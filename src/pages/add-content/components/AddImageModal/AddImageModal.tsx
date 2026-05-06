@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
-import { SearchNormal1 } from 'iconsax-react'
+import { useEffect, useRef, useState } from 'react'
+import { MagicStar, SearchNormal1 } from 'iconsax-react'
+import Chip from '../../../../components/Chip/Chip'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import FileUploader from '../../../../components/FileUploader/FileUploader'
 import './AddImageModal.css'
@@ -10,7 +11,28 @@ interface AddImageModalProps {
   onSelect: (imageDataUrl: string) => void
 }
 
-type Tab = 'upload' | 'freepik'
+type Tab = 'upload' | 'generate' | 'freepik'
+
+const GENERATED_ASPECT = '1 / 1'
+const GENERATION_DELAY_MS = 3000
+
+const STYLE_PRESETS = [
+  { id: 'photorealistic', label: 'Photorealistic' },
+  { id: 'illustration', label: 'Illustration' },
+  { id: '3d-render', label: '3D render' },
+  { id: 'flat-design', label: 'Flat design' },
+  { id: 'minimalist', label: 'Minimalist' },
+] as const
+
+type StyleId = (typeof STYLE_PRESETS)[number]['id']
+
+const LOADING_STATUSES = [
+  'Generating…',
+  'Refining details…',
+  'Almost done…',
+] as const
+
+const LOADING_STATUS_INTERVAL_MS = 1000
 
 const ACCEPTED_IMAGE_EXTENSIONS = '.jpg,.jpeg,.png'
 
@@ -44,13 +66,55 @@ const freepikThumb = (seed: string, aspect: string) => {
 function AddImageModal({ open, onClose, onSelect }: AddImageModalProps) {
   const [tab, setTab] = useState<Tab>('upload')
   const [query, setQuery] = useState('')
+  const [prompt, setPrompt] = useState('')
+  const [generating, setGenerating] = useState(false)
+  const [generatedUrl, setGeneratedUrl] = useState<string | null>(null)
+  const [selectedStyle, setSelectedStyle] = useState<StyleId | null>(null)
+  const [loadingStatusIndex, setLoadingStatusIndex] = useState(0)
+  const generationTimer = useRef<number | null>(null)
+  const statusTimer = useRef<number | null>(null)
 
   useEffect(() => {
     if (open) {
       setTab('upload')
       setQuery('')
+      setPrompt('')
+      setGenerating(false)
+      setGeneratedUrl(null)
+      setSelectedStyle(null)
+      setLoadingStatusIndex(0)
+    }
+    return () => {
+      if (generationTimer.current !== null) {
+        window.clearTimeout(generationTimer.current)
+        generationTimer.current = null
+      }
+      if (statusTimer.current !== null) {
+        window.clearInterval(statusTimer.current)
+        statusTimer.current = null
+      }
     }
   }, [open])
+
+  useEffect(() => {
+    if (!generating) {
+      if (statusTimer.current !== null) {
+        window.clearInterval(statusTimer.current)
+        statusTimer.current = null
+      }
+      return
+    }
+    setLoadingStatusIndex(0)
+    statusTimer.current = window.setInterval(() => {
+      setLoadingStatusIndex((i) => Math.min(i + 1, LOADING_STATUSES.length - 1))
+    }, LOADING_STATUS_INTERVAL_MS)
+    return () => {
+      if (statusTimer.current !== null) {
+        window.clearInterval(statusTimer.current)
+        statusTimer.current = null
+      }
+    }
+  }, [generating])
 
   const q = query.trim()
   const filteredFreepik = q
@@ -78,6 +142,30 @@ function AddImageModal({ open, onClose, onSelect }: AddImageModalProps) {
     onClose()
   }
 
+  const promptToSeed = (text: string, style: StyleId | null) =>
+    `nano-${text.trim().toLowerCase().replace(/\s+/g, '-').slice(0, 60) || 'idea'}-${style ?? 'auto'}-${Date.now()}`
+
+  const handleGenerate = () => {
+    const trimmed = prompt.trim()
+    if (!trimmed || generating) return
+    setGeneratedUrl(null)
+    setGenerating(true)
+    if (generationTimer.current !== null) window.clearTimeout(generationTimer.current)
+    generationTimer.current = window.setTimeout(() => {
+      setGeneratedUrl(freepikThumb(promptToSeed(trimmed, selectedStyle), GENERATED_ASPECT))
+      setGenerating(false)
+      generationTimer.current = null
+    }, GENERATION_DELAY_MS)
+  }
+
+  const handleGeneratedPick = () => {
+    if (!generatedUrl) return
+    onSelect(generatedUrl)
+    onClose()
+  }
+
+
+
   return (
     <ConfirmModal open={open} onClose={onClose} className="aim-modal">
       <button type="button" className="aim-close" aria-label="Close" onClick={onClose}>
@@ -103,7 +191,16 @@ function AddImageModal({ open, onClose, onSelect }: AddImageModalProps) {
             className={`aim-tab${tab === 'upload' ? ' aim-tab--active' : ''}`}
             onClick={() => setTab('upload')}
           >
-            Upload Image
+            Upload image
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'generate'}
+            className={`aim-tab${tab === 'generate' ? ' aim-tab--active' : ''}`}
+            onClick={() => setTab('generate')}
+          >
+            Generate With AI
           </button>
           <button
             type="button"
@@ -112,7 +209,7 @@ function AddImageModal({ open, onClose, onSelect }: AddImageModalProps) {
             className={`aim-tab${tab === 'freepik' ? ' aim-tab--active' : ''}`}
             onClick={() => setTab('freepik')}
           >
-            Freepik Images
+            Freepik images
           </button>
         </div>
       </div>
@@ -125,6 +222,102 @@ function AddImageModal({ open, onClose, onSelect }: AddImageModalProps) {
             onFileSelect={handleFile}
             className="aim-uploader"
           />
+        )}
+
+        {tab === 'generate' && (
+          <div className="aim-generate">
+            <div className="aim-generate-section">
+              <label className="aim-generate-label" htmlFor="aim-generate-prompt">
+                Describe the image you want
+              </label>
+              <textarea
+                id="aim-generate-prompt"
+                className="aim-generate-textarea"
+                placeholder="e.g. A friendly illustration of a team in a meeting room, soft pastel colours"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={1}
+                disabled={generating}
+              />
+            </div>
+
+            <div className="aim-generate-chips">
+              {STYLE_PRESETS.map((style) => {
+                const isActive = selectedStyle === style.id
+                return (
+                  <Chip
+                    key={style.id}
+                    label={style.label}
+                    selected={isActive}
+                    disabled={generating}
+                    onClick={() => setSelectedStyle(isActive ? null : style.id)}
+                  />
+                )
+              })}
+            </div>
+
+            {(generating || generatedUrl) && (
+              <div className="aim-generate-result">
+                {generating ? (
+                  <div className="aim-generate-loading">
+                    <div
+                      className="aim-generate-skeleton"
+                      style={{ aspectRatio: GENERATED_ASPECT }}
+                      aria-hidden="true"
+                    />
+                    <p className="aim-generate-status" aria-live="polite">
+                      {LOADING_STATUSES[loadingStatusIndex]}
+                    </p>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="aim-generate-card"
+                    style={{ aspectRatio: GENERATED_ASPECT }}
+                    onClick={handleGeneratedPick}
+                    aria-label="Use this generated image"
+                  >
+                    <img src={generatedUrl!} alt="Generated preview" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div
+              className={`aim-generate-actions${
+                generatedUrl && !generating ? ' aim-generate-actions--pair' : ''
+              }`}
+            >
+              {generatedUrl && !generating ? (
+                <>
+                  <button
+                    type="button"
+                    className="aim-generate-btn aim-generate-btn--secondary"
+                    onClick={handleGenerate}
+                  >
+                    Generate again
+                  </button>
+                  <button
+                    type="button"
+                    className="aim-generate-btn aim-generate-btn--primary"
+                    onClick={handleGeneratedPick}
+                  >
+                    Use this image
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="aim-generate-btn"
+                  onClick={handleGenerate}
+                  disabled={generating || prompt.trim().length === 0}
+                >
+                  {generating ? 'Generating…' : 'Generate Image'}
+                  <MagicStar size={24} color="currentColor" variant="Bold" />
+                </button>
+              )}
+            </div>
+          </div>
         )}
 
         {tab === 'freepik' && (

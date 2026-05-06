@@ -1,8 +1,9 @@
-/* Override ConfirmModal shell width */
+/* Override ConfirmModal shell width + section gap (Figma: 24px between header / body / CTA) */
 .aim-modal {
   width: 720px !important;
   position: relative;
   align-items: center !important;
+  gap: var(--space-l) !important;
 }
 
 .aim-close {
@@ -224,5 +225,243 @@
   line-height: 1.5;
   color: var(--text-tertiary);
   text-align: left;
+}
+
+/* Generate-with-AI tab — Figma: 20px gap inside body */
+.aim-generate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+}
+
+.aim-generate-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.aim-generate-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Figma text field — white card with 16px radius + soft side shadow */
+.aim-generate-textarea {
+  width: 100%;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  background: var(--cards-background);
+  box-shadow: -4px 0 12px rgba(32, 34, 42, 0.12);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  resize: none;
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.aim-generate-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.aim-generate-textarea:focus {
+  border-color: var(--border-hover);
+}
+
+.aim-generate-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Style chips row — chips themselves come from the DS Chip component (Figma: 12px gap) */
+.aim-generate-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* Result region — three states share top-aligned layout */
+.aim-generate-result {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 240px;
+}
+
+/* Loading — shimmer skeleton + status text */
+.aim-generate-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.aim-generate-skeleton {
+  width: 240px;
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--neutral-50) 0%,
+    var(--neutral-100) 50%,
+    var(--neutral-50) 100%
+  );
+  background-size: 200% 100%;
+  animation: aim-generate-shimmer 1400ms ease-in-out infinite;
+}
+
+@keyframes aim-generate-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aim-generate-skeleton {
+    animation: none;
+    background: var(--neutral-100);
+  }
+}
+
+.aim-generate-status {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* Result image */
+.aim-generate-card {
+  position: relative;
+  display: block;
+  width: 240px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 150ms ease;
+}
+
+.aim-generate-card:hover {
+  border-color: var(--blaze-quiz);
+}
+
+.aim-generate-card:focus-visible {
+  outline: 2px solid var(--blaze-quiz);
+  outline-offset: 2px;
+}
+
+.aim-generate-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Bottom action row — single button centred, pair fills the row 50/50 */
+.aim-generate-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-s);
+}
+
+.aim-generate-actions--pair .aim-generate-btn {
+  flex: 1;
+}
+
+/* AI Generate Image — Figma cyan→purple gradient, 8px radius, 16px label */
+.aim-generate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  height: 48px;
+  padding: var(--space-sm) var(--space-l);
+  border: 1px solid transparent;
+  border-radius: var(--radius-s);
+  background: linear-gradient(90deg, #00CEE6 0%, #4193E9 50%, #8158EC 100%);
+  color: var(--neutral-25);
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: filter 150ms ease, background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.aim-generate-btn:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+.aim-generate-btn:focus-visible {
+  outline: 2px solid var(--blaze-quiz);
+  outline-offset: 2px;
+}
+
+.aim-generate-btn:disabled {
+  background: var(--neutral-100);
+  border-color: var(--neutral-100);
+  color: var(--neutral-300);
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* AI Outlined — "Generate again" post-result (per buttons.md AI outlined) */
+.aim-generate-btn--secondary {
+  background: transparent;
+  border-color: var(--blaze-quiz);
+  color: var(--blaze-quiz);
+  font-size: 14px;
+}
+
+.aim-generate-btn--secondary:hover:not(:disabled) {
+  filter: none;
+  background: rgba(129, 88, 236, 0.08);
+  border-color: #6B45D1;
+  color: #6B45D1;
+}
+
+.aim-generate-btn--secondary:disabled {
+  background: transparent;
+  border-color: var(--neutral-100);
+  color: var(--neutral-300);
+}
+
+/* Primary Filled — "Use this image" confirm CTA (per buttons.md primary filled) */
+.aim-generate-btn--primary {
+  background: var(--primary-600);
+  border-color: transparent;
+  color: var(--neutral-0);
+  font-size: 14px;
+}
+
+.aim-generate-btn--primary:hover:not(:disabled) {
+  filter: none;
+  background: var(--primary-700);
+}
+
+.aim-generate-btn--primary:active:not(:disabled) {
+  background: var(--primary-800);
+}
+
+.aim-generate-btn--primary:focus-visible {
+  outline-color: var(--primary-600);
+}
+
+.aim-generate-btn--primary:disabled {
+  background: var(--neutral-100);
+  border-color: var(--neutral-100);
+  color: var(--neutral-300);
 }
 
