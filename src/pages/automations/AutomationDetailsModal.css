@@ -100,6 +100,13 @@
   border-radius: var(--radius-xs);
 }
 
+/* ===== Footer (save / update action) ===== */
+.automation-details-footer {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-s);
+}
+
 /* ===== Section ===== */
 .automation-details-section {
   display: flex;

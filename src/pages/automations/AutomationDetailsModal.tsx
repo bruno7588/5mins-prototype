@@ -49,17 +49,29 @@ function formatFrequency(c: AutomationCourse): { title: string; description?: st
   }
 }
 
+export type AutomationDetailsMode = 'edit' | 'new' | 'duplicate'
+
 interface AutomationDetailsModalProps {
   automation: AutomationRow | null
+  mode?: AutomationDetailsMode
   onClose: () => void
+  onSave?: (automation: AutomationRow) => void
   onCourseChange?: (automationId: string, courseId: string, patch: Partial<AutomationCourse>) => void
   onCourseRemove?: (automationId: string, courseId: string) => void
   onCoursesReorder?: (automationId: string, fromIndex: number, toIndex: number) => void
 }
 
+const SAVE_BUTTON_LABEL: Record<AutomationDetailsMode, string> = {
+  edit: 'Update Automation',
+  new: 'Save Automation',
+  duplicate: 'Create new automation',
+}
+
 function AutomationDetailsModal({
   automation,
+  mode = 'edit',
   onClose,
+  onSave,
   onCourseChange,
   onCourseRemove,
   onCoursesReorder,
@@ -270,6 +282,16 @@ function AutomationDetailsModal({
             )}
           </div>
         </section>
+
+        <footer className="automation-details-footer">
+          <button
+            type="button"
+            className="confirm-modal-btn confirm-modal-btn--primary"
+            onClick={() => onSave?.(automation)}
+          >
+            {SAVE_BUTTON_LABEL[mode]}
+          </button>
+        </footer>
       </div>
 
       <ToastContainer toasts={toasts} />

@@ -4,6 +4,7 @@ import {
   Medal,
   More,
   Edit2,
+  Copy,
   Trash,
   Danger,
   Activity,
@@ -20,7 +21,7 @@ import {
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ForceTriggerModal from './ForceTriggerModal'
-import AutomationDetailsModal from './AutomationDetailsModal'
+import AutomationDetailsModal, { type AutomationDetailsMode } from './AutomationDetailsModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import './Automations.css'
 
@@ -381,9 +382,32 @@ function Automations() {
 
   // Automation details modal (full-screen)
   const [detailsAutomation, setDetailsAutomation] = useState<AutomationRow | null>(null)
+  const [detailsMode, setDetailsMode] = useState<AutomationDetailsMode>('edit')
+
+  function openDetails(automation: AutomationRow, mode: AutomationDetailsMode) {
+    setDetailsMode(mode)
+    setDetailsAutomation(automation)
+  }
+
+  function closeDetails() {
+    setDetailsAutomation(null)
+  }
 
   // Toasts
-  const { toasts } = useToast()
+  const { toasts, show: showToast } = useToast()
+
+  function saveAutomation(automation: AutomationRow) {
+    if (detailsMode === 'edit') {
+      setAutomations((rows) =>
+        rows.map((r) => (r.id === automation.id ? { ...r, lastUpdated: 'Just now' } : r)),
+      )
+      showToast('success', 'Automation updated')
+    } else {
+      setAutomations((rows) => [{ ...automation, lastUpdated: 'Just now' }, ...rows])
+      showToast('success', 'Automation created')
+    }
+    closeDetails()
+  }
 
   function handleForceTrigger(automationId: string, userIds: string[]) {
     const automation = automations.find((a) => a.id === automationId)
@@ -500,7 +524,26 @@ function Automations() {
 
   function editAutomation(id: string) {
     const automation = automations.find((a) => a.id === id)
-    if (automation) setDetailsAutomation(automation)
+    if (automation) openDetails(automation, 'edit')
+  }
+
+  function duplicateAutomation(id: string) {
+    const automation = automations.find((a) => a.id === id)
+    if (!automation) return
+    const tempId = `duplicate-${automation.id}-${Date.now()}`
+    openDetails(
+      {
+        id: tempId,
+        name: `Copy of ${automation.name}`,
+        lastUpdated: new Date().toISOString().slice(0, 10),
+        active: false,
+        courses: automation.courses.map((c, i) => ({
+          ...c,
+          id: `${tempId}-c${i + 1}`,
+        })),
+      },
+      'duplicate',
+    )
   }
 
   function patchCourse(
@@ -626,13 +669,16 @@ function Automations() {
                 type="button"
                 className="automations-template automations-template--purple"
                 onClick={() =>
-                  setDetailsAutomation({
-                    id: 'template-new-employee',
-                    name: 'Copy of New Employee Onboarding',
-                    lastUpdated: new Date().toISOString().slice(0, 10),
-                    active: false,
-                    courses: [],
-                  })
+                  openDetails(
+                    {
+                      id: 'template-new-employee',
+                      name: 'Copy of New Employee Onboarding',
+                      lastUpdated: new Date().toISOString().slice(0, 10),
+                      active: false,
+                      courses: [],
+                    },
+                    'new',
+                  )
                 }
               >
                 <span className="automations-template-icon">
@@ -722,6 +768,18 @@ function Automations() {
                           >
                             <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
                             Edit automation
+                          </button>
+                          <button
+                            type="button"
+                            className="automations-action-menu-item"
+                            role="menuitem"
+                            onClick={() => {
+                              setOpenMenuId(null)
+                              duplicateAutomation(row.id)
+                            }}
+                          >
+                            <Copy size={20} color="var(--text-secondary)" variant="Linear" />
+                            Duplicate automation
                           </button>
                           <button
                             type="button"
@@ -1162,7 +1220,9 @@ function Automations() {
 
       <AutomationDetailsModal
         automation={detailsAutomation}
-        onClose={() => setDetailsAutomation(null)}
+        mode={detailsMode}
+        onClose={closeDetails}
+        onSave={saveAutomation}
         onCourseChange={patchCourse}
         onCourseRemove={removeCourse}
         onCoursesReorder={reorderCourses}
