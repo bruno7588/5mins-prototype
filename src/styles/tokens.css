@@ -66,6 +66,7 @@
   --button-background-active: var(--primary-800);
   --button-background-disabled: var(--neutral-100);
   --text-button-disabled: var(--neutral-300);
+  --text-button-hover: var(--primary-700);
 
   /* Spacing (4px base) */
   --space-xs: 0.25rem;   /* 4px */

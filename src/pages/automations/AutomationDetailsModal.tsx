@@ -78,6 +78,24 @@ const SAVE_BUTTON_LABEL: Record<AutomationDetailsMode, string> = {
   duplicate: 'Create new automation',
 }
 
+type FilterKind = 'role' | 'cohort' | 'region' | 'joinDate'
+
+const FILTER_PHRASE: Record<FilterKind, { first: string; rest: string }> = {
+  role:     { first: 'With',         rest: 'And with' },
+  cohort:   { first: 'With',         rest: 'And with' },
+  region:   { first: 'From',         rest: 'And from' },
+  joinDate: { first: 'Join date is', rest: 'And join date is' },
+}
+
+const FILTER_LABEL: Record<FilterKind, string> = {
+  role:     'Role',
+  cohort:   'Cohort',
+  region:   'Region',
+  joinDate: 'Join date',
+}
+
+const ALL_FILTER_KINDS: FilterKind[] = ['role', 'cohort', 'region', 'joinDate']
+
 function AutomationDetailsModal({
   automation,
   mode = 'edit',
@@ -94,6 +112,9 @@ function AutomationDetailsModal({
   const [openPopover, setOpenPopover] = useState<{ courseId: string; column: 'enrollment' | 'due' | 'frequency' } | null>(null)
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
   const draggingIndexRef = useRef<number | null>(null)
+  const [addedFilterKinds, setAddedFilterKinds] = useState<Set<FilterKind>>(new Set())
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false)
+  const filterMenuRef = useRef<HTMLDivElement>(null)
   const { toasts, show: showToast } = useToast()
 
   useEffect(() => {
@@ -101,8 +122,21 @@ function AutomationDetailsModal({
       setClosing(false)
       setCourseQuery('')
       setOpenPopover(null)
+      setAddedFilterKinds(new Set())
+      setFilterMenuOpen(false)
     }
   }, [automation?.id])
+
+  useEffect(() => {
+    if (!filterMenuOpen) return
+    function onMouseDown(e: MouseEvent) {
+      if (filterMenuRef.current && !filterMenuRef.current.contains(e.target as Node)) {
+        setFilterMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onMouseDown)
+    return () => document.removeEventListener('mousedown', onMouseDown)
+  }, [filterMenuOpen])
 
   useEffect(() => {
     if (!automation) return
@@ -200,77 +234,171 @@ function AutomationDetailsModal({
               </div>
             )}
             {(() => {
+              const a: AutomationRow = automation
               const watchedAttribute: TrackedAttribute | null =
-                automation.trigger.kind === 'attribute-changed'
-                  ? automation.trigger.attribute
+                a.trigger.kind === 'attribute-changed'
+                  ? a.trigger.attribute
                   : null
 
-              type FilterKind = 'role' | 'cohort' | 'region' | 'joinDate'
-              const visibleFilters: FilterKind[] = [
-                ...(watchedAttribute !== 'role'   ? ['role'   as const] : []),
-                ...(watchedAttribute !== 'cohort' ? ['cohort' as const] : []),
-                ...(watchedAttribute !== 'region' ? ['region' as const] : []),
-                'joinDate',
-              ]
+              const visibleFilters = ALL_FILTER_KINDS.filter((kind) => {
+                if ((kind as TrackedAttribute) === watchedAttribute) return false
+                if (a.filters[kind] !== undefined) return true
+                if (addedFilterKinds.has(kind)) return true
+                return false
+              })
 
-              const FILTER_PHRASE: Record<FilterKind, { first: string; rest: string }> = {
-                role:     { first: 'With',             rest: 'And with' },
-                cohort:   { first: 'With',             rest: 'And with' },
-                region:   { first: 'From',             rest: 'And from' },
-                joinDate: { first: 'Join date is',     rest: 'And join date is' },
+              const availableToAdd = ALL_FILTER_KINDS.filter(
+                (k) =>
+                  (k as TrackedAttribute) !== watchedAttribute &&
+                  !visibleFilters.includes(k),
+              )
+
+              function removeFilter(kind: FilterKind) {
+                setAddedFilterKinds((prev) => {
+                  const next = new Set(prev)
+                  next.delete(kind)
+                  return next
+                })
+                if (a.filters[kind] !== undefined) {
+                  onFiltersChange?.(a.id, {
+                    ...a.filters,
+                    [kind]: undefined,
+                  })
+                }
               }
 
-              return visibleFilters.map((kind, index) => {
-                const label = index === 0 ? FILTER_PHRASE[kind].first : FILTER_PHRASE[kind].rest
+              return (
+                <>
+                  {visibleFilters.map((kind, index) => {
+                    const label =
+                      index === 0 ? FILTER_PHRASE[kind].first : FILTER_PHRASE[kind].rest
 
-                if (kind === 'joinDate') {
-                  return (
-                    <div key={kind} className="automation-details-condition">
-                      <span className="automation-details-condition-label">{label}</span>
-                      <Dropdown
-                        size="md"
-                        options={[{ value: 'none', label: 'not required' }]}
-                        value={automation.filters.joinDate ?? 'none'}
-                        onChange={() => {
-                          /* only one option for now */
-                        }}
-                        className="automation-details-condition-dropdown"
-                      />
+                    const dropdown =
+                      kind === 'joinDate' ? (
+                        <Dropdown
+                          size="md"
+                          options={[{ value: 'none', label: 'not required' }]}
+                          value={a.filters.joinDate ?? 'none'}
+                          onChange={() => {
+                            /* only one option for now */
+                          }}
+                          className="automation-details-condition-dropdown"
+                        />
+                      ) : (
+                        (() => {
+                          const taxonomy =
+                            kind === 'role' ? ROLE_VALUES
+                            : kind === 'cohort' ? COHORT_VALUES
+                            : REGION_VALUES
+                          const allLabel =
+                            kind === 'role' ? 'All roles'
+                            : kind === 'cohort' ? 'All cohorts'
+                            : 'All regions'
+                          const currentValue = a.filters[kind] ?? 'all'
+                          return (
+                            <Dropdown
+                              size="md"
+                              options={[
+                                { value: 'all', label: allLabel },
+                                ...taxonomy.map((v) => ({ value: v.value, label: v.label })),
+                              ]}
+                              value={currentValue}
+                              onChange={(next) =>
+                                onFiltersChange?.(a.id, {
+                                  ...a.filters,
+                                  [kind]: next === 'all' ? undefined : next,
+                                })
+                              }
+                              className="automation-details-condition-dropdown"
+                            />
+                          )
+                        })()
+                      )
+
+                    return (
+                      <div key={kind} className="automation-details-condition">
+                        <span className="automation-details-condition-label">{label}</span>
+                        {dropdown}
+                        <button
+                          type="button"
+                          className="automation-details-condition-remove"
+                          aria-label={`Remove ${FILTER_LABEL[kind].toLowerCase()} filter`}
+                          onClick={() => removeFilter(kind)}
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M11.5 11.5L4.5 4.5M11.5 4.5L4.5 11.5"
+                              stroke="currentColor"
+                              strokeWidth="1.25"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    )
+                  })}
+
+                  {availableToAdd.length > 0 && (
+                    <div
+                      className="automation-details-add-filter"
+                      ref={filterMenuRef}
+                    >
+                      <button
+                        type="button"
+                        className="automation-details-add-filter-trigger"
+                        aria-haspopup="menu"
+                        aria-expanded={filterMenuOpen}
+                        onClick={() => setFilterMenuOpen((o) => !o)}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M8 3.5V12.5M3.5 8H12.5"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        Add filter
+                      </button>
+                      {filterMenuOpen && (
+                        <div className="automation-details-add-filter-menu" role="menu">
+                          {availableToAdd.map((kind) => (
+                            <button
+                              key={kind}
+                              type="button"
+                              role="menuitem"
+                              className="automation-details-add-filter-menu-item"
+                              onClick={() => {
+                                setAddedFilterKinds((prev) => {
+                                  const next = new Set(prev)
+                                  next.add(kind)
+                                  return next
+                                })
+                                setFilterMenuOpen(false)
+                              }}
+                            >
+                              {FILTER_LABEL[kind]}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )
-                }
-
-                const taxonomy =
-                  kind === 'role'   ? ROLE_VALUES
-                  : kind === 'cohort' ? COHORT_VALUES
-                  :                     REGION_VALUES
-                const allLabel =
-                  kind === 'role'   ? 'All roles'
-                  : kind === 'cohort' ? 'All cohorts'
-                  :                     'All regions'
-                const currentValue = automation.filters[kind] ?? 'all'
-
-                return (
-                  <div key={kind} className="automation-details-condition">
-                    <span className="automation-details-condition-label">{label}</span>
-                    <Dropdown
-                      size="md"
-                      options={[
-                        { value: 'all', label: allLabel },
-                        ...taxonomy.map((v) => ({ value: v.value, label: v.label })),
-                      ]}
-                      value={currentValue}
-                      onChange={(next) =>
-                        onFiltersChange?.(automation.id, {
-                          ...automation.filters,
-                          [kind]: next === 'all' ? undefined : next,
-                        })
-                      }
-                      className="automation-details-condition-dropdown"
-                    />
-                  </div>
-                )
-              })
+                  )}
+                </>
+              )
             })()}
           </div>
         </section>
