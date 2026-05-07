@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import {
   UserCirlceAdd,
   Medal,
+  Refresh,
   More,
   Edit2,
   Copy,
@@ -51,12 +52,70 @@ export interface AutomationCourse {
   recurrence: RecurrenceConfig
 }
 
+export type TrackedAttribute = 'role' | 'cohort' | 'region'
+
+export type AutomationTrigger =
+  | { kind: 'user-registered' }
+  | { kind: 'attribute-changed'; attribute: TrackedAttribute; toValue: string }
+
+export interface AutomationFilters {
+  role?: string
+  cohort?: string
+  region?: string
+  joinDate?: 'none'
+}
+
 export interface AutomationRow {
   id: string
   name: string
   lastUpdated: string
   active: boolean
+  trigger: AutomationTrigger
+  filters: AutomationFilters
   courses: AutomationCourse[]
+}
+
+// Taxonomy — used by both the trigger "To" picker and the filter dropdowns.
+// Kept inline because the prototype has no shared constants module.
+export const ROLE_VALUES = [
+  { value: 'employee',       label: 'Employee' },
+  { value: 'team-lead',      label: 'Team Lead' },
+  { value: 'manager',        label: 'Manager' },
+  { value: 'senior-manager', label: 'Senior Manager' },
+  { value: 'director',       label: 'Director' },
+] as const
+
+export const COHORT_VALUES = [
+  { value: 'q4-2025', label: 'Q4 2025' },
+  { value: 'q1-2026', label: 'Q1 2026' },
+  { value: 'q2-2026', label: 'Q2 2026' },
+  { value: 'q3-2026', label: 'Q3 2026' },
+  { value: 'q4-2026', label: 'Q4 2026' },
+] as const
+
+export const REGION_VALUES = [
+  { value: 'europe',   label: 'Europe' },
+  { value: 'americas', label: 'Americas' },
+  { value: 'apac',     label: 'APAC' },
+  { value: 'mea',      label: 'Middle East & Africa' },
+] as const
+
+export const ATTRIBUTE_LABELS: Record<TrackedAttribute, string> = {
+  role:   'Role',
+  cohort: 'Cohort',
+  region: 'Region',
+}
+
+export function getAttributeValues(attribute: TrackedAttribute): readonly { value: string; label: string }[] {
+  switch (attribute) {
+    case 'role':   return ROLE_VALUES
+    case 'cohort': return COHORT_VALUES
+    case 'region': return REGION_VALUES
+  }
+}
+
+export function getAttributeValueLabel(attribute: TrackedAttribute, value: string): string {
+  return getAttributeValues(attribute).find((v) => v.value === value)?.label ?? value
 }
 
 export interface User {
@@ -104,6 +163,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'New Hire Compliance Onboarding',
     lastUpdated: 'Sep 30, 2024',
     active: true,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('1', [
       ['Welcome to the Company', '0 days after registration'],
       ['Code of Conduct Essentials', '1 day after previous course', 7, 12],
@@ -119,6 +180,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Quarterly Refresher — Food Safety',
     lastUpdated: 'Sep 28, 2024',
     active: true,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('2', [
       ['HACCP Refresher', '0 days after registration', 7, 3],
       ['Allergen Awareness', '2 days after previous course', 7, 3],
@@ -134,6 +197,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Annual Anti-Harassment Training',
     lastUpdated: 'Sep 24, 2024',
     active: true,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('3', [
       ['Recognising Harassment', '0 days after registration', 14, 12],
       ['Bystander Intervention', '3 days after previous course', 14, 12],
@@ -145,6 +210,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'GDPR Privacy Awareness',
     lastUpdated: 'Sep 22, 2024',
     active: true,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('4', [
       ['GDPR Fundamentals', '0 days after registration', undefined, 6],
       ['Handling Personal Data', '2 days after previous course', 7],
@@ -158,6 +225,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Cybersecurity Essentials Q3',
     lastUpdated: 'Sep 18, 2024',
     active: true,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('5', [
       ['Phishing & Social Engineering', '0 days after registration', 7, 3],
       ['Password & MFA Best Practices', '2 days after previous course', 7, 3],
@@ -172,6 +241,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Manager 30-Day Check-in',
     lastUpdated: 'Sep 12, 2024',
     active: true,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('6', [
       ['Coaching Fundamentals', '0 days after registration'],
       ['Giving Effective Feedback', '3 days after previous course'],
@@ -183,6 +254,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Health & Safety Briefing',
     lastUpdated: 'Sep 5, 2024',
     active: true,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('7', [
       ['Health & Safety: The Workplace (UK)', '0 days after registration', 14, 12],
       ['Health & Safety: Working From Home (UK)', '1 day after previous course', 14, 12],
@@ -195,6 +268,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Diversity & Inclusion 2024',
     lastUpdated: 'Aug 30, 2024',
     active: false,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('8', [
       ['Inclusive Language', '0 days after registration'],
       ['Unconscious Bias', '2 days after previous course'],
@@ -206,6 +281,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Remote Work Best Practices',
     lastUpdated: 'Aug 22, 2024',
     active: false,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('9', [
       ['Asynchronous Communication', '0 days after registration'],
       ['Home Office Ergonomics', '2 days after previous course', 7],
@@ -217,6 +294,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Code of Conduct Refresher',
     lastUpdated: 'Aug 14, 2024',
     active: false,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('10', [['Code of Conduct 2024 Update', '0 days after registration', 14, 6]]),
   },
   {
@@ -224,6 +303,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Sales Onboarding Sprint',
     lastUpdated: 'Aug 8, 2024',
     active: false,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('11', [
       ['Product Overview', '0 days after registration'],
       ['Discovery Calls', '1 day after previous course'],
@@ -237,6 +318,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Customer Service Standards',
     lastUpdated: 'Jul 30, 2024',
     active: false,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('12', [
       ['Service Mindset', '0 days after registration'],
       ['Handling Difficult Customers', '2 days after previous course', 7],
@@ -249,6 +332,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Fire Safety Drill Series',
     lastUpdated: 'Jul 21, 2024',
     active: false,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('13', [
       ['Fire Drill Procedures', '0 days after registration', 7, 6],
       ['Extinguisher Use', '2 days after previous course', 7, 6],
@@ -259,6 +344,8 @@ const mockAutomations: AutomationRow[] = [
     name: 'Product Knowledge Bootcamp',
     lastUpdated: 'Jul 12, 2024',
     active: false,
+    trigger: { kind: 'user-registered' },
+    filters: {},
     courses: mkCourses('14', [
       ['Product Lineup', '0 days after registration'],
       ['Pricing & Plans', '1 day after previous course'],
@@ -266,6 +353,44 @@ const mockAutomations: AutomationRow[] = [
       ['Customer Personas', '2 days after previous course'],
       ['Feature Deep Dives', '3 days after previous course'],
       ['Roadmap Highlights', '3 days after previous course'],
+    ]),
+  },
+  {
+    id: '15',
+    name: 'Manager Promotion — Leadership Path',
+    lastUpdated: 'May 02, 2026',
+    active: true,
+    trigger: { kind: 'attribute-changed', attribute: 'role', toValue: 'manager' },
+    filters: { region: 'europe' },
+    courses: mkCourses('15', [
+      ['Leadership Foundations', '0 days after registration', 14],
+      ['Coaching Fundamentals', '3 days after previous course', 14],
+      ['Giving Effective Feedback', '3 days after previous course'],
+    ]),
+  },
+  {
+    id: '16',
+    name: 'Director Onboarding',
+    lastUpdated: 'Apr 28, 2026',
+    active: true,
+    trigger: { kind: 'attribute-changed', attribute: 'role', toValue: 'director' },
+    filters: {},
+    courses: mkCourses('16', [
+      ['Strategic Decision Making', '0 days after registration'],
+      ['Executive Communication', '2 days after previous course'],
+      ['Financial Acumen for Directors', '3 days after previous course', 14],
+    ]),
+  },
+  {
+    id: '17',
+    name: 'Americas Region — Compliance Welcome',
+    lastUpdated: 'Apr 22, 2026',
+    active: true,
+    trigger: { kind: 'attribute-changed', attribute: 'region', toValue: 'americas' },
+    filters: { cohort: 'q2-2026' },
+    courses: mkCourses('17', [
+      ['US Workplace Compliance Overview', '0 days after registration', 14],
+      ['Federal Anti-Harassment Standards', '2 days after previous course', 14, 12],
     ]),
   },
 ]
@@ -537,6 +662,8 @@ function Automations() {
         name: `Copy of ${automation.name}`,
         lastUpdated: new Date().toISOString().slice(0, 10),
         active: false,
+        trigger: { ...automation.trigger },
+        filters: { ...automation.filters },
         courses: automation.courses.map((c, i) => ({
           ...c,
           id: `${tempId}-c${i + 1}`,
@@ -555,6 +682,22 @@ function Automations() {
       ...a,
       courses: a.courses.map((c) => (c.id === courseId ? { ...c, ...patch } : c)),
     })
+    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
+    setDetailsAutomation((current) =>
+      current && current.id === automationId ? apply(current) : current,
+    )
+  }
+
+  function patchTrigger(automationId: string, trigger: AutomationTrigger) {
+    const apply = (a: AutomationRow): AutomationRow => ({ ...a, trigger })
+    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
+    setDetailsAutomation((current) =>
+      current && current.id === automationId ? apply(current) : current,
+    )
+  }
+
+  function patchFilters(automationId: string, filters: AutomationFilters) {
+    const apply = (a: AutomationRow): AutomationRow => ({ ...a, filters })
     setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
     setDetailsAutomation((current) =>
       current && current.id === automationId ? apply(current) : current,
@@ -675,6 +818,8 @@ function Automations() {
                       name: 'Copy of New Employee Onboarding',
                       lastUpdated: new Date().toISOString().slice(0, 10),
                       active: false,
+                      trigger: { kind: 'user-registered' },
+                      filters: {},
                       courses: [],
                     },
                     'new',
@@ -704,6 +849,41 @@ function Automations() {
                     Create and automate training programs for both new and existing users.
                     <br />
                     Perfect for compliance training.
+                  </span>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="automations-template automations-template--quiz"
+                onClick={() =>
+                  openDetails(
+                    {
+                      id: `template-attribute-change-${Date.now()}`,
+                      name: 'Untitled attribute change automation',
+                      lastUpdated: new Date().toISOString().slice(0, 10),
+                      active: false,
+                      trigger: {
+                        kind: 'attribute-changed',
+                        attribute: 'role',
+                        toValue: ROLE_VALUES[0].value,
+                      },
+                      filters: {},
+                      courses: [],
+                    },
+                    'new',
+                  )
+                }
+              >
+                <span className="automations-template-icon">
+                  <Refresh size={48} color="var(--lesson-quiz)" variant="Linear" />
+                </span>
+                <span className="automations-template-body">
+                  <span className="automations-template-title">Attribute Change Automation</span>
+                  <span className="automations-template-desc">
+                    Enrol users in courses when their role, cohort, or region changes.
+                    <br />
+                    Triggers every time the attribute changes to the target value.
                   </span>
                 </span>
               </button>
@@ -1223,6 +1403,8 @@ function Automations() {
         mode={detailsMode}
         onClose={closeDetails}
         onSave={saveAutomation}
+        onTriggerChange={patchTrigger}
+        onFiltersChange={patchFilters}
         onCourseChange={patchCourse}
         onCourseRemove={removeCourse}
         onCoursesReorder={reorderCourses}

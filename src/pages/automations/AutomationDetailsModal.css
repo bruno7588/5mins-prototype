@@ -166,6 +166,14 @@
   gap: var(--space-s);
 }
 
+/* Inline attribute-change trigger row: text + attribute dropdown + text + value dropdown */
+.automation-details-trigger-attribute {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s);
+}
+
 .automation-details-condition-label {
   font-family: 'Poppins', sans-serif;
   font-size: 14px;

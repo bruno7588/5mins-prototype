@@ -135,6 +135,14 @@
   background: rgba(42, 144, 216, 0.32);
 }
 
+.automations-template--quiz {
+  background: rgba(250, 113, 95, 0.16);
+}
+
+.automations-template--quiz:hover {
+  background: rgba(250, 113, 95, 0.32);
+}
+
 .automations-template-icon {
   display: flex;
   align-items: center;

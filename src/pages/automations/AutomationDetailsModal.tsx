@@ -10,10 +10,19 @@ import DueDatePopover from './DueDatePopover'
 import FrequencyPopover from './FrequencyPopover'
 import type {
   AutomationCourse,
+  AutomationFilters,
   AutomationRow,
+  AutomationTrigger,
   DueDateConfig,
   EnrollmentType,
   RecurrenceConfig,
+  TrackedAttribute,
+} from './Automations'
+import {
+  COHORT_VALUES,
+  REGION_VALUES,
+  ROLE_VALUES,
+  getAttributeValues,
 } from './Automations'
 import './AutomationDetailsModal.css'
 
@@ -56,6 +65,8 @@ interface AutomationDetailsModalProps {
   mode?: AutomationDetailsMode
   onClose: () => void
   onSave?: (automation: AutomationRow) => void
+  onTriggerChange?: (automationId: string, trigger: AutomationTrigger) => void
+  onFiltersChange?: (automationId: string, filters: AutomationFilters) => void
   onCourseChange?: (automationId: string, courseId: string, patch: Partial<AutomationCourse>) => void
   onCourseRemove?: (automationId: string, courseId: string) => void
   onCoursesReorder?: (automationId: string, fromIndex: number, toIndex: number) => void
@@ -72,6 +83,8 @@ function AutomationDetailsModal({
   mode = 'edit',
   onClose,
   onSave,
+  onTriggerChange,
+  onFiltersChange,
   onCourseChange,
   onCourseRemove,
   onCoursesReorder,
@@ -138,43 +151,127 @@ function AutomationDetailsModal({
             </p>
           </div>
           <div className="automation-details-card">
-            <p className="automation-details-card-lead">When a user registers on 5Mins.ai</p>
-            <div className="automation-details-condition">
-              <span className="automation-details-condition-label">With</span>
-              <Dropdown
-                size="md"
-                options={[{ value: 'all', label: 'All roles' }]}
-                value="all"
-                className="automation-details-condition-dropdown"
-              />
-            </div>
-            <div className="automation-details-condition">
-              <span className="automation-details-condition-label">And with</span>
-              <Dropdown
-                size="md"
-                options={[{ value: 'all', label: 'All cohorts' }]}
-                value="all"
-                className="automation-details-condition-dropdown"
-              />
-            </div>
-            <div className="automation-details-condition">
-              <span className="automation-details-condition-label">And from</span>
-              <Dropdown
-                size="md"
-                options={[{ value: 'all', label: 'All regions' }]}
-                value="all"
-                className="automation-details-condition-dropdown"
-              />
-            </div>
-            <div className="automation-details-condition">
-              <span className="automation-details-condition-label">And join date is</span>
-              <Dropdown
-                size="md"
-                options={[{ value: 'none', label: 'not required' }]}
-                value="none"
-                className="automation-details-condition-dropdown"
-              />
-            </div>
+            {automation.trigger.kind === 'user-registered' && (
+              <p className="automation-details-card-lead">When a user registers on 5Mins.ai</p>
+            )}
+            {automation.trigger.kind === 'attribute-changed' && (
+              <div className="automation-details-trigger-attribute">
+                <span className="automation-details-card-lead">When a user's</span>
+                <Dropdown
+                  size="md"
+                  options={[
+                    { value: 'role',   label: 'Role'   },
+                    { value: 'cohort', label: 'Cohort' },
+                    { value: 'region', label: 'Region' },
+                  ]}
+                  value={automation.trigger.attribute}
+                  onChange={(next) => {
+                    const attribute = next as TrackedAttribute
+                    const firstValue = getAttributeValues(attribute)[0]?.value ?? ''
+                    onTriggerChange?.(automation.id, {
+                      kind: 'attribute-changed',
+                      attribute,
+                      toValue: firstValue,
+                    })
+                  }}
+                  className="automation-details-condition-dropdown"
+                />
+                <span className="automation-details-card-lead">changes to</span>
+                <Dropdown
+                  size="md"
+                  options={getAttributeValues(automation.trigger.attribute).map((v) => ({
+                    value: v.value,
+                    label: v.label,
+                  }))}
+                  value={automation.trigger.toValue}
+                  onChange={(next) => {
+                    const trigger = automation.trigger as Extract<
+                      AutomationTrigger,
+                      { kind: 'attribute-changed' }
+                    >
+                    onTriggerChange?.(automation.id, {
+                      kind: 'attribute-changed',
+                      attribute: trigger.attribute,
+                      toValue: next,
+                    })
+                  }}
+                  className="automation-details-condition-dropdown"
+                />
+              </div>
+            )}
+            {(() => {
+              const watchedAttribute: TrackedAttribute | null =
+                automation.trigger.kind === 'attribute-changed'
+                  ? automation.trigger.attribute
+                  : null
+
+              type FilterKind = 'role' | 'cohort' | 'region' | 'joinDate'
+              const visibleFilters: FilterKind[] = [
+                ...(watchedAttribute !== 'role'   ? ['role'   as const] : []),
+                ...(watchedAttribute !== 'cohort' ? ['cohort' as const] : []),
+                ...(watchedAttribute !== 'region' ? ['region' as const] : []),
+                'joinDate',
+              ]
+
+              const FILTER_PHRASE: Record<FilterKind, { first: string; rest: string }> = {
+                role:     { first: 'With',             rest: 'And with' },
+                cohort:   { first: 'With',             rest: 'And with' },
+                region:   { first: 'From',             rest: 'And from' },
+                joinDate: { first: 'Join date is',     rest: 'And join date is' },
+              }
+
+              return visibleFilters.map((kind, index) => {
+                const label = index === 0 ? FILTER_PHRASE[kind].first : FILTER_PHRASE[kind].rest
+
+                if (kind === 'joinDate') {
+                  return (
+                    <div key={kind} className="automation-details-condition">
+                      <span className="automation-details-condition-label">{label}</span>
+                      <Dropdown
+                        size="md"
+                        options={[{ value: 'none', label: 'not required' }]}
+                        value={automation.filters.joinDate ?? 'none'}
+                        onChange={() => {
+                          /* only one option for now */
+                        }}
+                        className="automation-details-condition-dropdown"
+                      />
+                    </div>
+                  )
+                }
+
+                const taxonomy =
+                  kind === 'role'   ? ROLE_VALUES
+                  : kind === 'cohort' ? COHORT_VALUES
+                  :                     REGION_VALUES
+                const allLabel =
+                  kind === 'role'   ? 'All roles'
+                  : kind === 'cohort' ? 'All cohorts'
+                  :                     'All regions'
+                const currentValue = automation.filters[kind] ?? 'all'
+
+                return (
+                  <div key={kind} className="automation-details-condition">
+                    <span className="automation-details-condition-label">{label}</span>
+                    <Dropdown
+                      size="md"
+                      options={[
+                        { value: 'all', label: allLabel },
+                        ...taxonomy.map((v) => ({ value: v.value, label: v.label })),
+                      ]}
+                      value={currentValue}
+                      onChange={(next) =>
+                        onFiltersChange?.(automation.id, {
+                          ...automation.filters,
+                          [kind]: next === 'all' ? undefined : next,
+                        })
+                      }
+                      className="automation-details-condition-dropdown"
+                    />
+                  </div>
+                )
+              })
+            })()}
           </div>
         </section>
 
