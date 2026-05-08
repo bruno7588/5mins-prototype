@@ -8,6 +8,7 @@ import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import EnrollmentPopover from './EnrollmentPopover'
 import DueDatePopover from './DueDatePopover'
 import FrequencyPopover from './FrequencyPopover'
+import RoleSearch from './RoleSearch'
 import type {
   AutomationCourse,
   AutomationFilters,
@@ -22,7 +23,6 @@ import {
   COHORT_VALUES,
   MOCK_COURSE_CATALOG,
   REGION_VALUES,
-  ROLE_VALUES,
   getAttributeValues,
 } from './Automations'
 import './AutomationDetailsModal.css'
@@ -226,26 +226,39 @@ function AutomationDetailsModal({
                   className="automation-details-condition-dropdown"
                 />
                 <span className="automation-details-card-lead">changes to</span>
-                <Dropdown
-                  size="md"
-                  options={getAttributeValues(automation.trigger.attribute).map((v) => ({
-                    value: v.value,
-                    label: v.label,
-                  }))}
-                  value={automation.trigger.toValue}
-                  onChange={(next) => {
-                    const trigger = automation.trigger as Extract<
-                      AutomationTrigger,
-                      { kind: 'attribute-changed' }
-                    >
-                    onTriggerChange?.(automation.id, {
-                      kind: 'attribute-changed',
-                      attribute: trigger.attribute,
-                      toValue: next,
-                    })
-                  }}
-                  className="automation-details-condition-dropdown"
-                />
+                {automation.trigger.attribute === 'role' ? (
+                  <RoleSearch
+                    value={automation.trigger.toValue}
+                    onChange={(next) =>
+                      onTriggerChange?.(automation.id, {
+                        kind: 'attribute-changed',
+                        attribute: 'role',
+                        toValue: next,
+                      })
+                    }
+                  />
+                ) : (
+                  <Dropdown
+                    size="md"
+                    options={getAttributeValues(automation.trigger.attribute).map((v) => ({
+                      value: v.value,
+                      label: v.label,
+                    }))}
+                    value={automation.trigger.toValue}
+                    onChange={(next) => {
+                      const trigger = automation.trigger as Extract<
+                        AutomationTrigger,
+                        { kind: 'attribute-changed' }
+                      >
+                      onTriggerChange?.(automation.id, {
+                        kind: 'attribute-changed',
+                        attribute: trigger.attribute,
+                        toValue: next,
+                      })
+                    }}
+                    className="automation-details-condition-dropdown"
+                  />
+                )}
               </div>
             )}
             {(() => {
@@ -289,7 +302,17 @@ function AutomationDetailsModal({
                       index === 0 ? FILTER_PHRASE[kind].first : FILTER_PHRASE[kind].rest
 
                     const dropdown =
-                      kind === 'joinDate' ? (
+                      kind === 'role' ? (
+                        <RoleSearch
+                          value={a.filters.role ?? ''}
+                          onChange={(next) =>
+                            onFiltersChange?.(a.id, {
+                              ...a.filters,
+                              role: next || undefined,
+                            })
+                          }
+                        />
+                      ) : kind === 'joinDate' ? (
                         <Dropdown
                           size="md"
                           options={[{ value: 'none', label: 'not required' }]}
@@ -302,13 +325,9 @@ function AutomationDetailsModal({
                       ) : (
                         (() => {
                           const taxonomy =
-                            kind === 'role' ? ROLE_VALUES
-                            : kind === 'cohort' ? COHORT_VALUES
-                            : REGION_VALUES
+                            kind === 'cohort' ? COHORT_VALUES : REGION_VALUES
                           const allLabel =
-                            kind === 'role' ? 'All roles'
-                            : kind === 'cohort' ? 'All cohorts'
-                            : 'All regions'
+                            kind === 'cohort' ? 'All cohorts' : 'All regions'
                           const currentValue = a.filters[kind] ?? 'all'
                           return (
                             <Dropdown

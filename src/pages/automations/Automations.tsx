@@ -77,13 +77,40 @@ export interface AutomationRow {
 
 // Taxonomy — used by both the trigger "To" picker and the filter dropdowns.
 // Kept inline because the prototype has no shared constants module.
-export const ROLE_VALUES = [
-  { value: 'employee',       label: 'Employee' },
-  { value: 'team-lead',      label: 'Team Lead' },
-  { value: 'manager',        label: 'Manager' },
-  { value: 'senior-manager', label: 'Senior Manager' },
-  { value: 'director',       label: 'Director' },
-] as const
+export type RoleSource = '5mins' | 'tenant'
+export interface RoleOption {
+  value: string
+  label: string
+  source: RoleSource
+}
+
+export const ROLE_VALUES: RoleOption[] = [
+  { value: 'account-executive',          label: 'Account Executive',          source: '5mins'  },
+  { value: 'affiliate-marketing',        label: 'Affiliate Marketing',        source: '5mins'  },
+  { value: 'brand-management',           label: 'Brand Management',           source: '5mins'  },
+  { value: 'business-strategy',          label: 'Business Strategy',          source: '5mins'  },
+  { value: 'commercial-data-analyst',    label: 'Commercial Data Analyst',    source: '5mins'  },
+  { value: 'communication-manager',      label: 'Communication Manager',      source: '5mins'  },
+  { value: 'contact-centre-agent',       label: 'Contact Centre Agent',       source: '5mins'  },
+  { value: 'creative-design',            label: 'Creative Design',            source: '5mins'  },
+  { value: 'creative-graphic-design',    label: 'Creative/Graphic Design',    source: '5mins'  },
+  { value: 'credit-control-refunds',     label: 'Credit Control/Refunds',     source: '5mins'  },
+  { value: 'cro-manager',                label: 'CRO Manager',                source: '5mins'  },
+  { value: 'csr-ncd-advisor',            label: 'CSR/NCD Advisor',            source: '5mins'  },
+  { value: 'custom',                     label: 'Custom',                     source: '5mins'  },
+  { value: 'customer-experience-manager',label: 'Customer Experience Manager',source: '5mins'  },
+  { value: 'customer-support-executive', label: 'Customer Support Executive', source: '5mins'  },
+  { value: 'cx-software-engineer',       label: 'CX Software Engineer',       source: '5mins'  },
+  { value: 'digital-technology-lead',    label: 'Digital Technology Lead',    source: '5mins'  },
+  { value: 'engagement-marketing',       label: 'Engagement Marketing',       source: '5mins'  },
+  { value: 'financial-accountant',       label: 'Financial Accountant',       source: '5mins'  },
+  { value: 'infrastructure-architect',   label: 'Infrastructure Architect',   source: '5mins'  },
+  { value: 'leadership-development',     label: 'Leadership Development',     source: '5mins'  },
+  { value: 'marketing-operations',       label: 'Marketing Operations',       source: '5mins'  },
+  { value: 'custom-tenant-role',         label: 'Custom Tenant Role',         source: 'tenant' },
+  { value: 'field-manager-tenant',       label: 'Field Manager',              source: 'tenant' },
+  { value: 'regional-trainer-tenant',    label: 'Regional Trainer',           source: 'tenant' },
+]
 
 export const COHORT_VALUES = [
   { value: 'q4-2025', label: 'Q4 2025' },
@@ -427,10 +454,10 @@ const mockAutomations: AutomationRow[] = [
   },
   {
     id: '15',
-    name: 'Manager Promotion — Leadership Path',
+    name: 'New Communication Manager — Leadership Path',
     lastUpdated: 'May 02, 2026',
     active: true,
-    trigger: { kind: 'attribute-changed', attribute: 'role', toValue: 'manager' },
+    trigger: { kind: 'attribute-changed', attribute: 'role', toValue: 'communication-manager' },
     filters: { region: 'europe' },
     courses: mkCourses('15', [
       ['Leadership Foundations', '0 days after registration', 14],
@@ -440,10 +467,10 @@ const mockAutomations: AutomationRow[] = [
   },
   {
     id: '16',
-    name: 'Director Onboarding',
+    name: 'Digital Technology Lead Onboarding',
     lastUpdated: 'Apr 28, 2026',
     active: true,
-    trigger: { kind: 'attribute-changed', attribute: 'role', toValue: 'director' },
+    trigger: { kind: 'attribute-changed', attribute: 'role', toValue: 'digital-technology-lead' },
     filters: {},
     courses: mkCourses('16', [
       ['Strategic Decision Making', '0 days after registration'],
