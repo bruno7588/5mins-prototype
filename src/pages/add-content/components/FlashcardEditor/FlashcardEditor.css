@@ -392,6 +392,103 @@
   background: rgba(223, 22, 66, 0.08);
 }
 
+/* New-feature dot on the Gallery action button */
+.fce-card-action-nudge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00AFC4, #8158EC);
+  pointer-events: none;
+}
+
+/* Coachmark — first-visit explainer for the AI image generation feature */
+.fce-coachmark {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
+  width: 320px;
+  background: var(--neutral-800, #20222A);
+  color: var(--neutral-0);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(15, 16, 20, 0.24);
+  z-index: 20;
+  animation: fce-coachmark-in 200ms ease-out;
+}
+
+@keyframes fce-coachmark-in {
+  from { opacity: 0; transform: translate(-50%, 4px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.fce-coachmark__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  margin-top: 2px;
+}
+
+.fce-coachmark__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.fce-coachmark__title {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--neutral-0);
+}
+
+.fce-coachmark__desc {
+  margin: 2px 0 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--neutral-200);
+}
+
+.fce-coachmark__cta {
+  flex-shrink: 0;
+  align-self: center;
+  padding: 4px 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--neutral-0);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.fce-coachmark__cta:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.fce-coachmark__caret {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--neutral-800, #20222A);
+}
+
 /* Submenu host — wraps the Edit image item + submenu so hover is continuous */
 .fce-image-menu-submenu-host {
   position: relative;

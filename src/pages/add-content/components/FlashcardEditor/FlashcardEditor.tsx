@@ -150,6 +150,9 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
   const [imageMenuOpen, setImageMenuOpen] = useState(false)
   const [imageSubmenuOpen, setImageSubmenuOpen] = useState(false)
   const [addImageModalOpen, setAddImageModalOpen] = useState(false)
+  const [showAiNudge, setShowAiNudge] = useState(
+    () => typeof window !== 'undefined' && localStorage.getItem('flashcard-ai-image-nudge-seen') !== 'true',
+  )
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const trackRef = useRef<HTMLDivElement>(null)
@@ -222,6 +225,13 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
 
   const updateActive = (patch: Partial<Card>) => {
     setCards(prev => prev.map((c, i) => (i === activeIndex ? { ...c, ...patch } : c)))
+  }
+
+  const dismissAiNudge = () => {
+    if (showAiNudge) {
+      setShowAiNudge(false)
+      try { localStorage.setItem('flashcard-ai-image-nudge-seen', 'true') } catch {}
+    }
   }
 
   const handlePickImage = () => {
@@ -473,11 +483,34 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
                                 aria-label={card.image ? 'Edit image' : 'Add image'}
                                 aria-haspopup="menu"
                                 aria-expanded={imageMenuOpen}
-                                onClick={() => setImageMenuOpen(v => !v)}
+                                onClick={() => {
+                                  setImageMenuOpen(v => !v)
+                                  dismissAiNudge()
+                                }}
                               >
                                 <Gallery size={20} color="var(--text-primary)" variant="Linear" />
+                                {showAiNudge && <span className="fce-card-action-nudge" aria-hidden="true" />}
                               </button>
                             </Tooltip>
+                            {showAiNudge && isActive && !imageMenuOpen && (
+                              <div className="fce-coachmark" role="dialog" aria-label="New feature: AI image generation">
+                                <span className="fce-coachmark__icon" aria-hidden="true">
+                                  <AiSparkleIcon size={20} />
+                                </span>
+                                <div className="fce-coachmark__body">
+                                  <p className="fce-coachmark__title">Generate images with AI</p>
+                                  <p className="fce-coachmark__desc">Describe what you want and we'll draw it for you.</p>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="fce-coachmark__cta"
+                                  onClick={dismissAiNudge}
+                                >
+                                  Got it
+                                </button>
+                                <span className="fce-coachmark__caret" aria-hidden="true" />
+                              </div>
+                            )}
                             {imageMenuOpen && (
                               <div className="fce-image-menu" role="menu">
                                 <button

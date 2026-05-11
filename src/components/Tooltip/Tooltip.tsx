@@ -6,7 +6,7 @@ type TooltipPosition = 'Top' | 'Bottom' | 'Left' | 'Right'
 type TooltipAlignment = 'Center' | 'Start' | 'End'
 
 interface TooltipProps {
-  text: string
+  text: ReactNode
   position?: TooltipPosition
   alignment?: TooltipAlignment
   icon?: boolean

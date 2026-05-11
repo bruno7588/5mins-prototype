@@ -6,13 +6,14 @@ import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import FileUploader from '../../../../components/FileUploader/FileUploader'
 import './AddImageModal.css'
 
+type Tab = 'upload' | 'generate' | 'freepik'
+
 interface AddImageModalProps {
   open: boolean
   onClose: () => void
   onSelect: (imageDataUrl: string) => void
+  initialTab?: Tab
 }
-
-type Tab = 'upload' | 'generate' | 'freepik'
 
 const GENERATED_ASPECT = '1 / 1'
 const GENERATION_DELAY_MS = 3000
@@ -56,8 +57,8 @@ const freepikThumb = (seed: string, aspect: string) => {
   return `https://picsum.photos/seed/${seed}/${width}/${height}`
 }
 
-function AddImageModal({ open, onClose, onSelect }: AddImageModalProps) {
-  const [tab, setTab] = useState<Tab>('upload')
+function AddImageModal({ open, onClose, onSelect, initialTab = 'upload' }: AddImageModalProps) {
+  const [tab, setTab] = useState<Tab>(initialTab)
   const [query, setQuery] = useState('')
   const [prompt, setPrompt] = useState('')
   const [generating, setGenerating] = useState(false)
@@ -67,7 +68,7 @@ function AddImageModal({ open, onClose, onSelect }: AddImageModalProps) {
 
   useEffect(() => {
     if (open) {
-      setTab('upload')
+      setTab(initialTab)
       setQuery('')
       setPrompt('')
       setGenerating(false)
@@ -80,7 +81,7 @@ function AddImageModal({ open, onClose, onSelect }: AddImageModalProps) {
         generationTimer.current = null
       }
     }
-  }, [open])
+  }, [open, initialTab])
 
   const q = query.trim()
   const filteredFreepik = q
