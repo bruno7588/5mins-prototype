@@ -992,9 +992,9 @@ function Automations() {
                   <RefreshCircle size={48} color="var(--lesson-quiz)" variant="Linear" />
                 </span>
                 <span className="automations-template-body">
-                  <span className="automations-template-title">Update Employee Automation</span>
+                  <span className="automations-template-title">Employee Change Automation</span>
                   <span className="automations-template-desc">
-                    Enrol users when their role, cohort, or region changes. Perfect for promotions and transfers.
+                    Re-enrol users when their role, cohort, region, or other attributes change. Perfect for promotions, transfers, and reorgs.
                   </span>
                 </span>
               </button>
