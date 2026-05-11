@@ -171,6 +171,10 @@
   color: var(--text-tertiary);
 }
 
+.cffm-include-images .toggle--on .toggle__track {
+  background: var(--selected);
+}
+
 /* Generate button */
 .cffm-generate {
   display: inline-flex;
