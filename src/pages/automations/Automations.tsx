@@ -595,6 +595,9 @@ function Automations() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
+  // Manage tab pagination
+  const [managePage, setManagePage] = useState(1)
+
   // Delete confirmation modal
   const [pendingDelete, setPendingDelete] = useState<AutomationRow | null>(null)
   const [confirmInput, setConfirmInput] = useState('')
@@ -695,6 +698,13 @@ function Automations() {
   const pageStart = (safePage - 1) * PAGE_SIZE
   const pageEnd = Math.min(pageStart + PAGE_SIZE, totalRows)
   const pageRows = filteredTriggers.slice(pageStart, pageEnd)
+
+  const manageTotalRows = automations.length
+  const manageTotalPages = Math.max(1, Math.ceil(manageTotalRows / PAGE_SIZE))
+  const manageSafePage = Math.min(managePage, manageTotalPages)
+  const managePageStart = (manageSafePage - 1) * PAGE_SIZE
+  const managePageEnd = Math.min(managePageStart + PAGE_SIZE, manageTotalRows)
+  const managePageRows = automations.slice(managePageStart, managePageEnd)
 
   // Reset page when filters change
   useEffect(() => {
@@ -1001,7 +1011,7 @@ function Automations() {
                 <div className="automations-table-cell automations-table-cell--actions" />
               </div>
 
-              {automations.map((row) => (
+              {managePageRows.map((row) => (
                 <div
                   key={row.id}
                   className={`automations-table-row${row.active ? '' : ' automations-table-row--inactive'}`}
@@ -1115,6 +1125,32 @@ function Automations() {
                 </div>
               ))}
             </div>
+            )}
+
+            {manageTotalRows > 0 && (
+              <div className="automations-pagination">
+                <span className="automations-pagination-info">
+                  {managePageStart + 1}-{managePageEnd} of {manageTotalRows}
+                </span>
+                <button
+                  type="button"
+                  className="automations-pagination-btn"
+                  aria-label="Previous page"
+                  disabled={manageSafePage === 1}
+                  onClick={() => setManagePage((p) => Math.max(1, p - 1))}
+                >
+                  <ArrowLeft2 size={16} color="var(--text-secondary)" variant="Linear" />
+                </button>
+                <button
+                  type="button"
+                  className="automations-pagination-btn"
+                  aria-label="Next page"
+                  disabled={manageSafePage === manageTotalPages}
+                  onClick={() => setManagePage((p) => Math.min(manageTotalPages, p + 1))}
+                >
+                  <ArrowRight2 size={16} color="var(--text-secondary)" variant="Linear" />
+                </button>
+              </div>
             )}
           </div>
         )}
