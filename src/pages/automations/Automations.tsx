@@ -813,14 +813,6 @@ function Automations() {
     )
   }
 
-  function patchFilters(automationId: string, filters: AutomationFilters) {
-    const apply = (a: AutomationRow): AutomationRow => ({ ...a, filters })
-    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
-    setDetailsAutomation((current) =>
-      current && current.id === automationId ? apply(current) : current,
-    )
-  }
-
   function removeCourse(automationId: string, courseId: string) {
     const apply = (a: AutomationRow): AutomationRow => ({
       ...a,
@@ -1515,7 +1507,6 @@ function Automations() {
         onClose={closeDetails}
         onSave={saveAutomation}
         onTriggerChange={patchTrigger}
-        onFiltersChange={patchFilters}
         onCourseChange={patchCourse}
         onCourseAdd={addCourse}
         onCourseRemove={removeCourse}
