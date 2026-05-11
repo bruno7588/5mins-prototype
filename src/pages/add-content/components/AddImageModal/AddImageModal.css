@@ -269,7 +269,7 @@
 }
 
 .aim-generate-textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .aim-generate-textarea:focus {
