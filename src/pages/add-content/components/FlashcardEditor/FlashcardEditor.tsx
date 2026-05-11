@@ -150,6 +150,7 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
   const [imageMenuOpen, setImageMenuOpen] = useState(false)
   const [imageSubmenuOpen, setImageSubmenuOpen] = useState(false)
   const [addImageModalOpen, setAddImageModalOpen] = useState(false)
+  const [addImageModalTab, setAddImageModalTab] = useState<'upload' | 'generate'>('upload')
   const [showAiNudge, setShowAiNudge] = useState(
     () => typeof window !== 'undefined' && localStorage.getItem('flashcard-ai-image-nudge-seen') !== 'true',
   )
@@ -237,6 +238,15 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
   const handlePickImage = () => {
     setImageMenuOpen(false)
     setImageSubmenuOpen(false)
+    setAddImageModalTab('upload')
+    setAddImageModalOpen(true)
+  }
+
+  const handleStartGenerate = () => {
+    dismissAiNudge()
+    setImageMenuOpen(false)
+    setImageSubmenuOpen(false)
+    setAddImageModalTab('generate')
     setAddImageModalOpen(true)
   }
 
@@ -494,20 +504,24 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
                             </Tooltip>
                             {showAiNudge && isActive && !imageMenuOpen && (
                               <div className="fce-coachmark" role="dialog" aria-label="New feature: AI image generation">
-                                <span className="fce-coachmark__icon" aria-hidden="true">
-                                  <AiSparkleIcon size={20} />
-                                </span>
-                                <div className="fce-coachmark__body">
-                                  <p className="fce-coachmark__title">Generate images with AI</p>
-                                  <p className="fce-coachmark__desc">Describe what you want and we'll draw it for you.</p>
+                                <span className="fce-coachmark__badge">New</span>
+                                <p className="fce-coachmark__title">Generate flashcard images with AI in seconds</p>
+                                <div className="fce-coachmark__cta-row">
+                                  <button
+                                    type="button"
+                                    className="fce-coachmark__dismiss"
+                                    onClick={dismissAiNudge}
+                                  >
+                                    Dismiss
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="fce-coachmark__primary"
+                                    onClick={handleStartGenerate}
+                                  >
+                                    Add Image
+                                  </button>
                                 </div>
-                                <button
-                                  type="button"
-                                  className="fce-coachmark__cta"
-                                  onClick={dismissAiNudge}
-                                >
-                                  Got it
-                                </button>
                                 <span className="fce-coachmark__caret" aria-hidden="true" />
                               </div>
                             )}
@@ -706,6 +720,11 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
         open={addImageModalOpen}
         onClose={() => setAddImageModalOpen(false)}
         onSelect={(url) => updateActive({ image: url })}
+        initialTab={addImageModalTab}
+        cardContent={{
+          title: cards[activeIndex]?.title,
+          description: cards[activeIndex]?.description,
+        }}
       />
     </div>
   )
