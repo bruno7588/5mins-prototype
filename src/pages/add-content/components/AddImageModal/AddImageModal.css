@@ -242,12 +242,76 @@
   gap: var(--space-s);
 }
 
+.aim-generate-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+}
+
 .aim-generate-label {
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+.aim-suggest-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px 10px;
+  background: none;
+  border: none;
+  color: var(--primary-600);
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.aim-suggest-btn:hover:not(.aim-suggest-btn--disabled) {
+  color: var(--primary-700);
+  background: rgba(0, 206, 230, 0.08);
+}
+
+.aim-suggest-btn.aim-suggest-btn--disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+/* Custom tooltip — position: fixed so it escapes the modal body's overflow */
+.aim-suggest-tooltip {
+  position: fixed;
+  transform: translate(-100%, -100%);
+  z-index: 1100;
+  padding: var(--space-s, 8px) var(--space-sm, 12px);
+  background: var(--tooltip-background, #0F1014);
+  color: var(--neutral-25, #F9F9FA);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  border-radius: var(--radius-sm, 12px);
+  filter: drop-shadow(-4px 0 24px rgba(32, 34, 42, 0.18));
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.aim-suggest-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 12px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--tooltip-background, #0F1014);
 }
 
 /* Figma text field — white card with 16px radius + soft side shadow */
@@ -272,6 +336,10 @@
   color: var(--text-disabled);
 }
 
+.aim-generate-textarea:hover:not(:disabled):not(:focus) {
+  border-color: var(--border-hover);
+}
+
 .aim-generate-textarea:focus {
   border-color: var(--secondary-600);
 }
@@ -279,13 +347,6 @@
 .aim-generate-textarea:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-/* Style chips row — chips themselves come from the DS Chip component */
-.aim-generate-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-s);
 }
 
 /* Result region — placeholder/image stacked above the "Powered by" attribution */

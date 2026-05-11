@@ -1,32 +1,36 @@
 import { useEffect, useRef, useState } from 'react'
 import { SearchNormal1 } from 'iconsax-react'
 import SparkleIcon from '../../../../components/icons/SparkleIcon'
-import Chip from '../../../../components/Chip/Chip'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import FileUploader from '../../../../components/FileUploader/FileUploader'
 import './AddImageModal.css'
 
 type Tab = 'upload' | 'generate' | 'freepik'
 
+interface CardContent {
+  title?: string
+  description?: string
+}
+
 interface AddImageModalProps {
   open: boolean
   onClose: () => void
   onSelect: (imageDataUrl: string) => void
   initialTab?: Tab
+  cardContent?: CardContent
 }
 
 const GENERATED_ASPECT = '1 / 1'
 const GENERATION_DELAY_MS = 3000
+const SUGGEST_DELAY_MS = 900
 
-const STYLE_PRESETS = [
-  { id: 'photorealistic', label: 'Photorealistic' },
-  { id: 'illustration', label: 'Illustration' },
-  { id: '3d-render', label: '3D render' },
-  { id: 'flat-design', label: 'Flat design' },
-  { id: 'minimalist', label: 'Minimalist' },
-] as const
-
-type StyleId = (typeof STYLE_PRESETS)[number]['id']
+function buildSuggestedPrompt(content: CardContent | undefined): string {
+  const title = (content?.title ?? '').trim()
+  const description = (content?.description ?? '').trim()
+  const subject = title || description
+  if (!subject) return ''
+  return `An illustration that visualises "${subject}", clean modern business style, soft pastel colours, no text.`
+}
 
 const ACCEPTED_IMAGE_EXTENSIONS = '.jpg,.jpeg,.png'
 
@@ -57,14 +61,18 @@ const freepikThumb = (seed: string, aspect: string) => {
   return `https://picsum.photos/seed/${seed}/${width}/${height}`
 }
 
-function AddImageModal({ open, onClose, onSelect, initialTab = 'upload' }: AddImageModalProps) {
+function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardContent }: AddImageModalProps) {
   const [tab, setTab] = useState<Tab>(initialTab)
   const [query, setQuery] = useState('')
   const [prompt, setPrompt] = useState('')
   const [generating, setGenerating] = useState(false)
+  const [suggesting, setSuggesting] = useState(false)
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null)
-  const [selectedStyle, setSelectedStyle] = useState<StyleId | null>(null)
+  const [suggestTooltipPos, setSuggestTooltipPos] = useState<{ top: number; left: number } | null>(null)
   const generationTimer = useRef<number | null>(null)
+  const suggestTimer = useRef<number | null>(null)
+  const promptRef = useRef<HTMLTextAreaElement>(null)
+  const suggestBtnRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (open) {
@@ -72,13 +80,17 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload' }: AddIm
       setQuery('')
       setPrompt('')
       setGenerating(false)
+      setSuggesting(false)
       setGeneratedUrl(null)
-      setSelectedStyle(null)
     }
     return () => {
       if (generationTimer.current !== null) {
         window.clearTimeout(generationTimer.current)
         generationTimer.current = null
+      }
+      if (suggestTimer.current !== null) {
+        window.clearTimeout(suggestTimer.current)
+        suggestTimer.current = null
       }
     }
   }, [open, initialTab])
@@ -109,8 +121,33 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload' }: AddIm
     onClose()
   }
 
-  const promptToSeed = (text: string, style: StyleId | null) =>
-    `nano-${text.trim().toLowerCase().replace(/\s+/g, '-').slice(0, 60) || 'idea'}-${style ?? 'auto'}-${Date.now()}`
+  const promptToSeed = (text: string) =>
+    `nano-${text.trim().toLowerCase().replace(/\s+/g, '-').slice(0, 60) || 'idea'}-${Date.now()}`
+
+  const hasCardContent = Boolean(
+    (cardContent?.title ?? '').trim() || (cardContent?.description ?? '').trim(),
+  )
+
+  const showSuggestTooltip = () => {
+    if (hasCardContent) return
+    const el = suggestBtnRef.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    setSuggestTooltipPos({ top: r.top - 8, left: r.right })
+  }
+  const hideSuggestTooltip = () => setSuggestTooltipPos(null)
+
+  const handleSuggestPrompt = () => {
+    if (!hasCardContent || suggesting || generating) return
+    setSuggesting(true)
+    if (suggestTimer.current !== null) window.clearTimeout(suggestTimer.current)
+    suggestTimer.current = window.setTimeout(() => {
+      setPrompt(buildSuggestedPrompt(cardContent))
+      setSuggesting(false)
+      suggestTimer.current = null
+      promptRef.current?.focus()
+    }, SUGGEST_DELAY_MS)
+  }
 
   const handleGenerate = () => {
     const trimmed = prompt.trim()
@@ -119,7 +156,7 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload' }: AddIm
     setGenerating(true)
     if (generationTimer.current !== null) window.clearTimeout(generationTimer.current)
     generationTimer.current = window.setTimeout(() => {
-      setGeneratedUrl(freepikThumb(promptToSeed(trimmed, selectedStyle), GENERATED_ASPECT))
+      setGeneratedUrl(freepikThumb(promptToSeed(trimmed), GENERATED_ASPECT))
       setGenerating(false)
       generationTimer.current = null
     }, GENERATION_DELAY_MS)
@@ -194,36 +231,50 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload' }: AddIm
         {tab === 'generate' && (
           <div className="aim-generate">
             <div className="aim-generate-section">
-              <label className="aim-generate-label" htmlFor="aim-generate-prompt">
-                Describe the image you want
-              </label>
+              <div className="aim-generate-header">
+                <label className="aim-generate-label" htmlFor="aim-generate-prompt">
+                  Describe the image you want
+                </label>
+                <button
+                  ref={suggestBtnRef}
+                  type="button"
+                  className={`aim-suggest-btn${(!hasCardContent || suggesting || generating) ? ' aim-suggest-btn--disabled' : ''}`}
+                  aria-disabled={!hasCardContent || suggesting || generating}
+                  onMouseEnter={showSuggestTooltip}
+                  onMouseLeave={hideSuggestTooltip}
+                  onFocus={showSuggestTooltip}
+                  onBlur={hideSuggestTooltip}
+                  onClick={() => {
+                    if (!hasCardContent || suggesting || generating) return
+                    handleSuggestPrompt()
+                  }}
+                >
+                  <SparkleIcon size={16} />
+                  {suggesting ? 'Suggesting…' : 'Suggest From Card'}
+                </button>
+                {suggestTooltipPos && (
+                  <div
+                    role="tooltip"
+                    className="aim-suggest-tooltip"
+                    style={{ top: suggestTooltipPos.top, left: suggestTooltipPos.left }}
+                  >
+                    Add a title or description to the card
+                  </div>
+                )}
+              </div>
               <textarea
+                ref={promptRef}
                 id="aim-generate-prompt"
                 className="aim-generate-textarea"
                 placeholder="e.g. A friendly illustration of a team in a meeting room, soft pastel colours"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 rows={1}
-                disabled={generating}
+                disabled={generating || suggesting}
               />
             </div>
 
-            <div className="aim-generate-chips">
-              {STYLE_PRESETS.map((style) => {
-                const isActive = selectedStyle === style.id
-                return (
-                  <Chip
-                    key={style.id}
-                    label={style.label}
-                    selected={isActive}
-                    disabled={generating}
-                    onClick={() => setSelectedStyle(isActive ? null : style.id)}
-                  />
-                )
-              })}
-            </div>
-
-            {(generating || generatedUrl) && (
+{(generating || generatedUrl) && (
               <div className="aim-generate-result">
                 {generating ? (
                   <div
