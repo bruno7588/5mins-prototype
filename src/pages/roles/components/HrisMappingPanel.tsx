@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { SearchNormal1, House2, Global, TickCircle, Danger, InfoCircle } from 'iconsax-react'
+import { SearchNormal1, House2, Global, TickCircle, InfoCircle } from 'iconsax-react'
 import Badge from '../../../components/Badge/Badge'
 import type { CompanyRole, FiveMinsRole } from '../data/mockRoles'
 import {
@@ -98,22 +98,9 @@ function HrisMappingPanel({ mapping, tenantRoles, publicRoles, onClose, onSave }
                 {mapping.status === 'unmapped' && (
                   <Badge type="warning" label="Unmapped" icon />
                 )}
-                {mapping.status === 'broken' && (
-                  <Badge type="error" label="Broken — role no longer exists" icon />
-                )}
               </span>
             </div>
           </div>
-
-          {mapping.status === 'broken' && (
-            <div className="hris-panel-warning">
-              <Danger size={18} color="var(--text-warning)" variant="Linear" />
-              <div>
-                <strong>This mapping is broken.</strong> The role it pointed to has been deleted.
-                Pick a new role below before the next sync runs.
-              </div>
-            </div>
-          )}
 
           <div className="hris-panel-search-wrapper">
             <p className="roles-panel-label">Search and select a role</p>
@@ -204,10 +191,7 @@ function HrisMappingPanel({ mapping, tenantRoles, publicRoles, onClose, onSave }
                 disabled={!pending || !dirty}
                 onClick={handleSave}
               >
-                Save mapping
-              </button>
-              <button className="roles-btn-outlined-neutral800" onClick={handleClose}>
-                Cancel
+                Map Role
               </button>
             </div>
           </div>

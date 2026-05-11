@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { SearchNormal1, Edit2, Trash, ArrowLeft2, ArrowRight2, Refresh2, Danger, Eye } from 'iconsax-react'
+import { SearchNormal1, Edit2, Trash, ArrowLeft2, ArrowRight2, Refresh2, Danger } from 'iconsax-react'
 import Badge from '../../../components/Badge/Badge'
 import Alert from '../../../components/Alert/Alert'
 import type { CompanyRole, FiveMinsRole } from '../data/mockRoles'
@@ -25,14 +25,12 @@ interface Props {
   newTitlesNotice: NewTitlesNotice | null
   onEditMapping: (mapping: HrisRoleMapping) => void
   onRemoveMapping: (mapping: HrisRoleMapping) => void
-  onPreviewOnboarding: (mapping: HrisRoleMapping) => void
   onSimulateResync: () => void
 }
 
-const STATUS_BADGE: Record<MappingStatus, { type: 'success' | 'warning' | 'error'; label: string }> = {
+const STATUS_BADGE: Record<MappingStatus, { type: 'success' | 'warning'; label: string }> = {
   mapped: { type: 'success', label: 'Mapped' },
   unmapped: { type: 'warning', label: 'Unmapped' },
-  broken: { type: 'error', label: 'Broken' },
 }
 
 function HrisMappingTab({
@@ -42,7 +40,6 @@ function HrisMappingTab({
   newTitlesNotice,
   onEditMapping,
   onRemoveMapping,
-  onPreviewOnboarding,
   onSimulateResync,
 }: Props) {
   const [search, setSearch] = useState('')
@@ -53,13 +50,11 @@ function HrisMappingTab({
   const counts = useMemo(() => {
     let mapped = 0
     let unmapped = 0
-    let broken = 0
     for (const m of mappings) {
       if (m.status === 'mapped') mapped++
-      else if (m.status === 'unmapped') unmapped++
-      else broken++
+      else unmapped++
     }
-    return { all: mappings.length, mapped, unmapped, broken }
+    return { all: mappings.length, mapped, unmapped }
   }, [mappings])
 
   const filtered = useMemo(() => {
@@ -137,7 +132,7 @@ function HrisMappingTab({
             >
               All
             </button>
-            {counts.unmapped + counts.broken > 0 && (
+            {counts.unmapped > 0 && (
               <button
                 type="button"
                 role="tab"
@@ -146,7 +141,7 @@ function HrisMappingTab({
                 onClick={() => handleFilterTab('unmapped')}
               >
                 <Danger size={20} variant="Linear" color="currentColor" />
-                Needs Review ({counts.unmapped + counts.broken})
+                Needs Review ({counts.unmapped})
               </button>
             )}
           </div>
@@ -229,11 +224,9 @@ function HrisMappingTab({
                     <div className="hris-role-cell">
                       <span className="hris-role-cell__name">{roleName}</span>
                       <span className="hris-role-cell__source">
-                        {mapping.role.kind === 'tenant' ? 'Company role' : '5Mins library'}
+                        {mapping.role.kind === 'tenant' ? 'Company role' : '5Mins role'}
                       </span>
                     </div>
-                  ) : mapping.status === 'broken' ? (
-                    <span className="hris-role-cell__missing">Role no longer exists</span>
                   ) : (
                     <span className="hris-role-cell__missing">—</span>
                   )}
@@ -242,30 +235,36 @@ function HrisMappingTab({
                   <Badge type={badge.type} label={badge.label} icon />
                 </div>
                 <div className="people-table-cell hris-col--actions">
-                  <span className="roles-icon-btn-wrapper">
-                    <button className="roles-icon-btn" onClick={() => onPreviewOnboarding(mapping)}>
-                      <Eye size={18} color="var(--text-tertiary)" />
-                    </button>
-                    <span className="roles-icon-tooltip">Preview onboarding</span>
-                  </span>
-                  <span className="roles-icon-btn-wrapper">
-                    <button className="roles-icon-btn" onClick={() => onEditMapping(mapping)}>
-                      <Edit2 size={18} color="var(--text-tertiary)" />
-                    </button>
-                    <span className="roles-icon-tooltip">Edit mapping</span>
-                  </span>
-                  {mapping.role ? (
-                    <span className="roles-icon-btn-wrapper">
-                      <button
-                        className="roles-icon-btn roles-icon-btn--danger"
-                        onClick={() => onRemoveMapping(mapping)}
-                      >
-                        <Trash size={18} color="currentColor" />
-                      </button>
-                      <span className="roles-icon-tooltip">Remove mapping</span>
-                    </span>
+                  {mapping.status === 'mapped' ? (
+                    <>
+                      <span className="roles-icon-btn-wrapper">
+                        <button
+                          className="roles-icon-btn"
+                          aria-label={`Edit mapping for ${mapping.hrisJobTitle}`}
+                          onClick={() => onEditMapping(mapping)}
+                        >
+                          <Edit2 size={18} color="var(--text-tertiary)" />
+                        </button>
+                        <span className="roles-icon-tooltip">Edit mapping</span>
+                      </span>
+                      <span className="roles-icon-btn-wrapper">
+                        <button
+                          className="roles-icon-btn roles-icon-btn--danger"
+                          aria-label={`Remove mapping for ${mapping.hrisJobTitle}`}
+                          onClick={() => onRemoveMapping(mapping)}
+                        >
+                          <Trash size={18} color="currentColor" />
+                        </button>
+                        <span className="roles-icon-tooltip">Remove mapping</span>
+                      </span>
+                    </>
                   ) : (
-                    <span className="hris-icon-btn-placeholder" aria-hidden="true" />
+                    <button
+                      className="roles-btn-outlined"
+                      onClick={() => onEditMapping(mapping)}
+                    >
+                      Map Role
+                    </button>
                   )}
                 </div>
               </div>
@@ -281,6 +280,7 @@ function HrisMappingTab({
           </span>
           <button
             className="roles-pagination-btn"
+            aria-label="Previous page"
             disabled={safePage === 1}
             onClick={() => setPage(p => p - 1)}
           >
@@ -288,6 +288,7 @@ function HrisMappingTab({
           </button>
           <button
             className="roles-pagination-btn"
+            aria-label="Next page"
             disabled={safePage === totalPages}
             onClick={() => setPage(p => p + 1)}
           >

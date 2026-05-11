@@ -8,14 +8,13 @@ import CompanyRolesTab from './components/CompanyRolesTab'
 import RolePanel, { type PanelMode } from './components/RolePanel'
 import HrisMappingTab from './components/HrisMappingTab'
 import HrisMappingPanel from './components/HrisMappingPanel'
-import OnboardingPreviewPanel from './components/OnboardingPreviewPanel'
 import type { FiveMinsRole, CompanyRole, Skill } from './data/mockRoles'
 import { fiveMinsRoles, initialCompanyRoles } from './data/mockRoles'
 import {
   type HrisRoleMapping,
   type MappedRoleRef,
   buildInitialMappings,
-  markBroken,
+  reconcileStatuses,
   mockHrisJobTitles,
   resolveRoleName,
   resyncTitles,
@@ -71,7 +70,6 @@ function Roles() {
   )
   const [hrisMappings, setHrisMappings] = useState<HrisRoleMapping[]>(initialMappings)
   const [hrisPanelMapping, setHrisPanelMapping] = useState<HrisRoleMapping | null>(null)
-  const [hrisPreviewMapping, setHrisPreviewMapping] = useState<HrisRoleMapping | null>(null)
   const [hrisRemoveTarget, setHrisRemoveTarget] = useState<HrisRoleMapping | null>(null)
   const [newTitlesNotice, setNewTitlesNotice] = useState<{ count: number; employeeCount: number } | null>(null)
 
@@ -81,7 +79,7 @@ function Roles() {
     if (deleteRole) {
       const nextCompanyRoles = companyRoles.filter(r => r.id !== deleteRole.id)
       setCompanyRoles(nextCompanyRoles)
-      setHrisMappings(prev => markBroken(prev, nextCompanyRoles, fiveMinsRoles))
+      setHrisMappings(prev => reconcileStatuses(prev, nextCompanyRoles, fiveMinsRoles))
       showToast('success', `"${deleteRole.name}" deleted`)
       setDeleteRole(null)
       setDeleteConfirmInput('')
@@ -94,7 +92,7 @@ function Roles() {
   const handleHrisSave = (next: MappedRoleRef) => {
     if (!hrisPanelMapping) return
     setHrisMappings(prev =>
-      markBroken(
+      reconcileStatuses(
         prev.map(m =>
           m.hrisJobTitle === hrisPanelMapping.hrisJobTitle
             ? { ...m, role: next, status: 'mapped' }
@@ -138,16 +136,30 @@ function Roles() {
     ]
     const result = resyncTitles(hrisMappings, incoming, companyRoles, fiveMinsRoles)
     setHrisMappings(result.mappings)
-    if (result.newTitles.length > 0) {
-      const employeeCount = result.newTitles.reduce((sum, t) => sum + t.employeeCount, 0)
-      setNewTitlesNotice({ count: result.newTitles.length, employeeCount })
-      showToast(
-        'success',
-        `Re-sync complete — ${result.newTitles.length} new title${result.newTitles.length !== 1 ? 's' : ''} discovered`,
-      )
+
+    const unmappedTitleSet = new Set(
+      result.mappings.filter(m => m.status !== 'mapped').map(m => m.hrisJobTitle),
+    )
+    const unmappedNew = result.newTitles.filter(t => unmappedTitleSet.has(t.title))
+    const employeeCount = unmappedNew.reduce((sum, t) => sum + t.employeeCount, 0)
+
+    if (unmappedNew.length > 0) {
+      setNewTitlesNotice({ count: unmappedNew.length, employeeCount })
     } else {
-      showToast('success', 'Re-sync complete — no new titles')
+      setNewTitlesNotice(null)
     }
+
+    const parts: string[] = []
+    if (result.newTitles.length > 0) {
+      parts.push(`${result.newTitles.length} new title${result.newTitles.length !== 1 ? 's' : ''}`)
+    }
+    if (result.removedTitles.length > 0) {
+      parts.push(`${result.removedTitles.length} removed`)
+    }
+    showToast(
+      'success',
+      parts.length > 0 ? `Re-sync complete — ${parts.join(', ')}` : 'Re-sync complete — no changes',
+    )
   }
 
   /* ─── Copy from library (quick copy via table button) ── */
@@ -265,7 +277,6 @@ function Roles() {
               }
               onEditMapping={setHrisPanelMapping}
               onRemoveMapping={handleHrisRemoveRequest}
-              onPreviewOnboarding={setHrisPreviewMapping}
               onSimulateResync={handleHrisSimulateResync}
             />
           )}
@@ -288,15 +299,6 @@ function Roles() {
           publicRoles={fiveMinsRoles}
           onClose={() => setHrisPanelMapping(null)}
           onSave={handleHrisSave}
-        />
-      )}
-
-      {hrisPreviewMapping && (
-        <OnboardingPreviewPanel
-          mapping={hrisPreviewMapping}
-          tenantRoles={companyRoles}
-          publicRoles={fiveMinsRoles}
-          onClose={() => setHrisPreviewMapping(null)}
         />
       )}
 

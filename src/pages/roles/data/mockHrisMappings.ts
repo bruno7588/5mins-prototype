@@ -11,7 +11,7 @@ export type MappedRoleRef =
   | { kind: 'tenant'; id: number }
   | { kind: 'fivemins'; id: number }
 
-export type MappingStatus = 'mapped' | 'unmapped' | 'broken'
+export type MappingStatus = 'mapped' | 'unmapped'
 
 export interface HrisRoleMapping {
   hrisJobTitle: string
@@ -125,18 +125,21 @@ export function resyncTitles(
 
   const autoForNew = autoMatch(newTitles, tenantRoles, publicRoles)
   const next = [...updated, ...autoForNew]
-  const withBrokenStatus = markBroken(next, tenantRoles, publicRoles)
+  const reconciled = reconcileStatuses(next, tenantRoles, publicRoles)
 
   const removedTitles = prev
     .filter(m => !incomingByTitle.has(norm(m.hrisJobTitle)))
     .map(m => m.hrisJobTitle)
 
-  return { mappings: withBrokenStatus, newTitles, removedTitles }
+  return { mappings: reconciled, newTitles, removedTitles }
 }
 
-/* ─── Broken Status Detection ───────────────────────────── */
+/* ─── Status Reconciliation ─────────────────────────────── */
+/* If a mapped role no longer exists in the tenant or public lists
+ * (e.g. it was deleted), reset that mapping to unmapped so the admin
+ * can pick a fresh role. */
 
-export function markBroken(
+export function reconcileStatuses(
   mappings: HrisRoleMapping[],
   tenantRoles: CompanyRole[],
   publicRoles: FiveMinsRole[],
@@ -151,24 +154,19 @@ export function markBroken(
     const exists =
       m.role.kind === 'tenant' ? tenantIds.has(m.role.id) : publicIds.has(m.role.id)
     if (!exists) {
-      return m.status === 'broken' ? m : { ...m, status: 'broken' }
+      return { ...m, role: null, status: 'unmapped' }
     }
     return m.status === 'mapped' ? m : { ...m, status: 'mapped' }
   })
 }
 
-/* ─── Initial Mappings (auto-match seed + a broken example) ─ */
+/* ─── Initial Mappings (auto-match seed) ────────────────── */
 
 export function buildInitialMappings(
   tenantRoles: CompanyRole[],
   publicRoles: FiveMinsRole[],
 ): HrisRoleMapping[] {
-  const auto = autoMatch(mockHrisJobTitles, tenantRoles, publicRoles)
-  return auto.map(m =>
-    m.hrisJobTitle === 'Brand Designer'
-      ? { ...m, role: { kind: 'tenant', id: 9999 }, status: 'broken' }
-      : m,
-  )
+  return autoMatch(mockHrisJobTitles, tenantRoles, publicRoles)
 }
 
 /* ─── Lookup Helper ─────────────────────────────────────── */
