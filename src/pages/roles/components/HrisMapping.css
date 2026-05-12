@@ -119,29 +119,6 @@
   margin-bottom: calc(20px - var(--space-l));
 }
 
-.hris-sync-active-group {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-m);
-}
-
-.hris-simulate-resync-link {
-  font-family: 'Poppins', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-tertiary);
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  text-decoration: underline;
-  text-decoration-skip-ink: none;
-}
-
-.hris-simulate-resync-link:hover {
-  color: var(--text-secondary);
-}
-
 .hris-sync-active-pill {
   display: inline-flex;
   align-items: center;

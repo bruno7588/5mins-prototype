@@ -215,19 +215,10 @@ function HrisMappingTab({
             <Refresh size={20} color="var(--neutral-25)" />
           </button>
         ) : (
-          <div className="hris-sync-active-group">
-            <button
-              type="button"
-              className="hris-simulate-resync-link"
-              onClick={onSimulateResync}
-            >
-              Simulate Re-sync
-            </button>
-            <span className="hris-sync-active-pill" role="status" aria-label="HRIS sync active">
-              <span className="hris-sync-active-pill__dot" aria-hidden="true" />
-              Sync Active
-            </span>
-          </div>
+          <span className="hris-sync-active-pill" role="status" aria-label="HRIS sync active">
+            <span className="hris-sync-active-pill__dot" aria-hidden="true" />
+            Sync Active
+          </span>
         )}
       </div>
 
