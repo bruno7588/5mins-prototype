@@ -30,6 +30,28 @@ const STATUS_BADGE: Record<MappingStatus, { type: 'success' | 'warning'; label: 
   unmapped: { type: 'warning', label: 'Unmapped' },
 }
 
+function SortArrow({ dir }: { dir: 'asc' | 'desc' }) {
+  return (
+    <svg
+      className="hris-th__sort"
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      aria-hidden="true"
+      style={{ transform: dir === 'asc' ? 'rotate(180deg)' : undefined }}
+    >
+      <path
+        d="M6 2.5v7M3 7l3 3 3-3"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 function BellIllustration() {
   return (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style={{ flexShrink: 0 }}>
@@ -265,8 +287,18 @@ function HrisMappingTab({
       ) : (
         <div className="people-table hris-table">
           <div className="people-table-header">
-            <div className="people-table-cell hris-col--title">HRIS Job Title</div>
-            <div className="people-table-cell hris-col--count">Employees</div>
+            <div className="people-table-cell hris-col--title">
+              <span className="hris-th">
+                HRIS Job Title
+                {filterTab === 'mapped' && <SortArrow dir="asc" />}
+              </span>
+            </div>
+            <div className="people-table-cell hris-col--count">
+              <span className="hris-th">
+                Employees
+                {filterTab !== 'mapped' && <SortArrow dir="desc" />}
+              </span>
+            </div>
             <div className="people-table-cell hris-col--role">Mapped Role</div>
             <div className="people-table-cell hris-col--status">Status</div>
             <div className="people-table-cell hris-col--actions"></div>

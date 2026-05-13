@@ -182,6 +182,17 @@
   background: var(--neutral-25, #F9F9FA);
 }
 
+.hris-th {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hris-th__sort {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
 .hris-col--title {
   width: 320px;
   flex-shrink: 1;
