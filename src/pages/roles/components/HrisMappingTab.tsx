@@ -81,12 +81,18 @@ function HrisMappingTab({
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return mappings.filter(m => {
+    const result = mappings.filter(m => {
       if (filterTab === 'unmapped' && m.status === 'mapped') return false
       if (filterTab === 'mapped' && m.status === 'unmapped') return false
       if (q && !m.hrisJobTitle.toLowerCase().includes(q)) return false
       return true
     })
+    if (filterTab === 'mapped') {
+      result.sort((a, b) => a.hrisJobTitle.localeCompare(b.hrisJobTitle))
+    } else {
+      result.sort((a, b) => b.employeeCount - a.employeeCount)
+    }
+    return result
   }, [mappings, search, filterTab])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage))
