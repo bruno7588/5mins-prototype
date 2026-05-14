@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { SearchNormal1, Edit2, Trash, ArrowLeft2, ArrowRight2, Refresh, Danger, TickCircle } from 'iconsax-react'
+import { SearchNormal1, Edit2, Trash, ArrowLeft2, ArrowRight2, Refresh, Danger, TickCircle, Convertshape2 } from 'iconsax-react'
 import Badge from '../../../components/Badge/Badge'
 import Alert from '../../../components/Alert/Alert'
 import type { CompanyRole, FiveMinsRole } from '../data/mockRoles'
@@ -132,12 +132,7 @@ function HrisMappingTab({
     return (
       <div className="roles-empty-state">
         <div className="roles-empty-state__illustration">
-          <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="18" y="20" width="60" height="56" rx="6" fill="var(--neutral-200, #BFC2CC)" stroke="var(--neutral-400, #9EA4B3)" strokeWidth="2" />
-            <line x1="28" y1="34" x2="68" y2="34" stroke="var(--neutral-400, #9EA4B3)" strokeWidth="2" strokeLinecap="round" />
-            <line x1="28" y1="46" x2="58" y2="46" stroke="var(--neutral-400, #9EA4B3)" strokeWidth="2" strokeLinecap="round" />
-            <line x1="28" y1="58" x2="62" y2="58" stroke="var(--neutral-400, #9EA4B3)" strokeWidth="2" strokeLinecap="round" />
-          </svg>
+          <Convertshape2 size={64} variant="Linear" color="var(--neutral-400, #9EA4B3)" />
         </div>
         <div className="roles-empty-state__info">
           <h3 className="roles-empty-state__title">No HRIS mappings yet</h3>

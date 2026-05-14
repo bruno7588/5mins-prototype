@@ -68,8 +68,12 @@ function HrisMappingPanel({ mapping, tenantRoles, publicRoles, onClose, onSave }
         <div className="roles-panel-section-header">
           <div className="roles-panel-section-header__headline">
             <div className="roles-panel-section-header__title-group">
-              <h2 className="roles-panel-section-header__title">{mapping.hrisJobTitle}</h2>
+              <h2 className="roles-panel-section-header__title">
+                {mapping.status === 'mapped' ? 'Edit Mapping' : 'Map Role'}
+              </h2>
               <p className="roles-panel-section-header__description hris-panel-subtitle">
+                <span>{mapping.hrisJobTitle}</span>
+                <span aria-hidden="true">·</span>
                 <span>
                   {mapping.employeeCount} employee{mapping.employeeCount !== 1 ? 's' : ''}
                 </span>
