@@ -15,10 +15,15 @@ import {
   ArrowDown2,
   ArrowUp2,
 } from 'iconsax-react'
+import { buildInitialMappings } from '../../pages/roles/data/mockHrisMappings'
+import { initialCompanyRoles, fiveMinsRoles } from '../../pages/roles/data/mockRoles'
 import './LeftSidebar.css'
 
 const iconSize = 20
 const iconColor = 'var(--neutral-500)'
+
+const unmappedRolesCount = buildInitialMappings(initialCompanyRoles, fiveMinsRoles)
+  .filter(m => m.status !== 'mapped').length
 
 function LeftSidebar() {
   const navigate = useNavigate()
@@ -75,7 +80,15 @@ function LeftSidebar() {
               className={`sidebar-sub-item${activePage === '/roles' ? ' sidebar-sub-item--active' : ''}`}
               onClick={() => navigate('/roles')}
             >
-              Roles
+              <span>Roles</span>
+              {unmappedRolesCount > 0 && (
+                <span
+                  className="sidebar-sub-item__badge"
+                  aria-label={`${unmappedRolesCount} unmapped role${unmappedRolesCount !== 1 ? 's' : ''}`}
+                >
+                  {unmappedRolesCount}
+                </span>
+              )}
             </button>
           </div>
         )}
