@@ -341,7 +341,6 @@ function Roles() {
         {hrisRemoveTarget && (
           <>
             <div className="confirm-modal-header confirm-modal-header--center">
-              <InfoCircle size={72} color="var(--text-warning)" variant="Linear" />
               <h3 className="confirm-modal-title">Remove HRIS mapping?</h3>
               <p className="confirm-modal-body">
                 "{hrisRemoveTarget.hrisJobTitle}" affects {hrisRemoveTarget.employeeCount} employee
