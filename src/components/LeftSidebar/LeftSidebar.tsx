@@ -51,7 +51,15 @@ function LeftSidebar() {
           <span className="sidebar-item-icon">
             <Profile2User size={iconSize} color={iconColor} variant="Linear" />
           </span>
-          <span className="sidebar-item-label">People &amp; Teams</span>
+          <span className="sidebar-item-label">
+            People &amp; Teams
+            {!peopleOpen && unmappedRolesCount > 0 && (
+              <span
+                className="sidebar-item-label__dot"
+                aria-label={`${unmappedRolesCount} unmapped role${unmappedRolesCount !== 1 ? 's' : ''}`}
+              />
+            )}
+          </span>
           <span className="sidebar-item-chevron">
             {peopleOpen ? (
               <ArrowUp2 size={16} color="var(--text-tertiary)" />
