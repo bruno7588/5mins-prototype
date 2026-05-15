@@ -41,16 +41,13 @@
 .hris-sync-pill {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-s);
+  gap: var(--space-xs);
   padding: var(--space-s) var(--space-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-success, #18a957);
+  color: var(--text-success);
   background: rgba(24, 169, 87, 0.16);
-  border: 1px solid var(--success-500, #18a957);
-  border-radius: var(--radius-s);
+  border: 1px solid var(--success-500);
+  border-radius: var(--radius-sm);
   white-space: nowrap;
 }
 
@@ -72,6 +69,35 @@
 
 .hris-sync-pill--dry-run .hris-sync-pill__dot {
   background: var(--text-warning);
+}
+
+.hris-sync-pill__name {
+  color: var(--text-success);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.hris-sync-pill__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px var(--space-xs);
+  background: rgba(24, 169, 87, 0.16);
+  border-radius: var(--radius-full);
+  color: var(--text-success);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.hris-sync-pill--dry-run .hris-sync-pill__name,
+.hris-sync-pill--dry-run .hris-sync-pill__status {
+  color: var(--text-warning);
+}
+
+.hris-sync-pill--dry-run .hris-sync-pill__status {
+  background: rgba(255, 165, 56, 0.16);
 }
 
 .hris-sync-pill__dot::after {

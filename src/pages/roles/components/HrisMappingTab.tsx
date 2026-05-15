@@ -178,10 +178,11 @@ function HrisMappingTab({
         <span
           className={`hris-sync-pill${isSyncActive ? '' : ' hris-sync-pill--dry-run'}`}
           role="status"
-          aria-label={isSyncActive ? `HRIS sync active to ${provider}` : `HRIS dry run with ${provider}`}
+          aria-label={`${provider} sync ${isSyncActive ? 'active' : 'in preview mode'}`}
         >
           <span className="hris-sync-pill__dot" aria-hidden="true" />
-          {isSyncActive ? `HRIS Sync Active to ${provider}` : `HRIS Dry Run with ${provider}`}
+          <span className="hris-sync-pill__name">{provider}</span>
+          <span className="hris-sync-pill__status">{isSyncActive ? 'Active' : 'Preview'}</span>
         </span>
       </div>
 

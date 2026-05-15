@@ -60,7 +60,7 @@
   --text-secondary: var(--neutral-500);
   --text-tertiary: var(--neutral-400);
   --text-disabled: var(--neutral-300);
-  --text-success: #18A957;
+  --text-success: var(--success-600);
   --text-error: var(--danger-500);
   --button-background: var(--primary-600);
   --button-background-hover: var(--primary-700);
