@@ -24,9 +24,10 @@ import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ForceTriggerModal from './ForceTriggerModal'
 import AutomationDetailsModal, { type AutomationDetailsMode } from './AutomationDetailsModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
+import WorkflowsTab from '../your-courses/components/WorkflowsTab/WorkflowsTab'
 import './Automations.css'
 
-type Tab = 'manage' | 'activity'
+type Tab = 'manage' | 'activity' | 'workflows'
 type SortDirection = 'asc' | 'desc'
 type StateFilter = 'all' | 'active' | 'inactive' | 'deleted'
 
@@ -901,7 +902,7 @@ function Automations() {
           <div className="automations-title-group">
             <h2 className="automations-title">Automations</h2>
             <p className="automations-description">
-              Manage enrollment automations and review trigger history.{' '}
+              Manage enrollment automations, review trigger history, and configure course workflows.{' '}
               <a className="automations-description-link" href="#">
                 Here is how it works
               </a>
@@ -920,6 +921,12 @@ function Automations() {
               onClick={() => setActiveTab('activity')}
             >
               Activity
+            </button>
+            <button
+              className={`automations-tab${activeTab === 'workflows' ? ' automations-tab--active' : ''}`}
+              onClick={() => setActiveTab('workflows')}
+            >
+              Workflows
             </button>
           </div>
         </div>
@@ -1472,6 +1479,8 @@ function Automations() {
             )}
           </div>
         )}
+
+        {activeTab === 'workflows' && <WorkflowsTab />}
       </main>
 
       {/* Delete automation confirmation */}
