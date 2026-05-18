@@ -1,0 +1,357 @@
+.cal-body {
+  padding-bottom: 64px;
+}
+
+.cal-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 296px;
+  gap: 32px;
+  margin-top: 24px;
+}
+
+.cal-center {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Date row ─────────────────────────────────── */
+.cal-row {
+  position: relative;
+  padding-left: 24px;
+  padding-bottom: 24px;
+  border-left: 1px dashed var(--border, #e5e7eb);
+}
+
+.cal-row:last-child {
+  border-left-color: transparent;
+}
+
+.cal-row__header {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.cal-row__dot {
+  position: absolute;
+  left: -28px;
+  top: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--text-tertiary, #9ca3af);
+  box-shadow: 0 0 0 3px var(--background-primary, #fff);
+}
+
+.cal-row__date {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.cal-row__weekday {
+  font-size: 16px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.cal-row__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Card (Figma node 10113:207824 — Events file) ──────────── */
+.cal-card {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) auto;
+  gap: 16px;                                  /* Figma: gap-[16px] */
+  align-items: center;
+  padding: 16px;                              /* Figma: p-[--m,16px] */
+  background: var(--background-primary, #fff);
+  border-radius: 16px;                        /* Figma: rounded-[--m,16px] */
+  box-shadow: -1px -1px 4px rgba(32, 34, 42, 0.06),
+              1px 1px 4px rgba(32, 34, 42, 0.06);
+}
+
+.cal-card--course {
+  grid-template-columns: 200px minmax(0, 1fr);
+}
+
+.cal-card__media {
+  position: relative;
+  width: 200px;                               /* Figma: w-[200px] */
+  height: 120px;                              /* Figma: h-[120px] */
+  border-radius: 12px;                        /* Figma: rounded-[--sm,12px] */
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+/* ── Type tag (DS lesson-cards § Tag icon) ─────────────────── */
+.cal-card__typetag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 4px;
+  border-bottom-right-radius: 8px;
+  background: var(--background-primary, #fff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-card__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;                                   /* Figma info-col gap-[8px] */
+}
+
+.cal-card__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.cal-card__metablock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;                                   /* Figma metadata block gap-[--s,8px] */
+}
+
+.cal-card__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;                                   /* Figma per-pair gap-[8px] */
+  margin: 0;
+  font-size: 14px;                            /* Figma: text-[14px] */
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.cal-card__metarow {
+  display: flex;
+  align-items: center;
+  gap: 8px;                                   /* Figma date row gap-[--s,8px] */
+  flex-wrap: wrap;
+}
+
+/* ── Overdue badge (inline, doesn't stretch the flex parent) ─ */
+.cal-card__overdue {
+  align-self: flex-start;
+}
+
+/* ── Attendee stack (Figma node 10113:207839) ──────────────── */
+.cal-card__avatars {
+  display: inline-flex;
+  align-items: center;
+}
+
+.cal-card__avatar {
+  width: 24px;                                /* Figma: size-[24px] */
+  height: 24px;
+  border-radius: 100px;                       /* Figma: rounded-[--100,100px] */
+  background: #cbd5e1;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--background-primary, #fff);   /* Figma uses 0.5px; CSS rounds to 1px */
+  margin-left: -8px;                          /* Figma: mr-[-8px] overlap */
+  letter-spacing: 0.02em;
+}
+
+.cal-card__avatar:first-child {
+  margin-left: 0;
+}
+
+.cal-card__avatar--overflow {
+  background: var(--background-tertiary, #e5e7eb);
+  color: var(--text-tertiary);
+  font-size: 8px;                             /* Figma overflow pill: text-[8px] */
+  font-weight: 400;
+}
+
+/* ── Action button (Figma node 10113:207840) ─────────────────── */
+.cal-card__actionwrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.cal-card__action--split {
+  padding: 8px 16px;                          /* Figma: px-[16px] py-[8px] — overrides .btn-primary's 10px 20px */
+  gap: 4px;                                   /* Figma: gap-[4px] between label and chevron */
+}
+
+/* ── Right rail ───────────────────────────────── */
+.cal-rightrail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 24px;
+  align-self: start;
+}
+
+.cal-mini {
+  padding: 16px;
+  background: var(--background-primary, #fff);
+  border: 1px solid var(--border-tertiary, #f1f5f9);
+  border-radius: 14px;
+}
+
+.cal-mini__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.cal-mini__month {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cal-mini__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cal-mini__navbtn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-mini__navbtn:hover {
+  background: var(--background-tertiary, #f3f4f6);
+}
+
+.cal-mini__navbtn--dot {
+  position: relative;
+}
+
+.cal-mini__navbtn--dot::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.cal-mini__weekrow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.cal-mini__weekday {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 0;
+}
+
+.cal-mini__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-mini__day {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  padding: 6px 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cal-mini__day:hover {
+  background: var(--background-tertiary, #f3f4f6);
+}
+
+.cal-mini__day--outside {
+  color: var(--text-tertiary);
+}
+
+.cal-mini__day--today {
+  color: var(--warning-500, #f97316);
+  font-weight: 700;
+}
+
+/* ── Right-rail tabs ──────────────────────────── */
+.cal-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  background: var(--background-tertiary, #f3f4f6);
+  border-radius: 10px;
+}
+
+.cal-tab {
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.cal-tab--active {
+  background: var(--background-primary, #fff);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+/* ── Empty state placeholder ─────────────────── */
+.cal-empty {
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 1024px) {
+  .cal-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cal-rightrail {
+    position: static;
+  }
+  .cal-card {
+    grid-template-columns: 160px minmax(0, 1fr);
+  }
+  .cal-card__actionwrap {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}

@@ -141,3 +141,45 @@
 .btn-outlined:hover {
   background: rgba(0, 206, 230, 0.08);
 }
+
+.btn-success {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 10px var(--space-ml);
+  border-radius: var(--radius-s);
+  background: var(--success-500);
+  color: var(--neutral-25);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  transition: background 150ms ease;
+}
+
+.btn-success:hover {
+  background: var(--success-600);
+}
+
+.btn-danger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 10px var(--space-ml);
+  border-radius: var(--radius-s);
+  background: var(--danger-500);
+  color: var(--neutral-25);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  transition: background 150ms ease;
+}
+
+.btn-danger:hover {
+  background: var(--danger-600);
+}

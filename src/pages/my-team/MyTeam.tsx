@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Home2,
   Profile2User,
@@ -8,7 +8,6 @@ import {
   SearchNormal1,
   Award,
   Medal,
-  Messages2,
   UserSquare,
   ShieldSecurity,
   Setting2,
@@ -44,7 +43,7 @@ import avatar3 from './assets/m3.jpg'
 import avatar4 from './assets/m4.jpg'
 import './MyTeam.css'
 
-function Logo({ size = 22 }: { size?: number }) {
+export function Logo({ size = 22 }: { size?: number }) {
   return (
     <svg width={(size / 22) * 103} height={size} viewBox="0 0 103 22" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip_myteam_logo)">
@@ -195,19 +194,20 @@ const team: TeamMember[] = [
   { id: 'm17', name: 'Luke Patterson',  role: 'Host',                       initials: 'LP', managerIds: ['m7'], overdue: 0, atRisk: 2, inProgress: 1, completed: 5, overallProgress: 76 },
 ]
 
-const sideItems = [
+export const learnerSideItems: { label: string; icon: typeof Home2; path?: string }[] = [
   { label: 'For You', icon: Home2 },
   { label: 'Your Workspace', icon: Profile2User },
   { label: 'Knowledge Hub', icon: MonitorMobbile },
   { label: 'Search', icon: SearchNormal1 },
-  { label: 'My Team', icon: Award, active: true },
+  { label: 'My Team', icon: Award, path: '/my-team' },
   { label: 'My Progress', icon: Medal },
-  { label: 'Feed', icon: Messages2 },
+  { label: 'Calendar', icon: Calendar, path: '/calendar' },
   { label: 'Profile', icon: UserSquare },
 ]
 
 function MyTeam() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [drawerState, setDrawerState] = useState<{ memberId: string; bucket: CourseBucket } | null>(null)
@@ -361,10 +361,6 @@ function MyTeam() {
             <button type="button" className="mt-topnav__iconbtn" aria-label="Notifications">
               <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
             </button>
-            <button type="button" className="mt-topnav__iconbtn mt-topnav__iconbtn--dot" aria-label="Calendar">
-              <Calendar size={24} color="var(--text-primary)" variant="Linear" />
-              <span className="mt-topnav__dot" aria-hidden="true" />
-            </button>
           </div>
         </div>
       </header>
@@ -372,12 +368,20 @@ function MyTeam() {
       <div className="mt-main">
         <aside className="mt-side">
           <nav className="mt-side__menu">
-            {sideItems.map(({ label, icon: Icon, active }) => (
-              <button key={label} type="button" className={`mt-side__item${active ? ' mt-side__item--active' : ''}`}>
-                <Icon size={24} color={active ? 'var(--secondary-500)' : 'var(--text-secondary)'} variant="Bold" />
-                <span>{label}</span>
-              </button>
-            ))}
+            {learnerSideItems.map(({ label, icon: Icon, path }) => {
+              const isActive = !!path && location.pathname === path
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  className={`mt-side__item${isActive ? ' mt-side__item--active' : ''}`}
+                  onClick={path ? () => navigate(path) : undefined}
+                >
+                  <Icon size={24} color={isActive ? 'var(--secondary-500)' : 'var(--text-secondary)'} variant="Bold" />
+                  <span>{label}</span>
+                </button>
+              )
+            })}
             <button
               type="button"
               className="mt-side__item"

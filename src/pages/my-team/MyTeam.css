@@ -120,7 +120,6 @@
   width: 240px;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border);
   background: var(--neutral-25);
 }
 
