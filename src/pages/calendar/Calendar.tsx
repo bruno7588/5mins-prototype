@@ -32,7 +32,7 @@ import { pastItems, upcomingItems, type CalendarItem } from './mockItems'
 import '../my-team/MyTeam.css'
 import './Calendar.css'
 
-const TODAY = new Date('2026-05-18T00:00:00')
+const TODAY = new Date('2026-05-19T00:00:00')
 
 type Tab = 'upcoming' | 'past'
 
@@ -170,9 +170,9 @@ function CourseCard({ item, tab }: { item: CalendarItem; tab: Tab }) {
       <div className="cal-card__media" style={{ background: item.thumbnailGradient }}>
         <span className="cal-card__typetag" aria-label={item.type === 'course' ? 'Course' : 'Event'}>
           {item.type === 'course' ? (
-            <CourseTypeIcon size={20} />
+            <CourseTypeIcon size={24} />
           ) : (
-            <CalendarIcon size={20} color="var(--text-primary)" variant="Linear" />
+            <CalendarIcon size={24} color="var(--text-tertiary)" variant="Linear" />
           )}
         </span>
       </div>
@@ -211,9 +211,9 @@ function EventCard({ item, tab }: { item: CalendarItem; tab: Tab }) {
       <div className="cal-card__media" style={{ background: item.thumbnailGradient }}>
         <span className="cal-card__typetag" aria-label={item.type === 'course' ? 'Course' : 'Event'}>
           {item.type === 'course' ? (
-            <CourseTypeIcon size={20} />
+            <CourseTypeIcon size={24} />
           ) : (
-            <CalendarIcon size={20} color="var(--text-primary)" variant="Linear" />
+            <CalendarIcon size={24} color="var(--text-tertiary)" variant="Linear" />
           )}
         </span>
       </div>
@@ -251,11 +251,28 @@ function ItemCard({ item, tab }: { item: CalendarItem; tab: Tab }) {
   return <EventCard item={item} tab={tab} />
 }
 
-function MiniCalendar({ activeMonth }: { activeMonth: Date }) {
-  const monthLabel = activeMonth.toLocaleDateString('en-US', { month: 'long' })
+function buildDayMap(items: CalendarItem[]): Map<string, CalendarItem[]> {
+  const map = new Map<string, CalendarItem[]>()
+  for (const item of items) {
+    const start = new Date(item.startsAt)
+    const key = dateKey(new Date(start.getFullYear(), start.getMonth(), start.getDate()))
+    const bucket = map.get(key)
+    if (bucket) bucket.push(item)
+    else map.set(key, [item])
+  }
+  for (const bucket of map.values()) {
+    bucket.sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
+  }
+  return map
+}
+
+function MiniCalendar({ activeMonth, dayMap }: { activeMonth: Date; dayMap: Map<string, CalendarItem[]> }) {
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null)
+  const monthLabel = activeMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
   const firstOfMonth = new Date(activeMonth.getFullYear(), activeMonth.getMonth(), 1)
   const daysInMonth = new Date(activeMonth.getFullYear(), activeMonth.getMonth() + 1, 0).getDate()
-  const startWeekday = firstOfMonth.getDay()
+  // Monday-first week: getDay() 0=Sun..6=Sat → shift so Mon=0..Sun=6
+  const startWeekday = (firstOfMonth.getDay() + 6) % 7
   const totalCells = 42
   const cells: { date: Date; outside: boolean }[] = []
   for (let i = 0; i < totalCells; i++) {
@@ -264,18 +281,23 @@ function MiniCalendar({ activeMonth }: { activeMonth: Date }) {
     cells.push({ date: cellDate, outside: dayOffset < 0 || dayOffset >= daysInMonth })
   }
   const todayKey = dateKey(TODAY)
-  const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+  const weekdayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+  const handleDayClick = (key: string) => {
+    const target = document.getElementById(`cal-day-${key}`)
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <div className="cal-mini">
       <header className="cal-mini__header">
         <span className="cal-mini__month">{monthLabel}</span>
         <div className="cal-mini__nav">
           <button type="button" aria-label="Previous month" className="cal-mini__navbtn">
-            <ArrowLeft2 size={16} color="var(--text-secondary)" />
+            <ArrowLeft2 size={20} color="var(--text-primary)" variant="Linear" />
           </button>
-          <button type="button" aria-label="Today" className="cal-mini__navbtn cal-mini__navbtn--dot" />
           <button type="button" aria-label="Next month" className="cal-mini__navbtn">
-            <ArrowRight2 size={16} color="var(--text-secondary)" />
+            <ArrowRight2 size={20} color="var(--text-primary)" variant="Linear" />
           </button>
         </div>
       </header>
@@ -286,13 +308,38 @@ function MiniCalendar({ activeMonth }: { activeMonth: Date }) {
       </div>
       <div className="cal-mini__grid">
         {cells.map(({ date, outside }, i) => {
-          const isToday = dateKey(date) === todayKey
+          const key = dateKey(date)
+          const items = outside ? undefined : dayMap.get(key)
+          const hasItems = !!items && items.length > 0
+          const isToday = key === todayKey
+          const isHovered = hoveredKey === key
           return (
             <span
               key={i}
-              className={`cal-mini__day${outside ? ' cal-mini__day--outside' : ''}${isToday ? ' cal-mini__day--today' : ''}`}
+              className={`cal-mini__day${outside ? ' cal-mini__day--outside' : ''}${isToday ? ' cal-mini__day--today' : ''}${hasItems ? ' cal-mini__day--hasitems' : ''}`}
+              onClick={hasItems ? () => handleDayClick(key) : undefined}
+              onMouseEnter={hasItems ? () => setHoveredKey(key) : undefined}
+              onMouseLeave={hasItems ? () => setHoveredKey(null) : undefined}
             >
-              {date.getDate()}
+              {hasItems && !isToday ? (
+                <span
+                  className="cal-mini__day-fill"
+                  aria-hidden="true"
+                  style={{ background: items![0].thumbnailGradient }}
+                />
+              ) : null}
+              <span className="cal-mini__day-num">{date.getDate()}</span>
+              {hasItems && isHovered ? (
+                <span className="cal-mini__tooltip" role="tooltip">
+                  <span className="cal-mini__tooltip-eyebrow">
+                    {items![0].type === 'course' ? 'Course' : 'Event'}
+                  </span>
+                  <span className="cal-mini__tooltip-title">{items![0].title}</span>
+                  {items!.length > 1 ? (
+                    <span className="cal-mini__tooltip-count">+{items!.length - 1} more</span>
+                  ) : null}
+                </span>
+              ) : null}
             </span>
           )
         })}
@@ -309,6 +356,10 @@ function Calendar() {
   const groups = useMemo(() => {
     if (tab === 'upcoming') return groupByDate(upcomingItems, 'asc')
     return groupByDate(pastItems, 'desc')
+  }, [tab])
+
+  const dayMap = useMemo(() => {
+    return buildDayMap(tab === 'upcoming' ? upcomingItems : pastItems)
   }, [tab])
 
   return (
@@ -419,8 +470,9 @@ function Calendar() {
               ) : (
                 groups.map((group) => {
                   const label = dateSectionLabel(group.date)
+                  const key = dateKey(group.date)
                   return (
-                    <div key={dateKey(group.date)} className="cal-row">
+                    <div key={key} id={`cal-day-${key}`} className="cal-row">
                       <header className="cal-row__header">
                         <span className="cal-row__dot" aria-hidden="true" />
                         <span className="cal-row__date">{label.primary}</span>
@@ -438,7 +490,7 @@ function Calendar() {
             </div>
 
             <aside className="cal-rightrail">
-              <MiniCalendar activeMonth={TODAY} />
+              <MiniCalendar activeMonth={TODAY} dayMap={dayMap} />
             </aside>
           </div>
         </section>
