@@ -60,33 +60,29 @@
   color: var(--text-button-hover, #33e2f7);
 }
 
-/* Horizontal carousel — used by courses + categories */
-.ws-carousel {
-  display: flex;
+/* Carousel track variants — composed onto .carousel__track */
+
+/* Courses + Explore: fixed-width cards, multi-card viewport, 24px gap.
+   Vertical padding reserves room for the "New" overhang badge on course cards. */
+.ws-cards-track {
   gap: 24px;
-  overflow-x: auto;
-  /* Reserve room for "New" overhang badge that sits above the card */
   padding: 16px 4px 8px;
   margin: -16px -4px -8px;
   scroll-snap-type: x proximity;
-  scrollbar-width: thin;
 }
 
-.ws-carousel > * {
+.ws-cards-track > * {
   scroll-snap-align: start;
 }
 
-/* Events scroller — one wide card per viewport, snap-to-card */
-.ws-events {
-  display: flex;
+/* Events: one full-width card per viewport, snap-mandatory */
+.ws-events-track {
   gap: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
   padding: 4px 0;
-  scrollbar-width: thin;
+  scroll-snap-type: x mandatory;
 }
 
-.ws-events > .cal-card {
+.ws-events-track > .cal-card {
   flex: 0 0 100%;
   scroll-snap-align: start;
 }

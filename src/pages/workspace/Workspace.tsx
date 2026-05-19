@@ -15,6 +15,7 @@ import { upcomingItems } from '../calendar/mockItems'
 import CalendarView, { EventCard } from '../calendar/CalendarView'
 import WorkspaceCourseCard from '../../components/WorkspaceCourseCard/WorkspaceCourseCard'
 import CategoryCard from '../../components/CategoryCard/CategoryCard'
+import Carousel from '../../components/Carousel/Carousel'
 import { workspaceCourses, workspaceCategories } from './mockItems'
 
 type WorkspaceTab = 'courses' | 'calendar'
@@ -139,11 +140,11 @@ function Workspace() {
                   </div>
                   <button type="button" className="ws-section__cta">View All</button>
                 </header>
-                <div className="ws-carousel">
+                <Carousel trackClassName="ws-cards-track" ariaLabel="Enrolled courses">
                   {workspaceCourses.map((course) => (
                     <WorkspaceCourseCard key={course.id} course={course} />
                   ))}
-                </div>
+                </Carousel>
               </section>
 
               <section className="ws-section">
@@ -156,11 +157,11 @@ function Workspace() {
                   </div>
                   <button type="button" className="ws-section__cta">View All</button>
                 </header>
-                <div className="ws-events">
+                <Carousel trackClassName="ws-events-track" ariaLabel="Upcoming events">
                   {upcomingEvents.map((event) => (
                     <EventCard key={event.id} item={event} tab="upcoming" showCountdown />
                   ))}
-                </div>
+                </Carousel>
               </section>
 
               <section className="ws-section">
@@ -173,11 +174,11 @@ function Workspace() {
                   </div>
                   <button type="button" className="ws-section__cta">View All</button>
                 </header>
-                <div className="ws-carousel">
+                <Carousel trackClassName="ws-cards-track" ariaLabel="Explore categories">
                   {workspaceCategories.map((category) => (
                     <CategoryCard key={category.id} category={category} />
                   ))}
-                </div>
+                </Carousel>
               </section>
             </div>
           ) : (

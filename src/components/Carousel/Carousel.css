@@ -1,0 +1,44 @@
+.carousel {
+  position: relative;
+}
+
+.carousel__track {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel__chevron {
+  position: absolute;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translateY(-50%);
+  padding: 0;
+  background: var(--page-background);
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  box-shadow: var(--shadow-s);
+  transition: background 150ms ease, opacity 150ms ease;
+}
+
+.carousel__chevron--left { left: -20px; }
+.carousel__chevron--right { right: -20px; }
+
+.carousel__chevron:hover:not(:disabled) {
+  background: var(--cards-background-hover);
+}
+
+.carousel__chevron:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
