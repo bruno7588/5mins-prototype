@@ -1,0 +1,14 @@
+/* Events page — list view per Figma node 10113:202767.
+   Shell reuses learner shell from MyTeam.css + ws-* section styles from Workspace.css. */
+
+.ev-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Hide the type tag overlay on event thumbnails on this page —
+   the section titles already communicate "Events". */
+.ev-list .cal-card__typetag {
+  display: none;
+}

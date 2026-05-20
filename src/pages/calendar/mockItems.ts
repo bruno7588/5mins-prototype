@@ -18,6 +18,8 @@ export interface CalendarItem {
   kind: string
   thumbnailGradient: string
   hostNote?: string
+  instructor?: string
+  description?: string
   attendees: Attendee[]
   overflowCount?: number
   attendance: AttendanceState
@@ -52,6 +54,9 @@ export const upcomingItems: CalendarItem[] = [
     kind: 'Live Session',
     thumbnailGradient: 'linear-gradient(135deg, #f97316, #ef4444)',
     hostNote: 'LIVE 6:00 AM',
+    instructor: 'Martina Rossi',
+    description:
+      "Join 5Mins for a fast-paced tech meetup focused on emerging tools and what they mean for your day-to-day work. Expect quick demos, candid Q&A and a chance to swap notes with peers.",
     attendees: [stack[0], stack[2]],
     overflowCount: 12,
     attendance: 'none',
@@ -82,6 +87,9 @@ export const upcomingItems: CalendarItem[] = [
     locationKind: 'venue',
     kind: 'Course Event',
     thumbnailGradient: 'linear-gradient(135deg, #fbcfe8, #fca5a5)',
+    instructor: 'Alex Tan',
+    description:
+      "An in-person training day covering practical scenarios for new starters. Bring questions — we'll work through real examples together.",
     attendees: [stack[0], stack[1], stack[2], stack[4]],
     overflowCount: 8,
     attendance: 'none',
@@ -97,6 +105,9 @@ export const upcomingItems: CalendarItem[] = [
     locationKind: 'venue',
     kind: 'Course Event',
     thumbnailGradient: 'linear-gradient(135deg, #fb7185, #f97316)',
+    instructor: 'Priya Shah',
+    description:
+      "A flagship company event with talks, workshops and time to catch up across teams. The agenda will be shared a week before — register to get the latest.",
     attendees: [stack[0], stack[5], stack[3], stack[6]],
     overflowCount: 4,
     attendance: 'none',
@@ -127,6 +138,9 @@ export const upcomingItems: CalendarItem[] = [
     locationKind: 'venue',
     kind: 'Course Event',
     thumbnailGradient: 'linear-gradient(135deg, #1e3a8a, #4338ca)',
+    instructor: 'Sam Okafor',
+    description:
+      "A 3-day off-site for the leadership team — strategy sessions, peer coaching and time to reset together. Travel and accommodation are covered.",
     attendees: [stack[0], stack[2], stack[4]],
     overflowCount: 6,
     attendance: 'none',

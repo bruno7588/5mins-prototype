@@ -19,6 +19,7 @@ import ScormCreateCourse from './pages/scorm-content/CreateCourse'
 
 import MyTeam from './pages/my-team/MyTeam'
 import Workspace from './pages/workspace/Workspace'
+import Events from './pages/events/Events'
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
       />
       <Route path="/my-team" element={<MyTeam />} />
       <Route path="/workspace" element={<Workspace />} />
+      <Route path="/events" element={<Events />} />
 
       {/* All other pages — with TopNav */}
       <Route

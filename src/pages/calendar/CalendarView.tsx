@@ -200,15 +200,29 @@ export function EventCard({
   item,
   tab,
   showCountdown = false,
+  onClick,
 }: {
   item: CalendarItem
   tab: CalendarTab
   showCountdown?: boolean
+  onClick?: (item: CalendarItem) => void
 }) {
   const LocationIcon = item.locationKind === 'virtual' ? VideoSquare : Location
   const daysUntil = showCountdown ? daysFromToday(new Date(item.startsAt)) : null
+  const interactive = !!onClick
   return (
-    <article className="cal-card">
+    <article
+      className={`cal-card${interactive ? ' cal-card--interactive' : ''}`}
+      onClick={interactive ? () => onClick!(item) : undefined}
+      onKeyDown={interactive ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick!(item)
+        }
+      } : undefined}
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? 0 : undefined}
+    >
       <div className="cal-card__media" style={{ background: item.thumbnailGradient }}>
         <span className="cal-card__typetag" aria-label={item.type === 'course' ? 'Course' : 'Event'}>
           {item.type === 'course' ? (
@@ -251,7 +265,7 @@ export function EventCard({
           <AttendeeStack attendees={item.attendees} overflow={item.overflowCount} />
         </div>
       </div>
-      <div className="cal-card__actionwrap">
+      <div className="cal-card__actionwrap" onClick={(e) => e.stopPropagation()}>
         <ActionButton tab={tab} state={item.attendance} />
       </div>
     </article>

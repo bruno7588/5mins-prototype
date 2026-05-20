@@ -11,11 +11,12 @@ import { Logo, learnerSideItems } from '../my-team/MyTeam'
 import '../my-team/MyTeam.css'
 import './Workspace.css'
 
-import { upcomingItems } from '../calendar/mockItems'
+import { upcomingItems, type CalendarItem } from '../calendar/mockItems'
 import CalendarView, { EventCard, type CalendarTab } from '../calendar/CalendarView'
 import WorkspaceCourseCard from '../../components/WorkspaceCourseCard/WorkspaceCourseCard'
 import CategoryCard from '../../components/CategoryCard/CategoryCard'
 import Carousel from '../../components/Carousel/Carousel'
+import EventDetailsDrawer from './EventDetailsDrawer'
 import { workspaceCourses, workspaceCategories } from './mockItems'
 
 type WorkspaceTab = 'learn' | 'calendar'
@@ -25,6 +26,7 @@ function Workspace() {
   const location = useLocation()
   const [tab, setTab] = useState<WorkspaceTab>('learn')
   const [calendarFilter, setCalendarFilter] = useState<CalendarTab>('upcoming')
+  const [selectedEvent, setSelectedEvent] = useState<CalendarItem | null>(null)
 
   const upcomingEvents = upcomingItems
     .filter((item) => item.type === 'event')
@@ -176,17 +178,35 @@ function Workspace() {
                 <header className="ws-section__header">
                   <div className="ws-section__headline">
                     <h2 className="ws-section__title">Events</h2>
-                    <p className="ws-section__subtitle">
-                      {upcomingEvents.length} upcoming
-                    </p>
                   </div>
-                  <button type="button" className="ws-section__cta">View All</button>
+                  <button type="button" className="ws-section__cta" onClick={() => navigate('/events')}>
+                    View All
+                  </button>
                 </header>
-                <Carousel trackClassName="ws-events-track" ariaLabel="Upcoming events">
-                  {upcomingEvents.map((event) => (
-                    <EventCard key={event.id} item={event} tab="upcoming" showCountdown />
-                  ))}
-                </Carousel>
+                {upcomingEvents.length > 0 ? (
+                  <Carousel trackClassName="ws-events-track" ariaLabel="Upcoming events">
+                    {upcomingEvents.map((event) => (
+                      <EventCard
+                        key={event.id}
+                        item={event}
+                        tab="upcoming"
+                        showCountdown
+                        onClick={setSelectedEvent}
+                      />
+                    ))}
+                  </Carousel>
+                ) : (
+                  <div className="ws-events-empty">
+                    <p className="ws-events-empty__text">No upcoming events.</p>
+                    <button
+                      type="button"
+                      className="ws-events-empty__link"
+                      onClick={() => navigate('/events')}
+                    >
+                      Browse past events
+                    </button>
+                  </div>
+                )}
               </section>
 
               <section className="ws-section">
@@ -211,6 +231,12 @@ function Workspace() {
           )}
         </section>
       </div>
+
+      <EventDetailsDrawer
+        open={selectedEvent !== null}
+        event={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+      />
     </div>
   )
 }

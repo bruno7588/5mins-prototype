@@ -14,7 +14,7 @@
 .ws-sections {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 20px;
   margin-top: 24px;
 }
 
@@ -100,4 +100,42 @@
    the section title already communicates "Events". */
 .ws-events-track .cal-card__typetag {
   display: none;
+}
+
+/* Empty state — shown when there are no upcoming events.
+   Keeps the section visible so "View All" remains discoverable. */
+.ws-events-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 32px 16px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  background: var(--cards-background);
+}
+
+.ws-events-empty__text {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.ws-events-empty__link {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--button-background, #00cee6);
+  cursor: pointer;
+}
+
+.ws-events-empty__link:hover {
+  color: var(--text-button-hover, #33e2f7);
 }
