@@ -410,24 +410,28 @@
 
 /* ── Add section CTA + inline creation ──────────────────────── */
 .curriculum-add-section {
-  display: inline-flex;
-  align-self: flex-start;
+  display: flex;
   align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-s) 0;
-  background: transparent;
-  border: none;
-  color: var(--text-primary);
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: var(--space-s);
+  background: var(--input-background);
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
   cursor: pointer;
-  transition: color 150ms ease;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
 .curriculum-add-section:hover {
-  color: var(--primary-700);
+  background: var(--cards-background-hover);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
 }
 
 .curriculum-add-section:focus-visible {
