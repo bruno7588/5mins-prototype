@@ -139,17 +139,29 @@
 
 /* Trash button */
 .content-card-trash {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 4px;
-  border-radius: var(--radius-xs);
-  transition: background 150ms ease;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--neutral-400);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
 }
 
 .content-card-trash:hover {
-  background: var(--danger-100);
+  background: var(--input-background);
+  color: var(--text-error);
+}
+
+.content-card-trash:focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
 }
 
 /* Drag and drop */

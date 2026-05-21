@@ -113,7 +113,7 @@ function ContentCard({
         </div>
       </div>
       <button className="content-card-trash" aria-label="Delete" onClick={onDelete}>
-        <Trash size={20} color="var(--neutral-400)" variant="Linear" />
+        <Trash size={20} color="currentColor" variant="Linear" />
       </button>
     </div>
   )

@@ -7,6 +7,7 @@ import type { AssessmentType } from './components/AddContentSidebar/AddContentSi
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
 import AssessmentModal from './components/AssessmentModal/AssessmentModal'
 import type { AssessmentData } from './components/AssessmentModal/AssessmentModal'
+import LibraryDrawer, { type LibraryLesson } from './components/LibraryDrawer/LibraryDrawer'
 
 const assessmentLabels: Record<AssessmentType, string> = {
   'multiple-choice': 'Multiple Choice',
@@ -21,6 +22,8 @@ function CreateCourse() {
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
   const [assessmentModal, setAssessmentModal] = useState<{ type: AssessmentType } | null>(null)
+  const [libraryDrawerOpen, setLibraryDrawerOpen] = useState(false)
+  const [addedLibraryIds, setAddedLibraryIds] = useState<Set<number>>(new Set())
 
   const handleAddScorm = (file: ScormFile) => {
     const newItem: ContentItem = {
@@ -42,6 +45,12 @@ function CreateCourse() {
       next.delete(id)
       return next
     })
+    setAddedLibraryIds(prev => {
+      if (!prev.has(id)) return prev
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
   }
 
   const handleAddAssessment = (data: AssessmentData) => {
@@ -58,12 +67,38 @@ function CreateCourse() {
     setAssessmentModal(null)
   }
 
+  const handleAddLibraryLesson = (lesson: LibraryLesson) => {
+    const newItem: ContentItem = {
+      id: lesson.id,
+      type: 'LibraryLesson',
+      title: lesson.title,
+      metadata: `Lesson · ${lesson.instructor} · ${lesson.durationLabel}`,
+      thumbnail: '',
+      thumbColor: lesson.thumbColor,
+    }
+    setScormItems(prev => [...prev, newItem])
+    setAddedLibraryIds(prev => new Set(prev).add(lesson.id))
+  }
+
+  const handleRemoveLibraryLesson = (id: number) => {
+    setScormItems(prev => prev.filter(item => item.id !== id))
+    setAddedLibraryIds(prev => {
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
+  }
+
   return (
     <>
       <PageHeader />
       <div className="app-content-area">
         <main className="main-content">
-          <ContentList extraItems={scormItems} onDeleteExtra={handleRemoveScorm} />
+          <ContentList
+            extraItems={scormItems}
+            onDeleteExtra={handleRemoveScorm}
+            onAddContent={() => setLibraryDrawerOpen(true)}
+          />
         </main>
         {!assessmentModal && (
           <AddContentSidebar
@@ -71,6 +106,7 @@ function CreateCourse() {
             onAddScorm={handleAddScorm}
             onRemoveScorm={handleRemoveScorm}
             onAssessmentClick={(type) => setAssessmentModal({ type })}
+            onLibraryClick={() => setLibraryDrawerOpen(true)}
           />
         )}
         {assessmentModal && (
@@ -85,11 +121,19 @@ function CreateCourse() {
                 onRemoveScorm={handleRemoveScorm}
                 collapsed
                 onAssessmentClick={(type) => setAssessmentModal({ type })}
+                onLibraryClick={() => setLibraryDrawerOpen(true)}
               />
             }
           />
         )}
       </div>
+      <LibraryDrawer
+        open={libraryDrawerOpen}
+        onClose={() => setLibraryDrawerOpen(false)}
+        addedIds={addedLibraryIds}
+        onAdd={handleAddLibraryLesson}
+        onRemove={handleRemoveLibraryLesson}
+      />
     </>
   )
 }

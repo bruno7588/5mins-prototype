@@ -93,6 +93,8 @@ function DragHandle() {
 interface CurriculumSectionProps {
   section: Section
   itemCount: number
+  hideDragHandle?: boolean
+  startInRenameMode?: boolean
   onToggleCollapse: () => void
   onRename: (newName: string) => void
   onDelete: () => void
@@ -103,13 +105,15 @@ interface CurriculumSectionProps {
 function CurriculumSection({
   section,
   itemCount,
+  hideDragHandle = false,
+  startInRenameMode = false,
   onToggleCollapse,
   onRename,
   onDelete,
   onAddLesson,
   children,
 }: CurriculumSectionProps) {
-  const [renaming, setRenaming] = useState(false)
+  const [renaming, setRenaming] = useState(startInRenameMode)
   const [draft, setDraft] = useState(section.name)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -141,7 +145,7 @@ function CurriculumSection({
   return (
     <section className="curriculum-section" aria-labelledby={`section-${section.id}-title`}>
       <header className="curriculum-section__header">
-        <DragHandle />
+        {!hideDragHandle && <DragHandle />}
         {renaming ? (
           <div className="curriculum-section__rename">
             <input
@@ -207,19 +211,33 @@ function CurriculumSection({
       {!collapsed && (
         <div className="curriculum-section__body">
           {itemCount === 0 ? (
-            <p className="curriculum-section__empty">No lessons in this section</p>
+            <div className="curriculum-section__empty">
+              <p className="curriculum-section__empty-text">
+                No lessons on this section
+              </p>
+              <button
+                type="button"
+                className="curriculum-section__empty-cta"
+                onClick={onAddLesson}
+              >
+                <span>Add Content</span>
+                <Add size={16} color="currentColor" variant="Linear" />
+              </button>
+            </div>
           ) : (
-            <div className="curriculum-section__items">{children}</div>
-          )}
-          {onAddLesson && (
-            <button
-              type="button"
-              className="curriculum-section__add-lesson"
-              onClick={onAddLesson}
-            >
-              <Add size={20} color="currentColor" variant="Linear" />
-              <span>Add Lesson</span>
-            </button>
+            <>
+              <div className="curriculum-section__items">{children}</div>
+              {onAddLesson && (
+                <button
+                  type="button"
+                  className="curriculum-section__add-lesson"
+                  onClick={onAddLesson}
+                >
+                  <span>Add Content</span>
+                  <Add size={16} color="currentColor" variant="Linear" />
+                </button>
+              )}
+            </>
           )}
         </div>
       )}

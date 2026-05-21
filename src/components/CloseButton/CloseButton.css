@@ -1,9 +1,13 @@
 .close-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
-  border-radius: 40px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
   color: var(--text-secondary);
   cursor: pointer;
   transition: background 150ms ease;
@@ -11,4 +15,9 @@
 
 .close-btn:hover {
   background: var(--input-background, rgba(191, 194, 204, 0.16));
+}
+
+.close-btn:focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
 }

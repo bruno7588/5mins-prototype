@@ -27,9 +27,10 @@ interface AddContentSidebarProps {
   onRemoveScorm: (id: number) => void
   collapsed?: boolean
   onAssessmentClick?: (type: AssessmentType) => void
+  onLibraryClick?: () => void
 }
 
-function AddContentSidebar({ addedScormIds, onAddScorm, onRemoveScorm, collapsed, onAssessmentClick }: AddContentSidebarProps) {
+function AddContentSidebar({ addedScormIds, onAddScorm, onRemoveScorm, collapsed, onAssessmentClick, onLibraryClick }: AddContentSidebarProps) {
   const [showScormDrawer, setShowScormDrawer] = useState(false)
 
   return (
@@ -39,6 +40,7 @@ function AddContentSidebar({ addedScormIds, onAddScorm, onRemoveScorm, collapsed
       <AddContentMenuItem
         icon={<Book1 size={iconSize} color={iconColor} variant="Linear" />}
         label="5Mins Library"
+        onClick={onLibraryClick}
         collapsed={collapsed}
       />
       <AddContentMenuItem

@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { Add, CloseCircle, Edit2, TickCircle, Trash } from 'iconsax-react'
+import { Add, Edit2, Trash } from 'iconsax-react'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
+import Tooltip from '../../../../components/Tooltip/Tooltip'
 import CurriculumSection from './CurriculumSection'
 import './ContentList.css'
 
 export interface ContentItem {
   id: number
-  type: 'Lesson' | 'Assessment' | 'SCORM'
+  type: 'Lesson' | 'Assessment' | 'SCORM' | 'LibraryLesson'
   title: string
   metadata: string
   thumbnail: string
@@ -92,10 +93,19 @@ interface ContentCardProps {
   onDrop: () => void
 }
 
+const REMOVE_LABEL: Record<ContentItem['type'], string> = {
+  Lesson: 'Remove lesson',
+  LibraryLesson: 'Remove lesson',
+  Assessment: 'Remove assessment',
+  SCORM: 'Remove SCORM',
+}
+
 function ContentCard({
   item, onDelete, isDragging, dropAbove, dropBelow,
   onDragStart, onDragOver, onDragEnd, onDrop,
 }: ContentCardProps) {
+  const badgeLabel = item.type === 'LibraryLesson' ? 'Lesson' : item.type
+  const removeLabel = REMOVE_LABEL[item.type]
   const containerClass = [
     'content-item-container',
     isDragging && 'content-item-container--dragging',
@@ -127,7 +137,7 @@ function ContentCard({
         <div className="content-card-info">
           <div className="content-card-title-row">
             <h4 className="content-card-title">{item.title}</h4>
-            <span className="content-card-badge">{item.type}</span>
+            <span className="content-card-badge">{badgeLabel}</span>
           </div>
           <div className="content-card-meta">
             <span>{item.metadata}</span>
@@ -137,14 +147,16 @@ function ContentCard({
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        className="content-card-trash"
-        aria-label="Delete lesson"
-        onClick={onDelete}
-      >
-        <Trash size={20} color="var(--neutral-400)" variant="Linear" />
-      </button>
+      <Tooltip text={removeLabel} position="Top" icon={false} className="content-card-trash-tooltip">
+        <button
+          type="button"
+          className="content-card-trash"
+          aria-label={removeLabel}
+          onClick={onDelete}
+        >
+          <Trash size={20} color="currentColor" variant="Linear" />
+        </button>
+      </Tooltip>
     </div>
   )
 }
@@ -152,9 +164,10 @@ function ContentCard({
 interface ContentListProps {
   extraItems?: ContentItem[]
   onDeleteExtra?: (id: number) => void
+  onAddContent?: () => void
 }
 
-function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
+function ContentList({ extraItems = [], onDeleteExtra, onAddContent }: ContentListProps) {
   // Item registry — itemKey → ContentItem
   const [itemsByKey, setItemsByKey] = useState<Record<string, ContentItem>>(() => {
     const map: Record<string, ContentItem> = {}
@@ -176,10 +189,8 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
   const [dragKey, setDragKey] = useState<string | null>(null)
   const [dropTarget, setDropTarget] = useState<{ itemKey: string; position: 'above' | 'below' } | null>(null)
 
-  // Section creation
-  const [creating, setCreating] = useState(false)
-  const [draftName, setDraftName] = useState('')
-  const createInputRef = useRef<HTMLInputElement>(null)
+  // Tracks the most-recently-created section so it can open in rename mode
+  const [autoRenameSectionId, setAutoRenameSectionId] = useState<string | null>(null)
 
   // Delete confirmation
   const [confirmDelete, setConfirmDelete] = useState<Section | null>(null)
@@ -210,8 +221,11 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
       const existingKeys = new Set(prev.flatMap((s) => s.itemKeys))
       const extraSet = new Set(extraItems.map(itemKey))
       const newKeys = extraItems.map(itemKey).filter((k) => !existingKeys.has(k))
-      // Only SCORM items disappear when removed from extras; other types persist.
-      const shouldKeep = (k: string) => (k.startsWith('SCORM-') ? extraSet.has(k) : true)
+      // SCORM and Library lessons are extras-managed — drop them when they leave extras.
+      const shouldKeep = (k: string) => {
+        if (k.startsWith('SCORM-') || k.startsWith('LibraryLesson-')) return extraSet.has(k)
+        return true
+      }
       const cleaned = prev.map((s) => ({
         ...s,
         itemKeys: s.itemKeys.filter(shouldKeep),
@@ -234,34 +248,21 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
   /* Section actions */
 
   const startCreate = () => {
-    setDraftName(`Section ${sections.length + 1}`)
-    setCreating(true)
-    queueMicrotask(() => {
-      createInputRef.current?.focus()
-      createInputRef.current?.select()
-    })
-  }
-
-  const commitCreate = () => {
-    const name = draftName.trim()
-    if (!name) {
-      setCreating(false)
-      return
-    }
-    setSections((prev) => [...prev, { id: newSectionId(), name, itemKeys: [], collapsed: false }])
-    setCreating(false)
-    setDraftName('')
+    const id = newSectionId()
+    const name = `Section ${sections.length + 1}`
+    setSections((prev) => [...prev, { id, name, itemKeys: [], collapsed: false }])
+    setAutoRenameSectionId(id)
     showToast('success', `Section "${name}" created`)
-  }
-
-  const cancelCreate = () => {
-    setCreating(false)
-    setDraftName('')
   }
 
   const renameSection = (id: string, name: string) => {
     setSections((prev) => prev.map((s) => (s.id === id ? { ...s, name } : s)))
-    showToast('success', 'Section renamed')
+    if (autoRenameSectionId === id) {
+      // Quietly accept the rename if it came from the auto-rename flow on creation
+      setAutoRenameSectionId(null)
+    } else {
+      showToast('success', 'Section renamed')
+    }
   }
 
   const toggleCollapse = (id: string) => {
@@ -275,8 +276,9 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
       const next = { ...prev }
       for (const k of section.itemKeys) {
         const item = next[k]
-        if (item && item.type === 'SCORM') onDeleteExtra?.(item.id)
-        if (item && item.type === 'Assessment') onDeleteExtra?.(item.id)
+        if (item && (item.type === 'SCORM' || item.type === 'Assessment' || item.type === 'LibraryLesson')) {
+          onDeleteExtra?.(item.id)
+        }
         delete next[k]
       }
       return next
@@ -287,7 +289,7 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
 
   const deleteItem = (key: string) => {
     const item = itemsByKey[key]
-    if (item && (item.type === 'SCORM' || item.type === 'Assessment')) {
+    if (item && (item.type === 'SCORM' || item.type === 'Assessment' || item.type === 'LibraryLesson')) {
       onDeleteExtra?.(item.id)
     }
     setSections((prev) => prev.map((s) => ({ ...s, itemKeys: s.itemKeys.filter((k) => k !== key) })))
@@ -352,7 +354,7 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
     handleDragEnd()
   }
 
-  const isEmpty = sections.length === 0 && !creating
+  const isEmpty = sections.length === 0
 
   return (
     <section className="content-list" onDragOver={(e) => e.preventDefault()}>
@@ -378,7 +380,7 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
             <button
               type="button"
               className="course-empty-state__btn course-empty-state__btn--filled"
-              onClick={startCreate}
+              onClick={onAddContent ?? startCreate}
             >
               <span>Add Content</span>
               <Add size={20} color="currentColor" variant="Linear" />
@@ -397,9 +399,12 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
             collapsed: section.collapsed,
           }}
           itemCount={section.itemKeys.length}
+          hideDragHandle={sections.length === 1}
+          startInRenameMode={section.id === autoRenameSectionId}
           onToggleCollapse={() => toggleCollapse(section.id)}
           onRename={(name) => renameSection(section.id, name)}
           onDelete={() => setConfirmDelete(section)}
+          onAddLesson={onAddContent}
         >
           {section.itemKeys.map((key) => {
             const item = itemsByKey[key]
@@ -422,46 +427,12 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
         </CurriculumSection>
       ))}
 
-      {(sections.length > 0 || creating) && (creating ? (
-        <div className="curriculum-add-section curriculum-add-section--editing">
-          <input
-            ref={createInputRef}
-            className="curriculum-add-section__input"
-            type="text"
-            placeholder="Section name"
-            value={draftName}
-            onChange={(e) => setDraftName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') commitCreate()
-              if (e.key === 'Escape') cancelCreate()
-            }}
-            aria-label="New section name"
-          />
-          <button
-            type="button"
-            className="curriculum-add-section__btn curriculum-add-section__btn--confirm"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={commitCreate}
-            aria-label="Add section"
-          >
-            <TickCircle size={20} color="var(--success-500)" variant="Bold" />
-          </button>
-          <button
-            type="button"
-            className="curriculum-add-section__btn curriculum-add-section__btn--cancel"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={cancelCreate}
-            aria-label="Cancel"
-          >
-            <CloseCircle size={20} color="var(--text-secondary)" variant="Linear" />
-          </button>
-        </div>
-      ) : (
+      {sections.length > 0 && (
         <button type="button" className="curriculum-add-section" onClick={startCreate}>
-          <Add size={20} color="currentColor" variant="Linear" />
           <span>Add Section</span>
+          <Add size={20} color="currentColor" variant="Linear" />
         </button>
-      ))}
+      )}
 
       {confirmDelete && (
         <>

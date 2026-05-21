@@ -1,0 +1,157 @@
+/* LibraryDrawer — content per Figma 7068:79092.
+   Drawer shell uses shared .side-drawer / .overlay-backdrop from CoursesDrawer.css. */
+
+.library-drawer__headline {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.library-drawer__title {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.library-drawer__subtitle {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.library-drawer__search {
+  flex-shrink: 0;
+}
+
+.library-drawer__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding-top: var(--space-xs);
+}
+
+.library-drawer__empty {
+  margin: 0;
+  padding: var(--space-l) var(--space-m);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+/* Lesson row card */
+.library-lesson {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  padding: var(--space-sm);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-s);
+  transition: background 150ms ease;
+}
+
+.library-lesson:hover {
+  background: var(--cards-background-hover);
+}
+
+.library-lesson__thumb {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-s);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.library-lesson__tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 4px;
+  border-bottom-right-radius: var(--radius-s);
+  background: var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.library-lesson__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.library-lesson__title {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.library-lesson__meta {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+.library-lesson__btn {
+  flex-shrink: 0;
+  min-width: 83px;
+  padding: var(--space-s) var(--space-m);
+  border-radius: var(--radius-s);
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.library-lesson__btn:focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
+}
+
+.library-lesson__btn--add {
+  background: var(--primary-600);
+  color: var(--neutral-25);
+  border: none;
+}
+
+.library-lesson__btn--add:hover {
+  background: var(--primary-700);
+}
+
+.library-lesson__btn--remove {
+  background: transparent;
+  color: var(--primary-600);
+  border: 1px solid var(--primary-600);
+}
+
+.library-lesson__btn--remove:hover {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  border-color: var(--primary-700);
+}

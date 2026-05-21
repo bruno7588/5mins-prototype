@@ -109,9 +109,10 @@
   flex-direction: column;
   gap: var(--space-sm);
   padding: var(--space-m);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
+  background: var(--neutral-0);
+  border: none;
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-s);
 }
 
 .curriculum-section__header {
@@ -240,34 +241,87 @@
 }
 
 .curriculum-section__empty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
+  background: var(--input-background);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.curriculum-section__empty-text {
+  flex: 1;
   margin: 0;
-  padding: var(--space-m) var(--space-s);
+  font-family: 'Poppins', sans-serif;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--text-tertiary);
-  text-align: left;
+}
+
+.curriculum-section__empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-m);
+  background: transparent;
+  color: var(--primary-600);
+  border: 1px solid var(--primary-600);
+  border-radius: var(--radius-s);
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.curriculum-section__empty-cta:hover {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  border-color: var(--primary-700);
+}
+
+.curriculum-section__empty-cta:active {
+  background: var(--primary-100);
+  color: var(--primary-800);
+  border-color: var(--primary-800);
+}
+
+.curriculum-section__empty-cta:focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
 }
 
 .curriculum-section__add-lesson {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-s) 0;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-m);
   background: transparent;
-  border: none;
-  color: var(--text-primary);
+  color: var(--primary-600);
+  border: 1px solid var(--primary-600);
+  border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1.5;
+  line-height: 1.4;
   cursor: pointer;
-  transition: color 150ms ease;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
 .curriculum-section__add-lesson:hover {
+  background: var(--primary-100);
   color: var(--primary-700);
+  border-color: var(--primary-700);
+}
+
+.curriculum-section__add-lesson:active {
+  background: var(--primary-100);
+  color: var(--primary-800);
+  border-color: var(--primary-800);
 }
 
 .curriculum-section__add-lesson:focus-visible {
@@ -377,58 +431,6 @@
 }
 
 .curriculum-add-section:focus-visible {
-  outline: 2px solid var(--primary-600);
-  outline-offset: 2px;
-}
-
-.curriculum-add-section--editing {
-  display: flex;
-  align-self: stretch;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-s);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  cursor: default;
-}
-
-.curriculum-add-section__input {
-  flex: 1;
-  min-width: 0;
-  padding: var(--space-s) var(--space-sm);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-s);
-  outline: none;
-}
-
-.curriculum-add-section__input:focus {
-  border-color: var(--secondary-500);
-}
-
-.curriculum-add-section__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xs);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.curriculum-add-section__btn:hover {
-  background: var(--cards-background-hover);
-}
-
-.curriculum-add-section__btn:focus-visible {
   outline: 2px solid var(--primary-600);
   outline-offset: 2px;
 }
@@ -696,17 +698,29 @@
 
 /* Trash button */
 .content-card-trash {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 4px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
   border-radius: var(--radius-full);
-  transition: background 150ms ease;
+  color: var(--neutral-400);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
 }
 
 .content-card-trash:hover {
-  background: var(--danger-100);
+  background: var(--input-background);
+  color: var(--text-error);
+}
+
+.content-card-trash:focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
 }
 
 /* Drag and drop */
