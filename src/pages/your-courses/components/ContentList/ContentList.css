@@ -1,7 +1,7 @@
 .content-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-sm);
   padding: var(--space-l) 0;
   max-width: 900px;
   margin: 0 auto;
@@ -107,12 +107,12 @@
 .curriculum-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  padding: var(--space-m);
-  background: var(--neutral-0);
-  border: none;
+  gap: 0;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-s);
+  box-shadow: none;
 }
 
 .curriculum-section__header {
@@ -120,6 +120,27 @@
   align-items: center;
   gap: var(--space-s);
   min-height: 32px;
+  padding: var(--space-sm) var(--space-m);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: border-radius 150ms ease;
+}
+
+.curriculum-section--collapsed .curriculum-section__header {
+  border-radius: var(--radius-sm);
+}
+
+/* Section drag-and-drop */
+.curriculum-section--dragging {
+  opacity: 0.4;
+}
+
+.curriculum-section--drop-above {
+  box-shadow: 0 -2px 0 0 var(--primary-500);
+}
+
+.curriculum-section--drop-below {
+  box-shadow: 0 2px 0 0 var(--primary-500);
 }
 
 .curriculum-section__drag {
@@ -160,8 +181,14 @@
   outline-offset: 2px;
 }
 
-.curriculum-section__title {
+.curriculum-section__info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.curriculum-section__title {
   margin: 0;
   font-size: 16px;
   font-weight: 700;
@@ -171,58 +198,64 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
+}
+
+.curriculum-section__summary {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .curriculum-section__count {
   flex-shrink: 0;
 }
 
-/* Inline rename within section header */
-.curriculum-section__rename {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
+/* Inline rename — underlined input + Save / Close actions */
 .curriculum-section__rename-input {
   flex: 1;
   min-width: 0;
-  padding: var(--space-s) var(--space-sm);
+  padding: 0 0 2px;
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-s);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--selected);
+  border-radius: 0;
   outline: none;
 }
 
-.curriculum-section__rename-input:focus {
-  border-color: var(--secondary-500);
-}
-
-.curriculum-section__rename-btn {
+.curriculum-section__save-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xs);
-  background: transparent;
+  flex-shrink: 0;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--primary-600);
+  color: var(--neutral-0);
   border: none;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-s);
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
   cursor: pointer;
   transition: background 150ms ease;
 }
 
-.curriculum-section__rename-btn:hover {
-  background: var(--cards-background-hover);
+.curriculum-section__save-btn:hover {
+  background: var(--primary-700);
 }
 
-.curriculum-section__rename-btn:focus-visible {
+.curriculum-section__save-btn:focus-visible {
   outline: 2px solid var(--primary-600);
   outline-offset: 2px;
 }
@@ -232,6 +265,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+  padding: var(--space-m);
+  background: transparent;
 }
 
 .curriculum-section__items {
@@ -243,55 +278,21 @@
 .curriculum-section__empty {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-m);
-  background: var(--input-background);
+  background: transparent;
   border: 1px dashed var(--border);
   border-radius: var(--radius-sm);
 }
 
 .curriculum-section__empty-text {
-  flex: 1;
   margin: 0;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-tertiary);
-}
-
-.curriculum-section__empty-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-s) var(--space-m);
-  background: transparent;
-  color: var(--primary-600);
-  border: 1px solid var(--primary-600);
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-}
-
-.curriculum-section__empty-cta:hover {
-  background: var(--primary-100);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
-}
-
-.curriculum-section__empty-cta:active {
-  background: var(--primary-100);
-  color: var(--primary-800);
-  border-color: var(--primary-800);
-}
-
-.curriculum-section__empty-cta:focus-visible {
-  outline: 2px solid var(--primary-600);
-  outline-offset: 2px;
 }
 
 .curriculum-section__add-lesson {
@@ -417,7 +418,7 @@
   width: 100%;
   padding: var(--space-s);
   background: var(--input-background);
-  border: 1px dashed var(--border-hover);
+  border: 1px dashed var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   font-family: 'Poppins', sans-serif;
@@ -431,7 +432,7 @@
 .curriculum-add-section:hover {
   background: var(--cards-background-hover);
   color: var(--text-primary);
-  border-color: var(--text-secondary);
+  border-color: var(--border-hover);
 }
 
 .curriculum-add-section:focus-visible {
@@ -459,7 +460,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 345px;
+  width: 480px;
   max-width: calc(100vw - 48px);
   padding: var(--space-l);                  /* 24px uniform */
   background: var(--cards-background);      /* light, project convention */
@@ -491,8 +492,6 @@
   justify-content: center;
   width: 72px;
   height: 72px;
-  background: var(--danger-100);
-  border-radius: var(--radius-full);
 }
 
 .dialog__info {
@@ -542,6 +541,7 @@
   line-height: 1.5;
   border-radius: var(--radius-s);
   cursor: pointer;
+  white-space: nowrap;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 

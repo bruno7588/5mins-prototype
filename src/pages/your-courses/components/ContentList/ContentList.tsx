@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Add, Edit2, Trash } from 'iconsax-react'
+import { Add, Danger, Edit2, Trash } from 'iconsax-react'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
 import CurriculumSection from './CurriculumSection'
@@ -147,7 +147,7 @@ function ContentCard({
           </div>
         </div>
       </div>
-      <Tooltip text={removeLabel} position="Top" icon={false} className="content-card-trash-tooltip">
+      <Tooltip text={removeLabel} position="Top" alignment="End" icon={false} className="content-card-trash-tooltip">
         <button
           type="button"
           className="content-card-trash"
@@ -185,9 +185,13 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent }: ContentLi
     },
   ])
 
-  // Drag state — { fromSectionId, itemKey, overSectionId, overItemKey?, position }
+  // Item drag state
   const [dragKey, setDragKey] = useState<string | null>(null)
   const [dropTarget, setDropTarget] = useState<{ itemKey: string; position: 'above' | 'below' } | null>(null)
+
+  // Section drag state
+  const [sectionDragId, setSectionDragId] = useState<string | null>(null)
+  const [sectionDropTarget, setSectionDropTarget] = useState<{ id: string; position: 'above' | 'below' } | null>(null)
 
   // Tracks the most-recently-created section so it can open in rename mode
   const [autoRenameSectionId, setAutoRenameSectionId] = useState<string | null>(null)
@@ -252,7 +256,6 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent }: ContentLi
     const name = `Section ${sections.length + 1}`
     setSections((prev) => [...prev, { id, name, itemKeys: [], collapsed: false }])
     setAutoRenameSectionId(id)
-    showToast('success', `Section "${name}" created`)
   }
 
   const renameSection = (id: string, name: string) => {
@@ -283,7 +286,7 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent }: ContentLi
       }
       return next
     })
-    showToast('success', `Section "${section.name}" deleted`)
+    showToast('success', `Section "${section.name}" removed`)
     setConfirmDelete(null)
   }
 
@@ -354,7 +357,69 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent }: ContentLi
     handleDragEnd()
   }
 
+  /* Section drag-and-drop */
+
+  const handleSectionDragStart = (id: string) => (e: React.DragEvent) => {
+    e.dataTransfer.effectAllowed = 'move'
+    setSectionDragId(id)
+  }
+
+  const handleSectionDragOver = (overId: string) => (e: React.DragEvent) => {
+    if (!sectionDragId) return
+    e.preventDefault()
+    e.stopPropagation()
+    if (sectionDragId === overId) {
+      setSectionDropTarget(null)
+      return
+    }
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+    const midY = rect.top + rect.height / 2
+    const position: 'above' | 'below' = e.clientY < midY ? 'above' : 'below'
+    setSectionDropTarget({ id: overId, position })
+  }
+
+  const handleSectionDragEnd = () => {
+    setSectionDragId(null)
+    setSectionDropTarget(null)
+  }
+
+  const handleSectionDrop = () => {
+    if (!sectionDragId || !sectionDropTarget) {
+      handleSectionDragEnd()
+      return
+    }
+    setSections((prev) => {
+      const dragIdx = prev.findIndex((s) => s.id === sectionDragId)
+      const targetIdx = prev.findIndex((s) => s.id === sectionDropTarget.id)
+      if (dragIdx === -1 || targetIdx === -1) return prev
+      const next = [...prev]
+      const [dragged] = next.splice(dragIdx, 1)
+      if (!dragged) return prev
+      const insertBase = next.findIndex((s) => s.id === sectionDropTarget.id)
+      const insertAt = sectionDropTarget.position === 'above' ? insertBase : insertBase + 1
+      next.splice(insertAt, 0, dragged)
+      return next
+    })
+    handleSectionDragEnd()
+  }
+
   const isEmpty = sections.length === 0
+
+  const buildSummary = (itemKeys: string[]) => {
+    let lessons = 0, assessments = 0, scorm = 0
+    for (const k of itemKeys) {
+      const item = itemsByKey[k]
+      if (!item) continue
+      if (item.type === 'Lesson' || item.type === 'LibraryLesson') lessons++
+      else if (item.type === 'Assessment') assessments++
+      else if (item.type === 'SCORM') scorm++
+    }
+    const parts: string[] = []
+    if (lessons > 0) parts.push(`${lessons} lesson${lessons === 1 ? '' : 's'}`)
+    if (assessments > 0) parts.push(`${assessments} assessment${assessments === 1 ? '' : 's'}`)
+    if (scorm > 0) parts.push(`${scorm} SCORM`)
+    return parts.length ? parts.join(' · ') : 'No content'
+  }
 
   return (
     <section className="content-list" onDragOver={(e) => e.preventDefault()}>
@@ -399,8 +464,16 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent }: ContentLi
             collapsed: section.collapsed,
           }}
           itemCount={section.itemKeys.length}
+          summary={buildSummary(section.itemKeys)}
           hideDragHandle={sections.length === 1}
           startInRenameMode={section.id === autoRenameSectionId}
+          isDragging={sectionDragId === section.id}
+          dropAbove={sectionDropTarget?.id === section.id && sectionDropTarget.position === 'above'}
+          dropBelow={sectionDropTarget?.id === section.id && sectionDropTarget.position === 'below'}
+          onDragStart={handleSectionDragStart(section.id)}
+          onDragOver={handleSectionDragOver(section.id)}
+          onDragEnd={handleSectionDragEnd}
+          onDrop={handleSectionDrop}
           onToggleCollapse={() => toggleCollapse(section.id)}
           onRename={(name) => renameSection(section.id, name)}
           onDelete={() => setConfirmDelete(section)}
@@ -444,14 +517,14 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent }: ContentLi
             aria-labelledby="delete-section-title"
           >
             <div className="dialog__icon" aria-hidden="true">
-              <Trash size={32} color="var(--danger-500)" variant="Bold" />
+              <Danger size={72} color="var(--danger-500)" variant="Linear" />
             </div>
             <div className="dialog__info">
               <h2 id="delete-section-title" className="dialog__title">
-                Delete section?
+                Remove section?
               </h2>
               <p className="dialog__description">
-                This will delete <strong>{confirmDelete.name}</strong>
+                This will remove <strong>{confirmDelete.name}</strong>
                 {confirmDelete.itemKeys.length > 0
                   ? ` and its ${confirmDelete.itemKeys.length} lesson${confirmDelete.itemKeys.length === 1 ? '' : 's'}`
                   : ''}
@@ -471,7 +544,7 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent }: ContentLi
                 className="dialog__btn dialog__btn--filled-error"
                 onClick={() => deleteSection(confirmDelete)}
               >
-                Delete Section
+                Remove Section
               </button>
             </div>
           </div>

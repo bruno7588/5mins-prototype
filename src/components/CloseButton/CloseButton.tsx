@@ -1,17 +1,20 @@
+import type { MouseEventHandler } from 'react'
 import './CloseButton.css'
 
 interface CloseButtonProps {
   onClick?: () => void
+  onMouseDown?: MouseEventHandler<HTMLButtonElement>
   size?: number
   className?: string
   ariaLabel?: string
 }
 
-function CloseButton({ onClick, size = 24, className = '', ariaLabel = 'Close' }: CloseButtonProps) {
+function CloseButton({ onClick, onMouseDown, size = 24, className = '', ariaLabel = 'Close' }: CloseButtonProps) {
   return (
     <button
       className={`close-btn ${className}`.trim()}
       onClick={onClick}
+      onMouseDown={onMouseDown}
       aria-label={ariaLabel}
       type="button"
     >

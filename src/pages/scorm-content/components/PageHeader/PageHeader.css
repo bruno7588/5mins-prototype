@@ -75,13 +75,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
-  border-radius: var(--radius-xs);
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
   transition: background 150ms ease;
 }
 
 .page-header-close:hover {
-  background: var(--neutral-50);
+  background: var(--neutral-200);
 }
 
 /* Tabs */
