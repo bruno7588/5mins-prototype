@@ -3,6 +3,8 @@ import gsap from 'gsap'
 import {
   Add,
   ArrowDown2,
+  Edit2,
+  Trash,
 } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import MoreIcon from '../../../../components/icons/MoreIcon'
@@ -19,6 +21,7 @@ interface KebabItem {
   label: string
   onClick: () => void
   danger?: boolean
+  icon?: ReactNode
 }
 
 function KebabMenu({ items, ariaLabel = 'More actions' }: { items: KebabItem[]; ariaLabel?: string }) {
@@ -66,7 +69,8 @@ function KebabMenu({ items, ariaLabel = 'More actions' }: { items: KebabItem[]; 
                 it.onClick()
               }}
             >
-              {it.label}
+              {it.icon && <span className="kebab__item-icon" aria-hidden="true">{it.icon}</span>}
+              <span className="kebab__item-label">{it.label}</span>
             </button>
           ))}
         </div>
@@ -315,8 +319,17 @@ function CurriculumSection({
             <KebabMenu
               ariaLabel={`Actions for ${section.name}`}
               items={[
-                { label: 'Rename', onClick: startRename },
-                { label: 'Remove Section', onClick: onDelete, danger: true },
+                {
+                  label: 'Rename',
+                  onClick: startRename,
+                  icon: <Edit2 size={16} color="currentColor" variant="Linear" />,
+                },
+                {
+                  label: 'Remove Section',
+                  onClick: onDelete,
+                  danger: true,
+                  icon: <Trash size={16} color="currentColor" variant="Linear" />,
+                },
               ]}
             />
             <button
@@ -352,7 +365,7 @@ function CurriculumSection({
             onClick={onAddLesson}
           >
             <span>Add Content</span>
-            <Add size={16} color="currentColor" variant="Linear" />
+            <Add size={20} color="currentColor" variant="Linear" />
           </button>
         )}
       </div>

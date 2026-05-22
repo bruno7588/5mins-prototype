@@ -151,10 +151,12 @@
   opacity: 0.4;
 }
 
-/* Section reorder — live reorder, no decorative indicator */
-.curriculum-section--drop-above,
+/* Item drop adjacent to section (above/below as a LooseBlock) — yellow insertion line */
+.curriculum-section--drop-above {
+  box-shadow: 0 -2px 0 0 var(--selected);
+}
 .curriculum-section--drop-below {
-  /* no-op */
+  box-shadow: 0 2px 0 0 var(--selected);
 }
 
 /* Cross-container drop destination — section will receive an item from another container */
@@ -323,19 +325,20 @@
 }
 
 .curriculum-section__add-lesson {
+  /* Medium outlined button — DS spec: 10px 20px padding, 14px font, 20px icon */
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-s) var(--space-m);
+  gap: var(--space-s);
+  padding: 10px var(--space-ml);
   background: transparent;
   color: var(--primary-600);
   border: 1px solid var(--primary-600);
   border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.5;
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
@@ -405,6 +408,7 @@
 .kebab__item {
   display: flex;
   align-items: center;
+  gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   background: transparent;
   border: none;
@@ -417,6 +421,20 @@
   cursor: pointer;
   text-align: left;
   transition: background 150ms ease;
+}
+
+.kebab__item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.kebab__item-label {
+  flex: 1;
+  min-width: 0;
 }
 
 .kebab__item:hover {
