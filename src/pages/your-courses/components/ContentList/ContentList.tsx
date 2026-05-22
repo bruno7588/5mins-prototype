@@ -598,7 +598,7 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
         </div>
       )}
 
-      {sections.length > 0 && (
+      {!isEmpty && (
         <button type="button" className="curriculum-add-section" onClick={startCreate}>
           <span>Add Section</span>
           <Add size={20} color="currentColor" variant="Linear" />

@@ -438,33 +438,30 @@
 
 /* ── Add section CTA + inline creation ──────────────────────── */
 .curriculum-add-section {
-  display: flex;
+  align-self: flex-start;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: var(--space-xs);
-  width: 100%;
-  padding: var(--space-s);
-  background: var(--input-background);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
+  padding: var(--space-xs) 0;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
   cursor: pointer;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  transition: color 150ms ease;
 }
 
 .curriculum-add-section:hover {
-  background: var(--cards-background-hover);
-  color: var(--text-primary);
-  border-color: var(--border-hover);
+  color: var(--primary-700);
 }
 
 .curriculum-add-section:focus-visible {
   outline: 2px solid var(--primary-600);
   outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 /* ── Dialog (per design-system/overlays.md) ─────────────────── */
