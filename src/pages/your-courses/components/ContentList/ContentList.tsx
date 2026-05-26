@@ -201,7 +201,7 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
     setSections((prev) => {
       const cleaned = prev.map((s) => ({ ...s, itemKeys: s.itemKeys.filter(shouldKeep) }))
       if (newKeys.length === 0) return cleaned
-      const targetId = targetSectionId ?? cleaned[0]?.id
+      const targetId = targetSectionId ?? cleaned[cleaned.length - 1]?.id
       if (!targetId) return cleaned
       return cleaned.map((s) =>
         s.id === targetId ? { ...s, itemKeys: [...s.itemKeys, ...newKeys] } : s,
