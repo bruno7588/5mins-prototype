@@ -129,6 +129,19 @@
   box-shadow: none;
 }
 
+/* Chromeless: the only-default-section state. No header, no outer frame —
+   the section body acts as the page's flat list. */
+.curriculum-section--chromeless {
+  border: none;
+  border-radius: 0;
+}
+
+.curriculum-section--chromeless .curriculum-section__body {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
 .curriculum-section__header {
   /* align-items stays flex-start; GSAP tweens paddingTop on drag handle and info column
      to fake center-alignment in the expanded state and animate the shift on toggle. */
@@ -484,7 +497,7 @@
 }
 
 .curriculum-add-section:hover {
-  border-color: var(--primary-600);
+  border-color: var(--border-hover);
   color: var(--primary-700);
 }
 

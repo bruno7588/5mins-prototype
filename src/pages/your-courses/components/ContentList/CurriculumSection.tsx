@@ -96,6 +96,7 @@ interface CurriculumSectionProps {
   section: Section
   itemCount: number
   summary?: string
+  hideChrome?: boolean
   hideDragHandle?: boolean
   startInRenameMode?: boolean
   isDragging?: boolean
@@ -119,6 +120,7 @@ function CurriculumSection({
   section,
   itemCount,
   summary,
+  hideChrome = false,
   hideDragHandle = false,
   startInRenameMode = false,
   isDragging = false,
@@ -145,6 +147,7 @@ function CurriculumSection({
   const dragRef = useRef<HTMLDivElement>(null)
   const infoRef = useRef<HTMLDivElement>(null)
   const initialMountRef = useRef(true)
+  const prevHideChromeRef = useRef(hideChrome)
 
   // Header alignment tweens between center (expanded) and top-with-title (collapsed).
   // Header uses align-items: flex-start in CSS; we fake centering via paddingTop on the
@@ -254,6 +257,26 @@ function CurriculumSection({
     }
   }, [section.collapsed])
 
+  // Chrome just appeared (e.g., user added a 2nd section). Set initial header alignment
+  // without animation — refs were null while chromeless, so the regular collapse effect
+  // never set their paddingTop.
+  useEffect(() => {
+    if (!prevHideChromeRef.current || hideChrome) {
+      prevHideChromeRef.current = hideChrome
+      return
+    }
+    prevHideChromeRef.current = hideChrome
+    const drag = dragRef.current
+    const info = infoRef.current
+    const sub = summaryRef.current
+    if (drag) gsap.set(drag, { paddingTop: section.collapsed ? DRAG_PAD_COLLAPSED : DRAG_PAD_EXPANDED })
+    if (info) gsap.set(info, { paddingTop: section.collapsed ? INFO_PAD_COLLAPSED : INFO_PAD_EXPANDED })
+    if (sub) {
+      if (section.collapsed) gsap.set(sub, { height: 'auto', marginTop: 4, opacity: 1 })
+      else gsap.set(sub, { height: 0, marginTop: 0, opacity: 0, overflow: 'hidden' })
+    }
+  }, [hideChrome, section.collapsed])
+
   const startRename = () => {
     setDraft(section.name)
     setRenaming(true)
@@ -270,11 +293,12 @@ function CurriculumSection({
     setRenaming(false)
   }
 
-  const collapsed = !!section.collapsed
+  const collapsed = !hideChrome && !!section.collapsed
 
-  const draggable = !hideDragHandle && !renaming && !!onDragStart
+  const draggable = !hideChrome && !hideDragHandle && !renaming && !!onDragStart
   const classes = [
     'curriculum-section',
+    hideChrome && 'curriculum-section--chromeless',
     collapsed && 'curriculum-section--collapsed',
     isDragging && 'curriculum-section--dragging',
     dropAbove && 'curriculum-section--drop-above',
@@ -292,6 +316,7 @@ function CurriculumSection({
       onDragEnd={onDragEnd}
       onDrop={onDrop}
     >
+      {!hideChrome && (
       <header className="curriculum-section__header">
         {!hideDragHandle && <DragHandle innerRef={dragRef} />}
         {renaming ? (
@@ -366,6 +391,7 @@ function CurriculumSection({
           </>
         )}
       </header>
+      )}
 
       <div
         ref={bodyRef}

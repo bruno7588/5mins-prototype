@@ -15,28 +15,29 @@ export interface ContentItem {
   showEditIcon?: boolean
 }
 
-/* Unified blocks model — sections and loose items live in a single ordered list.
-   New additions append to the end, so "the bottom" is always whatever was added last. */
-interface SectionBlock {
-  kind: 'section'
+/* Sections-only model — every item lives in a section. A default "Section 1" is auto-created
+   so the user never starts in an empty/ambiguous state. When only that default section exists,
+   the header chrome is hidden so it visually behaves like a flat list. */
+interface Section {
   id: string
   name: string
   itemKeys: string[]
   collapsed: boolean
 }
 
-interface LooseBlock {
-  kind: 'loose'
-  itemKey: string
-}
-
-type Block = SectionBlock | LooseBlock
+const DEFAULT_SECTION_NAME = 'Section 1'
 
 function itemKey(item: ContentItem) {
   return `${item.type}-${item.id}`
 }
 
 const newSectionId = () => `s-${crypto.randomUUID()}`
+const makeDefaultSection = (): Section => ({
+  id: newSectionId(),
+  name: DEFAULT_SECTION_NAME,
+  itemKeys: [],
+  collapsed: false,
+})
 
 function ContentCardThumb({ item }: { item: ContentItem }) {
   const isAssessment = item.type === 'Assessment'
@@ -153,39 +154,24 @@ interface ContentListProps {
 }
 
 function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSectionId }: ContentListProps) {
-  // Item registry — itemKey → ContentItem
   const [itemsByKey, setItemsByKey] = useState<Record<string, ContentItem>>({})
+  const [sections, setSections] = useState<Section[]>(() => [makeDefaultSection()])
 
-  // Unified blocks: sections + loose items in a single ordered list
-  const [blocks, setBlocks] = useState<Block[]>([])
-
-  // Item drag state — same-container reorders mutate live; cross-container moves track a drop target and commit on drop
+  // Item drag — live-reorders within the same section; cross-section commits on drop
   const [dragKey, setDragKey] = useState<string | null>(null)
   const [dropTarget, setDropTarget] = useState<{ itemKey: string; position: 'above' | 'below' } | null>(null)
-  const [containerDropTarget, setContainerDropTarget] = useState<
-    { kind: 'section'; id: string } | { kind: 'loose' } | null
-  >(null)
-  // For dropping an item as a LooseBlock adjacent to a section (above/below the section card as a whole)
-  const [blockDropTarget, setBlockDropTarget] = useState<
-    { sectionId: string; position: 'above' | 'below' } | null
-  >(null)
+  const [containerDropTarget, setContainerDropTarget] = useState<string | null>(null) // sectionId
 
-  // Section drag state
+  // Section drag (reorder sections)
   const [sectionDragId, setSectionDragId] = useState<string | null>(null)
 
-  // Tracks the most-recently-created section so it can open in rename mode
   const [autoRenameSectionId, setAutoRenameSectionId] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<Section | null>(null)
 
-  // Delete confirmation
-  const [confirmDelete, setConfirmDelete] = useState<SectionBlock | null>(null)
-
-  // Toast
   const { toasts, show: showToast } = useToast()
-
   const prevExtraRef = useRef<string>(extraItems.map(itemKey).join(','))
 
-  // Sync extraItems into blocks. New items go to targetSectionId if set,
-  // otherwise they append as new LooseBlocks at the end (the visual bottom).
+  // Sync extraItems into sections. New items go to targetSectionId if set; otherwise the first section.
   useEffect(() => {
     const extraKey = extraItems.map(itemKey).join(',')
     if (extraKey === prevExtraRef.current) return
@@ -193,14 +179,8 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
 
     const extraSet = new Set(extraItems.map(itemKey))
     const existingKeys = new Set<string>()
-    for (const b of blocks) {
-      if (b.kind === 'section') b.itemKeys.forEach((k) => existingKeys.add(k))
-      else existingKeys.add(b.itemKey)
-    }
+    for (const s of sections) s.itemKeys.forEach((k) => existingKeys.add(k))
     const newKeys = extraItems.map(itemKey).filter((k) => !existingKeys.has(k))
-    const targetSection = targetSectionId
-      ? blocks.find((b): b is SectionBlock => b.kind === 'section' && b.id === targetSectionId)
-      : null
 
     // SCORM and Library lessons are extras-managed — drop them when they leave extras.
     const shouldKeep = (k: string) => {
@@ -218,26 +198,14 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
       return next
     })
 
-    setBlocks((prev) => {
-      // Drop departed extras (loose blocks for them, and from section itemKeys)
-      const cleaned: Block[] = []
-      for (const b of prev) {
-        if (b.kind === 'loose') {
-          if (shouldKeep(b.itemKey)) cleaned.push(b)
-        } else {
-          cleaned.push({ ...b, itemKeys: b.itemKeys.filter(shouldKeep) })
-        }
-      }
+    setSections((prev) => {
+      const cleaned = prev.map((s) => ({ ...s, itemKeys: s.itemKeys.filter(shouldKeep) }))
       if (newKeys.length === 0) return cleaned
-      if (targetSection) {
-        return cleaned.map((b) =>
-          b.kind === 'section' && b.id === targetSection.id
-            ? { ...b, itemKeys: [...b.itemKeys, ...newKeys] }
-            : b,
-        )
-      }
-      const newLoose: LooseBlock[] = newKeys.map((k) => ({ kind: 'loose', itemKey: k }))
-      return [...cleaned, ...newLoose]
+      const targetId = targetSectionId ?? cleaned[0]?.id
+      if (!targetId) return cleaned
+      return cleaned.map((s) =>
+        s.id === targetId ? { ...s, itemKeys: [...s.itemKeys, ...newKeys] } : s,
+      )
     })
   }, [extraItems, targetSectionId])
 
@@ -245,16 +213,12 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
 
   const startCreate = () => {
     const id = newSectionId()
-    const sectionCount = blocks.filter((b) => b.kind === 'section').length
-    const name = `Section ${sectionCount + 1}`
-    setBlocks((prev) => [...prev, { kind: 'section', id, name, itemKeys: [], collapsed: false }])
+    setSections((prev) => [...prev, { id, name: `Section ${prev.length + 1}`, itemKeys: [], collapsed: false }])
     setAutoRenameSectionId(id)
   }
 
   const renameSection = (id: string, name: string) => {
-    setBlocks((prev) =>
-      prev.map((b) => (b.kind === 'section' && b.id === id ? { ...b, name } : b)),
-    )
+    setSections((prev) => prev.map((s) => (s.id === id ? { ...s, name } : s)))
     if (autoRenameSectionId === id) {
       setAutoRenameSectionId(null)
     } else {
@@ -263,15 +227,10 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
   }
 
   const toggleCollapse = (id: string) => {
-    setBlocks((prev) =>
-      prev.map((b) =>
-        b.kind === 'section' && b.id === id ? { ...b, collapsed: !b.collapsed } : b,
-      ),
-    )
+    setSections((prev) => prev.map((s) => (s.id === id ? { ...s, collapsed: !s.collapsed } : s)))
   }
 
-  const deleteSection = (section: SectionBlock) => {
-    setBlocks((prev) => prev.filter((b) => !(b.kind === 'section' && b.id === section.id)))
+  const deleteSection = (section: Section) => {
     setItemsByKey((prev) => {
       const next = { ...prev }
       for (const k of section.itemKeys) {
@@ -283,6 +242,11 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
       }
       return next
     })
+    setSections((prev) => {
+      const next = prev.filter((s) => s.id !== section.id)
+      // Never leave the list section-less — the auto-default keeps the UI in a single mode.
+      return next.length === 0 ? [makeDefaultSection()] : next
+    })
     showToast('success', `Section "${section.name}" removed`)
     setConfirmDelete(null)
   }
@@ -292,13 +256,7 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
     if (item && (item.type === 'SCORM' || item.type === 'Assessment' || item.type === 'LibraryLesson')) {
       onDeleteExtra?.(item.id)
     }
-    setBlocks((prev) =>
-      prev
-        .filter((b) => !(b.kind === 'loose' && b.itemKey === key))
-        .map((b) =>
-          b.kind === 'section' ? { ...b, itemKeys: b.itemKeys.filter((k) => k !== key) } : b,
-        ),
-    )
+    setSections((prev) => prev.map((s) => ({ ...s, itemKeys: s.itemKeys.filter((k) => k !== key) })))
     setItemsByKey((prev) => {
       const next = { ...prev }
       delete next[key]
@@ -308,22 +266,12 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
 
   /* Drag-and-drop */
 
-  type Container = { kind: 'section'; id: string } | { kind: 'loose' }
-
-  const findContainer = (key: string): Container | null => {
-    for (const b of blocks) {
-      if (b.kind === 'section' && b.itemKeys.includes(key)) return { kind: 'section', id: b.id }
-      if (b.kind === 'loose' && b.itemKey === key) return { kind: 'loose' }
-    }
+  const findSectionId = (key: string): string | null => {
+    for (const s of sections) if (s.itemKeys.includes(key)) return s.id
     return null
   }
 
-  const sameContainer = (a: Container, b: Container) =>
-    a.kind === b.kind && (a.kind !== 'section' || a.id === (b as Container & { kind: 'section' }).id)
-
-  const handleDragStart = (key: string) => () => {
-    setDragKey(key)
-  }
+  const handleDragStart = (key: string) => () => setDragKey(key)
 
   const insertAt = (list: string[], anchor: string, position: 'above' | 'below', key: string) => {
     const idx = list.indexOf(anchor)
@@ -335,70 +283,31 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
   const handleDragOver = (overKey: string) => (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-
-    // Section being dragged over a loose item: reorder the section block past the loose block.
-    // Loose blocks and section blocks are siblings under .content-list, so this stays in the same DOM parent.
-    if (sectionDragId && !dragKey) {
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-      const midY = rect.top + rect.height / 2
-      const position: 'above' | 'below' = e.clientY < midY ? 'above' : 'below'
-      setBlocks((prev) => {
-        const dragIdx = prev.findIndex((b) => b.kind === 'section' && b.id === sectionDragId)
-        const overIdx = prev.findIndex((b) => b.kind === 'loose' && b.itemKey === overKey)
-        if (dragIdx === -1 || overIdx === -1) return prev
-        const next = [...prev]
-        const [dragged] = next.splice(dragIdx, 1)
-        if (!dragged) return prev
-        const newOverIdx = next.findIndex((b) => b.kind === 'loose' && b.itemKey === overKey)
-        const at = position === 'above' ? newOverIdx : newOverIdx + 1
-        next.splice(at, 0, dragged)
-        return next
-      })
-      return
-    }
-
     if (!dragKey || dragKey === overKey) return
-    const from = findContainer(dragKey)
-    const over = findContainer(overKey)
-    if (!from || !over) return
+    const fromId = findSectionId(dragKey)
+    const overId = findSectionId(overKey)
+    if (!fromId || !overId) return
 
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
     const midY = rect.top + rect.height / 2
     const position: 'above' | 'below' = e.clientY < midY ? 'above' : 'below'
 
-    if (sameContainer(from, over)) {
-      // Same DOM parent — safe to live-reorder without breaking the HTML5 drag.
+    if (fromId === overId) {
+      // Same section — live reorder; the dragged DOM node stays mounted, drag keeps going.
       const key = dragKey
-      if (from.kind === 'section') {
-        // Reorder within a section's itemKeys
-        setBlocks((prev) =>
-          prev.map((b) => {
-            if (b.kind !== 'section' || b.id !== from.id) return b
-            if (!b.itemKeys.includes(key)) return b
-            const without = b.itemKeys.filter((k) => k !== key)
-            if (!without.includes(overKey)) return b
-            return { ...b, itemKeys: insertAt(without, overKey, position, key) }
-          }),
-        )
-      } else {
-        // Reorder LooseBlocks within the blocks array (both blocks are siblings of .content-list)
-        setBlocks((prev) => {
-          const dragIdx = prev.findIndex((b) => b.kind === 'loose' && b.itemKey === key)
-          const overIdx = prev.findIndex((b) => b.kind === 'loose' && b.itemKey === overKey)
-          if (dragIdx === -1 || overIdx === -1) return prev
-          const next = [...prev]
-          const [dragged] = next.splice(dragIdx, 1)
-          if (!dragged) return prev
-          const newOverIdx = next.findIndex((b) => b.kind === 'loose' && b.itemKey === overKey)
-          const at = position === 'above' ? newOverIdx : newOverIdx + 1
-          next.splice(at, 0, dragged)
-          return next
-        })
-      }
+      setSections((prev) =>
+        prev.map((s) => {
+          if (s.id !== fromId) return s
+          if (!s.itemKeys.includes(key)) return s
+          const without = s.itemKeys.filter((k) => k !== key)
+          if (!without.includes(overKey)) return s
+          return { ...s, itemKeys: insertAt(without, overKey, position, key) }
+        }),
+      )
       setDropTarget(null)
       setContainerDropTarget(null)
     } else {
-      // Cross-container — defer to drop. Mutating now would unmount the dragged DOM node and cancel the drag.
+      // Cross-section — defer to drop; mutating now would unmount the dragged node and cancel the drag.
       setDropTarget({ itemKey: overKey, position })
       setContainerDropTarget(null)
     }
@@ -408,122 +317,60 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
     setDragKey(null)
     setDropTarget(null)
     setContainerDropTarget(null)
-    setBlockDropTarget(null)
   }
 
-  const handleContainerDragOver = (container: Container) => (e: React.DragEvent) => {
+  const handleContainerDragOver = (sectionId: string) => (e: React.DragEvent) => {
     if (!dragKey) return
     e.preventDefault()
-    const from = findContainer(dragKey)
-    if (!from || sameContainer(from, container)) return
-    setContainerDropTarget(container)
+    const fromId = findSectionId(dragKey)
+    if (!fromId || fromId === sectionId) return
+    setContainerDropTarget(sectionId)
     setDropTarget(null)
   }
 
-  const commitCrossContainerMove = () => {
+  const commitCrossSectionMove = () => {
     if (!dragKey) return
-    const from = findContainer(dragKey)
-    if (!from) return
+    const fromId = findSectionId(dragKey)
+    if (!fromId) return
     const key = dragKey
 
     if (dropTarget) {
-      const over = findContainer(dropTarget.itemKey)
-      if (!over || sameContainer(from, over)) return
+      const overId = findSectionId(dropTarget.itemKey)
+      if (!overId || fromId === overId) return
       const target = dropTarget
-      setBlocks((prev) => {
-        // 1. Remove the dragged key from its source
-        let next: Block[] = []
-        for (const b of prev) {
-          if (from.kind === 'section' && b.kind === 'section' && b.id === from.id) {
-            next.push({ ...b, itemKeys: b.itemKeys.filter((k) => k !== key) })
-          } else if (from.kind === 'loose' && b.kind === 'loose' && b.itemKey === key) {
-            // skip — remove this LooseBlock
-          } else {
-            next.push(b)
-          }
-        }
-        // 2. Insert into destination
-        if (over.kind === 'section') {
-          next = next.map((b) =>
-            b.kind === 'section' && b.id === over.id
-              ? { ...b, itemKeys: insertAt(b.itemKeys, target.itemKey, target.position, key) }
-              : b,
-          )
-        } else {
-          // Insert a new LooseBlock relative to the LooseBlock holding target.itemKey
-          const overIdx = next.findIndex((b) => b.kind === 'loose' && b.itemKey === target.itemKey)
-          if (overIdx === -1) return next
-          const at = target.position === 'above' ? overIdx : overIdx + 1
-          const newBlock: LooseBlock = { kind: 'loose', itemKey: key }
-          next = [...next.slice(0, at), newBlock, ...next.slice(at)]
-        }
-        return next
-      })
+      setSections((prev) =>
+        prev.map((s) => {
+          if (s.id === fromId) return { ...s, itemKeys: s.itemKeys.filter((k) => k !== key) }
+          if (s.id === overId) return { ...s, itemKeys: insertAt(s.itemKeys, target.itemKey, target.position, key) }
+          return s
+        }),
+      )
       return
     }
 
-    if (containerDropTarget) {
-      const dest = containerDropTarget
-      if (sameContainer(from, dest)) return
-      setBlocks((prev) => {
-        let next: Block[] = []
-        for (const b of prev) {
-          if (from.kind === 'section' && b.kind === 'section' && b.id === from.id) {
-            next.push({ ...b, itemKeys: b.itemKeys.filter((k) => k !== key) })
-          } else if (from.kind === 'loose' && b.kind === 'loose' && b.itemKey === key) {
-            // skip
-          } else {
-            next.push(b)
-          }
-        }
-        if (dest.kind === 'section') {
-          next = next.map((b) =>
-            b.kind === 'section' && b.id === dest.id ? { ...b, itemKeys: [...b.itemKeys, key] } : b,
-          )
-        } else {
-          next = [...next, { kind: 'loose', itemKey: key }]
-        }
-        return next
-      })
-      return
-    }
-
-    if (blockDropTarget) {
-      const { sectionId, position } = blockDropTarget
-      setBlocks((prev) => {
-        // Remove the dragged key from its source (section itemKeys or LooseBlock)
-        let next: Block[] = []
-        for (const b of prev) {
-          if (from.kind === 'section' && b.kind === 'section' && b.id === from.id) {
-            next.push({ ...b, itemKeys: b.itemKeys.filter((k) => k !== key) })
-          } else if (from.kind === 'loose' && b.kind === 'loose' && b.itemKey === key) {
-            // skip
-          } else {
-            next.push(b)
-          }
-        }
-        // Insert a new LooseBlock at the target position relative to the section
-        const sectionIdx = next.findIndex((b) => b.kind === 'section' && b.id === sectionId)
-        if (sectionIdx === -1) return next
-        const at = position === 'above' ? sectionIdx : sectionIdx + 1
-        const newBlock: LooseBlock = { kind: 'loose', itemKey: key }
-        return [...next.slice(0, at), newBlock, ...next.slice(at)]
-      })
+    if (containerDropTarget && containerDropTarget !== fromId) {
+      const destId = containerDropTarget
+      setSections((prev) =>
+        prev.map((s) => {
+          if (s.id === fromId) return { ...s, itemKeys: s.itemKeys.filter((k) => k !== key) }
+          if (s.id === destId) return { ...s, itemKeys: [...s.itemKeys, key] }
+          return s
+        }),
+      )
     }
   }
 
-  const handleContainerDrop = (_container: Container) => () => {
-    commitCrossContainerMove()
+  const handleContainerDrop = (_sectionId: string) => () => {
+    commitCrossSectionMove()
     handleDragEnd()
   }
 
   const handleDrop = () => {
-    commitCrossContainerMove()
+    commitCrossSectionMove()
     handleDragEnd()
   }
 
-  /* Section drag-and-drop — reorders a SectionBlock relative to another section in the blocks array.
-     Loose blocks between sections stay where they are. */
+  /* Section reorder */
 
   const handleSectionDragStart = (id: string) => (e: React.DragEvent) => {
     e.dataTransfer.effectAllowed = 'move'
@@ -531,54 +378,29 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
   }
 
   const handleSectionDragOver = (overId: string) => (e: React.DragEvent) => {
+    if (!sectionDragId || sectionDragId === overId) return
     e.preventDefault()
     e.stopPropagation()
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
     const midY = rect.top + rect.height / 2
     const position: 'above' | 'below' = e.clientY < midY ? 'above' : 'below'
 
-    if (sectionDragId) {
-      if (sectionDragId === overId) return
-      setBlocks((prev) => {
-        const dragIdx = prev.findIndex((b) => b.kind === 'section' && b.id === sectionDragId)
-        const overIdx = prev.findIndex((b) => b.kind === 'section' && b.id === overId)
-        if (dragIdx === -1 || overIdx === -1) return prev
-        const next = [...prev]
-        const [dragged] = next.splice(dragIdx, 1)
-        if (!dragged) return prev
-        const newOverIdx = next.findIndex((b) => b.kind === 'section' && b.id === overId)
-        const at = position === 'above' ? newOverIdx : newOverIdx + 1
-        next.splice(at, 0, dragged)
-        return next
-      })
-      return
-    }
-
-    if (dragKey) {
-      // Item dragged over a section header — drop will place it as a loose block adjacent to the section.
-      const from = findContainer(dragKey)
-      if (!from) return
-      // Skip if the dragged item already belongs to this section (would no-op)
-      setBlockDropTarget({ sectionId: overId, position })
-      setDropTarget(null)
-      setContainerDropTarget(null)
-    }
+    setSections((prev) => {
+      const dragIdx = prev.findIndex((s) => s.id === sectionDragId)
+      const overIdx = prev.findIndex((s) => s.id === overId)
+      if (dragIdx === -1 || overIdx === -1) return prev
+      const next = [...prev]
+      const [dragged] = next.splice(dragIdx, 1)
+      if (!dragged) return prev
+      const newOverIdx = next.findIndex((s) => s.id === overId)
+      const at = position === 'above' ? newOverIdx : newOverIdx + 1
+      next.splice(at, 0, dragged)
+      return next
+    })
   }
 
-  const handleSectionDragEnd = () => {
-    setSectionDragId(null)
-  }
-
-  const handleSectionDrop = () => {
-    // If an item was dragged over the section header, commit the adjacency move first.
-    if (dragKey && blockDropTarget) {
-      commitCrossContainerMove()
-      handleDragEnd()
-    }
-    handleSectionDragEnd()
-  }
-
-  const isEmpty = blocks.length === 0
+  const handleSectionDragEnd = () => setSectionDragId(null)
+  const handleSectionDrop = () => handleSectionDragEnd()
 
   const buildSummary = (itemKeys: string[]) => {
     let lessons = 0, assessments = 0, scorm = 0
@@ -596,9 +418,25 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
     return parts.length ? parts.join(' · ') : 'No content'
   }
 
+  // Chromeless mode: when the only section is the untitled default, hide its header so the
+  // page reads as a flat list. Renaming or adding a second section reveals the chrome.
+  // While autoRename is active on that section, force chrome so the rename input is visible.
+  const onlySection = sections.length === 1 ? sections[0] : null
+  const isFlatMode =
+    !!onlySection &&
+    onlySection.name === DEFAULT_SECTION_NAME &&
+    autoRenameSectionId !== onlySection.id
+  const showEmptyState = isFlatMode && onlySection!.itemKeys.length === 0
+
+  // "Add Section" from the empty state: reveal chrome on the default section and prompt rename.
+  const startSectioning = () => {
+    if (onlySection) setAutoRenameSectionId(onlySection.id)
+    else startCreate()
+  }
+
   return (
     <section className="content-list" onDragOver={(e) => e.preventDefault()}>
-      {isEmpty && (
+      {showEmptyState && (
         <div className="course-empty-state" role="status">
           <div className="course-empty-state__icon" aria-hidden="true">
             <Add size={72} color="var(--text-tertiary)" variant="Linear" />
@@ -613,14 +451,14 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
             <button
               type="button"
               className="course-empty-state__btn course-empty-state__btn--outlined"
-              onClick={startCreate}
+              onClick={startSectioning}
             >
               Add Section
             </button>
             <button
               type="button"
               className="course-empty-state__btn course-empty-state__btn--filled"
-              onClick={() => (onAddContent ? onAddContent() : startCreate())}
+              onClick={() => onAddContent?.(onlySection!.id)}
             >
               <span>Add Content</span>
               <Add size={20} color="currentColor" variant="Linear" />
@@ -629,85 +467,52 @@ function ContentList({ extraItems = [], onDeleteExtra, onAddContent, targetSecti
         </div>
       )}
 
-      {blocks.map((block) => {
-        if (block.kind === 'section') {
-          return (
-            <CurriculumSection
-              key={block.id}
-              section={{
-                id: block.id,
-                name: block.name,
-                items: [],
-                collapsed: block.collapsed,
-              }}
-              itemCount={block.itemKeys.length}
-              summary={buildSummary(block.itemKeys)}
-              hideDragHandle={blocks.length === 1}
-              startInRenameMode={block.id === autoRenameSectionId}
-              isDragging={sectionDragId === block.id}
-              dropAbove={
-                blockDropTarget?.sectionId === block.id && blockDropTarget.position === 'above'
-              }
-              dropBelow={
-                blockDropTarget?.sectionId === block.id && blockDropTarget.position === 'below'
-              }
-              onDragStart={handleSectionDragStart(block.id)}
-              onDragOver={handleSectionDragOver(block.id)}
-              onDragEnd={handleSectionDragEnd}
-              onDrop={handleSectionDrop}
-              onToggleCollapse={() => toggleCollapse(block.id)}
-              onRename={(name) => renameSection(block.id, name)}
-              onDelete={() =>
-                block.itemKeys.length === 0 ? deleteSection(block) : setConfirmDelete(block)
-              }
-              onAddLesson={onAddContent ? () => onAddContent(block.id) : undefined}
-              destinationActive={
-                containerDropTarget?.kind === 'section' && containerDropTarget.id === block.id
-              }
-              onBodyDragOver={handleContainerDragOver({ kind: 'section', id: block.id })}
-              onBodyDrop={handleContainerDrop({ kind: 'section', id: block.id })}
-            >
-              {block.itemKeys.map((key) => {
-                const item = itemsByKey[key]
-                if (!item) return null
-                return (
-                  <ContentCard
-                    key={key}
-                    item={item}
-                    onDelete={() => deleteItem(key)}
-                    isDragging={dragKey === key}
-                    dropAbove={dropTarget?.itemKey === key && dropTarget.position === 'above'}
-                    dropBelow={dropTarget?.itemKey === key && dropTarget.position === 'below'}
-                    onDragStart={handleDragStart(key)}
-                    onDragOver={handleDragOver(key)}
-                    onDragEnd={handleDragEnd}
-                    onDrop={handleDrop}
-                  />
-                )
-              })}
-            </CurriculumSection>
-          )
-        }
-        // LooseBlock — render as a top-level ContentCard
-        const item = itemsByKey[block.itemKey]
-        if (!item) return null
-        return (
-          <ContentCard
-            key={`loose-${block.itemKey}`}
-            item={item}
-            onDelete={() => deleteItem(block.itemKey)}
-            isDragging={dragKey === block.itemKey}
-            dropAbove={dropTarget?.itemKey === block.itemKey && dropTarget.position === 'above'}
-            dropBelow={dropTarget?.itemKey === block.itemKey && dropTarget.position === 'below'}
-            onDragStart={handleDragStart(block.itemKey)}
-            onDragOver={handleDragOver(block.itemKey)}
-            onDragEnd={handleDragEnd}
-            onDrop={handleDrop}
-          />
-        )
-      })}
+      {!showEmptyState && sections.map((section) => (
+        <CurriculumSection
+          key={section.id}
+          section={{ id: section.id, name: section.name, items: [], collapsed: section.collapsed }}
+          itemCount={section.itemKeys.length}
+          summary={buildSummary(section.itemKeys)}
+          hideChrome={isFlatMode}
+          hideDragHandle={sections.length === 1}
+          startInRenameMode={section.id === autoRenameSectionId}
+          isDragging={sectionDragId === section.id}
+          onDragStart={handleSectionDragStart(section.id)}
+          onDragOver={handleSectionDragOver(section.id)}
+          onDragEnd={handleSectionDragEnd}
+          onDrop={handleSectionDrop}
+          onToggleCollapse={() => toggleCollapse(section.id)}
+          onRename={(name) => renameSection(section.id, name)}
+          onDelete={() =>
+            section.itemKeys.length === 0 ? deleteSection(section) : setConfirmDelete(section)
+          }
+          onAddLesson={onAddContent ? () => onAddContent(section.id) : undefined}
+          destinationActive={containerDropTarget === section.id}
+          onBodyDragOver={handleContainerDragOver(section.id)}
+          onBodyDrop={handleContainerDrop(section.id)}
+        >
+          {section.itemKeys.map((key) => {
+            const item = itemsByKey[key]
+            if (!item) return null
+            return (
+              <ContentCard
+                key={key}
+                item={item}
+                onDelete={() => deleteItem(key)}
+                isDragging={dragKey === key}
+                dropAbove={dropTarget?.itemKey === key && dropTarget.position === 'above'}
+                dropBelow={dropTarget?.itemKey === key && dropTarget.position === 'below'}
+                onDragStart={handleDragStart(key)}
+                onDragOver={handleDragOver(key)}
+                onDragEnd={handleDragEnd}
+                onDrop={handleDrop}
+              />
+            )
+          })}
+        </CurriculumSection>
+      ))}
 
-      {!isEmpty && (
+      {!showEmptyState && (
         <button type="button" className="curriculum-add-section" onClick={startCreate}>
           <span>Add Section</span>
           <Add size={20} color="currentColor" variant="Linear" />
