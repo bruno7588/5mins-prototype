@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { PlayCircle } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Search from '../../../../components/Search/Search'
@@ -86,38 +86,17 @@ export const libraryLessons: LibraryLesson[] = [
   },
 ]
 
-interface Props {
-  open: boolean
+interface ContentProps {
   onClose: () => void
   addedIds: Set<number>
   onAdd: (lesson: LibraryLesson) => void
   onRemove: (id: number) => void
-  withSidebar?: boolean
 }
 
-function LibraryDrawer({ open, onClose, addedIds, onAdd, onRemove, withSidebar = false }: Props) {
-  const [closing, setClosing] = useState(false)
+/* Inner content only — no overlay/shell. Mount inside a shared drawer shell
+   (see ContentDrawer) so swapping between content types doesn't re-animate. */
+export function LibraryDrawerContent({ onClose, addedIds, onAdd, onRemove }: ContentProps) {
   const [search, setSearch] = useState('')
-
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(() => {
-      setClosing(false)
-      onClose()
-    }, 300)
-  }
-
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
-
-  if (!open) return null
 
   const query = search.trim().toLowerCase()
   const filtered = query
@@ -130,85 +109,71 @@ function LibraryDrawer({ open, onClose, addedIds, onAdd, onRemove, withSidebar =
 
   return (
     <>
-      <div
-        className={`overlay-backdrop${closing ? ' overlay-backdrop--closing' : ''}${withSidebar ? ' overlay-backdrop--with-sidebar' : ''}`}
-        onClick={handleClose}
-        aria-hidden="true"
-      />
-      <aside
-        className={`side-drawer library-drawer${closing ? ' side-drawer--closing' : ''}${withSidebar ? ' side-drawer--with-sidebar' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="library-drawer-title"
-      >
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <div className="library-drawer__headline">
-              <h2 id="library-drawer-title" className="library-drawer__title">
-                Add lessons from 5Mins library
-              </h2>
-              <p className="library-drawer__subtitle">
-                Explore from 20,000+ lessons designed for your team's growth
-              </p>
-            </div>
-            <CloseButton onClick={handleClose} />
+      <div className="side-drawer__header">
+        <div className="side-drawer__headline">
+          <div className="library-drawer__headline">
+            <h2 id="content-drawer-title" className="library-drawer__title">
+              Add lessons from 5Mins library
+            </h2>
+            <p className="library-drawer__subtitle">
+              Explore from 20,000+ lessons designed for your team's growth
+            </p>
           </div>
+          <CloseButton onClick={onClose} />
         </div>
+      </div>
 
-        <div className="library-drawer__search">
-          <Search
-            size="M"
-            value={search}
-            placeholder="Search the 5Mins library"
-            onChange={setSearch}
-            ariaLabel="Search 5Mins library"
-          />
-        </div>
+      <div className="library-drawer__search">
+        <Search
+          size="M"
+          value={search}
+          placeholder="Search the 5Mins library"
+          onChange={setSearch}
+          ariaLabel="Search 5Mins library"
+        />
+      </div>
 
-        <div className="side-drawer__content library-drawer__list">
-          {filtered.length === 0 ? (
-            <p className="library-drawer__empty">No lessons match your search.</p>
-          ) : (
-            filtered.map((lesson) => {
-              const isAdded = addedIds.has(lesson.id)
-              return (
-                <article key={lesson.id} className="library-lesson">
-                  <div className="library-lesson__thumb" style={{ background: lesson.thumbColor }}>
-                    <span className="library-lesson__tag" aria-hidden="true">
-                      <PlayCircle size={16} color="var(--text-tertiary)" variant="Bold" />
-                    </span>
-                  </div>
-                  <div className="library-lesson__info">
-                    <h3 className="library-lesson__title">{lesson.title}</h3>
-                    <p className="library-lesson__meta">
-                      {lesson.instructor} · {lesson.durationLabel}
-                    </p>
-                  </div>
-                  {isAdded ? (
-                    <button
-                      type="button"
-                      className="library-lesson__btn library-lesson__btn--remove"
-                      onClick={() => onRemove(lesson.id)}
-                    >
-                      Remove
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="library-lesson__btn library-lesson__btn--add"
-                      onClick={() => onAdd(lesson)}
-                    >
-                      Add
-                    </button>
-                  )}
-                </article>
-              )
-            })
-          )}
-        </div>
-      </aside>
+      <div className="side-drawer__content library-drawer__list">
+        {filtered.length === 0 ? (
+          <p className="library-drawer__empty">No lessons match your search.</p>
+        ) : (
+          filtered.map((lesson) => {
+            const isAdded = addedIds.has(lesson.id)
+            return (
+              <article key={lesson.id} className="library-lesson">
+                <div className="library-lesson__thumb" style={{ background: lesson.thumbColor }}>
+                  <span className="library-lesson__tag" aria-hidden="true">
+                    <PlayCircle size={16} color="var(--text-tertiary)" variant="Bold" />
+                  </span>
+                </div>
+                <div className="library-lesson__info">
+                  <h3 className="library-lesson__title">{lesson.title}</h3>
+                  <p className="library-lesson__meta">
+                    {lesson.instructor} · {lesson.durationLabel}
+                  </p>
+                </div>
+                {isAdded ? (
+                  <button
+                    type="button"
+                    className="library-lesson__btn library-lesson__btn--remove"
+                    onClick={() => onRemove(lesson.id)}
+                  >
+                    Remove
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="library-lesson__btn library-lesson__btn--add"
+                    onClick={() => onAdd(lesson)}
+                  >
+                    Add
+                  </button>
+                )}
+              </article>
+            )
+          })
+        )}
+      </div>
     </>
   )
 }
-
-export default LibraryDrawer

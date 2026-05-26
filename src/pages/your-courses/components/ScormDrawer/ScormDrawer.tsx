@@ -37,96 +37,77 @@ export const scormFiles: ScormFile[] = [
   },
 ]
 
-interface ScormDrawerProps {
+interface ContentProps {
   onClose: () => void
   addedIds: Set<number>
   onAdd: (file: ScormFile) => void
   onRemove: (id: number) => void
-  withSidebar?: boolean
 }
 
-function ScormDrawer({ onClose, addedIds, onAdd, onRemove, withSidebar = false }: ScormDrawerProps) {
+/* Inner content only — no overlay/shell. Mount inside a shared drawer shell
+   (see ContentDrawer) so swapping between content types doesn't re-animate. */
+export function ScormDrawerContent({ onClose, addedIds, onAdd, onRemove }: ContentProps) {
   const [search, setSearch] = useState('')
-  const [closing, setClosing] = useState(false)
-
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(onClose, 300)
-  }
 
   const filtered = scormFiles.filter((f) =>
     f.fileName.toLowerCase().includes(search.toLowerCase())
   )
 
   return (
-    <div
-      className={`scorm-drawer-overlay${closing ? ' scorm-drawer-overlay--closing' : ''}${withSidebar ? ' scorm-drawer-overlay--with-sidebar' : ''}`}
-      onClick={handleClose}
-    >
-      <aside
-        className={`scorm-drawer${closing ? ' scorm-drawer--closing' : ''}${withSidebar ? ' scorm-drawer--with-sidebar' : ''}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <CloseButton onClick={handleClose} className="scorm-drawer-close" />
+    <>
+      <CloseButton onClick={onClose} className="scorm-drawer-close" />
 
-        {/* Header */}
-        <div className="scorm-drawer-header">
-          <h3 className="scorm-drawer-title">Add SCORM files</h3>
-          <p className="scorm-drawer-subtitle">
-            Add from the list of SCORM files you've already published.{' '}
-            <a className="scorm-drawer-upload-link" href="#">Upload New SCORM</a>
-          </p>
-        </div>
+      <div className="scorm-drawer-header">
+        <h3 className="scorm-drawer-title">Add SCORM files</h3>
+        <p className="scorm-drawer-subtitle">
+          Add from the list of SCORM files you've already published.{' '}
+          <a className="scorm-drawer-upload-link" href="#">Upload New SCORM</a>
+        </p>
+      </div>
 
-        {/* Search */}
-        <div className="scorm-drawer-search">
-          <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
-          <input
-            type="text"
-            placeholder="Search in your content library"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+      <div className="scorm-drawer-search">
+        <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
+        <input
+          type="text"
+          placeholder="Search in your content library"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
 
-        {/* Table */}
-        <table className="scorm-drawer-table">
-          <thead>
-            <tr>
-              <th>File name</th>
-              <th>Type</th>
-              <th></th>
+      <table className="scorm-drawer-table">
+        <thead>
+          <tr>
+            <th>File name</th>
+            <th>Type</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {filtered.map((file) => (
+            <tr key={file.id}>
+              <td>
+                <div className="scorm-drawer-file">
+                  <div className="scorm-drawer-thumb" style={{ background: file.thumbColor }} />
+                  <span className="scorm-drawer-filename">{file.fileName}</span>
+                </div>
+              </td>
+              <td className="scorm-drawer-type">{file.type}</td>
+              <td>
+                {addedIds.has(file.id) ? (
+                  <button className="scorm-drawer-btn scorm-drawer-btn--remove" onClick={() => onRemove(file.id)}>
+                    Remove
+                  </button>
+                ) : (
+                  <button className="scorm-drawer-btn scorm-drawer-btn--add" onClick={() => onAdd(file)}>
+                    Add
+                  </button>
+                )}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {filtered.map((file) => (
-              <tr key={file.id}>
-                <td>
-                  <div className="scorm-drawer-file">
-                    <div className="scorm-drawer-thumb" style={{ background: file.thumbColor }} />
-                    <span className="scorm-drawer-filename">{file.fileName}</span>
-                  </div>
-                </td>
-                <td className="scorm-drawer-type">{file.type}</td>
-                <td>
-                  {addedIds.has(file.id) ? (
-                    <button className="scorm-drawer-btn scorm-drawer-btn--remove" onClick={() => onRemove(file.id)}>
-                      Remove
-                    </button>
-                  ) : (
-                    <button className="scorm-drawer-btn scorm-drawer-btn--add" onClick={() => onAdd(file)}>
-                      Add
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </aside>
-    </div>
+          ))}
+        </tbody>
+      </table>
+    </>
   )
 }
-
-export default ScormDrawer

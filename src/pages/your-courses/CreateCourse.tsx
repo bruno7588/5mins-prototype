@@ -4,10 +4,11 @@ import ContentList from './components/ContentList/ContentList'
 import type { ContentItem } from './components/ContentList/ContentList'
 import AddContentSidebar from './components/AddContentSidebar/AddContentSidebar'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
-import ScormDrawer, { type ScormFile } from './components/ScormDrawer/ScormDrawer'
+import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
+import ContentDrawer from './components/ContentDrawer/ContentDrawer'
 import AssessmentModal from './components/AssessmentModal/AssessmentModal'
 import type { AssessmentData } from './components/AssessmentModal/AssessmentModal'
-import LibraryDrawer, { type LibraryLesson } from './components/LibraryDrawer/LibraryDrawer'
+import type { LibraryLesson } from './components/LibraryDrawer/LibraryDrawer'
 
 const assessmentLabels: Record<AssessmentType, string> = {
   'multiple-choice': 'Multiple Choice',
@@ -140,23 +141,16 @@ function CreateCourse() {
           />
         )}
       </div>
-      <LibraryDrawer
-        open={activeDrawer === 'library'}
+      <ContentDrawer
+        activeDrawer={activeDrawer}
         onClose={closeDrawer}
-        addedIds={addedLibraryIds}
-        onAdd={handleAddLibraryLesson}
-        onRemove={handleRemoveLibraryLesson}
-        withSidebar
+        libraryAddedIds={addedLibraryIds}
+        onLibraryAdd={handleAddLibraryLesson}
+        onLibraryRemove={handleRemoveLibraryLesson}
+        scormAddedIds={addedScormIds}
+        onScormAdd={handleAddScorm}
+        onScormRemove={handleRemoveScorm}
       />
-      {activeDrawer === 'scorm' && (
-        <ScormDrawer
-          onClose={closeDrawer}
-          addedIds={addedScormIds}
-          onAdd={handleAddScorm}
-          onRemove={handleRemoveScorm}
-          withSidebar
-        />
-      )}
     </>
   )
 }
