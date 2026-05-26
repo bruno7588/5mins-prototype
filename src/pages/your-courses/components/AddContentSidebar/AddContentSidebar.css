@@ -18,6 +18,8 @@
   min-width: 60px;
   padding: var(--space-s) 0;
   align-items: center;
+  /* Sit above any open drawer/backdrop so the icon strip stays visible. */
+  z-index: 1002;
 }
 
 .add-content-sidebar--collapsed .add-content-menu-item {
