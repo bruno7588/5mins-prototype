@@ -37,7 +37,7 @@
 
 /* When rendered alongside a collapsed icons-only sidebar (CreateCourse pattern),
    the drawer and backdrop stop at the sidebar's left edge so the icons stay visible. */
-.overlay-backdrop.overlay-backdrop--with-sidebar { right: 60px; left: 0; top: 0; bottom: 0; inset: auto; }
+.overlay-backdrop.overlay-backdrop--with-sidebar { inset: auto; top: 0; right: 60px; bottom: 0; left: 0; }
 .side-drawer.side-drawer--with-sidebar { right: 60px; }
 
 /* Header (member chip + close, divider below) */

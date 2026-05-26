@@ -8,7 +8,7 @@
 }
 
 /* When alongside a collapsed sidebar, leave a 60px gap on the right for the icons strip. */
-.scorm-drawer-overlay.scorm-drawer-overlay--with-sidebar { right: 60px; left: 0; top: 0; bottom: 0; inset: auto; }
+.scorm-drawer-overlay.scorm-drawer-overlay--with-sidebar { inset: auto; top: 0; right: 60px; bottom: 0; left: 0; }
 .scorm-drawer.scorm-drawer--with-sidebar { right: 60px; }
 
 @keyframes scorm-overlay-fade {

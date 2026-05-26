@@ -12,20 +12,26 @@
   transition: width 300ms ease, min-width 300ms ease, padding 300ms ease;
 }
 
-/* Collapsed icon-only mode */
-.add-content-sidebar--collapsed {
+/* Collapsed icon-only mode — matches Figma 8126:112802 (Menu).
+   Container: pl 8 py 8, items aligned to start; items: 12/16 padding around 20px icon.
+   Double-class selector to outrank the duplicate `.add-content-sidebar` rule in
+   scorm-content/AddContentSidebar.css which gets bundled globally and would otherwise
+   override our width via source order. */
+.add-content-sidebar.add-content-sidebar--collapsed {
   width: 60px;
   min-width: 60px;
-  padding: var(--space-s) 0;
-  align-items: center;
+  padding: var(--space-s);
+  padding-right: 0;
+  align-items: flex-start;
   /* Sit above any open drawer/backdrop so the icon strip stays visible. */
   z-index: 1002;
 }
 
-.add-content-sidebar--collapsed .add-content-menu-item {
+.add-content-sidebar.add-content-sidebar--collapsed .add-content-menu-item {
   width: auto;
-  justify-content: center;
   padding: var(--space-sm) var(--space-m);
+  justify-content: center;
+  align-items: center;
   position: relative;
 }
 
@@ -91,11 +97,6 @@
 
 .add-content-menu-item:hover {
   background: var(--neutral-50);
-}
-
-.add-content-menu-item--active,
-.add-content-menu-item--active:hover {
-  background: rgba(255, 187, 56, 0.15);
 }
 
 .add-content-menu-item--active .add-content-menu-item-icon {

@@ -2,6 +2,7 @@ import { useState, type ReactElement, type ReactNode } from 'react'
 
 interface AddContentMenuItemProps {
   icon: ReactElement
+  activeIcon?: ReactElement
   label: string
   hasDropdown?: boolean
   children?: ReactNode
@@ -10,7 +11,7 @@ interface AddContentMenuItemProps {
   active?: boolean
 }
 
-function AddContentMenuItem({ icon, label, hasDropdown, children, onClick, collapsed, active }: AddContentMenuItemProps) {
+function AddContentMenuItem({ icon, activeIcon, label, hasDropdown, children, onClick, collapsed, active }: AddContentMenuItemProps) {
   const [expanded, setExpanded] = useState(false)
 
   const handleClick = () => {
@@ -28,7 +29,7 @@ function AddContentMenuItem({ icon, label, hasDropdown, children, onClick, colla
         onClick={handleClick}
         data-tooltip={collapsed ? label : undefined}
       >
-        <span className="add-content-menu-item-icon">{icon}</span>
+        <span className="add-content-menu-item-icon">{active && activeIcon ? activeIcon : icon}</span>
         {!collapsed && <span className="add-content-menu-item-label">{label}</span>}
         {hasDropdown && !collapsed && (
           <svg

@@ -44,6 +44,7 @@ function AddContentSidebar({ addedScormIds, onAddScorm, onRemoveScorm, collapsed
 
       <AddContentMenuItem
         icon={<Book1 size={iconSize} color={iconColor} variant="Linear" />}
+        activeIcon={<Book1 size={iconSize} color={iconColor} variant="Bold" />}
         label="5Mins Library"
         onClick={onLibraryClick}
         collapsed={isCollapsed}
@@ -61,6 +62,7 @@ function AddContentSidebar({ addedScormIds, onAddScorm, onRemoveScorm, collapsed
       />
       <AddContentMenuItem
         icon={<DocumentCode size={iconSize} color={iconColor} variant="Linear" />}
+        activeIcon={<DocumentCode size={iconSize} color={iconColor} variant="Bold" />}
         label="SCORM"
         onClick={() => setShowScormDrawer(true)}
         collapsed={isCollapsed}
