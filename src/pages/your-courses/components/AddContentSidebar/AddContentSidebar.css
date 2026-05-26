@@ -91,6 +91,15 @@
   background: var(--neutral-50);
 }
 
+.add-content-menu-item--active,
+.add-content-menu-item--active:hover {
+  background: rgba(255, 187, 56, 0.15);
+}
+
+.add-content-menu-item--active .add-content-menu-item-icon {
+  color: var(--selected);
+}
+
 .add-content-menu-item-icon {
   display: flex;
   align-items: center;

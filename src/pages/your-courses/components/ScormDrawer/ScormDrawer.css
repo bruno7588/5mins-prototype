@@ -7,6 +7,10 @@
   animation: scorm-overlay-fade 250ms ease;
 }
 
+/* When alongside a collapsed sidebar, leave a 60px gap on the right for the icons strip. */
+.scorm-drawer-overlay--with-sidebar { inset: 0 60px 0 0; }
+.scorm-drawer--with-sidebar { right: 60px; }
+
 @keyframes scorm-overlay-fade {
   from { opacity: 0; }
   to { opacity: 1; }

@@ -7,9 +7,10 @@ interface AddContentMenuItemProps {
   children?: ReactNode
   onClick?: () => void
   collapsed?: boolean
+  active?: boolean
 }
 
-function AddContentMenuItem({ icon, label, hasDropdown, children, onClick, collapsed }: AddContentMenuItemProps) {
+function AddContentMenuItem({ icon, label, hasDropdown, children, onClick, collapsed, active }: AddContentMenuItemProps) {
   const [expanded, setExpanded] = useState(false)
 
   const handleClick = () => {
@@ -22,7 +23,11 @@ function AddContentMenuItem({ icon, label, hasDropdown, children, onClick, colla
 
   return (
     <>
-      <button className="add-content-menu-item" onClick={handleClick} data-tooltip={collapsed ? label : undefined}>
+      <button
+        className={`add-content-menu-item${active ? ' add-content-menu-item--active' : ''}`}
+        onClick={handleClick}
+        data-tooltip={collapsed ? label : undefined}
+      >
         <span className="add-content-menu-item-icon">{icon}</span>
         {!collapsed && <span className="add-content-menu-item-label">{label}</span>}
         {hasDropdown && !collapsed && (

@@ -92,9 +92,10 @@ interface Props {
   addedIds: Set<number>
   onAdd: (lesson: LibraryLesson) => void
   onRemove: (id: number) => void
+  withSidebar?: boolean
 }
 
-function LibraryDrawer({ open, onClose, addedIds, onAdd, onRemove }: Props) {
+function LibraryDrawer({ open, onClose, addedIds, onAdd, onRemove, withSidebar = false }: Props) {
   const [closing, setClosing] = useState(false)
   const [search, setSearch] = useState('')
 
@@ -130,12 +131,12 @@ function LibraryDrawer({ open, onClose, addedIds, onAdd, onRemove }: Props) {
   return (
     <>
       <div
-        className={`overlay-backdrop${closing ? ' overlay-backdrop--closing' : ''}`}
+        className={`overlay-backdrop${closing ? ' overlay-backdrop--closing' : ''}${withSidebar ? ' overlay-backdrop--with-sidebar' : ''}`}
         onClick={handleClose}
         aria-hidden="true"
       />
       <aside
-        className={`side-drawer library-drawer${closing ? ' side-drawer--closing' : ''}`}
+        className={`side-drawer library-drawer${closing ? ' side-drawer--closing' : ''}${withSidebar ? ' side-drawer--with-sidebar' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="library-drawer-title"

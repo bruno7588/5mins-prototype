@@ -42,9 +42,10 @@ interface ScormDrawerProps {
   addedIds: Set<number>
   onAdd: (file: ScormFile) => void
   onRemove: (id: number) => void
+  withSidebar?: boolean
 }
 
-function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
+function ScormDrawer({ onClose, addedIds, onAdd, onRemove, withSidebar = false }: ScormDrawerProps) {
   const [search, setSearch] = useState('')
   const [closing, setClosing] = useState(false)
 
@@ -58,8 +59,14 @@ function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
   )
 
   return (
-    <div className={`scorm-drawer-overlay${closing ? ' scorm-drawer-overlay--closing' : ''}`} onClick={handleClose}>
-      <aside className={`scorm-drawer${closing ? ' scorm-drawer--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`scorm-drawer-overlay${closing ? ' scorm-drawer-overlay--closing' : ''}${withSidebar ? ' scorm-drawer-overlay--with-sidebar' : ''}`}
+      onClick={handleClose}
+    >
+      <aside
+        className={`scorm-drawer${closing ? ' scorm-drawer--closing' : ''}${withSidebar ? ' scorm-drawer--with-sidebar' : ''}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Close button */}
         <CloseButton onClick={handleClose} className="scorm-drawer-close" />
 

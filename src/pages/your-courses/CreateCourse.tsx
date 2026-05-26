@@ -117,6 +117,8 @@ function CreateCourse() {
             addedScormIds={addedScormIds}
             onAddScorm={handleAddScorm}
             onRemoveScorm={handleRemoveScorm}
+            collapsed={libraryDrawerOpen}
+            libraryDrawerOpen={libraryDrawerOpen}
             onAssessmentClick={(type) => setAssessmentModal({ type })}
             onLibraryClick={() => openLibraryDrawer()}
           />
@@ -145,6 +147,7 @@ function CreateCourse() {
         addedIds={addedLibraryIds}
         onAdd={handleAddLibraryLesson}
         onRemove={handleRemoveLibraryLesson}
+        withSidebar
       />
     </>
   )
