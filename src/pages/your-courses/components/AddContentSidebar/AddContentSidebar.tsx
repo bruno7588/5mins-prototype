@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Book1,
   FolderOpen,
@@ -13,71 +12,63 @@ import {
   Chart,
 } from 'iconsax-react'
 import AddContentMenuItem from './AddContentMenuItem'
-import ScormDrawer, { type ScormFile } from '../ScormDrawer/ScormDrawer'
 import './AddContentSidebar.css'
 
 const iconSize = 20
 const iconColor = 'currentColor'
 
 export type AssessmentType = 'multiple-choice' | 'short-text' | 'exercise' | 'poll'
+export type ActiveDrawer = 'library' | 'scorm' | null
 
 interface AddContentSidebarProps {
-  addedScormIds: Set<number>
-  onAddScorm: (file: ScormFile) => void
-  onRemoveScorm: (id: number) => void
   collapsed?: boolean
-  libraryDrawerOpen?: boolean
+  activeDrawer?: ActiveDrawer
   onAssessmentClick?: (type: AssessmentType) => void
   onLibraryClick?: () => void
+  onScormClick?: () => void
 }
 
-function AddContentSidebar({ addedScormIds, onAddScorm, onRemoveScorm, collapsed, libraryDrawerOpen, onAssessmentClick, onLibraryClick }: AddContentSidebarProps) {
-  const [showScormDrawer, setShowScormDrawer] = useState(false)
-
-  // Self-collapse when the internal SCORM drawer opens, so the drawer has space and
-  // the sidebar shows icons-only on the right edge.
-  const isCollapsed = collapsed || showScormDrawer
-
+function AddContentSidebar({ collapsed, activeDrawer = null, onAssessmentClick, onLibraryClick, onScormClick }: AddContentSidebarProps) {
   return (
-    <aside className={`add-content-sidebar${isCollapsed ? ' add-content-sidebar--collapsed' : ''}`}>
-      {!isCollapsed && <h4 className="add-content-sidebar-title">Add Content</h4>}
+    <aside className={`add-content-sidebar${collapsed ? ' add-content-sidebar--collapsed' : ''}`}>
+      {!collapsed && <h4 className="add-content-sidebar-title">Add Content</h4>}
 
       <AddContentMenuItem
         icon={<Book1 size={iconSize} color={iconColor} variant="Linear" />}
         activeIcon={<Book1 size={iconSize} color={iconColor} variant="Bold" />}
         label="5Mins Library"
         onClick={onLibraryClick}
-        collapsed={isCollapsed}
-        active={libraryDrawerOpen}
+        collapsed={collapsed}
+        active={activeDrawer === 'library'}
       />
       <AddContentMenuItem
         icon={<FolderOpen size={iconSize} color={iconColor} variant="Linear" />}
         label="Your Content"
-        collapsed={isCollapsed}
+        collapsed={collapsed}
       />
       <AddContentMenuItem
         icon={<Link1 size={iconSize} color={iconColor} variant="Linear" />}
         label="Embed Links"
-        collapsed={isCollapsed}
+        collapsed={collapsed}
       />
       <AddContentMenuItem
         icon={<DocumentCode size={iconSize} color={iconColor} variant="Linear" />}
         activeIcon={<DocumentCode size={iconSize} color={iconColor} variant="Bold" />}
         label="SCORM"
-        onClick={() => setShowScormDrawer(true)}
-        collapsed={isCollapsed}
-        active={showScormDrawer}
+        onClick={onScormClick}
+        collapsed={collapsed}
+        active={activeDrawer === 'scorm'}
       />
       <AddContentMenuItem
         icon={<Calendar size={iconSize} color={iconColor} variant="Linear" />}
         label="Events"
-        collapsed={isCollapsed}
+        collapsed={collapsed}
       />
       <AddContentMenuItem
         icon={<Edit size={iconSize} color={iconColor} variant="Linear" />}
         label="Assessments"
         hasDropdown
-        collapsed={isCollapsed}
+        collapsed={collapsed}
       >
         <AddContentMenuItem
           icon={<MessageText size={iconSize} color={iconColor} variant="Linear" />}
@@ -103,18 +94,9 @@ function AddContentSidebar({ addedScormIds, onAddScorm, onRemoveScorm, collapsed
       <AddContentMenuItem
         icon={<DocumentText size={iconSize} color={iconColor} variant="Linear" />}
         label="Resources"
-        collapsed={isCollapsed}
+        collapsed={collapsed}
       />
 
-      {showScormDrawer && (
-        <ScormDrawer
-          onClose={() => setShowScormDrawer(false)}
-          addedIds={addedScormIds}
-          onAdd={onAddScorm}
-          onRemove={onRemoveScorm}
-          withSidebar
-        />
-      )}
     </aside>
   )
 }

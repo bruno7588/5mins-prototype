@@ -4,7 +4,7 @@ import ContentList from './components/ContentList/ContentList'
 import type { ContentItem } from './components/ContentList/ContentList'
 import AddContentSidebar from './components/AddContentSidebar/AddContentSidebar'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
-import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
+import ScormDrawer, { type ScormFile } from './components/ScormDrawer/ScormDrawer'
 import AssessmentModal from './components/AssessmentModal/AssessmentModal'
 import type { AssessmentData } from './components/AssessmentModal/AssessmentModal'
 import LibraryDrawer, { type LibraryLesson } from './components/LibraryDrawer/LibraryDrawer'
@@ -18,21 +18,23 @@ const assessmentLabels: Record<AssessmentType, string> = {
 
 let nextAssessmentId = 100
 
+type ActiveDrawer = 'library' | 'scorm' | null
+
 function CreateCourse() {
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
   const [assessmentModal, setAssessmentModal] = useState<{ type: AssessmentType } | null>(null)
-  const [libraryDrawerOpen, setLibraryDrawerOpen] = useState(false)
+  const [activeDrawer, setActiveDrawer] = useState<ActiveDrawer>(null)
   const [addedLibraryIds, setAddedLibraryIds] = useState<Set<number>>(new Set())
   const [targetSectionId, setTargetSectionId] = useState<string | null>(null)
 
   const openLibraryDrawer = (sectionId?: string) => {
     setTargetSectionId(sectionId ?? null)
-    setLibraryDrawerOpen(true)
+    setActiveDrawer('library')
   }
 
-  const closeLibraryDrawer = () => {
-    setLibraryDrawerOpen(false)
+  const closeDrawer = () => {
+    setActiveDrawer(null)
     setTargetSectionId(null)
   }
 
@@ -114,13 +116,11 @@ function CreateCourse() {
         </main>
         {!assessmentModal && (
           <AddContentSidebar
-            addedScormIds={addedScormIds}
-            onAddScorm={handleAddScorm}
-            onRemoveScorm={handleRemoveScorm}
-            collapsed={libraryDrawerOpen}
-            libraryDrawerOpen={libraryDrawerOpen}
+            collapsed={activeDrawer !== null}
+            activeDrawer={activeDrawer}
             onAssessmentClick={(type) => setAssessmentModal({ type })}
             onLibraryClick={() => openLibraryDrawer()}
+            onScormClick={() => setActiveDrawer('scorm')}
           />
         )}
         {assessmentModal && (
@@ -130,25 +130,33 @@ function CreateCourse() {
             onAdd={handleAddAssessment}
             sidebarIcons={
               <AddContentSidebar
-                addedScormIds={addedScormIds}
-                onAddScorm={handleAddScorm}
-                onRemoveScorm={handleRemoveScorm}
                 collapsed
+                activeDrawer={activeDrawer}
                 onAssessmentClick={(type) => setAssessmentModal({ type })}
                 onLibraryClick={() => openLibraryDrawer()}
+                onScormClick={() => setActiveDrawer('scorm')}
               />
             }
           />
         )}
       </div>
       <LibraryDrawer
-        open={libraryDrawerOpen}
-        onClose={closeLibraryDrawer}
+        open={activeDrawer === 'library'}
+        onClose={closeDrawer}
         addedIds={addedLibraryIds}
         onAdd={handleAddLibraryLesson}
         onRemove={handleRemoveLibraryLesson}
         withSidebar
       />
+      {activeDrawer === 'scorm' && (
+        <ScormDrawer
+          onClose={closeDrawer}
+          addedIds={addedScormIds}
+          onAdd={handleAddScorm}
+          onRemove={handleRemoveScorm}
+          withSidebar
+        />
+      )}
     </>
   )
 }

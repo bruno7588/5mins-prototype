@@ -18,6 +18,11 @@
    scorm-content/AddContentSidebar.css which gets bundled globally and would otherwise
    override our width via source order. */
 .add-content-sidebar.add-content-sidebar--collapsed {
+  /* Fixed full-viewport-height strip on the right when a drawer is open. */
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
   width: 60px;
   min-width: 60px;
   padding: var(--space-s);
