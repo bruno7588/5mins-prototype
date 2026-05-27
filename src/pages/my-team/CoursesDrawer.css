@@ -36,9 +36,13 @@
 @keyframes side-drawer-out { from { transform: translateX(0);    } to { transform: translateX(100%); } }
 
 /* When rendered alongside a collapsed icons-only sidebar (CreateCourse pattern),
-   the drawer and backdrop stop at the sidebar's left edge so the icons stay visible. */
+   the backdrop stops at the sidebar's left edge so the icons stay visible. The drawer
+   itself extends full-width (right: 0) so its panel covers the vertical space above
+   where the strip's icons begin — the icon strip (z-index 1002) sits on top of the
+   drawer's right edge with its icons; the drawer's content area is padded right to
+   keep its inner content clear of the strip. */
 .overlay-backdrop.overlay-backdrop--with-sidebar { inset: auto; top: 0; right: 60px; bottom: 0; left: 0; }
-.side-drawer.side-drawer--with-sidebar { right: 60px; }
+.side-drawer.side-drawer--with-sidebar { right: 0; padding-right: calc(var(--space-l) + 60px); }
 
 /* Header (member chip + close, divider below) */
 .side-drawer__header {
