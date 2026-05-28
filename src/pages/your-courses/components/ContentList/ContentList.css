@@ -17,7 +17,7 @@
 .content-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-ml); /* 20px between sections / Add Section CTA */
+  gap: var(--space-l); /* 24px between sections / Add Section CTA */
   flex: 1;
   min-width: 0;
   max-width: 900px;
@@ -211,8 +211,8 @@
   display: none;
 }
 
-/* Unsectioned/loose content uses a divider-style header (label + horizontal line)
-   instead of the card header — no rename, no chevron, no collapse. */
+/* Unsectioned/loose content: a left-aligned "Unsectioned" subheader label beside the
+   rail (no grip, no card header, no rename/chevron/collapse) — per Figma 8661:12642. */
 .curriculum-section__divider-header {
   grid-column: 2;
   grid-row: 1;
@@ -225,10 +225,6 @@
   box-shadow: none;
 }
 
-.curriculum-section--unsectioned .curriculum-section__divider-header {
-  grid-column: 1 / -1;
-}
-
 .curriculum-section__divider-label {
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
@@ -238,11 +234,14 @@
   flex-shrink: 0;
 }
 
-.curriculum-section__divider-line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-  border-radius: var(--radius-xs);
+/* Subheader sits closer to its cards than the section header→body gap (12px per Figma). */
+.curriculum-section--unsectioned {
+  row-gap: var(--space-sm);
+}
+
+/* No grip in the unsectioned column, so the rail starts flush with the subheader. */
+.curriculum-section--unsectioned .curriculum-section__drag-column {
+  padding-top: 0;
 }
 
 .curriculum-section__body {
@@ -270,14 +269,24 @@
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-s);
   transition: background 150ms ease, box-shadow 150ms ease;
-}
-
-.curriculum-section--collapsed .curriculum-section__header {
   cursor: pointer;
 }
 
-.curriculum-section--collapsed .curriculum-section__header:hover {
+.curriculum-section__header:hover {
   background: var(--cards-background-hover);
+}
+
+/* While renaming, the header is an editing surface, not a collapse toggle. */
+.curriculum-section__header--editing,
+.curriculum-section__header--editing:hover {
+  cursor: default;
+  background: var(--cards-background);
+}
+
+/* Click-guard wrapper around the kebab — keeps menu clicks from toggling collapse.
+   display: contents so it adds no box and the kebab stays the header's flex item. */
+.curriculum-section__kebab-wrap {
+  display: contents;
 }
 
 /* Section drag-and-drop */
@@ -310,6 +319,21 @@
   height: 20px;
   cursor: grab;
   flex-shrink: 0;
+  color: var(--text-disabled);
+  transition: color 150ms ease;
+}
+
+/* Darken the grip when hovering anywhere on the section. */
+.curriculum-section:hover .curriculum-section__drag {
+  color: var(--text-primary);
+}
+
+/* Single-section state: nothing to reorder, so the grip reads as disabled and
+   stays muted even on hover. */
+.curriculum-section__drag--disabled,
+.curriculum-section:hover .curriculum-section__drag--disabled {
+  color: var(--text-disabled);
+  cursor: default;
 }
 
 .curriculum-section__chevron {
@@ -354,7 +378,7 @@
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
-  cursor: text;
+  cursor: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -578,6 +602,12 @@
   gap: var(--space-m);
 }
 
+/* Flat/loose mode has no drag column, so content sits at the list's left edge —
+   drop the indent so the actions line up with the cards above. */
+.curriculum-bottom-actions--flush {
+  margin-left: 0;
+}
+
 /* Compact pill — dashed border, transparent bg, primary text (per Figma 8647:12060). */
 .curriculum-add-content {
   display: inline-flex;
@@ -617,7 +647,7 @@
   background: var(--input-background);
   border: 1px dashed var(--border);
   border-radius: var(--radius-sm);
-  color: var(--text-secondary);
+  color: rgba(32, 34, 42, 1);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;

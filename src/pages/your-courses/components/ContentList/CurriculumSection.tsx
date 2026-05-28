@@ -74,15 +74,19 @@ function KebabMenu({ items, ariaLabel = 'More actions' }: { items: KebabItem[]; 
   )
 }
 
-const DragHandle = ({ innerRef }: { innerRef?: React.Ref<HTMLDivElement> }) => (
-  <div ref={innerRef} className="curriculum-section__drag" aria-label="Drag to reorder section">
+const DragHandle = ({ innerRef, disabled }: { innerRef?: React.Ref<HTMLDivElement>; disabled?: boolean }) => (
+  <div
+    ref={innerRef}
+    className={`curriculum-section__drag${disabled ? ' curriculum-section__drag--disabled' : ''}`}
+    aria-label="Drag to reorder section"
+  >
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <circle cx="7" cy="5" r="1.5" fill="var(--neutral-300)" />
-      <circle cx="13" cy="5" r="1.5" fill="var(--neutral-300)" />
-      <circle cx="7" cy="10" r="1.5" fill="var(--neutral-300)" />
-      <circle cx="13" cy="10" r="1.5" fill="var(--neutral-300)" />
-      <circle cx="7" cy="15" r="1.5" fill="var(--neutral-300)" />
-      <circle cx="13" cy="15" r="1.5" fill="var(--neutral-300)" />
+      <circle cx="7" cy="5" r="1.5" fill="currentColor" />
+      <circle cx="13" cy="5" r="1.5" fill="currentColor" />
+      <circle cx="7" cy="10" r="1.5" fill="currentColor" />
+      <circle cx="13" cy="10" r="1.5" fill="currentColor" />
+      <circle cx="7" cy="15" r="1.5" fill="currentColor" />
+      <circle cx="13" cy="15" r="1.5" fill="currentColor" />
     </svg>
   </div>
 )
@@ -92,7 +96,7 @@ interface CurriculumSectionProps {
   itemCount: number
   summary?: string
   hideChrome?: boolean
-  hideDragHandle?: boolean
+  dragDisabled?: boolean
   startInRenameMode?: boolean
   isDragging?: boolean
   dropAbove?: boolean
@@ -119,7 +123,7 @@ function CurriculumSection({
   itemCount,
   summary,
   hideChrome = false,
-  hideDragHandle = false,
+  dragDisabled = false,
   startInRenameMode = false,
   isDragging = false,
   dropAbove = false,
@@ -246,11 +250,10 @@ function CurriculumSection({
 
   const collapsed = !hideChrome && !!section.collapsed
 
-  const draggable = !hideChrome && !hideDragHandle && !renaming && !!onDragStart
+  const draggable = !hideChrome && !unsectioned && !renaming && !!onDragStart && !dragDisabled
   const classes = [
     'curriculum-section',
     hideChrome && 'curriculum-section--chromeless',
-    hideDragHandle && 'curriculum-section--no-drag',
     collapsed && 'curriculum-section--collapsed',
     isDragging && 'curriculum-section--dragging',
     dropAbove && 'curriculum-section--drop-above',
@@ -259,7 +262,10 @@ function CurriculumSection({
     unsectioned && 'curriculum-section--unsectioned',
   ].filter(Boolean).join(' ')
 
-  const showSectionDrag = !hideChrome && !hideDragHandle
+  // The rail (vertical line) shows for both sections and the unsectioned bucket;
+  // only real sections get the draggable grip.
+  const showDragColumn = !hideChrome
+  const showGrip = !hideChrome && !unsectioned
 
   return (
     <section
@@ -269,14 +275,14 @@ function CurriculumSection({
       onDragEnd={onDragEnd}
       onDrop={onDrop}
     >
-      {showSectionDrag && (
+      {showDragColumn && (
         <div
           className="curriculum-section__drag-column"
           draggable={draggable}
           onDragStart={draggable ? onDragStart : undefined}
           onDragEnd={onDragEnd}
         >
-          <DragHandle innerRef={dragRef} />
+          {showGrip && <DragHandle innerRef={dragRef} disabled={dragDisabled} />}
           <div className="curriculum-section__drag-line" aria-hidden="true" />
         </div>
       )}
@@ -284,12 +290,14 @@ function CurriculumSection({
       {!hideChrome && unsectioned && (
         <header className="curriculum-section__divider-header">
           <span className="curriculum-section__divider-label">{section.name}</span>
-          <div className="curriculum-section__divider-line" aria-hidden="true" />
         </header>
       )}
 
       {!hideChrome && !unsectioned && (
-      <header className="curriculum-section__header">
+      <header
+        className={`curriculum-section__header${renaming ? ' curriculum-section__header--editing' : ''}`}
+        onClick={renaming ? undefined : onToggleCollapse}
+      >
         {renaming ? (
           <>
             <input
@@ -325,8 +333,6 @@ function CurriculumSection({
               <h3
                 id={`section-${section.id}-title`}
                 className="curriculum-section__title"
-                onDoubleClick={startRename}
-                title="Double-click to rename"
               >
                 {section.name}
               </h3>
@@ -335,6 +341,7 @@ function CurriculumSection({
               )}
             </div>
             {(canRename || canDelete) && (
+              <div className="curriculum-section__kebab-wrap" onClick={(e) => e.stopPropagation()}>
               <KebabMenu
                 ariaLabel={`Actions for ${section.name}`}
                 items={[
@@ -351,11 +358,12 @@ function CurriculumSection({
                   },
                 ].filter(Boolean) as { label: string; onClick: () => void; danger?: boolean; icon?: ReactNode }[]}
               />
+              </div>
             )}
             <button
               type="button"
               className={`curriculum-section__chevron${collapsed ? ' curriculum-section__chevron--collapsed' : ''}`}
-              onClick={onToggleCollapse}
+              onClick={(e) => { e.stopPropagation(); onToggleCollapse() }}
               aria-label={collapsed ? 'Expand section' : 'Collapse section'}
               aria-expanded={!collapsed}
             >
@@ -375,7 +383,7 @@ function CurriculumSection({
         {itemCount > 0 && (
           <div className="curriculum-section__items">{children}</div>
         )}
-        {onAddContent && !unsectioned && (
+        {onAddContent && !unsectioned && !hideChrome && (
           <button
             type="button"
             className="curriculum-section__placeholder"

@@ -175,6 +175,9 @@ function ContentList({
 }: ContentListProps) {
   const [itemsByKey, setItemsByKey] = useState<Record<string, ContentItem>>({})
   const [sections, setSections] = useState<Section[]>(() => [makeDefaultSection()])
+  // True once the user has taken any sectioning action (renamed a section or added one).
+  // Drives flat (chromeless) mode instead of sniffing the default section name.
+  const [userHasSectioned, setUserHasSectioned] = useState(false)
 
   // Item drag — live-reorders within the same section; cross-section commits on drop
   const [dragKey, setDragKey] = useState<string | null>(null)
@@ -230,12 +233,26 @@ function ContentList({
   /* Section actions */
 
   const startCreate = () => {
+    // Loose content (a single not-yet-sectioned section) becomes the "Unsectioned" bucket,
+    // kept on top, with the new section added below it.
+    const fromLoose = sections.length === 1 && sections[0].id !== UNSECTIONED_ID && !userHasSectioned
     const id = newSectionId()
-    setSections((prev) => [...prev, { id, name: `Section ${prev.length + 1}`, itemKeys: [], collapsed: false }])
+    setUserHasSectioned(true)
+    setSections((prev) => {
+      if (fromLoose) {
+        return [
+          { ...prev[0], id: UNSECTIONED_ID, name: UNSECTIONED_NAME },
+          { id, name: 'Section 1', itemKeys: [], collapsed: false },
+        ]
+      }
+      const namedCount = prev.filter((s) => s.id !== UNSECTIONED_ID).length
+      return [...prev, { id, name: `Section ${namedCount + 1}`, itemKeys: [], collapsed: false }]
+    })
     setAutoRenameSectionId(id)
   }
 
   const renameSection = (id: string, name: string) => {
+    setUserHasSectioned(true)
     setSections((prev) => prev.map((s) => (s.id === id ? { ...s, name } : s)))
     if (autoRenameSectionId === id) {
       setAutoRenameSectionId(null)
@@ -446,18 +463,15 @@ function ContentList({
     return parts.length ? parts.join(' · ') : 'No content'
   }
 
-  // Chromeless mode: when the only section is the untitled default, hide its header so the
-  // page reads as a flat list. Renaming or adding a second section reveals the chrome.
-  // While autoRename is active on that section, force chrome so the rename input is visible.
+  // Chromeless mode: until the user has done any sectioning, a single section hides its header
+  // so the page reads as a flat list. Renaming it or adding a second section reveals the chrome.
   const onlySection = sections.length === 1 ? sections[0] : null
-  const isFlatMode =
-    !!onlySection &&
-    onlySection.name === DEFAULT_SECTION_NAME &&
-    autoRenameSectionId !== onlySection.id
+  const isFlatMode = !!onlySection && onlySection.id !== UNSECTIONED_ID && !userHasSectioned
   const showEmptyState = isFlatMode && onlySection!.itemKeys.length === 0
 
   // "Add Section" from the empty state: reveal chrome on the default section and prompt rename.
   const startSectioning = () => {
+    setUserHasSectioned(true)
     if (onlySection) setAutoRenameSectionId(onlySection.id)
     else startCreate()
   }
@@ -490,16 +504,20 @@ function ContentList({
               customIcon={<TextalignJustifyleft size={16} color="currentColor" variant="Linear" />}
               label={`${namedSectionCount} ${namedSectionCount === 1 ? 'section' : 'sections'}`}
             />
-            <Badge
-              type="informative"
-              customIcon={<PlayCircle size={16} color="currentColor" variant="Linear" />}
-              label={`${lessonCount} ${lessonCount === 1 ? 'lesson' : 'lessons'}`}
-            />
-            <Badge
-              type="informative"
-              customIcon={<AssessmentIcon size={16} color="currentColor" />}
-              label={`${assessmentCount} ${assessmentCount === 1 ? 'assessment' : 'assessments'}`}
-            />
+            {lessonCount > 0 && (
+              <Badge
+                type="informative"
+                customIcon={<PlayCircle size={16} color="currentColor" variant="Linear" />}
+                label={`${lessonCount} ${lessonCount === 1 ? 'lesson' : 'lessons'}`}
+              />
+            )}
+            {assessmentCount > 0 && (
+              <Badge
+                type="informative"
+                customIcon={<AssessmentIcon size={16} color="currentColor" />}
+                label={`${assessmentCount} ${assessmentCount === 1 ? 'assessment' : 'assessments'}`}
+              />
+            )}
             {totalMinutes > 0 && (
               <Badge
                 type="informative"
@@ -550,7 +568,7 @@ function ContentList({
                   itemCount={section.itemKeys.length}
                   summary={buildSummary(section.itemKeys)}
                   hideChrome={isFlatMode}
-                  hideDragHandle={isUnsectioned}
+                  dragDisabled={sections.length === 1}
                   startInRenameMode={section.id === autoRenameSectionId}
                   isDragging={sectionDragId === section.id}
                   onDragStart={handleSectionDragStart(section.id)}
@@ -594,12 +612,12 @@ function ContentList({
         })}
 
         {!showEmptyState && (
-          <div className="curriculum-bottom-actions">
-            {sections[sections.length - 1]?.id === UNSECTIONED_ID && (
+          <div className={`curriculum-bottom-actions${isFlatMode ? ' curriculum-bottom-actions--flush' : ''}`}>
+            {(isFlatMode || sections[sections.length - 1]?.id === UNSECTIONED_ID) && (
               <button
                 type="button"
                 className="curriculum-add-content"
-                onClick={() => onAddContent?.(UNSECTIONED_ID)}
+                onClick={() => onAddContent?.(isFlatMode ? onlySection!.id : UNSECTIONED_ID)}
               >
                 <Add size={20} color="currentColor" variant="Linear" />
                 <span>Add Content</span>
