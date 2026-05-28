@@ -550,7 +550,7 @@ function ContentList({
                   itemCount={section.itemKeys.length}
                   summary={buildSummary(section.itemKeys)}
                   hideChrome={isFlatMode}
-                  hideDragHandle={sections.length === 1 || isUnsectioned}
+                  hideDragHandle={isUnsectioned}
                   startInRenameMode={section.id === autoRenameSectionId}
                   isDragging={sectionDragId === section.id}
                   onDragStart={handleSectionDragStart(section.id)}
