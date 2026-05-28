@@ -514,7 +514,9 @@ function ContentList({
 
   /* Course metadata — live counts for the top-of-page chip strip.
      Hidden until the user has added at least one item. */
-  const namedSectionCount = sections.filter((s) => s.id !== UNSECTIONED_ID).length
+  // Flat mode is a chromeless single section that reads as a plain list — it has no
+  // real "sections", so it must not contribute to the section count (or the badge strip).
+  const namedSectionCount = isFlatMode ? 0 : sections.filter((s) => s.id !== UNSECTIONED_ID).length
   const allItems = sections
     .flatMap((s) => s.itemKeys.map((k) => itemsByKey[k]))
     .filter((it): it is ContentItem => !!it)
