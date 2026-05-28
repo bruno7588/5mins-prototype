@@ -197,6 +197,9 @@ interface ContentListProps {
   /* Opens the AddContentDrawer (slide-in side panel) scoped to a sectionId. */
   onAddContent?: (sectionId: string) => void
   targetSectionId?: string | null
+  /* Pixels to shift the body left so it clears an open right-side surface:
+     240 for the Add Content panel, 720 for the side drawer, 0 when none. */
+  bodyShiftPx?: number
 }
 
 function ContentList({
@@ -204,6 +207,7 @@ function ContentList({
   onDeleteExtra,
   onAddContent,
   targetSectionId,
+  bodyShiftPx = 0,
 }: ContentListProps) {
   const [itemsByKey, setItemsByKey] = useState<Record<string, ContentItem>>({})
   const [sections, setSections] = useState<Section[]>(() => [makeDefaultSection()])
@@ -529,9 +533,21 @@ function ContentList({
   )
   const showMeta = namedSectionCount + lessonCount + assessmentCount > 0
 
+  const layoutClass = [
+    'content-list-layout',
+    showEmptyState && 'content-list-layout--empty',
+    // Populated content slides flush to the left gutter (clamped, never off-screen).
+    bodyShiftPx > 0 && !showEmptyState && 'content-list-layout--drawer-shift',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
     <div
-      className={`content-list-layout${showEmptyState ? ' content-list-layout--empty' : ''}`}
+      className={layoutClass}
+      // Empty placeholder stays gutter-anchored and reserves the drawer's width on the
+      // right so it fills the visible area without sliding off-screen.
+      style={bodyShiftPx > 0 && showEmptyState ? { paddingRight: bodyShiftPx } : undefined}
       onDragOver={(e) => e.preventDefault()}
     >
       <section className="content-list">
@@ -573,7 +589,11 @@ function ContentList({
         {showEmptyState && (
           <div className="course-empty-state" role="status">
             <div className="course-empty-state__icon" aria-hidden="true">
-              <Add size={72} color="var(--text-tertiary)" variant="Linear" />
+              <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M30.0264 14.959C31.4351 8.53403 40.6252 8.56408 42.0879 14.75C42.2332 15.3645 42.2872 16.1879 42.2959 17.1113C42.3051 18.0877 42.2696 18.8822 42.2695 19.7656C42.2694 22.7479 42.2144 25.8067 42.2803 28.8311L42.3037 29.8994L43.3721 29.9307C44.825 29.973 47.3699 29.8739 49.7012 29.8535C50.8923 29.8431 52.0504 29.8528 53.0498 29.9062C54.072 29.9609 54.8432 30.0584 55.3057 30.1943C58.3471 31.0885 59.9004 33.8864 59.8057 36.7646C59.7116 39.6218 57.9953 42.3485 54.6289 43.085C54.2002 43.1787 53.6425 43.2166 53.0049 43.2246C52.3355 43.233 51.7746 43.2109 51.1348 43.2109H46.2217C45.3107 43.2109 44.3012 43.1873 43.3213 43.2305L42.2939 43.2754L42.2471 44.3037C42.2051 45.2352 42.267 46.3009 42.2676 47.0986V53.3672C42.2695 54.8589 42.3914 56.1256 42.1152 57.2529C41.6333 59.2195 39.9736 61.0239 38.0498 61.5713L38.0322 61.5762L38.0146 61.582C36.7503 61.9867 35.4955 61.9595 34.1602 61.5752C31.9465 60.7443 30.9698 59.6041 30.4736 58.2646C29.9299 56.7968 29.915 54.9926 29.916 52.6816C29.9172 49.9379 29.9535 47.1423 29.9062 44.3672L29.8887 43.3203L28.8428 43.2637L28.0654 43.2334C27.2912 43.2142 26.5266 43.2224 25.7998 43.2197H25.7979L21.374 43.2109H21.3721C19.7732 43.2108 18.3792 43.3287 17.1533 42.998C13.9194 42.1254 12.3183 39.2969 12.377 36.4014C12.4357 33.5061 14.1482 30.7646 17.4053 30.0518C17.9189 29.9394 18.6066 29.9025 19.3916 29.9014C19.7762 29.9008 20.166 29.9086 20.5527 29.917C20.9341 29.9253 21.3188 29.9344 21.6709 29.9346L28.793 29.9365H29.9189V28.8115L29.916 17.1533C29.9159 16.2606 29.8841 15.6082 30.0264 14.959Z" fill="#BFC2CC" stroke="#454C5E" strokeWidth="2.25" />
+                <path d="M16.6523 33.6586C15.0409 35.1108 15.8465 38.7717 17.0573 38.7717C18.4115 38.7717 17.9643 36.6539 19.8163 35.9451C21.6684 35.2364 22.5332 34.8694 22.5754 34.0973C22.6387 32.8486 17.8101 32.6151 16.6523 33.6586Z" fill="#DFE1E6" />
+                <path d="M38.2492 13.4699C38.2949 14.2443 36.3868 14.5745 35.6383 15.3232C34.8863 16.0718 34.4084 17.2681 33.8461 17.2498C33.2839 17.2314 32.8903 16.1268 33.0274 14.8791C33.1644 13.6314 34.1729 12.8828 35.6734 12.7764C37.1739 12.6699 38.2141 12.8828 38.2492 13.4699Z" fill="#DFE1E6" />
+              </svg>
             </div>
             <div className="course-empty-state__info">
               <h2 className="course-empty-state__title">Add content to your course</h2>

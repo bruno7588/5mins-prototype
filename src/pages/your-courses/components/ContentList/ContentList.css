@@ -6,12 +6,22 @@
   padding: var(--space-l) 0;
   max-width: 1180px;
   margin: 0 auto;
+  /* Sync timing with the AddContentDrawer slide (300ms, CoursesDrawer.css). */
+  transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1),
+    padding-right 300ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* Empty-state mode: drop the 1180px / 900px constraints so the empty placeholder
    spans the full main-content width. */
 .content-list-layout--empty {
   max-width: none;
+}
+
+/* Side panel/drawer open + populated content: slide the body flush to the page's 32px
+   gutter (no side nav on this page), where the "Create course" title aligns. The shift
+   is clamped to 0 so content never slides off-screen on narrower viewports. */
+.content-list-layout--drawer-shift {
+  transform: translateX(min(0px, calc(482px - 50vw)));
 }
 
 .content-list {

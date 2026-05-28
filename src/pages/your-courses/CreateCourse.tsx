@@ -143,7 +143,6 @@ function CreateCourse() {
       <div
         className={[
           'app-content-area',
-          addContentOpen && 'app-content-area--with-add-content',
           activeDrawer && 'app-content-area--with-icon-strip',
         ].filter(Boolean).join(' ')}
       >
@@ -153,6 +152,7 @@ function CreateCourse() {
             onDeleteExtra={handleRemoveScorm}
             onAddContent={openAddContent}
             targetSectionId={targetSectionId}
+            bodyShiftPx={activeDrawer ? 720 : addContentOpen ? 240 : 0}
           />
         </main>
         {assessmentModal && (

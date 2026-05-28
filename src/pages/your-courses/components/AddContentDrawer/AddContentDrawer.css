@@ -13,10 +13,9 @@
   z-index: 30; /* above main-content, below modals */
 }
 
-/* Right-pad the content area to make room for whichever right-side surface is open:
-   - default (no panel, no strip): 0
-   - Add Content panel open (full 240px expanded menu): 240px
-   - Secondary drawer open (icon strip visible alongside): 60px
+/* Right-pad the content area for the secondary drawer's icon strip. The Add Content
+   panel's own layout response (empty state shrinks; populated content slides left)
+   is handled inside ContentList so populated content can keep its fixed width.
    Sync timing with .side-drawer-in (300ms cubic-bezier in CoursesDrawer.css). */
 .app-content-area {
   padding-right: 0;
@@ -25,10 +24,6 @@
 
 .app-content-area--with-icon-strip {
   padding-right: 60px;
-}
-
-.app-content-area--with-add-content {
-  padding-right: 240px;
 }
 
 .add-content-drawer__header {
