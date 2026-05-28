@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Add, Clock, Edit2, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
 import AssessmentIcon from '../../../../components/icons/AssessmentIcon'
 import Badge from '../../../../components/Badge/Badge'
@@ -14,6 +14,38 @@ function parseDurationMinutes(metadata: string): number {
   const minMatch = metadata.match(/(\d+)\s*min/)
   if (minMatch) return Number(minMatch[1])
   return 0
+}
+
+/* Keeps children mounted long enough to play a fade + slight horizontal slide on exit.
+   `show` drives both directions; the timeout must match the CSS transition duration. */
+const PRESENCE_MS = 240
+
+function Presence({ show, className = '', children }: { show: boolean; className?: string; children: ReactNode }) {
+  const [mounted, setMounted] = useState(show)
+  const [active, setActive] = useState(false)
+  const [exiting, setExiting] = useState(false)
+
+  useEffect(() => {
+    if (show) {
+      setExiting(false)
+      setMounted(true)
+      return
+    }
+    setActive(false)
+    setExiting(true)
+    const t = setTimeout(() => setMounted(false), PRESENCE_MS)
+    return () => clearTimeout(t)
+  }, [show])
+
+  useEffect(() => {
+    if (!mounted || !show) return
+    const id = requestAnimationFrame(() => setActive(true))
+    return () => cancelAnimationFrame(id)
+  }, [mounted, show])
+
+  if (!mounted) return null
+  const phase = active ? 'presence--in' : exiting ? 'presence--exit' : 'presence--enter'
+  return <div className={`presence ${className} ${phase}`}>{children}</div>
 }
 
 export interface ContentItem {
@@ -270,6 +302,10 @@ function ContentList({
   const deleteSection = (section: Section) => {
     if (section.id === UNSECTIONED_ID) return
     const orphanCount = section.itemKeys.length
+    // Removing the last (empty) section returns the page to its flat, unsectioned state
+    // rather than instantly recreating a chromed "Section 1".
+    const isLastSection = orphanCount === 0 && sections.filter((s) => s.id !== section.id).length === 0
+    if (isLastSection) setUserHasSectioned(false)
     setSections((prev) => {
       const without = prev.filter((s) => s.id !== section.id)
       if (orphanCount === 0) {
@@ -489,7 +525,7 @@ function ContentList({
       .filter((it) => it.type !== 'Assessment')
       .reduce((sum, it) => sum + parseDurationMinutes(it.metadata), 0),
   )
-  const showMeta = lessonCount + assessmentCount > 0
+  const showMeta = namedSectionCount + lessonCount + assessmentCount > 0
 
   return (
     <div
@@ -497,36 +533,41 @@ function ContentList({
       onDragOver={(e) => e.preventDefault()}
     >
       <section className="content-list">
-        {showMeta && (
-          <div className="course-meta" aria-label="Course summary">
-            <Badge
-              type="informative"
-              customIcon={<TextalignJustifyleft size={16} color="currentColor" variant="Linear" />}
-              label={`${namedSectionCount} ${namedSectionCount === 1 ? 'section' : 'sections'}`}
-            />
-            {lessonCount > 0 && (
+        <Presence show={showMeta}>
+          <div
+            className={`course-meta${isFlatMode ? '' : ' course-meta--indented'}`}
+            aria-label="Course summary"
+          >
+            <Presence show={namedSectionCount > 0} className="presence--badge">
+              <Badge
+                type="informative"
+                customIcon={<TextalignJustifyleft size={16} color="currentColor" variant="Linear" />}
+                label={`${namedSectionCount} ${namedSectionCount === 1 ? 'section' : 'sections'}`}
+              />
+            </Presence>
+            <Presence show={lessonCount > 0} className="presence--badge">
               <Badge
                 type="informative"
                 customIcon={<PlayCircle size={16} color="currentColor" variant="Linear" />}
                 label={`${lessonCount} ${lessonCount === 1 ? 'lesson' : 'lessons'}`}
               />
-            )}
-            {assessmentCount > 0 && (
+            </Presence>
+            <Presence show={assessmentCount > 0} className="presence--badge">
               <Badge
                 type="informative"
                 customIcon={<AssessmentIcon size={16} color="currentColor" />}
                 label={`${assessmentCount} ${assessmentCount === 1 ? 'assessment' : 'assessments'}`}
               />
-            )}
-            {totalMinutes > 0 && (
+            </Presence>
+            <Presence show={totalMinutes > 0} className="presence--badge">
               <Badge
                 type="informative"
                 customIcon={<Clock size={16} color="currentColor" variant="Linear" />}
                 label={`${totalMinutes} ${totalMinutes === 1 ? 'min' : 'mins'}`}
               />
-            )}
+            </Presence>
           </div>
-        )}
+        </Presence>
         {showEmptyState && (
           <div className="course-empty-state" role="status">
             <div className="course-empty-state__icon" aria-hidden="true">

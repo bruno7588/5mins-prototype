@@ -30,8 +30,60 @@
 .course-meta {
   display: flex;
   align-items: center;
-  gap: var(--space-s);
   flex-wrap: wrap;
+}
+
+/* When a drag rail is present (sections or an unsectioned area), indent the badge
+   strip past the 20px rail + gap so it lines up with the content container rather
+   than the rail. Flat/loose mode has no rail, so badges stay at the left edge. */
+.course-meta--indented {
+  margin-left: calc(20px + var(--space-s));
+}
+
+/* Fade for the meta strip; each badge additionally collapses its own width (and
+   trailing gap) on exit so neighbours glide left in one continuous motion rather
+   than the badge sliding right and the rest snapping back. Spacing lives on the
+   badge margin (not flex gap) so it can be animated away. */
+.presence {
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+.presence--enter,
+.presence--exit {
+  opacity: 0;
+}
+.presence--in {
+  opacity: 1;
+  transform: translateX(0);
+}
+.presence--badge {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+  margin-right: var(--space-s);
+  transition: opacity 240ms ease, transform 240ms ease,
+    grid-template-columns 240ms ease, margin-right 240ms ease;
+}
+.presence--badge > * {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.presence--badge.presence--enter,
+.presence--badge.presence--exit {
+  grid-template-columns: 0fr;
+  margin-right: 0;
+}
+.presence--badge.presence--enter {
+  transform: translateX(-8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .presence,
+  .presence--badge {
+    transition: none;
+  }
+  .presence--badge.presence--enter {
+    transform: none;
+  }
 }
 
 .content-list-layout--empty .content-list {
