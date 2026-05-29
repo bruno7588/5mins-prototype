@@ -17,7 +17,7 @@ When building any UI component, feature, or screen, you MUST read the relevant d
    - `docs/design-system/chips-and-tabs.md` - Chip component (filter pills, dismissible tags, selection chips with optional left/right icons) and Tabs component (underlined horizontal switcher with optional counter pills); all variants, states, design tokens, React implementation, plus a Chips vs Tabs decision table | Any filter chip, selection pill, dismissible tag, tab bar, section switcher, or small pill-shaped interactive label
    - `docs/design-system/headers.md` — Page Headers and Section Headers
    - `docs/design-system/overlays.md` — Dialog, Modal, and Side Drawer
-   - `docs/design-system/lesson-cards.md` — Lesson/course card component
+   - `docs/design-system/cards.md` — Lesson, Assessment, Course, and Skill card components; desktop variants, states, dimensions, tokens, and ready HTML/CSS specs
    - `docs/design-system/typography.md` — Type scale, weights, colors
    - `docs/design-system/brand-colors.md` — Full color palette and usage rules (Primary, Neutral-0→900, Semantic, Gamification)
    - `docs/design-system/surface-colors.md` — Semantic surface tokens for backgrounds, borders, and button states

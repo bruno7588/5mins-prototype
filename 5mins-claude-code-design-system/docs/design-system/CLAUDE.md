@@ -12,7 +12,7 @@ This directory contains the complete 5Mins.ai design system documentation.
 | `chips-and-tabs.md` | Chip component (filter pills, dismissible tags, selection chips with optional left/right icons) and Tabs component (underlined horizontal switcher with optional counter pills); all variants, states, design tokens, React implementation, plus a Chips vs Tabs decision table | Adding filter chips, selection pills, dismissible tags, tab bars, section switchers, or any small pill-shaped interactive label |
 | `headers.md` | Page Header and Section Header with all sub-elements | Building page layouts, navigation, tabs, chips |
 | `overlays.md` | Dialog, Modal, Side Drawer — specs, animations, accessibility | Building any overlay, popup, or panel |
-| `lesson-cards.md` | Lesson card views, states, quiz badges, progress bars | Building lesson lists, course catalogs |
+| `cards.md` | Content card components: Lesson, Assessment, Course, and Skill cards; desktop variants, states, dimensions, tokens, and ready HTML/CSS specs | Building lesson lists, course catalogs, library grids, or any list of lessons, assessments, courses, or skills |
 | `typography.md` | Type scale (H1-H6, body, buttons), weights, responsive rules | Any text styling decisions |
 | `brand-colors.md` | Full color palette — Primary, Neutral-0→900, Semantic, Gamification | Choosing any raw palette value |
 | `surface-colors.md` | Semantic surface tokens — page/card/input backgrounds, borders, button background states | Setting any background, border, or button surface color |
