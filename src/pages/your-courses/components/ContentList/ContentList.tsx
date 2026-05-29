@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react'
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { Add, Clock, Edit2, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
 import AssessmentIcon from '../../../../components/icons/AssessmentIcon'
 import Badge from '../../../../components/Badge/Badge'
@@ -21,7 +21,7 @@ function parseDurationMinutes(metadata: string): number {
    than lingering. Each timeout must match the matching CSS transition duration. */
 const PRESENCE_EXIT_MS = 120
 
-function Presence({ show, className = '', children }: { show: boolean; className?: string; children: ReactNode }) {
+function Presence({ show, className = '', skipExit = false, children }: { show: boolean; className?: string; skipExit?: boolean; children: ReactNode }) {
   const [mounted, setMounted] = useState(show)
   const [active, setActive] = useState(false)
   const [exiting, setExiting] = useState(false)
@@ -32,11 +32,18 @@ function Presence({ show, className = '', children }: { show: boolean; className
       setMounted(true)
       return
     }
+    // skipExit: unmount instantly with no exit phase. Used when collapsing to the empty
+    // state — a lingering (even fading) strip would reserve height and make the empty
+    // state jump down then up as it finally unmounts.
+    if (skipExit) {
+      setMounted(false)
+      return
+    }
     setActive(false)
     setExiting(true)
     const t = setTimeout(() => setMounted(false), PRESENCE_EXIT_MS)
     return () => clearTimeout(t)
-  }, [show])
+  }, [show, skipExit])
 
   useEffect(() => {
     if (!mounted || !show) return
@@ -45,6 +52,7 @@ function Presence({ show, className = '', children }: { show: boolean; className
   }, [mounted, show])
 
   if (!mounted) return null
+  if (!show && skipExit) return null
   const phase = active ? 'presence--in' : exiting ? 'presence--exit' : 'presence--enter'
   return <div className={`presence ${className} ${phase}`}>{children}</div>
 }
@@ -261,11 +269,33 @@ function ContentList({
       if (newKeys.length === 0) return cleaned
       const targetId = targetSectionId ?? cleaned[cleaned.length - 1]?.id
       if (!targetId) return cleaned
+      // Adding loose content while sectioned, but the Unsectioned bucket doesn't exist
+      // yet — create it on top so the content has a home (matches the loose-on-top model).
+      if (targetId === UNSECTIONED_ID && !cleaned.some((s) => s.id === UNSECTIONED_ID)) {
+        return [
+          { id: UNSECTIONED_ID, name: UNSECTIONED_NAME, itemKeys: [...newKeys], collapsed: false },
+          ...cleaned,
+        ]
+      }
       return cleaned.map((s) =>
         s.id === targetId ? { ...s, itemKeys: [...s.itemKeys, ...newKeys] } : s,
       )
     })
   }, [extraItems, targetSectionId])
+
+  // Collapse back to the pristine empty state once the course holds no named sections
+  // and no content — e.g. deleting the last section (or removing the last loose item)
+  // would otherwise strand a lone, empty "Unsectioned" bucket. useLayoutEffect (not
+  // useEffect) so the reset happens before paint — otherwise the intermediate lone
+  // bucket flashes and the empty state visibly jumps down then up.
+  useLayoutEffect(() => {
+    const onlyEmptyUnsectioned = sections.length === 1 && sections[0].id === UNSECTIONED_ID
+    if (!onlyEmptyUnsectioned) return
+    const totalItems = sections.reduce((n, s) => n + s.itemKeys.length, 0)
+    if (totalItems > 0) return
+    setSections([makeDefaultSection()])
+    setUserHasSectioned(false)
+  }, [sections])
 
   /* Section actions */
 
@@ -553,7 +583,7 @@ function ContentList({
   return (
     <div className={layoutClass} style={layoutStyle} onDragOver={(e) => e.preventDefault()}>
       <section className="content-list">
-        <Presence show={showMeta} className="presence--meta">
+        <Presence show={showMeta} skipExit={showEmptyState} className="presence--meta">
           <div
             className={`course-meta${isFlatMode ? '' : ' course-meta--indented'}`}
             aria-label="Course summary"
@@ -678,16 +708,17 @@ function ContentList({
 
         {!showEmptyState && (
           <div className={`curriculum-bottom-actions${isFlatMode ? ' curriculum-bottom-actions--flush' : ''}`}>
-            {(isFlatMode || sections[sections.length - 1]?.id === UNSECTIONED_ID) && (
-              <button
-                type="button"
-                className="curriculum-add-content"
-                onClick={(e) => onAddContent?.(isFlatMode ? onlySection!.id : UNSECTIONED_ID, e.currentTarget)}
-              >
-                <Add size={20} color="currentColor" variant="Linear" />
-                <span>Add Content</span>
-              </button>
-            )}
+            {/* Always available so admins can add content outside any section. In flat
+               mode it targets the single section; once sectioned it targets the
+               Unsectioned (loose) bucket, which is created on demand if absent. */}
+            <button
+              type="button"
+              className="curriculum-add-content"
+              onClick={(e) => onAddContent?.(isFlatMode ? onlySection!.id : UNSECTIONED_ID, e.currentTarget)}
+            >
+              <Add size={20} color="currentColor" variant="Linear" />
+              <span>Add Content</span>
+            </button>
             <button type="button" className="curriculum-add-section" onClick={startCreate}>
               <TextalignJustifyleft size={20} color="currentColor" variant="Linear" />
               <span>Add Section</span>
