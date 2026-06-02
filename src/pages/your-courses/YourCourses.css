@@ -229,3 +229,160 @@
   font-weight: 400;
   color: var(--text-secondary);
 }
+
+/* Active Enrolments table */
+.your-courses-enrol-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.your-courses-enrol-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  transition: background 150ms ease;
+}
+
+.your-courses-enrol-row:hover {
+  background: var(--cards-background-hover);
+}
+
+.your-courses-enrol-row--head,
+.your-courses-enrol-row--head:hover {
+  border: none;
+  background: none;
+}
+
+.your-courses-enrol-cell {
+  display: flex;
+  align-items: center;
+  padding: var(--space-s) var(--space-sm);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.your-courses-enrol-row--head .your-courses-enrol-cell {
+  padding: 0 var(--space-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Columns */
+.your-courses-enrol-cell--course {
+  flex: 1;
+  min-width: 0;
+  gap: var(--space-m);
+}
+
+.your-courses-enrol-cell--last {
+  width: 154px;
+  flex-shrink: 0;
+  gap: var(--space-xs);
+  white-space: nowrap;
+}
+
+.your-courses-enrol-cell--sortable {
+  cursor: pointer;
+}
+
+.your-courses-enrol-cell--users {
+  width: 122px;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  gap: var(--space-s);
+}
+
+.your-courses-enrol-row--head .your-courses-enrol-cell--users {
+  justify-content: flex-start;
+}
+
+/* Course cell */
+.your-courses-enrol-thumb {
+  width: 90px;
+  height: 44px;
+  border-radius: var(--radius-s);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.your-courses-enrol-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.your-courses-enrol-course-title {
+  min-width: 0;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.your-courses-enrol-course-title:hover {
+  color: var(--primary-600);
+}
+
+/* Enrol users action */
+.your-courses-enrol-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms ease;
+}
+
+.your-courses-enrol-action-btn:hover {
+  background: var(--neutral-50);
+}
+
+/* Pagination */
+.your-courses-enrol-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-m);
+  margin-top: var(--space-xs);
+}
+
+.your-courses-enrol-pagination-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.your-courses-enrol-pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.your-courses-enrol-pagination-btn:hover {
+  background: var(--neutral-50);
+}
+
+.your-courses-enrol-pagination-btn--disabled {
+  cursor: default;
+  pointer-events: none;
+}

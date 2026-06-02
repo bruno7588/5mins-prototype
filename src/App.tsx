@@ -5,6 +5,7 @@ import YourContent from './pages/your-courses/YourContent'
 import YourCourses from './pages/your-courses/YourCourses'
 import YourCoursesList from './pages/your-courses/YourCoursesList'
 import CreateCourse from './pages/your-courses/CreateCourse'
+import CourseDetails from './pages/your-courses/CourseDetails'
 import AddContent from './pages/add-content/AddContent'
 
 import People from './pages/people/People'
@@ -63,6 +64,7 @@ function App() {
                 <Route path="/content-library/add-content" element={<AddContent />} />
                 <Route path="/your-courses" element={<YourCourses />} />
                 <Route path="/your-courses/list" element={<YourCoursesList />} />
+                <Route path="/your-courses/course" element={<CourseDetails />} />
                 <Route path="/people" element={<People />} />
                 <Route path="/user-fields" element={<UserFields />} />
                 <Route path="/roles" element={<Roles />} />
