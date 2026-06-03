@@ -22,16 +22,16 @@
   line-height: 1.5;
 }
 
-/* Per-section Save — bottom of the section card */
+/* Per-section Save — bottom of the section card (Medium button) */
 .cs-save {
-  padding: var(--space-s) var(--space-m);
+  padding: 10px var(--space-ml);
   border: none;
   border-radius: var(--radius-s);
   background: var(--primary-600);
   color: var(--neutral-25);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.5;
   cursor: pointer;
   transition: background 150ms ease;
 }

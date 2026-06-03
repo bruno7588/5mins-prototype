@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from 'react'
+import { useId, useState, type ReactNode } from 'react'
 import { Add, Minus } from 'iconsax-react'
 import './InputInteger.css'
 
@@ -37,6 +37,10 @@ function InputInteger({
   const atMin = min != null && value <= min
   const atMax = max != null && value >= max
 
+  // Holds the raw text while the field is focused, so typing/clearing isn't fought by the
+  // controlled numeric value. Committed (and clamped) on blur.
+  const [draft, setDraft] = useState<string | null>(null)
+
   function decrement() {
     if (disabled || atMin) return
     onChange(value - step)
@@ -45,6 +49,25 @@ function InputInteger({
   function increment() {
     if (disabled || atMax) return
     onChange(value + step)
+  }
+
+  function handleType(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value.replace(/[^0-9]/g, '')
+    setDraft(raw)
+    if (raw !== '') {
+      let n = parseInt(raw, 10)
+      if (max != null && n > max) n = max
+      onChange(n)
+    }
+  }
+
+  function handleBlur() {
+    let n = draft === null || draft === '' ? value : parseInt(draft, 10)
+    if (Number.isNaN(n)) n = value
+    if (min != null && n < min) n = min
+    if (max != null && n > max) n = max
+    if (n !== value) onChange(n)
+    setDraft(null)
   }
 
   return (
@@ -69,17 +92,17 @@ function InputInteger({
         >
           <Minus size={20} color="currentColor" variant="Linear" />
         </button>
-        <span
+        <input
           className="input-integer__value"
           id={id}
-          role="spinbutton"
-          aria-valuenow={value}
-          aria-valuemin={min}
-          aria-valuemax={max}
+          type="text"
+          inputMode="numeric"
+          value={draft ?? String(value)}
+          onChange={handleType}
+          onBlur={handleBlur}
+          disabled={disabled}
           aria-label={ariaLabel ?? label}
-        >
-          {value}
-        </span>
+        />
         <button
           type="button"
           className="input-integer__step"

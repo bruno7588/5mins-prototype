@@ -1139,7 +1139,7 @@
 
 /* Filled warning (amber) — caution actions with consequences */
 .confirm-modal-btn--warning {
-  background: var(--warning-500);
+  background: var(--warning-600);
   color: var(--neutral-0);
 }
 

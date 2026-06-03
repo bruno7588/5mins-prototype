@@ -193,3 +193,103 @@ const [password, setPassword] = useState('');
 {/* 6. Password */}
 <InputField label="Password" type={show ? 'text' : 'password'} iconRight={<EyeToggle />} value={pw} onChange={e => setPw(e.target.value)} />
 ```
+
+---
+
+# 5Mins.ai Input Field — Integer
+
+## Overview
+
+The `InputInteger` component is the numeric stepper used for small whole-number settings (e.g. *Maximum course attempts*, *Due days to complete course*). It is a bordered field with a **minus** control, a **centred, typeable value**, and a **plus** control. The value can be both stepped (− / +) and typed directly.
+
+**Figma source:** `Library → Input Field / Integer` — node `11820-2571`
+
+---
+
+## Import
+
+```tsx
+import InputInteger from '@/components/InputInteger/InputInteger';
+```
+
+---
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | — | Label displayed above the field |
+| `value` | `number` | — | Controlled value (required) |
+| `onChange` | `(value: number) => void` | — | Fires on step and on typing (required) |
+| `min` | `number` | `0` | Lower bound; `−` disables at min, typed values clamp up on blur |
+| `max` | `number` | — | Upper bound; `+` disables at max, typed values clamp down live |
+| `step` | `number` | `1` | Increment for the − / + controls |
+| `helperText` | `ReactNode` | — | Hint below the field (accepts rich content, e.g. an emphasised word) |
+| `validation` | `'none' \| 'error' \| 'success'` | `'none'` | Drives border + helper colour |
+| `disabled` | `boolean` | `false` | Mutes colours and blocks interaction |
+| `className` | `string` | — | Extra class names (e.g. `input-integer--inline` for label-before-field) |
+| `ariaLabel` | `string` | — | Accessible name when no visible `label` |
+
+---
+
+## Typing behaviour
+
+- The value is a real `<input inputMode="numeric">`, so users can **type** a number as well as step it.
+- While focused, a local draft holds the raw text so clearing/partial entry isn't fought by the controlled value. Non-digit characters are stripped.
+- Values above `max` clamp **live**; values below `min` (and an empty field) clamp on **blur**.
+- Native number spinners are hidden; the − / + controls are the only steppers.
+
+---
+
+## States
+
+| State | Trigger | Visual |
+|-------|---------|--------|
+| **Enabled** | Default | Border `#383d4c` |
+| **Hover** | Mouse over field | Border `#9ea4b3` |
+| **Active / Focused** | Field focused (typing) | Border `#ffbb38` (gold) |
+| **Error** | `validation="error"` | Border `#e95c7b`, helper red |
+| **Disabled** | `disabled={true}` | Label / value / helper `#656b7c` |
+
+---
+
+## Layout variants
+
+| Variant | Class | Layout |
+|---------|-------|--------|
+| **Stacked** (default) | — | Label on top, then field, then helper |
+| **Inline** | `input-integer--inline` | Label before (left of) the field; helper wraps full-width below |
+
+---
+
+## Spacing
+
+| Property | Value |
+|----------|-------|
+| Field padding | `8px 12px`  (`--space-s --space-sm`) |
+| Field border-radius | `12px` (`--radius-sm`) |
+| Gap (− / value / +) | `12px` (`--space-sm`) |
+| Step control size | `24×24px`, circular hover |
+| Value box | `32px` wide, centred |
+| Gap (label → field → helper) | `8px` |
+
+---
+
+## Examples
+
+```tsx
+{/* 1. Simple bounded stepper */}
+<InputInteger label="Maximum course attempts" value={attempts} onChange={setAttempts} min={1} />
+
+{/* 2. With rich helper text */}
+<InputInteger
+  label="Maximum course attempts"
+  value={attempts}
+  onChange={setAttempts}
+  min={1}
+  helperText={<>…they're marked <span className="cs-failed">Failed</span>.</>}
+/>
+
+{/* 3. Inline label */}
+<InputInteger className="input-integer--inline" label="Due days to complete course" value={days} onChange={setDays} min={1} />
+```

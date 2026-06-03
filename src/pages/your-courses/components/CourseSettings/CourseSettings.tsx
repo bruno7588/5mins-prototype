@@ -155,7 +155,6 @@ function CourseSettings() {
           expand: (
             <div className="cs-card-expand">
               <InputInteger
-                className="input-integer--inline"
                 label="Maximum course attempts"
                 value={maxAttempts}
                 onChange={setMaxAttempts}
@@ -168,7 +167,6 @@ function CourseSettings() {
                 }
               />
               <InputInteger
-                className="input-integer--inline"
                 label="Due days to complete course"
                 value={newAttemptDueDays}
                 onChange={setNewAttemptDueDays}

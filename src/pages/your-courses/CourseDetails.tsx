@@ -117,8 +117,8 @@ const ROW_MENU: RowMenuAction[] = [
   { key: 'extend', label: 'Extend due date', description: 'Give more time to complete the course', Icon: CalendarAdd },
   { key: 'editStart', label: 'Edit start date', description: 'Change when the enrolment begins', Icon: CalendarEdit },
   { key: 'editRepeat', label: 'Edit repeat rules', description: 'How often this course repeats', Icon: RepeatRules },
-  { key: 'restart', label: 'Restart enrolment', description: 'Start a new enrolment cycle with new dates', Icon: Repeat, variant: 'Bold' },
-  { key: 'reset', label: 'Reset progress', description: 'Archive this attempt and start over', Icon: ArrowRotateLeft },
+  { key: 'restart', label: 'Restart enrolment', description: 'Start a new enrolment with new dates', Icon: Repeat, variant: 'Bold' },
+  { key: 'reset', label: 'Give another attempt', description: 'Archive this attempt and start over', Icon: ArrowRotateLeft },
   { key: 'unenrol', label: 'Unenrol', description: 'Remove this learner from the course', Icon: UserMinus, danger: true, dividerBefore: true },
 ]
 
@@ -451,7 +451,7 @@ function CourseDetails() {
                   <Tooltip
                     icon={false}
                     position="Top"
-                    text="Course attempts (current / maximum allowed). A course attempt is a full restart of the course — the number goes up when progress is reset by an admin or by auto-reset on failure. Retaking individual quizzes within the same attempt doesn't count."
+                    text="Course attempts (current / maximum allowed)"
                     className="cd-attempt-info"
                   >
                     <InfoMark />
@@ -577,17 +577,17 @@ function CourseDetails() {
                 <div className="confirm-modal-icon">
                   <ArrowRotateLeft size={72} color="var(--warning-500)" variant="Linear" />
                 </div>
-                <h2 className="confirm-modal-title">Reset progress</h2>
+                <h2 className="confirm-modal-title">Give another attempt at this course</h2>
                 <p className="confirm-modal-body">
-                  Reset {resetTarget.name}&apos;s progress on this course
+                  Reset {resetTarget.name}&apos;s progress and start over
                 </p>
               </div>
               <Alert
                 type="Callout"
                 title="What happens:"
                 bullets={[
-                  'Their current attempt is archived and a fresh one starts in the same enrolment',
-                  'Start date, due date, and recurrence stay the same',
+                  'Their current attempt is archived and a new attempt begins in the same enrolment',
+                  'Their start date and recurrence stay the same',
                 ]}
               />
               {exceedsCap && (
@@ -595,7 +595,7 @@ function CourseDetails() {
                   type="Alert"
                   customIcon={<BellIcon />}
                   className="cd-reset-cap-alert"
-                  message={`${resetTarget.name} has used all ${MAX_COURSE_ATTEMPTS} attempts allowed by auto-reset. Resetting adds one beyond that limit — this will be their ${ordinal(nextAttempt)} attempt`}
+                  message={`${resetTarget.name} has used all ${MAX_COURSE_ATTEMPTS} attempts allowed by auto-reset. Resetting adds one beyond that limit - this will be their ${ordinal(nextAttempt)} attempt`}
                 />
               )}
               <div className="confirm-modal-actions">
@@ -603,7 +603,7 @@ function CourseDetails() {
                   Cancel
                 </button>
                 <button className="confirm-modal-btn confirm-modal-btn--warning" onClick={() => confirmReset(resetTarget.id)}>
-                  Reset Progress
+                  Give Another Attempt
                 </button>
               </div>
             </>

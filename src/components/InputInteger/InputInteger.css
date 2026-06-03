@@ -30,7 +30,7 @@
   align-items: center;
   gap: var(--space-sm);
   width: fit-content;
-  padding: var(--space-sm) var(--space-m);
+  padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   transition: border-color 150ms ease;
@@ -49,11 +49,27 @@
 }
 
 .input-integer__value {
+  width: 32px;
   min-width: 26px;
   text-align: center;
+  font-family: inherit;
   font-size: 14px;
   color: var(--text-primary);
   line-height: 1.5;
+  border: none;
+  background: transparent;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+
+.input-integer__value:focus {
+  outline: none;
+}
+
+.input-integer__value::-webkit-outer-spin-button,
+.input-integer__value::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .input-integer__step {
