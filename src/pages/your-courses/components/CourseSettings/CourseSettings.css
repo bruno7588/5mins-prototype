@@ -80,7 +80,7 @@
 /* Spacing via margins (not flex gap) so the collapsible's gap lives inside the
    animated height — no residual dead space when collapsed. */
 .cs-card-desc {
-  margin-top: var(--space-s);
+  margin-top: var(--space-xs);
 }
 
 .cs-card-title {
