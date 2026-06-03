@@ -28,6 +28,7 @@ import Checkbox from '../../components/Checkbox/Checkbox'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import Alert from '../../components/Alert/Alert'
+import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CourseSettings from './components/CourseSettings/CourseSettings'
 import '../people/People.css'
@@ -215,6 +216,7 @@ function CourseDetails() {
   const [learnerList, setLearnerList] = useState<Learner[]>(learners)
   const [openMenuId, setOpenMenuId] = useState<number | null>(null)
   const [resetTarget, setResetTarget] = useState<Learner | null>(null)
+  const { toasts, show: showToast } = useToast()
 
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -252,6 +254,8 @@ function CourseDetails() {
           : l,
       ),
     )
+    const name = learnerList.find((l) => l.id === id)?.name ?? 'Learner'
+    showToast('success', `New attempt started for ${name}`)
     setResetTarget(null)
   }
 
@@ -610,6 +614,8 @@ function CourseDetails() {
             )
           })()}
         </ConfirmModal>
+
+        <ToastContainer toasts={toasts} />
       </main>
     </div>
   )
