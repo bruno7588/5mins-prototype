@@ -527,6 +527,12 @@
   cursor: default;
 }
 
+/* Keep the attempt-no tooltip on a single line */
+.cd-attempt-info .tooltip__content {
+  max-width: none;
+  white-space: nowrap;
+}
+
 .cd-cell--actions {
   width: 48px;
   flex-shrink: 0;

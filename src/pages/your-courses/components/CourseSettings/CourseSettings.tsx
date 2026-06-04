@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import Checkbox from '../../../../components/Checkbox/Checkbox'
 import InputInteger from '../../../../components/InputInteger/InputInteger'
 import Collapse from '../../../../components/Collapse/Collapse'
+import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import './CourseSettings.css'
 
 type SettingKey =
@@ -56,6 +57,7 @@ function CourseSettings() {
   const [savedValues, setSavedValues] = useState<Record<SettingKey, boolean>>(INITIAL_VALUES)
   const [savedMaxAttempts, setSavedMaxAttempts] = useState(INITIAL_MAX_ATTEMPTS)
   const [savedDueDays, setSavedDueDays] = useState(INITIAL_DUE_DAYS)
+  const toast = useToast()
 
   const toggle = (key: SettingKey) => setValues((prev) => ({ ...prev, [key]: !prev[key] }))
 
@@ -132,19 +134,19 @@ function CourseSettings() {
           expand: (
             <div className="cs-card-expand">
               <InputInteger
-                label="Maximum course attempts"
+                label="Maximum course re-attempts"
                 value={maxAttempts}
                 onChange={setMaxAttempts}
                 min={1}
                 helperText={
                   <>
-                    Once a learner reaches this many attempts, auto-reset stops and they&apos;re marked{' '}
-                    <span className="cs-failed">Failed</span>.
+                    Once a learner uses all re-attempts, auto-reset stops and they&apos;re marked{' '}
+                    <span className="cs-failed">Failed</span>
                   </>
                 }
               />
               <InputInteger
-                label="Due days to complete course"
+                label="Days to complete each attempt"
                 value={newAttemptDueDays}
                 onChange={setNewAttemptDueDays}
                 min={1}
@@ -208,6 +210,12 @@ function CourseSettings() {
   }
 
   function saveSection(section: SettingSection) {
+    const hasAutoReset = section.items.some((item) => item.key === 'autoReset')
+    const autoResetChanged =
+      hasAutoReset &&
+      (values.autoReset !== savedValues.autoReset ||
+        (values.autoReset && (maxAttempts !== savedMaxAttempts || newAttemptDueDays !== savedDueDays)))
+
     setSavedValues((prev) => {
       const next = { ...prev }
       section.items.forEach((item) => {
@@ -215,9 +223,19 @@ function CourseSettings() {
       })
       return next
     })
-    if (section.items.some((item) => item.key === 'autoReset')) {
+    if (hasAutoReset) {
       setSavedMaxAttempts(maxAttempts)
       setSavedDueDays(newAttemptDueDays)
+    }
+
+    if (autoResetChanged) {
+      if (values.autoReset) {
+        const attempts = `${maxAttempts} re-attempt${maxAttempts === 1 ? '' : 's'}`
+        const days = `${newAttemptDueDays} day${newAttemptDueDays === 1 ? '' : 's'} per attempt`
+        toast.show('success', `Auto-reset enabled: ${attempts}, ${days}`)
+      } else {
+        toast.show('success', 'Auto-reset disabled')
+      }
     }
   }
 
@@ -250,6 +268,7 @@ function CourseSettings() {
           </div>
         </div>
       ))}
+      <ToastContainer toasts={toast.toasts} />
     </section>
   )
 }

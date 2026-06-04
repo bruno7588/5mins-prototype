@@ -118,8 +118,8 @@ const ROW_MENU: RowMenuAction[] = [
   { key: 'extend', label: 'Extend due date', description: 'Give more time to complete the course', Icon: CalendarAdd },
   { key: 'editStart', label: 'Edit start date', description: 'Change when the enrolment begins', Icon: CalendarEdit },
   { key: 'editRepeat', label: 'Edit repeat rules', description: 'How often this course repeats', Icon: RepeatRules },
-  { key: 'restart', label: 'Restart enrolment', description: 'Start a new enrolment with new dates', Icon: Repeat, variant: 'Bold' },
   { key: 'reset', label: 'Give another attempt', description: 'Archive this attempt and start over', Icon: ArrowRotateLeft },
+  { key: 'restart', label: 'Restart enrolment', description: 'Start a new enrolment with new dates', Icon: Repeat, variant: 'Bold' },
   { key: 'unenrol', label: 'Unenrol', description: 'Remove this learner from the course', Icon: UserMinus, danger: true, dividerBefore: true },
 ]
 
@@ -150,22 +150,6 @@ function BellIcon() {
       <path d="M9.4105 18.5786C9.60384 18.7164 9.86051 18.7835 10.0772 18.6905C10.2939 18.5975 10.4339 18.3133 10.3272 18.098C10.2855 18.0136 10.2139 17.9499 10.1422 17.8914C9.94385 17.7312 9.72384 17.6003 9.4905 17.5038C9.39883 17.4659 9.30216 17.4315 9.20216 17.4384C9.10382 17.4436 9.00049 17.4969 8.96215 17.5917C8.79715 17.9792 9.12716 18.3788 9.4105 18.5786Z" fill="#FFF59D" />
     </svg>
   )
-}
-
-// 1 → "1st", 2 → "2nd", 4 → "4th", 11 → "11th".
-function ordinal(n: number) {
-  const rem100 = n % 100
-  if (rem100 >= 11 && rem100 <= 13) return `${n}th`
-  switch (n % 10) {
-    case 1:
-      return `${n}st`
-    case 2:
-      return `${n}nd`
-    case 3:
-      return `${n}rd`
-    default:
-      return `${n}th`
-  }
 }
 
 function StackedDate({ value }: { value: string | null }) {
@@ -450,11 +434,11 @@ function CourseDetails() {
                 </div>
                 <div className="cd-cell cd-cell--status">Status</div>
                 <div className="cd-cell cd-cell--attempt">
-                  Attempt no
+                  Re-attempts
                   <Tooltip
                     icon={false}
                     position="Top"
-                    text="Course attempts (current / maximum allowed)"
+                    text="Course re-attempts (current/max allowed)"
                     className="cd-attempt-info"
                   >
                     <InfoMark />
@@ -578,7 +562,7 @@ function CourseDetails() {
             <>
               <div className="confirm-modal-header confirm-modal-header--center">
                 <div className="confirm-modal-icon">
-                  <ArrowRotateLeft size={72} color="var(--warning-500)" variant="Linear" />
+                  <ArrowRotateLeft size={72} color="var(--primary-600)" variant="Linear" />
                 </div>
                 <h2 className="confirm-modal-title">Give another attempt at this course</h2>
                 <p className="confirm-modal-body">
@@ -598,14 +582,14 @@ function CourseDetails() {
                   type="Alert"
                   customIcon={<BellIcon />}
                   className="cd-reset-cap-alert"
-                  message={`${resetTarget.name} has used all ${MAX_COURSE_ATTEMPTS} attempts allowed by auto-reset. Resetting adds one beyond that limit - this will be their ${ordinal(nextAttempt)} attempt`}
+                  message={`${resetTarget.name.split(' ')[0]} has used all ${MAX_COURSE_ATTEMPTS} re-attempts allowed by auto-reset. This grants one more beyond that limit.`}
                 />
               )}
               <div className="confirm-modal-actions">
                 <button className="confirm-modal-btn confirm-modal-btn--outlined" onClick={() => setResetTarget(null)}>
                   Cancel
                 </button>
-                <button className="confirm-modal-btn confirm-modal-btn--warning" onClick={() => confirmReset(resetTarget.id)}>
+                <button className="confirm-modal-btn confirm-modal-btn--primary" onClick={() => confirmReset(resetTarget.id)}>
                   Give Another Attempt
                 </button>
               </div>
