@@ -41,6 +41,7 @@ import thumb3 from './assets/t3.jpg'
 import avatar2 from './assets/m2.jpg'
 import avatar3 from './assets/m3.jpg'
 import avatar4 from './assets/m4.jpg'
+import { formatRelative } from './relativeTime'
 import './MyTeam.css'
 
 export function Logo({ size = 22 }: { size?: number }) {
@@ -114,6 +115,7 @@ type TeamMember = {
   inProgress: number           // started, not yet complete
   completed: number            // completed all-time
   overallProgress: number      // 0–100 — completion across all assigned courses
+  lastReminderSentAt?: string  // ISO date of the most recent reminder sent to this member
 }
 
 const CURRENT_USER_ID = 'me'
@@ -171,11 +173,11 @@ function coursesFor(memberId: string, bucket: CourseBucket, count: number): Draw
 
 const team: TeamMember[] = [
   // Direct reports of the current user
-  { id: 'm1', name: 'Michael Thompson', role: 'Risk Management Specialist', initials: 'MT', avatarSrc: avatar1, managerIds: [CURRENT_USER_ID], overdue: 2, atRisk: 1, inProgress: 1, completed: 3,  overallProgress: 0  },
-  { id: 'm2', name: 'Jessica Hart',     role: 'Compliance Officer',         initials: 'JH', avatarSrc: avatar2, managerIds: [CURRENT_USER_ID], teamName: 'Compliance Team',    overdue: 0, atRisk: 3, inProgress: 2, completed: 5,  overallProgress: 0  },
-  { id: 'm3', name: 'David Johnson',    role: 'Investment Strategist',      initials: 'DJ', avatarSrc: avatar3, managerIds: [CURRENT_USER_ID], overdue: 1, atRisk: 0, inProgress: 0, completed: 4,  overallProgress: 12 },
+  { id: 'm1', name: 'Michael Thompson', role: 'Risk Management Specialist', initials: 'MT', avatarSrc: avatar1, managerIds: [CURRENT_USER_ID], overdue: 2, atRisk: 1, inProgress: 1, completed: 3,  overallProgress: 0,  lastReminderSentAt: addDays(-5)  },
+  { id: 'm2', name: 'Jessica Hart',     role: 'Compliance Officer',         initials: 'JH', avatarSrc: avatar2, managerIds: [CURRENT_USER_ID], teamName: 'Compliance Team',    overdue: 0, atRisk: 3, inProgress: 2, completed: 5,  overallProgress: 0,  lastReminderSentAt: addDays(-2)  },
+  { id: 'm3', name: 'David Johnson',    role: 'Investment Strategist',      initials: 'DJ', avatarSrc: avatar3, managerIds: [CURRENT_USER_ID], overdue: 1, atRisk: 0, inProgress: 0, completed: 4,  overallProgress: 12, lastReminderSentAt: addDays(-12) },
   { id: 'm4', name: 'Noah Williams',    role: 'Concierge',                  initials: 'NW',                     managerIds: [CURRENT_USER_ID], overdue: 0, atRisk: 0, inProgress: 3, completed: 6,  overallProgress: 68 },
-  { id: 'm5', name: 'Mei Tanaka',       role: 'Housekeeping',               initials: 'MT',                     managerIds: [CURRENT_USER_ID], overdue: 3, atRisk: 2, inProgress: 0, completed: 2,  overallProgress: 22 },
+  { id: 'm5', name: 'Mei Tanaka',       role: 'Housekeeping',               initials: 'MT',                     managerIds: [CURRENT_USER_ID], overdue: 3, atRisk: 2, inProgress: 0, completed: 2,  overallProgress: 22, lastReminderSentAt: addDays(-1) },
   { id: 'm6', name: 'Ethan Brooks',     role: 'Barista',                    initials: 'EB',                     managerIds: [CURRENT_USER_ID], overdue: 0, atRisk: 1, inProgress: 1, completed: 4,  overallProgress: 45 },
   { id: 'm7', name: 'Priya Shah',       role: 'Shift Lead',                 initials: 'PS',                     managerIds: [CURRENT_USER_ID], teamName: 'Shift Operations',   overdue: 0, atRisk: 0, inProgress: 2, completed: 7,  overallProgress: 91 },
   { id: 'm8', name: 'Samantha Rivers',  role: 'Financial Analyst',          initials: 'SR', avatarSrc: avatar4, managerIds: [CURRENT_USER_ID], overdue: 1, atRisk: 0, inProgress: 1, completed: 3,  overallProgress: 0  },
@@ -212,7 +214,11 @@ function MyTeam() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [drawerState, setDrawerState] = useState<{ memberId: string; bucket: CourseBucket } | null>(null)
   const [reminderOpen, setReminderOpen] = useState(false)
+  // Reminders sent during this session — overrides the seeded lastReminderSentAt
+  const [sentMap, setSentMap] = useState<Record<string, string>>({})
   const toast = useToast()
+
+  const lastSentFor = (m: TeamMember) => sentMap[m.id] ?? m.lastReminderSentAt
   const [sortKey, setSortKey] = useState<'overdue' | 'atRisk' | 'inProgress' | 'completed' | 'progress'>('overdue')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   const [courseFilter, setCourseFilter] = useState<'all' | 'compliance'>('all')
@@ -764,21 +770,40 @@ function MyTeam() {
                         <span className="mt-cp__progress-pct">{r.overallProgress}%</span>
                       </div>
                       <div className="mt-cp__table-cell mt-cp__table-cell--action">
-                        {needsAttention && (
-                          <Tooltip text="Send reminder" position="Top" alignment="End" icon={false}>
-                            <button
-                              type="button"
-                              className="mt-cp__row-action"
-                              aria-label={`Send reminder to ${r.name}`}
-                              onClick={() => {
-                                setSelectedIds(new Set([r.id]))
-                                setReminderOpen(true)
-                              }}
+                        {needsAttention && (() => {
+                          const lastSent = lastSentFor(r)
+                          return (
+                            <Tooltip
+                              position="Top"
+                              alignment="End"
+                              icon={false}
+                              text={
+                                <span className="mt-reminder-tip">
+                                  <span className="mt-reminder-tip__title">Send reminder</span>
+                                  {lastSent && (
+                                    <span className="mt-reminder-tip__sub">Last sent {formatRelative(lastSent)}</span>
+                                  )}
+                                </span>
+                              }
                             >
-                              <SmsNotification size={20} color="var(--text-secondary)" variant="Linear" />
-                            </button>
-                          </Tooltip>
-                        )}
+                              <button
+                                type="button"
+                                className="mt-cp__row-action"
+                                aria-label={
+                                  lastSent
+                                    ? `Send reminder to ${r.name}, last sent ${formatRelative(lastSent)}`
+                                    : `Send reminder to ${r.name}`
+                                }
+                                onClick={() => {
+                                  setSelectedIds(new Set([r.id]))
+                                  setReminderOpen(true)
+                                }}
+                              >
+                                <SmsNotification size={20} color="var(--text-secondary)" variant="Linear" />
+                              </button>
+                            </Tooltip>
+                          )
+                        })()}
                       </div>
                     </div>
                   )
@@ -834,9 +859,18 @@ function MyTeam() {
 
       <ReminderDrawer
         open={reminderOpen}
-        members={team.filter((m) => selectedIds.has(m.id))}
+        members={team
+          .filter((m) => selectedIds.has(m.id))
+          .map((m) => ({ ...m, lastReminderSentAt: lastSentFor(m) }))}
         onClose={() => setReminderOpen(false)}
         onSend={(count) => {
+          const now = new Date().toISOString()
+          const sentIds = Array.from(selectedIds)
+          setSentMap((prev) => {
+            const next = { ...prev }
+            sentIds.forEach((id) => { next[id] = now })
+            return next
+          })
           setReminderOpen(false)
           setSelectedIds(new Set())
           toast.show('success', `${count} reminder${count === 1 ? '' : 's'} sent successfully`)

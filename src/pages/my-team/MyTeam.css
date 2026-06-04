@@ -716,16 +716,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   background: transparent;
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-full);
   cursor: pointer;
   transition: background 150ms ease;
 }
 .mt-cp__row-action:hover {
   background: var(--neutral-50);
+}
+
+/* Two-line "Send reminder / Last sent …" tooltip */
+.mt-reminder-tip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+.mt-reminder-tip__title {
+  font-weight: 500;
+}
+.mt-reminder-tip__sub {
+  color: var(--neutral-300);
+  font-size: 13px;
 }
 
 .mt-cp__table-cell--muted {

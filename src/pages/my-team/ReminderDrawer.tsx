@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
+import { InfoCircle } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
+import { daysSince, formatRelativeShort } from './relativeTime'
 import './ReminderDrawer.css'
+
+// Reminders sent within this many days count as "recent" for the spam guard.
+const RECENT_DAYS = 3
 
 interface ReminderMember {
   id: string
@@ -11,6 +16,7 @@ interface ReminderMember {
   overdue: number
   atRisk: number
   overallProgress: number
+  lastReminderSentAt?: string
 }
 
 interface Props {
@@ -60,6 +66,9 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
   const segments = 8
   const total = members.length
   const shown = Math.min(5, total)
+  const recentCount = members.filter(
+    (m) => m.lastReminderSentAt && daysSince(m.lastReminderSentAt) <= RECENT_DAYS,
+  ).length
 
   return (
     <>
@@ -88,6 +97,19 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
         </div>
 
         <div className="side-drawer__content">
+          {recentCount > 0 && (
+            <div className="rd-recent-banner" role="status">
+              <InfoCircle size={20} color="var(--warning-600)" variant="Bold" />
+              <p className="rd-recent-banner__text">
+                {recentCount === total
+                  ? total === 1
+                    ? 'This learner was already reminded in the last 3 days.'
+                    : `All ${total} selected learners were reminded in the last 3 days.`
+                  : `${recentCount} of ${total} selected ${recentCount === 1 ? 'learner was' : 'learners were'} reminded in the last 3 days.`}{' '}
+                Sending again may feel like spam.
+              </p>
+            </div>
+          )}
           <div className="rd-form">
             <div className="rd-field">
               <label className="rd-label" htmlFor="rd-subject">Subject</label>
@@ -114,9 +136,9 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
               <div className="rd-table">
                 <div className="rd-table__header">
                   <div className="rd-table__cell rd-table__cell--name">Name</div>
-                  <div className="rd-table__cell rd-table__cell--metric">Courses Overdue</div>
-                  <div className="rd-table__cell rd-table__cell--metric">At Risk</div>
-                  <div className="rd-table__cell rd-table__cell--progress">Overall progress</div>
+                  <div className="rd-table__cell rd-table__cell--head-overdue">Courses Overdue</div>
+                  <div className="rd-table__cell rd-table__cell--head-atrisk">At Risk</div>
+                  <div className="rd-table__cell rd-table__cell--head-progress">Overall progress</div>
                 </div>
 
                 {members.slice(0, shown).map((m) => {
@@ -131,17 +153,24 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
                         )}
                         <div className="rd-member-info">
                           <span className="rd-member-name">{m.name}</span>
-                          <span className="rd-member-role">{m.role}</span>
+                          <span className="rd-member-role">
+                            {m.role}
+                            {m.lastReminderSentAt && (
+                              <span className="rd-member-lastsent">
+                                {' · '}Last remind {formatRelativeShort(m.lastReminderSentAt)}
+                              </span>
+                            )}
+                          </span>
                         </div>
                       </div>
-                      <div className="rd-table__cell rd-table__cell--metric">
+                      <div className="rd-table__cell rd-table__cell--overdue">
                         {m.overdue > 0 ? (
                           <span className="rd-metric--overdue">{m.overdue}</span>
                         ) : (
                           <span>–</span>
                         )}
                       </div>
-                      <div className="rd-table__cell rd-table__cell--metric">
+                      <div className="rd-table__cell rd-table__cell--atrisk">
                         {m.atRisk > 0 ? (
                           <span className="rd-metric--at-risk">{m.atRisk}</span>
                         ) : (
