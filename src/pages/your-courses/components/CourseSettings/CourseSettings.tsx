@@ -125,29 +125,6 @@ function CourseSettings() {
           ),
         },
         {
-          key: 'accessAfterDue',
-          title: 'Allow course access after Due Date',
-          description: 'Users can continue viewing lessons and assessments after the due date has passed.',
-        },
-        {
-          key: 'rewards',
-          title: 'Rewards',
-          description: 'Award jewels when course is completed (max of 500 jewels).',
-        },
-        {
-          key: 'certificate',
-          title: 'Certificate',
-          description: (
-            <>
-              Add a certificate for completion.{' '}
-              <a className="cs-link" href="#">
-                Read
-              </a>{' '}
-              how certification works.
-            </>
-          ),
-        },
-        {
           key: 'autoReset',
           title: 'Auto-reset on failure',
           description:
@@ -173,6 +150,29 @@ function CourseSettings() {
                 min={1}
               />
             </div>
+          ),
+        },
+        {
+          key: 'accessAfterDue',
+          title: 'Allow course access after Due Date',
+          description: 'Users can continue viewing lessons and assessments after the due date has passed.',
+        },
+        {
+          key: 'rewards',
+          title: 'Rewards',
+          description: 'Award jewels when course is completed (max of 500 jewels).',
+        },
+        {
+          key: 'certificate',
+          title: 'Certificate',
+          description: (
+            <>
+              Add a certificate for completion.{' '}
+              <a className="cs-link" href="#">
+                Read
+              </a>{' '}
+              how certification works.
+            </>
           ),
         },
       ],
