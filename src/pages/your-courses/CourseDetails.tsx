@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState, type ComponentType } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState, type ComponentType } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
   Add,
@@ -201,11 +201,39 @@ function CourseDetails() {
   const [resetTarget, setResetTarget] = useState<Learner | null>(null)
   const { toasts, show: showToast } = useToast()
 
+  /* ─── Sticky first column: track horizontal scroll ─── */
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [hasScroll, setHasScroll] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q) return learnerList
     return learnerList.filter((l) => l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q))
   }, [search, learnerList])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+
+    function onScroll() {
+      setIsScrolled(el!.scrollLeft > 0)
+    }
+
+    function checkOverflow() {
+      setHasScroll(el!.scrollWidth > el!.clientWidth)
+    }
+
+    el.addEventListener('scroll', onScroll)
+    const ro = new ResizeObserver(checkOverflow)
+    ro.observe(el)
+    checkOverflow()
+
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      ro.disconnect()
+    }
+  }, [activeTab, rows.length])
 
   const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.id))
 
@@ -419,6 +447,10 @@ function CourseDetails() {
             </div>
 
             {/* Table */}
+            <div
+              ref={scrollRef}
+              className={`cd-table-scroll${hasScroll ? ' cd-table-scroll--has-scroll' : ''}${isScrolled ? ' cd-table-scroll--scrolled' : ''}`}
+            >
             <div className="cd-table">
               <div className="cd-row cd-row--head">
                 <div className="cd-cell cd-cell--name">
@@ -533,16 +565,17 @@ function CourseDetails() {
               ))}
 
               {rows.length === 0 && <div className="cd-empty">No people match your search.</div>}
+            </div>
+            </div>
 
-              <div className="cd-pagination">
-                <span className="cd-pagination-text">1-{rows.length} of {TOTAL}</span>
-                <button className="cd-pagination-btn cd-pagination-btn--disabled" aria-label="Previous page">
-                  <ArrowLeft2 size={16} color="var(--neutral-400)" />
-                </button>
-                <button className="cd-pagination-btn" aria-label="Next page">
-                  <ArrowRight2 size={16} color="var(--neutral-500)" />
-                </button>
-              </div>
+            <div className="cd-pagination">
+              <span className="cd-pagination-text">1-{rows.length} of {TOTAL}</span>
+              <button className="cd-pagination-btn cd-pagination-btn--disabled" aria-label="Previous page">
+                <ArrowLeft2 size={16} color="var(--neutral-400)" />
+              </button>
+              <button className="cd-pagination-btn" aria-label="Next page">
+                <ArrowRight2 size={16} color="var(--neutral-500)" />
+              </button>
             </div>
           </section>
         ) : activeTab === 'settings' ? (

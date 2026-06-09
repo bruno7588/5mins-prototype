@@ -375,6 +375,11 @@
 }
 
 /* Table */
+/* Scroll wrapper — only scrolls when content overflows */
+.cd-table-scroll {
+  overflow-x: auto;
+}
+
 .cd-table {
   display: flex;
   flex-direction: column;
@@ -385,6 +390,7 @@
 .cd-row {
   display: flex;
   align-items: center;
+  min-width: fit-content;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   transition: background 150ms ease;
@@ -428,6 +434,50 @@
   flex: 1;
   min-width: 0;
   gap: var(--space-sm);
+}
+
+/* ─── Sticky first (Name) column — frozen only when the table overflows ─── */
+.cd-table-scroll--has-scroll .cd-cell--name {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  flex: none;
+  width: 260px;
+  /* Opaque bg so scrolled-under content doesn't bleed through */
+  background: var(--page-background);
+}
+
+.cd-table-scroll--has-scroll .cd-row:hover .cd-cell--name {
+  background: var(--cards-background-hover);
+}
+
+.cd-table-scroll--has-scroll .cd-row--selected .cd-cell--name,
+.cd-table-scroll--has-scroll .cd-row--selected:hover .cd-cell--name {
+  /* secondary-500 @ 12% flattened over --page-background */
+  background: #FAF2E3;
+}
+
+/* Header row is transparent — keep its sticky cell on the page bg */
+.cd-table-scroll--has-scroll .cd-row--head .cd-cell--name {
+  background: var(--page-background);
+}
+
+/* Edge shadow — revealed only once the user scrolls horizontally */
+.cd-table-scroll--has-scroll .cd-cell--name::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.cd-table-scroll--scrolled .cd-cell--name::after {
+  opacity: 1;
 }
 
 .cd-cell--start {
