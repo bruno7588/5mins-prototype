@@ -1,7 +1,8 @@
 import { useCallback, useRef, useState } from 'react'
-import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Bookmark, Notification, Sort } from 'iconsax-react'
+import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Notification, Sort } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
+import Chip from '../../components/Chip/Chip'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
 import Collapse from '../../components/Collapse/Collapse'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -10,9 +11,11 @@ import PresetsMenu from './components/PresetsMenu/PresetsMenu'
 import ReportsMenu from './components/ReportsMenu/ReportsMenu'
 import ReportDrawer from './components/ReportDrawer/ReportDrawer'
 import {
+  DEFAULT_PRESETS,
   readPresets,
   savePreset,
   removePreset,
+  togglePresetPinned,
   readReports,
   saveReport,
   removeReport,
@@ -225,10 +228,11 @@ function LearningRecords() {
   }, [showToast])
 
   const saveCurrentAsPreset = useCallback(
-    (name: string) => {
+    (name: string, description: string) => {
       const preset: FilterPreset = {
         id: `preset-${Date.now()}`,
         name,
+        description: description || undefined,
         filters: activeFilters.map((id) => ({ id, value: filterValues[id] ?? null })),
         createdAt: new Date().toISOString(),
       }
@@ -246,6 +250,55 @@ function LearningRecords() {
     },
     [showToast],
   )
+
+  const togglePin = useCallback((id: string) => {
+    setPresets(togglePresetPinned(id))
+  }, [])
+
+  const renamePreset = useCallback(
+    (id: string, name: string) => {
+      setPresets((prev) => {
+        const p = prev.find((x) => x.id === id)
+        return p ? savePreset({ ...p, name }) : prev
+      })
+      showToast('success', 'Preset renamed')
+    },
+    [showToast],
+  )
+
+  const duplicatePreset = useCallback(
+    (preset: FilterPreset) => {
+      setPresets(
+        savePreset({
+          ...preset,
+          id: `preset-${Date.now()}`,
+          name: `${preset.name} (copy)`,
+          pinned: false,
+          createdAt: new Date().toISOString(),
+        }),
+      )
+      showToast('success', 'Preset duplicated')
+    },
+    [showToast],
+  )
+
+  // True when the table's current filters exactly match a preset.
+  const isPresetActive = useCallback(
+    (preset: FilterPreset): boolean => {
+      if (preset.filters.length !== activeFilters.length) return false
+      return preset.filters.every(
+        (f) => activeFilters.includes(f.id) && (filterValues[f.id] ?? null) === (f.value ?? null),
+      )
+    },
+    [activeFilters, filterValues],
+  )
+
+  // Presets shown as chips in the header: user presets (pinned first), then
+  // suggested defaults to fill — capped at 4.
+  const headerPresets = [
+    ...[...presets].sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned)),
+    ...DEFAULT_PRESETS,
+  ].slice(0, 4)
 
   /* ─── Saved reports ─── */
   const currentFilterEntries: FilterEntry[] = activeFilters.map((id) => ({
@@ -400,30 +453,19 @@ function LearningRecords() {
                 <span className="lrp-filters-badge">{activeFilters.length}</span>
               </button>
 
-              {/* Presets — apply / save filter combinations (visible in both states) */}
-              <div className="lrp-presets-wrap" ref={presetsWrapRef}>
-                <button
-                  type="button"
-                  className="lrp-presets-btn"
-                  aria-haspopup="dialog"
-                  aria-expanded={presetsOpen}
-                  onClick={() => setPresetsOpen((o) => !o)}
-                >
-                  <Bookmark size={18} color="var(--text-secondary)" variant="Linear" />
-                  Presets
-                  <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
-                </button>
-                <PresetsMenu
-                  open={presetsOpen}
-                  onClose={() => setPresetsOpen(false)}
-                  anchorRef={presetsWrapRef}
-                  presets={presets}
-                  canSave={activeFilters.length > 0}
-                  onApply={applyPreset}
-                  onSave={saveCurrentAsPreset}
-                  onDelete={deletePreset}
-                />
-              </div>
+              {/* Presets shown as quick-apply chips (DS Chip component) */}
+              {headerPresets.length > 0 && (
+                <div className="lrp-presets-wrap">
+                  {headerPresets.map((p) => (
+                    <Chip
+                      key={p.id}
+                      label={p.name}
+                      selected={isPresetActive(p)}
+                      onClick={() => applyPreset(p)}
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* Collapsed-only cluster: Add + button + filter pills. Stays mounted and
                   fades out as the container expands (cross-fades with the bottom Add+). */}
@@ -518,6 +560,31 @@ function LearningRecords() {
                 <div className="lrp-filter-actions">
                   {/* Add + lives in the bottom actions when expanded */}
                   {renderAddButton(bottomAddRef, filtersOpen && filtersExpanded)}
+                  <div className="lrp-presets-wrap" ref={presetsWrapRef}>
+                    <button
+                      type="button"
+                      className="lrp-filter-save-preset"
+                      aria-haspopup="dialog"
+                      aria-expanded={presetsOpen}
+                      onClick={() => setPresetsOpen((o) => !o)}
+                    >
+                      Save Preset
+                    </button>
+                    <PresetsMenu
+                      open={presetsOpen}
+                      onClose={() => setPresetsOpen(false)}
+                      anchorRef={presetsWrapRef}
+                      presets={presets}
+                      canSave={activeFilters.length > 0}
+                      isActive={isPresetActive}
+                      onApply={applyPreset}
+                      onSave={saveCurrentAsPreset}
+                      onDelete={deletePreset}
+                      onTogglePin={togglePin}
+                      onRename={renamePreset}
+                      onDuplicate={duplicatePreset}
+                    />
+                  </div>
                   <button
                     type="button"
                     className="lrp-filter-clear"

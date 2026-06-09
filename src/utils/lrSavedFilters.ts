@@ -13,10 +13,13 @@ export interface FilterEntry {
 export interface FilterPreset {
   id: string
   name: string
+  description?: string
   filters: FilterEntry[]
   createdAt: string
   /** Suggested defaults are read-only (apply-only, cannot be deleted). */
   isDefault?: boolean
+  /** Pinned presets surface as one-click chips in the filters bar. */
+  pinned?: boolean
 }
 
 const PRESETS_KEY = '5mins.lr-filter-presets'
@@ -71,6 +74,13 @@ export function savePreset(preset: FilterPreset): FilterPreset[] {
 
 export function removePreset(id: string): FilterPreset[] {
   const next = readPresets().filter((p) => p.id !== id)
+  localStorage.setItem(PRESETS_KEY, JSON.stringify(next))
+  return next
+}
+
+/** Flip the pinned flag on a user preset. Returns the updated list. */
+export function togglePresetPinned(id: string): FilterPreset[] {
+  const next = readPresets().map((p) => (p.id === id ? { ...p, pinned: !p.pinned } : p))
   localStorage.setItem(PRESETS_KEY, JSON.stringify(next))
   return next
 }
