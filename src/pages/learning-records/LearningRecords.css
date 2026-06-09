@@ -193,6 +193,11 @@
   min-width: 0;
 }
 
+/* Tighter padding only for preset chips (DS Chip stays 8px 16px elsewhere) */
+.lrp-presets-wrap .chip {
+  padding: 6px 12px;
+}
+
 .lrp-filter-save-preset {
   display: inline-flex;
   align-items: center;
