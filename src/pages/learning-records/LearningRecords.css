@@ -244,6 +244,51 @@
   border-color: var(--border-hover);
 }
 
+/* Active — a saved view is currently applied (mirrors a selected Chip) */
+.lrp-overflow-chip--active {
+  border-color: transparent;
+  background: var(--secondary-500);
+  color: var(--neutral-800);
+  font-weight: 700;
+}
+
+/* Selected chip keeps its background on hover (no darkening) */
+.lrp-overflow-chip--active:hover {
+  background: var(--secondary-500);
+  border-color: transparent;
+}
+
+.lrp-presets-wrap .chip--selected:hover {
+  background: var(--secondary-500);
+}
+
+/* Edited — the applied saved view has unsaved changes (pulses for attention) */
+.lrp-overflow-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--secondary-500);
+  flex-shrink: 0;
+  animation: lrp-dot-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes lrp-dot-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lrp-overflow-chip-dot {
+    animation: none;
+  }
+}
+
 .lrp-filter-save-preset {
   display: inline-flex;
   align-items: center;
@@ -259,9 +304,22 @@
   line-height: 1.5;
 }
 
+.lrp-filter-save-preset:hover:not(:disabled) {
+  color: var(--primary-700);
+}
+
 .lrp-filter-save-preset:disabled {
   color: var(--text-disabled);
   cursor: not-allowed;
+}
+
+/* Secondary save action (e.g. "Save as New") — muted next to the primary Update View */
+.lrp-filter-save-preset--ghost {
+  color: var(--text-secondary);
+}
+
+.lrp-filter-save-preset--ghost:hover:not(:disabled) {
+  color: var(--primary-700);
 }
 
 /* Collapsed-only cluster (Add+ and pills) — fades as the container expands */
@@ -462,6 +520,10 @@
   padding: 0;
 }
 
+.lrp-filter-add:hover {
+  color: var(--primary-700);
+}
+
 .lrp-filter-clear {
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
@@ -472,6 +534,10 @@
   cursor: pointer;
   line-height: 1.5;
   padding: 0;
+}
+
+.lrp-filter-clear:hover:not(:disabled) {
+  color: var(--text-error);
 }
 
 .lrp-filter-clear:disabled {

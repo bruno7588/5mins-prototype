@@ -109,12 +109,26 @@
 .rd-filter-chip {
   display: inline-flex;
   align-items: center;
-  padding: 6px var(--space-sm);
-  border-radius: var(--radius-full);
-  background: rgba(0, 206, 230, 0.16);
+  gap: var(--space-xs);
+  max-width: 200px;
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
   font-size: 14px;
-  color: var(--primary-600);
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.5;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Empty state ("no filters applied") — full message in the same wrapper, untruncated */
+.rd-filter-chip--empty {
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
 }
 
 /* Recipients */
@@ -122,35 +136,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
-}
-
-.rd-recipient-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-}
-
-.rd-recipient-input {
-  flex: 1;
-  min-width: 0;
-  height: 41px;
-  padding: var(--space-s) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-s);
-  outline: none;
-  background: var(--input-background);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.rd-recipient-input::placeholder {
-  color: var(--text-tertiary);
-}
-
-.rd-recipient-input:focus {
-  border-color: var(--primary-600);
 }
 
 .rd-recipient-remove {
@@ -185,7 +170,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-600);
+  color: var(--text-primary);
   line-height: 1.5;
 }
 

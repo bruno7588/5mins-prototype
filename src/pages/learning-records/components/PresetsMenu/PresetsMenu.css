@@ -2,10 +2,10 @@
 .pm {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
+  right: 0;
+  left: auto;
   z-index: 30;
   width: 360px;
-  max-height: 480px;
   display: flex;
   flex-direction: column;
   background: var(--neutral-0);
@@ -13,7 +13,8 @@
   border-radius: var(--radius-sm);
   box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12);
   padding: var(--space-s);
-  overflow: hidden;
+  /* Visible so the per-row kebab menu isn't clipped by the panel edge */
+  overflow: visible;
 }
 
 .pm-search {
@@ -44,7 +45,6 @@
 
 .pm-list {
   margin-top: var(--space-xs);
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -101,18 +101,11 @@
   gap: var(--space-s);
   flex: 1;
   min-width: 0;
-  padding: var(--space-s) var(--space-sm);
+  padding: 0;
   border: none;
   background: transparent;
   text-align: left;
   cursor: pointer;
-}
-
-.pm-item-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
 }
 
 .pm-item-text {
@@ -139,30 +132,16 @@
   line-height: 1.5;
 }
 
-/* Active (currently applied) preset */
+/* Active (currently applied) preset — DS selected list item (solid --selected) */
 .pm-item--active,
 .pm-item--row.pm-item--active {
-  background: rgba(255, 187, 56, 0.12);
+  background: var(--selected);
 }
 
-/* Pin star (leading control on user rows) */
-.pm-pin {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  margin-left: 2px;
-  border-radius: var(--radius-full);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: background 120ms ease;
-}
-
-.pm-pin:hover {
-  background: var(--neutral-100, #e3e5e9);
+/* On the selected (yellow) row, all text is text-primary */
+.pm-item--active .pm-item-title,
+.pm-item--active .pm-item-desc {
+  color: var(--text-primary);
 }
 
 /* Kebab menu */
@@ -242,7 +221,7 @@
   flex: 1;
   min-width: 0;
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--selected);
   border-radius: var(--radius-s);
   outline: none;
   background: var(--neutral-0);

@@ -16,7 +16,6 @@ import {
   readPresets,
   savePreset,
   removePreset,
-  togglePresetPinned,
   readReports,
   saveReport,
   type FilterPreset,
@@ -179,6 +178,9 @@ function LearningRecords() {
   const [presetsListOpen, setPresetsListOpen] = useState(false)
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
   const [presets, setPresets] = useState<FilterPreset[]>(() => readPresets())
+  // The saved view the current filters were last applied from, so we can detect
+  // when the admin has edited it (unsaved changes) and offer Update vs Save as New.
+  const [activeViewId, setActiveViewId] = useState<string | null>(null)
   const [reportsOpen, setReportsOpen] = useState(false)
   const [reports, setReports] = useState<SavedReport[]>(() => readReports())
   const [reportDrawerOpen, setReportDrawerOpen] = useState(false)
@@ -213,6 +215,7 @@ function LearningRecords() {
   const clearAllFilters = useCallback(() => {
     setActiveFilters([])
     setFilterValues({})
+    setActiveViewId(null)
   }, [])
 
   /* ─── Filter presets ─── */
@@ -223,10 +226,12 @@ function LearningRecords() {
       if (f.value != null) values[f.id] = f.value
     })
     setFilterValues(values)
+    // Suggested defaults can't be updated, so only saved views become the "active view".
+    const isDefault = DEFAULT_PRESETS.some((d) => d.id === preset.id)
+    setActiveViewId(isDefault ? null : preset.id)
     setFiltersExpanded(true)
     setPresetsListOpen(false)
-    showToast('success', `Applied “${preset.name}”`)
-  }, [showToast])
+  }, [])
 
   const saveCurrentAsPreset = useCallback(
     (name: string, description: string) => {
@@ -238,6 +243,7 @@ function LearningRecords() {
         createdAt: new Date().toISOString(),
       }
       setPresets(savePreset(preset))
+      setActiveViewId(preset.id)
       setSaveDialogOpen(false)
       setPresetsListOpen(false)
       showToast('success', 'View saved')
@@ -245,17 +251,28 @@ function LearningRecords() {
     [activeFilters, filterValues, showToast],
   )
 
+  // Commit the current (edited) filters back to the saved view they came from.
+  const updateActiveView = useCallback(() => {
+    if (!activeViewId) return
+    setPresets((prev) => {
+      const p = prev.find((x) => x.id === activeViewId)
+      if (!p) return prev
+      return savePreset({
+        ...p,
+        filters: activeFilters.map((id) => ({ id, value: filterValues[id] ?? null })),
+      })
+    })
+    showToast('success', 'View updated')
+  }, [activeViewId, activeFilters, filterValues, showToast])
+
   const deletePreset = useCallback(
     (id: string) => {
       setPresets(removePreset(id))
+      setActiveViewId((curr) => (curr === id ? null : curr))
       showToast('success', 'View deleted')
     },
     [showToast],
   )
-
-  const togglePin = useCallback((id: string) => {
-    setPresets(togglePresetPinned(id))
-  }, [])
 
   const renamePreset = useCallback(
     (id: string, name: string) => {
@@ -295,14 +312,18 @@ function LearningRecords() {
     [activeFilters, filterValues],
   )
 
-  // Presets for the header: user presets (pinned first), then suggested defaults.
-  // Show the first 3 as chips; the rest collapse into a "+N Presets" chip.
-  const allHeaderPresets = [
-    ...[...presets].sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned)),
-    ...DEFAULT_PRESETS,
-  ]
-  const visiblePresets = allHeaderPresets.slice(0, 3)
-  const presetsOverflow = allHeaderPresets.length - visiblePresets.length
+  // Header model: the suggested defaults are always shown as quick-apply chips;
+  // the admin's own saved views collapse into a single "Saved Views" dropdown.
+  const activeView = activeViewId ? presets.find((p) => p.id === activeViewId) ?? null : null
+  // A saved view is applied and the filters still match it exactly (clean) — highlight the chip.
+  const viewClean = !!activeView && isPresetActive(activeView)
+  // A saved view is applied but its filters have been edited (unsaved changes).
+  const viewEdited = !!activeView && !viewClean
+
+  // Save View is disabled while the current filters exactly match an existing
+  // view (suggested or saved) — there's nothing new to save. It re-enables the
+  // moment the user changes a filter so the state no longer matches any view.
+  const matchesExistingView = [...presets, ...DEFAULT_PRESETS].some(isPresetActive)
 
   const renderPresetsMenu = (
     open: boolean,
@@ -314,10 +335,9 @@ function LearningRecords() {
       onClose={() => setOpen(false)}
       anchorRef={ref}
       presets={presets}
-      isActive={isPresetActive}
+      isActive={(p) => p.id === activeViewId}
       onApply={applyPreset}
       onDelete={deletePreset}
-      onTogglePin={togglePin}
       onRename={renamePreset}
       onDuplicate={duplicatePreset}
     />
@@ -390,7 +410,7 @@ function LearningRecords() {
         aria-expanded={open}
         onClick={() => setFiltersOpen((o) => !o)}
       >
-        Add
+        Add Filter
         <Add size={20} color="var(--primary-600)" variant="Linear" />
       </button>
       <FilterListbox
@@ -447,7 +467,7 @@ function LearningRecords() {
                   <DocumentDownload size={20} color="currentColor" variant="Linear" />
                 </button>
 
-                {/* Automate Reports — saved report presets + email delivery */}
+                {/* Scheduled Reports — saved report presets + email delivery */}
                 <div className="lrp-reports-wrap" ref={reportsWrapRef}>
                   <button
                     type="button"
@@ -456,7 +476,7 @@ function LearningRecords() {
                     aria-expanded={reportsOpen}
                     onClick={() => setReportsOpen((o) => !o)}
                   >
-                    Automate Reports{reports.length > 0 ? ` (${reports.length})` : ''}
+                    Scheduled Reports{reports.length > 0 ? ` (${reports.filter((r) => r.automate).length})` : ''}
                     <ArrowDown2 size={16} color="currentColor" variant="Linear" />
                   </button>
                   <ReportsMenu
@@ -489,32 +509,33 @@ function LearningRecords() {
                 <span className="lrp-filters-badge">{activeFilters.length}</span>
               </button>
 
-              {/* Presets as quick-apply chips; overflow collapses into "+N Presets" */}
-              {visiblePresets.length > 0 && (
-                <div className="lrp-presets-wrap" ref={overflowWrapRef}>
-                  {visiblePresets.map((p) => (
-                    <Chip
-                      key={p.id}
-                      label={p.name}
-                      selected={isPresetActive(p)}
-                      onClick={() => applyPreset(p)}
-                    />
-                  ))}
-                  {presetsOverflow > 0 && (
+              {/* Suggested defaults are quick-apply chips; saved views live in a dropdown */}
+              <div className="lrp-presets-wrap" ref={overflowWrapRef}>
+                {DEFAULT_PRESETS.map((p) => (
+                  <Chip
+                    key={p.id}
+                    label={p.name}
+                    selected={isPresetActive(p)}
+                    onClick={() => applyPreset(p)}
+                  />
+                ))}
+                {presets.length > 0 && (
+                  <>
                     <button
                       type="button"
-                      className="lrp-overflow-chip"
+                      className={`lrp-overflow-chip${viewClean ? ' lrp-overflow-chip--active' : ''}`}
                       aria-haspopup="dialog"
                       aria-expanded={presetsListOpen}
                       onClick={() => setPresetsListOpen((o) => !o)}
                     >
-                      +{presetsOverflow} Views
+                      {activeView ? activeView.name : `Saved Views (${presets.length})`}
+                      {viewEdited && <span className="lrp-overflow-chip-dot" aria-label="Edited" title="Unsaved changes" />}
                       <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
                     </button>
-                  )}
-                  {renderPresetsMenu(presetsListOpen, setPresetsListOpen, overflowWrapRef)}
-                </div>
-              )}
+                    {renderPresetsMenu(presetsListOpen, setPresetsListOpen, overflowWrapRef)}
+                  </>
+                )}
+              </div>
 
               {/* Collapsed-only cluster: Add + button + filter pills. Stays mounted and
                   fades out as the container expands (cross-fades with the bottom Add+). */}
@@ -609,15 +630,36 @@ function LearningRecords() {
                 <div className="lrp-filter-actions">
                   {/* Add + lives in the bottom actions when expanded */}
                   {renderAddButton(bottomAddRef, filtersOpen && filtersExpanded)}
-                  <button
-                    type="button"
-                    className="lrp-filter-save-preset"
-                    aria-haspopup="dialog"
-                    disabled={activeFilters.length === 0}
-                    onClick={() => setSaveDialogOpen(true)}
-                  >
-                    Save View
-                  </button>
+                  {viewEdited ? (
+                    <>
+                      {/* Editing a saved view: commit back to it, or branch off */}
+                      <button
+                        type="button"
+                        className="lrp-filter-save-preset"
+                        onClick={updateActiveView}
+                      >
+                        Update View
+                      </button>
+                      <button
+                        type="button"
+                        className="lrp-filter-save-preset lrp-filter-save-preset--ghost"
+                        aria-haspopup="dialog"
+                        onClick={() => setSaveDialogOpen(true)}
+                      >
+                        Save as New
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      className="lrp-filter-save-preset"
+                      aria-haspopup="dialog"
+                      disabled={activeFilters.length === 0 || matchesExistingView}
+                      onClick={() => setSaveDialogOpen(true)}
+                    >
+                      Save View
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="lrp-filter-clear"

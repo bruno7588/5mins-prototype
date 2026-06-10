@@ -36,7 +36,7 @@ function ReportsMenu({ open, onClose, anchorRef, reports, onCreate, onEdit, onTo
   if (!open) return null
 
   return (
-    <div className="rm" ref={ref} role="dialog" aria-label="Automated reports">
+    <div className="rm" ref={ref} role="dialog" aria-label="Scheduled reports">
       <div className="rm-list">
         {reports.map((r) => (
           <div className="rm-item" key={r.id}>
@@ -53,14 +53,14 @@ function ReportsMenu({ open, onClose, anchorRef, reports, onCreate, onEdit, onTo
           </div>
         ))}
 
-        {reports.length === 0 && <div className="rm-empty">No automated reports yet.</div>}
+        {reports.length === 0 && <div className="rm-empty">No scheduled reports yet.</div>}
       </div>
 
       <div className="rm-divider" />
 
       <div className="rm-footer">
         <button type="button" className="rm-create" onClick={onCreate}>
-          Automate Report
+          New Scheduled Report
           <Routing2 size={20} color="var(--neutral-0)" variant="Linear" />
         </button>
       </div>
