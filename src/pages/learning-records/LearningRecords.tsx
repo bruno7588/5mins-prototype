@@ -1,24 +1,18 @@
 import { useCallback, useRef, useState } from 'react'
-import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, DocumentDownload, Sort } from 'iconsax-react'
+import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Note1, Sort } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
-import Chip from '../../components/Chip/Chip'
-import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
+import Dropdown from '../../components/Dropdown/Dropdown'
 import Collapse from '../../components/Collapse/Collapse'
+import Tooltip from '../../components/Tooltip/Tooltip'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
-import FilterListbox, { FILTER_BY_ID } from './components/FilterListbox/FilterListbox'
-import PresetsMenu from './components/PresetsMenu/PresetsMenu'
-import SaveViewDialog from './components/SaveViewDialog/SaveViewDialog'
-import ReportsMenu from './components/ReportsMenu/ReportsMenu'
-import ReportDrawer from './components/ReportDrawer/ReportDrawer'
+import FilterListbox, { FILTER_BY_ID, filterOptions } from './components/FilterListbox/FilterListbox'
+import ReportsListDrawer from './components/ReportsListDrawer/ReportsListDrawer'
+import SaveReportDrawer from './components/SaveReportDrawer/SaveReportDrawer'
 import {
-  DEFAULT_PRESETS,
-  readPresets,
-  savePreset,
-  removePreset,
   readReports,
   saveReport,
-  type FilterPreset,
+  removeReport,
   type FilterEntry,
   type SavedReport,
 } from '../../utils/lrSavedFilters'
@@ -104,56 +98,6 @@ const STATUS_BADGE: Record<Status, string> = {
   Overdue: 'lrp-badge--overdue',
 }
 
-/* Mock value options per filter (prototype) */
-const FILTER_VALUE_OPTIONS: Record<string, DropdownOption[]> = {
-  status: [
-    { value: 'completed', label: 'Completed' },
-    { value: 'in-progress', label: 'In Progress' },
-    { value: 'not-started', label: 'Not Started' },
-    { value: 'overdue', label: 'Overdue' },
-  ],
-  'enrolment-history': [
-    { value: 'current', label: 'Current' },
-    { value: 'archived', label: 'Archived' },
-  ],
-  team: [
-    { value: 'all', label: 'All teams' },
-    { value: 'operations', label: 'Operations' },
-    { value: 'finance', label: 'Finance' },
-    { value: 'compliance', label: 'Compliance' },
-  ],
-  region: [
-    { value: 'na', label: 'North America' },
-    { value: 'eu', label: 'Europe' },
-    { value: 'apac', label: 'Asia Pacific' },
-    { value: 'sea', label: 'Southeast Asia' },
-    { value: 'me', label: 'Middle East' },
-  ],
-  category: [
-    { value: 'compliance', label: 'Compliance' },
-    { value: 'safety', label: 'Safety' },
-    { value: 'soft-skills', label: 'Soft Skills' },
-    { value: 'operations', label: 'Operations' },
-    { value: 'performance', label: 'Performance' },
-  ],
-  progress: [
-    { value: '0-25', label: '0–25%' },
-    { value: '25-50', label: '25–50%' },
-    { value: '50-75', label: '50–75%' },
-    { value: '75-100', label: '75–100%' },
-  ],
-}
-
-const DEFAULT_FILTER_OPTIONS: DropdownOption[] = [
-  { value: 'opt-1', label: 'Option 1' },
-  { value: 'opt-2', label: 'Option 2' },
-  { value: 'opt-3', label: 'Option 3' },
-]
-
-function filterOptions(id: string): DropdownOption[] {
-  return FILTER_VALUE_OPTIONS[id] ?? DEFAULT_FILTER_OPTIONS
-}
-
 /* How many filter pills to show inline before collapsing the rest into "+N" */
 const MAX_VISIBLE_PILLS = 5
 
@@ -175,21 +119,13 @@ function LearningRecords() {
   const [filtersExpanded, setFiltersExpanded] = useState(false)
   const [activeFilters, setActiveFilters] = useState<string[]>([])
   const [filterValues, setFilterValues] = useState<Record<string, string>>({})
-  const [presetsListOpen, setPresetsListOpen] = useState(false)
-  const [saveDialogOpen, setSaveDialogOpen] = useState(false)
-  const [presets, setPresets] = useState<FilterPreset[]>(() => readPresets())
-  // The saved view the current filters were last applied from, so we can detect
-  // when the admin has edited it (unsaved changes) and offer Update vs Save as New.
-  const [activeViewId, setActiveViewId] = useState<string | null>(null)
-  const [reportsOpen, setReportsOpen] = useState(false)
   const [reports, setReports] = useState<SavedReport[]>(() => readReports())
+  const [reportsListOpen, setReportsListOpen] = useState(false)
   const [reportDrawerOpen, setReportDrawerOpen] = useState(false)
   const [editingReport, setEditingReport] = useState<SavedReport | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const headerAddRef = useRef<HTMLDivElement>(null)
   const bottomAddRef = useRef<HTMLDivElement>(null)
-  const overflowWrapRef = useRef<HTMLDivElement>(null)
-  const reportsWrapRef = useRef<HTMLDivElement>(null)
   const { toasts, show: showToast } = useToast()
 
   const toggleExpanded = useCallback(() => {
@@ -215,133 +151,7 @@ function LearningRecords() {
   const clearAllFilters = useCallback(() => {
     setActiveFilters([])
     setFilterValues({})
-    setActiveViewId(null)
   }, [])
-
-  /* ─── Filter presets ─── */
-  const applyPreset = useCallback((preset: FilterPreset) => {
-    setActiveFilters(preset.filters.map((f) => f.id))
-    const values: Record<string, string> = {}
-    preset.filters.forEach((f) => {
-      if (f.value != null) values[f.id] = f.value
-    })
-    setFilterValues(values)
-    // Suggested defaults can't be updated, so only saved views become the "active view".
-    const isDefault = DEFAULT_PRESETS.some((d) => d.id === preset.id)
-    setActiveViewId(isDefault ? null : preset.id)
-    setFiltersExpanded(true)
-    setPresetsListOpen(false)
-  }, [])
-
-  const saveCurrentAsPreset = useCallback(
-    (name: string, description: string) => {
-      const preset: FilterPreset = {
-        id: `preset-${Date.now()}`,
-        name,
-        description: description || undefined,
-        filters: activeFilters.map((id) => ({ id, value: filterValues[id] ?? null })),
-        createdAt: new Date().toISOString(),
-      }
-      setPresets(savePreset(preset))
-      setActiveViewId(preset.id)
-      setSaveDialogOpen(false)
-      setPresetsListOpen(false)
-      showToast('success', 'View saved')
-    },
-    [activeFilters, filterValues, showToast],
-  )
-
-  // Commit the current (edited) filters back to the saved view they came from.
-  const updateActiveView = useCallback(() => {
-    if (!activeViewId) return
-    setPresets((prev) => {
-      const p = prev.find((x) => x.id === activeViewId)
-      if (!p) return prev
-      return savePreset({
-        ...p,
-        filters: activeFilters.map((id) => ({ id, value: filterValues[id] ?? null })),
-      })
-    })
-    showToast('success', 'View updated')
-  }, [activeViewId, activeFilters, filterValues, showToast])
-
-  const deletePreset = useCallback(
-    (id: string) => {
-      setPresets(removePreset(id))
-      setActiveViewId((curr) => (curr === id ? null : curr))
-      showToast('success', 'View deleted')
-    },
-    [showToast],
-  )
-
-  const renamePreset = useCallback(
-    (id: string, name: string) => {
-      setPresets((prev) => {
-        const p = prev.find((x) => x.id === id)
-        return p ? savePreset({ ...p, name }) : prev
-      })
-      showToast('success', 'View renamed')
-    },
-    [showToast],
-  )
-
-  const duplicatePreset = useCallback(
-    (preset: FilterPreset) => {
-      setPresets(
-        savePreset({
-          ...preset,
-          id: `preset-${Date.now()}`,
-          name: `${preset.name} (copy)`,
-          pinned: false,
-          createdAt: new Date().toISOString(),
-        }),
-      )
-      showToast('success', 'View duplicated')
-    },
-    [showToast],
-  )
-
-  // True when the table's current filters exactly match a preset.
-  const isPresetActive = useCallback(
-    (preset: FilterPreset): boolean => {
-      if (preset.filters.length !== activeFilters.length) return false
-      return preset.filters.every(
-        (f) => activeFilters.includes(f.id) && (filterValues[f.id] ?? null) === (f.value ?? null),
-      )
-    },
-    [activeFilters, filterValues],
-  )
-
-  // Header model: the suggested defaults are always shown as quick-apply chips;
-  // the admin's own saved views collapse into a single "Saved Views" dropdown.
-  const activeView = activeViewId ? presets.find((p) => p.id === activeViewId) ?? null : null
-  // A saved view is applied and the filters still match it exactly (clean) — highlight the chip.
-  const viewClean = !!activeView && isPresetActive(activeView)
-  // A saved view is applied but its filters have been edited (unsaved changes).
-  const viewEdited = !!activeView && !viewClean
-
-  // Save View is disabled while the current filters exactly match an existing
-  // view (suggested or saved) — there's nothing new to save. It re-enables the
-  // moment the user changes a filter so the state no longer matches any view.
-  const matchesExistingView = [...presets, ...DEFAULT_PRESETS].some(isPresetActive)
-
-  const renderPresetsMenu = (
-    open: boolean,
-    setOpen: (v: boolean) => void,
-    ref: typeof overflowWrapRef,
-  ) => (
-    <PresetsMenu
-      open={open}
-      onClose={() => setOpen(false)}
-      anchorRef={ref}
-      presets={presets}
-      isActive={(p) => p.id === activeViewId}
-      onApply={applyPreset}
-      onDelete={deletePreset}
-      onRename={renamePreset}
-      onDuplicate={duplicatePreset}
-    />
-  )
 
   /* ─── Saved reports ─── */
   const currentFilterEntries: FilterEntry[] = activeFilters.map((id) => ({
@@ -349,22 +159,33 @@ function LearningRecords() {
     value: filterValues[id] ?? null,
   }))
 
-  const entryLabel = (entry: FilterEntry): string => {
-    const title = FILTER_BY_ID[entry.id]?.title ?? entry.id
-    if (!entry.value) return title
-    const opt = filterOptions(entry.id).find((o) => o.value === entry.value)?.label
-    return opt ? `${title}: ${opt}` : title
-  }
+  // Apply a saved report's filters to the table.
+  const applyReport = useCallback((report: SavedReport) => {
+    setActiveFilters(report.filters.map((f) => f.id))
+    const values: Record<string, string> = {}
+    report.filters.forEach((f) => {
+      if (f.value != null) values[f.id] = f.value
+    })
+    setFilterValues(values)
+    setFiltersExpanded(true)
+  }, [])
+
+  const deleteReport = useCallback(
+    (id: string) => {
+      setReports(removeReport(id))
+      showToast('success', 'Report deleted')
+    },
+    [showToast],
+  )
 
   const openCreateReport = useCallback(() => {
     setEditingReport(null)
-    setReportsOpen(false)
     setReportDrawerOpen(true)
   }, [])
 
   const openEditReport = useCallback((report: SavedReport) => {
     setEditingReport(report)
-    setReportsOpen(false)
+    setReportsListOpen(false)
     setReportDrawerOpen(true)
   }, [])
 
@@ -373,20 +194,9 @@ function LearningRecords() {
       const isEdit = !!editingReport
       setReports(saveReport(report))
       setReportDrawerOpen(false)
-      showToast('success', isEdit ? 'Report updated' : 'Report created')
+      showToast('success', isEdit ? 'Report updated' : 'Report saved')
     },
     [editingReport, showToast],
-  )
-
-  const toggleReportAutomate = useCallback(
-    (id: string, value: boolean) => {
-      setReports((prev) => {
-        const r = prev.find((x) => x.id === id)
-        return r ? saveReport({ ...r, automate: value }) : prev
-      })
-      showToast('success', value ? 'Reports turned on' : 'Reports turned off')
-    },
-    [showToast],
   )
 
   // Label shown on a collapsed pill: the chosen value, else the filter name.
@@ -401,7 +211,7 @@ function LearningRecords() {
 
   // Add+ relocates between header (collapsed) and bottom actions (expanded).
   // Only the live instance gets an open listbox so their click-outside handlers don't clash.
-  const renderAddButton = (ref: typeof headerAddRef, open: boolean) => (
+  const renderAddButton = (ref: typeof bottomAddRef, open: boolean) => (
     <div className="lrp-filters-add-wrap" ref={ref}>
       <button
         type="button"
@@ -457,38 +267,32 @@ function LearningRecords() {
               </div>
 
               <div className="lrp-head-actions">
-                {/* Download the current view as a report */}
-                <button
-                  type="button"
-                  className="lrp-download-btn"
-                  onClick={() => showToast('success', 'Report downloaded')}
+                {/* Saved reports — opens the list side drawer; disabled until one exists */}
+                <Tooltip
+                  icon={false}
+                  position="Bottom"
+                  disabled={reports.length > 0}
+                  text="No saved reports yet. Build a filter view and choose “Save Report”."
                 >
-                  Download Report
-                  <DocumentDownload size={20} color="currentColor" variant="Linear" />
-                </button>
-
-                {/* Scheduled Reports — saved report presets + email delivery */}
-                <div className="lrp-reports-wrap" ref={reportsWrapRef}>
                   <button
                     type="button"
                     className="lrp-reports-btn"
                     aria-haspopup="dialog"
-                    aria-expanded={reportsOpen}
-                    onClick={() => setReportsOpen((o) => !o)}
+                    disabled={reports.length === 0}
+                    onClick={() => setReportsListOpen(true)}
                   >
-                    Scheduled Reports{reports.length > 0 ? ` (${reports.filter((r) => r.automate).length})` : ''}
-                    <ArrowDown2 size={16} color="currentColor" variant="Linear" />
+                    <Note1
+                      size={20}
+                      color={reports.length === 0 ? 'var(--text-disabled)' : 'var(--text-primary)'}
+                      variant="Linear"
+                    />
+                    Reports ({reports.length})
                   </button>
-                  <ReportsMenu
-                    open={reportsOpen}
-                    onClose={() => setReportsOpen(false)}
-                    anchorRef={reportsWrapRef}
-                    reports={reports}
-                    onCreate={openCreateReport}
-                    onEdit={openEditReport}
-                    onToggle={toggleReportAutomate}
-                  />
-                </div>
+                </Tooltip>
+                {/* Save the current filter view as a report */}
+                <button type="button" className="lrp-save-report-btn" onClick={openCreateReport}>
+                  Save Report
+                </button>
               </div>
             </div>
           </div>
@@ -509,40 +313,12 @@ function LearningRecords() {
                 <span className="lrp-filters-badge">{activeFilters.length}</span>
               </button>
 
-              {/* Suggested defaults are quick-apply chips; saved views live in a dropdown */}
-              <div className="lrp-presets-wrap" ref={overflowWrapRef}>
-                {DEFAULT_PRESETS.map((p) => (
-                  <Chip
-                    key={p.id}
-                    label={p.name}
-                    selected={isPresetActive(p)}
-                    onClick={() => applyPreset(p)}
-                  />
-                ))}
-                {presets.length > 0 && (
-                  <>
-                    <button
-                      type="button"
-                      className={`lrp-overflow-chip${viewClean ? ' lrp-overflow-chip--active' : ''}`}
-                      aria-haspopup="dialog"
-                      aria-expanded={presetsListOpen}
-                      onClick={() => setPresetsListOpen((o) => !o)}
-                    >
-                      {activeView ? activeView.name : `Saved Views (${presets.length})`}
-                      {viewEdited && <span className="lrp-overflow-chip-dot" aria-label="Edited" title="Unsaved changes" />}
-                      <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
-                    </button>
-                    {renderPresetsMenu(presetsListOpen, setPresetsListOpen, overflowWrapRef)}
-                  </>
-                )}
-              </div>
-
-              {/* Collapsed-only cluster: Add + button + filter pills. Stays mounted and
-                  fades out as the container expands (cross-fades with the bottom Add+). */}
+              {/* Collapsed cluster: with no filters, Add Filter is the main action;
+                  once filters exist, show pills (Add Filter returns when expanded). */}
               <div className={`lrp-filters-collapsed${filtersExpanded ? ' lrp-filters-collapsed--hidden' : ''}`}>
-                {renderAddButton(headerAddRef, filtersOpen && !filtersExpanded)}
-
-                {activeFilters.length > 0 && (
+                {activeFilters.length === 0 ? (
+                  renderAddButton(headerAddRef, filtersOpen && !filtersExpanded)
+                ) : (
                   <div className="lrp-filters-pills">
                     {visibleFilters.map((id) => {
                       const meta = FILTER_BY_ID[id]
@@ -630,36 +406,6 @@ function LearningRecords() {
                 <div className="lrp-filter-actions">
                   {/* Add + lives in the bottom actions when expanded */}
                   {renderAddButton(bottomAddRef, filtersOpen && filtersExpanded)}
-                  {viewEdited ? (
-                    <>
-                      {/* Editing a saved view: commit back to it, or branch off */}
-                      <button
-                        type="button"
-                        className="lrp-filter-save-preset"
-                        onClick={updateActiveView}
-                      >
-                        Update View
-                      </button>
-                      <button
-                        type="button"
-                        className="lrp-filter-save-preset lrp-filter-save-preset--ghost"
-                        aria-haspopup="dialog"
-                        onClick={() => setSaveDialogOpen(true)}
-                      >
-                        Save as New
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      className="lrp-filter-save-preset"
-                      aria-haspopup="dialog"
-                      disabled={activeFilters.length === 0 || matchesExistingView}
-                      onClick={() => setSaveDialogOpen(true)}
-                    >
-                      Save View
-                    </button>
-                  )}
                   <button
                     type="button"
                     className="lrp-filter-clear"
@@ -786,24 +532,21 @@ function LearningRecords() {
         </div>
       </main>
 
-      <ReportDrawer
+      <ReportsListDrawer
+        open={reportsListOpen}
+        onClose={() => setReportsListOpen(false)}
+        reports={reports}
+        onApply={applyReport}
+        onEdit={openEditReport}
+        onDelete={deleteReport}
+      />
+
+      <SaveReportDrawer
         open={reportDrawerOpen}
         onClose={() => setReportDrawerOpen(false)}
         onSave={handleSaveReport}
         initial={editingReport}
         currentFilters={currentFilterEntries}
-        filterLabel={entryLabel}
-      />
-
-      <SaveViewDialog
-        open={saveDialogOpen}
-        onClose={() => setSaveDialogOpen(false)}
-        onSave={(name) => saveCurrentAsPreset(name, '')}
-        filters={currentFilterEntries.map((e) => ({
-          key: e.id,
-          label: entryLabel(e),
-          Icon: FILTER_BY_ID[e.id]?.Icon,
-        }))}
       />
 
       <ToastContainer toasts={toasts} />

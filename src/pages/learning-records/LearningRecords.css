@@ -50,51 +50,51 @@
   gap: var(--space-l);
 }
 
-/* Right-side header actions */
+/* Right-side header actions: Reports + Save Report */
 .lrp-head-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-m);
+  gap: var(--space-sm);
   flex-shrink: 0;
 }
 
-/* Download Report — DS Text / Primary / Medium (no bg/border, cyan text) */
-.lrp-download-btn {
+/* Reports (N) — DS Outlined / Neutral / Medium (note icon + label) */
+.lrp-reports-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
-  padding: 10px 0;
-  border: none;
+  flex-shrink: 0;
+  padding: 10px var(--space-ml);
+  border: 1px solid var(--text-primary);
+  border-radius: var(--radius-s);
   background: transparent;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
-  cursor: pointer;
   white-space: nowrap;
-  transition: color 120ms ease;
+  cursor: pointer;
+  transition: background 120ms ease;
 }
 
-.lrp-download-btn:hover {
-  color: var(--primary-700);
+.lrp-reports-btn:hover:not(:disabled) {
+  background: var(--neutral-50);
 }
 
-.lrp-download-btn:active {
-  color: var(--primary-800);
+.lrp-reports-btn:disabled {
+  border-color: var(--border);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  /* let the Tooltip wrapper receive hover so the explanation still shows */
+  pointer-events: none;
 }
 
-/* Automate Reports — DS Outlined / Primary / Medium */
-.lrp-reports-wrap {
-  position: relative;
-  display: inline-flex;
-  flex-shrink: 0;
-}
-
-.lrp-reports-btn {
+/* Save Report — DS Outlined / Primary / Medium */
+.lrp-save-report-btn {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-s);
+  flex-shrink: 0;
   padding: 10px var(--space-ml);
   border: 1px solid var(--primary-600);
   border-radius: var(--radius-s);
@@ -104,12 +104,12 @@
   font-weight: 700;
   color: var(--primary-600);
   line-height: 1.5;
-  cursor: pointer;
   white-space: nowrap;
+  cursor: pointer;
   transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
 }
 
-.lrp-reports-btn:hover {
+.lrp-save-report-btn:hover {
   background: var(--primary-100);
   color: var(--primary-700);
   border-color: var(--primary-700);
@@ -203,90 +203,6 @@
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
-}
-
-/* Presets — chip group (header) + save-preset wrap (expanded actions) */
-.lrp-presets-wrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-s);
-  min-width: 0;
-}
-
-/* Tighter padding only for preset chips (DS Chip stays 8px 16px elsewhere) */
-.lrp-presets-wrap .chip {
-  padding: 6px 12px;
-}
-
-/* Overflow chip — "+N Presets" dropdown trigger, styled like a chip */
-.lrp-overflow-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease;
-}
-
-.lrp-overflow-chip:hover {
-  background: var(--neutral-50);
-  border-color: var(--border-hover);
-}
-
-/* Active — a saved view is currently applied (mirrors a selected Chip) */
-.lrp-overflow-chip--active {
-  border-color: transparent;
-  background: var(--secondary-500);
-  color: var(--neutral-800);
-  font-weight: 700;
-}
-
-/* Selected chip keeps its background on hover (no darkening) */
-.lrp-overflow-chip--active:hover {
-  background: var(--secondary-500);
-  border-color: transparent;
-}
-
-.lrp-presets-wrap .chip--selected:hover {
-  background: var(--secondary-500);
-}
-
-/* Edited — the applied saved view has unsaved changes (pulses for attention) */
-.lrp-overflow-chip-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background: var(--secondary-500);
-  flex-shrink: 0;
-  animation: lrp-dot-pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes lrp-dot-pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(0.7);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .lrp-overflow-chip-dot {
-    animation: none;
-  }
 }
 
 .lrp-filter-save-preset {

@@ -1,5 +1,5 @@
 /**
- * Learning Records — saved filter presets (localStorage).
+ * Learning Records — saved reports (localStorage).
  * Mirrors the read/try-catch/setItem convention in ./addedLessons.ts.
  */
 
@@ -10,94 +10,19 @@ export interface FilterEntry {
   value: string | null
 }
 
-export interface FilterPreset {
-  id: string
-  name: string
-  description?: string
-  filters: FilterEntry[]
-  createdAt: string
-  /** Suggested defaults are read-only (apply-only, cannot be deleted). */
-  isDefault?: boolean
-  /** Pinned presets surface as one-click chips in the filters bar. */
-  pinned?: boolean
-}
-
-const PRESETS_KEY = '5mins.lr-filter-presets'
-
 /**
- * Pre-seeded suggestions for common admin workflows. Not persisted — surfaced
- * alongside the user's saved presets. Values must exist in the page's
- * FILTER_VALUE_OPTIONS so they apply cleanly.
- */
-export const DEFAULT_PRESETS: FilterPreset[] = [
-  {
-    id: 'default-overdue',
-    name: 'Overdue learners',
-    filters: [{ id: 'status', value: 'overdue' }],
-    createdAt: '',
-    isDefault: true,
-  },
-  {
-    id: 'default-completed',
-    name: 'Completed',
-    filters: [{ id: 'status', value: 'completed' }],
-    createdAt: '',
-    isDefault: true,
-  },
-  {
-    id: 'default-compliance',
-    name: 'Compliance courses',
-    filters: [{ id: 'category', value: 'compliance' }],
-    createdAt: '',
-    isDefault: true,
-  },
-]
-
-export function readPresets(): FilterPreset[] {
-  try {
-    const raw = localStorage.getItem(PRESETS_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? (parsed as FilterPreset[]) : []
-  } catch {
-    return []
-  }
-}
-
-/** Upsert a preset by id. Returns the updated list. */
-export function savePreset(preset: FilterPreset): FilterPreset[] {
-  const existing = readPresets().filter((p) => p.id !== preset.id)
-  const next = [preset, ...existing]
-  localStorage.setItem(PRESETS_KEY, JSON.stringify(next))
-  return next
-}
-
-export function removePreset(id: string): FilterPreset[] {
-  const next = readPresets().filter((p) => p.id !== id)
-  localStorage.setItem(PRESETS_KEY, JSON.stringify(next))
-  return next
-}
-
-/** Flip the pinned flag on a user preset. Returns the updated list. */
-export function togglePresetPinned(id: string): FilterPreset[] {
-  const next = readPresets().map((p) => (p.id === id ? { ...p, pinned: !p.pinned } : p))
-  localStorage.setItem(PRESETS_KEY, JSON.stringify(next))
-  return next
-}
-
-/* ─────────────────────────── Saved reports (Phase 2) ─────────────────────────── */
-
-/**
- * A saved report = a snapshot of a filter combination + automated email delivery.
- * Multiple reports can be saved per page (e.g. "Weekly overdue", "Monthly compliance").
+ * A saved report = a named snapshot of a filter combination. Applying a report
+ * loads its filters into the table. It can optionally be "scheduled" — emailed
+ * to recipients on a recurring cadence.
  */
 export interface SavedReport {
   id: string
   name: string
   filters: FilterEntry[] // snapshot of the active filters at creation time
-  recipients: string[] // email addresses
-  frequency: string // one of REPORT_FREQUENCIES value keys
-  automate: boolean // ON/OFF for scheduled email delivery
+  /** Emailed to recipients on the chosen cadence. */
+  scheduled: boolean
+  recipients: string[] // email addresses (only meaningful when scheduled)
+  frequency: string // one of REPORT_FREQUENCIES value keys (when scheduled)
   createdAt: string
 }
 
@@ -120,7 +45,7 @@ export function nextReportLabel(frequency: string): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-const REPORTS_KEY = '5mins.lr-saved-reports'
+const REPORTS_KEY = '5mins.lr-reports-v2'
 
 export function readReports(): SavedReport[] {
   try {

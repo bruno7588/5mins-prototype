@@ -1,4 +1,4 @@
-import { type ChangeEventHandler, type ReactNode, useId } from 'react'
+import { type ChangeEventHandler, type FocusEventHandler, type ReactNode, useId } from 'react'
 import { Danger, TickCircle } from 'iconsax-react'
 import './InputField.css'
 
@@ -7,6 +7,7 @@ interface InputFieldProps {
   placeholder?: string
   value?: string
   onChange?: ChangeEventHandler<HTMLInputElement>
+  onBlur?: FocusEventHandler<HTMLInputElement>
   helperText?: string
   validation?: 'none' | 'error' | 'warning' | 'success'
   iconRight?: ReactNode
@@ -21,6 +22,7 @@ function InputField({
   placeholder = 'Input text',
   value,
   onChange,
+  onBlur,
   helperText,
   validation = 'none',
   iconRight,
@@ -47,6 +49,7 @@ function InputField({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
           disabled={disabled}
           autoFocus={autoFocus}
           aria-invalid={validation === 'error' ? true : undefined}

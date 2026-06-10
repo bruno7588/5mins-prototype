@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ComponentType, type RefObject } from 'react'
+import { type DropdownOption } from '../../../../components/Dropdown/Dropdown'
 import {
   Calendar,
   CalendarAdd,
@@ -91,6 +92,57 @@ export interface FilterMeta {
 export const FILTER_BY_ID: Record<string, FilterMeta> = Object.fromEntries(
   FILTER_GROUPS.flatMap((g) => g.items.map((i) => [i.id, { ...i, section: g.section }])),
 )
+
+/* Mock value options per filter (prototype) — shared by the page filter rows and the
+   editable filters inside the Save Report drawer. */
+const FILTER_VALUE_OPTIONS: Record<string, DropdownOption[]> = {
+  status: [
+    { value: 'completed', label: 'Completed' },
+    { value: 'in-progress', label: 'In Progress' },
+    { value: 'not-started', label: 'Not Started' },
+    { value: 'overdue', label: 'Overdue' },
+  ],
+  'enrolment-history': [
+    { value: 'current', label: 'Current' },
+    { value: 'archived', label: 'Archived' },
+  ],
+  team: [
+    { value: 'all', label: 'All teams' },
+    { value: 'operations', label: 'Operations' },
+    { value: 'finance', label: 'Finance' },
+    { value: 'compliance', label: 'Compliance' },
+  ],
+  region: [
+    { value: 'na', label: 'North America' },
+    { value: 'eu', label: 'Europe' },
+    { value: 'apac', label: 'Asia Pacific' },
+    { value: 'sea', label: 'Southeast Asia' },
+    { value: 'me', label: 'Middle East' },
+  ],
+  category: [
+    { value: 'compliance', label: 'Compliance' },
+    { value: 'safety', label: 'Safety' },
+    { value: 'soft-skills', label: 'Soft Skills' },
+    { value: 'operations', label: 'Operations' },
+    { value: 'performance', label: 'Performance' },
+  ],
+  progress: [
+    { value: '0-25', label: '0–25%' },
+    { value: '25-50', label: '25–50%' },
+    { value: '50-75', label: '50–75%' },
+    { value: '75-100', label: '75–100%' },
+  ],
+}
+
+const DEFAULT_FILTER_OPTIONS: DropdownOption[] = [
+  { value: 'opt-1', label: 'Option 1' },
+  { value: 'opt-2', label: 'Option 2' },
+  { value: 'opt-3', label: 'Option 3' },
+]
+
+export function filterOptions(id: string): DropdownOption[] {
+  return FILTER_VALUE_OPTIONS[id] ?? DEFAULT_FILTER_OPTIONS
+}
 
 interface FilterListboxProps {
   open: boolean

@@ -1,4 +1,7 @@
-/* ReportDrawer — form-specific styles (shell uses shared .side-drawer classes) */
+/* SaveReportDrawer — form-specific styles. Shell (.side-drawer*, .overlay-backdrop,
+   .modal__divider) comes from the shared drawer stylesheet, imported here so the
+   shell is present regardless of which other drawers are mounted. */
+@import '../../../my-team/CoursesDrawer.css';
 
 .rd-header-text {
   flex: 1;
@@ -28,7 +31,7 @@
   gap: var(--space-l);
 }
 
-/* Status banner */
+/* Next-report banner */
 .rd-banner {
   display: flex;
   align-items: center;
@@ -61,24 +64,6 @@
   color: var(--text-primary);
 }
 
-.rd-banner-toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  margin-left: auto;
-}
-
-.rd-banner-status {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-}
-
-.rd-banner-status--on {
-  color: var(--success-500);
-}
-
 /* Generic field block */
 .rd-field {
   display: flex;
@@ -99,36 +84,130 @@
   line-height: 1.5;
 }
 
-/* Filter basis chips */
-.rd-filter-chips {
+.rd-hint--warn {
+  color: var(--text-warning);
+}
+
+/* Schedule toggle — bordered card */
+.rd-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-m) var(--space-sm) var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.rd-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.rd-toggle-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* Editable filter chips — wrap, with a dashed Add Filter at the end */
+.rd-chips {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-s);
 }
 
-.rd-filter-chip {
+.rd-chip-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.rd-chip {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  max-width: 200px;
+  max-width: 220px;
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: transparent;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* Empty state ("no filters applied") — full message in the same wrapper, untruncated */
-.rd-filter-chip--empty {
-  max-width: none;
-  white-space: normal;
-  overflow: visible;
+.rd-chip-main {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.rd-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rd-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  transition: color 120ms ease;
+}
+
+.rd-chip-remove:hover {
+  color: var(--text-primary);
+}
+
+.rd-chip-menu {
+  min-width: 180px;
+}
+
+.rd-add-filter-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Dashed "Add Filter" chip */
+.rd-add-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-m);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.5;
+  white-space: nowrap;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.rd-add-filter:hover {
+  background: var(--neutral-50);
+  border-color: var(--border-hover);
 }
 
 /* Recipients */
