@@ -88,7 +88,7 @@
   color: var(--text-warning);
 }
 
-/* Schedule toggle — bordered card */
+/* Schedule toggle — bordered card; whole card is clickable */
 .rd-toggle-row {
   display: flex;
   align-items: center;
@@ -96,6 +96,23 @@
   padding: var(--space-sm) var(--space-m) var(--space-sm) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.rd-toggle-row:hover {
+  background: var(--page-background-hover, var(--neutral-50));
+  border-color: var(--border-hover);
+}
+
+.rd-toggle-row:focus-visible {
+  outline: none;
+  border-color: var(--secondary-500);
+}
+
+.rd-toggle-control {
+  display: inline-flex;
+  flex-shrink: 0;
 }
 
 .rd-toggle-text {
@@ -113,17 +130,12 @@
   line-height: 1.5;
 }
 
-/* Editable filter chips — wrap, with a dashed Add Filter at the end */
+/* Filter summary chips — read-only (icon + Title: Value), removable */
 .rd-chips {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-s);
-}
-
-.rd-chip-wrap {
-  position: relative;
-  display: inline-flex;
 }
 
 .rd-chip {
@@ -135,17 +147,6 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: transparent;
-}
-
-.rd-chip-main {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  min-width: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 400;
@@ -159,55 +160,9 @@
   white-space: nowrap;
 }
 
-.rd-chip-remove {
-  display: inline-flex;
+/* Footer row: vertically center the button(s) */
+.rd-footer-buttons {
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  color: var(--text-tertiary);
-  transition: color 120ms ease;
-}
-
-.rd-chip-remove:hover {
-  color: var(--text-primary);
-}
-
-.rd-chip-menu {
-  min-width: 180px;
-}
-
-.rd-add-filter-wrap {
-  position: relative;
-  display: inline-flex;
-}
-
-/* Dashed "Add Filter" chip */
-.rd-add-filter {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  padding: var(--space-s) var(--space-m);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--input-background);
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-  white-space: nowrap;
-  transition: background 120ms ease, border-color 120ms ease;
-}
-
-.rd-add-filter:hover {
-  background: var(--neutral-50);
-  border-color: var(--border-hover);
 }
 
 /* Recipients */

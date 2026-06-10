@@ -183,18 +183,25 @@ function LearningRecords() {
     setReportDrawerOpen(true)
   }, [])
 
-  const openEditReport = useCallback((report: SavedReport) => {
-    setEditingReport(report)
-    setReportsListOpen(false)
-    setReportDrawerOpen(true)
-  }, [])
+  const openEditReport = useCallback(
+    (report: SavedReport) => {
+      // Load the report onto the page so its filters can be adjusted there (with
+      // live results), then open the drawer for name/schedule.
+      applyReport(report)
+      setEditingReport(report)
+      setReportsListOpen(false)
+      setReportDrawerOpen(true)
+    },
+    [applyReport],
+  )
 
+  // Persist (upsert). The drawer drives closing — step 1 saves and may continue to
+  // the schedule step, so we don't close here.
   const handleSaveReport = useCallback(
     (report: SavedReport) => {
       const isEdit = !!editingReport
       setReports(saveReport(report))
-      setReportDrawerOpen(false)
-      showToast('success', isEdit ? 'Report updated' : 'Report saved')
+      showToast('success', report.scheduled ? 'Report scheduled' : isEdit ? 'Report updated' : 'Report saved')
     },
     [editingReport, showToast],
   )
