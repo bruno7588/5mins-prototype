@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Sms } from 'iconsax-react'
 import { searchOrgUsers, orgUserByEmail } from '../../../../utils/orgUsers'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -132,7 +133,6 @@ function RecipientsField({ recipients, onChange, error, onPendingEmailChange }: 
           const user = orgUserByEmail(email)
           return (
           <span className="rcp-chip" key={email}>
-            {user && <span className="rcp-avatar" aria-hidden="true">{user.initials}</span>}
             <span className="rcp-chip-label" title={email}>{user ? user.name : email}</span>
             <button
               type="button"
@@ -179,7 +179,11 @@ function RecipientsField({ recipients, onChange, error, onPendingEmailChange }: 
                 onMouseEnter={() => setActiveIndex(i)}
                 onClick={() => addEmail(u.email)}
               >
-                <span className="rcp-avatar" aria-hidden="true">{u.initials}</span>
+                {u.avatar ? (
+                  <img className="rcp-avatar rcp-avatar--photo" src={u.avatar} alt="" aria-hidden="true" />
+                ) : (
+                  <span className="rcp-avatar" aria-hidden="true">{u.initials}</span>
+                )}
                 <span className="rcp-option-text">
                   <span className="rcp-option-name">{u.name}</span>
                   <span className="rcp-option-email">{u.email}</span>
@@ -200,10 +204,7 @@ function RecipientsField({ recipients, onChange, error, onPendingEmailChange }: 
                 onClick={() => addEmail(trimmed)}
               >
                 <span className="rcp-avatar rcp-avatar--email" aria-hidden="true">
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                    <path d="M3 5.5h14v9H3v-9Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                    <path d="m3.5 6 6.5 5 6.5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <Sms size={24} variant="Linear" color="var(--text-secondary)" />
                 </span>
                 <span className="rcp-option-text">
                   <span className="rcp-option-name rcp-option-add">Add “{trimmed}”</span>

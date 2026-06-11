@@ -258,7 +258,7 @@
   color: var(--text-tertiary);
 }
 
-/* Suggestions menu */
+/* Suggestions menu — "Listbox" component (Figma 11597:113490) */
 .rcp-menu {
   position: absolute;
   top: calc(100% + 4px);
@@ -266,24 +266,24 @@
   right: 0;
   z-index: 5;
   margin: 0;
-  padding: var(--space-xs);
+  padding: var(--space-s);
   list-style: none;
-  max-height: 240px;
+  max-height: 280px;
   overflow-y: auto;
   background: var(--cards-background, var(--neutral-0));
   border: 1px solid var(--border);
-  border-radius: var(--radius-s);
-  box-shadow: -4px 8px 24px 0 rgba(32, 34, 42, 0.12);
+  border-radius: var(--radius-sm);
+  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12);
 }
 
 .rcp-option {
   display: flex;
   align-items: center;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   width: 100%;
-  padding: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
   border: none;
-  border-radius: var(--radius-xs, 8px);
+  border-radius: var(--radius-s);
   background: transparent;
   cursor: pointer;
   text-align: left;
@@ -296,13 +296,15 @@
 .rcp-option-text {
   display: flex;
   flex-direction: column;
+  gap: 2px;
   min-width: 0;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .rcp-option-name {
   font-size: 14px;
   font-weight: 500;
+  line-height: 1.5;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -310,39 +312,40 @@
 }
 
 .rcp-option-email {
-  font-size: 13px;
-  color: var(--text-tertiary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Initials avatar (suggestion rows + known-user chips) — matches .cal-card__avatar */
+/* Initials avatar (suggestion rows) — 40px per the Listbox spec */
 .rcp-avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-full);
   background: #cbd5e1;
   color: #fff;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
-.rcp-chip .rcp-avatar {
-  width: 22px;
-  height: 22px;
-  font-size: 10px;
+.rcp-avatar--photo {
+  object-fit: cover;
+  background: var(--cards-background-hover, var(--neutral-100));
 }
 
-/* Envelope avatar + teal label for the "Add external email" row */
+/* Envelope avatar for the "Add external email" row (Figma 11597:116482) */
 .rcp-avatar--email {
-  background: var(--neutral-100, #f1f5f9);
+  background: var(--border);
   color: var(--text-secondary);
 }
 

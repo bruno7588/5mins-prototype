@@ -6,19 +6,21 @@
 export interface OrgUser {
   name: string
   email: string
-  /** Two-letter initials for the avatar chip. */
+  /** Two-letter initials for the avatar chip (fallback when no photo). */
   initials: string
+  /** Optional profile photo URL (served from /public/avatars). */
+  avatar?: string
   role?: string
 }
 
 export const ORG_USERS: OrgUser[] = [
-  { name: 'Anthonny Wallace', email: 'anthonny@example.com', initials: 'AW', role: 'Customer Support Specialist' },
-  { name: 'Brenda Kwasaki', email: 'brenda@example.com', initials: 'BK', role: 'Operations Manager' },
-  { name: 'Carlos Mendes', email: 'carlos@example.com', initials: 'CM', role: 'Software Engineer' },
-  { name: 'Diana Ross', email: 'diana.ross@company.com', initials: 'DR', role: 'Marketing Lead' },
-  { name: 'Erik Johansson', email: 'erik.j@example.com', initials: 'EJ', role: 'Data Analyst' },
-  { name: 'Fiona Chen', email: 'fiona.chen@example.com', initials: 'FC', role: 'UX Designer' },
-  { name: 'Gabriel Santos', email: 'gabriel.s@example.com', initials: 'GS', role: 'Sales Representative' },
+  { name: 'Anthonny Wallace', email: 'anthonny@example.com', initials: 'AW', avatar: '/avatars/a1.jpg', role: 'Customer Support Specialist' },
+  { name: 'Brenda Kwasaki', email: 'brenda@example.com', initials: 'BK', avatar: '/avatars/a2.jpg', role: 'Operations Manager' },
+  { name: 'Carlos Mendes', email: 'carlos@example.com', initials: 'CM', avatar: '/avatars/a3.jpg', role: 'Software Engineer' },
+  { name: 'Diana Ross', email: 'diana.ross@company.com', initials: 'DR', avatar: '/avatars/a4.jpg', role: 'Marketing Lead' },
+  { name: 'Erik Johansson', email: 'erik.j@example.com', initials: 'EJ', avatar: '/avatars/a5.jpg', role: 'Data Analyst' },
+  { name: 'Fiona Chen', email: 'fiona.chen@example.com', initials: 'FC', avatar: '/avatars/a6.jpg', role: 'UX Designer' },
+  { name: 'Gabriel Santos', email: 'gabriel.s@example.com', initials: 'GS', avatar: '/avatars/a7.jpg', role: 'Sales Representative' },
   { name: 'Hannah Lee', email: 'hannah.lee@example.com', initials: 'HL', role: 'People Operations' },
   { name: 'Ibrahim Khan', email: 'ibrahim.khan@example.com', initials: 'IK', role: 'Compliance Officer' },
   { name: 'Julia Romano', email: 'julia.romano@example.com', initials: 'JR', role: 'Finance Manager' },

@@ -35,6 +35,8 @@ export interface SavedReport {
   deliverTime?: string
   /** IANA timezone id the delivery time is interpreted in. */
   timezone?: string
+  /** Whether the schedule is active. Undefined is treated as enabled. */
+  enabled?: boolean
 }
 
 export const REPORT_FREQUENCIES: { value: string; label: string; days: number }[] = [
@@ -45,6 +47,29 @@ export const REPORT_FREQUENCIES: { value: string; label: string; days: number }[
 
 export function frequencyLabel(value: string): string {
   return REPORT_FREQUENCIES.find((f) => f.value === value)?.label ?? value
+}
+
+/**
+ * One-line cadence summary for a report row, e.g.
+ * "Weekly on Monday · 9:00 AM, London (GMT/BST)". Unscheduled reports fall back
+ * to a filter count.
+ */
+export function cadenceSummary(r: SavedReport): string {
+  if (!r.scheduled) {
+    const n = r.filters.length
+    return n === 0 ? 'No filters' : `${n} filter${n === 1 ? '' : 's'}`
+  }
+  let recurrence: string
+  if (r.frequency === 'weekly') {
+    recurrence = `Weekly on ${weekdayLabel(r.weekday ?? 'mon')}`
+  } else if (r.frequency === 'quarterly') {
+    recurrence = `Quarterly · ${quarterlyModeLabel(r.monthlyMode ?? 'first-working-day')}`
+  } else {
+    recurrence = `Monthly · ${monthlyModeLabel(r.monthlyMode ?? 'first-working-day')}`
+  }
+  const time = deliveryTimeLabel(r.deliverTime ?? '09:00')
+  const tz = r.timezone && r.timezone !== 'UTC' ? timezoneLabel(r.timezone) : 'UTC'
+  return `${recurrence} · ${time}, ${tz}`
 }
 
 /** Days of the week for the weekly cadence (Mon-first, business convention). */
@@ -89,6 +114,10 @@ export const QUARTERLY_MODES: { value: string; label: string; description?: stri
   { value: 'last-working-day', label: 'Last working day of the quarter', description: 'Skips weekends and holidays' },
   { value: 'last-day', label: 'Last day of the quarter' },
 ]
+
+export function quarterlyModeLabel(value: string): string {
+  return QUARTERLY_MODES.find((m) => m.value === value)?.label ?? value
+}
 
 /** Delivery times offered for scheduled reports (on the hour, common windows). */
 export const DELIVERY_TIMES: { value: string; label: string }[] = [

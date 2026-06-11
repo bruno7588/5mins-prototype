@@ -63,13 +63,6 @@
   cursor: pointer;
 }
 
-.rl-item-titlerow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
 .rl-item-title {
   font-size: 14px;
   font-weight: 500;
@@ -80,25 +73,19 @@
   white-space: nowrap;
 }
 
-.rl-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  padding: 0 var(--space-s);
-  border-radius: var(--radius-full);
-  background: var(--neutral-100, #e3e5e9);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
 .rl-item-desc {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Paused schedule — dim the text block but keep the controls fully usable. */
+.rl-item--off .rl-item-main {
+  opacity: 0.55;
 }
 
 .rl-item-actions {
@@ -124,4 +111,49 @@
 
 .rl-icon-btn:hover {
   background: var(--neutral-100, #e3e5e9);
+}
+
+/* Kebab "more" menu */
+.rl-more-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.rl-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-s);
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);
+  min-width: 160px;
+}
+
+.rl-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.rl-menu-item:hover {
+  background: var(--cards-background-hover);
+}
+
+.rl-menu-item--danger {
+  color: var(--danger-500);
 }
