@@ -276,16 +276,6 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
                   />
                 )}
 
-                {frequency === 'biweekly' && (
-                  <InputField
-                    label="Starting from"
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    helperText="The report repeats every 2 weeks from this date."
-                  />
-                )}
-
                 {(frequency === 'monthly' || frequency === 'quarterly') && (
                   <Dropdown
                     label={frequency === 'quarterly' ? 'When in the quarter?' : 'When in the month?'}

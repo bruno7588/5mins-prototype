@@ -38,10 +38,9 @@ export interface SavedReport {
 }
 
 export const REPORT_FREQUENCIES: { value: string; label: string; days: number }[] = [
-  { value: 'weekly', label: 'Every week', days: 7 },
-  { value: 'biweekly', label: 'Every 2 weeks', days: 14 },
-  { value: 'monthly', label: 'Every month', days: 30 },
-  { value: 'quarterly', label: 'Every 3 months', days: 90 },
+  { value: 'weekly', label: 'Weekly', days: 7 },
+  { value: 'monthly', label: 'Monthly', days: 30 },
+  { value: 'quarterly', label: 'Quarterly', days: 90 },
 ]
 
 export function frequencyLabel(value: string): string {
@@ -168,13 +167,6 @@ export function nextReportDate(report: Partial<SavedReport>, from: Date = new Da
     let delta = (target - d.getDay() + 7) % 7
     if (delta === 0) delta = 7 // always the next occurrence, not today
     d.setDate(d.getDate() + delta)
-    return d
-  }
-
-  if (freq === 'biweekly') {
-    const start = report.startDate ? new Date(`${report.startDate}T00:00:00`) : today
-    const d = new Date(start)
-    while (d <= today) d.setDate(d.getDate() + 14)
     return d
   }
 
