@@ -78,6 +78,18 @@ export function monthlyModeLabel(value: string): string {
   return MONTHLY_MODES.find((m) => m.value === value)?.label ?? value
 }
 
+/**
+ * Same mode values as MONTHLY_MODES, but framed for quarterly cadence: "first"
+ * modes land at quarter start (Jan/Apr/Jul/Oct), "last" modes at quarter close
+ * (Mar/Jun/Sep/Dec). Kept separate so the dropdown copy matches the cadence.
+ */
+export const QUARTERLY_MODES: { value: string; label: string; description?: string }[] = [
+  { value: 'first-working-day', label: 'First working day of the quarter', description: 'Skips weekends and holidays' },
+  { value: 'first-day', label: 'First day of the quarter' },
+  { value: 'last-working-day', label: 'Last working day of the quarter', description: 'Skips weekends and holidays' },
+  { value: 'last-day', label: 'Last day of the quarter' },
+]
+
 /** Delivery times offered for scheduled reports (on the hour, common windows). */
 export const DELIVERY_TIMES: { value: string; label: string }[] = [
   { value: '06:00', label: '6:00 AM' },
@@ -170,14 +182,28 @@ export function nextReportDate(report: Partial<SavedReport>, from: Date = new Da
     return d
   }
 
-  // monthly / quarterly
-  const step = freq === 'quarterly' ? 3 : 1
   const mode = report.monthlyMode ?? 'first-working-day'
+
+  if (freq === 'quarterly') {
+    // Anchor to calendar quarters so the cadence is predictable regardless of
+    // when the report was created. "first" modes land at quarter start
+    // (Jan/Apr/Jul/Oct); "last" modes at quarter close (Mar/Jun/Sep/Dec).
+    const quarterStart = Math.floor(today.getMonth() / 3) * 3
+    const anchorMonth = mode.startsWith('last') ? quarterStart + 2 : quarterStart
+    let d = monthlyDate(today.getFullYear(), anchorMonth, mode)
+    let guard = 0
+    while (d <= today && guard < 8) {
+      d = monthlyDate(today.getFullYear(), anchorMonth + 3 * (guard + 1), mode)
+      guard++
+    }
+    return d
+  }
+
+  // monthly
   let d = monthlyDate(today.getFullYear(), today.getMonth(), mode)
   let guard = 0
   while (d <= today && guard < 24) {
-    const m = today.getMonth() + step * (guard + 1)
-    d = monthlyDate(today.getFullYear(), m, mode)
+    d = monthlyDate(today.getFullYear(), today.getMonth() + (guard + 1), mode)
     guard++
   }
   return d

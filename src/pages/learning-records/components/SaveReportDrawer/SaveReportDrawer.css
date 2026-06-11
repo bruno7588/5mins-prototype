@@ -279,6 +279,7 @@
 .rcp-option {
   display: flex;
   align-items: center;
+  gap: var(--space-s);
   width: 100%;
   padding: var(--space-s);
   border: none;
@@ -292,13 +293,61 @@
   background: var(--cards-background-hover, var(--neutral-50));
 }
 
-.rcp-option-email {
+.rcp-option-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.rcp-option-name {
   font-size: 14px;
+  font-weight: 500;
   color: var(--text-primary);
-  line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.rcp-option-email {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Initials avatar (suggestion rows + known-user chips) — matches .cal-card__avatar */
+.rcp-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: #cbd5e1;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.rcp-chip .rcp-avatar {
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+}
+
+/* Envelope avatar + teal label for the "Add external email" row */
+.rcp-avatar--email {
+  background: var(--neutral-100, #f1f5f9);
+  color: var(--text-secondary);
+}
+
+.rcp-option-add {
+  color: var(--text-primary);
 }
 
 .rcp-helper {

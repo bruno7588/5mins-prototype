@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { searchOrgUsers } from '../../../../utils/orgUsers'
+import { searchOrgUsers, orgUserByEmail } from '../../../../utils/orgUsers'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const isValidEmail = (v: string) => EMAIL_RE.test(v.trim())
@@ -10,6 +10,12 @@ interface RecipientsFieldProps {
   onChange: (recipients: string[]) => void
   /** Form-level error (e.g. "add at least one recipient"), shown beneath. */
   error?: string
+  /**
+   * Notifies the parent of a valid email typed but not yet committed to a chip
+   * (null when the input is empty/invalid). Lets the parent treat a pending
+   * email as a recipient for enabling actions / committing on submit.
+   */
+  onPendingEmailChange?: (email: string | null) => void
 }
 
 const MAX_SUGGESTIONS = 6
@@ -19,7 +25,7 @@ const MAX_SUGGESTIONS = 6
  * type any email and press Enter/comma to add it. Backspace on an empty input
  * removes the last chip.
  */
-function RecipientsField({ recipients, onChange, error }: RecipientsFieldProps) {
+function RecipientsField({ recipients, onChange, error, onPendingEmailChange }: RecipientsFieldProps) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
@@ -31,6 +37,31 @@ function RecipientsField({ recipients, onChange, error }: RecipientsFieldProps) 
     () => searchOrgUsers(query, recipients).slice(0, MAX_SUGGESTIONS),
     [query, recipients],
   )
+
+  // Offer an "Add external email" row when the query is a valid email that's
+  // neither a known org user nor already added.
+  const trimmed = query.trim()
+  const showAdd = useMemo(() => {
+    if (!isValidEmail(trimmed)) return false
+    const e = trimmed.toLowerCase()
+    if (recipients.some((r) => r.toLowerCase() === e)) return false
+    return !suggestions.some((s) => s.email.toLowerCase() === e)
+  }, [trimmed, recipients, suggestions])
+
+  // The add row, when shown, sits just after the people suggestions.
+  const optionCount = suggestions.length + (showAdd ? 1 : 0)
+  const addIndex = suggestions.length
+
+  // A valid email typed but not yet committed to a chip — bubbled up so the
+  // parent can enable actions and commit it on submit.
+  const pendingEmail =
+    isValidEmail(trimmed) && !recipients.some((r) => r.toLowerCase() === trimmed.toLowerCase())
+      ? trimmed.toLowerCase()
+      : null
+
+  useEffect(() => {
+    onPendingEmailChange?.(pendingEmail)
+  }, [pendingEmail, onPendingEmailChange])
 
   useEffect(() => {
     setActiveIndex(0)
@@ -62,23 +93,26 @@ function RecipientsField({ recipients, onChange, error }: RecipientsFieldProps) 
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if ((e.key === 'Enter' || e.key === ',') && (query.trim() || suggestions[activeIndex])) {
+    if ((e.key === 'Enter' || e.key === ',') && (trimmed || suggestions[activeIndex])) {
       e.preventDefault()
-      if (open && suggestions[activeIndex]) addEmail(suggestions[activeIndex].email)
-      else addEmail(query)
+      if (open && activeIndex < suggestions.length && suggestions[activeIndex]) {
+        addEmail(suggestions[activeIndex].email)
+      } else {
+        addEmail(query)
+      }
       return
     }
     if (e.key === 'Backspace' && !query && recipients.length) {
       removeAt(recipients.length - 1)
       return
     }
-    if (e.key === 'ArrowDown' && suggestions.length) {
+    if (e.key === 'ArrowDown' && optionCount) {
       e.preventDefault()
       setOpen(true)
-      setActiveIndex((i) => Math.min(i + 1, suggestions.length - 1))
+      setActiveIndex((i) => Math.min(i + 1, optionCount - 1))
       return
     }
-    if (e.key === 'ArrowUp' && suggestions.length) {
+    if (e.key === 'ArrowUp' && optionCount) {
       e.preventDefault()
       setActiveIndex((i) => Math.max(i - 1, 0))
       return
@@ -94,13 +128,16 @@ function RecipientsField({ recipients, onChange, error }: RecipientsFieldProps) 
         className={`rcp${showError ? ' rcp--error' : ''}`}
         onClick={() => inputRef.current?.focus()}
       >
-        {recipients.map((email, i) => (
+        {recipients.map((email, i) => {
+          const user = orgUserByEmail(email)
+          return (
           <span className="rcp-chip" key={email}>
-            <span className="rcp-chip-label">{email}</span>
+            {user && <span className="rcp-avatar" aria-hidden="true">{user.initials}</span>}
+            <span className="rcp-chip-label" title={email}>{user ? user.name : email}</span>
             <button
               type="button"
               className="rcp-chip-remove"
-              aria-label={`Remove ${email}`}
+              aria-label={`Remove ${user ? user.name : email}`}
               onClick={(ev) => {
                 ev.stopPropagation()
                 removeAt(i)
@@ -111,12 +148,13 @@ function RecipientsField({ recipients, onChange, error }: RecipientsFieldProps) 
               </svg>
             </button>
           </span>
-        ))}
+          )
+        })}
         <input
           ref={inputRef}
           type="text"
           className="rcp-input"
-          placeholder={recipients.length ? '' : 'Search people or type an email'}
+          placeholder={recipients.length ? '' : 'Search people or type a name or email'}
           value={query}
           onChange={(e) => {
             setQuery(e.target.value)
@@ -128,7 +166,7 @@ function RecipientsField({ recipients, onChange, error }: RecipientsFieldProps) 
         />
       </div>
 
-      {open && suggestions.length > 0 && (
+      {open && optionCount > 0 && (
         <ul className="rcp-menu" role="listbox">
           {suggestions.map((u, i) => (
             <li key={u.email}>
@@ -141,10 +179,39 @@ function RecipientsField({ recipients, onChange, error }: RecipientsFieldProps) 
                 onMouseEnter={() => setActiveIndex(i)}
                 onClick={() => addEmail(u.email)}
               >
-                <span className="rcp-option-email">{u.email}</span>
+                <span className="rcp-avatar" aria-hidden="true">{u.initials}</span>
+                <span className="rcp-option-text">
+                  <span className="rcp-option-name">{u.name}</span>
+                  <span className="rcp-option-email">{u.email}</span>
+                </span>
               </button>
             </li>
           ))}
+
+          {showAdd && (
+            <li key="__add">
+              <button
+                type="button"
+                role="option"
+                aria-selected={addIndex === activeIndex}
+                className={`rcp-option${addIndex === activeIndex ? ' is-active' : ''}`}
+                onMouseDown={(e) => e.preventDefault()}
+                onMouseEnter={() => setActiveIndex(addIndex)}
+                onClick={() => addEmail(trimmed)}
+              >
+                <span className="rcp-avatar rcp-avatar--email" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                    <path d="M3 5.5h14v9H3v-9Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                    <path d="m3.5 6 6.5 5 6.5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <span className="rcp-option-text">
+                  <span className="rcp-option-name rcp-option-add">Add “{trimmed}”</span>
+                  <span className="rcp-option-email">External email address</span>
+                </span>
+              </button>
+            </li>
+          )}
         </ul>
       )}
 

@@ -9,6 +9,7 @@ import {
   REPORT_FREQUENCIES,
   WEEKDAYS,
   MONTHLY_MODES,
+  QUARTERLY_MODES,
   DELIVERY_TIMES,
   TIMEZONES,
   defaultTimezone,
@@ -31,6 +32,7 @@ interface SaveReportDrawerProps {
 const FREQ_OPTIONS = REPORT_FREQUENCIES.map((f) => ({ value: f.value, label: f.label }))
 const WEEKDAY_OPTIONS = WEEKDAYS.map((d) => ({ value: d.value, label: d.label }))
 const MONTHLY_OPTIONS = MONTHLY_MODES.map((m) => ({ value: m.value, label: m.label, description: m.description }))
+const QUARTERLY_OPTIONS = QUARTERLY_MODES.map((m) => ({ value: m.value, label: m.label, description: m.description }))
 const TIME_OPTIONS = DELIVERY_TIMES.map((t) => ({ value: t.value, label: t.label }))
 const TZ_OPTIONS = TIMEZONES.map((t) => ({ value: t.value, label: t.label }))
 
@@ -51,6 +53,8 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
   const [scheduled, setScheduled] = useState(false)
   const [frequency, setFrequency] = useState('monthly')
   const [recipients, setRecipients] = useState<string[]>([])
+  // A valid email typed into the recipients field but not yet committed to a chip.
+  const [pendingRecipient, setPendingRecipient] = useState<string | null>(null)
   const [filters, setFilters] = useState<FilterEntry[]>([])
   // Cadence detail
   const [weekday, setWeekday] = useState('mon')
@@ -67,6 +71,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
     if (!open) return
     setStep(1)
     setTriedSave(false)
+    setPendingRecipient(null)
     if (initial) {
       setName(initial.name)
       setScheduled(initial.scheduled)
@@ -120,7 +125,8 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
   if (!open) return null
 
   const nameMissing = name.trim().length === 0
-  const recipientsMissing = recipients.length === 0
+  // A pending valid email counts — it gets committed on save.
+  const recipientsMissing = recipients.length === 0 && !pendingRecipient
 
   function buildReport(extra: Partial<SavedReport>): SavedReport {
     return {
@@ -162,7 +168,12 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
       setTriedSave(true)
       return
     }
-    onSave(buildReport({ scheduled: true, recipients }))
+    // Fold a typed-but-uncommitted email into the recipient list.
+    const finalRecipients =
+      pendingRecipient && !recipients.some((r) => r.toLowerCase() === pendingRecipient)
+        ? [...recipients, pendingRecipient]
+        : recipients
+    onSave(buildReport({ scheduled: true, recipients: finalRecipients }))
     handleClose()
   }
 
@@ -276,10 +287,19 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
                   />
                 )}
 
-                {(frequency === 'monthly' || frequency === 'quarterly') && (
+                {frequency === 'monthly' && (
                   <Dropdown
-                    label={frequency === 'quarterly' ? 'When in the quarter?' : 'When in the month?'}
+                    label="When in the month?"
                     options={MONTHLY_OPTIONS}
+                    value={monthlyMode}
+                    onChange={setMonthlyMode}
+                  />
+                )}
+
+                {frequency === 'quarterly' && (
+                  <Dropdown
+                    label="When in the quarter?"
+                    options={QUARTERLY_OPTIONS}
                     value={monthlyMode}
                     onChange={setMonthlyMode}
                   />
@@ -308,6 +328,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
                 <RecipientsField
                   recipients={recipients}
                   onChange={setRecipients}
+                  onPendingEmailChange={setPendingRecipient}
                   error={triedSave && recipientsMissing ? 'Add at least one recipient.' : undefined}
                 />
               </div>
@@ -351,7 +372,12 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
                 {scheduled ? 'Save & Schedule Report' : isEditing ? 'Update Report' : 'Save New Report'}
               </button>
             ) : (
-              <button type="button" className="side-drawer__btn-primary" onClick={handleSave}>
+              <button
+                type="button"
+                className="side-drawer__btn-primary"
+                disabled={recipientsMissing}
+                onClick={handleSave}
+              >
                 Schedule Report
               </button>
             )}
