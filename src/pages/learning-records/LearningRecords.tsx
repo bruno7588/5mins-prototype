@@ -124,6 +124,9 @@ function LearningRecords() {
   const [reportsListOpen, setReportsListOpen] = useState(false)
   const [reportDrawerOpen, setReportDrawerOpen] = useState(false)
   const [editingReport, setEditingReport] = useState<SavedReport | null>(null)
+  // True when the drawer is open on a duplicated report (seeded from an existing
+  // one but saved as new).
+  const [duplicating, setDuplicating] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const headerAddRef = useRef<HTMLDivElement>(null)
   const bottomAddRef = useRef<HTMLDivElement>(null)
@@ -194,6 +197,7 @@ function LearningRecords() {
 
   const openCreateReport = useCallback(() => {
     setEditingReport(null)
+    setDuplicating(false)
     setReportDrawerOpen(true)
   }, [])
 
@@ -203,14 +207,15 @@ function LearningRecords() {
       // live results), then open the drawer for name/schedule.
       applyReport(report)
       setEditingReport(report)
+      setDuplicating(false)
       setReportsListOpen(false)
       setReportDrawerOpen(true)
     },
     [applyReport],
   )
 
-  // Duplicate — open the edit flow on a fresh copy (new id, so saving creates a
-  // new report rather than overwriting the original).
+  // Duplicate — seed a fresh copy (new id) and open it as a new report, so
+  // saving creates a new report rather than overwriting the original.
   const duplicateReport = useCallback(
     (report: SavedReport) => {
       const copy: SavedReport = {
@@ -221,6 +226,7 @@ function LearningRecords() {
       }
       applyReport(copy)
       setEditingReport(copy)
+      setDuplicating(true)
       setReportsListOpen(false)
       setReportDrawerOpen(true)
     },
@@ -231,11 +237,11 @@ function LearningRecords() {
   // the schedule step, so we don't close here.
   const handleSaveReport = useCallback(
     (report: SavedReport) => {
-      const isEdit = !!editingReport
+      const isEdit = !!editingReport && !duplicating
       setReports(saveReport(report))
       showToast('success', report.scheduled ? 'Report scheduled' : isEdit ? 'Report updated' : 'Report saved')
     },
-    [editingReport, showToast],
+    [editingReport, duplicating, showToast],
   )
 
   // Label shown on a collapsed pill: the chosen value, else the filter name.
@@ -597,6 +603,7 @@ function LearningRecords() {
         onClose={() => setReportDrawerOpen(false)}
         onSave={handleSaveReport}
         initial={editingReport}
+        isDuplicate={duplicating}
         currentFilters={currentFilterEntries}
         onDownload={downloadReport}
       />

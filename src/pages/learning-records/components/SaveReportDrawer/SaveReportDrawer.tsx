@@ -33,6 +33,8 @@ interface SaveReportDrawerProps {
   currentFilters: FilterEntry[]
   /** Download the report being edited as CSV. */
   onDownload?: (report: SavedReport) => void
+  /** Seed from `initial` but present as a brand-new report (Duplicate flow). */
+  isDuplicate?: boolean
 }
 
 const FREQ_OPTIONS = REPORT_FREQUENCIES.map((f) => ({ value: f.value, label: f.label }))
@@ -177,8 +179,10 @@ function todayISO(): string {
   return `${d.getFullYear()}-${m}-${day}`
 }
 
-function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDownload }: SaveReportDrawerProps) {
-  const isEditing = !!initial
+function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDownload, isDuplicate }: SaveReportDrawerProps) {
+  // A duplicate is seeded from an existing report but saved as a new one, so it
+  // is framed as "Save a new report", not an edit.
+  const isEditing = !!initial && !isDuplicate
   const [closing, setClosing] = useState(false)
 
   const [name, setName] = useState('')
