@@ -31,6 +31,14 @@
   gap: var(--space-l);
 }
 
+/* A grouped block of related fields (e.g. Name + Filters). Fields sit 16px
+   apart inside; the 24px form gap separates one section from the next. */
+.rd-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
 /* Next-report banner */
 .rd-banner {
   display: flex;
@@ -276,17 +284,39 @@
   line-height: 1.5;
 }
 
-/* Filter summary chips — read-only (icon + Title: Value), removable */
+/* Filter summary chips — read-only snapshot kept to a single row with a "+N"
+   overflow chip. Click "+N" to expand (.rd-chips--expanded) and wrap them all. */
 .rd-chips {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--space-s);
+  overflow: hidden;
+}
+
+.rd-chips--expanded {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
+/* Off-flow copy of every chip at natural width — used only for measurement. */
+.rd-chips-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--space-s);
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .rd-chip {
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   gap: var(--space-xs);
   max-width: 220px;
   padding: var(--space-s) var(--space-sm);
@@ -298,6 +328,19 @@
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;
+}
+
+/* "+N" overflow chip — expands the row on click. */
+.rd-chip--more {
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.rd-chip--more:hover {
+  background: var(--page-background-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
 }
 
 .rd-chip-label {

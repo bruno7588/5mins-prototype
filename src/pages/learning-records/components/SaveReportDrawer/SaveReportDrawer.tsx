@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react'
+import gsap from 'gsap'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
+import Collapse from '../../../../components/Collapse/Collapse'
 import InputField from '../../../../components/InputField/InputField'
 import Dropdown from '../../../../components/Dropdown/Dropdown'
 import Toggle from '../../../../components/Toggle/Toggle'
@@ -36,6 +38,133 @@ const MONTHLY_OPTIONS = MONTHLY_MODES.map((m) => ({ value: m.value, label: m.lab
 const QUARTERLY_OPTIONS = QUARTERLY_MODES.map((m) => ({ value: m.value, label: m.label, description: m.description }))
 const TIME_OPTIONS = DELIVERY_TIMES.map((t) => ({ value: t.value, label: t.label }))
 const TZ_OPTIONS = TIMEZONES.map((t) => ({ value: t.value, label: t.label }))
+
+type IconType = ComponentType<{ size?: number; color?: string; variant?: 'Linear' | 'Bold' | 'Outline' }>
+interface ChipData {
+  id: string
+  label: string
+  Icon?: IconType
+}
+
+/**
+ * Read-only filter snapshot kept to a single row. Fits as many chips as the
+ * width allows and collapses the rest into a "+N" chip that, when clicked,
+ * expands the row to reveal every filter. Widths are measured from a hidden
+ * full-width copy so the count stays correct on resize.
+ */
+function FilterChipsRow({ chips }: { chips: ChipData[] }) {
+  const rowRef = useRef<HTMLDivElement>(null)
+  const measureRef = useRef<HTMLDivElement>(null)
+  const moreRef = useRef<HTMLButtonElement>(null)
+  // Height captured the instant before a user toggle, so GSAP can tween from it.
+  const fromHeight = useRef<number | null>(null)
+  const [visibleCount, setVisibleCount] = useState(chips.length)
+  const [expanded, setExpanded] = useState(false)
+
+  // Toggle helper — snapshot the current height first so the next layout effect
+  // can animate the row between its single-row and wrapped heights.
+  const toggleExpanded = (next: boolean) => {
+    fromHeight.current = rowRef.current?.offsetHeight ?? null
+    setExpanded(next)
+  }
+
+  // Animate the row's height with GSAP whenever the user expands/collapses it.
+  useLayoutEffect(() => {
+    const el = rowRef.current
+    if (!el || fromHeight.current === null) return
+    const from = fromHeight.current
+    fromHeight.current = null
+    gsap.killTweensOf(el)
+    gsap.fromTo(
+      el,
+      { height: from, overflow: 'hidden' },
+      {
+        height: el.scrollHeight,
+        duration: 0.3,
+        ease: 'power2.inOut',
+        // Drop the inline height/overflow so the row stays responsive afterwards.
+        onComplete: () => {
+          el.style.height = ''
+          el.style.overflow = ''
+        },
+      },
+    )
+  }, [expanded])
+
+  useLayoutEffect(() => {
+    setExpanded(false)
+    const row = rowRef.current
+    const measure = measureRef.current
+    if (!row || !measure) return
+    const GAP = 8
+    const recompute = () => {
+      const total = row.clientWidth
+      if (!total) return
+      const widths = (Array.from(measure.children) as HTMLElement[]).map((el) => el.offsetWidth)
+      let sumAll = 0
+      widths.forEach((w, i) => (sumAll += w + (i ? GAP : 0)))
+      if (sumAll <= total) {
+        setVisibleCount(chips.length)
+        return
+      }
+      const moreW = moreRef.current?.offsetWidth ?? 44
+      let used = 0
+      let count = 0
+      for (let i = 0; i < widths.length; i++) {
+        const next = used + (count ? GAP : 0) + widths[i]
+        if (next + GAP + moreW <= total) {
+          used = next
+          count++
+        } else break
+      }
+      setVisibleCount(Math.max(1, count))
+    }
+    recompute()
+    const ro = new ResizeObserver(recompute)
+    ro.observe(row)
+    return () => ro.disconnect()
+  }, [chips])
+
+  const shown = expanded ? chips : chips.slice(0, visibleCount)
+  const hidden = chips.length - shown.length
+
+  const renderChip = (c: ChipData) => (
+    <span className="rd-chip" key={c.id}>
+      {c.Icon && <c.Icon size={16} color="var(--text-secondary)" variant="Linear" />}
+      <span className="rd-chip-label">{c.label}</span>
+    </span>
+  )
+
+  return (
+    <div className={`rd-chips${expanded ? ' rd-chips--expanded' : ''}`} ref={rowRef}>
+      {shown.map(renderChip)}
+      {hidden > 0 && (
+        <button
+          type="button"
+          className="rd-chip rd-chip--more"
+          ref={moreRef}
+          title={chips.slice(visibleCount).map((c) => c.label).join(', ')}
+          onClick={() => toggleExpanded(true)}
+        >
+          +{hidden}
+        </button>
+      )}
+      {expanded && chips.length > visibleCount && (
+        <button
+          type="button"
+          className="rd-chip rd-chip--more"
+          onClick={() => toggleExpanded(false)}
+        >
+          Show less
+        </button>
+      )}
+      {/* Hidden full-width copy used only to measure each chip's natural width. */}
+      <div className="rd-chips-measure" aria-hidden="true" ref={measureRef}>
+        {chips.map(renderChip)}
+      </div>
+    </div>
+  )
+}
 
 /** Today as yyyy-mm-dd, for seeding the biweekly start date. */
 function todayISO(): string {
@@ -216,40 +345,39 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
         <div className="side-drawer__content">
           {step === 1 ? (
           <div className="rd-form">
-            {/* Name */}
-            <InputField
-              label="Name"
-              placeholder="e.g. Weekly overdue learners"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              validation={triedSave && nameMissing ? 'error' : 'none'}
-              helperText={triedSave && nameMissing ? 'Give the report a name.' : undefined}
-            />
+            {/* Name + Filters — one tight section (16px gap); 24px separates it
+                from the schedule toggle below. Matches Figma 11637:122928. */}
+            <div className="rd-section">
+              {/* Name */}
+              <InputField
+                label="Name"
+                placeholder="e.g. Weekly overdue learners"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                validation={triedSave && nameMissing ? 'error' : 'none'}
+                helperText={triedSave && nameMissing ? 'Give the report a name.' : undefined}
+              />
 
-            {/* Filters — editable when editing a report; read-only snapshot of the
-                page's current view when creating a new one. */}
-            <div className="rd-field">
-              <label className="rd-label">Filters</label>
-              {isEditing ? (
-                <ReportFiltersEditor filters={filters} onChange={setFilters} />
-              ) : filters.length === 0 ? (
-                <p className="rd-hint">No filters — this report covers all learning records.</p>
-              ) : (
-                <div className="rd-chips">
-                  {filters.map((f) => {
-                    const meta = FILTER_BY_ID[f.id]
-                    if (!meta) return null
-                    const opt = filterOptions(f.id).find((o) => o.value === f.value)
-                    const label = opt ? `${meta.title}: ${opt.label}` : meta.title
-                    return (
-                      <span className="rd-chip" key={f.id}>
-                        <meta.Icon size={16} color="var(--text-secondary)" variant="Linear" />
-                        <span className="rd-chip-label">{label}</span>
-                      </span>
-                    )
-                  })}
-                </div>
-              )}
+              {/* Filters — editable when editing a report; read-only snapshot of the
+                  page's current view when creating a new one. */}
+              <div className="rd-field">
+                <label className="rd-label">Filters</label>
+                {isEditing ? (
+                  <ReportFiltersEditor filters={filters} onChange={setFilters} />
+                ) : filters.length === 0 ? (
+                  <p className="rd-hint">No filters — this report covers all learning records.</p>
+                ) : (
+                  <FilterChipsRow
+                    chips={filters.flatMap((f) => {
+                      const meta = FILTER_BY_ID[f.id]
+                      if (!meta) return []
+                      const opt = filterOptions(f.id).find((o) => o.value === f.value)
+                      const label = opt ? `${meta.title}: ${opt.label}` : meta.title
+                      return [{ id: f.id, label, Icon: meta.Icon }]
+                    })}
+                  />
+                )}
+              </div>
             </div>
 
             {/* Schedule — whole card toggles; scheduling options reveal inline when ON */}
@@ -267,7 +395,10 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
             >
               <div className="rd-toggle-text">
                 <span className="rd-toggle-title">Schedule this report</span>
-                <span className="rd-hint">Email this report to people on a recurring schedule.</span>
+                {/* Description collapses away once scheduling is on, leaving only the title. */}
+                <Collapse open={!scheduled}>
+                  <span className="rd-hint rd-toggle-hint">Email this report to people on a recurring schedule.</span>
+                </Collapse>
               </div>
               <span className="rd-toggle-control" onClick={(e) => e.stopPropagation()}>
                 <Toggle checked={scheduled} onChange={(e) => setScheduled(e.target.checked)} />
