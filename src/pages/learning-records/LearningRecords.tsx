@@ -179,15 +179,6 @@ function LearningRecords() {
     [showToast],
   )
 
-  // Pause/resume a scheduled report.
-  const toggleReport = useCallback(
-    (report: SavedReport, enabled: boolean) => {
-      setReports(saveReport({ ...report, enabled }))
-      showToast('success', enabled ? 'Schedule resumed' : 'Schedule paused')
-    },
-    [showToast],
-  )
-
   // Download the report now (prototype: confirms the action).
   const downloadReport = useCallback(
     (report: SavedReport) => {
@@ -212,17 +203,6 @@ function LearningRecords() {
       // live results), then open the drawer for name/schedule.
       applyReport(report)
       setEditingReport(report)
-      setReportsListOpen(false)
-      setReportDrawerOpen(true)
-    },
-    [applyReport],
-  )
-
-  // Schedule an unscheduled report: open the drawer with scheduling engaged.
-  const openScheduleReport = useCallback(
-    (report: SavedReport) => {
-      applyReport(report)
-      setEditingReport({ ...report, scheduled: true })
       setReportsListOpen(false)
       setReportDrawerOpen(true)
     },
@@ -590,8 +570,6 @@ function LearningRecords() {
         onEdit={openEditReport}
         onApply={applyReport}
         onDelete={deleteReport}
-        onSchedule={openScheduleReport}
-        onToggle={toggleReport}
         onDownload={downloadReport}
       />
 

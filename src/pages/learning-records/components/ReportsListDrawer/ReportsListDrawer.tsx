@@ -1,11 +1,48 @@
 import { useEffect, useRef, useState } from 'react'
-import { DocumentDownload, Edit2, Eye, Danger, Trash } from 'iconsax-react'
+import { Calendar, Clock, ArrowRight, Edit2, Eye, Danger, Trash } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
-import Toggle from '../../../../components/Toggle/Toggle'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import MoreIcon from '../../../../components/icons/MoreIcon'
-import { cadenceSummary, type SavedReport } from '../../../../utils/lrSavedFilters'
+import CsvIcon from '../../../../components/icons/CsvIcon'
+import { cadenceRecurrence, cadenceTime, type SavedReport } from '../../../../utils/lrSavedFilters'
+import { orgUserByEmail } from '../../../../utils/orgUsers'
 import './ReportsListDrawer.css'
+
+const MAX_AVATARS = 4
+
+/** Two-letter initials from an email's local part (e.g. lewis-ferrari → LF). */
+function emailInitials(email: string): string {
+  const local = email.split('@')[0] ?? email
+  const parts = local.split(/[.\-_]+/).filter(Boolean)
+  const letters = parts.length >= 2 ? parts[0][0] + parts[1][0] : local.slice(0, 2)
+  return letters.toUpperCase()
+}
+
+/** Overlapping recipient avatars (photo or initials), with a +N overflow chip. */
+function RecipientAvatars({ emails }: { emails: string[] }) {
+  const shown = emails.slice(0, MAX_AVATARS)
+  const overflow = emails.length - shown.length
+  return (
+    <div className="rl-recipients" aria-label={`${emails.length} recipient${emails.length === 1 ? '' : 's'}`}>
+      {shown.map((email) => {
+        const user = orgUserByEmail(email)
+        if (user?.avatar) {
+          return <img key={email} className="rl-avatar rl-avatar--photo" src={user.avatar} alt="" title={email} />
+        }
+        return (
+          <span key={email} className="rl-avatar" title={email}>
+            {user ? user.initials : emailInitials(email)}
+          </span>
+        )
+      })}
+      {overflow > 0 && (
+        <span className="rl-avatar rl-avatar--more" title={emails.slice(MAX_AVATARS).join(', ')}>
+          +{overflow}
+        </span>
+      )}
+    </div>
+  )
+}
 
 interface ReportsListDrawerProps {
   open: boolean
@@ -16,10 +53,6 @@ interface ReportsListDrawerProps {
   /** Apply the report's filters to the table (and close the drawer). */
   onApply: (r: SavedReport) => void
   onDelete: (id: string) => void
-  /** Open the drawer with scheduling engaged (for an unscheduled report). */
-  onSchedule: (r: SavedReport) => void
-  /** Pause/resume a scheduled report. */
-  onToggle: (r: SavedReport, enabled: boolean) => void
   /** Download the report now. */
   onDownload: (r: SavedReport) => void
 }
@@ -31,8 +64,6 @@ function ReportsListDrawer({
   onEdit,
   onApply,
   onDelete,
-  onSchedule,
-  onToggle,
   onDownload,
 }: ReportsListDrawerProps) {
   const [closing, setClosing] = useState(false)
@@ -99,51 +130,48 @@ function ReportsListDrawer({
             <p className="rl-empty">No saved reports yet. Build a filter view and choose “Save Report”.</p>
           ) : (
             <div className="rl-list">
-              {reports.map((r) => {
-                const enabled = r.enabled !== false
-                return (
-                  <div className={`rl-item${r.scheduled && !enabled ? ' rl-item--off' : ''}`} key={r.id}>
-                    <div className="rl-item-main">
-                      <button
-                        type="button"
-                        className="rl-item-title"
-                        onClick={() => onEdit(r)}
-                      >
-                        {r.name}
-                      </button>
-                      <span className={`rl-item-desc${r.scheduled ? '' : ' rl-item-desc--muted'}`}>
-                        {cadenceSummary(r)}
-                      </span>
+              {reports.map((r) => (
+                <div className="rl-item" key={r.id}>
+                  <div className="rl-item-header">
+                    <button
+                      type="button"
+                      className="rl-item-title"
+                      onClick={() => onEdit(r)}
+                    >
+                      {r.name}
+                    </button>
+
+                    {r.scheduled && (
+                      <div className="rl-item-meta">
+                        <span className="rl-meta">
+                          <Calendar size={16} color="var(--text-secondary)" variant="Linear" />
+                          {cadenceRecurrence(r)}
+                        </span>
+                        <span className="rl-meta">
+                          <Clock size={16} color="var(--text-secondary)" variant="Linear" />
+                          {cadenceTime(r)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rl-item-info">
+                    <div className="rl-item-badges">
+                      {r.scheduled ? (
+                        r.recipients.length > 0 && <RecipientAvatars emails={r.recipients} />
+                      ) : (
+                        <span className="rl-meta rl-meta--muted">No schedule</span>
+                      )}
                     </div>
 
                     <div className="rl-item-actions">
-                      {r.scheduled ? (
-                        <Toggle
-                          className="rl-toggle"
-                          checked={enabled}
-                          size="sm"
-                          label={enabled ? 'Scheduled' : 'Paused'}
-                          labelPosition="left"
-                          aria-label={`${enabled ? 'Pause' : 'Resume'} ${r.name}`}
-                          onChange={(e) => onToggle(r, e.target.checked)}
-                        />
-                      ) : (
-                        <button
-                          type="button"
-                          className="rl-schedule-btn"
-                          onClick={() => onSchedule(r)}
-                        >
-                          Schedule
-                        </button>
-                      )}
-
                       <button
                         type="button"
                         className="rl-icon-btn"
                         aria-label={`Download ${r.name}`}
                         onClick={() => onDownload(r)}
                       >
-                        <DocumentDownload size={18} color="var(--text-secondary)" variant="Linear" />
+                        <CsvIcon size={20} color="var(--text-secondary)" />
                       </button>
 
                       <div
@@ -202,10 +230,19 @@ function ReportsListDrawer({
                           </div>
                         )}
                       </div>
+
+                      <button
+                        type="button"
+                        className="rl-open-btn"
+                        aria-label={`Open ${r.name}`}
+                        onClick={() => onEdit(r)}
+                      >
+                        <ArrowRight size={16} color="var(--text-secondary)" variant="Linear" />
+                      </button>
                     </div>
                   </div>
-                )
-              })}
+                </div>
+              ))}
             </div>
           )}
         </div>

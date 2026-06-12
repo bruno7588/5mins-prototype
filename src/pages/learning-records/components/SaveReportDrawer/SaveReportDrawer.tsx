@@ -4,6 +4,7 @@ import InputField from '../../../../components/InputField/InputField'
 import Dropdown from '../../../../components/Dropdown/Dropdown'
 import Toggle from '../../../../components/Toggle/Toggle'
 import RecipientsField from './RecipientsField'
+import ReportFiltersEditor from './ReportFiltersEditor'
 import { FILTER_BY_ID, filterOptions } from '../FilterListbox/FilterListbox'
 import {
   REPORT_FREQUENCIES,
@@ -51,6 +52,8 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
 
   const [name, setName] = useState('')
   const [scheduled, setScheduled] = useState(false)
+  // Whether the schedule is active (false = paused). Pause/resume lives here now.
+  const [enabled, setEnabled] = useState(true)
   const [frequency, setFrequency] = useState('monthly')
   const [recipients, setRecipients] = useState<string[]>([])
   // A valid email typed into the recipients field but not yet committed to a chip.
@@ -75,6 +78,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
     if (initial) {
       setName(initial.name)
       setScheduled(initial.scheduled)
+      setEnabled(initial.enabled !== false)
       setFrequency(initial.frequency || 'monthly')
       setRecipients(initial.recipients ?? [])
       setFilters(initial.filters)
@@ -88,6 +92,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
     } else {
       setName('')
       setScheduled(false)
+      setEnabled(true)
       setFrequency('monthly')
       setRecipients([])
       setFilters(currentFilters)
@@ -141,6 +146,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
       monthlyMode,
       deliverTime,
       timezone,
+      enabled,
       createdAt,
       ...extra,
     }
@@ -220,10 +226,13 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
               helperText={triedSave && nameMissing ? 'Give the report a name.' : undefined}
             />
 
-            {/* Filters — read-only summary of the view (build/change them on the page) */}
+            {/* Filters — editable when editing a report; read-only snapshot of the
+                page's current view when creating a new one. */}
             <div className="rd-field">
               <label className="rd-label">Filters</label>
-              {filters.length === 0 ? (
+              {isEditing ? (
+                <ReportFiltersEditor filters={filters} onChange={setFilters} />
+              ) : filters.length === 0 ? (
                 <p className="rd-hint">No filters — this report covers all learning records.</p>
               ) : (
                 <div className="rd-chips">
@@ -267,6 +276,30 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters }: Sa
           </div>
           ) : (
           <div className="rd-form">
+              {/* Pause/resume — only when editing an existing report */}
+              {isEditing && (
+                <div
+                  className="rd-toggle-row"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setEnabled((v) => !v)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setEnabled((v) => !v)
+                    }
+                  }}
+                >
+                  <div className="rd-toggle-text">
+                    <span className="rd-toggle-title">{enabled ? 'Schedule active' : 'Schedule paused'}</span>
+                    <span className="rd-hint">Pause to stop sending emails without deleting the report.</span>
+                  </div>
+                  <span className="rd-toggle-control" onClick={(e) => e.stopPropagation()}>
+                    <Toggle checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
+                  </span>
+                </div>
+              )}
+
               {/* Schedule grid — Frequency / cadence detail on row 1, Time / Timezone on row 2 */}
               <div className="rd-grid">
                 {/* Frequency */}

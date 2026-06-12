@@ -50,23 +50,35 @@ export function frequencyLabel(value: string): string {
 }
 
 /**
+ * The recurrence half of a report's cadence, e.g. "Monthly · First working day"
+ * or "Weekly on Monday". Unscheduled reports return "No schedule".
+ */
+export function cadenceRecurrence(r: SavedReport): string {
+  if (!r.scheduled) return 'No schedule'
+  if (r.frequency === 'weekly') {
+    return `Weekly on ${weekdayLabel(r.weekday ?? 'mon')}`
+  }
+  if (r.frequency === 'quarterly') {
+    return `Quarterly · ${quarterlyModeLabel(r.monthlyMode ?? 'first-working-day')}`
+  }
+  return `Monthly · ${monthlyModeLabel(r.monthlyMode ?? 'first-working-day')}`
+}
+
+/** The delivery-time half of a report's cadence, e.g. "9:00 AM, UTC". */
+export function cadenceTime(r: SavedReport): string {
+  const time = deliveryTimeLabel(r.deliverTime ?? '09:00')
+  const tz = r.timezone && r.timezone !== 'UTC' ? timezoneLabel(r.timezone) : 'UTC'
+  return `${time}, ${tz}`
+}
+
+/**
  * One-line cadence summary for a report row, e.g.
  * "Weekly on Monday · 9:00 AM, London (GMT/BST)". Unscheduled reports fall back
- * to a filter count.
+ * to "No schedule".
  */
 export function cadenceSummary(r: SavedReport): string {
   if (!r.scheduled) return 'No schedule'
-  let recurrence: string
-  if (r.frequency === 'weekly') {
-    recurrence = `Weekly on ${weekdayLabel(r.weekday ?? 'mon')}`
-  } else if (r.frequency === 'quarterly') {
-    recurrence = `Quarterly · ${quarterlyModeLabel(r.monthlyMode ?? 'first-working-day')}`
-  } else {
-    recurrence = `Monthly · ${monthlyModeLabel(r.monthlyMode ?? 'first-working-day')}`
-  }
-  const time = deliveryTimeLabel(r.deliverTime ?? '09:00')
-  const tz = r.timezone && r.timezone !== 'UTC' ? timezoneLabel(r.timezone) : 'UTC'
-  return `${recurrence} · ${time}, ${tz}`
+  return `${cadenceRecurrence(r)} · ${cadenceTime(r)}`
 }
 
 /** Days of the week for the weekly cadence (Mon-first, business convention). */

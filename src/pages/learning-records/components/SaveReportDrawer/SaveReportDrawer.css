@@ -88,6 +88,152 @@
   color: var(--text-warning);
 }
 
+/* Inline editable filters (ReportFiltersEditor) */
+.rfe {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.rfe .flb {
+  width: 100%;
+}
+
+.rfe-chip-wrap {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.rfe-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  max-width: 100%;
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: border-color 120ms ease;
+}
+
+.rfe-chip.is-open,
+.rfe-chip-wrap:hover .rfe-chip {
+  border-color: var(--border-hover);
+}
+
+.rfe-chip-main {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.rfe-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rfe-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.rfe-chip-remove:hover {
+  background: var(--neutral-100);
+  color: var(--text-primary);
+}
+
+/* Value menu under a chip */
+.rfe-value-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 20;
+  min-width: 180px;
+  max-height: 240px;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--space-s);
+  list-style: none;
+  background: var(--cards-background, var(--neutral-0));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12);
+}
+
+.rfe-value-opt {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-s) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-s);
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rfe-value-opt:hover {
+  background: var(--cards-background-hover);
+}
+
+.rfe-value-opt.is-active {
+  background: var(--cards-background-hover);
+  font-weight: 500;
+}
+
+/* + Add filter */
+.rfe-add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-sm);
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.rfe-add:hover {
+  background: var(--page-background-hover);
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
 /* Schedule toggle — bordered card; whole card is clickable */
 .rd-toggle-row {
   display: flex;

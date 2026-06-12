@@ -36,36 +36,38 @@
   gap: var(--space-sm);
 }
 
+/* Report card — header (name + cadence) over an info row (recipients + actions). */
 .rl-item {
   display: flex;
-  align-items: center;
-  border: 1px solid var(--border);
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-m);
+  background: var(--cards-background);
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-s);
   transition: background 120ms ease;
 }
 
 .rl-item:hover {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
 }
 
-.rl-item-main {
+.rl-item-header {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  flex: 1;
+  gap: var(--space-s);
   min-width: 0;
-  padding: var(--space-s) var(--space-sm);
 }
 
 /* Only the report name is clickable (opens Edit), not the whole row. */
 .rl-item-title {
+  align-self: flex-start;
   max-width: 100%;
   padding: 0;
   border: none;
   background: transparent;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
@@ -81,48 +83,47 @@
   color: var(--text-button-hover);
 }
 
-.rl-item-desc {
+/* Cadence line — calendar (recurrence) · clock (delivery time). */
+.rl-item-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.rl-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* "No schedule" — dimmed subtitle for unscheduled reports. */
-.rl-item-desc--muted {
+.rl-meta svg {
+  flex-shrink: 0;
+}
+
+/* "No schedule" — dimmed for unscheduled reports. */
+.rl-meta--muted {
   color: var(--text-disabled);
 }
 
-/* Outline "Schedule" CTA shown in place of the toggle on unscheduled rows.
-   DS Outlined / Primary / Small (primary-500 text fails WCAG, so primary-600). */
-.rl-schedule-btn {
-  flex-shrink: 0;
-  padding: var(--space-s) var(--space-m);
-  border: 1px solid var(--primary-600);
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
-  color: var(--primary-600);
-  cursor: pointer;
-  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+.rl-item-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  min-height: 24px;
 }
 
-.rl-schedule-btn:hover {
-  background: var(--primary-100);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
-}
-
-.rl-schedule-btn:active {
-  background: var(--primary-200);
-  color: var(--primary-800);
-  border-color: var(--primary-800);
+.rl-item-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-width: 0;
 }
 
 .rl-item-actions {
@@ -130,15 +131,51 @@
   align-items: center;
   gap: var(--space-s);
   flex-shrink: 0;
-  padding-right: var(--space-sm);
 }
 
+/* Recipient avatars (info row, scheduled reports) */
+.rl-recipients {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-left: 8px; /* offsets the first avatar's negative margin */
+}
+
+.rl-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-left: -8px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--cards-background);
+  background: var(--neutral-300, #cbd5e1);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  object-fit: cover;
+}
+
+.rl-item:hover .rl-avatar {
+  border-color: var(--cards-background-hover);
+}
+
+.rl-avatar--more {
+  background: var(--cards-background-hover);
+  color: var(--text-tertiary);
+}
+
+/* Icon-only actions (download, kebab) — circular hover bg per DS. */
 .rl-icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-full);
   background: transparent;
   border: none;
@@ -150,20 +187,22 @@
   background: var(--neutral-100, #e3e5e9);
 }
 
-/* Scheduled / Paused toggle + helper label */
-.rl-toggle {
-  gap: var(--space-s);
+/* Circular "open" arrow — filled chip; opens the edit drawer. */
+.rl-open-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  border: none;
+  cursor: pointer;
+  transition: background 120ms ease;
 }
 
-.rl-toggle .toggle-row__label {
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.rl-item--off .rl-toggle .toggle-row__label {
-  color: var(--text-disabled);
+.rl-open-btn:hover {
+  background: var(--neutral-200, #d4d6dc);
 }
 
 /* Kebab "more" menu */
