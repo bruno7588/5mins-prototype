@@ -229,6 +229,68 @@
   line-height: 1.5;
 }
 
+/* "Viewing" indicator — a live pulsing dot + the report name, shown next to the
+   Filters title after a report is opened via "View in Table". */
+/* Right-aligned group: the "viewing" status + the collapse chevron. */
+.lrp-filters-trailing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.lrp-viewing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.lrp-viewing-dot {
+  position: relative;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--selected);
+  box-shadow: 0 0 0 0 rgba(255, 187, 56, 0.5);
+  animation: lrp-viewing-pulse 1.8s ease-out infinite;
+}
+
+@keyframes lrp-viewing-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 187, 56, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 187, 56, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 187, 56, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lrp-viewing-dot {
+    animation: none;
+  }
+}
+
+.lrp-viewing-label {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+}
+
+.lrp-viewing-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
 .lrp-filter-save-preset {
   display: inline-flex;
   align-items: center;
@@ -350,7 +412,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-left: auto;
   width: 28px;
   height: 28px;
   border-radius: var(--radius-full);

@@ -133,6 +133,28 @@
   flex-shrink: 0;
 }
 
+/* Quiet "Add a schedule" affordance — replaces the dead "No schedule" label on
+   unscheduled cards so it's a path into the scheduling flow. */
+.rl-add-schedule {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+
+.rl-add-schedule:hover {
+  color: var(--text-button-hover);
+}
+
 /* Recipient avatar group — Figma Library "Avatar group / 24px" (10589:3574):
    24px circles overlapping 8px, each ringed with the surface colour so the
    stack reads as separate chips. */

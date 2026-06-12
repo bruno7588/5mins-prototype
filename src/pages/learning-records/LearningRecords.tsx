@@ -120,6 +120,9 @@ function LearningRecords() {
   const [filtersExpanded, setFiltersExpanded] = useState(false)
   const [activeFilters, setActiveFilters] = useState<string[]>([])
   const [filterValues, setFilterValues] = useState<Record<string, string>>({})
+  // Name of the saved report currently being viewed in the table (via "View in
+  // Table"); cleared once the user edits the filters manually.
+  const [viewingName, setViewingName] = useState<string | null>(null)
   const [reports, setReports] = useState<SavedReport[]>(() => readReports())
   const [reportsListOpen, setReportsListOpen] = useState(false)
   const [reportDrawerOpen, setReportDrawerOpen] = useState(false)
@@ -141,6 +144,7 @@ function LearningRecords() {
     setActiveFilters((prev) => (prev.includes(id) ? prev : [...prev, id]))
     setFiltersOpen(false)
     setFiltersExpanded(true)
+    setViewingName(null)
   }, [])
 
   const removeFilter = useCallback((id: string) => {
@@ -150,11 +154,13 @@ function LearningRecords() {
       delete next[id]
       return next
     })
+    setViewingName(null)
   }, [])
 
   const clearAllFilters = useCallback(() => {
     setActiveFilters([])
     setFilterValues({})
+    setViewingName(null)
   }, [])
 
   /* ─── Saved reports ─── */
@@ -173,6 +179,29 @@ function LearningRecords() {
     setFilterValues(values)
     setFiltersExpanded(true)
   }, [])
+
+  // "Add a schedule" — open the edit drawer on the report with scheduling
+  // pre-enabled, so the schedule fields are revealed and ready to fill.
+  const scheduleReport = useCallback(
+    (report: SavedReport) => {
+      applyReport(report)
+      setEditingReport({ ...report, scheduled: true })
+      setDuplicating(false)
+      setViewingName(null)
+      setReportsListOpen(false)
+      setReportDrawerOpen(true)
+    },
+    [applyReport],
+  )
+
+  // "View in Table" — apply the report's filters and flag it as being viewed.
+  const viewReportInTable = useCallback(
+    (report: SavedReport) => {
+      applyReport(report)
+      setViewingName(report.name)
+    },
+    [applyReport],
+  )
 
   const deleteReport = useCallback(
     (id: string) => {
@@ -208,6 +237,7 @@ function LearningRecords() {
       applyReport(report)
       setEditingReport(report)
       setDuplicating(false)
+      setViewingName(null)
       setReportsListOpen(false)
       setReportDrawerOpen(true)
     },
@@ -227,6 +257,7 @@ function LearningRecords() {
       applyReport(copy)
       setEditingReport(copy)
       setDuplicating(true)
+      setViewingName(null)
       setReportsListOpen(false)
       setReportDrawerOpen(true)
     },
@@ -410,17 +441,27 @@ function LearningRecords() {
                 )}
               </div>
 
-              <button
-                type="button"
-                className="lrp-filters-chevron-btn"
-                aria-label={filtersExpanded ? 'Collapse filters' : 'Expand filters'}
-                aria-expanded={filtersExpanded}
-                onClick={toggleExpanded}
-              >
-                <span className={`lrp-filters-chevron${filtersExpanded ? ' lrp-filters-chevron--open' : ''}`}>
-                  <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
-                </span>
-              </button>
+              <div className="lrp-filters-trailing">
+                {viewingName && (
+                  <span className="lrp-viewing" title={`Viewing ${viewingName}`}>
+                    <span className="lrp-viewing-dot" aria-hidden="true" />
+                    <span className="lrp-viewing-label">Viewing</span>
+                    <span className="lrp-viewing-text">{viewingName}</span>
+                  </span>
+                )}
+
+                <button
+                  type="button"
+                  className="lrp-filters-chevron-btn"
+                  aria-label={filtersExpanded ? 'Collapse filters' : 'Expand filters'}
+                  aria-expanded={filtersExpanded}
+                  onClick={toggleExpanded}
+                >
+                  <span className={`lrp-filters-chevron${filtersExpanded ? ' lrp-filters-chevron--open' : ''}`}>
+                    <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
+                  </span>
+                </button>
+              </div>
             </div>
 
             <Collapse open={filtersExpanded}>
@@ -442,7 +483,10 @@ function LearningRecords() {
                         options={filterOptions(id)}
                         value={filterValues[id]}
                         placeholder={`Select ${meta.title.toLowerCase()}`}
-                        onChange={(v) => setFilterValues((prev) => ({ ...prev, [id]: v }))}
+                        onChange={(v) => {
+                          setFilterValues((prev) => ({ ...prev, [id]: v }))
+                          setViewingName(null)
+                        }}
                       />
                       <button
                         type="button"
@@ -593,7 +637,8 @@ function LearningRecords() {
         reports={reports}
         onEdit={openEditReport}
         onDuplicate={duplicateReport}
-        onApply={applyReport}
+        onSchedule={scheduleReport}
+        onApply={viewReportInTable}
         onDelete={deleteReport}
         onDownload={downloadReport}
       />

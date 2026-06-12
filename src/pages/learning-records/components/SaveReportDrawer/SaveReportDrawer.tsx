@@ -486,7 +486,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
             <button
               type="button"
               className="side-drawer__btn-primary"
-              disabled={nameMissing}
+              disabled={nameMissing || (scheduled && recipientsMissing)}
               onClick={handleSave}
             >
               {isEditing ? 'Update Report' : scheduled ? 'Save & Schedule Report' : 'Save New Report'}

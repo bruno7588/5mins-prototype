@@ -62,6 +62,8 @@ interface ReportsListDrawerProps {
   onEdit: (r: SavedReport) => void
   /** Open the edit flow on a fresh copy of the report. */
   onDuplicate: (r: SavedReport) => void
+  /** Open the edit drawer with scheduling pre-enabled. */
+  onSchedule: (r: SavedReport) => void
   /** Apply the report's filters to the table (and close the drawer). */
   onApply: (r: SavedReport) => void
   onDelete: (id: string) => void
@@ -75,6 +77,7 @@ function ReportsListDrawer({
   reports,
   onEdit,
   onDuplicate,
+  onSchedule,
   onApply,
   onDelete,
   onDownload,
@@ -177,7 +180,14 @@ function ReportsListDrawer({
                           <RecipientAvatars emails={r.recipients} onMore={() => setRecipientsReport(r)} />
                         )
                       ) : (
-                        <span className="rl-meta rl-meta--muted">No schedule</span>
+                        <button
+                          type="button"
+                          className="rl-add-schedule"
+                          onClick={() => onSchedule(r)}
+                        >
+                          <Calendar size={16} color="currentColor" variant="Linear" />
+                          Add a schedule
+                        </button>
                       )}
                     </div>
 
