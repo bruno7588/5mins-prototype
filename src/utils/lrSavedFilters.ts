@@ -35,8 +35,6 @@ export interface SavedReport {
   deliverTime?: string
   /** IANA timezone id the delivery time is interpreted in. */
   timezone?: string
-  /** Whether the schedule is active. Undefined is treated as enabled. */
-  enabled?: boolean
 }
 
 export const REPORT_FREQUENCIES: { value: string; label: string; days: number }[] = [
@@ -272,8 +270,8 @@ export function nextReportLabel(frequency: string): string {
 const REPORTS_KEY = '5mins.lr-reports-v3'
 
 /**
- * Seed reports shown on a fresh load — one per row state: an active schedule,
- * a paused schedule, and an unscheduled report (renders the "Schedule" CTA).
+ * Seed reports shown on a fresh load — one per row state: a scheduled report
+ * and an unscheduled report (renders the "Schedule" CTA).
  */
 export const DEFAULT_REPORTS: SavedReport[] = [
   {
@@ -284,7 +282,6 @@ export const DEFAULT_REPORTS: SavedReport[] = [
       { id: 'category', value: 'compliance' },
     ],
     scheduled: true,
-    enabled: true,
     recipients: ['anthonny@example.com', 'brenda@example.com'],
     frequency: 'monthly',
     monthlyMode: 'first-working-day',
@@ -293,11 +290,10 @@ export const DEFAULT_REPORTS: SavedReport[] = [
     createdAt: '2026-01-05T09:00:00.000Z',
   },
   {
-    id: 'report-seed-paused',
+    id: 'report-seed-quarterly',
     name: 'Quarterly leadership digest',
     filters: [{ id: 'category', value: 'compliance' }],
     scheduled: true,
-    enabled: false,
     recipients: ['carlos@example.com'],
     frequency: 'quarterly',
     monthlyMode: 'first-working-day',

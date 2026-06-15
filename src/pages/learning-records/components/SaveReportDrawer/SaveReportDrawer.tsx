@@ -187,9 +187,6 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
 
   const [name, setName] = useState('')
   const [scheduled, setScheduled] = useState(false)
-  // Retained on the model for backwards compatibility; no separate pause UI in
-  // the one-page layout (the "Schedule this report" toggle is the on/off).
-  const [enabled] = useState(true)
   const [frequency, setFrequency] = useState('monthly')
   const [recipients, setRecipients] = useState<string[]>([])
   // A valid email typed into the recipients field but not yet committed to a chip.
@@ -285,7 +282,6 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
       monthlyMode,
       deliverTime,
       timezone,
-      enabled,
       createdAt,
       ...extra,
     }
