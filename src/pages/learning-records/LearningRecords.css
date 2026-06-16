@@ -600,7 +600,7 @@
 }
 
 /* Column widths — 5Mins Courses (matches Figma) */
-.lrp-cell--user      { width: 200px; flex-direction: column; align-items: flex-start; gap: 2px; }
+.lrp-cell--user      { flex: 1 0 200px; min-width: 200px; flex-direction: column; align-items: flex-start; gap: 2px; }
 .lrp-cell--team      { width: 180px; }
 .lrp-cell--region    { width: 160px; }
 .lrp-cell--course    { width: 200px; }
