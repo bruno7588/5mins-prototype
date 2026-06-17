@@ -1071,32 +1071,35 @@
   position: fixed;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xs);
   padding: 8px 12px;
-  max-width: 240px;
-  background: var(--neutral-900);
+  max-width: 288px;
+  background: var(--tooltip-background);
   border-radius: var(--radius-sm);
+  filter: drop-shadow(-4px 0px 24px rgba(32, 34, 42, 0.12));
   pointer-events: none;
   opacity: 0;
   transition: opacity 150ms ease;
   z-index: 200;
 }
 
+/* Per Figma node 7939-21703 (People): title Neutral-25 / weight 500,
+   description Neutral-200 (secondary on dark) / weight 400. */
 .bulk-cell-error-tooltip-title {
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.4;
-  color: var(--danger-100);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--neutral-25);
   white-space: nowrap;
 }
 
 .bulk-cell-error-tooltip-solution {
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 1.4;
-  color: var(--neutral-0);
+  line-height: 1.5;
+  color: var(--neutral-200);
   white-space: normal;
 }
 

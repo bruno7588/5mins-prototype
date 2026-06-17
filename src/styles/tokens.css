@@ -58,6 +58,7 @@
   --input-background-hover: rgba(223, 225, 230, 1);
   --border: var(--neutral-100);
   --border-hover: var(--neutral-300);
+  --tooltip-background: #20222a;
   --text-primary: var(--neutral-800);
   --text-secondary: var(--neutral-500);
   --text-tertiary: var(--neutral-400);
