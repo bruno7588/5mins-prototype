@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { ArrowDown2, ArrowLeft2, ArrowRight2, Danger, ImportCurve, UserAdd, UserEdit, UserMinus } from 'iconsax-react'
+import { ArrowDown2, ArrowLeft2, ArrowRight2, Danger, DocumentDownload, ImportCurve, UserAdd, UserEdit, UserMinus } from 'iconsax-react'
+import Chip from '../../../../components/Chip/Chip'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import { FileUploader } from '../../../../components/FileUploader/FileUploader'
 import InfoIcon from '../../../../components/icons/InfoIcon'
@@ -31,6 +32,25 @@ type CellWarning = {
   message: string
 }
 
+// Error grouping model — each errored cell carries a category, a short label,
+// and the fix shown both in the hover tooltip and the downloadable error file.
+type ErrorCategory = 'manager-not-found' | 'invalid-email' | 'role-not-found'
+type ErrorColumn = 'email' | 'role' | 'reportsTo'
+
+type CellError = {
+  category: ErrorCategory
+  label: string
+  solution: string
+}
+
+const ERROR_META: Record<ErrorCategory, { chipLabel: string; column: ErrorColumn; label: string; solution: string }> = {
+  'manager-not-found': { chipLabel: 'Manager not found', column: 'reportsTo', label: 'Manager not found', solution: "Enter the manager's exact registered email, or leave the column blank." },
+  'invalid-email': { chipLabel: 'Invalid email', column: 'email', label: 'Invalid email', solution: 'Use the format name@company.com.' },
+  'role-not-found': { chipLabel: 'Role not found', column: 'role', label: 'Role not found', solution: 'Match an existing role, or download the list of available roles.' },
+}
+
+const ERROR_ORDER: ErrorCategory[] = ['manager-not-found', 'invalid-email', 'role-not-found']
+
 type PreviewEntry = {
   row: number
   firstName: string
@@ -43,7 +63,7 @@ type PreviewEntry = {
   region: string
   type: 'invite' | 'update' | 'deactivation' | 'no-change' | 'error'
   detail?: string
-  error?: string
+  errors?: Partial<Record<ErrorColumn, CellError>>
   warnings?: Record<string, CellWarning>
   customFields?: Record<number, string>
 }
@@ -61,14 +81,47 @@ function buildMockPreviewData(fields: UserField[], includeErrors = true): Previe
     return cf
   }
 
+  // 28 errored rows → 39 field errors, grouped as:
+  //   Manager not found (13) · Invalid email (2) · Role not found (24)
+  // Some rows carry two errors, so per-category counts (39) exceed the row count (28).
+  const makeError = (cat: ErrorCategory): CellError => ({
+    category: cat,
+    label: ERROR_META[cat].label,
+    solution: ERROR_META[cat].solution,
+  })
+  const errorRowSpecs: ErrorCategory[][] = [
+    ...Array.from({ length: 13 }, () => ['role-not-found'] as ErrorCategory[]),
+    ...Array.from({ length: 4 }, () => ['manager-not-found'] as ErrorCategory[]),
+    ...Array.from({ length: 9 }, () => ['role-not-found', 'manager-not-found'] as ErrorCategory[]),
+    ...Array.from({ length: 2 }, () => ['role-not-found', 'invalid-email'] as ErrorCategory[]),
+  ]
+  const errFirst = ['Anthonny', 'Liam', 'Maya', 'Noah', 'Zara', 'Ethan', 'Sofia', 'Aiden', 'Mia', 'Lucas', 'Ava', 'Leo', 'Ruby', 'Felix', 'Nora', 'Hugo', 'Iris', 'Milo', 'June', 'Theo', 'Cleo', 'Otis', 'Lena', 'Finn', 'Vera', 'Cody', 'Demi', 'Rhys']
+  const errLast = ['Wallace', 'Johnson', 'Smith', 'Brown', 'Miller', 'Davis', 'Wilson', 'Taylor', 'Moore', 'Clark', 'Lewis', 'Walker', 'Hall', 'Allen', 'Young', 'King', 'Wright', 'Scott', 'Green', 'Baker', 'Adams', 'Nelson', 'Hill', 'Reed', 'Cook', 'Bell', 'Ward', 'Cox']
+  const errTeams = ['Commercial', 'Operations & Production', 'Marketing', 'Engineering', 'Fron-Desk Services', 'Product & Design', 'RevOps']
+  const errRoles = ['Customer Support', 'Financial Solutions Advisor', 'Client Relations Specialist', 'Risk Management Consultant', 'Compliance Officer', 'Investment Support Analyst', 'Wealth Management Associate']
+  const errorRows: PreviewEntry[] = errorRowSpecs.map((cats, i) => {
+    const errors: Partial<Record<ErrorColumn, CellError>> = {}
+    cats.forEach(c => { errors[ERROR_META[c].column] = makeError(c) })
+    const first = errFirst[i % errFirst.length]
+    return {
+      row: 100 + i,
+      firstName: first,
+      lastName: errLast[i % errLast.length],
+      email: cats.includes('invalid-email') ? `${first.toLowerCase()}@email` : `${first.toLowerCase()}@email.com`,
+      team: errTeams[i % errTeams.length],
+      role: errRoles[i % errRoles.length],
+      reportsTo: 'manager@email.com',
+      startDate: '17/01/2026',
+      region: 'East Asia',
+      type: 'error' as const,
+      errors,
+      customFields: withCustom(i),
+    }
+  })
+
   return [
     // Errors (only on first upload)
-    ...(includeErrors ? [
-      { row: 3, firstName: 'Bob', lastName: 'Martin', email: '', team: 'Sales', role: 'Sales Rep', reportsTo: 'manager@company.com', startDate: '01/11/2025', region: 'Europe', type: 'error' as const, error: 'Email is required', customFields: withCustom(0) },
-      { row: 7, firstName: '', lastName: '', email: 'noname@company.com', team: 'Engineering', role: 'Engineer', reportsTo: 'lead@company.com', startDate: '15/03/2025', region: 'North America', type: 'error' as const, error: 'First name is required', customFields: withCustom(1) },
-      { row: 15, firstName: 'Carol', lastName: 'White', email: 'carol@company', team: 'Marketing', role: 'Designer', reportsTo: 'director@company.com', startDate: '20/06/2025', region: 'Southeast Asia', type: 'error' as const, error: 'Invalid email format', customFields: withCustom(2) },
-      { row: 22, firstName: 'Dave', lastName: 'Brown', email: 'dave@company.com', team: 'Sales', role: 'Sales Rep', reportsTo: 'manager@company.com', startDate: '10/01/2025', region: 'Latin America', type: 'error' as const, error: 'Invalid status value. Use Active or Inactive.', customFields: withCustom(3) },
-    ] : []),
+    ...(includeErrors ? errorRows : []),
     // Deactivations
     { row: 5, firstName: 'Mark', lastName: 'Johnson', email: 'mark@company.com', team: 'Support', role: 'HR Manager', reportsTo: 'director@company.com', startDate: '05/09/2024', region: 'Europe', type: 'deactivation', customFields: withCustom(4) },
     { row: 41, firstName: 'Paula', lastName: 'West', email: 'paula@company.com', team: 'Finance', role: 'Finance Analyst', reportsTo: 'lead@company.com', startDate: '12/02/2024', region: 'North America', type: 'deactivation', customFields: withCustom(5) },
@@ -141,6 +194,55 @@ function CellWithWarning({ value, warning }: { value: string; warning?: CellWarn
   )
 }
 
+function CellError({ value, error }: { value: string; error: CellError }) {
+  const anchorRef = useRef<HTMLSpanElement>(null)
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({ opacity: 0 })
+
+  const showTooltip = () => {
+    if (!anchorRef.current) return
+    const rect = anchorRef.current.getBoundingClientRect()
+    setTooltipStyle({
+      opacity: 1,
+      bottom: window.innerHeight - rect.top + 8,
+      left: rect.left + rect.width / 2,
+      transform: 'translateX(-50%)',
+    })
+  }
+  const hideTooltip = () => setTooltipStyle({ opacity: 0 })
+
+  return (
+    <span
+      className="bulk-cell-error"
+      onMouseEnter={showTooltip}
+      onMouseLeave={hideTooltip}
+    >
+      <span className="bulk-cell-error-value">{value || '—'}</span>
+      <span className="bulk-cell-error-icon" ref={anchorRef}>
+        <Danger size={20} color="var(--danger-500)" variant="Linear" />
+      </span>
+      <span className="bulk-cell-error-tooltip" style={tooltipStyle}>
+        <span className="bulk-cell-error-tooltip-title">{error.label}</span>
+        <span className="bulk-cell-error-tooltip-solution">{error.solution}</span>
+      </span>
+    </span>
+  )
+}
+
+function DataCell({ colClass, value, warning, error }: { colClass: string; value: string; warning?: CellWarning; error?: CellError }) {
+  if (error) {
+    return (
+      <span className={`bulk-preview-col ${colClass} bulk-preview-col--error`}>
+        <CellError value={value} error={error} />
+      </span>
+    )
+  }
+  return (
+    <span className={`bulk-preview-col ${colClass}`}>
+      <CellWithWarning value={value} warning={warning} />
+    </span>
+  )
+}
+
 function loadUserFields(): UserField[] {
   try {
     const raw = localStorage.getItem('5mins-user-fields')
@@ -158,6 +260,7 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
   const [step, setStep] = useState<Step>('upload')
   const [uploadCount, setUploadCount] = useState(0)
   const [previewFilter, setPreviewFilter] = useState<PreviewFilter>('all')
+  const [errorCategory, setErrorCategory] = useState<'all' | ErrorCategory>('all')
   const [currentPage, setCurrentPage] = useState(1)
   const rowsPerPage = 10
   // Custom fields from admin settings
@@ -181,8 +284,9 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
     return () => { el.removeEventListener('scroll', onScroll); ro.disconnect() }
   }, [step, previewFilter, userFields])
 
-  // Build mock data with custom field values (second upload has no errors)
-  const previewData = useMemo(() => buildMockPreviewData(userFields, uploadCount === 0), [userFields, uploadCount])
+  // Build mock data with custom field values — first upload shows errors,
+  // re-upload (count >= 2) is clean, matching the "fix your CSV and re-upload" flow.
+  const previewData = useMemo(() => buildMockPreviewData(userFields, uploadCount === 1), [userFields, uploadCount])
 
   // Preview counts
   const errorCount = previewData.filter(e => e.type === 'error').length
@@ -193,16 +297,33 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
   const hasErrors = errorCount > 0
   const totalEntries = previewData.length
 
+  // Error grouping — chips count errored ROWS (not field-level errors), so the
+  // "All Errors" total agrees with the tab. A row with two error types is counted
+  // in both category chips, so category counts can sum higher than the row total.
+  const errorEntries = previewData.filter(e => e.type === 'error')
+  const categoryRowCount = (c: ErrorCategory) =>
+    errorEntries.filter(e => (Object.values(e.errors ?? {}) as CellError[]).some(f => f.category === c)).length
+  const errorChips = [
+    { key: 'all' as const, label: 'All Errors', count: errorEntries.length },
+    ...ERROR_ORDER.map(c => ({ key: c, label: ERROR_META[c].chipLabel, count: categoryRowCount(c) })),
+  ].filter(chip => chip.key === 'all' || chip.count > 0)
+  const visibleErrorEntries = errorCategory === 'all'
+    ? errorEntries
+    : errorEntries.filter(e => (Object.values(e.errors ?? {}) as CellError[]).some(f => f.category === errorCategory))
+
   // Set default tab when entering preview
   useEffect(() => {
     if (step === 'preview') {
       setPreviewFilter(hasErrors ? 'error' : 'all')
+      setErrorCategory('all')
       setCurrentPage(1)
     }
   }, [step, hasErrors])
 
   const filteredEntries = previewFilter === 'all'
     ? [...previewData].sort((a, b) => (a.type === 'error' ? -1 : b.type === 'error' ? 1 : 0))
+    : previewFilter === 'error'
+    ? visibleErrorEntries
     : previewData.filter(e => e.type === previewFilter)
 
   const totalPages = Math.ceil(filteredEntries.length / rowsPerPage)
@@ -212,6 +333,12 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
 
   const handleFilterChange = (filter: PreviewFilter) => {
     setPreviewFilter(filter)
+    if (filter !== 'error') setErrorCategory('all')
+    setCurrentPage(1)
+  }
+
+  const handleErrorCategoryChange = (category: 'all' | ErrorCategory) => {
+    setErrorCategory(category)
     setCurrentPage(1)
   }
 
@@ -234,6 +361,35 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
     const a = document.createElement('a')
     a.href = url
     a.download = 'bulk-manage-people-template.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  // Download only the errored rows, with the error + the fix in trailing columns,
+  // so the admin can correct the CSV and re-upload.
+  const handleDownloadErrorFile = () => {
+    const baseHeaders = ['first_name', 'last_name', 'email', 'team_name', 'role', 'reports_to', 'start_date', 'region']
+    const customHeaders = userFields.map(f => f.name)
+    const headers = [...baseHeaders, ...customHeaders, 'Error', 'How to fix']
+    const rows = errorEntries.map(e => {
+      const errs = Object.values(e.errors ?? {}) as CellError[]
+      const baseRow = [e.firstName, e.lastName, e.email, e.team, e.role, e.reportsTo, e.startDate, e.region]
+      const customRow = userFields.map(f => e.customFields?.[f.id] ?? '')
+      return [
+        ...baseRow,
+        ...customRow,
+        errs.map(x => x.label).join(' · '),
+        errs.map(x => x.solution).join(' '),
+      ]
+    })
+    const csv = [headers, ...rows]
+      .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+      .join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'bulk-upload-errors.csv'
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -303,14 +459,6 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
   }
 
   const handleBackToUpload = () => {
-    setStep('upload')
-  }
-
-  const handleReupload = () => {
-    setUploaderState('Enabled')
-    setUploadedFileName('')
-    setUploadProgress(0)
-    setErrorMessage('')
     setStep('upload')
   }
 
@@ -484,8 +632,9 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
               {hasErrors ? (
                 <div className="bulk-preview-error-banner">
                   <Danger size={20} color="var(--danger-500)" variant="Bold" />
-                  <span>{errorCount} invite{errorCount !== 1 ? 's have' : ' has'} errors. Fix your CSV and re-upload to continue.</span>
-                  <button className="bulk-preview-error-banner-cta" onClick={handleReupload}>Re-upload CSV</button>
+                  <span>
+                    {errorCount} invite{errorCount !== 1 ? 's have' : ' has'} errors. Download the error file to fix your CSV and re-upload to continue.
+                  </span>
                 </div>
               ) : deactivationCount > 0 ? (
                 <div className="bulk-preview-warning-banner">
@@ -515,6 +664,27 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
                 ))}
               </div>
 
+              {/* Error grouping chips + download error file */}
+              {previewFilter === 'error' && (
+                <div className="bulk-preview-error-actions">
+                  <div className="bulk-preview-error-chips">
+                    {errorChips.map(chip => (
+                      <Chip
+                        key={chip.key}
+                        label={`${chip.label} (${chip.count})`}
+                        selected={errorCategory === chip.key}
+                        onClick={() => handleErrorCategoryChange(chip.key)}
+                        className="bulk-error-chip"
+                      />
+                    ))}
+                  </div>
+                  <button className="bulk-upload-btn-primary bulk-preview-download-error" onClick={handleDownloadErrorFile}>
+                    Download Error File
+                    <DocumentDownload size={20} color="var(--neutral-25)" variant="Linear" />
+                  </button>
+                </div>
+              )}
+
               {/* Data table — 5Mins card-row style */}
               <div
                 className={`bulk-preview-scroll${previewHasScroll ? ' bulk-preview-scroll--has-scroll' : ''}${previewIsScrolled ? ' bulk-preview-scroll--scrolled' : ''}`}
@@ -543,24 +713,18 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
                         key={i}
                         className={`bulk-preview-table-row ${entry.type === 'error' ? 'bulk-preview-table-row--error' : ''}`}
                       >
-                        <span className={`bulk-preview-col bulk-preview-col--firstname ${entry.type === 'error' && !entry.firstName ? 'bulk-preview-col--missing' : ''}`}>
+                        <span className="bulk-preview-col bulk-preview-col--firstname">
                           {entry.firstName || '—'}
                         </span>
-                        <span className={`bulk-preview-col bulk-preview-col--lastname ${entry.type === 'error' && !entry.lastName ? 'bulk-preview-col--missing' : ''}`}>
+                        <span className="bulk-preview-col bulk-preview-col--lastname">
                           {entry.lastName || '—'}
                         </span>
-                        <span className={`bulk-preview-col bulk-preview-col--email ${entry.type === 'error' && !entry.email ? 'bulk-preview-col--missing' : ''}`}>
-                          {entry.email || '—'}
-                        </span>
+                        <DataCell colClass="bulk-preview-col--email" value={entry.email} error={entry.errors?.email} />
                         <span className="bulk-preview-col bulk-preview-col--team">
                           <CellWithWarning value={entry.team} warning={entry.warnings?.team} />
                         </span>
-                        <span className="bulk-preview-col bulk-preview-col--role">
-                          <CellWithWarning value={entry.role} warning={entry.warnings?.role} />
-                        </span>
-                        <span className="bulk-preview-col bulk-preview-col--reportsto">
-                          <CellWithWarning value={entry.reportsTo} warning={entry.warnings?.reportsTo} />
-                        </span>
+                        <DataCell colClass="bulk-preview-col--role" value={entry.role} warning={entry.warnings?.role} error={entry.errors?.role} />
+                        <DataCell colClass="bulk-preview-col--reportsto" value={entry.reportsTo} warning={entry.warnings?.reportsTo} error={entry.errors?.reportsTo} />
                         <span className="bulk-preview-col bulk-preview-col--startdate">{entry.startDate}</span>
                         <span className="bulk-preview-col bulk-preview-col--region">
                           <CellWithWarning value={entry.region} warning={entry.warnings?.region} />
@@ -602,7 +766,7 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
               {/* Action bar */}
               <div className="bulk-preview-actions">
                 <button className="bulk-upload-btn-outlined" onClick={handleBackToUpload}>
-                  Back
+                  Back To Upload
                 </button>
                 <div className="bulk-preview-btn-wrapper">
                   <button
@@ -610,7 +774,9 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
                     onClick={hasErrors ? undefined : () => setStep('success')}
                     disabled={hasErrors}
                   >
-                    Process {totalEntries - errorCount} User{totalEntries - errorCount !== 1 ? 's' : ''}
+                    {hasErrors
+                      ? 'Process Users'
+                      : `Process ${totalEntries - errorCount} User${totalEntries - errorCount !== 1 ? 's' : ''}`}
                   </button>
                   {hasErrors && (
                     <div className="bulk-preview-tooltip">
