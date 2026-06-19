@@ -166,10 +166,10 @@ export default function Onboarding() {
     [navigate],
   )
 
-  // Hold the loading screen for 5s: fade it out at 4.5s, then navigate.
+  // Hold the loading screen for 5s: fade it out at 4.7s, then navigate.
   useEffect(() => {
     if (!loading) return
-    const fade = window.setTimeout(() => setExiting(true), 4500)
+    const fade = window.setTimeout(() => setExiting(true), 4700)
     const nav = window.setTimeout(
       () => navigate('/workspace', { state: { fromOnboarding: true } }),
       5000,

@@ -162,10 +162,14 @@ function breathe(shapes: Shape[], time: number, amount = 1, speed = 1): Shape[] 
   const t = time * speed
   return shapes.map((s) => {
     const p = s.phase
+    // X and Y share a frequency (cos/sin) so each shape travels an ellipse
+    // rather than a Lissajous path — an orbit's velocity is never zero, so the
+    // motion stays continuous and never stalls at a turning point.
+    const orbit = t * 0.16 + p
     return {
       ...s,
-      x: s.x + 0.035 * amount * Math.sin(t * 0.18 + p),
-      y: s.y + 0.045 * amount * Math.cos(t * 0.15 + p * 1.3),
+      x: s.x + 0.04 * amount * Math.cos(orbit),
+      y: s.y + 0.05 * amount * Math.sin(orbit),
       size: s.size * (1 + 0.06 * amount * Math.sin(t * 0.12 + p * 0.7)),
       rotation: s.rotation + 8 * amount * Math.sin(t * 0.1 + p),
     }

@@ -92,7 +92,7 @@
 /* Fade the whole loading screen out just before handing off to the Workspace. */
 .onboarding--fade-out {
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease;
 }
 
 .onboarding__loading {
