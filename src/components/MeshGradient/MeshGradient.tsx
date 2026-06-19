@@ -14,6 +14,12 @@ interface Props {
   interactive?: boolean
   /** Max parallax shift as a fraction of the canvas (default 0.04 = subtle). */
   parallax?: number
+  /** Multiplier on the per-shape breathing drift (default 1). Higher values
+   *  make the shapes flow more — used on the Screen 6 loading screen. */
+  breathe?: number
+  /** Multiplier on the breathing speed (default 1). Higher = the shapes cycle
+   *  faster, so the motion stays visible over short windows. */
+  breatheSpeed?: number
   className?: string
 }
 
@@ -38,6 +44,8 @@ export default function MeshGradient({
   morphDuration = 0.9,
   interactive = true,
   parallax = 0.04,
+  breathe = 1,
+  breatheSpeed = 1,
   className,
 }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -123,7 +131,7 @@ export default function MeshGradient({
       pc.x += (pt.x - pc.x) * 0.06
       pc.y += (pt.y - pc.y) * 0.06
 
-      drawFrame(octx, lw, lh, from, to, morph, time, noise, pc, parallaxAmount)
+      drawFrame(octx, lw, lh, from, to, morph, time, noise, pc, parallaxAmount, breathe, breatheSpeed)
 
       // Upscale into the display canvas.
       const ctx = canvas.getContext('2d')!
@@ -137,7 +145,7 @@ export default function MeshGradient({
 
     rafRef.current = requestAnimationFrame(paint)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [noise, offscreen, interactive, parallax])
+  }, [noise, offscreen, interactive, parallax, breathe, breatheSpeed])
 
   // Morph to a new config whenever it changes.
   useEffect(() => {

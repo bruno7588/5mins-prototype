@@ -1,4 +1,4 @@
-import { type ComponentType, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { type ComponentType, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'iconsax-react'
 import gsap from 'gsap'
@@ -79,6 +79,12 @@ export default function Onboarding() {
   // swap, which waits for the form to slide out.
   const [gradientIndex, setGradientIndex] = useState(0)
   const [data, setData] = useState<OnboardingData>(EMPTY_ONBOARDING)
+  // After the final step we show a 5s "Setting things up" loading screen
+  // (Screen 6) before handing off to the Workspace. `exiting` fades it out
+  // just before navigating, and the Workspace fades in to meet it.
+  const [loading, setLoading] = useState(false)
+  const [exiting, setExiting] = useState(false)
+  const loadingRef = useRef<HTMLDivElement>(null)
 
   const formRef = useRef<HTMLDivElement>(null)
   const dirRef = useRef(1) // 1 = forward, -1 = back
@@ -138,7 +144,8 @@ export default function Onboarding() {
     (target: number, dir: 1 | -1) => {
       if (animatingRef.current || target < 0) return
       if (target >= STEPS.length) {
-        navigate('/workspace')
+        setGradientIndex(STEPS.length) // morph to the Screen 6 gradient
+        setLoading(true) // the loading screen navigates after its 3s
         return
       }
       dirRef.current = dir
@@ -158,6 +165,75 @@ export default function Onboarding() {
     },
     [navigate],
   )
+
+  // Hold the loading screen for 5s: fade it out at 4.5s, then navigate.
+  useEffect(() => {
+    if (!loading) return
+    const fade = window.setTimeout(() => setExiting(true), 4500)
+    const nav = window.setTimeout(
+      () => navigate('/workspace', { state: { fromOnboarding: true } }),
+      5000,
+    )
+    return () => {
+      window.clearTimeout(fade)
+      window.clearTimeout(nav)
+    }
+  }, [loading, navigate])
+
+  // Animate the logo + text + bar in, the same way the form screens enter.
+  useLayoutEffect(() => {
+    if (!loading) return
+    const el = loadingRef.current
+    if (!el || reducedMotion()) return
+    const items = el.querySelectorAll(
+      ':scope > svg, .onboarding__loading-text, .onboarding__loadbar',
+    )
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        items,
+        { y: 18, autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.5,
+          stagger: 0.12,
+          ease: 'power3.out',
+          clearProps: 'transform',
+        },
+      )
+    }, el)
+    return () => ctx.revert()
+  }, [loading])
+
+  if (loading) {
+    return (
+      <div className={`onboarding${exiting ? ' onboarding--fade-out' : ''}`}>
+        <MeshGradient
+          config={ONBOARDING_GRADIENTS[gradientIndex]}
+          morphDuration={2.2}
+          breathe={2.4}
+          breatheSpeed={3}
+        />
+
+        <div className="onboarding__panel onboarding__panel--loading">
+          <div className="onboarding__loading" ref={loadingRef}>
+            <Logo />
+            <div className="onboarding__loading-body" role="status" aria-live="polite">
+              <div className="onboarding__loading-text">
+                <h1 className="onboarding__title">Setting things up...</h1>
+                <p className="onboarding__loading-sub">
+                  Your account will be ready in a moment!
+                </p>
+              </div>
+              <div className="onboarding__loadbar" aria-hidden="true">
+                <span className="onboarding__loadbar-fill" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const current = STEPS[step]
   const Body = current.Body

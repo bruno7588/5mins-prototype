@@ -158,15 +158,16 @@ export function lerpConfig(from: MeshConfig, to: MeshConfig, t: number): MeshCon
  * small — the heavy blur turns this into softly flowing colour rather than
  * visibly moving blobs.
  */
-function breathe(shapes: Shape[], time: number): Shape[] {
+function breathe(shapes: Shape[], time: number, amount = 1, speed = 1): Shape[] {
+  const t = time * speed
   return shapes.map((s) => {
     const p = s.phase
     return {
       ...s,
-      x: s.x + 0.035 * Math.sin(time * 0.18 + p),
-      y: s.y + 0.045 * Math.cos(time * 0.15 + p * 1.3),
-      size: s.size * (1 + 0.06 * Math.sin(time * 0.12 + p * 0.7)),
-      rotation: s.rotation + 8 * Math.sin(time * 0.1 + p),
+      x: s.x + 0.035 * amount * Math.sin(t * 0.18 + p),
+      y: s.y + 0.045 * amount * Math.cos(t * 0.15 + p * 1.3),
+      size: s.size * (1 + 0.06 * amount * Math.sin(t * 0.12 + p * 0.7)),
+      rotation: s.rotation + 8 * amount * Math.sin(t * 0.1 + p),
     }
   })
 }
@@ -300,9 +301,11 @@ export function drawFrame(
   noise: HTMLCanvasElement,
   pointer: { x: number; y: number } = { x: 0, y: 0 },
   parallax = 0,
+  breatheAmount = 1,
+  breatheSpeed = 1,
 ) {
   const geom = lerpConfig(from, to, morph)
-  const animated = applyParallax(breathe(geom.shapes, time), pointer, parallax)
+  const animated = applyParallax(breathe(geom.shapes, time, breatheAmount, breatheSpeed), pointer, parallax)
   const colorTo =
     morph > 0 && morph < 1 && from.shapes.length === to.shapes.length
       ? { shapes: to.shapes, t: morph }

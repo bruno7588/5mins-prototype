@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "settings": {
+    "aspect": "wide",
+    "background": "#0e0f14",
+    "blur": 56,
+    "grain": 0.08,
+    "grainScale": 1,
+    "overlayColor": "#0e0f14",
+    "overlayOpacity": 0.4
+  },
+  "shapes": [
+    {
+      "id": "smqkwqa0c6",
+      "type": "square",
+      "x": 0.18710806877422473,
+      "y": 0.15311047382988915,
+      "size": 0.4620768477280966,
+      "color": "#33E2F7",
+      "rotation": 85.7877019834494,
+      "radius": 0.03934809343904195,
+      "opacity": 1,
+      "phase": 1.3236554110379743
+    },
+    {
+      "id": "smqkwqa0c7",
+      "type": "circle",
+      "x": 0.4667618703735118,
+      "y": 0.33417060025969547,
+      "size": 0.920957221383878,
+      "color": "#FFCF74",
+      "rotation": 76.5692763481081,
+      "radius": 0.5326193404263095,
+      "opacity": 1,
+      "phase": 3.5995376711992506
+    },
+    {
+      "id": "smqkwqa0c8",
+      "type": "circle",
+      "x": 0.42931656374490357,
+      "y": 0.7029511734234848,
+      "size": 0.6286319228352478,
+      "color": "#e85b7a",
+      "rotation": 69.25289722327052,
+      "radius": 0.0439282502630872,
+      "opacity": 1,
+      "phase": 5.23612052039764
+    }
+  ]
+}

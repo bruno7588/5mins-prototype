@@ -84,6 +84,78 @@
   display: none; /* Chrome/Safari */
 }
 
+/* ---- Screen 6: "Setting things up" loading screen ---- */
+.onboarding__panel--loading {
+  justify-content: center;
+}
+
+/* Fade the whole loading screen out just before handing off to the Workspace. */
+.onboarding--fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.onboarding__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 96px;
+}
+
+.onboarding__loading-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.onboarding__loading-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.onboarding__loading-sub {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Thin progress track that fills over the 3s the screen is shown. */
+.onboarding__loadbar {
+  width: 300px;
+  max-width: 80vw;
+  height: 4px;
+  border-radius: 20px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.onboarding__loadbar-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 20px;
+  background: var(--primary-600);
+  animation: onboarding-loadbar 5s linear forwards;
+}
+
+@keyframes onboarding-loadbar {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding__loadbar-fill {
+    width: 100%;
+    animation: none;
+  }
+}
+
 /* progress dots */
 .onboarding__progress {
   display: flex;

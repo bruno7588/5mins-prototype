@@ -23,13 +23,15 @@ function Workspace() {
   const navigate = useNavigate()
   const location = useLocation()
   const [selectedEvent, setSelectedEvent] = useState<CalendarItem | null>(null)
+  // Fade in when arriving straight from the onboarding loading screen.
+  const fromOnboarding = (location.state as { fromOnboarding?: boolean } | null)?.fromOnboarding
 
   const upcomingEvents = upcomingItems
     .filter((item) => item.type === 'event')
     .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
 
   return (
-    <div className="mt-app">
+    <div className={`mt-app${fromOnboarding ? ' mt-app--fade-in' : ''}`}>
       <header className="mt-topnav">
         <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
           <Logo size={22} />

@@ -139,3 +139,19 @@
 .ws-events-empty__link:hover {
   color: var(--text-button-hover, #33e2f7);
 }
+
+/* Fade in when arriving from the onboarding loading screen. */
+.mt-app--fade-in {
+  animation: ws-fade-in 0.6s ease;
+}
+
+@keyframes ws-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mt-app--fade-in {
+    animation: none;
+  }
+}
