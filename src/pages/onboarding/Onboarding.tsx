@@ -10,6 +10,7 @@ import StepRole from './steps/StepRole'
 import StepDetails from './steps/StepDetails'
 import StepPlan from './steps/StepPlan'
 import StepTools from './steps/StepTools'
+import SplashScreen from './SplashScreen'
 import { EMPTY_ONBOARDING, type OnboardingData, type StepProps } from './types'
 import './Onboarding.css'
 
@@ -79,6 +80,9 @@ export default function Onboarding() {
   // swap, which waits for the form to slide out.
   const [gradientIndex, setGradientIndex] = useState(0)
   const [data, setData] = useState<OnboardingData>(EMPTY_ONBOARDING)
+  // Once the final step is confirmed we swap the form for the loading splash,
+  // which plays the Hugo animation before navigating to the Workspace.
+  const [finishing, setFinishing] = useState(false)
 
   const formRef = useRef<HTMLDivElement>(null)
   const dirRef = useRef(1) // 1 = forward, -1 = back
@@ -138,7 +142,7 @@ export default function Onboarding() {
     (target: number, dir: 1 | -1) => {
       if (animatingRef.current || target < 0) return
       if (target >= STEPS.length) {
-        navigate('/workspace')
+        setFinishing(true) // show the loading splash; it navigates when done
         return
       }
       dirRef.current = dir
@@ -166,6 +170,8 @@ export default function Onboarding() {
   return (
     <div className={`onboarding${current.scrollable ? ' onboarding--scroll' : ''}`}>
       <MeshGradient config={ONBOARDING_GRADIENTS[gradientIndex]} morphDuration={2.2} />
+
+      {finishing && <SplashScreen onDone={() => navigate('/workspace')} />}
 
       <div className="onboarding__panel">
         <div className="onboarding__column">
@@ -216,7 +222,7 @@ export default function Onboarding() {
 /** 5Mins.ai wordmark, tinted for the dark onboarding panel. */
 function Logo() {
   return (
-    <svg width="62" height="14" viewBox="0 0 103 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="5Mins.ai">
+    <svg width="94" height="20" viewBox="0 0 103 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="5Mins.ai">
       <g clipPath="url(#ob_logo)">
         <path d="M0 15.5275H4.14665C4.18738 16.5133 4.51324 17.275 5.12424 17.8045C5.65378 18.2974 6.40327 18.5418 7.38087 18.5418C8.55806 18.5418 9.45419 18.2159 10.0652 17.5561C10.6762 16.8188 10.9817 15.8127 10.9817 14.5377C10.9817 13.2628 10.6558 12.3626 10.0082 11.7068C9.39716 11.0102 8.5214 10.6599 7.38494 10.6599C6.77394 10.6599 6.22404 10.7821 5.73932 11.0306C5.20978 11.3198 4.82282 11.6864 4.58249 12.1385L0.680245 11.9552L2.07332 0.439941H12.3177C12.888 0.480675 13.3849 0.708781 13.8126 1.11611C14.2403 1.52752 14.4522 2.04076 14.4522 2.65583V4.13445H5.12424L4.57434 8.26073C4.94094 7.93079 5.4664 7.66602 6.15887 7.45828C6.8106 7.25462 7.49899 7.14871 8.23219 7.14871C10.387 7.14871 12.1141 7.80451 13.4175 9.1202C14.7577 10.4766 15.4298 12.22 15.4298 14.3544C15.4298 16.6966 14.6966 18.5622 13.2342 19.9593C11.8126 21.3157 9.85745 21.9919 7.38087 21.9919C5.06314 21.9919 3.27495 21.4379 2.01222 20.33C0.749492 19.1813 0.0814665 17.5805 0 15.5275Z" fill="#00CEE6"/>
         <path fillRule="evenodd" clipRule="evenodd" d="M16.7535 21.5561V2.70471C16.7535 2.09371 16.9694 1.57233 17.3971 1.14463C17.8248 0.716928 18.3462 0.480675 18.9572 0.439941H23.1772L27.336 16.5377L31.4949 0.439941H37.9185V21.5561H33.8819V4.54178L29.6008 21.5561H25.1364L20.7943 4.54178V21.5561H16.7576H16.7535Z" fill="#F9F9FA"/>
