@@ -1,4 +1,5 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
 import Chip from '../../components/Chip/Chip'
 
 interface Props {
@@ -60,6 +61,10 @@ export default function CollapsibleChips({ items, selected, onToggle, isDisabled
 
   const wrapRef = useRef<HTMLDivElement>(null)
   const measureRef = useRef<HTMLDivElement>(null)
+  // Height captured the instant before a toggle, so we can tween from it to the
+  // post-render natural height.
+  const prevHeightRef = useRef<number | null>(null)
+  const didToggle = useRef(false)
 
   const measure = useCallback(() => {
     const wrap = wrapRef.current
@@ -91,6 +96,38 @@ export default function CollapsibleChips({ items, selected, onToggle, isDisabled
     // re-measure when selection changes (selected chips are bold → wider)
   }, [measure, selected])
 
+  // Smoothly slide the chip row open/closed when expanding/collapsing. The new
+  // chip set is already in the DOM by the time this layout effect runs, so we
+  // read the target height, snap back to the pre-toggle height, then tween up
+  // (or down) with the project's ease-in-ease-out curve (see Collapse).
+  useLayoutEffect(() => {
+    if (!didToggle.current) return
+    didToggle.current = false
+    const el = wrapRef.current
+    const prev = prevHeightRef.current
+    if (!el || prev == null) return
+
+    el.style.height = 'auto'
+    const target = el.offsetHeight
+    gsap.killTweensOf(el)
+    gsap.set(el, { height: prev, overflow: 'hidden' })
+    gsap.to(el, {
+      height: target,
+      duration: 0.3,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        el.style.height = ''
+        el.style.overflow = ''
+      },
+    })
+  }, [expanded])
+
+  const toggleExpanded = useCallback(() => {
+    prevHeightRef.current = wrapRef.current?.offsetHeight ?? null
+    didToggle.current = true
+    setExpanded((e) => !e)
+  }, [])
+
   const hiddenCount = items.length - visibleCount
   const shown = expanded || !overflowing ? items : items.slice(0, visibleCount)
 
@@ -110,7 +147,7 @@ export default function CollapsibleChips({ items, selected, onToggle, isDisabled
           <Chip
             label={expanded ? 'View less' : `+${hiddenCount}`}
             className="onboarding__chip-toggle"
-            onClick={() => setExpanded((e) => !e)}
+            onClick={toggleExpanded}
           />
         )}
       </div>

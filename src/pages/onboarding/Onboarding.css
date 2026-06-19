@@ -305,6 +305,8 @@
 .onboarding__chips {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: flex-start;
   gap: 12px;
 }
 
