@@ -91,7 +91,10 @@ function Workspace() {
 
         <section className="mt-body ws-body">
           <div className="ws-sections">
-              <ProgramBanner programs={workspacePrograms} />
+              <ProgramBanner
+                programs={workspacePrograms}
+                onStart={(program) => navigate(`/programs/${program.id}`)}
+              />
 
               <section className="ws-section">
                 <header className="ws-section__header">
