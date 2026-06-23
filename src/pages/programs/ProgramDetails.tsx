@@ -15,7 +15,8 @@ import Badge from '../../components/Badge/Badge'
 import '../my-team/MyTeam.css'
 import '../workspace/Workspace.css'
 import './ProgramDetails.css'
-import { workspacePrograms, type CourseStatus } from '../workspace/mockItems'
+import { type CourseStatus } from '../workspace/mockItems'
+import { getAllPrograms } from './programStore'
 import avatar1 from '../../assets/programs/avatar-1.png'
 import avatar2 from '../../assets/programs/avatar-2.png'
 import avatar3 from '../../assets/programs/avatar-3.png'
@@ -37,7 +38,8 @@ function ProgramDetails() {
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
 
-  const program = workspacePrograms.find((p) => p.id === id) ?? workspacePrograms[0]
+  const programs = getAllPrograms()
+  const program = programs.find((p) => p.id === id) ?? programs[0]
   const outline = program.outline
 
   const filled = Math.max(0, Math.min(SEGMENTS, Math.round((program.progress / 100) * SEGMENTS)))

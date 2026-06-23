@@ -101,12 +101,12 @@ function LeftSidebar() {
           </div>
         )}
 
-        {/* Content & Courses (expandable) */}
+        {/* Content (expandable) */}
         <button className="sidebar-item" onClick={() => setContentOpen(!contentOpen)}>
           <span className="sidebar-item-icon">
             <Book1 size={iconSize} color={iconColor} variant="Linear" />
           </span>
-          <span className="sidebar-item-label">Content &amp; Courses</span>
+          <span className="sidebar-item-label">Content</span>
           <span className="sidebar-item-chevron">
             {contentOpen ? (
               <ArrowUp2 size={16} color="var(--text-tertiary)" />
@@ -117,6 +117,12 @@ function LeftSidebar() {
         </button>
         {contentOpen && (
           <div className="sidebar-sub-items">
+            <button
+              className={`sidebar-sub-item${activePage === '/programs' ? ' sidebar-sub-item--active' : ''}`}
+              onClick={() => navigate('/programs')}
+            >
+              Programs
+            </button>
             <button className="sidebar-sub-item">5Mins Courses</button>
             <button
               className={`sidebar-sub-item${activePage === '/content-library' ? ' sidebar-sub-item--active' : ''}`}

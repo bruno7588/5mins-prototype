@@ -1,0 +1,356 @@
+.pb {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100vh;
+  background: var(--page-background);
+}
+
+/* ---- Top bar ---- */
+.pb-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--cards-background);
+}
+
+.pb-topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pb-title-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.pb-title-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.pb-title-input:focus {
+  outline: none;
+  background: var(--neutral-50);
+}
+
+.pb-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- Buttons (shared with the drawer) ---- */
+.pb-btn {
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.pb-btn--primary {
+  border: none;
+  background: var(--primary-600);
+  color: var(--neutral-25);
+}
+
+.pb-btn--primary:hover {
+  background: var(--primary-700);
+}
+
+.pb-btn--outline {
+  background: transparent;
+  border: 1px solid var(--text-primary);
+  color: var(--text-primary);
+}
+
+.pb-btn--outline:hover {
+  background: rgba(0, 206, 230, 0.16);
+  border-color: var(--primary-600);
+  color: var(--primary-600);
+}
+
+/* ---- Canvas / sheet ---- */
+.pb-canvas {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 32px 24px 80px;
+}
+
+.pb-sheet {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pb-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pb-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.pb-section__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* ---- Steps (shared admin card-row pattern, matches .people-table) ---- */
+.pb-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.pb-steps__head,
+.pb-step {
+  display: grid;
+  grid-template-columns: 1fr 180px 120px 76px;
+  align-items: center;
+  gap: 16px;
+}
+
+.pb-steps__head {
+  padding: 0 var(--space-m);
+}
+
+.pb-steps__head .pb-col {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.pb-col {
+  min-width: 0;
+}
+
+.pb-col--release,
+.pb-col--due {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.pb-col--actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.pb-steps-empty {
+  padding: 28px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.pb-steps-empty p {
+  margin: 0;
+}
+
+.pb-step {
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  cursor: grab;
+  transition: background 150ms ease;
+}
+
+.pb-step:hover {
+  background: var(--cards-background-hover);
+}
+
+.pb-step--dragging {
+  opacity: 0.5;
+}
+
+.pb-step--drop {
+  border-color: var(--selected);
+  box-shadow: 0 0 0 1px var(--selected);
+}
+
+.pb-col--step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pb-step__grip {
+  flex: 0 0 auto;
+  color: var(--text-disabled);
+  font-size: 12px;
+  letter-spacing: -2px;
+  line-height: 1;
+  user-select: none;
+}
+
+.pb-step__icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--primary-100);
+}
+
+.pb-step__titlewrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.pb-step__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-step__sub {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pb-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-full, 999px);
+  background: transparent;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.pb-icon-btn:hover {
+  background: var(--neutral-50);
+}
+
+/* ---- Add step ---- */
+.pb-addstep {
+  position: relative;
+  margin-top: 4px;
+}
+
+.pb-addstep__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1px dashed var(--primary-600);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--primary-600);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.pb-addstep__btn:hover {
+  background: var(--primary-100);
+}
+
+.pb-addmenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  width: 320px;
+  padding: 6px;
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(32, 34, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pb-addmenu__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.pb-addmenu__item:hover {
+  background: var(--neutral-50);
+}
+
+.pb-addmenu__label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.pb-addmenu__desc {
+  display: block;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* ---- Certificate ---- */
+.pb-cert {
+  padding: 16px;
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}

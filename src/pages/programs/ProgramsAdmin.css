@@ -1,0 +1,189 @@
+.programs-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.programs-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Header ---- */
+.programs-header {
+  padding: 20px 24px 0;
+}
+
+.programs-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 41px;
+}
+
+.programs-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.programs-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary-600);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--neutral-25);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease;
+}
+
+.programs-create-btn:hover {
+  background: var(--primary-700);
+}
+
+.programs-divider {
+  height: 1px;
+  margin-top: 20px;
+  background: var(--border);
+}
+
+/* ---- Body ---- */
+.programs-body {
+  flex: 1;
+  padding: 24px;
+}
+
+.programs-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+}
+
+.programs-search {
+  width: 320px;
+  max-width: 100%;
+}
+
+/* Program name cell — primary line, Medium weight per DS table spec. */
+.programs-row-title {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Kebab menu (row action dropdown) ---- */
+.programs-kebab {
+  position: relative;
+}
+
+.programs-kebab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-full, 999px);
+  background: transparent;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.programs-kebab-btn:hover {
+  background: var(--neutral-100);
+}
+
+.programs-kebab-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 20;
+  min-width: 160px;
+  padding: 6px;
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(32, 34, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.programs-kebab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.programs-kebab-item:hover {
+  background: var(--neutral-50);
+}
+
+.programs-kebab-item--danger {
+  color: var(--danger-500);
+}
+
+/* ---- Empty state ---- */
+.programs-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.programs-empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--neutral-50);
+  margin-bottom: 8px;
+}
+
+.programs-empty-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.programs-empty-desc {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  max-width: 360px;
+}

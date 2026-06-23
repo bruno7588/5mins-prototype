@@ -18,7 +18,8 @@ import CategoryCard from '../../components/CategoryCard/CategoryCard'
 import Carousel from '../../components/Carousel/Carousel'
 import ProgramBanner from '../../components/ProgramBanner/ProgramBanner'
 import EventDetailsDrawer from './EventDetailsDrawer'
-import { workspaceCourses, workspaceCategories, workspacePrograms } from './mockItems'
+import { workspaceCourses, workspaceCategories } from './mockItems'
+import { getAllPrograms } from '../programs/programStore'
 
 function Workspace() {
   const navigate = useNavigate()
@@ -92,7 +93,7 @@ function Workspace() {
         <section className="mt-body ws-body">
           <div className="ws-sections">
               <ProgramBanner
-                programs={workspacePrograms}
+                programs={getAllPrograms()}
                 onStart={(program) => navigate(`/programs/${program.id}`)}
               />
 

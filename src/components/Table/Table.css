@@ -1,0 +1,282 @@
+/* Table — 5Mins design system (docs/design-system/table.md).
+   Card-row structure: borderless header + stack of bordered rounded row-cards.
+   DS tokens mapped to this project's token names
+   (--sm→--space-sm, --border-default→--border, --surface-page-hover→--cards-background-hover,
+    --surface-selected→--selected, --surface-page→--page-background). */
+
+.tbl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: flex-end;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Header */
+.tbl-head {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.tbl-head-cell {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-sm);
+  color: var(--text-secondary);
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  max-height: 42px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tbl-head-cell.is-sortable {
+  gap: var(--space-xs);
+  cursor: pointer;
+}
+
+.tbl-head-cell.is-checkbox {
+  gap: var(--space-sm);
+}
+
+.tbl-head-cell.is-disabled {
+  color: var(--text-disabled);
+}
+
+/* Row */
+.tbl-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--space-sm);
+  transition: background 150ms ease;
+}
+
+.tbl-row.is-clickable {
+  cursor: pointer;
+}
+
+.tbl-row.is-hover,
+.tbl-row:hover {
+  background: var(--cards-background-hover);
+}
+
+.tbl-row.is-selected {
+  background: rgba(255, 187, 56, 0.12);
+  border-color: rgba(255, 187, 56, 0.12);
+}
+
+.tbl-row.is-selected.is-hover,
+.tbl-row.is-selected:hover {
+  background: rgba(255, 187, 56, 0.24);
+  border-color: rgba(255, 187, 56, 0.24);
+}
+
+.tbl-row.is-disabled .tbl-cell {
+  color: var(--text-disabled);
+}
+
+.tbl-row.is-disabled .tbl-thumb,
+.tbl-row.is-disabled .avatar-32,
+.tbl-row.is-disabled .avatar-40 {
+  mix-blend-mode: luminosity;
+}
+
+/* Cell base */
+.tbl-cell {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: var(--space-s) var(--space-sm);
+  color: var(--text-primary);
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  max-height: 58px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tbl-row:hover .tbl-cell.is-link,
+.tbl-cell.is-hover {
+  color: var(--text-button-hover);
+}
+
+/* Media + text wrapper (12px gap between icon/thumb/avatar and text) */
+.tbl-media {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+/* Two-line stacks */
+.tbl-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.tbl-stack .primary {
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tbl-stack .supporting {
+  font-weight: 400;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Date */
+.tbl-date {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.tbl-date .day {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.tbl-date .year {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+/* Avatars */
+.avatar-32 {
+  width: 32px;
+  height: 32px;
+  border-radius: 100px;
+  object-fit: cover;
+  flex: 0 0 32px;
+}
+
+.avatar-40 {
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  object-fit: cover;
+  flex: 0 0 40px;
+}
+
+/* Thumbnail (90x44 rounded). Use a <span> with background-image for gradients. */
+.tbl-thumb {
+  width: 90px;
+  height: 44px;
+  border-radius: var(--space-s);
+  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+  flex: 0 0 90px;
+}
+
+/* Progress bar */
+.tbl-progress {
+  gap: var(--space-sm);
+  height: 56px;
+}
+
+.tbl-progress .bar {
+  display: flex;
+  width: 72px;
+  height: 8px;
+  border-radius: var(--space-s);
+  overflow: hidden;
+  flex: 0 0 72px;
+}
+
+.tbl-progress .seg {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  background: var(--border);
+}
+
+.tbl-progress .seg.fill {
+  background: var(--primary-600);
+}
+
+.tbl-progress .pct {
+  width: 33px;
+  flex: 0 0 33px;
+  color: var(--text-primary);
+  font: 400 14px/1.5 'Poppins', sans-serif;
+}
+
+/* Action icon */
+.tbl-action {
+  justify-content: center;
+}
+
+.tbl-action .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+.tbl-action .icon-btn:hover {
+  background: var(--neutral-100);
+}
+
+.tbl-action.is-disabled .icon-btn {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Fixed-width helper: apply to both header cell and data cell */
+.tbl-col-action {
+  flex: 0 0 52px;
+}
+
+/* Pagination */
+.tbl-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.tbl-pagination .count {
+  color: var(--text-secondary);
+  font: 400 14px/1.5 'Poppins', sans-serif;
+}
+
+.tbl-pagination .nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tbl-pagination .nav[aria-disabled='true'] {
+  opacity: 0.4;
+  cursor: default;
+}

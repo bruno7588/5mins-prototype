@@ -18,6 +18,7 @@ When building any UI component, feature, or screen, you MUST read the relevant d
    - `docs/design-system/headers.md` — Page Headers and Section Headers
    - `docs/design-system/overlays.md` — Dialog, Modal, and Side Drawer
    - `docs/design-system/cards.md` — Lesson, Assessment, Course, and Skill card components; desktop variants, states, dimensions, tokens, and ready HTML/CSS specs
+   - `docs/design-system/table.md` — Data table component. Card-style bordered rows (not a gridlined table), borderless header with optional sorting and select-all, all 16 cell content types (text, supporting text, date, icon, checkbox, avatar, avatar group, illustration, thumbnail, progress bar, action icon, badge, button, dropdown), 5 row states (Enabled, Hover, Selected, Selected-Hover, Disabled), pagination footer, design tokens, full CSS and React implementation | Any data table, list view, records grid, enrolments/learners/roles/reports table, or tabular layout
    - `docs/design-system/typography.md` — Type scale, weights, colors
    - `docs/design-system/brand-colors.md` — Full color palette and usage rules (Primary, Neutral-0→900, Semantic, Gamification)
    - `docs/design-system/surface-colors.md` — Semantic surface tokens for backgrounds, borders, and button states
@@ -41,7 +42,7 @@ When building any UI component, feature, or screen, you MUST read the relevant d
 - **All spacing must be multiples of 4px.** Use the spacing scale tokens.
 - **Never use `--primary-500` for text on white backgrounds** — it fails WCAG contrast.
 - **Bold (700) is only for headings and buttons.** Medium (500) for subtle emphasis. Regular (400) for body text.
-- **Follow the component patterns exactly** — button pairing, overlay selection, badge type mapping, header hierarchy.
+- **Follow the component patterns exactly** — button pairing, overlay selection, badge type mapping, header hierarchy, table card-row structure (each row a bordered rounded card with a gap between rows, never a gridlined table).
 
 ## Code Style
 

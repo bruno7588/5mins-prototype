@@ -24,6 +24,8 @@ import Onboarding from './pages/onboarding/Onboarding'
 import MyTeam from './pages/my-team/MyTeam'
 import Workspace from './pages/workspace/Workspace'
 import ProgramDetails from './pages/programs/ProgramDetails'
+import ProgramsAdmin from './pages/programs/ProgramsAdmin'
+import ProgramBuilder from './pages/programs/ProgramBuilder'
 import ProgramCourseDetails from './pages/courses/CourseDetails'
 import Events from './pages/events/Events'
 import LearningRecords from './pages/learning-records/LearningRecords'
@@ -55,6 +57,27 @@ function App() {
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/my-team" element={<MyTeam />} />
       <Route path="/workspace" element={<Workspace />} />
+      {/* Program Builder — standalone full-page, no TopNav (ranks above /programs/:id) */}
+      <Route
+        path="/programs/builder"
+        element={
+          <div className="app">
+            <div className="app-body app-body--no-nav">
+              <ProgramBuilder />
+            </div>
+          </div>
+        }
+      />
+      <Route
+        path="/programs/builder/:id"
+        element={
+          <div className="app">
+            <div className="app-body app-body--no-nav">
+              <ProgramBuilder />
+            </div>
+          </div>
+        }
+      />
       <Route path="/programs/:id" element={<ProgramDetails />} />
       <Route path="/courses/:id" element={<ProgramCourseDetails />} />
       <Route path="/events" element={<Events />} />
@@ -68,6 +91,7 @@ function App() {
             <div className="app-body">
               <Routes>
                 <Route path="/" element={<Navigate to="/content-library" replace />} />
+                <Route path="/programs" element={<ProgramsAdmin />} />
                 <Route path="/content-library" element={<YourContent />} />
                 <Route path="/content-library/add-content" element={<AddContent />} />
                 <Route path="/your-courses" element={<YourCourses />} />
