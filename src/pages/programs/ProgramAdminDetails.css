@@ -537,17 +537,68 @@
   color: var(--text-primary);
 }
 
-.pad-row__more {
+.pad-menu {
+  position: relative;
   flex: 0 0 auto;
+}
+
+.pad-row__more {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 36px;
   border: none;
+  border-radius: var(--radius-full, 999px);
   background: transparent;
   cursor: pointer;
   color: var(--text-secondary);
+  transition: background 120ms ease;
+}
+
+.pad-row__more:hover {
+  background: var(--neutral-50);
+}
+
+/* Row action menu (Figma node 2383:34493) */
+.pad-menu__list {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 20;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);
+}
+
+.pad-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: 8px var(--space-sm);
+  border: none;
+  border-radius: var(--radius-s);
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.pad-menu__item:hover {
+  background: var(--neutral-50);
+}
+
+.pad-menu__item--danger {
+  color: var(--text-error);
 }
 
 /* ── Empty / placeholder ────────────────────────────────────────────────── */

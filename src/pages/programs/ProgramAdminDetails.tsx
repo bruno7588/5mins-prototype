@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft2, ArrowRight2, Clock, Danger, DocumentDownload, Eye, Link2, More, Profile, TickCircle } from 'iconsax-react'
+import { ArrowLeft2, ArrowRight2, Clock, Danger, DocumentDownload, Eye, Link2, More, Profile, TaskSquare, TickCircle, UserMinus } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
+import LearnerProgressDrawer from './components/LearnerProgressDrawer/LearnerProgressDrawer'
 import { loadDraftForBuilder, type CourseStep, type ProgramStep } from './programStore'
 import coursesIcon from '../../assets/programs/courses-icon.svg'
 import avatar1 from '../../assets/programs/avatar-1.png'
@@ -18,11 +19,21 @@ interface Learner {
   id: string
   name: string
   avatar: string
+  role: string
   enrolled: { day: string; year: string }
   progress: number
   score: number
   completed: { day: string; year: string }
 }
+
+const ROLES = [
+  'Customer Support Specialist',
+  'Product Manager',
+  'Sales Executive',
+  'Marketing Lead',
+  'Operations Analyst',
+  'Engineering Manager',
+]
 
 const LEARNER_AVATARS = [avatar1, avatar2, avatar3]
 const LEARNER_NAMES = [
@@ -52,6 +63,7 @@ const LEARNERS: Learner[] = LEARNER_NAMES.map((name, i) => ({
   id: `lrn-${i + 1}`,
   name,
   avatar: LEARNER_AVATARS[i % LEARNER_AVATARS.length],
+  role: ROLES[i % ROLES.length],
   enrolled: ENROL_DATES[i % ENROL_DATES.length],
   progress: PROGRESS[i % PROGRESS.length],
   score: SCORES[i % SCORES.length],
@@ -126,6 +138,10 @@ function ProgramAdminDetails() {
   const [tab, setTab] = useState('Courses')
   const [page, setPage] = useState(0)
   const [learnerQuery, setLearnerQuery] = useState('')
+  const [learners, setLearners] = useState(LEARNERS)
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [progressLearner, setProgressLearner] = useState<Learner | null>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const draft = useMemo(() => loadDraftForBuilder(id), [id])
   const courseSteps = draft.steps.filter((s): s is CourseStep => s.type === 'course')
@@ -134,13 +150,35 @@ function ProgramAdminDetails() {
   const title = draft.title || 'Untitled program'
 
   const q = learnerQuery.trim().toLowerCase()
-  const filteredLearners = q ? LEARNERS.filter((l) => l.name.toLowerCase().includes(q)) : LEARNERS
+  const filteredLearners = q ? learners.filter((l) => l.name.toLowerCase().includes(q)) : learners
   const visibleLearners = filteredLearners.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
 
-  const learnerCount = LEARNERS.length
-  const completedPct = Math.round((LEARNERS.filter((l) => l.progress >= 100).length / learnerCount) * 100)
-  const notStartedPct = Math.round((LEARNERS.filter((l) => l.progress <= 0).length / learnerCount) * 100)
+  const learnerCount = learners.length
+  const completedPct = learnerCount ? Math.round((learners.filter((l) => l.progress >= 100).length / learnerCount) * 100) : 0
+  const notStartedPct = learnerCount ? Math.round((learners.filter((l) => l.progress <= 0).length / learnerCount) * 100) : 0
   const inProgressPct = Math.max(0, 100 - completedPct - notStartedPct)
+
+  // Close the row action menu on outside click / Escape.
+  useEffect(() => {
+    if (!openMenuId) return
+    const onDown = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpenMenuId(null)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenMenuId(null)
+    }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [openMenuId])
+
+  const unenrol = (learnerId: string) => {
+    setLearners((ls) => ls.filter((l) => l.id !== learnerId))
+    setOpenMenuId(null)
+  }
 
   const changeTab = (t: string) => {
     setTab(t)
@@ -261,7 +299,7 @@ function ProgramAdminDetails() {
         <>
           <div className="pad-stats">
             <div className="pad-stat">
-              <Profile size={32} color="var(--text-secondary)" variant="Linear" />
+              <Profile size={32} color="var(--primary-600)" variant="Linear" />
               <div className="pad-stat__body">
                 <span className="pad-stat__label">Total people enroled</span>
                 <span className="pad-stat__valuerow">
@@ -346,9 +384,43 @@ function ProgramAdminDetails() {
                     <span className="pad-date__day">{l.completed.day}</span>
                     <span className="pad-date__year">{l.completed.year}</span>
                   </div>
-                  <button type="button" className="pad-row__more" aria-label="Learner actions">
-                    <More size={20} color="var(--text-secondary)" variant="Linear" />
-                  </button>
+                  <div className="pad-menu" ref={openMenuId === l.id ? menuRef : undefined}>
+                    <button
+                      type="button"
+                      className="pad-row__more"
+                      aria-label="Learner actions"
+                      aria-haspopup="menu"
+                      aria-expanded={openMenuId === l.id}
+                      onClick={() => setOpenMenuId((cur) => (cur === l.id ? null : l.id))}
+                    >
+                      <More size={20} color="var(--text-secondary)" variant="Linear" />
+                    </button>
+                    {openMenuId === l.id && (
+                      <div className="pad-menu__list" role="menu">
+                        <button
+                          type="button"
+                          className="pad-menu__item"
+                          role="menuitem"
+                          onClick={() => {
+                            setProgressLearner(l)
+                            setOpenMenuId(null)
+                          }}
+                        >
+                          <TaskSquare size={20} color="var(--text-primary)" variant="Linear" />
+                          View progress
+                        </button>
+                        <button
+                          type="button"
+                          className="pad-menu__item pad-menu__item--danger"
+                          role="menuitem"
+                          onClick={() => unenrol(l.id)}
+                        >
+                          <UserMinus size={20} color="var(--text-error)" variant="Linear" />
+                          Unenrol
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))
             )}
@@ -361,6 +433,14 @@ function ProgramAdminDetails() {
       {tab === 'Settings' && <div className="pad-empty">{tab} coming soon.</div>}
         </div>
       </main>
+
+      {progressLearner && (
+        <LearnerProgressDrawer
+          learner={progressLearner}
+          courses={courseSteps}
+          onClose={() => setProgressLearner(null)}
+        />
+      )}
     </div>
   )
 }
