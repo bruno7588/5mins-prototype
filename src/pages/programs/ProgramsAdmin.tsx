@@ -91,7 +91,16 @@ function ProgramsAdmin() {
             className="tbl-thumb"
             style={{ backgroundImage: row.image ? `url(${row.image})` : row.thumbnailGradient }}
           />
-          <span className="programs-row-title">{row.title}</span>
+          <button
+            type="button"
+            className="programs-row-title"
+            onClick={(e) => {
+              e.stopPropagation()
+              navigate(`/programs/${row.id}/overview`)
+            }}
+          >
+            {row.title}
+          </button>
         </span>
       ),
     },

@@ -25,6 +25,7 @@ import MyTeam from './pages/my-team/MyTeam'
 import Workspace from './pages/workspace/Workspace'
 import ProgramDetails from './pages/programs/ProgramDetails'
 import ProgramsAdmin from './pages/programs/ProgramsAdmin'
+import ProgramAdminDetails from './pages/programs/ProgramAdminDetails'
 import ProgramBuilder from './pages/programs/ProgramBuilder'
 import ProgramCourseDetails from './pages/courses/CourseDetails'
 import Events from './pages/events/Events'
@@ -92,6 +93,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="/content-library" replace />} />
                 <Route path="/programs" element={<ProgramsAdmin />} />
+                <Route path="/programs/:id/overview" element={<ProgramAdminDetails />} />
                 <Route path="/content-library" element={<YourContent />} />
                 <Route path="/content-library/add-content" element={<AddContent />} />
                 <Route path="/your-courses" element={<YourCourses />} />

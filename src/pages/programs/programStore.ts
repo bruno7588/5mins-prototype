@@ -5,6 +5,7 @@ import {
   type ProgramCourseState,
   type CourseStatus,
 } from '../workspace/mockItems'
+import { fiveMinsCourses } from './coursesCatalog'
 import courseThumb1 from '../../assets/programs/course-1.png'
 import courseThumb2 from '../../assets/programs/course-2.png'
 import courseThumb3 from '../../assets/programs/course-3.png'
@@ -180,6 +181,23 @@ export function emptyDraft(): ProgramDraft {
   }
 }
 
+/** Seed course steps sourced from the 5Mins catalogue (real titles + thumbnails).
+ *  First course enrols immediately with no due date; the rest drip on a delay
+ *  with a relative due date — enough rows to exercise the table's pagination. */
+const seedCourseSteps: ProgramStep[] = fiveMinsCourses()
+  .slice(0, 16)
+  .map((c, i) => ({
+    id: `ds-${i + 1}`,
+    type: 'course',
+    title: c.title,
+    courseId: c.courseId,
+    lessonCount: c.lessonCount,
+    durationMinutes: c.durationMinutes,
+    thumbnail: c.thumb,
+    release: i === 0 ? { kind: 'on-start' } : { kind: 'after-days', days: 3 },
+    dueDays: i === 0 ? undefined : 14,
+  }))
+
 /** Built-in example draft so the admin list always shows a Draft row. */
 export const SEED_DRAFTS: ProgramDraft[] = [
   {
@@ -188,28 +206,7 @@ export const SEED_DRAFTS: ProgramDraft[] = [
     description:
       'A draft pathway for first-time managers — coaching, feedback, and leading with influence.',
     thumbnailGradient: 'linear-gradient(135deg, #00afc4, #6368db)',
-    steps: [
-      {
-        id: 'ds-1',
-        type: 'course',
-        title: MOCK_LIBRARY[0].title,
-        courseId: MOCK_LIBRARY[0].courseId,
-        lessonCount: MOCK_LIBRARY[0].lessonCount,
-        durationMinutes: MOCK_LIBRARY[0].durationMinutes,
-        thumbnail: MOCK_LIBRARY[0].thumbnail,
-        release: { kind: 'on-start' },
-      },
-      {
-        id: 'ds-2',
-        type: 'course',
-        title: MOCK_LIBRARY[2].title,
-        courseId: MOCK_LIBRARY[2].courseId,
-        lessonCount: MOCK_LIBRARY[2].lessonCount,
-        durationMinutes: MOCK_LIBRARY[2].durationMinutes,
-        thumbnail: MOCK_LIBRARY[2].thumbnail,
-        release: { kind: 'after-step', stepId: 'ds-1' },
-      },
-    ],
+    steps: seedCourseSteps,
     certificate: { enabled: true },
     status: 'draft',
     lastModified: '2026-06-21T00:00:00.000Z',

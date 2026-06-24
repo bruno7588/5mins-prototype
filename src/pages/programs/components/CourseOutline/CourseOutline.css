@@ -1,0 +1,213 @@
+/* Courses outline (Figma node 2377:33781) — numbered, draggable course rows with
+   inline Enrolment / Due date dropdowns, mirroring the Create Course content list. */
+.co-outline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.co-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 900px;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.co-head {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-xxl) 0 var(--space-xl);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.co-head__course {
+  flex: 1;
+  min-width: 0;
+  padding-right: var(--space-sm);
+}
+
+.co-head__col {
+  flex: 0 0 auto;
+  width: 160px;
+  padding: 0 var(--space-sm);
+}
+
+/* ── Row (grey wrapper: grip + card + trash) ────────────────────────────── */
+.co-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-s);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+  cursor: grab;
+}
+
+.co-row--dragging {
+  opacity: 0.5;
+}
+
+.co-row--drop {
+  box-shadow: 0 0 0 1px var(--selected);
+}
+
+.co-grip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+/* ── Inner card (course | enrolment | due) ──────────────────────────────── */
+.co-card {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+}
+
+.co-card__course {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
+}
+
+.co-counter {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--input-background);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.co-thumb {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: var(--neutral-100);
+  background-size: cover;
+  background-position: center;
+}
+
+.co-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.co-card__col {
+  flex: 0 0 auto;
+  width: 160px;
+  padding: var(--space-s) var(--space-sm);
+}
+
+/* ── Cell trigger (opens the shared Automations popover) ────────────────── */
+.co-cell {
+  position: relative;
+}
+
+.co-cell__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-tertiary);
+}
+
+.co-cell__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.co-cell__title {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.co-cell__sub {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Remove ─────────────────────────────────────────────────────────────── */
+.co-remove {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-full, 999px);
+  background: transparent;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.co-remove:hover {
+  background: var(--neutral-50);
+}
+
+/* ── Add Course ─────────────────────────────────────────────────────────── */
+.co-actions {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+}
+
+.co-add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-m);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.co-add:hover {
+  background: var(--input-background-hover);
+}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Add, Edit2, GalleryAdd, PlayCircle, Refresh2, Sms, Trash } from 'iconsax-react'
+import { Add, GalleryAdd } from 'iconsax-react'
 import PageHeader from '../your-courses/components/PageHeader/PageHeader'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -8,51 +8,17 @@ import {
   loadDraftForBuilder,
   makeId,
   saveProgram,
-  type CourseStep,
   type ProgramDraft,
   type ProgramStep,
-  type ReleaseRule,
-  type StepType,
 } from './programStore'
-import { getCatalogCourse, type CatalogCourse } from './coursesCatalog'
-import StepConfigDrawer from './components/StepConfigDrawer/StepConfigDrawer'
+import { type CatalogCourse } from './coursesCatalog'
+import CourseOutline from './components/CourseOutline/CourseOutline'
 import CoursePickerDrawer from './components/CoursePickerDrawer/CoursePickerDrawer'
 import defaultBanner from '../../assets/programs/program-banner-default.png'
 import emptyCoursesPlus from '../../assets/programs/empty-courses-plus.svg'
 import './ProgramBuilder.css'
 
-const STEP_META: Record<StepType, { label: string; icon: typeof PlayCircle }> = {
-  course: { label: 'Course', icon: PlayCircle },
-  email: { label: 'Email', icon: Sms },
-  review: { label: 'Review', icon: Refresh2 },
-}
-
 const TABS = [{ label: 'Details' }, { label: 'Courses' }, { label: 'Settings' }]
-
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
-  } catch {
-    return iso
-  }
-}
-
-/** One-line human summary of a step's release rule, for the row. */
-function releaseSummary(rule: ReleaseRule, steps: ProgramStep[]): string {
-  switch (rule.kind) {
-    case 'on-start':
-      return 'On program start'
-    case 'after-days':
-      return `${rule.days} day${rule.days !== 1 ? 's' : ''} after previous`
-    case 'on-date':
-      return rule.date ? `On ${formatDate(rule.date)}` : 'On date'
-    case 'after-step': {
-      const ref = steps.find((s) => s.id === rule.stepId)
-      const base = ref ? `After "${ref.title}"` : 'After step'
-      return rule.days ? `${base} + ${rule.days}d` : base
-    }
-  }
-}
 
 function ProgramBuilder() {
   const navigate = useNavigate()
@@ -61,14 +27,9 @@ function ProgramBuilder() {
 
   const [draft, setDraft] = useState<ProgramDraft>(() => loadDraftForBuilder(id))
   const [activeTab, setActiveTab] = useState('Details')
-  const [editingStepId, setEditingStepId] = useState<string | null>(null)
   const [pickerOpen, setPickerOpen] = useState(false)
   const coverInputRef = useRef<HTMLInputElement>(null)
   const descInputRef = useRef<HTMLTextAreaElement>(null)
-
-  // Drag-to-reorder (flat list)
-  const [dragIndex, setDragIndex] = useState<number | null>(null)
-  const [overIndex, setOverIndex] = useState<number | null>(null)
 
   // Keep the inline description textarea sized to its content (it has no border/scroll).
   useEffect(() => {
@@ -85,8 +46,6 @@ function ProgramBuilder() {
     setDraft((d) => ({ ...d, image: url }))
     e.target.value = ''
   }
-
-  const editingStep = draft.steps.find((s) => s.id === editingStepId) ?? null
 
   const patchStep = (stepId: string, patch: Partial<ProgramStep>) =>
     setDraft((d) => ({ ...d, steps: d.steps.map((s) => (s.id === stepId ? ({ ...s, ...patch } as ProgramStep) : s)) }))
@@ -151,7 +110,7 @@ function ProgramBuilder() {
         onSecondary={() => handleSave('draft')}
         secondaryDisabled={!draft.title.trim()}
         primaryLabel={id ? 'Save Changes' : 'Create Program'}
-        primaryIcon={id ? undefined : <Add size={20} color="var(--neutral-0)" variant="Linear" />}
+        primaryIcon={id ? undefined : <Add size={20} color="currentColor" variant="Linear" />}
         onPrimary={() => handleSave('published')}
         primaryDisabled={!draft.title.trim()}
         onClose={() => navigate('/programs')}
@@ -224,76 +183,13 @@ function ProgramBuilder() {
                     </button>
                   </div>
                 ) : (
-                  <div className="pb-steps">
-                    <div className="pb-steps__head">
-                      <span className="pb-col pb-col--step">Course</span>
-                      <span className="pb-col pb-col--release">Release</span>
-                      <span className="pb-col pb-col--due">Due date</span>
-                      <span className="pb-col pb-col--actions" aria-hidden="true" />
-                    </div>
-                    {draft.steps.map((step, i) => {
-                      const Meta = STEP_META[step.type]
-                      const Icon = Meta.icon
-                      const sub =
-                        step.type === 'course' && step.lessonCount > 0
-                          ? `${Meta.label} · ${step.lessonCount} lessons · ${step.durationMinutes} min`
-                          : step.type === 'review'
-                            ? `${Meta.label} · ${step.delayDays}d after completion`
-                            : Meta.label
-                      return (
-                        <article
-                          key={step.id}
-                          className={`pb-step${overIndex === i && dragIndex !== null && dragIndex !== i ? ' pb-step--drop' : ''}${dragIndex === i ? ' pb-step--dragging' : ''}`}
-                          draggable
-                          onDragStart={() => setDragIndex(i)}
-                          onDragOver={(e) => {
-                            e.preventDefault()
-                            setOverIndex(i)
-                          }}
-                          onDrop={() => {
-                            if (dragIndex !== null) reorder(dragIndex, i)
-                            setDragIndex(null)
-                            setOverIndex(null)
-                          }}
-                          onDragEnd={() => {
-                            setDragIndex(null)
-                            setOverIndex(null)
-                          }}
-                        >
-                          <span className="pb-col pb-col--step">
-                            <span className="pb-step__grip" aria-hidden="true">⋮⋮</span>
-                            <span className={`pb-step__icon pb-step__icon--${step.type}`}>
-                              <Icon size={20} color="var(--primary-600)" variant="Bold" />
-                            </span>
-                            <span className="pb-step__titlewrap">
-                              <span className="pb-step__title">{step.title}</span>
-                              <span className="pb-step__sub">{sub}</span>
-                            </span>
-                          </span>
-                          <span className="pb-col pb-col--release">{releaseSummary(step.release, draft.steps)}</span>
-                          <span className="pb-col pb-col--due">{step.dueDate ? formatDate(step.dueDate) : '—'}</span>
-                          <span className="pb-col pb-col--actions">
-                            <button className="pb-icon-btn" aria-label="Edit step" onClick={() => setEditingStepId(step.id)}>
-                              <Edit2 size={18} color="var(--text-secondary)" variant="Linear" />
-                            </button>
-                            <button className="pb-icon-btn" aria-label="Remove step" onClick={() => removeStep(step.id)}>
-                              <Trash size={18} color="var(--text-secondary)" variant="Linear" />
-                            </button>
-                          </span>
-                        </article>
-                      )
-                    })}
-                  </div>
-                )}
-
-                {/* Add course (the empty state has its own CTA) */}
-                {draft.steps.length > 0 && (
-                  <div className="pb-addstep">
-                    <button className="pb-addstep__btn" onClick={() => setPickerOpen(true)}>
-                      <Add size={20} color="var(--primary-600)" variant="Linear" />
-                      Add Course
-                    </button>
-                  </div>
+                  <CourseOutline
+                    steps={draft.steps}
+                    onReorder={reorder}
+                    onRemove={removeStep}
+                    onPatch={patchStep}
+                    onAddCourse={() => setPickerOpen(true)}
+                  />
                 )}
               </div>
             </div>
@@ -327,27 +223,6 @@ function ProgramBuilder() {
           )}
         </main>
       </div>
-
-      {editingStep && (
-        <StepConfigDrawer
-          step={editingStep}
-          allSteps={draft.steps}
-          onPatch={(patch) => patchStep(editingStep.id, patch)}
-          onPickCourse={(courseId) => {
-            const lib = getCatalogCourse(courseId)
-            if (lib) {
-              patchStep(editingStep.id, {
-                courseId: lib.courseId,
-                title: lib.title,
-                lessonCount: lib.lessonCount,
-                durationMinutes: lib.durationMinutes,
-                thumbnail: lib.thumb,
-              } as Partial<CourseStep>)
-            }
-          }}
-          onClose={() => setEditingStepId(null)}
-        />
-      )}
 
       {pickerOpen && (
         <CoursePickerDrawer
