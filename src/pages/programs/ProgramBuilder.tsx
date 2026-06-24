@@ -149,11 +149,11 @@ function ProgramBuilder() {
         onTabChange={setActiveTab}
         secondaryLabel="Save Draft"
         onSecondary={() => handleSave('draft')}
-        secondaryDisabled={false}
+        secondaryDisabled={!draft.title.trim()}
         primaryLabel={id ? 'Save Changes' : 'Create Program'}
         primaryIcon={id ? undefined : <Add size={20} color="var(--neutral-0)" variant="Linear" />}
         onPrimary={() => handleSave('published')}
-        primaryDisabled={false}
+        primaryDisabled={!draft.title.trim()}
         onClose={() => navigate('/programs')}
       />
 
