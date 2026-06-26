@@ -109,14 +109,17 @@
   min-width: 0;
 }
 
-.cpd-filters .cpd-filters__fn {
+.cpd-filters .cpd-filters__value {
   flex: 0 0 auto;
   width: 160px;
 }
 
-.cpd-filters .cpd-filters__skill {
-  flex: 0 0 auto;
-  width: 120px;
+/* Function / Skill dimension chips, above the search + value-dropdown row. */
+.cpd-chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 16px 24px 0;
 }
 
 /* ── Body (scroll area) ─────────────────────────────────────────────────── */

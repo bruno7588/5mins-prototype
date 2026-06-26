@@ -2,6 +2,7 @@ import { useState } from 'react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Search from '../../../../components/Search/Search'
 import Dropdown from '../../../../components/Dropdown/Dropdown'
+import Chip from '../../../../components/Chip/Chip'
 import {
   FUNCTION_OPTIONS,
   SKILL_OPTIONS,
@@ -25,6 +26,7 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
   const [closing, setClosing] = useState(false)
   const [tab, setTab] = useState<Tab>('yours')
   const [query, setQuery] = useState('')
+  const [dimension, setDimension] = useState<'functions' | 'skills'>('functions')
   const [functionFilter, setFunctionFilter] = useState('all')
   const [skillFilter, setSkillFilter] = useState('all')
 
@@ -38,6 +40,7 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
   const switchTab = (next: Tab) => {
     setTab(next)
     setQuery('')
+    setDimension('functions')
     setFunctionFilter('all')
     setSkillFilter('all')
   }
@@ -46,8 +49,8 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
   const results = (tab === 'yours' ? yourCourses() : fiveMinsCourses()).filter((c) => {
     if (q && !c.title.toLowerCase().includes(q)) return false
     if (tab === '5mins') {
-      if (functionFilter !== 'all' && !c.functionIds?.includes(functionFilter)) return false
-      if (skillFilter !== 'all' && c.skillId !== skillFilter) return false
+      if (dimension === 'functions' && functionFilter !== 'all' && !c.functionIds?.includes(functionFilter)) return false
+      if (dimension === 'skills' && skillFilter !== 'all' && c.skillId !== skillFilter) return false
     }
     return true
   })
@@ -84,6 +87,21 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
           </button>
         </div>
 
+        {tab === '5mins' && (
+          <div className="cpd-chips">
+            <Chip
+              label="Functions"
+              selected={dimension === 'functions'}
+              onClick={() => setDimension('functions')}
+            />
+            <Chip
+              label="Skills"
+              selected={dimension === 'skills'}
+              onClick={() => setDimension('skills')}
+            />
+          </div>
+        )}
+
         <div className="cpd-filters">
           <Search
             size="M"
@@ -93,20 +111,12 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
             className="cpd-filters__search"
           />
           {tab === '5mins' && (
-            <>
-              <Dropdown
-                className="cpd-filters__fn"
-                options={FUNCTION_OPTIONS}
-                value={functionFilter}
-                onChange={setFunctionFilter}
-              />
-              <Dropdown
-                className="cpd-filters__skill"
-                options={SKILL_OPTIONS}
-                value={skillFilter}
-                onChange={setSkillFilter}
-              />
-            </>
+            <Dropdown
+              className="cpd-filters__value"
+              options={dimension === 'functions' ? FUNCTION_OPTIONS : SKILL_OPTIONS}
+              value={dimension === 'functions' ? functionFilter : skillFilter}
+              onChange={dimension === 'functions' ? setFunctionFilter : setSkillFilter}
+            />
           )}
         </div>
 
