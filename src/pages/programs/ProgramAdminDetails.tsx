@@ -3,12 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft2, ArrowRight2, Clock, Danger, DocumentDownload, Eye, Link2, More, Profile, TaskSquare, TickCircle, UserMinus } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import LearnerProgressDrawer from './components/LearnerProgressDrawer/LearnerProgressDrawer'
 import { loadDraftForBuilder, type CourseStep, type ProgramStep } from './programStore'
 import coursesIcon from '../../assets/programs/courses-icon.svg'
 import avatar1 from '../../assets/programs/avatar-1.png'
 import avatar2 from '../../assets/programs/avatar-2.png'
 import avatar3 from '../../assets/programs/avatar-3.png'
+import '../people/People.css' // confirm-modal-* styles
 import './ProgramAdminDetails.css'
 
 const TABS = ['Courses', 'Enrolments', 'Settings']
@@ -141,6 +143,7 @@ function ProgramAdminDetails() {
   const [learners, setLearners] = useState(LEARNERS)
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [progressLearner, setProgressLearner] = useState<Learner | null>(null)
+  const [unenrolTarget, setUnenrolTarget] = useState<Learner | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   const draft = useMemo(() => loadDraftForBuilder(id), [id])
@@ -175,9 +178,10 @@ function ProgramAdminDetails() {
     }
   }, [openMenuId])
 
-  const unenrol = (learnerId: string) => {
-    setLearners((ls) => ls.filter((l) => l.id !== learnerId))
-    setOpenMenuId(null)
+  const confirmUnenrol = () => {
+    if (!unenrolTarget) return
+    setLearners((ls) => ls.filter((l) => l.id !== unenrolTarget.id))
+    setUnenrolTarget(null)
   }
 
   const changeTab = (t: string) => {
@@ -413,7 +417,10 @@ function ProgramAdminDetails() {
                           type="button"
                           className="pad-menu__item pad-menu__item--danger"
                           role="menuitem"
-                          onClick={() => unenrol(l.id)}
+                          onClick={() => {
+                            setUnenrolTarget(l)
+                            setOpenMenuId(null)
+                          }}
                         >
                           <UserMinus size={20} color="var(--text-error)" variant="Linear" />
                           Unenrol
@@ -441,6 +448,38 @@ function ProgramAdminDetails() {
           onClose={() => setProgressLearner(null)}
         />
       )}
+
+      <ConfirmModal open={!!unenrolTarget} onClose={() => setUnenrolTarget(null)}>
+        {unenrolTarget && (
+          <>
+            <div className="confirm-modal-header confirm-modal-header--center">
+              <div className="confirm-modal-icon">
+                <UserMinus size={72} color="var(--danger-500)" variant="Linear" />
+              </div>
+              <h2 className="confirm-modal-title">Unenrol learner</h2>
+              <p className="confirm-modal-body">
+                This will remove the learner from this program and all its courses
+              </p>
+            </div>
+            <div className="confirm-modal-actions">
+              <button
+                type="button"
+                className="confirm-modal-btn confirm-modal-btn--outlined"
+                onClick={() => setUnenrolTarget(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="confirm-modal-btn confirm-modal-btn--danger"
+                onClick={confirmUnenrol}
+              >
+                Unenrol Learner
+              </button>
+            </div>
+          </>
+        )}
+      </ConfirmModal>
     </div>
   )
 }
