@@ -30,7 +30,9 @@
 }
 
 /* ---- Header card ---- */
-.cd-header {
+/* Scoped to the learner course page so this card styling does not leak onto
+   the admin (.cd-layout) CourseDetails header, which shares the .cd-header class. */
+.cd-content .cd-header {
   display: flex;
   flex-direction: column;
   gap: 20px;
