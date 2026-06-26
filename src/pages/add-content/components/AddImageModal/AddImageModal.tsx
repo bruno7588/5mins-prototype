@@ -18,6 +18,8 @@ interface AddImageModalProps {
   onSelect: (imageDataUrl: string) => void
   initialTab?: Tab
   cardContent?: CardContent
+  /** Show the "Suggest From Card" affordance on the Generate tab (default true). */
+  showSuggest?: boolean
 }
 
 const GENERATED_ASPECT = '1 / 1'
@@ -61,7 +63,7 @@ const freepikThumb = (seed: string, aspect: string) => {
   return `https://picsum.photos/seed/${seed}/${width}/${height}`
 }
 
-function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardContent }: AddImageModalProps) {
+function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardContent, showSuggest = true }: AddImageModalProps) {
   const [tab, setTab] = useState<Tab>(initialTab)
   const [query, setQuery] = useState('')
   const [prompt, setPrompt] = useState('')
@@ -213,7 +215,7 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
             className={`aim-tab${tab === 'freepik' ? ' aim-tab--active' : ''}`}
             onClick={() => setTab('freepik')}
           >
-            Freepik images
+            Stock Footage
           </button>
         </div>
       </div>
@@ -235,31 +237,35 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
                 <label className="aim-generate-label" htmlFor="aim-generate-prompt">
                   Describe the image you want
                 </label>
-                <button
-                  ref={suggestBtnRef}
-                  type="button"
-                  className={`aim-suggest-btn${(!hasCardContent || suggesting || generating) ? ' aim-suggest-btn--disabled' : ''}`}
-                  aria-disabled={!hasCardContent || suggesting || generating}
-                  onMouseEnter={showSuggestTooltip}
-                  onMouseLeave={hideSuggestTooltip}
-                  onFocus={showSuggestTooltip}
-                  onBlur={hideSuggestTooltip}
-                  onClick={() => {
-                    if (!hasCardContent || suggesting || generating) return
-                    handleSuggestPrompt()
-                  }}
-                >
-                  <SparkleIcon size={16} />
-                  {suggesting ? 'Suggesting…' : 'Suggest From Card'}
-                </button>
-                {suggestTooltipPos && (
-                  <div
-                    role="tooltip"
-                    className="aim-suggest-tooltip"
-                    style={{ top: suggestTooltipPos.top, left: suggestTooltipPos.left }}
-                  >
-                    Add a title or description to the card
-                  </div>
+                {showSuggest && (
+                  <>
+                    <button
+                      ref={suggestBtnRef}
+                      type="button"
+                      className={`aim-suggest-btn${(!hasCardContent || suggesting || generating) ? ' aim-suggest-btn--disabled' : ''}`}
+                      aria-disabled={!hasCardContent || suggesting || generating}
+                      onMouseEnter={showSuggestTooltip}
+                      onMouseLeave={hideSuggestTooltip}
+                      onFocus={showSuggestTooltip}
+                      onBlur={hideSuggestTooltip}
+                      onClick={() => {
+                        if (!hasCardContent || suggesting || generating) return
+                        handleSuggestPrompt()
+                      }}
+                    >
+                      <SparkleIcon size={16} />
+                      {suggesting ? 'Suggesting…' : 'Suggest From Card'}
+                    </button>
+                    {suggestTooltipPos && (
+                      <div
+                        role="tooltip"
+                        className="aim-suggest-tooltip"
+                        style={{ top: suggestTooltipPos.top, left: suggestTooltipPos.left }}
+                      >
+                        Add a title or description to the card
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
               <textarea
@@ -356,7 +362,7 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
               <input
                 type="text"
                 className="aim-search-input"
-                placeholder="Search Freepik images"
+                placeholder="Search stock footage"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />

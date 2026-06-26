@@ -320,8 +320,7 @@
   padding: var(--space-sm) var(--space-m);
   border: 1px solid var(--border);
   border-radius: var(--radius-m);
-  background: var(--cards-background);
-  box-shadow: -4px 0 12px rgba(32, 34, 42, 0.12);
+  background: none;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 400;
