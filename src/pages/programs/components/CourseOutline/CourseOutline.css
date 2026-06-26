@@ -181,13 +181,21 @@
   border-radius: var(--radius-sm);
   background: none;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: border-color 150ms ease;
+  transition: border-color 150ms ease, background 150ms ease;
 }
 
-.co-date-trigger--active {
-  border-color: var(--secondary-600);
+.co-date-trigger:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background-hover);
+}
+
+/* DS input "active/focused" border (input.md). */
+.co-date-trigger--active,
+.co-date-trigger--active:hover {
+  border-color: var(--selected);
+  background: none;
 }
 
 .co-calendar-pop {

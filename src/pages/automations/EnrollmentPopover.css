@@ -44,7 +44,14 @@
   align-items: flex-start;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
+  border-radius: var(--radius-s);
   cursor: pointer;
+  transition: background 150ms ease;
+}
+
+/* Hover fills the whole option (input) per DS. */
+.enrollment-popover__option:hover {
+  background: var(--page-background-hover);
 }
 
 .enrollment-popover__option-text {

@@ -13,7 +13,12 @@
 }
 
 .radio:hover:not(.radio--disabled) {
-  background: var(--surface-page-hover, #EFF0F2);
+  background: var(--page-background-hover);
+}
+
+/* Unselected ring picks up the hover border colour (selected keeps its amber). */
+.radio:hover:not(.radio--disabled):not(.radio--selected) .radio__ring {
+  border-color: var(--border-hover);
 }
 
 .radio__ring {
@@ -72,6 +77,15 @@
   align-items: center;
   gap: var(--space-s, 8px);
   cursor: pointer;
+}
+
+/* Hovering anywhere on the labelled row shows the radio hover state. */
+.radio-row:hover .radio:not(.radio--disabled) {
+  background: var(--page-background-hover);
+}
+
+.radio-row:hover .radio:not(.radio--disabled):not(.radio--selected) .radio__ring {
+  border-color: var(--border-hover);
 }
 
 .radio-row__label {
