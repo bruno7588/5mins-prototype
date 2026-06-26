@@ -38,10 +38,28 @@
   overflow: hidden;
 }
 
-.pb-banner__btn {
+/* Dark scrim over the thumbnail, faded in while the add-image icon is hovered. */
+.pb-banner__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--neutral-900);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+.pb-banner:has(.pb-banner__btn:hover) .pb-banner__overlay {
+  opacity: 0.32;
+}
+
+/* Tooltip wrapper carries the absolute placement so the tooltip body anchors to the button. */
+.pb-banner__tooltip {
   position: absolute;
   right: 10px;
   bottom: 10px;
+}
+
+.pb-banner__btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;

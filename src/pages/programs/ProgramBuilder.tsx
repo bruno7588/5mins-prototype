@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Add, GalleryAdd } from 'iconsax-react'
 import PageHeader from '../your-courses/components/PageHeader/PageHeader'
@@ -14,6 +14,8 @@ import {
 import { type CatalogCourse } from './coursesCatalog'
 import CourseOutline from './components/CourseOutline/CourseOutline'
 import CoursePickerDrawer from './components/CoursePickerDrawer/CoursePickerDrawer'
+import AddImageModal from '../add-content/components/AddImageModal/AddImageModal'
+import Tooltip from '../../components/Tooltip/Tooltip'
 import defaultBanner from '../../assets/programs/program-banner-default.png'
 import emptyCoursesPlus from '../../assets/programs/empty-courses-plus.svg'
 import './ProgramBuilder.css'
@@ -28,7 +30,7 @@ function ProgramBuilder() {
   const [draft, setDraft] = useState<ProgramDraft>(() => loadDraftForBuilder(id))
   const [activeTab, setActiveTab] = useState('Details')
   const [pickerOpen, setPickerOpen] = useState(false)
-  const coverInputRef = useRef<HTMLInputElement>(null)
+  const [imageModalOpen, setImageModalOpen] = useState(false)
   const descInputRef = useRef<HTMLTextAreaElement>(null)
 
   // Keep the inline description textarea sized to its content (it has no border/scroll).
@@ -38,14 +40,6 @@ function ProgramBuilder() {
     el.style.height = 'auto'
     el.style.height = `${el.scrollHeight}px`
   }, [draft.description, activeTab])
-
-  const handleCoverChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const url = URL.createObjectURL(file)
-    setDraft((d) => ({ ...d, image: url }))
-    e.target.value = ''
-  }
 
   const patchStep = (stepId: string, patch: Partial<ProgramStep>) =>
     setDraft((d) => ({ ...d, steps: d.steps.map((s) => (s.id === stepId ? ({ ...s, ...patch } as ProgramStep) : s)) }))
@@ -107,7 +101,7 @@ function ProgramBuilder() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         hideSecondary
-        primaryLabel={id ? 'Save Changes' : 'Create Program'}
+        primaryLabel={id ? 'Update Program' : 'Create Program'}
         primaryIcon={id ? undefined : <Add size={20} color="currentColor" variant="Linear" />}
         onPrimary={() => handleSave()}
         primaryDisabled={!draft.title.trim()}
@@ -123,21 +117,23 @@ function ProgramBuilder() {
                 className="pb-banner"
                 style={{ backgroundImage: `url(${draft.image || defaultBanner})` }}
               >
-                <button
-                  type="button"
-                  className="pb-banner__btn"
-                  aria-label={draft.image ? 'Change cover image' : 'Add cover image'}
-                  onClick={() => coverInputRef.current?.click()}
+                <div className="pb-banner__overlay" aria-hidden="true" />
+                <Tooltip
+                  text="Add or generate image"
+                  position="Top"
+                  alignment="End"
+                  icon={false}
+                  className="pb-banner__tooltip"
                 >
-                  <GalleryAdd size={20} color="var(--neutral-0)" variant="Linear" />
-                </button>
-                <input
-                  ref={coverInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="pb-banner__file"
-                  onChange={handleCoverChange}
-                />
+                  <button
+                    type="button"
+                    className="pb-banner__btn"
+                    aria-label={draft.image ? 'Change cover image' : 'Add cover image'}
+                    onClick={() => setImageModalOpen(true)}
+                  >
+                    <GalleryAdd size={20} color="var(--neutral-0)" variant="Linear" />
+                  </button>
+                </Tooltip>
               </div>
 
               <div className="pb-headline">
@@ -230,6 +226,16 @@ function ProgramBuilder() {
           onClose={() => setPickerOpen(false)}
         />
       )}
+
+      <AddImageModal
+        open={imageModalOpen}
+        onClose={() => setImageModalOpen(false)}
+        onSelect={(url) => {
+          setDraft((d) => ({ ...d, image: url }))
+          setImageModalOpen(false)
+        }}
+        showSuggest={false}
+      />
 
       <ToastContainer toasts={toasts} />
     </>
