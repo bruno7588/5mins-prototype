@@ -100,6 +100,14 @@ function ProgramBuilder() {
         tabs={TABS}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        tabsAction={
+          activeTab === 'Courses' ? (
+            <button type="button" className="pb-add-course" onClick={() => setPickerOpen(true)}>
+              <Add size={20} color="currentColor" variant="Linear" />
+              Add Course
+            </button>
+          ) : undefined
+        }
         hideSecondary
         primaryLabel={id ? 'Update Program' : 'Create Program'}
         primaryIcon={id ? undefined : <Add size={20} color="currentColor" variant="Linear" />}

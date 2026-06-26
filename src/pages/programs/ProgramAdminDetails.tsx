@@ -7,6 +7,7 @@ import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import LearnerProgressDrawer from './components/LearnerProgressDrawer/LearnerProgressDrawer'
 import EnrolPeopleDrawer from './components/EnrolPeopleDrawer/EnrolPeopleDrawer'
+import LaunchSuccessModal from './components/LaunchSuccessModal/LaunchSuccessModal'
 import { loadDraftForBuilder, programLifecycle, type CourseStep, type ProgramStep } from './programStore'
 import ProgramStatusBadge from './components/ProgramStatusBadge/ProgramStatusBadge'
 import coursesIcon from '../../assets/programs/courses-icon.svg'
@@ -150,6 +151,7 @@ function ProgramAdminDetails() {
   const [enrolled, setEnrolled] = useState(false)
   const [programStart, setProgramStart] = useState<string | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [successOpen, setSuccessOpen] = useState(false)
   const { toasts, show: showToast } = useToast()
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -200,10 +202,11 @@ function ProgramAdminDetails() {
     setLearners(LEARNERS)
     setPage(0)
     setDrawerOpen(false)
-    showToast(
-      'success',
-      launching ? `Program launched — ${summary} enrolled` : `${summary} enrolled in this program`,
-    )
+    if (launching) {
+      setSuccessOpen(true)
+    } else {
+      showToast('success', `${summary} enrolled in this program`)
+    }
   }
 
   // No enrolments until the program is launched, regardless of the seeded table.
@@ -531,6 +534,15 @@ function ProgramAdminDetails() {
         onClose={() => setDrawerOpen(false)}
         launched={enrolled}
         onEnrol={handleEnrol}
+      />
+
+      <LaunchSuccessModal
+        open={successOpen}
+        onClose={() => setSuccessOpen(false)}
+        onTrackProgress={() => {
+          setTab('Enrolments')
+          setSuccessOpen(false)
+        }}
       />
 
       <ToastContainer toasts={toasts} />

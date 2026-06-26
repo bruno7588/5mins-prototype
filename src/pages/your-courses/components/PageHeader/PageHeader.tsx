@@ -12,6 +12,8 @@ interface PageHeaderProps {
   tabs?: PageHeaderTab[]
   activeTab?: string
   onTabChange?: (label: string) => void
+  /** Optional right-aligned action rendered on the tabs row (e.g. Add Course). */
+  tabsAction?: ReactNode
   secondaryLabel?: string
   onSecondary?: () => void
   secondaryDisabled?: boolean
@@ -41,6 +43,7 @@ function PageHeader({
   tabs = DEFAULT_TABS,
   activeTab = 'Course Content',
   onTabChange,
+  tabsAction,
   secondaryLabel = 'Save Draft',
   onSecondary,
   secondaryDisabled = true,
@@ -78,17 +81,20 @@ function PageHeader({
         </div>
       </div>
       <div className="page-header-divider" aria-hidden="true" />
-      <nav className="page-header-tabs">
-        {tabs.map((tab) => (
-          <button
-            key={tab.label}
-            className={`page-header-tab ${tab.label === activeTab ? 'page-header-tab--active' : ''}`}
-            onClick={onTabChange ? () => onTabChange(tab.label) : undefined}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
+      <div className="page-header-tabrow">
+        <nav className="page-header-tabs">
+          {tabs.map((tab) => (
+            <button
+              key={tab.label}
+              className={`page-header-tab ${tab.label === activeTab ? 'page-header-tab--active' : ''}`}
+              onClick={onTabChange ? () => onTabChange(tab.label) : undefined}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+        {tabsAction}
+      </div>
     </header>
   )
 }

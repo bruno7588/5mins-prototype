@@ -141,6 +141,13 @@
 }
 
 /* Tabs — gap 20px; divider lives above (page-header-divider). */
+.page-header-tabrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
 .page-header-tabs {
   display: flex;
   gap: var(--space-ml);
