@@ -74,6 +74,11 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
+  transition: background 150ms ease;
+}
+
+.co-card:hover {
+  background: var(--cards-background-hover);
 }
 
 .co-card__course {
@@ -155,6 +160,69 @@
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* "On specific date" calendar field inside the enrolment popover. */
+.enrollment-popover__date-row {
+  position: relative;
+  padding: var(--space-xs) 0 0 32px;
+}
+
+.co-date-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: none;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 150ms ease;
+}
+
+.co-date-trigger--active {
+  border-color: var(--secondary-600);
+}
+
+.co-calendar-pop {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: -8px;
+  z-index: 30;
+}
+
+/* Enrolment listbox: right-anchored so the caret sits under the chevron, with a
+   smooth ease-in-out open/close. */
+.co-cell .enrollment-popover {
+  left: auto;
+  right: 0;
+  transform-origin: top right;
+  animation: co-pop-in 180ms ease-in-out;
+}
+
+.co-cell .enrollment-popover--closing {
+  animation: co-pop-out 150ms ease-in-out forwards;
+}
+
+.co-cell .enrollment-popover__caret {
+  left: auto;
+  right: 2px;
+}
+
+@keyframes co-pop-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes co-pop-out {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to { opacity: 0; transform: scale(0.96) translateY(-4px); }
 }
 
 .co-cell__sub {
@@ -177,12 +245,14 @@
   border: none;
   border-radius: var(--radius-full, 999px);
   background: transparent;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: background 120ms ease;
+  transition: background 120ms ease, color 120ms ease;
 }
 
 .co-remove:hover {
   background: var(--neutral-50);
+  color: var(--text-error);
 }
 
 /* ── Add Course ─────────────────────────────────────────────────────────── */

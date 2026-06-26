@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react'
 import { Add, ArrowDown2, Trash } from 'iconsax-react'
 import type { CourseStep, ProgramStep, ReleaseRule } from '../../programStore'
-import EnrollmentPopover from '../../../automations/EnrollmentPopover'
+import Tooltip from '../../../../components/Tooltip/Tooltip'
+import ReleasePopover from './ReleasePopover'
 import DueDatePopover from '../../../automations/DueDatePopover'
-import type { EnrollmentType, DueDateConfig } from '../../../automations/Automations'
+import type { DueDateConfig } from '../../../automations/Automations'
 import './CourseOutline.css'
 
 interface Props {
@@ -14,15 +15,7 @@ interface Props {
   onAddCourse: () => void
 }
 
-/* ── Map the program step model ↔ the Automations popover model ──────────── */
-
-const releaseToEnrollment = (r: ReleaseRule): EnrollmentType =>
-  r.kind === 'after-days'
-    ? { kind: 'after-delay', days: r.days, relativeTo: 'previous-course' }
-    : { kind: 'immediate' }
-
-const enrollmentToRelease = (e: EnrollmentType): ReleaseRule =>
-  e.kind === 'after-delay' ? { kind: 'after-days', days: e.days } : { kind: 'on-start' }
+/* ── Display helpers ─────────────────────────────────────────────────────── */
 
 const dueToConfig = (dueDays?: number): DueDateConfig =>
   dueDays != null ? { kind: 'relative', daysAfterStart: dueDays } : { kind: 'none' }
@@ -30,10 +23,18 @@ const dueToConfig = (dueDays?: number): DueDateConfig =>
 const configToDue = (c: DueDateConfig): number | undefined =>
   c.kind === 'relative' ? c.daysAfterStart : undefined
 
-const enrolDisplay = (e: EnrollmentType): { title: string; desc?: string } => {
-  if (e.kind === 'immediate') return { title: 'Immediate' }
-  const unit = e.days === 1 ? 'day' : 'days'
-  return { title: 'After delay', desc: `${e.days} ${unit} after previous course enrolment` }
+const fmtDate = (iso: string): string => {
+  const [y, m, d] = iso.split('-')
+  return d && m && y ? `${d}/${m}/${y}` : iso
+}
+
+const enrolDisplay = (r: ReleaseRule): { title: string; desc?: string } => {
+  if (r.kind === 'after-days') {
+    const unit = r.days === 1 ? 'day' : 'days'
+    return { title: 'After delay', desc: `${r.days} ${unit} after previous course` }
+  }
+  if (r.kind === 'on-date') return { title: 'On specific date', desc: fmtDate(r.date) }
+  return { title: 'Program start' }
 }
 
 const dueDisplay = (c: DueDateConfig): { title: string; desc?: string } => {
@@ -55,8 +56,15 @@ function DragGrip() {
 function EnrolmentCell({ release, onChange }: { release: ReleaseRule; onChange: (r: ReleaseRule) => void }) {
   const ref = useRef<HTMLButtonElement>(null)
   const [open, setOpen] = useState(false)
-  const value = releaseToEnrollment(release)
-  const d = enrolDisplay(value)
+  const [closing, setClosing] = useState(false)
+  const close = () => {
+    setClosing(true)
+    setTimeout(() => {
+      setOpen(false)
+      setClosing(false)
+    }, 150)
+  }
+  const d = enrolDisplay(release)
   return (
     <div className="co-cell">
       <button
@@ -65,7 +73,7 @@ function EnrolmentCell({ release, onChange }: { release: ReleaseRule; onChange: 
         className={`co-cell__trigger${open ? ' co-cell__trigger--open' : ''}`}
         aria-haspopup="dialog"
         aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => (open ? close() : setOpen(true))}
       >
         <span className="co-cell__body">
           <span className="co-cell__title">{d.title}</span>
@@ -74,10 +82,11 @@ function EnrolmentCell({ release, onChange }: { release: ReleaseRule; onChange: 
         <ArrowDown2 size={18} color="var(--text-tertiary)" variant="Linear" />
       </button>
       {open && (
-        <EnrollmentPopover
-          value={value}
-          onChange={(next) => onChange(enrollmentToRelease(next))}
-          onClose={() => setOpen(false)}
+        <ReleasePopover
+          value={release}
+          onChange={onChange}
+          onClose={close}
+          closing={closing}
           anchorRef={ref}
         />
       )}
@@ -174,9 +183,11 @@ function CourseOutline({ steps, onReorder, onRemove, onPatch, onAddCourse }: Pro
                 </div>
               </div>
 
-              <button type="button" className="co-remove" aria-label="Remove course" onClick={() => onRemove(step.id)}>
-                <Trash size={16} color="var(--text-secondary)" variant="Linear" />
-              </button>
+              <Tooltip text="Remove" position="Top" icon={false}>
+                <button type="button" className="co-remove" aria-label="Remove course" onClick={() => onRemove(step.id)}>
+                  <Trash size={16} color="currentColor" variant="Linear" />
+                </button>
+              </Tooltip>
             </div>
           )
         })}
