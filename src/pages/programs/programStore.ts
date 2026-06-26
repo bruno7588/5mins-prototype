@@ -340,6 +340,21 @@ export function duplicateProgram(id: string): string {
   return copy.id
 }
 
+/** Program lifecycle for admin surfaces, driven purely by enrolment + schedule
+ *  (the builder publish state is a separate concern, deferred for this version):
+ *  Ready to Launch until the first enrolment, then Scheduled while its start date
+ *  is in the future, and Live once that date has arrived. */
+export type ProgramLifecycle = 'ready' | 'scheduled' | 'live'
+
+/** Derive the lifecycle from enrolment + start date. A program is launched by its
+ *  first enrolment: with no enrolments it is Ready to Launch; once launched a future
+ *  `startsAt` is Scheduled, otherwise Live. */
+export function programLifecycle(input: { learnerCount: number; startsAt?: string }): ProgramLifecycle {
+  if (input.learnerCount <= 0) return 'ready'
+  if (input.startsAt && new Date(input.startsAt).getTime() > Date.now()) return 'scheduled'
+  return 'live'
+}
+
 /** Row shape for the admin Programs list table. */
 export interface AdminProgramRow {
   id: string
@@ -349,9 +364,20 @@ export interface AdminProgramRow {
   courseCount: number
   learnerCount: number
   status: 'draft' | 'published'
+  /** ISO start date for launched programs; future = Scheduled, past = Live. */
+  startsAt?: string
   /** ISO timestamp of the last edit (drafts) or seed display date. */
   updatedAt: string
 }
+
+/** Display start dates for the seed/mock programs (no real schedule). The first
+ *  is in the future (Scheduled); the rest have already started (Live). */
+const MOCK_STARTS: Record<string, string> = {
+  p1: '2026-07-20T00:00:00.000Z',
+  p2: '2026-05-04T00:00:00.000Z',
+  p3: '2026-04-12T00:00:00.000Z',
+}
+const DEFAULT_MOCK_START = '2026-05-15T00:00:00.000Z'
 
 /** All programs for the admin list: stored drafts (any status) + seed programs,
  *  deduped by id (stored wins) and minus hidden/deleted ids. */
@@ -383,6 +409,7 @@ export function getAdminProgramRows(): AdminProgramRow[] {
       courseCount: p.courseCount,
       learnerCount: p.learnerCount,
       status: 'published',
+      startsAt: MOCK_STARTS[p.id] ?? DEFAULT_MOCK_START,
       updatedAt: MOCK_UPDATED[p.id] ?? '2026-06-01T00:00:00.000Z',
     }))
   return [...draftRows, ...mockRows]

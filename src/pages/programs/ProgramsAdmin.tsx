@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Add, Copy, Edit2, Routing, Status, Trash } from 'iconsax-react'
+import { Add, Copy, Edit2, Routing, Trash } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
-import Badge from '../../components/Badge/Badge'
 import Search from '../../components/Search/Search'
 import Table, { type Column } from '../../components/Table/Table'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
+import ProgramStatusBadge from './components/ProgramStatusBadge/ProgramStatusBadge'
 import {
   deleteProgram,
   duplicateProgram,
   getAdminProgramRows,
+  programLifecycle,
   type AdminProgramRow,
 } from './programStore'
 import './ProgramsAdmin.css'
@@ -121,16 +122,9 @@ function ProgramsAdmin() {
       key: 'status',
       header: 'Status',
       width: '0 0 140px',
-      render: (row) =>
-        row.status === 'published' ? (
-          <Badge type="success" icon label="Published" />
-        ) : (
-          <Badge
-            type="informative"
-            customIcon={<Status size={16} color="currentColor" variant="Linear" />}
-            label="Draft"
-          />
-        ),
+      render: (row) => (
+        <ProgramStatusBadge status={programLifecycle({ learnerCount: row.learnerCount, startsAt: row.startsAt })} />
+      ),
     },
     {
       key: 'actions',
