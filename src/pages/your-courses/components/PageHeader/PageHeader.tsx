@@ -15,6 +15,8 @@ interface PageHeaderProps {
   secondaryLabel?: string
   onSecondary?: () => void
   secondaryDisabled?: boolean
+  /** Hide the secondary (Save Draft) button entirely — e.g. the Program Builder. */
+  hideSecondary?: boolean
   primaryLabel?: string
   primaryIcon?: ReactNode
   onPrimary?: () => void
@@ -42,6 +44,7 @@ function PageHeader({
   secondaryLabel = 'Save Draft',
   onSecondary,
   secondaryDisabled = true,
+  hideSecondary = false,
   primaryLabel = 'Create Course',
   primaryIcon,
   onPrimary,
@@ -56,12 +59,14 @@ function PageHeader({
       <div className="page-header-top">
         <h2 className="page-header-title">{title}</h2>
         <div className="page-header-actions">
-          <button
-            className={`page-header-btn-outline-primary${secondaryDisabled ? ' page-header-btn-disabled' : ''}`}
-            onClick={secondaryDisabled ? undefined : onSecondary}
-          >
-            {secondaryLabel}
-          </button>
+          {!hideSecondary && (
+            <button
+              className={`page-header-btn-outline-primary${secondaryDisabled ? ' page-header-btn-disabled' : ''}`}
+              onClick={secondaryDisabled ? undefined : onSecondary}
+            >
+              {secondaryLabel}
+            </button>
+          )}
           <button
             className={`page-header-btn-filled${primaryDisabled ? ' page-header-btn-disabled' : ''}`}
             onClick={primaryDisabled ? undefined : onPrimary}

@@ -87,16 +87,16 @@ function ProgramBuilder() {
       return { ...d, steps }
     })
 
-  const handleSave = (status: 'draft' | 'published') => {
+  const handleSave = () => {
     if (!draft.title.trim()) {
       setActiveTab('Details')
       show('error', 'Add a program name before saving.')
       return
     }
-    const toSave = { ...draft, status }
+    const toSave = { ...draft, status: 'published' as const }
     saveProgram(toSave)
     setDraft(toSave)
-    show('success', status === 'published' ? 'Program published' : 'Draft saved')
+    show('success', id ? 'Changes saved' : 'Program created')
   }
 
   return (
@@ -106,12 +106,10 @@ function ProgramBuilder() {
         tabs={TABS}
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        secondaryLabel="Save Draft"
-        onSecondary={() => handleSave('draft')}
-        secondaryDisabled={!draft.title.trim()}
+        hideSecondary
         primaryLabel={id ? 'Save Changes' : 'Create Program'}
         primaryIcon={id ? undefined : <Add size={20} color="currentColor" variant="Linear" />}
-        onPrimary={() => handleSave('published')}
+        onPrimary={() => handleSave()}
         primaryDisabled={!draft.title.trim()}
         onClose={() => navigate('/programs')}
       />
