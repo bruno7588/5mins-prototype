@@ -4,8 +4,7 @@
 Complete implementation guide for Radio buttons, Checkboxes, and Toggle switches in the 5Mins.ai micro-learning platform. Source of truth: Figma library `EC26cSVe9KNTCWXvYovakw`.
 
 Cross-reference:
-- `5mins-brand-colors` for the raw palette
-- `5mins-surface-colors` for semantic surface tokens
+- `5mins-colors` (colors.md) for the raw palette and semantic surface tokens
 - `5mins-typography` for label typography
 - `5mins-iconography` for icon sizing conventions
 

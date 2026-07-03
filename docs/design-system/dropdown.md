@@ -7,7 +7,7 @@ description: Dropdown / Select component for 5Mins.ai. Covers states (Enabled, H
 
 > **Figma source:** [Library → Dropdown](https://www.figma.com/design/EC26cSVe9KNTCWXvYovakw/Library?node-id=11659-2103)
 
-Implementation guide for the 5Mins.ai Dropdown/Select. Cross-reference with `surface-colors`, `brand-colors`, `typography`, and `iconography` for raw token values.
+Implementation guide for the 5Mins.ai Dropdown/Select. Cross-reference with `colors`, `typography`, and `iconography` for raw token values.
 
 ---
 

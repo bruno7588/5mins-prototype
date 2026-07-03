@@ -36,9 +36,7 @@ When building any UI component, feature, or screen, you MUST read the relevant d
    - `docs/design-system/cards.md` — Lesson, Assessment, Course, and Skill card components; desktop variants, states, dimensions, tokens, and ready HTML/CSS specs
    - `docs/design-system/table.md` — Data table component. Card-style bordered rows (not a gridlined table), borderless header with optional sorting and select-all, all 16 cell content types (text, supporting text, date, icon, checkbox, avatar, avatar group, illustration, thumbnail, progress bar, action icon, badge, button, dropdown), 5 row states (Enabled, Hover, Selected, Selected-Hover, Disabled), pagination footer, design tokens, full CSS and React implementation | Any data table, list view, records grid, enrolments/learners/roles/reports table, or tabular layout
    - `docs/design-system/typography.md` — Type scale, weights, colors
-   - `docs/design-system/brand-colors.md` — Full color palette and usage rules (Primary, Neutral-0→900, Semantic, Gamification)
-   - `docs/design-system/surface-colors.md` — Semantic surface tokens for backgrounds, borders, and button states
-   - `docs/design-system/text-colors.md` — Semantic text color tokens for all text roles (hierarchy, buttons, status, interactive, quiz)
+   - `docs/design-system/colors.md` — Complete color system: raw palettes (Primary, Secondary, Neutral, Success/Warning/Danger, Gamification) + semantic surface and text tokens with dark- and light-mode values | Any color decision — backgrounds, borders, buttons, text, status, badges
    - `docs/design-system/iconography.md` — Iconsax React icons, sizes, variants
    - `docs/design-system/spacing.md` — Spacing scale and border radius system
    - `docs/design-system/input.md` - Text inputs, form fields, search boxes, email/password/numeric fields — all states (Enabled, Hover, Active, Filled, Disabled), validation states, label, helper text, right-side icon | Any user text-entry element or form control
@@ -52,7 +50,7 @@ When building any UI component, feature, or screen, you MUST read the relevant d
 ### Strict rules
 
 - **Never improvise design values.** Use only tokens defined in the design system (colors, spacing, radius, font sizes).
-- **Always use semantic tokens over raw palette values.** Prefer `--text-primary` over `--neutral-800`, `--surface-card` over `--neutral-0`, `--border-default` over `--neutral-100`.
+- **Always use semantic tokens over raw palette values.** Prefer `--text-primary` over `--neutral-800`, `--cards-background` over `--neutral-0`, `--border` over `--neutral-100`.
 - **Always use Poppins** as the font family. Weights: 400, 500, 700 only.
 - **Always use Iconsax React** for icons. Standard sizes: 16, 20, 24, 32px only.
 - **All spacing must be multiples of 4px.** Use the spacing scale tokens.

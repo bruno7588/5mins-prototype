@@ -297,6 +297,5 @@ export const Search: React.FC<SearchProps> = ({
 ## Related Skills
 
 - `5mins-inputs` — full text input component (labels, validation, helper text); use Search for search-specific UX, Input for form fields
-- `5mins-surface-colors` — `--surface-input`, `--surface-input-hover`, `--surface-selected`, `--border-default`, `--border-hover` tokens
-- `5mins-text-colors` — `--text-primary`, `--text-tertiary` tokens
+- `5mins-colors` (colors.md) — surface, border, and text tokens
 - `5mins-iconography` — Iconsax icon sizing and variant rules

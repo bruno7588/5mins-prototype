@@ -37,7 +37,7 @@ For Lesson and Assessment cards, pick the variant by surface: an **admin panel**
 
 ## Design tokens
 
-The cards use the standard 5Mins token system. If the prototype already defines these (via `5mins-brand-colors`, `5mins-surface-colors`, or the prototype-builder scaffold), reuse them. Otherwise the hex values below apply so this skill works standalone. These are the only theme values; build cards in the light theme.
+The cards use the standard 5Mins token system. If the prototype already defines these (via `5mins-colors` or the prototype-builder scaffold), reuse them. Otherwise the hex values below apply so this skill works standalone. These are the only theme values; build cards in the light theme.
 
 ```css
 :root {
@@ -358,6 +358,6 @@ Source variant nodes: `9577:3698` (enabled), `9577:3701` (hover), `9577:3704` (r
 ## Related skills
 
 - `5mins-prototype-builder` - the admin platform chrome the cards sit inside.
-- `5mins-brand-colors`, `5mins-surface-colors` - the colour token system these card tokens belong to.
+- `5mins-colors` - the colour token system these card tokens belong to.
 - `5mins-typography`, `5mins-iconography` - the Poppins type scale and the icon set (play-circle, clock, edit, close, lock, tick).
 - `buttons` - the quiz buttons used on the Lesson web app row.

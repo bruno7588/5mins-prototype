@@ -346,7 +346,7 @@ import * as Icons from 'iconsax-react';
 ## Integration with Design System
 
 Icons integrate seamlessly with:
-- **5mins-brand-colors:** All icon colors reference color tokens
+- **5mins-colors (colors.md):** All icon colors reference color tokens
 - **5mins-typography:** Icons sized to complement text
 - **Components:** Icons used in buttons, inputs, navigation
 

@@ -44,7 +44,7 @@ Columns size by `flex: 1` and `min-width: 0` by default (equal width, content-aw
 
 ## Design tokens
 
-Use the semantic token names, not raw hex. Cross-reference `surface-colors.md`, `brand-colors.md`, `text-colors.md`, `spacing.md`.
+Use the semantic token names, not raw hex. Cross-reference `colors.md`, `spacing.md`.
 
 | Token | Value | Use |
 |---|---|---|
@@ -423,8 +423,7 @@ Usage:
 
 ## Related docs
 
-- `surface-colors.md` - row border, hover, and selected backgrounds
-- `brand-colors.md` - raw palette behind the tokens
+- `colors.md` - row border, hover, and selected backgrounds, plus the raw palette behind the tokens
 - `typography.md` - the Poppins type scale
 - `iconography.md` - sort, kebab, and status icons
 - `selection-controls.md` - the checkbox used in selectable tables

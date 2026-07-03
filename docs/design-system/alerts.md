@@ -384,7 +384,5 @@ export const Alert: React.FC<AlertProps> = ({
 
 ## Related Skills
 
-- `5mins-surface-colors` — `--surface-input` token used for Callout background
-- `5mins-text-colors` — `--text-secondary`, `--text-warning`, `--text-primary` tokens
+- `5mins-colors` (colors.md) — surface, text, and palette tokens
 - `buttons` — for full standalone button component (Alert uses inline patterns, not the button component)
-- `5mins-brand-colors` — Warning-500/700 palette values
