@@ -69,7 +69,7 @@
   font-weight: 700;
   color: rgba(249, 249, 250, 1);
   border-radius: var(--radius-s);
-  background: var(--button-background, var(--primary-600));
+  background: var(--primary-button-background, var(--primary-600));
   cursor: pointer;
   line-height: 1.5;
   transition: background 150ms ease;
@@ -233,7 +233,7 @@
 .lesson-editor-change-file {
   font-size: 14px;
   font-weight: 700;
-  color: var(--button-background, var(--primary-600));
+  color: var(--primary-button-background, var(--primary-600));
   white-space: nowrap;
   cursor: pointer;
   transition: opacity 150ms ease;

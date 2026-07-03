@@ -37,7 +37,7 @@
 }
 
 .cs-save:hover:not(:disabled) {
-  background: var(--button-background-hover);
+  background: var(--primary-button-background-hover);
 }
 
 .cs-save:disabled {

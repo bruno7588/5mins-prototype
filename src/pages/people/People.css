@@ -1132,7 +1132,7 @@
 }
 
 .confirm-modal-btn--primary:hover {
-  background: var(--button-background-hover);
+  background: var(--primary-button-background-hover);
 }
 
 /* Filled danger (red) */

@@ -196,7 +196,7 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
-  color: var(--button-background);
+  color: var(--primary-button-background);
 }
 
 .epd-search { width: 100%; }
@@ -490,7 +490,7 @@
   padding: 10px var(--space-ml);
   border: none;
   border-radius: var(--radius-s);
-  background: var(--button-background);
+  background: var(--primary-button-background);
   color: var(--neutral-0);
   font-size: 14px;
   font-weight: 700;
@@ -498,7 +498,7 @@
   transition: background 150ms ease;
 }
 
-.epd-launch:hover:not(:disabled) { background: var(--button-background-hover); }
+.epd-launch:hover:not(:disabled) { background: var(--primary-button-background-hover); }
 
 .epd-launch:disabled {
   background: var(--button-background-disabled);

@@ -231,7 +231,7 @@
   font-size: 12px;
   font-weight: 700;
   color: var(--neutral-25);
-  background: var(--button-background);
+  background: var(--primary-button-background);
   border-radius: var(--radius-s);
   cursor: pointer;
   line-height: 1.4;
@@ -239,7 +239,7 @@
 }
 
 .add-scorm-select-file-btn:hover {
-  background: var(--button-background-hover);
+  background: var(--primary-button-background-hover);
 }
 
 .add-scorm-file-name {

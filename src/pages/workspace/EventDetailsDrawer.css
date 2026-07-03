@@ -89,7 +89,7 @@
   padding: 8px 16px;
   border-radius: var(--radius-s);
   border: none;
-  background: var(--button-background);
+  background: var(--primary-button-background);
   color: var(--neutral-25);
   font-size: 14px;
   font-weight: 700;
@@ -100,7 +100,7 @@
 }
 
 .event-drawer__btn-primary:hover {
-  background: var(--button-background-hover);
+  background: var(--primary-button-background-hover);
 }
 
 .event-drawer__card-body {

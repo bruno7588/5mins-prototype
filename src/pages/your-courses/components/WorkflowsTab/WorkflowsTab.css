@@ -82,7 +82,7 @@
 }
 
 .workflow-card__preview-link:hover {
-  color: var(--button-background-hover);
+  color: var(--primary-button-background-hover);
 }
 
 /* Collapsible body — animates height + opacity when toggle flips */
@@ -316,7 +316,7 @@
 }
 
 .course-reminders-add__btn:hover:not(:disabled) {
-  color: var(--button-background-hover);
+  color: var(--primary-button-background-hover);
 }
 
 .course-reminders-add__btn:disabled {

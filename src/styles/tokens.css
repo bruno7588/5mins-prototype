@@ -1,32 +1,60 @@
 :root {
+  /* Palette values per Figma variables — see docs/design-system/colors.md */
+
   /* Primary (Cyan Brand) */
-  --primary-100: #CCF8FD;
-  --primary-500: #00CEE6;
-  --primary-600: #00AFC4;
-  --primary-700: #008393;
+  --primary-900: #002C31;
   --primary-800: #005862;
+  --primary-700: #008393;
+  --primary-600: #00AFC4;
+  --primary-500: #00CEE6;
+  --primary-400: #33E2F7;
+  --primary-300: #66E9F9;
+  --primary-200: #99F1FB;
+  --primary-100: #CCF8FD;
 
   /* Secondary (Yellow) */
+  --secondary-900: #191306;
+  --secondary-800: #33250B;
+  --secondary-700: #664B16;
+  --secondary-600: #EDA30D;
   --secondary-500: #FFBB38;
-  --secondary-600: #E6A830;
-  --secondary-700: #CC9528;
+  --secondary-400: #FFCF74;
+  --secondary-300: #FFE4AF;
+  --secondary-200: #FFF1D7;
+  --secondary-100: #FFF8EB;
 
   /* Success (Green) */
-  --success-100: #E8F6EE;
+  --success-900: #021109;
+  --success-800: #052211;
+  --success-700: #0A4423;
+  --success-600: #11763D;
   --success-500: #18A957;
-  --success-600: #148A46;
+  --success-400: #5DC389;
+  --success-300: #A3DDBC;
+  --success-200: #D1EEDD;
+  --success-100: #E8F6EE;
 
   /* Warning (Orange) */
-  --warning-100: #FFEDD7;
-  --warning-500: #FFA538;
+  --warning-900: #33210B;
+  --warning-800: #664216;
+  --warning-700: #996322;
   --warning-600: #E88206;
-  --text-warning: #E88206;
+  --warning-500: #FFA538;
+  --warning-400: #FFB760;
+  --warning-300: #FFC988;
+  --warning-200: #FFDBAF;
+  --warning-100: #FFEDD7;
 
   /* Danger (Red) */
-  --danger-100: #FCE8EC;
-  --danger-400: #e95c7b;
+  --danger-900: #160207;
+  --danger-800: #2D040D;
+  --danger-700: #59091A;
+  --danger-600: #9C0F2E;
   --danger-500: #DF1642;
-  --danger-600: #B8123A;
+  --danger-400: #E95C7B;
+  --danger-300: #F2A2B3;
+  --danger-200: #F9D0D9;
+  --danger-100: #FCE8EC;
 
   /* Neutral (Grays) */
   --neutral-0: #FFFFFF;
@@ -37,7 +65,7 @@
   --neutral-300: #9EA4B3;
   --neutral-400: #656B7C;
   --neutral-500: #454C5E;
-  --neutral-600: #353945;
+  --neutral-600: #383D4C;
   --neutral-700: #2D313D;
   --neutral-800: #20222A;
   --neutral-900: #0F1014;
@@ -47,35 +75,47 @@
   --flash-poll: #9B55C9;
   --lesson-quiz: #FA715F;
   --certificate-quiz: #6368DB;
-  --case-study-quiz: #2A90D8;
+  --course-assessments: #2A90D8;
 
-  /* Semantic aliases */
+  /* Semantic aliases — light mode (Figma dark-mode values live in colors.md) */
   --page-background: var(--neutral-25);
   --page-background-hover: var(--neutral-50);
   --cards-background: var(--neutral-0);
   --cards-background-hover: var(--neutral-50);
-  --input-background: rgba(191, 194, 204, 0.16);
-  --input-background-hover: rgba(223, 225, 230, 1);
+  --input-background: rgba(191, 194, 204, 0.16); /* Neutral-200 @ 16% */
+  --input-background-hover: var(--neutral-100);
   --border: var(--neutral-100);
   --border-elevated: var(--neutral-200);
   --border-hover: var(--neutral-300);
-  --tooltip-background: #20222a;
+  --tooltip-background: var(--neutral-800);
   --text-primary: var(--neutral-800);
   --text-secondary: var(--neutral-500);
   --text-tertiary: var(--neutral-400);
   --text-disabled: var(--neutral-300);
   --text-success: var(--success-600);
+  --text-warning: var(--warning-600);
   --text-error: var(--danger-500);
-  --button-background: var(--primary-600);
-  --button-background-hover: var(--primary-700);
-  --button-background-active: var(--primary-800);
+  --text-selected: var(--secondary-600);
+  --text-progress: var(--primary-700);
+  --primary-button-background: var(--primary-600);
+  --primary-button-background-hover: var(--primary-700);
+  --primary-button-background-pressed: var(--primary-800);
   --button-background-disabled: var(--neutral-100);
+  --button-danger-hover: var(--danger-600);
+  --button-danger-pressed: var(--danger-700);
+  --button-warning-background: var(--warning-600);
+  --button-warning-background-hover: var(--warning-700);
+  --button-warning-background-pressed: var(--warning-800);
+  --button-success-background: var(--success-500);
+  --button-success-background-hover: var(--success-600);
+  --button-success-background-pressed: var(--success-700);
+  --text-button-foreground: var(--neutral-25);
   --text-button-disabled: var(--neutral-300);
   --text-button-hover: var(--primary-700);
-  --selected: var(--secondary-500);
-  --selected-tint: rgba(255, 187, 56, 0.15); /* selected-row / highlight fill derived from --selected */
-  --selected-fill: #FEF1D6; /* opaque equivalent of --selected-tint, for sticky cells over scrolling content */
-  --control-selected: #EDA30D; /* radio/checkbox selected amber, per selection-controls.md */
+  --selected: var(--secondary-600);
+  --selected-tint: rgba(237, 163, 13, 0.15); /* selected-row / highlight fill derived from --selected */
+  --selected-fill: #FCF1DB; /* opaque equivalent of --selected-tint, for sticky cells over scrolling content */
+  --control-selected: var(--secondary-600); /* radio/checkbox selected amber, per selection-controls.md */
   --scrim: rgba(15, 16, 20, 0.5); /* overlay backdrop fill */
 
   /* Spacing (4px base) */

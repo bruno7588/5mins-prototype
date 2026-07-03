@@ -430,8 +430,8 @@
 
 .invite-modal-btn--cancel {
   background: transparent;
-  border: 1px solid var(--button-background);
-  color: var(--button-background);
+  border: 1px solid var(--primary-button-background);
+  color: var(--primary-button-background);
 }
 
 .invite-modal-btn--cancel:hover {

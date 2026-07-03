@@ -73,8 +73,6 @@ Quiz types and interactive learning elements.
 ✓ Quiz type badges and indicators · achievement/gamification accents
 ✗ Never for general buttons or navigation · don't mix quiz colors in one component · never as large-area backgrounds
 
-> Code note: `tokens.css` still names `--course-assessments` as `--case-study-quiz` — see [Divergences](#8-divergences-from-current-code).
-
 ---
 
 ## 2. Neutral colours
@@ -407,21 +405,15 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
 
 ---
 
-## 8. Divergences from current code
+## 8. Relationship to code
 
-`src/styles/tokens.css` predates this spec and differs in places. **This file (Figma) is the source of truth**; the code should migrate toward it. Known divergences as of 2026-07-03:
+`src/styles/tokens.css` was aligned to this spec on 2026-07-03: full 100–900 palettes, Figma hex values, Figma token names (`--primary-button-background(-hover/-pressed)`, `--course-assessments`), and `--selected` resolving to Secondary-600 in light mode.
 
-| Concern | Figma (this doc) | Current `tokens.css` |
+Code-only tokens that intentionally extend this spec (keep them):
+
+| Token | Value | Purpose |
 |---|---|---|
-| `--neutral-600` | `#383D4C` | `#353945` |
-| `--secondary-600` | `#EDA30D` | `#E6A830` (but `--control-selected: #EDA30D` matches Figma) |
-| `--success-600` | `#11763D` | `#148A46` |
-| `--danger-600` | `#9C0F2E` | `#B8123A` |
-| `--selected` (light) | Secondary-600 `#EDA30D` | Secondary-500 `#FFBB38` |
-| Primary button tokens | `--primary-button-background(-hover/-pressed)` | `--button-background(-hover/-active)` |
-| Warning button default | Warning-600 | Warning-500 (per old surface-colors.md) |
-| Course assessments token | `--course-assessments` | `--case-study-quiz` |
-| Palette completeness | full 100–900 scales | partial scales only |
-| Extra code-only tokens | — | `--selected-tint`, `--selected-fill`, `--control-selected`, `--scrim`, `--text-btn-*` aliases |
-
-When touching a component, keep using the tokens the codebase defines today; migrate names/values only as a deliberate, repo-wide change.
+| `--selected-tint` | `rgba(237, 163, 13, 0.15)` | Selected-row / highlight fill derived from `--selected` |
+| `--selected-fill` | `#FCF1DB` | Opaque equivalent of `--selected-tint` for sticky cells over scrolling content |
+| `--control-selected` | `var(--secondary-600)` | Radio/checkbox selected amber, per selection-controls.md |
+| `--scrim` | `rgba(15, 16, 20, 0.5)` | Overlay backdrop fill |
