@@ -28,11 +28,12 @@ When building any UI component, feature, or screen, you MUST read the relevant d
 
 1. **Always start** with `docs/design-system/design-system-guidelines.md` — this is the consolidated reference with all tokens, colors, typography, spacing, and component specs.
 2. **Then read the specific component doc** for detailed implementation (React TypeScript code, full CSS, usage examples):
-   - `docs/design-system/buttons.md` — Button variants, semantic types, sizes, states
+   - `docs/design-system/buttons.md` — Button system: Filled/Outlined/Outlined-2/Text/Link + Danger/Warning/Success families + AI gradient buttons; 3 sizes, all states incl. Loading; trailing icons
    - `docs/design-system/badges.md` — Status badges, pill indicators, quiz badges
    - `docs/design-system/chips-and-tabs.md` - Chip component (filter pills, dismissible tags, selection chips with optional left/right icons) and Tabs component (underlined horizontal switcher with optional counter pills); all variants, states, design tokens, React implementation, plus a Chips vs Tabs decision table | Any filter chip, selection pill, dismissible tag, tab bar, section switcher, or small pill-shaped interactive label
    - `docs/design-system/headers.md` — Page Headers and Section Headers
    - `docs/design-system/overlays.md` — Dialog, Modal, and Side Drawer
+   - `docs/design-system/calendar.md` — Date field (Enabled/Hover/Active/Error, optional label) + month-grid calendar popover with all day-cell states (selected, today, focus, hover, outside-month, streak illustration) | Any date picker, date input, or scheduling UI
    - `docs/design-system/cards.md` — Lesson, Assessment, Course, and Skill card components; desktop variants, states, dimensions, tokens, and ready HTML/CSS specs
    - `docs/design-system/table.md` — Data table component. Card-style bordered rows (not a gridlined table), borderless header with optional sorting and select-all, all 16 cell content types (text, supporting text, date, icon, checkbox, avatar, avatar group, illustration, thumbnail, progress bar, action icon, badge, button, dropdown), 5 row states (Enabled, Hover, Selected, Selected-Hover, Disabled), pagination footer, design tokens, full CSS and React implementation | Any data table, list view, records grid, enrolments/learners/roles/reports table, or tabular layout
    - `docs/design-system/typography.md` — Type scale, weights, colors
