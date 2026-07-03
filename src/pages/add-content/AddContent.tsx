@@ -36,7 +36,7 @@ const cards: CardDef[] = [
     key: 'flashcards',
     color: '255, 187, 56',
     iconColor: '#FFBB38',
-    icon: <Notepad2 size={iconSize} color="#E6A830" variant="Linear" />,
+    icon: <Notepad2 size={iconSize} color="#EDA30D" variant="Linear" />,
     title: 'Create Flashcards',
     description: 'Start from a blank template or transform existing content with AI',
     badge: 'New',

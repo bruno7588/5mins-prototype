@@ -449,7 +449,7 @@
 }
 
 .mt-cp__switcher-item--active {
-  background: var(--selected, #FFBB38);
+  background: var(--selected, #EDA30D);
   color: var(--neutral-800, #20222A);
   font-weight: 700;
 }

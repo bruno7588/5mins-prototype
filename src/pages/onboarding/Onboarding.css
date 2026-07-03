@@ -410,7 +410,7 @@
 
 /* Active / Focused — gold border (--selected) */
 .onboarding .input-field__wrapper:focus-within {
-  border-color: var(--selected, #ffbb38);
+  border-color: var(--selected, #EDA30D);
   background: transparent;
 }
 

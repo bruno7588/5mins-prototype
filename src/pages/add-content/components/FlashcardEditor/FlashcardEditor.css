@@ -636,7 +636,7 @@
 
 .fce-page--active {
   background: var(--selected-tint);
-  color: #E6A830;
+  color: var(--secondary-600);
   font-weight: 500;
 }
 
@@ -747,7 +747,7 @@
   content: '';
   width: 100%;
   height: 2px;
-  background: #E6A830;
+  background: var(--secondary-600);
 }
 
 /* Quiz */

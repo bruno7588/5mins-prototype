@@ -64,7 +64,7 @@
 }
 
 .ws-course-card__segment--filled {
-  background: var(--selected, #ffbb38);
+  background: var(--selected, #EDA30D);
 }
 
 .ws-course-card__segment--complete {

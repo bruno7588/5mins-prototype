@@ -1,7 +1,7 @@
 /* Chip — per docs/design-system/chips.md
    Light-theme adaptation for the admin app.
    Tokens mapped:
-     --selected             → --secondary-500 (yellow #FFBB38)
+     --selected             → --secondary-600 (amber #EDA30D)
      --page-background-hover → --neutral-50
      --border               → --border (already exists)
      --border-hover         → --border-hover (already exists)

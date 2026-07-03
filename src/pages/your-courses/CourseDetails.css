@@ -400,7 +400,7 @@
   background: var(--cards-background-hover);
 }
 
-/* Selected row — secondary-500 (#FFBB38) at 12% for both fill and border */
+/* Selected row — var(--selected-tint) for both fill and border */
 .cd-row--selected,
 .cd-row--selected:hover {
   background: var(--selected-tint);

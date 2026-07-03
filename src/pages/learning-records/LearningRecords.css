@@ -255,19 +255,19 @@
   height: 8px;
   border-radius: var(--radius-full);
   background: var(--selected);
-  box-shadow: 0 0 0 0 rgba(255, 187, 56, 0.5);
+  box-shadow: 0 0 0 0 rgba(237, 163, 13, 0.5);
   animation: lrp-viewing-pulse 1.8s ease-out infinite;
 }
 
 @keyframes lrp-viewing-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 187, 56, 0.5);
+    box-shadow: 0 0 0 0 rgba(237, 163, 13, 0.5);
   }
   70% {
-    box-shadow: 0 0 0 6px rgba(255, 187, 56, 0);
+    box-shadow: 0 0 0 6px rgba(237, 163, 13, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 187, 56, 0);
+    box-shadow: 0 0 0 0 rgba(237, 163, 13, 0);
   }
 }
 

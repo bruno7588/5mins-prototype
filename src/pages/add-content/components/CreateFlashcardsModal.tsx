@@ -48,7 +48,7 @@ function CreateFlashcardsModal({ open, onClose, onCreateEmpty, onAiTransformer }
         <button type="button" className="cfm-option cfm-option--empty" onClick={onCreateEmpty}>
           <div className="cfm-option-body">
             <div className="cfm-option-icon">
-              <Edit size={32} color="#E6A830" variant="Linear" />
+              <Edit size={32} color="#EDA30D" variant="Linear" />
             </div>
             <div className="cfm-option-info">
               <h3 className="cfm-option-title">Create from scratch</h3>

@@ -73,8 +73,8 @@
 
 .tbl-row.is-selected.is-hover,
 .tbl-row.is-selected:hover {
-  background: rgba(255, 187, 56, 0.24);
-  border-color: rgba(255, 187, 56, 0.24);
+  background: rgba(237, 163, 13, 0.24);
+  border-color: rgba(237, 163, 13, 0.24);
 }
 
 .tbl-row.is-disabled .tbl-cell {
