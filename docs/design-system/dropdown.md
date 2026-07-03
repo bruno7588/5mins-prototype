@@ -5,7 +5,7 @@ description: Dropdown / Select component for 5Mins.ai. Covers states (Enabled, H
 
 # 5Mins.ai Dropdown Component
 
-> **Figma source:** [Library → Dropdown](https://www.figma.com/design/EC26cSVe9KNTCWXvYovakw/Library?node-id=11659-2103)
+> **Figma source:** Library — light `11920:5290` / dark `8925:1408` (verified 2026-07-03; earlier baseline node `11659:2103`)
 
 Implementation guide for the 5Mins.ai Dropdown/Select. Cross-reference with `colors`, `typography`, and `iconography` for raw token values.
 
@@ -55,7 +55,7 @@ The trigger is **transparent by default** with only a border — it is *not* a f
   background: transparent;
   border: 1px solid var(--border);          /* #DFE1E6 */
   border-radius: var(--radius-sm);          /* 12px */
-  padding: 8px 16px;                        /* --s, --m */
+  padding: 8px 12px;                        /* --s, --sm */
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
   font-size: 14px;
@@ -70,7 +70,7 @@ The trigger is **transparent by default** with only a border — it is *not* a f
 
 ```css
 .dropdown-trigger:hover {
-  background: var(--page-background-hover); /* #EFF0F2 */
+  background: var(--input-background);      /* translucent tint — light: #BFC2CC @16% */
   border-color: var(--border-hover);        /* #9EA4B3 */
 }
 ```
@@ -81,10 +81,12 @@ The trigger is **transparent by default** with only a border — it is *not* a f
 .dropdown-trigger.is-active,
 .dropdown-trigger:focus-visible {
   background: transparent;
-  border-color: var(--selected);            /* #FFBB38 */
+  border-color: var(--selected);            /* mode-aware: #EDA30D light / #FFBB38 dark */
   outline: none;
 }
 ```
+
+> All form-field active borders (dropdown, date field, inputs, search) use the mode-aware `--selected` token (`#EDA30D` light / `#FFBB38` dark), the same token as selection fills.
 
 ### Read-only (disabled)
 
@@ -111,12 +113,12 @@ The leading-icon (when present) is also tinted `--text-disabled` in read-only st
 | Size | Height | Padding | Font | Icon |
 |------|--------|---------|------|------|
 | Small | 33px | 4px 12px | 12px | 16px |
-| **Medium (default)** | 41px | 8px 16px | 14px | 20px |
+| **Medium (default)** | ~37px | 8px 12px | 14px | 20px |
 | Large | 48px | 12px 16px | 16px | 20px |
 
 ```css
 .dropdown-sm .dropdown-trigger { height: 33px; padding: 4px 12px; font-size: 12px; }
-.dropdown-md .dropdown-trigger { height: 41px; padding: 8px 16px;  font-size: 14px; }
+.dropdown-md .dropdown-trigger { padding: 8px 12px;  font-size: 14px; }
 .dropdown-lg .dropdown-trigger { height: 48px; padding: 12px 16px; font-size: 16px; }
 ```
 
@@ -155,7 +157,7 @@ The Figma library node focuses on trigger states. The menu below is the recommen
 .dropdown-menu {
   position: absolute;
   z-index: 1000;
-  margin-top: 4px;
+  margin-top: 8px;                          /* column gap --s */
   min-width: 160px;
   max-height: 240px;
   overflow-y: auto;
@@ -204,7 +206,7 @@ Two placements supported in the Figma library: **top** (default) and **start** (
 
 ```css
 .dropdown-label {
-  font: 500 14px/1.4 'Poppins', sans-serif;
+  font: 500 14px/1.5 'Poppins', sans-serif;
   color: var(--text-secondary);             /* #BFC2CC — Figma value */
 }
 
@@ -230,7 +232,7 @@ Required-field indicator:
 .dropdown-helper {
   font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-tertiary);              /* #9EA4B3 */
-  margin-top: 4px;
+  margin-top: 8px;                          /* column gap --s */
 }
 .dropdown-helper.is-error { color: var(--danger-500); }
 ```
@@ -435,20 +437,21 @@ Constrain the width at the wrapper level (`<div style={{ width: 'auto' }}>` or a
 | Context | Token | Value |
 |---|---|---|
 | Trigger background (Enabled/Active) | *none (transparent)* | — |
-| Trigger background (Hover) | `--page-background-hover` | `#EFF0F2` |
+| Trigger background (Hover) | `--input-background` | `#BFC2CC` @16% light / `#454C5E` @16% dark |
 | Border default | `--border` | `#DFE1E6` |
 | Border hover | `--border-hover` | `#9EA4B3` |
-| Border active / focus | `--selected` | `#FFBB38` |
+| Border active / focus | `--selected` | `#EDA30D` light / `#FFBB38` dark |
 | Border error | `--danger-500` | `#DF1642` |
 | Value text | `--text-primary` | `#20222A` |
-| Label text | `--text-secondary` | `#BFC2CC` |
+| Label text | `--text-secondary` | `#454C5E` light / `#BFC2CC` dark |
 | Helper text | `--text-tertiary` | `#9EA4B3` |
-| Read-only text / icon | `--text-disabled` | `#656B7C` |
+| Read-only text / icon | `--text-disabled` | `#9EA4B3` light / `#656B7C` dark |
 | Radius | `--radius-sm` | `12px` |
-| Medium padding | `--s --m` | `8px 16px` |
+| Medium padding | `--s --sm` | `8px 12px` |
 
 ---
 
 ## Change Log
 
+- **2026-07-03** — Re-verified against light `11920:5290` / dark `8925:1408`. Corrected: medium padding is `8px 12px` (not `8px 16px`); hover background is the translucent `--input-background` (not `--page-background-hover`); label line-height 1.5; helper gap 8px; token table now lists light/dark values.
 - **2026-04-14** — Rewritten to match the Figma library (node `11659:2103`). Corrected: trigger radius is `12px` (not 8px); trigger background is transparent (not filled `--surface-input`); hover bg is `--page-background-hover` (not `--surface-input-hover`); padding for medium is `8px 16px` (not `10px 16px`); state names are **Enabled / Hover / Active / Read-only**; `iconLeft` is first-class. Multi-select and searchable-within-dropdown are not in the current Figma library node and have been removed from the doc until they are added.

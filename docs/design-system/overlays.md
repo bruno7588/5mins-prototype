@@ -65,15 +65,15 @@ Scrim values (Neutral-900 @ 25% light / 50% dark) are defined in `layout.md` —
 
 ### Shared Design Tokens
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--page-background` | `#20222A` | Surface color for all overlay panels |
-| `--text-primary` | `#F9F9FA` | Titles and primary text |
-| `--text-secondary` | `#BFC2CC` | Supporting text and descriptions |
-| `--border` | `#383D4C` | Divider lines |
-| `--neutral-900` | `#0F1014` | Backdrop base color |
-| `--sm` (border-radius) | `12px` | Panel corner rounding (Modal & Side Drawer) |
-| `--s` (border-radius) | `8px` | Button corner rounding |
+| Token | Light | Dark | Usage |
+|-------|-------|------|-------|
+| `--page-background` | `#F9F9FA` | `#20222A` | Surface color for all overlay panels |
+| `--text-primary` | `#20222A` | `#F9F9FA` | Titles and primary text |
+| `--text-secondary` | `#454C5E` | `#BFC2CC` | Supporting text and descriptions |
+| `--border` | `#DFE1E6` | `#383D4C` | Divider lines |
+| `--scrim` | Neutral-900 @ 25% | Neutral-900 @ 50% | Backdrop fill (see `layout.md`) |
+| `--radius-sm` | `12px` | — | Panel corner rounding (Dialog & Modal; Drawer has none) |
+| `--radius-s` | `8px` | — | Button corner rounding |
 
 ### Shadow
 
@@ -106,7 +106,7 @@ This produces 16 variants (4 types × 2 icon states × 2 text states).
 ```
 ┌─────────────────────────────────────┐
 │                                     │
-│           [Icon - 72px]             │  ← optional, type-specific
+│           [Icon - 56px]             │  ← optional, type-specific
 │                                     │
 │     Title of the dialog modal       │  ← H3 (20px Bold), always shown
 │   Secondary text of the dialog      │  ← Paragraph L (16px Regular), optional
@@ -138,7 +138,7 @@ This produces 16 variants (4 types × 2 icon states × 2 text states).
 
 ### Icon by Type
 
-Each dialog type has a distinct 72×72px icon:
+Each dialog type has a distinct 56×56px icon:
 
 | Type | Icon | Description |
 |------|------|-------------|
@@ -147,7 +147,7 @@ Each dialog type has a distinct 72×72px icon:
 | **Info** | Cyan outlined info circle (`IoInformationCircleOutline`) | Informational |
 | **Success** | Green circle with checkmark | Confirmation/completion |
 
-The Info icon sits inside a 12px padding wrapper (total touch target: 96px). All other icons render directly at 72×72px.
+All four icons render at 56×56px; the Info icon sits inside a plain flex wrapper (no extra padding).
 
 ### Text Content
 
@@ -196,15 +196,15 @@ The CTA row always contains two buttons side by side: an outlined (secondary) bu
 | Type | Outlined Button | Filled Button |
 |------|----------------|---------------|
 | **Error** | `border: 1px solid var(--text-primary, #F9F9FA)` / text `#F9F9FA` | `background: var(--danger-500, #DF1642)` / text `#F9F9FA` |
-| **Warning** | `border: 1px solid var(--text-primary, #F9F9FA)` / text `#F9F9FA` | `background: var(--button-warning-background, #FFA538)` / text `var(--text-button-foreground, #20222A)` |
-| **Info** | `border: 1px solid var(--primary-button-background, #00CEE6)` / text `#00CEE6` | `background: var(--primary-button-background, #00CEE6)` / text `var(--text-button-foreground, #20222A)` |
-| **Success** | `border: 1px solid var(--primary-button-background, #00CEE6)` / text `#00CEE6` | `background: var(--primary-button-background, #00CEE6)` / text `var(--text-button-foreground, #20222A)` |
+| **Warning** | `border: 1px solid var(--text-primary, #F9F9FA)` / text `#F9F9FA` | `background: var(--button-warning-background, #E88206)` / text `var(--text-button-foreground, #F9F9FA)` |
+| **Info** | `border: 1px solid var(--primary-button-background, #00AFC4)` / text `--primary-button-background` | `background: var(--primary-button-background, #00AFC4)` / text `var(--text-button-foreground, #F9F9FA)` |
+| **Success** | `border: 1px solid var(--primary-button-background, #00AFC4)` / text `--primary-button-background` | `background: var(--primary-button-background, #00AFC4)` / text `var(--text-button-foreground, #F9F9FA)` |
 
 **Button shared styles:**
 
 ```css
 .dialog__btn {
-  padding: 12px 24px;
+  padding: 10px var(--ml, 20px);   /* Medium button */
   border-radius: var(--s, 8px);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;                     /* Bold */
@@ -323,8 +323,8 @@ A single centered primary (filled) button at the bottom:
 
 ```css
 .modal__cta {
-  background: var(--primary-button-background, #00CEE6);
-  color: var(--text-button-foreground, #20222A);
+  background: var(--primary-button-background, #00AFC4);
+  color: var(--text-button-foreground, #F9F9FA);
   padding: 10px var(--ml, 20px);
   border-radius: var(--s, 8px);
   font-family: 'Poppins', sans-serif;
@@ -431,8 +431,8 @@ The Side Drawer CTA section uses **two buttons** side by side: a filled primary 
 ```css
 /* Filled primary */
 .side-drawer__btn-primary {
-  background: var(--primary-button-background, #00CEE6);
-  color: var(--text-button-foreground, #20222A);
+  background: var(--primary-button-background, #00AFC4);
+  color: var(--text-button-foreground, #F9F9FA);
   padding: 10px var(--ml, 20px);
   border-radius: var(--s, 8px);
   font-family: 'Poppins', sans-serif;
@@ -446,8 +446,8 @@ The Side Drawer CTA section uses **two buttons** side by side: a filled primary 
 /* Outlined primary */
 .side-drawer__btn-secondary {
   background: transparent;
-  color: var(--primary-button-background, #00CEE6);
-  border: 1px solid var(--primary-button-background, #00CEE6);
+  color: var(--primary-button-background, #00AFC4);
+  border: 1px solid var(--primary-button-background, #00AFC4);
   padding: 10px var(--ml, 20px);
   border-radius: var(--s, 8px);
   font-family: 'Poppins', sans-serif;
@@ -493,22 +493,22 @@ const DIALOG_CONFIG: Record<DialogType, {
     outlinedText: 'var(--text-primary, #F9F9FA)',
   },
   warning: {
-    filledBg: 'var(--button-warning-background, #FFA538)',
-    filledText: 'var(--text-button-foreground, #20222A)',
+    filledBg: 'var(--button-warning-background, #E88206)',
+    filledText: 'var(--text-button-foreground, #F9F9FA)',
     outlinedBorder: 'var(--text-primary, #F9F9FA)',
     outlinedText: 'var(--text-primary, #F9F9FA)',
   },
   info: {
-    filledBg: 'var(--primary-button-background, #00CEE6)',
-    filledText: 'var(--text-button-foreground, #20222A)',
-    outlinedBorder: 'var(--primary-button-background, #00CEE6)',
-    outlinedText: 'var(--primary-button-background, #00CEE6)',
+    filledBg: 'var(--primary-button-background, #00AFC4)',
+    filledText: 'var(--text-button-foreground, #F9F9FA)',
+    outlinedBorder: 'var(--primary-button-background, #00AFC4)',
+    outlinedText: 'var(--primary-button-background, #00AFC4)',
   },
   success: {
-    filledBg: 'var(--primary-button-background, #00CEE6)',
-    filledText: 'var(--text-button-foreground, #20222A)',
-    outlinedBorder: 'var(--primary-button-background, #00CEE6)',
-    outlinedText: 'var(--primary-button-background, #00CEE6)',
+    filledBg: 'var(--primary-button-background, #00AFC4)',
+    filledText: 'var(--text-button-foreground, #F9F9FA)',
+    outlinedBorder: 'var(--primary-button-background, #00AFC4)',
+    outlinedText: 'var(--primary-button-background, #00AFC4)',
   },
 };
 

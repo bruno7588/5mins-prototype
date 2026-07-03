@@ -48,11 +48,11 @@ Label:    Poppins Medium 14, var(--text-secondary)
 |---|---|---|---|---|
 | Enabled | `--border` | transparent | `--text-secondary` | — |
 | Hover | `--border-hover` | `--input-background` | `--text-secondary` | — |
-| Active (open) | `--secondary-500` `#FFBB38` | transparent | `--text-primary` | popover renders below |
+| Active (open) | `--selected` (`#EDA30D` light / `#FFBB38` dark) | transparent | `--text-primary` | popover renders below |
 | Error | `--text-error` | transparent | `--text-primary` | warning-triangle icon (20px) before the calendar icon; label turns `--text-error`; helper text below |
 
 - **Error helper:** Poppins Regular 14, `var(--text-error)` (e.g. "Date is required!").
-- Note the token split: the **field's active border is `--secondary-500`** (raw palette, same in both modes) while the **selected day uses `--selected`** (mode-aware, Secondary-600 in light). Follow Figma exactly — don't unify them.
+- Token rule: **form-field active borders use the mode-aware `--selected` token** (`#EDA30D` light / `#FFBB38` dark — date field, dropdown, inputs, search), the same token as selection fills (day cells, tab indicator). The Figma light node shows a raw `Secondary-500` binding on this field — treat that as a stale binding; `--selected` is the rule.
 
 ---
 
@@ -107,7 +107,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
   cursor: pointer;
 }
 .date-field__input:hover  { border-color: var(--border-hover); background: var(--input-background); }
-.date-field__input.is-open  { border-color: var(--secondary-500); color: var(--text-primary); }
+.date-field__input.is-open  { border-color: var(--selected); color: var(--text-primary); }
 .date-field--error .date-field__input { border-color: var(--text-error); color: var(--text-primary); }
 .date-field--error .date-field__label,
 .date-field__helper--error { color: var(--text-error); font: 400 14px/1.5 'Poppins'; }
@@ -166,8 +166,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 |---|---|---|---|
 | `--border` / `--border-hover` / `--border-elevated` | `#DFE1E6` / `#9EA4B3` / `#BFC2CC` | `#383D4C` / `#9EA4B3` / `#454C5E` | Field border / hover / current-day ring |
 | `--input-background` | `#BFC2CC` @16% | `#454C5E` @16% | Field hover fill |
-| `--secondary-500` | `#FFBB38` | `#FFBB38` | Field active border |
-| `--selected` | `#EDA30D` | `#FFBB38` | Selected day fill, focus ring |
+| `--selected` | `#EDA30D` | `#FFBB38` | Field active border, selected day fill, focus ring |
 | `--cards-background` / `--cards-background-hover` | `#FFFFFF` / `#EFF0F2` | `#2D313D` / `#383D4C` | Popover / day hover |
 | `--text-primary` / `--text-secondary` / `--text-disabled` | per colors.md | per colors.md | Day / weekday / outside-month text |
 | `--text-error` | `#DF1642` | `#E95C7B` | Error border, label, helper |
