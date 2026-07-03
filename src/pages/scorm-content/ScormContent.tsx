@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import ContentTable from './components/ContentTable/ContentTable'
-import './YourContent.css'
+import './ScormContent.css'
 
 type Tab = 'lessons' | 'scorm'
 
-function YourContent() {
+function ScormContent() {
   const [activeTab, setActiveTab] = useState<Tab>('lessons')
 
   return (
@@ -36,4 +36,4 @@ function YourContent() {
   )
 }
 
-export default YourContent
+export default ScormContent

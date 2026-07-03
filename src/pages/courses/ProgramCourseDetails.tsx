@@ -20,7 +20,7 @@ import Badge from '../../components/Badge/Badge'
 import Collapse from '../../components/Collapse/Collapse'
 import '../my-team/MyTeam.css'
 import '../workspace/Workspace.css'
-import './CourseDetails.css'
+import './ProgramCourseDetails.css'
 import { getCourseDetail, type CourseLesson } from './mockCourse'
 import jewelsIllustration from '../../assets/programs/jewels.svg'
 import certificateIllustration from '../../assets/programs/certificate.svg'
@@ -62,7 +62,7 @@ function LessonCard({ lesson }: { lesson: CourseLesson }) {
   )
 }
 
-function CourseDetails() {
+function ProgramCourseDetails() {
   const navigate = useNavigate()
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
@@ -259,4 +259,4 @@ function CourseDetails() {
   )
 }
 
-export default CourseDetails
+export default ProgramCourseDetails

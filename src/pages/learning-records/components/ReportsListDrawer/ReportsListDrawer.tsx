@@ -5,7 +5,7 @@ import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
 import CsvIcon from '../../../../components/icons/CsvIcon'
 import { cadenceRecurrence, cadenceTime, type SavedReport } from '../../../../utils/lrSavedFilters'
-import { orgUserByEmail } from '../../../../utils/orgUsers'
+import { orgUserByEmail } from '@/data/orgUsers'
 import './ReportsListDrawer.css'
 
 const MAX_AVATARS = 3

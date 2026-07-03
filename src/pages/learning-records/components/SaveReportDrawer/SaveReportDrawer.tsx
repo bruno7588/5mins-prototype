@@ -12,7 +12,7 @@ import MoreIcon from '../../../../components/icons/MoreIcon'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import { Eye, Trash, Danger } from 'iconsax-react'
 import { FILTER_BY_ID, filterOptions } from '../FilterListbox/FilterListbox'
-import { orgUserByEmail, CURRENT_USER_EMAIL } from '../../../../utils/orgUsers'
+import { orgUserByEmail, CURRENT_USER_EMAIL } from '@/data/orgUsers'
 import {
   REPORT_FREQUENCIES,
   WEEKDAYS,

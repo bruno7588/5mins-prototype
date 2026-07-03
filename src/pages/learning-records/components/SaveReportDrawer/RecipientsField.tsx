@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Sms } from 'iconsax-react'
-import { searchOrgUsers, orgUserByEmail } from '../../../../utils/orgUsers'
+import { searchOrgUsers, orgUserByEmail } from '@/data/orgUsers'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const isValidEmail = (v: string) => EMAIL_RE.test(v.trim())

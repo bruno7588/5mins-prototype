@@ -5,7 +5,7 @@ import type { ContentItem } from './components/ContentList/ContentList'
 import AddContentSidebar from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
 
-function CreateCourse() {
+function ScormCreateCourse() {
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
 
@@ -48,4 +48,4 @@ function CreateCourse() {
   )
 }
 
-export default CreateCourse
+export default ScormCreateCourse

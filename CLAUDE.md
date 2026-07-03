@@ -4,6 +4,22 @@
 
 5Mins.ai is a B2B micro-learning platform for enterprise customers in compliance-heavy industries (hospitality, finance, healthcare). Tech stack: React TypeScript, CSS with design tokens (CSS custom properties).
 
+## Commands
+
+- `npm run dev` — Vite dev server at http://localhost:5173
+- `npm run build` — type-check (`tsc -b`) + production build; run this to verify changes compile
+
+## Project Structure
+
+- `src/pages/<feature>/` — one folder per route/feature; page-local components live in `<feature>/components/`
+- `src/components/` — shared reusable components, one folder per component (`Name/Name.tsx` + `Name.css`). Check here AND `docs/design-system/*.md` before building anything new — never improvise a custom component.
+- `src/data/` — mock data stores
+- `src/styles/` — global `tokens.css`, `reset.css`, `typography.css`
+- `docs/design-system/` — design system documentation (see below)
+- Routes are declared in `src/App.tsx`
+- Import shared code via the `@/` alias (e.g. `@/components/Toast/Toast`), never deep relative paths like `../../../../components/...`
+- **CSS is globally bundled** — class names collide across pages. Prefix page-level classes with the page name (e.g. `.roles-`, `.people-`) and grep for a class name before adding or restyling it.
+
 ## Design System
 
 When building any UI component, feature, or screen, you MUST read the relevant design system documentation before writing code.

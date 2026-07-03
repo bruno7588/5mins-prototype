@@ -3,11 +3,11 @@ import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import ContentTable from './components/ContentTable/ContentTable'
 import type { ContentRow } from './components/ContentTable/ContentTable'
 import LessonEditorModal from '../../components/LessonEditorModal/LessonEditorModal'
-import './YourContent.css'
+import './QuestionsBankContent.css'
 
 type Tab = 'lessons' | 'scorm'
 
-function YourContent() {
+function QuestionsBankContent() {
   const [activeTab, setActiveTab] = useState<Tab>('lessons')
   const [selectedLesson, setSelectedLesson] = useState<ContentRow | null>(null)
   const [isNewLesson, setIsNewLesson] = useState(false)
@@ -90,4 +90,4 @@ function YourContent() {
   )
 }
 
-export default YourContent
+export default QuestionsBankContent

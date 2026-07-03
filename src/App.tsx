@@ -14,10 +14,10 @@ import Roles from './pages/roles/Roles'
 
 import Automations from './pages/automations/Automations'
 
-import QBYourContent from './pages/questions-bank/YourContent'
+import QuestionsBankContent from './pages/questions-bank/QuestionsBankContent'
 
-import ScormYourContent from './pages/scorm-content/YourContent'
-import ScormCreateCourse from './pages/scorm-content/CreateCourse'
+import ScormContent from './pages/scorm-content/ScormContent'
+import ScormCreateCourse from './pages/scorm-content/ScormCreateCourse'
 
 import Onboarding from './pages/onboarding/Onboarding'
 
@@ -27,7 +27,7 @@ import ProgramDetails from './pages/programs/ProgramDetails'
 import ProgramsAdmin from './pages/programs/ProgramsAdmin'
 import ProgramAdminDetails from './pages/programs/ProgramAdminDetails'
 import ProgramBuilder from './pages/programs/ProgramBuilder'
-import ProgramCourseDetails from './pages/courses/CourseDetails'
+import ProgramCourseDetails from './pages/courses/ProgramCourseDetails'
 import Events from './pages/events/Events'
 import LearningRecords from './pages/learning-records/LearningRecords'
 
@@ -104,8 +104,8 @@ function App() {
                 <Route path="/user-fields" element={<UserFields />} />
                 <Route path="/roles" element={<Roles />} />
                 <Route path="/automations" element={<Automations />} />
-                <Route path="/questions-bank" element={<QBYourContent />} />
-                <Route path="/scorm-content" element={<ScormYourContent />} />
+                <Route path="/questions-bank" element={<QuestionsBankContent />} />
+                <Route path="/scorm-content" element={<ScormContent />} />
               </Routes>
             </div>
           </div>
