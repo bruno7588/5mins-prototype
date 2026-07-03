@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Calendar, Sort, UserTick } from 'iconsax-react'
+import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Checkbox from '../../../../components/Checkbox/Checkbox'
 import Search from '../../../../components/Search/Search'
@@ -110,6 +111,7 @@ function DrawerPagination({ page, total, onPage }: { page: number; total: number
 
 function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
   const [closing, setClosing] = useState(false)
+  const panelRef = useRef<HTMLElement>(null)
   const [mode, setMode] = useState<Mode>('all')
   const [startMode, setStartMode] = useState<'immediately' | 'on-date'>('immediately')
   const [startDate, setStartDate] = useState(todayISO())
@@ -132,6 +134,8 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
       onClose()
     }, 300)
   }
+
+  useOverlayA11y(panelRef, open && !closing, { onEscape: handleClose })
 
   const filteredPeople = useMemo(() => {
     const q = peopleQuery.trim().toLowerCase()
@@ -201,10 +205,13 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
       onMouseDown={handleClose}
     >
       <aside
+        ref={panelRef}
         className={`epd-panel${closing ? ' epd-panel--closing' : ''}`}
         onMouseDown={(e) => e.stopPropagation()}
         role="dialog"
+        aria-modal="true"
         aria-label="Enrol people"
+        tabIndex={-1}
       >
         {/* Header */}
         <header className="epd-header">
@@ -245,13 +252,14 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
           {/* ── People ── */}
           {mode === 'people' && (
             <div className="epd-section">
-              <div className="epd-filters">
+              {/* Filters — not built yet; shown disabled instead of as a decoy. */}
+              <div className="epd-filters ui-disabled" aria-disabled="true">
                 <span className="epd-filters__count">
                   <Sort size={20} color="var(--text-primary)" variant="Linear" />
                   <span className="epd-filters__label">Filters</span>
                   <span className="epd-filters__badge">0</span>
                 </span>
-                <button type="button" className="epd-filters__add">
+                <button type="button" className="epd-filters__add" disabled>
                   Add Filter
                   <Add size={20} color="var(--button-background)" variant="Linear" />
                 </button>
@@ -325,7 +333,7 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
                 <span className="epd-cohort-alert__text">
                   Create a cohort with members from diverse teams for content delivery
                 </span>
-                <button type="button" className="epd-cohort-alert__link">
+                <button type="button" className="epd-cohort-alert__link ui-disabled" disabled>
                   New Cohort
                 </button>
               </div>
@@ -370,7 +378,8 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
                         <div className="epd-cell epd-cell--view">
                           <button
                             type="button"
-                            className="epd-view-btn"
+                            className="epd-view-btn ui-disabled"
+                            disabled
                             onClick={(e) => e.stopPropagation()}
                           >
                             View
@@ -398,7 +407,7 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
                 onClick={() => setStartMode('immediately')}
               >
                 <Radio checked={startMode === 'immediately'} readOnly tabIndex={-1} />
-                <span>immediately</span>
+                <span>Immediately</span>
               </button>
 
               <div className={`epd-date__opt${startMode === 'on-date' ? ' epd-date__opt--selected' : ''}`}>

@@ -269,7 +269,7 @@ export function toWorkspaceProgram(draft: ProgramDraft): WorkspaceProgram {
     thumbnailGradient: draft.thumbnailGradient,
     image: draft.image,
     courseCount: courseSteps.length,
-    durationLabel: `${totalMinutes} min`,
+    durationLabel: `${totalMinutes} ${totalMinutes === 1 ? 'min' : 'mins'}`,
     learnerCount: 0,
     progress: 0,
     outline,

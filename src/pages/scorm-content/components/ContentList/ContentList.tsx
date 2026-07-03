@@ -39,7 +39,7 @@ const defaultItems: ContentItem[] = [
 
 function DragHandle() {
   return (
-    <div className="content-card-drag" aria-label="Drag to reorder">
+    <div className="sc-content-card-drag" aria-label="Drag to reorder">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <circle cx="7" cy="5" r="1.5" fill="var(--neutral-300)" />
         <circle cx="13" cy="5" r="1.5" fill="var(--neutral-300)" />
@@ -75,7 +75,7 @@ function ContentCard({
 
   return (
     <div
-      className={`content-item-container${isDragging ? ' content-item-container--dragging' : ''}${dropIndex === index ? ' content-item-container--drop-above' : ''}${dropIndex === index + 1 && index === (dragIndex !== null ? dragIndex : -1) - 1 ? '' : dropIndex === index + 1 ? ' content-item-container--drop-below' : ''}`}
+      className={`sc-content-item-container${isDragging ? ' sc-content-item-container--dragging' : ''}${dropIndex === index ? ' sc-content-item-container--drop-above' : ''}${dropIndex === index + 1 && index === (dragIndex !== null ? dragIndex : -1) - 1 ? '' : dropIndex === index + 1 ? ' sc-content-item-container--drop-below' : ''}`}
       draggable
       onDragStart={() => onDragStart(index)}
       onDragOver={(e) => onDragOver(e, index)}
@@ -83,15 +83,15 @@ function ContentCard({
       onDrop={onDrop}
     >
       <DragHandle />
-      <div className="content-card">
-        <div className={`content-card-thumb ${isAssessment ? 'content-card-thumb--assessment' : ''}`}>
+      <div className="sc-content-card">
+        <div className={`sc-content-card-thumb ${isAssessment ? 'sc-content-card-thumb--assessment' : ''}`}>
           {isAssessment ? (
-            <span className="content-card-thumb-emoji">💡</span>
+            <span className="sc-content-card-thumb-emoji">💡</span>
           ) : isScorm && item.thumbColor ? (
-            <div className="content-card-thumb-photo" style={{ background: item.thumbColor }} />
+            <div className="sc-content-card-thumb-photo" style={{ background: item.thumbColor }} />
           ) : (
-            <div className="content-card-thumb-photo">
-              <div className="content-card-thumb-tag">
+            <div className="sc-content-card-thumb-photo">
+              <div className="sc-content-card-thumb-tag">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <path d="M7 1.75C4.1 1.75 1.75 4.1 1.75 7C1.75 9.9 4.1 12.25 7 12.25C9.9 12.25 12.25 9.9 12.25 7C12.25 4.1 9.9 1.75 7 1.75ZM9.1 7.35L6.3 9.1C6.05 9.25 5.75 9.075 5.75 8.75V5.25C5.75 4.925 6.05 4.75 6.3 4.9L9.1 6.65C9.35 6.8 9.35 7.2 9.1 7.35Z" fill="var(--neutral-800)" />
                 </svg>
@@ -99,12 +99,12 @@ function ContentCard({
             </div>
           )}
         </div>
-        <div className="content-card-info">
-          <div className="content-card-title-row">
-            <h4 className="content-card-title">{item.title}</h4>
-            <span className="content-card-badge">{item.type}</span>
+        <div className="sc-content-card-info">
+          <div className="sc-content-card-title-row">
+            <h4 className="sc-content-card-title">{item.title}</h4>
+            <span className="sc-content-card-badge">{item.type}</span>
           </div>
-          <div className="content-card-meta">
+          <div className="sc-content-card-meta">
             <span>{item.metadata}</span>
             {item.showEditIcon && (
               <Edit2 size={16} color="var(--neutral-500)" variant="Linear" />
@@ -112,7 +112,7 @@ function ContentCard({
           </div>
         </div>
       </div>
-      <button className="content-card-trash" aria-label="Delete" onClick={onDelete}>
+      <button className="sc-content-card-trash" aria-label="Delete" onClick={onDelete}>
         <Trash size={20} color="currentColor" variant="Linear" />
       </button>
     </div>
@@ -192,7 +192,7 @@ function ContentList({ extraItems = [], onDeleteExtra }: ContentListProps) {
 
   return (
     <section
-      className="content-list"
+      className="sc-content-list"
       onDragOver={(e) => e.preventDefault()}
     >
       {orderedItems.map((item, index) => (

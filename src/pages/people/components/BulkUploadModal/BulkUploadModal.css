@@ -756,7 +756,7 @@
   background: var(--neutral-900);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.4;
   border-radius: var(--radius-sm);
@@ -854,13 +854,13 @@
 
 /* Detail text */
 .bulk-preview-detail-error {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--danger-500);
   font-weight: 500;
 }
 
 .bulk-preview-detail-change {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-tertiary);
   font-style: italic;
 }
@@ -929,7 +929,7 @@
   background: var(--neutral-900);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.4;
   border-radius: var(--radius-sm);

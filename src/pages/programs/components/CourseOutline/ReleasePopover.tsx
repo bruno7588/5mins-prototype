@@ -139,7 +139,7 @@ function ReleasePopover({ value, onChange, onClose, closing = false, anchorRef }
         </button>
 
         {value.kind === 'on-date' && (
-          <div className="enrollment-popover__date-row">
+          <div className="co-date-row">
             <button
               type="button"
               className={`co-date-trigger${calOpen ? ' co-date-trigger--active' : ''}`}

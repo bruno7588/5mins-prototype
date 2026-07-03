@@ -1,5 +1,5 @@
 /* Overlay */
-.scorm-drawer-overlay {
+.sc-scorm-drawer-overlay {
   position: fixed;
   inset: 0;
   z-index: 200;
@@ -12,7 +12,7 @@
   to { opacity: 1; }
 }
 
-.scorm-drawer-overlay--closing {
+.sc-scorm-drawer-overlay--closing {
   animation: scorm-overlay-fade-out 300ms ease forwards;
 }
 
@@ -22,7 +22,7 @@
 }
 
 /* Drawer panel */
-.scorm-drawer {
+.sc-scorm-drawer {
   position: absolute;
   top: 0;
   right: 0;
@@ -36,25 +36,25 @@
   flex-direction: column;
   gap: var(--space-l);
   overflow-y: auto;
-  animation: scorm-drawer-slide 300ms ease;
+  animation: sc-scorm-drawer-slide 300ms ease;
 }
 
-@keyframes scorm-drawer-slide {
+@keyframes sc-scorm-drawer-slide {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
 }
 
-.scorm-drawer--closing {
-  animation: scorm-drawer-slide-out 300ms ease forwards;
+.sc-scorm-drawer--closing {
+  animation: sc-scorm-drawer-slide-out 300ms ease forwards;
 }
 
-@keyframes scorm-drawer-slide-out {
+@keyframes sc-scorm-drawer-slide-out {
   from { transform: translateX(0); }
   to { transform: translateX(100%); }
 }
 
 /* Close button */
-.scorm-drawer-close {
+.sc-scorm-drawer-close {
   position: absolute;
   top: var(--space-m);
   right: var(--space-m);
@@ -65,44 +65,44 @@
   border-radius: var(--radius-xs);
 }
 
-.scorm-drawer-close:hover {
+.sc-scorm-drawer-close:hover {
   background: var(--neutral-50);
 }
 
 /* Header */
-.scorm-drawer-header {
+.sc-scorm-drawer-header {
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
   padding-right: 40px;
 }
 
-.scorm-drawer-title {
+.sc-scorm-drawer-title {
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
-.scorm-drawer-subtitle {
+.sc-scorm-drawer-subtitle {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
 }
 
-.scorm-drawer-upload-link {
+.sc-scorm-drawer-upload-link {
   color: var(--primary-600);
   font-weight: 500;
   text-decoration: none;
 }
 
-.scorm-drawer-upload-link:hover {
+.sc-scorm-drawer-upload-link:hover {
   text-decoration: underline;
 }
 
 /* Search */
-.scorm-drawer-search {
+.sc-scorm-drawer-search {
   display: flex;
   align-items: center;
   gap: var(--space-s);
@@ -112,7 +112,7 @@
   background-color: rgba(191, 194, 204, 0.16);
 }
 
-.scorm-drawer-search input {
+.sc-scorm-drawer-search input {
   border: none;
   outline: none;
   background: transparent;
@@ -123,17 +123,17 @@
   width: 100%;
 }
 
-.scorm-drawer-search input::placeholder {
+.sc-scorm-drawer-search input::placeholder {
   color: var(--text-tertiary);
 }
 
 /* Table */
-.scorm-drawer-table {
+.sc-scorm-drawer-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.scorm-drawer-table th {
+.sc-scorm-drawer-table th {
   text-align: left;
   font-size: 14px;
   font-weight: 400;
@@ -143,7 +143,7 @@
   white-space: nowrap;
 }
 
-.scorm-drawer-table td {
+.sc-scorm-drawer-table td {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
@@ -152,41 +152,41 @@
   vertical-align: middle;
 }
 
-.scorm-drawer-table tbody tr {
+.sc-scorm-drawer-table tbody tr {
   transition: background 150ms ease;
 }
 
-.scorm-drawer-table tbody tr:hover {
+.sc-scorm-drawer-table tbody tr:hover {
   background: var(--neutral-50);
 }
 
 /* File name cell */
-.scorm-drawer-file {
+.sc-scorm-drawer-file {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
 }
 
-.scorm-drawer-thumb {
+.sc-scorm-drawer-thumb {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-s);
   flex-shrink: 0;
 }
 
-.scorm-drawer-filename {
+.sc-scorm-drawer-filename {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
 }
 
 /* Type */
-.scorm-drawer-type {
+.sc-scorm-drawer-type {
   color: var(--text-secondary);
 }
 
 /* Action buttons */
-.scorm-drawer-btn {
+.sc-scorm-drawer-btn {
   padding: var(--space-xs) var(--space-sm);
   font-size: 14px;
   font-weight: 700;
@@ -199,24 +199,24 @@
 }
 
 /* Filled "Add" */
-.scorm-drawer-btn--add {
+.sc-scorm-drawer-btn--add {
   color: var(--neutral-0);
   background: var(--primary-600);
   border: 1px solid var(--primary-600);
 }
 
-.scorm-drawer-btn--add:hover {
+.sc-scorm-drawer-btn--add:hover {
   background: var(--primary-700);
   border-color: var(--primary-700);
 }
 
 /* Outlined "Remove" */
-.scorm-drawer-btn--remove {
+.sc-scorm-drawer-btn--remove {
   color: var(--primary-600);
   background: none;
   border: 1px solid var(--primary-600);
 }
 
-.scorm-drawer-btn--remove:hover {
+.sc-scorm-drawer-btn--remove:hover {
   background: rgba(0, 175, 196, 0.08);
 }

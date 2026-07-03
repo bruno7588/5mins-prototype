@@ -565,7 +565,7 @@
 }
 
 .mt-cp__tablescroll--has-scroll .mt-cp__table-row--selected .mt-cp__table-cell--name {
-  background: #FEF1D6;
+  background: var(--selected-fill);
 }
 
 .mt-cp__tablescroll--has-scroll .mt-cp__table-row--selected:hover .mt-cp__table-cell--name {
@@ -646,8 +646,8 @@
 }
 
 .mt-cp__table-row--selected {
-  background: #FEF1D6;
-  border-color: #FEF1D6;
+  background: var(--selected-fill);
+  border-color: var(--selected-fill);
 }
 
 .mt-cp__table-row--selected:hover {
@@ -662,22 +662,25 @@
   gap: 4px;
 }
 
-.mt-cp__th-btn:hover,
-.mt-cp__th-btn:focus-visible {
+.mt-cp__th-btn:hover {
   background: transparent;
-  outline: none;
 }
 
-/* Kill any background on the header and all descendants in every state */
+/* Kill any background on the header and all descendants in every state,
+   but keep keyboard focus visible (see :focus-visible rule below). */
 .mt-cp__table-header,
 .mt-cp__table-header *,
 .mt-cp__table-header *:hover,
 .mt-cp__table-header *:focus,
-.mt-cp__table-header *:focus-visible,
 .mt-cp__table-header *:active {
   background: transparent !important;
-  outline: none !important;
   box-shadow: none !important;
+}
+
+.mt-cp__table-header :focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 .mt-cp__th-btn > .tooltip-wrapper {
@@ -740,7 +743,7 @@
 }
 .mt-reminder-tip__sub {
   color: var(--neutral-300);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .mt-cp__table-cell--muted {
@@ -983,7 +986,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
   flex-shrink: 0;

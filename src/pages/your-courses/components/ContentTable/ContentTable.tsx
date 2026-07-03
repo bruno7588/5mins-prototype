@@ -18,7 +18,6 @@ import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import MoreIcon from '../../../../components/icons/MoreIcon'
 import './ContentTable.css'
-import '../../../people/People.css'
 
 export interface ContentRow {
   id: number
@@ -220,7 +219,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
       {/* Filter bar */}
       <div className="content-table-filters">
         <span className="content-table-filter-label">Show content from</span>
-        <button className="content-table-filter-dropdown">
+        <button className="content-table-filter-dropdown ui-disabled" disabled>
           All
           <ArrowDown2 size={12} color="var(--text-tertiary)" />
         </button>
@@ -324,7 +323,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                     </div>
                   )}
                   {!isScorm && !aiQuizReadyIds.includes(row.id) && (
-                    <button className="content-table-action-btn" aria-label="Share">
+                    <button className="content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
                       <ExportSquare size={20} color="var(--neutral-400)" variant="Linear" />
                     </button>
                   )}
@@ -355,7 +354,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                             Edit lesson
                           </button>
                         )}
-                        <button className="content-table-menu-item" onClick={() => setMenuOpenId(null)}>
+                        <button className="content-table-menu-item ui-disabled" disabled>
                           <EyeSlash size={20} color="var(--text-secondary)" variant="Linear" />
                           Hide
                         </button>

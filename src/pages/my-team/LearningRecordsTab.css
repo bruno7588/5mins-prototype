@@ -524,7 +524,7 @@
 
 /* ── Selected row ── */
 .lr__row--selected {
-  background: #FEF1D6;
+  background: var(--selected-fill);
 }
 
 .lr__row--selected:hover {
@@ -532,7 +532,7 @@
 }
 
 .lr__row--selected .lr__cell--ext-email {
-  background: #FEF1D6;
+  background: var(--selected-fill);
 }
 
 .lr__row--selected:hover .lr__cell--ext-email {
@@ -594,7 +594,7 @@
   gap: var(--space-xs);
   padding: 6px var(--space-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   border-radius: var(--radius-s);
   cursor: pointer;

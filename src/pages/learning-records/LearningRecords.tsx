@@ -571,13 +571,15 @@ function LearningRecords() {
                     </div>
                     <div className="lrp-cell lrp-cell--ext-cert">
                       {row.hasCertificate ? (
-                        <button type="button" className="lrp-cert-btn">Download</button>
+                        <button type="button" className="lrp-cert-btn ui-disabled" disabled>Download</button>
                       ) : (
                         <span className="lrp-dash">–</span>
                       )}
                     </div>
                     <div className="lrp-cell lrp-cell--ext-more">
-                      <MoreIcon size={20} color="var(--text-tertiary)" />
+                      <span className="ui-disabled">
+                        <MoreIcon size={20} color="var(--text-tertiary)" />
+                      </span>
                     </div>
                   </div>
                 ))}

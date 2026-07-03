@@ -177,7 +177,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 16, 20, 0.5);
+  background: var(--scrim);
   border-radius: 30px;
   padding: 0;
 }

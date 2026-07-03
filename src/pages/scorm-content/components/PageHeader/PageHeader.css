@@ -1,29 +1,29 @@
-.page-header {
+.sc-page-header {
   padding: 0 var(--space-xl);
   background: var(--page-background);
 }
 
-.page-header-top {
+.sc-page-header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--space-m) 0;
 }
 
-.page-header-title {
+.sc-page-header-title {
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
-.page-header-actions {
+.sc-page-header-actions {
   display: flex;
   align-items: center;
   gap: var(--space-m);
 }
 
-.page-header-btn-outline {
+.sc-page-header-btn-outline {
   padding: var(--space-s) var(--space-ml);
   font-size: 14px;
   font-weight: 700;
@@ -36,11 +36,11 @@
   transition: background 150ms ease;
 }
 
-.page-header-btn-outline:hover {
+.sc-page-header-btn-outline:hover {
   background: var(--neutral-50);
 }
 
-.page-header-btn-filled {
+.sc-page-header-btn-filled {
   padding: var(--space-s) var(--space-ml);
   font-size: 14px;
   font-weight: 700;
@@ -52,26 +52,26 @@
   transition: background 150ms ease;
 }
 
-.page-header-btn-filled:hover {
+.sc-page-header-btn-filled:hover {
   background: var(--primary-700);
 }
 
 /* Disabled state for both buttons */
-.page-header-btn-disabled.page-header-btn-outline {
+.sc-page-header-btn-disabled.sc-page-header-btn-outline {
   border-color: var(--text-disabled);
   color: var(--text-disabled);
   cursor: default;
   pointer-events: none;
 }
 
-.page-header-btn-disabled.page-header-btn-filled {
+.sc-page-header-btn-disabled.sc-page-header-btn-filled {
   background: var(--button-background-disabled);
   color: var(--text-button-disabled);
   cursor: default;
   pointer-events: none;
 }
 
-.page-header-close {
+.sc-page-header-close {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,17 +83,17 @@
   transition: background 150ms ease;
 }
 
-.page-header-close:hover {
+.sc-page-header-close:hover {
   background: var(--neutral-200);
 }
 
 /* Tabs */
-.page-header-tabs {
+.sc-page-header-tabs {
   display: flex;
   gap: var(--space-l);
 }
 
-.page-header-tab {
+.sc-page-header-tab {
   position: relative;
   font-size: 14px;
   font-weight: 500;
@@ -105,16 +105,16 @@
   transition: color 150ms ease;
 }
 
-.page-header-tab:hover {
+.sc-page-header-tab:hover {
   color: var(--text-primary);
 }
 
-.page-header-tab--active {
+.sc-page-header-tab--active {
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.page-header-tab--active::after {
+.sc-page-header-tab--active::after {
   content: '';
   position: absolute;
   bottom: 0;

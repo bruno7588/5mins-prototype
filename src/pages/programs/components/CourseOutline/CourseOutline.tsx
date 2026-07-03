@@ -34,7 +34,7 @@ const enrolDisplay = (r: ReleaseRule): { title: string; desc?: string } => {
     return { title: 'After delay', desc: `${r.days} ${unit} after previous course` }
   }
   if (r.kind === 'on-date') return { title: 'On specific date', desc: fmtDate(r.date) }
-  return { title: 'Program start' }
+  return { title: 'On program start' }
 }
 
 const dueDisplay = (c: DueDateConfig): { title: string; desc?: string } => {
@@ -196,7 +196,7 @@ function CourseOutline({ steps, onReorder, onRemove, onPatch, onAddCourse }: Pro
       <div className="co-actions">
         <button type="button" className="co-add" onClick={onAddCourse}>
           <Add size={20} color="var(--text-primary)" variant="Linear" />
-          Add Course
+          Add Courses
         </button>
       </div>
     </div>

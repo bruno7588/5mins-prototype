@@ -318,7 +318,7 @@
 
 .hris-panel-option--selected {
   border-color: var(--secondary-600);
-  background: rgba(255, 187, 56, 0.16);
+  background: var(--selected-tint);
 }
 
 .hris-panel-option--selected:hover {
@@ -345,7 +345,7 @@
 }
 
 .hris-panel-option__radio--selected {
-  border-color: #EDA30D;
+  border-color: var(--control-selected);
 }
 
 .hris-panel-option__radio--selected::after {
@@ -353,11 +353,11 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #EDA30D;
+  background: var(--control-selected);
 }
 
 .hris-panel-options__empty {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-tertiary);
   font-style: italic;
   padding: var(--space-s) 0;
@@ -385,7 +385,7 @@
   align-items: center;
   padding: 6px 12px;
   border-radius: var(--radius-full);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -528,6 +528,6 @@
 
 .hris-preview-screen__role-option--selected {
   border-color: var(--secondary-600);
-  background: rgba(255, 187, 56, 0.16);
+  background: var(--selected-tint);
   font-weight: 500;
 }

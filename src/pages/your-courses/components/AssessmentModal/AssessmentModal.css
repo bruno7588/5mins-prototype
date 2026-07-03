@@ -380,7 +380,7 @@
   justify-content: center;
   padding: 3px;
   border-radius: 40px;
-  background: rgba(15, 16, 20, 0.5);
+  background: var(--scrim);
   cursor: pointer;
   z-index: 2;
   transition: background 150ms ease;
@@ -537,7 +537,7 @@
   /* Above the ContentDrawer (1001) + icon strip (1002) so it works when the
      assessment form is hosted inside the side drawer. */
   z-index: 1100;
-  background: rgba(15, 16, 20, 0.5);
+  background: var(--scrim);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -637,7 +637,7 @@
 }
 
 .media-modal-dropzone-formats {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--text-tertiary);
   text-align: center;
@@ -754,7 +754,7 @@
 }
 
 .media-modal-staged-change {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--primary-600);
   background: none;

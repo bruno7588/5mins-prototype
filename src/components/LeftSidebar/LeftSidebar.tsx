@@ -39,7 +39,7 @@ function LeftSidebar() {
     <aside className="left-sidebar">
       <nav className="left-sidebar-nav">
         {/* Home */}
-        <button className="sidebar-item">
+        <button className="sidebar-item ui-disabled" disabled>
           <span className="sidebar-item-icon">
             <Home size={iconSize} color={iconColor} variant="Linear" />
           </span>
@@ -76,8 +76,8 @@ function LeftSidebar() {
             >
               People
             </button>
-            <button className="sidebar-sub-item">Teams</button>
-            <button className="sidebar-sub-item">Cohorts</button>
+            <button className="sidebar-sub-item ui-disabled" disabled>Teams</button>
+            <button className="sidebar-sub-item ui-disabled" disabled>Cohorts</button>
             <button
               className={`sidebar-sub-item${activePage === '/user-fields' ? ' sidebar-sub-item--active' : ''}`}
               onClick={() => navigate('/user-fields')}
@@ -123,7 +123,7 @@ function LeftSidebar() {
             >
               Programs
             </button>
-            <button className="sidebar-sub-item">5Mins Courses</button>
+            <button className="sidebar-sub-item ui-disabled" disabled>5Mins Courses</button>
             <button
               className={`sidebar-sub-item${activePage === '/content-library' ? ' sidebar-sub-item--active' : ''}`}
               onClick={() => navigate('/content-library')}
@@ -155,7 +155,7 @@ function LeftSidebar() {
         </button>
 
         {/* Reports */}
-        <button className="sidebar-item">
+        <button className="sidebar-item ui-disabled" disabled>
           <span className="sidebar-item-icon">
             <Diagram size={iconSize} color={iconColor} variant="Linear" />
           </span>
@@ -163,7 +163,7 @@ function LeftSidebar() {
         </button>
 
         {/* Skills */}
-        <button className="sidebar-item">
+        <button className="sidebar-item ui-disabled" disabled>
           <span className="sidebar-item-icon">
             <Award size={iconSize} color={iconColor} variant="Linear" />
           </span>
@@ -186,7 +186,7 @@ function LeftSidebar() {
         </button>
 
         {/* Events */}
-        <button className="sidebar-item">
+        <button className="sidebar-item ui-disabled" disabled>
           <span className="sidebar-item-icon">
             <Calendar size={iconSize} color={iconColor} variant="Linear" />
           </span>
@@ -194,7 +194,7 @@ function LeftSidebar() {
         </button>
 
         {/* Account & Settings */}
-        <button className="sidebar-item">
+        <button className="sidebar-item ui-disabled" disabled>
           <span className="sidebar-item-icon">
             <Setting2 size={iconSize} color={iconColor} variant="Linear" />
           </span>
@@ -203,13 +203,13 @@ function LeftSidebar() {
       </nav>
 
       <div className="left-sidebar-footer">
-        <button className="sidebar-item">
+        <button className="sidebar-item ui-disabled" disabled>
           <span className="sidebar-item-icon">
             <Teacher size={iconSize} color={iconColor} variant="Linear" />
           </span>
           <span className="sidebar-item-label">5Mins Academy</span>
         </button>
-        <button className="sidebar-item">
+        <button className="sidebar-item ui-disabled" disabled>
           <span className="sidebar-item-icon">
             <MessageQuestion size={iconSize} color={iconColor} variant="Linear" />
           </span>

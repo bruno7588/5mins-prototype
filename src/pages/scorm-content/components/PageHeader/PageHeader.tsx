@@ -10,24 +10,24 @@ const tabs = [
 
 function PageHeader() {
   return (
-    <header className="page-header">
-      <div className="page-header-top">
-        <h2 className="page-header-title">Create course</h2>
-        <div className="page-header-actions">
-          <button className="page-header-btn-outline page-header-btn-disabled">
+    <header className="sc-page-header">
+      <div className="sc-page-header-top">
+        <h2 className="sc-page-header-title">Create course</h2>
+        <div className="sc-page-header-actions">
+          <button className="sc-page-header-btn-outline sc-page-header-btn-disabled">
             Save Draft
           </button>
-          <button className="page-header-btn-filled page-header-btn-disabled">
+          <button className="sc-page-header-btn-filled sc-page-header-btn-disabled">
             Create Course
           </button>
-          <CloseButton className="page-header-close" />
+          <CloseButton className="sc-page-header-close" />
         </div>
       </div>
-      <nav className="page-header-tabs">
+      <nav className="sc-page-header-tabs">
         {tabs.map((tab) => (
           <button
             key={tab.label}
-            className={`page-header-tab ${tab.active ? 'page-header-tab--active' : ''}`}
+            className={`sc-page-header-tab ${tab.active ? 'sc-page-header-tab--active' : ''}`}
           >
             {tab.label}
           </button>

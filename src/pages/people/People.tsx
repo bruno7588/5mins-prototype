@@ -391,16 +391,18 @@ function People() {
         <div className="people-page">
       {/* Quicklinks */}
       <div className="people-quicklinks">
-        {quicklinks.map((q) => (
+        {quicklinks.map((q) => {
+          const onClick =
+            q.title === 'Invite people' ? () => setShowInvite(true)
+            : q.title === 'Bulk invite / update people by CSV' ? () => setShowBulkUpload(true)
+            : undefined
+          return (
           <button
             key={q.title}
-            className="people-quicklink"
+            className={`people-quicklink${onClick ? '' : ' ui-disabled'}`}
             style={{ '--ql-color': q.color } as React.CSSProperties}
-            onClick={
-              q.title === 'Invite people' ? () => setShowInvite(true)
-              : q.title === 'Bulk invite / update people by CSV' ? () => setShowBulkUpload(true)
-              : undefined
-            }
+            onClick={onClick}
+            disabled={!onClick}
           >
             <div className="people-quicklink-icon">{q.icon}</div>
             <div className="people-quicklink-info">
@@ -408,7 +410,8 @@ function People() {
               <p className="people-quicklink-desc">{q.description}</p>
             </div>
           </button>
-        ))}
+          )
+        })}
       </div>
 
       {/* Tabs */}
@@ -502,7 +505,7 @@ function People() {
               )}
             </div>
           )}
-          <button className="people-download-btn">
+          <button className="people-download-btn ui-disabled" disabled>
             Download List
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M10 2.5V12.5M10 12.5L6.25 8.75M10 12.5L13.75 8.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -910,7 +913,7 @@ function People() {
             </div>
             <div className="confirm-modal-actions">
               <button className="confirm-modal-btn confirm-modal-btn--outlined-neutral" onClick={closeModal}>Cancel</button>
-              <button className="confirm-modal-btn confirm-modal-btn--primary" onClick={() => handleDeactivateBulk(modal.persons)}>Deactivate {modal.persons.length} {modal.persons.length === 1 ? 'user' : 'users'}</button>
+              <button className="confirm-modal-btn confirm-modal-btn--primary" onClick={() => handleDeactivateBulk(modal.persons)}>Deactivate {modal.persons.length} {modal.persons.length === 1 ? 'User' : 'Users'}</button>
             </div>
           </>
         )}

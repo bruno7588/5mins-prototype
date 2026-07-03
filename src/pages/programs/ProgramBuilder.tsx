@@ -104,7 +104,7 @@ function ProgramBuilder() {
           activeTab === 'Courses' ? (
             <button type="button" className="pb-add-course" onClick={() => setPickerOpen(true)}>
               <Add size={20} color="currentColor" variant="Linear" />
-              Add Course
+              Add Courses
             </button>
           ) : undefined
         }
@@ -116,7 +116,7 @@ function ProgramBuilder() {
         onClose={() => navigate('/programs')}
       />
 
-      <div className={`app-content-area${pickerOpen ? ' app-content-area--with-picker' : ''}`}>
+      <div className={`app-content-area cpd-content-area${pickerOpen ? ' cpd-content-area--with-picker' : ''}`}>
         <main className="main-content">
           {/* ── Details ── */}
           {activeTab === 'Details' && (
@@ -213,9 +213,9 @@ function ProgramBuilder() {
                     <p className="pb-setting-name">Certificate</p>
                     <p className="pb-setting-desc">
                       Add a certificate for completion.{' '}
-                      <a className="pb-setting-link" href="#" onClick={(e) => e.preventDefault()}>
+                      <span className="pb-setting-link ui-disabled" aria-disabled="true">
                         Read
-                      </a>{' '}
+                      </span>{' '}
                       how certification works.
                     </p>
                   </div>

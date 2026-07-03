@@ -373,7 +373,7 @@
 }
 
 .invite-modal-listbox-item--selected {
-  background: rgba(255, 187, 56, 0.16);
+  background: var(--selected-tint);
   font-weight: 500;
 }
 

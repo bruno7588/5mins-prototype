@@ -61,7 +61,7 @@ export function ScormDrawerContent({ onClose, addedIds, onAdd, onRemove }: Conte
         <h3 className="scorm-drawer-title">Add SCORM files</h3>
         <p className="scorm-drawer-subtitle">
           Add from the list of SCORM files you've already published.{' '}
-          <a className="scorm-drawer-upload-link" href="#">Upload New SCORM</a>
+          <span className="scorm-drawer-upload-link ui-disabled" aria-disabled="true">Upload New SCORM</span>
         </p>
       </div>
 

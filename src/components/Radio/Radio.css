@@ -34,7 +34,7 @@
 }
 
 .radio--selected .radio__ring {
-  border-color: #EDA30D;
+  border-color: var(--control-selected);
 }
 
 .radio--selected .radio__ring::after {
@@ -42,7 +42,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #EDA30D;
+  background: var(--control-selected);
 }
 
 .radio--disabled {
@@ -68,7 +68,7 @@
 }
 
 .radio__input:focus-visible + .radio__ring {
-  outline: 2px solid #EDA30D;
+  outline: 2px solid var(--control-selected);
   outline-offset: 2px;
 }
 

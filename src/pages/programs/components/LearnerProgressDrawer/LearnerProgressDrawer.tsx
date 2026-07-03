@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { ArrowDown2, InfoCircle } from 'iconsax-react'
+import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import type { CourseStep } from '../../programStore'
 import './LearnerProgressDrawer.css'
@@ -27,19 +28,30 @@ function statFor(learnerId: string, course: CourseStep, index: number) {
 
 function LearnerProgressDrawer({ learner, courses, onClose }: Props) {
   const [closing, setClosing] = useState(false)
+  const panelRef = useRef<HTMLElement>(null)
 
   const handleClose = () => {
     setClosing(true)
     setTimeout(onClose, 300)
   }
 
+  useOverlayA11y(panelRef, !closing, { onEscape: handleClose })
+
   return (
     <div className={`lpd-overlay${closing ? ' lpd-overlay--closing' : ''}`} onMouseDown={handleClose}>
-      <aside className={`lpd-panel${closing ? ' lpd-panel--closing' : ''}`} onMouseDown={(e) => e.stopPropagation()}>
+      <aside
+        ref={panelRef}
+        className={`lpd-panel${closing ? ' lpd-panel--closing' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lpd-name"
+        tabIndex={-1}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <header className="lpd-header">
           <img className="lpd-avatar" src={learner.avatar} alt="" />
           <div className="lpd-headline">
-            <p className="lpd-name">{learner.name}</p>
+            <p className="lpd-name" id="lpd-name">{learner.name}</p>
             <p className="lpd-role">{learner.role}</p>
           </div>
           <CloseButton onClick={handleClose} />

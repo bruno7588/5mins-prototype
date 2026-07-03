@@ -39,11 +39,9 @@ function TopNav() {
       </div>
       <div className="topnav-right">
         <button className="topnav-btn-outline" onClick={goToApp}>Exit Admin</button>
-        <Tooltip text="Dark mode" position="Bottom" alignment="Center" icon={false}>
-          <button className="topnav-icon-btn" aria-label="Dark mode">
-            <Moon size={24} color="var(--neutral-500)" variant="Linear" />
-          </button>
-        </Tooltip>
+        <button className="topnav-icon-btn ui-disabled" aria-label="Dark mode (coming soon)" disabled>
+          <Moon size={24} color="var(--neutral-500)" variant="Linear" />
+        </button>
         <Tooltip text="Log out" position="Bottom" alignment="End" icon={false}>
           <button className="topnav-icon-btn" aria-label="Log out" onClick={logOut}>
             <Logout size={24} color="var(--neutral-500)" variant="Linear" />

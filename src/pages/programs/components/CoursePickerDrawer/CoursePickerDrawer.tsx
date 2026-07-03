@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Search from '../../../../components/Search/Search'
 import Dropdown from '../../../../components/Dropdown/Dropdown'
@@ -24,6 +25,7 @@ type Tab = 'yours' | '5mins'
 
 function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Props) {
   const [closing, setClosing] = useState(false)
+  const panelRef = useRef<HTMLElement>(null)
   const [tab, setTab] = useState<Tab>('yours')
   const [query, setQuery] = useState('')
   const [dimension, setDimension] = useState<'functions' | 'skills'>('functions')
@@ -36,6 +38,8 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
     setClosing(true)
     setTimeout(onClose, 300)
   }
+
+  useOverlayA11y(panelRef, !closing, { onEscape: handleClose })
 
   const switchTab = (next: Tab) => {
     setTab(next)
@@ -58,11 +62,16 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
   return (
     <div className={`cpd-overlay${closing ? ' cpd-overlay--closing' : ''}`} onMouseDown={handleClose}>
       <aside
+        ref={panelRef}
         className={`cpd-panel${closing ? ' cpd-panel--closing' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cpd-title"
+        tabIndex={-1}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <header className="cpd-header">
-          <h2 className="cpd-header__title">Add courses to program</h2>
+          <h2 className="cpd-header__title" id="cpd-title">Add courses to program</h2>
           <CloseButton onClick={handleClose} />
         </header>
 

@@ -39,16 +39,16 @@ function Workspace() {
           <Logo size={22} />
         </button>
         <div className="mt-topnav__right">
-          <button type="button" className="mt-topnav__textbtn">
+          <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
             <span>Get App</span>
             <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
           </button>
-          <button type="button" className="mt-topnav__outlinebtn">
+          <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
             <span>Create</span>
             <Add size={20} color="var(--text-primary)" variant="Linear" />
           </button>
           <div className="mt-topnav__icons">
-            <button type="button" className="mt-topnav__iconbtn" aria-label="Notifications">
+            <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
               <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
             </button>
           </div>
@@ -105,7 +105,7 @@ function Workspace() {
                       {workspaceCourses.length} courses · {workspaceCourses.filter((c) => c.progress > 0 && c.progress < 100).length} in progress · {workspaceCourses.filter((c) => c.progress >= 100).length} completed
                     </p>
                   </div>
-                  <button type="button" className="ws-section__cta">View All</button>
+                  <button type="button" className="ws-section__cta ui-disabled" disabled>View All</button>
                 </header>
                 <Carousel trackClassName="ws-cards-track" ariaLabel="Enrolled courses">
                   {workspaceCourses.map((course) => (
@@ -157,7 +157,7 @@ function Workspace() {
                       {workspaceCategories.length} categories
                     </p>
                   </div>
-                  <button type="button" className="ws-section__cta">View All</button>
+                  <button type="button" className="ws-section__cta ui-disabled" disabled>View All</button>
                 </header>
                 <Carousel trackClassName="ws-cards-track" ariaLabel="Explore categories">
                   {workspaceCategories.map((category) => (

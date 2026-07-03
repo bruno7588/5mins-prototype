@@ -145,7 +145,7 @@
 }
 
 .content-list__loose--drop-active {
-  background-color: rgba(255, 187, 56, 0.15);
+  background-color: var(--selected-tint);
 }
 
 /* ── Course empty state (per Figma 8565:12932) ──────────────── */
@@ -393,7 +393,7 @@
 
 /* Cross-container drop destination — section will receive an item from another container */
 .curriculum-section--drop-destination {
-  background-color: rgba(255, 187, 56, 0.15);
+  background-color: var(--selected-tint);
   transition: background-color 150ms ease;
 }
 .curriculum-section--drop-destination .curriculum-section__header {

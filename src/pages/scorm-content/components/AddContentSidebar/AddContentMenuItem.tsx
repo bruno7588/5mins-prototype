@@ -9,12 +9,12 @@ interface AddContentMenuItemProps {
 
 function AddContentMenuItem({ icon, label, hasDropdown, onClick }: AddContentMenuItemProps) {
   return (
-    <button className="add-content-menu-item" onClick={onClick}>
-      <span className="add-content-menu-item-icon">{icon}</span>
-      <span className="add-content-menu-item-label">{label}</span>
+    <button className="sc-add-content-menu-item" onClick={onClick}>
+      <span className="sc-add-content-menu-item-icon">{icon}</span>
+      <span className="sc-add-content-menu-item-label">{label}</span>
       {hasDropdown && (
         <svg
-          className="add-content-menu-item-arrow"
+          className="sc-add-content-menu-item-arrow"
           width="12"
           height="12"
           viewBox="0 0 12 12"

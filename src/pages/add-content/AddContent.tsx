@@ -46,7 +46,7 @@ const cards: CardDef[] = [
     color: '250, 113, 95',
     iconColor: '#FA715F',
     icon: <VideoSquare size={iconSize} color="#FA715F" variant="Linear" />,
-    title: 'Add a new video',
+    title: 'Add a New Video',
     description: 'Great for short training or update videos',
   },
   {
@@ -54,7 +54,7 @@ const cards: CardDef[] = [
     color: '155, 85, 201',
     iconColor: '#9B55C9',
     icon: <VolumeHigh size={iconSize} color="#9B55C9" variant="Linear" />,
-    title: 'Add a new audio',
+    title: 'Add a New Audio',
     description: 'Upload audio files for on-the-go learning',
   },
   {
@@ -62,7 +62,7 @@ const cards: CardDef[] = [
     color: '0, 206, 230',
     iconColor: '#00CEE6',
     icon: <DocumentText size={iconSize} color="#00AFC4" variant="Linear" />,
-    title: 'Add a new document',
+    title: 'Add a New Document',
     description: 'Share PDFs, presentations, and spreadsheets directly with your team',
     caption: 'PDF, DOCX, PPTX, XLSX',
   },
@@ -71,9 +71,9 @@ const cards: CardDef[] = [
     color: '42, 144, 216',
     iconColor: '#2A90D8',
     icon: <Link2 size={iconSize} color="#2A90D8" variant="Linear" />,
-    title: 'Add external link',
-    description: 'Embed web content, Youtube videos, TikToks, and more into any lesson',
-    caption: 'Youtube, TikTok & more',
+    title: 'Add External Link',
+    description: 'Embed web content, YouTube videos, TikToks, and more into any lesson',
+    caption: 'YouTube, TikTok & more',
   },
 ]
 

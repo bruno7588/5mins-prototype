@@ -79,7 +79,7 @@
   font-weight: 700;
   font-size: 20px;
   line-height: 1.5;
-  color: var(--text-primary, #F9F9FA);
+  color: var(--text-primary);
 }
 
 .force-trigger-subtitle {
@@ -191,7 +191,7 @@
   font-weight: 500;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--text-primary, #F9F9FA);
+  color: var(--text-primary);
 }
 
 .force-trigger-courses-card {
@@ -321,7 +321,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-primary, #F9F9FA);
+  color: var(--text-primary);
 }
 
 /* ===== User picker — search wrapper ===== */

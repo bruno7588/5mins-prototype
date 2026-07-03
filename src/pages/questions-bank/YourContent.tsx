@@ -2,7 +2,7 @@ import { useState } from 'react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import ContentTable from './components/ContentTable/ContentTable'
 import type { ContentRow } from './components/ContentTable/ContentTable'
-import LessonEditorModal from './components/LessonEditorModal/LessonEditorModal'
+import LessonEditorModal from '../../components/LessonEditorModal/LessonEditorModal'
 import './YourContent.css'
 
 type Tab = 'lessons' | 'scorm'
@@ -57,7 +57,7 @@ function YourContent() {
       <main className="your-content-main">
         <div className="your-content-header">
           <h2 className="your-content-title">Your Content</h2>
-          <div className="page-header-divider" />
+          <div className="qb-page-header-divider" />
           <div className="content-tabs">
             <button
               className={`content-tab${activeTab === 'lessons' ? ' content-tab--active' : ''}`}

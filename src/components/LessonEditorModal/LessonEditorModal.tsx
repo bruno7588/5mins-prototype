@@ -1,10 +1,19 @@
 import { useState } from 'react'
 import { ArrowDown2, Eye } from 'iconsax-react'
-import type { ContentRow } from '../ContentTable/ContentTable'
-import QuizTab from '../../../../components/QuizTab/QuizTab'
-import CloseButton from '../../../../components/CloseButton/CloseButton'
-import InfoIcon from '../../../../components/icons/InfoIcon'
+import QuizTab from '../QuizTab/QuizTab'
+import CloseButton from '../CloseButton/CloseButton'
+import InfoIcon from '../icons/InfoIcon'
 import './LessonEditorModal.css'
+
+/** Row shape the editor needs — structurally matches the page-level ContentRow. */
+export interface ContentRow {
+  id: number
+  fileName: string
+  type: string
+  uploadedBy: string
+  updatedAt: string
+  thumbColor: string
+}
 
 interface LessonEditorModalProps {
   lesson: ContentRow

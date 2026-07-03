@@ -300,13 +300,13 @@ function CourseDetails() {
               </span>
             </div>
             <div className="cd-header-ctas">
-              <button className="cd-icon-btn" aria-label="Copy course link">
+              <button className="cd-icon-btn ui-disabled" aria-label="Copy course link (coming soon)" disabled>
                 <Link2 size={20} color="var(--text-secondary)" variant="Linear" className="cd-link-icon" />
               </button>
-              <button className="cd-icon-btn" aria-label="More options">
+              <button className="cd-icon-btn ui-disabled" aria-label="More options (coming soon)" disabled>
                 <MoreIcon size={20} color="var(--text-secondary)" />
               </button>
-              <button className="btn-primary">Enrol People</button>
+              <button className="btn-primary ui-disabled" disabled>Enrol People</button>
             </div>
           </div>
 
@@ -405,7 +405,7 @@ function CourseDetails() {
                 <Sort size={20} color="var(--text-secondary)" variant="Linear" />
                 <span className="cd-filters-label">Filters</span>
                 <span className="cd-filters-count">0</span>
-                <button className="cd-filters-add">
+                <button className="cd-filters-add ui-disabled" disabled>
                   Add
                   <Add size={18} color="var(--primary-600)" />
                 </button>
@@ -440,7 +440,7 @@ function CourseDetails() {
                 ariaLabel="Search for people"
                 className="cd-search"
               />
-              <button className="cd-download-btn">
+              <button className="cd-download-btn ui-disabled" disabled>
                 Download Report
                 <DocumentDownload size={20} color="var(--text-primary)" variant="Linear" />
               </button>
@@ -540,7 +540,8 @@ function CourseDetails() {
                             <button
                               type="button"
                               role="menuitem"
-                              className={`cd-row-menu-item${danger ? ' cd-row-menu-item--danger' : ''}`}
+                              className={`cd-row-menu-item${danger ? ' cd-row-menu-item--danger' : ''}${key === 'reset' ? '' : ' ui-disabled'}`}
+                              disabled={key !== 'reset'}
                               onClick={() => {
                                 setOpenMenuId(null)
                                 if (key === 'reset') setResetTarget(row)

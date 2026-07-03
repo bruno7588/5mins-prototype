@@ -66,7 +66,7 @@
 }
 
 .ws-section__cta:hover {
-  color: var(--text-button-hover, #33e2f7);
+  color: var(--text-button-hover);
 }
 
 /* Carousel track variants — composed onto .carousel__track */
@@ -137,7 +137,7 @@
 }
 
 .ws-events-empty__link:hover {
-  color: var(--text-button-hover, #33e2f7);
+  color: var(--text-button-hover);
 }
 
 /* Fade in when arriving from the onboarding loading screen. */

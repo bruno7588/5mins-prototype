@@ -721,26 +721,6 @@
   text-decoration: line-through;
 }
 
-/* ===== Badge component (per docs/design-system/badges.md) ===== */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  font-family: inherit;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 1.2;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.badge--informative {
-  background: var(--input-background);
-  color: var(--text-secondary);
-}
-
 .automations-table-cell--triggered {
   width: 180px;
   flex-shrink: 0;

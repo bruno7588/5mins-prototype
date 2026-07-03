@@ -14,7 +14,7 @@ function YourContent() {
       <main className="your-content-main">
         <div className="your-content-header">
           <h2 className="your-content-title">Your Content</h2>
-          <div className="page-header-divider" />
+          <div className="sc-page-header-divider" />
           <div className="content-tabs">
             <button
               className={`content-tab${activeTab === 'lessons' ? ' content-tab--active' : ''}`}

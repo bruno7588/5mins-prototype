@@ -1,7 +1,4 @@
-/* Double-class selectors outrank the duplicate `.page-header*` rules in
-   scorm-content/components/PageHeader/PageHeader.css that are bundled globally
-   and would otherwise override our padding/gap via source order. */
-.page-header.page-header {
+.page-header {
   display: flex;
   flex-direction: column;
   gap: var(--space-m); /* 16px gap between top row, divider, tabs */
@@ -9,7 +6,7 @@
   background: var(--page-background);
 }
 
-.page-header-top.page-header-top {
+.page-header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -99,6 +99,13 @@
   padding: 0;
 }
 
+.pb-headline__title:focus-visible,
+.pb-headline__desc:focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
 .pb-headline__title {
   font-size: 32px;
   font-weight: 700;

@@ -333,7 +333,7 @@ function LearningRecordsTab() {
                     </button>
                   </li>
                   <li>
-                    <button type="button" className="lr__add-menu-item" role="menuitem" onClick={() => setAddMenuOpen(false)}>
+                    <button type="button" className="lr__add-menu-item ui-disabled" role="menuitem" disabled>
                       <DocumentUpload size={20} color="var(--text-primary)" variant="Linear" />
                       <span>Bulk upload CSV</span>
                     </button>
@@ -345,8 +345,9 @@ function LearningRecordsTab() {
         </div>
       </div>
 
-      {/* Filters bar */}
-      <div className="lr__filters">
+      {/* Filters bar — not built on this tab yet (the standalone Learning Records
+          page has the working version); shown disabled instead of as a decoy. */}
+      <div className="lr__filters ui-disabled" aria-disabled="true">
         <span className="lr__filters-icon">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -354,7 +355,7 @@ function LearningRecordsTab() {
         </span>
         <span className="lr__filters-label">Filters</span>
         <span className="lr__filters-badge">0</span>
-        <button type="button" className="lr__filters-add">
+        <button type="button" className="lr__filters-add" disabled>
           Add
           <Add size={20} color="var(--primary-600)" variant="Linear" />
         </button>
@@ -504,13 +505,15 @@ function LearningRecordsTab() {
                   </div>
                   <div className="lr__cell lr__cell--ext-cert">
                     {row.hasCertificate ? (
-                      <button type="button" className="lr__cert-btn">Download</button>
+                      <button type="button" className="lr__cert-btn ui-disabled" disabled>Download</button>
                     ) : (
                       <span className="lr__date-dash">—</span>
                     )}
                   </div>
                   <div className="lr__cell lr__cell--ext-more">
-                    <MoreIcon size={24} color="var(--text-tertiary)" />
+                    <span className="ui-disabled">
+                      <MoreIcon size={24} color="var(--text-tertiary)" />
+                    </span>
                   </div>
                 </div>
               )

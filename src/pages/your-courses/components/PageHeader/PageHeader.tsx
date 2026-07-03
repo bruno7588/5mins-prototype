@@ -39,7 +39,7 @@ const DEFAULT_TABS: PageHeaderTab[] = [
  * are unchanged; pass props to reuse it for other builders (e.g. Create Program).
  */
 function PageHeader({
-  title = 'Create course',
+  title = 'Create Course',
   tabs = DEFAULT_TABS,
   activeTab = 'Course Content',
   onTabChange,

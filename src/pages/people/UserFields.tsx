@@ -79,7 +79,7 @@ function UserFields() {
               <h2 className="user-fields-title">Custom Fields</h2>
               <p className="user-fields-subtitle">
                 Define custom fields to capture organization-specific data for your users. These fields can be included in CSV uploads and API operations.{' '}
-                <a href="#" className="user-fields-learn-more">Learn more</a>
+                <span className="user-fields-learn-more ui-disabled" aria-disabled="true">Learn more</span>
               </p>
             </div>
             <button className="btn-primary" onClick={handleOpenDrawer}>

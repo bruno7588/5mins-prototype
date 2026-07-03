@@ -67,8 +67,8 @@
 }
 
 .tbl-row.is-selected {
-  background: rgba(255, 187, 56, 0.12);
-  border-color: rgba(255, 187, 56, 0.12);
+  background: var(--selected-tint);
+  border-color: var(--selected-tint);
 }
 
 .tbl-row.is-selected.is-hover,

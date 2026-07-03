@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import './LaunchSuccessModal.css'
 
@@ -39,10 +41,20 @@ interface Props {
 }
 
 function LaunchSuccessModal({ open, onClose, onTrackProgress }: Props) {
+  const panelRef = useRef<HTMLDivElement>(null)
+  useOverlayA11y(panelRef, open, { onEscape: onClose })
+
   if (!open) return null
 
   return (
-    <div className="lsm-overlay" role="dialog" aria-modal="true" aria-label="Program launched">
+    <div
+      ref={panelRef}
+      className="lsm-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Program launched"
+      tabIndex={-1}
+    >
       <div className="lsm-confetti" aria-hidden="true">
         {CONFETTI.map((c, i) => (
           <span

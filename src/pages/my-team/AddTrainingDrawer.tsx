@@ -27,6 +27,7 @@ function AddTrainingDrawer({ open, onClose, onAdd }: Props) {
   const [closing, setClosing] = useState(false)
 
   // Form state
+  const [email, setEmail] = useState('')
   const [trainingName, setTrainingName] = useState('')
   const [provider, setProvider] = useState('')
   const [startDate, setStartDate] = useState('')
@@ -39,6 +40,7 @@ function AddTrainingDrawer({ open, onClose, onAdd }: Props) {
 
   useEffect(() => {
     if (open) {
+      setEmail('')
       setTrainingName('')
       setProvider('')
       setStartDate('')
@@ -102,8 +104,8 @@ function AddTrainingDrawer({ open, onClose, onAdd }: Props) {
             <InputField
               label="Email"
               placeholder="Add user's email"
-              value={trainingName}
-              onChange={() => {}}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
 
             <div className="at-group">

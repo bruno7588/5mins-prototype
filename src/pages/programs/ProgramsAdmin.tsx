@@ -121,7 +121,7 @@ function ProgramsAdmin() {
     {
       key: 'status',
       header: 'Status',
-      width: '0 0 140px',
+      width: '0 0 180px',
       render: (row) => (
         <ProgramStatusBadge status={programLifecycle({ learnerCount: row.learnerCount, startsAt: row.startsAt })} />
       ),

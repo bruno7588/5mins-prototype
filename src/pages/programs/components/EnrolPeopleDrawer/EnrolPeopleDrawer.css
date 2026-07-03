@@ -142,7 +142,7 @@
 
 .epd-all-row--selected {
   border-color: transparent;
-  background: rgba(255, 187, 56, 0.12);
+  background: var(--selected-tint);
 }
 
 .epd-all-row__label {
@@ -241,8 +241,8 @@
 .epd-row:hover { background: var(--cards-background-hover); }
 
 .epd-row--selected {
-  border-color: rgba(255, 187, 56, 0.12);
-  background: rgba(255, 187, 56, 0.12);
+  border-color: var(--selected-tint);
+  background: var(--selected-tint);
 }
 
 .epd-cell {

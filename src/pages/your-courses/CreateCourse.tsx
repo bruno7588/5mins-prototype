@@ -149,7 +149,8 @@ function CreateCourse() {
       <div
         className={[
           'app-content-area',
-          activeDrawer && 'app-content-area--with-icon-strip',
+          'acd-content-area',
+          activeDrawer && 'acd-content-area--with-icon-strip',
         ].filter(Boolean).join(' ')}
       >
         <main className="main-content">

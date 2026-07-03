@@ -121,7 +121,7 @@
 }
 
 .sidebar-sub-item--active {
-  color: rgba(237, 163, 13, 1);
+  color: var(--secondary-600);
   font-weight: 700;
 }
 

@@ -5,7 +5,7 @@
   inset: 0;
   /* Above side drawers (1000–1002) so drawer-spawned confirms show, below toasts (1100). */
   z-index: 1050;
-  background: rgba(15, 16, 20, 0.5);
+  background: var(--scrim);
   display: flex;
   align-items: center;
   justify-content: center;

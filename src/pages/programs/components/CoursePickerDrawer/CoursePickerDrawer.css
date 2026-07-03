@@ -35,11 +35,11 @@
 
 /* Behind the scrim, the program content shrinks to the space left of the 720px
    panel, animating in sync with the slide-in (empty state contracts to the left). */
-.app-content-area {
+.cpd-content-area {
   transition: padding-right 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.app-content-area--with-picker {
+.cpd-content-area--with-picker {
   /* Shift up to the 720px panel width, but never shrink the content below 600px. */
   padding-right: clamp(0px, calc(100vw - 600px), 720px);
 }

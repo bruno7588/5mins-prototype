@@ -540,10 +540,10 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
                           Download CSV template
                           <ImportCurve size={20} color="var(--neutral-25)" />
                         </button>
-                        <button className="bulk-upload-btn-outlined">
+                        <button className="bulk-upload-btn-outlined ui-disabled" disabled>
                           Download Available Roles
                         </button>
-                        <button className="bulk-upload-btn-text">
+                        <button className="bulk-upload-btn-text ui-disabled" disabled>
                           Export Current Users
                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clipPath="url(#clip0_6588_8697)">

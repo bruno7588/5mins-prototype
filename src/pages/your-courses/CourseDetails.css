@@ -403,8 +403,8 @@
 /* Selected row — secondary-500 (#FFBB38) at 12% for both fill and border */
 .cd-row--selected,
 .cd-row--selected:hover {
-  background: rgba(255, 187, 56, 0.12);
-  border-color: rgba(255, 187, 56, 0.12);
+  background: var(--selected-tint);
+  border-color: var(--selected-tint);
 }
 
 .cd-row--head,

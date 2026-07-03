@@ -145,6 +145,14 @@
   width: 400px;
 }
 
+.people-search:hover {
+  border-color: var(--neutral-400);
+}
+
+.people-search:focus-within {
+  border-color: var(--secondary-500);
+}
+
 .people-search-input {
   flex: 1;
   border: none;
@@ -367,8 +375,8 @@
 }
 
 .people-table-row--selected {
-  background: #FEF1D6;
-  border-color: #FEF1D6;
+  background: var(--selected-fill);
+  border-color: var(--selected-fill);
 }
 
 .people-table-row--selected:hover {
@@ -484,7 +492,7 @@
 
 .people-table-scroll--has-scroll .people-table-row--selected .people-table-cell--checkbox,
 .people-table-scroll--has-scroll .people-table-row--selected .people-table-cell--name {
-  background: #FEF1D6;
+  background: var(--selected-fill);
 }
 
 .people-table-scroll--has-scroll .people-table-row--selected:hover .people-table-cell--checkbox,
@@ -849,7 +857,7 @@
 
 .people-bulk-bar-btn {
   padding: 6px var(--space-sm);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   border-radius: var(--radius-s);
   cursor: pointer;
@@ -1003,13 +1011,13 @@
 }
 
 .confirm-modal-user-email {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
 }
 
 .confirm-modal-user-team {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--text-tertiary);
 }

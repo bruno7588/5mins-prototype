@@ -24,6 +24,7 @@ import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ForceTriggerModal from './ForceTriggerModal'
 import AutomationDetailsModal, { type AutomationDetailsMode } from './AutomationDetailsModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
+import Badge from '../../components/Badge/Badge'
 import WorkflowsTab from '../your-courses/components/WorkflowsTab/WorkflowsTab'
 import './Automations.css'
 
@@ -902,10 +903,10 @@ function Automations() {
           <div className="automations-title-group">
             <h2 className="automations-title">Automations</h2>
             <p className="automations-description">
-              Manage enrollment automations, review trigger history, and configure course workflows.{' '}
-              <a className="automations-description-link" href="#">
+              Manage enrolment automations, review trigger history, and configure course workflows.{' '}
+              <span className="automations-description-link ui-disabled" aria-disabled="true">
                 Here is how it works
-              </a>
+              </span>
             </p>
           </div>
           <div className="page-header-divider" />
@@ -963,7 +964,7 @@ function Automations() {
                 </span>
               </button>
 
-              <button className="automations-template automations-template--blue">
+              <button className="automations-template automations-template--blue ui-disabled" disabled>
                 <span className="automations-template-icon">
                   <Medal size={48} color="#2A90D8" variant="Linear" />
                 </span>
@@ -1416,7 +1417,7 @@ function Automations() {
                             <span className="automations-automation-name--deleted">
                               {row.automationNameSnapshot ?? 'Deleted automation'}
                             </span>
-                            <span className="badge badge--informative" role="status">Deleted</span>
+                            <Badge type="informative" label="Deleted" />
                           </>
                         ) : (
                           <>
@@ -1429,7 +1430,7 @@ function Automations() {
                             />
                             <span>{automation!.name}</span>
                             {isInactive && (
-                              <span className="badge badge--informative" role="status">Inactive</span>
+                              <Badge type="informative" label="Inactive" />
                             )}
                           </>
                         )}

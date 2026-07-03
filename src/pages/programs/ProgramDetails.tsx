@@ -1,4 +1,4 @@
-import { useNavigate, useLocation, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useLocation, useParams } from 'react-router-dom'
 import {
   Add,
   Clock,
@@ -39,10 +39,14 @@ function ProgramDetails() {
   const { id } = useParams<{ id: string }>()
 
   const programs = getAllPrograms()
-  const program = programs.find((p) => p.id === id) ?? programs[0]
+  const program = programs.find((p) => p.id === id)
+  if (!program) return <Navigate to="/workspace" replace />
   const outline = program.outline
 
   const filled = Math.max(0, Math.min(SEGMENTS, Math.round((program.progress / 100) * SEGMENTS)))
+
+  const stackAvatars = [avatar1, avatar2, avatar3].slice(0, Math.max(0, program.learnerCount))
+  const stackOverflow = program.learnerCount - stackAvatars.length
 
   return (
     <div className="mt-app">
@@ -51,16 +55,16 @@ function ProgramDetails() {
           <Logo size={22} />
         </button>
         <div className="mt-topnav__right">
-          <button type="button" className="mt-topnav__textbtn">
+          <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
             <span>Get App</span>
             <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
           </button>
-          <button type="button" className="mt-topnav__outlinebtn">
+          <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
             <span>Create</span>
             <Add size={20} color="var(--text-primary)" variant="Linear" />
           </button>
           <div className="mt-topnav__icons">
-            <button type="button" className="mt-topnav__iconbtn" aria-label="Notifications">
+            <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
               <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
             </button>
           </div>
@@ -113,20 +117,24 @@ function ProgramDetails() {
             <div className="pd-banner__meta">
               <span className="pd-meta__item">
                 <img className="pd-meta__icon" src={coursesIcon} alt="" />
-                <span>{program.courseCount} courses</span>
+                <span>{program.courseCount} {program.courseCount === 1 ? 'course' : 'courses'}</span>
               </span>
               <span className="pd-meta__item">
                 <Clock size={16} color="var(--text-tertiary)" variant="Linear" />
                 <span>{program.durationLabel}</span>
               </span>
               <span className="pd-learners">
-                <span className="pd-avatars">
-                  <img className="pd-avatar" src={avatar1} alt="" />
-                  <img className="pd-avatar" src={avatar2} alt="" />
-                  <img className="pd-avatar" src={avatar3} alt="" />
-                  <span className="pd-avatar pd-avatar--count">+32</span>
+                {stackAvatars.length > 0 && (
+                  <span className="pd-avatars">
+                    {stackAvatars.map((src, i) => (
+                      <img key={i} className="pd-avatar" src={src} alt="" />
+                    ))}
+                    {stackOverflow > 0 && <span className="pd-avatar pd-avatar--count">+{stackOverflow}</span>}
+                  </span>
+                )}
+                <span className="pd-learners__label">
+                  {program.learnerCount} {program.learnerCount === 1 ? 'learner' : 'learners'}
                 </span>
-                <span className="pd-learners__label">{program.learnerCount} learners</span>
               </span>
             </div>
 

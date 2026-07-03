@@ -216,11 +216,11 @@
 }
 
 .roles-search:hover {
-  border-color: var(--neutral-400, #9EA4B3);
+  border-color: var(--neutral-400);
 }
 
 .roles-search:focus-within {
-  border-color: var(--secondary-500, #FFBB38);
+  border-color: var(--secondary-500, var(--secondary-500));
 }
 
 .roles-search__icon {
@@ -263,7 +263,7 @@
 }
 
 .roles-search__clear:focus-visible {
-  outline: 2px solid var(--secondary-500, #FFBB38);
+  outline: 2px solid var(--secondary-500, var(--secondary-500));
   border-radius: 4px;
 }
 
@@ -290,7 +290,7 @@
 
 .roles-btn-ghost--small {
   padding: 4px 10px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .roles-btn-text {
@@ -421,7 +421,7 @@
 
 .roles-btn-outlined {
   padding: 6px 16px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--primary-600);
   background: transparent;
@@ -468,8 +468,8 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 6px 12px;
-  background: var(--neutral-800, #2D3142);
-  color: var(--neutral-0, #fff);
+  background: var(--neutral-800);
+  color: var(--neutral-0);
   font-size: 12px;
   font-weight: 500;
   border-radius: 6px;
@@ -490,11 +490,11 @@
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: var(--neutral-800, #2D3142);
+  border-top-color: var(--neutral-800);
 }
 
 .roles-btn-tooltip__asterisk {
-  color: var(--danger-400, #E95C7B);
+  color: var(--danger-400, var(--danger-400));
 }
 
 /* ===== Table column widths (5Mins Roles) ===== */
@@ -602,7 +602,7 @@
   line-height: 1.2;
   white-space: nowrap;
   background: var(--input-background, rgba(69, 76, 94, 0.16));
-  color: var(--text-secondary, #BFC2CC);
+  color: var(--text-secondary);
   flex-shrink: 0;
 }
 
@@ -662,7 +662,7 @@
   gap: 4px;
   padding: 5px 12px;
   border-radius: 40px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -728,7 +728,7 @@
 }
 
 .roles-skill-card__remove:hover {
-  color: var(--text-error, #E95C7B);
+  color: var(--text-error);
   background: var(--neutral-50);
 }
 
@@ -738,8 +738,8 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 6px 12px;
-  background: var(--neutral-800, #2D3142);
-  color: var(--neutral-0, #fff);
+  background: var(--neutral-800);
+  color: var(--neutral-0);
   font-size: 12px;
   font-weight: 500;
   border-radius: 6px;
@@ -760,7 +760,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: var(--neutral-800, #2D3142);
+  border-top-color: var(--neutral-800);
 }
 
 .roles-skill-card__name {
@@ -796,7 +796,7 @@
   font-size: 60px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--neutral-200, #BFC2CC);
+  color: var(--neutral-200, var(--neutral-200));
 }
 
 .roles-empty__accents {
@@ -936,7 +936,7 @@
 
 /* ===== Company Roles Footer ===== */
 .roles-footer {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-tertiary);
   padding-top: var(--space-s);
 }
@@ -945,7 +945,7 @@
 .roles-panel-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 16, 20, 0.5);
+  background: var(--scrim);
   z-index: 100;
   display: flex;
   justify-content: flex-end;
@@ -1015,7 +1015,7 @@
 }
 
 .roles-panel-subtitle {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
   margin-top: 4px;
   line-height: 1.5;
@@ -1115,7 +1115,7 @@
 }
 
 .roles-panel-description-wrapper:focus-within {
-  border-color: var(--secondary-500, #FFBB38);
+  border-color: var(--secondary-500, var(--secondary-500));
 }
 
 .roles-panel-description-wrapper .input-field__input {
@@ -1157,7 +1157,7 @@
   border: none;
   border-radius: 8px;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 14px;
   max-width: 100%;
 }
 
@@ -1187,7 +1187,7 @@
 }
 
 .roles-panel-file-chip__remove:hover {
-  color: var(--text-error, #E95C7B);
+  color: var(--text-error);
   background: var(--neutral-100);
 }
 
@@ -1279,7 +1279,7 @@
 }
 
 .roles-panel-skip {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
   background: none;
@@ -1356,7 +1356,7 @@
   inset: -1px;
   border-radius: var(--radius-sm);
   padding: 1px;
-  background: linear-gradient(135deg, #00CEE6 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
+  background: linear-gradient(135deg, var(--primary-500) 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -1414,7 +1414,7 @@
 .roles-ai-progress__fill {
   height: 100%;
   border-radius: 8px;
-  background: linear-gradient(90deg, #00CEE6 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
+  background: linear-gradient(90deg, var(--primary-500) 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
   transition: width 300ms ease;
 }
 
@@ -1423,7 +1423,7 @@
   font-weight: 500;
   width: 34px;
   text-align: right;
-  background: linear-gradient(135deg, #00CEE6, #8158EC);
+  background: linear-gradient(135deg, var(--primary-500), #8158EC);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1437,7 +1437,7 @@
   padding: var(--space-m);
   border-radius: var(--radius-s);
   background: rgba(129, 88, 236, 0.06);
-  font-size: 13px;
+  font-size: 14px;
   color: #8158EC;
 }
 
@@ -1497,10 +1497,10 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) var(--space-sm);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   background: transparent;
-  border: 1px solid #00CEE6;
+  border: 1px solid var(--primary-500);
   border-radius: var(--space-s);
   cursor: pointer;
   white-space: nowrap;
@@ -1640,7 +1640,7 @@
 .roles-panel-skill-option-tag {
   font-size: 11px;
   font-weight: 600;
-  color: var(--success-600, #18A957);
+  color: var(--success-600, var(--success-500));
   background: var(--success-50, #E8F9EF);
   padding: 2px 8px;
   border-radius: 10px;
@@ -1683,12 +1683,12 @@
 }
 
 .roles-panel-summary-label {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-tertiary);
 }
 
 .roles-panel-summary-value {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -1717,7 +1717,7 @@
 }
 
 .roles-panel-delete-btn:hover {
-  color: var(--danger-600, #c01238);
+  color: var(--danger-600);
 }
 
 .roles-panel-delete-confirm {
@@ -1764,7 +1764,7 @@
 }
 
 .roles-btn-danger:hover {
-  background: var(--danger-600, #c01238);
+  background: var(--danger-600);
 }
 
 /* ===== Panel Footer ===== */
@@ -1876,7 +1876,7 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--neutral-25);
-  background: linear-gradient(135deg, #00CEE6 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
+  background: linear-gradient(135deg, var(--primary-500) 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
   border: 2px solid transparent;
   border-radius: var(--space-s);
   cursor: pointer;
@@ -1885,7 +1885,7 @@
 }
 
 .roles-btn-ai-gradient:hover:not(:disabled) {
-  border: 2px solid #00CEE6;
+  border: 2px solid var(--primary-500);
   box-shadow: 1px 1px 32px rgba(129, 88, 236, 0.5);
 }
 
@@ -1909,14 +1909,14 @@
 }
 
 .roles-btn-ai-text > span {
-  background-image: linear-gradient(135deg, #00CEE6 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
+  background-image: linear-gradient(135deg, var(--primary-500) 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .roles-btn-ai-text:hover > span {
-  background-image: linear-gradient(135deg, #00AFC4 0%, #0DA0C5 12.5%, #1A92C6 25%, #377AC7 50%, #5462C9 75%, #6B45D1 100%);
+  background-image: linear-gradient(135deg, var(--primary-600) 0%, #0DA0C5 12.5%, #1A92C6 25%, #377AC7 50%, #5462C9 75%, #6B45D1 100%);
 }
 
 .roles-btn-ai-text:hover > svg path {
@@ -1936,7 +1936,7 @@
   font-size: 14px;
   font-weight: 700;
   background: transparent;
-  border: 1px solid #00CEE6;
+  border: 1px solid var(--primary-500);
   border-radius: var(--space-s);
   cursor: pointer;
   white-space: nowrap;
@@ -2113,13 +2113,13 @@
 }
 
 .roles-function-dropdown__option--active {
-  color: var(--neutral-800, #20222a);
+  color: var(--neutral-800);
   font-weight: 400;
-  background: var(--selected, #ffbb38);
+  background: var(--selected);
 }
 
 .roles-function-dropdown__option--active:hover {
-  background: var(--selected, #ffbb38);
+  background: var(--selected);
 }
 
 .roles-function-dropdown__option-icon {
@@ -2129,7 +2129,7 @@
 
 .roles-function-dropdown__count {
   margin-left: auto;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--text-tertiary);
 }

@@ -81,7 +81,11 @@ function enrolText(step: ProgramStep): { title: string; sub?: string } {
     const unit = step.release.days === 1 ? 'day' : 'days'
     return { title: 'After delay', sub: `${step.release.days} ${unit} after previous course enrolment` }
   }
-  return { title: 'Immediate' }
+  if (step.release.kind === 'on-date') {
+    const [y, m, d] = step.release.date.split('-')
+    return { title: 'On specific date', sub: d && m && y ? `${d}/${m}/${y}` : step.release.date }
+  }
+  return { title: 'On program start' }
 }
 
 function dueText(step: ProgramStep): string {
@@ -245,30 +249,32 @@ function ProgramAdminDetails() {
           <div className="pad-meta">
             <span className="pad-meta__item">
               <img src={coursesIcon} alt="" width={16} height={16} />
-              {courseSteps.length} courses
+              {courseSteps.length} {courseSteps.length === 1 ? 'course' : 'courses'}
             </span>
             <span className="pad-meta__item">
               <Clock size={16} color="var(--text-tertiary)" variant="Linear" />
-              {totalMins} mins
+              {totalMins} {totalMins === 1 ? 'min' : 'mins'}
             </span>
             {enrolledCount > 0 && (
               <span className="pad-avatars" aria-hidden="true">
-                <img className="pad-avatars__img" src={avatar1} alt="" />
-                <img className="pad-avatars__img" src={avatar2} alt="" />
-                <img className="pad-avatars__img" src={avatar3} alt="" />
-                <span className="pad-avatars__more">+{Math.max(0, enrolledCount - 3)}</span>
+                {[avatar1, avatar2, avatar3].slice(0, enrolledCount).map((src, i) => (
+                  <img key={i} className="pad-avatars__img" src={src} alt="" />
+                ))}
+                {enrolledCount > 3 && <span className="pad-avatars__more">+{enrolledCount - 3}</span>}
               </span>
             )}
-            <span className="pad-meta__item">{enrolledCount} learners</span>
+            <span className="pad-meta__item">
+              {enrolledCount} {enrolledCount === 1 ? 'learner' : 'learners'}
+            </span>
             <ProgramStatusBadge status={lifecycle} />
           </div>
         </div>
 
         <div className="pad-cta">
-          <button type="button" className="pad-icon-btn" aria-label="Copy program link">
+          <button type="button" className="pad-icon-btn ui-disabled" aria-label="Copy program link (coming soon)" disabled>
             <Link2 size={24} color="var(--text-secondary)" variant="Linear" />
           </button>
-          <button type="button" className="pad-icon-btn" aria-label="More actions">
+          <button type="button" className="pad-icon-btn ui-disabled" aria-label="More actions (coming soon)" disabled>
             <More size={24} color="var(--text-secondary)" variant="Linear" />
           </button>
           <button type="button" className="pad-btn pad-btn--text" onClick={() => navigate(`/programs/${draft.id}`)}>
@@ -353,7 +359,7 @@ function ProgramAdminDetails() {
             <div className="pad-stat">
               <Profile size={32} color="var(--primary-600)" variant="Linear" />
               <div className="pad-stat__body">
-                <span className="pad-stat__label">Total people enroled</span>
+                <span className="pad-stat__label">Total people enrolled</span>
                 <span className="pad-stat__valuerow">
                   <span className="pad-stat__value">{learnerCount}</span>
                   <span className="pad-stat__delta">+12 this month</span>
@@ -395,7 +401,7 @@ function ProgramAdminDetails() {
               className="pad-enrol-search"
             />
             <div className="pad-enrol-actions">
-              <button type="button" className="pad-btn pad-btn--outlined-2">
+              <button type="button" className="pad-btn pad-btn--outlined-2 ui-disabled" disabled>
                 Download Report
                 <DocumentDownload size={20} color="currentColor" variant="Linear" />
               </button>

@@ -184,9 +184,9 @@ function CourseSettings() {
           description: (
             <>
               Add a certificate for completion.{' '}
-              <a className="cs-link" href="#">
+              <span className="cs-link ui-disabled" aria-disabled="true">
                 Read
-              </a>{' '}
+              </span>{' '}
               how certification works.
             </>
           ),
@@ -250,7 +250,7 @@ function CourseSettings() {
           key: 'managersSeeAll',
           title: 'Allow Managers / Experts to see all enrolments',
           description:
-            'Managers and Experts can view all course enrollments in Knowledge Hub page. When unchecked, they only see their team members and learners they assigned. This setting controls privacy for this course only.',
+            'Managers and Experts can view all course enrolments in Knowledge Hub page. When unchecked, they only see their team members and learners they assigned. This setting controls privacy for this course only.',
         },
       ],
     },

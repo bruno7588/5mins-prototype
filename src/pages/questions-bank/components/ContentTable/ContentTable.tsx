@@ -157,7 +157,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
   }, [menuOpenId])
 
   return (
-    <div className="content-table-wrapper">
+    <div className="qb-content-table-wrapper">
       {showAddScorm && (
         <AddScormModal
           onClose={() => setShowAddScorm(false)}
@@ -184,40 +184,40 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
 
       {/* Preview overlay */}
       {previewRow && (
-        <div className="content-table-preview-overlay">
-          <CloseButton onClick={() => setPreviewRow(null)} size={32} className="content-table-preview-close" />
-          <div className="content-table-preview-content">
-            <h2 className="content-table-preview-title">{previewRow.fileName}</h2>
-            <div className="content-table-preview-divider" />
-            <div className="content-table-preview-frame">
-              <p className="content-table-preview-placeholder-text">SCORM content preview will load here</p>
+        <div className="qb-content-table-preview-overlay">
+          <CloseButton onClick={() => setPreviewRow(null)} size={32} className="qb-content-table-preview-close" />
+          <div className="qb-content-table-preview-content">
+            <h2 className="qb-content-table-preview-title">{previewRow.fileName}</h2>
+            <div className="qb-content-table-preview-divider" />
+            <div className="qb-content-table-preview-frame">
+              <p className="qb-content-table-preview-placeholder-text">SCORM content preview will load here</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Filter bar */}
-      <div className="content-table-filters">
-        <span className="content-table-filter-label">Show content from</span>
-        <button className="content-table-filter-dropdown">
+      <div className="qb-content-table-filters">
+        <span className="qb-content-table-filter-label">Show content from</span>
+        <button className="qb-content-table-filter-dropdown ui-disabled" disabled>
           <Setting4 size={16} color="var(--text-secondary)" variant="Linear" />
           All
           <ArrowDown2 size={12} color="var(--text-tertiary)" />
         </button>
 
-        <div className="content-table-search">
+        <div className="qb-content-table-search">
           <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
           <input type="text" placeholder={isScorm ? 'Search SCORM files' : 'Search content'} />
         </div>
 
-        <button className="content-table-add-btn" onClick={isScorm ? () => setShowAddScorm(true) : onAddContent}>
+        <button className="qb-content-table-add-btn" onClick={isScorm ? () => setShowAddScorm(true) : onAddContent}>
           {isScorm ? 'Add SCORM' : 'Add Content'}
           <Add size={20} color="white" />
         </button>
       </div>
 
       {/* Table */}
-      <table className="content-table">
+      <table className="qb-content-table">
         <thead>
           <tr>
             <th>File name</th>
@@ -236,15 +236,15 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
           {rows.map((row) => (
             <tr key={row.id}>
               <td>
-                <div className="content-table-file">
-                  <div className="content-table-thumb">
+                <div className="qb-content-table-file">
+                  <div className="qb-content-table-thumb">
                     <div
-                      className="content-table-thumb-img"
+                      className="qb-content-table-thumb-img"
                       style={{ background: row.thumbColor, borderRadius: 'var(--radius-s)' }}
                     />
                   </div>
                   <span
-                    className={`content-table-filename${isScorm ? ' content-table-filename--clickable' : ' content-table-filename--clickable'}`}
+                    className={`qb-content-table-filename${isScorm ? ' qb-content-table-filename--clickable' : ' qb-content-table-filename--clickable'}`}
                     onClick={() => isScorm ? setEditScormRow(row) : onLessonClick?.(row)}
                     title={isScorm ? 'Click to edit SCORM' : 'Click to edit lesson'}
                   >
@@ -252,30 +252,30 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                   </span>
                 </div>
               </td>
-              <td className="content-table-type">{row.type}</td>
-              <td className="content-table-uploader">{row.uploadedBy}</td>
-              <td className="content-table-date">{row.updatedAt}</td>
+              <td className="qb-content-table-type">{row.type}</td>
+              <td className="qb-content-table-uploader">{row.uploadedBy}</td>
+              <td className="qb-content-table-date">{row.updatedAt}</td>
               <td>
-                <div className="content-table-actions">
+                <div className="qb-content-table-actions">
                   {isScorm && (
-                    <button className="content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
+                    <button className="qb-content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
                       <Eye size={20} color="var(--neutral-400)" variant="Linear" />
                     </button>
                   )}
                   {!isScorm && aiQuizReadyIds.includes(row.id) && (
-                    <div className="content-table-ai-badge-wrapper">
+                    <div className="qb-content-table-ai-badge-wrapper">
                       {!dismissedTooltipIds.includes(row.id) && (
-                        <div className="content-table-ai-tooltip">
-                          <p className="content-table-ai-tooltip-text">AI generated quizzes are ready for review</p>
-                          <div className="content-table-ai-tooltip-actions">
+                        <div className="qb-content-table-ai-tooltip">
+                          <p className="qb-content-table-ai-tooltip-text">AI generated quizzes are ready for review</p>
+                          <div className="qb-content-table-ai-tooltip-actions">
                             <button
-                              className="content-table-ai-tooltip-dismiss"
+                              className="qb-content-table-ai-tooltip-dismiss"
                               onClick={() => setDismissedTooltipIds(prev => [...prev, row.id])}
                             >
                               Dismiss
                             </button>
                             <button
-                              className="content-table-ai-tooltip-review"
+                              className="qb-content-table-ai-tooltip-review"
                               onClick={() => {
                                 setDismissedTooltipIds(prev => [...prev, row.id])
                                 onLessonClick?.(row)
@@ -284,11 +284,11 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                               Review Quiz
                             </button>
                           </div>
-                          <div className="content-table-ai-tooltip-arrow" />
+                          <div className="qb-content-table-ai-tooltip-arrow" />
                         </div>
                       )}
                       <button
-                        className="content-table-ai-badge"
+                        className="qb-content-table-ai-badge"
                         aria-label="AI quizzes ready for review"
                         onClick={() => onLessonClick?.(row)}
                       >
@@ -306,23 +306,23 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                     </div>
                   )}
                   {!isScorm && !aiQuizReadyIds.includes(row.id) && (
-                    <button className="content-table-action-btn" aria-label="Share">
+                    <button className="qb-content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
                       <ExportSquare size={20} color="var(--neutral-400)" variant="Linear" />
                     </button>
                   )}
-                  <div className="content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
+                  <div className="qb-content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
                     <button
-                      className="content-table-action-btn"
+                      className="qb-content-table-action-btn"
                       aria-label="More options"
                       onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
                     >
                       <MoreIcon size={20} color="var(--neutral-400)" />
                     </button>
                     {menuOpenId === row.id && (
-                      <div className="content-table-menu">
+                      <div className="qb-content-table-menu">
                         {isScorm ? (
                           <button
-                            className="content-table-menu-item"
+                            className="qb-content-table-menu-item"
                             onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
                           >
                             <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
@@ -330,19 +330,19 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                           </button>
                         ) : (
                           <button
-                            className="content-table-menu-item"
+                            className="qb-content-table-menu-item"
                             onClick={() => { setMenuOpenId(null); onLessonClick?.(row) }}
                           >
                             <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
                             Edit lesson
                           </button>
                         )}
-                        <button className="content-table-menu-item" onClick={() => setMenuOpenId(null)}>
+                        <button className="qb-content-table-menu-item ui-disabled" disabled>
                           <EyeSlash size={20} color="var(--text-secondary)" variant="Linear" />
                           Hide
                         </button>
                         <button
-                          className="content-table-menu-item content-table-menu-item--danger"
+                          className="qb-content-table-menu-item qb-content-table-menu-item--danger"
                           onClick={() => {
                             setMenuOpenId(null)
                             setRows(prev => prev.filter(r => r.id !== row.id))
@@ -362,12 +362,12 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
       </table>
 
       {/* Pagination */}
-      <div className="content-table-pagination">
-        <span className="content-table-pagination-text">1-{rows.length} of {rows.length}</span>
-        <button className="content-table-pagination-btn content-table-pagination-btn--disabled" aria-label="Previous page">
+      <div className="qb-content-table-pagination">
+        <span className="qb-content-table-pagination-text">1-{rows.length} of {rows.length}</span>
+        <button className="qb-content-table-pagination-btn qb-content-table-pagination-btn--disabled" aria-label="Previous page">
           <ArrowLeft2 size={16} color="var(--neutral-400)" />
         </button>
-        <button className="content-table-pagination-btn content-table-pagination-btn--disabled" aria-label="Next page">
+        <button className="qb-content-table-pagination-btn qb-content-table-pagination-btn--disabled" aria-label="Next page">
           <ArrowRight2 size={16} color="var(--neutral-400)" />
         </button>
       </div>

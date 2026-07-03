@@ -2,7 +2,7 @@
 .ai-drawer-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 16, 20, 0.5);
+  background: var(--scrim);
   z-index: 200;
   animation: drawer-overlay-in 200ms ease;
 }

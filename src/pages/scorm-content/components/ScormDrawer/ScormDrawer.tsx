@@ -58,22 +58,22 @@ function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
   )
 
   return (
-    <div className={`scorm-drawer-overlay${closing ? ' scorm-drawer-overlay--closing' : ''}`} onClick={handleClose}>
-      <aside className={`scorm-drawer${closing ? ' scorm-drawer--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
+    <div className={`sc-scorm-drawer-overlay${closing ? ' sc-scorm-drawer-overlay--closing' : ''}`} onClick={handleClose}>
+      <aside className={`sc-scorm-drawer${closing ? ' sc-scorm-drawer--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
         {/* Close button */}
-        <CloseButton onClick={handleClose} className="scorm-drawer-close" />
+        <CloseButton onClick={handleClose} className="sc-scorm-drawer-close" />
 
         {/* Header */}
-        <div className="scorm-drawer-header">
-          <h3 className="scorm-drawer-title">Add SCORM files</h3>
-          <p className="scorm-drawer-subtitle">
+        <div className="sc-scorm-drawer-header">
+          <h3 className="sc-scorm-drawer-title">Add SCORM files</h3>
+          <p className="sc-scorm-drawer-subtitle">
             Add from the list of SCORM files you've already published.{' '}
-            <a className="scorm-drawer-upload-link" href="#">Upload New SCORM</a>
+            <span className="sc-scorm-drawer-upload-link ui-disabled" aria-disabled="true">Upload New SCORM</span>
           </p>
         </div>
 
         {/* Search */}
-        <div className="scorm-drawer-search">
+        <div className="sc-scorm-drawer-search">
           <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
           <input
             type="text"
@@ -84,7 +84,7 @@ function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
         </div>
 
         {/* Table */}
-        <table className="scorm-drawer-table">
+        <table className="sc-scorm-drawer-table">
           <thead>
             <tr>
               <th>File name</th>
@@ -96,19 +96,19 @@ function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
             {filtered.map((file) => (
               <tr key={file.id}>
                 <td>
-                  <div className="scorm-drawer-file">
-                    <div className="scorm-drawer-thumb" style={{ background: file.thumbColor }} />
-                    <span className="scorm-drawer-filename">{file.fileName}</span>
+                  <div className="sc-scorm-drawer-file">
+                    <div className="sc-scorm-drawer-thumb" style={{ background: file.thumbColor }} />
+                    <span className="sc-scorm-drawer-filename">{file.fileName}</span>
                   </div>
                 </td>
-                <td className="scorm-drawer-type">{file.type}</td>
+                <td className="sc-scorm-drawer-type">{file.type}</td>
                 <td>
                   {addedIds.has(file.id) ? (
-                    <button className="scorm-drawer-btn scorm-drawer-btn--remove" onClick={() => onRemove(file.id)}>
+                    <button className="sc-scorm-drawer-btn sc-scorm-drawer-btn--remove" onClick={() => onRemove(file.id)}>
                       Remove
                     </button>
                   ) : (
-                    <button className="scorm-drawer-btn scorm-drawer-btn--add" onClick={() => onAdd(file)}>
+                    <button className="sc-scorm-drawer-btn sc-scorm-drawer-btn--add" onClick={() => onAdd(file)}>
                       Add
                     </button>
                   )}

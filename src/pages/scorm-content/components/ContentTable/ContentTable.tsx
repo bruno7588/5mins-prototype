@@ -163,7 +163,7 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
   }
 
   return (
-    <div className="content-table-wrapper">
+    <div className="sc-content-table-wrapper">
       {showAddScorm && (
         <AddScormModal
           onClose={() => setShowAddScorm(false)}
@@ -190,40 +190,40 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
 
       {/* Preview overlay */}
       {previewRow && (
-        <div className="content-table-preview-overlay">
-          <CloseButton onClick={() => setPreviewRow(null)} size={32} className="content-table-preview-close" />
-          <div className="content-table-preview-content">
-            <h2 className="content-table-preview-title">{previewRow.fileName}</h2>
-            <div className="content-table-preview-divider" />
-            <div className="content-table-preview-frame">
-              <p className="content-table-preview-placeholder-text">SCORM content preview will load here</p>
+        <div className="sc-content-table-preview-overlay">
+          <CloseButton onClick={() => setPreviewRow(null)} size={32} className="sc-content-table-preview-close" />
+          <div className="sc-content-table-preview-content">
+            <h2 className="sc-content-table-preview-title">{previewRow.fileName}</h2>
+            <div className="sc-content-table-preview-divider" />
+            <div className="sc-content-table-preview-frame">
+              <p className="sc-content-table-preview-placeholder-text">SCORM content preview will load here</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Filter bar */}
-      <div className="content-table-filters">
-        <span className="content-table-filter-label">Show content from</span>
-        <button className="content-table-filter-dropdown">
+      <div className="sc-content-table-filters">
+        <span className="sc-content-table-filter-label">Show content from</span>
+        <button className="sc-content-table-filter-dropdown ui-disabled" disabled>
           <Setting4 size={16} color="var(--text-secondary)" variant="Linear" />
           All
           <ArrowDown2 size={12} color="var(--text-tertiary)" />
         </button>
 
-        <div className="content-table-search">
+        <div className="sc-content-table-search">
           <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
           <input type="text" placeholder={isScorm ? 'Search SCORM files' : 'Search content'} />
         </div>
 
-        <button className="content-table-add-btn" onClick={isScorm ? () => setShowAddScorm(true) : undefined}>
+        <button className="sc-content-table-add-btn" onClick={isScorm ? () => setShowAddScorm(true) : undefined}>
           {isScorm ? 'Add SCORM' : 'Add Content'}
           <Add size={20} color="white" />
         </button>
       </div>
 
       {/* Table */}
-      <table className="content-table">
+      <table className="sc-content-table">
         <thead>
           <tr>
             <th>File name</th>
@@ -242,17 +242,17 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
           {rows.map((row) => (
             <tr key={row.id}>
               <td>
-                <div className="content-table-file">
-                  <div className="content-table-thumb">
+                <div className="sc-content-table-file">
+                  <div className="sc-content-table-thumb">
                     <div
-                      className="content-table-thumb-img"
+                      className="sc-content-table-thumb-img"
                       style={{ background: row.thumbColor, borderRadius: 'var(--radius-s)' }}
                     />
                   </div>
                   {!isScorm && editingId === row.id ? (
                     <input
                       ref={editInputRef}
-                      className="content-table-filename-input"
+                      className="sc-content-table-filename-input"
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onBlur={saveEdit}
@@ -264,7 +264,7 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
                     />
                   ) : (
                     <span
-                      className={`content-table-filename${isScorm ? ' content-table-filename--clickable' : ' content-table-filename--editable'}`}
+                      className={`sc-content-table-filename${isScorm ? ' sc-content-table-filename--clickable' : ' sc-content-table-filename--editable'}`}
                       onClick={() => isScorm ? setEditScormRow(row) : startEditing(row)}
                       title={isScorm ? 'Click to edit SCORM' : 'Click to edit'}
                     >
@@ -273,44 +273,44 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
                   )}
                 </div>
               </td>
-              <td className="content-table-type">{row.type}</td>
-              <td className="content-table-uploader">{row.uploadedBy}</td>
-              <td className="content-table-date">{row.updatedAt}</td>
+              <td className="sc-content-table-type">{row.type}</td>
+              <td className="sc-content-table-uploader">{row.uploadedBy}</td>
+              <td className="sc-content-table-date">{row.updatedAt}</td>
               <td>
-                <div className="content-table-actions">
+                <div className="sc-content-table-actions">
                   {isScorm && (
-                    <button className="content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
+                    <button className="sc-content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
                       <Eye size={20} color="var(--neutral-400)" variant="Linear" />
                     </button>
                   )}
                   {!isScorm && (
-                    <button className="content-table-action-btn" aria-label="Share">
+                    <button className="sc-content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
                       <ExportSquare size={20} color="var(--neutral-400)" variant="Linear" />
                     </button>
                   )}
-                  <div className="content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
+                  <div className="sc-content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
                     <button
-                      className="content-table-action-btn"
+                      className="sc-content-table-action-btn"
                       aria-label="More options"
                       onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
                     >
                       <MoreIcon size={20} color="var(--neutral-400)" />
                     </button>
                     {menuOpenId === row.id && (
-                      <div className="content-table-menu">
+                      <div className="sc-content-table-menu">
                         <button
-                          className="content-table-menu-item"
+                          className="sc-content-table-menu-item"
                           onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
                         >
                           <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
                           Edit SCORM
                         </button>
-                        <button className="content-table-menu-item" onClick={() => setMenuOpenId(null)}>
+                        <button className="sc-content-table-menu-item ui-disabled" disabled>
                           <EyeSlash size={20} color="var(--text-secondary)" variant="Linear" />
                           Hide
                         </button>
                         <button
-                          className="content-table-menu-item content-table-menu-item--danger"
+                          className="sc-content-table-menu-item sc-content-table-menu-item--danger"
                           onClick={() => {
                             setMenuOpenId(null)
                             setRows(prev => prev.filter(r => r.id !== row.id))
@@ -330,12 +330,12 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
       </table>
 
       {/* Pagination */}
-      <div className="content-table-pagination">
-        <span className="content-table-pagination-text">1-10 of 28</span>
-        <button className="content-table-pagination-btn content-table-pagination-btn--disabled" aria-label="Previous page">
+      <div className="sc-content-table-pagination">
+        <span className="sc-content-table-pagination-text">1-10 of 28</span>
+        <button className="sc-content-table-pagination-btn sc-content-table-pagination-btn--disabled" aria-label="Previous page">
           <ArrowLeft2 size={16} color="var(--neutral-400)" />
         </button>
-        <button className="content-table-pagination-btn" aria-label="Next page">
+        <button className="sc-content-table-pagination-btn" aria-label="Next page">
           <ArrowRight2 size={16} color="var(--neutral-400)" />
         </button>
       </div>

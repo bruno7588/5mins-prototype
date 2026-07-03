@@ -25,8 +25,8 @@ function AddContentSidebar({ addedScormIds, onAddScorm, onRemoveScorm }: AddCont
   const [showScormDrawer, setShowScormDrawer] = useState(false)
 
   return (
-    <aside className="add-content-sidebar">
-      <h4 className="add-content-sidebar-title">Add Content</h4>
+    <aside className="sc-add-content-sidebar">
+      <h4 className="sc-add-content-sidebar-title">Add Content</h4>
 
       <AddContentMenuItem
         icon={<Book1 size={iconSize} color={iconColor} variant="Linear" />}

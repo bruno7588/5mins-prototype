@@ -355,16 +355,16 @@ function MyTeam() {
           <Logo size={22} />
         </button>
         <div className="mt-topnav__right">
-          <button type="button" className="mt-topnav__textbtn">
+          <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
             <span>Get App</span>
             <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
           </button>
-          <button type="button" className="mt-topnav__outlinebtn">
+          <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
             <span>Create</span>
             <Add size={20} color="var(--text-primary)" variant="Linear" />
           </button>
           <div className="mt-topnav__icons">
-            <button type="button" className="mt-topnav__iconbtn" aria-label="Notifications">
+            <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
               <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
             </button>
           </div>
@@ -413,7 +413,7 @@ function MyTeam() {
                 <h1 className="mt-pageheader__title">My Team</h1>
                 <p className="mt-pageheader__subtitle">18 Active users · 3 Pending users</p>
               </div>
-              <button type="button" className="mt-pageheader__cta">Manage Team</button>
+              <button type="button" className="mt-pageheader__cta ui-disabled" disabled>Manage Team</button>
             </div>
 
             <div className="mt-pageheader__divider" />
