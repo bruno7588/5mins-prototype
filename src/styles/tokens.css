@@ -116,7 +116,7 @@
   --selected-tint: rgba(237, 163, 13, 0.15); /* selected-row / highlight fill derived from --selected */
   --selected-fill: #FCF1DB; /* opaque equivalent of --selected-tint, for sticky cells over scrolling content */
   --control-selected: var(--secondary-600); /* radio/checkbox selected amber, per selection-controls.md */
-  --scrim: rgba(15, 16, 20, 0.5); /* overlay backdrop fill */
+  --scrim: rgba(15, 16, 20, 0.25); /* overlay backdrop — Neutral-900 @ 25% (light mode; dark mode spec is 50%) */
 
   /* Spacing (4px base) */
   --space-xs: 0.25rem;   /* 4px */

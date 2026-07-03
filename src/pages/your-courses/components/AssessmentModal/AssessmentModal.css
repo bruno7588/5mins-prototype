@@ -3,7 +3,7 @@
   position: absolute;
   inset: 0;
   z-index: 200;
-  background: rgba(15, 16, 20, 0.4);
+  background: var(--scrim);
   animation: assessment-overlay-fade 250ms ease;
 }
 

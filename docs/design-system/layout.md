@@ -169,7 +169,7 @@ Use the token, never a literal:
 }
 ```
 
-> **Code note:** `tokens.css` currently defines `--scrim: rgba(15, 16, 20, 0.5)` — the dark-mode value — while the app runs in light mode (Figma light = 25%). Aligning it is a visible change to every overlay; do it as a deliberate decision, not in passing.
+> **Code note:** `tokens.css` defines `--scrim` at the light-mode 25% value (aligned 2026-07-03). When dark mode lands, the `[data-theme="dark"]` block overrides it to 50%.
 
 See `overlays.md` for the Dialog/Modal/Side-Drawer component specs that sit on top of this scrim.
 

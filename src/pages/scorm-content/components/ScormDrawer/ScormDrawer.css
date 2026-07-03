@@ -3,7 +3,7 @@
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(15, 16, 20, 0.4);
+  background: var(--scrim);
   animation: scorm-overlay-fade 250ms ease;
 }
 
