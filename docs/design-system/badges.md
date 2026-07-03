@@ -1,16 +1,23 @@
+---
+name: 5mins-badges
+description: Badge component for 5Mins.ai — pill-shaped status indicators (Success, Warning, Error, In Progress, Informative, New) with optional leading type-icon and dismissible right ✕. Use when implementing any status pill, state tag, category label, count chip, or dismissible filter badge in tables, cards, headers, or lists.
+---
 
 # 5Mins.ai Badge Component System
 
 Complete badge implementation guide for the 5Mins.ai micro-learning platform. Badges are small, pill-shaped status indicators used to communicate state, category, or metadata at a glance.
 
+Spec source: Figma Library — light `node 11915:3152`, dark `node 5799:479` (verified 2026-07-03). Same structure in both modes; the tinted backgrounds are literal rgba values shared across modes, text colors are semantic tokens that resolve per mode.
+
 ## Badge Architecture
 
-The badge system uses a **type-based architecture** with two dimensions:
+The badge system uses a **type-based architecture** with three dimensions:
 
 | Dimension | Options |
 |-----------|---------|
-| **Type** | Success, Warning, Error, In Progress, Informative, Quiz, New |
-| **Icon** | With leading icon, Without icon |
+| **Type** | Success, Warning, Error, In Progress, Informative, New (+ Quiz, app extension) |
+| **iconLeft** | Leading 16px type-icon |
+| **iconRight** | Trailing 16px close ✕ (dismissible) — not available on New |
 
 All badges share the same shape and sizing — only color and content change between types.
 
@@ -19,13 +26,15 @@ All badges share the same shape and sizing — only color and content change bet
 Every badge follows this structure:
 
 ```
-┌──────────────────────────────┐
-│  [icon?]  Label Text         │   ← pill shape, fully rounded
-└──────────────────────────────┘
-     ↑         ↑
-   16px    14px Poppins Medium
-  optional
+┌──────────────────────────────────┐
+│  [iconLeft?]  Label Text  [ ✕? ] │   ← pill shape, fully rounded
+└──────────────────────────────────┘
+      ↑            ↑           ↑
+    16px    14px Poppins    16px close
+  type icon    Medium      (dismiss)
 ```
+
+**Gaps:** `4px` between leading icon and label · `8px` between label and the ✕ (Informative uses `4px` on both sides — per Figma).
 
 **Shared properties across all types:**
 
@@ -107,7 +116,10 @@ Neutral metadata or supplementary information. Used for general labels, counts, 
 
 **Icon:** `IoInformationCircleOutline` (Ionicons 5) — info circle outline
 
-### Quiz
+### Quiz (app extension)
+
+> Not part of the Figma Badge component — the Library node defines only the six types above. Quiz badges exist in the app (lesson cards, assessment indicators) and follow the same pill pattern; treat this as an accepted code extension until it lands in the Library.
+
 Indicates quiz-related status such as required assessments. Used for quiz badges on lesson cards, course requirements, and assessment indicators.
 
 ```css
@@ -133,17 +145,19 @@ A solid, high-contrast badge that draws attention to freshly added content. Unli
 
 ## Color Token Summary
 
-| Type | Background | Text Color |
-|------|-----------|------------|
-| **Success** | `rgba(24, 169, 87, 0.16)` | `#18A957` |
-| **Warning** | `rgba(255, 165, 56, 0.16)` | `#FFA538` |
-| **Error** | `rgba(223, 22, 66, 0.16)` | `#E95C7B` |
-| **In Progress** | `rgba(0, 206, 230, 0.16)` | `#00CEE6` |
-| **Informative** | `rgba(69, 76, 94, 0.16)` | `#BFC2CC` |
-| **Quiz** | `rgba(99, 104, 219, 0.16)` | `#FFDBAF` |
-| **New** | `#E95C7B` (solid) | `#F9F9FA` |
+Backgrounds are literal 16% tints of the type's 500-level color, identical in both modes (Informative uses the mode-aware `--input-background`). Text colors are semantic tokens:
 
-The translucent background pattern (16% opacity) is a core design principle — it ensures badges feel lightweight while maintaining readable contrast.
+| Type | Background (both modes) | Text token | Light | Dark |
+|------|------------------------|------------|-------|------|
+| **Success** | `rgba(24, 169, 87, 0.16)` — Success-500 | `--text-success` | `#11763D` | `#18A957` |
+| **Warning** | `rgba(255, 165, 56, 0.16)` — Warning-500 | `--text-warning` | `#E88206` | `#FFA538` |
+| **Error** | `rgba(223, 22, 66, 0.16)` — Danger-500 | `--text-error` | `#DF1642` | `#E95C7B` |
+| **In Progress** | `rgba(0, 206, 230, 0.16)` — Primary-500 | `--text-progress` | `#008393` | `#00CEE6` |
+| **Informative** | `var(--input-background)` | `--text-secondary` | `#454C5E` | `#BFC2CC` |
+| **Quiz** (ext.) | `rgba(99, 104, 219, 0.16)` — Certificate-quiz | `--text-quiz` | — | `#FFDBAF` |
+| **New** | `var(--danger-400)` `#E95C7B` (solid) | `--neutral-25` | `#F9F9FA` | `#F9F9FA` |
+
+The translucent background pattern (16% opacity) is a core design principle — it ensures badges feel lightweight while maintaining readable contrast. Icons always render in `currentColor`, matching the text token.
 
 ## React TypeScript Implementation
 
@@ -161,7 +175,8 @@ type BadgeType =
 
 interface BadgeProps {
   type?: BadgeType;
-  icon?: boolean;
+  icon?: boolean;          // leading type-icon (iconLeft in Figma)
+  onDismiss?: () => void;  // renders the trailing ✕ (iconRight); not for type="new"
   label?: string;
   className?: string;
 }
@@ -211,12 +226,14 @@ const BADGE_CONFIG: Record<BadgeType, {
 export function Badge({
   type = 'success',
   icon = false,
+  onDismiss,
   label,
   className,
 }: BadgeProps) {
   const config = BADGE_CONFIG[type];
-  // The "new" badge never shows an icon
+  // The "new" badge never shows icons — leading or dismiss
   const showIcon = icon && type !== 'new';
+  const dismissible = !!onDismiss && type !== 'new';
 
   return (
     <span
@@ -225,7 +242,7 @@ export function Badge({
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: showIcon ? '4px' : undefined,
+        gap: showIcon ? '4px' : dismissible ? '8px' : undefined,
         padding: '6px 12px',
         borderRadius: 'var(--xxl, 40px)',
         background: config.bg,
@@ -240,6 +257,20 @@ export function Badge({
     >
       {showIcon && <BadgeIcon type={type} />}
       {label ?? config.defaultLabel}
+      {dismissible && (
+        <button
+          type="button"
+          onClick={onDismiss}
+          aria-label="Remove"
+          style={{
+            display: 'flex', flexShrink: 0, width: 16, height: 16,
+            padding: 0, background: 'transparent', border: 'none',
+            color: 'inherit', cursor: 'pointer',
+          }}
+        >
+          <IoCloseOutline size={16} />
+        </button>
+      )}
     </span>
   );
 }
@@ -247,7 +278,7 @@ export function Badge({
 
 ### Icon Mapping
 
-Each badge type maps to a specific 16×16px icon from the Iconsax library (Linear variant), except Informative which uses Ionicons 5:
+Each badge type maps to a specific 16×16px **leading** icon from the Iconsax library (Linear variant), except Informative which uses Ionicons 5. The **trailing dismiss icon is always** Ionicons 5 `IoCloseOutline` (16px, currentColor), regardless of type:
 
 ```tsx
 function BadgeIcon({ type }: { type: BadgeType }) {
@@ -285,17 +316,25 @@ For projects preferring CSS classes over inline styles:
   white-space: nowrap;
 }
 
-/* Icon gap — only when icon is present */
-.badge--icon {
-  gap: 4px;
-}
+/* Icon gaps */
+.badge--icon      { gap: 4px; }  /* leading type-icon */
+.badge--dismiss   { gap: 8px; }  /* trailing ✕ only (Informative: keep 4px) */
 
-/* Badge icon container */
-.badge__icon {
+/* Badge icon container (leading icon and ✕ alike) */
+.badge__icon,
+.badge__dismiss {
   display: flex;
   flex-shrink: 0;
   width: 16px;
   height: 16px;
+}
+
+.badge__dismiss {
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 /* Type variants */
@@ -401,12 +440,12 @@ Always pair badge color with a text label. The icon provides an additional visua
 
 ### All Badge Variants at a Glance
 
-| Type | BG Pattern | Text | Icon | Default Label |
-|------|-----------|------|------|---------------|
-| Success | 16% green | Green | TickCircle | "Success" |
-| Warning | 16% orange | Orange | InfoCircle | "Warning" |
-| Error | 16% red | Pink | Danger | "Error" |
-| In Progress | 16% cyan | Cyan | TaskSquare | "In Progress" |
-| Informative | 16% gray | Gray | InfoCircleOutline | "Information" |
-| Quiz | 16% purple | Warm cream | LessonQuiz | "Quiz Required" |
-| New | Solid pink | White | None | "New" |
+| Type | BG Pattern | Text | Leading icon | Dismissible ✕ | Default Label |
+|------|-----------|------|--------------|---------------|---------------|
+| Success | 16% green | Green | TickCircle | ✓ | "Success" |
+| Warning | 16% orange | Orange | InfoCircle | ✓ | "Warning" |
+| Error | 16% red | Red/pink | Danger | ✓ | "Error" |
+| In Progress | 16% cyan | Cyan | TaskSquare | ✓ | "In Progress" |
+| Informative | 16% gray | Gray | InfoCircleOutline | ✓ (4px gap) | "Information" |
+| Quiz (ext.) | 16% purple | Warm cream | LessonQuiz | — | "Quiz Required" |
+| New | Solid pink | White | None | ✗ never | "New" |

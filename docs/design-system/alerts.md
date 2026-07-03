@@ -10,6 +10,8 @@ Two distinct banner types for surfacing messages inline with content.
 - **Callout** — informational, neutral surface, used for guidance, tips, and contextual help
 - **Alert** — warning state, yellow-tinted surface, used for system warnings and attention-required messages
 
+Spec source: Figma Library — light `node 11914:638`, dark `node 3658:32304` (verified 2026-07-03). Both modes share identical structure; every color is a semantic token that resolves per mode (see `colors.md`). All variants use a uniform `8px 12px` padding.
+
 ---
 
 ## Component Props
@@ -17,9 +19,9 @@ Two distinct banner types for surfacing messages inline with content.
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `type` | `"Callout" \| "Alert"` | `"Callout"` | Visual style and semantic intent |
-| `illustration` | `boolean` | `true` | Show small decorative icon/graphic before text |
-| `icon` | `boolean` | `false` | Show info-circle icon (overrides illustration in Callout; stacks with text in Alert) |
-| `supportingText` | `boolean` | `false` | Show title + bullet list body (Callout only) |
+| `illustration` | `boolean` | `true` | Small decorative image (20px) before text — Callout: pin/rocket-style; Alert: bell |
+| `icon` | `boolean` | `false` | Callout: info-circle outline 20px; Alert: warning triangle (Iconsax `Danger`, Bold) 20px. Use icon *or* illustration, not both |
+| `supportingText` | `boolean` | `false` | Title + bullet list body (Callout only) |
 | `button` | `boolean` | `false` | Show a CTA button |
 
 ---
@@ -29,36 +31,49 @@ Two distinct banner types for surfacing messages inline with content.
 ### Visual Spec
 
 ```
-Background:    var(--surface-input)  →  rgba(191, 194, 204, 0.16)
-Border-radius: 12px  (--spacing-sm)
-Padding:       12px 16px  (--spacing-sm --spacing-m)  →  16px all sides when supportingText
-Text color:    var(--text-secondary)  →  #BFC2CC  (Neutral-200)
-Font:          Poppins 14px / 1.5 line-height
+Background:    var(--input-background)          /* translucent, per mode */
+Border-radius: 12px   (--radius-sm)
+Padding:       8px 12px   (--space-s --space-sm) — all variants
+Gap:           8px    (--space-s)
+Text:          Poppins 14px / 1.5, Regular, var(--text-secondary)
+Alignment:     center (single line)  →  flex-start (with supportingText)
 ```
 
 ### Anatomy (left → right)
 
 ```
-[ illustration? ] [ icon? ] [ text / body ] [ button? ]
+[ illustration? | icon? ] [ text / body ] [ inline button? ]
 ```
 
-- **illustration** — 20×20px decorative SVG/image, `shrink-0`, sits flush left
-- **icon** — 20×20px Iconsax `InformationCircle` (outline variant), `shrink-0`; only one of `illustration` or `icon` shows at a time
-- **text area** — `flex: 1`, contains either:
-  - Simple: single `<p>` 14px Regular
-  - Supporting: `<p>` 14px Medium (title) + `<ul>` 14px Regular (bullets), `gap: 8px` between
-- **button** — see Button spec below
+- **illustration** — 20×20px decorative image, `shrink-0`; with supportingText it top-aligns (2px offset)
+- **icon** — 20×20px info-circle outline, `shrink-0`; only one of `illustration` / `icon` shows
+- **text area** — `flex: 1; min-width: 0`, contains either:
+  - Simple: single `<p>` 14px Regular `--text-secondary`
+  - Supporting: body column — title `<p>` 14px **Medium** + `<ul>` 14px Regular bullets (21px indent), `gap: 8px`; when a button follows, the description block and button sit in the body with `gap: 16px`
+- **button** — two different styles depending on placement (below)
 
-### Callout Button
+### Callout Buttons — two styles
 
-Outlined style, appears at the **end** of the row (simple) or **below** the description (supporting text):
+**Inline (no supportingText):** an underlined text button at the end of the row — same pattern as the Alert button but in `--text-primary`:
 
 ```css
-border: 1px solid var(--text-primary);   /* #F9F9FA */
-border-radius: 8px;                      /* --spacing-s */
-padding: 8px 16px;                       /* --spacing-s --spacing-m */
 color: var(--text-primary);
-font: 700 14px/1.5 Poppins;             /* Bold */
+font: 700 14px/1.5 Poppins;
+text-decoration: underline;
+text-decoration-skip-ink: none;
+background: transparent;
+border: none;
+padding: 0;
+```
+
+**Below supporting text:** an outlined button under the description (16px gap above):
+
+```css
+border: 1px solid var(--text-primary);
+border-radius: 8px;              /* --radius-s */
+padding: 8px 16px;               /* --space-s --space-m */
+color: var(--text-primary);
+font: 700 14px/1.5 Poppins;      /* no underline */
 background: transparent;
 ```
 
@@ -69,32 +84,29 @@ background: transparent;
 ### Visual Spec
 
 ```
-Background:    rgba(255, 187, 56, 0.12)  →  Warning-500 @ 12% opacity
-Border-radius: 12px
-Padding:       12px 16px
-Text color:    var(--text-warning)  →  #996322  (Warning-700, accessible on yellow bg)
-Font:          Poppins 16px / 1.5 line-height
+Background:    rgba(255, 187, 56, 0.12)   /* Secondary-500 @ 12% — same in both modes */
+Border-radius: 12px   (--radius-sm)
+Padding:       8px 12px   (--space-s --space-sm)
 Gap:           24px between info area and button
+Text:          Poppins 14px / 1.5, Medium (500), var(--text-warning)
 ```
 
 ### Anatomy (left → right)
 
 ```
-[ icon/illustration ] [ text ] [ button? ]
+[ info: illustration? / icon? + title ] [ underline button? ]
 ```
 
-- **illustration** — bell icon (21×21px SVG), `shrink-0`
-- **icon** — 24×24px Iconsax `InformationCircle` (outline), wrapped in a flex container, `shrink-0`
-- **text** — `flex: 1`, single `<p>` 16px Regular, `color: var(--text-warning)`
-- **button** — see Alert Button spec below
+- **illustration** — bell image, 20×20px, `shrink-0`
+- **icon** — warning triangle, Iconsax `Danger` **Bold** variant, 20px, warning color
+- **title** — `flex: 1`, single `<p>` 14px **Medium**, `color: var(--text-warning)`; 12px gap after illustration (8px when illustration + icon combine)
+- **button** — underlined text button, right-aligned
 
 ### Alert Button
 
-Inline underline style, floats to the right:
-
 ```css
-color: var(--text-warning);   /* same as text */
-font: 700 16px/1.5 Poppins;  /* Bold */
+color: var(--text-warning);
+font: 700 14px/1.5 Poppins;
 text-decoration: underline;
 text-decoration-skip-ink: none;
 background: transparent;
@@ -108,7 +120,7 @@ padding: 0;
 
 ```tsx
 import React from 'react';
-import { InfoCircle } from 'iconsax-react';
+import { InfoCircle, Danger } from 'iconsax-react';
 
 type AlertType = 'Callout' | 'Alert';
 
@@ -143,11 +155,16 @@ export const Alert: React.FC<AlertProps> = ({
   const hasBody = supportingText && !isAlert;
 
   return (
-    <div className={`alert alert--${type.toLowerCase()} ${hasBody ? 'alert--with-body' : ''}`}>
-
-      {/* Illustration / Icon */}
+    <div
+      className={[
+        'alert',
+        `alert--${type.toLowerCase()}`,
+        hasBody ? 'alert--with-body' : '',
+      ].join(' ').trim()}
+    >
+      {/* Leading element */}
       {!isAlert && icon && (
-        <InfoCircle size={20} variant="Outline" className="alert__icon" />
+        <InfoCircle size={20} variant="Outline" color="currentColor" className="alert__icon" />
       )}
       {!isAlert && illustration && !icon && illustrationSrc && (
         <img src={illustrationSrc} alt="" className="alert__illustration" />
@@ -156,18 +173,20 @@ export const Alert: React.FC<AlertProps> = ({
         <span className="alert__bell" aria-hidden="true">🔔</span>
       )}
       {isAlert && icon && (
-        <InfoCircle size={24} variant="Outline" className="alert__icon" />
+        <Danger size={20} variant="Bold" color="currentColor" className="alert__icon" />
       )}
 
       {/* Text body */}
       {hasBody ? (
         <div className="alert__body">
-          <p className="alert__title">{title}</p>
-          {bullets.length > 0 && (
-            <ul className="alert__bullets">
-              {bullets.map((b, i) => <li key={i}>{b}</li>)}
-            </ul>
-          )}
+          <div className="alert__description">
+            <p className="alert__title">{title}</p>
+            {bullets.length > 0 && (
+              <ul className="alert__bullets">
+                {bullets.map((b, i) => <li key={i}>{b}</li>)}
+              </ul>
+            )}
+          </div>
           {button && (
             <button className="alert__btn alert__btn--outlined" onClick={onButtonClick}>
               {buttonLabel}
@@ -178,12 +197,9 @@ export const Alert: React.FC<AlertProps> = ({
         <p className="alert__message">{message}</p>
       )}
 
-      {/* Inline button (simple / Alert variants) */}
+      {/* Inline underline button (simple Callout / Alert) */}
       {button && !hasBody && (
-        <button
-          className={`alert__btn ${isAlert ? 'alert__btn--inline' : 'alert__btn--outlined'}`}
-          onClick={onButtonClick}
-        >
+        <button className="alert__btn alert__btn--inline" onClick={onButtonClick}>
           {buttonLabel}
         </button>
       )}
@@ -201,51 +217,61 @@ export const Alert: React.FC<AlertProps> = ({
 .alert {
   display: flex;
   align-items: center;
-  border-radius: 12px;         /* --spacing-sm */
-  padding: 12px 16px;          /* --spacing-sm --spacing-m */
-  gap: 8px;                    /* --spacing-s */
+  border-radius: var(--radius-sm);   /* 12px */
+  padding: var(--space-s) var(--space-sm);  /* 8px 12px — all variants */
+  gap: var(--space-s);               /* 8px */
   width: 100%;
+  box-sizing: border-box;
   position: relative;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* ── Callout ── */
 .alert--callout {
-  background: var(--surface-input);    /* rgba(191,194,204,0.16) */
-  color: var(--text-secondary);        /* #BFC2CC */
-  font-family: 'Poppins', sans-serif;
+  background: var(--input-background);
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
 }
 
-/* ── Alert ── */
+/* ── Alert (warning) ── */
 .alert--alert {
-  background: rgba(255, 187, 56, 0.12);  /* Warning-500 @ 12% */
-  color: var(--text-warning);            /* #996322 */
-  font-family: 'Poppins', sans-serif;
-  font-size: 16px;
-  font-weight: 400;
+  background: rgba(255, 187, 56, 0.12);  /* Secondary-500 @ 12% */
+  color: var(--text-warning);
+  font-size: 14px;
+  font-weight: 500;                      /* Medium */
   line-height: 1.5;
-  gap: 24px;
+  gap: var(--space-l);                   /* 24px */
 }
 
-/* ── With supporting text: align top, add padding ── */
+/* ── With supporting text: align top ── */
 .alert--with-body {
   align-items: flex-start;
-  padding: 16px;               /* --spacing-m all sides */
 }
 
-/* ── Icon ── */
-.alert__icon {
-  flex-shrink: 0;
-  color: inherit;
-}
+/* ── Leading elements ── */
+.alert__icon { flex-shrink: 0; }
 
 .alert__illustration {
   flex-shrink: 0;
   width: 20px;
   height: 20px;
   object-fit: contain;
+}
+
+.alert--with-body .alert__illustration,
+.alert--with-body .alert__icon {
+  margin-top: 2px;                       /* optical top-align with title */
+}
+
+.alert__bell {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ── Message (simple) ── */
@@ -255,6 +281,7 @@ export const Alert: React.FC<AlertProps> = ({
   margin: 0;
   color: inherit;
   font: inherit;
+  word-break: break-word;
 }
 
 /* ── Body (supporting text) ── */
@@ -263,13 +290,19 @@ export const Alert: React.FC<AlertProps> = ({
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-m);                   /* 16px between description and button */
+}
+
+.alert__description {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);                   /* 8px between title and bullets */
 }
 
 .alert__title {
   margin: 0;
   font-size: 14px;
-  font-weight: 500;           /* Medium */
+  font-weight: 500;                      /* Medium */
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -283,42 +316,41 @@ export const Alert: React.FC<AlertProps> = ({
   color: var(--text-secondary);
 }
 
-.alert__bullets li + li {
-  margin-top: 0;
-}
-
 /* ── Buttons ── */
 .alert__btn {
   flex-shrink: 0;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;            /* Bold */
+  font-family: inherit;
+  font-weight: 700;                      /* Bold */
+  font-size: 14px;
   line-height: 1.5;
   cursor: pointer;
 }
 
-/* Outlined — Callout */
-.alert__btn--outlined {
-  font-size: 14px;
-  color: var(--text-primary);              /* #F9F9FA */
-  border: 1px solid var(--text-primary);
-  border-radius: 8px;                      /* --spacing-s */
-  padding: 8px 16px;                       /* --spacing-s --spacing-m */
-  background: transparent;
-}
-
-.alert__btn--outlined:hover {
-  background: rgba(249, 249, 250, 0.08);
-}
-
-/* Inline underline — Alert */
+/* Inline underline — simple Callout and Alert */
 .alert__btn--inline {
-  font-size: 16px;
-  color: var(--text-warning);
+  color: var(--text-primary);            /* Callout */
   background: transparent;
   border: none;
   padding: 0;
   text-decoration: underline;
   text-decoration-skip-ink: none;
+}
+
+.alert--alert .alert__btn--inline {
+  color: var(--text-warning);            /* Alert */
+}
+
+/* Outlined — below supporting text only */
+.alert__btn--outlined {
+  color: var(--text-primary);
+  border: 1px solid var(--text-primary);
+  border-radius: var(--radius-s);        /* 8px */
+  padding: var(--space-s) var(--space-m); /* 8px 16px */
+  background: transparent;
+}
+
+.alert__btn--outlined:hover {
+  background: rgba(32, 34, 42, 0.04);
 }
 ```
 
@@ -328,43 +360,42 @@ export const Alert: React.FC<AlertProps> = ({
 
 ### Callout variants
 
+All variants share the same `8px 12px` padding.
+
 | illustration | icon | supportingText | button | Layout notes |
 |---|---|---|---|---|
-| ✗ | ✗ | ✗ | ✗ | Text only, `py-12` |
-| ✓ | ✗ | ✗ | ✗ | Illustration + text, `py-12` |
-| ✗ | ✓ | ✗ | ✗ | Icon + text, `py-12` |
-| ✓ | ✗ | ✗ | ✓ | Illustration + text + button (end), `py-12` |
-| ✗ | ✓ | ✗ | ✓ | Icon + text + button (end), `py-12` |
-| ✓ | ✗ | ✓ | ✗ | Illustration + title + bullets, `p-16`, align top |
-| ✓ | ✗ | ✓ | ✓ | Illustration + title + bullets + button (below), `p-16`, align top |
-| ✗ | ✓ | ✓ | ✗ | Icon + title + bullets, `p-16`, align top |
-| ✗ | ✓ | ✓ | ✓ | Icon + title + bullets + button (below), `p-16`, align top |
+| ✗ | ✗ | ✗ | ✗ | Text only |
+| ✓ | ✗ | ✗ | ✗ | Illustration + text |
+| ✗ | ✓ | ✗ | ✗ | Icon + text |
+| ✗/✓ | ✓/✗ | ✗ | ✓ | + **underlined** text button at row end |
+| ✓ | ✗ | ✓ | ✗ | Illustration + title + bullets, align top |
+| ✗ | ✓/✗ | ✓ | ✗ | Icon/plain + title + bullets, align top |
+| any | — | ✓ | ✓ | … + **outlined** button below (16px gap) |
 
 ### Alert variants
 
-| illustration | icon | button | Notes |
-|---|---|---|---|
-| ✗ | ✗ | ✗ | Text only |
-| ✓ | ✗ | ✗ | Bell icon + text |
-| ✗ | ✓ | ✗ | Info icon + text |
-| ✗ | ✗ | ✓ | Text + underline button |
-| ✓ | ✗ | ✓ | Bell + text + underline button |
-| ✗ | ✓ | ✓ | Info icon + text + underline button |
+| illustration | icon | Leading element |
+|---|---|---|
+| ✗ | ✗ | none — title only |
+| ✓ | ✗ | bell (20px) |
+| ✓ | ✓ | warning triangle — Iconsax `Danger` Bold (20px) |
+
+Each can carry the underlined button on the right (24px gap).
 
 ---
 
 ## Token Summary
 
-| Token | Value | Used for |
-|---|---|---|
-| `--surface-input` | `rgba(191,194,204,0.16)` | Callout background |
-| `rgba(255,187,56,0.12)` | hardcoded | Alert background (Warning-500 @ 12%) |
-| `--text-secondary` | `#BFC2CC` | Callout text |
-| `--text-warning` | `#996322` | Alert text (Warning-700, accessible) |
-| `--text-primary` | `#F9F9FA` | Callout button border + label |
-| `--spacing-sm` | `12px` | Border-radius, vertical padding |
-| `--spacing-m` | `16px` | Horizontal padding |
-| `--spacing-s` | `8px` | Gap, button padding vertical |
+| Token | Light mode | Dark mode | Used for |
+|---|---|---|---|
+| `--input-background` | `#BFC2CC` @ 16% | `#454C5E` @ 16% | Callout background |
+| `rgba(255,187,56,0.12)` | same | same | Alert background (Secondary-500 @ 12%, literal) |
+| `--text-secondary` | Neutral-500 `#454C5E` | Neutral-200 `#BFC2CC` | Callout text |
+| `--text-warning` | Warning-600 `#E88206` | Warning-500 `#FFA538` | Alert text + button |
+| `--text-primary` | Neutral-800 `#20222A` | Neutral-25 `#F9F9FA` | Callout button border + label |
+| `--radius-sm` / `--radius-s` | 12px / 8px | — | Container / outlined button radius |
+| `--space-s` / `--space-sm` | 8px / 12px | — | Container padding (vertical / horizontal) |
+| `--space-m` / `--space-l` | 16px / 24px | — | Body↔button gap / Alert info↔button gap |
 
 ---
 
@@ -372,17 +403,22 @@ export const Alert: React.FC<AlertProps> = ({
 
 ✓ Use **Callout** for tips, guidance, onboarding hints, feature announcements  
 ✓ Use **Alert** for system warnings, expiring content, required actions  
-✓ Keep button labels short (1–2 words)  
+✓ Keep button labels short (1–2 words, Title Case)  
 ✓ Use `supportingText` only when the message genuinely needs a title + list structure  
 
 ✗ Don't use both `illustration` and `icon` together in Callout — pick one  
 ✗ Don't use `supportingText` on Alert type — it has no spec for it  
-✗ Don't use the Alert's inline button style on Callout — they have different button patterns  
-✗ Don't hardcode warning yellow (`#FFBB38`) as text — use `--text-warning` which is the darker, accessible Warning-700  
+✗ Don't use the outlined button inline — outlined only appears below supporting text; inline is always the underlined text button  
+✗ Don't hardcode warning text color — use `--text-warning` (resolves per mode)  
 
 ---
+
+## Code Extensions (src/components/Alert)
+
+The built component adds practical props beyond the Figma spec — keep them: `customIcon` (ReactNode leading icon), `onClose` (renders a 24px close ✕ at row end), and `title`+`message` body (title + paragraph instead of bullets, 2px gap).
 
 ## Related Skills
 
 - `5mins-colors` (colors.md) — surface, text, and palette tokens
+- `layout.md` — spacing and radius tokens
 - `buttons` — for full standalone button component (Alert uses inline patterns, not the button component)
