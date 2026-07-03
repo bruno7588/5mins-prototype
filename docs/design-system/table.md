@@ -44,7 +44,7 @@ Columns size by `flex: 1` and `min-width: 0` by default (equal width, content-aw
 
 ## Design tokens
 
-Use the semantic token names, not raw hex. Cross-reference `colors.md`, `spacing.md`.
+Use the semantic token names, not raw hex. Cross-reference `colors.md`, `layout.md`.
 
 | Token | Value | Use |
 |---|---|---|

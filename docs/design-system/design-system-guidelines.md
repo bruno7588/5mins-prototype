@@ -668,7 +668,7 @@ Badge styling: pill shape (`border-radius: 40px`), `padding: 4px 8px`, `gap: 4px
 ### 10.6 Card Shadow
 
 ```css
-box-shadow: -1px -1px 4px rgba(32, 34, 42, 0.06), 1px 1px 4px rgba(32, 34, 42, 0.06);
+box-shadow: var(--shadow-s);
 ```
 
 Applied to grid, web app, and admin cards. Not applied to mobile cards.
@@ -686,8 +686,7 @@ The overlay system has three components sharing a common backdrop. Use the decis
 .overlay-backdrop {
   position: fixed;
   inset: 0;
-  background: var(--neutral-900, #0F1014);
-  opacity: 0.64;
+  background: var(--scrim);
   z-index: 1000;
 }
 ```
@@ -777,7 +776,7 @@ Right-anchored panel spanning full viewport height.
 
 | Component | Animation | Duration | Easing |
 |-----------|-----------|----------|--------|
-| Backdrop | Fade in (opacity 0 → 0.64) | 200ms | ease-out |
+| Backdrop | Fade in (opacity 0 → 1, scrim carries its own alpha) | 200ms | ease-out |
 | Dialog | Scale up + fade (0.95 → 1) | 200ms | ease-out |
 | Modal | Scale up + fade (0.95 → 1) | 250ms | ease-out |
 | Side Drawer | Slide in from right | 300ms | cubic-bezier(0.32, 0.72, 0, 1) |

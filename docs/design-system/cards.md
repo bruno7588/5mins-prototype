@@ -67,8 +67,7 @@ Shared values used by every card:
 - **Font:** Poppins. Title = Bold 700. Metadata = Regular 400. Pills = Medium 500.
 - **Type scale:** H4 = 16px / line-height 1.5. H5 = 14px / 1.5. Paragraph M = 14px / 1.5. Paragraph S = 12px / 1.2.
 - **Radius:** cards use 12px. Inner thumbnails use 8px.
-- **Card shadow (Shadow S):** two stacked drop shadows, both color `rgba(32,34,42,0.04)`, blur 4px, offsets `1px 1px` and `-1px -1px`.
-  `box-shadow: 1px 1px 4px rgba(32,34,42,0.04), -1px -1px 4px rgba(32,34,42,0.04);`
+- **Card shadow (Shadow S):** `box-shadow: var(--shadow-s);` — see `layout.md` for the shadow scale.
 - **Spacing tokens:** XS 4px, S 8px, SM 12px, M 16px, L 24px, ML 20px, XXL 40px.
 
 ---
@@ -110,7 +109,7 @@ Anatomy, top to bottom:
   display: flex; flex-direction: column;
   background: var(--cards-background);
   border-radius: 12px; overflow: hidden;
-  box-shadow: 1px 1px 4px rgba(32,34,42,0.04), -1px -1px 4px rgba(32,34,42,0.04);
+  box-shadow: var(--shadow-s);
 }
 .lesson-grid:hover { background: var(--cards-background-hover); }
 .lesson-grid__thumb {
@@ -205,7 +204,7 @@ Horizontal row: 12px left / 16px right / 12px vertical padding, 12px gap, items 
 .assessment-row {
   display: flex; width: 900px; align-items: flex-start;
   background: var(--cards-background); border-radius: 12px; overflow: hidden;
-  box-shadow: 1px 1px 4px rgba(32,34,42,0.04), -1px -1px 4px rgba(32,34,42,0.04);
+  box-shadow: var(--shadow-s);
 }
 .assessment-row--admin { gap: 12px; padding: 12px 16px 12px 12px; }
 .assessment-illustration { flex: none; width: 48px; height: 48px; }
@@ -270,7 +269,7 @@ Anatomy, top to bottom:
 .course-card {
   width: 300px; display: flex; flex-direction: column;
   background: var(--cards-background); border-radius: 12px;
-  box-shadow: 1px 1px 4px rgba(32,34,42,0.04), -1px -1px 4px rgba(32,34,42,0.04);
+  box-shadow: var(--shadow-s);
 }
 .course-card:hover { background: var(--cards-background-hover); }
 .course-card__image {

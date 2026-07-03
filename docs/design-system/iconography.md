@@ -25,22 +25,7 @@ import { Home, User, Settings } from 'iconsax-react';
 
 ## Icon Size Scale
 
-Use consistent icon sizes across the application:
-
-| Size | Value | Usage |
-|------|-------|-------|
-| **Small** | 16px | Small indicators, inline icons, badges |
-| **Medium** | 20px | Button icons, form elements, input icons |
-| **Large** | 24px | Navigation, headers, cards (default) |
-| **Extra Large** | 32px | Large interactive elements, hero sections |
-
-### CSS Variables
-```css
---icon-size-sm: 16px;
---icon-size-md: 20px;
---icon-size-lg: 24px;
---icon-size-xl: 32px;
-```
+Icons come in exactly four sizes — 16, 20, 24, 32px (`--icon-size-sm/md/lg/xl`). The scale and usage table live in `layout.md`.
 
 ### Implementation
 ```jsx

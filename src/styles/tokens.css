@@ -142,8 +142,10 @@
   --icon-size-lg: 24px;
   --icon-size-xl: 32px;
 
-  /* Shadows */
+  /* Shadows — see docs/design-system/layout.md */
   --shadow-s: -1px -1px 4px 0 rgba(32, 34, 42, 0.04), 1px 1px 4px 0 rgba(32, 34, 42, 0.04);
+  --shadow-l: 4px 4px 24px 0 rgba(32, 34, 42, 0.12);
+  --shadow-xl: 0 4px 32px 0 rgba(32, 34, 42, 0.24);
   --shadow-panel: -24px 0px 24px 0px rgba(32, 34, 42, 0.04);
 }
 

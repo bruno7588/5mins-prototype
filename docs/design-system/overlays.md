@@ -27,11 +27,12 @@ A full-screen semi-transparent layer that dims the page content and prevents int
 .overlay-backdrop {
   position: fixed;
   inset: 0;
-  background: var(--neutral-900, #0F1014);
-  opacity: 0.64;
+  background: var(--scrim);
   z-index: 1000;
 }
 ```
+
+Scrim values (Neutral-900 @ 25% light / 50% dark) are defined in `layout.md` — always use `var(--scrim)`, never a literal.
 
 ### Close Behavior
 
@@ -706,7 +707,7 @@ export function SideDrawer({
 
 | Component | Animation | Duration | Easing |
 |-----------|-----------|----------|--------|
-| **Backdrop** | Fade in (opacity 0 → 0.64) | 200ms | ease-out |
+| **Backdrop** | Fade in (opacity 0 → 1, scrim carries its own alpha) | 200ms | ease-out |
 | **Dialog** | Scale up + fade (0.95 → 1, opacity 0 → 1) | 200ms | ease-out |
 | **Modal** | Scale up + fade (0.95 → 1, opacity 0 → 1) | 250ms | ease-out |
 | **Side Drawer** | Slide in from right (translateX(100%) → 0) | 300ms | cubic-bezier(0.32, 0.72, 0, 1) |
@@ -715,7 +716,7 @@ export function SideDrawer({
 /* Entry animations */
 @keyframes overlay-fade-in {
   from { opacity: 0; }
-  to   { opacity: 0.64; }
+  to   { opacity: 1; }
 }
 
 @keyframes dialog-enter {

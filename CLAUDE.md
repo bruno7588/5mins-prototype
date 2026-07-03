@@ -38,7 +38,7 @@ When building any UI component, feature, or screen, you MUST read the relevant d
    - `docs/design-system/typography.md` — Type scale, weights, colors
    - `docs/design-system/colors.md` — Complete color system: raw palettes (Primary, Secondary, Neutral, Success/Warning/Danger, Gamification) + semantic surface and text tokens with dark- and light-mode values | Any color decision — backgrounds, borders, buttons, text, status, badges
    - `docs/design-system/iconography.md` — Iconsax React icons, sizes, variants
-   - `docs/design-system/spacing.md` — Spacing scale and border radius system
+   - `docs/design-system/layout.md` — Layout foundations: 4px spacing scale (padding, margins, gaps), border radius, icon sizes, shadows (S/L/XL), overlay scrim with dark/light values | Any spacing, roundness, elevation, or backdrop decision
    - `docs/design-system/input.md` - Text inputs, form fields, search boxes, email/password/numeric fields — all states (Enabled, Hover, Active, Filled, Disabled), validation states, label, helper text, right-side icon | Any user text-entry element or form control
    - `docs/design-system/dropdown.md` — Dropdown/Select component — all sizes (S/M/L), all states (Default, Hover, Open, Selected, Disabled, Error), label, helper/error text, searchable variant, multi-select with chips, option groups, React implementation | Any dropdown, select field, option picker, filter selector, or combobox
    - `docs/design-system/file-uploader.md` - File upload component — two sizes (L/S), all five states (Enabled, Hover, Error, Uploading, Filled), circular progress, filename display, Preview + Change File CTAs | Any file input, drag-and-drop zone, CSV import, document or media upload
