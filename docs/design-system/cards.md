@@ -1,13 +1,13 @@
 ---
 name: 5mins-card-components
-description: Self-contained build specs for the four official 5Mins.ai content card components - Lesson, Assessment, Course, and Skill cards. Use this skill whenever a 5Mins prototype, mockup, or admin/learner UI needs to show a lesson, assessment, course, or skill as a card or tile; whenever the user references content cards, content tiles, library items, or course/lesson lists in the 5Mins admin panel or learner web app; and whenever building or modifying any 5Mins screen that displays courses, lessons, assessments, or skills. Trigger this even if the word "card" is not used, as long as content items need to be shown visually. Build cards from the specs in this file; do not invent ad-hoc card layouts.
+description: Self-contained build specs for the six official 5Mins.ai content card components - Lesson, Assessment, Course, Skill, Category, and Folder cards. Use this skill whenever a 5Mins prototype, mockup, or admin/learner UI needs to show a lesson, assessment, course, skill, category, or content folder as a card or tile; whenever the user references content cards, content tiles, library items, or course/lesson lists in the 5Mins admin panel or learner web app; and whenever building or modifying any 5Mins screen that displays these content types. Trigger this even if the word "card" is not used, as long as content items need to be shown visually. Build cards from the specs in this file; do not invent ad-hoc card layouts.
 ---
 
 # 5Mins Card Components
 
-5Mins.ai has four official content card components. When a prototype shows a lesson, assessment, course, or skill, build the card from the spec in this file. Do not invent a card layout. Matching the real component keeps prototypes accurate and on-brand, so stakeholders react to the new work and not to layout drift.
+5Mins.ai has six official content card components. When a prototype shows a lesson, assessment, course, skill, category, or folder, build the card from the spec in this file. Do not invent a card layout. Matching the real component keeps prototypes accurate and on-brand, so stakeholders react to the new work and not to layout drift.
 
-This skill is fully self-contained. Every dimension, token, and structure below is the real spec, so no Figma connection is needed to build a card. The Figma source is listed only for anyone who wants to re-verify later (file `EC26cSVe9KNTCWXvYovakw`, "Library").
+This skill is fully self-contained. Every dimension, token, and structure below is the real spec, so no Figma connection is needed to build a card. The Figma source is listed only for anyone who wants to re-verify later (file `EC26cSVe9KNTCWXvYovakw`, "Library" — verified against the light/dark nodes on 2026-07-03: Lesson `11916:9353`/`5144:14181`, Assessment `11916:9875`/`10242:2782`, Course `11916:10292`/`5132:5756`, Skill `11828:5184`/`11802:3704`, Category `10574:3913`/`10176:1806`, Folder `10175:3183`/`10175:3106`).
 
 ## When to use this skill
 
@@ -30,8 +30,10 @@ We only prototype the desktop experience. Every spec below is the desktop varian
 |---|---|---|
 | A single video micro-lesson | Lesson card | grid tile, admin list row, web app list row |
 | A quiz or assessment | Assessment card | admin list row, web app list row |
-| A course or playlist (group of lessons) | Course card | one desktop card |
+| A course or playlist (group of lessons) | Course card | one desktop card (New / Due date / Hover) |
 | A skill tag | Skill card | one chip, with or without a remove control |
+| A category of courses (learner browse) | Category card | desktop card, New / Hover / Disabled |
+| A content folder (admin library grouping) | Folder card | 0/1/2/3+ course stack + "New Folder" creator tile |
 
 For Lesson and Assessment cards, pick the variant by surface: an **admin panel** screen uses the admin list row; a **learner web app** screen uses the web app row; a **grid or library browse** layout uses the Lesson grid tile. When unsure, read the surrounding chrome: dark admin chrome means admin.
 
@@ -50,15 +52,15 @@ The cards use the standard 5Mins token system. If the prototype already defines 
   /* Text */
   --text-primary:    #20222A;  /* titles (Neutral-800) */
   --text-secondary:  #454C5E;  /* metadata, captions (Neutral-500) */
-  --text-disabled:   #656B7C;  /* disabled card text (Neutral-400) */
+  --text-disabled:   #9EA4B3;  /* disabled card text (Neutral-300, light mode) */
 
   /* Accents */
   --primary-600:   #00AFC4;  /* lesson progress fill */
   --success-500:   #18A957;  /* completed progress + completed state */
-  --selected:      #FFBB38;  /* course progress fill (Secondary-500) */
-  --text-warning:  #FFA538;  /* course due-date text (Warning-500) */
-  --badge-new:     #E95C7B;  /* course "New" badge fill */
-  --type-badge-bg: rgba(69, 76, 94, 0.16);  /* content-type pill background */
+  --selected:      #EDA30D;  /* course progress fill (Secondary-600 in light mode) */
+  --text-warning:  #E88206;  /* course due-date text (Warning-600 in light mode) */
+  --badge-new:     #E95C7B;  /* "New" badge fill (--danger-400) */
+  --type-badge-bg: rgba(69, 76, 94, 0.16);  /* content-type pill background (--input-background) */
 }
 ```
 
@@ -160,11 +162,11 @@ Horizontal row: 16px padding, 16px gap, items centered, radius 12px, card backgr
 
 - **Thumbnail** 80 x 80, radius 8px, corner play-circle tag.
 - **Info** fills the row, 8px gap, column. Title Poppins Bold 16px `--text-primary`, up to 2 lines. Metadata row with 24px gap: the `Lesson - Instructor name - 4min` line in Poppins Regular 14px `--text-secondary`, followed by a 96 x 4px progress bar (same segmented style as the grid tile, radius 20px).
-- A **completed** lesson swaps the progress bar for a 20px success tick icon. A lesson with an attached quiz adds a `Take Quiz` or `Retake Quiz` button on the right (warning-outlined when pending, see the `buttons` skill).
+- A **completed** lesson swaps the progress bar for a 20px success tick icon. A lesson with an attached quiz adds a small-outlined button on the right (12px Bold label, 8px/16px padding, radius 8px): `Take Quiz` — border+text `--button-warning-background` with a 16px danger icon; `Retake Quiz` — border+text `--primary-button-background` (quiz pending) or `--text-disabled` (already passed).
 
 ### Lesson states
 
-- **Hover:** card background switches to `--cards-background-hover`; in list rows the title shifts to the link-hover cyan.
+- **Hover:** card background switches to `--cards-background-hover`; in list rows the title shifts to `--text-button-hover` (cyan).
 - **Disabled:** thumbnail desaturated (`filter: grayscale(1)` or `mix-blend-mode: luminosity`); all text uses `--text-disabled`; a lock icon may replace interactive affordances.
 - **Completed:** progress fill uses `--success-500`.
 
@@ -319,9 +321,9 @@ A skill tag, shown as a compact chip. One component, no device split, roughly 40
 
 Anatomy, left to right: a 1px `--border` outline, transparent fill, 12px horizontal / 8px vertical padding, 8px gap, radius 12px, items centered.
 
-- **Illustration** roughly 24 x 24 on the left.
+- **Illustration** 20 x 20 on the left.
 - **Label** the skill name, Poppins Regular 14px `--text-secondary`.
-- **Remove control** a 20px close icon on the right, present only in the removable variant.
+- **Remove control** a 20px close icon (Ionicons `IoCloseOutline`) on the right, present only in the removable variant.
 
 ```html
 <span class="skill-chip">
@@ -337,20 +339,121 @@ Anatomy, left to right: a 1px `--border` outline, transparent fill, 12px horizon
   padding: 8px 12px; border: 1px solid var(--border); border-radius: 12px;
   background: transparent;
 }
-.skill-chip:hover { border-color: var(--border-hover); }
-.skill-chip__icon { width: 24px; height: 24px; flex: none; }
+.skill-chip:hover { border-color: var(--border-hover); background: var(--page-background-hover); }
+.skill-chip__icon { width: 20px; height: 20px; flex: none; }
 .skill-chip__label { font: 400 14px/1.5 Poppins; color: var(--text-secondary); }
 .skill-chip__remove { display: inline-flex; width: 20px; height: 20px; border: 0; background: 0; cursor: pointer; }
-.skill-chip[aria-disabled="true"] { opacity: .5; }
+.skill-chip[aria-disabled="true"] .skill-chip__label { color: var(--text-disabled); }
+.skill-chip[aria-disabled="true"] .skill-chip__icon  { mix-blend-mode: luminosity; }
 ```
 
 ### Skill variants
 
 - **Remove:** set the variant with the close icon when the chip appears in an editable context, for example a skill picker or a tag editor. Omit the close icon in read-only contexts.
-- **Hover:** border switches to `--border-hover`.
-- **Disabled:** reduced opacity, non-interactive, no remove control.
+- **Hover:** border switches to `--border-hover` **and** the chip fills with `--page-background-hover`.
+- **Disabled:** label in `--text-disabled`, illustration desaturated (`mix-blend-mode: luminosity`), non-interactive, no remove control.
 
-Source variant nodes: `9577:3698` (enabled), `9577:3701` (hover), `9577:3704` (removable), `9577:3712` (disabled).
+Source variant nodes (light): `11828:5185` (enabled), `11828:5188` (hover), `11828:5191` (removable), `11828:5199` (disabled).
+
+---
+
+## Category card
+
+A category of courses in the learner browse experience. Desktop card 300px wide, ~273px tall (Mobile 272px variant exists; out of scope). Source: `Card/ Category`, light `10574:3913`, dark `10176:1806`.
+
+Anatomy, top to bottom (16px gap between thumbnail area and info):
+
+- **Thumbnail stack:** a blurred "glow" copy of the category image fills the full 300 x 204 area (`filter: blur(16px)`, 32% opacity, radius 12px) with the sharp 240 x 140 image (radius 12px) centered on top — the card has **no surface fill**; the glow is the card.
+- **Info** below: 8px gap. Title Poppins Bold 16px `--text-primary`, single line, ellipsis. Metadata row, 16px gap, two items in Poppins Regular 14px `--text-secondary`, each with a 4px icon gap: a 20px collection-play icon + `12 courses`, and a 16px play-circle icon + `24 lessons`.
+- **"New Courses" badge** (New variant): overlaps the card's top edge — absolute, top −11px, left 30px; `--badge-new` (`--danger-400`) fill, 6px / 8px padding, radius 40px, label Poppins Medium 12px `--neutral-25`.
+
+```html
+<article class="category-card">
+  <div class="category-card__thumb">
+    <img class="category-card__glow"  src="..." alt="" />
+    <img class="category-card__image" src="..." alt="" />
+    <span class="badge-new badge-new--category">New Courses</span> <!-- New only -->
+  </div>
+  <div class="category-card__info">
+    <h3 class="card-title card-title--1line">Category name</h3>
+    <div class="category-card__meta">
+      <span class="meta-item"><i class="icon-collection"></i>12 courses</span>
+      <span class="meta-item"><i class="icon-play"></i>24 lessons</span>
+    </div>
+  </div>
+</article>
+```
+
+```css
+.category-card { position: relative; width: 300px; display: flex; flex-direction: column; gap: 16px; }
+.category-card__thumb { position: relative; height: 204px; display: grid; place-items: center; }
+.category-card__glow {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; border-radius: 12px;
+  filter: blur(16px); opacity: 0.32;
+}
+.category-card__image { position: relative; width: 240px; height: 140px; object-fit: cover; border-radius: 12px; }
+.category-card__info { display: flex; flex-direction: column; gap: 8px; }
+.category-card__meta { display: flex; gap: 16px; }
+.badge-new--category { position: absolute; top: -11px; left: 30px; }
+```
+
+### Category states
+
+- **Hover:** the sharp foreground image scales up toward the card edges over the glow.
+- **Disabled:** image desaturated, all text `--text-disabled`; hovering shows a tooltip — "Category not available in your plan. Please contact **Customer Success**" (standard tooltip, link in primary).
+- **New:** adds the overlapping "New Courses" badge.
+
+---
+
+## Folder card
+
+An admin library grouping ("folder") that previews its courses as a stacked deck. 308px wide; card area 308 x 272, info below. The stack depth mirrors the course count (variant axis: 0, 1, 2, 3+). Source: `Card/category` (named "category" in Figma but it is the **Folder** card — the creator tile inside it is labelled "New Folder"), light `10175:3183`, dark `10175:3106`.
+
+Anatomy (16px gap between card and info):
+
+- **Card surface:** `--cards-background`, radius 12px, 24px padding, Shadow S.
+- **Thumb stack** centered (240 x 164 area), all layers radius 8px, bottom-anchored front image:
+  - Back layer (3+ only): 208 x 118, `--cards-background-hover` fill, offset up 23px
+  - Middle layer (2 and 3+): 224 x 132, `--border-elevated` fill, offset up 4px
+  - Front: the folder's cover image, 240 x 140
+  - **0 courses:** a gray video-player glyph placeholder instead of the stack
+- **Info** below, 4px gap: folder name Poppins Bold 16px `--text-primary`; count Poppins Regular 14px `--text-secondary` (`3+ courses`, `1 course`, `0 courses`).
+
+```css
+.folder-card { width: 308px; display: flex; flex-direction: column; gap: 16px; }
+.folder-card__surface {
+  height: 272px; display: grid; place-items: center; padding: 24px;
+  background: var(--cards-background); border-radius: 12px;
+  box-shadow: var(--shadow-s);
+}
+.folder-card__surface:hover { background: var(--cards-background-hover); }
+.folder-card__stack { position: relative; width: 240px; height: 164px; }
+.folder-card__stack .back   { position: absolute; left: 50%; transform: translateX(-50%); top: 0;    width: 208px; height: 118px; background: var(--cards-background-hover); border-radius: 8px; }
+.folder-card__stack .middle { position: absolute; left: 50%; transform: translateX(-50%); top: 15px; width: 224px; height: 132px; background: var(--border-elevated); border-radius: 8px; }
+.folder-card__stack .front  { position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; width: 240px; height: 140px; object-fit: cover; border-radius: 8px; }
+.folder-card__info { display: flex; flex-direction: column; gap: 4px; }
+```
+
+### "New Folder" creator tile
+
+The last tile in a folder grid is the creator affordance: 308 x 272, transparent fill, **1.5px dashed `--border-elevated`** border, radius 12px, centered column in `--text-secondary` — a 48px `+` over a 16px Regular "New Folder" label. Hover fills with `--cards-background-hover`.
+
+```css
+.folder-card--new {
+  height: 272px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 1.5px dashed var(--border-elevated); border-radius: 12px;
+  color: var(--text-secondary); text-align: center; cursor: pointer;
+}
+.folder-card--new .plus  { font: 400 48px/1.5 Poppins; }
+.folder-card--new .label { font: 400 16px/1.5 Poppins; }
+.folder-card--new:hover  { background: var(--cards-background-hover); }
+```
+
+### Folder states
+
+- **Hover:** card surface (or creator tile) fills with `--cards-background-hover`.
+- **Stack depth:** render only as many layers as the folder has courses, capped at 3.
 
 ---
 

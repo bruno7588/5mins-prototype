@@ -1,34 +1,36 @@
 ---
-name: 5mins-chips-and-tabs
+name: 5mins-chips-switcher-tabs
 description: >
-  Chip / filter-tag and Tabs components for 5Mins.ai. Use when implementing
-  chips, tags, filter pills, selection chips, dismissible tags, tab bars,
+  Chip / filter-tag, Content Switcher (segmented control), and Tabs components
+  for 5Mins.ai. Use when implementing chips, tags, filter pills, selection
+  chips, dismissible tags, segmented controls, view switchers, tab bars,
   underlined tab navigation, page section tabs, or any small pill-shaped
-  interactive label or horizontal tab switcher in the admin or learner UI.
+  interactive label or horizontal switcher in the admin or learner UI.
   Covers all chip variants (default, hover, selected, disabled, with optional
-  left/right icons) and all tab variants (default, hover, selected, with
-  optional counter pill), plus design tokens and React TypeScript usage.
-  Trigger this skill whenever someone needs a chip, filter chip, tag pill,
-  selection pill, dismissible label, tab, tab bar, or section switcher in the
-  5Mins.ai platform, even if they just say "add a chip", "filter tag", or
-  "switch this to tabs".
+  left/right icons), the content-switcher item states, and all tab variants
+  (default, hover, selected, with optional counter pill), plus design tokens
+  and React TypeScript usage. Trigger this skill whenever someone needs a chip,
+  filter chip, tag pill, selection pill, dismissible label, segmented control,
+  content switcher, tab, tab bar, or section switcher in the 5Mins.ai platform.
 ---
 
-# 5Mins.ai - Chips & Tabs Components
+# 5Mins.ai - Chips, Content Switcher & Tabs
 
-This file documents two related navigation/selection components used across
+This file documents three related navigation/selection components used across
 the 5Mins.ai admin and learner UI:
 
 1. **Chips** - pill-shaped labels for filters, tags, and dismissible selections
-2. **Tabs** - underlined horizontal section switcher with optional counter pills
+2. **Content Switcher** - a segmented control inside a filled track, for exclusive view switching
+3. **Tabs** - underlined horizontal section switcher with optional counter pills
 
-Both components share the dark admin theme and the same Poppins type scale.
+All colors are semantic tokens that resolve per mode (see `colors.md`).
+
+Spec source (verified 2026-07-03): Chips light `11918:4167` / dark `5162:28510` · Content Switcher light `8953:10123` + item `11908:5278` / dark `7128:23859` + `8497:24186` · Tabs light `11916:6696` + item `11490:8863` / dark `8497:24855` + `1939:18281`.
 
 ---
 
 # Part 1: Chips Component
 
-Figma source: `Library` › node `11100-2179`
 Screenshot: pill-shaped labels, yellow selected state.
 
 ## Visual Overview
@@ -46,26 +48,21 @@ Screenshot: pill-shaped labels, yellow selected state.
 
 All values use 5Mins.ai design tokens.
 
-| CSS Variable               | Value      | Usage                                  |
-|----------------------------|------------|----------------------------------------|
-| `--border`                 | `#383d4c`  | Default & disabled border              |
-| `--border-hover`           | `#9ea4b3`  | Hover state border                     |
-| `--page-background-hover`  | `#2d313d`  | Hover state background fill            |
-| `--selected`               | `#ffbb38`  | Selected background (yellow/amber)     |
-| `--text-secondary`         | `#bfc2cc`  | Default & hover label color            |
-| `--text-disabled`          | `#656b7c`  | Disabled label & icon color            |
-| `--neutral-800`            | `#20222a`  | Selected label color (dark on yellow)  |
+| CSS Variable               | Light      | Dark       | Usage                                  |
+|----------------------------|------------|------------|----------------------------------------|
+| `--border`                 | `#DFE1E6`  | `#383D4C`  | Default & disabled border              |
+| `--border-hover`           | `#9EA4B3`  | `#9EA4B3`  | Hover state border                     |
+| `--page-background-hover`  | `#EFF0F2`  | `#2D313D`  | Hover state background fill            |
+| `--secondary-500`          | `#FFBB38`  | `#FFBB38`  | **Selected background — raw palette token, same in both modes (not `--selected`)** |
+| `--text-secondary`         | `#454C5E`  | `#BFC2CC`  | Default & hover label color            |
+| `--text-disabled`          | `#9EA4B3`  | `#656B7C`  | Disabled label & icon color            |
+| `--neutral-800`            | `#20222A`  | `#20222A`  | Selected label color (dark on yellow)  |
 
-### Spacing tokens
+### Spacing
 
-| Token  | px  | Used for                                         |
-|--------|-----|--------------------------------------------------|
-| `--xs` | 4   | Gap when no icons or iconLeft present            |
-| `--s`  | 8   | Gap when iconRight present                       |
-| `--sm` | 12  | Horizontal padding on the icon side of chip      |
-| `--m`  | 16  | Horizontal padding on the text side of chip      |
-
-- **Vertical padding:** `8px` (both sides)
+- **Padding:** `8px 12px` (`--s` / `--sm`) — uniform for all variants
+- **Gap:** `4px` (`--xs`) whenever an icon is present
+- **Icons:** 16 × 16 px, left or right (never both)
 - **Border radius:** `24px` (fully rounded pill)
 
 ### Typography
@@ -98,13 +95,10 @@ All values use 5Mins.ai design tokens.
 |------------|------------|------------|----------------|------------------------|-------------------|-------------|
 | false      | false      | Enabled    | `--border`     | transparent            | `--text-secondary`| 400         |
 | false      | false      | Hover      | `--border-hover`| `--page-background-hover`| `--text-secondary`| 400         |
-| false      | true       | Enabled    | none           | `--selected`           | `--neutral-800`   | 700         |
+| false      | true       | Enabled    | none           | `--secondary-500`      | `--neutral-800`   | 700         |
 | true       | false      | n/a        | `--border`     | transparent            | `--text-disabled` | 400         |
 
-**Padding rules:**
-- `iconLeft` only: `pl-[12px] pr-[16px]`, gap `4px`
-- `iconRight` only: `pl-[16px] pr-[12px]`, gap `8px`
-- No icons: `px-[16px]`, gap `0`
+**Padding rules:** `8px 12px` for every variant; add `gap: 4px` when an icon is present (left or right).
 
 ## React TypeScript Implementation
 
@@ -142,33 +136,24 @@ export function Chip({
   const isHover = state === 'Hover';
 
   // Base classes
-  const base = 'inline-flex items-center justify-center rounded-[24px] py-[8px] cursor-pointer select-none transition-colors';
+  const base = 'chip-base'; /* inline-flex, radius 24px, padding 8px 12px, transition */
 
-  // Background / border
+  // Background / border — use tokens, not hexes
   const visual = disabled
-    ? 'border border-[#383d4c]'
+    ? 'chip--disabled'                        /* border --border */
     : selected
-    ? 'bg-[#ffbb38]'
+    ? 'chip--selected'                        /* bg --secondary-500, no border */
     : isHover
-    ? 'border border-[#9ea4b3] bg-[#2d313d]'
-    : 'border border-[#383d4c] hover:border-[#9ea4b3] hover:bg-[#2d313d]';
+    ? 'chip--hover'                           /* border --border-hover, bg --page-background-hover */
+    : 'chip--enabled';                        /* border --border + CSS :hover */
 
-  // Padding
-  const padding = iconLeft && !iconRight
-    ? 'pl-[12px] pr-[16px] gap-[4px]'
-    : iconRight && !iconLeft
-    ? 'pl-[16px] pr-[12px] gap-[8px]'
-    : 'px-[16px]';
+  const padding = iconLeft || iconRight ? 'gap-[4px]' : '';
 
-  // Text style
-  const textStyle = disabled
-    ? 'text-[14px] font-normal text-[#656b7c] leading-[1.5] font-[Poppins]'
-    : selected
-    ? 'text-[14px] font-bold text-[#20222a] leading-[1.5] font-[Poppins]'
-    : 'text-[14px] font-normal text-[#bfc2cc] leading-[1.5] font-[Poppins]';
+  // Text: 14px/1.5 Poppins — Regular (--text-secondary), Bold + --neutral-800 when
+  // selected, Regular + --text-disabled when disabled
+  const textStyle = disabled ? 'chip__label--disabled' : selected ? 'chip__label--selected' : 'chip__label';
 
-  // Icon color
-  const iconColor = disabled ? '#656b7c' : selected ? '#20222a' : '#bfc2cc';
+  const iconColor = 'currentColor';
 
   return (
     <div
@@ -206,33 +191,32 @@ export function Chip({
   align-items: center;
   justify-content: center;
   border-radius: 24px;
-  padding: 8px 16px;
-  border: 1px solid var(--border, #383d4c);
+  padding: 8px 12px;
+  border: 1px solid var(--border);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--text-secondary, #bfc2cc);
+  color: var(--text-secondary);
   cursor: pointer;
   transition: background-color 0.15s, border-color 0.15s;
 }
 .chip:hover {
-  border-color: var(--border-hover, #9ea4b3);
-  background-color: var(--page-background-hover, #2d313d);
+  border-color: var(--border-hover);
+  background-color: var(--page-background-hover);
 }
 .chip--selected {
   border: none;
-  background-color: var(--selected, #ffbb38);
-  color: var(--neutral-800, #20222a);
+  background-color: var(--secondary-500);   /* #FFBB38 — raw token, both modes */
+  color: var(--neutral-800);
   font-weight: 700;
 }
 .chip--disabled {
-  border-color: var(--border, #383d4c);
-  color: var(--text-disabled, #656b7c);
+  border-color: var(--border);
+  color: var(--text-disabled);
   cursor: not-allowed;
   pointer-events: none;
 }
-.chip--icon-left  { padding-left: 12px; gap: 4px; }
-.chip--icon-right { padding-right: 12px; gap: 8px; }
+.chip--icon { gap: 4px; }                    /* left or right icon, 16px */
 ```
 
 ## Usage Examples
@@ -282,10 +266,115 @@ filters.map(f => (
 
 ---
 
-# Part 2: Tabs Component
+# Part 2: Content Switcher Component
 
-Figma source: `Library` › tab item node `11490-8863`, tab bar node `11490-8891`
-Screenshot: row of text labels, the active one bolded with a yellow underline beneath it.
+A segmented control: mutually exclusive sections inside a filled track. Use it to switch between views of the same data (e.g. grid/list, week/month) where the options should read as one connected control rather than separate chips.
+
+## Visual Overview
+
+```
+┌────────────────────────────────────────────┐
+│ [ Section ]  Section   Section   Section   │   ← track (filled), selected segment yellow
+└────────────────────────────────────────────┘
+```
+
+## Anatomy & Tokens
+
+**Track:** `background: var(--input-background)` · padding `4px` (`--xs`) · gap `4px` · radius `12px` (`--radius-sm`).
+
+**Item:** padding `6px 12px` · radius `8px` (`--radius-s`) · text 14px/1.5 Poppins.
+
+| Item state | Background | Text |
+|---|---|---|
+| Selected | `--secondary-500` `#FFBB38` (both modes) | Bold, `--neutral-800` |
+| Unselected | transparent | Regular, `--text-secondary` |
+| Unselected hover | `--input-background-hover` | Regular, `--text-secondary` |
+| Disabled | transparent | Regular, `--text-disabled` |
+
+Optional icons per item: **left 20px** (e.g. trash) or **right 16px** (e.g. info-circle), `gap: 4px`, `currentColor`. The selected item's hover has no further change — it is already the active segment.
+
+## CSS
+
+```css
+.switcher {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);      /* 12px */
+}
+
+.switcher__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--radius-s);       /* 8px */
+  background: transparent;
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.switcher__item:hover:not(.is-selected):not(:disabled) {
+  background: var(--input-background-hover);
+}
+
+.switcher__item.is-selected {
+  background: var(--secondary-500);     /* #FFBB38 — raw token, both modes */
+  color: var(--neutral-800);
+  font-weight: 700;
+}
+
+.switcher__item:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+```
+
+## React TypeScript
+
+```tsx
+interface SwitcherProps {
+  items: { key: string; label: string; disabled?: boolean }[];
+  activeKey: string;
+  onChange: (key: string) => void;
+}
+
+export function ContentSwitcher({ items, activeKey, onChange }: SwitcherProps) {
+  return (
+    <div className="switcher" role="tablist" aria-orientation="horizontal">
+      {items.map((item) => (
+        <button
+          key={item.key}
+          type="button"
+          role="tab"
+          aria-selected={item.key === activeKey}
+          disabled={item.disabled}
+          className={`switcher__item${item.key === activeKey ? ' is-selected' : ''}`}
+          onClick={() => onChange(item.key)}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+```
+
+## Do's and Don'ts (Content Switcher)
+
+**Do:** use for 2–5 exclusive views of the same content; keep labels one word where possible.
+**Don't:** use for filters (chips) or for sibling page sections (tabs); don't mix icon and no-icon items in one track.
+
+---
+
+# Part 3: Tabs Component
+
+Screenshot: row of text labels, the active one bolded with an amber underline beneath it.
 
 ## Visual Overview
 
@@ -317,13 +406,13 @@ Tab Name 0      ← Hover + Counter (counter text brightens too)
 
 ## Design Tokens
 
-| CSS Variable          | Value                       | Usage                                       |
-|-----------------------|-----------------------------|---------------------------------------------|
-| `--text-primary`      | `#f9f9fa`                   | Selected label text, hover label text       |
-| `--text-secondary`    | `#bfc2cc`                   | Default (enabled, not selected) label text  |
-| `--text-tertiary`     | `#9ea4b3`                   | Counter text in default enabled state       |
-| `--selected`          | `#ffbb38`                   | Yellow 2px indicator underline              |
-| `--input-background`  | `rgba(69, 76, 94, 0.16)`    | Counter pill background                     |
+| CSS Variable          | Light                       | Dark                      | Usage                                       |
+|-----------------------|-----------------------------|---------------------------|---------------------------------------------|
+| `--text-primary`      | `#20222A`                   | `#F9F9FA`                 | Selected label text, hover label text       |
+| `--text-secondary`    | `#454C5E`                   | `#BFC2CC`                 | Default (enabled, not selected) label text  |
+| `--text-tertiary`     | `#656B7C`                   | `#9EA4B3`                 | Counter text in default enabled state       |
+| `--selected`          | `#EDA30D`                   | `#FFBB38`                 | Amber 2px indicator underline — **mode-aware, unlike the chip/switcher fill** |
+| `--input-background`  | `#BFC2CC` @16%              | `#454C5E` @16%            | Counter pill background                     |
 
 ### Spacing tokens
 
@@ -492,7 +581,7 @@ export function TabItemView({
       </div>
       {/* Indicator only when selected */}
       <div
-        className={`h-[2px] w-full rounded-[1px] ${selected ? 'bg-[#ffbb38]' : 'bg-transparent'}`}
+        className={`h-[2px] w-full rounded-[1px] ${selected ? 'bg-[var(--selected)]' : 'bg-transparent'}`}
         aria-hidden
       />
     </button>
@@ -551,7 +640,7 @@ export function TabItemView({
   justify-content: center;
   padding: 0 6px;
   border-radius: 100px;
-  background-color: var(--input-background, rgba(69, 76, 94, 0.16));
+  background-color: var(--input-background);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   line-height: 1.5;
@@ -571,7 +660,7 @@ export function TabItemView({
 }
 
 .tab-item--selected .tab-item__indicator {
-  background-color: var(--selected, #ffbb38);
+  background-color: var(--selected);
 }
 ```
 
@@ -633,15 +722,16 @@ const [active, setActive] = useState('overview');
 - Don't use tabs for primary navigation between unrelated pages, use the sidebar instead
 - Don't use tabs as a filter mechanism, use chips for that
 - Don't render more than ~6 tabs in a single row; if you need more, consider a dropdown, secondary filter, or splitting the view
-- Don't change the indicator color or thickness, `#ffbb38` and `2px` are fixed
+- Don't change the indicator color or thickness, `var(--selected)` and `2px` are fixed
 - Don't combine tabs with chips in the same row, it makes the visual hierarchy ambiguous
 - Don't hide the indicator on the selected tab, it's the primary affordance signalling which tab is active
 
-## Chips vs Tabs: which one to use
+## Chips vs Switcher vs Tabs: which one to use
 
 | Use case                                              | Component |
 |-------------------------------------------------------|-----------|
 | Filter a list by category (multi or single select)    | Chips     |
+| Switch between exclusive views of the same data (grid/list, week/month) | Content Switcher |
 | Show applied filters that can be removed              | Chips with `iconRight` |
 | Switch between sibling views of the same object       | Tabs      |
 | Show counts alongside section labels                  | Tabs with `counter` |

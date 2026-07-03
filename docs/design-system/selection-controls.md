@@ -1,7 +1,13 @@
+---
+name: 5mins-selection-controls
+description: Selection controls for 5Mins.ai — Radio button, Checkbox (including indeterminate), and Toggle switch in one file. All states (enabled, hover halo, disabled), dimensions, amber selected tokens, CSS and React implementations, grouping and accessibility patterns. Use for any single-choice option group, multi-choice list, consent acknowledgement, select-all table header, or instant on/off setting.
+---
 
 # 5Mins.ai Selection Controls
 
-Complete implementation guide for Radio buttons, Checkboxes, and Toggle switches in the 5Mins.ai micro-learning platform. Source of truth: Figma library `EC26cSVe9KNTCWXvYovakw`.
+Complete implementation guide for Radio buttons, Checkboxes, and Toggle switches in the 5Mins.ai micro-learning platform.
+
+Spec source: Figma Library — Checkbox light `11917:3924` / dark `6339:10484`, Radio light `11917:3950` / dark `5001:18926`, Toggle light `11917:3970` / dark `8160:364` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`); hexes below are light-mode values.
 
 Cross-reference:
 - `5mins-colors` (colors.md) for the raw palette and semantic surface tokens
@@ -26,16 +32,16 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 
 All three controls pull from the same token set. Selected/on state colour differs slightly between controls (see each section for the exact hex); everything else is shared.
 
-| Role | Token / Resolved value | Notes |
-|---|---|---|
-| Selected state colour (radio, checkbox) | `#EDA30D` (secondary darker amber) | Maps to Figma `Text-selected` on these controls |
-| On state colour (toggle track) | `--surface-selected` / `#FFBB38` (secondary-500) | Maps to Figma `Text-selected` on toggle |
-| Hover halo background | `--surface-page-hover` / `#EFF0F2` (neutral-50) | Circular halo around radio and checkbox on hover |
-| Default stroke colour | `--neutral-800` / `#20222A` (text-primary) | Unselected radio ring, unchecked checkbox border |
-| Disabled colour | `#9EA4B3` (neutral-300, text-disabled) on light surfaces; `#656B7C` (neutral-400) on toggle track | See each section |
-| Thumb colour (toggle) | `--neutral-25` / `#F9F9FA` | Toggle knob |
+| Role | Token | Light | Dark | Notes |
+|---|---|---|---|---|
+| Selected colour (radio, checkbox) | `--control-selected` (= `--secondary-600`) | `#EDA30D` | `#EDA30D` | Ring + dot, box fill — same amber in both modes |
+| On colour (toggle track) | `--selected` | `#EDA30D` | `#FFBB38` | Mode-aware — brighter amber in dark mode |
+| Hover halo background | `--page-background-hover` | `#EFF0F2` | `#2D313D` | Circular halo around radio and checkbox on hover |
+| Default stroke colour | `--text-primary` | `#20222A` | `#F9F9FA` | Unselected radio ring, unchecked checkbox border |
+| Disabled colour | `--text-disabled` | `#9EA4B3` | `#656B7C` | Rings, borders, off-track when disabled |
+| Thumb colour (toggle) | `--neutral-25` | `#F9F9FA` | `#F9F9FA` | Toggle knob |
 
-> Always prefer the semantic token name (`--surface-selected`, `--surface-page-hover`) over the raw hex when the token exists. The raw hex is documented so prototypes can still render correctly if tokens are not yet wired up.
+> Always use the semantic token; the hexes are documented so prototypes render correctly if tokens are not yet wired up. `--control-selected` is defined in `tokens.css` as `var(--secondary-600)`.
 
 ---
 
@@ -81,7 +87,7 @@ Single-select indicator. Sits inside a labelled row; the label itself should als
 }
 
 .radio:hover:not(.radio--disabled) {
-  background: var(--surface-page-hover, #EFF0F2);
+  background: var(--page-background-hover);
 }
 
 /* Visible ring */
@@ -247,7 +253,7 @@ Multi-select or single acknowledgement indicator. Also supports an **indetermina
 }
 
 .checkbox:hover:not(.checkbox--disabled) {
-  background: var(--surface-page-hover, #EFF0F2);
+  background: var(--page-background-hover);
 }
 
 .checkbox__box {
@@ -418,9 +424,9 @@ Binary on/off control. Applies immediately on change; never use inside forms tha
 | State | Track colour | Thumb colour | Thumb position |
 |---|---|---|---|
 | Off (enabled) | `#656B7C` (neutral-400) | `#F9F9FA` (neutral-25) | left |
-| On (enabled) | `#FFBB38` / `--surface-selected` | `#F9F9FA` | right |
+| On (enabled) | `var(--selected)` (`#EDA30D` light / `#FFBB38` dark) | `#F9F9FA` | right |
 | Off (disabled) | `#9EA4B3` (neutral-300) | `#F9F9FA` | left |
-| On (disabled) | `#FFBB38` at 40% opacity | `#F9F9FA` | right |
+| On (disabled) | `var(--selected)` at 40% opacity | `#F9F9FA` | right |
 | Focus (either) | same + 2 px outline around track | - | - |
 
 No hover halo on the toggle (unlike radio/checkbox). Optional subtle darkening of the track on hover is acceptable.
@@ -466,7 +472,7 @@ No hover halo on the toggle (unlike radio/checkbox). Optional subtle darkening o
 
 /* On */
 .toggle--on .toggle__track {
-  background: var(--surface-selected, #FFBB38);
+  background: var(--selected);
 }
 .toggle--on .toggle__thumb {
   transform: translateX(16px);
@@ -475,7 +481,7 @@ No hover halo on the toggle (unlike radio/checkbox). Optional subtle darkening o
 /* Disabled */
 .toggle--disabled { cursor: not-allowed; }
 .toggle--disabled .toggle__track { background: #9EA4B3; }
-.toggle--disabled.toggle--on .toggle__track { background: #FFBB38; opacity: 0.4; }
+.toggle--disabled.toggle--on .toggle__track { background: var(--selected); opacity: 0.4; }
 
 /* Focus */
 .toggle__input:focus-visible + .toggle__track {
@@ -600,7 +606,7 @@ Note the use of `role="switch"` so assistive tech announces this as a toggle rat
 
 ### Radio card group (radios inside visual cards)
 
-The radio itself remains the same; the card handles its own selected border using `--surface-selected`. Only one radio can be `checked` per group.
+The radio itself remains the same; the card handles its own selected border using `--selected`. Only one radio can be `checked` per group.
 
 ---
 
@@ -623,7 +629,7 @@ The radio itself remains the same; the card handles its own selected border usin
 |---|---|---|
 | Radio | `#EDA30D` | `#EFF0F2`, 24 × 24 |
 | Checkbox | `#EDA30D` | `#EFF0F2`, 32 × 32 |
-| Toggle | `#FFBB38` (`--surface-selected`) | none |
+| Toggle | `var(--selected)` | none |
 
 ### Disabled summary
 
@@ -632,4 +638,4 @@ The radio itself remains the same; the card handles its own selected border usin
 | Radio (ring + dot) | `#9EA4B3` |
 | Checkbox (border) | `#9EA4B3` |
 | Toggle off (track) | `#9EA4B3` |
-| Toggle on (track) | `#FFBB38` at 40% opacity |
+| Toggle on (track) | `var(--selected)` at 40% opacity |
