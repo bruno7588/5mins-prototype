@@ -119,7 +119,7 @@ const CircularProgress = ({ pct }: { pct: number }) => {
       <svg width="64" height="64" style={{ transform: 'rotate(-90deg)' }}>
         <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(69,76,94,0.32)" strokeWidth="4" />
         <circle cx="32" cy="32" r={r} fill="none"
-          stroke="var(--primary, #00cee6)" strokeWidth="4"
+          stroke="var(--primary-500)" strokeWidth="4"
           strokeDasharray={circ}
           strokeDashoffset={circ - (pct / 100) * circ}
           strokeLinecap="round" />
@@ -142,7 +142,7 @@ const CircularProgress = ({ pct }: { pct: number }) => {
 import { DocumentUpload, DocumentText } from 'iconsax-react';
 
 <DocumentUpload size={40} color="var(--text-secondary, #bfc2cc)" variant="Linear" />  // Enabled/Hover
-<DocumentUpload size={40} color="var(--danger, #df1642)"         variant="Linear" />  // Error
+<DocumentUpload size={40} color="var(--danger-500)"         variant="Linear" />  // Error
 <DocumentText size={40} color="var(--text-secondary, #bfc2cc)" variant="Bold" /> // Filled
 // S size: use size={32} instead of 40
 ```
@@ -190,7 +190,7 @@ export function FileUploader({
   const isL = size === 'L';
 
   const getBorderColor = () => {
-    if (state === 'Error')                  return 'var(--danger, #df1642)';
+    if (state === 'Error')                  return 'var(--danger-500)';
     if (state === 'Hover' || isDragging)    return 'var(--border-hover, #9ea4b3)';
     if (state === 'Filled')                 return 'var(--border, #383d4c)';
     return 'var(--border-elevated, #454c5e)';
@@ -203,7 +203,7 @@ export function FileUploader({
   };
 
   // L: 20px all states; S: 16px (Filled: 24px)
-  const mainGap = isL ? 'var(--ml, 20px)' : (state === 'Filled' ? 'var(--l, 24px)' : 'var(--m, 16px)');
+  const mainGap = isL ? 'var(--space-ml)' : (state === 'Filled' ? 'var(--space-l)' : 'var(--space-m)');
 
   const iconSize   = isL ? 40 : 32;
   const bodySize   = isL ? '14px' : '12px';
@@ -236,7 +236,7 @@ export function FileUploader({
   const OutlinedBtn = ({ label, hover, onClick }: { label: string; hover?: boolean; onClick?: () => void }) => (
     <button onClick={onClick} style={{
       border: `1px solid ${hover ? 'var(--primary-button-background-hover)' : 'var(--text-primary, #f9f9fa)'}`,
-      borderRadius: 'var(--s, 8px)', padding: '8px 16px',
+      borderRadius: 'var(--radius-s)', padding: '8px 16px',
       background: hover ? 'rgba(0,206,230,0.16)' : 'transparent',
       fontFamily: "'Poppins', sans-serif", fontWeight: 700,
       fontSize: btnSize, lineHeight: btnLineH,
@@ -267,8 +267,8 @@ export function FileUploader({
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         justifyContent: 'center', gap: mainGap,
         border: `1px ${state === 'Filled' ? 'solid' : 'dashed'} ${getBorderColor()}`,
-        borderRadius: 'var(--sm, 12px)', background: getBackground(),
-        padding: isL ? 'var(--l, 24px)' : 'var(--m, 16px)',
+        borderRadius: 'var(--radius-sm)', background: getBackground(),
+        padding: isL ? 'var(--space-l)' : 'var(--space-m)',
         width: isL ? '100%' : '180px', minHeight: isL ? '240px' : '260px',
         boxSizing: 'border-box', transition: 'border-color 0.15s, background 0.15s',
         cursor: state === 'Uploading' ? 'default' : 'pointer',
@@ -293,7 +293,7 @@ export function FileUploader({
 
       {/* ERROR — first 3 messages as bullets, remainder as "+N errors" */}
       {state === "Error" && (<>
-        <DocumentUpload size={iconSize} color="var(--danger, #df1642)" variant="Linear" />
+        <DocumentUpload size={iconSize} color="var(--danger-500)" variant="Linear" />
         <div style={{ display: "flex", flexDirection: "column", gap: isL ? 4 : 2,
           fontFamily: "Poppins", fontWeight: 500, color: "var(--text-error)",
           fontSize: isL ? "16px" : "12px", lineHeight: isL ? 1.5 : 1.2 }}>
@@ -313,7 +313,7 @@ export function FileUploader({
           <div style={{ position: 'relative', width: 64, height: 64 }}>
             <svg width="64" height="64" style={{ transform: 'rotate(-90deg)' }}>
               <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(69,76,94,0.32)" strokeWidth="4" />
-              <circle cx="32" cy="32" r={r} fill="none" stroke="var(--primary, #00cee6)"
+              <circle cx="32" cy="32" r={r} fill="none" stroke="var(--primary-500)"
                 strokeWidth="4" strokeDasharray={circ}
                 strokeDashoffset={circ - (progress / 100) * circ} strokeLinecap="round" />
             </svg>
@@ -337,7 +337,7 @@ export function FileUploader({
             textAlign: 'center', margin: 0, wordBreak: 'break-all' }}>{fileName}</p>
         </div>
         <div style={{ display: 'flex', flexDirection: isL ? 'row' : 'column',
-          alignItems: 'center', gap: isL ? 24 : 'var(--m, 16px)' }}>
+          alignItems: 'center', gap: isL ? 24 : 'var(--space-m)' }}>
           {isL  && <TextBtn label="Preview" onClick={onPreview} />}
           <OutlinedBtn label="Change File" onClick={openPicker} />
           {!isL && <TextBtn label="Preview" muted onClick={onPreview} />}
@@ -407,4 +407,4 @@ const handleSelect = async (file: File) => {
 - **`errors` only renders in `state="Error"`** — first 3 as a Medium bullet list (16px L / 12px S), the rest collapsed to a 12px "+N errors" line.
 - **"Preview" placement differs by size** — L: left of "Change File"; S: below it (muted grey).
 - **Drag-over mimics Hover styling** — `isDragging` overrides border to `--border-hover`.
-- **Always use design tokens, not raw hex** — `var(--danger, #df1642)` not `#df1642`.
+- **Always use design tokens, not raw hex** — `var(--danger-500)` not `#df1642`.

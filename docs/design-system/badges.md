@@ -44,7 +44,7 @@ Every badge follows this structure:
   align-items: center;
   justify-content: center;
   padding: 6px 12px;                    /* vertical | horizontal */
-  border-radius: var(--xxl, 40px);      /* full pill shape */
+  border-radius: var(--radius-full);      /* full pill shape */
   font-family: 'Poppins', sans-serif;
   font-weight: 500;                     /* Medium */
   font-size: 14px;
@@ -244,7 +244,7 @@ export function Badge({
         justifyContent: 'center',
         gap: showIcon ? '4px' : dismissible ? '8px' : undefined,
         padding: '6px 12px',
-        borderRadius: 'var(--xxl, 40px)',
+        borderRadius: 'var(--radius-full)',
         background: config.bg,
         color: config.color,
         fontFamily: "'Poppins', sans-serif",
@@ -308,7 +308,7 @@ For projects preferring CSS classes over inline styles:
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
-  border-radius: var(--xxl, 40px);
+  border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
   font-size: 14px;

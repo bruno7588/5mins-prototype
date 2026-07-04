@@ -1,3 +1,7 @@
+---
+name: 5mins-overlays
+description: Dialog (Error/Warning/Info/Success types, 56px icons), Modal (720px, centered), and Side Drawer (right-anchored) for 5Mins.ai — shared scrim, close behavior, animations. Use for any overlay, confirmation, popup, panel, or drawer.
+---
 
 # 5Mins.ai Overlay Component System
 
@@ -124,14 +128,14 @@ This produces 16 variants (4 types × 2 icon states × 2 text states).
 .dialog {
   width: 345px;
   max-width: 900px;
-  padding: var(--l, 24px);                /* 24px all sides */
-  border-radius: var(--sm, 12px);         /* 12px */
+  padding: var(--space-l);                /* 24px all sides */
+  border-radius: var(--radius-sm);         /* 12px */
   background: var(--page-background, #20222A);
   box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--ml, 20px);                   /* 20px between body and CTA */
+  gap: var(--space-ml);                   /* 20px between body and CTA */
   text-align: center;
 }
 ```
@@ -175,7 +179,7 @@ All four icons render at 56×56px; the Info icon sits inside a plain flex wrappe
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--xs, 4px);                  /* 4px between title and description */
+  gap: var(--space-xs);                  /* 4px between title and description */
 }
 ```
 
@@ -204,8 +208,8 @@ The CTA row always contains two buttons side by side: an outlined (secondary) bu
 
 ```css
 .dialog__btn {
-  padding: 10px var(--ml, 20px);   /* Medium button */
-  border-radius: var(--s, 8px);
+  padding: 10px var(--space-ml);   /* Medium button */
+  border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;                     /* Bold */
   font-size: 14px;
@@ -250,14 +254,14 @@ A centered overlay panel for focused tasks with moderate content. Modals include
   left: 50%;
   transform: translate(-50%, -50%);
   width: 720px;
-  padding: var(--l, 24px);                /* 24px all sides */
-  border-radius: var(--sm, 12px);
+  padding: var(--space-l);                /* 24px all sides */
+  border-radius: var(--radius-sm);
   background: var(--page-background, #20222A);
   box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--ml, 20px);                   /* 20px between sections */
+  gap: var(--space-ml);                   /* 20px between sections */
   z-index: 1001;
 }
 ```
@@ -270,7 +274,7 @@ The header contains a title, optional supporting text, and a divider. It reuses 
 .modal__header {
   display: flex;
   flex-direction: column;
-  gap: var(--m, 16px);                    /* 16px between headline and divider */
+  gap: var(--space-m);                    /* 16px between headline and divider */
   width: 100%;
 }
 
@@ -301,7 +305,7 @@ The header contains a title, optional supporting text, and a divider. It reuses 
   width: 100%;
   height: 1px;
   background: var(--border, #383D4C);
-  border-radius: var(--x, 4px);
+  border-radius: var(--radius-xs);
 }
 ```
 
@@ -313,7 +317,7 @@ A flexible container for modal body content. Minimum height is 320px to ensure v
 .modal__content {
   width: 100%;
   min-height: 320px;
-  border-radius: var(--sm, 12px);
+  border-radius: var(--radius-sm);
 }
 ```
 
@@ -325,8 +329,8 @@ A single centered primary (filled) button at the bottom:
 .modal__cta {
   background: var(--primary-button-background, #00AFC4);
   color: var(--text-button-foreground, #F9F9FA);
-  padding: 10px var(--ml, 20px);
-  border-radius: var(--s, 8px);
+  padding: 10px var(--space-ml);
+  border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 14px;
@@ -370,11 +374,11 @@ A right-anchored panel that slides in from the edge of the viewport. The drawer 
   right: 0;
   width: 720px;
   height: 100vh;
-  padding: var(--ml, 20px) var(--l, 24px);  /* 20px top/bottom, 24px left/right */
+  padding: var(--space-ml) var(--space-l);  /* 20px top/bottom, 24px left/right */
   background: var(--page-background, #20222A);
   display: flex;
   flex-direction: column;
-  gap: var(--ml, 20px);                      /* 20px between sections */
+  gap: var(--space-ml);                      /* 20px between sections */
   z-index: 1001;
 }
 ```
@@ -395,7 +399,7 @@ The content area flexes to fill all available vertical space between the header 
   min-height: 0;                           /* allows flex shrinking for scroll */
   width: 100%;
   overflow-y: auto;
-  border-radius: var(--sm, 12px);
+  border-radius: var(--radius-sm);
 }
 ```
 
@@ -416,7 +420,7 @@ The footer is pinned to the bottom and contains a divider line followed by a row
   width: 100%;
   height: 1px;
   background: var(--border, #383D4C);
-  border-radius: var(--x, 4px);
+  border-radius: var(--radius-xs);
 }
 
 .side-drawer__buttons {
@@ -433,8 +437,8 @@ The Side Drawer CTA section uses **two buttons** side by side: a filled primary 
 .side-drawer__btn-primary {
   background: var(--primary-button-background, #00AFC4);
   color: var(--text-button-foreground, #F9F9FA);
-  padding: 10px var(--ml, 20px);
-  border-radius: var(--s, 8px);
+  padding: 10px var(--space-ml);
+  border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 14px;
@@ -448,8 +452,8 @@ The Side Drawer CTA section uses **two buttons** side by side: a filled primary 
   background: transparent;
   color: var(--primary-button-background, #00AFC4);
   border: 1px solid var(--primary-button-background, #00AFC4);
-  padding: 10px var(--ml, 20px);
-  border-radius: var(--s, 8px);
+  padding: 10px var(--space-ml);
+  border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 14px;

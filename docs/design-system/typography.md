@@ -1,3 +1,7 @@
+---
+name: 5mins-typography
+description: Typography system for 5Mins.ai — Poppins type scale (6 heading levels, body and button sizes), weights 400/500/700 only, line heights, and text color pairing rules. Use for any font-size, weight, or text-style decision.
+---
 
 # 5Mins.ai Typography System
 

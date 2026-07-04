@@ -1,3 +1,7 @@
+---
+name: 5mins-iconography
+description: Iconography system for 5Mins.ai — Iconsax React library, Linear/Bold variants, standard sizes (16/20/24/32), color pairing via tokens. Use when choosing or sizing any icon.
+---
 
 # 5Mins.ai Iconography System
 

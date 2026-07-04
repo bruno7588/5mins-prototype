@@ -1,16 +1,17 @@
 ---
-name: 5mins-alerts
-description: Alert and Callout banner component for 5Mins.ai. Use when implementing inline notifications, warning banners, informational callouts, contextual guidance messages, empty-state prompts, or any component that surfaces a message with optional icon, supporting text, or CTA button. Trigger this skill whenever building any alert, callout, warning strip, info banner, or notification box in the 5Mins.ai admin or learner UI.
+name: 5mins-alerts-toast
+description: Alert, Callout, and Toast components for 5Mins.ai. Alert/Callout are inline banners (warning strips, informational callouts, contextual guidance, CTA banners); Toast is the floating auto-dismissing feedback pill (Success/Warning/Error/Info) shown after an action. Trigger this skill whenever building any alert, callout, warning strip, info banner, notification box, toast, or snackbar in the 5Mins.ai admin or learner UI.
 ---
 
-# 5Mins.ai Alert & Callout Component
+# 5Mins.ai Alert, Callout & Toast
 
-Two distinct banner types for surfacing messages inline with content.
+Three message components:
 
-- **Callout** — informational, neutral surface, used for guidance, tips, and contextual help
-- **Alert** — warning state, yellow-tinted surface, used for system warnings and attention-required messages
+- **Callout** — inline, informational, neutral surface, used for guidance, tips, and contextual help
+- **Alert** — inline, warning state, yellow-tinted surface, used for system warnings and attention-required messages
+- **Toast** — floating, solid-color feedback pill that confirms an action and auto-dismisses (see the Toast section at the end)
 
-Spec source: Figma Library — light `node 11914:638`, dark `node 3658:32304` (verified 2026-07-03). Both modes share identical structure; every color is a semantic token that resolves per mode (see `colors.md`). All variants use a uniform `8px 12px` padding.
+Spec source: Figma Library — Alert/Callout light `node 11914:638`, dark `node 3658:32304`; Toast `node 5045:14119` (verified 2026-07-03). Alert/Callout share identical structure across modes; every color is a semantic token that resolves per mode (see `colors.md`). All Alert/Callout variants use a uniform `8px 12px` padding.
 
 ---
 
@@ -417,8 +418,136 @@ Each can carry the underlined button on the right (24px gap).
 
 The built component adds practical props beyond the Figma spec — keep them: `customIcon` (ReactNode leading icon), `onClose` (renders a 24px close ✕ at row end), and `title`+`message` body (title + paragraph instead of bullets, 2px gap).
 
+---
+
+# Toast
+
+A floating feedback pill that appears after an action (save, delete, error) and auto-dismisses. Unlike Alert/Callout it is not inline: it overlays the page, hugs its content, and uses solid semantic fills with a near-white Bold label in **both modes**.
+
+Spec source: Figma Library — `node 5045:14119`.
+
+## Visual Spec
+
+```
+Padding:   12px 16px   (--space-sm --space-m)
+Radius:    12px        (--radius-sm)
+Gap:       8px         (icon ↔ label)
+Shadow:    Shadow L — -4px 0 24px rgba(32, 34, 42, 0.12)
+Label:     Poppins Bold 16 (H4), var(--neutral-25) — near-white on every fill
+Icon:      optional, 24px, same near-white
+Width:     hugs content (no fixed width)
+```
+
+## Types
+
+| Type | Background | Icon (24px) |
+|---|---|---|
+| **Info** | `--border` (`#383D4C` dark) — a dark neutral pill | io5 `IoInformationCircleOutline` |
+| **Success** | `--success-500` `#18A957` | Iconsax `TickCircle` |
+| **Warning** | `--warning-600` `#E88206` | warning triangle (Iconsax `Danger`) |
+| **Error** | `--danger-500` `#DF1642` | warning triangle (Iconsax `Danger`) |
+
+> **Library gap:** the Toast has a single Figma node (no light/dark pair) and the Info fill is bound to the `Border` variable, whose *light* value (`#DFE1E6`) would make the near-white label illegible. Treat the Info pill as a fixed dark neutral (`--neutral-600` `#383D4C`) in both modes until the library adds a light node.
+
+## CSS
+
+```css
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);                    /* 8px */
+  padding: var(--space-sm) var(--space-m); /* 12px 16px */
+  border-radius: var(--radius-sm);        /* 12px */
+  box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);   /* Shadow L */
+  font: 700 16px/1.5 'Poppins', sans-serif;
+  color: var(--neutral-25);
+  width: fit-content;
+}
+
+.toast--info    { background: var(--neutral-600); }  /* see library-gap note */
+.toast--success { background: var(--success-500); }
+.toast--warning { background: var(--warning-600); }
+.toast--error   { background: var(--danger-500); }
+```
+
+## Behaviour
+
+- Appears on action feedback, stacked bottom-center (or per app convention), auto-dismisses after ~2.5s with a fade.
+- `role="status"` (Info/Success) or `role="alert"` (Warning/Error) so screen readers announce it.
+- One line, no wrapping — keep messages short ("Saved", "Course published"). No buttons; if the user must act, use a Dialog or Alert instead.
+
+## Alert vs Callout vs Toast
+
+| | Callout | Alert | Toast |
+|---|---|---|---|
+| Placement | inline with content | inline with content | floating overlay |
+| Purpose | guidance / tips | warnings needing attention | action feedback |
+| Persistence | persistent | persistent | auto-dismisses |
+| Fill | translucent neutral | amber @12% tint | solid semantic color |
+| Type scale | Regular/Medium 14 | Medium 14 | **Bold 16** |
+
+## Code reality (src/components/Toast)
+
+`src/components/Toast/Toast.tsx` implements the pill with a `useToast()` stack hook (2.5s auto-dismiss + 300ms fade). Drift from the node: Warning uses `--warning-500` + `--neutral-800` text (Figma: `--warning-600` + near-white), Info uses `--neutral-500` (Figma: `#383D4C`), Success/Error label color is `--neutral-0` (Figma: `--neutral-25`), and the Error icon is `CloseCircle` (Figma: warning triangle).
+
+---
+
+# Tooltip
+
+A small dark floating label that appears on hover, focus, or click of a trigger. The information must be contextual, useful, and **nonessential** — never put required content in a tooltip.
+
+Spec source: Figma Library — light `11927:8087` / dark `2683:29027`.
+
+## Props
+
+| Prop | Values | Default | Description |
+|---|---|---|---|
+| `position` | `Top \| Bottom \| Right \| Left` | `Top` | Which side of the trigger the tooltip appears on (caret points back at the trigger) |
+| `alignment` | `Center \| Start \| End` | `Center` | Caret placement along the edge — Start/End apply to Top/Bottom only; Left/Right are always Center |
+| `icon` | `boolean` | `false` | Renders a 20px io5 `IoInformationCircleOutline` as the anchor (info-icon-with-tooltip pattern), 4px gap to the body |
+
+## Visual Spec
+
+```
+Background:  var(--tooltip-background)   /* #20222A (Neutral-800), both modes */
+Padding:     8px 12px   (--space-s --space-sm)
+Radius:      12px       (--radius-sm)
+Text:        Poppins Regular 14 / 1.5, var(--neutral-25)
+Max width:   288px — wrap, don't overflow
+Shadow:      Shadow L — drop-shadow(-4px 0 24px rgba(32, 34, 42, 0.12))
+Caret:       12×6px triangle pointing at the trigger;
+             Start/End alignments inset it 16px from the body edge;
+             rotated 90° for Left/Right positions
+```
+
+> Token rule: the tooltip background is always `var(--tooltip-background)` (`#20222A`) in the app. Some Figma nodes carry a stale `#0F1014` value on the variable — the token is the rule.
+
+## Behaviour
+
+- Show on `mouseenter` and `:focus-visible`; hide on leave/blur/Esc. Keep hover-out forgiving (small delay) so the pointer can travel.
+- Choose `position` so the tooltip never clips a viewport edge; flip if needed.
+- One short phrase or sentence, Regular weight only — no bold, no links, no buttons (interactive content belongs in a popover/listbox).
+- `role="tooltip"` + `aria-describedby` on the trigger.
+
+## Code reality (src/components/Tooltip)
+
+`src/components/Tooltip/Tooltip.tsx` implements the full position/alignment matrix incl. the optional info-icon anchor and 288px max-width — use it, don't hand-roll. It matches this spec (its `#0f1014` fallback never applies since `tokens.css` defines the variable).
+
+## Alert vs Callout vs Toast vs Tooltip
+
+All four are informative components; pick by persistence and placement:
+
+| | Callout | Alert | Toast | Tooltip |
+|---|---|---|---|---|
+| Placement | inline | inline | floating overlay | floating, anchored to a trigger |
+| Trigger | always visible | always visible | after an action | hover / focus |
+| Content | guidance, tips | warnings | action feedback | nonessential context |
+| Dismissal | persistent | persistent | auto (~2.5s) | on leave/blur |
+
 ## Related Skills
 
 - `5mins-colors` (colors.md) — surface, text, and palette tokens
-- `layout.md` — spacing and radius tokens
+- `layout.md` — spacing and radius tokens, Shadow L
 - `buttons` — for full standalone button component (Alert uses inline patterns, not the button component)
+- `overlays.md` — Dialogs, for blocking feedback that needs user action

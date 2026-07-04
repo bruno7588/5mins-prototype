@@ -390,7 +390,7 @@
 
 /* CSS tooltip for disabled menu items — appears to the left of the row.
    Uses data-tooltip attribute so the message is content-driven from JSX.
-   Styled per 5Mins Tooltip spec (overlays.md / tooltip.md). */
+   Styled per 5Mins Tooltip spec (alerts-toast.md). */
 .automations-action-menu-item[disabled][data-tooltip]:hover::after {
   content: attr(data-tooltip);
   position: absolute;

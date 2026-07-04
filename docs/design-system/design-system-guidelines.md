@@ -1,6 +1,11 @@
+---
+name: 5mins-design-system-guidelines
+description: Design foundations for 5Mins.ai — brand identity, color system (incl. the three-amber selection tokens), typography, 4px spacing scale, border radius, iconography, accessibility, and quick decision tables. Component specs live in per-component docs (see section 7). Start here for any token or foundation question.
+---
+
 # 5Mins.ai Design System Guidelines
 
-> **For Cursor / AI Code Assistants:** This is the single source of truth for generating UI code for 5Mins.ai. Follow these rules strictly. When building any component, find the relevant section below and match every token, spacing value, and pattern exactly. Do not improvise values — use only what is defined here.
+> **For Cursor / AI Code Assistants:** This file holds the design **foundations** (colors, type, spacing, radius, icons) and quick decision tables. Component-level specs each live in their own verified doc (see section 7) — read the component doc before building and match it exactly. Do not improvise values; if neither this file nor a component doc covers what you need, ask for the Figma link. The authoritative token values live in `src/styles/tokens.css` and `colors.md`.
 
 ---
 
@@ -12,13 +17,9 @@
 4. [Spacing System](#4-spacing-system)
 5. [Border Radius](#5-border-radius)
 6. [Iconography](#6-iconography)
-7. [Buttons](#7-buttons)
-8. [Badges](#8-badges)
-9. [Headers](#9-headers)
-10. [Lesson Cards](#10-lesson-cards)
-11. [Overlays — Dialog, Modal, Side Drawer](#11-overlays)
-12. [Accessibility Requirements](#12-accessibility-requirements)
-13. [Quick Decision Reference](#13-quick-decision-reference)
+7. [Component Specs — one doc per component](#7-component-specs--one-doc-per-component)
+8. [Accessibility Requirements](#8-accessibility-requirements)
+9. [Quick Decision Reference](#9-quick-decision-reference)
 
 ---
 
@@ -49,13 +50,17 @@ Used for main actions, navigation, links, and progress indicators.
 - Never use primary cyan for warnings or errors.
 - Button mapping: Default → `--primary-600`, Hover → `--primary-700`, Pressed → `--primary-800`.
 
-### 2.2 Secondary (Yellow/Gold)
+### 2.2 Secondary (Yellow/Gold) — the three-amber system
 
-| Token | Hex | Usage |
+The amber family expresses selection, but through three distinct tokens — using the wrong one is the most common consistency mistake:
+
+| Token | Value | Used for |
 |-------|-----|-------|
-| `--secondary-500` | #FFBB38 | Active/selected states only |
+| `--selected` | `#EDA30D` light / `#FFBB38` dark (mode-aware) | **Form-field active borders** (input, dropdown, date field, search), selection indicators (tab underline, calendar selected day, DnD affordances), toggle on-track |
+| `--control-selected` | `#EDA30D` both modes (= `--secondary-600`) | Radio and checkbox selected fill |
+| `--secondary-500` (raw) | `#FFBB38` both modes | **Selected fills** on chips, content-switcher segments, and listbox items — always with Bold `--neutral-800` text |
 
-Used exclusively for: active tabs, selected checkboxes/radios, selected chips, input focus/active borders (dropdown, search). Never use for warnings (use `--warning-500`) or primary actions (use primary cyan).
+Never use amber for warnings (use `--warning-*`) or primary actions (use primary cyan). Some Figma light nodes still bind field-active borders to raw `Secondary-500` — those are stale; `--selected` is the rule.
 
 ### 2.3 Gamification Colors
 
@@ -403,407 +408,45 @@ import * as Icons from 'iconsax-react';
 
 ---
 
-## 7. Buttons
+## 7. Component Specs — one doc per component
 
-### 7.1 Button Variants
+Component-level specs are **not duplicated here**. Each component has a verified spec file (Figma-checked 2026-07) — read it before building, and match it exactly:
 
-| Variant | Style | Usage |
-|---------|-------|-------|
-| **Filled** | Solid background | Primary CTA, most important action |
-| **Outlined** | Primary-colored border, transparent bg | Secondary actions |
-| **Outlined-2** | Neutral border, transparent bg | Tertiary actions |
-| **Text** | No border/bg, text only | Inline/subtle actions |
-| **Link** | Text with underline | Navigation-like actions in content |
+| Component | Doc |
+|---|---|
+| Buttons (all families, sizes, states, AI gradient) | `buttons.md` |
+| Badges / status pills | `badges.md` |
+| Chips, Content Switcher, Tabs | `chips-switcher-tabs.md` |
+| Page & Section Headers | `headers.md` |
+| Cards (Lesson, Assessment, Course, Skill, Category, Folder) | `cards.md` |
+| Dialog, Modal, Side Drawer | `overlays.md` |
+| Alert, Callout, Toast, Tooltip | `alerts-toast.md` |
+| Table (card-row spec) | `table.md` |
+| Inputs (outlined, inline, radio-row, integer) | `input.md` |
+| Dropdown / select | `dropdown.md` |
+| Listbox / menu surface | `listbox.md` |
+| Search field | `search.md` |
+| Date field + calendar | `calendar.md` |
+| Checkbox, Radio, Toggle | `selection-controls.md` |
+| File uploader | `file-uploader.md` |
+| Avatars + avatar groups | `avatars.md` |
+| Empty states | `empty-state.md` |
+| Top nav + side panel navigation | `navigation.md` |
 
-### 7.2 Semantic Types
-
-| Type | Color | Usage |
-|------|-------|-------|
-| **Primary** | Cyan (`--primary-600`) | Default for most actions |
-| **Danger** | Red (`--danger-500`) | Delete, remove, destructive |
-| **Warning** | Orange (`--warning-500`) | Actions requiring confirmation |
-| **Success** | Green (`--success-500`) | Confirmations, mark complete |
-| **AI** | Purple (`--blaze-quiz` #8158EC) | Hugo AI interactions |
-
-### 7.3 Button Sizes
-
-| Size | Height | Padding | Font | Icon Size | Border Radius |
-|------|--------|---------|------|-----------|---------------|
-| Small | 33px | 8px 16px | 12px Bold | 16px | 8px |
-| Medium | 41px | 12px 20px | 14px Bold | 20px | 8px |
-| Large | 48px | 12px 24px | 16px Bold | 24px | 8px |
-
-### 7.4 Button States
-
-| State | Filled Primary | Outlined Primary |
-|-------|---------------|-----------------|
-| Enabled | bg: `--primary-600`, text: white | border/text: `--primary-600`, bg: transparent |
-| Hover | bg: `--primary-700` | bg: `--primary-100`, border/text: `--primary-700` |
-| Pressed | bg: `--primary-800` | bg: `--primary-100`, border/text: `--primary-800` |
-| Disabled | bg: `--neutral-100`, text: `--neutral-300`, cursor: not-allowed | border: `--neutral-100`, text: `--neutral-300` |
-| Loading | Content hidden, spinner shown, preserves width, pointer-events: none | Same |
-
-### 7.5 Button Icon Placement
-
-Icons appear as **trailing icons** (after text). Icon size matches button size tier (Small→16px, Medium→20px, Large→24px). Gap between icon and text: 4px (Small), 8px (Medium/Large).
-
-### 7.6 Button Patterns
-
-- **Primary + Secondary pair:** Outlined (Cancel) + Filled (Save)
-- **Destructive confirmation:** Outlined (Cancel) + Danger Filled (Delete)
-- **Focus indicator:** `outline: 2px solid var(--primary-600); outline-offset: 2px;`
-
-### 7.7 CSS Implementation
-
-```css
-/* Filled Primary */
-.btn-filled {
-  background: var(--primary-600);
-  color: var(--neutral-0);
-  border: none;
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  cursor: pointer;
-}
-.btn-filled:hover { background: var(--primary-700); }
-.btn-filled:active { background: var(--primary-800); }
-.btn-filled:disabled {
-  background: var(--neutral-100);
-  color: var(--neutral-300);
-  cursor: not-allowed;
-}
-
-/* Outlined Primary */
-.btn-outlined {
-  background: transparent;
-  color: var(--primary-600);
-  border: 1px solid var(--primary-600);
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  cursor: pointer;
-}
-.btn-outlined:hover {
-  background: var(--primary-100);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
-}
-
-/* Danger Filled */
-.btn-danger {
-  background: var(--danger-500);
-  color: var(--neutral-0);
-  border: none;
-}
-```
+If a component is not in this list, it has no verified spec yet — ask for the Figma link instead of improvising.
 
 ---
 
-## 8. Badges
+## 8. Accessibility Requirements
 
-Badges are small, pill-shaped status indicators. They use a **type-based architecture** with translucent backgrounds (16% opacity) for lightweight appearance on dark surfaces.
-
-### 8.1 Badge Anatomy
-
-```css
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 12px;
-  border-radius: var(--xxl, 40px);      /* full pill shape */
-  font-family: 'Poppins', sans-serif;
-  font-weight: 500;                     /* Medium */
-  font-size: 14px;
-  line-height: 1.2;
-  white-space: nowrap;
-  gap: 4px;                             /* icon-to-text gap when icon present */
-}
-```
-
-### 8.2 Badge Types
-
-| Type | Background | Text Color | Icon (16px, Linear) | Default Label |
-|------|-----------|------------|------|---------------|
-| **Success** | `rgba(24, 169, 87, 0.16)` | `#18A957` | `TickCircle` | "Success" |
-| **Warning** | `rgba(255, 165, 56, 0.16)` | `#FFA538` | `InfoCircle` | "Warning" |
-| **Error** | `rgba(223, 22, 66, 0.16)` | `#E95C7B` | `Danger` | "Error" |
-| **In Progress** | `rgba(0, 206, 230, 0.16)` | `#00CEE6` | `TaskSquare` | "In Progress" |
-| **Informative** | `rgba(69, 76, 94, 0.16)` | `#BFC2CC` | `IoInformationCircleOutline` (Ionicons) | "Information" |
-| **Quiz** | `rgba(99, 104, 219, 0.16)` | `#FFDBAF` | Custom `LessonQuiz` | "Quiz Required" |
-| **New** | `#E95C7B` (solid, not translucent) | `#F9F9FA` | None (never has icon) | "New" |
-
-### 8.3 Badge Usage Guide
-
-| Scenario | Type | Icon? |
-|----------|------|-------|
-| Course completed | Success | ✓ |
-| Quiz passed | Success | ✓ |
-| Assignment overdue | Warning | ✓ |
-| Quiz failed | Error | ✓ |
-| Course being taken | In Progress | ✓ |
-| Category/metadata label | Informative | ✗ |
-| Quiz required on lesson | Quiz | ✓ |
-| Freshly added content | New | ✗ (always) |
-
-### 8.4 React Implementation
-
-```tsx
-interface BadgeProps {
-  type?: 'success' | 'warning' | 'error' | 'in-progress' | 'informative' | 'quiz' | 'new';
-  icon?: boolean;
-  label?: string;
-}
-```
-
-Use `role="status"` for status badges, `role="presentation"` for decorative/category badges.
-
----
-
-## 9. Headers
-
-### 9.1 Component Overview
-
-| Component | Purpose | Title Size | Section Gap | Unique Feature |
-|-----------|---------|------------|-------------|----------------|
-| **Page Header** | Main page identification | 24px Bold (H2) | 20px | Breadcrumb support |
-| **Section Header** | Content sections, modals, dashboard widgets | 20px Bold (H3) | 16px | Compact layout |
-
-Both support: eyebrow metadata, CTAs, description, tabs, chips, icon, avatar. Page Header additionally supports breadcrumbs.
-
-### 9.2 When to Use Which
-
-| Scenario | Use |
-|----------|-----|
-| Top of a page | Page Header |
-| Inside a card or modal | Section Header |
-| Dashboard widget | Section Header |
-| Settings section | Section Header |
-
-### 9.3 Header Typography
-
-| Element | Size | Weight | Color |
-|---------|------|--------|-------|
-| Page title | 24px | Bold (700) | `--text-primary` |
-| Page description | 16px | Regular (400) | `--text-secondary` |
-| Section title | 20px | Bold (700) | `--text-primary` |
-| Section description | 14px | Regular (400) | `--text-secondary` |
-| Breadcrumb link | 12px | Regular (400) | `--text-tertiary` |
-| Breadcrumb current | 12px | Regular (400) | `--text-secondary` |
-| Eyebrow metadata | 14px | Regular (400) | `--text-tertiary` |
-| Tab selected | 14px | Bold (700) | `--text-primary` |
-| Tab unselected | 14px | Medium (500) | `--text-secondary` |
-| Chip selected | 14px | Bold (700) | `--neutral-800` |
-| Chip unselected | 14px | Regular (400) | `--text-secondary` |
-
-### 9.4 Header Spacing
-
-| Element | Value |
-|---------|-------|
-| Page Header section gap | 20px (`--space-ml`) |
-| Section Header section gap | 16px (`--space-m`) |
-| Breadcrumb item gap | 4px (`--space-xs`) |
-| Eyebrow item gap | 8px (`--space-s`) |
-| Eyebrow internal gap | 4px (`--space-xs`) |
-| Title-to-description gap | 4px |
-| Tab bottom indicator | 2px solid, `--secondary-500` (active) |
-
-### 9.5 Heading Hierarchy
-
-Page Header renders as `<h2>`. Section Headers render as `<h3>`. Course titles use `<h1>`. Maintain logical heading order throughout the page.
-
----
-
-## 10. Lesson Cards
-
-### 10.1 Views
-
-| View | Dimensions | Thumbnail |
-|------|-----------|-----------|
-| Grid | 170×230px | Fills top area |
-| List — Mobile | 343px wide | 56×56px |
-| List — Web App | 900px wide | 80×80px |
-| List — Admin | 900px wide | 48×48px |
-
-### 10.2 Props
-
-| Prop | Type | Default |
-|------|------|---------|
-| `view` | `"grid" \| "list"` | `"grid"` |
-| `device` | `"Mobile" \| "Web app" \| "Admin" \| "n/a"` | `"n/a"` |
-| `disabled` | `boolean` | `false` |
-| `completed` | `boolean` | `false` |
-| `state` | `"Enabled" \| "Hover"` | `"Enabled"` |
-| `quiz` | `"Required" \| "Off" \| "Completed" \| "Pending" \| "Failed"` | `"Required"` |
-
-### 10.3 Card States
-
-| State | Behavior |
-|-------|----------|
-| Enabled | Default appearance |
-| Hover | Background → `--cards-background-hover` (#EFF0F2), title → `--text-button-hover` (#00AFC4) |
-| Disabled | Thumbnail: `mix-blend-mode: luminosity`, text: `--text-disabled`, lock icon shown |
-| Completed | Progress bar fills with `--success-500` |
-
-### 10.4 Quiz Badges on Cards
-
-| Status | Background | Text Color |
-|--------|-----------|------------|
-| Required | `rgba(99, 104, 219, 0.16)` | #6368DB |
-| Completed | `rgba(24, 169, 87, 0.16)` | #18A957 |
-| Pending | `rgba(255, 165, 56, 0.16)` | #FFA538 |
-| Failed | `rgba(223, 22, 66, 0.16)` | #DF1642 |
-
-Badge styling: pill shape (`border-radius: 40px`), `padding: 4px 8px`, `gap: 4px` between icon and text.
-
-### 10.5 Progress Bar
-
-- Segmented (8 segments in-progress, 4 when completed)
-- Default fill: `--primary-600` (#00AFC4)
-- Completed fill: `--success-500` (#18A957)
-- Empty segment: `--border` color
-- Height: 8px, border-radius: 20px on first/last segments
-
-### 10.6 Card Shadow
-
-```css
-box-shadow: var(--shadow-s);
-```
-
-Applied to grid, web app, and admin cards. Not applied to mobile cards.
-
----
-
-## 11. Overlays
-
-The overlay system has three components sharing a common backdrop. Use the decision rule: Quick binary decision → **Dialog**. Moderate focused content → **Modal**. Extended working area → **Side Drawer**.
-
-### 11.1 Shared Foundation
-
-**Overlay Backdrop:**
-```css
-.overlay-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--scrim);
-  z-index: 1000;
-}
-```
-
-**Close Button (Modal & Side Drawer only):**
-```css
-.overlay-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  color: var(--text-secondary, #BFC2CC);
-  background: none;
-  border: none;
-}
-.overlay-close:hover { color: var(--text-primary, #F9F9FA); }
-```
-
-Icon: `IoCloseOutline` (Ionicons 5) at 24×24px.
-
-**Shadow L** (Dialog & Modal):
-```css
-box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
-```
-
-### 11.2 Dialog
-
-Compact, centered overlay for critical decisions. No close button — dismissal only through action buttons.
-
-| Property | Value |
-|----------|-------|
-| Width | 345px |
-| Padding | 24px (`--space-l`) uniform |
-| Border radius | 12px (`--radius-sm`) |
-| Background | `--page-background` (#20222A) |
-| Content gap | 20px (`--space-ml`) |
-| Text align | Center |
-
-**Dialog types:** Error, Warning, Info, Success — each with a distinct 72×72px icon and button colors.
-
-| Type | Filled Button Color | Outlined Button Border |
-|------|--------------------|-----------------------|
-| Error | `--danger-500` (#DF1642), text white | White border, white text |
-| Warning | `--warning-500` (#FFA538), text dark | White border, white text |
-| Info | `--primary-500` (#00CEE6), text dark | Cyan border, cyan text |
-| Success | `--primary-500` (#00CEE6), text dark | Cyan border, cyan text |
-
-**Close behavior:** Clicking backdrop does NOT close. No escape key. Only action buttons dismiss.
-
-### 11.3 Modal
-
-Centered overlay for focused tasks with moderate content.
-
-| Property | Value |
-|----------|-------|
-| Width | 720px |
-| Padding | 24px (`--space-l`) uniform |
-| Border radius | 12px (`--radius-sm`) |
-| Background | `--page-background` (#20222A) |
-| Content gap | 20px (`--space-ml`) |
-| Min content height | 320px |
-| CTA | Single centered primary button |
-| Close | ✕ button top-right + backdrop click + Escape key |
-
-**Header:** Section Header style — 20px Bold title, 14px Regular supporting text, divider line.
-
-### 11.4 Side Drawer
-
-Right-anchored panel spanning full viewport height.
-
-| Property | Value |
-|----------|-------|
-| Width | 720px |
-| Height | 100vh |
-| Padding | 20px top/bottom, 24px left/right |
-| Border radius | None (flush to viewport edge) |
-| Background | `--page-background` (#20222A) |
-| Shadow | None |
-| Content | Scrollable flex body |
-| Footer | Sticky with divider + primary/secondary buttons |
-| Close | ✕ button top-right + backdrop click + Escape key |
-
-### 11.5 Overlay Animations
-
-| Component | Animation | Duration | Easing |
-|-----------|-----------|----------|--------|
-| Backdrop | Fade in (opacity 0 → 1, scrim carries its own alpha) | 200ms | ease-out |
-| Dialog | Scale up + fade (0.95 → 1) | 200ms | ease-out |
-| Modal | Scale up + fade (0.95 → 1) | 250ms | ease-out |
-| Side Drawer | Slide in from right | 300ms | cubic-bezier(0.32, 0.72, 0, 1) |
-
-### 11.6 Overlay Comparison
-
-| Property | Dialog | Modal | Side Drawer |
-|----------|--------|-------|-------------|
-| Position | Centered | Centered | Right-anchored |
-| Close button | None | ✓ | ✓ |
-| Backdrop click closes | ✗ | ✓ | ✓ |
-| Escape key closes | ✗ | ✓ | ✓ |
-| CTA buttons | 2 (type-colored) | 1 (primary centered) | 2 (sticky footer) |
-| Scrollable | No | Optional | Yes |
-
----
-
-## 12. Accessibility Requirements
-
-### 12.1 Color Contrast
+### 8.1 Color Contrast
 
 - Normal text (16px): minimum 4.5:1 contrast ratio (WCAG AA)
 - Large text (24px+): minimum 3:1 contrast ratio
 - Safe: `--neutral-800` on white (AAA), `--neutral-500` on white (AA)
 - **Unsafe:** `--primary-500` on white (fails contrast — never use for text on light bg)
 
-### 12.2 Semantic HTML
+### 8.2 Semantic HTML
 
 - Use semantic heading tags (`<h1>`–`<h6>`) in logical order
 - Use `<article>` for lesson cards
@@ -812,7 +455,7 @@ Right-anchored panel spanning full viewport height.
 - Use `role="status"` on status badges
 - Use `role="alertdialog"` for Dialog, `role="dialog"` for Modal and Side Drawer
 
-### 12.3 Interactive Elements
+### 8.3 Interactive Elements
 
 - All buttons: visible focus indicator via `:focus-visible` — `outline: 2px solid var(--primary-600); outline-offset: 2px;`
 - Icon-only buttons: require `aria-label`
@@ -823,7 +466,7 @@ Right-anchored panel spanning full viewport height.
 
 ---
 
-## 13. Quick Decision Reference
+## 9. Quick Decision Reference
 
 ### "What color for…?"
 
@@ -833,12 +476,14 @@ Right-anchored panel spanning full viewport height.
 | Hover | `--primary-700` |
 | Pressed | `--primary-800` |
 | Links | `--primary-600` |
-| Active tab/selection | `--secondary-500` |
+| Field active border / tab indicator | `--selected` (mode-aware) |
+| Chip / switcher / listbox selected fill | `--secondary-500` + Bold `--neutral-800` text |
+| Radio / checkbox selected | `--control-selected` |
 | Success status | `--success-500` |
 | Warning status | `--warning-500` |
 | Error status | `--danger-500` |
 | AI features | `--blaze-quiz` (#8158EC) |
-| Overlay backdrop | `--neutral-900` at 64% opacity |
+| Overlay backdrop | `--scrim` — Neutral-900 @ 25% light / 50% dark |
 
 ### "What size for…?"
 
@@ -861,7 +506,7 @@ Right-anchored panel spanning full viewport height.
 
 | Context | Value |
 |---------|-------|
-| Button padding (medium) | 12px 20px |
+| Button padding (medium) | 10px 20px |
 | Card padding (standard) | 24px |
 | Input padding | 12px 16px |
 | Badge padding | 6px 12px |
