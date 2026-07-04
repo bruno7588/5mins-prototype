@@ -1,6 +1,11 @@
+---
+name: 5mins-file-uploader
+description: File upload drop zone for 5Mins.ai — two sizes (L full-width, S 180px), five states (Enabled, Hover, Error with bullet list + overflow counter, Uploading with circular progress, Filled with Preview/Change File CTAs). Use for any file input, drag-and-drop zone, CSV import, document or media upload.
+---
+
 # FileUploader Component
 
-> **Figma source:** Library node `11362-1265`  
+> **Figma source:** Library — light `11921:6366` / dark `11546:1560` (verified 2026-07-03; earlier baseline `11362-1265`)  
 > **React + TypeScript** · **Iconsax icons**
 
 ---
@@ -16,7 +21,7 @@ interface FileUploaderProps {
   state?        : FileUploaderState;         // controlled; omit for uncontrolled
   fileName?     : string;                    // shown in Filled state
   progress?     : number;                    // 0–100, shown in Uploading state
-  errorMessage? : string;                    // shown in Error state
+  errors?       : string[];                  // Error state: first 3 as bullets, rest as "+N errors"
   onFileSelect? : (file: File) => void;      // fired on drop or file picker select
   onChangeFile? : () => void;                // fired when "Change File" is clicked
   onPreview?    : () => void;                // fired when "Preview" is clicked
@@ -31,11 +36,11 @@ interface FileUploaderProps {
 
 | State | Border style | Border color | Background | Icon |
 |-------|-------------|--------------|------------|------|
-| `Enabled` | dashed | `#454c5e` | transparent | `CloudAdd` Linear |
-| `Hover` | dashed | `#9ea4b3` | `rgba(69,76,94,0.16)` | `CloudAdd` Linear |
-| `Error` | dashed | `#df1642` | `rgba(223,22,66,0.16)` | `CloudAdd` Linear, red |
+| `Enabled` | dashed | `#454c5e` | transparent | `DocumentUpload` Linear |
+| `Hover` | dashed | `#9ea4b3` | `rgba(69,76,94,0.16)` | `DocumentUpload` Linear |
+| `Error` | dashed | `#df1642` | `rgba(223,22,66,0.16)` | `DocumentUpload` Linear, red |
 | `Uploading` | dashed | `#454c5e` | `rgba(69,76,94,0.16)` | 64px circular progress |
-| `Filled` | **solid** | `#383d4c` | `rgba(69,76,94,0.16)` | `ClipboardText` Bold |
+| `Filled` | **solid** | `#383d4c` | `rgba(69,76,94,0.16)` | `DocumentText` Bold |
 
 ---
 
@@ -47,8 +52,8 @@ interface FileUploaderProps {
 | Min-height | `240px` | `260px` |
 | Padding | `24px` | `16px` |
 | Icon | `40×40px` | `32×32px` |
-| Main gap | `16px` (Error: `24px`) | `16px` (Error+Filled: `24px`) |
-| Body font | `14px / 1.5` | `12px / 1.2` |
+| Main gap | `20px` (all states) | `16px` (Filled: `24px`) |
+| Body font | `14px / 1.5` | `12px / 1.2-1.4` |
 | Button font | `14px Bold` | `12px Bold` |
 
 ---
@@ -64,8 +69,8 @@ interface FileUploaderProps {
 --text-primary:                    #f9f9fa;               /* button labels */
 --text-secondary:                  #bfc2cc;               /* body copy, filename */
 --text-error:                      #e95c7b;               /* error message */
---primary-button-background-hover: #33e2f7;               /* hover btn border+text */
---text-button-hover:               #33e2f7;
+--primary-button-background-hover: #008393;             /* hover btn border (Primary-700 light) */
+--text-button-hover:               #008393;             /* light; dark: #00CEE6 */
 --sm:  12px;   /* outer border-radius */
 --s:    8px;   /* button border-radius */
 --m:   16px;   /* S padding / gap */
@@ -88,8 +93,8 @@ font: 700 14px/1.5 'Poppins';   /* S: 12px/1.4 */
 **Hover state override** (only when component `state === 'Hover'`):
 ```css
 background: rgba(0,206,230,0.16);
-border-color: var(--primary-button-background-hover, #33e2f7);
-color: var(--text-button-hover, #33e2f7);
+border-color: var(--primary-button-background-hover);
+color: var(--text-button-hover);
 ```
 
 ### Text — "Preview"
@@ -134,11 +139,11 @@ const CircularProgress = ({ pct }: { pct: number }) => {
 ## Icons (Iconsax)
 
 ```tsx
-import { CloudAdd, ClipboardText } from 'iconsax-react';
+import { DocumentUpload, DocumentText } from 'iconsax-react';
 
-<CloudAdd size={40} color="var(--text-secondary, #bfc2cc)" variant="Linear" />  // Enabled/Hover
-<CloudAdd size={40} color="var(--danger, #df1642)"         variant="Linear" />  // Error
-<ClipboardText size={40} color="var(--text-secondary, #bfc2cc)" variant="Bold" /> // Filled
+<DocumentUpload size={40} color="var(--text-secondary, #bfc2cc)" variant="Linear" />  // Enabled/Hover
+<DocumentUpload size={40} color="var(--danger, #df1642)"         variant="Linear" />  // Error
+<DocumentText size={40} color="var(--text-secondary, #bfc2cc)" variant="Bold" /> // Filled
 // S size: use size={32} instead of 40
 ```
 
@@ -148,7 +153,7 @@ import { CloudAdd, ClipboardText } from 'iconsax-react';
 
 ```tsx
 import React, { useCallback, useRef, useState } from 'react';
-import { CloudAdd, ClipboardText } from 'iconsax-react';
+import { DocumentUpload, DocumentText } from 'iconsax-react';
 
 type FileUploaderSize  = 'L' | 'S';
 type FileUploaderState = 'Enabled' | 'Hover' | 'Error' | 'Uploading' | 'Filled';
@@ -158,7 +163,7 @@ interface FileUploaderProps {
   state?: FileUploaderState;
   fileName?: string;
   progress?: number;
-  errorMessage?: string;
+  errors?: string[];
   onFileSelect?: (file: File) => void;
   onChangeFile?: () => void;
   onPreview?: () => void;
@@ -171,7 +176,7 @@ export function FileUploader({
   state: controlledState,
   fileName = 'nameofthedocument.csv',
   progress = 0,
-  errorMessage = 'Error message here!',
+  errors = ["Error message here!"],
   onFileSelect,
   onChangeFile,
   onPreview,
@@ -197,8 +202,8 @@ export function FileUploader({
     return 'var(--input-background, rgba(69,76,94,0.16))';
   };
 
-  const mainGap = (state === 'Error' || (state === 'Filled' && !isL))
-    ? 'var(--l, 24px)' : 'var(--m, 16px)';
+  // L: 20px all states; S: 16px (Filled: 24px)
+  const mainGap = isL ? 'var(--ml, 20px)' : (state === 'Filled' ? 'var(--l, 24px)' : 'var(--m, 16px)');
 
   const iconSize   = isL ? 40 : 32;
   const bodySize   = isL ? '14px' : '12px';
@@ -230,12 +235,12 @@ export function FileUploader({
 
   const OutlinedBtn = ({ label, hover, onClick }: { label: string; hover?: boolean; onClick?: () => void }) => (
     <button onClick={onClick} style={{
-      border: `1px solid ${hover ? 'var(--primary-button-background-hover, #33e2f7)' : 'var(--text-primary, #f9f9fa)'}`,
+      border: `1px solid ${hover ? 'var(--primary-button-background-hover)' : 'var(--text-primary, #f9f9fa)'}`,
       borderRadius: 'var(--s, 8px)', padding: '8px 16px',
       background: hover ? 'rgba(0,206,230,0.16)' : 'transparent',
       fontFamily: "'Poppins', sans-serif", fontWeight: 700,
       fontSize: btnSize, lineHeight: btnLineH,
-      color: hover ? 'var(--text-button-hover, #33e2f7)' : 'var(--text-primary, #f9f9fa)',
+      color: hover ? 'var(--text-button-hover)' : 'var(--text-primary, #f9f9fa)',
       cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
     }}>{label}</button>
   );
@@ -275,8 +280,8 @@ export function FileUploader({
 
       {/* ENABLED / HOVER */}
       {(state === 'Enabled' || state === 'Hover') && (<>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, width: '100%' }}>
-          <CloudAdd size={iconSize} color="var(--text-secondary, #bfc2cc)" variant="Linear" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isL ? 16 : 8, width: '100%' }}>
+          <DocumentUpload size={iconSize} color="var(--text-secondary, #bfc2cc)" variant="Linear" />
           <p style={{ fontFamily: "'Poppins'", fontSize: bodySize, fontWeight: 400, lineHeight: bodyLineH,
             color: 'var(--text-secondary, #bfc2cc)', textAlign: 'center', margin: 0 }}>
             Drag and drop file here or click to upload
@@ -286,18 +291,25 @@ export function FileUploader({
           onClick={e => { (e as any).stopPropagation?.(); openPicker(); }} />
       </>)}
 
-      {/* ERROR */}
-      {state === 'Error' && (<>
-        <CloudAdd size={iconSize} color="var(--danger, #df1642)" variant="Linear" />
-        <p style={{ fontFamily: "'Poppins'", fontSize: isL ? '16px' : '12px', fontWeight: 500,
-          lineHeight: bodyLineH, color: 'var(--text-error, #e95c7b)', textAlign: 'center',
-          margin: 0, whiteSpace: 'nowrap' }}>{errorMessage}</p>
+      {/* ERROR — first 3 messages as bullets, remainder as "+N errors" */}
+      {state === "Error" && (<>
+        <DocumentUpload size={iconSize} color="var(--danger, #df1642)" variant="Linear" />
+        <div style={{ display: "flex", flexDirection: "column", gap: isL ? 4 : 2,
+          fontFamily: "Poppins", fontWeight: 500, color: "var(--text-error)",
+          fontSize: isL ? "16px" : "12px", lineHeight: isL ? 1.5 : 1.2 }}>
+          <ul style={{ margin: 0, paddingLeft: isL ? 24 : 18 }}>
+            {errors.slice(0, 3).map((msg, i) => <li key={i}>{msg}</li>)}
+          </ul>
+          {errors.length > 3 && (
+            <p style={{ margin: 0, fontSize: "12px", lineHeight: 1.2 }}>+{errors.length - 3} errors</p>
+          )}
+        </div>
         <OutlinedBtn label="Select File" onClick={openPicker} />
       </>)}
 
       {/* UPLOADING */}
       {state === 'Uploading' && (<>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isL ? 16 : 8 }}>
           <div style={{ position: 'relative', width: 64, height: 64 }}>
             <svg width="64" height="64" style={{ transform: 'rotate(-90deg)' }}>
               <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(69,76,94,0.32)" strokeWidth="4" />
@@ -318,8 +330,8 @@ export function FileUploader({
 
       {/* FILLED */}
       {state === 'Filled' && (<>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, width: '100%' }}>
-          <ClipboardText size={iconSize} color="var(--text-secondary, #bfc2cc)" variant="Bold" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isL ? 16 : 8, width: '100%' }}>
+          <DocumentText size={iconSize} color="var(--text-secondary, #bfc2cc)" variant="Bold" />
           <p style={{ fontFamily: "'Poppins'", fontSize: bodySize, fontWeight: 400,
             lineHeight: bodyLineH, color: 'var(--text-secondary, #bfc2cc)',
             textAlign: 'center', margin: 0, wordBreak: 'break-all' }}>{fileName}</p>
@@ -376,7 +388,7 @@ const handleSelect = async (file: File) => {
 ```tsx
 <FileUploader
   state="Error"
-  errorMessage="File exceeds 10MB limit."
+  errors={["File exceeds 10MB limit.", "Unsupported format.", "Missing header row.", "Empty rows found."]}  // 3 bullets + "+1 errors"
   onFileSelect={handleSelect}
 />
 ```
@@ -392,7 +404,7 @@ const handleSelect = async (file: File) => {
 
 - **L width = `100%`, not `900px`** — the Figma fixed value is design canvas only.
 - **`progress` required in Uploading** — omitting it renders a static `0%` ring.
-- **`errorMessage` only renders in `state="Error"`** — the prop is ignored otherwise.
+- **`errors` only renders in `state="Error"`** — first 3 as a Medium bullet list (16px L / 12px S), the rest collapsed to a 12px "+N errors" line.
 - **"Preview" placement differs by size** — L: left of "Change File"; S: below it (muted grey).
 - **Drag-over mimics Hover styling** — `isDragging` overrides border to `--border-hover`.
 - **Always use design tokens, not raw hex** — `var(--danger, #df1642)` not `#df1642`.

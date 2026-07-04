@@ -149,9 +149,9 @@ Chevron color tracks the current text color.
 
 ---
 
-## Menu (not fully specced in the Figma library)
+## Menu
 
-The Figma library node focuses on trigger states. The menu below is the recommended pattern — extrapolated from related DS surfaces. Use it as the default until a dedicated Figma menu node exists.
+> **Superseded:** the menu surface is now fully specced as the **Listbox** — see `listbox.md` (container with caret/grouped variants, full item slot matrix, selected = `--secondary-500` + `--neutral-800`). The pattern below predates it; prefer listbox.md values where they differ.
 
 ```css
 .dropdown-menu {

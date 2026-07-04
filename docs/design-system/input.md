@@ -1,10 +1,24 @@
+---
+name: 5mins-input
+description: Input field system for 5Mins.ai — four types. Outlined (standard labeled text field), Inline (borderless H1 title + description editor), Radio (selectable option row with radio inside a bordered field), and Integer (numeric stepper). All states (Enabled, Hover, Active with amber border, Filled, Disabled), error/success validation, label, helper text, right icon. Use for any text entry, form field, title editing, option-with-input row, or numeric setting.
+---
+
 # 5Mins.ai Input Field Component
 
-## Overview
+## The four input types
+
+| Type | What it is | Built component |
+|---|---|---|
+| **Outlined** | Standard labeled text field | `src/components/InputField` |
+| **Inline** | Borderless title (Bold 32) + description (Regular 16) editor — e.g. course title | page-local patterns |
+| **Radio** | Bordered field row with a 21px radio inside — pick an option AND type its value | not built yet |
+| **Integer** | Compact numeric stepper (− / value / +) | `src/components/InputInteger` |
+
+Spec source: Figma Library — set light `11922:1394` / dark `11180:1982`; Outlined `11922:1474`/`8974:24610`; Inline `11922:1426`/`10330:4736`; Radio `11922:1960`/`8974:30479`; Integer `11922:2042`/`10145:10895` (verified 2026-07-03). Hexes below are dark-mode fallbacks; tokens resolve per mode (see `colors.md`).
+
+## Overview — Outlined
 
 The `InputField` component is the standard text entry control across the 5Mins.ai platform. It is an **outlined input** built on the 5Mins design system. Always use this component — never build raw `<input>` elements.
-
-**Figma source:** `Library → Input Field (Outlined)` — node `8974-24610`
 
 ---
 
@@ -40,7 +54,7 @@ import { Eye, Danger, TickCircle } from 'iconsax-react';
 | State | Trigger | Visual |
 |-------|---------|--------|
 | **Enabled** | Default | Border `#383d4c` |
-| **Hover** | Mouse over field | Border `#9ea4b3`, background `#2d313d` |
+| **Hover** | Mouse over field | Border `--border-hover` + background `--input-background` (translucent tint) |
 | **Active / Focused** | Input focused | Border `#ffbb38` (gold) |
 | **Filled** | `value.length > 0` | Text switches to `#f9f9fa` |
 | **Disabled** | `disabled={true}` | All text `#656b7c`, no hover |
@@ -118,7 +132,7 @@ const [password, setPassword] = useState('');
 --border-hover:           #9ea4b3;   /* hovered border */
 --selected:               #ffbb38;   /* focused / active border */
 --text-error:             #e95c7b;   /* error text + border */
---input-background-hover: #2d313d;   /* hovered background fill */
+--input-background:       rgba(69,76,94,0.16);   /* hover background fill (light: #BFC2CC @16%) */
 --text-primary:           #f9f9fa;   /* filled input value */
 --text-secondary:         #bfc2cc;   /* label */
 --text-tertiary:          #9ea4b3;   /* placeholder + helper */
@@ -196,13 +210,69 @@ const [password, setPassword] = useState('');
 
 ---
 
+# 5Mins.ai Input Field — Inline
+
+## Overview — Inline
+
+A borderless editor for a page-level title and optional description — used where the content IS the field (course builder title, card names). No box, no label: the text styles are the affordance.
+
+| Element | Style | Placeholder | Filled |
+|---|---|---|---|
+| Title | Poppins **Bold 32** (H1), 1.5 | `--text-disabled` ("Add Title") | `--text-primary` |
+| Description (optional) | Poppins Regular 16, 1.5 | `--text-disabled` ("Add a description") | `--text-secondary` |
+
+- Column gap **4px**; reference width 900px.
+- **States:** Enabled (placeholders) → Active (blinking `--text-primary` caret) → Filled.
+- **Error (Filled):** title turns `--text-error`, a 24px `Danger` (Linear) icon appears at the row end, and an "Error message" line (Regular 14, `--text-error`) renders under the title. The description keeps its normal color.
+- No hover treatment — the inline editor reads as text until clicked.
+
+```tsx
+<div className="inline-input">
+  <input className="inline-input__title" placeholder="Add Title" />
+  <input className="inline-input__description" placeholder="Add a description" />
+</div>
+```
+
+```css
+.inline-input { display: flex; flex-direction: column; gap: 4px; }
+.inline-input__title { border: 0; background: none; font: 700 32px/1.5 Poppins; color: var(--text-primary); }
+.inline-input__title::placeholder { color: var(--text-disabled); }
+.inline-input__title.has-error { color: var(--text-error); }
+.inline-input__description { border: 0; background: none; font: 400 16px/1.5 Poppins; color: var(--text-secondary); }
+.inline-input__description::placeholder { color: var(--text-disabled); }
+```
+
+---
+
+# 5Mins.ai Input Field — Radio
+
+## Overview — Radio
+
+A bordered field row with a **21px radio button inside** — the user both selects the option and can type into it (e.g. quiz answer options, "other" choices). Shares the Outlined field chrome.
+
+- Layout: `[radio 21px] [text]`, gap **8px**, padding `8px 12px`, radius 12px, optional label above (Medium 14 `--text-secondary`, gap 8).
+- Text: placeholder `--text-tertiary`, value `--text-primary` (Regular 14).
+
+| State | Border | Radio | Notes |
+|---|---|---|---|
+| Enabled | `--border` | unselected | |
+| Hover | `--border-hover` | unselected | + `--input-background` fill |
+| Active (typing) | `--selected` | unselected | blinking caret |
+| Selected + Filled | `--border` | **on** (amber dot) | selecting does not keep the amber border |
+| Success validation | `--border` | on | trailing 20px bold tick-circle |
+| Disabled | `--border` | per state | all text `--text-disabled` |
+
+Radio behavior (halo, amber dot, grouping) follows `selection-controls.md`.
+
+---
+
 # 5Mins.ai Input Field — Integer
 
 ## Overview
 
 The `InputInteger` component is the numeric stepper used for small whole-number settings (e.g. *Maximum course attempts*, *Due days to complete course*). It is a bordered field with a **minus** control, a **centred, typeable value**, and a **plus** control. The value can be both stepped (− / +) and typed directly.
 
-**Figma source:** `Library → Input Field / Integer` — node `11820-2571`
+**Figma source:** `Library → Input Field / Integer` — light `11922:2042` / dark `10145:10895`
 
 ---
 
@@ -246,7 +316,7 @@ import InputInteger from '@/components/InputInteger/InputInteger';
 | State | Trigger | Visual |
 |-------|---------|--------|
 | **Enabled** | Default | Border `#383d4c` |
-| **Hover** | Mouse over field | Border `#9ea4b3` |
+| **Hover** | Mouse over field | Border `--border-hover` + background `--input-background` |
 | **Active / Focused** | Field focused (typing) | Border `#ffbb38` (gold) |
 | **Error** | `validation="error"` | Border `#e95c7b`, helper red |
 | **Disabled** | `disabled={true}` | Label / value / helper `#656b7c` |
@@ -269,7 +339,7 @@ import InputInteger from '@/components/InputInteger/InputInteger';
 | Field padding | `8px 12px`  (`--space-s --space-sm`) |
 | Field border-radius | `12px` (`--radius-sm`) |
 | Gap (− / value / +) | `12px` (`--space-sm`) |
-| Step control size | `24×24px`, circular hover |
+| Step control icons | `21×21px` (24px circular hover hit area) |
 | Value box | `32px` wide, centred |
 | Gap (label → field → helper) | `8px` |
 

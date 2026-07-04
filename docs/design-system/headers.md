@@ -1,14 +1,20 @@
+---
+name: 5mins-headers
+description: Page Header and Section Header for 5Mins.ai — slot-based base component where the label row swaps between eyebrow metadata and breadcrumb, the navigation row swaps between tabs and chips, and the CTA cluster (search, AI icon button, outlined/filled buttons) is configurable. Use for any page or section heading, title bar, or header with actions.
+---
 
 # 5Mins.ai Header Component System
 
 Complete header implementation matching the Figma design system with Page Headers and Section Headers.
 
+Spec source: Figma Library — light `9531:2974` / dark `7902:1018` (verified 2026-07-03). The base component exposes three swappable slots: **label** (eyebrow metadata ↔ breadcrumb), **header** (headline + CTA cluster), and **navigation** (tabs ↔ chips).
+
 ## Component Overview
 
 | Component | Purpose | Title Size | Gap | Unique Feature |
 |-----------|---------|------------|-----|----------------|
-| **Page Header** | Main page identification | 24px (H2) | 20px | Breadcrumb support |
-| **Section Header** | Content sections, modals | 20px (H3) | 16px | Compact layout |
+| **Page Header** | Main page identification | 24px (H2) | 16px | Breadcrumb support |
+| **Section Header** | Content sections, modals | 20px (H3) | 12px | Compact layout |
 
 Both components share the same configurable properties:
 
@@ -75,7 +81,7 @@ Primary header for page-level identification. Uses larger typography (24px title
 | Eyebrow item gap | 8px (`--space-s`) |
 | Eyebrow internal gap | 4px (`--space-xs`) |
 | Title/description gap | 4px (`--space-xs`) |
-| CTA buttons gap | 16px (`--space-m`) |
+| CTA cluster gap | 12px (`--space-sm`) |
 | Tabs gap | 24px (`--space-l`) |
 | Chips gap | 16px (`--space-m`) |
 
@@ -87,8 +93,19 @@ Primary header for page-level identification. Uses larger typography (24px title
 | `--text-secondary` | #454C5E | #BFC2CC |
 | `--text-tertiary` | #656B7C | #9EA4B3 |
 | `--border` | #DFE1E6 | #383D4C |
-| `--selected` | #FFBB38 | #FFBB38 |
-| `--button-background` | #00CEE6 | #00CEE6 |
+| `--selected` | #EDA30D | #FFBB38 |
+| `--primary-button-background` | #00AFC4 | #00AFC4 |
+
+### CTA cluster (reference composition)
+
+The `ctas` slot is free-form, but the Figma base ships this reference layout, right-aligned with a **12px gap**:
+
+1. **Search field** — 400px wide (Page) / 300px (Section); `--input-background` fill, 1px `--border`, radius 12, `8px 12px` padding, 18px search icon, placeholder Regular 14 `--text-tertiary` (see `search.md`)
+2. **AI icon button** — 40px circular hit area (`radius-full`), 24px AI-sparkle icon
+3. **Outlined button** — Medium (see `buttons.md`)
+4. **Filled button with trailing add icon** — Medium
+
+Swap, drop, or reorder items per page needs — icon-only buttons always keep the circular hover.
 
 ## React TypeScript Implementation
 
@@ -591,8 +608,10 @@ Secondary header for content sections and modals. Uses smaller typography (20px 
 |---------|-------------|----------------|
 | Title | 24px Bold | 20px Bold |
 | Description | 16px Regular | 14px Regular |
-| Section gap | 16px | 16px |
-| Eyebrow icon | 21.333px | 26.667px |
+| Section gap | 16px | 12px |
+| Eyebrow icon / text | 16px / 14px (1.5) | 14px / 12px (1.2) |
+| Tabs gap | 24px | 20px |
+| Search width (reference) | 400px | 300px |
 
 ### Types
 
@@ -865,7 +884,7 @@ export function SectionHeader({
 |---------|-------------|----------------|
 | Title | 24px Bold (H2) | 20px Bold (H3) |
 | Description | 16px Regular | 14px Regular |
-| Eyebrow | 14px Regular | 14px Regular |
+| Eyebrow | 14px Regular (1.5) | 12px Regular (1.2) |
 | Tab selected | 14px Bold | 14px Bold |
 | Tab unselected | 14px Medium | 14px Medium |
 | Chip | 14px | 14px |
@@ -874,10 +893,10 @@ export function SectionHeader({
 
 | Element | Page Header | Section Header |
 |---------|-------------|----------------|
-| Section gap | 16px | 16px |
+| Section gap | 16px | 12px |
 | Title/description gap | 4px | 4px |
-| CTA buttons gap | 16px | 16px |
-| Tabs gap | 24px | 24px |
+| CTA cluster gap | 12px | 12px |
+| Tabs gap | 24px | 20px |
 | Chips gap | 16px | 16px |
 
 ### CSS Class Prefixes
