@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Add, Copy, Edit2, Routing, Trash } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
@@ -44,12 +44,22 @@ function MoreIcon() {
 
 function ProgramsAdmin() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { toasts, show } = useToast()
   const [rows, setRows] = useState<AdminProgramRow[]>(() => getAdminProgramRows())
   const [query, setQuery] = useState('')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+
+  // Toast handed over by another page (e.g. delete from the program details page).
+  useEffect(() => {
+    const toast = (location.state as { toast?: string } | null)?.toast
+    if (!toast) return
+    show('success', toast)
+    navigate('.', { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (!openMenuId) return

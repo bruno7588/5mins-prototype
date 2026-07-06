@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft2, ArrowRight2, Clock, Danger, DocumentDownload, Eye, Link2, More, Profile, TaskSquare, TickCircle, UserCirlceAdd, UserMinus } from 'iconsax-react'
+import { ArrowDown2, ArrowLeft2, ArrowRight2, Clock, Danger, Edit2, Eye, Link2, More, Profile, TaskSquare, TickCircle, Trash, UserCirlceAdd, UserMinus } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
+import Tooltip from '../../components/Tooltip/Tooltip'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import LearnerProgressDrawer from './components/LearnerProgressDrawer/LearnerProgressDrawer'
 import EnrolPeopleDrawer from './components/EnrolPeopleDrawer/EnrolPeopleDrawer'
 import LaunchSuccessModal from './components/LaunchSuccessModal/LaunchSuccessModal'
-import { loadDraftForBuilder, programLifecycle, type CourseStep, type ProgramStep } from './programStore'
+import { deleteProgram, loadDraftForBuilder, programLifecycle, type CourseStep, type ProgramStep } from './programStore'
 import ProgramStatusBadge from './components/ProgramStatusBadge/ProgramStatusBadge'
 import coursesIcon from '../../assets/programs/courses-icon.svg'
 import avatar1 from '../../assets/programs/avatar-1.png'
@@ -152,6 +153,7 @@ function ProgramAdminDetails() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [progressLearner, setProgressLearner] = useState<Learner | null>(null)
   const [unenrolTarget, setUnenrolTarget] = useState<Learner | null>(null)
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
   const [enrolled, setEnrolled] = useState(false)
   const [programStart, setProgramStart] = useState<string | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -197,6 +199,17 @@ function ProgramAdminDetails() {
     setLearners((ls) => ls.filter((l) => l.id !== removedId))
     setUnenrolTarget(null)
     showToast('success', `${name} has been unenrolled from this program`)
+  }
+
+  const confirmDelete = () => {
+    deleteProgram(draft.id)
+    setConfirmDeleteOpen(false)
+    navigate('/programs', { state: { toast: `“${title}” has been deleted` } })
+  }
+
+  const downloadReport = (label: string) => {
+    setOpenMenuId(null)
+    showToast('success', `Downloading ${label} (CSV)`)
   }
 
   const handleEnrol = (summary: string, startDate: string) => {
@@ -274,15 +287,50 @@ function ProgramAdminDetails() {
           <button type="button" className="pad-icon-btn ui-disabled" aria-label="Copy program link (coming soon)" disabled>
             <Link2 size={24} color="var(--text-secondary)" variant="Linear" />
           </button>
-          <button type="button" className="pad-icon-btn ui-disabled" aria-label="More actions (coming soon)" disabled>
-            <More size={24} color="var(--text-secondary)" variant="Linear" />
-          </button>
+          {/* Program actions — Figma 2464:14871 / 2469:51780 */}
+          <div className="pad-menu" ref={openMenuId === 'header-more' ? menuRef : undefined}>
+            <button
+              type="button"
+              className="pad-icon-btn"
+              aria-label="Program actions"
+              aria-haspopup="menu"
+              aria-expanded={openMenuId === 'header-more'}
+              onClick={() => setOpenMenuId((cur) => (cur === 'header-more' ? null : 'header-more'))}
+            >
+              <More size={24} color="var(--text-secondary)" variant="Linear" />
+            </button>
+            {openMenuId === 'header-more' && (
+              <div className="pad-menu__list" role="menu">
+                <button
+                  type="button"
+                  className="pad-menu__item"
+                  role="menuitem"
+                  onClick={() => navigate(`/programs/builder/${draft.id}`)}
+                >
+                  <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  className="pad-menu__item pad-menu__item--danger"
+                  role="menuitem"
+                  onClick={() => {
+                    setConfirmDeleteOpen(true)
+                    setOpenMenuId(null)
+                  }}
+                >
+                  <Trash size={20} color="var(--text-error)" variant="Linear" />
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
           <button type="button" className="pad-btn pad-btn--text" onClick={() => navigate(`/programs/${draft.id}`)}>
             Preview
             <Eye size={20} color="currentColor" variant="Linear" />
           </button>
-          <button type="button" className="pad-btn pad-btn--filled" onClick={() => navigate(`/programs/builder/${draft.id}`)}>
-            Edit Program
+          <button type="button" className="pad-btn pad-btn--filled" onClick={() => setDrawerOpen(true)}>
+            Enrol People
           </button>
         </div>
       </header>
@@ -401,13 +449,41 @@ function ProgramAdminDetails() {
               className="pad-enrol-search"
             />
             <div className="pad-enrol-actions">
-              <button type="button" className="pad-btn pad-btn--outlined-2 ui-disabled" disabled>
-                Download Report
-                <DocumentDownload size={20} color="currentColor" variant="Linear" />
-              </button>
-              <button type="button" className="pad-btn pad-btn--outline" onClick={() => setDrawerOpen(true)}>
-                Enrol People
-              </button>
+              {/* Download Report dropdown — Figma 2422:10883 / listbox 2422:11594 */}
+              <div className="pad-menu" ref={openMenuId === 'dl-report' ? menuRef : undefined}>
+                <button
+                  type="button"
+                  className="pad-btn pad-btn--outlined-2"
+                  aria-haspopup="menu"
+                  aria-expanded={openMenuId === 'dl-report'}
+                  onClick={() => setOpenMenuId((cur) => (cur === 'dl-report' ? null : 'dl-report'))}
+                >
+                  Download Report
+                  <ArrowDown2 size={20} color="currentColor" variant="Linear" />
+                </button>
+                {openMenuId === 'dl-report' && (
+                  <div className="pad-menu__list pad-menu__list--reports" role="menu">
+                    <button
+                      type="button"
+                      className="pad-menu__item pad-menu__item--rich"
+                      role="menuitem"
+                      onClick={() => downloadReport('Snapshot')}
+                    >
+                      <span className="pad-menu__item-title">Download Snapshot</span>
+                      <span className="pad-menu__item-supporting">Overall progress, scores, summary data</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="pad-menu__item pad-menu__item--rich"
+                      role="menuitem"
+                      onClick={() => downloadReport('Progress Report')}
+                    >
+                      <span className="pad-menu__item-title">Download Progress Report</span>
+                      <span className="pad-menu__item-supporting">Detailed per-learner breakdown of all courses</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -416,7 +492,10 @@ function ProgramAdminDetails() {
               <span className="pad-thead__name">Name</span>
               <span className="pad-thead__enrol">Enrolment</span>
               <span className="pad-thead__progress">Progress</span>
-              <span className="pad-thead__score">Score</span>
+              <span className="pad-thead__score">
+                Score
+                <Tooltip text="Average score across completed courses" position="Top" iconColor="var(--text-tertiary)" />
+              </span>
               <span className="pad-thead__completion">Completion date</span>
               <span className="pad-thead__more" aria-hidden="true" />
             </div>
@@ -533,6 +612,29 @@ function ProgramAdminDetails() {
             </div>
           </>
         )}
+      </ConfirmModal>
+
+      {/* Delete program — Figma 2469:52244 */}
+      <ConfirmModal open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)}>
+        <div className="confirm-modal-header">
+          <h2 className="confirm-modal-title">Delete program</h2>
+          <p className="confirm-modal-body">
+            Delete <strong>{title}</strong>? This removes it from the list and the learner experience. This
+            can’t be undone.
+          </p>
+        </div>
+        <div className="confirm-modal-actions">
+          <button
+            type="button"
+            className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+            onClick={() => setConfirmDeleteOpen(false)}
+          >
+            Cancel
+          </button>
+          <button type="button" className="confirm-modal-btn confirm-modal-btn--danger" onClick={confirmDelete}>
+            Delete Program
+          </button>
+        </div>
       </ConfirmModal>
 
       <EnrolPeopleDrawer
