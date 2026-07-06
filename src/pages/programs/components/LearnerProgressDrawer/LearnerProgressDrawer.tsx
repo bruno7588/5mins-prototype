@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { ArrowDown2, InfoCircle } from 'iconsax-react'
+import { ArrowDown, InfoCircle } from 'iconsax-react'
 import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import type { CourseStep } from '../../programStore'
@@ -64,7 +64,7 @@ function LearnerProgressDrawer({ learner, courses, onClose }: Props) {
             <span className="lpd-thead__course">Course</span>
             <span className="lpd-thead__progress">
               Progress
-              <ArrowDown2 size={16} color="var(--text-secondary)" variant="Linear" />
+              <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
             </span>
             <span className="lpd-thead__score">
               Score

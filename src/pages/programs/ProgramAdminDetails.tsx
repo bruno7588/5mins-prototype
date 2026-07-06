@@ -511,10 +511,14 @@ function ProgramAdminDetails() {
               <div className="pad-empty">No learners match “{learnerQuery.trim()}”.</div>
             ) : (
               visibleLearners.map((l) => (
-                <div key={l.id} className="pad-row">
+                <div
+                  key={l.id}
+                  className="pad-row pad-row--click"
+                  onClick={() => setProgressLearner(l)}
+                >
                   <div className="pad-row__name">
                     <img className="pad-lavatar" src={l.avatar} alt="" />
-                    <span className="pad-row__title">{l.name}</span>
+                    <span className="pad-row__title pad-row__title--link">{l.name}</span>
                   </div>
                   <div className="pad-row__date">
                     <span className="pad-date__day">{l.enrolled.day}</span>
@@ -529,7 +533,11 @@ function ProgramAdminDetails() {
                     <span className="pad-date__day">{l.completed.day}</span>
                     <span className="pad-date__year">{l.completed.year}</span>
                   </div>
-                  <div className="pad-menu" ref={openMenuId === l.id ? menuRef : undefined}>
+                  <div
+                    className="pad-menu"
+                    ref={openMenuId === l.id ? menuRef : undefined}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <button
                       type="button"
                       className="pad-row__more"

@@ -470,6 +470,27 @@
   width: 44px;
 }
 
+/* Clickable enrolment rows — DS table hover; the learner name doubles as the
+   link affordance (Mobbin-verified pattern: clickable row + link-styled name). */
+.pad-row--click {
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.pad-row--click:hover {
+  background: var(--cards-background-hover);
+}
+
+.pad-row__title--link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 120ms ease;
+}
+
+.pad-row__title--link:hover {
+  color: var(--text-button-hover);
+}
+
 .pad-row__name {
   flex: 1;
   min-width: 0;
