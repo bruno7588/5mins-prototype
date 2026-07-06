@@ -25,7 +25,7 @@
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  border: 1.5px solid var(--neutral-800, #20222A);
+  border: 1.5px solid var(--text-primary);
   background: transparent;
   display: flex;
   align-items: center;

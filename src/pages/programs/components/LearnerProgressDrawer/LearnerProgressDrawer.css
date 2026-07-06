@@ -3,7 +3,7 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(32, 34, 42, 0.4);
+  background: var(--scrim);
   display: flex;
   justify-content: flex-end;
   animation: lpd-fade-in 200ms ease;
@@ -141,7 +141,7 @@
   width: 72px;
   height: 40px;
   border-radius: 8px;
-  background-color: var(--neutral-100);
+  background-color: var(--cards-background-hover);
   background-size: cover;
   background-position: center;
 }

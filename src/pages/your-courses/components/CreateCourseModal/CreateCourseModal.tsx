@@ -31,7 +31,7 @@ function CreateCourseModal({ onClose }: CreateCourseModalProps) {
             <button className="create-course-btn-submit">Create Course</button>
             <button className="create-course-btn-close" onClick={onClose}>
               <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M25.875 25.875L10.125 10.125M25.875 10.125L10.125 25.875" stroke="#454C5E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M25.875 25.875L10.125 10.125M25.875 10.125L10.125 25.875" stroke="var(--text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
           </div>

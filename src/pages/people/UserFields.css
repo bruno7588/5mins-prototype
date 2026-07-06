@@ -179,7 +179,7 @@
 }
 
 .uf-table-icon-btn:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 .uf-table-icon-btn--danger {
@@ -201,7 +201,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 8px 16px;
-  background: var(--neutral-800);
+  background: var(--tooltip-background);
   color: var(--neutral-25);
   font-size: 14px;
   font-weight: 500;
@@ -220,7 +220,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: var(--neutral-800);
+  border-top-color: var(--tooltip-background);
 }
 
 .uf-table-icon-btn--tooltip:hover .uf-table-tooltip {

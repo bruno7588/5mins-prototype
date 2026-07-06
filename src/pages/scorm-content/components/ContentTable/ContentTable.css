@@ -35,7 +35,7 @@
 }
 
 .sc-content-table-filter-dropdown:hover {
-  border-color: var(--neutral-300);
+  border-color: var(--border-hover);
 }
 
 .sc-content-table-search {
@@ -47,7 +47,7 @@
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);
-  background-color: rgba(191, 194, 204, 0.16);
+  background-color: var(--input-background);
   margin-left: auto;
 }
 
@@ -125,7 +125,7 @@
 }
 
 .sc-content-table tbody tr:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* File name cell */
@@ -162,7 +162,7 @@
 }
 
 .sc-content-table-filename--editable:hover {
-  border-bottom-color: var(--neutral-300);
+  border-bottom-color: var(--border-hover);
 }
 
 .sc-content-table-filename--clickable {
@@ -221,7 +221,7 @@
 }
 
 .sc-content-table-action-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* More menu */
@@ -294,7 +294,7 @@
 }
 
 .sc-content-table-pagination-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .sc-content-table-pagination-btn--disabled {
@@ -324,7 +324,7 @@
 }
 
 .sc-content-table-preview-close:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .sc-content-table-preview-content {

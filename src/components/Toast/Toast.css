@@ -44,7 +44,7 @@
 }
 
 .toast--info {
-  background: var(--neutral-500);
+  background: var(--neutral-600);
   color: var(--neutral-25);
 }
 

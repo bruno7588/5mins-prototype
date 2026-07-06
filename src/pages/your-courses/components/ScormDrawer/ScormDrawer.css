@@ -70,7 +70,7 @@
 }
 
 .scorm-drawer-close:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* Header */
@@ -113,7 +113,7 @@
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);
-  background-color: rgba(191, 194, 204, 0.16);
+  background-color: var(--input-background);
 }
 
 .scorm-drawer-search input {
@@ -161,7 +161,7 @@
 }
 
 .scorm-drawer-table tbody tr:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* File name cell */

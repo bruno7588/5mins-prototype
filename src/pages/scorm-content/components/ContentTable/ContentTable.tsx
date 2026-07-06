@@ -280,12 +280,12 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
                 <div className="sc-content-table-actions">
                   {isScorm && (
                     <button className="sc-content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
-                      <Eye size={20} color="var(--neutral-400)" variant="Linear" />
+                      <Eye size={20} color="var(--text-tertiary)" variant="Linear" />
                     </button>
                   )}
                   {!isScorm && (
                     <button className="sc-content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
-                      <ExportSquare size={20} color="var(--neutral-400)" variant="Linear" />
+                      <ExportSquare size={20} color="var(--text-tertiary)" variant="Linear" />
                     </button>
                   )}
                   <div className="sc-content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
@@ -294,7 +294,7 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
                       aria-label="More options"
                       onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
                     >
-                      <MoreIcon size={20} color="var(--neutral-400)" />
+                      <MoreIcon size={20} color="var(--text-tertiary)" />
                     </button>
                     {menuOpenId === row.id && (
                       <div className="sc-content-table-menu">
@@ -333,10 +333,10 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
       <div className="sc-content-table-pagination">
         <span className="sc-content-table-pagination-text">1-10 of 28</span>
         <button className="sc-content-table-pagination-btn sc-content-table-pagination-btn--disabled" aria-label="Previous page">
-          <ArrowLeft2 size={16} color="var(--neutral-400)" />
+          <ArrowLeft2 size={16} color="var(--text-tertiary)" />
         </button>
         <button className="sc-content-table-pagination-btn" aria-label="Next page">
-          <ArrowRight2 size={16} color="var(--neutral-400)" />
+          <ArrowRight2 size={16} color="var(--text-tertiary)" />
         </button>
       </div>
     </div>

@@ -142,7 +142,7 @@
   flex-direction: column;
   gap: var(--space-s);
   padding: var(--space-m) 0;
-  border-bottom: 1px solid var(--neutral-100);
+  border-bottom: 1px solid var(--border);
 }
 
 .bulk-upload-accordion-section:first-child {
@@ -234,7 +234,7 @@
 
 /* ─── CSV Preview (inline example table) ─── */
 .csv-preview {
-  border: 1px solid var(--neutral-200);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   overflow: hidden;
   margin-top: 4px;
@@ -249,7 +249,7 @@
 .csv-preview-table th,
 .csv-preview-table td {
   padding: 8px 12px;
-  border-bottom: 1px solid var(--neutral-100);
+  border-bottom: 1px solid var(--border);
   text-align: left;
   white-space: nowrap;
   font-family: 'Poppins', sans-serif;
@@ -258,12 +258,12 @@
 }
 
 .csv-preview-table th {
-  background: var(--neutral-50);
+  background: var(--input-background);
   font-weight: 500;
   color: var(--text-tertiary);
   font-size: 14px;
-  border-bottom: 1px solid var(--neutral-200);
-  border-right: 1px solid var(--neutral-200);
+  border-bottom: 1px solid var(--border-elevated);
+  border-right: 1px solid var(--border-elevated);
 }
 
 .csv-preview-table th:last-child {
@@ -281,7 +281,7 @@
 .csv-preview-table td {
   color: var(--text-primary);
   font-weight: 400;
-  border-right: 1px solid var(--neutral-100);
+  border-right: 1px solid var(--border);
 }
 
 .csv-preview-table td:last-child {
@@ -292,7 +292,7 @@
 .csv-preview-tr--success { border-left-color: var(--success-500); }
 .csv-preview-tr--warning { border-left-color: var(--primary-600); }
 .csv-preview-tr--danger { border-left-color: var(--text-warning); }
-.csv-preview-tr--neutral { border-left-color: var(--neutral-300); }
+.csv-preview-tr--neutral { border-left-color: var(--border-hover); }
 
 /* Ellipsis column */
 .csv-col-ellipsis {
@@ -310,7 +310,7 @@
 .csv-col-scenario {
   font-family: 'Poppins', sans-serif !important;
   white-space: normal !important;
-  border-right: 1px solid var(--neutral-200);
+  border-right: 1px solid var(--border-elevated);
   min-width: 240px;
 }
 
@@ -331,7 +331,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 400;
-  color: var(--neutral-800);
+  color: var(--text-primary);
   line-height: 1.4;
   margin-top: 4px;
   display: block;
@@ -410,7 +410,7 @@
 
 .bulk-upload-divider {
   height: 1px;
-  background: var(--neutral-100);
+  background: var(--border);
   border-radius: var(--radius-xs);
 }
 
@@ -437,7 +437,7 @@
 }
 
 .bulk-upload-table-wrapper::-webkit-scrollbar-thumb {
-  background: var(--neutral-200);
+  background: var(--border-elevated);
   border-radius: var(--radius-ml);
 }
 
@@ -718,8 +718,8 @@
 }
 
 .bulk-preview-table-row:hover {
-  border-color: var(--neutral-200);
-  background: var(--neutral-50);
+  border-color: var(--border-elevated);
+  background: var(--cards-background-hover);
   transition: background 150ms ease;
 }
 
@@ -753,7 +753,7 @@
 .bulk-cell-warning-tooltip {
   position: fixed;
   padding: 8px 12px;
-  background: var(--neutral-900);
+  background: var(--tooltip-background);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
@@ -810,7 +810,7 @@
 }
 
 .bulk-preview-scroll--has-scroll .bulk-preview-table-row:hover .bulk-preview-col--firstname {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
   transition: background 150ms ease;
 }
 
@@ -926,7 +926,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 8px 12px;
-  background: var(--neutral-900);
+  background: var(--tooltip-background);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
@@ -946,7 +946,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: var(--neutral-900);
+  border-top-color: var(--tooltip-background);
 }
 
 .bulk-preview-btn-wrapper:hover .bulk-preview-tooltip {

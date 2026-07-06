@@ -127,7 +127,7 @@
 }
 
 .page-header-close:hover {
-  background: var(--neutral-200);
+  background: var(--input-background-hover);
 }
 
 /* Full-width divider between top row and tabs (per Figma 8644:16189) */

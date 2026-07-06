@@ -201,7 +201,7 @@
   font-size: 12px;
   font-weight: 500;
   padding: 2px var(--space-s);
-  background: var(--neutral-50);
+  background: var(--input-background);
   color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.4px;

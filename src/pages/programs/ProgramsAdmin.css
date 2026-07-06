@@ -129,7 +129,7 @@
 }
 
 .programs-kebab-btn:hover {
-  background: var(--neutral-100);
+  background: var(--input-background-hover);
 }
 
 .programs-kebab-menu {
@@ -165,7 +165,7 @@
 }
 
 .programs-kebab-item:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .programs-kebab-item--danger {
@@ -190,7 +190,7 @@
   width: 56px;
   height: 56px;
   border-radius: var(--radius-full, 999px);
-  background: var(--neutral-50);
+  background: var(--input-background);
   margin-bottom: 8px;
 }
 

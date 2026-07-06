@@ -2,7 +2,7 @@
   width: 240px;
   min-width: 240px;
   border-left: 1px solid var(--border);
-  background: var(--neutral-25);
+  background: var(--page-background);
   padding: var(--space-s);
   display: flex;
   flex-direction: column;
@@ -32,7 +32,7 @@
 }
 
 .sc-add-content-menu-item:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .sc-add-content-menu-item-icon {
@@ -40,7 +40,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--neutral-500);
+  color: var(--text-secondary);
   transition: color 150ms ease;
 }
 

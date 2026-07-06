@@ -318,7 +318,7 @@
 .cffm-progress-track {
   flex: 1;
   height: 8px;
-  background: var(--neutral-100);
+  background: var(--border);
   border-radius: var(--radius-ml);
   overflow: hidden;
 }

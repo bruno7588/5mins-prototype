@@ -259,7 +259,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                 <div className="qb-content-table-actions">
                   {isScorm && (
                     <button className="qb-content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
-                      <Eye size={20} color="var(--neutral-400)" variant="Linear" />
+                      <Eye size={20} color="var(--text-tertiary)" variant="Linear" />
                     </button>
                   )}
                   {!isScorm && aiQuizReadyIds.includes(row.id) && (
@@ -307,7 +307,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                   )}
                   {!isScorm && !aiQuizReadyIds.includes(row.id) && (
                     <button className="qb-content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
-                      <ExportSquare size={20} color="var(--neutral-400)" variant="Linear" />
+                      <ExportSquare size={20} color="var(--text-tertiary)" variant="Linear" />
                     </button>
                   )}
                   <div className="qb-content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
@@ -316,7 +316,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                       aria-label="More options"
                       onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
                     >
-                      <MoreIcon size={20} color="var(--neutral-400)" />
+                      <MoreIcon size={20} color="var(--text-tertiary)" />
                     </button>
                     {menuOpenId === row.id && (
                       <div className="qb-content-table-menu">
@@ -365,10 +365,10 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
       <div className="qb-content-table-pagination">
         <span className="qb-content-table-pagination-text">1-{rows.length} of {rows.length}</span>
         <button className="qb-content-table-pagination-btn qb-content-table-pagination-btn--disabled" aria-label="Previous page">
-          <ArrowLeft2 size={16} color="var(--neutral-400)" />
+          <ArrowLeft2 size={16} color="var(--text-tertiary)" />
         </button>
         <button className="qb-content-table-pagination-btn qb-content-table-pagination-btn--disabled" aria-label="Next page">
-          <ArrowRight2 size={16} color="var(--neutral-400)" />
+          <ArrowRight2 size={16} color="var(--text-tertiary)" />
         </button>
       </div>
     </div>

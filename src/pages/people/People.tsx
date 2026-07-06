@@ -93,7 +93,7 @@ const initialDeactivated: DeactivatedPerson[] = [
 const quicklinks = [
   { icon: <ProfileAdd size={40} color="var(--primary-500)" variant="Linear" />, color: '0, 206, 230', title: 'Invite people', description: 'Welcome someone new to the 5Mins account' },
   { icon: <DocumentText size={40} color="var(--secondary-500)" variant="Linear" />, color: '255, 187, 56', title: 'Bulk invite / update people by CSV', description: "It's easy and will save you time" },
-  { icon: <PeopleIcon size={40} color="#8158EC" variant="Linear" />, color: '129, 88, 236', title: 'Move people to another team', description: 'Search for people to move to a different team' },
+  { icon: <PeopleIcon size={40} color="var(--blaze-quiz)" variant="Linear" />, color: '129, 88, 236', title: 'Move people to another team', description: 'Search for people to move to a different team' },
 ]
 
 const avatarColors = ['#4a90d9', '#7b68ee', '#e67e22', '#2ecc71', '#e74c3c']

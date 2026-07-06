@@ -235,7 +235,7 @@
 }
 
 .courses-list-action-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .courses-list-empty {
@@ -273,7 +273,7 @@
 }
 
 .courses-list-pagination-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .courses-list-pagination-btn--disabled {

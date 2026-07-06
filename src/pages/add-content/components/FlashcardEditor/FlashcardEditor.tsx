@@ -534,7 +534,7 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
                                   onClick={handleAddBackground}
                                 >
                                   <span className="fce-image-menu-icon fce-image-menu-icon--solid">
-                                    <TextalignLeft size={16} color="var(--neutral-0)" variant="Bold" />
+                                    <TextalignLeft size={16} color="var(--cards-background)" variant="Bold" />
                                   </span>
                                   <span>Add background</span>
                                 </button>

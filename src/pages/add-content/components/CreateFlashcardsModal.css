@@ -55,7 +55,7 @@
   padding: var(--space-m);
   border-radius: var(--radius-sm);
   border: none;
-  background-color: #FFFFFF;
+  background-color: var(--cards-background);
   box-shadow:
     -1px -1px 4px 0 rgba(32, 34, 42, 0.06),
     1px 1px 4px 0 rgba(32, 34, 42, 0.06);

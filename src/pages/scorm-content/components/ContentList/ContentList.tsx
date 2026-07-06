@@ -41,12 +41,12 @@ function DragHandle() {
   return (
     <div className="sc-content-card-drag" aria-label="Drag to reorder">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <circle cx="7" cy="5" r="1.5" fill="var(--neutral-300)" />
-        <circle cx="13" cy="5" r="1.5" fill="var(--neutral-300)" />
-        <circle cx="7" cy="10" r="1.5" fill="var(--neutral-300)" />
-        <circle cx="13" cy="10" r="1.5" fill="var(--neutral-300)" />
-        <circle cx="7" cy="15" r="1.5" fill="var(--neutral-300)" />
-        <circle cx="13" cy="15" r="1.5" fill="var(--neutral-300)" />
+        <circle cx="7" cy="5" r="1.5" fill="var(--text-disabled)" />
+        <circle cx="13" cy="5" r="1.5" fill="var(--text-disabled)" />
+        <circle cx="7" cy="10" r="1.5" fill="var(--text-disabled)" />
+        <circle cx="13" cy="10" r="1.5" fill="var(--text-disabled)" />
+        <circle cx="7" cy="15" r="1.5" fill="var(--text-disabled)" />
+        <circle cx="13" cy="15" r="1.5" fill="var(--text-disabled)" />
       </svg>
     </div>
   )
@@ -93,7 +93,7 @@ function ContentCard({
             <div className="sc-content-card-thumb-photo">
               <div className="sc-content-card-thumb-tag">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M7 1.75C4.1 1.75 1.75 4.1 1.75 7C1.75 9.9 4.1 12.25 7 12.25C9.9 12.25 12.25 9.9 12.25 7C12.25 4.1 9.9 1.75 7 1.75ZM9.1 7.35L6.3 9.1C6.05 9.25 5.75 9.075 5.75 8.75V5.25C5.75 4.925 6.05 4.75 6.3 4.9L9.1 6.65C9.35 6.8 9.35 7.2 9.1 7.35Z" fill="var(--neutral-800)" />
+                  <path d="M7 1.75C4.1 1.75 1.75 4.1 1.75 7C1.75 9.9 4.1 12.25 7 12.25C9.9 12.25 12.25 9.9 12.25 7C12.25 4.1 9.9 1.75 7 1.75ZM9.1 7.35L6.3 9.1C6.05 9.25 5.75 9.075 5.75 8.75V5.25C5.75 4.925 6.05 4.75 6.3 4.9L9.1 6.65C9.35 6.8 9.35 7.2 9.1 7.35Z" fill="var(--text-primary)" />
                 </svg>
               </div>
             </div>
@@ -107,7 +107,7 @@ function ContentCard({
           <div className="sc-content-card-meta">
             <span>{item.metadata}</span>
             {item.showEditIcon && (
-              <Edit2 size={16} color="var(--neutral-500)" variant="Linear" />
+              <Edit2 size={16} color="var(--text-secondary)" variant="Linear" />
             )}
           </div>
         </div>

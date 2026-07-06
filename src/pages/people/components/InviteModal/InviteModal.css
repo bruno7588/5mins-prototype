@@ -188,7 +188,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 8px 16px;
-  background: var(--neutral-800);
+  background: var(--tooltip-background);
   color: var(--neutral-25);
   font-size: 14px;
   font-weight: 500;
@@ -207,7 +207,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: var(--neutral-800);
+  border-top-color: var(--tooltip-background);
 }
 
 .invite-modal-card-remove:hover .invite-modal-card-remove-tooltip {
@@ -344,7 +344,7 @@
   left: 0;
   right: 0;
   z-index: 10;
-  background: var(--neutral-0);
+  background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: var(--space-s);
@@ -369,7 +369,7 @@
 }
 
 .invite-modal-listbox-item:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 .invite-modal-listbox-item--selected {
@@ -468,7 +468,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 8px 16px;
-  background: var(--neutral-800);
+  background: var(--tooltip-background);
   color: var(--neutral-25);
   font-size: 14px;
   font-weight: 500;
@@ -487,7 +487,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: var(--neutral-800);
+  border-top-color: var(--tooltip-background);
 }
 
 .invite-modal-btn-wrapper:hover .invite-modal-btn-tooltip {

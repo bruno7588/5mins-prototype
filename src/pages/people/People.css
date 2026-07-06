@@ -146,7 +146,7 @@
 }
 
 .people-search:hover {
-  border-color: var(--neutral-400);
+  border-color: var(--border-hover);
 }
 
 .people-search:focus-within {
@@ -261,8 +261,8 @@
 }
 
 .people-filter-trigger:hover {
-  background: var(--neutral-50);
-  border-color: var(--neutral-300);
+  background: var(--page-background-hover);
+  border-color: var(--border-hover);
 }
 
 .people-filter-trigger--open {
@@ -287,7 +287,7 @@
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  background: var(--neutral-0);
+  background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: var(--space-s);
@@ -314,7 +314,7 @@
 }
 
 .people-filter-option:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 .people-filter-option--selected {
@@ -380,7 +380,7 @@
 }
 
 .people-table-row--selected:hover {
-  background: #FDECC5;
+  background: var(--selected-fill-hover);
 }
 
 .people-table-cell {
@@ -497,7 +497,7 @@
 
 .people-table-scroll--has-scroll .people-table-row--selected:hover .people-table-cell--checkbox,
 .people-table-scroll--has-scroll .people-table-row--selected:hover .people-table-cell--name {
-  background: #FDECC5;
+  background: var(--selected-fill-hover);
 }
 
 /* Shadow on name cell edge — only when user has scrolled horizontally */
@@ -668,7 +668,7 @@
 }
 
 .people-more-btn:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 .people-action-menu {
@@ -676,7 +676,7 @@
   top: calc(100% + 12px);
   right: 0;
   min-width: 250px;
-  background: var(--neutral-0);
+  background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
@@ -714,7 +714,7 @@
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-bottom: 5px solid var(--neutral-0);
+  border-bottom: 5px solid var(--cards-background);
 }
 
 .people-action-menu-item {
@@ -734,7 +734,7 @@
 }
 
 .people-action-menu-item:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 .people-action-menu-item--danger {
@@ -1050,7 +1050,7 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
-  background: var(--neutral-0);
+  background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   outline: none;
@@ -1095,8 +1095,8 @@
 /* Outlined (cancel) */
 .confirm-modal-btn--outlined {
   background: transparent;
-  border: 1px solid var(--neutral-800);
-  color: var(--neutral-800);
+  border: 1px solid var(--text-primary);
+  color: var(--text-primary);
 }
 
 .confirm-modal-btn--outlined:hover {
@@ -1187,7 +1187,7 @@
 }
 
 .confirm-modal-radio-card:hover {
-  border-color: var(--neutral-300);
+  border-color: var(--border-hover);
 }
 
 .confirm-modal-radio-card--danger {
@@ -1216,7 +1216,7 @@
   width: 20px;
   height: 20px;
   border-radius: var(--radius-full);
-  border: 2px solid var(--neutral-300);
+  border: 2px solid var(--border-hover);
   position: relative;
   flex-shrink: 0;
   margin-top: 2px;
@@ -1284,10 +1284,10 @@
 
 .confirm-modal-reactivate-label--danger {
   font-weight: 500;
-  color: #df1642;
+  color: var(--text-error);
 }
 
 .confirm-modal-reactivate-label--warning {
   font-weight: 500;
-  color: #e88206;
+  color: var(--text-warning);
 }

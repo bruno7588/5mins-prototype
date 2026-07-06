@@ -125,7 +125,7 @@
 }
 
 .alert__btn--outlined:hover {
-  background: rgba(32, 34, 42, 0.04);
+  background: var(--page-background-hover);
 }
 
 /* Inline underline — Alert */
@@ -159,5 +159,5 @@
 
 .alert__close:hover {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--page-background-hover);
 }

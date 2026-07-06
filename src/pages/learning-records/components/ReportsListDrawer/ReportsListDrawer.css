@@ -208,7 +208,7 @@
 }
 
 .rl-avatar--more:hover {
-  background: var(--neutral-200);
+  background: var(--neutral-200); /* TODO(dark): verify */
   color: var(--text-secondary);
 }
 
@@ -284,7 +284,7 @@
 }
 
 .rl-icon-btn:hover {
-  background: var(--neutral-100, #e3e5e9);
+  background: var(--page-background-hover);
 }
 
 /* Circular "open" arrow — filled chip; opens the edit drawer. */
@@ -302,5 +302,5 @@
 }
 
 .rl-open-btn:hover {
-  background: var(--neutral-200, #d4d6dc);
+  background: var(--input-background-hover);
 }

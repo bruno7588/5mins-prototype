@@ -19,7 +19,7 @@
 }
 
 .lesson-editor-close:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* Centered content area */
@@ -67,7 +67,7 @@
   padding: 10px var(--space-ml);
   font-size: 14px;
   font-weight: 700;
-  color: rgba(249, 249, 250, 1);
+  color: var(--neutral-25);
   border-radius: var(--radius-s);
   background: var(--primary-button-background, var(--primary-600));
   cursor: pointer;
@@ -100,7 +100,7 @@
 }
 
 .lesson-editor-guidelines-field:hover {
-  border-color: var(--neutral-300);
+  border-color: var(--border-hover);
 }
 
 .lesson-editor-guidelines-text {

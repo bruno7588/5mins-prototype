@@ -94,7 +94,7 @@ function UserFields() {
             /* Empty State */
             <div className="user-fields-empty">
               <div className="user-fields-empty-icon">
-                <Setting3 size={40} color="var(--neutral-500)" variant="Linear" />
+                <Setting3 size={40} color="var(--text-secondary)" variant="Linear" />
               </div>
               <div className="user-fields-empty-info">
                 <h3 className="user-fields-empty-title">Create a new custom field to get started!</h3>

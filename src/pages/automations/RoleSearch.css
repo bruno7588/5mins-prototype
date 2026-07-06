@@ -14,7 +14,7 @@
   padding: 8px 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm); /* 12px */
-  background: var(--neutral-0);
+  background: var(--cards-background);
   transition: border-color 150ms ease;
 }
 
@@ -48,7 +48,7 @@
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: var(--neutral-0);
+  background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
@@ -76,7 +76,7 @@
 }
 
 .role-search-item:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 .role-search-item--selected,

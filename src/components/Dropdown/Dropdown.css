@@ -169,7 +169,7 @@
 }
 
 .dropdown-option.is-selected .dropdown-option__desc {
-  color: var(--neutral-600);
+  color: var(--text-secondary);
 }
 
 /* Helper / Error */
@@ -188,4 +188,4 @@
 /* Menu scrollbar */
 .dropdown-menu::-webkit-scrollbar { width: 4px; }
 .dropdown-menu::-webkit-scrollbar-track { background: transparent; }
-.dropdown-menu::-webkit-scrollbar-thumb { background: var(--neutral-200); border-radius: 4px; }
+.dropdown-menu::-webkit-scrollbar-thumb { background: var(--border-elevated); border-radius: 4px; }

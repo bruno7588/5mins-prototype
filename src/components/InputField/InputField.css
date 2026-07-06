@@ -22,8 +22,8 @@
 }
 
 .input-field__wrapper:hover {
-  border-color: var(--neutral-200);
-  background: var(--neutral-25);
+  border-color: var(--border-elevated);
+  background: var(--page-background);
 }
 
 .input-field__wrapper:focus-within {

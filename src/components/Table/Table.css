@@ -73,8 +73,8 @@
 
 .tbl-row.is-selected.is-hover,
 .tbl-row.is-selected:hover {
-  background: rgba(237, 163, 13, 0.24);
-  border-color: rgba(237, 163, 13, 0.24);
+  background: var(--selected-tint-hover);
+  border-color: var(--selected-tint-hover);
 }
 
 .tbl-row.is-disabled .tbl-cell {
@@ -241,7 +241,7 @@
 }
 
 .tbl-action .icon-btn:hover {
-  background: var(--neutral-100);
+  background: var(--input-background-hover);
 }
 
 .tbl-action.is-disabled .icon-btn {

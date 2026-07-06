@@ -162,7 +162,7 @@
 }
 
 .aim-search-clear:hover {
-  background: var(--neutral-100);
+  background: var(--input-background-hover);
   color: var(--text-primary);
 }
 
@@ -363,9 +363,9 @@
   border-radius: var(--radius-sm);
   background: linear-gradient(
     90deg,
-    var(--neutral-50) 0%,
-    var(--neutral-100) 50%,
-    var(--neutral-50) 100%
+    var(--page-background-hover) 0%,
+    var(--border) 50%,
+    var(--page-background-hover) 100%
   );
   background-size: 200% 100%;
   animation: aim-generate-shimmer 1400ms ease-in-out infinite;
@@ -379,7 +379,7 @@
 @media (prefers-reduced-motion: reduce) {
   .aim-generate-skeleton {
     animation: none;
-    background: var(--neutral-100);
+    background: var(--border);
   }
 }
 
@@ -516,9 +516,9 @@
 }
 
 .aim-generate-btn:disabled {
-  background: var(--neutral-100);
-  border-color: var(--neutral-100);
-  color: var(--neutral-300);
+  background: var(--button-background-disabled);
+  border-color: var(--button-background-disabled);
+  color: var(--text-button-disabled);
   cursor: not-allowed;
   filter: none;
 }
@@ -546,15 +546,15 @@
 
 .aim-generate-btn--secondary:disabled {
   background: transparent;
-  border-color: var(--neutral-100);
-  color: var(--neutral-300);
+  border-color: var(--button-background-disabled);
+  color: var(--text-button-disabled);
 }
 
 .aim-generate-btn--secondary:disabled .aim-generate-btn-gradient-text {
   background: none;
   -webkit-background-clip: initial;
   background-clip: initial;
-  color: var(--neutral-300);
+  color: var(--text-button-disabled);
 }
 
 /* Primary Filled — "Save Image" (Figma 5190:6231 — primary-600 bg + white text) */
@@ -583,8 +583,8 @@
 }
 
 .aim-generate-btn--primary:disabled {
-  background: var(--neutral-100);
-  border-color: var(--neutral-100);
-  color: var(--neutral-300);
+  background: var(--button-background-disabled);
+  border-color: var(--button-background-disabled);
+  color: var(--text-button-disabled);
 }
 

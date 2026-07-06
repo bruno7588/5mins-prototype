@@ -251,7 +251,7 @@
   height: 20px;
   border-radius: 9999px;
   border: none;
-  background: var(--neutral-200);
+  background: var(--neutral-200); /* TODO(dark): verify — off-state toggle track (selection-controls.md specs #656B7C) */
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
@@ -301,7 +301,7 @@
 }
 
 .automations-row-action:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 /* ── Row action menu ── */
@@ -315,7 +315,7 @@
   top: calc(100% + 12px);
   right: 0;
   min-width: 220px;
-  background: var(--neutral-0);
+  background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
@@ -352,7 +352,7 @@
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-bottom: 5px solid var(--neutral-0);
+  border-bottom: 5px solid var(--cards-background);
 }
 
 .automations-action-menu-item {
@@ -375,7 +375,7 @@
 }
 
 .automations-action-menu-item:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 .automations-action-menu-item:disabled {

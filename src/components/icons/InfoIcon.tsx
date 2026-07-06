@@ -4,7 +4,7 @@ interface InfoIconProps {
   className?: string
 }
 
-function InfoIcon({ size = 20, color = '#454C5E', className }: InfoIconProps) {
+function InfoIcon({ size = 20, color = 'var(--text-secondary)', className }: InfoIconProps) {
   return (
     <svg
       width={size}

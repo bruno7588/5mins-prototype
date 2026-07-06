@@ -19,7 +19,7 @@
 }
 
 .add-scorm-close:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* Centered content area */
@@ -210,7 +210,7 @@
 }
 
 .add-scorm-change-img-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* ZIP file upload */

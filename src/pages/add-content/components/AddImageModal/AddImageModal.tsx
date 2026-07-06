@@ -178,7 +178,7 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path
             d="M17.25 17.25L6.75 6.75M17.25 6.75L6.75 17.25"
-            stroke="#454C5E"
+            stroke="var(--text-secondary)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -311,7 +311,7 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
               {generating ? (
                 <div className="aim-generate-progress" aria-live="polite">
                   <div className="aim-generate-progress-info">
-                    <SparkleIcon size={20} color="#00CEE6" />
+                    <SparkleIcon size={20} color="var(--primary-500)" />
                     <span>Generating your image…</span>
                   </div>
                   <div

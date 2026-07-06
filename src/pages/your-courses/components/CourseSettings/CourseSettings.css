@@ -137,7 +137,7 @@
 
 /* Match the toggles to the checkbox's amber "on" colour (rather than the default green). */
 .cs-panel .toggle--on .toggle__track {
-  background: #f5a623;
+  background: var(--control-selected);
 }
 
 /* Emphasised "Failed" inside helper copy */

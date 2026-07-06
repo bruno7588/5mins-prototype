@@ -52,7 +52,7 @@
 
 /* Hover (enabled, non-selected) */
 .chip:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
   border-color: var(--border-hover);
 }
 

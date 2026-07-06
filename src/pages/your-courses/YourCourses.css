@@ -165,7 +165,7 @@
 }
 
 .your-courses-folder-card:hover .your-courses-folder-img-back {
-  background: var(--neutral-200);
+  background: var(--border-elevated);
   transform: translate(-50%, -50%) scale(0.833);
 }
 
@@ -176,13 +176,13 @@
   left: 50%;
   top: calc(50% - 4px);
   transform: translate(-50%, -50%);
-  background: var(--neutral-200);
+  background: var(--border-elevated);
   border-radius: var(--radius-s);
   transition: background-color 300ms ease-in-out, transform 300ms ease-in-out;
 }
 
 .your-courses-folder-card:hover .your-courses-folder-img-mid {
-  background: var(--neutral-300);
+  background: var(--border-hover);
   transform: translate(-50%, -50%) scale(0.833);
 }
 
@@ -348,7 +348,7 @@
 }
 
 .your-courses-enrol-action-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* Pagination */
@@ -379,7 +379,7 @@
 }
 
 .your-courses-enrol-pagination-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .your-courses-enrol-pagination-btn--disabled {

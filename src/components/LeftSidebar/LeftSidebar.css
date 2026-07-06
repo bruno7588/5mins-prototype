@@ -1,7 +1,7 @@
 .left-sidebar {
   width: 240px;
   min-width: 240px;
-  background: var(--neutral-25);
+  background: var(--page-background);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -58,7 +58,7 @@
 }
 
 .sidebar-item:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .sidebar-item--active {
@@ -117,7 +117,7 @@
 }
 
 .sidebar-sub-item:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .sidebar-sub-item--active {

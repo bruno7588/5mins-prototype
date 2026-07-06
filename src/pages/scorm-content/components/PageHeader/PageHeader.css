@@ -37,7 +37,7 @@
 }
 
 .sc-page-header-btn-outline:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .sc-page-header-btn-filled {
@@ -84,7 +84,7 @@
 }
 
 .sc-page-header-close:hover {
-  background: var(--neutral-200);
+  background: var(--input-background-hover);
 }
 
 /* Tabs */

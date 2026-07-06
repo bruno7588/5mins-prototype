@@ -53,7 +53,7 @@
 }
 
 .rd-icon-btn:hover {
-  background: var(--neutral-100, #e3e5e9);
+  background: var(--page-background-hover);
 }
 
 .rd-menu {
@@ -245,7 +245,7 @@
 }
 
 .rfe-chip-remove:hover {
-  background: var(--neutral-100);
+  background: var(--input-background-hover);
   color: var(--text-primary);
 }
 
@@ -489,8 +489,8 @@
 }
 
 .rcp:hover {
-  border-color: var(--neutral-200);
-  background: var(--neutral-25);
+  border-color: var(--border-elevated);
+  background: var(--page-background);
 }
 
 .rcp:focus-within {
@@ -538,7 +538,7 @@
 }
 
 .rcp-chip-remove:hover {
-  background: var(--neutral-200);
+  background: var(--neutral-200); /* TODO(dark): verify */
   color: var(--text-error);
 }
 
@@ -630,7 +630,7 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background: #cbd5e1;
+  background: var(--neutral-300);
   color: #fff;
   font-size: 14px;
   font-weight: 700;

@@ -155,7 +155,7 @@ function YourCoursesList() {
                 </div>
                 <div className="courses-list-cell courses-list-cell--actions">
                   <button className="courses-list-action-btn" aria-label="More options">
-                    <MoreIcon size={20} color="var(--neutral-400)" />
+                    <MoreIcon size={20} color="var(--text-tertiary)" />
                   </button>
                 </div>
               </div>
@@ -172,10 +172,10 @@ function YourCoursesList() {
               className="courses-list-pagination-btn courses-list-pagination-btn--disabled"
               aria-label="Previous page"
             >
-              <ArrowLeft2 size={16} color="var(--neutral-400)" />
+              <ArrowLeft2 size={16} color="var(--text-tertiary)" />
             </button>
             <button className="courses-list-pagination-btn" aria-label="Next page">
-              <ArrowRight2 size={16} color="var(--neutral-500)" />
+              <ArrowRight2 size={16} color="var(--text-secondary)" />
             </button>
           </div>
         </div>

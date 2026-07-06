@@ -114,7 +114,9 @@
   --text-button-hover: var(--primary-700);
   --selected: var(--secondary-600);
   --selected-tint: rgba(237, 163, 13, 0.15); /* selected-row / highlight fill derived from --selected */
+  --selected-tint-hover: rgba(237, 163, 13, 0.24); /* hover state of --selected-tint rows */
   --selected-fill: #FCF1DB; /* opaque equivalent of --selected-tint, for sticky cells over scrolling content */
+  --selected-fill-hover: #FDECC5; /* hover state of --selected-fill / selected rows (opaque) */
   --control-selected: var(--secondary-600); /* radio/checkbox selected amber, per selection-controls.md */
   --scrim: rgba(15, 16, 20, 0.25); /* overlay backdrop — Neutral-900 @ 25% (light mode; dark mode spec is 50%) */
 
@@ -186,8 +188,10 @@
   --selected: var(--secondary-500);
   --control-selected: var(--secondary-500);
   --selected-tint: rgba(255, 187, 56, 0.15); /* Secondary-500 @ 15% */
-  /* Translucent stand-in for the opaque light-mode #FCF1DB — designer review pending */
+  --selected-tint-hover: rgba(255, 187, 56, 0.24);
+  /* Translucent stand-ins for the opaque light-mode fills — designer review pending */
   --selected-fill: rgba(255, 187, 56, 0.16);
+  --selected-fill-hover: rgba(255, 187, 56, 0.24);
 
   /* Overlay backdrop — dark-mode spec is 50% (colors.md §8) */
   --scrim: rgba(15, 16, 20, 0.5);

@@ -35,7 +35,7 @@
 }
 
 .content-table-filter-dropdown:hover {
-  border-color: var(--neutral-300);
+  border-color: var(--border-hover);
 }
 
 .content-table-search {
@@ -47,7 +47,7 @@
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);
-  background-color: rgba(191, 194, 204, 0.16);
+  background-color: var(--input-background);
   margin-left: auto;
 }
 
@@ -191,7 +191,7 @@
 }
 
 .content-table-filename--editable:hover {
-  border-bottom-color: var(--neutral-300);
+  border-bottom-color: var(--border-hover);
 }
 
 .content-table-filename--clickable {
@@ -261,7 +261,7 @@
 }
 
 .content-table-action-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* AI quiz badge */
@@ -282,7 +282,7 @@
 }
 
 .content-table-ai-badge:hover {
-  background: var(--neutral-100, rgba(191, 194, 204, 0.28));
+  background: var(--input-background-hover);
 }
 
 /* Persistent tooltip */
@@ -292,7 +292,7 @@
   top: 50%;
   transform: translateY(-50%);
   padding: 16px 20px;
-  background: #20222A;
+  background: var(--tooltip-background);
   color: white;
   border-radius: 12px;
   white-space: nowrap;
@@ -359,7 +359,7 @@
   height: 0;
   border: 8px solid transparent;
   border-right: none;
-  border-left: 8px solid #20222A;
+  border-left: 8px solid var(--tooltip-background);
 }
 
 /* More menu */
@@ -432,7 +432,7 @@
 }
 
 .content-table-pagination-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .content-table-pagination-btn--disabled {
@@ -462,7 +462,7 @@
 }
 
 .content-table-preview-close:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .content-table-preview-content {

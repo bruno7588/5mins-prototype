@@ -149,21 +149,21 @@ function UserFieldDrawer({ onClose, onSave, initialData, existingNames = [] }: U
             <div className="uf-drawer-preview-card">
               <svg width="208" height="230" viewBox="0 0 208 230" fill="none" xmlns="http://www.w3.org/2000/svg" className="uf-drawer-preview-img">
                 {/* Title */}
-                <text x="0" y="14" fill="#454C5E" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="500">Dropdown example:</text>
+                <text x="0" y="14" fill="var(--text-secondary)" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="500">Dropdown example:</text>
                 {/* Card outline */}
-                <rect x="0.5" y="29.5" width="207" height="195" rx="11.5" stroke="#DFE1E6"/>
+                <rect x="0.5" y="29.5" width="207" height="195" rx="11.5" stroke="var(--border)"/>
                 {/* Field name label */}
-                <text x="20" y="60" fill="#656B7C" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Field name</text>
+                <text x="20" y="60" fill="var(--text-tertiary)" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Field name</text>
                 {/* Select box */}
-                <rect x="12.5" y="70.5" width="183" height="36" rx="11.5" stroke="#DFE1E6"/>
-                <text x="24" y="94" fill="#656B7C" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Option 1</text>
+                <rect x="12.5" y="70.5" width="183" height="36" rx="11.5" stroke="var(--border)"/>
+                <text x="24" y="94" fill="var(--text-tertiary)" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Option 1</text>
                 {/* Chevron */}
-                <path d="M174.4 90.2L170.8 86.6C170.35 86.14 169.65 86.14 169.2 86.6L165.6 90.2" stroke="#656B7C" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M174.4 90.2L170.8 86.6C170.35 86.14 169.65 86.14 169.2 86.6L165.6 90.2" stroke="var(--text-tertiary)" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                 {/* Options panel */}
-                <rect x="12" y="115" width="184" height="100" rx="12" fill="#BFC2CC" fillOpacity="0.16"/>
-                <text x="24" y="142" fill="#656B7C" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Option 1</text>
-                <text x="24" y="172" fill="#656B7C" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Option 2</text>
-                <text x="24" y="202" fill="#656B7C" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Option 3</text>
+                <rect x="12" y="115" width="184" height="100" rx="12" fill="var(--input-background)"/>
+                <text x="24" y="142" fill="var(--text-tertiary)" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Option 1</text>
+                <text x="24" y="172" fill="var(--text-tertiary)" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Option 2</text>
+                <text x="24" y="202" fill="var(--text-tertiary)" fontFamily="Poppins, sans-serif" fontSize="14" fontWeight="400">Option 3</text>
               </svg>
             </div>
           </div>}

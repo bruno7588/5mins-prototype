@@ -129,7 +129,7 @@
 }
 
 .assessment-modal-close:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* Form body */
@@ -215,7 +215,7 @@
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid var(--neutral-300);
+  border: 2px solid var(--border-hover);
   border-radius: 50%;
   flex-shrink: 0;
   cursor: pointer;
@@ -404,7 +404,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 6px 12px;
-  background: var(--neutral-900);
+  background: var(--tooltip-background);
   color: var(--neutral-0);
   font-size: 12px;
   font-weight: 500;
@@ -419,7 +419,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: var(--neutral-900);
+  border-top-color: var(--tooltip-background);
 }
 
 .assessment-modal-media-remove[data-tooltip]:hover::before,
@@ -575,7 +575,7 @@
 }
 
 .media-modal-close:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* Drop zone */
@@ -614,7 +614,7 @@
   width: calc(100% - 1.5px);
   height: calc(100% - 1.5px);
   fill: none;
-  stroke: var(--neutral-300);
+  stroke: var(--border-hover);
   stroke-width: 1.5;
   stroke-dasharray: 4 4;
   transition: stroke 150ms ease;
@@ -739,7 +739,7 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-m);
-  background: var(--neutral-50);
+  background: var(--input-background);
   border-radius: var(--radius-s);
   width: 100%;
 }

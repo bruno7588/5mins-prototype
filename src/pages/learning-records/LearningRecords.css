@@ -103,7 +103,7 @@
 }
 
 .lrp-reports-btn:hover:not(:disabled) {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .lrp-reports-btn:disabled {
@@ -357,7 +357,7 @@
   padding: 0 var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
-  background: var(--neutral-0);
+  background: var(--cards-background);
   font-size: 14px;
   color: var(--text-primary);
   line-height: 1.5;
@@ -392,7 +392,7 @@
 }
 
 .lrp-pill-remove:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
   color: var(--text-primary);
 }
 
@@ -488,7 +488,7 @@
 }
 
 .lrp-filter-remove:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
   color: var(--text-primary);
 }
 
@@ -803,7 +803,7 @@
 }
 
 .lrp-pagination-btn:hover:not(:disabled) {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .lrp-pagination-btn:disabled {

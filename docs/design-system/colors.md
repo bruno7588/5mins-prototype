@@ -409,11 +409,13 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
 
 `src/styles/tokens.css` was aligned to this spec on 2026-07-03: full 100–900 palettes, Figma hex values, Figma token names (`--primary-button-background(-hover/-pressed)`, `--course-assessments`), and `--selected` resolving to Secondary-600 in light mode.
 
-Code-only tokens that intentionally extend this spec (keep them):
+Code-only tokens that intentionally extend this spec (keep them). Dark-mode values shipped in `tokens.css` on 2026-07-06 (translucent `--selected-fill(-hover)` dark stand-ins pending designer review):
 
-| Token | Value | Purpose |
-|---|---|---|
-| `--selected-tint` | `rgba(237, 163, 13, 0.15)` | Selected-row / highlight fill derived from `--selected` |
-| `--selected-fill` | `#FCF1DB` | Opaque equivalent of `--selected-tint` for sticky cells over scrolling content |
-| `--control-selected` | `var(--secondary-600)` | Radio/checkbox selected amber, per selection-controls.md |
-| `--scrim` | `rgba(15, 16, 20, 0.5)` | Overlay backdrop fill |
+| Token | Light | Dark | Purpose |
+|---|---|---|---|
+| `--selected-tint` | `rgba(237, 163, 13, 0.15)` | `rgba(255, 187, 56, 0.15)` | Selected-row / highlight fill derived from `--selected` |
+| `--selected-tint-hover` | `rgba(237, 163, 13, 0.24)` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-tint` rows |
+| `--selected-fill` | `#FCF1DB` | `rgba(255, 187, 56, 0.16)` | Opaque equivalent of `--selected-tint` for sticky cells over scrolling content |
+| `--selected-fill-hover` | `#FDECC5` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-fill` / selected rows |
+| `--control-selected` | `var(--secondary-600)` | `var(--secondary-500)` | Radio/checkbox selected amber, per selection-controls.md |
+| `--scrim` | `rgba(15, 16, 20, 0.25)` | `rgba(15, 16, 20, 0.5)` | Overlay backdrop fill (light 25% / dark 50%) |

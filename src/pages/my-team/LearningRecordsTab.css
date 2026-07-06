@@ -514,7 +514,7 @@
 }
 
 .lr__pagination-btn:hover:not(:disabled) {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .lr__pagination-btn:disabled {
@@ -528,7 +528,7 @@
 }
 
 .lr__row--selected:hover {
-  background: #FDECC5;
+  background: var(--selected-fill-hover);
 }
 
 .lr__row--selected .lr__cell--ext-email {
@@ -536,7 +536,7 @@
 }
 
 .lr__row--selected:hover .lr__cell--ext-email {
-  background: #FDECC5;
+  background: var(--selected-fill-hover);
 }
 
 /* ── Floating bulk action bar ── */

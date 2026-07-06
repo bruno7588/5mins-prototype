@@ -453,8 +453,8 @@
 
 .cd-table-scroll--has-scroll .cd-row--selected .cd-cell--name,
 .cd-table-scroll--has-scroll .cd-row--selected:hover .cd-cell--name {
-  /* secondary-500 @ 12% flattened over --page-background */
-  background: #FAF2E3;
+  /* Opaque selected fill for sticky cells over scrolling content */
+  background: var(--selected-fill);
 }
 
 /* Header row is transparent — keep its sticky cell on the page bg */
@@ -727,7 +727,7 @@
 
 .cd-status--passed {
   background: rgba(24, 169, 87, 0.16);
-  color: #11763d;
+  color: var(--text-success);
 }
 
 .cd-status--not-started {
@@ -830,7 +830,7 @@
 }
 
 .cd-pagination-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .cd-pagination-btn--disabled {

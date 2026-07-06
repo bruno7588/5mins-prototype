@@ -61,7 +61,7 @@
 }
 
 .question-drawer-close:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .question-drawer-divider {
@@ -144,7 +144,7 @@
 
 .question-drawer-answer--correct {
   border-color: var(--border);
-  background: var(--neutral-0);
+  background: var(--cards-background);
 }
 
 /* Radio circle */
@@ -224,7 +224,7 @@
 }
 
 .question-drawer-add-option:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* Explanation field */

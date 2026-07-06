@@ -4,7 +4,7 @@
   right: 0;
   z-index: 20;
   width: 260px;
-  background: var(--neutral-0);
+  background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
@@ -72,7 +72,7 @@
 }
 
 .edit-cols-item:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 .edit-cols-item--locked {

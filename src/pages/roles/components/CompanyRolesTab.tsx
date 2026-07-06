@@ -109,10 +109,10 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
           <div className="roles-empty__illustration">
             <span className="roles-empty__zero">0</span>
             <svg className="roles-empty__accents" width="61" height="50" viewBox="0 0 61 50" fill="none">
-              <path d="M5.5 30C3.5 32 1.5 35.5 1 38" stroke="var(--neutral-600, #454C5E)" strokeWidth="3" strokeLinecap="round"/>
-              <path d="M10 37C8.5 38.5 7 41 6.5 43" stroke="var(--neutral-600, #454C5E)" strokeWidth="3" strokeLinecap="round"/>
-              <path d="M51 8C53 5.5 55.5 2.5 56 1" stroke="var(--neutral-600, #454C5E)" strokeWidth="3" strokeLinecap="round"/>
-              <path d="M55.5 15C57 13 59 10.5 59.5 9" stroke="var(--neutral-600, #454C5E)" strokeWidth="3" strokeLinecap="round"/>
+              <path d="M5.5 30C3.5 32 1.5 35.5 1 38" stroke="var(--text-secondary)" strokeWidth="3" strokeLinecap="round"/>
+              <path d="M10 37C8.5 38.5 7 41 6.5 43" stroke="var(--text-secondary)" strokeWidth="3" strokeLinecap="round"/>
+              <path d="M51 8C53 5.5 55.5 2.5 56 1" stroke="var(--text-secondary)" strokeWidth="3" strokeLinecap="round"/>
+              <path d="M55.5 15C57 13 59 10.5 59.5 9" stroke="var(--text-secondary)" strokeWidth="3" strokeLinecap="round"/>
             </svg>
           </div>
           <p className="roles-empty__text">No results found!</p>

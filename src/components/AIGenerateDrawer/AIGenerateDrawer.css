@@ -51,7 +51,7 @@
 }
 
 .ai-drawer-close:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .ai-drawer-divider {
@@ -141,7 +141,7 @@
 
 .ai-drawer-progress-track {
   height: 6px;
-  background: var(--neutral-100);
+  background: var(--border);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -242,7 +242,7 @@
 
 .ai-drawer-answer--correct {
   border-color: var(--border);
-  background: var(--neutral-0);
+  background: var(--cards-background);
 }
 
 .ai-drawer-radio {
@@ -318,7 +318,7 @@
 }
 
 .ai-drawer-add-option:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 /* Explanation */
@@ -406,7 +406,7 @@
 }
 
 .ai-drawer-btn-discard:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 
 .ai-drawer-btn-save {

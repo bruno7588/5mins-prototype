@@ -100,20 +100,20 @@
 
 .pool-header-coverage--strong {
   background: rgba(24, 169, 87, 0.16);
-  color: #11763D;
+  color: var(--text-success);
 }
 
 .pool-header-coverage--good {
   background: rgba(24, 169, 87, 0.16);
-  color: #11763D;
+  color: var(--text-success);
 }
 
 .pool-header-coverage--weak {
   background: rgba(245, 166, 35, 0.16);
-  color: #C67A00;
+  color: var(--text-warning);
 }
 
 .pool-header-coverage--static {
-  background: rgba(101, 107, 124, 0.12);
+  background: var(--input-background);
   color: var(--text-secondary);
 }

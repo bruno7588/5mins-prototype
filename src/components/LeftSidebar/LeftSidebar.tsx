@@ -20,7 +20,7 @@ import { initialCompanyRoles, fiveMinsRoles } from '../../pages/roles/data/mockR
 import './LeftSidebar.css'
 
 const iconSize = 20
-const iconColor = 'var(--neutral-500)'
+const iconColor = 'var(--text-secondary)'
 
 const unmappedRolesCount = buildInitialMappings(initialCompanyRoles, fiveMinsRoles)
   .filter(m => m.status !== 'mapped').length

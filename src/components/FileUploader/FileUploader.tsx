@@ -128,7 +128,7 @@ export function FileUploader({
           <div className="file-uploader__icon-group">
             <div className="file-uploader__progress-ring">
               <svg width="64" height="64" style={{ transform: 'rotate(-90deg)' }}>
-                <circle cx="32" cy="32" r={r} fill="none" stroke="var(--neutral-100)" strokeWidth="4" />
+                <circle cx="32" cy="32" r={r} fill="none" stroke="var(--border)" strokeWidth="4" />
                 <circle
                   cx="32" cy="32" r={r} fill="none"
                   stroke="var(--primary-500)"

@@ -80,7 +80,7 @@
 }
 
 .sc-content-card-thumb--assessment {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,7 +119,7 @@
 
 .sc-content-card-badge {
   flex-shrink: 0;
-  background: rgba(101, 107, 124, 0.16);
+  background: var(--input-background);
   padding: 6px 12px;
   border-radius: 40px;
   font-size: 12px;
@@ -149,7 +149,7 @@
   background: transparent;
   border: none;
   border-radius: var(--radius-full);
-  color: var(--neutral-400);
+  color: var(--text-tertiary);
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
@@ -190,7 +190,7 @@
 .sc-content-list-empty-icon {
   width: 64px;
   height: 64px;
-  background: var(--neutral-50);
+  background: var(--input-background);
   border-radius: var(--radius-m);
   display: flex;
   align-items: center;

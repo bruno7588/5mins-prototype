@@ -954,7 +954,7 @@ function Automations() {
                 }
               >
                 <span className="automations-template-icon">
-                  <UserCirlceAdd size={48} color="#8158EC" variant="Linear" />
+                  <UserCirlceAdd size={48} color="var(--blaze-quiz)" variant="Linear" />
                 </span>
                 <span className="automations-template-body">
                   <span className="automations-template-title">New Employee Automation</span>
@@ -966,7 +966,7 @@ function Automations() {
 
               <button className="automations-template automations-template--blue ui-disabled" disabled>
                 <span className="automations-template-icon">
-                  <Medal size={48} color="#2A90D8" variant="Linear" />
+                  <Medal size={48} color="var(--course-assessments)" variant="Linear" />
                 </span>
                 <span className="automations-template-body">
                   <span className="automations-template-title">Existing Employee Automation</span>

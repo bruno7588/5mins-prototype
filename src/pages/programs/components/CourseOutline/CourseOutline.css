@@ -109,7 +109,7 @@
   width: 64px;
   height: 40px;
   border-radius: 8px;
-  background-color: var(--neutral-100);
+  background-color: var(--cards-background-hover);
   background-size: cover;
   background-position: center;
 }
@@ -259,7 +259,7 @@
 }
 
 .co-remove:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
   color: var(--text-error);
 }
 

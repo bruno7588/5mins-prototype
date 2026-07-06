@@ -1,6 +1,6 @@
 .mt-app {
   min-height: 100vh;
-  background: var(--neutral-25);
+  background: var(--page-background);
   display: flex;
   flex-direction: column;
 }
@@ -8,7 +8,7 @@
 /* Top nav */
 .mt-topnav {
   height: 70px;
-  background: var(--neutral-25);
+  background: var(--page-background);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -91,7 +91,7 @@
 }
 
 .mt-topnav__iconbtn:hover {
-  background: var(--neutral-100);
+  background: var(--input-background-hover);
 }
 
 .mt-topnav__dot {
@@ -102,7 +102,7 @@
   height: 8px;
   border-radius: 50%;
   background: var(--danger-500, #DF1642);
-  border: 2px solid var(--neutral-25);
+  border: 2px solid var(--page-background);
 }
 
 /* Main */
@@ -120,7 +120,7 @@
   width: 240px;
   display: flex;
   flex-direction: column;
-  background: var(--neutral-25);
+  background: var(--page-background);
 }
 
 .mt-side__menu {
@@ -151,7 +151,7 @@
 }
 
 .mt-side__item:hover {
-  background: var(--neutral-100);
+  background: var(--input-background-hover);
 }
 
 .mt-side__item--active {
@@ -569,7 +569,7 @@
 }
 
 .mt-cp__tablescroll--has-scroll .mt-cp__table-row--selected:hover .mt-cp__table-cell--name {
-  background: #FDECC5;
+  background: var(--selected-fill-hover);
 }
 
 /* Shadow on right edge when user has scrolled horizontally */
@@ -651,7 +651,7 @@
 }
 
 .mt-cp__table-row--selected:hover {
-  background: #FDECC5;
+  background: var(--selected-fill-hover);
 }
 
 /* Sort button headers */
@@ -728,7 +728,7 @@
   transition: background 150ms ease;
 }
 .mt-cp__row-action:hover {
-  background: var(--neutral-50);
+  background: var(--cards-background-hover);
 }
 
 /* Two-line "Send reminder / Last sent …" tooltip */
@@ -830,7 +830,7 @@
   color: var(--text-secondary);
 }
 .mt-cp__pagination-btn:hover:not(:disabled) {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }
 .mt-cp__pagination-btn:disabled {
   opacity: 0.4;
@@ -863,7 +863,7 @@
   font-size: 60px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--neutral-200);
+  color: var(--text-disabled);
 }
 
 .mt-cp__empty-accents {
@@ -969,7 +969,7 @@
 }
 .mt-cp__metric-link--warning:hover,
 .mt-cp__metric-link--warning:focus-visible {
-  color: #996322; /* Warning-700 */
+  color: var(--warning-700); /* TODO(dark): verify hover contrast on dark bg */
   text-decoration: underline;
   outline: none;
 }

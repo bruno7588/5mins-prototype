@@ -339,7 +339,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
             {!showBackInHeader && (
               <button className="roles-panel-close" onClick={handleClose}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M17.25 17.25L6.75 6.75M17.25 6.75L6.75 17.25" stroke="#454C5E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M17.25 17.25L6.75 6.75M17.25 6.75L6.75 17.25" stroke="var(--text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
             )}
@@ -387,9 +387,9 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                     <div className="roles-ai-step">
                       <span className={`roles-ai-step__icon ${aiStep >= 2 ? 'roles-ai-step__icon--done' : 'roles-ai-step__icon--active'}`}>
                         {aiStep >= 2 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="#18A957"/></svg>
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
                         ) : (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#00CEE6" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="var(--primary-500)" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
                         )}
                       </span>
                       <span className="roles-ai-step__text">Analyzing your role</span>
@@ -397,7 +397,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                     <div className="roles-ai-step">
                       <span className={`roles-ai-step__icon ${aiStep >= 3 ? 'roles-ai-step__icon--done' : aiStep >= 2 ? 'roles-ai-step__icon--active' : ''}`}>
                         {aiStep >= 3 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="#18A957"/></svg>
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
                         ) : aiStep >= 2 ? (
                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/><path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/></svg>
                         ) : null}
@@ -605,9 +605,9 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                     <div className="roles-ai-step">
                       <span className={`roles-ai-step__icon ${aiStep >= 2 ? 'roles-ai-step__icon--done' : 'roles-ai-step__icon--active'}`}>
                         {aiStep >= 2 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="#18A957"/></svg>
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
                         ) : (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#00CEE6" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="var(--primary-500)" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
                         )}
                       </span>
                       <span className="roles-ai-step__text">Analyzing your role</span>
@@ -615,7 +615,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                     <div className="roles-ai-step">
                       <span className={`roles-ai-step__icon ${aiStep >= 3 ? 'roles-ai-step__icon--done' : aiStep >= 2 ? 'roles-ai-step__icon--active' : ''}`}>
                         {aiStep >= 3 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="#18A957"/></svg>
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
                         ) : aiStep >= 2 ? (
                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/><path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/></svg>
                         ) : null}

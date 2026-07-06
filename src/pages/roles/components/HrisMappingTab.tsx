@@ -107,7 +107,7 @@ function HrisMappingTab({
     return (
       <div className="roles-empty-state">
         <div className="roles-empty-state__illustration">
-          <Convertshape2 size={64} variant="Linear" color="var(--neutral-400, #9EA4B3)" />
+          <Convertshape2 size={64} variant="Linear" color="var(--text-tertiary)" />
         </div>
         <div className="roles-empty-state__info">
           <h3 className="roles-empty-state__title">No HRIS mappings yet</h3>

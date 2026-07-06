@@ -234,7 +234,7 @@
   padding: var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
-  box-shadow: -1px -1px 4px rgba(32, 34, 42, 0.04), 1px 1px 4px rgba(32, 34, 42, 0.04);
+  box-shadow: var(--shadow-s);
 }
 
 /* The shared Checkbox is a 32px hit-area (16px box + 8px padding). Offset it so the
