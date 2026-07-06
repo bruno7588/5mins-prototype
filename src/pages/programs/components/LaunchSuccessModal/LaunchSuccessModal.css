@@ -34,37 +34,33 @@
 }
 
 /* ── Confetti ───────────────────────────────────────────────────────────── */
+/* Motion lives in LaunchSuccessModal.tsx: GSAP animates each piece's fall;
+   Framer Motion fades the layer out after the 3s rain. */
 .lsm-confetti {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  /* Safe zone: masks confetti out of the content/CTA area in the centre. */
+  -webkit-mask-image: radial-gradient(ellipse 300px 240px at 50% 50%, transparent 58%, black 62%);
+  mask-image: radial-gradient(ellipse 300px 240px at 50% 50%, transparent 58%, black 62%);
 }
 
 .lsm-confetti__piece {
   position: absolute;
-  top: -24px;
+  top: 0;
   width: 8px;
   height: 14px;
   border-radius: 2px;
   opacity: 0;
-  animation-name: lsm-fall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  will-change: transform, opacity;
 }
 
 .lsm-confetti__piece--round {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-}
-
-@keyframes lsm-fall {
-  0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
-  8% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translate3d(var(--lsm-drift, 0px), 110vh, 0) rotate(var(--lsm-rot, 720deg)); opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

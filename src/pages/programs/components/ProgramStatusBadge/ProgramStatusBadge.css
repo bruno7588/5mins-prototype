@@ -43,14 +43,15 @@
   }
 }
 
+/* In Progress badge family (badges.md): Primary-500 @16% + --text-progress. */
 .psb--ready {
-  background: rgba(0, 175, 196, 0.12);
-  color: var(--primary-600);
+  background: rgba(0, 206, 230, 0.16);
+  color: var(--text-progress);
 }
 
 .psb--scheduled {
   background: rgba(255, 165, 56, 0.16);
-  color: #E88206;
+  color: var(--text-warning);
 }
 
 .psb--live {

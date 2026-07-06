@@ -168,12 +168,13 @@
   flex-shrink: 0;
 }
 
+/* 32px box (24px glyph + 4px slack) so cluster gaps read as the Figma 12px. */
 .pad-icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border: none;
   border-radius: var(--radius-full, 999px);
   background: transparent;
@@ -641,8 +642,8 @@
   font-size: 14px;
 }
 
-/* Enrolments empty state — Figma 2383:30664. No fill (DS convention): just the
-   shadow-admins shadow + rounded corners on the page background. */
+/* Enrolments empty state — Figma 2383:30664. Flat on the page background
+   (no fill, no shadow). */
 .pad-empty-state {
   display: flex;
   flex-direction: column;
@@ -650,7 +651,6 @@
   gap: var(--space-m);
   padding: 24px;
   border-radius: var(--radius-ml);
-  box-shadow: 1px 1px 5px 0 rgba(56, 62, 77, 0.05);
 }
 
 .pad-empty-state__info {

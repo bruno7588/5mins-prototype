@@ -420,6 +420,12 @@
   border-color: var(--border-hover);
 }
 
+/* Selected option — mode-aware amber border (--selected), per Figma 2423:12442. */
+.epd-date__opt--selected,
+.epd-date__opt--selected:hover {
+  border-color: var(--selected);
+}
+
 .epd-date__opt-radio {
   display: flex;
   align-items: center;

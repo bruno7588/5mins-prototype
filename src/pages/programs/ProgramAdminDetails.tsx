@@ -207,6 +207,12 @@ function ProgramAdminDetails() {
     navigate('/programs', { state: { toast: `“${title}” has been deleted` } })
   }
 
+  const copyLink = () => {
+    const url = `${window.location.origin}/programs/${draft.id}`
+    navigator.clipboard?.writeText(url).catch(() => {})
+    showToast('success', 'Link copied to clipboard')
+  }
+
   const downloadReport = (label: string) => {
     setOpenMenuId(null)
     showToast('success', `Downloading ${label} (CSV)`)
@@ -284,9 +290,11 @@ function ProgramAdminDetails() {
         </div>
 
         <div className="pad-cta">
-          <button type="button" className="pad-icon-btn ui-disabled" aria-label="Copy program link (coming soon)" disabled>
-            <Link2 size={24} color="var(--text-secondary)" variant="Linear" />
-          </button>
+          <Tooltip text="Copy link" position="Top" icon={false}>
+            <button type="button" className="pad-icon-btn" aria-label="Copy program link" onClick={copyLink}>
+              <Link2 size={24} color="var(--text-secondary)" variant="Linear" />
+            </button>
+          </Tooltip>
           {/* Program actions — Figma 2464:14871 / 2469:51780 */}
           <div className="pad-menu" ref={openMenuId === 'header-more' ? menuRef : undefined}>
             <button
