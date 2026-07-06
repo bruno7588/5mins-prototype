@@ -149,6 +149,50 @@
   --shadow-panel: -24px 0px 24px 0px rgba(32, 34, 42, 0.04);
 }
 
+/* ── Dark mode ─────────────────────────────────────────────────────────────
+   Semantic overrides per docs/design-system/colors.md §6 (Figma-verified).
+   Raw palettes, brand button fills, badge/status 16% tints, spacing, radius
+   and shadows are mode-independent and stay in :root. Applied via
+   <html data-theme="dark"> (see src/hooks/useTheme.ts). */
+[data-theme='dark'] {
+  /* Surfaces */
+  --page-background: var(--neutral-800);
+  --page-background-hover: var(--neutral-700);
+  --cards-background: var(--neutral-700);
+  --cards-background-hover: var(--neutral-600);
+  --input-background: rgba(69, 76, 94, 0.16); /* Neutral-500 @ 16% */
+  --input-background-hover: var(--neutral-700);
+  --border: var(--neutral-600);
+  --border-elevated: var(--neutral-500);
+  --border-hover: var(--neutral-300);
+  --tooltip-background: var(--neutral-900);
+
+  /* Text */
+  --text-primary: var(--neutral-25);
+  --text-secondary: var(--neutral-200);
+  --text-tertiary: var(--neutral-300);
+  --text-disabled: var(--neutral-400);
+  --text-success: var(--success-500);
+  --text-warning: var(--warning-500);
+  --text-error: var(--danger-400);
+  --text-selected: var(--secondary-500);
+  --text-progress: var(--primary-500);
+  --text-button-hover: var(--primary-500);
+
+  /* Buttons (brand fills unchanged in dark — only disabled differs) */
+  --button-background-disabled: var(--neutral-400);
+
+  /* Selection amber flips 600 → 500 in dark (colors.md / chips-switcher spec) */
+  --selected: var(--secondary-500);
+  --control-selected: var(--secondary-500);
+  --selected-tint: rgba(255, 187, 56, 0.15); /* Secondary-500 @ 15% */
+  /* Translucent stand-in for the opaque light-mode #FCF1DB — designer review pending */
+  --selected-fill: rgba(255, 187, 56, 0.16);
+
+  /* Overlay backdrop — dark-mode spec is 50% (colors.md §8) */
+  --scrim: rgba(15, 16, 20, 0.5);
+}
+
 /* Prototype-wide "not built yet" treatment: controls that look real but have no
    behaviour are dimmed and inert instead of silently doing nothing. Pair with the
    native `disabled` attribute (buttons) or aria-disabled so they also leave the

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Setting2, Logout } from 'iconsax-react'
+import { Moon, Setting2, Logout } from 'iconsax-react'
+import Toggle from '../Toggle/Toggle'
+import { useTheme } from '../../hooks/useTheme'
 import './ProfileMenu.css'
 
 interface ProfileMenuProps {
@@ -19,6 +21,7 @@ export default function ProfileMenu({
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
+  const { isDark, toggle } = useTheme()
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -32,6 +35,20 @@ export default function ProfileMenu({
     <div className="mt-side__profile-wrap" ref={ref}>
       {open && (
         <div className="profile-menu" role="menu">
+          {/* Toggling the theme keeps the menu open (checkbox-row behaviour). */}
+          <button
+            type="button"
+            role="menuitemcheckbox"
+            aria-checked={isDark}
+            className="profile-menu__item profile-menu__item--toggle"
+            onClick={toggle}
+          >
+            <Moon size={18} color="var(--text-secondary)" variant="Linear" />
+            <span className="profile-menu__item-label">Dark Mode</span>
+            <span className="profile-menu__toggle" aria-hidden="true">
+              <Toggle size="sm" checked={isDark} readOnly tabIndex={-1} />
+            </span>
+          </button>
           <button
             type="button"
             role="menuitem"

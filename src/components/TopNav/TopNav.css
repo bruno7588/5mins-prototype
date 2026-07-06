@@ -5,7 +5,7 @@
   right: 0;
   z-index: 100;
   height: 70px;
-  background: var(--neutral-25);
+  background: var(--page-background);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -20,6 +20,7 @@
 }
 
 .topnav-logo {
+  color: var(--text-primary); /* logo letters use currentColor */
   display: flex;
   align-items: center;
   background: transparent;
@@ -71,5 +72,5 @@
 }
 
 .topnav-icon-btn:hover {
-  background: var(--neutral-50);
+  background: var(--page-background-hover);
 }

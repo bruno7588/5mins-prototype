@@ -57,3 +57,14 @@
 .profile-menu__item:hover {
   background: var(--page-background-hover, var(--neutral-50));
 }
+
+/* Dark Mode row — label fills, DS Toggle sits right; the row is the control
+   (the Toggle is visual-only so a click never double-fires). */
+.profile-menu__item-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-menu__item--toggle .profile-menu__toggle {
+  pointer-events: none;
+}
