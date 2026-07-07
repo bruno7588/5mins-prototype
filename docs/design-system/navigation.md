@@ -151,7 +151,7 @@ Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label 
 A chevron-separated trail showing where the current page sits in the hierarchy. Component: `src/components/Breadcrumb/`.
 Spec source: Figma Library — dark `8497:2231` / `8497:1494`, light `11935:2368` / `8517:34946` (verified 2026-07-07). Same structure in both modes; all colours are semantic tokens, so it flips automatically.
 
-**Structure.** A horizontal list, `4px` gap between items. Each item is a label (Poppins **Regular 12px**, line-height 1.2) followed by an `ArrowRight2` (Iconsax Linear, 16px) chevron separator — **except the last item**, which is the current page and has **no chevron**. Label↔chevron gap is `2px`.
+**Structure.** A horizontal list, `4px` gap between items. Each item is a label (Poppins **Regular 14px**, line-height 1.5 — the app uses 14px; the Figma Library frames show 12px) followed by an `ArrowRight2` (Iconsax Linear, 16px) chevron separator — **except the last item**, which is the current page and has **no chevron**. Label↔chevron gap is `2px`.
 
 ### Item states
 
