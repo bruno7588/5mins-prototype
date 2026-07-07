@@ -17,11 +17,12 @@ import {
 import { Logo, learnerSideItems } from '../my-team/MyTeam'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Badge from '../../components/Badge/Badge'
+import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Collapse from '../../components/Collapse/Collapse'
 import '../my-team/MyTeam.css'
 import '../workspace/Workspace.css'
 import './ProgramCourseDetails.css'
-import { getCourseDetail, type CourseLesson } from './mockCourse'
+import { getCourseDetail, findProgramForCourse, type CourseLesson } from './mockCourse'
 import jewelsIllustration from '../../assets/programs/jewels.svg'
 import certificateIllustration from '../../assets/programs/certificate.svg'
 
@@ -67,6 +68,7 @@ function ProgramCourseDetails() {
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
   const course = getCourseDetail(id)
+  const program = findProgramForCourse(id)
 
   const [tab, setTab] = useState<'course' | 'about' | 'resources'>('course')
   const [open, setOpen] = useState<Record<string, boolean>>(
@@ -134,6 +136,14 @@ function ProgramCourseDetails() {
           <div className="cd-content">
             {/* Header */}
             <header className="cd-header">
+              {program && (
+                <Breadcrumb
+                  items={[
+                    { label: program.title, onClick: () => navigate(`/programs/${program.id}`) },
+                    { label: course.title },
+                  ]}
+                />
+              )}
               <div className="cd-header__top">
                 <div className="cd-header__info">
                   <span className="cd-meta__item">

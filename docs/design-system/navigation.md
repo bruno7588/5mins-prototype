@@ -1,6 +1,6 @@
 ---
 name: 5mins-navigation
-description: Navigation system for 5Mins.ai — Top Navigation bar (Web app and Admin variants, large + small breakpoints) and Side Panel Navigation (Web app and Admin, Expanded + Collapsed states) with the full menu-item state matrix (Enabled, Hover, Selected, Selected+Hover, collapsed hover tooltip) and sub-menu groups. Use when building any app shell, top bar, sidebar, menu item, or navigation chrome.
+description: Navigation system for 5Mins.ai — Top Navigation bar (Web app and Admin variants, large + small breakpoints), Side Panel Navigation (Web app and Admin, Expanded + Collapsed states) with the full menu-item state matrix (Enabled, Hover, Selected, Selected+Hover, collapsed hover tooltip) and sub-menu groups, and the Breadcrumb trail component. Use when building any app shell, top bar, sidebar, menu item, breadcrumb, or navigation chrome.
 ---
 
 # 5Mins.ai Navigation
@@ -143,6 +143,44 @@ Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label 
 .side-nav__sub-item:hover     { background: var(--input-background); }
 .side-nav__sub-item--selected { font-weight: 700; color: var(--text-selected); }
 ```
+
+---
+
+## Breadcrumb
+
+A chevron-separated trail showing where the current page sits in the hierarchy. Component: `src/components/Breadcrumb/`.
+Spec source: Figma Library — dark `8497:2231` / `8497:1494`, light `11935:2368` / `8517:34946` (verified 2026-07-07). Same structure in both modes; all colours are semantic tokens, so it flips automatically.
+
+**Structure.** A horizontal list, `4px` gap between items. Each item is a label (Poppins **Regular 12px**, line-height 1.2) followed by an `ArrowRight2` (Iconsax Linear, 16px) chevron separator — **except the last item**, which is the current page and has **no chevron**. Label↔chevron gap is `2px`.
+
+### Item states
+
+| State | Applies to | Label colour | Notes |
+|---|---|---|---|
+| **Default** | Link items (all but last) | `--text-tertiary` | + trailing chevron |
+| **Hover** | Link items | `--text-primary` | underline |
+| **Disabled** | Link items | `--text-disabled` | non-interactive, `cursor: not-allowed` |
+| **Current** | Last item | `--text-secondary` | no chevron, `aria-current="page"`, not a link |
+| Separator | between items | `--text-tertiary` | `ArrowRight2`, 16px |
+
+### React
+
+```tsx
+import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'
+
+// The last entry is rendered as the current page (no chevron, not a link).
+<Breadcrumb
+  items={[
+    { label: 'Programs', onClick: () => navigate('/programs') },
+    { label: program.title, onClick: () => navigate(`/programs/${program.id}`) },
+    { label: course.title }, // current page
+  ]}
+/>
+```
+
+`items: { label, onClick?, disabled? }[]`. Provide `onClick` (the app navigates via `useNavigate`, not `href`). Full CSS lives with the component.
+
+> Usage note: the learner **course-inside-a-program** header uses this component as the first child of `.cd-header` — `{Program} › {Course}` (the program links back to `/programs/{id}`, the course is the current page). It only renders when the course belongs to a program (`findProgramForCourse`).
 
 ---
 

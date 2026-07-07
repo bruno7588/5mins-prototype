@@ -35,10 +35,6 @@ const STATUS_BADGE: Record<CourseStatus, { type: 'success' | 'warning' | 'error'
   failed: { type: 'error', label: 'Failed' },
 }
 
-/** Mock learner identity for the certificate (matches the ProfileMenu default). */
-const LEARNER_NAME = 'Anthonny Wallace'
-const CERT_ISSUE_DATE = '7 Jul 2026'
-
 function ProgramDetails() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -275,10 +271,7 @@ function ProgramDetails() {
             <h2 className="pd-section__title">Certification</h2>
             <ProgramCertificate
               unlocked={certificateUnlocked}
-              programTitle={program.title}
-              learnerName={LEARNER_NAME}
-              issueDate={CERT_ISSUE_DATE}
-              onDownload={() => showToast('success', 'Certificate downloaded')}
+              onGetCertificate={() => showToast('success', 'Certificate downloaded')}
             />
           </section>
         </section>

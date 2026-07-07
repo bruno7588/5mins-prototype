@@ -42,6 +42,9 @@
   box-shadow: var(--shadow-s);
 }
 
+/* "Part of a program" context uses the shared DS Breadcrumb component
+   (src/components/Breadcrumb) — rendered as the first child of .cd-header. */
+
 .cd-header__top {
   display: flex;
   align-items: center;

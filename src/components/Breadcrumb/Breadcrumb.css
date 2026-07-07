@@ -1,0 +1,66 @@
+.breadcrumb__list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* Link item (every item except the last) */
+.breadcrumb__link {
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 100ms ease;
+}
+
+.breadcrumb__link:hover:not(:disabled) {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.breadcrumb__link:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.breadcrumb__link:focus-visible {
+  outline: 2px solid var(--secondary-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Current page (last item) — not interactive */
+.breadcrumb__current {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Chevron separator */
+.breadcrumb__sep {
+  display: inline-flex;
+  flex-shrink: 0;
+}

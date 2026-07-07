@@ -61,182 +61,54 @@
   width: 107px;
 }
 
-/* ===== Unlocked state (Figma 2504:51984) =====
-   A white "paper" document. Uses the raw neutral palette (which does NOT flip
-   between themes) so the certificate stays light in both light and dark mode.
-   Sized with container-query units (cqw) so the whole document scales
-   proportionally at any width. */
-.pcert {
+/* ===== Unlocked state — "Get Certificate" card (Figma 2510:23596) ===== */
+.pcert-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 16px;
-  width: 100%;
+  padding: 16px;
+  background: var(--cards-background);
+  border-radius: 12px;
+  box-shadow: -1px -1px 4px 0 rgba(32, 34, 42, 0.04), 1px 1px 4px 0 rgba(32, 34, 42, 0.04);
 }
 
-.pcert__doc {
-  position: relative;
-  width: 100%;
-  max-width: 720px;
-  aspect-ratio: 975 / 558;
-  background: var(--neutral-0);
-  border-radius: var(--radius-s, 8px);
-  box-shadow: var(--shadow-l, 0 8px 24px rgba(32, 34, 42, 0.12));
-  container-type: inline-size;
-  overflow: hidden;
-}
-
-.pcert__border {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.pcert__inner {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3.28cqw;
-  padding: 6.56cqw 5.74cqw;
-}
-
-.pcert__medallion {
-  width: 12.3cqw;
-  height: 12.3cqw;
+.pcert-card__medallion {
+  width: 72px;
+  height: 72px;
   flex-shrink: 0;
 }
 
-.pcert__body {
+.pcert-card__title {
   flex: 1 0 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.64cqw;
-  width: 100%;
-}
-
-.pcert__group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.41cqw;
-  width: 100%;
-}
-
-.pcert__eyebrow {
+  min-width: 0;
   margin: 0;
-  font-size: 1.44cqw;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--neutral-400);
-}
-
-.pcert__title {
-  margin: 0;
-  font-size: 3.28cqw;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--neutral-800);
-  text-align: center;
+  color: var(--text-primary);
 }
 
-.pcert__name {
-  margin: 0;
-  font-size: 2.05cqw;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--neutral-800);
-  text-align: center;
-}
-
-.pcert__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.pcert__issue {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.41cqw;
-}
-
-.pcert__issue-label {
-  font-size: 1.03cqw;
-  font-weight: 400;
-  line-height: 1.2;
-  color: var(--neutral-400);
-}
-
-.pcert__issue-date {
-  font-size: 1.23cqw;
-  font-weight: 700;
-  line-height: 1.4;
-  color: var(--neutral-500);
-}
-
-.pcert__orglogo {
-  flex: 1 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pcert__orglogo img {
-  height: 3.28cqw;
-  width: auto;
-  object-fit: contain;
-}
-
-.pcert__poweredby {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.41cqw;
-}
-
-.pcert__poweredby-label {
-  font-size: 1.03cqw;
-  font-weight: 400;
-  line-height: 1.2;
-  color: var(--neutral-400);
-}
-
-.pcert__poweredby-logo {
-  height: 1.23cqw;
-  width: auto;
-}
-
-/* Download CTA — filled primary (theme-aware, unlike the paper above) */
-.pcert__download {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.pcert-card__cta {
+  flex-shrink: 0;
   padding: 8px 16px;
   border: none;
   border-radius: 8px;
-  background: var(--primary-600);
+  background: var(--primary-button-background);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-button-foreground);
+  white-space: nowrap;
   cursor: pointer;
   transition: background 120ms ease;
 }
 
-.pcert__download:hover {
-  background: var(--primary-700);
+.pcert-card__cta:hover {
+  background: var(--primary-button-background-hover);
 }
 
-.pcert__download:focus-visible {
+.pcert-card__cta:focus-visible {
   outline: 2px solid var(--secondary-600);
   outline-offset: 2px;
 }

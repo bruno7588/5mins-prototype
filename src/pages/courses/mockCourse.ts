@@ -49,6 +49,20 @@ export function findProgramCourse(id: string | undefined): ProgramCourse | undef
   return undefined
 }
 
+/** Find the program a course belongs to (for the "part of a program" breadcrumb).
+ *  Returns just the id + title; undefined for standalone courses. */
+export function findProgramForCourse(
+  id: string | undefined,
+): { id: string; title: string } | undefined {
+  if (!id) return undefined
+  for (const program of workspacePrograms) {
+    if (program.outline.some((c) => c.id === id)) {
+      return { id: program.id, title: program.title }
+    }
+  }
+  return undefined
+}
+
 /** Shared outline used for any course in the prototype. */
 const sections: CourseSection[] = [
   {
