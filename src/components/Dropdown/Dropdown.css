@@ -142,7 +142,7 @@
 .dropdown-option.is-selected,
 .dropdown-option.is-selected:hover:not(:disabled) {
   background: var(--secondary-500);
-  color: var(--text-primary);
+  color: var(--neutral-800);
   font-weight: 500;
 }
 
@@ -169,7 +169,7 @@
 }
 
 .dropdown-option.is-selected .dropdown-option__desc {
-  color: var(--text-secondary);
+  color: var(--neutral-700);
 }
 
 /* Helper / Error */

@@ -81,7 +81,15 @@
 
 .role-search-item--selected,
 .role-search-item--selected:hover {
-  background: var(--selected);
+  background: var(--secondary-500);
+}
+
+.role-search-item--selected .role-search-item-label {
+  color: var(--neutral-800);
+}
+
+.role-search-item--selected .role-search-item-meta {
+  color: var(--neutral-700);
 }
 
 .role-search-item-label {

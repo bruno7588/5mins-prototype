@@ -1,11 +1,13 @@
-/* Full-screen modal that covers everything below the top nav (70px). */
+/* Full-screen modal that covers everything below the top nav (70px).
+   Sits BELOW the topnav (z-index 100) so the topnav stays interactive and its
+   downward tooltips (theme / log out) aren't clipped by this panel. */
 .automation-details-modal {
   position: fixed;
   top: 70px;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1000;
+  z-index: 90;
   background: var(--page-background);
   overflow-y: auto;
   animation: automation-details-fade-in 200ms ease-in-out;
@@ -178,6 +180,13 @@
   height: auto;
   padding: 8px 12px;
   font-size: 14px;
+}
+
+/* Keep the role search inline next to "changes to". Page-scoped to beat the
+   colliding global `.role-search { width: 100% }` from onboarding/RoleSearch.css. */
+.automation-details-trigger-attribute .role-search {
+  width: 300px;
+  flex: 0 0 auto;
 }
 
 /* ===== Actions toolbar ===== */
