@@ -12,6 +12,8 @@ import {
 import { Logo, learnerSideItems } from '../my-team/MyTeam'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Badge from '../../components/Badge/Badge'
+import ToastContainer, { useToast } from '../../components/Toast/Toast'
+import ProgramCertificate from './components/ProgramCertificate/ProgramCertificate'
 import '../my-team/MyTeam.css'
 import '../workspace/Workspace.css'
 import './ProgramDetails.css'
@@ -21,7 +23,6 @@ import avatar1 from '../../assets/programs/avatar-1.png'
 import avatar2 from '../../assets/programs/avatar-2.png'
 import avatar3 from '../../assets/programs/avatar-3.png'
 import coursesIcon from '../../assets/programs/courses-icon.svg'
-import certificateArt from '../../assets/programs/program-certificate.svg'
 
 const SEGMENTS = 8
 
@@ -31,12 +32,18 @@ const STATUS_BADGE: Record<CourseStatus, { type: 'success' | 'warning' | 'error'
   overdue: { type: 'error', label: 'Overdue' },
   scheduled: { type: 'informative', label: 'Scheduled' },
   due: { type: 'warning', label: 'Due' },
+  failed: { type: 'error', label: 'Failed' },
 }
+
+/** Mock learner identity for the certificate (matches the ProfileMenu default). */
+const LEARNER_NAME = 'Anthonny Wallace'
+const CERT_ISSUE_DATE = '7 Jul 2026'
 
 function ProgramDetails() {
   const navigate = useNavigate()
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
+  const { toasts, show: showToast } = useToast()
 
   const programs = getAllPrograms()
   const program = programs.find((p) => p.id === id)
@@ -46,6 +53,11 @@ function ProgramDetails() {
   // The primary next-up course gets the filled "Start Course" CTA; any other
   // available (jump-here) courses use the outlined secondary variant.
   const primaryStartIdx = outline.findIndex((c) => c.state === 'jump-here')
+
+  // Certificate unlocks only when every course is complete AND passed. A single
+  // failed (or still-incomplete) course keeps it locked.
+  const certificateUnlocked =
+    outline.length > 0 && outline.every((c) => c.status === 'completed')
 
   const filled = Math.max(0, Math.min(SEGMENTS, Math.round((program.progress / 100) * SEGMENTS)))
 
@@ -239,6 +251,14 @@ function ProgramDetails() {
                       >
                         Start Course
                       </button>
+                    ) : course.state === 'retake' ? (
+                      <button
+                        type="button"
+                        className="pd-course__cta pd-course__cta--retake"
+                        onClick={() => navigate(`/courses/${course.id}`)}
+                      >
+                        Retake
+                      </button>
                     ) : isLocked ? (
                       <span className="pd-course__lock" aria-label="Locked">
                         <Lock size={24} color="var(--text-primary)" variant="Bold" />
@@ -253,19 +273,18 @@ function ProgramDetails() {
           {/* Certification */}
           <section className="pd-section">
             <h2 className="pd-section__title">Certification</h2>
-            <div className="pd-cert">
-              <div className="pd-cert__icon">
-                <img src={certificateArt} alt="" width={56} height={56} />
-              </div>
-              <p className="pd-cert__title">Earn your Program certificate</p>
-              <div className="pd-cert__lines">
-                <span className="pd-cert__line" />
-                <span className="pd-cert__line pd-cert__line--short" />
-              </div>
-            </div>
+            <ProgramCertificate
+              unlocked={certificateUnlocked}
+              programTitle={program.title}
+              learnerName={LEARNER_NAME}
+              issueDate={CERT_ISSUE_DATE}
+              onDownload={() => showToast('success', 'Certificate downloaded')}
+            />
           </section>
         </section>
       </div>
+
+      <ToastContainer toasts={toasts} />
     </div>
   )
 }

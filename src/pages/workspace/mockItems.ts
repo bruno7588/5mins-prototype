@@ -84,15 +84,16 @@ export const workspaceCourses: WorkspaceCourse[] = [
  * - `jump-here`  → next course to resume, outline-primary "Start" button
  * - `locked`     → upcoming course, no button
  */
-/** Button action shown on a course row (independent of the status badge). */
-export type ProgramCourseState = 'review' | 'continue' | 'jump-here' | 'locked'
+/** Button action shown on a course row (independent of the status badge).
+ * - `retake` → the learner failed (score < pass score); error "Retake" button */
+export type ProgramCourseState = 'review' | 'continue' | 'jump-here' | 'locked' | 'retake'
 
 /**
  * Status badge shown below the course metadata. Maps to DS Badge variants:
- * - `completed` → success    - `overdue` → error
+ * - `completed` → success    - `overdue` → error    - `failed` → error
  * - `scheduled` → informative - `due`     → warning
  */
-export type CourseStatus = 'completed' | 'overdue' | 'scheduled' | 'due'
+export type CourseStatus = 'completed' | 'overdue' | 'scheduled' | 'due' | 'failed'
 
 export interface ProgramCourse {
   id: string
@@ -292,6 +293,100 @@ export const workspacePrograms: WorkspaceProgram[] = [
         state: 'locked',
         status: 'scheduled',
         statusLabel: 'Scheduled for 19 Jul',
+      },
+    ],
+  },
+  // End-of-program demo — all courses PASSED → certificate UNLOCKED.
+  {
+    id: 'p4',
+    title: 'Food Hygiene & Safety Level 3',
+    description:
+      'A compliance pathway covering food handling, contamination control, and safe kitchen practice for hospitality teams. Pass every course to earn your certificate.',
+    thumbnailGradient: 'linear-gradient(135deg, #14b8a6, #0ea5e9)',
+    image: courseThumb2,
+    courseCount: 4,
+    durationLabel: '17 min',
+    learnerCount: 32,
+    progress: 100,
+    outline: [
+      {
+        id: 'p4c1',
+        title: 'Food Safety Foundations',
+        lessonCount: 8,
+        durationMinutes: 16,
+        thumbnail: courseThumb1,
+        state: 'review',
+        status: 'completed',
+      },
+      {
+        id: 'p4c2',
+        title: 'Preventing Cross-Contamination',
+        lessonCount: 6,
+        durationMinutes: 12,
+        thumbnail: courseThumb2,
+        state: 'review',
+        status: 'completed',
+      },
+      {
+        id: 'p4c3',
+        title: 'Temperature Control & Storage',
+        lessonCount: 9,
+        durationMinutes: 18,
+        thumbnail: courseThumb3,
+        state: 'review',
+        status: 'completed',
+      },
+      {
+        id: 'p4c4',
+        title: 'Allergen Management in Practice',
+        lessonCount: 7,
+        durationMinutes: 14,
+        thumbnail: courseThumb4,
+        state: 'review',
+        status: 'completed',
+      },
+    ],
+  },
+  // End-of-program demo — one course FAILED → certificate stays LOCKED.
+  // Retake is course-level: the failed card shows a "Retake" CTA.
+  {
+    id: 'p5',
+    title: 'Fire Safety Essentials',
+    description:
+      'Everything hospitality staff need to prevent, detect, and respond to fire. The certificate unlocks only once every course is passed.',
+    thumbnailGradient: 'linear-gradient(135deg, #f97316, #ef4444)',
+    image: courseThumb5,
+    courseCount: 3,
+    durationLabel: '14 min',
+    learnerCount: 41,
+    progress: 100,
+    outline: [
+      {
+        id: 'p5c1',
+        title: 'Fire Prevention Fundamentals',
+        lessonCount: 7,
+        durationMinutes: 14,
+        thumbnail: courseThumb1,
+        state: 'review',
+        status: 'completed',
+      },
+      {
+        id: 'p5c2',
+        title: 'Using Fire Extinguishers Safely',
+        lessonCount: 5,
+        durationMinutes: 10,
+        thumbnail: courseThumb6,
+        state: 'retake',
+        status: 'failed',
+      },
+      {
+        id: 'p5c3',
+        title: 'Evacuation & Assembly Procedures',
+        lessonCount: 6,
+        durationMinutes: 12,
+        thumbnail: courseThumb3,
+        state: 'review',
+        status: 'completed',
       },
     ],
   },

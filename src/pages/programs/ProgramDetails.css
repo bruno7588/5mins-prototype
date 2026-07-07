@@ -311,56 +311,21 @@
   border-color: var(--primary-button-background-hover);
 }
 
-/* ---- Certification ---- */
-.pd-cert {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 280px;
-  max-width: 100%;
-  height: 175px;
-  padding: 18px;
-  background: var(--cards-background);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
+/* Retake — DS Danger-outlined (buttons.md): the corrective action on a failed
+   course. The red "Failed" badge carries the status; the button offers the fix. */
+.pd-course__cta--retake {
+  background: transparent;
+  border: 1px solid var(--danger-500);
+  color: var(--danger-500);
 }
 
-.pd-cert__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.pd-course__cta--retake:hover {
+  background: var(--danger-500);
+  color: var(--neutral-0);
+  border-color: var(--danger-500);
 }
 
-.pd-cert__title {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-  text-align: center;
-}
-
-.pd-cert__lines {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-}
-
-.pd-cert__line {
-  width: 133px;
-  max-width: 100%;
-  height: 8px;
-  border-radius: 3px;
-  background: var(--cards-background-hover);
-}
-
-.pd-cert__line--short {
-  width: 107px;
-}
+/* Certification section styles live in components/ProgramCertificate. */
 
 /* Course thumbnail collapses below the title on narrow viewports */
 @media (max-width: 720px) {
