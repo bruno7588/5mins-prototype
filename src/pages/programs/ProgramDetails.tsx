@@ -43,6 +43,10 @@ function ProgramDetails() {
   if (!program) return <Navigate to="/workspace" replace />
   const outline = program.outline
 
+  // The primary next-up course gets the filled "Start Course" CTA; any other
+  // available (jump-here) courses use the outlined secondary variant.
+  const primaryStartIdx = outline.findIndex((c) => c.state === 'jump-here')
+
   const filled = Math.max(0, Math.min(SEGMENTS, Math.round((program.progress / 100) * SEGMENTS)))
 
   const stackAvatars = [avatar1, avatar2, avatar3].slice(0, Math.max(0, program.learnerCount))
@@ -158,7 +162,7 @@ function ProgramDetails() {
           <section className="pd-section">
             <h2 className="pd-section__title">Program outline</h2>
             <div className="pd-outline">
-              {outline.map((course) => {
+              {outline.map((course, index) => {
                 const courseFilled = Math.max(
                   0,
                   Math.min(SEGMENTS, Math.round(((course.progress ?? 0) / 100) * SEGMENTS)),
@@ -230,10 +234,10 @@ function ProgramDetails() {
                     ) : course.state === 'jump-here' ? (
                       <button
                         type="button"
-                        className="pd-course__cta pd-course__cta--outline"
+                        className={`pd-course__cta${index === primaryStartIdx ? '' : ' pd-course__cta--outline'}`}
                         onClick={() => navigate(`/courses/${course.id}`)}
                       >
-                        Start
+                        Start Course
                       </button>
                     ) : isLocked ? (
                       <span className="pd-course__lock" aria-label="Locked">

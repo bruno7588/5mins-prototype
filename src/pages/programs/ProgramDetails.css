@@ -303,8 +303,12 @@
   color: var(--primary-600);
 }
 
+/* DS Outlined hover: 16% cyan tint, mode-aware label + border (buttons.md).
+   Was --primary-100 (raw, non-flipping → near-white fill in dark mode). */
 .pd-course__cta--outline:hover {
-  background: var(--primary-100);
+  background: rgba(0, 206, 230, 0.16);
+  color: var(--text-button-hover);
+  border-color: var(--primary-button-background-hover);
 }
 
 /* ---- Certification ---- */

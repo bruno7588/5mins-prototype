@@ -131,52 +131,58 @@ export const workspacePrograms: WorkspaceProgram[] = [
       'The Technical Product Manager Certification equips you with skills to lead product development and bridge technical teams with business goals. Gain expertise in managing product lifecycles, prioritizing features, and driving innovation.',
     thumbnailGradient: 'linear-gradient(135deg, #6368db, #8158ec)',
     image: programBanner,
-    courseCount: 17,
+    courseCount: 6,
     durationLabel: '20 min',
     learnerCount: 45,
-    progress: 37,
+    progress: 0,
+    // Fresh (0%) enrolment: one card per admin enrolment × due-date use case.
+    // Only the first course is startable; the rest are locked (never completed
+    // or in progress), their badge reflecting how the admin scheduled them.
     outline: [
+      // On program start · No due date → available now, startable
       {
         id: 'pc1',
         title: 'Master Coaching Strategies for Optimal Performance',
         lessonCount: 12,
         durationMinutes: 34,
         thumbnail: courseThumb1,
-        state: 'review',
-        status: 'completed',
+        state: 'jump-here',
       },
+      // On program start · Due date → available now (startable) with a deadline
       {
         id: 'pc2',
         title: 'Mastering Feedback - Practical Models and Techniques',
         lessonCount: 9,
         durationMinutes: 21,
         thumbnail: courseThumb2,
-        state: 'continue',
-        progress: 30,
-        status: 'overdue',
-        statusLabel: 'Overdue',
+        state: 'jump-here',
+        status: 'due',
+        statusLabel: 'Due on 15 Jul',
       },
+      // On specific date → scheduled to release on a fixed date
       {
         id: 'pc3',
         title: 'Leadership That Drives Innovation',
         lessonCount: 17,
         durationMinutes: 48,
         thumbnail: courseThumb3,
-        state: 'continue',
-        progress: 37,
-        status: 'due',
-        statusLabel: 'Due on 15 Jun',
+        state: 'locked',
+        status: 'scheduled',
+        statusLabel: 'Scheduled for 23 Jul',
       },
+      // After delay · No due date → drips after the previous course. Relative
+      // release, so the badge states the unlock rule (no absolute date to show).
       {
         id: 'pc4',
         title: 'Listen to Lead: The Power of Listening in Effective Leadership',
         lessonCount: 6,
         durationMinutes: 15,
         thumbnail: courseThumb4,
-        state: 'jump-here',
-        status: 'due',
-        statusLabel: 'Due on 15 Jun',
+        state: 'locked',
+        status: 'scheduled',
+        statusLabel: '3d after previous course',
       },
+      // On specific date · Due date → scheduled release with a deadline
       {
         id: 'pc5',
         title: 'Building a Leadership Mindset',
@@ -185,8 +191,10 @@ export const workspacePrograms: WorkspaceProgram[] = [
         thumbnail: courseThumb5,
         state: 'locked',
         status: 'scheduled',
-        statusLabel: 'Scheduled for 23 Jul',
+        statusLabel: 'Scheduled for 30 Jul',
       },
+      // After delay (longer) · Due date → drips after previous. Locked, so it
+      // shows the unlock rule; the due date surfaces once it releases.
       {
         id: 'pc6',
         title: 'Personality-Driven Leadership: Leveraging Individual Strengths for Team Success',
@@ -195,7 +203,7 @@ export const workspacePrograms: WorkspaceProgram[] = [
         thumbnail: courseThumb6,
         state: 'locked',
         status: 'scheduled',
-        statusLabel: 'Scheduled for 30 Jul',
+        statusLabel: '7d after previous course',
       },
     ],
   },

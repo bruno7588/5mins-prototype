@@ -38,7 +38,7 @@
 }
 
 .toggle--on .toggle__track {
-  background: var(--success-500);
+  background: var(--selected);
 }
 
 .toggle--on .toggle__thumb {
@@ -73,12 +73,12 @@
 }
 
 .toggle--disabled.toggle--on .toggle__track {
-  background: var(--success-500);
+  background: var(--selected);
   opacity: 0.4;
 }
 
 .toggle__input:focus-visible + .toggle__track {
-  outline: 2px solid var(--success-600);
+  outline: 2px solid var(--secondary-600);
   outline-offset: 2px;
 }
 
