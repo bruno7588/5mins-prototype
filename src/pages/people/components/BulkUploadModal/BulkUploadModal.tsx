@@ -632,7 +632,7 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
               {hasErrors ? (
                 <div className="bulk-preview-error-bar">
                   <div className="bulk-preview-error-banner">
-                    <Danger size={20} color="var(--danger-500)" variant="Bold" />
+                    <Danger size={20} color="var(--text-error)" variant="Bold" />
                     <span>
                       {errorCount} invite{errorCount !== 1 ? 's have' : ' has'} errors. Download Error File to fix your CSV and re-upload to continue.
                     </span>

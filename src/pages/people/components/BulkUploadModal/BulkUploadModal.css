@@ -533,7 +533,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 /* Warning banner */
@@ -723,9 +723,11 @@
   transition: background 150ms ease;
 }
 
+/* Error is conveyed by the cell tint + warning icon, not a colored row border
+   (table.md has no danger row-border state) — keep the neutral border. */
 .bulk-preview-table-row--error,
 .bulk-preview-table-row--error:hover {
-  border-color: rgba(223, 22, 66, 0.12);
+  border-color: var(--border);
 }
 
 /* Column sizing */
