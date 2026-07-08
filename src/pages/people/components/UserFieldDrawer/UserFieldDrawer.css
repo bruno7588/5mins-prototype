@@ -79,7 +79,7 @@
   justify-content: center;
   padding: 4px;
   cursor: pointer;
-  border-radius: var(--radius-x);
+  border-radius: var(--radius-full);
 }
 
 .uf-drawer-close:hover {

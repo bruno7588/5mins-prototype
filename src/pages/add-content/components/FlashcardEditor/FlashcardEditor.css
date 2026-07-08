@@ -228,7 +228,7 @@
   padding: 4px;
   background: none;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-full);
   cursor: pointer;
   color: var(--text-primary);
   transition: background 150ms ease;

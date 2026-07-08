@@ -216,7 +216,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-full);
   transition: background 150ms ease;
 }
 
@@ -289,7 +289,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-full);
   transition: background 150ms ease;
 }
 
@@ -319,7 +319,7 @@
   align-items: center;
   justify-content: center;
   padding: 6px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-full);
   z-index: 101;
 }
 

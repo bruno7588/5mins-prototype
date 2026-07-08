@@ -278,7 +278,7 @@
   padding: 0;
   background: transparent;
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-full);
   color: var(--text-secondary);
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;

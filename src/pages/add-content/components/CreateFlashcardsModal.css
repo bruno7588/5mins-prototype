@@ -24,7 +24,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-full);
   background: none;
   border: none;
   cursor: pointer;

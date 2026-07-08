@@ -663,7 +663,7 @@
   align-items: center;
   justify-content: center;
   padding: 4px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-full);
   transition: background 150ms ease;
 }
 
