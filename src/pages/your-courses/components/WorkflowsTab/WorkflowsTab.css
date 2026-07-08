@@ -300,6 +300,7 @@
 
 /* Add reminder — Figma 7447:7753 (icon + bold label, no border) */
 .course-reminders-add__btn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);

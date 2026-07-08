@@ -345,6 +345,7 @@
 
 /* "Generating" disabled button with spinner */
 .cffm-generating-btn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);

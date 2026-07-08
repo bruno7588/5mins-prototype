@@ -266,6 +266,7 @@
 
 /* Add option button — styled like an option row */
 .assessment-modal-add-option {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -296,6 +297,7 @@
 }
 
 .assessment-modal-cta {
+  white-space: nowrap;
   padding: var(--space-sm) var(--space-l);
   font-size: 14px;
   font-weight: 700;
@@ -319,6 +321,7 @@
 
 /* ===== Add Media Button (collapsed trigger) ===== */
 .assessment-modal-add-media {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-s);
@@ -645,6 +648,7 @@
 }
 
 .media-modal-select-btn {
+  white-space: nowrap;
   margin-top: var(--space-xs);
   padding: 8px 16px;
   font-size: 14px;
@@ -769,6 +773,7 @@
 
 /* Save button */
 .media-modal-save {
+  white-space: nowrap;
   align-self: center;
   padding: var(--space-sm) var(--space-xl);
   font-size: 14px;

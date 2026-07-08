@@ -35,6 +35,7 @@
 }
 
 .mt-topnav__textbtn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
@@ -50,6 +51,7 @@
 }
 
 .mt-topnav__outlinebtn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
@@ -455,6 +457,7 @@
 }
 
 .mt-cp__reminders-btn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;

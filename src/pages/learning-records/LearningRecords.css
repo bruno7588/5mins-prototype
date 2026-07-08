@@ -292,6 +292,7 @@
 }
 
 .lrp-filter-save-preset {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -507,6 +508,7 @@
 }
 
 .lrp-filter-add {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: 4px;

@@ -180,6 +180,7 @@
 }
 
 .people-edit-cols-btn {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -199,6 +200,7 @@
 }
 
 .people-download-btn {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -1080,6 +1082,7 @@
 }
 
 .confirm-modal-btn {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 4px;

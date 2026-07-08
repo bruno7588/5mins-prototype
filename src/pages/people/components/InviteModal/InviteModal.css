@@ -393,6 +393,7 @@
 
 /* Add user button */
 .invite-modal-add-user {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -418,6 +419,7 @@
 }
 
 .invite-modal-btn {
+  white-space: nowrap;
   padding: var(--space-sm) var(--space-ml);
   font-size: 14px;
   font-weight: 700;

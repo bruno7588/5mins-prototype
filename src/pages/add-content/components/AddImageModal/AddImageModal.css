@@ -258,6 +258,7 @@
 }
 
 .aim-suggest-btn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);

@@ -27,6 +27,7 @@
 
 /* Add manual button */
 .quiz-tab-add-manual {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);

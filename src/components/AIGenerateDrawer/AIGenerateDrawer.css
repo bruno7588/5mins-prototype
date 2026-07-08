@@ -304,6 +304,7 @@
 
 /* Add option */
 .ai-drawer-add-option {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-s);
@@ -394,6 +395,7 @@
 }
 
 .ai-drawer-btn-discard {
+  white-space: nowrap;
   padding: 10px var(--space-ml);
   font-size: 14px;
   font-weight: 700;
@@ -410,6 +412,7 @@
 }
 
 .ai-drawer-btn-save {
+  white-space: nowrap;
   padding: 10px var(--space-ml);
   font-size: 14px;
   font-weight: 700;

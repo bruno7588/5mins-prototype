@@ -453,6 +453,7 @@
 
 /* Filled primary button (cyan) — matches Figma node 8086-15934 */
 .force-trigger-btn-primary {
+  white-space: nowrap;
   background: var(--primary-600);
   color: var(--neutral-25);
   padding: 10px var(--space-ml);

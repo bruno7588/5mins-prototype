@@ -60,6 +60,7 @@
 }
 
 .pb-banner__btn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -133,6 +134,7 @@
 }
 
 .pb-next-btn {
+  white-space: nowrap;
   padding: var(--space-s) var(--space-ml);
   border: none;
   border-radius: var(--radius-s);
@@ -279,6 +281,7 @@
 
 /* Add Course on the tabs row — DS Outlined-2 (neutral border, cyan on hover). */
 .pb-add-course {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);

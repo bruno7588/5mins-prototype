@@ -346,6 +346,7 @@
 }
 
 .bulk-upload-btn-text {
+  white-space: nowrap;
   margin-left: auto;
   display: inline-flex;
   align-items: center;

@@ -61,6 +61,7 @@
 }
 
 .add-scorm-publish-btn {
+  white-space: nowrap;
   padding: var(--space-sm) var(--space-l);
   font-size: 16px;
   font-weight: 700;
@@ -77,6 +78,7 @@
 }
 
 .add-scorm-preview-btn {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-s);
@@ -197,6 +199,7 @@
 }
 
 .add-scorm-change-img-btn {
+  white-space: nowrap;
   align-self: flex-start;
   padding: var(--space-s) var(--space-m);
   font-size: 12px;
@@ -224,6 +227,7 @@
 }
 
 .add-scorm-select-file-btn {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -283,6 +287,7 @@
 }
 
 .add-scorm-success-btn {
+  white-space: nowrap;
   margin-top: var(--space-m);
   padding: 10px var(--space-ml);
   font-size: 14px;

@@ -29,6 +29,7 @@
 /* DS "Outlined-2" — neutral border/text at rest, primary-tinted on interaction.
    See design-system/buttons.md → Outlined-2. */
 .page-header-btn-outline {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
@@ -63,6 +64,7 @@
 
 /* Primary-outlined variant (Save Draft) — cyan border + cyan text, transparent bg */
 .page-header-btn-outline-primary {
+  white-space: nowrap;
   padding: var(--space-s) var(--space-ml);
   font-size: 14px;
   font-weight: 700;
@@ -81,6 +83,7 @@
 }
 
 .page-header-btn-filled {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);

@@ -269,6 +269,7 @@
 
 /* ===== Buttons ===== */
 .roles-btn-ghost {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -294,6 +295,7 @@
 }
 
 .roles-btn-text {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-s);
@@ -362,6 +364,7 @@
 }
 
 .roles-btn-outlined-dark {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -381,6 +384,7 @@
 }
 
 .roles-btn-outlined-neutral800 {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -400,6 +404,7 @@
 }
 
 .roles-btn-primary-with-icon {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-s);
@@ -420,6 +425,7 @@
 }
 
 .roles-btn-outlined {
+  white-space: nowrap;
   padding: 6px 16px;
   font-size: 14px;
   font-weight: 600;
@@ -436,6 +442,7 @@
 }
 
 .roles-btn-primary {
+  white-space: nowrap;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 700;
@@ -1128,6 +1135,7 @@
 }
 
 .roles-panel-upload-btn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1294,6 +1302,7 @@
 }
 
 .roles-panel-ai-btn {
+  white-space: nowrap;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 700;
@@ -1533,6 +1542,7 @@
 
 /* ===== Add More Skills ===== */
 .roles-panel-add-more {
+  white-space: nowrap;
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
@@ -1702,6 +1712,7 @@
 
 /* ===== Delete Role ===== */
 .roles-panel-delete-btn {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -1752,6 +1763,7 @@
 }
 
 .roles-btn-danger {
+  white-space: nowrap;
   padding: var(--space-s) var(--space-m);
   font-size: 14px;
   font-weight: 700;
@@ -1869,6 +1881,7 @@
 }
 
 .roles-btn-ai-gradient {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -1962,6 +1975,7 @@
 }
 
 .roles-btn-outlined-primary {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-s);

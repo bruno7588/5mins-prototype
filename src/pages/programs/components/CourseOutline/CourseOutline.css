@@ -271,6 +271,7 @@
 }
 
 .co-add {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);

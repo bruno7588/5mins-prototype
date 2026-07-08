@@ -38,6 +38,7 @@
 }
 
 .create-course-btn-draft {
+  white-space: nowrap;
   padding: var(--space-sm) var(--space-l);
   border-radius: var(--radius-s);
   border: 1px solid var(--text-disabled);
@@ -56,6 +57,7 @@
 }
 
 .create-course-btn-submit {
+  white-space: nowrap;
   padding: var(--space-sm) var(--space-l);
   border-radius: var(--radius-s);
   background: var(--button-background-disabled);
@@ -180,6 +182,7 @@
 }
 
 .create-course-empty-btn {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);

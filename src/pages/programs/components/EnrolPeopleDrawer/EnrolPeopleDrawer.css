@@ -300,6 +300,7 @@
 .epd-cohort__name { color: var(--text-primary); }
 
 .epd-view-btn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -507,6 +508,7 @@
 }
 
 .epd-launch {
+  white-space: nowrap;
   align-self: flex-start;
   padding: 10px var(--space-ml);
   border: none;

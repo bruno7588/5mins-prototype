@@ -257,6 +257,7 @@
 
 /* Add Option button */
 .uf-drawer-add-option {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -314,6 +315,7 @@
 }
 
 .uf-drawer-save {
+  white-space: nowrap;
   padding: 10px var(--space-ml);
   border-radius: var(--radius-s);
   background: var(--primary-600);

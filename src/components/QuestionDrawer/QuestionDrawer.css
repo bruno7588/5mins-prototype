@@ -210,6 +210,7 @@
 
 /* Add option row (bordered card like answers) */
 .question-drawer-add-option {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-s);
@@ -303,6 +304,7 @@
 }
 
 .question-drawer-save {
+  white-space: nowrap;
   align-self: flex-start;
   padding: 10px var(--space-ml);
   font-size: 14px;

@@ -150,6 +150,7 @@
   align-items: flex-start;
 }
 .side-drawer__btn-primary {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
@@ -167,6 +168,7 @@
 }
 .side-drawer__btn-primary:hover { background: var(--primary-700); }
 .side-drawer__btn-secondary {
+  white-space: nowrap;
   background: transparent;
   color: var(--primary-button-background, var(--primary-600));
   border: 1px solid var(--primary-button-background, var(--primary-600));

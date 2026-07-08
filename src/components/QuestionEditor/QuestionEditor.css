@@ -148,6 +148,7 @@
 
 /* Add answer */
 .question-editor-add-answer {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -185,6 +186,7 @@
 }
 
 .question-editor-cancel {
+  white-space: nowrap;
   padding: var(--space-s) var(--space-m);
   font-size: 14px;
   font-weight: 500;
@@ -198,6 +200,7 @@
 }
 
 .question-editor-save {
+  white-space: nowrap;
   padding: var(--space-s) var(--space-ml);
   font-size: 14px;
   font-weight: 700;

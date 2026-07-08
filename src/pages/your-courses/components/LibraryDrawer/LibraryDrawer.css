@@ -117,6 +117,7 @@
 }
 
 .library-lesson__btn {
+  white-space: nowrap;
   flex-shrink: 0;
   min-width: 83px;
   padding: var(--space-s) var(--space-m);

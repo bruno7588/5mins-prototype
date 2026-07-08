@@ -205,6 +205,7 @@
 }
 
 .course-empty-state__btn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
@@ -510,6 +511,7 @@
 }
 
 .curriculum-section__save-btn {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -699,6 +701,7 @@
 
 /* Compact pill — the more prominent of the two: dashed border, input bg fill, primary text. */
 .curriculum-add-content {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -729,6 +732,7 @@
 
 /* Compact pill — the quieter, secondary action: dashed border, transparent bg, primary text. */
 .curriculum-add-section {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;

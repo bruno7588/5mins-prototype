@@ -101,6 +101,7 @@
 }
 
 .lsm-btn {
+  white-space: nowrap;
   padding: 10px var(--space-ml);
   border: none;
   border-radius: var(--radius-s);

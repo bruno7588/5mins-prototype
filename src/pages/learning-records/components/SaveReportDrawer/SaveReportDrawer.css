@@ -294,6 +294,7 @@
 
 /* + Add filter */
 .rfe-add {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
@@ -431,6 +432,7 @@
 /* "Download Report" CTA — DS Button variant Outlined-2 (buttons.md, Figma
    11609:8315): neutral outline at rest, cyan tint on hover/press. */
 .rd-btn-download {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);

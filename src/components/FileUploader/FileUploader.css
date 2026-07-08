@@ -139,11 +139,13 @@
 }
 
 .file-uploader--L .file-uploader__btn-outlined {
+  white-space: nowrap;
   font-size: 14px;
   line-height: 1.5;
 }
 
 .file-uploader--S .file-uploader__btn-outlined {
+  white-space: nowrap;
   font-size: 12px;
   line-height: 1.4;
 }

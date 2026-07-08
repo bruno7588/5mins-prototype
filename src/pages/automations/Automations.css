@@ -799,6 +799,7 @@
 
 /* Outlined-2 button — Figma library node 11609:8315 (Enabled/Hover/Pressed) */
 .automations-empty-state-action {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
