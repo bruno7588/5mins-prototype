@@ -54,7 +54,7 @@
 .lrp-head-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-m);
   flex-shrink: 0;
 }
 
@@ -176,7 +176,7 @@
 .lrp-filters {
   display: flex;
   flex-direction: column;
-  padding: var(--space-sm) var(--space-s);
+  padding: var(--space-s) var(--space-sm);
   background: var(--cards-background);
   border-radius: var(--radius-sm);
 }

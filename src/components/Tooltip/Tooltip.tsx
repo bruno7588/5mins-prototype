@@ -1,4 +1,5 @@
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import InfoIcon from '../icons/InfoIcon'
 import './Tooltip.css'
 
@@ -27,6 +28,8 @@ function Tooltip({
   className = '',
 }: TooltipProps) {
   const [visible, setVisible] = useState(false)
+  const triggerRef = useRef<HTMLElement | null>(null)
+  const [rect, setRect] = useState<DOMRect | null>(null)
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -39,6 +42,24 @@ function Tooltip({
   useEffect(() => {
     if (disabled) setVisible(false)
   }, [disabled])
+
+  // Portal the body to <body> so it can't be clipped or covered by an
+  // ancestor's overflow / stacking context. Anchor it to the trigger's rect
+  // and keep it glued on scroll/resize while visible.
+  useLayoutEffect(() => {
+    if (!visible || disabled) return
+    const measure = () => {
+      const el = triggerRef.current
+      if (el) setRect(el.getBoundingClientRect())
+    }
+    measure()
+    window.addEventListener('scroll', measure, true)
+    window.addEventListener('resize', measure)
+    return () => {
+      window.removeEventListener('scroll', measure, true)
+      window.removeEventListener('resize', measure)
+    }
+  }, [visible, disabled])
 
   const posClass = `tooltip__body--${position.toLowerCase()}-${alignment.toLowerCase()}`
   const caretBefore = position === 'Bottom' || position === 'Right'
@@ -63,6 +84,7 @@ function Tooltip({
 
   const trigger = icon ? (
     <button
+      ref={(el) => { triggerRef.current = el }}
       type="button"
       className="tooltip__trigger"
       aria-label="More information"
@@ -75,6 +97,7 @@ function Tooltip({
     </button>
   ) : (
     <div
+      ref={(el) => { triggerRef.current = el }}
       className="tooltip__trigger"
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
@@ -88,13 +111,28 @@ function Tooltip({
   return (
     <div className={`tooltip-wrapper ${className}`.trim()}>
       {trigger}
-      {visible && !disabled && (
-        <div role="tooltip" className={`tooltip__body ${posClass}`}>
-          {caretBefore && caret}
-          <div className="tooltip__content">{text}</div>
-          {caretAfter && caret}
-        </div>
-      )}
+      {visible && !disabled && rect &&
+        createPortal(
+          <div
+            className="tooltip__anchor"
+            style={{
+              position: 'fixed',
+              top: rect.top,
+              left: rect.left,
+              width: rect.width,
+              height: rect.height,
+              pointerEvents: 'none',
+              zIndex: 2000,
+            }}
+          >
+            <div role="tooltip" className={`tooltip__body ${posClass}`}>
+              {caretBefore && caret}
+              <div className="tooltip__content">{text}</div>
+              {caretAfter && caret}
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }
