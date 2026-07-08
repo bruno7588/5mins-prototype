@@ -108,7 +108,7 @@
 }
 
 .lr__add-training-btn:hover {
-  background: var(--primary-100);
+  background: var(--button-outline-hover);
   color: var(--primary-700);
   border-color: var(--primary-700);
 }
@@ -475,13 +475,13 @@
 }
 
 .lr__cert-btn:hover {
-  background: var(--primary-100);
+  background: var(--button-outline-hover);
   color: var(--primary-700);
   border-color: var(--primary-700);
 }
 
 .lr__cert-btn:active {
-  background: var(--primary-100);
+  background: var(--button-outline-hover);
   color: var(--primary-800);
   border-color: var(--primary-800);
 }

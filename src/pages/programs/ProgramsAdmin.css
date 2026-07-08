@@ -165,7 +165,7 @@
 }
 
 .programs-kebab-item:hover {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
 }
 
 .programs-kebab-item--danger {

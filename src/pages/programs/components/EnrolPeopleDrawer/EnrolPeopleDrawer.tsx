@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Calendar, Sort, UserTick } from 'iconsax-react'
 import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
@@ -116,6 +117,9 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
   const [startMode, setStartMode] = useState<'immediately' | 'on-date'>('immediately')
   const [startDate, setStartDate] = useState(todayISO())
   const [startCalOpen, setStartCalOpen] = useState(false)
+  const startTriggerRef = useRef<HTMLButtonElement>(null)
+  const startPopRef = useRef<HTMLDivElement>(null)
+  const [calPos, setCalPos] = useState<{ right: number; bottom: number } | null>(null)
 
   // Selection state, kept independent per mode.
   const [allSelected, setAllSelected] = useState(false)
@@ -136,6 +140,45 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
   }
 
   useOverlayA11y(panelRef, open && !closing, { onEscape: handleClose })
+
+  // The start-date calendar is portaled to <body> so the drawer's scrollable
+  // form (overflow: auto) can't clip it. Anchor it above-right of the trigger,
+  // keep it glued on scroll/resize, and close it on outside click / Escape.
+  useLayoutEffect(() => {
+    if (!startCalOpen) return
+    const place = () => {
+      const t = startTriggerRef.current
+      if (!t) return
+      const r = t.getBoundingClientRect()
+      setCalPos({
+        right: window.innerWidth - r.right,
+        bottom: window.innerHeight - r.top + 8,
+      })
+    }
+    place()
+    const onPointerDown = (e: MouseEvent) => {
+      const target = e.target as Node
+      if (startPopRef.current?.contains(target) || startTriggerRef.current?.contains(target)) return
+      setStartCalOpen(false)
+    }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      // Close the calendar without also closing the drawer.
+      e.stopPropagation()
+      e.preventDefault()
+      setStartCalOpen(false)
+    }
+    document.addEventListener('mousedown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown, true)
+    window.addEventListener('resize', place)
+    window.addEventListener('scroll', place, true)
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown, true)
+      window.removeEventListener('resize', place)
+      window.removeEventListener('scroll', place, true)
+    }
+  }, [startCalOpen])
 
   const filteredPeople = useMemo(() => {
     const q = peopleQuery.trim().toLowerCase()
@@ -421,6 +464,7 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
                 </button>
                 <div className="epd-date__cal">
                   <button
+                    ref={startTriggerRef}
                     type="button"
                     className={`epd-date__cal-trigger${startMode === 'on-date' ? '' : ' epd-date__cal-trigger--disabled'}${startCalOpen ? ' epd-date__cal-trigger--active' : ''}`}
                     disabled={startMode !== 'on-date'}
@@ -429,17 +473,23 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
                     <span>{fmtDate(startDate)}</span>
                     <Calendar size={20} color="currentColor" variant="Linear" />
                   </button>
-                  {startCalOpen && startMode === 'on-date' && (
-                    <div className="epd-date__cal-pop">
-                      <MiniCalendar
-                        value={startDate}
-                        onSelect={(iso) => {
-                          setStartDate(iso)
-                          setStartCalOpen(false)
-                        }}
-                      />
-                    </div>
-                  )}
+                  {startCalOpen && startMode === 'on-date' && calPos &&
+                    createPortal(
+                      <div
+                        ref={startPopRef}
+                        className="epd-date__cal-pop"
+                        style={{ right: calPos.right, bottom: calPos.bottom }}
+                      >
+                        <MiniCalendar
+                          value={startDate}
+                          onSelect={(iso) => {
+                            setStartDate(iso)
+                            setStartCalOpen(false)
+                          }}
+                        />
+                      </div>,
+                      document.body,
+                    )}
                 </div>
               </div>
             </div>

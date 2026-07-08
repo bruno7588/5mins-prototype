@@ -112,6 +112,7 @@
   --text-button-foreground: var(--neutral-25);
   --text-button-disabled: var(--neutral-300);
   --text-button-hover: var(--primary-700);
+  --button-outline-hover: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% — Outlined/Text button hover/active tint; translucent so it reads correctly in both light & dark (DS buttons.md) */
   --selected: var(--secondary-600);
   --selected-tint: rgba(237, 163, 13, 0.15); /* selected-row / highlight fill derived from --selected */
   --selected-tint-hover: rgba(237, 163, 13, 0.24); /* hover state of --selected-tint rows */
@@ -248,7 +249,7 @@
 }
 
 .btn-outlined:hover {
-  background: rgba(0, 206, 230, 0.08);
+  background: var(--button-outline-hover);
 }
 
 .btn-success {

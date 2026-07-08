@@ -36,8 +36,14 @@
 .acm-row--sub .add-content-menu-item-label {
   flex: 1;
 }
+/* Rows live on the --cards-background popover, so override the shared
+   .add-content-menu-item hover (page-background-hover collides with the card
+   surface in dark mode → invisible). */
+.acm-row:hover {
+  background: var(--cards-background-hover);
+}
 .acm-row--open {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
 }
 
 .acm-has-sub {

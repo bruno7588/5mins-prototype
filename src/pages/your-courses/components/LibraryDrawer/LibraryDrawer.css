@@ -151,7 +151,7 @@
 }
 
 .library-lesson__btn--remove:hover {
-  background: var(--primary-100);
+  background: var(--button-outline-hover);
   color: var(--primary-700);
   border-color: var(--primary-700);
 }

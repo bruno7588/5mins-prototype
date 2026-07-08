@@ -49,9 +49,10 @@
   transition: background 150ms ease;
 }
 
-/* Hover fills the whole option (input) per DS. */
+/* Hover fills the whole option; on the card surface use cards-background-hover
+   so it stays visible in dark mode (page-background-hover == card bg there). */
 .enrollment-popover__option:hover {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
 }
 
 .enrollment-popover__option-text {

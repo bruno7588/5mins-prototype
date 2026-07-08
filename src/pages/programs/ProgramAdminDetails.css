@@ -206,7 +206,7 @@
 }
 
 .pad-btn--outline:hover {
-  background: var(--primary-100);
+  background: var(--button-outline-hover);
 }
 
 /* Tertiary text + icon button (no border/fill). */
@@ -217,8 +217,9 @@
   color: var(--primary-600);
 }
 
+/* Text button: no fill on hover — only the label/icon color shifts (buttons.md). */
 .pad-btn--text:hover {
-  background: var(--primary-100);
+  color: var(--text-button-hover);
 }
 
 .pad-btn--filled {
@@ -623,7 +624,7 @@
 }
 
 .pad-menu__item:hover {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
 }
 
 .pad-menu__item--danger {

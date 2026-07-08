@@ -206,7 +206,7 @@
 }
 
 .cpd-row__btn--remove:hover {
-  background: var(--primary-100);
+  background: var(--button-outline-hover);
 }
 
 /* ── Empty ──────────────────────────────────────────────────────────────── */

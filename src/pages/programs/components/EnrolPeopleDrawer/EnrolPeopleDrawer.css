@@ -145,6 +145,14 @@
   background: var(--selected-tint);
 }
 
+/* Selected + hover deepens the amber (table.md); without this the generic
+   .epd-all-row:hover (higher specificity than the single --selected class)
+   would replace the selection tint with the neutral gray hover. */
+.epd-all-row--selected:hover {
+  border-color: transparent;
+  background: var(--selected-tint-hover);
+}
+
 .epd-all-row__label {
   font-size: 14px;
   color: var(--text-primary);
@@ -243,6 +251,13 @@
 .epd-row--selected {
   border-color: var(--selected-tint);
   background: var(--selected-tint);
+}
+
+/* Selected + hover deepens the amber (table.md) instead of the generic
+   .epd-row:hover replacing it with the neutral gray hover. */
+.epd-row--selected:hover {
+  border-color: var(--selected-tint-hover);
+  background: var(--selected-tint-hover);
 }
 
 .epd-cell {
@@ -477,11 +492,11 @@
   cursor: default;
 }
 
+/* Portaled to <body>; right/bottom are set inline from the trigger's rect so
+   the drawer's scroll container can't clip it. Above the overlay (z 1000). */
 .epd-date__cal-pop {
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + 8px);
-  z-index: 30;
+  position: fixed;
+  z-index: 1001;
 }
 
 /* ── Footer ─────────────────────────────────────────────────────────────── */

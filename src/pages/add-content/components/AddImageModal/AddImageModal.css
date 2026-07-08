@@ -274,9 +274,9 @@
   transition: color 150ms ease, background 150ms ease;
 }
 
+/* Text button: color-only hover, no fill (buttons.md). */
 .aim-suggest-btn:hover:not(.aim-suggest-btn--disabled) {
-  color: var(--primary-700);
-  background: rgba(0, 206, 230, 0.08);
+  color: var(--text-button-hover);
 }
 
 .aim-suggest-btn.aim-suggest-btn--disabled {
