@@ -5,7 +5,6 @@ import {
   CalendarAdd,
   CalendarTick,
   Category,
-  Clock,
   Danger,
   Flag,
   Location,
@@ -57,7 +56,6 @@ const FILTER_GROUPS: FilterGroup[] = [
     items: [
       { id: 'status', title: 'Status', description: 'Active, completed, overdue, archived', Icon: Flag },
       { id: 'progress', title: 'Progress', description: 'Filter by % of course completed', Icon: PercentageSquare },
-      { id: 'enrolment-history', title: 'Enrolment History', description: 'Filter by enrolment lifecycle stage (Current, Archived)', Icon: Clock },
     ],
   },
   {
@@ -143,6 +141,82 @@ const DEFAULT_FILTER_OPTIONS: DropdownOption[] = [
 export function filterOptions(id: string): DropdownOption[] {
   return FILTER_VALUE_OPTIONS[id] ?? DEFAULT_FILTER_OPTIONS
 }
+
+/* ── Per-filter control type (matches the product's filter UI) ──
+   Prototype only — values below are sample options for context; the filters
+   are not applied to the table. */
+
+const opt = (labels: string[]): DropdownOption[] =>
+  labels.map((l) => ({ value: l.toLowerCase().replace(/[^a-z0-9]+/g, '-'), label: l }))
+
+const MULTI_OPTIONS: Record<string, DropdownOption[]> = {
+  'user-name': opt([
+    'Michael Thompson', 'Jessica Hart', 'David Johnson', 'Noah Williams', 'Mei Tanaka',
+    'Ethan Brooks', 'Priya Shah', 'Samantha Rivers', 'Laura Chen', 'Marcus Reid',
+  ]),
+  email: opt([
+    'michael.t@company.com', 'jessica.h@company.com', 'david.j@company.com',
+    'noah.w@company.com', 'mei.t@company.com', 'ethan.b@company.com',
+    'priya.s@company.com', 'samantha.r@company.com', 'laura.c@company.com', 'marcus.r@company.com',
+  ]),
+  team: opt([
+    'People & Performance', 'Operations', 'Food & Beverage', 'Shift Operations',
+    'Finance', 'Compliance', 'Front Office',
+  ]),
+  region: opt(['North America', 'Europe', 'Asia Pacific', 'Southeast Asia', 'Middle East']),
+  course: opt([
+    'HBR Guide to Communication Success', 'Food Safety Essentials', 'Harassment Prevention',
+    'Allergen Awareness', 'Conflict Resolution', 'Cash Handling', 'Fire Safety',
+    'POS System Training', 'Anti-Money Laundering',
+  ]),
+  category: opt(['Compliance', 'Safety', 'Soft Skills', 'Operations', 'Performance']),
+  'group-organisation': opt(['Head Office', 'Franchise — North', 'Franchise — South', 'Partner Sites']),
+}
+
+const SINGLE_OPTIONS: Record<string, DropdownOption[]> = {
+  status: opt(['Completed', 'In Progress', 'Not Started', 'Overdue']),
+  'compliance-course': opt(['Yes', 'No']),
+  'account-type': opt(['Standard', 'Manager', 'Administrator']),
+  'contract-type': opt(['Full-time', 'Part-time', 'Contractor', 'Seasonal']),
+}
+
+export type FilterControl =
+  | { kind: 'single'; options: DropdownOption[]; placeholder: string }
+  | { kind: 'multi'; options: DropdownOption[]; placeholder: string }
+  | { kind: 'range'; min: number; max: number; suffix?: string }
+  | { kind: 'operator'; unit: string }
+  | { kind: 'date' }
+
+const CONTROL_BY_ID: Record<string, FilterControl> = {
+  'user-name': { kind: 'multi', options: MULTI_OPTIONS['user-name'], placeholder: 'Select user names' },
+  email: { kind: 'multi', options: MULTI_OPTIONS.email, placeholder: 'Select emails' },
+  team: { kind: 'multi', options: MULTI_OPTIONS.team, placeholder: 'Select teams' },
+  region: { kind: 'multi', options: MULTI_OPTIONS.region, placeholder: 'Select regions' },
+  course: { kind: 'multi', options: MULTI_OPTIONS.course, placeholder: 'Select courses' },
+  category: { kind: 'multi', options: MULTI_OPTIONS.category, placeholder: 'Select categories' },
+  'group-organisation': { kind: 'multi', options: MULTI_OPTIONS['group-organisation'], placeholder: 'Select organisations' },
+  status: { kind: 'single', options: SINGLE_OPTIONS.status, placeholder: 'Select status' },
+  'compliance-course': { kind: 'single', options: SINGLE_OPTIONS['compliance-course'], placeholder: 'Select compliance status' },
+  'account-type': { kind: 'single', options: SINGLE_OPTIONS['account-type'], placeholder: 'Select account type' },
+  'contract-type': { kind: 'single', options: SINGLE_OPTIONS['contract-type'], placeholder: 'Select contract type' },
+  progress: { kind: 'range', min: 0, max: 100, suffix: '%' },
+  'days-late': { kind: 'operator', unit: 'days' },
+  'start-date': { kind: 'date' },
+  'due-date': { kind: 'date' },
+  'completion-date': { kind: 'date' },
+  'original-hire-date': { kind: 'date' },
+}
+
+export function filterControl(id: string): FilterControl {
+  return CONTROL_BY_ID[id] ?? { kind: 'single', options: DEFAULT_FILTER_OPTIONS, placeholder: 'Select' }
+}
+
+/** Operator options shared by numeric-operator filters (e.g. Days Late). */
+export const OPERATOR_OPTIONS: DropdownOption[] = [
+  { value: 'more-than', label: 'More than' },
+  { value: 'less-than', label: 'Less than' },
+  { value: 'between', label: 'Between' },
+]
 
 interface FilterListboxProps {
   open: boolean

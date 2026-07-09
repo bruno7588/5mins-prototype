@@ -38,7 +38,7 @@
   padding: var(--s, 8px) var(--sm, 12px);
   border-radius: var(--sm, 12px);
   max-width: 288px;
-  text-align: center;
+  text-align: left;
   /* Always wrap inside the bubble, even if an ancestor sets white-space: nowrap. */
   white-space: normal;
   filter: drop-shadow(-4px 0px 24px rgba(32, 34, 42, 0.12));

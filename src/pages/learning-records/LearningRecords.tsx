@@ -1,13 +1,18 @@
 import { useCallback, useRef, useState } from 'react'
-import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Note1, Sort } from 'iconsax-react'
+import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Calendar, Note1, Sort } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Dropdown from '../../components/Dropdown/Dropdown'
+import Toggle from '../../components/Toggle/Toggle'
+import Badge from '../../components/Badge/Badge'
+import InputInteger from '../../components/InputInteger/InputInteger'
+import InputField from '../../components/InputField/InputField'
 import Collapse from '../../components/Collapse/Collapse'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
-import FilterListbox, { FILTER_BY_ID, filterOptions } from './components/FilterListbox/FilterListbox'
+import FilterListbox, { FILTER_BY_ID, filterOptions, filterControl, OPERATOR_OPTIONS } from './components/FilterListbox/FilterListbox'
+import FilterMultiSelect from './components/FilterControls/FilterMultiSelect'
 import ReportsListDrawer from './components/ReportsListDrawer/ReportsListDrawer'
 import SaveReportDrawer from './components/SaveReportDrawer/SaveReportDrawer'
 import {
@@ -22,6 +27,17 @@ import './LearningRecords.css'
 type TabKey = '5mins' | 'external'
 type EnrolmentHistory = 'Current' | 'Archived'
 type Status = 'Completed' | 'Not Started' | 'In Progress' | 'Overdue'
+
+// Mirrors the People → Deactivate flow: a user is deactivated as either
+// 'long-leave' (temporary, expected to return) or 'terminated' (permanent).
+type DeactivationType = 'terminated' | 'long-leave'
+
+// Value shapes for the richer filter controls (see filterControl()).
+type ControlValue =
+  | { multi: string[] }
+  | { min: number; max: number }
+  | { op: string; a: number; b: number }
+  | { from: string; to: string }
 
 interface CourseRecord {
   id: string
@@ -39,6 +55,8 @@ interface CourseRecord {
   duration: string
   progress: number
   status: Status
+  // Present only on records belonging to a deactivated user; hidden by default.
+  deactivation?: { type: DeactivationType; on: string }
 }
 
 const courseData: CourseRecord[] = [
@@ -52,6 +70,19 @@ const courseData: CourseRecord[] = [
   { id: '8', name: 'Samantha Rivers', email: 'samantha.r@company.com', team: 'Finance', region: 'North America', course: 'Cash Handling', category: 'Operations', enrolment: 'Current', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: null, daysLate: 47, duration: '20 mins', progress: 20, status: 'Overdue' },
   { id: '9', name: 'Laura Chen', email: 'laura.c@company.com', team: 'Compliance', region: 'Asia Pacific', course: 'Fire Safety', category: 'Safety', enrolment: 'Archived', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: null, daysLate: 43, duration: '20 mins', progress: 20, status: 'Overdue' },
   { id: '10', name: 'Marcus Reid', email: 'marcus.r@company.com', team: 'Compliance', region: 'Europe', course: 'POS System Training', category: 'Operations', enrolment: 'Archived', startDate: '2026-04-20', dueDate: '2026-05-17', completionDate: null, daysLate: 38, duration: '20 mins', progress: 55, status: 'Overdue' },
+  // Prior (archived) enrolment of Michael Thompson on the same course — appears
+  // only when "Archived enrolments" is on, demonstrating the once-per-course dedup.
+  { id: '11', name: 'Michael Thompson', email: 'michael.t@company.com', team: 'People & Performance', region: 'Southeast Asia', course: 'HBR Guide to Communication Success', category: 'Performance', enrolment: 'Archived', startDate: '2025-10-01', dueDate: '2025-10-28', completionDate: '2025-10-20', daysLate: null, duration: '20 mins', progress: 100, status: 'Completed' },
+]
+
+/* Records for users who have since been deactivated in People. Hidden by
+   default; surfaced only when "Include deactivated users" is on — mainly to
+   evidence that leavers completed mandatory / compliance training. */
+const deactivatedData: CourseRecord[] = [
+  { id: 'd1', name: 'Olivia Bennett', email: 'olivia.b@company.com', team: 'Front Office', region: 'Europe', course: 'Harassment Prevention', category: 'Compliance', enrolment: 'Current', startDate: '2025-09-01', dueDate: '2025-09-28', completionDate: '2025-09-20', daysLate: null, duration: '20 mins', progress: 100, status: 'Completed', deactivation: { type: 'terminated', on: 'Nov 12, 2025' } },
+  { id: 'd2', name: 'Daniel Okafor', email: 'daniel.o@company.com', team: 'Food & Beverage', region: 'Middle East', course: 'Food Safety Essentials', category: 'Compliance', enrolment: 'Current', startDate: '2025-08-10', dueDate: '2025-09-06', completionDate: '2025-08-30', daysLate: null, duration: '20 mins', progress: 100, status: 'Completed', deactivation: { type: 'terminated', on: 'Oct 03, 2025' } },
+  { id: 'd3', name: 'Sofia Marchetti', email: 'sofia.m@company.com', team: 'Operations', region: 'Europe', course: 'Fire Safety', category: 'Compliance', enrolment: 'Current', startDate: '2025-10-05', dueDate: '2025-11-01', completionDate: '2025-10-22', daysLate: null, duration: '20 mins', progress: 100, status: 'Completed', deactivation: { type: 'long-leave', on: 'Nov 28, 2025' } },
+  { id: 'd4', name: 'James Whitfield', email: 'james.w@company.com', team: 'Finance', region: 'North America', course: 'Anti-Money Laundering', category: 'Compliance', enrolment: 'Current', startDate: '2025-09-15', dueDate: '2025-10-12', completionDate: null, daysLate: 21, duration: '20 mins', progress: 60, status: 'Overdue', deactivation: { type: 'long-leave', on: 'Dec 05, 2025' } },
 ]
 
 /* ── External Training data ── */
@@ -120,6 +151,15 @@ function LearningRecords() {
   const [filtersExpanded, setFiltersExpanded] = useState(false)
   const [activeFilters, setActiveFilters] = useState<string[]>([])
   const [filterValues, setFilterValues] = useState<Record<string, string>>({})
+  // Rich values for non-single controls (multi-select arrays, numeric ranges,
+  // operator + value, date ranges). Kept separate from the string filterValues
+  // used by pills / saved reports. Prototype: not applied to the table.
+  const [controlValues, setControlValues] = useState<Record<string, ControlValue>>({})
+  // "Also show" scope toggles — both widen the view and are OFF by default.
+  // Archived: previous enrolment records (learner can appear >once per course).
+  // Deactivated: learners whose accounts were deactivated in People.
+  const [showArchived, setShowArchived] = useState(false)
+  const [showDeactivated, setShowDeactivated] = useState(false)
   // Name of the saved report currently being viewed in the table (via "View in
   // Table"); cleared once the user edits the filters manually.
   const [viewingName, setViewingName] = useState<string | null>(null)
@@ -154,12 +194,24 @@ function LearningRecords() {
       delete next[id]
       return next
     })
+    setControlValues((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
     setViewingName(null)
   }, [])
 
   const clearAllFilters = useCallback(() => {
     setActiveFilters([])
     setFilterValues({})
+    setControlValues({})
+    setViewingName(null)
+  }, [])
+
+  // Update a rich control's value (multi/range/operator/date).
+  const setControl = useCallback((id: string, value: ControlValue) => {
+    setControlValues((prev) => ({ ...prev, [id]: value }))
     setViewingName(null)
   }, [])
 
@@ -243,14 +295,29 @@ function LearningRecords() {
   )
 
   // Label shown on a collapsed pill: the chosen value, else the filter name.
+  // Only single-select filters carry a plain string value; the rest collapse to
+  // their title (their richer state isn't summarised on the pill).
   const valueLabel = (id: string): string => {
     const v = filterValues[id]
-    if (v) return filterOptions(id).find((o) => o.value === v)?.label ?? FILTER_BY_ID[id]?.title ?? id
+    if (v) {
+      const ctrl = filterControl(id)
+      const opts = ctrl.kind === 'single' ? ctrl.options : filterOptions(id)
+      return opts.find((o) => o.value === v)?.label ?? FILTER_BY_ID[id]?.title ?? id
+    }
     return FILTER_BY_ID[id]?.title ?? id
   }
 
   const visibleFilters = activeFilters.slice(0, MAX_VISIBLE_PILLS)
   const overflowCount = activeFilters.length - visibleFilters.length
+
+  // The two "Also show" toggles are what actually shape the table: deactivated
+  // adds those learners' rows; archived reveals historical enrolment records
+  // (otherwise each learner shows once per course, i.e. Current only).
+  const displayedCourseRows = (() => {
+    const pool = showDeactivated ? [...courseData, ...deactivatedData] : courseData
+    return showArchived ? pool : pool.filter((r) => r.enrolment === 'Current')
+  })()
+  const rowCount = activeTab === '5mins' ? displayedCourseRows.length : externalData.length
 
   // Add+ relocates between header (collapsed) and bottom actions (expanded).
   // Only the live instance gets an open listbox so their click-outside handlers don't clash.
@@ -283,6 +350,118 @@ function LearningRecords() {
     { key: '5mins', label: '5Mins Courses' },
     { key: 'external', label: 'External Training' },
   ]
+
+  // Renders the correct input for an added filter based on its control type.
+  const renderControl = (id: string) => {
+    const ctrl = filterControl(id)
+    const title = FILTER_BY_ID[id]?.title ?? id
+
+    switch (ctrl.kind) {
+      case 'multi': {
+        const cv = controlValues[id]
+        const selected = cv && 'multi' in cv ? cv.multi : []
+        return (
+          <FilterMultiSelect
+            options={ctrl.options}
+            value={selected}
+            placeholder={ctrl.placeholder}
+            onChange={(arr) => setControl(id, { multi: arr })}
+          />
+        )
+      }
+      case 'range': {
+        const cv = controlValues[id]
+        const v = cv && 'min' in cv ? cv : { min: ctrl.min, max: ctrl.max }
+        return (
+          <div className="lrp-control-inline">
+            <span className="lrp-filter-connector">between</span>
+            <InputInteger
+              value={v.min}
+              min={ctrl.min}
+              max={ctrl.max}
+              suffix={ctrl.suffix}
+              ariaLabel={`${title} from`}
+              onChange={(n) => setControl(id, { min: n, max: v.max })}
+            />
+            <span className="lrp-filter-connector">and</span>
+            <InputInteger
+              value={v.max}
+              min={ctrl.min}
+              max={ctrl.max}
+              suffix={ctrl.suffix}
+              ariaLabel={`${title} to`}
+              onChange={(n) => setControl(id, { min: v.min, max: n })}
+            />
+          </div>
+        )
+      }
+      case 'operator': {
+        const cv = controlValues[id]
+        const v = cv && 'op' in cv ? cv : { op: 'more-than', a: 0, b: 0 }
+        return (
+          <div className="lrp-control-inline">
+            <Dropdown
+              size="sm"
+              className="lrp-filter-dropdown"
+              options={OPERATOR_OPTIONS}
+              value={v.op}
+              onChange={(op) => setControl(id, { ...v, op })}
+            />
+            <InputInteger value={v.a} min={0} ariaLabel={`${title} value`} onChange={(n) => setControl(id, { ...v, a: n })} />
+            {v.op === 'between' && (
+              <>
+                <span className="lrp-filter-connector">and</span>
+                <InputInteger value={v.b} min={0} ariaLabel={`${title} upper value`} onChange={(n) => setControl(id, { ...v, b: n })} />
+              </>
+            )}
+            <span className="lrp-filter-connector">{ctrl.unit}</span>
+          </div>
+        )
+      }
+      case 'date': {
+        const cv = controlValues[id]
+        const v = cv && 'from' in cv ? cv : { from: '', to: '' }
+        const calIcon = <Calendar size={20} color="var(--text-tertiary)" variant="Linear" />
+        return (
+          <div className="lrp-control-inline">
+            <span className="lrp-filter-connector">between</span>
+            <InputField
+              type="date"
+              className="lrp-date-input"
+              placeholder="dd/mm/yyyy"
+              value={v.from}
+              iconRight={calIcon}
+              onChange={(e) => setControl(id, { from: e.target.value, to: v.to })}
+            />
+            <span className="lrp-filter-connector">and</span>
+            <InputField
+              type="date"
+              className="lrp-date-input"
+              placeholder="dd/mm/yyyy"
+              value={v.to}
+              iconRight={calIcon}
+              onChange={(e) => setControl(id, { from: v.from, to: e.target.value })}
+            />
+          </div>
+        )
+      }
+      case 'single':
+      default:
+        return (
+          <Dropdown
+            size="sm"
+            className="lrp-filter-dropdown"
+            options={ctrl.options}
+            value={filterValues[id]}
+            placeholder={ctrl.placeholder}
+            onChange={(val) => {
+              setFilterValues((prev) => ({ ...prev, [id]: val }))
+              setViewingName(null)
+            }}
+          />
+        )
+    }
+  }
 
   return (
     <div className="lrp-layout">
@@ -444,17 +623,7 @@ function LearningRecords() {
                         <meta.Icon size={20} color="var(--text-secondary)" variant="Linear" />
                       </span>
                       <span className="lrp-filter-label">{label}</span>
-                      <Dropdown
-                        size="sm"
-                        className="lrp-filter-dropdown"
-                        options={filterOptions(id)}
-                        value={filterValues[id]}
-                        placeholder={`Select ${meta.title.toLowerCase()}`}
-                        onChange={(v) => {
-                          setFilterValues((prev) => ({ ...prev, [id]: v }))
-                          setViewingName(null)
-                        }}
-                      />
+                      {renderControl(id)}
                       <button
                         type="button"
                         className="lrp-filter-remove"
@@ -480,6 +649,38 @@ function LearningRecords() {
                   >
                     Clear All
                   </button>
+                </div>
+
+                {/* "Also show" scope toggles — secondary to filtering, so they sit
+                    at the bottom. Both widen the view and are OFF by default. */}
+                <div className="lrp-also-show">
+                  <span className="lrp-also-show-label">Also show</span>
+                  <div className="lrp-also-item">
+                    <Toggle
+                      id="lrp-show-archived"
+                      size="sm"
+                      checked={showArchived}
+                      onChange={(e) => setShowArchived(e.target.checked)}
+                    />
+                    <label htmlFor="lrp-show-archived" className="lrp-also-text">Archived enrolments</label>
+                    <Tooltip
+                      position="Top"
+                      text="Previous enrolment records kept when a learner is re-enrolled or a course is restarted. Off by default so each learner appears once per course."
+                    />
+                  </div>
+                  <div className="lrp-also-item">
+                    <Toggle
+                      id="lrp-show-deactivated"
+                      size="sm"
+                      checked={showDeactivated}
+                      onChange={(e) => setShowDeactivated(e.target.checked)}
+                    />
+                    <label htmlFor="lrp-show-deactivated" className="lrp-also-text">Deactivated users</label>
+                    <Tooltip
+                      position="Top"
+                      text="Include learners whose accounts were deactivated in People (Permanent or Long Leave). Off by default."
+                    />
+                  </div>
                 </div>
               </div>
             </Collapse>
@@ -509,10 +710,13 @@ function LearningRecords() {
                   <div className="lrp-cell lrp-cell--status">Status</div>
                 </div>
 
-                {courseData.map((row) => (
-                  <div className="lrp-row" key={row.id}>
+                {displayedCourseRows.map((row) => (
+                  <div className={`lrp-row${row.deactivation ? ' lrp-row--deactivated' : ''}`} key={row.id}>
                     <div className="lrp-cell lrp-cell--user">
-                      <span className="lrp-name">{row.name}</span>
+                      <span className="lrp-name-row">
+                        <span className="lrp-name">{row.name}</span>
+                        {row.deactivation && <Badge type="error" label="Deactivated" />}
+                      </span>
                       <span className="lrp-email">{row.email}</span>
                     </div>
                     <div className="lrp-cell lrp-cell--team">{row.team}</div>
@@ -589,7 +793,7 @@ function LearningRecords() {
 
           {/* Pagination */}
           <div className="lrp-pagination">
-            <span className="lrp-pagination-label">1-10 of 28</span>
+            <span className="lrp-pagination-label">1–{rowCount} of {rowCount}</span>
             <button type="button" className="lrp-pagination-btn" aria-label="Previous page" disabled>
               <ArrowLeft2 size={16} color="var(--text-secondary)" variant="Linear" />
             </button>

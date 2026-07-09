@@ -437,6 +437,43 @@
   transform: rotate(180deg);
 }
 
+/* ── "Also show" scope toggles — bottom of the panel, below the filter actions ── */
+.lrp-also-show {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-m);
+  margin-top: var(--space-s);
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--border);
+}
+
+.lrp-also-show-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.lrp-also-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.lrp-also-item .toggle {
+  flex-shrink: 0;
+}
+
+.lrp-also-text {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.5;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 /* ── Expanded body ── */
 .lrp-filters-body {
   display: flex;
@@ -445,9 +482,60 @@
   padding-top: var(--space-m);
 }
 
+/* ── Inline multi-part controls (range / operator / date) ── */
+.lrp-control-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+}
+
+.lrp-filter-connector {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.lrp-filters .lrp-date-input {
+  width: 188px;
+}
+
+/* Name + deactivation badge on one row inside the User cell */
+.lrp-name-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+  max-width: 100%;
+}
+
+.lrp-name-row .lrp-name {
+  min-width: 0;
+}
+
+/* Keep the DS Badge from being squeezed by a long name; Body Small / Medium (per Figma) */
+.lrp-name-row .badge {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+/* Deactivated rows carry no fill (per Figma) — the dimmed identity text is the
+   signal; the Permanent / Long Leave status shows in the badge/column. */
+.lrp-row--deactivated .lrp-name {
+  color: var(--text-tertiary);
+}
+
+.lrp-row--deactivated .lrp-email {
+  color: var(--text-disabled);
+}
+
 .lrp-filter-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-s);
   min-height: 37px;
 }
@@ -602,7 +690,7 @@
 }
 
 /* Column widths — 5Mins Courses (matches Figma) */
-.lrp-cell--user      { flex: 1 0 200px; min-width: 200px; flex-direction: column; align-items: flex-start; gap: 2px; }
+.lrp-cell--user      { flex: 1 0 240px; min-width: 240px; flex-direction: column; align-items: flex-start; gap: 2px; }
 .lrp-cell--team      { width: 180px; }
 .lrp-cell--region    { width: 160px; }
 .lrp-cell--course    { width: 200px; }
