@@ -739,15 +739,19 @@
   z-index: 3;
 }
 
-/* Once scrolled, the row's own left border/corner have slid out of view, so the
-   pinned cell masks the content behind it and redraws the card's rounded left edge. */
+/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks the
+   content sliding under it. Its top/bottom borders (aligned over the row's via
+   -1px margins) preserve the row separators; the right-edge shadow (::after)
+   signals the freeze. The left edge is square by design — a rounded mask over a
+   row whose real corner has scrolled off-screen produces corner artifacts. */
 .lrp-table-wrap--scrolled .lrp-row .lrp-cell--user {
   align-self: stretch;
   justify-content: center;
+  margin-top: -1px;
+  margin-bottom: -1px;
   background: var(--page-background);
-  border-left: 1px solid var(--border);
-  border-top-left-radius: var(--radius-sm);
-  border-bottom-left-radius: var(--radius-sm);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .lrp-table-wrap--scrolled .lrp-row:hover .lrp-cell--user {
