@@ -1,0 +1,151 @@
+.audit {
+  padding-top: var(--space-l); /* 24px */
+}
+
+/* ── Filter bar ── */
+.audit-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  margin-bottom: var(--space-m);
+}
+
+.audit .audit-setting-filter {
+  flex: 0 0 auto;
+  width: fit-content;
+  min-width: 190px;
+}
+
+/* Disabled launch filters — mirror the Dropdown (sm) trigger shape/position so the
+   layout doesn't shift when they're enabled later. Coming-soon tooltip on hover. */
+.audit-filter--disabled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  height: 33px;
+  min-width: 140px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.audit-filter-label {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-disabled);
+  white-space: nowrap;
+}
+
+/* ── Table cell content ── */
+.audit-course {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.audit-prev {
+  color: var(--text-tertiary);
+}
+
+.audit-new {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.audit-actor {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.audit-actor-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audit-actor-meta {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audit-time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.3;
+}
+
+.audit-time-date {
+  color: var(--text-primary);
+}
+
+.audit-time-clock {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Table can exceed the panel width — scroll horizontally rather than squash cells */
+.audit-table-wrap {
+  overflow-x: auto;
+}
+
+.audit-table-wrap .tbl {
+  min-width: 1080px;
+}
+
+/* ── Empty state (per docs/design-system/empty-state.md) ── */
+.audit-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-ml); /* 20px */
+  padding: var(--space-xxl) var(--space-l);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-ml);
+  background: var(--cards-background);
+  text-align: center;
+}
+
+.audit-empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--page-background-hover);
+}
+
+.audit-empty-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.audit-empty-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.audit-empty-desc {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 600px;
+}

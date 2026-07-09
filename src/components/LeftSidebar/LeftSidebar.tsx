@@ -194,9 +194,16 @@ function LeftSidebar() {
         </button>
 
         {/* Account & Settings */}
-        <button className="sidebar-item ui-disabled" disabled>
+        <button
+          className={`sidebar-item${activePage === '/account' ? ' sidebar-item--active' : ''}`}
+          onClick={() => navigate('/account')}
+        >
           <span className="sidebar-item-icon">
-            <Setting2 size={iconSize} color={iconColor} variant="Linear" />
+            <Setting2
+              size={iconSize}
+              color={activePage === '/account' ? 'var(--secondary-600)' : iconColor}
+              variant={activePage === '/account' ? 'Bold' : 'Linear'}
+            />
           </span>
           <span className="sidebar-item-label">Account &amp; Settings</span>
         </button>
