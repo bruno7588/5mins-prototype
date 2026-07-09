@@ -109,10 +109,3 @@
   color: var(--text-tertiary);
 }
 
-.fms-menu::-webkit-scrollbar {
-  width: 4px;
-}
-.fms-menu::-webkit-scrollbar-thumb {
-  background: var(--border-elevated);
-  border-radius: 4px;
-}

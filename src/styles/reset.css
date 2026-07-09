@@ -35,3 +35,26 @@ a {
 ul, ol {
   list-style: none;
 }
+
+/* ── Scrollbars — design-system spec ──
+   Thumb = --border (mode-aware), 6px wide, fully rounded; transparent track.
+   Elements that intentionally hide their scrollbar override with
+   `scrollbar-width: none` / `::-webkit-scrollbar { display: none }`. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-ml);
+}

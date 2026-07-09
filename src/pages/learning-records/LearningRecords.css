@@ -89,7 +89,7 @@
   gap: var(--space-s);
   flex-shrink: 0;
   padding: 10px var(--space-ml);
-  border: 1px solid var(--text-primary);
+  border: 1px solid var(--border);
   border-radius: var(--radius-s);
   background: transparent;
   font-family: 'Poppins', sans-serif;
@@ -99,11 +99,12 @@
   line-height: 1.5;
   white-space: nowrap;
   cursor: pointer;
-  transition: background 120ms ease;
+  transition: background 120ms ease, border-color 120ms ease;
 }
 
 .lrp-reports-btn:hover:not(:disabled) {
-  background: var(--page-background-hover);
+  background: var(--input-background-hover);
+  border-color: var(--border-hover);
 }
 
 .lrp-reports-btn:disabled {

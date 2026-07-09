@@ -429,18 +429,6 @@
   border-radius: var(--radius-s);
 }
 
-.bulk-upload-table-wrapper::-webkit-scrollbar {
-  height: 6px;
-}
-
-.bulk-upload-table-wrapper::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.bulk-upload-table-wrapper::-webkit-scrollbar-thumb {
-  background: var(--border-elevated);
-  border-radius: var(--radius-ml);
-}
 
 .bulk-upload-table {
   border-collapse: collapse;
