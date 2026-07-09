@@ -48,51 +48,57 @@ function FilterMultiSelect({ options, value, onChange, placeholder }: FilterMult
 
   return (
     <div className={`fms${open ? ' fms--open' : ''}`} ref={ref}>
-      <div
-        className="fms-field"
-        onClick={() => {
-          setOpen(true)
-          inputRef.current?.focus()
-        }}
-      >
-        <SearchNormal1 size={18} color="var(--text-tertiary)" variant="Outline" className="fms-search-icon" />
-        <div className="fms-tags">
-          {selected.map((o) => (
-            <Chip key={o.value} label={o.label} selected iconRight onDismiss={() => toggle(o.value)} />
-          ))}
+      <div className="fms-field-wrap">
+        <div
+          className="fms-field"
+          onClick={() => {
+            setOpen(true)
+            inputRef.current?.focus()
+          }}
+        >
+          <SearchNormal1 size={18} color="var(--text-tertiary)" variant="Outline" className="fms-search-icon" />
           <input
             ref={inputRef}
             type="text"
             className="fms-input"
             value={query}
-            placeholder={selected.length ? '' : placeholder}
+            placeholder={placeholder}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setOpen(true)}
             aria-label={placeholder}
           />
         </div>
+
+        {open && (
+          <ul className="fms-menu" role="listbox" aria-multiselectable="true">
+            {filtered.length === 0 && <li className="fms-empty">No matches</li>}
+            {filtered.map((o) => {
+              const checked = value.includes(o.value)
+              return (
+                <li key={o.value}>
+                  <div
+                    role="option"
+                    aria-selected={checked}
+                    className={`fms-option${checked ? ' is-selected' : ''}`}
+                    onClick={() => toggle(o.value)}
+                  >
+                    <Checkbox checked={checked} />
+                    <span className="fms-option-label">{o.label}</span>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        )}
       </div>
 
-      {open && (
-        <ul className="fms-menu" role="listbox" aria-multiselectable="true">
-          {filtered.length === 0 && <li className="fms-empty">No matches</li>}
-          {filtered.map((o) => {
-            const checked = value.includes(o.value)
-            return (
-              <li key={o.value}>
-                <div
-                  role="option"
-                  aria-selected={checked}
-                  className={`fms-option${checked ? ' is-selected' : ''}`}
-                  onClick={() => toggle(o.value)}
-                >
-                  <Checkbox checked={checked} />
-                  <span className="fms-option-label">{o.label}</span>
-                </div>
-              </li>
-            )
-          })}
-        </ul>
+      {/* Selected chips sit BELOW the input */}
+      {selected.length > 0 && (
+        <div className="fms-chips">
+          {selected.map((o) => (
+            <Chip key={o.value} label={o.label} selected iconRight onDismiss={() => toggle(o.value)} />
+          ))}
+        </div>
       )}
     </div>
   )

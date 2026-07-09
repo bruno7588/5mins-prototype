@@ -133,6 +133,26 @@ const STATUS_BADGE: Record<Status, string> = {
 /* How many filter pills to show inline before collapsing the rest into "+N" */
 const MAX_VISIBLE_PILLS = 5
 
+/* ── Filtering ── Maps a filter id to the CourseRecord field it constrains.
+   Filters without an entry (compliance-course, custom fields) don't narrow the
+   table. Option values are slugs of their labels, so row values are slugged too. */
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+
+const MULTI_FILTER_FIELD: Partial<Record<string, keyof CourseRecord>> = {
+  'user-name': 'name',
+  email: 'email',
+  team: 'team',
+  region: 'region',
+  course: 'course',
+  category: 'category',
+}
+const SINGLE_FILTER_FIELD: Partial<Record<string, keyof CourseRecord>> = { status: 'status' }
+const DATE_FILTER_FIELD: Partial<Record<string, keyof CourseRecord>> = {
+  'start-date': 'startDate',
+  'due-date': 'dueDate',
+  'completion-date': 'completionDate',
+}
+
 function DateCell({ value }: { value: string | null }) {
   if (!value) return <span className="lrp-dash">–</span>
   const { line1, line2 } = formatDate(value)
@@ -310,12 +330,53 @@ function LearningRecords() {
   const visibleFilters = activeFilters.slice(0, MAX_VISIBLE_PILLS)
   const overflowCount = activeFilters.length - visibleFilters.length
 
-  // The two "Also show" toggles are what actually shape the table: deactivated
-  // adds those learners' rows; archived reveals historical enrolment records
-  // (otherwise each learner shows once per course, i.e. Current only).
+  // Does a row satisfy every active filter that maps to a table column?
+  const matchesFilters = (row: CourseRecord): boolean => {
+    for (const id of activeFilters) {
+      const ctrl = filterControl(id)
+      if (ctrl.kind === 'multi') {
+        const sel = (controlValues[id] as { multi: string[] } | undefined)?.multi ?? []
+        const field = MULTI_FILTER_FIELD[id]
+        if (!sel.length || !field) continue
+        if (!sel.includes(slugify(String(row[field] ?? '')))) return false
+      } else if (ctrl.kind === 'single') {
+        const v = filterValues[id]
+        const field = SINGLE_FILTER_FIELD[id]
+        if (!v || !field) continue
+        if (slugify(String(row[field] ?? '')) !== v) return false
+      } else if (ctrl.kind === 'range') {
+        const cv = controlValues[id] as { min: number; max: number } | undefined
+        if (!cv || id !== 'progress') continue
+        if (row.progress < cv.min || row.progress > cv.max) return false
+      } else if (ctrl.kind === 'operator') {
+        const cv = controlValues[id] as { op: string; a: number; b: number } | undefined
+        if (!cv || id !== 'days-late') continue
+        const dl = row.daysLate ?? 0
+        if (cv.op === 'more-than' && !(dl > cv.a)) return false
+        if (cv.op === 'less-than' && !(dl < cv.a)) return false
+        if (cv.op === 'between' && !(dl >= cv.a && dl <= cv.b)) return false
+      } else if (ctrl.kind === 'date') {
+        const cv = controlValues[id] as { from: string; to: string } | undefined
+        const field = DATE_FILTER_FIELD[id]
+        if (!cv || !field || (!cv.from && !cv.to)) continue
+        const val = row[field] as string | null
+        if (!val) return false
+        if (cv.from && val < cv.from) return false
+        if (cv.to && val > cv.to) return false
+      }
+    }
+    return true
+  }
+
+  // Row set = active learners, plus (when toggled on) archived enrolments and
+  // deactivated learners surfaced toward the TOP so they're easy to spot; then
+  // narrowed by the active filters.
   const displayedCourseRows = (() => {
-    const pool = showDeactivated ? [...courseData, ...deactivatedData] : courseData
-    return showArchived ? pool : pool.filter((r) => r.enrolment === 'Current')
+    const current = courseData.filter((r) => r.enrolment === 'Current')
+    const archived = courseData.filter((r) => r.enrolment === 'Archived')
+    let rows = showArchived ? [...archived, ...current] : current
+    if (showDeactivated) rows = [...deactivatedData, ...rows]
+    return rows.filter(matchesFilters)
   })()
   const rowCount = activeTab === '5mins' ? displayedCourseRows.length : externalData.length
 
@@ -624,16 +685,18 @@ function LearningRecords() {
                       </span>
                       <span className="lrp-filter-label">{label}</span>
                       {renderControl(id)}
-                      <button
-                        type="button"
-                        className="lrp-filter-remove"
-                        aria-label={`Remove ${meta.title} filter`}
-                        onClick={() => removeFilter(id)}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                          <path d="M11 5L5 11M5 5L11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                        </svg>
-                      </button>
+                      <span className="lrp-filter-remove-slot">
+                        <button
+                          type="button"
+                          className="lrp-filter-remove"
+                          aria-label={`Remove ${meta.title} filter`}
+                          onClick={() => removeFilter(id)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <path d="M11 5L5 11M5 5L11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
+                        </button>
+                      </span>
                     </div>
                   )
                 })}
@@ -651,39 +714,40 @@ function LearningRecords() {
                   </button>
                 </div>
 
-                {/* "Also show" scope toggles — secondary to filtering, so they sit
-                    at the bottom. Both widen the view and are OFF by default. */}
-                <div className="lrp-also-show">
-                  <span className="lrp-also-show-label">Also show</span>
-                  <div className="lrp-also-item">
-                    <Toggle
-                      id="lrp-show-archived"
-                      size="sm"
-                      checked={showArchived}
-                      onChange={(e) => setShowArchived(e.target.checked)}
-                    />
-                    <label htmlFor="lrp-show-archived" className="lrp-also-text">Archived enrolments</label>
-                    <Tooltip
-                      position="Top"
-                      text="Previous enrolment records kept when a learner is re-enrolled or a course is restarted. Off by default so each learner appears once per course."
-                    />
-                  </div>
-                  <div className="lrp-also-item">
-                    <Toggle
-                      id="lrp-show-deactivated"
-                      size="sm"
-                      checked={showDeactivated}
-                      onChange={(e) => setShowDeactivated(e.target.checked)}
-                    />
-                    <label htmlFor="lrp-show-deactivated" className="lrp-also-text">Deactivated users</label>
-                    <Tooltip
-                      position="Top"
-                      text="Include learners whose accounts were deactivated in People (Permanent or Long Leave). Off by default."
-                    />
-                  </div>
-                </div>
               </div>
             </Collapse>
+
+            {/* "Also show" scope toggles — persistent so they stay visible even when
+                the filter list is collapsed. Both widen the view, OFF by default. */}
+            <div className={`lrp-also-show${filtersExpanded ? ' lrp-also-show--divided' : ''}`}>
+              <span className="lrp-also-show-label">Also show</span>
+              <div className="lrp-also-item">
+                <Toggle
+                  id="lrp-show-archived"
+                  size="sm"
+                  checked={showArchived}
+                  onChange={(e) => setShowArchived(e.target.checked)}
+                />
+                <label htmlFor="lrp-show-archived" className="lrp-also-text">Archived enrolments</label>
+                <Tooltip
+                  position="Top"
+                  text="Previous enrolment records kept when a learner is re-enrolled or a course is restarted. Off by default so each learner appears once per course."
+                />
+              </div>
+              <div className="lrp-also-item">
+                <Toggle
+                  id="lrp-show-deactivated"
+                  size="sm"
+                  checked={showDeactivated}
+                  onChange={(e) => setShowDeactivated(e.target.checked)}
+                />
+                <label htmlFor="lrp-show-deactivated" className="lrp-also-text">Deactivated users</label>
+                <Tooltip
+                  position="Top"
+                  text="Include learners whose accounts were deactivated in People (Permanent or Long Leave). Off by default."
+                />
+              </div>
+            </div>
           </div>
 
           {/* Table */}

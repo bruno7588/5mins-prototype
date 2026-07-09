@@ -437,12 +437,17 @@
   transform: rotate(180deg);
 }
 
-/* ── "Also show" scope toggles — bottom of the panel, below the filter actions ── */
+/* ── "Also show" scope toggles — persistent footer of the filters panel ── */
 .lrp-also-show {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-m);
+  padding-top: var(--space-sm);
+}
+
+/* Divider only when the filter list is expanded (separates from the actions row) */
+.lrp-also-show--divided {
   margin-top: var(--space-s);
   padding-top: var(--space-m);
   border-top: 1px solid var(--border);
@@ -468,10 +473,15 @@
 .lrp-also-text {
   font-size: 14px;
   font-weight: 400;
-  color: var(--text-primary);
+  color: var(--text-secondary); /* off (inactive) */
   line-height: 1.5;
   cursor: pointer;
   white-space: nowrap;
+}
+
+/* Label brightens to primary when its toggle is on */
+.toggle--on + .lrp-also-text {
+  color: var(--text-primary);
 }
 
 /* ── Expanded body ── */
@@ -534,7 +544,7 @@
 
 .lrp-filter-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* align label/icon to the control's first line, not the tall block's center */
   flex-wrap: wrap;
   gap: var(--space-s);
   min-height: 37px;
@@ -544,10 +554,14 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  min-height: 37px;
   color: var(--text-secondary);
 }
 
 .lrp-filter-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 37px; /* match the control height so the label centers against the input, not the chips */
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
@@ -559,6 +573,14 @@
   flex: 0 0 auto;
   width: fit-content;
   min-width: 150px;
+}
+
+/* Keeps the circular 28px remove button vertically centered on the control's first line */
+.lrp-filter-remove-slot {
+  display: inline-flex;
+  align-items: center;
+  min-height: 37px;
+  flex-shrink: 0;
 }
 
 .lrp-filter-remove {
@@ -708,15 +730,26 @@
   line-height: 1.3;
 }
 
-/* Sticky first column (User) */
+/* Sticky first column (User) — transparent at rest so the row's own rounded
+   border shows through untouched (no squared corners). */
 .lrp-table-wrap .lrp-cell--user {
   position: sticky;
   left: 0;
   z-index: 3;
-  background: var(--page-background);
 }
 
-.lrp-row:hover .lrp-cell--user {
+/* Once scrolled, the row's own left border/corner have slid out of view, so the
+   pinned cell masks the content behind it and redraws the card's rounded left edge. */
+.lrp-table-wrap--scrolled .lrp-row .lrp-cell--user {
+  align-self: stretch;
+  justify-content: center;
+  background: var(--page-background);
+  border-left: 1px solid var(--border);
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.lrp-table-wrap--scrolled .lrp-row:hover .lrp-cell--user {
   background: var(--cards-background-hover);
 }
 

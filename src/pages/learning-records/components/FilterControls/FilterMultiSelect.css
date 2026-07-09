@@ -1,8 +1,13 @@
 .fms {
-  position: relative;
+  display: flex;
+  flex-direction: column;
   flex: 0 0 auto;
   min-width: 260px;
   max-width: 420px;
+}
+
+.fms-field-wrap {
+  position: relative;
 }
 
 /* Field — mirrors the Dropdown trigger (transparent, 12px radius, amber active) */
@@ -27,13 +32,18 @@
   flex-shrink: 0;
 }
 
-.fms-tags {
+/* Selected chips — below the input, not inside it */
+.fms-chips {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: var(--space-xs);
-  flex: 1 1 auto;
-  min-width: 0;
+  margin-top: var(--space-s);
+}
+
+.fms-chips .chip {
+  padding: 4px 10px;
+  gap: var(--space-xs);
+  font-size: 12px;
 }
 
 .fms-input {
