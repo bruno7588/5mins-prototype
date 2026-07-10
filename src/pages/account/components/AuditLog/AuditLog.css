@@ -35,30 +35,6 @@
   font-size: 14px;
 }
 
-/* Disabled launch filters — mirror the Dropdown (sm) trigger shape/position so the
-   layout doesn't shift when they're enabled later. Coming-soon tooltip on hover. */
-.audit-filter--disabled {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-s);
-  height: 33px;
-  min-width: 140px;
-  padding: 4px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  cursor: not-allowed;
-}
-
-.audit-filter-label {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-disabled);
-  white-space: nowrap;
-}
-
 /* ── Table cell content ── */
 .audit-action {
   font-weight: 400;
@@ -67,7 +43,7 @@
 
 .audit-new {
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .audit-actor {
@@ -78,7 +54,7 @@
 }
 
 .audit-actor-name {
-  font-weight: 500;
+  font-weight: 400;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;

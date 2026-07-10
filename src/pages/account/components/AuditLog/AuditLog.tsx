@@ -1,35 +1,20 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowDown2, ClipboardText } from 'iconsax-react'
+import { ClipboardText } from 'iconsax-react'
 import Table, { type Column } from '@/components/Table/Table'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import Search from '@/components/Search/Search'
 import Badge from '@/components/Badge/Badge'
-import Tooltip from '@/components/Tooltip/Tooltip'
 import { auditEntries, CATEGORY_FILTER_OPTIONS, type AuditEntry } from '../../data/mockAudit'
 import './AuditLog.css'
 
 const PAGE_SIZE = 10
-
-/** Filters that ship disabled at launch — same shape/position as their future enabled state. */
-const DISABLED_FILTERS = ['Date range', 'Actor', 'Course']
 
 function formatTimestamp(iso: string): { date: string; time: string } {
   const d = new Date(iso)
   const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
   return { date, time }
-}
-
-function DisabledFilter({ label }: { label: string }) {
-  return (
-    <Tooltip text="Coming soon" icon={false} position="Top">
-      <div className="audit-filter audit-filter--disabled" aria-disabled="true">
-        <span className="audit-filter-label">{label}</span>
-        <ArrowDown2 size={16} color="var(--text-disabled)" variant="Linear" />
-      </div>
-    </Tooltip>
-  )
 }
 
 function AuditLog() {
@@ -102,7 +87,7 @@ function AuditLog() {
 
   return (
     <div className="audit">
-      {/* Filter bar — Search + Category are interactive at launch; the rest are placeholders */}
+      {/* Filter bar — Search across all fields + Category filter */}
       <div className="audit-filters">
         <Search
           size="M"
@@ -125,9 +110,6 @@ function AuditLog() {
             setPage(0)
           }}
         />
-        {DISABLED_FILTERS.map((label) => (
-          <DisabledFilter key={label} label={label} />
-        ))}
       </div>
 
       {total === 0 ? (
