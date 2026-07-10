@@ -269,20 +269,24 @@
   justify-content: center;
   padding: 6px 12px;
   border-radius: var(--radius-full);
-  background: rgba(255, 165, 56, 0.16);
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-warning, #FFA538);
   line-height: 1.2;
   white-space: nowrap;
 }
+
+/* Per-course status colors — same pill palette as the Learning Records badges */
+.cd-table__status-badge--overdue     { background: rgba(223, 22, 66, 0.16);  color: var(--text-error); }
+.cd-table__status-badge--at-risk     { background: rgba(255, 165, 56, 0.16); color: var(--text-warning, #FFA538); }
+.cd-table__status-badge--in-progress { background: rgba(0, 206, 230, 0.16);  color: var(--primary-600); }
+.cd-table__status-badge--completed   { background: rgba(24, 169, 87, 0.16);  color: var(--success-500); }
 
 .cd-table__cell--overdue {
   text-decoration: line-through;
 }
 .cd-table__cell--overdue .cd-table__date-top,
 .cd-table__cell--overdue .cd-table__date-year {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 .cd-table__date-stack {

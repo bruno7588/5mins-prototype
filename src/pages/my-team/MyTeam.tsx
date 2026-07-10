@@ -30,7 +30,7 @@ import Search from '../../components/Search/Search'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
-import CoursesDrawer, { type CourseBucket, type DrawerCourse } from './CoursesDrawer'
+import CoursesDrawer, { type DrawerCourse, type DrawerCourseStatus } from './CoursesDrawer'
 import ReminderDrawer from './ReminderDrawer'
 import EngagementTab from './EngagementTab'
 import LearningRecordsTab from './LearningRecordsTab'
@@ -145,21 +145,35 @@ function addDays(days: number): string {
 
 const THUMB_POOL = [thumb1, thumb2, thumb3]
 
-function coursesFor(memberId: string, bucket: CourseBucket, count: number): DrawerCourse[] {
+// Title-pool offset per bucket so a member's buckets don't repeat titles
+const BUCKET_TITLE_OFFSET: Record<DrawerCourseStatus, number> = {
+  overdue: 0,
+  'at-risk': 3,
+  'in-progress': 6,
+  completed: 9,
+}
+
+function coursesFor(memberId: string, bucket: DrawerCourseStatus, count: number): DrawerCourse[] {
   if (count === 0) return []
   const seed = [...memberId].reduce((a, c) => a + c.charCodeAt(0), 0)
   return Array.from({ length: count }).map((_, i) => {
-    const titleIdx = (seed + i * 7 + (bucket === 'overdue' ? 0 : 3)) % COURSE_POOL.length
+    const titleIdx = (seed + i * 7 + BUCKET_TITLE_OFFSET[bucket]) % COURSE_POOL.length
     const title = COURSE_POOL[titleIdx]
     const thumbnailSrc = THUMB_POOL[(seed + i) % THUMB_POOL.length]
     const dueOffset = bucket === 'overdue'
-      ? -(((seed + i) % 14) + 1)     // 1–14 days ago
-      : ((seed + i * 3) % 28) + 2    // 2–29 days ahead
+      ? -(((seed + i) % 14) + 1)                  // 1–14 days ago
+      : bucket === 'at-risk'
+        ? ((seed + i * 3) % 28) + 2               // 2–29 days ahead
+        : ((seed + i * 3) % 30) + 30              // in-progress/completed: 30–59 days ahead
     // start date: typically 30–60 days before due date
     const startOffset = dueOffset - (30 + ((seed + i * 5) % 30))
-    const progress = bucket === 'overdue'
-      ? (i * 11) % 40
-      : ((seed + i * 13) % 3 === 0 ? 0 : ((seed + i * 7) % 45) + 5)  // mix of 0% (not started) and 5-49% (low progress)
+    const progress = bucket === 'completed'
+      ? 100
+      : bucket === 'in-progress'
+        ? ((seed + i * 7) % 66) + 20              // 20–85%
+        : bucket === 'overdue'
+          ? (i * 11) % 40
+          : ((seed + i * 13) % 3 === 0 ? 0 : ((seed + i * 7) % 45) + 5)  // at-risk: mix of 0% and 5–49%
     return {
       id: `${memberId}-${bucket}-${i}`,
       title,
@@ -167,9 +181,50 @@ function coursesFor(memberId: string, bucket: CourseBucket, count: number): Draw
       startDate: addDays(startOffset),
       dueDate: addDays(dueOffset),
       progress,
+      status: bucket,
     }
   })
 }
+
+/** Every course assigned to a member, worst bucket first — feeds the drawer. */
+function allCoursesFor(m: TeamMember): DrawerCourse[] {
+  return [
+    ...coursesFor(m.id, 'overdue', m.overdue),
+    ...coursesFor(m.id, 'at-risk', m.atRisk),
+    ...coursesFor(m.id, 'in-progress', m.inProgress),
+    ...coursesFor(m.id, 'completed', m.completed),
+  ]
+}
+
+/* ── Manager-friendly rollup status ──
+   Completed: nothing outstanding · Not Started: 0% overall ·
+   Low Progress: under 40% overall · On Track: the rest. */
+type MemberStatus = 'not-started' | 'low-progress' | 'on-track' | 'completed'
+
+function statusFor(m: Pick<TeamMember, 'overdue' | 'atRisk' | 'inProgress' | 'completed' | 'overallProgress'>): MemberStatus {
+  if (m.overdue + m.atRisk + m.inProgress === 0 && m.completed > 0) return 'completed'
+  if (m.overallProgress === 0) return 'not-started'
+  if (m.overallProgress < 40) return 'low-progress'
+  return 'on-track'
+}
+
+const STATUS_LABEL: Record<MemberStatus, string> = {
+  'not-started': 'Not Started',
+  'low-progress': 'Low Progress',
+  'on-track': 'On Track',
+  completed: 'Completed',
+}
+
+// Sort rank — worst first when ascending
+const STATUS_RANK: Record<MemberStatus, number> = {
+  'not-started': 0,
+  'low-progress': 1,
+  'on-track': 2,
+  completed: 3,
+}
+
+const coursesTotal = (m: Pick<TeamMember, 'overdue' | 'atRisk' | 'inProgress' | 'completed'>) =>
+  m.overdue + m.atRisk + m.inProgress + m.completed
 
 const team: TeamMember[] = [
   // Direct reports of the current user
@@ -179,14 +234,14 @@ const team: TeamMember[] = [
   { id: 'm4', name: 'Noah Williams',    role: 'Concierge',                  initials: 'NW',                     managerIds: [CURRENT_USER_ID], overdue: 0, atRisk: 0, inProgress: 3, completed: 6,  overallProgress: 68 },
   { id: 'm5', name: 'Mei Tanaka',       role: 'Housekeeping',               initials: 'MT',                     managerIds: [CURRENT_USER_ID], overdue: 3, atRisk: 2, inProgress: 0, completed: 2,  overallProgress: 22, lastReminderSentAt: addDays(-1) },
   { id: 'm6', name: 'Ethan Brooks',     role: 'Barista',                    initials: 'EB',                     managerIds: [CURRENT_USER_ID], overdue: 0, atRisk: 1, inProgress: 1, completed: 4,  overallProgress: 45 },
-  { id: 'm7', name: 'Priya Shah',       role: 'Shift Lead',                 initials: 'PS',                     managerIds: [CURRENT_USER_ID], teamName: 'Shift Operations',   overdue: 0, atRisk: 0, inProgress: 2, completed: 7,  overallProgress: 91 },
+  { id: 'm7', name: 'Priya Shah',       role: 'Shift Lead',                 initials: 'PS',                     managerIds: [CURRENT_USER_ID], teamName: 'Shift Operations',   overdue: 0, atRisk: 0, inProgress: 0, completed: 9,  overallProgress: 100 },
   { id: 'm8', name: 'Samantha Rivers',  role: 'Financial Analyst',          initials: 'SR', avatarSrc: avatar4, managerIds: [CURRENT_USER_ID], overdue: 1, atRisk: 0, inProgress: 1, completed: 3,  overallProgress: 0  },
 
   // Indirect reports — Jessica Hart's (m2) compliance team
   { id: 'm9',  name: 'Laura Chen',      role: 'Compliance Analyst',         initials: 'LC', managerIds: ['m2', 'm7'], overdue: 1, atRisk: 2, inProgress: 1, completed: 4, overallProgress: 55 },
   { id: 'm10', name: 'Marcus Reid',     role: 'Internal Auditor',           initials: 'MR', managerIds: ['m2'], overdue: 0, atRisk: 1, inProgress: 2, completed: 3, overallProgress: 72 },
   { id: 'm11', name: 'Sofia Alvarez',   role: 'Compliance Analyst',         initials: 'SA', managerIds: ['m2'], overdue: 2, atRisk: 0, inProgress: 1, completed: 2, overallProgress: 30 },
-  { id: 'm12', name: 'Oliver Tran',     role: 'Risk Analyst',               initials: 'OT', managerIds: ['m2'], overdue: 0, atRisk: 0, inProgress: 1, completed: 6, overallProgress: 88 },
+  { id: 'm12', name: 'Oliver Tran',     role: 'Risk Analyst',               initials: 'OT', managerIds: ['m2'], overdue: 0, atRisk: 0, inProgress: 0, completed: 7, overallProgress: 100 },
 
   // Indirect reports — Priya Shah's (m7) shift team
   { id: 'm13', name: 'Jamal Carter',    role: 'Barista',                    initials: 'JC', managerIds: ['m7'], overdue: 0, atRisk: 1, inProgress: 2, completed: 3, overallProgress: 60 },
@@ -212,15 +267,16 @@ function MyTeam() {
   const location = useLocation()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
-  const [drawerState, setDrawerState] = useState<{ memberId: string; bucket: CourseBucket } | null>(null)
+  const [drawerMemberId, setDrawerMemberId] = useState<string | null>(null)
   const [reminderOpen, setReminderOpen] = useState(false)
   // Reminders sent during this session — overrides the seeded lastReminderSentAt
   const [sentMap, setSentMap] = useState<Record<string, string>>({})
   const toast = useToast()
 
   const lastSentFor = (m: TeamMember) => sentMap[m.id] ?? m.lastReminderSentAt
-  const [sortKey, setSortKey] = useState<'overdue' | 'atRisk' | 'inProgress' | 'completed' | 'progress'>('overdue')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  // Default: status ascending — members needing attention (Not Started, Low Progress) first
+  const [sortKey, setSortKey] = useState<'courses' | 'progress' | 'status'>('status')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [courseFilter, setCourseFilter] = useState<'all' | 'compliance'>('all')
   const [scopeFilter, setScopeFilter] = useState<string>('direct')
   const [page, setPage] = useState(1)
@@ -240,11 +296,11 @@ function MyTeam() {
     { value: 'all', label: 'All reports', description: 'Includes indirect reports from each manager under you' },
   ]
 
-  const toggleSort = (key: 'overdue' | 'atRisk' | 'inProgress' | 'completed' | 'progress') => {
+  const toggleSort = (key: 'courses' | 'progress' | 'status') => {
     if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
     else {
       setSortKey(key)
-      setSortDir('desc')
+      setSortDir(key === 'status' ? 'asc' : 'desc') // status: worst first by default
     }
   }
 
@@ -267,10 +323,8 @@ function MyTeam() {
       : base
     const sorted = [...scaled].sort((a, b) => {
       let diff = 0
-      if (sortKey === 'overdue') diff = a.overdue - b.overdue
-      else if (sortKey === 'atRisk') diff = a.atRisk - b.atRisk
-      else if (sortKey === 'inProgress') diff = a.inProgress - b.inProgress
-      else if (sortKey === 'completed') diff = a.completed - b.completed
+      if (sortKey === 'courses') diff = coursesTotal(a) - coursesTotal(b)
+      else if (sortKey === 'status') diff = STATUS_RANK[statusFor(a)] - STATUS_RANK[statusFor(b)]
       else diff = a.overallProgress - b.overallProgress
       return sortDir === 'asc' ? diff : -diff
     })
@@ -549,70 +603,13 @@ function MyTeam() {
                   <button
                     type="button"
                     className="mt-cp__table-cell mt-cp__table-cell--metric mt-cp__th-btn"
-                    onClick={() => toggleSort('completed')}
-                    aria-label={`Sort by Completed, currently ${sortKey === 'completed' ? sortDir : 'unsorted'}`}
+                    onClick={() => toggleSort('courses')}
+                    aria-label={`Sort by Courses, currently ${sortKey === 'courses' ? sortDir : 'unsorted'}`}
                   >
-                    <Tooltip text="Courses completed all-time" position="Top" alignment="Center" icon={false}>
-                      <span className="mt-cp__th-label">Completed</span>
+                    <Tooltip text="All courses assigned to this learner" position="Top" alignment="Center" icon={false}>
+                      <span className="mt-cp__th-label">Courses</span>
                     </Tooltip>
-                    {sortKey === 'completed' ? (
-                      sortDir === 'asc' ? (
-                        <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
-                      ) : (
-                        <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
-                      )
-                    ) : (
-                      <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-cp__table-cell mt-cp__table-cell--metric mt-cp__th-btn"
-                    onClick={() => toggleSort('inProgress')}
-                    aria-label={`Sort by In Progress, currently ${sortKey === 'inProgress' ? sortDir : 'unsorted'}`}
-                  >
-                    <Tooltip text="Courses started but not yet complete" position="Top" alignment="Center" icon={false}>
-                      <span className="mt-cp__th-label">In Progress</span>
-                    </Tooltip>
-                    {sortKey === 'inProgress' ? (
-                      sortDir === 'asc' ? (
-                        <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
-                      ) : (
-                        <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
-                      )
-                    ) : (
-                      <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-cp__table-cell mt-cp__table-cell--metric mt-cp__th-btn"
-                    onClick={() => toggleSort('atRisk')}
-                    aria-label={`Sort by At Risk, currently ${sortKey === 'atRisk' ? sortDir : 'unsorted'}`}
-                  >
-                    <Tooltip text="Courses due within the next 30 days" position="Top" alignment="Center" icon={false}>
-                      <span className="mt-cp__th-label">At Risk</span>
-                    </Tooltip>
-                    {sortKey === 'atRisk' ? (
-                      sortDir === 'asc' ? (
-                        <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
-                      ) : (
-                        <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
-                      )
-                    ) : (
-                      <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-cp__table-cell mt-cp__table-cell--metric mt-cp__th-btn"
-                    onClick={() => toggleSort('overdue')}
-                    aria-label={`Sort by Overdue, currently ${sortKey === 'overdue' ? sortDir : 'unsorted'}`}
-                  >
-                    <Tooltip text="Courses past their due date" position="Top" alignment="Center" icon={false}>
-                      <span className="mt-cp__th-label">Overdue</span>
-                    </Tooltip>
-                    {sortKey === 'overdue' ? (
+                    {sortKey === 'courses' ? (
                       sortDir === 'asc' ? (
                         <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
                       ) : (
@@ -630,6 +627,23 @@ function MyTeam() {
                   >
                     <span className="mt-cp__th-label">Overall progress</span>
                     {sortKey === 'progress' ? (
+                      sortDir === 'asc' ? (
+                        <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
+                      ) : (
+                        <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
+                      )
+                    ) : (
+                      <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-cp__table-cell mt-cp__table-cell--status mt-cp__th-btn"
+                    onClick={() => toggleSort('status')}
+                    aria-label={`Sort by Status, currently ${sortKey === 'status' ? sortDir : 'unsorted'}`}
+                  >
+                    <span className="mt-cp__th-label">Status</span>
+                    {sortKey === 'status' ? (
                       sortDir === 'asc' ? (
                         <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
                       ) : (
@@ -708,17 +722,7 @@ function MyTeam() {
                         )
                       })()}
                       <div className="mt-cp__table-cell mt-cp__table-cell--metric">
-                        <span className={`mt-cp__metric-plain${r.completed === 0 ? ' mt-cp__metric-plain--zero' : ''}`}>
-                          {r.completed}
-                        </span>
-                      </div>
-                      <div className="mt-cp__table-cell mt-cp__table-cell--metric">
-                        <span className={`mt-cp__metric-plain${r.inProgress === 0 ? ' mt-cp__metric-plain--zero' : ''}`}>
-                          {r.inProgress}
-                        </span>
-                      </div>
-                      <div className="mt-cp__table-cell mt-cp__table-cell--metric">
-                        {r.atRisk > 0 ? (
+                        {coursesTotal(r) > 0 ? (
                           <Tooltip
                             text="View courses"
                             position="Top"
@@ -727,32 +731,11 @@ function MyTeam() {
                           >
                             <button
                               type="button"
-                              className="mt-cp__metric-link mt-cp__metric-link--warning"
-                              onClick={() => setDrawerState({ memberId: r.id, bucket: 'at-risk' })}
-                              aria-label={`View ${r.atRisk} at-risk course${r.atRisk === 1 ? '' : 's'} for ${r.name}`}
+                              className="mt-cp__metric-link mt-cp__metric-link--neutral"
+                              onClick={() => setDrawerMemberId(r.id)}
+                              aria-label={`View ${coursesTotal(r)} course${coursesTotal(r) === 1 ? '' : 's'} for ${r.name}`}
                             >
-                              {r.atRisk}
-                            </button>
-                          </Tooltip>
-                        ) : (
-                          <span className="mt-cp__status-dash">–</span>
-                        )}
-                      </div>
-                      <div className="mt-cp__table-cell mt-cp__table-cell--metric">
-                        {r.overdue > 0 ? (
-                          <Tooltip
-                            text="View courses"
-                            position="Top"
-                            alignment="Center"
-                            icon={false}
-                          >
-                            <button
-                              type="button"
-                              className="mt-cp__metric-link mt-cp__metric-link--danger"
-                              onClick={() => setDrawerState({ memberId: r.id, bucket: 'overdue' })}
-                              aria-label={`View ${r.overdue} overdue course${r.overdue === 1 ? '' : 's'} for ${r.name}`}
-                            >
-                              {r.overdue}
+                              {coursesTotal(r)}
                             </button>
                           </Tooltip>
                         ) : (
@@ -762,6 +745,11 @@ function MyTeam() {
                       <div className={`mt-cp__table-cell mt-cp__table-cell--metric${progressMuted ? ' mt-cp__table-cell--muted' : ''}`}>
                         <ProgressBar value={r.overallProgress} muted={progressMuted} />
                         <span className="mt-cp__progress-pct">{r.overallProgress}%</span>
+                      </div>
+                      <div className="mt-cp__table-cell mt-cp__table-cell--status">
+                        <span className={`mt-cp__status-badge mt-cp__status-badge--${statusFor(r)}`}>
+                          {STATUS_LABEL[statusFor(r)]}
+                        </span>
                       </div>
                       <div className="mt-cp__table-cell mt-cp__table-cell--action">
                         {needsAttention && (() => {
@@ -832,21 +820,18 @@ function MyTeam() {
         </section>
       </div>
 
-      {drawerState && (() => {
-        const member = team.find((m) => m.id === drawerState.memberId)
+      {drawerMemberId && (() => {
+        const member = team.find((m) => m.id === drawerMemberId)
         if (!member) return null
-        const count = drawerState.bucket === 'overdue' ? member.overdue : member.atRisk
-        const courses = coursesFor(member.id, drawerState.bucket, count)
         return (
           <CoursesDrawer
             open
-            bucket={drawerState.bucket}
             memberName={member.name}
             memberRole={member.role}
             memberAvatarSrc={member.avatarSrc}
             memberInitials={member.initials}
-            courses={courses}
-            onClose={() => setDrawerState(null)}
+            courses={allCoursesFor(member)}
+            onClose={() => setDrawerMemberId(null)}
           />
         )
       })()}

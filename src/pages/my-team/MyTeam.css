@@ -951,31 +951,39 @@
   transition: background 150ms ease, color 150ms ease;
 }
 
-.mt-cp__metric-link:hover,
-.mt-cp__metric-link:focus-visible {
-  background: var(--input-background);
-  border-radius: var(--radius-s);
+.mt-cp__metric-link--neutral {
+  color: var(--text-primary);
 }
-
-.mt-cp__metric-link--danger {
-  color: var(--danger-500);
-}
-.mt-cp__metric-link--danger:hover,
-.mt-cp__metric-link--danger:focus-visible {
-  color: var(--danger-600);
+.mt-cp__metric-link--neutral:hover,
+.mt-cp__metric-link--neutral:focus-visible {
+  color: var(--text-button-hover);
   text-decoration: underline;
   outline: none;
 }
 
-.mt-cp__metric-link--warning {
-  color: var(--text-warning);
+/* Status column — user-level rollup badge */
+.mt-cp__table-cell--status {
+  width: 148px;
+  flex-shrink: 0;
+  justify-content: center;
 }
-.mt-cp__metric-link--warning:hover,
-.mt-cp__metric-link--warning:focus-visible {
-  color: var(--warning-700); /* TODO(dark): verify hover contrast on dark bg */
-  text-decoration: underline;
-  outline: none;
+
+.mt-cp__status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
 }
+
+.mt-cp__status-badge--not-started  { background: var(--input-background);    color: var(--text-secondary); }
+.mt-cp__status-badge--low-progress { background: rgba(255, 165, 56, 0.16);   color: var(--text-warning, #FFA538); }
+.mt-cp__status-badge--on-track     { background: rgba(0, 206, 230, 0.16);    color: var(--primary-600); }
+.mt-cp__status-badge--completed    { background: rgba(24, 169, 87, 0.16);    color: var(--success-500); }
 
 .mt-cp__metric-plain--zero {
   color: var(--text-disabled);

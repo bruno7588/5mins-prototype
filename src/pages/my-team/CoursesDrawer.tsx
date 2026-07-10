@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './CoursesDrawer.css'
 
-export type CourseBucket = 'overdue' | 'at-risk'
+export type DrawerCourseStatus = 'overdue' | 'at-risk' | 'in-progress' | 'completed'
 
 export interface DrawerCourse {
   id: string
@@ -10,11 +10,18 @@ export interface DrawerCourse {
   startDate: string  // ISO date
   dueDate: string    // ISO date
   progress: number   // 0–100
+  status: DrawerCourseStatus
+}
+
+const STATUS_LABEL: Record<DrawerCourseStatus, string> = {
+  overdue: 'Overdue',
+  'at-risk': 'At Risk',
+  'in-progress': 'In Progress',
+  completed: 'Completed',
 }
 
 interface Props {
   open: boolean
-  bucket: CourseBucket
   memberName: string
   memberRole: string
   memberAvatarSrc?: string
@@ -32,7 +39,6 @@ function formatDateSplit(iso: string): { top: string; year: string } {
 
 function CoursesDrawer({
   open,
-  bucket,
   memberName,
   memberRole,
   memberAvatarSrc,
@@ -62,8 +68,6 @@ function CoursesDrawer({
 
   if (!open) return null
 
-  const firstColLabel = bucket === 'overdue' ? 'Overdue courses' : 'Courses At Risk'
-  const isAtRisk = bucket === 'at-risk'
   const segments = 8
 
   return (
@@ -99,10 +103,10 @@ function CoursesDrawer({
         <div className="side-drawer__content">
           <div className="cd-table">
             <div className="cd-table__header">
-              <div className="cd-table__cell cd-table__cell--course">{firstColLabel}</div>
+              <div className="cd-table__cell cd-table__cell--course">Courses</div>
               <div className="cd-table__cell cd-table__cell--date">Start date</div>
               <div className="cd-table__cell cd-table__cell--date">Due date</div>
-              {isAtRisk && <div className="cd-table__cell cd-table__cell--status">Status</div>}
+              <div className="cd-table__cell cd-table__cell--status">Status</div>
               <div className="cd-table__cell cd-table__cell--progress">Progress</div>
             </div>
 
@@ -110,7 +114,6 @@ function CoursesDrawer({
               const filled = Math.round((c.progress / 100) * segments)
               const start = formatDateSplit(c.startDate)
               const due = formatDateSplit(c.dueDate)
-              const isOverdue = new Date(c.dueDate) < new Date()
               return (
                 <div className="cd-table__row" key={c.id}>
                   <div className="cd-table__cell cd-table__cell--course">
@@ -123,19 +126,17 @@ function CoursesDrawer({
                       <span className="cd-table__date-year">{start.year}</span>
                     </div>
                   </div>
-                  <div className={`cd-table__cell cd-table__cell--date${isOverdue ? ' cd-table__cell--overdue' : ''}`}>
+                  <div className={`cd-table__cell cd-table__cell--date${c.status === 'overdue' ? ' cd-table__cell--overdue' : ''}`}>
                     <div className="cd-table__date-stack">
                       <span className="cd-table__date-top">{due.top}</span>
                       <span className="cd-table__date-year">{due.year}</span>
                     </div>
                   </div>
-                  {isAtRisk && (
-                    <div className="cd-table__cell cd-table__cell--status">
-                      <span className="cd-table__status-badge">
-                        {c.progress === 0 ? 'Not Started' : 'Low Progress'}
-                      </span>
-                    </div>
-                  )}
+                  <div className="cd-table__cell cd-table__cell--status">
+                    <span className={`cd-table__status-badge cd-table__status-badge--${c.status}`}>
+                      {STATUS_LABEL[c.status]}
+                    </span>
+                  </div>
                   <div className="cd-table__cell cd-table__cell--progress">
                     <div className="cd-table__progress" role="progressbar" aria-valuenow={c.progress} aria-valuemin={0} aria-valuemax={100}>
                       {Array.from({ length: segments }).map((_, i) => (
