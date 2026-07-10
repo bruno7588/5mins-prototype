@@ -173,23 +173,31 @@
 }
 
 /* ── Table ── */
+.automations-table-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
 .automations-table {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm); /* 12px */
   width: 100%;
+  min-width: fit-content;
 }
 
 .automations-table-header {
   display: flex;
   align-items: center;
   width: 100%;
+  min-width: fit-content;
 }
 
 .automations-table-row {
   display: flex;
   align-items: center;
   width: 100%;
+  min-width: fit-content;
   border: 1px solid var(--border);
   border-radius: var(--radius-s); /* 8px */
   transition: background 150ms ease;
@@ -215,7 +223,8 @@
 }
 
 .automations-table-cell--name {
-  flex: 1 0 0;
+  flex: 1 0 240px;
+  min-width: 240px;
   color: var(--text-primary);
 }
 
@@ -668,11 +677,11 @@
 
 /* ── Activity table cells ── */
 .automations-table-cell--user {
-  flex: 1.4 0 0;
+  flex: 1.4 0 240px;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
-  min-width: 0;
+  min-width: 240px;
 }
 
 .automations-user-name {
@@ -690,9 +699,9 @@
 }
 
 .automations-table-cell--automation {
-  flex: 1.6 0 0;
+  flex: 1.6 0 240px;
   gap: var(--space-s);
-  min-width: 0;
+  min-width: 240px;
   color: var(--text-primary);
 }
 
@@ -759,6 +768,67 @@
 
 .automations-table-cell--sortable:hover {
   color: var(--text-primary);
+}
+
+/* ── Sticky first column (Automation on Manage, User on Activity) ──
+   Transparent at rest so the row's own rounded border shows through
+   untouched (no squared corners). */
+.automations-table-scroll .automations-table-cell--name,
+.automations-table-scroll .automations-table-cell--user {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+
+/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks
+   the content sliding under it. Its top/bottom borders (aligned over the
+   row's via -1px margins) preserve the row separators; the right-edge shadow
+   (::after) signals the freeze. The left edge is square by design — a rounded
+   mask over a row whose real corner has scrolled off-screen produces corner
+   artifacts. */
+.automations-table-scroll--scrolled .automations-table-row .automations-table-cell--name,
+.automations-table-scroll--scrolled .automations-table-row .automations-table-cell--user {
+  align-self: stretch;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  background: var(--page-background);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+/* User cell stacks name/email vertically — keep it centered when stretched */
+.automations-table-scroll--scrolled .automations-table-row .automations-table-cell--user {
+  justify-content: center;
+}
+
+.automations-table-scroll--scrolled .automations-table-row:hover .automations-table-cell--name,
+.automations-table-scroll--scrolled .automations-table-row:hover .automations-table-cell--user {
+  background: var(--cards-background-hover);
+}
+
+.automations-table-scroll--scrolled .automations-table-header .automations-table-cell--name,
+.automations-table-scroll--scrolled .automations-table-header .automations-table-cell--user {
+  background: var(--page-background);
+}
+
+/* Shadow on the pinned cell's right edge — only when scrolled */
+.automations-table-scroll .automations-table-cell--name::after,
+.automations-table-scroll .automations-table-cell--user::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.automations-table-scroll--scrolled .automations-table-cell--name::after,
+.automations-table-scroll--scrolled .automations-table-cell--user::after {
+  opacity: 1;
 }
 
 .automations-table-empty {

@@ -126,7 +126,7 @@
 .hris-table .people-table-header {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 5; /* above the sticky row cells (z-index 3) */
   background: var(--page-background);
 }
 
@@ -173,6 +173,60 @@
   margin-left: var(--space-s);
 }
 
+/* ===== Sticky first column ===== */
+/* Scroll wrapper — the table overflows horizontally instead of squashing */
+.hris-table-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
+/* First column (HRIS job title) pins while the rest scrolls — transparent at
+   rest so the row's own rounded border shows through untouched. The header's
+   first cell only needs the left pin: the vertical (top) pin lives on
+   .people-table-header itself, and the cell rides inside it. */
+.hris-table-scroll .hris-col--title {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+
+/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks the
+   content sliding under it. Its top/bottom borders (aligned over the row's via
+   -1px margins) preserve the row separators; the left edge is square by design. */
+.hris-table-scroll--scrolled .people-table-row .hris-col--title {
+  align-self: stretch;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  background: var(--page-background);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.hris-table-scroll--scrolled .people-table-row:hover .hris-col--title {
+  background: var(--cards-background-hover);
+}
+
+.hris-table-scroll--scrolled .people-table-header .hris-col--title {
+  background: var(--page-background);
+}
+
+/* Right-edge freeze shadow — only when scrolled */
+.hris-table-scroll .hris-col--title::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.hris-table-scroll--scrolled .hris-col--title::after {
+  opacity: 1;
+}
 
 .hris-role-cell {
   display: flex;

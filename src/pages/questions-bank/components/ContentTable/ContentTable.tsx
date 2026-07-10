@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   SearchNormal1,
   Add,
@@ -145,6 +145,13 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
   const [dismissedTooltipIds, setDismissedTooltipIds] = useState<number[]>([])
   const menuRef = useRef<HTMLDivElement>(null)
 
+  // Sticky first column: flag when the table is horizontally scrolled
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const handleScroll = useCallback(() => {
+    if (scrollRef.current) setIsScrolled(scrollRef.current.scrollLeft > 0)
+  }, [])
+
   useEffect(() => {
     if (menuOpenId === null) return
     const handleClick = (e: MouseEvent) => {
@@ -216,150 +223,156 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
         </button>
       </div>
 
-      {/* Table */}
-      <table className="qb-content-table">
-        <thead>
-          <tr>
-            <th>File name</th>
-            <th>Type</th>
-            <th>Uploaded by</th>
-            <th className="col-sort">
-              Updated at
-              <span className="sort-indicator">
-                <ArrowDown2 size={14} color="var(--text-secondary)" />
-              </span>
-            </th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.id}>
-              <td>
-                <div className="qb-content-table-file">
-                  <div className="qb-content-table-thumb">
-                    <div
-                      className="qb-content-table-thumb-img"
-                      style={{ background: row.thumbColor, borderRadius: 'var(--radius-s)' }}
-                    />
-                  </div>
-                  <span
-                    className={`qb-content-table-filename${isScorm ? ' qb-content-table-filename--clickable' : ' qb-content-table-filename--clickable'}`}
-                    onClick={() => isScorm ? setEditScormRow(row) : onLessonClick?.(row)}
-                    title={isScorm ? 'Click to edit SCORM' : 'Click to edit lesson'}
-                  >
-                    {row.fileName}
-                  </span>
-                </div>
-              </td>
-              <td className="qb-content-table-type">{row.type}</td>
-              <td className="qb-content-table-uploader">{row.uploadedBy}</td>
-              <td className="qb-content-table-date">{row.updatedAt}</td>
-              <td>
-                <div className="qb-content-table-actions">
-                  {isScorm && (
-                    <button className="qb-content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
-                      <Eye size={20} color="var(--text-tertiary)" variant="Linear" />
-                    </button>
-                  )}
-                  {!isScorm && aiQuizReadyIds.includes(row.id) && (
-                    <div className="qb-content-table-ai-badge-wrapper">
-                      {!dismissedTooltipIds.includes(row.id) && (
-                        <div className="qb-content-table-ai-tooltip">
-                          <p className="qb-content-table-ai-tooltip-text">AI generated quizzes are ready for review</p>
-                          <div className="qb-content-table-ai-tooltip-actions">
-                            <button
-                              className="qb-content-table-ai-tooltip-dismiss"
-                              onClick={() => setDismissedTooltipIds(prev => [...prev, row.id])}
-                            >
-                              Dismiss
-                            </button>
-                            <button
-                              className="qb-content-table-ai-tooltip-review"
-                              onClick={() => {
-                                setDismissedTooltipIds(prev => [...prev, row.id])
-                                onLessonClick?.(row)
-                              }}
-                            >
-                              Review Quiz
-                            </button>
-                          </div>
-                          <div className="qb-content-table-ai-tooltip-arrow" />
-                        </div>
-                      )}
-                      <button
-                        className="qb-content-table-ai-badge"
-                        aria-label="AI quizzes ready for review"
-                        onClick={() => onLessonClick?.(row)}
-                      >
-                        <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12.6948 9.22578C13.0267 7.85703 14.9733 7.85703 15.3052 9.22578L16.2185 12.992C16.337 13.4807 16.7185 13.8622 17.2072 13.9807L20.9734 14.894C22.3422 15.2259 22.3422 17.1726 20.9734 17.5045L17.2072 18.4177C16.7185 18.5362 16.337 18.9178 16.2185 19.4064L15.3052 23.1727C14.9733 24.5414 13.0267 24.5414 12.6948 23.1727L11.7815 19.4064C11.663 18.9178 11.2815 18.5362 10.7928 18.4177L7.02656 17.5045C5.65781 17.1726 5.65781 15.2259 7.02656 14.894L10.7928 13.9807C11.2815 13.8622 11.663 13.4807 11.7815 12.992L12.6948 9.22578Z" fill="url(#sparkle-gradient)" />
-                          <path d="M22.3705 6.71184C22.4795 6.26272 23.1182 6.26272 23.2271 6.71184L23.5268 7.94763C23.5657 8.10798 23.6909 8.23318 23.8512 8.27206L25.087 8.57172C25.5361 8.68062 25.5361 9.31938 25.087 9.42828L23.8512 9.72794C23.6909 9.76682 23.5657 9.89202 23.5268 10.0524L23.2271 11.2882C23.1182 11.7373 22.4795 11.7373 22.3705 11.2882L22.0709 10.0524C22.032 9.89202 21.9068 9.76682 21.7465 9.72794L20.5107 9.42828C20.0615 9.31938 20.0615 8.68062 20.5107 8.57172L21.7465 8.27206C21.9068 8.23318 22.032 8.10798 22.0709 7.94763L22.3705 6.71184Z" fill="url(#sparkle-gradient)" />
-                          <defs>
-                            <linearGradient id="sparkle-gradient" x1="5" y1="6" x2="26" y2="24" gradientUnits="userSpaceOnUse">
-                              <stop stopColor="#00AFC4" />
-                              <stop offset="1" stopColor="#8158EC" />
-                            </linearGradient>
-                          </defs>
-                        </svg>
-                      </button>
+      {/* Table — horizontal scroll wrapper keeps the first column pinned */}
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className={`qb-content-table-scroll${isScrolled ? ' qb-content-table-scroll--scrolled' : ''}`}
+      >
+        <table className="qb-content-table">
+          <thead>
+            <tr>
+              <th>File name</th>
+              <th>Type</th>
+              <th>Uploaded by</th>
+              <th className="col-sort">
+                Updated at
+                <span className="sort-indicator">
+                  <ArrowDown2 size={14} color="var(--text-secondary)" />
+                </span>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.id}>
+                <td>
+                  <div className="qb-content-table-file">
+                    <div className="qb-content-table-thumb">
+                      <div
+                        className="qb-content-table-thumb-img"
+                        style={{ background: row.thumbColor, borderRadius: 'var(--radius-s)' }}
+                      />
                     </div>
-                  )}
-                  {!isScorm && !aiQuizReadyIds.includes(row.id) && (
-                    <button className="qb-content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
-                      <ExportSquare size={20} color="var(--text-tertiary)" variant="Linear" />
-                    </button>
-                  )}
-                  <div className="qb-content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
-                    <button
-                      className="qb-content-table-action-btn"
-                      aria-label="More options"
-                      onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
+                    <span
+                      className={`qb-content-table-filename${isScorm ? ' qb-content-table-filename--clickable' : ' qb-content-table-filename--clickable'}`}
+                      onClick={() => isScorm ? setEditScormRow(row) : onLessonClick?.(row)}
+                      title={isScorm ? 'Click to edit SCORM' : 'Click to edit lesson'}
                     >
-                      <MoreIcon size={20} color="var(--text-tertiary)" />
-                    </button>
-                    {menuOpenId === row.id && (
-                      <div className="qb-content-table-menu">
-                        {isScorm ? (
-                          <button
-                            className="qb-content-table-menu-item"
-                            onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
-                          >
-                            <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
-                            Edit SCORM
-                          </button>
-                        ) : (
-                          <button
-                            className="qb-content-table-menu-item"
-                            onClick={() => { setMenuOpenId(null); onLessonClick?.(row) }}
-                          >
-                            <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
-                            Edit lesson
-                          </button>
+                      {row.fileName}
+                    </span>
+                  </div>
+                </td>
+                <td className="qb-content-table-type">{row.type}</td>
+                <td className="qb-content-table-uploader">{row.uploadedBy}</td>
+                <td className="qb-content-table-date">{row.updatedAt}</td>
+                <td>
+                  <div className="qb-content-table-actions">
+                    {isScorm && (
+                      <button className="qb-content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
+                        <Eye size={20} color="var(--text-tertiary)" variant="Linear" />
+                      </button>
+                    )}
+                    {!isScorm && aiQuizReadyIds.includes(row.id) && (
+                      <div className="qb-content-table-ai-badge-wrapper">
+                        {!dismissedTooltipIds.includes(row.id) && (
+                          <div className="qb-content-table-ai-tooltip">
+                            <p className="qb-content-table-ai-tooltip-text">AI generated quizzes are ready for review</p>
+                            <div className="qb-content-table-ai-tooltip-actions">
+                              <button
+                                className="qb-content-table-ai-tooltip-dismiss"
+                                onClick={() => setDismissedTooltipIds(prev => [...prev, row.id])}
+                              >
+                                Dismiss
+                              </button>
+                              <button
+                                className="qb-content-table-ai-tooltip-review"
+                                onClick={() => {
+                                  setDismissedTooltipIds(prev => [...prev, row.id])
+                                  onLessonClick?.(row)
+                                }}
+                              >
+                                Review Quiz
+                              </button>
+                            </div>
+                            <div className="qb-content-table-ai-tooltip-arrow" />
+                          </div>
                         )}
-                        <button className="qb-content-table-menu-item ui-disabled" disabled>
-                          <EyeSlash size={20} color="var(--text-secondary)" variant="Linear" />
-                          Hide
-                        </button>
                         <button
-                          className="qb-content-table-menu-item qb-content-table-menu-item--danger"
-                          onClick={() => {
-                            setMenuOpenId(null)
-                            setRows(prev => prev.filter(r => r.id !== row.id))
-                          }}
+                          className="qb-content-table-ai-badge"
+                          aria-label="AI quizzes ready for review"
+                          onClick={() => onLessonClick?.(row)}
                         >
-                          <Trash size={20} color="var(--danger-500)" variant="Linear" />
-                          Delete
+                          <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.6948 9.22578C13.0267 7.85703 14.9733 7.85703 15.3052 9.22578L16.2185 12.992C16.337 13.4807 16.7185 13.8622 17.2072 13.9807L20.9734 14.894C22.3422 15.2259 22.3422 17.1726 20.9734 17.5045L17.2072 18.4177C16.7185 18.5362 16.337 18.9178 16.2185 19.4064L15.3052 23.1727C14.9733 24.5414 13.0267 24.5414 12.6948 23.1727L11.7815 19.4064C11.663 18.9178 11.2815 18.5362 10.7928 18.4177L7.02656 17.5045C5.65781 17.1726 5.65781 15.2259 7.02656 14.894L10.7928 13.9807C11.2815 13.8622 11.663 13.4807 11.7815 12.992L12.6948 9.22578Z" fill="url(#sparkle-gradient)" />
+                            <path d="M22.3705 6.71184C22.4795 6.26272 23.1182 6.26272 23.2271 6.71184L23.5268 7.94763C23.5657 8.10798 23.6909 8.23318 23.8512 8.27206L25.087 8.57172C25.5361 8.68062 25.5361 9.31938 25.087 9.42828L23.8512 9.72794C23.6909 9.76682 23.5657 9.89202 23.5268 10.0524L23.2271 11.2882C23.1182 11.7373 22.4795 11.7373 22.3705 11.2882L22.0709 10.0524C22.032 9.89202 21.9068 9.76682 21.7465 9.72794L20.5107 9.42828C20.0615 9.31938 20.0615 8.68062 20.5107 8.57172L21.7465 8.27206C21.9068 8.23318 22.032 8.10798 22.0709 7.94763L22.3705 6.71184Z" fill="url(#sparkle-gradient)" />
+                            <defs>
+                              <linearGradient id="sparkle-gradient" x1="5" y1="6" x2="26" y2="24" gradientUnits="userSpaceOnUse">
+                                <stop stopColor="#00AFC4" />
+                                <stop offset="1" stopColor="#8158EC" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
                         </button>
                       </div>
                     )}
+                    {!isScorm && !aiQuizReadyIds.includes(row.id) && (
+                      <button className="qb-content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
+                        <ExportSquare size={20} color="var(--text-tertiary)" variant="Linear" />
+                      </button>
+                    )}
+                    <div className="qb-content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
+                      <button
+                        className="qb-content-table-action-btn"
+                        aria-label="More options"
+                        onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
+                      >
+                        <MoreIcon size={20} color="var(--text-tertiary)" />
+                      </button>
+                      {menuOpenId === row.id && (
+                        <div className="qb-content-table-menu">
+                          {isScorm ? (
+                            <button
+                              className="qb-content-table-menu-item"
+                              onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
+                            >
+                              <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+                              Edit SCORM
+                            </button>
+                          ) : (
+                            <button
+                              className="qb-content-table-menu-item"
+                              onClick={() => { setMenuOpenId(null); onLessonClick?.(row) }}
+                            >
+                              <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+                              Edit lesson
+                            </button>
+                          )}
+                          <button className="qb-content-table-menu-item ui-disabled" disabled>
+                            <EyeSlash size={20} color="var(--text-secondary)" variant="Linear" />
+                            Hide
+                          </button>
+                          <button
+                            className="qb-content-table-menu-item qb-content-table-menu-item--danger"
+                            onClick={() => {
+                              setMenuOpenId(null)
+                              setRows(prev => prev.filter(r => r.id !== row.id))
+                            }}
+                          >
+                            <Trash size={20} color="var(--danger-500)" variant="Linear" />
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Pagination */}
       <div className="qb-content-table-pagination">

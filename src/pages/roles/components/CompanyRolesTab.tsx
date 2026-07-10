@@ -1,5 +1,5 @@
 import { SearchNormal1, Edit2, Copy, ArrowLeft2, ArrowRight2, Add, Trash } from 'iconsax-react'
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import type { CompanyRole } from '../data/mockRoles'
 
 interface Props {
@@ -14,7 +14,14 @@ interface Props {
 function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onDeleteRole, onBrowseLibrary }: Props) {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
   const perPage = 10
+
+  /* Track horizontal scroll for frozen column styling */
+  const handleScroll = useCallback(() => {
+    if (scrollRef.current) setIsScrolled(scrollRef.current.scrollLeft > 0)
+  }, [])
 
   const filtered = roles.filter(r => {
     if (search && !r.name.toLowerCase().includes(search.toLowerCase())) return false
@@ -122,64 +129,70 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
           </button>
         </div>
       ) : (
-        <div className="people-table">
-          {/* Header */}
-          <div className="people-table-header">
-            <div className="people-table-cell roles-col--name-co">Role Name</div>
-            <div className="people-table-cell roles-col--skills">Skills</div>
-            <div className="people-table-cell roles-col--employees">Learners</div>
-            <div className="people-table-cell roles-col--actions"></div>
-          </div>
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className={`roles-table-scroll${isScrolled ? ' roles-table-scroll--scrolled' : ''}`}
+        >
+          <div className="people-table">
+            {/* Header */}
+            <div className="people-table-header">
+              <div className="people-table-cell roles-col--name-co">Role Name</div>
+              <div className="people-table-cell roles-col--skills">Skills</div>
+              <div className="people-table-cell roles-col--employees">Learners</div>
+              <div className="people-table-cell roles-col--actions"></div>
+            </div>
 
-          {/* Rows */}
-          {paginated.map(role => (
-            <div key={role.id} className="people-table-row">
-              <div className="people-table-cell roles-col--name-co">
-                <button
-                  className="roles-role-link"
-                  onClick={() => onEditRole(role)}
-                >
-                  {role.name}
-                </button>
-                {role.leadership && <span className="roles-leader-badge">Leadership</span>}
-              </div>
-              <div className="people-table-cell roles-col--skills">
-                {role.skills.length}
-              </div>
-              <div className="people-table-cell roles-col--employees">
-                {role.employeeCount}
-              </div>
-              <div className="people-table-cell roles-col--actions">
-                <span className="roles-icon-btn-wrapper">
+            {/* Rows */}
+            {paginated.map(role => (
+              <div key={role.id} className="people-table-row">
+                <div className="people-table-cell roles-col--name-co">
                   <button
-                    className="roles-icon-btn"
-                    onClick={() => onDuplicateRole(role)}
-                  >
-                    <Copy size={18} color="var(--text-tertiary)" />
-                  </button>
-                  <span className="roles-icon-tooltip">Duplicate</span>
-                </span>
-                <span className="roles-icon-btn-wrapper">
-                  <button
-                    className="roles-icon-btn"
+                    className="roles-role-link"
                     onClick={() => onEditRole(role)}
                   >
-                    <Edit2 size={18} color="var(--text-tertiary)" />
+                    {role.name}
                   </button>
-                  <span className="roles-icon-tooltip">Edit</span>
-                </span>
-                <span className="roles-icon-btn-wrapper">
-                  <button
-                    className="roles-icon-btn roles-icon-btn--danger"
-                    onClick={() => onDeleteRole(role)}
-                  >
-                    <Trash size={18} color="currentColor" />
-                  </button>
-                  <span className="roles-icon-tooltip">Delete</span>
-                </span>
+                  {role.leadership && <span className="roles-leader-badge">Leadership</span>}
+                </div>
+                <div className="people-table-cell roles-col--skills">
+                  {role.skills.length}
+                </div>
+                <div className="people-table-cell roles-col--employees">
+                  {role.employeeCount}
+                </div>
+                <div className="people-table-cell roles-col--actions">
+                  <span className="roles-icon-btn-wrapper">
+                    <button
+                      className="roles-icon-btn"
+                      onClick={() => onDuplicateRole(role)}
+                    >
+                      <Copy size={18} color="var(--text-tertiary)" />
+                    </button>
+                    <span className="roles-icon-tooltip">Duplicate</span>
+                  </span>
+                  <span className="roles-icon-btn-wrapper">
+                    <button
+                      className="roles-icon-btn"
+                      onClick={() => onEditRole(role)}
+                    >
+                      <Edit2 size={18} color="var(--text-tertiary)" />
+                    </button>
+                    <span className="roles-icon-tooltip">Edit</span>
+                  </span>
+                  <span className="roles-icon-btn-wrapper">
+                    <button
+                      className="roles-icon-btn roles-icon-btn--danger"
+                      onClick={() => onDeleteRole(role)}
+                    >
+                      <Trash size={18} color="currentColor" />
+                    </button>
+                    <span className="roles-icon-tooltip">Delete</span>
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 

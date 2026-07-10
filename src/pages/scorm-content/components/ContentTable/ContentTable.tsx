@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   SearchNormal1,
   Add,
@@ -132,6 +132,13 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
   const editInputRef = useRef<HTMLInputElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
+  // Sticky first column: flag when the table is horizontally scrolled
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const handleScroll = useCallback(() => {
+    if (scrollRef.current) setIsScrolled(scrollRef.current.scrollLeft > 0)
+  }, [])
+
   useEffect(() => {
     if (menuOpenId === null) return
     const handleClick = (e: MouseEvent) => {
@@ -222,112 +229,118 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
         </button>
       </div>
 
-      {/* Table */}
-      <table className="sc-content-table">
-        <thead>
-          <tr>
-            <th>File name</th>
-            <th>Type</th>
-            <th>Uploaded by</th>
-            <th className="col-sort">
-              Updated at
-              <span className="sort-indicator">
-                <ArrowDown2 size={14} color="var(--text-secondary)" />
-              </span>
-            </th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.id}>
-              <td>
-                <div className="sc-content-table-file">
-                  <div className="sc-content-table-thumb">
-                    <div
-                      className="sc-content-table-thumb-img"
-                      style={{ background: row.thumbColor, borderRadius: 'var(--radius-s)' }}
-                    />
-                  </div>
-                  {!isScorm && editingId === row.id ? (
-                    <input
-                      ref={editInputRef}
-                      className="sc-content-table-filename-input"
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      onBlur={saveEdit}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') saveEdit()
-                        if (e.key === 'Escape') cancelEdit()
-                      }}
-                      autoFocus
-                    />
-                  ) : (
-                    <span
-                      className={`sc-content-table-filename${isScorm ? ' sc-content-table-filename--clickable' : ' sc-content-table-filename--editable'}`}
-                      onClick={() => isScorm ? setEditScormRow(row) : startEditing(row)}
-                      title={isScorm ? 'Click to edit SCORM' : 'Click to edit'}
-                    >
-                      {row.fileName}
-                    </span>
-                  )}
-                </div>
-              </td>
-              <td className="sc-content-table-type">{row.type}</td>
-              <td className="sc-content-table-uploader">{row.uploadedBy}</td>
-              <td className="sc-content-table-date">{row.updatedAt}</td>
-              <td>
-                <div className="sc-content-table-actions">
-                  {isScorm && (
-                    <button className="sc-content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
-                      <Eye size={20} color="var(--text-tertiary)" variant="Linear" />
-                    </button>
-                  )}
-                  {!isScorm && (
-                    <button className="sc-content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
-                      <ExportSquare size={20} color="var(--text-tertiary)" variant="Linear" />
-                    </button>
-                  )}
-                  <div className="sc-content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
-                    <button
-                      className="sc-content-table-action-btn"
-                      aria-label="More options"
-                      onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
-                    >
-                      <MoreIcon size={20} color="var(--text-tertiary)" />
-                    </button>
-                    {menuOpenId === row.id && (
-                      <div className="sc-content-table-menu">
-                        <button
-                          className="sc-content-table-menu-item"
-                          onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
-                        >
-                          <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
-                          Edit SCORM
-                        </button>
-                        <button className="sc-content-table-menu-item ui-disabled" disabled>
-                          <EyeSlash size={20} color="var(--text-secondary)" variant="Linear" />
-                          Hide
-                        </button>
-                        <button
-                          className="sc-content-table-menu-item sc-content-table-menu-item--danger"
-                          onClick={() => {
-                            setMenuOpenId(null)
-                            setRows(prev => prev.filter(r => r.id !== row.id))
-                          }}
-                        >
-                          <Trash size={20} color="var(--danger-500)" variant="Linear" />
-                          Delete
-                        </button>
-                      </div>
+      {/* Table — horizontal scroll wrapper keeps the first column pinned */}
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className={`sc-content-table-scroll${isScrolled ? ' sc-content-table-scroll--scrolled' : ''}`}
+      >
+        <table className="sc-content-table">
+          <thead>
+            <tr>
+              <th>File name</th>
+              <th>Type</th>
+              <th>Uploaded by</th>
+              <th className="col-sort">
+                Updated at
+                <span className="sort-indicator">
+                  <ArrowDown2 size={14} color="var(--text-secondary)" />
+                </span>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.id}>
+                <td>
+                  <div className="sc-content-table-file">
+                    <div className="sc-content-table-thumb">
+                      <div
+                        className="sc-content-table-thumb-img"
+                        style={{ background: row.thumbColor, borderRadius: 'var(--radius-s)' }}
+                      />
+                    </div>
+                    {!isScorm && editingId === row.id ? (
+                      <input
+                        ref={editInputRef}
+                        className="sc-content-table-filename-input"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={saveEdit}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') saveEdit()
+                          if (e.key === 'Escape') cancelEdit()
+                        }}
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        className={`sc-content-table-filename${isScorm ? ' sc-content-table-filename--clickable' : ' sc-content-table-filename--editable'}`}
+                        onClick={() => isScorm ? setEditScormRow(row) : startEditing(row)}
+                        title={isScorm ? 'Click to edit SCORM' : 'Click to edit'}
+                      >
+                        {row.fileName}
+                      </span>
                     )}
                   </div>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </td>
+                <td className="sc-content-table-type">{row.type}</td>
+                <td className="sc-content-table-uploader">{row.uploadedBy}</td>
+                <td className="sc-content-table-date">{row.updatedAt}</td>
+                <td>
+                  <div className="sc-content-table-actions">
+                    {isScorm && (
+                      <button className="sc-content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
+                        <Eye size={20} color="var(--text-tertiary)" variant="Linear" />
+                      </button>
+                    )}
+                    {!isScorm && (
+                      <button className="sc-content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
+                        <ExportSquare size={20} color="var(--text-tertiary)" variant="Linear" />
+                      </button>
+                    )}
+                    <div className="sc-content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
+                      <button
+                        className="sc-content-table-action-btn"
+                        aria-label="More options"
+                        onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
+                      >
+                        <MoreIcon size={20} color="var(--text-tertiary)" />
+                      </button>
+                      {menuOpenId === row.id && (
+                        <div className="sc-content-table-menu">
+                          <button
+                            className="sc-content-table-menu-item"
+                            onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
+                          >
+                            <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+                            Edit SCORM
+                          </button>
+                          <button className="sc-content-table-menu-item ui-disabled" disabled>
+                            <EyeSlash size={20} color="var(--text-secondary)" variant="Linear" />
+                            Hide
+                          </button>
+                          <button
+                            className="sc-content-table-menu-item sc-content-table-menu-item--danger"
+                            onClick={() => {
+                              setMenuOpenId(null)
+                              setRows(prev => prev.filter(r => r.id !== row.id))
+                            }}
+                          >
+                            <Trash size={20} color="var(--danger-500)" variant="Linear" />
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Pagination */}
       <div className="sc-content-table-pagination">

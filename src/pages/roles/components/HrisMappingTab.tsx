@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SearchNormal1, Edit2, Trash, ArrowLeft2, ArrowRight2, Refresh, Danger, TickCircle, Convertshape2 } from 'iconsax-react'
 import Badge from '../../../components/Badge/Badge'
 import type { CompanyRole, FiveMinsRole } from '../data/mockRoles'
@@ -64,7 +64,14 @@ function HrisMappingTab({
   const isSyncActive = syncStatus === 'active'
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
   const perPage = 10
+
+  /* Track horizontal scroll for frozen column styling */
+  const handleScroll = useCallback(() => {
+    if (scrollRef.current) setIsScrolled(scrollRef.current.scrollLeft > 0)
+  }, [])
 
   const counts = useMemo(() => {
     let mapped = 0
@@ -211,96 +218,102 @@ function HrisMappingTab({
           </p>
         </div>
       ) : (
-        <div className="people-table hris-table">
-          <div className="people-table-header">
-            <div className="people-table-cell hris-col--title">
-              <span className="hris-th">
-                HRIS Job Title
-                {filterTab === 'mapped' && <SortArrow dir="asc" />}
-              </span>
-            </div>
-            <div className="people-table-cell hris-col--count">
-              <span className="hris-th">
-                Employees
-                {filterTab !== 'mapped' && <SortArrow dir="desc" />}
-              </span>
-            </div>
-            <div className="people-table-cell hris-col--role">Mapped Role</div>
-            <div className="people-table-cell hris-col--status">Status</div>
-            <div className="people-table-cell hris-col--actions"></div>
-          </div>
-
-          {paginated.map(mapping => {
-            const badge = STATUS_BADGE[mapping.status]
-            const roleName = mapping.role
-              ? resolveRoleName(mapping.role, tenantRoles, publicRoles)
-              : null
-            return (
-              <div key={mapping.hrisJobTitle} className="people-table-row">
-                <div className="people-table-cell hris-col--title">
-                  <button className="roles-role-link" onClick={() => onEditMapping(mapping)}>
-                    {mapping.hrisJobTitle}
-                  </button>
-                </div>
-                <div className="people-table-cell hris-col--count">
-                  {mapping.employeeCount}
-                </div>
-                <div className="people-table-cell hris-col--role">
-                  {mapping.role && roleName ? (
-                    <div className="hris-role-cell">
-                      <span className="hris-role-cell__name">{roleName}</span>
-                      <span className="hris-role-cell__source">
-                        {mapping.role.kind === 'tenant' ? 'Company role' : '5Mins role'}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="hris-role-cell__missing">—</span>
-                  )}
-                </div>
-                <div className="people-table-cell hris-col--status">
-                  <Badge
-                    type={badge.type}
-                    label={badge.label}
-                    icon
-                    customIcon={mapping.status === 'unmapped' ? <Danger size={16} variant="Linear" color="currentColor" /> : undefined}
-                  />
-                </div>
-                <div className="people-table-cell hris-col--actions">
-                  {mapping.status === 'mapped' ? (
-                    <>
-                      <span className="roles-icon-btn-wrapper">
-                        <button
-                          className="roles-icon-btn"
-                          aria-label={`Edit mapping for ${mapping.hrisJobTitle}`}
-                          onClick={() => onEditMapping(mapping)}
-                        >
-                          <Edit2 size={18} color="var(--text-tertiary)" />
-                        </button>
-                        <span className="roles-icon-tooltip">Edit mapping</span>
-                      </span>
-                      <span className="roles-icon-btn-wrapper">
-                        <button
-                          className="roles-icon-btn roles-icon-btn--danger"
-                          aria-label={`Remove mapping for ${mapping.hrisJobTitle}`}
-                          onClick={() => onRemoveMapping(mapping)}
-                        >
-                          <Trash size={18} color="currentColor" />
-                        </button>
-                        <span className="roles-icon-tooltip">Remove mapping</span>
-                      </span>
-                    </>
-                  ) : (
-                    <button
-                      className="roles-btn-outlined"
-                      onClick={() => onEditMapping(mapping)}
-                    >
-                      Map Role
-                    </button>
-                  )}
-                </div>
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className={`hris-table-scroll${isScrolled ? ' hris-table-scroll--scrolled' : ''}`}
+        >
+          <div className="people-table hris-table">
+            <div className="people-table-header">
+              <div className="people-table-cell hris-col--title">
+                <span className="hris-th">
+                  HRIS Job Title
+                  {filterTab === 'mapped' && <SortArrow dir="asc" />}
+                </span>
               </div>
-            )
-          })}
+              <div className="people-table-cell hris-col--count">
+                <span className="hris-th">
+                  Employees
+                  {filterTab !== 'mapped' && <SortArrow dir="desc" />}
+                </span>
+              </div>
+              <div className="people-table-cell hris-col--role">Mapped Role</div>
+              <div className="people-table-cell hris-col--status">Status</div>
+              <div className="people-table-cell hris-col--actions"></div>
+            </div>
+
+            {paginated.map(mapping => {
+              const badge = STATUS_BADGE[mapping.status]
+              const roleName = mapping.role
+                ? resolveRoleName(mapping.role, tenantRoles, publicRoles)
+                : null
+              return (
+                <div key={mapping.hrisJobTitle} className="people-table-row">
+                  <div className="people-table-cell hris-col--title">
+                    <button className="roles-role-link" onClick={() => onEditMapping(mapping)}>
+                      {mapping.hrisJobTitle}
+                    </button>
+                  </div>
+                  <div className="people-table-cell hris-col--count">
+                    {mapping.employeeCount}
+                  </div>
+                  <div className="people-table-cell hris-col--role">
+                    {mapping.role && roleName ? (
+                      <div className="hris-role-cell">
+                        <span className="hris-role-cell__name">{roleName}</span>
+                        <span className="hris-role-cell__source">
+                          {mapping.role.kind === 'tenant' ? 'Company role' : '5Mins role'}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="hris-role-cell__missing">—</span>
+                    )}
+                  </div>
+                  <div className="people-table-cell hris-col--status">
+                    <Badge
+                      type={badge.type}
+                      label={badge.label}
+                      icon
+                      customIcon={mapping.status === 'unmapped' ? <Danger size={16} variant="Linear" color="currentColor" /> : undefined}
+                    />
+                  </div>
+                  <div className="people-table-cell hris-col--actions">
+                    {mapping.status === 'mapped' ? (
+                      <>
+                        <span className="roles-icon-btn-wrapper">
+                          <button
+                            className="roles-icon-btn"
+                            aria-label={`Edit mapping for ${mapping.hrisJobTitle}`}
+                            onClick={() => onEditMapping(mapping)}
+                          >
+                            <Edit2 size={18} color="var(--text-tertiary)" />
+                          </button>
+                          <span className="roles-icon-tooltip">Edit mapping</span>
+                        </span>
+                        <span className="roles-icon-btn-wrapper">
+                          <button
+                            className="roles-icon-btn roles-icon-btn--danger"
+                            aria-label={`Remove mapping for ${mapping.hrisJobTitle}`}
+                            onClick={() => onRemoveMapping(mapping)}
+                          >
+                            <Trash size={18} color="currentColor" />
+                          </button>
+                          <span className="roles-icon-tooltip">Remove mapping</span>
+                        </span>
+                      </>
+                    ) : (
+                      <button
+                        className="roles-btn-outlined"
+                        onClick={() => onEditMapping(mapping)}
+                      >
+                        Map Role
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 

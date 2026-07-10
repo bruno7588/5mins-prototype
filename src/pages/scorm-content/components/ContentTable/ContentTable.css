@@ -85,9 +85,18 @@
 }
 
 /* Table */
+.sc-content-table-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
 .sc-content-table {
   width: 100%;
-  border-collapse: collapse;
+  min-width: 880px; /* overflow into the scroll wrapper instead of squashing columns */
+  /* separate (not collapse) so each cell owns its border-bottom — collapsed
+     borders don't travel with a sticky cell */
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .sc-content-table th {
@@ -126,6 +135,47 @@
 
 .sc-content-table tbody tr:hover {
   background: var(--page-background-hover);
+}
+
+/* Sticky first column (File name) — transparent at rest so the row's own
+   hover background shows through untouched. */
+.sc-content-table th:first-child,
+.sc-content-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+
+/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks
+   the content sliding under it. Its own border-bottom (kept by the separate
+   border model above) preserves the row separator. */
+.sc-content-table-scroll--scrolled .sc-content-table th:first-child,
+.sc-content-table-scroll--scrolled .sc-content-table td:first-child {
+  background: var(--page-background);
+}
+
+.sc-content-table-scroll--scrolled .sc-content-table tbody tr:hover td:first-child {
+  background: var(--page-background-hover);
+}
+
+/* Right-edge freeze shadow, only while scrolled */
+.sc-content-table th:first-child::after,
+.sc-content-table td:first-child::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.sc-content-table-scroll--scrolled .sc-content-table th:first-child::after,
+.sc-content-table-scroll--scrolled .sc-content-table td:first-child::after {
+  opacity: 1;
 }
 
 /* File name cell */

@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { useCallback, useRef, useState, type ReactNode } from 'react'
 import Checkbox from '../Checkbox/Checkbox'
 import './Table.css'
 
@@ -9,6 +9,10 @@ import './Table.css'
  * self-contained bordered row-cards, with a 12px gap between them. Columns are
  * column-driven — each column supplies its own cell renderer, so any DS cell
  * content type (text, thumbnail, badge, action icon, …) can be dropped in.
+ *
+ * The table owns its horizontal scroll (`.tbl-scroll`) and pins the first
+ * column (checkbox + first data column when selectable) while scrolled, same
+ * frozen-panel treatment as the Learning Records table.
  */
 export type RowState = 'enabled' | 'hover' | 'selected' | 'disabled'
 
@@ -66,19 +70,37 @@ export function Table<T>({
   onSort,
   pagination,
 }: TableProps<T>) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [scrolled, setScrolled] = useState(false)
+  const handleScroll = useCallback(() => {
+    if (scrollRef.current) setScrolled(scrollRef.current.scrollLeft > 0)
+  }, [])
+
+  // First data column pins after the checkbox column (52px) when selectable.
+  const stickyLeft = selectable ? 52 : 0
+  const stickyClass = (i: number, base: string) =>
+    i === 0 ? `${base} is-sticky is-sticky-last` : base
+  const stickyStyle = (i: number, style?: React.CSSProperties) =>
+    i === 0 ? { ...style, left: stickyLeft } : style
+
   return (
+    <div
+      ref={scrollRef}
+      onScroll={handleScroll}
+      className={`tbl-scroll${scrolled ? ' tbl-scroll--scrolled' : ''}`}
+    >
     <div className="tbl">
       <div className="tbl-head">
         {selectable && (
-          <div className="tbl-head-cell is-checkbox" style={{ flex: '0 0 52px' }}>
+          <div className="tbl-head-cell is-checkbox is-sticky" style={{ flex: '0 0 52px', left: 0 }}>
             <Checkbox checked={!!allSelected} onChange={onToggleAll} />
           </div>
         )}
-        {columns.map((col) => (
+        {columns.map((col, ci) => (
           <div
             key={col.key}
-            className={`tbl-head-cell${col.sortable ? ' is-sortable' : ''}`}
-            style={cellStyle(col)}
+            className={stickyClass(ci, `tbl-head-cell${col.sortable ? ' is-sortable' : ''}`)}
+            style={stickyStyle(ci, cellStyle(col))}
             onClick={col.sortable ? () => onSort?.(col.key) : undefined}
           >
             <span>{col.header}</span>
@@ -104,12 +126,16 @@ export function Table<T>({
             onClick={onRowClick ? () => onRowClick(row) : undefined}
           >
             {selectable && (
-              <div className="tbl-cell" style={{ flex: '0 0 52px' }} onClick={(e) => e.stopPropagation()}>
+              <div
+                className="tbl-cell is-sticky"
+                style={{ flex: '0 0 52px', left: 0 }}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Checkbox checked={!!selected} onChange={() => onToggleRow?.(row)} />
               </div>
             )}
-            {columns.map((col) => (
-              <div key={col.key} className="tbl-cell" style={cellStyle(col)}>
+            {columns.map((col, ci) => (
+              <div key={col.key} className={stickyClass(ci, 'tbl-cell')} style={stickyStyle(ci, cellStyle(col))}>
                 {col.render(row)}
               </div>
             ))}
@@ -142,6 +168,7 @@ export function Table<T>({
           </button>
         </div>
       )}
+    </div>
     </div>
   )
 }

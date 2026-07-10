@@ -4,6 +4,13 @@
    (--sm→--space-sm, --border-default→--border, --surface-page-hover→--cards-background-hover,
     --surface-selected→--selected, --surface-page→--page-background). */
 
+/* Horizontal scroll container — owned by the Table so the sticky first column
+   works everywhere (sticky pins to the nearest scrolling ancestor). */
+.tbl-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
 .tbl {
   display: flex;
   flex-direction: column;
@@ -11,6 +18,64 @@
   align-items: flex-end;
   width: 100%;
   font-family: 'Poppins', sans-serif;
+}
+
+/* ── Sticky first column (same frozen-panel treatment as Learning Records) ──
+   Transparent at rest so the row-card's rounded border shows through. */
+.tbl-cell.is-sticky,
+.tbl-head-cell.is-sticky {
+  position: sticky;
+  z-index: 3;
+}
+
+/* Once scrolled, pinned cells become opaque frozen panels that mask content
+   sliding under them. Top/bottom borders (aligned over the row's via -1px
+   margins) preserve the row separators; the left edge is square by design —
+   a rounded mask over a row whose corner has scrolled away leaves artifacts. */
+.tbl-scroll--scrolled .tbl-head-cell.is-sticky {
+  background: var(--page-background);
+}
+
+.tbl-scroll--scrolled .tbl-row .tbl-cell.is-sticky {
+  align-self: stretch;
+  max-height: none;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  background: var(--page-background);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Frozen panel follows the row-state backgrounds (layered over the opaque
+   page background so semi-transparent tints still mask scrolled content). */
+.tbl-scroll--scrolled .tbl-row:hover .tbl-cell.is-sticky,
+.tbl-scroll--scrolled .tbl-row.is-hover .tbl-cell.is-sticky {
+  background: linear-gradient(var(--cards-background-hover), var(--cards-background-hover)),
+    var(--page-background);
+}
+
+.tbl-scroll--scrolled .tbl-row.is-selected .tbl-cell.is-sticky {
+  background: linear-gradient(var(--selected-tint), var(--selected-tint)), var(--page-background);
+  border-color: var(--selected-tint);
+}
+
+.tbl-scroll--scrolled .tbl-row.is-selected:hover .tbl-cell.is-sticky,
+.tbl-scroll--scrolled .tbl-row.is-selected.is-hover .tbl-cell.is-sticky {
+  background: linear-gradient(var(--selected-tint-hover), var(--selected-tint-hover)),
+    var(--page-background);
+  border-color: var(--selected-tint-hover);
+}
+
+/* Right-edge shadow signalling the freeze — box-shadow (not ::after) because
+   .tbl-cell clips its children with overflow: hidden. */
+.tbl-cell.is-sticky-last,
+.tbl-head-cell.is-sticky-last {
+  transition: box-shadow 150ms ease;
+}
+
+.tbl-scroll--scrolled .tbl-cell.is-sticky-last,
+.tbl-scroll--scrolled .tbl-head-cell.is-sticky-last {
+  box-shadow: 10px 0 12px -6px rgba(0, 0, 0, 0.08);
 }
 
 /* Header */
@@ -254,12 +319,14 @@
   flex: 0 0 52px;
 }
 
-/* Pagination */
+/* Pagination — sticky so it stays in view while the table scrolls horizontally */
 .tbl-pagination {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
+  position: sticky;
+  right: 0;
 }
 
 .tbl-pagination .count {

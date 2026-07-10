@@ -558,6 +558,65 @@
   margin-left: var(--space-m);
 }
 
+/* ===== Sticky first column (5Mins + Company Roles tables) ===== */
+/* Scroll wrapper — the table overflows horizontally instead of squashing */
+.roles-table-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
+/* First column (role name) pins while the rest scrolls — transparent at rest
+   so the row's own rounded border shows through untouched. */
+.roles-table-scroll .roles-col--name,
+.roles-table-scroll .roles-col--name-co {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+
+/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks the
+   content sliding under it. Its top/bottom borders (aligned over the row's via
+   -1px margins) preserve the row separators; the left edge is square by design. */
+.roles-table-scroll--scrolled .people-table-row .roles-col--name,
+.roles-table-scroll--scrolled .people-table-row .roles-col--name-co {
+  align-self: stretch;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  background: var(--page-background);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.roles-table-scroll--scrolled .people-table-row:hover .roles-col--name,
+.roles-table-scroll--scrolled .people-table-row:hover .roles-col--name-co {
+  background: var(--cards-background-hover);
+}
+
+.roles-table-scroll--scrolled .people-table-header .roles-col--name,
+.roles-table-scroll--scrolled .people-table-header .roles-col--name-co {
+  background: var(--page-background);
+}
+
+/* Right-edge freeze shadow — only when scrolled */
+.roles-table-scroll .roles-col--name::after,
+.roles-table-scroll .roles-col--name-co::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.roles-table-scroll--scrolled .roles-col--name::after,
+.roles-table-scroll--scrolled .roles-col--name-co::after {
+  opacity: 1;
+}
+
 /* ===== Expandable row overrides ===== */
 .roles-row--expandable {
   flex-direction: column;

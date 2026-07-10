@@ -62,7 +62,14 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
   const [previewClosing, setPreviewClosing] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
   const perPage = 10
+
+  /* ─── Track horizontal scroll for frozen column styling ── */
+  const handleScroll = useCallback(() => {
+    if (scrollRef.current) setIsScrolled(scrollRef.current.scrollLeft > 0)
+  }, [])
 
   /* ─── Filtered roles ─────────────────────────────────── */
   const filtered = useMemo(() => {
@@ -236,42 +243,48 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
           </button>
         </div>
       ) : (
-        <div className="people-table">
-          {/* Header */}
-          <div className="people-table-header">
-            <div className="people-table-cell roles-col--name">{search ? `${filtered.length} roles match '${search}'` : selectedFunction === 'All' ? 'All roles' : `${selectedFunction} roles`}</div>
-            <div className="people-table-cell roles-col--skills">Skills</div>
-            <div className="people-table-cell roles-col--assigned">Learners</div>
-            <div className="people-table-cell roles-col--action"></div>
-          </div>
-
-          {/* Rows */}
-          {paginated.map(role => (
-            <div key={role.id} className="people-table-row">
-              <div className="people-table-cell roles-col--name">
-                <button
-                  className="roles-role-link"
-                  onClick={() => openPreview(role)}
-                >
-                  {role.name}
-                </button>
-              </div>
-              <div className="people-table-cell roles-col--skills">
-                {role.skills.length}
-              </div>
-              <div className="people-table-cell roles-col--assigned">
-                {role.assignedCount > 0 ? role.assignedCount : '\u2014'}
-              </div>
-              <div className="people-table-cell roles-col--action">
-                <button
-                  className="roles-btn-outlined"
-                  onClick={() => onCopy(role)}
-                >
-                  Copy
-                </button>
-              </div>
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className={`roles-table-scroll${isScrolled ? ' roles-table-scroll--scrolled' : ''}`}
+        >
+          <div className="people-table">
+            {/* Header */}
+            <div className="people-table-header">
+              <div className="people-table-cell roles-col--name">{search ? `${filtered.length} roles match '${search}'` : selectedFunction === 'All' ? 'All roles' : `${selectedFunction} roles`}</div>
+              <div className="people-table-cell roles-col--skills">Skills</div>
+              <div className="people-table-cell roles-col--assigned">Learners</div>
+              <div className="people-table-cell roles-col--action"></div>
             </div>
-          ))}
+  
+            {/* Rows */}
+            {paginated.map(role => (
+              <div key={role.id} className="people-table-row">
+                <div className="people-table-cell roles-col--name">
+                  <button
+                    className="roles-role-link"
+                    onClick={() => openPreview(role)}
+                  >
+                    {role.name}
+                  </button>
+                </div>
+                <div className="people-table-cell roles-col--skills">
+                  {role.skills.length}
+                </div>
+                <div className="people-table-cell roles-col--assigned">
+                  {role.assignedCount > 0 ? role.assignedCount : '\u2014'}
+                </div>
+                <div className="people-table-cell roles-col--action">
+                  <button
+                    className="roles-btn-outlined"
+                    onClick={() => onCopy(role)}
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import {
   UserCirlceAdd,
   Medal,
@@ -600,6 +600,18 @@ function Automations() {
   // Manage tab pagination
   const [managePage, setManagePage] = useState(1)
 
+  // Horizontal scroll tracking for the sticky first column (one per table)
+  const manageScrollRef = useRef<HTMLDivElement>(null)
+  const [manageScrolled, setManageScrolled] = useState(false)
+  const handleManageScroll = useCallback(() => {
+    if (manageScrollRef.current) setManageScrolled(manageScrollRef.current.scrollLeft > 0)
+  }, [])
+  const activityScrollRef = useRef<HTMLDivElement>(null)
+  const [activityScrolled, setActivityScrolled] = useState(false)
+  const handleActivityScroll = useCallback(() => {
+    if (activityScrollRef.current) setActivityScrolled(activityScrollRef.current.scrollLeft > 0)
+  }, [])
+
   // Delete confirmation modal
   const [pendingDelete, setPendingDelete] = useState<AutomationRow | null>(null)
   const [confirmInput, setConfirmInput] = useState('')
@@ -1011,6 +1023,11 @@ function Automations() {
             </div>
 
             {automations.length > 0 && (
+            <div
+              ref={manageScrollRef}
+              onScroll={handleManageScroll}
+              className={`automations-table-scroll${manageScrolled ? ' automations-table-scroll--scrolled' : ''}`}
+            >
             <div className="automations-table">
               <div className="automations-table-header">
                 <div className="automations-table-cell automations-table-cell--name">Automation</div>
@@ -1132,6 +1149,7 @@ function Automations() {
                   </div>
                 </div>
               ))}
+            </div>
             </div>
             )}
 
@@ -1338,6 +1356,11 @@ function Automations() {
             )}
 
             {/* Activity table */}
+            <div
+              ref={activityScrollRef}
+              onScroll={handleActivityScroll}
+              className={`automations-table-scroll${activityScrolled ? ' automations-table-scroll--scrolled' : ''}`}
+            >
             <div className="automations-table">
               {pageRows.length > 0 && (
                 <div className="automations-table-header">
@@ -1450,6 +1473,7 @@ function Automations() {
                   )
                 })
               )}
+            </div>
             </div>
 
             {/* Pagination */}
