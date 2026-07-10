@@ -65,7 +65,7 @@ function AuditLog() {
     },
     {
       key: 'category',
-      header: 'Category',
+      header: 'Setting',
       width: '0 0 165px',
       render: (r) => <Badge type="informative" label={r.category} />,
     },
