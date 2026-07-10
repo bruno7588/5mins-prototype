@@ -128,23 +128,19 @@
   gap: var(--space-s);
 }
 
-/* Overdue header sizes to its label (Figma); data cell is fixed-width below */
-.rd-table__cell--head-overdue {
+.rd-table__cell--head-courses,
+.rd-table__cell--courses {
+  width: 72px;
   flex-shrink: 0;
 }
-.rd-table__cell--overdue {
-  width: 84px;
-  flex-shrink: 0;
+.rd-table__cell--courses {
   justify-content: center;
 }
 
-.rd-table__cell--head-atrisk,
-.rd-table__cell--atrisk {
-  width: 70px;
+.rd-table__cell--head-status,
+.rd-table__cell--status {
+  width: 148px;
   flex-shrink: 0;
-}
-.rd-table__cell--atrisk {
-  justify-content: center;
 }
 
 .rd-table__cell--head-progress,
@@ -200,17 +196,6 @@
 .rd-member-lastsent {
   font-size: 12px;
   color: var(--text-tertiary);
-}
-
-/* Metric colors */
-.rd-metric--overdue {
-  color: var(--danger-400);
-  font-weight: 600;
-}
-
-.rd-metric--at-risk {
-  color: var(--warning-500);
-  font-weight: 600;
 }
 
 /* Progress bar */

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { InfoCircle } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
+import StatusBadge from './StatusBadge'
 import { daysSince, formatRelativeShort } from './relativeTime'
+import { statusFor, coursesTotal } from './memberStatus'
 import './ReminderDrawer.css'
 
 // Reminders sent within this many days count as "recent" for the spam guard.
@@ -15,6 +17,8 @@ interface ReminderMember {
   initials: string
   overdue: number
   atRisk: number
+  inProgress: number
+  completed: number
   overallProgress: number
   lastReminderSentAt?: string
 }
@@ -136,8 +140,8 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
               <div className="rd-table">
                 <div className="rd-table__header">
                   <div className="rd-table__cell rd-table__cell--name">Name</div>
-                  <div className="rd-table__cell rd-table__cell--head-overdue">Courses Overdue</div>
-                  <div className="rd-table__cell rd-table__cell--head-atrisk">At Risk</div>
+                  <div className="rd-table__cell rd-table__cell--head-courses">Courses</div>
+                  <div className="rd-table__cell rd-table__cell--head-status">Status</div>
                   <div className="rd-table__cell rd-table__cell--head-progress">Overall progress</div>
                 </div>
 
@@ -163,19 +167,11 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
                           </span>
                         </div>
                       </div>
-                      <div className="rd-table__cell rd-table__cell--overdue">
-                        {m.overdue > 0 ? (
-                          <span className="rd-metric--overdue">{m.overdue}</span>
-                        ) : (
-                          <span>–</span>
-                        )}
+                      <div className="rd-table__cell rd-table__cell--courses">
+                        {coursesTotal(m) > 0 ? <span>{coursesTotal(m)}</span> : <span>–</span>}
                       </div>
-                      <div className="rd-table__cell rd-table__cell--atrisk">
-                        {m.atRisk > 0 ? (
-                          <span className="rd-metric--at-risk">{m.atRisk}</span>
-                        ) : (
-                          <span>–</span>
-                        )}
+                      <div className="rd-table__cell rd-table__cell--status">
+                        <StatusBadge status={statusFor(m)} />
                       </div>
                       <div className="rd-table__cell rd-table__cell--progress">
                         <div className="rd-progress" role="progressbar" aria-valuenow={m.overallProgress} aria-valuemin={0} aria-valuemax={100}>

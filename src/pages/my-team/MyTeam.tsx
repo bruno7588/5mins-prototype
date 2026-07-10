@@ -23,6 +23,7 @@ import {
   ArrowUp,
   ArrowLeft2,
   ArrowRight2,
+  Sort,
 } from 'iconsax-react'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Tooltip from '../../components/Tooltip/Tooltip'
@@ -30,7 +31,7 @@ import Search from '../../components/Search/Search'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
-import CoursesDrawer, { type DrawerCourse, type DrawerCourseStatus } from './CoursesDrawer'
+import CoursesDrawer, { type DrawerCourse } from './CoursesDrawer'
 import ReminderDrawer from './ReminderDrawer'
 import EngagementTab from './EngagementTab'
 import LearningRecordsTab from './LearningRecordsTab'
@@ -42,6 +43,8 @@ import avatar2 from './assets/m2.jpg'
 import avatar3 from './assets/m3.jpg'
 import avatar4 from './assets/m4.jpg'
 import { formatRelative } from './relativeTime'
+import { statusFor, coursesTotal, STATUS_LABEL, STATUS_RANK, type MemberStatus } from './memberStatus'
+import StatusBadge from './StatusBadge'
 import './MyTeam.css'
 
 export function Logo({ size = 22 }: { size?: number }) {
@@ -145,86 +148,59 @@ function addDays(days: number): string {
 
 const THUMB_POOL = [thumb1, thumb2, thumb3]
 
-// Title-pool offset per bucket so a member's buckets don't repeat titles
-const BUCKET_TITLE_OFFSET: Record<DrawerCourseStatus, number> = {
-  overdue: 0,
-  'at-risk': 3,
-  'in-progress': 6,
+// Title-pool offset per status so a member's buckets don't repeat titles
+const STATUS_TITLE_OFFSET: Record<MemberStatus, number> = {
+  'not-started': 0,
+  'low-progress': 3,
+  'on-track': 6,
   completed: 9,
 }
 
-function coursesFor(memberId: string, bucket: DrawerCourseStatus, count: number): DrawerCourse[] {
+function coursesFor(memberId: string, status: MemberStatus, count: number): DrawerCourse[] {
   if (count === 0) return []
   const seed = [...memberId].reduce((a, c) => a + c.charCodeAt(0), 0)
   return Array.from({ length: count }).map((_, i) => {
-    const titleIdx = (seed + i * 7 + BUCKET_TITLE_OFFSET[bucket]) % COURSE_POOL.length
+    const titleIdx = (seed + i * 7 + STATUS_TITLE_OFFSET[status]) % COURSE_POOL.length
     const title = COURSE_POOL[titleIdx]
     const thumbnailSrc = THUMB_POOL[(seed + i) % THUMB_POOL.length]
-    const dueOffset = bucket === 'overdue'
+    // due date: overdue-ish statuses in the past, healthy ones ahead
+    const dueOffset = status === 'not-started'
       ? -(((seed + i) % 14) + 1)                  // 1–14 days ago
-      : bucket === 'at-risk'
+      : status === 'low-progress'
         ? ((seed + i * 3) % 28) + 2               // 2–29 days ahead
-        : ((seed + i * 3) % 30) + 30              // in-progress/completed: 30–59 days ahead
-    // start date: typically 30–60 days before due date
+        : ((seed + i * 3) % 30) + 30              // on-track/completed: 30–59 days ahead
     const startOffset = dueOffset - (30 + ((seed + i * 5) % 30))
-    const progress = bucket === 'completed'
+    const progress = status === 'completed'
       ? 100
-      : bucket === 'in-progress'
-        ? ((seed + i * 7) % 66) + 20              // 20–85%
-        : bucket === 'overdue'
-          ? (i * 11) % 40
-          : ((seed + i * 13) % 3 === 0 ? 0 : ((seed + i * 7) % 45) + 5)  // at-risk: mix of 0% and 5–49%
+      : status === 'on-track'
+        ? ((seed + i * 7) % 46) + 40              // 40–85%
+        : status === 'low-progress'
+          ? ((seed + i * 7) % 34) + 5             // 5–38%
+          : 0                                      // not-started
     return {
-      id: `${memberId}-${bucket}-${i}`,
+      id: `${memberId}-${status}-${i}`,
       title,
       thumbnailSrc,
       startDate: addDays(startOffset),
       dueDate: addDays(dueOffset),
       progress,
-      status: bucket,
+      status,
     }
   })
 }
 
-/** Every course assigned to a member, worst bucket first — feeds the drawer. */
+/* Every course assigned to a member, worst status first — feeds the drawer.
+   Member bucket counts map onto the four progress-based course statuses:
+   overdue → Not Started · atRisk → Low Progress · inProgress → On track · completed → Completed. */
 function allCoursesFor(m: TeamMember): DrawerCourse[] {
   return [
-    ...coursesFor(m.id, 'overdue', m.overdue),
-    ...coursesFor(m.id, 'at-risk', m.atRisk),
-    ...coursesFor(m.id, 'in-progress', m.inProgress),
+    ...coursesFor(m.id, 'not-started', m.overdue),
+    ...coursesFor(m.id, 'low-progress', m.atRisk),
+    ...coursesFor(m.id, 'on-track', m.inProgress),
     ...coursesFor(m.id, 'completed', m.completed),
   ]
 }
 
-/* ── Manager-friendly rollup status ──
-   Completed: nothing outstanding · Not Started: 0% overall ·
-   Low Progress: under 40% overall · On Track: the rest. */
-type MemberStatus = 'not-started' | 'low-progress' | 'on-track' | 'completed'
-
-function statusFor(m: Pick<TeamMember, 'overdue' | 'atRisk' | 'inProgress' | 'completed' | 'overallProgress'>): MemberStatus {
-  if (m.overdue + m.atRisk + m.inProgress === 0 && m.completed > 0) return 'completed'
-  if (m.overallProgress === 0) return 'not-started'
-  if (m.overallProgress < 40) return 'low-progress'
-  return 'on-track'
-}
-
-const STATUS_LABEL: Record<MemberStatus, string> = {
-  'not-started': 'Not Started',
-  'low-progress': 'Low Progress',
-  'on-track': 'On Track',
-  completed: 'Completed',
-}
-
-// Sort rank — worst first when ascending
-const STATUS_RANK: Record<MemberStatus, number> = {
-  'not-started': 0,
-  'low-progress': 1,
-  'on-track': 2,
-  completed: 3,
-}
-
-const coursesTotal = (m: Pick<TeamMember, 'overdue' | 'atRisk' | 'inProgress' | 'completed'>) =>
-  m.overdue + m.atRisk + m.inProgress + m.completed
 
 const team: TeamMember[] = [
   // Direct reports of the current user
@@ -279,6 +255,7 @@ function MyTeam() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [courseFilter, setCourseFilter] = useState<'all' | 'compliance'>('all')
   const [scopeFilter, setScopeFilter] = useState<string>('direct')
+  const [statusFilter, setStatusFilter] = useState<'all' | MemberStatus>('all')
   const [page, setPage] = useState(1)
   const [currentTab, setCurrentTab] = useState<'course-tracker' | 'engagement' | 'learning-records'>('course-tracker')
 
@@ -294,6 +271,13 @@ function MyTeam() {
   const scopeOptions: DropdownOption[] = [
     { value: 'direct', label: 'Direct reports', description: 'Team members who report to you' },
     { value: 'all', label: 'All reports', description: 'Includes indirect reports from each manager under you' },
+  ]
+  const statusOptions: DropdownOption[] = [
+    { value: 'all', label: 'Status: All' },
+    { value: 'not-started', label: STATUS_LABEL['not-started'] },
+    { value: 'low-progress', label: STATUS_LABEL['low-progress'] },
+    { value: 'on-track', label: STATUS_LABEL['on-track'] },
+    { value: 'completed', label: STATUS_LABEL.completed },
   ]
 
   const toggleSort = (key: 'courses' | 'progress' | 'status') => {
@@ -321,7 +305,10 @@ function MyTeam() {
           completed: Math.floor(r.completed / 2),
         }))
       : base
-    const sorted = [...scaled].sort((a, b) => {
+    const statusScoped = statusFilter === 'all'
+      ? scaled
+      : scaled.filter((r) => statusFor(r) === statusFilter)
+    const sorted = [...statusScoped].sort((a, b) => {
       let diff = 0
       if (sortKey === 'courses') diff = coursesTotal(a) - coursesTotal(b)
       else if (sortKey === 'status') diff = STATUS_RANK[statusFor(a)] - STATUS_RANK[statusFor(b)]
@@ -329,7 +316,7 @@ function MyTeam() {
       return sortDir === 'asc' ? diff : -diff
     })
     return sorted
-  }, [searchQuery, sortKey, sortDir, courseFilter, scopeFilter])
+  }, [searchQuery, sortKey, sortDir, courseFilter, scopeFilter, statusFilter])
 
   const totals = useMemo(() => {
     return rows.reduce(
@@ -355,7 +342,7 @@ function MyTeam() {
 
   useEffect(() => {
     setPage(1)
-  }, [searchQuery, courseFilter, scopeFilter, sortKey, sortDir])
+  }, [searchQuery, courseFilter, scopeFilter, statusFilter, sortKey, sortDir])
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const [hasScroll, setHasScroll] = useState(false)
@@ -467,7 +454,6 @@ function MyTeam() {
                 <h1 className="mt-pageheader__title">My Team</h1>
                 <p className="mt-pageheader__subtitle">18 Active users · 3 Pending users</p>
               </div>
-              <button type="button" className="mt-pageheader__cta ui-disabled" disabled>Manage Team</button>
             </div>
 
             <div className="mt-pageheader__divider" />
@@ -515,7 +501,7 @@ function MyTeam() {
 
             <div className="mt-cp__stats">
               <StatCard
-                icon={<TickCircle size={40} color="var(--success-500)" variant="Linear" />}
+                icon={<TickCircle size={40} color="var(--text-success)" variant="Linear" />}
                 label="Completed"
                 value={pct(totals.completed)}
                 tooltip="Courses completed all-time"
@@ -527,13 +513,13 @@ function MyTeam() {
                 tooltip="Courses started but not yet complete"
               />
               <StatCard
-                icon={<InfoCircle size={40} color="var(--warning-500)" variant="Linear" />}
+                icon={<InfoCircle size={40} color="var(--text-warning)" variant="Linear" />}
                 label="At Risk"
                 value={pct(totals.atRisk)}
                 tooltip="Courses due within the next 30 days"
               />
               <StatCard
-                icon={<Danger size={40} color="var(--danger-500)" variant="Linear" />}
+                icon={<Danger size={40} color="var(--text-error)" variant="Linear" />}
                 label="Overdue"
                 value={pct(totals.overdue)}
                 tooltip="Courses past their due date"
@@ -551,6 +537,15 @@ function MyTeam() {
                 />
               </div>
               <div className="mt-cp__toolbar-actions">
+                <div className="mt-cp__status-filter">
+                  <Dropdown
+                    size="md"
+                    options={statusOptions}
+                    value={statusFilter}
+                    onChange={(v) => setStatusFilter(v as 'all' | MemberStatus)}
+                    iconLeft={<Sort size={20} color="var(--text-secondary)" variant="Linear" />}
+                  />
+                </div>
                 <div className="mt-cp__scope">
                   <Dropdown
                     size="md"
@@ -747,9 +742,7 @@ function MyTeam() {
                         <span className="mt-cp__progress-pct">{r.overallProgress}%</span>
                       </div>
                       <div className="mt-cp__table-cell mt-cp__table-cell--status">
-                        <span className={`mt-cp__status-badge mt-cp__status-badge--${statusFor(r)}`}>
-                          {STATUS_LABEL[statusFor(r)]}
-                        </span>
+                        <StatusBadge status={statusFor(r)} />
                       </div>
                       <div className="mt-cp__table-cell mt-cp__table-cell--action">
                         {needsAttention && (() => {
