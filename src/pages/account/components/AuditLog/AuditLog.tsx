@@ -3,21 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowDown2, ClipboardText } from 'iconsax-react'
 import Table, { type Column } from '@/components/Table/Table'
 import Dropdown from '@/components/Dropdown/Dropdown'
+import Search from '@/components/Search/Search'
 import Badge from '@/components/Badge/Badge'
 import Tooltip from '@/components/Tooltip/Tooltip'
-import { auditEntries, SETTING_FILTER_OPTIONS, type AuditEntry, type AuditSurface } from '../../data/mockAudit'
+import { auditEntries, CATEGORY_FILTER_OPTIONS, type AuditEntry } from '../../data/mockAudit'
 import './AuditLog.css'
 
 const PAGE_SIZE = 10
 
 /** Filters that ship disabled at launch — same shape/position as their future enabled state. */
-const DISABLED_FILTERS = ['Date range', 'Actor', 'Course', 'Surface']
-
-const SURFACE_BADGE: Record<AuditSurface, 'informative' | 'warning' | 'in-progress'> = {
-  'Settings tab': 'informative',
-  'Compliance configuration': 'warning',
-  System: 'in-progress',
-}
+const DISABLED_FILTERS = ['Date range', 'Actor', 'Course']
 
 function formatTimestamp(iso: string): { date: string; time: string } {
   const d = new Date(iso)
@@ -39,13 +34,20 @@ function DisabledFilter({ label }: { label: string }) {
 
 function AuditLog() {
   const navigate = useNavigate()
-  const [setting, setSetting] = useState('all')
+  const [category, setCategory] = useState('all')
+  const [query, setQuery] = useState('')
   const [page, setPage] = useState(0)
 
-  const filtered = useMemo(
-    () => (setting === 'all' ? auditEntries : auditEntries.filter((e) => e.settingKey === setting)),
-    [setting],
-  )
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return auditEntries.filter((e) => {
+      if (category !== 'all' && e.categoryKey !== category) return false
+      if (!q) return true
+      return [e.action, e.target, e.value, e.actor, e.actorEmail, e.category, e.role].some((f) =>
+        f.toLowerCase().includes(q),
+      )
+    })
+  }, [category, query])
 
   const total = filtered.length
   const pageStart = page * PAGE_SIZE
@@ -53,23 +55,17 @@ function AuditLog() {
 
   const columns: Column<AuditEntry>[] = [
     {
-      key: 'course',
-      header: 'Course',
-      width: '1 1 170px',
-      render: (r) => <span className="audit-course">{r.course}</span>,
+      key: 'action',
+      header: 'Action',
+      width: '1 1 200px',
+      render: (r) => <span className="audit-action">{r.action}</span>,
     },
-    { key: 'setting', header: 'Setting', width: '0 0 175px', render: (r) => r.setting },
+    { key: 'target', header: 'Target', width: '0 0 180px', render: (r) => r.target },
     {
-      key: 'previous',
-      header: 'Previous value',
-      width: '0 0 130px',
-      render: (r) => <span className="audit-prev">{r.previousValue}</span>,
-    },
-    {
-      key: 'new',
-      header: 'New value',
-      width: '0 0 130px',
-      render: (r) => <span className="audit-new">{r.newValue}</span>,
+      key: 'value',
+      header: 'Value',
+      width: '0 0 170px',
+      render: (r) => <span className="audit-new">{r.value}</span>,
     },
     {
       key: 'actor',
@@ -83,10 +79,10 @@ function AuditLog() {
       ),
     },
     {
-      key: 'surface',
-      header: 'Surface',
-      width: '0 0 175px',
-      render: (r) => <Badge type={SURFACE_BADGE[r.surface]} label={r.surface} />,
+      key: 'category',
+      header: 'Category',
+      width: '0 0 165px',
+      render: (r) => <Badge type="informative" label={r.category} />,
     },
     {
       key: 'timestamp',
@@ -106,15 +102,26 @@ function AuditLog() {
 
   return (
     <div className="audit">
-      {/* Filter bar — only Setting is interactive at launch */}
+      {/* Filter bar — Search + Category are interactive at launch; the rest are placeholders */}
       <div className="audit-filters">
+        <Search
+          size="M"
+          className="audit-search"
+          value={query}
+          placeholder="Search actions, targets or actors"
+          ariaLabel="Search audit log"
+          onChange={(v) => {
+            setQuery(v)
+            setPage(0)
+          }}
+        />
         <Dropdown
           size="sm"
           className="audit-setting-filter"
-          options={SETTING_FILTER_OPTIONS}
-          value={setting}
+          options={CATEGORY_FILTER_OPTIONS}
+          value={category}
           onChange={(v) => {
-            setSetting(v)
+            setCategory(v)
             setPage(0)
           }}
         />
@@ -129,11 +136,11 @@ function AuditLog() {
             <ClipboardText size={32} color="var(--text-tertiary)" variant="Bold" />
           </span>
           <div className="audit-empty-info">
-            <p className="audit-empty-title">No changes recorded</p>
+            <p className="audit-empty-title">No activity recorded</p>
             <p className="audit-empty-desc">
-              {setting === 'all'
-                ? "When someone changes a course setting, it'll appear here — showing who changed what, and when."
-                : 'No changes have been recorded for this setting yet. Try a different setting.'}
+              {category === 'all' && !query.trim()
+                ? "When someone changes a setting, passcode, enrolment or course, it'll appear here — showing who did what, and when."
+                : 'No activity matches your filters. Try a different category or search.'}
             </p>
           </div>
         </div>
@@ -143,7 +150,9 @@ function AuditLog() {
             columns={columns}
             rows={pageRows}
             getRowKey={(r) => r.id}
-            onRowClick={() => navigate('/your-courses/course')}
+            onRowClick={(r) => {
+              if (r.targetKind === 'course') navigate('/your-courses/course')
+            }}
             pagination={{
               from: pageStart + 1,
               to: pageStart + pageRows.length,

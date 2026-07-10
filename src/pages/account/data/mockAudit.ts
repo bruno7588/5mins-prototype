@@ -1,68 +1,76 @@
 // Mock audit-log data for the Account & Settings → Audit Log tab (DES-318).
-// At launch the log records course-settings changes only.
+// Generic event ledger (CloudTrail-style): each row is one action an actor
+// performed on a target, recording the value it became. No field-level diffs —
+// a prior value is inferable from the preceding entry for the same target.
 
-export type AuditSurface = 'Settings tab' | 'Compliance configuration' | 'System'
+export type AuditCategory =
+  | 'Course settings'
+  | 'Passcode'
+  | 'Enrolment'
+  | 'Course'
+  | 'People & access'
+
+/** Whether the affected target is a course or a person — gates row navigation. */
+export type AuditTargetKind = 'course' | 'person'
 
 export interface AuditEntry {
   id: string
-  courseId: string
-  course: string
-  /** Human label of the setting that changed. */
-  setting: string
-  /** Stable key used by the Setting filter. */
-  settingKey: string
-  previousValue: string
-  newValue: string
+  category: AuditCategory
+  /** Stable key used by the Category filter. */
+  categoryKey: string
+  /** What happened, e.g. "Updated pass score", "Reset course passcode". */
+  action: string
+  /** The resource the action affected — a course, a learner, or a person. */
+  target: string
+  targetKind: AuditTargetKind
+  /** The value the target became; '—' when the action carries no value (reset, delete, archive). */
+  value: string
   actor: string
   actorEmail: string
   role: string
-  surface: AuditSurface
   /** ISO 8601 timestamp. */
   timestamp: string
 }
 
-/** Settings tracked at launch — drives the Setting filter options. */
-export const TRACKED_SETTINGS: { key: string; label: string }[] = [
-  { key: 'pass-score', label: 'Pass score' },
-  { key: 'awarded-jewels', label: 'Awarded jewels' },
-  { key: 'assessment-attempts', label: 'Assessment attempts' },
-  { key: 'access-after-due-date', label: 'Allow access after due date' },
-  { key: 'electronic-signature', label: 'Requires electronic signature' },
-  { key: 'enrolment-visibility', label: 'Enrolment visibility' },
-  { key: 'compliance-status', label: 'Compliance status' },
-  { key: 'background-playback', label: 'Disable background playback' },
-  { key: 'course-categories', label: 'Course categories' },
-  { key: 'course-certificate', label: 'Course certificate' },
+/** Categories tracked at launch — drives the Category filter options. */
+export const TRACKED_CATEGORIES: { key: string; label: AuditCategory }[] = [
+  { key: 'course-settings', label: 'Course settings' },
+  { key: 'passcode', label: 'Passcode' },
+  { key: 'enrolment', label: 'Enrolment' },
+  { key: 'course', label: 'Course' },
+  { key: 'people', label: 'People & access' },
 ]
 
-export const SETTING_FILTER_OPTIONS = [
-  { value: 'all', label: 'All settings' },
-  ...TRACKED_SETTINGS.map((s) => ({ value: s.key, label: s.label })),
+export const CATEGORY_FILTER_OPTIONS = [
+  { value: 'all', label: 'All activity' },
+  ...TRACKED_CATEGORIES.map((c) => ({ value: c.key, label: c.label })),
 ]
 
 export const auditEntries: AuditEntry[] = [
-  { id: 'a1', courseId: 'c1', course: 'Harassment Prevention', setting: 'Pass score', settingKey: 'pass-score', previousValue: '70%', newValue: '80%', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-09T14:32:00Z' },
-  { id: 'a2', courseId: 'c2', course: 'Food Safety Essentials', setting: 'Compliance status', settingKey: 'compliance-status', previousValue: 'Non-compliance', newValue: 'Compliance', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', surface: 'Compliance configuration', timestamp: '2026-07-09T11:05:00Z' },
-  { id: 'a3', courseId: 'c3', course: 'Fire Safety', setting: 'Requires electronic signature', settingKey: 'electronic-signature', previousValue: 'No', newValue: 'Yes', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-08T16:48:00Z' },
-  { id: 'a4', courseId: 'c4', course: 'Anti-Money Laundering', setting: 'Awarded jewels', settingKey: 'awarded-jewels', previousValue: '50', newValue: '100', actor: 'Priya Nair', actorEmail: 'priya.n@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-08T09:20:00Z' },
-  { id: 'a5', courseId: 'c1', course: 'Harassment Prevention', setting: 'Assessment attempts', settingKey: 'assessment-attempts', previousValue: 'Unlimited', newValue: '3', actor: 'David Chen', actorEmail: 'david.c@company.com', role: 'Course Admin', surface: 'Settings tab', timestamp: '2026-07-07T13:11:00Z' },
-  { id: 'a6', courseId: 'c5', course: 'Allergen Awareness', setting: 'Enrolment visibility', settingKey: 'enrolment-visibility', previousValue: 'All learners', newValue: 'Managers only', actor: 'Elena Rossi', actorEmail: 'elena.r@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-07T10:02:00Z' },
-  { id: 'a7', courseId: 'c6', course: 'GDPR Basics', setting: 'Course certificate', settingKey: 'course-certificate', previousValue: 'None', newValue: 'Completion certificate', actor: 'Priya Nair', actorEmail: 'priya.n@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-06T15:39:00Z' },
-  { id: 'a8', courseId: 'c2', course: 'Food Safety Essentials', setting: 'Allow access after due date', settingKey: 'access-after-due-date', previousValue: 'Yes', newValue: 'No', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-06T08:54:00Z' },
-  { id: 'a9', courseId: 'c7', course: 'Conflict Resolution', setting: 'Disable background playback', settingKey: 'background-playback', previousValue: 'Off', newValue: 'On', actor: 'David Chen', actorEmail: 'david.c@company.com', role: 'Course Admin', surface: 'Settings tab', timestamp: '2026-07-05T17:23:00Z' },
-  { id: 'a10', courseId: 'c3', course: 'Fire Safety', setting: 'Compliance status', settingKey: 'compliance-status', previousValue: 'Compliance', newValue: 'Non-compliance', actor: 'System', actorEmail: '—', role: 'System', surface: 'System', timestamp: '2026-07-05T02:00:00Z' },
-  { id: 'a11', courseId: 'c8', course: 'Cash Handling', setting: 'Course categories', settingKey: 'course-categories', previousValue: 'Operations', newValue: 'Operations, Compliance', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-04T14:17:00Z' },
-  { id: 'a12', courseId: 'c5', course: 'Allergen Awareness', setting: 'Pass score', settingKey: 'pass-score', previousValue: '60%', newValue: '75%', actor: 'Elena Rossi', actorEmail: 'elena.r@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-04T09:41:00Z' },
-  { id: 'a13', courseId: 'c4', course: 'Anti-Money Laundering', setting: 'Compliance status', settingKey: 'compliance-status', previousValue: 'Non-compliance', newValue: 'Compliance', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', surface: 'Compliance configuration', timestamp: '2026-07-03T16:08:00Z' },
-  { id: 'a14', courseId: 'c6', course: 'GDPR Basics', setting: 'Assessment attempts', settingKey: 'assessment-attempts', previousValue: '2', newValue: '3', actor: 'Priya Nair', actorEmail: 'priya.n@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-03T11:30:00Z' },
-  { id: 'a15', courseId: 'c1', course: 'Harassment Prevention', setting: 'Awarded jewels', settingKey: 'awarded-jewels', previousValue: '75', newValue: '120', actor: 'David Chen', actorEmail: 'david.c@company.com', role: 'Course Admin', surface: 'Settings tab', timestamp: '2026-07-02T13:52:00Z' },
-  { id: 'a16', courseId: 'c7', course: 'Conflict Resolution', setting: 'Requires electronic signature', settingKey: 'electronic-signature', previousValue: 'Yes', newValue: 'No', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-02T08:19:00Z' },
-  { id: 'a17', courseId: 'c8', course: 'Cash Handling', setting: 'Enrolment visibility', settingKey: 'enrolment-visibility', previousValue: 'Managers only', newValue: 'All learners', actor: 'Elena Rossi', actorEmail: 'elena.r@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-01T15:44:00Z' },
-  { id: 'a18', courseId: 'c2', course: 'Food Safety Essentials', setting: 'Course certificate', settingKey: 'course-certificate', previousValue: 'Completion certificate', newValue: 'Accredited certificate', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-07-01T10:26:00Z' },
-  { id: 'a19', courseId: 'c3', course: 'Fire Safety', setting: 'Pass score', settingKey: 'pass-score', previousValue: '80%', newValue: '90%', actor: 'Priya Nair', actorEmail: 'priya.n@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-06-30T17:03:00Z' },
-  { id: 'a20', courseId: 'c5', course: 'Allergen Awareness', setting: 'Disable background playback', settingKey: 'background-playback', previousValue: 'On', newValue: 'Off', actor: 'David Chen', actorEmail: 'david.c@company.com', role: 'Course Admin', surface: 'Settings tab', timestamp: '2026-06-30T09:12:00Z' },
-  { id: 'a21', courseId: 'c4', course: 'Anti-Money Laundering', setting: 'Allow access after due date', settingKey: 'access-after-due-date', previousValue: 'No', newValue: 'Yes', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-06-29T14:38:00Z' },
-  { id: 'a22', courseId: 'c6', course: 'GDPR Basics', setting: 'Course categories', settingKey: 'course-categories', previousValue: 'Compliance', newValue: 'Compliance, Data', actor: 'Elena Rossi', actorEmail: 'elena.r@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-06-29T08:47:00Z' },
-  { id: 'a23', courseId: 'c7', course: 'Conflict Resolution', setting: 'Pass score', settingKey: 'pass-score', previousValue: '65%', newValue: '70%', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', surface: 'Settings tab', timestamp: '2026-06-28T16:15:00Z' },
-  { id: 'a24', courseId: 'c8', course: 'Cash Handling', setting: 'Assessment attempts', settingKey: 'assessment-attempts', previousValue: '3', newValue: 'Unlimited', actor: 'David Chen', actorEmail: 'david.c@company.com', role: 'Course Admin', surface: 'Settings tab', timestamp: '2026-06-28T11:09:00Z' },
+  { id: 'a1', categoryKey: 'course-settings', category: 'Course settings', action: 'Updated pass score', target: 'Harassment Prevention', targetKind: 'course', value: '80%', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', timestamp: '2026-07-09T14:32:00Z' },
+  { id: 'a2', categoryKey: 'passcode', category: 'Passcode', action: 'Reset course passcode', target: 'Fire Safety', targetKind: 'course', value: '—', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', timestamp: '2026-07-09T11:05:00Z' },
+  { id: 'a3', categoryKey: 'enrolment', category: 'Enrolment', action: 'Enrolled learner', target: 'Food Safety Essentials', targetKind: 'course', value: 'David Chen', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', timestamp: '2026-07-08T16:48:00Z' },
+  { id: 'a4', categoryKey: 'course-settings', category: 'Course settings', action: 'Set compliance status', target: 'Anti-Money Laundering', targetKind: 'course', value: 'Compliance', actor: 'Priya Nair', actorEmail: 'priya.n@company.com', role: 'Admin', timestamp: '2026-07-08T09:20:00Z' },
+  { id: 'a5', categoryKey: 'people', category: 'People & access', action: 'Changed user role', target: 'James Okafor', targetKind: 'person', value: 'Admin', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', timestamp: '2026-07-07T13:11:00Z' },
+  { id: 'a6', categoryKey: 'course', category: 'Course', action: 'Archived course', target: 'Allergen Awareness', targetKind: 'course', value: '—', actor: 'Elena Rossi', actorEmail: 'elena.r@company.com', role: 'Admin', timestamp: '2026-07-07T10:02:00Z' },
+  { id: 'a7', categoryKey: 'passcode', category: 'Passcode', action: 'Changed course passcode', target: 'Cash Handling', targetKind: 'course', value: '—', actor: 'David Chen', actorEmail: 'david.c@company.com', role: 'Course Admin', timestamp: '2026-07-06T15:39:00Z' },
+  { id: 'a8', categoryKey: 'enrolment', category: 'Enrolment', action: 'Bulk-enrolled department', target: 'GDPR Basics', targetKind: 'course', value: 'Finance · 24 learners', actor: 'Priya Nair', actorEmail: 'priya.n@company.com', role: 'Admin', timestamp: '2026-07-06T08:54:00Z' },
+  { id: 'a9', categoryKey: 'course-settings', category: 'Course settings', action: 'Updated awarded jewels', target: 'Harassment Prevention', targetKind: 'course', value: '120', actor: 'David Chen', actorEmail: 'david.c@company.com', role: 'Course Admin', timestamp: '2026-07-05T17:23:00Z' },
+  { id: 'a10', categoryKey: 'people', category: 'People & access', action: 'Deactivated user', target: 'Michael Grant', targetKind: 'person', value: '—', actor: 'System', actorEmail: '—', role: 'System', timestamp: '2026-07-05T02:00:00Z' },
+  { id: 'a11', categoryKey: 'course', category: 'Course', action: 'Created course', target: 'Conflict Resolution', targetKind: 'course', value: '—', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', timestamp: '2026-07-04T14:17:00Z' },
+  { id: 'a12', categoryKey: 'enrolment', category: 'Enrolment', action: 'Removed enrolment', target: 'Allergen Awareness', targetKind: 'course', value: 'Priya Nair', actor: 'Elena Rossi', actorEmail: 'elena.r@company.com', role: 'Admin', timestamp: '2026-07-04T09:41:00Z' },
+  { id: 'a13', categoryKey: 'course-settings', category: 'Course settings', action: 'Set compliance status', target: 'Fire Safety', targetKind: 'course', value: 'Non-compliance', actor: 'System', actorEmail: '—', role: 'System', timestamp: '2026-07-04T02:00:00Z' },
+  { id: 'a14', categoryKey: 'passcode', category: 'Passcode', action: 'Enabled passcode protection', target: 'Anti-Money Laundering', targetKind: 'course', value: 'On', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', timestamp: '2026-07-03T16:08:00Z' },
+  { id: 'a15', categoryKey: 'course-settings', category: 'Course settings', action: 'Updated assessment attempts', target: 'GDPR Basics', targetKind: 'course', value: '3', actor: 'Priya Nair', actorEmail: 'priya.n@company.com', role: 'Admin', timestamp: '2026-07-03T11:30:00Z' },
+  { id: 'a16', categoryKey: 'people', category: 'People & access', action: 'Invited user', target: 'lauren.b@company.com', targetKind: 'person', value: 'Course Admin', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', timestamp: '2026-07-02T13:52:00Z' },
+  { id: 'a17', categoryKey: 'course-settings', category: 'Course settings', action: 'Changed enrolment visibility', target: 'Cash Handling', targetKind: 'course', value: 'Managers only', actor: 'Elena Rossi', actorEmail: 'elena.r@company.com', role: 'Admin', timestamp: '2026-07-02T08:19:00Z' },
+  { id: 'a18', categoryKey: 'course', category: 'Course', action: 'Published course', target: 'Conflict Resolution', targetKind: 'course', value: '—', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', timestamp: '2026-07-01T15:44:00Z' },
+  { id: 'a19', categoryKey: 'course-settings', category: 'Course settings', action: 'Updated course certificate', target: 'Food Safety Essentials', targetKind: 'course', value: 'Accredited certificate', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', timestamp: '2026-07-01T10:26:00Z' },
+  { id: 'a20', categoryKey: 'passcode', category: 'Passcode', action: 'Reset course passcode', target: 'GDPR Basics', targetKind: 'course', value: '—', actor: 'David Chen', actorEmail: 'david.c@company.com', role: 'Course Admin', timestamp: '2026-06-30T17:03:00Z' },
+  { id: 'a21', categoryKey: 'enrolment', category: 'Enrolment', action: 'Enrolled learner', target: 'Fire Safety', targetKind: 'course', value: 'Elena Rossi', actor: 'Priya Nair', actorEmail: 'priya.n@company.com', role: 'Admin', timestamp: '2026-06-30T09:12:00Z' },
+  { id: 'a22', categoryKey: 'people', category: 'People & access', action: 'Changed user role', target: 'David Chen', targetKind: 'person', value: 'Course Admin', actor: 'Sarah Mitchell', actorEmail: 'sarah.m@company.com', role: 'Admin', timestamp: '2026-06-29T14:38:00Z' },
+  { id: 'a23', categoryKey: 'course-settings', category: 'Course settings', action: 'Updated pass score', target: 'Conflict Resolution', targetKind: 'course', value: '70%', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', timestamp: '2026-06-29T08:47:00Z' },
+  { id: 'a24', categoryKey: 'course', category: 'Course', action: 'Duplicated course', target: 'Harassment Prevention', targetKind: 'course', value: '—', actor: 'Elena Rossi', actorEmail: 'elena.r@company.com', role: 'Admin', timestamp: '2026-06-28T16:15:00Z' },
+  { id: 'a25', categoryKey: 'enrolment', category: 'Enrolment', action: 'Bulk-enrolled department', target: 'Cash Handling', targetKind: 'course', value: 'Operations · 18 learners', actor: 'David Chen', actorEmail: 'david.c@company.com', role: 'Course Admin', timestamp: '2026-06-28T11:09:00Z' },
+  { id: 'a26', categoryKey: 'enrolment', category: 'Enrolment', action: 'Removed enrolment', target: 'Anti-Money Laundering', targetKind: 'course', value: 'Michael Grant', actor: 'James Okafor', actorEmail: 'james.o@company.com', role: 'Admin', timestamp: '2026-06-27T15:20:00Z' },
 ]

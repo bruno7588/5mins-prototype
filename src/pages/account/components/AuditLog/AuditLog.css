@@ -11,10 +11,28 @@
   margin-bottom: var(--space-m);
 }
 
+.audit-search {
+  flex: 1 1 260px;
+  min-width: 220px;
+  max-width: 360px;
+}
+
+/* Match the sm dropdown / disabled pills (33px, radius-sm) so the filter row aligns */
+.audit-search.search--m {
+  height: 33px;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+}
+
 .audit .audit-setting-filter {
   flex: 0 0 auto;
   width: fit-content;
   min-width: 190px;
+}
+
+/* Filter text sits at 14px (design-system body size) — bump the sm trigger + placeholders */
+.audit .dropdown-sm .dropdown-trigger {
+  font-size: 14px;
 }
 
 /* Disabled launch filters — mirror the Dropdown (sm) trigger shape/position so the
@@ -34,7 +52,7 @@
 }
 
 .audit-filter-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-disabled);
@@ -42,13 +60,9 @@
 }
 
 /* ── Table cell content ── */
-.audit-course {
-  font-weight: 500;
+.audit-action {
+  font-weight: 400;
   color: var(--text-primary);
-}
-
-.audit-prev {
-  color: var(--text-tertiary);
 }
 
 .audit-new {
