@@ -537,6 +537,14 @@ function MyTeam() {
                 />
               </div>
               <div className="mt-cp__toolbar-actions">
+                <div className="mt-cp__scope">
+                  <Dropdown
+                    size="md"
+                    options={scopeOptions}
+                    value={scopeFilter}
+                    onChange={setScopeFilter}
+                  />
+                </div>
                 <div className="mt-cp__status-filter">
                   <Dropdown
                     size="md"
@@ -544,14 +552,6 @@ function MyTeam() {
                     value={statusFilter}
                     onChange={(v) => setStatusFilter(v as 'all' | MemberStatus)}
                     iconLeft={<Sort size={20} color="var(--text-secondary)" variant="Linear" />}
-                  />
-                </div>
-                <div className="mt-cp__scope">
-                  <Dropdown
-                    size="md"
-                    options={scopeOptions}
-                    value={scopeFilter}
-                    onChange={setScopeFilter}
                   />
                 </div>
                 {canSendReminders ? (

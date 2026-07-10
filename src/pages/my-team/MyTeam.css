@@ -952,7 +952,7 @@
 .mt-cp__table-cell--status {
   width: 148px;
   flex-shrink: 0;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .mt-cp__status-badge {
