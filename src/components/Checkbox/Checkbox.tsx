@@ -3,15 +3,18 @@ import './Checkbox.css'
 interface CheckboxProps {
   checked: boolean
   onChange?: () => void
+  disabled?: boolean
 }
 
-function Checkbox({ checked, onChange }: CheckboxProps) {
+function Checkbox({ checked, onChange, disabled = false }: CheckboxProps) {
   return (
     <button
-      className="checkbox"
-      onClick={onChange}
+      className={`checkbox${disabled ? ' checkbox--disabled' : ''}`}
+      onClick={disabled ? undefined : onChange}
+      disabled={disabled}
       role="checkbox"
       aria-checked={checked}
+      aria-disabled={disabled || undefined}
     >
       {checked ? (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

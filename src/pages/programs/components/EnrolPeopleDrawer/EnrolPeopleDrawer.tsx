@@ -16,7 +16,12 @@ import './EnrolPeopleDrawer.css'
 type Mode = 'all' | 'people' | 'cohort'
 
 const COMPANY = 'Acme Inc.'
+/** Total workforce headcount, shown when enrolling everyone ("All"). */
+const COMPANY_HEADCOUNT = 132
 const PAGE_SIZE = 5
+
+/** "3 people" / "1 person" — pluralised learner count. */
+const peopleLabel = (n: number) => `${n} ${n === 1 ? 'person' : 'people'}`
 
 interface PersonRow {
   id: string
@@ -192,7 +197,10 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
   }, [cohortQuery])
   const visibleCohorts = filteredCohorts.slice(cohortPage * PAGE_SIZE, cohortPage * PAGE_SIZE + PAGE_SIZE)
 
-  const peopleHeaderChecked = visiblePeople.length > 0 && visiblePeople.every((p) => selectedPeople.has(p.id))
+  // Already-enrolled people can't be re-enrolled — exclude them from selection.
+  const selectableVisiblePeople = visiblePeople.filter((p) => !p.enrolled)
+  const peopleHeaderChecked =
+    selectableVisiblePeople.length > 0 && selectableVisiblePeople.every((p) => selectedPeople.has(p.id))
   const cohortHeaderChecked = visibleCohorts.length > 0 && visibleCohorts.every((c) => selectedCohorts.has(c.id))
 
   const togglePerson = (id: string) =>
@@ -210,8 +218,8 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
   const togglePeopleHeader = () =>
     setSelectedPeople((prev) => {
       const next = new Set(prev)
-      if (peopleHeaderChecked) visiblePeople.forEach((p) => next.delete(p.id))
-      else visiblePeople.forEach((p) => next.add(p.id))
+      if (peopleHeaderChecked) selectableVisiblePeople.forEach((p) => next.delete(p.id))
+      else selectableVisiblePeople.forEach((p) => next.add(p.id))
       return next
     })
   const toggleCohortHeader = () =>
@@ -225,17 +233,55 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
   const canEnrol =
     mode === 'all' ? allSelected : mode === 'people' ? selectedPeople.size > 0 : selectedCohorts.size > 0
 
+  // Learners this selection would enrol — the number the admin actually commits to.
+  // Cohorts expand to their member counts, so N cohorts ≠ N enrolments.
+  const selectedCohortMembers = COHORTS.filter((c) => selectedCohorts.has(c.id)).reduce(
+    (sum, c) => sum + c.members,
+    0,
+  )
+  const selectedCount =
+    mode === 'all'
+      ? allSelected
+        ? COMPANY_HEADCOUNT
+        : 0
+      : mode === 'people'
+        ? selectedPeople.size
+        : selectedCohortMembers
+
+  // Live consequence summary shown above the CTA (who + when).
+  const startText = startMode === 'on-date' ? `starts ${fmtDate(startDate)}` : 'starts immediately'
+  let summaryText: string
+  if (selectedCount === 0) {
+    summaryText = 'No one selected yet'
+  } else if (mode === 'all') {
+    summaryText = `Everyone at ${COMPANY} (${COMPANY_HEADCOUNT}) · ${startText}`
+  } else if (mode === 'people') {
+    summaryText = `${peopleLabel(selectedCount)} selected · ${startText}`
+  } else {
+    const nc = selectedCohorts.size
+    summaryText = `${peopleLabel(selectedCount)} · ${nc} ${nc === 1 ? 'cohort' : 'cohorts'} · ${startText}`
+  }
+
+  // First enrolment launches (or schedules) the program; later ones just enrol.
+  const launchLabel = startMode === 'on-date' ? 'Schedule Program' : 'Launch Program'
+  const ctaLabel = !canEnrol
+    ? launched
+      ? 'Enrol People'
+      : launchLabel
+    : launched
+      ? `Enrol ${selectedCount} ${selectedCount === 1 ? 'Person' : 'People'}`
+      : launchLabel
+
   const handleEnrol = () => {
     if (!canEnrol) return
     let summary: string
     if (mode === 'all') {
-      summary = `All people from ${COMPANY}`
+      summary = `All ${COMPANY_HEADCOUNT} people at ${COMPANY}`
     } else if (mode === 'people') {
-      const n = selectedPeople.size
-      summary = `${n} ${n === 1 ? 'person' : 'people'}`
+      summary = peopleLabel(selectedPeople.size)
     } else {
-      const n = selectedCohorts.size
-      summary = `${n} ${n === 1 ? 'cohort' : 'cohorts'}`
+      const nc = selectedCohorts.size
+      summary = `${peopleLabel(selectedCohortMembers)} from ${nc} ${nc === 1 ? 'cohort' : 'cohorts'}`
     }
     onEnrol(summary, startMode === 'on-date' ? startDate : todayISO())
   }
@@ -289,6 +335,7 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
             >
               <Checkbox checked={allSelected} />
               <span className="epd-all-row__label">All people from {COMPANY}</span>
+              <span className="epd-all-row__count">{COMPANY_HEADCOUNT}</span>
             </div>
           )}
 
@@ -338,11 +385,13 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
                     return (
                       <div
                         key={p.id}
-                        className={`epd-row epd-row--people${checked ? ' epd-row--selected' : ''}`}
-                        onClick={() => togglePerson(p.id)}
+                        className={`epd-row epd-row--people${checked ? ' epd-row--selected' : ''}${p.enrolled ? ' epd-row--enrolled' : ''}`}
+                        onClick={() => {
+                          if (!p.enrolled) togglePerson(p.id)
+                        }}
                       >
                         <div className="epd-cell epd-cell--name">
-                          <Checkbox checked={checked} />
+                          <Checkbox checked={checked} disabled={p.enrolled} />
                           <span className="epd-person">
                             <span className="epd-person__name">{p.name}</span>
                             <span className="epd-person__email">{p.email}</span>
@@ -499,14 +548,22 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
         {/* Footer */}
         <div className="epd-footer">
           <div className="epd-divider" />
-          <button
-            type="button"
-            className="epd-launch"
-            disabled={!canEnrol}
-            onClick={handleEnrol}
-          >
-            {launched ? 'Enrol People' : 'Launch Program'}
-          </button>
+          <div className="epd-footer__row">
+            <button
+              type="button"
+              className="epd-launch"
+              disabled={!canEnrol}
+              onClick={handleEnrol}
+            >
+              {ctaLabel}
+            </button>
+            <span
+              className={`epd-summary${selectedCount === 0 ? ' epd-summary--empty' : ''}`}
+              aria-live="polite"
+            >
+              {summaryText}
+            </span>
+          </div>
         </div>
       </aside>
     </div>

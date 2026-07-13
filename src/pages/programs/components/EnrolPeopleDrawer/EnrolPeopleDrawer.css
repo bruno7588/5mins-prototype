@@ -154,8 +154,17 @@
 }
 
 .epd-all-row__label {
+  flex: 1;
+  min-width: 0;
   font-size: 14px;
   color: var(--text-primary);
+}
+
+.epd-all-row__count {
+  flex: 0 0 auto;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 /* ── Filters bar (People) ───────────────────────────────────────────────── */
@@ -244,6 +253,11 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 150ms ease, border-color 150ms ease;
+}
+
+/* Already-enrolled rows can't be re-selected. */
+.epd-row--enrolled {
+  cursor: default;
 }
 
 .epd-row:hover { background: var(--cards-background-hover); }
@@ -357,7 +371,7 @@
 
 /* ── Pagination ─────────────────────────────────────────────────────────── */
 .epd-pagination {
-  align-self: center;
+  align-self: flex-end;
   display: inline-flex;
   align-items: center;
   gap: var(--space-m);
@@ -507,12 +521,33 @@
   gap: var(--space-m);
 }
 
+/* CTA + its live summary share a row: button left, count beside it. */
+.epd-footer__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+/* Live "who + when" summary for the pending enrolment (sits beside the CTA). */
+.epd-summary {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.epd-summary--empty {
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
 .epd-launch {
   white-space: nowrap;
-  align-self: flex-start;
+  flex: 0 0 auto;
   padding: 10px var(--space-ml);
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: var(--primary-button-background);
   color: var(--neutral-0);
   font-size: 14px;

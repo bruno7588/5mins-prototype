@@ -14,3 +14,12 @@
 .checkbox:hover {
   background: var(--page-background-hover, rgba(45, 49, 61, 0.08));
 }
+
+.checkbox--disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.checkbox--disabled:hover {
+  background: transparent;
+}
