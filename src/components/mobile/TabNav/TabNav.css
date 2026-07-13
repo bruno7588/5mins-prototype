@@ -1,0 +1,40 @@
+/* Mobile bottom tab navigation — navigation.md "Mobile App Navigation", Figma 1324:35285 */
+
+.m-tabnav {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 16px;
+  background: var(--page-background);
+  border-top: 1px solid var(--border);
+}
+
+.m-tabnav__item {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.m-tabnav__item--selected {
+  color: var(--selected);
+}
+
+.m-tabnav__item:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+.m-tabnav__label {
+  font: 400 10px/1.4 Poppins, sans-serif;
+  color: inherit;
+  white-space: nowrap;
+}

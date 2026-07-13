@@ -1,0 +1,141 @@
+/* Mobile Lesson list card — cards.md "Lesson mobile list card", Figma 5144:14181 (Mobile list variants) */
+
+.m-lesson-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--cards-background);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-s);
+  text-align: left;
+}
+
+.m-lesson-card[role='button'] {
+  cursor: pointer;
+}
+
+.m-lesson-card[role='button']:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.m-lesson-card__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+}
+
+.m-lesson-card__thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: var(--border);
+  background-size: cover;
+  background-position: center;
+}
+
+.m-lesson-card--disabled .m-lesson-card__thumb {
+  mix-blend-mode: luminosity;
+}
+
+.m-lesson-card__tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  padding: 4px;
+  background: var(--border);
+  border-bottom-right-radius: 8px;
+}
+
+.m-lesson-card__info {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.m-lesson-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.m-lesson-card__title {
+  margin: 0;
+  font: 700 14px/1.5 Poppins, sans-serif;
+  color: var(--text-primary);
+}
+
+.m-lesson-card__meta {
+  margin: 0;
+  font: 400 12px/1.2 Poppins, sans-serif;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.m-lesson-card--disabled .m-lesson-card__title,
+.m-lesson-card--disabled .m-lesson-card__meta {
+  color: var(--text-disabled);
+}
+
+.m-lesson-card__quiz {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: none;
+  font: 700 12px/1.4 Poppins, sans-serif;
+  cursor: pointer;
+}
+
+.m-lesson-card__quiz:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.m-lesson-card__quiz--take {
+  border: 1px solid var(--button-warning-background);
+  color: var(--button-warning-background);
+}
+
+.m-lesson-card__quiz--retake {
+  border: 1px solid var(--primary-button-background);
+  color: var(--primary-button-background);
+}
+
+.m-lesson-card__quiz--passed {
+  border: 1px solid var(--text-disabled);
+  color: var(--text-disabled);
+}
+
+.m-lesson-card__progress {
+  display: flex;
+  width: 100%;
+  height: 2px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.m-lesson-card__segment {
+  flex: 1 0 0;
+  background: var(--border);
+}
+
+.m-lesson-card__segment--filled {
+  background: var(--primary-600);
+}
+
+.m-lesson-card__segment--complete {
+  background: var(--success-500);
+}

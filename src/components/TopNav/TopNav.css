@@ -75,3 +75,46 @@
 .topnav-icon-btn:hover {
   background: var(--page-background-hover);
 }
+
+/* Logout menu — listbox-style popover anchored to the logout icon */
+
+.topnav-menu-wrap {
+  position: relative;
+}
+
+.topnav-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 1000;
+  min-width: 180px;
+  padding: 8px;
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(32, 34, 42, 0.12);
+}
+
+.topnav-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-s);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease;
+}
+
+.topnav-menu__item:hover {
+  background: var(--page-background-hover);
+}

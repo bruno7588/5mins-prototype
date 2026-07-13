@@ -1,0 +1,104 @@
+/* Mobile Course card — cards.md "Course mobile card (272 x 248)", Figma 5132:5756 (Mobile variants) */
+
+.m-course-card {
+  width: 272px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--cards-background);
+  border-radius: 12px;
+  box-shadow: var(--shadow-s);
+  text-align: left;
+}
+
+.m-course-card[role='button'] {
+  cursor: pointer;
+}
+
+.m-course-card[role='button']:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.m-course-card__image {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+
+.m-course-card__newbadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: var(--danger-400);
+  font: 500 12px/1.5 Poppins, sans-serif;
+  color: var(--neutral-0);
+}
+
+.m-course-card__duepill {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 12px;
+  border-radius: 40px;
+  background: var(--cards-background);
+  font: 400 12px/1.2 Poppins, sans-serif;
+  color: var(--text-warning);
+}
+
+.m-course-card__progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  width: 100%;
+  height: 2px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.m-course-card__segment {
+  flex: 1 0 0;
+  background: var(--border);
+}
+
+.m-course-card__segment--filled {
+  background: var(--selected);
+}
+
+.m-course-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.m-course-card__title {
+  margin: 0;
+  height: 63px;
+  font: 700 14px/1.5 Poppins, sans-serif;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.m-course-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.m-course-card__metaitem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: 400 12px/1.2 Poppins, sans-serif;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}

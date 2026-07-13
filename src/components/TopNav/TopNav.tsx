@@ -1,4 +1,5 @@
-import { Moon, Logout, Sun1 } from 'iconsax-react'
+import { useEffect, useRef, useState } from 'react'
+import { Moon, Logout, Sun1, Mobile } from 'iconsax-react'
 import { useNavigate } from 'react-router-dom'
 import Tooltip from '../Tooltip/Tooltip'
 import { useTheme } from '../../hooks/useTheme'
@@ -7,8 +8,18 @@ import './TopNav.css'
 function TopNav() {
   const navigate = useNavigate()
   const { isDark, toggle } = useTheme()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
   const goToApp = () => navigate('/my-team')
-  const logOut = () => navigate('/onboarding')
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [menuOpen])
   return (
     <nav className="topnav">
       <div className="topnav-left">
@@ -55,11 +66,57 @@ function TopNav() {
             )}
           </button>
         </Tooltip>
-        <Tooltip text="Log out" position="Bottom" alignment="End" icon={false}>
-          <button className="topnav-icon-btn" aria-label="Log out" onClick={logOut}>
-            <Logout size={24} color="var(--text-secondary)" variant="Linear" />
-          </button>
-        </Tooltip>
+        <div className="topnav-menu-wrap" ref={menuRef}>
+          {(() => {
+            const logoutButton = (
+              <button
+                className="topnav-icon-btn"
+                aria-label="Log out"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((o) => !o)}
+              >
+                <Logout size={24} color="var(--text-secondary)" variant="Linear" />
+              </button>
+            )
+            // Tooltip would overlap the open menu — show it only while closed.
+            return menuOpen ? (
+              logoutButton
+            ) : (
+              <Tooltip text="Log out" position="Bottom" alignment="End" icon={false}>
+                {logoutButton}
+              </Tooltip>
+            )
+          })()}
+          {menuOpen && (
+            <div className="topnav-menu" role="menu">
+              <button
+                type="button"
+                role="menuitem"
+                className="topnav-menu__item"
+                onClick={() => {
+                  setMenuOpen(false)
+                  navigate('/onboarding')
+                }}
+              >
+                <Logout size={18} color="var(--text-secondary)" variant="Linear" />
+                <span>Log Out</span>
+              </button>
+              <button
+                type="button"
+                role="menuitem"
+                className="topnav-menu__item"
+                onClick={() => {
+                  setMenuOpen(false)
+                  navigate('/mobile')
+                }}
+              >
+                <Mobile size={18} color="var(--text-secondary)" variant="Linear" />
+                <span>Mobile App</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   )

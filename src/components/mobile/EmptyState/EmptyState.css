@@ -1,0 +1,44 @@
+/* Mobile Empty State — empty-state.md "Visual Spec (Mobile)", Figma 5452:37381 (Device=Mobile) */
+
+.m-empty-state {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.m-empty-state__illustration {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.m-empty-state__info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.m-empty-state__title {
+  margin: 0;
+  font: 700 16px/1.5 Poppins, sans-serif;
+  color: var(--text-primary);
+}
+
+.m-empty-state__description {
+  margin: 0;
+  font: 400 14px/1.5 Poppins, sans-serif;
+  color: var(--text-secondary);
+}
+
+.m-empty-state__cta {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}

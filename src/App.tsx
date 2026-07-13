@@ -20,6 +20,7 @@ import ScormContent from './pages/scorm-content/ScormContent'
 import ScormCreateCourse from './pages/scorm-content/ScormCreateCourse'
 
 import Onboarding from './pages/onboarding/Onboarding'
+import MobileApp from './pages/mobile/MobileApp'
 
 import MyTeam from './pages/my-team/MyTeam'
 import Workspace from './pages/workspace/Workspace'
@@ -57,6 +58,7 @@ function App() {
         }
       />
       <Route path="/onboarding" element={<Onboarding />} />
+      <Route path="/mobile" element={<MobileApp />} />
       <Route path="/my-team" element={<MyTeam />} />
       <Route path="/workspace" element={<Workspace />} />
       {/* Program Builder — standalone full-page, no TopNav (ranks above /programs/:id) */}

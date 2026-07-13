@@ -32,7 +32,27 @@ Spec source: Figma Library — light `11921:5779` / dark `5452:37234` (verified 
 | Info block | `gap: 8px`; title H3 Bold 20 `--text-primary`; description Regular 14 `--text-secondary`, **max-width 600px**, centered |
 | CTA row | `gap: 16px` — outlined primary + filled primary Medium buttons (see `buttons.md`); one or both optional |
 
-**Mobile variant** (out of prototype scope, for reference): width 375, `padding: 16px`, `gap: 16px`, title drops to Bold 16 (H4), description spans full width.
+## Visual Spec (Mobile)
+
+Figma-verified 2026-07-13 (variant `Device=Mobile`, dark node `5452:37381`). Used in the mobile app prototype (phone-frame). Implemented as the shared component `src/components/mobile/EmptyState` — use it, don't hand-roll.
+
+Differences from desktop — everything else (illustration 72px, info gap 8px, CTA row 16px gap, Medium buttons, radius 20px, tokens) is identical:
+
+| Property | Desktop | Mobile |
+|---|---|---|
+| Width | hug content | 375px in Figma; fill the parent in code |
+| Padding | 24px | **16px** |
+| Container gap | 20px | **16px** |
+| Title | Bold 20 (H3) | **Bold 16 (H4)** |
+| Description | max-width 600px | full container width |
+
+## Illustrations
+
+The illustration slot swaps in one of 33 flat slate/blue-gray vector illustrations from the `Illustrations Empty state` set (node `9120:8372`; all 72×72 except Share at 120×72; the default `null` placeholder is a solid `#5e6780` square). Pick by context:
+
+Certificates `9120:8373` · Pie chart `9120:8385` · Empty box `9120:8397` · Search `9120:8404` · Share `9120:8413` · No bookmarks `9120:8416` · No automations `11635:3750` · Connect brain `9120:8425` · No likes `9120:8452` · Not following `9120:8468` · Cloud `9120:8483` · UFO `9120:8493` · Party `9120:8506` · Flashcards `9120:8528` · Custom Fields `11511:9958` · Computer screen `9120:8540` · Calendar `9120:8556` · Rocket `9120:8643` · Message `9120:8664` · Buble `9120:8671` · No results `9120:8715` · No activity `11637:3786` · No internet `9120:8719` · Skill level `9120:8733` · Add users `9120:8805` · No playlists `9120:8837` · Add `9565:9506` · Category `9878:20389` · Quiz `10254:8479` · Resources `11058:291` · Deactivated `11497:12646` · HRIS mapping `11765:570` · Programs `11887:19`
+
+Download the SVG from Figma per context when a page needs one; don't redraw them.
 
 ## CSS
 

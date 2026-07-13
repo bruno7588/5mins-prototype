@@ -1,0 +1,96 @@
+/* Mobile Assessment list card — cards.md "Assessment mobile list card", Figma 10242:2782 (Mobile app variants) */
+
+.m-assessment-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--cards-background);
+  border-radius: 12px;
+  box-shadow: var(--shadow-s);
+  text-align: left;
+}
+
+.m-assessment-card--completed {
+  align-items: flex-start;
+}
+
+.m-assessment-card[role='button'] {
+  cursor: pointer;
+}
+
+.m-assessment-card[role='button']:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.m-assessment-card__illustration {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+}
+
+.m-assessment-card--disabled .m-assessment-card__illustration {
+  mix-blend-mode: luminosity;
+  filter: grayscale(1);
+}
+
+.m-assessment-card__info {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.m-assessment-card--completed .m-assessment-card__info {
+  gap: 12px;
+}
+
+.m-assessment-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.m-assessment-card__title {
+  margin: 0;
+  font: 700 14px/1.5 Poppins, sans-serif;
+  color: var(--text-primary);
+}
+
+.m-assessment-card__meta {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 12px/1.2 Poppins, sans-serif;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.m-assessment-card--disabled .m-assessment-card__title,
+.m-assessment-card--disabled .m-assessment-card__meta {
+  color: var(--text-disabled);
+}
+
+.m-assessment-card__review {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: 1px solid var(--text-primary);
+  border-radius: 8px;
+  background: none;
+  font: 700 12px/1.4 Poppins, sans-serif;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.m-assessment-card__review:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}

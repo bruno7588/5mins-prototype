@@ -1,0 +1,310 @@
+/* Mobile top navigation header — navigation.md "Mobile App Navigation", Figma 1910:18375 */
+
+.m-topnav {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--page-background);
+}
+
+.m-topnav--overlay {
+  background: transparent;
+}
+
+/* Fake iOS status bar (lightweight stand-in for the Figma SF Pro assets) */
+
+.m-topnav__statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px;
+  color: var(--text-primary);
+}
+
+.m-topnav__statusbar--transparent {
+  background: transparent;
+}
+
+.m-topnav__clock {
+  font: 500 14px/1.5 -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+}
+
+.m-topnav__statusicons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Header row */
+
+.m-topnav__header {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.m-topnav__header--home,
+.m-topnav__header--search,
+.m-topnav__header--chips,
+.m-topnav__header--title {
+  height: 65px;
+  padding: 12px 16px;
+}
+
+.m-topnav__header--profile {
+  padding: 12px 16px;
+}
+
+.m-topnav__header--home,
+.m-topnav__header--profile,
+.m-topnav__header--skill,
+.m-topnav__header--lesson-feed {
+  justify-content: space-between;
+}
+
+.m-topnav__header--title {
+  justify-content: center;
+}
+
+/* No divider on Home and Lesson feed per Figma */
+.m-topnav__header--home,
+.m-topnav__header--transparent {
+  border-bottom: 0;
+}
+
+.m-topnav__header--transparent {
+  background: transparent;
+}
+
+/* Chips */
+
+.m-topnav__chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.m-topnav__chip {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: none;
+  font: 400 14px/1.5 Poppins, sans-serif;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.m-topnav__chip--active {
+  border-color: var(--secondary-500);
+  background: var(--secondary-500);
+  font-weight: 700;
+  color: var(--neutral-800);
+}
+
+.m-topnav__chip:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+/* Right icon cluster (Home) */
+
+.m-topnav__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.m-topnav__iconbtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--radius-full, 999px);
+}
+
+.m-topnav__iconbtn:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.m-topnav__dot {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger-500);
+}
+
+/* Search field */
+
+.m-topnav__search {
+  flex: 1 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--input-background);
+  font: 400 14px/1.5 Poppins, sans-serif;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  text-align: left;
+}
+
+.m-topnav__search:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+/* Titles */
+
+.m-topnav__title {
+  margin: 0;
+  font: 700 16px/1.5 Poppins, sans-serif;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.m-topnav__title--s {
+  font-size: 14px;
+}
+
+.m-topnav__titlewrap {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.m-topnav__spacer {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+/* Back button */
+
+.m-topnav__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  background: var(--input-background);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.m-topnav__back--scrim {
+  background: rgba(15, 16, 20, 0.5);
+}
+
+.m-topnav__back:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+/* Lesson feed points */
+
+.m-topnav__points {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: 700 12px/1.4 Poppins, sans-serif;
+  color: var(--text-primary);
+}
+
+/* Profile */
+
+.m-topnav__profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.m-topnav__avatarwrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.m-topnav__avatar {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--border);
+  background-size: cover;
+  background-position: center;
+}
+
+.m-topnav__editbadge {
+  position: absolute;
+  top: -5px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--input-background);
+  cursor: pointer;
+}
+
+.m-topnav__editbadge:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 1px;
+}
+
+.m-topnav__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.m-topnav__name {
+  font: 700 14px/1.5 Poppins, sans-serif;
+  color: var(--text-primary);
+}
+
+.m-topnav__role {
+  font: 400 12px/1.2 Poppins, sans-serif;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.m-topnav__fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary-500);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.m-topnav__fab:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}

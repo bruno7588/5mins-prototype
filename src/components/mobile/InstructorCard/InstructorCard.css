@@ -1,0 +1,91 @@
+/* Mobile Instructor card — cards.md "Instructor card", Figma 5149:27385 (Mobile, dark) / 9926:2478 (Mobile, light) */
+
+.m-instructor-card {
+  width: 100%;
+  min-height: 137px;
+  display: flex;
+  align-items: center;
+  background: var(--cards-background);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-s);
+  text-align: left;
+}
+
+.m-instructor-card[role='button'] {
+  cursor: pointer;
+}
+
+.m-instructor-card[role='button']:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.m-instructor-card__photo {
+  align-self: stretch;
+  flex-shrink: 0;
+  width: 120px;
+  background-color: var(--border);
+  background-size: cover;
+  background-position: center;
+}
+
+.m-instructor-card__info {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+}
+
+.m-instructor-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.m-instructor-card__name {
+  margin: 0;
+  font: 700 14px/1.5 Poppins, sans-serif;
+  color: var(--text-primary);
+}
+
+.m-instructor-card__bio {
+  margin: 0;
+  font: 400 12px/1.2 Poppins, sans-serif;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.m-instructor-card__skills {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.m-instructor-card__skill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 8px;
+  font: 400 12px/1.2 Poppins, sans-serif;
+  color: var(--text-tertiary);
+  min-width: 0;
+}
+
+.m-instructor-card__skill span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.m-instructor-card__skill img {
+  flex-shrink: 0;
+}

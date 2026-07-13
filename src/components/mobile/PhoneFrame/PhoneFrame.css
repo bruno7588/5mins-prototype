@@ -1,0 +1,86 @@
+/* Phone frame wrapper for the mobile app prototype (375x812 screen, dark bezel) */
+
+.m-phone-stage {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: var(--page-background);
+  overflow: auto;
+}
+
+/* Prototype scaffolding — sits on the stage, outside the phone bezel */
+.m-phone-stage__exit {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-s);
+  font: 700 14px/1.5 Poppins, sans-serif;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.m-phone-stage__exit:hover {
+  background: var(--cards-background-hover);
+  border-color: var(--border-hover);
+}
+
+.m-phone-stage__exit:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.m-phone {
+  padding: 10px;
+  border-radius: 54px;
+  /* Device hardware — intentionally unthemed */
+  background: #0f1014;
+  box-shadow:
+    0 24px 48px rgba(15, 16, 20, 0.35),
+    0 4px 12px rgba(15, 16, 20, 0.25);
+}
+
+.m-phone__screen {
+  position: relative;
+  width: 375px;
+  height: 812px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 44px;
+  overflow: hidden;
+  background: var(--page-background);
+}
+
+.m-phone__header {
+  flex-shrink: 0;
+}
+
+.m-phone__header--overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.m-phone__content {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.m-phone__footer {
+  flex-shrink: 0;
+}

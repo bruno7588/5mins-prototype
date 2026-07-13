@@ -1,0 +1,106 @@
+/* Mobile Category card — cards.md "Category mobile card (272 x 238)", Figma 10176:1806 (Mobile variants) */
+
+.m-cat-card {
+  position: relative;
+  width: 272px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.m-cat-card[role='button'] {
+  cursor: pointer;
+}
+
+.m-cat-card[role='button']:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.m-cat-card__thumb {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  padding: 32px;
+  display: grid;
+  place-items: center;
+}
+
+.m-cat-card--disabled .m-cat-card__thumb {
+  mix-blend-mode: luminosity;
+}
+
+.m-cat-card__glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  filter: blur(16px);
+  opacity: 0.32;
+}
+
+.m-cat-card__image {
+  position: relative;
+  width: 208px;
+  height: 116px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.m-cat-card--disabled .m-cat-card__image {
+  opacity: 0.5;
+}
+
+.m-cat-card__newbadge {
+  position: absolute;
+  top: -11px;
+  left: 30px;
+  padding: 6px 8px;
+  border-radius: 40px;
+  background: var(--danger-400);
+  font: 500 12px/1.2 Poppins, sans-serif;
+  color: var(--neutral-25);
+}
+
+.m-cat-card__info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.m-cat-card__title {
+  margin: 0;
+  font: 700 14px/1.5 Poppins, sans-serif;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.m-cat-card--disabled .m-cat-card__title {
+  color: var(--text-disabled);
+}
+
+.m-cat-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.m-cat-card__metaitem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: 400 12px/1.2 Poppins, sans-serif;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.m-cat-card--disabled .m-cat-card__metaitem {
+  color: var(--text-disabled);
+}
