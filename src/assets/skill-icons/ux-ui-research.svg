@@ -1,0 +1,30 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="96" height="96" fill="#F5F5F5"/>
+<g id="Hard skills icons">
+<g clip-path="url(#clip0_5502_20087)">
+<g id="Body">
+<g id="Icons/Skill Icon/UX UI Research">
+<g id="search">
+<path id="Rectangle" fill-rule="evenodd" clip-rule="evenodd" d="M70.5605 65.333L65.3358 70.5578L58.7316 63.9536L63.9564 58.7289L70.5605 65.333Z" fill="#00A999"/>
+<path id="Path" fill-rule="evenodd" clip-rule="evenodd" d="M73.7448 63.8784L95.1595 85.2929C96.1174 86.2508 96.1174 87.8183 95.1595 88.7763L88.7761 95.1596C87.8096 96.1262 86.2507 96.1176 85.2927 95.1596L63.8781 73.7454C63.3992 73.2665 63.3904 72.4914 63.8781 72.0037L72.0033 63.8784C72.4822 63.3996 73.266 63.3996 73.7448 63.8784Z" fill="#7E8599"/>
+<circle id="Oval" cx="36.9473" cy="36.9475" r="36.9473" fill="#00D3BF"/>
+<g id="Group">
+<circle id="Oval_2" cx="36.947" cy="36.9477" r="32.0231" fill="#EFF0F2"/>
+<path id="Rectangle_2" fill-rule="evenodd" clip-rule="evenodd" d="M79.166 69.3019L69.2995 79.1684L68.2111 78.08L78.0776 68.2135L79.166 69.3019Z" fill="#DFE1E6"/>
+<path id="Rectangle_3" fill-rule="evenodd" clip-rule="evenodd" d="M78.0742 68.2108L68.2077 78.0774L67.1193 76.989L76.9858 67.1224L78.0742 68.2108Z" fill="#DFE1E6"/>
+<path id="Rectangle_4" fill-rule="evenodd" clip-rule="evenodd" d="M82.4316 72.5575L72.5652 82.4239L71.4769 81.3355L81.3433 71.4691L82.4316 72.5575Z" fill="#DFE1E6"/>
+<path id="Rectangle_5" fill-rule="evenodd" clip-rule="evenodd" d="M83.5195 73.642L73.6531 83.5084L72.5647 82.42L82.4311 72.5536L83.5195 73.642Z" fill="#DFE1E6"/>
+</g>
+<path id="Path_2" fill-rule="evenodd" clip-rule="evenodd" d="M36.949 32.5222C29.3781 32.5222 21.5103 37.1763 16.9104 45.2035C15.4381 47.7728 17.266 50.9792 20.2272 50.9792H53.6708C56.6319 50.9792 58.4598 47.7728 56.9875 45.2035C52.3877 37.1763 44.5198 32.5222 36.949 32.5222Z" fill="#FFBB38"/>
+<circle id="Oval_3" cx="36.9475" cy="25.4753" r="7.67011" fill="#FFBB38"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_5502_20087">
+<path d="M-11143.3 -220C-11143.3 -231.046 -11134.4 -240 -11123.3 -240H5294.35C5305.4 -240 5314.35 -231.046 5314.35 -220V132C5314.35 143.046 5305.39 152 5294.35 152H-11123.3C-11134.4 152 -11143.3 143.046 -11143.3 132V-220Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>

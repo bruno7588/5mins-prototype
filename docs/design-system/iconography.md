@@ -314,6 +314,23 @@ import * as Icons from 'iconsax-react';
 - Emphasis → Bold
 - Standard UI → Linear
 
+## Skill Illustrations (gamification)
+
+Multi-color skill-category illustrations, separate from the Iconsax UI icon set. Used on skill pages, skill/instructor cards, and role panels. Source: Figma `Icons/Skill Icon/*` + `Illustrations/Skill Hugo/*` (frame `9120:10291`, downloaded 2026-07-13). Full library lives in `src/assets/skill-icons/` — **100 skills** as SVG (kebab-case filenames) plus **8 "Skill Hugo"** alternates (`*-hugo.svg`: Automation Testing & Deployment, Financial Compliance, Data & Security Compliance, Workplace Compliance, ESG, Sustainability, Buyer Psychology, Generative ai).
+
+Usage — always via the index, never raw paths:
+
+```tsx
+import { getSkillIllustrationByName, skillIllustrationHugoByName } from '@/assets/skill-icons'
+
+<img src={getSkillIllustrationByName('Machine Learning')} alt="" width={16} height={16} />
+```
+
+- `getSkillIllustrationByName(name)` — case-insensitive lookup by official skill name; unknown names fall back to a stable hash pick so mock data never renders empty.
+- `skillIllustrationHugoByName` — the 8 Hugo-style alternates, keyed by the same names.
+- `getSkillIllustration(skillId)` — legacy modulo pick over the original 20; existing call sites only, don't use in new code.
+- Render at 16, 20, or 96px depending on context (skill row, chip, skill page hero); they're decorative — pair with a text label, `alt=""`.
+
 ## Resources
 
 **Complete CSS Utilities:** `assets/iconography.css`

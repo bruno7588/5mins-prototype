@@ -1,0 +1,30 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="96" height="96" fill="#F5F5F5"/>
+<g id="Hard skills icons">
+<g clip-path="url(#clip0_5502_20087)">
+<g id="Body">
+<g id="Icons/Skill Icon/Conversion Optimisation">
+<path id="Path" fill-rule="evenodd" clip-rule="evenodd" d="M32.0762 26.4427H6.71191C6.71191 19.4525 12.3041 13.6605 19.4941 13.6605C26.4842 13.6605 32.0762 19.4523 32.0762 26.4427Z" fill="#FFBB38"/>
+<path id="Path_2" fill-rule="evenodd" clip-rule="evenodd" d="M60.8399 26.4427H35.4756C35.4756 19.4525 41.0678 13.6605 48.2577 13.6605C55.2479 13.6605 60.8399 19.4523 60.8399 26.4427Z" fill="#FFBB38"/>
+<path id="Path_3" fill-rule="evenodd" clip-rule="evenodd" d="M89.6045 26.4427H64.2402C64.2402 19.4525 69.8325 13.6605 77.0224 13.6605C84.0125 13.6605 89.6045 19.4523 89.6045 26.4427Z" fill="#FFBB38"/>
+<g id="funnel">
+<path id="Path_4" d="M88.0532 31.0402H8.78906L39.4021 67.1892V81.0453L57.4402 95.8807V67.1892L88.0532 31.0402Z" fill="#00D3BF"/>
+<g id="Group">
+<path id="Path_5" d="M48.4092 31.0402V88.4535L57.4401 95.8809V67.1892L88.0529 31.0402H48.4092Z" fill="#00A999"/>
+<rect id="Rectangle" x="5.75293" y="23.9702" width="85.3341" height="10.2969" fill="#00A999"/>
+</g>
+<rect id="Rectangle_2" x="48.4092" y="23.9702" width="42.678" height="10.2969" fill="#007F73"/>
+</g>
+<circle id="Oval" cx="19.4941" cy="6.59076" r="6.59076" fill="#FFBB38"/>
+<circle id="Oval_2" cx="48.2578" cy="6.59076" r="6.59076" fill="#FFBB38"/>
+<circle id="Oval_3" cx="77.0224" cy="6.59076" r="6.59076" fill="#FFBB38"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_5502_20087">
+<path d="M-2789.86 -220C-2789.86 -231.046 -2780.91 -240 -2769.86 -240H13647.8C13658.8 -240 13667.8 -231.046 13667.8 -220V132C13667.8 143.046 13658.8 152 13647.8 152H-2769.86C-2780.91 152 -2789.86 143.046 -2789.86 132V-220Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>

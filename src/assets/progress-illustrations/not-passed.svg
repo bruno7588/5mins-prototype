@@ -1,0 +1,28 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="40" height="40" fill="#F5F5F5"/>
+<g id="Progress illustrations">
+<g id="Frame 1611">
+<g id="Dark mode">
+<rect width="4008" height="1424" transform="translate(-688 -784)" fill="#20222A"/>
+<g id="Illustrations/ Progress">
+<rect x="-631.5" y="-55.5" width="727" height="151" rx="4.5" stroke="#9747FF" stroke-dasharray="10 5"/>
+<g id="Type=Not passed" clip-path="url(#clip0_5502_20087)">
+<g id="danger_circle">
+<g id="Group">
+<path id="Vector" d="M19.9766 38.7397C30.3319 38.7397 38.7266 30.345 38.7266 19.9897C38.7266 9.63433 30.3319 1.23967 19.9766 1.23967C9.62122 1.23967 1.22656 9.63433 1.22656 19.9897C1.22656 30.345 9.62122 38.7397 19.9766 38.7397Z" fill="#9C0F2E"/>
+<path id="Vector_2" d="M18.7578 37.2397C28.44 37.2397 36.2891 29.3907 36.2891 19.7084C36.2891 10.0262 28.44 2.17717 18.7578 2.17717C9.07557 2.17717 1.22656 10.0262 1.22656 19.7084C1.22656 29.3907 9.07557 37.2397 18.7578 37.2397Z" fill="#DF1642"/>
+<path id="Vector_3" d="M7.48942 9.28459C8.89567 7.06584 11.8957 5.22209 15.0207 4.65959C15.8019 4.53459 16.5832 4.47209 17.2394 4.72209C17.7394 4.90959 18.1457 5.37834 17.8644 5.90959C17.6457 6.34709 17.0519 6.53459 16.5832 6.69084C13.6519 7.65959 11.1238 9.56897 9.39567 12.1283C8.77067 13.0658 7.83317 15.6596 6.67692 15.0033C5.45817 14.2846 5.70817 12.0346 7.48942 9.28459Z" fill="#F2A2B3"/>
+</g>
+<path id="Vector_4" d="M26.25 25.625L13.75 13.125M26.25 13.125L13.75 25.625" stroke="#20222A" stroke-width="2.23214" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_5502_20087">
+<rect width="40" height="40" fill="white"/>
+</clipPath>
+</defs>
+</svg>
