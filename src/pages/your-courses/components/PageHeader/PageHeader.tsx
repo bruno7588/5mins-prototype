@@ -14,6 +14,8 @@ interface PageHeaderProps {
   onTabChange?: (label: string) => void
   /** Optional right-aligned action rendered on the tabs row (e.g. Add Course). */
   tabsAction?: ReactNode
+  /** Optional action rendered in the top action cluster, just before the primary button. */
+  primaryAction?: ReactNode
   secondaryLabel?: string
   onSecondary?: () => void
   secondaryDisabled?: boolean
@@ -44,6 +46,7 @@ function PageHeader({
   activeTab = 'Course Content',
   onTabChange,
   tabsAction,
+  primaryAction,
   secondaryLabel = 'Save Draft',
   onSecondary,
   secondaryDisabled = true,
@@ -70,6 +73,7 @@ function PageHeader({
               {secondaryLabel}
             </button>
           )}
+          {primaryAction}
           <button
             className={`page-header-btn-filled${primaryDisabled ? ' page-header-btn-disabled' : ''}`}
             onClick={primaryDisabled ? undefined : onPrimary}

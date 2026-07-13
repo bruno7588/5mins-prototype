@@ -49,9 +49,10 @@
   color: var(--text-progress);
 }
 
+/* Scheduled = neutral, on-track planned state → Informative family (badges.md). */
 .psb--scheduled {
-  background: rgba(255, 165, 56, 0.16);
-  color: var(--text-warning);
+  background: var(--input-background);
+  color: var(--text-secondary);
 }
 
 .psb--live {

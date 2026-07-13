@@ -187,25 +187,24 @@ function ProgramsAdmin() {
         <header className="programs-header">
           <div className="programs-header-top">
             <h1 className="programs-title">Programs</h1>
-            <button className="programs-create-btn" onClick={() => navigate('/programs/builder')}>
-              Create Program
-              <Add size={20} color="var(--neutral-25)" variant="Linear" />
-            </button>
+            <div className="programs-header-actions">
+              <Search
+                size="M"
+                value={query}
+                onChange={setQuery}
+                placeholder="Search programs"
+                className="programs-search"
+              />
+              <button className="programs-create-btn" onClick={() => navigate('/programs/builder')}>
+                Create Program
+                <Add size={20} color="var(--neutral-25)" variant="Linear" />
+              </button>
+            </div>
           </div>
           <div className="programs-divider" aria-hidden="true" />
         </header>
 
         <div className="programs-body">
-          <div className="programs-toolbar">
-            <Search
-              size="M"
-              value={query}
-              onChange={setQuery}
-              placeholder="Search programs"
-              className="programs-search"
-            />
-          </div>
-
           {filtered.length === 0 ? (
             <div className="programs-empty">
               <span className="programs-empty-icon">
@@ -231,7 +230,6 @@ function ProgramsAdmin() {
               columns={columns}
               rows={filtered}
               getRowKey={(row) => row.id}
-              onRowClick={(row) => navigate(`/programs/builder/${row.id}`)}
             />
           )}
         </div>

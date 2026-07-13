@@ -71,9 +71,9 @@
   min-width: 0;
   display: flex;
   align-items: center;
-  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
+  box-shadow: var(--shadow-s);
   transition: background 150ms ease;
 }
 
@@ -263,7 +263,7 @@
   color: var(--text-error);
 }
 
-/* ── Add Course ─────────────────────────────────────────────────────────── */
+/* ── Add Courses — dashed button at the foot of the list ────────────────── */
 .co-actions {
   display: flex;
   width: 100%;

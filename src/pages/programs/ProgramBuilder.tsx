@@ -100,11 +100,11 @@ function ProgramBuilder() {
         tabs={TABS}
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        tabsAction={
+        primaryAction={
           activeTab === 'Courses' ? (
-            <button type="button" className="pb-add-course" onClick={() => setPickerOpen(true)}>
-              <Add size={20} color="currentColor" variant="Linear" />
+            <button type="button" className="page-header-btn-outline" onClick={() => setPickerOpen(true)}>
               Add Courses
+              <Add size={20} color="currentColor" variant="Linear" />
             </button>
           ) : undefined
         }

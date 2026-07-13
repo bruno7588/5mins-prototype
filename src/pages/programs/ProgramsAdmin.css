@@ -33,6 +33,13 @@
   color: var(--text-primary);
 }
 
+/* Right-aligned CTA cluster: search + Create Program (headers.md, 12px gap). */
+.programs-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
 .programs-create-btn {
   display: inline-flex;
   align-items: center;
@@ -66,13 +73,6 @@
 .programs-body {
   flex: 1;
   padding: 24px;
-}
-
-.programs-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 16px;
 }
 
 .programs-search {
