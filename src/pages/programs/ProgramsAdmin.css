@@ -47,7 +47,7 @@
   flex: 0 0 auto;
   padding: 10px 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--primary-600);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;

@@ -38,7 +38,7 @@
   font-weight: 700;
   line-height: 1.5;
   border: 1px solid var(--text-primary);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-primary);
   cursor: pointer;
@@ -69,7 +69,7 @@
   font-size: 14px;
   font-weight: 700;
   border: 1px solid var(--primary-600);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--primary-600);
   cursor: pointer;
@@ -91,7 +91,7 @@
   font-size: 14px;
   font-weight: 700;
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: var(--primary-600);
   color: var(--neutral-0);
   cursor: pointer;

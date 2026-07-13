@@ -137,7 +137,7 @@
   white-space: nowrap;
   padding: var(--space-s) var(--space-ml);
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: var(--primary-600);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;
@@ -195,7 +195,7 @@
   gap: var(--space-xs);
   padding: 10px var(--space-ml);
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: var(--primary-600);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;

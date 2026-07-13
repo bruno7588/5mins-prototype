@@ -1089,7 +1089,7 @@
   padding: var(--space-sm) var(--space-l);
   font-size: 14px;
   font-weight: 700;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   text-transform: capitalize;
   cursor: pointer;
   transition: opacity 150ms ease, background 150ms ease;
