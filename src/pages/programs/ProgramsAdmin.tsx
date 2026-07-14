@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Add, Copy, Edit2, Routing, Trash } from 'iconsax-react'
+import { Add, Danger, Edit2, Routing, Trash } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
 import Table, { type Column } from '../../components/Table/Table'
@@ -9,7 +10,6 @@ import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import ProgramStatusBadge from './components/ProgramStatusBadge/ProgramStatusBadge'
 import {
   deleteProgram,
-  duplicateProgram,
   getAdminProgramRows,
   programLifecycle,
   type AdminProgramRow,
@@ -49,8 +49,21 @@ function ProgramsAdmin() {
   const [rows, setRows] = useState<AdminProgramRow[]>(() => getAdminProgramRows())
   const [query, setQuery] = useState('')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  // Row-action menu is portaled to <body> so the table's overflow can't clip it.
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [confirmInput, setConfirmInput] = useState('')
   const menuRef = useRef<HTMLDivElement>(null)
+
+  const openMenu = (rowId: string, e: React.MouseEvent) => {
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect()
+    setMenuPos({ top: r.bottom + 4, right: window.innerWidth - r.right })
+    setOpenMenuId(rowId)
+  }
+  const closeMenu = () => {
+    setOpenMenuId(null)
+    setMenuPos(null)
+  }
 
   // Toast handed over by another page (e.g. delete from the program details page).
   useEffect(() => {
@@ -64,10 +77,17 @@ function ProgramsAdmin() {
   useEffect(() => {
     if (!openMenuId) return
     const onDown = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpenMenuId(null)
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) closeMenu()
     }
+    const onReflow = () => closeMenu()
     document.addEventListener('mousedown', onDown)
-    return () => document.removeEventListener('mousedown', onDown)
+    window.addEventListener('scroll', onReflow, true)
+    window.addEventListener('resize', onReflow)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      window.removeEventListener('scroll', onReflow, true)
+      window.removeEventListener('resize', onReflow)
+    }
   }, [openMenuId])
 
   const filtered = useMemo(
@@ -77,18 +97,16 @@ function ProgramsAdmin() {
 
   const deletingProgram = rows.find((r) => r.id === confirmDeleteId) ?? null
 
-  const handleDuplicate = (id: string) => {
-    duplicateProgram(id)
-    setRows(getAdminProgramRows())
-    setOpenMenuId(null)
-    show('success', 'Program duplicated')
+  const closeDelete = () => {
+    setConfirmDeleteId(null)
+    setConfirmInput('')
   }
 
   const confirmDelete = () => {
-    if (!confirmDeleteId) return
+    if (!confirmDeleteId || confirmInput !== 'Delete') return
     deleteProgram(confirmDeleteId)
     setRows(getAdminProgramRows())
-    setConfirmDeleteId(null)
+    closeDelete()
     show('success', 'Program deleted')
   }
 
@@ -143,38 +161,17 @@ function ProgramsAdmin() {
       render: (row) => (
         <div
           className={`programs-kebab${openMenuId === row.id ? ' programs-kebab--open' : ''}`}
-          ref={openMenuId === row.id ? menuRef : undefined}
           onClick={(e) => e.stopPropagation()}
         >
           <button
             className="programs-kebab-btn"
             aria-label="Program actions"
-            onClick={() => setOpenMenuId((id) => (id === row.id ? null : row.id))}
+            aria-haspopup="menu"
+            aria-expanded={openMenuId === row.id}
+            onClick={(e) => (openMenuId === row.id ? closeMenu() : openMenu(row.id, e))}
           >
             <MoreIcon />
           </button>
-          {openMenuId === row.id && (
-            <div className="programs-kebab-menu" role="menu">
-              <button className="programs-kebab-item" onClick={() => navigate(`/programs/builder/${row.id}`)}>
-                <Edit2 size={18} color="var(--text-secondary)" variant="Linear" />
-                Edit
-              </button>
-              <button className="programs-kebab-item" onClick={() => handleDuplicate(row.id)}>
-                <Copy size={18} color="var(--text-secondary)" variant="Linear" />
-                Duplicate
-              </button>
-              <button
-                className="programs-kebab-item programs-kebab-item--danger"
-                onClick={() => {
-                  setConfirmDeleteId(row.id)
-                  setOpenMenuId(null)
-                }}
-              >
-                <Trash size={18} color="var(--danger-500)" variant="Linear" />
-                Delete
-              </button>
-            </div>
-          )}
         </div>
       ),
     },
@@ -235,23 +232,81 @@ function ProgramsAdmin() {
         </div>
       </main>
 
-      <ConfirmModal open={!!confirmDeleteId} onClose={() => setConfirmDeleteId(null)}>
-        <div className="confirm-modal-header">
-          <h2 className="confirm-modal-title">Delete program</h2>
-          <p className="confirm-modal-body">
-            Delete <strong>{deletingProgram?.title}</strong>? This removes it from the list and the learner
-            experience. This can’t be undone.
-          </p>
-        </div>
-        <div className="confirm-modal-actions">
-          <button className="confirm-modal-btn confirm-modal-btn--outlined-neutral" onClick={() => setConfirmDeleteId(null)}>
-            Cancel
-          </button>
-          <button className="confirm-modal-btn confirm-modal-btn--danger" onClick={confirmDelete}>
-            Delete Program
-          </button>
-        </div>
+      <ConfirmModal open={!!confirmDeleteId} onClose={closeDelete}>
+        {deletingProgram && (
+          <>
+            <div className="confirm-modal-header confirm-modal-header--center">
+              <div className="confirm-modal-icon">
+                <Danger size={72} color="var(--danger-500)" variant="Linear" />
+              </div>
+              <h2 className="confirm-modal-title">Delete program</h2>
+              <p className="confirm-modal-body">
+                All data concerning the program will be removed. This includes the progress made by the users.
+              </p>
+            </div>
+            <div className="confirm-modal-input-group">
+              <label className="confirm-modal-label">
+                Type <span className="confirm-modal-label-danger">'Delete'</span> below, to confirm
+              </label>
+              <input
+                className="confirm-modal-input"
+                type="text"
+                value={confirmInput}
+                onChange={(e) => setConfirmInput(e.target.value)}
+                placeholder="Delete"
+                autoFocus
+              />
+            </div>
+            <div className="confirm-modal-actions">
+              <button className="confirm-modal-btn confirm-modal-btn--outlined" onClick={closeDelete}>
+                Cancel
+              </button>
+              <button
+                className="confirm-modal-btn confirm-modal-btn--danger"
+                disabled={confirmInput !== 'Delete'}
+                onClick={confirmDelete}
+              >
+                Delete Program
+              </button>
+            </div>
+          </>
+        )}
       </ConfirmModal>
+
+      {openMenuId &&
+        menuPos &&
+        createPortal(
+          <div
+            ref={menuRef}
+            className="programs-kebab-menu"
+            role="menu"
+            style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 1000 }}
+          >
+            <button
+              className="programs-kebab-item"
+              role="menuitem"
+              onClick={() => {
+                navigate(`/programs/builder/${openMenuId}`)
+                closeMenu()
+              }}
+            >
+              <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+              Edit
+            </button>
+            <button
+              className="programs-kebab-item programs-kebab-item--danger"
+              role="menuitem"
+              onClick={() => {
+                setConfirmDeleteId(openMenuId)
+                closeMenu()
+              }}
+            >
+              <Trash size={20} color="var(--danger-500)" variant="Linear" />
+              Delete
+            </button>
+          </div>,
+          document.body,
+        )}
 
       <ToastContainer toasts={toasts} />
     </div>
