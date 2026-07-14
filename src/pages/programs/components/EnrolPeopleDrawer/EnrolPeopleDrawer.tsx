@@ -74,13 +74,6 @@ const fmtDate = (iso: string) => {
   return d && m && y ? `${d}/${m}/${y}` : iso
 }
 
-const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-/** "13 Jul 2026" — for the enrolment summary. */
-const fmtDateLong = (iso: string) => {
-  const [y, m, d] = iso.split('-')
-  return d && m && y ? `${Number(d)} ${MONTHS_SHORT[Number(m) - 1]} ${y}` : iso
-}
-
 interface Props {
   open: boolean
   onClose: () => void
@@ -255,20 +248,18 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
         ? selectedPeople.size
         : selectedCohortMembers
 
-  // Live consequence summary beside the CTA — the headcount is the point.
-  // The "when" lives on the CTA verb + the date field, so only echo a
-  // deliberately-chosen future date here (nothing for the immediate default).
-  const startText = startMode === 'on-date' ? ` · ${fmtDateLong(startDate)}` : ''
+  // Live consequence summary beside the CTA — just the headcount; the "when"
+  // is carried by the CTA verb (Launch / Schedule) and the date field above.
   let summaryText: string
   if (selectedCount === 0) {
     summaryText = 'No one selected yet'
   } else if (mode === 'all') {
-    summaryText = `Everyone at ${COMPANY} (${COMPANY_HEADCOUNT})${startText}`
+    summaryText = `Everyone at ${COMPANY} (${COMPANY_HEADCOUNT})`
   } else if (mode === 'people') {
-    summaryText = `${peopleLabel(selectedCount)} selected${startText}`
+    summaryText = `${peopleLabel(selectedCount)} selected`
   } else {
     const nc = selectedCohorts.size
-    summaryText = `${peopleLabel(selectedCount)} · ${nc} ${nc === 1 ? 'cohort' : 'cohorts'}${startText}`
+    summaryText = `${peopleLabel(selectedCount)} · ${nc} ${nc === 1 ? 'cohort' : 'cohorts'}`
   }
 
   // First enrolment launches (or schedules) the program; later ones just enrol.
