@@ -396,6 +396,7 @@ export interface WorkspaceCategory {
   id: string
   name: string
   thumbnailGradient: string
+  image?: string
   courseCount: number
   lessonCount: number
 }
@@ -405,6 +406,7 @@ export const workspaceCategories: WorkspaceCategory[] = [
     id: 'cat1',
     name: 'Leadership Training',
     thumbnailGradient: 'linear-gradient(135deg, #a855f7, #6366f1)',
+    image: enrolledThumb1,
     courseCount: 12,
     lessonCount: 84,
   },
@@ -412,6 +414,7 @@ export const workspaceCategories: WorkspaceCategory[] = [
     id: 'cat2',
     name: 'New Joiner Collection',
     thumbnailGradient: 'linear-gradient(135deg, #f97316, #fbbf24)',
+    image: enrolledThumb2,
     courseCount: 8,
     lessonCount: 41,
   },
@@ -419,6 +422,7 @@ export const workspaceCategories: WorkspaceCategory[] = [
     id: 'cat3',
     name: 'Compliance & Security',
     thumbnailGradient: 'linear-gradient(135deg, #14b8a6, #0ea5e9)',
+    image: enrolledThumb3,
     courseCount: 15,
     lessonCount: 67,
   },
@@ -426,6 +430,7 @@ export const workspaceCategories: WorkspaceCategory[] = [
     id: 'cat4',
     name: 'Product Updates',
     thumbnailGradient: 'linear-gradient(135deg, #0f172a, #334155)',
+    image: enrolledThumb4,
     courseCount: 6,
     lessonCount: 22,
   },

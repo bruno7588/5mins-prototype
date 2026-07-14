@@ -1,9 +1,19 @@
 .ws-cat-card {
+  position: relative;
   width: 300px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.ws-cat-card[role='button'] {
+  cursor: pointer;
+}
+
+.ws-cat-card[role='button']:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
 }
 
 .ws-cat-card__thumb {
@@ -12,35 +22,82 @@
   height: 204px;
   display: grid;
   place-items: center;
+  border-radius: 12px;
+  overflow: hidden; /* clips the glow to the rounded card area (Figma: overflow-clip) */
+  isolation: isolate;
+}
+
+.ws-cat-card--disabled .ws-cat-card__thumb {
+  mix-blend-mode: luminosity;
 }
 
 .ws-cat-card__blur {
   position: absolute;
   inset: 0;
-  border-radius: 12px;
   filter: blur(16px);
   opacity: 0.32;
   z-index: 0;
+  transition: opacity 250ms ease;
 }
 
+/* The sharp thumbnail — a FIXED-size frame that clips the image. */
 .ws-cat-card__inner {
   position: relative;
   z-index: 1;
   width: 240px;
   height: 140px;
   border-radius: 12px;
-  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
 }
 
-/* Hover: the sharp foreground image scales up toward the card edges. */
-.ws-cat-card:hover .ws-cat-card__inner {
-  transform: scale(1.12);
+/* The image fills the frame and zooms on hover; the frame stays fixed. */
+.ws-cat-card__image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Lock (disabled) sits above the image. */
+.ws-cat-card__inner > svg {
+  position: relative;
+  z-index: 1;
+}
+
+.ws-cat-card--disabled .ws-cat-card__image {
+  opacity: 0.5;
+}
+
+/* Hover (Figma): the image zooms in within its fixed frame; glow brightens 32% -> 48%. */
+.ws-cat-card:not(.ws-cat-card--disabled):hover .ws-cat-card__image {
+  transform: scale(1.17);
+}
+
+.ws-cat-card:not(.ws-cat-card--disabled):hover .ws-cat-card__blur {
+  opacity: 0.48;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ws-cat-card__inner {
+  .ws-cat-card__image,
+  .ws-cat-card__blur {
     transition: none;
   }
+}
+
+/* "New Courses" badge — overlaps the card top edge (New variant). */
+.ws-cat-card__newbadge {
+  position: absolute;
+  top: -11px;
+  left: 30px;
+  padding: 6px 8px;
+  border-radius: 40px;
+  background: var(--danger-400);
+  font: 500 12px/1.2 Poppins, sans-serif;
+  color: var(--neutral-25);
 }
 
 .ws-cat-card__info {
@@ -58,6 +115,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.ws-cat-card--disabled .ws-cat-card__title {
+  color: var(--text-disabled);
 }
 
 .ws-cat-card__meta {

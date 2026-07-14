@@ -161,7 +161,14 @@ function Workspace() {
                 </header>
                 <Carousel trackClassName="ws-cards-track" ariaLabel="Explore categories">
                   {workspaceCategories.map((category) => (
-                    <CategoryCard key={category.id} category={category} />
+                    <CategoryCard
+                      key={category.id}
+                      name={category.name}
+                      courseCount={category.courseCount}
+                      lessonCount={category.lessonCount}
+                      image={category.image}
+                      thumbnailGradient={category.thumbnailGradient}
+                    />
                   ))}
                 </Carousel>
               </section>
