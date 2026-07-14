@@ -45,7 +45,7 @@
   align-items: center;
   gap: 8px;
   flex: 0 0 auto;
-  padding: 10px 16px;
+  padding: 10px var(--space-ml);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-600);
