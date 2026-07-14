@@ -411,7 +411,8 @@
 .cd-row--head,
 .cd-row--head:hover {
   border: none;
-  background: none;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .cd-cell {
@@ -424,8 +425,8 @@
 }
 
 .cd-row--head .cd-cell {
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: var(--space-s);
+  padding-bottom: var(--space-s);
   color: var(--text-secondary);
   white-space: nowrap;
 }

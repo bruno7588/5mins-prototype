@@ -96,13 +96,15 @@
   display: flex;
   align-items: center;
   padding: 0;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .rd-table__header .rd-table__cell {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
 }
 
 .rd-table__row {

@@ -253,7 +253,8 @@
 .your-courses-enrol-row--head,
 .your-courses-enrol-row--head:hover {
   border: none;
-  background: none;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .your-courses-enrol-cell {
@@ -267,7 +268,7 @@
 }
 
 .your-courses-enrol-row--head .your-courses-enrol-cell {
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
   color: var(--text-secondary);
   white-space: nowrap;
 }

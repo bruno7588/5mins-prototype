@@ -81,13 +81,15 @@
 .content-table-header {
   display: flex;
   align-items: center;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .content-table-header .content-table-cell {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
-  padding: 0 var(--space-m);
+  padding: var(--space-s) var(--space-m);
   white-space: nowrap;
 }
 

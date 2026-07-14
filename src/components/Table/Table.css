@@ -78,11 +78,13 @@
   box-shadow: 10px 0 12px -6px rgba(0, 0, 0, 0.08);
 }
 
-/* Header */
+/* Header — filled bar with 12px radius */
 .tbl-head {
   display: flex;
   align-items: center;
   width: 100%;
+  background: var(--input-background);
+  border-radius: var(--radius-sm); /* 12px */
 }
 
 .tbl-head-cell {
@@ -90,7 +92,7 @@
   min-width: 0;
   display: flex;
   align-items: center;
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm); /* 8px 12px */
   color: var(--text-secondary);
   font: 400 14px/1.5 'Poppins', sans-serif;
   max-height: 42px;

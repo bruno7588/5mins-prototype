@@ -298,18 +298,20 @@
   align-items: center;
   font-size: 14px;
   color: var(--text-secondary);
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .pad-thead__course {
   flex: 1;
   min-width: 0;
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
 }
 
 .pad-thead__col {
   flex: 0 0 auto;
   width: 180px;
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
 }
 
 .pad-row {
@@ -443,7 +445,7 @@
 .pad-thead__name {
   flex: 1;
   min-width: 0;
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
 }
 
 .pad-thead__enrol,
@@ -451,13 +453,13 @@
 .pad-thead__completion {
   flex: 0 0 auto;
   width: 160px;
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
 }
 
 .pad-thead__score {
   flex: 0 0 auto;
   width: 88px;
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
 }
 
 /* "Score ⓘ" header cell — info tooltip anchor per Figma (Score ⓘ). */
@@ -470,6 +472,7 @@
 .pad-thead__more {
   flex: 0 0 auto;
   width: 44px;
+  padding-block: var(--space-s);
 }
 
 /* Clickable enrolment rows — DS table hover; the learner name doubles as the

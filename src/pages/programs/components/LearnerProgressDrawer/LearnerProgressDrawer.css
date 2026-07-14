@@ -93,12 +93,14 @@
   align-items: center;
   font-size: 14px;
   color: var(--text-secondary);
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .lpd-thead__course {
   flex: 1;
   min-width: 0;
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
 }
 
 .lpd-thead__progress {
@@ -107,7 +109,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
 }
 
 .lpd-thead__score {
@@ -117,7 +119,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: var(--space-xs);
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
 }
 
 .lpd-row {

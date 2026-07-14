@@ -136,10 +136,12 @@
 
 .cpd-col-head {
   margin: 4px 0 12px;
-  padding: 0 12px;
+  padding: var(--space-s) 12px;
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .cpd-list {

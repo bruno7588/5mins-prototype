@@ -675,6 +675,8 @@
 .lrp-header-row {
   display: flex;
   align-items: center;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .lrp-header-row .lrp-cell {
@@ -682,10 +684,15 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Sticky first header cell must show the header fill, not the page bg */
+.lrp-table-wrap .lrp-header-row .lrp-cell--ext-email {
+  background: var(--input-background);
 }
 
 .lrp-row {

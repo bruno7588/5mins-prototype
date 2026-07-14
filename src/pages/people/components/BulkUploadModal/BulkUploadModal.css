@@ -687,7 +687,8 @@
   position: sticky;
   top: 0;
   z-index: 5;
-  background: var(--page-background);
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .bulk-preview-table-rows {
@@ -762,8 +763,8 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: var(--space-s);
+  padding-bottom: var(--space-s);
 }
 
 .bulk-preview-col--firstname { flex: 1; min-width: 100px; position: relative; }

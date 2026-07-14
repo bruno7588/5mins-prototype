@@ -238,14 +238,22 @@
 .lr__header {
   display: flex;
   align-items: center;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .lr__header .lr__cell {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
   white-space: nowrap;
+}
+
+/* Sticky first header cell must show the header fill, not the page bg */
+.lr__table-wrap .lr__header .lr__cell--name,
+.lr__table-wrap .lr__header .lr__cell--ext-email {
+  background: var(--input-background);
 }
 
 /* ── Table row ── */

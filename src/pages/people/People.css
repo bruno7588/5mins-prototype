@@ -348,14 +348,15 @@
   position: sticky;
   top: 0;
   z-index: 5;
-  background: var(--page-background);
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .people-table-header .people-table-cell {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
-  padding: 0 var(--space-m);
+  padding: var(--space-s) var(--space-m);
   white-space: nowrap;
 }
 

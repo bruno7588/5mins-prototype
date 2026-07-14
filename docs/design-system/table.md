@@ -14,7 +14,7 @@ Spec source: Figma Library — full table light `11927:7332` / dark `7896:2624`,
 This is **not** a traditional gridlined table. The defining structure is:
 
 - The table is a vertical flex column with a `12px` gap between elements.
-- The header is a borderless row of cells sitting at the top.
+- The header is a **filled bar**: `background: var(--input-background)`, `border-radius: var(--radius-sm)` (12px), header cells padded `8px 12px` (`--space-s --space-sm`), text in `--text-secondary`. (Updated 2026-07 — was previously borderless/transparent.)
 - Each data row is its own self-contained card: a `1px` border, `12px` corner radius, with the 12px gap showing the page background between rows.
 - There are no vertical column dividers and no single outer table border.
 - A pagination footer sits below, right-aligned.
@@ -39,8 +39,8 @@ If you render a classic bordered grid with shared cell lines, it is wrong. Think
 | Part | What it is |
 |---|---|
 | Table | flex column, `gap: 12px`, `align-items: flex-end` (so pagination right-aligns) |
-| Header row | flex row, no border, cells share the same column widths as data rows |
-| Header cell | `flex: 1`, `padding: 0 12px`, text in `--text-secondary` |
+| Header row | flex row, `background: --input-background`, `border-radius: 12px`, cells share the same column widths as data rows |
+| Header cell | `flex: 1`, `padding: 8px 12px`, text in `--text-secondary` |
 | Data row | flex row, `border: 1px solid --border`, `border-radius: 12px` |
 | Data cell | `flex: 1`, `padding: 8px 12px`, text in `--text-primary` |
 | Pagination | flex row, `gap: 16px`, "x-y of N" label + prev/next 16px icons |
@@ -148,11 +148,11 @@ Label format: `"1-10 of 28"`. The footer right-aligns because the table containe
   font-family: "Poppins", sans-serif;
 }
 
-/* Header */
-.tbl-head { display: flex; align-items: center; width: 100%; }
+/* Header — filled bar, 12px radius */
+.tbl-head { display: flex; align-items: center; width: 100%; background: var(--input-background); border-radius: var(--radius-sm); }
 .tbl-head-cell {
   flex: 1 1 0; min-width: 0; display: flex; align-items: center;
-  padding: 0 var(--space-sm); color: var(--text-secondary);
+  padding: var(--space-s) var(--space-sm); color: var(--text-secondary);
   font: 400 14px/1.5 "Poppins", sans-serif;
   max-height: 42px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }

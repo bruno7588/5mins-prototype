@@ -191,6 +191,8 @@
   align-items: center;
   width: 100%;
   min-width: fit-content;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .automations-table-row {
@@ -218,8 +220,8 @@
 
 .automations-table-header .automations-table-cell {
   color: var(--text-secondary);
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: var(--space-s);
+  padding-bottom: var(--space-s);
 }
 
 .automations-table-cell--name {

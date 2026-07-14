@@ -127,7 +127,7 @@
   position: sticky;
   top: 0;
   z-index: 5; /* above the sticky row cells (z-index 3) */
-  background: var(--page-background);
+  background: var(--input-background);
 }
 
 .hris-th {
@@ -207,7 +207,7 @@
 }
 
 .hris-table-scroll--scrolled .people-table-header .hris-col--title {
-  background: var(--page-background);
+  background: var(--input-background);
 }
 
 /* Right-edge freeze shadow — only when scrolled */

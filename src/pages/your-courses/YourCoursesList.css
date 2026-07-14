@@ -114,10 +114,12 @@
 
 .courses-list-row--head {
   border: none;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .courses-list-row--head:hover {
-  background: none;
+  background: var(--input-background);
 }
 
 .courses-list-cell {
@@ -131,7 +133,7 @@
 }
 
 .courses-list-row--head .courses-list-cell {
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
   color: var(--text-secondary);
   white-space: nowrap;
 }

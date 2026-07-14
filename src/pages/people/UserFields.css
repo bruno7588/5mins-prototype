@@ -97,11 +97,13 @@
 .uf-table-header {
   display: flex;
   align-items: center;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .uf-table-header .uf-table-cell {
-  padding-top: 0;
-  padding-bottom: 4px;
+  padding-top: var(--space-s);
+  padding-bottom: var(--space-s);
 }
 
 .uf-table-row {

@@ -228,13 +228,15 @@
 .epd-thead {
   display: flex;
   align-items: center;
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
 }
 
 .epd-th {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: 0 var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
   font-size: 14px;
   color: var(--text-secondary);
 }

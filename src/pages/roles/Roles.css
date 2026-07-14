@@ -594,7 +594,7 @@
 
 .roles-table-scroll--scrolled .people-table-header .roles-col--name,
 .roles-table-scroll--scrolled .people-table-header .roles-col--name-co {
-  background: var(--page-background);
+  background: var(--input-background);
 }
 
 /* Right-edge freeze shadow — only when scrolled */
