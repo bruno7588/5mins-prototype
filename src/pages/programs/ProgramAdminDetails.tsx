@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ArrowDown2, ArrowLeft2, ArrowRight2, Clock, Danger, Edit2, Eye, Link2, More, Profile, TaskSquare, TickCircle, Trash, UserCirlceAdd, UserMinus } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
@@ -145,6 +145,7 @@ function TablePagination({
 
 function ProgramAdminDetails() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { id } = useParams<{ id: string }>()
   const [tab, setTab] = useState('Courses')
   const [page, setPage] = useState(0)
@@ -160,6 +161,15 @@ function ProgramAdminDetails() {
   const [successOpen, setSuccessOpen] = useState(false)
   const { toasts, show: showToast } = useToast()
   const menuRef = useRef<HTMLDivElement>(null)
+
+  // Toast handed over from the builder after saving ("Changes saved" / "Program created").
+  useEffect(() => {
+    const toast = (location.state as { toast?: string } | null)?.toast
+    if (!toast) return
+    showToast('success', toast)
+    navigate('.', { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const draft = useMemo(() => loadDraftForBuilder(id), [id])
   const courseSteps = draft.steps.filter((s): s is CourseStep => s.type === 'course')

@@ -15,7 +15,6 @@ import { type CatalogCourse } from './coursesCatalog'
 import CourseOutline from './components/CourseOutline/CourseOutline'
 import CoursePickerDrawer from './components/CoursePickerDrawer/CoursePickerDrawer'
 import AddImageModal from '../add-content/components/AddImageModal/AddImageModal'
-import Tooltip from '../../components/Tooltip/Tooltip'
 import defaultBanner from '../../assets/programs/program-banner-default.png'
 import emptyCoursesPlus from '../../assets/programs/empty-courses-plus.svg'
 import './ProgramBuilder.css'
@@ -89,8 +88,11 @@ function ProgramBuilder() {
     }
     const toSave = { ...draft, status: 'published' as const }
     saveProgram(toSave)
-    setDraft(toSave)
-    show('success', id ? 'Changes saved' : 'Program created')
+    // Saving is the terminal commit: leave the builder for the program's
+    // overview and hand off the confirmation toast to that page.
+    navigate(`/programs/${toSave.id}/overview`, {
+      state: { toast: id ? 'Program updated' : 'Program created' },
+    })
   }
 
   return (
@@ -126,22 +128,14 @@ function ProgramBuilder() {
                 style={{ backgroundImage: `url(${draft.image || defaultBanner})` }}
               >
                 <div className="pb-banner__overlay" aria-hidden="true" />
-                <Tooltip
-                  text="Add or generate image"
-                  position="Top"
-                  alignment="End"
-                  icon={false}
-                  className="pb-banner__tooltip"
+                <button
+                  type="button"
+                  className="pb-banner__btn"
+                  onClick={() => setImageModalOpen(true)}
                 >
-                  <button
-                    type="button"
-                    className="pb-banner__btn"
-                    aria-label={draft.image ? 'Change cover image' : 'Add cover image'}
-                    onClick={() => setImageModalOpen(true)}
-                  >
-                    <GalleryAdd size={20} color="var(--neutral-0)" variant="Linear" />
-                  </button>
-                </Tooltip>
+                  <GalleryAdd size={20} color="var(--neutral-0)" variant="Linear" />
+                  <span className="pb-banner__btn-label">{draft.image ? 'Change Thumbnail' : 'Add Thumbnail'}</span>
+                </button>
               </div>
 
               <div className="pb-headline">
