@@ -173,7 +173,7 @@
 .cs-panel {
   gap: var(--space-sm);
   padding: var(--space-sm);
-  background: var(--input-background);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
 }
 

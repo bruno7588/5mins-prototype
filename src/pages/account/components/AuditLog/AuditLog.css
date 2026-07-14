@@ -1,22 +1,30 @@
 .audit {
   padding-top: var(--space-l); /* 24px */
+  /* One shared column grid for header, rows, and expanded detail so every
+     column lines up exactly (flex drifts between filled cells and spacers). */
+  --audit-cols: 120px minmax(150px, 1fr) minmax(180px, 1fr) minmax(150px, 1fr) 160px 40px;
 }
 
 /* ── Toolbar: filters (left) + export (right) ── */
 .audit-toolbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-s);
+  align-items: flex-start;
+  gap: var(--space-m);
   margin-bottom: var(--space-m);
 }
 
+/* Filters take the available width and wrap vertically; Export stays far right */
 .audit-filters {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-sm); /* 12px */
+}
+
+.audit-export {
+  flex: 0 0 auto;
 }
 
 .audit .audit-filter {
@@ -30,6 +38,72 @@
   height: auto;
   padding: var(--space-s) var(--space-sm); /* 8px 12px */
   font-size: 14px;
+}
+
+/* Clear-all filters — text button, shown only when a filter is applied */
+.audit-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border: none;
+  background: transparent;
+  padding: var(--space-s);
+  font: 500 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.audit-clear:hover {
+  color: var(--text-error);
+}
+
+.audit-clear:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-s);
+}
+
+/* "All …" reset row: align its label with the checkbox rows */
+.dropdown-option.audit-mo-all {
+  padding-left: calc(var(--space-sm) + 16px + var(--space-s)); /* 12 + checkbox 16 + gap 8 */
+}
+
+/* Straight full-width divider under the reset row (on the li, so the button can still round) */
+.audit-mo-all-row {
+  border-bottom: 1px solid var(--border);
+}
+
+/* Selected and hovered option surfaces have an 8px corner radius (design-system rule) */
+.audit-filter .dropdown-option.is-selected,
+.audit-filter .dropdown-option:hover {
+  border-radius: var(--radius-s);
+}
+
+/* Multi-select option row: checkbox + label */
+.audit-mo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
+  cursor: pointer;
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+/* Checked tick reads as the menu surface colour (knockout on the amber box) */
+.audit-mo .checkbox path {
+  stroke: var(--cards-background);
+}
+
+.audit-mo:hover {
+  background: var(--page-background-hover);
+  border-radius: var(--radius-s); /* 8px, matches the selected surface */
+}
+
+.audit-mo:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: -2px;
 }
 
 /* CSV export — Outlined-2 (neutral tertiary) per buttons.md */
@@ -70,19 +144,33 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm); /* 12px between header and first row */
+  /* On narrow screens the column grid keeps its min widths and scrolls
+     horizontally rather than letting cells overlap. */
+  overflow-x: auto;
 }
 
-/* Header */
+/* Keep header, rows, and detail on one min-width so columns stay aligned while scrolling */
+.audit-thead,
+.audit-row-card {
+  min-width: 800px;
+}
+
+/* Header — filled bar with 12px radius */
 .audit-thead {
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--audit-cols);
   align-items: center;
   width: 100%;
+  padding-inline: 1px; /* offset the row cards' 1px border so columns line up */
+  background: var(--input-background);
+  border-radius: var(--radius-sm); /* 12px */
 }
 
 .audit-th {
   display: flex;
   align-items: center;
-  padding: 0 var(--space-sm); /* 0 12px */
+  min-width: 0;
+  padding: var(--space-s) var(--space-sm); /* 8px 12px */
   font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -90,13 +178,13 @@
   text-overflow: ellipsis;
 }
 
-/* Shared column widths — applied to both header cells and row cells */
-.audit-col-setting { flex: 1 1 0; min-width: 0; }
-.audit-col-date    { flex: 0 0 120px; }
-.audit-col-actor   { flex: 1 1 0; min-width: 0; }
-.audit-col-course  { flex: 1 1 0; min-width: 0; }
-.audit-col-surface { flex: 0 0 160px; }
-.audit-col-expand  { flex: 0 0 40px; }
+/* Grid items only need to allow their content to shrink (ellipsis) */
+.audit-col-date,
+.audit-col-actor,
+.audit-col-setting,
+.audit-col-course,
+.audit-col-surface,
+.audit-col-expand { min-width: 0; }
 
 /* Rows */
 .audit-list {
@@ -123,7 +211,8 @@
 
 /* Collapsed row — the whole row toggles expand */
 .audit-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--audit-cols);
   align-items: center;
   width: 100%;
   padding: 0;
@@ -214,13 +303,19 @@
   transform: rotate(180deg);
 }
 
-/* ── Expanded detail ── */
+/* ── Expanded detail — same column grid so values sit under Setting, button under Course ── */
 .audit-detail {
-  padding: var(--space-m) var(--space-sm); /* align under the row-main text (12px left) */
+  display: grid;
+  grid-template-columns: var(--audit-cols);
+  align-items: start;
+  padding: var(--space-m) 0;
   border-top: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
+}
+
+/* Content blocks pad 12px to sit under their column's cell text */
+.audit-detail-changes,
+.audit-detail-course {
+  padding: 0 var(--space-sm);
 }
 
 .audit-course-link {
@@ -246,32 +341,30 @@
   border-radius: var(--radius-s);
 }
 
-/* Per-setting new value — one line each, grouped under the operation */
+/* Per-setting new value — setting name over its new value, one block each */
 .audit-changes {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   margin: 0;
 }
 
 .audit-change {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-m);
+  flex-direction: column;
+  gap: 2px;
 }
 
 .audit-change-setting {
-  flex: 0 0 40%;
-  max-width: 240px;
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-tertiary);
 }
 
 .audit-change-value {
-  flex: 1 1 auto;
-  min-width: 0;
   margin: 0;
   font-size: 14px;
+  line-height: 1.5;
   color: var(--text-primary);
 }
 
@@ -344,28 +437,21 @@
   outline-offset: 2px;
 }
 
-/* ── Empty state (per docs/design-system/empty-state.md) ── */
+/* ── Empty state (per docs/design-system/empty-state.md) ──
+   No border, no fill — just centered illustration + title + description. */
 .audit-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-ml); /* 20px */
-  padding: var(--space-xxl) var(--space-l);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-ml);
-  background: var(--cards-background);
+  padding: var(--space-xxl) var(--space-l); /* extra vertical to centre in the empty list area */
   text-align: center;
 }
 
-.audit-empty-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.audit-empty-illustration {
   width: 72px;
   height: 72px;
   flex-shrink: 0;
-  border-radius: var(--radius-full);
-  background: var(--page-background-hover);
 }
 
 .audit-empty-info {

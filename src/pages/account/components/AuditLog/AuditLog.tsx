@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowDown2, ArrowLeft2, ArrowRight2, ClipboardText, DocumentDownload } from 'iconsax-react'
+import { ArrowDown2, ArrowLeft2, ArrowRight2, DocumentDownload } from 'iconsax-react'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import Collapse from '@/components/Collapse/Collapse'
+import AuditMultiSelect from './AuditMultiSelect'
+import noActivityIllustration from '@/assets/empty-state-illustrations/no-activity.svg'
+import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import {
   auditOperations,
   operationLabel,
@@ -19,26 +22,24 @@ import './AuditLog.css'
 
 const PAGE_SIZE = 10
 
-// Each filter defaults to an "All …" option that doubles as the clear action;
-// the current selection lives in the dropdown trigger (no applied-filter chips).
+// Date range is a single-select preset; 'all' = unfiltered.
 const ALL = 'all'
-const SETTING_FILTER_OPTIONS = [{ value: ALL, label: 'All settings' }, ...SETTING_OPTIONS]
-const ACTOR_FILTER_OPTIONS = [{ value: ALL, label: 'All actors' }, ...ACTOR_OPTIONS]
-const COURSE_FILTER_OPTIONS = [{ value: ALL, label: 'All courses' }, ...COURSE_OPTIONS]
-const SURFACE_FILTER_OPTIONS = [{ value: ALL, label: 'All surfaces' }, ...SURFACE_OPTIONS]
 
 interface AuditLogProps {
   /** When set (via the Settings-history deep link), the Course filter starts applied. */
   initialCourseId?: string
 }
 
-/** The five live filters. Each is single-select; 'all' = unfiltered. Combinable. */
+/**
+ * The five live filters. Actor / Setting / Course / Surface are multi-select
+ * (empty array = unfiltered); Date range is a single preset. All combinable.
+ */
 interface Filters {
-  setting: string
+  setting: string[]
   dateRange: string
-  actor: string
-  course: string
-  surface: string
+  actor: string[]
+  course: string[]
+  surface: string[]
 }
 
 function formatTimestamp(iso: string): { date: string; time: string } {
@@ -86,11 +87,11 @@ function csvCell(s: string): string {
 function AuditLog({ initialCourseId }: AuditLogProps) {
   const navigate = useNavigate()
   const [filters, setFilters] = useState<Filters>({
-    setting: ALL,
+    setting: [],
     dateRange: ALL,
-    actor: ALL,
-    course: initialCourseId ?? ALL,
-    surface: ALL,
+    actor: [],
+    course: initialCourseId ? [initialCourseId] : [],
+    surface: [],
   })
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [page, setPage] = useState(0)
@@ -106,21 +107,24 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
     const cutoff = rangeOpt?.days != null ? Date.now() - rangeOpt.days * 86_400_000 : null
 
     return auditOperations.filter((op) => {
-      if (filters.setting !== ALL && !op.changes.some((c) => c.settingKey === filters.setting)) return false
-      if (filters.actor !== ALL && op.actor !== filters.actor) return false
-      if (filters.course !== ALL && op.courseId !== filters.course) return false
-      if (filters.surface !== ALL && op.surfaceKey !== filters.surface) return false
+      if (filters.setting.length && !op.changes.some((c) => filters.setting.includes(c.settingKey))) return false
+      if (filters.actor.length && !filters.actor.includes(op.actor)) return false
+      if (filters.course.length && !filters.course.includes(op.courseId)) return false
+      if (filters.surface.length && !filters.surface.includes(op.surfaceKey)) return false
       if (cutoff != null && new Date(op.timestamp).getTime() < cutoff) return false
       return true
     })
   }, [filters])
 
   const anyApplied =
-    filters.setting !== ALL ||
+    filters.setting.length > 0 ||
     filters.dateRange !== ALL ||
-    filters.actor !== ALL ||
-    filters.course !== ALL ||
-    filters.surface !== ALL
+    filters.actor.length > 0 ||
+    filters.course.length > 0 ||
+    filters.surface.length > 0
+
+  const clearFilters = () =>
+    patch({ setting: [], dateRange: ALL, actor: [], course: [], surface: [] })
 
   const total = filtered.length
   const pageStart = page * PAGE_SIZE
@@ -178,38 +182,43 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
           <Dropdown
             size="sm"
             className="audit-filter"
-            options={SETTING_FILTER_OPTIONS}
-            value={filters.setting}
-            onChange={(v) => patch({ setting: v })}
-          />
-          <Dropdown
-            size="sm"
-            className="audit-filter"
             options={DATE_RANGE_OPTIONS.map(({ value, label }) => ({ value, label }))}
             value={filters.dateRange}
             onChange={(v) => patch({ dateRange: v })}
           />
-          <Dropdown
-            size="sm"
-            className="audit-filter"
-            options={ACTOR_FILTER_OPTIONS}
-            value={filters.actor}
+          <AuditMultiSelect
+            allLabel="All actors"
+            noun="actors"
+            options={ACTOR_OPTIONS}
+            selected={filters.actor}
             onChange={(v) => patch({ actor: v })}
           />
-          <Dropdown
-            size="sm"
-            className="audit-filter"
-            options={COURSE_FILTER_OPTIONS}
-            value={filters.course}
+          <AuditMultiSelect
+            allLabel="All settings"
+            noun="settings"
+            options={SETTING_OPTIONS}
+            selected={filters.setting}
+            onChange={(v) => patch({ setting: v })}
+          />
+          <AuditMultiSelect
+            allLabel="All courses"
+            noun="courses"
+            options={COURSE_OPTIONS}
+            selected={filters.course}
             onChange={(v) => patch({ course: v })}
           />
-          <Dropdown
-            size="sm"
-            className="audit-filter"
-            options={SURFACE_FILTER_OPTIONS}
-            value={filters.surface}
+          <AuditMultiSelect
+            allLabel="All surfaces"
+            noun="surfaces"
+            options={SURFACE_OPTIONS}
+            selected={filters.surface}
             onChange={(v) => patch({ surface: v })}
           />
+          {anyApplied && (
+            <button type="button" className="audit-clear" onClick={clearFilters}>
+              Clear Filters
+            </button>
+          )}
         </div>
 
         <button type="button" className="audit-export" onClick={exportCsv} disabled={total === 0}>
@@ -219,12 +228,16 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
       </div>
 
       {total === 0 ? (
-        <div className="audit-empty">
-          <span className="audit-empty-icon">
-            <ClipboardText size={32} color="var(--text-tertiary)" variant="Bold" />
-          </span>
+        <div className="audit-empty" role="status">
+          <img
+            className="audit-empty-illustration"
+            src={anyApplied ? noResultsIllustration : noActivityIllustration}
+            alt=""
+            width={72}
+            height={72}
+          />
           <div className="audit-empty-info">
-            <p className="audit-empty-title">No changes recorded</p>
+            <p className="audit-empty-title">{anyApplied ? 'No matching changes' : 'No changes recorded'}</p>
             <p className="audit-empty-desc">
               {anyApplied
                 ? 'No activity matches your filters. Try clearing a filter to widen the results.'
@@ -237,9 +250,9 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
           <div className="audit-table">
             {/* Borderless header, column labels mirror the five filters (table.md) */}
             <div className="audit-thead" role="row">
-              <span className="audit-th audit-col-setting">Setting</span>
               <span className="audit-th audit-col-date">Date range</span>
               <span className="audit-th audit-col-actor">Actor</span>
+              <span className="audit-th audit-col-setting">Setting</span>
               <span className="audit-th audit-col-course">Course</span>
               <span className="audit-th audit-col-surface">Surface</span>
               <span className="audit-th audit-col-expand" aria-hidden="true" />
@@ -250,8 +263,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                 const { date, time } = formatTimestamp(op.timestamp)
                 const isOpen = expanded.has(op.id)
                 const course = courseForOp(op)
-                const settingSummary =
-                  op.changes.length === 1 ? op.changes[0].setting : `${op.changes.length} settings`
+                // Describe what changed by naming the settings, not a bare count.
+                const settingSummary = op.changes.map((c) => c.setting).join(', ')
                 return (
                   <li key={op.id} className={`audit-row-card${isOpen ? ' is-open' : ''}`}>
                     <button
@@ -260,9 +273,6 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                       aria-expanded={isOpen}
                       onClick={() => toggleRow(op.id)}
                     >
-                      <span className="audit-cell audit-col-setting">
-                        <span className="audit-op">{settingSummary}</span>
-                      </span>
                       <span className="audit-cell audit-col-date">
                         <span className="audit-row-date">{date}</span>
                         <span className="audit-row-clock">{time}</span>
@@ -270,6 +280,9 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                       <span className="audit-cell audit-col-actor">
                         <span className="audit-actor-name">{op.actor}</span>
                         <span className="audit-actor-meta">{op.role}</span>
+                      </span>
+                      <span className="audit-cell audit-col-setting">
+                        <span className="audit-op" title={settingSummary}>{settingSummary}</span>
                       </span>
                       <span className="audit-cell audit-col-course">{course.name}</span>
                       <span className="audit-cell audit-col-surface">{SURFACES[op.surfaceKey]}</span>
@@ -279,21 +292,30 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                     </button>
 
                     <Collapse open={isOpen}>
+                      {/* Detail aligns to the columns: values under Setting, button under Course */}
                       <div className="audit-detail">
-                        <dl className="audit-changes">
-                          {op.changes.map((c) => (
-                            <div className="audit-change" key={c.settingKey}>
-                              <dt className="audit-change-setting">{c.setting}</dt>
-                              <dd className="audit-change-value">
-                                <AuditValueView value={c.value} />
-                              </dd>
-                            </div>
-                          ))}
-                        </dl>
-                        <button type="button" className="audit-course-link" onClick={openCourse}>
-                          View course settings
-                          <ArrowRight2 size={16} color="currentColor" variant="Linear" />
-                        </button>
+                        <span className="audit-col-date" aria-hidden="true" />
+                        <span className="audit-col-actor" aria-hidden="true" />
+                        <div className="audit-col-setting audit-detail-changes">
+                          <dl className="audit-changes">
+                            {op.changes.map((c) => (
+                              <div className="audit-change" key={c.settingKey}>
+                                <dt className="audit-change-setting">{c.setting}</dt>
+                                <dd className="audit-change-value">
+                                  <AuditValueView value={c.value} />
+                                </dd>
+                              </div>
+                            ))}
+                          </dl>
+                        </div>
+                        <div className="audit-col-course audit-detail-course">
+                          <button type="button" className="audit-course-link" onClick={openCourse}>
+                            View course settings
+                            <ArrowRight2 size={16} color="currentColor" variant="Linear" />
+                          </button>
+                        </div>
+                        <span className="audit-col-surface" aria-hidden="true" />
+                        <span className="audit-col-expand" aria-hidden="true" />
                       </div>
                     </Collapse>
                   </li>
