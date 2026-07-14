@@ -9,18 +9,15 @@
 .ws-cat-card__thumb {
   position: relative;
   width: 100%;
-  padding: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  overflow: hidden;
-  isolation: isolate;
+  height: 204px;
+  display: grid;
+  place-items: center;
 }
 
 .ws-cat-card__blur {
   position: absolute;
   inset: 0;
+  border-radius: 12px;
   filter: blur(16px);
   opacity: 0.32;
   z-index: 0;
@@ -32,6 +29,18 @@
   width: 240px;
   height: 140px;
   border-radius: 12px;
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hover: the sharp foreground image scales up toward the card edges. */
+.ws-cat-card:hover .ws-cat-card__inner {
+  transform: scale(1.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-cat-card__inner {
+    transition: none;
+  }
 }
 
 .ws-cat-card__info {
