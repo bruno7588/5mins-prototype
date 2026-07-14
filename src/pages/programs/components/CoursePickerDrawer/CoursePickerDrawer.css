@@ -19,7 +19,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--cards-background);
+  background: var(--page-background);
   box-shadow: -8px 0 24px rgba(32, 34, 42, 0.12);
   animation: cpd-slide-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -97,29 +97,33 @@
 }
 
 /* ── Filters row (search + Function/Skill dropdowns on the 5Mins tab) ────── */
-.cpd-filters {
+/* Content switcher (Functions / Skills) + function filter on one row. */
+.cpd-controls {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-sm);
-  padding: 16px 24px 12px;
+  padding: 16px 24px 0;
 }
 
-.cpd-filters .cpd-filters__search {
-  flex: 1;
-  min-width: 0;
-}
-
-.cpd-filters .cpd-filters__value {
+.cpd-controls__filter {
   flex: 0 0 auto;
   width: 160px;
 }
 
-/* Function / Skill dimension chips, above the search + value-dropdown row. */
-.cpd-chips {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: 16px 24px 0;
+/* Right-align the listbox to the filter input's right edge. */
+.cpd-controls__filter .dropdown-menu {
+  left: auto;
+  right: 0;
+}
+
+/* Search — full-width, below the switcher/filter row. */
+.cpd-search {
+  padding: 16px 24px 12px;
+}
+
+.cpd-search .cpd-search__input {
+  width: 100%;
 }
 
 /* ── Body (scroll area) ─────────────────────────────────────────────────── */
@@ -150,9 +154,13 @@
   align-items: center;
   gap: var(--space-s);
   padding: 8px 12px;
-  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
+  transition: background 120ms ease;
+}
+
+.cpd-row:hover {
+  background: var(--cards-background-hover);
 }
 
 .cpd-row__thumb {
@@ -164,13 +172,30 @@
   background-position: center;
 }
 
-.cpd-row__title {
+.cpd-row__info {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cpd-row__title {
   min-width: 0;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cpd-row__meta {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text-tertiary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -3,7 +3,7 @@ import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Search from '../../../../components/Search/Search'
 import Dropdown from '../../../../components/Dropdown/Dropdown'
-import Chip from '../../../../components/Chip/Chip'
+import ContentSwitcher from '../../../../components/ContentSwitcher/ContentSwitcher'
 import {
   FUNCTION_OPTIONS,
   SKILL_OPTIONS,
@@ -97,36 +97,32 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
         </div>
 
         {tab === '5mins' && (
-          <div className="cpd-chips">
-            <Chip
-              label="Functions"
-              selected={dimension === 'functions'}
-              onClick={() => setDimension('functions')}
+          <div className="cpd-controls">
+            <ContentSwitcher
+              items={[
+                { key: 'functions', label: 'Functions' },
+                { key: 'skills', label: 'Skills' },
+              ]}
+              activeKey={dimension}
+              onChange={(k) => setDimension(k as 'functions' | 'skills')}
             />
-            <Chip
-              label="Skills"
-              selected={dimension === 'skills'}
-              onClick={() => setDimension('skills')}
+            <Dropdown
+              className="cpd-controls__filter"
+              options={dimension === 'functions' ? FUNCTION_OPTIONS : SKILL_OPTIONS}
+              value={dimension === 'functions' ? functionFilter : skillFilter}
+              onChange={dimension === 'functions' ? setFunctionFilter : setSkillFilter}
             />
           </div>
         )}
 
-        <div className="cpd-filters">
+        <div className="cpd-search">
           <Search
             size="M"
             value={query}
             placeholder="Search for courses"
             onChange={setQuery}
-            className="cpd-filters__search"
+            className="cpd-search__input"
           />
-          {tab === '5mins' && (
-            <Dropdown
-              className="cpd-filters__value"
-              options={dimension === 'functions' ? FUNCTION_OPTIONS : SKILL_OPTIONS}
-              value={dimension === 'functions' ? functionFilter : skillFilter}
-              onChange={dimension === 'functions' ? setFunctionFilter : setSkillFilter}
-            />
-          )}
         </div>
 
         <div className="cpd-body">
@@ -143,7 +139,12 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
                   return (
                     <div key={course.courseId} className="cpd-row">
                       <span className="cpd-row__thumb" style={{ backgroundImage: `url(${course.thumb})` }} />
-                      <span className="cpd-row__title">{course.title}</span>
+                      <span className="cpd-row__info">
+                        <span className="cpd-row__title">{course.title}</span>
+                        <span className="cpd-row__meta">
+                          {course.lessonCount} lessons · {course.durationMinutes}min
+                        </span>
+                      </span>
                       {added ? (
                         <button
                           className="cpd-row__btn cpd-row__btn--remove"

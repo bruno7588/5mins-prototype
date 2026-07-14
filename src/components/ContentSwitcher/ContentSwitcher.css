@@ -1,0 +1,57 @@
+/* Content Switcher — segmented control in a filled track (DS: chips-switcher-tabs.md). */
+.switcher {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--input-background);
+  border-radius: var(--radius-sm); /* 12px */
+}
+
+.switcher__item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--radius-s); /* 8px */
+  background: transparent;
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.switcher__item:hover:not(.is-selected):not(:disabled) {
+  background: var(--input-background-hover);
+}
+
+/* Sliding amber selection pill (animated between segments via layoutId). */
+.switcher__pill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: var(--radius-s);
+  background: var(--secondary-500); /* #FFBB38 — raw token, both modes */
+}
+
+.switcher__label {
+  position: relative;
+  z-index: 1;
+}
+
+.switcher__item.is-selected {
+  color: var(--neutral-800);
+  font-weight: 700;
+}
+
+.switcher__item:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.switcher__item:focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
+}
