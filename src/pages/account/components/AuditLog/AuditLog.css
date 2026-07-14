@@ -25,8 +25,10 @@
   min-width: 132px;
 }
 
-/* Filter text sits at 14px (design-system body size) — bump the sm trigger */
+/* Filters at DS body size — 8px 12px padding, 14px text (height grows to fit) */
 .audit .audit-filter.dropdown-sm .dropdown-trigger {
+  height: auto;
+  padding: var(--space-s) var(--space-sm); /* 8px 12px */
   font-size: 14px;
 }
 
@@ -35,13 +37,12 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  height: 33px;
-  padding: var(--space-s) var(--space-m); /* 8px 16px */
+  padding: var(--space-s) var(--space-sm); /* 8px 12px — matches the filter dropdowns */
   border: 1px solid var(--border);
   border-radius: var(--radius-sm); /* 12px */
   background: transparent;
   color: var(--text-primary);
-  font: 700 12px/1.4 'Poppins', sans-serif;
+  font: 700 14px/1.5 'Poppins', sans-serif;
   cursor: pointer;
   transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
