@@ -1,9 +1,12 @@
 import { useState, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Clock } from 'iconsax-react'
 import Checkbox from '../../../../components/Checkbox/Checkbox'
 import Toggle from '../../../../components/Toggle/Toggle'
 import InputInteger from '../../../../components/InputInteger/InputInteger'
 import Collapse from '../../../../components/Collapse/Collapse'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
+import { operationCountForCourse, SETTINGS_TAB_COURSE_ID } from '@/pages/account/data/mockAudit'
 import './CourseSettings.css'
 
 type SettingKey =
@@ -67,6 +70,13 @@ function CourseSettings() {
   const [savedMaxAttempts, setSavedMaxAttempts] = useState(INITIAL_MAX_ATTEMPTS)
   const [savedDueDays, setSavedDueDays] = useState(INITIAL_DUE_DAYS)
   const toast = useToast()
+  const navigate = useNavigate()
+
+  // Settings-history entry point (Admin-only): count of recorded changes for this
+  // course, and a deep link into the Audit log with the Course filter applied.
+  const historyCount = operationCountForCourse(SETTINGS_TAB_COURSE_ID)
+  const openSettingsHistory = () =>
+    navigate(`/account?tab=audit-log&course=${SETTINGS_TAB_COURSE_ID}`)
 
   const toggle = (key: SettingKey) =>
     setValues((prev) => {
@@ -309,6 +319,13 @@ function CourseSettings() {
 
   return (
     <section className="cs">
+      <div className="cs-header">
+        <button type="button" className="cs-history" onClick={openSettingsHistory}>
+          <Clock size={16} color="currentColor" variant="Linear" />
+          Settings History
+          {historyCount > 0 && <span className="cs-history-count">{historyCount}</span>}
+        </button>
+      </div>
       {sections.map((section) => (
         <div className="cs-section" key={section.heading}>
           <h3 className="cs-section-heading">{section.heading}</h3>

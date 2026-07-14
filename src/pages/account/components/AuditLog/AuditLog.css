@@ -2,8 +2,70 @@
   padding-top: var(--space-l); /* 24px */
 }
 
-/* ── Filter bar ── */
+/* ── Toolbar: filters (left) + export (right) ── */
+.audit-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  margin-bottom: var(--space-m);
+}
+
 .audit-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.audit .audit-filter {
+  flex: 0 0 auto;
+  width: fit-content;
+  min-width: 132px;
+}
+
+/* Filter text sits at 14px (design-system body size) — bump the sm trigger */
+.audit .audit-filter.dropdown-sm .dropdown-trigger {
+  font-size: 14px;
+}
+
+/* CSV export — Outlined-2 (neutral tertiary) per buttons.md */
+.audit-export {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: 33px;
+  padding: var(--space-s) var(--space-m); /* 8px 16px */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); /* 12px */
+  background: transparent;
+  color: var(--text-primary);
+  font: 700 12px/1.4 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.audit-export:hover:not(:disabled) {
+  background: var(--button-outline-fill-hover);
+  border-color: var(--primary-button-background-hover);
+  color: var(--text-button-hover);
+}
+
+.audit-export:disabled {
+  color: var(--text-disabled);
+  border-color: var(--border);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.audit-export:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* ── Applied-filter chips + Clear all ── */
+.audit-active-filters {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -11,87 +73,274 @@
   margin-bottom: var(--space-m);
 }
 
-.audit-search {
-  flex: 1 1 260px;
-  min-width: 220px;
-  max-width: 360px;
+.audit-clear-all {
+  border: none;
+  background: transparent;
+  padding: var(--space-xs) var(--space-s);
+  font: 700 14px/1.5 'Poppins', sans-serif;
+  color: var(--primary-button-background);
+  cursor: pointer;
 }
 
-/* Match the sm dropdown / disabled pills (33px, radius-sm) so the filter row aligns */
-.audit-search.search--m {
-  height: 33px;
-  padding: 4px 12px;
+.audit-clear-all:hover {
+  color: var(--text-button-hover);
+}
+
+.audit-clear-all:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-s);
+}
+
+/* ── Operation list (card rows, per table.md card-row aesthetic) ── */
+.audit-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm); /* 12px between row cards */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.audit-row-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); /* 12px */
+  background: transparent;
+  overflow: hidden;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.audit-row-card.is-open {
+  background: var(--cards-background);
+  border-color: var(--border-hover);
+}
+
+/* Collapsed row — the whole row toggles expand */
+.audit-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-s) var(--space-sm); /* 8px 12px */
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.audit-row:hover {
+  background: var(--page-background-hover);
+}
+
+.audit-row:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: -2px;
   border-radius: var(--radius-sm);
 }
 
-.audit .audit-setting-filter {
-  flex: 0 0 auto;
-  width: fit-content;
-  min-width: 190px;
+.audit-row-chevron {
+  flex: 0 0 20px;
+  margin-left: var(--space-xs);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 200ms ease;
 }
 
-/* Filter text sits at 14px (design-system body size) — bump the sm trigger + placeholders */
-.audit .dropdown-sm .dropdown-trigger {
-  font-size: 14px;
+.audit-row-card.is-open .audit-row-chevron {
+  transform: rotate(180deg);
 }
 
-/* ── Table cell content ── */
-.audit-action {
-  font-weight: 400;
-  color: var(--text-primary);
-}
-
-.audit-new {
-  color: var(--text-primary);
-  font-weight: 400;
-}
-
-.audit-actor {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.audit-row-main {
+  flex: 1 1 auto;
   min-width: 0;
-}
-
-.audit-actor-name {
-  font-weight: 400;
-  color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.audit-actor-meta {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.audit-time {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  line-height: 1.3;
 }
 
-.audit-time-date {
+.audit-op {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audit-op-meta {
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audit-row-time {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+}
+
+.audit-row-date {
+  font-size: 14px;
+  line-height: 1.4;
   color: var(--text-primary);
 }
 
-.audit-time-clock {
+.audit-row-clock {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+/* ── Expanded detail ── */
+.audit-detail {
+  padding: var(--space-m) var(--space-sm); /* align under the row-main text (12px left) */
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.audit-detail-course {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.audit-detail-label {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.audit-course-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: 500 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-button-hover);
+  cursor: pointer;
+}
+
+.audit-course-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.audit-course-link:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-s);
+}
+
+/* Per-setting new value — one line each, grouped under the operation */
+.audit-changes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  margin: 0;
+}
+
+.audit-change {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-m);
+}
+
+.audit-change-setting {
+  flex: 0 0 40%;
+  max-width: 240px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.audit-change-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.audit-value--list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.audit-value-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-s);
+  border-radius: var(--radius-full);
+  background: var(--page-background-hover);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.audit-value--object {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.audit-value-sub {
   font-size: 12px;
   color: var(--text-tertiary);
 }
 
-/* Table can exceed the panel width — scroll horizontally rather than squash cells */
-.audit-table-wrap {
-  overflow-x: auto;
+/* ── Pagination (right-aligned, per table.md) ── */
+.audit-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-m);
+  margin-top: var(--space-sm);
 }
 
-.audit-table-wrap .tbl {
-  min-width: 1080px;
+.audit-pagination-count {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.audit-pagination-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.audit-pagination-nav:hover:not(:disabled) {
+  background: var(--input-background-hover);
+}
+
+.audit-pagination-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.audit-pagination-nav:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }
 
 /* ── Empty state (per docs/design-system/empty-state.md) ── */

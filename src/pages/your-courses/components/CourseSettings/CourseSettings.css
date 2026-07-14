@@ -8,6 +8,52 @@
   padding: var(--space-m) var(--space-m);
 }
 
+/* Settings-history entry point — top-right of the Settings tab */
+.cs-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Outlined-2 (neutral tertiary) button per buttons.md */
+.cs-history {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: 41px;
+  padding: 10px var(--space-ml); /* medium */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); /* 12px */
+  background: transparent;
+  color: var(--text-primary);
+  font: 700 14px/1.5 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.cs-history:hover {
+  background: var(--button-outline-fill-hover);
+  border-color: var(--primary-button-background-hover);
+  color: var(--text-button-hover);
+}
+
+.cs-history:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.cs-history-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  color: var(--text-secondary);
+  font: 500 12px/1 'Poppins', sans-serif;
+}
+
 /* Section */
 .cs-section {
   display: flex;

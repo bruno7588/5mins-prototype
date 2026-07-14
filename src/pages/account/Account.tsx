@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'
 import AuditLog from './components/AuditLog/AuditLog'
 import './Account.css'
@@ -30,7 +31,13 @@ const TABS: { key: TabKey; label: string }[] = [
 ]
 
 function Account() {
-  const [activeTab, setActiveTab] = useState<TabKey>('audit-log')
+  // Deep link support: /account?tab=audit-log&course=<id> (from the Settings-history button).
+  const [searchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab') as TabKey | null
+  const initialCourseId = searchParams.get('course') ?? undefined
+  const [activeTab, setActiveTab] = useState<TabKey>(
+    tabParam && TABS.some((t) => t.key === tabParam) ? tabParam : 'audit-log',
+  )
 
   return (
     <div className="acs-layout">
@@ -57,7 +64,7 @@ function Account() {
 
         <div className="acs-body">
           {activeTab === 'audit-log' ? (
-            <AuditLog />
+            <AuditLog initialCourseId={initialCourseId} />
           ) : (
             <div className="acs-placeholder">
               This section isn’t part of this prototype yet.
