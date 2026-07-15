@@ -64,9 +64,17 @@
   border-radius: var(--radius-s);
 }
 
-/* "All …" reset row: align its label with the checkbox rows */
+/* Applied filter — amber border so a set filter is visibly distinct from an idle
+   one. An unnoticed lingering filter makes an audit log look incomplete, which is
+   the worst misread on this surface. Open state keeps its own active border. */
+.dropdown-field.audit-filter .dropdown-trigger.is-applied:not(.is-active) {
+  border-color: var(--selected);
+}
+
+/* "All …" reset row: align its label with the checkbox column (same left edge
+   as the checkboxes below, not the option text). */
 .dropdown-option.audit-mo-all {
-  padding-left: calc(var(--space-sm) + 16px + var(--space-s)); /* 12 + checkbox 16 + gap 8 */
+  padding-left: var(--space-sm); /* 12px — matches the .audit-mo rows' left padding */
 }
 
 /* Straight full-width divider under the reset row (on the li, so the button can still round) */
@@ -78,6 +86,12 @@
 .audit-filter .dropdown-option.is-selected,
 .audit-filter .dropdown-option:hover {
   border-radius: var(--radius-s);
+}
+
+/* "All …" reset row hover — cards-hover, since page-hover matches the menu
+   surface in dark mode and would be invisible (listbox.md). */
+.audit-filter .dropdown-option:hover:not(:disabled):not(.is-selected) {
+  background: var(--cards-background-hover);
 }
 
 /* Multi-select option row: checkbox + label */
@@ -97,7 +111,7 @@
 }
 
 .audit-mo:hover {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover); /* listbox.md item hover (page-hover == surface in dark mode → invisible) */
   border-radius: var(--radius-s); /* 8px, matches the selected surface */
 }
 
@@ -265,7 +279,20 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 100%;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+/* Overflow count for multi-setting rows — full list lives in the expansion */
+.audit-op-more {
+  flex-shrink: 0;
+  margin-left: var(--space-xs); /* 4px */
+  padding: 3px 5px; /* tight pill — 1px more than the base 2px/4px */
+  border-radius: var(--radius-full);
+  background: var(--page-background-hover);
+  font: 500 12px/1.4 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .audit-actor-name {
@@ -474,4 +501,238 @@
   color: var(--text-secondary);
   line-height: 1.5;
   max-width: 600px;
+}
+
+/* Recovery CTA on the filtered empty state — outlined, so the fix for a zero-result
+   query sits right where the user is looking (not only in the toolbar). */
+.audit-empty-cta {
+  margin-top: var(--space-s); /* 8px above the description */
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-s) var(--space-m); /* 8px 16px */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); /* 12px */
+  background: transparent;
+  color: var(--text-primary);
+  font: 700 14px/1.5 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.audit-empty-cta:hover {
+  background: var(--button-outline-fill-hover);
+  border-color: var(--primary-button-background-hover);
+  color: var(--text-button-hover);
+}
+
+.audit-empty-cta:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* ── Date filter popover: preset list + custom-range calendar (calendar.md) ── */
+.audit-date-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 1000;
+  width: 300px; /* fixed so preset fills span full width with or without the calendar */
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12); /* Shadow L */
+  padding: var(--space-s);
+}
+
+.audit-date-presets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.audit-date-preset {
+  width: 100%;
+  text-align: left;
+  padding: var(--space-s) var(--space-sm); /* 8px 12px */
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-s);
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms ease;
+}
+
+.audit-date-preset:hover {
+  background: var(--cards-background-hover); /* listbox.md item hover — one step lighter than the popover surface */
+}
+
+/* Selected preset — solid fill + dark label, matching the DS Dropdown option */
+.audit-date-preset.is-selected,
+.audit-date-preset.is-selected:hover {
+  background: var(--secondary-500);
+  color: var(--neutral-800);
+  font-weight: 500;
+}
+
+.audit-date-preset:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: -2px;
+}
+
+.audit-date-cal {
+  margin-top: var(--space-s);
+  padding-top: var(--space-s);
+  border-top: 1px solid var(--border);
+}
+
+.audit-cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xs) var(--space-s) var(--space-s);
+}
+
+.audit-cal-title {
+  font: 700 16px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.audit-cal-nav {
+  display: flex;
+  gap: var(--space-s);
+}
+
+.audit-cal-nav-btn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.audit-cal-nav-btn:hover {
+  background: var(--page-background-hover);
+}
+
+.audit-cal-nav-btn:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.audit-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  border-radius: var(--radius-xs); /* 4px */
+  overflow: hidden;
+}
+
+.audit-cal-grid--head {
+  margin-bottom: 2px;
+}
+
+.audit-cal-weekday {
+  display: grid;
+  place-items: center;
+  height: 32px;
+  font: 400 12px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+}
+
+.audit-cal-day {
+  display: grid;
+  place-items: center;
+  height: 34px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-xs); /* 4px */
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.audit-cal-day:hover {
+  background: var(--cards-background-hover);
+  border-radius: var(--radius-s);
+}
+
+.audit-cal-day--muted {
+  color: var(--text-disabled);
+  opacity: 0.5;
+}
+
+/* In-range band between the two endpoints */
+.audit-cal-day--band {
+  background: var(--selected-tint);
+  border-radius: 0;
+}
+
+.audit-cal-day--today {
+  border-color: var(--border-elevated);
+  border-radius: var(--radius-s);
+}
+
+/* Range endpoints — secondary-500 selection fill, dark bold label in both modes */
+.audit-cal-day--selected {
+  background: var(--secondary-500);
+  border-radius: var(--radius-s);
+  font-weight: 700;
+  color: var(--neutral-800);
+}
+
+.audit-cal-day:focus-visible {
+  outline: none;
+  border-color: var(--selected);
+  border-radius: var(--radius-s);
+}
+
+.audit-cal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-s);
+  padding-top: var(--space-s);
+  border-top: 1px solid var(--border);
+}
+
+.audit-cal-range {
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+}
+
+.audit-cal-apply {
+  padding: var(--space-xs) var(--space-m); /* 4px 16px */
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary-button-background);
+  color: var(--neutral-25);
+  font: 700 14px/1.5 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.audit-cal-apply:hover:not(:disabled) {
+  background: var(--primary-button-background-hover);
+}
+
+.audit-cal-apply:disabled {
+  background: var(--button-background-disabled);
+  color: var(--text-button-disabled);
+  cursor: not-allowed;
+}
+
+.audit-cal-apply:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }

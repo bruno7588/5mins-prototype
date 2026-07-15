@@ -35,12 +35,20 @@ function AuditMultiSelect({ allLabel, noun, options, selected, onChange }: Audit
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
+  // Prefix the filter's category so an applied trigger says *which* filter it is
+  // ("Course: Cash Handling", "Actors: 4") — a bare value/count reads as an
+  // unlabelled query, and on an audit log that makes a filtered view look like
+  // an incomplete one.
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+  const singular = cap(noun.replace(/s$/, ''))
+  const plural = cap(noun)
   const triggerLabel =
     selected.length === 0
       ? allLabel
       : selected.length === 1
-        ? (options.find((o) => o.value === selected[0])?.label ?? `1 ${noun}`)
-        : `${selected.length} ${noun}`
+        ? `${singular}: ${options.find((o) => o.value === selected[0])?.label ?? '1'}`
+        : `${plural}: ${selected.length}`
+  const applied = selected.length > 0
 
   const toggle = (value: string) =>
     onChange(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value])
@@ -49,7 +57,7 @@ function AuditMultiSelect({ allLabel, noun, options, selected, onChange }: Audit
     <div ref={ref} className="dropdown-field dropdown-sm audit-filter">
       <button
         type="button"
-        className={`dropdown-trigger${open ? ' is-active' : ''}`}
+        className={`dropdown-trigger${open ? ' is-active' : ''}${applied ? ' is-applied' : ''}`}
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}

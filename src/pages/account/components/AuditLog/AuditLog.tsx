@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowDown2, ArrowLeft2, ArrowRight2, DocumentDownload } from 'iconsax-react'
-import Dropdown from '@/components/Dropdown/Dropdown'
 import Collapse from '@/components/Collapse/Collapse'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import AuditMultiSelect from './AuditMultiSelect'
+import AuditDateFilter from './AuditDateFilter'
 import noActivityIllustration from '@/assets/empty-state-illustrations/no-activity.svg'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import {
@@ -37,6 +38,9 @@ interface AuditLogProps {
 interface Filters {
   setting: string[]
   dateRange: string
+  /** ISO yyyy-mm-dd bounds, set only when dateRange === 'custom'. */
+  customFrom: string | null
+  customTo: string | null
   actor: string[]
   course: string[]
   surface: string[]
@@ -47,6 +51,24 @@ function formatTimestamp(iso: string): { date: string; time: string } {
   const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
   return { date, time }
+}
+
+/**
+ * ISO 8601 with the viewer's local offset (e.g. 2026-07-15T15:32:00+01:00) so the
+ * CSV timestamp matches the wall-clock time shown on screen, not UTC. Keeps the
+ * exported file and the table from disagreeing by a timezone offset.
+ */
+function toLocalIso(iso: string): string {
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const offMin = -d.getTimezoneOffset() // minutes east of UTC
+  const sign = offMin >= 0 ? '+' : '-'
+  const offHH = pad(Math.floor(Math.abs(offMin) / 60))
+  const offMM = pad(Math.abs(offMin) % 60)
+  return (
+    `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` +
+    `T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}${sign}${offHH}:${offMM}`
+  )
 }
 
 /** Flatten a value to a single plain string (used for CSV export). */
@@ -89,12 +111,15 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
   const [filters, setFilters] = useState<Filters>({
     setting: [],
     dateRange: ALL,
+    customFrom: null,
+    customTo: null,
     actor: [],
     course: initialCourseId ? [initialCourseId] : [],
     surface: [],
   })
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [page, setPage] = useState(0)
+  const { toasts, show } = useToast()
 
   // Any filter change resets to the first page so results stay in view.
   const patch = (next: Partial<Filters>) => {
@@ -105,13 +130,23 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
   const filtered = useMemo(() => {
     const rangeOpt = DATE_RANGE_OPTIONS.find((o) => o.value === filters.dateRange)
     const cutoff = rangeOpt?.days != null ? Date.now() - rangeOpt.days * 86_400_000 : null
+    // Custom range is inclusive: from 00:00 on the start day to 23:59:59.999 on the end day.
+    const custom =
+      filters.dateRange === 'custom' && filters.customFrom && filters.customTo
+        ? {
+            from: new Date(`${filters.customFrom}T00:00:00`).getTime(),
+            to: new Date(`${filters.customTo}T23:59:59.999`).getTime(),
+          }
+        : null
 
     return auditOperations.filter((op) => {
       if (filters.setting.length && !op.changes.some((c) => filters.setting.includes(c.settingKey))) return false
       if (filters.actor.length && !filters.actor.includes(op.actor)) return false
       if (filters.course.length && !filters.course.includes(op.courseId)) return false
       if (filters.surface.length && !filters.surface.includes(op.surfaceKey)) return false
-      if (cutoff != null && new Date(op.timestamp).getTime() < cutoff) return false
+      const t = new Date(op.timestamp).getTime()
+      if (cutoff != null && t < cutoff) return false
+      if (custom && (t < custom.from || t > custom.to)) return false
       return true
     })
   }, [filters])
@@ -124,7 +159,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
     filters.surface.length > 0
 
   const clearFilters = () =>
-    patch({ setting: [], dateRange: ALL, actor: [], course: [], surface: [] })
+    patch({ setting: [], dateRange: ALL, customFrom: null, customTo: null, actor: [], course: [], surface: [] })
 
   const total = filtered.length
   const pageStart = page * PAGE_SIZE
@@ -142,8 +177,20 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
   const openCourse = () => navigate('/your-courses/course', { state: { tab: 'settings' } })
 
   // CSV flattens to the EXPANDED detail level: one line per changed setting.
+  // Column order mirrors the on-screen table (Date · Actor · Setting · Course ·
+  // Surface), with the detail-only columns (New value, Operation) grouped in.
   const exportCsv = () => {
-    const header = ['Timestamp', 'Operation', 'Actor', 'Role at the time', 'Surface', 'Course', 'Setting', 'New value']
+    const header = [
+      'Timestamp',
+      'Actor',
+      'Actor email',
+      'Role at the time',
+      'Setting',
+      'New value',
+      'Course',
+      'Surface',
+      'Operation',
+    ]
     const lines = [header.map(csvCell).join(',')]
     filtered.forEach((op) => {
       const label = operationLabel(op)
@@ -151,14 +198,15 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
       op.changes.forEach((c) => {
         lines.push(
           [
-            new Date(op.timestamp).toISOString(),
-            label,
+            toLocalIso(op.timestamp),
             op.actor,
+            op.actorEmail,
             op.role,
-            SURFACES[op.surfaceKey],
-            course,
             c.setting,
             valueToPlain(c.value),
+            course,
+            SURFACES[op.surfaceKey],
+            label,
           ]
             .map(csvCell)
             .join(','),
@@ -172,6 +220,11 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
     a.download = 'audit-log.csv'
     a.click()
     URL.revokeObjectURL(url)
+
+    show(
+      'success',
+      `Exported ${total} ${total === 1 ? 'change' : 'changes'}${anyApplied ? ' (filters applied)' : ''}`,
+    )
   }
 
   return (
@@ -179,12 +232,10 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
       {/* ── Toolbar: five live filters (left) + CSV export (right) ── */}
       <div className="audit-toolbar">
         <div className="audit-filters">
-          <Dropdown
-            size="sm"
-            className="audit-filter"
-            options={DATE_RANGE_OPTIONS.map(({ value, label }) => ({ value, label }))}
-            value={filters.dateRange}
-            onChange={(v) => patch({ dateRange: v })}
+          <AuditDateFilter
+            presets={DATE_RANGE_OPTIONS}
+            value={{ dateRange: filters.dateRange, customFrom: filters.customFrom, customTo: filters.customTo }}
+            onChange={(v) => patch(v)}
           />
           <AuditMultiSelect
             allLabel="All actors"
@@ -243,14 +294,19 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                 ? 'No activity matches your filters.'
                 : "When someone changes a course's settings, it'll appear here — showing what changed, who did it, and when."}
             </p>
+            {anyApplied && (
+              <button type="button" className="audit-empty-cta" onClick={clearFilters}>
+                Clear Filters
+              </button>
+            )}
           </div>
         </div>
       ) : (
         <>
           <div className="audit-table">
-            {/* Borderless header, column labels mirror the five filters (table.md) */}
+            {/* Borderless header — short noun labels describing the data (table.md) */}
             <div className="audit-thead" role="row">
-              <span className="audit-th audit-col-date">Date range</span>
+              <span className="audit-th audit-col-date">Date</span>
               <span className="audit-th audit-col-actor">Actor</span>
               <span className="audit-th audit-col-setting">Setting</span>
               <span className="audit-th audit-col-course">Course</span>
@@ -263,8 +319,10 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                 const { date, time } = formatTimestamp(op.timestamp)
                 const isOpen = expanded.has(op.id)
                 const course = courseForOp(op)
-                // Describe what changed by naming the settings, not a bare count.
-                const settingSummary = op.changes.map((c) => c.setting).join(', ')
+                // Name the first changed setting; overflow collapses to a "+N more"
+                // pill (the full list lives in the expanded detail).
+                const settingNames = op.changes.map((c) => c.setting)
+                const extraSettings = settingNames.length - 1
                 return (
                   <li key={op.id} className={`audit-row-card${isOpen ? ' is-open' : ''}`}>
                     <button
@@ -282,7 +340,10 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                         <span className="audit-actor-meta">{op.role}</span>
                       </span>
                       <span className="audit-cell audit-col-setting">
-                        <span className="audit-op" title={settingSummary}>{settingSummary}</span>
+                        <span className="audit-op">{settingNames[0]}</span>
+                        {extraSettings > 0 && (
+                          <span className="audit-op-more">+{extraSettings}</span>
+                        )}
                       </span>
                       <span className="audit-cell audit-col-course">{course.name}</span>
                       <span className="audit-cell audit-col-surface">{SURFACES[op.surfaceKey]}</span>
@@ -349,6 +410,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
           </div>
         </>
       )}
+
+      <ToastContainer toasts={toasts} />
     </div>
   )
 }
