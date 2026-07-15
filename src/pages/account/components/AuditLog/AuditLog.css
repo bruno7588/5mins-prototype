@@ -143,9 +143,8 @@
 
 .audit-export:disabled {
   color: var(--text-disabled);
-  border-color: var(--border);
+  border-color: var(--text-disabled);
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
 .audit-export:focus-visible {
@@ -455,7 +454,7 @@
 }
 
 .audit-pagination-nav:disabled {
-  opacity: 0.4;
+  color: var(--text-disabled);
   cursor: default;
 }
 
