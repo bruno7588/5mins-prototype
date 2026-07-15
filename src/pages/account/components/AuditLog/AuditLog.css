@@ -2,7 +2,7 @@
   padding-top: var(--space-l); /* 24px */
   /* One shared column grid for header, rows, and expanded detail so every
      column lines up exactly (flex drifts between filled cells and spacers). */
-  --audit-cols: 120px minmax(150px, 1fr) minmax(180px, 1fr) minmax(150px, 1fr) 160px 40px;
+  --audit-cols: 120px 200px minmax(180px, 1fr) minmax(150px, 1fr) 160px 40px;
 }
 
 /* ── Toolbar: filters (left) + export (right) ── */
