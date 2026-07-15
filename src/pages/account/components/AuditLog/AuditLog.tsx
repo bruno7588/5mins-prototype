@@ -237,10 +237,10 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             height={72}
           />
           <div className="audit-empty-info">
-            <p className="audit-empty-title">{anyApplied ? 'No matching changes' : 'No changes recorded'}</p>
+            <p className="audit-empty-title">{anyApplied ? 'No results' : 'No changes recorded'}</p>
             <p className="audit-empty-desc">
               {anyApplied
-                ? 'No activity matches your filters. Try clearing a filter to widen the results.'
+                ? 'No activity matches your filters.'
                 : "When someone changes a course's settings, it'll appear here — showing what changed, who did it, and when."}
             </p>
           </div>
