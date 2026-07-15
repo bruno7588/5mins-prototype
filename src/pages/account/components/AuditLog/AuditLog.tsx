@@ -10,11 +10,10 @@ import noResultsIllustration from '@/assets/empty-state-illustrations/no-results
 import {
   auditOperations,
   operationLabel,
-  courseForOp,
-  SETTING_OPTIONS,
+  targetLabelForOp,
+  EVENT_TYPES,
   ACTOR_OPTIONS,
-  COURSE_OPTIONS,
-  SURFACE_OPTIONS,
+  EVENT_TYPE_OPTIONS,
   DATE_RANGE_OPTIONS,
   SURFACES,
   type AuditValue,
@@ -27,23 +26,27 @@ const PAGE_SIZE = 10
 const ALL = 'all'
 
 interface AuditLogProps {
-  /** When set (via the Settings-history deep link), the Course filter starts applied. */
-  initialCourseId?: string
+  /**
+   * Settings-history deep link (`/account?tab=audit-log&course=<id>`). Arriving from
+   * a course's settings simply pre-selects the Course settings event type — a normal
+   * filtered table, no course scope or banner.
+   */
+  fromCourseSettings?: boolean
 }
 
 /**
- * The five live filters. Actor / Setting / Course / Surface are multi-select
- * (empty array = unfiltered); Date range is a single preset. All combinable.
+ * The three live filters — the classic audit axes: when (Date), who (Actor),
+ * what (Events). Actor / Events are multi-select (empty array = unfiltered);
+ * Date range is a single preset. Setting / Course / Surface are row columns,
+ * not filters. All combinable.
  */
 interface Filters {
-  setting: string[]
   dateRange: string
   /** ISO yyyy-mm-dd bounds, set only when dateRange === 'custom'. */
   customFrom: string | null
   customTo: string | null
   actor: string[]
-  course: string[]
-  surface: string[]
+  eventType: string[]
 }
 
 function formatTimestamp(iso: string): { date: string; time: string } {
@@ -106,16 +109,15 @@ function csvCell(s: string): string {
   return `"${s.replace(/"/g, '""')}"`
 }
 
-function AuditLog({ initialCourseId }: AuditLogProps) {
+function AuditLog({ fromCourseSettings }: AuditLogProps) {
   const navigate = useNavigate()
   const [filters, setFilters] = useState<Filters>({
-    setting: [],
     dateRange: ALL,
     customFrom: null,
     customTo: null,
     actor: [],
-    course: initialCourseId ? [initialCourseId] : [],
-    surface: [],
+    // Arriving from a course's Settings history → start on Course settings events.
+    eventType: fromCourseSettings ? ['course-settings'] : [],
   })
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [page, setPage] = useState(0)
@@ -140,10 +142,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
         : null
 
     return auditOperations.filter((op) => {
-      if (filters.setting.length && !op.changes.some((c) => filters.setting.includes(c.settingKey))) return false
+      if (filters.eventType.length && !filters.eventType.includes(op.eventType)) return false
       if (filters.actor.length && !filters.actor.includes(op.actor)) return false
-      if (filters.course.length && !filters.course.includes(op.courseId)) return false
-      if (filters.surface.length && !filters.surface.includes(op.surfaceKey)) return false
       const t = new Date(op.timestamp).getTime()
       if (cutoff != null && t < cutoff) return false
       if (custom && (t < custom.from || t > custom.to)) return false
@@ -152,14 +152,10 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
   }, [filters])
 
   const anyApplied =
-    filters.setting.length > 0 ||
-    filters.dateRange !== ALL ||
-    filters.actor.length > 0 ||
-    filters.course.length > 0 ||
-    filters.surface.length > 0
+    filters.dateRange !== ALL || filters.actor.length > 0 || filters.eventType.length > 0
 
   const clearFilters = () =>
-    patch({ setting: [], dateRange: ALL, customFrom: null, customTo: null, actor: [], course: [], surface: [] })
+    patch({ dateRange: ALL, customFrom: null, customTo: null, actor: [], eventType: [] })
 
   const total = filtered.length
   const pageStart = page * PAGE_SIZE
@@ -185,16 +181,17 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
       'Actor',
       'Actor email',
       'Role at the time',
-      'Setting',
+      'Event type',
+      'Change',
       'New value',
-      'Course',
+      'Target',
       'Surface',
       'Operation',
     ]
     const lines = [header.map(csvCell).join(',')]
     filtered.forEach((op) => {
       const label = operationLabel(op)
-      const course = courseForOp(op).name
+      const target = targetLabelForOp(op)
       op.changes.forEach((c) => {
         lines.push(
           [
@@ -202,9 +199,10 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             op.actor,
             op.actorEmail,
             op.role,
+            EVENT_TYPES[op.eventType].label,
             c.setting,
             valueToPlain(c.value),
-            course,
+            target,
             SURFACES[op.surfaceKey],
             label,
           ]
@@ -245,25 +243,11 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             onChange={(v) => patch({ actor: v })}
           />
           <AuditMultiSelect
-            allLabel="All settings"
-            noun="settings"
-            options={SETTING_OPTIONS}
-            selected={filters.setting}
-            onChange={(v) => patch({ setting: v })}
-          />
-          <AuditMultiSelect
-            allLabel="All courses"
-            noun="courses"
-            options={COURSE_OPTIONS}
-            selected={filters.course}
-            onChange={(v) => patch({ course: v })}
-          />
-          <AuditMultiSelect
-            allLabel="All surfaces"
-            noun="surfaces"
-            options={SURFACE_OPTIONS}
-            selected={filters.surface}
-            onChange={(v) => patch({ surface: v })}
+            allLabel="All events"
+            noun="events"
+            options={EVENT_TYPE_OPTIONS}
+            selected={filters.eventType}
+            onChange={(v) => patch({ eventType: v })}
           />
           {anyApplied && (
             <button type="button" className="audit-clear" onClick={clearFilters}>
@@ -292,7 +276,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             <p className="audit-empty-desc">
               {anyApplied
                 ? 'No activity matches your filters.'
-                : "When someone changes a course's settings, it'll appear here — showing what changed, who did it, and when."}
+                : "When an admin changes a setting, enrolment, user, or role, it'll appear here — showing what changed, who did it, and when."}
             </p>
             {anyApplied && (
               <button type="button" className="audit-empty-cta" onClick={clearFilters}>
@@ -308,8 +292,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             <div className="audit-thead" role="row">
               <span className="audit-th audit-col-date">Date</span>
               <span className="audit-th audit-col-actor">Actor</span>
-              <span className="audit-th audit-col-setting">Setting</span>
-              <span className="audit-th audit-col-course">Course</span>
+              <span className="audit-th audit-col-setting">Event</span>
+              <span className="audit-th audit-col-course">Target</span>
               <span className="audit-th audit-col-surface">Surface</span>
               <span className="audit-th audit-col-expand" aria-hidden="true" />
             </div>
@@ -318,8 +302,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
               {pageRows.map((op) => {
                 const { date, time } = formatTimestamp(op.timestamp)
                 const isOpen = expanded.has(op.id)
-                const course = courseForOp(op)
-                // Name the first changed setting; overflow collapses to a "+N more"
+                const target = targetLabelForOp(op)
+                // Name the first changed field; overflow collapses to a "+N more"
                 // pill (the full list lives in the expanded detail).
                 const settingNames = op.changes.map((c) => c.setting)
                 const extraSettings = settingNames.length - 1
@@ -345,7 +329,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                           <span className="audit-op-more">+{extraSettings}</span>
                         )}
                       </span>
-                      <span className="audit-cell audit-col-course">{course.name}</span>
+                      <span className="audit-cell audit-col-course">{target}</span>
                       <span className="audit-cell audit-col-surface">{SURFACES[op.surfaceKey]}</span>
                       <span className="audit-cell audit-col-expand audit-row-chevron" aria-hidden="true">
                         <ArrowDown2 size={20} color="var(--text-tertiary)" variant="Linear" />
@@ -370,10 +354,12 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                           </dl>
                         </div>
                         <div className="audit-col-course audit-detail-course">
-                          <button type="button" className="audit-course-link" onClick={openCourse}>
-                            View course settings
-                            <ArrowRight2 size={16} color="currentColor" variant="Linear" />
-                          </button>
+                          {op.courseId && (
+                            <button type="button" className="audit-course-link" onClick={openCourse}>
+                              View course settings
+                              <ArrowRight2 size={16} color="currentColor" variant="Linear" />
+                            </button>
+                          )}
                         </div>
                         <span className="audit-col-surface" aria-hidden="true" />
                         <span className="audit-col-expand" aria-hidden="true" />

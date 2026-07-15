@@ -12,11 +12,39 @@
 // upcoming enrolment and user-change types (DEV-4540) reuse the exact same row
 // behaviour, differing only in their expanded content.
 
-/** Event types. Only `course-settings` records at launch; the rest arrive in DEV-4540. */
-export type AuditEventType = 'course-settings' | 'course-enrolment' | 'user-change'
+/** Event types. `live` ones carry seeded rows; the rest are roadmap ("Soon"). */
+export type AuditEventType =
+  | 'course-settings'
+  | 'course-enrolment'
+  | 'user-change'
+  | 'role-change'
+  | 'integration-change'
+  | 'program-change'
 
-/** Where the change was made — drives the Surface filter. */
-export type AuditSurfaceKey = 'settings-tab' | 'compliance-config' | 'bulk-upload' | 'system'
+/**
+ * The Events filter's taxonomy: the single "what happened" axis. `live` types
+ * record today; the rest are shown disabled ("Soon") so the filter advertises
+ * the roadmap and the row model proves out before the data lands (DEV-4540).
+ * Change / Target / Surface are NOT filters — they're columns on the row.
+ */
+export const EVENT_TYPES: Record<AuditEventType, { label: string; live: boolean }> = {
+  'course-settings': { label: 'Course settings', live: true },
+  'course-enrolment': { label: 'Course enrolments', live: true },
+  'user-change': { label: 'User changes', live: true },
+  'role-change': { label: 'Roles & permissions', live: true },
+  'integration-change': { label: 'Integrations & HRIS', live: false },
+  'program-change': { label: 'Programs', live: false },
+}
+
+/** Where the change was made — shown in the Surface column. */
+export type AuditSurfaceKey =
+  | 'settings-tab'
+  | 'compliance-config'
+  | 'bulk-upload'
+  | 'system'
+  | 'enrolment'
+  | 'user-admin'
+  | 'roles-admin'
 
 export interface AuditSurface {
   key: AuditSurfaceKey
@@ -28,6 +56,9 @@ export const SURFACES: Record<AuditSurfaceKey, string> = {
   'compliance-config': 'Compliance configuration',
   'bulk-upload': 'Bulk upload',
   system: 'System',
+  enrolment: 'Enrolment',
+  'user-admin': 'People admin',
+  'roles-admin': 'Roles & permissions',
 }
 
 /** A course that can be a target — id links through to its Settings tab. */
@@ -87,8 +118,14 @@ export interface AuditOperation {
   surfaceKey: AuditSurfaceKey
   /** ISO 8601 timestamp. */
   timestamp: string
-  /** Target course — shown only when expanded, links to the course Settings tab. */
-  courseId: string
+  /**
+   * The object the event acted on, shown in the Target column.
+   *  - `courseId` → a course event (settings/enrolment); links to the Settings tab.
+   *  - `target`   → a non-course object's display label (a user, a role, …).
+   * Course events set `courseId`; everything else sets `target`.
+   */
+  courseId?: string
+  target?: string
   /** Field-level changes in this save. Length drives the operation label + count. */
   changes: AuditChange[]
 }
@@ -98,7 +135,7 @@ const list = (items: string[]): AuditValue => ({ kind: 'list', items })
 
 // Newest first. Multi-change saves exist so the "Updated N course settings"
 // count and the multi-line expanded detail are both exercised.
-export const auditOperations: AuditOperation[] = [
+export const auditOperations: AuditOperation[] = ([
   {
     id: 'op1',
     eventType: 'course-settings',
@@ -322,24 +359,137 @@ export const auditOperations: AuditOperation[] = [
     courseId: 'building-company-culture',
     changes: [{ settingKey: 'certificate', setting: 'Certificate', value: { kind: 'object', label: 'Accredited certificate', sub: 'CPD-branded' } }],
   },
-]
+
+  // ── Other event types (demo data) — enrolments, user changes, role changes.
+  // Same row model; `target` stands in for `courseId` on non-course objects.
+  {
+    id: 'op-e1',
+    eventType: 'course-enrolment',
+    actor: 'Priya Nair',
+    actorEmail: 'priya.n@company.com',
+    role: 'Admin',
+    surfaceKey: 'enrolment',
+    timestamp: '2026-07-14T10:15:00Z',
+    courseId: 'fire-safety',
+    changes: [
+      {
+        settingKey: 'enrolled',
+        setting: 'Enrolled 24 learners',
+        value: list(['Housekeeping team', 'Front desk', 'Night shift', '+21 more']),
+      },
+    ],
+  },
+  {
+    id: 'op-u1',
+    eventType: 'user-change',
+    actor: 'Sarah Mitchell',
+    actorEmail: 'sarah.m@company.com',
+    role: 'Admin',
+    surfaceKey: 'user-admin',
+    timestamp: '2026-07-14T08:30:00Z',
+    target: 'Michael Torres',
+    changes: [
+      { settingKey: 'department', setting: 'Department', value: t('Housekeeping') },
+      { settingKey: 'manager', setting: 'Manager', value: t('Priya Nair') },
+    ],
+  },
+  {
+    id: 'op-r1',
+    eventType: 'role-change',
+    actor: 'Sarah Mitchell',
+    actorEmail: 'sarah.m@company.com',
+    role: 'Admin',
+    surfaceKey: 'roles-admin',
+    timestamp: '2026-07-13T16:45:00Z',
+    target: 'Content Manager',
+    changes: [
+      { settingKey: 'perm-courses', setting: 'Manage courses', value: t('Granted') },
+      { settingKey: 'perm-reports', setting: 'View reports', value: t('Granted') },
+      { settingKey: 'perm-billing', setting: 'Manage billing', value: t('Revoked') },
+    ],
+  },
+  {
+    id: 'op-u2',
+    eventType: 'user-change',
+    actor: 'System',
+    actorEmail: '—',
+    role: 'System',
+    surfaceKey: 'system',
+    timestamp: '2026-07-12T02:00:00Z',
+    target: 'Elena Rossi',
+    changes: [{ settingKey: 'status', setting: 'Account status', value: t('Deactivated') }],
+  },
+  {
+    id: 'op-e2',
+    eventType: 'course-enrolment',
+    actor: 'James Okafor',
+    actorEmail: 'james.o@company.com',
+    role: 'Admin',
+    surfaceKey: 'bulk-upload',
+    timestamp: '2026-07-11T14:00:00Z',
+    courseId: 'harassment-prevention',
+    changes: [
+      { settingKey: 'unenrolled', setting: 'Removed 3 learners', value: list(['Alex Kim', 'Sam Doe', 'Jo Ray']) },
+    ],
+  },
+  {
+    id: 'op-u3',
+    eventType: 'user-change',
+    actor: 'James Okafor',
+    actorEmail: 'james.o@company.com',
+    role: 'Admin',
+    surfaceKey: 'bulk-upload',
+    timestamp: '2026-07-10T13:20:00Z',
+    target: '8 new hires (bulk)',
+    changes: [
+      { settingKey: 'created', setting: 'Created 8 users', value: list(['G. Alves', 'M. Silva', 'R. Costa', '+5 more']) },
+    ],
+  },
+  {
+    id: 'op-r2',
+    eventType: 'role-change',
+    actor: 'Priya Nair',
+    actorEmail: 'priya.n@company.com',
+    role: 'Admin',
+    surfaceKey: 'roles-admin',
+    timestamp: '2026-07-09T11:00:00Z',
+    target: 'David Chen',
+    changes: [{ settingKey: 'role-assign', setting: 'Assigned role', value: t('Team Manager') }],
+  },
+  // Newest first — sorted by timestamp so demo rows interleave with course-settings.
+] as AuditOperation[]).sort((a, b) => b.timestamp.localeCompare(a.timestamp))
 
 // ── Derived helpers ─────────────────────────────────────────────────────────
 
 /** The operation label. Carries the change count so the collapsed row conveys
  *  scale without exposing the target ("Updated 3 course settings"). */
 export function operationLabel(op: AuditOperation): string {
-  if (op.eventType === 'course-settings') {
-    const n = op.changes.length
-    return n === 1 ? 'Updated course settings' : `Updated ${n} course settings`
+  const n = op.changes.length
+  switch (op.eventType) {
+    case 'course-settings':
+      return n === 1 ? 'Updated course settings' : `Updated ${n} course settings`
+    case 'course-enrolment':
+      return 'Updated enrolments'
+    case 'user-change':
+      return n === 1 ? 'Updated user' : `Updated user (${n} changes)`
+    case 'role-change':
+      return 'Updated role'
+    // No seeded rows yet — labels ready for when the data lands.
+    case 'integration-change':
+      return 'Updated integration'
+    case 'program-change':
+      return 'Updated program'
   }
-  // Placeholders for the upcoming event types (DEV-4540).
-  if (op.eventType === 'course-enrolment') return 'Enrolled learners'
-  return 'Updated user'
 }
 
 export function courseForOp(op: AuditOperation): AuditCourse {
-  return courseById[op.courseId] ?? { id: op.courseId, name: op.courseId }
+  return (op.courseId && courseById[op.courseId]) || { id: op.courseId ?? '', name: op.courseId ?? '—' }
+}
+
+/** The Target column's label: the course name for course events, else the object. */
+export function targetLabelForOp(op: AuditOperation): string {
+  if (op.courseId) return courseForOp(op).name
+  return op.target ?? '—'
 }
 
 /** Distinct filter options, derived from the data so the bar stays in sync. */
@@ -351,26 +501,18 @@ function distinctBy<K extends string>(pairs: { value: K; label: string }[]) {
   return [...seen.entries()].map(([value, label]) => ({ value, label }))
 }
 
-export const SETTING_OPTIONS = distinctBy(
-  auditOperations
-    .flatMap((op) => op.changes)
-    .map((c) => ({ value: c.settingKey, label: c.setting })),
-).sort((a, b) => a.label.localeCompare(b.label))
+/**
+ * The Events filter options. Live types come first; the roadmap types follow as
+ * `disabled` ("Soon") rows. Derived from EVENT_TYPES so the bar stays in sync as
+ * types go live. Actor stays a filter (who); Setting / Course / Surface don't.
+ */
+export const EVENT_TYPE_OPTIONS = (Object.keys(EVENT_TYPES) as AuditEventType[])
+  .map((key) => ({ value: key, label: EVENT_TYPES[key].label, disabled: !EVENT_TYPES[key].live }))
+  .sort((a, b) => Number(a.disabled) - Number(b.disabled))
 
 export const ACTOR_OPTIONS = distinctBy(
   auditOperations.map((op) => ({ value: op.actor, label: op.actor })),
 ).sort((a, b) => a.label.localeCompare(b.label))
-
-export const COURSE_OPTIONS = distinctBy(
-  auditOperations.map((op) => {
-    const c = courseForOp(op)
-    return { value: c.id, label: c.name }
-  }),
-).sort((a, b) => a.label.localeCompare(b.label))
-
-export const SURFACE_OPTIONS = distinctBy(
-  auditOperations.map((op) => ({ value: op.surfaceKey, label: SURFACES[op.surfaceKey] })),
-)
 
 /** Preset date-range windows (days back from today). `null` = All time. */
 export const DATE_RANGE_OPTIONS: { value: string; label: string; days: number | null }[] = [

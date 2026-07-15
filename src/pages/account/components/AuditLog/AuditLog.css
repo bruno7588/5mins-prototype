@@ -120,6 +120,25 @@
   outline-offset: -2px;
 }
 
+/* Roadmap event type: inert + dimmed, tagged "Soon" (dead-UI convention) */
+.audit-mo--soon {
+  cursor: default;
+  color: var(--text-disabled);
+}
+
+.audit-mo--soon:hover {
+  background: transparent; /* no hover affordance — it isn't selectable */
+}
+
+.audit-mo-soon-tag {
+  margin-left: auto;
+  padding: 2px var(--space-xs); /* 2px 4px */
+  border-radius: var(--radius-full);
+  background: var(--button-background-disabled);
+  color: var(--text-disabled);
+  font: 500 12px/1.5 'Poppins', sans-serif;
+}
+
 /* CSV export — Outlined-2 (neutral tertiary) per buttons.md */
 .audit-export {
   display: inline-flex;

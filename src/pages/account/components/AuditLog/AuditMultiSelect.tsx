@@ -5,6 +5,8 @@ import Checkbox from '@/components/Checkbox/Checkbox'
 export interface MultiOption {
   value: string
   label: string
+  /** Not-yet-live option: rendered inert and dimmed with a "Soon" tag. */
+  disabled?: boolean
 }
 
 interface AuditMultiSelectProps {
@@ -53,6 +55,8 @@ function AuditMultiSelect({ allLabel, noun, options, selected, onChange }: Audit
   const toggle = (value: string) =>
     onChange(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value])
 
+  // Trigger count and label only ever reflect live (selectable) options.
+
   return (
     <div ref={ref} className="dropdown-field dropdown-sm audit-filter">
       <button
@@ -84,6 +88,18 @@ function AuditMultiSelect({ allLabel, noun, options, selected, onChange }: Audit
             </button>
           </li>
           {options.map((opt) => {
+            // Roadmap option: inert, dimmed, tagged "Soon" (dead-UI convention).
+            if (opt.disabled) {
+              return (
+                <li key={opt.value}>
+                  <div role="option" aria-selected={false} aria-disabled className="audit-mo audit-mo--soon">
+                    <Checkbox checked={false} disabled />
+                    <span>{opt.label}</span>
+                    <span className="audit-mo-soon-tag">Soon</span>
+                  </div>
+                </li>
+              )
+            }
             const isSel = selected.includes(opt.value)
             return (
               <li key={opt.value}>
