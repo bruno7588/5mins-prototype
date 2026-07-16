@@ -2,7 +2,7 @@
   padding-top: var(--space-l); /* 24px */
   /* One shared column grid for header, rows, and expanded detail so every
      column lines up exactly (flex drifts between filled cells and spacers). */
-  --audit-cols: 120px 200px minmax(180px, 1fr) minmax(150px, 1fr) 160px 40px;
+  --audit-cols: 180px 200px minmax(180px, 1fr) minmax(150px, 1fr) 160px 40px;
 }
 
 /* ── Toolbar: filters (left) + export (right) ── */
@@ -68,13 +68,6 @@
 .audit-clear:focus-visible {
   border-color: var(--primary-button-background-hover);
   outline: none;
-}
-
-/* Applied filter — amber border so a set filter is visibly distinct from an idle
-   one. An unnoticed lingering filter makes an audit log look incomplete, which is
-   the worst misread on this surface. Open state keeps its own active border. */
-.dropdown-field.audit-filter .dropdown-trigger.is-applied:not(.is-active) {
-  border-color: var(--selected);
 }
 
 /* "All …" reset row: align its label with the checkbox column (same left edge
@@ -354,7 +347,8 @@
   transform: rotate(180deg);
 }
 
-/* ── Expanded detail — same column grid so values sit under Setting, button under Course ── */
+/* ── Expanded detail — column-aligned to the row grid: Timezone under Date, Email
+   under Actor, changed values under Event, target link under Target ── */
 .audit-detail {
   display: grid;
   grid-template-columns: var(--audit-cols);
@@ -364,11 +358,43 @@
 }
 
 /* Content blocks pad 12px to sit under their column's cell text */
+.audit-detail-field,
 .audit-detail-changes,
-.audit-detail-course {
+.audit-detail-actions {
   padding: 0 var(--space-sm);
 }
 
+/* Labelled field (Timezone, Email): 12px label over its value, like a change row */
+.audit-detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.audit-detail-label {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.audit-detail-value {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+/* Target link — stacked under the Target column, aligned to the value row via the
+   invisible label spacer (same 2px gap as a field). */
+.audit-detail-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+/* Copy details — Outlined-2 pill, same interaction as the Clear Filters button */
 .audit-course-link {
   display: inline-flex;
   align-items: center;
@@ -407,8 +433,8 @@
 }
 
 .audit-change-setting {
-  font-size: 12px;
-  line-height: 1.4;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--text-tertiary);
 }
 
@@ -428,7 +454,7 @@
 .audit-value-pill {
   display: inline-flex;
   align-items: center;
-  padding: 2px var(--space-s);
+  padding: 2px 0;
   border-radius: var(--radius-full);
   background: var(--page-background-hover);
   font-size: 13px;

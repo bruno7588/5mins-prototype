@@ -57,6 +57,22 @@ function formatTimestamp(iso: string): { date: string; time: string } {
 }
 
 /**
+ * Timezone label for the expanded detail — the viewer's zone city + GMT offset
+ * (e.g. "London (GMT +01:00)"). The collapsed row shows the wall-clock date/time;
+ * the expanded row states the zone so that timestamp is unambiguous.
+ */
+function formatTimezone(iso: string): string {
+  const d = new Date(iso)
+  const zone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const city = zone.split('/').pop()?.replace(/_/g, ' ') ?? zone
+  const offMin = -d.getTimezoneOffset()
+  const sign = offMin >= 0 ? '+' : '-'
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const offset = `${pad(Math.floor(Math.abs(offMin) / 60))}:${pad(Math.abs(offMin) % 60)}`
+  return `${city} (GMT ${sign}${offset})`
+}
+
+/**
  * ISO 8601 with the viewer's local offset (e.g. 2026-07-15T15:32:00+01:00) so the
  * CSV timestamp matches the wall-clock time shown on screen, not UTC. Keeps the
  * exported file and the table from disagreeing by a timezone offset.
@@ -337,10 +353,18 @@ function AuditLog({ fromCourseSettings }: AuditLogProps) {
                     </button>
 
                     <Collapse open={isOpen}>
-                      {/* Detail aligns to the columns: values under Setting, button under Course */}
+                      {/* Column-aligned detail: Timezone under Date, Email under
+                          Actor, the changed values under Event, target link under
+                          Target. Source/Target text dropped — on the collapsed row. */}
                       <div className="audit-detail">
-                        <span className="audit-col-date" aria-hidden="true" />
-                        <span className="audit-col-actor" aria-hidden="true" />
+                        <div className="audit-col-date audit-detail-field">
+                          <span className="audit-detail-label">Timezone</span>
+                          <span className="audit-detail-value">{formatTimezone(op.timestamp)}</span>
+                        </div>
+                        <div className="audit-col-actor audit-detail-field">
+                          <span className="audit-detail-label">Email</span>
+                          <span className="audit-detail-value">{op.actorEmail}</span>
+                        </div>
                         <div className="audit-col-setting audit-detail-changes">
                           <dl className="audit-changes">
                             {op.changes.map((c) => (
@@ -353,7 +377,10 @@ function AuditLog({ fromCourseSettings }: AuditLogProps) {
                             ))}
                           </dl>
                         </div>
-                        <div className="audit-col-course audit-detail-course">
+                        <div className="audit-col-course audit-detail-actions">
+                          {/* Spacer aligns the link with the value row (matches the
+                              12px label above every other column). */}
+                          <span className="audit-detail-label" aria-hidden="true">&nbsp;</span>
                           {op.courseId && (
                             <button type="button" className="audit-course-link" onClick={openCourse}>
                               View course settings
