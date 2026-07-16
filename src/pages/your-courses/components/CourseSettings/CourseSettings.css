@@ -8,10 +8,32 @@
   padding: var(--space-m) var(--space-m);
 }
 
-/* Settings-history entry point — top-right of the Settings tab */
+/* Sub-header — "Course Settings" title left, Settings-history entry point right,
+   divider below (Figma 8543:4431) */
 .cs-header {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: var(--space-m); /* 16px */
+}
+
+.cs-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.cs-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font: 700 20px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.cs-header-divider {
+  height: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xs); /* 4px */
 }
 
 /* Outlined-2 (neutral tertiary) button per buttons.md */
@@ -46,12 +68,11 @@
   align-items: center;
   justify-content: center;
   min-width: 20px;
-  height: 20px;
   padding: 0 6px;
   border-radius: var(--radius-full);
   background: var(--input-background);
-  color: var(--text-secondary);
-  font: 500 12px/1 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+  font: 500 14px/1.5 'Poppins', sans-serif;
 }
 
 /* Section */

@@ -457,14 +457,17 @@
   gap: var(--space-xs);
 }
 
+/* Informative (category) badge — badges.md: mode-aware translucent tint so it
+   lifts off the expanded card surface (--page-background-hover == the card in
+   dark mode → invisible) */
 .audit-value-pill {
   display: inline-flex;
   align-items: center;
-  padding: 2px 0;
+  padding: 6px var(--space-sm); /* 6px 12px — DS badge */
   border-radius: var(--radius-full);
-  background: var(--page-background-hover);
-  font-size: 13px;
-  color: var(--text-primary);
+  background: var(--input-background);
+  font: 500 14px/1.2 'Poppins', sans-serif;
+  color: var(--text-secondary);
 }
 
 .audit-value--object {
@@ -640,10 +643,58 @@
   outline-offset: -2px;
 }
 
+/* "Custom range" row — label + trailing chevron flagging the calendar flyout */
+.audit-date-preset--nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+}
+
+.audit-date-preset-chevron {
+  flex: 0 0 auto;
+  color: var(--text-secondary);
+}
+
+/* Expanded (flyout open) — subtle active fill, not the amber committed state */
+.audit-date-preset.is-expanded,
+.audit-date-preset.is-expanded:hover {
+  background: var(--cards-background-hover);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Custom-range calendar opens as a flyout to the right of the preset list. */
 .audit-date-cal {
-  margin-top: var(--space-s);
-  padding-top: var(--space-s);
-  border-top: 1px solid var(--border);
+  position: absolute;
+  top: calc(100% + 4px);
+  left: calc(300px + var(--space-s)); /* preset popover width + 8px gap */
+  z-index: 1001;
+  width: 360px;
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12); /* Shadow L */
+  padding: var(--space-s);
+  transform-origin: top left;
+  animation: audit-cal-in 150ms ease;
+}
+
+@keyframes audit-cal-in {
+  from {
+    opacity: 0;
+    transform: translateX(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audit-date-cal {
+    animation: none;
+  }
 }
 
 .audit-cal-head {
@@ -756,15 +807,30 @@
 .audit-cal-foot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: var(--space-s);
   margin-top: var(--space-s);
-  padding-top: var(--space-s);
-  border-top: 1px solid var(--border);
 }
 
-.audit-cal-range {
-  font: 400 14px/1.5 'Poppins', sans-serif;
-  color: var(--text-secondary);
+/* Text button — dismisses the range picker without committing */
+.audit-cal-cancel {
+  padding: var(--space-xs) var(--space-m); /* 4px 16px */
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
+  font: 700 14px/1.5 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.audit-cal-cancel:hover {
+  background: var(--page-background-hover);
+}
+
+.audit-cal-cancel:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }
 
 .audit-cal-apply {

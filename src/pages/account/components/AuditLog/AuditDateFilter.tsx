@@ -132,34 +132,44 @@ function AuditDateFilter({ presets, value, onChange }: Props) {
       </button>
 
       {open && (
-        <div className="audit-date-pop" role="dialog" aria-label="Filter by date">
-          <ul className="audit-date-presets">
-            {presets.map((p) => (
-              <li key={p.value}>
+        <>
+          <div className="audit-date-pop" role="dialog" aria-label="Filter by date">
+            <ul className="audit-date-presets">
+              {presets.map((p) => (
+                <li key={p.value}>
+                  <button
+                    type="button"
+                    className={`audit-date-preset${
+                      value.dateRange === p.value && !showRange ? ' is-selected' : ''
+                    }`}
+                    onClick={() => choosePreset(p.value)}
+                  >
+                    {p.label}
+                  </button>
+                </li>
+              ))}
+              <li>
                 <button
                   type="button"
-                  className={`audit-date-preset${
-                    value.dateRange === p.value && !showRange ? ' is-selected' : ''
-                  }`}
-                  onClick={() => choosePreset(p.value)}
+                  className={`audit-date-preset audit-date-preset--nav${showRange ? ' is-expanded' : ''}`}
+                  aria-haspopup="dialog"
+                  aria-expanded={showRange}
+                  onClick={() => setShowRange(true)}
                 >
-                  {p.label}
+                  <span>Custom range</span>
+                  <ArrowRight2
+                    size={16}
+                    color="currentColor"
+                    variant="Linear"
+                    className="audit-date-preset-chevron"
+                  />
                 </button>
               </li>
-            ))}
-            <li>
-              <button
-                type="button"
-                className={`audit-date-preset${showRange ? ' is-selected' : ''}`}
-                onClick={() => setShowRange(true)}
-              >
-                Custom range
-              </button>
-            </li>
-          </ul>
+            </ul>
+          </div>
 
           {showRange && (
-            <div className="audit-date-cal">
+            <div className="audit-date-cal" role="dialog" aria-label="Choose a custom date range">
               <div className="audit-cal-head">
                 <span className="audit-cal-title">{monthLabel}</span>
                 <div className="audit-cal-nav">
@@ -214,9 +224,13 @@ function AuditDateFilter({ presets, value, onChange }: Props) {
               </div>
 
               <div className="audit-cal-foot">
-                <span className="audit-cal-range">
-                  {from ? fmtShort(from) : 'Start'} – {to ? fmtShort(to) : 'End'}
-                </span>
+                <button
+                  type="button"
+                  className="audit-cal-cancel"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </button>
                 <button
                   type="button"
                   className="audit-cal-apply"
@@ -228,7 +242,7 @@ function AuditDateFilter({ presets, value, onChange }: Props) {
               </div>
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   )

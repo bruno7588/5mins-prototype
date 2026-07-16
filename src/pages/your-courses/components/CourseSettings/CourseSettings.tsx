@@ -320,11 +320,15 @@ function CourseSettings() {
   return (
     <section className="cs">
       <div className="cs-header">
-        <button type="button" className="cs-history" onClick={openSettingsHistory}>
-          <Clock size={16} color="currentColor" variant="Linear" />
-          Settings History
-          {historyCount > 0 && <span className="cs-history-count">{historyCount}</span>}
-        </button>
+        <div className="cs-header-row">
+          <h2 className="cs-title">Course Settings</h2>
+          <button type="button" className="cs-history" onClick={openSettingsHistory}>
+            <Clock size={20} color="currentColor" variant="Linear" />
+            Settings History
+            {historyCount > 0 && <span className="cs-history-count">{historyCount}</span>}
+          </button>
+        </div>
+        <div className="cs-header-divider" />
       </div>
       {sections.map((section) => (
         <div className="cs-section" key={section.heading}>
