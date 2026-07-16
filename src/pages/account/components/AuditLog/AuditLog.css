@@ -40,28 +40,34 @@
   font-size: 14px;
 }
 
-/* Clear-all filters — text button, shown only when a filter is applied */
+/* Clear-all filters — pill button matching the filter dropdowns, shown only
+   when a filter is applied. Same border/radius/padding as .dropdown-sm here. */
 .audit-clear {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  border: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   background: transparent;
-  padding: var(--space-s);
+  padding: var(--space-s) var(--space-sm); /* 8px 12px */
   font: 500 14px/1.5 'Poppins', sans-serif;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: color 150ms ease;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
+/* Hover: Outlined-2 treatment — brand cyan surfaces on interaction (24% tint,
+   cyan border + text), matching .btn-outlined:hover in buttons.md. */
 .audit-clear:hover {
-  color: var(--text-error);
+  background: rgba(0, 206, 230, 0.24);
+  color: var(--text-button-hover);
+  border-color: var(--primary-button-background-hover);
 }
 
 .audit-clear:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-  border-radius: var(--radius-s);
+  border-color: var(--primary-button-background-hover);
+  outline: none;
 }
 
 /* Applied filter — amber border so a set filter is visibly distinct from an idle

@@ -357,7 +357,6 @@ function AuditLog({ fromCourseSettings }: AuditLogProps) {
                           {op.courseId && (
                             <button type="button" className="audit-course-link" onClick={openCourse}>
                               View course settings
-                              <ArrowRight2 size={16} color="currentColor" variant="Linear" />
                             </button>
                           )}
                         </div>
