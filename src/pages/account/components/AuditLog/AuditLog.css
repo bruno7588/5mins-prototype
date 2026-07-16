@@ -259,6 +259,12 @@
   background: var(--page-background-hover);
 }
 
+/* When expanded, the row sits on the card fill — hovering its top uses the
+   card hover so the tint reads against that surface, not the page. */
+.audit-row-card.is-open .audit-row:hover {
+  background: var(--cards-background-hover);
+}
+
 .audit-row:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: -2px;
