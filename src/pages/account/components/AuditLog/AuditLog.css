@@ -13,13 +13,13 @@
   margin-bottom: var(--space-m);
 }
 
-/* Filters take the available width and wrap vertically; Export stays far right */
+/* Filters take the available width and stay on ONE row; Export stays far right */
 .audit-filters {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--space-sm); /* 12px */
 }
 
@@ -27,8 +27,14 @@
   flex: 0 0 auto;
 }
 
+/* Sized to content, but allowed to SHRINK so a long applied value ("Target:
+   Building Company Culture") ellipsises in the trigger instead of pushing the
+   bar onto a second row. 132px is the floor — below that the label stops being
+   readable. The DS trigger already handles the ellipsis; it just needs a
+   shrinkable box. The open menu is width: max-content, so the full option text
+   is still readable there. */
 .audit .audit-filter {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   width: fit-content;
   min-width: 132px;
 }

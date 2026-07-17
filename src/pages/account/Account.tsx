@@ -32,11 +32,10 @@ const TABS: { key: TabKey; label: string }[] = [
 
 function Account() {
   // Deep link support: /account?tab=audit-log&course=<id> (from the Settings-history
-  // button). The course id just signals origin — it pre-selects the Course settings
-  // event type; no per-course scoping.
+  // button). The course id pre-selects the Target + Course settings filters.
   const [searchParams] = useSearchParams()
   const tabParam = searchParams.get('tab') as TabKey | null
-  const fromCourseSettings = searchParams.get('course') != null
+  const courseParam = searchParams.get('course') ?? undefined
   const [activeTab, setActiveTab] = useState<TabKey>(
     tabParam && TABS.some((t) => t.key === tabParam) ? tabParam : 'audit-log',
   )
@@ -66,7 +65,7 @@ function Account() {
 
         <div className="acs-body">
           {activeTab === 'audit-log' ? (
-            <AuditLog fromCourseSettings={fromCourseSettings} />
+            <AuditLog initialCourseId={courseParam} />
           ) : (
             <div className="acs-placeholder">
               This section isn’t part of this prototype yet.

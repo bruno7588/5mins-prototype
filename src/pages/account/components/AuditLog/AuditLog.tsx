@@ -11,9 +11,11 @@ import {
   auditOperations,
   operationLabel,
   targetLabelForOp,
+  targetKeyForOp,
   EVENT_TYPES,
   ACTOR_OPTIONS,
   EVENT_TYPE_OPTIONS,
+  TARGET_OPTIONS,
   DATE_RANGE_OPTIONS,
   SURFACES,
   type AuditValue,
@@ -27,18 +29,19 @@ const ALL = 'all'
 
 interface AuditLogProps {
   /**
-   * Settings-history deep link (`/account?tab=audit-log&course=<id>`). Arriving from
-   * a course's settings simply pre-selects the Course settings event type — a normal
-   * filtered table, no course scope or banner.
+   * Course id from the Settings-history deep link (`/account?tab=audit-log&course=<id>`).
+   * Pre-selects Target = that course + Events = Course settings, so the table opens on
+   * exactly the rows the entry point's count badge promised. Both are ordinary applied
+   * filters — visible and clearable — not a hidden scope.
    */
-  fromCourseSettings?: boolean
+  initialCourseId?: string
 }
 
 /**
- * The three live filters — the classic audit axes: when (Date), who (Actor),
- * what (Events). Actor / Events are multi-select (empty array = unfiltered);
- * Date range is a single preset. Setting / Course / Surface are row columns,
- * not filters. All combinable.
+ * The four live filters — the classic audit axes: when (Date), who (Actor),
+ * what (Events), and what-was-acted-on (Target). Actor / Events / Target are
+ * multi-select (empty array = unfiltered); Date range is a single preset.
+ * Setting / Surface are row columns, not filters. All combinable.
  */
 interface Filters {
   dateRange: string
@@ -47,6 +50,8 @@ interface Filters {
   customTo: string | null
   actor: string[]
   eventType: string[]
+  /** Keys from `targetKeyForOp` — course ids for course events, labels otherwise. */
+  target: string[]
 }
 
 function formatTimestamp(iso: string): { date: string; time: string } {
@@ -125,15 +130,16 @@ function csvCell(s: string): string {
   return `"${s.replace(/"/g, '""')}"`
 }
 
-function AuditLog({ fromCourseSettings }: AuditLogProps) {
+function AuditLog({ initialCourseId }: AuditLogProps) {
   const navigate = useNavigate()
   const [filters, setFilters] = useState<Filters>({
     dateRange: ALL,
     customFrom: null,
     customTo: null,
     actor: [],
-    // Arriving from a course's Settings history → start on Course settings events.
-    eventType: fromCourseSettings ? ['course-settings'] : [],
+    // Arriving from a course's Settings history → that course's settings changes.
+    eventType: initialCourseId ? ['course-settings'] : [],
+    target: initialCourseId ? [initialCourseId] : [],
   })
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [page, setPage] = useState(0)
@@ -160,6 +166,7 @@ function AuditLog({ fromCourseSettings }: AuditLogProps) {
     return auditOperations.filter((op) => {
       if (filters.eventType.length && !filters.eventType.includes(op.eventType)) return false
       if (filters.actor.length && !filters.actor.includes(op.actor)) return false
+      if (filters.target.length && !filters.target.includes(targetKeyForOp(op))) return false
       const t = new Date(op.timestamp).getTime()
       if (cutoff != null && t < cutoff) return false
       if (custom && (t < custom.from || t > custom.to)) return false
@@ -168,10 +175,13 @@ function AuditLog({ fromCourseSettings }: AuditLogProps) {
   }, [filters])
 
   const anyApplied =
-    filters.dateRange !== ALL || filters.actor.length > 0 || filters.eventType.length > 0
+    filters.dateRange !== ALL ||
+    filters.actor.length > 0 ||
+    filters.eventType.length > 0 ||
+    filters.target.length > 0
 
   const clearFilters = () =>
-    patch({ dateRange: ALL, customFrom: null, customTo: null, actor: [], eventType: [] })
+    patch({ dateRange: ALL, customFrom: null, customTo: null, actor: [], eventType: [], target: [] })
 
   const total = filtered.length
   const pageStart = page * PAGE_SIZE
@@ -264,6 +274,13 @@ function AuditLog({ fromCourseSettings }: AuditLogProps) {
             options={EVENT_TYPE_OPTIONS}
             selected={filters.eventType}
             onChange={(v) => patch({ eventType: v })}
+          />
+          <AuditMultiSelect
+            allLabel="All targets"
+            noun="targets"
+            options={TARGET_OPTIONS}
+            selected={filters.target}
+            onChange={(v) => patch({ target: v })}
           />
           {anyApplied && (
             <button type="button" className="audit-clear" onClick={clearFilters}>

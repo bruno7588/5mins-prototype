@@ -492,6 +492,15 @@ export function targetLabelForOp(op: AuditOperation): string {
   return op.target ?? '—'
 }
 
+/**
+ * Stable key for the Target filter. Course events key off `courseId` (so the
+ * Settings-history deep link can pre-select by id, not by display name);
+ * everything else keys off its `target` label. Empty = untargeted, unfilterable.
+ */
+export function targetKeyForOp(op: AuditOperation): string {
+  return op.courseId ?? op.target ?? ''
+}
+
 /** Distinct filter options, derived from the data so the bar stays in sync. */
 function distinctBy<K extends string>(pairs: { value: K; label: string }[]) {
   const seen = new Map<string, string>()
@@ -504,7 +513,8 @@ function distinctBy<K extends string>(pairs: { value: K; label: string }[]) {
 /**
  * The Events filter options. Live types come first; the roadmap types follow as
  * `disabled` ("Soon") rows. Derived from EVENT_TYPES so the bar stays in sync as
- * types go live. Actor stays a filter (who); Setting / Course / Surface don't.
+ * types go live. Actor / Target stay filters (who / what was acted on);
+ * Setting and Surface don't.
  */
 export const EVENT_TYPE_OPTIONS = (Object.keys(EVENT_TYPES) as AuditEventType[])
   .map((key) => ({ value: key, label: EVENT_TYPES[key].label, disabled: !EVENT_TYPES[key].live }))
@@ -512,6 +522,17 @@ export const EVENT_TYPE_OPTIONS = (Object.keys(EVENT_TYPES) as AuditEventType[])
 
 export const ACTOR_OPTIONS = distinctBy(
   auditOperations.map((op) => ({ value: op.actor, label: op.actor })),
+).sort((a, b) => a.label.localeCompare(b.label))
+
+/**
+ * The Target filter options — every object the log has touched. Deliberately flat
+ * and heterogeneous (courses alongside users and roles), mirroring the Target
+ * column: the Events filter is what narrows it to one kind.
+ */
+export const TARGET_OPTIONS = distinctBy(
+  auditOperations
+    .filter((op) => targetKeyForOp(op) !== '')
+    .map((op) => ({ value: targetKeyForOp(op), label: targetLabelForOp(op) })),
 ).sort((a, b) => a.label.localeCompare(b.label))
 
 /** Preset date-range windows (days back from today). `null` = All time. */
