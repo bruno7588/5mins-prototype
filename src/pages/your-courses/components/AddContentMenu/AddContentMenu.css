@@ -24,17 +24,37 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Rows reuse the shared .add-content-menu-item visual; acm-row just guarantees the
-   button resets in this floating context. */
+/* Rows are fully self-styled here — this portal menu must NOT depend on
+   .add-content-menu-item from AddContentSidebar.css, whose stylesheet isn't
+   loaded on every screen that opens this menu (e.g. Create Course), which left
+   the rows unstyled: centred text, icons colliding with labels. */
 .acm-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  width: 100%;
+  padding: var(--space-sm) var(--space-m);
   border: none;
+  border-radius: var(--radius-s);
   background: transparent;
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
   cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
 }
 
-/* The Assessments parent row keeps its highlight while the flyout is open. */
-.acm-row--sub .add-content-menu-item-label {
+.acm-row .add-content-menu-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* Iconsax rows pass color=currentColor, so the icon tracks the row's color. */
+  color: currentColor;
+}
+
+.acm-row .add-content-menu-item-label {
   flex: 1;
+  text-align: left;
 }
 /* Rows live on the --cards-background popover, so override the shared
    .add-content-menu-item hover (page-background-hover collides with the card
