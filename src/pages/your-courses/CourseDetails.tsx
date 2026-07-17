@@ -389,7 +389,7 @@ function CourseDetails() {
               </div>
               <div className="cd-stat">
                 <div className="cd-stat-label">
-                  <Danger size={18} color="var(--danger-500)" variant="Linear" />
+                  <Danger size={18} color="var(--text-error)" variant="Linear" />
                   <span>Overdue</span>
                 </div>
                 <div className="cd-stat-value">

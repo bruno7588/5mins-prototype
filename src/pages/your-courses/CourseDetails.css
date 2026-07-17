@@ -459,9 +459,17 @@
   background: var(--selected-fill);
 }
 
-/* Header row is transparent — keep its sticky cell on the page bg */
+/* The header's own fill (--input-background) is translucent, so the sticky Name
+   cell can't just reuse it — it must stay opaque or scrolled-under columns bleed
+   through. Layer the same fill over an opaque page bg: composites to exactly what
+   the rest of the header row shows, with nothing showing through. */
 .cd-table-scroll--has-scroll .cd-row--head .cd-cell--name {
-  background: var(--page-background);
+  background:
+    linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
+  /* Round the left edge back — the opaque fill would otherwise square off the
+     header row's own radius. */
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
 }
 
 /* Edge shadow — revealed only once the user scrolls horizontally */
