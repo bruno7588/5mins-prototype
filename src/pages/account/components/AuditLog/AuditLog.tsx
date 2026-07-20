@@ -204,8 +204,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
   const exportCsv = () => {
     const header = [
       'Timestamp',
-      'Actor',
-      'Actor email',
+      'User',
+      'User email',
       'Role at the time',
       'Event type',
       'Change',
@@ -262,8 +262,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             onChange={(v) => patch(v)}
           />
           <AuditMultiSelect
-            allLabel="All actors"
-            noun="actors"
+            allLabel="All users"
+            noun="users"
             options={ACTOR_OPTIONS}
             selected={filters.actor}
             onChange={(v) => patch({ actor: v })}
@@ -324,7 +324,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             {/* Borderless header — short noun labels describing the data (table.md) */}
             <div className="audit-thead" role="row">
               <span className="audit-th audit-col-date">Date</span>
-              <span className="audit-th audit-col-actor">Actor</span>
+              <span className="audit-th audit-col-actor">User</span>
               <span className="audit-th audit-col-setting">Event</span>
               <span className="audit-th audit-col-course">Target</span>
               <span className="audit-th audit-col-surface">Surface</span>
