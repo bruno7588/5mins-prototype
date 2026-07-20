@@ -37,7 +37,7 @@
   flex-direction: column;
   gap: 20px;
   padding: 24px;
-  background: var(--cards-background);
+  background: var(--page-background);
   border-radius: 16px;
   box-shadow: var(--shadow-s);
 }
@@ -304,6 +304,18 @@
   background: var(--cards-background);
   border-radius: 12px;
   box-shadow: var(--shadow-s);
+  transition: background 150ms ease;
+}
+
+/* DS Lesson hover (cards.md §Lesson states): card fill switches to
+   --cards-background-hover and the title shifts to --text-button-hover.
+   Locked lessons are excluded — they stay inert. */
+.cd-lesson:not(.cd-lesson--locked):hover {
+  background: var(--cards-background-hover);
+}
+
+.cd-lesson:not(.cd-lesson--locked):hover .cd-lesson__title {
+  color: var(--text-button-hover);
 }
 
 /* "Start!" tooltip floating above the active lesson, centered on the card */
@@ -413,6 +425,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 150ms ease;
 }
 
 .cd-lesson--locked .cd-lesson__title {

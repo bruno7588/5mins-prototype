@@ -89,7 +89,7 @@ function ProgramCourseDetails() {
           </button>
           <button type="button" className="mt-topnav__outlinebtn">
             <span>Create</span>
-            <Add size={20} color="var(--text-primary)" variant="Linear" />
+            <Add size={20} color="currentColor" variant="Linear" />
           </button>
           <div className="mt-topnav__icons">
             <button type="button" className="mt-topnav__iconbtn" aria-label="Notifications">
