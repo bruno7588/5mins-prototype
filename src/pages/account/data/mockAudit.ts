@@ -375,7 +375,7 @@ export const auditOperations: AuditOperation[] = ([
       {
         settingKey: 'enrolled',
         setting: 'Enrolled 24 learners',
-        value: list(['Housekeeping team', 'Front desk', 'Night shift', '+21 more']),
+        value: list(['Marco Rossi', 'Ana Ferreira', 'Liam Walsh', '+21 more']),
       },
     ],
   },
