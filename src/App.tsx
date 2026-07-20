@@ -94,7 +94,7 @@ function App() {
             <TopNav />
             <div className="app-body">
               <Routes>
-                <Route path="/" element={<Navigate to="/content-library" replace />} />
+                <Route path="/" element={<Navigate to="/workspace" replace />} />
                 <Route path="/programs" element={<ProgramsAdmin />} />
                 <Route path="/programs/:id/overview" element={<ProgramAdminDetails />} />
                 <Route path="/content-library" element={<YourContent />} />
