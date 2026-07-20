@@ -207,7 +207,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
       'User',
       'User email',
       'Role at the time',
-      'Event type',
+      'Action type',
       'Change',
       'New value',
       'Target',
@@ -269,8 +269,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             onChange={(v) => patch({ actor: v })}
           />
           <AuditMultiSelect
-            allLabel="All events"
-            noun="events"
+            allLabel="All actions"
+            noun="actions"
             options={EVENT_TYPE_OPTIONS}
             selected={filters.eventType}
             onChange={(v) => patch({ eventType: v })}
@@ -325,7 +325,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             <div className="audit-thead" role="row">
               <span className="audit-th audit-col-date">Date</span>
               <span className="audit-th audit-col-actor">User</span>
-              <span className="audit-th audit-col-setting">Event</span>
+              <span className="audit-th audit-col-setting">Action</span>
               <span className="audit-th audit-col-course">Target</span>
               <span className="audit-th audit-col-surface">Surface</span>
               <span className="audit-th audit-col-expand" aria-hidden="true" />
