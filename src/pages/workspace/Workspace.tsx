@@ -109,7 +109,11 @@ function Workspace() {
                 </header>
                 <Carousel trackClassName="ws-cards-track" ariaLabel="Enrolled courses">
                   {workspaceCourses.map((course) => (
-                    <WorkspaceCourseCard key={course.id} course={course} />
+                    <WorkspaceCourseCard
+                      key={course.id}
+                      course={course}
+                      onOpen={() => navigate(`/courses/${course.id}`)}
+                    />
                   ))}
                 </Carousel>
               </section>

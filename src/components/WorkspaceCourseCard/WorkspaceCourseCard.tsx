@@ -4,11 +4,28 @@ import './WorkspaceCourseCard.css'
 
 const SEGMENTS = 8
 
-function WorkspaceCourseCard({ course }: { course: WorkspaceCourse }) {
+function WorkspaceCourseCard({ course, onOpen }: { course: WorkspaceCourse; onOpen?: () => void }) {
   const filledSegments = Math.max(0, Math.min(SEGMENTS, Math.round((course.progress / 100) * SEGMENTS)))
   const isComplete = course.progress >= 100
+  const interactive = !!onOpen
   return (
-    <article className="ws-course-card">
+    <article
+      className={`ws-course-card${interactive ? ' ws-course-card--interactive' : ''}`}
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={interactive ? `Open course: ${course.title}` : undefined}
+      onClick={onOpen}
+      onKeyDown={
+        interactive
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onOpen?.()
+              }
+            }
+          : undefined
+      }
+    >
       {course.isNew ? <span className="ws-course-card__newbadge">New</span> : null}
       <div
         className="ws-course-card__media"
