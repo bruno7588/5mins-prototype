@@ -1,0 +1,111 @@
+.lesson-grid-card {
+  box-sizing: border-box;
+  width: 170px;
+  height: 230px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: background 150ms ease;
+}
+
+.lesson-grid-card:hover {
+  background: var(--cards-background-hover);
+}
+
+.lesson-grid-card--interactive {
+  cursor: pointer;
+}
+
+.lesson-grid-card--interactive:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.lesson-grid-card__thumb {
+  position: relative;
+  flex: 1 0 0;
+  min-height: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.lesson-grid-card__tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs);
+  background: var(--border);
+  border-bottom-right-radius: var(--radius-s);
+}
+
+.lesson-grid-card__duration {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 4px 6px;
+  border-radius: var(--radius-xs);
+  background: rgba(15, 16, 20, 0.5);
+  font-size: 10px;
+  line-height: 1;
+  color: var(--neutral-0);
+  white-space: nowrap;
+}
+
+/* 8-segment progress bar flush at the bottom of the thumbnail */
+.lesson-grid-card__progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  width: 100%;
+  height: 2px;
+}
+
+.lesson-grid-card__seg {
+  flex: 1 0 0;
+  min-width: 1px;
+  height: 100%;
+  background: var(--border);
+}
+
+.lesson-grid-card__seg--filled {
+  background: var(--primary-600);
+}
+
+.lesson-grid-card--complete .lesson-grid-card__seg {
+  background: var(--success-500);
+}
+
+.lesson-grid-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-m);
+}
+
+.lesson-grid-card__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Reserve 3 lines (63px) so the info block height matches the Figma tile */
+  height: calc(1.5em * 3);
+}
+
+.lesson-grid-card__meta {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}

@@ -24,6 +24,7 @@ import MobileApp from './pages/mobile/MobileApp'
 
 import MyTeam from './pages/my-team/MyTeam'
 import Workspace from './pages/workspace/Workspace'
+import ForYou from './pages/for-you/ForYou'
 import ProgramDetails from './pages/programs/ProgramDetails'
 import ProgramsAdmin from './pages/programs/ProgramsAdmin'
 import ProgramAdminDetails from './pages/programs/ProgramAdminDetails'
@@ -61,6 +62,7 @@ function App() {
       <Route path="/mobile" element={<MobileApp />} />
       <Route path="/my-team" element={<MyTeam />} />
       <Route path="/workspace" element={<Workspace />} />
+      <Route path="/for-you" element={<ForYou />} />
       {/* Program Builder — standalone full-page, no TopNav (ranks above /programs/:id) */}
       <Route
         path="/programs/builder"

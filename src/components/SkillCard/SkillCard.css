@@ -1,0 +1,102 @@
+.skill-card {
+  box-sizing: border-box;
+  width: 170px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-m);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  transition: background 150ms ease;
+}
+
+.skill-card:hover {
+  background: var(--cards-background-hover);
+}
+
+.skill-card__top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.skill-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-s);
+}
+
+.skill-card__icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.skill-card__level {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.skill-card__name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Reserve 3 lines so cards with progress vs. pending stay aligned */
+  height: calc(1.5em * 3);
+}
+
+/* 8-segment progress bar (filled = primary, empty = border) */
+.skill-card__progress {
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+
+.skill-card__seg {
+  flex: 1 0 0;
+  min-width: 1px;
+  height: 8px;
+  background: var(--border);
+}
+
+.skill-card__seg:first-child {
+  border-radius: 20px 0 0 20px;
+}
+
+.skill-card__seg:last-child {
+  border-radius: 0 20px 20px 0;
+}
+
+.skill-card__seg--filled {
+  background: var(--primary-600);
+}
+
+.skill-card__pending {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  height: 20px;
+}
+
+.skill-card__pending-label {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-warning);
+  white-space: nowrap;
+}
+
+.skill-card__pending-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}

@@ -1,0 +1,404 @@
+.lf-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  background: var(--page-background);
+}
+
+/* ---- Left: video stage + feed controls ---- */
+.lf-feed {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  gap: var(--space-l);
+  padding: var(--space-l);
+}
+
+.lf-stage {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Wrapper shrink-wraps the (overflow-clipped) video so the close button can
+   sit just outside its top-left corner with an 8px gap. */
+.lf-video-wrap {
+  position: relative;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1080 / 1920;
+}
+
+.lf-feed .lf-close {
+  position: absolute;
+  top: 0;
+  left: -48px; /* 40px button + 8px gap to the video */
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.lf-feed .lf-close:hover {
+  background: var(--input-background-hover);
+}
+
+.lf-video {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-m, 16px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.lf-video__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.lf-video__gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 16, 20, 0) 86%, rgba(15, 16, 20, 0.5) 100%);
+  pointer-events: none;
+}
+
+.lf-video__progress {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-l);
+  width: 100%;
+}
+
+.lf-video__bars {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.lf-video__time {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--neutral-25);
+  white-space: nowrap;
+}
+
+/* Generic segmented fill bar */
+.lf-bar {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.lf-bar__fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+
+/* Feed action rail */
+.lf-actions {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 40px;
+}
+
+.lf-actions__arrows {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-m);
+}
+
+.lf-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.lf-icon-btn:hover:not(:disabled) {
+  background: var(--input-background-hover);
+}
+
+.lf-icon-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.lf-icon-btn:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+/* ---- Right: lesson details panel ---- */
+.lf-panel {
+  flex-shrink: 0;
+  width: 544px;
+  max-width: 45%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  padding: var(--space-l);
+  overflow-y: auto;
+}
+
+.lf-instructor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.lf-instructor__creator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.lf-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.lf-instructor__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.lf-instructor__name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.lf-instructor__role {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+.lf-follow {
+  padding: 8px 16px;
+  border: 1px solid var(--text-button-outlined);
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--text-button-outlined);
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.lf-follow--active {
+  background: var(--text-button-outlined);
+  color: var(--text-button-foreground);
+}
+
+.lf-follow:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.lf-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.lf-info__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.lf-info__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.lf-info__link {
+  align-self: flex-start;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-button-outlined);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.lf-episodes {
+  display: flex;
+  gap: var(--space-m);
+  width: 100%;
+  overflow: hidden;
+}
+
+.lf-ep {
+  box-sizing: border-box;
+  width: 180px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  padding: var(--space-m);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+}
+
+.lf-ep__label {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.lf-ep__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: calc(1.5em * 3);
+}
+
+.lf-ep__title--upcoming {
+  color: var(--text-secondary);
+}
+
+.lf-ep__duration {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.lf-ep__time {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.lf-skill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.lf-skill__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.lf-skill__name {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.lf-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.lf-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.lf-quiz {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border: 1px solid var(--lesson-quiz);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lf-quiz__mark {
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--lesson-quiz);
+}
+
+.lf-quiz__text {
+  margin: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}

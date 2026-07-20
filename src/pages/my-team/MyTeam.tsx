@@ -228,7 +228,7 @@ const team: TeamMember[] = [
 ]
 
 export const learnerSideItems: { label: string; icon: typeof Home2; path?: string }[] = [
-  { label: 'For You', icon: Home2 },
+  { label: 'For You', icon: Home2, path: '/for-you' },
   { label: 'Your Workspace', icon: Profile2User, path: '/workspace' },
   { label: 'Knowledge Hub', icon: MonitorMobbile },
   { label: 'Search', icon: SearchNormal1 },

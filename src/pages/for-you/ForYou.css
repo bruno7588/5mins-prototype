@@ -1,0 +1,76 @@
+.fy-body {
+  padding-bottom: 64px;
+}
+
+/* Centered feed column (matches the 528px Figma content width) */
+.fy-column {
+  width: 100%;
+  max-width: 528px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+}
+
+.fy-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+/* "Today's Top Picks" heading + dropdown affordance (decorative, single feed) */
+.fy-toppicks {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.fy-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.fy-section__title {
+  margin: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.fy-section__cta {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-button-outlined);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fy-section__cta:hover {
+  color: var(--text-button-hover);
+}
+
+/* Card carousel track — 16px gap; vertical padding keeps hover/shadow from clipping */
+.fy-cards-track {
+  gap: var(--space-m);
+  padding: 4px 2px;
+  margin: -4px -2px;
+  scroll-snap-type: x proximity;
+}
+
+.fy-cards-track > * {
+  scroll-snap-align: start;
+}

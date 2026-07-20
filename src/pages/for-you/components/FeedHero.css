@@ -1,0 +1,188 @@
+.fy-hero-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.fy-hero {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  border-radius: var(--space-ml); /* 20px — matches Figma --ml radius */
+  overflow: hidden;
+}
+
+.fy-hero__track {
+  display: flex;
+  height: 100%;
+  transition: transform 400ms ease;
+}
+
+.fy-hero__track--static {
+  transition: none;
+}
+
+.fy-hero__slide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.fy-hero__slide--interactive {
+  cursor: pointer;
+}
+
+.fy-hero__slide--interactive:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: -2px;
+}
+
+.fy-hero__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* Bottom-anchored gradient that fades into the page background so the card
+   bottom edge merges seamlessly with the page (keeps the caption legible). */
+.fy-hero__gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--page-background) 0%, transparent) 0%,
+    color-mix(in srgb, var(--page-background) 8%, transparent) 61%,
+    color-mix(in srgb, var(--page-background) 32%, transparent) 69%,
+    color-mix(in srgb, var(--page-background) 72%, transparent) 80%,
+    var(--page-background) 100%
+  );
+  pointer-events: none;
+}
+
+.fy-hero__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  padding: var(--space-ml);
+}
+
+.fy-hero__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.fy-hero__skill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.fy-hero__skill-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.fy-hero__skill-name {
+  font-size: 14px;
+  line-height: 1.5;
+  /* Neutral-25 at 50% opacity */
+  color: color-mix(in srgb, var(--neutral-25) 50%, transparent);
+}
+
+/* Mute / volume toggle — top-left tag */
+.fy-hero__mute {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-s);
+  background: var(--border);
+  border: none;
+  border-bottom-right-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.fy-hero__mute:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+/* Slide progress dots */
+.fy-hero__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.fy-hero__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  cursor: pointer;
+  transition: width 200ms ease;
+}
+
+.fy-hero__dot--active {
+  width: 48px;
+  height: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.fy-hero__dot:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.fy-hero__dot-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--selected);
+  border-radius: 6px;
+  animation: fy-hero-progress linear forwards;
+}
+
+/* Reduced motion / static: show a resting half-filled indicator */
+.fy-hero__dot-fill--static {
+  width: 50%;
+  animation: none;
+}
+
+@keyframes fy-hero-progress {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fy-hero__track {
+    transition: none;
+  }
+  .fy-hero__dot {
+    transition: none;
+  }
+  .fy-hero__dot-fill {
+    width: 50%;
+    animation: none;
+  }
+}
