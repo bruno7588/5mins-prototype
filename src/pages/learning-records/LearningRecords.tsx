@@ -720,7 +720,7 @@ function LearningRecords() {
             {/* "Also show" scope toggles — persistent so they stay visible even when
                 the filter list is collapsed. Both widen the view, OFF by default. */}
             <div className={`lrp-also-show${filtersExpanded ? ' lrp-also-show--divided' : ''}`}>
-              <span className="lrp-also-show-label">Also show</span>
+              <span className="lrp-also-show-label">Include</span>
               <div className="lrp-also-item">
                 <Toggle
                   id="lrp-show-archived"
