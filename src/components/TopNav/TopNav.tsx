@@ -10,7 +10,7 @@ function TopNav() {
   const { isDark, toggle } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-  const goToApp = () => navigate('/my-team')
+  const goToApp = () => navigate('/workspace')
 
   useEffect(() => {
     if (!menuOpen) return
