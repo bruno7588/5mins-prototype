@@ -114,9 +114,11 @@
   --text-button-hover: var(--primary-700);
   --text-button-outlined: var(--primary-600);
   --button-outline-hover: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% — generic Outlined/Text button hover/active tint; translucent so it reads correctly in both light & dark (DS buttons.md) */
-  /* Outlined-button resting fill ladder (buttons.md 2026-07-13): 16% at rest → 24% hover */
+  /* Outlined-button fill ladder (buttons.md 2026-07-13): 16% rest → 24% hover → 8% pressed */
   --button-outline-fill: rgba(0, 206, 230, 0.16);
   --button-outline-fill-hover: rgba(0, 206, 230, 0.24);
+  --button-outline-fill-pressed: rgba(0, 206, 230, 0.08); /* Primary-500 @ 8% */
+  --button-outline-fill-disabled: rgba(101, 107, 124, 0.16); /* Neutral @ 16% */
   --selected: var(--secondary-600);
   --selected-tint: rgba(237, 163, 13, 0.15); /* selected-row / highlight fill derived from --selected */
   --selected-tint-hover: rgba(237, 163, 13, 0.24); /* hover state of --selected-tint rows */
@@ -257,6 +259,19 @@
   background: var(--button-outline-fill-hover);
   border-color: var(--text-button-hover);
   color: var(--text-button-hover);
+}
+
+.btn-outlined:active {
+  background: var(--button-outline-fill-pressed);
+  border-color: var(--primary-button-background-pressed);
+  color: var(--primary-button-background-pressed);
+}
+
+.btn-outlined:disabled {
+  background: var(--button-outline-fill-disabled);
+  border-color: var(--text-disabled);
+  color: var(--text-disabled);
+  cursor: not-allowed;
 }
 
 .btn-success {
