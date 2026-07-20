@@ -112,6 +112,7 @@
   --text-button-foreground: var(--neutral-25);
   --text-button-disabled: var(--neutral-300);
   --text-button-hover: var(--primary-700);
+  --text-button-outlined: var(--primary-600);
   --button-outline-hover: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% — generic Outlined/Text button hover/active tint; translucent so it reads correctly in both light & dark (DS buttons.md) */
   /* Outlined-button resting fill ladder (buttons.md 2026-07-13): 16% at rest → 24% hover */
   --button-outline-fill: rgba(0, 206, 230, 0.16);
@@ -183,7 +184,8 @@
   --text-error: var(--danger-400);
   --text-selected: var(--secondary-500);
   --text-progress: var(--primary-500);
-  --text-button-hover: var(--primary-500);
+  --text-button-hover: var(--primary-400);
+  --text-button-outlined: var(--primary-500);
 
   /* Buttons (brand fills unchanged in dark — only disabled differs) */
   --button-background-disabled: var(--neutral-400);
@@ -241,18 +243,20 @@
   padding: 10px var(--space-ml);
   border-radius: var(--radius-sm);
   background: var(--button-outline-fill);
-  border: 1px solid var(--primary-600);
-  color: var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
+  color: var(--text-button-outlined);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 150ms ease;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
 .btn-outlined:hover {
   background: var(--button-outline-fill-hover);
+  border-color: var(--text-button-hover);
+  color: var(--text-button-hover);
 }
 
 .btn-success {

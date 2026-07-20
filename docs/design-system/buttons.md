@@ -73,13 +73,13 @@ Border with a **16% cyan tint at rest** (not transparent). Use for secondary act
 ```css
 .btn-outlined {
   background: rgba(0, 206, 230, 0.16);                     /* Primary-500 @ 16% — now the resting fill */
-  color: var(--primary-button-background);                 /* Primary-600 */
-  border: 1px solid var(--primary-button-background);
+  color: var(--text-button-outlined);                      /* light: Primary-600 / dark: Primary-500 */
+  border: 1px solid var(--text-button-outlined);
 }
 .btn-outlined:hover {
   background: rgba(0, 206, 230, 0.24);                     /* Primary-500 @ 24% */
-  color: var(--text-button-hover);                         /* light: Primary-700 / dark: Primary-500 */
-  border-color: var(--primary-button-background-hover);
+  color: var(--text-button-hover);                         /* light: Primary-700 / dark: Primary-400 */
+  border-color: var(--text-button-hover);
 }
 .btn-outlined:active {
   background: rgba(0, 206, 230, 0.08);                     /* Primary-500 @ 8% */
@@ -104,7 +104,7 @@ Neutral, **transparent** outline at rest (the one outlined family that stays ful
   border: 1px solid var(--border);                         /* neutral hairline, not text-primary */
 }
 /* Hover and Pressed are IDENTICAL to .btn-outlined — 24% cyan tint on hover / 8% on press,
-   hover border --primary-button-background-hover, text --text-button-hover */
+   hover border + text --text-button-hover */
 ```
 
 ### Text
@@ -114,7 +114,7 @@ No background, border, or padding — just the bold label.
 ```css
 .btn-text {
   background: transparent; border: none; padding: 0;
-  color: var(--primary-button-background);                 /* Primary-600 */
+  color: var(--text-button-outlined);                      /* light: Primary-600 / dark: Primary-500 */
 }
 .btn-text:hover    { color: var(--text-button-hover); }
 .btn-text:active   { color: var(--primary-button-background-pressed); }
@@ -239,46 +239,26 @@ Per Figma: the button takes the **disabled background** (`--button-background-di
 
 ## React TypeScript Implementation
 
+Built as `src/components/Button/Button.tsx` (import `@/components/Button/Button`). It is namespaced `ds-btn` rather than `btn` so it doesn't collide with the legacy global `.btn-*` utility classes (CSS is globally bundled in this app). Props:
+
 ```tsx
-import { ReactNode, ButtonHTMLAttributes } from 'react';
+import Button from '@/components/Button/Button';
 
 type ButtonVariant = 'filled' | 'outlined' | 'outlined-2' | 'text' | 'link';
 type ButtonSemantic = 'primary' | 'danger' | 'warning' | 'success' | 'ai';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant;
-  semantic?: ButtonSemantic;
-  size?: ButtonSize;
-  icon?: ReactNode;          // trailing icon — rendered AFTER the label
+  variant?: ButtonVariant;    // default 'filled'
+  semantic?: ButtonSemantic;  // default 'primary'
+  size?: ButtonSize;          // default 'md'
+  icon?: ReactNode;           // trailing icon — rendered AFTER the label
   loading?: boolean;
-  children: ReactNode;
-}
-
-export function Button({
-  variant = 'filled', semantic = 'primary', size = 'md',
-  icon, loading = false, disabled, children, className, ...props
-}: ButtonProps) {
-  return (
-    <button
-      className={[
-        'btn',
-        `btn-${variant}`,
-        semantic !== 'primary' ? `btn-${semantic}` : '',
-        `btn-${size}`,
-        loading ? 'btn-loading' : '',
-        className,
-      ].filter(Boolean).join(' ')}
-      disabled={disabled || loading}
-      aria-busy={loading || undefined}
-      {...props}
-    >
-      <span className="btn-label">{children}</span>
-      {icon && <span className="btn-icon">{icon}</span>}
-    </button>
-  );
+  children?: ReactNode;
 }
 ```
+
+The component composes one appearance class from `(semantic, variant)` — `ds-btn--filled`, `ds-btn--danger-outlined`, `ds-btn--ai`, etc. Semantic families (danger/warning/success) only mirror filled/outlined/text; AI is filled + outlined only. See `Button.css` for the full class matrix.
 
 ## Usage Guidelines
 
@@ -344,14 +324,19 @@ Contrast: filled combinations meet WCAG AA; never use `--primary-500` as text on
 
 | State | Filled bg | Outlined (fill / border / text) | Text/Link color |
 |-------|-----------|----------|-----------------|
-| Enabled | `--primary-button-background` | **16% cyan** / `--primary-button-background` / `--primary-button-background` | `--primary-button-background` |
-| Hover | `…-hover` | **24% cyan** / `…-hover` / `--text-button-hover` | `--text-button-hover` |
+| Enabled | `--primary-button-background` | **16% cyan** / `--text-button-outlined` / `--text-button-outlined` | `--text-button-outlined` |
+| Hover | `…-hover` | **24% cyan** / `--text-button-hover` / `--text-button-hover` | `--text-button-hover` |
 | Pressed | `…-pressed` | **8% cyan** / `…-pressed` / `…-pressed` | `--primary-button-background-pressed` |
 | Disabled | `--button-background-disabled` + `--text-button-disabled` | 16% neutral / `--text-disabled` / `--text-disabled` | `--text-disabled` |
 | Loading | `--button-background-disabled` + 20px spinner, width preserved | same pattern | spinner replaces label |
 
 ## Code reality
 
-`src/styles/tokens.css` ships global `.btn-primary`, `.btn-outlined`, `.btn-success`, `.btn-danger` classes — there is **no Button React component** in `src/components/`. They predate this spec: padding `10px 20px` ✓, but there's no pressed/loading/AI support and no size modifiers. Extend those classes against this spec rather than inventing new ones.
+**`src/components/Button/Button.tsx` is the source of truth** — it implements this full spec (all variants, semantic families, sizes, pressed/disabled/loading, AI gradients). Use it for all new work: `import Button from '@/components/Button/Button'`.
 
-**Synced to the 2026-07-13 Figma update:** all four classes now use `border-radius: var(--radius-sm)` (12px), and `.btn-outlined` rests on `--button-outline-fill` (16% cyan) → `--button-outline-fill-hover` (24%) on hover. Still unbuilt vs. the full spec: pressed/loading/AI variants, size modifiers, and the `Outlined-2`/`Text`/`Link` families.
+Two button patterns still exist alongside it, to be migrated opportunistically (convert a call site when you're already editing that file — no big-bang sweep):
+
+- **Legacy global classes** in `src/styles/tokens.css` — `.btn-primary`, `.btn-outlined`, `.btn-success`, `.btn-danger`, `.btn-text` (~50 usages). These predate the component and cover only the common cases (no pressed/loading/AI, no size modifiers). Kept as a fallback until adoption is high, then delete.
+- **Raw `<button>` elements** with hand-rolled styling across pages.
+
+The component is namespaced `ds-btn` precisely so it can coexist with the legacy `.btn-*` classes without collision.

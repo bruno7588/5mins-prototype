@@ -199,7 +199,8 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--text-disabled` | Neutral-400 `#656B7C` | Neutral-300 `#9EA4B3` | Disabled text — apply to label, value, and icon together |
 | `--text-button-foreground` | Neutral-25 `#F9F9FA` | Neutral-25 `#F9F9FA` | Label on filled buttons (near-white, softer than pure white) |
 | `--text-button-disabled` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` | Label on any disabled button |
-| `--text-button-hover` | Primary-500 `#00CEE6` | Primary-700 `#008393` | Outlined/text button label on hover |
+| `--text-button-hover` | Primary-400 `#33E2F7` | Primary-700 `#008393` | Outlined/text button label on hover |
+| `--text-button-outlined` | Primary-500 `#00CEE6` | Primary-600 `#00AFC4` | Outlined/text button label (default) |
 | `--text-success` | Success-500 `#18A957` | Success-600 `#11763D` | Success messages, completed labels |
 | `--text-warning` | Warning-500 `#FFA538` | Warning-600 `#E88206` | Warning messages, deadline labels |
 | `--text-error` | Danger-400 `#E95C7B` | Danger-500 `#DF1642` | Error messages, failed validation |
@@ -327,6 +328,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --text-button-foreground: var(--neutral-25);
   --text-button-disabled: var(--neutral-300);
   --text-button-hover: var(--primary-700);
+  --text-button-outlined: var(--primary-600);
   --text-success: var(--success-600);
   --text-warning: var(--warning-600);
   --text-error: var(--danger-500);
@@ -356,7 +358,8 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --text-secondary: var(--neutral-200);
   --text-tertiary: var(--neutral-300);
   --text-disabled: var(--neutral-400);
-  --text-button-hover: var(--primary-500);
+  --text-button-hover: var(--primary-400);
+  --text-button-outlined: var(--primary-500);
   --text-success: var(--success-500);
   --text-warning: var(--warning-500);
   --text-error: var(--danger-400);
