@@ -19,13 +19,25 @@ import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import MoreIcon from '../../../../components/icons/MoreIcon'
 import './ContentTable.css'
 
+import thumb1 from '../../../../assets/programs/course-thumbs/course-thumb-1.jpg'
+import thumb2 from '../../../../assets/programs/course-thumbs/course-thumb-2.jpg'
+import thumb3 from '../../../../assets/programs/course-thumbs/course-thumb-3.jpg'
+import thumb4 from '../../../../assets/programs/course-thumbs/course-thumb-4.jpg'
+import thumb5 from '../../../../assets/programs/course-thumbs/course-thumb-5.jpg'
+import thumb6 from '../../../../assets/programs/course-thumbs/course-thumb-6.jpg'
+import thumb7 from '../../../../assets/programs/course-thumbs/course-thumb-7.jpg'
+import thumb8 from '../../../../assets/programs/course-thumbs/course-thumb-8.jpg'
+import thumb9 from '../../../../assets/programs/course-thumbs/course-thumb-9.jpg'
+
+const contentThumbs = [thumb1, thumb2, thumb3, thumb4, thumb5, thumb6, thumb7, thumb8, thumb9]
+
 export interface ContentRow {
   id: number
   fileName: string
   type: string
   uploadedBy: string
   updatedAt: string
-  thumbColor: string
+  thumbnail: string
 }
 
 const lessonRows: ContentRow[] = [
@@ -35,7 +47,7 @@ const lessonRows: ContentRow[] = [
     type: 'Audio',
     uploadedBy: 'Anthony Wallace',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #e74c6f, #c94080)',
+    thumbnail: contentThumbs[0],
   },
   {
     id: 2,
@@ -43,7 +55,7 @@ const lessonRows: ContentRow[] = [
     type: 'PDF',
     uploadedBy: 'Oliver Bennett',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #2d8f6f, #1a6e5a)',
+    thumbnail: contentThumbs[1],
   },
   {
     id: 3,
@@ -51,7 +63,7 @@ const lessonRows: ContentRow[] = [
     type: 'External Link',
     uploadedBy: 'Sophia Carter',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #5a7fbf, #4a6fa8)',
+    thumbnail: contentThumbs[2],
   },
   {
     id: 4,
@@ -59,7 +71,7 @@ const lessonRows: ContentRow[] = [
     type: 'Video',
     uploadedBy: 'Liam Johnson',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #e6a04c, #d08a3a)',
+    thumbnail: contentThumbs[3],
   },
   {
     id: 5,
@@ -67,7 +79,7 @@ const lessonRows: ContentRow[] = [
     type: 'PDF',
     uploadedBy: 'Emma Thompson',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #8b6fd4, #7558c0)',
+    thumbnail: contentThumbs[4],
   },
   {
     id: 6,
@@ -75,7 +87,7 @@ const lessonRows: ContentRow[] = [
     type: 'Flashcards',
     uploadedBy: 'Noah Davis',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #00a5b5, #008c9a)',
+    thumbnail: contentThumbs[5],
   },
 ]
 
@@ -86,7 +98,7 @@ const scormRows: ContentRow[] = [
     type: 'SCORM',
     uploadedBy: 'Sophia Carter',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #5a7fbf, #4a6fa8)',
+    thumbnail: contentThumbs[2],
   },
   {
     id: 2,
@@ -94,7 +106,7 @@ const scormRows: ContentRow[] = [
     type: 'SCORM',
     uploadedBy: 'Liam Johnson',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #e6a04c, #d08a3a)',
+    thumbnail: contentThumbs[3],
   },
   {
     id: 3,
@@ -102,7 +114,7 @@ const scormRows: ContentRow[] = [
     type: 'SCORM',
     uploadedBy: 'Emma Thompson',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #8b6fd4, #7558c0)',
+    thumbnail: contentThumbs[6],
   },
   {
     id: 4,
@@ -110,7 +122,7 @@ const scormRows: ContentRow[] = [
     type: 'SCORM',
     uploadedBy: 'Noah Davis',
     updatedAt: 'Feb 14, 2025',
-    thumbColor: 'linear-gradient(135deg, #00a5b5, #008c9a)',
+    thumbnail: contentThumbs[7],
   },
 ]
 
@@ -188,7 +200,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
               type: 'SCORM',
               uploadedBy: 'You',
               updatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-              thumbColor: `linear-gradient(135deg, hsl(${Math.floor(Math.random() * 360)}, 50%, 50%), hsl(${Math.floor(Math.random() * 360)}, 50%, 40%))`,
+              thumbnail: contentThumbs[Math.floor(Math.random() * contentThumbs.length)],
             }
             setScorm(prev => [newRow, ...prev])
           }}
@@ -253,7 +265,11 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
               <div className="content-table-thumb">
                 <div
                   className="content-table-thumb-img"
-                  style={{ background: row.thumbColor }}
+                  style={{
+                    backgroundImage: `url(${row.thumbnail})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
                 />
               </div>
               <span

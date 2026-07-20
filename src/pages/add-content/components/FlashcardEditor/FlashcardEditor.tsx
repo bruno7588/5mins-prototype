@@ -22,6 +22,7 @@ import Checkbox from '../../../../components/Checkbox/Checkbox'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
 import AddImageModal from '../AddImageModal/AddImageModal'
 import type { ContentRow } from '../../../your-courses/components/ContentTable/ContentTable'
+import flashcardThumb from '../../../../assets/programs/course-thumbs/course-thumb-1.jpg'
 import './FlashcardEditor.css'
 
 export interface Card {
@@ -345,7 +346,7 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
       type: 'Flashcards',
       uploadedBy: 'You',
       updatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      thumbColor: 'linear-gradient(135deg, #4B3A99, #2B1F6B)',
+      thumbnail: flashcardThumb,
     }
     onPublish(lesson)
   }

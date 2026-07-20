@@ -12,7 +12,10 @@ export interface ContentRow {
   type: string
   uploadedBy: string
   updatedAt: string
-  thumbColor: string
+  /** Image URL (Your Content) — takes precedence over the gradient fallback. */
+  thumbnail?: string
+  /** CSS gradient fallback (questions-bank / SCORM content tables). */
+  thumbColor?: string
 }
 
 interface LessonEditorModalProps {
@@ -273,7 +276,14 @@ function LessonEditorModal({ lesson, isNew, onClose, onPublish, onQuizReviewed, 
         {/* File preview + form fields */}
         <div className="lesson-editor-body">
           <div className="lesson-editor-preview">
-            <div className="lesson-editor-preview-thumb" style={{ background: lesson.thumbColor }} />
+            <div
+              className="lesson-editor-preview-thumb"
+              style={
+                lesson.thumbnail
+                  ? { backgroundImage: `url(${lesson.thumbnail})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                  : { background: lesson.thumbColor }
+              }
+            />
             <div className="lesson-editor-preview-overlay">
               <Eye size={48} color="white" variant="Bold" />
             </div>
