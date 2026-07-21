@@ -414,9 +414,6 @@
   flex-wrap: wrap;
   gap: var(--space-s);
   min-height: 52px;
-  padding: var(--space-s);
-  border: 1.5px dashed var(--border);
-  border-radius: var(--radius-sm);
 }
 
 .ql-cat__buckets {
