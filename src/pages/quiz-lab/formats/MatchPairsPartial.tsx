@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { CloseCircle } from 'iconsax-react'
 import type { MatchPairsQuestion } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
@@ -122,7 +121,15 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
                       aria-label={`Unmatch ${question.pairs[leftId].left}`}
                       onClick={() => unpair(leftId)}
                     >
-                      <CloseCircle size={20} color="currentColor" variant="Linear" />
+                      <svg width="20" height="20" viewBox="0 0 21 21" fill="none" aria-hidden="true">
+                        <path
+                          d="M15.0938 15.0938L5.90625 5.90625M15.0938 5.90625L5.90625 15.0938"
+                          stroke="currentColor"
+                          strokeWidth="1.3125"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </button>
                   )}
                 </div>
