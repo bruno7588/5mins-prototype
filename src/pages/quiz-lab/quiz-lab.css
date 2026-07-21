@@ -45,6 +45,18 @@
   max-width: 520px;
 }
 
+.ql-lab__hint {
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+  text-align: center;
+  max-width: 520px;
+}
+
+.ql-lab__hint strong {
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
 /* Per-format screen inside the phone */
 .ql-screen {
   display: flex;

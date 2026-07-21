@@ -47,8 +47,12 @@ function QuizLab() {
       <div className="ql-lab__bar">
         <span className="ql-lab__title">Quiz Lab</span>
         <span className="ql-lab__sub">
-          Testing ground for the DES-321 lesson quiz formats — mobile-first, tap-only, one format per
-          screen. Pick a format to preview it in the phone.
+          A sandbox for the new lesson quiz formats we're exploring. Pick one below and try it in the
+          phone — everything is tap-only and mobile-first, just like the real lesson.
+        </span>
+        <span className="ql-lab__hint">
+          The two <strong>Pairs</strong> tabs are the same question with different scoring — tell us which
+          feels better. It's a prototype, so it resets on refresh; best viewed on your phone.
         </span>
         <ContentSwitcher
           items={FORMAT_ORDER.map((f) => ({ key: f.key, label: f.label }))}
