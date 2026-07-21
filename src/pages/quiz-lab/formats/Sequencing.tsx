@@ -60,6 +60,12 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
     return classes.join(' ')
   }
 
+  const indexClass = (pos: number) => {
+    const classes = ['ql-seq__index']
+    if (status !== 'idle') classes.push(slotCorrect(pos) ? 'ql-seq__index--correct' : 'ql-seq__index--incorrect')
+    return classes.join(' ')
+  }
+
   return (
     <div className="ql-screen">
       <div className="ql-screen__body">
@@ -73,7 +79,7 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
           ) : (
             order.map((stepIndex, pos) => (
               <div key={pos} className="ql-seq__slot">
-                <span className="ql-seq__index">{pos + 1}</span>
+                <span className={indexClass(pos)}>{pos + 1}</span>
                 <button
                   type="button"
                   className={placedClass(pos)}

@@ -440,6 +440,16 @@
   font: 500 14px/1 'Poppins', sans-serif;
 }
 
+.ql-seq__index--correct {
+  background: var(--success-500);
+  color: var(--neutral-0);
+}
+
+.ql-seq__index--incorrect {
+  background: var(--danger-500);
+  color: var(--neutral-0);
+}
+
 .ql-seq__slot .ql-token {
   flex: 1 1 auto;
   justify-content: flex-start;
