@@ -98,7 +98,9 @@
 }
 
 .ql-token:active {
-  transform: translateY(1px);
+  /* Tap sensation: sink into the bottom lip so the raised edge flattens. */
+  transform: translateY(3px);
+  box-shadow: inset 0 0 0 0 transparent;
 }
 
 .ql-token:focus-visible {
