@@ -196,8 +196,8 @@
   padding: var(--space-sm);
   border: none;
   border-radius: var(--radius-m);
-  background: var(--cards-background);
-  box-shadow: inset 0 -3px 0 0 var(--cards-background-hover);
+  /* A settled, non-tappable row — flat input fill, no raised bottom lip. */
+  background: var(--input-background);
 }
 
 .ql-pair--correct {
