@@ -387,17 +387,6 @@
 }
 
 /* ── True / false ────────────────────────────────────────────────────────── */
-.ql-statement {
-  padding: var(--space-l);
-  /* Same treatment as the option tokens: no all-sides border, -3px bottom lip. */
-  border: none;
-  border-radius: var(--radius-m);
-  background: var(--cards-background);
-  box-shadow: inset 0 -3px 0 0 var(--cards-background-hover);
-  font: 500 18px/1.5 'Poppins', sans-serif;
-  color: var(--text-primary);
-}
-
 .ql-tf {
   display: flex;
   flex-direction: column;
