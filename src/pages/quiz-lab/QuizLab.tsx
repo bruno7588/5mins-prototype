@@ -6,7 +6,6 @@ import QuizHeader from './components/QuizHeader'
 import { FORMAT_ORDER, QUIZ_SAMPLES, type FormatKey } from './quizData'
 import MatchPairsPartial from './formats/MatchPairsPartial'
 import FillBlank from './formats/FillBlank'
-import TrueFalse from './formats/TrueFalse'
 import Categorization from './formats/Categorization'
 import Sequencing from './formats/Sequencing'
 import './quiz-lab.css'
@@ -30,8 +29,6 @@ function QuizLab() {
     switch (q.type) {
       case 'fill-blank':
         return <FillBlank question={q} formatKey={format} />
-      case 'true-false':
-        return <TrueFalse question={q} formatKey={format} />
       case 'categorization':
         return <Categorization question={q} formatKey={format} />
       case 'sequencing':

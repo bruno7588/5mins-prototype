@@ -163,10 +163,6 @@
   visibility: hidden;
 }
 
-.ql-token__icon {
-  display: inline-flex;
-  flex-shrink: 0;
-}
 
 /* ── Match pairs ─────────────────────────────────────────────────────────── */
 .ql-match {
@@ -334,19 +330,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-s);
-}
-
-/* ── True / false ────────────────────────────────────────────────────────── */
-.ql-tf {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.ql-tf .ql-token {
-  min-height: 60px;
-  gap: var(--space-s);
-  font-size: 14px;
 }
 
 /* ── Categorization ──────────────────────────────────────────────────────── */

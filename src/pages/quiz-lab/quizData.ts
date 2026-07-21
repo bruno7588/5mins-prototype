@@ -11,7 +11,6 @@
 export type FormatKey =
   | 'match-pairs'
   | 'fill-blank'
-  | 'true-false'
   | 'categorization'
   | 'sequencing'
 
@@ -37,14 +36,6 @@ export interface FillBlankQuestion {
   segments: FillBlankSegment[]
   /** Word-bank chips — correct answers plus distractors, order-independent. */
   bank: string[]
-  explanation: string
-}
-
-export interface TrueFalseQuestion {
-  type: 'true-false'
-  prompt: string
-  statement: string
-  answer: boolean
   explanation: string
 }
 
@@ -77,7 +68,6 @@ export interface SequencingQuestion {
 export type QuizQuestion =
   | MatchPairsQuestion
   | FillBlankQuestion
-  | TrueFalseQuestion
   | CategorizationQuestion
   | SequencingQuestion
 
@@ -118,14 +108,6 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
     explanation:
       'Locking your screen and keeping passwords private are two of the simplest ways to prevent unauthorised access.',
   },
-  'true-false': {
-    type: 'true-false',
-    prompt: 'True or false?',
-    statement: 'It is acceptable to prop a fire door open with a wedge to move between rooms more easily.',
-    answer: false,
-    explanation:
-      'Fire doors must stay closed to contain smoke and flames. Wedging one open puts everyone at risk and breaches fire-safety regulations.',
-  },
   categorization: {
     type: 'categorization',
     prompt: 'Sort each item under the correct data category',
@@ -162,7 +144,6 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
 export const FORMAT_ORDER: { key: FormatKey; label: string }[] = [
   { key: 'match-pairs', label: 'Match Pairs' },
   { key: 'fill-blank', label: 'Fill Blank' },
-  { key: 'true-false', label: 'True / False' },
   { key: 'categorization', label: 'Categorize' },
   { key: 'sequencing', label: 'Sequence' },
 ]
