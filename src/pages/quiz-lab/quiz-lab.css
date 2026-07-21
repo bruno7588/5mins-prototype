@@ -235,7 +235,7 @@
 }
 
 .ql-pair__term {
-  font: 700 15px/1.4 'Poppins', sans-serif;
+  font: 500 15px/1.4 'Poppins', sans-serif;
   color: var(--text-primary);
 }
 
@@ -256,10 +256,12 @@
 
 .ql-pair__remove {
   flex-shrink: 0;
+  /* 44px mobile tap target (PRD FR6.5). */
+  width: 44px;
+  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xs);
   border: none;
   border-radius: var(--radius-full);
   background: transparent;
@@ -402,7 +404,7 @@
 }
 
 .ql-bucket__label {
-  font: 700 14px/1.5 'Poppins', sans-serif;
+  font: 500 14px/1.5 'Poppins', sans-serif;
   color: var(--text-secondary);
 }
 
@@ -447,7 +449,7 @@
   border-radius: var(--radius-full);
   background: var(--selected);
   color: var(--neutral-800);
-  font: 700 14px/1 'Poppins', sans-serif;
+  font: 500 14px/1 'Poppins', sans-serif;
 }
 
 .ql-seq__slot .ql-token {

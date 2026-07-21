@@ -121,7 +121,7 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
                       aria-label={`Unmatch ${question.pairs[leftId].left}`}
                       onClick={() => unpair(leftId)}
                     >
-                      <svg width="20" height="20" viewBox="0 0 21 21" fill="none" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 21 21" fill="none" aria-hidden="true">
                         <path
                           d="M15.0938 15.0938L5.90625 5.90625M15.0938 5.90625L5.90625 15.0938"
                           stroke="currentColor"
