@@ -105,16 +105,18 @@
   gap: var(--space-s);
   min-height: 48px;
   padding: 10px 16px;
-  border: 1.5px solid var(--border);
-  border-bottom-width: 3px;
+  border: none;
   border-radius: var(--radius-sm);
   background: var(--cards-background);
+  /* Depth via bottom-only inner shadow (DS Quiz Option, node 5504:24967) —
+     no all-sides border; the -3px Y lip reads as a raised bottom edge. */
+  box-shadow: inset 0 -3px 0 0 var(--cards-background-hover);
   color: var(--text-primary);
   font: 500 16px/1.4 'Poppins', sans-serif;
   text-align: center;
   cursor: pointer;
   user-select: none;
-  transition: transform 120ms ease, background 150ms ease, border-color 150ms ease,
+  transition: transform 120ms ease, background 150ms ease, box-shadow 150ms ease,
     color 150ms ease;
 }
 
@@ -138,20 +140,20 @@
 }
 
 .ql-token--selected {
-  border-color: var(--selected);
   background: var(--selected-tint);
+  box-shadow: inset 0 -3px 0 0 var(--selected);
   color: var(--text-selected);
 }
 
 .ql-token--correct {
-  border-color: var(--success-500);
   background: rgba(24, 169, 87, 0.14);
+  box-shadow: inset 0 -3px 0 0 var(--success-500);
   color: var(--text-success);
 }
 
 .ql-token--incorrect {
-  border-color: var(--danger-500);
   background: rgba(223, 22, 66, 0.12);
+  box-shadow: inset 0 -3px 0 0 var(--danger-500);
   color: var(--text-error);
 }
 
@@ -197,8 +199,8 @@
 .ql-token--matched {
   animation: ql-collapse 320ms ease forwards;
   animation-delay: 260ms;
-  border-color: var(--success-500);
   background: rgba(24, 169, 87, 0.14);
+  box-shadow: inset 0 -3px 0 0 var(--success-500);
   color: var(--text-success);
   pointer-events: none;
   overflow: hidden;
