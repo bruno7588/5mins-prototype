@@ -250,9 +250,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* Hover fill paints only the inner circle, clear of the row edges. */
+  padding: var(--space-s);
   border: none;
   border-radius: var(--radius-full);
   background: transparent;
+  background-clip: content-box;
   color: var(--text-tertiary);
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
