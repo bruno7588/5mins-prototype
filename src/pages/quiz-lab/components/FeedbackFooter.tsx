@@ -1,4 +1,5 @@
 import Button from '@/components/Button/Button'
+import ResultBanner from './ResultBanner'
 
 export type FeedbackStatus = 'idle' | 'correct' | 'incorrect'
 
@@ -40,7 +41,8 @@ function FeedbackFooter({
 
   const correct = status === 'correct'
   return (
-    <div className="ql-footer">
+    <div className="ql-footer ql-footer--result">
+      <ResultBanner status={status} />
       <Button semantic={correct ? 'success' : 'danger'} size="lg" onClick={onContinue}>
         {continueLabel}
       </Button>

@@ -3,7 +3,6 @@ import type { FillBlankQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
-import ResultBanner from '../components/ResultBanner'
 import { cue } from '../quizSound'
 
 const norm = (s: string) => s.trim().toLowerCase()
@@ -113,7 +112,6 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
             )
           })}
         </div>
-        <ResultBanner status={status} />
       </div>
 
       <div className="ql-sr-only" role="status" aria-live="polite">
