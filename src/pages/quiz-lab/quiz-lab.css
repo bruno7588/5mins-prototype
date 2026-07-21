@@ -346,44 +346,10 @@
   color: var(--text-error);
 }
 
-.ql-blank__input {
-  min-width: 96px;
-  min-height: 40px;
-  margin: 0 2px;
-  padding: 4px 10px;
-  border: 1.5px solid var(--border-hover);
-  border-radius: var(--radius-s);
-  background: var(--cards-background);
-  color: var(--text-primary);
-  font: 500 16px/1.4 'Poppins', sans-serif;
-  vertical-align: middle;
-}
-
-.ql-blank__input:focus-visible {
-  outline: none;
-  border-color: var(--selected);
-  background: var(--selected-tint);
-}
-
-.ql-blank__input.is-correct {
-  border-color: var(--success-500);
-  color: var(--text-success);
-}
-
-.ql-blank__input.is-incorrect {
-  border-color: var(--danger-500);
-  color: var(--text-error);
-}
-
 .ql-bank {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-s);
-}
-
-.ql-mode {
-  display: flex;
-  justify-content: flex-end;
 }
 
 /* ── True / false ────────────────────────────────────────────────────────── */

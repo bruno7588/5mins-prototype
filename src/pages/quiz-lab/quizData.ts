@@ -38,8 +38,6 @@ export interface FillBlankQuestion {
   segments: FillBlankSegment[]
   /** Word-bank chips — correct answers plus distractors, order-independent. */
   bank: string[]
-  /** Whether the learner can switch to free-type recall (PRD FR2.4). */
-  allowFreeType: boolean
   explanation: string
 }
 
@@ -132,7 +130,6 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
       ' your password with a colleague.',
     ],
     bank: ['lock', 'share', 'ignore', 'email'],
-    allowFreeType: true,
     explanation:
       'Locking your screen and keeping passwords private are two of the simplest ways to prevent unauthorised access.',
   },
