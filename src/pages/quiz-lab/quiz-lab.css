@@ -279,7 +279,7 @@
 
 /* ── Fill in the blank ───────────────────────────────────────────────────── */
 .ql-sentence {
-  font: 400 18px/2 'Poppins', sans-serif;
+  font: 400 14px/2 'Poppins', sans-serif;
   color: var(--text-primary);
 }
 
@@ -295,7 +295,7 @@
   border-radius: var(--radius-s);
   background: var(--input-background);
   color: var(--text-primary);
-  font: 500 16px/1.4 'Poppins', sans-serif;
+  font: 500 14px/1.4 'Poppins', sans-serif;
   vertical-align: middle;
   cursor: pointer;
 }
