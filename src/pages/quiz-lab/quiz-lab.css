@@ -89,7 +89,7 @@
      no all-sides border; the -3px Y lip reads as a raised bottom edge. */
   box-shadow: inset 0 -3px 0 0 var(--cards-background-hover);
   color: var(--text-primary);
-  font: 500 16px/1.4 'Poppins', sans-serif;
+  font: 400 16px/1.4 'Poppins', sans-serif;
   text-align: center;
   cursor: pointer;
   user-select: none;
@@ -124,24 +124,28 @@
   font-size: 15px;
 }
 
-/* State variants (DS Quiz Option, Figma). Selected = solid amber fill + dark
-   text (9012:421); validation = colored border + tint. All carry a -3px lip. */
+/* Active states (DS Quiz Option, Figma): solid fill + Medium (500) weight.
+   Selected = amber + dark text (9012:421); validation = solid green/red +
+   white text (5504:24966). Resting tokens stay Regular (400). */
 .ql-token--selected {
   background: var(--secondary-500);
   box-shadow: inset 0 -3px 0 0 var(--secondary-600);
   color: var(--neutral-800);
+  font-weight: 500;
 }
 
 .ql-token--correct {
   background: var(--success-500);
   box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
   color: var(--neutral-0);
+  font-weight: 500;
 }
 
 .ql-token--incorrect {
   background: var(--danger-500);
   box-shadow: inset 0 -3px 0 0 var(--button-danger-hover);
   color: var(--neutral-0);
+  font-weight: 500;
 }
 
 .ql-token--locked {
