@@ -68,6 +68,10 @@ function Categorization({ question }: { question: CategorizationQuestion; format
   }
 
   const correctCount = question.items.filter((_, i) => itemCorrect(i)).length
+  const categoryLabel = (id: string) => question.categories.find((c) => c.id === id)?.label ?? ''
+  const misplaced = question.items
+    .map((it, i) => ({ it, i }))
+    .filter(({ i }) => placement[i] !== null && !itemCorrect(i))
 
   return (
     <div className="ql-screen">
@@ -101,7 +105,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
             <div key={cat.id} className="ql-cat__group">
               <span className="ql-bucket__label">{cat.label}</span>
               <div
-                className={`ql-bucket${selected !== null && status === 'idle' ? ' ql-bucket--target' : ''}`}
+                className="ql-bucket"
                 onClick={() => dropInto(cat.id)}
                 role="button"
                 aria-label={cat.label}
@@ -145,7 +149,20 @@ function Categorization({ question }: { question: CategorizationQuestion; format
         onCheck={check}
         onContinue={reset}
         title={status === 'correct' ? 'All sorted!' : `${correctCount} of ${question.items.length} correct`}
-        detail={question.explanation}
+        detail={
+          status === 'incorrect' ? (
+            <>
+              {misplaced.map(({ it }) => (
+                <div key={it.label}>
+                  <strong>{it.label}</strong> → {categoryLabel(it.categoryId)}
+                </div>
+              ))}
+              <div>{question.explanation}</div>
+            </>
+          ) : (
+            question.explanation
+          )
+        }
       />
     </div>
   )

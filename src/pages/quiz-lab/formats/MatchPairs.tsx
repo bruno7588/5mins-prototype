@@ -139,7 +139,6 @@ function MatchPairs({ question }: { question: MatchPairsQuestion; formatKey: For
         onContinue={reset}
         title="All matched!"
         detail={question.explanation}
-        continueLabel="Try Again"
       />
     </div>
   )
