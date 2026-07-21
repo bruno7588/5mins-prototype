@@ -86,17 +86,7 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
     )
   })
 
-  const detail =
-    status === 'incorrect' ? (
-      <>
-        <div>
-          Answer: <strong>{gaps.map((g) => g.blank).join(', ')}</strong>
-        </div>
-        <div>{question.explanation}</div>
-      </>
-    ) : (
-      question.explanation
-    )
+  const detail = status === 'correct' ? question.explanation : 'Give it another go.'
 
   return (
     <div className="ql-screen">

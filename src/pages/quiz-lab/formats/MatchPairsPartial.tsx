@@ -108,11 +108,6 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
                   <div className="ql-pair__body">
                     <span className="ql-pair__term">{question.pairs[leftId].left}</span>
                     <span className="ql-pair__def">{question.pairs[rightId].right}</span>
-                    {status === 'incorrect' && !isCorrect && (
-                      <span className="ql-pair__fix">
-                        Correct: <strong>{question.pairs[leftId].right}</strong>
-                      </span>
-                    )}
                   </div>
                   {status === 'idle' && (
                     <button
@@ -184,7 +179,7 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
         onCheck={check}
         onContinue={reset}
         title={status === 'correct' ? 'All matched!' : `${correctCount} of ${total} correct · ${pct}%`}
-        detail={question.explanation}
+        detail={status === 'correct' ? question.explanation : 'Give it another go.'}
       />
     </div>
   )

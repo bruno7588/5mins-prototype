@@ -33,8 +33,8 @@ function TrueFalse({ question }: { question: TrueFalseQuestion; formatKey: Forma
   const tokenClass = (value: boolean) => {
     const classes = ['ql-token', 'ql-token--block']
     if (status !== 'idle') {
-      if (value === question.answer) classes.push('ql-token--correct')
-      else if (value === choice) classes.push('ql-token--incorrect')
+      // Grade only the chosen option — never reveal the answer on a wrong attempt.
+      if (value === choice) classes.push(choice === question.answer ? 'ql-token--correct' : 'ql-token--incorrect')
       else classes.push('ql-token--locked')
     } else if (choice === value) classes.push('ql-token--selected')
     return classes.join(' ')
@@ -83,18 +83,7 @@ function TrueFalse({ question }: { question: TrueFalseQuestion; formatKey: Forma
         onCheck={check}
         onContinue={reset}
         title={status === 'correct' ? 'Correct!' : 'Not quite'}
-        detail={
-          status === 'incorrect' ? (
-            <>
-              <div>
-                The statement is <strong>{question.answer ? 'True' : 'False'}</strong>.
-              </div>
-              <div>{question.explanation}</div>
-            </>
-          ) : (
-            question.explanation
-          )
-        }
+        detail={status === 'correct' ? question.explanation : 'Give it another go.'}
       />
     </div>
   )

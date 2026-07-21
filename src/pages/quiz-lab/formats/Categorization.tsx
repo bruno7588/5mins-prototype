@@ -75,10 +75,6 @@ function Categorization({ question }: { question: CategorizationQuestion; format
   }
 
   const correctCount = question.items.filter((_, i) => itemCorrect(i)).length
-  const categoryLabel = (id: string) => question.categories.find((c) => c.id === id)?.label ?? ''
-  const misplaced = question.items
-    .map((it, i) => ({ it, i }))
-    .filter(({ i }) => placement[i] !== null && !itemCorrect(i))
 
   return (
     <div className="ql-screen">
@@ -155,20 +151,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
         onCheck={check}
         onContinue={reset}
         title={status === 'correct' ? 'All sorted!' : `${correctCount} of ${question.items.length} correct`}
-        detail={
-          status === 'incorrect' ? (
-            <>
-              {misplaced.map(({ it }) => (
-                <div key={it.label}>
-                  <strong>{it.label}</strong> → {categoryLabel(it.categoryId)}
-                </div>
-              ))}
-              <div>{question.explanation}</div>
-            </>
-          ) : (
-            question.explanation
-          )
-        }
+        detail={status === 'correct' ? question.explanation : 'Give it another go.'}
       />
     </div>
   )

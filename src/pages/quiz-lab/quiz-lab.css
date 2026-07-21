@@ -60,7 +60,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
-  padding: var(--space-l);
+  padding: var(--space-m) var(--space-l) var(--space-l);
 }
 
 .ql-stem {
@@ -70,7 +70,7 @@
 }
 
 .ql-stem__q {
-  font: 700 20px/1.35 'Poppins', sans-serif;
+  font: 700 16px/1.4 'Poppins', sans-serif;
   color: var(--text-primary);
 }
 
@@ -89,7 +89,7 @@
      no all-sides border; the -3px Y lip reads as a raised bottom edge. */
   box-shadow: inset 0 -3px 0 0 var(--cards-background-hover);
   color: var(--text-primary);
-  font: 400 16px/1.4 'Poppins', sans-serif;
+  font: 400 14px/1.4 'Poppins', sans-serif;
   text-align: center;
   cursor: pointer;
   user-select: none;
@@ -121,7 +121,7 @@
 .ql-token--sm {
   min-height: 44px;
   padding: 8px 14px;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 /* Active states (DS Quiz Option, Figma): solid fill + Medium (500) weight.
@@ -182,7 +182,7 @@
 
 .ql-match .ql-token {
   min-height: 64px;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.3;
 }
 
@@ -216,9 +216,7 @@
 
 /* White text on the solid validation fill. */
 .ql-pair--correct .ql-pair__term,
-.ql-pair--incorrect .ql-pair__term,
-.ql-pair--correct .ql-pair__fix,
-.ql-pair--incorrect .ql-pair__fix {
+.ql-pair--incorrect .ql-pair__term {
   color: var(--neutral-0);
 }
 
@@ -242,16 +240,6 @@
 .ql-pair__def {
   font: 400 14px/1.4 'Poppins', sans-serif;
   color: var(--text-secondary);
-}
-
-.ql-pair__fix {
-  margin-top: var(--space-xs);
-  font: 400 14px/1.4 'Poppins', sans-serif;
-  color: var(--text-primary);
-}
-
-.ql-pair__fix strong {
-  font-weight: 700;
 }
 
 .ql-pair__remove {
@@ -327,17 +315,17 @@
 .ql-blank--correct {
   border-style: solid;
   border-color: var(--success-500);
-  background: rgba(24, 169, 87, 0.14);
-  box-shadow: inset 0 -3px 0 0 var(--success-500);
-  color: var(--text-success);
+  background: var(--success-500);
+  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
+  color: var(--neutral-0);
 }
 
 .ql-blank--incorrect {
   border-style: solid;
   border-color: var(--danger-500);
-  background: rgba(223, 22, 66, 0.12);
-  box-shadow: inset 0 -3px 0 0 var(--danger-500);
-  color: var(--text-error);
+  background: var(--danger-500);
+  box-shadow: inset 0 -3px 0 0 var(--button-danger-hover);
+  color: var(--neutral-0);
 }
 
 .ql-bank {
@@ -356,7 +344,7 @@
 .ql-tf .ql-token {
   min-height: 60px;
   gap: var(--space-s);
-  font-size: 17px;
+  font-size: 14px;
 }
 
 /* ── Categorization ──────────────────────────────────────────────────────── */
@@ -585,7 +573,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-s);
-  padding: var(--space-m) var(--space-l) var(--space-s);
+  padding: var(--space-l) var(--space-l) 0;
 }
 
 .ql-qhead__label {

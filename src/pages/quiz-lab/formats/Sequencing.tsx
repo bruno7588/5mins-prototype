@@ -113,18 +113,7 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
         onCheck={check}
         onContinue={reset}
         title={status === 'correct' ? 'Correct order!' : 'Not the right order'}
-        detail={
-          status === 'incorrect' ? (
-            <>
-              <div>
-                Correct order: <strong>{question.steps.join(' → ')}</strong>
-              </div>
-              <div>{question.explanation}</div>
-            </>
-          ) : (
-            question.explanation
-          )
-        }
+        detail={status === 'correct' ? question.explanation : 'Give it another go.'}
       />
     </div>
   )
