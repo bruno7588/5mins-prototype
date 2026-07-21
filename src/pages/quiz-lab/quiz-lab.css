@@ -193,13 +193,14 @@
 
 .ql-pair {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-s);
   padding: var(--space-sm);
   border: none;
   border-radius: var(--radius-m);
-  /* A settled, non-tappable row — flat input fill, no raised bottom lip. */
-  background: var(--input-background);
+  /* Styled like a selected item — solid amber fill + darker-amber lip. */
+  background: var(--secondary-500);
+  box-shadow: inset 0 -3px 0 0 var(--secondary-600);
 }
 
 .ql-pair--correct {
@@ -232,20 +233,18 @@
 
 .ql-pair__term {
   font: 500 15px/1.4 'Poppins', sans-serif;
-  color: var(--text-primary);
+  color: var(--neutral-800);
 }
 
 .ql-pair__def {
   font: 400 14px/1.4 'Poppins', sans-serif;
-  color: var(--text-secondary);
+  color: var(--neutral-800);
 }
 
 .ql-pair__remove {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
-  /* Nudge up so the icon aligns with the term line, not the row's centre. */
-  margin-top: calc(var(--space-sm) * -1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -255,14 +254,14 @@
   border-radius: var(--radius-full);
   background: transparent;
   background-clip: content-box;
-  color: var(--text-tertiary);
+  color: var(--neutral-800);
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
 
 .ql-pair__remove:hover {
-  background: var(--page-background-hover);
-  color: var(--text-secondary);
+  background: rgba(32, 34, 42, 0.1);
+  color: var(--neutral-800);
 }
 
 .ql-pair__remove:focus-visible {

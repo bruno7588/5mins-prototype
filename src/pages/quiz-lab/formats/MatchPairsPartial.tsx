@@ -105,10 +105,6 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
                   : `ql-pair ql-pair--${isCorrect ? 'correct' : 'incorrect'}`
               return (
                 <div key={leftId} className={rowClass}>
-                  <div className="ql-pair__body">
-                    <span className="ql-pair__term">{question.pairs[leftId].left}</span>
-                    <span className="ql-pair__def">{question.pairs[rightId].right}</span>
-                  </div>
                   {status === 'idle' && (
                     <button
                       type="button"
@@ -127,6 +123,10 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
                       </svg>
                     </button>
                   )}
+                  <div className="ql-pair__body">
+                    <span className="ql-pair__term">{question.pairs[leftId].left}</span>
+                    <span className="ql-pair__def">{question.pairs[rightId].right}</span>
+                  </div>
                 </div>
               )
             })
