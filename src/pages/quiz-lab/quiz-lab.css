@@ -410,7 +410,14 @@
 .ql-cat__buckets {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-m);
+}
+
+/* Category = a label above its dashed receiver (label sits outside the box). */
+.ql-cat__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
 }
 
 .ql-bucket {
@@ -429,8 +436,6 @@
 }
 
 .ql-bucket__label {
-  display: block;
-  margin-bottom: var(--space-s);
   font: 700 14px/1.5 'Poppins', sans-serif;
   color: var(--text-secondary);
 }

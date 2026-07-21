@@ -98,35 +98,37 @@ function Categorization({ question }: { question: CategorizationQuestion; format
 
         <div className="ql-cat__buckets">
           {question.categories.map((cat) => (
-            <div
-              key={cat.id}
-              className={`ql-bucket${selected !== null && status === 'idle' ? ' ql-bucket--target' : ''}`}
-              onClick={() => dropInto(cat.id)}
-              role="button"
-              tabIndex={selected !== null && status === 'idle' ? 0 : -1}
-              onKeyDown={(e) => {
-                if ((e.key === 'Enter' || e.key === ' ') && selected !== null) {
-                  e.preventDefault()
-                  dropInto(cat.id)
-                }
-              }}
-            >
+            <div key={cat.id} className="ql-cat__group">
               <span className="ql-bucket__label">{cat.label}</span>
-              <div className="ql-bucket__items">
-                {itemsIn(cat.id).map((i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className={placedClass(i)}
-                    disabled={status !== 'idle'}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      returnToPool(i)
-                    }}
-                  >
-                    {question.items[i].label}
-                  </button>
-                ))}
+              <div
+                className={`ql-bucket${selected !== null && status === 'idle' ? ' ql-bucket--target' : ''}`}
+                onClick={() => dropInto(cat.id)}
+                role="button"
+                aria-label={cat.label}
+                tabIndex={selected !== null && status === 'idle' ? 0 : -1}
+                onKeyDown={(e) => {
+                  if ((e.key === 'Enter' || e.key === ' ') && selected !== null) {
+                    e.preventDefault()
+                    dropInto(cat.id)
+                  }
+                }}
+              >
+                <div className="ql-bucket__items">
+                  {itemsIn(cat.id).map((i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={placedClass(i)}
+                      disabled={status !== 'idle'}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        returnToPool(i)
+                      }}
+                    >
+                      {question.items[i].label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
