@@ -3,6 +3,7 @@ import type { CategorizationQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
+import ResultBanner from '../components/ResultBanner'
 import { cue } from '../quizSound'
 
 /**
@@ -74,8 +75,6 @@ function Categorization({ question }: { question: CategorizationQuestion; format
     return classes.join(' ')
   }
 
-  const correctCount = question.items.filter((_, i) => itemCorrect(i)).length
-
   return (
     <div className="ql-screen">
       <div className="ql-screen__body">
@@ -139,6 +138,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
             </div>
           ))}
         </div>
+        <ResultBanner status={status} />
       </div>
 
       <div className="ql-sr-only" role="status" aria-live="polite">
@@ -150,8 +150,6 @@ function Categorization({ question }: { question: CategorizationQuestion; format
         checkDisabled={!allPlaced}
         onCheck={check}
         onContinue={reset}
-        title={status === 'correct' ? 'All sorted!' : `${correctCount} of ${question.items.length} correct`}
-        detail={status === 'correct' ? question.explanation : 'Give it another go.'}
       />
     </div>
   )

@@ -3,6 +3,7 @@ import type { MatchPairsQuestion } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
+import ResultBanner from '../components/ResultBanner'
 import { cue } from '../quizSound'
 
 /**
@@ -83,8 +84,6 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
     setAttempt((a) => a + 1)
     cue('continue')
   }
-
-  const pct = Math.round((correctCount / total) * 100)
 
   return (
     <div className="ql-screen">
@@ -167,6 +166,7 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
             </div>
           </div>
         )}
+        <ResultBanner status={status} />
       </div>
 
       <div className="ql-sr-only" role="status" aria-live="polite">
@@ -178,8 +178,6 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
         checkDisabled={!allPaired}
         onCheck={check}
         onContinue={reset}
-        title={status === 'correct' ? 'All matched!' : `${correctCount} of ${total} correct · ${pct}%`}
-        detail={status === 'correct' ? question.explanation : 'Give it another go.'}
       />
     </div>
   )

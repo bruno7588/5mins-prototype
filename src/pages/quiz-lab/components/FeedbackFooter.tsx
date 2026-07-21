@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react'
-import { TickCircle, CloseCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 
 export type FeedbackStatus = 'idle' | 'correct' | 'incorrect'
@@ -13,16 +11,12 @@ interface FeedbackFooterProps {
   onCheck?: () => void
   onContinue: () => void
   continueLabel?: string
-  /** Heading shown in the correct/incorrect panel. */
-  title?: string
-  /** Correct answer + one-line "why" (PRD FR5.2). */
-  detail?: ReactNode
 }
 
 /**
- * Shared quiz footer (PRD FR5): a Check button while answering, swapped for a
- * colour-coded feedback panel that reveals the correct answer + explanation and
- * a Continue action. Kept format-agnostic so every renderer feels consistent.
+ * Pinned bottom action for the quiz (DS-aligned). Idle → Check; once graded →
+ * Continue (success/danger). The result message itself lives below the options
+ * (see ResultBanner) rather than in a coloured panel.
  */
 function FeedbackFooter({
   status,
@@ -32,8 +26,6 @@ function FeedbackFooter({
   onCheck,
   onContinue,
   continueLabel = 'Continue',
-  title,
-  detail,
 }: FeedbackFooterProps) {
   if (status === 'idle') {
     if (!showCheck) return null
@@ -48,18 +40,7 @@ function FeedbackFooter({
 
   const correct = status === 'correct'
   return (
-    <div className={`ql-feedback ql-feedback--${status}`} role="status">
-      <div className="ql-feedback__head">
-        <span className="ql-feedback__icon" aria-hidden="true">
-          {correct ? (
-            <TickCircle size={24} color="var(--success-500)" variant="Bold" />
-          ) : (
-            <CloseCircle size={24} color="var(--danger-500)" variant="Bold" />
-          )}
-        </span>
-        <span className="ql-feedback__title">{title ?? (correct ? 'Correct!' : 'Not quite')}</span>
-      </div>
-      {detail && <div className="ql-feedback__detail">{detail}</div>}
+    <div className="ql-footer">
       <Button semantic={correct ? 'success' : 'danger'} size="lg" onClick={onContinue}>
         {continueLabel}
       </Button>

@@ -470,55 +470,28 @@
   justify-content: center;
 }
 
-.ql-feedback {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding: var(--space-l);
-  border-top-left-radius: var(--radius-ml);
-  border-top-right-radius: var(--radius-ml);
-  animation: ql-slide-up 260ms ease;
-}
-
-.ql-feedback--correct {
-  background: rgba(24, 169, 87, 0.14);
-}
-
-.ql-feedback--incorrect {
-  background: rgba(223, 22, 66, 0.12);
-}
-
-.ql-feedback__head {
+/* Result message below the options (DS "Well done!" pattern) — no fill. */
+.ql-result {
   display: flex;
   align-items: center;
   gap: var(--space-s);
 }
 
-.ql-feedback__title {
-  font: 700 18px/1.4 'Poppins', sans-serif;
+.ql-result__emoji {
+  font-size: 22px;
+  line-height: 1;
 }
 
-.ql-feedback--correct .ql-feedback__title {
+.ql-result__title {
+  font: 700 16px/1.5 'Poppins', sans-serif;
+}
+
+.ql-result--correct .ql-result__title {
   color: var(--text-success);
 }
 
-.ql-feedback--incorrect .ql-feedback__title {
+.ql-result--incorrect .ql-result__title {
   color: var(--text-error);
-}
-
-.ql-feedback__detail {
-  font: 400 14px/1.5 'Poppins', sans-serif;
-  color: var(--text-primary);
-}
-
-.ql-feedback__detail strong {
-  font-weight: 700;
-}
-
-.ql-feedback .ds-btn {
-  width: 100%;
-  justify-content: center;
 }
 
 /* Screen-reader-only live region */
@@ -535,18 +508,8 @@
 }
 
 /* ── Animations ──────────────────────────────────────────────────────────── */
-@keyframes ql-slide-up {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .ql-token,
-  .ql-feedback {
+  .ql-token {
     animation: none !important;
     transition: none !important;
   }
