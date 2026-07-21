@@ -3,6 +3,7 @@ import { TickCircle, CloseCircle } from 'iconsax-react'
 import type { TrueFalseQuestion, FormatKey } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
+import { cue } from '../quizSound'
 
 /** True / False (MCQ backbone). Tap an option to select, then Check. */
 function TrueFalse({ question }: { question: TrueFalseQuestion; formatKey: FormatKey }) {
@@ -19,12 +20,14 @@ function TrueFalse({ question }: { question: TrueFalseQuestion; formatKey: Forma
     const correct = choice === question.answer
     setStatus(correct ? 'correct' : 'incorrect')
     setAnnounce(correct ? 'Correct' : 'Incorrect')
+    cue(correct ? 'correct' : 'incorrect')
   }
 
   function reset() {
     setChoice(null)
     setStatus('idle')
     setAnnounce('')
+    cue('continue')
   }
 
   const tokenClass = (value: boolean) => {
@@ -53,7 +56,10 @@ function TrueFalse({ question }: { question: TrueFalseQuestion; formatKey: Forma
               className={tokenClass(opt.value)}
               aria-pressed={choice === opt.value}
               disabled={status !== 'idle'}
-              onClick={() => setChoice(opt.value)}
+              onClick={() => {
+                setChoice(opt.value)
+                cue('select')
+              }}
             >
               <span className="ql-token__icon" aria-hidden="true">
                 {opt.value ? (

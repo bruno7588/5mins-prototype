@@ -1,4 +1,5 @@
-import { Heart } from 'iconsax-react'
+import heartFilled from '@/assets/quiz-hearts/heart-filled.svg'
+import heartEmpty from '@/assets/quiz-hearts/heart-empty.svg'
 
 interface QuizHeaderProps {
   label: string
@@ -10,8 +11,8 @@ interface QuizHeaderProps {
 
 /**
  * Quiz label + attempt hearts (DS Quizzes, Figma 9012:380). Left: the quiz label
- * with a used/total badge. Right: one heart per allowed attempt — filled (danger)
- * for remaining, muted for spent.
+ * with a used/total badge. Right: one heart per allowed attempt — filled artwork
+ * for remaining, muted artwork for spent.
  */
 function QuizHeader({ label, used, total }: QuizHeaderProps) {
   const remaining = Math.max(0, total - used)
@@ -25,13 +26,14 @@ function QuizHeader({ label, used, total }: QuizHeaderProps) {
       </div>
       <div className="ql-qhead__hearts" aria-label={`${remaining} of ${total} attempts left`}>
         {Array.from({ length: total }).map((_, i) => (
-          <span
+          <img
             key={i}
             className="ql-qhead__heart"
-            style={{ color: i < remaining ? 'var(--danger-500)' : 'var(--text-disabled)' }}
-          >
-            <Heart size={20} variant="Bold" color="currentColor" />
-          </span>
+            src={i < remaining ? heartFilled : heartEmpty}
+            alt=""
+            width={20}
+            height={20}
+          />
         ))}
       </div>
     </div>

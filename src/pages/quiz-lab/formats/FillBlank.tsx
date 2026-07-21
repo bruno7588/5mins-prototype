@@ -3,6 +3,7 @@ import type { FillBlankQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
+import { cue } from '../quizSound'
 
 const norm = (s: string) => s.trim().toLowerCase()
 
@@ -33,6 +34,7 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
     next[nextEmpty] = bankIndex
     setFills(next)
     setAnnounce(`Placed ${bank[bankIndex]} in blank ${nextEmpty + 1}`)
+    cue('place')
   }
 
   function clearGap(gapIndex: number) {
@@ -41,6 +43,7 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
     next[gapIndex] = null
     setFills(next)
     setAnnounce(`Cleared blank ${gapIndex + 1}`)
+    cue('remove')
   }
 
   const gapCorrect = (gapIndex: number) => {
@@ -54,6 +57,7 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
     const allCorrect = gaps.every((_, i) => gapCorrect(i))
     setStatus(allCorrect ? 'correct' : 'incorrect')
     setAnnounce(allCorrect ? 'All blanks correct' : 'Some blanks are incorrect')
+    cue(allCorrect ? 'correct' : 'incorrect')
   }
 
   function reset() {
@@ -61,6 +65,7 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
     setStatus('idle')
     setAnnounce('')
     setAttempt((a) => a + 1)
+    cue('continue')
   }
 
   // Render the sentence, replacing gap segments with tappable slots.

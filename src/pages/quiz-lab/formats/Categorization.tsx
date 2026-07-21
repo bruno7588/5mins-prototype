@@ -3,6 +3,7 @@ import type { CategorizationQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
+import { cue } from '../quizSound'
 
 /**
  * Categorization (PRD, SC Training pattern) — tap-only, no drag. Tap a pool item
@@ -30,6 +31,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
     if (status !== 'idle') return
     setSelected((cur) => (cur === i ? null : i))
     setAnnounce(`Selected ${question.items[i].label}`)
+    cue('select')
   }
 
   function dropInto(catId: string) {
@@ -38,6 +40,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
     const label = question.items[selected].label
     setSelected(null)
     setAnnounce(`Placed ${label} in ${question.categories.find((c) => c.id === catId)?.label}`)
+    cue('place')
   }
 
   function returnToPool(i: number) {
@@ -45,12 +48,15 @@ function Categorization({ question }: { question: CategorizationQuestion; format
     setPlacement((p) => ({ ...p, [i]: null }))
     setSelected(null)
     setAnnounce(`Returned ${question.items[i].label} to the pool`)
+    cue('remove')
   }
 
   function check() {
     const correctCount = question.items.filter((_, i) => itemCorrect(i)).length
-    setStatus(correctCount === question.items.length ? 'correct' : 'incorrect')
+    const allCorrect = correctCount === question.items.length
+    setStatus(allCorrect ? 'correct' : 'incorrect')
     setAnnounce(`${correctCount} of ${question.items.length} sorted correctly`)
+    cue(allCorrect ? 'correct' : 'incorrect')
   }
 
   function reset() {
@@ -59,6 +65,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
     setStatus('idle')
     setAnnounce('')
     setAttempt((a) => a + 1)
+    cue('continue')
   }
 
   const placedClass = (i: number) => {

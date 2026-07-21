@@ -3,6 +3,7 @@ import type { SequencingQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
+import { cue } from '../quizSound'
 
 /**
  * Sorting / Sequencing (PRD FR3) — tap tokens in order to assemble the answer.
@@ -27,18 +28,21 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
     if (status !== 'idle') return
     setOrder((o) => [...o, stepIndex])
     setAnnounce(`Added ${question.steps[stepIndex]} as step ${order.length + 1}`)
+    cue('place')
   }
 
   function removeAt(pos: number) {
     if (status !== 'idle') return
     setOrder((o) => o.filter((_, idx) => idx !== pos))
     setAnnounce(`Removed step ${pos + 1}`)
+    cue('remove')
   }
 
   function check() {
     const allCorrect = order.every((_, pos) => slotCorrect(pos))
     setStatus(allCorrect ? 'correct' : 'incorrect')
     setAnnounce(allCorrect ? 'Correct order' : 'Order is not quite right')
+    cue(allCorrect ? 'correct' : 'incorrect')
   }
 
   function reset() {
@@ -46,6 +50,7 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
     setStatus('idle')
     setAnnounce('')
     setAttempt((a) => a + 1)
+    cue('continue')
   }
 
   const placedClass = (pos: number) => {

@@ -4,6 +4,7 @@ import type { MatchPairsQuestion } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
+import { cue } from '../quizSound'
 
 /**
  * Match the Pairs — partial-credit variant (PRD FR1.4). Unlike the instant
@@ -41,6 +42,7 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
     if (!selected) {
       setSelected({ side, id })
       setAnnounce(`Selected ${side === 'L' ? question.pairs[id].left : question.pairs[id].right}`)
+      cue('select')
       return
     }
     if (selected.side === side && selected.id === id) {
@@ -57,6 +59,7 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
     setLinks((l) => ({ ...l, [leftId]: rightId }))
     setSelected(null)
     setAnnounce(`Matched ${question.pairs[leftId].left}`)
+    cue('place')
   }
 
   function unpair(leftId: number) {
@@ -64,11 +67,13 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
     setLinks((l) => ({ ...l, [leftId]: null }))
     setSelected(null)
     setAnnounce(`Unmatched ${question.pairs[leftId].left}`)
+    cue('remove')
   }
 
   function check() {
     setStatus(correctCount === total ? 'correct' : 'incorrect')
     setAnnounce(`${correctCount} of ${total} pairs correct`)
+    cue(correctCount === total ? 'correct' : 'incorrect')
   }
 
   function reset() {
@@ -77,6 +82,7 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
     setStatus('idle')
     setAnnounce('')
     setAttempt((a) => a + 1)
+    cue('continue')
   }
 
   const pct = Math.round((correctCount / total) * 100)
