@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
+import QuizHeader from './components/QuizHeader'
 import { FORMAT_ORDER, QUIZ_SAMPLES, type FormatKey } from './quizData'
 import MatchPairsPartial from './formats/MatchPairsPartial'
 import FillBlank from './formats/FillBlank'
@@ -19,6 +20,7 @@ import './quiz-lab.css'
 function QuizLab() {
   const navigate = useNavigate()
   const [format, setFormat] = useState<FormatKey>('match-pairs')
+  const activeLabel = FORMAT_ORDER.find((f) => f.key === format)?.label ?? ''
 
   const renderFormat = () => {
     const q = QUIZ_SAMPLES[format]
@@ -53,7 +55,8 @@ function QuizLab() {
 
       <PhoneFrame onExit={() => navigate('/workspace')}>
         {/* Remount on format change so each preview starts fresh. */}
-        <div key={format} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div key={format} className="ql-quizview">
+          <QuizHeader label={activeLabel} used={1} total={3} />
           {renderFormat()}
         </div>
       </PhoneFrame>

@@ -129,13 +129,12 @@
   font-size: 15px;
 }
 
-/* State variants — DS Quiz Option selected/validation: full colored border
-   ring + tint fill + colored -3px lip (base resting state stays borderless). */
+/* State variants (DS Quiz Option, Figma). Selected = solid amber fill + dark
+   text (9012:421); validation = colored border + tint. All carry a -3px lip. */
 .ql-token--selected {
-  border: 1.5px solid var(--selected);
-  background: var(--selected-tint);
-  box-shadow: inset 0 -3px 0 0 var(--selected);
-  color: var(--text-selected);
+  background: var(--secondary-500);
+  box-shadow: inset 0 -3px 0 0 var(--secondary-600);
+  color: var(--neutral-800);
 }
 
 .ql-token--correct {
@@ -309,10 +308,10 @@
 
 .ql-blank--filled {
   border-style: solid;
-  border-color: var(--selected);
-  background: var(--selected-tint);
-  box-shadow: inset 0 -3px 0 0 var(--selected);
-  color: var(--text-selected);
+  border-color: var(--secondary-500);
+  background: var(--secondary-500);
+  box-shadow: inset 0 -3px 0 0 var(--secondary-600);
+  color: var(--neutral-800);
 }
 
 .ql-blank--correct {
@@ -556,4 +555,64 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* ── Quiz header: label + attempt hearts (Figma 9012:380) ────────────────── */
+.ql-quizview {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ql-quizview > .ql-screen {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+}
+
+.ql-qhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  padding: var(--space-m) var(--space-l) var(--space-s);
+}
+
+.ql-qhead__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.ql-qhead__title {
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ql-qhead__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  font: 400 14px/1 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.ql-qhead__hearts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.ql-qhead__heart {
+  display: inline-flex;
 }
