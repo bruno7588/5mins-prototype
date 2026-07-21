@@ -415,10 +415,10 @@
 
 .ql-bucket {
   padding: var(--space-sm);
-  /* Dashed = a container that receives dropped items (drop-target affordance). */
+  /* Dashed + no fill = an empty container that receives dropped items. */
   border: 1.5px dashed var(--border);
   border-radius: var(--radius-m);
-  background: var(--cards-background);
+  background: transparent;
   transition: border-color 150ms ease, background 150ms ease;
 }
 
