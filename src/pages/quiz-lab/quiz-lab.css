@@ -206,15 +206,26 @@
 }
 
 .ql-pair--correct {
-  border: 1.5px solid var(--success-500);
-  background: rgba(24, 169, 87, 0.14);
-  box-shadow: inset 0 -3px 0 0 var(--success-500);
+  background: var(--success-500);
+  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
 }
 
 .ql-pair--incorrect {
-  border: 1.5px solid var(--danger-500);
-  background: rgba(223, 22, 66, 0.12);
-  box-shadow: inset 0 -3px 0 0 var(--danger-500);
+  background: var(--danger-500);
+  box-shadow: inset 0 -3px 0 0 var(--button-danger-hover);
+}
+
+/* White text on the solid validation fill. */
+.ql-pair--correct .ql-pair__term,
+.ql-pair--incorrect .ql-pair__term,
+.ql-pair--correct .ql-pair__fix,
+.ql-pair--incorrect .ql-pair__fix {
+  color: var(--neutral-0);
+}
+
+.ql-pair--correct .ql-pair__def,
+.ql-pair--incorrect .ql-pair__def {
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .ql-pair__body {
