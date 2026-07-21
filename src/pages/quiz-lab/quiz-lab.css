@@ -79,24 +79,6 @@
   color: var(--text-primary);
 }
 
-/* Progress dots (matched pairs, placed steps…) */
-.ql-progress {
-  display: flex;
-  gap: var(--space-xs);
-}
-
-.ql-progress__dot {
-  flex: 1 1 0;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background: var(--border);
-  transition: background 200ms ease;
-}
-
-.ql-progress__dot.is-done {
-  background: var(--selected);
-}
-
 /* ── Tappable token (the shared building block) ──────────────────────────── */
 .ql-token {
   display: inline-flex;
@@ -208,18 +190,6 @@
   line-height: 1.3;
 }
 
-/* Matched pair flashes then collapses out to reduce clutter (PRD FR1.3). */
-.ql-token--matched {
-  animation: ql-collapse 320ms ease forwards;
-  animation-delay: 260ms;
-  border: 1.5px solid var(--success-500);
-  background: rgba(24, 169, 87, 0.14);
-  box-shadow: inset 0 -3px 0 0 var(--success-500);
-  color: var(--text-success);
-  pointer-events: none;
-  overflow: hidden;
-}
-
 /* ── Match pairs (partial-credit / build-then-check variant) ─────────────── */
 .ql-pairs {
   display: flex;
@@ -308,11 +278,6 @@
   font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-tertiary);
   text-align: center;
-}
-
-.ql-pool-label {
-  font: 500 14px/1.5 'Poppins', sans-serif;
-  color: var(--text-tertiary);
 }
 
 /* ── Fill in the blank ───────────────────────────────────────────────────── */
@@ -452,7 +417,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
-  min-height: 56px;
+  min-height: 96px;
+  padding: var(--space-sm);
+  /* Dashed receiver — tapped steps land here (matches the categorize buckets). */
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-m);
 }
 
 .ql-seq__slot {
@@ -482,6 +451,7 @@
 }
 
 .ql-seq__hint {
+  margin: auto;
   font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-tertiary);
   text-align: center;
@@ -571,19 +541,6 @@
 }
 
 /* ── Animations ──────────────────────────────────────────────────────────── */
-@keyframes ql-collapse {
-  to {
-    opacity: 0;
-    transform: scale(0.9);
-    max-height: 0;
-    min-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: -8px;
-    border-width: 0;
-  }
-}
-
 @keyframes ql-slide-up {
   from {
     transform: translateY(100%);
@@ -593,29 +550,9 @@
   }
 }
 
-@keyframes ql-shake {
-  10%,
-  90% {
-    transform: translateX(-2px);
-  }
-  30%,
-  70% {
-    transform: translateX(4px);
-  }
-  50% {
-    transform: translateX(-4px);
-  }
-}
-
-.ql-shake {
-  animation: ql-shake 400ms ease;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .ql-token,
-  .ql-token--matched,
-  .ql-feedback,
-  .ql-shake {
+  .ql-feedback {
     animation: none !important;
     transition: none !important;
   }

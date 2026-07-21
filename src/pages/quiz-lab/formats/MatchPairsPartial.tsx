@@ -129,7 +129,6 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
         {status === 'idle' && !allPaired && (
           <div className="ql-match">
             <div className="ql-match__col">
-              <span className="ql-pool-label">Terms</span>
               {leftPool.map((id) => (
                 <button
                   key={id}
@@ -145,7 +144,6 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
               ))}
             </div>
             <div className="ql-match__col">
-              <span className="ql-pool-label">Definitions</span>
               {rightPool.map((id) => (
                 <button
                   key={id}

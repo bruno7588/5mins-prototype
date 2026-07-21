@@ -10,7 +10,6 @@
 
 export type FormatKey =
   | 'match-pairs'
-  | 'match-pairs-partial'
   | 'fill-blank'
   | 'true-false'
   | 'categorization'
@@ -105,20 +104,6 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
     explanation:
       'Recognising these four terms is the baseline for spotting and reporting security threats at work.',
   },
-  // Same content as `match-pairs`; a different renderer (build-all-then-check with
-  // partial credit) is selected by this format key.
-  'match-pairs-partial': {
-    type: 'match-pairs',
-    prompt: 'Match each security term to its definition',
-    pairs: [
-      { left: 'Phishing', right: 'A fraudulent attempt to obtain sensitive information' },
-      { left: 'Encryption', right: 'Encoding data so only authorised parties can read it' },
-      { left: 'Firewall', right: 'A barrier that filters incoming network traffic' },
-      { left: 'Malware', right: 'Software designed to damage or gain unauthorised access' },
-    ],
-    explanation:
-      'Recognising these four terms is the baseline for spotting and reporting security threats at work.',
-  },
   'fill-blank': {
     type: 'fill-blank',
     prompt: 'Complete the clean-desk policy',
@@ -175,8 +160,7 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
 }
 
 export const FORMAT_ORDER: { key: FormatKey; label: string }[] = [
-  { key: 'match-pairs', label: 'Pairs · Instant' },
-  { key: 'match-pairs-partial', label: 'Pairs · Credit' },
+  { key: 'match-pairs', label: 'Match Pairs' },
   { key: 'fill-blank', label: 'Fill Blank' },
   { key: 'true-false', label: 'True / False' },
   { key: 'categorization', label: 'Categorize' },

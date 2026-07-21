@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import { FORMAT_ORDER, QUIZ_SAMPLES, type FormatKey } from './quizData'
-import MatchPairs from './formats/MatchPairs'
 import MatchPairsPartial from './formats/MatchPairsPartial'
 import FillBlank from './formats/FillBlank'
 import TrueFalse from './formats/TrueFalse'
@@ -24,11 +23,7 @@ function QuizLab() {
   const renderFormat = () => {
     const q = QUIZ_SAMPLES[format]
     if (q.type === 'match-pairs') {
-      return format === 'match-pairs-partial' ? (
-        <MatchPairsPartial question={q} />
-      ) : (
-        <MatchPairs question={q} formatKey={format} />
-      )
+      return <MatchPairsPartial question={q} />
     }
     switch (q.type) {
       case 'fill-blank':
