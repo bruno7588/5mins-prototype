@@ -102,7 +102,6 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
     <div className="ql-screen">
       <div className="ql-screen__body">
         <div className="ql-stem">
-          <span className="ql-stem__eyebrow">Fill in the missing words</span>
           <span className="ql-stem__q">{question.prompt}</span>
         </div>
 

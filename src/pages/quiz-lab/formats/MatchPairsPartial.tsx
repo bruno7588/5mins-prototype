@@ -91,7 +91,6 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
     <div className="ql-screen">
       <div className="ql-screen__body">
         <div className="ql-stem">
-          <span className="ql-stem__eyebrow">Build every pair, then check</span>
           <span className="ql-stem__q">{question.prompt}</span>
         </div>
 

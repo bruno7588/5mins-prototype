@@ -44,7 +44,6 @@ function TrueFalse({ question }: { question: TrueFalseQuestion; formatKey: Forma
     <div className="ql-screen">
       <div className="ql-screen__body">
         <div className="ql-stem">
-          <span className="ql-stem__eyebrow">{question.prompt}</span>
           <span className="ql-stem__q">{question.statement}</span>
         </div>
 

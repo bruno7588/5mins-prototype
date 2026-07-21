@@ -64,7 +64,6 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
     <div className="ql-screen">
       <div className="ql-screen__body">
         <div className="ql-stem">
-          <span className="ql-stem__eyebrow">Tap the steps in order</span>
           <span className="ql-stem__q">{question.prompt}</span>
         </div>
 

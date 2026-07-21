@@ -84,7 +84,6 @@ function Categorization({ question }: { question: CategorizationQuestion; format
     <div className="ql-screen">
       <div className="ql-screen__body">
         <div className="ql-stem">
-          <span className="ql-stem__eyebrow">Tap an item, then tap a category</span>
           <span className="ql-stem__q">{question.prompt}</span>
         </div>
 
