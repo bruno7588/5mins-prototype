@@ -312,7 +312,7 @@
   min-height: 40px;
   margin: 0 2px;
   padding: 4px 10px;
-  border: 1.5px dashed var(--border-hover);
+  border: 1.5px dashed var(--border);
   border-radius: var(--radius-s);
   background: var(--input-background);
   color: var(--text-primary);
