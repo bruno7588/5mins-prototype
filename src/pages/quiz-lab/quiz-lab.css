@@ -282,7 +282,7 @@
 /* ── Fill in the blank ───────────────────────────────────────────────────── */
 .ql-sentence {
   font: 400 14px/2 'Poppins', sans-serif;
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 
 .ql-blank {
