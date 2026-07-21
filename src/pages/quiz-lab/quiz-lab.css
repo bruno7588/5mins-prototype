@@ -416,11 +416,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
-  min-height: 96px;
   padding: var(--space-sm);
-  /* Dashed receiver — tapped steps land here (matches the categorize buckets). */
+  /* Dashed receiver — same size as the match-pairs empty receiver. */
   border: 1.5px dashed var(--border);
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-sm);
 }
 
 .ql-seq__slot {

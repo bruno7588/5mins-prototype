@@ -75,7 +75,7 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
 
         <div className="ql-seq__answer">
           {order.length === 0 ? (
-            <p className="ql-seq__hint">Tap a step below to add it here</p>
+            <p className="ql-seq__hint">Tap the steps below in the correct order</p>
           ) : (
             order.map((stepIndex, pos) => (
               <div key={pos} className="ql-seq__slot">
