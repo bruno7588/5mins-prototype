@@ -21,6 +21,7 @@ import ScormCreateCourse from './pages/scorm-content/ScormCreateCourse'
 
 import Onboarding from './pages/onboarding/Onboarding'
 import MobileApp from './pages/mobile/MobileApp'
+import QuizLab from './pages/quiz-lab/QuizLab'
 
 import MyTeam from './pages/my-team/MyTeam'
 import Workspace from './pages/workspace/Workspace'
@@ -60,6 +61,7 @@ function App() {
       />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/mobile" element={<MobileApp />} />
+      <Route path="/quiz-lab" element={<QuizLab />} />
       <Route path="/my-team" element={<MyTeam />} />
       <Route path="/workspace" element={<Workspace />} />
       <Route path="/for-you" element={<ForYou />} />

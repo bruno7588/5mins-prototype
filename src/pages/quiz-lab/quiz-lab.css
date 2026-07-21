@@ -1,0 +1,632 @@
+/* ── Quiz Lab (DES-321) ───────────────────────────────────────────────────────
+   Mobile-first quiz formats staged inside the PhoneFrame. All classes are
+   `.ql-` prefixed (globally-bundled CSS). Tokens only — no improvised values.
+   Selected state uses the mode-aware `--selected` amber (PRD FR6.6); correct /
+   incorrect use translucent success / danger tints that read in both themes. */
+
+/* Lab chrome (desktop stage, outside the phone bezel) */
+.ql-lab {
+  min-height: 100vh;
+  background: var(--page-background);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Neutralise PhoneFrame's own full-viewport centring so the control bar can sit
+   above the phone rather than being pushed off-screen. */
+.ql-lab .m-phone-stage {
+  min-height: 0;
+  flex: 1 1 auto;
+  padding-top: var(--space-l);
+}
+
+.ql-lab__bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-l) var(--space-l) var(--space-m);
+  background: var(--page-background);
+  border-bottom: 1px solid var(--border);
+}
+
+.ql-lab__title {
+  font: 700 20px/1.4 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.ql-lab__sub {
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 520px;
+}
+
+/* Per-format screen inside the phone */
+.ql-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--page-background);
+}
+
+.ql-screen__body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  padding: var(--space-l);
+}
+
+.ql-stem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.ql-stem__eyebrow {
+  font: 500 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+}
+
+.ql-stem__q {
+  font: 700 20px/1.35 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+/* Progress dots (matched pairs, placed steps…) */
+.ql-progress {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.ql-progress__dot {
+  flex: 1 1 0;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  transition: background 200ms ease;
+}
+
+.ql-progress__dot.is-done {
+  background: var(--selected);
+}
+
+/* ── Tappable token (the shared building block) ──────────────────────────── */
+.ql-token {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border);
+  border-bottom-width: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  color: var(--text-primary);
+  font: 500 16px/1.4 'Poppins', sans-serif;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 120ms ease, background 150ms ease, border-color 150ms ease,
+    color 150ms ease;
+}
+
+.ql-token:active {
+  transform: translateY(1px);
+}
+
+.ql-token:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.ql-token--block {
+  width: 100%;
+}
+
+.ql-token--sm {
+  min-height: 44px;
+  padding: 8px 14px;
+  font-size: 15px;
+}
+
+.ql-token--selected {
+  border-color: var(--selected);
+  background: var(--selected-tint);
+  color: var(--text-selected);
+}
+
+.ql-token--correct {
+  border-color: var(--success-500);
+  background: rgba(24, 169, 87, 0.14);
+  color: var(--text-success);
+}
+
+.ql-token--incorrect {
+  border-color: var(--danger-500);
+  background: rgba(223, 22, 66, 0.12);
+  color: var(--text-error);
+}
+
+.ql-token--locked {
+  cursor: default;
+}
+
+.ql-token--locked:active {
+  transform: none;
+}
+
+/* Bank placeholder: keeps its slot width once the chip has been placed. */
+.ql-token--used {
+  visibility: hidden;
+}
+
+.ql-token__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* ── Match pairs ─────────────────────────────────────────────────────────── */
+.ql-match {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  align-items: start;
+}
+
+.ql-match__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.ql-match .ql-token {
+  min-height: 64px;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+/* Matched pair flashes then collapses out to reduce clutter (PRD FR1.3). */
+.ql-token--matched {
+  animation: ql-collapse 320ms ease forwards;
+  animation-delay: 260ms;
+  border-color: var(--success-500);
+  background: rgba(24, 169, 87, 0.14);
+  color: var(--text-success);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── Match pairs (partial-credit / build-then-check variant) ─────────────── */
+.ql-pairs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.ql-pair {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  padding: var(--space-sm);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-m);
+  background: var(--cards-background);
+}
+
+.ql-pair--correct {
+  border-color: var(--success-500);
+  background: rgba(24, 169, 87, 0.14);
+}
+
+.ql-pair--incorrect {
+  border-color: var(--danger-500);
+  background: rgba(223, 22, 66, 0.12);
+}
+
+.ql-pair__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ql-pair__term {
+  font: 700 15px/1.4 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.ql-pair__def {
+  font: 400 14px/1.4 'Poppins', sans-serif;
+  color: var(--text-secondary);
+}
+
+.ql-pair__fix {
+  margin-top: var(--space-xs);
+  font: 400 14px/1.4 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.ql-pair__fix strong {
+  font-weight: 700;
+}
+
+.ql-pair__remove {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs);
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.ql-pair__remove:hover {
+  background: var(--page-background-hover);
+  color: var(--text-secondary);
+}
+
+.ql-pair__remove:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.ql-pairs__empty {
+  padding: var(--space-sm);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.ql-pool-label {
+  font: 500 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+}
+
+/* ── Fill in the blank ───────────────────────────────────────────────────── */
+.ql-sentence {
+  font: 400 18px/2 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.ql-blank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  min-height: 40px;
+  margin: 0 2px;
+  padding: 4px 10px;
+  border: 1.5px dashed var(--border-hover);
+  border-radius: var(--radius-s);
+  background: var(--input-background);
+  color: var(--text-primary);
+  font: 500 16px/1.4 'Poppins', sans-serif;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.ql-blank--empty {
+  color: transparent;
+}
+
+.ql-blank--filled {
+  border-style: solid;
+  border-color: var(--selected);
+  background: var(--selected-tint);
+  color: var(--text-selected);
+}
+
+.ql-blank--correct {
+  border-style: solid;
+  border-color: var(--success-500);
+  background: rgba(24, 169, 87, 0.14);
+  color: var(--text-success);
+}
+
+.ql-blank--incorrect {
+  border-style: solid;
+  border-color: var(--danger-500);
+  background: rgba(223, 22, 66, 0.12);
+  color: var(--text-error);
+}
+
+.ql-blank__input {
+  min-width: 96px;
+  min-height: 40px;
+  margin: 0 2px;
+  padding: 4px 10px;
+  border: 1.5px solid var(--border-hover);
+  border-radius: var(--radius-s);
+  background: var(--cards-background);
+  color: var(--text-primary);
+  font: 500 16px/1.4 'Poppins', sans-serif;
+  vertical-align: middle;
+}
+
+.ql-blank__input:focus-visible {
+  outline: none;
+  border-color: var(--selected);
+  background: var(--selected-tint);
+}
+
+.ql-blank__input.is-correct {
+  border-color: var(--success-500);
+  color: var(--text-success);
+}
+
+.ql-blank__input.is-incorrect {
+  border-color: var(--danger-500);
+  color: var(--text-error);
+}
+
+.ql-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.ql-mode {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── True / false ────────────────────────────────────────────────────────── */
+.ql-statement {
+  padding: var(--space-l);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-m);
+  background: var(--cards-background);
+  font: 500 18px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.ql-tf {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.ql-tf .ql-token {
+  min-height: 60px;
+  gap: var(--space-s);
+  font-size: 17px;
+}
+
+/* ── Categorization ──────────────────────────────────────────────────────── */
+.ql-cat__pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  min-height: 52px;
+  padding: var(--space-s);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.ql-cat__buckets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.ql-bucket {
+  padding: var(--space-sm);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-m);
+  background: var(--cards-background);
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.ql-bucket--target {
+  border-style: dashed;
+  border-color: var(--selected);
+  background: var(--selected-tint);
+}
+
+.ql-bucket__label {
+  display: block;
+  margin-bottom: var(--space-s);
+  font: 700 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+}
+
+.ql-bucket__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  min-height: 44px;
+}
+
+.ql-cat__empty {
+  align-self: center;
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+}
+
+/* ── Sequencing ──────────────────────────────────────────────────────────── */
+.ql-seq__answer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  min-height: 56px;
+}
+
+.ql-seq__slot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.ql-seq__index {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--selected);
+  color: var(--neutral-800);
+  font: 700 14px/1 'Poppins', sans-serif;
+}
+
+.ql-seq__slot .ql-token {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  text-align: left;
+  min-height: 52px;
+}
+
+.ql-seq__hint {
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.ql-seq__bank {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+/* ── Footer: check / feedback ────────────────────────────────────────────── */
+.ql-footer {
+  flex-shrink: 0;
+  padding: var(--space-m) var(--space-l) var(--space-l);
+  border-top: 1px solid var(--border);
+  background: var(--page-background);
+}
+
+.ql-footer .ds-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.ql-feedback {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-l);
+  border-top-left-radius: var(--radius-ml);
+  border-top-right-radius: var(--radius-ml);
+  animation: ql-slide-up 260ms ease;
+}
+
+.ql-feedback--correct {
+  background: rgba(24, 169, 87, 0.14);
+}
+
+.ql-feedback--incorrect {
+  background: rgba(223, 22, 66, 0.12);
+}
+
+.ql-feedback__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.ql-feedback__title {
+  font: 700 18px/1.4 'Poppins', sans-serif;
+}
+
+.ql-feedback--correct .ql-feedback__title {
+  color: var(--text-success);
+}
+
+.ql-feedback--incorrect .ql-feedback__title {
+  color: var(--text-error);
+}
+
+.ql-feedback__detail {
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.ql-feedback__detail strong {
+  font-weight: 700;
+}
+
+.ql-feedback .ds-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Screen-reader-only live region */
+.ql-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes ql-collapse {
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+    max-height: 0;
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: -8px;
+    border-width: 0;
+  }
+}
+
+@keyframes ql-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes ql-shake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  30%,
+  70% {
+    transform: translateX(4px);
+  }
+  50% {
+    transform: translateX(-4px);
+  }
+}
+
+.ql-shake {
+  animation: ql-shake 400ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ql-token,
+  .ql-token--matched,
+  .ql-feedback,
+  .ql-shake {
+    animation: none !important;
+    transition: none !important;
+  }
+}
