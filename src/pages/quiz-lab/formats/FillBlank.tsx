@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import type { FillBlankQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
@@ -71,7 +71,15 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
   // Render the sentence, replacing gap segments with tappable slots.
   let gapCursor = -1
   const sentence = question.segments.map((seg, i) => {
-    if (typeof seg === 'string') return <Fragment key={i}>{seg}</Fragment>
+    if (typeof seg === 'string')
+      return seg
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((word, w) => (
+          <span key={`${i}-${w}`} className="ql-word">
+            {word}
+          </span>
+        ))
     gapCursor += 1
     const gapIndex = gapCursor
     const placed = fills[gapIndex]
@@ -93,24 +101,26 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
           <span className="ql-stem__q">{question.prompt}</span>
         </div>
 
-        <p className="ql-sentence">{sentence}</p>
+        <div className="ql-fb">
+          <div className="ql-sentence">{sentence}</div>
 
-        <div className="ql-bank">
-          {bank.map((word, b) => {
-            const used = usedBank.has(b)
-            return (
-              <button
-                key={b}
-                type="button"
-                className={`ql-token ql-token--sm${used ? ' ql-token--used' : ''}`}
-                disabled={used || status !== 'idle'}
-                aria-hidden={used}
-                onClick={() => placeChip(b)}
-              >
-                {word}
-              </button>
-            )
-          })}
+          <div className="ql-bank">
+            {bank.map((word, b) => {
+              const used = usedBank.has(b)
+              return (
+                <button
+                  key={b}
+                  type="button"
+                  className={`ql-token ql-token--sm${used ? ' ql-token--used' : ''}`}
+                  disabled={used || status !== 'idle'}
+                  aria-hidden={used}
+                  onClick={() => placeChip(b)}
+                >
+                  {word}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
 

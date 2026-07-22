@@ -59,8 +59,9 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-l);
-  padding: var(--space-m) var(--space-l) var(--space-l);
+  /* Figma 9033:398 — 16px screen gutter, 20px vertical rhythm. */
+  gap: var(--space-ml);
+  padding: var(--space-m) var(--space-m) var(--space-l);
 }
 
 .ql-stem {
@@ -80,8 +81,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-s);
-  min-height: 48px;
-  padding: 10px 16px;
+  /* Figma option chip — 12/16 padding, content height (~45px). */
+  min-height: 0;
+  padding: var(--space-sm) var(--space-m);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--cards-background);
@@ -89,7 +91,7 @@
      no all-sides border; the -3px Y lip reads as a raised bottom edge. */
   box-shadow: inset 0 -3px 0 0 var(--cards-background-hover);
   color: var(--text-primary);
-  font: 400 14px/1.4 'Poppins', sans-serif;
+  font: 400 14px/1.5 'Poppins', sans-serif;
   text-align: center;
   cursor: pointer;
   user-select: none;
@@ -121,8 +123,9 @@
 }
 
 .ql-token--sm {
-  min-height: 44px;
-  padding: 8px 14px;
+  /* Figma option chip (fill-blank bank + categorize) — 12/16 padding, 45px. */
+  min-height: 0;
+  padding: var(--space-sm) var(--space-m);
   font-size: 14px;
 }
 
@@ -175,13 +178,7 @@
 .ql-match__col {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
-}
-
-.ql-match .ql-token {
-  min-height: 64px;
-  font-size: 14px;
-  line-height: 1.3;
+  gap: var(--space-sm);
 }
 
 /* ── Match pairs (partial-credit / build-then-check variant) ─────────────── */
@@ -195,7 +192,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
   border: none;
   border-radius: var(--radius-m);
   /* Styled like a selected item — solid amber fill + darker-amber lip. */
@@ -270,35 +267,57 @@
 }
 
 .ql-pairs__empty {
-  padding: var(--space-sm);
+  /* Figma 9033:425 — 16px padding, 12px/1.2 tertiary text. */
+  padding: var(--space-m);
   border: 1.5px dashed var(--border);
   border-radius: var(--radius-sm);
-  font: 400 14px/1.5 'Poppins', sans-serif;
+  font: 400 12px/1.2 'Poppins', sans-serif;
   color: var(--text-tertiary);
   text-align: center;
 }
 
 /* ── Fill in the blank ───────────────────────────────────────────────────── */
+.ql-fb {
+  display: flex;
+  flex-direction: column;
+  /* Figma 9035:1213 — 16px between sentence and word bank. */
+  gap: var(--space-m);
+}
+
 .ql-sentence {
-  font: 400 14px/2 'Poppins', sans-serif;
+  /* Figma 9035:1214 — flex-wrap words, 4px row / 8px column gap. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.ql-word {
+  font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-secondary);
 }
 
 .ql-blank {
+  /* Figma 9035:903 empty / 9035:1216 filled — 72×37, 8/16 padding, 12 radius. */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 84px;
-  min-height: 40px;
-  margin: 0 2px;
-  padding: 4px 10px;
+  min-width: 72px;
+  min-height: 37px;
+  padding: var(--space-s) var(--space-m);
   border: 1.5px dashed var(--border);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: var(--input-background);
   color: var(--text-primary);
-  font: 500 14px/1.4 'Poppins', sans-serif;
-  vertical-align: middle;
+  font: 500 14px/1.5 'Poppins', sans-serif;
   cursor: pointer;
+}
+
+/* Placed chips size to content (Figma); only the empty gap keeps the 72px min. */
+.ql-blank--filled,
+.ql-blank--correct,
+.ql-blank--incorrect {
+  min-width: 0;
 }
 
 .ql-blank--empty {
@@ -332,14 +351,14 @@
 .ql-bank {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-s);
+  gap: var(--space-sm);
 }
 
 /* ── Categorization ──────────────────────────────────────────────────────── */
 .ql-cat__pool {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   min-height: 52px;
 }
 
@@ -358,10 +377,12 @@
 
 .ql-bucket {
   position: relative;
+  /* Figma 9041:639 — 12px padding, 12 radius, 126px empty drop zone. */
+  min-height: 126px;
   padding: var(--space-sm);
   /* Dashed receiver — enabled by default; hover + active (tap) escalate. */
   border: 1.5px dashed var(--border);
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-sm);
   background: transparent;
   transition: border-color 150ms ease, background 150ms ease;
 }
@@ -407,8 +428,22 @@
 .ql-bucket__items {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   min-height: 44px;
+}
+
+/* Placed chips remain tappable (return to pool) until graded — show the token
+   hover + pointer so they read as still clickable. */
+.ql-bucket__items .ql-token--locked:not(.ql-token--correct):not(.ql-token--incorrect) {
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .ql-bucket__items
+    .ql-token--locked:not(.ql-token--correct):not(.ql-token--incorrect):hover {
+    background: var(--cards-background-hover);
+    box-shadow: inset 0 -3px 0 0 var(--input-background);
+  }
 }
 
 .ql-cat__empty {
@@ -421,7 +456,7 @@
 .ql-seq__answer {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   padding: var(--space-sm);
   /* Dashed receiver — same size as the match-pairs empty receiver. */
   border: 1.5px dashed var(--border);
@@ -436,8 +471,8 @@
 
 .ql-seq__index {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -462,15 +497,53 @@
 }
 
 .ql-seq__slot .ql-token {
+  position: relative;
   flex: 1 1 auto;
   justify-content: flex-start;
   text-align: left;
-  min-height: 52px;
+  cursor: default;
+}
+
+/* Trailing remove control (X) on placed steps — like Match Pairs; only the X
+   removes. Absolutely placed so the 40px target keeps the step at 45px.
+   Right padding is reserved on the idle (selected) chip so labels clear it. */
+.ql-seq__slot .ql-token--selected {
+  padding-right: 48px;
+}
+
+.ql-seq__remove {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Hover fill paints only the inner circle (4px inset), clear of the row edge. */
+  padding: var(--space-xs);
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  background-clip: content-box;
+  color: var(--neutral-800);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.ql-seq__remove:hover {
+  background: rgba(32, 34, 42, 0.1);
+}
+
+.ql-seq__remove:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
 }
 
 .ql-seq__hint {
   margin: auto;
-  font: 400 14px/1.5 'Poppins', sans-serif;
+  font: 400 12px/1.2 'Poppins', sans-serif;
   color: var(--text-tertiary);
   text-align: center;
 }
@@ -478,7 +551,7 @@
 .ql-seq__bank {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
 }
 
 /* ── Footer: check / feedback ────────────────────────────────────────────── */

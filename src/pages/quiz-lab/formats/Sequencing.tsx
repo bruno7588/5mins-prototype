@@ -80,14 +80,27 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
             order.map((stepIndex, pos) => (
               <div key={pos} className="ql-seq__slot">
                 <span className={indexClass(pos)}>{pos + 1}</span>
-                <button
-                  type="button"
-                  className={placedClass(pos)}
-                  disabled={status !== 'idle'}
-                  onClick={() => removeAt(pos)}
-                >
+                <div className={placedClass(pos)}>
                   {question.steps[stepIndex]}
-                </button>
+                  {status === 'idle' && (
+                    <button
+                      type="button"
+                      className="ql-seq__remove"
+                      aria-label={`Remove step ${pos + 1}`}
+                      onClick={() => removeAt(pos)}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 21 21" fill="none" aria-hidden="true">
+                        <path
+                          d="M15.0938 15.0938L5.90625 5.90625M15.0938 5.90625L5.90625 15.0938"
+                          stroke="currentColor"
+                          strokeWidth="1.3125"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
             ))
           )}
