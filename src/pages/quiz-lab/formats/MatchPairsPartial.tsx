@@ -3,6 +3,7 @@ import type { MatchPairsQuestion } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
+import DashedBorder from '../components/DashedBorder'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
@@ -94,7 +95,10 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
 
         <div className="ql-pairs">
           {rows.length === 0 ? (
-            <div className="ql-pairs__empty">Your matches will appear here</div>
+            <div className="ql-pairs__empty">
+              <DashedBorder />
+              Your matches will appear here
+            </div>
           ) : (
             rows.map(({ leftId, rightId }) => {
               const isCorrect = leftId === rightId

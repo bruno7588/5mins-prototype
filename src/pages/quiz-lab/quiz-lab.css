@@ -269,7 +269,7 @@
 .ql-pairs__empty {
   /* Figma 9033:425 — 16px padding, 12px/1.2 tertiary text. */
   padding: var(--space-m);
-  border: 1.5px dashed var(--border);
+  border: none;
   border-radius: var(--radius-sm);
   font: 400 12px/1.2 'Poppins', sans-serif;
   color: var(--text-tertiary);
@@ -305,7 +305,7 @@
   min-width: 72px;
   min-height: 37px;
   padding: var(--space-s) var(--space-m);
-  border: 1.5px dashed var(--border);
+  border: none;
   border-radius: var(--radius-sm);
   background: var(--input-background);
   color: var(--text-primary);
@@ -322,6 +322,28 @@
 
 .ql-blank--empty {
   color: transparent;
+}
+
+/* ── Crisp dashed border overlay (see DashedBorder.tsx) ─────────────────────
+   Real inline SVG so the 4px dash stays sharp at any size; stroke colour is a
+   token (theme-aware) and reacts to the bucket's hover/active state. */
+.ql-bucket,
+.ql-pairs__empty,
+.ql-seq__answer,
+.ql-blank {
+  position: relative;
+}
+
+.ql-dash {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ql-dash rect {
+  stroke: var(--border);
+  transition: stroke 150ms ease;
 }
 
 .ql-blank--filled {
@@ -386,7 +408,7 @@
   min-height: 126px;
   padding: var(--space-sm);
   /* Dashed receiver — enabled by default; hover + active (tap) escalate. */
-  border: 1.5px dashed var(--border);
+  border: none;
   border-radius: var(--radius-sm);
   background: transparent;
   transition: border-color 150ms ease, background 150ms ease;
@@ -413,16 +435,22 @@
 
 @media (hover: hover) {
   .ql-bucket:hover {
-    border-color: var(--border-hover);
     background: var(--page-background-hover);
+  }
+  .ql-bucket:hover .ql-dash rect {
+    stroke: var(--border-hover);
   }
 }
 
 .ql-bucket:focus-visible,
 .ql-bucket:active {
   outline: none;
-  border-color: var(--selected);
   background: var(--selected-tint);
+}
+
+.ql-bucket:focus-visible .ql-dash rect,
+.ql-bucket:active .ql-dash rect {
+  stroke: var(--selected);
 }
 
 .ql-bucket__label {
@@ -464,7 +492,7 @@
   gap: var(--space-sm);
   padding: var(--space-sm);
   /* Dashed receiver — same size as the match-pairs empty receiver. */
-  border: 1.5px dashed var(--border);
+  border: none;
   border-radius: var(--radius-sm);
 }
 

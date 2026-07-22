@@ -51,8 +51,9 @@ function QuizLab() {
       </div>
 
       <PhoneFrame onExit={() => navigate('/workspace')}>
-        {/* Remount on format change so each preview starts fresh. */}
-        <div key={format} className="ql-quizview">
+        {/* Remount on format change so each preview starts fresh. Dark theme to
+            match the Figma quiz designs. */}
+        <div key={format} className="ql-quizview" data-theme="dark">
           <QuizHeader label={activeLabel} used={1} total={3} />
           {renderFormat()}
         </div>

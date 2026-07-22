@@ -3,6 +3,7 @@ import type { SequencingQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
+import DashedBorder from '../components/DashedBorder'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
@@ -75,6 +76,7 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
         </div>
 
         <div className="ql-seq__answer">
+          <DashedBorder />
           {order.length === 0 ? (
             <p className="ql-seq__hint">Tap the steps below in the correct order</p>
           ) : (
