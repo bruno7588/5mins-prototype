@@ -142,8 +142,8 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
 }
 
 export const FORMAT_ORDER: { key: FormatKey; label: string }[] = [
-  { key: 'match-pairs', label: 'Match Pairs' },
-  { key: 'fill-blank', label: 'Fill Blank' },
+  { key: 'match-pairs', label: 'Match the pairs' },
+  { key: 'fill-blank', label: 'Fill in the blank' },
   { key: 'categorization', label: 'Categorize' },
   { key: 'sequencing', label: 'Sequence' },
 ]
