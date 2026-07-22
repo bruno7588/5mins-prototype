@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { SequencingQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
+import ResultBanner from '../components/ResultBanner'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
@@ -120,6 +121,7 @@ function Sequencing({ question }: { question: SequencingQuestion; formatKey: For
             ))}
           </div>
         )}
+        <ResultBanner status={status} />
       </div>
 
       <div className="ql-sr-only" role="status" aria-live="polite">

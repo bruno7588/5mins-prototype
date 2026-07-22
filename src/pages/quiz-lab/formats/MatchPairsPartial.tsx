@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { MatchPairsQuestion } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
+import ResultBanner from '../components/ResultBanner'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
@@ -165,6 +166,7 @@ function MatchPairsPartial({ question }: { question: MatchPairsQuestion }) {
             </div>
           </div>
         )}
+        <ResultBanner status={status} />
       </div>
 
       <div className="ql-sr-only" role="status" aria-live="polite">
