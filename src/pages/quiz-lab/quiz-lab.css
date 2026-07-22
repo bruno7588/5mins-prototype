@@ -357,12 +357,32 @@
 }
 
 .ql-bucket {
+  position: relative;
   padding: var(--space-sm);
   /* Dashed receiver — enabled by default; hover + active (tap) escalate. */
   border: 1.5px dashed var(--border);
   border-radius: var(--radius-m);
   background: transparent;
   transition: border-color 150ms ease, background 150ms ease;
+}
+
+/* Placement nudge: while an item is selected, a down-arrow bobs over each
+   receiver to signal "drop it in here". Pointer-events off so taps reach the
+   bucket; aria-hidden since the SR live-region already narrates selection. */
+.ql-bucket__nudge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: inline-flex;
+  transform: translate(-50%, -50%);
+  color: var(--selected);
+  pointer-events: none;
+  animation: ql-nudge 1s ease-in-out infinite;
+}
+
+@keyframes ql-nudge {
+  0%, 100% { transform: translate(-50%, calc(-50% - 3px)); }
+  50% { transform: translate(-50%, calc(-50% + 3px)); }
 }
 
 @media (hover: hover) {
@@ -516,8 +536,46 @@
 }
 
 /* ── Animations ──────────────────────────────────────────────────────────── */
+/* Grading feedback: a wrong item shakes left–right (a "no"); a right item
+   bounces up–down (a "yes"). Paired with the error/success cue on check. */
+@keyframes ql-shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-6px); }
+  30% { transform: translateX(5px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+}
+
+@keyframes ql-bounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-8px); }
+  50% { transform: translateY(0); }
+  68% { transform: translateY(-4px); }
+  84% { transform: translateY(0); }
+}
+
+.ql-token--incorrect,
+.ql-pair--incorrect,
+.ql-blank--incorrect {
+  animation: ql-shake 0.45s ease both;
+}
+
+.ql-token--correct,
+.ql-pair--correct,
+.ql-blank--correct {
+  animation: ql-bounce 0.5s ease both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .ql-token {
+  .ql-token,
+  .ql-token--incorrect,
+  .ql-pair--incorrect,
+  .ql-blank--incorrect,
+  .ql-token--correct,
+  .ql-pair--correct,
+  .ql-blank--correct,
+  .ql-bucket__nudge {
     animation: none !important;
     transition: none !important;
   }

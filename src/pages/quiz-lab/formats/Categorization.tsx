@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { ArrowDown } from 'iconsax-react'
 import type { CategorizationQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
@@ -117,6 +118,11 @@ function Categorization({ question }: { question: CategorizationQuestion; format
                   }
                 }}
               >
+                {selected !== null && status === 'idle' && (
+                  <span className="ql-bucket__nudge" aria-hidden="true">
+                    <ArrowDown size={24} color="var(--selected)" />
+                  </span>
+                )}
                 <div className="ql-bucket__items">
                   {itemsIn(cat.id).map((i) => (
                     <button
