@@ -690,6 +690,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  /* Own the surface so the header sits on the themed background too, not the
+     phone's default white. */
+  background: var(--page-background);
 }
 
 .ql-quizview > .ql-screen {
