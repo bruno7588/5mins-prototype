@@ -442,18 +442,22 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-full);
-  background: var(--selected);
+  /* Styled like a selected option item — solid amber fill + darker-amber lip. */
+  background: var(--secondary-500);
+  box-shadow: inset 0 -3px 0 0 var(--secondary-600);
   color: var(--neutral-800);
   font: 500 14px/1 'Poppins', sans-serif;
 }
 
 .ql-seq__index--correct {
   background: var(--success-500);
+  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
   color: var(--neutral-0);
 }
 
 .ql-seq__index--incorrect {
   background: var(--danger-500);
+  box-shadow: inset 0 -3px 0 0 var(--button-danger-hover);
   color: var(--neutral-0);
 }
 
