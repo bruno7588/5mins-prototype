@@ -325,24 +325,29 @@
 }
 
 .ql-blank--filled {
-  border-style: solid;
-  border-color: var(--secondary-500);
+  border: none;
   background: var(--secondary-500);
   box-shadow: inset 0 -3px 0 0 var(--secondary-600);
   color: var(--neutral-800);
 }
 
+/* Placed word stays clickable (tap to return it) — darken on hover. */
+@media (hover: hover) {
+  .ql-blank--filled:hover {
+    background: var(--secondary-600);
+    box-shadow: inset 0 -3px 0 0 var(--secondary-700);
+  }
+}
+
 .ql-blank--correct {
-  border-style: solid;
-  border-color: var(--success-500);
+  border: none;
   background: var(--success-500);
   box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
   color: var(--neutral-0);
 }
 
 .ql-blank--incorrect {
-  border-style: solid;
-  border-color: var(--danger-500);
+  border: none;
   background: var(--danger-500);
   box-shadow: inset 0 -3px 0 0 var(--button-danger-hover);
   color: var(--neutral-0);
