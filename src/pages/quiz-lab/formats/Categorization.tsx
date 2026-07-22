@@ -20,6 +20,8 @@ function Categorization({ question }: { question: CategorizationQuestion; format
     Object.fromEntries(question.items.map((_, i) => [i, null])),
   )
   const [selected, setSelected] = useState<number | null>(null)
+  // One-time placement hint: arrows show until the first drop, then stay hidden.
+  const [hasDropped, setHasDropped] = useState(false)
   const [status, setStatus] = useState<FeedbackStatus>('idle')
   const [announce, setAnnounce] = useState('')
 
@@ -38,6 +40,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
   function dropInto(catId: string) {
     if (status !== 'idle' || selected === null) return
     setPlacement((p) => ({ ...p, [selected]: catId }))
+    setHasDropped(true)
     const label = question.items[selected].label
     setSelected(null)
     setAnnounce(`Placed ${label} in ${question.categories.find((c) => c.id === catId)?.label}`)
@@ -63,6 +66,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
   function reset() {
     setPlacement(Object.fromEntries(question.items.map((_, i) => [i, null])))
     setSelected(null)
+    setHasDropped(false)
     setStatus('idle')
     setAnnounce('')
     setAttempt((a) => a + 1)
@@ -118,7 +122,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
                   }
                 }}
               >
-                {selected !== null && status === 'idle' && (
+                {selected !== null && status === 'idle' && !hasDropped && (
                   <span className="ql-bucket__nudge" aria-hidden="true">
                     <ArrowDown size={24} color="var(--selected)" />
                   </span>
