@@ -151,6 +151,7 @@ function SequencingDnd({ question }: { question: SequencingQuestion }) {
               add(dragging)
             }
             setOverReceiver(false)
+            setDragging(null)
           }}
         >
           <DashedBorder />
@@ -213,6 +214,7 @@ function SequencingDnd({ question }: { question: SequencingQuestion }) {
                 removeToBank()
               }
               setOverBank(false)
+              setDragging(null)
             }}
           >
             {bank.map((stepIndex) => (
