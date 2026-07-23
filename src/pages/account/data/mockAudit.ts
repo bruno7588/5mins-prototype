@@ -95,7 +95,9 @@ export const SETTINGS_TAB_COURSE_ID = 'building-company-culture'
  */
 export type AuditValue =
   | { kind: 'text'; text: string }
-  | { kind: 'list'; items: string[] }
+  // `emails` (parallel to `items`) is set when the list represents people, so the
+  // impacted-users drawer can show each name's email as supporting text.
+  | { kind: 'list'; items: string[]; emails?: string[] }
   | { kind: 'object'; label: string; sub?: string }
 
 /** One field-level change inside an operation. Rendered as one line on expand. */
@@ -132,6 +134,23 @@ export interface AuditOperation {
 
 const t = (text: string): AuditValue => ({ kind: 'text', text })
 const list = (items: string[]): AuditValue => ({ kind: 'list', items })
+
+/** Slugify a display name into a company email — "M. Silva" → m.silva@company.com. */
+const emailFor = (name: string): string =>
+  `${name
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '') // strip accents (Fernández → fernandez)
+    .toLowerCase()
+    .replace(/\./g, '')
+    .trim()
+    .replace(/\s+/g, '.')}@company.com`
+
+/** A people list-value — carries derived emails for the impacted-users drawer. */
+const people = (names: string[]): AuditValue => ({
+  kind: 'list',
+  items: names,
+  emails: names.map(emailFor),
+})
 
 // Newest first. Multi-change saves exist so the "Updated N course settings"
 // count and the multi-line expanded detail are both exercised.
@@ -375,7 +394,15 @@ export const auditOperations: AuditOperation[] = ([
       {
         settingKey: 'enrolled',
         setting: 'Enrolled 24 learners',
-        value: list(['Marco Rossi', 'Ana Ferreira', 'Liam Walsh', '+21 more']),
+        // Full impacted list — the row shows the first few + a "+N" chip that
+        // opens the drawer with every name.
+        value: people([
+          'Marco Rossi', 'Ana Ferreira', 'Liam Walsh', 'Sofia Almeida', 'Tomás Costa',
+          'Isabel Moreira', 'Hugo Santos', 'Clara Nunes', 'Diego Fernández', 'Beatriz Lopes',
+          'Nuno Carvalho', 'Elena Petrova', 'Rui Tavares', 'Mariana Silva', 'Pedro Gonçalves',
+          'Inês Dias', 'Bruno Machado', 'Carla Ribeiro', 'André Pinto', 'Teresa Cardoso',
+          'João Mendes', 'Patrícia Sousa', 'Filipe Ramos', 'Andreia Correia',
+        ]),
       },
     ],
   },
@@ -429,7 +456,7 @@ export const auditOperations: AuditOperation[] = ([
     timestamp: '2026-07-11T14:00:00Z',
     courseId: 'harassment-prevention',
     changes: [
-      { settingKey: 'unenrolled', setting: 'Removed 3 learners', value: list(['Alex Kim', 'Sam Doe', 'Jo Ray']) },
+      { settingKey: 'unenrolled', setting: 'Removed 3 learners', value: people(['Alex Kim', 'Sam Doe', 'Jo Ray']) },
     ],
   },
   {
@@ -442,7 +469,14 @@ export const auditOperations: AuditOperation[] = ([
     timestamp: '2026-07-10T13:20:00Z',
     target: '8 new hires (bulk)',
     changes: [
-      { settingKey: 'created', setting: 'Created 8 users', value: list(['G. Alves', 'M. Silva', 'R. Costa', '+5 more']) },
+      {
+        settingKey: 'created',
+        setting: 'Created 8 users',
+        value: people([
+          'G. Alves', 'M. Silva', 'R. Costa', 'L. Pereira',
+          'N. Ferreira', 'S. Martins', 'T. Rocha', 'V. Sousa',
+        ]),
+      },
     ],
   },
   {

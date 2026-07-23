@@ -476,6 +476,29 @@
   color: var(--text-secondary);
 }
 
+/* "+N" overflow chip on a list-value — compact count pill (matches .audit-op-more),
+   but interactive: opens the impacted-users drawer. */
+.audit-value-more {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px var(--space-sm); /* match .audit-value-pill height */
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--page-background-hover);
+  font: 500 14px/1.2 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+.audit-value-more:hover {
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+}
+.audit-value-more:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
 .audit-value--object {
   display: inline-flex;
   flex-direction: column;

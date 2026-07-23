@@ -5,6 +5,7 @@ import Collapse from '@/components/Collapse/Collapse'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import AuditMultiSelect from './AuditMultiSelect'
 import AuditDateFilter from './AuditDateFilter'
+import ImpactedUsersDrawer from './ImpactedUsersDrawer'
 import noActivityIllustration from '@/assets/empty-state-illustrations/no-activity.svg'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import {
@@ -102,16 +103,54 @@ function valueToPlain(v: AuditValue): string {
   return v.sub ? `${v.label} (${v.sub})` : v.label
 }
 
+// A long people list-value shows the first few names inline; the rest collapse
+// into a "+N" chip that opens the impacted-users drawer.
+const LIST_INLINE_MAX = 3
+
+export interface ImpactedUser {
+  name: string
+  email: string
+}
+
 /** Render a value in the expanded detail, handling its shape. */
-function AuditValueView({ value }: { value: AuditValue }) {
+function AuditValueView({
+  value,
+  label,
+  onShowAll,
+}: {
+  value: AuditValue
+  /** Operation label (e.g. "Enrolled 24 learners") — the drawer title. */
+  label: string
+  onShowAll: (title: string, users: ImpactedUser[]) => void
+}) {
   if (value.kind === 'list') {
+    // Only people lists (carry `emails`) collapse + open the drawer; generic
+    // lists (e.g. course categories) render every pill inline as before.
+    const isPeople = value.emails != null
+    const shown = isPeople ? value.items.slice(0, LIST_INLINE_MAX) : value.items
+    const overflow = value.items.length - shown.length
     return (
       <span className="audit-value audit-value--list">
-        {value.items.map((item) => (
+        {shown.map((item) => (
           <span key={item} className="audit-value-pill">
             {item}
           </span>
         ))}
+        {isPeople && overflow > 0 && (
+          <button
+            type="button"
+            className="audit-value-more"
+            aria-label={`Show all ${value.items.length} impacted`}
+            onClick={() =>
+              onShowAll(
+                label,
+                value.items.map((name, i) => ({ name, email: value.emails?.[i] ?? '' })),
+              )
+            }
+          >
+            +{overflow}
+          </button>
+        )}
       </span>
     )
   }
@@ -143,6 +182,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
   })
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [page, setPage] = useState(0)
+  // Impacted-users drawer, opened from a list-value's "+N" chip.
+  const [impacted, setImpacted] = useState<{ title: string; users: ImpactedUser[] } | null>(null)
   const { toasts, show } = useToast()
 
   // Any filter change resets to the first page so results stay in view.
@@ -388,7 +429,11 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
                               <div className="audit-change" key={c.settingKey}>
                                 <dt className="audit-change-setting">{c.setting}</dt>
                                 <dd className="audit-change-value">
-                                  <AuditValueView value={c.value} />
+                                  <AuditValueView
+                                    value={c.value}
+                                    label={c.setting}
+                                    onShowAll={(title, users) => setImpacted({ title, users })}
+                                  />
                                 </dd>
                               </div>
                             ))}
@@ -439,6 +484,13 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
           </div>
         </>
       )}
+
+      <ImpactedUsersDrawer
+        open={impacted !== null}
+        title={impacted?.title ?? ''}
+        users={impacted?.users ?? []}
+        onClose={() => setImpacted(null)}
+      />
 
       <ToastContainer toasts={toasts} />
     </div>
