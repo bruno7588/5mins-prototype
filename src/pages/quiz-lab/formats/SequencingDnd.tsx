@@ -217,6 +217,7 @@ function SequencingDnd({ question }: { question: SequencingQuestion }) {
               setDragging(null)
             }}
           >
+            {overBank && <DashedBorder />}
             {bank.map((stepIndex) => (
               <button
                 key={stepIndex}
@@ -232,7 +233,7 @@ function SequencingDnd({ question }: { question: SequencingQuestion }) {
                 {question.steps[stepIndex]}
               </button>
             ))}
-            {draggingPlaced && <p className="ql-seq__hint">Drop here to remove</p>}
+            {overBank && <p className="ql-seq__hint">Drop here</p>}
           </div>
         )}
         <ResultBanner status={status} />

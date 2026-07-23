@@ -620,15 +620,21 @@
 /* Bank doubles as a drop-to-remove zone: drag a placed row down into it to
    send the step back. Keeps a droppable min-height even when empty. */
 .ql-seqdnd__bank {
+  position: relative;
   min-height: 56px;
   padding: var(--space-sm);
   border-radius: var(--radius-sm);
-  transition: background 150ms ease, box-shadow 150ms ease;
+  transition: background 150ms ease;
 }
 
+/* Hovering a placed row over the options takes the same hover state as the
+   receiver: input-background fill + border-hover dashed stroke. */
 .ql-seqdnd__bank--drop {
-  background: var(--selected-tint);
-  box-shadow: inset 0 0 0 1.5px var(--selected);
+  background: var(--input-background);
+}
+
+.ql-seqdnd__bank--drop .ql-dash rect {
+  stroke: var(--border-hover);
 }
 
 /* Bank items double as drag sources (drag up into the receiver to add). */
@@ -645,9 +651,13 @@
   opacity: 0.5;
 }
 
-/* Receiver highlights amber while a bank item is dragged over it. */
+/* Receiver takes a hover state while a bank item is dragged over it. */
 .ql-seqdnd__receiver--drop {
-  background: var(--selected-tint);
+  background: var(--input-background);
+}
+
+.ql-seqdnd__receiver--drop .ql-dash rect {
+  stroke: var(--border-hover);
 }
 
 /* ── Footer: check / feedback ────────────────────────────────────────────── */
