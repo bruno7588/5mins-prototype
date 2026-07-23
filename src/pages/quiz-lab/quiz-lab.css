@@ -576,7 +576,7 @@
 
 .ql-seq__hint {
   margin: auto;
-  font: 400 12px/1.2 'Poppins', sans-serif;
+  font: 400 14px/1.4 'Poppins', sans-serif;
   color: var(--text-tertiary);
   text-align: center;
 }
@@ -604,11 +604,6 @@
   border-radius: var(--radius-sm);
 }
 
-/* Dragged row fades so the gap it leaves reads as the drop target. */
-.ql-seqdnd__slot--dragging {
-  opacity: 0.5;
-}
-
 .ql-seqdnd .ql-seq__slot .ql-token--selected {
   padding-right: var(--space-m);
 }
@@ -620,6 +615,39 @@
   align-items: center;
   color: var(--neutral-800);
   opacity: 0.6;
+}
+
+/* Bank doubles as a drop-to-remove zone: drag a placed row down into it to
+   send the step back. Keeps a droppable min-height even when empty. */
+.ql-seqdnd__bank {
+  min-height: 56px;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  transition: background 150ms ease, box-shadow 150ms ease;
+}
+
+.ql-seqdnd__bank--drop {
+  background: var(--selected-tint);
+  box-shadow: inset 0 0 0 1.5px var(--selected);
+}
+
+/* Bank items double as drag sources (drag up into the receiver to add). */
+.ql-seqdnd__bankitem {
+  cursor: grab;
+}
+
+.ql-seqdnd__bankitem:active {
+  cursor: grabbing;
+}
+
+.ql-seqdnd__slot--dragging,
+.ql-seqdnd__bankitem--dragging {
+  opacity: 0.5;
+}
+
+/* Receiver highlights amber while a bank item is dragged over it. */
+.ql-seqdnd__receiver--drop {
+  background: var(--selected-tint);
 }
 
 /* ── Footer: check / feedback ────────────────────────────────────────────── */
