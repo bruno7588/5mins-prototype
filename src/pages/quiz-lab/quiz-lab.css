@@ -587,6 +587,41 @@
   gap: var(--space-sm);
 }
 
+/* ── Sequence: drag-and-drop variant ─────────────────────────────────────────
+   All steps sit pre-placed; the whole row is the drag handle. Reuses the amber
+   "selected" token look; no remove control, so drop the reserved right pad. */
+.ql-seqdnd__slot {
+  cursor: grab;
+}
+
+.ql-seqdnd__slot:active {
+  cursor: grabbing;
+}
+
+.ql-seqdnd__slot:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Dragged row fades so the gap it leaves reads as the drop target. */
+.ql-seqdnd__slot--dragging {
+  opacity: 0.5;
+}
+
+.ql-seqdnd .ql-seq__slot .ql-token--selected {
+  padding-right: var(--space-m);
+}
+
+.ql-seqdnd__grip {
+  flex-shrink: 0;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  color: var(--neutral-800);
+  opacity: 0.6;
+}
+
 /* ── Footer: check / feedback ────────────────────────────────────────────── */
 .ql-footer {
   flex-shrink: 0;

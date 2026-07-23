@@ -7,7 +7,7 @@ import { FORMAT_ORDER, QUIZ_SAMPLES, type FormatKey } from './quizData'
 import MatchPairsPartial from './formats/MatchPairsPartial'
 import FillBlank from './formats/FillBlank'
 import Categorization from './formats/Categorization'
-import Sequencing from './formats/Sequencing'
+import SequencingDnd from './formats/SequencingDnd'
 import './quiz-lab.css'
 
 /**
@@ -32,7 +32,7 @@ function QuizLab() {
       case 'categorization':
         return <Categorization question={q} formatKey={format} />
       case 'sequencing':
-        return <Sequencing question={q} formatKey={format} />
+        return <SequencingDnd question={q} />
     }
   }
 
