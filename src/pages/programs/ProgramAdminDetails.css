@@ -233,23 +233,24 @@
   background: var(--primary-700);
 }
 
-/* DS Outlined-2 (buttons.md): neutral dark border at rest, cyan tint on interaction. */
+/* DS Outlined-2 (buttons.md): transparent + neutral hairline at rest;
+   brand cyan surfaces only on interaction — 24% (hover) → 8% (pressed) fill ladder. */
 .pad-btn--outlined-2 {
-  border: 1px solid var(--text-primary);
+  border: 1px solid var(--border);
   background: transparent;
   color: var(--text-primary);
 }
 
 .pad-btn--outlined-2:hover {
-  background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-600);
-  border-color: var(--primary-600);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 .pad-btn--outlined-2:active {
-  background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: rgba(0, 206, 230, 0.08);
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }
 
 /* ── Divider + tabs ─────────────────────────────────────────────────────── */

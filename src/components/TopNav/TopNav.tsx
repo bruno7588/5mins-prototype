@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Moon, Logout, Sun1, Mobile } from 'iconsax-react'
 import { useNavigate } from 'react-router-dom'
+import Button from '../Button/Button'
 import Tooltip from '../Tooltip/Tooltip'
 import { useTheme } from '../../hooks/useTheme'
 import './TopNav.css'
@@ -51,7 +52,7 @@ function TopNav() {
         </button>
       </div>
       <div className="topnav-right">
-        <button className="topnav-btn-outline" onClick={goToApp}>Exit Admin</button>
+        <Button variant="outlined-2" onClick={goToApp}>Exit Admin</Button>
         <Tooltip text={isDark ? 'Light mode' : 'Dark mode'} position="Bottom" alignment="End" icon={false}>
           <button
             className="topnav-icon-btn"

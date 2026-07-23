@@ -35,33 +35,6 @@
   gap: var(--space-s);
 }
 
-.topnav-btn-outline {
-  white-space: nowrap;
-  height: 41px;
-  padding: 8px 16px;
-  font-size: 14px;
-  line-height: 1.5;
-  font-weight: 700;
-  color: var(--text-primary);
-  border: 1px solid var(--text-primary);
-  border-radius: var(--radius-s);
-  background: transparent;
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.topnav-btn-outline:hover {
-  background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-600);
-  border-color: var(--primary-600);
-}
-
-.topnav-btn-outline:active {
-  background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
-}
-
 .topnav-icon-btn {
   display: flex;
   align-items: center;
