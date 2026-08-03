@@ -15,8 +15,8 @@ import {
   ShieldTick,
   Sms,
   User,
-  Video,
 } from 'iconsax-react'
+import CourseIcon from '../../../../components/icons/CourseIcon'
 import './FilterListbox.css'
 
 type IconType = ComponentType<{ size?: number; color?: string; variant?: 'Linear' | 'Bold' | 'Outline' }>
@@ -46,7 +46,7 @@ const FILTER_GROUPS: FilterGroup[] = [
   {
     section: 'Course',
     items: [
-      { id: 'course', title: 'Course', description: 'Filter by a specific course title', Icon: Video },
+      { id: 'course', title: 'Course', description: 'Filter by a specific course title', Icon: CourseIcon },
       { id: 'category', title: 'Category', description: 'Filter by course category (e.g. Compliance)', Icon: Category },
       { id: 'compliance-course', title: 'Compliance Course', description: 'Show only courses flagged as compliance training', Icon: ShieldTick },
     ],

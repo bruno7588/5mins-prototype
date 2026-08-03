@@ -11,6 +11,7 @@ import Table, { type Column } from '../../components/Table/Table'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import RowActionsMenu, { type RowMenuItem } from './components/RowActionsMenu/RowActionsMenu'
+import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterValue } from './components/CourseFilters/CourseFilters'
 import CsvIcon from '../../components/icons/CsvIcon'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
 import avatarBrenda from '../../assets/avatars/avatar-2.jpg'
@@ -105,6 +106,8 @@ function compareCourses(a: CourseProgress, b: CourseProgress, key: SortKey): num
 
 const SEGMENTS = 8
 
+const FILTER_KIND = Object.fromEntries(FILTER_DEFS.map((d) => [d.id, d.kind])) as Record<FilterId, FilterValue['kind']>
+
 /* Enrolment-level row actions — same set as the course enrolments page; each
    Course Progress row is an enrolment (this learner × this course). */
 const ROW_MENU_ITEMS: RowMenuItem[] = [
@@ -168,7 +171,29 @@ function UserProfile() {
   const [sortKey, setSortKey] = useState<SortKey>('startDate')
   const [sortDesc, setSortDesc] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [filterActive, setFilterActive] = useState<FilterId[]>([])
+  const [filterValues, setFilterValues] = useState<Record<string, FilterValue>>({})
+  const [filtersExpanded, setFiltersExpanded] = useState(false)
   const { toasts, show: showToast } = useToast()
+
+  const addFilter = (id: FilterId) => {
+    setFilterActive((prev) => (prev.includes(id) ? prev : [...prev, id]))
+    setFilterValues((prev) => ({ ...prev, [id]: prev[id] ?? defaultValueFor(FILTER_KIND[id]) }))
+    setFiltersExpanded(true)
+  }
+  const removeFilter = (id: FilterId) => {
+    setFilterActive((prev) => prev.filter((f) => f !== id))
+    setFilterValues((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
+  }
+  const setFilterValue = (id: FilterId, value: FilterValue) => setFilterValues((prev) => ({ ...prev, [id]: value }))
+  const clearFilters = () => {
+    setFilterActive([])
+    setFilterValues({})
+  }
 
   const handleRowAction = (key: string, row: CourseProgress) => {
     if (key === 'unenrol') {
@@ -193,10 +218,12 @@ function UserProfile() {
   }
 
   const rows = useMemo(() => {
-    const filtered = COURSES.filter((c) => c.course.toLowerCase().includes(query.trim().toLowerCase()))
+    const filtered = COURSES.filter(
+      (c) => c.course.toLowerCase().includes(query.trim().toLowerCase()) && matchesCourse(c, filterActive, filterValues),
+    )
     const sorted = [...filtered].sort((a, b) => compareCourses(a, b, sortKey))
     return sortDesc ? sorted.reverse() : sorted
-  }, [query, sortKey, sortDesc])
+  }, [query, sortKey, sortDesc, filterActive, filterValues])
 
   // Click a sortable header: same column flips direction, a new column starts ascending.
   const handleSort = (key: SortKey) => {
@@ -241,7 +268,7 @@ function UserProfile() {
     {
       key: 'course',
       header: 'Course',
-      width: '2 1 220px',
+      width: '2 0 240px',
       render: (row) => (
         <span className="up-course">
           <img className="tbl-thumb" src={row.thumb} alt="" />
@@ -377,6 +404,19 @@ function UserProfile() {
               Download List
             </Button>
           </div>
+
+          {/* Smart filters */}
+          <CourseFilters
+            courses={COURSES}
+            active={filterActive}
+            values={filterValues}
+            expanded={filtersExpanded}
+            onAdd={addFilter}
+            onRemove={removeFilter}
+            onSetValue={setFilterValue}
+            onClear={clearFilters}
+            onToggleExpanded={() => setFiltersExpanded((e) => !e)}
+          />
 
           {/* Course Progress table */}
           <Table

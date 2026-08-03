@@ -139,6 +139,15 @@
   max-width: 100%;
 }
 
+/* The Course column has a hard 240px min (no shrink), so the row can exceed the
+   viewport. Size the table to its content (but at least 100%) so the row border
+   wraps every column — including the trailing actions cell — and the overflow
+   scrolls horizontally instead of spilling past the border. */
+.up-page .tbl {
+  width: max-content;
+  min-width: 100%;
+}
+
 /* ── Table cell helpers (DS classes live in Table.css; these are page-local) ── */
 .up-course {
   display: flex;
