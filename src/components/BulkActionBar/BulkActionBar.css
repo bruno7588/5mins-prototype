@@ -1,0 +1,124 @@
+/* Fixed layer that centres the pill (offset for the 240px side panel) */
+.bulk-bar-layer {
+  position: fixed;
+  bottom: var(--space-l);
+  left: 240px;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* The pill — same dark surface as the tooltip, so it flips per mode */
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 12px;
+  background: var(--tooltip-background);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(15, 16, 20, 0.24), 0 2px 8px rgba(15, 16, 20, 0.12);
+  pointer-events: auto;
+  animation: bulk-bar-slide-up 250ms ease;
+}
+
+@keyframes bulk-bar-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bulk-bar { animation: none; }
+}
+
+.bulk-bar-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--neutral-700);
+  color: var(--neutral-200);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+  flex-shrink: 0;
+}
+
+.bulk-bar-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--neutral-0);
+}
+
+.bulk-bar-count {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--neutral-200);
+  white-space: nowrap;
+}
+
+.bulk-bar-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.16);
+  flex-shrink: 0;
+}
+
+.bulk-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+/* ── Action buttons (children) ── */
+.bulk-bar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: 8px var(--space-sm);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.bulk-bar-btn--primary {
+  background: var(--primary-600);
+  color: var(--neutral-0);
+}
+.bulk-bar-btn--primary:hover { background: var(--primary-700); }
+
+.bulk-bar-btn--danger {
+  background: var(--danger-500);
+  color: var(--neutral-0);
+}
+.bulk-bar-btn--danger:hover { background: var(--danger-600); }
+
+/* Outlined action / dropdown trigger — follows dropdown.md states: neutral
+   hairline when Enabled, brighter on Hover, amber only when open (Active). */
+.bulk-bar-btn--outlined {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.24);
+  color: var(--neutral-0);
+}
+.bulk-bar-btn--outlined:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.bulk-bar-btn--outlined[aria-expanded='true'] {
+  border-color: var(--secondary-500);
+}
+
+/* Chevron points down when closed, up when the menu is open */
+.bulk-bar-chevron {
+  transition: transform 150ms ease;
+}
+.bulk-bar-btn--outlined[aria-expanded='true'] .bulk-bar-chevron {
+  transform: rotate(180deg);
+}

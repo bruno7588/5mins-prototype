@@ -147,16 +147,27 @@
   min-width: 0;
 }
 
-.up-th,
 .up-th-sort {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
 }
 
+/* Arrow: hidden by default (space reserved so hover doesn't shift the header),
+   revealed on hover of a sortable header, always shown on the active column. */
 .up-sort {
   color: var(--text-tertiary);
-  transition: transform 150ms ease;
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.tbl-head-cell.is-sortable:hover .up-sort {
+  opacity: 1;
+}
+
+.up-sort--active {
+  opacity: 1;
 }
 
 .up-sort--desc {

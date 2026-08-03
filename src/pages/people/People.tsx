@@ -26,6 +26,7 @@ import avatarCarlos from '../../assets/avatars/avatar-4.jpg'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
 import Checkbox from '../../components/Checkbox/Checkbox'
+import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import Tooltip from '../../components/Tooltip/Tooltip'
@@ -794,54 +795,32 @@ function People() {
 
       {/* ═══ Bulk action bar — Active People ═══ */}
       {selectedIds.size > 0 && !isDeactivatedTab && (
-        <div className="people-bulk-bar">
+        <BulkActionBar count={selectedIds.size} onClear={() => setSelectedIds(new Set())}>
           <button
-            className="people-bulk-bar-close"
-            aria-label="Clear selection"
-            onClick={() => setSelectedIds(new Set())}
+            className="bulk-bar-btn bulk-bar-btn--danger"
+            onClick={() => setModal({ type: 'deactivate-bulk', persons: selectedPeoplePersons })}
           >
-            <Add size={18} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
+            Deactivate {selectedIds.size} {selectedIds.size === 1 ? 'User' : 'Users'}
           </button>
-          <span className="people-bulk-bar-count">{selectedIds.size} selected</span>
-          <div className="people-bulk-bar-divider" />
-          <div className="people-bulk-bar-actions">
-            <button
-              className="people-bulk-bar-btn people-bulk-bar-btn--danger"
-              onClick={() => setModal({ type: 'deactivate-bulk', persons: selectedPeoplePersons })}
-            >
-              Deactivate {selectedIds.size} {selectedIds.size === 1 ? 'User' : 'Users'}
-            </button>
-          </div>
-        </div>
+        </BulkActionBar>
       )}
 
       {/* ═══ Bulk action bar — Deactivated ═══ */}
       {selectedIds.size > 0 && isDeactivatedTab && (
-        <div className="people-bulk-bar">
+        <BulkActionBar count={selectedIds.size} onClear={() => setSelectedIds(new Set())}>
           <button
-            className="people-bulk-bar-close"
-            aria-label="Clear selection"
-            onClick={() => setSelectedIds(new Set())}
+            className="bulk-bar-btn bulk-bar-btn--primary"
+            onClick={() => setModal({ type: 'reactivate-bulk', persons: selectedPersons })}
           >
-            <Add size={18} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
+            Reactivate {selectedIds.size} {selectedIds.size === 1 ? 'User' : 'Users'}
           </button>
-          <span className="people-bulk-bar-count">{selectedIds.size} selected</span>
-          <div className="people-bulk-bar-divider" />
-          <div className="people-bulk-bar-actions">
-            <button
-              className="people-bulk-bar-btn people-bulk-bar-btn--primary"
-              onClick={() => setModal({ type: 'reactivate-bulk', persons: selectedPersons })}
-            >
-              Reactivate {selectedIds.size} {selectedIds.size === 1 ? 'User' : 'Users'}
-            </button>
-            <button
-              className="people-bulk-bar-btn people-bulk-bar-btn--danger"
-              onClick={() => setModal({ type: 'delete-bulk', persons: selectedPersons })}
-            >
-              Delete {selectedIds.size} Permanently
-            </button>
-          </div>
-        </div>
+          <button
+            className="bulk-bar-btn bulk-bar-btn--danger"
+            onClick={() => setModal({ type: 'delete-bulk', persons: selectedPersons })}
+          >
+            Delete {selectedIds.size} Permanently
+          </button>
+        </BulkActionBar>
       )}
 
       {/* ═══ Modals ═══ */}

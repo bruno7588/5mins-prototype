@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown2 } from 'iconsax-react'
+import { ArrowDown, ArrowDown2, TaskSquare, Calendar, CalendarEdit, RotateLeft, Refresh, Repeat, ProfileRemove } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -8,7 +8,9 @@ import Button from '../../components/Button/Button'
 import Search from '../../components/Search/Search'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Table, { type Column } from '../../components/Table/Table'
-import MoreIcon from '../../components/icons/MoreIcon'
+import ToastContainer, { useToast } from '../../components/Toast/Toast'
+import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
+import RowActionsMenu, { type RowMenuItem } from './components/RowActionsMenu/RowActionsMenu'
 import CsvIcon from '../../components/icons/CsvIcon'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
 import avatarBrenda from '../../assets/avatars/avatar-2.jpg'
@@ -78,7 +80,58 @@ const STATUS_BADGE: Record<Status, 'success' | 'informative' | 'in-progress' | '
   Overdue: 'error',
 }
 
+type SortKey = 'startDate' | 'dueDate' | 'progress' | 'score' | 'status' | 'completionDate'
+
+const STATUS_ORDER: Record<Status, number> = {
+  'Not Started': 0,
+  'In Progress': 1,
+  Overdue: 2,
+  Completed: 3,
+}
+
+function compareCourses(a: CourseProgress, b: CourseProgress, key: SortKey): number {
+  switch (key) {
+    case 'progress':
+      return a.progress - b.progress
+    case 'score':
+      return (a.score ?? -1) - (b.score ?? -1)
+    case 'status':
+      return STATUS_ORDER[a.status] - STATUS_ORDER[b.status]
+    default:
+      // date columns — ISO strings sort lexicographically; nulls sort first
+      return (a[key] ?? '').localeCompare(b[key] ?? '')
+  }
+}
+
 const SEGMENTS = 8
+
+/* Enrolment-level row actions — same set as the course enrolments page; each
+   Course Progress row is an enrolment (this learner × this course). */
+const ROW_MENU_ITEMS: RowMenuItem[] = [
+  { key: 'view-progress', label: 'View progress', supporting: "See learner's lesson and quiz progress", icon: <TaskSquare size={20} color="currentColor" variant="Linear" /> },
+  { key: 'extend-due-date', label: 'Extend due date', supporting: 'Give more time to complete the course', icon: <Calendar size={20} color="currentColor" variant="Linear" /> },
+  { key: 'edit-start-date', label: 'Edit start date', supporting: 'Change when the enrolment begins', icon: <CalendarEdit size={20} color="currentColor" variant="Linear" /> },
+  { key: 'edit-repeat-rules', label: 'Edit repeat rules', supporting: 'How often this course repeats', icon: <RotateLeft size={20} color="currentColor" variant="Linear" /> },
+  { key: 'give-another-attempt', label: 'Give another attempt', supporting: 'Reset progress and start a new attempt', icon: <Refresh size={20} color="currentColor" variant="Linear" /> },
+  { key: 'restart-enrolment', label: 'Restart enrolment', supporting: 'Start a new enrolment with new dates', icon: <Repeat size={20} color="currentColor" variant="Linear" /> },
+  { key: 'unenrol', label: 'Unenrol', supporting: 'Remove this learner from the course', icon: <ProfileRemove size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
+]
+
+const ROW_ACTION_LABEL: Record<string, string> = {
+  'view-progress': 'View progress',
+  'extend-due-date': 'Extend due date',
+  'edit-start-date': 'Edit start date',
+  'edit-repeat-rules': 'Edit repeat rules',
+  'give-another-attempt': 'Give another attempt',
+  'restart-enrolment': 'Restart enrolment',
+  unenrol: 'Unenrol',
+}
+
+/* Bulk menu = the enrolment actions that apply to many rows at once
+   (no "View progress" / "Edit repeat rules" — those are single-row). */
+const BULK_KEYS = ['extend-due-date', 'edit-start-date', 'give-another-attempt', 'restart-enrolment', 'unenrol']
+// Bulk menu items are single-line (no supporting text), per the Figma.
+const BULK_MENU_ITEMS = ROW_MENU_ITEMS.filter((i) => BULK_KEYS.includes(i.key)).map((i) => ({ ...i, supporting: undefined }))
 
 function DateCell({ value }: { value: string | null }) {
   if (!value) return <span className="up-muted">–</span>
@@ -112,14 +165,58 @@ function UserProfile() {
 
   const [activeTab, setActiveTab] = useState<Tab>('Course Progress')
   const [query, setQuery] = useState('')
+  const [sortKey, setSortKey] = useState<SortKey>('startDate')
   const [sortDesc, setSortDesc] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
+  const { toasts, show: showToast } = useToast()
+
+  const handleRowAction = (key: string, row: CourseProgress) => {
+    if (key === 'unenrol') {
+      showToast('warning', `${person.name} would be unenrolled from “${row.course}”`)
+      return
+    }
+    showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} — coming soon`)
+  }
+
+  const handleBulkAction = (key: string) => {
+    const n = selected.size
+    if (key === 'unenrol') {
+      showToast('warning', `${n} ${n === 1 ? 'enrolment' : 'enrolments'} would be unenrolled`)
+      return
+    }
+    showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} — ${n} selected — coming soon`)
+  }
+
+  const sendReminder = () => {
+    const n = selected.size
+    showToast('success', `Reminder sent for ${n} ${n === 1 ? 'course' : 'courses'}`)
+  }
 
   const rows = useMemo(() => {
     const filtered = COURSES.filter((c) => c.course.toLowerCase().includes(query.trim().toLowerCase()))
-    const sorted = [...filtered].sort((a, b) => a.startDate.localeCompare(b.startDate))
+    const sorted = [...filtered].sort((a, b) => compareCourses(a, b, sortKey))
     return sortDesc ? sorted.reverse() : sorted
-  }, [query, sortDesc])
+  }, [query, sortKey, sortDesc])
+
+  // Click a sortable header: same column flips direction, a new column starts ascending.
+  const handleSort = (key: SortKey) => {
+    if (key === sortKey) setSortDesc((s) => !s)
+    else {
+      setSortKey(key)
+      setSortDesc(false)
+    }
+  }
+
+  // Sort arrow: always shown on the active column (rotates for direction),
+  // revealed on hover for the other sortable columns (see .up-sort in the CSS).
+  const sortArrow = (key: SortKey) => (
+    <ArrowDown
+      size={16}
+      color="currentColor"
+      variant="Linear"
+      className={`up-sort${sortKey === key ? ' up-sort--active' : ''}${sortKey === key && sortDesc ? ' up-sort--desc' : ''}`}
+    />
+  )
 
   const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.id))
 
@@ -156,47 +253,69 @@ function UserProfile() {
     },
     {
       key: 'startDate',
-      header: (
-        <span className="up-th-sort">
-          Start Date
-          <ArrowDown2 size={16} color="currentColor" variant="Linear" className={`up-sort${sortDesc ? ' up-sort--desc' : ''}`} />
-        </span>
-      ),
+      header: <span className="up-th-sort">Start Date{sortArrow('startDate')}</span>,
       sortable: true,
       width: '0 0 108px',
       render: (row) => <DateCell value={row.startDate} />,
     },
-    { key: 'dueDate', header: 'Due Date', width: '0 0 108px', render: (row) => <DateCell value={row.dueDate} /> },
+    {
+      key: 'dueDate',
+      header: <span className="up-th-sort">Due Date{sortArrow('dueDate')}</span>,
+      sortable: true,
+      width: '0 0 108px',
+      render: (row) => <DateCell value={row.dueDate} />,
+    },
     {
       key: 'progress',
-      header: <span className="up-th">Progress<Tooltip position="Top" text="Share of the course the learner has completed." /></span>,
-      width: '0 0 150px',
+      header: (
+        <span className="up-th-sort">
+          Progress
+          <Tooltip position="Top" text="Share of the course the learner has completed." />
+          {sortArrow('progress')}
+        </span>
+      ),
+      sortable: true,
+      width: '0 0 156px',
       render: (row) => <ProgressCell value={row.progress} />,
     },
     {
       key: 'score',
-      header: <span className="up-th">Score<Tooltip position="Top" text="Latest quiz or assessment score for this course." /></span>,
-      width: '0 0 84px',
+      header: (
+        <span className="up-th-sort">
+          Score
+          <Tooltip position="Top" text="Latest quiz or assessment score for this course." />
+          {sortArrow('score')}
+        </span>
+      ),
+      sortable: true,
+      width: '0 0 100px',
       render: (row) => (row.score != null ? `${row.score}%` : <span className="up-muted">–</span>),
     },
     {
       key: 'status',
-      header: 'Status',
+      header: <span className="up-th-sort">Status{sortArrow('status')}</span>,
+      sortable: true,
       width: '0 0 140px',
       render: (row) => <Badge type={STATUS_BADGE[row.status]} label={row.status} icon={false} />,
     },
-    { key: 'completionDate', header: 'Completion Date', width: '0 0 120px', render: (row) => <DateCell value={row.completionDate} /> },
+    {
+      key: 'completionDate',
+      header: <span className="up-th-sort">Completion Date{sortArrow('completionDate')}</span>,
+      sortable: true,
+      width: '0 0 150px',
+      render: (row) => <DateCell value={row.completionDate} />,
+    },
     {
       key: 'actions',
       header: '',
       width: '0 0 52px',
       align: 'center',
-      render: () => (
-        <span className="tbl-action is-disabled">
-          <span className="icon-btn">
-            <MoreIcon size={20} color="var(--text-tertiary)" />
-          </span>
-        </span>
+      render: (row) => (
+        <RowActionsMenu
+          items={ROW_MENU_ITEMS}
+          onSelect={(key) => handleRowAction(key, row)}
+          ariaLabel={`Actions for ${row.course}`}
+        />
       ),
     },
   ]
@@ -269,11 +388,30 @@ function UserProfile() {
             allSelected={allSelected}
             onToggleRow={toggleRow}
             onToggleAll={toggleAll}
-            onSort={() => setSortDesc((s) => !s)}
+            onSort={(key) => handleSort(key as SortKey)}
             pagination={{ from: rows.length ? 1 : 0, to: rows.length, total: rows.length }}
           />
         </div>
       </main>
+
+      {selected.size > 0 && (
+        <BulkActionBar count={selected.size} onClear={() => setSelected(new Set())}>
+          <button type="button" className="bulk-bar-btn bulk-bar-btn--primary" onClick={sendReminder}>
+            Send Reminder
+          </button>
+          <RowActionsMenu
+            items={BULK_MENU_ITEMS}
+            onSelect={handleBulkAction}
+            placement="top"
+            caret={false}
+            ariaLabel="Bulk actions"
+            triggerClassName="bulk-bar-btn bulk-bar-btn--outlined"
+            triggerContent={<>Actions<ArrowDown2 size={16} color="currentColor" variant="Linear" className="bulk-bar-chevron" /></>}
+          />
+        </BulkActionBar>
+      )}
+
+      <ToastContainer toasts={toasts} />
     </div>
   )
 }

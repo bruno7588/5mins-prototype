@@ -1,0 +1,128 @@
+/* Row kebab trigger */
+.ram-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  color: var(--text-tertiary);
+  transition: background 150ms ease;
+}
+
+.ram-trigger:hover,
+.ram-trigger[aria-expanded='true'] {
+  background: var(--input-background-hover);
+}
+
+/* Menu surface — DS listbox (listbox.md) */
+.ram-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  max-width: 340px;
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); /* 12px */
+  padding: var(--space-s); /* 8px */
+  box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12); /* Shadow L */
+  animation: ram-in 120ms ease;
+}
+
+@keyframes ram-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ram-menu { animation: none; }
+}
+
+/* Caret — a rotated square sitting over the border at the top-right (menu below
+   trigger) or bottom-right (menu above trigger). */
+.ram-caret {
+  position: absolute;
+  right: 16px;
+  width: 11px;
+  height: 11px;
+  background: var(--cards-background);
+}
+
+.ram-caret--top {
+  top: -6px;
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+
+.ram-caret--bottom {
+  bottom: -6px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+
+/* Items — icon left + two-line (title + supporting), per the DS slot matrix */
+.ram-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s); /* 8px */
+  width: 100%;
+  text-align: left;
+  padding: var(--space-s) var(--space-sm); /* 8px 12px */
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-s); /* 8px */
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.ram-item:hover {
+  background: var(--cards-background-hover);
+}
+
+.ram-item:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: -2px;
+}
+
+.ram-item-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--text-primary);
+}
+
+.ram-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ram-item-title {
+  font: 500 14px/1.4 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.ram-item-supporting {
+  font: 400 14px/1.4 'Poppins', sans-serif;
+  color: var(--text-secondary);
+}
+
+/* Danger (destructive) item — Unenrol */
+.ram-item--danger .ram-item-icon,
+.ram-item--danger .ram-item-title,
+.ram-item--danger .ram-item-supporting {
+  color: var(--text-error);
+}
+
+/* Section divider */
+.ram-divider {
+  height: 1px;
+  margin: var(--space-xs) var(--space-xs);
+  background: var(--border);
+}
