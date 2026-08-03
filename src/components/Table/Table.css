@@ -42,8 +42,9 @@
   max-height: none;
   margin-top: -1px;
   margin-bottom: -1px;
-  /* Match the row card, not the page, so the frozen column reads as part of the row. */
-  background: var(--cards-background);
+  /* Rows are transparent (they show the page), so the frozen column masks with
+     the same --page-background — no colour change vs the other columns. */
+  background: var(--page-background);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
@@ -53,18 +54,18 @@
 .tbl-scroll--scrolled .tbl-row:hover .tbl-cell.is-sticky,
 .tbl-scroll--scrolled .tbl-row.is-hover .tbl-cell.is-sticky {
   background: linear-gradient(var(--cards-background-hover), var(--cards-background-hover)),
-    var(--cards-background);
+    var(--page-background);
 }
 
 .tbl-scroll--scrolled .tbl-row.is-selected .tbl-cell.is-sticky {
-  background: linear-gradient(var(--selected-tint), var(--selected-tint)), var(--cards-background);
+  background: linear-gradient(var(--selected-tint), var(--selected-tint)), var(--page-background);
   border-color: var(--selected-tint);
 }
 
 .tbl-scroll--scrolled .tbl-row.is-selected:hover .tbl-cell.is-sticky,
 .tbl-scroll--scrolled .tbl-row.is-selected.is-hover .tbl-cell.is-sticky {
   background: linear-gradient(var(--selected-tint-hover), var(--selected-tint-hover)),
-    var(--cards-background);
+    var(--page-background);
   border-color: var(--selected-tint-hover);
 }
 

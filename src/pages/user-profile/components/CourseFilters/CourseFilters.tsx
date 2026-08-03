@@ -92,19 +92,56 @@ interface CourseFiltersProps {
   onToggleExpanded: () => void
 }
 
-function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onSetValue, onClear, onToggleExpanded }: CourseFiltersProps) {
-  const [addOpen, setAddOpen] = useState(false)
-  const addRef = useRef<HTMLDivElement>(null)
+/* Self-contained Add-Filter picker. It owns its open state + ref so it can be
+   rendered in more than one place (collapsed header and expanded body) without
+   the instances sharing a ref — sharing one broke click-to-add. */
+function AddFilterMenu({ available, onSelect }: { available: FilterDef[]; onSelect: (id: FilterId) => void }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!addOpen) return
+    if (!open) return
     const onDown = (e: MouseEvent) => {
-      if (addRef.current && !addRef.current.contains(e.target as Node)) setAddOpen(false)
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
     document.addEventListener('mousedown', onDown)
     return () => document.removeEventListener('mousedown', onDown)
-  }, [addOpen])
+  }, [open])
 
+  return (
+    <div className="up-filter-add-wrap" ref={ref}>
+      <button type="button" className="up-filter-add" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        Add Filter
+        <Add size={20} color="var(--primary-600)" variant="Linear" />
+      </button>
+      {open && (
+        <div className="up-filter-add-menu" role="listbox">
+          {available.length === 0 ? (
+            <div className="up-filter-add-empty">All filters added</div>
+          ) : (
+            available.map((d) => (
+              <button
+                key={d.id}
+                type="button"
+                role="option"
+                className="up-filter-add-item"
+                onClick={() => {
+                  onSelect(d.id)
+                  setOpen(false)
+                }}
+              >
+                <span className="up-filter-add-icon">{d.renderIcon(20)}</span>
+                {d.label}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onSetValue, onClear, onToggleExpanded }: CourseFiltersProps) {
   // Options for the multi-select filters, derived from the data.
   const optionsById = useMemo(() => {
     const uniq = (arr: string[]) => [...new Set(arr)]
@@ -116,11 +153,6 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
   }, [courses])
 
   const available = FILTER_DEFS.filter((d) => !active.includes(d.id))
-
-  const addFilter = (id: FilterId) => {
-    onAdd(id)
-    setAddOpen(false)
-  }
 
   // Short label for a collapsed pill: the chosen value(s) if any, else the filter name.
   const pillLabel = (id: FilterId): string => {
@@ -157,39 +189,19 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
         </div>
       )
     }
-    const calIcon = <Calendar size={20} color="var(--text-tertiary)" variant="Linear" />
+    // The native date-picker indicator is hidden in CSS; show the iconsax
+    // Calendar (text-primary) instead. The invisible native indicator still
+    // covers the field so clicking it opens the picker.
+    const calIcon = <Calendar size={20} color="var(--text-primary)" variant="Linear" />
     return (
       <div className="up-filter-control-inline">
         <span className="up-filter-connector">between</span>
-        <InputField type="date" className="up-filter-date" placeholder="dd/mm/yyyy" value={v.from} iconRight={calIcon} onChange={(e) => onSetValue(def.id, { kind: 'date', from: e.target.value, to: v.to })} />
+        <InputField type="date" className="up-filter-date" value={v.from} iconRight={calIcon} onChange={(e) => onSetValue(def.id, { kind: 'date', from: e.target.value, to: v.to })} />
         <span className="up-filter-connector">and</span>
-        <InputField type="date" className="up-filter-date" placeholder="dd/mm/yyyy" value={v.to} iconRight={calIcon} onChange={(e) => onSetValue(def.id, { kind: 'date', from: v.from, to: e.target.value })} />
+        <InputField type="date" className="up-filter-date" value={v.to} iconRight={calIcon} onChange={(e) => onSetValue(def.id, { kind: 'date', from: v.from, to: e.target.value })} />
       </div>
     )
   }
-
-  const addButton = (
-    <div className="up-filter-add-wrap" ref={addRef}>
-      <button type="button" className="up-filter-add" aria-haspopup="listbox" aria-expanded={addOpen} onClick={() => setAddOpen((o) => !o)}>
-        Add Filter
-        <Add size={20} color="var(--primary-600)" variant="Linear" />
-      </button>
-      {addOpen && (
-        <div className="up-filter-add-menu" role="listbox">
-          {available.length === 0 ? (
-            <div className="up-filter-add-empty">All filters added</div>
-          ) : (
-            available.map((d) => (
-              <button key={d.id} type="button" role="option" className="up-filter-add-item" onClick={() => addFilter(d.id)}>
-                <span className="up-filter-add-icon">{d.renderIcon(20)}</span>
-                {d.label}
-              </button>
-            ))
-          )}
-        </div>
-      )}
-    </div>
-  )
 
   return (
     <div className="up-filters">
@@ -202,7 +214,7 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
 
         <div className={`up-filters-collapsed${expanded ? ' up-filters-collapsed--hidden' : ''}`}>
           {active.length === 0 ? (
-            addButton
+            <AddFilterMenu available={available} onSelect={onAdd} />
           ) : (
             <div className="up-filters-pills">
               {visiblePills.map((id) => (
@@ -246,7 +258,7 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
             )
           })}
           <div className="up-filters-actions">
-            {addButton}
+            <AddFilterMenu available={available} onSelect={onAdd} />
             <button type="button" className="up-filters-clear" disabled={active.length === 0} onClick={onClear}>
               Clear All
             </button>

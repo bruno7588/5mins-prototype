@@ -115,20 +115,28 @@
 
 .up-filter-row {
   display: flex;
-  align-items: center;
+  /* Align icon/label/remove to the control's first line, not the tall block's
+     centre — so a multi-select's chips wrap below and stay aligned. */
+  align-items: flex-start;
   gap: var(--space-s);
   flex-wrap: wrap;
+  min-height: 37px;
 }
 
 .up-filter-row-icon {
   display: inline-flex;
+  align-items: center;
+  min-height: 37px;
   color: var(--text-primary);
   flex-shrink: 0;
 }
 
 .up-filter-row-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 37px;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
@@ -140,6 +148,9 @@
 }
 
 .up-filter-connector {
+  display: inline-flex;
+  align-items: center;
+  min-height: 37px;
   font-size: 14px;
   color: var(--text-tertiary);
 }
@@ -148,13 +159,23 @@
   width: 160px;
 }
 
+/* Hide the native date-picker indicator (we show the iconsax Calendar via
+   iconRight); keep it covering the field so it stays clickable to open. */
+.up-filter-date input[type='date']::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
 .up-filter-row-remove {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 28px;
-  height: 28px;
-  margin-left: auto;
+  min-height: 37px;
   border: none;
   background: transparent;
   border-radius: var(--radius-full);
@@ -182,7 +203,7 @@
   font-weight: 500;
   color: var(--text-secondary);
 }
-.up-filters-clear:hover:not(:disabled) { color: var(--text-primary); }
+.up-filters-clear:hover:not(:disabled) { color: var(--text-error); }
 .up-filters-clear:disabled { color: var(--text-disabled); cursor: not-allowed; }
 
 /* Add Filter button + dropdown */
