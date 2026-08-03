@@ -75,12 +75,12 @@
   border-color: var(--text-button-hover);
 }
 .ds-btn--outlined:active:not(:disabled) {
-  background: rgba(0, 206, 230, 0.08);
+  background: var(--button-outline-fill-pressed);
   color: var(--primary-button-background-pressed);
   border-color: var(--primary-button-background-pressed);
 }
 .ds-btn--outlined:disabled {
-  background: rgba(101, 107, 124, 0.16);
+  background: var(--button-outline-fill-disabled);
   color: var(--text-disabled);
   border-color: var(--text-disabled);
 }
@@ -97,7 +97,7 @@
   border-color: var(--text-button-hover);
 }
 .ds-btn--outlined-2:active:not(:disabled) {
-  background: rgba(0, 206, 230, 0.08);
+  background: var(--button-outline-fill-pressed);
   color: var(--primary-button-background-pressed);
   border-color: var(--primary-button-background-pressed);
 }

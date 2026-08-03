@@ -24,7 +24,7 @@ function EditColumnsPopover({ columns, visibleKeys, onToggle, onReset, onClose }
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [onClose])
 
-  const customCols = columns.filter(c => c.isCustomField)
+  const toggleableCols = columns.filter(c => !c.locked)
 
   return (
     <div className="edit-cols-popover" ref={ref}>
@@ -37,7 +37,7 @@ function EditColumnsPopover({ columns, visibleKeys, onToggle, onReset, onClose }
       <div className="edit-cols-divider" />
 
       <div className="edit-cols-section">
-        {customCols.map(col => (
+        {toggleableCols.map(col => (
           <button
             key={col.key}
             className="edit-cols-item"

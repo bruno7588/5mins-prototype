@@ -172,7 +172,7 @@
 .people-actions-right {
   display: flex;
   align-items: center;
-  gap: var(--space-s);
+  gap: var(--space-m);
 }
 
 .people-edit-cols-wrapper {
@@ -183,11 +183,11 @@
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-s);
   padding: var(--space-s) var(--space-m);
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);
   cursor: pointer;
@@ -197,26 +197,6 @@
 .people-edit-cols-btn:hover {
   color: var(--text-primary);
   border-color: var(--border-hover);
-}
-
-.people-download-btn {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-s) var(--space-m);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  border: 1px solid var(--text-primary);
-  border-radius: var(--radius-s);
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.people-download-btn:hover {
-  color: var(--primary-700);
-  border-color: var(--primary-700);
 }
 
 /* ===== Actions left group ===== */
@@ -422,6 +402,12 @@
   flex-shrink: 1;
 }
 
+.people-table-cell--reports {
+  width: 150px;
+  min-width: 100px;
+  flex-shrink: 1;
+}
+
 .people-table-cell--date {
   width: 130px;
   flex-shrink: 0;
@@ -593,11 +579,19 @@
   flex-shrink: 0;
 }
 
+.people-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
 .people-name-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
+  cursor: pointer;
 }
 
 .people-name {
@@ -606,6 +600,7 @@
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 150ms ease;
 }
 
 .people-email {
@@ -614,6 +609,12 @@
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 150ms ease;
+}
+
+.people-name-info:hover .people-name,
+.people-name-info:hover .people-email {
+  color: var(--text-button-hover);
 }
 
 /* Status badges */

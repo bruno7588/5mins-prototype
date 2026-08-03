@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   SearchNormal1,
   Add,
@@ -15,7 +16,13 @@ import {
   ArrowUp2,
   RowVertical,
   Lock,
+  ImportCurve,
 } from 'iconsax-react'
+import Button from '../../components/Button/Button'
+import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
+import avatarBrenda from '../../assets/avatars/avatar-2.jpg'
+import avatarDiana from '../../assets/avatars/avatar-3.jpg'
+import avatarCarlos from '../../assets/avatars/avatar-4.jpg'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
 import Checkbox from '../../components/Checkbox/Checkbox'
@@ -35,8 +42,10 @@ interface PersonRow {
   name: string
   email: string
   avatar: string
+  avatarImg?: string
   role: string
   team: string
+  reportsTo: string
   startDate: string
   region: string
   status: 'Registered' | 'Invited'
@@ -68,11 +77,11 @@ type ModalState =
 /* ─── Mock data ─── */
 
 const initialPeople: PersonRow[] = [
-  { id: 1, name: 'Anthonny Wallace', email: 'anthonny@example.com', avatar: 'AW', role: 'Customer Support Specialist', team: 'Customer Support Team', startDate: 'Jan 13, 2025', region: 'Southeast Asia', status: 'Registered' },
-  { id: 2, name: 'Brenda Kwasaki', email: 'brenda@email.com', avatar: 'BK', role: 'Operations Manager', team: 'Financial Services', startDate: 'Jan 13, 2025', region: '–', status: 'Invited' },
-  { id: 3, name: 'Carlos Mendes', email: 'carlos@example.com', avatar: 'CM', role: 'Software Engineer', team: 'Product Engineering', startDate: 'Feb 1, 2025', region: 'Europe', status: 'Registered', hrisJobTitle: 'Software Engineer' },
-  { id: 4, name: 'Diana Ross', email: 'diana.ross@company.com', avatar: 'DR', role: 'Marketing Lead', team: 'Growth Team', startDate: 'Mar 5, 2025', region: 'North America', status: 'Registered' },
-  { id: 5, name: 'Erik Johansson', email: 'erik.j@email.com', avatar: 'EJ', role: 'Data Analyst', team: 'Business Intelligence', startDate: 'Dec 10, 2024', region: 'Europe', status: 'Invited', hrisJobTitle: 'Senior Software Engineer' },
+  { id: 1, name: 'Anthonny Wallace', email: 'anthonny@example.com', avatar: 'AW', avatarImg: avatarAnthonny, role: 'Customer Support Specialist', team: 'Customer Support Team', reportsTo: 'Manuela Vilar', startDate: 'Jan 13, 2025', region: 'Southeast Asia', status: 'Registered' },
+  { id: 2, name: 'Brenda Kwasaki', email: 'brenda@email.com', avatar: 'BK', avatarImg: avatarBrenda, role: 'Operations Manager', team: 'Financial Services', reportsTo: '–', startDate: 'Jan 13, 2025', region: '–', status: 'Invited' },
+  { id: 3, name: 'Carlos Mendes', email: 'carlos@example.com', avatar: 'CM', avatarImg: avatarCarlos, role: 'Software Engineer', team: 'Product Engineering', reportsTo: 'Sofia Almeida', startDate: 'Feb 1, 2025', region: 'Europe', status: 'Registered', hrisJobTitle: 'Software Engineer' },
+  { id: 4, name: 'Diana Ross', email: 'diana.ross@company.com', avatar: 'DR', avatarImg: avatarDiana, role: 'Marketing Lead', team: 'Growth Team', reportsTo: 'Manuela Vilar', startDate: 'Mar 5, 2025', region: 'North America', status: 'Registered' },
+  { id: 5, name: 'Erik Johansson', email: 'erik.j@email.com', avatar: 'EJ', role: 'Data Analyst', team: 'Business Intelligence', reportsTo: '–', startDate: 'Dec 10, 2024', region: 'Europe', status: 'Invited', hrisJobTitle: 'Senior Software Engineer' },
 ]
 
 const initialDeactivated: DeactivatedPerson[] = [
@@ -112,6 +121,7 @@ function People() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   const [statusFilter, setStatusFilter] = useState<'all' | 'terminated' | 'long-leave'>('all')
   const { toasts, show: showToast } = useToast()
+  const navigate = useNavigate()
   const menuRef = useRef<HTMLDivElement>(null)
   const [filterOpen, setFilterOpen] = useState(false)
   const filterRef = useRef<HTMLDivElement>(null)
@@ -297,6 +307,7 @@ function People() {
       avatar: person.avatar,
       role: person.role,
       team: person.team,
+      reportsTo: '–',
       region: person.region,
       startDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       status: 'Registered',
@@ -324,6 +335,7 @@ function People() {
       avatar: p.avatar,
       role: p.role,
       team: p.team,
+      reportsTo: '–',
       region: p.region,
       startDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       status: 'Registered' as const,
@@ -487,9 +499,9 @@ function People() {
                 className="people-edit-cols-btn"
                 onClick={() => setEditColumnsOpen(prev => !prev)}
               >
-                <RowVertical size={18} color="currentColor" variant="Linear" />
+                <RowVertical size={16} color="currentColor" variant="Linear" />
                 Columns
-                <ArrowDown2 size={14} color="currentColor" variant="Linear" />
+                <ArrowDown2 size={16} color="currentColor" variant="Linear" />
               </button>
               {editColumnsOpen && (
                 <EditColumnsPopover
@@ -505,13 +517,14 @@ function People() {
               )}
             </div>
           )}
-          <button className="people-download-btn ui-disabled" disabled>
+          <Button
+            variant="outlined-2"
+            className="ui-disabled"
+            disabled
+            icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
+          >
             Download List
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M10 2.5V12.5M10 12.5L6.25 8.75M10 12.5L13.75 8.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M3.33 14.167V15.833C3.33 16.292 3.513 16.733 3.838 17.058C4.163 17.383 4.604 17.567 5.063 17.567H14.938C15.396 17.567 15.838 17.383 16.163 17.058C16.488 16.733 16.671 16.292 16.671 15.833V14.167" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+          </Button>
         </div>
       </div>
       )}
@@ -530,6 +543,7 @@ function People() {
               <div className="people-table-cell people-table-cell--name">Name</div>
               {visibleKeys.includes('role') && <div className="people-table-cell people-table-cell--role">Role</div>}
               {visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">Team</div>}
+              {visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">Reports to</div>}
               {visibleKeys.includes('startDate') && (
                 <div className="people-table-cell people-table-cell--date">
                   Start Date
@@ -555,9 +569,15 @@ function People() {
                 </div>
                 <div className="people-table-cell people-table-cell--name">
                   <div className="people-avatar" style={{ background: avatarColors[(person.id - 1) % avatarColors.length] }}>
-                    {person.avatar}
+                    {person.avatarImg ? <img className="people-avatar-img" src={person.avatarImg} alt="" /> : person.avatar}
                   </div>
-                  <div className="people-name-info">
+                  <div
+                    className="people-name-info"
+                    role="link"
+                    tabIndex={0}
+                    onClick={() => navigate(`/people/${person.id}`)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${person.id}`) }}
+                  >
                     <span className="people-name">{person.name}</span>
                     <span className="people-email">{person.email}</span>
                   </div>
@@ -579,6 +599,7 @@ function People() {
                   </div>
                 )}
                 {visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">{person.team}</div>}
+                {visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">{person.reportsTo}</div>}
                 {visibleKeys.includes('startDate') && (
                   <div className="people-table-cell people-table-cell--date">
                     <div className="people-date-stack">

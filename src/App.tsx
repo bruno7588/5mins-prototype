@@ -9,6 +9,7 @@ import CourseDetails from './pages/your-courses/CourseDetails'
 import AddContent from './pages/add-content/AddContent'
 
 import People from './pages/people/People'
+import UserProfile from './pages/user-profile/UserProfile'
 import UserFields from './pages/people/UserFields'
 import Roles from './pages/roles/Roles'
 
@@ -105,6 +106,7 @@ function App() {
                 <Route path="/your-courses/list" element={<YourCoursesList />} />
                 <Route path="/your-courses/course" element={<CourseDetails />} />
                 <Route path="/people" element={<People />} />
+                <Route path="/people/:id" element={<UserProfile />} />
                 <Route path="/learning-records" element={<LearningRecords />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/user-fields" element={<UserFields />} />

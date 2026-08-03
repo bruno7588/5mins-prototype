@@ -26,12 +26,15 @@ interface UserField {
 const DEFAULT_COLUMNS: ColumnDef[] = [
   { key: 'role', label: 'Role', locked: true, isCustomField: false },
   { key: 'team', label: 'Team', locked: true, isCustomField: false },
+  { key: 'reportsTo', label: 'Reports to', locked: true, isCustomField: false },
   { key: 'startDate', label: 'Start Date', locked: true, isCustomField: false },
-  { key: 'region', label: 'Region', locked: true, isCustomField: false },
+  { key: 'region', label: 'Region', locked: false, isCustomField: false },
   { key: 'status', label: 'Status', locked: true, isCustomField: false },
 ]
 
-const DEFAULT_VISIBLE_KEYS = DEFAULT_COLUMNS.map(c => c.key)
+const DEFAULT_VISIBLE_KEYS = DEFAULT_COLUMNS.filter(c => c.locked).map(c => c.key)
+
+const PREFS_VERSION = 2
 
 const STORAGE_KEY = '5mins-people-columns'
 
@@ -53,9 +56,16 @@ export function useColumnPreferences(customFields: UserField[]) {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) {
         const prefs: ColumnPreferences = JSON.parse(raw)
-        // Reconcile: keep only keys that still exist in allColumns
-        const validKeys = new Set(allColumns.map(c => c.key))
-        return prefs.visibleKeys.filter(k => validKeys.has(k))
+        // Stale-version prefs (e.g. region was locked) fall back to defaults
+        if (prefs.version === PREFS_VERSION) {
+          // Reconcile: keep only keys that still exist, and force locked
+          // columns visible even if saved prefs predate them
+          const validKeys = new Set(allColumns.map(c => c.key))
+          const lockedKeys = allColumns.filter(c => c.locked).map(c => c.key)
+          const merged = new Set([...prefs.visibleKeys.filter(k => validKeys.has(k)), ...lockedKeys])
+          const allKeys = allColumns.map(c => c.key)
+          return [...merged].sort((a, b) => allKeys.indexOf(a) - allKeys.indexOf(b))
+        }
       }
     } catch { /* ignore */ }
     return DEFAULT_VISIBLE_KEYS
@@ -63,7 +73,7 @@ export function useColumnPreferences(customFields: UserField[]) {
 
   // Persist to localStorage on change
   useEffect(() => {
-    const prefs: ColumnPreferences = { visibleKeys, version: 1 }
+    const prefs: ColumnPreferences = { visibleKeys, version: PREFS_VERSION }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
   }, [visibleKeys])
 
