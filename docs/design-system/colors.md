@@ -172,19 +172,21 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 
 | Token | Dark mode | Light mode |
 |---|---|---|
-| `--primary-button-background` | Primary-600 `#00AFC4` | Primary-600 `#00AFC4` |
-| `--primary-button-background-hover` | Primary-700 `#008393` | Primary-700 `#008393` |
-| `--primary-button-background-pressed` | Primary-800 `#005862` | Primary-800 `#005862` |
+| `--primary-button-background` | Primary-500 `#00CEE6` | Primary-700 `#008393` |
+| `--primary-button-background-hover` | Primary-400 `#33E2F7` | Primary-800 `#005862` |
+| `--primary-button-background-pressed` | Primary-700 `#008393` | Primary-900 `#002C31` |
 | `--button-background-disabled` | Neutral-400 `#656B7C` | Neutral-100 `#DFE1E6` |
 | `--button-danger-hover` | Danger-600 `#9C0F2E` | Danger-600 `#9C0F2E` |
 | `--button-danger-pressed` | Danger-700 `#59091A` | Danger-700 `#59091A` |
 | `--button-warning-background` | Warning-600 `#E88206` | Warning-600 `#E88206` |
-| `--button-warning-background-hover` | Warning-700 `#996322` | Warning-700 `#996322` |
-| `--button-warning-background-pressed` | Warning-800 `#664216` | Warning-800 `#664216` |
+| `--button-warning-background-hover` | Warning-500 `#FFA538` | Warning-700 `#996322` |
+| `--button-warning-background-pressed` | Warning-700 `#996322` | Warning-800 `#664216` |
 | `--button-success-background` | Success-500 `#18A957` | Success-500 `#18A957` |
-| `--button-success-background-hover` | Success-600 `#11763D` | Success-600 `#11763D` |
-| `--button-success-background-pressed` | Success-700 `#0A4423` | Success-700 `#0A4423` |
+| `--button-success-background-hover` | Success-400 `#5DC389` | Success-600 `#11763D` |
+| `--button-success-background-pressed` | Success-600 `#11763D` | Success-700 `#0A4423` |
 
+> **Updated 2026-08-04** (Figma buttons rework): the primary ladder is now mode-specific — light darkens (700→800→900), dark starts at Primary-500 and goes **lighter** on hover. Warning/Success hovers also go lighter in dark mode. Only Danger keeps one darkening ladder in both modes.
+>
 > The danger button **default** background is not in the Figma variables; it is Danger-500 `#DF1642` per `buttons.md`.
 
 ---
@@ -197,12 +199,12 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--text-secondary` | Neutral-200 `#BFC2CC` | Neutral-500 `#454C5E` | Body copy, descriptions — the default text color |
 | `--text-tertiary` | Neutral-300 `#9EA4B3` | Neutral-400 `#656B7C` | Captions, placeholders, helper text, timestamps |
 | `--text-disabled` | Neutral-400 `#656B7C` | Neutral-300 `#9EA4B3` | Disabled text — apply to label, value, and icon together |
-| `--text-button-foreground` | Neutral-25 `#F9F9FA` | Neutral-25 `#F9F9FA` | Label on filled buttons (near-white, softer than pure white) |
+| `--text-button-foreground` | **Neutral-800 `#20222A`** | Neutral-25 `#F9F9FA` | Label on the **primary** filled button — flips dark on the bright cyan dark-mode fill. Semantic filled buttons (danger/warning/success) use raw `--neutral-25` in both modes instead |
 | `--text-button-disabled` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` | Label on any disabled button |
 | `--text-button-hover` | Primary-400 `#33E2F7` | Primary-700 `#008393` | Outlined/text button label on hover |
-| `--text-button-outlined` | Primary-500 `#00CEE6` | Primary-600 `#00AFC4` | Outlined/text button label (default) |
+| `--text-button-outlined` | Primary-500 `#00CEE6` | Primary-700 `#008393` | Outlined/text button label (default) |
 | `--text-success` | Success-500 `#18A957` | Success-600 `#11763D` | Success messages, completed labels |
-| `--text-warning` | Warning-500 `#FFA538` | Warning-600 `#E88206` | Warning messages, deadline labels |
+| `--text-warning` | Warning-500 `#FFA538` | Warning-700 `#996322` | Warning messages, deadline labels; warning-outlined button hover chrome |
 | `--text-error` | Danger-400 `#E95C7B` | Danger-500 `#DF1642` | Error messages, failed validation |
 | `--text-selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Selected tab label, active chip label |
 | `--text-progress` | Primary-500 `#00CEE6` | Primary-700 `#008393` | Progress labels, "In Progress", step counters |
@@ -307,9 +309,9 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --border-hover: var(--neutral-300);
 
   /* ── Button backgrounds (light mode) ── */
-  --primary-button-background: var(--primary-600);
-  --primary-button-background-hover: var(--primary-700);
-  --primary-button-background-pressed: var(--primary-800);
+  --primary-button-background: var(--primary-700);
+  --primary-button-background-hover: var(--primary-800);
+  --primary-button-background-pressed: var(--primary-900);
   --button-background-disabled: var(--neutral-100);
   --button-danger-hover: var(--danger-600);
   --button-danger-pressed: var(--danger-700);
@@ -328,9 +330,9 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --text-button-foreground: var(--neutral-25);
   --text-button-disabled: var(--neutral-300);
   --text-button-hover: var(--primary-700);
-  --text-button-outlined: var(--primary-600);
+  --text-button-outlined: var(--primary-700);
   --text-success: var(--success-600);
-  --text-warning: var(--warning-600);
+  --text-warning: var(--warning-700);
   --text-error: var(--danger-500);
   --text-selected: var(--secondary-600);
   --text-progress: var(--primary-700);
@@ -350,7 +352,14 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --border-elevated: var(--neutral-500);
   --border-hover: var(--neutral-300);
 
-  /* ── Button backgrounds (dark mode; primary/danger/warning/success same as light) ── */
+  /* ── Button backgrounds (dark mode; danger same as light) ── */
+  --primary-button-background: var(--primary-500);
+  --primary-button-background-hover: var(--primary-400);   /* dark hovers go LIGHTER */
+  --primary-button-background-pressed: var(--primary-700);
+  --button-warning-background-hover: var(--warning-500);
+  --button-warning-background-pressed: var(--warning-700);
+  --button-success-background-hover: var(--success-400);
+  --button-success-background-pressed: var(--success-600);
   --button-background-disabled: var(--neutral-400);
 
   /* ── Text (dark mode) ── */
@@ -358,6 +367,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --text-secondary: var(--neutral-200);
   --text-tertiary: var(--neutral-300);
   --text-disabled: var(--neutral-400);
+  --text-button-foreground: var(--neutral-800);  /* dark label on the bright cyan filled button */
   --text-button-hover: var(--primary-400);
   --text-button-outlined: var(--primary-500);
   --text-success: var(--success-500);
@@ -376,7 +386,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
 - **Never improvise a color.** Every value must be a token from this file.
 - **Contrast:** normal text needs 4.5:1, large text (24px+) needs 3:1.
   - ✓ `--text-primary` / `--text-secondary` on `--cards-background`
-  - ✓ `--text-button-foreground` on any filled button background
+  - ✓ `--text-button-foreground` on the primary filled button (mode-aware); `--neutral-25` on semantic filled buttons
   - ✗ `--primary-500` as text on white
   - ✗ `--text-tertiary` for body copy (supporting detail only)
 
