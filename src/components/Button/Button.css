@@ -35,15 +35,21 @@
 
 /* ── Sizes ── */
 .ds-btn--sm { padding: var(--space-s) var(--space-m); font-size: 12px; line-height: 1.4; }
-.ds-btn--md { padding: 10px var(--space-ml);          font-size: 14px; }
-.ds-btn--lg { padding: var(--space-sm) var(--space-l); font-size: 16px; }
+.ds-btn--md { padding: 10px var(--space-ml);          font-size: 14px; gap: var(--space-s); /* 8px */ }
+.ds-btn--lg { padding: var(--space-sm) var(--space-l); font-size: 16px; gap: var(--space-s); /* 8px */ }
 
-/* Text / Link carry no box — strip padding regardless of size. */
-.ds-btn--text,
-.ds-btn--link,
-.ds-btn--danger-text,
-.ds-btn--warning-text,
-.ds-btn--success-text {
+/* With a leading icon the icon side is one padding step tighter (buttons.md 2026-08-04) */
+.ds-btn--sm.ds-btn--has-icon { padding-left: var(--space-sm); } /* 12px */
+.ds-btn--md.ds-btn--has-icon { padding-left: var(--space-m); }  /* 16px */
+.ds-btn--lg.ds-btn--has-icon { padding-left: var(--space-ml); } /* 20px */
+
+/* Text / Link carry no box — strip padding regardless of size.
+   `.ds-btn` prefix keeps these ahead of the two-class has-icon rules above. */
+.ds-btn.ds-btn--text,
+.ds-btn.ds-btn--link,
+.ds-btn.ds-btn--danger-text,
+.ds-btn.ds-btn--warning-text,
+.ds-btn.ds-btn--success-text {
   padding: 0;
   background: transparent;
   border: none;
@@ -63,7 +69,7 @@
   color: var(--text-button-disabled);
 }
 
-/* Outlined — 16% → 24% (hover) → 8% (pressed) cyan fill ladder */
+/* Outlined — transparent at rest; 16% cyan tint on hover only (fill tokens carry the ladder) */
 .ds-btn--outlined {
   background: var(--button-outline-fill);
   color: var(--text-button-outlined);
@@ -129,39 +135,69 @@
 .ds-btn--danger:active:not(:disabled) { background: var(--button-danger-pressed); }
 
 .ds-btn--danger-outlined {
-  background: rgba(223, 22, 66, 0.16);
+  background: transparent;
   color: var(--danger-500);
   border-color: var(--danger-500);
+}
+.ds-btn--danger-outlined:hover:not(:disabled) {
+  background: rgba(223, 22, 66, 0.24); /* Danger-500 @ 24% */
+  color: var(--text-error);
+  border-color: var(--text-error);
+}
+.ds-btn--danger-outlined:active:not(:disabled) {
+  background: transparent;
+  color: var(--button-danger-hover);
+  border-color: var(--button-danger-pressed); /* text and border differ on press — per Figma */
 }
 .ds-btn--danger-text { color: var(--danger-500); }
 
 /* ══ Warning family (default is Warning-600) ══ */
 .ds-btn--warning {
   background: var(--button-warning-background);
-  color: var(--text-button-foreground);
+  color: var(--neutral-25); /* semantic filled labels stay near-white in both modes */
 }
 .ds-btn--warning:hover:not(:disabled)  { background: var(--button-warning-background-hover); }
 .ds-btn--warning:active:not(:disabled) { background: var(--button-warning-background-pressed); }
 
 .ds-btn--warning-outlined {
-  background: rgba(255, 165, 56, 0.16);
+  background: transparent;
   color: var(--button-warning-background);
   border-color: var(--button-warning-background);
+}
+.ds-btn--warning-outlined:hover:not(:disabled) {
+  background: rgba(255, 165, 56, 0.24); /* Warning-500 @ 24% */
+  color: var(--text-warning);
+  border-color: var(--text-warning);
+}
+.ds-btn--warning-outlined:active:not(:disabled) {
+  background: transparent;
+  color: var(--button-warning-background-pressed);
+  border-color: var(--button-warning-background-pressed);
 }
 .ds-btn--warning-text { color: var(--button-warning-background); }
 
 /* ══ Success family ══ */
 .ds-btn--success {
   background: var(--button-success-background);
-  color: var(--text-button-foreground);
+  color: var(--neutral-25); /* semantic filled labels stay near-white in both modes */
 }
 .ds-btn--success:hover:not(:disabled)  { background: var(--button-success-background-hover); }
 .ds-btn--success:active:not(:disabled) { background: var(--button-success-background-pressed); }
 
 .ds-btn--success-outlined {
-  background: rgba(24, 169, 87, 0.16);
-  color: var(--success-500);
-  border-color: var(--success-500);
+  background: transparent;
+  color: var(--button-success-background);
+  border-color: var(--button-success-background);
+}
+.ds-btn--success-outlined:hover:not(:disabled) {
+  background: rgba(24, 169, 87, 0.24); /* Success-500 @ 24% */
+  color: var(--button-success-background); /* text stays base on hover — per Figma */
+  border-color: var(--button-success-background-hover);
+}
+.ds-btn--success-outlined:active:not(:disabled) {
+  background: transparent;
+  color: var(--button-success-background-pressed);
+  border-color: var(--button-success-background-pressed);
 }
 .ds-btn--success-text { color: var(--button-success-background); }
 
@@ -183,35 +219,58 @@
 .ds-btn--warning-text:disabled,
 .ds-btn--success-text:disabled { color: var(--text-disabled); }
 
-/* ══ AI family — cyan→purple gradient ══ */
+/* ══ AI family — cyan→purple gradient (buttons.md 2026-08-04) ══
+   The gradient START follows the mode-aware primary filled ladder;
+   the END is always Blaze #8158EC. */
 .ds-btn--ai {
-  background: linear-gradient(
-    100deg,
-    #00afc4 0%,
-    #10a4c9 12.5%,
-    #2099ce 25%,
-    #4184d8 50%,
-    #616ee2 75%,
-    #8158ec 100%
-  );
+  background: linear-gradient(100deg, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
   color: var(--neutral-25);
+}
+.ds-btn--ai:hover:not(:disabled) {
+  background: linear-gradient(100deg, var(--primary-button-background-hover) 0%, var(--blaze-quiz) 100%);
+  /* 2px cyan border without layout shift: 1px border + 1px inset ring */
+  border-color: var(--primary-500);
+  box-shadow: inset 0 0 0 1px var(--primary-500);
+  filter: drop-shadow(1px 1px 16px rgba(129, 88, 236, 0.5));
+}
+.ds-btn--ai:active:not(:disabled) {
+  background: linear-gradient(100deg, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
+  border-color: var(--primary-500);
+  box-shadow: none;
+  filter: none;
 }
 
 .ds-btn--ai-outlined {
-  border: 1px solid #00cee6; /* raw hex per spec — candidate for a token */
+  border: 1px solid var(--primary-500); /* raw Primary-500 in both modes, per Figma */
+  background: transparent;
+}
+.ds-btn--ai-outlined:hover:not(:disabled) {
+  /* 24% wash of the hover gradient + soft purple glow */
   background: linear-gradient(
     100deg,
-    rgba(0, 131, 147, 0.16) 0%,
-    rgba(65, 110, 192, 0.16) 50%,
-    rgba(129, 88, 236, 0.16) 100%
+    color-mix(in srgb, var(--primary-button-background-hover) 24%, transparent) 0%,
+    rgba(129, 88, 236, 0.24) 100%
   );
+  box-shadow: 1px 1px 32px 0 rgba(129, 88, 236, 0.16);
+}
+.ds-btn--ai-outlined:active:not(:disabled) {
+  background: transparent;
+  box-shadow: none;
 }
 .ds-btn--ai-outlined .ds-btn__label,
 .ds-btn--ai-outlined .ds-btn__icon {
-  background: linear-gradient(100deg, #00afc4 0%, #8158ec 100%);
+  background: linear-gradient(100deg, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+.ds-btn--ai-outlined:hover:not(:disabled) .ds-btn__label,
+.ds-btn--ai-outlined:hover:not(:disabled) .ds-btn__icon {
+  background-image: linear-gradient(100deg, var(--primary-button-background-hover) 0%, var(--blaze-quiz) 100%);
+}
+.ds-btn--ai-outlined:active:not(:disabled) .ds-btn__label,
+.ds-btn--ai-outlined:active:not(:disabled) .ds-btn__icon {
+  background-image: linear-gradient(100deg, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
 }
 
 .ds-btn--ai:disabled,

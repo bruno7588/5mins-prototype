@@ -9,7 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
   semantic?: ButtonSemantic
   size?: ButtonSize
-  /** Trailing icon — rendered AFTER the label. Pass an Iconsax icon sized 16/20/24 with color="currentColor". */
+  /** Leading icon — rendered BEFORE the label. Pass an Iconsax icon sized 16/20/24 with color="currentColor". */
   icon?: ReactNode
   loading?: boolean
   children?: ReactNode
@@ -36,6 +36,7 @@ function Button({
     'ds-btn',
     `ds-btn--${size}`,
     `ds-btn--${appearance(semantic, variant)}`,
+    icon && children && 'ds-btn--has-icon',
     loading && 'ds-btn--loading',
     className,
   ]
@@ -50,8 +51,8 @@ function Button({
       aria-busy={loading || undefined}
       {...props}
     >
-      <span className="ds-btn__label">{children}</span>
       {icon && <span className="ds-btn__icon">{icon}</span>}
+      <span className="ds-btn__label">{children}</span>
       {loading && <span className="ds-btn__spinner" aria-hidden="true" />}
     </button>
   )
