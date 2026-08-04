@@ -69,7 +69,7 @@
 .bulk-bar-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-s);
+  gap: var(--space-sm);
 }
 
 /* ── Action buttons (children) ── */
