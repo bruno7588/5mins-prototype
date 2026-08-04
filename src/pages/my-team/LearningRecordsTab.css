@@ -572,7 +572,7 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  background: transparent;
+  background: var(--input-background);
   border: none;
   cursor: pointer;
   color: var(--neutral-300);
