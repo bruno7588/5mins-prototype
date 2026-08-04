@@ -450,15 +450,15 @@
 }
 
 .rd-btn-download:hover {
-  background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-600);
-  border-color: var(--primary-600);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 .rd-btn-download:active {
-  background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-pressed);
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }
 
 /* Schedule grid — 2 columns: Frequency / cadence, Time / Timezone */

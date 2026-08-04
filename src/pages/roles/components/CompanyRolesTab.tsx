@@ -62,7 +62,7 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
             Browse 5Mins Roles
           </button>
           <button className="roles-btn-primary-with-icon" onClick={onCreateRole}>
-            <Add size={20} color="var(--neutral-25)" />
+            <Add size={20} color="currentColor" />
             Create New Role
           </button>
         </div>
@@ -104,7 +104,7 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
             Export Roles
           </button>
           <button className="roles-btn-primary-with-icon" onClick={onCreateRole}>
-            <Add size={20} color="var(--neutral-25)" />
+            <Add size={20} color="currentColor" />
             Create New Role
           </button>
         </div>

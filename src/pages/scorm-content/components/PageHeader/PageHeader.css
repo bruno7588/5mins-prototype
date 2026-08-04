@@ -48,14 +48,14 @@
   font-weight: 700;
   border: none;
   border-radius: var(--radius-s);
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   cursor: pointer;
   transition: background 150ms ease;
 }
 
 .sc-page-header-btn-filled:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 /* Disabled state for both buttons */

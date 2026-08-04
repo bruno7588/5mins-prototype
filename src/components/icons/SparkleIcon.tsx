@@ -23,10 +23,9 @@ function SparkleIcon({ size = 20, color = 'currentColor', className, gradient = 
     >
       {gradient && (
         <defs>
-          <linearGradient id={gradId} x1="0" y1="0" x2="20" y2="0" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#00CEE6" />
-            <stop offset="0.5" stopColor="#4193E9" />
-            <stop offset="1" stopColor="#8158EC" />
+          <linearGradient id={gradId} x1="0" y1="0" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+            <stop offset="0" style={{ stopColor: 'var(--text-button-outlined)' }} />
+            <stop offset="1" style={{ stopColor: 'var(--blaze-quiz)' }} />
           </linearGradient>
         </defs>
       )}

@@ -224,7 +224,7 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
         </div>
 
         <button className="sc-content-table-add-btn" onClick={isScorm ? () => setShowAddScorm(true) : undefined}>
-          <Add size={20} color="white" />
+          <Add size={20} color="currentColor" />
           {isScorm ? 'Add SCORM' : 'Add Content'}
         </button>
       </div>

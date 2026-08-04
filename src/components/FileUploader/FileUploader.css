@@ -152,15 +152,15 @@
 
 .file-uploader__btn-outlined--hover,
 .file-uploader__btn-outlined:hover {
-  background: rgba(0, 175, 196, 0.16);
-  border-color: var(--primary-600);
-  color: var(--primary-600);
+  background: var(--button-outline-fill-hover);
+  border-color: var(--text-button-hover);
+  color: var(--text-button-hover);
 }
 
 .file-uploader__btn-outlined:active {
-  background: rgba(0, 175, 196, 0.24);
-  border-color: var(--primary-700);
-  color: var(--primary-700);
+  background: transparent;
+  border-color: var(--primary-button-background-pressed);
+  color: var(--primary-button-background-pressed);
 }
 
 /* ─── Circular progress ring ─── */

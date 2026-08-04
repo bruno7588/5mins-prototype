@@ -322,17 +322,21 @@
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
   border-radius: var(--radius-s);
   background: none;
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   transition: background 150ms ease;
 }
 
-.epd-view-btn:hover { background: rgba(0, 175, 196, 0.08); }
+.epd-view-btn:hover {
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
+}
 
 .epd-empty {
   padding: var(--space-l);
@@ -552,7 +556,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);
-  color: var(--neutral-0);
+  color: var(--text-button-foreground);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;

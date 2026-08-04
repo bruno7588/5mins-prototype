@@ -335,7 +335,7 @@
 }
 
 .your-courses-enrol-course-title:hover {
-  color: var(--primary-600);
+  color: var(--text-button-hover);
 }
 
 /* Enrol users action */

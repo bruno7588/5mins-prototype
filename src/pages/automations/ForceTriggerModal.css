@@ -454,8 +454,8 @@
 /* Filled primary button (cyan) — matches Figma node 8086-15934 */
 .force-trigger-btn-primary {
   white-space: nowrap;
-  background: var(--primary-600);
-  color: var(--neutral-25);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   padding: 10px var(--space-ml);
   border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
@@ -467,7 +467,7 @@
 }
 
 .force-trigger-btn-primary:hover:not(:disabled) {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .force-trigger-btn-primary:disabled {

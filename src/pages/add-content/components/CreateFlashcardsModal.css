@@ -110,7 +110,8 @@
 
 .cfm-option--ai {
   --cfm-grad-fill: linear-gradient(135deg, rgba(0, 206, 230, 0.08), rgba(129, 88, 236, 0.08));
-  --cfm-grad-stroke: linear-gradient(135deg, #00AFC4, #8158EC);
+  /* Canonical AI gradient chrome (Button.css) — mode-aware start, Blaze end */
+  --cfm-grad-stroke: radial-gradient(circle at top left, var(--text-button-outlined), var(--blaze-quiz));
 }
 
 .cfm-option:focus-visible {

@@ -153,7 +153,7 @@ function QuestionEditor({ question, onSave, onCancel, isNew }: QuestionEditorPro
           </div>
           {answers.length < 6 && (
             <button className="question-editor-add-answer" onClick={addAnswer}>
-              <Add size={16} color="var(--primary-600)" />
+              <Add size={16} color="currentColor" />
               Add answer
             </button>
           )}

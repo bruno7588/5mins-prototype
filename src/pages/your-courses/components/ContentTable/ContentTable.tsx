@@ -242,7 +242,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
         </div>
 
         <button className="btn-primary content-table-add-btn" onClick={isScorm ? () => setShowAddScorm(true) : onAddContent}>
-          <Add size={20} color="white" />
+          <Add size={20} color="currentColor" />
           {isScorm ? 'Add SCORM' : 'Add Content'}
         </button>
       </div>

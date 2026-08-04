@@ -95,8 +95,8 @@
   padding: 10px var(--space-ml);
   border: none;
   border-radius: var(--radius-s);
-  background: var(--primary-600);
-  color: var(--neutral-25);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
@@ -171,7 +171,7 @@
 }
 
 .cs-link:hover {
-  color: var(--primary-600);
+  color: var(--text-button-hover);
 }
 
 /* Revealed content (e.g. max attempts when auto-reset is on).

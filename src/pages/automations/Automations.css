@@ -890,24 +890,19 @@
 }
 
 .automations-empty-state-action:hover {
-  background: rgba(0, 206, 230, 0.16);
-  border-color: var(--primary-600);
-  color: var(--primary-600);
+  background: var(--button-outline-fill-hover);
+  border-color: var(--text-button-hover);
+  color: var(--text-button-hover);
 }
 
 .automations-empty-state-action:active {
-  background: rgba(0, 206, 230, 0.16);
-  border-color: var(--primary-700);
-  color: var(--primary-700);
+  background: var(--button-outline-fill-pressed);
+  border-color: var(--primary-button-background-pressed);
+  color: var(--primary-button-background-pressed);
 }
 
 .automations-empty-state-action:focus-visible {
-  outline: 2px solid var(--primary-600);
-  outline-offset: 2px;
-}
-
-.automations-empty-state-action:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 

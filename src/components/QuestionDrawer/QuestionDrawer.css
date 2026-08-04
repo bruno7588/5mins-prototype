@@ -310,12 +310,12 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--neutral-800);
-  background: var(--primary-500);
+  color: var(--text-button-foreground);
+  background: var(--primary-button-background);
   border-radius: var(--radius-s);
   transition: background 150ms ease;
 }
 
 .question-drawer-save:hover {
-  background: var(--primary-600);
+  background: var(--primary-button-background-hover);
 }

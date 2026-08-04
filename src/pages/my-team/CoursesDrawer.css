@@ -171,8 +171,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   padding: 10px var(--space-ml);
   border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
@@ -183,7 +183,7 @@
   cursor: pointer;
   transition: background 150ms ease;
 }
-.side-drawer__btn-primary:hover { background: var(--primary-700); }
+.side-drawer__btn-primary:hover { background: var(--primary-button-background-hover); }
 .side-drawer__btn-secondary {
   white-space: nowrap;
   background: transparent;
@@ -198,7 +198,7 @@
   cursor: pointer;
   transition: background 150ms ease;
 }
-.side-drawer__btn-secondary:hover { background: rgba(0, 206, 230, 0.16); }
+.side-drawer__btn-secondary:hover { background: var(--button-outline-fill-hover); }
 
 /* Courses table */
 .cd-table {

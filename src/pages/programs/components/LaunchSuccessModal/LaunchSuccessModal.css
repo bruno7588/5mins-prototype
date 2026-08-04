@@ -106,7 +106,7 @@
   border: none;
   border-radius: var(--radius-s);
   background: var(--primary-button-background);
-  color: var(--neutral-0);
+  color: var(--text-button-foreground);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;

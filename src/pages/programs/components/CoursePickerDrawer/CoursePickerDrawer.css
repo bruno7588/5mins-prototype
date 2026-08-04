@@ -219,22 +219,24 @@
 
 .cpd-row__btn--add {
   border: none;
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
 }
 
 .cpd-row__btn--add:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .cpd-row__btn--remove {
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
   background: transparent;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
 }
 
 .cpd-row__btn--remove:hover {
-  background: var(--button-outline-hover);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 /* ── Empty ──────────────────────────────────────────────────────────────── */

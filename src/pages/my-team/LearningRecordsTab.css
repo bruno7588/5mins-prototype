@@ -71,15 +71,15 @@
 }
 
 .lr__download-btn:hover {
-  background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-600);
-  border-color: var(--primary-600);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 .lr__download-btn:active {
-  background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-pressed);
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }
 
 .lr__actions-right {
@@ -94,23 +94,23 @@
   justify-content: center;
   gap: var(--space-xs);
   padding: 10px var(--space-ml) 10px var(--space-m);
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
   border-radius: var(--radius-s);
   background: transparent;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   cursor: pointer;
   white-space: nowrap;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
 .lr__add-training-btn:hover {
-  background: var(--button-outline-hover);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 .lr__add-training-wrap {
@@ -201,7 +201,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -470,29 +470,29 @@
   align-items: center;
   gap: 4px;
   padding: 8px 16px;
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
   border-radius: var(--radius-s);
   background: transparent;
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
   font-weight: 700;
   line-height: 1.4;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   cursor: pointer;
   white-space: nowrap;
   transition: background 150ms ease;
 }
 
 .lr__cert-btn:hover {
-  background: var(--button-outline-hover);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 .lr__cert-btn:active {
-  background: var(--button-outline-hover);
-  color: var(--primary-800);
-  border-color: var(--primary-800);
+  background: var(--button-outline-fill-pressed);
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }
 
 /* ── Pagination (matches mt-cp__pagination) ── */

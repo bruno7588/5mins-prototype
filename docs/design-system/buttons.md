@@ -239,22 +239,22 @@ AI buttons use a diagonal **gradient that ends at Blaze `#8158EC`** and *starts*
 | Pressed | Primary-900 `#002C31` | Primary-700 `#008393` | 1px `#00CEE6` border |
 | Disabled | standard disabled fill + label | standard | — |
 
-(Figma renders each as a 6-stop gradient, but the stops are collinear — a 2-stop `linear-gradient` is visually identical.)
+**Gradient geometry (verified against rendered pixels 2026-08-04):** Figma uses a **diamond gradient centered at the button's top-left corner** (its 6 stops are collinear, so only the two endpoint colors matter). The closest CSS equivalent is `radial-gradient(circle at top left, start, end)` — corner samples match within ~4%. A `linear-gradient(120deg, …)` is an acceptable fallback; ~100deg is too flat (the left edge visibly shifts toward purple as it descends).
 
 ```css
 .btn-ai {
   /* start = the mode-resolved primary filled token, end = Blaze */
-  background: linear-gradient(100deg, var(--primary-button-background) 0%, var(--blaze-quiz, #8158EC) 100%);
+  background: radial-gradient(circle at top left, var(--primary-button-background) 0%, var(--blaze-quiz, #8158EC) 100%);
   color: var(--neutral-25);
   border: none;
 }
 .btn-ai:hover {
-  background: linear-gradient(100deg, var(--primary-button-background-hover) 0%, #8158EC 100%);
+  background: radial-gradient(circle at top left, var(--primary-button-background-hover) 0%, #8158EC 100%);
   border: 2px solid #00cee6;                       /* raw Primary-500, both modes */
   filter: drop-shadow(1px 1px 16px rgba(129, 88, 236, 0.5));
 }
 .btn-ai:active {
-  background: linear-gradient(100deg, var(--primary-button-background-pressed) 0%, #8158EC 100%);
+  background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, #8158EC 100%);
   border: 1px solid #00cee6;
 }
 ```
@@ -270,22 +270,25 @@ AI buttons use a diagonal **gradient that ends at Blaze `#8158EC`** and *starts*
 }
 .btn-ai-outlined:hover {
   /* wash = the HOVER gradient at 24% opacity, plus a soft glow */
-  background: linear-gradient(100deg,
+  background: radial-gradient(circle at top left,
     rgb(from var(--primary-button-background-hover) r g b / 0.24) 0%,
     rgba(129, 88, 236, 0.24) 100%);
   box-shadow: 1px 1px 32px 0 rgba(129, 88, 236, 0.16);
 }
 .btn-ai-outlined:active { background: transparent; }
 
+/* Label/icon gradient starts on the TEXT-chrome ladder (Figma node 11210:4067 binds the
+   start stop to Text-button-outlined), NOT the filled background token. The 24% hover
+   wash behind the button does use the background-hover ladder. */
 .btn-ai-outlined .btn-label,
 .btn-ai-outlined .btn-icon {
-  background: linear-gradient(100deg, var(--primary-button-background) 0%, #8158EC 100%);
+  background: radial-gradient(circle at top left, var(--text-button-outlined) 0%, #8158EC 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-.btn-ai-outlined:hover .btn-label  { background-image: linear-gradient(100deg, var(--primary-button-background-hover) 0%, #8158EC 100%); }
-.btn-ai-outlined:active .btn-label { background-image: linear-gradient(100deg, var(--primary-button-background-pressed) 0%, #8158EC 100%); }
+.btn-ai-outlined:hover .btn-label  { background-image: radial-gradient(circle at top left, var(--text-button-hover) 0%, #8158EC 100%); }
+.btn-ai-outlined:active .btn-label { background-image: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, #8158EC 100%); }
 ```
 
 ## Loading State

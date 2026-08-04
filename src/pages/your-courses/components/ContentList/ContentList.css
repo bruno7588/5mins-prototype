@@ -223,32 +223,38 @@
 }
 
 .course-empty-state__btn:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
 .course-empty-state__btn--outlined {
   background: transparent;
-  color: var(--primary-600);
-  border: 1px solid var(--primary-600);
+  color: var(--text-button-outlined);
+  border: 1px solid var(--text-button-outlined);
 }
 
 .course-empty-state__btn--outlined:hover {
-  background: var(--button-outline-hover);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
+}
+
+.course-empty-state__btn--outlined:active {
+  background: transparent;
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }
 
 .course-empty-state__btn--filled {
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   border: none;
   /* leading icon — icon-side padding 4px tighter than the right */
   padding-left: var(--space-m);
 }
 
 .course-empty-state__btn--filled:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 /* ── Curriculum section card ────────────────────────────────── */
@@ -456,7 +462,7 @@
 }
 
 .curriculum-section__chevron:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -522,8 +528,8 @@
   justify-content: center;
   flex-shrink: 0;
   padding: var(--space-xs) var(--space-sm);
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   border: none;
   border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
@@ -535,11 +541,11 @@
 }
 
 .curriculum-section__save-btn:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .curriculum-section__save-btn:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -589,7 +595,7 @@
 }
 
 .curriculum-section__placeholder:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -618,7 +624,7 @@
 }
 
 .kebab__trigger:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -675,7 +681,7 @@
 }
 
 .kebab__item:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: -2px;
 }
 
@@ -731,7 +737,7 @@
 }
 
 .curriculum-add-content:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -761,7 +767,7 @@
 }
 
 .curriculum-add-section:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -871,7 +877,7 @@
 }
 
 .dialog__btn:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -1057,7 +1063,7 @@
 }
 
 .content-card-trash:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 

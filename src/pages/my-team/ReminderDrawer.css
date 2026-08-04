@@ -77,7 +77,7 @@
   transition: border-color 150ms ease;
 }
 .rd-input:focus {
-  border-color: var(--primary-600);
+  border-color: var(--selected);
 }
 
 .rd-textarea {

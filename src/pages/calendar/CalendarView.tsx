@@ -150,7 +150,7 @@ function ActionButton({ tab, state }: { tab: CalendarTab; state: CalendarItem['a
   return (
     <button type="button" className="btn-primary cal-card__action--split">
       <span>Mark Attendance</span>
-      <ArrowDown2 size={20} color="var(--neutral-25)" />
+      <ArrowDown2 size={20} color="currentColor" />
     </button>
   )
 }

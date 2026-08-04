@@ -155,13 +155,17 @@
   padding: var(--space-s) 0;
   font-size: 14px;
   font-weight: 500;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   cursor: pointer;
-  transition: opacity 150ms ease;
+  transition: color 150ms ease;
 }
 
 .question-editor-add-answer:hover {
-  opacity: 0.8;
+  color: var(--text-button-hover);
+}
+
+.question-editor-add-answer:active {
+  color: var(--primary-button-background-pressed);
 }
 
 /* Errors */
@@ -204,12 +208,12 @@
   padding: var(--space-s) var(--space-ml);
   font-size: 14px;
   font-weight: 700;
-  color: var(--neutral-0);
-  background: var(--primary-600);
+  color: var(--text-button-foreground);
+  background: var(--primary-button-background);
   border-radius: var(--radius-s);
   transition: background 150ms ease;
 }
 
 .question-editor-save:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }

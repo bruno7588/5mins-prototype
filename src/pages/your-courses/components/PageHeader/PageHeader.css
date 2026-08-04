@@ -46,19 +46,19 @@
 }
 
 .page-header-btn-outline:hover {
-  background: rgba(0, 206, 230, 0.16); /* primary-500 @ 16% — DS Outlined-2 hover */
-  color: var(--primary-600);
-  border-color: var(--primary-600);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 .page-header-btn-outline:active {
-  background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: transparent;
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }
 
 .page-header-btn-outline:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -68,18 +68,24 @@
   padding: var(--space-s) var(--space-ml);
   font-size: 14px;
   font-weight: 700;
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
 .page-header-btn-outline-primary:hover {
-  background: var(--button-outline-hover);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
+}
+
+.page-header-btn-outline-primary:active {
+  background: transparent;
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }
 
 .page-header-btn-filled {
@@ -92,14 +98,14 @@
   font-weight: 700;
   border: none;
   border-radius: var(--radius-sm);
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   cursor: pointer;
   transition: background 150ms ease;
 }
 
 .page-header-btn-filled:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 /* When a leading icon is passed (primaryIcon), icon-side padding is 4px tighter */

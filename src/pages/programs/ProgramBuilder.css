@@ -103,7 +103,7 @@
 
 .pb-headline__title:focus-visible,
 .pb-headline__desc:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
@@ -139,8 +139,8 @@
   padding: var(--space-s) var(--space-ml);
   border: none;
   border-radius: var(--radius-sm);
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -149,11 +149,11 @@
 }
 
 .pb-next-btn:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .pb-next-btn:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -202,8 +202,8 @@
   padding: 10px var(--space-ml) 10px var(--space-m);
   border: none;
   border-radius: var(--radius-sm);
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -212,11 +212,11 @@
 }
 
 .pb-empty__cta:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .pb-empty__cta:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 

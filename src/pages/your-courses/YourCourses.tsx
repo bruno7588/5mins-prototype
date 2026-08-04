@@ -41,7 +41,7 @@ function YourCourses() {
           <div className="your-courses-headline">
             <h2 className="your-courses-title">Your Courses</h2>
             <button className="btn-primary" onClick={() => navigate('/create-course')}>
-              <Add size={20} color="var(--neutral-25)" />
+              <Add size={20} color="currentColor" />
               Create Course
             </button>
           </div>

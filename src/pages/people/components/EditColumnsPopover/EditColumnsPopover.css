@@ -30,14 +30,14 @@
 .edit-cols-reset {
   font-size: 12px;
   font-weight: 500;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   cursor: pointer;
   padding: 0;
   transition: color 150ms ease;
 }
 
 .edit-cols-reset:hover {
-  color: var(--primary-700);
+  color: var(--text-button-hover);
 }
 
 .edit-cols-divider {

@@ -63,10 +63,10 @@
   transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
-/* Hover: Outlined-2 treatment — brand cyan surfaces on interaction (24% tint,
-   cyan border + text), matching .btn-outlined:hover in buttons.md. */
+/* Hover: Outlined-2 treatment — brand cyan surfaces on interaction (16% tint,
+   cyan border + text), matching .ds-btn--outlined-2:hover in buttons.md. */
 .audit-clear:hover {
-  background: rgba(0, 206, 230, 0.24);
+  background: var(--button-outline-fill-hover);
   color: var(--text-button-hover);
   border-color: var(--primary-button-background-hover);
 }
@@ -867,7 +867,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);
-  color: var(--neutral-25);
+  color: var(--text-button-foreground);
   font: 700 14px/1.5 'Poppins', sans-serif;
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;

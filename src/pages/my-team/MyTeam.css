@@ -463,14 +463,14 @@
 }
 
 .mt-cp__reminders-btn--active {
-  color: var(--primary-600);
-  border-color: var(--primary-600);
+  color: var(--text-button-outlined);
+  border-color: var(--text-button-outlined);
 }
 
 .mt-cp__reminders-btn--active:hover {
-  background: var(--button-outline-hover);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 .mt-cp__reminders-btn:disabled {
@@ -673,7 +673,7 @@
 }
 
 .mt-cp__table-header :focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
@@ -789,7 +789,7 @@
 }
 
 .mt-cp__metric-btn:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 

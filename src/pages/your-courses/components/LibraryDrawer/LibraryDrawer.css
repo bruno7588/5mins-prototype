@@ -131,28 +131,34 @@
 }
 
 .library-lesson__btn:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
 .library-lesson__btn--add {
-  background: var(--primary-600);
-  color: var(--neutral-25);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   border: none;
 }
 
 .library-lesson__btn--add:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .library-lesson__btn--remove {
   background: transparent;
-  color: var(--primary-600);
-  border: 1px solid var(--primary-600);
+  color: var(--text-button-outlined);
+  border: 1px solid var(--text-button-outlined);
 }
 
 .library-lesson__btn--remove:hover {
-  background: var(--button-outline-hover);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
+}
+
+.library-lesson__btn--remove:active {
+  background: transparent;
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }

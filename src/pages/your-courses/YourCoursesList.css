@@ -212,7 +212,7 @@
 }
 
 .courses-list-course-title:hover {
-  color: var(--primary-600);
+  color: var(--text-button-hover);
 }
 
 /* Updated date — stacked (Mon DD, / YYYY) */

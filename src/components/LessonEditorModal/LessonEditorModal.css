@@ -234,7 +234,7 @@
 .lesson-editor-change-file {
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-button-background, var(--primary-600));
+  color: var(--text-button-outlined);
   white-space: nowrap;
   cursor: pointer;
   transition: opacity 150ms ease;

@@ -188,18 +188,26 @@
   gap: var(--space-xs);
   padding: 10px var(--space-ml) 10px var(--space-m);
   border-radius: var(--radius-s);
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
   background: none;
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   line-height: 1.5;
   cursor: pointer;
-  transition: background 150ms ease;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
 .create-course-empty-btn:hover {
-  background: rgba(0, 175, 196, 0.06);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
+}
+
+.create-course-empty-btn:active {
+  background: transparent;
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }
 
 /* Side menu */

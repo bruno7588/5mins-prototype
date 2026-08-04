@@ -407,7 +407,7 @@
 }
 
 .invite-modal-add-user:hover {
-  color: var(--primary-600);
+  color: var(--text-button-hover);
 }
 
 /* Footer */
@@ -437,16 +437,16 @@
 }
 
 .invite-modal-btn--cancel:hover {
-  background: rgba(0, 175, 196, 0.08);
+  background: var(--button-outline-fill-hover);
 }
 
 .invite-modal-btn--invite {
-  background: var(--primary-600);
-  color: var(--neutral-25);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
 }
 
 .invite-modal-btn--invite:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .invite-modal-btn--disabled {

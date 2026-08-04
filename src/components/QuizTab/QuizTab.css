@@ -77,7 +77,8 @@
   gap: var(--space-s);
   font-size: 16px;
   font-weight: 700;
-  background: linear-gradient(to bottom right, var(--Primary-500, #00CEE6) 0%, var(--Blaze-quiz, #8158EC) 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, var(--Primary-500, #00CEE6) 0%, var(--Blaze-quiz, #8158EC) 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, var(--Primary-500, #00CEE6) 0%, var(--Blaze-quiz, #8158EC) 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, var(--Primary-500, #00CEE6) 0%, var(--Blaze-quiz, #8158EC) 50%) top right / 50% 50% no-repeat;
+  /* Canonical AI text chrome (Button.css .ds-btn--ai-outlined label) */
+  background: radial-gradient(circle at top left, var(--text-button-outlined) 0%, var(--blaze-quiz) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

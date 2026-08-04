@@ -201,13 +201,15 @@
 }
 
 .pad-btn--outline {
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
   background: transparent;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
 }
 
 .pad-btn--outline:hover {
-  background: var(--button-outline-hover);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 /* Tertiary text + icon button (no border/fill). */
@@ -215,7 +217,7 @@
   padding: 10px var(--space-s) 10px var(--space-xs);
   border: none;
   background: transparent;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
 }
 
 /* Text button: no fill on hover — only the label/icon color shifts (buttons.md). */
@@ -225,12 +227,12 @@
 
 .pad-btn--filled {
   border: none;
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
 }
 
 .pad-btn--filled:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 /* DS Outlined-2 (buttons.md): transparent + neutral hairline at rest;
@@ -248,7 +250,7 @@
 }
 
 .pad-btn--outlined-2:active {
-  background: rgba(0, 206, 230, 0.08);
+  background: var(--button-outline-fill-pressed);
   color: var(--primary-button-background-pressed);
   border-color: var(--primary-button-background-pressed);
 }

@@ -1,49 +1,54 @@
 .generate-more-btn {
-  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-s);
   padding: 10px var(--space-ml) 10px var(--space-m);
-  background: unset;
+  background: transparent;
   font-size: 14px;
   font-weight: 700;
-  border: 1px solid transparent;
+  /* Canonical AI outlined border (Button.css .ds-btn--ai-outlined) */
+  border: 1px solid var(--primary-500);
   border-radius: 8px;
-  background-clip: padding-box;
   white-space: nowrap;
-  transition: background 150ms ease;
+  transition: background 150ms ease, box-shadow 150ms ease;
 }
 
-/* Gradient border via pseudo-element */
-.generate-more-btn::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 8px;
-  padding: 1px;
-  background: linear-gradient(135deg, #00CEE6 0%, #9B55C9 25%, #00CEE6 68.5%, #8158EC 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Gradient text */
+/* Gradient text — canonical AI text chrome */
 .generate-more-text {
-  background: linear-gradient(135deg, #008393 0%, #8158EC 100%);
+  background: radial-gradient(circle at top left, var(--text-button-outlined) 0%, var(--blaze-quiz) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   transition: all 150ms ease;
 }
 
-/* Hover: subtle gradient fill at 16% opacity */
+/* Hover: canonical 24% gradient wash + soft purple glow */
 .generate-more-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(0, 206, 230, 0.16) 0%, rgba(129, 88, 236, 0.16) 100%);
+  background: radial-gradient(
+    circle at top left,
+    color-mix(in srgb, var(--primary-button-background-hover) 24%, transparent) 0%,
+    rgba(129, 88, 236, 0.24) 100%
+  );
+  box-shadow: 1px 1px 32px 0 rgba(129, 88, 236, 0.16);
   cursor: pointer;
 }
 
+.generate-more-btn:hover:not(:disabled) .generate-more-text {
+  background-image: radial-gradient(circle at top left, var(--text-button-hover) 0%, var(--blaze-quiz) 100%);
+}
+
+/* Disabled — canonical AI outlined disabled tokens (Button.css) */
 .generate-more-btn--disabled {
-  opacity: 0.4;
+  background: var(--button-background-disabled);
+  border-color: transparent;
   cursor: not-allowed;
+}
+
+.generate-more-btn--disabled .generate-more-text {
+  background: none;
+  -webkit-text-fill-color: var(--text-button-disabled);
+}
+
+.generate-more-btn--disabled svg path {
+  fill: var(--text-button-disabled);
 }

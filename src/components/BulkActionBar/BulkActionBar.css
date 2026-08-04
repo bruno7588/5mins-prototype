@@ -89,10 +89,10 @@
 }
 
 .bulk-bar-btn--primary {
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
 }
-.bulk-bar-btn--primary:hover { background: var(--primary-700); }
+.bulk-bar-btn--primary:hover { background: var(--primary-button-background-hover); }
 
 .bulk-bar-btn--danger {
   background: var(--danger-500);

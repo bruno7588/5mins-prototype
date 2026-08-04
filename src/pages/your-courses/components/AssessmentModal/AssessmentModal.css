@@ -301,8 +301,8 @@
   padding: var(--space-sm) var(--space-l);
   font-size: 14px;
   font-weight: 700;
-  color: var(--neutral-0);
-  background: var(--primary-600);
+  color: var(--text-button-foreground);
+  background: var(--primary-button-background);
   border: none;
   border-radius: var(--radius-s);
   cursor: pointer;
@@ -310,7 +310,7 @@
 }
 
 .assessment-modal-cta:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .assessment-modal-cta:disabled {
@@ -333,15 +333,15 @@
 }
 
 .assessment-modal-add-media:hover {
-  color: var(--primary-700);
+  color: var(--text-button-hover);
 }
 
 .assessment-modal-add-media:hover .assessment-modal-add-media-label {
-  color: var(--primary-700);
+  color: var(--text-button-hover);
 }
 
 .assessment-modal-add-media:hover .assessment-modal-add-media-hint {
-  color: var(--primary-700);
+  color: var(--text-button-hover);
 }
 
 .assessment-modal-add-media-label {
@@ -662,8 +662,8 @@
 }
 
 .media-modal-select-btn:hover {
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 /* Staged preview inside drop zone */
@@ -760,7 +760,7 @@
 .media-modal-staged-change {
   font-size: 14px;
   font-weight: 600;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   background: none;
   border: none;
   cursor: pointer;
@@ -768,7 +768,7 @@
 }
 
 .media-modal-staged-change:hover {
-  color: var(--primary-700);
+  color: var(--text-button-hover);
 }
 
 /* Save button */
@@ -778,8 +778,8 @@
   padding: var(--space-sm) var(--space-xl);
   font-size: 14px;
   font-weight: 700;
-  color: var(--neutral-0);
-  background: var(--primary-600);
+  color: var(--text-button-foreground);
+  background: var(--primary-button-background);
   border: none;
   border-radius: var(--radius-s);
   cursor: pointer;
@@ -787,7 +787,7 @@
 }
 
 .media-modal-save:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .media-modal-save:disabled {

@@ -13,8 +13,8 @@ function SparkleIcon() {
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="sparkle-grad" x1="0" y1="0" x2="20" y2="20" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#008393" />
-          <stop offset="1" stopColor="#8158EC" />
+          <stop style={{ stopColor: 'var(--text-button-outlined)' }} />
+          <stop offset="1" style={{ stopColor: 'var(--blaze-quiz)' }} />
         </linearGradient>
       </defs>
       {/* Large sparkle */}

@@ -306,7 +306,7 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
 }
 
 /* Actions row */
@@ -354,7 +354,7 @@
 }
 
 .cd-link-btn--primary {
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
 }
 
 .cd-actions .cd-search {

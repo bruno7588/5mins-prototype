@@ -65,16 +65,16 @@
   padding: var(--space-sm) var(--space-l);
   font-size: 16px;
   font-weight: 700;
-  color: var(--neutral-25);
+  color: var(--text-button-foreground);
   border: none;
   border-radius: var(--radius-s);
-  background: var(--primary-600);
+  background: var(--primary-button-background);
   cursor: pointer;
   line-height: 1.5;
 }
 
 .add-scorm-publish-btn:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .add-scorm-preview-btn {
@@ -85,16 +85,24 @@
   padding: var(--space-sm) var(--space-l) var(--space-sm) var(--space-ml);
   font-size: 16px;
   font-weight: 700;
-  color: var(--primary-600);
-  border: 1px solid var(--primary-600);
+  color: var(--text-button-outlined);
+  border: 1px solid var(--text-button-outlined);
   border-radius: var(--radius-s);
-  background: none;
+  background: transparent;
   cursor: pointer;
   line-height: 1.5;
 }
 
 .add-scorm-preview-btn:hover {
-  background: rgba(0, 175, 196, 0.08);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
+}
+
+.add-scorm-preview-btn:active {
+  background: transparent;
+  color: var(--primary-button-background-pressed);
+  border-color: var(--primary-button-background-pressed);
 }
 
 .add-scorm-divider {
@@ -292,8 +300,8 @@
   padding: 10px var(--space-ml);
   font-size: 14px;
   font-weight: 700;
-  color: var(--neutral-25);
-  background: var(--primary-600);
+  color: var(--text-button-foreground);
+  background: var(--primary-button-background);
   border: none;
   border-radius: var(--radius-s);
   cursor: pointer;
@@ -301,5 +309,5 @@
 }
 
 .add-scorm-success-btn:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }

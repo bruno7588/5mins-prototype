@@ -220,21 +220,23 @@
 .ds-btn--success-text:disabled { color: var(--text-disabled); }
 
 /* ══ AI family — cyan→purple gradient (buttons.md 2026-08-04) ══
-   The gradient START follows the mode-aware primary filled ladder;
-   the END is always Blaze #8158EC. */
+   The gradient START follows the mode-aware primary filled ladder; the END is
+   always Blaze #8158EC. Figma uses a DIAMOND gradient centered at the button's
+   top-left corner — radial-gradient at top left is the closest CSS equivalent
+   (a ~120deg linear-gradient is an acceptable fallback, 100deg is too flat). */
 .ds-btn--ai {
-  background: linear-gradient(100deg, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
+  background: radial-gradient(circle at top left, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
   color: var(--neutral-25);
 }
 .ds-btn--ai:hover:not(:disabled) {
-  background: linear-gradient(100deg, var(--primary-button-background-hover) 0%, var(--blaze-quiz) 100%);
+  background: radial-gradient(circle at top left, var(--primary-button-background-hover) 0%, var(--blaze-quiz) 100%);
   /* 2px cyan border without layout shift: 1px border + 1px inset ring */
   border-color: var(--primary-500);
   box-shadow: inset 0 0 0 1px var(--primary-500);
   filter: drop-shadow(1px 1px 16px rgba(129, 88, 236, 0.5));
 }
 .ds-btn--ai:active:not(:disabled) {
-  background: linear-gradient(100deg, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
+  background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
   border-color: var(--primary-500);
   box-shadow: none;
   filter: none;
@@ -246,8 +248,8 @@
 }
 .ds-btn--ai-outlined:hover:not(:disabled) {
   /* 24% wash of the hover gradient + soft purple glow */
-  background: linear-gradient(
-    100deg,
+  background: radial-gradient(
+    circle at top left,
     color-mix(in srgb, var(--primary-button-background-hover) 24%, transparent) 0%,
     rgba(129, 88, 236, 0.24) 100%
   );
@@ -259,18 +261,19 @@
 }
 .ds-btn--ai-outlined .ds-btn__label,
 .ds-btn--ai-outlined .ds-btn__icon {
-  background: linear-gradient(100deg, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
+  /* label/icon gradient starts on the TEXT-chrome ladder, not the filled bg (Figma 11210:4067) */
+  background: radial-gradient(circle at top left, var(--text-button-outlined) 0%, var(--blaze-quiz) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 .ds-btn--ai-outlined:hover:not(:disabled) .ds-btn__label,
 .ds-btn--ai-outlined:hover:not(:disabled) .ds-btn__icon {
-  background-image: linear-gradient(100deg, var(--primary-button-background-hover) 0%, var(--blaze-quiz) 100%);
+  background-image: radial-gradient(circle at top left, var(--text-button-hover) 0%, var(--blaze-quiz) 100%);
 }
 .ds-btn--ai-outlined:active:not(:disabled) .ds-btn__label,
 .ds-btn--ai-outlined:active:not(:disabled) .ds-btn__icon {
-  background-image: linear-gradient(100deg, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
+  background-image: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
 }
 
 .ds-btn--ai:disabled,

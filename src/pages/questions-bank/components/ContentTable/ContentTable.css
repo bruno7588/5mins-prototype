@@ -71,8 +71,8 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-ml) var(--space-s) var(--space-m);
-  background: var(--primary-600);
-  color: var(--neutral-0);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   font-size: 14px;
   font-weight: 700;
   border-radius: var(--radius-s);
@@ -81,7 +81,7 @@
 }
 
 .qb-content-table-add-btn:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 /* Table */
@@ -221,7 +221,7 @@
 }
 
 .qb-content-table-filename--clickable:hover {
-  color: var(--primary-600);
+  color: var(--text-button-hover);
 }
 
 .qb-content-table-filename-input {
@@ -231,7 +231,7 @@
   color: var(--text-primary);
   background: none;
   border: none;
-  border-bottom: 2px solid var(--primary-500);
+  border-bottom: 2px solid var(--selected);
   outline: none;
   padding: 0 0 2px 0;
   width: 100%;
@@ -347,8 +347,8 @@
 .qb-content-table-ai-tooltip-review {
   font-size: 14px;
   font-weight: 700;
-  color: white;
-  background: var(--primary-500, #00CEE6);
+  color: var(--text-button-foreground);
+  background: var(--primary-button-background);
   border: none;
   cursor: pointer;
   padding: 8px 20px;
@@ -357,7 +357,7 @@
 }
 
 .qb-content-table-ai-tooltip-review:hover {
-  background: var(--primary-600, #00b8cc);
+  background: var(--primary-button-background-hover);
 }
 
 /* Arrow pointing right toward the badge */

@@ -97,7 +97,7 @@
 }
 
 .edit-reminder-modal__textarea:focus-visible {
-  border-color: var(--primary-600);
+  border-color: var(--selected);
 }
 
 .edit-reminder-modal__actions {

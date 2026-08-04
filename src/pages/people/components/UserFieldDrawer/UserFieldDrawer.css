@@ -271,7 +271,7 @@
 }
 
 .uf-drawer-add-option:hover {
-  color: var(--primary-600);
+  color: var(--text-button-hover);
 }
 
 /* Checkbox row */
@@ -318,8 +318,8 @@
   white-space: nowrap;
   padding: 10px var(--space-ml);
   border-radius: var(--radius-s);
-  background: var(--primary-600);
-  color: var(--neutral-25);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
@@ -328,7 +328,7 @@
 }
 
 .uf-drawer-save:hover {
-  background: var(--primary-700);
+  background: var(--primary-button-background-hover);
 }
 
 .uf-drawer-save:disabled {

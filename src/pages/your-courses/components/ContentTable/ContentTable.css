@@ -203,7 +203,7 @@
 }
 
 .content-table-filename--clickable:hover {
-  color: var(--primary-600);
+  color: var(--text-button-hover);
 }
 
 .content-table-filename-input {
@@ -213,7 +213,7 @@
   color: var(--text-primary);
   background: none;
   border: none;
-  border-bottom: 2px solid var(--primary-500);
+  border-bottom: 2px solid var(--selected);
   outline: none;
   padding: 0 0 2px 0;
   width: 100%;
@@ -340,8 +340,8 @@
 .content-table-ai-tooltip-review {
   font-size: 14px;
   font-weight: 700;
-  color: white;
-  background: var(--primary-500, #00CEE6);
+  color: var(--text-button-foreground);
+  background: var(--primary-button-background);
   border: none;
   cursor: pointer;
   padding: 8px 20px;
@@ -350,7 +350,7 @@
 }
 
 .content-table-ai-tooltip-review:hover {
-  background: var(--primary-600, #00b8cc);
+  background: var(--primary-button-background-hover);
 }
 
 /* Arrow pointing right toward the badge */

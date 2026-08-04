@@ -1022,8 +1022,8 @@
 
 /* Filled primary (cyan) */
 .confirm-modal-btn--primary {
-  background: var(--primary-600);
-  color: var(--neutral-25);
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
 }
 
 .confirm-modal-btn--primary:hover {

@@ -121,13 +121,13 @@
   align-items: center;
   flex-shrink: 0;
   padding: 10px var(--space-ml);
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
   border-radius: var(--radius-s);
   background: transparent;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   line-height: 1.5;
   white-space: nowrap;
   cursor: pointer;
@@ -135,9 +135,9 @@
 }
 
 .lrp-save-report-btn:hover {
-  background: var(--button-outline-hover);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 .lrp-tab {
@@ -304,12 +304,12 @@
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   line-height: 1.5;
 }
 
 .lrp-filter-save-preset:hover:not(:disabled) {
-  color: var(--primary-700);
+  color: var(--text-button-hover);
 }
 
 .lrp-filter-save-preset:disabled {
@@ -323,7 +323,7 @@
 }
 
 .lrp-filter-save-preset--ghost:hover:not(:disabled) {
-  color: var(--primary-700);
+  color: var(--text-button-hover);
 }
 
 /* Collapsed-only cluster (Add+ and pills) — fades as the container expands */
@@ -626,7 +626,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -635,7 +635,7 @@
 }
 
 .lrp-filter-add:hover {
-  color: var(--primary-700);
+  color: var(--text-button-hover);
 }
 
 .lrp-filter-clear {
@@ -891,23 +891,23 @@
   align-items: center;
   gap: 4px;
   padding: 8px 16px;
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--text-button-outlined);
   border-radius: var(--radius-s);
   background: transparent;
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
   font-weight: 700;
   line-height: 1.4;
-  color: var(--primary-600);
+  color: var(--text-button-outlined);
   cursor: pointer;
   white-space: nowrap;
   transition: background 150ms ease;
 }
 
 .lrp-cert-btn:hover {
-  background: var(--button-outline-hover);
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  background: var(--button-outline-fill-hover);
+  color: var(--text-button-hover);
+  border-color: var(--text-button-hover);
 }
 
 /* ===== Pagination ===== */
