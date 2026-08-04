@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Sort, Add, ArrowDown2, Status, Calendar, Clock, CalendarTick, Chart, Star1 } from 'iconsax-react'
+import { Sort, Add, ArrowDown2, Status, Calendar, Clock, CalendarTick, StatusUp, Star1 } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
 import Chip from '@/components/Chip/Chip'
 import InputInteger from '@/components/InputInteger/InputInteger'
@@ -41,14 +41,18 @@ interface FilterDef {
 // Iconsax icon at a given size, inheriting color (→ --text-primary in context).
 const ix = (El: typeof Sort) => (size: number) => <El size={size} color="currentColor" variant="Linear" />
 
+/* Grouped by type so the menu scans as state → dates → course, with the
+   most-reached-for filter leading each group: Status heads the progress
+   signals, Due date heads the dates (start dates are near-never filtered on).
+   Course sits last since search already narrows by course name. */
 export const FILTER_DEFS: FilterDef[] = [
-  { id: 'course', label: 'Course', renderIcon: (s) => <CourseIcon size={s} />, kind: 'multi' },
   { id: 'status', label: 'Status', renderIcon: ix(Status), kind: 'multi' },
-  { id: 'startDate', label: 'Start date', renderIcon: ix(Calendar), kind: 'date' },
-  { id: 'dueDate', label: 'Due date', renderIcon: ix(Clock), kind: 'date' },
-  { id: 'completionDate', label: 'Completion date', renderIcon: ix(CalendarTick), kind: 'date' },
-  { id: 'progress', label: 'Progress', renderIcon: ix(Chart), kind: 'range', suffix: '%' },
+  { id: 'progress', label: 'Progress', renderIcon: ix(StatusUp), kind: 'range', suffix: '%' },
   { id: 'score', label: 'Score', renderIcon: ix(Star1), kind: 'range', suffix: '%' },
+  { id: 'dueDate', label: 'Due date', renderIcon: ix(Clock), kind: 'date' },
+  { id: 'startDate', label: 'Start date', renderIcon: ix(Calendar), kind: 'date' },
+  { id: 'completionDate', label: 'Completion date', renderIcon: ix(CalendarTick), kind: 'date' },
+  { id: 'course', label: 'Course', renderIcon: (s) => <CourseIcon size={s} />, kind: 'multi' },
 ]
 
 const DEF_BY_ID = Object.fromEntries(FILTER_DEFS.map((d) => [d.id, d])) as Record<FilterId, FilterDef>
@@ -66,9 +70,11 @@ export function matchesCourse(row: FilterRow, active: FilterId[], values: Record
       const field = id === 'course' ? row.course : row.status
       if (!v.values.includes(field)) return false
     } else if (v.kind === 'range') {
+      if (v.min <= 0 && v.max >= 100) continue // full range — nothing set yet
       const val = id === 'progress' ? row.progress : row.score ?? -1
       if (val < v.min || val > v.max) return false
     } else {
+      if (!v.from && !v.to) continue // no bounds set yet
       const val = id === 'startDate' ? row.startDate : id === 'dueDate' ? row.dueDate : row.completionDate
       if (!val) return false
       if (v.from && val < v.from) return false
@@ -113,7 +119,7 @@ function AddFilterMenu({ available, onSelect }: { available: FilterDef[]; onSele
     <div className="up-filter-add-wrap" ref={ref}>
       <button type="button" className="up-filter-add" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <Add size={20} color="currentColor" variant="Linear" />
-        Add Filter
+        Add
       </button>
       {open && (
         <div className="up-filter-add-menu" role="listbox">

@@ -214,6 +214,10 @@
 /* Add Filter button + dropdown */
 .up-filter-add-wrap {
   position: relative;
+  /* Flex (not block) so the inline-flex button doesn't ride the text baseline —
+     keeps "Add" vertically centered in line with the "Filters" toggle. */
+  display: inline-flex;
+  align-items: center;
 }
 
 .up-filter-add {
