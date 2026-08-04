@@ -64,11 +64,18 @@
   display: none;
 }
 
+/* Single row — the collapsed header is a summary, so pills past MAX_PILLS
+   roll into the "+N" chip rather than wrapping onto a second line. */
 .up-filters-pills {
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.up-filters-pills > * {
+  flex-shrink: 0;
 }
 
 /* Filter pills use the DS Chip component; force the leading icon to primary. */

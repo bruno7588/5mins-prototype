@@ -84,8 +84,10 @@ export function matchesCourse(row: FilterRow, active: FilterId[], values: Record
   return true
 }
 
-/* How many pills before collapsing the rest into "+N". */
-const MAX_PILLS = 4
+/* How many pills before collapsing the rest into "+N". Three keeps the row on
+   one line at the narrowest supported width, even with the longest labels
+   ("Completion date", "Progress 20–80%"). */
+const MAX_PILLS = 3
 
 interface CourseFiltersProps {
   courses: FilterRow[]
