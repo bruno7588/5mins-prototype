@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, ArrowDown2, TaskSquare, Calendar, CalendarEdit, RotateLeft, Refresh, Repeat, ProfileRemove } from 'iconsax-react'
+import { ArrowDown, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -113,16 +113,33 @@ const FILTER_KIND = Object.fromEntries(FILTER_DEFS.map((d) => [d.id, d.kind])) a
    Course Progress row is an enrolment (this learner × this course). */
 const ROW_MENU_ITEMS: RowMenuItem[] = [
   { key: 'view-progress', label: 'View progress', supporting: "See learner's lesson and quiz progress", icon: <TaskSquare size={20} color="currentColor" variant="Linear" /> },
-  { key: 'extend-due-date', label: 'Extend due date', supporting: 'Give more time to complete the course', icon: <Calendar size={20} color="currentColor" variant="Linear" /> },
+  /* Reminders are automated per course (see Workflows); this is the manual nudge
+     for the exceptional case, so it stays single-row — never a bulk action. */
+  { key: 'send-reminder', label: 'Send reminder', supporting: 'Nudge the learner about this course', icon: <NotificationBing size={20} color="currentColor" variant="Linear" /> },
+  { key: 'extend-due-date', label: 'Extend due date', supporting: 'Give more time to complete the course', icon: <CalendarAdd size={20} color="currentColor" variant="Linear" /> },
   { key: 'edit-start-date', label: 'Edit start date', supporting: 'Change when the enrolment begins', icon: <CalendarEdit size={20} color="currentColor" variant="Linear" /> },
-  { key: 'edit-repeat-rules', label: 'Edit repeat rules', supporting: 'How often this course repeats', icon: <RotateLeft size={20} color="currentColor" variant="Linear" /> },
-  { key: 'give-another-attempt', label: 'Give another attempt', supporting: 'Reset progress and start a new attempt', icon: <Refresh size={20} color="currentColor" variant="Linear" /> },
+  /* Refresh, not RotateLeft — the bar uses RotateLeft for "give another
+     attempt", so recurrence keeps its own glyph to stay unambiguous. */
+  { key: 'edit-repeat-rules', label: 'Edit repeat rules', supporting: 'How often this course repeats', icon: <Refresh size={20} color="currentColor" variant="Linear" /> },
+  { key: 'give-another-attempt', label: 'Give another attempt', supporting: 'Reset progress and start a new attempt', icon: <RotateLeft size={20} color="currentColor" variant="Linear" /> },
   { key: 'restart-enrolment', label: 'Restart enrolment', supporting: 'Start a new enrolment with new dates', icon: <Repeat size={20} color="currentColor" variant="Linear" /> },
-  { key: 'unenrol', label: 'Unenrol', supporting: 'Remove this learner from the course', icon: <ProfileRemove size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
+  { key: 'unenrol', label: 'Unenrol', supporting: 'Remove this learner from the course', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
+]
+
+/* Floating-bar actions — icon-only until hovered, when each expands into the DS
+   Outlined button hover state (Figma 9180:54019 rest / 9180:54170 hover).
+   Glyphs follow that Figma and differ from the row menu's for three of these. */
+const BULK_ACTIONS: { key: string; label: string; icon: ReactNode; destructive?: boolean }[] = [
+  { key: 'extend-due-date', label: 'Extend Due Date', icon: <CalendarAdd size={20} color="currentColor" variant="Linear" /> },
+  { key: 'edit-start-date', label: 'Edit Start Date', icon: <CalendarEdit size={20} color="currentColor" variant="Linear" /> },
+  { key: 'give-another-attempt', label: 'Give Another Attempt', icon: <RotateLeft size={20} color="currentColor" variant="Linear" /> },
+  { key: 'restart-enrolment', label: 'Restart Enrolment', icon: <Repeat size={20} color="currentColor" variant="Linear" /> },
+  { key: 'unenrol', label: 'Unenrol', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, destructive: true },
 ]
 
 const ROW_ACTION_LABEL: Record<string, string> = {
   'view-progress': 'View progress',
+  'send-reminder': 'Send reminder',
   'extend-due-date': 'Extend due date',
   'edit-start-date': 'Edit start date',
   'edit-repeat-rules': 'Edit repeat rules',
@@ -130,12 +147,6 @@ const ROW_ACTION_LABEL: Record<string, string> = {
   'restart-enrolment': 'Restart enrolment',
   unenrol: 'Unenrol',
 }
-
-/* Bulk menu = the enrolment actions that apply to many rows at once
-   (no "View progress" / "Edit repeat rules" — those are single-row). */
-const BULK_KEYS = ['extend-due-date', 'edit-start-date', 'give-another-attempt', 'restart-enrolment', 'unenrol']
-// Bulk menu items are single-line (no supporting text), per the Figma.
-const BULK_MENU_ITEMS = ROW_MENU_ITEMS.filter((i) => BULK_KEYS.includes(i.key)).map((i) => ({ ...i, supporting: undefined }))
 
 function DateCell({ value }: { value: string | null }) {
   if (!value) return <span className="up-muted">–</span>
@@ -197,6 +208,10 @@ function UserProfile() {
   }
 
   const handleRowAction = (key: string, row: CourseProgress) => {
+    if (key === 'send-reminder') {
+      showToast('success', `Reminder sent to ${person.name} for “${row.course}”`)
+      return
+    }
     if (key === 'unenrol') {
       showToast('warning', `${person.name} would be unenrolled from “${row.course}”`)
       return
@@ -211,11 +226,6 @@ function UserProfile() {
       return
     }
     showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} — ${n} selected — coming soon`)
-  }
-
-  const sendReminder = () => {
-    const n = selected.size
-    showToast('success', `Reminder sent for ${n} ${n === 1 ? 'course' : 'courses'}`)
   }
 
   const rows = useMemo(() => {
@@ -461,18 +471,18 @@ function UserProfile() {
 
       {selected.size > 0 && (
         <BulkActionBar count={selected.size} onClear={() => setSelected(new Set())}>
-          <button type="button" className="bulk-bar-btn bulk-bar-btn--primary" onClick={sendReminder}>
-            Send Reminder
-          </button>
-          <RowActionsMenu
-            items={BULK_MENU_ITEMS}
-            onSelect={handleBulkAction}
-            placement="top"
-            caret={false}
-            ariaLabel="Bulk actions"
-            triggerClassName="bulk-bar-btn bulk-bar-btn--outlined"
-            triggerContent={<>Actions<ArrowDown2 size={16} color="currentColor" variant="Linear" className="bulk-bar-chevron" /></>}
-          />
+          {BULK_ACTIONS.map((action) => (
+            <button
+              key={action.key}
+              type="button"
+              className={`bulk-bar-btn bulk-bar-btn--icon${action.destructive ? ' bulk-bar-btn--destructive' : ''}`}
+              onClick={() => handleBulkAction(action.key)}
+            >
+              {action.icon}
+              {/* Label stays in the DOM while collapsed so it is always announced. */}
+              <span className="bulk-bar-btn-label"><span>{action.label}</span></span>
+            </button>
+          ))}
         </BulkActionBar>
       )}
 
