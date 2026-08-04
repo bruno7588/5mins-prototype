@@ -794,7 +794,8 @@ function People() {
       )}
 
       {/* ═══ Bulk action bar — Active People ═══ */}
-      {selectedIds.size > 0 && !isDeactivatedTab && (
+      {/* Tab picks which bar; `count` drives show/hide so it can animate out. */}
+      {!isDeactivatedTab && (
         <BulkActionBar count={selectedIds.size} onClear={() => setSelectedIds(new Set())}>
           <button
             className="bulk-bar-btn bulk-bar-btn--danger"
@@ -806,7 +807,7 @@ function People() {
       )}
 
       {/* ═══ Bulk action bar — Deactivated ═══ */}
-      {selectedIds.size > 0 && isDeactivatedTab && (
+      {isDeactivatedTab && (
         <BulkActionBar count={selectedIds.size} onClear={() => setSelectedIds(new Set())}>
           <button
             className="bulk-bar-btn bulk-bar-btn--primary"

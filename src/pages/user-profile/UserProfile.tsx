@@ -469,22 +469,21 @@ function UserProfile() {
         </div>
       </main>
 
-      {selected.size > 0 && (
-        <BulkActionBar count={selected.size} onClear={() => setSelected(new Set())}>
-          {BULK_ACTIONS.map((action) => (
-            <button
-              key={action.key}
-              type="button"
-              className={`bulk-bar-btn bulk-bar-btn--icon${action.destructive ? ' bulk-bar-btn--destructive' : ''}`}
-              onClick={() => handleBulkAction(action.key)}
-            >
-              {action.icon}
-              {/* Label stays in the DOM while collapsed so it is always announced. */}
-              <span className="bulk-bar-btn-label"><span>{action.label}</span></span>
-            </button>
-          ))}
-        </BulkActionBar>
-      )}
+      {/* Always mounted — the bar shows/hides itself off `count` so it can animate out. */}
+      <BulkActionBar count={selected.size} onClear={() => setSelected(new Set())}>
+        {BULK_ACTIONS.map((action) => (
+          <button
+            key={action.key}
+            type="button"
+            className={`bulk-bar-btn bulk-bar-btn--icon${action.destructive ? ' bulk-bar-btn--destructive' : ''}`}
+            onClick={() => handleBulkAction(action.key)}
+          >
+            {action.icon}
+            {/* Label stays in the DOM while collapsed so it is always announced. */}
+            <span className="bulk-bar-btn-label"><span>{action.label}</span></span>
+          </button>
+        ))}
+      </BulkActionBar>
 
       <ToastContainer toasts={toasts} />
     </div>

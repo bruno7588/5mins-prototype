@@ -20,16 +20,8 @@
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(15, 16, 20, 0.24), 0 2px 8px rgba(15, 16, 20, 0.12);
   pointer-events: auto;
-  animation: bulk-bar-slide-up 250ms ease;
-}
-
-@keyframes bulk-bar-slide-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bulk-bar { animation: none; }
+  /* Enter/exit (opacity + 16px slide) is owned by Framer in BulkActionBar.tsx —
+     a CSS keyframe can only play on mount, so it can't animate the bar out. */
 }
 
 .bulk-bar-close {
