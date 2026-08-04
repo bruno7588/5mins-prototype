@@ -102,6 +102,11 @@
   background: var(--primary-700);
 }
 
+/* When a leading icon is passed (primaryIcon), icon-side padding is 4px tighter */
+.page-header-btn-filled:has(> svg:first-child) {
+  padding-left: var(--space-m);
+}
+
 /* Disabled state for all button variants */
 .page-header-btn-disabled.page-header-btn-outline,
 .page-header-btn-disabled.page-header-btn-outline-primary {

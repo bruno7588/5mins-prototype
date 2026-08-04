@@ -44,8 +44,8 @@ function MobileLessonCard({
     if (quiz === 'pending' && !completed) {
       return (
         <button type="button" className="m-lesson-card__quiz m-lesson-card__quiz--take" onClick={onQuizClick}>
-          Take Quiz
           <Danger size={16} color="var(--button-warning-background)" variant="Linear" />
+          Take Quiz
         </button>
       )
     }

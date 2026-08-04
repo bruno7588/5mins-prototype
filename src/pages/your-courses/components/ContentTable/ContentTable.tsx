@@ -242,8 +242,8 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
         </div>
 
         <button className="btn-primary content-table-add-btn" onClick={isScorm ? () => setShowAddScorm(true) : onAddContent}>
-          {isScorm ? 'Add SCORM' : 'Add Content'}
           <Add size={20} color="white" />
+          {isScorm ? 'Add SCORM' : 'Add Content'}
         </button>
       </div>
 
@@ -358,7 +358,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                             className="content-table-menu-item"
                             onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
                           >
-                            <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+                            <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
                             Edit SCORM
                           </button>
                         ) : (
@@ -366,12 +366,12 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
                             className="content-table-menu-item"
                             onClick={() => { setMenuOpenId(null); onLessonClick?.(row) }}
                           >
-                            <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+                            <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
                             Edit lesson
                           </button>
                         )}
                         <button className="content-table-menu-item ui-disabled" disabled>
-                          <EyeSlash size={20} color="var(--text-secondary)" variant="Linear" />
+                          <EyeSlash size={20} color="var(--text-primary)" variant="Linear" />
                           Hide
                         </button>
                         <button

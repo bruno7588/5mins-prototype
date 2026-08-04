@@ -171,8 +171,8 @@ function CreateFlashcardsFromFileModal({ open, onClose, onGenerate }: CreateFlas
               disabled={!file}
               onClick={handleStart}
             >
-              Generate flashcards
               <SparkleIcon size={20} color={file ? '#FFFFFF' : 'var(--text-button-disabled)'} />
+              Generate flashcards
             </button>
           </div>
         )}

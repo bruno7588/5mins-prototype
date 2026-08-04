@@ -70,7 +70,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-s) var(--space-ml);
+  padding: var(--space-s) var(--space-ml) var(--space-s) var(--space-m);
   background: var(--primary-600);
   color: var(--neutral-0);
   font-size: 14px;

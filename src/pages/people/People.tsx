@@ -633,15 +633,15 @@ function People() {
                       <div className="people-action-menu">
                         <div className="people-action-menu-caret" />
                         <button className="people-action-menu-item" onClick={() => setOpenMenuId(null)}>
-                          <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+                          <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
                           Edit user profile
                         </button>
                         <button className="people-action-menu-item" onClick={() => setOpenMenuId(null)}>
-                          <ShieldSecurity size={20} color="var(--text-secondary)" variant="Linear" />
+                          <ShieldSecurity size={20} color="var(--text-primary)" variant="Linear" />
                           Make user Admin
                         </button>
                         <button className="people-action-menu-item" onClick={() => setOpenMenuId(null)}>
-                          <Devices size={20} color="var(--text-secondary)" variant="Linear" />
+                          <Devices size={20} color="var(--text-primary)" variant="Linear" />
                           Make Subject Expert
                         </button>
                         <button

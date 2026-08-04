@@ -408,7 +408,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-sm) var(--space-ml);
+  padding: var(--space-sm) var(--space-ml) var(--space-sm) var(--space-m);
   font-size: 14px;
   font-weight: 700;
   color: var(--neutral-25);
@@ -1944,7 +1944,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: 10px var(--space-ml) 10px var(--space-m);
   font-size: 14px;
   font-weight: 700;
   color: var(--neutral-25);
@@ -2323,3 +2323,8 @@
   animation-fill-mode: backwards;
 }
 
+
+/* Download List (delete-role modal) — leading icon, icon-side padding 4px tighter */
+.confirm-modal-btn.roles-download-list-btn {
+  padding-left: var(--space-ml);
+}

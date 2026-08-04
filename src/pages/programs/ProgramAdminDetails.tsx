@@ -344,8 +344,8 @@ function ProgramAdminDetails() {
             )}
           </div>
           <button type="button" className="pad-btn pad-btn--text" onClick={() => navigate(`/programs/${draft.id}`)}>
-            Preview
             <Eye size={20} color="currentColor" variant="Linear" />
+            Preview
           </button>
           <button type="button" className="pad-btn pad-btn--filled" onClick={() => setDrawerOpen(true)}>
             Enrol People

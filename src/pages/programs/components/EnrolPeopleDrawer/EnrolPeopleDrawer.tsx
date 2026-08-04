@@ -350,8 +350,8 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
                   <span className="epd-filters__badge">0</span>
                 </span>
                 <button type="button" className="epd-filters__add" disabled>
+                  <Add size={20} color="currentColor" variant="Linear" />
                   Add Filter
-                  <Add size={20} color="var(--primary-button-background)" variant="Linear" />
                 </button>
                 <ArrowDown2 size={16} color="var(--text-secondary)" variant="Linear" />
               </div>

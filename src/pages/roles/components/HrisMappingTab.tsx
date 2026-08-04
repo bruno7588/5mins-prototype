@@ -124,8 +124,8 @@ function HrisMappingTab({
         </div>
         <div className="roles-empty-state__cta">
           <button className="roles-btn-primary-with-icon" onClick={onSimulateResync}>
-            Run Dry Run
             <Refresh size={20} color="var(--neutral-25)" />
+            Run Dry Run
           </button>
         </div>
       </div>

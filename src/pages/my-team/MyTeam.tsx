@@ -397,12 +397,12 @@ function MyTeam() {
         </button>
         <div className="mt-topnav__right">
           <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
-            <span>Get App</span>
             <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
+            <span>Get App</span>
           </button>
           <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
-            <span>Create</span>
             <Add size={20} color="var(--text-primary)" variant="Linear" />
+            <span>Create</span>
           </button>
           <div className="mt-topnav__icons">
             <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
@@ -556,8 +556,8 @@ function MyTeam() {
                 </div>
                 {canSendReminders ? (
                   <button type="button" className="mt-cp__reminders-btn mt-cp__reminders-btn--active" onClick={() => setReminderOpen(true)}>
-                    <span>Send Reminders ({selectedCount})</span>
                     <SmsNotification size={20} color="currentColor" variant="Linear" />
+                    <span>Send Reminders ({selectedCount})</span>
                   </button>
                 ) : (
                   <Tooltip
@@ -572,8 +572,8 @@ function MyTeam() {
                       disabled
                       aria-disabled="true"
                     >
-                      <span>Send Reminders</span>
                       <SmsNotification size={20} color="currentColor" variant="Linear" />
+                      <span>Send Reminders</span>
                     </button>
                   </Tooltip>
                 )}

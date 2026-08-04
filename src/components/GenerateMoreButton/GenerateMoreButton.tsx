@@ -35,8 +35,8 @@ function GenerateMoreButton({ poolSize, maxPoolSize = MAX_POOL, onGenerate }: Ge
       disabled={atMax}
       title={atMax ? `Maximum pool size reached (${maxPoolSize} questions)` : undefined}
     >
-      <span className="generate-more-text">Create With AI (+6)</span>
       <SparkleIcon />
+      <span className="generate-more-text">Create With AI (+6)</span>
     </button>
   )
 }

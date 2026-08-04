@@ -37,12 +37,12 @@ function Events() {
         </button>
         <div className="mt-topnav__right">
           <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
-            <span>Get App</span>
             <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
+            <span>Get App</span>
           </button>
           <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
-            <span>Create</span>
             <Add size={20} color="var(--text-primary)" variant="Linear" />
+            <span>Create</span>
           </button>
           <div className="mt-topnav__icons">
             <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>

@@ -193,8 +193,8 @@ function ProgramsAdmin() {
                 className="programs-search"
               />
               <button className="programs-create-btn" onClick={() => navigate('/programs/builder')}>
+                <Add size={20} color="currentColor" variant="Linear" />
                 Create Program
-                <Add size={20} color="var(--neutral-25)" variant="Linear" />
               </button>
             </div>
           </div>
@@ -217,8 +217,8 @@ function ProgramsAdmin() {
               </p>
               {!query && (
                 <button className="programs-create-btn" onClick={() => navigate('/programs/builder')}>
+                  <Add size={20} color="currentColor" variant="Linear" />
                   Create Program
-                  <Add size={20} color="var(--neutral-25)" variant="Linear" />
                 </button>
               )}
             </div>
@@ -290,7 +290,7 @@ function ProgramsAdmin() {
                 closeMenu()
               }}
             >
-              <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+              <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
               Edit
             </button>
             <button

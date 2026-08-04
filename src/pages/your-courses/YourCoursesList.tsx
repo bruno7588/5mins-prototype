@@ -73,8 +73,8 @@ function YourCoursesList() {
           <div className="courses-list-headline">
             <h2 className="courses-list-title">Your Courses</h2>
             <button className="btn-primary" onClick={() => navigate('/create-course')}>
-              Create Course
               <Add size={20} color="var(--neutral-25)" />
+              Create Course
             </button>
           </div>
 

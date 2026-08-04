@@ -331,8 +331,8 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
         </div>
 
         <button type="button" className="audit-export" onClick={exportCsv} disabled={total === 0}>
-          Export CSV
           <DocumentDownload size={16} color="currentColor" variant="Linear" />
+          Export CSV
         </button>
       </div>
 

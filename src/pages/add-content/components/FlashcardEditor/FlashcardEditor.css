@@ -44,6 +44,12 @@
   gap: var(--space-sm);
 }
 
+/* "Edit Theme" (global .btn-outlined + leading brush icon):
+   icon-side (left) padding 4px tighter per DS leading-icon rule */
+.fce-header-actions > .btn-outlined {
+  padding: 10px var(--space-ml) 10px var(--space-m);
+}
+
 .fce-icon-btn {
   display: flex;
   align-items: center;

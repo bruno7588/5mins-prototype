@@ -104,9 +104,9 @@ function ProgramBuilder() {
         onTabChange={setActiveTab}
         primaryAction={
           activeTab === 'Courses' ? (
-            <button type="button" className="page-header-btn-outline" onClick={() => setPickerOpen(true)}>
-              Add Courses
+            <button type="button" className="page-header-btn-outline pb-addcourses-btn" onClick={() => setPickerOpen(true)}>
               <Add size={20} color="currentColor" variant="Linear" />
+              Add Courses
             </button>
           ) : undefined
         }
@@ -174,8 +174,8 @@ function ProgramBuilder() {
                     <img className="pb-empty__art" src={emptyCoursesPlus} alt="" aria-hidden="true" />
                     <p className="pb-empty__title">Add courses to your program</p>
                     <button className="pb-empty__cta" onClick={() => setPickerOpen(true)}>
+                      <Add size={20} color="currentColor" variant="Linear" />
                       Add Courses
-                      <Add size={20} color="var(--neutral-0)" variant="Linear" />
                     </button>
                   </div>
                 ) : (

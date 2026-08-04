@@ -68,6 +68,8 @@
 
 .content-table-add-btn {
   gap: var(--space-s);
+  /* leading icon — icon-side padding 4px tighter than the right */
+  padding: 10px var(--space-ml) 10px var(--space-m);
 }
 
 /* Table — flex-based, mirrors Figma Your Content / 4839:937 and People table pattern */

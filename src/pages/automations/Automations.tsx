@@ -1084,7 +1084,7 @@ function Automations() {
                               editAutomation(row.id)
                             }}
                           >
-                            <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+                            <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
                             Edit automation
                           </button>
                           <button
@@ -1096,7 +1096,7 @@ function Automations() {
                               duplicateAutomation(row.id)
                             }}
                           >
-                            <Copy size={20} color="var(--text-secondary)" variant="Linear" />
+                            <Copy size={20} color="var(--text-primary)" variant="Linear" />
                             Duplicate
                           </button>
                           <button
@@ -1109,7 +1109,7 @@ function Automations() {
                               setActiveTab('activity')
                             }}
                           >
-                            <Activity size={20} color="var(--text-secondary)" variant="Linear" />
+                            <Activity size={20} color="var(--text-primary)" variant="Linear" />
                             View activity
                           </button>
                           <button
@@ -1126,7 +1126,7 @@ function Automations() {
                           >
                             <Flash
                               size={20}
-                              color={row.active ? 'var(--text-secondary)' : 'var(--text-disabled)'}
+                              color={row.active ? 'var(--text-primary)' : 'var(--text-disabled)'}
                               variant="Linear"
                             />
                             Trigger automation

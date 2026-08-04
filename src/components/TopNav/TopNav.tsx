@@ -100,7 +100,7 @@ function TopNav() {
                   navigate('/onboarding')
                 }}
               >
-                <Logout size={18} color="var(--text-secondary)" variant="Linear" />
+                <Logout size={18} color="var(--text-primary)" variant="Linear" />
                 <span>Log Out</span>
               </button>
               <button
@@ -112,7 +112,7 @@ function TopNav() {
                   navigate('/mobile')
                 }}
               >
-                <Mobile size={18} color="var(--text-secondary)" variant="Linear" />
+                <Mobile size={18} color="var(--text-primary)" variant="Linear" />
                 <span>Mobile App</span>
               </button>
             </div>

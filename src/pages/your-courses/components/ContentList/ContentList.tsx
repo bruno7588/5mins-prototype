@@ -646,8 +646,8 @@ function ContentList({
                 className="course-empty-state__btn course-empty-state__btn--filled"
                 onClick={(e) => onAddContent?.(onlySection!.id, e.currentTarget)}
               >
-                <span>Add Content</span>
                 <Add size={20} color="currentColor" variant="Linear" />
+                <span>Add Content</span>
               </button>
             </div>
           </div>

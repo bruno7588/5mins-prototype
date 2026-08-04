@@ -329,8 +329,8 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
                     className="aim-generate-btn aim-generate-btn--secondary"
                     onClick={handleGenerate}
                   >
-                    <span className="aim-generate-btn-gradient-text">Generate Again</span>
                     <SparkleIcon size={20} gradient />
+                    <span className="aim-generate-btn-gradient-text">Generate Again</span>
                   </button>
                   <button
                     type="button"
@@ -347,8 +347,8 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
                   onClick={handleGenerate}
                   disabled={prompt.trim().length === 0}
                 >
-                  Generate Image
                   <SparkleIcon size={20} />
+                  Generate Image
                 </button>
               )}
             </div>

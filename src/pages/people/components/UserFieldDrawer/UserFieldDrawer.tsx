@@ -128,8 +128,8 @@ function UserFieldDrawer({ onClose, onSave, initialData, existingNames = [] }: U
             </div>
 
             <button className="uf-drawer-add-option" type="button" onClick={handleAddOption}>
-              Add Option
               <Add size={20} color="currentColor" />
+              Add Option
             </button>
           </div>
 

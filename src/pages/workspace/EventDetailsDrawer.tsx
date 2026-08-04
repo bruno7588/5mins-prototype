@@ -111,8 +111,8 @@ function EventDetailsDrawer({ open, event, onClose }: Props) {
               </div>
               <div className="event-drawer__actions">
                 <button type="button" className="event-drawer__btn-outline">
-                  <span>Add to Calendar</span>
                   <CalendarAdd size={20} color="var(--text-secondary)" variant="Linear" />
+                  <span>Add to Calendar</span>
                 </button>
                 <button type="button" className="event-drawer__btn-primary">
                   Register

@@ -45,8 +45,8 @@ function PoolHeader({ poolSize, drawCount, maxPoolSize, onDrawCountChange, onAdd
             onClick={onAddManual}
             disabled={addManualDisabled}
           >
-            Add Question Manually
             <Add size={20} color="currentColor" />
+            Add Question Manually
           </button>
           <GenerateMoreButton
             poolSize={poolSize}

@@ -406,8 +406,8 @@ function CourseDetails() {
                 <span className="cd-filters-label">Filters</span>
                 <span className="cd-filters-count">0</span>
                 <button className="cd-filters-add ui-disabled" disabled>
+                  <Add size={18} color="currentColor" />
                   Add
-                  <Add size={18} color="var(--primary-600)" />
                 </button>
               </div>
               <button className="cd-icon-btn cd-icon-btn--sm" aria-label="Collapse filters">
@@ -441,8 +441,8 @@ function CourseDetails() {
                 className="cd-search"
               />
               <button className="cd-download-btn ui-disabled" disabled>
-                Download Report
                 <DocumentDownload size={20} color="var(--text-primary)" variant="Linear" />
+                Download Report
               </button>
             </div>
 

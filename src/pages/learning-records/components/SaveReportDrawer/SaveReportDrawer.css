@@ -298,7 +298,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-s) var(--space-sm);
+  padding: var(--space-s) var(--space-sm) var(--space-s) var(--space-s);
   border: 1px dashed var(--border-hover);
   border-radius: var(--radius-sm);
   background: transparent;
@@ -436,7 +436,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
-  padding: 10px var(--space-ml);
+  padding: 10px var(--space-ml) 10px var(--space-m);
   border: 1px solid var(--text-primary);
   border-radius: var(--radius-s);
   background: transparent;

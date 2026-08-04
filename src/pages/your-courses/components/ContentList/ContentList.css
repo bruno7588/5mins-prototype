@@ -243,6 +243,8 @@
   background: var(--primary-600);
   color: var(--neutral-0);
   border: none;
+  /* leading icon — icon-side padding 4px tighter than the right */
+  padding-left: var(--space-m);
 }
 
 .course-empty-state__btn--filled:hover {

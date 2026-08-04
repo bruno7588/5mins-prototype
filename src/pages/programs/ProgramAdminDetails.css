@@ -212,7 +212,7 @@
 
 /* Tertiary text + icon button (no border/fill). */
 .pad-btn--text {
-  padding: 10px var(--space-s);
+  padding: 10px var(--space-s) 10px var(--space-xs);
   border: none;
   background: transparent;
   color: var(--primary-600);

@@ -60,7 +60,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
+  padding: 8px 12px 8px 8px;
   border: none;
   border-radius: var(--radius-full, 999px);
   background: rgba(15, 16, 20, 0.5);
@@ -190,11 +190,16 @@
   text-align: center;
 }
 
+/* Leading-icon "Add Courses" in the page header: icon-side padding 4px tighter. */
+.page-header-btn-outline.pb-addcourses-btn {
+  padding: 10px var(--space-ml) 10px var(--space-m);
+}
+
 .pb-empty__cta {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: 10px var(--space-ml) 10px var(--space-m);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-600);

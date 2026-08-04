@@ -373,8 +373,8 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
               <AiSparkleIcon size={24} />
             </button>
             <button type="button" className="btn-outlined">
-              Edit Theme
               <Brush2 size={20} color="currentColor" variant="Linear" />
+              Edit Theme
             </button>
             <Tooltip
               text={disabledReason}
@@ -710,8 +710,8 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
               </div>
             </div>
             <button type="button" className="fce-add-question">
-              Add Question Manually
               <Add size={20} color="var(--text-primary)" variant="Linear" />
+              Add Question Manually
             </button>
           </div>
         )}

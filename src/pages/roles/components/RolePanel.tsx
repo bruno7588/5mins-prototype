@@ -426,11 +426,11 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                       className="roles-btn-ai-text"
                       onClick={handleEditAISuggest}
                     >
-                      <span>Add Skills With AI</span>
                       <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
                         <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/>
                         <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/>
                       </svg>
+                      <span>Add Skills With AI</span>
                     </button>
                   </div>
                   {renderSkillChips()}
@@ -491,8 +491,8 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                       >
-                        Upload Job Description
                         <DocumentUpload size={20} color="currentColor" variant="Linear" />
+                        Upload Job Description
                       </button>
                       <input
                         ref={fileInputRef}
@@ -573,8 +573,8 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
                         >
-                          Upload Job Description
                           <DocumentUpload size={20} color="currentColor" variant="Linear" />
+                          Upload Job Description
                         </button>
                         <input
                           ref={fileInputRef}
@@ -649,11 +649,11 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                         disabled={aiLoading}
                         onClick={handleAISuggest}
                       >
-                        <span>Add Skills With AI</span>
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                           <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/>
                           <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/>
                         </svg>
+                        <span>Add Skills With AI</span>
                       </button>
                     </div>
                   )}
@@ -672,11 +672,11 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                         disabled={aiLoading}
                         onClick={handleAISuggest}
                       >
-                        <span>Add Skills With AI</span>
                         <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
                           <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/>
                           <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/>
                         </svg>
+                        <span>Add Skills With AI</span>
                       </button>
                     </div>
                   )}
@@ -703,12 +703,12 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                       disabled={!name.trim() || aiLoading || isDuplicateName}
                       onClick={handleAISuggest}
                     >
-                      Add Skills With AI
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="currentColor"/>
                         <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="currentColor"/>
                         <path d="M5 12.5L5.625 14.375L7.5 15L5.625 15.625L5 17.5L4.375 15.625L2.5 15L4.375 14.375L5 12.5Z" fill="currentColor"/>
                       </svg>
+                      Add Skills With AI
                     </button>
                     {!name.trim() && (
                       <span className="roles-btn-tooltip"><span className="roles-btn-tooltip__asterisk">*</span> Role name is required</span>

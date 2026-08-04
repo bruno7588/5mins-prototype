@@ -82,7 +82,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-sm) var(--space-l);
+  padding: var(--space-sm) var(--space-l) var(--space-sm) var(--space-ml);
   font-size: 16px;
   font-weight: 700;
   color: var(--primary-600);
@@ -231,7 +231,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: var(--space-s) var(--space-m);
+  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
   font-size: 12px;
   font-weight: 700;
   color: var(--neutral-25);

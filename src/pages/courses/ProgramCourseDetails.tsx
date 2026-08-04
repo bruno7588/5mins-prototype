@@ -84,12 +84,12 @@ function ProgramCourseDetails() {
         </button>
         <div className="mt-topnav__right">
           <button type="button" className="mt-topnav__textbtn">
-            <span>Get App</span>
             <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
+            <span>Get App</span>
           </button>
           <button type="button" className="mt-topnav__outlinebtn">
-            <span>Create</span>
             <Add size={20} color="currentColor" variant="Linear" />
+            <span>Create</span>
           </button>
           <div className="mt-topnav__icons">
             <button type="button" className="mt-topnav__iconbtn" aria-label="Notifications">

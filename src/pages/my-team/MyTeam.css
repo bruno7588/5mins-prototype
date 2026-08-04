@@ -41,7 +41,7 @@
   gap: var(--space-xs);
   background: transparent;
   border: none;
-  padding: var(--space-s);
+  padding: var(--space-s) var(--space-s) var(--space-s) var(--space-xs);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 14px;
@@ -58,7 +58,7 @@
   background: transparent;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 8px 16px;
+  padding: 8px 16px 8px 12px;
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 14px;
@@ -449,7 +449,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-s);
-  padding: 8px 16px;
+  padding: 8px 16px 8px 12px;
   border: 1px solid var(--text-disabled, var(--neutral-300));
   border-radius: var(--radius-s);
   background: transparent;

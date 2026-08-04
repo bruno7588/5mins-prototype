@@ -64,7 +64,7 @@
   align-items: center;
   gap: var(--space-xs);
   flex-shrink: 0;
-  padding: 10px var(--space-sm);
+  padding: 10px var(--space-sm) 10px var(--space-s);
   border: none;
   border-radius: var(--radius-s);
   background: transparent;
@@ -88,7 +88,7 @@
   align-items: center;
   gap: var(--space-s);
   flex-shrink: 0;
-  padding: 10px var(--space-ml);
+  padding: 10px var(--space-ml) 10px var(--space-m);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);
   background: transparent;

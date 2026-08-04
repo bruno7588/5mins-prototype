@@ -213,7 +213,7 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
       <div className="sc-content-table-filters">
         <span className="sc-content-table-filter-label">Show content from</span>
         <button className="sc-content-table-filter-dropdown ui-disabled" disabled>
-          <Setting4 size={16} color="var(--text-secondary)" variant="Linear" />
+          <Setting4 size={16} color="var(--text-primary)" variant="Linear" />
           All
           <ArrowDown2 size={12} color="var(--text-tertiary)" />
         </button>
@@ -224,8 +224,8 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
         </div>
 
         <button className="sc-content-table-add-btn" onClick={isScorm ? () => setShowAddScorm(true) : undefined}>
-          {isScorm ? 'Add SCORM' : 'Add Content'}
           <Add size={20} color="white" />
+          {isScorm ? 'Add SCORM' : 'Add Content'}
         </button>
       </div>
 
@@ -314,11 +314,11 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
                             className="sc-content-table-menu-item"
                             onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
                           >
-                            <Edit2 size={20} color="var(--text-secondary)" variant="Linear" />
+                            <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
                             Edit SCORM
                           </button>
                           <button className="sc-content-table-menu-item ui-disabled" disabled>
-                            <EyeSlash size={20} color="var(--text-secondary)" variant="Linear" />
+                            <EyeSlash size={20} color="var(--text-primary)" variant="Linear" />
                             Hide
                           </button>
                           <button

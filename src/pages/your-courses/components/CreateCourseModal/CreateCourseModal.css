@@ -186,7 +186,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: 10px var(--space-ml) 10px var(--space-m);
   border-radius: var(--radius-s);
   border: 1px solid var(--primary-600);
   background: none;

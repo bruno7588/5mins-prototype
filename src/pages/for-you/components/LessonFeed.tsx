@@ -173,8 +173,8 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
 
         <div className="lf-menu">
           <button type="button" className="lf-menu__item ui-disabled" disabled>
-            <span>Learnings</span>
             <Discover size={20} color="var(--text-primary)" variant="Linear" />
+            <span>Learnings</span>
           </button>
           <button
             type="button"
@@ -182,16 +182,16 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             onClick={() => setBookmarked((b) => !b)}
             aria-pressed={bookmarked}
           >
-            <span>Bookmark</span>
             <ArchiveAdd size={20} color="var(--text-primary)" variant={bookmarked ? 'Bold' : 'Linear'} />
+            <span>Bookmark</span>
           </button>
           <button type="button" className="lf-menu__item ui-disabled" disabled>
-            <span>Share</span>
             <Send2 size={20} color="var(--text-primary)" variant="Linear" />
+            <span>Share</span>
           </button>
           <button type="button" className="lf-menu__item ui-disabled" disabled>
-            <span>Comments</span>
             <Messages2 size={20} color="var(--text-primary)" variant="Linear" />
+            <span>Comments</span>
           </button>
         </div>
 

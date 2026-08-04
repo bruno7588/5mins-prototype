@@ -56,7 +56,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  padding: 8px 16px;
+  padding: 8px 16px 8px 12px;
   border: 1px solid var(--text-primary);
   border-radius: var(--radius-s);
   background: transparent;
@@ -93,7 +93,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: 10px var(--space-ml) 10px var(--space-m);
   border: 1px solid var(--primary-600);
   border-radius: var(--radius-s);
   background: transparent;
@@ -206,7 +206,7 @@
   border: none;
   cursor: pointer;
   line-height: 1.5;
-  padding: 0 var(--space-s);
+  padding: 0 var(--space-s) 0 var(--space-xs);
 }
 
 .lr__filters-spacer {

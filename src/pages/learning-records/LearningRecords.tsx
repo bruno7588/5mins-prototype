@@ -391,8 +391,8 @@ function LearningRecords() {
         aria-expanded={open}
         onClick={() => setFiltersOpen((o) => !o)}
       >
+        <Add size={20} color="currentColor" variant="Linear" />
         Add Filter
-        <Add size={20} color="var(--primary-600)" variant="Linear" />
       </button>
       <FilterListbox
         open={open}
@@ -556,8 +556,8 @@ function LearningRecords() {
                   className="lrp-download-btn"
                   onClick={downloadCurrentView}
                 >
-                  Download Report
                   <CsvIcon size={20} color="currentColor" />
+                  Download Report
                 </button>
 
                 {/* Saved reports — opens the list side drawer; disabled until one exists */}
@@ -574,12 +574,12 @@ function LearningRecords() {
                     disabled={reports.length === 0}
                     onClick={() => setReportsListOpen(true)}
                   >
-                    Reports ({reports.length})
                     <Note1
                       size={20}
                       color={reports.length === 0 ? 'var(--text-disabled)' : 'var(--text-primary)'}
                       variant="Linear"
                     />
+                    Reports ({reports.length})
                   </button>
                 </Tooltip>
                 {/* Save the current filter view as a report */}

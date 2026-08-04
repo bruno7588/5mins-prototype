@@ -323,8 +323,8 @@ function InviteModal({ onClose, onInvite, userFields }: InviteModalProps) {
           {/* Add another user + required hint */}
           <div className="invite-modal-form-footer">
             <button className="invite-modal-add-user" onClick={addRow}>
-              Invite Another User
               <Add size={20} color="currentColor" />
+              Invite Another User
             </button>
             <span className="invite-modal-required-hint">
               <span className="invite-modal-required">*</span> Required fields

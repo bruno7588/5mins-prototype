@@ -169,7 +169,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: 10px var(--space-ml) 10px var(--space-m);
   border: none;
   border-radius: var(--radius-s);
   background: linear-gradient(135deg, #00AFC4 0%, #8158EC 100%);

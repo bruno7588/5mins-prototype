@@ -112,8 +112,8 @@ function AddFilterMenu({ available, onSelect }: { available: FilterDef[]; onSele
   return (
     <div className="up-filter-add-wrap" ref={ref}>
       <button type="button" className="up-filter-add" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <Add size={20} color="currentColor" variant="Linear" />
         Add Filter
-        <Add size={20} color="var(--primary-600)" variant="Linear" />
       </button>
       {open && (
         <div className="up-filter-add-menu" role="listbox">

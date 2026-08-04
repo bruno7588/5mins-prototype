@@ -65,8 +65,8 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
                 {isEdit ? (
                   <>
                     <button className="add-scorm-preview-btn" onClick={onPreview}>
+                      <Eye size={18} color="currentColor" variant="Linear" />
                       Preview
-                      <Eye size={18} color="var(--primary-600)" variant="Linear" />
                     </button>
                     <button className="add-scorm-publish-btn" onClick={onClose}>
                       Update SCORM
@@ -142,8 +142,8 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
                   className="add-scorm-select-file-btn"
                   onClick={() => zipInputRef.current?.click()}
                 >
+                  <Add size={16} color="currentColor" />
                   Select File
-                  <Add size={16} color="var(--neutral-25)" />
                 </button>
                 <span className="add-scorm-file-name">
                   {zipFileName || 'No file selected'}

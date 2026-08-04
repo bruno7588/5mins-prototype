@@ -91,8 +91,8 @@ function CreateCourseModal({ onClose }: CreateCourseModalProps) {
             </span>
           </div>
           <button className="create-course-empty-btn">
+            <Add size={20} color="currentColor" />
             Add Content
-            <Add size={20} color="var(--primary-600)" />
           </button>
         </div>
 
@@ -100,34 +100,34 @@ function CreateCourseModal({ onClose }: CreateCourseModalProps) {
         <aside className="create-course-menu">
           <div className="create-course-menu-header">Add Content</div>
           <button className="create-course-menu-item">
-            <VideoCircle size={20} color="var(--text-secondary)" variant="Linear" />
+            <VideoCircle size={20} color="var(--text-primary)" variant="Linear" />
             5Mins Library
           </button>
           <button className="create-course-menu-item">
-            <FolderOpen size={20} color="var(--text-secondary)" variant="Linear" />
+            <FolderOpen size={20} color="var(--text-primary)" variant="Linear" />
             Your Content
           </button>
           <button className="create-course-menu-item">
-            <DocumentText1 size={20} color="var(--text-secondary)" variant="Linear" />
+            <DocumentText1 size={20} color="var(--text-primary)" variant="Linear" />
             SCORM
           </button>
           <button className="create-course-menu-item">
-            <Link1 size={20} color="var(--text-secondary)" variant="Linear" />
+            <Link1 size={20} color="var(--text-primary)" variant="Linear" />
             Embed Links
           </button>
           <button className="create-course-menu-item">
-            <Calendar size={20} color="var(--text-secondary)" variant="Linear" />
+            <Calendar size={20} color="var(--text-primary)" variant="Linear" />
             Events
           </button>
           <button className="create-course-menu-item">
-            <Clipboard size={20} color="var(--text-secondary)" variant="Linear" />
+            <Clipboard size={20} color="var(--text-primary)" variant="Linear" />
             Assessments
             <span className="create-course-menu-item-chevron">
               <ArrowDown2 size={12} color="var(--text-secondary)" />
             </span>
           </button>
           <button className="create-course-menu-item">
-            <FolderOpen size={20} color="var(--text-secondary)" variant="Linear" />
+            <FolderOpen size={20} color="var(--text-primary)" variant="Linear" />
             Resources
           </button>
         </aside>

@@ -43,7 +43,7 @@ export default function ProfileMenu({
             className="profile-menu__item profile-menu__item--toggle"
             onClick={toggle}
           >
-            <Moon size={18} color="var(--text-secondary)" variant="Linear" />
+            <Moon size={18} color="var(--text-primary)" variant="Linear" />
             <span className="profile-menu__item-label">Dark Mode</span>
             <span className="profile-menu__toggle" aria-hidden="true">
               <Toggle size="sm" checked={isDark} readOnly tabIndex={-1} />
@@ -58,7 +58,7 @@ export default function ProfileMenu({
               navigate('/onboarding')
             }}
           >
-            <Logout size={18} color="var(--text-secondary)" variant="Linear" />
+            <Logout size={18} color="var(--text-primary)" variant="Linear" />
             <span>Log out</span>
           </button>
         </div>

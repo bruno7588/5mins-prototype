@@ -12,6 +12,11 @@
   gap: var(--space-xl);
 }
 
+/* Leading-icon button: icon-side padding 4px tighter (base .btn-primary is 10px 20px). */
+.user-fields-header .btn-primary {
+  padding: 10px var(--space-ml) 10px var(--space-m);
+}
+
 .user-fields-header-text {
   flex: 1;
   display: flex;

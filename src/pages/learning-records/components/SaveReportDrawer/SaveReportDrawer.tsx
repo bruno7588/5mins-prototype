@@ -395,7 +395,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
                             handleClose()
                           }}
                         >
-                          <Eye size={18} color="var(--text-secondary)" variant="Linear" />
+                          <Eye size={18} color="var(--text-primary)" variant="Linear" />
                           View Records
                         </button>
                       )}
@@ -585,8 +585,8 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
                   onDownload(buildReport({ scheduled, recipients: scheduled ? recipients : [] }))
                 }
               >
-                Download Report
                 <CsvIcon size={20} color="currentColor" />
+                Download Report
               </button>
             )}
           </div>

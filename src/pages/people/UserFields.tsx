@@ -83,8 +83,8 @@ function UserFields() {
               </p>
             </div>
             <button className="btn-primary" onClick={handleOpenDrawer}>
-              Create New Field
               <Add size={20} color="currentColor" />
+              Create New Field
             </button>
           </div>
 

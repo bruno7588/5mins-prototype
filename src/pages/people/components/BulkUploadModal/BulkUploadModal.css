@@ -384,6 +384,11 @@
   transition: background 150ms ease;
 }
 
+/* Leading-icon variant: icon-side padding 4px tighter. */
+.bulk-upload-btn-primary:has(> svg:first-child) {
+  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
+}
+
 .bulk-upload-btn-primary:hover {
   background: var(--primary-700);
 }

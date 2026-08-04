@@ -78,8 +78,8 @@ function PageHeader({
             className={`page-header-btn-filled${primaryDisabled ? ' page-header-btn-disabled' : ''}`}
             onClick={primaryDisabled ? undefined : onPrimary}
           >
-            {primaryLabel}
             {primaryIcon}
+            {primaryLabel}
           </button>
           <CloseButton onClick={handleClose} className="page-header-close" />
         </div>
