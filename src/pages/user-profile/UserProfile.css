@@ -193,3 +193,67 @@
   display: flex;
   align-items: center;
 }
+
+/* ── No-results empty state (DS empty-state.md; mirrors .audit-empty) ──
+   Shown in place of the table when search/filters exclude every course.
+   No card chrome — centered illustration + title + copy + one outlined CTA. */
+.up-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-ml); /* 20px */
+  padding: var(--space-xxl) var(--space-l); /* extra vertical to centre in the empty list area */
+  text-align: center;
+}
+
+.up-empty-illustration {
+  width: 72px;
+  height: 72px;
+}
+
+.up-empty-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-s); /* 8px */
+}
+
+.up-empty-title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.up-empty-desc {
+  max-width: 600px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.up-empty-cta {
+  margin-top: var(--space-s); /* 8px above the description */
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-s) var(--space-m); /* 8px 16px */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); /* 12px */
+  background: transparent;
+  color: var(--text-primary);
+  font: 700 14px/1.5 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.up-empty-cta:hover {
+  background: var(--button-outline-fill-hover);
+  border-color: var(--primary-button-background-hover);
+  color: var(--text-button-hover);
+}
+
+.up-empty-cta:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}

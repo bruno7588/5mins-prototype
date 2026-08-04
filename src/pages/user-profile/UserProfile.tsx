@@ -13,6 +13,7 @@ import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import RowActionsMenu, { type RowMenuItem } from './components/RowActionsMenu/RowActionsMenu'
 import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterValue } from './components/CourseFilters/CourseFilters'
 import CsvIcon from '../../components/icons/CsvIcon'
+import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
 import avatarBrenda from '../../assets/avatars/avatar-2.jpg'
 import avatarDiana from '../../assets/avatars/avatar-3.jpg'
@@ -225,6 +226,14 @@ function UserProfile() {
     return sortDesc ? sorted.reverse() : sorted
   }, [query, sortKey, sortDesc, filterActive, filterValues])
 
+  // No-results empty state: which inputs are narrowing the list, and a one-shot reset.
+  const hasQuery = query.trim() !== ''
+  const hasFilters = filterActive.length > 0
+  const clearSearchAndFilters = () => {
+    setQuery('')
+    clearFilters()
+  }
+
   // Click a sortable header: same column flips direction, a new column starts ascending.
   const handleSort = (key: SortKey) => {
     if (key === sortKey) setSortDesc((s) => !s)
@@ -418,19 +427,35 @@ function UserProfile() {
             onToggleExpanded={() => setFiltersExpanded((e) => !e)}
           />
 
-          {/* Course Progress table */}
-          <Table
-            columns={columns}
-            rows={rows}
-            getRowKey={(row) => row.id}
-            selectable
-            isSelected={(row) => selected.has(row.id)}
-            allSelected={allSelected}
-            onToggleRow={toggleRow}
-            onToggleAll={toggleAll}
-            onSort={(key) => handleSort(key as SortKey)}
-            pagination={{ from: rows.length ? 1 : 0, to: rows.length, total: rows.length }}
-          />
+          {/* Course Progress table — or a no-results empty state when the
+              search/filters exclude everything (DS empty-state.md). */}
+          {rows.length === 0 ? (
+            <div className="up-empty" role="status">
+              <img className="up-empty-illustration" src={noResultsIllustration} alt="" width={72} height={72} />
+              <div className="up-empty-info">
+                <p className="up-empty-title">No results</p>
+                <p className="up-empty-desc">
+                  {`No courses match your ${hasQuery && hasFilters ? 'search and filters' : hasQuery ? 'search' : 'filters'}.`}
+                </p>
+                <button type="button" className="up-empty-cta" onClick={clearSearchAndFilters}>
+                  {hasQuery && hasFilters ? 'Clear All' : hasFilters ? 'Clear Filters' : 'Clear Search'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <Table
+              columns={columns}
+              rows={rows}
+              getRowKey={(row) => row.id}
+              selectable
+              isSelected={(row) => selected.has(row.id)}
+              allSelected={allSelected}
+              onToggleRow={toggleRow}
+              onToggleAll={toggleAll}
+              onSort={(key) => handleSort(key as SortKey)}
+              pagination={{ from: rows.length ? 1 : 0, to: rows.length, total: rows.length }}
+            />
+          )}
         </div>
       </main>
 
