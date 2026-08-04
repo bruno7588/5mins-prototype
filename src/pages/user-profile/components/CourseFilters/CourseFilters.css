@@ -77,6 +77,12 @@
   color: var(--text-primary);
 }
 
+/* Collapsed filter pills: label + left icon are primary; the dismiss × keeps
+   the DS Chip's secondary colour. */
+.up-filters-pills .chip__label {
+  color: var(--text-primary);
+}
+
 /* Trailing chevron */
 .up-filters-trailing {
   margin-left: auto;
@@ -155,27 +161,26 @@
   color: var(--text-tertiary);
 }
 
-.up-filter-date {
-  width: 160px;
+/* The multi-select fills the row so its selected chips flow across the full
+   width and wrap, while the search FIELD itself stays the DS 400px reference
+   (search.md) and aligns with "{Label} is". */
+.up-filter-row .fms {
+  max-width: none;
+  flex: 1;
+}
+.up-filter-row .fms .fms-field-wrap {
+  flex: 0 0 400px;
+  max-width: 400px;
 }
 
-/* Hide the native date-picker indicator (we show the iconsax Calendar via
-   iconRight); keep it covering the field so it stays clickable to open. */
-.up-filter-date input[type='date']::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  position: absolute;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-}
 
 .up-filter-row-remove {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 28px;
-  min-height: 37px;
+  height: 28px;
+  align-self: center;
   border: none;
   background: transparent;
   border-radius: var(--radius-full);

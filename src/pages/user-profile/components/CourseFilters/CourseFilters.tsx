@@ -1,9 +1,10 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Sort, Add, ArrowDown2, Status, Calendar, Clock, CalendarTick, Chart, Star1 } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
 import Chip from '@/components/Chip/Chip'
 import InputInteger from '@/components/InputInteger/InputInteger'
-import InputField from '@/components/InputField/InputField'
+import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import FilterMultiSelect from '@/pages/learning-records/components/FilterControls/FilterMultiSelect'
 import CourseIcon from '@/components/icons/CourseIcon'
 import { type DropdownOption } from '@/components/Dropdown/Dropdown'
@@ -142,6 +143,8 @@ function AddFilterMenu({ available, onSelect }: { available: FilterDef[]; onSele
 }
 
 function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onSetValue, onClear, onToggleExpanded }: CourseFiltersProps) {
+  const reduceMotion = useReducedMotion()
+
   // Options for the multi-select filters, derived from the data.
   const optionsById = useMemo(() => {
     const uniq = (arr: string[]) => [...new Set(arr)]
@@ -158,7 +161,7 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
   const pillLabel = (id: FilterId): string => {
     const def = DEF_BY_ID[id]
     const v = values[id]
-    if (v?.kind === 'multi' && v.values.length) return v.values.length === 1 ? v.values[0] : `${def.label} · ${v.values.length}`
+    if (v?.kind === 'multi' && v.values.length) return v.values.length === 1 ? v.values[0] : `${def.label}: ${v.values.length}`
     if (v?.kind === 'range' && (v.min > 0 || v.max < 100)) return `${def.label} ${v.min}–${v.max}${def.suffix ?? ''}`
     if (v?.kind === 'date' && (v.from || v.to)) return `${def.label} ${v.from || '…'} → ${v.to || '…'}`
     return def.label
@@ -167,7 +170,7 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
   const visiblePills = active.slice(0, MAX_PILLS)
   const overflow = active.length - visiblePills.length
 
-  const renderControl = (def: FilterDef) => {
+  const renderControl = (def: FilterDef, trailing?: ReactNode) => {
     const v = values[def.id] ?? defaultValueFor(def.kind)
     if (v.kind === 'multi') {
       return (
@@ -176,6 +179,7 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
           value={v.values}
           placeholder={`Select ${def.label.toLowerCase()}`}
           onChange={(arr) => onSetValue(def.id, { kind: 'multi', values: arr })}
+          trailing={trailing}
         />
       )
     }
@@ -189,16 +193,13 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
         </div>
       )
     }
-    // The native date-picker indicator is hidden in CSS; show the iconsax
-    // Calendar (text-primary) instead. The invisible native indicator still
-    // covers the field so clicking it opens the picker.
-    const calIcon = <Calendar size={20} color="var(--text-primary)" variant="Linear" />
+    // DS month-grid popover (MiniCalendar) instead of the native browser picker.
     return (
       <div className="up-filter-control-inline">
         <span className="up-filter-connector">between</span>
-        <InputField type="date" className="up-filter-date" value={v.from} iconRight={calIcon} onChange={(e) => onSetValue(def.id, { kind: 'date', from: e.target.value, to: v.to })} />
+        <DatePickerField value={v.from} ariaLabel={`${def.label} from`} onChange={(iso) => onSetValue(def.id, { kind: 'date', from: iso, to: v.to })} />
         <span className="up-filter-connector">and</span>
-        <InputField type="date" className="up-filter-date" value={v.to} iconRight={calIcon} onChange={(e) => onSetValue(def.id, { kind: 'date', from: v.from, to: e.target.value })} />
+        <DatePickerField value={v.to} ariaLabel={`${def.label} to`} onChange={(iso) => onSetValue(def.id, { kind: 'date', from: v.from, to: iso })} />
       </div>
     )
   }
@@ -212,24 +213,34 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
           <span className="up-filters-badge">{active.length}</span>
         </button>
 
-        <div className={`up-filters-collapsed${expanded ? ' up-filters-collapsed--hidden' : ''}`}>
-          {active.length === 0 ? (
-            <AddFilterMenu available={available} onSelect={onAdd} />
-          ) : (
-            <div className="up-filters-pills">
-              {visiblePills.map((id) => (
-                <Chip
-                  key={id}
-                  label={pillLabel(id)}
-                  customIconLeft={<span className="up-pill-chip-icon">{DEF_BY_ID[id].renderIcon(16)}</span>}
-                  iconRight
-                  onDismiss={() => onRemove(id)}
-                />
-              ))}
-              {overflow > 0 && <Chip label={`+${overflow}`} onClick={onToggleExpanded} />}
-            </div>
+        <AnimatePresence initial={false}>
+          {!expanded && (
+            <motion.div
+              className="up-filters-collapsed"
+              initial={reduceMotion ? false : { opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
+              transition={{ duration: reduceMotion ? 0 : 0.22, ease: [0.4, 0, 0.2, 1] }}
+            >
+              {active.length === 0 ? (
+                <AddFilterMenu available={available} onSelect={onAdd} />
+              ) : (
+                <div className="up-filters-pills">
+                  {visiblePills.map((id) => (
+                    <Chip
+                      key={id}
+                      label={pillLabel(id)}
+                      customIconLeft={<span className="up-pill-chip-icon">{DEF_BY_ID[id].renderIcon(16)}</span>}
+                      iconRight
+                      onDismiss={() => onRemove(id)}
+                    />
+                  ))}
+                  {overflow > 0 && <Chip label={`+${overflow}`} onClick={onToggleExpanded} />}
+                </div>
+              )}
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
 
         <div className="up-filters-trailing">
           <button type="button" className="up-filters-chevron-btn" aria-label={expanded ? 'Collapse filters' : 'Expand filters'} aria-expanded={expanded} onClick={onToggleExpanded}>
@@ -244,15 +255,20 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
         <div className="up-filters-body">
           {active.map((id) => {
             const def = DEF_BY_ID[id]
+            const removeBtn = (
+              <button type="button" className="up-filter-row-remove" aria-label={`Remove ${def.label} filter`} onClick={() => onRemove(id)}>
+                <Add size={16} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
+              </button>
+            )
+            // Multi-select renders the × on the field's line (via trailing) so it
+            // sits next to the 400px search bar while chips flow full-width below.
             return (
               <Fragment key={id}>
                 <div className="up-filter-row">
                   <span className="up-filter-row-icon">{def.renderIcon(20)}</span>
                   <span className="up-filter-row-label">{def.label} is</span>
-                  {renderControl(def)}
-                  <button type="button" className="up-filter-row-remove" aria-label={`Remove ${def.label} filter`} onClick={() => onRemove(id)}>
-                    <Add size={16} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
-                  </button>
+                  {def.kind === 'multi' ? renderControl(def, removeBtn) : renderControl(def)}
+                  {def.kind !== 'multi' && removeBtn}
                 </div>
               </Fragment>
             )

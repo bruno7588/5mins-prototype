@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { SearchNormal1 } from 'iconsax-react'
 import { type DropdownOption } from '@/components/Dropdown/Dropdown'
 import Chip from '@/components/Chip/Chip'
@@ -10,6 +10,8 @@ interface FilterMultiSelectProps {
   value: string[]
   onChange: (value: string[]) => void
   placeholder: string
+  /** Optional element rendered on the field's line, right after the input (e.g. a remove ×). */
+  trailing?: ReactNode
 }
 
 /**
@@ -18,7 +20,7 @@ interface FilterMultiSelectProps {
  * icon, dismissible chips for the current selection, and a popover listbox of
  * options with checkboxes. Composed entirely from DS primitives.
  */
-function FilterMultiSelect({ options, value, onChange, placeholder }: FilterMultiSelectProps) {
+function FilterMultiSelect({ options, value, onChange, placeholder, trailing }: FilterMultiSelectProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const ref = useRef<HTMLDivElement>(null)
@@ -48,6 +50,7 @@ function FilterMultiSelect({ options, value, onChange, placeholder }: FilterMult
 
   return (
     <div className={`fms${open ? ' fms--open' : ''}`} ref={ref}>
+      <div className="fms-field-row">
       <div className="fms-field-wrap">
         <div
           className="fms-field"
@@ -90,6 +93,8 @@ function FilterMultiSelect({ options, value, onChange, placeholder }: FilterMult
             })}
           </ul>
         )}
+      </div>
+        {trailing && <div className="fms-trailing">{trailing}</div>}
       </div>
 
       {/* Selected chips sit BELOW the input */}

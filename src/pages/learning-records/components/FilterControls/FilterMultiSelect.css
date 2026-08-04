@@ -33,11 +33,31 @@
 }
 
 /* Selected chips — below the input, not inside it */
+/* Field line: the input (fixed width) with an optional trailing element (× ) beside it. */
+.fms-field-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+}
+
+.fms-trailing {
+  display: flex;
+  align-items: center;
+  min-height: 37px;
+  flex-shrink: 0;
+}
+
 .fms-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-xs);
-  margin-top: var(--space-s);
+  align-content: flex-start;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.fms-chips .chip {
+  flex: 0 0 auto;
+  max-width: 100%;
 }
 
 .fms-chips .chip {
