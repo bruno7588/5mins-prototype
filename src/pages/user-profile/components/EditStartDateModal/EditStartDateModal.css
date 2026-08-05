@@ -1,0 +1,101 @@
+/* Edit start date modal — Figma People 9197:53129.
+   Shell (scrim, radius, 24px padding, animations) comes from ConfirmModal. */
+
+.esd {
+  width: 600px;
+  /* Figma spaces this modal's sections at 24px, not ConfirmModal's 20px. */
+  gap: var(--space-l);
+  position: relative;
+}
+
+.esd__close {
+  position: absolute;
+  top: var(--space-s);
+  right: var(--space-s);
+}
+
+/* ── Header ── */
+.esd__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.esd__headline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  /* Keep the title clear of the close button. */
+  padding-right: var(--space-xl);
+}
+
+.esd__title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.esd__supporting {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.esd__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}
+
+/* ── Fields ── date sized to its content, timezone takes the rest. */
+.esd__fields {
+  display: flex;
+  /* Stretch, so the shorter date control matches the select's height rather
+     than sitting 4px shy of it — the two components pad differently. */
+  align-items: stretch;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.esd__field {
+  display: flex;
+  flex-direction: column;
+  /* Matches .dropdown-label's 4px so both controls sit on the same line. */
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+/* .dpf is a plain block wrapper, so it needs to become a flex container
+   before its button can stretch to the column height. */
+.esd__field .dpf {
+  display: flex;
+  flex: 1 0 auto;
+}
+
+.esd__field .dpf-field {
+  flex: 1 0 auto;
+}
+
+/* Same values as .dropdown-label, so the two column headings match. */
+.esd__label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.esd__timezone {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+.esd__cta {
+  align-self: center;
+}

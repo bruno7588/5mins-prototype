@@ -8,6 +8,7 @@ type BadgeType =
   | 'error'
   | 'in-progress'
   | 'informative'
+  | 'scheduled'
   | 'quiz'
   | 'new'
 
@@ -17,6 +18,7 @@ const DEFAULT_LABELS: Record<BadgeType, string> = {
   error: 'Error',
   'in-progress': 'In Progress',
   informative: 'Information',
+  scheduled: 'Scheduled',
   quiz: 'Quiz Required',
   new: 'New',
 }

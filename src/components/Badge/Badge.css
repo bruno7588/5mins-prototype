@@ -28,6 +28,8 @@
 .badge--error        { background: rgba(223, 22, 66, 0.16);  color: var(--text-error, #E95C7B); }
 .badge--in-progress  { background: rgba(0, 206, 230, 0.16);  color: var(--text-progress, #00CEE6); }
 .badge--informative  { background: var(--input-background, rgba(69, 76, 94, 0.16)); color: var(--text-secondary, #BFC2CC); }
+/* Figma 9200:58569 — enrolment not open to the learner yet. */
+.badge--scheduled    { background: rgba(42, 144, 216, 0.16);  color: var(--course-assessments, #2A90D8); }
 .badge--quiz         { background: rgba(99, 104, 219, 0.16); color: var(--text-quiz, #FFDBAF); }
 .badge--new          { background: var(--danger-400, #E95C7B); color: var(--neutral-25, #F9F9FA); }
 

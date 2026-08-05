@@ -80,6 +80,16 @@
   transition: background 150ms ease, border-color 150ms ease;
 }
 
+/* Nothing in the current selection this action can touch. Stays in place rather
+   than disappearing, so the bar keeps a stable shape as the selection changes. */
+.bulk-bar-btn:disabled,
+.bulk-bar-btn:disabled:hover {
+  color: var(--text-disabled);
+  background: transparent;
+  border-color: transparent;
+  cursor: not-allowed;
+}
+
 .bulk-bar-btn--primary {
   background: var(--primary-button-background);
   color: var(--text-button-foreground);

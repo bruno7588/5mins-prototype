@@ -11,6 +11,9 @@ export interface RowMenuItem {
   danger?: boolean
   /** Render a divider above this item (section break). */
   dividerBefore?: boolean
+  /** Not valid for this row — shown greyed with the reason, never hidden, so
+      the action stays discoverable and the menu keeps a stable shape. */
+  disabled?: boolean
 }
 
 interface RowActionsMenuProps {
@@ -119,7 +122,9 @@ function RowActionsMenu({
                 <button
                   type="button"
                   role="menuitem"
-                  className={`ram-item${item.danger ? ' ram-item--danger' : ''}`}
+                  className={`ram-item${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}`}
+                  disabled={item.disabled}
+                  aria-disabled={item.disabled || undefined}
                   onClick={() => handleSelect(item.key)}
                 >
                   <span className="ram-item-icon">{item.icon}</span>

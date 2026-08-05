@@ -84,6 +84,20 @@
   background: var(--cards-background-hover);
 }
 
+/* Invalid for this row's status — kept visible so the action stays
+   discoverable, with its supporting line carrying the reason. */
+.ram-item--disabled,
+.ram-item--disabled:hover {
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.ram-item--disabled .ram-item-icon,
+.ram-item--disabled .ram-item-title,
+.ram-item--disabled .ram-item-supporting {
+  color: var(--text-disabled);
+}
+
 .ram-item:focus-visible {
   outline: 2px solid var(--selected);
   outline-offset: -2px;

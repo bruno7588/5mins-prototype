@@ -13,6 +13,7 @@ import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import RowActionsMenu, { type RowMenuItem } from './components/RowActionsMenu/RowActionsMenu'
 import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterValue } from './components/CourseFilters/CourseFilters'
 import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDateModal/ExtendDueDateModal'
+import EditStartDateModal, { type StartDateChange } from './components/EditStartDateModal/EditStartDateModal'
 import CsvIcon from '../../components/icons/CsvIcon'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
@@ -27,6 +28,7 @@ import thumb5 from '../../assets/programs/course-thumbs/course-thumb-5.jpg'
 import thumb6 from '../../assets/programs/course-thumbs/course-thumb-6.jpg'
 import thumb7 from '../../assets/programs/course-thumbs/course-thumb-7.jpg'
 import thumb8 from '../../assets/programs/course-thumbs/course-thumb-8.jpg'
+import thumb9 from '../../assets/programs/course-thumbs/course-thumb-9.jpg'
 import './UserProfile.css'
 
 /* ─── Header lookup ─── Mirrors the active People rows (src/pages/people/People.tsx)
@@ -51,7 +53,9 @@ const PEOPLE: Record<string, ProfilePerson> = {
 const TABS = ['Engagement', 'Skills', 'Course Progress', 'Certificates'] as const
 type Tab = (typeof TABS)[number]
 
-type Status = 'Completed' | 'Not Started' | 'In Progress' | 'Overdue'
+/* Enrolment lifecycle. Scheduled = start date still ahead, so the learner
+   can't open it yet; Failed = attempt finished below the pass mark. */
+type Status = 'Scheduled' | 'Not Started' | 'In Progress' | 'Overdue' | 'Failed' | 'Completed'
 
 interface CourseProgress {
   id: string
@@ -65,15 +69,23 @@ interface CourseProgress {
   completionDate: string | null
 }
 
+/* Covers every status so each row action has a row to act on. Rules the data
+   holds to (today is Aug 2026): only Completed carries a completion date and
+   100% progress; Failed finished its attempt but scored under the pass mark;
+   Scheduled starts in the future, so progress is 0 and nothing is late. */
 const COURSES: CourseProgress[] = [
-  { id: '1', course: 'Anti Money Laundering and Terrorist Financing', thumb: thumb1, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 100, score: 80, status: 'Completed', completionDate: '2025-01-13' },
-  { id: '2', course: 'Fraud Prevention and Risk Assessment', thumb: thumb2, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 50, score: 80, status: 'Completed', completionDate: '2025-01-13' },
-  { id: '3', course: 'Compliance Strategies for Financial Institutions', thumb: thumb3, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 50, score: 80, status: 'Completed', completionDate: '2025-01-13' },
-  { id: '4', course: 'Counteracting Financial Crimes and Corruption', thumb: thumb4, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 50, score: 80, status: 'Completed', completionDate: '2025-01-13' },
-  { id: '5', course: 'Regulatory Frameworks for Money Laundering Prevention', thumb: thumb5, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 50, score: 80, status: 'Completed', completionDate: '2025-01-13' },
-  { id: '6', course: 'Financial Integrity and Security Management', thumb: thumb6, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 0, score: 0, status: 'Not Started', completionDate: null },
-  { id: '7', course: 'Terrorism Financing and Economic Stability', thumb: thumb7, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 50, score: 20, status: 'Overdue', completionDate: null },
-  { id: '8', course: 'Sanctions Screening and Reporting Obligations', thumb: thumb8, startDate: '2025-02-01', dueDate: '2025-03-01', progress: 65, score: null, status: 'In Progress', completionDate: null },
+  { id: '1', course: 'Anti Money Laundering and Terrorist Financing', thumb: thumb1, startDate: '2026-01-12', dueDate: '2026-02-13', progress: 100, score: 80, status: 'Completed', completionDate: '2026-02-02' },
+  { id: '2', course: 'Fraud Prevention and Risk Assessment', thumb: thumb2, startDate: '2026-02-02', dueDate: '2026-03-06', progress: 100, score: 92, status: 'Completed', completionDate: '2026-02-27' },
+  { id: '3', course: 'Compliance Strategies for Financial Institutions', thumb: thumb3, startDate: '2026-03-09', dueDate: '2026-04-10', progress: 100, score: 75, status: 'Completed', completionDate: '2026-04-01' },
+  { id: '4', course: 'Counteracting Financial Crimes and Corruption', thumb: thumb4, startDate: '2026-06-01', dueDate: '2026-07-03', progress: 100, score: 41, status: 'Failed', completionDate: null },
+  { id: '5', course: 'Regulatory Frameworks for Money Laundering Prevention', thumb: thumb5, startDate: '2026-06-15', dueDate: '2026-07-17', progress: 100, score: 38, status: 'Failed', completionDate: null },
+  { id: '6', course: 'Financial Integrity and Security Management', thumb: thumb6, startDate: '2026-05-18', dueDate: '2026-06-19', progress: 45, score: null, status: 'Overdue', completionDate: null },
+  { id: '7', course: 'Terrorism Financing and Economic Stability', thumb: thumb7, startDate: '2026-06-22', dueDate: '2026-07-24', progress: 0, score: null, status: 'Overdue', completionDate: null },
+  { id: '8', course: 'Sanctions Screening and Reporting Obligations', thumb: thumb8, startDate: '2026-07-20', dueDate: '2026-08-21', progress: 65, score: null, status: 'In Progress', completionDate: null },
+  { id: '9', course: 'Know Your Customer Due Diligence', thumb: thumb9, startDate: '2026-07-27', dueDate: '2026-08-28', progress: 20, score: null, status: 'In Progress', completionDate: null },
+  { id: '10', course: 'Bribery and Corruption Awareness', thumb: thumb1, startDate: '2026-08-03', dueDate: '2026-09-04', progress: 0, score: null, status: 'Not Started', completionDate: null },
+  { id: '11', course: 'Data Protection for Financial Services', thumb: thumb2, startDate: '2026-09-07', dueDate: '2026-10-09', progress: 0, score: null, status: 'Scheduled', completionDate: null },
+  { id: '12', course: 'Whistleblowing and Speak-Up Culture', thumb: thumb3, startDate: '2026-10-05', dueDate: '2026-11-06', progress: 0, score: null, status: 'Scheduled', completionDate: null },
 ]
 
 /* Standing for the whole course list — deliberately NOT derived from the
@@ -81,25 +93,41 @@ const COURSES: CourseProgress[] = [
    and filters narrow the table below. "At risk" is Not Started, per the Figma.
    Plain rounding means the four can total 102% on a short list; that beats the
    alternative, where two buckets of 1 course read 13% and 12%. */
-const STATS = (['Completed', 'In Progress', 'Not Started', 'Overdue'] as Status[]).map((status) => {
-  const count = COURSES.filter((c) => c.status === status).length
-  return { count, share: Math.round((count / COURSES.length) * 100) }
+/* Which statuses each card counts. "At risk" is Not Started plus Failed, the
+   breakdown the Figma spells out. Scheduled belongs to no card and is left out
+   of the denominator too — those enrolments haven't opened, so they can't yet
+   speak to how the learner is doing, and excluding them keeps the four cards
+   summing to the active population instead of falling short of 100%. */
+const STAT_GROUPS: Status[][] = [['Completed'], ['In Progress'], ['Not Started', 'Failed'], ['Overdue']]
+
+const ACTIVE_COURSES = COURSES.filter((c) => c.status !== 'Scheduled')
+
+const STATS = STAT_GROUPS.map((statuses) => {
+  const count = ACTIVE_COURSES.filter((c) => statuses.includes(c.status)).length
+  return { count, share: ACTIVE_COURSES.length ? Math.round((count / ACTIVE_COURSES.length) * 100) : 0 }
 })
 
-const STATUS_BADGE: Record<Status, 'success' | 'informative' | 'in-progress' | 'error'> = {
-  Completed: 'success',
+/* Overdue and Failed intentionally share the red error pill — colour carries
+   severity, the label carries which. Matches how Failed reads on My Team. */
+const STATUS_BADGE: Record<Status, 'success' | 'informative' | 'in-progress' | 'error' | 'scheduled'> = {
+  Scheduled: 'scheduled',
   'Not Started': 'informative',
   'In Progress': 'in-progress',
   Overdue: 'error',
+  Failed: 'error',
+  Completed: 'success',
 }
 
 type SortKey = 'startDate' | 'dueDate' | 'progress' | 'score' | 'status' | 'completionDate'
 
+// Lifecycle order: not yet open → in flight → gone wrong → done.
 const STATUS_ORDER: Record<Status, number> = {
-  'Not Started': 0,
-  'In Progress': 1,
-  Overdue: 2,
-  Completed: 3,
+  Scheduled: 0,
+  'Not Started': 1,
+  'In Progress': 2,
+  Overdue: 3,
+  Failed: 4,
+  Completed: 5,
 }
 
 function compareCourses(a: CourseProgress, b: CourseProgress, key: SortKey): number {
@@ -147,6 +175,46 @@ const BULK_ACTIONS: { key: string; label: string; icon: ReactNode; destructive?:
   { key: 'restart-enrolment', label: 'Restart Enrolment', icon: <Repeat size={20} color="currentColor" variant="Linear" /> },
   { key: 'unenrol', label: 'Unenrol', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, destructive: true },
 ]
+
+/* Which statuses an action can act on. The test is whether the action still has
+   something ahead of the learner to change: dates only matter while the course
+   is unfinished, retries only once an attempt has concluded. Actions absent
+   here — view progress, edit repeat rules, unenrol — are always valid, being
+   read-only or configuration that is independent of progress. */
+const ACTION_RULES: Record<string, { statuses: Status[]; reason: string }> = {
+  'edit-start-date': {
+    statuses: ['Scheduled'],
+    reason: 'Only before the enrolment begins',
+  },
+  'extend-due-date': {
+    statuses: ['Scheduled', 'Not Started', 'In Progress', 'Overdue'],
+    reason: 'Only while there is still something to complete',
+  },
+  'send-reminder': {
+    statuses: ['Not Started', 'In Progress', 'Overdue'],
+    reason: 'Only while the course is open to the learner',
+  },
+  'give-another-attempt': {
+    statuses: ['Failed', 'Completed'],
+    reason: 'Only after an attempt has finished',
+  },
+  'restart-enrolment': {
+    statuses: ['In Progress', 'Overdue', 'Failed', 'Completed'],
+    reason: 'Nothing has happened yet — edit the dates instead',
+  },
+}
+
+const allows = (key: string, status: Status) => {
+  const rule = ACTION_RULES[key]
+  return !rule || rule.statuses.includes(status)
+}
+
+/* Short by default; only grows when part of the selection was left out, so the
+   numbers appear exactly when they carry information. */
+const outcomeToast = (base: string, applied: number, skipped: number) =>
+  skipped === 0
+    ? base
+    : `${base} on ${applied} ${applied === 1 ? 'course' : 'courses'} · ${skipped} skipped`
 
 const ROW_ACTION_LABEL: Record<string, string> = {
   'view-progress': 'View progress',
@@ -221,6 +289,7 @@ function UserProfile() {
   /* Which enrolments the Extend-due-date modal is acting on: the whole
      selection ('bulk') or the single row its menu was opened from. */
   const [extendTarget, setExtendTarget] = useState<'bulk' | CourseProgress | null>(null)
+  const [startDateTarget, setStartDateTarget] = useState<'bulk' | CourseProgress | null>(null)
   const [query, setQuery] = useState('')
   const [sortKey, setSortKey] = useState<SortKey>('startDate')
   const [sortDesc, setSortDesc] = useState(false)
@@ -254,6 +323,10 @@ function UserProfile() {
       setExtendTarget(row)
       return
     }
+    if (key === 'edit-start-date') {
+      setStartDateTarget(row)
+      return
+    }
     if (key === 'send-reminder') {
       showToast('success', `Reminder sent to ${person.name} for “${row.course}”`)
       return
@@ -265,10 +338,19 @@ function UserProfile() {
     showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} — coming soon`)
   }
 
+  /* Rows in the selection an action can actually touch. A mixed selection runs
+     on the eligible subset rather than blocking outright — with 40 rows picked,
+     a greyed-out button never says which row poisoned it. */
+  const eligible = (key: string) => courses.filter((c) => selected.has(c.id) && allows(key, c.status))
+
   const handleBulkAction = (key: string) => {
     const n = selected.size
     if (key === 'extend-due-date') {
       setExtendTarget('bulk')
+      return
+    }
+    if (key === 'edit-start-date') {
+      setStartDateTarget('bulk')
       return
     }
     if (key === 'unenrol') {
@@ -282,7 +364,10 @@ function UserProfile() {
      all of them; a day offset shifts each row from its own current due date. */
   const applyExtension = (value: ExtendDueDate) => {
     const isBulk = extendTarget === 'bulk'
-    const ids = isBulk ? selected : new Set(extendTarget ? [extendTarget.id] : [])
+    const ids = isBulk
+      ? new Set(eligible('extend-due-date').map((c) => c.id))
+      : new Set(extendTarget ? [extendTarget.id] : [])
+    const skipped = isBulk ? selected.size - ids.size : 0
     setCourses((prev) =>
       prev.map((c) => {
         if (!ids.has(c.id)) return c
@@ -292,10 +377,24 @@ function UserProfile() {
         return { ...c, dueDate: d.toISOString().slice(0, 10) }
       }),
     )
-    const n = ids.size
-    showToast('success', `Due date updated on ${n} ${n === 1 ? 'course' : 'courses'}`)
+    showToast('success', outcomeToast('Due date extended', ids.size, skipped))
     setExtendTarget(null)
     // A row action shouldn't disturb a selection the admin is still building.
+    if (isBulk) setSelected(new Set())
+  }
+
+  /* Set the enrolment start date on the targeted rows. The timezone is
+     collected per the design but has nowhere to live on an enrolment yet, so
+     it only surfaces in the confirmation. */
+  const applyStartDate = ({ date }: StartDateChange) => {
+    const isBulk = startDateTarget === 'bulk'
+    const ids = isBulk
+      ? new Set(eligible('edit-start-date').map((c) => c.id))
+      : new Set(startDateTarget ? [startDateTarget.id] : [])
+    const skipped = isBulk ? selected.size - ids.size : 0
+    setCourses((prev) => prev.map((c) => (ids.has(c.id) ? { ...c, startDate: date } : c)))
+    showToast('success', outcomeToast('Start date updated', ids.size, skipped))
+    setStartDateTarget(null)
     if (isBulk) setSelected(new Set())
   }
 
@@ -429,7 +528,11 @@ function UserProfile() {
       align: 'center',
       render: (row) => (
         <RowActionsMenu
-          items={ROW_MENU_ITEMS}
+          items={ROW_MENU_ITEMS.map((item) =>
+            allows(item.key, row.status)
+              ? item
+              : { ...item, disabled: true, supporting: ACTION_RULES[item.key].reason },
+          )}
           onSelect={(key) => handleRowAction(key, row)}
           ariaLabel={`Actions for ${row.course}`}
         />
@@ -508,7 +611,7 @@ function UserProfile() {
             <StatCard
               icon={<Danger size={32} color="var(--warning-600)" variant="Linear" />}
               label="At risk!"
-              tooltip="Courses the learner has not started yet."
+              tooltip="Courses not started yet, or failed and needing another attempt."
               share={STATS[2].share}
               support={courseCount(STATS[2].count)}
             />
@@ -576,26 +679,42 @@ function UserProfile() {
 
       {/* Always mounted — the bar shows/hides itself off `count` so it can animate out. */}
       <BulkActionBar count={selected.size} onClear={() => setSelected(new Set())}>
-        {BULK_ACTIONS.map((action) => (
+        {BULK_ACTIONS.map((action) => {
+          // Disabled only when the action can touch nothing in the selection.
+          const none = eligible(action.key).length === 0
+          return (
           <button
             key={action.key}
             type="button"
             className={`bulk-bar-btn bulk-bar-btn--icon${action.destructive ? ' bulk-bar-btn--destructive' : ''}`}
+            disabled={none}
+            title={none ? ACTION_RULES[action.key]?.reason : undefined}
             onClick={() => handleBulkAction(action.key)}
           >
             {action.icon}
             {/* Label stays in the DOM while collapsed so it is always announced. */}
             <span className="bulk-bar-btn-label"><span>{action.label}</span></span>
           </button>
-        ))}
+          )
+        })}
       </BulkActionBar>
 
       {extendTarget && (
         <ExtendDueDateModal
-          count={extendTarget === 'bulk' ? selected.size : 1}
+          count={extendTarget === 'bulk' ? eligible('extend-due-date').length : 1}
           courseName={extendTarget === 'bulk' ? undefined : extendTarget.course}
           onClose={() => setExtendTarget(null)}
           onApply={applyExtension}
+        />
+      )}
+
+      {startDateTarget && (
+        <EditStartDateModal
+          count={startDateTarget === 'bulk' ? eligible('edit-start-date').length : 1}
+          courseName={startDateTarget === 'bulk' ? undefined : startDateTarget.course}
+          startDate={startDateTarget === 'bulk' ? undefined : startDateTarget.startDate}
+          onClose={() => setStartDateTarget(null)}
+          onApply={applyStartDate}
         />
       )}
 
