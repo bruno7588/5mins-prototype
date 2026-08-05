@@ -473,7 +473,7 @@ Width:     hugs content (no fixed width)
 
 ## Behaviour
 
-- Appears on action feedback, stacked bottom-center (or per app convention), auto-dismisses after ~2.5s with a fade.
+- Appears on action feedback, stacked bottom-center (or per app convention), auto-dismisses after ~5s with a fade. Budget roughly 1s to notice the pill plus ~300ms per word (200wpm) — raise the duration rather than let a long message time out before it can be read.
 - `role="status"` (Info/Success) or `role="alert"` (Warning/Error) so screen readers announce it.
 - One line, no wrapping — keep messages short ("Saved", "Course published"). No buttons; if the user must act, use a Dialog or Alert instead.
 
@@ -489,7 +489,7 @@ Width:     hugs content (no fixed width)
 
 ## Code reality (src/components/Toast)
 
-`src/components/Toast/Toast.tsx` implements the pill with a `useToast()` stack hook (2.5s auto-dismiss + 300ms fade). Drift from the node: Warning uses `--warning-500` + `--neutral-800` text (Figma: `--warning-600` + near-white), Info uses `--neutral-500` (Figma: `#383D4C`), Success/Error label color is `--neutral-0` (Figma: `--neutral-25`), and the Error icon is `CloseCircle` (Figma: warning triangle).
+`src/components/Toast/Toast.tsx` implements the pill with a `useToast()` stack hook (5s auto-dismiss + 300ms fade). Drift from the node: Warning uses `--warning-500` + `--neutral-800` text (Figma: `--warning-600` + near-white), Info uses `--neutral-500` (Figma: `#383D4C`), Success/Error label color is `--neutral-0` (Figma: `--neutral-25`), and the Error icon is `CloseCircle` (Figma: warning triangle).
 
 ---
 
@@ -543,7 +543,7 @@ All four are informative components; pick by persistence and placement:
 | Placement | inline | inline | floating overlay | floating, anchored to a trigger |
 | Trigger | always visible | always visible | after an action | hover / focus |
 | Content | guidance, tips | warnings | action feedback | nonessential context |
-| Dismissal | persistent | persistent | auto (~2.5s) | on leave/blur |
+| Dismissal | persistent | persistent | auto (~5s) | on leave/blur |
 
 ## Related Skills
 

@@ -21,7 +21,10 @@ const ICON_MAP: Record<ToastType, typeof TickCircle> = {
   info: InfoCircle,
 }
 
-const AUTO_DISMISS_MS = 2500
+/* 5s, per alerts-toast.md. Reading time is roughly 1s to notice the pill plus
+   ~300ms per word (200wpm); our longest toasts quote a full course title, so
+   the previous 2.5s left them on screen for less time than they take to read. */
+const AUTO_DISMISS_MS = 5000
 const FADE_DURATION_MS = 300
 
 /* --- Single toast pill --- */
