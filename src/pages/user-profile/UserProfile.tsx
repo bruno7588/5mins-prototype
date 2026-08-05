@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus } from 'iconsax-react'
+import { ArrowDown, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, TickCircle, StatusUp, Danger, Clock } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -12,6 +12,7 @@ import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import RowActionsMenu, { type RowMenuItem } from './components/RowActionsMenu/RowActionsMenu'
 import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterValue } from './components/CourseFilters/CourseFilters'
+import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDateModal/ExtendDueDateModal'
 import CsvIcon from '../../components/icons/CsvIcon'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
@@ -71,9 +72,19 @@ const COURSES: CourseProgress[] = [
   { id: '4', course: 'Counteracting Financial Crimes and Corruption', thumb: thumb4, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 50, score: 80, status: 'Completed', completionDate: '2025-01-13' },
   { id: '5', course: 'Regulatory Frameworks for Money Laundering Prevention', thumb: thumb5, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 50, score: 80, status: 'Completed', completionDate: '2025-01-13' },
   { id: '6', course: 'Financial Integrity and Security Management', thumb: thumb6, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 0, score: 0, status: 'Not Started', completionDate: null },
-  { id: '7', course: 'Terrorism Financing and Economic Stability', thumb: thumb7, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 50, score: 20, status: 'Overdue', completionDate: '2025-01-13' },
+  { id: '7', course: 'Terrorism Financing and Economic Stability', thumb: thumb7, startDate: '2025-01-13', dueDate: '2025-01-13', progress: 50, score: 20, status: 'Overdue', completionDate: null },
   { id: '8', course: 'Sanctions Screening and Reporting Obligations', thumb: thumb8, startDate: '2025-02-01', dueDate: '2025-03-01', progress: 65, score: null, status: 'In Progress', completionDate: null },
 ]
+
+/* Standing for the whole course list — deliberately NOT derived from the
+   filtered rows, so the summary stays a fixed reference point while the search
+   and filters narrow the table below. "At risk" is Not Started, per the Figma.
+   Plain rounding means the four can total 102% on a short list; that beats the
+   alternative, where two buckets of 1 course read 13% and 12%. */
+const STATS = (['Completed', 'In Progress', 'Not Started', 'Overdue'] as Status[]).map((status) => {
+  const count = COURSES.filter((c) => c.status === status).length
+  return { count, share: Math.round((count / COURSES.length) * 100) }
+})
 
 const STATUS_BADGE: Record<Status, 'success' | 'informative' | 'in-progress' | 'error'> = {
   Completed: 'success',
@@ -159,6 +170,32 @@ function DateCell({ value }: { value: string | null }) {
   )
 }
 
+const courseCount = (n: number) => `${n} ${n === 1 ? 'course' : 'courses'}`
+
+function StatCard({ icon, label, tooltip, share, support }: {
+  icon: ReactNode
+  label: string
+  tooltip: string
+  share: number
+  support: string
+}) {
+  return (
+    <div className="up-stat">
+      <span className="up-stat-icon">{icon}</span>
+      <div className="up-stat-body">
+        <div className="up-stat-label">
+          {label}
+          <Tooltip position="Top" text={tooltip} />
+        </div>
+        <div className="up-stat-data">
+          <span className="up-stat-value">{share}%</span>
+          <span className="up-stat-support">{support}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ProgressCell({ value }: { value: number }) {
   const filled = Math.round((value / 100) * SEGMENTS)
   return (
@@ -179,6 +216,11 @@ function UserProfile() {
   const person = PEOPLE[id] ?? PEOPLE['1']
 
   const [activeTab, setActiveTab] = useState<Tab>('Course Progress')
+  // Due dates are editable via the bulk actions, so the list is state, not the const.
+  const [courses, setCourses] = useState<CourseProgress[]>(COURSES)
+  /* Which enrolments the Extend-due-date modal is acting on: the whole
+     selection ('bulk') or the single row its menu was opened from. */
+  const [extendTarget, setExtendTarget] = useState<'bulk' | CourseProgress | null>(null)
   const [query, setQuery] = useState('')
   const [sortKey, setSortKey] = useState<SortKey>('startDate')
   const [sortDesc, setSortDesc] = useState(false)
@@ -208,6 +250,10 @@ function UserProfile() {
   }
 
   const handleRowAction = (key: string, row: CourseProgress) => {
+    if (key === 'extend-due-date') {
+      setExtendTarget(row)
+      return
+    }
     if (key === 'send-reminder') {
       showToast('success', `Reminder sent to ${person.name} for “${row.course}”`)
       return
@@ -221,6 +267,10 @@ function UserProfile() {
 
   const handleBulkAction = (key: string) => {
     const n = selected.size
+    if (key === 'extend-due-date') {
+      setExtendTarget('bulk')
+      return
+    }
     if (key === 'unenrol') {
       showToast('warning', `${n} ${n === 1 ? 'enrolment' : 'enrolments'} would be unenrolled`)
       return
@@ -228,13 +278,34 @@ function UserProfile() {
     showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} — ${n} selected — coming soon`)
   }
 
+  /* Apply the new due date to every selected enrolment. A specific date lands on
+     all of them; a day offset shifts each row from its own current due date. */
+  const applyExtension = (value: ExtendDueDate) => {
+    const isBulk = extendTarget === 'bulk'
+    const ids = isBulk ? selected : new Set(extendTarget ? [extendTarget.id] : [])
+    setCourses((prev) =>
+      prev.map((c) => {
+        if (!ids.has(c.id)) return c
+        if (value.mode === 'date') return { ...c, dueDate: value.date }
+        const d = new Date(`${c.dueDate}T00:00:00`)
+        d.setDate(d.getDate() + value.days)
+        return { ...c, dueDate: d.toISOString().slice(0, 10) }
+      }),
+    )
+    const n = ids.size
+    showToast('success', `Due date updated on ${n} ${n === 1 ? 'course' : 'courses'}`)
+    setExtendTarget(null)
+    // A row action shouldn't disturb a selection the admin is still building.
+    if (isBulk) setSelected(new Set())
+  }
+
   const rows = useMemo(() => {
-    const filtered = COURSES.filter(
+    const filtered = courses.filter(
       (c) => c.course.toLowerCase().includes(query.trim().toLowerCase()) && matchesCourse(c, filterActive, filterValues),
     )
     const sorted = [...filtered].sort((a, b) => compareCourses(a, b, sortKey))
     return sortDesc ? sorted.reverse() : sorted
-  }, [query, sortKey, sortDesc, filterActive, filterValues])
+  }, [courses, query, sortKey, sortDesc, filterActive, filterValues])
 
   // No-results empty state: which inputs are narrowing the list, and a one-shot reset.
   const hasQuery = query.trim() !== ''
@@ -416,6 +487,40 @@ function UserProfile() {
             </div>
           </header>
 
+          {/* Standing at a glance, before the rows (Figma People 9192:42911).
+              Always the learner's full course list — search and filters below
+              narrow the table, never this. */}
+          <div className="up-stats">
+            <StatCard
+              icon={<TickCircle size={32} color="var(--success-500)" variant="Linear" />}
+              label="Completed"
+              tooltip="Courses this learner has finished."
+              share={STATS[0].share}
+              support={courseCount(STATS[0].count)}
+            />
+            <StatCard
+              icon={<StatusUp size={32} color="var(--primary-600)" variant="Linear" />}
+              label="In progress"
+              tooltip="Courses started but not yet finished."
+              share={STATS[1].share}
+              support={courseCount(STATS[1].count)}
+            />
+            <StatCard
+              icon={<Danger size={32} color="var(--warning-600)" variant="Linear" />}
+              label="At risk!"
+              tooltip="Courses the learner has not started yet."
+              share={STATS[2].share}
+              support={courseCount(STATS[2].count)}
+            />
+            <StatCard
+              icon={<Clock size={32} color="var(--danger-400)" variant="Linear" />}
+              label="Overdue"
+              tooltip="Courses past their due date."
+              share={STATS[3].share}
+              support={courseCount(STATS[3].count)}
+            />
+          </div>
+
           {/* Toolbar */}
           <div className="up-actions">
             <Search size="M" className="up-search" value={query} placeholder="Search for courses" onChange={setQuery} />
@@ -426,7 +531,7 @@ function UserProfile() {
 
           {/* Smart filters */}
           <CourseFilters
-            courses={COURSES}
+            courses={courses}
             active={filterActive}
             values={filterValues}
             expanded={filtersExpanded}
@@ -484,6 +589,15 @@ function UserProfile() {
           </button>
         ))}
       </BulkActionBar>
+
+      {extendTarget && (
+        <ExtendDueDateModal
+          count={extendTarget === 'bulk' ? selected.size : 1}
+          courseName={extendTarget === 'bulk' ? undefined : extendTarget.course}
+          onClose={() => setExtendTarget(null)}
+          onApply={applyExtension}
+        />
+      )}
 
       <ToastContainer toasts={toasts} />
     </div>
