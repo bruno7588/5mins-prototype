@@ -108,6 +108,7 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
             />
             <Dropdown
               className="cpd-controls__filter"
+              menuAlign="end"
               options={dimension === 'functions' ? FUNCTION_OPTIONS : SKILL_OPTIONS}
               value={dimension === 'functions' ? functionFilter : skillFilter}
               onChange={dimension === 'functions' ? setFunctionFilter : setSkillFilter}

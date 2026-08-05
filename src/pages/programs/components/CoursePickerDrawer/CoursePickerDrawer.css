@@ -111,11 +111,8 @@
   width: 160px;
 }
 
-/* Right-align the listbox to the filter input's right edge. */
-.cpd-controls__filter .dropdown-menu {
-  left: auto;
-  right: 0;
-}
+/* Right-aligned to the filter's right edge via the Dropdown's menuAlign="end"
+   — the menu is portalled to <body>, so a descendant rule can't reach it. */
 
 /* Search — full-width, below the switcher/filter row. */
 .cpd-search {

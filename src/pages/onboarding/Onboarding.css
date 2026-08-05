@@ -378,19 +378,19 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
-.onboarding .dropdown-menu {
+.onboarding-menu {
   background: var(--neutral-700);
   border-color: var(--border);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
 }
 
-.onboarding .dropdown-option:hover:not(:disabled) {
+.onboarding-menu .dropdown-option:hover:not(:disabled) {
   background: var(--neutral-600);
 }
 
 /* Selected option sits on gold — keep its label dark for contrast */
-.onboarding .dropdown-option.is-selected,
-.onboarding .dropdown-option.is-selected:hover:not(:disabled) {
+.onboarding-menu .dropdown-option.is-selected,
+.onboarding-menu .dropdown-option.is-selected:hover:not(:disabled) {
   color: var(--neutral-800);
 }
 

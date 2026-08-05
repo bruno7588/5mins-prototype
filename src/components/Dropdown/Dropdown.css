@@ -96,13 +96,13 @@
   transform: rotate(180deg);
 }
 
-/* Menu — matches Figma library listbox node 11186:4418 */
+/* Menu — matches Figma library listbox node 11186:4418.
+   Portalled to <body> and positioned from the trigger's viewport rect, so an
+   ancestor with overflow (modal panel, drawer, scroll area) can't clip it.
+   top/left/min-width come from the component; above modals, below toasts. */
 .dropdown-menu {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  z-index: 1000;
-  min-width: 100%;
+  position: fixed;
+  z-index: 1060;
   width: max-content;
   max-height: 240px;
   overflow-y: auto;

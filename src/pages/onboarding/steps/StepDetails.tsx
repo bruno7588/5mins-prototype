@@ -41,6 +41,7 @@ export default function StepDetails({ data, update }: StepProps) {
     <>
       <div className="onboarding__field">
         <Dropdown
+          menuClassName="onboarding-menu"
           label="Region"
           placeholder="Select region"
           options={REGIONS}
@@ -50,6 +51,7 @@ export default function StepDetails({ data, update }: StepProps) {
       </div>
       <div className="onboarding__field">
         <Dropdown
+          menuClassName="onboarding-menu"
           label="Department"
           placeholder="Select department"
           options={DEPARTMENTS}
@@ -59,6 +61,7 @@ export default function StepDetails({ data, update }: StepProps) {
       </div>
       <div className="onboarding__field">
         <Dropdown
+          menuClassName="onboarding-menu"
           label="Office location"
           placeholder="Select office location"
           options={OFFICES}

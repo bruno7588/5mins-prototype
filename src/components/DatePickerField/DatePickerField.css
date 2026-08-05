@@ -36,9 +36,10 @@
   color: var(--text-disabled);
 }
 
+/* Portalled to <body> and positioned from the field's viewport rect, so an
+   ancestor with overflow (modal panel, drawer, scroll area) can't clip it.
+   Above the modal/drawer layers (1000–1050), below toasts (1100). */
 .dpf-popover {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 40;
+  position: fixed;
+  z-index: 1060;
 }
