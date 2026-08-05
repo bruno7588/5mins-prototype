@@ -14,6 +14,7 @@ import RowActionsMenu, { type RowMenuItem } from './components/RowActionsMenu/Ro
 import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterValue } from './components/CourseFilters/CourseFilters'
 import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDateModal/ExtendDueDateModal'
 import EditStartDateModal, { type StartDateChange } from './components/EditStartDateModal/EditStartDateModal'
+import GiveAnotherAttemptModal from './components/GiveAnotherAttemptModal/GiveAnotherAttemptModal'
 import CsvIcon from '../../components/icons/CsvIcon'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
@@ -290,6 +291,7 @@ function UserProfile() {
      selection ('bulk') or the single row its menu was opened from. */
   const [extendTarget, setExtendTarget] = useState<'bulk' | CourseProgress | null>(null)
   const [startDateTarget, setStartDateTarget] = useState<'bulk' | CourseProgress | null>(null)
+  const [attemptTarget, setAttemptTarget] = useState<'bulk' | CourseProgress | null>(null)
   const [query, setQuery] = useState('')
   const [sortKey, setSortKey] = useState<SortKey>('startDate')
   const [sortDesc, setSortDesc] = useState(false)
@@ -327,6 +329,10 @@ function UserProfile() {
       setStartDateTarget(row)
       return
     }
+    if (key === 'give-another-attempt') {
+      setAttemptTarget(row)
+      return
+    }
     if (key === 'send-reminder') {
       showToast('success', `Reminder sent to ${person.name} for “${row.course}”`)
       return
@@ -351,6 +357,10 @@ function UserProfile() {
     }
     if (key === 'edit-start-date') {
       setStartDateTarget('bulk')
+      return
+    }
+    if (key === 'give-another-attempt') {
+      setAttemptTarget('bulk')
       return
     }
     if (key === 'unenrol') {
@@ -395,6 +405,27 @@ function UserProfile() {
     setCourses((prev) => prev.map((c) => (ids.has(c.id) ? { ...c, startDate: date } : c)))
     showToast('success', outcomeToast('Start date updated', ids.size, skipped))
     setStartDateTarget(null)
+    if (isBulk) setSelected(new Set())
+  }
+
+  /* A fresh attempt in the same enrolment: progress and score wipe, the row
+     goes back to In Progress, and any completion date is cleared. Start date
+     and due date are untouched — the modal promises they stay put. */
+  const applyAnotherAttempt = () => {
+    const isBulk = attemptTarget === 'bulk'
+    const ids = isBulk
+      ? new Set(eligible('give-another-attempt').map((c) => c.id))
+      : new Set(attemptTarget ? [attemptTarget.id] : [])
+    const skipped = isBulk ? selected.size - ids.size : 0
+    setCourses((prev) =>
+      prev.map((c) =>
+        ids.has(c.id)
+          ? { ...c, progress: 0, score: null, status: 'In Progress' as Status, completionDate: null }
+          : c,
+      ),
+    )
+    showToast('success', outcomeToast(`New attempt started for ${person.name}`, ids.size, skipped))
+    setAttemptTarget(null)
     if (isBulk) setSelected(new Set())
   }
 
@@ -715,6 +746,16 @@ function UserProfile() {
           startDate={startDateTarget === 'bulk' ? undefined : startDateTarget.startDate}
           onClose={() => setStartDateTarget(null)}
           onApply={applyStartDate}
+        />
+      )}
+
+      {attemptTarget && (
+        <GiveAnotherAttemptModal
+          count={attemptTarget === 'bulk' ? eligible('give-another-attempt').length : 1}
+          courseName={attemptTarget === 'bulk' ? undefined : attemptTarget.course}
+          learnerName={person.name}
+          onClose={() => setAttemptTarget(null)}
+          onApply={applyAnotherAttempt}
         />
       )}
 
