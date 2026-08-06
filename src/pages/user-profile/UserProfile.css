@@ -203,21 +203,23 @@
   max-width: 100%;
 }
 
-/* The Course column has a hard 240px min (no shrink), so the row can exceed the
-   viewport. Size the table to its content (but at least 100%) so the row border
-   wraps every column — including the trailing actions cell — and the overflow
-   scrolls horizontally instead of spilling past the border. */
-.up-page .tbl {
-  width: max-content;
-  min-width: 100%;
-}
-
 /* ── Table cell helpers (DS classes live in Table.css; these are page-local) ── */
 .up-course {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   min-width: 0;
+}
+
+/* Course names wrap to a second line before truncating — once the pinned column
+   is at its 240px floor the 90px thumbnail leaves ~114px of text, and a single
+   line cuts most titles off before they're recognisable. Two lines (42px) still
+   sit inside the thumbnail's 44px, so row height is unchanged. */
+.up-course .primary {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
 }
 
 .up-th-sort {

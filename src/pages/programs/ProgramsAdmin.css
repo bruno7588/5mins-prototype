@@ -92,10 +92,12 @@
   text-align: left;
   color: var(--text-primary);
   cursor: pointer;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  /* Truncates rather than wraps: the cell inherits `white-space: nowrap`, so the
+     old 2-line clamp never wrapped — it just cut the title off mid-word once the
+     pinned column reached its 240px floor. */
+  max-width: 100%;
   overflow: hidden;
+  text-overflow: ellipsis;
   transition: color 150ms ease;
 }
 

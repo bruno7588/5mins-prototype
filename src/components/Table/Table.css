@@ -11,12 +11,16 @@
   width: 100%;
 }
 
+/* Sized to its content but never below the viewport, so once the pinned column
+   hits its floor the row keeps its border around every column — including the
+   trailing actions cell — and the excess scrolls instead of spilling out. */
 .tbl {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
   align-items: flex-end;
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -69,10 +73,19 @@
   border-color: var(--selected-tint-hover);
 }
 
-/* Right-edge shadow signalling the freeze — box-shadow (not ::after) because
-   .tbl-cell clips its children with overflow: hidden. */
+/* The pinned column shrinks with the viewport down to 240px, then holds — past
+   that the row overflows and the column freezes instead of getting narrower.
+   `contain: inline-size` is what makes the floor bite: without it the cell's
+   longest text sets its intrinsic width, so a table sized to its content
+   (`width: max-content`) hands the column far more than 240px and nothing ever
+   truncates. Contained, the column contributes only its flex basis, while
+   flex-grow still lets it take the slack on wide screens.
+   The right-edge shadow signalling the freeze is a box-shadow (not ::after)
+   because .tbl-cell clips its children with overflow: hidden. */
 .tbl-cell.is-sticky-last,
 .tbl-head-cell.is-sticky-last {
+  min-width: 240px;
+  contain: inline-size;
   transition: box-shadow 150ms ease;
 }
 
@@ -194,7 +207,11 @@
   min-width: 0;
 }
 
+/* max-width is what makes the ellipsis appear: the stack is `align-items:
+   flex-start`, so without it these size to their text and spill out of a
+   narrowed cell, getting clipped mid-word instead of truncated. */
 .tbl-stack .primary {
+  max-width: 100%;
   font-weight: 500;
   color: var(--text-primary);
   overflow: hidden;
@@ -202,6 +219,7 @@
 }
 
 .tbl-stack .supporting {
+  max-width: 100%;
   font-weight: 400;
   color: var(--text-secondary);
   overflow: hidden;
