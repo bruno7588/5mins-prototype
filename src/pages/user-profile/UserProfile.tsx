@@ -5,7 +5,6 @@ import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
 import Button from '../../components/Button/Button'
-import Search from '../../components/Search/Search'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Table, { type Column } from '../../components/Table/Table'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -15,7 +14,6 @@ import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type Filter
 import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDateModal/ExtendDueDateModal'
 import EditStartDateModal, { type StartDateChange } from './components/EditStartDateModal/EditStartDateModal'
 import GiveAnotherAttemptModal from './components/GiveAnotherAttemptModal/GiveAnotherAttemptModal'
-import CsvIcon from '../../components/icons/CsvIcon'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
 import avatarBrenda from '../../assets/avatars/avatar-2.jpg'
@@ -292,7 +290,6 @@ function UserProfile() {
   const [extendTarget, setExtendTarget] = useState<'bulk' | CourseProgress | null>(null)
   const [startDateTarget, setStartDateTarget] = useState<'bulk' | CourseProgress | null>(null)
   const [attemptTarget, setAttemptTarget] = useState<'bulk' | CourseProgress | null>(null)
-  const [query, setQuery] = useState('')
   const [sortKey, setSortKey] = useState<SortKey>('startDate')
   const [sortDesc, setSortDesc] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -430,20 +427,10 @@ function UserProfile() {
   }
 
   const rows = useMemo(() => {
-    const filtered = courses.filter(
-      (c) => c.course.toLowerCase().includes(query.trim().toLowerCase()) && matchesCourse(c, filterActive, filterValues),
-    )
+    const filtered = courses.filter((c) => matchesCourse(c, filterActive, filterValues))
     const sorted = [...filtered].sort((a, b) => compareCourses(a, b, sortKey))
     return sortDesc ? sorted.reverse() : sorted
-  }, [courses, query, sortKey, sortDesc, filterActive, filterValues])
-
-  // No-results empty state: which inputs are narrowing the list, and a one-shot reset.
-  const hasQuery = query.trim() !== ''
-  const hasFilters = filterActive.length > 0
-  const clearSearchAndFilters = () => {
-    setQuery('')
-    clearFilters()
-  }
+  }, [courses, sortKey, sortDesc, filterActive, filterValues])
 
   // Click a sortable header: same column flips direction, a new column starts ascending.
   const handleSort = (key: SortKey) => {
@@ -653,14 +640,6 @@ function UserProfile() {
             />
           </div>
 
-          {/* Toolbar */}
-          <div className="up-actions">
-            <Search size="M" className="up-search" value={query} placeholder="Search for courses" onChange={setQuery} />
-            <Button variant="outlined-2" className="ui-disabled" disabled icon={<CsvIcon size={20} color="currentColor" />}>
-              Download List
-            </Button>
-          </div>
-
           {/* Smart filters */}
           <CourseFilters
             courses={courses}
@@ -675,17 +654,15 @@ function UserProfile() {
           />
 
           {/* Course Progress table — or a no-results empty state when the
-              search/filters exclude everything (DS empty-state.md). */}
+              filters exclude everything (DS empty-state.md). */}
           {rows.length === 0 ? (
             <div className="up-empty" role="status">
               <img className="up-empty-illustration" src={noResultsIllustration} alt="" width={72} height={72} />
               <div className="up-empty-info">
                 <p className="up-empty-title">No results</p>
-                <p className="up-empty-desc">
-                  {`No courses match your ${hasQuery && hasFilters ? 'search and filters' : hasQuery ? 'search' : 'filters'}.`}
-                </p>
-                <button type="button" className="up-empty-cta" onClick={clearSearchAndFilters}>
-                  {hasQuery && hasFilters ? 'Clear All' : hasFilters ? 'Clear Filters' : 'Clear Search'}
+                <p className="up-empty-desc">No courses match your filters.</p>
+                <button type="button" className="up-empty-cta" onClick={clearFilters}>
+                  Clear Filters
                 </button>
               </div>
             </div>

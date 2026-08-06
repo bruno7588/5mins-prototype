@@ -190,19 +190,6 @@
   color: var(--text-tertiary);
 }
 
-/* ── Toolbar ── */
-.up-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-m);
-}
-
-.up-search {
-  width: 400px;
-  max-width: 100%;
-}
-
 /* ── Table cell helpers (DS classes live in Table.css; these are page-local) ── */
 .up-course {
   display: flex;
