@@ -6,13 +6,12 @@ import './RowActionsMenu.css'
 export interface RowMenuItem {
   key: string
   label: string
-  supporting?: string
   icon: ReactNode
   danger?: boolean
   /** Render a divider above this item (section break). */
   dividerBefore?: boolean
-  /** Not valid for this row — shown greyed with the reason, never hidden, so
-      the action stays discoverable and the menu keeps a stable shape. */
+  /** Not valid for this row — shown greyed, never hidden, so the action stays
+      discoverable and the menu keeps a stable shape. */
   disabled?: boolean
 }
 
@@ -128,10 +127,7 @@ function RowActionsMenu({
                   onClick={() => handleSelect(item.key)}
                 >
                   <span className="ram-item-icon">{item.icon}</span>
-                  <span className="ram-item-info">
-                    <span className="ram-item-title">{item.label}</span>
-                    {item.supporting && <span className="ram-item-supporting">{item.supporting}</span>}
-                  </span>
+                  <span className="ram-item-label">{item.label}</span>
                 </button>
               </Fragment>
             ))}

@@ -22,7 +22,7 @@
 .ram-menu {
   display: flex;
   flex-direction: column;
-  min-width: 300px;
+  min-width: 240px;
   max-width: 340px;
   background: var(--cards-background);
   border: 1px solid var(--border);
@@ -65,10 +65,10 @@
   transform: rotate(45deg);
 }
 
-/* Items — icon left + two-line (title + supporting), per the DS slot matrix */
+/* Items — icon left + label, per the DS listbox base item */
 .ram-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-s); /* 8px */
   width: 100%;
   text-align: left;
@@ -85,7 +85,7 @@
 }
 
 /* Invalid for this row's status — kept visible so the action stays
-   discoverable, with its supporting line carrying the reason. */
+   discoverable. */
 .ram-item--disabled,
 .ram-item--disabled:hover {
   background: transparent;
@@ -93,8 +93,7 @@
 }
 
 .ram-item--disabled .ram-item-icon,
-.ram-item--disabled .ram-item-title,
-.ram-item--disabled .ram-item-supporting {
+.ram-item--disabled .ram-item-label {
   color: var(--text-disabled);
 }
 
@@ -106,31 +105,18 @@
 .ram-item-icon {
   display: inline-flex;
   flex-shrink: 0;
-  margin-top: 1px;
   color: var(--text-primary);
 }
 
-.ram-item-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.ram-item-label {
   min-width: 0;
-}
-
-.ram-item-title {
-  font: 500 14px/1.4 'Poppins', sans-serif;
+  font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-primary);
-}
-
-.ram-item-supporting {
-  font: 400 14px/1.4 'Poppins', sans-serif;
-  color: var(--text-secondary);
 }
 
 /* Danger (destructive) item — Unenrol */
 .ram-item--danger .ram-item-icon,
-.ram-item--danger .ram-item-title,
-.ram-item--danger .ram-item-supporting {
+.ram-item--danger .ram-item-label {
   color: var(--text-error);
 }
 

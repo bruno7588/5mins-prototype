@@ -152,18 +152,18 @@ const FILTER_KIND = Object.fromEntries(FILTER_DEFS.map((d) => [d.id, d.kind])) a
 /* Enrolment-level row actions — same set as the course enrolments page; each
    Course Progress row is an enrolment (this learner × this course). */
 const ROW_MENU_ITEMS: RowMenuItem[] = [
-  { key: 'view-progress', label: 'View progress', supporting: "See learner's lesson and quiz progress", icon: <TaskSquare size={20} color="currentColor" variant="Linear" /> },
+  { key: 'view-progress', label: 'View progress', icon: <TaskSquare size={20} color="currentColor" variant="Linear" /> },
   /* Reminders are automated per course (see Workflows); this is the manual nudge
      for the exceptional case, so it stays single-row — never a bulk action. */
-  { key: 'send-reminder', label: 'Send reminder', supporting: 'Nudge the learner about this course', icon: <NotificationBing size={20} color="currentColor" variant="Linear" /> },
-  { key: 'extend-due-date', label: 'Extend due date', supporting: 'Give more time to complete the course', icon: <CalendarAdd size={20} color="currentColor" variant="Linear" /> },
-  { key: 'edit-start-date', label: 'Edit start date', supporting: 'Change when the enrolment begins', icon: <CalendarEdit size={20} color="currentColor" variant="Linear" /> },
+  { key: 'send-reminder', label: 'Send reminder', icon: <NotificationBing size={20} color="currentColor" variant="Linear" /> },
+  { key: 'extend-due-date', label: 'Extend due date', icon: <CalendarAdd size={20} color="currentColor" variant="Linear" /> },
+  { key: 'edit-start-date', label: 'Edit start date', icon: <CalendarEdit size={20} color="currentColor" variant="Linear" /> },
   /* Refresh, not RotateLeft — the bar uses RotateLeft for "give another
      attempt", so recurrence keeps its own glyph to stay unambiguous. */
-  { key: 'edit-repeat-rules', label: 'Edit repeat rules', supporting: 'How often this course repeats', icon: <Refresh size={20} color="currentColor" variant="Linear" /> },
-  { key: 'give-another-attempt', label: 'Give another attempt', supporting: 'Reset progress and start a new attempt', icon: <RotateLeft size={20} color="currentColor" variant="Linear" /> },
-  { key: 'restart-enrolment', label: 'Restart enrolment', supporting: 'Start a new enrolment with new dates', icon: <Repeat size={20} color="currentColor" variant="Linear" /> },
-  { key: 'unenrol', label: 'Unenrol', supporting: 'Remove this learner from the course', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
+  { key: 'edit-repeat-rules', label: 'Edit repeat rules', icon: <Refresh size={20} color="currentColor" variant="Linear" /> },
+  { key: 'give-another-attempt', label: 'Give another attempt', icon: <RotateLeft size={20} color="currentColor" variant="Linear" /> },
+  { key: 'restart-enrolment', label: 'Restart enrolment', icon: <Repeat size={20} color="currentColor" variant="Linear" /> },
+  { key: 'unenrol', label: 'Unenrol', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
 ]
 
 /* Floating-bar actions — icon-only until hovered, when each expands into the DS
@@ -560,9 +560,7 @@ function UserProfile() {
       render: (row) => (
         <RowActionsMenu
           items={ROW_MENU_ITEMS.map((item) =>
-            allows(item.key, row.status)
-              ? item
-              : { ...item, disabled: true, supporting: ACTION_RULES[item.key].reason },
+            allows(item.key, row.status) ? item : { ...item, disabled: true },
           )}
           onSelect={(key) => handleRowAction(key, row)}
           ariaLabel={`Actions for ${row.course}`}
