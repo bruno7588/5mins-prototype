@@ -66,12 +66,6 @@
   color: var(--text-tertiary);
 }
 
-.content-table-add-btn {
-  gap: var(--space-s);
-  /* leading icon — icon-side padding 4px tighter than the right */
-  padding: 10px var(--space-ml) 10px var(--space-m);
-}
-
 /* Table — flex-based, mirrors Figma Your Content / 4839:937 and People table pattern */
 .content-table {
   display: flex;
@@ -329,7 +323,7 @@
   border: none;
   cursor: pointer;
   padding: 8px 12px;
-  border-radius: var(--radius-s, 6px);
+  border-radius: var(--radius-sm);
   transition: opacity 150ms ease;
 }
 
@@ -345,7 +339,7 @@
   border: none;
   cursor: pointer;
   padding: 8px 20px;
-  border-radius: var(--radius-s, 6px);
+  border-radius: var(--radius-sm);
   transition: background 150ms ease;
 }
 

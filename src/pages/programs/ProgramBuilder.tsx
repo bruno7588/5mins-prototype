@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Add, GalleryAdd } from 'iconsax-react'
 import PageHeader from '../your-courses/components/PageHeader/PageHeader'
+import Button from '../../components/Button/Button'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import {
@@ -104,10 +105,13 @@ function ProgramBuilder() {
         onTabChange={setActiveTab}
         primaryAction={
           activeTab === 'Courses' ? (
-            <button type="button" className="page-header-btn-outline pb-addcourses-btn" onClick={() => setPickerOpen(true)}>
-              <Add size={20} color="currentColor" variant="Linear" />
+            <Button
+              variant="outlined-2"
+              icon={<Add size={20} color="currentColor" variant="Linear" />}
+              onClick={() => setPickerOpen(true)}
+            >
               Add Courses
-            </button>
+            </Button>
           ) : undefined
         }
         hideSecondary

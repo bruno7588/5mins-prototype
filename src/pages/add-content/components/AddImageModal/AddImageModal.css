@@ -271,7 +271,7 @@
   font-weight: 700;
   line-height: 1.4;
   cursor: pointer;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   transition: color 150ms ease, background 150ms ease;
 }
 
@@ -495,7 +495,7 @@
   gap: var(--space-xs);
   padding: 10px var(--space-ml);
   border: 1px solid transparent;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   /* Canonical AI filled gradient (Button.css .ds-btn--ai) */
   background: radial-gradient(circle at top left, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
   color: var(--neutral-25);

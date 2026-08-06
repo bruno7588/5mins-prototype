@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import './PageHeader.css'
 
@@ -66,21 +67,14 @@ function PageHeader({
         <h2 className="page-header-title">{title}</h2>
         <div className="page-header-actions">
           {!hideSecondary && (
-            <button
-              className={`page-header-btn-outline-primary${secondaryDisabled ? ' page-header-btn-disabled' : ''}`}
-              onClick={secondaryDisabled ? undefined : onSecondary}
-            >
+            <Button variant="outlined" disabled={secondaryDisabled} onClick={onSecondary}>
               {secondaryLabel}
-            </button>
+            </Button>
           )}
           {primaryAction}
-          <button
-            className={`page-header-btn-filled${primaryDisabled ? ' page-header-btn-disabled' : ''}`}
-            onClick={primaryDisabled ? undefined : onPrimary}
-          >
-            {primaryIcon}
+          <Button icon={primaryIcon} disabled={primaryDisabled} onClick={onPrimary}>
             {primaryLabel}
-          </button>
+          </Button>
           <CloseButton onClick={handleClose} className="page-header-close" />
         </div>
       </div>

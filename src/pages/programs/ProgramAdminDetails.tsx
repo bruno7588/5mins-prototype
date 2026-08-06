@@ -17,6 +17,7 @@ import avatar2 from '../../assets/programs/avatar-2.png'
 import avatar3 from '../../assets/programs/avatar-3.png'
 import '../people/People.css' // confirm-modal-* styles
 import './ProgramAdminDetails.css'
+import Button from '@/components/Button/Button'
 
 const TABS = ['Courses', 'Enrolments', 'Settings']
 const PAGE_SIZE = 10
@@ -343,13 +344,11 @@ function ProgramAdminDetails() {
               </div>
             )}
           </div>
-          <button type="button" className="pad-btn pad-btn--text" onClick={() => navigate(`/programs/${draft.id}`)}>
-            <Eye size={20} color="currentColor" variant="Linear" />
-            Preview
-          </button>
-          <button type="button" className="pad-btn pad-btn--filled" onClick={() => setDrawerOpen(true)}>
+          <Button icon={<Eye size={20} color="currentColor" variant="Linear" />} variant="text" onClick={() => navigate(`/programs/${draft.id}`)}>Preview
+          </Button>
+          <Button onClick={() => setDrawerOpen(true)}>
             Enrol People
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -415,9 +414,9 @@ function ProgramAdminDetails() {
             <h3 className="pad-empty-state__title">You haven’t enrolled any learners yet!</h3>
             <p className="pad-empty-state__sub">Enrol people to your program</p>
           </div>
-          <button type="button" className="pad-btn pad-btn--outline" onClick={() => setDrawerOpen(true)}>
+          <Button variant="outlined" onClick={() => setDrawerOpen(true)}>
             Enrol People
-          </button>
+          </Button>
         </div>
       ) : (
         <>
@@ -469,16 +468,14 @@ function ProgramAdminDetails() {
             <div className="pad-enrol-actions">
               {/* Download Report dropdown — Figma 2422:10883 / listbox 2422:11594 */}
               <div className="pad-menu" ref={openMenuId === 'dl-report' ? menuRef : undefined}>
-                <button
-                  type="button"
-                  className="pad-btn pad-btn--outlined-2"
+                <Button variant="outlined-2"
                   aria-haspopup="menu"
                   aria-expanded={openMenuId === 'dl-report'}
                   onClick={() => setOpenMenuId((cur) => (cur === 'dl-report' ? null : 'dl-report'))}
                 >
                   Download Report
                   <ArrowDown2 size={20} color="currentColor" variant="Linear" />
-                </button>
+                </Button>
                 {openMenuId === 'dl-report' && (
                   <div className="pad-menu__list pad-menu__list--reports" role="menu">
                     <button
@@ -621,20 +618,16 @@ function ProgramAdminDetails() {
               </p>
             </div>
             <div className="confirm-modal-actions">
-              <button
-                type="button"
-                className="confirm-modal-btn confirm-modal-btn--outlined"
+              <Button variant="outlined-2"
                 onClick={() => setUnenrolTarget(null)}
               >
                 Cancel
-              </button>
-              <button
-                type="button"
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              </Button>
+              <Button semantic="danger"
                 onClick={confirmUnenrol}
               >
                 Unenrol Learner
-              </button>
+              </Button>
             </div>
           </>
         )}
@@ -650,16 +643,14 @@ function ProgramAdminDetails() {
           </p>
         </div>
         <div className="confirm-modal-actions">
-          <button
-            type="button"
-            className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+          <Button variant="outlined-2"
             onClick={() => setConfirmDeleteOpen(false)}
           >
             Cancel
-          </button>
-          <button type="button" className="confirm-modal-btn confirm-modal-btn--danger" onClick={confirmDelete}>
+          </Button>
+          <Button semantic="danger" onClick={confirmDelete}>
             Delete Program
-          </button>
+          </Button>
         </div>
       </ConfirmModal>
 

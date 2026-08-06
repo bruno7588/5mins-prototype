@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Button from '@/components/Button/Button'
 import { SearchNormal1 } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import './ScormDrawer.css'
@@ -95,13 +96,13 @@ export function ScormDrawerContent({ onClose, addedIds, onAdd, onRemove }: Conte
               <td className="scorm-drawer-type">{file.type}</td>
               <td>
                 {addedIds.has(file.id) ? (
-                  <button className="scorm-drawer-btn scorm-drawer-btn--remove" onClick={() => onRemove(file.id)}>
+                  <Button size="sm" variant="outlined" onClick={() => onRemove(file.id)}>
                     Remove
-                  </button>
+                  </Button>
                 ) : (
-                  <button className="scorm-drawer-btn scorm-drawer-btn--add" onClick={() => onAdd(file)}>
+                  <Button size="sm" onClick={() => onAdd(file)}>
                     Add
-                  </button>
+                  </Button>
                 )}
               </td>
             </tr>

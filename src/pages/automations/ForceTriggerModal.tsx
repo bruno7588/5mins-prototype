@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowUp2, TickCircle, UserTick } from 'iconsax-react'
+import Button from '../../components/Button/Button'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import Search from '../../components/Search/Search'
 import Badge from '../../components/Badge/Badge'
@@ -179,16 +180,14 @@ function ForceTriggerModal({
                 </div>
               ))}
             </div>
-            <button
-              type="button"
-              className="force-trigger-btn-primary"
+            <Button
               onClick={() => {
                 setClosing(true)
                 setTimeout(onDone, 300)
               }}
             >
               Done
-            </button>
+            </Button>
           </div>
         ) : (
           <>
@@ -351,14 +350,9 @@ function ForceTriggerModal({
             <div className="force-trigger-footer">
               <div className="force-trigger-footer-divider" />
               <div className="force-trigger-footer-buttons">
-                <button
-                  type="button"
-                  className="force-trigger-btn-primary"
-                  disabled={selectedUsers.length === 0}
-                  onClick={handleTrigger}
-                >
+                <Button disabled={selectedUsers.length === 0} onClick={handleTrigger}>
                   {triggerLabel}
-                </button>
+                </Button>
               </div>
             </div>
           </>

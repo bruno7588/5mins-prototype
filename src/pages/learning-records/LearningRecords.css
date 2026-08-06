@@ -58,88 +58,6 @@
   flex-shrink: 0;
 }
 
-/* Download Report — ghost text action (label + CSV icon) */
-.lrp-download-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  flex-shrink: 0;
-  padding: 10px var(--space-sm) 10px var(--space-s);
-  border: none;
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: color 120ms ease;
-}
-
-.lrp-download-btn:hover {
-  color: var(--text-button-hover);
-}
-
-/* Reports (N) — DS Outlined / Neutral / Medium (note icon + label) */
-.lrp-reports-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-s);
-  flex-shrink: 0;
-  padding: 10px var(--space-ml) 10px var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 120ms ease, border-color 120ms ease;
-}
-
-.lrp-reports-btn:hover:not(:disabled) {
-  background: var(--input-background-hover);
-  border-color: var(--border-hover);
-}
-
-.lrp-reports-btn:disabled {
-  border-color: var(--border);
-  color: var(--text-disabled);
-  cursor: not-allowed;
-  /* let the Tooltip wrapper receive hover so the explanation still shows */
-  pointer-events: none;
-}
-
-/* Save Report — DS Outlined / Primary / Medium */
-.lrp-save-report-btn {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  padding: 10px var(--space-ml);
-  border: 1px solid var(--text-button-outlined);
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-button-outlined);
-  line-height: 1.5;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
-}
-
-.lrp-save-report-btn:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
 .lrp-tab {
   position: relative;
   font-family: 'Poppins', sans-serif;
@@ -884,30 +802,6 @@
 
 .lrp-table-wrap--scrolled .lrp-cell--ext-email::after {
   opacity: 1;
-}
-
-.lrp-cert-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 16px;
-  border: 1px solid var(--text-button-outlined);
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
-  color: var(--text-button-outlined);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 150ms ease;
-}
-
-.lrp-cert-btn:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
 }
 
 /* ===== Pagination ===== */

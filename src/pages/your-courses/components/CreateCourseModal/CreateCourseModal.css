@@ -37,25 +37,6 @@
   gap: var(--space-m);
 }
 
-.create-course-btn-draft {
-  white-space: nowrap;
-  padding: var(--space-sm) var(--space-l);
-  border-radius: var(--radius-s);
-  border: 1px solid var(--text-disabled);
-  background: none;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-disabled);
-  line-height: 1.5;
-  cursor: pointer;
-  transition: border-color 150ms ease, color 150ms ease;
-}
-
-.create-course-btn-draft:hover {
-  border-color: var(--text-secondary);
-  color: var(--text-secondary);
-}
-
 .create-course-btn-submit {
   white-space: nowrap;
   padding: var(--space-sm) var(--space-l);
@@ -179,35 +160,6 @@
   font-size: 16px;
   font-weight: 400;
   color: var(--text-secondary);
-}
-
-.create-course-empty-btn {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 10px var(--space-ml) 10px var(--space-m);
-  border-radius: var(--radius-s);
-  border: 1px solid var(--text-button-outlined);
-  background: none;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-button-outlined);
-  line-height: 1.5;
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-}
-
-.create-course-empty-btn:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
-.create-course-empty-btn:active {
-  background: transparent;
-  color: var(--primary-button-background-pressed);
-  border-color: var(--primary-button-background-pressed);
 }
 
 /* Side menu */

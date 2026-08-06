@@ -186,74 +186,8 @@
   background: var(--page-background-hover);
 }
 
-.pad-btn {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 10px var(--space-ml);
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.pad-btn--outline {
-  border: 1px solid var(--text-button-outlined);
-  background: transparent;
-  color: var(--text-button-outlined);
-}
-
-.pad-btn--outline:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
-/* Tertiary text + icon button (no border/fill). */
-.pad-btn--text {
-  padding: 10px var(--space-s) 10px var(--space-xs);
-  border: none;
-  background: transparent;
-  color: var(--text-button-outlined);
-}
-
-/* Text button: no fill on hover — only the label/icon color shifts (buttons.md). */
-.pad-btn--text:hover {
-  color: var(--text-button-hover);
-}
-
-.pad-btn--filled {
-  border: none;
-  background: var(--primary-button-background);
-  color: var(--text-button-foreground);
-}
-
-.pad-btn--filled:hover {
-  background: var(--primary-button-background-hover);
-}
-
 /* DS Outlined-2 (buttons.md): transparent + neutral hairline at rest;
    brand cyan surfaces only on interaction — 24% (hover) → 8% (pressed) fill ladder. */
-.pad-btn--outlined-2 {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-primary);
-}
-
-.pad-btn--outlined-2:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
-.pad-btn--outlined-2:active {
-  background: var(--button-outline-fill-pressed);
-  color: var(--primary-button-background-pressed);
-  border-color: var(--primary-button-background-pressed);
-}
 
 /* ── Divider + tabs ─────────────────────────────────────────────────────── */
 .pad-divider {

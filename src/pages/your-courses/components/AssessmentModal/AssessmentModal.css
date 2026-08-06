@@ -210,7 +210,6 @@
   border-color: var(--secondary-600);
 }
 
-
 .assessment-modal-radio {
   appearance: none;
   width: 20px;
@@ -304,7 +303,7 @@
   color: var(--text-button-foreground);
   background: var(--primary-button-background);
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 150ms ease;
 }
@@ -656,7 +655,7 @@
   color: var(--text-primary);
   background: transparent;
   border: 1.5px solid var(--text-primary);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: color 150ms ease, border-color 150ms ease;
 }
@@ -781,7 +780,7 @@
   color: var(--text-button-foreground);
   background: var(--primary-button-background);
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 150ms ease;
 }

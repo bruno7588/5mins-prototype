@@ -89,31 +89,6 @@
   line-height: 1.5;
 }
 
-/* Per-section Save — bottom of the section card (Medium button) */
-.cs-save {
-  white-space: nowrap;
-  padding: 10px var(--space-ml);
-  border: none;
-  border-radius: var(--radius-s);
-  background: var(--primary-button-background);
-  color: var(--text-button-foreground);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.cs-save:hover:not(:disabled) {
-  background: var(--primary-button-background-hover);
-}
-
-.cs-save:disabled {
-  background: var(--button-background-disabled);
-  color: var(--text-button-disabled);
-  cursor: default;
-}
-
 /* Section card — holds all of a section's settings + one Save at the bottom */
 .cs-card {
   display: flex;

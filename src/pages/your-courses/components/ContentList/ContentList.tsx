@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import Button from '@/components/Button/Button'
 import { Add, Clock, Edit2, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
 import AssessmentIcon from '../../../../components/icons/AssessmentIcon'
 import Badge from '../../../../components/Badge/Badge'
@@ -634,21 +635,15 @@ function ContentList({
               </p>
             </div>
             <div className="course-empty-state__cta">
-              <button
-                type="button"
-                className="course-empty-state__btn course-empty-state__btn--outlined"
+              <Button variant="outlined"
                 onClick={startSectioning}
               >
                 Start With A Section
-              </button>
-              <button
-                type="button"
-                className="course-empty-state__btn course-empty-state__btn--filled"
+              </Button>
+              <Button icon={<Add size={20} color="currentColor" variant="Linear" />}
                 onClick={(e) => onAddContent?.(onlySection!.id, e.currentTarget)}
-              >
-                <Add size={20} color="currentColor" variant="Linear" />
-                <span>Add Content</span>
-              </button>
+              ><span>Add Content</span>
+              </Button>
             </div>
           </div>
         )}

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import Button from '@/components/Button/Button'
 import { SearchNormal1, Edit2, Trash, ArrowLeft2, ArrowRight2, Refresh, Danger, TickCircle, Convertshape2 } from 'iconsax-react'
 import Badge from '../../../components/Badge/Badge'
 import type { CompanyRole, FiveMinsRole } from '../data/mockRoles'
@@ -123,10 +124,8 @@ function HrisMappingTab({
           </p>
         </div>
         <div className="roles-empty-state__cta">
-          <button className="roles-btn-primary-with-icon" onClick={onSimulateResync}>
-            <Refresh size={20} color="currentColor" />
-            Run Dry Run
-          </button>
+          <Button icon={<Refresh size={20} color="currentColor" />} onClick={onSimulateResync}>Run Dry Run
+          </Button>
         </div>
       </div>
     )
@@ -302,12 +301,11 @@ function HrisMappingTab({
                         </span>
                       </>
                     ) : (
-                      <button
-                        className="roles-btn-outlined"
+                      <Button variant="outlined"
                         onClick={() => onEditMapping(mapping)}
                       >
                         Map Role
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>

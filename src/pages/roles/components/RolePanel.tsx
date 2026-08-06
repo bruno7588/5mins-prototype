@@ -6,6 +6,7 @@ import InputField from '../../../components/InputField/InputField'
 import Alert from '../../../components/Alert/Alert'
 import { skillCatalogue, simulateAISuggestion, type Skill, type CompanyRole, type FiveMinsRole } from '../data/mockRoles'
 import { getSkillIllustration } from '../../../assets/skill-icons'
+import Button from '@/components/Button/Button'
 
 /* ─── Panel mode types ─────────────────────────────────── */
 
@@ -715,13 +716,12 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                     )}
                   </div>
                   <div className="roles-btn-tooltip-wrapper">
-                    <button
-                      className="roles-btn-outlined-primary"
+                    <Button variant="outlined"
                       disabled={!name.trim() || isDuplicateName}
                       onClick={handleSkipToManual}
                     >
                       Add Skills Manually
-                    </button>
+                    </Button>
                     {!name.trim() && (
                       <span className="roles-btn-tooltip"><span className="roles-btn-tooltip__asterisk">*</span> Role name is required</span>
                     )}
@@ -731,13 +731,12 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
               {/* Step 1 Copy: Continue button */}
               {!isEdit && step === 1 && isCopy && (
                 <div className="roles-btn-tooltip-wrapper">
-                  <button
-                    className="roles-btn-primary"
+                  <Button
                     disabled={!name.trim() || isDuplicateName}
                     onClick={() => setStep(2)}
                   >
                     Continue
-                  </button>
+                  </Button>
                   {!name.trim() && (
                     <span className="roles-btn-tooltip">Role name is required to continue</span>
                   )}
@@ -745,30 +744,27 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
               )}
               {/* Edit: Save */}
               {isEdit && (
-                <button
-                  className="roles-btn-primary"
+                <Button
                   disabled={!canSave}
                   onClick={() => onSave(name, selectedSkills, leadership)}
                 >
                   Save Changes
-                </button>
+                </Button>
               )}
               {/* Step 2: Create/Copy + Cancel */}
               {!isEdit && step === 2 && !aiLoading && (
                 <>
-                  <button
-                    className="roles-btn-primary"
+                  <Button
                     disabled={!canSave}
                     onClick={() => onSave(name, selectedSkills, leadership)}
                   >
                     {isCopy ? 'Copy Role' : 'Create Role'}
-                  </button>
-                  <button
-                    className="roles-btn-outlined-neutral800"
+                  </Button>
+                  <Button variant="outlined-2"
                     onClick={handleClose}
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </>
               )}
             </div>
@@ -807,19 +803,17 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
             />
           </div>
           <div className="confirm-modal-actions confirm-modal-actions--center">
-            <button
-              className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+            <Button variant="outlined-2"
               onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmInput('') }}
             >
               Cancel
-            </button>
-            <button
-              className="confirm-modal-btn confirm-modal-btn--danger"
+            </Button>
+            <Button semantic="danger"
               disabled={deleteConfirmInput !== 'Delete'}
               onClick={handleDelete}
             >
               Delete Role
-            </button>
+            </Button>
           </div>
         </ConfirmModal>
       )}

@@ -207,56 +207,6 @@
   gap: var(--space-m);
 }
 
-.course-empty-state__btn {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 10px var(--space-ml);
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-}
-
-.course-empty-state__btn:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
-
-.course-empty-state__btn--outlined {
-  background: transparent;
-  color: var(--text-button-outlined);
-  border: 1px solid var(--text-button-outlined);
-}
-
-.course-empty-state__btn--outlined:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
-.course-empty-state__btn--outlined:active {
-  background: transparent;
-  color: var(--primary-button-background-pressed);
-  border-color: var(--primary-button-background-pressed);
-}
-
-.course-empty-state__btn--filled {
-  background: var(--primary-button-background);
-  color: var(--text-button-foreground);
-  border: none;
-  /* leading icon — icon-side padding 4px tighter than the right */
-  padding-left: var(--space-m);
-}
-
-.course-empty-state__btn--filled:hover {
-  background: var(--primary-button-background-hover);
-}
-
 /* ── Curriculum section card ────────────────────────────────── */
 /* Outer section wrapper — 2-column grid: [drag column][content].
    Grid puts the drag column in the SAME ROW as the header so its height
@@ -349,7 +299,6 @@
   grid-column: 2;
   grid-row: 2;
 }
-
 
 /* Chromeless: the only-default-section state. No drag column, no header, no
    tinted item rails — the section body becomes the page's flat list. */
@@ -519,34 +468,6 @@
   border-bottom: 1px solid var(--selected);
   border-radius: 0;
   outline: none;
-}
-
-.curriculum-section__save-btn {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--primary-button-background);
-  color: var(--text-button-foreground);
-  border: none;
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.curriculum-section__save-btn:hover {
-  background: var(--primary-button-background-hover);
-}
-
-.curriculum-section__save-btn:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
 }
 
 /* Body — vertical stack below the header card. No border or padding here;
@@ -858,48 +779,6 @@
   justify-content: center;
   gap: var(--space-m);                      /* 16px */
   width: 100%;
-}
-
-.dialog__btn {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 1.5;
-  border-radius: var(--radius-s);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-}
-
-.dialog__btn:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
-
-/* Error type — outlined uses neutral border (per spec) */
-.dialog__btn--outlined-error {
-  background: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--text-primary);
-}
-
-.dialog__btn--outlined-error:hover {
-  background: var(--cards-background-hover);
-}
-
-.dialog__btn--filled-error {
-  background: var(--danger-500);
-  color: var(--neutral-0);
-  border: none;
-}
-
-.dialog__btn--filled-error:hover {
-  background: var(--danger-600);
 }
 
 /* Wrapper container: drag handle + card + trash */

@@ -61,48 +61,6 @@
   flex-shrink: 0;
 }
 
-.event-drawer__btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 16px 8px 12px; /* leading icon — icon-side 4px tighter */
-  border-radius: var(--radius-s);
-  border: 1px solid var(--text-secondary);
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.event-drawer__btn-outline:hover {
-  background: var(--input-background);
-}
-
-.event-drawer__btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
-  border-radius: var(--radius-s);
-  border: none;
-  background: var(--primary-button-background);
-  color: var(--neutral-25);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.event-drawer__btn-primary:hover {
-  background: var(--primary-button-background-hover);
-}
-
 .event-drawer__card-body {
   display: flex;
   align-items: center;

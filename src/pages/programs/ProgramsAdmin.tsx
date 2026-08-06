@@ -15,6 +15,7 @@ import {
   type AdminProgramRow,
 } from './programStore'
 import './ProgramsAdmin.css'
+import Button from '@/components/Button/Button'
 
 const fmtDay = (iso: string) => {
   try {
@@ -258,16 +259,15 @@ function ProgramsAdmin() {
               />
             </div>
             <div className="confirm-modal-actions">
-              <button className="confirm-modal-btn confirm-modal-btn--outlined" onClick={closeDelete}>
+              <Button variant="outlined-2" onClick={closeDelete}>
                 Cancel
-              </button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              </Button>
+              <Button semantic="danger"
                 disabled={confirmInput !== 'Delete'}
                 onClick={confirmDelete}
               >
                 Delete Program
-              </button>
+              </Button>
             </div>
           </>
         )}

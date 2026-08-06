@@ -190,11 +190,6 @@
   text-align: center;
 }
 
-/* Leading-icon "Add Courses" in the page header: icon-side padding 4px tighter. */
-.page-header-btn-outline.pb-addcourses-btn {
-  padding: 10px var(--space-ml) 10px var(--space-m);
-}
-
 .pb-empty__cta {
   display: inline-flex;
   align-items: center;

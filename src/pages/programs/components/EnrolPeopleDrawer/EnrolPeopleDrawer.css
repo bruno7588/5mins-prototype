@@ -24,11 +24,11 @@
   padding: var(--space-ml) var(--space-l);
   background: var(--page-background);
   box-shadow: -8px 0 24px rgba(32, 34, 42, 0.12);
-  animation: epd-slide-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: epd-slide-in 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .epd-panel--closing {
-  animation: epd-slide-out 300ms ease forwards;
+  animation: epd-slide-out 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes epd-fade-in { from { opacity: 0; } to { opacity: 1; } }
@@ -323,7 +323,7 @@
   justify-content: center;
   padding: 8px 16px;
   border: 1px solid var(--text-button-outlined);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: none;
   cursor: pointer;
   font-size: 12px;
@@ -476,7 +476,6 @@
   color: inherit;
   cursor: pointer;
 }
-
 
 .epd-date__cal {
   position: relative;

@@ -22,6 +22,7 @@ import {
 } from './data/mockHrisMappings'
 import '../people/People.css'
 import './Roles.css'
+import Button from '@/components/Button/Button'
 
 /* ─── Mock learner names for prototype ──────────────────── */
 const mockLearnerNames = [
@@ -341,18 +342,16 @@ function Roles() {
               </p>
             </div>
             <div className="confirm-modal-actions confirm-modal-actions--center">
-              <button
-                className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+              <Button variant="outlined-2"
                 onClick={() => setHrisRemoveTarget(null)}
               >
                 Cancel
-              </button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              </Button>
+              <Button semantic="danger"
                 onClick={() => removeMappingNow(hrisRemoveTarget)}
               >
                 Remove Mapping
-              </button>
+              </Button>
             </div>
           </>
         )}
@@ -374,14 +373,12 @@ function Roles() {
               </p>
             </div>
             <div className="confirm-modal-actions confirm-modal-actions--center">
-              <button
-                className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+              <Button variant="outlined-2"
                 onClick={() => { setDeleteRole(null); setDeleteConfirmInput('') }}
               >
                 Close
-              </button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--primary roles-download-list-btn"
+              </Button>
+              <Button className="roles-download-list-btn"
                 onClick={() => downloadLearnersCsv(deleteRole.name, getMockLearnersForRole(deleteRole.name, deleteRole.employeeCount))}
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -395,7 +392,7 @@ function Roles() {
                   </defs>
                 </svg>
                 Download List
-              </button>
+              </Button>
             </div>
           </>
         ) : deleteRole ? (
@@ -420,19 +417,17 @@ function Roles() {
               />
             </div>
             <div className="confirm-modal-actions confirm-modal-actions--center">
-              <button
-                className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+              <Button variant="outlined-2"
                 onClick={() => { setDeleteRole(null); setDeleteConfirmInput('') }}
               >
                 Cancel
-              </button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              </Button>
+              <Button semantic="danger"
                 disabled={deleteConfirmInput !== 'Delete'}
                 onClick={handleDeleteConfirm}
               >
                 Delete Role
-              </button>
+              </Button>
             </div>
           </>
         ) : null}

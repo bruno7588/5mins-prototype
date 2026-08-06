@@ -429,38 +429,6 @@
   align-items: center;
 }
 
-/* "Download Report" CTA — DS Button variant Outlined-2 (buttons.md, Figma
-   11609:8315): neutral outline at rest, cyan tint on hover/press. */
-.rd-btn-download {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: 10px var(--space-ml) 10px var(--space-m);
-  border: 1px solid var(--text-primary);
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.rd-btn-download:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
-.rd-btn-download:active {
-  background: var(--button-outline-fill-pressed);
-  color: var(--primary-button-background-pressed);
-  border-color: var(--primary-button-background-pressed);
-}
-
 /* Schedule grid — 2 columns: Frequency / cadence, Time / Timezone */
 .rd-grid {
   display: grid;
@@ -666,9 +634,3 @@
   line-height: 1.5;
 }
 
-/* Disabled primary CTA (shared class has no disabled style) */
-.side-drawer__btn-primary:disabled {
-  background: var(--button-background-disabled, var(--neutral-300));
-  color: var(--text-button-disabled, var(--text-tertiary));
-  cursor: not-allowed;
-}

@@ -27,6 +27,7 @@ import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import Badge from '../../components/Badge/Badge'
 import WorkflowsTab from '../your-courses/components/WorkflowsTab/WorkflowsTab'
 import './Automations.css'
+import Button from '@/components/Button/Button'
 
 type Tab = 'manage' | 'activity' | 'workflows'
 type SortDirection = 'asc' | 'desc'
@@ -1533,19 +1534,17 @@ function Automations() {
               />
             </div>
             <div className="confirm-modal-actions confirm-modal-actions--center">
-              <button
-                className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+              <Button variant="outlined-2"
                 onClick={closeDeleteModal}
               >
                 Cancel
-              </button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              </Button>
+              <Button semantic="danger"
                 disabled={confirmInput !== 'Delete'}
                 onClick={confirmDeleteAutomation}
               >
                 Delete Automation
-              </button>
+              </Button>
             </div>
           </>
         )}

@@ -504,7 +504,6 @@
   font-weight: 400;
 }
 
-
 /* ── Filter bar ── */
 .automations-filter-bar {
   display: flex;
@@ -514,7 +513,6 @@
   width: 100%;
   flex-wrap: wrap;
 }
-
 
 .automations-search {
   display: flex;
@@ -723,7 +721,6 @@
   background: var(--text-disabled);
 }
 
-
 .automations-table-cell--automation-muted {
   color: var(--text-disabled);
 }
@@ -878,7 +875,7 @@
   margin-top: var(--space-sm);
   padding: 10px var(--space-ml); /* 10px 20px to match figma height (41px) */
   border: 1px solid var(--text-primary);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: transparent;
   font-family: inherit;
   font-size: 14px;

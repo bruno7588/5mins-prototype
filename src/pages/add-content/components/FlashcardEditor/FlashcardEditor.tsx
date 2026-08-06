@@ -16,6 +16,7 @@ import {
   TextItalic,
   TextUnderline,
 } from 'iconsax-react'
+import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import InputField from '../../../../components/InputField/InputField'
 import Checkbox from '../../../../components/Checkbox/Checkbox'
@@ -372,10 +373,9 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
             <button type="button" className="fce-icon-btn" aria-label="AI actions">
               <AiSparkleIcon size={24} />
             </button>
-            <button type="button" className="btn-outlined">
-              <Brush2 size={20} color="currentColor" variant="Linear" />
+            <Button variant="outlined" icon={<Brush2 size={20} color="currentColor" variant="Linear" />}>
               Edit Theme
-            </button>
+            </Button>
             <Tooltip
               text={disabledReason}
               position="Bottom"
@@ -383,14 +383,9 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
               icon={false}
               disabled={canPublish}
             >
-              <button
-                type="button"
-                className="btn-primary fce-publish"
-                disabled={!canPublish}
-                onClick={handlePublish}
-              >
+              <Button disabled={!canPublish} onClick={handlePublish}>
                 {mode === 'edit' ? 'Update Lesson' : 'Publish Lesson'}
-              </button>
+              </Button>
             </Tooltip>
           </div>
         </div>

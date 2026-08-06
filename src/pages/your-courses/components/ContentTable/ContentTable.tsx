@@ -13,6 +13,7 @@ import {
   Danger,
 } from 'iconsax-react'
 import AddScormModal from '../../../../components/AddScormModal/AddScormModal'
+import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
@@ -241,10 +242,12 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
           <input type="text" placeholder={isScorm ? 'Search SCORM files' : 'Search content'} />
         </div>
 
-        <button className="btn-primary content-table-add-btn" onClick={isScorm ? () => setShowAddScorm(true) : onAddContent}>
-          <Add size={20} color="currentColor" />
+        <Button
+          icon={<Add size={20} color="currentColor" />}
+          onClick={isScorm ? () => setShowAddScorm(true) : onAddContent}
+        >
           {isScorm ? 'Add SCORM' : 'Add Content'}
-        </button>
+        </Button>
       </div>
 
       {/* Table */}
@@ -430,14 +433,13 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
               />
             </div>
             <div className="confirm-modal-actions">
-              <button className="confirm-modal-btn confirm-modal-btn--outlined" onClick={closeDeleteModal}>Cancel</button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              <Button variant="outlined-2" onClick={closeDeleteModal}>Cancel</Button>
+              <Button semantic="danger"
                 disabled={confirmInput !== 'Delete'}
                 onClick={confirmDelete}
               >
                 Delete Lesson
-              </button>
+              </Button>
             </div>
           </>
         )}

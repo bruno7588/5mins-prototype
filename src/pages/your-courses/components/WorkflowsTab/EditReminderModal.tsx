@@ -4,6 +4,7 @@ import CloseButton from '../../../../components/CloseButton/CloseButton'
 import InputField from '../../../../components/InputField/InputField'
 import '../../../../components/ConfirmModal/ConfirmModal.css'
 import './EditReminderModal.css'
+import Button from '@/components/Button/Button'
 
 const MIN_DAYS = 1
 const MAX_DAYS = 30
@@ -154,21 +155,17 @@ function EditReminderModal({ open, mode, initial, takenDays, onClose, onSave }: 
         </div>
 
         <div className="edit-reminder-modal__actions">
-          <button
-            type="button"
-            className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+          <Button variant="outlined-2"
             onClick={onClose}
           >
             Cancel
-          </button>
-          <button
-            type="button"
-            className="confirm-modal-btn confirm-modal-btn--primary"
+          </Button>
+          <Button
             disabled={!canSave}
             onClick={() => canSave && onSave({ days, subject: trimmedSubject, body: trimmedBody })}
           >
             {cta}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

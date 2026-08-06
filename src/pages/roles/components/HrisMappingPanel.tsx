@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import Button from '@/components/Button/Button'
 import { InfoCircle } from 'iconsax-react'
 import Search from '../../../components/Search/Search'
 import type { CompanyRole, FiveMinsRole } from '../data/mockRoles'
@@ -196,13 +197,12 @@ function HrisMappingPanel({ mapping, tenantRoles, publicRoles, onClose, onSave }
           <div className="roles-panel-footer-divider" />
           <div className="roles-panel-footer-row">
             <div className="roles-panel-footer-left">
-              <button
-                className="roles-btn-primary"
+              <Button
                 disabled={!pending || !dirty}
                 onClick={handleSave}
               >
                 {mapping.status === 'mapped' ? 'Save Mapping' : 'Map Role'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

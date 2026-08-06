@@ -19,7 +19,7 @@
    Sync timing with .side-drawer-in (300ms cubic-bezier in CoursesDrawer.css). */
 .acd-content-area {
   padding-right: 0;
-  transition: padding-right 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition: padding-right 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .acd-content-area--with-icon-strip {

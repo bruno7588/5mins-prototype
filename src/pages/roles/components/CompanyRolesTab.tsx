@@ -1,4 +1,5 @@
 import { SearchNormal1, Edit2, Copy, ArrowLeft2, ArrowRight2, Add, Trash } from 'iconsax-react'
+import Button from '@/components/Button/Button'
 import { useCallback, useRef, useState } from 'react'
 import type { CompanyRole } from '../data/mockRoles'
 
@@ -58,13 +59,11 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
           <p className="roles-empty-state__description">Create your first role or copy one from the 5Mins library.</p>
         </div>
         <div className="roles-empty-state__cta">
-          <button className="roles-btn-outlined-primary" onClick={onBrowseLibrary}>
+          <Button variant="outlined" onClick={onBrowseLibrary}>
             Browse 5Mins Roles
-          </button>
-          <button className="roles-btn-primary-with-icon" onClick={onCreateRole}>
-            <Add size={20} color="currentColor" />
-            Create New Role
-          </button>
+          </Button>
+          <Button icon={<Add size={20} color="currentColor" />} onClick={onCreateRole}>Create New Role
+          </Button>
         </div>
       </div>
     )
@@ -103,10 +102,8 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
             </svg>
             Export Roles
           </button>
-          <button className="roles-btn-primary-with-icon" onClick={onCreateRole}>
-            <Add size={20} color="currentColor" />
-            Create New Role
-          </button>
+          <Button icon={<Add size={20} color="currentColor" />} onClick={onCreateRole}>Create New Role
+          </Button>
         </div>
       </div>
 
@@ -124,9 +121,9 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
           </div>
           <p className="roles-empty__text">No results found!</p>
           <p className="roles-empty__subtext">Try a different search, or create a custom role</p>
-          <button className="roles-btn-primary" onClick={onCreateRole}>
+          <Button onClick={onCreateRole}>
             Create New Role
-          </button>
+          </Button>
         </div>
       ) : (
         <div

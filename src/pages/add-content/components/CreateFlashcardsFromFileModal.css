@@ -171,7 +171,7 @@
   gap: var(--space-xs);
   padding: 10px var(--space-ml) 10px var(--space-m);
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   /* Canonical AI filled gradient (Button.css .ds-btn--ai) */
   background: radial-gradient(circle at top left, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
   color: var(--neutral-25);

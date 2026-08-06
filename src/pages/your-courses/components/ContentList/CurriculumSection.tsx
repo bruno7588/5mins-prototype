@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import Button from '@/components/Button/Button'
 import gsap from 'gsap'
 import { Add, ArrowDown2, Edit2, Trash } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
@@ -313,14 +314,12 @@ function CurriculumSection({
               onBlur={commitRename}
               aria-label="Section name"
             />
-            <button
-              type="button"
-              className="curriculum-section__save-btn"
+            <Button size="sm"
               onMouseDown={(e) => e.preventDefault()}
               onClick={commitRename}
             >
               Save
-            </button>
+            </Button>
             <CloseButton
               onMouseDown={(e) => e.preventDefault()}
               onClick={cancelRename}

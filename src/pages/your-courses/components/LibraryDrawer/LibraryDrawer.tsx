@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Button from '@/components/Button/Button'
 import { PlayCircle } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Search from '../../../../components/Search/Search'
@@ -153,21 +154,17 @@ export function LibraryDrawerContent({ onClose, addedIds, onAdd, onRemove }: Con
                   </p>
                 </div>
                 {isAdded ? (
-                  <button
-                    type="button"
-                    className="library-lesson__btn library-lesson__btn--remove"
+                  <Button size="sm" variant="outlined"
                     onClick={() => onRemove(lesson.id)}
                   >
                     Remove
-                  </button>
+                  </Button>
                 ) : (
-                  <button
-                    type="button"
-                    className="library-lesson__btn library-lesson__btn--add"
+                  <Button size="sm"
                     onClick={() => onAdd(lesson)}
                   >
                     Add
-                  </button>
+                  </Button>
                 )}
               </article>
             )

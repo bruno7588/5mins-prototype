@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, UserAdd } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
+import Button from '../../components/Button/Button'
 import './YourCourses.css'
 
 type Tab = 'created' | 'enrolments' | 'dashboard'
@@ -40,10 +41,9 @@ function YourCourses() {
         <div className="your-courses-header">
           <div className="your-courses-headline">
             <h2 className="your-courses-title">Your Courses</h2>
-            <button className="btn-primary" onClick={() => navigate('/create-course')}>
-              <Add size={20} color="currentColor" />
+            <Button icon={<Add size={20} color="currentColor" />} onClick={() => navigate('/create-course')}>
               Create Course
-            </button>
+            </Button>
           </div>
           <div className="page-header-divider" />
           <div className="your-courses-tabs">

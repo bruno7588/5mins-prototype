@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Button from '@/components/Button/Button'
 import {
   Add,
   VideoCircle,
@@ -27,7 +28,7 @@ function CreateCourseModal({ onClose }: CreateCourseModalProps) {
         <div className="create-course-headline">
           <h2 className="create-course-title">Create course</h2>
           <div className="create-course-actions">
-            <button className="create-course-btn-draft">Save Draft</button>
+            <Button size="lg" variant="outlined">Save Draft</Button>
             <button className="create-course-btn-submit">Create Course</button>
             <button className="create-course-btn-close" onClick={onClose}>
               <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -90,10 +91,8 @@ function CreateCourseModal({ onClose }: CreateCourseModalProps) {
               Use the side menu to add content, upload resources, and create assessments
             </span>
           </div>
-          <button className="create-course-empty-btn">
-            <Add size={20} color="currentColor" />
-            Add Content
-          </button>
+          <Button icon={<Add size={20} color="currentColor" />} variant="outlined">Add Content
+          </Button>
         </div>
 
         {/* Side menu */}

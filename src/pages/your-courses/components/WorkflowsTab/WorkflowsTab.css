@@ -298,33 +298,6 @@
   cursor: not-allowed;
 }
 
-/* Add reminder — Figma 7447:7753 (icon + bold label, no border) */
-.course-reminders-add__btn {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: color 150ms ease;
-}
-
-.course-reminders-add__btn:hover:not(:disabled) {
-  color: var(--primary-button-background-hover);
-}
-
-.course-reminders-add__btn:disabled {
-  color: var(--text-disabled);
-  cursor: not-allowed;
-}
-
 /* Rules / bullets */
 .workflow-card__rules {
   display: flex;

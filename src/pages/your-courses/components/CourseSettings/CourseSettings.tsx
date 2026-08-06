@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import Button from '@/components/Button/Button'
 import { useNavigate } from 'react-router-dom'
 import { Clock } from 'iconsax-react'
 import Checkbox from '../../../../components/Checkbox/Checkbox'
@@ -345,14 +346,12 @@ function CourseSettings() {
               </div>
             ))}
             <div className="cs-cta">
-              <button
-                type="button"
-                className="cs-save"
+              <Button
                 disabled={!sectionDirty(section)}
                 onClick={() => saveSection(section)}
               >
                 Save
-              </button>
+              </Button>
             </div>
           </div>
         </div>

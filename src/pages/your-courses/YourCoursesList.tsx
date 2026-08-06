@@ -4,6 +4,7 @@ import { Add, ArrowRight2, ArrowDown2, ArrowLeft2, Sort } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
 import Badge from '../../components/Badge/Badge'
+import Button from '../../components/Button/Button'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import MoreIcon from '../../components/icons/MoreIcon'
 import './YourCoursesList.css'
@@ -72,10 +73,9 @@ function YourCoursesList() {
 
           <div className="courses-list-headline">
             <h2 className="courses-list-title">Your Courses</h2>
-            <button className="btn-primary" onClick={() => navigate('/create-course')}>
-              <Add size={20} color="currentColor" />
+            <Button icon={<Add size={20} color="currentColor" />} onClick={() => navigate('/create-course')}>
               Create Course
-            </button>
+            </Button>
           </div>
 
           <div className="page-header-divider" />

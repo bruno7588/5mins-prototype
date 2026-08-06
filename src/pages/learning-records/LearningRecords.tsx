@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import Button from '@/components/Button/Button'
 import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Calendar, Note1, Sort } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
@@ -551,14 +552,9 @@ function LearningRecords() {
 
               <div className="lrp-head-actions">
                 {/* Quick export — download the current table view without saving a report */}
-                <button
-                  type="button"
-                  className="lrp-download-btn"
-                  onClick={downloadCurrentView}
-                >
-                  <CsvIcon size={20} color="currentColor" />
+                <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />} onClick={downloadCurrentView}>
                   Download Report
-                </button>
+                </Button>
 
                 {/* Saved reports — opens the list side drawer; disabled until one exists */}
                 <Tooltip
@@ -567,25 +563,18 @@ function LearningRecords() {
                   disabled={reports.length > 0}
                   text="No saved reports yet. Build a filter view and choose “Save Report”."
                 >
-                  <button
-                    type="button"
-                    className="lrp-reports-btn"
+                  <Button
+                    variant="outlined-2"
                     aria-haspopup="dialog"
                     disabled={reports.length === 0}
                     onClick={() => setReportsListOpen(true)}
+                    icon={<Note1 size={20} color="currentColor" variant="Linear" />}
                   >
-                    <Note1
-                      size={20}
-                      color={reports.length === 0 ? 'var(--text-disabled)' : 'var(--text-primary)'}
-                      variant="Linear"
-                    />
                     Reports ({reports.length})
-                  </button>
+                  </Button>
                 </Tooltip>
                 {/* Save the current filter view as a report */}
-                <button type="button" className="lrp-save-report-btn" onClick={openCreateReport}>
-                  Save New Report
-                </button>
+                <Button variant="outlined" onClick={openCreateReport}>Save New Report</Button>
               </div>
             </div>
           </div>
@@ -839,7 +828,7 @@ function LearningRecords() {
                     </div>
                     <div className="lrp-cell lrp-cell--ext-cert">
                       {row.hasCertificate ? (
-                        <button type="button" className="lrp-cert-btn ui-disabled" disabled>Download</button>
+                        <Button size="sm" variant="outlined" className="ui-disabled" disabled>Download</Button>
                       ) : (
                         <span className="lrp-dash">–</span>
                       )}

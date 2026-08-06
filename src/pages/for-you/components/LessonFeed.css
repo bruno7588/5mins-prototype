@@ -226,7 +226,7 @@
 .lf-follow {
   padding: 8px 16px;
   border: 1px solid var(--text-button-outlined);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-button-outlined);
   font-family: 'Poppins', sans-serif;

@@ -1,3 +1,4 @@
+import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import './PageHeader.css'
 
@@ -14,12 +15,8 @@ function PageHeader() {
       <div className="sc-page-header-top">
         <h2 className="sc-page-header-title">Create course</h2>
         <div className="sc-page-header-actions">
-          <button className="sc-page-header-btn-outline sc-page-header-btn-disabled">
-            Save Draft
-          </button>
-          <button className="sc-page-header-btn-filled sc-page-header-btn-disabled">
-            Create Course
-          </button>
+          <Button variant="outlined" disabled>Save Draft</Button>
+          <Button disabled>Create Course</Button>
           <CloseButton className="sc-page-header-close" />
         </div>
       </div>

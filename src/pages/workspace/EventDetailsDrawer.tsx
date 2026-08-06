@@ -6,6 +6,7 @@ import {
   People,
   VideoSquare,
 } from 'iconsax-react'
+import Button from '../../components/Button/Button'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import { AttendeeStack, formatItemTime } from '../calendar/CalendarView'
 import type { CalendarItem } from '../calendar/mockItems'
@@ -110,13 +111,10 @@ function EventDetailsDrawer({ open, event, onClose }: Props) {
                 ) : null}
               </div>
               <div className="event-drawer__actions">
-                <button type="button" className="event-drawer__btn-outline">
-                  <CalendarAdd size={20} color="var(--text-secondary)" variant="Linear" />
-                  <span>Add to Calendar</span>
-                </button>
-                <button type="button" className="event-drawer__btn-primary">
-                  Register
-                </button>
+                <Button variant="outlined-2" icon={<CalendarAdd size={20} color="currentColor" variant="Linear" />}>
+                  Add to Calendar
+                </Button>
+                <Button>Register</Button>
               </div>
             </div>
             <div className="event-drawer__card-body">

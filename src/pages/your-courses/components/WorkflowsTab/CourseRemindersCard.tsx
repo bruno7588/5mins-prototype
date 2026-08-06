@@ -5,6 +5,7 @@ import Tooltip from '../../../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import EditReminderModal, { type ReminderDraft } from './EditReminderModal'
+import Button from '@/components/Button/Button'
 
 export interface Reminder {
   id: string
@@ -175,14 +176,10 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                 </div>
               ))}
               {enabled && (
-                <button
-                  type="button"
-                  className="course-reminders-add__btn"
+                <Button icon={<Add size={20} color="currentColor" variant="Linear" />} variant="text"
                   onClick={() => setModal({ mode: 'add' })}
-                >
-                  <Add size={20} color="currentColor" variant="Linear" />
-                  Add Reminder
-                </button>
+                >Add Reminder
+                </Button>
               )}
             </div>
           </li>
@@ -211,14 +208,12 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
               </p>
             </div>
             <div className="confirm-modal-actions confirm-modal-actions--center">
-              <button
-                className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+              <Button variant="outlined-2"
                 onClick={() => setDeletingId(null)}
               >
                 Cancel
-              </button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              </Button>
+              <Button semantic="danger"
                 onClick={() => {
                   handleRemove(deleting.id)
                   setDeletingId(null)
@@ -226,7 +221,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                 }}
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </>
         )}

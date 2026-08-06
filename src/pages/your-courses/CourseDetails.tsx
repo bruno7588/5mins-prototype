@@ -28,6 +28,7 @@ import Checkbox from '../../components/Checkbox/Checkbox'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import Alert from '../../components/Alert/Alert'
+import Button from '../../components/Button/Button'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CourseSettings from './components/CourseSettings/CourseSettings'
@@ -306,7 +307,7 @@ function CourseDetails() {
               <button className="cd-icon-btn ui-disabled" aria-label="More options (coming soon)" disabled>
                 <MoreIcon size={20} color="var(--text-secondary)" />
               </button>
-              <button className="btn-primary ui-disabled" disabled>Enrol People</button>
+              <Button className="ui-disabled" disabled>Enrol People</Button>
             </div>
           </div>
 
@@ -620,12 +621,12 @@ function CourseDetails() {
                 />
               )}
               <div className="confirm-modal-actions">
-                <button className="confirm-modal-btn confirm-modal-btn--outlined" onClick={() => setResetTarget(null)}>
+                <Button variant="outlined-2" onClick={() => setResetTarget(null)}>
                   Cancel
-                </button>
-                <button className="confirm-modal-btn confirm-modal-btn--primary" onClick={() => confirmReset(resetTarget.id)}>
+                </Button>
+                <Button onClick={() => confirmReset(resetTarget.id)}>
                   Give Another Attempt
-                </button>
+                </Button>
               </div>
             </>
             )

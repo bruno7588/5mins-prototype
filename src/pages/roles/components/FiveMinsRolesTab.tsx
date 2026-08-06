@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import Button from '@/components/Button/Button'
 import {
   SearchNormal1, ArrowLeft2, ArrowRight2, ArrowDown2,
   Judge, Headphone, Magicpen, DeviceMessage, Like1,
@@ -238,9 +239,9 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
           </div>
           <p className="roles-empty__text">No results found!</p>
           <p className="roles-empty__subtext">Try a different search, or create a custom role</p>
-          <button className="roles-btn-primary" onClick={onCreateRole}>
+          <Button onClick={onCreateRole}>
             Create New Role
-          </button>
+          </Button>
         </div>
       ) : (
         <div
@@ -275,12 +276,11 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
                   {role.assignedCount > 0 ? role.assignedCount : '\u2014'}
                 </div>
                 <div className="people-table-cell roles-col--action">
-                  <button
-                    className="roles-btn-outlined"
+                  <Button variant="outlined"
                     onClick={() => onCopy(role)}
                   >
                     Copy
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
@@ -352,12 +352,11 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
             {/* Footer */}
             <div className="roles-preview-footer">
               <div className="roles-preview-footer__divider" />
-              <button
-                className="roles-btn-primary"
+              <Button
                 onClick={() => handleCopyFromPreview(previewRole)}
               >
                 Copy to Company Roles
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react'
 import gsap from 'gsap'
 import BellIllustration from '../../../../components/icons/BellIllustration'
+import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Collapse from '../../../../components/Collapse/Collapse'
 import InputField from '../../../../components/InputField/InputField'
@@ -569,25 +570,22 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
         <div className="side-drawer__footer">
           <div className="side-drawer__footer-divider" />
           <div className="side-drawer__buttons rd-footer-buttons">
-            <button
-              type="button"
-              className="side-drawer__btn-primary"
+            <Button
               disabled={nameMissing || (scheduled && recipientsMissing)}
               onClick={handleSave}
             >
               {isEditing ? 'Update Report' : scheduled ? 'Save & Schedule Report' : 'Save New Report'}
-            </button>
+            </Button>
             {isEditing && onDownload && (
-              <button
-                type="button"
-                className="rd-btn-download"
+              <Button
+                variant="outlined-2"
+                icon={<CsvIcon size={20} color="currentColor" />}
                 onClick={() =>
                   onDownload(buildReport({ scheduled, recipients: scheduled ? recipients : [] }))
                 }
               >
-                <CsvIcon size={20} color="currentColor" />
                 Download Report
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -606,14 +604,12 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
               </p>
             </div>
             <div className="confirm-modal-actions">
-              <button
-                className="confirm-modal-btn confirm-modal-btn--outlined"
+              <Button variant="outlined-2"
                 onClick={() => setConfirmDelete(false)}
               >
                 Cancel
-              </button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              </Button>
+              <Button semantic="danger"
                 onClick={() => {
                   setConfirmDelete(false)
                   onDelete?.(initial.id)
@@ -621,7 +617,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
                 }}
               >
                 Delete Report
-              </button>
+              </Button>
             </div>
           </>
         )}

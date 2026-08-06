@@ -54,11 +54,6 @@
   gap: var(--space-m);
 }
 
-/* Create Course has a leading icon — icon-side padding 4px tighter */
-.courses-list-headline .btn-primary {
-  padding-left: var(--space-m);
-}
-
 .courses-list-title {
   flex: 1;
   font-size: 24px;

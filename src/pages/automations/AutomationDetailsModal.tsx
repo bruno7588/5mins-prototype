@@ -23,6 +23,7 @@ import {
   getAttributeValues,
 } from './Automations'
 import './AutomationDetailsModal.css'
+import Button from '@/components/Button/Button'
 
 function formatEnrollment(c: AutomationCourse): { title: string; description?: string } {
   if (c.enrollmentType.kind === 'immediate') {
@@ -361,13 +362,11 @@ function AutomationDetailsModal({
         </section>
 
         <footer className="automation-details-footer">
-          <button
-            type="button"
-            className="confirm-modal-btn confirm-modal-btn--primary"
+          <Button
             onClick={() => onSave?.(automation)}
           >
             {SAVE_BUTTON_LABEL[mode]}
-          </button>
+          </Button>
         </footer>
       </div>
 

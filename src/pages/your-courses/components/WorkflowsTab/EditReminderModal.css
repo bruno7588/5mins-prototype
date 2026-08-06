@@ -107,10 +107,6 @@
   width: 100%;
 }
 
-.edit-reminder-modal__actions .confirm-modal-btn {
-  padding: 10px var(--space-ml); /* medium: 10px 20px */
-}
-
 /* Days stepper inside modal */
 .edit-reminder-modal__stepper {
   display: inline-flex;

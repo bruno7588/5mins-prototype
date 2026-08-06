@@ -12,6 +12,7 @@ import {
   VideoSquare,
 } from 'iconsax-react'
 import Badge from '../../components/Badge/Badge'
+import Button from '../../components/Button/Button'
 import { pastItems, upcomingItems, type CalendarItem } from './mockItems'
 import './CalendarView.css'
 
@@ -126,25 +127,21 @@ export function AttendeeStack({ attendees, overflow }: { attendees: CalendarItem
 function ActionButton({ tab, state }: { tab: CalendarTab; state: CalendarItem['attendance'] }) {
   if (tab === 'upcoming') {
     return (
-      <button type="button" className="btn-primary cal-card__action--split">
-        <span>Register</span>
-      </button>
+      <Button className="cal-card__action--split">Register</Button>
     )
   }
   if (state === 'attended') {
     return (
-      <button type="button" className="btn-success">
-        <TickCircle size={20} color="var(--neutral-25)" variant="Linear" />
-        <span>Attended</span>
-      </button>
+      <Button semantic="success" icon={<TickCircle size={20} color="currentColor" variant="Linear" />}>
+        Attended
+      </Button>
     )
   }
   if (state === 'missed') {
     return (
-      <button type="button" className="btn-danger">
-        <CloseCircle size={20} color="var(--neutral-25)" variant="Bold" />
-        <span>Didn’t Attend</span>
-      </button>
+      <Button semantic="danger" icon={<CloseCircle size={20} color="currentColor" variant="Bold" />}>
+        Didn’t Attend
+      </Button>
     )
   }
   return (

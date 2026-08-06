@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
+import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import './LaunchSuccessModal.css'
 
@@ -186,16 +187,15 @@ function LaunchSuccessModal({ open, onClose, onTrackProgress }: Props) {
             <h2 className="lsm-title">Success!</h2>
             <p className="lsm-sub">Your program is now live.</p>
           </motion.div>
-          <motion.button
-            type="button"
-            className="lsm-btn"
-            onClick={onTrackProgress}
+          {/* motion wraps the DS Button — .lsm-content centers flex children,
+             so the wrapper shrinks to the button and the entrance still plays. */}
+          <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.35, ease: 'easeOut' }}
           >
-            Track Progress
-          </motion.button>
+            <Button onClick={onTrackProgress}>Track Progress</Button>
+          </motion.div>
         </div>
       </MotionConfig>
     </div>
