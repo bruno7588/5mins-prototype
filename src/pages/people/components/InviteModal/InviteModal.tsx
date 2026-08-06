@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Button from '@/components/Button/Button'
 import { Add, ArrowDown2, Calendar } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import './InviteModal.css'
@@ -334,12 +335,11 @@ function InviteModal({ onClose, onInvite, userFields }: InviteModalProps) {
 
         {/* Footer CTAs */}
         <div className="invite-modal-footer">
-          <button className="invite-modal-btn invite-modal-btn--cancel" onClick={onClose}>
+          <Button variant="outlined" onClick={onClose}>
             Cancel
-          </button>
+          </Button>
           <div className="invite-modal-btn-wrapper">
-            <button
-              className={`invite-modal-btn invite-modal-btn--invite${!canInvite ? ' invite-modal-btn--disabled' : ''}`}
+            <Button
               disabled={!canInvite}
               onClick={() => {
                 const filledCount = rows.filter(r => r.email.trim().length > 0).length
@@ -347,7 +347,7 @@ function InviteModal({ onClose, onInvite, userFields }: InviteModalProps) {
               }}
             >
               Invite
-            </button>
+            </Button>
             {!canInvite && (
               <span className="invite-modal-btn-tooltip">Fill all the required fields</span>
             )}

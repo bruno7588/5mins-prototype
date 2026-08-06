@@ -468,10 +468,20 @@
   width: 240px;
 }
 
-/* Opaque page-background on sticky cells so content doesn't show through */
-.people-table-scroll--has-scroll .people-table-cell--checkbox,
-.people-table-scroll--has-scroll .people-table-cell--name {
+/* Opaque backgrounds on sticky cells so content doesn't show through.
+   Rows sit directly on the page, so they mask with --page-background. The
+   header is a filled bar and --input-background is a translucent tint, so its
+   pinned cells must repaint that tint over an opaque page base — masking with
+   bare --page-background punches a hole in the bar. */
+.people-table-scroll--has-scroll .people-table-row .people-table-cell--checkbox,
+.people-table-scroll--has-scroll .people-table-row .people-table-cell--name {
   background: var(--page-background);
+}
+
+.people-table-scroll--has-scroll .people-table-header .people-table-cell--checkbox,
+.people-table-scroll--has-scroll .people-table-header .people-table-cell--name {
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 .people-table-scroll--has-scroll .people-table-row:hover .people-table-cell--checkbox,
@@ -479,14 +489,17 @@
   background: var(--cards-background-hover);
 }
 
+/* --selected-fill is translucent in dark mode, so the amber is layered over an
+   opaque page base — on its own it would let scrolled columns show through. */
 .people-table-scroll--has-scroll .people-table-row--selected .people-table-cell--checkbox,
 .people-table-scroll--has-scroll .people-table-row--selected .people-table-cell--name {
-  background: var(--selected-fill);
+  background: linear-gradient(var(--selected-fill), var(--selected-fill)), var(--page-background);
 }
 
 .people-table-scroll--has-scroll .people-table-row--selected:hover .people-table-cell--checkbox,
 .people-table-scroll--has-scroll .people-table-row--selected:hover .people-table-cell--name {
-  background: var(--selected-fill-hover);
+  background: linear-gradient(var(--selected-fill-hover), var(--selected-fill-hover)),
+    var(--page-background);
 }
 
 /* Shadow on name cell edge — only when user has scrolled horizontally */
@@ -971,95 +984,6 @@
   justify-content: center;
   gap: var(--space-m);
   width: 100%;
-}
-
-.confirm-modal-btn {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: var(--space-sm) var(--space-l);
-  font-size: 14px;
-  font-weight: 700;
-  border-radius: var(--radius-sm);
-  text-transform: capitalize;
-  cursor: pointer;
-  transition: opacity 150ms ease, background 150ms ease;
-}
-
-/* Outlined (cancel) */
-.confirm-modal-btn--outlined {
-  background: transparent;
-  border: 1px solid var(--text-primary);
-  color: var(--text-primary);
-}
-
-.confirm-modal-btn--outlined:hover {
-  background: var(--cards-background-hover);
-}
-
-/* Outlined neutral (cancel for delete/deactivate) */
-.confirm-modal-btn--outlined-neutral {
-  background: transparent;
-  border: 1px solid var(--text-primary);
-  color: var(--text-primary);
-}
-
-.confirm-modal-btn--outlined-neutral:hover {
-  background: var(--cards-background-hover);
-}
-
-/* Ghost (legacy / deactivate cancel) */
-.confirm-modal-btn--ghost {
-  background: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--text-primary);
-}
-
-.confirm-modal-btn--ghost:hover {
-  background: var(--cards-background-hover);
-}
-
-/* Filled primary (cyan) */
-.confirm-modal-btn--primary {
-  background: var(--primary-button-background);
-  color: var(--text-button-foreground);
-}
-
-.confirm-modal-btn--primary:hover {
-  background: var(--primary-button-background-hover);
-}
-
-/* Filled danger (red) */
-.confirm-modal-btn--danger {
-  background: var(--danger-500);
-  color: var(--neutral-0);
-}
-
-.confirm-modal-btn--danger:hover {
-  background: var(--danger-600);
-}
-
-/* Filled warning (amber) — caution actions with consequences */
-.confirm-modal-btn--warning {
-  background: var(--warning-600);
-  color: var(--neutral-0);
-}
-
-.confirm-modal-btn--warning:hover {
-  background: var(--warning-600);
-}
-
-.confirm-modal-btn:disabled {
-  background: var(--button-background-disabled);
-  color: var(--text-button-disabled);
-  border-color: var(--button-background-disabled);
-  cursor: not-allowed;
-}
-
-.confirm-modal-btn:disabled:hover {
-  background: var(--button-background-disabled);
-  color: var(--text-button-disabled);
 }
 
 /* Radio cards (deactivate-bulk modal) */

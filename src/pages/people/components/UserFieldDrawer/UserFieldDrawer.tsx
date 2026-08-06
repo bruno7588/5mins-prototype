@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Button from '@/components/Button/Button'
 import { Add } from 'iconsax-react'
 import Checkbox from '../../../../components/Checkbox/Checkbox'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
@@ -173,13 +174,12 @@ function UserFieldDrawer({ onClose, onSave, initialData, existingNames = [] }: U
         <div className="uf-drawer-footer">
           <div className="uf-drawer-divider" />
           <div className="uf-drawer-save-wrapper">
-            <button
-              className="uf-drawer-save"
+            <Button
               disabled={!canSave}
               onClick={handleSave}
             >
               {isEditing ? 'Save' : 'Create Field'}
-            </button>
+            </Button>
             {!canSave && (
               <span className="uf-drawer-save-tooltip">Field name is required</span>
             )}

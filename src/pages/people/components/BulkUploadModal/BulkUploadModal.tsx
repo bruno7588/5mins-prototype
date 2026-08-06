@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { ArrowDown2, ArrowLeft2, ArrowRight2, Danger, DocumentDownload, ImportCurve, UserAdd, UserEdit, UserMinus } from 'iconsax-react'
+import Button from '../../../../components/Button/Button'
 import Chip from '../../../../components/Chip/Chip'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import { FileUploader } from '../../../../components/FileUploader/FileUploader'
@@ -536,13 +537,12 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
                     <div className="bulk-upload-accordion-body">
                       <p className="bulk-upload-accordion-desc">Download our CSV file and fill the information with the correct format and column headers. The <span style={{ fontWeight: 500 }}>status</span> column controls what happens to each user.</p>
                       <div className="bulk-upload-ctas">
-                        <button className="bulk-upload-btn-primary" onClick={handleDownloadTemplate}>
-                          <ImportCurve size={20} color="currentColor" />
+                        <Button icon={<ImportCurve size={20} color="currentColor" />} onClick={handleDownloadTemplate}>
                           Download CSV template
-                        </button>
-                        <button className="bulk-upload-btn-outlined ui-disabled" disabled>
+                        </Button>
+                        <Button variant="outlined" className="ui-disabled" disabled>
                           Download Available Roles
-                        </button>
+                        </Button>
                         <button className="bulk-upload-btn-text ui-disabled" disabled>
                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clipPath="url(#clip0_6588_8697)">
@@ -637,10 +637,13 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
                       {errorCount} invite{errorCount !== 1 ? 's have' : ' has'} errors. Download Error File to fix your CSV and re-upload to continue.
                     </span>
                   </div>
-                  <button className="bulk-upload-btn-primary bulk-preview-download-error" onClick={handleDownloadErrorFile}>
-                    <DocumentDownload size={20} color="currentColor" variant="Linear" />
+                  <Button
+                    className="bulk-preview-download-error"
+                    icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+                    onClick={handleDownloadErrorFile}
+                  >
                     Download Error File
-                  </button>
+                  </Button>
                 </div>
               ) : deactivationCount > 0 ? (
                 <div className="bulk-preview-warning-banner">
@@ -765,19 +768,18 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
 
               {/* Action bar */}
               <div className="bulk-preview-actions">
-                <button className="bulk-upload-btn-outlined" onClick={handleBackToUpload}>
+                <Button variant="outlined" onClick={handleBackToUpload}>
                   Back To Upload
-                </button>
+                </Button>
                 <div className="bulk-preview-btn-wrapper">
-                  <button
-                    className={`bulk-upload-btn-primary${hasErrors ? ' bulk-upload-btn-primary--disabled' : ''}`}
+                  <Button
                     onClick={hasErrors ? undefined : () => setStep('success')}
                     disabled={hasErrors}
                   >
                     {hasErrors
                       ? 'Process Users'
                       : `Process ${totalEntries - errorCount} User${totalEntries - errorCount !== 1 ? 's' : ''}`}
-                  </button>
+                  </Button>
                   {hasErrors && (
                     <div className="bulk-preview-tooltip">
                       {errorCount} invite{errorCount !== 1 ? 's have' : ' has'} errors. Fix your CSV and re-upload to continue.
@@ -821,9 +823,7 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
                   <span className="bulk-success-value">{deactivationCount}</span>
                 </div>
               </div>
-              <button className="bulk-upload-btn-primary" onClick={onClose}>
-                Done
-              </button>
+              <Button onClick={onClose}>Done</Button>
             </div>
           )}
         </div>

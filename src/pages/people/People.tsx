@@ -866,8 +866,8 @@ function People() {
               </label>
             </div>
             <div className="confirm-modal-actions">
-              <button className="confirm-modal-btn confirm-modal-btn--outlined-neutral" onClick={closeModal}>Cancel</button>
-              <button className="confirm-modal-btn confirm-modal-btn--primary" onClick={() => handleDeactivate(modal.person)}>Deactivate 1 User</button>
+              <Button variant="outlined-2" onClick={closeModal}>Cancel</Button>
+              <Button onClick={() => handleDeactivate(modal.person)}>Deactivate 1 User</Button>
             </div>
           </>
         )}
@@ -913,8 +913,8 @@ function People() {
               </label>
             </div>
             <div className="confirm-modal-actions">
-              <button className="confirm-modal-btn confirm-modal-btn--outlined-neutral" onClick={closeModal}>Cancel</button>
-              <button className="confirm-modal-btn confirm-modal-btn--primary" onClick={() => handleDeactivateBulk(modal.persons)}>Deactivate {modal.persons.length} {modal.persons.length === 1 ? 'User' : 'Users'}</button>
+              <Button variant="outlined-2" onClick={closeModal}>Cancel</Button>
+              <Button onClick={() => handleDeactivateBulk(modal.persons)}>Deactivate {modal.persons.length} {modal.persons.length === 1 ? 'User' : 'Users'}</Button>
             </div>
           </>
         )}
@@ -949,18 +949,17 @@ function People() {
                 </p>
               </div>
               <div className="confirm-modal-actions">
-                <button className="confirm-modal-btn confirm-modal-btn--cancel" onClick={closeModal}>
+                <Button variant="outlined-2" onClick={closeModal}>
                   Cancel
-                </button>
-                <button
-                  className="confirm-modal-btn confirm-modal-btn--primary"
+                </Button>
+                <Button
                   onClick={() => {
                     handleReactivateBulk(modal.persons)
                     closeModal()
                   }}
                 >
                   Reactivate {total} {total === 1 ? 'User' : 'Users'}
-                </button>
+                </Button>
               </div>
             </>
           )
@@ -993,14 +992,13 @@ function People() {
               />
             </div>
             <div className="confirm-modal-actions">
-              <button className="confirm-modal-btn confirm-modal-btn--outlined" onClick={closeModal}>Cancel</button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              <Button variant="outlined-2" onClick={closeModal}>Cancel</Button>
+              <Button semantic="danger"
                 disabled={confirmInput !== 'Delete'}
                 onClick={() => handleDeleteSingle(modal.person)}
               >
                 Delete Permanently
-              </button>
+              </Button>
             </div>
           </>
         )}
@@ -1032,14 +1030,13 @@ function People() {
               />
             </div>
             <div className="confirm-modal-actions">
-              <button className="confirm-modal-btn confirm-modal-btn--outlined" onClick={closeModal}>Cancel</button>
-              <button
-                className="confirm-modal-btn confirm-modal-btn--danger"
+              <Button variant="outlined-2" onClick={closeModal}>Cancel</Button>
+              <Button semantic="danger"
                 disabled={confirmInput !== 'Delete'}
                 onClick={() => handleDeleteBulk(modal.persons)}
               >
                 Delete {modal.persons.length} Permanently
-              </button>
+              </Button>
             </div>
           </>
         )}

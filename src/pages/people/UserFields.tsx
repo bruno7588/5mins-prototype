@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Setting3, Add, Edit2, Trash, Danger } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import UserFieldDrawer from './components/UserFieldDrawer/UserFieldDrawer'
+import Button from '../../components/Button/Button'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import './UserFields.css'
@@ -82,10 +83,9 @@ function UserFields() {
                 <span className="user-fields-learn-more ui-disabled" aria-disabled="true">Learn more</span>
               </p>
             </div>
-            <button className="btn-primary" onClick={handleOpenDrawer}>
-              <Add size={20} color="currentColor" />
+            <Button icon={<Add size={20} color="currentColor" />} onClick={handleOpenDrawer}>
               Create New Field
-            </button>
+            </Button>
           </div>
 
           <div className="user-fields-divider" />
@@ -100,9 +100,9 @@ function UserFields() {
                 <h3 className="user-fields-empty-title">Create a new custom field to get started!</h3>
                 <p className="user-fields-empty-desc">Customize user profiles with unique fields.</p>
               </div>
-              <button className="btn-outlined" onClick={handleOpenDrawer}>
+              <Button variant="outlined" onClick={handleOpenDrawer}>
                 New Custom Field
-              </button>
+              </Button>
             </div>
           ) : (
             /* Fields Table */
@@ -174,19 +174,17 @@ function UserFields() {
                 />
               </div>
               <div className="confirm-modal-actions confirm-modal-actions--center">
-                <button
-                  className="confirm-modal-btn confirm-modal-btn--outlined-neutral"
+                <Button variant="outlined-2"
                   onClick={() => { setDeleteField(null); setConfirmInput('') }}
                 >
                   Cancel
-                </button>
-                <button
-                  className="confirm-modal-btn confirm-modal-btn--danger"
+                </Button>
+                <Button semantic="danger"
                   disabled={confirmInput !== 'Delete'}
                   onClick={handleDeleteConfirm}
                 >
                   Delete Field
-                </button>
+                </Button>
               </div>
             </>
           )}

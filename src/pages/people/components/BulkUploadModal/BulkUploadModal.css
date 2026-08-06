@@ -367,55 +367,6 @@
   color: var(--text-button-hover);
 }
 
-.bulk-upload-btn-primary {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: var(--space-s) var(--space-m);
-  background: var(--primary-button-background);
-  border: none;
-  border-radius: var(--radius-s);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-button-foreground);
-  line-height: 1.5;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 150ms ease;
-}
-
-/* Leading-icon variant: icon-side padding 4px tighter. */
-.bulk-upload-btn-primary:has(> svg:first-child) {
-  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
-}
-
-.bulk-upload-btn-primary:hover {
-  background: var(--primary-button-background-hover);
-}
-
-.bulk-upload-btn-outlined {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-s) var(--space-m);
-  background: transparent;
-  border: 1px solid var(--text-button-outlined);
-  border-radius: var(--radius-s);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-button-outlined);
-  line-height: 1.5;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 150ms ease;
-}
-
-.bulk-upload-btn-outlined:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
 .bulk-upload-divider {
   height: 1px;
   background: var(--border);
@@ -435,7 +386,6 @@
   overflow-x: auto;
   border-radius: var(--radius-s);
 }
-
 
 .bulk-upload-table {
   border-collapse: collapse;
@@ -901,17 +851,6 @@
 .bulk-preview-pagination-btn:disabled {
   color: var(--text-disabled);
   cursor: not-allowed;
-}
-
-/* Disabled primary button */
-.bulk-upload-btn-primary--disabled {
-  background: var(--button-background-disabled);
-  color: var(--text-button-disabled);
-  cursor: not-allowed;
-}
-
-.bulk-upload-btn-primary--disabled:hover {
-  background: var(--button-background-disabled);
 }
 
 /* ─── Preview actions ─── */
