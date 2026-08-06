@@ -43,6 +43,11 @@
 .ds-btn--md.ds-btn--has-icon { padding-left: var(--space-m); }  /* 16px */
 .ds-btn--lg.ds-btn--has-icon { padding-left: var(--space-ml); } /* 20px */
 
+/* Trailing icon mirrors the leading-icon rule: the icon side is one step tighter */
+.ds-btn--sm.ds-btn--has-trailing { padding-right: var(--space-sm); }
+.ds-btn--md.ds-btn--has-trailing { padding-right: var(--space-m); }
+.ds-btn--lg.ds-btn--has-trailing { padding-right: var(--space-ml); }
+
 /* Text / Link carry no box — strip padding regardless of size.
    `.ds-btn` prefix keeps these ahead of the two-class has-icon rules above. */
 .ds-btn.ds-btn--text,

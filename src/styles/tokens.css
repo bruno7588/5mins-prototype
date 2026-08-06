@@ -93,7 +93,7 @@
   --text-tertiary: var(--neutral-400);
   --text-disabled: var(--neutral-300);
   --text-success: var(--success-600);
-  --text-warning: var(--warning-700);
+  --text-warning: var(--warning-600);
   --text-error: var(--danger-500);
   --text-selected: var(--secondary-600);
   --text-progress: var(--primary-700);

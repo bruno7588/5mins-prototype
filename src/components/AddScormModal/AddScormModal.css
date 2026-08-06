@@ -60,51 +60,6 @@
   flex-shrink: 0;
 }
 
-.add-scorm-publish-btn {
-  white-space: nowrap;
-  padding: var(--space-sm) var(--space-l);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-button-foreground);
-  border: none;
-  border-radius: var(--radius-s);
-  background: var(--primary-button-background);
-  cursor: pointer;
-  line-height: 1.5;
-}
-
-.add-scorm-publish-btn:hover {
-  background: var(--primary-button-background-hover);
-}
-
-.add-scorm-preview-btn {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-sm) var(--space-l) var(--space-sm) var(--space-ml);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-button-outlined);
-  border: 1px solid var(--text-button-outlined);
-  border-radius: var(--radius-s);
-  background: transparent;
-  cursor: pointer;
-  line-height: 1.5;
-}
-
-.add-scorm-preview-btn:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
-.add-scorm-preview-btn:active {
-  background: transparent;
-  color: var(--primary-button-background-pressed);
-  border-color: var(--primary-button-background-pressed);
-}
-
 .add-scorm-divider {
   height: 1px;
   background: var(--border);
@@ -206,24 +161,6 @@
   line-height: 1.5;
 }
 
-.add-scorm-change-img-btn {
-  white-space: nowrap;
-  align-self: flex-start;
-  padding: var(--space-s) var(--space-m);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-primary);
-  border: 1px solid var(--text-primary);
-  border-radius: var(--radius-s);
-  background: none;
-  cursor: pointer;
-  line-height: 1.4;
-}
-
-.add-scorm-change-img-btn:hover {
-  background: var(--page-background-hover);
-}
-
 /* ZIP file upload */
 .add-scorm-file-row {
   display: flex;
@@ -232,26 +169,6 @@
   padding: var(--space-sm) var(--space-m);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-}
-
-.add-scorm-select-file-btn {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--neutral-25);
-  background: var(--primary-button-background);
-  border-radius: var(--radius-s);
-  cursor: pointer;
-  line-height: 1.4;
-  flex-shrink: 0;
-}
-
-.add-scorm-select-file-btn:hover {
-  background: var(--primary-button-background-hover);
 }
 
 .add-scorm-file-name {
@@ -292,22 +209,4 @@
   color: var(--text-secondary);
   line-height: 1.5;
   max-width: 600px;
-}
-
-.add-scorm-success-btn {
-  white-space: nowrap;
-  margin-top: var(--space-m);
-  padding: 10px var(--space-ml);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-button-foreground);
-  background: var(--primary-button-background);
-  border: none;
-  border-radius: var(--radius-s);
-  cursor: pointer;
-  line-height: 1.5;
-}
-
-.add-scorm-success-btn:hover {
-  background: var(--primary-button-background-hover);
 }

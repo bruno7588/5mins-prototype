@@ -204,7 +204,7 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--text-button-hover` | Primary-400 `#33E2F7` | Primary-700 `#008393` | Outlined/text button label on hover |
 | `--text-button-outlined` | Primary-500 `#00CEE6` | Primary-700 `#008393` | Outlined/text button label (default) |
 | `--text-success` | Success-500 `#18A957` | Success-600 `#11763D` | Success messages, completed labels |
-| `--text-warning` | Warning-500 `#FFA538` | Warning-700 `#996322` | Warning messages, deadline labels; warning-outlined button hover chrome |
+| `--text-warning` | Warning-500 `#FFA538` | Warning-600 `#E88206` | Warning messages, deadline labels; warning-outlined button hover chrome |
 | `--text-error` | Danger-400 `#E95C7B` | Danger-500 `#DF1642` | Error messages, failed validation |
 | `--text-selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Selected tab label, active chip label |
 | `--text-progress` | Primary-500 `#00CEE6` | Primary-700 `#008393` | Progress labels, "In Progress", step counters |
@@ -332,7 +332,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --text-button-hover: var(--primary-700);
   --text-button-outlined: var(--primary-700);
   --text-success: var(--success-600);
-  --text-warning: var(--warning-700);
+  --text-warning: var(--warning-600);
   --text-error: var(--danger-500);
   --text-selected: var(--secondary-600);
   --text-progress: var(--primary-700);

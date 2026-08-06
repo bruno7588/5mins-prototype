@@ -85,10 +85,10 @@ background: transparent;
 ### Visual Spec
 
 ```
-Background:    rgba(255, 187, 56, 0.12)   /* Secondary-500 @ 12% — same in both modes */
+Background:    rgba(255, 165, 56, 0.16)   /* Warning-500 @ 16% — same in both modes */
 Border-radius: 12px   (--radius-sm)
 Padding:       8px 12px   (--space-s --space-sm)
-Gap:           24px between info area and button
+Gap:           12px icon → text; 24px between info area and button
 Text:          Poppins 14px / 1.5, Medium (500), var(--text-warning)
 ```
 
@@ -238,12 +238,12 @@ export const Alert: React.FC<AlertProps> = ({
 
 /* ── Alert (warning) ── */
 .alert--alert {
-  background: rgba(255, 187, 56, 0.12);  /* Secondary-500 @ 12% */
+  background: rgba(255, 165, 56, 0.16);  /* Warning-500 @ 16% */
   color: var(--text-warning);
   font-size: 14px;
   font-weight: 500;                      /* Medium */
   line-height: 1.5;
-  gap: var(--space-l);                   /* 24px */
+  gap: var(--space-sm);                  /* 12px icon → text */
 }
 
 /* ── With supporting text: align top ── */

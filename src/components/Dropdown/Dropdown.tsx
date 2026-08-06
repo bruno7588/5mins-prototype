@@ -170,8 +170,8 @@ function Dropdown({
                     setIsActive(false)
                   }}
                 >
-                  <span className="dropdown-option__text">
-                    <span>{opt.label}</span>
+                  <span className={`dropdown-option__text${opt.description ? ' is-rich' : ''}`}>
+                    <span className="dropdown-option__label">{opt.label}</span>
                     {opt.description && <span className="dropdown-option__desc">{opt.description}</span>}
                   </span>
                 </button>

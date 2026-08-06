@@ -11,6 +11,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize
   /** Leading icon — rendered BEFORE the label. Pass an Iconsax icon sized 16/20/24 with color="currentColor". */
   icon?: ReactNode
+  /** Trailing icon — AFTER the label. The 2026-08-04 rework made icons leading, so
+   *  this is only for disclosure controls whose Figma shows a trailing chevron
+   *  (My Team courses button, Figma 10837:17669). Prefer `icon` otherwise. */
+  trailingIcon?: ReactNode
   loading?: boolean
   children?: ReactNode
 }
@@ -25,6 +29,7 @@ function Button({
   semantic = 'primary',
   size = 'md',
   icon,
+  trailingIcon,
   loading = false,
   disabled,
   children,
@@ -37,6 +42,7 @@ function Button({
     `ds-btn--${size}`,
     `ds-btn--${appearance(semantic, variant)}`,
     icon && children && 'ds-btn--has-icon',
+    trailingIcon && children && 'ds-btn--has-trailing',
     loading && 'ds-btn--loading',
     className,
   ]
@@ -53,6 +59,7 @@ function Button({
     >
       {icon && <span className="ds-btn__icon">{icon}</span>}
       <span className="ds-btn__label">{children}</span>
+      {trailingIcon && <span className="ds-btn__icon">{trailingIcon}</span>}
       {loading && <span className="ds-btn__spinner" aria-hidden="true" />}
     </button>
   )

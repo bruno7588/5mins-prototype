@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Button from '../../Button/Button'
 import './EmptyState.css'
 
 export interface MobileEmptyStateAction {
@@ -27,14 +28,12 @@ function MobileEmptyState({ illustration, title, description, primaryAction, sec
       {primaryAction || secondaryAction ? (
         <div className="m-empty-state__cta">
           {secondaryAction ? (
-            <button type="button" className="btn-outlined" onClick={secondaryAction.onClick}>
+            <Button variant="outlined" onClick={secondaryAction.onClick}>
               {secondaryAction.label}
-            </button>
+            </Button>
           ) : null}
           {primaryAction ? (
-            <button type="button" className="btn-primary" onClick={primaryAction.onClick}>
-              {primaryAction.label}
-            </button>
+            <Button onClick={primaryAction.onClick}>{primaryAction.label}</Button>
           ) : null}
         </div>
       ) : null}

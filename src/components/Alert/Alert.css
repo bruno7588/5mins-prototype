@@ -23,12 +23,15 @@
 
 /* ── Alert (warning) ── */
 .alert--alert {
-  background: rgba(255, 187, 56, 0.12);
+  /* Warning-500 #FFA538 @ 16% (was Secondary-500 @ 12%) */
+  background: rgba(255, 165, 56, 0.16);
   color: var(--text-warning);
   font-size: 16px;
   font-weight: 400;
   line-height: 1.5;
-  gap: 24px;
+  /* 12px icon → text; the inline button adds another 12px for the 24px
+     info↔button gap the spec calls for. */
+  gap: 12px;
 }
 
 /* ── With supporting text: align top, larger padding ── */
@@ -134,6 +137,7 @@
 
 /* Inline underline — Alert */
 .alert__btn--inline {
+  margin-left: 12px; /* + the row's 12px gap = 24px from the info area */
   font-size: 16px;
   color: var(--text-warning);
   background: transparent;

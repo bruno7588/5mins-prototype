@@ -187,7 +187,7 @@ Default is **Warning-600**. Dark mode goes **lighter** on hover:
 | `--button-warning-background` | Warning-600 `#E88206` | Warning-600 `#E88206` |
 | `--button-warning-background-hover` | Warning-700 `#996322` | **Warning-500 `#FFA538`** |
 | `--button-warning-background-pressed` | Warning-800 `#664216` | **Warning-700 `#996322`** |
-| `--text-warning` (outlined hover chrome) | Warning-700 `#996322` | Warning-500 `#FFA538` |
+| `--text-warning` (outlined hover chrome) | Warning-600 `#E88206` | Warning-500 `#FFA538` |
 
 ```css
 .btn-warning          { background: var(--button-warning-background); color: var(--neutral-25); }

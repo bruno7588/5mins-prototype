@@ -13,16 +13,18 @@ interface ContentSwitcherProps {
   activeKey: string
   onChange: (key: string) => void
   className?: string
+  /** Labels the tablist for screen readers, e.g. "Course filter". */
+  ariaLabel?: string
 }
 
 /** Segmented control (DS: chips-switcher-tabs.md → Content Switcher). The amber
  *  selection pill slides between segments via Framer Motion shared layout
  *  (`layoutId`), so switching feels continuous rather than abrupt. */
-function ContentSwitcher({ items, activeKey, onChange, className = '' }: ContentSwitcherProps) {
+function ContentSwitcher({ items, activeKey, onChange, className = '', ariaLabel }: ContentSwitcherProps) {
   const reduce = useReducedMotion()
   const pillId = useId()
   return (
-    <div className={`switcher${className ? ` ${className}` : ''}`} role="tablist" aria-orientation="horizontal">
+    <div className={`switcher${className ? ` ${className}` : ''}`} role="tablist" aria-orientation="horizontal" aria-label={ariaLabel}>
       {items.map((item) => {
         const selected = item.key === activeKey
         return (

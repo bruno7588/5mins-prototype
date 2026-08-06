@@ -69,7 +69,7 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--neutral-25);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: var(--primary-button-background, var(--primary-600));
   cursor: pointer;
   line-height: 1.5;

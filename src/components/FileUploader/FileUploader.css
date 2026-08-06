@@ -126,7 +126,7 @@
 /* ─── Outlined button (Select File / Change File) ─── */
 .file-uploader__btn-outlined {
   border: 1px solid var(--text-primary);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   padding: 8px 16px;
   background: transparent;
   font-family: 'Poppins', sans-serif;

@@ -74,7 +74,7 @@
   font-size: 14px;
   font-weight: 700;
   border: 1px solid transparent;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   white-space: nowrap;
   transition: background 150ms ease, border-color 150ms ease;

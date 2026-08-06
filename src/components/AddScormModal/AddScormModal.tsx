@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import Button from '@/components/Button/Button'
 import { Add, Eye, GalleryAdd } from 'iconsax-react'
 import CloseButton from '../CloseButton/CloseButton'
 import './AddScormModal.css'
@@ -51,9 +52,7 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
           <p className="add-scorm-success-desc">
             You can leave this page whenever you want!
           </p>
-          <button className="add-scorm-success-btn" onClick={onClose}>
-            Awesome
-          </button>
+          <Button onClick={onClose}>Awesome</Button>
         </div>
       ) : (
         <div className="add-scorm-content">
@@ -64,18 +63,15 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
               <div className="add-scorm-header-actions">
                 {isEdit ? (
                   <>
-                    <button className="add-scorm-preview-btn" onClick={onPreview}>
-                      <Eye size={18} color="currentColor" variant="Linear" />
+                    <Button size="lg" variant="outlined" icon={<Eye size={18} color="currentColor" variant="Linear" />} onClick={onPreview}>
                       Preview
-                    </button>
-                    <button className="add-scorm-publish-btn" onClick={onClose}>
-                      Update SCORM
-                    </button>
+                    </Button>
+                    <Button size="lg" onClick={onClose}>Update SCORM</Button>
                   </>
                 ) : (
-                  <button className="add-scorm-publish-btn" onClick={() => { onPublish?.(name); setPublished(true) }}>
+                  <Button size="lg" onClick={() => { onPublish?.(name); setPublished(true) }}>
                     Publish Lesson
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -116,12 +112,9 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
                 <p className="add-scorm-thumbnail-desc">
                   Upload a 256 x 256 px image, PNG or JPEG format. This image shows up in your lesson thumbnails.
                 </p>
-                <button
-                  className="add-scorm-change-img-btn"
-                  onClick={() => thumbnailInputRef.current?.click()}
-                >
+                <Button size="sm" variant="outlined-2" onClick={() => thumbnailInputRef.current?.click()}>
                   Change Image
-                </button>
+                </Button>
               </div>
               <input
                 ref={thumbnailInputRef}
@@ -138,13 +131,9 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
             <div className="add-scorm-field">
               <label className="add-scorm-label">Select a ZIP file to upload</label>
               <div className="add-scorm-file-row">
-                <button
-                  className="add-scorm-select-file-btn"
-                  onClick={() => zipInputRef.current?.click()}
-                >
-                  <Add size={16} color="currentColor" />
+                <Button size="sm" icon={<Add size={16} color="currentColor" />} onClick={() => zipInputRef.current?.click()}>
                   Select File
-                </button>
+                </Button>
                 <span className="add-scorm-file-name">
                   {zipFileName || 'No file selected'}
                 </span>
