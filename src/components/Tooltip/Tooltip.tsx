@@ -12,6 +12,8 @@ interface TooltipProps {
   alignment?: TooltipAlignment
   icon?: boolean
   iconColor?: string
+  /** Anchor icon size. Defaults to the DS 20px; 16px suits dense inline rows. */
+  iconSize?: number
   disabled?: boolean
   children?: ReactNode
   className?: string
@@ -23,6 +25,7 @@ function Tooltip({
   alignment = 'Center',
   icon = true,
   iconColor,
+  iconSize = 20,
   disabled = false,
   children,
   className = '',
@@ -93,7 +96,7 @@ function Tooltip({
       onFocus={() => setVisible(true)}
       onBlur={() => setVisible(false)}
     >
-      <InfoIcon size={20} color={iconColor} />
+      <InfoIcon size={iconSize} color={iconColor} />
     </button>
   ) : (
     <div

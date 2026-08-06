@@ -103,7 +103,7 @@ const ACTIVE_COURSES = COURSES.filter((c) => c.status !== 'Scheduled')
 
 const STATS = STAT_GROUPS.map((statuses) => {
   const count = ACTIVE_COURSES.filter((c) => statuses.includes(c.status)).length
-  return { count, share: ACTIVE_COURSES.length ? Math.round((count / ACTIVE_COURSES.length) * 100) : 0 }
+  return { share: ACTIVE_COURSES.length ? Math.round((count / ACTIVE_COURSES.length) * 100) : 0 }
 })
 
 /* Overdue and Failed intentionally share the red error pill — colour carries
@@ -237,28 +237,21 @@ function DateCell({ value }: { value: string | null }) {
   )
 }
 
-const courseCount = (n: number) => `${n} ${n === 1 ? 'course' : 'courses'}`
-
-function StatCard({ icon, label, tooltip, share, support }: {
+/* Single-line stat (Figma 9193:44018): icon, share, label + info anchor. */
+function StatCard({ icon, label, tooltip, share }: {
   icon: ReactNode
   label: string
   tooltip: string
   share: number
-  support: string
 }) {
   return (
     <div className="up-stat">
       <span className="up-stat-icon">{icon}</span>
-      <div className="up-stat-body">
-        <div className="up-stat-label">
-          {label}
-          <Tooltip position="Top" text={tooltip} />
-        </div>
-        <div className="up-stat-data">
-          <span className="up-stat-value">{share}%</span>
-          <span className="up-stat-support">{support}</span>
-        </div>
-      </div>
+      <span className="up-stat-value">{share}%</span>
+      <span className="up-stat-label">
+        {label}
+        <Tooltip position="Top" text={tooltip} iconSize={16} />
+      </span>
     </div>
   )
 }
@@ -611,32 +604,28 @@ function UserProfile() {
               narrow the table, never this. */}
           <div className="up-stats">
             <StatCard
-              icon={<TickCircle size={32} color="var(--success-500)" variant="Linear" />}
+              icon={<TickCircle size={24} color="var(--success-500)" variant="Linear" />}
               label="Completed"
               tooltip="Courses this learner has finished."
               share={STATS[0].share}
-              support={courseCount(STATS[0].count)}
             />
             <StatCard
-              icon={<StatusUp size={32} color="var(--primary-600)" variant="Linear" />}
+              icon={<StatusUp size={24} color="var(--primary-600)" variant="Linear" />}
               label="In progress"
               tooltip="Courses started but not yet finished."
               share={STATS[1].share}
-              support={courseCount(STATS[1].count)}
             />
             <StatCard
-              icon={<Danger size={32} color="var(--warning-600)" variant="Linear" />}
+              icon={<Danger size={24} color="var(--warning-600)" variant="Linear" />}
               label="At risk!"
               tooltip="Courses not started yet, or failed and needing another attempt."
               share={STATS[2].share}
-              support={courseCount(STATS[2].count)}
             />
             <StatCard
-              icon={<Clock size={32} color="var(--danger-400)" variant="Linear" />}
+              icon={<Clock size={24} color="var(--danger-400)" variant="Linear" />}
               label="Overdue"
               tooltip="Courses past their due date."
               share={STATS[3].share}
-              support={courseCount(STATS[3].count)}
             />
           </div>
 

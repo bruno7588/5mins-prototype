@@ -133,47 +133,25 @@
   gap: var(--space-m);
 }
 
+/* One line: icon · share · label + info anchor (Figma 9193:44018). */
 .up-stat {
   flex: 1 0 0;
   /* Real min so the wrap actually kicks in — 4 up, then 2×2 when narrow. */
   min-width: 200px;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-s);
   padding: var(--space-sm) var(--space-m);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
 }
 
+/* 12px to the share, not the 8px the rest of the row uses — the icon needs the
+   extra separation to read as a marker rather than part of the number. */
 .up-stat-icon {
   display: flex;
   flex-shrink: 0;
-}
-
-/* No gap — the label and value line-heights set the rhythm (Figma). */
-.up-stat-body {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex: 1 0 0;
-  min-width: 0;
-}
-
-.up-stat-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.up-stat-data {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-xs);
-  min-width: 0;
+  margin-right: var(--space-xs);
 }
 
 .up-stat-value {
@@ -181,13 +159,18 @@
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
+  white-space: nowrap;
 }
 
-.up-stat-support {
-  font-size: 12px;
+.up-stat-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 /* ── Table cell helpers (DS classes live in Table.css; these are page-local) ── */
