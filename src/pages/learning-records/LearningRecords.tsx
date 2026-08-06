@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import Button from '@/components/Button/Button'
-import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Calendar, Note1, Sort } from 'iconsax-react'
+import { Add, ArrowDown2, Calendar, Note1, Sort } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CsvIcon from '../../components/icons/CsvIcon'
@@ -379,7 +379,6 @@ function LearningRecords() {
     if (showDeactivated) rows = [...deactivatedData, ...rows]
     return rows.filter(matchesFilters)
   })()
-  const rowCount = activeTab === '5mins' ? displayedCourseRows.length : externalData.length
 
   // Add+ relocates between header (collapsed) and bottom actions (expanded).
   // Only the live instance gets an open listbox so their click-outside handlers don't clash.
@@ -844,16 +843,7 @@ function LearningRecords() {
             )}
           </div>
 
-          {/* Pagination */}
-          <div className="lrp-pagination">
-            <span className="lrp-pagination-label">1–{rowCount} of {rowCount}</span>
-            <button type="button" className="lrp-pagination-btn" aria-label="Previous page" disabled>
-              <ArrowLeft2 size={16} color="var(--text-secondary)" variant="Linear" />
-            </button>
-            <button type="button" className="lrp-pagination-btn" aria-label="Next page">
-              <ArrowRight2 size={16} color="var(--text-secondary)" variant="Linear" />
-            </button>
-          </div>
+
         </div>
       </main>
 

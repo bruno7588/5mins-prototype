@@ -162,9 +162,11 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
                 })}
               </div>
 
-              <div className="rd-pagination">
-                <span>1–{shown} of {total}</span>
-              </div>
+              {total > shown && (
+                <div className="rd-pagination">
+                  <span>1–{shown} of {total}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

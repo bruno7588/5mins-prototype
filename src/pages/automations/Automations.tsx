@@ -1154,7 +1154,7 @@ function Automations() {
             </div>
             )}
 
-            {manageTotalRows > 0 && (
+            {manageTotalPages > 1 && (
               <div className="automations-pagination">
                 <span className="automations-pagination-info">
                   {managePageStart + 1}-{managePageEnd} of {manageTotalRows}
@@ -1478,7 +1478,7 @@ function Automations() {
             </div>
 
             {/* Pagination */}
-            {totalRows > 0 && (
+            {totalPages > 1 && (
               <div className="automations-pagination">
                 <span className="automations-pagination-info">
                   {pageStart + 1}-{pageEnd} of {totalRows}

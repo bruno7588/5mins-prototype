@@ -459,6 +459,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
             </ul>
           </div>
 
+          {total > PAGE_SIZE && (
           <div className="audit-pagination">
             <span className="audit-pagination-count">
               {pageStart + 1}-{pageStart + pageRows.length} of {total}
@@ -482,6 +483,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
               <ArrowRight2 size={16} color="currentColor" variant="Linear" />
             </button>
           </div>
+          )}
         </>
       )}
 

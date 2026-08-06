@@ -727,7 +727,7 @@ function MyTeam() {
                   )
                 })}
 
-                {totalRows > 0 && rows.length > 0 && (
+                {totalPages > 1 && (
                   <div className="mt-cp__pagination">
                     <span className="mt-cp__pagination-label">{pageStart + 1}–{pageEnd} of {totalRows}</span>
                     <button

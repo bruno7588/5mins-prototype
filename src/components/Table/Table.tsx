@@ -143,7 +143,9 @@ export function Table<T>({
         )
       })}
 
-      {pagination && (
+      {/* Single page: the footer would be a count that restates the visible rows
+          plus two arrows that can never fire. */}
+      {pagination && (pagination.from > 1 || pagination.to < pagination.total) && (
         <div className="tbl-pagination">
           <span className="count">
             {pagination.from}-{pagination.to} of {pagination.total}

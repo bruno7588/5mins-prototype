@@ -88,6 +88,7 @@ interface Props {
 /** Right-aligned pagination matching the program tables. */
 function DrawerPagination({ page, total, onPage }: { page: number; total: number; onPage: (p: number) => void }) {
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  if (pageCount <= 1) return null
   return (
     <div className="epd-pagination">
       <span className="epd-pagination__label">
