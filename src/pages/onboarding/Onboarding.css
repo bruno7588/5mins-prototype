@@ -18,6 +18,14 @@
   --input-background: rgba(69, 76, 94, 0.16);
   --input-background-hover: #2d313d;
   --button-background-disabled: #656b7c; /* neutral-400, per Figma */
+
+  /* Filled-button ladder pinned to its dark-mode values (buttons.md): bright
+     cyan that lightens on hover, with a dark label. The app tokens are
+     mode-aware, and onboarding renders on the dark gradient in either mode. */
+  --primary-button-background: var(--primary-500);
+  --primary-button-background-hover: var(--primary-400);
+  --primary-button-background-pressed: var(--primary-700);
+  --text-button-foreground: var(--neutral-800);
 }
 
 /* Translucent panel laid over the full-bleed gradient. */
@@ -220,45 +228,6 @@
 }
 
 /* primary button */
-.onboarding__primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
-  border: none;
-  border-radius: var(--radius-s);
-  background: var(--primary-600);
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  cursor: pointer;
-  transition: background 150ms ease, transform 80ms ease;
-}
-
-.onboarding__primary:hover {
-  background: var(--primary-700);
-}
-
-.onboarding__primary:active {
-  transform: scale(0.98);
-}
-
-.onboarding__primary:disabled {
-  background: var(--button-background-disabled);
-  color: var(--text-button-disabled);
-  cursor: not-allowed;
-}
-
-.onboarding__primary:disabled:hover {
-  background: var(--button-background-disabled);
-}
-
-.onboarding__primary:disabled:active {
-  transform: none;
-}
-
 /* icon-only back button — filled circle (Figma), circular hover */
 .onboarding__back {
   display: inline-flex;

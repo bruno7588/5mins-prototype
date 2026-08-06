@@ -2,6 +2,7 @@ import { type ComponentType, useCallback, useEffect, useLayoutEffect, useRef, us
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'iconsax-react'
 import gsap from 'gsap'
+import Button from '../../components/Button/Button'
 import MeshGradient from '../../components/MeshGradient/MeshGradient'
 import { ONBOARDING_GRADIENTS } from './gradients'
 import Progress from './Progress'
@@ -273,14 +274,9 @@ export default function Onboarding() {
               ) : (
                 <span />
               )}
-              <button
-                type="button"
-                className="onboarding__primary"
-                onClick={() => go(step + 1, 1)}
-                disabled={!canContinue}
-              >
+              <Button size="md" onClick={() => go(step + 1, 1)} disabled={!canContinue}>
                 {current.primaryLabel}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
