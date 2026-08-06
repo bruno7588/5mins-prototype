@@ -51,66 +51,10 @@
   border-color: var(--secondary-500);
 }
 
-.lr__download-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  padding: 8px 16px 8px 12px;
-  border: 1px solid var(--text-primary);
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 150ms ease;
-}
-
-.lr__download-btn:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
-.lr__download-btn:active {
-  background: var(--button-outline-fill-pressed);
-  color: var(--primary-button-background-pressed);
-  border-color: var(--primary-button-background-pressed);
-}
-
 .lr__actions-right {
   display: flex;
   gap: var(--space-m);
   align-items: center;
-}
-
-.lr__add-training-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  padding: 10px var(--space-ml) 10px var(--space-m);
-  border: 1px solid var(--text-button-outlined);
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-button-outlined);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-}
-
-.lr__add-training-btn:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
 }
 
 .lr__add-training-wrap {
@@ -464,37 +408,6 @@
   opacity: 1;
 }
 
-/* Certificate download button */
-.lr__cert-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 16px;
-  border: 1px solid var(--text-button-outlined);
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
-  color: var(--text-button-outlined);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 150ms ease;
-}
-
-.lr__cert-btn:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
-.lr__cert-btn:active {
-  background: var(--button-outline-fill-pressed);
-  color: var(--primary-button-background-pressed);
-  border-color: var(--primary-button-background-pressed);
-}
-
 /* ── Pagination (matches mt-cp__pagination) ── */
 .lr__pagination {
   display: flex;
@@ -605,7 +518,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   border: none;
   background: var(--danger-500);

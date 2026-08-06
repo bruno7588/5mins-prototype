@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Calendar } from 'iconsax-react'
+import Button from '../../components/Button/Button'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import InputField from '../../components/InputField/InputField'
 import Dropdown from '../../components/Dropdown/Dropdown'
@@ -221,9 +222,7 @@ function AddTrainingDrawer({ open, onClose, onAdd }: Props) {
         <div className="side-drawer__footer">
           <div className="side-drawer__footer-divider" />
           <div className="side-drawer__buttons">
-            <button type="button" className="side-drawer__btn-primary" onClick={onAdd}>
-              Add Training
-            </button>
+            <Button onClick={onAdd}>Add Training</Button>
           </div>
         </div>
       </aside>

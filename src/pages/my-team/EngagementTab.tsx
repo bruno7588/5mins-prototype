@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ArrowDown2, Diagram } from 'iconsax-react'
+import Checkbox from '../../components/Checkbox/Checkbox'
 import Tooltip from '../../components/Tooltip/Tooltip'
+import { getSkillIllustrationByName } from '../../assets/skill-icons'
 import avatar1 from './assets/m1.jpg'
 import avatar2 from './assets/m2.jpg'
 import avatar3 from './assets/m3.jpg'
@@ -160,7 +162,7 @@ function SkillsCompetency() {
           return (
             <div className="eng-skills__row" key={skill.name}>
               <div className="eng-skills__row-name">
-                <span className="eng-skills__icon">{skill.icon}</span>
+                <img className="eng-skills__icon" src={getSkillIllustrationByName(skill.name)} alt="" />
                 <span>{skill.name}</span>
                 <Tooltip text={skill.description} position="Top" alignment="Center" icon={false}>
                   <InfoIcon />
@@ -189,6 +191,8 @@ function SkillsCompetency() {
 
 function EngagementChart() {
   const maxBar = 96
+  /* Toggles only — the chart data is not yet cumulative. */
+  const [cumulative, setCumulative] = useState(false)
 
   return (
     <div className="eng-card">
@@ -220,7 +224,7 @@ function EngagementChart() {
             </div>
           </div>
           <label className="eng-chart__legend-item">
-            <input type="checkbox" style={{ width: 16, height: 16 }} />
+            <Checkbox checked={cumulative} onChange={() => setCumulative((c) => !c)} />
             <span>Cumulative</span>
           </label>
         </div>

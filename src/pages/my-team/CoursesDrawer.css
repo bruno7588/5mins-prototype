@@ -29,9 +29,13 @@
   gap: var(--space-ml);
   z-index: 1001;
   overflow: hidden;
-  animation: side-drawer-in 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  /* Even ease-in-out. The old iOS-sheet curve (cubic-bezier(0.32, 0.72, 0, 1))
+     put ~90% of the travel in the first 40% of the time, so it read as a snap
+     however long the duration was. Every drawer unmount timer must stay in step
+     with this 300ms — see the 300 in each handleClose. */
+  animation: side-drawer-in 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-.side-drawer--closing { animation: side-drawer-out 300ms cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+.side-drawer--closing { animation: side-drawer-out 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 @keyframes side-drawer-in  { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes side-drawer-out { from { transform: translateX(0);    } to { transform: translateX(100%); } }
 
@@ -166,38 +170,6 @@
   gap: var(--space-m);
   align-items: flex-start;
 }
-.side-drawer__btn-primary {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-s);
-  background: var(--primary-button-background);
-  color: var(--text-button-foreground);
-  padding: 10px var(--space-ml);
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 1.5;
-  border: none;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-.side-drawer__btn-primary:hover { background: var(--primary-button-background-hover); }
-.side-drawer__btn-secondary {
-  white-space: nowrap;
-  background: transparent;
-  color: var(--primary-button-background, var(--primary-600));
-  border: 1px solid var(--primary-button-background, var(--primary-600));
-  padding: 10px var(--space-ml);
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 1.5;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
 .side-drawer__btn-secondary:hover { background: var(--button-outline-fill-hover); }
 
 /* Courses table */
@@ -268,11 +240,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
-}
-
-.cd-table__cell--status {
-  width: 148px;
-  flex-shrink: 0;
 }
 
 /* Empty state — no courses match the search / status filter */

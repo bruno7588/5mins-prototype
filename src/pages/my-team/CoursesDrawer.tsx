@@ -3,7 +3,6 @@ import { Sort } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import Search from '../../components/Search/Search'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
-import StatusBadge from './StatusBadge'
 import { type MemberStatus, STATUS_LABEL } from './memberStatus'
 import './CoursesDrawer.css'
 
@@ -143,7 +142,6 @@ function CoursesDrawer({
           <div className="cd-table">
             <div className="cd-table__header">
               <div className="cd-table__cell cd-table__cell--course">Courses</div>
-              <div className="cd-table__cell cd-table__cell--status">Status</div>
               <div className="cd-table__cell cd-table__cell--progress">Progress</div>
             </div>
 
@@ -159,9 +157,6 @@ function CoursesDrawer({
                   <div className="cd-table__cell cd-table__cell--course">
                     <img className="cd-table__thumb" src={c.thumbnailSrc} alt="" />
                     <p className="cd-table__course-title">{c.title}</p>
-                  </div>
-                  <div className="cd-table__cell cd-table__cell--status">
-                    <StatusBadge status={c.status} />
                   </div>
                   <div className="cd-table__cell cd-table__cell--progress">
                     <div className="cd-table__progress" role="progressbar" aria-valuenow={c.progress} aria-valuemin={0} aria-valuemax={100}>

@@ -1,13 +1,9 @@
 import { useEffect, useState } from 'react'
-import { InfoCircle } from 'iconsax-react'
+import Button from '../../components/Button/Button'
 import CloseButton from '../../components/CloseButton/CloseButton'
-import StatusBadge from './StatusBadge'
-import { daysSince, formatRelativeShort } from './relativeTime'
-import { statusFor, coursesTotal } from './memberStatus'
+import { formatRelativeShort } from './relativeTime'
+import { coursesTotal } from './memberStatus'
 import './ReminderDrawer.css'
-
-// Reminders sent within this many days count as "recent" for the spam guard.
-const RECENT_DAYS = 3
 
 interface ReminderMember {
   id: string
@@ -70,9 +66,6 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
   const segments = 8
   const total = members.length
   const shown = Math.min(5, total)
-  const recentCount = members.filter(
-    (m) => m.lastReminderSentAt && daysSince(m.lastReminderSentAt) <= RECENT_DAYS,
-  ).length
 
   return (
     <>
@@ -101,19 +94,6 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
         </div>
 
         <div className="side-drawer__content">
-          {recentCount > 0 && (
-            <div className="rd-recent-banner" role="status">
-              <InfoCircle size={20} color="var(--warning-600)" variant="Bold" />
-              <p className="rd-recent-banner__text">
-                {recentCount === total
-                  ? total === 1
-                    ? 'This learner was already reminded in the last 3 days.'
-                    : `All ${total} selected learners were reminded in the last 3 days.`
-                  : `${recentCount} of ${total} selected ${recentCount === 1 ? 'learner was' : 'learners were'} reminded in the last 3 days.`}{' '}
-                Sending again may feel like spam.
-              </p>
-            </div>
-          )}
           <div className="rd-form">
             <div className="rd-field">
               <label className="rd-label" htmlFor="rd-subject">Subject</label>
@@ -141,7 +121,6 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
                 <div className="rd-table__header">
                   <div className="rd-table__cell rd-table__cell--name">Name</div>
                   <div className="rd-table__cell rd-table__cell--head-courses">Courses</div>
-                  <div className="rd-table__cell rd-table__cell--head-status">Status</div>
                   <div className="rd-table__cell rd-table__cell--head-progress">Overall progress</div>
                 </div>
 
@@ -170,9 +149,6 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
                       <div className="rd-table__cell rd-table__cell--courses">
                         {coursesTotal(m) > 0 ? <span>{coursesTotal(m)}</span> : <span>–</span>}
                       </div>
-                      <div className="rd-table__cell rd-table__cell--status">
-                        <StatusBadge status={statusFor(m)} />
-                      </div>
                       <div className="rd-table__cell rd-table__cell--progress">
                         <div className="rd-progress" role="progressbar" aria-valuenow={m.overallProgress} aria-valuemin={0} aria-valuemax={100}>
                           {Array.from({ length: segments }).map((_, i) => (
@@ -196,9 +172,7 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
         <div className="side-drawer__footer">
           <div className="side-drawer__footer-divider" />
           <div className="side-drawer__buttons">
-            <button type="button" className="side-drawer__btn-primary" onClick={() => onSend(total)}>
-              Send Reminders ({total})
-            </button>
+            <Button onClick={() => onSend(total)}>Send Reminders ({total})</Button>
           </div>
         </div>
       </aside>

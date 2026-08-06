@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowLeft2, ArrowRight2, Add, ArrowDown2, Danger, DocumentUpload } from 'iconsax-react'
 import MoreIcon from '../../components/icons/MoreIcon'
+import CsvIcon from '../../components/icons/CsvIcon'
+import Button from '../../components/Button/Button'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -307,23 +309,14 @@ function LearningRecordsTab() {
           </button>
         </div>
         <div className="lr__actions-right">
-          <button type="button" className="lr__download-btn">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <g clipPath="url(#clip_csv)">
-                <path fillRule="evenodd" clipRule="evenodd" d="M17.5 5.625V17.5C17.5 18.163 17.2366 18.7989 16.7678 19.2678C16.2989 19.7366 15.663 20 15 20H13.75V18.75H15C15.3315 18.75 15.6495 18.6183 15.8839 18.3839C16.1183 18.1495 16.25 17.8315 16.25 17.5V5.625H13.75C13.2527 5.625 12.7758 5.42746 12.4242 5.07583C12.0725 4.72419 11.875 4.24728 11.875 3.75V1.25H5C4.66848 1.25 4.35054 1.3817 4.11612 1.61612C3.8817 1.85054 3.75 2.16848 3.75 2.5V13.75H2.5V2.5C2.5 1.83696 2.76339 1.20107 3.23223 0.732233C3.70107 0.263392 4.33696 0 5 0L11.875 0L17.5 5.625ZM4.39625 18.5512C4.40341 18.7482 4.4517 18.9415 4.53803 19.1187C4.62435 19.2958 4.7468 19.453 4.8975 19.58C5.06 19.715 5.25917 19.82 5.495 19.895C5.73167 19.9708 6.00875 20.0087 6.32625 20.0087C6.74875 20.0087 7.10667 19.9429 7.4 19.8112C7.695 19.6796 7.91958 19.4963 8.07375 19.2613C8.22958 19.0246 8.3075 18.7513 8.3075 18.4413C8.3075 18.1613 8.25167 17.9279 8.14 17.7412C8.02564 17.5539 7.86397 17.4 7.67125 17.295C7.45006 17.1722 7.21151 17.0837 6.96375 17.0325L6.1875 16.8525C6.0049 16.8176 5.83238 16.7425 5.6825 16.6325C5.62547 16.5885 5.5795 16.5318 5.54825 16.4669C5.517 16.4021 5.50133 16.3308 5.5025 16.2587C5.5025 16.0637 5.57958 15.9038 5.73375 15.7788C5.89042 15.6521 6.10375 15.5887 6.37375 15.5887C6.55208 15.5887 6.70625 15.6171 6.83625 15.6737C6.95655 15.7214 7.06248 15.7993 7.14375 15.9C7.22068 15.9928 7.27235 16.1039 7.29375 16.2225H8.23125C8.21512 15.968 8.12857 15.7231 7.98125 15.515C7.82373 15.2902 7.60755 15.1129 7.35625 15.0025C7.04946 14.8673 6.71635 14.8024 6.38125 14.8125C6.01542 14.8125 5.69208 14.875 5.41125 15C5.13042 15.1242 4.91083 15.2996 4.7525 15.5262C4.59417 15.7537 4.515 16.02 4.515 16.325C4.515 16.5767 4.56583 16.795 4.6675 16.98C4.77083 17.1658 4.9175 17.3188 5.1075 17.4388C5.2975 17.5579 5.52208 17.6467 5.78125 17.705L6.55375 17.885C6.81208 17.9458 7.005 18.0263 7.1325 18.1263C7.19455 18.1739 7.24421 18.2359 7.27728 18.3068C7.31036 18.3777 7.32586 18.4556 7.3225 18.5337C7.32532 18.6626 7.28821 18.7893 7.21625 18.8962C7.13571 19.0059 7.02494 19.0898 6.8975 19.1375C6.75833 19.1958 6.58625 19.225 6.38125 19.225C6.23542 19.225 6.10208 19.2083 5.98125 19.175C5.87043 19.1452 5.76557 19.0966 5.67125 19.0313C5.58813 18.9773 5.51697 18.9068 5.46214 18.8243C5.40732 18.7417 5.37 18.6488 5.3525 18.5512H4.39625ZM1.0075 17.1162C1.0075 16.8054 1.05 16.5417 1.135 16.325C1.20927 16.1254 1.34054 15.9519 1.5125 15.8263C1.68737 15.7079 1.89522 15.648 2.10625 15.655C2.29375 15.655 2.45958 15.6954 2.60375 15.7763C2.74462 15.8515 2.8622 15.9639 2.94375 16.1012C3.03087 16.2458 3.08229 16.4091 3.09375 16.5775H4.05V16.4875C4.04171 16.2572 3.98564 16.0312 3.88537 15.8238C3.78509 15.6164 3.64279 15.432 3.4675 15.2825C3.28871 15.1292 3.0808 15.0135 2.85625 14.9425C2.61255 14.859 2.35633 14.818 2.09875 14.8213C1.65375 14.8213 1.27417 14.9142 0.96 15.1C0.6475 15.285 0.409167 15.5483 0.245 15.89C0.0825 16.2317 0.000833333 16.6396 0 17.1137V17.7363C0 18.2096 0.0804167 18.6162 0.24125 18.9562C0.405417 19.2954 0.64375 19.5563 0.95625 19.7388C1.26875 19.9196 1.64958 20.01 2.09875 20.01C2.46458 20.01 2.79167 19.9417 3.08 19.805C3.36833 19.6683 3.5975 19.4792 3.7675 19.2375C3.93995 18.9893 4.03795 18.697 4.05 18.395V18.3H3.095C3.08316 18.4609 3.03256 18.6166 2.9475 18.7538C2.8642 18.8865 2.74677 18.9944 2.6075 19.0663C2.45102 19.1406 2.27948 19.1778 2.10625 19.175C1.89511 19.1806 1.68709 19.1232 1.50875 19.01C1.33741 18.8883 1.20708 18.7174 1.135 18.52C1.04363 18.2691 1.00038 18.0032 1.0075 17.7363V17.1162ZM11.3063 19.9137H10.115L8.4425 14.915H9.58875L10.7088 18.8375H10.7562L11.8663 14.915H12.965L11.3063 19.9137Z" fill="currentColor"/>
-              </g>
-              <defs>
-                <clipPath id="clip_csv"><rect width="20" height="20" fill="white"/></clipPath>
-              </defs>
-            </svg>
-            <span>Download Report</span>
-          </button>
+          <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />}>
+            Download Report
+          </Button>
           {activeChip === 'external' && (
             <div className="lr__add-training-wrap" ref={addMenuRef}>
-              <button type="button" className="lr__add-training-btn" onClick={() => setAddMenuOpen(o => !o)}>
-                <Add size={20} color="currentColor" variant="Linear" />
-                <span>Add Training</span>
-              </button>
+              <Button variant="outlined" icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setAddMenuOpen(o => !o)}>
+                Add Training
+              </Button>
               {addMenuOpen && (
                 <ul className="lr__add-menu" role="menu">
                   <li>
@@ -505,7 +498,7 @@ function LearningRecordsTab() {
                   </div>
                   <div className="lr__cell lr__cell--ext-cert">
                     {row.hasCertificate ? (
-                      <button type="button" className="lr__cert-btn ui-disabled" disabled>Download</button>
+                      <Button size="sm" variant="outlined" className="ui-disabled" disabled>Download</Button>
                     ) : (
                       <span className="lr__date-dash">—</span>
                     )}
@@ -576,14 +569,13 @@ function LearningRecordsTab() {
           />
         </div>
         <div className="confirm-modal-actions">
-          <button className="confirm-modal-btn confirm-modal-btn--outlined" onClick={closeDeleteConfirm}>Cancel</button>
-          <button
-            className="confirm-modal-btn confirm-modal-btn--danger"
+          <Button variant="outlined-2" onClick={closeDeleteConfirm}>Cancel</Button>
+          <Button semantic="danger"
             disabled={confirmInput !== 'Delete'}
             onClick={handleDeleteTrainings}
           >
             Delete Permanently
-          </button>
+          </Button>
         </div>
       </ConfirmModal>
 

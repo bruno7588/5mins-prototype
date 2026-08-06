@@ -314,32 +314,33 @@
   width: 100%;
 }
 
+/* One line: icon · value · label + info anchor (Figma 10859:28432) — the same
+   card as the user profile's .up-stat. */
 .mt-stat-card {
   flex: 1 0 0;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-m);
+  gap: var(--space-s);
+  padding: var(--space-sm) var(--space-m);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   min-width: 0;
 }
 
+/* 12px to the value, not the 8px the rest of the row uses — the icon needs the
+   extra separation to read as a marker rather than part of the number. */
 .mt-stat-icon {
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  margin-right: var(--space-xs);
 }
 
-.mt-stat-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1 0 0;
-  min-width: 0;
+.mt-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
   line-height: 1.5;
+  white-space: nowrap;
 }
 
 .mt-stat-label {
@@ -348,17 +349,9 @@
   gap: var(--space-xs);
   font-size: 14px;
   font-weight: 400;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   line-height: 1.5;
-  margin: 0;
-}
-
-.mt-stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-  margin: 0;
+  white-space: nowrap;
 }
 
 /* Toolbar: search + timeframe + Send Reminders */
@@ -402,79 +395,11 @@
   min-width: 160px;
 }
 
-/* Content switcher: All Courses / Compliance Only */
+/* Content switcher: All Courses / Compliance Only — DS ContentSwitcher
+   supplies the track and items; only the page placement is local. */
 .mt-cp__switcher {
   align-self: flex-start;
   margin-bottom: calc(20px - var(--space-l));
-  display: inline-flex;
-  align-items: stretch;
-  gap: 4px;
-  padding: 4px;
-  border-radius: var(--radius-sm, 12px);
-  background: var(--input-background);
-}
-
-.mt-cp__switcher-item {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
-  border: none;
-  border-radius: var(--radius-s, 8px);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-  white-space: nowrap;
-}
-
-.mt-cp__switcher-item:hover:not(.mt-cp__switcher-item--active) {
-  background: var(--input-background);
-  color: var(--text-primary);
-}
-
-.mt-cp__switcher-item--active {
-  background: var(--selected, #EDA30D);
-  color: var(--neutral-800, #20222A);
-  font-weight: 700;
-}
-
-.mt-cp__reminders-btn {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-s);
-  padding: 8px 16px 8px 12px;
-  border: 1px solid var(--text-disabled, var(--neutral-300));
-  border-radius: var(--radius-s);
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-disabled, var(--neutral-300));
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.mt-cp__reminders-btn--active {
-  color: var(--text-button-outlined);
-  border-color: var(--text-button-outlined);
-}
-
-.mt-cp__reminders-btn--active:hover {
-  background: var(--button-outline-fill-hover);
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
-}
-
-.mt-cp__reminders-btn:disabled {
-  cursor: not-allowed;
 }
 
 @media (max-width: 900px) {
@@ -763,6 +688,10 @@
 .mt-cp__progress-seg--filled {
   background: var(--primary-600);
 }
+/* 100% goes green — the completed signal the removed Status column carried. */
+.mt-cp__progress--complete .mt-cp__progress-seg--filled {
+  background: var(--success-500);
+}
 .mt-cp__progress--muted .mt-cp__progress-seg--filled {
   background: var(--border);
 }
@@ -953,13 +882,8 @@
   outline: none;
 }
 
-/* Status column — user-level rollup badge */
-.mt-cp__table-cell--status {
-  width: 148px;
-  flex-shrink: 0;
-  justify-content: flex-start;
-}
-
+/* Rollup status badge — the Course Tracker no longer has a Status column; the
+   badge lives on in the Courses and Send Reminder drawers. */
 .mt-cp__status-badge {
   display: inline-flex;
   align-items: center;

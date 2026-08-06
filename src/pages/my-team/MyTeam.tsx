@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Button from '@/components/Button/Button'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
@@ -15,20 +16,23 @@ import {
   Add,
   Mobile,
   Danger,
-  InfoCircle,
+  Clock,
   TickCircle,
-  TaskSquare,
+  StatusUp,
   SmsNotification,
   ArrowDown,
+  ArrowDown2,
   ArrowUp,
   ArrowLeft2,
   ArrowRight2,
   Sort,
 } from 'iconsax-react'
+import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Search from '../../components/Search/Search'
 import Checkbox from '../../components/Checkbox/Checkbox'
+import ContentSwitcher from '../../components/ContentSwitcher/ContentSwitcher'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import CoursesDrawer, { type DrawerCourse } from './CoursesDrawer'
@@ -43,8 +47,7 @@ import avatar2 from './assets/m2.jpg'
 import avatar3 from './assets/m3.jpg'
 import avatar4 from './assets/m4.jpg'
 import { formatRelative } from './relativeTime'
-import { statusFor, coursesTotal, STATUS_LABEL, STATUS_RANK, type MemberStatus } from './memberStatus'
-import StatusBadge from './StatusBadge'
+import { statusFor, coursesTotal, STATUS_LABEL, type MemberStatus } from './memberStatus'
 import './MyTeam.css'
 
 export function Logo({ size = 22 }: { size?: number }) {
@@ -73,7 +76,13 @@ function ProgressBar({ value, muted }: { value: number; muted?: boolean }) {
   const segments = 8
   const filled = Math.round((value / 100) * segments)
   return (
-    <div className={`mt-cp__progress${muted ? ' mt-cp__progress--muted' : ''}`} role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}>
+    <div
+      className={`mt-cp__progress${muted ? ' mt-cp__progress--muted' : ''}${value === 100 ? ' mt-cp__progress--complete' : ''}`}
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
       {Array.from({ length: segments }).map((_, i) => (
         <span key={i} className={`mt-cp__progress-seg${i < filled ? ' mt-cp__progress-seg--filled' : ''}`} />
       ))}
@@ -81,26 +90,18 @@ function ProgressBar({ value, muted }: { value: number; muted?: boolean }) {
   )
 }
 
+/* Single-line stat (Figma 10859:28432) — icon, value, label + info anchor, the
+   same card the user profile uses. The DS Tooltip supplies the info icon at
+   16px, so the hand-rolled SVG this card carried is gone. */
 function StatCard({ icon, label, value, tooltip }: { icon: ReactNode; label: string; value: string; tooltip?: string }) {
   return (
     <div className="mt-stat-card">
       <span className="mt-stat-icon">{icon}</span>
-      <div className="mt-stat-info">
-        <p className="mt-stat-label">
-          {label}
-          {tooltip && (
-            <Tooltip text={tooltip} position="Top" alignment="Center" icon={false}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M7.75 2C4.57469 2 2 4.57469 2 7.75C2 10.9253 4.57469 13.5 7.75 13.5C10.9253 13.5 13.5 10.9253 13.5 7.75C13.5 4.57469 10.9253 2 7.75 2Z" stroke="var(--text-secondary)" strokeMiterlimit="10"/>
-                <path d="M6.875 6.875H7.875V10.5" stroke="var(--text-secondary)" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M6.5 10.625H9.25" stroke="var(--text-secondary)" strokeMiterlimit="10" strokeLinecap="round"/>
-                <path d="M7.75 4.0625C7.5893 4.0625 7.43221 4.11015 7.2986 4.19943C7.16498 4.28871 7.06084 4.4156 6.99935 4.56407C6.93785 4.71253 6.92176 4.8759 6.95311 5.03351C6.98446 5.19112 7.06185 5.33589 7.17548 5.44952C7.28911 5.56315 7.43388 5.64054 7.59149 5.67189C7.7491 5.70324 7.91247 5.68715 8.06093 5.62565C8.2094 5.56416 8.33629 5.46002 8.42557 5.3264C8.51485 5.19279 8.5625 5.0357 8.5625 4.875C8.5625 4.65951 8.4769 4.45285 8.32452 4.30048C8.17215 4.1481 7.96549 4.0625 7.75 4.0625Z" fill="var(--text-secondary)"/>
-              </svg>
-            </Tooltip>
-          )}
-        </p>
-        <p className="mt-stat-value">{value}</p>
-      </div>
+      <span className="mt-stat-value">{value}</span>
+      <span className="mt-stat-label">
+        {label}
+        {tooltip && <Tooltip text={tooltip} position="Top" alignment="Center" iconSize={16} />}
+      </span>
     </div>
   )
 }
@@ -250,8 +251,8 @@ function MyTeam() {
   const toast = useToast()
 
   const lastSentFor = (m: TeamMember) => sentMap[m.id] ?? m.lastReminderSentAt
-  // Default: status ascending — members needing attention (Not Started, Low Progress) first
-  const [sortKey, setSortKey] = useState<'courses' | 'progress' | 'status'>('status')
+  // Default: progress ascending — the members furthest behind first
+  const [sortKey, setSortKey] = useState<'courses' | 'progress'>('progress')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [courseFilter, setCourseFilter] = useState<'all' | 'compliance'>('all')
   const [scopeFilter, setScopeFilter] = useState<string>('direct')
@@ -280,11 +281,11 @@ function MyTeam() {
     { value: 'completed', label: STATUS_LABEL.completed },
   ]
 
-  const toggleSort = (key: 'courses' | 'progress' | 'status') => {
+  const toggleSort = (key: 'courses' | 'progress') => {
     if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
     else {
       setSortKey(key)
-      setSortDir(key === 'status' ? 'asc' : 'desc') // status: worst first by default
+      setSortDir('desc')
     }
   }
 
@@ -311,7 +312,6 @@ function MyTeam() {
     const sorted = [...statusScoped].sort((a, b) => {
       let diff = 0
       if (sortKey === 'courses') diff = coursesTotal(a) - coursesTotal(b)
-      else if (sortKey === 'status') diff = STATUS_RANK[statusFor(a)] - STATUS_RANK[statusFor(b)]
       else diff = a.overallProgress - b.overallProgress
       return sortDir === 'asc' ? diff : -diff
     })
@@ -387,7 +387,6 @@ function MyTeam() {
     })
 
   const selectedCount = selectedIds.size
-  const canSendReminders = selectedCount > 0
 
   return (
     <div className="mt-app">
@@ -478,48 +477,38 @@ function MyTeam() {
           {currentTab === 'learning-records' && <LearningRecordsTab />}
 
           {currentTab === 'course-tracker' && <section className="mt-course-progress" aria-label="Course Progress">
-            <div className="mt-cp__switcher" role="tablist" aria-label="Course filter">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={courseFilter === 'all'}
-                className={`mt-cp__switcher-item${courseFilter === 'all' ? ' mt-cp__switcher-item--active' : ''}`}
-                onClick={() => setCourseFilter('all')}
-              >
-                All Courses
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={courseFilter === 'compliance'}
-                className={`mt-cp__switcher-item${courseFilter === 'compliance' ? ' mt-cp__switcher-item--active' : ''}`}
-                onClick={() => setCourseFilter('compliance')}
-              >
-                Compliance Only (12)
-              </button>
-            </div>
+            <ContentSwitcher
+              className="mt-cp__switcher"
+              ariaLabel="Course filter"
+              items={[
+                { key: 'all', label: 'All Courses' },
+                { key: 'compliance', label: 'Compliance Only (12)' },
+              ]}
+              activeKey={courseFilter}
+              onChange={(k) => setCourseFilter(k as 'all' | 'compliance')}
+            />
 
             <div className="mt-cp__stats">
               <StatCard
-                icon={<TickCircle size={40} color="var(--text-success)" variant="Linear" />}
+                icon={<TickCircle size={24} color="var(--success-500)" variant="Linear" />}
                 label="Completed"
                 value={pct(totals.completed)}
                 tooltip="Courses completed all-time"
               />
               <StatCard
-                icon={<TaskSquare size={40} color="var(--primary-600)" variant="Linear" />}
-                label="In Progress"
+                icon={<StatusUp size={24} color="var(--primary-600)" variant="Linear" />}
+                label="In progress"
                 value={pct(totals.inProgress)}
                 tooltip="Courses started but not yet complete"
               />
               <StatCard
-                icon={<InfoCircle size={40} color="var(--text-warning)" variant="Linear" />}
-                label="At Risk"
+                icon={<Danger size={24} color="var(--warning-600)" variant="Linear" />}
+                label="At risk!"
                 value={pct(totals.atRisk)}
                 tooltip="Courses due within the next 30 days"
               />
               <StatCard
-                icon={<Danger size={40} color="var(--text-error)" variant="Linear" />}
+                icon={<Clock size={24} color="var(--danger-400)" variant="Linear" />}
                 label="Overdue"
                 value={pct(totals.overdue)}
                 tooltip="Courses past their due date"
@@ -554,29 +543,6 @@ function MyTeam() {
                     iconLeft={<Sort size={20} color="var(--text-secondary)" variant="Linear" />}
                   />
                 </div>
-                {canSendReminders ? (
-                  <button type="button" className="mt-cp__reminders-btn mt-cp__reminders-btn--active" onClick={() => setReminderOpen(true)}>
-                    <SmsNotification size={20} color="currentColor" variant="Linear" />
-                    <span>Send Reminders ({selectedCount})</span>
-                  </button>
-                ) : (
-                  <Tooltip
-                    text="Select learners to remind"
-                    position="Top"
-                    alignment="End"
-                    icon={false}
-                  >
-                    <button
-                      type="button"
-                      className="mt-cp__reminders-btn"
-                      disabled
-                      aria-disabled="true"
-                    >
-                      <SmsNotification size={20} color="currentColor" variant="Linear" />
-                      <span>Send Reminders</span>
-                    </button>
-                  </Tooltip>
-                )}
               </div>
             </div>
 
@@ -622,23 +588,6 @@ function MyTeam() {
                   >
                     <span className="mt-cp__th-label">Overall progress</span>
                     {sortKey === 'progress' ? (
-                      sortDir === 'asc' ? (
-                        <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
-                      ) : (
-                        <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
-                      )
-                    ) : (
-                      <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-cp__table-cell mt-cp__table-cell--status mt-cp__th-btn"
-                    onClick={() => toggleSort('status')}
-                    aria-label={`Sort by Status, currently ${sortKey === 'status' ? sortDir : 'unsorted'}`}
-                  >
-                    <span className="mt-cp__th-label">Status</span>
-                    {sortKey === 'status' ? (
                       sortDir === 'asc' ? (
                         <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
                       ) : (
@@ -716,23 +665,20 @@ function MyTeam() {
                           </div>
                         )
                       })()}
+                      {/* The count is a disclosure control, not a label — an outlined
+                          box + trailing chevron so it reads as "opens something"
+                          without a hover (Figma 10837:17669). */}
                       <div className="mt-cp__table-cell mt-cp__table-cell--metric">
                         {coursesTotal(r) > 0 ? (
-                          <Tooltip
-                            text="View courses"
-                            position="Top"
-                            alignment="Center"
-                            icon={false}
+                          <Button
+                            variant="outlined-2"
+                            size="sm"
+                            trailingIcon={<ArrowDown2 size={16} color="currentColor" variant="Linear" />}
+                            onClick={() => setDrawerMemberId(r.id)}
+                            aria-label={`View ${coursesTotal(r)} course${coursesTotal(r) === 1 ? '' : 's'} for ${r.name}`}
                           >
-                            <button
-                              type="button"
-                              className="mt-cp__metric-link mt-cp__metric-link--neutral"
-                              onClick={() => setDrawerMemberId(r.id)}
-                              aria-label={`View ${coursesTotal(r)} course${coursesTotal(r) === 1 ? '' : 's'} for ${r.name}`}
-                            >
-                              {coursesTotal(r)}
-                            </button>
-                          </Tooltip>
+                            {coursesTotal(r)}
+                          </Button>
                         ) : (
                           <span className="mt-cp__status-dash">–</span>
                         )}
@@ -740,9 +686,6 @@ function MyTeam() {
                       <div className={`mt-cp__table-cell mt-cp__table-cell--metric${progressMuted ? ' mt-cp__table-cell--muted' : ''}`}>
                         <ProgressBar value={r.overallProgress} muted={progressMuted} />
                         <span className="mt-cp__progress-pct">{r.overallProgress}%</span>
-                      </div>
-                      <div className="mt-cp__table-cell mt-cp__table-cell--status">
-                        <StatusBadge status={statusFor(r)} />
                       </div>
                       <div className="mt-cp__table-cell mt-cp__table-cell--action">
                         {needsAttention && (() => {
@@ -848,6 +791,18 @@ function MyTeam() {
           toast.show('success', `${count} reminder${count === 1 ? '' : 's'} sent successfully`)
         }}
       />
+
+      {/* Bulk actions live in the floating bar, same pattern as People —
+          mounted unconditionally so `count` drives its own enter/exit. */}
+      <BulkActionBar count={selectedCount} onClear={() => setSelectedIds(new Set())}>
+        <button
+          className="bulk-bar-btn bulk-bar-btn--primary"
+          onClick={() => setReminderOpen(true)}
+        >
+          <SmsNotification size={20} color="currentColor" variant="Linear" />
+          Send Reminders
+        </button>
+      </BulkActionBar>
 
       <ToastContainer toasts={toast.toasts} />
     </div>
