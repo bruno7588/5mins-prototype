@@ -57,6 +57,16 @@ function SelectAll({ question }: { question: SelectAllQuestion }) {
     cue('continue')
   }
 
+  // The disabled CTA states its own unlock condition, so the count never needs
+  // its own line: "Select Four" → "Select 2 More" → "Check".
+  const outstanding = PICK - selected.length
+  const checkLabel =
+    outstanding === 0
+      ? 'Check'
+      : outstanding === PICK
+        ? 'Select Four'
+        : `Select ${outstanding} More`
+
   const wordClass = (word: string) => {
     const classes = ['ql-token', 'ql-token--sm']
     if (status === 'idle') {
@@ -101,6 +111,7 @@ function SelectAll({ question }: { question: SelectAllQuestion }) {
 
       <FeedbackFooter
         status={status}
+        checkLabel={checkLabel}
         checkDisabled={selected.length !== PICK}
         onCheck={check}
         onContinue={reset}
