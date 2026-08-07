@@ -578,6 +578,14 @@
   line-height: 1.4;
 }
 
+/* Year drops back so the day line carries the scan — table.md's date cell,
+   dimmed one further step to --text-tertiary. */
+.people-date-stack__year {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
 /* Avatar */
 .people-avatar {
   width: 40px;
@@ -648,25 +656,6 @@
 
 .people-badge--invited {
   background: rgba(255, 165, 56, 0.16);
-  color: var(--text-warning);
-}
-
-.people-status-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 40px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.people-status-badge--error {
-  background: var(--danger-100);
-  color: var(--danger-500);
-}
-
-.people-status-badge--warning {
-  background: var(--warning-100);
   color: var(--text-warning);
 }
 

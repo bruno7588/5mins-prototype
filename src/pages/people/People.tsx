@@ -18,6 +18,7 @@ import {
   Lock,
   ImportCurve,
 } from 'iconsax-react'
+import Badge from '../../components/Badge/Badge'
 import Button from '../../components/Button/Button'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
 import avatarBrenda from '../../assets/avatars/avatar-2.jpg'
@@ -605,7 +606,7 @@ function People() {
                   <div className="people-table-cell people-table-cell--date">
                     <div className="people-date-stack">
                       <span>{person.startDate.replace(/,?\s*\d{4}$/, ',')}</span>
-                      <span>{person.startDate.match(/\d{4}$/)?.[0]}</span>
+                      <span className="people-date-stack__year">{person.startDate.match(/\d{4}$/)?.[0]}</span>
                     </div>
                   </div>
                 )}
@@ -723,9 +724,11 @@ function People() {
                     </div>
                   </div>
                   <div className="people-table-cell people-table-cell--status-d">
-                    <span className={`people-status-badge people-status-badge--${person.status === 'terminated' ? 'error' : 'warning'}`}>
-                      {person.status === 'terminated' ? 'Terminated' : 'Long Leave'}
-                    </span>
+                    {person.status === 'terminated' ? (
+                      <Badge type="error" label="Terminated" />
+                    ) : (
+                      <Badge type="warning" label="Long Leave" />
+                    )}
                   </div>
                   <div className="people-table-cell people-table-cell--role-d">{person.role}</div>
                   <div className="people-table-cell people-table-cell--team-d">{person.team || '–'}</div>
@@ -733,7 +736,7 @@ function People() {
                   <div className="people-table-cell people-table-cell--deactivated">
                     <div className="people-date-stack">
                       <span>{person.deactivatedOn.replace(/,?\s*\d{4}$/, ',')}</span>
-                      <span>{person.deactivatedOn.match(/\d{4}$/)?.[0]}</span>
+                      <span className="people-date-stack__year">{person.deactivatedOn.match(/\d{4}$/)?.[0]}</span>
                     </div>
                   </div>
                   <div className="people-table-cell people-table-cell--actions">
