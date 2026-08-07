@@ -660,6 +660,14 @@
   stroke: var(--border-hover);
 }
 
+/* ── Select all that apply (Figma 9041:550) ──────────────────────────────── */
+/* One flat pool of words that wraps — 12px gutters, chips size to their text. */
+.ql-sel__pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
 /* ── Footer: check / feedback ────────────────────────────────────────────── */
 .ql-footer {
   flex-shrink: 0;

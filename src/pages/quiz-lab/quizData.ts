@@ -13,6 +13,7 @@ export type FormatKey =
   | 'fill-blank'
   | 'categorization'
   | 'sequencing'
+  | 'select-all'
 
 export interface MatchPair {
   left: string
@@ -65,11 +66,23 @@ export interface SequencingQuestion {
   explanation: string
 }
 
+export interface SelectAllQuestion {
+  type: 'select-all'
+  /** Names the criterion and the count — the stem does all the instructing. */
+  prompt: string
+  /** The words that meet the criterion. */
+  answers: string[]
+  /** Words that do not — shuffled into the same pool. */
+  distractors: string[]
+  explanation: string
+}
+
 export type QuizQuestion =
   | MatchPairsQuestion
   | FillBlankQuestion
   | CategorizationQuestion
   | SequencingQuestion
+  | SelectAllQuestion
 
 /** Fisher–Yates shuffle returning a new array (used for banks / column order). */
 export function shuffle<T>(input: readonly T[]): T[] {
@@ -139,6 +152,14 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
     explanation:
       'Raising the alarm first warns everyone; the roll call at the end confirms that no one is left behind.',
   },
+  'select-all': {
+    type: 'select-all',
+    prompt: 'Which four of these need extra protection under GDPR?',
+    answers: ['Health records', 'Biometric data', 'Religious beliefs', 'Trade union membership'],
+    distractors: ['Email address', 'Home address', 'Phone number', 'Job title'],
+    explanation:
+      'Health, biometrics, beliefs and union membership are special-category data — GDPR needs an extra lawful basis before you process them.',
+  },
 }
 
 export const FORMAT_ORDER: { key: FormatKey; label: string }[] = [
@@ -146,4 +167,5 @@ export const FORMAT_ORDER: { key: FormatKey; label: string }[] = [
   { key: 'fill-blank', label: 'Fill in the blank' },
   { key: 'categorization', label: 'Categorize' },
   { key: 'sequencing', label: 'Sequence' },
+  { key: 'select-all', label: 'Select all that apply' },
 ]

@@ -8,6 +8,7 @@ import MatchPairsPartial from './formats/MatchPairsPartial'
 import FillBlank from './formats/FillBlank'
 import Categorization from './formats/Categorization'
 import SequencingDnd from './formats/SequencingDnd'
+import SelectAll from './formats/SelectAll'
 import './quiz-lab.css'
 
 /**
@@ -33,6 +34,8 @@ function QuizLab() {
         return <Categorization question={q} formatKey={format} />
       case 'sequencing':
         return <SequencingDnd question={q} />
+      case 'select-all':
+        return <SelectAll question={q} />
     }
   }
 
