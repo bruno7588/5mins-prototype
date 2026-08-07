@@ -815,6 +815,11 @@
   text-overflow: ellipsis;
 }
 
+/* Deliberately NOT the shared Badge component. This is Badge "informative" in
+   everything but size — the quiz header wants 20px / 0 6px / Regular 400
+   (Figma 9041:565), and Badge.tsx only ships the ~29px / 6px 12px / Medium 500
+   size. Swap it in once Badge grows a small size; until then it would visibly
+   fatten the header. */
 .ql-qhead__badge {
   display: inline-flex;
   align-items: center;
@@ -845,31 +850,4 @@
 
 .ql-qhead__heart {
   display: inline-flex;
-}
-
-/* Icon-only control — circular hover fill, never squared. */
-.ql-qhead__close {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.ql-qhead__close:hover {
-  background: var(--input-background);
-  color: var(--text-primary);
-}
-
-.ql-qhead__close:focus-visible {
-  outline: 2px solid var(--selected);
-  outline-offset: 2px;
 }

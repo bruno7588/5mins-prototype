@@ -1,3 +1,4 @@
+import CloseButton from '@/components/CloseButton/CloseButton'
 import heartFilled from '@/assets/quiz-hearts/heart-filled.svg'
 import heartEmpty from '@/assets/quiz-hearts/heart-empty.svg'
 
@@ -14,8 +15,8 @@ interface QuizHeaderProps {
 /**
  * Quiz label + attempt hearts (DS Quizzes, Figma 9012:380). Left: the quiz label
  * with a used/total badge. Right: one heart per allowed attempt — filled artwork
- * for remaining, muted artwork for spent — then the close control (Figma
- * 9041:585, io5/IoCloseOutline at 32px).
+ * for remaining, muted artwork for spent — then the shared DS CloseButton
+ * (Figma 9041:585).
  */
 function QuizHeader({ label, used, total, onClose }: QuizHeaderProps) {
   const remaining = Math.max(0, total - used)
@@ -40,17 +41,7 @@ function QuizHeader({ label, used, total, onClose }: QuizHeaderProps) {
             />
           ))}
         </div>
-        <button type="button" className="ql-qhead__close" aria-label="Close quiz" onClick={onClose}>
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <path
-              d="M23 23L9 9M23 9L9 23"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+        <CloseButton onClick={onClose} ariaLabel="Close quiz" />
       </div>
     </div>
   )
