@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Sort } from 'iconsax-react'
+import { ArrowDown, ArrowUp, Sort } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import Search from '../../components/Search/Search'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
-import { type MemberStatus, STATUS_LABEL } from './memberStatus'
+import StatusBadge from './StatusBadge'
+import { type CourseStatus, COURSE_STATUS_LABEL, COURSE_STATUS_ORDER } from './memberStatus'
 import './CoursesDrawer.css'
 
 export interface DrawerCourse {
@@ -13,15 +14,12 @@ export interface DrawerCourse {
   startDate: string  // ISO date
   dueDate: string    // ISO date
   progress: number   // 0–100
-  status: MemberStatus
+  status: CourseStatus
 }
 
 const STATUS_FILTER_OPTIONS: DropdownOption[] = [
   { value: 'all', label: 'Status: All' },
-  { value: 'not-started', label: STATUS_LABEL['not-started'] },
-  { value: 'low-progress', label: STATUS_LABEL['low-progress'] },
-  { value: 'on-track', label: STATUS_LABEL['on-track'] },
-  { value: 'completed', label: STATUS_LABEL.completed },
+  ...COURSE_STATUS_ORDER.map((s) => ({ value: s, label: COURSE_STATUS_LABEL[s] })),
 ]
 
 interface Props {
@@ -46,6 +44,9 @@ function CoursesDrawer({
   const [closing, setClosing] = useState(false)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  // Status is the only sortable column, so it is never unsorted. Ascending =
+  // COURSE_STATUS_ORDER = most urgent first, which is what a manager opens this for.
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
 
   const handleClose = () => {
     setClosing(true)
@@ -70,17 +71,23 @@ function CoursesDrawer({
     if (open) {
       setQuery('')
       setStatusFilter('all')
+      setSortDir('asc')
     }
   }, [open])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return courses.filter((c) => {
+    const matches = courses.filter((c) => {
       if (statusFilter !== 'all' && c.status !== statusFilter) return false
       if (q && !c.title.toLowerCase().includes(q)) return false
       return true
     })
-  }, [courses, query, statusFilter])
+    // Stable sort, so courses inside one status keep their incoming order
+    return matches.sort((a, b) => {
+      const diff = COURSE_STATUS_ORDER.indexOf(a.status) - COURSE_STATUS_ORDER.indexOf(b.status)
+      return sortDir === 'asc' ? diff : -diff
+    })
+  }, [courses, query, statusFilter, sortDir])
 
   if (!open) return null
 
@@ -142,6 +149,19 @@ function CoursesDrawer({
           <div className="cd-table">
             <div className="cd-table__header">
               <div className="cd-table__cell cd-table__cell--course">Courses</div>
+              <button
+                type="button"
+                className="cd-table__cell cd-table__cell--status cd-table__th-btn"
+                onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
+                aria-label={`Sort by status, currently ${sortDir === 'asc' ? 'most urgent first' : 'least urgent first'}`}
+              >
+                Status
+                {sortDir === 'asc' ? (
+                  <ArrowUp size={16} color="currentColor" variant="Linear" />
+                ) : (
+                  <ArrowDown size={16} color="currentColor" variant="Linear" />
+                )}
+              </button>
               <div className="cd-table__cell cd-table__cell--progress">Progress</div>
             </div>
 
@@ -157,6 +177,9 @@ function CoursesDrawer({
                   <div className="cd-table__cell cd-table__cell--course">
                     <img className="cd-table__thumb" src={c.thumbnailSrc} alt="" />
                     <p className="cd-table__course-title">{c.title}</p>
+                  </div>
+                  <div className="cd-table__cell cd-table__cell--status">
+                    <StatusBadge status={c.status} />
                   </div>
                   <div className="cd-table__cell cd-table__cell--progress">
                     <div className="cd-table__progress" role="progressbar" aria-valuenow={c.progress} aria-valuemin={0} aria-valuemax={100}>

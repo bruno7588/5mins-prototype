@@ -47,7 +47,7 @@ import avatar2 from './assets/m2.jpg'
 import avatar3 from './assets/m3.jpg'
 import avatar4 from './assets/m4.jpg'
 import { formatRelative } from './relativeTime'
-import { statusFor, coursesTotal, STATUS_LABEL, type MemberStatus } from './memberStatus'
+import { statusFor, coursesTotal, STATUS_LABEL, type MemberStatus, type CourseStatus } from './memberStatus'
 import './MyTeam.css'
 
 export function Logo({ size = 22 }: { size?: number }) {
@@ -150,34 +150,39 @@ function addDays(days: number): string {
 const THUMB_POOL = [thumb1, thumb2, thumb3]
 
 // Title-pool offset per status so a member's buckets don't repeat titles
-const STATUS_TITLE_OFFSET: Record<MemberStatus, number> = {
-  'not-started': 0,
-  'low-progress': 3,
-  'on-track': 6,
-  completed: 9,
+const STATUS_TITLE_OFFSET: Record<CourseStatus, number> = {
+  overdue: 0,
+  failed: 2,
+  'not-started': 4,
+  'low-progress': 6,
+  'on-track': 8,
+  completed: 10,
 }
 
-function coursesFor(memberId: string, status: MemberStatus, count: number): DrawerCourse[] {
+function coursesFor(memberId: string, status: CourseStatus, count: number): DrawerCourse[] {
   if (count === 0) return []
   const seed = [...memberId].reduce((a, c) => a + c.charCodeAt(0), 0)
   return Array.from({ length: count }).map((_, i) => {
     const titleIdx = (seed + i * 7 + STATUS_TITLE_OFFSET[status]) % COURSE_POOL.length
     const title = COURSE_POOL[titleIdx]
     const thumbnailSrc = THUMB_POOL[(seed + i) % THUMB_POOL.length]
-    // due date: overdue-ish statuses in the past, healthy ones ahead
-    const dueOffset = status === 'not-started'
+    // due date: only Overdue sits in the past — that date is what defines it
+    const dueOffset = status === 'overdue'
       ? -(((seed + i) % 14) + 1)                  // 1–14 days ago
-      : status === 'low-progress'
-        ? ((seed + i * 3) % 28) + 2               // 2–29 days ahead
-        : ((seed + i * 3) % 30) + 30              // on-track/completed: 30–59 days ahead
+      : status === 'low-progress' || status === 'failed'
+        ? ((seed + i * 3) % 28) + 2               // 2–29 days ahead (failed = retake window)
+        : ((seed + i * 3) % 30) + 30              // not-started/on-track/completed: 30–59 ahead
     const startOffset = dueOffset - (30 + ((seed + i * 5) % 30))
-    const progress = status === 'completed'
+    // Failed sits at 100% — the content was consumed, the assessment wasn't passed
+    const progress = status === 'completed' || status === 'failed'
       ? 100
       : status === 'on-track'
         ? ((seed + i * 7) % 46) + 40              // 40–85%
         : status === 'low-progress'
           ? ((seed + i * 7) % 34) + 5             // 5–38%
-          : 0                                      // not-started
+          : status === 'overdue'
+            ? (seed + i * 7) % 40                 // 0–39%
+            : 0                                    // not-started
     return {
       id: `${memberId}-${status}-${i}`,
       title,
@@ -191,13 +196,18 @@ function coursesFor(memberId: string, status: MemberStatus, count: number): Draw
 }
 
 /* Every course assigned to a member, worst status first — feeds the drawer.
-   Member bucket counts map onto the four progress-based course statuses:
-   overdue → Not Started · atRisk → Low Progress · inProgress → On track · completed → Completed. */
+   The member's four buckets are coarser than the six course statuses, so two of
+   them split: one overdue item is a Failed assessment, one in-progress item was
+   never opened. Totals still equal coursesTotal(m), which the row's count shows. */
 function allCoursesFor(m: TeamMember): DrawerCourse[] {
+  const failed = m.overdue > 1 ? 1 : 0
+  const notStarted = m.inProgress > 1 ? 1 : 0
   return [
-    ...coursesFor(m.id, 'not-started', m.overdue),
+    ...coursesFor(m.id, 'overdue', m.overdue - failed),
+    ...coursesFor(m.id, 'failed', failed),
+    ...coursesFor(m.id, 'not-started', notStarted),
     ...coursesFor(m.id, 'low-progress', m.atRisk),
-    ...coursesFor(m.id, 'on-track', m.inProgress),
+    ...coursesFor(m.id, 'on-track', m.inProgress - notStarted),
     ...coursesFor(m.id, 'completed', m.completed),
   ]
 }

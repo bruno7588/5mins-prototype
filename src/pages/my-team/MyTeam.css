@@ -882,8 +882,10 @@
   outline: none;
 }
 
-/* Rollup status badge — the Course Tracker no longer has a Status column; the
-   badge lives on in the Courses and Send Reminder drawers. */
+/* Course status badge — the Course Tracker has no Status column; this is the
+   Courses drawer's per-course pill. Types per badges.md: Overdue and Failed are
+   both Error (told apart by their labels), Not Started is Informative — it is a
+   neutral "hasn't begun", not a failure, now that Overdue owns the red. */
 .mt-cp__status-badge {
   display: inline-flex;
   align-items: center;
@@ -897,7 +899,9 @@
   white-space: nowrap;
 }
 
-.mt-cp__status-badge--not-started  { background: rgba(223, 22, 66, 0.16);    color: var(--text-error); }
+.mt-cp__status-badge--overdue      { background: rgba(223, 22, 66, 0.16);    color: var(--text-error); }
+.mt-cp__status-badge--failed       { background: rgba(223, 22, 66, 0.16);    color: var(--text-error); }
+.mt-cp__status-badge--not-started  { background: var(--input-background);    color: var(--text-secondary); }
 .mt-cp__status-badge--low-progress { background: rgba(255, 165, 56, 0.16);   color: var(--text-warning, #FFA538); }
 .mt-cp__status-badge--on-track     { background: rgba(0, 206, 230, 0.16);    color: var(--primary-600); }
 .mt-cp__status-badge--completed    { background: rgba(24, 169, 87, 0.16);    color: var(--success-500); }

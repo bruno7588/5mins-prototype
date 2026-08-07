@@ -242,6 +242,27 @@
   min-width: 0;
 }
 
+.cd-table__cell--status {
+  width: 148px;
+  flex-shrink: 0;
+}
+
+/* Sortable Status header — the only sortable column, so the arrow is always
+   shown rather than revealed on hover like the Course Tracker's headers. */
+.cd-table__th-btn {
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  gap: var(--space-xs);
+  cursor: pointer;
+}
+.cd-table__header .cd-table__th-btn:hover { color: var(--text-primary); }
+.cd-table__header .cd-table__th-btn:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
 /* Empty state — no courses match the search / status filter */
 .cd-table__empty {
   display: flex;

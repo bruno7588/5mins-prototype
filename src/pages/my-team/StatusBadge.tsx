@@ -1,16 +1,14 @@
-import { Flag } from 'iconsax-react'
-import { type MemberStatus, STATUS_LABEL, STATUS_HAS_FLAG } from './memberStatus'
+import { type CourseStatus, COURSE_STATUS_LABEL } from './memberStatus'
 
 /**
- * Shared My Team status pill — used by the Course Tracker table, the reminder
- * drawer, and the courses drawer so the four statuses (colors, labels, and the
- * flag icon on the attention states) stay identical across all three.
+ * Course status pill — used by the Courses drawer so the six course states
+ * (colors and labels) stay in one place. No icon: the label carries the state,
+ * and Overdue vs Failed share the Error red but never share a word.
  */
-function StatusBadge({ status }: { status: MemberStatus }) {
+function StatusBadge({ status }: { status: CourseStatus }) {
   return (
     <span className={`mt-cp__status-badge mt-cp__status-badge--${status}`}>
-      {STATUS_HAS_FLAG[status] && <Flag size={16} color="currentColor" variant="Bold" />}
-      {STATUS_LABEL[status]}
+      {COURSE_STATUS_LABEL[status]}
     </span>
   )
 }
