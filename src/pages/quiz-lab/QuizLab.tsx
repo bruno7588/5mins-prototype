@@ -56,7 +56,12 @@ function QuizLab() {
       <PhoneFrame onExit={() => navigate('/workspace')}>
         {/* Remount on format change so each preview starts fresh. */}
         <div key={format} className="ql-quizview">
-          <QuizHeader label={activeLabel} used={1} total={3} />
+          <QuizHeader
+            label={activeLabel}
+            used={1}
+            total={3}
+            onClose={() => navigate('/workspace')}
+          />
           {renderFormat()}
         </div>
       </PhoneFrame>

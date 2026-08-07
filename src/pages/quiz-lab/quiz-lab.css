@@ -787,7 +787,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-s);
-  padding: var(--space-l) var(--space-l) 0;
+  /* 16px gutter matches .ql-screen__body so the label lines up with the stem. */
+  padding: var(--space-l) var(--space-m) 0;
 }
 
 .ql-qhead__label {
@@ -818,6 +819,14 @@
   flex-shrink: 0;
 }
 
+/* Right cluster: attempt hearts, then the close control. */
+.ql-qhead__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
 .ql-qhead__hearts {
   display: flex;
   align-items: center;
@@ -827,4 +836,31 @@
 
 .ql-qhead__heart {
   display: inline-flex;
+}
+
+/* Icon-only control — circular hover fill, never squared. */
+.ql-qhead__close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.ql-qhead__close:hover {
+  background: var(--input-background);
+  color: var(--text-primary);
+}
+
+.ql-qhead__close:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
 }
