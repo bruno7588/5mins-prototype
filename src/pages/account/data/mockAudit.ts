@@ -576,8 +576,3 @@ export const DATE_RANGE_OPTIONS: { value: string; label: string; days: number | 
   { value: '30d', label: 'Last 30 days', days: 30 },
   { value: '90d', label: 'Last 90 days', days: 90 },
 ]
-
-/** How many recorded operations touched a given course (for the count badge). */
-export function operationCountForCourse(courseId: string): number {
-  return auditOperations.filter((op) => op.courseId === courseId).length
-}

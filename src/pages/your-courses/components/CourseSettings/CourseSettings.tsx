@@ -7,7 +7,7 @@ import Toggle from '../../../../components/Toggle/Toggle'
 import InputInteger from '../../../../components/InputInteger/InputInteger'
 import Collapse from '../../../../components/Collapse/Collapse'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
-import { operationCountForCourse, SETTINGS_TAB_COURSE_ID } from '@/pages/account/data/mockAudit'
+import { SETTINGS_TAB_COURSE_ID } from '@/pages/account/data/mockAudit'
 import './CourseSettings.css'
 
 type SettingKey =
@@ -73,9 +73,8 @@ function CourseSettings() {
   const toast = useToast()
   const navigate = useNavigate()
 
-  // Settings-history entry point (Admin-only): count of recorded changes for this
-  // course, and a deep link into the Audit log with the Course filter applied.
-  const historyCount = operationCountForCourse(SETTINGS_TAB_COURSE_ID)
+  // Settings-history entry point (Admin-only): deep link into the Audit log with
+  // the Course filter applied.
   const openSettingsHistory = () =>
     navigate(`/account?tab=audit-log&course=${SETTINGS_TAB_COURSE_ID}`)
 
@@ -326,7 +325,6 @@ function CourseSettings() {
           <button type="button" className="cs-history" onClick={openSettingsHistory}>
             <Clock size={20} color="currentColor" variant="Linear" />
             Settings History
-            {historyCount > 0 && <span className="cs-history-count">{historyCount}</span>}
           </button>
         </div>
         <div className="cs-header-divider" />

@@ -40,7 +40,7 @@
 .cs-history {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-s); /* 8px — buttons.md gap for a 20px leading icon */
   height: 41px;
   padding: 10px var(--space-ml) 10px var(--space-m); /* medium, leading icon — icon-side 4px tighter */
   border: 1px solid var(--border);
@@ -61,18 +61,6 @@
 .cs-history:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
-}
-
-.cs-history-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  padding: 0 6px;
-  border-radius: var(--radius-full);
-  background: var(--input-background);
-  color: var(--text-tertiary);
-  font: 500 14px/1.5 'Poppins', sans-serif;
 }
 
 /* Section */
