@@ -11,6 +11,8 @@ Spec source: Figma Library — light `node 11957:17281`, dark `node 10825:3269` 
 
 > **Updated 2026-07-13:** two structural changes — (1) **radius is now 12px** (`--radius-sm`) on every size and family, up from 8px; (2) **Outlined variants now carry a 16% tint at rest** (were transparent), with a 16% → 24% (hover) → 8% (pressed) fill ladder. Also: `AI-Outlined` is a first-class family, `Outlined-2` gained a Loading state, and semantic size coverage expanded (see gap note).
 
+> **Updated 2026-08-07:** the dark-mode brand ladders were missing from `tokens.css` (it asserted "brand fills unchanged in dark"). They are now implemented and documented — see **Dark Mode Ladders** below.
+
 > **Known gap:** semantic (Danger/Warning/Success) and AI size coverage is now broad but still not total — `Danger` has all three sizes; `Warning`/`Warning-outlined` have Small + Medium; `Success` gained no-icon Medium. Any remaining holes: extrapolate from the Size System table.
 
 ## Button Architecture
@@ -169,6 +171,26 @@ Default is **Warning-600**, not 500:
 ```
 
 Disabled state for all semantic variants = the shared disabled treatment (`--button-background-disabled` fill or border, `--text-button-disabled` label).
+
+## Dark Mode Ladders
+
+Spec source: Figma Library dark `node 10825:3269` (verified 2026-08-07). Every hex elsewhere in this doc is a **light-mode** resolution. In dark mode the brand ladders are not simply one shade over: fills brighten, **hover climbs the palette instead of deepening**, and the filled label flips to dark ink.
+
+| Token | Light | Dark |
+|-------|-------|------|
+| `--primary-button-background` | Primary-600 `#00AFC4` | **Primary-500 `#00CEE6`** |
+| `--primary-button-background-hover` | Primary-700 `#008393` | **Primary-400 `#33E2F7`** |
+| `--primary-button-background-pressed` | Primary-800 `#005862` | **Primary-700 `#008393`** |
+| `--text-button-foreground` | Neutral-25 `#F9F9FA` | **Neutral-800 `#20222A`** |
+| `--button-success-background-hover` | Success-600 `#11763D` | **Success-400 `#5DC389`** |
+| `--button-success-background-pressed` | Success-700 `#0A4423` | **Success-600 `#11763D`** |
+| `--button-warning-background-hover` | Warning-700 `#996322` | **Warning-500 `#FFA538`** |
+| `--button-warning-background-pressed` | Warning-800 `#664216` | **Warning-700 `#996322`** |
+| `--button-background-disabled` | Neutral-100 | **Neutral-400 `#656B7C`** |
+
+Identical in both modes: the Danger ladder (`--danger-500` / `--button-danger-hover` / `--button-danger-pressed`), `--button-success-background` (Success-500), `--button-warning-background` (Warning-600), and `--text-button-disabled` (Neutral-300).
+
+**Danger and AI keep a white label in both modes** — `Button.css` hard-codes `--neutral-25` for those two families instead of reading `--text-button-foreground`. The dark Figma node carries Neutral-25 alongside the dark ink for exactly this reason.
 
 ## AI Variants (Hugo AI)
 

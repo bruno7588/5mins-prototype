@@ -189,8 +189,19 @@
   --text-button-hover: var(--primary-400);
   --text-button-outlined: var(--primary-500);
 
-  /* Buttons (brand fills unchanged in dark — only disabled differs) */
+  /* Buttons — the brand ladders are mode-aware (Figma Library dark 10825:3269).
+     Fills brighten one step, hover climbs the palette instead of deepening, and
+     the label flips to dark ink so it stays legible on the brighter fills.
+     Danger and AI keep a white label (hard-coded --neutral-25 in Button.css). */
+  --primary-button-background: var(--primary-500); /* #00CEE6 */
+  --primary-button-background-hover: var(--primary-400); /* #33E2F7 */
+  --primary-button-background-pressed: var(--primary-700); /* #008393 */
+  --text-button-foreground: var(--neutral-800); /* #20222A */
   --button-background-disabled: var(--neutral-400);
+  --button-success-background-hover: var(--success-400); /* #5DC389 */
+  --button-success-background-pressed: var(--success-600); /* #11763D */
+  --button-warning-background-hover: var(--warning-500); /* #FFA538 */
+  --button-warning-background-pressed: var(--warning-700); /* #996322 */
 
   /* Selection amber flips 600 → 500 in dark (colors.md / chips-switcher spec) */
   --selected: var(--secondary-500);
