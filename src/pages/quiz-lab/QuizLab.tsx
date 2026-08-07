@@ -44,7 +44,7 @@ function QuizLab() {
       <div className="ql-lab__bar">
         <span className="ql-lab__title">Quiz Lab</span>
         <span className="ql-lab__sub">
-          New lesson quiz formats we're exploring. Everything is tap-only and mobile-first.
+          New lesson quiz formats we're exploring — tap-only and mobile-first.
         </span>
         <ContentSwitcher
           items={FORMAT_ORDER.map((f) => ({ key: f.key, label: f.label }))}

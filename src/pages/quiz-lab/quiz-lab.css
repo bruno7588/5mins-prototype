@@ -42,7 +42,8 @@
   font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-secondary);
   text-align: center;
-  max-width: 520px;
+  /* Wide enough that the caption holds a single line at lab widths. */
+  max-width: 640px;
 }
 
 /* Per-format screen inside the phone */
