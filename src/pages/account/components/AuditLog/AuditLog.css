@@ -148,7 +148,7 @@
 .audit-export {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-s); /* 8px — buttons.md gap for a 20px leading icon */
   padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm); /* 8 / right 16, left 12 (leading icon) — vertical matches the filter dropdowns' height */
   border: 1px solid var(--border);
   border-radius: var(--radius-sm); /* 12px */

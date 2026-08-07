@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowDown2, ArrowLeft2, ArrowRight2, DocumentDownload } from 'iconsax-react'
+import { ArrowDown2, ArrowLeft2, ArrowRight2 } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
+import CsvIcon from '@/components/icons/CsvIcon'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import AuditMultiSelect from './AuditMultiSelect'
 import AuditDateFilter from './AuditDateFilter'
@@ -331,7 +332,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
         </div>
 
         <button type="button" className="audit-export" onClick={exportCsv} disabled={total === 0}>
-          <DocumentDownload size={16} color="currentColor" variant="Linear" />
+          <CsvIcon size={20} />
           Export CSV
         </button>
       </div>
