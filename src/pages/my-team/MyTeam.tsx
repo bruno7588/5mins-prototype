@@ -47,7 +47,7 @@ import avatar2 from './assets/m2.jpg'
 import avatar3 from './assets/m3.jpg'
 import avatar4 from './assets/m4.jpg'
 import { formatRelative } from './relativeTime'
-import { statusFor, coursesTotal, STATUS_LABEL, type MemberStatus, type CourseStatus } from './memberStatus'
+import { coursesTotal, type CourseStatus } from './memberStatus'
 import './MyTeam.css'
 
 export function Logo({ size = 22 }: { size?: number }) {
@@ -121,6 +121,14 @@ type TeamMember = {
   overallProgress: number      // 0–100 — completion across all assigned courses
   lastReminderSentAt?: string  // ISO date of the most recent reminder sent to this member
 }
+
+/* Tracker status filter — names and semantics match the four stat cards above
+   the table, which read off the same TeamMember buckets. These are predicates,
+   not exclusive buckets: someone Overdue is usually also In progress. That is
+   fine here — the tracker has no Status column that would have to agree with a
+   single answer. Completed is the one that isn't "has at least one": on a list
+   of people it has to mean "nothing outstanding", or it matches everybody. */
+type TeamStatusFilter = 'all' | 'overdue' | 'at-risk' | 'in-progress' | 'completed'
 
 const CURRENT_USER_ID = 'me'
 const CURRENT_USER_NAME = 'Alex Morgan'
@@ -266,7 +274,7 @@ function MyTeam() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [courseFilter, setCourseFilter] = useState<'all' | 'compliance'>('all')
   const [scopeFilter, setScopeFilter] = useState<string>('direct')
-  const [statusFilter, setStatusFilter] = useState<'all' | MemberStatus>('all')
+  const [statusFilter, setStatusFilter] = useState<TeamStatusFilter>('all')
   const [page, setPage] = useState(1)
   const [currentTab, setCurrentTab] = useState<'course-tracker' | 'engagement' | 'learning-records'>('course-tracker')
 
@@ -285,10 +293,10 @@ function MyTeam() {
   ]
   const statusOptions: DropdownOption[] = [
     { value: 'all', label: 'Status: All' },
-    { value: 'not-started', label: STATUS_LABEL['not-started'] },
-    { value: 'low-progress', label: STATUS_LABEL['low-progress'] },
-    { value: 'on-track', label: STATUS_LABEL['on-track'] },
-    { value: 'completed', label: STATUS_LABEL.completed },
+    { value: 'overdue', label: 'Overdue', description: 'Has at least one course past its due date' },
+    { value: 'at-risk', label: 'At risk', description: 'Has at least one course due in the next 30 days' },
+    { value: 'in-progress', label: 'In progress', description: 'Has at least one course started but unfinished' },
+    { value: 'completed', label: 'Completed', description: 'Nothing outstanding' },
   ]
 
   const toggleSort = (key: 'courses' | 'progress') => {
@@ -318,7 +326,12 @@ function MyTeam() {
       : base
     const statusScoped = statusFilter === 'all'
       ? scaled
-      : scaled.filter((r) => statusFor(r) === statusFilter)
+      : scaled.filter((r) => {
+          if (statusFilter === 'overdue') return r.overdue > 0
+          if (statusFilter === 'at-risk') return r.atRisk > 0
+          if (statusFilter === 'in-progress') return r.inProgress > 0
+          return r.overdue + r.atRisk + r.inProgress === 0 && r.completed > 0
+        })
     const sorted = [...statusScoped].sort((a, b) => {
       let diff = 0
       if (sortKey === 'courses') diff = coursesTotal(a) - coursesTotal(b)
@@ -549,7 +562,7 @@ function MyTeam() {
                     size="md"
                     options={statusOptions}
                     value={statusFilter}
-                    onChange={(v) => setStatusFilter(v as 'all' | MemberStatus)}
+                    onChange={(v) => setStatusFilter(v as TeamStatusFilter)}
                     iconLeft={<Sort size={20} color="var(--text-secondary)" variant="Linear" />}
                   />
                 </div>
