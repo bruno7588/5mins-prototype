@@ -115,7 +115,7 @@ type TeamMember = {
   managerIds: string[]         // one or more managers — 'me' for direct reports, sub-manager ids for indirects
   teamName?: string            // set on sub-managers — displayed in scope dropdown
   overdue: number              // past due
-  atRisk: number               // due within next 30 days
+  atRisk: number               // not started, or failed and needing another attempt
   inProgress: number           // started, not yet complete
   completed: number            // completed all-time
   overallProgress: number      // 0–100 — completion across all assigned courses
@@ -177,9 +177,9 @@ function coursesFor(memberId: string, status: CourseStatus, count: number): Draw
     // due date: only Overdue sits in the past — that date is what defines it
     const dueOffset = status === 'overdue'
       ? -(((seed + i) % 14) + 1)                  // 1–14 days ago
-      : status === 'low-progress' || status === 'failed'
-        ? ((seed + i * 3) % 28) + 2               // 2–29 days ahead (failed = retake window)
-        : ((seed + i * 3) % 30) + 30              // not-started/on-track/completed: 30–59 ahead
+      : status === 'failed'
+        ? ((seed + i * 3) % 28) + 2               // 2–29 days ahead — the retake window
+        : ((seed + i * 3) % 30) + 30              // everything else: 30–59 days ahead
     const startOffset = dueOffset - (30 + ((seed + i * 5) % 30))
     // Failed sits at 100% — the content was consumed, the assessment wasn't passed
     const progress = status === 'completed' || status === 'failed'
@@ -204,18 +204,19 @@ function coursesFor(memberId: string, status: CourseStatus, count: number): Draw
 }
 
 /* Every course assigned to a member, worst status first — feeds the drawer.
-   The member's four buckets are coarser than the six course statuses, so two of
-   them split: one overdue item is a Failed assessment, one in-progress item was
-   never opened. Totals still equal coursesTotal(m), which the row's count shows. */
+   The four stat-card buckets each map onto course statuses: At risk is Not
+   started plus Failed (the Figma definition), In progress splits on the 40%
+   threshold into Low progress and On track. Totals still equal coursesTotal(m),
+   which the row's count shows. */
 function allCoursesFor(m: TeamMember): DrawerCourse[] {
-  const failed = m.overdue > 1 ? 1 : 0
-  const notStarted = m.inProgress > 1 ? 1 : 0
+  const failed = m.atRisk > 1 ? 1 : 0
+  const lowProgress = m.inProgress > 1 ? 1 : 0
   return [
-    ...coursesFor(m.id, 'overdue', m.overdue - failed),
+    ...coursesFor(m.id, 'overdue', m.overdue),
     ...coursesFor(m.id, 'failed', failed),
-    ...coursesFor(m.id, 'not-started', notStarted),
-    ...coursesFor(m.id, 'low-progress', m.atRisk),
-    ...coursesFor(m.id, 'on-track', m.inProgress - notStarted),
+    ...coursesFor(m.id, 'not-started', m.atRisk - failed),
+    ...coursesFor(m.id, 'low-progress', lowProgress),
+    ...coursesFor(m.id, 'on-track', m.inProgress - lowProgress),
     ...coursesFor(m.id, 'completed', m.completed),
   ]
 }
@@ -293,10 +294,10 @@ function MyTeam() {
   ]
   const statusOptions: DropdownOption[] = [
     { value: 'all', label: 'Status: All' },
-    { value: 'overdue', label: 'Overdue', description: 'Has at least one course past its due date' },
-    { value: 'at-risk', label: 'At risk', description: 'Has at least one course due in the next 30 days' },
-    { value: 'in-progress', label: 'In progress', description: 'Has at least one course started but unfinished' },
-    { value: 'completed', label: 'Completed', description: 'Nothing outstanding' },
+    { value: 'overdue', label: 'Overdue' },
+    { value: 'at-risk', label: 'At risk' },
+    { value: 'in-progress', label: 'In progress' },
+    { value: 'completed', label: 'Completed' },
   ]
 
   const toggleSort = (key: 'courses' | 'progress') => {
@@ -516,25 +517,24 @@ function MyTeam() {
                 icon={<TickCircle size={24} color="var(--success-500)" variant="Linear" />}
                 label="Completed"
                 value={pct(totals.completed)}
-                tooltip="Courses completed all-time"
+                tooltip="Finished 100% of the course and met the pass score, where one is required."
               />
               <StatCard
                 icon={<StatusUp size={24} color="var(--primary-600)" variant="Linear" />}
                 label="In progress"
                 value={pct(totals.inProgress)}
-                tooltip="Courses started but not yet complete"
               />
               <StatCard
                 icon={<Danger size={24} color="var(--warning-600)" variant="Linear" />}
                 label="At risk!"
                 value={pct(totals.atRisk)}
-                tooltip="Courses due within the next 30 days"
+                tooltip="Not started yet, or failed and needing another attempt."
               />
               <StatCard
                 icon={<Clock size={24} color="var(--danger-400)" variant="Linear" />}
                 label="Overdue"
                 value={pct(totals.overdue)}
-                tooltip="Courses past their due date"
+                tooltip="Not yet finished and past the due date."
               />
             </div>
 
