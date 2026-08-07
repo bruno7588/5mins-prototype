@@ -11,3 +11,4 @@ dist
 
 # Local agent tooling / scratch output (not part of the app)
 agents/
+.playwright-mcp/
