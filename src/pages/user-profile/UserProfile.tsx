@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, TickCircle, StatusUp, Danger, Clock } from 'iconsax-react'
+import { ArrowDown, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -14,6 +14,7 @@ import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type Filter
 import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDateModal/ExtendDueDateModal'
 import EditStartDateModal, { type StartDateChange } from './components/EditStartDateModal/EditStartDateModal'
 import GiveAnotherAttemptModal from './components/GiveAnotherAttemptModal/GiveAnotherAttemptModal'
+import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
 import avatarBrenda from '../../assets/avatars/avatar-2.jpg'
@@ -97,14 +98,19 @@ const COURSES: CourseProgress[] = [
    of the denominator too — those enrolments haven't opened, so they can't yet
    speak to how the learner is doing, and excluding them keeps the four cards
    summing to the active population instead of falling short of 100%. */
-const STAT_GROUPS: Status[][] = [['Completed'], ['In Progress'], ['Not Started', 'Failed'], ['Overdue']]
+const STAT_GROUPS: Record<CourseStatusCard['key'], Status[]> = {
+  completed: ['Completed'],
+  'in-progress': ['In Progress'],
+  'at-risk': ['Not Started', 'Failed'],
+  overdue: ['Overdue'],
+}
 
 const ACTIVE_COURSES = COURSES.filter((c) => c.status !== 'Scheduled')
 
-const STATS = STAT_GROUPS.map((statuses) => {
+const shareOf = (statuses: Status[]) => {
   const count = ACTIVE_COURSES.filter((c) => statuses.includes(c.status)).length
-  return { share: ACTIVE_COURSES.length ? Math.round((count / ACTIVE_COURSES.length) * 100) : 0 }
-})
+  return ACTIVE_COURSES.length ? Math.round((count / ACTIVE_COURSES.length) * 100) : 0
+}
 
 /* Overdue and Failed intentionally share the red error pill — colour carries
    severity, the label carries which. Matches how Failed reads on My Team. */
@@ -241,7 +247,7 @@ function DateCell({ value }: { value: string | null }) {
 function StatCard({ icon, label, tooltip, share }: {
   icon: ReactNode
   label: string
-  tooltip: string
+  tooltip?: string
   share: number
 }) {
   return (
@@ -250,7 +256,7 @@ function StatCard({ icon, label, tooltip, share }: {
       <span className="up-stat-value">{share}%</span>
       <span className="up-stat-label">
         {label}
-        <Tooltip position="Top" text={tooltip} iconSize={16} />
+        {tooltip && <Tooltip position="Top" text={tooltip} iconSize={16} />}
       </span>
     </div>
   )
@@ -603,30 +609,15 @@ function UserProfile() {
               Always the learner's full course list — search and filters below
               narrow the table, never this. */}
           <div className="up-stats">
-            <StatCard
-              icon={<TickCircle size={24} color="var(--success-500)" variant="Linear" />}
-              label="Completed"
-              tooltip="Courses this learner has finished."
-              share={STATS[0].share}
-            />
-            <StatCard
-              icon={<StatusUp size={24} color="var(--primary-600)" variant="Linear" />}
-              label="In progress"
-              tooltip="Courses started but not yet finished."
-              share={STATS[1].share}
-            />
-            <StatCard
-              icon={<Danger size={24} color="var(--warning-600)" variant="Linear" />}
-              label="At risk!"
-              tooltip="Courses not started yet, or failed and needing another attempt."
-              share={STATS[2].share}
-            />
-            <StatCard
-              icon={<Clock size={24} color="var(--danger-400)" variant="Linear" />}
-              label="Overdue"
-              tooltip="Courses past their due date."
-              share={STATS[3].share}
-            />
+            {COURSE_STATUS_CARDS.map((c) => (
+              <StatCard
+                key={c.key}
+                icon={c.icon}
+                label={c.label}
+                tooltip={c.tooltip}
+                share={shareOf(STAT_GROUPS[c.key])}
+              />
+            ))}
           </div>
 
           {/* Smart filters */}

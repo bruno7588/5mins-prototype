@@ -15,10 +15,6 @@ import {
   Messages2,
   Add,
   Mobile,
-  Danger,
-  Clock,
-  TickCircle,
-  StatusUp,
   SmsNotification,
   ArrowDown,
   ArrowDown2,
@@ -48,6 +44,7 @@ import avatar3 from './assets/m3.jpg'
 import avatar4 from './assets/m4.jpg'
 import { formatRelative } from './relativeTime'
 import { coursesTotal, type CourseStatus } from './memberStatus'
+import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
 import './MyTeam.css'
 
 export function Logo({ size = 22 }: { size?: number }) {
@@ -357,6 +354,13 @@ function MyTeam() {
   const totalCourses = totals.overdue + totals.atRisk + totals.inProgress + totals.completed
   const pct = (n: number) => totalCourses === 0 ? '0%' : `${Math.round((n / totalCourses) * 100)}%`
 
+  const cardTotals: Record<CourseStatusCard['key'], number> = {
+    completed: totals.completed,
+    'in-progress': totals.inProgress,
+    'at-risk': totals.atRisk,
+    overdue: totals.overdue,
+  }
+
   const totalRows = rows.length
   const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE))
   const safePage = Math.min(page, totalPages)
@@ -513,29 +517,15 @@ function MyTeam() {
             />
 
             <div className="mt-cp__stats">
-              <StatCard
-                icon={<TickCircle size={24} color="var(--success-500)" variant="Linear" />}
-                label="Completed"
-                value={pct(totals.completed)}
-                tooltip="Finished 100% of the course and met the pass score, where one is required."
-              />
-              <StatCard
-                icon={<StatusUp size={24} color="var(--primary-600)" variant="Linear" />}
-                label="In progress"
-                value={pct(totals.inProgress)}
-              />
-              <StatCard
-                icon={<Danger size={24} color="var(--warning-600)" variant="Linear" />}
-                label="At risk!"
-                value={pct(totals.atRisk)}
-                tooltip="Not started yet, or failed and needing another attempt."
-              />
-              <StatCard
-                icon={<Clock size={24} color="var(--danger-400)" variant="Linear" />}
-                label="Overdue"
-                value={pct(totals.overdue)}
-                tooltip="Not yet finished and past the due date."
-              />
+              {COURSE_STATUS_CARDS.map((c) => (
+                <StatCard
+                  key={c.key}
+                  icon={c.icon}
+                  label={c.label}
+                  value={pct(cardTotals[c.key])}
+                  tooltip={c.tooltip}
+                />
+              ))}
             </div>
 
             <div className="mt-cp__toolbar">
@@ -740,7 +730,7 @@ function MyTeam() {
                                   setReminderOpen(true)
                                 }}
                               >
-                                <SmsNotification size={20} color="var(--text-secondary)" variant="Linear" />
+                                <SmsNotification size={20} color="var(--text-primary)" variant="Linear" />
                               </button>
                             </Tooltip>
                           )
