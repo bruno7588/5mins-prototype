@@ -170,7 +170,7 @@
   align-items: center;
   gap: var(--space-m);
   padding: var(--space-xxl) var(--space-l);
-  border: 1px dashed var(--border-elevated);
+  border: 1px dashed var(--border);
   border-radius: 20px;
   background: var(--input-background, rgba(69, 76, 94, 0.16));
 }

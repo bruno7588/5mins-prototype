@@ -1536,6 +1536,8 @@
   border: 1px solid var(--border);
   border-radius: var(--space-sm);
   box-shadow: 0 8px 24px rgba(32, 34, 42, 0.18), 0 2px 8px rgba(32, 34, 42, 0.10);
+  /* Inset so the options' 8px corners don't sit flush against the surface edge. */
+  padding: var(--space-s);
   max-height: 240px;
   overflow-y: auto;
   z-index: 200;
@@ -1566,6 +1568,7 @@
   color: var(--text-primary);
   cursor: pointer;
   border: none;
+  border-radius: var(--radius-s);
   background: none;
   transition: background 150ms ease;
 }

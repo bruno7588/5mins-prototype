@@ -299,7 +299,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) var(--space-sm) var(--space-s) var(--space-s);
-  border: 1px dashed var(--border-hover);
+  border: 1px dashed var(--border);
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: 'Poppins', sans-serif;

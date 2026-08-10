@@ -58,8 +58,10 @@ function Collapse({ open, children, duration = 0.3, className }: CollapseProps) 
     }
   }, [open, duration])
 
+  // `inert` alongside aria-hidden: the content stays mounted while collapsed, so
+  // without it any buttons/inputs inside would still take keyboard focus.
   return (
-    <div ref={ref} className={className} aria-hidden={!open}>
+    <div ref={ref} className={className} aria-hidden={!open} inert={!open}>
       {children}
     </div>
   )

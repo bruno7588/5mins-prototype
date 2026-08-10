@@ -58,6 +58,33 @@
   transform: rotate(180deg);
 }
 
+/* Left/Right: the caret sits beside the bubble, so it must be a fixed 6x12 slot —
+   the vertical layouts' `width: 100%` makes it a greedy flex item that squeezes the
+   label into extra lines. The 12x6 glyph rotates a quarter turn to point back at the
+   trigger; rotating about the centre of the 6x12 slot lands it flush. */
+.tooltip__body--left-center .tooltip__caret,
+.tooltip__body--right-center .tooltip__caret {
+  width: 6px;
+  height: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.tooltip__body--left-center .tooltip__caret svg,
+.tooltip__body--right-center .tooltip__caret svg {
+  flex-shrink: 0;
+}
+
+.tooltip__body--left-center .tooltip__caret svg {
+  transform: rotate(-90deg);
+}
+
+.tooltip__body--right-center .tooltip__caret svg {
+  transform: rotate(90deg);
+}
+
 /* ===== Position: Top ===== */
 .tooltip__body--top-center {
   bottom: calc(100% + 2px);
@@ -99,11 +126,12 @@
 }
 
 /* ===== Position: Left ===== */
+/* Bubble sits left of the trigger, so the caret follows the label on the right. */
 .tooltip__body--left-center {
   right: calc(100% + 2px);
   top: 50%;
   transform: translateY(-50%);
-  flex-direction: row-reverse;
+  flex-direction: row;
   align-items: center;
 }
 
