@@ -1,9 +1,9 @@
 import { useLayoutEffect, useState } from 'react'
+import { Eye } from 'iconsax-react'
+import Button from '@/components/Button/Button'
 import PageHeader from './components/PageHeader/PageHeader'
 import ContentList from './components/ContentList/ContentList'
 import type { ContentItem } from './components/ContentList/ContentList'
-import AddContentMenu from './components/AddContentMenu/AddContentMenu'
-import type { AddContentKind } from './components/AddContentMenu/AddContentMenu'
 import AddContentIconStrip from './components/AddContentIconStrip/AddContentIconStrip'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
@@ -27,7 +27,9 @@ function CreateCourse() {
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
   const [assessmentType, setAssessmentType] = useState<AssessmentType>('multiple-choice')
   const [activeDrawer, setActiveDrawer] = useState<ActiveDrawer>(null)
-  const [addMenuAnchor, setAddMenuAnchor] = useState<HTMLElement | null>(null)
+  /* The builder opens with the Add Content panel already expanded — it's the first
+     thing an admin needs on an empty course. */
+  const [sidebarExpanded, setSidebarExpanded] = useState(true)
   const [addedLibraryIds, setAddedLibraryIds] = useState<Set<number>>(new Set())
   const [targetSectionId, setTargetSectionId] = useState<string | null>(null)
 
@@ -46,31 +48,24 @@ function CreateCourse() {
     return () => window.removeEventListener('resize', update)
   }, [])
 
-  const openAddContent = (sectionId: string, anchor: HTMLElement) => {
+  /* Every "Add Content" CTA opens the sidebar's first source, the 5Mins Library, so
+     the admin lands on content rather than an empty panel. The section it was fired
+     from is remembered so the pick lands in the right place. */
+  const openAddContent = (sectionId: string) => {
     setTargetSectionId(sectionId)
-    setAddMenuAnchor(anchor)
+    openDrawer('library')
   }
 
-  const closeAddMenu = () => setAddMenuAnchor(null)
-
-  const openLibraryDrawer = () => setActiveDrawer('library')
-
-  const openScormDrawer = () => setActiveDrawer('scorm')
+  /* A drawer takes 720px, so the sidebar always shows as its icon rail alongside
+     one — the open source stays legible as the rail's active icon. */
+  const openDrawer = (drawer: ActiveDrawer) => {
+    setSidebarExpanded(false)
+    setActiveDrawer(drawer)
+  }
 
   const openAssessment = (type: AssessmentType) => {
     setAssessmentType(type)
-    setActiveDrawer('assessment')
-  }
-
-  const assessmentTypes: AssessmentType[] = ['multiple-choice', 'short-text', 'exercise', 'poll']
-
-  /* Route a menu pick to the matching content drawer. Your Content / Embed Links /
-     Events / Resources are not wired to drawers yet (same as the old picker), so they
-     just dismiss the menu for now. */
-  const handleAddMenuSelect = (kind: AddContentKind) => {
-    if (kind === 'library') openLibraryDrawer()
-    else if (kind === 'scorm') openScormDrawer()
-    else if (assessmentTypes.includes(kind as AssessmentType)) openAssessment(kind as AssessmentType)
+    openDrawer('assessment')
   }
 
   const closeDrawer = () => {
@@ -145,12 +140,18 @@ function CreateCourse() {
 
   return (
     <>
-      <PageHeader />
+      <PageHeader
+        leadingAction={
+          <Button variant="outlined-2" icon={<Eye size={20} color="currentColor" variant="Linear" />}>
+            Preview
+          </Button>
+        }
+      />
       <div
         className={[
           'app-content-area',
           'acd-content-area',
-          activeDrawer && 'acd-content-area--with-icon-strip',
+          sidebarExpanded && 'acd-content-area--sidebar-expanded',
         ].filter(Boolean).join(' ')}
       >
         <main className="main-content">
@@ -163,19 +164,15 @@ function CreateCourse() {
           />
         </main>
       </div>
-      {activeDrawer && (
-        <AddContentIconStrip
-          active={activeDrawer}
-          onLibraryClick={() => setActiveDrawer('library')}
-          onScormClick={() => setActiveDrawer('scorm')}
-          onAssessmentClick={openAssessment}
-        />
-      )}
-      <AddContentMenu
-        open={!!addMenuAnchor}
-        anchor={addMenuAnchor}
-        onClose={closeAddMenu}
-        onSelect={handleAddMenuSelect}
+      <AddContentIconStrip
+        active={activeDrawer}
+        activeAssessment={assessmentType}
+        expanded={sidebarExpanded}
+        onToggleExpanded={() => setSidebarExpanded((v) => !v)}
+        overDrawer={!!activeDrawer}
+        onLibraryClick={() => openDrawer('library')}
+        onScormClick={() => openDrawer('scorm')}
+        onAssessmentClick={openAssessment}
       />
       <ContentDrawer
         activeDrawer={activeDrawer}

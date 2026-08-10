@@ -1,37 +1,143 @@
-/* Persistent right-edge icon strip per Figma 8646:16767. Anchors to the same
-   top offset as the expanded AddContentDrawer (just below the PageHeader divider)
-   so the two visually stack — strip behind, drawer in front. */
+/* Persistent right-edge Add Content sidebar per Figma 8949:70435 / 8953:70671.
+   Two states: a 52px icon rail and a 240px labelled panel (navigation.md, Admin
+   side panel). It sits above an open content drawer so the icons stay reachable.
 
-/* Anchored from below the TopNav (70px) down to the bottom — fully covers the
-   right 60px column so the PageHeader's "Close course" X doesn't peek through.
-   Icons start from the top of the strip with a small 20px breathing room
-   (matches Figma 8646:16767 `py-20`). */
+   Expand/collapse animates ONE property — the panel's width. Every child keeps
+   the same box in both states (full-width rows with a 16px inset, so the 20px
+   icon sits at x=16 either way), so nothing re-lays-out mid-transition; the
+   labels only fade. */
+
+/* The rail is fixed, so the builder's content area reserves its width here.
+   (AddContentDrawer.css carries an older copy of these rules, but that component
+   is no longer rendered, so its stylesheet never loads.)
+   Sync timing with .side-drawer-in (300ms cubic-bezier in CoursesDrawer.css). */
+.acd-content-area {
+  padding-right: calc(60px + var(--space-xl));
+  transition: padding-right 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.acd-content-area--sidebar-expanded {
+  padding-right: calc(240px + var(--space-xl));
+}
+
+/* Always anchored under the PageHeader divider — the header's own Close button stays
+   clickable, and an open drawer starts on the same line (CoursesDrawer.css). */
 .add-content-icon-strip {
   position: fixed;
-  top: 70px; /* sits below the fixed TopNav */
-  right: 0;
+  top: var(--page-header-offset, 0px);
+  /* Held off the viewport edge by the page's own 32px gutter, so the panel's right
+     edge lines up with the header's right edge (its close button). */
+  right: var(--space-xl);
   bottom: 0;
   width: 60px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: var(--space-ml) 0;
+  align-items: stretch;
+  /* 8px left gutter in both states, so the rows' hover fill never touches the
+     panel's own left border. */
+  padding: var(--space-s) 0 var(--space-s) var(--space-s);
   background-color: var(--page-background);
   border-left: 1px solid var(--border);
+  /* Labels are laid out at full length in both states; the rail clips them. */
+  overflow: hidden;
   /* Must beat PageHeader CTAs (no z-index, default 0) AND the open secondary
      drawer (z-index 1001) so its content doesn't bleed under the icon strip.
      Stays below the TopNav (z-100) so global nav remains accessible. */
   z-index: 1002;
-  transition: opacity 150ms ease;
+  transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* No right gutter needed — the panel itself is already inset by the page gutter, so
+   rows end flush under the header's close button. */
+.add-content-icon-strip--expanded {
+  width: 240px;
+}
+
+/* Masks the page gutter to the sidebar's right. The drawer is anchored to the
+   viewport edge and slides in from translateX(100%), so without this you watch it
+   travel through the 32px strip beside the rail before it tucks underneath.
+   A separate element rather than a pseudo on the rail — the rail clips its own
+   overflow to hide the labels, which would swallow it. */
+.add-content-icon-strip__gutter {
+  position: fixed;
+  top: var(--page-header-offset, 0px);
+  right: 0;
+  bottom: 0;
+  width: var(--space-xl);
+  background: var(--page-background);
+  z-index: 1002;
+  pointer-events: none;
+}
+
+/* Title is taken out of flow so it can't push the toggle around while the panel
+   is only 52px wide; the toggle just hugs the right edge in both states. */
+.add-content-icon-strip__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 44px;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* No toggle beside an open drawer, so the head folds away rather than leaving a
+   44px hole above the icons. */
+.add-content-icon-strip--over-drawer .add-content-icon-strip__head {
+  height: 0;
+}
+
+.add-content-icon-strip__title {
+  position: absolute;
+  left: var(--space-m);
+  top: 50%;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--text-primary);
+  pointer-events: none;
+  /* Collapsing: fade out immediately so nothing is caught mid-clip. */
+  opacity: 0;
+  transform: translate(-4px, -50%);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+/* The DS Tooltip wraps each item; it must not shrink the row. */
+.add-content-icon-strip__tooltip,
+.add-content-icon-strip__tooltip .tooltip__trigger {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.add-content-icon-strip__tooltip .tooltip__trigger {
+  width: 100%;
+}
+
+/* Separates the content sources / assessment types / resources groups. The 16px
+   side margin makes it exactly the 20px icon width. Rail-only — the labelled
+   panel groups by reading order, so the rules just add noise there. */
+.add-content-icon-strip__divider {
+  height: 1px;
+  margin: 2px var(--space-m);
+  background: var(--border);
+  border-radius: var(--radius-xs);
+  flex-shrink: 0;
+  transition: opacity 120ms ease;
+}
+
+.add-content-icon-strip--expanded .add-content-icon-strip__divider {
+  opacity: 0;
 }
 
 .add-content-icon-strip__item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 44px;
+  gap: var(--space-s);
+  width: 100%;
   height: 44px;
-  padding: 0;
+  padding: 0 var(--space-m);
   background: transparent;
   border: none;
   border-radius: var(--radius-s);
@@ -41,8 +147,98 @@
   transition: background 150ms ease, color 150ms ease;
 }
 
+/* The toggle keeps the rail's 52px box so it stays put as the panel widens. */
+.add-content-icon-strip__item--toggle {
+  width: 52px;
+  flex: 0 0 52px;
+}
+
+/* In the panel the toggle reads as a header icon action rather than a nav tile,
+   so it takes the DS icon-button treatment: circular hover halo, 4px around the
+   20px glyph. */
+.add-content-icon-strip--expanded .add-content-icon-strip__item--toggle {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  padding: var(--space-xs);
+  border-radius: var(--radius-full);
+}
+
+.add-content-icon-strip__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.add-content-icon-strip__label {
+  flex: 1;
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+/* Expandable Assessments group — chevron right-aligned, sub-rows text-only and
+   indented so their text sits under the parent's label (navigation.md). */
+.add-content-icon-strip__chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.add-content-icon-strip__item--open {
+  background: var(--page-background-hover);
+}
+
+.add-content-icon-strip__subitem {
+  display: block;
+  width: 100%;
+  padding: var(--space-s) var(--space-m) var(--space-s) 44px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-s);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.add-content-icon-strip__subitem:hover {
+  background: var(--page-background-hover);
+  color: var(--text-primary);
+}
+
+.add-content-icon-strip__subitem:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: -2px;
+}
+
+/* Expanding: hold the text back until the panel has opened enough to hold it. */
+.add-content-icon-strip--expanded .add-content-icon-strip__title,
+.add-content-icon-strip--expanded .add-content-icon-strip__label {
+  opacity: 1;
+  transition: opacity 200ms ease 110ms, transform 200ms ease 110ms;
+}
+
+.add-content-icon-strip--expanded .add-content-icon-strip__label {
+  transform: none;
+}
+
+.add-content-icon-strip--expanded .add-content-icon-strip__title {
+  transform: translate(0, -50%);
+}
+
 .add-content-icon-strip__item:hover {
-  background: var(--cards-background-hover);
+  background: var(--page-background-hover);
   color: var(--text-primary);
 }
 
@@ -53,4 +249,16 @@
 .add-content-icon-strip__item:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acd-content-area,
+  .add-content-icon-strip,
+  .add-content-icon-strip__head,
+  .add-content-icon-strip__title,
+  .add-content-icon-strip__label,
+  .add-content-icon-strip--expanded .add-content-icon-strip__title,
+  .add-content-icon-strip--expanded .add-content-icon-strip__label {
+    transition: none;
+  }
 }

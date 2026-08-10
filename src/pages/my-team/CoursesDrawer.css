@@ -51,8 +51,18 @@
    where the strip's icons begin — the icon strip (z-index 1002) sits on top of the
    drawer's right edge with its icons; the drawer's content area is padded right to
    keep its inner content clear of the strip. */
-.overlay-backdrop.overlay-backdrop--with-sidebar { inset: auto; top: 0; right: 60px; bottom: 0; left: 0; }
-.side-drawer.side-drawer--with-sidebar { right: 0; padding-right: calc(var(--space-l) + 60px); }
+/* The Add Content rail is 60px wide and held 32px off the viewport edge by the page
+   gutter, so the drawer clears 92px on its right. (A drawer always shows the sidebar
+   as its rail, never the 240px panel — see CreateCourse's openDrawer.)
+   Both start below the PageHeader divider so the builder's title and CTAs stay
+   visible and undimmed while a drawer is open. */
+.overlay-backdrop.overlay-backdrop--with-sidebar { inset: auto; top: var(--page-header-offset, 0px); right: calc(60px + var(--space-xl)); bottom: 0; left: 0; }
+.side-drawer.side-drawer--with-sidebar {
+  top: var(--page-header-offset, 0px);
+  height: auto;
+  right: 0;
+  padding-right: calc(var(--space-l) + 60px + var(--space-xl));
+}
 
 /* Header (member chip + close, divider below) */
 .side-drawer__header {

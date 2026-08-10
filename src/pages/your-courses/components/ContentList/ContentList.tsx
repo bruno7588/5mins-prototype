@@ -572,14 +572,14 @@ function ContentList({
     .filter(Boolean)
     .join(' ')
 
-  // With a right-side panel/drawer open, the empty placeholder reserves the panel's
-  // width and fills the left of the viewport, while populated content stays centered
-  // within the remaining (viewport − panel) area — a half-panel-width leftward shift.
-  const layoutStyle = bodyShiftPx
-    ? showEmptyState
-      ? { paddingRight: bodyShiftPx }
-      : { transform: `translateX(-${bodyShiftPx / 2}px)` }
-    : undefined
+  // With a right-side panel/drawer open, the empty placeholder keeps its full width and
+  // runs on underneath the panel (squeezing it would push the CTA pair out of the dashed
+  // frame), while populated content stays centered within the remaining (viewport −
+  // panel) area — a half-panel-width leftward shift.
+  const layoutStyle =
+    bodyShiftPx && !showEmptyState
+      ? { transform: `translateX(-${bodyShiftPx / 2}px)` }
+      : undefined
 
   return (
     <div className={layoutClass} style={layoutStyle} onDragOver={(e) => e.preventDefault()}>

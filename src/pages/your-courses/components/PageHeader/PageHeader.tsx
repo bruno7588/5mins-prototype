@@ -15,6 +15,8 @@ interface PageHeaderProps {
   onTabChange?: (label: string) => void
   /** Optional right-aligned action rendered on the tabs row (e.g. Add Course). */
   tabsAction?: ReactNode
+  /** Optional action rendered first in the top action cluster, before Save Draft (e.g. Preview). */
+  leadingAction?: ReactNode
   /** Optional action rendered in the top action cluster, just before the primary button. */
   primaryAction?: ReactNode
   secondaryLabel?: string
@@ -47,6 +49,7 @@ function PageHeader({
   activeTab = 'Course Content',
   onTabChange,
   tabsAction,
+  leadingAction,
   primaryAction,
   secondaryLabel = 'Save Draft',
   onSecondary,
@@ -66,6 +69,7 @@ function PageHeader({
       <div className="page-header-top">
         <h2 className="page-header-title">{title}</h2>
         <div className="page-header-actions">
+          {leadingAction}
           {!hideSecondary && (
             <Button variant="outlined" disabled={secondaryDisabled} onClick={onSecondary}>
               {secondaryLabel}

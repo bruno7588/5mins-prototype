@@ -2,7 +2,10 @@ import { useState, useRef, useCallback, useEffect, type DragEvent } from 'react'
 import { Add, PlayCircle, PauseCircle, Backward10Seconds, Forward10Seconds, Minus } from 'iconsax-react'
 import type { AssessmentType } from '../AddContentSidebar/AddContentSidebar'
 import SectionHeader from '../SectionHeader/SectionHeader'
-import CloseButton from '../../../../components/CloseButton/CloseButton'
+import Badge from '@/components/Badge/Badge'
+import Button from '@/components/Button/Button'
+import CloseButton from '@/components/CloseButton/CloseButton'
+import Radio from '@/components/Radio/Radio'
 import './AssessmentModal.css'
 
 const typeConfig: Record<AssessmentType, { title: string; subtitle: string }> = {
@@ -29,6 +32,7 @@ export interface AssessmentData {
   question: string
   options: string[]
   correctIndex: number
+  explanation?: string
   mediaFile?: File
   mediaType?: 'image' | 'audio'
   cropBgW?: number
@@ -54,6 +58,7 @@ function AssessmentModal({ type, onClose, onAdd, sidebarIcons, variant = 'modal'
   const [question, setQuestion] = useState('')
   const [options, setOptions] = useState(['', ''])
   const [correctIndex, setCorrectIndex] = useState(0)
+  const [explanation, setExplanation] = useState('')
 
   // Media state (confirmed)
   const [mediaFile, setMediaFile] = useState<File | null>(null)
@@ -186,6 +191,7 @@ function AssessmentModal({ type, onClose, onAdd, sidebarIcons, variant = 'modal'
       question,
       options,
       correctIndex,
+      explanation: explanation.trim() || undefined,
       mediaFile: mediaFile ?? undefined,
       mediaType: mediaType ?? undefined,
       cropBgW: cropBgW || undefined,
@@ -413,21 +419,20 @@ function AssessmentModal({ type, onClose, onAdd, sidebarIcons, variant = 'modal'
 
   const formContent = (
         <div className={`assessment-modal-content${variant === 'drawer' ? ' assessment-modal-content--drawer' : ''}`}>
-        {/* Close button */}
-        <CloseButton onClick={handleClose} className="assessment-modal-close" />
-
         {/* Header */}
-        <div className="assessment-modal-header">
-          <h3 className="assessment-modal-title">{config.title}</h3>
-          <p className="assessment-modal-subtitle">{config.subtitle}</p>
-        </div>
+        <SectionHeader
+          title={config.title}
+          description={config.subtitle}
+          ctas={<CloseButton onClick={handleClose} />}
+        />
 
         {/* Form */}
         <div className="assessment-modal-body">
           {/* Question */}
           <div className="assessment-modal-field">
-            <label className="assessment-modal-label">Question</label>
+            <label className="assessment-modal-label" htmlFor="assessment-question">Question</label>
             <input
+              id="assessment-question"
               className="assessment-modal-input"
               type="text"
               placeholder="Write your question here..."
@@ -438,16 +443,16 @@ function AssessmentModal({ type, onClose, onAdd, sidebarIcons, variant = 'modal'
 
           {/* Media Upload */}
           <div className="assessment-modal-field">
-            {/* Collapsed trigger button */}
+            {/* Collapsed trigger — dashed full-width row */}
             {!mediaFile && (
               <button
                 className="assessment-modal-add-media"
                 type="button"
                 onClick={openMediaModal}
               >
-                <Add size={18} color="currentColor" />
+                <Add size={20} color="currentColor" variant="Linear" />
                 <span className="assessment-modal-add-media-label">Attach Media</span>
-                <span className="assessment-modal-add-media-hint">(optional)</span>
+                <span className="assessment-modal-add-media-hint">(Image or Audio)</span>
               </button>
             )}
 
@@ -559,48 +564,55 @@ function AssessmentModal({ type, onClose, onAdd, sidebarIcons, variant = 'modal'
 
           {/* Options */}
           <div className="assessment-modal-field">
-            <label className="assessment-modal-label">What are the options?</label>
+            <span className="assessment-modal-label">What are the options?</span>
             <div className="assessment-modal-options">
               {options.map((opt, index) => (
-                <div className="assessment-modal-option" key={index}>
-                  <div className="assessment-modal-option-field">
-                    <input
-                      className="assessment-modal-radio"
-                      type="radio"
-                      name="correct-option"
-                      checked={correctIndex === index}
-                      onChange={() => setCorrectIndex(index)}
-                    />
-                    <input
-                      className="assessment-modal-option-input"
-                      type="text"
-                      placeholder={`Option ${index + 1}`}
-                      value={opt}
-                      onChange={(e) => handleOptionChange(index, e.target.value)}
-                    />
-                    {correctIndex === index && (
-                      <span className="assessment-modal-correct-badge">Correct</span>
-                    )}
-                  </div>
+                <div className="assessment-modal-option-field" key={index}>
+                  <Radio
+                    name="correct-option"
+                    checked={correctIndex === index}
+                    onChange={() => setCorrectIndex(index)}
+                    aria-label={`Mark option ${index + 1} as the correct answer`}
+                  />
+                  <input
+                    className="assessment-modal-option-input"
+                    type="text"
+                    placeholder={`Write option ${index + 1} here...`}
+                    value={opt}
+                    onChange={(e) => handleOptionChange(index, e.target.value)}
+                  />
+                  {correctIndex === index && (
+                    <Badge type="success" label="Correct" className="assessment-modal-correct-badge" />
+                  )}
                 </div>
               ))}
+              <button className="assessment-modal-add-option" type="button" onClick={handleAddOption}>
+                <Add size={24} color="currentColor" variant="Linear" />
+                <span>Add Option</span>
+              </button>
             </div>
-            <button className="assessment-modal-add-option" onClick={handleAddOption}>
-              <Add size={16} color="var(--text-tertiary)" />
-              <span>Add Option</span>
-            </button>
+          </div>
+
+          {/* Explanation */}
+          <div className="assessment-modal-field">
+            <label className="assessment-modal-label" htmlFor="assessment-explanation">
+              Add an explanation for the correct answer{' '}
+              <span className="assessment-modal-label-hint">(optional)</span>
+            </label>
+            <input
+              id="assessment-explanation"
+              className="assessment-modal-input"
+              type="text"
+              placeholder="Write an explanation..."
+              value={explanation}
+              onChange={(e) => setExplanation(e.target.value)}
+            />
           </div>
         </div>
 
         {/* Footer */}
         <div className="assessment-modal-footer">
-          <button
-            className="assessment-modal-cta"
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-          >
-            Save
-          </button>
+          <Button onClick={handleSubmit} disabled={!canSubmit}>Save</Button>
         </div>
         </div>
   )

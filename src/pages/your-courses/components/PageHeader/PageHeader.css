@@ -47,9 +47,12 @@
   background: var(--input-background-hover);
 }
 
-/* Full-width divider between top row and tabs (per Figma 8644:16189) */
+/* Divider between top row and tabs (per Figma 8644:16189). Full-bleed — the
+   negative margin cancels the header's 32px gutter so the rule runs edge to edge
+   while the title and CTAs stay inset. */
 .page-header-divider {
   height: 1px;
+  margin: 0 calc(-1 * var(--space-xl));
   background: var(--border);
   border-radius: var(--radius-xs);
 }

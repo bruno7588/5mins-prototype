@@ -57,16 +57,10 @@
   to { transform: translateX(100%); }
 }
 
-/* Close button */
+/* Close button — in flow within the header. Absolutely positioning it against the
+   drawer put it at the viewport edge, where the Add Content rail clipped it. */
 .scorm-drawer-close {
-  position: absolute;
-  top: var(--space-m);
-  right: var(--space-m);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  border-radius: var(--radius-full);
+  flex-shrink: 0;
 }
 
 .scorm-drawer-close:hover {
@@ -76,9 +70,15 @@
 /* Header */
 .scorm-drawer-header {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.scorm-drawer-headline {
+  display: flex;
   flex-direction: column;
   gap: var(--space-s);
-  padding-right: 40px;
 }
 
 .scorm-drawer-title {
@@ -132,60 +132,12 @@
 }
 
 /* Table */
-.scorm-drawer-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.scorm-drawer-table th {
-  text-align: left;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  background: var(--input-background);
-  padding: var(--space-s) var(--space-m);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.scorm-drawer-table td {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  padding: var(--space-sm) var(--space-m);
-  border-bottom: 1px solid var(--border);
-  vertical-align: middle;
-}
-
-.scorm-drawer-table tbody tr {
-  transition: background 150ms ease;
-}
-
-.scorm-drawer-table tbody tr:hover {
-  background: var(--page-background-hover);
-}
-
-/* File name cell */
-.scorm-drawer-file {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.scorm-drawer-thumb {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-s);
-  flex-shrink: 0;
-}
-
+/* Table markup replaced by the DS Table component (table.md); its chrome, the
+   .tbl-media wrapper and the .tbl-thumb thumbnail all live in
+   src/components/Table/Table.css. Only the filename's own wrapping is local. */
 .scorm-drawer-filename {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Type */
-.scorm-drawer-type {
-  color: var(--text-secondary);
-}
