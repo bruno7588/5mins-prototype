@@ -1,0 +1,399 @@
+/* Situational test authoring (DES-276). Hosted inside the shared ContentDrawer shell,
+   which owns the panel, its padding and the slide animation — this file only styles the
+   form. Field chrome deliberately matches the Add assessment drawer (AssessmentModal.css)
+   so the two read as one family; class names are prefixed .st-drawer__ because the
+   prototype bundles CSS globally. */
+
+.st-drawer__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  overflow-y: auto;
+}
+
+.st-drawer__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+/* ===== Collapsible guidance callout ===== */
+
+/* The DS Callout's own 8px body gap would survive the collapse and leave a gap under
+   the title, so the bullets carry their own spacing instead. */
+.st-drawer__guidance .alert__body {
+  gap: 0;
+}
+
+.st-drawer__guidance .alert__bullets {
+  margin-top: var(--space-s);
+}
+
+.st-drawer__guidance-toggle {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  /* Icon-only button — circular hover fill. */
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.st-drawer__guidance-toggle:hover {
+  background: var(--page-background-hover);
+  color: var(--text-primary);
+}
+
+.st-drawer__guidance-toggle:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.st-drawer__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ===== Text fields — outlined, per input.md ===== */
+
+.st-drawer__input,
+.st-drawer__textarea {
+  width: 100%;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.st-drawer__textarea {
+  resize: vertical;
+  min-height: 132px;
+}
+
+.st-drawer__input::placeholder,
+.st-drawer__textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.st-drawer__input:hover,
+.st-drawer__textarea:hover {
+  border-color: var(--border-hover);
+}
+
+.st-drawer__input:focus,
+.st-drawer__textarea:focus {
+  border-color: var(--selected);
+}
+
+.st-drawer__input--error,
+.st-drawer__textarea--error {
+  border-color: var(--text-error);
+}
+
+/* ===== Helper + word count ===== */
+
+/* Any error on the left, live count pinned right — the count holds its place whether
+   or not an error is showing. */
+.st-drawer__helper-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.st-drawer__helper-row .st-drawer__count {
+  margin-left: auto;
+}
+
+.st-drawer__helper {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.st-drawer__helper--error {
+  color: var(--text-error);
+}
+
+.st-drawer__count {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* Over the soft target — a warning, never a block (FR-2 / FR-3). */
+.st-drawer__count--over {
+  color: var(--text-warning);
+}
+
+/* Under an option row rather than beside it — the row is already full-width. */
+.st-drawer__count--option {
+  display: block;
+  margin-top: var(--space-xs);
+  padding-left: var(--space-sm);
+  white-space: normal;
+}
+
+/* ===== Step 2: the brief, kept in view ===== */
+
+/* Label and Edit action sit above the box, matching every other field's label row. */
+.st-drawer__brief-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.st-drawer__brief-text {
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.st-drawer__link {
+  flex-shrink: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-button-outlined);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.st-drawer__link:hover {
+  color: var(--text-button-hover);
+}
+
+/* ===== Question cards ===== */
+
+/* No gap — the collapsing body carries its own top margin, so a folded question is
+   exactly its header tall. */
+.st-drawer__question {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.st-drawer__question-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.st-drawer__question-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  margin-top: var(--space-m);
+}
+
+/* The whole title area folds the question — a bigger target than the chevron alone. */
+.st-drawer__question-toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: 0;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.st-drawer__question-toggle:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Icon-only buttons in the question header share the circular hover treatment. */
+.st-drawer__question-chevron,
+.st-drawer__question-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: var(--space-xs);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.st-drawer__question-chevron:hover {
+  background: var(--page-background-hover);
+  color: var(--text-primary);
+}
+
+.st-drawer__question-chevron:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.st-drawer__question-index {
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-drawer__question-preview {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.st-drawer__question-remove:hover {
+  background: var(--page-background-hover);
+  color: var(--text-error);
+}
+
+.st-drawer__question-remove:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* ===== Options ===== */
+
+.st-drawer__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.st-drawer__option-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-height: 44px;
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  /* The correct answer reads green, matching the Add assessment drawer, not the
+     amber the DS Radio uses for a neutral selection. */
+  --control-selected: var(--success-500);
+  transition: border-color 150ms ease;
+}
+
+.st-drawer__option-field:focus-within {
+  border-color: var(--selected);
+}
+
+.st-drawer__option-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.st-drawer__option-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.st-drawer__correct-badge {
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+/* ===== Dashed add rows ===== */
+
+.st-drawer__add-option,
+.st-drawer__add-question {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-s) var(--space-sm);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.st-drawer__add-question {
+  justify-content: center;
+  font-weight: 700;
+}
+
+.st-drawer__add-option:hover,
+.st-drawer__add-question:hover {
+  background: var(--input-background);
+  border-color: var(--border-hover);
+}
+
+/* ===== Footer ===== */
+
+/* Primary action left, step indicator right — the two-step drawer pattern already
+   used by the roles panel. */
+.st-drawer__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.st-drawer__step-indicator {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}

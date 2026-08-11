@@ -10,6 +10,10 @@ import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
 import ContentDrawer from './components/ContentDrawer/ContentDrawer'
 import type { AssessmentData } from './components/AssessmentModal/AssessmentModal'
 import type { LibraryLesson } from './components/LibraryDrawer/LibraryDrawer'
+import type {
+  SituationalQuestion,
+  SituationalTestData,
+} from './components/SituationalTestDrawer/SituationalTestDrawer'
 
 const assessmentLabels: Record<AssessmentType, string> = {
   'multiple-choice': 'Multiple Choice',
@@ -19,8 +23,18 @@ const assessmentLabels: Record<AssessmentType, string> = {
 }
 
 let nextAssessmentId = 100
+let nextSituationalTestId = 200
 
-type ActiveDrawer = 'library' | 'scorm' | 'assessment' | null
+type ActiveDrawer = 'library' | 'scorm' | 'assessment' | 'situational-test' | null
+
+/* The outline card shows the opening of the brief — enough to recognise the scenario
+   without turning the row into a paragraph. */
+const SITUATIONAL_TITLE_LIMIT = 72
+const situationalTitle = (brief: string) => {
+  const flat = brief.replace(/\s+/g, ' ').trim()
+  if (flat.length <= SITUATIONAL_TITLE_LIMIT) return flat || 'Untitled Situational Test'
+  return `${flat.slice(0, SITUATIONAL_TITLE_LIMIT).trimEnd()}…`
+}
 
 function CreateCourse() {
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
@@ -32,6 +46,10 @@ function CreateCourse() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true)
   const [addedLibraryIds, setAddedLibraryIds] = useState<Set<number>>(new Set())
   const [targetSectionId, setTargetSectionId] = useState<string | null>(null)
+  /* Authored situational tests, keyed by the id their outline card carries — the drawer
+     reads from here when reopened for editing (FR-4). */
+  const [situationalTests, setSituationalTests] = useState<Record<number, SituationalTestData>>({})
+  const [editingSituationalId, setEditingSituationalId] = useState<number | null>(null)
 
   /* The Add Content drawer snaps to the bottom edge of the PageHeader's divider —
      so the panel butts directly against the divider line and the tabs row sits
@@ -68,9 +86,15 @@ function CreateCourse() {
     openDrawer('assessment')
   }
 
+  const openSituationalTest = (id: number | null) => {
+    setEditingSituationalId(id)
+    openDrawer('situational-test')
+  }
+
   const closeDrawer = () => {
     setActiveDrawer(null)
     setTargetSectionId(null)
+    setEditingSituationalId(null)
   }
 
   const handleAddScorm = (file: ScormFile) => {
@@ -116,6 +140,51 @@ function CreateCourse() {
     setTargetSectionId(null)
   }
 
+  /* The outline deletes by id; the tests map is the only thing that knows which ids
+     belong to situational tests. */
+  const handleDeleteExtra = (id: number) => {
+    if (situationalTests[id]) {
+      handleRemoveSituationalTest(id)
+      return
+    }
+    handleRemoveScorm(id)
+  }
+
+  const situationalMetadata = (questions: SituationalQuestion[]) =>
+    `Situational test · ${questions.length} question${questions.length === 1 ? '' : 's'}`
+
+  const handleSaveSituationalTest = (brief: string, questions: SituationalQuestion[]) => {
+    const id = editingSituationalId ?? nextSituationalTestId++
+    setSituationalTests((prev) => ({ ...prev, [id]: { id, brief, questions } }))
+
+    const card: ContentItem = {
+      id,
+      type: 'SituationalTest',
+      title: situationalTitle(brief),
+      metadata: situationalMetadata(questions),
+      thumbnail: '',
+    }
+    setScormItems((prev) =>
+      editingSituationalId === null
+        ? [...prev, card]
+        : prev.map((item) =>
+            item.type === 'SituationalTest' && item.id === id ? card : item,
+          ),
+    )
+    closeDrawer()
+  }
+
+  const handleRemoveSituationalTest = (id: number) => {
+    setScormItems((prev) =>
+      prev.filter((item) => !(item.type === 'SituationalTest' && item.id === id)),
+    )
+    setSituationalTests((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
+  }
+
   const handleAddLibraryLesson = (lesson: LibraryLesson) => {
     const newItem: ContentItem = {
       id: lesson.id,
@@ -157,7 +226,8 @@ function CreateCourse() {
         <main className="main-content">
           <ContentList
             extraItems={scormItems}
-            onDeleteExtra={handleRemoveScorm}
+            onDeleteExtra={handleDeleteExtra}
+            onEditExtra={(item) => openSituationalTest(item.id)}
             onAddContent={openAddContent}
             targetSectionId={targetSectionId}
             bodyShiftPx={activeDrawer ? 720 : 0}
@@ -169,14 +239,15 @@ function CreateCourse() {
         activeAssessment={assessmentType}
         expanded={sidebarExpanded}
         onToggleExpanded={() => setSidebarExpanded((v) => !v)}
-        overDrawer={!!activeDrawer}
         onLibraryClick={() => openDrawer('library')}
         onScormClick={() => openDrawer('scorm')}
         onAssessmentClick={openAssessment}
+        onSituationalTestClick={() => openSituationalTest(null)}
       />
       <ContentDrawer
         activeDrawer={activeDrawer}
         onClose={closeDrawer}
+        sidebarExpanded={sidebarExpanded}
         libraryAddedIds={addedLibraryIds}
         onLibraryAdd={handleAddLibraryLesson}
         onLibraryRemove={handleRemoveLibraryLesson}
@@ -185,6 +256,8 @@ function CreateCourse() {
         onScormRemove={handleRemoveScorm}
         assessmentType={assessmentType}
         onAssessmentAdd={handleAddAssessment}
+        situationalTest={editingSituationalId === null ? null : situationalTests[editingSituationalId] ?? null}
+        onSituationalTestSave={handleSaveSituationalTest}
       />
     </>
   )

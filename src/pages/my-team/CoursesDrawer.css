@@ -62,6 +62,16 @@
   height: auto;
   right: 0;
   padding-right: calc(var(--space-l) + 60px + var(--space-xl));
+  /* In step with the rail's own width tween (AddContentIconStrip.css). */
+  transition: right 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* The rail can still be expanded while a drawer is open — the admin may need the
+   labels to know which source they are in. The panel keeps its 720px and simply slides
+   left by the extra width the panel takes (240 − 60), so nothing inside it reflows. */
+.overlay-backdrop.overlay-backdrop--sidebar-expanded { right: calc(240px + var(--space-xl)); }
+.side-drawer.side-drawer--sidebar-expanded {
+  right: calc(240px - 60px);
 }
 
 /* Header (member chip + close, divider below) */

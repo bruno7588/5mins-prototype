@@ -22,7 +22,7 @@ import Tooltip from '@/components/Tooltip/Tooltip'
 import type { AssessmentType } from '../AddContentSidebar/AddContentSidebar'
 import './AddContentIconStrip.css'
 
-export type StripActive = 'library' | 'scorm' | 'assessment' | null
+export type StripActive = 'library' | 'scorm' | 'assessment' | 'situational-test' | null
 
 const ICON = 20
 const C = 'currentColor'
@@ -41,11 +41,10 @@ interface AddContentIconStripProps {
   /** Labelled 240px panel instead of the 52px icon rail. */
   expanded?: boolean
   onToggleExpanded?: () => void
-  /** True while a content drawer covers the page — the rail then runs full height. */
-  overDrawer?: boolean
   onLibraryClick?: () => void
   onScormClick?: () => void
   onAssessmentClick?: (type: AssessmentType) => void
+  onSituationalTestClick?: () => void
 }
 
 /* Right-edge Add Content sidebar per Figma 8949:70435 (rail) / 8953:70671 (items).
@@ -57,10 +56,10 @@ function AddContentIconStrip({
   activeAssessment,
   expanded = false,
   onToggleExpanded,
-  overDrawer = false,
   onLibraryClick,
   onScormClick,
   onAssessmentClick,
+  onSituationalTestClick,
 }: AddContentIconStripProps) {
   const [assessmentsOpen, setAssessmentsOpen] = useState(false)
 
@@ -116,11 +115,7 @@ function AddContentIconStrip({
     </Tooltip>
   )
 
-  const classes = [
-    'add-content-icon-strip',
-    expanded && 'add-content-icon-strip--expanded',
-    overDrawer && 'add-content-icon-strip--over-drawer',
-  ]
+  const classes = ['add-content-icon-strip', expanded && 'add-content-icon-strip--expanded']
     .filter(Boolean)
     .join(' ')
 
@@ -128,11 +123,11 @@ function AddContentIconStrip({
     <>
     <span className="add-content-icon-strip__gutter" aria-hidden="true" />
     <aside className={classes} aria-label="Add content">
-      {/* The panel can't be expanded while a drawer covers the page, so the toggle
-          would be a decoy — the head collapses away with it. */}
+      {/* The toggle stays put even beside an open drawer — the labels are the only way
+          to read what each glyph means, so expanding must always be reachable. */}
       <div className="add-content-icon-strip__head">
         <h4 className="add-content-icon-strip__title" aria-hidden={!expanded}>Add Content</h4>
-        {!overDrawer && toggle}
+        {toggle}
       </div>
 
       {item('5Mins Library', <PlayCircle size={ICON} color={C} variant={active === 'library' ? 'Bold' : 'Linear'} />, active === 'library', onLibraryClick)}
@@ -143,7 +138,12 @@ function AddContentIconStrip({
       {/* A stack of sheets — a situational test is a SET of multiple-choice questions,
           where Multiple Choice below is a single one. Deliberately not a checklist
           glyph, which would collide with TaskSquare. Pending a Figma Library glyph. */}
-      {item('Situational Test', <Layer size={ICON} color={C} variant="Linear" />, false)}
+      {item(
+        'Situational Test',
+        <Layer size={ICON} color={C} variant={active === 'situational-test' ? 'Bold' : 'Linear'} />,
+        active === 'situational-test',
+        onSituationalTestClick,
+      )}
 
       {/* The rail shows the four assessment types flat between dividers (Figma
           8953:70671); the panel folds them into an expandable Assessments group

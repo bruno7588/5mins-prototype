@@ -944,6 +944,12 @@
   outline-offset: 2px;
 }
 
+/* Same icon-button box as the trash, but editing isn't destructive — it keeps the
+   neutral hover colour. */
+.content-card-edit:hover {
+  color: var(--text-primary);
+}
+
 /* Drag and drop
    - same-container: live reorder (no decorative indicator)
    - cross-container: insertion line + destination tint (per DnD color rule: var(--selected)) */

@@ -82,12 +82,6 @@
   transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* No toggle beside an open drawer, so the head folds away rather than leaving a
-   44px hole above the icons. */
-.add-content-icon-strip--over-drawer .add-content-icon-strip__head {
-  height: 0;
-}
-
 .add-content-icon-strip__title {
   position: absolute;
   left: var(--space-m);

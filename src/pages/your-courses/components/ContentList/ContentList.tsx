@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import Button from '@/components/Button/Button'
-import { Add, Clock, Edit2, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
+import { Add, Clock, Edit2, Layer, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
 import AssessmentIcon from '../../../../components/icons/AssessmentIcon'
 import Badge from '../../../../components/Badge/Badge'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
@@ -60,7 +60,7 @@ function Presence({ show, className = '', skipExit = false, children }: { show: 
 
 export interface ContentItem {
   id: number
-  type: 'Lesson' | 'Assessment' | 'SCORM' | 'LibraryLesson'
+  type: 'Lesson' | 'Assessment' | 'SCORM' | 'LibraryLesson' | 'SituationalTest'
   title: string
   metadata: string
   thumbnail: string
@@ -96,10 +96,15 @@ const makeDefaultSection = (): Section => ({
 
 function ContentCardThumb({ item }: { item: ContentItem }) {
   const isAssessment = item.type === 'Assessment'
+  const isSituational = item.type === 'SituationalTest'
   const isScorm = item.type === 'SCORM'
   return (
-    <div className={`content-card-thumb ${isAssessment ? 'content-card-thumb--assessment' : ''}`}>
-      {isAssessment ? (
+    <div className={`content-card-thumb ${isAssessment || isSituational ? 'content-card-thumb--assessment' : ''}`}>
+      {isSituational ? (
+        /* Same stacked-sheets glyph the Add Content rail uses — a situational test is
+           a set of multiple-choice questions. */
+        <Layer size={24} color="var(--text-secondary)" variant="Linear" />
+      ) : isAssessment ? (
         <svg className="content-card-thumb-illustration" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
           <path d="M28.3224 32.2734H28.3254C28.3254 32.2734 28.3018 32.2837 28.2665 32.294C28.0855 32.3723 27.9046 32.4446 27.7221 32.5125C25.9345 33.2489 20.2744 35.4389 17.8836 38.9896L10.8125 34.1978C13.0665 30.8507 13.0106 25.2694 12.9724 23.0291C12.9488 22.7 12.9356 22.3695 12.9385 22.0374C12.9385 22.0212 12.9385 22.0079 12.9385 22.0079H12.9415C12.968 19.93 13.5785 17.8359 14.8262 15.9838C18.2234 10.9337 25.0576 9.60699 30.0924 13.0175C32.2199 14.4593 33.6853 16.518 34.4106 18.7981C35.3993 21.9061 35.0109 25.4214 33.0497 28.3345C31.8344 30.1394 30.1762 31.4647 28.3224 32.2749V32.2734Z" fill="#FFB83D"/>
           <path d="M16.3221 40.4059L9.75195 35.9541L9.14909 36.8493L15.7193 41.3011L16.3221 40.4059Z" fill="#522A75"/>
@@ -124,6 +129,7 @@ function ContentCardThumb({ item }: { item: ContentItem }) {
 interface ContentCardProps {
   item: ContentItem
   onDelete?: () => void
+  onEdit?: () => void
   isDragging: boolean
   dropAbove: boolean
   dropBelow: boolean
@@ -138,13 +144,17 @@ const REMOVE_LABEL: Record<ContentItem['type'], string> = {
   LibraryLesson: 'Remove lesson',
   Assessment: 'Remove assessment',
   SCORM: 'Remove SCORM',
+  SituationalTest: 'Remove situational test',
 }
 
 function ContentCard({
-  item, onDelete, isDragging, dropAbove, dropBelow,
+  item, onDelete, onEdit, isDragging, dropAbove, dropBelow,
   onDragStart, onDragOver, onDragEnd, onDrop,
 }: ContentCardProps) {
-  const badgeLabel = item.type === 'LibraryLesson' ? 'Lesson' : item.type
+  const badgeLabel =
+    item.type === 'LibraryLesson' ? 'Lesson'
+    : item.type === 'SituationalTest' ? 'Situational Test'
+    : item.type
   const removeLabel = REMOVE_LABEL[item.type]
   const containerClass = [
     'content-item-container',
@@ -187,6 +197,18 @@ function ContentCard({
           </div>
         </div>
       </div>
+      {onEdit && (
+        <Tooltip text="Edit" position="Top" alignment="End" icon={false} className="content-card-trash-tooltip">
+          <button
+            type="button"
+            className="content-card-trash content-card-edit"
+            aria-label={`Edit ${item.title}`}
+            onClick={onEdit}
+          >
+            <Edit2 size={20} color="currentColor" variant="Linear" />
+          </button>
+        </Tooltip>
+      )}
       <Tooltip text={removeLabel} position="Top" alignment="End" icon={false} className="content-card-trash-tooltip">
         <button
           type="button"
@@ -204,6 +226,8 @@ function ContentCard({
 interface ContentListProps {
   extraItems?: ContentItem[]
   onDeleteExtra?: (id: number) => void
+  /* Reopens an item's authoring drawer. Only situational tests are editable so far. */
+  onEditExtra?: (item: ContentItem) => void
   /* Opens the AddContentMenu dropdown anchored to the clicked trigger, scoped to a sectionId. */
   onAddContent?: (sectionId: string, anchor: HTMLElement) => void
   targetSectionId?: string | null
@@ -215,6 +239,7 @@ interface ContentListProps {
 function ContentList({
   extraItems = [],
   onDeleteExtra,
+  onEditExtra,
   onAddContent,
   targetSectionId,
   bodyShiftPx = 0,
@@ -240,7 +265,10 @@ function ContentList({
 
   // Sync extraItems into sections. New items go to targetSectionId if set; otherwise the first section.
   useEffect(() => {
-    const extraKey = extraItems.map(itemKey).join(',')
+    /* Title and metadata are part of the signature, not just the key — editing a
+       situational test changes its label without changing its identity, and the card
+       would otherwise keep the text it was created with. */
+    const extraKey = extraItems.map((it) => `${itemKey(it)}:${it.title}:${it.metadata}`).join(',')
     if (extraKey === prevExtraRef.current) return
     prevExtraRef.current = extraKey
 
@@ -249,9 +277,12 @@ function ContentList({
     for (const s of sections) s.itemKeys.forEach((k) => existingKeys.add(k))
     const newKeys = extraItems.map(itemKey).filter((k) => !existingKeys.has(k))
 
-    // SCORM and Library lessons are extras-managed — drop them when they leave extras.
+    // SCORM, Library lessons and situational tests are extras-managed — drop them when
+    // they leave extras.
     const shouldKeep = (k: string) => {
-      if (k.startsWith('SCORM-') || k.startsWith('LibraryLesson-')) return extraSet.has(k)
+      if (k.startsWith('SCORM-') || k.startsWith('LibraryLesson-') || k.startsWith('SituationalTest-')) {
+        return extraSet.has(k)
+      }
       return true
     }
 
@@ -260,7 +291,9 @@ function ContentList({
       for (const it of extraItems) next[itemKey(it)] = it
       for (const k of Object.keys(next)) {
         const t = next[k]?.type
-        if ((t === 'SCORM' || t === 'LibraryLesson') && !extraSet.has(k)) delete next[k]
+        if ((t === 'SCORM' || t === 'LibraryLesson' || t === 'SituationalTest') && !extraSet.has(k)) {
+          delete next[k]
+        }
       }
       return next
     })
@@ -370,7 +403,7 @@ function ContentList({
 
   const deleteItem = (key: string) => {
     const item = itemsByKey[key]
-    if (item && (item.type === 'SCORM' || item.type === 'Assessment' || item.type === 'LibraryLesson')) {
+    if (item && item.type !== 'Lesson') {
       onDeleteExtra?.(item.id)
     }
     setSections((prev) => prev.map((s) => ({ ...s, itemKeys: s.itemKeys.filter((k) => k !== key) })))
@@ -520,17 +553,19 @@ function ContentList({
   const handleSectionDrop = () => handleSectionDragEnd()
 
   const buildSummary = (itemKeys: string[]) => {
-    let lessons = 0, assessments = 0, scorm = 0
+    let lessons = 0, assessments = 0, scorm = 0, situational = 0
     for (const k of itemKeys) {
       const item = itemsByKey[k]
       if (!item) continue
       if (item.type === 'Lesson' || item.type === 'LibraryLesson') lessons++
       else if (item.type === 'Assessment') assessments++
       else if (item.type === 'SCORM') scorm++
+      else if (item.type === 'SituationalTest') situational++
     }
     const parts: string[] = []
     if (lessons > 0) parts.push(`${lessons} lesson${lessons === 1 ? '' : 's'}`)
     if (assessments > 0) parts.push(`${assessments} assessment${assessments === 1 ? '' : 's'}`)
+    if (situational > 0) parts.push(`${situational} situational test${situational === 1 ? '' : 's'}`)
     if (scorm > 0) parts.push(`${scorm} SCORM`)
     return parts.length ? parts.join(' · ') : 'No content'
   }
@@ -556,14 +591,14 @@ function ContentList({
   const allItems = sections
     .flatMap((s) => s.itemKeys.map((k) => itemsByKey[k]))
     .filter((it): it is ContentItem => !!it)
-  const lessonCount = allItems.filter((it) => it.type !== 'Assessment').length
+  const isTimedContent = (it: ContentItem) => it.type !== 'Assessment' && it.type !== 'SituationalTest'
+  const lessonCount = allItems.filter(isTimedContent).length
   const assessmentCount = allItems.filter((it) => it.type === 'Assessment').length
+  const situationalCount = allItems.filter((it) => it.type === 'SituationalTest').length
   const totalMinutes = Math.round(
-    allItems
-      .filter((it) => it.type !== 'Assessment')
-      .reduce((sum, it) => sum + parseDurationMinutes(it.metadata), 0),
+    allItems.filter(isTimedContent).reduce((sum, it) => sum + parseDurationMinutes(it.metadata), 0),
   )
-  const showMeta = namedSectionCount + lessonCount + assessmentCount > 0
+  const showMeta = namedSectionCount + lessonCount + assessmentCount + situationalCount > 0
 
   const layoutClass = [
     'content-list-layout',
@@ -608,6 +643,13 @@ function ContentList({
                 type="informative"
                 customIcon={<AssessmentIcon size={16} color="currentColor" />}
                 label={`${assessmentCount} ${assessmentCount === 1 ? 'assessment' : 'assessments'}`}
+              />
+            </Presence>
+            <Presence show={situationalCount > 0} className="presence--badge">
+              <Badge
+                type="informative"
+                customIcon={<Layer size={16} color="currentColor" variant="Linear" />}
+                label={`${situationalCount} situational test${situationalCount === 1 ? '' : 's'}`}
               />
             </Presence>
             <Presence show={totalMinutes > 0} className="presence--badge">
@@ -684,6 +726,11 @@ function ContentList({
                         <ContentCard
                           item={item}
                           onDelete={() => deleteItem(key)}
+                          onEdit={
+                            onEditExtra && item.type === 'SituationalTest'
+                              ? () => onEditExtra(item)
+                              : undefined
+                          }
                           isDragging={dragKey === key}
                           dropAbove={dropTarget?.itemKey === key && dropTarget.position === 'above'}
                           dropBelow={dropTarget?.itemKey === key && dropTarget.position === 'below'}
