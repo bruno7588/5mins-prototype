@@ -193,6 +193,11 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
     autoGrow(briefRef.current)
   }, [brief, step, aiLoading])
 
+  /* Always the latest questions, so a generation that resolves later can build the next
+     list without depending on the state captured when the button was clicked. */
+  const questionsRef = useRef(questions)
+  questionsRef.current = questions
+
   const briefFilled = brief.trim().length > 0
   const briefError = briefBlurred && !briefFilled
 
@@ -341,7 +346,15 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
       setTimeout(() => {
         if (cancelled.current) return
         /* Appended, never replacing — the existing list and its collapsed state survive. */
-        setQuestions((prev) => [...prev, ...extras.map((q) => ({ ...makeQuestion(), ...q }))])
+        const next = [
+          ...questionsRef.current,
+          ...extras.map((q) => ({ ...makeQuestion(), ...q })),
+        ]
+        setQuestions(next)
+        /* The appended questions are AI output too, so the set is still an untouched
+           generation and Regenerate stays on offer. Without this, adding two more
+           questions silently withdrew it even though nothing was hand-written. */
+        setGeneratedSig(questionsSig(next))
         setAiMoreLoading(false)
         setAiMoreRound((r) => r + 1)
       }, 400),

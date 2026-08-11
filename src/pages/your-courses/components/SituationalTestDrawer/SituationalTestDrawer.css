@@ -236,13 +236,14 @@
 
 /* No gap — the collapsing body carries its own top margin, so a folded question is
    exactly its header tall. */
+/* No border: the fill already separates the card from the page, and the question field
+   inside carries its own outline — two nested rounded borders read as noise. */
 .st-drawer__question {
   display: flex;
   flex-direction: column;
   padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--input-background);
+  background: var(--cards-background);
 }
 
 .st-drawer__question-head {
