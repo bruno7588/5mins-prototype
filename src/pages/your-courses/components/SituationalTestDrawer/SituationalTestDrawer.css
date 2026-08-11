@@ -65,6 +65,30 @@
   line-height: 1.5;
 }
 
+/* H5 weight (typography.md: 14px Bold, small headers and labels) for labels that head a
+   step-level block — Brief, Context. Colour stays --text-secondary: weight alone carries
+   the hierarchy, so the labels don't compete with the content they introduce.
+   Deliberately NOT applied to labels nested inside a question card, where "Question N" is
+   already the bold anchor and a second bold line under it would flatten the card. */
+.st-drawer__label--section {
+  font-weight: 700;
+}
+
+/* Parentheticals ride the label in tertiary at regular weight, so they read as an aside
+   rather than a second label. The "(optional)" flag drops to 12px; a hint that carries
+   real instruction stays at body size. */
+.st-drawer__label-optional {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+.st-drawer__label-hint {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
 /* ===== Text fields — outlined, per input.md ===== */
 
 .st-drawer__input,
@@ -318,6 +342,82 @@
   border-color: var(--border-hover);
 }
 
+/* ===== Context sources ===== */
+
+/* The picker is opened by the Add Source button, so the input itself never shows. */
+.st-drawer__file-input {
+  display: none;
+}
+
+/* Matches the Attach Media row in the Add assessment drawer
+   (.assessment-modal-add-media) — centred, filled, dashed, Bold-14 label. */
+.st-drawer__add-source {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: var(--space-s) var(--space-m);
+  background: var(--input-background);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  /* The Add glyph is currentColor; without this it falls back to the UA button
+     colour and reads dimmer than the label next to it. */
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 150ms ease;
+}
+
+.st-drawer__add-source:hover {
+  border-color: var(--border-hover);
+}
+
+.st-drawer__add-source:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.st-drawer__add-source-label {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* Names the accepted file types up front, so the OS picker isn't the first place the
+   admin finds out. Mirrors .assessment-modal-add-media-hint. */
+.st-drawer__add-source-hint {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.st-drawer__source-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.st-drawer__source-chips .chip {
+  flex: 0 0 auto;
+  max-width: 100%;
+  padding: 4px 10px;
+  gap: var(--space-xs);
+  font-size: 12px;
+}
+
+/* ===== Step 2 action row ===== */
+
+.st-drawer__question-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
 /* ===== Footer ===== */
 
 /* Primary action left, step indicator right — the two-step drawer pattern already
@@ -342,4 +442,9 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-tertiary);
+}
+
+/* Matches the roles panel's required marker. */
+.st-drawer__tooltip-required {
+  color: var(--danger-400);
 }

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Add, ArrowDown2, ArrowUp2, Trash } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
+import SparkleIcon from '@/components/icons/SparkleIcon'
+import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
@@ -8,7 +10,28 @@ import Collapse from '@/components/Collapse/Collapse'
 import Radio from '@/components/Radio/Radio'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import SectionHeader from '../SectionHeader/SectionHeader'
+import ContextSources from './ContextSources'
+import {
+  generateMoreSituationalQuestions,
+  generateSituationalTest,
+} from './generateSituationalTest'
 import './SituationalTestDrawer.css'
+
+/* Four labels because the progress ladder has four beats — the card's activeStep maps
+   1:1 onto aiStep, so any other length would light the wrong row. */
+const AI_STEPS = [
+  'Reading your scenario',
+  'Writing the brief',
+  'Building the questions',
+  'Done',
+]
+
+const AI_MORE_STEPS = [
+  'Re-reading the scenario',
+  'Drafting more questions',
+  'Checking the options',
+  'Done',
+]
 
 /* The DS Callout (alerts-toast.md) with a chevron, so the guidance can be folded away
    once the admin knows it. Built from the Alert component's own classes rather than a
@@ -73,11 +96,17 @@ const questionIsComplete = (q: SituationalQuestion) =>
   (q.options[q.correctIndex] ?? '').trim().length > 0
 
 /* Only the authored values matter for the dirty check — question ids are generated per
-   mount and would otherwise make a pristine form look edited. */
-const snapshot = (brief: string, questions: SituationalQuestion[]) =>
+   mount and would otherwise make a pristine form look edited.
+
+   Context sources are a generation input and never reach onSave, so strictly they can't
+   be "unsaved". They're in here anyway: dirty means the admin has put work into this
+   form, and losing an attached policy to a stray Escape is exactly what the discard
+   guard exists to prevent. */
+const snapshot = (brief: string, questions: SituationalQuestion[], sources: string[]) =>
   JSON.stringify({
     brief,
     questions: questions.map((q) => ({ t: q.text, o: q.options, c: q.correctIndex })),
+    sources,
   })
 
 interface Props {
@@ -112,6 +141,30 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
     () => new Set(initial ? initial.questions.map((q) => q.id) : []),
   )
 
+  /* Generation input. Not persisted — see the note on snapshot(). */
+  const [sources, setSources] = useState<string[]>([])
+
+  /* Transient generation state, deliberately outside the dirty snapshot. */
+  const [aiLoading, setAiLoading] = useState(false)
+  const [aiProgress, setAiProgress] = useState(0)
+  const [aiStep, setAiStep] = useState(0)
+  const [aiMoreLoading, setAiMoreLoading] = useState(false)
+  const [aiMoreUsed, setAiMoreUsed] = useState(false)
+  const timers = useRef<number[]>([])
+  const cancelled = useRef(false)
+
+  /* Escape mid-generation unmounts the drawer with timers and a promise still in
+     flight; without this they keep firing into a dead component. Re-armed on mount
+     rather than only torn down on unmount: StrictMode's double-invoke would otherwise
+     latch the flag on first mount and swallow every generation in dev. */
+  useEffect(() => {
+    cancelled.current = false
+    return () => {
+      cancelled.current = true
+      timers.current.forEach(clearTimeout)
+    }
+  }, [])
+
   const briefFilled = brief.trim().length > 0
   const briefError = briefBlurred && !briefFilled
 
@@ -119,7 +172,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
      seeds one blank question, so a baseline built from `initial` alone reads as edited
      before the admin has typed anything. */
   const pristine = useRef<string | null>(null)
-  const current = snapshot(brief, questions)
+  const current = snapshot(brief, questions, sources)
   if (pristine.current === null) pristine.current = current
   const dirty = current !== pristine.current
   useEffect(() => {
@@ -173,6 +226,72 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
   const canContinue = briefFilled
   const canSave = questions.length > 0 && questions.every(questionIsComplete)
 
+  /* Generating replaces the brief and every question, so the offer is withdrawn the
+     moment there is work to destroy. Covers both routes in: straight after a generation,
+     and coming back from step 2 via Edit Brief with questions already written. Editing a
+     saved test starts on step 2, so the CTA never appears there either. */
+  const hasQuestionContent = questions.some(
+    (q) => q.text.trim() || q.options.some((o) => o.trim()),
+  )
+
+  /* Fake progress against the mock's fixed 2s, mirroring the roles panel. The ladder is
+     cosmetic — the resolve is what actually gates the result. */
+  const runProgressLadder = () => {
+    setAiProgress(0)
+    setAiStep(0)
+    timers.current.push(
+      setTimeout(() => { setAiProgress(35); setAiStep(1) }, 300),
+      setTimeout(() => { setAiProgress(65); setAiStep(2) }, 800),
+      setTimeout(() => setAiProgress(85), 1200),
+    )
+  }
+
+  const handleGenerate = async () => {
+    if (!canContinue) {
+      setBriefBlurred(true)
+      return
+    }
+    setAiLoading(true)
+    runProgressLadder()
+
+    const result = await generateSituationalTest(brief, sources)
+    if (cancelled.current) return
+
+    setAiProgress(100)
+    setAiStep(3)
+    timers.current.push(
+      setTimeout(() => {
+        if (cancelled.current) return
+        setBrief(result.brief)
+        /* makeQuestion() stays the only id source, so the generated questions slot into
+           the same numbering as hand-written ones. */
+        setQuestions(result.questions.map((q) => ({ ...makeQuestion(), ...q })))
+        setCollapsedQuestions(new Set())
+        setAiLoading(false)
+      }, 400),
+    )
+  }
+
+  const handleGenerateMore = async () => {
+    setAiMoreLoading(true)
+    runProgressLadder()
+
+    const extras = await generateMoreSituationalQuestions(brief, sources)
+    if (cancelled.current) return
+
+    setAiProgress(100)
+    setAiStep(3)
+    timers.current.push(
+      setTimeout(() => {
+        if (cancelled.current) return
+        /* Appended, never replacing — the existing list and its collapsed state survive. */
+        setQuestions((prev) => [...prev, ...extras.map((q) => ({ ...makeQuestion(), ...q }))])
+        setAiMoreLoading(false)
+        setAiMoreUsed(true)
+      }, 400),
+    )
+  }
+
   const handleContinue = () => {
     if (!canContinue) {
       setBriefBlurred(true)
@@ -208,6 +327,10 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
 
       <div className="st-drawer__body">
         {step === 1 ? (
+          aiLoading ? (
+            /* Rendered where the brief will land, so the card doubles as its placeholder. */
+            <AIWorkingCard steps={AI_STEPS} activeStep={aiStep} progress={aiProgress} />
+          ) : (
           <>
             <GuidanceCallout
               title="A strong scenario has four parts"
@@ -220,8 +343,15 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
             />
 
             <div className="st-drawer__field">
-              <label className="st-drawer__label" htmlFor="st-brief">
-                Scenario brief
+              <label className="st-drawer__label st-drawer__label--section" htmlFor="st-brief">
+                Brief{' '}
+                {/* Says the quiet part before it happens: Generate rewrites this field.
+                    Withdrawn once there's generated work, when it stops being true. */}
+                {!hasQuestionContent && (
+                  <span className="st-drawer__label-hint">
+                    (a rough outline is enough — AI will rewrite this into a full brief)
+                  </span>
+                )}
               </label>
               <textarea
                 id="st-brief"
@@ -244,7 +374,14 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                 </span>
               )}
             </div>
+
+            {/* Only feeds generation, so it's withdrawn alongside the Generate CTA —
+                otherwise editing a saved test shows an input that cannot do anything. */}
+            {!hasQuestionContent && (
+              <ContextSources sources={sources} onChange={setSources} />
+            )}
           </>
+          )
         ) : (
           <>
             <GuidanceCallout
@@ -423,14 +560,36 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
               )
             })}
 
-            <button
-              className="st-drawer__add-question"
-              type="button"
-              onClick={() => setQuestions((prev) => [...prev, makeQuestion()])}
-            >
-              <Add size={24} color="currentColor" variant="Linear" />
-              <span>Add Question</span>
-            </button>
+            {/* Below the list, where the new questions will appear — the existing ones
+                stay mounted and keep their scroll position and collapsed state. */}
+            {aiMoreLoading && (
+              <AIWorkingCard
+                steps={AI_MORE_STEPS}
+                activeStep={aiStep}
+                progress={aiProgress}
+              />
+            )}
+
+            <div className="st-drawer__question-actions">
+              <button
+                className="st-drawer__add-question"
+                type="button"
+                onClick={() => setQuestions((prev) => [...prev, makeQuestion()])}
+              >
+                <Add size={24} color="currentColor" variant="Linear" />
+                <span>Add Question</span>
+              </button>
+              {!aiMoreUsed && !aiMoreLoading && (
+                <Button
+                  semantic="ai"
+                  variant="outlined"
+                  icon={<SparkleIcon size={20} />}
+                  onClick={handleGenerateMore}
+                >
+                  Generate More Questions
+                </Button>
+              )}
+            </div>
           </>
         )}
       </div>
@@ -438,9 +597,54 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
       <div className="st-drawer__footer">
         <div className="st-drawer__footer-actions">
           {step === 1 ? (
-            <Button onClick={handleContinue} disabled={!canContinue}>
-              {returnedToBrief ? 'Save Brief' : 'Save Brief & Add Questions'}
-            </Button>
+            /* Nothing to offer while it generates — the working card is the whole state. */
+            aiLoading ? null : hasQuestionContent ? (
+              <Button onClick={handleContinue} disabled={!canContinue}>
+                {returnedToBrief ? 'Save Brief' : 'Review Questions'}
+              </Button>
+            ) : (
+              <>
+                {/* Wrapped rather than conditionally rendered so the tooltip fires over
+                    the *disabled* button — handlers sit on Tooltip's own wrapper. */}
+                <Tooltip
+                  text={
+                    <>
+                      <span className="st-drawer__tooltip-required">*</span> A scenario
+                      brief is required
+                    </>
+                  }
+                  position="Top"
+                  alignment="Start"
+                  icon={false}
+                  disabled={briefFilled}
+                >
+                  <Button
+                    semantic="ai"
+                    icon={<SparkleIcon size={20} />}
+                    onClick={handleGenerate}
+                    disabled={!canContinue}
+                  >
+                    Generate With AI
+                  </Button>
+                </Tooltip>
+                <Tooltip
+                  text={
+                    <>
+                      <span className="st-drawer__tooltip-required">*</span> A scenario
+                      brief is required
+                    </>
+                  }
+                  position="Top"
+                  alignment="Start"
+                  icon={false}
+                  disabled={briefFilled}
+                >
+                  <Button variant="outlined" onClick={handleContinue} disabled={!canContinue}>
+                    Add Questions Manually
+                  </Button>
+                </Tooltip>
+              </>
+            )
           ) : (
             <>
               <Button onClick={handleSave} disabled={!canSave}>
