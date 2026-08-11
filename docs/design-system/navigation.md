@@ -210,12 +210,12 @@ The Figma component includes the iOS status bar (clock "9:41" + signal/wifi/batt
 | Profile | `7632:8270` | auto, 16px/12px pad | 40px avatar with settings mini-badge (top-right, `--input-background`, 9px `setting-2` icon), name Bold 14 + role Regular 12 `--text-secondary` (2px gap); right 40px `--primary-500` circular add button |
 | Detail page | `6162:9788` | auto, 16px/8px pad | Back button left, centered title Bold 16, empty 32px right spacer to keep the title centered |
 | Skill | `8377:1056` | auto, 16px/8px pad | Back button, 24px skill illustration + title Bold **14**, right 24px vertical kebab |
-| Lesson feed | `7645:4829` | auto, 16px/8px pad | Transparent; back button on `rgba(15,16,20,0.5)` scrim; right "45 Pt" Bold 12 + small trophy |
+| Lesson feed | `7645:4829` | auto, 16px/8px pad | Transparent; back button on a fixed `rgba(15,16,20,0.5)` legibility fill; right "45 Pt" Bold 12 + small trophy |
 | Mobile web | `9465:24352` | — | Browser-chrome mock (white, Chrome URL pill "app.5mins.ai") — reference only, not built |
 
 Shared elements:
 
-- **Back button**: 40px circle — 8px padding around a 24px `ArrowLeft` Linear icon, radius full, `--input-background` fill (`rgba(15,16,20,0.5)` scrim on Lesson feed).
+- **Back button**: 40px circle — 8px padding around a 24px `ArrowLeft` Linear icon, radius full, `--input-background` fill (`rgba(15,16,20,0.5)` on Lesson feed, a fixed legibility fill over video — not the `--scrim` overlay token, which is mode-aware; see `layout.md` §7).
 - **Header chips** (Home/Progress): selected = `--secondary-500` fill, Poppins Bold 14, `--neutral-800` text (always-dark text on amber, both modes); unselected = transparent, 1px `--border`, Regular 14 `--text-secondary`. Both: 12px/8px padding, **radius 24px**, 8px gap (16px between chip group items on Progress).
 - Title is Bold 16 when alone, Bold 14 when paired with a leading icon (Skill).
 

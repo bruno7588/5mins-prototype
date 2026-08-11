@@ -6,14 +6,13 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: var(--neutral-900, #0F1014);
-  opacity: 0.64;
+  background: var(--scrim);
   animation: force-trigger-overlay-fade 200ms ease-out;
 }
 
 @keyframes force-trigger-overlay-fade {
   from { opacity: 0; }
-  to { opacity: 0.64; }
+  to { opacity: 1; }
 }
 
 .force-trigger-overlay--closing {
@@ -21,7 +20,7 @@
 }
 
 @keyframes force-trigger-overlay-fade-out {
-  from { opacity: 0.64; }
+  from { opacity: 1; }
   to { opacity: 0; }
 }
 

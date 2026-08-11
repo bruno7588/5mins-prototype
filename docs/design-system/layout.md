@@ -151,14 +151,14 @@ Code-only extra: `--shadow-panel` (`-24px 0 24px 0 rgba(32, 34, 42, 0.04)`) — 
 
 ## 7. Overlay scrim
 
-Full-screen backdrop behind dialogs, modals, and side drawers. Always Neutral-900 `#0F1014`, opacity per mode:
+Full-screen backdrop behind dialogs, modals, and side drawers. The base colour is always Neutral-900 `#0F1014`, exposed as the single token `--scrim`, and only the opacity changes per mode:
 
 | Mode | Value |
 |---|---|
 | Light mode | Neutral-900 @ **25%** — `rgba(15, 16, 20, 0.25)` |
 | Dark mode | Neutral-900 @ **50%** — `rgba(15, 16, 20, 0.5)` |
 
-Use the token, never a literal:
+**Usage rule:** every overlay backdrop - dialog, modal, side drawer, lightbox, popover blocker - uses `background: var(--scrim)`. Never hardcode the rgba value, and never derive a one-off alpha: the token is the only thing that flips between modes.
 
 ```css
 .overlay-backdrop {
@@ -169,7 +169,9 @@ Use the token, never a literal:
 }
 ```
 
-> **Code note:** `tokens.css` defines `--scrim` at the light-mode 25% value (aligned 2026-07-03). When dark mode lands, the `[data-theme="dark"]` block overrides it to 50%.
+> **Code note:** `tokens.css` ships both values today. `:root` defines `--scrim` as `rgba(15, 16, 20, 0.25)` and the `[data-theme="dark"]` block overrides it to `rgba(15, 16, 20, 0.5)`. Dark mode is live in the prototype (`data-theme` on `<html>`, driven by `src/hooks/useTheme.ts`), so a literal will not follow the theme - always read `var(--scrim)`.
+
+> **What this is not:** the scrim is the blocking layer between the page and an overlay panel. It is not an image-darkening layer, meaning the gradients and flat tints painted over hero images, banners, and card thumbnails to keep text on top legible. Those are a separate concern, belong to their own component spec, and keep their own alphas - do not replace them with `var(--scrim)`.
 
 See `overlays.md` for the Dialog/Modal/Side-Drawer component specs that sit on top of this scrim.
 

@@ -125,7 +125,7 @@
   --selected-fill: #FCF1DB; /* opaque equivalent of --selected-tint, for sticky cells over scrolling content */
   --selected-fill-hover: #FDECC5; /* hover state of --selected-fill / selected rows (opaque) */
   --control-selected: var(--secondary-600); /* radio/checkbox selected amber, per selection-controls.md */
-  --scrim: rgba(15, 16, 20, 0.25); /* overlay backdrop — Neutral-900 @ 25% (light mode; dark mode spec is 50%) */
+  --scrim: rgba(15, 16, 20, 0.25); /* overlay backdrop — Neutral-900 @ 25%; overridden to 50% in dark mode (layout.md §7) */
 
   /* Spacing (4px base) */
   --space-xs: 0.25rem;   /* 4px */
@@ -209,7 +209,7 @@
   --selected-fill: rgba(255, 187, 56, 0.16);
   --selected-fill-hover: rgba(255, 187, 56, 0.24);
 
-  /* Overlay backdrop — dark-mode spec is 50% (colors.md §8) */
+  /* Overlay backdrop — Neutral-900 @ 50% in dark mode (layout.md §7) */
   --scrim: rgba(15, 16, 20, 0.5);
 }
 

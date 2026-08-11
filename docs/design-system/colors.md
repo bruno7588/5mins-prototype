@@ -431,4 +431,4 @@ Code-only tokens that intentionally extend this spec (keep them). Dark-mode valu
 | `--selected-fill` | `#FCF1DB` | `rgba(255, 187, 56, 0.16)` | Opaque equivalent of `--selected-tint` for sticky cells over scrolling content |
 | `--selected-fill-hover` | `#FDECC5` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-fill` / selected rows |
 | `--control-selected` | `var(--secondary-600)` | `var(--secondary-500)` | Radio/checkbox selected amber, per selection-controls.md |
-| `--scrim` | `rgba(15, 16, 20, 0.25)` | `rgba(15, 16, 20, 0.5)` | Overlay backdrop fill (light 25% / dark 50%) |
+| `--scrim` | `rgba(15, 16, 20, 0.25)` | `rgba(15, 16, 20, 0.5)` | Overlay backdrop fill — Neutral-900 @ 25% light / 50% dark; spec in `layout.md` §7 |

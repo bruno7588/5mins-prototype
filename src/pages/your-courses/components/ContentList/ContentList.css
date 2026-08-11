@@ -666,15 +666,14 @@
 .overlay-backdrop {
   position: fixed;
   inset: 0;
-  background: var(--neutral-900);
-  opacity: 0.64;
+  background: var(--scrim);
   z-index: 1000;
   animation: overlay-fade-in 200ms ease-out;
 }
 
 @keyframes overlay-fade-in {
   from { opacity: 0; }
-  to { opacity: 0.64; }
+  to { opacity: 1; }
 }
 
 .dialog {
