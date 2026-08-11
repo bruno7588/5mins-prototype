@@ -1,17 +1,19 @@
 /* DS Side Drawer — follows docs/design-system/overlays.md, content per Figma 10613:658 */
 
 /* Backdrop */
+/* The DS scrim (layout.md §7) — 50% in dark, 25% in light. It used to be a hardcoded
+   Neutral-900 at 64%, which buried the page behind it; the token keeps the content
+   underneath readable. The alpha lives in the colour, so the fade runs 0 → 1. */
 .overlay-backdrop {
   position: fixed;
   inset: 0;
-  background: var(--neutral-900, #0F1014);
-  opacity: 0.64;
+  background: var(--scrim);
   z-index: 1000;
   animation: overlay-fade-in 200ms ease-out;
 }
 .overlay-backdrop--closing { animation: overlay-fade-out 300ms ease-out forwards; }
-@keyframes overlay-fade-in  { from { opacity: 0; } to { opacity: 0.64; } }
-@keyframes overlay-fade-out { from { opacity: 0.64; } to { opacity: 0; } }
+@keyframes overlay-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes overlay-fade-out { from { opacity: 1; } to { opacity: 0; } }
 
 /* Drawer panel */
 .side-drawer {

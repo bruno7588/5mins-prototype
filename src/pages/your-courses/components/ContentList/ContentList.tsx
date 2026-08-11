@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import Button from '@/components/Button/Button'
 import { Add, Clock, Edit2, Layer, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
+import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import AssessmentIcon from '../../../../components/icons/AssessmentIcon'
 import Badge from '../../../../components/Badge/Badge'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
@@ -99,11 +100,19 @@ function ContentCardThumb({ item }: { item: ContentItem }) {
   const isSituational = item.type === 'SituationalTest'
   const isScorm = item.type === 'SCORM'
   return (
-    <div className={`content-card-thumb ${isAssessment || isSituational ? 'content-card-thumb--assessment' : ''}`}>
+    /* The situational-test artwork carries its own shape, so it gets no tinted tile
+       behind it — unlike the assessment glyph, which needs one. */
+    <div className={`content-card-thumb ${isAssessment ? 'content-card-thumb--assessment' : ''}`}>
       {isSituational ? (
-        /* Same stacked-sheets glyph the Add Content rail uses — a situational test is
-           a set of multiple-choice questions. */
-        <Layer size={24} color="var(--text-secondary)" variant="Linear" />
+        /* The DS situational-test artwork (assessment-illustrations); the desktop
+           variant is drawn at 80px and scales down for this 48px admin row. */
+        <img
+          className="content-card-thumb-illustration"
+          src={getAssessmentIllustration('situational-test', 'desktop')}
+          width={48}
+          height={48}
+          alt=""
+        />
       ) : isAssessment ? (
         <svg className="content-card-thumb-illustration" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
           <path d="M28.3224 32.2734H28.3254C28.3254 32.2734 28.3018 32.2837 28.2665 32.294C28.0855 32.3723 27.9046 32.4446 27.7221 32.5125C25.9345 33.2489 20.2744 35.4389 17.8836 38.9896L10.8125 34.1978C13.0665 30.8507 13.0106 25.2694 12.9724 23.0291C12.9488 22.7 12.9356 22.3695 12.9385 22.0374C12.9385 22.0212 12.9385 22.0079 12.9385 22.0079H12.9415C12.968 19.93 13.5785 17.8359 14.8262 15.9838C18.2234 10.9337 25.0576 9.60699 30.0924 13.0175C32.2199 14.4593 33.6853 16.518 34.4106 18.7981C35.3993 21.9061 35.0109 25.4214 33.0497 28.3345C31.8344 30.1394 30.1762 31.4647 28.3224 32.2749V32.2734Z" fill="#FFB83D"/>
