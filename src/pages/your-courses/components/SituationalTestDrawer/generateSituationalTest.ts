@@ -70,7 +70,7 @@ Decide what you do in the next five minutes. A good answer protects the guest's 
       text: 'Your shift ends. What do you hand over?',
       options: [
         'A written note of what went wrong, what you promised her, and who owes her a follow-up tomorrow',
-        'Nothing — the issue was resolved on your shift',
+        'Nothing - the issue was resolved on your shift',
         'A verbal heads-up to the incoming manager if you see them before you leave',
         "An email to the general manager about housekeeping's staffing problem",
       ],
@@ -83,7 +83,7 @@ Decide what you do in the next five minutes. A good answer protects the guest's 
       options: [
         'You do, the same day, referencing what was actually promised her at the desk',
         'The general manager, once the full incident has been investigated',
-        'Nobody — responding to reviews invites further argument',
+        'Nobody - responding to reviews invites further argument',
         'The marketing team, using the standard apology template',
       ],
       correctIndex: 0,
@@ -94,7 +94,7 @@ Decide what you do in the next five minutes. A good answer protects the guest's 
         'Log the discrepancy and raise it as a process problem, separately from the guest recovery',
         'Tell the guest the room was recorded as clean so the error was not yours',
         'Ask the supervisor to correct the record before anyone else sees it',
-        'Drop it — the guest has been moved, so the record no longer matters',
+        'Drop it - the guest has been moved, so the record no longer matters',
       ],
       correctIndex: 0,
     },
@@ -104,7 +104,7 @@ Decide what you do in the next five minutes. A good answer protects the guest's 
 const finance: Pack = {
   brief: `You are a relationship manager at a mid-sized commercial bank, covering twenty business accounts.
 
-A long-standing customer — a family-run import business you have handled for six years — asks you to process three transfers totalling £180,000 to a supplier in a jurisdiction your bank treats as higher risk. They say the supplier is new, the deal closes Friday, and their finance director is on leave.
+A long-standing customer, a family-run import business you have handled for six years, asks you to process three transfers totalling £180,000 to a supplier in a jurisdiction your bank treats as higher risk. They say the supplier is new, the deal closes Friday, and their finance director is on leave.
 
 The three transfers sit just under the threshold that would trigger an automatic enhanced due-diligence review. The caller is warm, apologetic about the rush, and mentions twice that they have never had a problem with the bank before.
 
@@ -136,7 +136,7 @@ Decide how you handle the request today. A good answer meets the bank's obligati
         'The invoice plus evidence of who owns and controls the supplier, and how they found them',
         'The invoice, since it evidences the commercial purpose of the payment',
         'A signed letter confirming the supplier is legitimate',
-        'Nothing further — six years of history is sufficient comfort',
+        'Nothing further - six years of history is sufficient comfort',
       ],
       correctIndex: 0,
     },
@@ -178,7 +178,7 @@ Decide how you handle the request today. A good answer meets the bank's obligati
 const sales: Pack = {
   brief: `You are an account executive at a B2B software company, three weeks from the end of the quarter and £40,000 short of your number.
 
-A prospect you have worked for two months — a 400-person logistics firm — is ready to sign. On the final call their new CFO joins and asks for a 35% discount, framing it as the only way the deal gets approved this quarter. Your approval ceiling is 15%.
+A prospect you have worked for two months, a 400-person logistics firm, is ready to sign. On the final call their new CFO joins and asks for a 35% discount, framing it as the only way the deal gets approved this quarter. Your approval ceiling is 15%.
 
 Afterwards your champion, the Head of Operations, messages you privately to say the CFO "always does this" and that the budget is real.
 
@@ -197,7 +197,7 @@ Decide how you respond on the follow-up call. A good answer protects a price you
     {
       text: 'You can approve 15%. How do you use it?',
       options: [
-        'Trade it — offer 15% in exchange for a two-year term or a reference commitment',
+        'Trade it - offer 15% in exchange for a two-year term or a reference commitment',
         'Offer 15% as a quarter-end concession with a Friday deadline',
         'Hold at list price and keep the 15% in reserve for a second round',
         'Split the difference and ask your manager to sign off 25%',
@@ -209,7 +209,7 @@ Decide how you respond on the follow-up call. A good answer protects a price you
       options: [
         'Ask the champion who else has to approve, and what the CFO signed off last time',
         'Repeat it to the CFO to show you understand how they negotiate',
-        'Ignore it — a private message from a champion is not reliable',
+        'Ignore it - a private message from a champion is not reliable',
         'Use it to justify holding at list price on the next call',
       ],
       correctIndex: 0,
@@ -217,7 +217,7 @@ Decide how you respond on the follow-up call. A good answer protects a price you
     {
       text: 'You are £40,000 short with three weeks left. How does that affect the deal?',
       options: [
-        "It does not — run the deal on the buyer's timeline and flag the risk to your manager early",
+        "It does not - run the deal on the buyer's timeline and flag the risk to your manager early",
         'Offer a larger discount for signature before quarter end',
         'Warn them the discount expires on the 31st to pull the deal forward',
         'Forecast it as committed so your manager helps you protect the price',
@@ -232,7 +232,7 @@ Decide how you respond on the follow-up call. A good answer protects a price you
         'Go back through the champion to find out what changed internally',
         'Send the CFO a final-offer email with an expiry date',
         'Escalate to the CFO\'s manager to unblock the decision',
-        'Wait — chasing signals that you need the deal more than they do',
+        'Wait - chasing signals that you need the deal more than they do',
       ],
       correctIndex: 0,
     },
@@ -240,7 +240,7 @@ Decide how you respond on the follow-up call. A good answer protects a price you
       text: 'They accept 15% but ask to pay annually in arrears. What do you do?',
       options: [
         'Treat payment terms as a second concession and trade them, rather than adding them free',
-        'Accept — the discount is what mattered and the terms are finance\'s problem',
+        'Accept - the discount is what mattered and the terms are finance\'s problem',
         'Refuse outright, since the discount was already agreed',
         'Accept in exchange for dropping the two-year term you asked for',
       ],
@@ -318,7 +318,7 @@ Decide how you handle the next two hours. A good answer resolves the customer's 
         'Review both today and apply the same fix before they escalate',
         'Wait until the process change is formally approved',
         'Ask the team to flag any case that passes ten days from now on',
-        'Handle them normally — one complaint does not prove a pattern',
+        'Handle them normally - one complaint does not prove a pattern',
       ],
       correctIndex: 0,
     },

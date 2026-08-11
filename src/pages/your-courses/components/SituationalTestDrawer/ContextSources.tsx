@@ -14,7 +14,7 @@ interface Props {
 
 /**
  * The optional Context block on step 1 — background material the AI reads before it
- * writes the scenario. Add Source opens the file picker directly; attached files list
+ * writes the brief. Add Source opens the file picker directly; attached files list
  * as dismissible chips.
  */
 function ContextSources({ sources, onChange }: Props) {
@@ -64,11 +64,11 @@ function ContextSources({ sources, onChange }: Props) {
       >
         <Add size={20} color="currentColor" variant="Linear" />
         <span className="st-drawer__add-source-label">Attach Source</span>
-        <span className="st-drawer__add-source-hint">(Document, Image, Audio or Video)</span>
+        <span className="st-drawer__add-source-hint">(document, image, audio, or video)</span>
       </button>
 
       <span className="st-drawer__helper">
-        Relevant background information helps AI create a more realistic test
+        Relevant background information helps AI create a more realistic test.
       </span>
     </div>
   )

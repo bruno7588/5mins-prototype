@@ -106,8 +106,8 @@ function ContentDrawer({
     rendered === 'library' ? 'Add from the 5Mins Library'
     : rendered === 'scorm' ? 'Add SCORM files'
     : rendered === 'assessment' ? 'Add assessment'
-    : situationalTest ? 'Edit situational test'
-    : 'Add situational test'
+    : situationalTest ? 'Edit Situational Test'
+    : 'Add Situational Test'
 
   return (
     <>

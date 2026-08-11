@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Add, ArrowDown2, ArrowUp2, Trash } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
 import SparkleIcon from '@/components/icons/SparkleIcon'
@@ -20,14 +20,14 @@ import './SituationalTestDrawer.css'
 /* Four labels because the progress ladder has four beats — the card's activeStep maps
    1:1 onto aiStep, so any other length would light the wrong row. */
 const AI_STEPS = [
-  'Reading your scenario',
+  'Reading your brief',
   'Writing the brief',
   'Building the questions',
   'Done',
 ]
 
 const AI_MORE_STEPS = [
-  'Re-reading the scenario',
+  'Re-reading the brief',
   'Drafting more questions',
   'Checking the options',
   'Done',
@@ -118,10 +118,10 @@ interface Props {
   onDirtyChange?: (dirty: boolean) => void
 }
 
-/* Situational test authoring, PRD DES-276. Two steps inside one drawer: the scenario
-   brief sets the scene, then the multiple-choice questions that judge it. The brief is
-   mandatory before questions — deliberate friction so the scenario exists before the
-   questions that depend on it. */
+/* Situational test authoring, PRD DES-276. Two steps inside one drawer: the brief sets
+   the scene, then the multiple-choice questions that judge it. The brief is mandatory
+   before questions — deliberate friction so it exists before the questions that depend
+   on it. */
 function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirtyChange }: Props) {
   const isEdit = !!initial
   /* Editing jumps straight to the questions; the brief is one click away. */
@@ -164,6 +164,17 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
       timers.current.forEach(clearTimeout)
     }
   }, [])
+
+  /* The brief field hugs two lines and grows with its content. Height has to be reset to
+     auto before reading scrollHeight, or the box can only ever get taller. Runs on `step`
+     too, since the textarea unmounts when the questions step is showing. */
+  const briefRef = useRef<HTMLTextAreaElement>(null)
+  useLayoutEffect(() => {
+    const el = briefRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }, [brief, step, aiLoading])
 
   const briefFilled = brief.trim().length > 0
   const briefError = briefBlurred && !briefFilled
@@ -316,11 +327,11 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
   return (
     <>
       <SectionHeader
-        title={isEdit ? 'Edit situational test' : 'Add situational test'}
+        title={isEdit ? 'Edit Situational Test' : 'Add Situational Test'}
         description={
           step === 1
-            ? 'Set the scene learners will be judged on'
-            : 'Add the multiple-choice questions that judge this scenario'
+            ? 'Set the brief learners will be tested on'
+            : 'Add the multiple-choice questions that judge this brief'
         }
         ctas={<CloseButton onClick={onClose} />}
       />
@@ -333,7 +344,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
           ) : (
           <>
             <GuidanceCallout
-              title="A strong scenario has four parts"
+              title="Guidelines for writing a brief"
               bullets={[
                 'Position — who the learner is in this situation',
                 'Situation — the context, tied to the skill being tested',
@@ -349,14 +360,15 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                     Withdrawn once there's generated work, when it stops being true. */}
                 {!hasQuestionContent && (
                   <span className="st-drawer__label-hint">
-                    (a rough outline is enough — AI will rewrite this into a full brief)
+                    (a rough outline is enough - AI will rewrite it in full)
                   </span>
                 )}
               </label>
               <textarea
+                ref={briefRef}
                 id="st-brief"
                 className={`st-drawer__textarea${briefError ? ' st-drawer__textarea--error' : ''}`}
-                rows={7}
+                rows={2}
                 placeholder="Describe a realistic situation the learner might face, the complication they run into, and the decision you want them to make…"
                 value={brief}
                 onChange={(e) => setBrief(e.target.value)}
@@ -370,7 +382,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                   id="st-brief-helper"
                   role="alert"
                 >
-                  Enter a scenario brief
+                  Enter a brief
                 </span>
               )}
             </div>
@@ -385,9 +397,9 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
         ) : (
           <>
             <GuidanceCallout
-              title="Writing the options"
+              title="Guidelines for writing the options"
               bullets={[
-                'Each question should test a single skill from the scenario',
+                'Each question should test a single skill from the brief',
                 'Options are actions the learner could take, never the outcomes of those actions',
                 'Keep every option plausible — an obviously wrong option tests nothing',
               ]}
@@ -607,12 +619,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                 {/* Wrapped rather than conditionally rendered so the tooltip fires over
                     the *disabled* button — handlers sit on Tooltip's own wrapper. */}
                 <Tooltip
-                  text={
-                    <>
-                      <span className="st-drawer__tooltip-required">*</span> A scenario
-                      brief is required
-                    </>
-                  }
+                  text="Write a brief first"
                   position="Top"
                   alignment="Start"
                   icon={false}
@@ -628,12 +635,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                   </Button>
                 </Tooltip>
                 <Tooltip
-                  text={
-                    <>
-                      <span className="st-drawer__tooltip-required">*</span> A scenario
-                      brief is required
-                    </>
-                  }
+                  text="Write a brief first"
                   position="Top"
                   alignment="Start"
                   icon={false}

@@ -4,6 +4,14 @@
    so the two read as one family; class names are prefixed .st-drawer__ because the
    prototype bundles CSS globally. */
 
+/* Divider under the drawer header, mirroring the footer's border-top so the form sits
+   in a ruled band. Scoped to this shell rather than added to SectionHeader, which is
+   shared with the library, SCORM and assessment drawers. */
+.situational-test-drawer-shell .section-header {
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border);
+}
+
 .st-drawer__body {
   flex: 1;
   min-height: 0;
@@ -107,9 +115,12 @@
   transition: border-color 150ms ease;
 }
 
+/* Starts two lines tall and grows with its content (height is set from scrollHeight in
+   the component). The manual resize grip is dropped because it fights the auto-sizing,
+   and overflow is hidden so no inner scrollbar appears mid-growth. */
 .st-drawer__textarea {
-  resize: vertical;
-  min-height: 132px;
+  resize: none;
+  overflow-y: hidden;
 }
 
 .st-drawer__input::placeholder,
@@ -442,9 +453,4 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-tertiary);
-}
-
-/* Matches the roles panel's required marker. */
-.st-drawer__tooltip-required {
-  color: var(--danger-400);
 }
