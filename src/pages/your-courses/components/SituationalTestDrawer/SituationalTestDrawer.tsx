@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Add, ArrowDown2, ArrowUp2, Trash } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
 import Badge from '@/components/Badge/Badge'
@@ -72,25 +72,35 @@ const questionIsComplete = (q: SituationalQuestion) =>
   q.options.filter((o) => o.trim().length > 0).length >= 2 &&
   (q.options[q.correctIndex] ?? '').trim().length > 0
 
+/* Only the authored values matter for the dirty check — question ids are generated per
+   mount and would otherwise make a pristine form look edited. */
+const snapshot = (brief: string, questions: SituationalQuestion[]) =>
+  JSON.stringify({
+    brief,
+    questions: questions.map((q) => ({ t: q.text, o: q.options, c: q.correctIndex })),
+  })
+
 interface Props {
   /** Prefilled when reopened from the course outline (FR-4); null when creating. */
   initial?: SituationalTestData | null
   onClose: () => void
   onSave: (brief: string, questions: SituationalQuestion[]) => void
+  /** Lets the page guard the close paths while there is unsaved work. */
+  onDirtyChange?: (dirty: boolean) => void
 }
 
 /* Situational test authoring, PRD DES-276. Two steps inside one drawer: the scenario
    brief sets the scene, then the multiple-choice questions that judge it. The brief is
    mandatory before questions — deliberate friction so the scenario exists before the
    questions that depend on it. */
-function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props) {
+function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirtyChange }: Props) {
   const isEdit = !!initial
   /* Editing jumps straight to the questions; the brief is one click away. */
   const [step, setStep] = useState<1 | 2>(initial ? 2 : 1)
   const [brief, setBrief] = useState(initial?.brief ?? '')
   const [briefBlurred, setBriefBlurred] = useState(false)
   const [questions, setQuestions] = useState<SituationalQuestion[]>(
-    initial?.questions ?? [makeQuestion()],
+    () => initial?.questions ?? [makeQuestion()],
   )
   /* Which question texts have been blurred — validation fires on blur, not on submit. */
   const [blurredQuestions, setBlurredQuestions] = useState<Set<string>>(new Set())
@@ -104,6 +114,17 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
 
   const briefFilled = brief.trim().length > 0
   const briefError = briefBlurred && !briefFilled
+
+  /* Captured from the first render's own state, not from `initial` — creating a test
+     seeds one blank question, so a baseline built from `initial` alone reads as edited
+     before the admin has typed anything. */
+  const pristine = useRef<string | null>(null)
+  const current = snapshot(brief, questions)
+  if (pristine.current === null) pristine.current = current
+  const dirty = current !== pristine.current
+  useEffect(() => {
+    onDirtyChange?.(dirty)
+  }, [dirty, onDirtyChange])
 
   const updateQuestion = (id: string, patch: Partial<SituationalQuestion>) => {
     setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, ...patch } : q)))
@@ -214,7 +235,11 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
                 aria-describedby={briefError ? 'st-brief-helper' : undefined}
               />
               {briefError && (
-                <span className="st-drawer__helper st-drawer__helper--error" id="st-brief-helper">
+                <span
+                  className="st-drawer__helper st-drawer__helper--error"
+                  id="st-brief-helper"
+                  role="alert"
+                >
                   Enter a scenario brief
                 </span>
               )}
@@ -303,9 +328,14 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
                       onBlur={() => markQuestionBlurred(question.id)}
                       aria-label={`Question ${index + 1} text`}
                       aria-invalid={textError || undefined}
+                      aria-describedby={textError ? `${question.id}-text-error` : undefined}
                     />
                     {textError && (
-                      <span className="st-drawer__helper st-drawer__helper--error">
+                      <span
+                        className="st-drawer__helper st-drawer__helper--error"
+                        id={`${question.id}-text-error`}
+                        role="alert"
+                      >
                         Write the question
                       </span>
                     )}
@@ -313,7 +343,16 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
 
                   <div className="st-drawer__field">
                     <span className="st-drawer__label">What are the options?</span>
-                    <div className="st-drawer__options">
+                    {/* A group, so the "needs 2 options" / "mark one correct" errors
+                        describe the set rather than any single field. */}
+                    <div
+                      className="st-drawer__options"
+                      role="group"
+                      aria-label={`Answer options for question ${index + 1}`}
+                      aria-describedby={
+                        optionsError || correctBlank ? `${question.id}-options-error` : undefined
+                      }
+                    >
                       {question.options.map((option, optionIndex) => {
                         const isCorrect = question.correctIndex === optionIndex
                         return (
@@ -331,6 +370,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
                                 className="st-drawer__option-input"
                                 type="text"
                                 placeholder={`Write option ${optionIndex + 1} here...`}
+                                aria-label={`Option ${optionIndex + 1} of question ${index + 1}`}
                                 value={option}
                                 onChange={(e) =>
                                   updateOption(question.id, optionIndex, e.target.value)
@@ -367,14 +407,13 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
                         <span>Add Option</span>
                       </button>
                     </div>
-                    {optionsError && (
-                      <span className="st-drawer__helper st-drawer__helper--error">
-                        Add at least 2 answer options
-                      </span>
-                    )}
-                    {!optionsError && correctBlank && (
-                      <span className="st-drawer__helper st-drawer__helper--error">
-                        Mark one of the filled options as correct
+                    {(optionsError || correctBlank) && (
+                      <span
+                        className="st-drawer__helper st-drawer__helper--error"
+                        id={`${question.id}-options-error`}
+                        role="alert"
+                      >
+                        {optionsError ? 'Add at least 2 answer options' : 'Mark the correct answer'}
                       </span>
                     )}
                   </div>
@@ -405,7 +444,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
           ) : (
             <>
               <Button onClick={handleSave} disabled={!canSave}>
-                {isEdit ? 'Save Changes' : 'Create Situational Test'}
+                {isEdit ? 'Update Situational Test' : 'Create Situational Test'}
               </Button>
               {/* The brief is no longer shown here, so this is the only way back to it. */}
               <Button

@@ -1,6 +1,7 @@
 import { useLayoutEffect, useState } from 'react'
-import { Eye } from 'iconsax-react'
+import { Danger, Eye } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import PageHeader from './components/PageHeader/PageHeader'
 import ContentList from './components/ContentList/ContentList'
 import type { ContentItem } from './components/ContentList/ContentList'
@@ -50,6 +51,9 @@ function CreateCourse() {
      reads from here when reopened for editing (FR-4). */
   const [situationalTests, setSituationalTests] = useState<Record<number, SituationalTestData>>({})
   const [editingSituationalId, setEditingSituationalId] = useState<number | null>(null)
+  /* Unsaved work in the situational test drawer — every close route checks it first. */
+  const [situationalDirty, setSituationalDirty] = useState(false)
+  const [confirmDiscard, setConfirmDiscard] = useState(false)
 
   /* The Add Content drawer snaps to the bottom edge of the PageHeader's divider —
      so the panel butts directly against the divider line and the tabs row sits
@@ -95,6 +99,17 @@ function CreateCourse() {
     setActiveDrawer(null)
     setTargetSectionId(null)
     setEditingSituationalId(null)
+    setSituationalDirty(false)
+  }
+
+  /* Every way out of a drawer — the header close button, Escape and the scrim — routes
+     through here, so a half-written situational test can't be thrown away by accident. */
+  const requestCloseDrawer = () => {
+    if (activeDrawer === 'situational-test' && situationalDirty) {
+      setConfirmDiscard(true)
+      return
+    }
+    closeDrawer()
   }
 
   const handleAddScorm = (file: ScormFile) => {
@@ -246,7 +261,7 @@ function CreateCourse() {
       />
       <ContentDrawer
         activeDrawer={activeDrawer}
-        onClose={closeDrawer}
+        onClose={requestCloseDrawer}
         sidebarExpanded={sidebarExpanded}
         libraryAddedIds={addedLibraryIds}
         onLibraryAdd={handleAddLibraryLesson}
@@ -258,7 +273,37 @@ function CreateCourse() {
         onAssessmentAdd={handleAddAssessment}
         situationalTest={editingSituationalId === null ? null : situationalTests[editingSituationalId] ?? null}
         onSituationalTestSave={handleSaveSituationalTest}
+        onSituationalTestDirtyChange={setSituationalDirty}
       />
+      <ConfirmModal
+        open={confirmDiscard}
+        onClose={() => setConfirmDiscard(false)}
+        ariaLabel="Discard situational test"
+      >
+        <div className="confirm-modal-header confirm-modal-header--center">
+          <div className="confirm-modal-icon">
+            <Danger size={56} color="var(--danger-500)" variant="Linear" />
+          </div>
+          <h2 className="confirm-modal-title">Discard this situational test?</h2>
+          <p className="confirm-modal-body">
+            Your scenario brief and questions haven't been saved, and can't be recovered.
+          </p>
+        </div>
+        <div className="confirm-modal-actions">
+          <Button variant="outlined-2" onClick={() => setConfirmDiscard(false)}>
+            Keep Editing
+          </Button>
+          <Button
+            semantic="danger"
+            onClick={() => {
+              setConfirmDiscard(false)
+              closeDrawer()
+            }}
+          >
+            Discard
+          </Button>
+        </div>
+      </ConfirmModal>
     </>
   )
 }
