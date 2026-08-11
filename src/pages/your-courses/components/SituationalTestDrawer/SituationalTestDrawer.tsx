@@ -12,6 +12,7 @@ import Tooltip from '@/components/Tooltip/Tooltip'
 import SectionHeader from '../SectionHeader/SectionHeader'
 import ContextSources from './ContextSources'
 import {
+  GENERATION_MS,
   generateMoreSituationalQuestions,
   generateSituationalTest,
 } from './generateSituationalTest'
@@ -115,12 +116,11 @@ const questionIsComplete = (q: SituationalQuestion) =>
    be "unsaved". They're in here anyway: dirty means the admin has put work into this
    form, and losing an attached policy to a stray Escape is exactly what the discard
    guard exists to prevent. */
+const questionsSig = (questions: SituationalQuestion[]) =>
+  JSON.stringify(questions.map((q) => ({ t: q.text, o: q.options, c: q.correctIndex })))
+
 const snapshot = (brief: string, questions: SituationalQuestion[], sources: string[]) =>
-  JSON.stringify({
-    brief,
-    questions: questions.map((q) => ({ t: q.text, o: q.options, c: q.correctIndex })),
-    sources,
-  })
+  JSON.stringify({ brief, questions: questionsSig(questions), sources })
 
 interface Props {
   /** Prefilled when reopened from the course outline (FR-4); null when creating. */
@@ -165,6 +165,13 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
   /* How many times "Generate With AI" has run on step 2, so each press serves the next
      pair from the pack rather than repeating the first one. */
   const [aiMoreRound, setAiMoreRound] = useState(0)
+  /* How many whole-test generations have run, so Regenerate advances the brief and the
+     question window instead of handing back what is already on screen. */
+  const [aiRound, setAiRound] = useState(0)
+  /* Signature of the questions exactly as generation left them. Regenerate is offered
+     only while this still matches, which is what separates "AI output the admin has not
+     invested in" from "work that would be destroyed". Null before any generation. */
+  const [generatedSig, setGeneratedSig] = useState<string | null>(null)
   const timers = useRef<number[]>([])
   const cancelled = useRef(false)
 
@@ -257,15 +264,30 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
     (q) => q.text.trim() || q.options.some((o) => o.trim()),
   )
 
-  /* Fake progress against the mock's fixed 2s, mirroring the roles panel. The ladder is
-     cosmetic — the resolve is what actually gates the result. */
+  /* The generated questions are still untouched, so a re-roll costs the admin nothing.
+     Deliberately keyed on the questions alone: editing the brief and pressing Regenerate
+     is the point — the edited brief becomes the new prompt. Touching any question
+     withdraws the offer, which is the same guard hasQuestionContent provides for the
+     first run. */
+  const isUntouchedGeneration =
+    generatedSig !== null && questionsSig(questions) === generatedSig
+
+  /* Sources only ever feed generation, so they stay on screen exactly as long as there is
+     a generate action to feed. Showing them on a saved test would be a control that
+     cannot do anything. */
+  const canGenerate = !hasQuestionContent || isUntouchedGeneration
+
+  /* Fake progress against the mock's fixed delay, mirroring the roles panel. Paced off
+     GENERATION_MS so the two cannot drift: the bar should still be climbing when the
+     promise lands, never parked at 85%. The ladder is cosmetic — the resolve is what
+     actually gates the result. */
   const runProgressLadder = () => {
     setAiProgress(0)
     setAiStep(0)
     timers.current.push(
-      setTimeout(() => { setAiProgress(35); setAiStep(1) }, 300),
-      setTimeout(() => { setAiProgress(65); setAiStep(2) }, 800),
-      setTimeout(() => setAiProgress(85), 1200),
+      setTimeout(() => { setAiProgress(35); setAiStep(1) }, GENERATION_MS * 0.15),
+      setTimeout(() => { setAiProgress(65); setAiStep(2) }, GENERATION_MS * 0.42),
+      setTimeout(() => setAiProgress(85), GENERATION_MS * 0.72),
     )
   }
 
@@ -277,7 +299,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
     setAiLoading(true)
     runProgressLadder()
 
-    const result = await generateSituationalTest(brief, sources)
+    const result = await generateSituationalTest(brief, sources, aiRound)
     if (cancelled.current) return
 
     setAiProgress(100)
@@ -288,8 +310,14 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
         setBrief(result.brief)
         /* makeQuestion() stays the only id source, so the generated questions slot into
            the same numbering as hand-written ones. */
-        setQuestions(result.questions.map((q) => ({ ...makeQuestion(), ...q })))
+        const generated = result.questions.map((q) => ({ ...makeQuestion(), ...q }))
+        setQuestions(generated)
+        setGeneratedSig(questionsSig(generated))
         setCollapsedQuestions(new Set())
+        setAiRound((r) => r + 1)
+        /* A fresh set of questions restarts the held-back pool, or step 2's button would
+           carry on from an offset that belongs to the previous generation. */
+        setAiMoreRound(0)
         setAiLoading(false)
       }, 400),
     )
@@ -299,7 +327,14 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
     setAiMoreLoading(true)
     runProgressLadder()
 
-    const extras = await generateMoreSituationalQuestions(brief, sources, aiMoreRound)
+    /* aiRound - 1 is the generation currently on screen; aiRound has already advanced
+       past it. Zero stays zero for a hand-written test that never generated. */
+    const extras = await generateMoreSituationalQuestions(
+      brief,
+      sources,
+      aiMoreRound,
+      Math.max(0, aiRound - 1),
+    )
     if (cancelled.current) return
 
     setAiProgress(100)
@@ -401,8 +436,9 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
               <label className="st-drawer__label st-drawer__label--section" htmlFor="st-brief">
                 Brief{' '}
                 {/* Says the quiet part before it happens: Generate rewrites this field.
-                    Withdrawn once there's generated work, when it stops being true. */}
-                {!hasQuestionContent && (
+                    Withdrawn once there is no generate action left, when it stops being
+                    true. */}
+                {canGenerate && (
                   <span className="st-drawer__label-hint">
                     (a rough outline is enough - AI will rewrite it in full)
                   </span>
@@ -431,9 +467,11 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
               )}
             </div>
 
-            {/* Only feeds generation, so it's withdrawn alongside the Generate CTA —
-                otherwise editing a saved test shows an input that cannot do anything. */}
-            {!hasQuestionContent && (
+            {/* Stays below the brief for as long as a generate action can consume it, so
+                sources can be added or removed and fed straight into a Regenerate.
+                Withdrawn only when there is nothing left to feed — on a saved test it
+                would be an input that cannot do anything. */}
+            {canGenerate && (
               <ContextSources sources={sources} onChange={setSources} />
             )}
           </>
@@ -654,9 +692,26 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
           {step === 1 ? (
             /* Nothing to offer while it generates — the working card is the whole state. */
             aiLoading ? null : hasQuestionContent ? (
-              <Button onClick={handleContinue} disabled={!canContinue}>
-                {returnedToBrief ? 'Save Brief' : 'Review Questions'}
-              </Button>
+              <>
+                {/* Only while the generated questions are untouched, so it can never be
+                    the button that destroys written work. Outlined, not filled: reviewing
+                    what AI produced is the expected next step, having another go is the
+                    alternative. */}
+                {isUntouchedGeneration && (
+                  <Button
+                    semantic="ai"
+                    variant="outlined"
+                    icon={<SparkleIcon size={20} gradient />}
+                    onClick={handleGenerate}
+                    disabled={!canContinue}
+                  >
+                    Regenerate
+                  </Button>
+                )}
+                <Button onClick={handleContinue} disabled={!canContinue}>
+                  {returnedToBrief ? 'Save Brief' : 'Review Questions'}
+                </Button>
+              </>
             ) : (
               <>
                 {/* Wrapped rather than conditionally rendered so the tooltip fires over

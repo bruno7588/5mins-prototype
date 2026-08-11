@@ -7,7 +7,10 @@
    action the learner could take rather than the outcome of one, per Step 2's guidance. The
    generator demonstrating the rules the form preaches is the point, not a coincidence. */
 
-const DELAY_MS = 2000
+/* Exported so the drawer's progress ladder is paced off the same number. Two numbers
+   drifting apart is how you get a bar that sits at 85% for a second, or hits 100% while
+   the promise is still out. */
+export const GENERATION_MS = 3600
 
 export interface GeneratedQuestion {
   text: string
@@ -21,20 +24,38 @@ export interface GeneratedTest {
 }
 
 interface Pack {
-  brief: string
+  /* Rotated by Regenerate, so a second press is a genuinely different brief rather than
+     the same paragraphs back — which would read as a broken button.
+
+     Every brief in a pack must describe the SAME situation, just rendered differently.
+     The questions are drawn from one shared pool and every one of them names specifics
+     from the scenario, so a variant that invents a new situation puts a brief about one
+     thing above questions about another. Regenerating a prompt is AI having another go
+     at the same facts, not picking a different story. */
+  briefs: string[]
   questions: GeneratedQuestion[]
   /** Held back for "Generate More Questions" on step 2. */
   extras: GeneratedQuestion[]
 }
 
 const hospitality: Pack = {
-  brief: `You are the duty manager on a Friday evening shift at a 120-room city hotel. The restaurant is fully booked and two of your four servers have called in sick.
+  briefs: [
+    `You are the duty manager on a Friday evening shift at a 120-room city hotel. The restaurant is fully booked and two of your four servers have called in sick.
 
 A guest who checked in an hour ago comes to the desk. Her room was not cleaned before arrival, her 8pm dinner reservation has been given away, and she leaves for a conference dinner in forty minutes. She is calm but firm, and she mentions she books this hotel eleven nights a month.
 
 You have one unoccupied suite on the fourth floor, a restaurant that cannot seat her, and a housekeeping team already an hour behind.
 
 Decide what you do in the next five minutes. A good answer protects the guest's evening, is honest about what you can and cannot fix, and does not commit the hotel to something you have no authority to give.`,
+
+    `It is 7:40pm and you are the duty manager. A guest is standing at the front desk, coat still on, waiting for you to say something.
+
+She checked in an hour ago to a room that had not been cleaned. The 8pm table she booked three weeks ago has been given away. She leaves for a conference dinner in forty minutes, and she stays here eleven nights a month.
+
+Behind you: one unoccupied suite on the fourth floor, a restaurant with no table until 9:30, a housekeeping team an hour behind, and two of four servers off sick. Your shift ends at nine.
+
+Decide what you do in the next five minutes. A good answer protects the guest's evening, is honest about what you can and cannot fix, and does not commit the hotel to something you have no authority to give.`,
+  ],
   questions: [
     {
       text: 'The guest is at the desk waiting for an answer. What do you do first?',
@@ -152,13 +173,23 @@ Decide what you do in the next five minutes. A good answer protects the guest's 
 }
 
 const finance: Pack = {
-  brief: `You are a relationship manager at a mid-sized commercial bank, covering twenty business accounts.
+  briefs: [
+    `You are a relationship manager at a mid-sized commercial bank, covering twenty business accounts.
 
 A long-standing customer, a family-run import business you have handled for six years, asks you to process three transfers totalling £180,000 to a supplier in a jurisdiction your bank treats as higher risk. They say the supplier is new, the deal closes Friday, and their finance director is on leave.
 
 The three transfers sit just under the threshold that would trigger an automatic enhanced due-diligence review. The caller is warm, apologetic about the rush, and mentions twice that they have never had a problem with the bank before.
 
 Decide how you handle the request today. A good answer meets the bank's obligations without accusing anyone of anything, and leaves a record that would stand up to an audit.`,
+
+    `A customer you have banked for six years is on the phone, and they want three transfers released today.
+
+You are a relationship manager at a mid-sized commercial bank. The customer is a family-run import business, always paid on time, never a problem. The transfers total £180,000, they go to a supplier none of you have seen before, and the supplier sits in a jurisdiction your bank treats as higher risk.
+
+Split three ways, each transfer lands just under the value that would trigger an enhanced due-diligence review automatically. Their deal closes Friday. Their finance director is on leave. The caller is warm, apologetic about the rush, and has now mentioned twice that they have never had trouble with the bank before.
+
+Decide how you handle the request today. A good answer meets the bank's obligations without accusing anyone of anything, and leaves a record that would stand up to an audit.`,
+  ],
   questions: [
     {
       text: 'They are on the phone asking you to release the first transfer this afternoon. What do you do?',
@@ -276,13 +307,23 @@ Decide how you handle the request today. A good answer meets the bank's obligati
 }
 
 const sales: Pack = {
-  brief: `You are an account executive at a B2B software company, three weeks from the end of the quarter and £40,000 short of your number.
+  briefs: [
+    `You are an account executive at a B2B software company, three weeks from the end of the quarter and £40,000 short of your number.
 
 A prospect you have worked for two months, a 400-person logistics firm, is ready to sign. On the final call their new CFO joins and asks for a 35% discount, framing it as the only way the deal gets approved this quarter. Your approval ceiling is 15%.
 
 Afterwards your champion, the Head of Operations, messages you privately to say the CFO "always does this" and that the budget is real.
 
 Decide how you respond on the follow-up call. A good answer protects a price you can defend, keeps the champion's trust, and does not depend on a discount you have no authority to approve.`,
+
+    `The call ended ten minutes ago and you have a follow-up booked for tomorrow morning.
+
+You are an account executive at a B2B software company. The quarter closes in three weeks and you are £40,000 short. The deal that covers it is a 400-person logistics firm you have worked for two months, and until today it was ready to sign.
+
+Then their new CFO joined the final call and asked for 35%, framed as the only way it gets approved this quarter. You can approve 15%. Afterwards your champion, the Head of Operations, messaged you privately: the CFO "always does this", and the budget is real.
+
+Decide how you respond on the follow-up call. A good answer protects a price you can defend, keeps the champion's trust, and does not depend on a discount you have no authority to approve.`,
+  ],
   questions: [
     {
       text: 'The CFO asks for 35% on the call. What is your immediate response?',
@@ -402,13 +443,23 @@ Decide how you respond on the follow-up call. A good answer protects a price you
 /* Nothing in the prompt matched a domain, so fall back to the situation almost every
    admin recognises: an escalation with an unhappy customer and a manager watching. */
 const escalation: Pack = {
-  brief: `You are a team leader with six direct reports in a customer support centre.
+  briefs: [
+    `You are a team leader with six direct reports in a customer support centre.
 
 One of your team has been handling a complaint for nine days. This morning the customer emailed your director directly, copying you, describing the service as "the worst I have experienced" and asking for a refund your team cannot authorise.
 
 Your team member is upset, insists they followed the process exactly, and you can see from the record that they did. The process itself is what failed. Your director wants an answer before the end of the day.
 
 Decide how you handle the next two hours. A good answer resolves the customer's problem, is honest with your director about the cause, and does not leave your team member carrying blame for a process they followed correctly.`,
+
+    `The email arrived at 9:04 this morning, addressed to your director, copying you.
+
+You lead a team of six in a customer support centre. One of your people has been working a complaint for nine days. The customer has now gone over all of you, called the service "the worst I have experienced", and asked for a refund nobody on your team can authorise.
+
+You have read the whole record. Your team member followed the process exactly, and you can prove it. The process is what failed. They know the email exists and they are upset. Your director wants an answer before the end of the day.
+
+Decide how you handle the next two hours. A good answer resolves the customer's problem, is honest with your director about the cause, and does not leave your team member carrying blame for a process they followed correctly.`,
+  ],
   questions: [
     {
       text: 'What do you do first?',
@@ -562,11 +613,31 @@ function match(prompt: string, sources: string[]): Pack {
 }
 
 const wait = <T,>(value: T): Promise<T> =>
-  new Promise((resolve) => setTimeout(() => resolve(value), DELAY_MS))
+  new Promise((resolve) => setTimeout(() => resolve(value), GENERATION_MS))
+
+/** How many questions a whole-test generation returns. */
+const MAIN_COUNT = 4
+/** How many held-back questions one "Generate With AI" on step 2 returns. */
+const PER_ROUND = 2
+
+/* Both entry points draw from one flat pool per pack, so the on-screen set and the
+   held-back set can never be the same question twice. Ten per pack. */
+const poolOf = (pack: Pack) => [...pack.questions, ...pack.extras]
+
+const windowOf = <T,>(pool: T[], start: number, count: number): T[] =>
+  Array.from({ length: count }, (_, i) => pool[(start + i) % pool.length])
+
+/** Where a given regenerate round's four questions start in the pool. */
+const mainStart = (pool: GeneratedQuestion[], round: number) =>
+  (round * MAIN_COUNT) % pool.length
 
 /**
  * Generate a whole situational test — brief and questions — from the admin's rough
  * prompt and any context sources they attached.
+ *
+ * `round` is how many times Regenerate has run. Both the brief and the question window
+ * advance with it: 10 questions taken 4 at a time gives five distinct sets before it
+ * repeats, which is well past the point an admin keeps pressing.
  *
  * Questions come back without ids: the drawer owns id generation so there stays exactly
  * one counter.
@@ -574,19 +645,23 @@ const wait = <T,>(value: T): Promise<T> =>
 export function generateSituationalTest(
   prompt: string,
   sources: string[],
+  round = 0,
 ): Promise<GeneratedTest> {
   const pack = match(prompt, sources)
-  return wait({ brief: pack.brief, questions: pack.questions })
+  const pool = poolOf(pack)
+  return wait({
+    brief: pack.briefs[round % pack.briefs.length],
+    questions: windowOf(pool, mainStart(pool, round), MAIN_COUNT),
+  })
 }
 
-/** How many held-back questions one "Generate With AI" on step 2 returns. */
-const PER_ROUND = 2
-
 /**
- * Step 2's "Generate With AI" — two more from the pack's held-back pool.
+ * Step 2's "Generate With AI" — two more from the pool.
  *
  * `round` is how many times the admin has already asked, so each press returns the next
- * pair rather than the same one. Six per pack covers three presses; beyond that it wraps,
+ * pair rather than the same one. `generationRound` is which regenerate round produced the
+ * questions currently on screen: starting past that window is what stops "add two more"
+ * handing back a question the admin is already looking at. Beyond the pool it wraps,
  * which repeats content but never returns an empty list — a press that appeared to do
  * nothing would read as broken.
  */
@@ -594,10 +669,9 @@ export function generateMoreSituationalQuestions(
   prompt: string,
   sources: string[],
   round = 0,
+  generationRound = 0,
 ): Promise<GeneratedQuestion[]> {
-  const { extras } = match(prompt, sources)
-  const start = (round * PER_ROUND) % extras.length
-  return wait(
-    Array.from({ length: PER_ROUND }, (_, i) => extras[(start + i) % extras.length]),
-  )
+  const pool = poolOf(match(prompt, sources))
+  const start = mainStart(pool, generationRound) + MAIN_COUNT + round * PER_ROUND
+  return wait(windowOf(pool, start, PER_ROUND))
 }
