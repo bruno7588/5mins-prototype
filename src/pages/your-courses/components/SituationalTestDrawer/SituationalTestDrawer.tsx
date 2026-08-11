@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Add, ArrowDown2, ArrowUp2, Trash } from 'iconsax-react'
+import { Add, ArrowDown2, ArrowLeft, ArrowUp2, Trash } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
@@ -90,6 +90,19 @@ const makeQuestion = (): SituationalQuestion => ({
   correctIndex: 0,
 })
 
+/* Question and option fields wrap instead of truncating — an admin reviewing generated
+   content has to be able to read all of it, and AI options run long. Passed as both a
+   ref callback and an onInput handler: the ref sizes content that arrives from state
+   (a generation), the handler sizes it as the admin types. */
+const autoGrow = (el: HTMLTextAreaElement | null) => {
+  if (!el) return
+  el.style.height = 'auto'
+  /* scrollHeight covers content + padding but not the border, while a border-box height
+     has to include it — without this the bordered fields sit 2px short and clip. */
+  const border = el.offsetHeight - el.clientHeight
+  el.style.height = `${el.scrollHeight + border}px`
+}
+
 const questionIsComplete = (q: SituationalQuestion) =>
   q.text.trim().length > 0 &&
   q.options.filter((o) => o.trim().length > 0).length >= 2 &&
@@ -149,7 +162,9 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
   const [aiProgress, setAiProgress] = useState(0)
   const [aiStep, setAiStep] = useState(0)
   const [aiMoreLoading, setAiMoreLoading] = useState(false)
-  const [aiMoreUsed, setAiMoreUsed] = useState(false)
+  /* How many times "Generate With AI" has run on step 2, so each press serves the next
+     pair from the pack rather than repeating the first one. */
+  const [aiMoreRound, setAiMoreRound] = useState(0)
   const timers = useRef<number[]>([])
   const cancelled = useRef(false)
 
@@ -170,10 +185,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
      too, since the textarea unmounts when the questions step is showing. */
   const briefRef = useRef<HTMLTextAreaElement>(null)
   useLayoutEffect(() => {
-    const el = briefRef.current
-    if (!el) return
-    el.style.height = 'auto'
-    el.style.height = `${el.scrollHeight}px`
+    autoGrow(briefRef.current)
   }, [brief, step, aiLoading])
 
   const briefFilled = brief.trim().length > 0
@@ -287,7 +299,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
     setAiMoreLoading(true)
     runProgressLadder()
 
-    const extras = await generateMoreSituationalQuestions(brief, sources)
+    const extras = await generateMoreSituationalQuestions(brief, sources, aiMoreRound)
     if (cancelled.current) return
 
     setAiProgress(100)
@@ -298,7 +310,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
         /* Appended, never replacing — the existing list and its collapsed state survive. */
         setQuestions((prev) => [...prev, ...extras.map((q) => ({ ...makeQuestion(), ...q }))])
         setAiMoreLoading(false)
-        setAiMoreUsed(true)
+        setAiMoreRound((r) => r + 1)
       }, 400),
     )
   }
@@ -327,20 +339,52 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
   return (
     <>
       <SectionHeader
-        title={isEdit ? 'Edit Situational Test' : 'Add Situational Test'}
-        description={
-          step === 1
-            ? 'Set the brief learners will be tested on'
-            : 'Add the multiple-choice questions that judge this brief'
+        /* Step 2 names the step rather than the object: the back arrow beside it already
+           says which object you are inside, and the questions need no further preamble. */
+        title={
+          step === 2
+            ? 'Add questions'
+            : isEdit
+              ? 'Edit Situational Test'
+              : 'Add Situational Test'
         }
+        description={step === 1 ? 'Write the brief learners will be tested on' : undefined}
         ctas={<CloseButton onClick={onClose} />}
+        /* Step 2's only route back to the brief, replacing the footer's Edit Brief
+           button (Figma 8998:55648). */
+        leading={
+          step === 2 ? (
+            <button
+              type="button"
+              className="st-drawer__back"
+              aria-label="Back to the brief"
+              onClick={() => {
+                setReturnedToBrief(true)
+                setStep(1)
+              }}
+            >
+              <ArrowLeft size={16} color="currentColor" variant="Linear" />
+            </button>
+          ) : undefined
+        }
       />
 
       <div className="st-drawer__body">
         {step === 1 ? (
           aiLoading ? (
             /* Rendered where the brief will land, so the card doubles as its placeholder. */
-            <AIWorkingCard steps={AI_STEPS} activeStep={aiStep} progress={aiProgress} />
+            <>
+              <AIWorkingCard steps={AI_STEPS} activeStep={aiStep} progress={aiProgress} />
+              {/* The admin's own words stay on screen while AI rewrites them, with a
+                  shimmer sweeping the text so it reads as being worked on rather than
+                  frozen. Rendered as text, not a field — it is not editable right now. */}
+              {brief.trim() && (
+                <div className="st-drawer__field">
+                  <span className="st-drawer__label st-drawer__label--section">Brief</span>
+                  <p className="st-drawer__brief-shimmer">{brief}</p>
+                </div>
+              )}
+            </>
           ) : (
           <>
             <GuidanceCallout
@@ -396,15 +440,6 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
           )
         ) : (
           <>
-            <GuidanceCallout
-              title="Guidelines for writing the options"
-              bullets={[
-                'Each question should test a single skill from the brief',
-                'Options are actions the learner could take, never the outcomes of those actions',
-                'Keep every option plausible — an obviously wrong option tests nothing',
-              ]}
-            />
-
             {questions.map((question, index) => {
               const filledOptions = question.options.filter((o) => o.trim().length > 0).length
               const textError = blurredQuestions.has(question.id) && !question.text.trim()
@@ -426,10 +461,6 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                       aria-expanded={isOpen}
                     >
                       <span className="st-drawer__question-index">Question {index + 1}</span>
-                      {/* Folded rows carry their question text so the list stays readable. */}
-                      {!isOpen && question.text.trim() && (
-                        <span className="st-drawer__question-preview">{question.text}</span>
-                      )}
                     </button>
                     {questions.length > 1 && (
                       <Tooltip
@@ -465,14 +496,17 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                     </button>
                   </div>
 
-                  <Collapse open={isOpen}>
+                  {/* The question itself stays visible when the card is folded — it is
+                      what identifies the card. Only the options collapse. */}
                   <div className="st-drawer__question-body">
                   <div className="st-drawer__field">
-                    <input
+                    <textarea
+                      ref={autoGrow}
+                      rows={1}
                       className={`st-drawer__input${textError ? ' st-drawer__input--error' : ''}`}
-                      type="text"
                       placeholder="Write your question here..."
                       value={question.text}
+                      onInput={(e) => autoGrow(e.currentTarget)}
                       onChange={(e) => updateQuestion(question.id, { text: e.target.value })}
                       onBlur={() => markQuestionBlurred(question.id)}
                       aria-label={`Question ${index + 1} text`}
@@ -489,7 +523,10 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                       </span>
                     )}
                   </div>
+                  </div>
 
+                  <Collapse open={isOpen}>
+                  <div className="st-drawer__question-options">
                   <div className="st-drawer__field">
                     <span className="st-drawer__label">What are the options?</span>
                     {/* A group, so the "needs 2 options" / "mark one correct" errors
@@ -515,12 +552,14 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                                 }
                                 aria-label={`Mark option ${optionIndex + 1} of question ${index + 1} as the correct answer`}
                               />
-                              <input
+                              <textarea
+                                ref={autoGrow}
+                                rows={1}
                                 className="st-drawer__option-input"
-                                type="text"
                                 placeholder={`Write option ${optionIndex + 1} here...`}
                                 aria-label={`Option ${optionIndex + 1} of question ${index + 1}`}
                                 value={option}
+                                onInput={(e) => autoGrow(e.currentTarget)}
                                 onChange={(e) =>
                                   updateOption(question.id, optionIndex, e.target.value)
                                 }
@@ -583,22 +622,26 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
             )}
 
             <div className="st-drawer__question-actions">
-              <button
-                className="st-drawer__add-question"
-                type="button"
+              <Button
+                variant="outlined-2"
+                icon={<Add size={20} color="currentColor" variant="Linear" />}
                 onClick={() => setQuestions((prev) => [...prev, makeQuestion()])}
               >
-                <Add size={24} color="currentColor" variant="Linear" />
-                <span>Add Question</span>
-              </button>
-              {!aiMoreUsed && !aiMoreLoading && (
+                Add Question
+              </Button>
+              {/* Stays put once used — generating more is a repeatable action, not a
+                  one-shot, so the control shouldn't vanish out from under the admin. */}
+              {!aiMoreLoading && (
                 <Button
                   semantic="ai"
                   variant="outlined"
-                  icon={<SparkleIcon size={20} />}
+                  /* The outlined AI button gradient-clips its icon slot to *text*, so a
+                     currentColor glyph resolves to transparent and vanishes. The icon
+                     paints its own gradient instead — same ladder as the label. */
+                  icon={<SparkleIcon size={20} gradient />}
                   onClick={handleGenerateMore}
                 >
-                  Generate More Questions
+                  Generate With AI
                 </Button>
               )}
             </div>
@@ -648,21 +691,10 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
               </>
             )
           ) : (
-            <>
-              <Button onClick={handleSave} disabled={!canSave}>
-                {isEdit ? 'Update Situational Test' : 'Create Situational Test'}
-              </Button>
-              {/* The brief is no longer shown here, so this is the only way back to it. */}
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setReturnedToBrief(true)
-                  setStep(1)
-                }}
-              >
-                Edit Brief
-              </Button>
-            </>
+            /* Getting back to the brief is the header's back arrow, not a footer button. */
+            <Button onClick={handleSave} disabled={!canSave}>
+              {isEdit ? 'Update Situational Test' : 'Create Situational Test'}
+            </Button>
           )}
         </div>
         <span className="st-drawer__step-indicator">Step {step} of 2</span>

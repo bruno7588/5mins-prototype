@@ -98,6 +98,56 @@ Decide what you do in the next five minutes. A good answer protects the guest's 
       ],
       correctIndex: 0,
     },
+    {
+      text: 'She asks for tonight to be taken off her bill. You can authorise that. What do you do?',
+      options: [
+        'Take it off now and tell her it is done, without making her ask a second time',
+        'Tell her you will pass the request to the general manager in the morning',
+        'Offer half the rate back, since she is still getting a suite',
+        'Explain the rate is non-refundable but offer points instead',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'It is 7:55pm and the suite still is not ready. What do you tell her?',
+      options: [
+        'Tell her now, before she goes up, and offer somewhere to change in the meantime',
+        'Wait until she comes down to ask, in case housekeeping finishes first',
+        'Send her up anyway and apologise if the room is not done',
+        'Text her the delay so you do not have to say it in person',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'A colleague says the guest is "being difficult". How do you respond?',
+      options: [
+        'Correct it there and then, and restate what actually went wrong tonight',
+        'Ignore it, since arguing in front of the team helps nobody',
+        'Agree that she is demanding but ask them to stay professional',
+        'Raise it with them privately at the end of the week',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'She asks for your name and your manager\'s name. What do you do?',
+      options: [
+        'Give both, write them down for her, and tell her when your manager is next on shift',
+        'Give your first name only and offer to pass a message on',
+        'Ask what she intends to do with them before you answer',
+        'Give your manager\'s name but not your own, to keep it off the record',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'The same room fault appears on two other arrivals this week. What do you do?',
+      options: [
+        'Raise it as a pattern with evidence, and propose the check that would have caught it',
+        'Handle each guest individually as they come up',
+        'Ask housekeeping to be more careful on arrivals days',
+        'Wait for a fourth case before escalating, to be sure it is real',
+      ],
+      correctIndex: 0,
+    },
   ],
 }
 
@@ -172,6 +222,56 @@ Decide how you handle the request today. A good answer meets the bank's obligati
       ],
       correctIndex: 0,
     },
+    {
+      text: 'The invoice they send is dated three days after today. What do you do?',
+      options: [
+        'Ask them to explain the date, and record both the question and their answer',
+        'Accept it, since post-dated invoices are common in import trade',
+        'Return it and ask them to send a corrected copy',
+        'Ignore the date and check the supplier details instead',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'A colleague offers to process the transfers for you so you can go home. What do you do?',
+      options: [
+        'Decline, and tell them why the payments are on hold',
+        'Accept, and brief them on the customer relationship',
+        'Accept, since the checks are logged in the system anyway',
+        'Ask them to process only the smallest of the three',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'Your MLRO asks why this was not flagged when the account was reviewed last year. What do you say?',
+      options: [
+        'That the pattern is new, and point to what changed in the last month',
+        'That the annual review is not designed to catch this',
+        'That you inherited the account and cannot speak to last year',
+        'That the customer has always been low risk until now',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'The customer asks you directly whether you have reported them. What do you say?',
+      options: [
+        'That you cannot discuss the bank\'s internal processes, and move the conversation on',
+        'That you have, so they understand the delay is not personal',
+        'That you have not, to keep the relationship intact',
+        'That you are not allowed to say, which tells them the answer',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'The checks come back clean. What do you do with the file?',
+      options: [
+        'Release the payments and keep the full record of what you asked and why',
+        'Release the payments and close the file, since nothing was found',
+        'Release the payments and delete the internal notes to protect the relationship',
+        'Hold the payments until the customer explains the split again',
+      ],
+      correctIndex: 0,
+    },
   ],
 }
 
@@ -243,6 +343,56 @@ Decide how you respond on the follow-up call. A good answer protects a price you
         'Accept - the discount is what mattered and the terms are finance\'s problem',
         'Refuse outright, since the discount was already agreed',
         'Accept in exchange for dropping the two-year term you asked for',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'Your manager offers to approve 25% to get it closed this week. What do you do?',
+      options: [
+        'Ask them to hold it, and show what you have not yet traded the 15% for',
+        'Take it, since a signed deal at 25% beats an open one',
+        'Take it but hold it back as a final concession',
+        'Decline and close at 15% or not at all',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'Your champion asks you to send pricing they can "adjust" before the CFO sees it. What do you do?',
+      options: [
+        'Send pricing you are willing to stand behind in the room, and say so',
+        'Send a higher figure so their adjustment lands where you want it',
+        'Send it, since how they present it internally is their call',
+        'Refuse and insist on presenting to the CFO yourself',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'A competitor quotes 40% below your list price. How do you respond?',
+      options: [
+        'Ask what is in their scope, and compare the two on what the buyer actually needs',
+        'Match the price and protect the term instead',
+        'Point out that the competitor cannot deliver at that price',
+        'Hold your price and let the buyer decide on quality',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'They sign at 15% and immediately ask for ten extra seats at no cost. What do you do?',
+      options: [
+        'Price the seats, and offer the same 15% on them rather than giving them away',
+        'Include them, since the deal is signed and the relationship is new',
+        'Refuse, as the contract is agreed and cannot be reopened',
+        'Include them this year and price them at renewal',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'The deal slips past quarter end. What do you tell your manager?',
+      options: [
+        'That it slipped, why, and the specific date you now expect, before they ask',
+        'That it is still closing this week and you are chasing signature',
+        'That the CFO is blocking it and you need help escalating',
+        'Nothing yet, since it may still land in the first week of next quarter',
       ],
       correctIndex: 0,
     },
@@ -322,6 +472,56 @@ Decide how you handle the next two hours. A good answer resolves the customer's 
       ],
       correctIndex: 0,
     },
+    {
+      text: 'The customer emails your director again the next morning. What do you do?',
+      options: [
+        'Reply to both, restate what you committed to yesterday, and give the next update time',
+        'Wait for your director to respond, since it was addressed to them',
+        'Reply to the customer only, to keep your director out of it',
+        'Ask your director how they would like you to handle it',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'Your team member asks to be moved off customer-facing work. How do you respond?',
+      options: [
+        'Ask what would need to change for them to stay, before agreeing to anything',
+        'Move them, since they have clearly lost confidence',
+        'Tell them to give it a week and see how they feel',
+        'Decline, as moving them would confirm they did something wrong',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'Your director asks you to draft a reply for them to send. What do you do?',
+      options: [
+        'Draft it, and flag the one line you think they should say in their own words',
+        'Draft it exactly as you would send it yourself',
+        'Ask them to send yours unchanged, since you know the case',
+        'Decline, and offer to reply directly instead',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'Operations pushes back on your proposed process change. What do you do?',
+      options: [
+        'Take them the three cases, and ask what they would change instead',
+        'Escalate to your director, since the evidence is clear',
+        'Implement it for your team only and leave theirs alone',
+        'Drop it, as the immediate complaint is now resolved',
+      ],
+      correctIndex: 0,
+    },
+    {
+      text: 'A month later the same failure happens on another team. What do you do?',
+      options: [
+        'Share what you changed and what it cost, without waiting to be asked',
+        'Let their team leader handle it as you handled yours',
+        'Raise it with your director as evidence the fix was never rolled out',
+        'Offer to take the case on, since you know the pattern',
+      ],
+      correctIndex: 0,
+    },
   ],
 }
 
@@ -379,10 +579,25 @@ export function generateSituationalTest(
   return wait({ brief: pack.brief, questions: pack.questions })
 }
 
-/** Step 2's "Generate More Questions" — the two the pack held back. */
+/** How many held-back questions one "Generate With AI" on step 2 returns. */
+const PER_ROUND = 2
+
+/**
+ * Step 2's "Generate With AI" — two more from the pack's held-back pool.
+ *
+ * `round` is how many times the admin has already asked, so each press returns the next
+ * pair rather than the same one. Six per pack covers three presses; beyond that it wraps,
+ * which repeats content but never returns an empty list — a press that appeared to do
+ * nothing would read as broken.
+ */
 export function generateMoreSituationalQuestions(
   prompt: string,
   sources: string[],
+  round = 0,
 ): Promise<GeneratedQuestion[]> {
-  return wait(match(prompt, sources).extras)
+  const { extras } = match(prompt, sources)
+  const start = (round * PER_ROUND) % extras.length
+  return wait(
+    Array.from({ length: PER_ROUND }, (_, i) => extras[(start + i) % extras.length]),
+  )
 }

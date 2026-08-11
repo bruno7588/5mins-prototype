@@ -630,35 +630,7 @@
 }
 
 /* Compact pill — the more prominent of the two: dashed border, input bg fill, primary text. */
-.curriculum-add-content {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  padding: var(--space-s) var(--space-m);
-  background: var(--input-background);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.curriculum-add-content:hover {
-  background: var(--input-background-hover);
-  border-color: var(--border-hover);
-  color: var(--text-primary);
-}
-
-.curriculum-add-content:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
+/* Add Content is the DS Button (outlined-2); only Add Section keeps a local style. */
 
 /* Compact pill — the quieter, secondary action: dashed border, transparent bg, primary text. */
 .curriculum-add-section {

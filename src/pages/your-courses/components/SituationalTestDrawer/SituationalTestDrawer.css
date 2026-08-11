@@ -12,6 +12,44 @@
   border-bottom: 1px solid var(--border);
 }
 
+/* 12px between the back arrow and the title. The title group has to absorb the free
+   space (Figma's flex-1 headline), or space-between pushes it to the middle of the row
+   and the arrow ends up marooned on the far left. */
+.situational-test-drawer-shell .section-header__headline {
+  gap: var(--space-sm);
+}
+
+.situational-test-drawer-shell .section-header__title-group {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 32px filled circle with a 16px arrow, per Figma 8998:55648. */
+.st-drawer__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: var(--space-s);
+  background: var(--input-background);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.st-drawer__back:hover {
+  background: var(--input-background-hover);
+}
+
+.st-drawer__back:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
 .st-drawer__body {
   flex: 1;
   min-height: 0;
@@ -99,9 +137,14 @@
 
 /* ===== Text fields — outlined, per input.md ===== */
 
+/* Both are textareas: question and option text wrap rather than truncating, so an admin
+   reviewing generated content can read all of it. Height is driven from scrollHeight in
+   the component, so the resize grip and inner scrollbar are off. */
 .st-drawer__input,
 .st-drawer__textarea {
   width: 100%;
+  resize: none;
+  overflow-y: hidden;
   padding: var(--space-sm) var(--space-m);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -118,10 +161,6 @@
 /* Starts two lines tall and grows with its content (height is set from scrollHeight in
    the component). The manual resize grip is dropped because it fights the auto-sizing,
    and overflow is hidden so no inner scrollbar appears mid-growth. */
-.st-drawer__textarea {
-  resize: none;
-  overflow-y: hidden;
-}
 
 .st-drawer__input::placeholder,
 .st-drawer__textarea::placeholder {
@@ -141,6 +180,43 @@
 .st-drawer__input--error,
 .st-drawer__textarea--error {
   border-color: var(--text-error);
+}
+
+/* The brief while AI is rewriting it: same box as the field it replaces, with a light
+   band sweeping the glyphs via background-clip so the text itself reads as in progress. */
+.st-drawer__brief-shimmer {
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  background-image: linear-gradient(
+    100deg,
+    var(--text-tertiary) 40%,
+    var(--text-primary) 50%,
+    var(--text-tertiary) 60%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: st-brief-shimmer 1.8s linear infinite;
+}
+
+@keyframes st-brief-shimmer {
+  from { background-position: 150% 0; }
+  to   { background-position: -150% 0; }
+}
+
+/* No sweep for reduced motion — the working card already says work is happening. */
+@media (prefers-reduced-motion: reduce) {
+  .st-drawer__brief-shimmer {
+    animation: none;
+    background-image: none;
+    color: var(--text-secondary);
+  }
 }
 
 /* ===== Helper + word count ===== */
@@ -166,6 +242,7 @@
   padding: var(--space-sm) var(--space-m);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
+  background: var(--input-background);
 }
 
 .st-drawer__question-head {
@@ -175,7 +252,11 @@
   gap: var(--space-m);
 }
 
-.st-drawer__question-body {
+/* The question field sits outside the collapse and is always visible; the options block
+   is what folds away. Both carry the same top margin so the rhythm doesn't change as
+   the card opens and closes. */
+.st-drawer__question-body,
+.st-drawer__question-options {
   display: flex;
   flex-direction: column;
   gap: var(--space-m);
@@ -236,17 +317,6 @@
   color: var(--text-primary);
 }
 
-.st-drawer__question-preview {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
 .st-drawer__question-remove:hover {
   background: var(--page-background-hover);
   color: var(--text-error);
@@ -265,9 +335,11 @@
   gap: var(--space-sm);
 }
 
+/* Top-aligned so the radio, Correct badge and remove control stay level with the first
+   line once a long option wraps. */
 .st-drawer__option-field {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-s);
   min-height: 44px;
   padding: var(--space-s) var(--space-sm);
@@ -292,8 +364,15 @@
   font-family: inherit;
   font-size: 14px;
   font-weight: 400;
+  line-height: 1.5;
   color: var(--text-primary);
   outline: none;
+  /* Wraps and grows with its content — see .st-drawer__input. */
+  resize: none;
+  overflow-y: hidden;
+  padding: 0;
+  /* Sits on the same baseline as the 20px radio beside it. */
+  margin-top: 2px;
 }
 
 .st-drawer__option-input::placeholder {
@@ -319,10 +398,11 @@
   color: var(--text-error);
 }
 
-/* ===== Dashed add rows ===== */
+/* ===== Dashed add row ===== */
 
-.st-drawer__add-option,
-.st-drawer__add-question {
+/* Inside a question card only. The step-2 "Add Question" action is a DS Button
+   (outlined-2) per Figma 8998:65568, not a dashed row. */
+.st-drawer__add-option {
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -342,13 +422,7 @@
   transition: border-color 150ms ease, background 150ms ease;
 }
 
-.st-drawer__add-question {
-  justify-content: center;
-  font-weight: 700;
-}
-
-.st-drawer__add-option:hover,
-.st-drawer__add-question:hover {
+.st-drawer__add-option:hover {
   background: var(--input-background);
   border-color: var(--border-hover);
 }
@@ -407,18 +481,56 @@
   color: var(--text-tertiary);
 }
 
-.st-drawer__source-chips {
+/* Attached sources — outlined pills carrying the file's type icon, its name and a
+   remove control (Figma 8996:55219). Deliberately not the DS Chip: a chip's amber
+   selected fill reads as a choice the admin made from a set, and these are attachments. */
+.st-drawer__sources {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-sm);
+  gap: var(--space-s);
+  /* 12px clear of the uploader above. The field's own column gap contributes 8px, so
+     this adds the remaining 4px rather than restating the whole distance. */
+  margin: var(--space-xs) 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.st-drawer__source-chips .chip {
-  flex: 0 0 auto;
+.st-drawer__source-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
   max-width: 100%;
-  padding: 4px 10px;
-  gap: var(--space-xs);
-  font-size: 12px;
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-drawer__source-item > svg {
+  flex-shrink: 0;
+}
+
+/* Long file names truncate rather than wrapping the pill onto two lines. */
+.st-drawer__source-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.st-drawer__source-remove {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: color 150ms ease;
+}
+
+.st-drawer__source-remove:hover {
+  color: var(--text-error);
 }
 
 /* ===== Step 2 action row ===== */

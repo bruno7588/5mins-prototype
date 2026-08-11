@@ -762,14 +762,13 @@ function ContentList({
             {/* Always available so admins can add content outside any section. In flat
                mode it targets the single section; once sectioned it targets the
                Unsectioned (loose) bucket, which is created on demand if absent. */}
-            <button
-              type="button"
-              className="curriculum-add-content"
+            <Button
+              variant="outlined-2"
+              icon={<Add size={20} color="currentColor" variant="Linear" />}
               onClick={(e) => onAddContent?.(isFlatMode ? onlySection!.id : UNSECTIONED_ID, e.currentTarget)}
             >
-              <Add size={20} color="currentColor" variant="Linear" />
-              <span>Add Content</span>
-            </button>
+              Add Content
+            </Button>
             <button type="button" className="curriculum-add-section" onClick={startCreate}>
               <TextalignJustifyleft size={20} color="currentColor" variant="Linear" />
               <span>Add Section</span>
