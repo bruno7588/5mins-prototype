@@ -247,9 +247,28 @@
   filter: none;
 }
 
+/* The stroke is the AI gradient, not a flat cyan. Figma 8998:65562 renders it sweeping
+   cyan through purple along the edge; the MCP code export flattens it to its first stop
+   (#00cee6), which is what this used to be. Drawn as a masked ring rather than a border
+   because the button is transparent at rest, so the usual two-background border trick
+   (which needs an opaque inner fill) cannot be used, and border-image ignores the 12px
+   radius. Border stays in the box model, transparent, so nothing reflows. */
 .ds-btn--ai-outlined {
-  border: 1px solid var(--primary-500); /* raw Primary-500 in both modes, per Figma */
+  border: 1px solid transparent;
   background: transparent;
+}
+.ds-btn--ai-outlined::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(circle at top left, var(--text-button-outlined) 0%, var(--blaze-quiz) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
 }
 .ds-btn--ai-outlined:hover:not(:disabled) {
   /* 24% wash of the hover gradient + soft purple glow */
@@ -263,6 +282,13 @@
 .ds-btn--ai-outlined:active:not(:disabled) {
   background: transparent;
   box-shadow: none;
+}
+/* The ring follows the same per-state ladder as the label it frames. */
+.ds-btn--ai-outlined:hover:not(:disabled)::before {
+  background: radial-gradient(circle at top left, var(--text-button-hover) 0%, var(--blaze-quiz) 100%);
+}
+.ds-btn--ai-outlined:active:not(:disabled)::before {
+  background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
 }
 .ds-btn--ai-outlined .ds-btn__label,
 .ds-btn--ai-outlined .ds-btn__icon {
@@ -287,6 +313,9 @@
   border-color: transparent;
   color: var(--text-button-disabled);
 }
+/* Disabled takes the shared flat treatment, so the gradient ring goes with the gradient
+   label. */
+.ds-btn--ai-outlined:disabled::before { display: none; }
 .ds-btn--ai-outlined:disabled .ds-btn__label,
 .ds-btn--ai-outlined:disabled .ds-btn__icon {
   background: none;

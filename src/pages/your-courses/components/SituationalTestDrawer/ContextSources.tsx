@@ -91,10 +91,6 @@ function ContextSources({ sources, onChange }: Props) {
           })}
         </ul>
       )}
-
-      <span className="st-drawer__helper">
-        Relevant background information helps AI create a more realistic test.
-      </span>
     </div>
   )
 }

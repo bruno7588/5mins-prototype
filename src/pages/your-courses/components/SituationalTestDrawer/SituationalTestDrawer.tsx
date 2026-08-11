@@ -146,8 +146,6 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
   )
   /* Which question texts have been blurred — validation fires on blur, not on submit. */
   const [blurredQuestions, setBlurredQuestions] = useState<Set<string>>(new Set())
-  /* Step 1 reached backwards from the questions — the CTA then just saves the brief. */
-  const [returnedToBrief, setReturnedToBrief] = useState(false)
   /* Reopening a finished test starts every question folded so the whole thing can be
      scanned at once; questions you are writing start open. */
   const [collapsedQuestions, setCollapsedQuestions] = useState<Set<string>>(
@@ -393,10 +391,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
               type="button"
               className="st-drawer__back"
               aria-label="Back to the brief"
-              onClick={() => {
-                setReturnedToBrief(true)
-                setStep(1)
-              }}
+              onClick={() => setStep(1)}
             >
               <ArrowLeft size={16} color="currentColor" variant="Linear" />
             </button>
@@ -693,10 +688,15 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
             /* Nothing to offer while it generates — the working card is the whole state. */
             aiLoading ? null : hasQuestionContent ? (
               <>
+                {/* Primary first, matching the pre-generation pair: moving on to the
+                    questions is the expected next step, having another go is the
+                    alternative. The label names where it goes rather than claiming to
+                    save — nothing persists until Create Situational Test on step 2. */}
+                <Button onClick={handleContinue} disabled={!canContinue}>
+                  Review Questions
+                </Button>
                 {/* Only while the generated questions are untouched, so it can never be
-                    the button that destroys written work. Outlined, not filled: reviewing
-                    what AI produced is the expected next step, having another go is the
-                    alternative. */}
+                    the button that destroys written work. */}
                 {isUntouchedGeneration && (
                   <Button
                     semantic="ai"
@@ -708,9 +708,6 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                     Regenerate
                   </Button>
                 )}
-                <Button onClick={handleContinue} disabled={!canContinue}>
-                  {returnedToBrief ? 'Save Brief' : 'Review Questions'}
-                </Button>
               </>
             ) : (
               <>

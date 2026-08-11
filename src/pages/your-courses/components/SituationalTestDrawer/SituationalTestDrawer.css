@@ -314,7 +314,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 
 .st-drawer__question-remove:hover {
@@ -507,6 +507,14 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+/* Skill-card hover (cards.md § Skill card): border to --border-hover, fill to
+   --page-background-hover. Same chip shape, so it takes the same state. */
+.st-drawer__source-item:hover {
+  border-color: var(--border-hover);
+  background: var(--page-background-hover);
 }
 
 .st-drawer__source-item > svg {

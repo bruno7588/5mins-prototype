@@ -13,7 +13,7 @@ Spec source: Figma Library — parent frame `node 5453:38273` (dark board `10825
 > 1. **Primary filled ladder is now mode-specific.** Light darkened one step (bg Primary-**700**, was 600); dark uses Primary-**500** with a **dark label** (`Neutral-800`) and goes **lighter on hover** (Primary-400).
 > 2. **Outlined resting tint is gone.** New fill ladder: **transparent at rest → tint on hover → transparent on press**. Hover tint = Primary-500 @ 16% (primary) / family-500 @ **24%** (semantic families). Disabled is transparent too (the 16% neutral fill was removed).
 > 3. **Icons are now LEADING** (before the label), not trailing. Gap 4px (S) / 8px (M, L); icon-side padding is one step tighter.
-> 4. **AI gradients are per-state and per-mode**: the gradient start follows the primary filled ladder, the end is always Blaze `#8158EC`. AI hover gains a cyan border + purple glow. AI-Outlined lost its resting wash (wash only on hover, at 24%).
+> 4. **AI gradients are per-state and per-mode**: the gradient start follows the primary filled ladder, the end is always Blaze `#8158EC`. AI hover gains a cyan border + purple glow. AI-Outlined lost its resting wash (wash only on hover, at 24%), and its 1px stroke is a **gradient**, not a flat cyan (corrected 2026-08-11 - see AI-Outlined below).
 > 5. Warning/Success dark-mode filled hovers now go **lighter** (Warning-500 / Success-400). Danger darkens in both modes.
 > 6. Coverage: Loading now exists for the semantic-outlined families; semantic-text variants (Danger/Warning/Success-text) are first-class.
 
@@ -261,13 +261,34 @@ AI buttons use a diagonal **gradient that ends at Blaze `#8158EC`** and *starts*
 
 ### AI-Outlined
 
-**Transparent at rest** (the old 16% resting wash is gone). 1px raw `#00cee6` border in every state; the **label + icon are gradient-filled** via background-clip with the *same state gradient* as `.btn-ai`:
+**Transparent at rest** (the old 16% resting wash is gone). The 1px stroke is **the AI gradient, not a flat cyan** - it sweeps cyan through purple along the edge, on the same per-state ladder as the label it frames. The **label + icon are gradient-filled** via background-clip with that same gradient.
+
+> **Verified 2026-08-11 against Figma `8998:65562`** by sampling the rendered stroke: `rgb(19,171,202)` → `rgb(143,94,203)` → `rgb(5,201,228)` → `rgb(90,105,210)` across the top edge. Note the MCP code export flattens this stroke to its first stop and reports `border: 1px solid #00cee6` - that export is wrong, and this doc said the same thing until the pixels were checked. Figma paints a diamond gradient, so CSS uses the documented `radial-gradient(circle at top left, …)` approximation, exactly as `.btn-ai` already does for its fill.
+
+The ring is drawn as a **masked pseudo-element**, not a border: the button is transparent at rest, so the usual two-background border trick (which needs an opaque inner fill) does not apply, and `border-image` ignores the 12px radius. Keep the transparent `border` in the box model so nothing reflows between states.
 
 ```css
 .btn-ai-outlined {
   background: transparent;
-  border: 1px solid #00cee6;                       /* raw hex — still not tokenized in Figma */
+  border: 1px solid transparent;                   /* holds the box, ring is painted below */
 }
+.btn-ai-outlined::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;                                    /* = stroke width */
+  background: radial-gradient(circle at top left, var(--text-button-outlined) 0%, #8158EC 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+/* the ring follows the same state ladder as the label */
+.btn-ai-outlined:hover::before  { background: radial-gradient(circle at top left, var(--text-button-hover) 0%, #8158EC 100%); }
+.btn-ai-outlined:active::before { background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, #8158EC 100%); }
+.btn-ai-outlined:disabled::before { display: none; }   /* disabled takes the shared flat treatment */
 .btn-ai-outlined:hover {
   /* wash = the HOVER gradient at 24% opacity, plus a soft glow */
   background: radial-gradient(circle at top left,
