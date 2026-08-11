@@ -110,19 +110,6 @@
 
 /* ===== Helper + word count ===== */
 
-/* Any error on the left, live count pinned right — the count holds its place whether
-   or not an error is showing. */
-.st-drawer__helper-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-m);
-}
-
-.st-drawer__helper-row .st-drawer__count {
-  margin-left: auto;
-}
-
 .st-drawer__helper {
   font-size: 14px;
   font-weight: 400;
@@ -134,67 +121,6 @@
   color: var(--text-error);
 }
 
-.st-drawer__count {
-  flex-shrink: 0;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-}
-
-/* Over the soft target — a warning, never a block (FR-2 / FR-3). */
-.st-drawer__count--over {
-  color: var(--text-warning);
-}
-
-/* Under an option row rather than beside it — the row is already full-width. */
-.st-drawer__count--option {
-  display: block;
-  margin-top: var(--space-xs);
-  padding-left: var(--space-sm);
-  white-space: normal;
-}
-
-/* ===== Step 2: the brief, kept in view ===== */
-
-/* Label and Edit action sit above the box, matching every other field's label row. */
-.st-drawer__brief-summary-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-m);
-}
-
-.st-drawer__brief-text {
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  white-space: pre-wrap;
-}
-
-.st-drawer__link {
-  flex-shrink: 0;
-  padding: 0;
-  background: none;
-  border: none;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-button-outlined);
-  cursor: pointer;
-  transition: color 150ms ease;
-}
-
-.st-drawer__link:hover {
-  color: var(--text-button-hover);
-}
-
 /* ===== Question cards ===== */
 
 /* No gap — the collapsing body carries its own top margin, so a folded question is
@@ -202,7 +128,7 @@
 .st-drawer__question {
   display: flex;
   flex-direction: column;
-  padding: var(--space-m);
+  padding: var(--space-sm) var(--space-m);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
 }
@@ -269,7 +195,7 @@
 
 .st-drawer__question-index {
   flex-shrink: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -344,6 +270,20 @@
   font-size: 12px;
 }
 
+/* Sits inside the option field, hard right. Smaller box than the DS default so it
+   fits the 44px row without pushing it taller. */
+.st-drawer__option-remove {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.st-drawer__option-remove:hover {
+  color: var(--text-error);
+}
+
 /* ===== Dashed add rows ===== */
 
 .st-drawer__add-option,
@@ -390,6 +330,12 @@
   padding-top: var(--space-m);
   border-top: 1px solid var(--border);
   flex-shrink: 0;
+}
+
+.st-drawer__footer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
 }
 
 .st-drawer__step-indicator {

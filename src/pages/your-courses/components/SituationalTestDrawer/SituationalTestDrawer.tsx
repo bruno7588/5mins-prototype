@@ -57,16 +57,6 @@ export interface SituationalTestData {
   questions: SituationalQuestion[]
 }
 
-/* Soft targets from the SJT authoring research (PRD FR-2 / FR-3): over-length is a
-   warning, never a block. */
-const BRIEF_WORD_TARGET = 80
-const OPTION_WORD_TARGET = 25
-
-const countWords = (value: string) => {
-  const trimmed = value.trim()
-  return trimmed ? trimmed.split(/\s+/).length : 0
-}
-
 let nextQuestionId = 0
 /* The first option is marked correct by default — every question needs exactly one
    answer, so starting from a valid state beats starting from an error. */
@@ -112,7 +102,6 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
     () => new Set(initial ? initial.questions.map((q) => q.id) : []),
   )
 
-  const briefWords = countWords(brief)
   const briefFilled = brief.trim().length > 0
   const briefError = briefBlurred && !briefFilled
 
@@ -131,6 +120,19 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
   const addOption = (id: string) => {
     setQuestions((prev) =>
       prev.map((q) => (q.id === id ? { ...q, options: [...q.options, ''] } : q)),
+    )
+  }
+
+  /* Dropping an option shifts everything below it, so the marked answer moves with it —
+     and if the marked one is what went, the mark falls back to the first option. */
+  const removeOption = (id: string, index: number) => {
+    setQuestions((prev) =>
+      prev.map((q) => {
+        if (q.id !== id) return q
+        const correctIndex =
+          q.correctIndex === index ? 0 : q.correctIndex > index ? q.correctIndex - 1 : q.correctIndex
+        return { ...q, options: q.options.filter((_, i) => i !== index), correctIndex }
+      }),
     )
   }
 
@@ -209,45 +211,17 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
                 onChange={(e) => setBrief(e.target.value)}
                 onBlur={() => setBriefBlurred(true)}
                 aria-invalid={briefError || undefined}
-                aria-describedby="st-brief-helper"
+                aria-describedby={briefError ? 'st-brief-helper' : undefined}
               />
-              <div className="st-drawer__helper-row" id="st-brief-helper">
-                {briefError && (
-                  <span className="st-drawer__helper st-drawer__helper--error">
-                    Please enter a scenario brief.
-                  </span>
-                )}
-                <span
-                  className={`st-drawer__count${briefWords > BRIEF_WORD_TARGET ? ' st-drawer__count--over' : ''}`}
-                >
-                  {briefWords > BRIEF_WORD_TARGET
-                    ? `${briefWords} words — aim for ${BRIEF_WORD_TARGET} or fewer`
-                    : `${briefWords} / ${BRIEF_WORD_TARGET} words`}
+              {briefError && (
+                <span className="st-drawer__helper st-drawer__helper--error" id="st-brief-helper">
+                  Enter a scenario brief
                 </span>
-              </div>
+              )}
             </div>
           </>
         ) : (
           <>
-            {/* The brief stays in view so questions can be written against it. Label and
-                action sit above the box, like every other field's label. */}
-            <div className="st-drawer__field">
-              <div className="st-drawer__brief-summary-head">
-                <span className="st-drawer__label">Scenario brief</span>
-                <button
-                  type="button"
-                  className="st-drawer__link"
-                  onClick={() => {
-                    setReturnedToBrief(true)
-                    setStep(1)
-                  }}
-                >
-                  Edit Brief
-                </button>
-              </div>
-              <p className="st-drawer__brief-text">{brief}</p>
-            </div>
-
             <GuidanceCallout
               title="Writing the options"
               bullets={[
@@ -332,7 +306,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
                     />
                     {textError && (
                       <span className="st-drawer__helper st-drawer__helper--error">
-                        Please write the question.
+                        Write the question
                       </span>
                     )}
                   </div>
@@ -341,7 +315,6 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
                     <span className="st-drawer__label">What are the options?</span>
                     <div className="st-drawer__options">
                       {question.options.map((option, optionIndex) => {
-                        const optionWords = countWords(option)
                         const isCorrect = question.correctIndex === optionIndex
                         return (
                           <div key={optionIndex}>
@@ -371,12 +344,17 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
                                   className="st-drawer__correct-badge"
                                 />
                               )}
+                              {/* Two options is the floor, so the last pair can't be
+                                  removed and the control simply isn't there. */}
+                              {question.options.length > 2 && (
+                                <CloseButton
+                                  size={16}
+                                  className="st-drawer__option-remove"
+                                  ariaLabel={`Remove option ${optionIndex + 1} of question ${index + 1}`}
+                                  onClick={() => removeOption(question.id, optionIndex)}
+                                />
+                              )}
                             </div>
-                            {optionWords > OPTION_WORD_TARGET && (
-                              <span className="st-drawer__count st-drawer__count--over st-drawer__count--option">
-                                {optionWords} words — aim for {OPTION_WORD_TARGET} or fewer
-                              </span>
-                            )}
                           </div>
                         )
                       })}
@@ -391,12 +369,12 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
                     </div>
                     {optionsError && (
                       <span className="st-drawer__helper st-drawer__helper--error">
-                        Each question needs at least 2 answer options.
+                        Add at least 2 answer options
                       </span>
                     )}
                     {!optionsError && correctBlank && (
                       <span className="st-drawer__helper st-drawer__helper--error">
-                        Mark one of the filled options as correct.
+                        Mark one of the filled options as correct
                       </span>
                     )}
                   </div>
@@ -419,15 +397,29 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave }: Props
       </div>
 
       <div className="st-drawer__footer">
-        {step === 1 ? (
-          <Button onClick={handleContinue} disabled={!canContinue}>
-            {returnedToBrief ? 'Save Brief' : 'Save Brief & Add Questions'}
-          </Button>
-        ) : (
-          <Button onClick={handleSave} disabled={!canSave}>
-            {isEdit ? 'Save Changes' : 'Save'}
-          </Button>
-        )}
+        <div className="st-drawer__footer-actions">
+          {step === 1 ? (
+            <Button onClick={handleContinue} disabled={!canContinue}>
+              {returnedToBrief ? 'Save Brief' : 'Save Brief & Add Questions'}
+            </Button>
+          ) : (
+            <>
+              <Button onClick={handleSave} disabled={!canSave}>
+                {isEdit ? 'Save Changes' : 'Create Situational Test'}
+              </Button>
+              {/* The brief is no longer shown here, so this is the only way back to it. */}
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setReturnedToBrief(true)
+                  setStep(1)
+                }}
+              >
+                Edit Brief
+              </Button>
+            </>
+          )}
+        </div>
         <span className="st-drawer__step-indicator">Step {step} of 2</span>
       </div>
     </>
