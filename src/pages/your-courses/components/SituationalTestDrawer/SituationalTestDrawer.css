@@ -111,15 +111,6 @@
   line-height: 1.5;
 }
 
-/* H5 weight (typography.md: 14px Bold, small headers and labels) for labels that head a
-   step-level block — Brief, Context. Colour stays --text-secondary: weight alone carries
-   the hierarchy, so the labels don't compete with the content they introduce.
-   Deliberately NOT applied to labels nested inside a question card, where "Question N" is
-   already the bold anchor and a second bold line under it would flatten the card. */
-.st-drawer__label--section {
-  font-weight: 700;
-}
-
 /* The "(optional)" flag rides the label in tertiary at 12px, so it reads as an aside
    rather than part of the label. Matches .assessment-modal-label-hint. */
 .st-drawer__label-optional {
@@ -152,9 +143,12 @@
   transition: border-color 150ms ease, background 150ms ease;
 }
 
-/* Starts two lines tall and grows with its content (height is set from scrollHeight in
-   the component). The manual resize grip is dropped because it fights the auto-sizing,
-   and overflow is hidden so no inner scrollbar appears mid-growth. */
+/* Empty, the brief holds two lines so its placeholder isn't clipped. Once there is
+   content the pseudo-class stops matching and autoGrow's inline height takes over, so the
+   box hugs the text rather than sitting a line taller than it needs. */
+.st-drawer__textarea:placeholder-shown {
+  min-height: calc(2 * 1.5em + 2 * var(--space-sm) + 2px);
+}
 
 .st-drawer__input::placeholder,
 .st-drawer__textarea::placeholder {
@@ -275,7 +269,7 @@
 .st-drawer__question-index {
   flex-shrink: 0;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
 }

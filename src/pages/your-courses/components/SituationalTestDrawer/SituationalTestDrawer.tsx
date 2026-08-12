@@ -118,8 +118,8 @@ interface Props {
    on it. */
 function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirtyChange }: Props) {
   const isEdit = !!initial
-  /* Editing jumps straight to the questions; the brief is one click away. */
-  const [step, setStep] = useState<1 | 2>(initial ? 2 : 1)
+  /* Only the create path is stepped — see the note on the body below. */
+  const [step, setStep] = useState<1 | 2>(1)
   /* Names the test in the course outline, so it is required the same way the brief is —
      an outline row has to have something to call itself. */
   const [title, setTitle] = useState(initial?.title ?? '')
@@ -207,6 +207,9 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
 
   const canContinue = titleFilled && briefFilled
   const canSave = questions.length > 0 && questions.every(questionIsComplete)
+  /* The edit form commits every field at once, so it has to check both halves. On create
+     this is reached from step 2, where step 1 already gated the title and brief. */
+  const canSubmit = canContinue && canSave
 
   const handleContinue = () => {
     if (!canContinue) {
@@ -241,25 +244,25 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
   return (
     <>
       <SectionHeader
-        /* Step 2 names the step rather than the object: the back arrow beside it already
-           says which object you are inside, and the questions need no further preamble. */
+        /* Create's step 2 names the step rather than the object: the back arrow beside it
+           already says which object you are inside. The edit form names the object, since
+           it is the whole test on one surface. */
         title={
           step === 2
-            ? 'Add questions'
-            : isEdit
-              ? 'Edit Situational Test'
-              : 'Add Situational Test'
+            ? isEdit ? 'Edit questions' : 'Add questions'
+            : isEdit ? 'Edit Situational Test' : 'Add Situational Test'
         }
-        description={step === 1 ? 'Write the brief learners will be tested on' : undefined}
+        description={
+          !isEdit && step === 1 ? 'Write the brief learners will be tested on' : undefined
+        }
         ctas={<CloseButton onClick={onClose} />}
-        /* Step 2's only route back to the brief, replacing the footer's Edit Brief
-           button (Figma 8998:55648). */
+        /* Step 2's route back to the title and brief (Figma 8998:55648, 9037:62042). */
         leading={
           step === 2 ? (
             <button
               type="button"
               className="st-drawer__back"
-              aria-label="Back to the brief"
+              aria-label="Back to the title and brief"
               onClick={() => setStep(1)}
             >
               <ArrowLeft size={16} color="currentColor" variant="Linear" />
@@ -268,23 +271,32 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
         }
       />
 
+      {/* Two surfaces on both paths, but they behave differently. Creating gates: the
+          brief has to exist before the questions that depend on it, and nothing persists
+          until the last step. Editing does not gate — either surface commits the whole
+          test, so this is a two-pane editor rather than a wizard, and the step counter is
+          create-only (Figma 9037:61788 / 9037:62042). */}
       <div className="st-drawer__body">
         {step === 1 ? (
           <>
-            <GuidanceCallout
-              title="Guidelines for writing a brief"
-              bullets={[
-                'Position — who the learner is in this situation',
-                'Situation — the context, tied to the skill being tested',
-                'Complication — the specific thing they have to respond to',
-                'Question and goal — what to decide, and what a good answer achieves',
-              ]}
-            />
+            {/* Scaffolding for the blank page, so it is create-only — on a written brief
+                it would push the fields the admin came for below the fold. */}
+            {!isEdit && (
+              <GuidanceCallout
+                title="Guidelines for writing a brief"
+                bullets={[
+                  'Position — who the learner is in this situation',
+                  'Situation — the context, tied to the skill being tested',
+                  'Complication — the specific thing they have to respond to',
+                  'Question and goal — what to decide, and what a good answer achieves',
+                ]}
+              />
+            )}
 
             {/* Single-line: this is the label the outline row carries, not prose — the
                 brief below is where the scenario goes. */}
             <div className="st-drawer__field">
-              <label className="st-drawer__label st-drawer__label--section" htmlFor="st-title">
+              <label className="st-drawer__label" htmlFor="st-title">
                 Title
               </label>
               <input
@@ -310,14 +322,16 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
             </div>
 
             <div className="st-drawer__field">
-              <label className="st-drawer__label st-drawer__label--section" htmlFor="st-brief">
+              <label className="st-drawer__label" htmlFor="st-brief">
                 Brief
               </label>
               <textarea
                 ref={briefRef}
                 id="st-brief"
                 className={`st-drawer__textarea${briefError ? ' st-drawer__textarea--error' : ''}`}
-                rows={2}
+                /* Hugs its content like every other field here; the two-line floor for
+                   the placeholder is CSS, so it applies only while the field is empty. */
+                rows={1}
                 placeholder="Describe a realistic situation the learner might face, the complication they run into, and the decision you want them to make…"
                 value={brief}
                 onChange={(e) => setBrief(e.target.value)}
@@ -336,7 +350,9 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
               )}
             </div>
           </>
-        ) : (
+        ) : null}
+
+        {step === 2 ? (
           <>
             {questions.map((question, index) => {
               const filledOptions = question.options.filter((o) => o.trim().length > 0).length
@@ -541,12 +557,27 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
               </Button>
             </div>
           </>
-        )}
+        ) : null}
       </div>
 
       <div className="st-drawer__footer">
         <div className="st-drawer__footer-actions">
-          {step === 1 ? (
+          {isEdit && step === 1 ? (
+            <>
+              {/* Filled = commit, outlined = navigate: the two buttons differ in kind, so
+                  weight is what says which is which. Both surfaces save the same whole
+                  test under the same label — Edit Questions carries the title and brief
+                  forward and step 2 commits them, so nothing typed here can be lost by
+                  going to look at the questions. */}
+              <Button onClick={handleSave} disabled={!canSubmit}>
+                Update Situational Test
+              </Button>
+              {/* Names its destination and its size, so the jump is predictable. */}
+              <Button variant="outlined" onClick={handleContinue} disabled={!canContinue}>
+                Edit Questions ({questions.length})
+              </Button>
+            </>
+          ) : step === 1 ? (
             /* Wrapped rather than conditionally rendered so the tooltip fires over the
                *disabled* button — handlers sit on Tooltip's own wrapper. The label names
                where it goes rather than claiming to save: nothing persists until Create
@@ -565,13 +596,15 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
               </Button>
             </Tooltip>
           ) : (
-            /* Getting back to the brief is the header's back arrow, not a footer button. */
-            <Button onClick={handleSave} disabled={!canSave}>
+            /* Same label as step 1's commit — one action shouldn't have two names. */
+            <Button onClick={handleSave} disabled={!canSubmit}>
               {isEdit ? 'Update Situational Test' : 'Create Situational Test'}
             </Button>
           )}
         </div>
-        <span className="st-drawer__step-indicator">Step {step} of 2</span>
+        {/* Create only. A counter implies a sequence you finish, and on the edit path
+            either surface commits, so there is nothing to count down to. */}
+        {!isEdit && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
       </div>
     </>
   )
