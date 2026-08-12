@@ -173,6 +173,14 @@
   white-space: nowrap;
 }
 
+/* The stat tooltips centre their text. Applied to the text the call site passes rather
+   than to .tooltip__content, which is portalled to <body> and shared with 38 other
+   tooltips — several of them multi-line paragraphs that read worse centred. */
+.up-stat-tooltip-text {
+  display: block;
+  text-align: center;
+}
+
 /* ── Table cell helpers (DS classes live in Table.css; these are page-local) ── */
 .up-course {
   display: flex;

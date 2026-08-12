@@ -256,7 +256,13 @@ function StatCard({ icon, label, tooltip, share }: {
       <span className="up-stat-value">{share}%</span>
       <span className="up-stat-label">
         {label}
-        {tooltip && <Tooltip position="Top" text={tooltip} iconSize={16} />}
+        {tooltip && (
+          <Tooltip
+            position="Top"
+            text={<span className="up-stat-tooltip-text">{tooltip}</span>}
+            iconSize={16}
+          />
+        )}
       </span>
     </div>
   )
