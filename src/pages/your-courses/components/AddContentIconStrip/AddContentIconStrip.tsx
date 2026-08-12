@@ -7,7 +7,7 @@ import {
   DirectboxNotif,
   Link2,
   CalendarEdit,
-  Layer,
+  ClipboardText,
   TaskSquare,
   Edit,
   ArchiveBook,
@@ -135,12 +135,13 @@ function AddContentIconStrip({
       {item('SCORM', <DirectboxNotif size={ICON} color={C} variant={active === 'scorm' ? 'Bold' : 'Linear'} />, active === 'scorm', onScormClick)}
       {item('Embed Links', <Link2 size={ICON} color={C} variant="Linear" />, false)}
       {item('Events', <CalendarEdit size={ICON} color={C} variant="Linear" />, false)}
-      {/* A stack of sheets — a situational test is a SET of multiple-choice questions,
-          where Multiple Choice below is a single one. Deliberately not a checklist
-          glyph, which would collide with TaskSquare. Pending a Figma Library glyph. */}
       {item(
         'Situational Test',
-        <Layer size={ICON} color={C} variant={active === 'situational-test' ? 'Bold' : 'Linear'} />,
+        <ClipboardText
+          size={ICON}
+          color={C}
+          variant={active === 'situational-test' ? 'Bold' : 'Linear'}
+        />,
         active === 'situational-test',
         onSituationalTestClick,
       )}

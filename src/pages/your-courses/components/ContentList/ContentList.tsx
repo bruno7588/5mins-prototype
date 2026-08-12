@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import Button from '@/components/Button/Button'
-import { Add, Clock, Edit2, Layer, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
+import { Add, ClipboardText, Clock, Edit2, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import AssessmentIcon from '../../../../components/icons/AssessmentIcon'
 import Badge from '../../../../components/Badge/Badge'
@@ -657,7 +657,7 @@ function ContentList({
             <Presence show={situationalCount > 0} className="presence--badge">
               <Badge
                 type="informative"
-                customIcon={<Layer size={16} color="currentColor" variant="Linear" />}
+                customIcon={<ClipboardText size={16} color="currentColor" variant="Linear" />}
                 label={`${situationalCount} situational test${situationalCount === 1 ? '' : 's'}`}
               />
             </Presence>
