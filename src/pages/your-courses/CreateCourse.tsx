@@ -78,10 +78,12 @@ function CreateCourse() {
     openDrawer('library')
   }
 
-  /* A drawer takes 720px, so the sidebar always shows as its icon rail alongside
-     one — the open source stays legible as the rail's active icon. */
+  /* Opening a drawer leaves the sidebar however the admin left it. It used to force the
+     rail closed, which meant clicking Add Content collapsed the very menu the admin was
+     reading — and picking a second source then meant re-expanding it. The drawer shifts
+     left by the panel's width instead (.side-drawer--sidebar-expanded), so both fit.
+     Collapsing is the rail's own toggle, not a side effect of opening something. */
   const openDrawer = (drawer: ActiveDrawer) => {
-    setSidebarExpanded(false)
     setActiveDrawer(drawer)
   }
 
@@ -245,7 +247,9 @@ function CreateCourse() {
             onEditExtra={(item) => openSituationalTest(item.id)}
             onAddContent={openAddContent}
             targetSectionId={targetSectionId}
-            bodyShiftPx={activeDrawer ? 720 : 0}
+            /* The drawer's 720px, plus the 180px it moves left when the panel is
+               expanded — otherwise the outline sits under the drawer's left edge. */
+            bodyShiftPx={activeDrawer ? (sidebarExpanded ? 900 : 720) : 0}
           />
         </main>
       </div>
