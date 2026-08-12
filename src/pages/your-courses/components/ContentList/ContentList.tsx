@@ -66,7 +66,6 @@ export interface ContentItem {
   metadata: string
   thumbnail: string
   thumbColor?: string
-  showEditIcon?: boolean
 }
 
 /* Sections-only model — every item lives in a section. A default "Section 1" is auto-created
@@ -196,26 +195,26 @@ function ContentCard({
         <div className="content-card-info">
           <div className="content-card-title-row">
             <h4 className="content-card-title">{item.title}</h4>
-            <span className="content-card-badge">{badgeLabel}</span>
-          </div>
-          <div className="content-card-meta">
-            <span>{item.metadata}</span>
-            {/* Edit sits with the metadata it edits rather than out in the action
-                cluster, which leaves that cluster to the one destructive action. */}
-            {onEdit ? (
+            {/* Beside the title, not the metadata: it edits the whole test — title, brief
+                and questions — and sitting next to "8 questions" would imply it only
+                reaches the questions. Out of the trailing cluster too, so that column
+                stays a single trash icon on every row type. */}
+            {onEdit && (
               <Tooltip text="Edit" position="Top" icon={false}>
                 <button
                   type="button"
-                  className="content-card-meta-edit"
+                  className="content-card-title-edit"
                   aria-label={`Edit ${item.title}`}
                   onClick={onEdit}
                 >
                   <Edit2 size={16} color="currentColor" variant="Linear" />
                 </button>
               </Tooltip>
-            ) : item.showEditIcon ? (
-              <Edit2 size={16} color="var(--text-secondary)" variant="Linear" />
-            ) : null}
+            )}
+            <span className="content-card-badge">{badgeLabel}</span>
+          </div>
+          <div className="content-card-meta">
+            <span>{item.metadata}</span>
           </div>
         </div>
       </div>
@@ -243,7 +242,8 @@ interface ContentListProps {
   targetSectionId?: string | null
   /* Pixels to shift the body left so it clears an open right-side surface:
      240 for the Add Content panel, 720 for the side drawer, 0 when none. */
-  bodyShiftPx?: number
+  /** A right-side drawer is open, so the list anchors left instead of centring. */
+  drawerOpen?: boolean
 }
 
 function ContentList({
@@ -252,7 +252,7 @@ function ContentList({
   onEditExtra,
   onAddContent,
   targetSectionId,
-  bodyShiftPx = 0,
+  drawerOpen = false,
 }: ContentListProps) {
   const [itemsByKey, setItemsByKey] = useState<Record<string, ContentItem>>({})
   const [sections, setSections] = useState<Section[]>(() => [makeDefaultSection()])
@@ -610,24 +610,19 @@ function ContentList({
   )
   const showMeta = namedSectionCount + lessonCount + assessmentCount + situationalCount > 0
 
+  // With a right-side panel/drawer open, the empty placeholder keeps its full width and
+  // runs on underneath the panel — squeezing it would push the CTA pair out of the dashed
+  // frame. Populated content anchors left at its full 900px instead (see the CSS).
   const layoutClass = [
     'content-list-layout',
     showEmptyState && 'content-list-layout--empty',
+    drawerOpen && !showEmptyState && 'content-list-layout--drawer-open',
   ]
     .filter(Boolean)
     .join(' ')
 
-  // With a right-side panel/drawer open, the empty placeholder keeps its full width and
-  // runs on underneath the panel (squeezing it would push the CTA pair out of the dashed
-  // frame), while populated content stays centered within the remaining (viewport −
-  // panel) area — a half-panel-width leftward shift.
-  const layoutStyle =
-    bodyShiftPx && !showEmptyState
-      ? { transform: `translateX(-${bodyShiftPx / 2}px)` }
-      : undefined
-
   return (
-    <div className={layoutClass} style={layoutStyle} onDragOver={(e) => e.preventDefault()}>
+    <div className={layoutClass} onDragOver={(e) => e.preventDefault()}>
       <section className="content-list">
         <Presence show={showMeta} skipExit={showEmptyState} className="presence--meta">
           <div
@@ -737,7 +732,8 @@ function ContentList({
                           item={item}
                           onDelete={() => deleteItem(key)}
                           onEdit={
-                            onEditExtra && item.type === 'SituationalTest'
+                            onEditExtra &&
+                            (item.type === 'SituationalTest' || item.type === 'Assessment')
                               ? () => onEditExtra(item)
                               : undefined
                           }

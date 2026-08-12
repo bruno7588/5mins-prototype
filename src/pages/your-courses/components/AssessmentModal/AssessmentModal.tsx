@@ -43,6 +43,8 @@ export interface AssessmentData {
 
 interface AssessmentModalProps {
   type: AssessmentType
+  /** Prefilled when reopened from the course outline; null when creating. */
+  initial?: AssessmentData | null
   onClose: () => void
   onAdd: (data: AssessmentData) => void
   sidebarIcons?: React.ReactNode
@@ -53,17 +55,18 @@ interface AssessmentModalProps {
 
 const ACCEPTED_TYPES = 'image/png,image/jpeg,image/gif,image/webp,audio/mpeg,audio/wav,audio/ogg'
 
-function AssessmentModal({ type, onClose, onAdd, sidebarIcons, variant = 'modal' }: AssessmentModalProps) {
+function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, variant = 'modal' }: AssessmentModalProps) {
+  const isEdit = !!initial
   const [closing, setClosing] = useState(false)
-  const [question, setQuestion] = useState('')
-  const [options, setOptions] = useState(['', ''])
-  const [correctIndex, setCorrectIndex] = useState(0)
-  const [explanation, setExplanation] = useState('')
+  const [question, setQuestion] = useState(initial?.question ?? '')
+  const [options, setOptions] = useState(initial?.options ?? ['', ''])
+  const [correctIndex, setCorrectIndex] = useState(initial?.correctIndex ?? 0)
+  const [explanation, setExplanation] = useState(initial?.explanation ?? '')
 
   // Media state (confirmed)
-  const [mediaFile, setMediaFile] = useState<File | null>(null)
+  const [mediaFile, setMediaFile] = useState<File | null>(initial?.mediaFile ?? null)
   const [mediaPreview, setMediaPreview] = useState<string | null>(null)
-  const [mediaType, setMediaType] = useState<'image' | 'audio' | null>(null)
+  const [mediaType, setMediaType] = useState<'image' | 'audio' | null>(initial?.mediaType ?? null)
 
   // Media modal state (staging)
   const [showMediaModal, setShowMediaModal] = useState(false)
@@ -83,10 +86,22 @@ function AssessmentModal({ type, onClose, onAdd, sidebarIcons, variant = 'modal'
   const cropRef = useRef<HTMLDivElement>(null)
 
   // Crop state (confirmed — stored after save, pixel values at 400x224 scale)
-  const [cropBgW, setCropBgW] = useState(0)
-  const [cropBgH, setCropBgH] = useState(0)
-  const [cropPosX, setCropPosX] = useState(0)
-  const [cropPosY, setCropPosY] = useState(0)
+  const [cropBgW, setCropBgW] = useState(initial?.cropBgW ?? 0)
+  const [cropBgH, setCropBgH] = useState(initial?.cropBgH ?? 0)
+  const [cropPosX, setCropPosX] = useState(initial?.cropPosX ?? 0)
+  const [cropPosY, setCropPosY] = useState(initial?.cropPosY ?? 0)
+
+  /* Reopening for edit hands back the File itself, but an object URL can't be stored
+     with it — the previous one was revoked when that drawer unmounted. Rebuild it here
+     and revoke on unmount, or the attached media would silently vanish from the form and
+     then from the saved assessment. */
+  useEffect(() => {
+    const file = initial?.mediaFile
+    if (!file) return
+    const url = URL.createObjectURL(file)
+    setMediaPreview(url)
+    return () => URL.revokeObjectURL(url)
+  }, [initial])
 
   // Audio playback state
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -421,7 +436,7 @@ function AssessmentModal({ type, onClose, onAdd, sidebarIcons, variant = 'modal'
         <div className={`assessment-modal-content${variant === 'drawer' ? ' assessment-modal-content--drawer' : ''}`}>
         {/* Header */}
         <SectionHeader
-          title={config.title}
+          title={isEdit ? config.title.replace('Add assessment', 'Edit assessment') : config.title}
           description={config.subtitle}
           ctas={<CloseButton onClick={handleClose} />}
         />

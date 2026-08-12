@@ -42,6 +42,10 @@ function CreateCourse() {
      reads from here when reopened for editing (FR-4). */
   const [situationalTests, setSituationalTests] = useState<Record<number, SituationalTestData>>({})
   const [editingSituationalId, setEditingSituationalId] = useState<number | null>(null)
+  /* Same store for assessments. Without it the card was built from the answers and the
+     answers thrown away, so the row could only ever be deleted and re-authored. */
+  const [assessments, setAssessments] = useState<Record<number, AssessmentData>>({})
+  const [editingAssessmentId, setEditingAssessmentId] = useState<number | null>(null)
   /* Unsaved work in the situational test drawer — every close route checks it first. */
   const [situationalDirty, setSituationalDirty] = useState(false)
   const [confirmDiscard, setConfirmDiscard] = useState(false)
@@ -80,6 +84,17 @@ function CreateCourse() {
 
   const openAssessment = (type: AssessmentType) => {
     setAssessmentType(type)
+    setEditingAssessmentId(null)
+    openDrawer('assessment')
+  }
+
+  /* Reopening keeps the assessment's own type rather than whatever the rail last had
+     selected, or a poll would reopen as a multiple choice. */
+  const openAssessmentEdit = (id: number) => {
+    const data = assessments[id]
+    if (!data) return
+    setAssessmentType(data.type)
+    setEditingAssessmentId(id)
     openDrawer('assessment')
   }
 
@@ -92,6 +107,7 @@ function CreateCourse() {
     setActiveDrawer(null)
     setTargetSectionId(null)
     setEditingSituationalId(null)
+    setEditingAssessmentId(null)
     setSituationalDirty(false)
   }
 
@@ -133,8 +149,13 @@ function CreateCourse() {
     })
   }
 
+  /* Handles both authoring and re-saving: an id already in hand means the drawer was
+     reopened from the outline, so the existing row is replaced in place rather than a
+     second card appended. Mirrors handleSaveSituationalTest. */
   const handleAddAssessment = (data: AssessmentData) => {
-    const id = nextAssessmentId++
+    const id = editingAssessmentId ?? nextAssessmentId++
+    setAssessments(prev => ({ ...prev, [id]: data }))
+
     const newItem: ContentItem = {
       id,
       type: 'Assessment',
@@ -142,10 +163,14 @@ function CreateCourse() {
       /* Question type only — the card's badge already reads "Assessment". */
       metadata: assessmentLabels[data.type],
       thumbnail: '',
-      showEditIcon: true,
     }
-    setScormItems(prev => [...prev, newItem])
+    setScormItems(prev =>
+      editingAssessmentId === null
+        ? [...prev, newItem]
+        : prev.map(item => (item.type === 'Assessment' && item.id === id ? newItem : item)),
+    )
     setActiveDrawer(null)
+    setEditingAssessmentId(null)
     setTargetSectionId(null)
   }
 
@@ -242,12 +267,15 @@ function CreateCourse() {
           <ContentList
             extraItems={scormItems}
             onDeleteExtra={handleDeleteExtra}
-            onEditExtra={(item) => openSituationalTest(item.id)}
+            /* One edit entry point for the outline; the row's own type picks the drawer. */
+            onEditExtra={(item) =>
+              item.type === 'Assessment'
+                ? openAssessmentEdit(item.id)
+                : openSituationalTest(item.id)
+            }
             onAddContent={openAddContent}
             targetSectionId={targetSectionId}
-            /* The drawer's 720px, plus the 180px it moves left when the panel is
-               expanded — otherwise the outline sits under the drawer's left edge. */
-            bodyShiftPx={activeDrawer ? (sidebarExpanded ? 900 : 720) : 0}
+            drawerOpen={activeDrawer !== null}
           />
         </main>
       </div>
@@ -272,6 +300,8 @@ function CreateCourse() {
         onScormAdd={handleAddScorm}
         onScormRemove={handleRemoveScorm}
         assessmentType={assessmentType}
+        assessmentInitial={editingAssessmentId === null ? null : assessments[editingAssessmentId] ?? null}
+        assessmentInitialId={editingAssessmentId}
         onAssessmentAdd={handleAddAssessment}
         situationalTest={editingSituationalId === null ? null : situationalTests[editingSituationalId] ?? null}
         onSituationalTestSave={handleSaveSituationalTest}

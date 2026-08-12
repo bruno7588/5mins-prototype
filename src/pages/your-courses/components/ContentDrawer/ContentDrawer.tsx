@@ -31,6 +31,10 @@ interface Props {
   onScormRemove: (id: number) => void
   /* Assessment */
   assessmentType: AssessmentType
+  /** Prefilled when an assessment row was reopened from the outline. */
+  assessmentInitial: AssessmentData | null
+  /** Which row is open, so the form can be remounted per assessment (see the key below). */
+  assessmentInitialId: number | null
   onAssessmentAdd: (data: AssessmentData) => void
   /* Situational test — non-null when reopened from the outline for editing. */
   situationalTest: SituationalTestData | null
@@ -56,6 +60,8 @@ function ContentDrawer({
   onScormAdd,
   onScormRemove,
   assessmentType,
+  assessmentInitial,
+  assessmentInitialId,
   onAssessmentAdd,
   situationalTest,
   onSituationalTestSave,
@@ -109,7 +115,7 @@ function ContentDrawer({
   const label =
     rendered === 'library' ? 'Add from the 5Mins Library'
     : rendered === 'scorm' ? 'Add SCORM files'
-    : rendered === 'assessment' ? 'Add assessment'
+    : rendered === 'assessment' ? (assessmentInitial ? 'Edit assessment' : 'Add assessment')
     : situationalTest ? 'Edit Situational Test'
     : 'Add Situational Test'
 
@@ -145,9 +151,15 @@ function ContentDrawer({
           />
         )}
         {rendered === 'assessment' && (
+          /* Keyed for the same reason as the situational form below: the shell stays
+             mounted across swaps, and this form seeds its fields from `initial` at mount
+             only, so without a key a second assessment would open showing the first
+             one's answers. */
           <AssessmentModal
+            key={assessmentInitialId ?? 'new'}
             variant="drawer"
             type={assessmentType}
+            initial={assessmentInitial}
             onClose={onClose}
             onAdd={onAssessmentAdd}
           />
