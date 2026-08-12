@@ -831,8 +831,9 @@
   justify-content: center;
 }
 
+/* Centres the glyph only — no tinted tile behind it, so it sits on the row the same way
+   the situational-test artwork does. */
 .content-card-thumb--assessment {
-  background: var(--cards-background-hover);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -915,10 +916,33 @@
   outline-offset: 2px;
 }
 
-/* Same icon-button box as the trash, but editing isn't destructive — it keeps the
-   neutral hover colour. */
-.content-card-edit:hover {
+/* Edit, inline in the metadata row. Sized to the 16px glyph it holds rather than the
+   32px action-cluster box, so it sits on the metadata baseline instead of stretching
+   the row. Icon-only, so the hover fill is circular. */
+.content-card-meta-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.content-card-meta-edit:hover {
+  background: var(--input-background);
   color: var(--text-primary);
+}
+
+.content-card-meta-edit:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }
 
 /* Drag and drop

@@ -100,8 +100,8 @@ function ContentCardThumb({ item }: { item: ContentItem }) {
   const isSituational = item.type === 'SituationalTest'
   const isScorm = item.type === 'SCORM'
   return (
-    /* The situational-test artwork carries its own shape, so it gets no tinted tile
-       behind it — unlike the assessment glyph, which needs one. */
+    /* Both the assessment glyph and the situational-test artwork carry their own shape,
+       so neither gets a tinted tile behind it. */
     <div className={`content-card-thumb ${isAssessment ? 'content-card-thumb--assessment' : ''}`}>
       {isSituational ? (
         /* The DS situational-test artwork (assessment-illustrations); the desktop
@@ -200,24 +200,25 @@ function ContentCard({
           </div>
           <div className="content-card-meta">
             <span>{item.metadata}</span>
-            {item.showEditIcon && (
+            {/* Edit sits with the metadata it edits rather than out in the action
+                cluster, which leaves that cluster to the one destructive action. */}
+            {onEdit ? (
+              <Tooltip text="Edit" position="Top" icon={false}>
+                <button
+                  type="button"
+                  className="content-card-meta-edit"
+                  aria-label={`Edit ${item.title}`}
+                  onClick={onEdit}
+                >
+                  <Edit2 size={16} color="currentColor" variant="Linear" />
+                </button>
+              </Tooltip>
+            ) : item.showEditIcon ? (
               <Edit2 size={16} color="var(--text-secondary)" variant="Linear" />
-            )}
+            ) : null}
           </div>
         </div>
       </div>
-      {onEdit && (
-        <Tooltip text="Edit" position="Top" alignment="End" icon={false} className="content-card-trash-tooltip">
-          <button
-            type="button"
-            className="content-card-trash content-card-edit"
-            aria-label={`Edit ${item.title}`}
-            onClick={onEdit}
-          >
-            <Edit2 size={20} color="currentColor" variant="Linear" />
-          </button>
-        </Tooltip>
-      )}
       <Tooltip text={removeLabel} position="Top" alignment="End" icon={false} className="content-card-trash-tooltip">
         <button
           type="button"
