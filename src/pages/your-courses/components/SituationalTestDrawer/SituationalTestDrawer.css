@@ -140,7 +140,7 @@
   line-height: 1.5;
   color: var(--text-primary);
   outline: none;
-  transition: border-color 150ms ease;
+  transition: border-color 150ms ease, background 150ms ease;
 }
 
 /* Starts two lines tall and grows with its content (height is set from scrollHeight in
@@ -152,9 +152,13 @@
   color: var(--text-tertiary);
 }
 
+/* input.md § Outlined text field: hover is --border-hover plus the --input-background
+   tint. The card underneath already carries that token, so the two translucent layers
+   compound and the hovered field still reads a shade deeper than the card. */
 .st-drawer__input:hover,
 .st-drawer__textarea:hover {
   border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 .st-drawer__input:focus,
@@ -184,14 +188,15 @@
 
 /* No gap — the collapsing body carries its own top margin, so a folded question is
    exactly its header tall. */
-/* Outlined rather than filled — the card sits on the drawer's own surface, so a border
-   is what separates it without adding a second tone to the step. */
+/* Filled, no border (Figma 9012:2884). The fill is what separates one question from the
+   next; the fields inside stay transparent so the card reads as a single surface rather
+   than a stack of nested tones. */
 .st-drawer__question {
   display: flex;
   flex-direction: column;
   padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
+  background: var(--input-background);
 }
 
 .st-drawer__question-head {
@@ -298,9 +303,17 @@
   /* The correct answer reads green, matching the Add assessment drawer, not the
      amber the DS Radio uses for a neutral selection. */
   --control-selected: var(--success-500);
-  transition: border-color 150ms ease;
+  transition: border-color 150ms ease, background 150ms ease;
 }
 
+/* Same hover as the text fields above — an option row is an outlined field too. */
+.st-drawer__option-field:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background);
+}
+
+/* After the hover rule, so a focused row keeps the amber border while the pointer is
+   still over it. */
 .st-drawer__option-field:focus-within {
   border-color: var(--selected);
 }
@@ -371,6 +384,7 @@
   transition: border-color 150ms ease, background 150ms ease;
 }
 
+/* Same hover as the fields it sits under. */
 .st-drawer__add-option:hover {
   background: var(--input-background);
   border-color: var(--border-hover);
