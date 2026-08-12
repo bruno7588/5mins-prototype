@@ -120,26 +120,11 @@
   font-weight: 700;
 }
 
-/* Parentheticals ride the label in tertiary at regular weight, so they read as an aside
-   rather than a second label. The "(optional)" flag drops to 12px; a hint that carries
-   real instruction stays at body size. */
-.st-drawer__label-optional {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--text-tertiary);
-}
-
-.st-drawer__label-hint {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-
 /* ===== Text fields — outlined, per input.md ===== */
 
-/* Both are textareas: question and option text wrap rather than truncating, so an admin
-   reviewing generated content can read all of it. Height is driven from scrollHeight in
-   the component, so the resize grip and inner scrollbar are off. */
+/* Both are textareas: question and option text wrap rather than truncating, so a long
+   option can be read in full. Height is driven from scrollHeight in the component, so
+   the resize grip and inner scrollbar are off. */
 .st-drawer__input,
 .st-drawer__textarea {
   width: 100%;
@@ -182,43 +167,6 @@
   border-color: var(--text-error);
 }
 
-/* The brief while AI is rewriting it: same box as the field it replaces, with a light
-   band sweeping the glyphs via background-clip so the text itself reads as in progress. */
-.st-drawer__brief-shimmer {
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  background-image: linear-gradient(
-    100deg,
-    var(--text-tertiary) 40%,
-    var(--text-primary) 50%,
-    var(--text-tertiary) 60%
-  );
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: st-brief-shimmer 1.8s linear infinite;
-}
-
-@keyframes st-brief-shimmer {
-  from { background-position: 150% 0; }
-  to   { background-position: -150% 0; }
-}
-
-/* No sweep for reduced motion — the working card already says work is happening. */
-@media (prefers-reduced-motion: reduce) {
-  .st-drawer__brief-shimmer {
-    animation: none;
-    background-image: none;
-    color: var(--text-secondary);
-  }
-}
-
 /* ===== Helper + word count ===== */
 
 .st-drawer__helper {
@@ -236,14 +184,14 @@
 
 /* No gap — the collapsing body carries its own top margin, so a folded question is
    exactly its header tall. */
-/* No border: the fill already separates the card from the page, and the question field
-   inside carries its own outline — two nested rounded borders read as noise. */
+/* Outlined rather than filled — the card sits on the drawer's own surface, so a border
+   is what separates it without adding a second tone to the step. */
 .st-drawer__question {
   display: flex;
   flex-direction: column;
   padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--cards-background);
 }
 
 .st-drawer__question-head {
@@ -426,120 +374,6 @@
 .st-drawer__add-option:hover {
   background: var(--input-background);
   border-color: var(--border-hover);
-}
-
-/* ===== Context sources ===== */
-
-/* The picker is opened by the Add Source button, so the input itself never shows. */
-.st-drawer__file-input {
-  display: none;
-}
-
-/* Matches the Attach Media row in the Add assessment drawer
-   (.assessment-modal-add-media) — centred, filled, dashed, Bold-14 label. */
-.st-drawer__add-source {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  width: 100%;
-  padding: var(--space-s) var(--space-m);
-  background: var(--input-background);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-sm);
-  /* The Add glyph is currentColor; without this it falls back to the UA button
-     colour and reads dimmer than the label next to it. */
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: border-color 150ms ease;
-}
-
-.st-drawer__add-source:hover {
-  border-color: var(--border-hover);
-}
-
-.st-drawer__add-source:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
-
-.st-drawer__add-source-label {
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-/* Names the accepted file types up front, so the OS picker isn't the first place the
-   admin finds out. Mirrors .assessment-modal-add-media-hint. */
-.st-drawer__add-source-hint {
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
-/* Attached sources — outlined pills carrying the file's type icon, its name and a
-   remove control (Figma 8996:55219). Deliberately not the DS Chip: a chip's amber
-   selected fill reads as a choice the admin made from a set, and these are attachments. */
-.st-drawer__sources {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-  /* 12px clear of the uploader above. The field's own column gap contributes 8px, so
-     this adds the remaining 4px rather than restating the whole distance. */
-  margin: var(--space-xs) 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.st-drawer__source-item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-s);
-  max-width: 100%;
-  padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  transition: border-color 150ms ease, background-color 150ms ease;
-}
-
-/* Skill-card hover (cards.md § Skill card): border to --border-hover, fill to
-   --page-background-hover. Same chip shape, so it takes the same state. */
-.st-drawer__source-item:hover {
-  border-color: var(--border-hover);
-  background: var(--page-background-hover);
-}
-
-.st-drawer__source-item > svg {
-  flex-shrink: 0;
-}
-
-/* Long file names truncate rather than wrapping the pill onto two lines. */
-.st-drawer__source-name {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.st-drawer__source-remove {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  color: var(--text-secondary);
-  transition: color 150ms ease;
-}
-
-.st-drawer__source-remove:hover {
-  color: var(--text-error);
 }
 
 /* ===== Step 2 action row ===== */
