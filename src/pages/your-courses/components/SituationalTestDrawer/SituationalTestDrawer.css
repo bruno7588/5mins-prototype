@@ -120,6 +120,15 @@
   font-weight: 700;
 }
 
+/* The "(optional)" flag rides the label in tertiary at 12px, so it reads as an aside
+   rather than part of the label. Matches .assessment-modal-label-hint. */
+.st-drawer__label-optional {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
 /* ===== Text fields — outlined, per input.md ===== */
 
 /* Both are textareas: question and option text wrap rather than truncating, so a long

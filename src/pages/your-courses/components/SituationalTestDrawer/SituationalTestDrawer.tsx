@@ -49,6 +49,8 @@ export interface SituationalQuestion {
   text: string
   options: string[]
   correctIndex: number
+  /** Why the marked option is right. Optional, and dropped on save when left blank. */
+  explanation?: string
 }
 
 export interface SituationalTestData {
@@ -65,6 +67,7 @@ const makeQuestion = (): SituationalQuestion => ({
   text: '',
   options: ['', ''],
   correctIndex: 0,
+  explanation: '',
 })
 
 /* Question and option fields wrap instead of truncating — options run long and an admin
@@ -90,7 +93,12 @@ const questionIsComplete = (q: SituationalQuestion) =>
 const snapshot = (brief: string, questions: SituationalQuestion[]) =>
   JSON.stringify({
     brief,
-    questions: questions.map((q) => ({ t: q.text, o: q.options, c: q.correctIndex })),
+    questions: questions.map((q) => ({
+      t: q.text,
+      o: q.options,
+      c: q.correctIndex,
+      e: q.explanation ?? '',
+    })),
   })
 
 interface Props {
@@ -208,7 +216,14 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
       questions.map((q) => {
         const correct = q.options[q.correctIndex]
         const options = q.options.filter((o) => o.trim().length > 0)
-        return { ...q, options, correctIndex: options.indexOf(correct) }
+        return {
+          ...q,
+          options,
+          correctIndex: options.indexOf(correct),
+          /* Optional, so a blank one is dropped rather than saved as an empty string —
+             same as the assessment drawer. */
+          explanation: q.explanation?.trim() || undefined,
+        }
       }),
     )
   }
@@ -449,6 +464,28 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                         {optionsError ? 'Add at least 2 answer options' : 'Mark the correct answer'}
                       </span>
                     )}
+                  </div>
+
+                  {/* Same field as the Add assessment drawer's explanation
+                      (AssessmentModal.tsx), down to the label and placeholder. Folds with
+                      the options, since it explains which of them is right. */}
+                  <div className="st-drawer__field">
+                    <label className="st-drawer__label" htmlFor={`${question.id}-explanation`}>
+                      Add an explanation for the correct answer{' '}
+                      <span className="st-drawer__label-optional">(optional)</span>
+                    </label>
+                    <textarea
+                      ref={autoGrow}
+                      rows={1}
+                      id={`${question.id}-explanation`}
+                      className="st-drawer__input"
+                      placeholder="Write an explanation..."
+                      value={question.explanation ?? ''}
+                      onInput={(e) => autoGrow(e.currentTarget)}
+                      onChange={(e) =>
+                        updateQuestion(question.id, { explanation: e.target.value })
+                      }
+                    />
                   </div>
                   </div>
                   </Collapse>
