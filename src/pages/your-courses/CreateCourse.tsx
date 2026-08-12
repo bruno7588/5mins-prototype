@@ -28,15 +28,6 @@ let nextSituationalTestId = 200
 
 type ActiveDrawer = 'library' | 'scorm' | 'assessment' | 'situational-test' | null
 
-/* The outline card shows the opening of the brief — enough to recognise the scenario
-   without turning the row into a paragraph. */
-const SITUATIONAL_TITLE_LIMIT = 72
-const situationalTitle = (brief: string) => {
-  const flat = brief.replace(/\s+/g, ' ').trim()
-  if (flat.length <= SITUATIONAL_TITLE_LIMIT) return flat || 'Untitled Situational Test'
-  return `${flat.slice(0, SITUATIONAL_TITLE_LIMIT).trimEnd()}…`
-}
-
 function CreateCourse() {
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
@@ -148,7 +139,8 @@ function CreateCourse() {
       id,
       type: 'Assessment',
       title: data.question || 'Untitled Assessment',
-      metadata: `Assessment · ${assessmentLabels[data.type]}`,
+      /* Question type only — the card's badge already reads "Assessment". */
+      metadata: assessmentLabels[data.type],
       thumbnail: '',
       showEditIcon: true,
     }
@@ -167,17 +159,23 @@ function CreateCourse() {
     handleRemoveScorm(id)
   }
 
+  /* Question count only — the card's own badge already names the type, so repeating it
+     here spends the one line the row has on something already on screen. */
   const situationalMetadata = (questions: SituationalQuestion[]) =>
-    `Situational test · ${questions.length} question${questions.length === 1 ? '' : 's'}`
+    `${questions.length} question${questions.length === 1 ? '' : 's'}`
 
-  const handleSaveSituationalTest = (brief: string, questions: SituationalQuestion[]) => {
+  const handleSaveSituationalTest = (
+    title: string,
+    brief: string,
+    questions: SituationalQuestion[],
+  ) => {
     const id = editingSituationalId ?? nextSituationalTestId++
-    setSituationalTests((prev) => ({ ...prev, [id]: { id, brief, questions } }))
+    setSituationalTests((prev) => ({ ...prev, [id]: { id, title, brief, questions } }))
 
     const card: ContentItem = {
       id,
       type: 'SituationalTest',
-      title: situationalTitle(brief),
+      title,
       metadata: situationalMetadata(questions),
       thumbnail: '',
     }

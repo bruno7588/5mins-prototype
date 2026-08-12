@@ -34,7 +34,11 @@ interface Props {
   onAssessmentAdd: (data: AssessmentData) => void
   /* Situational test — non-null when reopened from the outline for editing. */
   situationalTest: SituationalTestData | null
-  onSituationalTestSave: (brief: string, questions: SituationalQuestion[]) => void
+  onSituationalTestSave: (
+    title: string,
+    brief: string,
+    questions: SituationalQuestion[],
+  ) => void
   onSituationalTestDirtyChange: (dirty: boolean) => void
 }
 

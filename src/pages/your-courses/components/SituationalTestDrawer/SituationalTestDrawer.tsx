@@ -55,6 +55,7 @@ export interface SituationalQuestion {
 
 export interface SituationalTestData {
   id: number
+  title: string
   brief: string
   questions: SituationalQuestion[]
 }
@@ -90,8 +91,9 @@ const questionIsComplete = (q: SituationalQuestion) =>
 
 /* Only the authored values matter for the dirty check — question ids are generated per
    mount and would otherwise make a pristine form look edited. */
-const snapshot = (brief: string, questions: SituationalQuestion[]) =>
+const snapshot = (title: string, brief: string, questions: SituationalQuestion[]) =>
   JSON.stringify({
+    title,
     brief,
     questions: questions.map((q) => ({
       t: q.text,
@@ -105,7 +107,7 @@ interface Props {
   /** Prefilled when reopened from the course outline (FR-4); null when creating. */
   initial?: SituationalTestData | null
   onClose: () => void
-  onSave: (brief: string, questions: SituationalQuestion[]) => void
+  onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void
   /** Lets the page guard the close paths while there is unsaved work. */
   onDirtyChange?: (dirty: boolean) => void
 }
@@ -118,6 +120,10 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
   const isEdit = !!initial
   /* Editing jumps straight to the questions; the brief is one click away. */
   const [step, setStep] = useState<1 | 2>(initial ? 2 : 1)
+  /* Names the test in the course outline, so it is required the same way the brief is —
+     an outline row has to have something to call itself. */
+  const [title, setTitle] = useState(initial?.title ?? '')
+  const [titleBlurred, setTitleBlurred] = useState(false)
   const [brief, setBrief] = useState(initial?.brief ?? '')
   const [briefBlurred, setBriefBlurred] = useState(false)
   const [questions, setQuestions] = useState<SituationalQuestion[]>(
@@ -139,6 +145,8 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
     autoGrow(briefRef.current)
   }, [brief, step])
 
+  const titleFilled = title.trim().length > 0
+  const titleError = titleBlurred && !titleFilled
   const briefFilled = brief.trim().length > 0
   const briefError = briefBlurred && !briefFilled
 
@@ -146,7 +154,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
      seeds one blank question, so a baseline built from `initial` alone reads as edited
      before the admin has typed anything. */
   const pristine = useRef<string | null>(null)
-  const current = snapshot(brief, questions)
+  const current = snapshot(title, brief, questions)
   if (pristine.current === null) pristine.current = current
   const dirty = current !== pristine.current
   useEffect(() => {
@@ -197,11 +205,12 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
     })
   }
 
-  const canContinue = briefFilled
+  const canContinue = titleFilled && briefFilled
   const canSave = questions.length > 0 && questions.every(questionIsComplete)
 
   const handleContinue = () => {
     if (!canContinue) {
+      setTitleBlurred(true)
       setBriefBlurred(true)
       return
     }
@@ -210,6 +219,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
 
   const handleSave = () => {
     onSave(
+      title.trim(),
       brief.trim(),
       /* Blank options are dropped, so the correct index has to be re-derived against the
          kept ones — carrying the raw index over would point at the wrong answer. */
@@ -270,6 +280,34 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                 'Question and goal — what to decide, and what a good answer achieves',
               ]}
             />
+
+            {/* Single-line: this is the label the outline row carries, not prose — the
+                brief below is where the scenario goes. */}
+            <div className="st-drawer__field">
+              <label className="st-drawer__label st-drawer__label--section" htmlFor="st-title">
+                Title
+              </label>
+              <input
+                id="st-title"
+                type="text"
+                className={`st-drawer__input${titleError ? ' st-drawer__input--error' : ''}`}
+                placeholder="Add a title..."
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onBlur={() => setTitleBlurred(true)}
+                aria-invalid={titleError || undefined}
+                aria-describedby={titleError ? 'st-title-helper' : undefined}
+              />
+              {titleError && (
+                <span
+                  className="st-drawer__helper st-drawer__helper--error"
+                  id="st-title-helper"
+                  role="alert"
+                >
+                  Enter a title
+                </span>
+              )}
+            </div>
 
             <div className="st-drawer__field">
               <label className="st-drawer__label st-drawer__label--section" htmlFor="st-brief">
@@ -514,11 +552,13 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                where it goes rather than claiming to save: nothing persists until Create
                Situational Test on step 2. */
             <Tooltip
-              text="Write a brief first"
+              /* Names whichever field is actually missing — "write a brief first" over a
+                 filled brief would send the admin looking in the wrong place. */
+              text={!titleFilled ? 'Name the situational test first' : 'Write a brief first'}
               position="Top"
               alignment="Start"
               icon={false}
-              disabled={briefFilled}
+              disabled={canContinue}
             >
               <Button onClick={handleContinue} disabled={!canContinue}>
                 Add Questions
