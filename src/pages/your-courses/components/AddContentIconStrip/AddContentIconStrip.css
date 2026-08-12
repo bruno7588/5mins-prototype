@@ -236,8 +236,11 @@
   color: var(--text-primary);
 }
 
+/* navigation.md § menu item: the selected state is amber --text-selected AND Bold, so
+   it still reads as selected where the colour alone is hard to pick out. */
 .add-content-icon-strip__item--active {
   color: var(--selected); /* yellow per DS active treatment */
+  font-weight: 700;
 }
 
 .add-content-icon-strip__item:focus-visible {
