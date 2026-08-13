@@ -13,6 +13,8 @@ export interface RowMenuItem {
   /** Not valid for this row — shown greyed, never hidden, so the action stays
       discoverable and the menu keeps a stable shape. */
   disabled?: boolean
+  /** Native tooltip — says why a greyed item is unavailable. */
+  title?: string
 }
 
 interface RowActionsMenuProps {
@@ -124,6 +126,7 @@ function RowActionsMenu({
                   className={`ram-item${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}`}
                   disabled={item.disabled}
                   aria-disabled={item.disabled || undefined}
+                  title={item.title}
                   onClick={() => handleSelect(item.key)}
                 >
                   <span className="ram-item-icon">{item.icon}</span>

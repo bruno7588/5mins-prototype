@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus } from 'iconsax-react'
+import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -170,16 +170,17 @@ const ROW_MENU_ITEMS: RowMenuItem[] = [
   { key: 'unenrol', label: 'Unenrol', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
 ]
 
-/* Floating-bar actions — icon-only until hovered, when each expands into the DS
-   Outlined button hover state (Figma 9180:54019 rest / 9180:54170 hover).
-   Glyphs follow that Figma and differ from the row menu's for three of these. */
-const BULK_ACTIONS: { key: string; label: string; icon: ReactNode; destructive?: boolean }[] = [
-  { key: 'extend-due-date', label: 'Extend Due Date', icon: <CalendarAdd size={20} color="currentColor" variant="Linear" /> },
-  { key: 'edit-start-date', label: 'Edit Start Date', icon: <CalendarEdit size={20} color="currentColor" variant="Linear" /> },
-  { key: 'give-another-attempt', label: 'Give Another Attempt', icon: <RotateLeft size={20} color="currentColor" variant="Linear" /> },
-  { key: 'restart-enrolment', label: 'Restart Enrolment', icon: <Repeat size={20} color="currentColor" variant="Linear" /> },
-  { key: 'unenrol', label: 'Unenrol', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, destructive: true },
-]
+/* Floating-bar actions — the subset of the row menu that means something across a
+   whole selection. Derived from ROW_MENU_ITEMS so the glyphs and wording can never
+   drift between the two menus; the divider before Unenrol comes with it. */
+const BULK_ACTION_KEYS = new Set([
+  'extend-due-date',
+  'edit-start-date',
+  'give-another-attempt',
+  'restart-enrolment',
+  'unenrol',
+])
+const BULK_MENU_ITEMS: RowMenuItem[] = ROW_MENU_ITEMS.filter((item) => BULK_ACTION_KEYS.has(item.key))
 
 /* Which statuses an action can act on. The test is whether the action still has
    something ahead of the learner to change: dates only matter while the course
@@ -671,24 +672,27 @@ function UserProfile() {
 
       {/* Always mounted — the bar shows/hides itself off `count` so it can animate out. */}
       <BulkActionBar count={selected.size} onClear={() => setSelected(new Set())}>
-        {BULK_ACTIONS.map((action) => {
-          // Disabled only when the action can touch nothing in the selection.
-          const none = eligible(action.key).length === 0
-          return (
-          <button
-            key={action.key}
-            type="button"
-            className={`bulk-bar-btn bulk-bar-btn--icon${action.destructive ? ' bulk-bar-btn--destructive' : ''}`}
-            disabled={none}
-            title={none ? ACTION_RULES[action.key]?.reason : undefined}
-            onClick={() => handleBulkAction(action.key)}
-          >
-            {action.icon}
-            {/* Label stays in the DOM while collapsed so it is always announced. */}
-            <span className="bulk-bar-btn-label"><span>{action.label}</span></span>
-          </button>
-          )
-        })}
+        <RowActionsMenu
+          items={BULK_MENU_ITEMS.map((item) =>
+            // Greyed only when the action can touch nothing in the selection.
+            eligible(item.key).length === 0
+              ? { ...item, disabled: true, title: ACTION_RULES[item.key]?.reason }
+              : item,
+          )}
+          onSelect={handleBulkAction}
+          ariaLabel="Actions for the selected enrolments"
+          placement="top"
+          caret={false}
+          triggerClassName="bulk-bar-btn bulk-bar-btn--outlined bulk-bar-trigger"
+          triggerContent={
+            <>
+              Actions
+              <span className="bulk-bar-trigger-chevron">
+                <ArrowDown2 size={20} color="currentColor" variant="Linear" />
+              </span>
+            </>
+          }
+        />
       </BulkActionBar>
 
       {extendTarget && (

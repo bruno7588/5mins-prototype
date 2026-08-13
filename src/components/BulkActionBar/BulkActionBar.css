@@ -102,86 +102,44 @@
 }
 .bulk-bar-btn--danger:hover { background: var(--danger-600); }
 
-/* ── Icon-first action (Figma 9180:54019 rest / 9180:53911 hover) ──
-   Icon-only at rest; hover or keyboard focus expands the label inline.
-   The 0fr→1fr grid track animates to the label's natural width with no
-   hard-coded max-width, and the 8px icon gap lives *inside* the collapsing
-   track so there's no dead space while collapsed.
-   The pill surface is dark in both modes, so this variant uses the raw neutral
-   and danger-400 ladder rather than the mode-aware --border,
-   --input-background-hover and --text-error the Figma names — those flip light
-   in light mode and would wash out on this surface. */
-.bulk-bar-btn--icon {
-  gap: 0;
-  padding: var(--space-s) var(--space-sm);
-  border-radius: var(--radius-sm);
-  border-color: var(--neutral-600);
+/* ── Actions dropdown trigger ──
+   The DS dropdown trigger (dropdown.md): transparent fill, hairline border,
+   12px radius, chevron on the right, `--selected` amber border while open.
+   The hairline and label come from .bulk-bar-btn--outlined below rather than
+   the mode-aware --border / --text-primary the doc names: this pill is dark in
+   both modes, so those tokens would flip light and wash out here. */
+.bulk-bar-trigger {
+  /* Reads as a field, not a button: Regular 14 with the chevron pushed to the
+     right edge, so the trigger keeps one width as its label never changes. */
+  justify-content: space-between;
+  min-width: 160px;
+  font-weight: 400;
+}
+
+/* Active/open — amber chrome, label left white (Figma). */
+.bulk-bar-trigger[aria-expanded='true'],
+.bulk-bar-trigger[aria-expanded='true']:hover {
   background: transparent;
-  color: var(--neutral-0);
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease,
-    padding 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-color: var(--selected);
 }
 
-/* Hover/focus adopts the DS Outlined hover state (buttons.md): 16% primary
-   tint, chrome and label both on the hover ladder, and the Figma's asymmetric
-   12px-left / 16px-right padding once the label is out. */
-.bulk-bar-btn--icon:hover,
-.bulk-bar-btn--icon:focus-visible {
-  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
-  background: var(--button-outline-fill-hover);
-  border-color: var(--primary-400);
-  color: var(--primary-400);
-}
-
-.bulk-bar-btn--icon:focus-visible {
-  outline: 2px solid var(--primary-button-background);
+.bulk-bar-trigger:focus-visible {
+  outline: 2px solid var(--selected);
   outline-offset: 2px;
 }
 
-/* The icon gap is a margin here, not padding on the clipped child: border-box
-   never compresses padding below its set value, so an 8px inner padding would
-   still occupy 8px while collapsed and push the icon off-centre. */
-.bulk-bar-btn-label {
-  display: grid;
-  grid-template-columns: 0fr;
-  margin-left: 0;
-  opacity: 0;
-  transition: grid-template-columns 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    margin-left 220ms cubic-bezier(0.4, 0, 0.2, 1), opacity 140ms ease;
+/* Chevron flips to point at the menu once it is above the bar. */
+.bulk-bar-trigger-chevron {
+  display: inline-flex;
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.bulk-bar-btn--icon:hover .bulk-bar-btn-label,
-.bulk-bar-btn--icon:focus-visible .bulk-bar-btn-label {
-  grid-template-columns: 1fr;
-  margin-left: var(--space-s);
-  opacity: 1;
-}
-
-/* overflow:hidden is what lets the 0fr track actually reach zero width. */
-.bulk-bar-btn-label > span {
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-/* Destructive action — outlined, never filled (Figma). Chrome stays on
-   danger-400 through hover; only the tint changes, at the 24% the DS uses for
-   semantic outlined (buttons.md) vs 16% for primary. The dark hover ladder
-   darkens danger, which would lose contrast on this always-dark pill. */
-.bulk-bar-btn--destructive,
-.bulk-bar-btn--destructive:hover,
-.bulk-bar-btn--destructive:focus-visible {
-  border-color: var(--danger-400);
-  color: var(--danger-400);
-}
-
-.bulk-bar-btn--destructive:hover,
-.bulk-bar-btn--destructive:focus-visible {
-  background: rgba(233, 92, 123, 0.24); /* Danger-400 @ 24% */
+.bulk-bar-trigger[aria-expanded='true'] .bulk-bar-trigger-chevron {
+  transform: rotate(180deg);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bulk-bar-btn-label { transition: none; }
-  .bulk-bar-btn--icon { transition: background 150ms ease, border-color 150ms ease, color 150ms ease; }
+  .bulk-bar-trigger-chevron { transition: none; }
 }
 
 /* Outlined action — neutral hairline when Enabled, brighter on Hover. */
