@@ -25,11 +25,8 @@
   line-height: 1.5;
 }
 
-.page-header-divider {
-  height: 1px;
-  background: var(--border);
-  border-radius: var(--radius-xs);
-}
+/* .page-header-divider is owned by PageHeader.css — redefining it here dropped
+   the full-bleed margin, and which copy won came down to stylesheet order. */
 
 .content-tabs {
   display: flex;

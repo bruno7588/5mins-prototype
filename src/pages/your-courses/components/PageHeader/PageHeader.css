@@ -47,14 +47,21 @@
   background: var(--input-background-hover);
 }
 
-/* Divider between top row and tabs (per Figma 8644:16189). Full-bleed — the
-   negative margin cancels the header's 32px gutter so the rule runs edge to edge
-   while the title and CTAs stay inset. */
+/* Divider between a page title and its tabs. Standalone pages hand-write this
+   class inside a 32px-gutter main column, and there it stops 24px short of the
+   panel edge — hence the -8px, which trims the gutter to 24 rather than
+   cancelling it. */
 .page-header-divider {
   height: 1px;
-  margin: 0 calc(-1 * var(--space-xl));
+  margin: 0 calc(var(--space-l) - var(--space-xl)); /* 24px from the panel edge */
   background: var(--border);
   border-radius: var(--radius-xs);
+}
+
+/* The Create Course builder is the exception (Figma 8644:16189): its header
+   divider is full-bleed, so the negative margin cancels the gutter outright. */
+.page-header > .page-header-divider {
+  margin: 0 calc(-1 * var(--space-xl));
 }
 
 /* Tabs — gap 20px; divider lives above (page-header-divider). */

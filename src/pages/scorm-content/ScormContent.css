@@ -25,8 +25,11 @@
   line-height: 1.5;
 }
 
+/* Stops 24px short of the panel edge — the -8px trims the main column's 32px
+   gutter to 24. Only the Create Course builder's divider is full-bleed. */
 .sc-page-header-divider {
   height: 1px;
+  margin: 0 calc(var(--space-l) - var(--space-xl));
   background: var(--border);
   border-radius: var(--radius-xs);
 }
