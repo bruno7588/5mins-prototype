@@ -10,8 +10,8 @@ import CourseDetailsTab, {
 } from './components/CourseDetailsTab/CourseDetailsTab'
 import type { CourseDetailsDraft } from './components/CourseDetailsTab/CourseDetailsTab'
 import { saveCourse, type StoredCourse } from './courseStore'
+import { buildPreviewCourse } from './previewCourse'
 import type { ContentItem, OutlineSection } from './components/ContentList/ContentList'
-import CoursePreview from './components/CoursePreview/CoursePreview'
 import AddContentIconStrip from './components/AddContentIconStrip/AddContentIconStrip'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
@@ -60,7 +60,6 @@ function CreateCourse() {
   /* Mirrors the outline ContentList owns, so Preview can show the real sections
      and ordering rather than a flat re-derivation of what was added. */
   const [outline, setOutline] = useState<OutlineSection[]>([])
-  const [previewOpen, setPreviewOpen] = useState(false)
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
   const [assessmentType, setAssessmentType] = useState<AssessmentType>('multiple-choice')
   const [activeDrawer, setActiveDrawer] = useState<ActiveDrawer>(null)
@@ -386,7 +385,11 @@ function CreateCourse() {
           <Button
             variant="outlined-2"
             icon={<Eye size={20} color="currentColor" variant="Linear" />}
-            onClick={() => setPreviewOpen(true)}
+            onClick={() =>
+              navigate('/courses/preview', {
+                state: { preview: buildPreviewCourse(details, previewOutline, interactive) },
+              })
+            }
           >
             Preview
           </Button>
@@ -459,13 +462,6 @@ function CreateCourse() {
         interactiveInitialId={editingInteractiveId}
         onInteractiveSave={handleSaveInteractive}
         onInteractiveDirtyChange={setInteractiveDirty}
-      />
-      <CoursePreview
-        open={previewOpen}
-        draft={details}
-        outline={previewOutline}
-        interactive={interactive}
-        onClose={() => setPreviewOpen(false)}
       />
       {/* One modal for both authoring drawers — only the nouns change, so a second
           copy of the scrim, icon and actions would be four lines of difference. */}

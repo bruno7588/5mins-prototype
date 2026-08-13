@@ -3,6 +3,7 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import {
   Add,
   ArchiveAdd,
+  ArrowLeft2,
   ArrowUp2,
   CalendarAdd,
   Clock,
@@ -23,16 +24,40 @@ import '../my-team/MyTeam.css'
 import '../workspace/Workspace.css'
 import './ProgramCourseDetails.css'
 import { getCourseDetail, findProgramForCourse, type CourseLesson } from './mockCourse'
+import PhoneFrame from '../../components/mobile/PhoneFrame/PhoneFrame'
+import QuizHeader from '../quiz-lab/components/QuizHeader'
+import MatchPairsPartial from '../quiz-lab/formats/MatchPairsPartial'
+import FillBlank from '../quiz-lab/formats/FillBlank'
+import Categorization from '../quiz-lab/formats/Categorization'
+import SequencingDnd from '../quiz-lab/formats/SequencingDnd'
+import { TYPE_CONFIG } from '../../data/interactiveQuestions'
+import type { CoursePreviewPayload } from '../your-courses/previewCourse'
+import '../quiz-lab/quiz-lab.css'
 import jewelsIllustration from '../../assets/programs/jewels.svg'
 import certificateIllustration from '../../assets/programs/certificate.svg'
 
 const SEGMENTS = 8
 
-function LessonCard({ lesson }: { lesson: CourseLesson }) {
+function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => void }) {
   const isLocked = lesson.state === 'locked'
   const filled = Math.max(0, Math.min(SEGMENTS, Math.round(((lesson.progress ?? 0) / 100) * SEGMENTS)))
   return (
-    <article className={`cd-lesson${isLocked ? ' cd-lesson--locked' : ''}`}>
+    <article
+      className={`cd-lesson${isLocked ? ' cd-lesson--locked' : ''}${onOpen ? ' cd-lesson--openable' : ''}`}
+      role={onOpen ? 'button' : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      onClick={onOpen}
+      onKeyDown={
+        onOpen
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onOpen()
+              }
+            }
+          : undefined
+      }
+    >
       {lesson.state === 'active' ? (
         <button type="button" className="cd-tooltip">
           Start Here!
@@ -67,8 +92,16 @@ function ProgramCourseDetails() {
   const navigate = useNavigate()
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
-  const course = getCourseDetail(id)
-  const program = findProgramForCourse(id)
+
+  /* The course builder's Preview hands the draft over in router state rather
+     than saving it — the admin may be previewing a course that doesn't exist
+     yet. Everything below renders the same either way. */
+  const preview = (location.state as { preview?: CoursePreviewPayload } | null)?.preview ?? null
+  const course = preview?.course ?? getCourseDetail(id)
+  const program = preview ? undefined : findProgramForCourse(id)
+
+  const [openQuizId, setOpenQuizId] = useState<number | null>(null)
+  const openQuiz = openQuizId === null ? null : preview?.questions[openQuizId] ?? null
 
   const [tab, setTab] = useState<'course' | 'about' | 'resources'>('course')
   const [open, setOpen] = useState<Record<string, boolean>>(
@@ -78,6 +111,43 @@ function ProgramCourseDetails() {
 
   return (
     <div className="mt-app">
+      {/* Preview mode needs its own way out — the learner chrome has no route
+          back to the builder the admin came from. */}
+      {preview && (
+        <div className="cd-previewbar">
+          <span className="cd-previewbar__label">
+            <Badge type="informative" label="Preview" />
+            <span>This is how learners will see the course</span>
+          </span>
+          <button type="button" className="cd-previewbar__back" onClick={() => navigate(-1)}>
+            <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
+            Back to editing
+          </button>
+        </div>
+      )}
+      {openQuiz && (
+        <div className="cd-quizstage" role="dialog" aria-modal="true" aria-label="Assessment preview">
+          <PhoneFrame>
+            <div className="ql-quizview">
+              <QuizHeader
+                label={TYPE_CONFIG[openQuiz.type].label}
+                used={1}
+                total={3}
+                onClose={() => setOpenQuizId(null)}
+              />
+              {openQuiz.type === 'match-pairs' ? (
+                <MatchPairsPartial question={openQuiz} />
+              ) : openQuiz.type === 'fill-blank' ? (
+                <FillBlank question={openQuiz} formatKey="fill-blank" />
+              ) : openQuiz.type === 'categorization' ? (
+                <Categorization question={openQuiz} formatKey="categorization" />
+              ) : (
+                <SequencingDnd question={openQuiz} />
+              )}
+            </div>
+          </PhoneFrame>
+        </div>
+      )}
       <header className="mt-topnav">
         <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
           <Logo size={22} />
@@ -250,7 +320,15 @@ function ProgramCourseDetails() {
                       <Collapse open={open[section.id]}>
                         <div className="cd-section__lessons">
                           {section.lessons.map((lesson) => (
-                            <LessonCard key={lesson.id} lesson={lesson} />
+                            <LessonCard
+                              key={lesson.id}
+                              lesson={lesson}
+                              onOpen={
+                                lesson.questionId !== undefined
+                                  ? () => setOpenQuizId(lesson.questionId!)
+                                  : undefined
+                              }
+                            />
                           ))}
                         </div>
                       </Collapse>

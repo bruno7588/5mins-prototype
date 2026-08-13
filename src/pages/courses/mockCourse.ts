@@ -15,6 +15,8 @@ export interface CourseLesson {
   state: 'active' | 'locked'
   /** 0..100 — inline progress shown for the active lesson */
   progress?: number
+  /** Builder preview only: an authored interactive question this row opens. */
+  questionId?: number
 }
 
 export interface CourseSection {
