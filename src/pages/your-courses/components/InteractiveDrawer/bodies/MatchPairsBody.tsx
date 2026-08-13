@@ -1,0 +1,102 @@
+import { Add, ArrowSwapHorizontal } from 'iconsax-react'
+import Button from '@/components/Button/Button'
+import CloseButton from '@/components/CloseButton/CloseButton'
+import { draftErrors, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
+import type { BodyProps } from '../InteractiveDrawer'
+import { autoGrow } from '../autoGrow'
+
+type MatchPairsDraft = Extract<Draft, { type: 'match-pairs' }>
+
+const MIN_PAIRS = 3
+
+/**
+ * Match-the-pairs authoring. Each row is one correct pair — correctness is index
+ * identity, so there is nothing to mark and no per-row "Correct" badge: every row
+ * is correct by construction.
+ *
+ * No reordering either. The renderer shuffles the right column, so row order
+ * carries no meaning and a grip would imply otherwise.
+ */
+function MatchPairsBody({ draft, onChange, showErrors }: BodyProps<MatchPairsDraft>) {
+  const pairs = draft.pairs
+  const setPairs = (next: DraftRow[]) => onChange({ ...draft, pairs: next })
+
+  const update = (id: string, patch: Partial<DraftRow>) =>
+    setPairs(pairs.map((p) => (p.id === id ? { ...p, ...patch } : p)))
+
+  /* Reuses the model's own rules so the row hint and the disabled Save button can
+     never disagree about what is wrong. */
+  const errors = showErrors ? draftErrors(draft) : []
+
+  return (
+    <div className="iq-drawer__field">
+      <div className="iq-drawer__pair-head">
+        <span className="iq-drawer__label">Term</span>
+        <span className="iq-drawer__label">Match</span>
+      </div>
+      <div
+        className="iq-drawer__rows"
+        role="group"
+        aria-label="Pairs"
+        aria-describedby={errors.length ? 'iq-pairs-error' : undefined}
+      >
+        {pairs.map((pair, index) => (
+          <div className="iq-drawer__row iq-drawer__row--pair" key={pair.id}>
+            <textarea
+              ref={autoGrow}
+              rows={1}
+              className="iq-drawer__row-input"
+              placeholder={`Term ${index + 1}`}
+              aria-label={`Term ${index + 1}`}
+              value={pair.a}
+              onInput={(e) => autoGrow(e.currentTarget)}
+              onChange={(e) => update(pair.id, { a: e.target.value })}
+            />
+            <ArrowSwapHorizontal
+              size={20}
+              color="var(--text-tertiary)"
+              variant="Linear"
+              className="iq-drawer__pair-link"
+            />
+            <textarea
+              ref={autoGrow}
+              rows={1}
+              className="iq-drawer__row-input"
+              placeholder={`Match ${index + 1}`}
+              aria-label={`Match for term ${index + 1}`}
+              value={pair.b}
+              onInput={(e) => autoGrow(e.currentTarget)}
+              onChange={(e) => update(pair.id, { b: e.target.value })}
+            />
+            {pairs.length > MIN_PAIRS && (
+              <CloseButton
+                size={16}
+                className="iq-drawer__row-remove"
+                ariaLabel={`Remove pair ${index + 1}`}
+                onClick={() => setPairs(pairs.filter((p) => p.id !== pair.id))}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {errors.length > 0 && (
+        <span className="iq-drawer__helper iq-drawer__helper--error" id="iq-pairs-error" role="alert">
+          {errors[0]}
+        </span>
+      )}
+
+      <div className="iq-drawer__row-actions">
+        <Button
+          variant="outlined-2"
+          icon={<Add size={20} color="currentColor" variant="Linear" />}
+          onClick={() => setPairs([...pairs, makeRow()])}
+        >
+          Add Pair
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+export default MatchPairsBody

@@ -1,70 +1,32 @@
 /**
- * Quiz Lab — shared question data model (DES-321).
+ * Quiz Lab — question samples and the lab's own format list (DES-321).
  *
- * One discriminated union covers every format, prototyping the reusable
- * question-renderer contract (PRD FR7): each format component takes its own
- * question variant, renders the interaction, grades locally, and reports a
- * result. Content is compliance-flavoured to match the 5Mins personas
- * (hospitality / finance / healthcare frontline).
+ * The four authorable formats now live in `@/data/interactiveQuestions`, shared
+ * with the course builder's authoring drawer so a question the admin writes is
+ * literally the object these renderers eat. They are re-exported here so the
+ * format components keep importing from one place.
  */
 
+export type {
+  MatchPair,
+  MatchPairsQuestion,
+  FillBlankSegment,
+  FillBlankQuestion,
+  Category,
+  CategorizationItem,
+  CategorizationQuestion,
+  SequencingQuestion,
+} from '@/data/interactiveQuestions'
+
+import type { InteractiveQuestion } from '@/data/interactiveQuestions'
+
+/** The lab's tabs. Select-all is learner-only — it has no authoring UI yet. */
 export type FormatKey =
   | 'match-pairs'
   | 'fill-blank'
   | 'categorization'
   | 'sequencing'
   | 'select-all'
-
-export interface MatchPair {
-  left: string
-  right: string
-}
-
-export interface MatchPairsQuestion {
-  type: 'match-pairs'
-  /** Short instruction shown above the interaction. */
-  prompt: string
-  pairs: MatchPair[]
-  explanation: string
-}
-
-/** A sentence segment: a literal string, or a gap carrying its correct answer. */
-export type FillBlankSegment = string | { blank: string }
-
-export interface FillBlankQuestion {
-  type: 'fill-blank'
-  prompt: string
-  segments: FillBlankSegment[]
-  /** Word-bank chips — correct answers plus distractors, order-independent. */
-  bank: string[]
-  explanation: string
-}
-
-export interface Category {
-  id: string
-  label: string
-}
-
-export interface CategorizationItem {
-  label: string
-  categoryId: string
-}
-
-export interface CategorizationQuestion {
-  type: 'categorization'
-  prompt: string
-  categories: Category[]
-  items: CategorizationItem[]
-  explanation: string
-}
-
-export interface SequencingQuestion {
-  type: 'sequencing'
-  prompt: string
-  /** Steps in their correct order — the renderer shuffles a copy for the bank. */
-  steps: string[]
-  explanation: string
-}
 
 export interface SelectAllQuestion {
   type: 'select-all'
@@ -77,12 +39,7 @@ export interface SelectAllQuestion {
   explanation: string
 }
 
-export type QuizQuestion =
-  | MatchPairsQuestion
-  | FillBlankQuestion
-  | CategorizationQuestion
-  | SequencingQuestion
-  | SelectAllQuestion
+export type QuizQuestion = InteractiveQuestion | SelectAllQuestion
 
 /** Fisher–Yates shuffle returning a new array (used for banks / column order). */
 export function shuffle<T>(input: readonly T[]): T[] {

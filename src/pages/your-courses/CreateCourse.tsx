@@ -15,6 +15,13 @@ import type {
   SituationalQuestion,
   SituationalTestData,
 } from './components/SituationalTestDrawer/SituationalTestDrawer'
+import {
+  TYPE_CONFIG,
+  draftSummary,
+  toDraft,
+  type InteractiveQuestion,
+  type InteractiveQuestionType,
+} from '@/data/interactiveQuestions'
 
 const assessmentLabels: Record<AssessmentType, string> = {
   'multiple-choice': 'Multiple Choice',
@@ -25,8 +32,12 @@ const assessmentLabels: Record<AssessmentType, string> = {
 
 let nextAssessmentId = 100
 let nextSituationalTestId = 200
+/* Interactive questions ride `type: 'Assessment'` outline cards, so they share the
+   `Assessment-<id>` key namespace with classic assessments — 1000 keeps the two
+   counters clear of each other. */
+let nextInteractiveId = 1000
 
-type ActiveDrawer = 'library' | 'scorm' | 'assessment' | 'situational-test' | null
+type ActiveDrawer = 'library' | 'scorm' | 'assessment' | 'situational-test' | 'interactive' | null
 
 function CreateCourse() {
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
@@ -46,8 +57,13 @@ function CreateCourse() {
      answers thrown away, so the row could only ever be deleted and re-authored. */
   const [assessments, setAssessments] = useState<Record<number, AssessmentData>>({})
   const [editingAssessmentId, setEditingAssessmentId] = useState<number | null>(null)
-  /* Unsaved work in the situational test drawer — every close route checks it first. */
+  /* Same store again for the four interactive formats. */
+  const [interactiveType, setInteractiveType] = useState<InteractiveQuestionType>('fill-blank')
+  const [interactive, setInteractive] = useState<Record<number, InteractiveQuestion>>({})
+  const [editingInteractiveId, setEditingInteractiveId] = useState<number | null>(null)
+  /* Unsaved work in a drawer that authors something — every close route checks it first. */
   const [situationalDirty, setSituationalDirty] = useState(false)
+  const [interactiveDirty, setInteractiveDirty] = useState(false)
   const [confirmDiscard, setConfirmDiscard] = useState(false)
 
   /* The Add Content drawer snaps to the bottom edge of the PageHeader's divider —
@@ -103,18 +119,39 @@ function CreateCourse() {
     openDrawer('situational-test')
   }
 
+  const openInteractive = (type: InteractiveQuestionType) => {
+    setInteractiveType(type)
+    setEditingInteractiveId(null)
+    openDrawer('interactive')
+  }
+
+  /* Reopening keeps the question's own format rather than whatever the rail last
+     had selected — the same reason openAssessmentEdit restores its type. */
+  const openInteractiveEdit = (id: number) => {
+    const question = interactive[id]
+    if (!question) return
+    setInteractiveType(question.type)
+    setEditingInteractiveId(id)
+    openDrawer('interactive')
+  }
+
   const closeDrawer = () => {
     setActiveDrawer(null)
     setTargetSectionId(null)
     setEditingSituationalId(null)
     setEditingAssessmentId(null)
+    setEditingInteractiveId(null)
     setSituationalDirty(false)
+    setInteractiveDirty(false)
   }
 
   /* Every way out of a drawer — the header close button, Escape and the scrim — routes
-     through here, so a half-written situational test can't be thrown away by accident. */
+     through here, so half-written work can't be thrown away by accident. */
   const requestCloseDrawer = () => {
-    if (activeDrawer === 'situational-test' && situationalDirty) {
+    const dirty =
+      (activeDrawer === 'situational-test' && situationalDirty) ||
+      (activeDrawer === 'interactive' && interactiveDirty)
+    if (dirty) {
       setConfirmDiscard(true)
       return
     }
@@ -174,14 +211,48 @@ function CreateCourse() {
     setTargetSectionId(null)
   }
 
-  /* The outline deletes by id; the tests map is the only thing that knows which ids
-     belong to situational tests. */
+  /* The outline deletes by id; the payload maps are the only thing that knows which
+     ids belong to situational tests and interactive questions. */
   const handleDeleteExtra = (id: number) => {
     if (situationalTests[id]) {
       handleRemoveSituationalTest(id)
       return
     }
+    if (interactive[id]) {
+      handleRemoveInteractive(id)
+      return
+    }
     handleRemoveScorm(id)
+  }
+
+  const handleSaveInteractive = (question: InteractiveQuestion) => {
+    const id = editingInteractiveId ?? nextInteractiveId++
+    setInteractive((prev) => ({ ...prev, [id]: question }))
+
+    const card: ContentItem = {
+      id,
+      type: 'Assessment',
+      title: question.prompt || 'Untitled question',
+      /* The badge already reads "Assessment", so the line names the format and
+         its size — the one thing the card can't otherwise show. */
+      metadata: `${TYPE_CONFIG[question.type].label} · ${draftSummary(toDraft(question))}`,
+      thumbnail: '',
+    }
+    setScormItems((prev) =>
+      editingInteractiveId === null
+        ? [...prev, card]
+        : prev.map((item) => (item.type === 'Assessment' && item.id === id ? card : item)),
+    )
+    closeDrawer()
+  }
+
+  const handleRemoveInteractive = (id: number) => {
+    setScormItems((prev) => prev.filter((item) => !(item.type === 'Assessment' && item.id === id)))
+    setInteractive((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
   }
 
   /* Question count only — the card's own badge already names the type, so repeating it
@@ -267,12 +338,16 @@ function CreateCourse() {
           <ContentList
             extraItems={scormItems}
             onDeleteExtra={handleDeleteExtra}
-            /* One edit entry point for the outline; the row's own type picks the drawer. */
-            onEditExtra={(item) =>
-              item.type === 'Assessment'
-                ? openAssessmentEdit(item.id)
-                : openSituationalTest(item.id)
-            }
+            /* One edit entry point for the outline. Interactive questions report
+               `type: 'Assessment'` like classic ones, so the store is checked
+               first — the row type alone can't tell the two apart. Written as an
+               explicit chain rather than a ternary with a trailing else, so a
+               future type can't fall through to the situational drawer. */
+            onEditExtra={(item) => {
+              if (interactive[item.id]) openInteractiveEdit(item.id)
+              else if (item.type === 'Assessment') openAssessmentEdit(item.id)
+              else openSituationalTest(item.id)
+            }}
             onAddContent={openAddContent}
             targetSectionId={targetSectionId}
             drawerOpen={activeDrawer !== null}
@@ -288,6 +363,8 @@ function CreateCourse() {
         onScormClick={() => openDrawer('scorm')}
         onAssessmentClick={openAssessment}
         onSituationalTestClick={() => openSituationalTest(null)}
+        activeInteractive={interactiveType}
+        onInteractiveClick={openInteractive}
       />
       <ContentDrawer
         activeDrawer={activeDrawer}
@@ -306,19 +383,32 @@ function CreateCourse() {
         situationalTest={editingSituationalId === null ? null : situationalTests[editingSituationalId] ?? null}
         onSituationalTestSave={handleSaveSituationalTest}
         onSituationalTestDirtyChange={setSituationalDirty}
+        interactiveType={interactiveType}
+        interactiveInitial={editingInteractiveId === null ? null : interactive[editingInteractiveId] ?? null}
+        interactiveInitialId={editingInteractiveId}
+        onInteractiveSave={handleSaveInteractive}
+        onInteractiveDirtyChange={setInteractiveDirty}
       />
+      {/* One modal for both authoring drawers — only the nouns change, so a second
+          copy of the scrim, icon and actions would be four lines of difference. */}
       <ConfirmModal
         open={confirmDiscard}
         onClose={() => setConfirmDiscard(false)}
-        ariaLabel="Discard situational test"
+        ariaLabel={activeDrawer === 'interactive' ? 'Discard question' : 'Discard situational test'}
       >
         <div className="confirm-modal-header confirm-modal-header--center">
           <div className="confirm-modal-icon">
             <Danger size={56} color="var(--danger-500)" variant="Linear" />
           </div>
-          <h2 className="confirm-modal-title">Discard this situational test?</h2>
+          <h2 className="confirm-modal-title">
+            {activeDrawer === 'interactive'
+              ? 'Discard this question?'
+              : 'Discard this situational test?'}
+          </h2>
           <p className="confirm-modal-body">
-            Your scenario brief and questions haven't been saved, and can't be recovered.
+            {activeDrawer === 'interactive'
+              ? "Your question hasn't been saved, and can't be recovered."
+              : "Your scenario brief and questions haven't been saved, and can't be recovered."}
           </p>
         </div>
         <div className="confirm-modal-actions">

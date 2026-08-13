@@ -8,12 +8,26 @@ import SituationalTestDrawerContent, {
   type SituationalQuestion,
   type SituationalTestData,
 } from '../SituationalTestDrawer/SituationalTestDrawer'
+import InteractiveDrawer from '../InteractiveDrawer/InteractiveDrawer'
+import {
+  TYPE_CONFIG,
+  type InteractiveQuestion,
+  type InteractiveQuestionType,
+} from '@/data/interactiveQuestions'
 import type { AssessmentType } from '../AddContentSidebar/AddContentSidebar'
 import '../../../my-team/CoursesDrawer.css'
 import '../LibraryDrawer/LibraryDrawer.css'
 import '../ScormDrawer/ScormDrawer.css'
 
-export type ActiveDrawer = 'library' | 'scorm' | 'assessment' | 'situational-test' | null
+/* One member for all four interactive formats — which one is carried in a prop,
+   so adding a fifth format doesn't widen this union or the two switches on it. */
+export type ActiveDrawer =
+  | 'library'
+  | 'scorm'
+  | 'assessment'
+  | 'situational-test'
+  | 'interactive'
+  | null
 
 interface Props {
   activeDrawer: ActiveDrawer
@@ -44,6 +58,14 @@ interface Props {
     questions: SituationalQuestion[],
   ) => void
   onSituationalTestDirtyChange: (dirty: boolean) => void
+  /* Interactive question (fill in the blanks / match the pairs / categorise / sequence) */
+  interactiveType: InteractiveQuestionType
+  /** Prefilled when an interactive row was reopened from the outline. */
+  interactiveInitial: InteractiveQuestion | null
+  /** Which row is open, so the form can be remounted per question (see the key below). */
+  interactiveInitialId: number | null
+  onInteractiveSave: (question: InteractiveQuestion) => void
+  onInteractiveDirtyChange: (dirty: boolean) => void
 }
 
 /* Single drawer shell that hosts library or SCORM content. Stays mounted across
@@ -66,6 +88,11 @@ function ContentDrawer({
   situationalTest,
   onSituationalTestSave,
   onSituationalTestDirtyChange,
+  interactiveType,
+  interactiveInitial,
+  interactiveInitialId,
+  onInteractiveSave,
+  onInteractiveDirtyChange,
 }: Props) {
   // What content to actually render. Lags activeDrawer when closing so the
   // close animation can complete before unmounting.
@@ -116,6 +143,8 @@ function ContentDrawer({
     rendered === 'library' ? 'Add from the 5Mins Library'
     : rendered === 'scorm' ? 'Add SCORM files'
     : rendered === 'assessment' ? (assessmentInitial ? 'Edit assessment' : 'Add assessment')
+    : rendered === 'interactive'
+      ? `${interactiveInitial ? 'Edit' : 'Add'} ${TYPE_CONFIG[interactiveType].label}`
     : situationalTest ? 'Edit Situational Test'
     : 'Add Situational Test'
 
@@ -127,7 +156,7 @@ function ContentDrawer({
         aria-hidden="true"
       />
       <aside
-        className={`side-drawer side-drawer--with-sidebar${sidebarExpanded ? ' side-drawer--sidebar-expanded' : ''}${closing ? ' side-drawer--closing' : ''} ${rendered === 'library' ? 'library-drawer' : rendered === 'scorm' ? 'scorm-drawer-shell' : rendered === 'situational-test' ? 'situational-test-drawer-shell' : 'assessment-drawer-shell'}`}
+        className={`side-drawer side-drawer--with-sidebar${sidebarExpanded ? ' side-drawer--sidebar-expanded' : ''}${closing ? ' side-drawer--closing' : ''} ${rendered === 'library' ? 'library-drawer' : rendered === 'scorm' ? 'scorm-drawer-shell' : rendered === 'situational-test' ? 'situational-test-drawer-shell' : rendered === 'interactive' ? 'interactive-drawer-shell' : 'assessment-drawer-shell'}`}
         ref={panelRef}
         role="dialog"
         aria-modal="true"
@@ -173,6 +202,22 @@ function ContentDrawer({
             onClose={onClose}
             onSave={onSituationalTestSave}
             onDirtyChange={onSituationalTestDirtyChange}
+          />
+        )}
+        {rendered === 'interactive' && (
+          /* Keyed for the same reason as the two forms above — the shell stays
+             mounted across swaps and this form seeds its draft from `initial` at
+             mount only, so a second question would otherwise open showing the
+             first one's answers. The type is in the key too: switching format
+             from the rail keeps the same id, and the draft shape has to change
+             with it. */
+          <InteractiveDrawer
+            key={`${interactiveType}-${interactiveInitialId ?? 'new'}`}
+            type={interactiveType}
+            initial={interactiveInitial}
+            onClose={onClose}
+            onSave={onInteractiveSave}
+            onDirtyChange={onInteractiveDirtyChange}
           />
         )}
       </aside>

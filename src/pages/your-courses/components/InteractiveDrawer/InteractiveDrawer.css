@@ -1,0 +1,379 @@
+/* Interactive question authoring (fill in the blanks, match the pairs, categorise,
+   sequence). Hosted inside the shared ContentDrawer shell, which owns the panel,
+   its padding and the slide animation — this file only styles the form. Field
+   chrome deliberately matches SituationalTestDrawer.css so the drawers read as one
+   family; class names are prefixed .iq-drawer__ because the prototype bundles CSS
+   globally. */
+
+/* Divider under the drawer header, mirroring the footer's border-top, as in the
+   situational shell. */
+.interactive-drawer-shell .section-header {
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border);
+}
+
+.iq-drawer__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  overflow-y: auto;
+}
+
+.iq-drawer__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+/* Wrapper that arms blur validation for whichever body is mounted. It must not
+   collapse the body's own field spacing, so it inherits the column layout. */
+.iq-drawer__body-slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+}
+
+/* Label on the left, an inline action (Make Blank) hard right. */
+.iq-drawer__field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.iq-drawer__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.iq-drawer__label-optional {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+/* ===== Text fields — outlined, per input.md ===== */
+
+.iq-drawer__input,
+.iq-drawer__textarea {
+  width: 100%;
+  resize: none;
+  overflow-y: hidden;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+/* Empty, the sentence field holds two lines so its placeholder isn't clipped.
+   Once there is content autoGrow's inline height takes over. */
+.iq-drawer__textarea:placeholder-shown {
+  min-height: calc(2 * 1.5em + 2 * var(--space-sm) + 2px);
+}
+
+.iq-drawer__input::placeholder,
+.iq-drawer__textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.iq-drawer__input:hover,
+.iq-drawer__textarea:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background);
+}
+
+.iq-drawer__input:focus,
+.iq-drawer__textarea:focus {
+  border-color: var(--selected);
+}
+
+.iq-drawer__input--error,
+.iq-drawer__textarea--error {
+  border-color: var(--text-error);
+}
+
+.iq-drawer__helper {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.iq-drawer__helper--error {
+  color: var(--text-error);
+}
+
+/* ===== Editable rows (steps, pairs, categories, items, wrong words) ===== */
+
+.iq-drawer__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* An outlined field that happens to hold several controls — same chrome as the
+   situational drawer's option row, top-aligned so the grip, arrows and remove
+   stay level with the first line once the text wraps. */
+.iq-drawer__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  min-height: 44px;
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.iq-drawer__row:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background);
+}
+
+/* After the hover rule, so a focused row keeps the amber border while the pointer
+   is still over it. */
+.iq-drawer__row:focus-within {
+  border-color: var(--selected);
+}
+
+.iq-drawer__row--dragging {
+  opacity: 0.5;
+}
+
+/* Where the dragged row will land. Amber, per the DnD selection convention. */
+.iq-drawer__row--dragover {
+  border-color: var(--selected);
+  background: var(--selected-tint);
+}
+
+.iq-drawer__row-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  outline: none;
+  resize: none;
+  overflow-y: hidden;
+  padding: 0;
+  /* Sits on the same baseline as the controls beside it. */
+  margin-top: 2px;
+}
+
+.iq-drawer__row-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Only the grip starts a drag, so the textarea beside it stays selectable. */
+.iq-drawer__grip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--text-tertiary);
+  cursor: grab;
+}
+
+.iq-drawer__grip:active {
+  cursor: grabbing;
+}
+
+.iq-drawer__row-index {
+  flex-shrink: 0;
+  min-width: 20px;
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.iq-drawer__row-move {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-xs);
+}
+
+/* Icon-only, so circular hover per the house rule. */
+.iq-drawer__move-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.iq-drawer__move-btn:hover:not(:disabled) {
+  background: var(--page-background-hover);
+  color: var(--text-primary);
+}
+
+.iq-drawer__move-btn:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.iq-drawer__move-btn:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.iq-drawer__row-remove {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.iq-drawer__row-remove:hover {
+  color: var(--text-error);
+}
+
+.iq-drawer__row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+/* ===== Match the pairs ===== */
+
+/* Column headers sit over the two inputs; the trailing columns (link glyph and
+   remove) have no header, so the grid is set from the row itself. */
+.iq-drawer__pair-head {
+  display: flex;
+  gap: var(--space-s);
+  padding: 0 var(--space-sm);
+}
+
+.iq-drawer__pair-head .iq-drawer__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.iq-drawer__row--pair {
+  align-items: flex-start;
+}
+
+.iq-drawer__pair-link {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ===== Categorise ===== */
+
+/* An item and its category choices read as one block, so they sit closer to each
+   other than to the next item. */
+.iq-drawer__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.iq-drawer__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s) var(--space-m);
+  padding-left: var(--space-sm);
+}
+
+.iq-drawer__choice {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+/* ===== Fill in the blanks ===== */
+
+/* Reads back the parsed sentence — the gaps are what the admin is checking, so
+   they carry the amber selection tint the learner's chips use. */
+.iq-drawer__preview {
+  padding: var(--space-sm) var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 2;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.iq-drawer__preview-blank {
+  padding: 2px var(--space-s);
+  border-radius: var(--radius-xs);
+  background: var(--selected);
+  color: var(--neutral-800);
+  font-weight: 500;
+}
+
+.iq-drawer__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.iq-drawer__chip {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* ===== Footer ===== */
+
+.iq-drawer__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Reorder announcements — visible to screen readers only. */
+.iq-drawer__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

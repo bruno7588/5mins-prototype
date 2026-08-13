@@ -15,14 +15,25 @@ import {
   DocumentText,
   ArrowDown2,
   ArrowUp2,
+  TextalignJustifyleft,
+  Convertshape,
+  Category,
+  Sort,
 } from 'iconsax-react'
 import AssessmentIcon from '@/components/icons/AssessmentIcon'
 import Collapse from '@/components/Collapse/Collapse'
 import Tooltip from '@/components/Tooltip/Tooltip'
+import { TYPE_CONFIG, type InteractiveQuestionType } from '@/data/interactiveQuestions'
 import type { AssessmentType } from '../AddContentSidebar/AddContentSidebar'
 import './AddContentIconStrip.css'
 
-export type StripActive = 'library' | 'scorm' | 'assessment' | 'situational-test' | null
+export type StripActive =
+  | 'library'
+  | 'scorm'
+  | 'assessment'
+  | 'situational-test'
+  | 'interactive'
+  | null
 
 const ICON = 20
 const C = 'currentColor'
@@ -32,6 +43,16 @@ const ASSESSMENTS: { type: AssessmentType; label: string; icon: (active: boolean
   { type: 'short-text', label: 'Short Text', icon: (a) => <Edit size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'exercise', label: 'Exercise', icon: (a) => <ArchiveBook size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'poll', label: 'Poll', icon: (a) => <Chart size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+]
+
+/* The interactive formats join the same Assessments group — they are assessments,
+   and a second group of four would double the rail's chrome to say so. Labels come
+   from TYPE_CONFIG so the rail, the drawer header and the outline card can't drift. */
+const INTERACTIVE: { type: InteractiveQuestionType; icon: (active: boolean) => ReactNode }[] = [
+  { type: 'fill-blank', icon: (a) => <TextalignJustifyleft size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'match-pairs', icon: (a) => <Convertshape size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'categorization', icon: (a) => <Category size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'sequencing', icon: (a) => <Sort size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
 ]
 
 interface AddContentIconStripProps {
@@ -45,6 +66,9 @@ interface AddContentIconStripProps {
   onScormClick?: () => void
   onAssessmentClick?: (type: AssessmentType) => void
   onSituationalTestClick?: () => void
+  /** Which interactive format the open drawer is showing. */
+  activeInteractive?: InteractiveQuestionType
+  onInteractiveClick?: (type: InteractiveQuestionType) => void
 }
 
 /* Right-edge Add Content sidebar per Figma 8949:70435 (rail) / 8953:70671 (items).
@@ -60,11 +84,16 @@ function AddContentIconStrip({
   onScormClick,
   onAssessmentClick,
   onSituationalTestClick,
+  activeInteractive,
+  onInteractiveClick,
 }: AddContentIconStripProps) {
   const [assessmentsOpen, setAssessmentsOpen] = useState(false)
 
   const assessmentActive = (type: AssessmentType) =>
     active === 'assessment' && activeAssessment === type
+
+  const interactiveActive = (type: InteractiveQuestionType) =>
+    active === 'interactive' && activeInteractive === type
 
   /* The label and the Tooltip wrapper are always mounted — swapping either on
      `expanded` would remount the button mid-transition and snap the panel. The
@@ -178,6 +207,16 @@ function AddContentIconStrip({
                 {label}
               </button>
             ))}
+            {INTERACTIVE.map(({ type }) => (
+              <button
+                key={type}
+                type="button"
+                className="add-content-icon-strip__subitem"
+                onClick={() => onInteractiveClick?.(type)}
+              >
+                {TYPE_CONFIG[type].label}
+              </button>
+            ))}
           </Collapse>
         </>
       ) : (
@@ -185,6 +224,9 @@ function AddContentIconStrip({
           <span className="add-content-icon-strip__divider" aria-hidden="true" />
           {ASSESSMENTS.map(({ type, label, icon }) =>
             <Fragment key={type}>{item(label, icon(assessmentActive(type)), assessmentActive(type), () => onAssessmentClick?.(type))}</Fragment>,
+          )}
+          {INTERACTIVE.map(({ type, icon }) =>
+            <Fragment key={type}>{item(TYPE_CONFIG[type].label, icon(interactiveActive(type)), interactiveActive(type), () => onInteractiveClick?.(type))}</Fragment>,
           )}
           <span className="add-content-icon-strip__divider" aria-hidden="true" />
         </>
