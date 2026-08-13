@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Button from '@/components/Button/Button'
+import Table, { type Column } from '@/components/Table/Table'
 import { SearchNormal1 } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import './ScormDrawer.css'
@@ -58,6 +59,38 @@ function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
     f.fileName.toLowerCase().includes(search.toLowerCase())
   )
 
+  /* DS Table (table.md): thumbnail + text cell, text cell, then a button cell. */
+  const columns: Column<ScormFile>[] = [
+    {
+      key: 'fileName',
+      header: 'File name',
+      width: '1 1 auto',
+      render: (f) => (
+        <span className="tbl-media">
+          <span className="tbl-thumb" style={{ background: f.thumbColor }} />
+          <span className="sc-scorm-drawer-filename">{f.fileName}</span>
+        </span>
+      ),
+    },
+    { key: 'type', header: 'Type', width: '0 0 96px', render: (f) => f.type },
+    {
+      key: 'action',
+      header: '',
+      width: '0 0 96px',
+      align: 'right',
+      render: (f) =>
+        addedIds.has(f.id) ? (
+          <Button size="sm" variant="outlined" onClick={() => onRemove(f.id)}>
+            Remove
+          </Button>
+        ) : (
+          <Button size="sm" onClick={() => onAdd(f)}>
+            Add
+          </Button>
+        ),
+    },
+  ]
+
   return (
     <div className={`sc-scorm-drawer-overlay${closing ? ' sc-scorm-drawer-overlay--closing' : ''}`} onClick={handleClose}>
       <aside className={`sc-scorm-drawer${closing ? ' sc-scorm-drawer--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
@@ -84,40 +117,7 @@ function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
           />
         </div>
 
-        {/* Table */}
-        <table className="sc-scorm-drawer-table">
-          <thead>
-            <tr>
-              <th>File name</th>
-              <th>Type</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((file) => (
-              <tr key={file.id}>
-                <td>
-                  <div className="sc-scorm-drawer-file">
-                    <div className="sc-scorm-drawer-thumb" style={{ background: file.thumbColor }} />
-                    <span className="sc-scorm-drawer-filename">{file.fileName}</span>
-                  </div>
-                </td>
-                <td className="sc-scorm-drawer-type">{file.type}</td>
-                <td>
-                  {addedIds.has(file.id) ? (
-                    <Button size="sm" variant="outlined" onClick={() => onRemove(file.id)}>
-                      Remove
-                    </Button>
-                  ) : (
-                    <Button size="sm" onClick={() => onAdd(file)}>
-                      Add
-                    </Button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table columns={columns} rows={filtered} getRowKey={(f) => String(f.id)} />
       </aside>
     </div>
   )

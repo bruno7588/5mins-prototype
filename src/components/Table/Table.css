@@ -190,6 +190,12 @@
   color: var(--text-button-hover);
 }
 
+/* Opt-out of the ellipsis clip, for a cell that anchors its own popover.
+   Only for cells with no text to truncate — an actions cluster, say. */
+.tbl-cell.is-overflow {
+  overflow: visible;
+}
+
 /* Media + text wrapper (12px gap between icon/thumb/avatar and text) */
 .tbl-media {
   display: flex;

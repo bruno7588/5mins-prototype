@@ -127,61 +127,8 @@
   color: var(--text-tertiary);
 }
 
-/* Table */
-.sc-scorm-drawer-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.sc-scorm-drawer-table th {
-  text-align: left;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  background: var(--input-background);
-  padding: var(--space-s) var(--space-m);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.sc-scorm-drawer-table td {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  padding: var(--space-sm) var(--space-m);
-  border-bottom: 1px solid var(--border);
-  vertical-align: middle;
-}
-
-.sc-scorm-drawer-table tbody tr {
-  transition: background 150ms ease;
-}
-
-.sc-scorm-drawer-table tbody tr:hover {
-  background: var(--page-background-hover);
-}
-
-/* File name cell */
-.sc-scorm-drawer-file {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.sc-scorm-drawer-thumb {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-s);
-  flex-shrink: 0;
-}
-
+/* File name cell — the row chrome comes from the shared Table (table.md). */
 .sc-scorm-drawer-filename {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-}
-
-/* Type */
-.sc-scorm-drawer-type {
-  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

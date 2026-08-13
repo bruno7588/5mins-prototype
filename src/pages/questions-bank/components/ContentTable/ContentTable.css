@@ -84,136 +84,20 @@
   background: var(--primary-button-background-hover);
 }
 
-/* Table */
-.qb-content-table-scroll {
-  overflow-x: auto;
-  width: 100%;
-}
-
-.qb-content-table {
-  width: 100%;
-  min-width: 880px; /* overflow into the scroll wrapper instead of squashing columns */
-  /* separate (not collapse) so each cell owns its border-bottom — collapsed
-     borders don't travel with a sticky cell */
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-.qb-content-table th {
-  text-align: left;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  background: var(--input-background);
-  padding: var(--space-s) var(--space-m);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.qb-content-table th.col-sort {
-  cursor: pointer;
-}
-
-.qb-content-table th .sort-indicator {
+/* Sort arrow in a header cell — the table chrome itself is the shared
+   Table component (docs/design-system/table.md). */
+.qb-content-table-sort {
   display: inline-flex;
   align-items: center;
-  margin-left: var(--space-xs);
-  vertical-align: middle;
-}
-
-.qb-content-table td {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  padding: var(--space-sm) var(--space-m);
-  border-bottom: 1px solid var(--border);
-  vertical-align: middle;
-}
-
-.qb-content-table tr {
-  transition: background 150ms ease;
-}
-
-.qb-content-table tbody tr:hover {
-  background: var(--page-background-hover);
-}
-
-/* Sticky first column (File name) — transparent at rest so the row's own
-   hover background shows through untouched. */
-.qb-content-table th:first-child,
-.qb-content-table td:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-}
-
-/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks
-   the content sliding under it. Its own border-bottom (kept by the separate
-   border model above) preserves the row separator. */
-.qb-content-table-scroll--scrolled .qb-content-table th:first-child,
-.qb-content-table-scroll--scrolled .qb-content-table td:first-child {
-  background: var(--page-background);
-}
-
-.qb-content-table-scroll--scrolled .qb-content-table tbody tr:hover td:first-child {
-  background: var(--page-background-hover);
-}
-
-/* Right-edge freeze shadow, only while scrolled */
-.qb-content-table th:first-child::after,
-.qb-content-table td:first-child::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.qb-content-table-scroll--scrolled .qb-content-table th:first-child::after,
-.qb-content-table-scroll--scrolled .qb-content-table td:first-child::after {
-  opacity: 1;
-}
-
-/* File name cell */
-.qb-content-table-file {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.qb-content-table-thumb {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-s);
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.qb-content-table-thumb-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  gap: var(--space-xs);
 }
 
 .qb-content-table-filename {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
-}
-
-.qb-content-table-filename--editable {
-  cursor: pointer;
-  border-bottom: 1px solid transparent;
-  transition: border-color 150ms ease;
-}
-
-.qb-content-table-filename--editable:hover {
-  border-bottom-color: var(--border-hover);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .qb-content-table-filename--clickable {
@@ -224,34 +108,9 @@
   color: var(--text-button-hover);
 }
 
-.qb-content-table-filename-input {
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  background: none;
-  border: none;
-  border-bottom: 2px solid var(--selected);
-  outline: none;
-  padding: 0 0 2px 0;
-  width: 100%;
-  line-height: 1.5;
-}
-
 /* Type cell */
 .qb-content-table-type {
   color: var(--text-secondary);
-}
-
-/* Uploaded by */
-.qb-content-table-uploader {
-  color: var(--text-primary);
-}
-
-/* Date */
-.qb-content-table-date {
-  color: var(--text-primary);
-  white-space: nowrap;
 }
 
 /* Action icons */
@@ -278,6 +137,8 @@
 /* AI quiz badge */
 .qb-content-table-ai-badge-wrapper {
   position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
 .qb-content-table-ai-badge {
@@ -373,84 +234,6 @@
   border-left: 8px solid var(--tooltip-background);
 }
 
-/* More menu */
-.qb-content-table-more-wrapper {
-  position: relative;
-}
-
-.qb-content-table-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-s);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);
-  min-width: 180px;
-}
-
-.qb-content-table-menu-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-m);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  background: none;
-  border: none;
-  border-radius: var(--radius-s);
-  cursor: pointer;
-  white-space: nowrap;
-  text-align: left;
-}
-
-.qb-content-table-menu-item:hover {
-  background: var(--cards-background-hover);
-}
-
-.qb-content-table-menu-item--danger {
-  color: var(--danger-500);
-}
-
-/* Pagination */
-.qb-content-table-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-sm);
-  padding: var(--space-m) 0;
-}
-
-.qb-content-table-pagination-text {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-
-.qb-content-table-pagination-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  transition: background 150ms ease;
-}
-
-.qb-content-table-pagination-btn:hover {
-  background: var(--page-background-hover);
-}
-
-.qb-content-table-pagination-btn--disabled {
-  opacity: 0.3;
-  pointer-events: none;
-}
-
 /* Preview overlay */
 .qb-content-table-preview-overlay {
   position: fixed;
@@ -513,3 +296,4 @@
   font-weight: 400;
   color: var(--text-tertiary);
 }
+

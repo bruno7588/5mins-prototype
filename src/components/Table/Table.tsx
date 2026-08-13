@@ -24,6 +24,9 @@ export interface Column<T> {
   width?: string
   /** Horizontal alignment of the header + cell content. Default: left. */
   align?: 'left' | 'right' | 'center'
+  /** Extra class on this column's data cells — e.g. `is-overflow` to let an
+      anchored tooltip escape the cell's text-ellipsis clip. */
+  cellClassName?: string
   render: (row: T) => ReactNode
 }
 
@@ -135,7 +138,11 @@ export function Table<T>({
               </div>
             )}
             {columns.map((col, ci) => (
-              <div key={col.key} className={stickyClass(ci, 'tbl-cell')} style={stickyStyle(ci, cellStyle(col))}>
+              <div
+                key={col.key}
+                className={stickyClass(ci, `tbl-cell${col.cellClassName ? ` ${col.cellClassName}` : ''}`)}
+                style={stickyStyle(ci, cellStyle(col))}
+              >
                 {col.render(row)}
               </div>
             ))}
