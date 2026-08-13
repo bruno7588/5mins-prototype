@@ -30,9 +30,9 @@ function BulkActionBar({ count, onClear, children, label = 'selected' }: BulkAct
   const motionProps = reduceMotion
     ? { transition: { duration: 0 } }
     : {
-        transition: { duration: 0.25, ease: 'easeOut' as const },
+        transition: { duration: 0.14, ease: 'easeOut' as const },
         // Leaves a touch quicker than it arrives, so dismissal feels responsive.
-        exit: { opacity: 0, y: 16, transition: { duration: 0.2, ease: 'easeIn' as const } },
+        exit: { opacity: 0, y: 16, transition: { duration: 0.1, ease: 'easeIn' as const } },
       }
 
   return (
