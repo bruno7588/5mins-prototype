@@ -1,10 +1,17 @@
 import { useLayoutEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Danger, Eye } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import PageHeader from './components/PageHeader/PageHeader'
 import ContentList from './components/ContentList/ContentList'
-import type { ContentItem } from './components/ContentList/ContentList'
+import CourseDetailsTab, {
+  DEFAULT_COURSE_THUMBNAIL,
+} from './components/CourseDetailsTab/CourseDetailsTab'
+import type { CourseDetailsDraft } from './components/CourseDetailsTab/CourseDetailsTab'
+import { saveCourse, type StoredCourse } from './courseStore'
+import type { ContentItem, OutlineSection } from './components/ContentList/ContentList'
+import CoursePreview from './components/CoursePreview/CoursePreview'
 import AddContentIconStrip from './components/AddContentIconStrip/AddContentIconStrip'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
@@ -40,7 +47,20 @@ let nextInteractiveId = 1000
 type ActiveDrawer = 'library' | 'scorm' | 'assessment' | 'situational-test' | 'interactive' | null
 
 function CreateCourse() {
+  const navigate = useNavigate()
+  /* The builder opens on Details — a course starts with its title, and the
+     outline is the second step. */
+  const [activeTab, setActiveTab] = useState('Details')
+  const [details, setDetails] = useState<CourseDetailsDraft>({
+    title: '',
+    description: '',
+    thumbnail: '',
+  })
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
+  /* Mirrors the outline ContentList owns, so Preview can show the real sections
+     and ordering rather than a flat re-derivation of what was added. */
+  const [outline, setOutline] = useState<OutlineSection[]>([])
+  const [previewOpen, setPreviewOpen] = useState(false)
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
   const [assessmentType, setAssessmentType] = useState<AssessmentType>('multiple-choice')
   const [activeDrawer, setActiveDrawer] = useState<ActiveDrawer>(null)
@@ -318,11 +338,56 @@ function CreateCourse() {
     })
   }
 
+  /* ContentList only mounts on the Course Content tab, so its reported outline
+     goes stale the moment something is added from Details — where the Add
+     Content rail is equally available. Trust the outline only while it still
+     accounts for every item; otherwise show the flat list, which is always
+     current. Better a preview without section headings than one missing content. */
+  const outlineItemCount = outline.reduce((n, s) => n + s.items.length, 0)
+  const previewOutline =
+    outlineItemCount === scormItems.length && outline.length > 0
+      ? outline
+      : [{ id: 'preview-all', name: 'Course content', items: scormItems }]
+
+  /* The title is the only thing a course can't be created without — the outline
+     can be filled in later, and a missing thumbnail falls back to the generated
+     one the Details copy promises. */
+  const canCreate = details.title.trim().length > 0
+
+  /* Both actions persist the course; only the status and where they land differ.
+     Creating opens the confirmation over the Courses folder, so closing it leaves
+     the admin exactly where the modal says the course now lives. */
+  const commit = (status: StoredCourse['status']) => {
+    const course: StoredCourse = {
+      id: Date.now(),
+      title: details.title.trim(),
+      description: details.description.trim(),
+      thumbnail: details.thumbnail || DEFAULT_COURSE_THUMBNAIL,
+      status,
+      lessons: scormItems.length,
+      createdAt: new Date().toISOString(),
+    }
+    saveCourse(course)
+    navigate('/your-courses/list', {
+      state: status === 'published' ? { createdCourseId: course.id } : { toast: 'Draft saved' },
+    })
+  }
+
   return (
     <>
       <PageHeader
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        secondaryDisabled={!canCreate}
+        onSecondary={() => commit('draft')}
+        primaryDisabled={!canCreate}
+        onPrimary={() => commit('published')}
         leadingAction={
-          <Button variant="outlined-2" icon={<Eye size={20} color="currentColor" variant="Linear" />}>
+          <Button
+            variant="outlined-2"
+            icon={<Eye size={20} color="currentColor" variant="Linear" />}
+            onClick={() => setPreviewOpen(true)}
+          >
             Preview
           </Button>
         }
@@ -335,6 +400,10 @@ function CreateCourse() {
         ].filter(Boolean).join(' ')}
       >
         <main className="main-content">
+          {activeTab === 'Details' && (
+            <CourseDetailsTab draft={details} onChange={setDetails} />
+          )}
+          {activeTab === 'Course Content' && (
           <ContentList
             extraItems={scormItems}
             onDeleteExtra={handleDeleteExtra}
@@ -351,7 +420,9 @@ function CreateCourse() {
             onAddContent={openAddContent}
             targetSectionId={targetSectionId}
             drawerOpen={activeDrawer !== null}
+            onOutlineChange={setOutline}
           />
+          )}
         </main>
       </div>
       <AddContentIconStrip
@@ -388,6 +459,13 @@ function CreateCourse() {
         interactiveInitialId={editingInteractiveId}
         onInteractiveSave={handleSaveInteractive}
         onInteractiveDirtyChange={setInteractiveDirty}
+      />
+      <CoursePreview
+        open={previewOpen}
+        draft={details}
+        outline={previewOutline}
+        interactive={interactive}
+        onClose={() => setPreviewOpen(false)}
       />
       {/* One modal for both authoring drawers — only the nouns change, so a second
           copy of the scrim, icon and actions would be four lines of difference. */}

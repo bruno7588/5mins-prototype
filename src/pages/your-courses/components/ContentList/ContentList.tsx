@@ -244,6 +244,16 @@ interface ContentListProps {
      240 for the Add Content panel, 720 for the side drawer, 0 when none. */
   /** A right-side drawer is open, so the list anchors left instead of centring. */
   drawerOpen?: boolean
+  /** Emits the outline whenever it changes, so the builder can preview it.
+      Sections and their order live in here, not in the parent. */
+  onOutlineChange?: (sections: OutlineSection[]) => void
+}
+
+/** Resolved outline handed to the parent — items inlined, not keys. */
+export interface OutlineSection {
+  id: string
+  name: string
+  items: ContentItem[]
 }
 
 function ContentList({
@@ -253,6 +263,7 @@ function ContentList({
   onAddContent,
   targetSectionId,
   drawerOpen = false,
+  onOutlineChange,
 }: ContentListProps) {
   const [itemsByKey, setItemsByKey] = useState<Record<string, ContentItem>>({})
   const [sections, setSections] = useState<Section[]>(() => [makeDefaultSection()])
@@ -326,6 +337,20 @@ function ContentList({
       )
     })
   }, [extraItems, targetSectionId])
+
+  /* Hand the resolved outline up so the builder's Preview can render what the
+     admin actually arranged — section names, grouping and drag order all live
+     in this component's state, so the parent can't derive it from extraItems. */
+  useEffect(() => {
+    if (!onOutlineChange) return
+    onOutlineChange(
+      sections.map((s) => ({
+        id: s.id,
+        name: s.name,
+        items: s.itemKeys.map((k) => itemsByKey[k]).filter(Boolean),
+      })),
+    )
+  }, [sections, itemsByKey, onOutlineChange])
 
   // Collapse back to the pristine empty state once the course holds no named sections
   // and no content — e.g. deleting the last section (or removing the last loose item)

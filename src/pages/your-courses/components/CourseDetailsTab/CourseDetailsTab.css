@@ -1,0 +1,146 @@
+/* Create Course → Details tab.
+   Figma: inline input 9044:77741, course thumbnail 9044:78406.
+   The 900px column is the inline input's reference width and matches the Course
+   Content tab's own content column, so the two tabs don't jump when switched. */
+.cdt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl); /* 32px */
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-l) 0; /* matches .content-list-layout's vertical rhythm */
+}
+
+/* ── Inline input (docs/design-system/input.md → Inline) ──────────────────────
+   Borderless: no box and no label, the type scale is the affordance. */
+.cdt-headline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs); /* 4px */
+  width: 100%;
+}
+
+/* Title row — the Error state's 24px Danger icon sits at the row end. */
+.cdt-headline__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.cdt-headline__title,
+.cdt-headline__desc {
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.5;
+}
+
+.cdt-headline__title::placeholder,
+.cdt-headline__desc::placeholder {
+  color: var(--text-disabled);
+}
+
+/* Active is the caret and nothing else (input.md): no box, no ring, no hover —
+   a focus outline here would give the editor the chrome it exists to avoid.
+   The caret is the affordance, so it takes the filled text colour explicitly. */
+.cdt-headline__title:focus,
+.cdt-headline__desc:focus {
+  outline: none;
+}
+
+.cdt-headline__title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  caret-color: var(--text-primary);
+}
+
+.cdt-headline__title--error {
+  color: var(--text-error);
+}
+
+.cdt-headline__error {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-error);
+}
+
+/* The description keeps its normal colour even while the title is in error. */
+.cdt-headline__desc {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  caret-color: var(--text-primary);
+  resize: none;
+  overflow: hidden;
+}
+
+/* ── Course thumbnail ──────────────────────────────────────────────────────── */
+.cdt-thumb {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s); /* 8px */
+  width: 100%;
+}
+
+.cdt-thumb__label {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.cdt-thumb__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m); /* 16px */
+  width: 100%;
+}
+
+/* 160x90 — a 16:9 crop of the thumbnail it stands in for. */
+.cdt-thumb__box {
+  flex: 0 0 160px;
+  width: 160px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-m);
+  border: 1px dashed var(--border-elevated);
+  border-radius: var(--radius-sm); /* 12px */
+  background-size: cover;
+  background-position: center;
+}
+
+.cdt-thumb__box--filled {
+  border-style: solid;
+  border-color: var(--border);
+}
+
+.cdt-thumb__info {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm); /* 12px */
+}
+
+.cdt-thumb__copy {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.cdt-thumb__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}

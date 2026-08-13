@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Add, ArrowRight2, ArrowDown2, ArrowLeft2, Sort } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
@@ -7,6 +7,9 @@ import Badge from '../../components/Badge/Badge'
 import Button from '../../components/Button/Button'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import MoreIcon from '../../components/icons/MoreIcon'
+import ToastContainer, { useToast } from '../../components/Toast/Toast'
+import CourseCreatedModal from './components/CourseCreatedModal/CourseCreatedModal'
+import { formatCourseDate, loadCourses } from './courseStore'
 import './YourCoursesList.css'
 
 const thumbImage = 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=180&h=88&fit=crop'
@@ -20,6 +23,8 @@ interface CourseRow {
   lessons: number
   createdBy: string
   updatedAt: string
+  /** Builder-authored courses carry their own artwork; seeds share a stock shot. */
+  thumbnail?: string
 }
 
 const courseRows: CourseRow[] = [
@@ -43,16 +48,60 @@ const statusOptions = [
 
 function YourCoursesList() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [statusFilter, setStatusFilter] = useState('all')
   const [search, setSearch] = useState('')
 
+  /* Read once on mount: the builder writes to the store before navigating here,
+     and nothing else mutates it while this page is open. */
+  const [stored] = useState(() => loadCourses())
+
+  /* The builder hands over the id it just created; that course gets the
+     confirmation modal over this page, so closing it lands on the folder. */
+  const createdId = (location.state as { createdCourseId?: number } | null)?.createdCourseId
+  const createdCourse = stored.find((c) => c.id === createdId) ?? null
+  const [successOpen, setSuccessOpen] = useState(!!createdCourse)
+
+  /* Saving a draft gets a toast rather than the modal — it isn't a finished
+     course, so it doesn't earn the celebration. The ref guard stops StrictMode's
+     double-invoked effect stacking two identical pills. */
+  const { toasts, show } = useToast()
+  const toastShown = useRef(false)
+  useEffect(() => {
+    const toast = (location.state as { toast?: string } | null)?.toast
+    if (!toast || toastShown.current) return
+    toastShown.current = true
+    show('success', toast)
+    navigate('.', { replace: true, state: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const allRows = useMemo<CourseRow[]>(
+    () => [
+      // Authored courses lead — newest first, above the seeded mock rows.
+      ...[...stored]
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        .map((c) => ({
+          id: c.id,
+          title: c.title,
+          status: c.status,
+          lessons: c.lessons,
+          createdBy: 'You',
+          updatedAt: formatCourseDate(c.createdAt),
+          thumbnail: c.thumbnail,
+        })),
+      ...courseRows,
+    ],
+    [stored],
+  )
+
   const rows = useMemo(() => {
-    return courseRows.filter((row) => {
+    return allRows.filter((row) => {
       const matchesStatus = statusFilter === 'all' || row.status === statusFilter
       const matchesSearch = row.title.toLowerCase().includes(search.trim().toLowerCase())
       return matchesStatus && matchesSearch
     })
-  }, [statusFilter, search])
+  }, [allRows, statusFilter, search])
 
   return (
     <div className="courses-list-layout">
@@ -121,7 +170,7 @@ function YourCoursesList() {
               <div className="courses-list-row" key={row.id}>
                 <div className="courses-list-cell courses-list-cell--course">
                   <div className="courses-list-thumb">
-                    <img src={thumbImage} alt="" />
+                    <img src={row.thumbnail || thumbImage} alt="" />
                   </div>
                   <span
                     className="courses-list-course-title"
@@ -180,6 +229,14 @@ function YourCoursesList() {
           </div>
         </div>
       </main>
+
+      <ToastContainer toasts={toasts} />
+
+      <CourseCreatedModal
+        open={successOpen}
+        course={createdCourse}
+        onClose={() => setSuccessOpen(false)}
+      />
     </div>
   )
 }

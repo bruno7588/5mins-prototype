@@ -159,7 +159,6 @@ function YourCourses() {
         </div>
         )}
       </main>
-
     </div>
   )
 }

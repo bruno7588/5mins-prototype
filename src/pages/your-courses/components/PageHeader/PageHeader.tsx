@@ -6,6 +6,8 @@ import './PageHeader.css'
 
 export interface PageHeaderTab {
   label: string
+  /** Tab with nothing behind it yet — dimmed and inert rather than clickable to a blank panel. */
+  disabled?: boolean
 }
 
 interface PageHeaderProps {
@@ -34,8 +36,8 @@ interface PageHeaderProps {
 const DEFAULT_TABS: PageHeaderTab[] = [
   { label: 'Details' },
   { label: 'Course Content' },
-  { label: 'Resources' },
-  { label: 'Settings' },
+  { label: 'Resources', disabled: true },
+  { label: 'Settings', disabled: true },
 ]
 
 /**
@@ -88,8 +90,15 @@ function PageHeader({
           {tabs.map((tab) => (
             <button
               key={tab.label}
-              className={`page-header-tab ${tab.label === activeTab ? 'page-header-tab--active' : ''}`}
-              onClick={onTabChange ? () => onTabChange(tab.label) : undefined}
+              className={[
+                'page-header-tab',
+                tab.label === activeTab && 'page-header-tab--active',
+                tab.disabled && 'ui-disabled',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              disabled={tab.disabled}
+              onClick={onTabChange && !tab.disabled ? () => onTabChange(tab.label) : undefined}
             >
               {tab.label}
             </button>
