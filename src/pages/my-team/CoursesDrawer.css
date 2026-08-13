@@ -219,7 +219,7 @@
   display: flex;
   align-items: center;
   border: 1px solid var(--border);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
 }
 
 .cd-table__cell {

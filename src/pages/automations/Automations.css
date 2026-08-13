@@ -201,7 +201,7 @@
   width: 100%;
   min-width: fit-content;
   border: 1px solid var(--border);
-  border-radius: var(--radius-s); /* 8px */
+  border-radius: var(--radius-sm); /* 12px */
   transition: background 150ms ease;
 }
 
