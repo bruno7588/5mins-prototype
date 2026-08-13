@@ -473,7 +473,7 @@
   gap: var(--space-sm);
   padding: 12px;
   background: var(--neutral-800);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-m); /* 16px — same as the shared .bulk-bar */
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
   animation: lr-bulk-bar-slide-up 250ms ease;
 }
