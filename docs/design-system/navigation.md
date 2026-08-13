@@ -73,9 +73,9 @@ Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regul
 
 Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records, Events, Account & Settings.
 
-**Expandable groups** (People & Teams, Content) append a 14px `ArrowDown2`/`ArrowUp2` chevron right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 8px 16px 8px 44px` (aligns text under the parent label), Regular 14 `--text-tertiary`.
+**Expandable groups** (People & Teams, Content) append a 14px `ArrowDown2`/`ArrowUp2` chevron right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`.
 
-> The item component node (`11925:5713`) draws sub-items at `42px` left / `12px` vertical padding, while the assembled panel (`11925:5294`) uses `44px` / `8px`. The assembled panel (and the built `LeftSidebar`) is the reference: **44px / 8px**.
+> Reversed 2026-08-13. The assembled panel (`11925:5294`) draws sub-items at `44px` left / `8px` vertical, the item component at `42px` / `12px`; this doc previously took the panel as reference. The component set — `10372:4045`, which carries the full Menu/Sub-menu × selected × Enabled/Hover matrix — is now the reference, so sub-items are **42px / 12px** and menu items share the same `12px 16px` row metrics. `LeftSidebar` follows this.
 
 ### Item states (both systems)
 
@@ -260,7 +260,8 @@ Shared elements:
 ## Code reality
 
 - `src/components/TopNav/TopNav.tsx` — the Admin top nav (inline SVG logo, Exit Admin, disabled Moon toggle, Logout with tooltip). Drift from the node: background is `--neutral-25` instead of `--page-background` (same value in light mode) and the Moon/Logout icons render at 24px vs Figma's 21px.
-- `src/components/LeftSidebar/LeftSidebar.tsx` — the Admin side panel (expandable People & Teams / Content groups, route-driven selection). Drift: hover uses `--neutral-50` instead of `--input-background`, selected uses `--secondary-600` directly (equals `--text-selected` in light mode), and it adds section eyebrows + red count badges that aren't part of the Library component.
+- `src/components/LeftSidebar/LeftSidebar.tsx` — the Admin side panel (expandable People & Teams / Content groups, route-driven selection). Aligned to `10372:4045` on 2026-08-13: row metrics `12px 16px`, sub-items indented 42px, hover `--input-background`, selected `--text-selected` (was `--secondary-600`, which matched only in light mode). Remaining drift: it adds section eyebrows and red count badges that aren't part of the Library component.
+- `src/pages/your-courses/components/AddContentIconStrip/` — the Create Course rail reuses this menu-item language. Its Assessments group and sub-items follow the same states, per the product file (`9051:187870` expanded group, `9052:198939` selected sub-item): Bold label for an open group, Bold `--text-selected` for the selected sub-item, neither with a fill. Note its sub-items sit at `8px 40px`, not the Library's `12px 42px`.
 - The **Web app** top nav and side panel are not built in this prototype.
 - Collapsed states are not implemented (`LeftSidebar` is fixed-width 240px).
 - `src/components/mobile/TabNav/TabNav.tsx` and `src/components/mobile/TopNav/TopNav.tsx` — the mobile app chrome (see "Mobile App Navigation" above). TopNav's status bar is a lightweight stand-in (system font clock + simple glyphs, not the Figma SF Pro assets); the Mobile web (browser chrome) variant is not built.

@@ -42,11 +42,13 @@
 }
 
 /* Sidebar item */
+/* Menu item — Figma Library 10372:4045 (Menu/Itens/Admin): 12px 16px, 8px gap,
+   8px radius. */
 .sidebar-item {
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-s) var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-s);
   font-size: 14px;
   font-weight: 400;
@@ -58,11 +60,13 @@
 }
 
 .sidebar-item:hover {
-  background: var(--page-background-hover);
+  background: var(--input-background);
 }
 
+/* Selected is the amber Bold label; --text-selected is the mode-aware token
+   (secondary-600 light / secondary-500 dark), not the raw palette value. */
 .sidebar-item--active {
-  color: var(--secondary-600);
+  color: var(--text-selected);
   font-weight: 700;
 }
 
@@ -101,11 +105,12 @@
   gap: 2px;
 }
 
+/* Sub-menu item — same row metrics, indented to clear the parent icon. */
 .sidebar-sub-item {
   display: flex;
   align-items: center;
-  padding: var(--space-s) var(--space-sm);
-  padding-left: 44px;
+  padding: var(--space-sm) var(--space-m);
+  padding-left: 42px;
   border-radius: var(--radius-s);
   font-size: 14px;
   font-weight: 400;
@@ -117,11 +122,11 @@
 }
 
 .sidebar-sub-item:hover {
-  background: var(--page-background-hover);
+  background: var(--input-background);
 }
 
 .sidebar-sub-item--active {
-  color: var(--secondary-600);
+  color: var(--text-selected);
   font-weight: 700;
 }
 
