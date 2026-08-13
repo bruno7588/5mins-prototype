@@ -121,7 +121,10 @@ padding: 0;
 
 ```tsx
 import React from 'react';
-import { InfoCircle, Danger } from 'iconsax-react';
+import { Danger } from 'iconsax-react';
+// The info glyph is the platform's own (src/components/icons/InfoIcon.tsx), not
+// Iconsax's InfoCircle — same circle, lowercase "i" instead of "!".
+import InfoIcon from '@/components/icons/InfoIcon';
 
 type AlertType = 'Callout' | 'Alert';
 
@@ -165,7 +168,7 @@ export const Alert: React.FC<AlertProps> = ({
     >
       {/* Leading element */}
       {!isAlert && icon && (
-        <InfoCircle size={20} variant="Outline" color="currentColor" className="alert__icon" />
+        <InfoIcon size={20} color="currentColor" className="alert__icon" />
       )}
       {!isAlert && illustration && !icon && illustrationSrc && (
         <img src={illustrationSrc} alt="" className="alert__illustration" />

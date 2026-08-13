@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { InfoCircle } from 'iconsax-react'
+import InfoIcon from '../icons/InfoIcon'
 import './Alert.css'
 
 export type AlertType = 'Callout' | 'Alert'
@@ -45,14 +45,11 @@ function Alert({
         hasBody ? ' alert--with-body' : ''
       } ${className}`.trim()}
     >
+      {/* Default glyph is the platform's own info icon (Tooltip, PoolHeader, the
+          situational drawer's guidance callout) rather than Iconsax's. */}
       {showIcon && (
         customIcon ?? (
-          <InfoCircle
-            size={isAlert ? 24 : 20}
-            variant="Outline"
-            color="currentColor"
-            className="alert__icon"
-          />
+          <InfoIcon size={isAlert ? 24 : 20} color="currentColor" className="alert__icon" />
         )
       )}
       {!icon && illustration && isAlert && (
