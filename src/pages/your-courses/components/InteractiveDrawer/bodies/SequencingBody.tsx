@@ -2,7 +2,7 @@ import { useState, type DragEvent } from 'react'
 import { Add, ArrowDown2, ArrowUp2 } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import { makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
+import { draftErrors, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
 import { autoGrow } from '../autoGrow'
 import DragHandleIcon from './DragHandleIcon'
@@ -67,8 +67,10 @@ function SequencingBody({ draft, onChange, showErrors }: BodyProps<SequencingDra
     setDragOverIndex(null)
   }
 
-  const filled = steps.filter((s) => s.a.trim()).length
-  const tooFew = showErrors && filled < MIN_STEPS
+  /* Reads the model's rules rather than re-checking the count here, so the
+     duplicate-step rule surfaces too and the message can never drift from the
+     one the footer shows. */
+  const errors = showErrors ? draftErrors(draft).filter((e) => e.field === 'steps') : []
 
   return (
     <div className="iq-drawer__field">
@@ -77,7 +79,7 @@ function SequencingBody({ draft, onChange, showErrors }: BodyProps<SequencingDra
         className="iq-drawer__rows"
         role="group"
         aria-label="Steps in the correct order"
-        aria-describedby={tooFew ? 'iq-steps-error' : undefined}
+        aria-describedby={errors.length ? 'iq-steps-error' : undefined}
       >
         {steps.map((step, index) => (
           <div
@@ -144,9 +146,9 @@ function SequencingBody({ draft, onChange, showErrors }: BodyProps<SequencingDra
         ))}
       </div>
 
-      {tooFew && (
+      {errors.length > 0 && (
         <span className="iq-drawer__helper iq-drawer__helper--error" id="iq-steps-error" role="alert">
-          Add at least {MIN_STEPS} steps
+          {errors[0].message}
         </span>
       )}
 

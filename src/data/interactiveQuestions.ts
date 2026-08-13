@@ -94,64 +94,96 @@ export const makeRow = (a = '', b = '', id?: string): DraftRow => ({
 })
 
 export type Draft =
-  | { type: 'fill-blank'; text: string; distractors: DraftRow[] }
+  /** `text` is the sentence exactly as the learner reads it; `blanks` are the
+      words within it to hide. */
+  | { type: 'fill-blank'; text: string; blanks: DraftRow[]; distractors: DraftRow[] }
   | { type: 'match-pairs'; pairs: DraftRow[] }
   | { type: 'categorization'; categories: DraftRow[]; items: DraftRow[] }
   | { type: 'sequencing'; steps: DraftRow[] }
 
-/* ── Fill-in-the-blank sentence syntax ─────────────────────────────────────
-   The editor's source of truth is one string with gaps marked `{{answer}}`,
-   not a segment array: the renderer needs each literal's exact whitespace, and
-   a segmented editor would make the author manage those spaces by hand.
-   Braces rather than square brackets because compliance copy genuinely uses
-   `[...]` for placeholders and citations. */
+/* ── Fill-in-the-blank marking ─────────────────────────────────────────────
+   The author writes the sentence as it reads, then lists the words to blank.
+   Nothing is bracketed or escaped, so the string stays exactly the sentence the
+   learner sees and the marks are a separate list — the author never has to learn
+   a syntax, and the renderer still gets each literal's exact whitespace.
 
-const BLANK_RE = /\{\{([^}]*)\}\}/g
+   Each listed word claims the first occurrence no earlier mark has taken, so
+   listing "the" twice blanks the first two "the"s. A word listed more often than
+   it occurs is reported rather than silently dropped. */
 
 /** Matches FillBlank.tsx's own comparison, so authoring and grading agree. */
 const norm = (s: string) => s.trim().toLowerCase()
 
-/** `'Always {{lock}} it.'` → `['Always ', { blank: 'lock' }, ' it.']` */
-export function parseSentence(text: string): FillBlankSegment[] {
-  const segments: FillBlankSegment[] = []
-  let cursor = 0
-  for (const match of text.matchAll(BLANK_RE)) {
-    const at = match.index ?? 0
-    const literal = text.slice(cursor, at)
-    // Guard against emitting an empty-string segment when two gaps touch.
-    if (literal) segments.push(literal)
-    segments.push({ blank: match[1].trim() })
-    cursor = at + match[0].length
+const isWordChar = (c: string) => /[\p{L}\p{N}_]/u.test(c)
+
+/** Whole-word, case-insensitive search from `from`. -1 when there is no match. */
+function findWord(haystack: string, needle: string, from: number): number {
+  const hay = haystack.toLowerCase()
+  const word = needle.toLowerCase()
+  for (let i = hay.indexOf(word, from); i !== -1; i = hay.indexOf(word, i + 1)) {
+    const before = i > 0 ? hay[i - 1] : ''
+    const after = hay[i + word.length] ?? ''
+    if (!isWordChar(before) && !isWordChar(after)) return i
   }
-  const tail = text.slice(cursor)
-  if (tail) segments.push(tail)
-  return segments
+  return -1
 }
 
-/** Inverse of parseSentence, for reopening a saved question. */
-export const serialiseSentence = (segments: FillBlankSegment[]): string =>
-  segments.map((s) => (typeof s === 'string' ? s : `{{${s.blank}}}`)).join('')
+export interface MarkedSentence {
+  segments: FillBlankSegment[]
+  /** Listed words with no free occurrence left in the sentence. */
+  missing: string[]
+}
+
+/** `('Always lock it.', ['lock'])` → `['Always ', { blank: 'lock' }, ' it.']` */
+export function markBlanks(sentence: string, words: string[]): MarkedSentence {
+  const taken: { start: number; end: number }[] = []
+  const missing: string[] = []
+  for (const raw of words) {
+    const word = raw.trim()
+    if (!word) continue
+    let at = findWord(sentence, word, 0)
+    while (at !== -1 && taken.some((t) => at < t.end && at + word.length > t.start)) {
+      at = findWord(sentence, word, at + 1)
+    }
+    if (at === -1) missing.push(word)
+    else taken.push({ start: at, end: at + word.length })
+  }
+  taken.sort((a, b) => a.start - b.start)
+
+  const segments: FillBlankSegment[] = []
+  let cursor = 0
+  for (const { start, end } of taken) {
+    const literal = sentence.slice(cursor, start)
+    if (literal) segments.push(literal)
+    // The sentence's own casing is the answer, not however the mark was typed.
+    segments.push({ blank: sentence.slice(start, end) })
+    cursor = end
+  }
+  const tail = sentence.slice(cursor)
+  if (tail) segments.push(tail)
+  return { segments, missing }
+}
 
 export const blanksOf = (segments: FillBlankSegment[]): string[] =>
   segments.filter((s): s is { blank: string } => typeof s !== 'string').map((s) => s.blank)
-
-/** True when a `{{` was opened and never closed — the regex leaves it as text. */
-export const hasUnclosedBlank = (text: string) => text.replace(BLANK_RE, '').includes('{{')
 
 /* ── Draft ⇄ question ──────────────────────────────────────────────────── */
 
 export function emptyDraft(type: InteractiveQuestionType): Draft {
   switch (type) {
     case 'fill-blank':
-      return { type, text: '', distractors: [makeRow(), makeRow()] }
+      return { type, text: '', blanks: [makeRow()], distractors: [makeRow(), makeRow()] }
     case 'match-pairs':
       return { type, pairs: [makeRow(), makeRow(), makeRow()] }
-    case 'categorization':
+    case 'categorization': {
+      // Items are authored inside a category, so each starts with one to fill.
+      const [first, second] = [makeRow(), makeRow()]
       return {
         type,
-        categories: [makeRow(), makeRow()],
-        items: [makeRow(), makeRow()],
+        categories: [first, second],
+        items: [makeRow('', first.id), makeRow('', second.id)],
       }
+    }
     case 'sequencing':
       return { type, steps: [makeRow(), makeRow(), makeRow()] }
   }
@@ -171,9 +203,13 @@ export function toDraft(question: InteractiveQuestion): Draft {
         pool.splice(i, 1)
         return false
       })
+      /* Re-marking picks each word's first free occurrence, so a question whose
+         blank sat on a later repeat of the same word reopens with the earlier one
+         marked instead. The preview shows what will be graded either way. */
       return {
         type: 'fill-blank',
-        text: serialiseSentence(question.segments),
+        text: question.segments.map((s) => (typeof s === 'string' ? s : s.blank)).join(''),
+        blanks: answers.length ? answers.map((a) => makeRow(a)) : [makeRow()],
         distractors: distractors.length ? distractors.map((d) => makeRow(d)) : [makeRow()],
       }
     }
@@ -196,7 +232,10 @@ export function toQuestion(draft: Draft, prompt: string): InteractiveQuestion {
   const shared = { prompt: prompt.trim() }
   switch (draft.type) {
     case 'fill-blank': {
-      const segments = parseSentence(draft.text)
+      const { segments } = markBlanks(
+        draft.text,
+        draft.blanks.map((b) => b.a),
+      )
       /* One bank entry per gap, duplicates deliberately preserved: FillBlank.tsx
          disables a placed chip by bank *index* but grades by text, so two gaps
          answered "lock" need two "lock" chips or the second can never be filled. */
@@ -242,53 +281,99 @@ export function toQuestion(draft: Draft, prompt: string): InteractiveQuestion {
    disabled Save. The prompt rule lives in the drawer shell, which owns that
    field for every type. */
 
-const duplicates = (values: string[]) => {
+/** Returns the first value that repeats, so a message can name it. */
+const firstDuplicate = (values: string[]): string | null => {
   const seen = new Set<string>()
-  return values.some((v) => {
+  for (const v of values) {
     const key = norm(v)
-    if (seen.has(key)) return true
+    if (seen.has(key)) return v
     seen.add(key)
-    return false
-  })
+  }
+  return null
 }
 
-export function draftErrors(draft: Draft): string[] {
-  const errors: string[] = []
+/** Which part of the form an error belongs to, so it renders beside its cause. */
+export type DraftErrorField =
+  | 'sentence'
+  | 'blanks'
+  | 'wrong-words'
+  | 'pairs'
+  | 'categories'
+  | 'items'
+  | 'steps'
+
+export interface DraftError {
+  field: DraftErrorField
+  message: string
+}
+
+export function draftErrors(draft: Draft): DraftError[] {
+  const errors: DraftError[] = []
+  const add = (field: DraftErrorField, message: string) => errors.push({ field, message })
+
   switch (draft.type) {
     case 'fill-blank': {
-      const segments = parseSentence(draft.text)
+      const marks = draft.blanks.map((b) => b.a.trim()).filter(Boolean)
+      const { segments, missing } = markBlanks(draft.text, marks)
       const answers = blanksOf(segments)
-      if (!draft.text.trim()) errors.push('Write the sentence learners will complete')
-      else if (answers.length === 0) errors.push('Mark at least one answer as a blank')
-      if (answers.some((a) => !a)) errors.push('One of your blanks has no answer in it')
-      if (hasUnclosedBlank(draft.text)) errors.push("One of your blanks isn't closed")
-      if (!draft.distractors.some((d) => d.a.trim()))
-        errors.push('Add at least one wrong word to the bank')
+      if (!draft.text.trim()) add('sentence', 'Write the sentence learners will complete')
+      if (marks.length === 0) add('blanks', 'Mark at least one word to blank')
+      if (missing.length > 0) {
+        const word = missing[0]
+        const listedTwice = marks.filter((m) => norm(m) === norm(word)).length > 1
+        add(
+          'blanks',
+          listedTwice
+            ? `"${word}" doesn't appear in your sentence that many times`
+            : `"${word}" isn't in your sentence`,
+        )
+      }
+
+      const wrongWords = draft.distractors.map((d) => d.a.trim()).filter(Boolean)
+      if (wrongWords.length === 0) add('wrong-words', 'Add at least one wrong word to the bank')
+      /* Grading compares text, not position, so a wrong word that matches an
+         answer is quietly a second right answer — the question can't be failed. */
+      const alsoAnAnswer = wrongWords.find((w) => answers.some((a) => norm(a) === norm(w)))
+      if (alsoAnAnswer)
+        add('wrong-words', `"${alsoAnAnswer}" is one of your answers, so it can't be a wrong word`)
       break
     }
     case 'match-pairs': {
       const complete = draft.pairs.filter((p) => p.a.trim() && p.b.trim())
-      if (complete.length < 3) errors.push('Add at least 3 complete pairs')
+      if (complete.length < 3) add('pairs', 'Fill in both sides of at least 3 pairs')
       /* Index identity is the answer, so a repeated term makes two pairings
          equally right while the renderer marks one of them wrong. */
-      if (duplicates(complete.map((p) => p.a))) errors.push('Two terms are the same')
-      if (duplicates(complete.map((p) => p.b))) errors.push('Two matches are the same')
+      const dupeTerm = firstDuplicate(complete.map((p) => p.a))
+      if (dupeTerm) add('pairs', `Two terms are both "${dupeTerm}" — each needs one clear match`)
+      const dupeMatch = firstDuplicate(complete.map((p) => p.b))
+      if (dupeMatch) add('pairs', `Two matches are both "${dupeMatch}" — each needs one clear term`)
       break
     }
     case 'categorization': {
       const categories = draft.categories.filter((c) => c.a.trim())
       const items = draft.items.filter((i) => i.a.trim())
       const kept = new Set(categories.map((c) => c.id))
-      if (categories.length < 2) errors.push('Name at least 2 categories')
-      if (duplicates(categories.map((c) => c.a))) errors.push('Two categories have the same name')
-      if (items.length < 2) errors.push('Add at least 2 items to sort')
-      if (items.some((i) => !kept.has(i.b))) errors.push('Give every item a category')
+      if (categories.length < 2) add('categories', 'Name at least 2 categories')
+      const dupeCategory = firstDuplicate(categories.map((c) => c.a))
+      if (dupeCategory) add('categories', `Two categories are both "${dupeCategory}"`)
+
+      if (items.length < 2) add('items', 'Add at least 2 concepts to sort')
+      /* Concepts grade by position, so two identical labels are a coin flip for
+         the learner however they place them — the trap match-pairs guards too. */
+      const dupeItem = firstDuplicate(items.map((i) => i.a))
+      if (dupeItem)
+        add('items', `Two concepts are both "${dupeItem}" — learners can't tell them apart`)
+      if (items.some((i) => !kept.has(i.b))) add('items', 'Give every concept a category')
       break
     }
     case 'sequencing': {
+      const steps = draft.steps.filter((s) => s.a.trim())
       // Two steps is a coin flip, not a question.
-      if (draft.steps.filter((s) => s.a.trim()).length < 3)
-        errors.push('Add at least 3 steps')
+      if (steps.length < 3) add('steps', 'Add at least 3 steps')
+      /* Order is the answer and steps grade by position, so identical steps
+         can't be placed correctly by reading them. */
+      const dupeStep = firstDuplicate(steps.map((s) => s.a))
+      if (dupeStep) add('steps', `Two steps are both "${dupeStep}" — learners can't tell them apart`)
       break
     }
   }
@@ -303,11 +388,11 @@ const count = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? on
 export function draftSummary(draft: Draft): string {
   switch (draft.type) {
     case 'fill-blank':
-      return count(blanksOf(parseSentence(draft.text)).length, 'blank')
+      return count(draft.blanks.filter((b) => b.a.trim()).length, 'blank')
     case 'match-pairs':
       return count(draft.pairs.filter((p) => p.a.trim() && p.b.trim()).length, 'pair')
     case 'categorization':
-      return `${count(draft.items.filter((i) => i.a.trim()).length, 'item')} · ${count(
+      return `${count(draft.items.filter((i) => i.a.trim()).length, 'concept')} · ${count(
         draft.categories.filter((c) => c.a.trim()).length,
         'category',
         'categories',
@@ -324,9 +409,11 @@ export const TYPE_CONFIG: Record<
   'fill-blank': {
     label: 'Fill in the Blanks',
     title: 'Fill in the Blanks',
-    description: 'Learners drag words from a bank into the gaps',
+    /* Tap-to-place, not drag — FillBlank.tsx places a word on tap. Saying
+       "drag" here had authors designing for an interaction that doesn't exist. */
+    description: 'Learners pick words from a bank to fill the gaps',
     callout:
-      'Write the sentence, then mark the answers as blanks. Learners pick from a shared word bank, so add a few wrong words to make it count.',
+      'Write the sentence in full, then list the words to blank out. Learners pick from a shared word bank, so add a few wrong words to make it count.',
   },
   'match-pairs': {
     label: 'Match the Pairs',
@@ -337,8 +424,9 @@ export const TYPE_CONFIG: Record<
   categorization: {
     label: 'Categorise',
     title: 'Categorise',
-    description: 'Learners sort items into the right categories',
-    callout: 'Name the categories first, then add the items and say where each one belongs.',
+    description: 'Learners sort concepts into the right categories',
+    callout:
+      'Name each category, then add the concepts that belong in it. Learners see all the concepts together, shuffled.',
   },
   sequencing: {
     label: 'Sequence',

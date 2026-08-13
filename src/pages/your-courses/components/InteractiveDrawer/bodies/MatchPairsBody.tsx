@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { Add, ArrowSwapHorizontal } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
@@ -34,55 +35,66 @@ function MatchPairsBody({ draft, onChange, showErrors }: BodyProps<MatchPairsDra
         <span className="iq-drawer__label">Term</span>
         <span className="iq-drawer__label">Match</span>
       </div>
+      {/* One grid, not a row per pair: the term and its match are separate fields
+          in their own columns, so terms line up down the page and the link glyph
+          sits between the two columns rather than inside one box. */}
       <div
-        className="iq-drawer__rows"
+        className="iq-drawer__pair-grid"
         role="group"
         aria-label="Pairs"
         aria-describedby={errors.length ? 'iq-pairs-error' : undefined}
       >
         {pairs.map((pair, index) => (
-          <div className="iq-drawer__row iq-drawer__row--pair" key={pair.id}>
-            <textarea
-              ref={autoGrow}
-              rows={1}
-              className="iq-drawer__row-input"
-              placeholder={`Term ${index + 1}`}
-              aria-label={`Term ${index + 1}`}
-              value={pair.a}
-              onInput={(e) => autoGrow(e.currentTarget)}
-              onChange={(e) => update(pair.id, { a: e.target.value })}
-            />
+          <Fragment key={pair.id}>
+            <div className="iq-drawer__row">
+              <textarea
+                ref={autoGrow}
+                rows={1}
+                className="iq-drawer__row-input"
+                placeholder={`Term ${index + 1}`}
+                aria-label={`Term ${index + 1}`}
+                value={pair.a}
+                onInput={(e) => autoGrow(e.currentTarget)}
+                onChange={(e) => update(pair.id, { a: e.target.value })}
+              />
+            </div>
             <ArrowSwapHorizontal
               size={20}
               color="var(--text-tertiary)"
               variant="Linear"
               className="iq-drawer__pair-link"
             />
-            <textarea
-              ref={autoGrow}
-              rows={1}
-              className="iq-drawer__row-input"
-              placeholder={`Match ${index + 1}`}
-              aria-label={`Match for term ${index + 1}`}
-              value={pair.b}
-              onInput={(e) => autoGrow(e.currentTarget)}
-              onChange={(e) => update(pair.id, { b: e.target.value })}
-            />
-            {pairs.length > MIN_PAIRS && (
+            <div className="iq-drawer__row">
+              <textarea
+                ref={autoGrow}
+                rows={1}
+                className="iq-drawer__row-input"
+                placeholder={`Match ${index + 1}`}
+                aria-label={`Match for term ${index + 1}`}
+                value={pair.b}
+                onInput={(e) => autoGrow(e.currentTarget)}
+                onChange={(e) => update(pair.id, { b: e.target.value })}
+              />
+            </div>
+            {/* The slot is always occupied — an empty cell keeps the columns from
+                shifting when the last removable pair is deleted. */}
+            {pairs.length > MIN_PAIRS ? (
               <CloseButton
                 size={16}
                 className="iq-drawer__row-remove"
                 ariaLabel={`Remove pair ${index + 1}`}
                 onClick={() => setPairs(pairs.filter((p) => p.id !== pair.id))}
               />
+            ) : (
+              <span aria-hidden="true" />
             )}
-          </div>
+          </Fragment>
         ))}
       </div>
 
       {errors.length > 0 && (
         <span className="iq-drawer__helper iq-drawer__helper--error" id="iq-pairs-error" role="alert">
-          {errors[0]}
+          {errors[0].message}
         </span>
       )}
 

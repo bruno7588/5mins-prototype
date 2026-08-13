@@ -35,14 +35,6 @@
   gap: var(--space-ml);
 }
 
-/* Label on the left, an inline action (Make Blank) hard right. */
-.iq-drawer__field-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-m);
-}
-
 .iq-drawer__label {
   font-size: 14px;
   font-weight: 500;
@@ -257,6 +249,14 @@
   color: var(--text-error);
 }
 
+/* 12px between a field's last input and the button that adds another — the
+   field's own 8px gap plus 4. Same rule for the two buttons that sit directly in
+   a list rather than in this wrapper. */
+.iq-drawer__row-actions,
+.iq-drawer__category-items > .ds-btn {
+  margin-top: var(--space-xs);
+}
+
 .iq-drawer__row-actions {
   display: flex;
   align-items: center;
@@ -265,59 +265,69 @@
 
 /* ===== Match the pairs ===== */
 
-/* Column headers sit over the two inputs; the trailing columns (link glyph and
-   remove) have no header, so the grid is set from the row itself. */
+/* Two columns of fields with the link glyph between them. Header and rows share
+   one template so the labels sit over their column, and the remove slot is always
+   present so the columns hold still when a pair is deleted. */
+.iq-drawer__pair-head,
+.iq-drawer__pair-grid {
+  display: grid;
+  grid-template-columns: 1fr 20px 1fr 24px;
+  gap: var(--space-sm) var(--space-s);
+}
+
 .iq-drawer__pair-head {
-  display: flex;
-  gap: var(--space-s);
-  padding: 0 var(--space-sm);
+  row-gap: 0;
 }
 
+/* Aligns each label with the text inside the field below it. */
 .iq-drawer__pair-head .iq-drawer__label {
-  flex: 1;
-  min-width: 0;
+  padding-inline: var(--space-sm);
 }
 
-.iq-drawer__row--pair {
-  align-items: flex-start;
+.iq-drawer__pair-head .iq-drawer__label:last-child {
+  grid-column: 3;
 }
 
-.iq-drawer__pair-link {
-  flex-shrink: 0;
-  margin-top: 2px;
+/* Centred against the pair, which grows taller when either field wraps. */
+.iq-drawer__pair-link,
+.iq-drawer__pair-grid .iq-drawer__row-remove {
+  align-self: center;
 }
 
 /* ===== Categorise ===== */
 
-/* An item and its category choices read as one block, so they sit closer to each
-   other than to the next item. */
-.iq-drawer__item {
+/* Categories are further apart than the rows inside one, so a category and its
+   items read as a single block. */
+.iq-drawer__categories {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-ml);
 }
 
-.iq-drawer__choices {
+.iq-drawer__category {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-s) var(--space-m);
-  padding-left: var(--space-sm);
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
-.iq-drawer__choice {
-  display: inline-flex;
-  align-items: center;
+/* Indented under the category name — the indent is what says "these belong to
+   it", so the items need no label of their own. */
+.iq-drawer__category-items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--space-s);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  cursor: pointer;
+  padding-left: var(--space-ml);
 }
+
+.iq-drawer__category-items .iq-drawer__row {
+  align-self: stretch;
+}
+
 
 /* ===== Fill in the blanks ===== */
 
-/* Reads back the parsed sentence — the gaps are what the admin is checking, so
+/* Reads back the marked sentence — the gaps are what the admin is checking, so
    they carry the amber selection tint the learner's chips use. */
 .iq-drawer__preview {
   padding: var(--space-sm) var(--space-m);
@@ -330,6 +340,8 @@
   white-space: pre-wrap;
 }
 
+/* A marked word, shown in place so the author can see which occurrence the mark
+   claimed. Inherits the preview's type so the sentence still reads as one. */
 .iq-drawer__preview-blank {
   padding: 2px var(--space-s);
   border-radius: var(--radius-xs);
@@ -338,20 +350,12 @@
   font-weight: 500;
 }
 
-.iq-drawer__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-}
-
-.iq-drawer__chip {
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-full);
-  background: var(--input-background);
-  font-size: 14px;
+/* Sub-label above the preview — instruction, not a field label. */
+.iq-drawer__label-sub {
+  font-size: 12px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text-tertiary);
 }
 
 /* ===== Footer ===== */
@@ -376,4 +380,41 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* What's blocking Save sits beside it (the footer is already a flex row), not
+   inside a tooltip on a button that can't be focused. */
+.iq-drawer__blocker {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Preview stage — takes the body's place while previewing, so the learner
+   formats (mobile-first, from quiz-lab) run in the same phone frame the lab
+   uses rather than stretched across a desktop drawer. */
+.iq-drawer__preview-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  padding-bottom: var(--space-m);
+}
+
+/* The frame is sized for a full page — full-viewport stage, 812px screen. In the
+   drawer it takes the height it is given instead, so the whole question (Check
+   button included) stays visible without a second scrollbar. */
+.iq-drawer__preview-stage .m-phone-stage {
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.iq-drawer__preview-stage .m-phone,
+.iq-drawer__preview-stage .m-phone__screen {
+  height: 100%;
 }

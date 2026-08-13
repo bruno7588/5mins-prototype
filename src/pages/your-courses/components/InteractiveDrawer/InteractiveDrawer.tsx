@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import Tooltip from '@/components/Tooltip/Tooltip'
 import {
   TYPE_CONFIG,
   draftErrors,
@@ -13,6 +12,14 @@ import {
   type InteractiveQuestion,
   type InteractiveQuestionType,
 } from '@/data/interactiveQuestions'
+import { ArrowLeft, Eye } from 'iconsax-react'
+import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
+import QuizHeader from '@/pages/quiz-lab/components/QuizHeader'
+import MatchPairsPartial from '@/pages/quiz-lab/formats/MatchPairsPartial'
+import FillBlank from '@/pages/quiz-lab/formats/FillBlank'
+import Categorization from '@/pages/quiz-lab/formats/Categorization'
+import SequencingDnd from '@/pages/quiz-lab/formats/SequencingDnd'
+import '@/pages/quiz-lab/quiz-lab.css'
 import SectionHeader from '../SectionHeader/SectionHeader'
 import CategorizationBody from './bodies/CategorizationBody'
 import FillBlankBody from './bodies/FillBlankBody'
@@ -66,6 +73,7 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
      the draft is invalid, so a submit-driven flag could never be set. One handler
      on the body wrapper covers all four bodies, since focusout bubbles. */
   const [bodyTouched, setBodyTouched] = useState(false)
+  const [previewing, setPreviewing] = useState(false)
 
   /* The prompt grows with its content; height must reset to auto before reading
      scrollHeight or the box can only ever get taller. */
@@ -77,6 +85,7 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
   const promptFilled = prompt.trim().length > 0
   const promptError = promptBlurred && !promptFilled
   const bodyErrors = draftErrors(draft)
+  const blockingError = bodyErrors[0]?.message ?? ''
   const canSave = promptFilled && bodyErrors.length === 0
 
   const pristine = useRef<string | null>(null)
@@ -88,6 +97,26 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
   }, [dirty, onDirtyChange])
 
   const handleSave = () => onSave(toQuestion(draft, prompt))
+
+  /* The shell's Escape handler lives on document and closes the whole drawer, so
+     while the preview is up this one runs first (capture) and stops there —
+     Escape backs out of the preview, not out of the unsaved question. */
+  useEffect(() => {
+    if (!previewing) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      e.stopPropagation()
+      setPreviewing(false)
+    }
+    document.addEventListener('keydown', onKeyDown, true)
+    return () => document.removeEventListener('keydown', onKeyDown, true)
+  }, [previewing])
+
+  /* The preview runs the real learner renderer on the draft as it stands, so the
+     author sees the shuffle, the word bank and the buckets before saving rather
+     than after — the only way to tell a good question from a plausible one. It
+     needs a valid draft, since the renderers grade what they're given. */
+  const previewQuestion = canSave ? toQuestion(draft, prompt) : null
 
   const bodyProps = { showErrors: bodyTouched }
   const body =
@@ -109,6 +138,32 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
         ctas={<CloseButton onClick={onClose} />}
       />
 
+      {previewing && previewQuestion ? (
+        /* The preview replaces the form rather than covering it: the drawer already
+           owns the focus trap and the strip beside it paints above any overlay we
+           could stack here, so swapping the body keeps both correct. */
+        <div className="iq-drawer__preview-stage">
+          <PhoneFrame>
+            <div className="ql-quizview">
+              <QuizHeader
+                label={config.label}
+                used={1}
+                total={3}
+                onClose={() => setPreviewing(false)}
+              />
+              {previewQuestion.type === 'match-pairs' ? (
+                <MatchPairsPartial question={previewQuestion} />
+              ) : previewQuestion.type === 'fill-blank' ? (
+                <FillBlank question={previewQuestion} formatKey="fill-blank" />
+              ) : previewQuestion.type === 'categorization' ? (
+                <Categorization question={previewQuestion} formatKey="categorization" />
+              ) : (
+                <SequencingDnd question={previewQuestion} />
+              )}
+            </div>
+          </PhoneFrame>
+        </div>
+      ) : (
       <div className="iq-drawer__body">
         {/* How the format works, and — for sequence and match-pairs — the only
             statement of where the correct answer lives, since nothing is clicked
@@ -149,22 +204,42 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
           {body}
         </div>
       </div>
+      )}
 
       <div className="iq-drawer__footer">
-        {/* Wrapped rather than conditionally rendered so the tooltip fires over the
-            *disabled* button — handlers sit on Tooltip's own wrapper. It names the
-            first thing missing, so the admin knows where to look. */}
-        <Tooltip
-          text={!promptFilled ? 'Write the question first' : bodyErrors[0] ?? ''}
-          position="Top"
-          alignment="Start"
-          icon={false}
-          disabled={canSave}
-        >
-          <Button onClick={handleSave} disabled={!canSave}>
-            {`${isEdit ? 'Update' : 'Add'} ${config.label}`}
+        {previewing ? (
+          <Button
+            variant="outlined-2"
+            icon={<ArrowLeft size={20} color="currentColor" variant="Linear" />}
+            onClick={() => setPreviewing(false)}
+          >
+            Back To Editing
           </Button>
-        </Tooltip>
+        ) : (
+          <>
+            {/* What's missing is stated in the footer, not only in a tooltip over the
+                disabled button: a disabled button can't take focus, so hover was the
+                only way to reach the reason — no path at all by keyboard or screen
+                reader, at the moment the admin most wants an answer. */}
+            {!canSave && (
+              <span className="iq-drawer__blocker" role="status">
+                {!promptFilled ? 'Write the question first' : blockingError}
+              </span>
+            )}
+            {previewQuestion && (
+              <Button
+                variant="outlined-2"
+                icon={<Eye size={20} color="currentColor" variant="Linear" />}
+                onClick={() => setPreviewing(true)}
+              >
+                Preview
+              </Button>
+            )}
+            <Button onClick={handleSave} disabled={!canSave}>
+              {`${isEdit ? 'Update' : 'Add'} ${config.label}`}
+            </Button>
+          </>
+        )}
       </div>
     </>
   )
