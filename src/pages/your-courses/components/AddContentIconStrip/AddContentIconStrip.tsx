@@ -187,7 +187,8 @@ function AddContentIconStrip({
             aria-expanded={assessmentsOpen}
           >
             <span className="add-content-icon-strip__icon">
-              <AssessmentIcon size={ICON} color={C} />
+              {/* Bold while open, so the glyph carries the same weight as its label. */}
+              <AssessmentIcon size={ICON} color={C} variant={assessmentsOpen ? 'Bold' : 'Linear'} />
             </span>
             <span className="add-content-icon-strip__label">Assessments</span>
             <span className="add-content-icon-strip__chevron">
