@@ -31,7 +31,7 @@ import {
 } from '@/data/interactiveQuestions'
 
 const assessmentLabels: Record<AssessmentType, string> = {
-  'multiple-choice': 'Multiple Choice',
+  'single-choice': 'Single Choice',
   'short-text': 'Short Text',
   exercise: 'Exercise',
   poll: 'Poll',
@@ -61,7 +61,7 @@ function CreateCourse() {
      and ordering rather than a flat re-derivation of what was added. */
   const [outline, setOutline] = useState<OutlineSection[]>([])
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
-  const [assessmentType, setAssessmentType] = useState<AssessmentType>('multiple-choice')
+  const [assessmentType, setAssessmentType] = useState<AssessmentType>('single-choice')
   const [activeDrawer, setActiveDrawer] = useState<ActiveDrawer>(null)
   /* The builder opens with the Add Content panel already expanded — it's the first
      thing an admin needs on an empty course. */

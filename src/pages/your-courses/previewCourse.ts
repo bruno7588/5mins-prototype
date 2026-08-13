@@ -25,7 +25,7 @@ const isLesson = (item: ContentItem) =>
 /* Only the classic types have artwork; the interactive formats fall back to the
    multiple-choice tile rather than borrowing a label they don't carry. */
 const ILLUSTRATION_BY_LABEL: Record<string, Parameters<typeof getAssessmentIllustration>[0]> = {
-  'Multiple Choice': 'multiple-choice',
+  'Single Choice': 'multiple-choice',
   'Short Text': 'short-text',
   Exercise: 'exercise',
   Poll: 'poll',

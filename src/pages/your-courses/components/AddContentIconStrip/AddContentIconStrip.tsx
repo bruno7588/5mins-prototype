@@ -8,17 +8,17 @@ import {
   Link2,
   CalendarEdit,
   ClipboardText,
-  TaskSquare,
+  RecordCircle,
   Edit,
   ArchiveBook,
   Chart,
   DocumentText,
   ArrowDown2,
   ArrowUp2,
-  TextalignJustifyleft,
-  Convertshape,
+  TextBlock,
+  ArrangeHorizontal,
   Category,
-  Sort,
+  RowVertical,
 } from 'iconsax-react'
 import AssessmentIcon from '@/components/icons/AssessmentIcon'
 import Collapse from '@/components/Collapse/Collapse'
@@ -39,7 +39,7 @@ const ICON = 20
 const C = 'currentColor'
 
 const ASSESSMENTS: { type: AssessmentType; label: string; icon: (active: boolean) => ReactNode }[] = [
-  { type: 'multiple-choice', label: 'Multiple Choice', icon: (a) => <TaskSquare size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'single-choice', label: 'Single Choice', icon: (a) => <RecordCircle size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'short-text', label: 'Short Text', icon: (a) => <Edit size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'exercise', label: 'Exercise', icon: (a) => <ArchiveBook size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'poll', label: 'Poll', icon: (a) => <Chart size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
@@ -49,10 +49,10 @@ const ASSESSMENTS: { type: AssessmentType; label: string; icon: (active: boolean
    and a second group of four would double the rail's chrome to say so. Labels come
    from TYPE_CONFIG so the rail, the drawer header and the outline card can't drift. */
 const INTERACTIVE: { type: InteractiveQuestionType; icon: (active: boolean) => ReactNode }[] = [
-  { type: 'fill-blank', icon: (a) => <TextalignJustifyleft size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'match-pairs', icon: (a) => <Convertshape size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'fill-blank', icon: (a) => <TextBlock size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'match-pairs', icon: (a) => <ArrangeHorizontal size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'categorization', icon: (a) => <Category size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'sequencing', icon: (a) => <Sort size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'sequencing', icon: (a) => <RowVertical size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
 ]
 
 interface AddContentIconStripProps {
@@ -197,7 +197,9 @@ function AddContentIconStrip({
             </span>
           </button>
           <Collapse open={assessmentsOpen}>
-            {ASSESSMENTS.map(({ type, label }) => (
+            {/* Each type carries its own glyph here too, so the icon an admin
+                learns in the collapsed rail is the same one they see expanded. */}
+            {ASSESSMENTS.map(({ type, label, icon }) => (
               <button
                 key={type}
                 type="button"
@@ -205,10 +207,11 @@ function AddContentIconStrip({
                 aria-current={assessmentActive(type) || undefined}
                 onClick={() => onAssessmentClick?.(type)}
               >
+                <span className="add-content-icon-strip__subicon">{icon(assessmentActive(type))}</span>
                 {label}
               </button>
             ))}
-            {INTERACTIVE.map(({ type }) => (
+            {INTERACTIVE.map(({ type, icon }) => (
               <button
                 key={type}
                 type="button"
@@ -216,6 +219,7 @@ function AddContentIconStrip({
                 aria-current={interactiveActive(type) || undefined}
                 onClick={() => onInteractiveClick?.(type)}
               >
+                <span className="add-content-icon-strip__subicon">{icon(interactiveActive(type))}</span>
                 {TYPE_CONFIG[type].label}
               </button>
             ))}

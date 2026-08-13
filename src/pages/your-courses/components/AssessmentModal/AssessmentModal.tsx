@@ -9,8 +9,8 @@ import Radio from '@/components/Radio/Radio'
 import './AssessmentModal.css'
 
 const typeConfig: Record<AssessmentType, { title: string; subtitle: string }> = {
-  'multiple-choice': {
-    title: 'Add assessment - Multiple choice',
+  'single-choice': {
+    title: 'Add assessment - Single choice',
     subtitle: 'Users can select one correct choice',
   },
   'short-text': {

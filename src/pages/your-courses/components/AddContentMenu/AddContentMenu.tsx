@@ -164,7 +164,7 @@ function AddContentMenu({ open, anchor, onClose, onSelect }: AddContentMenuProps
 
         {subOpen && (
           <div className={`acm-submenu acm-submenu--${subSide}`} role="menu" aria-label="Assessment type">
-            <Row icon={<MessageText size={ICON} color={C} variant="Linear" />} label="Multiple Choice" onClick={pick('multiple-choice')} />
+            <Row icon={<MessageText size={ICON} color={C} variant="Linear" />} label="Single Choice" onClick={pick('single-choice')} />
             <Row icon={<Text size={ICON} color={C} variant="Linear" />} label="Short Text" onClick={pick('short-text')} />
             <Row icon={<ClipboardText size={ICON} color={C} variant="Linear" />} label="Exercise" onClick={pick('exercise')} />
             <Row icon={<Chart size={ICON} color={C} variant="Linear" />} label="Poll" onClick={pick('poll')} />

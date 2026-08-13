@@ -17,7 +17,7 @@ import './AddContentSidebar.css'
 const iconSize = 20
 const iconColor = 'currentColor'
 
-export type AssessmentType = 'multiple-choice' | 'short-text' | 'exercise' | 'poll'
+export type AssessmentType = 'single-choice' | 'short-text' | 'exercise' | 'poll'
 export type ActiveDrawer = 'library' | 'scorm' | null
 
 interface AddContentSidebarProps {
@@ -72,8 +72,8 @@ function AddContentSidebar({ collapsed, activeDrawer = null, onAssessmentClick, 
       >
         <AddContentMenuItem
           icon={<MessageText size={iconSize} color={iconColor} variant="Linear" />}
-          label="Multiple Choice"
-          onClick={() => onAssessmentClick?.('multiple-choice')}
+          label="Single Choice"
+          onClick={() => onAssessmentClick?.('single-choice')}
         />
         <AddContentMenuItem
           icon={<Text size={iconSize} color={iconColor} variant="Linear" />}

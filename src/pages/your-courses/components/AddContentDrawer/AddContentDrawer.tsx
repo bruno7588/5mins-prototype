@@ -123,8 +123,8 @@ function AddContentDrawer({ open, onClose, onLibraryClick, onScormClick, onAsses
           >
             <AddContentMenuItem
               icon={<MessageText size={iconSize} color={iconColor} variant="Linear" />}
-              label="Multiple Choice"
-              onClick={route(() => onAssessmentClick?.('multiple-choice'))}
+              label="Single Choice"
+              onClick={route(() => onAssessmentClick?.('single-choice'))}
             />
             <AddContentMenuItem
               icon={<Text size={iconSize} color={iconColor} variant="Linear" />}
