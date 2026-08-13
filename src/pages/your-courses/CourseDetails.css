@@ -30,8 +30,10 @@
   transition: color 150ms ease;
 }
 
+/* Hover is --text-primary + underline (navigation.md → Breadcrumb item states). */
 .cd-breadcrumb-link:hover {
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  text-decoration: underline;
 }
 
 .cd-breadcrumb-current {

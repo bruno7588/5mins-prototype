@@ -37,8 +37,10 @@
   transition: color 150ms ease;
 }
 
+/* Hover is --text-primary + underline (navigation.md → Breadcrumb item states). */
 .courses-list-breadcrumb-link:hover {
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  text-decoration: underline;
 }
 
 .courses-list-breadcrumb-current {

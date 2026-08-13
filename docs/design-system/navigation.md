@@ -182,6 +182,18 @@ import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'
 
 > Usage note: the learner **course-inside-a-program** header uses this component as the first child of `.cd-header` — `{Program} › {Course}` (the program links back to `/programs/{id}`, the course is the current page). It only renders when the course belongs to a program (`findProgramForCourse`).
 
+### Code reality
+
+`src/components/Breadcrumb/` is the implementation — use it. Three pages predate it and hand-roll the same trail with their own classes, which is how they drifted (all three had a `--text-secondary` hover and no underline until 2026-08-13):
+
+| Page | Class prefix |
+|---|---|
+| `pages/add-content/AddContent` | `.add-content-breadcrumb-*` |
+| `pages/your-courses/CourseDetails` | `.cd-breadcrumb-*` |
+| `pages/your-courses/YourCoursesList` | `.courses-list-breadcrumb-*` |
+
+They now match the state table above, but they are still three copies of one component — migrate them when you next touch those headers.
+
 ---
 
 ## Mobile App Navigation
