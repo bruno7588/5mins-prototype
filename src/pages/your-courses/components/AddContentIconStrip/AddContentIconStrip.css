@@ -184,14 +184,18 @@
   color: var(--text-tertiary);
 }
 
-.add-content-icon-strip__item--open {
-  background: var(--page-background-hover);
+/* Expanded group (Figma 9051:187870): the label goes Bold to mark the open
+   group — no fill, which would compete with the selected sub-item below it. */
+.add-content-icon-strip__item--open .add-content-icon-strip__label {
+  font-weight: 700;
 }
 
 .add-content-icon-strip__subitem {
   display: block;
   width: 100%;
-  padding: var(--space-s) var(--space-m) var(--space-s) 44px;
+  /* 8px 40px (Figma 9052:198939) — the 40px indent aligns the sub-item under
+     the group's label rather than its icon. */
+  padding: var(--space-s) var(--space-xxl);
   background: transparent;
   border: none;
   border-radius: var(--radius-s);
@@ -214,6 +218,15 @@
 .add-content-icon-strip__subitem:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: -2px;
+}
+
+/* Selected (Figma 9052:198939): amber Bold label, no fill — the same
+   --text-selected treatment the side nav uses for a selected menu item. */
+.add-content-icon-strip__subitem--selected,
+.add-content-icon-strip__subitem--selected:hover {
+  font-weight: 700;
+  color: var(--text-selected);
+  background: transparent;
 }
 
 /* Expanding: hold the text back until the panel has opened enough to hold it. */

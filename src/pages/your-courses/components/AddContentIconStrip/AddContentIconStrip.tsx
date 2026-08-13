@@ -201,7 +201,8 @@ function AddContentIconStrip({
               <button
                 key={type}
                 type="button"
-                className="add-content-icon-strip__subitem"
+                className={`add-content-icon-strip__subitem${assessmentActive(type) ? ' add-content-icon-strip__subitem--selected' : ''}`}
+                aria-current={assessmentActive(type) || undefined}
                 onClick={() => onAssessmentClick?.(type)}
               >
                 {label}
@@ -211,7 +212,8 @@ function AddContentIconStrip({
               <button
                 key={type}
                 type="button"
-                className="add-content-icon-strip__subitem"
+                className={`add-content-icon-strip__subitem${interactiveActive(type) ? ' add-content-icon-strip__subitem--selected' : ''}`}
+                aria-current={interactiveActive(type) || undefined}
                 onClick={() => onInteractiveClick?.(type)}
               >
                 {TYPE_CONFIG[type].label}
