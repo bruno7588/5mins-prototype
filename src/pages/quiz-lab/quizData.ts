@@ -61,8 +61,6 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
       { left: 'Firewall', right: 'A barrier that filters incoming network traffic' },
       { left: 'Malware', right: 'Software designed to damage or gain unauthorised access' },
     ],
-    explanation:
-      'Recognising these four terms is the baseline for spotting and reporting security threats at work.',
   },
   'fill-blank': {
     type: 'fill-blank',
@@ -75,8 +73,6 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
       ' your password with a colleague.',
     ],
     bank: ['lock', 'share', 'ignore', 'email'],
-    explanation:
-      'Locking your screen and keeping passwords private are two of the simplest ways to prevent unauthorised access.',
   },
   categorization: {
     type: 'categorization',
@@ -93,8 +89,6 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
       { label: 'Religious beliefs', categoryId: 'special' },
       { label: 'Phone number', categoryId: 'personal' },
     ],
-    explanation:
-      'Special-category data (health, biometrics, beliefs) needs extra protection under GDPR than ordinary personal data.',
   },
   sequencing: {
     type: 'sequencing',
@@ -106,8 +100,6 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
       'Go to the assembly point',
       'Wait for the roll call',
     ],
-    explanation:
-      'Raising the alarm first warns everyone; the roll call at the end confirms that no one is left behind.',
   },
   'select-all': {
     type: 'select-all',

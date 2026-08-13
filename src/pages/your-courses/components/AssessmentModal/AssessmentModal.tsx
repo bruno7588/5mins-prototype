@@ -608,21 +608,23 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
             </div>
           </div>
 
-          {/* Explanation */}
-          <div className="assessment-modal-field">
-            <label className="assessment-modal-label" htmlFor="assessment-explanation">
-              Add an explanation for the correct answer{' '}
-              <span className="assessment-modal-label-hint">(optional)</span>
-            </label>
-            <input
-              id="assessment-explanation"
-              className="assessment-modal-input"
-              type="text"
-              placeholder="Write an explanation..."
-              value={explanation}
-              onChange={(e) => setExplanation(e.target.value)}
-            />
-          </div>
+          {/* Explanation — a poll has no correct answer to explain. */}
+          {type !== 'poll' && (
+            <div className="assessment-modal-field">
+              <label className="assessment-modal-label" htmlFor="assessment-explanation">
+                Add an explanation for the correct answer{' '}
+                <span className="assessment-modal-label-hint">(optional)</span>
+              </label>
+              <input
+                id="assessment-explanation"
+                className="assessment-modal-input"
+                type="text"
+                placeholder="Write an explanation..."
+                value={explanation}
+                onChange={(e) => setExplanation(e.target.value)}
+              />
+            </div>
+          )}
         </div>
 
         {/* Footer */}

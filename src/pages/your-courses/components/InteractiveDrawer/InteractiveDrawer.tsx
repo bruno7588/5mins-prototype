@@ -40,19 +40,17 @@ interface Props {
 
 /* Only the authored values matter for the dirty check — row ids are minted per
    mount and would otherwise make a pristine form read as edited. */
-const snapshot = (prompt: string, explanation: string, draft: Draft) =>
+const snapshot = (prompt: string, draft: Draft) =>
   JSON.stringify({
     prompt,
-    explanation,
     draft: JSON.parse(JSON.stringify(draft), (key, value) => (key === 'id' ? undefined : value)),
   })
 
 /**
  * Authoring for the four interactive question formats (fill in the blanks, match
  * the pairs, categorise, sequence). One drawer rather than four: the chrome —
- * prompt, explanation, validation, dirty guard, footer — is identical, and only
- * the middle of the form differs, so the bodies switch and everything else is
- * written once.
+ * prompt, validation, dirty guard, footer — is identical, and only the middle of
+ * the form differs, so the bodies switch and everything else is written once.
  *
  * Single surface, not a wizard: a situational test is a container of N questions
  * and earns its steps, but this is one question.
@@ -63,7 +61,6 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
 
   const [prompt, setPrompt] = useState(initial?.prompt ?? '')
   const [promptBlurred, setPromptBlurred] = useState(false)
-  const [explanation, setExplanation] = useState(initial?.explanation ?? '')
   const [draft, setDraft] = useState<Draft>(() => (initial ? toDraft(initial) : emptyDraft(type)))
   /* Validation fires on blur, not on submit — the footer button is disabled while
      the draft is invalid, so a submit-driven flag could never be set. One handler
@@ -83,14 +80,14 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
   const canSave = promptFilled && bodyErrors.length === 0
 
   const pristine = useRef<string | null>(null)
-  const current = snapshot(prompt, explanation, draft)
+  const current = snapshot(prompt, draft)
   if (pristine.current === null) pristine.current = current
   const dirty = current !== pristine.current
   useEffect(() => {
     onDirtyChange?.(dirty)
   }, [dirty, onDirtyChange])
 
-  const handleSave = () => onSave(toQuestion(draft, prompt, explanation))
+  const handleSave = () => onSave(toQuestion(draft, prompt))
 
   const bodyProps = { showErrors: bodyTouched }
   const body =
@@ -150,25 +147,6 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
             body is mounted, instead of four copies of the same blur plumbing. */}
         <div className="iq-drawer__body-slot" onBlur={() => setBodyTouched(true)}>
           {body}
-        </div>
-
-        {/* Same field as the assessment and situational drawers, down to the
-            label and placeholder. */}
-        <div className="iq-drawer__field">
-          <label className="iq-drawer__label" htmlFor="iq-explanation">
-            Add an explanation for the correct answer{' '}
-            <span className="iq-drawer__label-optional">(optional)</span>
-          </label>
-          <textarea
-            ref={autoGrow}
-            id="iq-explanation"
-            rows={1}
-            className="iq-drawer__input"
-            placeholder="Write an explanation..."
-            value={explanation}
-            onInput={(e) => autoGrow(e.currentTarget)}
-            onChange={(e) => setExplanation(e.target.value)}
-          />
         </div>
       </div>
 
