@@ -4,12 +4,11 @@
    so the two read as one family; class names are prefixed .st-drawer__ because the
    prototype bundles CSS globally. */
 
-/* Divider under the drawer header, mirroring the footer's border-top so the form sits
-   in a ruled band. Scoped to this shell rather than added to SectionHeader, which is
-   shared with the library, SCORM and assessment drawers. */
+/* The rule under the header now belongs to SectionHeader itself (headers.md),
+   so this shell only owns the space beneath it — keeping the border here drew
+   a second line. */
 .situational-test-drawer-shell .section-header {
   padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--border);
 }
 
 /* 12px between the back arrow and the title. The title group has to absorb the free

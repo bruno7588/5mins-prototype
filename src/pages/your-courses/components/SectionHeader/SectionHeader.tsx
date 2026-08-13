@@ -22,6 +22,9 @@ function SectionHeader({ title, description, ctas, leading }: SectionHeaderProps
         </div>
         {ctas && <div className="section-header__ctas">{ctas}</div>}
       </div>
+      {/* Rule under the headline (headers.md → Section Header) — separates the
+          drawer's title block from the form below it. */}
+      <div className="section-header__divider" aria-hidden="true" />
     </header>
   )
 }

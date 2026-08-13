@@ -5,11 +5,11 @@
    family; class names are prefixed .iq-drawer__ because the prototype bundles CSS
    globally. */
 
-/* Divider under the drawer header, mirroring the footer's border-top, as in the
-   situational shell. */
+/* The rule under the header now belongs to SectionHeader itself (headers.md),
+   so this shell only owns the space beneath it — keeping the border here drew
+   a second line. */
 .interactive-drawer-shell .section-header {
   padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--border);
 }
 
 .iq-drawer__body {

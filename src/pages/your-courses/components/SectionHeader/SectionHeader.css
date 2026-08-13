@@ -37,3 +37,9 @@
   gap: var(--space-m);
   flex-shrink: 0;
 }
+
+.section-header__divider {
+  height: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}

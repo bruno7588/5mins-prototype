@@ -15,11 +15,11 @@ const typeConfig: Record<AssessmentType, { title: string; subtitle: string }> = 
   },
   'short-text': {
     title: 'Add assessment - Short text',
-    subtitle: 'Users type a short written answer',
+    subtitle: 'Users can submit a text response',
   },
   exercise: {
     title: 'Add assessment - Exercise',
-    subtitle: 'Users complete a practical exercise',
+    subtitle: 'Users can upload files such as video, audio, image, excel, and PDF',
   },
   poll: {
     title: 'Add assessment - Poll',
@@ -430,7 +430,15 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
     return `${m}:${s.toString().padStart(2, '0')}`
   }
 
-  const canSubmit = question.trim().length > 0 && options.some(o => o.trim().length > 0)
+  /* Only the pick-one formats give the learner options to choose between; short
+     text is answered in their own words and an exercise by uploading a file. */
+  const hasOptions = type === 'single-choice' || type === 'poll'
+  /* An explanation explains the *correct* answer, so it needs one to exist —
+     which rules out the poll (no right answer) as well as the two open formats. */
+  const hasExplanation = type === 'single-choice'
+
+  const canSubmit =
+    question.trim().length > 0 && (!hasOptions || options.some((o) => o.trim().length > 0))
 
   const formContent = (
         <div className={`assessment-modal-content${variant === 'drawer' ? ' assessment-modal-content--drawer' : ''}`}>
@@ -578,6 +586,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
           </div>
 
           {/* Options */}
+          {hasOptions && (
           <div className="assessment-modal-field">
             <span className="assessment-modal-label">What are the options?</span>
             <div className="assessment-modal-options">
@@ -607,9 +616,10 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
               </button>
             </div>
           </div>
+          )}
 
-          {/* Explanation — a poll has no correct answer to explain. */}
-          {type !== 'poll' && (
+          {/* Explanation */}
+          {hasExplanation && (
             <div className="assessment-modal-field">
               <label className="assessment-modal-label" htmlFor="assessment-explanation">
                 Add an explanation for the correct answer{' '}
