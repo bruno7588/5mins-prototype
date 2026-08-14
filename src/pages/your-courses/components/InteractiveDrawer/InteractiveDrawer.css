@@ -69,12 +69,6 @@
   transition: border-color 150ms ease, background 150ms ease;
 }
 
-/* Empty, the sentence field holds two lines so its placeholder isn't clipped.
-   Once there is content autoGrow's inline height takes over. */
-.iq-drawer__textarea:placeholder-shown {
-  min-height: calc(2 * 1.5em + 2 * var(--space-sm) + 2px);
-}
-
 .iq-drawer__input::placeholder,
 .iq-drawer__textarea::placeholder {
   color: var(--text-tertiary);
@@ -253,7 +247,7 @@
    field's own 8px gap plus 4. Same rule for the two buttons that sit directly in
    a list rather than in this wrapper. */
 .iq-drawer__row-actions,
-.iq-drawer__category-items > .ds-btn {
+.iq-drawer__category-concepts > .ds-btn {
   margin-top: var(--space-xs);
 }
 
@@ -310,14 +304,32 @@
   gap: var(--space-sm);
 }
 
-/* Indented under the category name — the indent is what says "these belong to
-   it", so the items need no label of their own. */
+/* Indented under the category name, with an arrow in the gutter drawing the
+   category down into the concepts that belong to it. */
 .iq-drawer__category-items {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  padding-left: var(--space-s);
+}
+
+/* Flipped so it leaves the category above and turns into the concepts, rather
+   than curving back up out of them. */
+.iq-drawer__category-arrow {
+  flex-shrink: 0;
+  transform: scaleY(-1);
+  color: var(--text-tertiary);
+  /* Centres the 20px glyph on the 44px first concept row. */
+  margin-top: 12px;
+}
+
+.iq-drawer__category-concepts {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-s);
-  padding-left: var(--space-ml);
 }
 
 .iq-drawer__category-items .iq-drawer__row {
@@ -325,11 +337,30 @@
 }
 
 
+/* ===== Format callout ===== */
+
+/* The quiz treatment from Figma 16693:47451 (light) / 17445:77087 (dark): the
+   indigo quiz tint rather than the neutral callout grey, so the banner reads as
+   part of the assessment family. Doubled class so it beats .alert--callout
+   whichever order the global bundle lands in. */
+.alert.iq-drawer__callout {
+  /* Certificate quiz #6368DB @ 16% — the same fill in both themes. */
+  background: rgba(99, 104, 219, 0.16);
+  color: var(--text-quiz);
+  border-radius: var(--radius-sm);
+  padding: var(--space-s) var(--space-sm);
+  /* 8px and regular weight rather than the badge's 4px/Medium — this banner runs
+     to two lines, where the tighter, heavier setting of a one-line pill reads
+     cramped. */
+  gap: var(--space-s);
+  font-weight: 400;
+}
+
 /* ===== Fill in the blanks ===== */
 
-/* Reads back the marked sentence — the gaps are what the admin is checking, so
-   they carry the amber selection tint the learner's chips use. */
-.iq-drawer__preview {
+/* The sentence, marked up. This is the control *and* the read-back: the words
+   clicked amber here are the gaps the learner gets. */
+.iq-drawer__marker {
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--input-background);
@@ -340,14 +371,48 @@
   white-space: pre-wrap;
 }
 
-/* A marked word, shown in place so the author can see which occurrence the mark
-   claimed. Inherits the preview's type so the sentence still reads as one. */
-.iq-drawer__preview-blank {
-  padding: 2px var(--space-s);
-  border-radius: var(--radius-xs);
+.iq-drawer__marker--error {
+  /* Outline rather than border so the sentence doesn't shift by a pixel. */
+  outline: 1px solid var(--text-error);
+  outline-offset: -1px;
+}
+
+/* No horizontal padding: the words have to sit at the sentence's own spacing or
+   the read-back lies about it — padding here detaches trailing punctuation and
+   opens gaps the learner won't see. The fill alone marks a word. */
+.iq-drawer__marker-word {
+  padding: 2px 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.iq-drawer__marker-word:hover {
+  background: var(--selected-tint);
+}
+
+.iq-drawer__marker-word:focus-visible {
+  outline: 2px solid var(--text-selected);
+  outline-offset: 1px;
+}
+
+/* Amber is the platform's selection colour, and the same amber the learner's
+   word-bank chips use — so a blanked word here looks like what it becomes. */
+.iq-drawer__marker-word--blank {
   background: var(--selected);
   color: var(--neutral-800);
   font-weight: 500;
+  border-radius: var(--radius-xs);
+}
+
+/* A blanked word keeps its solid amber on hover — swapping to the translucent
+   hover tint would read as already-unblanked. */
+.iq-drawer__marker-word--blank:hover {
+  background: var(--selected);
 }
 
 /* Sub-label above the preview — instruction, not a field label. */

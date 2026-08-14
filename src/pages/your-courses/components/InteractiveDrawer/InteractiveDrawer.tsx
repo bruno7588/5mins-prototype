@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
+import QuizIllustration from '@/components/icons/QuizIllustration'
 import {
   TYPE_CONFIG,
   draftErrors,
@@ -168,7 +169,12 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
         {/* How the format works, and — for sequence and match-pairs — the only
             statement of where the correct answer lives, since nothing is clicked
             to mark it. */}
-        <Alert type="Callout" icon message={config.callout} />
+        <Alert
+          type="Callout"
+          className="iq-drawer__callout"
+          customIcon={<QuizIllustration className="alert__icon" />}
+          message={config.callout}
+        />
 
         <div className="iq-drawer__field">
           <label className="iq-drawer__label" htmlFor="iq-prompt">

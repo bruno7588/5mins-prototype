@@ -15,7 +15,7 @@ import {
   DocumentText,
   ArrowDown2,
   ArrowUp2,
-  TextBlock,
+  SliderVertical1,
   ArrangeHorizontal,
   Category,
   RowVertical,
@@ -49,7 +49,7 @@ const ASSESSMENTS: { type: AssessmentType; label: string; icon: (active: boolean
    and a second group of four would double the rail's chrome to say so. Labels come
    from TYPE_CONFIG so the rail, the drawer header and the outline card can't drift. */
 const INTERACTIVE: { type: InteractiveQuestionType; icon: (active: boolean) => ReactNode }[] = [
-  { type: 'fill-blank', icon: (a) => <TextBlock size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'fill-blank', icon: (a) => <SliderVertical1 size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'match-pairs', icon: (a) => <ArrangeHorizontal size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'categorization', icon: (a) => <Category size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'sequencing', icon: (a) => <RowVertical size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },

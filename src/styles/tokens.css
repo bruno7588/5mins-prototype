@@ -97,6 +97,7 @@
   --text-error: var(--danger-500);
   --text-selected: var(--secondary-600);
   --text-progress: var(--primary-700);
+  --text-quiz: var(--certificate-quiz);
   --primary-button-background: var(--primary-700);
   --primary-button-background-hover: var(--primary-800);
   --primary-button-background-pressed: var(--primary-900);
@@ -186,6 +187,7 @@
   --text-error: var(--danger-400);
   --text-selected: var(--secondary-500);
   --text-progress: var(--primary-500);
+  --text-quiz: var(--warning-200);
   --text-button-hover: var(--primary-400);
   --text-button-outlined: var(--primary-500);
   --text-button-foreground: var(--neutral-800); /* dark label on the bright cyan filled button */

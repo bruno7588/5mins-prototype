@@ -1,4 +1,4 @@
-import { Add } from 'iconsax-react'
+import { Add, ArrowForward } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import { draftErrors, makeRow, type Draft } from '@/data/interactiveQuestions'
@@ -62,7 +62,16 @@ function CategorizationBody({ draft, onChange, showErrors }: BodyProps<Categoriz
                 />
               </div>
 
+              {/* The indent alone left it to the reader to infer that these
+                  belong to the category above; the arrow says it. */}
               <div className="iq-drawer__category-items">
+                <ArrowForward
+                  size={20}
+                  color="currentColor"
+                  variant="Linear"
+                  className="iq-drawer__category-arrow"
+                />
+                <div className="iq-drawer__category-concepts">
                 {own.map((item, i) => (
                   <div className="iq-drawer__row" key={item.id}>
                     <textarea
@@ -99,6 +108,7 @@ function CategorizationBody({ draft, onChange, showErrors }: BodyProps<Categoriz
                 >
                   Add Concept
                 </Button>
+                </div>
               </div>
             </div>
           )

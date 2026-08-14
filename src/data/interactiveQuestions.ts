@@ -95,73 +95,108 @@ export const makeRow = (a = '', b = '', id?: string): DraftRow => ({
 
 export type Draft =
   /** `text` is the sentence exactly as the learner reads it; `blanks` are the
-      words within it to hide. */
-  | { type: 'fill-blank'; text: string; blanks: DraftRow[]; distractors: DraftRow[] }
+      character ranges within it to hide. */
+  | { type: 'fill-blank'; text: string; blanks: BlankRange[]; distractors: DraftRow[] }
   | { type: 'match-pairs'; pairs: DraftRow[] }
   | { type: 'categorization'; categories: DraftRow[]; items: DraftRow[] }
   | { type: 'sequencing'; steps: DraftRow[] }
 
 /* ── Fill-in-the-blank marking ─────────────────────────────────────────────
-   The author writes the sentence as it reads, then lists the words to blank.
-   Nothing is bracketed or escaped, so the string stays exactly the sentence the
-   learner sees and the marks are a separate list — the author never has to learn
-   a syntax, and the renderer still gets each literal's exact whitespace.
+   The author writes the sentence as it reads, then clicks the words to hide. A
+   mark is the character range it occupies, not the word's text, so clicking the
+   second "the" blanks *that* "the" — there is no occurrence rule to guess at and
+   no word to retype. The sentence string stays exactly what the learner sees.
 
-   Each listed word claims the first occurrence no earlier mark has taken, so
-   listing "the" twice blanks the first two "the"s. A word listed more often than
-   it occurs is reported rather than silently dropped. */
+   Ranges are positions, so they have to survive edits to the sentence around
+   them: `remapBlanks` shifts them past an edit that landed elsewhere. */
 
 /** Matches FillBlank.tsx's own comparison, so authoring and grading agree. */
 const norm = (s: string) => s.trim().toLowerCase()
 
 const isWordChar = (c: string) => /[\p{L}\p{N}_]/u.test(c)
 
-/** Whole-word, case-insensitive search from `from`. -1 when there is no match. */
-function findWord(haystack: string, needle: string, from: number): number {
-  const hay = haystack.toLowerCase()
-  const word = needle.toLowerCase()
-  for (let i = hay.indexOf(word, from); i !== -1; i = hay.indexOf(word, i + 1)) {
-    const before = i > 0 ? hay[i - 1] : ''
-    const after = hay[i + word.length] ?? ''
-    if (!isWordChar(before) && !isWordChar(after)) return i
-  }
-  return -1
+/** A gap: the half-open character range of the sentence the learner sees hidden. */
+export interface BlankRange {
+  start: number
+  end: number
 }
 
-export interface MarkedSentence {
-  segments: FillBlankSegment[]
-  /** Listed words with no free occurrence left in the sentence. */
-  missing: string[]
+/** One run of the sentence. Words are clickable; the gaps between them are not. */
+export interface SentenceToken {
+  text: string
+  start: number
+  end: number
+  isWord: boolean
 }
 
-/** `('Always lock it.', ['lock'])` → `['Always ', { blank: 'lock' }, ' it.']` */
-export function markBlanks(sentence: string, words: string[]): MarkedSentence {
-  const taken: { start: number; end: number }[] = []
-  const missing: string[] = []
-  for (const raw of words) {
-    const word = raw.trim()
-    if (!word) continue
-    let at = findWord(sentence, word, 0)
-    while (at !== -1 && taken.some((t) => at < t.end && at + word.length > t.start)) {
-      at = findWord(sentence, word, at + 1)
-    }
-    if (at === -1) missing.push(word)
-    else taken.push({ start: at, end: at + word.length })
+/** Splits into alternating word / non-word runs, each carrying its offsets. */
+export function tokenize(sentence: string): SentenceToken[] {
+  const tokens: SentenceToken[] = []
+  let i = 0
+  while (i < sentence.length) {
+    const isWord = isWordChar(sentence[i])
+    let j = i + 1
+    while (j < sentence.length && isWordChar(sentence[j]) === isWord) j++
+    tokens.push({ text: sentence.slice(i, j), start: i, end: j, isWord })
+    i = j
   }
-  taken.sort((a, b) => a.start - b.start)
+  return tokens
+}
 
+/** `('Always lock it.', [{start:7,end:11}])` → `['Always ', { blank: 'lock' }, ' it.']` */
+export function segmentsFrom(sentence: string, blanks: BlankRange[]): FillBlankSegment[] {
+  const sorted = [...blanks].sort((a, b) => a.start - b.start)
   const segments: FillBlankSegment[] = []
   let cursor = 0
-  for (const { start, end } of taken) {
+  for (const { start, end } of sorted) {
+    // Defensive: a stale or overlapping range would otherwise slice backwards.
+    if (start < cursor || start >= end || end > sentence.length) continue
     const literal = sentence.slice(cursor, start)
     if (literal) segments.push(literal)
-    // The sentence's own casing is the answer, not however the mark was typed.
     segments.push({ blank: sentence.slice(start, end) })
     cursor = end
   }
   const tail = sentence.slice(cursor)
   if (tail) segments.push(tail)
-  return { segments, missing }
+  return segments
+}
+
+/**
+ * Moves marks to where their words ended up after the sentence was edited.
+ *
+ * Typing is one contiguous edit, so the changed span is whatever sits between
+ * the common prefix and the common suffix. A mark before it holds still, a mark
+ * after it shifts, a mark the edit happened *inside* grows or shrinks with it,
+ * and a mark the edit straddles is dropped — its word no longer exists to hide.
+ */
+export function remapBlanks(
+  blanks: BlankRange[],
+  oldText: string,
+  newText: string,
+): BlankRange[] {
+  if (oldText === newText) return blanks
+
+  const max = Math.min(oldText.length, newText.length)
+  let prefix = 0
+  while (prefix < max && oldText[prefix] === newText[prefix]) prefix++
+  let suffix = 0
+  while (
+    suffix < max - prefix &&
+    oldText[oldText.length - 1 - suffix] === newText[newText.length - 1 - suffix]
+  )
+    suffix++
+
+  const editEnd = oldText.length - suffix
+  const delta = newText.length - oldText.length
+
+  const out: BlankRange[] = []
+  for (const b of blanks) {
+    if (b.end <= prefix) out.push(b)
+    else if (b.start >= editEnd) out.push({ start: b.start + delta, end: b.end + delta })
+    else if (b.start <= prefix && editEnd <= b.end && b.end + delta > b.start)
+      out.push({ start: b.start, end: b.end + delta })
+  }
+  return out
 }
 
 export const blanksOf = (segments: FillBlankSegment[]): string[] =>
@@ -172,7 +207,7 @@ export const blanksOf = (segments: FillBlankSegment[]): string[] =>
 export function emptyDraft(type: InteractiveQuestionType): Draft {
   switch (type) {
     case 'fill-blank':
-      return { type, text: '', blanks: [makeRow()], distractors: [makeRow(), makeRow()] }
+      return { type, text: '', blanks: [], distractors: [makeRow(), makeRow()] }
     case 'match-pairs':
       return { type, pairs: [makeRow(), makeRow(), makeRow()] }
     case 'categorization': {
@@ -203,13 +238,20 @@ export function toDraft(question: InteractiveQuestion): Draft {
         pool.splice(i, 1)
         return false
       })
-      /* Re-marking picks each word's first free occurrence, so a question whose
-         blank sat on a later repeat of the same word reopens with the earlier one
-         marked instead. The preview shows what will be graded either way. */
+      /* Offsets are read off the segments themselves, so a gap reopens on the
+         exact words it was saved on — including a later repeat of a word, and
+         including a gap that spans a phrase. */
+      const blanks: BlankRange[] = []
+      let at = 0
+      for (const segment of question.segments) {
+        const literal = typeof segment === 'string' ? segment : segment.blank
+        if (typeof segment !== 'string') blanks.push({ start: at, end: at + literal.length })
+        at += literal.length
+      }
       return {
         type: 'fill-blank',
         text: question.segments.map((s) => (typeof s === 'string' ? s : s.blank)).join(''),
-        blanks: answers.length ? answers.map((a) => makeRow(a)) : [makeRow()],
+        blanks,
         distractors: distractors.length ? distractors.map((d) => makeRow(d)) : [makeRow()],
       }
     }
@@ -232,10 +274,7 @@ export function toQuestion(draft: Draft, prompt: string): InteractiveQuestion {
   const shared = { prompt: prompt.trim() }
   switch (draft.type) {
     case 'fill-blank': {
-      const { segments } = markBlanks(
-        draft.text,
-        draft.blanks.map((b) => b.a),
-      )
+      const segments = segmentsFrom(draft.text, draft.blanks)
       /* One bank entry per gap, duplicates deliberately preserved: FillBlank.tsx
          disables a placed chip by bank *index* but grades by text, so two gaps
          answered "lock" need two "lock" chips or the second can never be filled. */
@@ -313,21 +352,11 @@ export function draftErrors(draft: Draft): DraftError[] {
 
   switch (draft.type) {
     case 'fill-blank': {
-      const marks = draft.blanks.map((b) => b.a.trim()).filter(Boolean)
-      const { segments, missing } = markBlanks(draft.text, marks)
-      const answers = blanksOf(segments)
+      const answers = blanksOf(segmentsFrom(draft.text, draft.blanks))
       if (!draft.text.trim()) add('sentence', 'Write the sentence learners will complete')
-      if (marks.length === 0) add('blanks', 'Mark at least one word to blank')
-      if (missing.length > 0) {
-        const word = missing[0]
-        const listedTwice = marks.filter((m) => norm(m) === norm(word)).length > 1
-        add(
-          'blanks',
-          listedTwice
-            ? `"${word}" doesn't appear in your sentence that many times`
-            : `"${word}" isn't in your sentence`,
-        )
-      }
+      /* A mark is a range the author clicked, so it is always a real word in the
+         sentence — "that word isn't in your sentence" can no longer happen. */
+      if (draft.blanks.length === 0) add('blanks', 'Click a word in your sentence to blank it')
 
       const wrongWords = draft.distractors.map((d) => d.a.trim()).filter(Boolean)
       if (wrongWords.length === 0) add('wrong-words', 'Add at least one wrong word to the bank')
@@ -388,7 +417,7 @@ const count = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? on
 export function draftSummary(draft: Draft): string {
   switch (draft.type) {
     case 'fill-blank':
-      return count(draft.blanks.filter((b) => b.a.trim()).length, 'blank')
+      return count(draft.blanks.length, 'blank')
     case 'match-pairs':
       return count(draft.pairs.filter((p) => p.a.trim() && p.b.trim()).length, 'pair')
     case 'categorization':
@@ -413,7 +442,7 @@ export const TYPE_CONFIG: Record<
        "drag" here had authors designing for an interaction that doesn't exist. */
     description: 'Learners pick words from a bank to fill the gaps',
     callout:
-      'Write the sentence in full, then list the words to blank out. Learners pick from a shared word bank, so add a few wrong words to make it count.',
+      'Write the sentence in full, then click the words to blank out. Learners pick from a shared word bank, so add a few wrong words to make it count.',
   },
   'match-pairs': {
     label: 'Match the Pairs',
