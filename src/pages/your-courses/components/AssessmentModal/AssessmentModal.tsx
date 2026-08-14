@@ -436,6 +436,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   /* An explanation explains the *correct* answer, so it needs one to exist —
      which rules out the poll (no right answer) as well as the two open formats. */
   const hasExplanation = type === 'single-choice'
+  const hasMedia = type !== 'poll'
 
   const canSubmit =
     question.trim().length > 0 && (!hasOptions || options.some((o) => o.trim().length > 0))
@@ -465,6 +466,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
           </div>
 
           {/* Media Upload */}
+          {hasMedia && (
           <div className="assessment-modal-field">
             {/* Collapsed trigger — dashed full-width row */}
             {!mediaFile && (
@@ -584,6 +586,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
               </div>
             )}
           </div>
+          )}
 
           {/* Options */}
           {hasOptions && (
