@@ -41,3 +41,24 @@ export function getAssessmentIllustration(
 ): string {
   return illustrations[type][device]
 }
+
+/* Outline cards carry the format as a display label rather than a key, so this
+   is the bridge. The artwork predates the Multiple Choice → Single Choice
+   rename and still files that type under the old name. */
+const byLabel: Record<string, AssessmentType> = {
+  'Single Choice': 'multiple-choice',
+  'Short Text': 'short-text',
+  Exercise: 'exercise',
+  Poll: 'poll',
+}
+
+/**
+ * The illustration behind an outline card's format label, or null for the
+ * interactive formats, which have no artwork of their own.
+ *
+ * Labels can carry a summary after a middot ("Fill in the Blanks · 2 blanks"),
+ * so only the part before it names the format.
+ */
+export function assessmentTypeFromLabel(label: string): AssessmentType | null {
+  return byLabel[label.split(' · ')[0]] ?? null
+}

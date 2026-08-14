@@ -11,7 +11,7 @@ import {
   RecordCircle,
   Edit,
   ArchiveBook,
-  Chart,
+  Chart1,
   DocumentText,
   ArrowDown2,
   ArrowUp2,
@@ -42,7 +42,7 @@ const ASSESSMENTS: { type: AssessmentType; label: string; icon: (active: boolean
   { type: 'single-choice', label: 'Single Choice', icon: (a) => <RecordCircle size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'short-text', label: 'Short Text', icon: (a) => <Edit size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'exercise', label: 'Exercise', icon: (a) => <ArchiveBook size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'poll', label: 'Poll', icon: (a) => <Chart size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'poll', label: 'Poll', icon: (a) => <Chart1 size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
 ]
 
 /* The interactive formats join the same Assessments group — they are assessments,

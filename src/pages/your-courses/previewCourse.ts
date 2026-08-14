@@ -4,7 +4,7 @@
  * built instead of the seeded mock.
  */
 
-import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
+import { assessmentTypeFromLabel, getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import type { InteractiveQuestion } from '@/data/interactiveQuestions'
 import type { CourseDetail, CourseLesson } from '@/pages/courses/mockCourse'
 import defaultThumbnail from '@/assets/programs/course-thumbs/course-thumb-1.jpg'
@@ -22,18 +22,12 @@ export interface CoursePreviewPayload {
 const isLesson = (item: ContentItem) =>
   item.type === 'Lesson' || item.type === 'LibraryLesson' || item.type === 'SCORM'
 
-/* Only the classic types have artwork; the interactive formats fall back to the
-   multiple-choice tile rather than borrowing a label they don't carry. */
-const ILLUSTRATION_BY_LABEL: Record<string, Parameters<typeof getAssessmentIllustration>[0]> = {
-  'Single Choice': 'multiple-choice',
-  'Short Text': 'short-text',
-  Exercise: 'exercise',
-  Poll: 'poll',
-}
-
 function thumbnailFor(item: ContentItem): string {
   if (isLesson(item)) return item.thumbnail || defaultThumbnail
-  const label = item.type === 'SituationalTest' ? 'situational-test' : ILLUSTRATION_BY_LABEL[item.metadata.split(' · ')[0]]
+  /* Only the classic types have artwork; the interactive formats fall back to
+     the multiple-choice tile rather than borrowing a label they don't carry. */
+  const label =
+    item.type === 'SituationalTest' ? 'situational-test' : assessmentTypeFromLabel(item.metadata)
   return getAssessmentIllustration(label ?? 'multiple-choice', 'desktop')
 }
 

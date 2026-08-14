@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import Button from '@/components/Button/Button'
 import { Add, ClipboardText, Clock, Edit2, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
-import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
+import { assessmentTypeFromLabel, getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import AssessmentIcon from '../../../../components/icons/AssessmentIcon'
 import Badge from '../../../../components/Badge/Badge'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
@@ -98,16 +98,22 @@ function ContentCardThumb({ item }: { item: ContentItem }) {
   const isAssessment = item.type === 'Assessment'
   const isSituational = item.type === 'SituationalTest'
   const isScorm = item.type === 'SCORM'
+  /* Classic assessments each have their own artwork; the interactive formats
+     have none, so they keep the generic glyph below. */
+  const assessmentArt = isAssessment ? assessmentTypeFromLabel(item.metadata) : null
   return (
     /* Both the assessment glyph and the situational-test artwork carry their own shape,
        so neither gets a tinted tile behind it. */
     <div className={`content-card-thumb ${isAssessment ? 'content-card-thumb--assessment' : ''}`}>
-      {isSituational ? (
-        /* The DS situational-test artwork (assessment-illustrations); the desktop
-           variant is drawn at 80px and scales down for this 48px admin row. */
+      {isSituational || assessmentArt ? (
+        /* The DS artwork (assessment-illustrations); the desktop variant is drawn
+           at 80px and scales down for this 48px admin row. */
         <img
           className="content-card-thumb-illustration"
-          src={getAssessmentIllustration('situational-test', 'desktop')}
+          src={getAssessmentIllustration(
+            isSituational ? 'situational-test' : assessmentArt!,
+            'desktop',
+          )}
           width={48}
           height={48}
           alt=""
