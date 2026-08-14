@@ -40,15 +40,20 @@
   transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
-.dropdown-trigger:hover:not(:disabled) {
-  background: var(--page-background-hover, var(--neutral-50));
+/* `:not(.is-active)` rather than source order: the hover selector carries two
+   pseudo-classes, so it outranks `.is-active` wherever it sits, and an open
+   dropdown under the cursor would lose its amber border. */
+.dropdown-trigger:hover:not(:disabled):not(.is-active) {
+  background: var(--input-background);
   border-color: var(--border-hover);
 }
 
 .dropdown-trigger.is-active,
 .dropdown-trigger:focus-visible {
   background: transparent;
-  border-color: var(--secondary-500);
+  /* Mode-aware, like every other form-field active border: #EDA30D light /
+     #FFBB38 dark. Raw --secondary-500 was the dark value in both modes. */
+  border-color: var(--selected);
   outline: none;
 }
 
@@ -65,7 +70,7 @@
 
 /* Sizes */
 .dropdown-sm .dropdown-trigger { height: 33px; padding: 4px 12px; font-size: 12px; }
-.dropdown-md .dropdown-trigger { height: 41px; padding: 8px 16px;  font-size: 14px; }
+.dropdown-md .dropdown-trigger { height: 41px; padding: 8px 12px;  font-size: 14px; }
 .dropdown-lg .dropdown-trigger { height: 48px; padding: 12px 16px; font-size: 16px; }
 
 .dropdown-trigger-leading {
@@ -83,8 +88,10 @@
   text-align: left;
 }
 
+/* Placeholder, not disabled — per input.md the empty-field token is
+   --text-tertiary. --text-disabled made an empty field read as inert. */
 .dropdown-trigger-text--placeholder {
-  color: var(--text-disabled);
+  color: var(--text-tertiary);
 }
 
 .dropdown-chevron {
