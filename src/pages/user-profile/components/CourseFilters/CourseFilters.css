@@ -180,6 +180,13 @@
   max-width: 400px;
 }
 
+/* Matches the multi-select's field width, so a single- and a multi-value row
+   line up when both are on screen. */
+.up-filter-dropdown {
+  flex: 0 0 400px;
+  max-width: 400px;
+}
+
 .up-filter-row-remove {
   display: inline-flex;
   align-items: center;

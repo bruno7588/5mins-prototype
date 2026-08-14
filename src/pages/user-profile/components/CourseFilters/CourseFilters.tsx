@@ -7,7 +7,7 @@ import InputInteger from '@/components/InputInteger/InputInteger'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import FilterMultiSelect from '@/pages/learning-records/components/FilterControls/FilterMultiSelect'
 import CourseIcon from '@/components/icons/CourseIcon'
-import { type DropdownOption } from '@/components/Dropdown/Dropdown'
+import Dropdown, { type DropdownOption } from '@/components/Dropdown/Dropdown'
 import './CourseFilters.css'
 
 /* ─── Model ─── the 7 filters mirror the Course Progress columns. */
@@ -15,6 +15,7 @@ export type FilterId = 'course' | 'status' | 'startDate' | 'dueDate' | 'completi
 
 export type FilterValue =
   | { kind: 'multi'; values: string[] }
+  | { kind: 'single'; value: string }
   | { kind: 'range'; min: number; max: number }
   | { kind: 'date'; from: string; to: string }
 
@@ -46,7 +47,9 @@ const ix = (El: typeof Sort) => (size: number) => <El size={size} color="current
    signals, Due date heads the dates (start dates are near-never filtered on).
    Course sits last since search already narrows by course name. */
 export const FILTER_DEFS: FilterDef[] = [
-  { id: 'status', label: 'Status', renderIcon: ix(Status), kind: 'multi' },
+  /* Single, not multi: an enrolment holds one status, so picking two never
+     narrows anything a learner would ask for. */
+  { id: 'status', label: 'Status', renderIcon: ix(Status), kind: 'single' },
   { id: 'progress', label: 'Progress', renderIcon: ix(StatusUp), kind: 'range', suffix: '%' },
   { id: 'score', label: 'Score', renderIcon: ix(Star1), kind: 'range', suffix: '%' },
   { id: 'dueDate', label: 'Due date', renderIcon: ix(Clock), kind: 'date' },
@@ -58,7 +61,13 @@ export const FILTER_DEFS: FilterDef[] = [
 const DEF_BY_ID = Object.fromEntries(FILTER_DEFS.map((d) => [d.id, d])) as Record<FilterId, FilterDef>
 
 export const defaultValueFor = (kind: Kind): FilterValue =>
-  kind === 'multi' ? { kind: 'multi', values: [] } : kind === 'range' ? { kind: 'range', min: 0, max: 100 } : { kind: 'date', from: '', to: '' }
+  kind === 'multi'
+    ? { kind: 'multi', values: [] }
+    : kind === 'single'
+      ? { kind: 'single', value: '' }
+      : kind === 'range'
+        ? { kind: 'range', min: 0, max: 100 }
+        : { kind: 'date', from: '', to: '' }
 
 /* ─── Matching ─── pure predicate reused by the page's row memo. */
 export function matchesCourse(row: FilterRow, active: FilterId[], values: Record<string, FilterValue>): boolean {
@@ -69,6 +78,9 @@ export function matchesCourse(row: FilterRow, active: FilterId[], values: Record
       if (!v.values.length) continue
       const field = id === 'course' ? row.course : row.status
       if (!v.values.includes(field)) return false
+    } else if (v.kind === 'single') {
+      if (!v.value) continue // nothing picked yet
+      if (row.status !== v.value) return false
     } else if (v.kind === 'range') {
       if (v.min <= 0 && v.max >= 100) continue // full range — nothing set yet
       const val = id === 'progress' ? row.progress : row.score ?? -1
@@ -170,6 +182,7 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
     const def = DEF_BY_ID[id]
     const v = values[id]
     if (v?.kind === 'multi' && v.values.length) return v.values.length === 1 ? v.values[0] : `${def.label}: ${v.values.length}`
+    if (v?.kind === 'single' && v.value) return v.value
     if (v?.kind === 'range' && (v.min > 0 || v.max < 100)) return `${def.label} ${v.min}–${v.max}${def.suffix ?? ''}`
     if (v?.kind === 'date' && (v.from || v.to)) return `${def.label} ${v.from || '…'} → ${v.to || '…'}`
     return def.label
@@ -188,6 +201,17 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
           placeholder={`Select ${def.label.toLowerCase()}`}
           onChange={(arr) => onSetValue(def.id, { kind: 'multi', values: arr })}
           trailing={trailing}
+        />
+      )
+    }
+    if (v.kind === 'single') {
+      return (
+        <Dropdown
+          className="up-filter-dropdown"
+          options={optionsById[def.id] ?? []}
+          value={v.value}
+          placeholder={`Select ${def.label.toLowerCase()}`}
+          onChange={(value) => onSetValue(def.id, { kind: 'single', value })}
         />
       )
     }
