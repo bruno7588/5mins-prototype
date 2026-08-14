@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowDown2 } from 'iconsax-react'
+import Checkbox from '../Checkbox/Checkbox'
 import './Dropdown.css'
 
 export interface DropdownOption {
@@ -24,6 +25,11 @@ export interface DropdownProps {
   readOnly?: boolean
   size?: Size
   onChange?: (value: string) => void
+  /** Options carry a checkbox and the menu stays open across picks. */
+  multiple?: boolean
+  /** Chosen values in `multiple` mode; `value`/`onChange` are ignored there. */
+  values?: string[]
+  onChangeValues?: (values: string[]) => void
   className?: string
   /** Class for the menu. It is portalled to <body>, so descendant selectors
       written against an ancestor of the field will not reach it. */
@@ -44,6 +50,9 @@ function Dropdown({
   readOnly = false,
   size = 'md',
   onChange,
+  multiple = false,
+  values,
+  onChangeValues,
   className = '',
   menuClassName = '',
   menuAlign = 'start',
@@ -104,7 +113,16 @@ function Dropdown({
     }
   }
 
+  const picked = values ?? []
+  const isPicked = (v: string) => picked.includes(v)
+  const toggle = (v: string) =>
+    onChangeValues?.(isPicked(v) ? picked.filter((x) => x !== v) : [...picked, v])
+
   const selected = options.find((o) => o.value === value)
+  /* Multi keeps its placeholder: what is chosen is read back as chips beneath
+     the field, so repeating it in the trigger would say the same thing twice
+     and grow the control past the row. */
+  const triggerLabel = multiple ? placeholder : (selected?.label ?? placeholder)
 
   return (
     <div
@@ -128,6 +146,7 @@ function Dropdown({
           .join(' ')}
         aria-haspopup="listbox"
         aria-expanded={isActive}
+        aria-multiselectable={multiple || undefined}
         aria-disabled={readOnly}
         disabled={readOnly}
         onClick={() => !readOnly && setIsActive((o) => !o)}
@@ -136,7 +155,7 @@ function Dropdown({
         }}
       >
         {iconLeft && <span className="dropdown-trigger-leading">{iconLeft}</span>}
-        <span className={`dropdown-trigger-text${!selected ? ' dropdown-trigger-text--placeholder' : ''}`}>{selected?.label ?? placeholder}</span>
+        <span className={`dropdown-trigger-text${multiple || !selected ? ' dropdown-trigger-text--placeholder' : ''}`}>{triggerLabel}</span>
         <ArrowDown2
           size={size === 'sm' ? 16 : 20}
           color="currentColor"
@@ -148,7 +167,50 @@ function Dropdown({
       {isActive && rect && createPortal(
         <ul ref={menuRef} className={`dropdown-menu ${menuClassName}`.trim()} role="listbox" style={menuStyle()}>
           {options.map((opt) => {
-            const isSelected = opt.value === value
+            const isSelected = multiple ? isPicked(opt.value) : opt.value === value
+            const optionClass = [
+              'dropdown-option',
+              isSelected && 'is-selected',
+              opt.disabled && 'is-disabled',
+            ]
+              .filter(Boolean)
+              .join(' ')
+            const text = (
+              <span className={`dropdown-option__text${opt.description ? ' is-rich' : ''}`}>
+                <span className="dropdown-option__label">{opt.label}</span>
+                {opt.description && <span className="dropdown-option__desc">{opt.description}</span>}
+              </span>
+            )
+
+            /* Multi rows are a div, not a button: the Checkbox is itself a
+               button and cannot nest inside one. Same shape FilterMultiSelect
+               uses — the row owns the click, the box just draws the state. */
+            if (multiple) {
+              return (
+                <li key={opt.value}>
+                  <div
+                    role="option"
+                    aria-selected={isSelected}
+                    aria-disabled={opt.disabled || undefined}
+                    tabIndex={opt.disabled ? -1 : 0}
+                    className={`${optionClass} dropdown-option--check`}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => !opt.disabled && toggle(opt.value)}
+                    onKeyDown={(e) => {
+                      if (opt.disabled) return
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        toggle(opt.value)
+                      }
+                    }}
+                  >
+                    <Checkbox checked={isSelected} disabled={opt.disabled} />
+                    {text}
+                  </div>
+                </li>
+              )
+            }
+
             return (
               <li key={opt.value}>
                 <button
@@ -156,13 +218,7 @@ function Dropdown({
                   role="option"
                   aria-selected={isSelected}
                   disabled={opt.disabled}
-                  className={[
-                    'dropdown-option',
-                    isSelected && 'is-selected',
-                    opt.disabled && 'is-disabled',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
+                  className={optionClass}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => {
                     if (opt.disabled) return
@@ -170,10 +226,7 @@ function Dropdown({
                     setIsActive(false)
                   }}
                 >
-                  <span className={`dropdown-option__text${opt.description ? ' is-rich' : ''}`}>
-                    <span className="dropdown-option__label">{opt.label}</span>
-                    {opt.description && <span className="dropdown-option__desc">{opt.description}</span>}
-                  </span>
+                  {text}
                 </button>
               </li>
             )

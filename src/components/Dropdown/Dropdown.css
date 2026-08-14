@@ -191,3 +191,31 @@
   color: var(--danger-500);
 }
 
+
+/* ===== Multi-select rows (checkbox) ===== */
+
+/* Checkbox sits against the label rather than opposite it — the row's default
+   space-between is for the single-select's right-hand helper slot. 8px gap per
+   listbox.md's checkbox item. */
+.dropdown-option--check {
+  justify-content: flex-start;
+}
+
+/* The box states the selection, so the row keeps its normal fill: the amber
+   single-select row behind a ticked checkbox says the same thing twice. */
+.dropdown-option--check.is-selected,
+.dropdown-option--check.is-selected:hover {
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.dropdown-option--check.is-selected:hover,
+.dropdown-option--check:hover {
+  background: var(--page-background-hover, var(--neutral-50));
+}
+
+.dropdown-option--check:focus-visible {
+  outline: 2px solid var(--text-selected);
+  outline-offset: -2px;
+}

@@ -15,7 +15,6 @@ export type FilterId = 'course' | 'status' | 'startDate' | 'dueDate' | 'completi
 
 export type FilterValue =
   | { kind: 'multi'; values: string[] }
-  | { kind: 'single'; value: string }
   | { kind: 'range'; min: number; max: number }
   | { kind: 'date'; from: string; to: string }
 
@@ -37,6 +36,9 @@ interface FilterDef {
   renderIcon: (size: number) => ReactNode
   kind: Kind
   suffix?: string
+  /** Multi filters over a long list get the search field; short, fixed sets get
+      a dropdown of checkboxes, where typing to narrow six options is a cost. */
+  searchable?: boolean
 }
 
 // Iconsax icon at a given size, inheriting color (→ --text-primary in context).
@@ -47,27 +49,19 @@ const ix = (El: typeof Sort) => (size: number) => <El size={size} color="current
    signals, Due date heads the dates (start dates are near-never filtered on).
    Course sits last since search already narrows by course name. */
 export const FILTER_DEFS: FilterDef[] = [
-  /* Single, not multi: an enrolment holds one status, so picking two never
-     narrows anything a learner would ask for. */
-  { id: 'status', label: 'Status', renderIcon: ix(Status), kind: 'single' },
+  { id: 'status', label: 'Status', renderIcon: ix(Status), kind: 'multi' },
   { id: 'progress', label: 'Progress', renderIcon: ix(StatusUp), kind: 'range', suffix: '%' },
   { id: 'score', label: 'Score', renderIcon: ix(Star1), kind: 'range', suffix: '%' },
   { id: 'dueDate', label: 'Due date', renderIcon: ix(Clock), kind: 'date' },
   { id: 'startDate', label: 'Start date', renderIcon: ix(Calendar), kind: 'date' },
   { id: 'completionDate', label: 'Completion date', renderIcon: ix(CalendarTick), kind: 'date' },
-  { id: 'course', label: 'Course', renderIcon: (s) => <CourseIcon size={s} />, kind: 'multi' },
+  { id: 'course', label: 'Course', renderIcon: (s) => <CourseIcon size={s} />, kind: 'multi', searchable: true },
 ]
 
 const DEF_BY_ID = Object.fromEntries(FILTER_DEFS.map((d) => [d.id, d])) as Record<FilterId, FilterDef>
 
 export const defaultValueFor = (kind: Kind): FilterValue =>
-  kind === 'multi'
-    ? { kind: 'multi', values: [] }
-    : kind === 'single'
-      ? { kind: 'single', value: '' }
-      : kind === 'range'
-        ? { kind: 'range', min: 0, max: 100 }
-        : { kind: 'date', from: '', to: '' }
+  kind === 'multi' ? { kind: 'multi', values: [] } : kind === 'range' ? { kind: 'range', min: 0, max: 100 } : { kind: 'date', from: '', to: '' }
 
 /* ─── Matching ─── pure predicate reused by the page's row memo. */
 export function matchesCourse(row: FilterRow, active: FilterId[], values: Record<string, FilterValue>): boolean {
@@ -78,9 +72,6 @@ export function matchesCourse(row: FilterRow, active: FilterId[], values: Record
       if (!v.values.length) continue
       const field = id === 'course' ? row.course : row.status
       if (!v.values.includes(field)) return false
-    } else if (v.kind === 'single') {
-      if (!v.value) continue // nothing picked yet
-      if (row.status !== v.value) return false
     } else if (v.kind === 'range') {
       if (v.min <= 0 && v.max >= 100) continue // full range — nothing set yet
       const val = id === 'progress' ? row.progress : row.score ?? -1
@@ -182,7 +173,6 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
     const def = DEF_BY_ID[id]
     const v = values[id]
     if (v?.kind === 'multi' && v.values.length) return v.values.length === 1 ? v.values[0] : `${def.label}: ${v.values.length}`
-    if (v?.kind === 'single' && v.value) return v.value
     if (v?.kind === 'range' && (v.min > 0 || v.max < 100)) return `${def.label} ${v.min}–${v.max}${def.suffix ?? ''}`
     if (v?.kind === 'date' && (v.from || v.to)) return `${def.label} ${v.from || '…'} → ${v.to || '…'}`
     return def.label
@@ -194,25 +184,50 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
   const renderControl = (def: FilterDef, trailing?: ReactNode) => {
     const v = values[def.id] ?? defaultValueFor(def.kind)
     if (v.kind === 'multi') {
+      const opts = optionsById[def.id] ?? []
+      const setValues = (values: string[]) => onSetValue(def.id, { kind: 'multi', values })
+
+      // Long lists keep the search field; a fixed handful gets a checkbox menu.
+      if (def.searchable) {
+        return (
+          <FilterMultiSelect
+            options={opts}
+            value={v.values}
+            placeholder={`Select ${def.label.toLowerCase()}`}
+            onChange={setValues}
+            trailing={trailing}
+          />
+        )
+      }
+
+      const chosen = opts.filter((o) => v.values.includes(o.value))
       return (
-        <FilterMultiSelect
-          options={optionsById[def.id] ?? []}
-          value={v.values}
-          placeholder={`Select ${def.label.toLowerCase()}`}
-          onChange={(arr) => onSetValue(def.id, { kind: 'multi', values: arr })}
-          trailing={trailing}
-        />
-      )
-    }
-    if (v.kind === 'single') {
-      return (
-        <Dropdown
-          className="up-filter-dropdown"
-          options={optionsById[def.id] ?? []}
-          value={v.value}
-          placeholder={`Select ${def.label.toLowerCase()}`}
-          onChange={(value) => onSetValue(def.id, { kind: 'single', value })}
-        />
+        <div className="up-filter-multi">
+          <div className="up-filter-multi-row">
+            <Dropdown
+              className="up-filter-dropdown"
+              options={opts}
+              multiple
+              values={v.values}
+              placeholder={`Select ${def.label.toLowerCase()}`}
+              onChangeValues={setValues}
+            />
+            {trailing}
+          </div>
+          {chosen.length > 0 && (
+            <div className="up-filter-chips">
+              {chosen.map((o) => (
+                <Chip
+                  key={o.value}
+                  className="up-filter-chip"
+                  label={o.label}
+                  iconRight
+                  onDismiss={() => setValues(v.values.filter((x) => x !== o.value))}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       )
     }
     if (v.kind === 'range') {

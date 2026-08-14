@@ -180,11 +180,40 @@
   max-width: 400px;
 }
 
-/* Matches the multi-select's field width, so a single- and a multi-value row
-   line up when both are on screen. */
+/* The field hugs its label rather than reserving the search field's 400px —
+   the chips below carry the selection, so the trigger only ever holds
+   "Select {filter}". */
 .up-filter-dropdown {
-  flex: 0 0 400px;
-  max-width: 400px;
+  width: fit-content;
+}
+
+.up-filter-multi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  flex: 1;
+  min-width: 0;
+}
+
+/* Field and its × share a line; chips wrap onto the next. */
+.up-filter-multi-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.up-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+/* Figma 8725:104395 — the enabled chip: 12px side padding, 4px gap, and the
+   primary text colour rather than the base chip's secondary. */
+.up-filter-chip.chip {
+  padding: var(--space-s) var(--space-sm);
+  gap: var(--space-xs);
+  color: var(--text-primary);
 }
 
 .up-filter-row-remove {
