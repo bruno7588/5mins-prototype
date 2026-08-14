@@ -352,11 +352,10 @@
   color: var(--text-quiz);
   border-radius: var(--radius-sm);
   padding: var(--space-s) var(--space-sm);
-  /* 8px and regular weight rather than the badge's 4px/Medium — this banner runs
-     to two lines, where the tighter, heavier setting of a one-line pill reads
-     cramped. */
+  /* 8px rather than the badge's 4px — this banner runs to two lines, where a
+     one-line pill's tighter gap reads cramped. Weight stays Medium, as designed. */
   gap: var(--space-s);
-  font-weight: 400;
+  font-weight: 500;
 }
 
 /* ===== Fill in the blanks ===== */

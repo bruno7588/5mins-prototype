@@ -12,13 +12,14 @@ import {
   Edit,
   ArchiveBook,
   Chart1,
+  Chart21,
+  I3Square,
   DocumentText,
   ArrowDown2,
   ArrowUp2,
   SliderVertical1,
   ArrangeHorizontal,
   Category,
-  RowVertical,
 } from 'iconsax-react'
 import AssessmentIcon from '@/components/icons/AssessmentIcon'
 import Collapse from '@/components/Collapse/Collapse'
@@ -42,7 +43,20 @@ const ASSESSMENTS: { type: AssessmentType; label: string; icon: (active: boolean
   { type: 'single-choice', label: 'Single Choice', icon: (a) => <RecordCircle size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'short-text', label: 'Short Text', icon: (a) => <Edit size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'exercise', label: 'Exercise', icon: (a) => <ArchiveBook size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'poll', label: 'Poll', icon: (a) => <Chart1 size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  /* iconsax-react splits this glyph's two styles across exports: Chart1 holds
+     its Linear and Chart21 its Bold, and each one's *other* variant is a
+     different, boxed chart. Picking per state is the only way to keep the
+     selected icon the same glyph as the resting one. */
+  {
+    type: 'poll',
+    label: 'Poll',
+    icon: (a) =>
+      a ? (
+        <Chart21 size={ICON} color={C} variant="Bold" />
+      ) : (
+        <Chart1 size={ICON} color={C} variant="Linear" />
+      ),
+  },
 ]
 
 /* The interactive formats join the same Assessments group — they are assessments,
@@ -52,7 +66,7 @@ const INTERACTIVE: { type: InteractiveQuestionType; icon: (active: boolean) => R
   { type: 'fill-blank', icon: (a) => <SliderVertical1 size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'match-pairs', icon: (a) => <ArrangeHorizontal size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { type: 'categorization', icon: (a) => <Category size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'sequencing', icon: (a) => <RowVertical size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { type: 'sequencing', icon: (a) => <I3Square size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
 ]
 
 interface AddContentIconStripProps {
