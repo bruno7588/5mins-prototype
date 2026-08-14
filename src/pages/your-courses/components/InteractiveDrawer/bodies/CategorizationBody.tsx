@@ -65,40 +65,41 @@ function CategorizationBody({ draft, onChange, showErrors }: BodyProps<Categoriz
               {/* The indent alone left it to the reader to infer that these
                   belong to the category above; the arrow says it. */}
               <div className="iq-drawer__category-items">
-                <ArrowForward
-                  size={20}
-                  color="currentColor"
-                  variant="Linear"
-                  className="iq-drawer__category-arrow"
-                />
-                <div className="iq-drawer__category-concepts">
                 {own.map((item, i) => (
-                  <div className="iq-drawer__row" key={item.id}>
-                    <textarea
-                      ref={autoGrow}
-                      rows={1}
-                      className="iq-drawer__row-input"
-                      placeholder={`Concept ${i + 1}`}
-                      aria-label={`Concept ${i + 1} in ${named}`}
-                      value={item.a}
-                      onInput={(e) => autoGrow(e.currentTarget)}
-                      onChange={(e) =>
-                        onChange({
-                          ...draft,
-                          items: items.map((x) =>
-                            x.id === item.id ? { ...x, a: e.target.value } : x,
-                          ),
-                        })
-                      }
+                  <div className="iq-drawer__concept" key={item.id}>
+                    <ArrowForward
+                      size={20}
+                      color="currentColor"
+                      variant="Linear"
+                      className="iq-drawer__category-arrow"
                     />
-                    {own.length > 1 && (
-                      <CloseButton
-                        size={16}
-                        className="iq-drawer__row-remove"
-                        ariaLabel={`Remove concept ${i + 1} from ${named}`}
-                        onClick={() => onChange({ ...draft, items: items.filter((x) => x.id !== item.id) })}
+                    <div className="iq-drawer__row">
+                      <textarea
+                        ref={autoGrow}
+                        rows={1}
+                        className="iq-drawer__row-input"
+                        placeholder={`Concept ${i + 1}`}
+                        aria-label={`Concept ${i + 1} in ${named}`}
+                        value={item.a}
+                        onInput={(e) => autoGrow(e.currentTarget)}
+                        onChange={(e) =>
+                          onChange({
+                            ...draft,
+                            items: items.map((x) =>
+                              x.id === item.id ? { ...x, a: e.target.value } : x,
+                            ),
+                          })
+                        }
                       />
-                    )}
+                      {own.length > 1 && (
+                        <CloseButton
+                          size={16}
+                          className="iq-drawer__row-remove"
+                          ariaLabel={`Remove concept ${i + 1} from ${named}`}
+                          onClick={() => onChange({ ...draft, items: items.filter((x) => x.id !== item.id) })}
+                        />
+                      )}
+                    </div>
                   </div>
                 ))}
                 <Button
@@ -108,7 +109,6 @@ function CategorizationBody({ draft, onChange, showErrors }: BodyProps<Categoriz
                 >
                   Add Concept
                 </Button>
-                </div>
               </div>
             </div>
           )

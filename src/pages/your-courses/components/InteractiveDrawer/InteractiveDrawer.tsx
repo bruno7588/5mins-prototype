@@ -86,7 +86,6 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
   const promptFilled = prompt.trim().length > 0
   const promptError = promptBlurred && !promptFilled
   const bodyErrors = draftErrors(draft)
-  const blockingError = bodyErrors[0]?.message ?? ''
   const canSave = promptFilled && bodyErrors.length === 0
 
   const pristine = useRef<string | null>(null)
@@ -223,15 +222,6 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
           </Button>
         ) : (
           <>
-            {/* What's missing is stated in the footer, not only in a tooltip over the
-                disabled button: a disabled button can't take focus, so hover was the
-                only way to reach the reason — no path at all by keyboard or screen
-                reader, at the moment the admin most wants an answer. */}
-            {!canSave && (
-              <span className="iq-drawer__blocker" role="status">
-                {!promptFilled ? 'Write the question first' : blockingError}
-              </span>
-            )}
             {previewQuestion && (
               <Button
                 variant="outlined-2"

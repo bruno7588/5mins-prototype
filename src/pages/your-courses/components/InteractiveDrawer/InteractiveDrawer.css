@@ -244,10 +244,8 @@
 }
 
 /* 12px between a field's last input and the button that adds another — the
-   field's own 8px gap plus 4. Same rule for the two buttons that sit directly in
-   a list rather than in this wrapper. */
-.iq-drawer__row-actions,
-.iq-drawer__category-concepts > .ds-btn {
+   field's own 8px gap plus 4. */
+.iq-drawer__row-actions {
   margin-top: var(--space-xs);
 }
 
@@ -304,36 +302,41 @@
   gap: var(--space-sm);
 }
 
-/* Indented under the category name, with an arrow in the gutter drawing the
-   category down into the concepts that belong to it. */
+/* Indented under the category name. Every concept carries its own arrow, so the
+   line back to the category holds however far down the list you read. */
 .iq-drawer__category-items {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   padding-left: var(--space-s);
 }
 
-/* Flipped so it leaves the category above and turns into the concepts, rather
-   than curving back up out of them. */
+.iq-drawer__concept {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  align-self: stretch;
+}
+
+/* Flipped so it leaves the category above and turns into the concept, rather
+   than curving back up out of it. */
 .iq-drawer__category-arrow {
   flex-shrink: 0;
   transform: scaleY(-1);
   color: var(--text-tertiary);
-  /* Centres the 20px glyph on the 44px first concept row. */
+  /* Centres the 20px glyph on the 44px row. */
   margin-top: 12px;
 }
 
-.iq-drawer__category-concepts {
+.iq-drawer__concept .iq-drawer__row {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-s);
 }
 
-.iq-drawer__category-items .iq-drawer__row {
-  align-self: stretch;
+/* Lines the button up with the inputs rather than the arrows. */
+.iq-drawer__category-items > .ds-btn {
+  margin-left: calc(20px + var(--space-s));
 }
 
 
@@ -445,17 +448,6 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
-}
-
-/* What's blocking Save sits beside it (the footer is already a flex row), not
-   inside a tooltip on a button that can't be focused. */
-.iq-drawer__blocker {
-  flex: 1;
-  min-width: 0;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-secondary);
 }
 
 /* Preview stage — takes the body's place while previewing, so the learner
