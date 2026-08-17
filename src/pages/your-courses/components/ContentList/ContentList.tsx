@@ -98,33 +98,27 @@ function ContentCardThumb({ item }: { item: ContentItem }) {
   const isAssessment = item.type === 'Assessment'
   const isSituational = item.type === 'SituationalTest'
   const isScorm = item.type === 'SCORM'
-  /* Classic assessments each have their own artwork; the interactive formats
-     have none, so they keep the generic glyph below. */
-  const assessmentArt = isAssessment ? assessmentTypeFromLabel(item.metadata) : null
+  /* Every assessment format has its own artwork; an unknown label falls back to
+     the multiple-choice tile, same as the preview builder. */
+  const assessmentArt = isSituational
+    ? 'situational-test'
+    : isAssessment
+      ? assessmentTypeFromLabel(item.metadata) ?? 'multiple-choice'
+      : null
   return (
-    /* Both the assessment glyph and the situational-test artwork carry their own shape,
-       so neither gets a tinted tile behind it. */
+    /* Both the assessment artwork and the situational-test artwork carry their own
+       shape, so neither gets a tinted tile behind it. */
     <div className={`content-card-thumb ${isAssessment ? 'content-card-thumb--assessment' : ''}`}>
-      {isSituational || assessmentArt ? (
+      {assessmentArt ? (
         /* The DS artwork (assessment-illustrations); the desktop variant is drawn
            at 80px and scales down for this 48px admin row. */
         <img
           className="content-card-thumb-illustration"
-          src={getAssessmentIllustration(
-            isSituational ? 'situational-test' : assessmentArt!,
-            'desktop',
-          )}
+          src={getAssessmentIllustration(assessmentArt, 'desktop')}
           width={48}
           height={48}
           alt=""
         />
-      ) : isAssessment ? (
-        <svg className="content-card-thumb-illustration" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <path d="M28.3224 32.2734H28.3254C28.3254 32.2734 28.3018 32.2837 28.2665 32.294C28.0855 32.3723 27.9046 32.4446 27.7221 32.5125C25.9345 33.2489 20.2744 35.4389 17.8836 38.9896L10.8125 34.1978C13.0665 30.8507 13.0106 25.2694 12.9724 23.0291C12.9488 22.7 12.9356 22.3695 12.9385 22.0374C12.9385 22.0212 12.9385 22.0079 12.9385 22.0079H12.9415C12.968 19.93 13.5785 17.8359 14.8262 15.9838C18.2234 10.9337 25.0576 9.60699 30.0924 13.0175C32.2199 14.4593 33.6853 16.518 34.4106 18.7981C35.3993 21.9061 35.0109 25.4214 33.0497 28.3345C31.8344 30.1394 30.1762 31.4647 28.3224 32.2749V32.2734Z" fill="#FFB83D"/>
-          <path d="M16.3221 40.4059L9.75195 35.9541L9.14909 36.8493L15.7193 41.3011L16.3221 40.4059Z" fill="#522A75"/>
-          <path d="M14.4559 43.1769L7.88574 38.7251L7.58431 39.1727L14.1545 43.6245L14.4559 43.1769Z" fill="#522A75"/>
-          <path d="M8.88958 44.6982L8.55266 44.4695C6.83124 43.3036 6.39868 40.9276 7.58601 39.1641L14.1568 43.6165C12.9695 45.38 10.611 45.8641 8.88958 44.6982Z" fill="#522A75"/>
-        </svg>
       ) : isScorm && item.thumbColor ? (
         <div className="content-card-thumb-photo" style={{ background: item.thumbColor }} />
       ) : (

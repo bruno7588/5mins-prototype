@@ -1,6 +1,6 @@
 ---
 name: 5mins-gamification
-description: Gamification asset libraries for 5Mins.ai — skill-level shield/medal illustrations (levels 1–5, Advanced/Expert/Master, enabled + disabled, 56/72px) and the skill-category illustration library. Use whenever a prototype shows learner progression - skill levels, learning paths, badges, level-up states - on skill pages, profile screens, cards, or leaderboards.
+description: Gamification asset libraries for 5Mins.ai — skill-level shield/medal illustrations (levels 1–5, Advanced/Expert/Master, enabled + disabled, 56/72px), the ten assessment/quiz-type illustrations (56px mobile / 80px desktop), and the skill-category illustration library. Use whenever a prototype shows learner progression - skill levels, learning paths, badges, level-up states, assessment or quiz cards - on skill pages, profile screens, cards, course outlines, or leaderboards.
 ---
 
 # 5Mins.ai Gamification Elements
@@ -48,6 +48,43 @@ import { getProgressIllustration } from '@/assets/progress-illustrations'
 ```
 
 Render at native 40px. Use the outcome trio only for quiz/assessment results, not as generic status icons (status uses badges — see `badges.md`).
+
+## Assessment illustrations
+
+Source: Figma `Illustrations/ Assessments`, frame `9120:8850` (classic six downloaded 2026-07-13, interactive four 2026-08-17). Assets in `src/assets/assessment-illustrations/` with a typed index. **Ten** assessment/quiz types, one artwork each, in two device variants — Mobile **56px** and Desktop **80px**.
+
+| Key | Figma variant | Mobile / Desktop node | Artwork |
+|---|---|---|---|
+| `multiple-choice` | Multiple choice | `9120:8851` / `10978:11975` | amber lightbulb |
+| `short-text` | Short text | `9120:8885` / `10978:12003` | pen on a scroll |
+| `exercise` | Exercise | `10247:7546` / `10978:12375` | folder of documents |
+| `situational-test` | Situational test | `9120:8879` / `10978:12393` | teal question mark |
+| `fast-track` | Fast Track | `9120:9256` / `10978:12400` | rocket |
+| `poll` | Poll | `9120:9290` / `10978:12427` | amber lightning bolt |
+| `fill-blank` | Fill in the blank | `12086:6607` / `12086:7219` | red lines with blue gaps |
+| `sequence` | Sequence | `12087:8357` / `12090:7286` | stacked purple bars |
+| `categorize` | Categorize | `12090:6607` / `12090:7313` | blue shapes in two groups |
+| `match-pairs` | Match the pairs | `12092:8499` / `12092:8573` | green and red arrows |
+
+Mobile and Desktop are **different artwork**, not scaled copies — pick by device, never resize one into the other. The one sanctioned exception is the 48px admin outline row, which draws the desktop variant down.
+
+| Surface | Variant | Rendered size |
+|---|---|---|
+| Mobile assessment list card | mobile | 56 |
+| Web app course row | desktop | 80 |
+| Admin outline row (Create/Edit Course) | desktop | 48 |
+
+```tsx
+import { getAssessmentIllustration, assessmentTypeFromLabel } from '@/assets/assessment-illustrations'
+
+<img src={getAssessmentIllustration('sequence', 'desktop')} alt="" width={48} height={48} />
+
+// Outline cards carry a display label, not a key — bridge it first.
+// Labels may carry a summary after a middot ("Sequence · 3 steps").
+const type = assessmentTypeFromLabel(item.metadata) // 'sequence' | … | null
+```
+
+Every artwork sits on transparent — never put a tinted tile, card, or colored square behind it. When the assessment type is already named in adjacent text (as it is on every card), the image is decorative: `alt=""`.
 
 ## Certificate illustrations
 

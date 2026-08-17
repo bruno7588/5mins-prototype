@@ -24,8 +24,8 @@ const isLesson = (item: ContentItem) =>
 
 function thumbnailFor(item: ContentItem): string {
   if (isLesson(item)) return item.thumbnail || defaultThumbnail
-  /* Only the classic types have artwork; the interactive formats fall back to
-     the multiple-choice tile rather than borrowing a label they don't carry. */
+  /* Every assessment format has its own artwork; an unknown label falls back to
+     the multiple-choice tile. */
   const label =
     item.type === 'SituationalTest' ? 'situational-test' : assessmentTypeFromLabel(item.metadata)
   return getAssessmentIllustration(label ?? 'multiple-choice', 'desktop')
