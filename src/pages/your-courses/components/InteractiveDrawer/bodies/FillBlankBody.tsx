@@ -63,7 +63,6 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
   const errors = showErrors ? draftErrors(draft) : []
   const sentenceErrors = errors.filter((e) => e.field === 'sentence')
   const blankErrors = errors.filter((e) => e.field === 'blanks')
-  const wrongWordErrors = errors.filter((e) => e.field === 'wrong-words')
 
   return (
     <>
@@ -168,12 +167,7 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
 
       <div className="iq-drawer__field">
         <span className="iq-drawer__label">Wrong words</span>
-        <div
-          className="iq-drawer__rows"
-          role="group"
-          aria-label="Wrong words"
-          aria-describedby={wrongWordErrors.length ? 'iq-fb-error' : undefined}
-        >
+        <div className="iq-drawer__rows" role="group" aria-label="Wrong words">
           {draft.distractors.map((distractor, index) => (
             <div className="iq-drawer__row" key={distractor.id}>
               <input
@@ -205,16 +199,6 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
             </div>
           ))}
         </div>
-        <span className="iq-drawer__helper">
-          These join the answers in the word bank. Two or three make the question worth asking.
-        </span>
-
-        {wrongWordErrors.length > 0 && (
-          <span className="iq-drawer__helper iq-drawer__helper--error" id="iq-fb-error" role="alert">
-            {wrongWordErrors[0].message}
-          </span>
-        )}
-
         <div className="iq-drawer__row-actions">
           <Button
             variant="outlined-2"
