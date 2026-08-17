@@ -76,7 +76,7 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
           ref={autoGrow}
           rows={1}
           className={`iq-drawer__textarea${sentenceErrors.length ? ' iq-drawer__textarea--error' : ''}`}
-          placeholder="Write the sentence learners will complete…"
+          placeholder="Write the sentence users will complete…"
           value={draft.text}
           onInput={(e) => autoGrow(e.currentTarget)}
           onChange={(e) => setText(e.target.value)}

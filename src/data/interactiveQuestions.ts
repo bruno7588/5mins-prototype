@@ -353,7 +353,7 @@ export function draftErrors(draft: Draft): DraftError[] {
   switch (draft.type) {
     case 'fill-blank': {
       const answers = blanksOf(segmentsFrom(draft.text, draft.blanks))
-      if (!draft.text.trim()) add('sentence', 'Write the sentence learners will complete')
+      if (!draft.text.trim()) add('sentence', 'Write the sentence users will complete')
       /* A mark is a range the author clicked, so it is always a real word in the
          sentence — "that word isn't in your sentence" can no longer happen. */
       if (draft.blanks.length === 0) add('blanks', 'Click a word in your sentence to blank it')
@@ -391,7 +391,7 @@ export function draftErrors(draft: Draft): DraftError[] {
          the learner however they place them — the trap match-pairs guards too. */
       const dupeItem = firstDuplicate(items.map((i) => i.a))
       if (dupeItem)
-        add('items', `Two concepts are both "${dupeItem}" — learners can't tell them apart`)
+        add('items', `Two concepts are both "${dupeItem}" — users can't tell them apart`)
       if (items.some((i) => !kept.has(i.b))) add('items', 'Give every concept a category')
       break
     }
@@ -402,7 +402,7 @@ export function draftErrors(draft: Draft): DraftError[] {
       /* Order is the answer and steps grade by position, so identical steps
          can't be placed correctly by reading them. */
       const dupeStep = firstDuplicate(steps.map((s) => s.a))
-      if (dupeStep) add('steps', `Two steps are both "${dupeStep}" — learners can't tell them apart`)
+      if (dupeStep) add('steps', `Two steps are both "${dupeStep}" — users can't tell them apart`)
       break
     }
   }
@@ -440,27 +440,27 @@ export const TYPE_CONFIG: Record<
     title: 'Fill in the Blanks',
     /* Tap-to-place, not drag — FillBlank.tsx places a word on tap. Saying
        "drag" here had authors designing for an interaction that doesn't exist. */
-    description: 'Learners pick words from a bank to fill the gaps',
+    description: 'Users pick words from a bank to fill the gaps',
     callout:
-      'Write the sentence in full, then click the words to blank out. Learners pick from a shared word bank, so add a few wrong words to make it count.',
+      'Write the sentence in full, then click the words to blank out. Users pick from a shared word bank, so add a few wrong words to make it count.',
   },
   'match-pairs': {
     label: 'Match the Pairs',
     title: 'Match the Pairs',
-    description: 'Learners pair each term with its match',
-    callout: 'Each row is one correct pair. Learners see the matches shuffled.',
+    description: 'Users pair each term with its match',
+    callout: 'Each row is one correct pair. Users see the matches shuffled.',
   },
   categorization: {
     label: 'Categorise',
     title: 'Categorise',
-    description: 'Learners sort concepts into the right categories',
+    description: 'Users sort concepts into the right categories',
     callout:
-      'Name each category, then add the concepts that belong in it. Learners see all the concepts together, shuffled.',
+      'Name each category, then add the concepts that belong in it. Users see all the concepts together, shuffled.',
   },
   sequencing: {
     label: 'Sequence',
     title: 'Sequence',
-    description: 'Learners put the steps back in order',
-    callout: 'Learners see these shuffled. The order you set here is the answer.',
+    description: 'Users put the steps back in order',
+    callout: 'Users see these shuffled. The order you set here is the answer.',
   },
 }

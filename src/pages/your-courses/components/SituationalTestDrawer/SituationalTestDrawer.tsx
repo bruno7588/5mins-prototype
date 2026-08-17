@@ -253,7 +253,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
             : isEdit ? 'Edit Situational Test' : 'Add Situational Test'
         }
         description={
-          !isEdit && step === 1 ? 'Write the brief learners will be tested on' : undefined
+          !isEdit && step === 1 ? 'Write the brief users will be tested on' : undefined
         }
         ctas={<CloseButton onClick={onClose} />}
         /* Step 2's route back to the title and brief (Figma 8998:55648, 9037:62042). */
@@ -285,7 +285,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
               <GuidanceCallout
                 title="Guidelines for writing a brief"
                 bullets={[
-                  'Position — who the learner is in this situation',
+                  'Position — who the user is in this situation',
                   'Situation — the context, tied to the skill being tested',
                   'Complication — the specific thing they have to respond to',
                   'Question and goal — what to decide, and what a good answer achieves',
@@ -332,7 +332,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                 /* Hugs its content like every other field here; the two-line floor for
                    the placeholder is CSS, so it applies only while the field is empty. */
                 rows={1}
-                placeholder="Describe a realistic situation the learner might face, the complication they run into, and the decision you want them to make…"
+                placeholder="Describe a realistic situation the user might face, the complication they run into, and the decision you want them to make…"
                 value={brief}
                 onChange={(e) => setBrief(e.target.value)}
                 onBlur={() => setBriefBlurred(true)}

@@ -186,7 +186,7 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
             id="iq-prompt"
             rows={1}
             className={`iq-drawer__input${promptError ? ' iq-drawer__input--error' : ''}`}
-            placeholder="What are you asking learners to do?"
+            placeholder="Write your question here..."
             value={prompt}
             onInput={(e) => autoGrow(e.currentTarget)}
             onChange={(e) => setPrompt(e.target.value)}
