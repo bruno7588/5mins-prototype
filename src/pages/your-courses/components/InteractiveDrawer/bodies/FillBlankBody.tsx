@@ -190,7 +190,9 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
                   )
                 }
               />
-              {draft.distractors.length > 1 && (
+              {/* Two wrong words is the floor the drawer opens on, so there is
+                  nothing to remove until a third is added. */}
+              {draft.distractors.length > 2 && (
                 <CloseButton
                   size={16}
                   className="iq-drawer__row-remove"
