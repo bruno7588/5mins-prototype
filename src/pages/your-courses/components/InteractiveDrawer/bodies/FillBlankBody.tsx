@@ -199,6 +199,10 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
             </div>
           ))}
         </div>
+        <span className="iq-drawer__helper">
+          These join the answers in the word bank. Two or three make the question worth asking.
+        </span>
+
         <div className="iq-drawer__row-actions">
           <Button
             variant="outlined-2"
