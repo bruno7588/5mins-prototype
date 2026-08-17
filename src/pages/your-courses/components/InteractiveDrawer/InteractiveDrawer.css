@@ -365,7 +365,8 @@
 .iq-drawer__marker {
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-sm);
-  background: var(--input-background);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-s);
   font-size: 14px;
   font-weight: 400;
   line-height: 2;
@@ -373,19 +374,14 @@
   white-space: pre-wrap;
 }
 
-.iq-drawer__marker--error {
-  /* Outline rather than border so the sentence doesn't shift by a pixel. */
-  outline: 1px solid var(--text-error);
-  outline-offset: -1px;
-}
-
-/* No horizontal padding: the words have to sit at the sentence's own spacing or
-   the read-back lies about it — padding here detaches trailing punctuation and
-   opens gaps the learner won't see. The fill alone marks a word. */
+/* 4px of side padding so the hover and blank fills have room around the word
+   rather than clamping its letters. It is padding, not margin, so the fill grows
+   with it — and it carries the gap between words, which is why there is no
+   margin on top of it. */
 .iq-drawer__marker-word {
-  padding: 2px 0;
+  padding: 2px 4px;
   border: none;
-  border-radius: 0;
+  border-radius: var(--radius-xs);
   background: transparent;
   font: inherit;
   color: inherit;
@@ -394,7 +390,7 @@
 }
 
 .iq-drawer__marker-word:hover {
-  background: var(--selected-tint);
+  background: var(--cards-background-hover);
 }
 
 .iq-drawer__marker-word:focus-visible {
@@ -402,10 +398,10 @@
   outline-offset: 1px;
 }
 
-/* Amber is the platform's selection colour, and the same amber the learner's
-   word-bank chips use — so a blanked word here looks like what it becomes. */
+/* Raw secondary-500 rather than the mode-aware --selected: this is a chip fill,
+   and chip fills hold the same amber in both modes (Figma 9105:3554). */
 .iq-drawer__marker-word--blank {
-  background: var(--selected);
+  background: var(--secondary-500);
   color: var(--neutral-800);
   font-weight: 500;
   border-radius: var(--radius-xs);
@@ -419,7 +415,7 @@
 
 /* Sub-label above the preview — instruction, not a field label. */
 .iq-drawer__label-sub {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -452,25 +448,28 @@
 /* Preview stage — takes the body's place while previewing, so the learner
    formats (mobile-first, from quiz-lab) run in the same phone frame the lab
    uses rather than stretched across a desktop drawer. */
+/* Preview modal — the DS Modal width (overlays.md), on the shared ConfirmModal
+   shell so the scrim, escape handling and focus trap come for free. */
+.iq-preview-modal {
+  width: 720px;
+}
+
+.iq-preview-modal > * {
+  width: 100%;
+}
+
+/* A definite height, not min-height: the question is a flex column whose rows are
+   `flex: 1 1 0`, so against an auto-height parent they resolve to zero and only
+   the prompt and Check survive. Floor is the DS Modal's 320px content area. */
 .iq-drawer__preview-stage {
-  flex: 1;
-  min-height: 0;
   display: flex;
-  justify-content: center;
-  padding-bottom: var(--space-m);
+  height: clamp(320px, 52vh, 520px);
 }
 
-/* The frame is sized for a full page — full-viewport stage, 812px screen. In the
-   drawer it takes the height it is given instead, so the whole question (Check
-   button included) stays visible without a second scrollbar. */
-.iq-drawer__preview-stage .m-phone-stage {
-  min-height: 0;
-  padding: 0;
+/* Full modal width rather than a phone's 375px — the quiz runs on desktop too.
+   The modal panel is the frame, so the question needs none of its own. */
+.iq-drawer__preview-stage > .ql-quizview {
+  flex: 1;
+  min-width: 0;
   background: transparent;
-  overflow: visible;
-}
-
-.iq-drawer__preview-stage .m-phone,
-.iq-drawer__preview-stage .m-phone__screen {
-  height: 100%;
 }

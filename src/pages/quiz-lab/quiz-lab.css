@@ -691,6 +691,12 @@
   justify-content: center;
 }
 
+/* Wider hosts (the builder's preview modal) let the action size to its label
+   instead of stretching the full width. */
+.ql-footer--hug .ds-btn {
+  width: auto;
+}
+
 /* Result footer: "Well done!" message centred above the CTA. */
 /* Result message below the options (DS "Well done!" pattern) — no fill. */
 .ql-result {

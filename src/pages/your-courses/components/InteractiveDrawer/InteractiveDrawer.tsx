@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import QuizIllustration from '@/components/icons/QuizIllustration'
 import {
   TYPE_CONFIG,
@@ -13,9 +14,7 @@ import {
   type InteractiveQuestion,
   type InteractiveQuestionType,
 } from '@/data/interactiveQuestions'
-import { ArrowLeft, Eye } from 'iconsax-react'
-import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
-import QuizHeader from '@/pages/quiz-lab/components/QuizHeader'
+import { QuizFooterLayoutContext } from '@/pages/quiz-lab/components/FeedbackFooter'
 import MatchPairsPartial from '@/pages/quiz-lab/formats/MatchPairsPartial'
 import FillBlank from '@/pages/quiz-lab/formats/FillBlank'
 import Categorization from '@/pages/quiz-lab/formats/Categorization'
@@ -140,32 +139,6 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
         ctas={<CloseButton onClick={onClose} />}
       />
 
-      {previewing && previewQuestion ? (
-        /* The preview replaces the form rather than covering it: the drawer already
-           owns the focus trap and the strip beside it paints above any overlay we
-           could stack here, so swapping the body keeps both correct. */
-        <div className="iq-drawer__preview-stage">
-          <PhoneFrame>
-            <div className="ql-quizview">
-              <QuizHeader
-                label={config.label}
-                used={1}
-                total={3}
-                onClose={() => setPreviewing(false)}
-              />
-              {previewQuestion.type === 'match-pairs' ? (
-                <MatchPairsPartial question={previewQuestion} />
-              ) : previewQuestion.type === 'fill-blank' ? (
-                <FillBlank question={previewQuestion} formatKey="fill-blank" />
-              ) : previewQuestion.type === 'categorization' ? (
-                <Categorization question={previewQuestion} formatKey="categorization" />
-              ) : (
-                <SequencingDnd question={previewQuestion} />
-              )}
-            </div>
-          </PhoneFrame>
-        </div>
-      ) : (
       <div className="iq-drawer__body">
         {/* How the format works, and — for sequence and match-pairs — the only
             statement of where the correct answer lives, since nothing is clicked
@@ -211,34 +184,55 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
           {body}
         </div>
       </div>
-      )}
 
       <div className="iq-drawer__footer">
-        {previewing ? (
-          <Button
-            variant="outlined-2"
-            icon={<ArrowLeft size={20} color="currentColor" variant="Linear" />}
-            onClick={() => setPreviewing(false)}
-          >
-            Back To Editing
+        {/* Plain "Save", like the classic assessment modal — the header
+            already names the format. */}
+        <Button onClick={handleSave} disabled={!canSave}>
+          Save
+        </Button>
+        {/* Secondary action, sitting beside Save on the footer's 16px gap. */}
+        {previewQuestion && (
+          <Button variant="outlined" onClick={() => setPreviewing(true)}>
+            Preview
           </Button>
-        ) : (
-          <>
-            {previewQuestion && (
-              <Button
-                variant="outlined-2"
-                icon={<Eye size={20} color="currentColor" variant="Linear" />}
-                onClick={() => setPreviewing(true)}
-              >
-                Preview
-              </Button>
-            )}
-            <Button onClick={handleSave} disabled={!canSave}>
-              {`${isEdit ? 'Update' : 'Add'} ${config.label}`}
-            </Button>
-          </>
         )}
       </div>
+
+      {/* Centred over the page rather than swapped into the drawer body, so the
+          form stays exactly where it was when the preview closes. No phone frame
+          — the quiz runs on desktop too — and no attempt hearts or counter,
+          which belong to a real run. */}
+      <ConfirmModal
+        open={previewing && !!previewQuestion}
+        onClose={() => setPreviewing(false)}
+        className="iq-preview-modal"
+        ariaLabel={`Preview - ${config.title}`}
+      >
+        <SectionHeader
+          title={`Preview - ${config.title}`}
+          ctas={<CloseButton onClick={() => setPreviewing(false)} />}
+        />
+        {previewQuestion && (
+          /* 'hug' because the modal is 720px wide — the quiz's default full-bleed
+             action is sized for a phone. */
+          <QuizFooterLayoutContext.Provider value="hug">
+            <div className="iq-drawer__preview-stage">
+              <div className="ql-quizview">
+                {previewQuestion.type === 'match-pairs' ? (
+                  <MatchPairsPartial question={previewQuestion} />
+                ) : previewQuestion.type === 'fill-blank' ? (
+                  <FillBlank question={previewQuestion} formatKey="fill-blank" />
+                ) : previewQuestion.type === 'categorization' ? (
+                  <Categorization question={previewQuestion} formatKey="categorization" />
+                ) : (
+                  <SequencingDnd question={previewQuestion} />
+                )}
+              </div>
+            </div>
+          </QuizFooterLayoutContext.Provider>
+        )}
+      </ConfirmModal>
     </>
   )
 }
