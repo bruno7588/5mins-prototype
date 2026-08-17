@@ -144,7 +144,7 @@ function ContentDrawer({
     : rendered === 'scorm' ? 'Add SCORM files'
     : rendered === 'assessment' ? (assessmentInitial ? 'Edit assessment' : 'Add assessment')
     : rendered === 'interactive'
-      ? `${interactiveInitial ? 'Edit' : 'Add'} ${TYPE_CONFIG[interactiveType].label}`
+      ? `${interactiveInitial ? 'Edit' : 'Add'} assessment - ${TYPE_CONFIG[interactiveType].label}`
     : situationalTest ? 'Edit Situational Test'
     : 'Add Situational Test'
 

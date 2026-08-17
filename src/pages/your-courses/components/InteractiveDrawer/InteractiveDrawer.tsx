@@ -133,7 +133,9 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
   return (
     <>
       <SectionHeader
-        title={`${isEdit ? 'Edit' : 'Add'} ${config.title}`}
+        /* Same header pattern as the classic assessment modal — every assessment
+           reads "Add assessment - <format>". */
+        title={`${isEdit ? 'Edit' : 'Add'} assessment - ${config.title}`}
         description={config.description}
         ctas={<CloseButton onClick={onClose} />}
       />
