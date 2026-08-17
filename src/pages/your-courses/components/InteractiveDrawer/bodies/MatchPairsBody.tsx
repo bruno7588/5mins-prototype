@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { Add, ArrowSwapHorizontal } from 'iconsax-react'
+import { Add, ArrangeHorizontal } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import { draftErrors, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
@@ -58,7 +58,8 @@ function MatchPairsBody({ draft, onChange, showErrors }: BodyProps<MatchPairsDra
                 onChange={(e) => update(pair.id, { a: e.target.value })}
               />
             </div>
-            <ArrowSwapHorizontal
+            {/* Same glyph the Add Content strip files Match the Pairs under. */}
+            <ArrangeHorizontal
               size={20}
               color="var(--text-tertiary)"
               variant="Linear"
