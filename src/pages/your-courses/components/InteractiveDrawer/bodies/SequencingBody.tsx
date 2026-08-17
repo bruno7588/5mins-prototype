@@ -1,5 +1,5 @@
 import { useState, type DragEvent } from 'react'
-import { Add, ArrowDown2, ArrowUp2 } from 'iconsax-react'
+import { Add, ArrowDown, ArrowUp } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import { draftErrors, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
@@ -121,7 +121,9 @@ function SequencingBody({ draft, onChange, showErrors }: BodyProps<SequencingDra
                 aria-label={`Move step ${index + 1} up`}
                 onClick={() => moveByKeyboard(index, index - 1)}
               >
-                <ArrowUp2 size={16} color="currentColor" variant="Linear" />
+                {/* Shafted arrow, not a chevron — a chevron here reads as a
+                    dropdown (Figma vuesax/linear/arrow-down, 10215:68484). */}
+                <ArrowUp size={16} color="currentColor" variant="Linear" />
               </button>
               <button
                 type="button"
@@ -130,7 +132,7 @@ function SequencingBody({ draft, onChange, showErrors }: BodyProps<SequencingDra
                 aria-label={`Move step ${index + 1} down`}
                 onClick={() => moveByKeyboard(index, index + 1)}
               >
-                <ArrowDown2 size={16} color="currentColor" variant="Linear" />
+                <ArrowDown size={16} color="currentColor" variant="Linear" />
               </button>
             </div>
             {/* Three steps is the floor, so the control simply isn't there below it. */}
