@@ -3,7 +3,6 @@ import { Add } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import {
-  draftErrors,
   makeRow,
   remapBlanks,
   tokenize,
@@ -26,7 +25,9 @@ type FillBlankDraft = Extract<Draft, { type: 'fill-blank' }>
  * blanking the first, and the sentence shown here is both the control and the
  * read-back of what a learner will see.
  */
-function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft>) {
+/* No inline validation here — every rule this form has is already stated by a
+   label, placeholder or hint, so the Add button carries the gating on its own. */
+function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
   /* Marks are positions, so editing the sentence has to carry them along. */
   const setText = (text: string) =>
     onChange({ ...draft, text, blanks: remapBlanks(draft.blanks, draft.text, text) })
@@ -60,10 +61,6 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
     wordRefs.current[next]?.focus()
   }
 
-  const errors = showErrors ? draftErrors(draft) : []
-  const sentenceErrors = errors.filter((e) => e.field === 'sentence')
-  const blankErrors = errors.filter((e) => e.field === 'blanks')
-
   return (
     <>
       <div className="iq-drawer__field">
@@ -74,24 +71,14 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
           id="iq-sentence"
           ref={autoGrow}
           rows={1}
-          className={`iq-drawer__textarea${sentenceErrors.length ? ' iq-drawer__textarea--error' : ''}`}
+          className="iq-drawer__textarea"
           placeholder="Write the sentence users will complete…"
           value={draft.text}
           onInput={(e) => autoGrow(e.currentTarget)}
           onChange={(e) => setText(e.target.value)}
-          aria-describedby={sentenceErrors.length ? 'iq-fb-sentence-error' : undefined}
-          aria-invalid={sentenceErrors.length ? true : undefined}
         />
-
-        {sentenceErrors.length > 0 && (
-          <span
-            className="iq-drawer__helper iq-drawer__helper--error"
-            id="iq-fb-sentence-error"
-            role="alert"
-          >
-            {sentenceErrors[0].message}
-          </span>
-        )}
+        {/* No error treatment here: the only rule is "not empty", and the
+            placeholder already says what to write. */}
       </div>
 
       {draft.text.trim() && (
@@ -106,10 +93,10 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
           {/* Both the control and the read-back: what is amber here is what
               reaches the learner as a gap. */}
           <div
-            className={`iq-drawer__marker${blankErrors.length ? ' iq-drawer__marker--error' : ''}`}
+            className="iq-drawer__marker"
             role="group"
             aria-labelledby="iq-fb-marker-label"
-            aria-describedby={`iq-fb-marker-hint${blankErrors.length ? ' iq-fb-blanks-error' : ''}`}
+            aria-describedby="iq-fb-marker-hint"
           >
             {tokens.map((token, i) => {
               if (!token.isWord) return <span key={i}>{token.text}</span>
@@ -152,22 +139,23 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
               )
             })}
           </div>
-
-          {blankErrors.length > 0 && (
-            <span
-              className="iq-drawer__helper iq-drawer__helper--error"
-              id="iq-fb-blanks-error"
-              role="alert"
-            >
-              {blankErrors[0].message}
-            </span>
-          )}
+          {/* No error treatment: the hint above already says to click a word. */}
         </div>
       )}
 
       <div className="iq-drawer__field">
         <span className="iq-drawer__label">Wrong words</span>
-        <div className="iq-drawer__rows" role="group" aria-label="Wrong words">
+        {/* Secondary line on the label, like "Words to blank" above — it explains
+            the field, so it belongs before the rows rather than after them. */}
+        <span className="iq-drawer__label-sub" id="iq-fb-wrong-hint">
+          These join the answers in the word bank. Two or three make the question worth asking.
+        </span>
+        <div
+          className="iq-drawer__rows"
+          role="group"
+          aria-label="Wrong words"
+          aria-describedby="iq-fb-wrong-hint"
+        >
           {draft.distractors.map((distractor, index) => (
             <div className="iq-drawer__row" key={distractor.id}>
               <input
@@ -199,9 +187,6 @@ function FillBlankBody({ draft, onChange, showErrors }: BodyProps<FillBlankDraft
             </div>
           ))}
         </div>
-        <span className="iq-drawer__helper">
-          These join the answers in the word bank. Two or three make the question worth asking.
-        </span>
 
         <div className="iq-drawer__row-actions">
           <Button
