@@ -33,8 +33,6 @@ import './InteractiveDrawer.css'
 export interface BodyProps<D extends Draft = Draft> {
   draft: D
   onChange: (next: D) => void
-  /** Errors are held back until the admin has tried to save or left a field. */
-  showErrors: boolean
 }
 
 interface Props {
@@ -63,18 +61,19 @@ const snapshot = (prompt: string, draft: Draft) =>
  *
  * Single surface, not a wizard: a situational test is a container of N questions
  * and earns its steps, but this is one question.
+ *
+ * Validation speaks only for conflicts (draftErrors' 'conflict' kind): two
+ * identical steps, a wrong word that is also an answer. Those can't be seen by
+ * reading the form back, and can't exist until the author has typed. The
+ * 'incomplete' rules stay silent — on an untouched draft they all fire at once,
+ * each restating the label above it — and hold Save disabled instead.
  */
 function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChange }: Props) {
   const isEdit = !!initial
   const config = TYPE_CONFIG[type]
 
   const [prompt, setPrompt] = useState(initial?.prompt ?? '')
-  const [promptBlurred, setPromptBlurred] = useState(false)
   const [draft, setDraft] = useState<Draft>(() => (initial ? toDraft(initial) : emptyDraft(type)))
-  /* Validation fires on blur, not on submit — the footer button is disabled while
-     the draft is invalid, so a submit-driven flag could never be set. One handler
-     on the body wrapper covers all four bodies, since focusout bubbles. */
-  const [bodyTouched, setBodyTouched] = useState(false)
   const [previewing, setPreviewing] = useState(false)
 
   /* The prompt grows with its content; height must reset to auto before reading
@@ -85,7 +84,6 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
   }, [prompt])
 
   const promptFilled = prompt.trim().length > 0
-  const promptError = promptBlurred && !promptFilled
   const bodyErrors = draftErrors(draft)
   const canSave = promptFilled && bodyErrors.length === 0
 
@@ -119,16 +117,15 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
      needs a valid draft, since the renderers grade what they're given. */
   const previewQuestion = canSave ? toQuestion(draft, prompt) : null
 
-  const bodyProps = { showErrors: bodyTouched }
   const body =
     draft.type === 'sequencing' ? (
-      <SequencingBody draft={draft} onChange={setDraft} {...bodyProps} />
+      <SequencingBody draft={draft} onChange={setDraft} />
     ) : draft.type === 'match-pairs' ? (
-      <MatchPairsBody draft={draft} onChange={setDraft} {...bodyProps} />
+      <MatchPairsBody draft={draft} onChange={setDraft} />
     ) : draft.type === 'categorization' ? (
-      <CategorizationBody draft={draft} onChange={setDraft} {...bodyProps} />
+      <CategorizationBody draft={draft} onChange={setDraft} />
     ) : (
-      <FillBlankBody draft={draft} onChange={setDraft} {...bodyProps} />
+      <FillBlankBody draft={draft} onChange={setDraft} />
     )
 
   return (
@@ -160,31 +157,15 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
             ref={promptRef}
             id="iq-prompt"
             rows={1}
-            className={`iq-drawer__input${promptError ? ' iq-drawer__input--error' : ''}`}
-            placeholder="Write your question here..."
+            className="iq-drawer__input"
+            placeholder={config.promptPlaceholder}
             value={prompt}
             onInput={(e) => autoGrow(e.currentTarget)}
             onChange={(e) => setPrompt(e.target.value)}
-            onBlur={() => setPromptBlurred(true)}
-            aria-invalid={promptError || undefined}
-            aria-describedby={promptError ? 'iq-prompt-helper' : undefined}
           />
-          {promptError && (
-            <span
-              className="iq-drawer__helper iq-drawer__helper--error"
-              id="iq-prompt-helper"
-              role="alert"
-            >
-              Write the question
-            </span>
-          )}
         </div>
 
-        {/* focusout bubbles, so one handler here arms validation for whichever
-            body is mounted, instead of four copies of the same blur plumbing. */}
-        <div className="iq-drawer__body-slot" onBlur={() => setBodyTouched(true)}>
-          {body}
-        </div>
+        <div className="iq-drawer__body-slot">{body}</div>
       </div>
 
       <div className="iq-drawer__footer">

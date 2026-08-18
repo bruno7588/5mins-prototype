@@ -1,7 +1,7 @@
 import { Add, ArrowForward } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import { draftErrors, makeRow, type Draft } from '@/data/interactiveQuestions'
+import { draftConflicts, makeRow, type Draft } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
 import { autoGrow } from '../autoGrow'
 
@@ -22,21 +22,22 @@ type CategorizationDraft = Extract<Draft, { type: 'categorization' }>
  * typed under a category IS assigned to it. The previous shape — a flat list with
  * a radio row per concept — asked the author to state the same fact twice.
  */
-function CategorizationBody({ draft, onChange, showErrors }: BodyProps<CategorizationDraft>) {
+function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>) {
   const { categories, items } = draft
-
-  const errors = showErrors ? draftErrors(draft) : []
-  const categoryErrors = errors.filter((e) => e.field === 'categories')
-  const itemErrors = errors.filter((e) => e.field === 'items')
-  const errorIds =
-    [categoryErrors.length && 'iq-categories-error', itemErrors.length && 'iq-items-error']
-      .filter(Boolean)
-      .join(' ') || undefined
+  /* Only the conflicts — two categories or two concepts with the same label,
+     which grade as a coin flip. The count rules stay silent (see
+     InteractiveDrawer). */
+  const conflicts = draftConflicts(draft)
 
   return (
     <div className="iq-drawer__field">
       <span className="iq-drawer__label">Categories</span>
-      <div className="iq-drawer__categories" role="group" aria-label="Categories" aria-describedby={errorIds}>
+      <div
+        className="iq-drawer__categories"
+        role="group"
+        aria-label="Categories"
+        aria-describedby={conflicts.length ? 'iq-categories-conflict' : undefined}
+      >
         {categories.map((category, index) => {
           const own = items.filter((i) => i.b === category.id)
           const named = category.a.trim() || `Category ${index + 1}`
@@ -115,26 +116,11 @@ function CategorizationBody({ draft, onChange, showErrors }: BodyProps<Categoriz
         })}
       </div>
 
-      {categoryErrors.length > 0 && (
-        <span
-          className="iq-drawer__helper iq-drawer__helper--error"
-          id="iq-categories-error"
-          role="alert"
-        >
-          {categoryErrors[0].message}
+      {conflicts.length > 0 && (
+        <span className="iq-drawer__conflict" id="iq-categories-conflict" role="alert">
+          {conflicts[0].message}
         </span>
       )}
-
-      {itemErrors.length > 0 && (
-        <span
-          className="iq-drawer__helper iq-drawer__helper--error"
-          id="iq-items-error"
-          role="alert"
-        >
-          {itemErrors[0].message}
-        </span>
-      )}
-
     </div>
   )
 }

@@ -344,11 +344,22 @@ export type DraftErrorField =
 export interface DraftError {
   field: DraftErrorField
   message: string
+  /**
+   * 'incomplete' — a part of the question hasn't been written yet. Silent in the
+   * form: on an untouched draft every one of these fires at once, and each just
+   * restates the label or placeholder it sits under.
+   *
+   * 'conflict' — what's written can't grade. Two identical steps, a wrong word
+   * that is also an answer: the author can't see the problem by reading their
+   * own form, and it can only exist once they've typed, so it's always shown.
+   */
+  kind: 'incomplete' | 'conflict'
 }
 
 export function draftErrors(draft: Draft): DraftError[] {
   const errors: DraftError[] = []
-  const add = (field: DraftErrorField, message: string) => errors.push({ field, message })
+  const add = (field: DraftErrorField, message: string, kind: DraftError['kind'] = 'incomplete') =>
+    errors.push({ field, message, kind })
 
   switch (draft.type) {
     case 'fill-blank': {
@@ -364,7 +375,11 @@ export function draftErrors(draft: Draft): DraftError[] {
          answer is quietly a second right answer — the question can't be failed. */
       const alsoAnAnswer = wrongWords.find((w) => answers.some((a) => norm(a) === norm(w)))
       if (alsoAnAnswer)
-        add('wrong-words', `"${alsoAnAnswer}" is one of your answers, so it can't be a wrong word`)
+        add(
+          'wrong-words',
+          `"${alsoAnAnswer}" is one of your answers, so it can't be a wrong word`,
+          'conflict',
+        )
       break
     }
     case 'match-pairs': {
@@ -373,9 +388,11 @@ export function draftErrors(draft: Draft): DraftError[] {
       /* Index identity is the answer, so a repeated term makes two pairings
          equally right while the renderer marks one of them wrong. */
       const dupeTerm = firstDuplicate(complete.map((p) => p.a))
-      if (dupeTerm) add('pairs', `Two terms are both "${dupeTerm}" — each needs one clear match`)
+      if (dupeTerm)
+        add('pairs', `Two terms are both "${dupeTerm}" — each needs one clear match`, 'conflict')
       const dupeMatch = firstDuplicate(complete.map((p) => p.b))
-      if (dupeMatch) add('pairs', `Two matches are both "${dupeMatch}" — each needs one clear term`)
+      if (dupeMatch)
+        add('pairs', `Two matches are both "${dupeMatch}" — each needs one clear term`, 'conflict')
       break
     }
     case 'categorization': {
@@ -384,14 +401,15 @@ export function draftErrors(draft: Draft): DraftError[] {
       const kept = new Set(categories.map((c) => c.id))
       if (categories.length < 2) add('categories', 'Name at least 2 categories')
       const dupeCategory = firstDuplicate(categories.map((c) => c.a))
-      if (dupeCategory) add('categories', `Two categories are both "${dupeCategory}"`)
+      if (dupeCategory)
+        add('categories', `Two categories are both "${dupeCategory}"`, 'conflict')
 
       if (items.length < 2) add('items', 'Add at least 2 concepts to sort')
       /* Concepts grade by position, so two identical labels are a coin flip for
          the learner however they place them — the trap match-pairs guards too. */
       const dupeItem = firstDuplicate(items.map((i) => i.a))
       if (dupeItem)
-        add('items', `Two concepts are both "${dupeItem}" — users can't tell them apart`)
+        add('items', `Two concepts are both "${dupeItem}" — users can't tell them apart`, 'conflict')
       if (items.some((i) => !kept.has(i.b))) add('items', 'Give every concept a category')
       break
     }
@@ -402,12 +420,17 @@ export function draftErrors(draft: Draft): DraftError[] {
       /* Order is the answer and steps grade by position, so identical steps
          can't be placed correctly by reading them. */
       const dupeStep = firstDuplicate(steps.map((s) => s.a))
-      if (dupeStep) add('steps', `Two steps are both "${dupeStep}" — users can't tell them apart`)
+      if (dupeStep)
+        add('steps', `Two steps are both "${dupeStep}" — users can't tell them apart`, 'conflict')
       break
     }
   }
   return errors
 }
+
+/** The errors the authoring form says out loud — see the DraftError doc above. */
+export const draftConflicts = (draft: Draft): DraftError[] =>
+  draftErrors(draft).filter((e) => e.kind === 'conflict')
 
 export const draftIsComplete = (draft: Draft) => draftErrors(draft).length === 0
 
@@ -433,7 +456,17 @@ export function draftSummary(draft: Draft): string {
 
 export const TYPE_CONFIG: Record<
   InteractiveQuestionType,
-  { label: string; title: string; description: string; callout: string }
+  {
+    label: string
+    title: string
+    description: string
+    callout: string
+    /** Placeholder for the prompt field. "Write your question here" left authors
+     *  writing a question with an answer, which none of these formats can take —
+     *  each one's prompt is the instruction the learner reads, so the placeholder
+     *  is an example of that instruction. */
+    promptPlaceholder: string
+  }
 > = {
   'fill-blank': {
     label: 'Fill in the Blanks',
@@ -443,24 +476,29 @@ export const TYPE_CONFIG: Record<
     description: 'Users pick words from a bank to fill the gaps',
     callout:
       'Write the sentence in full, then click the words to blank out. Users pick from a shared word bank, so add a few wrong words to make it count.',
+    promptPlaceholder: 'Fill in the missing words',
   },
   'match-pairs': {
     label: 'Match the Pairs',
     title: 'Match the Pairs',
     description: 'Users pair each term with its match',
-    callout: 'Each row is one correct pair. Users see the matches shuffled.',
+    callout:
+      'Each row is one correct pair. Fill in both sides of at least 3 pairs. Users see the matches shuffled.',
+    promptPlaceholder: 'Match each term with its definition',
   },
   categorization: {
     label: 'Categorise',
     title: 'Categorise',
-    description: 'Users sort concepts into the right categories',
+    description: 'Users place concepts into the right categories',
     callout:
       'Name each category, then add the concepts that belong in it. Users see all the concepts together, shuffled.',
+    promptPlaceholder: 'Place each concept into the right category',
   },
   sequencing: {
     label: 'Sequence',
     title: 'Sequence',
     description: 'Users put the steps back in order',
     callout: 'Users see these shuffled. The order you set here is the answer.',
+    promptPlaceholder: 'Put the steps in the right order',
   },
 }

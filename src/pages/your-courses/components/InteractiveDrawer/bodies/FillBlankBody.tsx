@@ -3,6 +3,7 @@ import { Add } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import {
+  draftConflicts,
   makeRow,
   remapBlanks,
   tokenize,
@@ -25,9 +26,11 @@ type FillBlankDraft = Extract<Draft, { type: 'fill-blank' }>
  * blanking the first, and the sentence shown here is both the control and the
  * read-back of what a learner will see.
  */
-/* No inline validation here — every rule this form has is already stated by a
-   label, placeholder or hint, so the Add button carries the gating on its own. */
 function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
+  /* Only the conflict — a wrong word that is also an answer, which grades as a
+     second right answer and cannot be spotted by reading the two lists side by
+     side. The count rules stay silent (see InteractiveDrawer). */
+  const conflicts = draftConflicts(draft)
   /* Marks are positions, so editing the sentence has to carry them along. */
   const setText = (text: string) =>
     onChange({ ...draft, text, blanks: remapBlanks(draft.blanks, draft.text, text) })
@@ -154,7 +157,7 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
           className="iq-drawer__rows"
           role="group"
           aria-label="Wrong words"
-          aria-describedby="iq-fb-wrong-hint"
+          aria-describedby={`iq-fb-wrong-hint${conflicts.length ? ' iq-fb-wrong-conflict' : ''}`}
         >
           {draft.distractors.map((distractor, index) => (
             <div className="iq-drawer__row" key={distractor.id}>
@@ -187,6 +190,12 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
             </div>
           ))}
         </div>
+
+        {conflicts.length > 0 && (
+          <span className="iq-drawer__conflict" id="iq-fb-wrong-conflict" role="alert">
+            {conflicts[0].message}
+          </span>
+        )}
 
         <div className="iq-drawer__row-actions">
           <Button

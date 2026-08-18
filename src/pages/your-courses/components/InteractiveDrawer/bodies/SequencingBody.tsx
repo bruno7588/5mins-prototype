@@ -2,7 +2,7 @@ import { useState, type DragEvent } from 'react'
 import { Add, ArrowDown, ArrowUp } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import { draftErrors, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
+import { draftConflicts, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
 import { autoGrow } from '../autoGrow'
 import DragHandleIcon from './DragHandleIcon'
@@ -19,13 +19,16 @@ const MIN_STEPS = 3
  * order carries the answer here, so a mouse-only control would make this format
  * unauthorable by keyboard, and the learner side offers the same pair.
  */
-function SequencingBody({ draft, onChange, showErrors }: BodyProps<SequencingDraft>) {
+function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   /* Announced on keyboard moves, where there is no pointer to watch. */
   const [announcement, setAnnouncement] = useState('')
 
   const steps = draft.steps
+  /* Only the conflicts — two identical steps, which can't be ordered by reading
+     them. The count rule stays silent (see InteractiveDrawer). */
+  const conflicts = draftConflicts(draft)
   const setSteps = (next: DraftRow[]) => onChange({ ...draft, steps: next })
 
   const move = (from: number, to: number) => {
@@ -67,11 +70,6 @@ function SequencingBody({ draft, onChange, showErrors }: BodyProps<SequencingDra
     setDragOverIndex(null)
   }
 
-  /* Reads the model's rules rather than re-checking the count here, so the
-     duplicate-step rule surfaces too and the message can never drift from the
-     one the footer shows. */
-  const errors = showErrors ? draftErrors(draft).filter((e) => e.field === 'steps') : []
-
   return (
     <div className="iq-drawer__field">
       <span className="iq-drawer__label">Steps, in the correct order</span>
@@ -79,7 +77,7 @@ function SequencingBody({ draft, onChange, showErrors }: BodyProps<SequencingDra
         className="iq-drawer__rows"
         role="group"
         aria-label="Steps in the correct order"
-        aria-describedby={errors.length ? 'iq-steps-error' : undefined}
+        aria-describedby={conflicts.length ? 'iq-steps-conflict' : undefined}
       >
         {steps.map((step, index) => (
           <div
@@ -148,9 +146,9 @@ function SequencingBody({ draft, onChange, showErrors }: BodyProps<SequencingDra
         ))}
       </div>
 
-      {errors.length > 0 && (
-        <span className="iq-drawer__helper iq-drawer__helper--error" id="iq-steps-error" role="alert">
-          {errors[0].message}
+      {conflicts.length > 0 && (
+        <span className="iq-drawer__conflict" id="iq-steps-conflict" role="alert">
+          {conflicts[0].message}
         </span>
       )}
 

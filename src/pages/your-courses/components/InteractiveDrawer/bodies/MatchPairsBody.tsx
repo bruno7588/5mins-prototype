@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import { Add, ArrangeHorizontal } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import { draftErrors, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
+import { draftConflicts, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
 import { autoGrow } from '../autoGrow'
 
@@ -18,16 +18,15 @@ const MIN_PAIRS = 3
  * No reordering either. The renderer shuffles the right column, so row order
  * carries no meaning and a grip would imply otherwise.
  */
-function MatchPairsBody({ draft, onChange, showErrors }: BodyProps<MatchPairsDraft>) {
+function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
   const pairs = draft.pairs
+  /* Only the conflicts — a repeated term or match, which reads as fine until you
+     notice the same word twice. The count rule is in the callout. */
+  const conflicts = draftConflicts(draft)
   const setPairs = (next: DraftRow[]) => onChange({ ...draft, pairs: next })
 
   const update = (id: string, patch: Partial<DraftRow>) =>
     setPairs(pairs.map((p) => (p.id === id ? { ...p, ...patch } : p)))
-
-  /* Reuses the model's own rules so the row hint and the disabled Save button can
-     never disagree about what is wrong. */
-  const errors = showErrors ? draftErrors(draft) : []
 
   return (
     <div className="iq-drawer__field">
@@ -42,7 +41,7 @@ function MatchPairsBody({ draft, onChange, showErrors }: BodyProps<MatchPairsDra
         className="iq-drawer__pair-grid"
         role="group"
         aria-label="Pairs"
-        aria-describedby={errors.length ? 'iq-pairs-error' : undefined}
+        aria-describedby={conflicts.length ? 'iq-pairs-conflict' : undefined}
       >
         {pairs.map((pair, index) => (
           <Fragment key={pair.id}>
@@ -93,9 +92,9 @@ function MatchPairsBody({ draft, onChange, showErrors }: BodyProps<MatchPairsDra
         ))}
       </div>
 
-      {errors.length > 0 && (
-        <span className="iq-drawer__helper iq-drawer__helper--error" id="iq-pairs-error" role="alert">
-          {errors[0].message}
+      {conflicts.length > 0 && (
+        <span className="iq-drawer__conflict" id="iq-pairs-conflict" role="alert">
+          {conflicts[0].message}
         </span>
       )}
 

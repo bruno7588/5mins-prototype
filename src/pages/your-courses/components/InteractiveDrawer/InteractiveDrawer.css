@@ -85,19 +85,12 @@
   border-color: var(--selected);
 }
 
-.iq-drawer__input--error,
-.iq-drawer__textarea--error {
-  border-color: var(--text-error);
-}
-
-.iq-drawer__helper {
+/* Conflict line under a group — two identical steps, a wrong word that is also
+   an answer. The only validation the form speaks (see InteractiveDrawer). */
+.iq-drawer__conflict {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
-.iq-drawer__helper--error {
   color: var(--text-error);
 }
 
