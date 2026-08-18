@@ -277,11 +277,11 @@
 }
 
 .ql-pairs__empty {
-  /* Figma 9033:425 — 16px padding, 12px/1.2 tertiary text. */
+  /* Figma 9033:425 — 16px padding, 14px/1.2 tertiary text. */
   padding: var(--space-m);
   border: none;
   border-radius: var(--radius-sm);
-  font: 400 12px/1.2 'Poppins', sans-serif;
+  font: 400 14px/1.2 'Poppins', sans-serif;
   color: var(--text-tertiary);
   text-align: center;
 }
