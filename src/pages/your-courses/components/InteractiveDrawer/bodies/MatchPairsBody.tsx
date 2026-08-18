@@ -1,8 +1,14 @@
 import { Fragment } from 'react'
-import { Add, ArrangeHorizontal } from 'iconsax-react'
+import { Add, ArrangeHorizontal, Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import { draftConflicts, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
+import {
+  conflictedBy,
+  draftConflicts,
+  makeRow,
+  type Draft,
+  type DraftRow,
+} from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
 import { autoGrow } from '../autoGrow'
 
@@ -43,9 +49,14 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
         aria-label="Pairs"
         aria-describedby={conflicts.length ? 'iq-pairs-conflict' : undefined}
       >
-        {pairs.map((pair, index) => (
+        {pairs.map((pair, index) => {
+          /* Each column answers for its own clash: a repeated term marks the two
+             terms, a repeated match marks the two matches. */
+          const termErrored = conflictedBy(conflicts, 'pairs', pair.a)
+          const matchErrored = conflictedBy(conflicts, 'matches', pair.b)
+          return (
           <Fragment key={pair.id}>
-            <div className="iq-drawer__row">
+            <div className={`iq-drawer__row${termErrored ? ' iq-drawer__row--error' : ''}`}>
               <textarea
                 ref={autoGrow}
                 rows={1}
@@ -56,6 +67,11 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
                 onInput={(e) => autoGrow(e.currentTarget)}
                 onChange={(e) => update(pair.id, { a: e.target.value })}
               />
+              {termErrored && (
+                <span className="iq-drawer__row-danger">
+                  <Danger size={20} color="var(--text-error)" variant="Bold" />
+                </span>
+              )}
             </div>
             {/* Same glyph the Add Content strip files Match the Pairs under. */}
             <ArrangeHorizontal
@@ -64,7 +80,7 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
               variant="Linear"
               className="iq-drawer__pair-link"
             />
-            <div className="iq-drawer__row">
+            <div className={`iq-drawer__row${matchErrored ? ' iq-drawer__row--error' : ''}`}>
               <textarea
                 ref={autoGrow}
                 rows={1}
@@ -75,6 +91,11 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
                 onInput={(e) => autoGrow(e.currentTarget)}
                 onChange={(e) => update(pair.id, { b: e.target.value })}
               />
+              {matchErrored && (
+                <span className="iq-drawer__row-danger">
+                  <Danger size={20} color="var(--text-error)" variant="Bold" />
+                </span>
+              )}
             </div>
             {/* The slot is always occupied — an empty cell keeps the columns from
                 shifting when the last removable pair is deleted. */}
@@ -89,7 +110,8 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
               <span aria-hidden="true" />
             )}
           </Fragment>
-        ))}
+          )
+        })}
       </div>
 
       {conflicts.length > 0 && (

@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
-import { Add } from 'iconsax-react'
+import { Add, Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import {
+  conflictedBy,
   draftConflicts,
   makeRow,
   remapBlanks,
@@ -159,8 +160,15 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
           aria-label="Wrong words"
           aria-describedby={`iq-fb-wrong-hint${conflicts.length ? ' iq-fb-wrong-conflict' : ''}`}
         >
-          {draft.distractors.map((distractor, index) => (
-            <div className="iq-drawer__row" key={distractor.id}>
+          {draft.distractors.map((distractor, index) => {
+            /* The clash is with a word in the sentence, so only the wrong word
+               can be corrected here — it alone takes the DS error state. */
+            const errored = conflictedBy(conflicts, 'wrong-words', distractor.a)
+            return (
+            <div
+              className={`iq-drawer__row${errored ? ' iq-drawer__row--error' : ''}`}
+              key={distractor.id}
+            >
               <input
                 type="text"
                 className="iq-drawer__row-input"
@@ -175,6 +183,11 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
                   )
                 }
               />
+              {errored && (
+                <span className="iq-drawer__row-danger">
+                  <Danger size={20} color="var(--text-error)" variant="Bold" />
+                </span>
+              )}
               {/* Two wrong words is the floor the drawer opens on, so there is
                   nothing to remove until a third is added. */}
               {draft.distractors.length > 2 && (
@@ -188,7 +201,8 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
                 />
               )}
             </div>
-          ))}
+            )
+          })}
         </div>
 
         {conflicts.length > 0 && (

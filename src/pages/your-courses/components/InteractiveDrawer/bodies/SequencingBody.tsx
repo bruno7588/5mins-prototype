@@ -1,9 +1,15 @@
 import { useState, type DragEvent } from 'react'
-import { Add, ArrowDown, ArrowUp } from 'iconsax-react'
+import { Add, ArrowDown, ArrowUp, Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import { draftConflicts, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
+import {
+  conflictedBy,
+  draftConflicts,
+  makeRow,
+  type Draft,
+  type DraftRow,
+} from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
 import { autoGrow } from '../autoGrow'
 import DragHandleIcon from './DragHandleIcon'
@@ -80,12 +86,16 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
         aria-label="Steps in the correct order"
         aria-describedby={conflicts.length ? 'iq-steps-conflict' : undefined}
       >
-        {steps.map((step, index) => (
+        {steps.map((step, index) => {
+          /* The DS error state goes on the rows actually holding the repeated
+             text, so the author doesn't have to scan the list for the pair. */
+          const errored = conflictedBy(conflicts, 'steps', step.a)
+          return (
           <div
             key={step.id}
             className={`iq-drawer__row${dragIndex === index ? ' iq-drawer__row--dragging' : ''}${
               dragOverIndex === index ? ' iq-drawer__row--dragover' : ''
-            }`}
+            }${errored ? ' iq-drawer__row--error' : ''}`}
             onDragOver={handleDragOver(index)}
             onDrop={handleDrop(index)}
             onDragEnd={clearDrag}
@@ -112,6 +122,13 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
                 setSteps(steps.map((s) => (s.id === step.id ? { ...s, a: e.target.value } : s)))
               }
             />
+            {/* Before the arrows, not after: the icon belongs to the field it is
+                reporting on, and trailing it left the row ending on an alarm. */}
+            {errored && (
+              <span className="iq-drawer__row-danger">
+                <Danger size={20} color="var(--text-error)" variant="Bold" />
+              </span>
+            )}
             {/* Tooltips off at the ends of the list: the button is disabled there,
                 and a label for a move that can't happen is just noise. */}
             <div className="iq-drawer__row-move">
@@ -155,7 +172,8 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
               />
             )}
           </div>
-        ))}
+          )
+        })}
       </div>
 
       {conflicts.length > 0 && (

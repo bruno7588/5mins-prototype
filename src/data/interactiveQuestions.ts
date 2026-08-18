@@ -336,7 +336,10 @@ export type DraftErrorField =
   | 'sentence'
   | 'blanks'
   | 'wrong-words'
+  /** Match-pairs left column. */
   | 'pairs'
+  /** Match-pairs right column — its own field so a clash marks the guilty side. */
+  | 'matches'
   | 'categories'
   | 'items'
   | 'steps'
@@ -354,12 +357,23 @@ export interface DraftError {
    * own form, and it can only exist once they've typed, so it's always shown.
    */
   kind: 'incomplete' | 'conflict'
+  /**
+   * The clashing text, on conflicts only. The form matches rows against it to
+   * put the DS input error state on the inputs actually holding the problem —
+   * see `conflictedBy`, which keeps the comparison here rather than letting each
+   * body re-implement the model's idea of "the same word".
+   */
+  value?: string
 }
 
 export function draftErrors(draft: Draft): DraftError[] {
   const errors: DraftError[] = []
-  const add = (field: DraftErrorField, message: string, kind: DraftError['kind'] = 'incomplete') =>
-    errors.push({ field, message, kind })
+  const add = (
+    field: DraftErrorField,
+    message: string,
+    kind: DraftError['kind'] = 'incomplete',
+    value?: string,
+  ) => errors.push({ field, message, kind, value })
 
   switch (draft.type) {
     case 'fill-blank': {
@@ -379,6 +393,7 @@ export function draftErrors(draft: Draft): DraftError[] {
           'wrong-words',
           `"${alsoAnAnswer}" is one of your answers, so it can't be a wrong word`,
           'conflict',
+          alsoAnAnswer,
         )
       break
     }
@@ -389,10 +404,20 @@ export function draftErrors(draft: Draft): DraftError[] {
          equally right while the renderer marks one of them wrong. */
       const dupeTerm = firstDuplicate(complete.map((p) => p.a))
       if (dupeTerm)
-        add('pairs', `Two terms are both "${dupeTerm}" — each needs one clear match`, 'conflict')
+        add(
+          'pairs',
+          `Two terms are both "${dupeTerm}" — each needs one clear match`,
+          'conflict',
+          dupeTerm,
+        )
       const dupeMatch = firstDuplicate(complete.map((p) => p.b))
       if (dupeMatch)
-        add('pairs', `Two matches are both "${dupeMatch}" — each needs one clear term`, 'conflict')
+        add(
+          'matches',
+          `Two matches are both "${dupeMatch}" — each needs one clear term`,
+          'conflict',
+          dupeMatch,
+        )
       break
     }
     case 'categorization': {
@@ -402,14 +427,19 @@ export function draftErrors(draft: Draft): DraftError[] {
       if (categories.length < 2) add('categories', 'Name at least 2 categories')
       const dupeCategory = firstDuplicate(categories.map((c) => c.a))
       if (dupeCategory)
-        add('categories', `Two categories are both "${dupeCategory}"`, 'conflict')
+        add('categories', `Two categories are both "${dupeCategory}"`, 'conflict', dupeCategory)
 
       if (items.length < 2) add('items', 'Add at least 2 concepts to sort')
       /* Concepts grade by position, so two identical labels are a coin flip for
          the learner however they place them — the trap match-pairs guards too. */
       const dupeItem = firstDuplicate(items.map((i) => i.a))
       if (dupeItem)
-        add('items', `Two concepts are both "${dupeItem}" — users can't tell them apart`, 'conflict')
+        add(
+          'items',
+          `Two concepts are both "${dupeItem}" — users can't tell them apart`,
+          'conflict',
+          dupeItem,
+        )
       if (items.some((i) => !kept.has(i.b))) add('items', 'Give every concept a category')
       break
     }
@@ -421,7 +451,12 @@ export function draftErrors(draft: Draft): DraftError[] {
          can't be placed correctly by reading them. */
       const dupeStep = firstDuplicate(steps.map((s) => s.a))
       if (dupeStep)
-        add('steps', `Two steps are both "${dupeStep}" — users can't tell them apart`, 'conflict')
+        add(
+          'steps',
+          `Two steps are both "${dupeStep}" — users can't tell them apart`,
+          'conflict',
+          dupeStep,
+        )
       break
     }
   }
@@ -431,6 +466,19 @@ export function draftErrors(draft: Draft): DraftError[] {
 /** The errors the authoring form says out loud — see the DraftError doc above. */
 export const draftConflicts = (draft: Draft): DraftError[] =>
   draftErrors(draft).filter((e) => e.kind === 'conflict')
+
+/**
+ * Is this row's text the text a conflict is about? Drives the DS input error
+ * state on the guilty inputs, and compares the way grading does — the author
+ * sees the error on "Fire " and "fire" too, since the learner would.
+ */
+export const conflictedBy = (
+  conflicts: DraftError[],
+  field: DraftErrorField,
+  text: string,
+): boolean =>
+  text.trim().length > 0 &&
+  conflicts.some((e) => e.field === field && e.value !== undefined && norm(e.value) === norm(text))
 
 export const draftIsComplete = (draft: Draft) => draftErrors(draft).length === 0
 

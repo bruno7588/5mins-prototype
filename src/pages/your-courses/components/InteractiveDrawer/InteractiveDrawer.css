@@ -85,13 +85,16 @@
   border-color: var(--selected);
 }
 
-/* Conflict line under a group — two identical steps, a wrong word that is also
-   an answer. The only validation the form speaks (see InteractiveDrawer). */
+/* The DS helper text in its error colour (input.md → Typography, and
+   .input-field__helper). It sits under the whole group rather than under one
+   field because a conflict is always about two rows at once — repeating the
+   line under each would say the same thing twice. The 8px it needs comes from
+   .iq-drawer__field's own gap, which is the DS label → field → helper spacing. */
 .iq-drawer__conflict {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text-error);
+  color: var(--danger-500);
 }
 
 /* ===== Editable rows (steps, pairs, categories, items, wrong words) ===== */
@@ -136,6 +139,23 @@
 .iq-drawer__row--dragover {
   border-color: var(--selected);
   background: var(--selected-tint);
+}
+
+/* DS input error state (input.md → Validation, InputField.css): danger border on
+   the field, a 20px Bold Danger icon inside it, message below as helper text.
+   Two class names so it outranks the hover and focus-within rules above — the
+   DS keeps the error border through both, since focusing the field doesn't make
+   the clash go away. */
+.iq-drawer__row.iq-drawer__row--error,
+.iq-drawer__row.iq-drawer__row--error:hover,
+.iq-drawer__row.iq-drawer__row--error:focus-within {
+  border-color: var(--danger-500);
+}
+
+.iq-drawer__row-danger {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .iq-drawer__row-input {

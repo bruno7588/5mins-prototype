@@ -1,7 +1,7 @@
-import { Add, ArrowForward } from 'iconsax-react'
+import { Add, ArrowForward, Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import { draftConflicts, makeRow, type Draft } from '@/data/interactiveQuestions'
+import { conflictedBy, draftConflicts, makeRow, type Draft } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
 import { autoGrow } from '../autoGrow'
 
@@ -43,7 +43,11 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
           const named = category.a.trim() || `Category ${index + 1}`
           return (
             <div className="iq-drawer__category" key={category.id}>
-              <div className="iq-drawer__row">
+              <div
+                className={`iq-drawer__row${
+                  conflictedBy(conflicts, 'categories', category.a) ? ' iq-drawer__row--error' : ''
+                }`}
+              >
                 <textarea
                   ref={autoGrow}
                   rows={1}
@@ -61,6 +65,11 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                     })
                   }
                 />
+                {conflictedBy(conflicts, 'categories', category.a) && (
+                  <span className="iq-drawer__row-danger">
+                    <Danger size={20} color="var(--text-error)" variant="Bold" />
+                  </span>
+                )}
               </div>
 
               {/* The indent alone left it to the reader to infer that these
@@ -74,7 +83,11 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                       variant="Linear"
                       className="iq-drawer__category-arrow"
                     />
-                    <div className="iq-drawer__row">
+                    <div
+                      className={`iq-drawer__row${
+                        conflictedBy(conflicts, 'items', item.a) ? ' iq-drawer__row--error' : ''
+                      }`}
+                    >
                       <textarea
                         ref={autoGrow}
                         rows={1}
@@ -92,6 +105,11 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                           })
                         }
                       />
+                      {conflictedBy(conflicts, 'items', item.a) && (
+                        <span className="iq-drawer__row-danger">
+                          <Danger size={20} color="var(--text-error)" variant="Bold" />
+                        </span>
+                      )}
                       {own.length > 1 && (
                         <CloseButton
                           size={16}
