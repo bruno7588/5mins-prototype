@@ -199,31 +199,37 @@ Disabled: thumbnail desaturated (`mix-blend-mode: luminosity`), all text `--text
 
 ## Assessment card
 
-A quiz or assessment item. Two desktop variants. Source: `Card/Assessments`, node `11604:5305`.
+A quiz or assessment item. Three devices — admin, web app, mobile — each with its own row height. Source: `Card/Assessments`, node `10242:2782` (Library file `EC26cSVe9KNTCWXvYovakw`), re-verified 2026-08-18.
+
+The variant matrix is `Device × Disabled × State × Completed`, and it is deliberately sparse: admin has enabled and hover only, web app carries all six (enabled / hover, each × disabled and × completed), mobile has no hover and no disabled+completed combination.
 
 Assessment cards use a built-in illustration in place of a thumbnail. The official illustrations are in `src/assets/assessment-illustrations/` (Figma `Illustrations/ Assessments` `9120:8850`): ten types — Multiple choice, Short text, Exercise, Situational test, Fast Track, Poll, Fill in the blank, Sequence, Categorize, Match the pairs — each as distinct Mobile (56px) and Desktop (80px) artwork. Use `getAssessmentIllustration(type, device)`; scale the desktop one down for the 48px admin row. Keep the size and placement exact. Full set and node refs: `gamification.md` → Assessment illustrations.
 
 ### Assessment admin list row (900 x 73)
 
-Use in admin panel lists. Source variant nodes: `11604:5327` (default), `11604:5335` (hover).
+Use in admin panel lists. Source variant nodes: `10867:5413` (enabled), `11054:9903` (hover).
 
-Horizontal row: 12px left / 16px right / 12px vertical padding, 12px gap, items at top, radius 12px, card background and shadow.
+Horizontal row: **12px padding all round**, 12px gap, items at top, radius 12px, card background and shadow.
 
 - **Illustration** 48 x 48 on the left.
-- **Info** fills the row, 4px gap, column. Title Poppins Bold 16px `--text-primary`, single line, ellipsis. Metadata row, 8px gap: `Assessment - Type of assessment` in Poppins Regular 14px `--text-secondary`, followed by a 16px edit icon.
-- **Content-type pill** on the right: `--type-badge-bg` background, 8px / 4px padding, radius 40px, label `Assessment` Poppins Medium 12px `--text-secondary`.
+- **Info** fills the row, 4px gap, column. Title Poppins Bold 16px/1.5 `--text-primary`, single line, ellipsis. Under it the assessment type on its own line: `Type of assessment`, Poppins Regular 14px/1.5 `--text-secondary`. **Not prefixed with "Assessment ·"** — the pill on the right already says that.
+- **Edit + badge cluster** on the right, top-aligned with the illustration, 8px gap:
+  - 16px edit icon (`vuesax/linear/edit-2`) centred in a 22 x 22 hit box, `--text-secondary`.
+  - Content-type pill: `--type-badge-bg` background, 8px / 4px padding, radius 40px, label `Assessment` Poppins Medium 12px `--text-secondary`.
 
 ```html
 <article class="assessment-row assessment-row--admin">
   <div class="assessment-illustration"><!-- 48px assessment illustration --></div>
   <div class="card-info">
     <h3 class="card-title card-title--1line">50 free Tools and resources that everyone should know</h3>
-    <div class="card-meta-row">
-      <span class="card-meta">Assessment &middot; Type of assessment</span>
-      <i class="icon-edit"><!-- 16px edit icon --></i>
-    </div>
+    <span class="card-meta">Type of assessment</span>
   </div>
-  <span class="type-pill">Assessment</span>
+  <div class="assessment-row__actions">
+    <button class="icon-edit" type="button" aria-label="Edit assessment">
+      <!-- 16px edit-2 icon -->
+    </button>
+    <span class="type-pill">Assessment</span>
+  </div>
 </article>
 ```
 
@@ -233,11 +239,16 @@ Horizontal row: 12px left / 16px right / 12px vertical padding, 12px gap, items 
   background: var(--cards-background); border-radius: 12px; overflow: hidden;
   box-shadow: var(--shadow-s);
 }
-.assessment-row--admin { gap: 12px; padding: 12px 16px 12px 12px; }
+.assessment-row--admin { gap: 12px; padding: 12px; }
 .assessment-illustration { flex: none; width: 48px; height: 48px; }
 .card-info { display: flex; flex: 1 0 0; flex-direction: column; gap: 4px; min-width: 0; }
 .card-title--1line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.card-meta-row { display: flex; align-items: center; gap: 8px; }
+.assessment-row__actions { display: flex; flex: none; align-items: center; gap: 8px; }
+.icon-edit {
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; padding: 0; border: none; background: transparent;
+  border-radius: var(--radius-full); color: var(--text-secondary); cursor: pointer;
+}
 .type-pill {
   flex: none; padding: 4px 8px; border-radius: 40px;
   background: var(--type-badge-bg);
@@ -247,30 +258,41 @@ Horizontal row: 12px left / 16px right / 12px vertical padding, 12px gap, items 
 
 ### Assessment web app list row (900 x 112)
 
-Use in learner web app lists. Source variant nodes: `11604:5343` (default), `11604:5349` (hover), `11604:5355` (disabled), `11604:5367` (completed).
+Use in learner web app lists. Source variant nodes: `11052:9148` (enabled), `10242:3208` (hover), `10242:3246` (disabled), `10242:3289` (disabled + hover), `10242:3407` (completed), `10242:3469` (completed + hover).
 
-Horizontal row: 16px left / 24px right / 16px vertical padding, 16px gap, items centered, radius 12px, card background and shadow.
+Horizontal row: **16px padding all round**, 16px gap, items centred, radius 12px, card background and shadow.
 
 - **Illustration** 80 x 80 on the left.
-- **Info** fills the row, 8px gap, column. Title Poppins Bold 16px `--text-primary`. Subtitle `Assessment - Type of assessment` Poppins Regular 14px `--text-secondary`.
+- **Info** fills the row, 8px gap, column. Title Poppins Bold 16px/1.5 `--text-primary`. Under it `Type of assessment`, Poppins Regular 14px/1.5 `--text-secondary` — the type alone, same as the admin row.
 - No content-type pill on the web app variant.
+- **Right slot**, one element at a time, vertically centred:
+  - **Disabled** → 24px lock (`vuesax/bold/lock`) `--text-disabled`, 24px in from the right edge.
+  - **Completed** → a **Review** button, 84 x 37, 16px in from the right edge.
+  - **Enabled** → nothing; the info column takes the width.
+
+**Completed** also adds a 20px success tick (`vuesax/bold/tick-circle`, `--success-500`) after the type, on an 8px gap — the metadata becomes a row rather than a lone line.
+
+**Disabled** desaturates the illustration (`mix-blend-mode: luminosity`) and drops both title and type to `--text-disabled`. It combines with hover: the disabled row still lightens, since the card stays clickable enough to explain itself.
+
+The Review button is outlined with no fill — 1px border and label both `--primary-button-background`, going to `--text-button-hover` on the row's hover variant. Its box is 8px / 16px padding with a **14px/1.5 Bold** label, which lands at 37px tall: between the DS Small (33px) and Medium (41px) rungs in `buttons.md`. Figma is the source of truth here, so build it at 37px, but flag it if the button ladder is ever reconciled. (The mobile card's Review button is a true DS Small — 12px/1.4 label, 33px.)
 
 ### Assessment mobile list card (344 x auto)
 
-Use in the mobile app prototype. Figma-verified 2026-07-13 against the Mobile app variants of `Card/Assessments` in dark node `10242:2782` (default `10242:2877`, disabled `10867:5445`, completed `10867:5489`). No hover state; no disabled+completed combo. Implemented as the shared component `src/components/mobile/AssessmentCard`.
+Use in the mobile app prototype. Figma-verified 2026-08-18 against the Mobile app variants of `Card/Assessments` in dark node `10242:2782` (enabled `10242:2877`, disabled `10867:5445`, completed `10867:5489`). No hover state; no disabled+completed combo. Implemented as the shared component `src/components/mobile/AssessmentCard`.
 
 Container: 344px in Figma (fill the parent in code), `--cards-background`, radius 12px, **12px padding**, horizontal row with **8px gap**, items vertically centered (top-aligned in the completed variant).
 
 - **Illustration** 56 x 56 (desktop admin row uses 48, web app 80) — the mobile-device artwork from `src/assets/assessment-illustrations/`, picked by assessment type (the component's `illustrationType` prop; defaults to multiple choice).
-- **Info column** fills the row, 4px gap. Title Poppins Bold 14px/1.5 `--text-primary`, wraps freely. Metadata `Assessment · Type of assessment` Poppins Regular 12px/1.2 `--text-secondary`, single line, nowrap.
+- **Info column** fills the row, 4px gap. Title Poppins Bold 14px/1.5 `--text-primary`, wraps freely (two lines in the completed variant). Below it `Type of assessment`, Poppins Regular 12px/1.2 `--text-secondary`, single line, nowrap — the type alone, as on the other two devices.
 - **Disabled**: illustration desaturated (`mix-blend-mode: luminosity`), all text `--text-disabled`, trailing **20px** lock icon (Bold; web app uses 24px).
-- **Completed** (card grows taller): info column gap becomes 12px — header (title + metadata, 4px gap) with a **16px** success tick icon (Bold) appended to the metadata row (8px gap), then a **Review** button below: outlined, 1px border + text `--text-primary`, Poppins Bold 12px/1.4, 8px/16px padding, radius 8px.
+- **Completed** (card grows to 131px): info column gap becomes 12px — header (title + metadata, 4px gap) with a **16px** success tick (`vuesax/bold/tick-circle`, `--success-500`) appended to the metadata row on an 8px gap, then a **Review** button below: 77 x 33, outlined with no fill, 1px border and label both `--primary-button-background`, Poppins Bold 12px/1.4, 8px/16px padding, radius 8px — a true DS Small.
 
 ### Assessment states
 
-- **Hover:** card background switches to `--cards-background-hover`.
-- **Disabled:** illustration desaturated; text uses `--text-disabled`.
-- **Completed:** carries a completed treatment (success tick / colour); follow the completed lesson pattern.
+- **Hover:** card background switches to `--cards-background-hover`. Admin and web app only — mobile has no hover variant. It combines with every other state: a disabled row still lightens, and a completed row lightens *and* takes its Review button to `--text-button-hover`.
+- **Disabled:** illustration desaturated (`mix-blend-mode: luminosity`), title and type both `--text-disabled`, and a bold lock in the trailing slot — 24px on web app, 20px on mobile. Admin has no disabled variant.
+- **Completed:** a bold success tick in `--success-500` after the type — 20px on web app, 16px on mobile — plus a **Review** button. Web app puts it in the trailing slot; mobile stacks it under the metadata, which is why that card is the only one that changes height. Admin has no completed variant: the row is a management view, not a learner's.
+- **Metadata is the type alone** on all three devices — `Type of assessment`, never `Assessment · Type of assessment`. Only the admin row names the content type, and it does so in the pill.
 
 ---
 
