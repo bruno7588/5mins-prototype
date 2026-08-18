@@ -1,6 +1,7 @@
 import { useState, type DragEvent } from 'react'
 import { Add, ArrowDown, ArrowUp } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import { draftConflicts, makeRow, type Draft, type DraftRow } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
@@ -111,27 +112,38 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
                 setSteps(steps.map((s) => (s.id === step.id ? { ...s, a: e.target.value } : s)))
               }
             />
+            {/* Tooltips off at the ends of the list: the button is disabled there,
+                and a label for a move that can't happen is just noise. */}
             <div className="iq-drawer__row-move">
-              <button
-                type="button"
-                className="iq-drawer__move-btn"
-                disabled={index === 0}
-                aria-label={`Move step ${index + 1} up`}
-                onClick={() => moveByKeyboard(index, index - 1)}
-              >
-                {/* Shafted arrow, not a chevron — a chevron here reads as a
-                    dropdown (Figma vuesax/linear/arrow-down, 10215:68484). */}
-                <ArrowUp size={16} color="currentColor" variant="Linear" />
-              </button>
-              <button
-                type="button"
-                className="iq-drawer__move-btn"
+              <Tooltip text="Move up" position="Top" icon={false} disabled={index === 0}>
+                <button
+                  type="button"
+                  className="iq-drawer__move-btn"
+                  disabled={index === 0}
+                  aria-label={`Move step ${index + 1} up`}
+                  onClick={() => moveByKeyboard(index, index - 1)}
+                >
+                  {/* Shafted arrow, not a chevron — a chevron here reads as a
+                      dropdown (Figma vuesax/linear/arrow-down, 10215:68484). */}
+                  <ArrowUp size={16} color="currentColor" variant="Linear" />
+                </button>
+              </Tooltip>
+              <Tooltip
+                text="Move down"
+                position="Top"
+                icon={false}
                 disabled={index === steps.length - 1}
-                aria-label={`Move step ${index + 1} down`}
-                onClick={() => moveByKeyboard(index, index + 1)}
               >
-                <ArrowDown size={16} color="currentColor" variant="Linear" />
-              </button>
+                <button
+                  type="button"
+                  className="iq-drawer__move-btn"
+                  disabled={index === steps.length - 1}
+                  aria-label={`Move step ${index + 1} down`}
+                  onClick={() => moveByKeyboard(index, index + 1)}
+                >
+                  <ArrowDown size={16} color="currentColor" variant="Linear" />
+                </button>
+              </Tooltip>
             </div>
             {/* Three steps is the floor, so the control simply isn't there below it. */}
             {steps.length > MIN_STEPS && (

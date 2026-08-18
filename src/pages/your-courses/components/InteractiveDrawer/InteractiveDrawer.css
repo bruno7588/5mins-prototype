@@ -209,8 +209,11 @@
   transition: background 150ms ease, color 150ms ease;
 }
 
+/* --input-background-hover, not --page-background-hover: the row is already
+   filled with --input-background by its own hover, and the two are a shade
+   apart, so the arrow's circle vanished exactly when it was needed. */
 .iq-drawer__move-btn:hover:not(:disabled) {
-  background: var(--page-background-hover);
+  background: var(--input-background-hover);
   color: var(--text-primary);
 }
 
