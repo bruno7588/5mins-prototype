@@ -39,15 +39,33 @@ export type StripActive =
 const ICON = 20
 const C = 'currentColor'
 
-const ASSESSMENTS: { type: AssessmentType; label: string; icon: (active: boolean) => ReactNode }[] = [
-  { type: 'single-choice', label: 'Single Choice', icon: (a) => <RecordCircle size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'short-text', label: 'Short Text', icon: (a) => <Edit size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'exercise', label: 'Exercise', icon: (a) => <ArchiveBook size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+/* The interactive formats sit in the same Assessments group as the classic ones —
+   they are assessments, and a second group of four would double the rail's chrome
+   to say so. Their labels come from TYPE_CONFIG, so the rail, the drawer header
+   and the outline card can't drift.
+
+   The order is by how much writing each one asks for, with the most-reached-for
+   type leading: single choice, then the interactive four from the one you can
+   fill in a minute (three pairs) to the one that needs a sentence written, words
+   marked in it and wrong words invented, then the remaining classic types. */
+type MenuItem =
+  | { kind: 'assessment'; type: AssessmentType; label: string; icon: (active: boolean) => ReactNode }
+  | { kind: 'interactive'; type: InteractiveQuestionType; icon: (active: boolean) => ReactNode }
+
+const ASSESSMENT_MENU: MenuItem[] = [
+  { kind: 'assessment', type: 'single-choice', label: 'Single Choice', icon: (a) => <RecordCircle size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { kind: 'interactive', type: 'match-pairs', icon: (a) => <ArrangeHorizontal size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { kind: 'interactive', type: 'sequencing', icon: (a) => <I3Square size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { kind: 'interactive', type: 'categorization', icon: (a) => <Category size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { kind: 'interactive', type: 'fill-blank', icon: (a) => <SliderVertical1 size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { kind: 'assessment', type: 'short-text', label: 'Short Text', icon: (a) => <Edit size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { kind: 'assessment', type: 'exercise', label: 'Exercise', icon: (a) => <ArchiveBook size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   /* iconsax-react splits this glyph's two styles across exports: Chart1 holds
      its Linear and Chart21 its Bold, and each one's *other* variant is a
      different, boxed chart. Picking per state is the only way to keep the
      selected icon the same glyph as the resting one. */
   {
+    kind: 'assessment',
     type: 'poll',
     label: 'Poll',
     icon: (a) =>
@@ -57,16 +75,6 @@ const ASSESSMENTS: { type: AssessmentType; label: string; icon: (active: boolean
         <Chart1 size={ICON} color={C} variant="Linear" />
       ),
   },
-]
-
-/* The interactive formats join the same Assessments group — they are assessments,
-   and a second group of four would double the rail's chrome to say so. Labels come
-   from TYPE_CONFIG so the rail, the drawer header and the outline card can't drift. */
-const INTERACTIVE: { type: InteractiveQuestionType; icon: (active: boolean) => ReactNode }[] = [
-  { type: 'fill-blank', icon: (a) => <SliderVertical1 size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'match-pairs', icon: (a) => <ArrangeHorizontal size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'categorization', icon: (a) => <Category size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
-  { type: 'sequencing', icon: (a) => <I3Square size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
 ]
 
 interface AddContentIconStripProps {
@@ -108,6 +116,15 @@ function AddContentIconStrip({
 
   const interactiveActive = (type: InteractiveQuestionType) =>
     active === 'interactive' && activeInteractive === type
+
+  /* One list, two kinds of entry — the rail reads as a single menu, so the only
+     thing that varies per entry is which handler opens it. */
+  const menuLabel = (m: MenuItem) =>
+    m.kind === 'assessment' ? m.label : TYPE_CONFIG[m.type].label
+  const menuActive = (m: MenuItem) =>
+    m.kind === 'assessment' ? assessmentActive(m.type) : interactiveActive(m.type)
+  const menuClick = (m: MenuItem) => () =>
+    m.kind === 'assessment' ? onAssessmentClick?.(m.type) : onInteractiveClick?.(m.type)
 
   /* The label and the Tooltip wrapper are always mounted — swapping either on
      `expanded` would remount the button mid-transition and snap the panel. The
@@ -214,28 +231,16 @@ function AddContentIconStrip({
           <Collapse open={assessmentsOpen}>
             {/* Each type carries its own glyph here too, so the icon an admin
                 learns in the collapsed rail is the same one they see expanded. */}
-            {ASSESSMENTS.map(({ type, label, icon }) => (
+            {ASSESSMENT_MENU.map((entry) => (
               <button
-                key={type}
+                key={entry.type}
                 type="button"
-                className={`add-content-icon-strip__subitem${assessmentActive(type) ? ' add-content-icon-strip__subitem--selected' : ''}`}
-                aria-current={assessmentActive(type) || undefined}
-                onClick={() => onAssessmentClick?.(type)}
+                className={`add-content-icon-strip__subitem${menuActive(entry) ? ' add-content-icon-strip__subitem--selected' : ''}`}
+                aria-current={menuActive(entry) || undefined}
+                onClick={menuClick(entry)}
               >
-                <span className="add-content-icon-strip__subicon">{icon(assessmentActive(type))}</span>
-                {label}
-              </button>
-            ))}
-            {INTERACTIVE.map(({ type, icon }) => (
-              <button
-                key={type}
-                type="button"
-                className={`add-content-icon-strip__subitem${interactiveActive(type) ? ' add-content-icon-strip__subitem--selected' : ''}`}
-                aria-current={interactiveActive(type) || undefined}
-                onClick={() => onInteractiveClick?.(type)}
-              >
-                <span className="add-content-icon-strip__subicon">{icon(interactiveActive(type))}</span>
-                {TYPE_CONFIG[type].label}
+                <span className="add-content-icon-strip__subicon">{entry.icon(menuActive(entry))}</span>
+                {menuLabel(entry)}
               </button>
             ))}
           </Collapse>
@@ -243,12 +248,11 @@ function AddContentIconStrip({
       ) : (
         <>
           <span className="add-content-icon-strip__divider" aria-hidden="true" />
-          {ASSESSMENTS.map(({ type, label, icon }) =>
-            <Fragment key={type}>{item(label, icon(assessmentActive(type)), assessmentActive(type), () => onAssessmentClick?.(type))}</Fragment>,
-          )}
-          {INTERACTIVE.map(({ type, icon }) =>
-            <Fragment key={type}>{item(TYPE_CONFIG[type].label, icon(interactiveActive(type)), interactiveActive(type), () => onInteractiveClick?.(type))}</Fragment>,
-          )}
+          {ASSESSMENT_MENU.map((entry) => (
+            <Fragment key={entry.type}>
+              {item(menuLabel(entry), entry.icon(menuActive(entry)), menuActive(entry), menuClick(entry))}
+            </Fragment>
+          ))}
           <span className="add-content-icon-strip__divider" aria-hidden="true" />
         </>
       )}
