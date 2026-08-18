@@ -79,14 +79,17 @@
   color: var(--text-disabled);
 }
 
+/* Outlined in the primary button colour, not --text-primary: the tick above it
+   already says "done", so the button is the one thing on the card still asking
+   to be pressed (Figma 10867:5489). */
 .m-assessment-card__review {
   align-self: flex-start;
   padding: 8px 16px;
-  border: 1px solid var(--text-primary);
+  border: 1px solid var(--primary-button-background);
   border-radius: 8px;
   background: none;
   font: 700 12px/1.4 Poppins, sans-serif;
-  color: var(--text-primary);
+  color: var(--primary-button-background);
   cursor: pointer;
 }
 

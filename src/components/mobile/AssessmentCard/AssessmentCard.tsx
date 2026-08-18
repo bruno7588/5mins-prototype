@@ -5,9 +5,8 @@ import './AssessmentCard.css'
 
 export interface MobileAssessmentCardProps {
   title: string
-  /** Metadata after the type label, e.g. "Type of assessment" */
+  /** The metadata line, e.g. "Type of assessment" — the type on its own. */
   assessmentType: string
-  typeLabel?: string
   completed?: boolean
   disabled?: boolean
   /** Picks the official 56px illustration; defaults to multiple choice */
@@ -21,7 +20,6 @@ export interface MobileAssessmentCardProps {
 function MobileAssessmentCard({
   title,
   assessmentType,
-  typeLabel = 'Assessment',
   completed = false,
   disabled = false,
   illustrationType = 'multiple-choice',
@@ -37,8 +35,6 @@ function MobileAssessmentCard({
       onClick?.()
     }
   }
-
-  const meta = `${typeLabel} · ${assessmentType}`
 
   return (
     <article
@@ -56,8 +52,11 @@ function MobileAssessmentCard({
       <div className="m-assessment-card__info">
         <div className="m-assessment-card__header">
           <h3 className="m-assessment-card__title">{title}</h3>
+          {/* The type alone — the card is already in an assessment list, so
+              prefixing it with "Assessment ·" only repeated the context
+              (Figma 10242:2782). */}
           <p className="m-assessment-card__meta">
-            {meta}
+            {assessmentType}
             {completed ? <TickCircle size={16} color="var(--success-500)" variant="Bold" /> : null}
           </p>
         </div>
