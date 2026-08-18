@@ -1,7 +1,7 @@
 import { Add, ArrowForward, Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import { conflictedBy, draftConflicts, makeRow, type Draft } from '@/data/interactiveQuestions'
+import { conflictFor, draftConflicts, makeRow, type Draft } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
 import { autoGrow } from '../autoGrow'
 
@@ -36,17 +36,16 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
         className="iq-drawer__categories"
         role="group"
         aria-label="Categories"
-        aria-describedby={conflicts.length ? 'iq-categories-conflict' : undefined}
       >
         {categories.map((category, index) => {
           const own = items.filter((i) => i.b === category.id)
           const named = category.a.trim() || `Category ${index + 1}`
+          const categoryConflict = conflictFor(conflicts, 'categories', category.a)
           return (
             <div className="iq-drawer__category" key={category.id}>
+              <div className="iq-drawer__row-field">
               <div
-                className={`iq-drawer__row${
-                  conflictedBy(conflicts, 'categories', category.a) ? ' iq-drawer__row--error' : ''
-                }`}
+                className={`iq-drawer__row${categoryConflict ? ' iq-drawer__row--error' : ''}`}
               >
                 <textarea
                   ref={autoGrow}
@@ -54,6 +53,8 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                   className="iq-drawer__row-input"
                   placeholder={`Category ${index + 1}`}
                   aria-label={`Category ${index + 1} name`}
+                  aria-invalid={categoryConflict ? true : undefined}
+                  aria-describedby={categoryConflict ? `iq-conflict-${category.id}` : undefined}
                   value={category.a}
                   onInput={(e) => autoGrow(e.currentTarget)}
                   onChange={(e) =>
@@ -65,17 +66,25 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                     })
                   }
                 />
-                {conflictedBy(conflicts, 'categories', category.a) && (
+                {categoryConflict && (
                   <span className="iq-drawer__row-danger">
                     <Danger size={20} color="var(--text-error)" variant="Bold" />
                   </span>
                 )}
               </div>
+              {categoryConflict && (
+                <span className="iq-drawer__conflict" id={`iq-conflict-${category.id}`} role="alert">
+                  {categoryConflict.message}
+                </span>
+              )}
+              </div>
 
               {/* The indent alone left it to the reader to infer that these
                   belong to the category above; the arrow says it. */}
               <div className="iq-drawer__category-items">
-                {own.map((item, i) => (
+                {own.map((item, i) => {
+                  const itemConflict = conflictFor(conflicts, 'items', item.a)
+                  return (
                   <div className="iq-drawer__concept" key={item.id}>
                     <ArrowForward
                       size={20}
@@ -83,10 +92,9 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                       variant="Linear"
                       className="iq-drawer__category-arrow"
                     />
+                    <div className="iq-drawer__row-field">
                     <div
-                      className={`iq-drawer__row${
-                        conflictedBy(conflicts, 'items', item.a) ? ' iq-drawer__row--error' : ''
-                      }`}
+                      className={`iq-drawer__row${itemConflict ? ' iq-drawer__row--error' : ''}`}
                     >
                       <textarea
                         ref={autoGrow}
@@ -94,6 +102,8 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                         className="iq-drawer__row-input"
                         placeholder={`Concept ${i + 1}`}
                         aria-label={`Concept ${i + 1} in ${named}`}
+                        aria-invalid={itemConflict ? true : undefined}
+                        aria-describedby={itemConflict ? `iq-conflict-${item.id}` : undefined}
                         value={item.a}
                         onInput={(e) => autoGrow(e.currentTarget)}
                         onChange={(e) =>
@@ -105,7 +115,7 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                           })
                         }
                       />
-                      {conflictedBy(conflicts, 'items', item.a) && (
+                      {itemConflict && (
                         <span className="iq-drawer__row-danger">
                           <Danger size={20} color="var(--text-error)" variant="Bold" />
                         </span>
@@ -119,8 +129,15 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                         />
                       )}
                     </div>
+                    {itemConflict && (
+                      <span className="iq-drawer__conflict" id={`iq-conflict-${item.id}`} role="alert">
+                        {itemConflict.message}
+                      </span>
+                    )}
+                    </div>
                   </div>
-                ))}
+                  )
+                })}
                 <Button
                   variant="outlined-2"
                   icon={<Add size={20} color="currentColor" variant="Linear" />}
@@ -133,12 +150,6 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
           )
         })}
       </div>
-
-      {conflicts.length > 0 && (
-        <span className="iq-drawer__conflict" id="iq-categories-conflict" role="alert">
-          {conflicts[0].message}
-        </span>
-      )}
     </div>
   )
 }

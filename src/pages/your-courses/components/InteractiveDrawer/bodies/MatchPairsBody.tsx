@@ -3,7 +3,7 @@ import { Add, ArrangeHorizontal, Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import {
-  conflictedBy,
+  conflictFor,
   draftConflicts,
   makeRow,
   type Draft,
@@ -47,13 +47,14 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
         className="iq-drawer__pair-grid"
         role="group"
         aria-label="Pairs"
-        aria-describedby={conflicts.length ? 'iq-pairs-conflict' : undefined}
       >
         {pairs.map((pair, index) => {
           /* Each column answers for its own clash: a repeated term marks the two
              terms, a repeated match marks the two matches. */
-          const termErrored = conflictedBy(conflicts, 'pairs', pair.a)
-          const matchErrored = conflictedBy(conflicts, 'matches', pair.b)
+          const termConflict = conflictFor(conflicts, 'pairs', pair.a)
+          const matchConflict = conflictFor(conflicts, 'matches', pair.b)
+          const termErrored = Boolean(termConflict)
+          const matchErrored = Boolean(matchConflict)
           return (
           <Fragment key={pair.id}>
             <div className={`iq-drawer__row${termErrored ? ' iq-drawer__row--error' : ''}`}>
@@ -63,6 +64,8 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
                 className="iq-drawer__row-input"
                 placeholder={`Term ${index + 1}`}
                 aria-label={`Term ${index + 1}`}
+                aria-invalid={termErrored || undefined}
+                aria-describedby={termErrored ? `iq-conflict-${pair.id}` : undefined}
                 value={pair.a}
                 onInput={(e) => autoGrow(e.currentTarget)}
                 onChange={(e) => update(pair.id, { a: e.target.value })}
@@ -87,6 +90,8 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
                 className="iq-drawer__row-input"
                 placeholder={`Match ${index + 1}`}
                 aria-label={`Match for term ${index + 1}`}
+                aria-invalid={matchErrored || undefined}
+                aria-describedby={matchErrored ? `iq-conflict-${pair.id}` : undefined}
                 value={pair.b}
                 onInput={(e) => autoGrow(e.currentTarget)}
                 onChange={(e) => update(pair.id, { b: e.target.value })}
@@ -109,16 +114,21 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
             ) : (
               <span aria-hidden="true" />
             )}
+            {/* Spans the grid, under the pair it belongs to — both halves of a
+                clash carry the same line, each under its own row. */}
+            {(termConflict ?? matchConflict) && (
+              <span
+                className="iq-drawer__conflict"
+                id={`iq-conflict-${pair.id}`}
+                role="alert"
+              >
+                {(termConflict ?? matchConflict)?.message}
+              </span>
+            )}
           </Fragment>
           )
         })}
       </div>
-
-      {conflicts.length > 0 && (
-        <span className="iq-drawer__conflict" id="iq-pairs-conflict" role="alert">
-          {conflicts[0].message}
-        </span>
-      )}
 
       <div className="iq-drawer__row-actions">
         <Button

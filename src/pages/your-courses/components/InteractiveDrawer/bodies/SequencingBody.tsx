@@ -4,7 +4,7 @@ import Button from '@/components/Button/Button'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import {
-  conflictedBy,
+  conflictFor,
   draftConflicts,
   makeRow,
   type Draft,
@@ -84,15 +84,15 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
         className="iq-drawer__rows"
         role="group"
         aria-label="Steps in the correct order"
-        aria-describedby={conflicts.length ? 'iq-steps-conflict' : undefined}
       >
         {steps.map((step, index) => {
           /* The DS error state goes on the rows actually holding the repeated
-             text, so the author doesn't have to scan the list for the pair. */
-          const errored = conflictedBy(conflicts, 'steps', step.a)
+             text, and the message under each of them. */
+          const conflict = conflictFor(conflicts, 'steps', step.a)
+          const errored = Boolean(conflict)
           return (
+          <div className="iq-drawer__row-field" key={step.id}>
           <div
-            key={step.id}
             className={`iq-drawer__row${dragIndex === index ? ' iq-drawer__row--dragging' : ''}${
               dragOverIndex === index ? ' iq-drawer__row--dragover' : ''
             }${errored ? ' iq-drawer__row--error' : ''}`}
@@ -116,6 +116,8 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
               className="iq-drawer__row-input"
               placeholder={`Write step ${index + 1} here...`}
               aria-label={`Step ${index + 1} of ${steps.length}`}
+              aria-invalid={errored || undefined}
+              aria-describedby={errored ? `iq-conflict-${step.id}` : undefined}
               value={step.a}
               onInput={(e) => autoGrow(e.currentTarget)}
               onChange={(e) =>
@@ -172,15 +174,15 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
               />
             )}
           </div>
+          {conflict && (
+            <span className="iq-drawer__conflict" id={`iq-conflict-${step.id}`} role="alert">
+              {conflict.message}
+            </span>
+          )}
+          </div>
           )
         })}
       </div>
-
-      {conflicts.length > 0 && (
-        <span className="iq-drawer__conflict" id="iq-steps-conflict" role="alert">
-          {conflicts[0].message}
-        </span>
-      )}
 
       <div className="iq-drawer__row-actions">
         <Button

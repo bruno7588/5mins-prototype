@@ -3,7 +3,7 @@ import { Add, Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import {
-  conflictedBy,
+  conflictFor,
   draftConflicts,
   makeRow,
   remapBlanks,
@@ -158,22 +158,23 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
           className="iq-drawer__rows"
           role="group"
           aria-label="Wrong words"
-          aria-describedby={`iq-fb-wrong-hint${conflicts.length ? ' iq-fb-wrong-conflict' : ''}`}
+          aria-describedby="iq-fb-wrong-hint"
         >
           {draft.distractors.map((distractor, index) => {
             /* The clash is with a word in the sentence, so only the wrong word
                can be corrected here — it alone takes the DS error state. */
-            const errored = conflictedBy(conflicts, 'wrong-words', distractor.a)
+            const conflict = conflictFor(conflicts, 'wrong-words', distractor.a)
+            const errored = Boolean(conflict)
             return (
-            <div
-              className={`iq-drawer__row${errored ? ' iq-drawer__row--error' : ''}`}
-              key={distractor.id}
-            >
+            <div className="iq-drawer__row-field" key={distractor.id}>
+            <div className={`iq-drawer__row${errored ? ' iq-drawer__row--error' : ''}`}>
               <input
                 type="text"
                 className="iq-drawer__row-input"
                 placeholder={`Wrong word ${index + 1}`}
                 aria-label={`Wrong word ${index + 1}`}
+                aria-invalid={errored || undefined}
+                aria-describedby={errored ? `iq-conflict-${distractor.id}` : undefined}
                 value={distractor.a}
                 onChange={(e) =>
                   setDistractors(
@@ -201,15 +202,19 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
                 />
               )}
             </div>
+            {conflict && (
+              <span
+                className="iq-drawer__conflict"
+                id={`iq-conflict-${distractor.id}`}
+                role="alert"
+              >
+                {conflict.message}
+              </span>
+            )}
+            </div>
             )
           })}
         </div>
-
-        {conflicts.length > 0 && (
-          <span className="iq-drawer__conflict" id="iq-fb-wrong-conflict" role="alert">
-            {conflicts[0].message}
-          </span>
-        )}
 
         <div className="iq-drawer__row-actions">
           <Button

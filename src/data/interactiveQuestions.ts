@@ -360,7 +360,7 @@ export interface DraftError {
   /**
    * The clashing text, on conflicts only. The form matches rows against it to
    * put the DS input error state on the inputs actually holding the problem —
-   * see `conflictedBy`, which keeps the comparison here rather than letting each
+   * see `conflictFor`, which keeps the comparison here rather than letting each
    * body re-implement the model's idea of "the same word".
    */
   value?: string
@@ -468,17 +468,20 @@ export const draftConflicts = (draft: Draft): DraftError[] =>
   draftErrors(draft).filter((e) => e.kind === 'conflict')
 
 /**
- * Is this row's text the text a conflict is about? Drives the DS input error
- * state on the guilty inputs, and compares the way grading does — the author
- * sees the error on "Fire " and "fire" too, since the learner would.
+ * The conflict this row's text is guilty of, if any. Drives the DS input error
+ * state and the helper line under that field, and compares the way grading does
+ * — the author sees the error on "Fire " and "fire" too, since the learner would.
  */
-export const conflictedBy = (
+export const conflictFor = (
   conflicts: DraftError[],
   field: DraftErrorField,
   text: string,
-): boolean =>
-  text.trim().length > 0 &&
-  conflicts.some((e) => e.field === field && e.value !== undefined && norm(e.value) === norm(text))
+): DraftError | undefined =>
+  text.trim().length === 0
+    ? undefined
+    : conflicts.find(
+        (e) => e.field === field && e.value !== undefined && norm(e.value) === norm(text),
+      )
 
 export const draftIsComplete = (draft: Draft) => draftErrors(draft).length === 0
 

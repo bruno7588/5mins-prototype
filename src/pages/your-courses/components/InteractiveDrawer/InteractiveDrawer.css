@@ -86,15 +86,31 @@
 }
 
 /* The DS helper text in its error colour (input.md → Typography, and
-   .input-field__helper). It sits under the whole group rather than under one
-   field because a conflict is always about two rows at once — repeating the
-   line under each would say the same thing twice. The 8px it needs comes from
-   .iq-drawer__field's own gap, which is the DS label → field → helper spacing. */
+   .input-field__helper), directly under the field it belongs to. A duplicate is
+   two rows, so the line appears under both — each field states its own problem
+   rather than pointing at a message somewhere below the list. */
 .iq-drawer__conflict {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--danger-500);
+}
+
+/* Row plus its helper: the DS field → helper gap (input.md → Spacing). Wrapping
+   is what lets the message sit under one row rather than after the whole list —
+   the row containers space their children further apart than 8px. */
+.iq-drawer__row-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+/* In the pair grid the helper can't be wrapped — the four cells of a row are
+   grid items — so it spans the full width as an item of its own, pulled up to
+   the same 8px the wrapper gives everywhere else (grid row-gap is 12px). */
+.iq-drawer__pair-grid .iq-drawer__conflict {
+  grid-column: 1 / -1;
+  margin-top: -4px;
 }
 
 /* ===== Editable rows (steps, pairs, categories, items, wrong words) ===== */
