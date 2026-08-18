@@ -10,6 +10,8 @@ interface QuizHeaderProps {
   total: number
   /** Leave the quiz. */
   onClose: () => void
+  /** Hearts belong to a real attempt — the course builder's preview shows none. */
+  showHearts?: boolean
 }
 
 /**
@@ -18,7 +20,7 @@ interface QuizHeaderProps {
  * for remaining, muted artwork for spent — then the shared DS CloseButton
  * (Figma 9041:585).
  */
-function QuizHeader({ label, used, total, onClose }: QuizHeaderProps) {
+function QuizHeader({ label, used, total, onClose, showHearts = true }: QuizHeaderProps) {
   const remaining = Math.max(0, total - used)
   return (
     <div className="ql-qhead">
@@ -29,18 +31,20 @@ function QuizHeader({ label, used, total, onClose }: QuizHeaderProps) {
         </span>
       </div>
       <div className="ql-qhead__actions">
-        <div className="ql-qhead__hearts" aria-label={`${remaining} of ${total} attempts left`}>
-          {Array.from({ length: total }).map((_, i) => (
-            <img
-              key={i}
-              className="ql-qhead__heart"
-              src={i < remaining ? heartFilled : heartEmpty}
-              alt=""
-              width={20}
-              height={20}
-            />
-          ))}
-        </div>
+        {showHearts && (
+          <div className="ql-qhead__hearts" aria-label={`${remaining} of ${total} attempts left`}>
+            {Array.from({ length: total }).map((_, i) => (
+              <img
+                key={i}
+                className="ql-qhead__heart"
+                src={i < remaining ? heartFilled : heartEmpty}
+                alt=""
+                width={20}
+                height={20}
+              />
+            ))}
+          </div>
+        )}
         <CloseButton onClick={onClose} ariaLabel="Close quiz" />
       </div>
     </div>

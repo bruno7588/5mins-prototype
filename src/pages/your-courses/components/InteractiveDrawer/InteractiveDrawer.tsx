@@ -1,9 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import QuizIllustration from '@/components/icons/QuizIllustration'
+import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import {
   TYPE_CONFIG,
   draftErrors,
@@ -14,7 +16,7 @@ import {
   type InteractiveQuestion,
   type InteractiveQuestionType,
 } from '@/data/interactiveQuestions'
-import { QuizFooterLayoutContext } from '@/pages/quiz-lab/components/FeedbackFooter'
+import QuizHeader from '@/pages/quiz-lab/components/QuizHeader'
 import MatchPairsPartial from '@/pages/quiz-lab/formats/MatchPairsPartial'
 import FillBlank from '@/pages/quiz-lab/formats/FillBlank'
 import Categorization from '@/pages/quiz-lab/formats/Categorization'
@@ -199,40 +201,47 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
         )}
       </div>
 
-      {/* Centred over the page rather than swapped into the drawer body, so the
-          form stays exactly where it was when the preview closes. No phone frame
-          — the quiz runs on desktop too — and no attempt hearts or counter,
-          which belong to a real run. */}
-      <ConfirmModal
-        open={previewing && !!previewQuestion}
-        onClose={() => setPreviewing(false)}
-        className="iq-preview-modal"
-        ariaLabel={`Preview - ${config.title}`}
-      >
-        <SectionHeader
-          title={`Preview - ${config.title}`}
-          ctas={<CloseButton onClick={() => setPreviewing(false)} />}
-        />
-        {previewQuestion && (
-          /* 'hug' because the modal is 720px wide — the quiz's default full-bleed
-             action is sized for a phone. */
-          <QuizFooterLayoutContext.Provider value="hug">
+      {/* Just the phone on the scrim — no dialog card, no title bar; the format
+          label and the close sit in the quiz's own header (Figma 9111:4633).
+          ConfirmModal still supplies the scrim, focus trap and escape, and it is
+          portalled to the body because the drawer's z-index makes a stacking
+          context the overlay could not paint over the content rail from. */}
+      {createPortal(
+        <ConfirmModal
+          open={previewing && !!previewQuestion}
+          onClose={() => setPreviewing(false)}
+          className="iq-preview-modal"
+          ariaLabel={`Preview - ${config.title}`}
+        >
+          {previewQuestion && (
             <div className="iq-drawer__preview-stage">
-              <div className="ql-quizview">
-                {previewQuestion.type === 'match-pairs' ? (
-                  <MatchPairsPartial question={previewQuestion} />
-                ) : previewQuestion.type === 'fill-blank' ? (
-                  <FillBlank question={previewQuestion} formatKey="fill-blank" />
-                ) : previewQuestion.type === 'categorization' ? (
-                  <Categorization question={previewQuestion} formatKey="categorization" />
-                ) : (
-                  <SequencingDnd question={previewQuestion} />
-                )}
-              </div>
+              <PhoneFrame>
+                <div className="ql-quizview">
+                  {/* No hearts: they track a real attempt, and this is a preview
+                      of one question rather than a run. */}
+                  <QuizHeader
+                    label={config.title}
+                    used={1}
+                    total={3}
+                    showHearts={false}
+                    onClose={() => setPreviewing(false)}
+                  />
+                  {previewQuestion.type === 'match-pairs' ? (
+                    <MatchPairsPartial question={previewQuestion} />
+                  ) : previewQuestion.type === 'fill-blank' ? (
+                    <FillBlank question={previewQuestion} formatKey="fill-blank" />
+                  ) : previewQuestion.type === 'categorization' ? (
+                    <Categorization question={previewQuestion} formatKey="categorization" />
+                  ) : (
+                    <SequencingDnd question={previewQuestion} />
+                  )}
+                </div>
+              </PhoneFrame>
             </div>
-          </QuizFooterLayoutContext.Provider>
-        )}
-      </ConfirmModal>
+          )}
+        </ConfirmModal>,
+        document.body,
+      )}
     </>
   )
 }

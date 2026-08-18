@@ -445,31 +445,32 @@
   border: 0;
 }
 
-/* Preview stage — takes the body's place while previewing, so the learner
-   formats (mobile-first, from quiz-lab) run in the same phone frame the lab
-   uses rather than stretched across a desktop drawer. */
-/* Preview modal — the DS Modal width (overlays.md), on the shared ConfirmModal
-   shell so the scrim, escape handling and focus trap come for free. */
+/* The ConfirmModal panel, stripped of every panel style: the preview is the
+   phone alone on the scrim, so the shell contributes only its behaviour. */
 .iq-preview-modal {
-  width: 720px;
+  width: auto;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
 }
 
-.iq-preview-modal > * {
-  width: 100%;
-}
-
-/* A definite height, not min-height: the question is a flex column whose rows are
-   `flex: 1 1 0`, so against an auto-height parent they resolve to zero and only
-   the prompt and Check survive. Floor is the DS Modal's 320px content area. */
 .iq-drawer__preview-stage {
   display: flex;
-  height: clamp(320px, 52vh, 520px);
+  justify-content: center;
 }
 
-/* Full modal width rather than a phone's 375px — the quiz runs on desktop too.
-   The modal panel is the frame, so the question needs none of its own. */
-.iq-drawer__preview-stage > .ql-quizview {
-  flex: 1;
-  min-width: 0;
+/* The frame is built for a full page — 100vh stage, 32px gutter. Inside the modal
+   the modal supplies both. */
+.iq-drawer__preview-stage .m-phone-stage {
+  min-height: 0;
+  padding: 0;
   background: transparent;
+  overflow: visible;
+}
+
+/* 375x640 per Figma 9111:6787 — the real phone width, on a screen cropped to fit
+   the viewport. Shrinks further on short ones rather than running off-screen. */
+.iq-drawer__preview-stage .m-phone__screen {
+  height: min(640px, calc(100vh - 96px));
 }
