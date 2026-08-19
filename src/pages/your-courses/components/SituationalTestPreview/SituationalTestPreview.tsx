@@ -8,6 +8,8 @@ import MatchPairsPartial from '@/pages/quiz-lab/formats/MatchPairsPartial'
 import FillBlank from '@/pages/quiz-lab/formats/FillBlank'
 import Categorization from '@/pages/quiz-lab/formats/Categorization'
 import SequencingDnd from '@/pages/quiz-lab/formats/SequencingDnd'
+import SingleChoice from '@/pages/quiz-lab/formats/SingleChoice'
+import FreeText from '@/pages/quiz-lab/formats/FreeText'
 import '@/pages/quiz-lab/quiz-lab.css'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
@@ -124,32 +126,23 @@ function QuestionScreen({ question }: { question: SituationalQuestion }) {
     return <Categorization question={payload} formatKey="categorization" />
   if (payload?.type === 'sequencing') return <SequencingDnd question={payload} />
 
-  /* Multiple choice, poll, short text and exercise have no learner renderer in the
-     prototype yet — quiz-lab covers the four interactive formats. Shown in the quiz's
-     own screen and token styles so the screen still belongs to the same UI, and inert,
-     since there is nothing here that could grade it. */
-  return (
-    <div className="ql-screen">
-      <div className="ql-screen__body">
-        <div className="ql-stem">
-          <span className="ql-stem__q">{question.text}</span>
-        </div>
-        {question.options.filter((option) => option.trim()).length > 0 ? (
-          <div className="st-preview__options">
-            {question.options
-              .filter((option) => option.trim())
-              .map((option) => (
-                <span className="ql-token ql-token--block" key={option}>
-                  {option}
-                </span>
-              ))}
-          </div>
-        ) : (
-          <p className="st-preview__brief">The learner answers in their own words.</p>
-        )}
-      </div>
-    </div>
-  )
+  /* The rest are option or open-answer questions, played by the same two renderers the
+     lab uses. A poll carries correctIndex -1, so SingleChoice asks without marking. */
+  const options = question.options.filter((option) => option.trim())
+  if (options.length > 0) {
+    return (
+      <SingleChoice
+        question={{
+          type: 'single-choice',
+          prompt: question.text,
+          options,
+          correctIndex: question.format === 'poll' ? -1 : question.correctIndex,
+        }}
+      />
+    )
+  }
+
+  return <FreeText question={{ type: 'free-text', prompt: question.text }} />
 }
 
 export default SituationalTestPreview

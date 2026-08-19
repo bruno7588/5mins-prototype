@@ -9,6 +9,8 @@ import FillBlank from './formats/FillBlank'
 import Categorization from './formats/Categorization'
 import SequencingDnd from './formats/SequencingDnd'
 import SelectAll from './formats/SelectAll'
+import SingleChoice from './formats/SingleChoice'
+import FreeText from './formats/FreeText'
 import './quiz-lab.css'
 
 /**
@@ -36,6 +38,10 @@ function QuizLab() {
         return <SequencingDnd question={q} />
       case 'select-all':
         return <SelectAll question={q} />
+      case 'single-choice':
+        return <SingleChoice question={q} />
+      case 'free-text':
+        return <FreeText question={q} />
     }
   }
 

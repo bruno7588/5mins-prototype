@@ -858,3 +858,41 @@
 .ql-qhead__heart {
   display: inline-flex;
 }
+
+/* ── Multiple choice / short text ─────────────────────────────────────────── */
+
+/* Full-width options, stacked. The token carries its own chrome; this only decides
+   how they queue up. */
+.ql-choice__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* The learner's own words. Same field chrome as the rest of the app (input.md §
+   Outlined text field) rather than a token — it is written into, not chosen. */
+.ql-answer {
+  width: 100%;
+  resize: none;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.ql-answer::placeholder {
+  color: var(--text-tertiary);
+}
+
+.ql-answer:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background);
+}
+
+.ql-answer:focus {
+  border-color: var(--selected);
+}

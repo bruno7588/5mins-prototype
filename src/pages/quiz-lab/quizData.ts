@@ -27,6 +27,8 @@ export type FormatKey =
   | 'categorization'
   | 'sequencing'
   | 'select-all'
+  | 'single-choice'
+  | 'free-text'
 
 export interface SelectAllQuestion {
   type: 'select-all'
@@ -39,7 +41,27 @@ export interface SelectAllQuestion {
   explanation: string
 }
 
-export type QuizQuestion = InteractiveQuestion | SelectAllQuestion
+/** One answer of several. A poll is the same screen with `correctIndex: -1` — it asks
+ *  rather than marks, so there is nothing to check and nothing to reveal. */
+export interface SingleChoiceQuestion {
+  type: 'single-choice'
+  prompt: string
+  options: string[]
+  correctIndex: number
+}
+
+/** Short text and exercise: answered in the learner's own words, marked by a human. */
+export interface FreeTextQuestion {
+  type: 'free-text'
+  prompt: string
+  placeholder?: string
+}
+
+export type QuizQuestion =
+  | InteractiveQuestion
+  | SelectAllQuestion
+  | SingleChoiceQuestion
+  | FreeTextQuestion
 
 /** Fisher–Yates shuffle returning a new array (used for banks / column order). */
 export function shuffle<T>(input: readonly T[]): T[] {
@@ -52,6 +74,21 @@ export function shuffle<T>(input: readonly T[]): T[] {
 }
 
 export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
+  'single-choice': {
+    type: 'single-choice',
+    prompt: 'An email asks you to confirm your password on a link. What do you do first?',
+    options: [
+      'Follow the link and check the address bar',
+      'Report it and delete the email',
+      'Reply asking who sent it',
+      'Forward it to your team to warn them',
+    ],
+    correctIndex: 1,
+  },
+  'free-text': {
+    type: 'free-text',
+    prompt: 'In a sentence, how would you explain the risk to a colleague?',
+  },
   'match-pairs': {
     type: 'match-pairs',
     prompt: 'Match each security term to its definition',
@@ -112,9 +149,11 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
 }
 
 export const FORMAT_ORDER: { key: FormatKey; label: string }[] = [
+  { key: 'single-choice', label: 'Multiple choice' },
   { key: 'match-pairs', label: 'Match the pairs' },
   { key: 'fill-blank', label: 'Fill in the blank' },
   { key: 'categorization', label: 'Categorize' },
   { key: 'sequencing', label: 'Sequence' },
   { key: 'select-all', label: 'Select all that apply' },
+  { key: 'free-text', label: 'Short text' },
 ]
