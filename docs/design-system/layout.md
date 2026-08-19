@@ -147,6 +147,8 @@ Three elevation levels per the Figma styles:
 }
 ```
 
+Code-only extra: `--shadow-card` — Shadow S in light mode, `none` in dark. For a filled card on the page background: in light the two surfaces are one step apart and the fill alone doesn't separate them, in dark they already are. Use it wherever a `--cards-background` card sits directly on `--page-background`.
+
 Code-only extra: `--shadow-panel` (`-24px 0 24px 0 rgba(32, 34, 42, 0.04)`) — leftward shadow for right-anchored side panels. Directional variants of Shadow L (e.g. the tooltip's `drop-shadow(-4px 0 24px rgba(32,34,42,0.12))` and the drawer's `-4px 0 24px`) reuse L's blur/opacity with a shifted offset.
 
 ## 7. Overlay scrim

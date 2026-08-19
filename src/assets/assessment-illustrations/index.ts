@@ -60,10 +60,10 @@ export function getAssessmentIllustration(
 }
 
 /* Outline cards carry the format as a display label rather than a key, so this
-   is the bridge. The artwork predates the Multiple Choice → Single Choice
-   rename and still files that type under the old name. */
+   is the bridge. Label and artwork filename agree again since the type went back
+   to Multiple Choice. */
 const byLabel: Record<string, AssessmentType> = {
-  'Single Choice': 'multiple-choice',
+  'Multiple Choice': 'multiple-choice',
   'Short Text': 'short-text',
   Exercise: 'exercise',
   Poll: 'poll',

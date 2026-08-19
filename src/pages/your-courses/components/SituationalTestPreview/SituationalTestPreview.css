@@ -1,0 +1,263 @@
+/* Situational test preview (DES-279) — the learner's screens inside an admin modal.
+   Built on the shared ConfirmModal shell (scrim, Esc, backdrop close); this file only
+   widens it to the DS modal width and styles what goes inside. */
+
+.confirm-modal.st-preview {
+  width: 720px; /* overlays.md § Modal */
+  gap: var(--space-ml);
+}
+
+.st-preview__chrome {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.st-preview__chrome-headline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.st-preview__chrome-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-preview__chrome-sub {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* The learner's screen, exactly as the course feed draws it (Figma 17024:82020):
+   card surface, 32px padding, 24px between its blocks. */
+.st-preview__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-l);
+  width: 100%;
+  padding: var(--space-xl);
+  background: var(--cards-background);
+  border-radius: var(--radius-m);
+  animation: st-preview-screen-in 220ms ease;
+}
+
+/* Each screen arrives rather than snapping — the same beat as turning a page. */
+@keyframes st-preview-screen-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .st-preview__card {
+    animation: none;
+  }
+}
+
+.st-preview__card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.st-preview__card-label {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-preview__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}
+
+.st-preview__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.st-preview__heading {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-preview__prose {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ===== The interactions, in their unanswered state ===== */
+
+.st-preview__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  width: 100%;
+  margin-top: var(--space-s);
+}
+
+.st-preview__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-preview__radio {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-hover);
+  border-radius: var(--radius-full);
+}
+
+/* Sequencing: the empty slots the learner fills, over the bank they fill them from. */
+.st-preview__slot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 48px;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-sm);
+}
+
+.st-preview__slot-number {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.st-preview__bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  margin-top: var(--space-s);
+}
+
+.st-preview__chip {
+  padding: var(--space-s) var(--space-sm);
+  background: var(--page-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.st-preview__columns {
+  display: flex;
+  gap: var(--space-m);
+  width: 100%;
+  margin-top: var(--space-s);
+}
+
+.st-preview__column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+/* Categorisation: the empty buckets, labelled but unfilled. */
+.st-preview__bucket {
+  flex: 1;
+  min-width: 0;
+  min-height: 96px;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-sm);
+}
+
+.st-preview__bucket-label {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.st-preview__sentence {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 2;
+  color: var(--text-primary);
+}
+
+/* A gap, not a placeholder word — the answer is what the learner has to supply. */
+.st-preview__gap {
+  display: inline-block;
+  width: 96px;
+  height: 2px;
+  vertical-align: baseline;
+  background: var(--border-hover);
+}
+
+.st-preview__answer-box {
+  display: flex;
+  align-items: flex-start;
+  min-height: 96px;
+  margin-top: var(--space-s);
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.st-preview__answer-hint {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* ===== Admin navigation ===== */
+
+.st-preview__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+/* Between the two controls, so the position reads as part of the pair rather than a
+   caption to one of them. */
+.st-preview__counter {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}

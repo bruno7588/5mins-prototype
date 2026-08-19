@@ -41,7 +41,7 @@ import {
 } from '@/data/aiAssessmentGeneration'
 
 const assessmentLabels: Record<AssessmentType, string> = {
-  'single-choice': 'Single Choice',
+  'single-choice': 'Multiple Choice',
   'short-text': 'Short Text',
   exercise: 'Exercise',
   poll: 'Poll',
@@ -95,6 +95,10 @@ interface GeneratedSource {
   /** Situational tests only. handleRemoveSituationalTest clears the live store on
    *  delete; this copy is what undo restores from. */
   payload?: SituationalTestData
+  /** The formats the admin asked for. Kept so redrafting one card writes the same
+   *  kinds of question the first pass did — a regenerate that quietly reverted to
+   *  every format would undo the pick. */
+  formats?: GeneratableType[]
 }
 
 const toContentItem = (draft: GeneratedAssessment, id: number): ContentItem => ({
@@ -165,7 +169,9 @@ function CreateCourse() {
     types: GeneratableType[]
   } | null>(null)
   const [activeStep, setActiveStep] = useState(0)
-  const [elapsed, setElapsed] = useState(0)
+  /* What the picker last asked for, kept past the run so a single-card redraft can be
+     written to the same brief. */
+  const [pickedFormats, setPickedFormats] = useState<GeneratableType[]>([])
   const [confirmRegenerateAll, setConfirmRegenerateAll] = useState(false)
   const [pendingTypes, setPendingTypes] = useState<GeneratableType[]>([])
   /* A finished situational test waiting for the admin to approve it. It is not course
@@ -423,6 +429,7 @@ function CreateCourse() {
       sources[id] = {
         type: draft.type,
         lesson: { id: draft.sourceLessonId, title: draft.sourceLessonTitle },
+        formats: pickedFormats,
       }
       /* A generated situational test is stored like an authored one — same shape,
          same store — so it deletes, restores and previews through the same paths
@@ -444,6 +451,7 @@ function CreateCourse() {
   }
 
   const startRun = (types: GeneratableType[]) => {
+    setPickedFormats(types)
     /* The working card lives in the drawer, so both routes in — the first generation
        and a confirmed replace, which closed the drawer to show the outline — need it
        open again by the time the run starts. */
@@ -462,7 +470,10 @@ function CreateCourse() {
           ],
       stepMs: situational ? SITUATIONAL_STEP_MS : GENERATION_STEP_MS,
       lessons: coverage.withTranscript,
-      types,
+      /* The chips are question formats. Assessments generate those formats directly;
+         a situational test is always one test, so its formats travel alongside the
+         'situational-test' marker that tells generateSet which shape to build. */
+      types: situational ? [...TYPES_BY_SCOPE.situational, ...types] : types,
     })
   }
 
@@ -489,8 +500,6 @@ function CreateCourse() {
   useEffect(() => {
     if (!run) return
     setActiveStep(0)
-    setElapsed(0)
-    const clock = window.setInterval(() => setElapsed((e) => e + 1), 1000)
     const steps = run.steps.map((_, i) =>
       window.setTimeout(() => setActiveStep(i), run.stepMs * i),
     )
@@ -519,7 +528,6 @@ function CreateCourse() {
     }, run.stepMs * (run.steps.length - 1) + GENERATION_TAIL_MS)
 
     return () => {
-      window.clearInterval(clock)
       steps.forEach(window.clearTimeout)
       window.clearTimeout(finish)
     }
@@ -534,7 +542,7 @@ function CreateCourse() {
        transcribed lesson again — not just the one recorded against it. */
     const draft =
       source.type === 'situational-test'
-        ? generateSituationalTest(coverage.withTranscript, details)
+        ? generateSituationalTest(coverage.withTranscript, details, source.formats ?? [])
         : generateOne(source.type, source.lesson)
 
     setScormItems((prev) =>
@@ -604,6 +612,7 @@ function CreateCourse() {
         type: 'situational-test',
         lesson: coverage.withTranscript[0] ?? { id: 0, title: '' },
         payload,
+        formats: pickedFormats,
       },
     }))
     setScormItems((prev) => [
@@ -793,7 +802,7 @@ function CreateCourse() {
         onInteractiveSave={handleSaveInteractive}
         onInteractiveDirtyChange={setInteractiveDirty}
         generationScope={generationScope}
-        generating={run ? { steps: run.steps, activeStep, elapsedSeconds: elapsed } : null}
+        generating={run ? { steps: run.steps, activeStep } : null}
         generationReview={
           pendingTest
             ? {

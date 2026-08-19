@@ -16,32 +16,33 @@
   overflow-y: auto;
 }
 
+/* Two rhythms, so neither has to be expressed as the difference of the other:
+   4px binds the H4 sub-header to its description, 16px separates that heading group
+   from the chips it introduces (Figma 9155:41921). */
 .gen-drawer__field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-m);
 }
 
-.gen-drawer__label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  line-height: 1.5;
+.gen-drawer__field-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
+/* Type comes from the DS scale via .h4 / .text-md on the elements themselves —
+   the sub-header is H4 and its description is Text M regular (Figma 9155:41921). */
 .gen-drawer__helper {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-tertiary);
   margin: 0;
+  color: var(--text-secondary);
 }
+
 
 .gen-drawer__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-s);
-  padding-top: var(--space-xs);
+  gap: var(--space-sm);
 }
 
 .gen-drawer__footer {
@@ -91,4 +92,41 @@
   line-height: 1.5;
   color: var(--text-secondary);
   margin: 0;
+}
+
+
+/* Inline under the source chips rather than filling the drawer — the other two
+   sources are still usable, so this is one source reporting itself empty, not the
+   whole screen giving up. */
+.gen-drawer__empty--inline {
+  padding: var(--space-m) 0 var(--space-s);
+  gap: var(--space-s);
+}
+
+.gen-drawer__empty--inline .gen-drawer__empty-title {
+  font-size: 16px;
+}
+
+/* The callout carries the format's own artwork rather than an info glyph, so it needs
+   the illustration's box rather than the 20px icon slot Alert sizes by default. */
+.gen-drawer__callout img.alert__icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+/* Branded rather than the neutral DS callout: this banner is about what the AI reads,
+   so it wears the brand (Figma 9156:42714 / 9156:42774). Colour comes from the tokens
+   so the text can flip in dark mode while the 16% cyan ground stays put. */
+.gen-drawer__callout.alert--callout {
+  background: var(--ai-callout-background);
+  color: var(--ai-callout-text);
+}
+
+/* Medium, not regular: the branded ground sits light behind it, and 500 is what holds
+   the line at that contrast (typography.md — Medium for subtle emphasis). */
+.gen-drawer__callout.alert--callout .alert__message,
+.gen-drawer__callout.alert--callout p {
+  color: inherit;
+  font-weight: 500;
 }

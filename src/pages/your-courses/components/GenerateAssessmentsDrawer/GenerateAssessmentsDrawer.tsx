@@ -3,12 +3,14 @@ import { Add } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import Chip from '@/components/Chip/Chip'
+import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
+import { assessmentTypeIcon } from '../assessmentTypeIcons'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import SparkleIcon from '@/components/icons/SparkleIcon'
-import noActivity from '@/assets/empty-state-illustrations/no-activity.svg'
+import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
 import {
-  TYPES_BY_SCOPE,
+  ASSESSMENT_TYPES,
   typeLabel,
   type CoverageReport,
   type GeneratableType,
@@ -33,7 +35,7 @@ interface Props {
   /** Route out of the zero-transcript dead end — opens the 5Mins Library. */
   onAddLessons: () => void
   /** Live run. Non-null replaces the form with the working card (FR-11). */
-  generating?: { steps: string[]; activeStep: number; elapsedSeconds: number } | null
+  generating?: { steps: string[]; activeStep: number } | null
   /**
    * A finished situational test waiting to be approved. Nothing reaches the course
    * outline until the admin saves it, so the drawer holds the draft in the same
@@ -46,16 +48,45 @@ interface Props {
   } | null
 }
 
-const COPY: Record<GenerationScope, { noun: string; title: string; blurb: string }> = {
+/* Names what it makes, not just how — two rail rows share the label "Create With AI",
+   so the drawer is where they become distinguishable. Situational is singular: the
+   scope produces one test for the whole course. */
+const COPY: Record<
+  GenerationScope,
+  {
+    noun: string
+    title: string
+    typesLabel: string
+    typesHelper: string
+    callout: string
+    emptyBody: string
+    cta: string
+    ctaReplace: string
+  }
+> = {
   assessments: {
     noun: 'assessments',
-    title: 'Generate assessments with AI',
-    blurb: 'Drafted from your lesson transcripts, placed straight onto the outline.',
+    title: 'Create Assessments with AI',
+    typesLabel: 'Assessment types',
+    typesHelper: 'Select the ones you want. AI decides how many of each.',
+    callout:
+      'Assessments are created using the course material. Lessons, links, or resources help AI generate assessments based on that content.',
+    emptyBody:
+      'Assessments are created using the course material. By adding lessons, links, or resources, AI will generate assessments based on that content.',
+    cta: 'Generate Assessments',
+    ctaReplace: 'Regenerate Assessments',
   },
   situational: {
     noun: 'situational tests',
-    title: 'Generate situational tests with AI',
-    blurb: 'Scenarios built from your lesson transcripts, placed straight onto the outline.',
+    title: 'Create Situational Test with AI',
+    typesLabel: 'Assessment types',
+    typesHelper: 'Select the ones you want in the test. AI decides how many of each.',
+    callout:
+      'Situational tests are created using the course material. Lessons, links, or resources help AI generate a tailored situational test based on that content.',
+    emptyBody:
+      'Situational tests are created using the course material. By adding lessons, links, or resources, AI will generate a tailored situational test based on that content.',
+    cta: 'Generate Situational Test',
+    ctaReplace: 'Regenerate Situational Test',
   },
 }
 
@@ -75,15 +106,15 @@ function GenerateAssessmentsDrawer({
   scope, coverage, generatedCount, onClose, onGenerate, onAddLessons,
   generating = null, review = null,
 }: Props) {
-  const types = TYPES_BY_SCOPE[scope]
-  const hasPicker = types.length > 1
+  /* Both scopes ask the same question — which formats — so both offer the same eight.
+     What differs is what they mean by it, which is what COPY carries. */
+  const questionTypes = ASSESSMENT_TYPES
   const copy = COPY[scope]
   const replacing = generatedCount > 0
 
   /* Nothing selected to start. Chips are a choice the admin makes, and eight
-     pre-filled ones read as a wall of amber rather than something to pick from.
-     With no picker there is nothing to choose, so the one type is the selection. */
-  const [selected, setSelected] = useState<GeneratableType[]>(hasPicker ? [] : types)
+     pre-filled ones read as a wall of amber rather than something to pick from. */
+  const [selected, setSelected] = useState<GeneratableType[]>([])
 
   const readable = coverage.withTranscript.length
   const skipped = coverage.withoutTranscript.length
@@ -109,46 +140,37 @@ function GenerateAssessmentsDrawer({
     )
   }
 
-  /* The wait replaces the form it was started from, so the drawer stays the one
-     place this happens rather than handing off to the page behind it. No percentage:
-     the length of the read isn't knowable, so it counts up and names the lesson it's
-     on (FR-11). The footer goes with the form — there is nothing to submit or cancel
-     while it runs. */
+  /* The wait replaces the form it was started from, so the drawer stays the one place
+     this happens rather than handing off to the page behind it. Neither a percentage nor
+     a clock: the length of the read isn't knowable, so the card names the step it is on
+     and twinkles (FR-11). The footer goes with the form — there is nothing to submit or
+     cancel while it runs. */
   if (generating) {
     return (
       <>
         <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
         <div className="gen-drawer__body">
-          <AIWorkingCard
-            steps={generating.steps}
-            activeStep={generating.activeStep}
-            elapsedSeconds={generating.elapsedSeconds}
-          />
+          <AIWorkingCard steps={generating.steps} activeStep={generating.activeStep} />
         </div>
       </>
     )
   }
 
-  /* FR-05: nothing to read from. The dead end explains what the generator works
-     from and hands over the one action that clears it, rather than reporting that
-     generation is unavailable and stopping there. */
-  if (readable === 0) {
+  /* FR-05. The generator reads the course, so an empty course is the one thing it
+     can't work around — and the fix is the same for both scopes: put something on
+     the outline. */
+  if (total === 0) {
     return (
       <>
         <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
         <div className="gen-drawer__body gen-drawer__body--empty">
           <div className="gen-drawer__empty">
-            <img src={noActivity} width={72} height={72} alt="" />
+            <img src={emptyBox} width={72} height={72} alt="" />
             <div className="gen-drawer__empty-info">
-              <h3 className="gen-drawer__empty-title">No transcripts to read yet</h3>
-              <p className="gen-drawer__empty-body">
-                {copy.noun.charAt(0).toUpperCase() + copy.noun.slice(1)} are written from
-                your lessons' transcripts — every question comes from something a lesson
-                actually says. {total > 0
-                  ? 'None of the lessons on this course have one yet.'
-                  : 'Add a lesson and its transcript becomes the source material.'}{' '}
-                Uploaded SCORM packages can't be read, so they don't count.
-              </p>
+              {/* Names the gap, not the consequence — "nothing to read" left the admin
+                  to work out whose problem it was and what would fix it. */}
+              <h3 className="gen-drawer__empty-title">This course has no content yet</h3>
+              <p className="gen-drawer__empty-body">{copy.emptyBody}</p>
             </div>
             {/* Adding lessons is adding content, not an AI action — the sparkle here
                 promised the button would generate something. */}
@@ -166,24 +188,35 @@ function GenerateAssessmentsDrawer({
 
   return (
     <>
-      <SectionHeader
-        title={copy.title}
-        description={
-          replacing
-            ? `Writing a fresh set replaces the ${generatedCount} already generated. Anything you wrote yourself stays.`
-            : copy.blurb
-        }
-        ctas={<CloseButton onClick={onClose} />}
-      />
+      {/* No description: the callout and the source list below say the same things
+          with more room, and saying them twice above the fold just pushed the
+          controls down. */}
+      <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
 
       <div className="gen-drawer__body">
-        {/* What the generator can and can't do, said before it runs rather than
-            discovered afterwards. */}
+        {/* No standing callout about what the generator reads — the source chips below
+            say it concretely, and naming the actual sources beats a paragraph
+            promising the same thing. */}
+
+        {/* What the generator works from, and the lever the admin has over it — the
+            course's own artwork rather than a generic info glyph, so the callout reads
+            as being about this thing (Figma 9155:41921). */}
         <Alert
           type="Callout"
           className="gen-drawer__callout"
-          customIcon={<SparkleIcon size={24} gradient className="alert__icon" />}
-          message="Every question is written from what your lessons say — nothing is invented from outside them. Drafts are yours to keep, delete or regenerate; editing them comes later, so read them before you publish."
+          customIcon={
+            <img
+              src={getAssessmentIllustration(
+                scope === 'situational' ? 'situational-test' : 'multiple-choice',
+                'desktop',
+              )}
+              width={40}
+              height={40}
+              alt=""
+              className="alert__icon"
+            />
+          }
+          message={copy.callout}
         />
 
         {/* FR-04: partial coverage is surfaced, never silently skipped. */}
@@ -196,33 +229,38 @@ function GenerateAssessmentsDrawer({
           />
         )}
 
-        {hasPicker ? (
-          <div className="gen-drawer__field">
-            <h3 className="gen-drawer__label">Assessment types</h3>
-            <p className="gen-drawer__helper">
-              Pick what to write. How many of each follows from how much each transcript
-              supports, so there's no number to set.
-            </p>
-            <div className="gen-drawer__chips">
-              {types.map((type) => (
+        {/* Was the header's description, but it's a consequence rather than a
+            summary — it belongs where warnings go. */}
+        {replacing && (
+          <Alert
+            type="Alert"
+            icon
+            message={`Generating again replaces the ${generatedCount} already on the outline. Anything you wrote yourself stays.`}
+          />
+        )}
+
+        <div className="gen-drawer__field">
+          <div className="gen-drawer__field-heading">
+            <h3 className="h4">{copy.typesLabel}</h3>
+            <p className="text-md gen-drawer__helper">{copy.typesHelper}</p>
+          </div>
+          <div className="gen-drawer__chips">
+            {questionTypes.map((type) => {
+              const isOn = selected.includes(type)
+              return (
                 <Chip
                   key={type}
                   label={typeLabel(type)}
-                  selected={selected.includes(type)}
+                  selected={isOn}
+                  /* Same glyph the Add Content rail uses for this format, so the
+                     format is recognised rather than re-read. */
+                  customIconLeft={assessmentTypeIcon(type, { size: 16, active: isOn })}
                   onClick={() => toggle(type)}
                 />
-              ))}
-            </div>
+              )
+            })}
           </div>
-        ) : (
-          /* One test, so nothing to choose — say what will happen instead of
-             offering a picker with a single option in it. */
-          <p className="gen-drawer__helper">
-            One situational test for the course, built from{' '}
-            {readable === 1 ? 'the lesson' : `all ${readable} lessons`} with a transcript
-            — a title, a brief, and 6 to 8 questions.
-          </p>
-        )}
+        </div>
       </div>
 
       <div className="gen-drawer__footer">
@@ -232,10 +270,7 @@ function GenerateAssessmentsDrawer({
           disabled={selected.length === 0}
           onClick={() => onGenerate(selected)}
         >
-          {replacing ? 'Regenerate All' : 'Generate'}
-        </Button>
-        <Button variant="outlined-2" onClick={onClose}>
-          Cancel
+          {replacing ? copy.ctaReplace : copy.cta}
         </Button>
       </div>
     </>

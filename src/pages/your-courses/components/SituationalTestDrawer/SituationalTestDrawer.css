@@ -168,6 +168,65 @@
   border-color: var(--selected);
 }
 
+/* Review only. The brief is read here, not written, so collapsed it is a paragraph
+   wearing the field's own chrome — three lines, truncated by the clamp, with View more
+   sitting on the tail of the third. Opening it swaps in the real textarea. */
+.st-drawer__brief-read {
+  position: relative;
+}
+
+.st-drawer__brief-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* Text button (buttons.md § Text). Sat on the last line, it needs the line to stop
+   cleanly behind it — the fade does that without a hard edge, and the panel colour is
+   the only ground the field ever sits on (it is transparent at rest). */
+.st-drawer__brief-more {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  padding: 0 var(--space-m) var(--space-sm) var(--space-xl);
+  background: linear-gradient(90deg, transparent 0%, var(--page-background) var(--space-l));
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-button-outlined);
+  cursor: pointer;
+}
+
+.st-drawer__brief-more:hover {
+  color: var(--text-button-hover);
+  text-decoration: underline;
+}
+
+.st-drawer__brief-more:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Opened, there is no truncated line to sit on, so it goes back under the field. */
+.st-drawer__brief-more--under {
+  position: static;
+  align-self: flex-start;
+  padding: 0;
+  background: none;
+}
+
 .st-drawer__input--error,
 .st-drawer__textarea--error {
   border-color: var(--text-error);
@@ -191,14 +250,15 @@
 /* No gap — the collapsing body carries its own top margin, so a folded question is
    exactly its header tall. */
 /* Filled, no border (Figma 9012:2884). The fill is what separates one question from the
-   next; the fields inside stay transparent so the card reads as a single surface rather
-   than a stack of nested tones. */
+   next; the fields inside keep their hairline, so the field reads as a field on the
+   card rather than the card and the field being the same bordered box twice. */
 .st-drawer__question {
   display: flex;
   flex-direction: column;
   padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
+  background: var(--cards-background);
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .st-drawer__question-head {
@@ -424,4 +484,26 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-tertiary);
+}
+
+/* ===== Format label + read-only structure (DES-279) ===== */
+
+/* The format the generator wrote this question in, beside its number — the admin picked
+   the formats, so the output says which one it got. */
+.st-drawer__question-format {
+  padding: 2px var(--space-s);
+  background: var(--input-background);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.st-drawer__structure-note {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }

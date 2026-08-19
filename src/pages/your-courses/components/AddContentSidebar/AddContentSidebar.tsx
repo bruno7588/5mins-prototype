@@ -72,7 +72,7 @@ function AddContentSidebar({ collapsed, activeDrawer = null, onAssessmentClick, 
       >
         <AddContentMenuItem
           icon={<MessageText size={iconSize} color={iconColor} variant="Linear" />}
-          label="Single Choice"
+          label="Multiple Choice"
           onClick={() => onAssessmentClick?.('single-choice')}
         />
         <AddContentMenuItem

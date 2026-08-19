@@ -306,6 +306,11 @@
 .ds-btn--ai-outlined:active:not(:disabled) .ds-btn__icon {
   background-image: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
 }
+/* background-clip: text paints glyphs, and an SVG has none — the clip above leaves a
+   currentColor icon fully transparent. Icons that want the real gradient carry their own
+   (SparkleIcon’s `gradient` prop); anything else falls back to its first stop rather
+   than vanishing. */
+.ds-btn--ai-outlined .ds-btn__icon svg { color: var(--text-button-outlined); }
 
 .ds-btn--ai:disabled,
 .ds-btn--ai-outlined:disabled {

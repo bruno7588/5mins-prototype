@@ -149,7 +149,7 @@ function AddContentPopover({ open, onClose, onLibraryClick, onScormClick, onAsse
           >
             <AddContentMenuItem
               icon={<MessageText size={iconSize} color={iconColor} variant="Linear" />}
-              label="Single Choice"
+              label="Multiple Choice"
               onClick={route(() => onAssessmentClick?.('single-choice'))}
             />
             <AddContentMenuItem

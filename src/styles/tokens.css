@@ -81,6 +81,14 @@
   --page-background: var(--neutral-25);
   --page-background-hover: var(--neutral-50);
   --cards-background: var(--neutral-0);
+
+  /* AI callout — the branded banner on generative surfaces (Figma 9156:42774 light,
+     9156:42714 dark). Brand cyan at 16% reads correctly over both page grounds, so
+     only the text flips: cyan in light, the secondary yellow in dark, where
+     cyan-on-cyan would not carry. */
+  --ai-callout-background: rgba(0, 131, 147, 0.16);
+  --ai-callout-text: var(--primary-700);
+
   --cards-background-hover: var(--neutral-50);
   --input-background: rgba(191, 194, 204, 0.16); /* Neutral-200 @ 16% */
   --input-background-hover: var(--neutral-100);
@@ -157,6 +165,11 @@
   --shadow-l: 4px 4px 24px 0 rgba(32, 34, 42, 0.12);
   --shadow-xl: 0 4px 32px 0 rgba(32, 34, 42, 0.24);
   --shadow-panel: -24px 0px 24px 0px rgba(32, 34, 42, 0.04);
+  /* Lift for a filled card sitting on the page. Light mode needs it — --cards-background
+     is one step off --page-background and the fill alone barely separates. Dark mode
+     doesn't: there the same two tokens are a visible step apart, and a shadow over a dark
+     ground reads as grime rather than elevation. */
+  --shadow-card: var(--shadow-s);
 }
 
 /* ── Dark mode ─────────────────────────────────────────────────────────────
@@ -165,10 +178,12 @@
    and shadows are mode-independent and stay in :root. Applied via
    <html data-theme="dark"> (see src/hooks/useTheme.ts). */
 [data-theme='dark'] {
+  --ai-callout-text: var(--secondary-400);
   /* Surfaces */
   --page-background: var(--neutral-800);
   --page-background-hover: var(--neutral-700);
   --cards-background: var(--neutral-700);
+  --shadow-card: none;
   --cards-background-hover: var(--neutral-600);
   --input-background: rgba(69, 76, 94, 0.16); /* Neutral-500 @ 16% */
   --input-background-hover: var(--neutral-700);

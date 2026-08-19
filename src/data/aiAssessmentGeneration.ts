@@ -1,5 +1,9 @@
 import type { AssessmentType } from '@/pages/your-courses/components/AddContentSidebar/AddContentSidebar'
-import { TYPE_CONFIG, type InteractiveQuestionType } from '@/data/interactiveQuestions'
+import {
+  TYPE_CONFIG,
+  type InteractiveQuestion,
+  type InteractiveQuestionType,
+} from '@/data/interactiveQuestions'
 
 /**
  * Mock backend for the AI assessment generator (DES-279).
@@ -53,7 +57,7 @@ export const GENERATABLE_TYPES: GeneratableType[] = [
 ]
 
 const CLASSIC_LABELS: Record<AssessmentType, string> = {
-  'single-choice': 'Single Choice',
+  'single-choice': 'Multiple Choice',
   'short-text': 'Short Text',
   exercise: 'Exercise',
   poll: 'Poll',
@@ -142,9 +146,15 @@ const STEMS: Record<Exclude<GeneratableType, 'situational-test'>, [string, strin
 }
 
 export interface GeneratedQuestion {
+  /** Which format this question is — what the admin picked, carried through to the
+   *  review card and the learner preview so the pick is visible in the output. */
+  format: GeneratableType
   text: string
+  /** Empty for formats a flat list can't express; `interactive` carries those. */
   options: string[]
+  /** -1 where the format has no right answer (poll, and the open-answer formats). */
   correctIndex: number
+  interactive?: InteractiveQuestion
 }
 
 export interface GeneratedAssessment {
@@ -182,27 +192,249 @@ export function generateOne(
   }
 }
 
-/* Scenario openers, and the decision each question turns on. A situational test is
-   one continuous scenario, so the questions step through it rather than each one
-   restating it. */
-const SITUATION_BEATS: [string, string[]][] = [
-  ['A colleague asks you to bend the process "just this once". What do you do first?',
-    ['Agree — it saves everyone time', 'Ask what they are trying to achieve', 'Escalate immediately', 'Say nothing and carry on']],
-  ['The shortcut would work, but nobody has recorded it. What matters most here?',
-    ['Speed', 'That the decision is written down', 'Keeping your colleague happy', 'Waiting for someone else to decide']],
-  ['You spot something that looks wrong an hour later. What is the right next step?',
-    ['Fix it quietly', 'Raise it with your manager', 'Wait to see if anyone notices', 'Log it and move on']],
-  ['Your manager is unavailable and the deadline is today. What do you do?',
-    ['Make the call and document your reasoning', 'Miss the deadline to be safe', 'Ask a peer to approve it', 'Guess what your manager would want']],
-  ['A customer asks you to confirm something you are not sure about. How do you answer?',
-    ['Confirm it to keep them happy', 'Say you will check and come back', 'Redirect them elsewhere', 'Give your best guess']],
-  ['The same issue comes up a third time this month. What does that tell you?',
-    ['It is bad luck', 'The process needs changing', 'Someone is not following it', 'It is not your problem']],
-  ['You are asked to explain the decision afterwards. What is most useful?',
-    ['What you decided', 'What you decided and why', 'Who else agreed', 'How long it took']],
-  ['What would you do differently next time?',
-    ['Nothing — it worked out', 'Check earlier, before committing', 'Escalate sooner', 'Ask for the rule in writing']],
-]
+/* Scenario beats, grouped by the question format each one is written for. A situational
+   test is one continuous scenario, so the beats step through the same week rather than
+   each restating it — and the admin's picked formats decide which of them get used.
+
+   Formats whose learner UI is a list of options are fully described by `options`. The
+   four interactive formats cannot be: a pairing, an order, a sorting or a sentence with
+   gaps is a structure, not a list, so those beats carry the real payload the learner
+   renderers eat (`@/data/interactiveQuestions`). Short text and exercise carry neither —
+   the learner answers in their own words. */
+type Beat = {
+  text: string
+  /** Empty for the interactive formats and for the two open-answer ones. */
+  options: string[]
+  /** -1 where the format has no right answer — a poll asks, it doesn't mark. */
+  correctIndex: number
+  interactive?: InteractiveQuestion
+}
+
+const BEATS_BY_FORMAT: Partial<Record<GeneratableType, Beat[]>> = {
+  'single-choice': [
+    {
+      text: 'A colleague asks you to bend the process "just this once". What do you do first?',
+      options: ['Agree — it saves everyone time', 'Ask what they are trying to achieve', 'Escalate immediately', 'Say nothing and carry on'],
+      correctIndex: 1,
+    },
+    {
+      text: 'Your manager is unavailable and the deadline is today. What do you do?',
+      options: ['Make the call and document your reasoning', 'Miss the deadline to be safe', 'Ask a peer to approve it', 'Guess what your manager would want'],
+      correctIndex: 0,
+    },
+    {
+      text: 'You are asked to explain the decision afterwards. What is most useful?',
+      options: ['What you decided', 'What you decided and why', 'Who else agreed', 'How long it took'],
+      correctIndex: 1,
+    },
+    {
+      text: 'A customer asks for something the policy does not cover. What is your first move?',
+      options: ['Say no and close the conversation', 'Check who owns the policy and ask them', 'Make an exception quietly', 'Promise it and sort it out later'],
+      correctIndex: 1,
+    },
+  ],
+  poll: [
+    {
+      text: 'How confident are you handling this situation unsupervised?',
+      options: ['Not at all', 'Somewhat', 'Confident', 'Very confident'],
+      correctIndex: -1,
+    },
+    {
+      text: 'How often does something like this come up in your week?',
+      options: ['Never', 'Once or twice', 'Most weeks', 'Every day'],
+      correctIndex: -1,
+    },
+  ],
+  'short-text': [
+    { text: 'In a sentence, how would you justify this decision to your manager?', options: [], correctIndex: -1 },
+    { text: 'Write the message you would send the customer to explain the delay.', options: [], correctIndex: -1 },
+  ],
+  exercise: [
+    {
+      text: 'The same issue comes up a third time this month. Write down what you would change about the process, and who you would tell.',
+      options: [],
+      correctIndex: -1,
+    },
+    {
+      text: 'Draft the three lines you would add to the handover note so the next shift is not caught out.',
+      options: [],
+      correctIndex: -1,
+    },
+  ],
+  sequencing: [
+    {
+      text: 'Put the steps you would take next in order, starting with the first.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'sequencing',
+        prompt: 'Put the steps you would take next in order, starting with the first.',
+        steps: ['Check what the rule actually says', 'Tell your manager what you are about to do', 'Act on the decision', 'Log what you did and why'],
+      },
+    },
+    {
+      text: 'Order the way you would handle the customer, from first contact to close.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'sequencing',
+        prompt: 'Order the way you would handle the customer, from first contact to close.',
+        steps: ['Acknowledge them', 'Find out what actually happened', 'Agree the fix and the timing', 'Confirm it in writing'],
+      },
+    },
+    {
+      text: 'Put the response to a possible breach in order.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'sequencing',
+        prompt: 'Put the response to a possible breach in order.',
+        steps: ['Spot the risk', 'Contain it', 'Report it', 'Review what let it happen'],
+      },
+    },
+  ],
+  'match-pairs': [
+    {
+      text: 'Match each situation to the response it calls for.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'match-pairs',
+        prompt: 'Match each situation to the response it calls for.',
+        pairs: [
+          { left: 'A customer alleges their data was shared', right: 'Escalate to your manager today' },
+          { left: 'A rota clash next week', right: 'Sort it with the team lead' },
+          { left: 'A printer that keeps jamming', right: 'Log a facilities ticket' },
+          { left: 'A colleague asking to skip a check', right: 'Ask what they are trying to achieve' },
+        ],
+      },
+    },
+    {
+      text: 'Match each phrase to what it does in a difficult conversation.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'match-pairs',
+        prompt: 'Match each phrase to what it does in a difficult conversation.',
+        pairs: [
+          { left: '"Help me understand…"', right: 'Opens up the reason' },
+          { left: '"What I heard was…"', right: 'Checks you got it right' },
+          { left: '"Here is what I can do"', right: 'Sets the boundary' },
+          { left: '"Let me come back to you"', right: 'Buys time honestly' },
+        ],
+      },
+    },
+    {
+      text: 'Match each record to the reason you keep it.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'match-pairs',
+        prompt: 'Match each record to the reason you keep it.',
+        pairs: [
+          { left: 'The decision you made', right: 'So it can be explained later' },
+          { left: 'Who you told', right: 'So nobody is surprised' },
+          { left: 'When you acted', right: 'So the timeline is clear' },
+          { left: 'What you were told', right: 'So the source is traceable' },
+        ],
+      },
+    },
+  ],
+  categorization: [
+    {
+      text: 'Sort these into what you handle yourself and what you escalate now.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'categorization',
+        prompt: 'Sort these into what you handle yourself and what you escalate now.',
+        categories: [
+          { id: 'self', label: 'Handle yourself' },
+          { id: 'escalate', label: 'Escalate now' },
+        ],
+        items: [
+          { label: 'A stationery order over budget', categoryId: 'self' },
+          { label: 'A customer alleging their data was shared', categoryId: 'escalate' },
+          { label: 'A rota clash next week', categoryId: 'self' },
+          { label: 'A threat of legal action', categoryId: 'escalate' },
+        ],
+      },
+    },
+    {
+      text: 'Sort what belongs in the written record from what stays out of it.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'categorization',
+        prompt: 'Sort what belongs in the written record from what stays out of it.',
+        categories: [
+          { id: 'record', label: 'Goes in the record' },
+          { id: 'out', label: 'Stays out' },
+        ],
+        items: [
+          { label: 'What you decided', categoryId: 'record' },
+          { label: 'Why you decided it', categoryId: 'record' },
+          { label: 'Your opinion of the colleague', categoryId: 'out' },
+          { label: 'Who you notified', categoryId: 'record' },
+        ],
+      },
+    },
+    {
+      text: 'Sort these into acceptable and not acceptable under the policy.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'categorization',
+        prompt: 'Sort these into acceptable and not acceptable under the policy.',
+        categories: [
+          { id: 'ok', label: 'Acceptable' },
+          { id: 'no', label: 'Not acceptable' },
+        ],
+        items: [
+          { label: 'Sharing a file through the approved system', categoryId: 'ok' },
+          { label: 'Forwarding it to a personal address', categoryId: 'no' },
+          { label: 'Asking a manager to approve an exception', categoryId: 'ok' },
+          { label: 'Copying data to a USB stick', categoryId: 'no' },
+        ],
+      },
+    },
+  ],
+  'fill-blank': [
+    {
+      text: 'Complete the rule you are working to.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'fill-blank',
+        prompt: 'Complete the rule you are working to.',
+        segments: ['Before acting you must always ', { blank: 'record the reason' }, ', and tell ', { blank: 'your manager' }, '.'],
+        bank: ['record the reason', 'your manager', 'wait 24 hours', 'the customer'],
+      },
+    },
+    {
+      text: 'Finish the escalation rule.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'fill-blank',
+        prompt: 'Finish the escalation rule.',
+        segments: ['If a customer alleges ', { blank: 'a data breach' }, ', you escalate it ', { blank: 'the same day' }, '.'],
+        bank: ['a data breach', 'the same day', 'a late delivery', 'within a month'],
+      },
+    },
+    {
+      text: 'Complete the handover line.',
+      options: [],
+      correctIndex: -1,
+      interactive: {
+        type: 'fill-blank',
+        prompt: 'Complete the handover line.',
+        segments: ['The next shift needs to know what you ', { blank: 'decided' }, ' and what is still ', { blank: 'open' }, '.'],
+        bank: ['decided', 'open', 'forgot', 'closed'],
+      },
+    },
+  ],
+}
 
 const TEST_TITLES = [
   'Putting it into practice',
@@ -210,12 +442,6 @@ const TEST_TITLES = [
   'The call you have to make',
 ]
 
-/**
- * One situational test for the whole course, not one per lesson — it is a single
- * scenario the learner is dropped into, and every transcribed lesson feeds it.
- * Comes out shaped exactly like a hand-authored one: a title, a brief, and 6–8
- * questions.
- */
 /** The course's own framing, which the brief is written against alongside the
  *  lesson transcripts. Both fields are optional in practice — a course can be
  *  outlined before it's titled. */
@@ -227,16 +453,39 @@ export interface CourseContext {
 const firstSentence = (text: string) => text.split(/(?<=[.!?])\s/)[0].replace(/[.!?]$/, '')
 const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1)
 
+/**
+ * One situational test for the whole course, not one per lesson — it is a single
+ * scenario the learner is dropped into, and every transcribed lesson feeds it.
+ * Comes out shaped exactly like a hand-authored one: a title, a brief, and 6–8
+ * questions.
+ */
 export function generateSituationalTest(
   lessons: TranscriptSource[],
   course?: CourseContext,
+  /** The question formats the admin picked. Empty means no preference. */
+  formats: GeneratableType[] = [],
 ): GeneratedAssessment {
-  const count = between(6, 8)
-  const questions = SITUATION_BEATS.slice(0, count).map(([text, options]) => ({
-    text,
-    options,
-    correctIndex: 1,
-  }))
+  /* Only the picked formats get written. Padding a narrow pick out with formats the
+     admin didn't ask for would make the picker decoration — picking Sequence and Match
+     the Pairs means a test of sequences and pairs, and nothing else. */
+  const picked = formats.filter((f) => f !== 'situational-test')
+  const pool = (picked.length ? picked : ASSESSMENT_TYPES).filter((f) => BEATS_BY_FORMAT[f]?.length)
+  const supply = pool.map((format) => ({ format, beats: BEATS_BY_FORMAT[format] as Beat[] }))
+
+  /* Round-robin rather than format-by-format, so every picked format appears early and
+     the test alternates the way a written one would. A narrow pick runs out of beats
+     before it reaches the target — a short test of what was asked for beats a long one
+     padded with what wasn't. */
+  const target = between(6, 8)
+  const questions: GeneratedQuestion[] = []
+  for (let round = 0; questions.length < target; round++) {
+    const stillHasBeats = supply.filter((s) => round < s.beats.length)
+    if (stillHasBeats.length === 0) break
+    for (const { format, beats } of stillHasBeats) {
+      questions.push(toQuestion(format, beats[round]))
+      if (questions.length === target) break
+    }
+  }
 
   const named = lessons.map((l) => `"${l.title}"`)
   const sources =
@@ -269,6 +518,14 @@ export function generateSituationalTest(
   }
 }
 
+const toQuestion = (format: GeneratableType, beat: Beat): GeneratedQuestion => ({
+  format,
+  text: beat.text,
+  options: beat.options,
+  correctIndex: beat.correctIndex,
+  ...(beat.interactive ? { interactive: beat.interactive } : {}),
+})
+
 /**
  * A full set: one or two assessments per transcribed lesson, drawn from the types
  * the admin selected. Quantity is the generator's call, not the admin's (FR-02) —
@@ -283,7 +540,7 @@ export function generateSet(
 
   /* One test for the course, built from every transcribed lesson — not one per
      lesson like the question formats below. */
-  if (types.includes('situational-test')) return [generateSituationalTest(lessons, course)]
+  if (types.includes('situational-test')) return [generateSituationalTest(lessons, course, types)]
 
   /* Situational tests returned above, so what's left is the per-lesson formats. */
   const perLesson = types.filter(

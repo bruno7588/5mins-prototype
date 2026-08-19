@@ -1,5 +1,6 @@
 import { Fragment, useState, type ReactNode } from 'react'
 import {
+  Add,
   SidebarLeft,
   SidebarRight,
   PlayCircle,
@@ -56,7 +57,7 @@ type MenuItem =
   | { kind: 'interactive'; type: InteractiveQuestionType; icon: (active: boolean) => ReactNode }
 
 const ASSESSMENT_MENU: MenuItem[] = [
-  { kind: 'assessment', type: 'single-choice', label: 'Single Choice', icon: (a) => <RecordCircle size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
+  { kind: 'assessment', type: 'single-choice', label: 'Multiple Choice', icon: (a) => <RecordCircle size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { kind: 'interactive', type: 'match-pairs', icon: (a) => <ArrangeHorizontal size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { kind: 'interactive', type: 'sequencing', icon: (a) => <I3Square size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
   { kind: 'interactive', type: 'categorization', icon: (a) => <Category size={ICON} color={C} variant={a ? 'Bold' : 'Linear'} /> },
@@ -159,7 +160,7 @@ function AddContentIconStrip({
     icon: ReactNode,
     isActive: boolean,
     onClick?: () => void,
-    /* Collapsed, a row has no group above it to lend it context — "Generate with AI"
+    /* Collapsed, a row has no group above it to lend it context — "Create With AI"
        alone can't say which of the two it is. The flyout takes the longer name. */
     tooltip = label,
   ) => (
@@ -281,15 +282,18 @@ function AddContentIconStrip({
           </button>
           <Collapse open={situationalOpen}>
             {subitem(
-              'Generate with AI',
+              'Create With AI',
               sparkle(generateActive('situational')),
               generateActive('situational'),
               () => onGenerateWithAIClick?.('situational'),
               true,
             )}
+            {/* '+', matching the manual route beside an AI one in Your Content
+                ("Add Question Manually"). The group header above already says what
+                this makes, so the row only has to say how. */}
             {subitem(
               'Create Manually',
-              <ClipboardText size={ICON} color={C} variant={active === 'situational-test' ? 'Bold' : 'Linear'} />,
+              <Add size={ICON} color={C} variant={active === 'situational-test' ? 'Bold' : 'Linear'} />,
               active === 'situational-test',
               onSituationalTestClick,
             )}
@@ -298,11 +302,11 @@ function AddContentIconStrip({
       ) : (
         <>
           {item(
-            'Generate with AI',
+            'Create With AI',
             sparkle(generateActive('situational')),
             generateActive('situational'),
             () => onGenerateWithAIClick?.('situational'),
-            'Generate Situational Tests with AI',
+            'Create Situational Tests With AI',
           )}
           {item(
             'Situational Test',
@@ -337,15 +341,6 @@ function AddContentIconStrip({
             </span>
           </button>
           <Collapse open={assessmentsOpen}>
-            {/* Leads the group: it writes the whole list below it, so it sits above
-                rather than at the end of eight formats. */}
-            {subitem(
-              'Generate with AI',
-              sparkle(generateActive('assessments')),
-              generateActive('assessments'),
-              () => onGenerateWithAIClick?.('assessments'),
-              true,
-            )}
             {/* Each type carries its own glyph here too, so the icon an admin
                 learns in the collapsed rail is the same one they see expanded. */}
             {ASSESSMENT_MENU.map((entry) => (
@@ -363,13 +358,6 @@ function AddContentIconStrip({
       ) : (
         <>
           <span className="add-content-icon-strip__divider" aria-hidden="true" />
-          {item(
-            'Generate with AI',
-            sparkle(generateActive('assessments')),
-            generateActive('assessments'),
-            () => onGenerateWithAIClick?.('assessments'),
-            'Generate Assessments with AI',
-          )}
           {ASSESSMENT_MENU.map((entry) => (
             <Fragment key={entry.type}>
               {item(menuLabel(entry), entry.icon(menuActive(entry)), menuActive(entry), menuClick(entry))}

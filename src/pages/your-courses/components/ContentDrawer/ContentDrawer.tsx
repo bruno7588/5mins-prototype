@@ -75,7 +75,7 @@ interface Props {
   generatedCount: number
   onGenerate: (types: GeneratableType[]) => void
   onAddLessons: () => void
-  generating: { steps: string[]; activeStep: number; elapsedSeconds: number } | null
+  generating: { steps: string[]; activeStep: number } | null
   generationReview: {
     draft: SituationalTestData
     onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void
