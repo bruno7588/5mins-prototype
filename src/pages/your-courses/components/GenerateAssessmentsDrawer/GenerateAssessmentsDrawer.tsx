@@ -1,4 +1,5 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Add } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
@@ -7,6 +8,7 @@ import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import { assessmentTypeIcon } from '../assessmentTypeIcons'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
+import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
 import {
@@ -359,6 +361,7 @@ function GeneratingBody({
   const questions = draft?.questions ?? []
   const [landed, setLanded] = useState(0)
   const newest = useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
 
   /* Keeps the card being written in view. The passes are pinned at the top, so the
      content scrolls under them rather than the whole drawer jumping. */
@@ -418,15 +421,25 @@ function GeneratingBody({
         <div className="gen-drawer__live" aria-hidden="true">
           {/* The fields the review will hand over, filling as they are written. The
               shimmer sits on whatever is still being written and lifts when it is done. */}
-          <div className="gen-drawer__live-field">
+          <motion.div
+            className="gen-drawer__live-field"
+            layout="position"
+            {...ARRIVE(reduce)}
+            transition={arriveTransition(reduce)}
+          >
             <span className="gen-drawer__live-label">Title</span>
             <div className={`gen-drawer__live-input${title.done ? '' : ' is-writing'}`}>
               {title.shown}
               {!title.done && <span className="gen-drawer__caret" />}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="gen-drawer__live-field">
+          <motion.div
+            className="gen-drawer__live-field"
+            layout="position"
+            {...ARRIVE(reduce)}
+            transition={arriveTransition(reduce)}
+          >
             <span className="gen-drawer__live-label">Brief</span>
             <div
               className={`gen-drawer__live-input gen-drawer__live-input--brief${
@@ -436,7 +449,7 @@ function GeneratingBody({
               {briefText.shown}
               {!briefText.done && <span className="gen-drawer__caret" />}
             </div>
-          </div>
+          </motion.div>
 
           {questions.slice(0, landed).map((question, i) => (
             <LiveQuestion
@@ -446,6 +459,7 @@ function GeneratingBody({
               /* Only the newest card is being written; the ones above it are done. */
               writing={activeStep === CREATING && i === landed - 1}
               ms={QUESTION_BEAT_MS * 0.7}
+              reduce={reduce}
             />
           ))}
         </div>
@@ -457,17 +471,25 @@ function GeneratingBody({
 /** One assessment card, writing itself in. */
 const LiveQuestion = forwardRef<
   HTMLDivElement,
-  { question: GeneratedQuestion; writing: boolean; ms: number }
->(function LiveQuestion({ question, writing, ms }, ref) {
+  { question: GeneratedQuestion; writing: boolean; ms: number; reduce: boolean | null }
+>(function LiveQuestion({ question, writing, ms, reduce }, ref) {
   const text = useTyped(question.text, writing, ms)
   return (
-    <div ref={ref} className={`gen-drawer__live-question${writing ? ' is-writing' : ''}`}>
+    <motion.div
+      ref={ref}
+      className={`gen-drawer__live-question${writing ? ' is-writing' : ''}`}
+      /* Position only: the card grows as its question types itself in, and scaling that
+         growth would stretch the text being written. */
+      layout="position"
+      {...ARRIVE(reduce)}
+      transition={arriveTransition(reduce)}
+    >
       <span className="gen-drawer__live-format">{typeLabel(question.format)}</span>
       <span className="gen-drawer__live-text">
         {text.shown}
         {!text.done && <span className="gen-drawer__caret" />}
       </span>
-    </div>
+    </motion.div>
   )
 })
 

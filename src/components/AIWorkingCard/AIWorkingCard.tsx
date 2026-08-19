@@ -1,5 +1,7 @@
 import { TickCircle } from 'iconsax-react'
+import { motion, useReducedMotion } from 'framer-motion'
 import SparkleIcon from '@/components/icons/SparkleIcon'
+import { ARRIVE, arriveTransition } from './arrive'
 import './AIWorkingCard.css'
 
 interface AIWorkingCardProps {
@@ -30,6 +32,7 @@ interface AIWorkingCardProps {
  * copy of this markup — the two will drift until RolePanel is moved over.
  */
 function AIWorkingCard({ steps, activeStep, detail, className = '' }: AIWorkingCardProps) {
+  const reduce = useReducedMotion()
   return (
     <div className={`ai-working-card ${className}`.trim()}>
       {/* Announced as a whole so a screen reader hears the current step, not every tick. */}
@@ -44,20 +47,50 @@ function AIWorkingCard({ steps, activeStep, detail, className = '' }: AIWorkingC
           const done = i < activeStep || (i === activeStep && isLast)
           const active = i === activeStep && !isLast
           return (
-            <div className="ai-working-step" key={label}>
+            /* Layout is what makes the card grow rather than jump: a new pass pushes the
+               rows under it — and everything under the card — instead of teleporting them
+               into their new places. Position only: the row gets taller when its detail
+               line appears, and animating that size means scaling the row, which stretches
+               the words inside it. */
+            <motion.div
+              className="ai-working-step"
+              key={label}
+              layout="position"
+              {...ARRIVE(reduce)}
+              transition={arriveTransition(reduce)}
+            >
               <span
                 className={`ai-working-step__icon${active ? ' ai-working-step__icon--active' : ''}`}
               >
-                {done && <TickCircle size={20} color="var(--success-500)" variant="Bold" />}
+                {done && (
+                  <TickCircle
+                    className="ai-working-step__tick"
+                    size={20}
+                    color="var(--success-500)"
+                    variant="Bold"
+                  />
+                )}
                 {active && <SparkleIcon size={32} gradient />}
               </span>
               <span
                 className={`ai-working-step__text${active ? ' ai-working-step__text--active' : ''}`}
               >
                 {label}
-                {active && detail && <span className="ai-working-step__detail">{detail}</span>}
+                {active && detail && (
+                  /* Keyed on the text so a new one mounts rather than swapping in place:
+                     the same node changing its words is the jump cut. */
+                  <motion.span
+                    className="ai-working-step__detail"
+                    key={detail}
+                    layout="position"
+                    {...ARRIVE(reduce)}
+                    transition={arriveTransition(reduce)}
+                  >
+                    {detail}
+                  </motion.span>
+                )}
               </span>
-            </div>
+            </motion.div>
           )
         })}
       </div>

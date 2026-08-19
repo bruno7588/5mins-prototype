@@ -14,6 +14,18 @@
   gap: var(--space-s);
 }
 
+/* The rows and the detail line arrive through Framer (see arrive.ts) — they have to carry
+   `layout` as well as an entrance, and a keyframe cannot. The tick is a plain swap inside
+   a row that is already in place, so it stays here. */
+.ai-working-step__tick {
+  animation: ai-working-arrive 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes ai-working-arrive {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
 /* Top-aligned, not centred: the running step carries a second line under it, and an icon
    floating between the two belongs to neither. It marks the step, so it sits on the
    step's own line. */
@@ -81,12 +93,15 @@
   transform-origin: center;
 }
 
+/* Slow: it runs the whole time, while everything else in the wait arrives in under half
+   a second. At the old pace the two read as one busy surface — this one breathes under
+   the rest rather than competing with it. */
 .ai-working-step__icon--active .sparkle-icon__big {
-  animation: ai-sparkle-big 1.8s ease-in-out infinite;
+  animation: ai-sparkle-big 3.2s ease-in-out infinite;
 }
 
 .ai-working-step__icon--active .sparkle-icon__small {
-  animation: ai-sparkle-small 1.8s ease-in-out infinite;
+  animation: ai-sparkle-small 3.2s ease-in-out infinite;
 }
 
 @keyframes ai-sparkle-big {
@@ -100,6 +115,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .ai-working-step__tick {
+    animation: none;
+  }
+
   /* Still marked as the running step by its icon and its weight — the motion is what
      goes, not the meaning. */
   .ai-working-step__icon--active .sparkle-icon__big,

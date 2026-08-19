@@ -146,7 +146,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
-  animation: gen-drawer-arrive 320ms ease;
 }
 
 .gen-drawer__live-label {
@@ -220,8 +219,6 @@
   background: var(--cards-background);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-card);
-  /* Each card drops in as it starts being written. */
-  animation: gen-drawer-arrive 320ms ease;
 }
 
 .gen-drawer__live-format {
@@ -238,18 +235,9 @@
   color: var(--text-primary);
 }
 
-@keyframes gen-drawer-arrive {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  /* The content still arrives pass by pass — only the movement goes. */
-  .gen-drawer__live-field,
-  .gen-drawer__live-question {
-    animation: none;
-  }
-
+  /* The fields and cards drop their movement in arrive.ts; what is left here is the
+     shimmer and the write-head. */
   .is-writing::after,
   .gen-drawer__caret {
     display: none;
