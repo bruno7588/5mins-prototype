@@ -31,11 +31,11 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
 
   return (
     <div className="iq-drawer__field">
-      <span className="iq-drawer__label">Categories</span>
+      <span className="iq-drawer__label">Category</span>
       <div
         className="iq-drawer__categories"
         role="group"
-        aria-label="Categories"
+        aria-label="Category"
       >
         {categories.map((category, index) => {
           const own = items.filter((i) => i.b === category.id)
@@ -83,6 +83,7 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
               {/* The indent alone left it to the reader to infer that these
                   belong to the category above; the arrow says it. */}
               <div className="iq-drawer__category-items">
+                <span className="iq-drawer__label iq-drawer__label--concepts">Concepts</span>
                 {own.map((item, i) => {
                   const itemConflict = conflictFor(conflicts, 'items', item.a)
                   return (

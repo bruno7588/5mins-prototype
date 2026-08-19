@@ -269,6 +269,15 @@
   font-weight: 700;
 }
 
+/* A group holding the open row: Bold, so you can see which group the selection is in,
+   but not amber — the amber says "this is the thing you are looking at", and that is the
+   row below, not the group above it. */
+.add-content-icon-strip__item--holds-active,
+.add-content-icon-strip__item--holds-active .add-content-icon-strip__label {
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
 .add-content-icon-strip__item:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: -2px;

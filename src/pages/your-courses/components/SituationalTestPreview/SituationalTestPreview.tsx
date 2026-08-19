@@ -82,10 +82,12 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
               <>
                 <QuizHeader
                   label={typeLabel(question?.format ?? 'single-choice')}
-                  /* Attempts, not position — hearts belong to a real run, and this is a
-                     preview. The position lives under the phone. */
-                  used={1}
-                  total={3}
+                  /* Where you are in the test. The badge counts attempts in a real run,
+                     but a walkthrough has no attempts — and a fixed 1/3 beside seven
+                     questions reads as a question count that disagrees with itself.
+                     Hearts stay off, so nothing else on screen claims otherwise. */
+                  used={screen}
+                  total={questions.length}
                   showHearts={false}
                   onClose={onClose}
                 />
@@ -97,14 +99,12 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
       </div>
 
       {/* The walkthrough's own controls, outside the phone: paging between questions is
-          the admin's business, not something the learner would have. */}
+          the admin's business, not something the learner would have. The position is in
+          the phone's header, so it isn't repeated here. */}
       <div className="st-preview__nav">
         <Button variant="outlined" disabled={onBrief} onClick={() => setScreen((s) => s - 1)}>
           Back
         </Button>
-        <span className="st-preview__counter">
-          {onBrief ? 'Brief' : `Question ${screen} of ${questions.length}`}
-        </span>
         <Button disabled={last} onClick={() => setScreen((s) => s + 1)}>
           Next
         </Button>

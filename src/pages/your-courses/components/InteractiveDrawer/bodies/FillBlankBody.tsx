@@ -91,9 +91,12 @@ function FillBlankBody({ draft, onChange, readOnly = false }: BodyProps<FillBlan
           <span className="iq-drawer__label" id="iq-fb-marker-label">
             Words to blank
           </span>
-          <span className="iq-drawer__label-sub" id="iq-fb-marker-hint">
-            Click a word to blank it. Click it again to put it back.
-          </span>
+          {/* How to mark a gap, which is only worth saying to someone who can. */}
+          {!readOnly && (
+            <span className="iq-drawer__label-sub" id="iq-fb-marker-hint">
+              Click a word to blank it. Click it again to put it back.
+            </span>
+          )}
 
           {/* Both the control and the read-back: what is amber here is what
               reaches the learner as a gap. */}
@@ -101,7 +104,7 @@ function FillBlankBody({ draft, onChange, readOnly = false }: BodyProps<FillBlan
             className="iq-drawer__marker"
             role="group"
             aria-labelledby="iq-fb-marker-label"
-            aria-describedby="iq-fb-marker-hint"
+            aria-describedby={readOnly ? undefined : 'iq-fb-marker-hint'}
           >
             {tokens.map((token, i) => {
               if (!token.isWord) return <span key={i}>{token.text}</span>
@@ -152,15 +155,18 @@ function FillBlankBody({ draft, onChange, readOnly = false }: BodyProps<FillBlan
       <div className="iq-drawer__field">
         <span className="iq-drawer__label">Wrong words</span>
         {/* Secondary line on the label, like "Words to blank" above — it explains
-            the field, so it belongs before the rows rather than after them. */}
-        <span className="iq-drawer__label-sub" id="iq-fb-wrong-hint">
-          These join the answers in the word bank. Two or three make the question worth asking.
-        </span>
+            the field, so it belongs before the rows rather than after them. Advice on
+            how many to write, so it goes with the writing. */}
+        {!readOnly && (
+          <span className="iq-drawer__label-sub" id="iq-fb-wrong-hint">
+            These join the answers in the word bank. Two or three make the question worth asking.
+          </span>
+        )}
         <div
           className="iq-drawer__rows"
           role="group"
           aria-label="Wrong words"
-          aria-describedby="iq-fb-wrong-hint"
+          aria-describedby={readOnly ? undefined : 'iq-fb-wrong-hint'}
         >
           {draft.distractors.map((distractor, index) => {
             /* The clash is with a word in the sentence, so only the wrong word

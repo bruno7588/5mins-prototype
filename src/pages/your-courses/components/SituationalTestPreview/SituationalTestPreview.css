@@ -124,18 +124,8 @@
 .st-preview__nav {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-m);
   width: 375px; /* the phone's width, so the controls sit under its edges */
 }
 
-/* Between the two controls, so the position reads as part of the pair rather than a
-   caption to one of them. */
-.st-preview__counter {
-  flex: 1;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}

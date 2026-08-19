@@ -1,10 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Add, ArrowDown2, ArrowLeft, ArrowUp2, Trash } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
+import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import Collapse from '@/components/Collapse/Collapse'
 import Radio from '@/components/Radio/Radio'
 import Tooltip from '@/components/Tooltip/Tooltip'
@@ -170,14 +171,6 @@ function SituationalTestDrawerContent({
     () => new Set(initial ? initial.questions.map((q) => q.id) : []),
   )
 
-  /* The brief field hugs two lines and grows with its content. Height has to be reset to
-     auto before reading scrollHeight, or the box can only ever get taller. Runs on `step`
-     too, since the textarea unmounts when the questions step is showing. */
-  const briefRef = useRef<HTMLTextAreaElement>(null)
-  useLayoutEffect(() => {
-    autoGrow(briefRef.current)
-  }, [brief, step])
-
   /* The draft as the learner would meet it. Review only — an admin approving prose they
      did not write is the one place where seeing it played back is worth a screen. */
   const [previewing, setPreviewing] = useState(false)
@@ -242,6 +235,15 @@ function SituationalTestDrawerContent({
     })
   }
 
+  /* Steps are for an order you have to go through: creating, you write the brief before
+     there are questions to write. Reviewing or editing, both halves already exist and
+     either may be the one you came to read — so they are two views of one object, and a
+     switcher is what that is (chips-switcher-tabs.md). */
+  const twoPane = !!review || isEdit
+  const [pane, setPane] = useState<'brief' | 'questions'>('brief')
+  const showBrief = twoPane ? pane === 'brief' : step === 1
+  const showQuestions = twoPane ? pane === 'questions' : step === 2
+
   const canContinue = titleFilled && briefFilled
   const canSave = questions.length > 0 && questions.every(questionIsComplete)
   /* The edit form commits every field at once, so it has to check both halves. On create
@@ -285,11 +287,9 @@ function SituationalTestDrawerContent({
            already says which object you are inside. The edit form names the object, since
            it is the whole test on one surface. */
         title={
-          review
-            ? step === 2 ? 'Review questions' : 'Review situational test'
-            : step === 2
-              ? isEdit ? 'Edit questions' : 'Add questions'
-              : isEdit ? 'Edit Situational Test' : 'Add Situational Test'
+          twoPane
+            ? review ? 'Review situational test' : 'Edit Situational Test'
+            : step === 2 ? 'Add questions' : 'Add Situational Test'
         }
         /* No description on the review: it said read this through and edit what you
            disagree with, which is what the surface visibly is — and it cost two lines
@@ -300,7 +300,7 @@ function SituationalTestDrawerContent({
         ctas={<CloseButton onClick={onClose} />}
         /* Step 2's route back to the title and brief (Figma 8998:55648, 9037:62042). */
         leading={
-          step === 2 ? (
+          !twoPane && step === 2 ? (
             <button
               type="button"
               className="st-drawer__back"
@@ -319,7 +319,21 @@ function SituationalTestDrawerContent({
           test, so this is a two-pane editor rather than a wizard, and the step counter is
           create-only (Figma 9037:61788 / 9037:62042). */}
       <div className="st-drawer__body">
-        {step === 1 ? (
+        {twoPane && (
+          /* The count rides the label: a segmented control has no counter slot, and the
+             page behind this drawer already has a tab bar for its own sections. */
+          <ContentSwitcher
+            className="st-drawer__panes"
+            ariaLabel="Situational test"
+            items={[
+              { key: 'brief', label: 'Brief' },
+              { key: 'questions', label: `Questions (${questions.length})` },
+            ]}
+            activeKey={pane}
+            onChange={(key) => setPane(key as 'brief' | 'questions')}
+          />
+        )}
+        {showBrief ? (
           <>
             {/* Scaffolding for the blank page, so it is create-only — on a written brief
                 it would push the fields the admin came for below the fold. */}
@@ -368,7 +382,10 @@ function SituationalTestDrawerContent({
                 Brief
               </label>
               <textarea
-                ref={briefRef}
+                /* Sized on mount and as it is typed into, like every other field here —
+                   the pane it lives in mounts when it is switched to, so a measurement
+                   tied to anything else arrives too late or not at all. */
+                ref={autoGrowRef}
                 id="st-brief"
                 className={`st-drawer__textarea${briefError ? ' st-drawer__textarea--error' : ''}`}
                 /* Hugs its content like every other field here; the two-line floor for
@@ -376,6 +393,7 @@ function SituationalTestDrawerContent({
                 rows={1}
                 placeholder="Describe a realistic situation the user might face, the complication they run into, and the decision you want them to make…"
                 value={brief}
+                onInput={(e) => autoGrow(e.currentTarget)}
                 onChange={(e) => setBrief(e.target.value)}
                 onBlur={() => setBriefBlurred(true)}
                 aria-invalid={briefError || undefined}
@@ -394,7 +412,7 @@ function SituationalTestDrawerContent({
           </>
         ) : null}
 
-        {step === 2 ? (
+        {showQuestions ? (
           <>
             {questions.map((question, index) => {
               const optionQuestion = isOptionQuestion(question)
@@ -646,18 +664,7 @@ function SituationalTestDrawerContent({
 
       <div className="st-drawer__footer">
         <div className="st-drawer__footer-actions">
-          {review && step === 1 ? (
-            /* Same pair as the edit path's first surface: commit, or go and read what
-               the commit would include. */
-            <>
-              <Button onClick={handleSave} disabled={!canSubmit}>
-                Save Situational Test
-              </Button>
-              <Button variant="outlined" onClick={handleContinue} disabled={!canContinue}>
-                Review Questions ({questions.length})
-              </Button>
-            </>
-          ) : review ? (
+          {review ? (
             /* Both actions sit together on the left: one adds this draft to the course,
                the other throws it away and asks for another. They are alternatives to
                each other, so they read as a pair rather than as opposite ends of a bar.
@@ -678,21 +685,12 @@ function SituationalTestDrawerContent({
                 Generate Again
               </Button>
             </>
-          ) : isEdit && step === 1 ? (
-            <>
-              {/* Filled = commit, outlined = navigate: the two buttons differ in kind, so
-                  weight is what says which is which. Both surfaces save the same whole
-                  test under the same label — Edit Questions carries the title and brief
-                  forward and step 2 commits them, so nothing typed here can be lost by
-                  going to look at the questions. */}
-              <Button onClick={handleSave} disabled={!canSubmit}>
-                {review ? 'Save Situational Test' : 'Update Situational Test'}
-              </Button>
-              {/* Names its destination and its size, so the jump is predictable. */}
-              <Button variant="outlined" onClick={handleContinue} disabled={!canContinue}>
-                Edit Questions ({questions.length})
-              </Button>
-            </>
+          ) : isEdit ? (
+            /* One commit for the whole test, whichever pane is showing — the switcher
+               moved the navigation out of the footer, so nothing here is a detour. */
+            <Button onClick={handleSave} disabled={!canSubmit}>
+              Update Situational Test
+            </Button>
           ) : step === 1 ? (
             /* Wrapped rather than conditionally rendered so the tooltip fires over the
                *disabled* button — handlers sit on Tooltip's own wrapper. The label names
@@ -714,18 +712,16 @@ function SituationalTestDrawerContent({
           ) : (
             /* Same label as step 1's commit — one action shouldn't have two names. */
             <Button onClick={handleSave} disabled={!canSubmit}>
-              {review
-                ? 'Save Situational Test'
-                : isEdit ? 'Update Situational Test' : 'Create Situational Test'}
+              Create Situational Test
             </Button>
           )}
         </div>
         {/* Create only. A counter implies a sequence you finish, and on the edit path
             either surface commits, so there is nothing to count down to. */}
-        {!isEdit && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
+        {!twoPane && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
         {/* Opposite the commit actions: the two on the left decide the draft's fate,
             this one only looks at it. */}
-        {review && step === 2 && (
+        {review && (
           <Button variant="outlined-2" onClick={() => setPreviewing(true)}>
             View
           </Button>

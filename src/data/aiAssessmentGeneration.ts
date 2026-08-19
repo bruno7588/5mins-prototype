@@ -317,10 +317,10 @@ const BEATS_BY_FORMAT: Partial<Record<GeneratableType, Beat[]>> = {
         type: 'match-pairs',
         prompt: 'Match each phrase to what it does in a difficult conversation.',
         pairs: [
-          { left: '"Help me understand…"', right: 'Opens up the reason' },
-          { left: '"What I heard was…"', right: 'Checks you got it right' },
-          { left: '"Here is what I can do"', right: 'Sets the boundary' },
-          { left: '"Let me come back to you"', right: 'Buys time honestly' },
+          { left: 'Help me understand…', right: 'Opens up the reason' },
+          { left: 'What I heard was…', right: 'Checks you got it right' },
+          { left: 'Here is what I can do', right: 'Sets the boundary' },
+          { left: 'Let me come back to you', right: 'Buys time honestly' },
         ],
       },
     },
@@ -407,8 +407,8 @@ const BEATS_BY_FORMAT: Partial<Record<GeneratableType, Beat[]>> = {
       interactive: {
         type: 'fill-blank',
         prompt: 'Complete the rule you are working to.',
-        segments: ['Before acting you must always ', { blank: 'record the reason' }, ', and tell ', { blank: 'your manager' }, '.'],
-        bank: ['record the reason', 'your manager', 'wait 24 hours', 'the customer'],
+        segments: ['Before acting you must always record the ', { blank: 'reason' }, ', and tell your ', { blank: 'manager' }, '.'],
+        bank: ['reason', 'manager', 'deadline', 'customer'],
       },
     },
     {
@@ -418,8 +418,8 @@ const BEATS_BY_FORMAT: Partial<Record<GeneratableType, Beat[]>> = {
       interactive: {
         type: 'fill-blank',
         prompt: 'Finish the escalation rule.',
-        segments: ['If a customer alleges ', { blank: 'a data breach' }, ', you escalate it ', { blank: 'the same day' }, '.'],
-        bank: ['a data breach', 'the same day', 'a late delivery', 'within a month'],
+        segments: ['If a customer alleges a data ', { blank: 'breach' }, ', you escalate it the same ', { blank: 'day' }, '.'],
+        bank: ['breach', 'day', 'delay', 'month'],
       },
     },
     {

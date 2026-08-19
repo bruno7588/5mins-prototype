@@ -374,6 +374,11 @@
   min-width: 0;
 }
 
+/* Lines up with the concepts it heads, not with the arrows pointing at them. */
+.iq-drawer__label--concepts {
+  margin-left: calc(20px + var(--space-s));
+}
+
 /* Lines the button up with the inputs rather than the arrows. */
 .iq-drawer__category-items > .ds-btn {
   margin-left: calc(20px + var(--space-s));
@@ -517,18 +522,21 @@
 
 /* ===== Read-only (the AI review approves a draft, it doesn't author one) =====
 
-   A field you cannot type in shouldn't dress like one you can: the outline goes and
-   the fill comes in, which is how the DS marks a value being shown rather than
-   collected (input.md § states). The row owns the border, so the row is what changes;
-   :has() reads the state off the field itself, so nothing has to remember to pass a
-   second class alongside readOnly. */
+   Filled, and it keeps its hairline. The fill alone can't carry the field: --input-background
+   is a neutral tint that flips with the mode, so over --cards-background it lands within a
+   point of the card in dark and the field disappears. The border is the part that reads on
+   both grounds; the fill is what says the value is shown rather than collected (input.md §
+   states), and hover/focus stay put because neither leads anywhere.
+
+   :has() reads the state off the field itself, so nothing has to remember to pass a second
+   class alongside readOnly. */
 .iq-drawer__row:has(> .iq-drawer__row-input[readonly]),
 .iq-drawer__row:has(> .iq-drawer__row-input[readonly]):hover,
 .iq-drawer__row:has(> .iq-drawer__row-input[readonly]):focus-within,
 .iq-drawer__textarea[readonly],
 .iq-drawer__textarea[readonly]:hover,
 .iq-drawer__textarea[readonly]:focus {
-  border-color: transparent;
+  border-color: var(--border);
   background: var(--input-background);
 }
 

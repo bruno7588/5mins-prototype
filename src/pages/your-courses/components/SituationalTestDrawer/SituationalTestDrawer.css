@@ -440,7 +440,9 @@
   font-size: 12px;
   font-weight: 500;
   line-height: 1.5;
-  color: var(--text-secondary);
+  /* Tertiary: it says what kind of question this is, which is a note on the heading
+     beside it rather than a second heading. */
+  color: var(--text-tertiary);
 }
 
 .st-drawer__structure-note {
@@ -453,15 +455,22 @@
 
 /* ===== Read-only fields on the review ===== */
 
-/* Same rule as the interactive bodies: no outline, filled instead, so a value being
-   shown never wears the chrome of a value being collected. The brief and the title are
-   left alone — those two stay the admin's to edit. */
+/* Same rule as the interactive bodies: filled and outlined, so the field reads on both
+   grounds while the fill says the value is shown rather than collected. The brief and the
+   title are left alone — those two stay the admin's to edit. */
 .st-drawer__input[readonly],
 .st-drawer__input[readonly]:hover,
 .st-drawer__input[readonly]:focus,
 .st-drawer__option-field:has(> .st-drawer__option-input[readonly]),
 .st-drawer__option-field:has(> .st-drawer__option-input[readonly]):hover,
 .st-drawer__option-field:has(> .st-drawer__option-input[readonly]):focus-within {
-  border-color: transparent;
+  border-color: var(--border);
   background: var(--input-background);
+}
+
+/* The two panes of a test that already exists. The body is a stretching column, so the
+   switcher has to opt out of it — segments size to their labels (the DS default) rather
+   than stretching a two-item control across 720px. */
+.st-drawer__panes {
+  align-self: flex-start;
 }

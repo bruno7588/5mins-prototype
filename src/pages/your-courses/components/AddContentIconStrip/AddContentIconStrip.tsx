@@ -272,7 +272,7 @@ function AddContentIconStrip({
         <>
           <button
             type="button"
-            className={`add-content-icon-strip__item${situationalSelected ? ' add-content-icon-strip__item--active' : ''}`}
+            className={`add-content-icon-strip__item${situationalSelected ? ' add-content-icon-strip__item--holds-active' : ''}`}
             onClick={() => setSituationalOpen((v) => !v)}
             aria-expanded={situationalOpen}
           >
@@ -331,7 +331,7 @@ function AddContentIconStrip({
         <>
           <button
             type="button"
-            className={`add-content-icon-strip__item${assessmentsSelected ? ' add-content-icon-strip__item--active' : ''}`}
+            className={`add-content-icon-strip__item${assessmentsSelected ? ' add-content-icon-strip__item--holds-active' : ''}`}
             onClick={() => setAssessmentsOpen((v) => !v)}
             aria-expanded={assessmentsOpen}
           >
