@@ -14,6 +14,16 @@ export type FeedbackStatus = 'idle' | 'correct' | 'incorrect'
  */
 export const QuizFooterLayoutContext = createContext<'fill' | 'hug'>('fill')
 
+/**
+ * What Continue does, when the host has somewhere to send the learner.
+ *
+ * On its own a format has nowhere to go, so Continue resets it for another attempt. A
+ * host running several questions in a row does have somewhere — the next one — and it
+ * says so here rather than through five formats that have no stake in the decision, the
+ * same reason the layout above is a context.
+ */
+export const QuizAdvanceContext = createContext<(() => void) | null>(null)
+
 interface FeedbackFooterProps {
   status: FeedbackStatus
   /** Show the Check button in the idle state (false for instant formats). */
@@ -40,6 +50,7 @@ function FeedbackFooter({
   continueLabel = 'Continue',
 }: FeedbackFooterProps) {
   const layout = useContext(QuizFooterLayoutContext)
+  const advance = useContext(QuizAdvanceContext)
   const footerClass = `ql-footer${layout === 'hug' ? ' ql-footer--hug' : ''}`
   const size = layout === 'hug' ? 'md' : 'lg'
 
@@ -57,7 +68,7 @@ function FeedbackFooter({
   const correct = status === 'correct'
   return (
     <div className={footerClass}>
-      <Button semantic={correct ? 'success' : 'danger'} size={size} onClick={onContinue}>
+      <Button semantic={correct ? 'success' : 'danger'} size={size} onClick={advance ?? onContinue}>
         {continueLabel}
       </Button>
     </div>

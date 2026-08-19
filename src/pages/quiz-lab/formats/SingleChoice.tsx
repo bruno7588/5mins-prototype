@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import type { SingleChoiceQuestion } from '../quizData'
-import FeedbackFooter from '../components/FeedbackFooter'
+import FeedbackFooter, { QuizAdvanceContext } from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
@@ -20,6 +20,9 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
   const [status, setStatus] = useState<FeedbackStatus>('idle')
   const [announce, setAnnounce] = useState('')
 
+  /* A poll's one button is its Continue, and it lives in the idle state — so it has to
+     read the host's next itself, where the graded formats get it from the footer. */
+  const advance = useContext(QuizAdvanceContext)
   const graded = question.correctIndex >= 0
   const locked = status !== 'idle'
 
@@ -103,8 +106,8 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
           status="idle"
           checkLabel="Continue"
           checkDisabled={picked === null}
-          onCheck={reset}
-          onContinue={reset}
+          onCheck={advance ?? reset}
+          onContinue={advance ?? reset}
         />
       )}
     </div>

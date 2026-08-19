@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import type { FreeTextQuestion } from '../quizData'
-import FeedbackFooter from '../components/FeedbackFooter'
+import FeedbackFooter, { QuizAdvanceContext } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
 /**
@@ -9,13 +9,20 @@ import { cue } from '../quizSound'
  * on rather than pretending to mark it.
  */
 function FreeText({ question }: { question: FreeTextQuestion }) {
+  const advance = useContext(QuizAdvanceContext)
   const [attempt, setAttempt] = useState(0)
   const [answer, setAnswer] = useState('')
 
   function submit() {
+    cue('continue')
+    if (advance) {
+      advance()
+      return
+    }
+    /* Nowhere to go: clear the field for another go rather than sitting on a submitted
+       answer with no way forward. */
     setAnswer('')
     setAttempt((a) => a + 1)
-    cue('continue')
   }
 
   return (

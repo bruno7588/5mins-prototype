@@ -4,6 +4,7 @@ import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Button from '@/components/Button/Button'
 import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import QuizHeader from '@/pages/quiz-lab/components/QuizHeader'
+import { QuizAdvanceContext } from '@/pages/quiz-lab/components/FeedbackFooter'
 import MatchPairsPartial from '@/pages/quiz-lab/formats/MatchPairsPartial'
 import FillBlank from '@/pages/quiz-lab/formats/FillBlank'
 import Categorization from '@/pages/quiz-lab/formats/Categorization'
@@ -93,7 +94,14 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
                   showHearts={false}
                   onClose={onClose}
                 />
-                <QuestionScreen question={question as SituationalQuestion} />
+                {/* Continue is the learner's way on, so in a walkthrough it goes to the
+                    next question rather than resetting this one. On the last there is
+                    nowhere to go, so the format keeps its own retry. */}
+                <QuizAdvanceContext.Provider
+                  value={last ? null : () => setScreen((s) => s + 1)}
+                >
+                  <QuestionScreen question={question as SituationalQuestion} />
+                </QuizAdvanceContext.Provider>
               </>
             )}
           </div>

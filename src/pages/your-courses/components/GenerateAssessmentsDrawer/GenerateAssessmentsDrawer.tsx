@@ -144,6 +144,16 @@ function GenerateAssessmentsDrawer({
         <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
         <div className="gen-drawer__body">
           <AIWorkingCard steps={generating.steps} activeStep={generating.activeStep} />
+          {/* The shape of what is coming, in the place it will land: a title, a brief and
+              the question cards under them. Decorative — the steps above are what a
+              screen reader hears — so it is hidden from the tree rather than described. */}
+          <div className="gen-drawer__skeleton" aria-hidden="true">
+            <span className="gen-drawer__skeleton-title" />
+            <span className="gen-drawer__skeleton-brief" />
+            <span className="gen-drawer__skeleton-card" />
+            <span className="gen-drawer__skeleton-card" />
+            <span className="gen-drawer__skeleton-card" />
+          </div>
         </div>
       </>
     )
