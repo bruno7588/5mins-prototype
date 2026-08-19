@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Add, ArrowDown2, ArrowLeft, ArrowUp2, Trash } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
+import SparkleIcon from '@/components/icons/SparkleIcon'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
@@ -110,13 +111,24 @@ interface Props {
   onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void
   /** Lets the page guard the close paths while there is unsaved work. */
   onDirtyChange?: (dirty: boolean) => void
+  /**
+   * AI review (DES-279): the same two-pane editor, holding a generated draft that
+   * hasn't been added to the course yet. Nothing about the form changes — the admin
+   * reads and edits it exactly as they would their own — only what the surface calls
+   * itself, and the extra way out: ask for a different draft.
+   */
+  review?: { onGenerateAgain: () => void }
 }
 
 /* Situational test authoring, PRD DES-276. Two steps inside one drawer: the brief sets
    the scene, then the multiple-choice questions that judge it. The brief is mandatory
    before questions — deliberate friction so it exists before the questions that depend
    on it. */
-function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirtyChange }: Props) {
+function SituationalTestDrawerContent({
+  initial = null, onClose, onSave, onDirtyChange, review,
+}: Props) {
+  /* A review carries a draft, so it takes the two-pane editor rather than the
+     create wizard — there is nothing to gate when the fields arrive filled in. */
   const isEdit = !!initial
   /* Only the create path is stepped — see the note on the body below. */
   const [step, setStep] = useState<1 | 2>(1)
@@ -248,12 +260,18 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
            already says which object you are inside. The edit form names the object, since
            it is the whole test on one surface. */
         title={
-          step === 2
-            ? isEdit ? 'Edit questions' : 'Add questions'
-            : isEdit ? 'Edit Situational Test' : 'Add Situational Test'
+          review
+            ? step === 2 ? 'Review questions' : 'Review situational test'
+            : step === 2
+              ? isEdit ? 'Edit questions' : 'Add questions'
+              : isEdit ? 'Edit Situational Test' : 'Add Situational Test'
         }
         description={
-          !isEdit && step === 1 ? 'Write the brief users will be tested on' : undefined
+          review && step === 1
+            ? "Written from your lessons. Read it through — edit anything you'd say differently — then save it to the course."
+            : !isEdit && step === 1
+              ? 'Write the brief users will be tested on'
+              : undefined
         }
         ctas={<CloseButton onClick={onClose} />}
         /* Step 2's route back to the title and brief (Figma 8998:55648, 9037:62042). */
@@ -570,7 +588,7 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
                   forward and step 2 commits them, so nothing typed here can be lost by
                   going to look at the questions. */}
               <Button onClick={handleSave} disabled={!canSubmit}>
-                Update Situational Test
+                {review ? 'Save Situational Test' : 'Update Situational Test'}
               </Button>
               {/* Names its destination and its size, so the jump is predictable. */}
               <Button variant="outlined" onClick={handleContinue} disabled={!canContinue}>
@@ -598,13 +616,27 @@ function SituationalTestDrawerContent({ initial = null, onClose, onSave, onDirty
           ) : (
             /* Same label as step 1's commit — one action shouldn't have two names. */
             <Button onClick={handleSave} disabled={!canSubmit}>
-              {isEdit ? 'Update Situational Test' : 'Create Situational Test'}
+              {review
+                ? 'Save Situational Test'
+                : isEdit ? 'Update Situational Test' : 'Create Situational Test'}
             </Button>
           )}
         </div>
         {/* Create only. A counter implies a sequence you finish, and on the edit path
             either surface commits, so there is nothing to count down to. */}
         {!isEdit && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
+        {/* Sits opposite the commit actions, in the space the step counter would take:
+            the two on the left add this draft to the course, this one throws it away
+            and asks for another. */}
+        {review && (
+          <Button
+            variant="outlined-2"
+            icon={<SparkleIcon size={20} color="currentColor" />}
+            onClick={review.onGenerateAgain}
+          >
+            Generate Again
+          </Button>
+        )}
       </div>
     </>
   )

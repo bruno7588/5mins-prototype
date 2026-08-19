@@ -308,6 +308,12 @@
 .curriculum-section__body {
   grid-column: 2;
   grid-row: 2;
+  /* Grid items default to min-width: auto, so a card whose title can't fit pushes
+     this track — and every row in it — past the 900px column. The title already
+     truncates; without this it never gets the chance to, because the row it sits in
+     keeps growing instead. Generated questions are long enough to hit this every
+     time, but a long hand-written one always could. */
+  min-width: 0;
 }
 
 /* Chromeless: the only-default-section state. No drag column, no header, no
@@ -1015,3 +1021,27 @@
   text-align: center;
   max-width: 320px;
 }
+
+/* ===== AI-generated assessments (DES-279) ===== */
+
+/* Confirming "Regenerate all" inverts the outline's focus: the rows that would be
+   replaced stay lit and everything else pulls back, so the blast radius is read
+   from the outline rather than counted in a sentence. */
+.content-item-container--receded {
+  opacity: 0.32;
+  transition: opacity 200ms ease;
+}
+
+.content-item-container--doomed {
+  background: var(--input-background-hover);
+  box-shadow: 0 0 0 1px var(--selected);
+  transition: box-shadow 200ms ease, background-color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-item-container--receded,
+  .content-item-container--doomed {
+    transition: none;
+  }
+}
+

@@ -1,0 +1,94 @@
+/* AI assessment generation (DES-279). Hosted in the shared ContentDrawer shell,
+   which owns the panel, its padding and the slide — this file styles the form
+   only. Chrome deliberately matches InteractiveDrawer.css so the drawers read as
+   one family; classes are prefixed .gen-drawer__ because CSS is bundled globally. */
+
+.generate-drawer-shell .section-header {
+  padding-bottom: var(--space-sm);
+}
+
+.gen-drawer__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  overflow-y: auto;
+}
+
+.gen-drawer__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.gen-drawer__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.gen-drawer__helper {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.gen-drawer__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  padding-top: var(--space-xs);
+}
+
+.gen-drawer__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ===== Zero-transcript state (FR-05) =====
+   empty-state.md: illustration, title, ≤600px description, CTA — no border and no
+   fill, so it sits in the drawer rather than becoming a card inside it. */
+
+.gen-drawer__body--empty {
+  justify-content: center;
+}
+
+.gen-drawer__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-m);
+  padding: var(--space-xl) 0;
+}
+
+.gen-drawer__empty-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-width: 600px;
+}
+
+.gen-drawer__empty-title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.gen-drawer__empty-body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}

@@ -265,6 +265,13 @@
   font-weight: 700;
 }
 
+/* The label sets its own 400, which outranks the weight inherited from the button —
+   so the expanded panel's selected row stayed regular while the collapsed rail's
+   tooltip label went bold. Restate it here, as the open Assessments group does. */
+.add-content-icon-strip__item--active .add-content-icon-strip__label {
+  font-weight: 700;
+}
+
 .add-content-icon-strip__item:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: -2px;
@@ -280,4 +287,22 @@
   .add-content-icon-strip--expanded .add-content-icon-strip__label {
     transition: none;
   }
+}
+
+/* ===== AI rows (DES-279) =====
+   Selected, these take the AI gradient rather than the rail's amber, so the label
+   agrees with the sparkle beside it. The gradient stops match SparkleIcon's exactly.
+   Clipped to the label span, never the button — the button's background is its
+   hover fill, and background-clip: text would eat it. */
+.add-content-icon-strip__subitem--ai.add-content-icon-strip__subitem--selected,
+.add-content-icon-strip__subitem--ai.add-content-icon-strip__subitem--selected:hover {
+  color: var(--text-primary);
+}
+
+.add-content-icon-strip__subitem--ai.add-content-icon-strip__subitem--selected
+  .add-content-icon-strip__sublabel {
+  background: linear-gradient(135deg, var(--text-button-outlined), var(--blaze-quiz));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

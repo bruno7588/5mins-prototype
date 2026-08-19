@@ -48,6 +48,33 @@
   color: var(--neutral-25);
 }
 
+/* Undo and friends. The container is click-through, so the button re-enables
+   pointer events for itself only — the pill stays out of the way otherwise.
+   Underlined rather than filled: it borrows the pill's colour, and a second
+   filled shape inside a solid pill reads as a button on a button. */
+.toast__action {
+  pointer-events: auto;
+  margin-left: var(--space-xs);
+  padding: 0;
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.toast__action:hover {
+  opacity: 0.8;
+}
+
+.toast__action:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 .toast--fading {
   animation: toast-slide-out 300ms ease forwards;
 }

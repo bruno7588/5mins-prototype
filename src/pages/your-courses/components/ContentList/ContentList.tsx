@@ -3,6 +3,8 @@ import Button from '@/components/Button/Button'
 import { Add, ClipboardText, Clock, Edit2, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
 import { assessmentTypeFromLabel, getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import AssessmentIcon from '../../../../components/icons/AssessmentIcon'
+import SparkleIcon from '@/components/icons/SparkleIcon'
+import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import Badge from '../../../../components/Badge/Badge'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
@@ -66,6 +68,10 @@ export interface ContentItem {
   metadata: string
   thumbnail: string
   thumbColor?: string
+  /* Where the item came from (DES-279). Absent means authored by hand — the AI
+     badge, the per-item regenerate action and the blast radius of "Regenerate
+     all" all read from this one field. */
+  source?: 'manual' | 'ai'
 }
 
 /* Sections-only model — every item lives in a section. A default "Section 1" is auto-created
@@ -138,6 +144,12 @@ interface ContentCardProps {
   item: ContentItem
   onDelete?: () => void
   onEdit?: () => void
+  /** FR-09a — redraft just this one. Only passed for AI-generated items. */
+  onRegenerate?: () => void
+  /** Dimmed because something else on the outline is about to be replaced. */
+  receded?: boolean
+  /** Highlighted as part of that blast radius. */
+  doomed?: boolean
   isDragging: boolean
   dropAbove: boolean
   dropBelow: boolean
@@ -146,6 +158,18 @@ interface ContentCardProps {
   onDragEnd: () => void
   onDrop: () => void
 }
+
+/**
+ * Whether the row opens for editing — i.e. whether it carries a pencil beside its
+ * title (Figma 9144:24479).
+ *
+ * A situational test has a stored title, brief and questions whether it was written
+ * by hand or generated, so both open. A generated question format has no payload
+ * behind its card yet, so a pencil there would open an empty drawer — the way into
+ * changing one is still Delete & Regenerate.
+ */
+const canEdit = (item: ContentItem) =>
+  item.type === 'SituationalTest' || (item.type === 'Assessment' && item.source !== 'ai')
 
 const REMOVE_LABEL: Record<ContentItem['type'], string> = {
   Lesson: 'Remove lesson',
@@ -156,7 +180,8 @@ const REMOVE_LABEL: Record<ContentItem['type'], string> = {
 }
 
 function ContentCard({
-  item, onDelete, onEdit, isDragging, dropAbove, dropBelow,
+  item, onDelete, onEdit, onRegenerate, receded = false, doomed = false,
+  isDragging, dropAbove, dropBelow,
   onDragStart, onDragOver, onDragEnd, onDrop,
 }: ContentCardProps) {
   const badgeLabel =
@@ -164,11 +189,14 @@ function ContentCard({
     : item.type === 'SituationalTest' ? 'Situational Test'
     : item.type
   const removeLabel = REMOVE_LABEL[item.type]
+  const isAI = item.source === 'ai'
   const containerClass = [
     'content-item-container',
     isDragging && 'content-item-container--dragging',
     dropAbove && 'content-item-container--drop-above',
     dropBelow && 'content-item-container--drop-below',
+    receded && 'content-item-container--receded',
+    doomed && 'content-item-container--doomed',
   ].filter(Boolean).join(' ')
 
   return (
@@ -218,16 +246,40 @@ function ContentCard({
           </div>
         </div>
       </div>
-      <Tooltip text={removeLabel} position="Top" alignment="End" icon={false} className="content-card-trash-tooltip">
-        <button
-          type="button"
-          className="content-card-trash"
-          aria-label={removeLabel}
-          onClick={onDelete}
-        >
-          <Trash size={20} color="currentColor" variant="Linear" />
-        </button>
-      </Tooltip>
+      {/* A generated row has two ways out — bin it, or ask for a different draft —
+          so its trailing control becomes a menu. Hand-authored rows keep the single
+          trash they've always had rather than gaining a menu of one. */}
+      {isAI && onRegenerate ? (
+        <RowActionsMenu
+          ariaLabel={`Actions for ${item.title}`}
+          items={[
+            {
+              key: 'regenerate',
+              label: 'Delete & Regenerate',
+              icon: <SparkleIcon size={20} gradient />,
+            },
+            {
+              key: 'delete',
+              label: 'Delete',
+              icon: <Trash size={20} color="currentColor" variant="Linear" />,
+              danger: true,
+            },
+          ]}
+          onSelect={(key) => (key === 'regenerate' ? onRegenerate() : onDelete?.())}
+          triggerClassName="content-card-trash"
+        />
+      ) : (
+        <Tooltip text={removeLabel} position="Top" alignment="End" icon={false} className="content-card-trash-tooltip">
+          <button
+            type="button"
+            className="content-card-trash"
+            aria-label={removeLabel}
+            onClick={onDelete}
+          >
+            <Trash size={20} color="currentColor" variant="Linear" />
+          </button>
+        </Tooltip>
+      )}
     </div>
   )
 }
@@ -247,6 +299,16 @@ interface ContentListProps {
   /** Emits the outline whenever it changes, so the builder can preview it.
       Sections and their order live in here, not in the parent. */
   onOutlineChange?: (sections: OutlineSection[]) => void
+  /* --- AI generation (DES-279) --- */
+  /** Puts a deleted item back in extras. Paired with the undo toast, which restores
+      the outline position this component holds. */
+  onRestoreExtra?: (item: ContentItem) => void
+  /** FR-09a — redraft one generated assessment in place. */
+  onRegenerateExtra?: (item: ContentItem) => void
+  /** FR-09b — a full regeneration is being confirmed, so the outline shows what it
+      would take: generated rows of this card type lit, everything else pulled back.
+      Null when nothing is being confirmed. */
+  highlightGenerated?: ContentItem['type'] | null
 }
 
 /** Resolved outline handed to the parent — items inlined, not keys. */
@@ -264,6 +326,9 @@ function ContentList({
   targetSectionId,
   drawerOpen = false,
   onOutlineChange,
+  onRestoreExtra,
+  onRegenerateExtra,
+  highlightGenerated = null,
 }: ContentListProps) {
   const [itemsByKey, setItemsByKey] = useState<Record<string, ContentItem>>({})
   const [sections, setSections] = useState<Section[]>(() => [makeDefaultSection()])
@@ -281,7 +346,13 @@ function ContentList({
 
   const [autoRenameSectionId, setAutoRenameSectionId] = useState<string | null>(null)
 
-  const { toasts, show: showToast } = useToast()
+  /* In the blast radius of the regeneration being confirmed: generated, and of the
+     card type the open scope produces. A generated situational test is not touched by
+     regenerating assessments, so it recedes with everything else rather than lighting. */
+  const isDoomed = (item: ContentItem) =>
+    !!highlightGenerated && item.source === 'ai' && item.type === highlightGenerated
+
+  const { toasts, show: showToast, dismiss: dismissToast } = useToast()
   const prevExtraRef = useRef<string>(extraItems.map(itemKey).join(','))
 
   // Sync extraItems into sections. New items go to targetSectionId if set; otherwise the first section.
@@ -298,23 +369,23 @@ function ContentList({
     for (const s of sections) s.itemKeys.forEach((k) => existingKeys.add(k))
     const newKeys = extraItems.map(itemKey).filter((k) => !existingKeys.has(k))
 
-    // SCORM, Library lessons and situational tests are extras-managed — drop them when
-    // they leave extras.
+    // Everything the builder adds is extras-managed — drop it when it leaves extras.
+    // Assessments were exempt, which was invisible while they only ever left one at a
+    // time (the row removes itself locally on delete). "Regenerate all" clears them in
+    // one go from the parent, and the exempted rows stayed on the outline while a fresh
+    // set landed underneath. Only `Lesson` is not extras-managed.
     const shouldKeep = (k: string) => {
-      if (k.startsWith('SCORM-') || k.startsWith('LibraryLesson-') || k.startsWith('SituationalTest-')) {
-        return extraSet.has(k)
-      }
-      return true
+      if (k.startsWith('Lesson-')) return true
+      return extraSet.has(k)
     }
 
     setItemsByKey((prev) => {
       const next: Record<string, ContentItem> = { ...prev }
       for (const it of extraItems) next[itemKey(it)] = it
       for (const k of Object.keys(next)) {
-        const t = next[k]?.type
-        if ((t === 'SCORM' || t === 'LibraryLesson' || t === 'SituationalTest') && !extraSet.has(k)) {
-          delete next[k]
-        }
+        /* Same rule as shouldKeep — the two run over the same items, so a divergence
+           here leaves an orphan in the lookup that no section points at. */
+        if (!shouldKeep(k)) delete next[k]
       }
       return next
     })
@@ -436,8 +507,13 @@ function ContentList({
     }
   }
 
-  const deleteItem = (key: string) => {
+  /* Removal, and everything needed to put it back exactly where it was. The
+     section and index live here rather than in the parent, so restoring from the
+     parent's list alone would drop the row at the end of a section. */
+  const removeItem = (key: string) => {
     const item = itemsByKey[key]
+    const section = sections.find((s) => s.itemKeys.includes(key))
+    const index = section ? section.itemKeys.indexOf(key) : -1
     if (item && item.type !== 'Lesson') {
       onDeleteExtra?.(item.id)
     }
@@ -446,6 +522,38 @@ function ContentList({
       const next = { ...prev }
       delete next[key]
       return next
+    })
+    return item && section ? { key, item, sectionId: section.id, index } : null
+  }
+
+  const deleteItem = (key: string) => {
+    const removed = removeItem(key)
+    if (!removed || removed.item.source !== 'ai') return
+
+    /* FR-08: generated assessments are deleted outright, and the way back is the
+       toast rather than a dialog in front of every row. Restoring locally as well
+       as in extras means the row returns to its own place in its own section —
+       the sync effect then sees the key already present and leaves it alone. */
+    showToast('success', 'Assessment deleted', {
+      label: 'Undo',
+      onClick: () => {
+        setItemsByKey((prev) => ({ ...prev, [removed.key]: removed.item }))
+        setSections((prev) =>
+          prev.map((s) =>
+            s.id === removed.sectionId
+              ? {
+                  ...s,
+                  itemKeys: [
+                    ...s.itemKeys.slice(0, removed.index),
+                    removed.key,
+                    ...s.itemKeys.slice(removed.index),
+                  ],
+                }
+              : s,
+          ),
+        )
+        onRestoreExtra?.(removed.item)
+      },
     })
   }
 
@@ -757,11 +865,15 @@ function ContentList({
                           item={item}
                           onDelete={() => deleteItem(key)}
                           onEdit={
-                            onEditExtra &&
-                            (item.type === 'SituationalTest' || item.type === 'Assessment')
-                              ? () => onEditExtra(item)
+                            onEditExtra && canEdit(item) ? () => onEditExtra(item) : undefined
+                          }
+                          onRegenerate={
+                            onRegenerateExtra && item.source === 'ai'
+                              ? () => onRegenerateExtra(item)
                               : undefined
                           }
+                          receded={!!highlightGenerated && !isDoomed(item)}
+                          doomed={isDoomed(item)}
                           isDragging={dragKey === key}
                           dropAbove={dropTarget?.itemKey === key && dropTarget.position === 'above'}
                           dropBelow={dropTarget?.itemKey === key && dropTarget.position === 'below'}
@@ -798,7 +910,8 @@ function ContentList({
           </div>
         )}
 
-        <ToastContainer toasts={toasts} />
+        {/* onDismiss so taking the undo closes the pill offering it. */}
+        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
       </section>
     </div>
   )

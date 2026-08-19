@@ -22,9 +22,11 @@ import {
   Category,
 } from 'iconsax-react'
 import AssessmentIcon from '@/components/icons/AssessmentIcon'
+import SparkleIcon from '@/components/icons/SparkleIcon'
 import Collapse from '@/components/Collapse/Collapse'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { TYPE_CONFIG, type InteractiveQuestionType } from '@/data/interactiveQuestions'
+import type { GenerationScope } from '@/data/aiAssessmentGeneration'
 import type { AssessmentType } from '../AddContentSidebar/AddContentSidebar'
 import './AddContentIconStrip.css'
 
@@ -34,6 +36,7 @@ export type StripActive =
   | 'assessment'
   | 'situational-test'
   | 'interactive'
+  | 'ai-generate'
   | null
 
 const ICON = 20
@@ -91,6 +94,11 @@ interface AddContentIconStripProps {
   /** Which interactive format the open drawer is showing. */
   activeInteractive?: InteractiveQuestionType
   onInteractiveClick?: (type: InteractiveQuestionType) => void
+  /** DES-279 — drafts a set from the course's lesson transcripts. Each group offers
+   *  its own AI route, scoped to what that group makes. */
+  onGenerateWithAIClick?: (scope: GenerationScope) => void
+  /** Which scope the open generate drawer is working in. */
+  activeGenerateScope?: GenerationScope | null
 }
 
 /* Right-edge Add Content sidebar per Figma 8949:70435 (rail) / 8953:70671 (items).
@@ -108,8 +116,25 @@ function AddContentIconStrip({
   onSituationalTestClick,
   activeInteractive,
   onInteractiveClick,
+  onGenerateWithAIClick,
+  activeGenerateScope = null,
 }: AddContentIconStripProps) {
   const [assessmentsOpen, setAssessmentsOpen] = useState(false)
+  const [situationalOpen, setSituationalOpen] = useState(false)
+
+  const generateActive = (scope: GenerationScope) =>
+    active === 'ai-generate' && activeGenerateScope === scope
+
+  /* Same Linear → Bold ladder every other icon on the rail follows; the gradient is
+     what Bold means here, in place of the amber the labels take. */
+  const sparkle = (isActive: boolean) => (
+    <SparkleIcon
+      size={ICON}
+      color={C}
+      variant={isActive ? 'Bold' : 'Linear'}
+      gradient={isActive}
+    />
+  )
 
   const assessmentActive = (type: AssessmentType) =>
     active === 'assessment' && activeAssessment === type
@@ -129,9 +154,17 @@ function AddContentIconStrip({
   /* The label and the Tooltip wrapper are always mounted — swapping either on
      `expanded` would remount the button mid-transition and snap the panel. The
      label fades under CSS; the flyout is silenced with `disabled` instead. */
-  const item = (label: string, icon: ReactNode, isActive: boolean, onClick?: () => void) => (
+  const item = (
+    label: string,
+    icon: ReactNode,
+    isActive: boolean,
+    onClick?: () => void,
+    /* Collapsed, a row has no group above it to lend it context — "Generate with AI"
+       alone can't say which of the two it is. The flyout takes the longer name. */
+    tooltip = label,
+  ) => (
     <Tooltip
-      text={label}
+      text={tooltip}
       position="Left"
       icon={false}
       disabled={expanded}
@@ -147,6 +180,35 @@ function AddContentIconStrip({
         <span className="add-content-icon-strip__label">{label}</span>
       </button>
     </Tooltip>
+  )
+
+  /* A row inside an open group. Same shape for both groups, so the two read as one
+     pattern rather than two that happen to look alike.
+     `ai` swaps the selected treatment from the rail's amber to the AI gradient, so the
+     label matches the sparkle beside it rather than disagreeing with it. */
+  const subitem = (
+    label: string,
+    icon: ReactNode,
+    isActive: boolean,
+    onClick?: () => void,
+    ai = false,
+  ) => (
+    <button
+      key={label}
+      type="button"
+      className={[
+        'add-content-icon-strip__subitem',
+        isActive && 'add-content-icon-strip__subitem--selected',
+        ai && 'add-content-icon-strip__subitem--ai',
+      ].filter(Boolean).join(' ')}
+      aria-current={isActive || undefined}
+      onClick={onClick}
+    >
+      <span className="add-content-icon-strip__subicon">{icon}</span>
+      {/* Wrapped so the gradient clips to the words and not to the button, whose
+          background is the hover fill. */}
+      <span className="add-content-icon-strip__sublabel">{label}</span>
+    </button>
   )
 
   const toggleLabel = expanded ? 'Collapse' : 'Expand'
@@ -195,18 +257,64 @@ function AddContentIconStrip({
       {item('SCORM', <DirectboxNotif size={ICON} color={C} variant={active === 'scorm' ? 'Bold' : 'Linear'} />, active === 'scorm', onScormClick)}
       {item('Embed Links', <Link2 size={ICON} color={C} variant="Linear" />, false)}
       {item('Events', <CalendarEdit size={ICON} color={C} variant="Linear" />, false)}
-      {item(
-        'Situational Test',
-        <ClipboardText
-          size={ICON}
-          color={C}
-          variant={active === 'situational-test' ? 'Bold' : 'Linear'}
-        />,
-        active === 'situational-test',
-        onSituationalTestClick,
+      {/* Both content groups offer the same pair: write one yourself, or have the
+          generator draft a set from the lesson transcripts. Situational tests are their
+          own group rather than a ninth assessment type — they are their own card, their
+          own drawer, and their own thing to generate. */}
+      {expanded ? (
+        <>
+          <button
+            type="button"
+            className={`add-content-icon-strip__item${situationalOpen ? ' add-content-icon-strip__item--open' : ''}`}
+            onClick={() => setSituationalOpen((v) => !v)}
+            aria-expanded={situationalOpen}
+          >
+            <span className="add-content-icon-strip__icon">
+              <ClipboardText size={ICON} color={C} variant={situationalOpen ? 'Bold' : 'Linear'} />
+            </span>
+            <span className="add-content-icon-strip__label">Situational Tests</span>
+            <span className="add-content-icon-strip__chevron">
+              {situationalOpen
+                ? <ArrowUp2 size={16} color={C} variant="Linear" />
+                : <ArrowDown2 size={16} color={C} variant="Linear" />}
+            </span>
+          </button>
+          <Collapse open={situationalOpen}>
+            {subitem(
+              'Generate with AI',
+              sparkle(generateActive('situational')),
+              generateActive('situational'),
+              () => onGenerateWithAIClick?.('situational'),
+              true,
+            )}
+            {subitem(
+              'Create Manually',
+              <ClipboardText size={ICON} color={C} variant={active === 'situational-test' ? 'Bold' : 'Linear'} />,
+              active === 'situational-test',
+              onSituationalTestClick,
+            )}
+          </Collapse>
+        </>
+      ) : (
+        <>
+          {item(
+            'Generate with AI',
+            sparkle(generateActive('situational')),
+            generateActive('situational'),
+            () => onGenerateWithAIClick?.('situational'),
+            'Generate Situational Tests with AI',
+          )}
+          {item(
+            'Situational Test',
+            <ClipboardText size={ICON} color={C} variant={active === 'situational-test' ? 'Bold' : 'Linear'} />,
+            active === 'situational-test',
+            onSituationalTestClick,
+            'Create a Situational Test',
+          )}
+        </>
       )}
 
-      {/* The rail shows the four assessment types flat between dividers (Figma
+      {/* The rail shows the eight assessment types flat between dividers (Figma
           8953:70671); the panel folds them into an expandable Assessments group
           (navigation.md). Only this block differs between the two states. */}
       {expanded ? (
@@ -229,25 +337,39 @@ function AddContentIconStrip({
             </span>
           </button>
           <Collapse open={assessmentsOpen}>
+            {/* Leads the group: it writes the whole list below it, so it sits above
+                rather than at the end of eight formats. */}
+            {subitem(
+              'Generate with AI',
+              sparkle(generateActive('assessments')),
+              generateActive('assessments'),
+              () => onGenerateWithAIClick?.('assessments'),
+              true,
+            )}
             {/* Each type carries its own glyph here too, so the icon an admin
                 learns in the collapsed rail is the same one they see expanded. */}
             {ASSESSMENT_MENU.map((entry) => (
-              <button
-                key={entry.type}
-                type="button"
-                className={`add-content-icon-strip__subitem${menuActive(entry) ? ' add-content-icon-strip__subitem--selected' : ''}`}
-                aria-current={menuActive(entry) || undefined}
-                onClick={menuClick(entry)}
-              >
-                <span className="add-content-icon-strip__subicon">{entry.icon(menuActive(entry))}</span>
-                {menuLabel(entry)}
-              </button>
+              <Fragment key={entry.type}>
+                {subitem(
+                  menuLabel(entry),
+                  entry.icon(menuActive(entry)),
+                  menuActive(entry),
+                  menuClick(entry),
+                )}
+              </Fragment>
             ))}
           </Collapse>
         </>
       ) : (
         <>
           <span className="add-content-icon-strip__divider" aria-hidden="true" />
+          {item(
+            'Generate with AI',
+            sparkle(generateActive('assessments')),
+            generateActive('assessments'),
+            () => onGenerateWithAIClick?.('assessments'),
+            'Generate Assessments with AI',
+          )}
           {ASSESSMENT_MENU.map((entry) => (
             <Fragment key={entry.type}>
               {item(menuLabel(entry), entry.icon(menuActive(entry)), menuActive(entry), menuClick(entry))}

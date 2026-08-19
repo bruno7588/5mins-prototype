@@ -9,6 +9,8 @@ import SituationalTestDrawerContent, {
   type SituationalTestData,
 } from '../SituationalTestDrawer/SituationalTestDrawer'
 import InteractiveDrawer from '../InteractiveDrawer/InteractiveDrawer'
+import GenerateAssessmentsDrawer from '../GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
+import type { CoverageReport, GeneratableType, GenerationScope } from '@/data/aiAssessmentGeneration'
 import {
   TYPE_CONFIG,
   type InteractiveQuestion,
@@ -27,6 +29,7 @@ export type ActiveDrawer =
   | 'assessment'
   | 'situational-test'
   | 'interactive'
+  | 'ai-generate'
   | null
 
 interface Props {
@@ -66,6 +69,18 @@ interface Props {
   interactiveInitialId: number | null
   onInteractiveSave: (question: InteractiveQuestion) => void
   onInteractiveDirtyChange: (dirty: boolean) => void
+  /* AI generation (DES-279) */
+  generationScope: GenerationScope
+  generationCoverage: CoverageReport
+  generatedCount: number
+  onGenerate: (types: GeneratableType[]) => void
+  onAddLessons: () => void
+  generating: { steps: string[]; activeStep: number; elapsedSeconds: number } | null
+  generationReview: {
+    draft: SituationalTestData
+    onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void
+    onGenerateAgain: () => void
+  } | null
 }
 
 /* Single drawer shell that hosts library or SCORM content. Stays mounted across
@@ -93,6 +108,13 @@ function ContentDrawer({
   interactiveInitialId,
   onInteractiveSave,
   onInteractiveDirtyChange,
+  generationScope,
+  generationCoverage,
+  generatedCount,
+  onGenerate,
+  onAddLessons,
+  generating,
+  generationReview,
 }: Props) {
   // What content to actually render. Lags activeDrawer when closing so the
   // close animation can complete before unmounting.
@@ -145,6 +167,7 @@ function ContentDrawer({
     : rendered === 'assessment' ? (assessmentInitial ? 'Edit assessment' : 'Add assessment')
     : rendered === 'interactive'
       ? `${interactiveInitial ? 'Edit' : 'Add'} assessment - ${TYPE_CONFIG[interactiveType].label}`
+    : rendered === 'ai-generate' ? (generationScope === 'situational' ? 'Generate situational tests with AI' : 'Generate assessments with AI')
     : situationalTest ? 'Edit Situational Test'
     : 'Add Situational Test'
 
@@ -156,7 +179,7 @@ function ContentDrawer({
         aria-hidden="true"
       />
       <aside
-        className={`side-drawer side-drawer--with-sidebar${sidebarExpanded ? ' side-drawer--sidebar-expanded' : ''}${closing ? ' side-drawer--closing' : ''} ${rendered === 'library' ? 'library-drawer' : rendered === 'scorm' ? 'scorm-drawer-shell' : rendered === 'situational-test' ? 'situational-test-drawer-shell' : rendered === 'interactive' ? 'interactive-drawer-shell' : 'assessment-drawer-shell'}`}
+        className={`side-drawer side-drawer--with-sidebar${sidebarExpanded ? ' side-drawer--sidebar-expanded' : ''}${closing ? ' side-drawer--closing' : ''} ${rendered === 'library' ? 'library-drawer' : rendered === 'scorm' ? 'scorm-drawer-shell' : rendered === 'situational-test' ? 'situational-test-drawer-shell' : rendered === 'interactive' ? 'interactive-drawer-shell' : rendered === 'ai-generate' ? `generate-drawer-shell${generationReview ? ' situational-test-drawer-shell' : ''}` : 'assessment-drawer-shell'}`}
         ref={panelRef}
         role="dialog"
         aria-modal="true"
@@ -218,6 +241,21 @@ function ContentDrawer({
             onClose={onClose}
             onSave={onInteractiveSave}
             onDirtyChange={onInteractiveDirtyChange}
+          />
+        )}
+        {rendered === 'ai-generate' && (
+          /* Keyed on the coverage so reopening after adding a lesson starts from a
+             fresh type selection rather than the one left behind last time. */
+          <GenerateAssessmentsDrawer
+            key={`${generationScope}-${generationCoverage.withTranscript.length}`}
+            scope={generationScope}
+            coverage={generationCoverage}
+            generatedCount={generatedCount}
+            onClose={onClose}
+            onGenerate={onGenerate}
+            onAddLessons={onAddLessons}
+            generating={generating}
+            review={generationReview}
           />
         )}
       </aside>

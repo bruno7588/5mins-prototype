@@ -4,7 +4,7 @@ import Button from '@/components/Button/Button'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import { autoGrow } from '../InteractiveDrawer/autoGrow'
-import defaultThumbnail from '@/assets/programs/course-thumbs/course-thumb-1.jpg'
+import defaultThumbnail from '@/assets/programs/course-thumbs/04.png'
 import './CourseDetailsTab.css'
 
 /* Stands in for the "automatically generated thumbnail" the copy promises, so a
@@ -105,6 +105,9 @@ function CourseDetailsTab({ draft, onChange }: Props) {
               automatically generated thumbnail.
             </p>
             <div className="cdt-thumb__actions">
+              {/* No Remove: a course always carries artwork, so the only move is to
+                  swap it for another. Removing would only ever put back the one the
+                  course opened with. */}
               <Button
                 variant="outlined-2"
                 icon={<SparkleIcon size={20} color="currentColor" />}
@@ -112,11 +115,6 @@ function CourseDetailsTab({ draft, onChange }: Props) {
               >
                 {draft.thumbnail ? 'Change Thumbnail' : 'Add Thumbnail'}
               </Button>
-              {draft.thumbnail && (
-                <Button variant="text" onClick={() => set({ thumbnail: '' })}>
-                  Remove
-                </Button>
-              )}
             </div>
           </div>
         </div>
