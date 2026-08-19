@@ -17,8 +17,16 @@
 /* The rows and the detail line arrive through Framer (see arrive.ts) — they have to carry
    `layout` as well as an entrance, and a keyframe cannot. The tick is a plain swap inside
    a row that is already in place, so it stays here. */
+/* The tick fades in behind the sparkle as it leaves — the pass is finished, and the mark
+   that says so arrives rather than replacing the glyph in one frame. */
 .ai-working-step__tick {
   animation: ai-working-arrive 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The travelling sparkle. It carries the pulse on its own paths, so this only has to
+   hold the glyph and be the thing Framer moves. */
+.ai-working-step__sparkle {
+  display: inline-flex;
 }
 
 @keyframes ai-working-arrive {

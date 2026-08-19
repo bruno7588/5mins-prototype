@@ -70,7 +70,19 @@ function AIWorkingCard({ steps, activeStep, detail, className = '' }: AIWorkingC
                     variant="Bold"
                   />
                 )}
-                {active && <SparkleIcon size={32} gradient />}
+                {active && (
+                  /* One sparkle for the whole card, not one per pass: sharing a layoutId
+                     means Framer moves it from the pass it was on to the pass it is on
+                     now. It used to vanish here and reappear there, which read as two
+                     sparkles rather than the same one following the work. */
+                  <motion.span
+                    className="ai-working-step__sparkle"
+                    layoutId="ai-working-sparkle"
+                    transition={arriveTransition(reduce)}
+                  >
+                    <SparkleIcon size={32} gradient />
+                  </motion.span>
+                )}
               </span>
               <span
                 className={`ai-working-step__text${active ? ' ai-working-step__text--active' : ''}`}
