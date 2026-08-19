@@ -33,6 +33,10 @@ import './InteractiveDrawer.css'
 export interface BodyProps<D extends Draft = Draft> {
   draft: D
   onChange: (next: D) => void
+  /** Read the question rather than write it — the AI review approves a draft, it does
+   *  not author one. Fields go uneditable and every control that would change the
+   *  question's shape (add a row, remove one, reorder) goes away. */
+  readOnly?: boolean
 }
 
 interface Props {

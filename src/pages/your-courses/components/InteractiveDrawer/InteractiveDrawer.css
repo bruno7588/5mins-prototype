@@ -361,6 +361,14 @@
   margin-top: 12px;
 }
 
+/* The field column takes whatever the arrow leaves. Without this it hugs its own text
+   — the row inside it stretches, but only within a wrapper already shrunk to content —
+   and a four-word concept wraps to two lines in a half-empty box. */
+.iq-drawer__concept > .iq-drawer__row-field {
+  flex: 1;
+  min-width: 0;
+}
+
 .iq-drawer__concept .iq-drawer__row {
   flex: 1;
   min-width: 0;
@@ -505,4 +513,26 @@
    the viewport. Shrinks further on short ones rather than running off-screen. */
 .iq-drawer__preview-stage .m-phone__screen {
   height: min(640px, calc(100vh - 96px));
+}
+
+/* ===== Read-only (the AI review approves a draft, it doesn't author one) =====
+
+   A field you cannot type in shouldn't dress like one you can: the outline goes and
+   the fill comes in, which is how the DS marks a value being shown rather than
+   collected (input.md § states). The row owns the border, so the row is what changes;
+   :has() reads the state off the field itself, so nothing has to remember to pass a
+   second class alongside readOnly. */
+.iq-drawer__row:has(> .iq-drawer__row-input[readonly]),
+.iq-drawer__row:has(> .iq-drawer__row-input[readonly]):hover,
+.iq-drawer__row:has(> .iq-drawer__row-input[readonly]):focus-within,
+.iq-drawer__textarea[readonly],
+.iq-drawer__textarea[readonly]:hover,
+.iq-drawer__textarea[readonly]:focus {
+  border-color: transparent;
+  background: var(--input-background);
+}
+
+/* The words still read back which of them are gaps; they just no longer take a click. */
+.iq-drawer__marker-word:disabled {
+  cursor: default;
 }

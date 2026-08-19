@@ -3,7 +3,7 @@ import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import { conflictFor, draftConflicts, makeRow, type Draft } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
-import { autoGrow } from '../autoGrow'
+import { autoGrow, autoGrowRef } from '../autoGrow'
 
 type CategorizationDraft = Extract<Draft, { type: 'categorization' }>
 
@@ -22,7 +22,7 @@ type CategorizationDraft = Extract<Draft, { type: 'categorization' }>
  * typed under a category IS assigned to it. The previous shape — a flat list with
  * a radio row per concept — asked the author to state the same fact twice.
  */
-function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>) {
+function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<CategorizationDraft>) {
   const { categories, items } = draft
   /* Only the conflicts — two categories or two concepts with the same label,
      which grade as a coin flip. The count rules stay silent (see
@@ -48,9 +48,10 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                 className={`iq-drawer__row${categoryConflict ? ' iq-drawer__row--error' : ''}`}
               >
                 <textarea
-                  ref={autoGrow}
+                  ref={autoGrowRef}
                   rows={1}
                   className="iq-drawer__row-input"
+                  readOnly={readOnly}
                   placeholder={`Category ${index + 1}`}
                   aria-label={`Category ${index + 1} name`}
                   aria-invalid={categoryConflict ? true : undefined}
@@ -97,9 +98,10 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                       className={`iq-drawer__row${itemConflict ? ' iq-drawer__row--error' : ''}`}
                     >
                       <textarea
-                        ref={autoGrow}
+                        ref={autoGrowRef}
                         rows={1}
                         className="iq-drawer__row-input"
+                        readOnly={readOnly}
                         placeholder={`Concept ${i + 1}`}
                         aria-label={`Concept ${i + 1} in ${named}`}
                         aria-invalid={itemConflict ? true : undefined}
@@ -120,7 +122,7 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                           <Danger size={20} color="var(--text-error)" variant="Bold" />
                         </span>
                       )}
-                      {own.length > 1 && (
+                      {!readOnly && own.length > 1 && (
                         <CloseButton
                           size={16}
                           className="iq-drawer__row-remove"
@@ -138,13 +140,15 @@ function CategorizationBody({ draft, onChange }: BodyProps<CategorizationDraft>)
                   </div>
                   )
                 })}
-                <Button
-                  variant="outlined-2"
-                  icon={<Add size={20} color="currentColor" variant="Linear" />}
-                  onClick={() => onChange({ ...draft, items: [...items, makeRow('', category.id)] })}
-                >
-                  Add Concept
-                </Button>
+                {!readOnly && (
+                  <Button
+                    variant="outlined-2"
+                    icon={<Add size={20} color="currentColor" variant="Linear" />}
+                    onClick={() => onChange({ ...draft, items: [...items, makeRow('', category.id)] })}
+                  >
+                    Add Concept
+                  </Button>
+                )}
               </div>
             </div>
           )

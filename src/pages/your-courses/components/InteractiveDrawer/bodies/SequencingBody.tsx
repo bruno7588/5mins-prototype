@@ -11,7 +11,7 @@ import {
   type DraftRow,
 } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
-import { autoGrow } from '../autoGrow'
+import { autoGrow, autoGrowRef } from '../autoGrow'
 import DragHandleIcon from './DragHandleIcon'
 
 type SequencingDraft = Extract<Draft, { type: 'sequencing' }>
@@ -26,7 +26,7 @@ const MIN_STEPS = 3
  * order carries the answer here, so a mouse-only control would make this format
  * unauthorable by keyboard, and the learner side offers the same pair.
  */
-function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
+function SequencingBody({ draft, onChange, readOnly = false }: BodyProps<SequencingDraft>) {
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   /* Announced on keyboard moves, where there is no pointer to watch. */
@@ -100,6 +100,7 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
             onDrop={handleDrop(index)}
             onDragEnd={clearDrag}
           >
+            {!readOnly && (
             <span
               className="iq-drawer__grip"
               draggable
@@ -109,11 +110,13 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
             >
               <DragHandleIcon />
             </span>
+            )}
             <span className="iq-drawer__row-index">{index + 1}</span>
             <textarea
-              ref={autoGrow}
+              ref={autoGrowRef}
               rows={1}
               className="iq-drawer__row-input"
+              readOnly={readOnly}
               placeholder={`Write step ${index + 1} here...`}
               aria-label={`Step ${index + 1} of ${steps.length}`}
               aria-invalid={errored || undefined}
@@ -133,6 +136,7 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
             )}
             {/* Tooltips off at the ends of the list: the button is disabled there,
                 and a label for a move that can't happen is just noise. */}
+            {!readOnly && (
             <div className="iq-drawer__row-move">
               <Tooltip text="Move up" position="Top" icon={false} disabled={index === 0}>
                 <button
@@ -164,8 +168,9 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
                 </button>
               </Tooltip>
             </div>
+            )}
             {/* Three steps is the floor, so the control simply isn't there below it. */}
-            {steps.length > MIN_STEPS && (
+            {!readOnly && steps.length > MIN_STEPS && (
               <CloseButton
                 size={16}
                 className="iq-drawer__row-remove"
@@ -184,6 +189,7 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
         })}
       </div>
 
+      {!readOnly && (
       <div className="iq-drawer__row-actions">
         <Button
           variant="outlined-2"
@@ -193,6 +199,7 @@ function SequencingBody({ draft, onChange }: BodyProps<SequencingDraft>) {
           Add Step
         </Button>
       </div>
+      )}
 
       <span className="iq-drawer__sr-only" role="status" aria-live="polite">
         {announcement}

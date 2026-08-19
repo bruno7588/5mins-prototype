@@ -10,7 +10,7 @@ import {
   type DraftRow,
 } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
-import { autoGrow } from '../autoGrow'
+import { autoGrow, autoGrowRef } from '../autoGrow'
 
 type MatchPairsDraft = Extract<Draft, { type: 'match-pairs' }>
 
@@ -24,7 +24,7 @@ const MIN_PAIRS = 3
  * No reordering either. The renderer shuffles the right column, so row order
  * carries no meaning and a grip would imply otherwise.
  */
-function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
+function MatchPairsBody({ draft, onChange, readOnly = false }: BodyProps<MatchPairsDraft>) {
   const pairs = draft.pairs
   /* Only the conflicts — a repeated term or match, which reads as fine until you
      notice the same word twice. The count rule is in the callout. */
@@ -59,9 +59,10 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
           <Fragment key={pair.id}>
             <div className={`iq-drawer__row${termErrored ? ' iq-drawer__row--error' : ''}`}>
               <textarea
-                ref={autoGrow}
+                ref={autoGrowRef}
                 rows={1}
                 className="iq-drawer__row-input"
+                readOnly={readOnly}
                 placeholder={`Term ${index + 1}`}
                 aria-label={`Term ${index + 1}`}
                 aria-invalid={termErrored || undefined}
@@ -85,9 +86,10 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
             />
             <div className={`iq-drawer__row${matchErrored ? ' iq-drawer__row--error' : ''}`}>
               <textarea
-                ref={autoGrow}
+                ref={autoGrowRef}
                 rows={1}
                 className="iq-drawer__row-input"
+                readOnly={readOnly}
                 placeholder={`Match ${index + 1}`}
                 aria-label={`Match for term ${index + 1}`}
                 aria-invalid={matchErrored || undefined}
@@ -104,7 +106,7 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
             </div>
             {/* The slot is always occupied — an empty cell keeps the columns from
                 shifting when the last removable pair is deleted. */}
-            {pairs.length > MIN_PAIRS ? (
+            {!readOnly && pairs.length > MIN_PAIRS ? (
               <CloseButton
                 size={16}
                 className="iq-drawer__row-remove"
@@ -130,6 +132,7 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
         })}
       </div>
 
+      {!readOnly && (
       <div className="iq-drawer__row-actions">
         <Button
           variant="outlined-2"
@@ -139,6 +142,7 @@ function MatchPairsBody({ draft, onChange }: BodyProps<MatchPairsDraft>) {
           Add Pair
         </Button>
       </div>
+      )}
     </div>
   )
 }

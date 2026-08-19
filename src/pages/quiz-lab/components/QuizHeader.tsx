@@ -12,6 +12,9 @@ interface QuizHeaderProps {
   onClose: () => void
   /** Hearts belong to a real attempt — the course builder's preview shows none. */
   showHearts?: boolean
+  /** The used/total badge counts attempts, so a screen that isn't an attempt — the
+   *  situational test's brief — has nothing for it to count. */
+  showAttempts?: boolean
 }
 
 /**
@@ -20,15 +23,17 @@ interface QuizHeaderProps {
  * for remaining, muted artwork for spent — then the shared DS CloseButton
  * (Figma 9041:585).
  */
-function QuizHeader({ label, used, total, onClose, showHearts = true }: QuizHeaderProps) {
+function QuizHeader({ label, used, total, onClose, showHearts = true, showAttempts = true }: QuizHeaderProps) {
   const remaining = Math.max(0, total - used)
   return (
     <div className="ql-qhead">
       <div className="ql-qhead__label">
         <span className="ql-qhead__title">{label}</span>
-        <span className="ql-qhead__badge">
-          {used}/{total}
-        </span>
+        {showAttempts && (
+          <span className="ql-qhead__badge">
+            {used}/{total}
+          </span>
+        )}
       </div>
       <div className="ql-qhead__actions">
         {showHearts && (

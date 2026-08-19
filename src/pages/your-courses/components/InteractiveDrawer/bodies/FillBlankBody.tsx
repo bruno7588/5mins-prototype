@@ -14,7 +14,7 @@ import {
   type SentenceToken,
 } from '@/data/interactiveQuestions'
 import type { BodyProps } from '../InteractiveDrawer'
-import { autoGrow } from '../autoGrow'
+import { autoGrow, autoGrowRef } from '../autoGrow'
 
 type FillBlankDraft = Extract<Draft, { type: 'fill-blank' }>
 
@@ -27,7 +27,7 @@ type FillBlankDraft = Extract<Draft, { type: 'fill-blank' }>
  * blanking the first, and the sentence shown here is both the control and the
  * read-back of what a learner will see.
  */
-function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
+function FillBlankBody({ draft, onChange, readOnly = false }: BodyProps<FillBlankDraft>) {
   /* Only the conflict — a wrong word that is also an answer, which grades as a
      second right answer and cannot be spotted by reading the two lists side by
      side. The count rules stay silent (see InteractiveDrawer). */
@@ -73,9 +73,10 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
         </label>
         <textarea
           id="iq-sentence"
-          ref={autoGrow}
+          ref={autoGrowRef}
           rows={1}
           className="iq-drawer__textarea"
+          readOnly={readOnly}
           placeholder="Write the sentence users will complete…"
           value={draft.text}
           onInput={(e) => autoGrow(e.currentTarget)}
@@ -117,6 +118,7 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
                   className={`iq-drawer__marker-word${
                     isBlank ? ' iq-drawer__marker-word--blank' : ''
                   }`}
+                  disabled={readOnly}
                   tabIndex={index === Math.min(focused, words.length - 1) ? 0 : -1}
                   aria-pressed={isBlank}
                   aria-label={`${token.text}${isBlank ? ', blanked' : ''}`}
@@ -171,6 +173,7 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
               <input
                 type="text"
                 className="iq-drawer__row-input"
+                readOnly={readOnly}
                 placeholder={`Wrong word ${index + 1}`}
                 aria-label={`Wrong word ${index + 1}`}
                 aria-invalid={errored || undefined}
@@ -191,7 +194,7 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
               )}
               {/* Two wrong words is the floor the drawer opens on, so there is
                   nothing to remove until a third is added. */}
-              {draft.distractors.length > 2 && (
+              {!readOnly && draft.distractors.length > 2 && (
                 <CloseButton
                   size={16}
                   className="iq-drawer__row-remove"
@@ -216,15 +219,17 @@ function FillBlankBody({ draft, onChange }: BodyProps<FillBlankDraft>) {
           })}
         </div>
 
-        <div className="iq-drawer__row-actions">
-          <Button
-            variant="outlined-2"
-            icon={<Add size={20} color="currentColor" variant="Linear" />}
-            onClick={() => setDistractors([...draft.distractors, makeRow()])}
-          >
-            Add Wrong Word
-          </Button>
-        </div>
+        {!readOnly && (
+          <div className="iq-drawer__row-actions">
+            <Button
+              variant="outlined-2"
+              icon={<Add size={20} color="currentColor" variant="Linear" />}
+              onClick={() => setDistractors([...draft.distractors, makeRow()])}
+            >
+              Add Wrong Word
+            </Button>
+          </div>
+        )}
       </div>
     </>
   )

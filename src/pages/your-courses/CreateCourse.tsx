@@ -28,7 +28,6 @@ import {
   type InteractiveQuestionType,
 } from '@/data/interactiveQuestions'
 import {
-  CARD_TYPE_BY_SCOPE,
   TYPES_BY_SCOPE,
   generateOne,
   generateSet,
@@ -172,8 +171,6 @@ function CreateCourse() {
   /* What the picker last asked for, kept past the run so a single-card redraft can be
      written to the same brief. */
   const [pickedFormats, setPickedFormats] = useState<GeneratableType[]>([])
-  const [confirmRegenerateAll, setConfirmRegenerateAll] = useState(false)
-  const [pendingTypes, setPendingTypes] = useState<GeneratableType[]>([])
   /* A finished situational test waiting for the admin to approve it. It is not course
      content until they save — closing the drawer discards it, which is the point of
      asking. Assessments have no equivalent: a set of eight questions is reviewed on
@@ -477,20 +474,10 @@ function CreateCourse() {
     })
   }
 
-  /* With a set already on the outline, generating again would stack a second set
-     on top of the first — so the same action becomes a replace, and a replace is
-     where the confirmation belongs (FR-09b). The drawer closes first: the point of
-     the confirmation is that the outline behind it shows what would go. */
-  const handleGenerate = (types: GeneratableType[]) => {
-    if (generatedCount > 0) {
-      /* Closed so the confirmation can show the outline behind it — startRun reopens. */
-      closeDrawer()
-      setPendingTypes(types)
-      setConfirmRegenerateAll(true)
-      return
-    }
-    startRun(types)
-  }
+  /* Create With AI creates: a second run is a second situational test, not a redraft of
+     the first. Replacing is what Generate Again does, inside a review, to the draft that
+     review is holding. */
+  const handleGenerate = (types: GeneratableType[]) => startRun(types)
 
   const openGenerate = (scope: GenerationScope) => {
     setGenerationScope(scope)
@@ -566,34 +553,6 @@ function CreateCourse() {
     }
   }
 
-  /** Drops the generated items in the open scope. Hand-authored items are never in
-   *  scope, and neither is the other group's output: regenerating assessments leaves
-   *  generated situational tests where they are. That is the whole reason the
-   *  confirmation lights up exactly what goes. */
-  const clearGeneratedInScope = () => {
-    setScormItems((prev) => prev.filter((item) => !isGeneratedInScope(item)))
-    setGeneratedSources((prev) => {
-      const next = { ...prev }
-      for (const id of Object.keys(next)) {
-        const item = scormItems.find((i) => i.id === Number(id))
-        if (item && isGeneratedInScope(item)) delete next[Number(id)]
-      }
-      return next
-    })
-  }
-
-  /* FR-09b. Assessments go straight back through the generator; a situational test is
-     only cleared once its replacement has been approved, so backing out of the review
-     leaves the admin with what they already had rather than nothing. */
-  const handleRegenerateAll = () => {
-    setConfirmRegenerateAll(false)
-    if (generationScope !== 'situational') clearGeneratedInScope()
-    /* Through the working card again rather than swapping the set out instantly —
-       a replace takes as long as the first pass, and pretending otherwise would
-       make the second set look pre-written. */
-    startRun(pendingTypes)
-  }
-
   /* Approved. The draft becomes an outline row here and nowhere earlier, carrying
      whatever edits the admin made in the review. */
   const handleSaveGeneratedTest = (
@@ -603,8 +562,6 @@ function CreateCourse() {
   ) => {
     const id = nextGeneratedId++
     const payload: SituationalTestData = { id, title, brief, questions }
-    /* A replace only lands once the new one is approved — see handleRegenerateAll. */
-    clearGeneratedInScope()
     setSituationalTests((prev) => ({ ...prev, [id]: payload }))
     setGeneratedSources((prev) => ({
       ...prev,
@@ -616,7 +573,7 @@ function CreateCourse() {
       },
     }))
     setScormItems((prev) => [
-      ...prev.filter((item) => !isGeneratedInScope(item)),
+      ...prev,
       {
         id,
         type: 'SituationalTest',
@@ -638,12 +595,6 @@ function CreateCourse() {
     if (payload) setSituationalTests((prev) => ({ ...prev, [item.id]: payload }))
   }
 
-  /* The two scopes never share a card type, so the card type is the attribution —
-     no lookup needed to tell one group's output from the other's. */
-  const isGeneratedInScope = (item: ContentItem) =>
-    item.source === 'ai' && item.type === CARD_TYPE_BY_SCOPE[generationScope]
-
-  const generatedCount = scormItems.filter(isGeneratedInScope).length
 
   const handleAddLibraryLesson = (lesson: LibraryLesson) => {
     const newItem: ContentItem = {
@@ -760,7 +711,6 @@ function CreateCourse() {
             onOutlineChange={setOutline}
             onRestoreExtra={handleRestoreExtra}
             onRegenerateExtra={handleRegenerateOne}
-            highlightGenerated={confirmRegenerateAll ? CARD_TYPE_BY_SCOPE[generationScope] : null}
           />
           )}
         </main>
@@ -809,14 +759,15 @@ function CreateCourse() {
                 draft: pendingTest,
                 onSave: handleSaveGeneratedTest,
                 onGenerateAgain: () => {
+                  /* Clearing the draft first drops the review, so the drawer goes back
+                     to the working card and the wait is shown again from the top. */
                   setPendingTest(null)
-                  startRun(TYPES_BY_SCOPE.situational)
+                  startRun(pickedFormats)
                 },
               }
             : null
         }
         generationCoverage={coverage}
-        generatedCount={generatedCount}
         onGenerate={handleGenerate}
         onAddLessons={() => openDrawer('library')}
       />
@@ -858,37 +809,6 @@ function CreateCourse() {
         </div>
       </ConfirmModal>
 
-      {/* FR-09b. The count is here, but the outline behind is where the answer
-          actually is: the generated rows stay lit and the rest recedes, so what's
-          about to go is read rather than counted. */}
-      <ConfirmModal
-        open={confirmRegenerateAll}
-        onClose={() => setConfirmRegenerateAll(false)}
-        ariaLabel={generationScope === 'situational' ? 'Replace generated situational tests' : 'Replace generated assessments'}
-      >
-        <div className="confirm-modal-header confirm-modal-header--center">
-          <div className="confirm-modal-icon">
-            <Danger size={56} color="var(--warning-500)" variant="Linear" />
-          </div>
-          <h2 className="confirm-modal-title">
-            Replace {generatedCount} generated{' '}
-            {generationScope === 'situational' ? 'situational test' : 'assessment'}
-            {generatedCount === 1 ? '' : 's'}?
-          </h2>
-          <p className="confirm-modal-body">
-            {generatedCount === 1 ? 'The highlighted one is' : 'The highlighted ones are'}{' '}
-            replaced with a fresh draft. Anything you wrote yourself is left alone.
-          </p>
-        </div>
-        <div className="confirm-modal-actions">
-          <Button variant="outlined-2" onClick={() => setConfirmRegenerateAll(false)}>
-            {generatedCount === 1 ? 'Keep It' : 'Keep Them'}
-          </Button>
-          <Button semantic="warning" onClick={handleRegenerateAll}>
-            {generatedCount === 1 ? 'Replace' : 'Replace All'}
-          </Button>
-        </div>
-      </ConfirmModal>
     </>
   )
 }

@@ -72,7 +72,6 @@ interface Props {
   /* AI generation (DES-279) */
   generationScope: GenerationScope
   generationCoverage: CoverageReport
-  generatedCount: number
   onGenerate: (types: GeneratableType[]) => void
   onAddLessons: () => void
   generating: { steps: string[]; activeStep: number } | null
@@ -110,7 +109,6 @@ function ContentDrawer({
   onInteractiveDirtyChange,
   generationScope,
   generationCoverage,
-  generatedCount,
   onGenerate,
   onAddLessons,
   generating,
@@ -250,7 +248,6 @@ function ContentDrawer({
             key={`${generationScope}-${generationCoverage.withTranscript.length}`}
             scope={generationScope}
             coverage={generationCoverage}
-            generatedCount={generatedCount}
             onClose={onClose}
             onGenerate={onGenerate}
             onAddLessons={onAddLessons}

@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Add, ArrowDown2, ArrowLeft, ArrowUp2, Eye, Trash } from 'iconsax-react'
+import { Add, ArrowDown2, ArrowLeft, ArrowUp2, Trash } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import Badge from '@/components/Badge/Badge'
@@ -12,6 +12,7 @@ import CategorizationBody from '../InteractiveDrawer/bodies/CategorizationBody'
 import FillBlankBody from '../InteractiveDrawer/bodies/FillBlankBody'
 import MatchPairsBody from '../InteractiveDrawer/bodies/MatchPairsBody'
 import SequencingBody from '../InteractiveDrawer/bodies/SequencingBody'
+import { autoGrow, autoGrowRef } from '../InteractiveDrawer/autoGrow'
 import '../InteractiveDrawer/InteractiveDrawer.css'
 import SectionHeader from '../SectionHeader/SectionHeader'
 import SituationalTestPreview from '../SituationalTestPreview/SituationalTestPreview'
@@ -91,19 +92,6 @@ const makeQuestion = (): SituationalQuestion => ({
   correctIndex: 0,
   explanation: '',
 })
-
-/* Question and option fields wrap instead of truncating — options run long and an admin
-   has to be able to read all of one. Passed as both a ref callback and an onInput
-   handler: the ref sizes content that arrives from state (a reopened test), the handler
-   sizes it as the admin types. */
-const autoGrow = (el: HTMLTextAreaElement | null) => {
-  if (!el) return
-  el.style.height = 'auto'
-  /* scrollHeight covers content + padding but not the border, while a border-box height
-     has to include it — without this the bordered fields sit 2px short and clip. */
-  const border = el.offsetHeight - el.clientHeight
-  el.style.height = `${el.scrollHeight + border}px`
-}
 
 /* A question is answered with options unless its format says otherwise: the four
    interactive formats carry a structure instead, and short text and exercise are
@@ -186,23 +174,9 @@ function SituationalTestDrawerContent({
      auto before reading scrollHeight, or the box can only ever get taller. Runs on `step`
      too, since the textarea unmounts when the questions step is showing. */
   const briefRef = useRef<HTMLTextAreaElement>(null)
-  /* Review only: the brief arrives written and long, and at full height it pushed every
-     question below the fold. Collapsed it reads as three truncated lines with the View
-     more sitting on the end of the last one; opened it is the same editable field as
-     everywhere else. */
-  const [briefExpanded, setBriefExpanded] = useState(false)
-  const [briefOverflows, setBriefOverflows] = useState(false)
-  const briefClampRef = useRef<HTMLParagraphElement>(null)
   useLayoutEffect(() => {
     autoGrow(briefRef.current)
-    /* Only when the clamp is actually holding something back — a two-line brief needs
-       no control, and one that says View more over nothing is a broken promise. */
-    const el = briefClampRef.current
-    setBriefOverflows(!!el && el.scrollHeight > el.clientHeight + 1)
-  }, [brief, step, review, briefExpanded])
-
-  /* Truncated only where the brief is something to check rather than write. */
-  const briefCollapsed = !!review && !briefExpanded
+  }, [brief, step])
 
   /* The draft as the learner would meet it. Review only — an admin approving prose they
      did not write is the one place where seeing it played back is worth a screen. */
@@ -345,7 +319,7 @@ function SituationalTestDrawerContent({
           test, so this is a two-pane editor rather than a wizard, and the step counter is
           create-only (Figma 9037:61788 / 9037:62042). */}
       <div className="st-drawer__body">
-        {review || step === 1 ? (
+        {step === 1 ? (
           <>
             {/* Scaffolding for the blank page, so it is create-only — on a written brief
                 it would push the fields the admin came for below the fold. */}
@@ -390,36 +364,13 @@ function SituationalTestDrawerContent({
             </div>
 
             <div className="st-drawer__field">
-              <label className="st-drawer__label" htmlFor={briefCollapsed ? undefined : 'st-brief'}>
+              <label className="st-drawer__label" htmlFor="st-brief">
                 Brief
               </label>
-              {briefCollapsed ? (
-                /* Read, not edit: three lines ending in the ellipsis the clamp draws, with
-                   View more sitting on the tail of the third. Opening it hands back the
-                   real field — you cannot fix prose you can only see three lines of. */
-                <div className="st-drawer__brief-read">
-                  <p className="st-drawer__brief-clamp" ref={briefClampRef}>
-                    {brief}
-                  </p>
-                  {briefOverflows && (
-                    <button
-                      type="button"
-                      className="st-drawer__brief-more"
-                      onClick={() => setBriefExpanded(true)}
-                    >
-                      View more
-                    </button>
-                  )}
-                </div>
-              ) : (
               <textarea
                 ref={briefRef}
                 id="st-brief"
-                /* Clamped on the review only. The brief arrives written and long, and at
-                   full height it pushed every question below the fold — so it opens at
-                   four lines and grows to all of itself the moment you click into it.
-                   Nothing is hidden: it scrolls in place and stays editable. */
-                className={`st-drawer__textarea${review && !briefExpanded ? ' st-drawer__textarea--clamped' : ''}${briefError ? ' st-drawer__textarea--error' : ''}`}
+                className={`st-drawer__textarea${briefError ? ' st-drawer__textarea--error' : ''}`}
                 /* Hugs its content like every other field here; the two-line floor for
                    the placeholder is CSS, so it applies only while the field is empty. */
                 rows={1}
@@ -430,7 +381,6 @@ function SituationalTestDrawerContent({
                 aria-invalid={briefError || undefined}
                 aria-describedby={briefError ? 'st-brief-helper' : undefined}
               />
-              )}
               {briefError && (
                 <span
                   className="st-drawer__helper st-drawer__helper--error"
@@ -440,22 +390,11 @@ function SituationalTestDrawerContent({
                   Enter a brief
                 </span>
               )}
-              {/* The way back from an opened brief, under the field rather than on it —
-                  there is no truncated line left to sit on. */}
-              {review && briefExpanded && (
-                <button
-                  type="button"
-                  className="st-drawer__brief-more st-drawer__brief-more--under"
-                  onClick={() => setBriefExpanded(false)}
-                >
-                  View less
-                </button>
-              )}
             </div>
           </>
         ) : null}
 
-        {review || step === 2 ? (
+        {step === 2 ? (
           <>
             {questions.map((question, index) => {
               const optionQuestion = isOptionQuestion(question)
@@ -529,9 +468,10 @@ function SituationalTestDrawerContent({
                   <div className="st-drawer__question-body">
                   <div className="st-drawer__field">
                     <textarea
-                      ref={autoGrow}
+                      ref={autoGrowRef}
                       rows={1}
                       className={`st-drawer__input${textError ? ' st-drawer__input--error' : ''}`}
+                      readOnly={!!review}
                       placeholder="Write your question here..."
                       value={question.text}
                       onInput={(e) => autoGrow(e.currentTarget)}
@@ -559,6 +499,7 @@ function SituationalTestDrawerContent({
                     <InteractiveQuestionBody
                       question={question}
                       onChange={(next) => updateQuestion(question.id, { interactive: next })}
+                      readOnly={!!review}
                     />
                   ) : !optionQuestion ? (
                     /* Short text and exercise: there is nothing to author but the
@@ -590,6 +531,7 @@ function SituationalTestDrawerContent({
                             <div className="st-drawer__option-field">
                               {marked && (
                                 <Radio
+                                  disabled={!!review}
                                   name={`st-correct-${question.id}`}
                                   checked={isCorrect}
                                   onChange={() =>
@@ -599,9 +541,10 @@ function SituationalTestDrawerContent({
                                 />
                               )}
                               <textarea
-                                ref={autoGrow}
+                                ref={autoGrowRef}
                                 rows={1}
                                 className="st-drawer__option-input"
+                                readOnly={!!review}
                                 placeholder={`Write option ${optionIndex + 1} here...`}
                                 aria-label={`Option ${optionIndex + 1} of question ${index + 1}`}
                                 value={option}
@@ -620,7 +563,7 @@ function SituationalTestDrawerContent({
                               )}
                               {/* Two options is the floor, so the last pair can't be
                                   removed and the control simply isn't there. */}
-                              {question.options.length > 2 && (
+                              {!review && question.options.length > 2 && (
                                 <CloseButton
                                   size={16}
                                   className="st-drawer__option-remove"
@@ -632,14 +575,16 @@ function SituationalTestDrawerContent({
                           </div>
                         )
                       })}
-                      <button
-                        className="st-drawer__add-option"
-                        type="button"
-                        onClick={() => addOption(question.id)}
-                      >
-                        <Add size={24} color="currentColor" variant="Linear" />
-                        <span>Add Option</span>
-                      </button>
+                      {!review && (
+                        <button
+                          className="st-drawer__add-option"
+                          type="button"
+                          onClick={() => addOption(question.id)}
+                        >
+                          <Add size={24} color="currentColor" variant="Linear" />
+                          <span>Add Option</span>
+                        </button>
+                      )}
                     </div>
                     {(optionsError || correctBlank) && (
                       <span
@@ -661,10 +606,11 @@ function SituationalTestDrawerContent({
                       <span className="st-drawer__label-optional">(optional)</span>
                     </label>
                     <textarea
-                      ref={autoGrow}
+                      ref={autoGrowRef}
                       rows={1}
                       id={`${question.id}-explanation`}
                       className="st-drawer__input"
+                      readOnly={!!review}
                       placeholder="Write an explanation..."
                       value={question.explanation ?? ''}
                       onInput={(e) => autoGrow(e.currentTarget)}
@@ -700,7 +646,18 @@ function SituationalTestDrawerContent({
 
       <div className="st-drawer__footer">
         <div className="st-drawer__footer-actions">
-          {review ? (
+          {review && step === 1 ? (
+            /* Same pair as the edit path's first surface: commit, or go and read what
+               the commit would include. */
+            <>
+              <Button onClick={handleSave} disabled={!canSubmit}>
+                Save Situational Test
+              </Button>
+              <Button variant="outlined" onClick={handleContinue} disabled={!canContinue}>
+                Review Questions ({questions.length})
+              </Button>
+            </>
+          ) : review ? (
             /* Both actions sit together on the left: one adds this draft to the course,
                the other throws it away and asks for another. They are alternatives to
                each other, so they read as a pair rather than as opposite ends of a bar.
@@ -766,15 +723,11 @@ function SituationalTestDrawerContent({
         {/* Create only. A counter implies a sequence you finish, and on the edit path
             either surface commits, so there is nothing to count down to. */}
         {!isEdit && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
-        {/* Same label, icon and weight as the course-level Preview in the page header —
-            one action, one appearance, whatever it is previewing. */}
-        {review && (
-          <Button
-            variant="outlined-2"
-            icon={<Eye size={20} color="currentColor" variant="Linear" />}
-            onClick={() => setPreviewing(true)}
-          >
-            Preview
+        {/* Opposite the commit actions: the two on the left decide the draft's fate,
+            this one only looks at it. */}
+        {review && step === 2 && (
+          <Button variant="outlined-2" onClick={() => setPreviewing(true)}>
+            View
           </Button>
         )}
       </div>
@@ -805,9 +758,11 @@ function SituationalTestDrawerContent({
 function InteractiveQuestionBody({
   question,
   onChange,
+  readOnly,
 }: {
   question: SituationalQuestion
   onChange: (next: InteractiveQuestion) => void
+  readOnly: boolean
 }) {
   const [draft, setDraft] = useState<Draft>(() => toDraft(question.interactive as InteractiveQuestion))
 
@@ -818,13 +773,13 @@ function InteractiveQuestionBody({
 
   switch (draft.type) {
     case 'match-pairs':
-      return <MatchPairsBody draft={draft} onChange={update} />
+      return <MatchPairsBody draft={draft} onChange={update} readOnly={readOnly} />
     case 'sequencing':
-      return <SequencingBody draft={draft} onChange={update} />
+      return <SequencingBody draft={draft} onChange={update} readOnly={readOnly} />
     case 'categorization':
-      return <CategorizationBody draft={draft} onChange={update} />
+      return <CategorizationBody draft={draft} onChange={update} readOnly={readOnly} />
     case 'fill-blank':
-      return <FillBlankBody draft={draft} onChange={update} />
+      return <FillBlankBody draft={draft} onChange={update} readOnly={readOnly} />
   }
 }
 

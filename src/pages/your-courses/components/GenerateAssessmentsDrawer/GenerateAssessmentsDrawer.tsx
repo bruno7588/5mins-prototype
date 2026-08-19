@@ -27,9 +27,6 @@ interface Props {
   /** Which rail group opened this — decides what gets written. */
   scope: GenerationScope
   coverage: CoverageReport
-  /** Already-generated items in this scope. Above zero, generating means replacing
-      them rather than stacking a second set on the first. */
-  generatedCount: number
   onClose: () => void
   onGenerate: (types: GeneratableType[]) => void
   /** Route out of the zero-transcript dead end — opens the 5Mins Library. */
@@ -61,32 +58,29 @@ const COPY: Record<
     callout: string
     emptyBody: string
     cta: string
-    ctaReplace: string
   }
 > = {
   assessments: {
     noun: 'assessments',
     title: 'Create Assessments with AI',
-    typesLabel: 'Assessment types',
+    typesLabel: 'What kind of assessments do you want to create?',
     typesHelper: 'Select the ones you want. AI decides how many of each.',
     callout:
       'Assessments are created using the course material. Lessons, links, or resources help AI generate assessments based on that content.',
     emptyBody:
       'Assessments are created using the course material. By adding lessons, links, or resources, AI will generate assessments based on that content.',
     cta: 'Generate Assessments',
-    ctaReplace: 'Regenerate Assessments',
   },
   situational: {
     noun: 'situational tests',
     title: 'Create Situational Test with AI',
-    typesLabel: 'Assessment types',
+    typesLabel: 'What kind of assessments do you want to create?',
     typesHelper: 'Select the ones you want in the test. AI decides how many of each.',
     callout:
       'Situational tests are created using the course material. Lessons, links, or resources help AI generate a tailored situational test based on that content.',
     emptyBody:
       'Situational tests are created using the course material. By adding lessons, links, or resources, AI will generate a tailored situational test based on that content.',
     cta: 'Generate Situational Test',
-    ctaReplace: 'Regenerate Situational Test',
   },
 }
 
@@ -103,14 +97,13 @@ const COPY: Record<
  * drawer holds until the drafts land on the outline behind it.
  */
 function GenerateAssessmentsDrawer({
-  scope, coverage, generatedCount, onClose, onGenerate, onAddLessons,
+  scope, coverage, onClose, onGenerate, onAddLessons,
   generating = null, review = null,
 }: Props) {
   /* Both scopes ask the same question — which formats — so both offer the same eight.
      What differs is what they mean by it, which is what COPY carries. */
   const questionTypes = ASSESSMENT_TYPES
   const copy = COPY[scope]
-  const replacing = generatedCount > 0
 
   /* Nothing selected to start. Chips are a choice the admin makes, and eight
      pre-filled ones read as a wall of amber rather than something to pick from. */
@@ -229,16 +222,6 @@ function GenerateAssessmentsDrawer({
           />
         )}
 
-        {/* Was the header's description, but it's a consequence rather than a
-            summary — it belongs where warnings go. */}
-        {replacing && (
-          <Alert
-            type="Alert"
-            icon
-            message={`Generating again replaces the ${generatedCount} already on the outline. Anything you wrote yourself stays.`}
-          />
-        )}
-
         <div className="gen-drawer__field">
           <div className="gen-drawer__field-heading">
             <h3 className="h4">{copy.typesLabel}</h3>
@@ -270,7 +253,7 @@ function GenerateAssessmentsDrawer({
           disabled={selected.length === 0}
           onClick={() => onGenerate(selected)}
         >
-          {replacing ? copy.ctaReplace : copy.cta}
+          {copy.cta}
         </Button>
       </div>
     </>

@@ -184,12 +184,9 @@
   color: var(--text-tertiary);
 }
 
-/* Expanded group (Figma 9051:187870): the label goes Bold to mark the open
-   group — no fill, which would compete with the selected sub-item below it. */
-.add-content-icon-strip__item--open .add-content-icon-strip__label {
-  font-weight: 700;
-}
-
+/* Sub-rows of an expanded group (Figma 9051:187870). The group header itself takes no
+   weight for being open — Bold marks what is selected, and opening a group selects
+   nothing. */
 .add-content-icon-strip__subitem {
   display: flex;
   align-items: center;

@@ -1,97 +1,89 @@
-/* Situational test preview (DES-279) — the learner's screens inside an admin modal.
-   Built on the shared ConfirmModal shell (scrim, Esc, backdrop close); this file only
-   widens it to the DS modal width and styles what goes inside. */
+/* Situational test preview (DES-279) — the phone on the scrim, then the walkthrough's
+   own paging under it. The screens themselves are the quiz's (quiz-lab.css); this file
+   only stages the phone and styles what sits outside it.
 
-.confirm-modal.st-preview {
-  width: 720px; /* overlays.md § Modal */
-  gap: var(--space-ml);
-}
+   Mirrors .iq-preview-modal in InteractiveDrawer.css, which stages the same phone for a
+   single question. */
 
-.st-preview__chrome {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+.confirm-modal.st-preview-modal {
+  width: auto;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  align-items: center;
   gap: var(--space-m);
-  width: 100%;
 }
 
-.st-preview__chrome-headline {
+.st-preview__stage {
+  display: flex;
+  justify-content: center;
+}
+
+/* The frame is built for a full page — 100vh stage, 32px gutter. Inside the modal the
+   modal supplies both. */
+.st-preview__stage .m-phone-stage {
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+/* The device's own 375x812, not the 640 the single-question preview crops to: these are
+   whole quiz screens — a categorisation's pool over its buckets, a sequence's slots over
+   its bank — and at 640 the pool overruns the first bucket. Shrinks on short viewports
+   rather than running off-screen, with room left for the paging row below. */
+.st-preview__stage .m-phone__screen {
+  height: min(812px, calc(100vh - 176px));
+}
+
+/* ===== The brief, as the course feed draws it (Figma 17024:82020) ===== */
+
+.st-preview__brief-screen {
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-m);
+  overflow-y: auto;
+}
+
+.st-preview__brief-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.st-preview__chrome-title {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.st-preview__chrome-sub {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-/* The learner's screen, exactly as the course feed draws it (Figma 17024:82020):
-   card surface, 32px padding, 24px between its blocks. */
-.st-preview__card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-l);
-  width: 100%;
-  padding: var(--space-xl);
+  gap: var(--space-m);
+  padding: var(--space-m);
   background: var(--cards-background);
   border-radius: var(--radius-m);
-  animation: st-preview-screen-in 220ms ease;
+  /* The same lift the outline's cards take: in light mode the card and the page it
+     sits on are one step apart, in dark they already separate. */
+  box-shadow: var(--shadow-card);
 }
 
-/* Each screen arrives rather than snapping — the same beat as turning a page. */
-@keyframes st-preview-screen-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .st-preview__card {
-    animation: none;
-  }
-}
-
-.st-preview__card-head {
+.st-preview__brief-head {
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  width: 100%;
 }
 
-.st-preview__card-label {
+.st-preview__brief-label {
   font-size: 20px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
-.st-preview__divider {
-  width: 100%;
+.st-preview__brief-divider {
   height: 1px;
   background: var(--border);
   border-radius: var(--radius-xs);
 }
 
-.st-preview__body {
+.st-preview__brief-body {
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
-  width: 100%;
 }
 
-.st-preview__heading {
+.st-preview__brief-title {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
@@ -99,7 +91,7 @@
   color: var(--text-primary);
 }
 
-.st-preview__prose {
+.st-preview__brief-text {
   margin: 0;
   font-size: 16px;
   font-weight: 400;
@@ -107,147 +99,33 @@
   color: var(--text-secondary);
 }
 
-/* ===== The interactions, in their unanswered state ===== */
-
-.st-preview__stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
+/* Full-bleed inside the card, like every primary action on a phone. */
+.st-preview__brief-card .ds-btn {
   width: 100%;
-  margin-top: var(--space-s);
 }
 
-.st-preview__option {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+/* The note for the formats a learner answers in their own words. */
+.st-preview__brief {
+  margin: 0;
   font-size: 16px;
   font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.st-preview__radio {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--border-hover);
-  border-radius: var(--radius-full);
-}
-
-/* Sequencing: the empty slots the learner fills, over the bank they fill them from. */
-.st-preview__slot {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  min-height: 48px;
-  padding: var(--space-sm) var(--space-m);
-  border: 1px dashed var(--border-hover);
-  border-radius: var(--radius-sm);
-}
-
-.st-preview__slot-number {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-  font-variant-numeric: tabular-nums;
-}
-
-.st-preview__bank {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-  margin-top: var(--space-s);
-}
-
-.st-preview__chip {
-  padding: var(--space-s) var(--space-sm);
-  background: var(--page-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-s);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.st-preview__columns {
-  display: flex;
-  gap: var(--space-m);
-  width: 100%;
-  margin-top: var(--space-s);
-}
-
-.st-preview__column {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-}
-
-/* Categorisation: the empty buckets, labelled but unfilled. */
-.st-preview__bucket {
-  flex: 1;
-  min-width: 0;
-  min-height: 96px;
-  padding: var(--space-sm) var(--space-m);
-  border: 1px dashed var(--border-hover);
-  border-radius: var(--radius-sm);
-}
-
-.st-preview__bucket-label {
-  font-size: 14px;
-  font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
 }
 
-.st-preview__sentence {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 2;
-  color: var(--text-primary);
-}
-
-/* A gap, not a placeholder word — the answer is what the learner has to supply. */
-.st-preview__gap {
-  display: inline-block;
-  width: 96px;
-  height: 2px;
-  vertical-align: baseline;
-  background: var(--border-hover);
-}
-
-.st-preview__answer-box {
+.st-preview__options {
   display: flex;
-  align-items: flex-start;
-  min-height: 96px;
-  margin-top: var(--space-s);
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  flex-direction: column;
+  gap: var(--space-s);
 }
 
-.st-preview__answer-hint {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
+/* ===== Paging, outside the phone ===== */
 
-/* ===== Admin navigation ===== */
-
-.st-preview__footer {
+.st-preview__nav {
   display: flex;
   align-items: center;
   gap: var(--space-m);
-  width: 100%;
+  width: 375px; /* the phone's width, so the controls sit under its edges */
 }
 
 /* Between the two controls, so the position reads as part of the pair rather than a
@@ -256,8 +134,8 @@
   flex: 1;
   text-align: center;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.5;
-  color: var(--text-tertiary);
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }

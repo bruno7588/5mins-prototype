@@ -168,65 +168,6 @@
   border-color: var(--selected);
 }
 
-/* Review only. The brief is read here, not written, so collapsed it is a paragraph
-   wearing the field's own chrome — three lines, truncated by the clamp, with View more
-   sitting on the tail of the third. Opening it swaps in the real textarea. */
-.st-drawer__brief-read {
-  position: relative;
-}
-
-.st-drawer__brief-clamp {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin: 0;
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-/* Text button (buttons.md § Text). Sat on the last line, it needs the line to stop
-   cleanly behind it — the fade does that without a hard edge, and the panel colour is
-   the only ground the field ever sits on (it is transparent at rest). */
-.st-drawer__brief-more {
-  position: absolute;
-  right: 1px;
-  bottom: 1px;
-  padding: 0 var(--space-m) var(--space-sm) var(--space-xl);
-  background: linear-gradient(90deg, transparent 0%, var(--page-background) var(--space-l));
-  border: none;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-button-outlined);
-  cursor: pointer;
-}
-
-.st-drawer__brief-more:hover {
-  color: var(--text-button-hover);
-  text-decoration: underline;
-}
-
-.st-drawer__brief-more:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-  border-radius: var(--radius-xs);
-}
-
-/* Opened, there is no truncated line to sit on, so it goes back under the field. */
-.st-drawer__brief-more--under {
-  position: static;
-  align-self: flex-start;
-  padding: 0;
-  background: none;
-}
-
 .st-drawer__input--error,
 .st-drawer__textarea--error {
   border-color: var(--text-error);
@@ -325,10 +266,12 @@
   outline-offset: 2px;
 }
 
+/* Bold: it titles the card it sits on rather than labelling a field inside it
+   (typography.md — Bold for headings). */
 .st-drawer__question-index {
   flex-shrink: 0;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -506,4 +449,19 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/* ===== Read-only fields on the review ===== */
+
+/* Same rule as the interactive bodies: no outline, filled instead, so a value being
+   shown never wears the chrome of a value being collected. The brief and the title are
+   left alone — those two stay the admin's to edit. */
+.st-drawer__input[readonly],
+.st-drawer__input[readonly]:hover,
+.st-drawer__input[readonly]:focus,
+.st-drawer__option-field:has(> .st-drawer__option-input[readonly]),
+.st-drawer__option-field:has(> .st-drawer__option-input[readonly]):hover,
+.st-drawer__option-field:has(> .st-drawer__option-input[readonly]):focus-within {
+  border-color: transparent;
+  background: var(--input-background);
 }

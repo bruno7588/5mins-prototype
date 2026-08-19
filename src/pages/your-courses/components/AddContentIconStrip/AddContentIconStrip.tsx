@@ -212,6 +212,12 @@ function AddContentIconStrip({
     </button>
   )
 
+  /* Expanded is not selected. A group opens to show what is inside it; Bold means the
+     thing currently open in the drawer (navigation.md), so the group only wears it when
+     one of its own rows is that thing. */
+  const situationalSelected = generateActive('situational') || active === 'situational-test'
+  const assessmentsSelected = active === 'assessment' || active === 'interactive'
+
   const toggleLabel = expanded ? 'Collapse' : 'Expand'
   const toggle = (
     <Tooltip
@@ -266,12 +272,12 @@ function AddContentIconStrip({
         <>
           <button
             type="button"
-            className={`add-content-icon-strip__item${situationalOpen ? ' add-content-icon-strip__item--open' : ''}`}
+            className={`add-content-icon-strip__item${situationalSelected ? ' add-content-icon-strip__item--active' : ''}`}
             onClick={() => setSituationalOpen((v) => !v)}
             aria-expanded={situationalOpen}
           >
             <span className="add-content-icon-strip__icon">
-              <ClipboardText size={ICON} color={C} variant={situationalOpen ? 'Bold' : 'Linear'} />
+              <ClipboardText size={ICON} color={C} variant={situationalSelected ? 'Bold' : 'Linear'} />
             </span>
             <span className="add-content-icon-strip__label">Situational Tests</span>
             <span className="add-content-icon-strip__chevron">
@@ -325,13 +331,13 @@ function AddContentIconStrip({
         <>
           <button
             type="button"
-            className={`add-content-icon-strip__item${assessmentsOpen ? ' add-content-icon-strip__item--open' : ''}`}
+            className={`add-content-icon-strip__item${assessmentsSelected ? ' add-content-icon-strip__item--active' : ''}`}
             onClick={() => setAssessmentsOpen((v) => !v)}
             aria-expanded={assessmentsOpen}
           >
             <span className="add-content-icon-strip__icon">
-              {/* Bold while open, so the glyph carries the same weight as its label. */}
-              <AssessmentIcon size={ICON} color={C} variant={assessmentsOpen ? 'Bold' : 'Linear'} />
+              {/* Bold with its label, and for the same reason: one of its types is open. */}
+              <AssessmentIcon size={ICON} color={C} variant={assessmentsSelected ? 'Bold' : 'Linear'} />
             </span>
             <span className="add-content-icon-strip__label">Assessments</span>
             <span className="add-content-icon-strip__chevron">
