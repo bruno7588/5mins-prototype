@@ -259,3 +259,14 @@
   padding-bottom: var(--space-m);
   background: var(--page-background);
 }
+
+/* Each phase of the drawer — the wait, the review — is one column so it can be moved as
+   a whole. The shell is a flex column and expects header/body/footer as its children, so
+   the wrapper has to stretch and pass that arrangement through unchanged. */
+.gen-drawer__phase {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: inherit;
+}

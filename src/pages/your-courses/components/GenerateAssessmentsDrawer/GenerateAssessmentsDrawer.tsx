@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Add } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
@@ -118,6 +118,7 @@ function GenerateAssessmentsDrawer({
   /* Nothing selected to start. Chips are a choice the admin makes, and eight
      pre-filled ones read as a wall of amber rather than something to pick from. */
   const [selected, setSelected] = useState<GeneratableType[]>([])
+  const reduce = useReducedMotion()
 
   const readable = coverage.withTranscript.length
   const skipped = coverage.withoutTranscript.length
@@ -132,36 +133,58 @@ function GenerateAssessmentsDrawer({
      editor an admin would have written it in — so reviewing one and writing one are
      the same skill, and anything they'd have said differently is edited here rather
      than after it lands. */
-  if (review) {
+  /* The wait and the review are one handoff, not two screens: the wait leaves upward as
+     the review rises into the place it left. AnimatePresence is what holds the wait on
+     screen long enough to leave — without it the swap is a cut — and `mode="wait"` keeps
+     the two from crossing over each other. */
+  if (review || generating) {
     return (
-      <SituationalTestDrawerContent
-        initial={review.draft}
-        onClose={onClose}
-        onSave={review.onSave}
-        review={{ onGenerateAgain: review.onGenerateAgain }}
-      />
-    )
-  }
-
-  /* The wait replaces the form it was started from, so the drawer stays the one place
-     this happens rather than handing off to the page behind it. Neither a percentage nor
-     a clock: the length of the read isn't knowable, so the card names the step it is on
-     and twinkles (FR-11). The footer goes with the form — there is nothing to submit or
-     cancel while it runs. */
-  if (generating) {
-    return (
-      <>
-        <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
-        <div className="gen-drawer__body">
-          <GeneratingBody
-            steps={generating.steps}
-            activeStep={generating.activeStep}
-            stepMs={generating.stepMs}
-            draft={generating.draft}
-            detail={generating.detail}
-          />
-        </div>
-      </>
+      <AnimatePresence mode="wait" initial={false}>
+        {review ? (
+          <motion.div
+            key="review"
+            className="gen-drawer__phase"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={arriveTransition(reduce)}
+          >
+            {/* The draft is read and approved before it becomes course content, in the
+                same editor an admin would have written it in — so reviewing one and
+                writing one are the same skill. */}
+            <SituationalTestDrawerContent
+              initial={review.draft}
+              onClose={onClose}
+              onSave={review.onSave}
+              review={{ onGenerateAgain: review.onGenerateAgain }}
+            />
+          </motion.div>
+        ) : (
+          generating && (
+            <motion.div
+              key="working"
+              className="gen-drawer__phase"
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+              transition={arriveTransition(reduce)}
+            >
+              {/* The wait replaces the form it was started from, so the drawer stays the
+                  one place this happens. Neither a percentage nor a clock: the length of
+                  the read isn't knowable, so the card names the pass it is on (FR-11).
+                  The footer goes with the form — there is nothing to submit while it
+                  runs. */}
+              <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
+              <div className="gen-drawer__body">
+                <GeneratingBody
+                  steps={generating.steps}
+                  activeStep={generating.activeStep}
+                  stepMs={generating.stepMs}
+                  draft={generating.draft}
+                  detail={generating.detail}
+                />
+              </div>
+            </motion.div>
+          )
+        )}
+      </AnimatePresence>
     )
   }
 

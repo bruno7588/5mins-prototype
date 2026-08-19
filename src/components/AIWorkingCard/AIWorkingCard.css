@@ -93,15 +93,14 @@
   transform-origin: center;
 }
 
-/* Slow: it runs the whole time, while everything else in the wait arrives in under half
-   a second. At the old pace the two read as one busy surface — this one breathes under
-   the rest rather than competing with it. */
+/* Slower than the arrivals around it — it runs the whole time, and at their pace the two
+   read as one busy surface — but not so slow it stops looking like something working. */
 .ai-working-step__icon--active .sparkle-icon__big {
-  animation: ai-sparkle-big 3.2s ease-in-out infinite;
+  animation: ai-sparkle-big 2.2s ease-in-out infinite;
 }
 
 .ai-working-step__icon--active .sparkle-icon__small {
-  animation: ai-sparkle-small 3.2s ease-in-out infinite;
+  animation: ai-sparkle-small 2.2s ease-in-out infinite;
 }
 
 @keyframes ai-sparkle-big {
