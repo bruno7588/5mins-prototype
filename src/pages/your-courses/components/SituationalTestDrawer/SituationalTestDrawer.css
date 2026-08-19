@@ -11,6 +11,13 @@
   padding-bottom: var(--space-sm);
 }
 
+/* When the switcher leads the body it sits straight under the rule, and the two
+   spaces stacked — the header's own 12px plus the body's 20px — read as a gap
+   twice the size of every other one on the panel. One gap, 20px. */
+.situational-test-drawer-shell .section-header:has(+ .st-drawer__body > .st-drawer__panes) {
+  padding-bottom: 0;
+}
+
 /* 12px between the back arrow and the title. The title group has to absorb the free
    space (Figma's flex-1 headline), or space-between pushes it to the middle of the row
    and the arrow ends up marooned on the far left. */
