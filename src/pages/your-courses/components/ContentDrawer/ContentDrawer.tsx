@@ -10,7 +10,12 @@ import SituationalTestDrawerContent, {
 } from '../SituationalTestDrawer/SituationalTestDrawer'
 import InteractiveDrawer from '../InteractiveDrawer/InteractiveDrawer'
 import GenerateAssessmentsDrawer from '../GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
-import type { CoverageReport, GeneratableType, GenerationScope } from '@/data/aiAssessmentGeneration'
+import type {
+  CoverageReport,
+  GeneratableType,
+  GeneratedAssessment,
+  GenerationScope,
+} from '@/data/aiAssessmentGeneration'
 import {
   TYPE_CONFIG,
   type InteractiveQuestion,
@@ -74,7 +79,16 @@ interface Props {
   generationCoverage: CoverageReport
   onGenerate: (types: GeneratableType[]) => void
   onAddLessons: () => void
-  generating: { steps: string[]; activeStep: number } | null
+  generating: {
+    steps: string[]
+    activeStep: number
+    /** How long each step is held — the reveal paces itself against it. */
+    stepMs: number
+    /** The draft being written, revealed as the steps run. */
+    draft: GeneratedAssessment | null
+    /** What the running step is on right now. */
+    detail?: string
+  } | null
   generationReview: {
     draft: SituationalTestData
     onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void

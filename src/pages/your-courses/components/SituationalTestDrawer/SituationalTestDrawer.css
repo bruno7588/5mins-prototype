@@ -437,8 +437,8 @@
   padding: 2px var(--space-s);
   background: var(--input-background);
   border-radius: var(--radius-full);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 1.5;
   /* Tertiary: it says what kind of question this is, which is a note on the heading
      beside it rather than a second heading. */

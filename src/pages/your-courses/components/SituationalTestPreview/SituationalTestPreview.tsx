@@ -36,9 +36,11 @@ interface Props {
  * the shuffle, the word bank, the buckets and the grading are the real thing, so what
  * the admin approves is what the learner meets.
  *
- * Just the phone on the scrim — no dialog card. ConfirmModal supplies the scrim, focus
- * trap and Escape, and it is portalled to the body because the drawer's z-index makes a
- * stacking context the overlay couldn't paint over.
+ * The way through is the learner's own: Start Situational Test opens the first question
+ * and each Continue moves to the next, so the admin takes the same path they would. Just
+ * the phone on the scrim — no dialog card, no paging beside it. ConfirmModal supplies the
+ * scrim, focus trap and Escape, and it is portalled to the body because the drawer's
+ * z-index makes a stacking context the overlay couldn't paint over.
  */
 function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
   const [screen, setScreen] = useState(0)
@@ -108,17 +110,6 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
         </PhoneFrame>
       </div>
 
-      {/* The walkthrough's own controls, outside the phone: paging between questions is
-          the admin's business, not something the learner would have. The position is in
-          the phone's header, so it isn't repeated here. */}
-      <div className="st-preview__nav">
-        <Button variant="outlined" disabled={onBrief} onClick={() => setScreen((s) => s - 1)}>
-          Back
-        </Button>
-        <Button disabled={last} onClick={() => setScreen((s) => s + 1)}>
-          Next
-        </Button>
-      </div>
     </ConfirmModal>,
     document.body,
   )

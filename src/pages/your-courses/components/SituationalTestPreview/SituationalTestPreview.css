@@ -34,7 +34,7 @@
    its bank — and at 640 the pool overruns the first bucket. Shrinks on short viewports
    rather than running off-screen, with room left for the paging row below. */
 .st-preview__stage .m-phone__screen {
-  height: min(812px, calc(100vh - 176px));
+  height: min(812px, calc(100vh - 96px));
 }
 
 /* ===== The brief, as the course feed draws it (Figma 17024:82020) ===== */
@@ -112,15 +112,3 @@
   line-height: 1.5;
   color: var(--text-secondary);
 }
-
-
-/* ===== Paging, outside the phone ===== */
-
-.st-preview__nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-m);
-  width: 375px; /* the phone's width, so the controls sit under its edges */
-}
-

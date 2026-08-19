@@ -131,45 +131,67 @@
   font-weight: 500;
 }
 
-/* ===== The wait's placeholder =====
+/* ===== The draft arriving =====
 
-   The generator writes a title, a brief and a set of questions, so the wait shows those
-   in the shape they will arrive in. The sweep is what says it is working — a still
-   skeleton reads as a page that failed to load. */
-.gen-drawer__skeleton {
+   Not a placeholder for the result — the result, written into the fields the review is
+   about to hand over. Whatever is still being written wears the shimmer; it lifts as each
+   piece finishes, so the effect and the content say the same thing. */
+.gen-drawer__live {
   display: flex;
   flex-direction: column;
   gap: var(--space-m);
-  margin-top: var(--space-l);
 }
 
-.gen-drawer__skeleton > * {
-  display: block;
+.gen-drawer__live-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  animation: gen-drawer-arrive 320ms ease;
+}
+
+.gen-drawer__live-label {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* The review's own field chrome (input.md § Outlined text field), so what is being
+   written looks like what will be handed over. */
+.gen-drawer__live-input {
+  position: relative;
+  overflow: hidden;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  /* Both stops are tokens, so the highlight stays lighter than its ground in either
-     mode rather than being a white sweep that only works on a pale one. */
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* Holds its finished height from the first character, or every few characters would
+   nudge everything under it. */
+.gen-drawer__live-input--brief {
+  min-height: calc(5 * 1.5em + 2 * var(--space-sm));
+}
+
+/* The shimmer, over the thing being written rather than over the drawer. Both stops are
+   tokens, so the highlight stays lighter than its ground in either mode. */
+.is-writing::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     90deg,
-    var(--input-background) 0%,
+    transparent 0%,
     var(--cards-background-hover) 50%,
-    var(--input-background) 100%
+    transparent 100%
   );
   background-size: 200% 100%;
-  animation: gen-drawer-shimmer 1.6s linear infinite;
-}
-
-.gen-drawer__skeleton-title {
-  width: 45%;
-  height: 20px;
-}
-
-.gen-drawer__skeleton-brief {
-  height: 88px;
-}
-
-/* Roughly a folded question card, so the outline that follows lands on the same rhythm. */
-.gen-drawer__skeleton-card {
-  height: 64px;
+  animation: gen-drawer-shimmer 1.4s linear infinite;
+  pointer-events: none;
 }
 
 @keyframes gen-drawer-shimmer {
@@ -177,11 +199,75 @@
   to { background-position: -200% 0; }
 }
 
+/* The write-head. Steady, not blinking: it marks where the text is up to, and a blink
+   would compete with the sparkle above for the eye. */
+.gen-drawer__caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--text-button-outlined);
+}
+
+.gen-drawer__live-question {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-m);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  /* Each card drops in as it starts being written. */
+  animation: gen-drawer-arrive 320ms ease;
+}
+
+.gen-drawer__live-format {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.gen-drawer__live-text {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+@keyframes gen-drawer-arrive {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  /* The steps above still tick over, so the wait is still visibly alive without a
-     travelling highlight. */
-  .gen-drawer__skeleton > * {
+  /* The content still arrives pass by pass — only the movement goes. */
+  .gen-drawer__live-field,
+  .gen-drawer__live-question {
     animation: none;
-    background: var(--input-background);
   }
+
+  .is-writing::after,
+  .gen-drawer__caret {
+    display: none;
+  }
+}
+
+/* The passes stay put while what they produce scrolls under them: on a short drawer the
+   cards would otherwise push the steps off the top, and the one thing the wait has to
+   keep saying is what it is doing. The body is the scroll container, so the card sticks
+   to its top edge and carries the panel colour to hide what passes behind it. */
+.gen-drawer__steps {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  /* The 32px sparkle overhangs its one-line box by ~6px each way, and the body is a
+     scroll container — so without room above, the first row's sparkle is clipped at the
+     top edge. */
+  padding-top: var(--space-s);
+  padding-bottom: var(--space-m);
+  background: var(--page-background);
 }

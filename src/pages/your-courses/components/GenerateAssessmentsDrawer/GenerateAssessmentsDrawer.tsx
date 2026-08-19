@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { Add } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
@@ -14,6 +14,8 @@ import {
   typeLabel,
   type CoverageReport,
   type GeneratableType,
+  type GeneratedAssessment,
+  type GeneratedQuestion,
   type GenerationScope,
 } from '@/data/aiAssessmentGeneration'
 import SituationalTestDrawerContent, {
@@ -32,7 +34,13 @@ interface Props {
   /** Route out of the zero-transcript dead end — opens the 5Mins Library. */
   onAddLessons: () => void
   /** Live run. Non-null replaces the form with the working card (FR-11). */
-  generating?: { steps: string[]; activeStep: number } | null
+  generating?: {
+    steps: string[]
+    activeStep: number
+    stepMs: number
+    draft: GeneratedAssessment | null
+    detail?: string
+  } | null
   /**
    * A finished situational test waiting to be approved. Nothing reaches the course
    * outline until the admin saves it, so the drawer holds the draft in the same
@@ -143,17 +151,13 @@ function GenerateAssessmentsDrawer({
       <>
         <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
         <div className="gen-drawer__body">
-          <AIWorkingCard steps={generating.steps} activeStep={generating.activeStep} />
-          {/* The shape of what is coming, in the place it will land: a title, a brief and
-              the question cards under them. Decorative — the steps above are what a
-              screen reader hears — so it is hidden from the tree rather than described. */}
-          <div className="gen-drawer__skeleton" aria-hidden="true">
-            <span className="gen-drawer__skeleton-title" />
-            <span className="gen-drawer__skeleton-brief" />
-            <span className="gen-drawer__skeleton-card" />
-            <span className="gen-drawer__skeleton-card" />
-            <span className="gen-drawer__skeleton-card" />
-          </div>
+          <GeneratingBody
+            steps={generating.steps}
+            activeStep={generating.activeStep}
+            stepMs={generating.stepMs}
+            draft={generating.draft}
+            detail={generating.detail}
+          />
         </div>
       </>
     )
@@ -269,5 +273,202 @@ function GenerateAssessmentsDrawer({
     </>
   )
 }
+
+/* Floors, not schedules: a longer pass spreads the same content further apart rather
+   than fitting more into it. */
+const TITLE_BEAT_MS = 500
+/** How long one assessment card holds the screen. Exported because the pass that shows
+ *  the cards has to be long enough for all of them — a pass that ends early dumps the
+ *  rest in at once, which is the one thing a reveal must not do. */
+export const QUESTION_BEAT_MS = 700
+
+/* How the passes are numbered, so the reveal and the labels can't drift apart. */
+const READING = 0
+const WRITING_BRIEF = 1
+const CREATING = 2
+
+/* What the third pass calls each format while it writes one. The rail's labels are
+   titles for a menu; these are the middle of a sentence. */
+const CREATING_WORD: Partial<Record<GeneratableType, string>> = {
+  'single-choice': 'multiple-choice',
+  'fill-blank': 'fill-in-the-blanks',
+  sequencing: 'sequence',
+  'match-pairs': 'match-the-pairs',
+  categorization: 'categorise',
+  'short-text': 'short-text',
+  exercise: 'exercise',
+  poll: 'poll',
+}
+
+/** Matches the media query the CSS uses, so motion is dropped in one place per user. */
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+/** Types a string out over `ms`, or hands it over whole when `run` is false. */
+function useTyped(text: string, run: boolean, ms: number, delay = 0) {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (!run || prefersReducedMotion()) {
+      setCount(text.length)
+      return
+    }
+    setCount(0)
+    const tick = 32
+    const perTick = Math.max(1, Math.ceil(text.length / Math.max(1, ms / tick)))
+    let id = 0
+    const started = window.setTimeout(() => {
+      id = window.setInterval(() => setCount((n) => Math.min(text.length, n + perTick)), tick)
+    }, delay)
+    return () => {
+      window.clearTimeout(started)
+      window.clearInterval(id)
+    }
+  }, [text, run, ms, delay])
+
+  return { shown: text.slice(0, count), done: count >= text.length }
+}
+
+/**
+ * The wait, and the draft arriving inside it.
+ *
+ * The generator wrote the whole thing before the wait began, so this is a reveal paced to
+ * the passes: nothing while the course is read, then the title and brief write themselves
+ * into their own fields, then one assessment card at a time writes itself in. Each thing
+ * being written wears the shimmer until it is finished, so the effect and the content say
+ * the same thing rather than two different ones.
+ *
+ * The passes are told what is happening under them — which lesson is being read, which
+ * kind of assessment is being written — which is why the working card is in here: the
+ * detail for the third pass depends on which card the reveal has reached.
+ */
+function GeneratingBody({
+  steps,
+  activeStep,
+  stepMs,
+  draft,
+  detail,
+}: {
+  steps: string[]
+  activeStep: number
+  stepMs: number
+  draft: GeneratedAssessment | null
+  detail?: string
+}) {
+  const brief = draft?.brief ?? ''
+  const questions = draft?.questions ?? []
+  const [landed, setLanded] = useState(0)
+  const newest = useRef<HTMLDivElement>(null)
+
+  /* Keeps the card being written in view. The passes are pinned at the top, so the
+     content scrolls under them rather than the whole drawer jumping. */
+  useEffect(() => {
+    if (!landed) return
+    newest.current?.scrollIntoView({
+      block: 'nearest',
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    })
+  }, [landed])
+
+  /* Pass two writes both fields: the title first and quickly, since it is one line, then
+     the brief under it for the rest of the pass. */
+  const writingBrief = activeStep === WRITING_BRIEF
+  const title = useTyped(draft?.title ?? '', writingBrief, TITLE_BEAT_MS)
+  const briefText = useTyped(brief, writingBrief, stepMs * 0.65, TITLE_BEAT_MS + 200)
+
+  /* Pass three: one card at a time, never faster than one can be read. */
+  useEffect(() => {
+    if (activeStep < CREATING) {
+      setLanded(0)
+      return
+    }
+    if (activeStep > CREATING || prefersReducedMotion()) {
+      setLanded(questions.length)
+      return
+    }
+    setLanded(1)
+    const every = Math.max(QUESTION_BEAT_MS, (stepMs * 0.9) / Math.max(1, questions.length))
+    const id = window.setInterval(
+      () => setLanded((n) => Math.min(questions.length, n + 1)),
+      every,
+    )
+    return () => window.clearInterval(id)
+  }, [activeStep, questions.length, stepMs])
+
+  /* The third pass names the kind it is on, which is whichever card is being written. */
+  const writingCard = activeStep === CREATING ? questions[landed - 1] : undefined
+  const stepDetail =
+    activeStep === READING
+      ? detail
+      : writingCard
+        ? `Creating ${CREATING_WORD[writingCard.format] ?? typeLabel(writingCard.format)} assessments`
+        : undefined
+
+  return (
+    <>
+      <AIWorkingCard
+        className="gen-drawer__steps"
+        steps={steps}
+        activeStep={activeStep}
+        detail={stepDetail}
+      />
+
+      {/* Nothing is written yet while the course is being read. */}
+      {activeStep >= WRITING_BRIEF && draft && (
+        <div className="gen-drawer__live" aria-hidden="true">
+          {/* The fields the review will hand over, filling as they are written. The
+              shimmer sits on whatever is still being written and lifts when it is done. */}
+          <div className="gen-drawer__live-field">
+            <span className="gen-drawer__live-label">Title</span>
+            <div className={`gen-drawer__live-input${title.done ? '' : ' is-writing'}`}>
+              {title.shown}
+              {!title.done && <span className="gen-drawer__caret" />}
+            </div>
+          </div>
+
+          <div className="gen-drawer__live-field">
+            <span className="gen-drawer__live-label">Brief</span>
+            <div
+              className={`gen-drawer__live-input gen-drawer__live-input--brief${
+                briefText.done ? '' : ' is-writing'
+              }`}
+            >
+              {briefText.shown}
+              {!briefText.done && <span className="gen-drawer__caret" />}
+            </div>
+          </div>
+
+          {questions.slice(0, landed).map((question, i) => (
+            <LiveQuestion
+              key={i}
+              ref={i === landed - 1 ? newest : undefined}
+              question={question}
+              /* Only the newest card is being written; the ones above it are done. */
+              writing={activeStep === CREATING && i === landed - 1}
+              ms={QUESTION_BEAT_MS * 0.7}
+            />
+          ))}
+        </div>
+      )}
+    </>
+  )
+}
+
+/** One assessment card, writing itself in. */
+const LiveQuestion = forwardRef<
+  HTMLDivElement,
+  { question: GeneratedQuestion; writing: boolean; ms: number }
+>(function LiveQuestion({ question, writing, ms }, ref) {
+  const text = useTyped(question.text, writing, ms)
+  return (
+    <div ref={ref} className={`gen-drawer__live-question${writing ? ' is-writing' : ''}`}>
+      <span className="gen-drawer__live-format">{typeLabel(question.format)}</span>
+      <span className="gen-drawer__live-text">
+        {text.shown}
+        {!text.done && <span className="gen-drawer__caret" />}
+      </span>
+    </div>
+  )
+})
 
 export default GenerateAssessmentsDrawer

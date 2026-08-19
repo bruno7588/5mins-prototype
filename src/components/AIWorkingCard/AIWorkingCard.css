@@ -14,23 +14,33 @@
   gap: var(--space-s);
 }
 
+/* Top-aligned, not centred: the running step carries a second line under it, and an icon
+   floating between the two belongs to neither. It marks the step, so it sits on the
+   step's own line. */
 .ai-working-step {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-xs);
-  height: 28px;
+  min-height: 28px;
 }
 
-/* Fixed box so the labels stay aligned as icons swap in and out. */
+/* Fixed box so the labels stay aligned as icons swap in and out, and so the 32px sparkle
+   and the 20px tick share one centre line rather than each finding its own.
+
+   The box is one text line tall: the row is top-aligned, so a box as tall as the sparkle
+   would drop the glyph below the line it belongs to. The sparkle overflows it evenly,
+   which is what keeps the two icons centred on the same axis. */
 .ai-working-step__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: calc(14px * 1.5);
   flex-shrink: 0;
 }
 
+/* One size throughout the card; colour is what separates the three kinds of line. The
+   pass itself is primary — it is the thing being said. */
 .ai-working-step__text {
   font-size: 14px;
   font-weight: 400;
@@ -38,25 +48,62 @@
   color: var(--text-primary);
 }
 
-.ai-working-step__text--pending {
-  color: var(--text-disabled);
+/* The pass being worked on carries Medium — the one line on the card that is happening
+   now, beside the only glyph that is moving. */
+.ai-working-step__text--active {
+  font-weight: 500;
 }
 
-/* The running step twinkles: a slow scale-and-fade, which reads as working without
-   claiming a position on a scale nobody can measure. */
-.ai-working-step__icon--active {
-  animation: ai-working-twinkle 1.6s ease-in-out infinite;
+
+/* What the pass is on this second. Same size, tertiary: the pass is the promise, this is
+   only where it has got to. */
+.ai-working-step__detail {
+  display: block;
+  /* Bound to the pass above it: 4px is close enough to read as one block, far enough
+     that the two lines don't run together. */
+  margin-top: var(--space-xs);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
 }
 
-@keyframes ai-working-twinkle {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%      { transform: scale(1.18); opacity: 0.72; }
+/* The running step pulses: the two sparkles trade size, the big one shrinking as the
+   small one swells and back again. One glyph breathing rather than the whole icon
+   throbbing — it reads as working without claiming a position on a scale nobody can
+   measure.
+
+   Each path scales about its own centre (fill-box), or they would both swing around the
+   icon's corner instead of staying where they are drawn. */
+.ai-working-step__icon--active .sparkle-icon__big,
+.ai-working-step__icon--active .sparkle-icon__small {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ai-working-step__icon--active .sparkle-icon__big {
+  animation: ai-sparkle-big 1.8s ease-in-out infinite;
+}
+
+.ai-working-step__icon--active .sparkle-icon__small {
+  animation: ai-sparkle-small 1.8s ease-in-out infinite;
+}
+
+@keyframes ai-sparkle-big {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(0.72); }
+}
+
+@keyframes ai-sparkle-small {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.45); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Still marked as the running step by its icon and its full-strength label — the
-     motion is what goes, not the meaning. */
-  .ai-working-step__icon--active {
+  /* Still marked as the running step by its icon and its weight — the motion is what
+     goes, not the meaning. */
+  .ai-working-step__icon--active .sparkle-icon__big,
+  .ai-working-step__icon--active .sparkle-icon__small {
     animation: none;
   }
 }

@@ -12,6 +12,7 @@ import type { CourseDetailsDraft } from './components/CourseDetailsTab/CourseDet
 import { saveCourse, type StoredCourse } from './courseStore'
 import { buildPreviewCourse } from './previewCourse'
 import type { ContentItem, OutlineSection } from './components/ContentList/ContentList'
+import { QUESTION_BEAT_MS } from './components/GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
 import AddContentIconStrip from './components/AddContentIconStrip/AddContentIconStrip'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
@@ -71,18 +72,40 @@ type ActiveDrawer =
    of its steps carries more and is held long enough to actually be read — a step
    that flicks past says nothing about what the generator is doing. */
 const GENERATION_STEP_MS = 1100
-const SITUATIONAL_STEP_MS = 2600
-/* How long the finished step stays ticked before the drawer closes. Without it the
-   last step is marked done and the panel vanishes in the same frame. */
-const GENERATION_TAIL_MS = 900
+/* Long enough to read what each pass produces: the brief writes itself out over the
+   first, the questions land one at a time over the second. A wait that shows its work
+   is paced by the work, not by how soon it can be over. */
+const SITUATIONAL_STEP_MS = 4200
+/* How long the last step stays ticked before the drawer moves on. It is the one that
+   says the work is done, so it has to be readable — without it the panel would swap to
+   the review in the same frame it announced itself. */
+const GENERATION_TAIL_MS = 1400
 
-/* Three steps, in the order the work actually happens: the scenario is written
-   first (from the course's own title and description as well as the lessons),
-   then the questions that run through it, then the two are assembled. */
+/* Every pass gets the base beat, except the one that writes the assessments: that one
+   is as long as the cards it has to show, or the last few would land in a lump when the
+   pass ended rather than one at a time. */
+const stepDurations = (situational: boolean, count: number, draft: GeneratedAssessment | null) => {
+  if (!situational) return Array.from({ length: count }, () => GENERATION_STEP_MS)
+  const questions = draft?.questions?.length ?? 0
+  return Array.from({ length: count }, (_, i) =>
+    i === CREATING_PASS
+      ? Math.max(SITUATIONAL_STEP_MS, questions * QUESTION_BEAT_MS + 400)
+      : SITUATIONAL_STEP_MS,
+  )
+}
+
+/* Which pass writes the assessments — the reveal indexes the same list. */
+const CREATING_PASS = 2
+
+/* The passes, in the order the work happens: the course is read, then the scenario is
+   written from it, then the questions that run through the scenario, then the two are
+   assembled. Each one names what is happening rather than counting to a number it
+   cannot know (FR-11). */
 const SITUATIONAL_STEPS = [
-  'Writing the title and brief from your course and lessons',
-  'Writing 6–8 questions',
-  'Building your situational test',
+  'Reading the source transcripts',
+  'Writing the title and brief',
+  'Creating assessments',
+  'All done — your situational test is ready',
 ]
 
 /* A generated draft's provenance: which format it is and which lesson it was read
@@ -162,12 +185,18 @@ function CreateCourse() {
   const [generationScope, setGenerationScope] = useState<GenerationScope>('assessments')
   const [run, setRun] = useState<{
     steps: string[]
-    /** How long each step is held — the two scopes do differently sized work. */
-    stepMs: number
+    /** How long each pass is held. Per pass, not one number: writing the assessments
+     *  takes as long as there are assessments to write. */
+    stepDurations: number[]
     lessons: TranscriptSource[]
     types: GeneratableType[]
+    /** Written before the wait starts, so the wait can show it arriving rather than
+     *  standing in for it. Situational only: assessments are a set, not one artefact. */
+    draft: GeneratedAssessment | null
   } | null>(null)
   const [activeStep, setActiveStep] = useState(0)
+  /* Which lesson the first pass is naming. */
+  const [reading, setReading] = useState(0)
   /* What the picker last asked for, kept past the run so a single-card redraft can be
      written to the same brief. */
   const [pickedFormats, setPickedFormats] = useState<GeneratableType[]>([])
@@ -454,23 +483,27 @@ function CreateCourse() {
        open again by the time the run starts. */
     setActiveDrawer('ai-generate')
     const situational = generationScope === 'situational'
+    /* Written before the wait starts, so the wait can show it arriving rather than
+       standing in for it — and so the passes can be sized against it. */
+    const draft = situational
+      ? generateSituationalTest(coverage.withTranscript, details, types)
+      : null
+    const steps = situational
+      ? SITUATIONAL_STEPS
+      : [...coverage.withTranscript.map((l) => `Reading "${l.title}"`), 'Writing your assessments']
     setRun({
       /* Assessments are written a lesson at a time, so the wait names the lesson
          being read; a situational test is one artefact built in three passes, so it
          names the passes. Either way the step says what is happening rather than
          counting to a number it can't know (FR-11). */
-      steps: situational
-        ? SITUATIONAL_STEPS
-        : [
-            ...coverage.withTranscript.map((l) => `Reading "${l.title}"`),
-            'Writing your assessments',
-          ],
-      stepMs: situational ? SITUATIONAL_STEP_MS : GENERATION_STEP_MS,
+      steps,
+      stepDurations: stepDurations(situational, situational ? SITUATIONAL_STEPS.length : steps.length, draft),
       lessons: coverage.withTranscript,
       /* The chips are question formats. Assessments generate those formats directly;
          a situational test is always one test, so its formats travel alongside the
          'situational-test' marker that tells generateSet which shape to build. */
       types: situational ? [...TYPES_BY_SCOPE.situational, ...types] : types,
+      draft,
     })
   }
 
@@ -487,13 +520,26 @@ function CreateCourse() {
   useEffect(() => {
     if (!run) return
     setActiveStep(0)
-    const steps = run.steps.map((_, i) =>
-      window.setTimeout(() => setActiveStep(i), run.stepMs * i),
+    setReading(0)
+    /* The first pass reads the course, so it names what it is reading — one lesson at a
+       time, so the wait is about this course rather than about waiting. */
+    const reader = window.setInterval(
+      () => setReading((i) => i + 1),
+      Math.max(700, run.stepDurations[0] / Math.max(1, run.lessons.length)),
     )
+    let at = 0
+    const offsets = run.stepDurations.map((ms) => {
+      const start = at
+      at += ms
+      return start
+    })
+    const steps = offsets.map((start, i) => window.setTimeout(() => setActiveStep(i), start))
     /* The last step is the card's terminal one — it ticks the moment it's reached
        rather than spinning — so the run ends a beat after it, not a full step. */
     const finish = window.setTimeout(() => {
-      const drafts = generateSet(run.types, run.lessons, details)
+      /* Situational runs wrote their draft up front so the wait could show it; anything
+         else is written now. */
+      const drafts = run.draft ? [run.draft] : generateSet(run.types, run.lessons, details)
       setRun(null)
 
       /* A situational test is one artefact an admin publishes under their own name, so
@@ -512,9 +558,10 @@ function CreateCourse() {
 
       setScormItems((prev) => [...prev, ...placeDrafts(drafts)])
       setActiveDrawer(null)
-    }, run.stepMs * (run.steps.length - 1) + GENERATION_TAIL_MS)
+    }, offsets[offsets.length - 1] + GENERATION_TAIL_MS)
 
     return () => {
+      window.clearInterval(reader)
       steps.forEach(window.clearTimeout)
       window.clearTimeout(finish)
     }
@@ -752,7 +799,22 @@ function CreateCourse() {
         onInteractiveSave={handleSaveInteractive}
         onInteractiveDirtyChange={setInteractiveDirty}
         generationScope={generationScope}
-        generating={run ? { steps: run.steps, activeStep } : null}
+        generating={
+          run
+            ? {
+                steps: run.steps,
+                activeStep,
+                stepMs: run.stepDurations[activeStep] ?? SITUATIONAL_STEP_MS,
+                draft: run.draft,
+                /* Named only while the first pass is running — after that it is writing,
+                   not reading. */
+                detail:
+                  activeStep === 0 && run.lessons.length
+                    ? `Reading "${run.lessons[reading % run.lessons.length].title}"`
+                    : undefined,
+              }
+            : null
+        }
         generationReview={
           pendingTest
             ? {
