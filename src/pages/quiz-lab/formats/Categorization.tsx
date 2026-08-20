@@ -77,7 +77,9 @@ function Categorization({ question }: { question: CategorizationQuestion; format
 
   const placedClass = (i: number) => {
     const classes = ['ql-token', 'ql-token--sm', 'ql-token--locked']
+    // Placed reads as selected (Figma 9051:3353) until Check swaps in the grade.
     if (status !== 'idle') classes.push(itemCorrect(i) ? 'ql-token--correct' : 'ql-token--incorrect')
+    else classes.push('ql-token--selected')
     return classes.join(' ')
   }
 
@@ -88,11 +90,11 @@ function Categorization({ question }: { question: CategorizationQuestion; format
           <span className="ql-stem__q">{question.prompt}</span>
         </div>
 
-        <div className="ql-cat__pool">
-          {poolItems.length === 0 ? (
-            <span className="ql-cat__empty">All items sorted</span>
-          ) : (
-            poolItems.map((i) => (
+        {/* Once every item is placed the pool leaves the flow entirely — an
+            empty box would still hold the body's 20px gap open. */}
+        {poolItems.length > 0 && (
+          <div className="ql-cat__pool">
+            {poolItems.map((i) => (
               <button
                 key={i}
                 type="button"
@@ -103,9 +105,9 @@ function Categorization({ question }: { question: CategorizationQuestion; format
               >
                 {question.items[i].label}
               </button>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div className="ql-cat__buckets">
           {question.categories.map((cat) => (
