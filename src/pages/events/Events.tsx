@@ -64,7 +64,7 @@ function Events() {
                   className={`mt-side__item${isActive ? ' mt-side__item--active' : ''}`}
                   onClick={path ? () => navigate(path) : undefined}
                 >
-                  <Icon size={24} color={isActive ? 'var(--secondary-500)' : 'var(--text-secondary)'} variant="Bold" />
+                  <Icon size={24} color={isActive ? 'var(--selected)' : 'var(--text-secondary)'} variant="Bold" />
                   <span>{label}</span>
                 </button>
               )

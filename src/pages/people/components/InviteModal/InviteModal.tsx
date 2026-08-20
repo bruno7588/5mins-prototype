@@ -128,7 +128,7 @@ function InviteModal({ onClose, onInvite, userFields }: InviteModalProps) {
             >
               {showMoreAutomations ? 'show less' : 'and 4 more automations'}
               <ArrowDown2
-                size={14}
+                size={16}
                 color="var(--text-tertiary)"
                 style={{ transform: showMoreAutomations ? 'rotate(180deg)' : undefined, transition: 'transform 200ms ease' }}
               />

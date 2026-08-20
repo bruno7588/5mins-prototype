@@ -92,7 +92,7 @@
 }
 
 .rd-menu-item--danger {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 .rd-subtitle {
@@ -245,7 +245,7 @@
 }
 
 .rfe-chip-remove:hover {
-  background: var(--input-background-hover);
+  background: var(--input-background);
   color: var(--text-primary);
 }
 
@@ -451,7 +451,7 @@
   gap: var(--space-xs);
   min-height: 48px;
   padding: 8px 12px;
-  border: 1px solid var(--input-border, var(--border-elevated));
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-s);
   background: transparent;
   cursor: text;
@@ -508,7 +508,7 @@
 }
 
 .rcp-chip-remove:hover {
-  background: var(--neutral-200); /* TODO(dark): verify */
+  background: var(--input-background);
   color: var(--text-error);
 }
 
@@ -630,7 +630,7 @@
 
 .rcp-helper {
   font-size: 14px;
-  color: var(--danger-500);
+  color: var(--text-error);
   line-height: 1.5;
 }
 

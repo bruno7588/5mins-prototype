@@ -361,7 +361,7 @@
 /* Selected option sits on gold — keep its label dark for contrast */
 .onboarding-menu .dropdown-option.is-selected,
 .onboarding-menu .dropdown-option.is-selected:hover:not(:disabled) {
-  color: var(--neutral-800);
+  color: var(--text-on-selected);
 }
 
 /* ---- InputField overrides for the dark panel (per DS input.md) ---- */

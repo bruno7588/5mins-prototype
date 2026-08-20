@@ -14,7 +14,7 @@
 }
 
 .tooltip__trigger:focus-visible {
-  outline: 2px solid var(--primary-500, #00c4cc);
+  outline: 2px solid var(--primary-500);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -29,14 +29,14 @@
 }
 
 .tooltip__content {
-  background-color: var(--tooltip-background, #0f1014);
-  color: var(--neutral-25, #f9f9fa);
+  background-color: var(--tooltip-background);
+  color: var(--neutral-25);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  padding: var(--s, 8px) var(--sm, 12px);
-  border-radius: var(--sm, 12px);
+  padding: var(--space-s) var(--space-sm);
+  border-radius: var(--radius-sm);
   max-width: 288px;
   text-align: left;
   /* Always wrap inside the bubble, even if an ancestor sets white-space: nowrap. */

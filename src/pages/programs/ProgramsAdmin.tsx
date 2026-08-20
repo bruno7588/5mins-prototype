@@ -206,7 +206,7 @@ function ProgramsAdmin() {
           {filtered.length === 0 ? (
             <div className="programs-empty">
               <span className="programs-empty-icon">
-                <Routing size={28} color="var(--text-tertiary)" variant="Bold" />
+                <Routing size={32} color="var(--text-tertiary)" variant="Bold" />
               </span>
               <p className="programs-empty-title">
                 {query ? 'No programs found' : 'Create your first program'}

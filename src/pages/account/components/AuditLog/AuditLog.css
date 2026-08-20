@@ -539,7 +539,7 @@
 }
 
 .audit-pagination-nav:hover:not(:disabled) {
-  background: var(--input-background-hover);
+  background: var(--input-background);
 }
 
 .audit-pagination-nav:disabled {
@@ -662,8 +662,8 @@
 /* Selected preset — solid fill + dark label, matching the DS Dropdown option */
 .audit-date-preset.is-selected,
 .audit-date-preset.is-selected:hover {
-  background: var(--secondary-500);
-  color: var(--neutral-800);
+  background: var(--selected);
+  color: var(--text-on-selected);
   font-weight: 500;
 }
 
@@ -805,7 +805,6 @@
 
 .audit-cal-day--muted {
   color: var(--text-disabled);
-  opacity: 0.5;
 }
 
 /* In-range band between the two endpoints */
@@ -821,10 +820,10 @@
 
 /* Range endpoints — secondary-500 selection fill, dark bold label in both modes */
 .audit-cal-day--selected {
-  background: var(--secondary-500);
+  background: var(--selected);
   border-radius: var(--radius-s);
-  font-weight: 700;
-  color: var(--neutral-800);
+  font-weight: 500;
+  color: var(--text-on-selected);
 }
 
 .audit-cal-day:focus-visible {

@@ -44,7 +44,7 @@ function QuestionCard({ question, onEdit, onDelete }: QuestionCardProps) {
             data-tooltip="Edit question"
             onClick={onEdit}
           >
-            <Edit2 size={17} color="var(--text-tertiary)" variant="Linear" />
+            <Edit2 size={16} color="var(--text-tertiary)" variant="Linear" />
           </button>
           <button
             className="question-card-action question-card-action--delete"
@@ -52,7 +52,7 @@ function QuestionCard({ question, onEdit, onDelete }: QuestionCardProps) {
             data-tooltip="Delete question"
             onClick={onDelete}
           >
-            <Trash size={17} color="var(--text-tertiary)" variant="Linear" />
+            <Trash size={16} color="var(--text-tertiary)" variant="Linear" />
           </button>
         </div>
       </div>
@@ -65,7 +65,7 @@ function QuestionCard({ question, onEdit, onDelete }: QuestionCardProps) {
               className={`question-card-option${answer.isCorrect ? ' question-card-option--correct' : ''}`}
             >
               <span className={`question-card-option-dot${answer.isCorrect ? ' question-card-option-dot--correct' : ''}`}>
-                {answer.isCorrect && <TickCircle size={14} color="var(--neutral-0)" variant="Bold" />}
+                {answer.isCorrect && <TickCircle size={16} color="var(--neutral-0)" variant="Bold" />}
               </span>
               <span className="question-card-option-text">{answer.text}</span>
               {answer.isCorrect && (

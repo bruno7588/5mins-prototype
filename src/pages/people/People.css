@@ -186,10 +186,10 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-m);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--text-primary);
   border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: color 150ms ease, border-color 150ms ease;
 }
@@ -301,8 +301,8 @@
 
 .people-filter-option--selected {
   background: var(--secondary-500);
-  color: var(--neutral-800);
-  font-weight: 400;
+  color: var(--text-on-selected);
+  font-weight: 500;
 }
 
 .people-filter-option--selected:hover {
@@ -595,7 +595,7 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--neutral-0);
   flex-shrink: 0;
 }
@@ -744,7 +744,7 @@
 }
 
 .people-action-menu-item--danger {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 .people-action-menu-item svg {
@@ -936,7 +936,7 @@
 }
 
 .confirm-modal-label-danger {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 .confirm-modal-input {
@@ -988,7 +988,7 @@
   align-items: flex-start;
   gap: var(--space-sm);
   padding: 16px;
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: border-color 150ms ease, background 150ms ease;
@@ -1024,7 +1024,7 @@
   width: 20px;
   height: 20px;
   border-radius: var(--radius-full);
-  border: 2px solid var(--border-hover);
+  border: 1.5px solid var(--text-primary);
   position: relative;
   flex-shrink: 0;
   margin-top: 2px;

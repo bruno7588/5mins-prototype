@@ -62,7 +62,7 @@
   gap: 6px;
   padding: 8px 12px 8px 8px;
   border: none;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: rgba(15, 16, 20, 0.5);
   cursor: pointer;
   transition: background 120ms ease;
@@ -172,7 +172,7 @@
   padding: var(--space-xxl) var(--space-l);
   border: 1px dashed var(--border-elevated);
   border-radius: 20px;
-  background: var(--input-background, rgba(69, 76, 94, 0.16));
+  background: var(--input-background);
 }
 
 .pb-empty__art {
@@ -272,7 +272,7 @@
 }
 
 .pb-setting-link {
-  color: var(--primary-700);
+  color: var(--text-button-outlined);
   text-decoration: underline;
 }
 

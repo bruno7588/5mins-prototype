@@ -57,7 +57,7 @@
 .pad-stat__delta {
   font-size: 12px;
   font-weight: 500;
-  color: var(--success-600);
+  color: var(--text-success);
 }
 
 /* ── Breadcrumb ─────────────────────────────────────────────────────────── */
@@ -141,7 +141,7 @@
 .pad-avatars__img {
   width: 24px;
   height: 24px;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   object-fit: cover;
   border: 1px solid var(--page-background);
   margin-right: -8px;
@@ -153,7 +153,7 @@
   justify-content: center;
   height: 24px;
   padding: 0 6px;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: var(--cards-background-hover);
   border: 1px solid var(--page-background);
   font-size: 10px;
@@ -176,7 +176,7 @@
   width: 32px;
   height: 32px;
   border: none;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: transparent;
   cursor: pointer;
   transition: background 120ms ease;
@@ -274,7 +274,7 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: var(--input-background);
   font-size: 12px;
   font-weight: 500;
@@ -343,7 +343,7 @@
   width: 24px;
   height: 24px;
   border: none;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
@@ -446,7 +446,7 @@
   flex: 0 0 auto;
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   object-fit: cover;
 }
 
@@ -520,7 +520,7 @@
   width: 44px;
   height: 36px;
   border: none;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: transparent;
   cursor: pointer;
   color: var(--text-secondary);

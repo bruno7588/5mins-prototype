@@ -93,7 +93,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 /* Row plus its helper: the DS field → helper gap (input.md → Spacing). Wrapping
@@ -165,7 +165,7 @@
 .iq-drawer__row.iq-drawer__row--error,
 .iq-drawer__row.iq-drawer__row--error:hover,
 .iq-drawer__row.iq-drawer__row--error:focus-within {
-  border-color: var(--danger-500);
+  border-color: var(--text-error);
 }
 
 .iq-drawer__row-danger {
@@ -447,7 +447,7 @@
    and chip fills hold the same amber in both modes (Figma 9105:3554). */
 .iq-drawer__marker-word--blank {
   background: var(--secondary-500);
-  color: var(--neutral-800);
+  color: var(--text-on-selected);
   font-weight: 500;
   border-radius: var(--radius-xs);
 }

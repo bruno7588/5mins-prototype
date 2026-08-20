@@ -59,7 +59,7 @@ function FilterMultiSelect({ options, value, onChange, placeholder, trailing }: 
             inputRef.current?.focus()
           }}
         >
-          <SearchNormal1 size={18} color="var(--text-tertiary)" variant="Outline" className="fms-search-icon" />
+          <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Outline" className="fms-search-icon" />
           <input
             ref={inputRef}
             type="text"

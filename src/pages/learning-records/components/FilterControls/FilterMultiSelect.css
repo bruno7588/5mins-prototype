@@ -113,7 +113,7 @@
 }
 
 .fms-option:hover {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
 }
 
 .fms-option-label {

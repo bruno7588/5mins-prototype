@@ -273,7 +273,7 @@
   position: relative;
   width: 218px;
   height: 122px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
@@ -293,8 +293,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3px;
-  border-radius: 40px;
+  padding: var(--space-xs);
+  border-radius: var(--radius-full);
   background: var(--scrim);
   cursor: pointer;
   z-index: 2;
@@ -320,7 +320,7 @@
   transform: translateX(-50%);
   padding: 6px 12px;
   background: var(--tooltip-background);
-  color: var(--neutral-0);
+  color: var(--neutral-25);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.5;
@@ -348,7 +348,7 @@
   align-items: center;
   gap: var(--space-m);
   padding: var(--space-m);
-  border-radius: 40px;
+  border-radius: var(--radius-full);
   background: var(--input-background);
   min-width: 0;
   max-width: 100%;
@@ -394,7 +394,7 @@
   position: relative;
   height: 4px;
   background: var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-full);
   cursor: pointer;
 }
 
@@ -404,7 +404,7 @@
   left: 0;
   height: 100%;
   background: var(--text-primary);
-  border-radius: 16px 0 0 16px;
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
   transition: width 100ms linear;
 }
 
@@ -433,7 +433,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3px;
+  padding: var(--space-xs);
   border-radius: 50%;
   background: var(--input-background);
   cursor: pointer;
@@ -464,7 +464,7 @@
   width: 520px;
   max-width: calc(100vw - 48px);
   background: var(--page-background);
-  border-radius: 16px;
+  border-radius: var(--radius-m);
   padding: var(--space-l);
   display: flex;
   flex-direction: column;
@@ -503,7 +503,7 @@
   gap: var(--space-sm);
   min-height: 220px;
   padding: var(--space-l);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 150ms ease;
 }
@@ -593,10 +593,10 @@
   width: 400px;
   height: 224px;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   cursor: grab;
   user-select: none;
-  background-color: var(--neutral-900, #1a1a2e);
+  background-color: var(--neutral-900);
 }
 
 .media-modal-crop--dragging {
@@ -635,7 +635,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--neutral-0, #fff);
+  background: var(--neutral-0);
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
@@ -644,7 +644,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--neutral-0, #fff);
+  background: var(--neutral-0);
   cursor: pointer;
   border: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -671,7 +671,7 @@
 
 .media-modal-staged-change {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-button-outlined);
   background: none;
   border: none;

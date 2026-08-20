@@ -4,7 +4,7 @@
   gap: 4px;
   padding: 8px 12px;
   border: 1px solid var(--border-elevated);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
 }
 
 .draw-count-stepper-btn {
@@ -22,7 +22,7 @@
 }
 
 .draw-count-stepper-btn:disabled {
-  opacity: 0.3;
+  color: var(--text-disabled);
   cursor: not-allowed;
 }
 

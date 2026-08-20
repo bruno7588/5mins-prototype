@@ -8,7 +8,7 @@
   font-weight: 700;
   /* Canonical AI outlined border (Button.css .ds-btn--ai-outlined) */
   border: 1px solid var(--primary-500);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   white-space: nowrap;
   transition: background 150ms ease, box-shadow 150ms ease;
 }

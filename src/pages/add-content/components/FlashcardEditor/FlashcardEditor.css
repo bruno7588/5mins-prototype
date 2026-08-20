@@ -383,7 +383,7 @@
 }
 
 .fce-image-menu-item--danger {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 .fce-image-menu-item--danger:hover,

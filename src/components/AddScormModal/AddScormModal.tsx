@@ -63,7 +63,7 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
               <div className="add-scorm-header-actions">
                 {isEdit ? (
                   <>
-                    <Button size="lg" variant="outlined" icon={<Eye size={18} color="currentColor" variant="Linear" />} onClick={onPreview}>
+                    <Button size="lg" variant="outlined" icon={<Eye size={20} color="currentColor" variant="Linear" />} onClick={onPreview}>
                       Preview
                     </Button>
                     <Button size="lg" onClick={onClose}>Update SCORM</Button>
@@ -105,7 +105,7 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
                   onClick={() => thumbnailInputRef.current?.click()}
                   aria-label="Change image"
                 >
-                  <GalleryAdd size={13} color="white" variant="Linear" />
+                  <GalleryAdd size={16} color="white" variant="Linear" />
                 </button>
               </div>
               <div className="add-scorm-thumbnail-info">

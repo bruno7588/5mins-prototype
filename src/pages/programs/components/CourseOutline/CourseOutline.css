@@ -99,7 +99,7 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: var(--input-background);
   font-size: 12px;
   font-weight: 500;
@@ -253,7 +253,7 @@
   width: 28px;
   height: 28px;
   border: none;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;

@@ -15,7 +15,7 @@
 .search--m {
   gap: 8px;
   padding: 8px 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
 }
 
 /* ── Size L ── */
@@ -84,6 +84,6 @@
 }
 
 .search__clear:focus-visible {
-  outline: 2px solid var(--secondary-500);
+  outline: 2px solid var(--selected);
   border-radius: 4px;
 }

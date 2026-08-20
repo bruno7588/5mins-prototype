@@ -339,7 +339,7 @@
 }
 
 .tbl-action.is-disabled .icon-btn {
-  opacity: 0.5;
+  color: var(--text-disabled);
   cursor: default;
 }
 
@@ -378,6 +378,6 @@
 }
 
 .tbl-pagination .nav[aria-disabled='true'] {
-  opacity: 0.4;
+  color: var(--text-disabled);
   cursor: default;
 }

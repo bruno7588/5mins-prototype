@@ -67,11 +67,11 @@ function MobileCourseCard({
         <h3 className="m-course-card__title">{title}</h3>
         <div className="m-course-card__meta">
           <span className="m-course-card__metaitem">
-            <PlayCircle size={14} color="var(--text-secondary)" variant="Linear" />
+            <PlayCircle size={16} color="var(--text-secondary)" variant="Linear" />
             <span>{lessonCount} lessons</span>
           </span>
           <span className="m-course-card__metaitem">
-            <Clock size={14} color="var(--text-secondary)" variant="Linear" />
+            <Clock size={16} color="var(--text-secondary)" variant="Linear" />
             <span>{durationMinutes} min</span>
           </span>
         </div>

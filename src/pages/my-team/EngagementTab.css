@@ -85,8 +85,8 @@
 
 .eng-switcher__item--active {
   background: var(--secondary-500);
-  color: var(--neutral-800);
-  font-weight: 700;
+  color: var(--text-on-selected);
+  font-weight: 500;
 }
 
 /* ── Fake dropdown (static) ── */

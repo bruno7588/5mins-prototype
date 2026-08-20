@@ -49,7 +49,7 @@ function Carousel({ children, trackClassName = '', ariaLabel }: CarouselProps) {
         disabled={!canScroll.left}
         aria-label="Scroll left"
       >
-        <ArrowLeft2 size={16} color="var(--text-primary)" variant="Linear" />
+        <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
       </button>
       <div
         className={`carousel__track ${trackClassName}`.trim()}
@@ -66,7 +66,7 @@ function Carousel({ children, trackClassName = '', ariaLabel }: CarouselProps) {
         disabled={!canScroll.right}
         aria-label="Scroll right"
       >
-        <ArrowRight2 size={16} color="var(--text-primary)" variant="Linear" />
+        <ArrowRight2 size={16} color="currentColor" variant="Linear" />
       </button>
     </div>
   )

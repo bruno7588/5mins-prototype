@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
-  border-radius: var(--xxl, 40px);
+  border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
   font-size: 14px;
@@ -23,15 +23,15 @@
   height: 16px;
 }
 
-.badge--success      { background: rgba(24, 169, 87, 0.16);  color: var(--text-success, #18A957); }
-.badge--warning      { background: rgba(255, 165, 56, 0.16); color: var(--text-warning, #664B16); }
-.badge--error        { background: rgba(223, 22, 66, 0.16);  color: var(--text-error, #E95C7B); }
-.badge--in-progress  { background: rgba(0, 206, 230, 0.16);  color: var(--text-progress, #00CEE6); }
-.badge--informative  { background: var(--input-background, rgba(69, 76, 94, 0.16)); color: var(--text-secondary, #BFC2CC); }
+.badge--success      { background: rgba(24, 169, 87, 0.16);  color: var(--text-success); }
+.badge--warning      { background: rgba(255, 165, 56, 0.16); color: var(--text-warning); }
+.badge--error        { background: rgba(223, 22, 66, 0.16);  color: var(--text-error); }
+.badge--in-progress  { background: rgba(0, 206, 230, 0.16);  color: var(--text-progress); }
+.badge--informative  { background: var(--input-background); color: var(--text-secondary); }
 /* Figma 9200:58569 — enrolment not open to the learner yet. */
-.badge--scheduled    { background: rgba(42, 144, 216, 0.16);  color: var(--course-assessments, #2A90D8); }
-.badge--quiz         { background: rgba(99, 104, 219, 0.16); color: var(--text-quiz, #FFDBAF); }
-.badge--new          { background: var(--danger-400, #E95C7B); color: var(--neutral-25, #F9F9FA); }
+.badge--scheduled    { background: rgba(42, 144, 216, 0.16);  color: var(--course-assessments); }
+.badge--quiz         { background: rgba(99, 104, 219, 0.16); color: var(--text-quiz); }
+.badge--new          { background: var(--danger-400); color: var(--neutral-25); }
 
 /* Dismissible badge — has close button */
 .badge--dismissible {

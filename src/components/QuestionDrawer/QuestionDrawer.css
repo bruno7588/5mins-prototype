@@ -199,7 +199,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 3.5px;
+  padding: 4px;
   color: var(--text-tertiary);
   transition: color 150ms ease;
 }
@@ -283,7 +283,7 @@
 .question-drawer-error {
   font-size: 12px;
   font-weight: 400;
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 /* Footer */
@@ -312,7 +312,7 @@
   line-height: 1.5;
   color: var(--text-button-foreground);
   background: var(--primary-button-background);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   transition: background 150ms ease;
 }
 

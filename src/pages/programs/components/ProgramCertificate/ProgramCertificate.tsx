@@ -19,7 +19,7 @@ function ProgramCertificate({ unlocked, onGetCertificate }: ProgramCertificatePr
     return (
       <div className="pcert-locked">
         <span className="pcert-locked__badge" aria-hidden="true">
-          <Lock size={28} color="var(--neutral-400)" variant="Bold" />
+          <Lock size={32} color="var(--neutral-400)" variant="Bold" />
         </span>
         <div className="pcert-locked__body">
           <p className="pcert-locked__title">Earn your Program certificate</p>

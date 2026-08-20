@@ -60,7 +60,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--primary-button-background, #00cee6);
+  color: var(--primary-button-background);
   cursor: pointer;
   white-space: nowrap;
 }
@@ -132,7 +132,7 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--primary-button-background, #00cee6);
+  color: var(--primary-button-background);
   cursor: pointer;
 }
 

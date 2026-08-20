@@ -57,7 +57,7 @@ function MobileCategoryCard({
         <h3 className="m-cat-card__title">{name}</h3>
         <div className="m-cat-card__meta">
           <span className="m-cat-card__metaitem">
-            <Element4 size={18} color={metaColor} variant="Linear" />
+            <Element4 size={20} color={metaColor} variant="Linear" />
             <span>{courseCount} courses</span>
           </span>
           <span className="m-cat-card__metaitem">

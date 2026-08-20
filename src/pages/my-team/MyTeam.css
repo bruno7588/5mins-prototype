@@ -93,7 +93,7 @@
 }
 
 .mt-topnav__iconbtn:hover {
-  background: var(--input-background-hover);
+  background: var(--input-background);
 }
 
 .mt-topnav__dot {
@@ -157,7 +157,7 @@
 }
 
 .mt-side__item--active {
-  color: var(--secondary-500);
+  color: var(--text-selected);
   font-weight: 700;
 }
 
@@ -757,7 +757,7 @@
   background: var(--page-background-hover);
 }
 .mt-cp__pagination-btn:disabled {
-  opacity: 0.4;
+  color: var(--text-disabled);
   cursor: not-allowed;
 }
 

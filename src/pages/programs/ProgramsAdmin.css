@@ -102,7 +102,7 @@
 }
 
 .programs-row-title:hover {
-  color: var(--primary-600);
+  color: var(--text-button-hover);
 }
 
 .programs-row-title:focus-visible {
@@ -123,7 +123,7 @@
   width: 32px;
   height: 32px;
   border: none;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: transparent;
   color: var(--text-primary);
   cursor: pointer;
@@ -143,7 +143,7 @@
   padding: 6px;
   background: var(--cards-background);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   box-shadow: 0 8px 24px rgba(32, 34, 42, 0.12);
   display: flex;
   flex-direction: column;
@@ -156,7 +156,7 @@
   gap: 8px;
   padding: 8px 10px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-s);
   background: transparent;
   font-size: 14px;
   font-weight: 500;
@@ -171,7 +171,7 @@
 }
 
 .programs-kebab-item--danger {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 /* ---- Empty state ---- */
@@ -191,7 +191,7 @@
   justify-content: center;
   width: 56px;
   height: 56px;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: var(--input-background);
   margin-bottom: 8px;
 }

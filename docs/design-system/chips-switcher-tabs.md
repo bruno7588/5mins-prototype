@@ -57,7 +57,7 @@ All values use 5Mins.ai design tokens.
 | `--secondary-500`          | `#FFBB38`  | `#FFBB38`  | **Selected background — raw palette token, same in both modes (not `--selected`)** |
 | `--text-secondary`         | `#454C5E`  | `#BFC2CC`  | Default & hover label color            |
 | `--text-disabled`          | `#9EA4B3`  | `#656B7C`  | Disabled label & icon color            |
-| `--neutral-800`            | `#20222A`  | `#20222A`  | Selected label color (dark on yellow)  |
+| `--text-on-selected`       | `#20222A`  | `#20222A`  | Selected label color (dark on yellow)  |
 
 ### Spacing
 
@@ -96,7 +96,7 @@ All values use 5Mins.ai design tokens.
 |------------|------------|------------|----------------|------------------------|-------------------|-------------|
 | false      | false      | Enabled    | `--border-elevated` | transparent            | `--text-secondary`| 400         |
 | false      | false      | Hover      | `--border-hover`| `--page-background-hover`| `--text-secondary`| 400         |
-| false      | true       | Enabled    | none           | `--secondary-500`      | `--neutral-800`   | 700         |
+| false      | true       | Enabled    | none           | `--secondary-500`      | `--text-on-selected` | 500         |
 | true       | false      | n/a        | `--border`     | transparent            | `--text-disabled` | 400         |
 
 **Padding rules:** `8px 12px` for every variant; add `gap: 4px` when an icon is present (left or right).
@@ -150,7 +150,7 @@ export function Chip({
 
   const padding = iconLeft || iconRight ? 'gap-[4px]' : '';
 
-  // Text: 14px/1.5 Poppins — Regular (--text-secondary), Bold + --neutral-800 when
+  // Text: 14px/1.5 Poppins — Regular (--text-secondary), Medium 500 + --text-on-selected when
   // selected, Regular + --text-disabled when disabled
   const textStyle = disabled ? 'chip__label--disabled' : selected ? 'chip__label--selected' : 'chip__label';
 
@@ -208,8 +208,8 @@ export function Chip({
 .chip--selected {
   border: none;
   background-color: var(--secondary-500);   /* #FFBB38 — raw token, both modes */
-  color: var(--neutral-800);
-  font-weight: 700;
+  color: var(--text-on-selected);
+  font-weight: 500;
 }
 .chip--disabled {
   border-color: var(--border);
@@ -287,7 +287,7 @@ A segmented control: mutually exclusive sections inside a filled track. Use it t
 
 | Item state | Background | Text |
 |---|---|---|
-| Selected | `--secondary-500` `#FFBB38` (both modes) | Bold, `--neutral-800` |
+| Selected | `--secondary-500` `#FFBB38` (both modes) | Medium 500, `--text-on-selected` |
 | Unselected | transparent | Regular, `--text-secondary` |
 | Unselected hover | `--input-background-hover` | Regular, `--text-secondary` |
 | Disabled | transparent | Regular, `--text-disabled` |
@@ -326,8 +326,8 @@ Optional icons per item: **left 20px** (e.g. trash) or **right 16px** (e.g. info
 
 .switcher__item.is-selected {
   background: var(--secondary-500);     /* #FFBB38 — raw token, both modes */
-  color: var(--neutral-800);
-  font-weight: 700;
+  color: var(--text-on-selected);
+  font-weight: 500;
 }
 
 .switcher__item:disabled {

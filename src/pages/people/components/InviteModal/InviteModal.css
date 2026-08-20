@@ -238,7 +238,7 @@
 }
 
 .invite-modal-required {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 /* Input */

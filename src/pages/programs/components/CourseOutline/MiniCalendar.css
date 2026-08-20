@@ -83,6 +83,6 @@
 
 .mc__day--selected {
   background: var(--selected);
-  color: var(--neutral-800);
-  font-weight: 700;
+  color: var(--text-on-selected);
+  font-weight: 500;
 }

@@ -22,7 +22,7 @@
   height: 204px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   overflow: hidden; /* clips the glow to the rounded card area (Figma: overflow-clip) */
   isolation: isolate;
 }
@@ -46,7 +46,7 @@
   z-index: 1;
   width: 240px;
   height: 140px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   display: grid;
   place-items: center;

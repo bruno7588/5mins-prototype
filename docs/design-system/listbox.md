@@ -65,8 +65,8 @@ Base: `padding: 8px 12px` · `radius: 8px` (`--radius-s`) · label Poppins Regul
 |---|---|---|
 | Enabled | transparent (container bg) | `--text-primary` |
 | Hover | `--cards-background-hover` | `--text-primary` |
-| **Selected** | `--secondary-500` `#FFBB38` (both modes) | **`--neutral-800`** — dark on amber, same family as chips/switcher |
-| Selected + Hover | `--secondary-500` | `--neutral-800` |
+| **Selected** | `--secondary-500` `#FFBB38` (both modes) | **`--text-on-selected`** (weight 500) — dark on amber, same family as chips/switcher |
+| Selected + Hover | `--secondary-500` | `--text-on-selected` |
 | Read-only (disabled) | transparent | `--text-disabled`, muted slots |
 
 ### Slot matrix
@@ -102,7 +102,7 @@ Item heights for reference: 37px plain · 40px with avatar/radio · ~60–62px w
   white-space: nowrap;
 }
 .listbox__item:hover        { background: var(--cards-background-hover); }
-.listbox__item.is-selected  { background: var(--secondary-500); color: var(--neutral-800); }
+.listbox__item.is-selected  { background: var(--secondary-500); color: var(--text-on-selected); font-weight: 500; }
 .listbox__item.is-readonly  { color: var(--text-disabled); pointer-events: none; }
 
 /* Right-aligned options cluster (helper text + chevron) */

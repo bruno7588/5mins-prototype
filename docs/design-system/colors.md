@@ -207,6 +207,7 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--text-warning` | Warning-500 `#FFA538` | Warning-600 `#E88206` | Warning messages, deadline labels; warning-outlined button hover chrome |
 | `--text-error` | Danger-400 `#E95C7B` | Danger-500 `#DF1642` | Error messages, failed validation |
 | `--text-selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Selected tab label, active chip label |
+| `--text-on-selected` | Neutral-800 `#20222A` | Neutral-800 `#20222A` | Knockout label ON the amber `--selected` fill — chips, switcher pills, selected menu options, selected day cells. Mode-invariant; pair with weight 500 |
 | `--text-progress` | Primary-500 `#00CEE6` | Primary-700 `#008393` | Progress labels, "In Progress", step counters |
 
 > The Figma variable is spelled `Text-button-foregorund` (typo in Figma); the CSS token uses the corrected spelling `--text-button-foreground`.
@@ -413,6 +414,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
 | Captions, placeholders | `--text-tertiary` |
 | Filled-button label | `--text-button-foreground` |
 | Selected tab/chip — border/fill vs label | `--selected` vs `--text-selected` |
+| Label sitting ON the amber fill | `--text-on-selected` (weight 500) |
 | Success / warning / error text | `--text-success` / `--text-warning` / `--text-error` |
 | Progress labels | `--text-progress` |
 | Quiz badges | `--blaze-quiz` `--flash-poll` `--lesson-quiz` `--certificate-quiz` `--course-assessments` |

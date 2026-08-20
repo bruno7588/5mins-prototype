@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   background: var(--cards-background);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   box-shadow: var(--shadow-s);
 }
 
@@ -19,7 +19,7 @@
 }
 
 .ws-course-card--interactive:focus-visible {
-  outline: 2px solid var(--selected, #EDA30D);
+  outline: 2px solid var(--selected);
   outline-offset: 2px;
 }
 
@@ -37,8 +37,8 @@
   display: inline-flex;
   align-items: center;
   padding: 4px 8px;
-  background: var(--danger-400, #e95c7b);
-  color: var(--neutral-25, #f9f9fa);
+  background: var(--danger-400);
+  color: var(--neutral-25);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.5;
@@ -62,7 +62,7 @@
   padding: 6px 12px;
   border-radius: 40px;
   background: var(--cards-background);
-  color: var(--text-warning, #ffa538);
+  color: var(--text-warning);
   font-size: 14px;
   line-height: 1.5;
   white-space: nowrap;
@@ -84,11 +84,11 @@
 }
 
 .ws-course-card__segment--filled {
-  background: var(--selected, #EDA30D);
+  background: var(--selected);
 }
 
 .ws-course-card__segment--complete {
-  background: var(--success-500, #18a957);
+  background: var(--success-500);
 }
 
 .ws-course-card__body {

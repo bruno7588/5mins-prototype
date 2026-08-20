@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   background: var(--cards-background);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   box-shadow: var(--shadow-s);
   text-align: left;
@@ -74,7 +74,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  border-radius: 8px;
+  border-radius: var(--radius-s);
   font: 400 12px/1.2 Poppins, sans-serif;
   color: var(--text-tertiary);
   min-width: 0;

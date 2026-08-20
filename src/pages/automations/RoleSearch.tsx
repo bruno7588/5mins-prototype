@@ -51,7 +51,7 @@ function RoleSearch({ value, onChange, placeholder = 'Search for a role' }: Role
     <div className="role-search" ref={ref}>
       <div className="role-search-input-wrap">
         <SearchNormal1
-          size={18}
+          size={20}
           color="var(--text-tertiary)"
           variant="Outline"
           className="role-search-icon"
@@ -82,9 +82,9 @@ function RoleSearch({ value, onChange, placeholder = 'Search for a role' }: Role
                 <span className="role-search-item-label">{r.label}</span>
                 <span className="role-search-item-meta">
                   {r.source === '5mins' ? (
-                    <Global size={14} color="var(--primary-600)" variant="Linear" />
+                    <Global size={16} color="var(--primary-600)" variant="Linear" />
                   ) : (
-                    <House2 size={14} color="var(--lesson-quiz)" variant="Linear" />
+                    <House2 size={16} color="var(--lesson-quiz)" variant="Linear" />
                   )}
                   <span>{r.source === '5mins' ? '5Mins role' : 'Tenant role'}</span>
                 </span>

@@ -85,7 +85,7 @@
 }
 
 .role-search-item--selected .role-search-item-label {
-  color: var(--neutral-800);
+  color: var(--text-on-selected);
 }
 
 .role-search-item--selected .role-search-item-meta {

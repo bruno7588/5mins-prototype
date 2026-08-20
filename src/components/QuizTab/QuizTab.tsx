@@ -153,7 +153,7 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange }
           </div>
         </div>
         <button className="quiz-tab-add-manual" onClick={handleStartAdd}>
-          <Add size={20} color="var(--text-primary)" />
+          <Add size={20} color="currentColor" />
           Add Question Manually
         </button>
 

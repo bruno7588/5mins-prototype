@@ -89,5 +89,5 @@
 }
 
 .topnav-menu__item:hover {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
 }

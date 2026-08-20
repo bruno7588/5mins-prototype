@@ -79,7 +79,7 @@ function EnrolmentCell({ release, onChange }: { release: ReleaseRule; onChange: 
           <span className="co-cell__title">{d.title}</span>
           {d.desc && <span className="co-cell__sub">{d.desc}</span>}
         </span>
-        <ArrowDown2 size={18} color="var(--text-tertiary)" variant="Linear" />
+        <ArrowDown2 size={20} color="var(--text-tertiary)" variant="Linear" />
       </button>
       {open && (
         <ReleasePopover
@@ -113,7 +113,7 @@ function DueCell({ dueDays, onChange }: { dueDays?: number; onChange: (dueDays?:
           <span className="co-cell__title">{d.title}</span>
           {d.desc && <span className="co-cell__sub">{d.desc}</span>}
         </span>
-        <ArrowDown2 size={18} color="var(--text-tertiary)" variant="Linear" />
+        <ArrowDown2 size={20} color="var(--text-tertiary)" variant="Linear" />
       </button>
       {open && (
         <DueDatePopover

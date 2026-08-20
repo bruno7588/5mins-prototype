@@ -26,7 +26,7 @@ function PhoneFrame({ header, footer, children, overlayHeader = false, onExit }:
     <div className="m-phone-stage">
       {onExit ? (
         <button type="button" className="m-phone-stage__exit" onClick={onExit}>
-          <ArrowLeft size={18} color="currentColor" variant="Linear" />
+          <ArrowLeft size={20} color="currentColor" variant="Linear" />
           <span>Back to Desktop</span>
         </button>
       ) : null}

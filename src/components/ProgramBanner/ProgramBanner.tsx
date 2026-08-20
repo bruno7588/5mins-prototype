@@ -51,7 +51,7 @@ export default function ProgramBanner({ programs, onStart }: Props) {
               aria-label="Previous program"
               onClick={() => go(-1)}
             >
-              <ArrowLeft2 size={14} color="var(--neutral-200)" variant="Linear" />
+              <ArrowLeft2 size={16} color="var(--neutral-200)" variant="Linear" />
             </button>
             <button
               type="button"
@@ -59,7 +59,7 @@ export default function ProgramBanner({ programs, onStart }: Props) {
               aria-label="Next program"
               onClick={() => go(1)}
             >
-              <ArrowRight2 size={14} color="var(--neutral-200)" variant="Linear" />
+              <ArrowRight2 size={16} color="var(--neutral-200)" variant="Linear" />
             </button>
           </div>
         ) : null}

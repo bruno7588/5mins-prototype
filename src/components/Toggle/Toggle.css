@@ -69,7 +69,7 @@
 }
 
 .toggle--disabled .toggle__track {
-  background: var(--neutral-300);
+  background: var(--text-disabled);
 }
 
 .toggle--disabled.toggle--on .toggle__track {
@@ -78,7 +78,7 @@
 }
 
 .toggle__input:focus-visible + .toggle__track {
-  outline: 2px solid var(--secondary-600);
+  outline: 2px solid var(--selected);
   outline-offset: 2px;
 }
 

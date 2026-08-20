@@ -159,7 +159,7 @@ function AddContentMenu({ open, anchor, onClose, onSelect }: AddContentMenuProps
         >
           <span className="add-content-menu-item-icon"><AssessmentIcon size={ICON} color={C} /></span>
           <span className="add-content-menu-item-label">Assessments</span>
-          <ArrowRight2 size={14} color="var(--text-tertiary)" variant="Linear" />
+          <ArrowRight2 size={16} color="var(--text-tertiary)" variant="Linear" />
         </button>
 
         {subOpen && (

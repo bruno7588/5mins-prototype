@@ -234,7 +234,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
         <span className="content-table-filter-label">Show content from</span>
         <button className="content-table-filter-dropdown ui-disabled" disabled>
           All
-          <ArrowDown2 size={12} color="var(--text-tertiary)" />
+          <ArrowDown2 size={16} color="var(--text-tertiary)" />
         </button>
 
         <div className="content-table-search">
@@ -258,7 +258,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
           <div className="content-table-cell content-table-cell--uploader">Uploaded by</div>
           <div className="content-table-cell content-table-cell--date content-table-cell--sortable">
             Updated at
-            <ArrowDown2 size={14} color="var(--text-secondary)" />
+            <ArrowDown2 size={16} color="var(--text-secondary)" />
           </div>
           <div className="content-table-cell content-table-cell--actions" aria-hidden="true" />
         </div>
@@ -400,10 +400,10 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
       <div className="content-table-pagination">
         <span className="content-table-pagination-text">1-{rows.length} of {rows.length}</span>
         <button className="content-table-pagination-btn content-table-pagination-btn--disabled" aria-label="Previous page">
-          <ArrowLeft2 size={16} color="var(--text-tertiary)" />
+          <ArrowLeft2 size={16} color="var(--text-disabled)" />
         </button>
         <button className="content-table-pagination-btn content-table-pagination-btn--disabled" aria-label="Next page">
-          <ArrowRight2 size={16} color="var(--text-tertiary)" />
+          <ArrowRight2 size={16} color="var(--text-disabled)" />
         </button>
       </div>
 

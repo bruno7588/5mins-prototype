@@ -84,7 +84,7 @@
   margin-left: 6px;
   vertical-align: middle;
   background: var(--danger-500);
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
 }
 
 .sidebar-item-label {
@@ -140,8 +140,8 @@
   padding: 0 6px;
   background: var(--danger-500);
   color: var(--neutral-25);
-  font-size: 11px;
-  font-weight: 600;
-  border-radius: var(--radius-full, 999px);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-full);
   line-height: 1;
 }

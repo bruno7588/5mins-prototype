@@ -85,7 +85,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 | Hover | `--cards-background-hover` | — | 8px | Regular 14 `--text-primary` |
 | Focus | — | 1px `--selected` | 8px | Regular 14 `--text-primary` |
 | Current day | — | 1px `--border` | 8px | Regular 14 `--text-primary` |
-| **Selected** | `--selected` | — | 8px | **Bold 14 `--neutral-800`** — dark label in both modes |
+| **Selected** | `--selected` | — | 8px | **Medium 14 `--text-on-selected`** — dark label in both modes |
 | Illustration | — | — | — | 23×28px streak graphic replaces the number (learner streak calendar) |
 
 ---
@@ -143,8 +143,8 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 .cal-day--selected {
   background: var(--selected);
   border-radius: var(--radius-s);
-  font-weight: 700;
-  color: var(--neutral-800);                        /* dark label in BOTH modes */
+  font-weight: 500;
+  color: var(--text-on-selected);                        /* dark label in BOTH modes */
 }
 ```
 
@@ -170,7 +170,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 | `--cards-background` / `--cards-background-hover` | `#FFFFFF` / `#EFF0F2` | `#2D313D` / `#383D4C` | Popover / day hover |
 | `--text-primary` / `--text-secondary` / `--text-disabled` | per colors.md | per colors.md | Day / weekday / outside-month text |
 | `--text-error` | `#DF1642` | `#E95C7B` | Error border, label, helper |
-| `--neutral-800` | `#20222A` | `#20222A` | Selected-day label |
+| `--text-on-selected` | `#20222A` | `#20222A` | Selected-day label (weight 500) |
 
 ---
 

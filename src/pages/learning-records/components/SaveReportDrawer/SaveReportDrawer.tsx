@@ -396,7 +396,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
                             handleClose()
                           }}
                         >
-                          <Eye size={18} color="var(--text-primary)" variant="Linear" />
+                          <Eye size={20} color="var(--text-primary)" variant="Linear" />
                           View Records
                         </button>
                       )}
@@ -410,7 +410,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
                             setConfirmDelete(true)
                           }}
                         >
-                          <Trash size={18} color="var(--danger-500)" variant="Linear" />
+                          <Trash size={20} color="var(--danger-500)" variant="Linear" />
                           Delete
                         </button>
                       )}

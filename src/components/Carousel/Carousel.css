@@ -22,13 +22,14 @@
   background: var(--page-background);
   border: none;
   border-radius: 40px;
+  color: var(--text-primary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   z-index: 5;
   box-shadow: var(--shadow-s);
-  transition: background 150ms ease, opacity 150ms ease;
+  transition: background 150ms ease, color 150ms ease;
 }
 
 .carousel__chevron--left { left: -20px; }
@@ -39,6 +40,6 @@
 }
 
 .carousel__chevron:disabled {
-  opacity: 0.5;
+  color: var(--text-disabled);
   cursor: default;
 }

@@ -1224,7 +1224,7 @@ function Automations() {
             {hasAnyTriggers && (
             <div className="automations-filter-bar">
               <div className="automations-search">
-                <SearchNormal1 size={18} color="var(--text-tertiary)" variant="Linear" />
+                <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
                 <input
                   type="text"
                   className="automations-search-input"

@@ -172,7 +172,7 @@ function CreateFlashcardsFromFileModal({ open, onClose, onGenerate }: CreateFlas
               onClick={handleStart}
             >
               <SparkleIcon size={20} color="currentColor" />
-              Generate flashcards
+              Generate Flashcards
             </button>
           </div>
         )}

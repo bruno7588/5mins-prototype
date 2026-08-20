@@ -63,7 +63,7 @@
   height: 8px;
   margin: 4px;
   border-radius: 50%;
-  background: var(--success-500, #18a957);
+  background: var(--success-500);
   flex-shrink: 0;
 }
 
@@ -357,7 +357,7 @@
   padding: var(--space-sm) var(--space-m);
   background: var(--cards-background);
   border: 1px solid var(--border);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   color: var(--text-primary);
@@ -478,7 +478,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 22px;
+  font-size: 24px;
 }
 
 .hris-preview-screen__heading {
@@ -522,7 +522,7 @@
 }
 
 .hris-preview-screen__role-card-name {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -566,7 +566,7 @@
   padding: var(--space-sm) var(--space-m);
   background: var(--cards-background);
   border: 1px solid var(--border);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   color: var(--text-primary);

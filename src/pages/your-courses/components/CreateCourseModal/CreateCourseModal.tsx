@@ -122,7 +122,7 @@ function CreateCourseModal({ onClose }: CreateCourseModalProps) {
             <Clipboard size={20} color="var(--text-primary)" variant="Linear" />
             Assessments
             <span className="create-course-menu-item-chevron">
-              <ArrowDown2 size={12} color="var(--text-secondary)" />
+              <ArrowDown2 size={16} color="var(--text-secondary)" />
             </span>
           </button>
           <button className="create-course-menu-item">

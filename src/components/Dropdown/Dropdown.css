@@ -65,8 +65,8 @@
   cursor: not-allowed;
 }
 
-.dropdown-trigger.has-error { border-color: var(--danger-500); }
-.dropdown-trigger.has-error:hover { border-color: var(--danger-600, #9C0F2E); }
+.dropdown-trigger.has-error { border-color: var(--text-error); }
+.dropdown-trigger.has-error:hover { border-color: var(--text-error); }
 
 /* Sizes */
 .dropdown-sm .dropdown-trigger { height: 33px; padding: 4px 12px; font-size: 12px; }
@@ -143,13 +143,13 @@
 }
 
 .dropdown-option:hover:not(:disabled) {
-  background: var(--page-background-hover, var(--neutral-50));
+  background: var(--cards-background-hover);
 }
 
 .dropdown-option.is-selected,
 .dropdown-option.is-selected:hover:not(:disabled) {
   background: var(--secondary-500);
-  color: var(--neutral-800);
+  color: var(--text-on-selected);
   font-weight: 500;
 }
 
@@ -195,7 +195,7 @@
 }
 
 .dropdown-helper.is-error {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 

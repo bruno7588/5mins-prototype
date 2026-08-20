@@ -193,7 +193,7 @@
 /* Correct badge */
 .question-card-option-badge {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--success-600);
   background: var(--success-100);
   padding: 2px 8px;

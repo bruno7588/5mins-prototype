@@ -48,10 +48,10 @@ function MiniCalendar({ value, onSelect }: Props) {
         <span className="mc__title">{monthLabel}</span>
         <div className="mc__nav">
           <button type="button" className="mc__nav-btn" aria-label="Previous month" onClick={() => shift(-1)}>
-            <ArrowLeft2 size={18} color="currentColor" variant="Linear" />
+            <ArrowLeft2 size={20} color="currentColor" variant="Linear" />
           </button>
           <button type="button" className="mc__nav-btn" aria-label="Next month" onClick={() => shift(1)}>
-            <ArrowRight2 size={18} color="currentColor" variant="Linear" />
+            <ArrowRight2 size={20} color="currentColor" variant="Linear" />
           </button>
         </div>
       </div>

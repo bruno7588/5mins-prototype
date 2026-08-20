@@ -55,7 +55,7 @@
 }
 
 .profile-menu__item:hover {
-  background: var(--page-background-hover, var(--neutral-50));
+  background: var(--cards-background-hover);
 }
 
 /* Dark Mode row — label fills, DS Toggle sits right; the row is the control

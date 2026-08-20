@@ -141,7 +141,7 @@ function HrisMappingTab({
             className={`roles-chip roles-chip--with-icon${filterTab === 'unmapped' ? ' roles-chip--active' : ''}`}
             onClick={() => handleFilterTab('unmapped')}
           >
-            <Danger size={18} variant="Linear" color="currentColor" />
+            <Danger size={20} variant="Linear" color="currentColor" />
             Unmapped ({counts.unmapped})
           </button>
           <button
@@ -150,7 +150,7 @@ function HrisMappingTab({
             className={`roles-chip roles-chip--with-icon${filterTab === 'mapped' ? ' roles-chip--active' : ''}`}
             onClick={() => handleFilterTab('mapped')}
           >
-            <TickCircle size={18} variant="Linear" color="currentColor" />
+            <TickCircle size={20} variant="Linear" color="currentColor" />
             Mapped ({counts.mapped})
           </button>
           <button
@@ -166,7 +166,7 @@ function HrisMappingTab({
 
       <div className="hris-search-row">
         <div className="roles-search" style={{ width: 320 }}>
-          <SearchNormal1 size={18} variant="Outline" color="var(--text-tertiary)" />
+          <SearchNormal1 size={20} variant="Outline" color="var(--text-tertiary)" />
           <input
             className="roles-search-input"
             placeholder="Search HRIS job titles…"
@@ -285,7 +285,7 @@ function HrisMappingTab({
                             aria-label={`Edit mapping for ${mapping.hrisJobTitle}`}
                             onClick={() => onEditMapping(mapping)}
                           >
-                            <Edit2 size={18} color="var(--text-tertiary)" />
+                            <Edit2 size={20} color="var(--text-tertiary)" />
                           </button>
                           <span className="roles-icon-tooltip">Edit mapping</span>
                         </span>
@@ -295,7 +295,7 @@ function HrisMappingTab({
                             aria-label={`Remove mapping for ${mapping.hrisJobTitle}`}
                             onClick={() => onRemoveMapping(mapping)}
                           >
-                            <Trash size={18} color="currentColor" />
+                            <Trash size={20} color="currentColor" />
                           </button>
                           <span className="roles-icon-tooltip">Remove mapping</span>
                         </span>

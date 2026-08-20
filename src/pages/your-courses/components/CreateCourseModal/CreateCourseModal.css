@@ -109,7 +109,7 @@
 }
 
 .create-course-tab--active::after {
-  background: var(--secondary-500);
+  background: var(--selected);
 }
 
 /* Body: content area + side menu */
@@ -197,7 +197,7 @@
 }
 
 .create-course-menu-item:hover {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
 }
 
 .create-course-menu-item-chevron {

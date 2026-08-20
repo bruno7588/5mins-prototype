@@ -24,7 +24,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: unset;
   background-color: unset;
   font-size: 14px;
@@ -46,7 +46,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background-color: var(--input-background);
   margin-left: auto;
 }

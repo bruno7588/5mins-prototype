@@ -105,6 +105,6 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--secondary-500);
+  background: var(--selected);
   border-radius: 2px;
 }

@@ -5,18 +5,17 @@
   width: 32px;
   height: 32px;
   padding: 8px;
-  border-radius: var(--radius-xxl, 40px);
+  border-radius: var(--radius-full);
   cursor: pointer;
   transition: background 150ms ease;
   flex-shrink: 0;
 }
 
 .checkbox:hover {
-  background: var(--page-background-hover, rgba(45, 49, 61, 0.08));
+  background: var(--page-background-hover);
 }
 
 .checkbox--disabled {
-  opacity: 0.4;
   cursor: default;
 }
 

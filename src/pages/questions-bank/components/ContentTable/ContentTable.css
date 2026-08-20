@@ -24,7 +24,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: unset;
   background-color: unset;
   font-size: 14px;
@@ -46,7 +46,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background-color: var(--input-background);
   margin-left: auto;
 }
@@ -165,7 +165,7 @@
   transform: translateY(-50%);
   padding: 16px 20px;
   background: var(--tooltip-background);
-  color: white;
+  color: var(--neutral-25);
   border-radius: 12px;
   white-space: nowrap;
   z-index: 60;
@@ -176,9 +176,9 @@
 }
 
 .qb-content-table-ai-tooltip-text {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  color: white;
+  color: var(--neutral-25);
   line-height: 1.4;
 }
 
@@ -192,17 +192,20 @@
 .qb-content-table-ai-tooltip-dismiss {
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-500, #00CEE6);
+  /* Deliberate: this sits on --tooltip-background, dark in BOTH modes, so the
+     "no --primary-500 as text" rule (which is about light grounds) does not
+     apply. --text-button-outlined would drop this to ~3.7:1. */
+  color: var(--primary-500);
   background: none;
   border: none;
   cursor: pointer;
   padding: 8px 12px;
   border-radius: var(--radius-sm);
-  transition: opacity 150ms ease;
+  transition: color 150ms ease;
 }
 
 .qb-content-table-ai-tooltip-dismiss:hover {
-  opacity: 0.8;
+  color: var(--text-button-hover);
 }
 
 .qb-content-table-ai-tooltip-review {

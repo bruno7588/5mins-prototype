@@ -155,7 +155,7 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
       {/* Toolbar */}
       <div className="roles-table-toolbar">
         <div className="roles-search" style={{ width: 320 }}>
-          <SearchNormal1 size={18} variant="Outline" color="var(--text-tertiary)" />
+          <SearchNormal1 size={20} variant="Outline" color="var(--text-tertiary)" />
           <input
             className="roles-search-input"
             placeholder="Search roles..."

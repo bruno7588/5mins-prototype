@@ -32,7 +32,7 @@
 }
 
 .sc-add-content-menu-item:hover {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
 }
 
 .sc-add-content-menu-item-icon {

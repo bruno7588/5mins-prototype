@@ -337,7 +337,7 @@
 }
 
 .automation-details-row-remove:hover {
-  color: var(--danger-500);
+  color: var(--text-error);
   background: var(--input-background);
 }
 

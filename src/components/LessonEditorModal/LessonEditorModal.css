@@ -68,7 +68,7 @@
   padding: 10px var(--space-ml);
   font-size: 14px;
   font-weight: 700;
-  color: var(--neutral-25);
+  color: var(--text-button-foreground);
   border-radius: var(--radius-sm);
   background: var(--primary-button-background, var(--primary-600));
   cursor: pointer;
@@ -128,7 +128,7 @@
   color: var(--text-secondary);
   line-height: 1.6;
   padding: var(--space-sm) var(--space-m);
-  background: var(--input-background, rgba(191, 194, 204, 0.16));
+  background: var(--input-background);
   border-radius: var(--radius-sm);
 }
 
@@ -142,7 +142,7 @@
   width: 180px;
   height: 260px;
   flex-shrink: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-s);
   overflow: hidden;
   position: relative;
   cursor: pointer;
@@ -160,7 +160,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: var(--radius-s);
 }
 
 .lesson-editor-fields {
@@ -250,7 +250,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-sm) var(--space-m);
-  background: var(--input-background, rgba(191, 194, 204, 0.16));
+  background: var(--input-background);
   border-radius: var(--radius-sm);
 }
 
@@ -307,11 +307,11 @@
 }
 
 .lesson-editor-tab--active::after {
-  background: var(--secondary-500, var(--primary-600));
+  background: var(--selected);
 }
 
 .lesson-editor-tab--disabled {
-  opacity: 0.5;
+  color: var(--text-disabled);
   cursor: not-allowed;
 }
 

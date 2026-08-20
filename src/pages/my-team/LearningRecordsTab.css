@@ -26,7 +26,7 @@
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  border-radius: 24px;
+  border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 400;
@@ -46,8 +46,8 @@
 
 .lr__chip--active {
   background: var(--secondary-500);
-  color: var(--neutral-800);
-  font-weight: 700;
+  color: var(--text-on-selected);
+  font-weight: 500;
   border-color: var(--secondary-500);
 }
 
@@ -440,7 +440,7 @@
 }
 
 .lr__pagination-btn:disabled {
-  opacity: 0.4;
+  color: var(--text-disabled);
   cursor: not-allowed;
 }
 
@@ -472,7 +472,7 @@
   align-items: center;
   gap: var(--space-sm);
   padding: 12px;
-  background: var(--neutral-800);
+  background: var(--tooltip-background);
   border-radius: var(--radius-m); /* 16px — same as the shared .bulk-bar */
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
   animation: lr-bulk-bar-slide-up 140ms ease-out;

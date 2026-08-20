@@ -67,5 +67,5 @@
 }
 
 .content-tab--active::after {
-  background: var(--secondary-500);
+  background: var(--selected);
 }

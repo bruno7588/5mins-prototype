@@ -14,7 +14,7 @@
 }
 
 .close-btn:hover {
-  background: var(--input-background, rgba(191, 194, 204, 0.16));
+  background: var(--input-background);
 }
 
 .close-btn:focus-visible {

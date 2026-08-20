@@ -121,7 +121,7 @@ function ProgramCourseDetails() {
           </span>
           <button type="button" className="cd-previewbar__back" onClick={() => navigate(-1)}>
             <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
-            Back to editing
+            Back to Editing
           </button>
         </div>
       )}
@@ -181,7 +181,7 @@ function ProgramCourseDetails() {
                   className={`mt-side__item${isActive ? ' mt-side__item--active' : ''}`}
                   onClick={path ? () => navigate(path) : undefined}
                 >
-                  <Icon size={24} color={isActive ? 'var(--secondary-500)' : 'var(--text-secondary)'} variant="Bold" />
+                  <Icon size={24} color={isActive ? 'var(--selected)' : 'var(--text-secondary)'} variant="Bold" />
                   <span>{label}</span>
                 </button>
               )
@@ -251,7 +251,7 @@ function ProgramCourseDetails() {
                     <span>Certificate of completion</span>
                   </span>
                   <span className="cd-helper__item">
-                    <InfoCircle size={18} color="var(--text-tertiary)" variant="Linear" />
+                    <InfoCircle size={20} color="var(--text-tertiary)" variant="Linear" />
                     <span>Pass Score: {course.passScore}%</span>
                   </span>
                 </div>

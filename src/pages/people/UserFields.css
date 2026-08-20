@@ -41,7 +41,7 @@
 .user-fields-divider {
   height: 1px;
   background: var(--border);
-  border-radius: var(--radius-x);
+  border-radius: var(--radius-xs);
 }
 
 /* Empty State */

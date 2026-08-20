@@ -293,7 +293,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 3.5px;
+  padding: 4px;
   color: var(--text-tertiary);
   transition: color 150ms ease;
 }
@@ -403,7 +403,7 @@
   color: var(--text-primary);
   background: transparent;
   border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   transition: background 150ms ease;
 }
 
@@ -419,7 +419,7 @@
   line-height: 1.5;
   color: var(--text-button-foreground);
   background: var(--primary-button-background);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   transition: background 150ms ease;
 }
 

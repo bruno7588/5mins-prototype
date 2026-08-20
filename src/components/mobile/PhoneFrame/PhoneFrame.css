@@ -21,7 +21,7 @@
   gap: 8px;
   padding: 10px 16px 10px 12px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: var(--cards-background);
   box-shadow: var(--shadow-s);
   font: 700 14px/1.5 Poppins, sans-serif;

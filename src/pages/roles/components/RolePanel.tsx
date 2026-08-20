@@ -242,7 +242,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
       <p className="roles-panel-label">Search and add more skills</p>
       <div className="roles-panel-skill-search" ref={dropdownRef}>
         <div className="roles-search" style={{ width: '100%' }}>
-          <SearchNormal1 size={18} variant="Outline" color="var(--text-tertiary)" />
+          <SearchNormal1 size={20} variant="Outline" color="var(--text-tertiary)" />
           <input
             className="roles-search-input"
             placeholder="Search skills…"
@@ -474,7 +474,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                   </div>
                   {uploadedFileName ? (
                     <div className="roles-panel-file-chip">
-                      <DocumentText size={18} color="var(--text-secondary)" variant="Bold" />
+                      <DocumentText size={20} color="var(--text-secondary)" variant="Bold" />
                       <span className="roles-panel-file-chip__name">{uploadedFileName}</span>
                       <button
                         className="roles-panel-file-chip__remove"
@@ -556,7 +556,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                     </div>
                     {uploadedFileName ? (
                       <div className="roles-panel-file-chip">
-                        <DocumentText size={18} color="var(--text-secondary)" variant="Bold" />
+                        <DocumentText size={20} color="var(--text-secondary)" variant="Bold" />
                         <span className="roles-panel-file-chip__name">{uploadedFileName}</span>
                         <button
                           className="roles-panel-file-chip__remove"

@@ -179,7 +179,7 @@ function AuditDateFilter({ presets, value, onChange }: Props) {
                     aria-label="Previous month"
                     onClick={() => setView(new Date(year, month - 1, 1))}
                   >
-                    <ArrowLeft2 size={18} color="currentColor" variant="Linear" />
+                    <ArrowLeft2 size={20} color="currentColor" variant="Linear" />
                   </button>
                   <button
                     type="button"
@@ -187,7 +187,7 @@ function AuditDateFilter({ presets, value, onChange }: Props) {
                     aria-label="Next month"
                     onClick={() => setView(new Date(year, month + 1, 1))}
                   >
-                    <ArrowRight2 size={18} color="currentColor" variant="Linear" />
+                    <ArrowRight2 size={20} color="currentColor" variant="Linear" />
                   </button>
                 </div>
               </div>

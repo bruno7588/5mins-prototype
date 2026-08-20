@@ -534,7 +534,7 @@ function LearningRecordsTab() {
             aria-label="Clear selection"
             onClick={() => setSelectedExtIds(new Set())}
           >
-            <Add size={18} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
+            <Add size={20} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
           </button>
           <span className="lr__bulk-bar-count">{selectedExtIds.size} selected</span>
           <div className="lr__bulk-bar-divider" />

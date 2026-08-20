@@ -290,7 +290,7 @@
 }
 
 .course-reminders-row__icon-btn--danger:hover:not(:disabled) {
-  color: var(--text-error, var(--danger-500));
+  color: var(--text-error);
 }
 
 .course-reminders-row__icon-btn:disabled {

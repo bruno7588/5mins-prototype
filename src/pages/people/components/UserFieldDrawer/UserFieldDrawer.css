@@ -89,7 +89,7 @@
 .uf-drawer-divider {
   height: 1px;
   background: var(--border);
-  border-radius: var(--radius-x);
+  border-radius: var(--radius-xs);
 }
 
 /* Form */
@@ -142,21 +142,21 @@
 }
 
 .uf-drawer-input--error {
-  border-color: var(--danger-500);
+  border-color: var(--text-error);
 }
 
 .uf-drawer-input--error:hover {
-  border-color: var(--danger-500);
+  border-color: var(--text-error);
 }
 
 .uf-drawer-input--error:focus {
-  border-color: var(--danger-500);
+  border-color: var(--text-error);
 }
 
 .uf-drawer-error {
   font-size: 14px;
   font-weight: 400;
-  color: var(--danger-500);
+  color: var(--text-error);
   line-height: 1.5;
 }
 

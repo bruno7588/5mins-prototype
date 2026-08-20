@@ -844,7 +844,7 @@
   top: 0;
   left: 0;
   background: var(--border);
-  padding: 3px;
+  padding: var(--space-xs);
   border-radius: 0 0 6px 0;
   display: flex;
   align-items: center;
@@ -922,7 +922,7 @@
   flex-shrink: 0;
   background: var(--input-background);
   padding: 6px 12px;
-  border-radius: 40px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 400;
   color: var(--text-secondary);

@@ -84,7 +84,7 @@ function MobileLessonCard({
       <div className="m-lesson-card__row">
         <div className="m-lesson-card__thumb" style={image ? { backgroundImage: `url(${image})` } : undefined}>
           <span className="m-lesson-card__tag">
-            <PlayCircle size={14} color="var(--text-secondary)" variant="Bold" />
+            <PlayCircle size={16} color="var(--text-secondary)" variant="Bold" />
           </span>
         </div>
         <div className="m-lesson-card__info">

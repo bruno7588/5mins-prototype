@@ -112,7 +112,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background-color: var(--input-background);
 }
 

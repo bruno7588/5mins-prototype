@@ -504,7 +504,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                   data-tooltip="Remove media"
                   type="button"
                 >
-                  <Add size={19} color="var(--neutral-0)" style={{ transform: 'rotate(45deg)' }} />
+                  <Add size={20} color="var(--neutral-0)" style={{ transform: 'rotate(45deg)' }} />
                 </button>
               </div>
             )}
@@ -581,7 +581,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                   aria-label="Remove media"
                   type="button"
                 >
-                  <Add size={18} color="var(--text-secondary)" style={{ transform: 'rotate(45deg)' }} />
+                  <Add size={20} color="var(--text-secondary)" style={{ transform: 'rotate(45deg)' }} />
                 </button>
               </div>
             )}

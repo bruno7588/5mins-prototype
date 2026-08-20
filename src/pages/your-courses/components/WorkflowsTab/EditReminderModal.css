@@ -126,7 +126,7 @@
 
 .edit-reminder-modal__stepper--error,
 .edit-reminder-modal__stepper--error:focus-within {
-  border-color: var(--danger-500);
+  border-color: var(--text-error);
 }
 
 .edit-reminder-modal__step-btn {
@@ -169,5 +169,5 @@
   margin: 0;
   font-size: 12px;
   line-height: 1.4;
-  color: var(--danger-500);
+  color: var(--text-error);
 }

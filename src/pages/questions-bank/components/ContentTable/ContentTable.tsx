@@ -185,7 +185,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
       header: (
         <span className="qb-content-table-sort">
           Updated at
-          <ArrowDown2 size={14} color="var(--text-secondary)" />
+          <ArrowDown2 size={16} color="var(--text-secondary)" />
         </span>
       ),
       width: '0 0 160px',
@@ -317,7 +317,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
         <button className="qb-content-table-filter-dropdown ui-disabled" disabled>
           <Setting4 size={16} color="var(--text-primary)" variant="Linear" />
           All
-          <ArrowDown2 size={12} color="var(--text-tertiary)" />
+          <ArrowDown2 size={16} color="var(--text-tertiary)" />
         </button>
 
         <div className="qb-content-table-search">

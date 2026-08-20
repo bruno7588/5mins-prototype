@@ -80,7 +80,7 @@ function Tooltip({
   const caret = (
     <div className={`tooltip__caret ${caretAlignClass}${caretBefore ? ' tooltip__caret--flip' : ''}`}>
       <svg width="12" height="6" viewBox="0 0 12 6" fill="none">
-        <path d="M6 6L0 0H12L6 6Z" fill="var(--tooltip-background, #0f1014)" />
+        <path d="M6 6L0 0H12L6 6Z" fill="var(--tooltip-background)" />
       </svg>
     </div>
   )

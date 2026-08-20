@@ -184,7 +184,7 @@ function HrisMappingPanel({ mapping, tenantRoles, publicRoles, onClose, onSave }
                 )}
                 {!search && filteredPublic.length > 50 && (
                   <p className="hris-panel-options__hint">
-                    <InfoCircle size={14} color="var(--text-tertiary)" variant="Linear" />
+                    <InfoCircle size={16} color="var(--text-tertiary)" variant="Linear" />
                     Showing first 50 of {filteredPublic.length} — refine your search to see more.
                   </p>
                 )}

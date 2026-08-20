@@ -666,7 +666,7 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
           <div className="fce-thumb-row">
             <div className="fce-thumb-preview" style={{ background: 'linear-gradient(135deg, #4B3A99, #2B1F6B)' }}>
               <span className="fce-thumb-gallery-btn" aria-hidden="true">
-                <GalleryAdd size={14} color="#ffffff" variant="Linear" />
+                <GalleryAdd size={16} color="var(--neutral-25)" variant="Linear" />
               </span>
             </div>
             <div className="fce-thumb-info">

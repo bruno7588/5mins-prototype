@@ -71,7 +71,7 @@
 }
 
 .your-courses-tab--active::after {
-  background: var(--secondary-500);
+  background: var(--selected);
 }
 
 /* Folders grid */

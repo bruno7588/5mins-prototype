@@ -42,8 +42,8 @@
 }
 
 .switcher__item.is-selected {
-  color: var(--neutral-800);
-  font-weight: 700;
+  color: var(--text-on-selected);
+  font-weight: 500;
 }
 
 .switcher__item:disabled {

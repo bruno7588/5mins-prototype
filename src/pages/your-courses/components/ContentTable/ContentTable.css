@@ -24,7 +24,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: unset;
   background-color: unset;
   font-size: 14px;
@@ -46,7 +46,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background-color: var(--input-background);
   margin-left: auto;
 }
@@ -273,8 +273,8 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: 100px;
-  background: var(--input-background, rgba(191, 194, 204, 0.16));
+  border-radius: var(--radius-full);
+  background: var(--input-background);
   transition: background 150ms ease;
   cursor: pointer;
 }
@@ -291,8 +291,8 @@
   transform: translateY(-50%);
   padding: 16px 20px;
   background: var(--tooltip-background);
-  color: white;
-  border-radius: 12px;
+  color: var(--neutral-25);
+  border-radius: var(--radius-sm);
   white-space: nowrap;
   z-index: 60;
   display: flex;
@@ -302,9 +302,9 @@
 }
 
 .content-table-ai-tooltip-text {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  color: white;
+  color: var(--neutral-25);
   line-height: 1.4;
 }
 
@@ -318,7 +318,7 @@
 .content-table-ai-tooltip-dismiss {
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-500, #00CEE6);
+  color: var(--primary-500);
   background: none;
   border: none;
   cursor: pointer;
@@ -401,7 +401,7 @@
 }
 
 .content-table-menu-item--danger {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 /* Pagination */
@@ -434,7 +434,7 @@
 }
 
 .content-table-pagination-btn--disabled {
-  opacity: 0.3;
+  color: var(--text-disabled);
   pointer-events: none;
 }
 

@@ -45,7 +45,7 @@
 
 /* ─── State: Error ─── */
 .file-uploader--error {
-  border: 1px dashed var(--danger-500);
+  border: 1px dashed var(--text-error);
   background: rgba(223, 22, 66, 0.08);
   gap: var(--space-l);
 }
@@ -108,7 +108,7 @@
 .file-uploader__error-text {
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
-  color: var(--danger-400);
+  color: var(--text-error);
   text-align: center;
   margin: 0;
 }

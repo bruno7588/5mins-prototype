@@ -50,13 +50,13 @@
 }
 
 .radio--disabled .radio__ring {
-  border-color: var(--text-disabled, #9EA4B3);
+  border-color: var(--text-disabled);
 }
 
 .radio--disabled.radio--selected .radio__ring,
 .radio--disabled.radio--selected .radio__ring::after {
-  border-color: var(--text-disabled, #9EA4B3);
-  background: var(--text-disabled, #9EA4B3);
+  border-color: var(--text-disabled);
+  background: var(--text-disabled);
 }
 
 .radio__input {
@@ -75,7 +75,7 @@
 .radio-row {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-s, 8px);
+  gap: var(--space-s);
   cursor: pointer;
 }
 

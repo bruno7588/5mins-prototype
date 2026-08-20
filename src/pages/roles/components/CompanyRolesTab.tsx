@@ -74,7 +74,7 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
       {/* Toolbar */}
       <div className="roles-filter-bar">
         <div className="roles-search" style={{ width: 320 }}>
-          <SearchNormal1 size={18} variant="Outline" color="var(--text-tertiary)" />
+          <SearchNormal1 size={20} variant="Outline" color="var(--text-tertiary)" />
           <input
             className="roles-search-input"
             placeholder="Search roles…"
@@ -164,7 +164,7 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
                       className="roles-icon-btn"
                       onClick={() => onDuplicateRole(role)}
                     >
-                      <Copy size={18} color="var(--text-tertiary)" />
+                      <Copy size={20} color="var(--text-tertiary)" />
                     </button>
                     <span className="roles-icon-tooltip">Duplicate</span>
                   </span>
@@ -173,7 +173,7 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
                       className="roles-icon-btn"
                       onClick={() => onEditRole(role)}
                     >
-                      <Edit2 size={18} color="var(--text-tertiary)" />
+                      <Edit2 size={20} color="var(--text-tertiary)" />
                     </button>
                     <span className="roles-icon-tooltip">Edit</span>
                   </span>
@@ -182,7 +182,7 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
                       className="roles-icon-btn roles-icon-btn--danger"
                       onClick={() => onDeleteRole(role)}
                     >
-                      <Trash size={18} color="currentColor" />
+                      <Trash size={20} color="currentColor" />
                     </button>
                     <span className="roles-icon-tooltip">Delete</span>
                   </span>

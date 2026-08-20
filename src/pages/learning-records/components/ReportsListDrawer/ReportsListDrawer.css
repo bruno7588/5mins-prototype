@@ -208,7 +208,7 @@
 }
 
 .rl-avatar--more:hover {
-  background: var(--neutral-200); /* TODO(dark): verify */
+  background: var(--input-background-hover);
   color: var(--text-secondary);
 }
 
@@ -243,7 +243,7 @@
   width: 100%;
   height: 1px;
   background: var(--border);
-  border-radius: var(--radius-x, 4px);
+  border-radius: var(--radius-xs);
 }
 
 .recipients-modal-list {
@@ -302,5 +302,5 @@
 }
 
 .rl-open-btn:hover {
-  background: var(--input-background-hover);
+  background: var(--input-background);
 }

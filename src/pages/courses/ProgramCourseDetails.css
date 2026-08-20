@@ -221,7 +221,7 @@
   bottom: 0;
   height: 2px;
   border-radius: 2px;
-  background: var(--secondary-500);
+  background: var(--selected);
 }
 
 .cd-tab__count {

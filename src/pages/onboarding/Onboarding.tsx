@@ -269,7 +269,7 @@ export default function Onboarding() {
                   onClick={() => go(step - 1, -1)}
                   aria-label="Go back"
                 >
-                  <ArrowLeft size={18} color="currentColor" />
+                  <ArrowLeft size={20} color="currentColor" />
                 </button>
               ) : (
                 <span />

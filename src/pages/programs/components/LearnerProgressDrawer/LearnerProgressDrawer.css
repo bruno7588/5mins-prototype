@@ -46,7 +46,7 @@
   flex: 0 0 auto;
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   object-fit: cover;
 }
 

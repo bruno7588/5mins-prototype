@@ -836,6 +836,6 @@
 }
 
 .lrp-pagination-btn:disabled {
-  opacity: 0.4;
+  color: var(--text-disabled);
   cursor: not-allowed;
 }

@@ -124,10 +124,10 @@ function MobileTopNav({
           <Chips chips={chips} />
           <div className="m-topnav__actions">
             <button type="button" className="m-topnav__iconbtn" aria-label="Streak" onClick={onStreakClick}>
-              <FlashCircle size={28} color="var(--text-primary)" variant="Bold" />
+              <FlashCircle size={24} color="var(--text-primary)" variant="Bold" />
             </button>
             <button type="button" className="m-topnav__iconbtn" aria-label="Notifications" onClick={onNotificationsClick}>
-              <Notification size={28} color="var(--text-primary)" variant="Bold" />
+              <Notification size={24} color="var(--text-primary)" variant="Bold" />
               {notificationDot ? <span className="m-topnav__dot" /> : null}
             </button>
           </div>
@@ -140,7 +140,7 @@ function MobileTopNav({
     case 'search':
       header = (
         <button type="button" className="m-topnav__search" onClick={onSearchClick}>
-          <SearchNormal1 size={18} color="var(--text-tertiary)" variant="Linear" />
+          <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
           <span>{searchPlaceholder}</span>
         </button>
       )
@@ -194,7 +194,7 @@ function MobileTopNav({
                 style={avatar ? { backgroundImage: `url(${avatar})` } : undefined}
               />
               <button type="button" className="m-topnav__editbadge" aria-label="Profile settings" onClick={onEditProfile}>
-                <Setting2 size={9} color="var(--text-primary)" variant="Linear" />
+                <Setting2 size={16} color="var(--text-primary)" variant="Linear" />
               </button>
             </span>
             <span className="m-topnav__identity">

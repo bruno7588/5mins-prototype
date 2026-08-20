@@ -454,7 +454,7 @@ function People() {
       <div className="people-actions">
         <div className="people-actions-left">
           <div className="people-search">
-            <SearchNormal1 size={18} color="var(--text-tertiary)" variant="Linear" />
+            <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
             <input
               className="people-search-input"
               type="text"
@@ -549,7 +549,7 @@ function People() {
               {visibleKeys.includes('startDate') && (
                 <div className="people-table-cell people-table-cell--date">
                   Start Date
-                  <Add size={14} color="var(--text-tertiary)" style={{ transform: 'rotate(45deg)', opacity: 0 }} />
+                  <Add size={16} color="var(--text-tertiary)" style={{ transform: 'rotate(45deg)', opacity: 0 }} />
                 </div>
               )}
               {visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">Region</div>}
@@ -594,7 +594,7 @@ function People() {
                           position="Top"
                           icon={false}
                         >
-                          <Lock size={14} variant="Bold" color="var(--text-tertiary)" />
+                          <Lock size={16} variant="Bold" color="var(--text-tertiary)" />
                         </Tooltip>
                       )}
                     </span>
@@ -684,24 +684,24 @@ function People() {
                 </div>
                 <div className={`people-table-cell people-table-cell--name people-table-cell--sortable${sortCol === 'name' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('name')}>
                   Name
-                  {sortCol === 'name' && (sortDir === 'asc' ? <ArrowUp2 size={14} color="var(--text-tertiary)" /> : <ArrowDown2 size={14} color="var(--text-tertiary)" />)}
+                  {sortCol === 'name' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
                 </div>
                 <div className={`people-table-cell people-table-cell--status-d people-table-cell--sortable${sortCol === 'status' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('status')}>
                   Status
-                  {sortCol === 'status' && (sortDir === 'asc' ? <ArrowUp2 size={14} color="var(--text-tertiary)" /> : <ArrowDown2 size={14} color="var(--text-tertiary)" />)}
+                  {sortCol === 'status' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
                 </div>
                 <div className={`people-table-cell people-table-cell--role-d people-table-cell--sortable${sortCol === 'role' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('role')}>
                   Role
-                  {sortCol === 'role' && (sortDir === 'asc' ? <ArrowUp2 size={14} color="var(--text-tertiary)" /> : <ArrowDown2 size={14} color="var(--text-tertiary)" />)}
+                  {sortCol === 'role' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
                 </div>
                 <div className="people-table-cell people-table-cell--team-d">Team</div>
                 <div className={`people-table-cell people-table-cell--region-d people-table-cell--sortable${sortCol === 'region' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('region')}>
                   Region
-                  {sortCol === 'region' && (sortDir === 'asc' ? <ArrowUp2 size={14} color="var(--text-tertiary)" /> : <ArrowDown2 size={14} color="var(--text-tertiary)" />)}
+                  {sortCol === 'region' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
                 </div>
                 <div className={`people-table-cell people-table-cell--deactivated people-table-cell--sortable${sortCol === 'deactivatedOn' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('deactivatedOn')}>
                   Deactivated on
-                  {sortCol === 'deactivatedOn' && (sortDir === 'asc' ? <ArrowUp2 size={14} color="var(--text-tertiary)" /> : <ArrowDown2 size={14} color="var(--text-tertiary)" />)}
+                  {sortCol === 'deactivatedOn' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
                 </div>
                 <div className="people-table-cell people-table-cell--actions" />
               </div>

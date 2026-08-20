@@ -54,14 +54,14 @@
   font-weight: 700;
   color: var(--text-primary);
   border: none;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: unset;
   background-color: unset;
   transition: opacity 150ms ease;
 }
 
 .pool-header-add-manual:disabled {
-  opacity: 0.4;
+  color: var(--text-disabled);
   cursor: not-allowed;
 }
 

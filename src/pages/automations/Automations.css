@@ -260,9 +260,9 @@
   position: relative;
   width: 36px;
   height: 20px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   border: none;
-  background: var(--neutral-200); /* TODO(dark): verify — off-state toggle track (selection-controls.md specs #656B7C) */
+  background: var(--neutral-400); /* off-state toggle track — same value as the shared DS Toggle (.toggle__track) */
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
@@ -279,7 +279,7 @@
   left: 2px;
   width: 16px;
   height: 16px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: var(--neutral-0, #fff);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   transition: transform 150ms ease;
@@ -408,14 +408,14 @@
   right: calc(100% + 8px);
   top: 50%;
   transform: translateY(-50%);
-  padding: var(--s, 8px) var(--sm, 12px);
-  background: var(--tooltip-background, #0f1014);
+  padding: var(--space-s) var(--space-sm);
+  background: var(--tooltip-background);
   color: var(--neutral-25, #f9f9fa);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  border-radius: var(--sm, 12px);
+  border-radius: var(--radius-sm);
   max-width: 288px;
   white-space: nowrap;
   pointer-events: none;
@@ -430,13 +430,13 @@
   top: 50%;
   transform: translateY(-50%);
   border: 6px solid transparent;
-  border-left-color: var(--tooltip-background, #0f1014);
+  border-left-color: var(--tooltip-background);
   pointer-events: none;
   z-index: 10;
 }
 
 .automations-action-menu-item--danger {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 .automations-action-menu-item svg {
@@ -709,7 +709,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   flex-shrink: 0;
 }
 
@@ -933,6 +933,6 @@
 }
 
 .automations-pagination-btn:disabled {
-  opacity: 0.4;
+  color: var(--text-disabled);
   cursor: not-allowed;
 }

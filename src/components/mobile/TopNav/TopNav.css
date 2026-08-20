@@ -88,7 +88,7 @@
 .m-topnav__chip {
   padding: 8px 12px;
   border: 1px solid var(--border-elevated);
-  border-radius: 24px;
+  border-radius: var(--radius-full);
   background: none;
   font: 400 14px/1.5 Poppins, sans-serif;
   color: var(--text-secondary);
@@ -99,8 +99,8 @@
 .m-topnav__chip--active {
   border-color: var(--secondary-500);
   background: var(--secondary-500);
-  font-weight: 700;
-  color: var(--neutral-800);
+  font-weight: 500;
+  color: var(--text-on-selected);
 }
 
 .m-topnav__chip:focus-visible {
@@ -125,7 +125,7 @@
   border: 0;
   background: none;
   cursor: pointer;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
 }
 
 .m-topnav__iconbtn:focus-visible {
@@ -152,7 +152,7 @@
   gap: 8px;
   padding: 8px 12px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   background: var(--input-background);
   font: 400 14px/1.5 Poppins, sans-serif;
   color: var(--text-tertiary);
@@ -203,7 +203,7 @@
   justify-content: center;
   padding: 8px;
   border: 0;
-  border-radius: var(--radius-full, 999px);
+  border-radius: var(--radius-full);
   background: var(--input-background);
   cursor: pointer;
   flex-shrink: 0;
@@ -259,7 +259,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3px;
+  padding: 4px;
   border: 0;
   border-radius: 50%;
   background: var(--input-background);

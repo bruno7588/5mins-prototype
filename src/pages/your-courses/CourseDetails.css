@@ -196,7 +196,7 @@
 }
 
 .cd-tab--active::after {
-  background: var(--secondary-500);
+  background: var(--selected);
 }
 
 .cd-tab-count {
@@ -205,7 +205,7 @@
   justify-content: center;
   padding: 2px var(--space-xs);
   border-radius: var(--radius-full);
-  background: var(--input-background, rgba(69, 76, 94, 0.16));
+  background: var(--input-background);
   font-size: 12px;
   font-weight: 400;
   line-height: 1.2;
@@ -293,7 +293,7 @@
   min-width: 21px;
   padding: 0 var(--space-xs);
   border-radius: var(--radius-full);
-  background: var(--input-background, rgba(69, 76, 94, 0.16));
+  background: var(--input-background);
   font-size: 14px;
   color: var(--text-secondary);
 }
@@ -683,7 +683,7 @@
   width: 100%;
   margin: var(--space-s) 0;
   background: var(--border);
-  border-radius: var(--radius-x);
+  border-radius: var(--radius-xs);
 }
 
 /* Reset-progress dialog width (Figma: 600px, vs ConfirmModal default 560px) */

@@ -106,6 +106,10 @@
   --text-warning: var(--warning-600);
   --text-error: var(--danger-500);
   --text-selected: var(--secondary-600);
+  /* Knockout label on the amber --selected fill (chips, switcher pills, selected
+     menu options, selected day cells). Mode-invariant: the fill is the same amber
+     in both themes, so the label stays Neutral-800 in both. Pair with weight 500. */
+  --text-on-selected: var(--neutral-800);
   --text-progress: var(--primary-700);
   --text-quiz: var(--certificate-quiz);
   --primary-button-background: var(--primary-700);

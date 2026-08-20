@@ -163,7 +163,8 @@
 }
 
 .lf-icon-btn:disabled {
-  opacity: 0.4;
+  background: var(--button-background-disabled);
+  color: var(--text-disabled);
   cursor: default;
 }
 

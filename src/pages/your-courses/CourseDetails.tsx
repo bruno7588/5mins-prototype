@@ -322,11 +322,11 @@ function CourseDetails() {
                 Earn 100 jewels
               </span>
               <span className="cd-helper-item">
-                <MedalStar size={18} color="var(--warning-500)" variant="Bold" />
+                <MedalStar size={20} color="var(--warning-500)" variant="Bold" />
                 Certificate of completion
               </span>
               <span className="cd-helper-item">
-                <InfoMark size={18} />
+                <InfoMark size={20} />
                 Pass score: 80%
               </span>
             </div>
@@ -358,7 +358,7 @@ function CourseDetails() {
             <div className="cd-stats">
               <div className="cd-stat">
                 <div className="cd-stat-label">
-                  <TickCircle size={18} color="var(--success-500)" variant="Linear" />
+                  <TickCircle size={20} color="var(--success-500)" variant="Linear" />
                   <span>Completed</span>
                   <InfoMark />
                 </div>
@@ -369,7 +369,7 @@ function CourseDetails() {
               </div>
               <div className="cd-stat">
                 <div className="cd-stat-label">
-                  <Clock size={18} color="var(--primary-600)" variant="Linear" />
+                  <Clock size={20} color="var(--primary-600)" variant="Linear" />
                   <span>In progress</span>
                 </div>
                 <div className="cd-stat-value">
@@ -379,7 +379,7 @@ function CourseDetails() {
               </div>
               <div className="cd-stat">
                 <div className="cd-stat-label">
-                  <InfoCircle size={18} color="var(--warning-500)" variant="Linear" />
+                  <InfoCircle size={20} color="var(--warning-500)" variant="Linear" />
                   <span>At risk!</span>
                   <InfoMark />
                 </div>
@@ -390,7 +390,7 @@ function CourseDetails() {
               </div>
               <div className="cd-stat">
                 <div className="cd-stat-label">
-                  <Danger size={18} color="var(--text-error)" variant="Linear" />
+                  <Danger size={20} color="var(--text-error)" variant="Linear" />
                   <span>Overdue</span>
                 </div>
                 <div className="cd-stat-value">
@@ -407,7 +407,7 @@ function CourseDetails() {
                 <span className="cd-filters-label">Filters</span>
                 <span className="cd-filters-count">0</span>
                 <button className="cd-filters-add ui-disabled" disabled>
-                  <Add size={18} color="currentColor" />
+                  <Add size={20} color="currentColor" />
                   Add
                 </button>
               </div>

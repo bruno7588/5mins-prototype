@@ -170,11 +170,11 @@
 }
 
 .sc-content-item-container--drop-above {
-  box-shadow: 0 -2px 0 0 var(--primary-500);
+  box-shadow: 0 -2px 0 0 var(--selected);
 }
 
 .sc-content-item-container--drop-below {
-  box-shadow: 0 2px 0 0 var(--primary-500);
+  box-shadow: 0 2px 0 0 var(--selected);
 }
 
 /* Empty state (kept for reference) */

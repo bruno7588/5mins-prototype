@@ -49,7 +49,7 @@ function BulkActionBar({ count, onClear, children, label = 'selected' }: BulkAct
             {...motionProps}
           >
             <button className="bulk-bar-close" aria-label="Clear selection" onClick={onClear}>
-              <Add size={18} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
+              <Add size={20} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
             </button>
             <span className="bulk-bar-count">{count} {label}</span>
             <div className="bulk-bar-divider" />
