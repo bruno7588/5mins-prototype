@@ -239,7 +239,8 @@
 }
 
 .ql-pair__term {
-  font: 500 15px/1.4 'Poppins', sans-serif;
+  /* H4 — component title (16px/1.5 Bold). */
+  font: 700 16px/1.5 'Poppins', sans-serif;
   color: var(--neutral-800);
 }
 
