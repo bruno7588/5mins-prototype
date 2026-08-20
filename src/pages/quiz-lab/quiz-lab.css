@@ -151,7 +151,7 @@
 
 .ql-token--correct {
   background: var(--success-500);
-  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
+  box-shadow: inset 0 -3px 0 0 var(--success-600);
   color: var(--neutral-0);
   font-weight: 500;
 }
@@ -212,7 +212,7 @@
 
 .ql-pair--correct {
   background: var(--success-500);
-  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
+  box-shadow: inset 0 -3px 0 0 var(--success-600);
 }
 
 .ql-pair--incorrect {
@@ -375,7 +375,7 @@
 .ql-blank--correct {
   border: none;
   background: var(--success-500);
-  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
+  box-shadow: inset 0 -3px 0 0 var(--success-600);
   color: var(--neutral-0);
 }
 
@@ -530,7 +530,7 @@
 
 .ql-seq__index--correct {
   background: var(--success-500);
-  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
+  box-shadow: inset 0 -3px 0 0 var(--success-600);
   color: var(--neutral-0);
 }
 
