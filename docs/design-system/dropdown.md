@@ -53,7 +53,7 @@ The trigger is **transparent by default** with only a border — it is *not* a f
   gap: 8px;
   width: 100%;
   background: transparent;
-  border: 1px solid var(--border);          /* #DFE1E6 */
+  border: 1px solid var(--border-elevated); /* #BFC2CC light / #383D4C dark */
   border-radius: var(--radius-sm);          /* 12px */
   padding: 8px 12px;                        /* --s, --sm */
   font-family: 'Poppins', sans-serif;
@@ -438,8 +438,9 @@ Constrain the width at the wrapper level (`<div style={{ width: 'auto' }}>` or a
 |---|---|---|
 | Trigger background (Enabled/Active) | *none (transparent)* | — |
 | Trigger background (Hover) | `--input-background` | `#BFC2CC` @16% light / `#454C5E` @16% dark |
-| Border default | `--border` | `#DFE1E6` |
+| Border default | `--border-elevated` | `#BFC2CC` light / `#383D4C` dark |
 | Border hover | `--border-hover` | `#9EA4B3` |
+| Border disabled / read-only | `--border` | `#DFE1E6` light / `#2D313D` dark |
 | Border active / focus | `--selected` | `#EDA30D` light / `#FFBB38` dark |
 | Border error | `--danger-500` | `#DF1642` |
 | Value text | `--text-primary` | `#20222A` |

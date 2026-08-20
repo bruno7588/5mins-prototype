@@ -13,7 +13,8 @@
   --text-secondary: #bfc2cc;
   --text-tertiary: #9ea4b3;
   --text-disabled: #656b7c;
-  --border: #383d4c;
+  --border: #2d313d;
+  --border-elevated: #383d4c;
   --border-hover: #9ea4b3;
   --input-background: rgba(69, 76, 94, 0.16);
   --input-background-hover: #2d313d;

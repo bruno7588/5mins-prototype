@@ -101,7 +101,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 .date-field__input {
   display: flex; align-items: center; gap: var(--space-m);
   padding: var(--space-s) var(--space-sm);         /* 8px 12px */
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);                  /* 12px */
   font: 400 14px/1.5 'Poppins'; color: var(--text-secondary);
   cursor: pointer;
@@ -139,7 +139,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 .cal-day--outside  { color: var(--text-disabled); opacity: 0.5; pointer-events: none; }
 .cal-day:hover     { background: var(--cards-background-hover); border-radius: var(--radius-s); }
 .cal-day:focus-visible { border: 1px solid var(--selected); border-radius: var(--radius-s); outline: none; }
-.cal-day--today    { border: 1px solid var(--border); border-radius: var(--radius-s); }
+.cal-day--today    { border: 1px solid var(--border-elevated); border-radius: var(--radius-s); }
 .cal-day--selected {
   background: var(--selected);
   border-radius: var(--radius-s);

@@ -56,7 +56,7 @@ Use the semantic token names, not raw hex. Cross-reference `colors.md`, `layout.
 | `--space-sm` | `12px` | `12px` | cell padding-x, row gap, row radius |
 | `--space-s` | `8px` | `8px` | cell padding-y |
 | `--space-xs` | `4px` | `4px` | tight gaps |
-| `--border` | `#DFE1E6` | `#383D4C` | row border, progress track |
+| `--border` | `#DFE1E6` | `#2D313D` | row border, progress track |
 | `--page-background-hover` | `#EFF0F2` | `#2D313D` | row hover background |
 | `--input-background-hover` | `#EFF0F2` | `#2D313D` | action-icon hover pill |
 | `--text-primary` | `#20222A` | `#F9F9FA` | cell content |

@@ -50,7 +50,8 @@ All values use 5Mins.ai design tokens.
 
 | CSS Variable               | Light      | Dark       | Usage                                  |
 |----------------------------|------------|------------|----------------------------------------|
-| `--border`                 | `#DFE1E6`  | `#383D4C`  | Default & disabled border              |
+| `--border-elevated`        | `#BFC2CC`  | `#383D4C`  | Enabled chip border                    |
+| `--border`                 | `#DFE1E6`  | `#2D313D`  | Disabled chip border                   |
 | `--border-hover`           | `#9EA4B3`  | `#9EA4B3`  | Hover state border                     |
 | `--page-background-hover`  | `#EFF0F2`  | `#2D313D`  | Hover state background fill            |
 | `--secondary-500`          | `#FFBB38`  | `#FFBB38`  | **Selected background — raw palette token, same in both modes (not `--selected`)** |
@@ -93,7 +94,7 @@ All values use 5Mins.ai design tokens.
 
 | `disabled` | `selected` | `state`    | Border         | Background             | Text color        | Text weight |
 |------------|------------|------------|----------------|------------------------|-------------------|-------------|
-| false      | false      | Enabled    | `--border`     | transparent            | `--text-secondary`| 400         |
+| false      | false      | Enabled    | `--border-elevated` | transparent            | `--text-secondary`| 400         |
 | false      | false      | Hover      | `--border-hover`| `--page-background-hover`| `--text-secondary`| 400         |
 | false      | true       | Enabled    | none           | `--secondary-500`      | `--neutral-800`   | 700         |
 | true       | false      | n/a        | `--border`     | transparent            | `--text-disabled` | 400         |
@@ -145,7 +146,7 @@ export function Chip({
     ? 'chip--selected'                        /* bg --secondary-500, no border */
     : isHover
     ? 'chip--hover'                           /* border --border-hover, bg --page-background-hover */
-    : 'chip--enabled';                        /* border --border + CSS :hover */
+    : 'chip--enabled';                        /* border --border-elevated + CSS :hover */
 
   const padding = iconLeft || iconRight ? 'gap-[4px]' : '';
 
@@ -192,7 +193,7 @@ export function Chip({
   justify-content: center;
   border-radius: 24px;
   padding: 8px 12px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   line-height: 1.5;

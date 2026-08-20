@@ -124,7 +124,7 @@
 .assessment-modal-input {
   width: 100%;
   padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: inherit;
@@ -162,7 +162,7 @@
   gap: var(--space-s);
   min-height: 44px;
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   /* The correct answer reads green here (Figma 8833:145778), not the amber the DS

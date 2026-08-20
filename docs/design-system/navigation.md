@@ -247,7 +247,7 @@ Shared elements:
 | Token | Light | Dark | Used for |
 |---|---|---|---|
 | `--page-background` | `#F9F9FA` | `#20222A` | Bar + panel background |
-| `--border` | `#DFE1E6` | `#383D4C` | Bottom / right hairline |
+| `--border` | `#DFE1E6` | `#2D313D` | Bottom / right hairline |
 | `--input-background` | `#BFC2CC` @16% | `#454C5E` @16% | Item hover, profile card |
 | `--page-background-hover` | `#EFF0F2` | `#2D313D` | Open-group row |
 | `--text-selected` | `#EDA30D` | `#FFBB38` | Selected item label + icon |

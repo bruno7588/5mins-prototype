@@ -60,6 +60,7 @@ Font:           Poppins 16px / 1.5  (Regular 400)
 | Active (focused) | `--input-background` | `--selected` (`#EDA30D` light / `#FFBB38` dark) |
 
 - The border is the primary state signal — background only changes on Hover.
+- **Search keeps the quiet `--border`, not `--border-elevated`.** It is the one field that carries a fill at rest, so it does not need the stronger edge the transparent fields (input, dropdown, date) use to define themselves. Both Figma nodes agree — the dark set has no `Border-elevated` binding at all. Do not "fix" this to match the other fields.
 - Token rule: **form-field active borders use the mode-aware `--selected` token** (same as inputs, dropdowns, date fields).
 - In Figma, Active is modeled on the unfilled variant and shows in-progress typing (value text + clear button) — i.e. Active = focused, whatever the content; `filled` styling applies once the field has a value.
 
@@ -236,8 +237,8 @@ export const Search: React.FC<SearchProps> = ({
 | Token | Light | Dark | Used for |
 |---|---|---|---|
 | `--input-background` | `#BFC2CC` @16% | `#454C5E` @16% | Default + Active background |
-| `--input-background-hover` | `#EFF0F2` (Neutral-100) | `#2D313D` (Neutral-700) | Hover background |
-| `--border` / `--border-hover` | `#DFE1E6` / `#9EA4B3` | `#383D4C` / `#9EA4B3` | Default / hover border |
+| `--input-background-hover` | `#DFE1E6` (Neutral-100) | `#2D313D` (Neutral-700) | Hover background |
+| `--border` / `--border-hover` | `#DFE1E6` / `#9EA4B3` | `#2D313D` / `#9EA4B3` | Default / hover border |
 | `--selected` | `#EDA30D` | `#FFBB38` | Active/focused border |
 | `--text-primary` | `#20222A` | `#F9F9FA` | Value text |
 | `--text-tertiary` | `#9EA4B3` | `#9EA4B3` | Placeholder + icons |

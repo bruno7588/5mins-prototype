@@ -124,13 +124,13 @@ Note: in **light** mode the rest and hover chrome are the same color — the hov
 
 ### Outlined-2
 
-Neutral at rest: `--border` hairline + `--text-primary` label, transparent fill. Hover/Pressed are **identical to Outlined** (16% cyan tint on hover, brand chrome). Use for tertiary actions where the brand color should only surface on interaction. Has Loading in all three sizes.
+Neutral at rest: `--border-elevated` hairline + `--text-primary` label, transparent fill. Hover/Pressed are **identical to Outlined** (16% cyan tint on hover, brand chrome). Use for tertiary actions where the brand color should only surface on interaction. Has Loading in all three sizes.
 
 ```css
 .btn-outlined-2 {
   background: transparent;
   color: var(--text-primary);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
 }
 /* :hover / :active — same as .btn-outlined */
 ```

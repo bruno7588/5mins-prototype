@@ -92,7 +92,7 @@ Primary header for page-level identification. Uses larger typography (24px title
 | `--text-primary` | #20222A | #F9F9FA |
 | `--text-secondary` | #454C5E | #BFC2CC |
 | `--text-tertiary` | #656B7C | #9EA4B3 |
-| `--border` | #DFE1E6 | #383D4C |
+| `--border` | #DFE1E6 | #2D313D |
 | `--selected` | #EDA30D | #FFBB38 |
 | `--primary-button-background` | #00AFC4 | #00AFC4 |
 

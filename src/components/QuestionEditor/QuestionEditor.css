@@ -30,7 +30,7 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-s);
   padding: var(--space-sm);
   resize: vertical;
@@ -56,7 +56,7 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-s);
   padding: var(--space-s) var(--space-sm);
   background: var(--cards-background);

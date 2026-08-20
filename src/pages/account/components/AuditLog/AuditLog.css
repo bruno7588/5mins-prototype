@@ -815,7 +815,7 @@
 }
 
 .audit-cal-day--today {
-  border-color: var(--border);
+  border-color: var(--border-elevated);
   border-radius: var(--radius-s);
 }
 

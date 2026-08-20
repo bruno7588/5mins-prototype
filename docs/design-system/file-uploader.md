@@ -61,9 +61,10 @@ interface FileUploaderProps {
 ## Design Tokens
 
 ```css
---border:                          #383d4c;               /* Filled solid */
---border:                          #383d4c;               /* Enabled/Uploading dashed */
+--border-elevated:                 #383d4c;               /* Filled solid */
+--border-elevated:                 #383d4c;               /* Enabled/Uploading dashed */
 --border-hover:                    #9ea4b3;               /* Hover dashed */
+--border:                          #2d313d;               /* Uploading progress-ring track */
 --danger:                          #df1642;               /* Error border */
 --input-background:                rgba(69,76,94,0.16);   /* tinted bg */
 --text-primary:                    #f9f9fa;               /* button labels */
@@ -192,8 +193,8 @@ export function FileUploader({
   const getBorderColor = () => {
     if (state === 'Error')                  return 'var(--danger-500)';
     if (state === 'Hover' || isDragging)    return 'var(--border-hover, #9ea4b3)';
-    if (state === 'Filled')                 return 'var(--border, #383d4c)';
-    return 'var(--border, #383d4c)';
+    if (state === 'Filled')                 return 'var(--border-elevated, #383d4c)';
+    return 'var(--border-elevated, #383d4c)';
   };
 
   const getBackground = () => {

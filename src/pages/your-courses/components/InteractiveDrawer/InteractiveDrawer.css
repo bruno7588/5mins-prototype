@@ -57,7 +57,7 @@
   resize: none;
   overflow-y: hidden;
   padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: inherit;

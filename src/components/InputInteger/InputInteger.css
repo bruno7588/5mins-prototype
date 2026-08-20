@@ -31,7 +31,7 @@
   gap: var(--space-sm);
   width: fit-content;
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   transition: border-color 150ms ease;
 }
@@ -126,6 +126,10 @@
 }
 
 /* Disabled */
+.input-integer--disabled .input-integer__control {
+  border-color: var(--border);
+}
+
 .input-integer--disabled .input-integer__label,
 .input-integer--disabled .input-integer__value,
 .input-integer--disabled .input-integer__helper {

@@ -1047,7 +1047,7 @@
 
 .roles-panel-input {
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-s);
   font-family: inherit;
   font-size: 14px;
@@ -1070,7 +1070,7 @@
   position: relative;
   display: flex;
   align-items: flex-start;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm, 12px);
   background: transparent;
   transition: border-color 150ms ease;
@@ -1194,7 +1194,7 @@
 
 .roles-panel-textarea {
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-s);
   font-family: inherit;
   font-size: 14px;
@@ -1987,7 +1987,7 @@
   font-weight: 400;
   color: var(--text-secondary);
   background: transparent;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   cursor: pointer;
   white-space: nowrap;
@@ -1996,14 +1996,14 @@
 }
 
 .roles-function-dropdown__trigger:hover {
-  border-color: var(--border);
-  background: var(--page-background);
+  border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 .roles-function-dropdown__trigger--active {
   color: var(--text-primary);
   font-weight: 400;
-  border-color: var(--border);
+  border-color: var(--selected);
 }
 
 .roles-function-dropdown__icon {

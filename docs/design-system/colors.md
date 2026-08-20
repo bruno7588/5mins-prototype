@@ -164,7 +164,8 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--input-background` | `#454C5E` @ 16% | `#BFC2CC` @ 16% | Input/dropdown/search background (translucent — apply only over a known surface) |
 | `--input-background-hover` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | Input background on hover |
 | `--selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Active/selected state — inputs, tabs, chips, radios, checkboxes |
-| `--border` | Neutral-600 `#383D4C` | Neutral-200 `#BFC2CC` | Default border — inputs, cards, modals, dividers, table rows, dashed drop zones, skeletons |
+| `--border` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | The quiet border — table rows, dividers, cards, modals, dashed drop zones, skeletons, and disabled controls |
+| `--border-elevated` | Neutral-600 `#383D4C` | Neutral-200 `#BFC2CC` | One step stronger, for enabled control chrome — text fields, integer steppers, dropdowns, date fields, chips, the calendar today-ring |
 | `--border-hover` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` | Any border on hover |
 
 ### Button backgrounds
@@ -303,7 +304,8 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --input-background: rgba(191, 194, 204, 0.16);  /* #BFC2CC @ 16% */
   --input-background-hover: var(--neutral-100);
   --selected: var(--secondary-600);
-  --border: var(--neutral-200);
+  --border: var(--neutral-100);
+  --border-elevated: var(--neutral-200);
   --border-hover: var(--neutral-300);
 
   /* ── Button backgrounds (light mode) ── */
@@ -346,7 +348,8 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --input-background: rgba(69, 76, 94, 0.16);  /* #454C5E @ 16% */
   --input-background-hover: var(--neutral-700);
   --selected: var(--secondary-500);
-  --border: var(--neutral-600);
+  --border: var(--neutral-700);
+  --border-elevated: var(--neutral-600);
   --border-hover: var(--neutral-300);
 
   /* ── Button backgrounds (dark mode; danger same as light) ── */
@@ -397,7 +400,9 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
 | Card hover | `--cards-background-hover` |
 | Input / dropdown / search bg | `--input-background` (+ `-hover`) |
 | Tooltip / popover | `--tooltip-background` |
-| Any border | `--border` (hover: `--border-hover`) |
+| Table row, divider, card, modal | `--border` (hover: `--border-hover`) |
+| Enabled control chrome (field, dropdown, chip) | `--border-elevated` (hover: `--border-hover`) |
+| That same control when disabled | `--border` |
 | Primary CTA | `--primary-button-background` (+ `-hover`, `-pressed`) |
 | Destructive button | `--danger-500` (hover `--button-danger-hover`) |
 | Caution button | `--button-warning-background` (+ `-hover`, `-pressed`) |

@@ -115,7 +115,7 @@ Used in overlays, modals, and similar UI surfaces:
 | `--text-primary` (dark) | #F9F9FA | Titles on dark bg |
 | `--text-secondary` (dark) | #BFC2CC | Descriptions on dark bg |
 | `--text-tertiary` (dark) | #8E94A4 | Metadata on dark bg |
-| `--border` (dark) | #383D4C | Dividers on dark bg |
+| `--border` (dark) | #2D313D | Dividers on dark bg |
 | `--input-background` | rgba(69, 76, 94, 0.16) | Input fields on dark bg |
 
 ### 2.7 CSS Variables Template

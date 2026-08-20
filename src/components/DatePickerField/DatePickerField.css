@@ -10,7 +10,7 @@
   width: 160px;
   min-height: 37px;
   padding: 4px var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   cursor: pointer;

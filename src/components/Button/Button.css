@@ -100,7 +100,7 @@
 .ds-btn--outlined-2 {
   background: transparent;
   color: var(--text-primary);
-  border-color: var(--border);
+  border-color: var(--border-elevated);
 }
 .ds-btn--outlined-2:hover:not(:disabled) {
   background: var(--button-outline-fill-hover);

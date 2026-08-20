@@ -99,7 +99,7 @@
 .force-trigger-divider {
   width: 100%;
   height: 1px;
-  background: var(--border, #383D4C);
+  background: var(--border, #2D313D);
   border-radius: var(--x, 4px);
 }
 

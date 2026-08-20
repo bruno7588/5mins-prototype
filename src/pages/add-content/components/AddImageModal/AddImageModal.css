@@ -319,7 +319,7 @@
 .aim-generate-textarea {
   width: 100%;
   padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-m);
   background: none;
   font-family: 'Poppins', sans-serif;

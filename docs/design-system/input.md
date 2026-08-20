@@ -16,7 +16,9 @@ description: Input field system for 5Mins.ai — four types. Outlined (standard 
 
 Spec source: Figma Library — set light `12111:3346` / dark `11180:1982`; Outlined `12111:2866`/`8974:24610`; Inline `12111:3347`/`10330:4736`; Radio `12111:3351`/`8974:30479`; Integer `12111:2565`/`10145:10895` (re-verified 2026-08-20). Hexes below are dark-mode fallbacks; tokens resolve per mode (see `colors.md`).
 
-> **2026-08-20 — `--border-elevated` is gone.** It was removed from the design system: in light mode it had collapsed onto `--border` (both `#BFC2CC`), and in dark mode nothing in the input set needed the lighter variant. Every field border — enabled, filled, success, **and disabled** — is now `--border`.
+> **2026-08-20 — field borders use `--border-elevated`.** The border token was split in two: `--border` is the quiet weight for table rows, dividers and cards, and `--border-elevated` is one step stronger for field chrome. Enabled, filled and success borders are `--border-elevated`.
+>
+> **Disabled drops back to `--border`.** A disabled field should not hold an edge as firmly as a live one, so every disabled control — Outlined, Radio, Integer, and the Chip and Dropdown outside this doc — uses the quiet weight. The Radio, Integer, Chip and Dropdown sets all bind their disabled variants to `Border` in Figma; only the Outlined set still paints `Border-elevated`. Four-to-one — treat the Outlined disabled binding as stale, and `--border` as the rule.
 
 ## Overview — Outlined
 
@@ -55,11 +57,11 @@ import { Eye, Danger, TickCircle } from 'iconsax-react';
 
 | State | Trigger | Visual |
 |-------|---------|--------|
-| **Enabled** | Default | Border `--border` |
+| **Enabled** | Default | Border `--border-elevated` |
 | **Hover** | Mouse over field | Border `--border-hover` + background `--input-background` (translucent tint) |
 | **Active / Focused** | Input focused | Border `--selected` (gold) — **no** background fill |
 | **Filled** | `value.length > 0` | Text switches from `--text-disabled` (placeholder) to `--text-primary` |
-| **Disabled** | `disabled={true}` | Border stays `--border`; label, value and helper all `--text-disabled`; no hover |
+| **Disabled** | `disabled={true}` | Border drops to `--border`; label, value and helper all `--text-disabled`; no hover |
 
 **Hover is its own axis.** In Figma `Hovering` is a separate boolean from `State`, so hover composes with Filled and with `validation="success"` — a filled, valid field still picks up the `--border-hover` ring and `--input-background` fill on mouse-over. The two combinations it does *not* apply to are **Active** (focus wins: gold border, transparent background) and **Disabled**.
 
@@ -95,7 +97,7 @@ import { Eye, Danger, TickCircle } from 'iconsax-react';
 />
 ```
 
-- Border stays `--border`
+- Border stays `--border-elevated`
 - Label and helper keep their normal colours
 - TickCircle icon (20px, Bold, `--text-success`) auto-appears on right
 
@@ -133,7 +135,8 @@ const [password, setPassword] = useState('');
 ## Design Tokens Reference
 
 ```css
---border:                 #383d4c;   /* default border — enabled, filled, success AND disabled */
+--border-elevated:        #383d4c;   /* field border — enabled, filled, success */
+--border:                 #2d313d;   /* the quiet weight — any field border when disabled */
 --border-hover:           #9ea4b3;   /* hovered border */
 --selected:               #ffbb38;   /* focused / active border */
 --text-error:             #e95c7b;   /* error label + border + helper */
@@ -188,7 +191,7 @@ const [password, setPassword] = useState('');
 | Wrong | Right |
 |-------|-------|
 | Raw `<input>` with custom styles | `<InputField>` |
-| Hard-coded hex colors | Design tokens (`var(--border, ...)`) |
+| Hard-coded hex colors | Design tokens (`var(--border-elevated, ...)`) |
 | `helperText` alone for errors | `helperText` + `validation="error"` |
 | Building your own password icon layout | Pass `iconRight`; composition is automatic |
 | `readOnly` for disabled | `disabled={true}` |
@@ -264,11 +267,11 @@ A bordered field row with a **21px radio button inside** — the user both selec
 
 | State | Border | Radio | Notes |
 |---|---|---|---|
-| Enabled | `--border` | unselected | |
+| Enabled | `--border-elevated` | unselected | |
 | Hover | `--border-hover` | unselected | + `--input-background` fill |
 | Active (typing) | `--selected` | unselected | blinking caret |
-| Selected + Filled | `--border` | **on** (amber dot) | selecting does not keep the amber border |
-| Success validation | `--border` | on | trailing 20px bold tick-circle |
+| Selected + Filled | `--border-elevated` | **on** (amber dot) | selecting does not keep the amber border |
+| Success validation | `--border-elevated` | on | trailing 20px bold tick-circle |
 | Disabled | `--border` | per state | all text `--text-disabled` |
 
 Radio behavior (halo, amber dot, grouping) follows `selection-controls.md`.
@@ -324,13 +327,13 @@ import InputInteger from '@/components/InputInteger/InputInteger';
 
 | State | Trigger | Visual |
 |-------|---------|--------|
-| **Enabled** | Default | Border `--border`; helper `--text-secondary` |
+| **Enabled** | Default | Border `--border-elevated`; helper `--text-secondary` |
 | **Hover** | Mouse over field | Border `--border-hover`. **The field itself gets no fill** — instead the − / + control under the pointer picks up a circular `--page-background-hover` background |
 | **Active / Focused** | Field focused (typing) | Border `--selected` (gold), blinking caret |
 | **Filled** | Value set by the user | Value `--text-primary` (the resting `0` renders `--text-disabled`) |
 | **Error** | `validation="error"` | Border, **label** and helper all `--text-error` |
-| **Success** | `validation="success"` | Border stays `--border` — no tick icon; the Integer has no icon slot |
-| **Disabled** | `disabled={true}` | Border `--border`; label / value / helper `--text-disabled` |
+| **Success** | `validation="success"` | Border stays `--border-elevated` — no tick icon; the Integer has no icon slot |
+| **Disabled** | `disabled={true}` | Border drops to `--border`; label / value / helper `--text-disabled` |
 
 **Hover differs from Outlined.** The Outlined field tints its whole box on hover (`--input-background`); the Integer does not. Its hover affordance is per-control — a circular `--page-background-hover` behind whichever stepper you are pointing at — because the − and + are the interactive targets, not the box.
 

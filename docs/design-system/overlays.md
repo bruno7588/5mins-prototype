@@ -74,7 +74,7 @@ Scrim values (Neutral-900 @ 25% light / 50% dark) are defined in `layout.md` —
 | `--page-background` | `#F9F9FA` | `#20222A` | Surface color for all overlay panels |
 | `--text-primary` | `#20222A` | `#F9F9FA` | Titles and primary text |
 | `--text-secondary` | `#454C5E` | `#BFC2CC` | Supporting text and descriptions |
-| `--border` | `#DFE1E6` | `#383D4C` | Divider lines |
+| `--border` | `#DFE1E6` | `#2D313D` | Divider lines |
 | `--scrim` | Neutral-900 @ 25% | Neutral-900 @ 50% | Backdrop fill (see `layout.md`) |
 | `--radius-sm` | `12px` | — | Panel corner rounding (Dialog & Modal; Drawer has none) |
 | `--radius-s` | `8px` | — | Button corner rounding |
@@ -304,7 +304,7 @@ The header contains a title, optional supporting text, and a divider. It reuses 
 .modal__divider {
   width: 100%;
   height: 1px;
-  background: var(--border, #383D4C);
+  background: var(--border, #2D313D);
   border-radius: var(--radius-xs);
 }
 ```
@@ -419,7 +419,7 @@ The footer is pinned to the bottom and contains a divider line followed by a row
 .side-drawer__footer-divider {
   width: 100%;
   height: 1px;
-  background: var(--border, #383D4C);
+  background: var(--border, #2D313D);
   border-radius: var(--radius-xs);
 }
 

@@ -445,7 +445,7 @@ Width:     hugs content (no fixed width)
 
 | Type | Background | Icon (24px) |
 |---|---|---|
-| **Info** | `--border` (`#383D4C` dark) — a dark neutral pill | io5 `IoInformationCircleOutline` |
+| **Info** | `--border` (`#2D313D` dark) — a dark neutral pill | io5 `IoInformationCircleOutline` |
 | **Success** | `--success-500` `#18A957` | Iconsax `TickCircle` |
 | **Warning** | `--warning-600` `#E88206` | warning triangle (Iconsax `Danger`) |
 | **Error** | `--danger-500` `#DF1642` | warning triangle (Iconsax `Danger`) |
