@@ -22,12 +22,12 @@
 }
 
 .input-field__wrapper:hover {
-  border-color: var(--border-elevated);
-  background: var(--page-background);
+  border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 .input-field__wrapper:focus-within {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
   background: transparent;
 }
 
@@ -52,7 +52,7 @@
   align-items: center;
   gap: var(--space-s);
   flex-shrink: 0;
-  margin-left: var(--space-s);
+  margin-left: var(--space-l);
 }
 
 .input-field__helper {
@@ -64,12 +64,12 @@
 
 /* Error */
 .input-field--error .input-field__wrapper {
-  border-color: var(--danger-500);
+  border-color: var(--text-error);
 }
 
 .input-field--error .input-field__label,
 .input-field--error .input-field__helper {
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 /* Warning */
