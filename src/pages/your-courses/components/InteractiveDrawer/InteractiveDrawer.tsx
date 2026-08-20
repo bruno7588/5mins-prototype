@@ -178,12 +178,16 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
         <Button onClick={handleSave} disabled={!canSave}>
           Save
         </Button>
-        {/* Secondary action, sitting beside Save on the footer's 16px gap. */}
-        {previewQuestion && (
-          <Button variant="outlined" onClick={() => setPreviewing(true)}>
-            Preview
-          </Button>
-        )}
+        {/* Secondary action, sitting beside Save on the footer's 16px gap. Figma
+            keeps it in place and disables it until there is something to show,
+            rather than letting the footer change shape as the form fills in. */}
+        <Button
+          variant="outlined-2"
+          disabled={!previewQuestion}
+          onClick={() => setPreviewing(true)}
+        >
+          View
+        </Button>
       </div>
 
       {/* Just the phone on the scrim — no dialog card, no title bar; the format

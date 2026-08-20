@@ -228,7 +228,8 @@ function FillBlankBody({ draft, onChange, readOnly = false }: BodyProps<FillBlan
         {!readOnly && (
           <div className="iq-drawer__row-actions">
             <Button
-              variant="outlined-2"
+              variant="text"
+              className="iq-drawer__add-btn"
               icon={<Add size={20} color="currentColor" variant="Linear" />}
               onClick={() => setDistractors([...draft.distractors, makeRow()])}
             >

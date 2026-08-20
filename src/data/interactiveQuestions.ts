@@ -526,8 +526,8 @@ export const TYPE_CONFIG: Record<
        "drag" here had authors designing for an interaction that doesn't exist. */
     description: 'Users pick words from a bank to fill the gaps',
     callout:
-      'Write the sentence in full, then click the words to blank out. Users pick from a shared word bank, so add a few wrong words to make it count.',
-    promptPlaceholder: 'Fill in the missing words',
+      'Write the sentence in full, then click the words to blank out. Learners pick from a shared word bank, so add a few wrong words to make it count',
+    promptPlaceholder: 'Fill in the missing words...',
   },
   'match-pairs': {
     label: 'Match the Pairs',
@@ -535,7 +535,7 @@ export const TYPE_CONFIG: Record<
     description: 'Users pair each term with its match',
     callout:
       'Each row is one correct pair. Fill in both sides of at least 3 pairs. Users see the matches shuffled.',
-    promptPlaceholder: 'Match each term with its definition',
+    promptPlaceholder: 'Match each term to its match...',
   },
   categorization: {
     label: 'Categorise',
@@ -543,13 +543,13 @@ export const TYPE_CONFIG: Record<
     description: 'Users place concepts into the right categories',
     callout:
       'Name each category, then add the concepts that belong in it. Users see all the concepts together, shuffled.',
-    promptPlaceholder: 'Place each concept into the right category',
+    promptPlaceholder: 'Place each concept into the right category...',
   },
   sequencing: {
     label: 'Sequence',
     title: 'Sequence',
     description: 'Users put the steps back in order',
     callout: 'Users see these shuffled. The order you set here is the answer.',
-    promptPlaceholder: 'Put the steps in the right order',
+    promptPlaceholder: 'Put the steps in the correct order...',
   },
 }

@@ -135,7 +135,8 @@ function MatchPairsBody({ draft, onChange, readOnly = false }: BodyProps<MatchPa
       {!readOnly && (
       <div className="iq-drawer__row-actions">
         <Button
-          variant="outlined-2"
+          variant="text"
+          className="iq-drawer__add-btn"
           icon={<Add size={20} color="currentColor" variant="Linear" />}
           onClick={() => setPairs([...pairs, makeRow()])}
         >

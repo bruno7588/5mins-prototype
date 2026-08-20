@@ -10,7 +10,7 @@ import './AssessmentModal.css'
 
 const typeConfig: Record<AssessmentType, { title: string; subtitle: string }> = {
   'single-choice': {
-    title: 'Add assessment - Multiple choice',
+    title: 'Add assessment - Multiple Choice',
     subtitle: 'Users can select one correct choice',
   },
   'short-text': {

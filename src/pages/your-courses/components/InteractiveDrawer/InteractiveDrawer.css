@@ -544,3 +544,12 @@
 .iq-drawer__marker-word:disabled {
   cursor: default;
 }
+
+/* Add-row buttons (Add Wrong Word / Add Step / Add Pair / Add Concept).
+   Figma draws these borderless with a --text-primary label, but the DS Text
+   button is brand cyan (buttons.md has no neutral text variant), so the colour
+   is pinned here rather than inventing a DS variant. Hover keeps the DS brand
+   step so the control still reads as interactive. */
+.iq-drawer__add-btn.ds-btn--text {
+  color: var(--text-primary);
+}

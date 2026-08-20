@@ -31,7 +31,6 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
 
   return (
     <div className="iq-drawer__field">
-      <span className="iq-drawer__label">Category</span>
       <div
         className="iq-drawer__categories"
         role="group"
@@ -43,6 +42,10 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
           const categoryConflict = conflictFor(conflicts, 'categories', category.a)
           return (
             <div className="iq-drawer__category" key={category.id}>
+              {/* Figma numbers each category in its own label rather than heading the
+                  whole group once — the label is the only thing separating one
+                  category block from the next. */}
+              <span className="iq-drawer__label">Category {index + 1}</span>
               <div className="iq-drawer__row-field">
               <div
                 className={`iq-drawer__row${categoryConflict ? ' iq-drawer__row--error' : ''}`}
@@ -52,7 +55,7 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
                   rows={1}
                   className="iq-drawer__row-input"
                   readOnly={readOnly}
-                  placeholder={`Category ${index + 1}`}
+                  placeholder="Write category name..."
                   aria-label={`Category ${index + 1} name`}
                   aria-invalid={categoryConflict ? true : undefined}
                   aria-describedby={categoryConflict ? `iq-conflict-${category.id}` : undefined}
@@ -83,7 +86,6 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
               {/* The indent alone left it to the reader to infer that these
                   belong to the category above; the arrow says it. */}
               <div className="iq-drawer__category-items">
-                <span className="iq-drawer__label iq-drawer__label--concepts">Concepts</span>
                 {own.map((item, i) => {
                   const itemConflict = conflictFor(conflicts, 'items', item.a)
                   return (
@@ -143,7 +145,8 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
                 })}
                 {!readOnly && (
                   <Button
-                    variant="outlined-2"
+                    variant="text"
+                    className="iq-drawer__add-btn"
                     icon={<Add size={20} color="currentColor" variant="Linear" />}
                     onClick={() => onChange({ ...draft, items: [...items, makeRow('', category.id)] })}
                   >

@@ -117,7 +117,7 @@ function SequencingBody({ draft, onChange, readOnly = false }: BodyProps<Sequenc
               rows={1}
               className="iq-drawer__row-input"
               readOnly={readOnly}
-              placeholder={`Write step ${index + 1} here...`}
+              placeholder={`Write step ${index + 1}...`}
               aria-label={`Step ${index + 1} of ${steps.length}`}
               aria-invalid={errored || undefined}
               aria-describedby={errored ? `iq-conflict-${step.id}` : undefined}
@@ -192,7 +192,8 @@ function SequencingBody({ draft, onChange, readOnly = false }: BodyProps<Sequenc
       {!readOnly && (
       <div className="iq-drawer__row-actions">
         <Button
-          variant="outlined-2"
+          variant="text"
+          className="iq-drawer__add-btn"
           icon={<Add size={20} color="currentColor" variant="Linear" />}
           onClick={() => setSteps([...steps, makeRow()])}
         >
