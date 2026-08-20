@@ -116,7 +116,7 @@
 }
 
 .fce-card-slot--drag-over .fce-card {
-  outline: 2px dashed var(--secondary-600);
+  outline: 2px dashed var(--selected);
   outline-offset: 4px;
 }
 

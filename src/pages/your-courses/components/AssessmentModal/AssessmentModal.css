@@ -206,7 +206,7 @@
   width: 100%;
   min-height: 44px;
   padding: var(--space-s) var(--space-sm);
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   font-size: 14px;
@@ -241,7 +241,7 @@
   width: 100%;
   padding: var(--space-s) var(--space-m);
   background: var(--input-background);
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
   /* The Add glyph is currentColor; without this it falls back to the UA button
      colour and reads dimmer than the label next to it. */
@@ -529,7 +529,7 @@
   width: calc(100% - 1.5px);
   height: calc(100% - 1.5px);
   fill: none;
-  stroke: var(--border);
+  stroke: var(--border-elevated);
   stroke-width: 1.5;
   stroke-dasharray: 4 4;
   transition: stroke 150ms ease;

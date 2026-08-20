@@ -121,7 +121,7 @@
 }
 
 .edit-reminder-modal__stepper:focus-within {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .edit-reminder-modal__stepper--error,

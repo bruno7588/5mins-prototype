@@ -375,7 +375,7 @@
 
 .onboarding .input-field__wrapper:hover {
   border-color: var(--border-hover, #9ea4b3);
-  background: var(--input-background-hover, #2d313d);
+  background: var(--input-background);
 }
 
 /* Active / Focused — gold border (--selected) */

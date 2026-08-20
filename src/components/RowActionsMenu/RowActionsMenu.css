@@ -15,7 +15,7 @@
 
 .ram-trigger:hover,
 .ram-trigger[aria-expanded='true'] {
-  background: var(--input-background-hover);
+  background: var(--input-background);
 }
 
 /* Menu surface — DS listbox (listbox.md) */

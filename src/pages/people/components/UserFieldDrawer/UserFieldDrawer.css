@@ -138,7 +138,7 @@
 }
 
 .uf-drawer-input:focus {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .uf-drawer-input--error {

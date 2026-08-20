@@ -278,7 +278,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
   background: var(--input-background);
   font-family: 'Poppins', sans-serif;

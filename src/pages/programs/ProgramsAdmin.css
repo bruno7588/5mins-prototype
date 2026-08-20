@@ -131,7 +131,7 @@
 }
 
 .programs-kebab-btn:hover {
-  background: var(--input-background-hover);
+  background: var(--input-background);
 }
 
 .programs-kebab-menu {

@@ -279,7 +279,7 @@
    interaction (see design-system/buttons.md). */
 .pd-course__cta--review {
   background: transparent;
-  border: 1px solid var(--text-primary);
+  border: 1px solid var(--border-elevated);
   color: var(--text-primary);
 }
 

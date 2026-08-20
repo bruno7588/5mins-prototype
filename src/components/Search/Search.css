@@ -34,7 +34,7 @@
 /* ── Active / Focused ── */
 .search:focus-within {
   background: var(--input-background);
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 /* ── Search icon ── */

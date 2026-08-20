@@ -112,7 +112,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-m);
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm); /* 12px */
   background-size: cover;
   background-position: center;
@@ -120,7 +120,7 @@
 
 .cdt-thumb__box--filled {
   border-style: solid;
-  border-color: var(--border);
+  border-color: var(--border-elevated);
 }
 
 .cdt-thumb__info {

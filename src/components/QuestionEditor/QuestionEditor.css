@@ -31,20 +31,21 @@
   font-weight: 400;
   color: var(--text-primary);
   border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   padding: var(--space-sm);
   resize: vertical;
   min-height: 60px;
   outline: none;
-  transition: border-color 150ms ease;
+  transition: border-color 150ms ease, background 150ms ease;
 }
 
 .question-editor-textarea:hover {
   border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 .question-editor-textarea:focus {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .question-editor-textarea::placeholder {
@@ -57,21 +58,22 @@
   font-weight: 400;
   color: var(--text-primary);
   border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   padding: var(--space-s) var(--space-sm);
-  background: var(--cards-background);
+  background: transparent;
   outline: none;
   width: 200px;
   cursor: pointer;
-  transition: border-color 150ms ease;
+  transition: border-color 150ms ease, background 150ms ease;
 }
 
 .question-editor-select:hover {
   border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 .question-editor-select:focus {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 /* Answer rows */
@@ -101,7 +103,7 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  border: 2px solid var(--border);
+  border: 2px solid var(--text-primary);
   border-radius: 50%;
   flex-shrink: 0;
   cursor: pointer;
@@ -110,7 +112,7 @@
 }
 
 .question-editor-radio--selected {
-  border-color: var(--success-500);
+  border-color: var(--control-selected);
   background: transparent;
 }
 
@@ -178,7 +180,7 @@
 .question-editor-error {
   font-size: 12px;
   font-weight: 400;
-  color: var(--danger-500);
+  color: var(--text-error);
 }
 
 /* Actions */
@@ -193,9 +195,9 @@
   white-space: nowrap;
   padding: var(--space-s) var(--space-m);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--text-secondary);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   transition: background 150ms ease;
 }
 
@@ -210,7 +212,7 @@
   font-weight: 700;
   color: var(--text-button-foreground);
   background: var(--primary-button-background);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   transition: background 150ms ease;
 }
 

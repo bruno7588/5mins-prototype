@@ -207,7 +207,7 @@
 }
 
 .lesson-editor-input:focus {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 /* File name field with Change File button */

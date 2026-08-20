@@ -341,7 +341,7 @@
 }
 
 .aim-generate-textarea:focus {
-  border-color: var(--secondary-600);
+  border-color: var(--selected);
 }
 
 .aim-generate-textarea:disabled {

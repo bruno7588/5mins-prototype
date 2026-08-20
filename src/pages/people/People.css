@@ -150,7 +150,7 @@
 }
 
 .people-search:focus-within {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .people-search-input {
@@ -188,7 +188,7 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-s);
   cursor: pointer;
   transition: color 150ms ease, border-color 150ms ease;
@@ -248,11 +248,11 @@
 }
 
 .people-filter-trigger--open {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .people-filter-trigger--open:hover {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .people-filter-chevron {
@@ -960,7 +960,7 @@
 }
 
 .confirm-modal-input:focus {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .confirm-modal-input::placeholder {

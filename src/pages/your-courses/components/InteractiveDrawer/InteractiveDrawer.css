@@ -130,7 +130,7 @@
   gap: var(--space-s);
   min-height: 44px;
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   transition: border-color 150ms ease, background 150ms ease;

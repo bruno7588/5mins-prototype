@@ -87,7 +87,7 @@
   height: 272px;
   /* Plain CSS dashed border. The old data-URI SVG hardcoded its stroke hexes, so
      the frame never followed --border across themes. */
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;

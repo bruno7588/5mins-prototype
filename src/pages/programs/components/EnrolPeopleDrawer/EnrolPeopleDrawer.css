@@ -451,9 +451,9 @@
   transition: background 150ms ease, border-color 150ms ease;
 }
 
-/* Hover fills the whole option (input), per DS: page-background-hover + border-hover. */
+/* Hover fills the whole option (input), per DS: --input-background + --border-hover. */
 .epd-date__opt:hover {
-  background: var(--page-background-hover);
+  background: var(--input-background);
   border-color: var(--border-hover);
 }
 
@@ -498,7 +498,7 @@
 
 .epd-date__cal-trigger:not(.epd-date__cal-trigger--disabled):hover {
   border-color: var(--border-hover);
-  background: var(--input-background-hover);
+  background: var(--input-background);
 }
 
 /* DS input "active/focused" border (input.md). */

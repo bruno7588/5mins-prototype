@@ -10,7 +10,7 @@
   padding: var(--space-s);
   background: var(--cards-background);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12), 0 12px 28px 0 rgba(32, 34, 42, 0.14);
   transform-origin: top left;
   animation: acm-pop-in 120ms ease;
@@ -38,7 +38,7 @@
   border-radius: var(--radius-s);
   background: transparent;
   font: 400 14px/1.5 'Poppins', sans-serif;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
@@ -82,7 +82,7 @@
   padding: var(--space-s);
   background: var(--cards-background);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12), 0 12px 28px 0 rgba(32, 34, 42, 0.14);
   animation: acm-pop-in 120ms ease;
 }

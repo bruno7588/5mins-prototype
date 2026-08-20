@@ -216,7 +216,7 @@
 }
 
 .ai-drawer-textarea:focus {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .ai-drawer-textarea::placeholder {
@@ -235,13 +235,13 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   transition: border-color 150ms ease, background 150ms ease;
 }
 
 .ai-drawer-answer--correct {
-  border-color: var(--border);
+  border-color: var(--border-elevated);
   background: var(--cards-background);
 }
 
@@ -309,7 +309,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 400;
@@ -327,7 +327,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-s);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   padding: var(--space-s) var(--space-sm);
   transition: border-color 150ms ease;
@@ -338,7 +338,7 @@
 }
 
 .ai-drawer-explanation:focus-within {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .ai-drawer-explanation-icon {
@@ -402,7 +402,7 @@
   line-height: 1.5;
   color: var(--text-primary);
   background: transparent;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-s);
   transition: background 150ms ease;
 }

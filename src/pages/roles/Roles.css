@@ -164,7 +164,7 @@
   font-weight: 400;
   color: var(--text-secondary);
   background: transparent;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   cursor: pointer;
   transition: all 150ms ease;
   line-height: 1.5;
@@ -180,7 +180,7 @@
 
 .roles-chip:hover {
   background: var(--page-background-hover);
-  border-color: var(--border);
+  border-color: var(--border-hover);
 }
 
 .roles-chip--active {
@@ -220,7 +220,7 @@
 }
 
 .roles-search:focus-within {
-  border-color: var(--secondary-500, var(--secondary-500));
+  border-color: var(--selected);
 }
 
 .roles-search__icon {
@@ -277,7 +277,7 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-s);
   cursor: pointer;
   background: transparent;
@@ -286,7 +286,7 @@
 
 .roles-btn-ghost:hover {
   color: var(--text-primary);
-  border-color: var(--border);
+  border-color: var(--border-hover);
 }
 
 .roles-btn-ghost--small {
@@ -882,7 +882,7 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
@@ -896,6 +896,7 @@
 
 .roles-pagination-btn:disabled {
   color: var(--text-disabled);
+  border-color: var(--text-disabled);
   cursor: not-allowed;
 }
 
@@ -1058,7 +1059,7 @@
 }
 
 .roles-panel-input:focus {
-  border-color: var(--primary-500);
+  border-color: var(--selected);
 }
 
 .roles-field-required .input-field__label::after {
@@ -1080,7 +1081,7 @@
 }
 
 .roles-panel-description-wrapper:focus-within {
-  border-color: var(--secondary-500, var(--secondary-500));
+  border-color: var(--selected);
 }
 
 .roles-panel-description-wrapper .input-field__input {
@@ -1154,7 +1155,7 @@
 
 .roles-panel-file-chip__remove:hover {
   color: var(--text-error);
-  background: var(--input-background-hover);
+  background: var(--input-background);
 }
 
 .roles-panel-file-chip__remove-tooltip {
@@ -1206,7 +1207,7 @@
 }
 
 .roles-panel-textarea:focus {
-  border-color: var(--primary-500);
+  border-color: var(--selected);
 }
 
 .roles-panel-checkbox-row {

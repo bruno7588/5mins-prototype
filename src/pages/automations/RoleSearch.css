@@ -19,7 +19,7 @@
 }
 
 .role-search-input-wrap:focus-within {
-  border-color: var(--secondary-600);
+  border-color: var(--selected);
 }
 
 .role-search-icon {

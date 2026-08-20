@@ -275,7 +275,7 @@
   max-width: 200px;
   height: 37px;
   padding: 0 var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-full);
   background: var(--cards-background);
   font-size: 14px;

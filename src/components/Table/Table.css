@@ -335,7 +335,7 @@
 }
 
 .tbl-action .icon-btn:hover {
-  background: var(--input-background-hover);
+  background: var(--input-background);
 }
 
 .tbl-action.is-disabled .icon-btn {

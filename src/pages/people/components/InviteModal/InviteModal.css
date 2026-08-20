@@ -266,7 +266,7 @@
 }
 
 .invite-modal-input:focus {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .invite-modal-date-wrapper {

@@ -371,7 +371,7 @@
 }
 
 .hris-panel-option--selected {
-  border-color: var(--secondary-600);
+  border-color: var(--selected);
   background: var(--selected-tint);
 }
 
@@ -580,7 +580,7 @@
 }
 
 .hris-preview-screen__role-option--selected {
-  border-color: var(--secondary-600);
+  border-color: var(--selected);
   background: var(--selected-tint);
   font-weight: 500;
 }

@@ -195,7 +195,7 @@
   gap: var(--space-xs);
   max-width: 100%;
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   transition: border-color 120ms ease;
@@ -299,7 +299,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) var(--space-sm) var(--space-s) var(--space-s);
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: 'Poppins', sans-serif;
@@ -336,7 +336,7 @@
 
 .rd-toggle-row:focus-visible {
   outline: none;
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
 }
 
 .rd-toggle-control {
@@ -395,7 +395,7 @@
   gap: var(--space-xs);
   max-width: 220px;
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: 'Poppins', sans-serif;
@@ -459,12 +459,12 @@
 }
 
 .rcp:hover {
-  border-color: var(--border);
-  background: var(--page-background);
+  border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 .rcp:focus-within {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
   background: transparent;
 }
 

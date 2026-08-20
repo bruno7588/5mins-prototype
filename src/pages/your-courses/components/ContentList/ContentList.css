@@ -169,7 +169,7 @@
   /* Plain CSS dashed border. The old SVG data-URI stroked `currentColor`, but a
      background-image SVG is its own document — it can't see the host element's
      colour, so the dashes rendered near-black instead of --border. */
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-ml);
   width: 100%;
 }
@@ -514,7 +514,7 @@
   width: 100%;
   padding: var(--space-s) var(--space-m);
   background: transparent;
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
   color: var(--text-tertiary);
   font-family: 'Poppins', sans-serif;
@@ -661,7 +661,7 @@
      sits shorter than the Add Content button beside it. */
   padding: 10px var(--space-ml) 10px var(--space-m);
   background: transparent;
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-family: 'Poppins', sans-serif;

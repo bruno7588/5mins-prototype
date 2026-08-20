@@ -532,7 +532,7 @@
 }
 
 .automations-search:focus-within {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
   background: var(--input-background);
 }
 
@@ -599,7 +599,7 @@
 }
 
 .automations-dropdown--open .automations-dropdown-trigger {
-  border-color: var(--secondary-500);
+  border-color: var(--selected);
   background: transparent;
 }
 
@@ -837,7 +837,7 @@
   padding: var(--space-xl) var(--space-m);
   font-size: 14px;
   color: var(--text-tertiary);
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-s);
 }
 
@@ -874,7 +874,7 @@
   justify-content: center;
   margin-top: var(--space-sm);
   padding: 10px var(--space-ml); /* 10px 20px to match figma height (41px) */
-  border: 1px solid var(--text-primary);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: inherit;

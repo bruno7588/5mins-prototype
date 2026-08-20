@@ -352,7 +352,7 @@
 }
 
 .ql-dash rect {
-  stroke: var(--border);
+  stroke: var(--border-elevated);
   transition: stroke 150ms ease;
 }
 
@@ -875,7 +875,7 @@
   width: 100%;
   resize: none;
   padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
   font: 400 14px/1.5 'Poppins', sans-serif;
