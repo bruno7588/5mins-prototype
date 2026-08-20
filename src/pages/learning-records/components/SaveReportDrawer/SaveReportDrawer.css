@@ -459,7 +459,7 @@
 }
 
 .rcp:hover {
-  border-color: var(--border-elevated);
+  border-color: var(--border);
   background: var(--page-background);
 }
 

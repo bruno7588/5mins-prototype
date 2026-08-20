@@ -18,7 +18,7 @@ type BarTone = 'primary' | 'success' | 'elevated'
 
 function Bar({ progress, tone, height }: { progress: number; tone: BarTone; height: number }) {
   const color =
-    tone === 'success' ? 'var(--success-500)' : tone === 'elevated' ? 'var(--border-elevated)' : 'var(--primary-600)'
+    tone === 'success' ? 'var(--success-500)' : tone === 'elevated' ? 'var(--border)' : 'var(--primary-600)'
   return (
     <div className="lf-bar" style={{ height }}>
       <div className="lf-bar__fill" style={{ width: `${Math.min(100, Math.max(0, progress * 100))}%`, background: color }} />

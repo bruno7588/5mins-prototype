@@ -166,7 +166,7 @@
 }
 
 .your-courses-folder-card:hover .your-courses-folder-img-back {
-  background: var(--border-elevated);
+  background: var(--border);
   transform: translate(-50%, -50%) scale(0.833);
 }
 
@@ -177,7 +177,7 @@
   left: 50%;
   top: calc(50% - 4px);
   transform: translate(-50%, -50%);
-  background: var(--border-elevated);
+  background: var(--border);
   border-radius: var(--radius-s);
   transition: background-color 300ms ease-in-out, transform 300ms ease-in-out;
 }

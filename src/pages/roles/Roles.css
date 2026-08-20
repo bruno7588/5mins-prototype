@@ -180,7 +180,7 @@
 
 .roles-chip:hover {
   background: var(--page-background-hover);
-  border-color: var(--border-elevated);
+  border-color: var(--border);
 }
 
 .roles-chip--active {
@@ -286,7 +286,7 @@
 
 .roles-btn-ghost:hover {
   color: var(--text-primary);
-  border-color: var(--border-elevated);
+  border-color: var(--border);
 }
 
 .roles-btn-ghost--small {
@@ -1996,7 +1996,7 @@
 }
 
 .roles-function-dropdown__trigger:hover {
-  border-color: var(--border-elevated);
+  border-color: var(--border);
   background: var(--page-background);
 }
 

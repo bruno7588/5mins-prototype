@@ -493,7 +493,7 @@ Anatomy (16px gap between card and info):
 - **Card surface:** `--cards-background`, radius 12px, 24px padding, Shadow S.
 - **Thumb stack** centered (240 x 164 area), all layers radius 8px, bottom-anchored front image:
   - Back layer (3+ only): 208 x 118, `--cards-background-hover` fill, offset up 23px
-  - Middle layer (2 and 3+): 224 x 132, `--border-elevated` fill, offset up 4px
+  - Middle layer (2 and 3+): 224 x 132, `--border` fill, offset up 4px
   - Front: the folder's cover image, 240 x 140
   - **0 courses:** a gray video-player glyph placeholder instead of the stack
 - **Info** below, 4px gap: folder name Poppins Bold 16px `--text-primary`; count Poppins Regular 14px `--text-secondary` (`3+ courses`, `1 course`, `0 courses`).
@@ -508,19 +508,19 @@ Anatomy (16px gap between card and info):
 .folder-card__surface:hover { background: var(--cards-background-hover); }
 .folder-card__stack { position: relative; width: 240px; height: 164px; }
 .folder-card__stack .back   { position: absolute; left: 50%; transform: translateX(-50%); top: 0;    width: 208px; height: 118px; background: var(--cards-background-hover); border-radius: 8px; }
-.folder-card__stack .middle { position: absolute; left: 50%; transform: translateX(-50%); top: 15px; width: 224px; height: 132px; background: var(--border-elevated); border-radius: 8px; }
+.folder-card__stack .middle { position: absolute; left: 50%; transform: translateX(-50%); top: 15px; width: 224px; height: 132px; background: var(--border); border-radius: 8px; }
 .folder-card__stack .front  { position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; width: 240px; height: 140px; object-fit: cover; border-radius: 8px; }
 .folder-card__info { display: flex; flex-direction: column; gap: 4px; }
 ```
 
 ### "New Folder" creator tile
 
-The last tile in a folder grid is the creator affordance: 308 x 272, transparent fill, **1.5px dashed `--border-elevated`** border, radius 12px, centered column in `--text-secondary` — a 48px `+` over a 16px Regular "New Folder" label. Hover fills with `--cards-background-hover`.
+The last tile in a folder grid is the creator affordance: 308 x 272, transparent fill, **1.5px dashed `--border`** border, radius 12px, centered column in `--text-secondary` — a 48px `+` over a 16px Regular "New Folder" label. Hover fills with `--cards-background-hover`.
 
 ```css
 .folder-card--new {
   height: 272px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  border: 1.5px dashed var(--border-elevated); border-radius: 12px;
+  border: 1.5px dashed var(--border); border-radius: 12px;
   color: var(--text-secondary); text-align: center; cursor: pointer;
 }
 .folder-card--new .plus  { font: 400 48px/1.5 Poppins; }

@@ -84,7 +84,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 | Outside month / disabled | — | — | 4px | Regular 14 `--text-disabled`, **50% opacity** on the cell |
 | Hover | `--cards-background-hover` | — | 8px | Regular 14 `--text-primary` |
 | Focus | — | 1px `--selected` | 8px | Regular 14 `--text-primary` |
-| Current day | — | 1px `--border-elevated` | 8px | Regular 14 `--text-primary` |
+| Current day | — | 1px `--border` | 8px | Regular 14 `--text-primary` |
 | **Selected** | `--selected` | — | 8px | **Bold 14 `--neutral-800`** — dark label in both modes |
 | Illustration | — | — | — | 23×28px streak graphic replaces the number (learner streak calendar) |
 
@@ -139,7 +139,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 .cal-day--outside  { color: var(--text-disabled); opacity: 0.5; pointer-events: none; }
 .cal-day:hover     { background: var(--cards-background-hover); border-radius: var(--radius-s); }
 .cal-day:focus-visible { border: 1px solid var(--selected); border-radius: var(--radius-s); outline: none; }
-.cal-day--today    { border: 1px solid var(--border-elevated); border-radius: var(--radius-s); }
+.cal-day--today    { border: 1px solid var(--border); border-radius: var(--radius-s); }
 .cal-day--selected {
   background: var(--selected);
   border-radius: var(--radius-s);
@@ -164,7 +164,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 
 | Token | Light | Dark | Used for |
 |---|---|---|---|
-| `--border` / `--border-hover` / `--border-elevated` | `#DFE1E6` / `#9EA4B3` / `#BFC2CC` | `#383D4C` / `#9EA4B3` / `#454C5E` | Field border / hover / current-day ring |
+| `--border` / `--border-hover` | `#BFC2CC` / `#9EA4B3` | `#383D4C` / `#9EA4B3` | Field border + current-day ring / hover |
 | `--input-background` | `#BFC2CC` @16% | `#454C5E` @16% | Field hover fill |
 | `--selected` | `#EDA30D` | `#FFBB38` | Field active border, selected day fill, focus ring |
 | `--cards-background` / `--cards-background-hover` | `#FFFFFF` / `#EFF0F2` | `#2D313D` / `#383D4C` | Popover / day hover |

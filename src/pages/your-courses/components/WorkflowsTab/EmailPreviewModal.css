@@ -201,7 +201,7 @@
 .email-preview__bar--name {
   height: 10px;
   width: 139px;
-  background: var(--border-elevated);
+  background: var(--border);
 }
 
 .email-preview__bar--role {
@@ -212,13 +212,13 @@
 .email-preview__bar--due {
   flex: 1;
   height: 8px;
-  background: var(--border-elevated);
+  background: var(--border);
 }
 
 .email-preview__bar--pct {
   width: 16px;
   height: 8px;
-  background: var(--border-elevated);
+  background: var(--border);
 }
 
 /* Segmented progress */

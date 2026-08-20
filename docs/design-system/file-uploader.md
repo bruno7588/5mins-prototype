@@ -62,7 +62,7 @@ interface FileUploaderProps {
 
 ```css
 --border:                          #383d4c;               /* Filled solid */
---border-elevated:                 #454c5e;               /* Enabled/Uploading dashed */
+--border:                          #383d4c;               /* Enabled/Uploading dashed */
 --border-hover:                    #9ea4b3;               /* Hover dashed */
 --danger:                          #df1642;               /* Error border */
 --input-background:                rgba(69,76,94,0.16);   /* tinted bg */
@@ -193,7 +193,7 @@ export function FileUploader({
     if (state === 'Error')                  return 'var(--danger-500)';
     if (state === 'Hover' || isDragging)    return 'var(--border-hover, #9ea4b3)';
     if (state === 'Filled')                 return 'var(--border, #383d4c)';
-    return 'var(--border-elevated, #454c5e)';
+    return 'var(--border, #383d4c)';
   };
 
   const getBackground = () => {

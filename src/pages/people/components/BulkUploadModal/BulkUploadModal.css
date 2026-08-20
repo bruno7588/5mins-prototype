@@ -234,7 +234,7 @@
 
 /* ─── CSV Preview (inline example table) ─── */
 .csv-preview {
-  border: 1px solid var(--border-elevated);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
   margin-top: 4px;
@@ -262,8 +262,8 @@
   font-weight: 500;
   color: var(--text-tertiary);
   font-size: 14px;
-  border-bottom: 1px solid var(--border-elevated);
-  border-right: 1px solid var(--border-elevated);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
 
 .csv-preview-table th:last-child {
@@ -310,7 +310,7 @@
 .csv-col-scenario {
   font-family: 'Poppins', sans-serif !important;
   white-space: normal !important;
-  border-right: 1px solid var(--border-elevated);
+  border-right: 1px solid var(--border);
   min-width: 240px;
 }
 
@@ -665,7 +665,7 @@
 }
 
 .bulk-preview-table-row:hover {
-  border-color: var(--border-elevated);
+  border-color: var(--border);
   background: var(--cards-background-hover);
   transition: background 150ms ease;
 }

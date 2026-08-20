@@ -31,7 +31,7 @@
 
 /* ─── State: Enabled ─── */
 .file-uploader--enabled {
-  border: 1px dashed var(--border-elevated);
+  border: 1px dashed var(--border);
   background: transparent;
 }
 
@@ -56,7 +56,7 @@
 
 /* ─── State: Uploading ─── */
 .file-uploader--uploading {
-  border: 1px dashed var(--border-elevated);
+  border: 1px dashed var(--border);
   background: var(--input-background);
   cursor: default;
 }

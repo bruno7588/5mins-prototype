@@ -112,7 +112,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-m);
-  border: 1px dashed var(--border-elevated);
+  border: 1px dashed var(--border);
   border-radius: var(--radius-sm); /* 12px */
   background-size: cover;
   background-position: center;

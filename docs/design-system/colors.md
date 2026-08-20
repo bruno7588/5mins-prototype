@@ -12,7 +12,7 @@ Single source of truth for every color in the 5Mins.ai platform. Token names fol
 Two layers:
 
 1. **Raw palettes** (sections 1–3) — mode-independent hex scales. Never reference these directly in component CSS except where a semantic token doesn't exist yet.
-2. **Semantic tokens** (sections 4–5) — express *intent* (page background, primary text, selected state) and carry a **dark-mode and light-mode value each**. Always prefer these: `--text-primary` over `--neutral-800`, `--cards-background` over `--neutral-0`, `--border` over `--neutral-100`.
+2. **Semantic tokens** (sections 4–5) — express *intent* (page background, primary text, selected state) and carry a **dark-mode and light-mode value each**. Always prefer these: `--text-primary` over `--neutral-800`, `--cards-background` over `--neutral-0`, `--border` over `--neutral-200`.
 
 The prototype currently ships **light mode only** — light-mode values live in `src/styles/tokens.css` `:root`; the dark-mode column is the spec for a future `[data-theme="dark"]` override block (included in section 6).
 
@@ -164,8 +164,7 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--input-background` | `#454C5E` @ 16% | `#BFC2CC` @ 16% | Input/dropdown/search background (translucent — apply only over a known surface) |
 | `--input-background-hover` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | Input background on hover |
 | `--selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Active/selected state — inputs, tabs, chips, radios, checkboxes |
-| `--border` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | Default border — inputs, cards, modals, dividers, table rows |
-| `--border-elevated` | Neutral-500 `#454C5E` | Neutral-200 `#BFC2CC` | Borders on elevated surfaces, skeletons |
+| `--border` | Neutral-600 `#383D4C` | Neutral-200 `#BFC2CC` | Default border — inputs, cards, modals, dividers, table rows, dashed drop zones, skeletons |
 | `--border-hover` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` | Any border on hover |
 
 ### Button backgrounds
@@ -304,8 +303,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --input-background: rgba(191, 194, 204, 0.16);  /* #BFC2CC @ 16% */
   --input-background-hover: var(--neutral-100);
   --selected: var(--secondary-600);
-  --border: var(--neutral-100);
-  --border-elevated: var(--neutral-200);
+  --border: var(--neutral-200);
   --border-hover: var(--neutral-300);
 
   /* ── Button backgrounds (light mode) ── */
@@ -349,7 +347,6 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --input-background-hover: var(--neutral-700);
   --selected: var(--secondary-500);
   --border: var(--neutral-600);
-  --border-elevated: var(--neutral-500);
   --border-hover: var(--neutral-300);
 
   /* ── Button backgrounds (dark mode; danger same as light) ── */

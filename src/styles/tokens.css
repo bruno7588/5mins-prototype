@@ -92,8 +92,7 @@
   --cards-background-hover: var(--neutral-50);
   --input-background: rgba(191, 194, 204, 0.16); /* Neutral-200 @ 16% */
   --input-background-hover: var(--neutral-100);
-  --border: var(--neutral-100);
-  --border-elevated: var(--neutral-200);
+  --border: var(--neutral-200);
   --border-hover: var(--neutral-300);
   --tooltip-background: var(--neutral-800);
   --text-primary: var(--neutral-800);
@@ -188,7 +187,6 @@
   --input-background: rgba(69, 76, 94, 0.16); /* Neutral-500 @ 16% */
   --input-background-hover: var(--neutral-700);
   --border: var(--neutral-600);
-  --border-elevated: var(--neutral-500);
   --border-hover: var(--neutral-300);
   --tooltip-background: var(--neutral-900);
 
