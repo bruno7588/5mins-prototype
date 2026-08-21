@@ -54,6 +54,13 @@
   flex-wrap: wrap;
 }
 
+/* The summary pills are a count, not a status: they read as body text alongside the
+   outline rather than as labels demanding attention, so they drop to Regular. The DS
+   Badge stays Medium 500 (badges.md) — this is scoped to the strip. */
+.course-meta .badge {
+  font-weight: 400;
+}
+
 /* When a drag rail is present (sections or an unsectioned area), indent the badge
    strip past the 20px rail + gap so it lines up with the content container rather
    than the rail. Flat/loose mode has no rail, so badges stay at the left edge. */
