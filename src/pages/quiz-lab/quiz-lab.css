@@ -151,7 +151,7 @@
 
 .ql-token--correct {
   background: var(--success-500);
-  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
+  box-shadow: inset 0 -3px 0 0 var(--success-600);
   color: var(--neutral-0);
   font-weight: 500;
 }
@@ -195,7 +195,7 @@
 .ql-pairs {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-m);
 }
 
 .ql-pair {
@@ -212,7 +212,7 @@
 
 .ql-pair--correct {
   background: var(--success-500);
-  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
+  box-shadow: inset 0 -3px 0 0 var(--success-600);
 }
 
 .ql-pair--incorrect {
@@ -239,7 +239,10 @@
 }
 
 .ql-pair__term {
-  font: 500 16px/1.4 'Poppins', sans-serif;
+  /* H4 — component title (16px/1.5 Bold). */
+  font: 700 16px/1.5 'Poppins', sans-serif;
+  /* The card is the amber --selected fill, so the label takes its knockout token
+     rather than the raw neutral the branch was written against. */
   color: var(--text-on-selected);
 }
 
@@ -374,7 +377,7 @@
 .ql-blank--correct {
   border: none;
   background: var(--success-500);
-  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
+  box-shadow: inset 0 -3px 0 0 var(--success-600);
   color: var(--neutral-0);
 }
 
@@ -420,7 +423,8 @@
   /* Dashed receiver — enabled by default; hover + active (tap) escalate. */
   border: none;
   border-radius: var(--radius-sm);
-  background: transparent;
+  /* Figma 9071:3978 — the receiver carries the input fill at rest. */
+  background: var(--input-background);
   transition: border-color 150ms ease, background 150ms ease;
 }
 
@@ -475,24 +479,11 @@
   min-height: 44px;
 }
 
-/* Placed chips remain tappable (return to pool) until graded — show the token
-   hover + pointer so they read as still clickable. */
+/* Placed chips remain tappable (return to pool) until graded. They carry
+   .ql-token--selected, so the amber hover comes from that rule — no override
+   here, which would otherwise repaint them grey. */
 .ql-bucket__items .ql-token--locked:not(.ql-token--correct):not(.ql-token--incorrect) {
   cursor: pointer;
-}
-
-@media (hover: hover) {
-  .ql-bucket__items
-    .ql-token--locked:not(.ql-token--correct):not(.ql-token--incorrect):hover {
-    background: var(--cards-background-hover);
-    box-shadow: inset 0 -3px 0 0 var(--input-background);
-  }
-}
-
-.ql-cat__empty {
-  align-self: center;
-  font: 400 14px/1.5 'Poppins', sans-serif;
-  color: var(--text-tertiary);
 }
 
 /* ── Sequencing ──────────────────────────────────────────────────────────── */
@@ -529,7 +520,7 @@
 
 .ql-seq__index--correct {
   background: var(--success-500);
-  box-shadow: inset 0 -3px 0 0 var(--button-success-background-hover);
+  box-shadow: inset 0 -3px 0 0 var(--success-600);
   color: var(--neutral-0);
 }
 
