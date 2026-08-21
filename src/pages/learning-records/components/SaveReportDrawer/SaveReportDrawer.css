@@ -525,7 +525,7 @@
 }
 
 .rcp-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Suggestions menu — "Listbox" component (Figma 11597:113490) */

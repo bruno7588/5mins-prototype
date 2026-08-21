@@ -220,7 +220,7 @@
 }
 
 .ai-drawer-textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Answer cards */
@@ -270,7 +270,7 @@
 }
 
 .ai-drawer-answer-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .ai-drawer-correct-badge {
@@ -364,7 +364,7 @@
 }
 
 .ai-drawer-explanation-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* ──────────────────────────────────────────

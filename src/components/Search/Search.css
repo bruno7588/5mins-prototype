@@ -64,7 +64,7 @@
 }
 
 .search__input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* ── Clear button ── */

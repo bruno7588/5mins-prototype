@@ -122,7 +122,7 @@
 }
 
 .question-drawer-textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Answer cards */
@@ -174,7 +174,7 @@
 }
 
 .question-drawer-answer-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Correct badge */
@@ -270,7 +270,7 @@
 }
 
 .question-drawer-explanation-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Errors */

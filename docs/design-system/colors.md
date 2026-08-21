@@ -197,8 +197,8 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 |---|---|---|---|
 | `--text-primary` | Neutral-25 `#F9F9FA` | Neutral-800 `#20222A` | Headings, high-emphasis labels — max one per visual group |
 | `--text-secondary` | Neutral-200 `#BFC2CC` | Neutral-500 `#454C5E` | Body copy, descriptions — the default text color |
-| `--text-tertiary` | Neutral-300 `#9EA4B3` | Neutral-400 `#656B7C` | Captions, placeholders, helper text, timestamps |
-| `--text-disabled` | Neutral-400 `#656B7C` | Neutral-300 `#9EA4B3` | Disabled text — apply to label, value, and icon together |
+| `--text-tertiary` | Neutral-300 `#9EA4B3` | Neutral-400 `#656B7C` | Captions, helper text, timestamps |
+| `--text-disabled` | Neutral-400 `#656B7C` | Neutral-300 `#9EA4B3` | Disabled text — apply to label, value, and icon together; also the placeholder in any empty field |
 | `--text-button-foreground` | **Neutral-800 `#20222A`** | Neutral-25 `#F9F9FA` | Label on the **primary** filled button — flips dark on the bright cyan dark-mode fill. Semantic filled buttons (danger/warning/success) use raw `--neutral-25` in both modes instead |
 | `--text-button-disabled` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` | Label on any disabled button |
 | `--text-button-hover` | Primary-400 `#33E2F7` | Primary-700 `#008393` | Outlined/text button label on hover |
@@ -411,7 +411,8 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
 | Disabled button bg / label | `--button-background-disabled` / `--text-button-disabled` |
 | Headings | `--text-primary` |
 | Body copy | `--text-secondary` |
-| Captions, placeholders | `--text-tertiary` |
+| Captions, helper text | `--text-tertiary` |
+| Placeholder in an empty field | `--text-disabled` |
 | Filled-button label | `--text-button-foreground` |
 | Selected tab/chip — border/fill vs label | `--selected` vs `--text-selected` |
 | Label sitting ON the amber fill | `--text-on-selected` (weight 500) |

@@ -369,10 +369,6 @@
   color: var(--neutral-200); /* #bfc2cc */
 }
 
-.onboarding .input-field__input::placeholder {
-  color: var(--text-tertiary); /* neutral-300 #9ea4b3 */
-}
-
 .onboarding .input-field__wrapper:hover {
   border-color: var(--border-hover, #9ea4b3);
   background: var(--input-background);

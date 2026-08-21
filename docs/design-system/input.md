@@ -63,6 +63,8 @@ import { Eye, Danger, TickCircle } from 'iconsax-react';
 | **Filled** | `value.length > 0` | Text switches from `--text-disabled` (placeholder) to `--text-primary` |
 | **Disabled** | `disabled={true}` | Border drops to `--border`; label, value and helper all `--text-disabled`; no hover |
 
+**Placeholder colour is `--text-disabled`, everywhere.** Any control whose value slot is empty — text input, textarea, search field, unselected dropdown trigger, unset date field — renders its placeholder in `--text-disabled`, then switches to `--text-primary` once filled. `--text-tertiary` is for helper text, captions, and icons, never for a placeholder.
+
 **Hover is its own axis.** In Figma `Hovering` is a separate boolean from `State`, so hover composes with Filled and with `validation="success"` — a filled, valid field still picks up the `--border-hover` ring and `--input-background` fill on mouse-over. The two combinations it does *not* apply to are **Active** (focus wins: gold border, transparent background) and **Disabled**.
 
 ---
@@ -263,7 +265,7 @@ A borderless editor for a page-level title and optional description — used whe
 A bordered field row with a **21px radio button inside** — the user both selects the option and can type into it (e.g. quiz answer options, "other" choices). Shares the Outlined field chrome.
 
 - Layout: `[radio 21px] [text]`, gap **8px**, padding `8px 12px`, radius 12px, optional label above (Medium 14 `--text-secondary`, gap 8).
-- Text: placeholder `--text-tertiary`, value `--text-primary` (Regular 14).
+- Text: placeholder `--text-disabled`, value `--text-primary` (Regular 14).
 
 | State | Border | Radio | Notes |
 |---|---|---|---|

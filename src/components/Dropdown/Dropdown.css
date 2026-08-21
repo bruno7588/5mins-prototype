@@ -88,10 +88,10 @@
   text-align: left;
 }
 
-/* Placeholder, not disabled — per input.md the empty-field token is
-   --text-tertiary. --text-disabled made an empty field read as inert. */
+/* Empty (unselected) trigger reads as a placeholder, so it takes the same
+   --text-disabled token as an empty input. Filled switches to --text-primary. */
 .dropdown-trigger-text--placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .dropdown-chevron {

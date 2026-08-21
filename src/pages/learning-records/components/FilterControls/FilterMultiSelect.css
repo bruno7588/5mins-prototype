@@ -80,7 +80,7 @@
 }
 
 .fms-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Popover listbox */

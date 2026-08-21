@@ -124,7 +124,7 @@
 }
 
 .sc-scorm-drawer-search input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* File name cell — the row chrome comes from the shared Table (table.md). */

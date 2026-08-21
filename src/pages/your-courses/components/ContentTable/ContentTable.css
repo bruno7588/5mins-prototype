@@ -63,7 +63,7 @@
 }
 
 .content-table-search input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Table — flex-based, mirrors Figma Your Content / 4839:937 and People table pattern */

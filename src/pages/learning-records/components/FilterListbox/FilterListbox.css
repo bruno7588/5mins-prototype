@@ -40,7 +40,7 @@
 }
 
 .flb-search-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Scrollable list */

@@ -79,7 +79,7 @@ Font:           Poppins 16px / 1.5  (Regular 400)
 ```
 
 - **SearchIcon** — Iconsax `SearchNormal1` Outline, `--text-tertiary` (18px M / 20px L)
-- **Placeholder** — Regular 400, `--text-tertiary`
+- **Placeholder** — Regular 400, `--text-disabled`
 - **Value text** — Regular 400, `--text-primary`, `flex: 1`
 - **Clear** — `IoCloseOutline` (io5 set, same glyph as dismissible badges), 20px M / 24px L, `--text-tertiary`, calls `onClear`
 
@@ -209,7 +209,7 @@ export const Search: React.FC<SearchProps> = ({
 .search--m .search__input { font-size: 14px; }
 .search--l .search__input { font-size: 16px; }
 
-.search__input::placeholder { color: var(--text-tertiary); }
+.search__input::placeholder { color: var(--text-disabled); }
 
 /* ── Clear button ── */
 .search__clear {
@@ -241,7 +241,8 @@ export const Search: React.FC<SearchProps> = ({
 | `--border` / `--border-hover` | `#DFE1E6` / `#9EA4B3` | `#2D313D` / `#9EA4B3` | Default / hover border |
 | `--selected` | `#EDA30D` | `#FFBB38` | Active/focused border |
 | `--text-primary` | `#20222A` | `#F9F9FA` | Value text |
-| `--text-tertiary` | `#9EA4B3` | `#9EA4B3` | Placeholder + icons |
+| `--text-tertiary` | `#656B7C` | `#9EA4B3` | Search + clear icons |
+| `--text-disabled` | `#9EA4B3` | `#656B7C` | Placeholder (empty field) |
 
 ---
 

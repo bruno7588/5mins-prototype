@@ -258,7 +258,7 @@
 }
 
 .invite-modal-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .invite-modal-input:hover {

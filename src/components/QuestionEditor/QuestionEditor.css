@@ -49,7 +49,7 @@
 }
 
 .question-editor-textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .question-editor-select {
@@ -128,7 +128,7 @@
 }
 
 .question-editor-answer-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .question-editor-answer-remove {

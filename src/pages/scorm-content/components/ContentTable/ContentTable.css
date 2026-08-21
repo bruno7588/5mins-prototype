@@ -63,7 +63,7 @@
 }
 
 .sc-content-table-search input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .sc-content-table-add-btn {

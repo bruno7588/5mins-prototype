@@ -94,7 +94,7 @@
 }
 
 .add-scorm-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .add-scorm-input:hover {

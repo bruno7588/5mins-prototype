@@ -130,7 +130,7 @@
 }
 
 .uf-drawer-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .uf-drawer-input:hover {

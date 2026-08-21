@@ -242,7 +242,7 @@
 }
 
 .roles-search-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .roles-search__clear {

@@ -885,7 +885,7 @@
 }
 
 .ql-answer::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .ql-answer:hover {

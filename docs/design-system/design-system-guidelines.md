@@ -98,8 +98,8 @@ Quiz type and interactive learning element colors:
 | `--neutral-900` | #0F1014 | Overlay backdrop base |
 | `--neutral-800` / `--text-primary` | #20222A | Headings, primary text |
 | `--neutral-500` / `--text-secondary` (light) | #454C5E | Body text |
-| `--neutral-400` / `--text-tertiary` | #656B7C | Secondary/tertiary text, placeholders |
-| `--neutral-300` | #9EA4B3 | Disabled text |
+| `--neutral-400` / `--text-tertiary` | #656B7C | Secondary/tertiary text, captions |
+| `--neutral-300` / `--text-disabled` | #9EA4B3 | Disabled text, placeholders |
 | `--neutral-100` | #DFE1E6 | Borders, dividers |
 | `--neutral-50` | #EFF0F2 | Card hover bg |
 | `--neutral-25` | #F9F9FA | Page background |

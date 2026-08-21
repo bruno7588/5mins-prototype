@@ -71,7 +71,7 @@
 
 .iq-drawer__input::placeholder,
 .iq-drawer__textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .iq-drawer__input:hover,
@@ -193,7 +193,7 @@
 }
 
 .iq-drawer__row-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Only the grip starts a drag, so the textarea beside it stays selectable. */

@@ -137,7 +137,7 @@
 }
 
 .assessment-modal-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 .assessment-modal-input:hover {
@@ -187,7 +187,7 @@
 }
 
 .assessment-modal-option-input::placeholder {
-  color: var(--text-tertiary);
+  color: var(--text-disabled);
 }
 
 /* Correct badge — DS success badge; this Figma instance sets 12px rather than the

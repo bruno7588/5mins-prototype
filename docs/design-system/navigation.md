@@ -216,7 +216,7 @@ The Figma component includes the iOS status bar (clock "9:41" + signal/wifi/batt
 | Page variant | Node | Height | Contents |
 |---|---|---|---|
 | Home | `1092:34690` | 65px, 16px/12px pad | Chips left ("For You" selected / "Your Workspace"); right cluster 16px gap: 28px flash-circle + 28px bell with red Nudge dot |
-| Search | `7632:8029` | 65px | Full-width search field: `--input-background` fill, 1px `--border`, radius 12px, 12px/8px padding, 18px magnifier, placeholder Poppins Regular 14 `--text-tertiary` |
+| Search | `7632:8029` | 65px | Full-width search field: `--input-background` fill, 1px `--border`, radius 12px, 12px/8px padding, 18px magnifier, placeholder Poppins Regular 14 `--text-disabled` |
 | Progress | `7632:8164` | 65px | Chips "My Team" / "My Progress" |
 | Feed | `7632:8202` | 65px | Centered title Poppins Bold 16/1.5 `--text-primary` |
 | Profile | `7632:8270` | auto, 16px/12px pad | 40px avatar with settings mini-badge (top-right, `--input-background`, 9px `setting-2` icon), name Bold 14 + role Regular 12 `--text-secondary` (2px gap); right 40px `--primary-500` circular add button |

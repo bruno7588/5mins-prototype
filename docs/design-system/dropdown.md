@@ -443,7 +443,8 @@ Constrain the width at the wrapper level (`<div style={{ width: 'auto' }}>` or a
 | Border disabled / read-only | `--border` | `#DFE1E6` light / `#2D313D` dark |
 | Border active / focus | `--selected` | `#EDA30D` light / `#FFBB38` dark |
 | Border error | `--danger-500` | `#DF1642` |
-| Value text | `--text-primary` | `#20222A` |
+| Value text (something selected) | `--text-primary` | `#20222A` |
+| Placeholder text (nothing selected) | `--text-disabled` | `#9EA4B3` light / `#656B7C` dark |
 | Label text | `--text-secondary` | `#454C5E` light / `#BFC2CC` dark |
 | Helper text | `--text-tertiary` | `#9EA4B3` |
 | Read-only text / icon | `--text-disabled` | `#9EA4B3` light / `#656B7C` dark |

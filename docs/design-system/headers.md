@@ -100,7 +100,7 @@ Primary header for page-level identification. Uses larger typography (24px title
 
 The `ctas` slot is free-form, but the Figma base ships this reference layout, right-aligned with a **12px gap**:
 
-1. **Search field** — 400px wide (Page) / 300px (Section); `--input-background` fill, 1px `--border`, radius 12, `8px 12px` padding, 18px search icon, placeholder Regular 14 `--text-tertiary` (see `search.md`)
+1. **Search field** — 400px wide (Page) / 300px (Section); `--input-background` fill, 1px `--border`, radius 12, `8px 12px` padding, 18px search icon, placeholder Regular 14 `--text-disabled` (see `search.md`)
 2. **AI icon button** — 40px circular hit area (`radius-full`), 24px AI-sparkle icon
 3. **Outlined button** — Medium (see `buttons.md`)
 4. **Filled button with trailing add icon** — Medium
