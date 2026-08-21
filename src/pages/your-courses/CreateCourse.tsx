@@ -85,23 +85,40 @@ const GENERATION_TAIL_MS = 1400
 /* Every pass gets the base beat, except the one that writes the assessments: that one
    is as long as the cards it has to show, or the last few would land in a lump when the
    pass ended rather than one at a time. */
-const stepDurations = (situational: boolean, count: number, cards: number) => {
+const stepDurations = (situational: boolean, count: number, cards: number, lessons: number) => {
   const base = situational ? SITUATIONAL_STEP_MS : GENERATION_STEP_MS
   /* Which pass writes the cards: the third of a situational run, the last of an
-     assessments run — whose earlier passes read one lesson each. */
-  const writing = situational ? CREATING_PASS : count - 1
-  return Array.from({ length: count }, (_, i) =>
-    i === writing ? Math.max(base, cards * QUESTION_BEAT_MS + 400) : base,
-  )
+     assessments run. */
+  const writing = situational ? CREATING_PASS : ASSESSMENT_CREATING_PASS
+  return Array.from({ length: count }, (_, i) => {
+    if (i === writing) return Math.max(base, cards * QUESTION_BEAT_MS + 400)
+    /* The read names each lesson in turn under it, so it lasts as long as there are
+       lessons to name — a single beat would leave most of them unread. */
+    if (!situational && i === 0) return base * Math.max(1, lessons)
+    return base
+  })
 }
 
-/* Which pass writes the assessments — the reveal indexes the same list. */
+/* Which pass writes the assessments — the reveal indexes the same list. A situational
+   run writes a title and brief first, so its cards land on the third pass; an
+   assessments run has neither, so they land on its second. */
 const CREATING_PASS = 2
+export const ASSESSMENT_CREATING_PASS = 1
 
 /* The passes, in the order the work happens: the course is read, then the scenario is
    written from it, then the questions that run through the scenario, then the two are
    assembled. Each one names what is happening rather than counting to a number it
    cannot know (FR-11). */
+/* The same shape as the situational passes below, minus the brief it has no equivalent
+   of: the course is read, the assessments are written from it, and the last pass says
+   the work is done. The lesson being read is the line under the first pass rather than a
+   pass of its own, so the list is the length of the work rather than of the course. */
+const ASSESSMENT_STEPS = [
+  'Reading the source transcripts',
+  'Creating assessments',
+  'All done — your assessments are ready',
+]
+
 const SITUATIONAL_STEPS = [
   'Reading the source transcripts',
   'Writing the title and brief',
@@ -527,9 +544,7 @@ function CreateCourse() {
       ? generateSituationalTest(coverage.withTranscript, details, types)
       : null
     const drafts = situational ? [] : generateSet(types, coverage.withTranscript, details)
-    const steps = situational
-      ? SITUATIONAL_STEPS
-      : [...coverage.withTranscript.map((l) => `Reading "${l.title}"`), 'Writing your assessments']
+    const steps = situational ? SITUATIONAL_STEPS : ASSESSMENT_STEPS
     setRun({
       /* Assessments are written a lesson at a time, so the wait names the lesson
          being read; a situational test is one artefact built in three passes, so it
@@ -540,6 +555,7 @@ function CreateCourse() {
         situational,
         steps.length,
         situational ? (draft?.questions?.length ?? 0) : drafts.length,
+        coverage.withTranscript.length,
       ),
       lessons: coverage.withTranscript,
       /* The chips are question formats. Assessments generate those formats directly;

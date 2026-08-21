@@ -416,6 +416,8 @@ export const QUESTION_BEAT_MS = 700
 const READING = 0
 const WRITING_BRIEF = 1
 const CREATING = 2
+/* An assessments run has no brief between the two, so its cards land a pass earlier. */
+const ASSESSMENT_CREATING = 1
 
 /* What the third pass calls each format while it writes one. The rail's labels are
    titles for a menu; these are the middle of a sentence. */
@@ -494,9 +496,9 @@ function GeneratingBody({
   const questions: { format: GeneratableType; text: string }[] = draft
     ? draft.questions ?? []
     : drafts.map((d) => ({ format: d.type, text: d.title }))
-  /* Which pass writes them: the third of a situational run, the last of an assessments
-     run, whose earlier passes read one lesson each. */
-  const creating = draft ? CREATING : steps.length - 1
+  /* Which pass writes them: the third of a situational run, the second of an
+     assessments run — which reads in one pass rather than one per lesson. */
+  const creating = draft ? CREATING : ASSESSMENT_CREATING
   const [landed, setLanded] = useState(0)
   const newest = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
@@ -540,12 +542,11 @@ function GeneratingBody({
      The first two take whatever the caller sends — the lesson being read, then who the
      brief is being written for. */
   const writingCard = activeStep === creating ? questions[landed - 1] : undefined
-  const stepDetail =
-    activeStep === READING || activeStep === WRITING_BRIEF
+  const stepDetail = writingCard
+    ? `Creating ${CREATING_WORD[writingCard.format] ?? typeLabel(writingCard.format)} assessments`
+    : activeStep === READING || activeStep === WRITING_BRIEF
       ? detail
-      : writingCard
-        ? `Creating ${CREATING_WORD[writingCard.format] ?? typeLabel(writingCard.format)} assessments`
-        : undefined
+      : undefined
 
   return (
     <>
