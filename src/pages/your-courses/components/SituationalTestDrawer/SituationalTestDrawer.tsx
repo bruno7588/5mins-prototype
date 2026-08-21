@@ -1,29 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import { Add, ArrowDown2, ArrowLeft, ArrowUp2, Trash } from 'iconsax-react'
+import { Add, ArrowDown2, ArrowLeft, ArrowUp2 } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
 import SparkleIcon from '@/components/icons/SparkleIcon'
-import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import Collapse from '@/components/Collapse/Collapse'
-import Radio from '@/components/Radio/Radio'
 import Tooltip from '@/components/Tooltip/Tooltip'
-import CategorizationBody from '../InteractiveDrawer/bodies/CategorizationBody'
-import FillBlankBody from '../InteractiveDrawer/bodies/FillBlankBody'
-import MatchPairsBody from '../InteractiveDrawer/bodies/MatchPairsBody'
-import SequencingBody from '../InteractiveDrawer/bodies/SequencingBody'
 import { autoGrow, autoGrowRef } from '../InteractiveDrawer/autoGrow'
 import '../InteractiveDrawer/InteractiveDrawer.css'
+import QuestionCard from '../QuestionCard/QuestionCard'
 import SectionHeader from '../SectionHeader/SectionHeader'
 import SituationalTestPreview from '../SituationalTestPreview/SituationalTestPreview'
-import { typeLabel, type GeneratableType } from '@/data/aiAssessmentGeneration'
-import {
-  toDraft,
-  toQuestion,
-  type Draft,
-  type InteractiveQuestion,
-} from '@/data/interactiveQuestions'
+import { type GeneratableType } from '@/data/aiAssessmentGeneration'
+import { type InteractiveQuestion } from '@/data/interactiveQuestions'
 import './SituationalTestDrawer.css'
 
 /* The DS Callout (alerts-toast.md) with a chevron, so the guidance can be folded away
@@ -418,230 +408,40 @@ function SituationalTestDrawerContent({
               const optionQuestion = isOptionQuestion(question)
               const marked = marksCorrect(question)
               const filledOptions = question.options.filter((o) => o.trim().length > 0).length
-              const textError = blurredQuestions.has(question.id) && !question.text.trim()
-              const optionsError =
-                optionQuestion && blurredQuestions.has(question.id) && filledOptions < 2
               /* One option is always marked; it just may be the blank one. */
-              const correctBlank =
-                marked &&
-                blurredQuestions.has(question.id) &&
-                filledOptions > 0 &&
-                !(question.options[question.correctIndex] ?? '').trim()
-              const isOpen = !collapsedQuestions.has(question.id)
-
+              const blurred = blurredQuestions.has(question.id)
               return (
-                <div className="st-drawer__question" key={question.id}>
-                  <div className="st-drawer__question-head">
-                    <button
-                      type="button"
-                      className="st-drawer__question-toggle"
-                      onClick={() => toggleQuestion(question.id)}
-                      aria-expanded={isOpen}
-                    >
-                      <span className="st-drawer__question-index">Question {index + 1}</span>
-                      {/* Generated questions say which format they are: the admin picked
-                          the formats, so the output has to show which one it got. */}
-                      {question.format && (
-                        <span className="st-drawer__question-format">
-                          {typeLabel(question.format)}
-                        </span>
-                      )}
-                    </button>
-                    {questions.length > 1 && (
-                      <Tooltip
-                        text="Remove question"
-                        position="Top"
-                        alignment="End"
-                        icon={false}
-                        className="st-drawer__question-remove-tooltip"
-                      >
-                        <button
-                          type="button"
-                          className="st-drawer__question-remove"
-                          aria-label={`Remove question ${index + 1}`}
-                          onClick={() =>
-                            setQuestions((prev) => prev.filter((q) => q.id !== question.id))
-                          }
-                        >
-                          <Trash size={20} color="currentColor" variant="Linear" />
-                        </button>
-                      </Tooltip>
-                    )}
-                    {/* Chevron last, hard against the card's right edge. */}
-                    <button
-                      type="button"
-                      className="st-drawer__question-chevron"
-                      onClick={() => toggleQuestion(question.id)}
-                      aria-expanded={isOpen}
-                      aria-label={`${isOpen ? 'Collapse' : 'Expand'} question ${index + 1}`}
-                    >
-                      {isOpen
-                        ? <ArrowUp2 size={20} color="currentColor" variant="Linear" />
-                        : <ArrowDown2 size={20} color="currentColor" variant="Linear" />}
-                    </button>
-                  </div>
-
-                  {/* The question itself stays visible when the card is folded — it is
-                      what identifies the card. Only the answer collapses. */}
-                  <div className="st-drawer__question-body">
-                  <div className="st-drawer__field">
-                    <textarea
-                      ref={autoGrowRef}
-                      rows={1}
-                      className={`st-drawer__input${textError ? ' st-drawer__input--error' : ''}`}
-                      readOnly={!!review}
-                      placeholder="Write your question here..."
-                      value={question.text}
-                      onInput={(e) => autoGrow(e.currentTarget)}
-                      onChange={(e) => updateQuestion(question.id, { text: e.target.value })}
-                      onBlur={() => markQuestionBlurred(question.id)}
-                      aria-label={`Question ${index + 1} text`}
-                      aria-invalid={textError || undefined}
-                      aria-describedby={textError ? `${question.id}-text-error` : undefined}
-                    />
-                    {textError && (
-                      <span
-                        className="st-drawer__helper st-drawer__helper--error"
-                        id={`${question.id}-text-error`}
-                        role="alert"
-                      >
-                        Write the question
-                      </span>
-                    )}
-                  </div>
-                  </div>
-
-                  <Collapse open={isOpen}>
-                  <div className="st-drawer__question-options">
-                  {question.interactive ? (
-                    <InteractiveQuestionBody
-                      question={question}
-                      onChange={(next) => updateQuestion(question.id, { interactive: next })}
-                      readOnly={!!review}
-                    />
-                  ) : !optionQuestion ? (
-                    /* Short text and exercise: there is nothing to author but the
-                       question, which is above. */
-                    <div className="st-drawer__field">
-                      <span className="st-drawer__label">The answer</span>
-                      <p className="st-drawer__structure-note">
-                        The learner answers in their own words.
-                      </p>
-                    </div>
-                  ) : (
-                  <>
-                  <div className="st-drawer__field">
-                    <span className="st-drawer__label">What are the options?</span>
-                    {/* A group, so the "needs 2 options" / "mark one correct" errors
-                        describe the set rather than any single field. */}
-                    <div
-                      className="st-drawer__options"
-                      role="group"
-                      aria-label={`Answer options for question ${index + 1}`}
-                      aria-describedby={
-                        optionsError || correctBlank ? `${question.id}-options-error` : undefined
-                      }
-                    >
-                      {question.options.map((option, optionIndex) => {
-                        const isCorrect = question.correctIndex === optionIndex
-                        return (
-                          <div key={optionIndex}>
-                            <div className="st-drawer__option-field">
-                              {marked && (
-                                <Radio
-                                  disabled={!!review}
-                                  name={`st-correct-${question.id}`}
-                                  checked={isCorrect}
-                                  onChange={() =>
-                                    updateQuestion(question.id, { correctIndex: optionIndex })
-                                  }
-                                  aria-label={`Mark option ${optionIndex + 1} of question ${index + 1} as the correct answer`}
-                                />
-                              )}
-                              <textarea
-                                ref={autoGrowRef}
-                                rows={1}
-                                className="st-drawer__option-input"
-                                readOnly={!!review}
-                                placeholder={`Write option ${optionIndex + 1} here...`}
-                                aria-label={`Option ${optionIndex + 1} of question ${index + 1}`}
-                                value={option}
-                                onInput={(e) => autoGrow(e.currentTarget)}
-                                onChange={(e) =>
-                                  updateOption(question.id, optionIndex, e.target.value)
-                                }
-                                onBlur={() => markQuestionBlurred(question.id)}
-                              />
-                              {marked && isCorrect && (
-                                <Badge
-                                  type="success"
-                                  label="Correct"
-                                  className="st-drawer__correct-badge"
-                                />
-                              )}
-                              {/* Two options is the floor, so the last pair can't be
-                                  removed and the control simply isn't there. */}
-                              {!review && question.options.length > 2 && (
-                                <CloseButton
-                                  size={16}
-                                  className="st-drawer__option-remove"
-                                  ariaLabel={`Remove option ${optionIndex + 1} of question ${index + 1}`}
-                                  onClick={() => removeOption(question.id, optionIndex)}
-                                />
-                              )}
-                            </div>
-                          </div>
-                        )
-                      })}
-                      {!review && (
-                        <button
-                          className="st-drawer__add-option"
-                          type="button"
-                          onClick={() => addOption(question.id)}
-                        >
-                          <Add size={24} color="currentColor" variant="Linear" />
-                          <span>Add Option</span>
-                        </button>
-                      )}
-                    </div>
-                    {(optionsError || correctBlank) && (
-                      <span
-                        className="st-drawer__helper st-drawer__helper--error"
-                        id={`${question.id}-options-error`}
-                        role="alert"
-                      >
-                        {optionsError ? 'Add at least 2 answer options' : 'Mark the correct answer'}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Same field as the Add assessment drawer's explanation
-                      (AssessmentModal.tsx), down to the label and placeholder. Folds with
-                      the options, since it explains which of them is right. */}
-                  <div className="st-drawer__field">
-                    <label className="st-drawer__label" htmlFor={`${question.id}-explanation`}>
-                      Add an explanation for the correct answer{' '}
-                      <span className="st-drawer__label-optional">(optional)</span>
-                    </label>
-                    <textarea
-                      ref={autoGrowRef}
-                      rows={1}
-                      id={`${question.id}-explanation`}
-                      className="st-drawer__input"
-                      readOnly={!!review}
-                      placeholder="Write an explanation..."
-                      value={question.explanation ?? ''}
-                      onInput={(e) => autoGrow(e.currentTarget)}
-                      onChange={(e) =>
-                        updateQuestion(question.id, { explanation: e.target.value })
-                      }
-                    />
-                  </div>
-                  </>
-                  )}
-                  </div>
-                  </Collapse>
-                </div>
+                <QuestionCard
+                  key={question.id}
+                  question={question}
+                  label={`Question ${index + 1}`}
+                  format={question.format}
+                  isOpen={!collapsedQuestions.has(question.id)}
+                  onToggle={() => toggleQuestion(question.id)}
+                  onRemove={
+                    questions.length > 1
+                      ? () => setQuestions((prev) => prev.filter((q) => q.id !== question.id))
+                      : undefined
+                  }
+                  readOnly={!!review}
+                  edit={{
+                    onChange: (patch) => updateQuestion(question.id, patch),
+                    onOptionChange: (optionIndex, value) =>
+                      updateOption(question.id, optionIndex, value),
+                    onAddOption: () => addOption(question.id),
+                    onRemoveOption: (optionIndex) => removeOption(question.id, optionIndex),
+                    onBlur: () => markQuestionBlurred(question.id),
+                    errors: {
+                      text: blurred && !question.text.trim(),
+                      options: optionQuestion && blurred && filledOptions < 2,
+                      correctBlank:
+                        marked &&
+                        blurred &&
+                        filledOptions > 0 &&
+                        !(question.options[question.correctIndex] ?? '').trim(),
+                    },
+                  }}
+                />
               )
             })}
 
@@ -739,45 +539,6 @@ function SituationalTestDrawerContent({
       )}
     </>
   )
-}
-
-/**
- * An interactive question, in the form the admin already knows.
- *
- * These four formats are authored from the Assessments menu through
- * `InteractiveDrawer`, whose per-format bodies are the form — so the review shows the
- * same bodies rather than a second, prettier description of the same thing. One shape
- * to learn, one place to fix.
- *
- * The draft is held here rather than derived on every render: `toDraft` mints fresh row
- * ids each call, and a new id per keystroke would remount the field being typed into.
- */
-function InteractiveQuestionBody({
-  question,
-  onChange,
-  readOnly,
-}: {
-  question: SituationalQuestion
-  onChange: (next: InteractiveQuestion) => void
-  readOnly: boolean
-}) {
-  const [draft, setDraft] = useState<Draft>(() => toDraft(question.interactive as InteractiveQuestion))
-
-  const update = (next: Draft) => {
-    setDraft(next)
-    onChange(toQuestion(next, question.text))
-  }
-
-  switch (draft.type) {
-    case 'match-pairs':
-      return <MatchPairsBody draft={draft} onChange={update} readOnly={readOnly} />
-    case 'sequencing':
-      return <SequencingBody draft={draft} onChange={update} readOnly={readOnly} />
-    case 'categorization':
-      return <CategorizationBody draft={draft} onChange={update} readOnly={readOnly} />
-    case 'fill-blank':
-      return <FillBlankBody draft={draft} onChange={update} readOnly={readOnly} />
-  }
 }
 
 export default SituationalTestDrawerContent
