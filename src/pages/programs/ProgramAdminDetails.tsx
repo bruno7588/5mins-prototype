@@ -509,7 +509,7 @@ function ProgramAdminDetails() {
               <span className="pad-thead__progress">Progress</span>
               <span className="pad-thead__score">
                 Score
-                <Tooltip text="Average score across completed courses" position="Top" iconColor="var(--text-tertiary)" />
+                <Tooltip text="Average of this learner’s course scores, from quizzes, assessments, and situational tests. Courses without a score aren’t counted." position="Top" iconColor="var(--text-tertiary)" />
               </span>
               <span className="pad-thead__completion">Completion date</span>
               <span className="pad-thead__more" aria-hidden="true" />
