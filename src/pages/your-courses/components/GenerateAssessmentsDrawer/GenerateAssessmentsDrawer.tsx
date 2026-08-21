@@ -17,6 +17,7 @@ import {
   type CoverageReport,
   type GeneratableType,
   type GeneratedAssessment,
+  type GenerationPrompt,
   type GeneratedQuestion,
   type GenerationScope,
 } from '@/data/aiAssessmentGeneration'
@@ -32,7 +33,7 @@ interface Props {
   scope: GenerationScope
   coverage: CoverageReport
   onClose: () => void
-  onGenerate: (types: GeneratableType[]) => void
+  onGenerate: (types: GeneratableType[], prompt?: GenerationPrompt) => void
   /** Route out of the zero-transcript dead end — opens the 5Mins Library. */
   onAddLessons: () => void
   /** Live run. Non-null replaces the form with the working card (FR-11). */
@@ -63,8 +64,9 @@ const COPY: Record<
   {
     noun: string
     title: string
-    typesLabel: string
-    typesHelper: string
+    /** The format picker's heading. Absent where there is no picker. */
+    typesLabel?: string
+    typesHelper?: string
     callout: string
     emptyBody: string
     cta: string
@@ -84,10 +86,8 @@ const COPY: Record<
   situational: {
     noun: 'situational tests',
     title: 'Create Situational Test with AI',
-    typesLabel: 'What kind of assessments do you want to create?',
-    typesHelper: 'Select the ones you want in the test. AI decides how many of each.',
     callout:
-      'Situational tests are created using the course material. Lessons, links, or resources help AI generate a tailored situational test based on that content.',
+      'Situational tests are created using the course material. AI picks the question formats and how many of each, based on what the content supports — you can change them when you review the draft.',
     emptyBody:
       'Situational tests are created using the course material. By adding lessons, links, or resources, AI will generate a tailored situational test based on that content.',
     cta: 'Generate Situational Test',
@@ -110,14 +110,24 @@ function GenerateAssessmentsDrawer({
   scope, coverage, onClose, onGenerate, onAddLessons,
   generating = null, review = null,
 }: Props) {
-  /* Both scopes ask the same question — which formats — so both offer the same eight.
-     What differs is what they mean by it, which is what COPY carries. */
   const questionTypes = ASSESSMENT_TYPES
   const copy = COPY[scope]
+
+  /* Only the assessments scope picks formats. A situational test is one artefact
+     built from whatever the content supports, so V1 lets the generator choose the
+     formats and the admin change them in the review — a picker there asked for a
+     decision before there was anything to decide it against. */
+  const picksFormats = scope === 'assessments'
 
   /* Nothing selected to start. Chips are a choice the admin makes, and eight
      pre-filled ones read as a wall of amber rather than something to pick from. */
   const [selected, setSelected] = useState<GeneratableType[]>([])
+
+  /* The situational prompt. Both free text, both optional — what the admin knows
+     about the audience and how the test should read, which the course content
+     cannot say on its own. */
+  const [audience, setAudience] = useState('')
+  const [instructions, setInstructions] = useState('')
   const reduce = useReducedMotion()
 
   const readable = coverage.withTranscript.length
@@ -261,36 +271,82 @@ function GenerateAssessmentsDrawer({
           />
         )}
 
-        <div className="gen-drawer__field">
-          <div className="gen-drawer__field-heading">
-            <h3 className="h4">{copy.typesLabel}</h3>
-            <p className="text-md gen-drawer__helper">{copy.typesHelper}</p>
+        {picksFormats ? (
+          <div className="gen-drawer__field">
+            <div className="gen-drawer__field-heading">
+              <h3 className="h4">{copy.typesLabel}</h3>
+              <p className="text-md gen-drawer__helper">{copy.typesHelper}</p>
+            </div>
+            <div className="gen-drawer__chips">
+              {questionTypes.map((type) => {
+                const isOn = selected.includes(type)
+                return (
+                  <Chip
+                    key={type}
+                    label={typeLabel(type)}
+                    selected={isOn}
+                    /* Same glyph the Add Content rail uses for this format, so the
+                       format is recognised rather than re-read. */
+                    customIconLeft={assessmentTypeIcon(type, { size: 16, active: isOn })}
+                    onClick={() => toggle(type)}
+                  />
+                )
+              })}
+            </div>
           </div>
-          <div className="gen-drawer__chips">
-            {questionTypes.map((type) => {
-              const isOn = selected.includes(type)
-              return (
-                <Chip
-                  key={type}
-                  label={typeLabel(type)}
-                  selected={isOn}
-                  /* Same glyph the Add Content rail uses for this format, so the
-                     format is recognised rather than re-read. */
-                  customIconLeft={assessmentTypeIcon(type, { size: 16, active: isOn })}
-                  onClick={() => toggle(type)}
-                />
-              )
-            })}
-          </div>
-        </div>
+        ) : (
+          <>
+            {/* Who the scenarios are written for. Optional: with nothing here the
+                generator writes for whoever the course is written for. */}
+            <div className="gen-drawer__field gen-drawer__field--prompt">
+              <label className="gen-drawer__label" htmlFor="gen-audience">
+                Audience <span className="gen-drawer__label-optional">(optional)</span>
+              </label>
+              <input
+                id="gen-audience"
+                type="text"
+                className="gen-drawer__input"
+                placeholder="Front-of-house staff in their first month"
+                value={audience}
+                onChange={(e) => setAudience(e.target.value)}
+              />
+            </div>
+
+            {/* The steer the format picker used to be: not which formats, but how the
+                test should read. */}
+            <div className="gen-drawer__field gen-drawer__field--prompt">
+              <label className="gen-drawer__label" htmlFor="gen-instructions">
+                Instructions <span className="gen-drawer__label-optional">(optional)</span>
+              </label>
+              <textarea
+                id="gen-instructions"
+                className="gen-drawer__textarea"
+                rows={3}
+                placeholder="Tone, constraints, anything to avoid…"
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+              />
+            </div>
+          </>
+        )}
       </div>
 
       <div className="gen-drawer__footer">
+        {/* The picker gates the assessments scope: nothing chosen, nothing to write.
+            The situational prompt gates nothing — both its fields are optional, so
+            Generate is ready from the moment the drawer opens. */}
         <Button
           semantic="ai"
           icon={<SparkleIcon size={20} color="currentColor" />}
-          disabled={selected.length === 0}
-          onClick={() => onGenerate(selected)}
+          disabled={picksFormats && selected.length === 0}
+          onClick={() =>
+            picksFormats
+              ? onGenerate(selected)
+              : onGenerate([], {
+                  audience: audience.trim() || undefined,
+                  instructions: instructions.trim() || undefined,
+                })
+          }
         >
           {copy.cta}
         </Button>
@@ -421,10 +477,12 @@ function GeneratingBody({
     return () => window.clearInterval(id)
   }, [activeStep, questions.length, stepMs])
 
-  /* The third pass names the kind it is on, which is whichever card is being written. */
+  /* The third pass names the kind it is on, which is whichever card is being written.
+     The first two take whatever the caller sends — the lesson being read, then who the
+     brief is being written for. */
   const writingCard = activeStep === CREATING ? questions[landed - 1] : undefined
   const stepDetail =
-    activeStep === READING
+    activeStep === READING || activeStep === WRITING_BRIEF
       ? detail
       : writingCard
         ? `Creating ${CREATING_WORD[writingCard.format] ?? typeLabel(writingCard.format)} assessments`

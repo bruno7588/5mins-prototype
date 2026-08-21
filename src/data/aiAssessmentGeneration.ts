@@ -82,6 +82,18 @@ export interface TranscriptSource {
   title: string
 }
 
+/**
+ * What the admin told the generator beyond the course itself (situational scope).
+ * Both are free text and both are optional: with neither, the generator works from
+ * the course content alone.
+ */
+export interface GenerationPrompt {
+  /** Who is taking the test — shapes who the scenarios are written for. */
+  audience?: string
+  /** Tone, constraints, things to avoid. */
+  instructions?: string
+}
+
 export interface CoverageReport {
   withTranscript: TranscriptSource[]
   withoutTranscript: TranscriptSource[]

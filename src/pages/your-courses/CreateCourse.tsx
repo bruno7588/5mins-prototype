@@ -34,6 +34,7 @@ import {
   generateSituationalTest,
   transcriptCoverage,
   type GeneratableType,
+  type GenerationPrompt,
   type GeneratedAssessment,
   type GenerationScope,
   type TranscriptSource,
@@ -196,6 +197,9 @@ function CreateCourse() {
   /* What the picker last asked for, kept past the run so a single-card redraft can be
      written to the same brief. */
   const [pickedFormats, setPickedFormats] = useState<GeneratableType[]>([])
+  /* And what the admin told the generator alongside it. Kept for the same reason:
+     Generate Again is the same ask made twice, not a fresh one. */
+  const [pickedPrompt, setPickedPrompt] = useState<GenerationPrompt>({})
   /* A finished situational test waiting for the admin to approve it. It is not course
      content until they save — closing the drawer discards it, which is the point of
      asking. Assessments have no equivalent: a set of eight questions is reviewed on
@@ -472,8 +476,9 @@ function CreateCourse() {
     return items
   }
 
-  const startRun = (types: GeneratableType[]) => {
+  const startRun = (types: GeneratableType[], prompt: GenerationPrompt = {}) => {
     setPickedFormats(types)
+    setPickedPrompt(prompt)
     /* The working card lives in the drawer, so both routes in — the first generation
        and a confirmed replace, which closed the drawer to show the outline — need it
        open again by the time the run starts. */
@@ -506,11 +511,25 @@ function CreateCourse() {
   /* Create With AI creates: a second run is a second situational test, not a redraft of
      the first. Replacing is what Generate Again does, inside a review, to the draft that
      review is holding. */
-  const handleGenerate = (types: GeneratableType[]) => startRun(types)
+  const handleGenerate = (types: GeneratableType[], prompt?: GenerationPrompt) => startRun(types, prompt)
 
   const openGenerate = (scope: GenerationScope) => {
     setGenerationScope(scope)
     openDrawer('ai-generate')
+  }
+
+  /* The line under the pass name: the lesson being read, then who the brief is being
+     written for. Naming the audience back is what tells the admin the field was read —
+     a steer that disappears into a spinner reads as a steer that was ignored. The third
+     pass names the format it is writing, which the drawer composes itself. Written as a
+     chain rather than nested ternaries, so a third case can't fall through. */
+  const runDetail = () => {
+    if (!run) return undefined
+    if (activeStep === 0 && run.lessons.length) {
+      return `Reading "${run.lessons[reading % run.lessons.length].title}"`
+    }
+    if (activeStep === 1 && pickedPrompt.audience) return `Writing for ${pickedPrompt.audience}`
+    return undefined
   }
 
   useEffect(() => {
@@ -775,12 +794,7 @@ function CreateCourse() {
                 activeStep,
                 stepMs: run.stepDurations[activeStep] ?? SITUATIONAL_STEP_MS,
                 draft: run.draft,
-                /* Named only while the first pass is running — after that it is writing,
-                   not reading. */
-                detail:
-                  activeStep === 0 && run.lessons.length
-                    ? `Reading "${run.lessons[reading % run.lessons.length].title}"`
-                    : undefined,
+                detail: runDetail(),
               }
             : null
         }
@@ -793,7 +807,7 @@ function CreateCourse() {
                   /* Clearing the draft first drops the review, so the drawer goes back
                      to the working card and the wait is shown again from the top. */
                   setPendingTest(null)
-                  startRun(pickedFormats)
+                  startRun(pickedFormats, pickedPrompt)
                 },
               }
             : null

@@ -272,3 +272,67 @@
   min-height: 0;
   gap: inherit;
 }
+
+/* ===== Situational prompt (Audience / Instructions) =====
+
+   Field chrome matches SituationalTestDrawer.css, per input.md's Outlined field, so
+   the two situational drawers read as one family. */
+
+.gen-drawer__field--prompt {
+  gap: var(--space-s);
+}
+
+.gen-drawer__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* The "(optional)" flag rides the label in tertiary at 12px, so it reads as an aside
+   rather than part of the label. Matches .st-drawer__label-optional. */
+.gen-drawer__label-optional {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.gen-drawer__input,
+.gen-drawer__textarea {
+  width: 100%;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+/* Fixed at three rows rather than auto-growing: instructions are a note, not the
+   brief, and a field that grows under the Generate button moves the target. */
+.gen-drawer__textarea {
+  resize: none;
+}
+
+.gen-drawer__input::placeholder,
+.gen-drawer__textarea::placeholder {
+  color: var(--text-disabled);
+}
+
+.gen-drawer__input:hover,
+.gen-drawer__textarea:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background);
+}
+
+.gen-drawer__input:focus,
+.gen-drawer__textarea:focus {
+  border-color: var(--selected);
+  background: transparent;
+}
