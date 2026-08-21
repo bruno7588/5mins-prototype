@@ -16,6 +16,7 @@ import AddContentIconStrip from './components/AddContentIconStrip/AddContentIcon
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
 import ContentDrawer from './components/ContentDrawer/ContentDrawer'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import type { AssessmentData } from './components/AssessmentModal/AssessmentModal'
 import type { LibraryLesson } from './components/LibraryDrawer/LibraryDrawer'
 import type {
@@ -200,6 +201,10 @@ function CreateCourse() {
   /* And what the admin told the generator alongside it. Kept for the same reason:
      Generate Again is the same ask made twice, not a fresh one. */
   const [pickedPrompt, setPickedPrompt] = useState<GenerationPrompt>({})
+  /* Confirms an edit landed. Authoring needs no toast — a new card arrives on the
+     outline, which is the confirmation — but re-saving changes a row in place, behind
+     a drawer that is closing, and that is easy to miss. */
+  const { toasts, show: showToast, dismiss: dismissToast } = useToast()
   /* A finished situational test waiting for the admin to approve it. It is not course
      content until they save — closing the drawer discards it, which is the point of
      asking. Assessments have no equivalent: a set of eight questions is reviewed on
@@ -347,6 +352,7 @@ function CreateCourse() {
         ? [...prev, newItem]
         : prev.map(item => (item.type === 'Assessment' && item.id === id ? newItem : item)),
     )
+    if (editingAssessmentId !== null) showToast('success', 'Assessment updated')
     setActiveDrawer(null)
     setEditingAssessmentId(null)
     setTargetSectionId(null)
@@ -385,6 +391,9 @@ function CreateCourse() {
         ? [...prev, card]
         : prev.map((item) => (item.type === 'Assessment' && item.id === id ? card : item)),
     )
+    /* Interactive questions ride Assessment cards, so the confirmation names what the
+       outline calls it rather than the format. */
+    if (editingInteractiveId !== null) showToast('success', 'Assessment updated')
     closeDrawer()
   }
 
@@ -424,6 +433,7 @@ function CreateCourse() {
             item.type === 'SituationalTest' && item.id === id ? card : item,
           ),
     )
+    if (editingSituationalId !== null) showToast('success', 'Situational test updated')
     closeDrawer()
   }
 
@@ -854,6 +864,9 @@ function CreateCourse() {
         </div>
       </ConfirmModal>
 
+      {/* Sits above the drawers (z-index 1100) so the confirmation is readable while a
+          panel is still sliding out. */}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </>
   )
 }
