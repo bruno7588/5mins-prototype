@@ -1,9 +1,10 @@
-/* Situational test preview (DES-279) — the phone on the scrim, then the walkthrough's
-   own paging under it. The screens themselves are the quiz's (quiz-lab.css); this file
-   only stages the phone and styles what sits outside it.
+/* Situational test preview (DES-279) — the feed panel on the scrim, then the
+   walkthrough's own paging under it. The screens themselves are the quiz's
+   (quiz-lab.css) and the frame is DesktopPreview's; this file only stages it and
+   styles what sits outside.
 
-   Mirrors .iq-preview-modal in InteractiveDrawer.css, which stages the same phone for a
-   single question. */
+   Mirrors .iq-preview-modal in InteractiveDrawer.css, which stages the same frame for
+   a single question. */
 
 .confirm-modal.st-preview-modal {
   width: auto;
@@ -18,23 +19,6 @@
 .st-preview__stage {
   display: flex;
   justify-content: center;
-}
-
-/* The frame is built for a full page — 100vh stage, 32px gutter. Inside the modal the
-   modal supplies both. */
-.st-preview__stage .m-phone-stage {
-  min-height: 0;
-  padding: 0;
-  background: transparent;
-  overflow: visible;
-}
-
-/* The device's own 375x812, not the 640 the single-question preview crops to: these are
-   whole quiz screens — a categorisation's pool over its buckets, a sequence's slots over
-   its bank — and at 640 the pool overruns the first bucket. Shrinks on short viewports
-   rather than running off-screen, with room left for the paging row below. */
-.st-preview__stage .m-phone__screen {
-  height: min(812px, calc(100vh - 96px));
 }
 
 /* ===== The brief, as the course feed draws it (Figma 17024:82020) ===== */

@@ -5,7 +5,7 @@ import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import QuizIllustration from '@/components/icons/QuizIllustration'
-import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
+import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
 import {
   TYPE_CONFIG,
   draftErrors,
@@ -190,7 +190,7 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
         </Button>
       </div>
 
-      {/* Just the phone on the scrim — no dialog card, no title bar; the format
+      {/* The feed panel on the scrim — no dialog card, no title bar; the format
           label and the close sit in the quiz's own header (Figma 9111:4633).
           ConfirmModal still supplies the scrim, focus trap and escape, and it is
           portalled to the body because the drawer's z-index makes a stacking
@@ -204,7 +204,7 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
         >
           {previewQuestion && (
             <div className="iq-drawer__preview-stage">
-              <PhoneFrame>
+              <DesktopPreview>
                 <div className="ql-quizview">
                   {/* No hearts: they track a real attempt, and this is a preview
                       of one question rather than a run. */}
@@ -225,7 +225,7 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
                     <SequencingDnd question={previewQuestion} />
                   )}
                 </div>
-              </PhoneFrame>
+              </DesktopPreview>
             </div>
           )}
         </ConfirmModal>,

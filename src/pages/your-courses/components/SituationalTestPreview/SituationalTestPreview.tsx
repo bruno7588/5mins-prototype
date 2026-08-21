@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Button from '@/components/Button/Button'
-import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
+import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
 import QuizHeader from '@/pages/quiz-lab/components/QuizHeader'
 import { QuizAdvanceContext } from '@/pages/quiz-lab/components/FeedbackFooter'
 import MatchPairsPartial from '@/pages/quiz-lab/formats/MatchPairsPartial'
@@ -56,7 +56,7 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
       ariaLabel="Preview situational test"
     >
       <div className="st-preview__stage">
-        <PhoneFrame>
+        <DesktopPreview>
           {/* Remounted per screen so each question starts unanswered, the way the
               learner meets it. */}
           <div className="ql-quizview" key={screen}>
@@ -107,7 +107,7 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
               </>
             )}
           </div>
-        </PhoneFrame>
+        </DesktopPreview>
       </div>
 
     </ConfirmModal>,

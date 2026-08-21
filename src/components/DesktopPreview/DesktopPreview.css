@@ -1,0 +1,22 @@
+/* Desktop preview frame: the lesson feed's 544x812 side panel, on the modal's
+   scrim. The modal supplies the scrim, focus trap and Escape. */
+
+.desktop-preview {
+  display: flex;
+  justify-content: center;
+}
+
+/* Drawn 812 tall, which with the modal's gutters overflows a laptop viewport,
+   so the height is capped to what is on screen. The width is never scaled: it
+   is the thing being previewed. */
+.desktop-preview__frame {
+  width: 544px;
+  height: min(812px, calc(100vh - 96px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-m); /* 16px */
+  background: var(--page-background);
+  box-shadow: var(--shadow-l);
+}

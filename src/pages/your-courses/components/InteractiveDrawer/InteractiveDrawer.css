@@ -492,7 +492,7 @@
 }
 
 /* The ConfirmModal panel, stripped of every panel style: the preview is the
-   phone alone on the scrim, so the shell contributes only its behaviour. */
+   feed panel alone on the scrim, so the shell contributes only its behaviour. */
 .iq-preview-modal {
   width: auto;
   padding: 0;
@@ -504,21 +504,6 @@
 .iq-drawer__preview-stage {
   display: flex;
   justify-content: center;
-}
-
-/* The frame is built for a full page — 100vh stage, 32px gutter. Inside the modal
-   the modal supplies both. */
-.iq-drawer__preview-stage .m-phone-stage {
-  min-height: 0;
-  padding: 0;
-  background: transparent;
-  overflow: visible;
-}
-
-/* 375x640 per Figma 9111:6787 — the real phone width, on a screen cropped to fit
-   the viewport. Shrinks further on short ones rather than running off-screen. */
-.iq-drawer__preview-stage .m-phone__screen {
-  height: min(640px, calc(100vh - 96px));
 }
 
 /* ===== Read-only (the AI review approves a draft, it doesn't author one) =====
