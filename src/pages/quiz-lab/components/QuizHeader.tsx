@@ -3,7 +3,9 @@ import heartFilled from '@/assets/quiz-hearts/heart-filled.svg'
 import heartEmpty from '@/assets/quiz-hearts/heart-empty.svg'
 
 interface QuizHeaderProps {
-  label: string
+  /** The format being played. Omit on a screen that names itself — the header is
+   *  then just the close. */
+  label?: string
   /** Attempts already used. Omit where neither the badge nor the hearts show. */
   used?: number
   /** Attempts allowed. Omit where neither the badge nor the hearts show. */
@@ -28,7 +30,7 @@ function QuizHeader({ label, used = 0, total = 0, onClose, showHearts = true, sh
   return (
     <div className="ql-qhead">
       <div className="ql-qhead__label">
-        <span className="ql-qhead__title">{label}</span>
+        {label && <span className="ql-qhead__title">{label}</span>}
         {showAttempts && (
           <span className="ql-qhead__badge">
             {used}/{total}

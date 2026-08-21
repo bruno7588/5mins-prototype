@@ -62,27 +62,32 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
           <div className="ql-quizview" key={screen}>
             {onBrief ? (
               /* The brief as the course feed draws it (Figma 17024:82020): a card on the
-                 page, headed by the situational test's own artwork. No quiz header —
-                 there is no format to name and no attempt to count, and the card already
-                 says what it is. */
-              <div className="st-preview__brief-screen">
-                <div className="st-preview__brief-card">
-                  <div className="st-preview__brief-head">
-                    <img src={briefIllustration} width={40} height={40} alt="" />
-                    <span className="st-preview__brief-label">Brief</span>
+                 page, headed by the situational test's own artwork. The quiz header runs
+                 empty here — no format to name and no attempt to count, and the card
+                 already says what it is — but it still carries the close, which is the
+                 way out of every other screen and has to be in the same place on this
+                 one. */
+              <>
+                <QuizHeader showHearts={false} showAttempts={false} onClose={onClose} />
+                <div className="st-preview__brief-screen">
+                  <div className="st-preview__brief-card">
+                    <div className="st-preview__brief-head">
+                      <img src={briefIllustration} width={40} height={40} alt="" />
+                      <span className="st-preview__brief-label">Brief</span>
+                    </div>
+                    <div className="st-preview__brief-divider" />
+                    <div className="st-preview__brief-body">
+                      <p className="st-preview__brief-title">
+                        {title || 'Untitled situational test'}
+                      </p>
+                      <p className="st-preview__brief-text">{brief}</p>
+                    </div>
+                    <Button size="lg" onClick={() => setScreen(1)}>
+                      Start Situational Test
+                    </Button>
                   </div>
-                  <div className="st-preview__brief-divider" />
-                  <div className="st-preview__brief-body">
-                    <p className="st-preview__brief-title">
-                      {title || 'Untitled situational test'}
-                    </p>
-                    <p className="st-preview__brief-text">{brief}</p>
-                  </div>
-                  <Button size="lg" onClick={() => setScreen(1)}>
-                    Start Situational Test
-                  </Button>
                 </div>
-              </div>
+              </>
             ) : (
               <>
                 <QuizHeader
