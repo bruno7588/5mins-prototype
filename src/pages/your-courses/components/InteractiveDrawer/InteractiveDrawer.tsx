@@ -206,13 +206,13 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
             <div className="iq-drawer__preview-stage">
               <DesktopPreview>
                 <div className="ql-quizview">
-                  {/* No hearts: they track a real attempt, and this is a preview
-                      of one question rather than a run. */}
+                  {/* Neither hearts nor the attempt badge: both count a real run, and
+                      this is one question shown on its own. The header keeps the
+                      format label and the close. */}
                   <QuizHeader
                     label={config.title}
-                    used={1}
-                    total={3}
                     showHearts={false}
+                    showAttempts={false}
                     onClose={() => setPreviewing(false)}
                   />
                   {previewQuestion.type === 'match-pairs' ? (

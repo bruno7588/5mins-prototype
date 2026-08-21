@@ -4,10 +4,10 @@ import heartEmpty from '@/assets/quiz-hearts/heart-empty.svg'
 
 interface QuizHeaderProps {
   label: string
-  /** Attempts already used. */
-  used: number
-  /** Attempts allowed. */
-  total: number
+  /** Attempts already used. Omit where neither the badge nor the hearts show. */
+  used?: number
+  /** Attempts allowed. Omit where neither the badge nor the hearts show. */
+  total?: number
   /** Leave the quiz. */
   onClose: () => void
   /** Hearts belong to a real attempt — the course builder's preview shows none. */
@@ -23,7 +23,7 @@ interface QuizHeaderProps {
  * for remaining, muted artwork for spent — then the shared DS CloseButton
  * (Figma 9041:585).
  */
-function QuizHeader({ label, used, total, onClose, showHearts = true, showAttempts = true }: QuizHeaderProps) {
+function QuizHeader({ label, used = 0, total = 0, onClose, showHearts = true, showAttempts = true }: QuizHeaderProps) {
   const remaining = Math.max(0, total - used)
   return (
     <div className="ql-qhead">
