@@ -87,7 +87,7 @@ const COPY: Record<
     noun: 'situational tests',
     title: 'Create Situational Test with AI',
     callout:
-      'Situational tests are created using the course material. AI picks the question formats and how many of each, based on what the content supports — you can change them when you review the draft.',
+      'Written from your lessons, links and resources. AI picks the question formats, and you can change them when you review the draft.',
     emptyBody:
       'Situational tests are created using the course material. By adding lessons, links, or resources, AI will generate a tailored situational test based on that content.',
     cta: 'Generate Situational Test',
