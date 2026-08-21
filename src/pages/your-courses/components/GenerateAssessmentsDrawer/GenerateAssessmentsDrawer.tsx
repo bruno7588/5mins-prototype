@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Add } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
@@ -10,6 +10,7 @@ import CloseButton from '@/components/CloseButton/CloseButton'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import SparkleIcon from '@/components/icons/SparkleIcon'
+import QuizIllustration from '@/components/icons/QuizIllustration'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
 import {
   ASSESSMENT_TYPES,
@@ -18,13 +19,13 @@ import {
   type GeneratableType,
   type GeneratedAssessment,
   type GenerationPrompt,
-  type GeneratedQuestion,
   type GenerationScope,
 } from '@/data/aiAssessmentGeneration'
 import SituationalTestDrawerContent, {
   type SituationalQuestion,
   type SituationalTestData,
 } from '../SituationalTestDrawer/SituationalTestDrawer'
+import QuestionCard from '../QuestionCard/QuestionCard'
 import SectionHeader from '../SectionHeader/SectionHeader'
 import './GenerateAssessmentsDrawer.css'
 
@@ -42,6 +43,8 @@ interface Props {
     activeStep: number
     stepMs: number
     draft: GeneratedAssessment | null
+    /** The set being written, revealed the same way. Empty on a situational run. */
+    drafts: GeneratedAssessment[]
     detail?: string
   } | null
   /**
@@ -52,6 +55,17 @@ interface Props {
   review?: {
     draft: SituationalTestData
     onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void
+    onGenerateAgain: () => void
+  } | null
+  /**
+   * A finished set waiting to be approved. The situational review hands back one
+   * artefact; this one hands back N cards, so it carries per-card actions and its own
+   * save rather than reusing an authoring form.
+   */
+  assessmentReview?: {
+    drafts: GeneratedAssessment[]
+    onSave: () => void
+    onRemove: (index: number) => void
     onGenerateAgain: () => void
   } | null
 }
@@ -76,9 +90,10 @@ const COPY: Record<
     noun: 'assessments',
     title: 'Create Assessments with AI',
     typesLabel: 'What kind of assessments do you want to create?',
-    typesHelper: 'Select the ones you want. AI decides how many of each.',
+    typesHelper: "Pick the types you want. You'll get one assessment of each.",
     callout:
-      'Assessments are created using the course material. Lessons, links, or resources help AI generate assessments based on that content.',
+      'AI writes one assessment of each type you pick, using your lessons, links and ' +
+      'resources. They are added to your course content as separate assessments.',
     emptyBody:
       'Assessments are created using the course material. By adding lessons, links, or resources, AI will generate assessments based on that content.',
     cta: 'Generate Assessments',
@@ -108,7 +123,7 @@ const COPY: Record<
  */
 function GenerateAssessmentsDrawer({
   scope, coverage, onClose, onGenerate, onAddLessons,
-  generating = null, review = null,
+  generating = null, review = null, assessmentReview = null,
 }: Props) {
   const questionTypes = ASSESSMENT_TYPES
   const copy = COPY[scope]
@@ -147,10 +162,26 @@ function GenerateAssessmentsDrawer({
      the review rises into the place it left. AnimatePresence is what holds the wait on
      screen long enough to leave — without it the swap is a cut — and `mode="wait"` keeps
      the two from crossing over each other. */
-  if (review || generating) {
+  if (review || assessmentReview || generating) {
     return (
       <AnimatePresence mode="wait" initial={false}>
-        {review ? (
+        {assessmentReview ? (
+          <motion.div
+            key="assessment-review"
+            className="gen-drawer__phase"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={arriveTransition(reduce)}
+          >
+            <AssessmentReview
+              drafts={assessmentReview.drafts}
+              onClose={onClose}
+              onSave={assessmentReview.onSave}
+              onRemove={assessmentReview.onRemove}
+              onGenerateAgain={assessmentReview.onGenerateAgain}
+            />
+          </motion.div>
+        ) : review ? (
           <motion.div
             key="review"
             className="gen-drawer__phase"
@@ -188,8 +219,25 @@ function GenerateAssessmentsDrawer({
                   activeStep={generating.activeStep}
                   stepMs={generating.stepMs}
                   draft={generating.draft}
+                  drafts={generating.drafts}
                   detail={generating.detail}
                 />
+              </div>
+              {/* The button that started the run stays where it was and spins: the wait
+                  is that button's own work, so it says so rather than disappearing and
+                  leaving the drawer with no sign of what is being waited on. */}
+              <div className="gen-drawer__footer">
+                {/* The DS Loading state swaps the label out for the spinner; this one
+                    keeps it, as drawn — the label is the only thing naming what is being
+                    waited for, and the working card above is already the progress. */}
+                <Button
+                  semantic="ai"
+                  disabled
+                  aria-busy
+                  icon={<span className="gen-drawer__cta-spinner" aria-hidden="true" />}
+                >
+                  {copy.cta}
+                </Button>
               </div>
             </motion.div>
           )
@@ -245,18 +293,19 @@ function GenerateAssessmentsDrawer({
             as being about this thing (Figma 9155:41921). */}
         <Alert
           type="Callout"
-          className="gen-drawer__callout"
+          className={`gen-drawer__callout${scope === 'assessments' ? ' gen-drawer__callout--quiz' : ''}`}
           customIcon={
-            <img
-              src={getAssessmentIllustration(
-                scope === 'situational' ? 'situational-test' : 'multiple-choice',
-                'desktop',
-              )}
-              width={40}
-              height={40}
-              alt=""
-              className="alert__icon"
-            />
+            scope === 'assessments' ? (
+              <QuizIllustration className="alert__icon" />
+            ) : (
+              <img
+                src={getAssessmentIllustration('situational-test', 'desktop')}
+                width={40}
+                height={40}
+                alt=""
+                className="alert__icon"
+              />
+            )
           }
           message={copy.callout}
         />
@@ -428,16 +477,26 @@ function GeneratingBody({
   activeStep,
   stepMs,
   draft,
+  drafts,
   detail,
 }: {
   steps: string[]
   activeStep: number
   stepMs: number
   draft: GeneratedAssessment | null
+  drafts: GeneratedAssessment[]
   detail?: string
 }) {
   const brief = draft?.brief ?? ''
-  const questions = draft?.questions ?? []
+  /* What the reveal writes out, one card at a time. A situational test writes the
+     questions inside it; an assessments run writes the set itself, one card per format
+     the admin picked. Same cards and same shimmer either way — only the list differs. */
+  const questions: { format: GeneratableType; text: string }[] = draft
+    ? draft.questions ?? []
+    : drafts.map((d) => ({ format: d.type, text: d.title }))
+  /* Which pass writes them: the third of a situational run, the last of an assessments
+     run, whose earlier passes read one lesson each. */
+  const creating = draft ? CREATING : steps.length - 1
   const [landed, setLanded] = useState(0)
   const newest = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
@@ -460,11 +519,11 @@ function GeneratingBody({
 
   /* Pass three: one card at a time, never faster than one can be read. */
   useEffect(() => {
-    if (activeStep < CREATING) {
+    if (activeStep < creating) {
       setLanded(0)
       return
     }
-    if (activeStep > CREATING || prefersReducedMotion()) {
+    if (activeStep > creating || prefersReducedMotion()) {
       setLanded(questions.length)
       return
     }
@@ -475,12 +534,12 @@ function GeneratingBody({
       every,
     )
     return () => window.clearInterval(id)
-  }, [activeStep, questions.length, stepMs])
+  }, [activeStep, creating, questions.length, stepMs])
 
   /* The third pass names the kind it is on, which is whichever card is being written.
      The first two take whatever the caller sends — the lesson being read, then who the
      brief is being written for. */
-  const writingCard = activeStep === CREATING ? questions[landed - 1] : undefined
+  const writingCard = activeStep === creating ? questions[landed - 1] : undefined
   const stepDetail =
     activeStep === READING || activeStep === WRITING_BRIEF
       ? detail
@@ -498,10 +557,13 @@ function GeneratingBody({
       />
 
       {/* Nothing is written yet while the course is being read. */}
-      {activeStep >= WRITING_BRIEF && draft && (
+      {activeStep >= (draft ? WRITING_BRIEF : creating) && questions.length > 0 && (
         <div className="gen-drawer__live" aria-hidden="true">
           {/* The fields the review will hand over, filling as they are written. The
-              shimmer sits on whatever is still being written and lifts when it is done. */}
+              shimmer sits on whatever is still being written and lifts when it is done.
+              Situational only: a set has no title or brief of its own, only its cards. */}
+          {draft && (
+            <>
           <motion.div
             className="gen-drawer__live-field"
             layout="position"
@@ -531,6 +593,8 @@ function GeneratingBody({
               {!briefText.done && <span className="gen-drawer__caret" />}
             </div>
           </motion.div>
+            </>
+          )}
 
           {questions.slice(0, landed).map((question, i) => (
             <LiveQuestion
@@ -538,7 +602,7 @@ function GeneratingBody({
               ref={i === landed - 1 ? newest : undefined}
               question={question}
               /* Only the newest card is being written; the ones above it are done. */
-              writing={activeStep === CREATING && i === landed - 1}
+              writing={activeStep === creating && i === landed - 1}
               ms={QUESTION_BEAT_MS * 0.7}
               reduce={reduce}
             />
@@ -549,10 +613,31 @@ function GeneratingBody({
   )
 }
 
+/** The inside of an assessment card: the format it is, then what it asks. Shared by the
+ *  run and the review so the card an admin watches being written is the card they then
+ *  approve. Only the container differs — the run's animates, the review's does not. */
+function AssessmentCardBody({ format, children }: { format: GeneratableType; children: ReactNode }) {
+  return (
+    <>
+      {/* Question first, format beneath it: what the assessment asks is what tells one
+          card from another, and the format is the line that qualifies it. */}
+      <span className="gen-drawer__live-text">{children}</span>
+      <span className="gen-drawer__live-format">{typeLabel(format)}</span>
+    </>
+  )
+}
+
 /** One assessment card, writing itself in. */
 const LiveQuestion = forwardRef<
   HTMLDivElement,
-  { question: GeneratedQuestion; writing: boolean; ms: number; reduce: boolean | null }
+  {
+    /** The two fields a card shows. Wider than GeneratedQuestion on purpose: a set's
+     *  cards are assessments, not questions inside one. */
+    question: { format: GeneratableType; text: string }
+    writing: boolean
+    ms: number
+    reduce: boolean | null
+  }
 >(function LiveQuestion({ question, writing, ms, reduce }, ref) {
   const text = useTyped(question.text, writing, ms)
   return (
@@ -565,13 +650,92 @@ const LiveQuestion = forwardRef<
       {...ARRIVE(reduce)}
       transition={arriveTransition(reduce)}
     >
-      <span className="gen-drawer__live-format">{typeLabel(question.format)}</span>
-      <span className="gen-drawer__live-text">
+      <AssessmentCardBody format={question.format}>
         {text.shown}
         {!text.done && <span className="gen-drawer__caret" />}
-      </span>
+      </AssessmentCardBody>
     </motion.div>
   )
 })
 
+/**
+ * The set, before any of it is course content (FR-12).
+ *
+ * Each card is the assessment as the admin would have authored it, read-only — the same
+ * QuestionCard the situational review hands its questions to, which is the same form the
+ * manual drawers are. Folded to its question by default, since the decision in front of
+ * the admin is which of them to keep; opened to read the answer it would give.
+ */
+function AssessmentReview({
+  drafts, onClose, onSave, onRemove, onGenerateAgain,
+}: {
+  drafts: GeneratedAssessment[]
+  onClose: () => void
+  onSave: () => void
+  onRemove: (index: number) => void
+  onGenerateAgain: () => void
+}) {
+  /* Folded by default, so the set can be scanned at once — the same ruling the
+     situational drawer makes when it reopens a finished test. */
+  const [opened, setOpened] = useState<Set<number>>(() => new Set())
+  const toggle = (i: number) =>
+    setOpened((prev) => {
+      const next = new Set(prev)
+      if (next.has(i)) next.delete(i)
+      else next.add(i)
+      return next
+    })
+
+  return (
+    <>
+      <SectionHeader title="Review assessments" ctas={<CloseButton onClick={onClose} />} />
+
+      <div className="gen-drawer__body">
+        {drafts.map((draft, i) => {
+          /* Every generated draft carries its question; the guard is for the formats a
+             future bank might not cover yet. */
+          const question = draft.questions?.[0]
+          if (!question) return null
+          return (
+            <QuestionCard
+              key={`${draft.type}-${draft.sourceLessonId}-${i}`}
+              question={{
+                id: `gen-${draft.type}-${i}`,
+                text: question.text,
+                options: question.options,
+                correctIndex: question.correctIndex,
+                format: question.format,
+                ...(question.interactive ? { interactive: question.interactive } : {}),
+              }}
+              label={typeLabel(draft.type)}
+              isOpen={opened.has(i)}
+              onToggle={() => toggle(i)}
+              onRemove={() => onRemove(i)}
+              removeLabel="Remove assessment"
+              readOnly
+            />
+          )
+        })}
+      </div>
+
+      <div className="gen-drawer__footer">
+        {/* Nothing to save once every card has been dropped — Generate Again is the way
+            back from an empty set. */}
+        <Button disabled={drafts.length === 0} onClick={onSave}>
+          Save Assessments
+        </Button>
+        <Button
+          semantic="ai"
+          variant="outlined"
+          /* The label gradient is background-clip: text, which an SVG cannot take — so
+             the sparkle paints its own, from the same two stops. */
+          icon={<SparkleIcon size={20} gradient />}
+          onClick={onGenerateAgain}
+        >
+          Generate Again
+        </Button>
+      </div>
+    </>
+  )
+}
 export default GenerateAssessmentsDrawer

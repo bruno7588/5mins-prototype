@@ -223,18 +223,20 @@
   box-shadow: var(--shadow-card);
 }
 
+/* The question leads the card, so it takes the weight; the format is the line under it
+   that qualifies what was just read (Figma). */
+.gen-drawer__live-text {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
 .gen-drawer__live-format {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);
-}
-
-.gen-drawer__live-text {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -335,4 +337,38 @@
 .gen-drawer__textarea:focus {
   border-color: var(--selected);
   background: transparent;
+}
+
+/* ===== Assessments callout ===== */
+
+/* The quiz treatment from Figma 9105:3541 — the same banner the assessment authoring
+   drawers wear (.alert.iq-drawer__callout), so a format explained while writing one by
+   hand and the same format explained while AI writes it read as one note. Doubled class
+   so it beats .alert--callout whichever order the global bundle lands in. */
+.alert.gen-drawer__callout--quiz {
+  /* Certificate quiz #6368DB @ 16% — the same fill in both themes. */
+  background: rgba(99, 104, 219, 0.16);
+  color: var(--text-quiz);
+  border-radius: var(--radius-sm);
+  padding: var(--space-s) var(--space-sm);
+  gap: var(--space-s);
+  font-weight: 500;
+}
+
+/* The running CTA's spinner. It rides in the icon slot rather than replacing the label,
+   which is what the DS Loading state does — the label has to stay, so the disabled
+   button still says which run it belongs to. Keyframes come from Button.css. */
+.gen-drawer__cta-spinner {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--radius-full);
+  animation: ds-btn-spin 0.8s linear infinite;
+}
+
+/* The review is a stack of authored-shape cards (QuestionCard), not a list of rows. */
+.gen-drawer__body > .st-drawer__question + .st-drawer__question {
+  margin-top: var(--space-m);
 }

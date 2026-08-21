@@ -180,6 +180,9 @@ export interface GeneratedAssessment {
   sourceLessonTitle: string
   /** Situational tests only — the scenario the learner is dropped into. */
   brief?: string
+  /** What the learner is asked. A situational test holds the several questions that run
+   *  through its scenario; every other draft holds the single one it is. Which kind of
+   *  draft this is comes from the type field — this one is not the tell. */
   questions?: GeneratedQuestion[]
 }
 
@@ -191,16 +194,43 @@ const between = (min: number, max: number) => min + Math.floor(Math.random() * (
 export function generateOne(
   type: Exclude<GeneratableType, 'situational-test'>,
   lesson: TranscriptSource,
+  /** A question already written for this lesson and format. The other stem is used
+   *  instead, so a regenerate returns something else and a set doesn't repeat itself
+   *  — which a plain random pick did half the time, both stems being equally likely. */
+  avoidTitle?: string,
 ): GeneratedAssessment {
+  const titles = STEMS[type].map(stem => stem.replace('%s', lesson.title))
+  const fresh = titles.filter(title => title !== avoidTitle)
+  const title = pick(fresh.length > 0 ? fresh : titles)
+  /* The answer, from the same bank the situational test draws on. A card is opened to
+     read what the learner will actually be asked to do, so the draft has to carry it —
+     a title on its own is a promise the review cannot show. The beat supplies the
+     structure; the question over it is the one written from this lesson. */
+  const beat = pick(BEATS_BY_FORMAT[type] ?? [])
   return {
     type,
-    title: pick(STEMS[type]).replace('%s', lesson.title),
+    title,
     /* The format, and nothing after it. A count of pairs or blanks is a detail of
        the question rather than something to scan a row for — the line names what
        the card is, and the card is opened to see how big it is. */
     metadata: typeLabel(type),
     sourceLessonId: lesson.id,
     sourceLessonTitle: lesson.title,
+    ...(beat
+      ? {
+          questions: [
+            {
+              format: type,
+              text: title,
+              options: beat.options,
+              correctIndex: beat.correctIndex,
+              ...(beat.interactive
+                ? { interactive: { ...beat.interactive, prompt: title } }
+                : {}),
+            },
+          ],
+        }
+      : {}),
   }
 }
 
@@ -539,9 +569,10 @@ const toQuestion = (format: GeneratableType, beat: Beat): GeneratedQuestion => (
 })
 
 /**
- * A full set: one or two assessments per transcribed lesson, drawn from the types
- * the admin selected. Quantity is the generator's call, not the admin's (FR-02) —
- * it follows from how much each transcript supports, mocked here as a coin flip.
+ * A full set: one assessment for each type the admin selected, written from the
+ * transcribed lessons. The count is the pick — three chips, three assessments — so the
+ * admin can predict what lands on the outline before pressing the button. Lessons are
+ * dealt round the set rather than each producing questions of their own.
  */
 export function generateSet(
   types: GeneratableType[],
@@ -558,16 +589,7 @@ export function generateSet(
   const perLesson = types.filter(
     (t): t is Exclude<GeneratableType, 'situational-test'> => t !== 'situational-test',
   )
-  const out: GeneratedAssessment[] = []
-  let cursor = 0
-  for (const lesson of lessons) {
-    const count = Math.random() < 0.5 ? 1 : 2
-    for (let i = 0; i < count; i++) {
-      /* Cycle rather than sample, so every selected type actually appears instead
-         of one lucky type filling the whole set. */
-      out.push(generateOne(perLesson[cursor % perLesson.length], lesson))
-      cursor++
-    }
-  }
-  return out
+  /* One per format, which is also why nothing here guards against writing the same
+     question twice: no two cards in a set can be the same type. */
+  return perLesson.map((type, i) => generateOne(type, lessons[i % lessons.length]))
 }

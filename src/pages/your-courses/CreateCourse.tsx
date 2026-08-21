@@ -85,13 +85,13 @@ const GENERATION_TAIL_MS = 1400
 /* Every pass gets the base beat, except the one that writes the assessments: that one
    is as long as the cards it has to show, or the last few would land in a lump when the
    pass ended rather than one at a time. */
-const stepDurations = (situational: boolean, count: number, draft: GeneratedAssessment | null) => {
-  if (!situational) return Array.from({ length: count }, () => GENERATION_STEP_MS)
-  const questions = draft?.questions?.length ?? 0
+const stepDurations = (situational: boolean, count: number, cards: number) => {
+  const base = situational ? SITUATIONAL_STEP_MS : GENERATION_STEP_MS
+  /* Which pass writes the cards: the third of a situational run, the last of an
+     assessments run — whose earlier passes read one lesson each. */
+  const writing = situational ? CREATING_PASS : count - 1
   return Array.from({ length: count }, (_, i) =>
-    i === CREATING_PASS
-      ? Math.max(SITUATIONAL_STEP_MS, questions * QUESTION_BEAT_MS + 400)
-      : SITUATIONAL_STEP_MS,
+    i === writing ? Math.max(base, cards * QUESTION_BEAT_MS + 400) : base,
   )
 }
 
@@ -191,6 +191,9 @@ function CreateCourse() {
     /** Written before the wait starts, so the wait can show it arriving rather than
      *  standing in for it. Situational only: assessments are a set, not one artefact. */
     draft: GeneratedAssessment | null
+    /** The set, for the same reason: an assessments run reveals its cards as they are
+     *  written, so they have to exist before the wait does. Empty on a situational run. */
+    drafts: GeneratedAssessment[]
   } | null>(null)
   const [activeStep, setActiveStep] = useState(0)
   /* Which lesson the first pass is naming. */
@@ -207,9 +210,12 @@ function CreateCourse() {
   const { toasts, show: showToast, dismiss: dismissToast } = useToast()
   /* A finished situational test waiting for the admin to approve it. It is not course
      content until they save — closing the drawer discards it, which is the point of
-     asking. Assessments have no equivalent: a set of eight questions is reviewed on
-     the outline, where they can be deleted one at a time. */
+     asking. */
   const [pendingTest, setPendingTest] = useState<SituationalTestData | null>(null)
+  /* And the same for a generated set of assessments. They used to land on the outline
+     the moment the run ended, which asked the admin to undo rather than to approve —
+     eight cards they had not read yet, mixed in with the ones they wrote themselves. */
+  const [pendingAssessments, setPendingAssessments] = useState<GeneratedAssessment[] | null>(null)
 
   /* The Add Content drawer snaps to the bottom edge of the PageHeader's divider —
      so the panel butts directly against the divider line and the tabs row sits
@@ -283,6 +289,7 @@ function CreateCourse() {
   const closeDrawer = () => {
     setActiveDrawer(null)
     setPendingTest(null)
+    setPendingAssessments(null)
     setTargetSectionId(null)
     setEditingSituationalId(null)
     setEditingAssessmentId(null)
@@ -459,6 +466,11 @@ function CreateCourse() {
     const items: ContentItem[] = []
     const sources: Record<number, GeneratedSource> = {}
     const tests: Record<number, SituationalTestData> = {}
+    /* A generated assessment is stored like an authored one too, in whichever of the two
+       stores its format belongs to — so the row the admin approved opens in the drawer
+       they would have written it in, holding what they just read. */
+    const authored: Record<number, AssessmentData> = {}
+    const interactives: Record<number, InteractiveQuestion> = {}
     for (const draft of drafts) {
       const id = nextGeneratedId++
       items.push(toContentItem(draft, id))
@@ -470,7 +482,7 @@ function CreateCourse() {
       /* A generated situational test is stored like an authored one — same shape,
          same store — so it deletes, restores and previews through the same paths
          rather than being a card with nothing behind it. */
-      if (draft.questions) {
+      if (draft.type === 'situational-test' && draft.questions) {
         const payload: SituationalTestData = {
           id,
           title: draft.title,
@@ -479,10 +491,25 @@ function CreateCourse() {
         }
         tests[id] = payload
         sources[id].payload = payload
+      } else {
+        const question = draft.questions?.[0]
+        if (question?.interactive) interactives[id] = question.interactive
+        else if (question) {
+          authored[id] = {
+            type: draft.type as AssessmentType,
+            question: question.text,
+            options: question.options,
+            correctIndex: question.correctIndex,
+          }
+        }
       }
     }
     setGeneratedSources((prev) => ({ ...prev, ...sources }))
     if (Object.keys(tests).length) setSituationalTests((prev) => ({ ...prev, ...tests }))
+    if (Object.keys(authored).length) setAssessments((prev) => ({ ...prev, ...authored }))
+    if (Object.keys(interactives).length) {
+      setInteractive((prev) => ({ ...prev, ...interactives }))
+    }
     return items
   }
 
@@ -499,6 +526,7 @@ function CreateCourse() {
     const draft = situational
       ? generateSituationalTest(coverage.withTranscript, details, types)
       : null
+    const drafts = situational ? [] : generateSet(types, coverage.withTranscript, details)
     const steps = situational
       ? SITUATIONAL_STEPS
       : [...coverage.withTranscript.map((l) => `Reading "${l.title}"`), 'Writing your assessments']
@@ -508,13 +536,18 @@ function CreateCourse() {
          names the passes. Either way the step says what is happening rather than
          counting to a number it can't know (FR-11). */
       steps,
-      stepDurations: stepDurations(situational, situational ? SITUATIONAL_STEPS.length : steps.length, draft),
+      stepDurations: stepDurations(
+        situational,
+        steps.length,
+        situational ? (draft?.questions?.length ?? 0) : drafts.length,
+      ),
       lessons: coverage.withTranscript,
       /* The chips are question formats. Assessments generate those formats directly;
          a situational test is always one test, so its formats travel alongside the
          'situational-test' marker that tells generateSet which shape to build. */
       types: situational ? [...TYPES_BY_SCOPE.situational, ...types] : types,
       draft,
+      drafts,
     })
   }
 
@@ -562,15 +595,15 @@ function CreateCourse() {
     /* The last step is the card's terminal one — it ticks the moment it's reached
        rather than spinning — so the run ends a beat after it, not a full step. */
     const finish = window.setTimeout(() => {
-      /* Situational runs wrote their draft up front so the wait could show it; anything
-         else is written now. */
-      const drafts = run.draft ? [run.draft] : generateSet(run.types, run.lessons, details)
+      /* Both scopes wrote their drafts up front so the wait could show them arriving —
+         so what the admin watched being written is what they are handed. */
+      const drafts = run.draft ? [run.draft] : run.drafts
       setRun(null)
 
       /* A situational test is one artefact an admin publishes under their own name, so
          it is handed to them to approve rather than dropped onto the outline. The drawer
          stays open and swaps to the review. */
-      const test = drafts.find((d) => d.questions)
+      const test = drafts.find((d) => d.type === 'situational-test')
       if (test) {
         setPendingTest({
           id: -1, // assigned on save, when it becomes a real outline row
@@ -581,8 +614,9 @@ function CreateCourse() {
         return
       }
 
-      setScormItems((prev) => [...prev, ...placeDrafts(drafts)])
-      setActiveDrawer(null)
+      /* A set is approved the same way the test is: the drawer holds it, and nothing
+         reaches the outline until the admin says so. */
+      setPendingAssessments(drafts)
     }, offsets[offsets.length - 1] + GENERATION_TAIL_MS)
 
     return () => {
@@ -602,7 +636,7 @@ function CreateCourse() {
     const draft =
       source.type === 'situational-test'
         ? generateSituationalTest(coverage.withTranscript, details, source.formats ?? [])
-        : generateOne(source.type, source.lesson)
+        : generateOne(source.type, source.lesson, item.title)
 
     setScormItems((prev) =>
       prev.map((existing) =>
@@ -613,7 +647,7 @@ function CreateCourse() {
     )
     /* The stored payload has to follow the card, or the row would show the new title
        over the old brief and questions. */
-    if (draft.questions) {
+    if (draft.type === 'situational-test' && draft.questions) {
       const payload: SituationalTestData = {
         id: item.id,
         title: draft.title,
@@ -657,6 +691,22 @@ function CreateCourse() {
     ])
     setPendingTest(null)
     closeDrawer()
+  }
+
+  /* The set is approved. placeDrafts is what records where each card came from, which is
+     what the outline's own Delete & Regenerate reads later — so approval goes through it
+     rather than appending the cards directly. */
+  const handleSaveGeneratedAssessments = () => {
+    if (!pendingAssessments) return
+    setScormItems((prev) => [...prev, ...placeDrafts(pendingAssessments)])
+    setPendingAssessments(null)
+    closeDrawer()
+  }
+
+  /* One card the admin does not want. It is dropped from the set rather than generated
+     over — a set of six they chose beats seven they have to keep explaining away. */
+  const handleRemovePendingAssessment = (index: number) => {
+    setPendingAssessments((prev) => (prev ? prev.filter((_, i) => i !== index) : prev))
   }
 
   /* Undo on the delete toast. The outline position is restored by ContentList,
@@ -804,6 +854,7 @@ function CreateCourse() {
                 activeStep,
                 stepMs: run.stepDurations[activeStep] ?? SITUATIONAL_STEP_MS,
                 draft: run.draft,
+                drafts: run.drafts,
                 detail: runDetail(),
               }
             : null
@@ -817,6 +868,19 @@ function CreateCourse() {
                   /* Clearing the draft first drops the review, so the drawer goes back
                      to the working card and the wait is shown again from the top. */
                   setPendingTest(null)
+                  startRun(pickedFormats, pickedPrompt)
+                },
+              }
+            : null
+        }
+        generationAssessmentReview={
+          pendingAssessments
+            ? {
+                drafts: pendingAssessments,
+                onSave: handleSaveGeneratedAssessments,
+                onRemove: handleRemovePendingAssessment,
+                onGenerateAgain: () => {
+                  setPendingAssessments(null)
                   startRun(pickedFormats, pickedPrompt)
                 },
               }

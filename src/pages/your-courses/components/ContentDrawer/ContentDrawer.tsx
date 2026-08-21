@@ -86,12 +86,22 @@ interface Props {
     stepMs: number
     /** The draft being written, revealed as the steps run. */
     draft: GeneratedAssessment | null
+    /** The set being written, revealed the same way. Empty on a situational run. */
+    drafts: GeneratedAssessment[]
     /** What the running step is on right now. */
     detail?: string
   } | null
   generationReview: {
     draft: SituationalTestData
     onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void
+    onGenerateAgain: () => void
+  } | null
+  /** A generated set of assessments waiting to be approved. The situational equivalent
+   *  is one artefact; this is N cards, so it carries per-card actions too. */
+  generationAssessmentReview: {
+    drafts: GeneratedAssessment[]
+    onSave: () => void
+    onRemove: (index: number) => void
     onGenerateAgain: () => void
   } | null
 }
@@ -127,6 +137,7 @@ function ContentDrawer({
   onAddLessons,
   generating,
   generationReview,
+  generationAssessmentReview,
 }: Props) {
   // What content to actually render. Lags activeDrawer when closing so the
   // close animation can complete before unmounting.
@@ -267,6 +278,7 @@ function ContentDrawer({
             onAddLessons={onAddLessons}
             generating={generating}
             review={generationReview}
+            assessmentReview={generationAssessmentReview}
           />
         )}
       </aside>

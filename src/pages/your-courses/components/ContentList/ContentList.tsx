@@ -163,13 +163,13 @@ interface ContentCardProps {
  * Whether the row opens for editing — i.e. whether it carries a pencil beside its
  * title (Figma 9144:24479).
  *
- * A situational test has a stored title, brief and questions whether it was written
- * by hand or generated, so both open. A generated question format has no payload
- * behind its card yet, so a pencil there would open an empty drawer — the way into
- * changing one is still Delete & Regenerate.
+ * Both kinds open, written by hand or generated: a generated card now carries the same
+ * payload its review showed — question, options, correct answer — stored in the same
+ * place an authored one is, so the pencil opens the drawer it was written in rather than
+ * an empty form. Delete & Regenerate is still there for rewriting rather than editing.
  */
 const canEdit = (item: ContentItem) =>
-  item.type === 'SituationalTest' || (item.type === 'Assessment' && item.source !== 'ai')
+  item.type === 'SituationalTest' || item.type === 'Assessment'
 
 const REMOVE_LABEL: Record<ContentItem['type'], string> = {
   Lesson: 'Remove lesson',

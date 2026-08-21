@@ -161,7 +161,9 @@ function AddContentIconStrip({
     isActive: boolean,
     onClick?: () => void,
     /* Collapsed, a row has no group above it to lend it context — "Create With AI"
-       alone can't say which of the two it is. The flyout takes the longer name. */
+       alone can't say which of the two it is. The flyout takes the longer name, and
+       so does the accessible name: collapsed, there are two buttons reading "Create
+       With AI" and nothing else to tell them apart. */
     tooltip = label,
   ) => (
     <Tooltip
@@ -175,7 +177,7 @@ function AddContentIconStrip({
         type="button"
         className={`add-content-icon-strip__item${isActive ? ' add-content-icon-strip__item--active' : ''}`}
         onClick={onClick}
-        aria-label={label}
+        aria-label={expanded ? label : tooltip}
       >
         <span className="add-content-icon-strip__icon">{icon}</span>
         <span className="add-content-icon-strip__label">{label}</span>
@@ -216,7 +218,8 @@ function AddContentIconStrip({
      thing currently open in the drawer (navigation.md), so the group only wears it when
      one of its own rows is that thing. */
   const situationalSelected = generateActive('situational') || active === 'situational-test'
-  const assessmentsSelected = active === 'assessment' || active === 'interactive'
+  const assessmentsSelected =
+    generateActive('assessments') || active === 'assessment' || active === 'interactive'
 
   const toggleLabel = expanded ? 'Collapse' : 'Expand'
   const toggle = (
@@ -347,6 +350,16 @@ function AddContentIconStrip({
             </span>
           </button>
           <Collapse open={assessmentsOpen}>
+            {/* First, and above the eight formats, for the same reason it leads the
+                situational group: the rows below author one question of a chosen kind,
+                this one has the generator write a set across them. */}
+            {subitem(
+              'Create With AI',
+              sparkle(generateActive('assessments')),
+              generateActive('assessments'),
+              () => onGenerateWithAIClick?.('assessments'),
+              true,
+            )}
             {/* Each type carries its own glyph here too, so the icon an admin
                 learns in the collapsed rail is the same one they see expanded. */}
             {ASSESSMENT_MENU.map((entry) => (
@@ -364,6 +377,13 @@ function AddContentIconStrip({
       ) : (
         <>
           <span className="add-content-icon-strip__divider" aria-hidden="true" />
+          {item(
+            'Create With AI',
+            sparkle(generateActive('assessments')),
+            generateActive('assessments'),
+            () => onGenerateWithAIClick?.('assessments'),
+            'Create Assessments With AI',
+          )}
           {ASSESSMENT_MENU.map((entry) => (
             <Fragment key={entry.type}>
               {item(menuLabel(entry), entry.icon(menuActive(entry)), menuActive(entry), menuClick(entry))}
