@@ -48,6 +48,9 @@ export interface SingleChoiceQuestion {
   prompt: string
   options: string[]
   correctIndex: number
+  /** Why the marked option is right, shown under the result once graded. Optional:
+   *  a question without one grades the same, it just says less afterwards. */
+  explanation?: string
 }
 
 /** Short text and exercise: answered in the learner's own words, marked by a human. */

@@ -690,6 +690,20 @@
 
 /* Result footer: "Well done!" message centred above the CTA. */
 /* Result message below the options (DS "Well done!" pattern) — no fill. */
+/* Verdict and reason are one block: the explanation reads as the rest of the same
+   sentence, not a second message. */
+.ql-result-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.ql-result__explanation {
+  margin: 0;
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+}
+
 .ql-result {
   display: flex;
   align-items: center;
@@ -857,7 +871,48 @@
 .ql-choice__options {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  /* 16px between options, per Figma 9051:1075 (87px rows, 103px apart). */
+  gap: var(--space-m);
+}
+
+/* Multiple-choice option row (Figma 9051:1076). The token supplies the fill, radius
+   and raised lip; this only turns it into a row: the control on the left, the text
+   filling the rest and reading left. Left padding drops to 12 so the radio sits where
+   the design puts it — the right stays 16. */
+.ql-choice__option {
+  justify-content: flex-start;
+  gap: var(--space-s);
+  padding-left: var(--space-sm);
+  text-align: left;
+}
+
+.ql-choice__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The mark that replaces the radio once graded — same 20px box, so the row keeps its
+   height and the text does not shift. */
+.ql-choice__mark {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* The DS radio is drawn for a page, not for a fill: on the amber selected row its
+   amber ring and dot disappear into the background. Both take the knockout token the
+   label already uses on --selected. */
+.ql-token--selected .ql-choice__radio.radio--selected .radio__ring {
+  border-color: var(--text-on-selected);
+}
+
+.ql-token--selected .ql-choice__radio.radio--selected .radio__ring::after {
+  background: var(--text-on-selected);
+}
+
+/* The row owns the hover, so the radio inside it must not paint its own. */
+.ql-choice__option .ql-choice__radio:hover {
+  background: transparent;
 }
 
 /* The learner's own words. Same field chrome as the rest of the app (input.md §

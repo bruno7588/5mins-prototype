@@ -141,6 +141,9 @@ function QuestionScreen({ question }: { question: SituationalQuestion }) {
           prompt: question.text,
           options,
           correctIndex: question.format === 'poll' ? -1 : question.correctIndex,
+          /* What the admin wrote in the drawer's explanation field, shown under the
+             result — the preview is where they find out whether it reads well. */
+          explanation: question.explanation,
         }}
       />
     )

@@ -1,4 +1,6 @@
-import { useContext, useState } from 'react'
+import { useContext, useId, useState } from 'react'
+import { CloseCircle, TickCircle } from 'iconsax-react'
+import Radio from '@/components/Radio/Radio'
 import type { SingleChoiceQuestion } from '../quizData'
 import FeedbackFooter, { QuizAdvanceContext } from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
@@ -6,19 +8,28 @@ import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
 /**
- * Multiple choice — one answer, tap-only. Tap an option to select it (amber), then
- * Check. The pick turns green or red and nothing else moves: an option the learner did
- * not touch never says whether it was the answer, so the question is still worth asking
- * on the retry.
+ * Multiple choice — one answer, tap-only (Figma 9051:860 / 1038 / 1199 / 1315).
  *
- * A poll is the same screen with nothing to mark (`correctIndex: -1`): it asks, so there
- * is no Check and no result — the pick is the whole interaction.
+ * Each option is a quiz token carrying the DS radio: tap the row to select it (amber,
+ * with the radio knocked out dark so it still reads on the fill), then Check.
+ *
+ * Grading collapses the list to the answer the learner gave, green or red, with a
+ * tick or a cross where the radio was, and the explanation under it. The options they
+ * did not pick are not shown as right or wrong — an untouched option never reveals
+ * whether it was the answer, so the question is still worth asking on the retry, which
+ * is the rule every graded format here follows.
+ *
+ * A poll is the same screen with nothing to mark (`correctIndex: -1`): it asks, so
+ * there is no Check, no grading and no collapse — the pick is the whole interaction.
  */
 function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
   const [attempt, setAttempt] = useState(0)
   const [picked, setPicked] = useState<number | null>(null)
   const [status, setStatus] = useState<FeedbackStatus>('idle')
   const [announce, setAnnounce] = useState('')
+  /* Names the radio group. Two questions on one screen would otherwise share a group
+     and steal each other's selection. */
+  const group = useId()
 
   /* A poll's one button is its Continue, and it lives in the idle state — so it has to
      read the host's next itself, where the graded formats get it from the footer. */
@@ -50,16 +61,13 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
   }
 
   const optionClass = (index: number) => {
-    const classes = ['ql-token', 'ql-token--block']
-    if (!locked) {
-      if (picked === index) classes.push('ql-token--selected')
-      return classes.join(' ')
+    const classes = ['ql-token', 'ql-token--block', 'ql-choice__option']
+    if (locked) {
+      classes.push('ql-token--locked')
+      classes.push(status === 'correct' ? 'ql-token--correct' : 'ql-token--incorrect')
+    } else if (picked === index) {
+      classes.push('ql-token--selected')
     }
-    classes.push('ql-token--locked')
-    /* Only the learner's own pick is graded — an untouched option never reveals whether
-       it was the answer, the same rule SelectAll follows. A wrong pick turns red and the
-       question stays askable on the retry. */
-    if (index === picked) classes.push(status === 'correct' ? 'ql-token--correct' : 'ql-token--incorrect')
     return classes.join(' ')
   }
 
@@ -70,23 +78,39 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
           <span className="ql-stem__q">{question.prompt}</span>
         </div>
 
-        <div className="ql-choice__options" role="radiogroup" aria-label="Options">
-          {question.options.map((option, index) => (
-            <button
-              key={option}
-              type="button"
-              role="radio"
-              aria-checked={picked === index}
-              disabled={locked}
-              className={optionClass(index)}
-              onClick={() => select(index)}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
+        {locked && picked !== null ? (
+          /* The graded answer, alone. Not a button any more — there is nothing left to
+             choose, and the icon takes the radio's place so the row keeps its shape. */
+          <div className={optionClass(picked)}>
+            <span className="ql-choice__mark" aria-hidden="true">
+              {status === 'correct' ? (
+                <TickCircle size={20} color="currentColor" variant="Linear" />
+              ) : (
+                <CloseCircle size={20} color="currentColor" variant="Linear" />
+              )}
+            </span>
+            <span className="ql-choice__label">{question.options[picked]}</span>
+          </div>
+        ) : (
+          <div className="ql-choice__options" role="radiogroup" aria-label="Options">
+            {question.options.map((option, index) => (
+              /* A label rather than a button: the DS Radio is a real input, which a
+                 button cannot contain, and the native group gives arrow-key movement
+                 between options for free. */
+              <label key={option} className={optionClass(index)}>
+                <Radio
+                  name={group}
+                  checked={picked === index}
+                  onChange={() => select(index)}
+                  className="ql-choice__radio"
+                />
+                <span className="ql-choice__label">{option}</span>
+              </label>
+            ))}
+          </div>
+        )}
 
-        {graded && <ResultBanner status={status} />}
+        {graded && <ResultBanner status={status} explanation={question.explanation} />}
       </div>
 
       <div className="ql-sr-only" role="status" aria-live="polite">
