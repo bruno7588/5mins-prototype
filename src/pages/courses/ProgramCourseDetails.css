@@ -27,6 +27,9 @@
   pointer-events: none;
 }
 
+/* Offset 20px below the cover, which is itself inset 20px from the top of the
+   body — so the cover's rounded top edge shows above the header card instead of
+   being covered by it. */
 .cd-content {
   position: relative;
   z-index: 1;
@@ -35,7 +38,7 @@
   gap: 24px;
   width: 100%;
   max-width: 900px;
-  margin: 0 auto;
+  margin: 20px auto 0;
 }
 
 /* ---- Header card ---- */
