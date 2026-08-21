@@ -399,6 +399,15 @@
 
 /* ===== Step 2 action row ===== */
 
+/* Add Question is an add-row button, so it takes the same treatment as the four in
+   InteractiveDrawer (.iq-drawer__add-btn): borderless with a --text-primary label.
+   The DS Text button is brand cyan — buttons.md has no neutral text variant — so the
+   colour is pinned here rather than inventing a DS variant. Hover keeps the DS brand
+   step, so the control still reads as interactive. */
+.st-drawer__add-btn.ds-btn--text {
+  color: var(--text-primary);
+}
+
 .st-drawer__question-actions {
   display: flex;
   align-items: center;

@@ -650,7 +650,8 @@ function SituationalTestDrawerContent({
             {!review && (
               <div className="st-drawer__question-actions">
                 <Button
-                  variant="outlined-2"
+                  variant="text"
+                  className="st-drawer__add-btn"
                   icon={<Add size={20} color="currentColor" variant="Linear" />}
                   onClick={() => setQuestions((prev) => [...prev, makeQuestion()])}
                 >
