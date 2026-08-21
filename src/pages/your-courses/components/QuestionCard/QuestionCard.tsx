@@ -44,6 +44,10 @@ interface Props {
   onRemove?: () => void
   /** What dropping the card removes: a question inside a test, or a whole assessment. */
   removeLabel?: string
+  /** Names the question field, where the head does not. A situational card's head reads
+   *  "Question 3", so the field under it needs nothing; an assessment's head names its
+   *  format instead, leaving the field the only one on the card without a label. */
+  fieldLabel?: string
   /** A generated draft being approved: every field is inert and the only actions are
    *  folding the card and dropping it. */
   readOnly: boolean
@@ -73,6 +77,7 @@ function QuestionCard({
   onToggle,
   onRemove,
   removeLabel = 'Remove question',
+  fieldLabel,
   readOnly,
   edit,
 }: Props) {
@@ -130,8 +135,14 @@ function QuestionCard({
           identifies the card. Only the answer collapses. */}
       <div className="st-drawer__question-body">
         <div className="st-drawer__field">
+          {fieldLabel && (
+            <label className="st-drawer__label" htmlFor={`${question.id}-text`}>
+              {fieldLabel}
+            </label>
+          )}
           <textarea
             ref={autoGrowRef}
+            id={`${question.id}-text`}
             rows={1}
             className={`st-drawer__input${errors.text ? ' st-drawer__input--error' : ''}`}
             readOnly={readOnly}

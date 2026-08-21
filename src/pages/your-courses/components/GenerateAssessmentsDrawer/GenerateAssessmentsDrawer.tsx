@@ -712,6 +712,7 @@ function AssessmentReview({
               onToggle={() => toggle(i)}
               onRemove={() => onRemove(i)}
               removeLabel="Remove assessment"
+              fieldLabel="Question"
               readOnly
             />
           )
