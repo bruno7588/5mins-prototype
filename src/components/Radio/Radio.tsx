@@ -12,10 +12,14 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   const reactId = useId()
   const controlId = id ?? `radio-${reactId}`
 
+  /* className lands on the wrapper, not the input: the wrapper is what carries the
+     state classes and what a host scopes its overrides to. It was accepted and then
+     dropped, so callers styling a radio in context silently got nothing. */
   const wrapperClass = [
     'radio',
     checked ? 'radio--selected' : '',
     disabled ? 'radio--disabled' : '',
+    className ?? '',
   ]
     .filter(Boolean)
     .join(' ')
