@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Danger, Eye } from 'iconsax-react'
+import { Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import PageHeader from './components/PageHeader/PageHeader'
@@ -10,8 +10,7 @@ import CourseDetailsTab, {
 } from './components/CourseDetailsTab/CourseDetailsTab'
 import type { CourseDetailsDraft } from './components/CourseDetailsTab/CourseDetailsTab'
 import { saveCourse, type StoredCourse } from './courseStore'
-import { buildPreviewCourse } from './previewCourse'
-import type { ContentItem, OutlineSection } from './components/ContentList/ContentList'
+import type { ContentItem } from './components/ContentList/ContentList'
 import { QUESTION_BEAT_MS } from './components/GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
 import AddContentIconStrip from './components/AddContentIconStrip/AddContentIconStrip'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
@@ -149,9 +148,6 @@ function CreateCourse() {
     thumbnail: DEFAULT_COURSE_THUMBNAIL,
   })
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
-  /* Mirrors the outline ContentList owns, so Preview can show the real sections
-     and ordering rather than a flat re-derivation of what was added. */
-  const [outline, setOutline] = useState<OutlineSection[]>([])
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
   const [assessmentType, setAssessmentType] = useState<AssessmentType>('single-choice')
   const [activeDrawer, setActiveDrawer] = useState<ActiveDrawer>(null)
@@ -665,17 +661,6 @@ function CreateCourse() {
     })
   }
 
-  /* ContentList only mounts on the Course Content tab, so its reported outline
-     goes stale the moment something is added from Details — where the Add
-     Content rail is equally available. Trust the outline only while it still
-     accounts for every item; otherwise show the flat list, which is always
-     current. Better a preview without section headings than one missing content. */
-  const outlineItemCount = outline.reduce((n, s) => n + s.items.length, 0)
-  const previewOutline =
-    outlineItemCount === scormItems.length && outline.length > 0
-      ? outline
-      : [{ id: 'preview-all', name: 'Course content', items: scormItems }]
-
   /* The title is the only thing a course can't be created without — the outline
      can be filled in later, and a missing thumbnail falls back to the generated
      one the Details copy promises. */
@@ -709,23 +694,8 @@ function CreateCourse() {
         onSecondary={() => commit('draft')}
         primaryDisabled={!canCreate}
         onPrimary={() => commit('published')}
-        leadingAction={
-          <Button
-            variant="outlined-2"
-            icon={<Eye size={20} color="currentColor" variant="Linear" />}
-            /* Gated on the same thing Save Draft and Create Course are: an untitled
-               course has nothing to preview, and the three actions sitting side by
-               side shouldn't disagree about whether it's ready. */
-            disabled={!canCreate}
-            onClick={() =>
-              navigate('/courses/preview', {
-                state: { preview: buildPreviewCourse(details, previewOutline, interactive) },
-              })
-            }
-          >
-            Preview
-          </Button>
-        }
+        /* No Preview action while the course is being created: there is nothing to
+           preview until it exists. Preview belongs on the course once created. */
       />
       <div
         className={[
@@ -755,7 +725,6 @@ function CreateCourse() {
             onAddContent={openAddContent}
             targetSectionId={targetSectionId}
             drawerOpen={activeDrawer !== null}
-            onOutlineChange={setOutline}
             onRestoreExtra={handleRestoreExtra}
             onRegenerateExtra={handleRegenerateOne}
           />
