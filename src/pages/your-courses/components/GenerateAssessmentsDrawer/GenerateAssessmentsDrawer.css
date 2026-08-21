@@ -3,8 +3,10 @@
    only. Chrome deliberately matches InteractiveDrawer.css so the drawers read as
    one family; classes are prefixed .gen-drawer__ because CSS is bundled globally. */
 
+/* No padding under the rule: the 20px to the body is the drawer shell's own
+   flex gap, same as every other assessment drawer. */
 .generate-drawer-shell .section-header {
-  padding-bottom: var(--space-sm);
+  padding-bottom: 0;
 }
 
 .gen-drawer__body {

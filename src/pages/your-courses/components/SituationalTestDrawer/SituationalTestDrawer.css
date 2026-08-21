@@ -4,17 +4,12 @@
    so the two read as one family; class names are prefixed .st-drawer__ because the
    prototype bundles CSS globally. */
 
-/* The rule under the header now belongs to SectionHeader itself (headers.md),
-   so this shell only owns the space beneath it — keeping the border here drew
-   a second line. */
+/* The rule under the header belongs to SectionHeader itself (headers.md) —
+   keeping the border here drew a second line. Nothing is added beneath it
+   either: the header's own padding used to stack on top of the shell's 20px
+   flex gap and read as a gap twice the size of every other one on the panel.
+   One gap, 20px, whatever leads the body. */
 .situational-test-drawer-shell .section-header {
-  padding-bottom: var(--space-sm);
-}
-
-/* When the switcher leads the body it sits straight under the rule, and the two
-   spaces stacked — the header's own 12px plus the body's 20px — read as a gap
-   twice the size of every other one on the panel. One gap, 20px. */
-.situational-test-drawer-shell .section-header:has(+ .st-drawer__body > .st-drawer__panes) {
   padding-bottom: 0;
 }
 

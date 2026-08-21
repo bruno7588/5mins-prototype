@@ -5,11 +5,12 @@
    family; class names are prefixed .iq-drawer__ because the prototype bundles CSS
    globally. */
 
-/* The rule under the header now belongs to SectionHeader itself (headers.md),
-   so this shell only owns the space beneath it — keeping the border here drew
-   a second line. */
+/* The rule under the header belongs to SectionHeader itself (headers.md) —
+   keeping a border here drew a second line. Nothing is added beneath it either:
+   the 20px between the rule and the callout is the drawer shell's own flex gap,
+   so this header contributes no padding of its own. */
 .interactive-drawer-shell .section-header {
-  padding-bottom: var(--space-sm);
+  padding-bottom: 0;
 }
 
 .iq-drawer__body {
