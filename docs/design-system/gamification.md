@@ -41,6 +41,8 @@ import { getLevelIllustration } from '@/assets/level-illustrations'
 
 Source: Figma `Illustrations/ Progress`, frame `10157:9081` (downloaded 2026-07-13). Assets in `src/assets/progress-illustrations/`. Seven **40×40** stat icons for "My progress" surfaces (profile stats, progress summaries, quiz results): `streak`, `points`, `jewels`, `certificates`, plus the quiz-outcome trio `passed`, `nearly-there`, `not-passed`.
 
+> **Export them transparent.** Figma's SVG export carries the artboard out with the artwork: a 40×40 `#F5F5F5` rect, the full-bleed `#20222A` "Dark mode" section rect, and the purple dashed component-set marker. Clipped by the viewBox they read as a solid square behind the illustration. Strip all three after any re-export — the icons must sit on whatever surface hosts them.
+
 ```tsx
 import { getProgressIllustration } from '@/assets/progress-illustrations'
 
