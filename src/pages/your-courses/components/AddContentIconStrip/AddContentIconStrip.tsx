@@ -24,6 +24,7 @@ import {
 } from 'iconsax-react'
 import AssessmentIcon from '@/components/icons/AssessmentIcon'
 import SparkleBadge from '@/components/icons/SparkleBadge'
+import SituationalAIIcon from '@/components/icons/SituationalAIIcon'
 import Collapse from '@/components/Collapse/Collapse'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { TYPE_CONFIG, type InteractiveQuestionType } from '@/data/interactiveQuestions'
@@ -130,15 +131,16 @@ function AddContentIconStrip({
      makes with the sparkle badged onto it, not the bare sparkle both of them used to
      share. The base takes the same Linear → Bold ladder and the same amber as every
      other row; the badge says how the thing gets made. */
-  const aiGlyph = (scope: GenerationScope, isActive: boolean) => (
-    <SparkleBadge size={ICON}>
-      {scope === 'situational' ? (
-        <ClipboardText size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
-      ) : (
+  const aiGlyph = (scope: GenerationScope, isActive: boolean) =>
+    scope === 'situational' ? (
+      /* Drawn artwork, both weights. */
+      <SituationalAIIcon size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
+    ) : (
+      /* Still composed in code, until the assessments glyph is drawn too. */
+      <SparkleBadge size={ICON}>
         <AssessmentIcon size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
-      )}
-    </SparkleBadge>
-  )
+      </SparkleBadge>
+    )
 
   const assessmentActive = (type: AssessmentType) =>
     active === 'assessment' && activeAssessment === type
