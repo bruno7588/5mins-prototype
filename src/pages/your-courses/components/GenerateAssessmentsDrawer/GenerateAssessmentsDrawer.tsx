@@ -138,14 +138,6 @@ function GenerateAssessmentsDrawer({
      pre-filled ones read as a wall of amber rather than something to pick from. */
   const [selected, setSelected] = useState<GeneratableType[]>([])
 
-  /* TEMPORARY — two candidate answers to "an admin can't tell the fields are optional",
-     so both can be seen against today's screen rather than described.
-       ?gen=1  the block gets a heading that names it a steer
-       ?gen=2  Generate moves above the fields, and the footer drops
-     No param is the screen as it ships. Delete this and the branches it feeds once one
-     of them is chosen. */
-  const variant = new URLSearchParams(window.location.search).get('gen')
-
   /* The situational prompt. Both free text, both optional — what the admin knows
      about the audience and how the test should read, which the course content
      cannot say on its own. */
@@ -161,27 +153,6 @@ function GenerateAssessmentsDrawer({
     setSelected((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     )
-
-  /* One button, wherever the variant puts it. The picker gates the assessments scope:
-     nothing chosen, nothing to write. The situational prompt gates nothing — both its
-     fields are optional, so Generate is ready from the moment the drawer opens. */
-  const generateButton = (
-    <Button
-      semantic="ai"
-      icon={<SparkleIcon size={20} color="currentColor" />}
-      disabled={picksFormats && selected.length === 0}
-      onClick={() =>
-        picksFormats
-          ? onGenerate(selected)
-          : onGenerate([], {
-              audience: audience.trim() || undefined,
-              instructions: instructions.trim() || undefined,
-            })
-      }
-    >
-      {copy.cta}
-    </Button>
-  )
 
   /* The draft is read and approved before it becomes course content, in the same
      editor an admin would have written it in — so reviewing one and writing one are
@@ -374,31 +345,25 @@ function GenerateAssessmentsDrawer({
           </div>
         ) : (
           <>
-            {/* Variant B puts the action first: nothing above it to fill in, so the
-                fields below can only read as refinement. */}
-            {variant === '2' && <div className="gen-drawer__inline-cta">{generateButton}</div>}
-
-            {/* Both variants name the block, so the two fields read as a steer rather
-                than as a form standing between the admin and the button. With the
-                heading carrying "(optional)", the labels no longer have to. */}
-            {variant && (
-              <div className="gen-drawer__field-heading">
-                <h3 className="h4">
-                  {variant === '2' ? 'Or steer it first (optional)' : 'Steer the test (optional)'}
-                </h3>
-                <p className="text-md gen-drawer__helper">
-                  Generate now and the AI works from your course content alone. Add either of
-                  these to shape who it is written for and how it reads.
-                </p>
-              </div>
-            )}
+            {/* The block is named, so the two fields read as a steer rather than as a
+                form standing between the admin and the button. Two labelled fields over
+                a footer button read as something to complete — and the assessments scope
+                of this same drawer really does gate on its chips, so an admin arriving
+                from there has already learnt to fill something in first. The heading
+                carries "(optional)", so the labels no longer have to. */}
+            <div className="gen-drawer__field-heading">
+              <h3 className="h4">Steer the test (optional)</h3>
+              <p className="text-md gen-drawer__helper">
+                Generate now and the AI works from your course content alone. Add either of
+                these to shape who it is written for and how it reads.
+              </p>
+            </div>
 
             {/* Who the scenarios are written for. Optional: with nothing here the
                 generator writes for whoever the course is written for. */}
             <div className="gen-drawer__field gen-drawer__field--prompt">
               <label className="gen-drawer__label" htmlFor="gen-audience">
-                Audience{' '}
-                {!variant && <span className="gen-drawer__label-optional">(optional)</span>}
+                Audience
               </label>
               <input
                 id="gen-audience"
@@ -414,8 +379,7 @@ function GenerateAssessmentsDrawer({
                 test should read. */}
             <div className="gen-drawer__field gen-drawer__field--prompt">
               <label className="gen-drawer__label" htmlFor="gen-instructions">
-                Instructions{' '}
-                {!variant && <span className="gen-drawer__label-optional">(optional)</span>}
+                Instructions
               </label>
               <textarea
                 id="gen-instructions"
@@ -430,11 +394,26 @@ function GenerateAssessmentsDrawer({
         )}
       </div>
 
-      {/* Variant B has already shown this button at the top of the body, and one action
-          twice is two actions to the eye. */}
-      {!(variant === '2' && !picksFormats) && (
-        <div className="gen-drawer__footer">{generateButton}</div>
-      )}
+      <div className="gen-drawer__footer">
+        {/* The picker gates the assessments scope: nothing chosen, nothing to write.
+            The situational prompt gates nothing — both its fields are optional, so
+            Generate is ready from the moment the drawer opens. */}
+        <Button
+          semantic="ai"
+          icon={<SparkleIcon size={20} color="currentColor" />}
+          disabled={picksFormats && selected.length === 0}
+          onClick={() =>
+            picksFormats
+              ? onGenerate(selected)
+              : onGenerate([], {
+                  audience: audience.trim() || undefined,
+                  instructions: instructions.trim() || undefined,
+                })
+          }
+        >
+          {copy.cta}
+        </Button>
+      </div>
     </>
   )
 }

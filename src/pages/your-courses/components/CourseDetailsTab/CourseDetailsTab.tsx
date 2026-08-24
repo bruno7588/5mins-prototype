@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { Danger, GalleryAdd } from 'iconsax-react'
 import Button from '@/components/Button/Button'
-import SparkleIcon from '@/components/icons/SparkleIcon'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import { autoGrow } from '../InteractiveDrawer/autoGrow'
 import defaultThumbnail from '@/assets/programs/course-thumbs/04.png'
@@ -108,11 +107,10 @@ function CourseDetailsTab({ draft, onChange }: Props) {
               {/* No Remove: a course always carries artwork, so the only move is to
                   swap it for another. Removing would only ever put back the one the
                   course opened with. */}
-              <Button
-                variant="outlined-2"
-                icon={<SparkleIcon size={20} color="currentColor" />}
-                onClick={() => setImageModalOpen(true)}
-              >
+              {/* No sparkle: the modal behind this uploads as readily as it generates,
+                  so the glyph promised the wrong half of it — and with the rail and the
+                  generate drawer both carrying one, another here says nothing. */}
+              <Button variant="outlined-2" onClick={() => setImageModalOpen(true)}>
                 {draft.thumbnail ? 'Change Thumbnail' : 'Add Thumbnail'}
               </Button>
             </div>
