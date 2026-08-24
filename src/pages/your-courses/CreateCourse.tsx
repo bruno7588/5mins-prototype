@@ -303,6 +303,11 @@ function CreateCourse() {
 
   const closeDrawer = () => {
     setActiveDrawer(null)
+    /* Stops the run as well as the panel. Left alone, its timers kept counting and
+       delivered a draft into a drawer that had been closed a quarter of a minute
+       earlier — the admin thought they had cancelled, and the next AI drawer they
+       opened, of either scope, handed them the abandoned test. */
+    setRun(null)
     setPendingTest(null)
     setPendingAssessments(null)
     setTargetSectionId(null)
@@ -313,12 +318,52 @@ function CreateCourse() {
     setInteractiveDirty(false)
   }
 
+  /* What the discard modal says, which depends on what is being thrown away: a question,
+     a hand-written test, a run still going, or a draft waiting to be approved. Stopping a
+     run isn't discarding a draft, so it doesn't claim to be. */
+  const discardCopy =
+    activeDrawer === 'interactive'
+      ? {
+          ariaLabel: 'Discard question',
+          title: 'Discard this question?',
+          body: "Your question hasn't been saved, and can't be recovered.",
+          keep: 'Keep Editing',
+          discard: 'Discard',
+        }
+      : activeDrawer === 'ai-generate' && run
+        ? {
+            ariaLabel: 'Stop generating',
+            title: 'Stop generating?',
+            body: "Nothing has been written yet, so there's nothing to keep. You can start again whenever you like.",
+            keep: 'Keep Generating',
+            discard: 'Stop',
+          }
+        : activeDrawer === 'ai-generate'
+          ? {
+              ariaLabel: 'Discard draft',
+              title: 'Discard this draft?',
+              body: "The draft and any edits you've made to it haven't been saved, and can't be recovered.",
+              keep: 'Keep Editing',
+              discard: 'Discard',
+            }
+          : {
+              ariaLabel: 'Discard situational test',
+              title: 'Discard this situational test?',
+              body: "Your scenario brief and questions haven't been saved, and can't be recovered.",
+              keep: 'Keep Editing',
+              discard: 'Discard',
+            }
+
   /* Every way out of a drawer — the header close button, Escape and the scrim — routes
      through here, so half-written work can't be thrown away by accident. */
   const requestCloseDrawer = () => {
     const dirty =
       (activeDrawer === 'situational-test' && situationalDirty) ||
-      (activeDrawer === 'interactive' && interactiveDirty)
+      (activeDrawer === 'interactive' && interactiveDirty) ||
+      /* A generated draft is unsaved work whether or not it has been touched: it took a
+         run to produce and closing is the only way to lose it. The run itself counts too
+         — walking away mid-generation should say so rather than look like a cancel. */
+      (activeDrawer === 'ai-generate' && (!!run || !!pendingTest || !!pendingAssessments))
     if (dirty) {
       setConfirmDiscard(true)
       return
@@ -690,6 +735,34 @@ function CreateCourse() {
     setPendingAssessments((prev) => (prev ? prev.filter((_, i) => i !== index) : prev))
   }
 
+  /* The same rule the situational review follows: a draft is edited where it is read, so
+     the set is editable before it is saved. The edits live on the pending drafts rather
+     than in the drawer, which is where removal already lives — save then writes whatever
+     is here without needing to be told twice.
+
+     The card's title is the question, so a reworded question renames the outline row
+     with it; leaving those to drift would put a stale stem on the course. */
+  const handleEditPendingAssessment = (
+    index: number,
+    patch: Partial<SituationalQuestion>,
+  ) => {
+    setPendingAssessments((prev) =>
+      prev
+        ? prev.map((draft, i) => {
+            if (i !== index) return draft
+            const [question, ...rest] = draft.questions ?? []
+            if (!question) return draft
+            const next = { ...question, ...patch }
+            return {
+              ...draft,
+              title: next.text || draft.title,
+              questions: [next, ...rest],
+            }
+          })
+        : prev,
+    )
+  }
+
   /* Undo on the delete toast. The outline position is restored by ContentList,
      which is the only thing that knows it; this puts the item back in the list. */
   const handleRestoreExtra = (item: ContentItem) => {
@@ -859,6 +932,7 @@ function CreateCourse() {
                 drafts: pendingAssessments,
                 onSave: handleSaveGeneratedAssessments,
                 onRemove: handleRemovePendingAssessment,
+                onEdit: handleEditPendingAssessment,
                 onGenerateAgain: () => {
                   setPendingAssessments(null)
                   startRun(pickedFormats, pickedPrompt)
@@ -875,26 +949,18 @@ function CreateCourse() {
       <ConfirmModal
         open={confirmDiscard}
         onClose={() => setConfirmDiscard(false)}
-        ariaLabel={activeDrawer === 'interactive' ? 'Discard question' : 'Discard situational test'}
+        ariaLabel={discardCopy.ariaLabel}
       >
         <div className="confirm-modal-header confirm-modal-header--center">
           <div className="confirm-modal-icon">
             <Danger size={56} color="var(--danger-500)" variant="Linear" />
           </div>
-          <h2 className="confirm-modal-title">
-            {activeDrawer === 'interactive'
-              ? 'Discard this question?'
-              : 'Discard this situational test?'}
-          </h2>
-          <p className="confirm-modal-body">
-            {activeDrawer === 'interactive'
-              ? "Your question hasn't been saved, and can't be recovered."
-              : "Your scenario brief and questions haven't been saved, and can't be recovered."}
-          </p>
+          <h2 className="confirm-modal-title">{discardCopy.title}</h2>
+          <p className="confirm-modal-body">{discardCopy.body}</p>
         </div>
         <div className="confirm-modal-actions">
           <Button variant="outlined-2" onClick={() => setConfirmDiscard(false)}>
-            Keep Editing
+            {discardCopy.keep}
           </Button>
           <Button
             semantic="danger"
@@ -903,7 +969,7 @@ function CreateCourse() {
               closeDrawer()
             }}
           >
-            Discard
+            {discardCopy.discard}
           </Button>
         </div>
       </ConfirmModal>

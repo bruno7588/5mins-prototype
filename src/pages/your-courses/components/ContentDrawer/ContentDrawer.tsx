@@ -102,6 +102,7 @@ interface Props {
     drafts: GeneratedAssessment[]
     onSave: () => void
     onRemove: (index: number) => void
+    onEdit: (index: number, patch: Partial<SituationalQuestion>) => void
     onGenerateAgain: () => void
   } | null
 }

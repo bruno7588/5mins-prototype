@@ -1,12 +1,13 @@
 import { forwardRef, useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Add } from 'iconsax-react'
+import { Add, Danger } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import Chip from '@/components/Chip/Chip'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import { assessmentTypeIcon } from '../assessmentTypeIcons'
 import CloseButton from '@/components/CloseButton/CloseButton'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import SparkleIcon from '@/components/icons/SparkleIcon'
@@ -66,6 +67,8 @@ interface Props {
     drafts: GeneratedAssessment[]
     onSave: () => void
     onRemove: (index: number) => void
+    /** Edits land on the pending drafts, so save writes them without being told. */
+    onEdit: (index: number, patch: Partial<SituationalQuestion>) => void
     onGenerateAgain: () => void
   } | null
 }
@@ -200,6 +203,7 @@ function GenerateAssessmentsDrawer({
               onClose={onClose}
               onSave={assessmentReview.onSave}
               onRemove={assessmentReview.onRemove}
+              onEdit={assessmentReview.onEdit}
               onGenerateAgain={assessmentReview.onGenerateAgain}
             />
           </motion.div>
@@ -679,17 +683,26 @@ const LiveQuestion = forwardRef<
  * the admin is which of them to keep; opened to read the answer it would give.
  */
 function AssessmentReview({
-  drafts, onClose, onSave, onRemove, onGenerateAgain,
+  drafts, onClose, onSave, onRemove, onEdit, onGenerateAgain,
 }: {
   drafts: GeneratedAssessment[]
   onClose: () => void
   onSave: () => void
   onRemove: (index: number) => void
+  onEdit: (index: number, patch: Partial<SituationalQuestion>) => void
   onGenerateAgain: () => void
 }) {
   /* Folded by default, so the set can be scanned at once — the same ruling the
      situational drawer makes when it reopens a finished test. */
   const [opened, setOpened] = useState<Set<number>>(() => new Set())
+  /* Same guard the situational review carries: Generate Again replaces the set, and the
+     cards are editable now, so it asks once there is something to lose. */
+  const [touched, setTouched] = useState(false)
+  const [confirmRegenerate, setConfirmRegenerate] = useState(false)
+  const editAndMark = (index: number, patch: Partial<SituationalQuestion>) => {
+    setTouched(true)
+    onEdit(index, patch)
+  }
   const toggle = (i: number) =>
     setOpened((prev) => {
       const next = new Set(prev)
@@ -725,7 +738,32 @@ function AssessmentReview({
               onRemove={() => onRemove(i)}
               removeLabel="Remove assessment"
               fieldLabel="Question"
-              readOnly
+              readOnly={false}
+              generated
+              edit={{
+                onChange: (patch) => editAndMark(i, patch),
+                onOptionChange: (optionIndex, value) =>
+                  editAndMark(i, {
+                    options: question.options.map((o, k) => (k === optionIndex ? value : o)),
+                  }),
+                onAddOption: () => editAndMark(i, { options: [...question.options, ''] }),
+                onRemoveOption: (optionIndex) =>
+                  editAndMark(i, {
+                    options: question.options.filter((_, k) => k !== optionIndex),
+                    /* The mark travels with the options: drop the one below it and it
+                       shifts up, drop the marked one itself and nothing is marked. */
+                    correctIndex:
+                      optionIndex === question.correctIndex
+                        ? -1
+                        : optionIndex < question.correctIndex
+                          ? question.correctIndex - 1
+                          : question.correctIndex,
+                  }),
+                /* Validation on this surface is the Save button's job — the set is
+                   approved as a whole, so a per-field error state has nothing to gate. */
+                onBlur: () => {},
+                errors: { text: false, options: false, correctBlank: false },
+              }}
             />
           )
         })}
@@ -743,11 +781,42 @@ function AssessmentReview({
           /* The label gradient is background-clip: text, which an SVG cannot take — so
              the sparkle paints its own, from the same two stops. */
           icon={<SparkleIcon size={20} gradient />}
-          onClick={onGenerateAgain}
+          onClick={() => (touched ? setConfirmRegenerate(true) : onGenerateAgain())}
         >
           Generate Again
         </Button>
       </div>
+
+      <ConfirmModal
+        open={confirmRegenerate}
+        onClose={() => setConfirmRegenerate(false)}
+        ariaLabel="Replace this set"
+      >
+        <div className="confirm-modal-header confirm-modal-header--center">
+          <div className="confirm-modal-icon">
+            <Danger size={56} color="var(--danger-500)" variant="Linear" />
+          </div>
+          <h2 className="confirm-modal-title">Replace this set?</h2>
+          <p className="confirm-modal-body">
+            Generating again writes a new set from scratch. The edits you've made to these
+            assessments can't be recovered.
+          </p>
+        </div>
+        <div className="confirm-modal-actions">
+          <Button variant="outlined-2" onClick={() => setConfirmRegenerate(false)}>
+            Keep This Set
+          </Button>
+          <Button
+            semantic="danger"
+            onClick={() => {
+              setConfirmRegenerate(false)
+              onGenerateAgain()
+            }}
+          >
+            Generate Again
+          </Button>
+        </div>
+      </ConfirmModal>
     </>
   )
 }

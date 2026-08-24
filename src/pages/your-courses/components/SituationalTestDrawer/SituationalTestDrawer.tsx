@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { Add, ArrowDown2, ArrowLeft, ArrowUp2 } from 'iconsax-react'
+import { Add, ArrowDown2, ArrowLeft, ArrowUp2, Danger } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import Collapse from '@/components/Collapse/Collapse'
 import Tooltip from '@/components/Tooltip/Tooltip'
@@ -164,6 +165,11 @@ function SituationalTestDrawerContent({
   /* The draft as the learner would meet it. Review only — an admin approving prose they
      did not write is the one place where seeing it played back is worth a screen. */
   const [previewing, setPreviewing] = useState(false)
+
+  /* Generate Again replaces the draft outright. That was harmless while the review was
+     read-only; now that the questions are editable it can take edits with it, so it asks
+     first — but only once there is something to lose. */
+  const [confirmRegenerate, setConfirmRegenerate] = useState(false)
 
   const titleFilled = title.trim().length > 0
   const titleError = titleBlurred && !titleFilled
@@ -485,7 +491,7 @@ function SituationalTestDrawerContent({
                 /* The label gradient is background-clip: text, which an SVG cannot take —
                    so the sparkle paints its own, from the same two stops. */
                 icon={<SparkleIcon size={20} gradient />}
-                onClick={review.onGenerateAgain}
+                onClick={() => (dirty ? setConfirmRegenerate(true) : review.onGenerateAgain())}
               >
                 Generate Again
               </Button>
@@ -540,6 +546,39 @@ function SituationalTestDrawerContent({
           questions={questions}
           onClose={() => setPreviewing(false)}
         />
+      )}
+
+      {review && (
+        <ConfirmModal
+          open={confirmRegenerate}
+          onClose={() => setConfirmRegenerate(false)}
+          ariaLabel="Replace this draft"
+        >
+          <div className="confirm-modal-header confirm-modal-header--center">
+            <div className="confirm-modal-icon">
+              <Danger size={56} color="var(--danger-500)" variant="Linear" />
+            </div>
+            <h2 className="confirm-modal-title">Replace this draft?</h2>
+            <p className="confirm-modal-body">
+              Generating again writes a new test from scratch. The edits you've made to
+              this one can't be recovered.
+            </p>
+          </div>
+          <div className="confirm-modal-actions">
+            <Button variant="outlined-2" onClick={() => setConfirmRegenerate(false)}>
+              Keep This Draft
+            </Button>
+            <Button
+              semantic="danger"
+              onClick={() => {
+                setConfirmRegenerate(false)
+                review.onGenerateAgain()
+              }}
+            >
+              Generate Again
+            </Button>
+          </div>
+        </ConfirmModal>
       )}
     </>
   )
