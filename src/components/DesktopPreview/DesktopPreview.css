@@ -15,7 +15,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--border-elevated);
+  /* No border: the frame sits on the scrim, where its own ground and the XL lift already
+     separate it — a hairline on top only drew the edge twice. */
   border-radius: var(--radius-m); /* 16px */
   background: var(--page-background);
   box-shadow: var(--shadow-l);
