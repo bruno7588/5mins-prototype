@@ -58,7 +58,7 @@ import { Eye, Danger, TickCircle } from 'iconsax-react';
 | State | Trigger | Visual |
 |-------|---------|--------|
 | **Enabled** | Default | Border `--border-elevated` |
-| **Hover** | Mouse over field | Border `--border-hover` + background `--input-background` (translucent tint) |
+| **Hover** | Mouse over field | Border `--border-hover` + background `--input-background` (translucent tint) — `--input-background-elevated` when the field sits on a card fill |
 | **Active / Focused** | Input focused | Border `--selected` (gold) — **no** background fill |
 | **Filled** | `value.length > 0` | Text switches from `--text-disabled` (placeholder) to `--text-primary` |
 | **Disabled** | `disabled={true}` | Border drops to `--border`; label, value and helper all `--text-disabled`; no hover |
@@ -143,6 +143,7 @@ const [password, setPassword] = useState('');
 --selected:               #ffbb38;   /* focused / active border */
 --text-error:             #e95c7b;   /* error label + border + helper */
 --input-background:       rgba(69,76,94,0.16);   /* hover background fill (light: #BFC2CC @16%) */
+--input-background-elevated: rgba(69,76,94,0.24);   /* same fill for a field on a card surface (light: #BFC2CC @16%) */
 --page-background-hover:  #2d313d;   /* circular hover fill behind an Integer − / + control */
 --text-primary:           #f9f9fa;   /* filled input value */
 --text-secondary:         #bfc2cc;   /* label; Integer helper text */
@@ -152,6 +153,8 @@ const [password, setPassword] = useState('');
 ```
 
 > **Helper text is not one colour.** Outlined helper text is `--text-tertiary`; **Integer** helper text is `--text-secondary`. Error helper text is `--text-error` in both.
+
+> **Two field fills, one rule.** `--input-background` is the default — any field, search, dropdown, or chip sitting on the page surface. Reach for `--input-background-elevated` only when the field sits on a card fill (`--cards-background`): in dark mode the default 16% tint lands within a point of the card and the field visually disappears, so the elevated token steps the tint up to 24%. Light mode already separates page and card, so both tokens hold at 16% there and are interchangeable.
 
 ---
 

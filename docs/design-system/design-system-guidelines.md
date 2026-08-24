@@ -117,6 +117,7 @@ Used in overlays, modals, and similar UI surfaces:
 | `--text-tertiary` (dark) | #8E94A4 | Metadata on dark bg |
 | `--border` (dark) | #2D313D | Dividers on dark bg |
 | `--input-background` | rgba(69, 76, 94, 0.16) | Input fields on dark bg |
+| `--input-background-elevated` | rgba(69, 76, 94, 0.24) | Input fields sitting on a card surface, dark bg |
 
 ### 2.7 CSS Variables Template
 

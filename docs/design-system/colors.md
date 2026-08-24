@@ -161,7 +161,8 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--page-background-hover` | Neutral-700 `#2D313D` | Neutral-50 `#EFF0F2` | Hovered row, list item, sidebar item |
 | `--cards-background` | Neutral-700 `#2D313D` | Neutral-0 `#FFFFFF` | Cards, panels, modals, side drawers |
 | `--cards-background-hover` | Neutral-600 `#383D4C` | Neutral-50 `#EFF0F2` | Card hover state |
-| `--input-background` | `#454C5E` @ 16% | `#BFC2CC` @ 16% | Input/dropdown/search background (translucent — apply only over a known surface) |
+| `--input-background` | `#454C5E` @ 16% | `#BFC2CC` @ 16% | Input/dropdown/search background on the page surface (translucent — apply only over a known surface; over a card fill use `--input-background-elevated`) |
+| `--input-background-elevated` | `#454C5E` @ 24% | `#BFC2CC` @ 16% | The same fill one step up, for a field sitting on a card surface (`--cards-background`) — identical to `--input-background` in light mode |
 | `--input-background-hover` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | Input background on hover |
 | `--selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Active/selected state — inputs, tabs, chips, radios, checkboxes |
 | `--border` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | The quiet border — table rows, dividers, cards, modals, dashed drop zones, skeletons, and disabled controls |
@@ -303,6 +304,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --cards-background: var(--neutral-0);
   --cards-background-hover: var(--neutral-50);
   --input-background: rgba(191, 194, 204, 0.16);  /* #BFC2CC @ 16% */
+  --input-background-elevated: rgba(191, 194, 204, 0.16);  /* #BFC2CC @ 16% */
   --input-background-hover: var(--neutral-100);
   --selected: var(--secondary-600);
   --border: var(--neutral-100);
@@ -347,6 +349,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --cards-background: var(--neutral-700);
   --cards-background-hover: var(--neutral-600);
   --input-background: rgba(69, 76, 94, 0.16);  /* #454C5E @ 16% */
+  --input-background-elevated: rgba(69, 76, 94, 0.24);  /* #454C5E @ 24% */
   --input-background-hover: var(--neutral-700);
   --selected: var(--secondary-500);
   --border: var(--neutral-700);
@@ -399,7 +402,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
 | Card / panel / modal / drawer | `--cards-background` |
 | Row or sidebar item hover | `--page-background-hover` |
 | Card hover | `--cards-background-hover` |
-| Input / dropdown / search bg | `--input-background` (+ `-hover`) |
+| Input / dropdown / search bg | `--input-background` (+ `-hover`; `-elevated` on a card fill) |
 | Tooltip / popover | `--tooltip-background` |
 | Table row, divider, card, modal | `--border` (hover: `--border-hover`) |
 | Enabled control chrome (field, dropdown, chip) | `--border-elevated` (hover: `--border-hover`) |

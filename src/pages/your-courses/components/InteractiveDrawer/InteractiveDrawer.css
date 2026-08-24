@@ -537,3 +537,16 @@
 .iq-drawer__add-btn.ds-btn--text {
   color: var(--text-primary);
 }
+
+/* The interactive bodies render both standalone in this drawer (on the panel) and inside
+   a question card, so the elevated fill is scoped to the card — see tokens.css. */
+.st-drawer__question .iq-drawer__textarea:hover,
+.st-drawer__question .iq-drawer__row:hover,
+.st-drawer__question .iq-drawer__textarea[readonly],
+.st-drawer__question .iq-drawer__textarea[readonly]:hover,
+.st-drawer__question .iq-drawer__textarea[readonly]:focus,
+.st-drawer__question .iq-drawer__row:has(> .iq-drawer__row-input[readonly]),
+.st-drawer__question .iq-drawer__row:has(> .iq-drawer__row-input[readonly]):hover,
+.st-drawer__question .iq-drawer__row:has(> .iq-drawer__row-input[readonly]):focus-within {
+  background: var(--input-background-elevated);
+}

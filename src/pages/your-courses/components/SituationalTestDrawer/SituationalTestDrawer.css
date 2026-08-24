@@ -497,3 +497,25 @@
   border-color: var(--success-500);
   background: var(--success-500);
 }
+
+/* ===== Fields on a card take the elevated fill =====
+
+   .st-drawer__question is a --cards-background card, and in dark the base 16% tint over
+   it lands within a point of the card, so the field disappears. --input-background-elevated
+   is that same tint one step up (24% dark; light is already separated and holds at 16%).
+
+   Scoped to the card rather than baked into the classes: Title and Brief use the same
+   ones out on the drawer panel, where the base tint is the right answer. */
+.st-drawer__question .st-drawer__input:hover,
+.st-drawer__question .st-drawer__textarea:hover,
+.st-drawer__question .st-drawer__option-field:hover,
+.st-drawer__question .st-drawer__add-option:hover,
+.st-drawer__question .st-drawer__question-format,
+.st-drawer__question .st-drawer__input[readonly],
+.st-drawer__question .st-drawer__input[readonly]:hover,
+.st-drawer__question .st-drawer__input[readonly]:focus,
+.st-drawer__question .st-drawer__option-field:has(> .st-drawer__option-input[readonly]),
+.st-drawer__question .st-drawer__option-field:has(> .st-drawer__option-input[readonly]):hover,
+.st-drawer__question .st-drawer__option-field:has(> .st-drawer__option-input[readonly]):focus-within {
+  background: var(--input-background-elevated);
+}
