@@ -464,21 +464,20 @@
   color: var(--text-secondary);
 }
 
-/* ===== Read-only fields on the review ===== */
+/* ===== Read-only fields ===== */
 
-/* Filled, but not outlined: the fill is enough to hold the value, and the border is what
-   said "type here" — which is the one thing this field isn't for. The brief and the title
-   are left alone; those two stay the admin's to edit, so they keep their chrome.
-   `border-color`, not `border: none`, so the box keeps its metrics and nothing shifts
-   between this and the editable card. */
+/* Read-only reads as a field, not as a filled slab: the same --border-elevated outline
+   an enabled field carries, and no fill behind it. A generated draft is edited where it
+   is read, so the only cards still using this are the ones that genuinely cannot be
+   typed into. */
 .st-drawer__input[readonly],
 .st-drawer__input[readonly]:hover,
 .st-drawer__input[readonly]:focus,
 .st-drawer__option-field:has(> .st-drawer__option-input[readonly]),
 .st-drawer__option-field:has(> .st-drawer__option-input[readonly]):hover,
 .st-drawer__option-field:has(> .st-drawer__option-input[readonly]):focus-within {
-  border-color: transparent;
-  background: var(--input-background);
+  border-color: var(--border-elevated);
+  background: transparent;
 }
 
 /* The two panes of a test that already exists. The body is a stretching column, so the
@@ -488,12 +487,11 @@
   align-self: flex-start;
 }
 
-/* The marked answer stays a radio, but here it reports rather than selects — so it takes
-   the same green as the "Correct" badge beside it instead of the disabled grey it would
-   otherwise inherit. Carries .radio--disabled to outrank Radio.css's own disabled rule,
-   which is equally specific and could otherwise win on bundle order. */
-.st-drawer__question--read-only .radio--disabled.radio--selected .radio__ring,
-.st-drawer__question--read-only .radio--disabled.radio--selected .radio__ring::after {
+/* On a generated draft the marked answer is the generator.s claim, not a choice the admin
+   has made — so it takes the same green as the "Correct" badge beside it rather than the
+   amber that means "you picked this". Still selectable: editing the draft is the point. */
+.st-drawer__question--generated .radio--selected .radio__ring,
+.st-drawer__question--generated .radio--selected .radio__ring::after {
   border-color: var(--success-500);
   background: var(--success-500);
 }
@@ -510,13 +508,7 @@
 .st-drawer__question .st-drawer__textarea:hover,
 .st-drawer__question .st-drawer__option-field:hover,
 .st-drawer__question .st-drawer__add-option:hover,
-.st-drawer__question .st-drawer__question-format,
-.st-drawer__question .st-drawer__input[readonly],
-.st-drawer__question .st-drawer__input[readonly]:hover,
-.st-drawer__question .st-drawer__input[readonly]:focus,
-.st-drawer__question .st-drawer__option-field:has(> .st-drawer__option-input[readonly]),
-.st-drawer__question .st-drawer__option-field:has(> .st-drawer__option-input[readonly]):hover,
-.st-drawer__question .st-drawer__option-field:has(> .st-drawer__option-input[readonly]):focus-within {
+.st-drawer__question .st-drawer__question-format {
   background: var(--input-background-elevated);
 }
 

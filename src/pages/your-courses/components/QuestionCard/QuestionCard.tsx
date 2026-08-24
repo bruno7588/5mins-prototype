@@ -51,6 +51,10 @@ interface Props {
   /** A generated draft being approved: every field is inert and the only actions are
    *  folding the card and dropping it. */
   readOnly: boolean
+  /** The card holds a generated draft. Editable like any other — this only marks the
+   *  answer the generator picked, which is a claim to check rather than a choice the
+   *  admin has made. */
+  generated?: boolean
   /** Required when the card is not read-only. */
   edit?: QuestionCardEdit
 }
@@ -79,6 +83,7 @@ function QuestionCard({
   removeLabel = 'Remove question',
   fieldLabel,
   readOnly,
+  generated = false,
   edit,
 }: Props) {
   const optionQuestion = isOptionQuestion(question)
@@ -87,7 +92,11 @@ function QuestionCard({
 
   return (
     <div
-      className={`st-drawer__question${readOnly ? ' st-drawer__question--read-only' : ''}`}
+      className={[
+        'st-drawer__question',
+        readOnly && 'st-drawer__question--read-only',
+        generated && 'st-drawer__question--generated',
+      ].filter(Boolean).join(' ')}
     >
       <div className="st-drawer__question-head">
         <button
@@ -275,11 +284,9 @@ function QuestionCard({
                   (AssessmentModal.tsx), down to the label and placeholder. Folds with the
                   options, since it explains which of them is right.
 
-                  Authoring only. A generated draft is read through and approved, and an
-                  empty optional field is nothing to read — it asks for writing on a
-                  surface that takes none. It comes back when the saved test is reopened
-                  to edit. */}
-              {!readOnly && (
+                  Only where there is a right answer to explain — which rules out a poll,
+                  and the open-answer and interactive formats above it. */}
+              {marked && (
                 <div className="st-drawer__field">
                   <label className="st-drawer__label" htmlFor={`${question.id}-explanation`}>
                     Add an explanation for the correct answer{' '}

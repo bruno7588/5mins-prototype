@@ -423,7 +423,11 @@ function SituationalTestDrawerContent({
                       ? () => setQuestions((prev) => prev.filter((q) => q.id !== question.id))
                       : undefined
                   }
-                  readOnly={!!review}
+                  /* A draft is edited where it is read. Saving is the approval, so
+                     making the admin save before they can fix a question asked them to
+                     approve something they had already decided was wrong. */
+                  readOnly={false}
+                  generated={!!review}
                   edit={{
                     onChange: (patch) => updateQuestion(question.id, patch),
                     onOptionChange: (optionIndex, value) =>

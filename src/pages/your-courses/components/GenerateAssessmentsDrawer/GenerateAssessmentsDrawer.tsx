@@ -554,7 +554,7 @@ function GeneratingBody({
      brief is being written for. */
   const writingCard = activeStep === creating ? questions[landed - 1] : undefined
   const stepDetail = writingCard
-    ? `Creating ${CREATING_WORD[writingCard.format] ?? typeLabel(writingCard.format)} assessments`
+    ? `Writing a ${CREATING_WORD[writingCard.format] ?? typeLabel(writingCard.format)} question`
     : activeStep === READING || activeStep === WRITING_BRIEF
       ? detail
       : undefined

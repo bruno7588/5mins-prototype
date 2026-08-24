@@ -121,7 +121,7 @@ const ASSESSMENT_STEPS = [
 const SITUATIONAL_STEPS = [
   'Reading the source transcripts',
   'Writing the title and brief',
-  'Creating assessments',
+  'Writing the questions',
   'All done — your situational test is ready',
 ]
 
