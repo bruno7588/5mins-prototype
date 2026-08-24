@@ -50,7 +50,7 @@
   display: flex;
   gap: 4px;
   padding: 4px;
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   border-radius: var(--radius-sm);
 }
 
@@ -79,7 +79,7 @@
 }
 
 .eng-switcher__item:hover:not(.eng-switcher__item--active) {
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   color: var(--text-primary);
 }
 
@@ -513,7 +513,7 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   display: flex;
   align-items: center;
   justify-content: center;

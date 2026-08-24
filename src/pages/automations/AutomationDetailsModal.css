@@ -259,7 +259,7 @@
   align-items: flex-start;
   padding-left: var(--space-xl);  /* aligns with row body (drag handle width + gap) */
   padding-right: var(--space-xxl); /* aligns with row body (remove btn width + gap) */
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   border-radius: var(--radius-sm);
 }
 
@@ -297,7 +297,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s);
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   border-radius: var(--radius-sm);
   transition: opacity 120ms ease, box-shadow 120ms ease;
 }
@@ -438,7 +438,7 @@
   flex-shrink: 0;
   min-width: 20px;
   padding: 0 6px;
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;

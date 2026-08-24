@@ -916,7 +916,7 @@
 }
 
 .content-card-title-edit:hover {
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   color: var(--text-primary);
 }
 
@@ -927,7 +927,7 @@
 
 .content-card-badge {
   flex-shrink: 0;
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   padding: 6px 12px;
   border-radius: var(--radius-full);
   font-size: 12px;

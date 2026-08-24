@@ -471,7 +471,7 @@
   align-items: center;
   padding: 6px var(--space-sm); /* 6px 12px — DS badge */
   border-radius: var(--radius-full);
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   font: 500 14px/1.2 'Poppins', sans-serif;
   color: var(--text-secondary);
 }

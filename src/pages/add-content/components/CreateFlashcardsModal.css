@@ -173,7 +173,7 @@
   margin-top: auto;
   padding: var(--space-s);
   border-radius: 100px;
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   z-index: 1;
 }
 

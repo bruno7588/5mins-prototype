@@ -1629,7 +1629,7 @@
 
 .roles-panel-skill-option-tag--already {
   color: var(--text-tertiary);
-  background: var(--input-background);
+  background: var(--input-background-elevated);
 }
 
 @keyframes roles-tag-fade-in {

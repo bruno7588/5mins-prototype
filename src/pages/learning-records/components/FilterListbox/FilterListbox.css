@@ -23,7 +23,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   border-radius: var(--radius-s);
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   flex-shrink: 0;
 }
 

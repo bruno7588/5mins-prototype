@@ -519,3 +519,10 @@
 .st-drawer__question .st-drawer__option-field:has(> .st-drawer__option-input[readonly]):focus-within {
   background: var(--input-background-elevated);
 }
+
+/* The option's remove button is a shared CloseButton, whose hover fill comes from its own
+   stylesheet — the rule below it here only sets the colour. On a card that fill needs the
+   same step up, and scoping it keeps every other CloseButton on the base tint. */
+.st-drawer__question .st-drawer__option-remove:hover {
+  background: var(--input-background-elevated);
+}

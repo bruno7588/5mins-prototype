@@ -170,7 +170,7 @@
   width: 20px;
   height: 20px;
   border-radius: var(--radius-full);
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   color: var(--text-tertiary);
   cursor: pointer;
   transition: color 150ms ease, background 150ms ease;

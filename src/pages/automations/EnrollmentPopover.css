@@ -35,7 +35,7 @@
 }
 
 .enrollment-popover__group:hover {
-  background: var(--input-background);
+  background: var(--input-background-elevated);
 }
 
 .enrollment-popover__option {

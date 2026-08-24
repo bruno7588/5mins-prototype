@@ -293,7 +293,7 @@
   min-width: 21px;
   padding: 0 var(--space-xs);
   border-radius: var(--radius-full);
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   font-size: 14px;
   color: var(--text-secondary);
 }

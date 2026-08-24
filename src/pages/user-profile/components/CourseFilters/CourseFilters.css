@@ -46,7 +46,7 @@
   height: 20px;
   padding: 0 6px;
   border-radius: var(--radius-full);
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   color: var(--text-secondary);
   font-size: 12px;
   font-weight: 500;

@@ -295,12 +295,12 @@
   width: 28px;
   height: 28px;
   border-radius: var(--radius-full);
-  background: var(--input-background);
+  background: var(--input-background-elevated);
   border: none;
   cursor: pointer;
   transition: background 120ms ease;
 }
 
 .rl-open-btn:hover {
-  background: var(--input-background);
+  background: var(--input-background-elevated);
 }
