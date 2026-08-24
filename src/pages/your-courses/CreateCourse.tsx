@@ -30,7 +30,6 @@ import {
 } from '@/data/interactiveQuestions'
 import {
   TYPES_BY_SCOPE,
-  generateOne,
   generateSet,
   generateSituationalTest,
   transcriptCoverage,
@@ -127,17 +126,16 @@ const SITUATIONAL_STEPS = [
 ]
 
 /* A generated draft's provenance: which format it is and which lesson it was read
-   from. FR-12 wants the source recorded; regenerating one (FR-09a) needs it too,
-   or the redraft would have nothing to read. */
+   from, which FR-12 wants recorded. Nothing on the outline reads `type`, `lesson` or
+   `formats` now that a row's only action is delete — they are kept because the record
+   is the requirement, not because a screen is using them. */
 interface GeneratedSource {
   type: GeneratableType
   lesson: TranscriptSource
   /** Situational tests only. handleRemoveSituationalTest clears the live store on
    *  delete; this copy is what undo restores from. */
   payload?: SituationalTestData
-  /** The formats the admin asked for. Kept so redrafting one card writes the same
-   *  kinds of question the first pass did — a regenerate that quietly reverted to
-   *  every format would undo the pick. */
+  /** The formats the admin asked for. */
   formats?: GeneratableType[]
 }
 
@@ -642,39 +640,6 @@ function CreateCourse() {
     }
   }, [run])
 
-  /* FR-09a — one weak question is redrafted on its own. The card keeps its id, so
-     it also keeps its place in its section: only the words change. */
-  const handleRegenerateOne = (item: ContentItem) => {
-    const source = generatedSources[item.id]
-    if (!source) return
-    /* A situational test is built from the whole course, so its redraft reads every
-       transcribed lesson again — not just the one recorded against it. */
-    const draft =
-      source.type === 'situational-test'
-        ? generateSituationalTest(coverage.withTranscript, details, source.formats ?? [])
-        : generateOne(source.type, source.lesson, item.title)
-
-    setScormItems((prev) =>
-      prev.map((existing) =>
-        existing.id === item.id
-          ? { ...existing, title: draft.title, metadata: draft.metadata }
-          : existing,
-      ),
-    )
-    /* The stored payload has to follow the card, or the row would show the new title
-       over the old brief and questions. */
-    if (draft.type === 'situational-test' && draft.questions) {
-      const payload: SituationalTestData = {
-        id: item.id,
-        title: draft.title,
-        brief: draft.brief ?? '',
-        questions: draft.questions.map((q, i) => ({ ...q, id: `stq-gen-${item.id}-${i}` })),
-      }
-      setSituationalTests((prev) => ({ ...prev, [item.id]: payload }))
-      setGeneratedSources((prev) => ({ ...prev, [item.id]: { ...prev[item.id], payload } }))
-    }
-  }
-
   /* Approved. The draft becomes an outline row here and nowhere earlier, carrying
      whatever edits the admin made in the review. */
   const handleSaveGeneratedTest = (
@@ -821,7 +786,6 @@ function CreateCourse() {
             targetSectionId={targetSectionId}
             drawerOpen={activeDrawer !== null}
             onRestoreExtra={handleRestoreExtra}
-            onRegenerateExtra={handleRegenerateOne}
           />
           )}
         </main>

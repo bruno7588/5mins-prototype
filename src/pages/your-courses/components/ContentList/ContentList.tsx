@@ -3,8 +3,6 @@ import Button from '@/components/Button/Button'
 import { Add, ClipboardText, Clock, Edit2, PlayCircle, TextalignJustifyleft, Trash } from 'iconsax-react'
 import { assessmentTypeFromLabel, getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import AssessmentIcon from '../../../../components/icons/AssessmentIcon'
-import SparkleIcon from '@/components/icons/SparkleIcon'
-import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import Badge from '../../../../components/Badge/Badge'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
@@ -69,8 +67,7 @@ export interface ContentItem {
   thumbnail: string
   thumbColor?: string
   /* Where the item came from (DES-279). Absent means authored by hand — the AI
-     badge, the per-item regenerate action and the blast radius of "Regenerate
-     all" all read from this one field. */
+     badge and the blast radius of "Regenerate all" both read from this one field. */
   source?: 'manual' | 'ai'
 }
 
@@ -144,8 +141,6 @@ interface ContentCardProps {
   item: ContentItem
   onDelete?: () => void
   onEdit?: () => void
-  /** FR-09a — redraft just this one. Only passed for AI-generated items. */
-  onRegenerate?: () => void
   /** Dimmed because something else on the outline is about to be replaced. */
   receded?: boolean
   /** Highlighted as part of that blast radius. */
@@ -166,7 +161,7 @@ interface ContentCardProps {
  * Both kinds open, written by hand or generated: a generated card now carries the same
  * payload its review showed — question, options, correct answer — stored in the same
  * place an authored one is, so the pencil opens the drawer it was written in rather than
- * an empty form. Delete & Regenerate is still there for rewriting rather than editing.
+ * an empty form.
  */
 const canEdit = (item: ContentItem) =>
   item.type === 'SituationalTest' || item.type === 'Assessment'
@@ -180,7 +175,7 @@ const REMOVE_LABEL: Record<ContentItem['type'], string> = {
 }
 
 function ContentCard({
-  item, onDelete, onEdit, onRegenerate, receded = false, doomed = false,
+  item, onDelete, onEdit, receded = false, doomed = false,
   isDragging, dropAbove, dropBelow,
   onDragStart, onDragOver, onDragEnd, onDrop,
 }: ContentCardProps) {
@@ -189,7 +184,6 @@ function ContentCard({
     : item.type === 'SituationalTest' ? 'Situational Test'
     : item.type
   const removeLabel = REMOVE_LABEL[item.type]
-  const isAI = item.source === 'ai'
   const containerClass = [
     'content-item-container',
     isDragging && 'content-item-container--dragging',
@@ -246,40 +240,18 @@ function ContentCard({
           </div>
         </div>
       </div>
-      {/* A generated row has two ways out — bin it, or ask for a different draft —
-          so its trailing control becomes a menu. Hand-authored rows keep the single
-          trash they've always had rather than gaining a menu of one. */}
-      {isAI && onRegenerate ? (
-        <RowActionsMenu
-          ariaLabel={`Actions for ${item.title}`}
-          items={[
-            {
-              key: 'regenerate',
-              label: 'Delete & Regenerate',
-              icon: <SparkleIcon size={20} gradient />,
-            },
-            {
-              key: 'delete',
-              label: 'Delete',
-              icon: <Trash size={20} color="currentColor" variant="Linear" />,
-              danger: true,
-            },
-          ]}
-          onSelect={(key) => (key === 'regenerate' ? onRegenerate() : onDelete?.())}
-          triggerClassName="content-card-trash"
-        />
-      ) : (
-        <Tooltip text={removeLabel} position="Top" alignment="End" icon={false} className="content-card-trash-tooltip">
-          <button
-            type="button"
-            className="content-card-trash"
-            aria-label={removeLabel}
-            onClick={onDelete}
-          >
-            <Trash size={20} color="currentColor" variant="Linear" />
-          </button>
-        </Tooltip>
-      )}
+      {/* One trash on every row, generated or hand-authored — the trailing column is the
+          same control wherever you are in the outline. */}
+      <Tooltip text={removeLabel} position="Top" alignment="End" icon={false} className="content-card-trash-tooltip">
+        <button
+          type="button"
+          className="content-card-trash"
+          aria-label={removeLabel}
+          onClick={onDelete}
+        >
+          <Trash size={20} color="currentColor" variant="Linear" />
+        </button>
+      </Tooltip>
     </div>
   )
 }
@@ -303,8 +275,6 @@ interface ContentListProps {
   /** Puts a deleted item back in extras. Paired with the undo toast, which restores
       the outline position this component holds. */
   onRestoreExtra?: (item: ContentItem) => void
-  /** FR-09a — redraft one generated assessment in place. */
-  onRegenerateExtra?: (item: ContentItem) => void
   /** FR-09b — a full regeneration is being confirmed, so the outline shows what it
       would take: generated rows of this card type lit, everything else pulled back.
       Null when nothing is being confirmed. */
@@ -327,7 +297,6 @@ function ContentList({
   drawerOpen = false,
   onOutlineChange,
   onRestoreExtra,
-  onRegenerateExtra,
   highlightGenerated = null,
 }: ContentListProps) {
   const [itemsByKey, setItemsByKey] = useState<Record<string, ContentItem>>({})
@@ -866,11 +835,6 @@ function ContentList({
                           onDelete={() => deleteItem(key)}
                           onEdit={
                             onEditExtra && canEdit(item) ? () => onEditExtra(item) : undefined
-                          }
-                          onRegenerate={
-                            onRegenerateExtra && item.source === 'ai'
-                              ? () => onRegenerateExtra(item)
-                              : undefined
                           }
                           receded={!!highlightGenerated && !isDoomed(item)}
                           doomed={isDoomed(item)}
