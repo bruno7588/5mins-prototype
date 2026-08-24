@@ -17,6 +17,13 @@ const SPARKLE =
   '17.3106 19.5224 17.0968 19.4706L15.4491 19.071C14.8503 18.9258 14.8503 18.0742 15.4491 ' +
   '17.929L17.0968 17.5294C17.3106 17.4776 17.4776 17.3106 17.5294 17.0968L17.929 15.4491Z'
 
+/* The companion star, up and right of the badge. Stroked in both weights — its path is
+   only ~0.02 units across, so what draws is essentially the 0.75 stroke itself. */
+const SPARK =
+  'M22.5 14.9912C22.5027 14.994 22.505 14.9972 22.5078 15C22.5052 15.0026 22.5026 15.0052 ' +
+  '22.5 15.0078C22.4972 15.005 22.494 15.0027 22.4912 15C22.4942 14.9971 22.4971 14.9942 ' +
+  '22.5 14.9912Z'
+
 /**
  * "Create situational tests with AI" — the clipboard with a sparkle badged into its
  * bottom-right corner. Drawn in Figma, so the two weights are separate artwork.
@@ -67,6 +74,7 @@ function SituationalAIIcon({
             strokeLinecap="round"
             strokeLinejoin="round"
           />
+          <path d={SPARK} stroke={color} strokeWidth={0.75} />
         </>
       ) : (
         <>
@@ -85,6 +93,7 @@ function SituationalAIIcon({
             <path d="M16 4.01999C19.33 4.19999 21 5.42999 21 9.99999M9 22C4 22 3 20 3 16V9.99999C3 5.43999 4.67 4.19999 8 4.01999" />
           </g>
           <path d={SPARKLE} stroke={color} strokeLinecap="round" strokeLinejoin="round" />
+          <path d={SPARK} stroke={color} strokeWidth={0.75} />
         </>
       )}
     </svg>

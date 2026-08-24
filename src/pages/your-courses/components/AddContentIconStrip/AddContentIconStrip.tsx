@@ -23,8 +23,8 @@ import {
   Category,
 } from 'iconsax-react'
 import AssessmentIcon from '@/components/icons/AssessmentIcon'
-import SparkleBadge from '@/components/icons/SparkleBadge'
 import SituationalAIIcon from '@/components/icons/SituationalAIIcon'
+import AssessmentsAIIcon from '@/components/icons/AssessmentsAIIcon'
 import Collapse from '@/components/Collapse/Collapse'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { TYPE_CONFIG, type InteractiveQuestionType } from '@/data/interactiveQuestions'
@@ -127,19 +127,15 @@ function AddContentIconStrip({
   const generateActive = (scope: GenerationScope) =>
     active === 'ai-generate' && activeGenerateScope === scope
 
-  /* Collapsed, the rail is nothing but glyphs — so an AI row wears the icon of what it
-     makes with the sparkle badged onto it, not the bare sparkle both of them used to
-     share. The base takes the same Linear → Bold ladder and the same amber as every
-     other row; the badge says how the thing gets made. */
+  /* Collapsed, the rail is nothing but glyphs, so an AI row can't wear the bare sparkle
+     both of them once shared. Each has its own drawn glyph — the thing being made, with
+     a sparkle in it — on the same Linear → Bold ladder and the same amber as every other
+     row. */
   const aiGlyph = (scope: GenerationScope, isActive: boolean) =>
     scope === 'situational' ? (
-      /* Drawn artwork, both weights. */
       <SituationalAIIcon size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
     ) : (
-      /* Still composed in code, until the assessments glyph is drawn too. */
-      <SparkleBadge size={ICON}>
-        <AssessmentIcon size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
-      </SparkleBadge>
+      <AssessmentsAIIcon size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
     )
 
   const assessmentActive = (type: AssessmentType) =>
