@@ -291,6 +291,15 @@
   line-height: 1.5;
 }
 
+/* The "(optional)" flag rides the label in tertiary at 12px, so it reads as an aside
+   rather than part of the label. Matches .st-drawer__label-optional. */
+.gen-drawer__label-optional {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
 .gen-drawer__input,
 .gen-drawer__textarea {
   width: 100%;
@@ -362,4 +371,10 @@
 /* The review is a stack of authored-shape cards (QuestionCard), not a list of rows. */
 .gen-drawer__body > .st-drawer__question + .st-drawer__question {
   margin-top: var(--space-m);
+}
+
+/* Generate, sitting at the end of the situational prompt rather than in the footer.
+   Left-aligned and unchanged otherwise — only its place in the column moved. */
+.gen-drawer__prompt-cta {
+  display: flex;
 }

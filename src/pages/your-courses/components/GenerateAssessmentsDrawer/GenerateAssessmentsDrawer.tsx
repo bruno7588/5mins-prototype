@@ -154,6 +154,28 @@ function GenerateAssessmentsDrawer({
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     )
 
+  /* Same button either scope; only where it sits differs. The picker gates the
+     assessments scope: nothing chosen, nothing to write. The situational prompt gates
+     nothing — both its fields are optional, so Generate is ready from the moment the
+     drawer opens. */
+  const generateButton = (
+    <Button
+      semantic="ai"
+      icon={<SparkleIcon size={20} color="currentColor" />}
+      disabled={picksFormats && selected.length === 0}
+      onClick={() =>
+        picksFormats
+          ? onGenerate(selected)
+          : onGenerate([], {
+              audience: audience.trim() || undefined,
+              instructions: instructions.trim() || undefined,
+            })
+      }
+    >
+      {copy.cta}
+    </Button>
+  )
+
   /* The draft is read and approved before it becomes course content, in the same
      editor an admin would have written it in — so reviewing one and writing one are
      the same skill, and anything they'd have said differently is edited here rather
@@ -345,25 +367,11 @@ function GenerateAssessmentsDrawer({
           </div>
         ) : (
           <>
-            {/* The block is named, so the two fields read as a steer rather than as a
-                form standing between the admin and the button. Two labelled fields over
-                a footer button read as something to complete — and the assessments scope
-                of this same drawer really does gate on its chips, so an admin arriving
-                from there has already learnt to fill something in first. The heading
-                carries "(optional)", so the labels no longer have to. */}
-            <div className="gen-drawer__field-heading">
-              <h3 className="h4">Steer the test (optional)</h3>
-              <p className="text-md gen-drawer__helper">
-                Generate now and the AI works from your course content alone. Add either of
-                these to shape who it is written for and how it reads.
-              </p>
-            </div>
-
             {/* Who the scenarios are written for. Optional: with nothing here the
                 generator writes for whoever the course is written for. */}
             <div className="gen-drawer__field gen-drawer__field--prompt">
               <label className="gen-drawer__label" htmlFor="gen-audience">
-                Audience
+                Audience <span className="gen-drawer__label-optional">(optional)</span>
               </label>
               <input
                 id="gen-audience"
@@ -379,7 +387,7 @@ function GenerateAssessmentsDrawer({
                 test should read. */}
             <div className="gen-drawer__field gen-drawer__field--prompt">
               <label className="gen-drawer__label" htmlFor="gen-instructions">
-                Instructions
+                Instructions <span className="gen-drawer__label-optional">(optional)</span>
               </label>
               <textarea
                 id="gen-instructions"
@@ -390,30 +398,19 @@ function GenerateAssessmentsDrawer({
                 onChange={(e) => setInstructions(e.target.value)}
               />
             </div>
+
+            {/* Directly under the last field rather than in the footer. Both fields are
+                optional and nothing gates the button, so it belongs at the end of what it
+                reads rather than parked at the bottom of the drawer with empty space
+                between — an admin who fills in neither still meets it straight away. */}
+            <div className="gen-drawer__prompt-cta">{generateButton}</div>
           </>
         )}
       </div>
 
-      <div className="gen-drawer__footer">
-        {/* The picker gates the assessments scope: nothing chosen, nothing to write.
-            The situational prompt gates nothing — both its fields are optional, so
-            Generate is ready from the moment the drawer opens. */}
-        <Button
-          semantic="ai"
-          icon={<SparkleIcon size={20} color="currentColor" />}
-          disabled={picksFormats && selected.length === 0}
-          onClick={() =>
-            picksFormats
-              ? onGenerate(selected)
-              : onGenerate([], {
-                  audience: audience.trim() || undefined,
-                  instructions: instructions.trim() || undefined,
-                })
-          }
-        >
-          {copy.cta}
-        </Button>
-      </div>
+      {/* Assessments only. Its chips gate the button, so it stays where a form's submit
+          belongs; the situational scope has shown its own above. */}
+      {picksFormats && <div className="gen-drawer__footer">{generateButton}</div>}
     </>
   )
 }
