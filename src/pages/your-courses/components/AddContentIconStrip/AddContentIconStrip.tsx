@@ -126,15 +126,10 @@ function AddContentIconStrip({
   const generateActive = (scope: GenerationScope) =>
     active === 'ai-generate' && activeGenerateScope === scope
 
-  /* Same Linear → Bold ladder every other icon on the rail follows; the gradient is
-     what Bold means here, in place of the amber the labels take. */
+  /* Same Linear → Bold ladder every other icon on the rail follows, and the same amber
+     it inherits from the row — selected reads one way here, gradient or not. */
   const sparkle = (isActive: boolean) => (
-    <SparkleIcon
-      size={ICON}
-      color={C}
-      variant={isActive ? 'Bold' : 'Linear'}
-      gradient={isActive}
-    />
+    <SparkleIcon size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
   )
 
   const assessmentActive = (type: AssessmentType) =>
@@ -186,15 +181,13 @@ function AddContentIconStrip({
   )
 
   /* A row inside an open group. Same shape for both groups, so the two read as one
-     pattern rather than two that happen to look alike.
-     `ai` swaps the selected treatment from the rail's amber to the AI gradient, so the
-     label matches the sparkle beside it rather than disagreeing with it. */
+     pattern rather than two that happen to look alike. The AI rows take the same
+     amber selected treatment as every other row, label and icon alike. */
   const subitem = (
     label: string,
     icon: ReactNode,
     isActive: boolean,
     onClick?: () => void,
-    ai = false,
   ) => (
     <button
       key={label}
@@ -202,14 +195,11 @@ function AddContentIconStrip({
       className={[
         'add-content-icon-strip__subitem',
         isActive && 'add-content-icon-strip__subitem--selected',
-        ai && 'add-content-icon-strip__subitem--ai',
       ].filter(Boolean).join(' ')}
       aria-current={isActive || undefined}
       onClick={onClick}
     >
       <span className="add-content-icon-strip__subicon">{icon}</span>
-      {/* Wrapped so the gradient clips to the words and not to the button, whose
-          background is the hover fill. */}
       <span className="add-content-icon-strip__sublabel">{label}</span>
     </button>
   )
@@ -295,7 +285,6 @@ function AddContentIconStrip({
               sparkle(generateActive('situational')),
               generateActive('situational'),
               () => onGenerateWithAIClick?.('situational'),
-              true,
             )}
             {/* '+', matching the manual route beside an AI one in Your Content
                 ("Add Question Manually"). The group header above already says what
@@ -358,7 +347,6 @@ function AddContentIconStrip({
               sparkle(generateActive('assessments')),
               generateActive('assessments'),
               () => onGenerateWithAIClick?.('assessments'),
-              true,
             )}
             {/* Each type carries its own glyph here too, so the icon an admin
                 learns in the collapsed rail is the same one they see expanded. */}
