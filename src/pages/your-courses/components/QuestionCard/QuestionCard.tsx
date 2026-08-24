@@ -86,7 +86,9 @@ function QuestionCard({
   const errors = edit?.errors ?? { text: false, options: false, correctBlank: false }
 
   return (
-    <div className="st-drawer__question">
+    <div
+      className={`st-drawer__question${readOnly ? ' st-drawer__question--read-only' : ''}`}
+    >
       <div className="st-drawer__question-head">
         <button
           type="button"
@@ -271,24 +273,30 @@ function QuestionCard({
 
               {/* Same field as the Add assessment drawer's explanation
                   (AssessmentModal.tsx), down to the label and placeholder. Folds with the
-                  options, since it explains which of them is right. */}
-              <div className="st-drawer__field">
-                <label className="st-drawer__label" htmlFor={`${question.id}-explanation`}>
-                  Add an explanation for the correct answer{' '}
-                  <span className="st-drawer__label-optional">(optional)</span>
-                </label>
-                <textarea
-                  ref={autoGrowRef}
-                  rows={1}
-                  id={`${question.id}-explanation`}
-                  className="st-drawer__input"
-                  readOnly={readOnly}
-                  placeholder="Write an explanation..."
-                  value={question.explanation ?? ''}
-                  onInput={(e) => autoGrow(e.currentTarget)}
-                  onChange={(e) => edit?.onChange({ explanation: e.target.value })}
-                />
-              </div>
+                  options, since it explains which of them is right.
+
+                  Authoring only. A generated draft is read through and approved, and an
+                  empty optional field is nothing to read — it asks for writing on a
+                  surface that takes none. It comes back when the saved test is reopened
+                  to edit. */}
+              {!readOnly && (
+                <div className="st-drawer__field">
+                  <label className="st-drawer__label" htmlFor={`${question.id}-explanation`}>
+                    Add an explanation for the correct answer{' '}
+                    <span className="st-drawer__label-optional">(optional)</span>
+                  </label>
+                  <textarea
+                    ref={autoGrowRef}
+                    rows={1}
+                    id={`${question.id}-explanation`}
+                    className="st-drawer__input"
+                    placeholder="Write an explanation..."
+                    value={question.explanation ?? ''}
+                    onInput={(e) => autoGrow(e.currentTarget)}
+                    onChange={(e) => edit?.onChange({ explanation: e.target.value })}
+                  />
+                </div>
+              )}
             </>
           )}
         </div>

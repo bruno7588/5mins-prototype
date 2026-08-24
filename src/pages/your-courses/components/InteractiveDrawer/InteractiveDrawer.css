@@ -508,11 +508,9 @@
 
 /* ===== Read-only (the AI review approves a draft, it doesn't author one) =====
 
-   Filled, and it keeps its hairline. The fill alone can't carry the field: --input-background
-   is a neutral tint that flips with the mode, so over --cards-background it lands within a
-   point of the card in dark and the field disappears. The border is the part that reads on
-   both grounds; the fill is what says the value is shown rather than collected (input.md §
-   states), and hover/focus stay put because neither leads anywhere.
+   Filled, and no border: the hairline is what said "type here", which is the one thing
+   this field is not for. The fill is what says the value is shown rather than collected
+   (input.md § states), and hover/focus stay put because neither leads anywhere.
 
    :has() reads the state off the field itself, so nothing has to remember to pass a second
    class alongside readOnly. */
@@ -522,7 +520,7 @@
 .iq-drawer__textarea[readonly],
 .iq-drawer__textarea[readonly]:hover,
 .iq-drawer__textarea[readonly]:focus {
-  border-color: var(--border);
+  border-color: transparent;
   background: var(--input-background);
 }
 
