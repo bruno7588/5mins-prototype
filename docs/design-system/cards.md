@@ -61,7 +61,7 @@ The cards use the standard 5Mins token system. If the prototype already defines 
   --selected:      #EDA30D;  /* course progress fill (Secondary-600 in light mode) */
   --text-warning:  #E88206;  /* course due-date text (Warning-600 in light mode) */
   --badge-new:     #E95C7B;  /* "New" badge fill (--danger-400) */
-  --type-badge-bg: rgba(69, 76, 94, 0.16);  /* content-type pill background (--input-background) */
+  --type-badge-bg: rgba(69, 76, 94, 0.24);  /* content-type pill background (--input-background) */
 }
 ```
 

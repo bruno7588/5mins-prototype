@@ -413,7 +413,7 @@ Tab Name 0      ← Hover + Counter (counter text brightens too)
 | `--text-secondary`    | `#454C5E`                   | `#BFC2CC`                 | Default (enabled, not selected) label text  |
 | `--text-tertiary`     | `#656B7C`                   | `#9EA4B3`                 | Counter text in default enabled state       |
 | `--selected`          | `#EDA30D`                   | `#FFBB38`                 | Amber 2px indicator underline — **mode-aware, unlike the chip/switcher fill** |
-| `--input-background`  | `#BFC2CC` @16%              | `#454C5E` @16%            | Counter pill background                     |
+| `--input-background`  | `#BFC2CC` @24%              | `#454C5E` @24%            | Counter pill background                     |
 
 ### Spacing tokens
 
@@ -570,7 +570,7 @@ export function TabItemView({
         </span>
         {hasCounter && (
           <span
-            className="inline-flex items-center justify-center px-[6px] rounded-[100px] bg-[rgba(69,76,94,0.16)]"
+            className="inline-flex items-center justify-center px-[6px] rounded-[100px] bg-[rgba(69,76,94,0.24)]"
           >
             <span
               className={`text-[14px] leading-[1.5] font-medium font-[Poppins] ${counterTextColor}`}

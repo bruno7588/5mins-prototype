@@ -90,7 +90,7 @@
   --ai-callout-text: var(--primary-700);
 
   --cards-background-hover: var(--neutral-50);
-  --input-background: rgba(191, 194, 204, 0.16); /* Neutral-200 @ 16% */
+  --input-background: rgba(191, 194, 204, 0.24); /* Neutral-200 @ 24% */
   --input-background-hover: var(--neutral-100);
   /* Two weights: --border is the quiet one (table rows, dividers, cards),
      --border-elevated is the field chrome that has to hold its own edge. */
@@ -191,7 +191,7 @@
   --cards-background: var(--neutral-700);
   --shadow-card: none;
   --cards-background-hover: var(--neutral-600);
-  --input-background: rgba(69, 76, 94, 0.16); /* Neutral-500 @ 16% */
+  --input-background: rgba(69, 76, 94, 0.24); /* Neutral-500 @ 24% */
   --input-background-hover: var(--neutral-700);
   --border: var(--neutral-700);
   --border-elevated: var(--neutral-600);

@@ -248,7 +248,7 @@ Shared elements:
 |---|---|---|---|
 | `--page-background` | `#F9F9FA` | `#20222A` | Bar + panel background |
 | `--border` | `#DFE1E6` | `#2D313D` | Bottom / right hairline |
-| `--input-background` | `#BFC2CC` @16% | `#454C5E` @16% | Item hover, profile card |
+| `--input-background` | `#BFC2CC` @24% | `#454C5E` @24% | Item hover, profile card |
 | `--page-background-hover` | `#EFF0F2` | `#2D313D` | Open-group row |
 | `--text-selected` | `#EDA30D` | `#FFBB38` | Selected item label + icon |
 | `--text-secondary` / `--text-tertiary` | per colors.md | per colors.md | Item / sub-item + footer labels |

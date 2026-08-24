@@ -392,7 +392,7 @@ Each can carry the underlined button on the right (24px gap).
 
 | Token | Light mode | Dark mode | Used for |
 |---|---|---|---|
-| `--input-background` | `#BFC2CC` @ 16% | `#454C5E` @ 16% | Callout background |
+| `--input-background` | `#BFC2CC` @ 24% | `#454C5E` @ 24% | Callout background |
 | `rgba(255,187,56,0.12)` | same | same | Alert background (Secondary-500 @ 12%, literal) |
 | `--text-secondary` | Neutral-500 `#454C5E` | Neutral-200 `#BFC2CC` | Callout text |
 | `--text-warning` | Warning-600 `#E88206` | Warning-500 `#FFA538` | Alert text + button |
