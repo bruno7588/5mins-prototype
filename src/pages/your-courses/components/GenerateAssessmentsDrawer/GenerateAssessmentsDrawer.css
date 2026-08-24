@@ -372,3 +372,10 @@
 .gen-drawer__body > .st-drawer__question + .st-drawer__question {
   margin-top: var(--space-m);
 }
+
+/* TEMPORARY (?gen=2) — Generate sitting in the body rather than the footer, so the
+   fields under it read as refinement. Left-aligned like the footer's, so only the
+   position changes and not the button. Remove with the variant. */
+.gen-drawer__inline-cta {
+  display: flex;
+}
