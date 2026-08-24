@@ -332,11 +332,14 @@ function CreateCourse() {
         }
       : activeDrawer === 'ai-generate' && run
         ? {
-            ariaLabel: 'Stop generating',
-            title: 'Stop generating?',
-            body: "Nothing has been written yet, so there's nothing to keep. You can start again whenever you like.",
+            ariaLabel: 'Exit AI generation',
+            title: 'Exit while AI is writing your test?',
+            /* True at two seconds and at fourteen: "anything written so far" covers the
+               empty case without claiming nothing has been written, which the reveal
+               behind this modal would immediately contradict. */
+            body: 'Generation stops and nothing is added to your course. Anything written so far is discarded, but you can generate again whenever you like.',
             keep: 'Keep Generating',
-            discard: 'Stop',
+            discard: 'Exit',
           }
         : activeDrawer === 'ai-generate'
           ? {
