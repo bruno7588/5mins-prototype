@@ -23,7 +23,7 @@ import {
   Category,
 } from 'iconsax-react'
 import AssessmentIcon from '@/components/icons/AssessmentIcon'
-import SparkleIcon from '@/components/icons/SparkleIcon'
+import SparkleBadge from '@/components/icons/SparkleBadge'
 import Collapse from '@/components/Collapse/Collapse'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { TYPE_CONFIG, type InteractiveQuestionType } from '@/data/interactiveQuestions'
@@ -126,10 +126,18 @@ function AddContentIconStrip({
   const generateActive = (scope: GenerationScope) =>
     active === 'ai-generate' && activeGenerateScope === scope
 
-  /* Same Linear → Bold ladder every other icon on the rail follows, and the same amber
-     it inherits from the row — selected reads one way here, gradient or not. */
-  const sparkle = (isActive: boolean) => (
-    <SparkleIcon size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
+  /* Collapsed, the rail is nothing but glyphs — so an AI row wears the icon of what it
+     makes with the sparkle badged onto it, not the bare sparkle both of them used to
+     share. The base takes the same Linear → Bold ladder and the same amber as every
+     other row; the badge says how the thing gets made. */
+  const aiGlyph = (scope: GenerationScope, isActive: boolean) => (
+    <SparkleBadge size={ICON}>
+      {scope === 'situational' ? (
+        <ClipboardText size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
+      ) : (
+        <AssessmentIcon size={ICON} color={C} variant={isActive ? 'Bold' : 'Linear'} />
+      )}
+    </SparkleBadge>
   )
 
   const assessmentActive = (type: AssessmentType) =>
@@ -282,7 +290,7 @@ function AddContentIconStrip({
           <Collapse open={situationalOpen}>
             {subitem(
               'Create With AI',
-              sparkle(generateActive('situational')),
+              aiGlyph('situational', generateActive('situational')),
               generateActive('situational'),
               () => onGenerateWithAIClick?.('situational'),
             )}
@@ -301,7 +309,7 @@ function AddContentIconStrip({
         <>
           {item(
             'Create With AI',
-            sparkle(generateActive('situational')),
+            aiGlyph('situational', generateActive('situational')),
             generateActive('situational'),
             () => onGenerateWithAIClick?.('situational'),
             'Create Situational Tests With AI',
@@ -344,7 +352,7 @@ function AddContentIconStrip({
                 this one has the generator write a set across them. */}
             {subitem(
               'Create With AI',
-              sparkle(generateActive('assessments')),
+              aiGlyph('assessments', generateActive('assessments')),
               generateActive('assessments'),
               () => onGenerateWithAIClick?.('assessments'),
             )}
@@ -367,7 +375,7 @@ function AddContentIconStrip({
           <span className="add-content-icon-strip__divider" aria-hidden="true" />
           {item(
             'Create With AI',
-            sparkle(generateActive('assessments')),
+            aiGlyph('assessments', generateActive('assessments')),
             generateActive('assessments'),
             () => onGenerateWithAIClick?.('assessments'),
             'Create Assessments With AI',

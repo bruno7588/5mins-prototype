@@ -257,7 +257,12 @@
 
 /* navigation.md § menu item: the selected state is amber --text-selected AND Bold, so
    it still reads as selected where the colour alone is hard to pick out. */
-.add-content-icon-strip__item--active {
+/* Restated under :hover, which is a pseudo-class and so outranks this on its own —
+   without it the pointer took the amber off the row it was pointing at, which is the
+   one row that has to keep saying what it is. The open group's sub-rows already hold
+   their colour this way. */
+.add-content-icon-strip__item--active,
+.add-content-icon-strip__item--active:hover {
   color: var(--selected); /* yellow per DS active treatment */
   font-weight: 700;
 }
