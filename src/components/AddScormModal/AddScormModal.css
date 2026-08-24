@@ -109,42 +109,27 @@
 .add-scorm-thumbnail-row {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-m);
 }
 
+/* Mirrors .cdt-thumb__box (CourseDetailsTab): dashed while empty, and once a picture is
+   chosen the box IS the preview, so the border goes solid and the icon gives way to the
+   image. Square rather than 16:9 because a lesson thumbnail is 256x256. */
 .add-scorm-thumbnail {
-  position: relative;
-  width: 72px;
-  height: 72px;
-  flex-shrink: 0;
-  border-radius: 6px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #5ac8fa, #34aadc);
-}
-
-.add-scorm-thumbnail-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.add-scorm-thumbnail-placeholder {
-  width: 100%;
-  height: 100%;
-}
-
-.add-scorm-thumbnail-edit {
-  position: absolute;
-  bottom: 4px;
-  left: 4px;
-  width: 24px;
-  height: 24px;
+  flex: 0 0 90px;
+  width: 90px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--scrim);
-  border-radius: 30px;
-  padding: 0;
+  border: 1px dashed var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background-size: cover;
+  background-position: center;
+}
+
+.add-scorm-thumbnail--filled {
+  border-style: solid;
 }
 
 .add-scorm-thumbnail-info {

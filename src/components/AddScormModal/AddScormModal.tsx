@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import Button from '@/components/Button/Button'
 import { Add, Eye, GalleryAdd } from 'iconsax-react'
 import CloseButton from '../CloseButton/CloseButton'
+import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import './AddScormModal.css'
 
 interface EditRow {
@@ -20,17 +21,10 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
   const isEdit = !!editRow
   const [name, setName] = useState(editRow?.fileName ?? '')
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
+  const [imageModalOpen, setImageModalOpen] = useState(false)
   const [zipFileName, setZipFileName] = useState<string | null>(null)
   const [published, setPublished] = useState(false)
-  const thumbnailInputRef = useRef<HTMLInputElement>(null)
   const zipInputRef = useRef<HTMLInputElement>(null)
-
-  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setThumbnailUrl(URL.createObjectURL(file))
-    }
-  }
 
   const handleZipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -93,36 +87,27 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
           {/* Thumbnail */}
           <div className="add-scorm-field">
             <label className="add-scorm-label">Lesson thumbnail</label>
+            {/* Same pattern as the course thumbnail (CourseDetailsTab): dashed while
+                empty, the box itself becomes the preview once picked, and one outlined
+                button opens the shared picker. The box stays square because a SCORM
+                lesson thumbnail is 256x256, where a course's is 16:9. */}
             <div className="add-scorm-thumbnail-row">
-              <div className="add-scorm-thumbnail">
-                {thumbnailUrl ? (
-                  <img src={thumbnailUrl} alt="Thumbnail" className="add-scorm-thumbnail-img" />
-                ) : (
-                  <div className="add-scorm-thumbnail-placeholder" />
+              <div
+                className={`add-scorm-thumbnail${thumbnailUrl ? ' add-scorm-thumbnail--filled' : ''}`}
+                style={thumbnailUrl ? { backgroundImage: `url(${thumbnailUrl})` } : undefined}
+              >
+                {!thumbnailUrl && (
+                  <GalleryAdd size={32} color="var(--text-secondary)" variant="Linear" />
                 )}
-                <button
-                  className="add-scorm-thumbnail-edit"
-                  onClick={() => thumbnailInputRef.current?.click()}
-                  aria-label="Change image"
-                >
-                  <GalleryAdd size={16} color="white" variant="Linear" />
-                </button>
               </div>
               <div className="add-scorm-thumbnail-info">
                 <p className="add-scorm-thumbnail-desc">
                   Upload a 256 x 256 px image, PNG or JPEG format. This image shows up in your lesson thumbnails.
                 </p>
-                <Button size="sm" variant="outlined-2" onClick={() => thumbnailInputRef.current?.click()}>
-                  Change Image
+                <Button variant="outlined-2" onClick={() => setImageModalOpen(true)}>
+                  {thumbnailUrl ? 'Change Thumbnail' : 'Add Thumbnail'}
                 </Button>
               </div>
-              <input
-                ref={thumbnailInputRef}
-                type="file"
-                accept="image/png,image/jpeg"
-                onChange={handleThumbnailChange}
-                hidden
-              />
             </div>
           </div>
 
@@ -149,6 +134,17 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
           )}
         </div>
       )}
+      {/* The same picker the course and program builders use: upload, generate with AI,
+         or pick from stock. */}
+      <AddImageModal
+        open={imageModalOpen}
+        onClose={() => setImageModalOpen(false)}
+        onSelect={(url) => {
+          setThumbnailUrl(url)
+          setImageModalOpen(false)
+        }}
+        showSuggest={false}
+      />
     </div>
   )
 }
