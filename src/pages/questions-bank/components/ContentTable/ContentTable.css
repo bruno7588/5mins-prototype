@@ -148,7 +148,7 @@
   width: 40px;
   height: 40px;
   border-radius: 100px;
-  background: var(--input-background, rgba(191, 194, 204, 0.24));
+  background: var(--input-background, rgba(191, 194, 204, 0.16));
   transition: background 150ms ease;
   cursor: pointer;
 }

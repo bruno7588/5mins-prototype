@@ -165,7 +165,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 | Token | Light | Dark | Used for |
 |---|---|---|---|
 | `--border` / `--border-hover` | `#BFC2CC` / `#9EA4B3` | `#383D4C` / `#9EA4B3` | Field border + current-day ring / hover |
-| `--input-background` | `#BFC2CC` @24% | `#454C5E` @24% | Field hover fill |
+| `--input-background` | `#BFC2CC` @16% | `#454C5E` @16% | Field hover fill |
 | `--selected` | `#EDA30D` | `#FFBB38` | Field active border, selected day fill, focus ring |
 | `--cards-background` / `--cards-background-hover` | `#FFFFFF` / `#EFF0F2` | `#2D313D` / `#383D4C` | Popover / day hover |
 | `--text-primary` / `--text-secondary` / `--text-disabled` | per colors.md | per colors.md | Day / weekday / outside-month text |

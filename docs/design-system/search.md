@@ -236,7 +236,7 @@ export const Search: React.FC<SearchProps> = ({
 
 | Token | Light | Dark | Used for |
 |---|---|---|---|
-| `--input-background` | `#BFC2CC` @24% | `#454C5E` @24% | Default + Active background |
+| `--input-background` | `#BFC2CC` @16% | `#454C5E` @16% | Default + Active background |
 | `--input-background-hover` | `#DFE1E6` (Neutral-100) | `#2D313D` (Neutral-700) | Hover background |
 | `--border` / `--border-hover` | `#DFE1E6` / `#9EA4B3` | `#2D313D` / `#9EA4B3` | Default / hover border |
 | `--selected` | `#EDA30D` | `#FFBB38` | Active/focused border |

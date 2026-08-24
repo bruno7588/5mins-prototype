@@ -70,7 +70,7 @@ The trigger is **transparent by default** with only a border — it is *not* a f
 
 ```css
 .dropdown-trigger:hover {
-  background: var(--input-background);      /* translucent tint — light: #BFC2CC @24% */
+  background: var(--input-background);      /* translucent tint — light: #BFC2CC @16% */
   border-color: var(--border-hover);        /* #9EA4B3 */
 }
 ```
@@ -437,7 +437,7 @@ Constrain the width at the wrapper level (`<div style={{ width: 'auto' }}>` or a
 | Context | Token | Value |
 |---|---|---|
 | Trigger background (Enabled/Active) | *none (transparent)* | — |
-| Trigger background (Hover) | `--input-background` | `#BFC2CC` @24% light / `#454C5E` @24% dark |
+| Trigger background (Hover) | `--input-background` | `#BFC2CC` @16% light / `#454C5E` @16% dark |
 | Border default | `--border-elevated` | `#BFC2CC` light / `#383D4C` dark |
 | Border hover | `--border-hover` | `#9EA4B3` |
 | Border disabled / read-only | `--border` | `#DFE1E6` light / `#2D313D` dark |

@@ -37,10 +37,10 @@ interface FileUploaderProps {
 | State | Border style | Border color | Background | Icon |
 |-------|-------------|--------------|------------|------|
 | `Enabled` | dashed | `#454c5e` | transparent | `DocumentUpload` Linear |
-| `Hover` | dashed | `#9ea4b3` | `rgba(69,76,94,0.24)` | `DocumentUpload` Linear |
+| `Hover` | dashed | `#9ea4b3` | `rgba(69,76,94,0.16)` | `DocumentUpload` Linear |
 | `Error` | dashed | `#df1642` | `rgba(223,22,66,0.16)` | `DocumentUpload` Linear, red |
-| `Uploading` | dashed | `#454c5e` | `rgba(69,76,94,0.24)` | 64px circular progress |
-| `Filled` | **solid** | `#383d4c` | `rgba(69,76,94,0.24)` | `DocumentText` Bold |
+| `Uploading` | dashed | `#454c5e` | `rgba(69,76,94,0.16)` | 64px circular progress |
+| `Filled` | **solid** | `#383d4c` | `rgba(69,76,94,0.16)` | `DocumentText` Bold |
 
 ---
 
@@ -66,7 +66,7 @@ interface FileUploaderProps {
 --border-hover:                    #9ea4b3;               /* Hover dashed */
 --border:                          #2d313d;               /* Uploading progress-ring track */
 --danger:                          #df1642;               /* Error border */
---input-background:                rgba(69,76,94,0.24);   /* tinted bg */
+--input-background:                rgba(69,76,94,0.16);   /* tinted bg */
 --text-primary:                    #f9f9fa;               /* button labels */
 --text-secondary:                  #bfc2cc;               /* body copy, filename */
 --text-error:                      #e95c7b;               /* error message */
@@ -200,7 +200,7 @@ export function FileUploader({
   const getBackground = () => {
     if (state === 'Error')    return 'rgba(223,22,66,0.16)';
     if (state === 'Enabled')  return 'transparent';
-    return 'var(--input-background, rgba(69,76,94,0.24))';
+    return 'var(--input-background, rgba(69,76,94,0.16))';
   };
 
   // L: 20px all states; S: 16px (Filled: 24px)

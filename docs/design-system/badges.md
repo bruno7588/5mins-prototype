@@ -109,7 +109,7 @@ Neutral metadata or supplementary information. Used for general labels, counts, 
 
 ```css
 .badge-informative {
-  background: var(--input-background, rgba(69, 76, 94, 0.24));
+  background: var(--input-background, rgba(69, 76, 94, 0.16));
   color: var(--text-secondary, #BFC2CC);
 }
 ```
@@ -157,7 +157,7 @@ Backgrounds are literal 16% tints of the type's 500-level color, identical in bo
 | **Quiz** (ext.) | `rgba(99, 104, 219, 0.16)` — Certificate-quiz | `--text-quiz` | — | `#FFDBAF` |
 | **New** | `var(--danger-400)` `#E95C7B` (solid) | `--neutral-25` | `#F9F9FA` | `#F9F9FA` |
 
-The translucent background pattern is a core design principle — it ensures badges feel lightweight while maintaining readable contrast. The status types tint their own 500-level colour at 16%; Informative is the exception, taking the mode-aware `--input-background` at 24%. Icons always render in `currentColor`, matching the text token.
+The translucent background pattern (16% opacity) is a core design principle — it ensures badges feel lightweight while maintaining readable contrast. Icons always render in `currentColor`, matching the text token.
 
 ## React TypeScript Implementation
 
@@ -207,7 +207,7 @@ const BADGE_CONFIG: Record<BadgeType, {
     defaultLabel: 'In Progress',
   },
   informative: {
-    bg: 'var(--input-background, rgba(69, 76, 94, 0.24))',
+    bg: 'var(--input-background, rgba(69, 76, 94, 0.16))',
     color: 'var(--text-secondary, #BFC2CC)',
     defaultLabel: 'Information',
   },
@@ -342,7 +342,7 @@ For projects preferring CSS classes over inline styles:
 .badge--warning      { background: rgba(255, 165, 56, 0.16); color: var(--text-warning, #FFA538); }
 .badge--error        { background: rgba(223, 22, 66, 0.16);  color: var(--text-error, #E95C7B); }
 .badge--in-progress  { background: rgba(0, 206, 230, 0.16);  color: var(--text-progress, #00CEE6); }
-.badge--informative  { background: var(--input-background, rgba(69, 76, 94, 0.24)); color: var(--text-secondary, #BFC2CC); }
+.badge--informative  { background: var(--input-background, rgba(69, 76, 94, 0.16)); color: var(--text-secondary, #BFC2CC); }
 .badge--quiz         { background: rgba(99, 104, 219, 0.16); color: var(--text-quiz, #FFDBAF); }
 .badge--new          { background: var(--danger-400, #E95C7B); color: var(--neutral-25, #F9F9FA); }
 ```
@@ -446,6 +446,6 @@ Always pair badge color with a text label. The icon provides an additional visua
 | Warning | 16% orange | Orange | InfoCircle | ✓ | "Warning" |
 | Error | 16% red | Red/pink | Danger | ✓ | "Error" |
 | In Progress | 16% cyan | Cyan | TaskSquare | ✓ | "In Progress" |
-| Informative | 24% gray | Gray | InfoCircleOutline | ✓ (4px gap) | "Information" |
+| Informative | 16% gray | Gray | InfoCircleOutline | ✓ (4px gap) | "Information" |
 | Quiz (ext.) | 16% purple | Warm cream | LessonQuiz | — | "Quiz Required" |
 | New | Solid pink | White | None | ✗ never | "New" |

@@ -142,7 +142,7 @@ const [password, setPassword] = useState('');
 --border-hover:           #9ea4b3;   /* hovered border */
 --selected:               #ffbb38;   /* focused / active border */
 --text-error:             #e95c7b;   /* error label + border + helper */
---input-background:       rgba(69,76,94,0.24);   /* hover background fill (light: #BFC2CC @24%) */
+--input-background:       rgba(69,76,94,0.16);   /* hover background fill (light: #BFC2CC @16%) */
 --page-background-hover:  #2d313d;   /* circular hover fill behind an Integer − / + control */
 --text-primary:           #f9f9fa;   /* filled input value */
 --text-secondary:         #bfc2cc;   /* label; Integer helper text */
