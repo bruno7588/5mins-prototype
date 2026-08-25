@@ -261,14 +261,11 @@
   font-family: 'Poppins', sans-serif;
 }
 
+/* One rule for both states: --input-background is translucent, so it tints
+   whatever the row sits on — the page when collapsed, the card fill when the
+   row is expanded. The open-state override it used to need is now redundant. */
 .audit-row:hover {
-  background: var(--page-background-hover);
-}
-
-/* When expanded, the row sits on the card fill — hovering its top uses the
-   card hover so the tint reads against that surface, not the page. */
-.audit-row-card.is-open .audit-row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .audit-row:focus-visible {

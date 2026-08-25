@@ -211,7 +211,7 @@
 }
 
 .lr__row:hover {
-  background: var(--cards-background-hover, var(--neutral-25));
+  background: var(--input-background);
 }
 
 /* ── Cells ── */
@@ -254,7 +254,8 @@
 }
 
 .lr__row:hover .lr__cell--name {
-  background: var(--cards-background-hover, var(--neutral-25));
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 .lr__cell--name::after {
@@ -388,7 +389,8 @@
 }
 
 .lr__row:hover .lr__cell--ext-email {
-  background: var(--cards-background-hover, var(--neutral-25));
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 .lr__cell--ext-email::after {

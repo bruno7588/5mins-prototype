@@ -248,7 +248,7 @@
 }
 
 .your-courses-enrol-row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .your-courses-enrol-row--head,

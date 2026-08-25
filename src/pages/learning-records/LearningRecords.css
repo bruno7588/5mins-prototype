@@ -624,7 +624,7 @@
 }
 
 .lrp-row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .lrp-cell {
@@ -681,7 +681,8 @@
 }
 
 .lrp-table-wrap--scrolled .lrp-row:hover .lrp-cell--user {
-  background: var(--cards-background-hover);
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 .lrp-cell--user::after {
@@ -785,7 +786,8 @@
 }
 
 .lrp-row:hover .lrp-cell--ext-email {
-  background: var(--cards-background-hover);
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 .lrp-cell--ext-email::after {

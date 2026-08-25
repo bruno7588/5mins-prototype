@@ -57,7 +57,7 @@ Use the semantic token names, not raw hex. Cross-reference `colors.md`, `layout.
 | `--space-s` | `8px` | `8px` | cell padding-y |
 | `--space-xs` | `4px` | `4px` | tight gaps |
 | `--border` | `#DFE1E6` | `#2D313D` | row border, progress track |
-| `--page-background-hover` | `#EFF0F2` | `#2D313D` | row hover background |
+| `--input-background` | `rgba(191,194,204,0.16)` | `rgba(69,76,94,0.16)` | header bar fill, row hover background |
 | `--input-background-hover` | `#EFF0F2` | `#2D313D` | action-icon hover pill |
 | `--text-primary` | `#20222A` | `#F9F9FA` | cell content |
 | `--text-secondary` | `#454C5E` | `#BFC2CC` | header text, supporting text, date year |
@@ -88,7 +88,7 @@ All table text is Poppins, `14px`, `line-height: 1.5`.
 | State | Background | Border | Cell text |
 |---|---|---|---|
 | Enabled | transparent | `--border` | `--text-primary` |
-| Hover | `--page-background-hover` | `--border` | `--text-primary` (interactive cells go to `--text-button-hover`) |
+| Hover | `--input-background` | `--border` | `--text-primary` (interactive cells go to `--text-button-hover`) |
 | Selected | `rgba(255,187,56,0.12)` | `rgba(255,187,56,0.12)` | `--text-primary` |
 | Selected + Hover | `rgba(255,187,56,0.24)` | `rgba(255,187,56,0.24)` | `--text-primary` |
 | Disabled (read-only) | transparent | `--border` | `--text-disabled` |
@@ -166,7 +166,7 @@ Label format: `"1-10 of 28"`. The footer right-aligns because the table containe
   display: flex; align-items: center; width: 100%;
   border: 1px solid var(--border); border-radius: var(--space-sm);
 }
-.tbl-row.is-hover, .tbl-row:hover { background: var(--page-background-hover); }
+.tbl-row.is-hover, .tbl-row:hover { background: var(--input-background); }
 .tbl-row.is-selected { background: rgba(255,187,56,0.12); border-color: rgba(255,187,56,0.12); }
 .tbl-row.is-selected.is-hover, .tbl-row.is-selected:hover { background: rgba(255,187,56,0.24); border-color: rgba(255,187,56,0.24); }
 .tbl-row.is-disabled .tbl-cell { color: var(--text-disabled); }
@@ -428,7 +428,7 @@ Usage:
 
 ## Code reality
 
-`src/components/Table/` is the reusable implementation of this spec — use it for any data table, don't hand-roll. Drift from the nodes (flagged, not changed): row hover uses `--cards-background-hover` instead of `--page-background-hover` (same value in light mode, one step lighter in dark), and the selected-row tint uses `--selected-tint` / `rgba(237,163,13,…)` (the `#EDA30D` amber) where Figma specifies Secondary-500 `#FFBB38` @12%/24%.
+`src/components/Table/` is the reusable implementation of this spec — use it for any data table, don't hand-roll. Drift from the nodes (flagged, not changed): row hover uses `--input-background` — the translucent tint every table in the app now shares, and the same fill the header bar carries — where the nodes specify `--page-background-hover`; and the selected-row tint uses `--selected-tint` / `rgba(237,163,13,…)` (the `#EDA30D` amber) where Figma specifies Secondary-500 `#FFBB38` @12%/24%.
 
 ## Related docs
 

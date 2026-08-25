@@ -490,7 +490,8 @@
 
 .roles-table-scroll--scrolled .people-table-row:hover .roles-col--name,
 .roles-table-scroll--scrolled .people-table-row:hover .roles-col--name-co {
-  background: var(--cards-background-hover);
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 .roles-table-scroll--scrolled .people-table-header .roles-col--name,

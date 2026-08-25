@@ -203,7 +203,8 @@
 }
 
 .hris-table-scroll--scrolled .people-table-row:hover .hris-col--title {
-  background: var(--cards-background-hover);
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 .hris-table-scroll--scrolled .people-table-header .hris-col--title {

@@ -400,7 +400,7 @@
 }
 
 .cd-row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 /* Selected row — var(--selected-tint) for both fill and border */
@@ -452,7 +452,8 @@
 }
 
 .cd-table-scroll--has-scroll .cd-row:hover .cd-cell--name {
-  background: var(--cards-background-hover);
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 .cd-table-scroll--has-scroll .cd-row--selected .cd-cell--name,

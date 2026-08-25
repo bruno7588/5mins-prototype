@@ -666,7 +666,7 @@
 
 .bulk-preview-table-row:hover {
   border-color: var(--border);
-  background: var(--cards-background-hover);
+  background: var(--input-background);
   transition: background 150ms ease;
 }
 
@@ -759,7 +759,8 @@
 }
 
 .bulk-preview-scroll--has-scroll .bulk-preview-table-row:hover .bulk-preview-col--firstname {
-  background: var(--cards-background-hover);
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
   transition: background 150ms ease;
 }
 

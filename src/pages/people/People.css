@@ -354,7 +354,7 @@
 }
 
 .people-table-row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .people-table-row--selected {
@@ -486,7 +486,8 @@
 
 .people-table-scroll--has-scroll .people-table-row:hover .people-table-cell--checkbox,
 .people-table-scroll--has-scroll .people-table-row:hover .people-table-cell--name {
-  background: var(--cards-background-hover);
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 /* --selected-fill is translucent in dark mode, so the amber is layered over an

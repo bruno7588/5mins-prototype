@@ -206,7 +206,7 @@
 }
 
 .automations-table-row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .automations-table-cell {
@@ -802,7 +802,8 @@
 
 .automations-table-scroll--scrolled .automations-table-row:hover .automations-table-cell--name,
 .automations-table-scroll--scrolled .automations-table-row:hover .automations-table-cell--user {
-  background: var(--cards-background-hover);
+  background: linear-gradient(var(--input-background), var(--input-background)),
+    var(--page-background);
 }
 
 .automations-table-scroll--scrolled .automations-table-header .automations-table-cell--name,

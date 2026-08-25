@@ -98,7 +98,7 @@
 }
 
 .content-table-row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .content-table-cell {

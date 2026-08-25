@@ -57,7 +57,7 @@
    page background so semi-transparent tints still mask scrolled content). */
 .tbl-scroll--scrolled .tbl-row:hover .tbl-cell.is-sticky,
 .tbl-scroll--scrolled .tbl-row.is-hover .tbl-cell.is-sticky {
-  background: linear-gradient(var(--cards-background-hover), var(--cards-background-hover)),
+  background: linear-gradient(var(--input-background), var(--input-background)),
     var(--page-background);
 }
 
@@ -146,7 +146,7 @@
 
 .tbl-row.is-hover,
 .tbl-row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .tbl-row.is-selected {

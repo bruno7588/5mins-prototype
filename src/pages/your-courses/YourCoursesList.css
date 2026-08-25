@@ -111,7 +111,7 @@
 }
 
 .courses-list-row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .courses-list-row--head {

@@ -154,7 +154,7 @@
 }
 
 .eng-skills__row:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .eng-skills__row-name {
