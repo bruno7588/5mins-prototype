@@ -689,12 +689,16 @@ function AssessmentReview({
                 format: question.format,
                 ...(question.interactive ? { interactive: question.interactive } : {}),
               }}
-              label={typeLabel(draft.type)}
+              /* Numbered head, format on the badge beside it — the same card the
+                 situational review uses, called the same way. The head used to be the
+                 format itself, which left the set with no running order and pushed the
+                 question field into needing a label of its own to make up for it. */
+              label={`Question ${i + 1}`}
+              format={draft.type}
               isOpen={opened.has(i)}
               onToggle={() => toggle(i)}
               onRemove={() => onRemove(i)}
               removeLabel="Remove assessment"
-              fieldLabel="Question"
               readOnly={false}
               generated
               edit={{
