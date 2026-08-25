@@ -844,16 +844,6 @@
   justify-content: center;
 }
 
-/* Nothing overdue: a quiet zero, so the column stays a column. Tabular figures keep
-   it aligned with the badge digits in the rows above and below. */
-.mt-cp__overdue {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-tertiary);
-}
-
 /* Something overdue: the DS error badge carrying the count. */
 .mt-cp__overdue-badge {
   font-variant-numeric: tabular-nums;

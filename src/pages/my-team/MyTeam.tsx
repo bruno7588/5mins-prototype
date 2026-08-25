@@ -17,7 +17,6 @@ import {
   Mobile,
   SmsNotification,
   ArrowDown,
-  ArrowDown2,
   ArrowUp,
   ArrowLeft2,
   ArrowRight2,
@@ -667,8 +666,8 @@ function MyTeam() {
                           className="mt-cp__member-info"
                           role="link"
                           tabIndex={0}
-                          onClick={() => navigate(`/people/${r.id}`)}
-                          onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${r.id}`) }}
+                          onClick={() => navigate(`/my-team/people/${r.id}`)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/my-team/people/${r.id}`) }}
                         >
                           <span className="mt-cp__member-name">{r.name}</span>
                           <span className="mt-cp__member-role">{r.role}</span>
@@ -724,20 +723,24 @@ function MyTeam() {
                           </Tooltip>
                         ) : (
                           /* Nothing overdue is the good news, and a badge is for the row
-                             that needs something doing. A quiet zero keeps the column a
-                             column — a blank cell would read as missing data. */
-                          <span className="mt-cp__overdue">0</span>
+                             that needs something doing. The dash is the same glyph the
+                             Courses column uses for nothing-to-show, so the two empty
+                             states read alike instead of one being a countable zero. */
+                          <span className="mt-cp__status-dash">–</span>
                         )}
                       </div>
                       {/* The count is a disclosure control, not a label — an outlined
                           box + trailing chevron so it reads as "opens something"
-                          without a hover (Figma 10837:17669). */}
+                          without a hover (Figma 10837:17669). The chevron points
+                          right because that is where the view goes: a down chevron
+                          is the accordion convention and promises the row expands
+                          in place, but this opens the drawer in from the right. */}
                       <div className="mt-cp__table-cell mt-cp__table-cell--metric">
                         {coursesTotal(r) > 0 ? (
                           <Button
                             variant="outlined-2"
                             size="sm"
-                            trailingIcon={<ArrowDown2 size={16} color="currentColor" variant="Linear" />}
+                            trailingIcon={<ArrowRight2 size={12} color="var(--text-secondary)" variant="Linear" />}
                             onClick={() => setDrawerMemberId(r.id)}
                             aria-label={`View ${coursesTotal(r)} course${coursesTotal(r) === 1 ? '' : 's'} for ${r.name}`}
                           >

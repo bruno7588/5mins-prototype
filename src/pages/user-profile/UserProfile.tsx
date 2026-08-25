@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus } from 'iconsax-react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle, ShieldSecurity } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -15,7 +15,8 @@ import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDa
 import EditStartDateModal, { type StartDateChange } from './components/EditStartDateModal/EditStartDateModal'
 import GiveAnotherAttemptModal from './components/GiveAnotherAttemptModal/GiveAnotherAttemptModal'
 import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
-import { teamProfiles } from '../my-team/MyTeam'
+import ProfileMenu from '@/components/ProfileMenu/ProfileMenu'
+import { Logo, learnerSideItems, teamProfiles } from '../my-team/MyTeam'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
 import avatarBrenda from '../../assets/avatars/avatar-2.jpg'
@@ -287,11 +288,13 @@ function ProgressCell({ value }: { value: number }) {
 function UserProfile() {
   const navigate = useNavigate()
   const { id = '1' } = useParams<{ id: string }>()
-  /* Two doors into this page: the admin People table (numeric ids) and a
-     manager's My Team rows (`m*` ids). The breadcrumb goes back to whichever
-     one the id came from — People is a dead end for a manager who never
-     started there. */
-  const fromMyTeam = id in teamProfiles
+  /* Two doors into this page, and the route says which one the visitor came
+     through: /people/:id from the admin People table, /my-team/people/:id from
+     a manager's team list. That decides both the chrome the page wears and
+     where its breadcrumb goes back to — a manager who never left the learner
+     app should not land in the admin side by clicking a name. Either route
+     resolves either roster, so a pasted link still finds its person. */
+  const isLearnerView = useLocation().pathname.startsWith('/my-team')
   const person = PEOPLE[id] ?? teamProfiles[id] ?? PEOPLE['1']
 
   const [activeTab, setActiveTab] = useState<Tab>('Course Progress')
@@ -568,20 +571,23 @@ function UserProfile() {
     },
   ]
 
-  return (
-    <div className="up-layout">
-      <LeftSidebar />
-      <main className="up-main">
-        <div className="up-page">
-          <Breadcrumb
-            className="up-breadcrumb"
-            items={[
-              fromMyTeam
-                ? { label: 'My Team', onClick: () => navigate('/my-team') }
-                : { label: 'People', onClick: () => navigate('/people') },
-              { label: person.name },
-            ]}
-          />
+  /* The same profile, rendered in whichever shell the route belongs to — admin
+     chrome under /people/:id, the learner chrome under /my-team/people/:id.
+     .mt-body already pads, so the page drops its own padding inside it. */
+  const page = (
+        <div className={`up-page${isLearnerView ? ' up-page--in-shell' : ''}`}>
+          {/* Admin only. In the learner shell the lit My Team item in the side
+              panel is already the way back, so a trail saying the same thing is
+              a second answer to a question nobody asked. */}
+          {!isLearnerView && (
+            <Breadcrumb
+              className="up-breadcrumb"
+              items={[
+                { label: 'People', onClick: () => navigate('/people') },
+                { label: person.name },
+              ]}
+            />
+          )}
 
           {/* Profile header — divider sits between the headline and the tabs (per headers.md) */}
           <header className="up-header">
@@ -676,8 +682,10 @@ function UserProfile() {
             />
           )}
         </div>
-      </main>
+  )
 
+  const overlays = (
+    <>
       {/* Always mounted — the bar shows/hides itself off `count` so it can animate out. */}
       <BulkActionBar count={selected.size} onClear={() => setSelected(new Set())}>
         <RowActionsMenu
@@ -733,6 +741,83 @@ function UserProfile() {
       )}
 
       <ToastContainer toasts={toasts} />
+    </>
+  )
+
+  if (isLearnerView) {
+    return (
+      <div className="mt-app">
+        <header className="mt-topnav">
+          <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
+            <Logo size={22} />
+          </button>
+          <div className="mt-topnav__right">
+            <button type="button" className="mt-topnav__textbtn ui-disabled" disabled>
+              <Mobile size={20} color="var(--text-secondary)" variant="Linear" />
+              <span>Get App</span>
+            </button>
+            <button type="button" className="mt-topnav__outlinebtn ui-disabled" disabled>
+              <Add size={20} color="var(--text-primary)" variant="Linear" />
+              <span>Create</span>
+            </button>
+            <div className="mt-topnav__icons">
+              <button type="button" className="mt-topnav__iconbtn ui-disabled" aria-label="Notifications (coming soon)" disabled>
+                <FlashCircle size={24} color="var(--text-primary)" variant="Linear" />
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <div className="mt-main">
+          <aside className="mt-side">
+            <nav className="mt-side__menu">
+              {learnerSideItems.map(({ label, icon: Icon, path }) => {
+                /* My Team stays lit while the manager is on one of its profiles —
+                   the profile is a level below the tab, not a sibling of it. */
+                const isActive = path === '/my-team'
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    className={`mt-side__item${isActive ? ' mt-side__item--active' : ''}`}
+                    onClick={path ? () => navigate(path) : undefined}
+                  >
+                    <Icon size={24} color={isActive ? 'var(--selected)' : 'var(--text-secondary)'} variant="Bold" />
+                    <span>{label}</span>
+                  </button>
+                )
+              })}
+              <button
+                type="button"
+                className="mt-side__item"
+                onClick={() => navigate('/content-library')}
+              >
+                <ShieldSecurity size={24} color="var(--text-secondary)" variant="Bold" />
+                <span>Admin</span>
+              </button>
+            </nav>
+
+            <ProfileMenu />
+
+            <div className="mt-side__powered">
+              <span>Powered by</span>
+              <Logo size={12} />
+            </div>
+          </aside>
+
+          <section className="mt-body">{page}</section>
+        </div>
+
+        {overlays}
+      </div>
+    )
+  }
+
+  return (
+    <div className="up-layout">
+      <LeftSidebar />
+      <main className="up-main">{page}</main>
+      {overlays}
     </div>
   )
 }

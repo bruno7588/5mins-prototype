@@ -64,6 +64,9 @@ function App() {
       <Route path="/mobile" element={<MobileApp />} />
       <Route path="/quiz-lab" element={<QuizLab />} />
       <Route path="/my-team" element={<MyTeam />} />
+      {/* A learner profile opened from My Team — top-level so it keeps the
+          learner shell instead of picking up the admin TopNav below. */}
+      <Route path="/my-team/people/:id" element={<UserProfile />} />
       <Route path="/workspace" element={<Workspace />} />
       <Route path="/for-you" element={<ForYou />} />
       {/* Program Builder — standalone full-page, no TopNav (ranks above /programs/:id) */}

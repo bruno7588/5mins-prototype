@@ -301,3 +301,8 @@
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
+
+/* Inside the learner shell the page sits in .mt-body, which already pads. */
+.up-page--in-shell {
+  padding: 0;
+}
