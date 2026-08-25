@@ -27,11 +27,6 @@
   gap: var(--space-m);
 }
 
-.gen-drawer__field-heading {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
 
 /* Type comes from the DS scale via .h4 / .text-md on the elements themselves —
    the sub-header is H4 and its description is Text M regular (Figma 9155:41921). */
@@ -41,11 +36,13 @@
 }
 
 
-.gen-drawer__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-}
+
+
+
+
+
+
+
 
 .gen-drawer__footer {
   display: flex;

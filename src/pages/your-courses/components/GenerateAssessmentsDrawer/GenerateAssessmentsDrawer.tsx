@@ -3,9 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Add, Danger } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
-import Chip from '@/components/Chip/Chip'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
-import { assessmentTypeIcon } from '../assessmentTypeIcons'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
@@ -14,7 +12,6 @@ import SparkleIcon from '@/components/icons/SparkleIcon'
 import QuizIllustration from '@/components/icons/QuizIllustration'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
 import {
-  ASSESSMENT_TYPES,
   typeLabel,
   type CoverageReport,
   type GeneratableType,
@@ -81,10 +78,10 @@ const COPY: Record<
   {
     noun: string
     title: string
-    /** The format picker's heading. Absent where there is no picker. */
-    typesLabel?: string
-    typesHelper?: string
     callout: string
+    /** Names what the one free-text field can steer, so it reads as a lever rather
+     *  than a comment box. */
+    instructionsPlaceholder: string
     emptyBody: string
     cta: string
   }
@@ -92,11 +89,10 @@ const COPY: Record<
   assessments: {
     noun: 'assessments',
     title: 'Create Assessments with AI',
-    typesLabel: 'What kind of assessments do you want to create?',
-    typesHelper: "Pick the types you want. You'll get one assessment of each.",
     callout:
-      'AI writes one assessment of each type you pick, using your lessons, links and ' +
-      'resources. They are added to your course content as separate assessments.',
+      'AI reads your lessons, links and resources and writes the assessments it thinks ' +
+      'fit the course. You review every one before it lands on your course content.',
+    instructionsPlaceholder: 'Types of assessment to use, tone, anything to avoid…',
     emptyBody:
       'Assessments are created using the course material. By adding lessons, links, or resources, AI will generate assessments based on that content.',
     cta: 'Generate Assessments',
@@ -106,6 +102,7 @@ const COPY: Record<
     title: 'Create Situational Test with AI',
     callout:
       'Written from your lessons, links and resources. AI picks the question formats, and you can change them when you review the draft.',
+    instructionsPlaceholder: 'Tone, constraints, anything to avoid…',
     emptyBody:
       'Situational tests are created using the course material. By adding lessons, links, or resources, AI will generate a tailored situational test based on that content.',
     cta: 'Generate Situational Test',
@@ -113,13 +110,18 @@ const COPY: Record<
 }
 
 /**
- * Picks what the generator should write, then hands off (DES-279 FR-02). The admin
- * chooses the formats; how many of each is the generator's call, so there is no
- * quantity control here.
+ * Hands the course to the generator and gets out of the way (DES-279 FR-02, revised).
  *
- * Opened from either rail group. The assessments scope offers its eight formats as
- * chips; the situational scope has only one format, so it has nothing to pick and
- * shows no picker.
+ * There is no picker in either scope. The generator reads the transcripts and decides
+ * which formats fit and how many to write; the admin's lever is a sentence, not a form.
+ * FR-02 originally had the admin choose the types up front — that asked for a decision
+ * they could not make until they had seen what came back, and the review is where the
+ * set actually gets shaped (remove one, regenerate one, regenerate the lot).
+ *
+ * A short-lived version of this screen carried a mode switch and a count per format.
+ * Both are gone: a spec the admin cannot evaluate is worse than a steer they can write
+ * in their own words, and the prompt says things a chip and a number never could
+ * ("keep them scenario-based", "focus on the escalation policy").
  *
  * The wait happens here too: Generate swaps the form for the working card and the
  * drawer holds until the drafts land on the outline behind it.
@@ -128,18 +130,7 @@ function GenerateAssessmentsDrawer({
   scope, coverage, onClose, onGenerate, onAddLessons,
   generating = null, review = null, assessmentReview = null,
 }: Props) {
-  const questionTypes = ASSESSMENT_TYPES
   const copy = COPY[scope]
-
-  /* Only the assessments scope picks formats. A situational test is one artefact
-     built from whatever the content supports, so V1 lets the generator choose the
-     formats and the admin change them in the review — a picker there asked for a
-     decision before there was anything to decide it against. */
-  const picksFormats = scope === 'assessments'
-
-  /* Nothing selected to start. Chips are a choice the admin makes, and eight
-     pre-filled ones read as a wall of amber rather than something to pick from. */
-  const [selected, setSelected] = useState<GeneratableType[]>([])
 
   /* The situational prompt. Both free text, both optional — what the admin knows
      about the audience and how the test should read, which the course content
@@ -152,27 +143,18 @@ function GenerateAssessmentsDrawer({
   const skipped = coverage.withoutTranscript.length
   const total = readable + skipped
 
-  const toggle = (type: GeneratableType) =>
-    setSelected((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
-    )
-
-  /* Same button either scope; only where it sits differs. The picker gates the
-     assessments scope: nothing chosen, nothing to write. The situational prompt gates
-     nothing — both its fields are optional, so Generate is ready from the moment the
-     drawer opens. */
+  /* Same button, same place, either scope. Nothing gates it: every field is optional,
+     and an empty form is a complete answer — it means "read the course and decide".
+     The empty type list is how the generator is told the composition is its call. */
   const generateButton = (
     <Button
       semantic="ai"
       icon={<SparkleIcon size={20} color="currentColor" />}
-      disabled={picksFormats && selected.length === 0}
       onClick={() =>
-        picksFormats
-          ? onGenerate(selected)
-          : onGenerate([], {
-              audience: audience.trim() || undefined,
-              instructions: instructions.trim() || undefined,
-            })
+        onGenerate([], {
+          audience: audience.trim() || undefined,
+          instructions: instructions.trim() || undefined,
+        })
       }
     >
       {copy.cta}
@@ -346,75 +328,50 @@ function GenerateAssessmentsDrawer({
           />
         )}
 
-        {picksFormats ? (
-          <div className="gen-drawer__field">
-            <div className="gen-drawer__field-heading">
-              <h3 className="h4">{copy.typesLabel}</h3>
-              <p className="text-md gen-drawer__helper">{copy.typesHelper}</p>
-            </div>
-            <div className="gen-drawer__chips">
-              {questionTypes.map((type) => {
-                const isOn = selected.includes(type)
-                return (
-                  <Chip
-                    key={type}
-                    label={typeLabel(type)}
-                    selected={isOn}
-                    /* Same glyph the Add Content rail uses for this format, so the
-                       format is recognised rather than re-read. */
-                    customIconLeft={assessmentTypeIcon(type, { size: 16, active: isOn })}
-                    onClick={() => toggle(type)}
-                  />
-                )
-              })}
-            </div>
+        {/* Who the scenarios are written for. Situational only — a set of assessments is
+            written for whoever the course is, and a second optional field to say so was
+            one more thing to skip past. */}
+        {scope === 'situational' && (
+          <div className="gen-drawer__field gen-drawer__field--prompt">
+            <label className="gen-drawer__label" htmlFor="gen-audience">
+              Audience <span className="gen-drawer__label-optional">(optional)</span>
+            </label>
+            <input
+              id="gen-audience"
+              type="text"
+              className="gen-drawer__input"
+              placeholder="Front-of-house staff in their first month"
+              value={audience}
+              onChange={(e) => setAudience(e.target.value)}
+            />
           </div>
-        ) : (
-          <>
-            {/* Who the scenarios are written for. Optional: with nothing here the
-                generator writes for whoever the course is written for. */}
-            <div className="gen-drawer__field gen-drawer__field--prompt">
-              <label className="gen-drawer__label" htmlFor="gen-audience">
-                Audience <span className="gen-drawer__label-optional">(optional)</span>
-              </label>
-              <input
-                id="gen-audience"
-                type="text"
-                className="gen-drawer__input"
-                placeholder="Front-of-house staff in their first month"
-                value={audience}
-                onChange={(e) => setAudience(e.target.value)}
-              />
-            </div>
-
-            {/* The steer the format picker used to be: not which formats, but how the
-                test should read. */}
-            <div className="gen-drawer__field gen-drawer__field--prompt">
-              <label className="gen-drawer__label" htmlFor="gen-instructions">
-                Instructions <span className="gen-drawer__label-optional">(optional)</span>
-              </label>
-              <textarea
-                id="gen-instructions"
-                className="gen-drawer__textarea"
-                rows={3}
-                placeholder="Tone, constraints, anything to avoid…"
-                value={instructions}
-                onChange={(e) => setInstructions(e.target.value)}
-              />
-            </div>
-
-            {/* Directly under the last field rather than in the footer. Both fields are
-                optional and nothing gates the button, so it belongs at the end of what it
-                reads rather than parked at the bottom of the drawer with empty space
-                between — an admin who fills in neither still meets it straight away. */}
-            <div className="gen-drawer__prompt-cta">{generateButton}</div>
-          </>
         )}
-      </div>
 
-      {/* Assessments only. Its chips gate the button, so it stays where a form's submit
-          belongs; the situational scope has shown its own above. */}
-      {picksFormats && <div className="gen-drawer__footer">{generateButton}</div>}
+        {/* The only lever either scope has. The format picker used to stand here for
+            assessments — eight chips and a count each — and it asked for a decision the
+            admin could not make until they had seen what came back. The generator reads
+            the course and picks the formats it thinks fit; this is where anything it
+            cannot infer goes, in the words the admin would have used anyway. */}
+        <div className="gen-drawer__field gen-drawer__field--prompt">
+          <label className="gen-drawer__label" htmlFor="gen-instructions">
+            Instructions <span className="gen-drawer__label-optional">(optional)</span>
+          </label>
+          <textarea
+            id="gen-instructions"
+            className="gen-drawer__textarea"
+            rows={3}
+            placeholder={copy.instructionsPlaceholder}
+            value={instructions}
+            onChange={(e) => setInstructions(e.target.value)}
+          />
+        </div>
+
+        {/* Directly under the last field rather than in the footer. Every field is
+            optional and nothing gates the button, so it belongs at the end of what it
+            reads rather than parked at the bottom of the drawer with empty space
+            between — an admin who fills in nothing still meets it straight away. */}
+        <div className="gen-drawer__prompt-cta">{generateButton}</div>
+      </div>
     </>
   )
 }

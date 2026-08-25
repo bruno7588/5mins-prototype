@@ -569,10 +569,32 @@ const toQuestion = (format: GeneratableType, beat: Beat): GeneratedQuestion => (
 })
 
 /**
- * A full set: one assessment for each type the admin selected, written from the
- * transcribed lessons. The count is the pick — three chips, three assessments — so the
- * admin can predict what lands on the outline before pressing the button. Lessons are
- * dealt round the set rather than each producing questions of their own.
+ * What the generator writes when the admin lets it decide — the auto half of the mode
+ * switch, and the path most admins take.
+ *
+ * Volume follows the reading: one assessment per lesson, floored at 3 so a one-lesson
+ * course still gets a set worth reviewing, and capped at 8 so a long course does not
+ * bury the outline in drafts the admin has to curate one by one.
+ *
+ * Formats cycle through ASSESSMENT_TYPES, which is ordered most-reached-for first — so
+ * a short course gets the formats admins actually use, and a longer one earns the
+ * rarer ones rather than opening with them.
+ *
+ * Returned expanded rather than as counts because that is what generateSet consumes:
+ * one entry, one assessment. A repeated type is simply more of it.
+ */
+export function autoPlan(lessons: TranscriptSource[]): GeneratableType[] {
+  if (lessons.length === 0) return []
+  const count = Math.min(Math.max(lessons.length, 3), 8)
+  return Array.from({ length: count }, (_, i) => ASSESSMENT_TYPES[i % ASSESSMENT_TYPES.length])
+}
+
+/**
+ * A full set: one assessment for each entry in `types`, written from the transcribed
+ * lessons. The list is already expanded — a type repeated three times is three
+ * assessments of it — so the admin can predict what lands on the outline before
+ * pressing the button. Lessons are dealt round the set rather than each producing
+ * questions of their own.
  */
 export function generateSet(
   types: GeneratableType[],
@@ -589,7 +611,10 @@ export function generateSet(
   const perLesson = types.filter(
     (t): t is Exclude<GeneratableType, 'situational-test'> => t !== 'situational-test',
   )
-  /* One per format, which is also why nothing here guards against writing the same
-     question twice: no two cards in a set can be the same type. */
+  /* One card per entry, and the list is allowed to name a format twice — autoPlan does
+     not today (it caps at the eight formats before it would wrap), but nothing here
+     depends on that. If it ever does repeat, the lesson index is what keeps the copies
+     apart: each is written from the next lesson round the deal rather than all of them
+     from the first. */
   return perLesson.map((type, i) => generateOne(type, lessons[i % lessons.length]))
 }

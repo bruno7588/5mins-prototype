@@ -30,6 +30,7 @@ import {
 } from '@/data/interactiveQuestions'
 import {
   TYPES_BY_SCOPE,
+  autoPlan,
   generateSet,
   generateSituationalTest,
   transcriptCoverage,
@@ -576,7 +577,15 @@ function CreateCourse() {
     return items
   }
 
-  const startRun = (types: GeneratableType[], prompt: GenerationPrompt = {}) => {
+  const startRun = (requested: GeneratableType[], prompt: GenerationPrompt = {}) => {
+    /* An empty list from the assessments drawer is the admin handing the decision over,
+       not an empty request — the button is only reachable that way in "AI decides". What
+       gets written is the generator's call, so it is made here rather than in the drawer
+       that asked. Manual arrives already expanded and passes straight through. */
+    const types =
+      generationScope === 'assessments' && requested.length === 0
+        ? autoPlan(coverage.withTranscript)
+        : requested
     setPickedFormats(types)
     setPickedPrompt(prompt)
     /* The working card lives in the drawer, so both routes in — the first generation
