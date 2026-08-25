@@ -64,8 +64,9 @@
   flex-shrink: 0;
 }
 
-/* One size throughout the card; colour is what separates the three kinds of line. The
-   pass itself is primary — it is the thing being said. */
+/* One size throughout the card; colour and weight are what separate the kinds of line.
+   The pass being said is primary — the running one and, at the end, the one the card has
+   arrived at. */
 .ai-working-step__text {
   font-size: 14px;
   font-weight: 400;
@@ -77,6 +78,16 @@
    now, beside the only glyph that is moving. */
 .ai-working-step__text--active {
   font-weight: 500;
+}
+
+/* A pass the work has left steps back to tertiary. It stays on the card as the record of
+   what happened, but it is no longer the line to read, so it stops competing with the one
+   that is. The green tick, not the colour, is what says it succeeded.
+
+   Only passes behind the work — the terminal "all done" line is the card's conclusion and
+   keeps primary. */
+.ai-working-step__text--done {
+  color: var(--text-tertiary);
 }
 
 

@@ -46,6 +46,10 @@ function AIWorkingCard({ steps, activeStep, detail, className = '' }: AIWorkingC
              be "in progress" for. */
           const done = i < activeStep || (i === activeStep && isLast)
           const active = i === activeStep && !isLast
+          /* Ticked *and* behind the work. The terminal step is `done` too, but it is the
+             line the card has arrived at rather than a pass the work has left, so it
+             keeps its colour instead of receding with the others. */
+          const past = i < activeStep
           return (
             /* Layout is what makes the card grow rather than jump: a new pass pushes the
                rows under it — and everything under the card — instead of teleporting them
@@ -85,7 +89,7 @@ function AIWorkingCard({ steps, activeStep, detail, className = '' }: AIWorkingC
                 )}
               </span>
               <span
-                className={`ai-working-step__text${active ? ' ai-working-step__text--active' : ''}`}
+                className={`ai-working-step__text${active ? ' ai-working-step__text--active' : ''}${past ? ' ai-working-step__text--done' : ''}`}
               >
                 {label}
                 {active && detail && (
