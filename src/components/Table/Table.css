@@ -218,10 +218,18 @@
    narrowed cell, getting clipped mid-word instead of truncated. */
 .tbl-stack .primary {
   max-width: 100%;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Semibold is what separates a primary line from the supporting one under it,
+   so it only applies when there is something to separate from. A lone line in a
+   cell is body text and takes Regular — otherwise every one-line cell reads as
+   emphasised against nothing. */
+.tbl-stack:has(.supporting) .primary {
+  font-weight: 600;
 }
 
 .tbl-stack .supporting {
