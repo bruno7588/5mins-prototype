@@ -82,7 +82,7 @@ All combinable per the Figma variant axes; gaps are the load-bearing detail:
 | **Skill icon** | 20px illustration (see skill card) | 8px |
 | **Checkbox** | 32px checkbox (see `selection-controls.md`) — multi-select lists | 8px |
 | **Radio** | 24px radio — single-select lists | 8px |
-| **Supporting text** | second line, Regular 14 `--text-secondary`; the label becomes **Medium 14**; 2px column gap | — |
+| **Supporting text** | second line, Regular 14 `--text-secondary`; the label becomes **Semibold 14** (Paragraph M semibold — the same primary-over-supporting pair as a table cell, see `typography.md`); 2px column gap | — |
 | **Search** | an embedded search field as the first item: 240px, `--input-background` fill, radius 12, `8px 12px` padding, 18px icon, placeholder `--text-disabled` | — |
 
 Item heights for reference: 37px plain · 40px with avatar/radio · ~60–62px with supporting text · 53px search row.

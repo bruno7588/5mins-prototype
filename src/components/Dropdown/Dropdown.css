@@ -147,11 +147,19 @@
   background: var(--cards-background-hover);
 }
 
+/* Bold on the amber, per the selected-fill rule chips and switcher segments already
+   follow (colors.md: --secondary-500 always carries Bold --neutral-800). Stated on the
+   label too, or the supporting-text row's Semibold would win on the child span and the
+   selected row would come out lighter than an unselected one. */
+.dropdown-option.is-selected .dropdown-option__label {
+  font-weight: 700;
+}
+
 .dropdown-option.is-selected,
 .dropdown-option.is-selected:hover:not(:disabled) {
   background: var(--secondary-500);
   color: var(--text-on-selected);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .dropdown-option.is-disabled,
@@ -168,10 +176,11 @@
   min-width: 0;
 }
 
-/* Supporting-text rows (listbox.md slot matrix): supporting is Regular 14 and
-   the label goes Medium 14, so the two lines separate on weight, not size. */
+/* Supporting-text rows (listbox.md slot matrix): supporting is Regular 14 and the
+   label goes Semibold 14 — the same primary-over-supporting pair the table cells use,
+   so the two lines separate on weight rather than size. */
 .dropdown-option__text.is-rich .dropdown-option__label {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .dropdown-option__desc {
@@ -179,7 +188,11 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
-  white-space: nowrap;
+  /* Wraps rather than runs on. The menu sizes to max-content by default, where the
+     description never needs a second line and this changes nothing — but a menu given a
+     width (see .mt-cp__scope-menu) had the description overflow the panel instead of
+     folding under itself, which is what nowrap does once the room runs out. */
+  white-space: normal;
 }
 
 .dropdown-option.is-selected .dropdown-option__desc {

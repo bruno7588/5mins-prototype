@@ -15,6 +15,7 @@ import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDa
 import EditStartDateModal, { type StartDateChange } from './components/EditStartDateModal/EditStartDateModal'
 import GiveAnotherAttemptModal from './components/GiveAnotherAttemptModal/GiveAnotherAttemptModal'
 import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
+import { teamProfiles } from '../my-team/MyTeam'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import avatarAnthonny from '../../assets/avatars/avatar-1.jpg'
 import avatarBrenda from '../../assets/avatars/avatar-2.jpg'
@@ -286,7 +287,12 @@ function ProgressCell({ value }: { value: number }) {
 function UserProfile() {
   const navigate = useNavigate()
   const { id = '1' } = useParams<{ id: string }>()
-  const person = PEOPLE[id] ?? PEOPLE['1']
+  /* Two doors into this page: the admin People table (numeric ids) and a
+     manager's My Team rows (`m*` ids). The breadcrumb goes back to whichever
+     one the id came from — People is a dead end for a manager who never
+     started there. */
+  const fromMyTeam = id in teamProfiles
+  const person = PEOPLE[id] ?? teamProfiles[id] ?? PEOPLE['1']
 
   const [activeTab, setActiveTab] = useState<Tab>('Course Progress')
   // Due dates are editable via the bulk actions, so the list is state, not the const.
@@ -570,7 +576,9 @@ function UserProfile() {
           <Breadcrumb
             className="up-breadcrumb"
             items={[
-              { label: 'People', onClick: () => navigate('/people') },
+              fromMyTeam
+                ? { label: 'My Team', onClick: () => navigate('/my-team') }
+                : { label: 'People', onClick: () => navigate('/people') },
               { label: person.name },
             ]}
           />

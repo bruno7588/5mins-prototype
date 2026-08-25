@@ -21,13 +21,13 @@ import {
   ArrowUp,
   ArrowLeft2,
   ArrowRight2,
-  Sort,
 } from 'iconsax-react'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Search from '../../components/Search/Search'
 import Checkbox from '../../components/Checkbox/Checkbox'
+import Badge from '../../components/Badge/Badge'
 import ContentSwitcher from '../../components/ContentSwitcher/ContentSwitcher'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -119,13 +119,6 @@ type TeamMember = {
   lastReminderSentAt?: string  // ISO date of the most recent reminder sent to this member
 }
 
-/* Tracker status filter — names and semantics match the four stat cards above
-   the table, which read off the same TeamMember buckets. These are predicates,
-   not exclusive buckets: someone Overdue is usually also In progress. That is
-   fine here — the tracker has no Status column that would have to agree with a
-   single answer. Completed is the one that isn't "has at least one": on a list
-   of people it has to mean "nothing outstanding", or it matches everybody. */
-type TeamStatusFilter = 'all' | 'overdue' | 'at-risk' | 'in-progress' | 'completed'
 
 const CURRENT_USER_ID = 'me'
 const CURRENT_USER_NAME = 'Alex Morgan'
@@ -244,6 +237,18 @@ const team: TeamMember[] = [
   { id: 'm17', name: 'Luke Patterson',  role: 'Host',                       initials: 'LP', managerIds: ['m7'], overdue: 0, atRisk: 2, inProgress: 1, completed: 5, overallProgress: 76 },
 ]
 
+/* Clicking a name opens the same profile page the admin People table opens
+   (/people/:id), but a manager's reports aren't in the People roster — so the
+   profile resolves them from here, derived off `team` so the two can't drift. */
+export const teamProfiles: Record<string, { name: string; role: string; email: string; avatar: string; avatarImg?: string }> =
+  Object.fromEntries(team.map((m) => [m.id, {
+    name: m.name,
+    role: m.role,
+    email: `${m.name.toLowerCase().replace(/\s+/g, '.')}@email.com`,
+    avatar: m.initials,
+    avatarImg: m.avatarSrc,
+  }]))
+
 export const learnerSideItems: { label: string; icon: typeof Home2; path?: string }[] = [
   { label: 'For You', icon: Home2, path: '/for-you' },
   { label: 'Your Workspace', icon: Profile2User, path: '/workspace' },
@@ -267,12 +272,13 @@ function MyTeam() {
   const toast = useToast()
 
   const lastSentFor = (m: TeamMember) => sentMap[m.id] ?? m.lastReminderSentAt
-  // Default: progress ascending — the members furthest behind first
-  const [sortKey, setSortKey] = useState<'courses' | 'progress'>('progress')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  /* Default: most overdue first. The tab exists to answer "who needs chasing", and
+     that is the column that answers it — so the table opens on it rather than making
+     the manager sort their way to the question they came with. */
+  const [sortKey, setSortKey] = useState<'overdue' | 'courses' | 'progress'>('overdue')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   const [courseFilter, setCourseFilter] = useState<'all' | 'compliance'>('all')
   const [scopeFilter, setScopeFilter] = useState<string>('direct')
-  const [statusFilter, setStatusFilter] = useState<TeamStatusFilter>('all')
   const [page, setPage] = useState(1)
   const [currentTab, setCurrentTab] = useState<'course-tracker' | 'engagement' | 'learning-records'>('course-tracker')
 
@@ -287,17 +293,10 @@ function MyTeam() {
   const showReportsTo = scopeFilter !== 'direct'
   const scopeOptions: DropdownOption[] = [
     { value: 'direct', label: 'Direct reports', description: 'Team members who report to you' },
-    { value: 'all', label: 'All reports', description: 'Includes indirect reports from each manager under you' },
-  ]
-  const statusOptions: DropdownOption[] = [
-    { value: 'all', label: 'Status: All' },
-    { value: 'overdue', label: 'Overdue' },
-    { value: 'at-risk', label: 'At risk' },
-    { value: 'in-progress', label: 'In progress' },
-    { value: 'completed', label: 'Completed' },
+    { value: 'all', label: 'My organisation', description: 'Includes indirect reports from each manager under you' },
   ]
 
-  const toggleSort = (key: 'courses' | 'progress') => {
+  const toggleSort = (key: 'overdue' | 'courses' | 'progress') => {
     if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
     else {
       setSortKey(key)
@@ -322,22 +321,18 @@ function MyTeam() {
           completed: Math.floor(r.completed / 2),
         }))
       : base
-    const statusScoped = statusFilter === 'all'
-      ? scaled
-      : scaled.filter((r) => {
-          if (statusFilter === 'overdue') return r.overdue > 0
-          if (statusFilter === 'at-risk') return r.atRisk > 0
-          if (statusFilter === 'in-progress') return r.inProgress > 0
-          return r.overdue + r.atRisk + r.inProgress === 0 && r.completed > 0
-        })
-    const sorted = [...statusScoped].sort((a, b) => {
+    const sorted = [...scaled].sort((a, b) => {
       let diff = 0
-      if (sortKey === 'courses') diff = coursesTotal(a) - coursesTotal(b)
+      if (sortKey === 'overdue') diff = a.overdue - b.overdue
+      else if (sortKey === 'courses') diff = coursesTotal(a) - coursesTotal(b)
       else diff = a.overallProgress - b.overallProgress
+      /* Ties on overdue fall back to who is furthest behind overall, so the top of the
+         table is ordered by how much trouble someone is in rather than alphabetically. */
+      if (diff === 0 && sortKey === 'overdue') diff = b.overallProgress - a.overallProgress
       return sortDir === 'asc' ? diff : -diff
     })
     return sorted
-  }, [searchQuery, sortKey, sortDir, courseFilter, scopeFilter, statusFilter])
+  }, [searchQuery, sortKey, sortDir, courseFilter, scopeFilter])
 
   const totals = useMemo(() => {
     return rows.reduce(
@@ -370,7 +365,7 @@ function MyTeam() {
 
   useEffect(() => {
     setPage(1)
-  }, [searchQuery, courseFilter, scopeFilter, statusFilter, sortKey, sortDir])
+  }, [searchQuery, courseFilter, scopeFilter, sortKey, sortDir])
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const [hasScroll, setHasScroll] = useState(false)
@@ -391,7 +386,12 @@ function MyTeam() {
     }
   }, [showReportsTo])
 
-  const visibleIds = paginatedRows.map((r) => r.id)
+  /* Selecting a row is how a reminder gets sent, so someone at 100% has nothing to be
+     selected for — their checkbox is disabled, and select-all skips them rather than
+     ticking boxes the row itself refuses. A page of finished learners leaves nothing to
+     select, so the header box is disabled too. */
+  const isSelectable = (r: { overallProgress: number }) => r.overallProgress < 100
+  const visibleIds = paginatedRows.filter(isSelectable).map((r) => r.id)
   const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id))
 
   const toggleRow = (id: string) =>
@@ -545,15 +545,11 @@ function MyTeam() {
                     options={scopeOptions}
                     value={scopeFilter}
                     onChange={setScopeFilter}
-                  />
-                </div>
-                <div className="mt-cp__status-filter">
-                  <Dropdown
-                    size="md"
-                    options={statusOptions}
-                    value={statusFilter}
-                    onChange={(v) => setStatusFilter(v as TeamStatusFilter)}
-                    iconLeft={<Sort size={20} color="var(--text-secondary)" variant="Linear" />}
+                    /* The menu is wider than its trigger, so left-aligned it hangs off
+                       the right edge of the toolbar. Anchored to the trigger's right
+                       instead, which is the edge the toolbar itself ends on. */
+                    menuAlign="end"
+                    menuClassName="mt-cp__scope-menu"
                   />
                 </div>
               </div>
@@ -566,7 +562,7 @@ function MyTeam() {
               <div className="mt-cp__table">
                 <div className="mt-cp__table-header">
                   <div className="mt-cp__table-cell mt-cp__table-cell--name">
-                    <Checkbox checked={allVisibleSelected} onChange={toggleAll} />
+                    <Checkbox checked={allVisibleSelected} onChange={toggleAll} disabled={visibleIds.length === 0} />
                     <span className="mt-cp__th-label">Name</span>
                   </div>
                   {showReportsTo && (
@@ -574,6 +570,25 @@ function MyTeam() {
                       <span className="mt-cp__th-label">Reports to</span>
                     </div>
                   )}
+                  <button
+                    type="button"
+                    className="mt-cp__table-cell mt-cp__table-cell--metric mt-cp__th-btn"
+                    onClick={() => toggleSort('overdue')}
+                    aria-label={`Sort by Overdue, currently ${sortKey === 'overdue' ? sortDir : 'unsorted'}`}
+                  >
+                    <Tooltip text="Courses past their due date" position="Top" alignment="Center" icon={false}>
+                      <span className="mt-cp__th-label">Overdue</span>
+                    </Tooltip>
+                    {sortKey === 'overdue' ? (
+                      sortDir === 'asc' ? (
+                        <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
+                      ) : (
+                        <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
+                      )
+                    ) : (
+                      <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
+                    )}
+                  </button>
                   <button
                     type="button"
                     className="mt-cp__table-cell mt-cp__table-cell--metric mt-cp__th-btn"
@@ -638,13 +653,23 @@ function MyTeam() {
                       key={r.id}
                     >
                       <div className="mt-cp__table-cell mt-cp__table-cell--name">
-                        <Checkbox checked={selectedIds.has(r.id)} onChange={() => toggleRow(r.id)} />
+                        <Checkbox
+                          checked={selectedIds.has(r.id)}
+                          onChange={() => toggleRow(r.id)}
+                          disabled={!isSelectable(r)}
+                        />
                         {r.avatarSrc ? (
                           <img className="mt-cp__avatar mt-cp__avatar--img" src={r.avatarSrc} alt="" />
                         ) : (
                           <div className="mt-cp__avatar" aria-hidden="true">{r.initials}</div>
                         )}
-                        <div className="mt-cp__member-info">
+                        <div
+                          className="mt-cp__member-info"
+                          role="link"
+                          tabIndex={0}
+                          onClick={() => navigate(`/people/${r.id}`)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${r.id}`) }}
+                        >
                           <span className="mt-cp__member-name">{r.name}</span>
                           <span className="mt-cp__member-role">{r.role}</span>
                         </div>
@@ -678,6 +703,32 @@ function MyTeam() {
                           </div>
                         )
                       })()}
+                      {/* Overdue leads the metrics because it is what the tab is for:
+                          the number that decides whether this row needs anything doing
+                          about it. A zero is stated rather than dashed — "none overdue"
+                          is the good news, and a dash would read as missing data. */}
+                      <div className="mt-cp__table-cell mt-cp__table-cell--metric">
+                        {r.overdue > 0 ? (
+                          <Tooltip
+                            text={`${r.overdue} course${r.overdue === 1 ? '' : 's'} past its due date`}
+                            position="Top"
+                            alignment="Center"
+                            icon={false}
+                          >
+                            <Badge
+                              type="error"
+                              className="mt-cp__overdue-badge"
+                              customIcon={<span className="mt-cp__overdue-dot" aria-hidden="true" />}
+                              label={String(r.overdue)}
+                            />
+                          </Tooltip>
+                        ) : (
+                          /* Nothing overdue is the good news, and a badge is for the row
+                             that needs something doing. A quiet zero keeps the column a
+                             column — a blank cell would read as missing data. */
+                          <span className="mt-cp__overdue">0</span>
+                        )}
+                      </div>
                       {/* The count is a disclosure control, not a label — an outlined
                           box + trailing chevron so it reads as "opens something"
                           without a hover (Figma 10837:17669). */}
