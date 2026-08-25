@@ -90,7 +90,7 @@
 
 .skill-card__pending-label {
   font-size: 12px;
-  line-height: 1.5;
+  line-height: 1.2;
   color: var(--text-warning);
   white-space: nowrap;
 }

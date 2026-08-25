@@ -49,6 +49,7 @@
   background: var(--input-background-elevated);
   color: var(--text-secondary);
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
 }
 

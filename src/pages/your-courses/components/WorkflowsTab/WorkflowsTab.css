@@ -199,6 +199,7 @@
 
 .course-reminders-row__badge--system {
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   padding: 2px var(--space-s);
   background: var(--input-background);

@@ -14,7 +14,7 @@ Spec source: Figma Library — date field light `11916:6112` / dark `11529:406`,
 ## Anatomy
 
 ```
-Label                        ← optional, Poppins Medium 14
+Label                        ← optional, Poppins Semibold 14
 ┌──────────────────────┐
 │ dd/mm/yyyy       [📅] │    ← trigger field
 └──────────────────────┘
@@ -39,7 +39,7 @@ Radius:   12px       (--radius-sm)
 Gap:      16px between value and icon
 Icon:     calendar, 20px, trailing
 Value:    Poppins Regular 14 — placeholder "dd/mm/yyyy"
-Label:    Poppins Medium 14, var(--text-secondary)
+Label:    Poppins Semibold 14, var(--text-secondary)   (Paragraph M semibold)
 ```
 
 ### States
@@ -96,7 +96,7 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 /* ── Field ── */
 .date-field { display: flex; flex-direction: column; gap: var(--space-s); }
 
-.date-field__label { font: 500 14px/1.5 'Poppins'; color: var(--text-secondary); }
+.date-field__label { font: 600 14px/1.5 'Poppins'; color: var(--text-secondary); }
 
 .date-field__input {
   display: flex; align-items: center; gap: var(--space-m);

@@ -348,6 +348,7 @@
   transform: translateX(-50%);
   padding: 4px 8px;
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   color: var(--neutral-25);
   background: var(--tooltip-background);
@@ -377,6 +378,7 @@
   background: var(--tooltip-background);
   color: var(--neutral-0);
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   border-radius: 6px;
   white-space: nowrap;
@@ -550,6 +552,7 @@
   padding: 4px 10px;
   border-radius: 40px;
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   background: var(--input-background);
   color: var(--text-secondary);
@@ -615,6 +618,7 @@
   padding: 4px 10px;
   border-radius: 40px;
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   background: rgba(255, 187, 56, 0.12);
   color: var(--text-warning);
@@ -706,6 +710,7 @@
   background: var(--tooltip-background);
   color: var(--neutral-0);
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   border-radius: 6px;
   white-space: nowrap;
@@ -1166,6 +1171,7 @@
   background: var(--tooltip-background);
   color: var(--neutral-25);
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   white-space: nowrap;
   border-radius: var(--radius-s);
@@ -1227,6 +1233,7 @@
 
 .roles-panel-helper {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
   font-weight: 400;
 }
@@ -1608,6 +1615,7 @@
 
 .roles-panel-skill-option-cat {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
 }
 
@@ -1618,6 +1626,7 @@
 
 .roles-panel-skill-option-tag {
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   color: var(--text-success);
   background: rgba(24, 169, 87, 0.16);
@@ -1988,7 +1997,7 @@
 /* ─── Function Dropdown ─── */
 .roles-function-dropdown__label {
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;
   line-height: 1.5;

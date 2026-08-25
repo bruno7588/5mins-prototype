@@ -107,7 +107,7 @@
 
 .st-drawer__label {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -351,6 +351,7 @@
 .st-drawer__correct-badge {
   flex-shrink: 0;
   font-size: 12px;
+  line-height: 1.2;
 }
 
 /* Sits inside the option field, hard right. Smaller box than the DS default so it

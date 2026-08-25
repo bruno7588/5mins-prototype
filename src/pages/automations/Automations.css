@@ -686,7 +686,7 @@
 
 .automations-user-name {
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-primary);
   line-height: 1.5;
 }
@@ -695,7 +695,7 @@
   font-size: 12px;
   font-weight: 400;
   color: var(--text-tertiary);
-  line-height: 1.5;
+  line-height: 1.2;
 }
 
 .automations-table-cell--automation {

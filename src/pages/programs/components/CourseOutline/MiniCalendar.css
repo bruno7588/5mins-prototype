@@ -55,6 +55,7 @@
 .mc__weekday {
   text-align: center;
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-secondary);
   padding: 4px 0;
 }

@@ -224,7 +224,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font: 700 12px/1.4 Poppins, sans-serif;
+  font: 700 12px/1.2 Poppins, sans-serif;
   color: var(--text-primary);
 }
 

@@ -141,7 +141,7 @@
   border-radius: var(--radius-full);
   background: var(--button-background-disabled);
   color: var(--text-disabled);
-  font: 500 12px/1.5 'Poppins', sans-serif;
+  font: 500 12px/1.2 'Poppins', sans-serif;
 }
 
 /* CSV export — Outlined-2 (neutral tertiary) per buttons.md */
@@ -319,13 +319,14 @@
   padding: 3px 5px; /* tight pill — 1px more than the base 2px/4px */
   border-radius: var(--radius-full);
   background: var(--page-background-hover);
-  font: 500 12px/1.4 'Poppins', sans-serif;
+  font: 500 12px/1.2 'Poppins', sans-serif;
   color: var(--text-secondary);
   white-space: nowrap;
 }
 
 .audit-actor-name {
   font-size: 14px;
+  font-weight: 600;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -507,6 +508,7 @@
 
 .audit-value-sub {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
 }
 
@@ -781,7 +783,7 @@
   display: grid;
   place-items: center;
   height: 32px;
-  font: 400 12px/1.5 'Poppins', sans-serif;
+  font: 400 12px/1.2 'Poppins', sans-serif;
   color: var(--text-secondary);
 }
 

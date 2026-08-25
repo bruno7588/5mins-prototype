@@ -58,11 +58,11 @@ All component docs are Figma-verified (2026-07, with node refs in each file). **
 
 - **Never improvise design values.** Use only tokens defined in the design system (colors, spacing, radius, font sizes).
 - **Always use semantic tokens over raw palette values.** Prefer `--text-primary` over `--neutral-800`, `--cards-background` over `--neutral-0`, `--border` over `--neutral-100`.
-- **Always use Poppins** as the font family. Weights: 400, 500, 700 only.
+- **Always use Poppins** as the font family. Weights: 400, 500, 600, 700 only.
 - **Always use Iconsax React** for icons. Standard sizes: 16, 20, 24, 32px only.
 - **All spacing must be multiples of 4px.** Use the spacing scale tokens.
 - **Never use `--primary-500` for text on white backgrounds** — it fails WCAG contrast.
-- **Bold (700) is only for headings and buttons.** Medium (500) for subtle emphasis. Regular (400) for body text.
+- **Bold (700) is only for headings and buttons.** Semibold (600) for form-field labels. Medium (500) for subtle emphasis. Regular (400) for body text.
 - **Follow the component patterns exactly** — button pairing, overlay selection, badge type mapping, header hierarchy, table card-row structure (each row a bordered rounded card with a gap between rows, never a gridlined table).
 
 ## Code Style

@@ -53,7 +53,7 @@ interface FileUploaderProps {
 | Padding | `24px` | `16px` |
 | Icon | `40×40px` | `32×32px` |
 | Main gap | `20px` (all states) | `16px` (Filled: `24px`) |
-| Body font | `14px / 1.5` | `12px / 1.2-1.4` |
+| Body font | `14px / 1.5` | `12px / 1.2` |
 | Button font | `14px Bold` | `12px Bold` |
 
 ---

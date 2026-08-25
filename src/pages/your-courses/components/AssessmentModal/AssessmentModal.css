@@ -109,7 +109,7 @@
 
 .assessment-modal-label {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -195,6 +195,7 @@
 .assessment-modal-correct-badge {
   flex-shrink: 0;
   font-size: 12px;
+  line-height: 1.2;
 }
 
 /* Add option button — dashed sibling of an option row */
@@ -323,7 +324,7 @@
   color: var(--neutral-25);
   font-size: 12px;
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.2;
   white-space: nowrap;
   border-radius: var(--radius-s);
 }

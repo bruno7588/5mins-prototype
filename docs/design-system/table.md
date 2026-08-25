@@ -76,7 +76,7 @@ All table text is Poppins, `14px`, `line-height: 1.5`.
 |---|---|---|
 | Header cell | Regular (400) | `--text-secondary` |
 | Data cell (single line) | Regular (400) | `--text-primary` |
-| Primary line of a two-line cell | Medium (500) | `--text-primary` |
+| Primary line of a two-line cell | **Semibold (600)** — Paragraph M semibold | `--text-primary` |
 | Supporting text line | Regular (400) | `--text-secondary` |
 | Date day line | Regular (400), 14px | `--text-primary` |
 | Date year line | Regular (400), 12px | `--text-secondary` |
@@ -111,7 +111,7 @@ Every cell is `flex: 1; display: flex; align-items: center; padding: 8px 12px; m
 | Type | Composition |
 |---|---|
 | Text | single line, `--text-primary` |
-| Text + supporting | two lines: Medium primary + Regular secondary, `2px` gap |
+| Text + supporting | two lines: **Semibold (600)** primary + Regular secondary, `2px` gap |
 | Date | two lines: "Jan 1," (14px) over "2025" (12px secondary) |
 | Text + icon | text + trailing 20px icon, `gap: 12px` |
 | Checkbox | leading 24px checkbox + text, `gap: 12px` (checked fill per `selection-controls.md`) |
@@ -186,7 +186,7 @@ Label format: `"1-10 of 28"`. The footer right-aligns because the table containe
 
 /* Two-line stacks */
 .tbl-stack { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; min-width: 0; }
-.tbl-stack .primary { font-weight: 500; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; }
+.tbl-stack .primary { font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; }
 .tbl-stack .supporting { font-weight: 400; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; }
 
 /* Date */

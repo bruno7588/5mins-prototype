@@ -206,7 +206,7 @@ Two placements supported in the Figma library: **top** (default) and **start** (
 
 ```css
 .dropdown-label {
-  font: 500 14px/1.5 'Poppins', sans-serif;
+  font: 600 14px/1.5 'Poppins', sans-serif; /* Paragraph M semibold — the label weight */
   color: var(--text-secondary);             /* #BFC2CC — Figma value */
 }
 

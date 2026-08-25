@@ -162,9 +162,13 @@ const [password, setPassword] = useState('');
 
 | Element | Font | Weight | Size | Line height |
 |---------|------|--------|------|------------|
-| Label | Poppins | 500 (Medium) | 14px | 1.5 |
+| Label | Poppins | **600 (Semibold)** | 14px | 1.5 |
 | Input text | Poppins | 400 (Regular) | 14px | 1.5 |
 | Helper text | Poppins | 400 (Regular) | 14px | 1.5 |
+
+> **The label is Paragraph M semibold** (Figma `5445:24009`, 2026-08-25) — 14px / 600 / 1.5, `--text-secondary`. This holds for *every* field label in the product, not just `InputField`: dropdowns, date fields, textareas, steppers, and the hand-rolled `<label>` elements in page-local drawers and modals. Never drop back to Medium 500, and never reach for Bold 700 to make a label stand out — 600 is the label weight.
+>
+> Option text inside a radio, checkbox, or toggle row is **not** a field label — that stays Regular 400 (see `selection-controls.md`).
 
 ---
 

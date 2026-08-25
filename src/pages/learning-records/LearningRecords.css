@@ -447,6 +447,7 @@
 .lrp-name-row .badge {
   flex-shrink: 0;
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   padding: 4px 8px;
 }
@@ -482,7 +483,7 @@
   align-items: center;
   min-height: 37px; /* match the control height so the label centers against the input, not the chips */
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-primary);
   line-height: 1.5;
   white-space: nowrap;
@@ -703,7 +704,7 @@
 /* User cell content */
 .lrp-name {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
   line-height: 1.5;
   overflow: hidden;

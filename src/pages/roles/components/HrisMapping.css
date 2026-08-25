@@ -236,12 +236,13 @@
 
 .hris-role-cell__name {
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .hris-role-cell__source {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
 }
 
@@ -345,6 +346,7 @@
   color: var(--text-secondary);
   border-radius: var(--radius-full);
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
@@ -422,6 +424,7 @@
   align-items: center;
   gap: var(--space-s);
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
   padding: var(--space-s) 0;
   font-style: italic;
@@ -516,6 +519,7 @@
 
 .hris-preview-screen__role-card-label {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -529,6 +533,7 @@
 
 .hris-preview-screen__role-card-source {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
 }
 
@@ -545,6 +550,7 @@
 
 .hris-preview-screen__footnote {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
   margin: 0;
   font-style: italic;

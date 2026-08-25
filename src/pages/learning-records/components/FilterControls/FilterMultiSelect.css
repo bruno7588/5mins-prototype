@@ -64,6 +64,7 @@
   padding: 4px 10px;
   gap: var(--space-xs);
   font-size: 12px;
+  line-height: 1.2;
 }
 
 .fms-input {

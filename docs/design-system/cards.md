@@ -341,7 +341,7 @@ Anatomy, top to bottom:
   position: absolute; top: 10px; left: 10px;
   padding: 4px 8px; border-radius: 20px;
   background: var(--badge-new);
-  font: 500 12px/1.5 Poppins; color: #fff;
+  font: 500 12px/1.2 Poppins; color: #fff;
 }
 .badge-due {
   position: absolute; top: 10px; right: 10px;
@@ -377,7 +377,7 @@ Use in the mobile app prototype. Figma-verified 2026-07-13 against the Mobile va
 
 Same anatomy as desktop, scaled down. Container: **272px** wide (fixed — mobile course cards sit in horizontal scrollers), column, `--cards-background`, radius 12px.
 
-- **Image area** 272 x **120** (desktop 300 x 140), top corners rounded 12px, with the 2px 8-segment progress bar flush at the bottom (fill `--selected` gold, empty `--border`). `New` badge top-left at 10px inset (same tokens as desktop: `--badge-new` fill, 4px/8px padding, radius 20px, Medium 12px/1.5 white). Due-date pill top-right at 10px inset: `--cards-background` fill, 6px/12px padding, radius 40px — text drops to Poppins **Regular 12px/1.2** `--text-warning` (desktop uses Medium 14px).
+- **Image area** 272 x **120** (desktop 300 x 140), top corners rounded 12px, with the 2px 8-segment progress bar flush at the bottom (fill `--selected` gold, empty `--border`). `New` badge top-left at 10px inset (same tokens as desktop: `--badge-new` fill, 4px/8px padding, radius 20px, Medium 12px/1.2 white). Due-date pill top-right at 10px inset: `--cards-background` fill, 6px/12px padding, radius 40px — text drops to Poppins **Regular 12px/1.2** `--text-warning` (desktop uses Medium 14px).
 - **Body** **16px padding, 12px gap** (desktop 24px/16px). Title Poppins Bold **14px**/1.5 `--text-primary`, clamped to 3 lines (height 63px). Duration row 8px gap, items 4px icon gap: **14px** play-circle icon + `17 lessons`, 14px clock icon + `20 min`, Poppins Regular **12px/1.2** `--text-secondary`.
 
 ---

@@ -17,8 +17,8 @@
 .dropdown-label {
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
-  font-weight: 500;
-  line-height: 1.4;
+  font-weight: 600;
+  line-height: 1.5;
   color: var(--text-secondary);
 }
 
@@ -69,7 +69,8 @@
 .dropdown-trigger.has-error:hover { border-color: var(--text-error); }
 
 /* Sizes */
-.dropdown-sm .dropdown-trigger { height: 33px; padding: 4px 12px; font-size: 12px; }
+.dropdown-sm .dropdown-trigger { height: 33px; padding: 4px 12px; font-size: 12px;
+ line-height: 1.2; }
 .dropdown-md .dropdown-trigger { height: 41px; padding: 8px 12px;  font-size: 14px; }
 .dropdown-lg .dropdown-trigger { height: 48px; padding: 12px 16px; font-size: 16px; }
 

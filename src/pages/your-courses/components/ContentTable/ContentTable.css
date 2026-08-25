@@ -13,7 +13,7 @@
 
 .content-table-filter-label {
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;
 }
@@ -238,6 +238,7 @@
 
 .content-table-date-stack-year {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
 }
 

@@ -148,16 +148,9 @@
 
 .rd-label {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
-}
-
-/* Field labels in this drawer are bold (700) per Figma 11637:124991 — scoped to
-   the form so the shared InputField/Dropdown defaults are untouched elsewhere. */
-.rd-form .input-field__label,
-.rd-form .dropdown-label {
-  font-weight: 700;
 }
 
 .rd-hint {

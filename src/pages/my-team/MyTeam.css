@@ -538,7 +538,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.2;
   cursor: default;
   transition: background 150ms ease, color 150ms ease;
 }
@@ -936,12 +936,13 @@
 
 .mt-cp__member-name {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .mt-cp__member-role {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-secondary);
 }
 

@@ -617,7 +617,7 @@
 
 .people-name {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -929,7 +929,7 @@
 
 .confirm-modal-label {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
   text-align: left;

@@ -1,6 +1,6 @@
 ---
 name: 5mins-typography
-description: Typography system for 5Mins.ai — Poppins type scale (6 heading levels, body and button sizes), weights 400/500/700 only, line heights, and text color pairing rules. Use for any font-size, weight, or text-style decision.
+description: Typography system for 5Mins.ai — Poppins type scale (6 heading levels, body and button sizes), weights 400/500/600/700, line heights, and text color pairing rules. Use for any font-size, weight, or text-style decision.
 ---
 
 # 5Mins.ai Typography System
@@ -14,8 +14,10 @@ Complete typography guidelines for 5Mins.ai using Poppins font family with a cle
 ## Font Family
 
 **Primary Font:** Poppins (Google Fonts)
-- **Weights:** 400 (Regular), 500 (Medium), 700 (Bold)
+- **Weights:** 400 (Regular), 500 (Medium), 600 (Semibold), 700 (Bold)
 - **Fallback:** System fonts (-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif)
+
+> **Every 12px text style has a 120% line height** — H6, Paragraph S, badges, tooltips, captions. **The one exception is Button S, which stays at 140%** so the Small button holds its 33px height. 16px and 14px stay at 150%.
 
 ```css
 font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
@@ -32,19 +34,31 @@ font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
 | **H3** | 20px (1.25rem) | 1.5 | Subsection headers |
 | **H4** | 16px (1rem) | 1.5 | Component titles, card headers |
 | **H5** | 14px (0.875rem) | 1.5 | Small headers, labels |
-| **H6** | 12px (0.75rem) | 1.4 | Micro headers, tags |
+| **H6** | 12px (0.75rem) | 1.2 | Micro headers, tags |
 
 **Color for all headings:** `--neutral-800` (#20222A)
 
-### Body Text (Regular 400 / Medium 500)
+### Body Text (Regular 400 / Medium 500 / Semibold 600)
 
 | Size | Font Size | Weights | Line Height | Usage |
 |------|-----------|---------|-------------|-------|
-| **Large** | 16px (1rem) | 400, 500 | 1.5 | Main body content, default text |
-| **Medium** | 14px (0.875rem) | 400, 500 | 1.5 | Secondary descriptions, lists |
-| **Small** | 12px (0.75rem) | 400, 500 | 1.4 | Captions, help text, labels |
+| **Large** | 16px (1rem) | 400, 500, 600 | 1.5 | Main body content, default text |
+| **Medium** | 14px (0.875rem) | 400, 500, 600 | 1.5 | Secondary descriptions, lists |
+| **Small** | 12px (0.75rem) | 400, 500, 600 | 1.2 | Captions, help text, labels |
 
 **Color for body text:** `--neutral-500` (#454C5E)
+
+### Paragraph Semibold (600)
+
+Added 2026-08-25 (Figma Library `5445:24009`). Semibold sits between Medium and Bold: heavier than emphasis, without reading as a heading.
+
+| Style | Font Size | Weight | Line Height |
+|-------|-----------|--------|-------------|
+| **Paragraph L semibold** | 16px (1rem) | 600 | 1.5 |
+| **Paragraph M semibold** | 14px (0.875rem) | 600 | 1.5 |
+| **Paragraph S semibold** | 12px (0.75rem) | 600 | 1.2 |
+
+**Form-field labels use Paragraph M semibold.** Every visible label above (or beside) an input, dropdown, date field, textarea, or stepper — see `input.md`. Option text inside a radio, checkbox, or toggle row is *not* a field label and stays Regular 400.
 
 ### Button Text (All Bold, 700 weight)
 
@@ -52,7 +66,7 @@ font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
 |------|-----------|-------------|-------|
 | **Large** | 16px (1rem) | 1.5 | Primary CTAs, hero buttons |
 | **Medium** | 14px (0.875rem) | 1.5 | Standard buttons (most common) |
-| **Small** | 12px (0.75rem) | 1.2 | Compact buttons, toolbars |
+| **Small** | 12px (0.75rem) | 1.4 | Compact buttons, toolbars |
 
 ## CSS Classes
 
@@ -83,6 +97,17 @@ font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
 .text-body-s-regular  /* Regular weight (explicit) */
 .text-body-s-medium   /* Medium weight */
 ```
+
+### Paragraph Semibold
+```css
+.text-lg-semibold  /* 16px, 600, 1.5 */
+.text-md-semibold  /* 14px, 600, 1.5 — form-field labels */
+.text-sm-semibold  /* 12px, 600, 1.2 */
+
+.font-semibold     /* weight only */
+```
+
+> These are the names actually implemented in `src/styles/typography.css`, which uses the `.text-lg / .text-md / .text-sm` prefix rather than the `.text-body-*` names spelled out above.
 
 ### Button Text
 ```css
@@ -152,6 +177,7 @@ font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
 
 **Regular (400):** Default for body text
 **Medium (500):** Subtle emphasis without bold
+**Semibold (600):** Form-field labels; text that must lead a control without becoming a heading
 **Bold (700):** Headings and buttons only
 
 ### Button Text Guidelines
@@ -172,8 +198,8 @@ Always use `.text-primary` (neutral-800) for all headings to maintain clear hier
 /* Standard body text */
 .text-secondary  /* Default for paragraphs */
 
-/* Form labels */
-.text-body-m-medium .text-secondary
+/* Form-field labels */
+.text-md-semibold .text-secondary
 
 /* Captions and metadata */
 .text-body-s .text-label
@@ -231,7 +257,7 @@ Always use `.text-primary` (neutral-800) for all headings to maintain clear hier
 ✓ Use semantic HTML headings (h1-h6)
 ✓ Maintain logical heading order
 ✓ Don't skip heading levels
-✓ Line height 1.5 for body text (optimal readability)
+✓ Line height 1.5 for 16px and 14px body text, 1.2 for 12px text (Button S excepted at 1.4)
 ✓ Body text minimum 16px for main content
 ✓ Test with screen readers
 
@@ -240,7 +266,7 @@ Always use `.text-primary` (neutral-800) for all headings to maintain clear hier
 The typography system loads Poppins from Google Fonts:
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 ```
 
 **Strategy:**
@@ -259,6 +285,7 @@ All typography values available as CSS variables:
 /* Font weights */
 --font-weight-regular: 400;
 --font-weight-medium: 500;
+--font-weight-semibold: 600;
 --font-weight-bold: 700;
 
 /* Font sizes - Headings */
@@ -280,7 +307,7 @@ All typography values available as CSS variables:
 --font-size-button-s: 12px;
 
 /* Line heights */
---line-height-tight: 1.2;
+--line-height-tight: 1.2;    /* 12px text (Button S uses 1.4) */
 --line-height-compact: 1.4;
 --line-height-normal: 1.5;
 --line-height-loose: 1.6;
@@ -303,6 +330,7 @@ All typography values available as CSS variables:
 - Headings → Bold (700)
 - Body text → Regular (400)
 - Emphasis → Medium (500)
+- Form-field labels → Semibold (600)
 - Buttons → Bold (700)
 
 **"What color for...?"**

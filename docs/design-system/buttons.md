@@ -32,7 +32,7 @@ All sizes share `border-radius: var(--radius-sm)` (12px) and Poppins **Bold** la
 
 | Size | Height | Padding (no icon) | Padding (with icon) | Icon gap | Font | Icon |
 |------|--------|-------------------|---------------------|----------|------|------|
-| **Small** | 33px | 8px 16px | 8px **12px**/16px | 4px (`--space-xs`) | 12px / 1.4 (H6) | 16px |
+| **Small** | 33px | 8px 16px | 8px **12px**/16px | 4px (`--space-xs`) | 12px / 1.4 (Button S) | 16px |
 | **Medium** | 41px | **10px** 20px (10px is intentionally off the 4px scale) | 10px **16px**/20px | 8px (`--space-s`) | 14px / 1.5 (H5) | 20px |
 | **Large** | 48px | 12px 24px | 12px **20px**/24px | 8px (`--space-s`) | 16px / 1.5 (H4) | 24px |
 

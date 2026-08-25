@@ -777,6 +777,7 @@
 
 .cd-date-year {
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-secondary);
 }
 

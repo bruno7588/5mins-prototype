@@ -327,6 +327,7 @@
   background: none;
   cursor: pointer;
   font-size: 12px;
+  line-height: 1.4;
   font-weight: 700;
   color: var(--text-button-outlined);
   transition: background 150ms ease;

@@ -56,6 +56,7 @@
 
 .pad-stat__delta {
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   color: var(--text-success);
 }
@@ -75,6 +76,7 @@
   background: none;
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
+  line-height: 1.2;
   color: var(--text-tertiary);
   cursor: pointer;
   transition: color 120ms ease;
@@ -277,6 +279,7 @@
   border-radius: var(--radius-full);
   background: var(--input-background);
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   color: var(--text-secondary);
 }

@@ -171,11 +171,13 @@ Used in overlays, modals, and similar UI surfaces:
 
 ### 3.1 Font Family
 
-**Primary:** Poppins (Google Fonts), weights 400 (Regular), 500 (Medium), 700 (Bold).
+**Primary:** Poppins (Google Fonts), weights 400 (Regular), 500 (Medium), 600 (Semibold), 700 (Bold).
 **Fallback:** -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif.
 
+> **Every 12px text style has a 120% line height** — H6, Paragraph S, badges, tooltips, captions. **The one exception is Button S, which stays at 140%** so the Small button holds its 33px height. 16px and 14px stay at 150%.
+
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 ```
@@ -191,17 +193,21 @@ All headings use **Bold (700)** weight, color `--neutral-800` (#20222A).
 | H3 | 20px (1.25rem) | 1.5 | Section headers |
 | H4 | 16px (1rem) | 1.5 | Card headers, component titles |
 | H5 | 14px (0.875rem) | 1.5 | Small headers, labels |
-| H6 | 12px (0.75rem) | 1.4 | Tags, micro headers |
+| H6 | 12px (0.75rem) | 1.2 | Tags, micro headers |
 
 ### 3.3 Type Scale — Body Text
 
-Body text uses **Regular (400)** or **Medium (500)** weight, color `--neutral-500` (#454C5E).
+Body text uses **Regular (400)**, **Medium (500)**, or **Semibold (600)** weight, color `--neutral-500` (#454C5E).
 
 | Size | Font Size | Line Height | Usage |
 |------|-----------|-------------|-------|
 | Large | 16px (1rem) | 1.5 | Main body content, descriptions |
 | Medium | 14px (0.875rem) | 1.5 | Secondary text, list items, table content |
-| Small | 12px (0.75rem) | 1.4 | Captions, help text, timestamps |
+| Small | 12px (0.75rem) | 1.2 | Captions, help text, timestamps |
+
+**Paragraph Semibold (600)** — added 2026-08-25 (Figma `5445:24009`). Same three sizes; line heights 1.5 / 1.5 / 1.2 (L / M / S). Utilities: `.text-lg-semibold`, `.text-md-semibold`, `.text-sm-semibold`.
+
+**Every form-field label is Paragraph M semibold** — 14px / 600 / 1.5, `--text-secondary`. See `input.md`.
 
 ### 3.4 Type Scale — Buttons
 
@@ -211,7 +217,7 @@ All button text uses **Bold (700)** weight, no text-transform.
 |------|-----------|-------------|
 | Large | 16px | 1.5 |
 | Medium | 14px | 1.5 |
-| Small | 12px | 1.2 |
+| Small | 12px | 1.4 |
 
 ### 3.5 Text Color Hierarchy
 
@@ -232,6 +238,7 @@ All button text uses **Bold (700)** weight, no text-transform.
 
 - Use semantic heading hierarchy; never skip heading levels.
 - Bold (700) is reserved for headings and buttons only.
+- Semibold (600) is for form-field labels.
 - Medium (500) is for subtle emphasis within body text.
 - Never make body text smaller than 14px. Minimum for main content is 16px.
 - Never use bold for entire paragraphs.

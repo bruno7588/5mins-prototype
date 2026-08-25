@@ -21,7 +21,7 @@
 
 .question-editor-label {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
 }
 
@@ -179,6 +179,7 @@
 
 .question-editor-error {
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 400;
   color: var(--text-error);
 }

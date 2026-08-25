@@ -29,6 +29,7 @@
 
 .edit-cols-reset {
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   color: var(--text-button-outlined);
   cursor: pointer;
@@ -54,6 +55,7 @@
 
 .edit-cols-section-label {
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 500;
   color: var(--text-tertiary);
   text-transform: uppercase;

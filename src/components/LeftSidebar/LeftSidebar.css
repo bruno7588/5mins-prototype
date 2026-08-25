@@ -30,6 +30,7 @@
 
 .left-sidebar-powered {
   font-size: 12px;
+  line-height: 1.2;
   font-weight: 400;
   color: var(--text-tertiary);
   padding: var(--space-sm) var(--space-sm);
@@ -143,5 +144,5 @@
   font-size: 12px;
   font-weight: 500;
   border-radius: var(--radius-full);
-  line-height: 1;
+  line-height: 1.2;
 }

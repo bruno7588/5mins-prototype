@@ -278,7 +278,7 @@
   gap: var(--space-s);
   font-size: 12px;
   color: var(--text-tertiary);
-  line-height: 1.5;
+  line-height: 1.2;
 }
 
 .eng-chart__legend-swatch {
