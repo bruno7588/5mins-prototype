@@ -1332,7 +1332,7 @@
   inset: -1px;
   border-radius: var(--radius-sm);
   padding: 1px;
-  background: linear-gradient(135deg, var(--primary-500) 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
+  background: var(--gradient-ai-diagonal);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -1390,7 +1390,7 @@
 .roles-ai-progress__fill {
   height: 100%;
   border-radius: 8px;
-  background: linear-gradient(90deg, var(--primary-500) 0%, #10BFE7 12.5%, #20B1E8 25%, #4193E9 50%, #6176EB 75%, #8158EC 100%);
+  background: var(--gradient-ai);
   transition: width 300ms ease;
 }
 
@@ -1399,7 +1399,7 @@
   font-weight: 500;
   width: 34px;
   text-align: right;
-  background: linear-gradient(135deg, var(--primary-500), var(--blaze-quiz));
+  background: var(--gradient-ai-diagonal);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1484,7 +1484,7 @@
 }
 
 .roles-panel-ai-resuggest > span {
-  background-image: linear-gradient(135deg, #33E2F7 0%, #47C0F4 25%, #5A9DF2 50%, #6E7BEF 75%, #8158EC 100%);
+  background-image: var(--gradient-ai-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1933,7 +1933,7 @@
 }
 
 .roles-btn-ai-outlined-sm > span {
-  background-image: linear-gradient(135deg, #33E2F7 0%, #47C0F4 25%, #5A9DF2 50%, #6E7BEF 75%, #8158EC 100%);
+  background-image: var(--gradient-ai-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

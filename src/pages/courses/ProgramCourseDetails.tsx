@@ -43,7 +43,7 @@ function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => v
   const filled = Math.max(0, Math.min(SEGMENTS, Math.round(((lesson.progress ?? 0) / 100) * SEGMENTS)))
   return (
     <article
-      className={`cd-lesson${isLocked ? ' cd-lesson--locked' : ''}${onOpen ? ' cd-lesson--openable' : ''}`}
+      className={`pcd-lesson${isLocked ? ' pcd-lesson--locked' : ''}${onOpen ? ' pcd-lesson--openable' : ''}`}
       role={onOpen ? 'button' : undefined}
       tabIndex={onOpen ? 0 : undefined}
       onClick={onOpen}
@@ -59,26 +59,26 @@ function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => v
       }
     >
       {lesson.state === 'active' ? (
-        <button type="button" className="cd-tooltip">
+        <button type="button" className="pcd-tooltip">
           Start Here!
         </button>
       ) : null}
-      <div className="cd-lesson__thumb">
+      <div className="pcd-lesson__thumb">
         <img src={lesson.thumbnail} alt="" />
-        <span className="cd-lesson__tag">
+        <span className="pcd-lesson__tag">
           <PlayCircle size={20} color="var(--text-primary)" variant="Bold" />
         </span>
       </div>
-      <div className="cd-lesson__info">
-        <h4 className="cd-lesson__title">{lesson.title}</h4>
-        <div className="cd-lesson__meta">
-          <span className="cd-lesson__metatext">{lesson.meta}</span>
+      <div className="pcd-lesson__info">
+        <h4 className="pcd-lesson__title">{lesson.title}</h4>
+        <div className="pcd-lesson__meta">
+          <span className="pcd-lesson__metatext">{lesson.meta}</span>
           {isLocked ? (
             <Lock size={24} color="var(--text-disabled)" variant="Bold" />
           ) : (
-            <span className="cd-lesson__track">
+            <span className="pcd-lesson__track">
               {Array.from({ length: SEGMENTS }).map((_, i) => (
-                <span key={i} className={`cd-seg${i < filled ? ' cd-seg--filled' : ''}`} />
+                <span key={i} className={`pcd-seg${i < filled ? ' pcd-seg--filled' : ''}`} />
               ))}
             </span>
           )}
@@ -114,19 +114,19 @@ function ProgramCourseDetails() {
       {/* Preview mode needs its own way out — the learner chrome has no route
           back to the builder the admin came from. */}
       {preview && (
-        <div className="cd-previewbar">
-          <span className="cd-previewbar__label">
+        <div className="pcd-previewbar">
+          <span className="pcd-previewbar__label">
             <Badge type="informative" label="Preview" />
             <span>This is how learners will see the course</span>
           </span>
-          <button type="button" className="cd-previewbar__back" onClick={() => navigate(-1)}>
+          <button type="button" className="pcd-previewbar__back" onClick={() => navigate(-1)}>
             <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
             Back to Editing
           </button>
         </div>
       )}
       {openQuiz && (
-        <div className="cd-quizstage" role="dialog" aria-modal="true" aria-label="Assessment preview">
+        <div className="pcd-quizstage" role="dialog" aria-modal="true" aria-label="Assessment preview">
           <PhoneFrame>
             <div className="ql-quizview">
               <QuizHeader
@@ -200,12 +200,12 @@ function ProgramCourseDetails() {
           </div>
         </aside>
 
-        <section className="mt-body cd-body">
-          <div className="cd-cover" aria-hidden style={{ backgroundImage: `url(${course.thumbnail})` }} />
+        <section className="mt-body pcd-body">
+          <div className="pcd-cover" aria-hidden style={{ backgroundImage: `url(${course.thumbnail})` }} />
 
-          <div className="cd-content">
+          <div className="pcd-content">
             {/* Header */}
-            <header className="cd-header">
+            <header className="pcd-header">
               {program && (
                 <Breadcrumb
                   items={[
@@ -214,111 +214,111 @@ function ProgramCourseDetails() {
                   ]}
                 />
               )}
-              <div className="cd-header__top">
-                <div className="cd-header__info">
-                  <span className="cd-meta__item">
+              <div className="pcd-header__top">
+                <div className="pcd-header__info">
+                  <span className="pcd-meta__item">
                     <PlayCircle size={16} color="var(--text-tertiary)" variant="Linear" />
                     <span>{course.lessonCount} lessons</span>
                   </span>
-                  <span className="cd-meta__item">
+                  <span className="pcd-meta__item">
                     <Clock size={16} color="var(--text-tertiary)" variant="Linear" />
                     <span>{course.durationLabel}</span>
                   </span>
                   <Badge type="warning" icon label={course.statusLabel} />
                 </div>
-                <div className="cd-header__actions">
-                  <button type="button" className="cd-iconbtn" aria-label="Save">
+                <div className="pcd-header__actions">
+                  <button type="button" className="pcd-iconbtn" aria-label="Save">
                     <ArchiveAdd size={24} color="var(--text-primary)" variant="Linear" />
                   </button>
-                  <button type="button" className="cd-iconbtn" aria-label="Share">
+                  <button type="button" className="pcd-iconbtn" aria-label="Share">
                     <Share size={24} color="var(--text-primary)" variant="Linear" />
                   </button>
-                  <button type="button" className="cd-iconbtn" aria-label="Add to calendar">
+                  <button type="button" className="pcd-iconbtn" aria-label="Add to calendar">
                     <CalendarAdd size={24} color="var(--text-primary)" variant="Linear" />
                   </button>
                 </div>
               </div>
 
-              <div className="cd-header__title">
-                <h1 className="cd-title">{course.title}</h1>
-                <div className="cd-helper">
-                  <span className="cd-helper__item">
-                    <img className="cd-helper__icon" src={jewelsIllustration} alt="" />
+              <div className="pcd-header__title">
+                <h1 className="pcd-title">{course.title}</h1>
+                <div className="pcd-helper">
+                  <span className="pcd-helper__item">
+                    <img className="pcd-helper__icon" src={jewelsIllustration} alt="" />
                     <span>Earn {course.jewels} jewels</span>
                   </span>
-                  <span className="cd-helper__item">
-                    <img className="cd-helper__icon" src={certificateIllustration} alt="" />
+                  <span className="pcd-helper__item">
+                    <img className="pcd-helper__icon" src={certificateIllustration} alt="" />
                     <span>Certificate of completion</span>
                   </span>
-                  <span className="cd-helper__item">
+                  <span className="pcd-helper__item">
                     <InfoCircle size={20} color="var(--text-tertiary)" variant="Linear" />
                     <span>Pass Score: {course.passScore}%</span>
                   </span>
                 </div>
               </div>
 
-              <div className="cd-progress">
+              <div className="pcd-progress">
                 <div
-                  className="cd-progress__track"
+                  className="pcd-progress__track"
                   role="progressbar"
                   aria-valuenow={course.progress}
                   aria-valuemin={0}
                   aria-valuemax={100}
                 >
-                  <div className="cd-progress__fill" style={{ width: `${course.progress}%` }} />
+                  <div className="pcd-progress__fill" style={{ width: `${course.progress}%` }} />
                 </div>
-                <span className="cd-progress__pct">{course.progress}%</span>
+                <span className="pcd-progress__pct">{course.progress}%</span>
               </div>
             </header>
 
             {/* Tabs */}
-            <nav className="cd-tabs">
+            <nav className="pcd-tabs">
               <button
                 type="button"
-                className={`cd-tab${tab === 'course' ? ' cd-tab--active' : ''}`}
+                className={`pcd-tab${tab === 'course' ? ' pcd-tab--active' : ''}`}
                 onClick={() => setTab('course')}
               >
                 Course
               </button>
               <button
                 type="button"
-                className={`cd-tab${tab === 'about' ? ' cd-tab--active' : ''}`}
+                className={`pcd-tab${tab === 'about' ? ' pcd-tab--active' : ''}`}
                 onClick={() => setTab('about')}
               >
                 About
               </button>
               <button
                 type="button"
-                className={`cd-tab${tab === 'resources' ? ' cd-tab--active' : ''}`}
+                className={`pcd-tab${tab === 'resources' ? ' pcd-tab--active' : ''}`}
                 onClick={() => setTab('resources')}
               >
                 Resources
-                <span className="cd-tab__count">3</span>
+                <span className="pcd-tab__count">3</span>
               </button>
             </nav>
 
             {/* Course outline */}
             {tab === 'course' ? (
-              <div className="cd-outline">
+              <div className="pcd-outline">
                 {course.sections.map((section, idx) => (
                   <Fragment key={section.id}>
-                    <div className="cd-section">
+                    <div className="pcd-section">
                       <button
                         type="button"
-                        className="cd-section__header"
+                        className="pcd-section__header"
                         onClick={() => toggle(section.id)}
                         aria-expanded={open[section.id]}
                       >
-                        <span className="cd-section__headline">
-                          <span className="cd-section__name">{section.name}</span>
-                          <span className="cd-section__summary">{section.summary}</span>
+                        <span className="pcd-section__headline">
+                          <span className="pcd-section__name">{section.name}</span>
+                          <span className="pcd-section__summary">{section.summary}</span>
                         </span>
-                        <span className={`cd-section__chevron${open[section.id] ? '' : ' cd-section__chevron--closed'}`}>
+                        <span className={`pcd-section__chevron${open[section.id] ? '' : ' pcd-section__chevron--closed'}`}>
                           <ArrowUp2 size={20} color="var(--text-secondary)" variant="Linear" />
                         </span>
                       </button>
                       <Collapse open={open[section.id]}>
-                        <div className="cd-section__lessons">
+                        <div className="pcd-section__lessons">
                           {section.lessons.map((lesson) => (
                             <LessonCard
                               key={lesson.id}
@@ -333,12 +333,12 @@ function ProgramCourseDetails() {
                         </div>
                       </Collapse>
                     </div>
-                    {idx < course.sections.length - 1 ? <div className="cd-divider" /> : null}
+                    {idx < course.sections.length - 1 ? <div className="pcd-divider" /> : null}
                   </Fragment>
                 ))}
               </div>
             ) : (
-              <div className="cd-empty">Nothing here yet.</div>
+              <div className="pcd-empty">Nothing here yet.</div>
             )}
           </div>
         </section>

@@ -335,7 +335,7 @@
 
 .cffm-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00CEE6 0%, #4193E9 50%, #8158EC 100%);
+  background: var(--gradient-ai);
   border-radius: var(--radius-ml);
   transition: width 300ms ease;
 }
@@ -347,7 +347,7 @@
   line-height: 1.5;
   width: 34px;
   text-align: right;
-  background: linear-gradient(90deg, #00CEE6 0%, #4193E9 50%, #8158EC 100%);
+  background: var(--gradient-ai);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

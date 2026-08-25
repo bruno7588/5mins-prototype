@@ -30,7 +30,7 @@
 .badge--informative  { background: var(--input-background); color: var(--text-secondary); }
 /* Figma 9200:58569 — enrolment not open to the learner yet. */
 .badge--scheduled    { background: rgba(42, 144, 216, 0.16);  color: var(--course-assessments); }
-.badge--quiz         { background: rgba(99, 104, 219, 0.16); color: var(--text-quiz); }
+.badge--quiz         { background: var(--quiz-background); color: var(--text-quiz); }
 .badge--new          { background: var(--danger-400); color: var(--neutral-25); }
 
 /* Dismissible badge — has close button */

@@ -346,8 +346,7 @@
    hand and the same format explained while AI writes it read as one note. Doubled class
    so it beats .alert--callout whichever order the global bundle lands in. */
 .alert.gen-drawer__callout--quiz {
-  /* Certificate quiz #6368DB @ 16% — the same fill in both themes. */
-  background: rgba(99, 104, 219, 0.16);
+  background: var(--quiz-background);
   color: var(--text-quiz);
   border-radius: var(--radius-sm);
   padding: var(--space-s) var(--space-sm);

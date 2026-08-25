@@ -77,6 +77,29 @@
   --certificate-quiz: #6368DB;
   --course-assessments: #2A90D8;
 
+  /* AI gradient — cyan into Blaze purple, the mark of a generative surface.
+     Two ramps, and the difference is deliberate rather than drift: a fill starts at
+     --primary-500, while gradient-filled TEXT starts one step lighter at --primary-400
+     so the first glyphs still carry against the page.
+
+     Only the endpoints are declared. buttons.md (verified against Figma 2026-08-04)
+     records that the six stops Figma paints are collinear, so the intermediate ones
+     were only ever a longhand for the interpolation the browser already does — the
+     hand-typed 4- and 6-stop copies this replaces render identically to these two.
+
+     Angle is per-surface, so the stop list is its own token and each gradient picks
+     its own: 90deg along a progress bar, 135deg across a card or a border. Buttons do
+     NOT use these — .btn-ai paints a radial gradient on the mode-aware primary ladder
+     (buttons.md §AI), which is a different geometry, not a different colour. */
+  --gradient-ai-stops: var(--primary-500) 0%, var(--blaze-quiz) 100%;
+  --gradient-ai: linear-gradient(90deg, var(--gradient-ai-stops));
+  --gradient-ai-diagonal: linear-gradient(135deg, var(--gradient-ai-stops));
+  --gradient-ai-text: linear-gradient(135deg, var(--primary-400) 0%, var(--blaze-quiz) 100%);
+
+  /* Certificate-quiz @ 16% — the quiz badge fill and the callout on assessment drawers.
+     Identical in both themes: it tints the quiz colour, which does not flip. */
+  --quiz-background: rgba(99, 104, 219, 0.16);
+
   /* Semantic aliases — light mode (Figma dark-mode values live in colors.md) */
   --page-background: var(--neutral-25);
   --page-background-hover: var(--neutral-50);

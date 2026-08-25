@@ -427,7 +427,7 @@
   height: 100%;
   width: 0;
   border-radius: var(--radius-ml);
-  background: linear-gradient(90deg, #00CEE6 0%, #4193E9 50%, #8158EC 100%);
+  background: var(--gradient-ai);
   animation: aim-progress-fill 3s ease-out forwards;
 }
 

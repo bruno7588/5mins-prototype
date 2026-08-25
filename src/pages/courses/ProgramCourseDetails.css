@@ -1,4 +1,4 @@
-.cd-body {
+.pcd-body {
   position: relative;
   overflow: hidden;
   padding-bottom: 64px;
@@ -9,7 +9,7 @@
    before it reaches the content, so the page background takes over cleanly.
    The Figma mask is an SVG alpha rectangle; a gradient mask is the same fade
    expressed in CSS, and keeps it resolution-independent. */
-.cd-cover {
+.pcd-cover {
   position: absolute;
   top: 20px;
   left: 24px;
@@ -30,7 +30,7 @@
 /* Offset 20px below the cover, which is itself inset 20px from the top of the
    body — so the cover's rounded top edge shows above the header card instead of
    being covered by it. */
-.cd-content {
+.pcd-content {
   position: relative;
   z-index: 1;
   display: flex;
@@ -43,8 +43,8 @@
 
 /* ---- Header card ---- */
 /* Scoped to the learner course page so this card styling does not leak onto
-   the admin (.cd-layout) CourseDetails header, which shares the .cd-header class. */
-.cd-content .cd-header {
+   the admin (.pcd-layout) CourseDetails header, which shares the .pcd-header class. */
+.pcd-content .pcd-header {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -55,9 +55,9 @@
 }
 
 /* "Part of a program" context uses the shared DS Breadcrumb component
-   (src/components/Breadcrumb) — rendered as the first child of .cd-header. */
+   (src/components/Breadcrumb) — rendered as the first child of .pcd-header. */
 
-.cd-header__top {
+.pcd-header__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,14 +65,14 @@
   flex-wrap: wrap;
 }
 
-.cd-header__info {
+.pcd-header__info {
   display: flex;
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
 }
 
-.cd-meta__item {
+.pcd-meta__item {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -82,13 +82,13 @@
   white-space: nowrap;
 }
 
-.cd-header__actions {
+.pcd-header__actions {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.cd-iconbtn {
+.pcd-iconbtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -101,17 +101,17 @@
   transition: background 120ms ease;
 }
 
-.cd-iconbtn:hover {
+.pcd-iconbtn:hover {
   background: var(--page-background-hover);
 }
 
-.cd-header__title {
+.pcd-header__title {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.cd-title {
+.pcd-title {
   margin: 0;
   font-size: 24px;
   font-weight: 700;
@@ -119,14 +119,14 @@
   color: var(--text-primary);
 }
 
-.cd-helper {
+.pcd-helper {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
 
-.cd-helper__item {
+.pcd-helper__item {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -136,14 +136,14 @@
   white-space: nowrap;
 }
 
-.cd-helper__icon {
+.pcd-helper__icon {
   display: block;
   width: 18px;
   height: 18px;
 }
 
-/* Segmented progress (shared by header + lesson rows via .cd-seg) */
-.cd-progress {
+/* Segmented progress (shared by header + lesson rows via .pcd-seg) */
+.pcd-progress {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -151,7 +151,7 @@
   background-color: unset;
 }
 
-.cd-progress__track {
+.pcd-progress__track {
   flex: 1 0 0;
   min-width: 0;
   height: 8px;
@@ -160,24 +160,24 @@
   overflow: hidden;
 }
 
-.cd-progress__fill {
+.pcd-progress__fill {
   height: 100%;
   border-radius: 24px;
   background: var(--primary-600);
 }
 
-.cd-seg {
+.pcd-seg {
   flex: 1 0 0;
   min-width: 0;
   height: 100%;
   background: var(--border);
 }
 
-.cd-seg--filled {
+.pcd-seg--filled {
   background: var(--primary-600);
 }
 
-.cd-progress__pct {
+.pcd-progress__pct {
   font-size: 14px;
   font-weight: 700;
   line-height: 1;
@@ -186,13 +186,13 @@
 }
 
 /* ---- Tabs ---- */
-.cd-tabs {
+.pcd-tabs {
   display: flex;
   align-items: center;
   gap: 24px;
 }
 
-.cd-tab {
+.pcd-tab {
   position: relative;
   display: inline-flex;
   flex-direction: row;
@@ -211,12 +211,12 @@
   cursor: pointer;
 }
 
-.cd-tab--active {
+.pcd-tab--active {
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.cd-tab--active::after {
+.pcd-tab--active::after {
   content: '';
   position: absolute;
   left: 0;
@@ -227,7 +227,7 @@
   background: var(--selected);
 }
 
-.cd-tab__count {
+.pcd-tab__count {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
@@ -241,19 +241,19 @@
 }
 
 /* ---- Course outline ---- */
-.cd-outline {
+.pcd-outline {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.cd-section {
+.pcd-section {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.cd-section__header {
+.pcd-section__header {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -265,7 +265,7 @@
   cursor: pointer;
 }
 
-.cd-section__headline {
+.pcd-section__headline {
   display: flex;
   flex: 1 0 0;
   min-width: 0;
@@ -273,20 +273,20 @@
   gap: 8px;
 }
 
-.cd-section__name {
+.pcd-section__name {
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
-.cd-section__summary {
+.pcd-section__summary {
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-tertiary);
 }
 
-.cd-section__chevron {
+.pcd-section__chevron {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -296,18 +296,18 @@
   transition: transform 200ms ease;
 }
 
-.cd-section__chevron--closed {
+.pcd-section__chevron--closed {
   transform: rotate(180deg);
 }
 
-.cd-section__lessons {
+.pcd-section__lessons {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
 /* ---- Lesson card ---- */
-.cd-lesson {
+.pcd-lesson {
   position: relative;
   display: flex;
   align-items: center;
@@ -322,16 +322,16 @@
 /* DS Lesson hover (cards.md §Lesson states): card fill switches to
    --cards-background-hover and the title shifts to --text-button-hover.
    Locked lessons are excluded — they stay inert. */
-.cd-lesson:not(.cd-lesson--locked):hover {
+.pcd-lesson:not(.pcd-lesson--locked):hover {
   background: var(--cards-background-hover);
 }
 
-.cd-lesson:not(.cd-lesson--locked):hover .cd-lesson__title {
+.pcd-lesson:not(.pcd-lesson--locked):hover .pcd-lesson__title {
   color: var(--text-button-hover);
 }
 
 /* "Start!" tooltip floating above the active lesson, centered on the card */
-.cd-tooltip {
+.pcd-tooltip {
   position: absolute;
   bottom: calc(100% - 12px);
   left: 50%;
@@ -350,10 +350,10 @@
   box-shadow: -4px 0 12px rgba(32, 34, 42, 0.12);
   cursor: pointer;
   transition: background 120ms ease;
-  animation: cd-tooltip-bob 1.6s ease-in-out infinite;
+  animation: pcd-tooltip-bob 1.6s ease-in-out infinite;
 }
 
-@keyframes cd-tooltip-bob {
+@keyframes pcd-tooltip-bob {
   0%,
   100% {
     transform: translate(-50%, 0);
@@ -364,20 +364,20 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cd-tooltip {
+  .pcd-tooltip {
     animation: none;
   }
 }
 
-.cd-tooltip:hover {
+.pcd-tooltip:hover {
   background: var(--primary-button-background-hover);
 }
 
-.cd-tooltip:hover::after {
+.pcd-tooltip:hover::after {
   border-top-color: var(--primary-button-background-hover);
 }
 
-.cd-tooltip::after {
+.pcd-tooltip::after {
   content: '';
   position: absolute;
   top: 100%;
@@ -387,7 +387,7 @@
   border-top-color: var(--primary-button-background);
 }
 
-.cd-lesson__thumb {
+.pcd-lesson__thumb {
   position: relative;
   flex: 0 0 auto;
   width: 80px;
@@ -396,18 +396,18 @@
   overflow: hidden;
 }
 
-.cd-lesson__thumb img {
+.pcd-lesson__thumb img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.cd-lesson--locked .cd-lesson__thumb img {
+.pcd-lesson--locked .pcd-lesson__thumb img {
   filter: grayscale(1);
 }
 
-.cd-lesson__tag {
+.pcd-lesson__tag {
   position: absolute;
   top: 0;
   left: 0;
@@ -419,7 +419,7 @@
   border-bottom-right-radius: 8px;
 }
 
-.cd-lesson__info {
+.pcd-lesson__info {
   display: flex;
   flex: 1 0 0;
   min-width: 0;
@@ -427,7 +427,7 @@
   gap: 8px;
 }
 
-.cd-lesson__title {
+.pcd-lesson__title {
   margin: 0;
   max-width: 100%;
   font-size: 16px;
@@ -440,18 +440,18 @@
   transition: color 150ms ease;
 }
 
-.cd-lesson--locked .cd-lesson__title {
+.pcd-lesson--locked .pcd-lesson__title {
   color: var(--text-disabled);
 }
 
-.cd-lesson__meta {
+.pcd-lesson__meta {
   display: flex;
   align-items: center;
   gap: 16px;
   width: 100%;
 }
 
-.cd-lesson__metatext {
+.pcd-lesson__metatext {
   flex: 1 0 0;
   min-width: 0;
   font-size: 14px;
@@ -462,11 +462,11 @@
   text-overflow: ellipsis;
 }
 
-.cd-lesson--locked .cd-lesson__metatext {
+.pcd-lesson--locked .pcd-lesson__metatext {
   color: var(--text-disabled);
 }
 
-.cd-lesson__track {
+.pcd-lesson__track {
   display: flex;
   flex: 0 0 auto;
   width: 96px;
@@ -476,14 +476,14 @@
 }
 
 /* ---- Divider ---- */
-.cd-divider {
+.pcd-divider {
   width: 100%;
   height: 1px;
   border-radius: 4px;
   background: var(--border);
 }
 
-.cd-empty {
+.pcd-empty {
   padding: 48px 16px;
   text-align: center;
   font-size: 14px;
@@ -492,7 +492,7 @@
 
 /* ── Builder preview chrome ───────────────────────────────────────────────────
    Only rendered when the course builder hands a draft over in router state. */
-.cd-previewbar {
+.pcd-previewbar {
   position: sticky;
   top: 0;
   z-index: 60;
@@ -505,7 +505,7 @@
   border-bottom: 1px solid var(--border);
 }
 
-.cd-previewbar__label {
+.pcd-previewbar__label {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -513,7 +513,7 @@
   color: var(--text-secondary);
 }
 
-.cd-previewbar__back {
+.pcd-previewbar__back {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
@@ -529,22 +529,22 @@
   transition: background 150ms ease;
 }
 
-.cd-previewbar__back:hover {
+.pcd-previewbar__back:hover {
   background: var(--input-background);
 }
 
 /* A row that opens an authored assessment in preview. */
-.cd-lesson--openable {
+.pcd-lesson--openable {
   cursor: pointer;
 }
 
-.cd-lesson--openable:focus-visible {
+.pcd-lesson--openable:focus-visible {
   outline: 2px solid var(--selected);
   outline-offset: 2px;
 }
 
 /* The interactive formats are mobile-first, so they play in the phone frame. */
-.cd-quizstage {
+.pcd-quizstage {
   position: fixed;
   inset: 0;
   z-index: 1100;

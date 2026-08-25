@@ -393,8 +393,7 @@
    part of the assessment family. Doubled class so it beats .alert--callout
    whichever order the global bundle lands in. */
 .alert.iq-drawer__callout {
-  /* Certificate quiz #6368DB @ 16% — the same fill in both themes. */
-  background: rgba(99, 104, 219, 0.16);
+  background: var(--quiz-background);
   color: var(--text-quiz);
   border-radius: var(--radius-sm);
   padding: var(--space-s) var(--space-sm);
