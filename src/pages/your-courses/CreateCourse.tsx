@@ -334,7 +334,12 @@ function CreateCourse() {
       : activeDrawer === 'ai-generate' && run
         ? {
             ariaLabel: 'Exit AI generation',
-            title: 'Exit while AI is writing your test?',
+            /* Names what is being written. Both scopes share this modal, and "your test"
+               was wrong half the time it appeared. */
+            title:
+              generationScope === 'assessments'
+                ? 'Exit while AI is writing your assessments?'
+                : 'Exit while AI is writing your situational test?',
             /* True at two seconds and at fourteen: "anything written so far" covers the
                empty case without claiming nothing has been written, which the reveal
                behind this modal would immediately contradict. */
@@ -343,13 +348,21 @@ function CreateCourse() {
             discard: 'Exit',
           }
         : activeDrawer === 'ai-generate'
-          ? {
-              ariaLabel: 'Discard draft',
-              title: 'Discard this draft?',
-              body: "The draft and any edits you've made to it haven't been saved, and can't be recovered.",
-              keep: 'Keep Editing',
-              discard: 'Discard',
-            }
+          ? generationScope === 'assessments'
+            ? {
+                ariaLabel: 'Discard assessments',
+                title: 'Discard these assessments?',
+                body: "These assessments and any edits you've made to them haven't been saved, and can't be recovered.",
+                keep: 'Keep Reviewing',
+                discard: 'Discard',
+              }
+            : {
+                ariaLabel: 'Discard draft',
+                title: 'Discard this draft?',
+                body: "The draft and any edits you've made to it haven't been saved, and can't be recovered.",
+                keep: 'Keep Editing',
+                discard: 'Discard',
+              }
           : {
               ariaLabel: 'Discard situational test',
               title: 'Discard this situational test?',
@@ -963,9 +976,13 @@ function CreateCourse() {
         onClose={() => setConfirmDiscard(false)}
         ariaLabel={discardCopy.ariaLabel}
       >
+        {/* Warning, not Error (overlays.md § Dialog): leaving a drawer is a caution, not a
+            failure. Nothing on the course is touched, nothing is deleted — the admin is
+            about to walk away from work that has not landed yet, and can start again in a
+            click. Red is for loss that stays lost. Same triangle, warning colours. */}
         <div className="confirm-modal-header confirm-modal-header--center">
           <div className="confirm-modal-icon">
-            <Danger size={56} color="var(--danger-500)" variant="Linear" />
+            <Danger size={56} color="var(--warning-500)" variant="Linear" />
           </div>
           <h2 className="confirm-modal-title">{discardCopy.title}</h2>
           <p className="confirm-modal-body">{discardCopy.body}</p>
@@ -975,7 +992,7 @@ function CreateCourse() {
             {discardCopy.keep}
           </Button>
           <Button
-            semantic="danger"
+            semantic="warning"
             onClick={() => {
               setConfirmDiscard(false)
               closeDrawer()
