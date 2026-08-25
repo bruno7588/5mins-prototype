@@ -568,25 +568,71 @@ const toQuestion = (format: GeneratableType, beat: Beat): GeneratedQuestion => (
   ...(beat.interactive ? { interactive: beat.interactive } : {}),
 })
 
+/* What the admin's sentence can move, and the words that move it. Deliberately shallow:
+   a real generator reads the instruction, and this stands in for the part of that the
+   prototype has to be able to show — asking for polls and getting polls. Everything
+   subtler in the field (tone, what to focus on) is carried through to the run and
+   changes nothing here, which is the honest limit of a mock. */
+const FORMAT_WORDS: [RegExp, GeneratableType][] = [
+  [/multiple[- ]choice|mcq|single[- ]choice/i, 'single-choice'],
+  [/match(ing)?([- ]the)?[- ]pairs?/i, 'match-pairs'],
+  [/sequenc|order(ing)?|put in order/i, 'sequencing'],
+  [/categoris|categoriz|sort(ing)? into/i, 'categorization'],
+  [/fill[- ](in[- ])?(the[- ])?blanks?|cloze/i, 'fill-blank'],
+  [/short[- ]text|open[- ]answer|free[- ]text/i, 'short-text'],
+  [/exercise|task|reflection/i, 'exercise'],
+  [/poll|survey|opinion/i, 'poll'],
+]
+
+/** How many the admin asked for, if they said. "Write 6 questions", "10 assessments". */
+function requestedCount(instructions: string): number | null {
+  const m = instructions.match(/\b(\d{1,2})\b(?=[^.]*\b(question|assessment)s?\b)/i)
+  if (!m) return null
+  const n = Number(m[1])
+  return n >= 1 && n <= 20 ? n : null
+}
+
 /**
- * What the generator writes when the admin lets it decide — the auto half of the mode
- * switch, and the path most admins take.
+ * What the generator writes when nobody named the formats — which, since the picker
+ * came out, is every run.
  *
  * Volume follows the reading: one assessment per lesson, floored at 3 so a one-lesson
  * course still gets a set worth reviewing, and capped at 8 so a long course does not
- * bury the outline in drafts the admin has to curate one by one.
+ * bury the outline in drafts the admin has to curate one by one. An explicit number in
+ * the instructions overrides both — if they asked for six, six is the answer.
  *
  * Formats cycle through ASSESSMENT_TYPES, which is ordered most-reached-for first — so
- * a short course gets the formats admins actually use, and a longer one earns the
- * rarer ones rather than opening with them.
+ * a short course gets the formats admins actually use, and a longer one earns the rarer
+ * ones rather than opening with them. Naming formats in the instructions replaces that
+ * cycle with the ones named, in the order the picker would have shown them.
  *
  * Returned expanded rather than as counts because that is what generateSet consumes:
  * one entry, one assessment. A repeated type is simply more of it.
  */
-export function autoPlan(lessons: TranscriptSource[]): GeneratableType[] {
+export function autoPlan(
+  lessons: TranscriptSource[],
+  instructions = '',
+): GeneratableType[] {
   if (lessons.length === 0) return []
-  const count = Math.min(Math.max(lessons.length, 3), 8)
-  return Array.from({ length: count }, (_, i) => ASSESSMENT_TYPES[i % ASSESSMENT_TYPES.length])
+
+  /* Ordered as the picker ordered them, not as the sentence happened to mention them —
+     the admin is naming a set, not a running order. */
+  const asked = FORMAT_WORDS.filter(([re]) => re.test(instructions)).map(([, t]) => t)
+  const palette = asked.length
+    ? ASSESSMENT_TYPES.filter((t) => asked.includes(t))
+    : ASSESSMENT_TYPES
+
+  const fromReading = Math.min(Math.max(lessons.length, 3), 8)
+  const count =
+    requestedCount(instructions) ??
+    /* A *named* format is one they want to see, so a set that names formats is at least
+       long enough to include each once — otherwise "multiple choice and polls" on a
+       one-lesson course would quietly drop the polls. Only when they named some: the
+       unnamed palette is all eight, and flooring on that would make every course
+       produce eight regardless of how little there was to read. */
+    (asked.length ? Math.max(fromReading, palette.length) : fromReading)
+
+  return Array.from({ length: count }, (_, i) => palette[i % palette.length])
 }
 
 /**

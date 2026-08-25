@@ -584,7 +584,7 @@ function CreateCourse() {
        that asked. Manual arrives already expanded and passes straight through. */
     const types =
       generationScope === 'assessments' && requested.length === 0
-        ? autoPlan(coverage.withTranscript)
+        ? autoPlan(coverage.withTranscript, prompt.instructions ?? '')
         : requested
     setPickedFormats(types)
     setPickedPrompt(prompt)
