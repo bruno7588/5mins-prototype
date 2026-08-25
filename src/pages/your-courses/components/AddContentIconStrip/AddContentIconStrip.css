@@ -34,12 +34,21 @@
   flex-direction: column;
   align-items: stretch;
   /* 8px left gutter in both states, so the rows' hover fill never touches the
-     panel's own left border. */
-  padding: var(--space-s) 0 var(--space-s) var(--space-s);
+     panel's own left border. No top padding: this is a scroll container now, and a
+     padding band above the sticky head is a strip of scrollport the head cannot cover —
+     rows slide through it. The 8px lives on the head instead, where it moves with it. */
+  padding: 0 0 var(--space-s) var(--space-s);
   background-color: var(--page-background);
   border-left: 1px solid var(--border);
   /* Labels are laid out at full length in both states; the rail clips them. */
-  overflow: hidden;
+  overflow-x: hidden;
+  /* The rail is pinned top to bottom, so on a short viewport the menu is taller than the
+     room it has and the last items were simply unreachable — clipped by the same rule
+     that hides the labels. The scroll goes on this element rather than an inner wrapper
+     so the strip keeps one clipping context, and hover tooltips behave exactly as before.
+     Thin, or a platform that draws a classic scrollbar eats a quarter of the 60px rail. */
+  overflow-y: auto;
+  scrollbar-width: thin;
   /* Must beat PageHeader CTAs (no z-index, default 0) AND the open secondary
      drawer (z-index 1001) so its content doesn't bleed under the icon strip.
      Stays below the TopNav (z-100) so global nav remains accessible. */
@@ -72,11 +81,21 @@
 /* Title is taken out of flow so it can't push the toggle around while the panel
    is only 52px wide; the toggle just hugs the right edge in both states. */
 .add-content-icon-strip__head {
-  position: relative;
+  /* Sticky, not relative: the list below it scrolls now, and the collapse toggle is the
+     only way back out of the rail — it must not scroll away with the items. Still a
+     containing block for the absolutely-positioned title, so nothing else moves. */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--page-background);
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  height: 44px;
+  /* 52 = the 44px row plus the rail's old 8px top padding, taken over so the head's own
+     background covers that band while rows scroll beneath it. Border-box, so the content
+     the toggle centres in is still 44px and nothing moves. */
+  height: 52px;
+  padding-top: var(--space-s);
   overflow: hidden;
   flex-shrink: 0;
   transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
