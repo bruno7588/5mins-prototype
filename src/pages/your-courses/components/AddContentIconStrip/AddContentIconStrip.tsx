@@ -44,6 +44,13 @@ export type StripActive =
 const ICON = 20
 const C = 'currentColor'
 
+/* Static rather than useId: the rail is rendered once per builder, and the pairs have to
+   agree across the header's aria-controls and the group's aria-labelledby. */
+const SITUATIONAL_HEADER_ID = 'add-content-situational-header'
+const SITUATIONAL_GROUP_ID = 'add-content-situational-group'
+const ASSESSMENTS_HEADER_ID = 'add-content-assessments-header'
+const ASSESSMENTS_GROUP_ID = 'add-content-assessments-group'
+
 /* The interactive formats sit in the same Assessments group as the classic ones —
    they are assessments, and a second group of four would double the rail's chrome
    to say so. Their labels come from TYPE_CONFIG, so the rail, the drawer header
@@ -194,6 +201,13 @@ function AddContentIconStrip({
     icon: ReactNode,
     isActive: boolean,
     onClick?: () => void,
+    /* Expanded, the group header above is what tells "Create With AI" which of the two
+       it is — and that is a visual relationship, not one a screen reader can follow from
+       the button alone. The group carries it programmatically (role=group +
+       aria-labelledby, below); this is the belt to that pair of braces, for anything
+       that lists controls out of their container. Same strings the collapsed rail
+       already uses, so the two states name the row identically. */
+    accessibleName = label,
   ) => (
     <button
       key={label}
@@ -203,6 +217,7 @@ function AddContentIconStrip({
         isActive && 'add-content-icon-strip__subitem--selected',
       ].filter(Boolean).join(' ')}
       aria-current={isActive || undefined}
+      aria-label={accessibleName === label ? undefined : accessibleName}
       onClick={onClick}
     >
       <span className="add-content-icon-strip__subicon">{icon}</span>
@@ -271,6 +286,8 @@ function AddContentIconStrip({
         <>
           <button
             type="button"
+            id={SITUATIONAL_HEADER_ID}
+            aria-controls={SITUATIONAL_GROUP_ID}
             className={`add-content-icon-strip__item${situationalSelected ? ' add-content-icon-strip__item--holds-active' : ''}`}
             onClick={() => setSituationalOpen((v) => !v)}
             aria-expanded={situationalOpen}
@@ -286,11 +303,18 @@ function AddContentIconStrip({
             </span>
           </button>
           <Collapse open={situationalOpen}>
+            {/* The group its rows belong to, said out loud. Sighted, the header above
+                does this by sitting there; this is the same relationship written down,
+                so "Create With AI" is announced inside "Situational Tests" rather than
+                as one of two identically named buttons (WCAG 2.4.4 wants the context
+                to be programmatically determined, not merely adjacent). */}
+            <div id={SITUATIONAL_GROUP_ID} role="group" aria-labelledby={SITUATIONAL_HEADER_ID}>
             {subitem(
               'Create With AI',
               aiGlyph('situational', generateActive('situational')),
               generateActive('situational'),
               () => onGenerateWithAIClick?.('situational'),
+              'Create Situational Tests With AI',
             )}
             {/* '+', matching the manual route beside an AI one in Your Content
                 ("Add Question Manually"). The group header above already says what
@@ -300,7 +324,9 @@ function AddContentIconStrip({
               <Add size={ICON} color={C} variant={active === 'situational-test' ? 'Bold' : 'Linear'} />,
               active === 'situational-test',
               onSituationalTestClick,
+              'Create a Situational Test Manually',
             )}
+            </div>
           </Collapse>
         </>
       ) : (
@@ -329,6 +355,8 @@ function AddContentIconStrip({
         <>
           <button
             type="button"
+            id={ASSESSMENTS_HEADER_ID}
+            aria-controls={ASSESSMENTS_GROUP_ID}
             className={`add-content-icon-strip__item${assessmentsSelected ? ' add-content-icon-strip__item--holds-active' : ''}`}
             onClick={() => setAssessmentsOpen((v) => !v)}
             aria-expanded={assessmentsOpen}
@@ -345,6 +373,7 @@ function AddContentIconStrip({
             </span>
           </button>
           <Collapse open={assessmentsOpen}>
+            <div id={ASSESSMENTS_GROUP_ID} role="group" aria-labelledby={ASSESSMENTS_HEADER_ID}>
             {/* First, and above the eight formats, for the same reason it leads the
                 situational group: the rows below author one question of a chosen kind,
                 this one has the generator write a set across them. */}
@@ -353,6 +382,7 @@ function AddContentIconStrip({
               aiGlyph('assessments', generateActive('assessments')),
               generateActive('assessments'),
               () => onGenerateWithAIClick?.('assessments'),
+              'Create Assessments With AI',
             )}
             {/* Each type carries its own glyph here too, so the icon an admin
                 learns in the collapsed rail is the same one they see expanded. */}
@@ -366,6 +396,7 @@ function AddContentIconStrip({
                 )}
               </Fragment>
             ))}
+            </div>
           </Collapse>
         </>
       ) : (
