@@ -1,4 +1,10 @@
-import eventThumb from '../../assets/programs/course-5.png'
+import eventThumb1 from '../../assets/programs/course-5.png'
+import eventThumb2 from '../../assets/programs/course-1.png'
+import eventThumb3 from '../../assets/programs/course-2.png'
+import eventThumb4 from '../../assets/programs/course-6.png'
+import eventThumb5 from '../../assets/programs/course-4.png'
+import eventThumb6 from '../../assets/workspace/course-2.png'
+import eventThumb7 from '../../assets/workspace/course-4.png'
 
 export type CalendarItemType = 'course' | 'event'
 export type AttendanceState = 'none' | 'attended' | 'missed'
@@ -49,7 +55,7 @@ export const upcomingItems: CalendarItem[] = [
   {
     id: 'u1',
     type: 'event',
-    image: eventThumb,
+    image: eventThumb1,
     title: 'Tech Meetup',
     startsAt: '2026-05-18T06:00:00+01:00',
     endsAt: '2026-05-18T07:30:00+01:00',
@@ -84,7 +90,7 @@ export const upcomingItems: CalendarItem[] = [
   {
     id: 'u3',
     type: 'event',
-    image: eventThumb,
+    image: eventThumb2,
     title: 'Training events',
     startsAt: '2026-05-19T09:50:00+00:00',
     endsAt: '2026-05-19T13:50:00+00:00',
@@ -103,7 +109,7 @@ export const upcomingItems: CalendarItem[] = [
   {
     id: 'u4',
     type: 'event',
-    image: eventThumb,
+    image: eventThumb3,
     title: 'Next Big Event',
     startsAt: '2026-05-21T18:20:00+01:00',
     endsAt: '2026-05-21T19:20:00+01:00',
@@ -137,7 +143,7 @@ export const upcomingItems: CalendarItem[] = [
   {
     id: 'u6',
     type: 'event',
-    image: eventThumb,
+    image: eventThumb4,
     title: 'Leadership Off-site',
     startsAt: '2026-06-01T09:00:00+01:00',
     endsAt: '2026-06-03T17:00:00+01:00',
@@ -174,7 +180,7 @@ export const pastItems: CalendarItem[] = [
   {
     id: 'p1',
     type: 'event',
-    image: eventThumb,
+    image: eventThumb5,
     title: 'Monthly venue',
     startsAt: '2026-05-14T14:15:00-04:00',
     endsAt: '2026-05-14T18:15:00-04:00',
@@ -189,7 +195,7 @@ export const pastItems: CalendarItem[] = [
   {
     id: 'p2',
     type: 'event',
-    image: eventThumb,
+    image: eventThumb6,
     title: 'Online event',
     startsAt: '2026-05-12T18:57:00+01:00',
     endsAt: '2026-05-12T22:57:00+01:00',
@@ -205,7 +211,7 @@ export const pastItems: CalendarItem[] = [
   {
     id: 'p3',
     type: 'event',
-    image: eventThumb,
+    image: eventThumb7,
     title: 'Quarterly all-hands',
     startsAt: '2026-05-02T16:30:00+01:00',
     endsAt: '2026-05-02T20:30:00+01:00',
