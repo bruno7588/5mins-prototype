@@ -298,7 +298,7 @@ Container: 344px in Figma (fill the parent in code), `--cards-background`, radiu
 
 ## Course card
 
-A course or playlist, that is a group of lessons. One desktop card, 300px wide, roughly 297px tall. Source: `Card/Courses`, node `11312:3479`. Variant nodes: `11312:3534` (base), `11312:3576` (new + due date), `11312:3592` (hover).
+A course or playlist, that is a group of lessons. One desktop card, 300px wide, roughly 297px tall. Source: `Card/Courses`, set `5132:5756` (re-verified 2026-08-26). Desktop variant nodes: `6122:3185` (base), `10274:13124` (new), `10276:13252` (due date), `10276:13283` (new + due), `10229:3173` (hover), `10276:13379` (new + due, hover). Implemented as `src/components/WorkspaceCourseCard`.
 
 Anatomy, top to bottom:
 
@@ -307,7 +307,8 @@ Anatomy, top to bottom:
 
 ```html
 <article class="course-card">
-  <div class="course-card__image" style="background-image:url(...)">
+  <div class="course-card__image">
+    <div class="course-card__picture" style="background-image:url(...)"></div>
     <span class="badge-new">New</span>            <!-- only when New -->
     <span class="badge-due">Due on Aug 20</span>  <!-- only when Due date -->
     <div class="progress-bar progress-bar--8 progress-bar--course">
@@ -334,14 +335,24 @@ Anatomy, top to bottom:
 .course-card:hover { background: var(--cards-background-hover); }
 .course-card__image {
   position: relative; width: 300px; height: 140px;
-  border-radius: 12px 12px 0 0; background-size: cover; background-position: center;
+  border-radius: 12px 12px 0 0; overflow: hidden;
+}
+.course-card__picture {                       /* the zoomable layer, under badges + progress */
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.course-card:hover .course-card__picture { transform: scale(1.12); }   /* 336 x 157 inside 300 x 140 */
+@media (prefers-reduced-motion: reduce) {
+  .course-card__picture { transition: none; }
+  .course-card:hover .course-card__picture { transform: none; }
 }
 .progress-bar--course i.on { background: var(--selected); }   /* gold, not cyan */
 .badge-new {
   position: absolute; top: 10px; left: 10px;
   padding: 4px 8px; border-radius: 20px;
   background: var(--badge-new);
-  font: 500 12px/1.2 Poppins; color: #fff;
+  font: 500 12px/1.5 Poppins; color: #fff;
 }
 .badge-due {
   position: absolute; top: 10px; right: 10px;
@@ -369,7 +380,7 @@ Anatomy, top to bottom:
 - **New:** adds the rose `New` pill in the top-left of the image. Use for recently added courses.
 - **Due date:** adds the white due-date pill in the top-right, text in `--text-warning`. Use when a course has a compliance deadline.
 - New and Due date can both appear at once.
-- **Hover:** card background switches to `--cards-background-hover`.
+- **Hover:** card background switches to `--cards-background-hover` **and the picture zooms 1.12x** (Figma draws it at 336 x 157 inside the clipped 300 x 140 frame). Badges and the progress bar stay put on top; the zoom is animated (300ms ease-out) and disabled under `prefers-reduced-motion`.
 
 ### Course mobile card (272 x 248)
 

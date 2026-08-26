@@ -18,22 +18,31 @@
   background: var(--cards-background-hover);
 }
 
+/* Hover (Figma 10229:3173): the picture grows to 336 x 157 inside the fixed 300 x 140 frame — a 1.12x zoom, clipped. */
+.ws-course-card--interactive:hover .ws-course-card__image {
+  transform: scale(1.12);
+}
+
 .ws-course-card--interactive:focus-visible {
   outline: 2px solid var(--selected);
   outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ws-course-card--interactive {
+  .ws-course-card--interactive,
+  .ws-course-card__image {
     transition: none;
+  }
+  .ws-course-card--interactive:hover .ws-course-card__image {
+    transform: none;
   }
 }
 
 .ws-course-card__newbadge {
   position: absolute;
-  top: -13px;
-  left: 20px;
-  z-index: 2;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   padding: var(--space-xs) var(--space-s);
@@ -41,7 +50,7 @@
   color: var(--neutral-25);
   font-size: 12px;
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.5;
   border-radius: 20px;
   white-space: nowrap;
 }
@@ -55,16 +64,27 @@
   overflow: hidden;
 }
 
+.ws-course-card__image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Badge/Warning on the card fill (Figma 10308:3104) */
 .ws-course-card__duepill {
   position: absolute;
   top: 10px;
   right: 10px;
+  z-index: 1;
   padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
   background: var(--cards-background);
   color: var(--text-warning);
   font-size: 14px;
-  line-height: 1.5;
+  font-weight: 500;
+  line-height: 1.2;
   white-space: nowrap;
 }
 

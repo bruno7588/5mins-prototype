@@ -26,15 +26,12 @@ function WorkspaceCourseCard({ course, onOpen }: { course: WorkspaceCourse; onOp
           : undefined
       }
     >
-      {course.isNew ? <span className="ws-course-card__newbadge">New</span> : null}
-      <div
-        className="ws-course-card__media"
-        style={
-          course.image
-            ? { backgroundImage: `url(${course.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-            : { background: course.thumbnailGradient }
-        }
-      >
+      <div className="ws-course-card__media">
+        <div
+          className="ws-course-card__image"
+          style={course.image ? { backgroundImage: `url(${course.image})` } : { background: course.thumbnailGradient }}
+        />
+        {course.isNew ? <span className="ws-course-card__newbadge">New</span> : null}
         {course.dueLabel ? <span className="ws-course-card__duepill">{course.dueLabel}</span> : null}
         <div className="ws-course-card__progress" role="progressbar" aria-valuenow={course.progress} aria-valuemin={0} aria-valuemax={100}>
           {Array.from({ length: SEGMENTS }).map((_, i) => {
