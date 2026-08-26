@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Moon, Setting2, Logout } from 'iconsax-react'
+import { Moon, Setting2, Logout, Mobile } from 'iconsax-react'
 import Toggle from '../Toggle/Toggle'
 import { useTheme } from '../../hooks/useTheme'
 import './ProfileMenu.css'
@@ -60,6 +60,19 @@ export default function ProfileMenu({
           >
             <Logout size={20} color="var(--text-primary)" variant="Linear" />
             <span>Log out</span>
+          </button>
+          {/* Same escape hatch as the admin TopNav menu — opens the phone-frame prototype. */}
+          <button
+            type="button"
+            role="menuitem"
+            className="profile-menu__item"
+            onClick={() => {
+              setOpen(false)
+              navigate('/mobile')
+            }}
+          >
+            <Mobile size={20} color="var(--text-primary)" variant="Linear" />
+            <span>Mobile App</span>
           </button>
         </div>
       )}
