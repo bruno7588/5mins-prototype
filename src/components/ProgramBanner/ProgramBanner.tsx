@@ -84,7 +84,7 @@ export default function ProgramBanner({ programs, onStart, onResume }: Props) {
               <p className="program-banner__upnext">
                 <span className="program-banner__upnext-label">
                   {current ? 'Current course:' : 'Next course:'}
-                </span>
+                </span>{' '}
                 <span className="program-banner__upnext-title">{resumeCourse.title}</span>
               </p>
             ) : null}

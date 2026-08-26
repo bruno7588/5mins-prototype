@@ -82,6 +82,11 @@
 }
 
 .program-banner__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
   margin: 0;
   font-size: 24px;
   font-weight: 700;
@@ -141,31 +146,25 @@
 
 /* "Current course" / "Next course" subtext under the title. Sits on the fixed
    dark scrim, so it uses raw palette tokens rather than mode-aware --text-*. */
+/* Label and course title wrap together as one run of text, clamped at 2 lines. */
 .program-banner__upnext {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-xs);
-  min-width: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
   margin: 0;
-  white-space: nowrap;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(249, 249, 250, 0.72);
 }
 
 .program-banner__upnext-label {
-  flex-shrink: 0;
-  font-size: 14px;
   font-weight: 400;
-  line-height: 1.5;
-  color: rgba(249, 249, 250, 0.72);
 }
 
 .program-banner__upnext-title {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 14px;
   font-weight: 600;
-  line-height: 1.5;
-  color: rgba(249, 249, 250, 0.72);
 }
 
 .program-banner__actions {

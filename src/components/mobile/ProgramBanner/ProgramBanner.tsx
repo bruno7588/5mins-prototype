@@ -45,11 +45,17 @@ function MobileProgramBanner({ programs, onOpen }: MobileProgramBannerProps) {
          itself fires — otherwise each frame would restart the dwell timer. */
       sliding.current = true
       setIndex(next)
+
+      /* Mandatory snapping clamps every position the tween writes, so the
+         slide teleports between snap points. Suspend it while animating and
+         restore it afterwards, which keeps swiping snappy. */
+      el.style.scrollSnapType = 'none'
       gsap.to(el, {
         scrollLeft: next * el.clientWidth,
         duration: 0.6,
         ease: 'power2.inOut',
         onComplete: () => {
+          el.style.scrollSnapType = ''
           sliding.current = false
         },
       })
@@ -114,7 +120,7 @@ function MobileProgramBanner({ programs, onOpen }: MobileProgramBannerProps) {
                     <p className="m-program-banner__course">
                       <span className="m-program-banner__course-label">
                         {current ? 'Current course:' : 'Next course:'}
-                      </span>
+                      </span>{' '}
                       <span className="m-program-banner__course-title">{resumeCourse.title}</span>
                     </p>
                   ) : null}
