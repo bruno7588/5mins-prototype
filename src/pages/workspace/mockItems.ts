@@ -1,4 +1,5 @@
-import programBanner from '../../assets/programs/banner.jpg'
+import programBanner from '../../assets/programs/unsplash_GP5EziJ_Cdo.jpg'
+import programBanner2 from '../../assets/programs/banner.jpg'
 import courseThumb1 from '../../assets/programs/course-1.png'
 import courseThumb2 from '../../assets/programs/course-2.png'
 import courseThumb3 from '../../assets/programs/course-3.png'
@@ -214,7 +215,7 @@ export const workspacePrograms: WorkspaceProgram[] = [
     description:
       'A structured path to becoming a confident people leader. Build the habits, conversations, and decision-making frameworks that high-performing managers rely on every day.',
     thumbnailGradient: 'linear-gradient(135deg, #00afc4, #6368db)',
-    image: courseThumb1,
+    image: programBanner2,
     courseCount: 9,
     durationLabel: '15 min',
     learnerCount: 28,
@@ -258,11 +259,11 @@ export const workspacePrograms: WorkspaceProgram[] = [
     description:
       'Learn to turn data into action. This program covers analytics fundamentals, interpreting metrics, and communicating insights that move the business forward.',
     thumbnailGradient: 'linear-gradient(135deg, #f97316, #df1642)',
-    image: courseThumb3,
+    image: programBanner,
     courseCount: 12,
     durationLabel: '18 min',
     learnerCount: 61,
-    progress: 0,
+    progress: 33,
     outline: [
       {
         id: 'p3c1',
@@ -280,9 +281,8 @@ export const workspacePrograms: WorkspaceProgram[] = [
         lessonCount: 8,
         durationMinutes: 14,
         thumbnail: courseThumb4,
-        state: 'locked',
-        status: 'scheduled',
-        statusLabel: 'Scheduled for 12 Jul',
+        state: 'continue',
+        progress: 45,
       },
       {
         id: 'p3c3',
@@ -303,7 +303,7 @@ export const workspacePrograms: WorkspaceProgram[] = [
     description:
       'A compliance pathway covering food handling, contamination control, and safe kitchen practice for hospitality teams. Pass every course to earn your certificate.',
     thumbnailGradient: 'linear-gradient(135deg, #14b8a6, #0ea5e9)',
-    image: courseThumb2,
+    image: programBanner,
     courseCount: 4,
     durationLabel: '17 min',
     learnerCount: 32,
@@ -355,11 +355,11 @@ export const workspacePrograms: WorkspaceProgram[] = [
     description:
       'Everything hospitality staff need to prevent, detect, and respond to fire. The certificate unlocks only once every course is passed.',
     thumbnailGradient: 'linear-gradient(135deg, #f97316, #ef4444)',
-    image: courseThumb5,
+    image: programBanner2,
     courseCount: 3,
     durationLabel: '14 min',
     learnerCount: 41,
-    progress: 100,
+    progress: 67,
     outline: [
       {
         id: 'p5c1',
