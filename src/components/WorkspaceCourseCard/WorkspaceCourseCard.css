@@ -100,7 +100,7 @@
 .ws-course-card__segment {
   flex: 1 0 0;
   height: 100%;
-  background: var(--border);
+  background: var(--border-elevated);
 }
 
 .ws-course-card__segment--filled {
