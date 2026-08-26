@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import MobileTopNav from '@/components/mobile/TopNav/TopNav'
 import MobileTabNav, { type MobileTab } from '@/components/mobile/TabNav/TabNav'
+import { getAllPrograms } from '@/pages/programs/programStore'
 import WorkspaceScreen from './WorkspaceScreen'
+import ProgramScreen from './ProgramScreen'
 
 /**
  * Mobile app prototype shell (Figma scaffold 7632:8501) — the app chrome inside
@@ -15,8 +17,17 @@ function MobileApp() {
   const [tab, setTab] = useState<MobileTab>('home')
   const [homeChip, setHomeChip] = useState('For You')
   const [progressChip, setProgressChip] = useState('My Team')
+  /** Detail screens push over the tabs rather than leaving the phone frame. */
+  const [openProgramId, setOpenProgramId] = useState<string | null>(null)
+
+  const openProgram = openProgramId
+    ? getAllPrograms().find((p) => p.id === openProgramId)
+    : undefined
 
   const header = (() => {
+    if (openProgram) {
+      return <MobileTopNav variant="detail" title="Program" onBack={() => setOpenProgramId(null)} />
+    }
     switch (tab) {
       case 'home':
         return (
@@ -59,11 +70,20 @@ function MobileApp() {
   return (
     <PhoneFrame
       header={header}
-      footer={<MobileTabNav active={tab} onNavigate={setTab} />}
+      footer={
+        <MobileTabNav
+          active={tab}
+          onNavigate={(next) => {
+            setOpenProgramId(null)
+            setTab(next)
+          }}
+        />
+      }
       onExit={() => navigate('/content-library')}
     >
-      {tab === 'home' && homeChip === 'Your Workspace' ? (
-        <WorkspaceScreen onOpenProgram={(id) => navigate(`/programs/${id}`)} />
+      {openProgram ? <ProgramScreen program={openProgram} /> : null}
+      {!openProgram && tab === 'home' && homeChip === 'Your Workspace' ? (
+        <WorkspaceScreen onOpenProgram={setOpenProgramId} />
       ) : null}
       {/* The remaining tab screens land here as they are built. */}
     </PhoneFrame>

@@ -1,0 +1,160 @@
+/* Mobile program details — Figma 3716:83128 / 3716:83261 / 3716:83526. */
+.m-prog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-m);
+}
+
+/* ===== Banner ===== */
+.m-prog__banner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+/* The "Live" badge takes a plain dot rather than a glyph. */
+.m-prog__livedot {
+  width: 12px;
+  height: 12px;
+  margin: auto;
+  border-radius: var(--radius-full);
+  background: currentColor;
+}
+
+.m-prog__titleblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.m-prog__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-prog__desc {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.m-prog__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.m-prog__metaitem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.m-prog__avatars {
+  display: inline-flex;
+  align-items: center;
+}
+
+.m-prog__avatar {
+  width: 24px;
+  height: 24px;
+  margin-right: -8px;
+  border: 1px solid var(--page-background);
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.m-prog__avatar--count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--page-background-hover);
+  font-size: 8px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* Only the overlap between avatars is negative — the stack ends flush. */
+.m-prog__avatars > :last-child {
+  margin-right: 0;
+}
+
+.m-prog__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.m-prog__track {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  height: 6px;
+  border-radius: var(--radius-ml);
+  overflow: hidden;
+}
+
+.m-prog__seg {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 100%;
+  background: var(--border-elevated);
+}
+
+.m-prog__seg--filled {
+  background: var(--primary-600);
+}
+
+/* A finished program turns the whole bar green (100% is never primary). */
+.m-prog__seg--passed {
+  background: var(--success-500);
+}
+
+.m-prog__pct {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ===== Courses + Certification ===== */
+.m-prog__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.m-prog__sectiontitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* The shared certificate card is sized for the desktop column; on the phone it
+   fills the content width like every other card on the screen. */
+.m-prog .pcert-locked,
+.m-prog .pcert-card {
+  width: 100%;
+}

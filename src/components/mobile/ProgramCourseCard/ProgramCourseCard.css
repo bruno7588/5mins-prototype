@@ -1,0 +1,167 @@
+/* Mobile program-outline course card — Figma 3716:83150 (available),
+   3716:83166 (locked), 3716:83304 (failed + Retake). */
+.m-pcourse {
+  position: relative;
+  width: 100%;
+}
+
+.m-pcourse__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  /* Clips the bottom progress track to the card's rounded corners. */
+  overflow: hidden;
+}
+
+.m-pcourse__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm);
+}
+
+.m-pcourse__thumb {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-s);
+  background-size: cover;
+  background-position: center;
+}
+
+/* A locked course reads as unavailable: the artwork drops to grey and the
+   copy to the disabled token. */
+.m-pcourse__card--locked .m-pcourse__thumb {
+  mix-blend-mode: luminosity;
+}
+
+.m-pcourse__body {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.m-pcourse__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.m-pcourse__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-pcourse__card--locked .m-pcourse__title {
+  color: var(--text-disabled);
+}
+
+.m-pcourse__info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.m-pcourse__metaitem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.m-pcourse__card--locked .m-pcourse__metaitem {
+  color: var(--text-disabled);
+}
+
+/* Status badge, plus the Retake CTA when the learner failed the course. */
+.m-pcourse__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.m-pcourse__lock {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+/* 2px completion track along the bottom edge of a released course. */
+.m-pcourse__track {
+  display: flex;
+  width: 100%;
+  height: 2px;
+  border-radius: var(--radius-ml);
+  overflow: hidden;
+}
+
+.m-pcourse__seg {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 100%;
+  /* --border matches --cards-background in dark mode, so the empty track needs
+     the elevated step to stay visible on the card. */
+  background: var(--border-elevated);
+}
+
+.m-pcourse__seg--filled {
+  background: var(--primary-600);
+}
+
+.m-pcourse__seg--passed {
+  background: var(--success-500);
+}
+
+/* "Start here" marker for the first course of a program not yet begun —
+   the DS Tooltip body + caret, anchored above the card (Figma 3716:83255). */
+.m-pcourse__marker {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  padding: var(--space-s) var(--space-m);
+  border-radius: var(--radius-s);
+  background: var(--primary-button-background);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-button-foreground);
+  white-space: nowrap;
+  filter: drop-shadow(-4px 0 12px rgba(32, 34, 42, 0.12));
+}
+
+.m-pcourse__marker::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 12px;
+  height: 7px;
+  transform: translateX(-50%);
+  background: var(--primary-button-background);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}

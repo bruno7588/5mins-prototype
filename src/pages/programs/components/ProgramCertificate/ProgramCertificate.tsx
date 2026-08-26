@@ -11,6 +11,8 @@ import './ProgramCertificate.css'
  */
 interface ProgramCertificateProps {
   unlocked: boolean
+  /** Omit where there is nowhere to download to — the CTA is then left out
+   *  rather than rendered as a button that does nothing (mobile, Figma 3716:83526). */
   onGetCertificate?: () => void
 }
 
@@ -36,9 +38,11 @@ function ProgramCertificate({ unlocked, onGetCertificate }: ProgramCertificatePr
     <div className="pcert-card">
       <img className="pcert-card__medallion" src={certMedallion} alt="" aria-hidden="true" />
       <p className="pcert-card__title">Certificate of Completion</p>
-      <button type="button" className="pcert-card__cta" onClick={onGetCertificate}>
-        Get Certificate
-      </button>
+      {onGetCertificate ? (
+        <button type="button" className="pcert-card__cta" onClick={onGetCertificate}>
+          Get Certificate
+        </button>
+      ) : null}
     </div>
   )
 }
