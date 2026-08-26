@@ -119,7 +119,7 @@
   height: 20px;
   border-radius: 50%;
   border: 2px solid var(--border);
-  margin: 2px;
+  margin: var(--space-xxs);
 }
 
 /* Sparkle pulse animation for active step */
@@ -294,7 +294,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 4px;
+  padding: var(--space-xs);
   color: var(--text-tertiary);
   transition: color 150ms ease;
 }
@@ -346,7 +346,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: var(--space-xs);
   flex-shrink: 0;
 }
 
@@ -397,7 +397,7 @@
 
 .ai-drawer-btn-discard {
   white-space: nowrap;
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
@@ -414,7 +414,7 @@
 
 .ai-drawer-btn-save {
   white-space: nowrap;
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;

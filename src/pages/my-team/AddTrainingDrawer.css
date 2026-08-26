@@ -3,7 +3,7 @@
 .at-header-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
   flex: 1;
   min-width: 0;
 }
@@ -95,7 +95,7 @@
 .at-duration-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
   min-width: 0;
 }
 

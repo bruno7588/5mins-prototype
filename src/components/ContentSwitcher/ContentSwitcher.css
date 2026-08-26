@@ -1,8 +1,8 @@
 /* Content Switcher — segmented control in a filled track (DS: chips-switcher-tabs.md). */
 .switcher {
   display: inline-flex;
-  gap: 4px;
-  padding: 4px;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
   background: var(--input-background);
   border-radius: var(--radius-sm); /* 12px */
 }
@@ -12,8 +12,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 6px 12px;
+  gap: var(--space-xs);
+  padding: var(--space-xss) var(--space-sm);
   border: none;
   border-radius: var(--radius-s); /* 8px */
   background: transparent;

@@ -341,7 +341,7 @@
   overflow-y: hidden;
   padding: 0;
   /* Sits on the same baseline as the 20px radio beside it. */
-  margin-top: 2px;
+  margin-top: var(--space-xxs);
 }
 
 .st-drawer__option-input::placeholder {
@@ -446,7 +446,7 @@
 /* The format the generator wrote this question in, beside its number — the admin picked
    the formats, so the output says which one it got. */
 .st-drawer__question-format {
-  padding: 2px var(--space-s);
+  padding: var(--space-xxs) var(--space-s);
   background: var(--input-background);
   border-radius: var(--radius-full);
   font-size: 14px;

@@ -117,7 +117,7 @@
 .cd-drawer__member-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
   line-height: 1.5;
   min-width: 0;
 }
@@ -137,7 +137,7 @@
 
 .cd-drawer__close {
   flex-shrink: 0;
-  padding: 4px;
+  padding: var(--space-xs);
 }
 
 .modal__divider {
@@ -240,7 +240,7 @@
 
 .cd-table__cell--progress {
   width: 145px;
-  gap: 8px;
+  gap: var(--space-s);
   flex-shrink: 0;
   justify-content: flex-end;
   padding: var(--space-sm) var(--space-m);

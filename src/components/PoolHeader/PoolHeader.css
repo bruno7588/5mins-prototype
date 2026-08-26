@@ -87,8 +87,8 @@
 .pool-header-coverage {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
+  gap: var(--space-xs);
+  padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
   font-size: 14px;
   font-weight: 500;

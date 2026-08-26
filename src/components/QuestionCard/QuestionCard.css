@@ -113,7 +113,7 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-0);
   font-size: 14px;
@@ -197,7 +197,7 @@
   font-weight: 500;
   color: var(--success-600);
   background: var(--success-100);
-  padding: 2px 8px;
+  padding: var(--space-xxs) var(--space-s);
   border-radius: var(--radius-full);
   flex-shrink: 0;
 }

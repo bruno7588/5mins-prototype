@@ -61,7 +61,7 @@
   right: 0;
   z-index: 1000;
   min-width: 180px;
-  padding: 8px;
+  padding: var(--space-s);
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -71,9 +71,9 @@
 .topnav-menu__item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
   width: 100%;
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   background: transparent;
   border: none;
   border-radius: var(--radius-s);

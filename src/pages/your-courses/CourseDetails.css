@@ -203,7 +203,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px var(--space-xs);
+  padding: var(--space-xxs) var(--space-xs);
   border-radius: var(--radius-full);
   background: var(--input-background);
   font-size: 12px;
@@ -714,7 +714,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  padding: 6px var(--space-sm);
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-size: 14px;
   font-weight: 500;

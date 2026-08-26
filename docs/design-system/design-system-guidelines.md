@@ -205,7 +205,7 @@ Body text uses **Regular (400)**, **Medium (500)**, or **Semibold (600)** weight
 | Medium | 14px (0.875rem) | 1.5 | Secondary text, list items, table content |
 | Small | 12px (0.75rem) | 1.2 | Captions, help text, timestamps |
 
-**Paragraph Semibold (600)** — added 2026-08-25 (Figma `5445:24009`). Same three sizes; line heights 1.5 / 1.5 / 1.2 (L / M / S). Utilities: `.text-lg-semibold`, `.text-md-semibold`, `.text-sm-semibold`.
+Each size exists in three weights (Figma `5445:24009`, verified 2026-08-26) with the same line heights (1.5 / 1.5 / 1.2 for L / M / S). Utilities: `.text-{lg,md,sm}` (400), `.text-{lg,md,sm}-medium` (500), `.text-{lg,md,sm}-semibold` (600).
 
 **Every form-field label is Paragraph M semibold** — 14px / 600 / 1.5, `--text-secondary`. See `input.md`.
 
@@ -248,14 +248,17 @@ All button text uses **Bold (700)** weight, no text-transform.
 
 ## 4. Spacing System
 
-All spacing uses a **4px base unit**. Every padding, margin, gap, and size value must be a multiple of 4px.
+All spacing uses a **4px base unit**. Layout spacing (padding, margins, gaps between blocks) must be a multiple of 4px. Three fine-grain tokens (2/6/10px) exist for micro spacing inside components — hairline gaps, icon nudges, compact control padding — never for layout.
 
 ### 4.1 Spacing Scale
 
 | Token | rem | px | Usage |
 |-------|-----|----|----|
+| `--space-xxs` | 0.125rem | 2px | Hairline gaps, focus-ring offset, badge inner gap (micro only) |
 | `--space-xs` | 0.25rem | 4px | Micro gaps, icon-to-text gap (small buttons) |
+| `--space-xss` | 0.375rem | 6px | Compact chip/badge padding, tight icon nudges (micro only) |
 | `--space-s` | 0.5rem | 8px | Small gaps, icon padding, button padding |
+| `--space-ssm` | 0.625rem | 10px | Button padding-y (M/L), compact control padding (micro only) |
 | `--space-sm` | 0.75rem | 12px | Compact spacing, input padding-y |
 | `--space-m` | 1rem | 16px | Default spacing, card padding, icon-header gap |
 | `--space-ml` | 1.25rem | 20px | Form gaps, section gaps |
@@ -288,8 +291,11 @@ All spacing uses a **4px base unit**. Every padding, margin, gap, and size value
 
 ```css
 :root {
+  --space-xxs: 0.125rem; /* 2px */
   --space-xs: 0.25rem;   /* 4px */
+  --space-xss: 0.375rem; /* 6px */
   --space-s: 0.5rem;     /* 8px */
+  --space-ssm: 0.625rem; /* 10px */
   --space-sm: 0.75rem;   /* 12px */
   --space-m: 1rem;       /* 16px */
   --space-ml: 1.25rem;   /* 20px */

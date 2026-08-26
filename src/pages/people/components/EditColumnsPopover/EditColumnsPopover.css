@@ -11,7 +11,7 @@
   padding: var(--space-sm);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .edit-cols-header {
@@ -50,7 +50,7 @@
 .edit-cols-section {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .edit-cols-section-label {

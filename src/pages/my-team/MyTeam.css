@@ -58,7 +58,7 @@
   background: transparent;
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
-  padding: 8px 16px 8px 12px;
+  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 14px;
@@ -180,7 +180,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .mt-side__profile-name {
@@ -406,7 +406,7 @@
    supplies the track and items; only the page placement is local. */
 .mt-cp__switcher {
   align-self: flex-start;
-  margin-bottom: calc(20px - var(--space-l));
+  margin-bottom: calc(var(--space-ml) - var(--space-l));
 }
 
 @media (max-width: 900px) {
@@ -523,7 +523,7 @@
   width: 180px;
   flex-shrink: 0;
   justify-content: flex-start;
-  gap: var(--space-xs, 4px);
+  gap: var(--space-xs);
   color: var(--text-secondary);
   white-space: nowrap;
 }
@@ -543,7 +543,7 @@
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  padding: 2px 6px;
+  padding: var(--space-xxs) var(--space-xss);
   border-radius: var(--radius-s);
   background: var(--input-background);
   color: var(--text-secondary);
@@ -588,7 +588,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 .mt-cp__th-btn:hover {
@@ -667,7 +667,7 @@
 .mt-reminder-tip {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   text-align: left;
 }
 .mt-reminder-tip__title {
@@ -712,7 +712,7 @@
   color: var(--text-secondary);
   min-width: 36px;
   text-align: left;
-  margin-left: 8px;
+  margin-left: var(--space-s);
 }
 .mt-cp__table-cell--muted .mt-cp__progress-pct {
   color: var(--text-disabled);
@@ -779,7 +779,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-ml);
-  padding: 24px;
+  padding: var(--space-l);
   border-radius: var(--radius-ml);
   overflow: hidden;
   box-shadow: 1px 1px 5px 0 rgba(56, 62, 77, 0.05);
@@ -950,7 +950,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-size: 14px;
   font-weight: 500;

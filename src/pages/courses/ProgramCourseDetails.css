@@ -35,10 +35,10 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-l);
   width: 100%;
   max-width: 900px;
-  margin: 20px auto 0;
+  margin: var(--space-ml) auto 0;
 }
 
 /* ---- Header card ---- */
@@ -47,8 +47,8 @@
 .pcd-content .pcd-header {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 24px;
+  gap: var(--space-ml);
+  padding: var(--space-l);
   background: var(--page-background);
   border-radius: 16px;
   box-shadow: var(--shadow-s);
@@ -61,21 +61,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-m);
   flex-wrap: wrap;
 }
 
 .pcd-header__info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-m);
   flex-wrap: wrap;
 }
 
 .pcd-meta__item {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -85,7 +85,7 @@
 .pcd-header__actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .pcd-iconbtn {
@@ -108,7 +108,7 @@
 .pcd-header__title {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .pcd-title {
@@ -122,14 +122,14 @@
 .pcd-helper {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   flex-wrap: wrap;
 }
 
 .pcd-helper__item {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -146,7 +146,7 @@
 .pcd-progress {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
   background: unset;
   background-color: unset;
 }
@@ -189,7 +189,7 @@
 .pcd-tabs {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: var(--space-l);
 }
 
 .pcd-tab {
@@ -198,8 +198,8 @@
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 4px;
-  padding: 0 0 6px;
+  gap: var(--space-xs);
+  padding: 0 0 var(--space-xss);
   background: none;
   border: none;
   font-family: 'Poppins', sans-serif;
@@ -232,7 +232,7 @@
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  padding: 2px 8px;
+  padding: var(--space-xxs) var(--space-s);
   border-radius: 40px;
   background: var(--input-background);
   font-size: 14px;
@@ -244,19 +244,19 @@
 .pcd-outline {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 .pcd-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .pcd-section__header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-m);
   width: 100%;
   padding: 0;
   background: none;
@@ -270,7 +270,7 @@
   flex: 1 0 0;
   min-width: 0;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .pcd-section__name {
@@ -303,7 +303,7 @@
 .pcd-section__lessons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 /* ---- Lesson card ---- */
@@ -311,8 +311,8 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--space-m);
+  padding: var(--space-m);
   background: var(--cards-background);
   border-radius: 12px;
   box-shadow: var(--shadow-s);
@@ -337,7 +337,7 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
-  padding: 12px 16px;
+  padding: var(--space-sm) var(--space-m);
   border: none;
   border-radius: 12px;
   background: var(--primary-button-background);
@@ -414,7 +414,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: var(--space-xs);
   background: var(--border);
   border-bottom-right-radius: 8px;
 }
@@ -424,7 +424,7 @@
   flex: 1 0 0;
   min-width: 0;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .pcd-lesson__title {
@@ -447,7 +447,7 @@
 .pcd-lesson__meta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-m);
   width: 100%;
 }
 
@@ -484,7 +484,7 @@
 }
 
 .pcd-empty {
-  padding: 48px 16px;
+  padding: 48px var(--space-m);
   text-align: center;
   font-size: 14px;
   color: var(--text-secondary);

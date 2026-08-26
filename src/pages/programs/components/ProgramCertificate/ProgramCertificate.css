@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: var(--space-sm);
   width: 280px;
   max-width: 100%;
   height: 175px;
@@ -28,7 +28,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
   width: 100%;
 }
 
@@ -45,7 +45,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xss);
   width: 100%;
 }
 
@@ -65,8 +65,8 @@
 .pcert-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--space-m);
+  padding: var(--space-m);
   background: var(--cards-background);
   border-radius: 12px;
   box-shadow: -1px -1px 4px 0 rgba(32, 34, 42, 0.04), 1px 1px 4px 0 rgba(32, 34, 42, 0.04);
@@ -90,7 +90,7 @@
 
 .pcert-card__cta {
   flex-shrink: 0;
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);

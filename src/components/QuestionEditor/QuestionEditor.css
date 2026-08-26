@@ -174,7 +174,7 @@
 .question-editor-errors {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .question-editor-error {

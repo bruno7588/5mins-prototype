@@ -54,7 +54,7 @@
   display: flex;
   gap: var(--space-sm);
   align-items: flex-start;
-  padding: var(--space-m) 16px;
+  padding: var(--space-m) var(--space-m);
   background: var(--input-background);
   border-radius: var(--radius-sm);
   width: 100%;
@@ -89,7 +89,7 @@
 
 .invite-modal-alert-bullet::before {
   content: '•';
-  margin-right: 8px;
+  margin-right: var(--space-s);
 }
 
 .invite-modal-alert-badges {
@@ -101,7 +101,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   background: var(--input-background);
   border-radius: var(--radius-full);
   font-size: 14px;
@@ -118,7 +118,7 @@
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.2;
-  padding-left: 16px;
+  padding-left: var(--space-m);
   cursor: pointer;
 }
 
@@ -187,7 +187,7 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   background: var(--tooltip-background);
   color: var(--neutral-25);
   font-size: 14px;
@@ -305,7 +305,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-s) 16px;
+  padding: var(--space-s) var(--space-m);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
@@ -350,7 +350,7 @@
   padding: var(--space-s);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   max-height: 200px;
   overflow-y: auto;
@@ -415,5 +415,5 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 16px;
+  gap: var(--space-m);
 }

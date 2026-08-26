@@ -235,7 +235,7 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .ql-pair__term {
@@ -302,7 +302,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 8px;
+  gap: var(--space-xs) var(--space-s);
 }
 
 .ql-word {
@@ -837,7 +837,7 @@
   align-items: center;
   justify-content: center;
   height: 20px;
-  padding: 0 6px;
+  padding: 0 var(--space-xss);
   border-radius: var(--radius-full);
   background: var(--input-background);
   font: 400 14px/1 'Poppins', sans-serif;
@@ -856,7 +856,7 @@
 .ql-qhead__hearts {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xss);
   flex-shrink: 0;
 }
 

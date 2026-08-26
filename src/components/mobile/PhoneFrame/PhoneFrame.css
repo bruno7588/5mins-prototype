@@ -5,7 +5,7 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 32px;
+  padding: var(--space-xl);
   background: var(--page-background);
   overflow: auto;
 }
@@ -18,8 +18,8 @@
   z-index: 10;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px 10px 12px;
+  gap: var(--space-s);
+  padding: var(--space-ssm) var(--space-m) var(--space-ssm) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
   background: var(--cards-background);
@@ -41,7 +41,7 @@
 }
 
 .m-phone {
-  padding: 10px;
+  padding: var(--space-ssm);
   border-radius: 54px;
   /* Device hardware — intentionally unthemed */
   background: #0f1014;

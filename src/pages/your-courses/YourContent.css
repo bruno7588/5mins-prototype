@@ -30,7 +30,7 @@
 
 .content-tabs {
   display: flex;
-  gap: 24px;
+  gap: var(--space-l);
 }
 
 .content-tab {

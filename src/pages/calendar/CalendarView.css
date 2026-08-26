@@ -1,13 +1,13 @@
 .cal-view {
   display: flex;
   flex-direction: column;
-  margin-top: 24px;
+  margin-top: var(--space-l);
 }
 
 .cal-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 32px;
+  gap: var(--space-xl);
 }
 
 .cal-center {
@@ -19,8 +19,8 @@
 /* ── Date row ─────────────────────────────────── */
 .cal-row {
   position: relative;
-  padding-left: 24px;
-  padding-bottom: 24px;
+  padding-left: var(--space-l);
+  padding-bottom: var(--space-l);
   border-left: 1px dashed var(--border);
 }
 
@@ -32,8 +32,8 @@
   position: relative;
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: var(--space-s);
+  margin-bottom: var(--space-sm);
 }
 
 .cal-row__dot {
@@ -64,16 +64,16 @@
 .cal-row__cards {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 /* ── Card (Figma node 10113:207824 — Events file) ──────────── */
 .cal-card {
   display: grid;
   grid-template-columns: 200px minmax(0, 1fr) auto;
-  gap: 16px;                                  /* Figma: gap-[16px] */
+  gap: var(--space-m);                                  /* Figma: gap-[16px] */
   align-items: center;
-  padding: 16px;                              /* Figma: p-[--m,16px] */
+  padding: var(--space-m);                              /* Figma: p-[--m,16px] */
   background: var(--cards-background);
   border-radius: 16px;                        /* Figma: rounded-[--m,16px] */
   box-shadow: -1px -1px 4px rgba(32, 34, 42, 0.06),
@@ -113,7 +113,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  padding: 4px;
+  padding: var(--space-xs);
   border-bottom-right-radius: 9.143px;
   background: var(--border);
   color: var(--text-tertiary);
@@ -126,7 +126,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;                                   /* Figma info-col gap-[8px] */
+  gap: var(--space-s);                                   /* Figma info-col gap-[8px] */
 }
 
 .cal-card__title {
@@ -140,13 +140,13 @@
 .cal-card__metablock {
   display: flex;
   flex-direction: column;
-  gap: 8px;                                   /* Figma metadata block gap-[--s,8px] */
+  gap: var(--space-s);                                   /* Figma metadata block gap-[--s,8px] */
 }
 
 .cal-card__meta {
   display: inline-flex;
   align-items: center;
-  gap: 8px;                                   /* Figma per-pair gap-[8px] */
+  gap: var(--space-s);                                   /* Figma per-pair gap-[8px] */
   margin: 0;
   font-size: 14px;                            /* Figma: text-[14px] */
   font-weight: 400;
@@ -158,7 +158,7 @@
 .cal-card__metarow {
   display: flex;
   align-items: center;
-  gap: 8px;                                   /* Figma date row gap-[--s,8px] */
+  gap: var(--space-s);                                   /* Figma date row gap-[--s,8px] */
   flex-wrap: wrap;
 }
 
@@ -171,12 +171,12 @@
 .cal-card__bottomrow {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
   flex-wrap: wrap;
 }
 
 .cal-card__countdown {
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   font-size: 12px;
   line-height: 1.2;
 }
@@ -222,15 +222,15 @@
 }
 
 .cal-card__action--split {
-  padding: 8px 16px;                          /* Figma: px-[16px] py-[8px] — overrides .btn-primary's 10px 20px */
-  gap: 4px;                                   /* Figma: gap-[4px] between label and chevron */
+  padding: var(--space-s) var(--space-m);                          /* Figma: px-[16px] py-[8px] — overrides .btn-primary's 10px 20px */
+  gap: var(--space-xs);                                   /* Figma: gap-[4px] between label and chevron */
 }
 
 /* ── Right rail ───────────────────────────────── */
 .cal-rightrail {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-m);
   position: sticky;
   top: 24px;
   align-self: start;
@@ -239,7 +239,7 @@
 .cal-mini {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
   background: var(--cards-background);
   border-radius: 12px;
   box-shadow: var(--shadow-s);
@@ -249,7 +249,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 16px 8px;
+  padding: var(--space-m) var(--space-m) var(--space-s);
 }
 
 .cal-mini__month {
@@ -262,7 +262,7 @@
 .cal-mini__nav {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 .cal-mini__navbtn {
@@ -281,8 +281,8 @@
 .cal-mini__weekrow {
   display: grid;
   grid-template-columns: repeat(7, 40px);
-  gap: 8px;
-  padding: 8px 16px 4px;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-m) var(--space-xs);
 }
 
 .cal-mini__weekday {
@@ -301,8 +301,8 @@
 .cal-mini__grid {
   display: grid;
   grid-template-columns: repeat(7, 40px);
-  gap: 8px;
-  padding: 4px 16px 16px;
+  gap: var(--space-s);
+  padding: var(--space-xs) var(--space-m) var(--space-m);
 }
 
 .cal-mini__day {
@@ -359,10 +359,10 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: var(--space-xss);
   min-width: 140px;
   max-width: 220px;
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   background: var(--cards-background);
   border-radius: 8px;
   box-shadow: var(--shadow-s);
@@ -434,8 +434,8 @@
 .cal-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  padding: 4px;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
   background: var(--input-background);
   border-radius: 10px;
 }
@@ -443,7 +443,7 @@
 .cal-tab {
   background: transparent;
   border: none;
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 700;
@@ -459,7 +459,7 @@
 
 /* ── Empty state placeholder ─────────────────── */
 .cal-empty {
-  padding: 64px 24px;
+  padding: 64px var(--space-l);
   text-align: center;
   color: var(--text-tertiary);
 }

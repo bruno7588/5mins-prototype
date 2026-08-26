@@ -136,14 +136,14 @@
 
 .workflow-card__info > svg {
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: var(--space-xxs);
 }
 
 /* "Last sent" badge — Figma 7440:6039 */
 .badge.workflow-card__last-sent-badge {
   display: flex;
   width: fit-content;
-  padding: 4px 12px;
+  padding: var(--space-xs) var(--space-sm);
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -201,7 +201,7 @@
   font-size: 12px;
   line-height: 1.2;
   font-weight: 500;
-  padding: 2px var(--space-s);
+  padding: var(--space-xxs) var(--space-s);
   background: var(--input-background);
   color: var(--text-tertiary);
   text-transform: uppercase;
@@ -314,7 +314,7 @@
 .workflow-card__rule {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
   flex-wrap: wrap;
   font-size: 14px;
   font-weight: 400;
@@ -334,6 +334,6 @@
 .dropdown-field.workflow-card__inline-dropdown .dropdown-trigger {
   width: auto;
   height: auto;
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   font-size: 14px;
 }

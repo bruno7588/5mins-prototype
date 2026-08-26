@@ -28,7 +28,7 @@
 }
 
 .bulk-upload-content--preview {
-  padding: 32px;
+  padding: var(--space-xl);
 }
 
 /* Centered form container */
@@ -63,7 +63,7 @@
   display: flex;
   gap: var(--space-sm);
   align-items: flex-start;
-  padding: var(--space-m) 16px;
+  padding: var(--space-m) var(--space-m);
   background: var(--input-background);
   border-radius: var(--radius-sm);
   width: 100%;
@@ -98,7 +98,7 @@
 
 .bulk-upload-alert-bullet::before {
   content: '\2022';
-  margin-right: 8px;
+  margin-right: var(--space-s);
 }
 
 .bulk-upload-alert-badges {
@@ -110,7 +110,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   background: var(--input-background);
   border-radius: var(--radius-full);
   font-size: 14px;
@@ -127,7 +127,7 @@
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.2;
-  padding-left: 16px;
+  padding-left: var(--space-m);
   cursor: pointer;
 }
 
@@ -237,7 +237,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: var(--space-xs);
 }
 
 .csv-preview-table {
@@ -248,7 +248,7 @@
 
 .csv-preview-table th,
 .csv-preview-table td {
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   border-bottom: 1px solid var(--border);
   text-align: left;
   white-space: nowrap;
@@ -333,7 +333,7 @@
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.4;
-  margin-top: 4px;
+  margin-top: var(--space-xs);
   display: block;
 }
 
@@ -350,7 +350,7 @@
   margin-left: auto;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xss);
   padding: 0;
   border: none;
   background: none;
@@ -397,7 +397,7 @@
 .bulk-upload-table td {
   width: 160px;
   min-width: 160px;
-  padding: 16px 12px;
+  padding: var(--space-m) var(--space-sm);
   border: 1px solid var(--border);
   font-size: 14px;
   line-height: 1.5;
@@ -508,7 +508,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: var(--space-xxs);
   padding: var(--space-sm) var(--space-s);
   background: transparent;
   border: 1px solid var(--border);
@@ -539,7 +539,7 @@
 /* Filter tabs */
 .bulk-preview-tabs {
   display: flex;
-  gap: 24px;
+  gap: var(--space-l);
   align-items: flex-start;
 }
 
@@ -548,7 +548,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: 0;
-  padding-bottom: 6px;
+  padding-bottom: var(--space-xss);
   border: none;
   background: none;
   cursor: pointer;
@@ -592,7 +592,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 6px;
+  padding: 0 var(--space-xss);
   border-radius: 100px;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
@@ -633,7 +633,7 @@
 .bulk-preview-table-5m {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .bulk-preview-table-header {
@@ -651,7 +651,7 @@
 .bulk-preview-table-rows {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .bulk-preview-table-row {
@@ -679,7 +679,7 @@
 
 /* Column sizing */
 .bulk-preview-col {
-  padding: 12px 16px;
+  padding: var(--space-sm) var(--space-m);
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
@@ -694,14 +694,14 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  margin-left: 4px;
+  margin-left: var(--space-xs);
   cursor: pointer;
   flex-shrink: 0;
 }
 
 .bulk-cell-warning-tooltip {
   position: fixed;
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;
@@ -787,7 +787,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
@@ -864,7 +864,7 @@
   bottom: calc(100% + 10px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;
@@ -953,7 +953,7 @@
 .bulk-preview-error-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 /* Danger-selected chip — diverges from the DS yellow `selected` state per Figma.
@@ -987,7 +987,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   width: 100%;
   cursor: default;
 }
@@ -1011,7 +1011,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   max-width: 288px;
   background: var(--tooltip-background);
   border-radius: var(--radius-sm);

@@ -29,7 +29,7 @@
   align-items: flex-start;
   justify-content: center;
   padding: var(--space-l);
-  padding-top: 32px;
+  padding-top: var(--space-xl);
   padding-bottom: 10vh;
 }
 
@@ -169,7 +169,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml) 10px var(--space-m);
+  padding: var(--space-ssm) var(--space-ml) var(--space-ssm) var(--space-m);
   border: none;
   border-radius: var(--radius-sm);
   /* Canonical AI filled gradient (Button.css .ds-btn--ai) */
@@ -359,7 +359,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   border: none;
   border-radius: var(--radius-s);
   background: var(--button-background-disabled);

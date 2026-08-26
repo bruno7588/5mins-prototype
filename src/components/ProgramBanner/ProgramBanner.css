@@ -2,8 +2,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 24px;
+  gap: var(--space-ml);
+  padding: var(--space-l);
   border-radius: 16px;
   overflow: hidden;
   background-size: cover;
@@ -32,7 +32,7 @@
 .program-banner__content {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
   animation: program-banner-fade 0.4s ease;
 }
 
@@ -50,7 +50,7 @@
 .program-banner__label {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-size: 12px;
   font-weight: 400;
   line-height: 1.2;
@@ -82,14 +82,14 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 .program-banner__cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
+  padding: var(--space-ssm) var(--space-ml);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);
@@ -110,7 +110,7 @@
 .program-banner__nav {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .program-banner__navbtn {

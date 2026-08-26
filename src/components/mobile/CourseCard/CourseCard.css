@@ -32,7 +32,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  padding: 4px 8px;
+  padding: var(--space-xs) var(--space-s);
   border-radius: 20px;
   background: var(--danger-400);
   font: 500 12px/1.2 Poppins, sans-serif;
@@ -43,7 +43,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
   background: var(--cards-background);
   font: 400 12px/1.2 Poppins, sans-serif;
@@ -73,8 +73,8 @@
 .m-course-card__body {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
+  gap: var(--space-sm);
+  padding: var(--space-m);
 }
 
 .m-course-card__title {
@@ -91,13 +91,13 @@
 .m-course-card__meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .m-course-card__metaitem {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font: 400 12px/1.2 Poppins, sans-serif;
   color: var(--text-secondary);
   white-space: nowrap;

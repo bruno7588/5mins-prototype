@@ -49,7 +49,7 @@
 .mc__grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .mc__weekday {
@@ -57,7 +57,7 @@
   font-size: 12px;
   line-height: 1.2;
   color: var(--text-secondary);
-  padding: 4px 0;
+  padding: var(--space-xs) 0;
 }
 
 .mc__day {

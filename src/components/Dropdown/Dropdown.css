@@ -4,14 +4,14 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
   width: 100%;
 }
 
 .dropdown-field.label-start {
   flex-direction: row;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .dropdown-label {
@@ -26,7 +26,7 @@
 .dropdown-trigger {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
   width: 100%;
   background: transparent;
   border: 1px solid var(--border-elevated);
@@ -119,7 +119,7 @@
   border-radius: var(--radius-sm);
   box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12);
   margin: 0;
-  padding: 8px;
+  padding: var(--space-s);
   list-style: none;
 }
 
@@ -128,8 +128,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
   background: transparent;
   border: none;
   border-radius: var(--radius-s);
@@ -172,7 +172,7 @@
 .dropdown-option__text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   min-width: 0;
 }
 

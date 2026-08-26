@@ -14,14 +14,14 @@
 
 /* ---- Header ---- */
 .programs-header {
-  padding: 20px 24px 0;
+  padding: var(--space-ml) var(--space-l) 0;
 }
 
 .programs-header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-m);
   min-height: 41px;
 }
 
@@ -43,9 +43,9 @@
 .programs-create-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
   flex: 0 0 auto;
-  padding: 10px var(--space-ml) 10px var(--space-m);
+  padding: var(--space-ssm) var(--space-ml) var(--space-ssm) var(--space-m);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);
@@ -65,14 +65,14 @@
 
 .programs-divider {
   height: 1px;
-  margin-top: 20px;
+  margin-top: var(--space-ml);
   background: var(--border);
 }
 
 /* ---- Body ---- */
 .programs-body {
   flex: 1;
-  padding: 24px;
+  padding: var(--space-l);
 }
 
 .programs-search {
@@ -140,21 +140,21 @@
   right: 0;
   z-index: 20;
   min-width: 160px;
-  padding: 6px;
+  padding: var(--space-xss);
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   box-shadow: 0 8px 24px rgba(32, 34, 42, 0.12);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .programs-kebab-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-ssm);
   border: none;
   border-radius: var(--radius-s);
   background: transparent;
@@ -180,8 +180,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 80px 24px;
+  gap: var(--space-s);
+  padding: 80px var(--space-l);
   text-align: center;
 }
 
@@ -193,7 +193,7 @@
   height: 56px;
   border-radius: var(--radius-full);
   background: var(--input-background);
-  margin-bottom: 8px;
+  margin-bottom: var(--space-s);
 }
 
 .programs-empty-title {
@@ -204,7 +204,7 @@
 }
 
 .programs-empty-desc {
-  margin: 0 0 8px;
+  margin: 0 0 var(--space-s);
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);

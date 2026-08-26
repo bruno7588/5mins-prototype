@@ -66,7 +66,7 @@
 /* Card carousel track — 16px gap; vertical padding keeps hover/shadow from clipping */
 .fy-cards-track {
   gap: var(--space-m);
-  padding: 4px 2px;
+  padding: var(--space-xs) var(--space-xxs);
   margin: -4px -2px;
   scroll-snap-type: x proximity;
 }

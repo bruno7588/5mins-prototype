@@ -34,7 +34,7 @@
 
 .your-courses-tabs {
   display: flex;
-  gap: 24px;
+  gap: var(--space-l);
 }
 
 .your-courses-tab {

@@ -190,7 +190,7 @@
   overflow-y: hidden;
   padding: 0;
   /* Sits on the same baseline as the controls beside it. */
-  margin-top: 2px;
+  margin-top: var(--space-xxs);
 }
 
 .iq-drawer__row-input::placeholder {
@@ -216,7 +216,7 @@
 .iq-drawer__row-index {
   flex-shrink: 0;
   min-width: 20px;
-  margin-top: 2px;
+  margin-top: var(--space-xxs);
   font-size: 14px;
   font-weight: 500;
   line-height: 1.5;
@@ -359,7 +359,7 @@
   transform: scaleY(-1);
   color: var(--text-tertiary);
   /* Centres the 20px glyph on the 44px row. */
-  margin-top: 12px;
+  margin-top: var(--space-sm);
 }
 
 /* The field column takes whatever the arrow leaves. Without this it hugs its own text
@@ -377,12 +377,12 @@
 
 /* Lines up with the concepts it heads, not with the arrows pointing at them. */
 .iq-drawer__label--concepts {
-  margin-left: calc(20px + var(--space-s));
+  margin-left: calc(var(--space-ml) + var(--space-s));
 }
 
 /* Lines the button up with the inputs rather than the arrows. */
 .iq-drawer__category-items > .ds-btn {
-  margin-left: calc(20px + var(--space-s));
+  margin-left: calc(var(--space-ml) + var(--space-s));
 }
 
 
@@ -424,7 +424,7 @@
    with it — and it carries the gap between words, which is why there is no
    margin on top of it. */
 .iq-drawer__marker-word {
-  padding: 2px 4px;
+  padding: var(--space-xxs) var(--space-xs);
   border: none;
   border-radius: var(--radius-xs);
   background: transparent;

@@ -319,7 +319,7 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-25);
   font-size: 12px;
@@ -370,7 +370,7 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  padding: 2px;
+  padding: var(--space-xxs);
   border-radius: 50%;
   background: transparent;
   cursor: pointer;
@@ -486,7 +486,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: var(--space-xs);
   border-radius: var(--radius-full);
 }
 
@@ -563,7 +563,7 @@
 .media-modal-select-btn {
   white-space: nowrap;
   margin-top: var(--space-xs);
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
@@ -613,7 +613,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   background: rgba(15, 16, 20, 0.56);
   backdrop-filter: blur(4px);
   z-index: 1;

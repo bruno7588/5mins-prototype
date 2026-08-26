@@ -225,7 +225,7 @@
 }
 
 .lf-follow {
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   border: 1px solid var(--text-button-outlined);
   border-radius: var(--radius-sm);
   background: transparent;

@@ -127,7 +127,7 @@
   border: none;
   border-bottom: 2px solid var(--selected);
   outline: none;
-  padding: 0 0 2px 0;
+  padding: 0 0 var(--space-xxs) 0;
   width: 100%;
   line-height: 1.5;
 }
@@ -174,7 +174,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  padding: var(--space-xss);
   border-radius: var(--radius-full);
   z-index: 101;
 }

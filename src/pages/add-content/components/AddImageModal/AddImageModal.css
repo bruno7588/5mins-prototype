@@ -15,7 +15,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  padding: 4px;
+  padding: var(--space-xs);
   background: transparent;
   border: none;
   border-radius: var(--radius-full);
@@ -206,7 +206,7 @@
   position: absolute;
   top: var(--space-s);
   left: var(--space-s);
-  padding: 2px 8px;
+  padding: var(--space-xxs) var(--space-s);
   border-radius: var(--radius-xs);
   background: var(--secondary-500);
   color: var(--text-primary);
@@ -262,7 +262,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 4px 10px 4px 6px;
+  padding: var(--space-xs) var(--space-ssm) var(--space-xs) var(--space-xss);
   background: none;
   border: none;
   color: var(--text-button-outlined);
@@ -290,7 +290,7 @@
   position: fixed;
   transform: translate(-100%, -100%);
   z-index: 1100;
-  padding: var(--space-s, 8px) var(--space-sm, 12px);
+  padding: var(--space-s) var(--space-sm);
   background: var(--tooltip-background, #0F1014);
   color: var(--neutral-25, #F9F9FA);
   font-family: 'Poppins', sans-serif;
@@ -494,7 +494,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   /* Canonical AI filled gradient (Button.css .ds-btn--ai) */

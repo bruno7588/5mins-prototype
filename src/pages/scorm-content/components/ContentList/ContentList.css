@@ -120,7 +120,7 @@
 .sc-content-card-badge {
   flex-shrink: 0;
   background: var(--input-background-elevated);
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
   font-size: 12px;
   line-height: 1.2;

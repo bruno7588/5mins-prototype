@@ -35,14 +35,14 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 12px;
+  gap: var(--space-m);
+  padding: var(--space-sm);
 }
 
 .m-instructor-card__header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .m-instructor-card__name {
@@ -67,13 +67,13 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .m-instructor-card__skill {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   border-radius: var(--radius-s);
   font: 400 12px/1.2 Poppins, sans-serif;
   color: var(--text-tertiary);

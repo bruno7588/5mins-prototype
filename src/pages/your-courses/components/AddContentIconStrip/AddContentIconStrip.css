@@ -133,7 +133,7 @@
    panel groups by reading order, so the rules just add noise there. */
 .add-content-icon-strip__divider {
   height: 1px;
-  margin: 2px var(--space-m);
+  margin: var(--space-xxs) var(--space-m);
   background: var(--border);
   border-radius: var(--radius-xs);
   flex-shrink: 0;

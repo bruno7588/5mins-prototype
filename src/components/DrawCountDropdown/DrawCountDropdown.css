@@ -1,8 +1,8 @@
 .draw-count-stepper {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px 12px;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
 }

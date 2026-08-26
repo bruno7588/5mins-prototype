@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   text-align: left;
 }
 
@@ -24,7 +24,7 @@
   position: relative;
   width: 100%;
   height: 180px;
-  padding: 32px;
+  padding: var(--space-xl);
   display: grid;
   place-items: center;
 }
@@ -59,7 +59,7 @@
   position: absolute;
   top: -11px;
   left: 30px;
-  padding: 6px 8px;
+  padding: var(--space-xss) var(--space-s);
   border-radius: 40px;
   background: var(--danger-400);
   font: 500 12px/1.2 Poppins, sans-serif;
@@ -70,7 +70,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 .m-cat-card__title {
@@ -89,13 +89,13 @@
 .m-cat-card__meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .m-cat-card__metaitem {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font: 400 12px/1.2 Poppins, sans-serif;
   color: var(--text-secondary);
   white-space: nowrap;

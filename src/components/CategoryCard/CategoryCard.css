@@ -4,7 +4,7 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 .ws-cat-card[role='button'] {
@@ -93,7 +93,7 @@
   position: absolute;
   top: -11px;
   left: 30px;
-  padding: 6px 8px;
+  padding: var(--space-xss) var(--space-s);
   border-radius: 40px;
   background: var(--danger-400);
   font: 500 12px/1.2 Poppins, sans-serif;
@@ -103,7 +103,7 @@
 .ws-cat-card__info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .ws-cat-card__title {
@@ -124,13 +124,13 @@
 .ws-cat-card__meta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 .ws-cat-card__metaitem {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-secondary);

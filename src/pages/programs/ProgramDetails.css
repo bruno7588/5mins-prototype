@@ -1,7 +1,7 @@
 .pd-body {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-ml);
   padding-bottom: 64px;
 }
 
@@ -9,19 +9,19 @@
 .pd-banner {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 .pd-banner__title {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .pd-banner__label {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-size: 12px;
   font-weight: 400;
   line-height: 1.2;
@@ -47,14 +47,14 @@
 .pd-banner__meta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-m);
   flex-wrap: wrap;
 }
 
 .pd-meta__item {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -71,7 +71,7 @@
 .pd-learners {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .pd-avatars {
@@ -110,7 +110,7 @@
 .pd-progress {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .pd-progress__track {
@@ -145,7 +145,7 @@
 .pd-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 .pd-section__title {
@@ -160,14 +160,14 @@
 .pd-outline {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 .pd-course {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--space-m);
+  padding: var(--space-m);
   background: var(--cards-background);
   border-radius: 12px;
   box-shadow: var(--shadow-s);
@@ -205,13 +205,13 @@
   min-width: 0;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .pd-course__head {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
   width: 100%;
 }
 
@@ -242,7 +242,7 @@
 .pd-course__info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
   flex-wrap: wrap;
 }
 
@@ -257,7 +257,7 @@
 
 .pd-course__cta {
   flex: 0 0 auto;
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);

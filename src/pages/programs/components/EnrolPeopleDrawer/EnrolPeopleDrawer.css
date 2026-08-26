@@ -72,7 +72,7 @@
 
 .epd-tab {
   position: relative;
-  padding: 0 0 6px;
+  padding: 0 0 var(--space-xss);
   background: none;
   border: none;
   cursor: pointer;
@@ -196,7 +196,7 @@
   justify-content: center;
   min-width: 20px;
   height: 20px;
-  padding: 0 6px;
+  padding: 0 var(--space-xss);
   border-radius: var(--radius-full);
   background: var(--cards-background-hover);
   font-size: 14px;
@@ -207,7 +207,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   padding: 0 var(--space-s) 0 var(--space-xs);
   background: none;
   border: none;
@@ -295,7 +295,7 @@
 .epd-person {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   min-width: 0;
 }
 
@@ -321,7 +321,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   border: 1px solid var(--text-button-outlined);
   border-radius: var(--radius-sm);
   background: none;
@@ -552,7 +552,7 @@
 .epd-launch {
   white-space: nowrap;
   flex: 0 0 auto;
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);
@@ -580,8 +580,8 @@
 .epd-enrolled-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
+  gap: var(--space-xs);
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   background: var(--input-background);
   color: var(--text-secondary);

@@ -139,7 +139,7 @@
   align-items: center;
   justify-content: center;
   min-width: 24px;
-  padding: 1px 6px;
+  padding: 1px var(--space-xss);
   border-radius: var(--radius-full);
   background: var(--input-background-elevated);
   font-size: 14px;
@@ -214,7 +214,7 @@
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   padding: 0;
   background: transparent;
   border: none;
@@ -449,7 +449,7 @@
   font-size: 12px;
   line-height: 1.2;
   font-weight: 500;
-  padding: 4px 8px;
+  padding: var(--space-xs) var(--space-s);
 }
 
 /* Deactivated rows carry no fill (per Figma) — the dimmed identity text is the
@@ -541,7 +541,7 @@
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -753,7 +753,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-size: 14px;
   font-weight: 500;

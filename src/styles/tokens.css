@@ -170,8 +170,11 @@
   --scrim: rgba(15, 16, 20, 0.25); /* overlay backdrop — Neutral-900 @ 25%; overridden to 50% in dark mode (layout.md §7) */
 
   /* Spacing (4px base) */
+  --space-xxs: 0.125rem; /* 2px */
   --space-xs: 0.25rem;   /* 4px */
+  --space-xss: 0.375rem; /* 6px */
   --space-s: 0.5rem;     /* 8px */
+  --space-ssm: 0.625rem; /* 10px */
   --space-sm: 0.75rem;   /* 12px */
   --space-m: 1rem;       /* 16px */
   --space-ml: 1.25rem;   /* 20px */
@@ -280,7 +283,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);
   color: var(--text-button-foreground);
@@ -301,7 +304,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   border-radius: var(--radius-sm);
   background: var(--button-outline-fill);
   border: 1px solid var(--text-button-outlined);
@@ -337,7 +340,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   border-radius: var(--radius-sm);
   background: var(--button-success-background);
   color: var(--neutral-25);
@@ -358,7 +361,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   border-radius: var(--radius-sm);
   background: var(--danger-500);
   color: var(--neutral-25);

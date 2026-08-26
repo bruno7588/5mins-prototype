@@ -48,7 +48,7 @@
   position: absolute;
   top: 6px;
   right: 6px;
-  padding: 4px 6px;
+  padding: var(--space-xs) var(--space-xss);
   border-radius: var(--radius-xs);
   background: rgba(15, 16, 20, 0.5);
   font-size: 10px;

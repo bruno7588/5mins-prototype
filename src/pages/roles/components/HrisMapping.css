@@ -1,8 +1,8 @@
 /* ===== HRIS Mapping Tab ===== */
 
 .hris-dry-run-alert.alert--alert {
-  padding: 8px 16px;
-  gap: 12px;
+  padding: var(--space-s) var(--space-m);
+  gap: var(--space-sm);
   font-size: 14px;
   font-weight: 500;
   align-items: center;
@@ -20,7 +20,7 @@
   background: rgba(255, 165, 56, 0.16);
   border: 1px solid var(--text-warning);
   border-radius: var(--radius-s);
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   text-decoration: none;
 }
 
@@ -34,8 +34,8 @@
   justify-content: space-between;
   gap: var(--space-m);
   flex-wrap: wrap;
-  margin-top: calc(20px - var(--space-l));
-  margin-bottom: calc(20px - var(--space-l));
+  margin-top: calc(var(--space-ml) - var(--space-l));
+  margin-bottom: calc(var(--space-ml) - var(--space-l));
 }
 
 .hris-sync-pill {
@@ -61,7 +61,7 @@
   position: relative;
   width: 8px;
   height: 8px;
-  margin: 4px;
+  margin: var(--space-xs);
   border-radius: 50%;
   background: var(--success-500);
   flex-shrink: 0;
@@ -82,7 +82,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px var(--space-xs);
+  padding: var(--space-xxs) var(--space-xs);
   background: rgba(24, 169, 87, 0.16);
   border-radius: var(--radius-full);
   color: var(--text-success);
@@ -133,7 +133,7 @@
 .hris-th {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 .hris-th__sort {
@@ -232,7 +232,7 @@
 .hris-role-cell {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .hris-role-cell__name {
@@ -312,8 +312,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
-  margin-top: calc(20px - var(--space-m));
-  margin-bottom: calc(20px - var(--space-m));
+  margin-top: calc(var(--space-ml) - var(--space-m));
+  margin-bottom: calc(var(--space-ml) - var(--space-m));
 }
 
 .hris-panel-search-wrapper .roles-panel-label {
@@ -333,7 +333,7 @@
 .hris-panel-options__group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .hris-panel-options__count {
@@ -341,7 +341,7 @@
   align-items: center;
   justify-content: center;
   min-width: 22px;
-  padding: 0 8px;
+  padding: 0 var(--space-s);
   height: 20px;
   background: var(--input-background);
   color: var(--text-secondary);
@@ -440,7 +440,7 @@
 .hris-preview-meta__pill {
   display: inline-flex;
   align-items: center;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-size: 14px;
   font-weight: 500;

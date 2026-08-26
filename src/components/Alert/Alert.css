@@ -4,8 +4,8 @@
   display: flex;
   align-items: center;
   border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  gap: 8px;
+  padding: var(--space-sm) var(--space-m);
+  gap: var(--space-s);
   width: 100%;
   box-sizing: border-box;
   position: relative;
@@ -31,13 +31,13 @@
   line-height: 1.5;
   /* 12px icon → text; the inline button adds another 12px for the 24px
      info↔button gap the spec calls for. */
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 /* ── With supporting text: align top, larger padding ── */
 .alert--with-body {
   align-items: flex-start;
-  padding: 16px;
+  padding: var(--space-m);
 }
 
 /* ── Icon ── */
@@ -69,11 +69,11 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .alert__body:has(.alert__title + .alert__message) {
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .alert__title {
@@ -108,7 +108,7 @@
 }
 
 .alert__bullets li + li {
-  margin-top: 4px;
+  margin-top: var(--space-xs);
 }
 
 /* ── Buttons ── */
@@ -127,7 +127,7 @@
   color: var(--text-primary);
   border: 1px solid var(--text-primary);
   border-radius: var(--radius-sm);
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   background: transparent;
 }
 
@@ -137,7 +137,7 @@
 
 /* Inline underline — Alert */
 .alert__btn--inline {
-  margin-left: 12px; /* + the row's 12px gap = 24px from the info area */
+  margin-left: var(--space-sm); /* + the row's 12px gap = 24px from the info area */
   font-size: 16px;
   color: var(--text-warning);
   background: transparent;

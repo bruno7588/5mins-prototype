@@ -65,7 +65,7 @@
    strip past the 20px rail + gap so it lines up with the content container rather
    than the rail. Flat/loose mode has no rail, so badges stay at the left edge. */
 .course-meta--indented {
-  margin-left: calc(20px + var(--space-s));
+  margin-left: calc(var(--space-ml) + var(--space-s));
 }
 
 /* Fade for the meta strip; each badge additionally collapses its own width (and
@@ -480,7 +480,7 @@
 .curriculum-section__rename-input {
   flex: 1;
   min-width: 0;
-  padding: 0 0 2px;
+  padding: 0 0 var(--space-xxs);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 500;
@@ -585,7 +585,7 @@
   box-shadow: -1px -1px 4px rgba(32, 34, 42, 0.06), 1px 1px 4px rgba(32, 34, 42, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .kebab__item {
@@ -640,7 +640,7 @@
    Add Section. Indented to align with the section header (past the drag column). */
 .curriculum-bottom-actions {
   align-self: flex-start;
-  margin-left: calc(20px + var(--space-s));
+  margin-left: calc(var(--space-ml) + var(--space-s));
   display: flex;
   align-items: center;
   gap: var(--space-m);
@@ -666,7 +666,7 @@
      10px vertical, 20px on the label side, 16px on the icon side. This is a dashed
      affordance rather than a DS Button, so the padding has to be matched by hand or it
      sits shorter than the Add Content button beside it. */
-  padding: 10px var(--space-ml) 10px var(--space-m);
+  padding: var(--space-ssm) var(--space-ml) var(--space-ssm) var(--space-m);
   background: transparent;
   border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
@@ -928,7 +928,7 @@
 .content-card-badge {
   flex-shrink: 0;
   background: var(--input-background-elevated);
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-size: 12px;
   line-height: 1.2;

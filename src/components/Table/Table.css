@@ -208,7 +208,7 @@
 .tbl-stack {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   align-items: flex-start;
   min-width: 0;
 }
@@ -361,7 +361,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: var(--space-m);
   position: sticky;
   right: 0;
 }

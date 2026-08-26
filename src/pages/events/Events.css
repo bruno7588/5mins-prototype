@@ -4,7 +4,7 @@
 .ev-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 /* Hide the type tag overlay on event thumbnails on this page —

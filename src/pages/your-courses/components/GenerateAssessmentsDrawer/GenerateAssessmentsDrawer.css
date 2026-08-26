@@ -203,7 +203,7 @@
   display: inline-block;
   width: 2px;
   height: 1em;
-  margin-left: 2px;
+  margin-left: var(--space-xxs);
   vertical-align: text-bottom;
   background: var(--text-button-outlined);
 }

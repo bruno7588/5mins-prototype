@@ -25,8 +25,8 @@
 .event-drawer__card-header {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--space-m);
+  padding: var(--space-m);
   border-bottom: 1px solid var(--border);
 }
 
@@ -35,7 +35,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 .event-drawer__session {
@@ -57,15 +57,15 @@
 .event-drawer__actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-m);
   flex-shrink: 0;
 }
 
 .event-drawer__card-body {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--space-m);
+  padding: var(--space-m);
 }
 
 .event-drawer__date-tile {
@@ -105,7 +105,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
+  padding: var(--space-xs) var(--space-s);
   background: rgba(15, 16, 20, 0.4);
   font-size: 14px;
   font-weight: 400;
@@ -118,20 +118,20 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .event-drawer__meta-row {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-m);
   flex-wrap: wrap;
 }
 
 .event-drawer__meta-item {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -142,8 +142,8 @@
 .event-drawer__section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 20px;
+  gap: var(--space-s);
+  margin-top: var(--space-ml);
 }
 
 .event-drawer__section-title {
@@ -166,8 +166,8 @@
 .event-drawer__attending {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 16px;
+  gap: var(--space-sm);
+  margin-top: var(--space-m);
 }
 
 .event-drawer__attending-title {

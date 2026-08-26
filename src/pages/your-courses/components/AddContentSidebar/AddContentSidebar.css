@@ -54,7 +54,7 @@
   right: calc(100% + 8px);
   top: 50%;
   transform: translateY(-50%);
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-25);
   font-size: 12px;

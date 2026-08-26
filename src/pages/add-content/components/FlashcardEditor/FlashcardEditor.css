@@ -16,7 +16,7 @@
 .fce-content {
   max-width: 900px;
   margin: 0 auto;
-  padding: 32px 0 64px;
+  padding: var(--space-xl) 0 64px;
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
@@ -26,7 +26,7 @@
 .fce-header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-m);
   width: 100%;
 }
 
@@ -88,7 +88,7 @@
 .fce-cards-strip {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--space-m);
   height: 100%;
   transition: transform 250ms ease-out;
   will-change: transform;
@@ -98,7 +98,7 @@
   position: relative;
   width: 320px;
   height: 634px;
-  padding: 32px 0 42px;
+  padding: var(--space-xl) 0 42px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -143,7 +143,7 @@
   width: 320px;
   height: 560px;
   border-radius: 16px;
-  padding: 64px 40px 40px;
+  padding: 64px var(--space-xxl) var(--space-xxl);
   background: linear-gradient(135deg, #4B3A99 0%, #2B1F6B 100%);
   display: flex;
   flex-direction: column;
@@ -156,7 +156,7 @@
 }
 
 .fce-card--image-bottom {
-  padding-top: 40px;
+  padding-top: var(--space-xxl);
   padding-bottom: 0;
   justify-content: flex-start;
 }
@@ -201,7 +201,7 @@
   align-items: center;
   justify-content: space-between;
   width: 304px;
-  padding: 4px 12px;
+  padding: var(--space-xs) var(--space-sm);
   background: var(--cards-background);
   border-radius: 12px;
   box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);
@@ -215,7 +215,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  padding: 4px;
+  padding: var(--space-xs);
   background: none;
   border: none;
   border-radius: var(--radius-full);
@@ -283,7 +283,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  padding: 6px;
+  padding: var(--space-xss);
   background: none;
   border: none;
   border-radius: var(--radius-full);
@@ -319,7 +319,7 @@
   min-width: 220px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   padding: var(--space-s);
   background: var(--cards-background);
   border-radius: var(--radius-sm);
@@ -414,7 +414,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-s);
-  padding: 12px 16px;
+  padding: var(--space-sm) var(--space-m);
   width: 220px;
   background: var(--tooltip-background);
   color: var(--neutral-25, #F9F9FA);
@@ -430,7 +430,7 @@
 }
 
 .fce-coachmark__badge {
-  padding: 4px 8px;
+  padding: var(--space-xs) var(--space-s);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 500;
@@ -475,7 +475,7 @@
 }
 
 .fce-coachmark__primary {
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   background: var(--primary-500, #00CEE6);
   border: none;
   border-radius: var(--radius-sm);
@@ -519,7 +519,7 @@
   min-width: 200px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   background: var(--cards-background);
   border-radius: var(--radius-sm);
   box-shadow: 0 8px 24px rgba(32, 34, 42, 0.16), 0 2px 4px rgba(32, 34, 42, 0.08);
@@ -609,7 +609,7 @@
   justify-content: center;
   min-width: 28px;
   height: 28px;
-  padding: 0 8px;
+  padding: 0 var(--space-s);
   border-radius: var(--radius-full);
   background: transparent;
   border: none;
@@ -689,7 +689,7 @@
 
 .fce-thumb-change {
   align-self: flex-start;
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   border: 1px solid var(--text-primary);
   border-radius: var(--radius-sm);
   background: transparent;
@@ -752,7 +752,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-s);
-  padding: 16px;
+  padding: var(--space-m);
   background: var(--cards-background);
   border-radius: var(--radius-sm);
 }

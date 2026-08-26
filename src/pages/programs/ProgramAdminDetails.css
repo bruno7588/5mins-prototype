@@ -31,7 +31,7 @@
 .pad-stat__body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   min-width: 0;
 }
 
@@ -65,7 +65,7 @@
 .pad-crumb {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-size: 12px;
   line-height: 1.2;
 }
@@ -129,7 +129,7 @@
 .pad-meta__item {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-size: 14px;
   color: var(--text-tertiary);
   white-space: nowrap;
@@ -154,7 +154,7 @@
   align-items: center;
   justify-content: center;
   height: 24px;
-  padding: 0 6px;
+  padding: 0 var(--space-xss);
   border-radius: var(--radius-full);
   background: var(--cards-background-hover);
   border: 1px solid var(--page-background);
@@ -203,7 +203,7 @@
 }
 
 .pad-tab {
-  padding: 0 0 4px;
+  padding: 0 0 var(--space-xs);
   border: none;
   border-bottom: 2px solid transparent;
   background: transparent;
@@ -331,7 +331,7 @@
 
 .pad-pagination {
   align-self: flex-end;
-  margin-top: 4px;
+  margin-top: var(--space-xs);
   display: inline-flex;
   align-items: center;
   gap: var(--space-m);
@@ -543,8 +543,8 @@
   min-width: 180px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 8px;
+  gap: var(--space-xxs);
+  padding: var(--space-s);
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -555,7 +555,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding: 8px var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
   border: none;
   border-radius: var(--radius-s);
   background: transparent;
@@ -584,7 +584,7 @@
 .pad-menu__item--rich {
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: var(--space-xs);
   white-space: normal;
   text-align: left;
 }
@@ -602,7 +602,7 @@
 
 /* ── Empty / placeholder ────────────────────────────────────────────────── */
 .pad-empty {
-  padding: 48px 24px;
+  padding: 48px var(--space-l);
   text-align: center;
   color: var(--text-secondary);
   font-size: 14px;
@@ -615,7 +615,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-m);
-  padding: 24px;
+  padding: var(--space-l);
   border-radius: var(--radius-ml);
 }
 

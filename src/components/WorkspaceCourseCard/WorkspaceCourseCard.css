@@ -36,7 +36,7 @@
   z-index: 2;
   display: inline-flex;
   align-items: center;
-  padding: 4px 8px;
+  padding: var(--space-xs) var(--space-s);
   background: var(--danger-400);
   color: var(--neutral-25);
   font-size: 12px;
@@ -59,7 +59,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
   background: var(--cards-background);
   color: var(--text-warning);
@@ -92,10 +92,10 @@
 }
 
 .ws-course-card__body {
-  padding: 24px;
+  padding: var(--space-l);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-m);
 }
 
 .ws-course-card__title {
@@ -115,13 +115,13 @@
 .ws-course-card__meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-s);
 }
 
 .ws-course-card__metaitem {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-secondary);

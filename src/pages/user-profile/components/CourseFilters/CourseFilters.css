@@ -44,7 +44,7 @@
   justify-content: center;
   min-width: 20px;
   height: 20px;
-  padding: 0 6px;
+  padding: 0 var(--space-xss);
   border-radius: var(--radius-full);
   background: var(--input-background-elevated);
   color: var(--text-secondary);

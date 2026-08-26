@@ -178,7 +178,7 @@
 .dropdown-field.automation-details-condition-dropdown .dropdown-trigger {
   width: auto;
   height: auto;
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   font-size: 14px;
 }
 
@@ -212,7 +212,7 @@
   border-radius: var(--radius-sm);
   box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
   z-index: 100;
-  padding: 8px;
+  padding: var(--space-s);
   display: flex;
   flex-direction: column;
   max-height: 320px;
@@ -223,7 +223,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 10px 12px;
+  padding: var(--space-ssm) var(--space-sm);
   border: none;
   background: transparent;
   color: var(--text-primary);
@@ -241,7 +241,7 @@
 }
 
 .automation-details-search-empty {
-  padding: 12px;
+  padding: var(--space-sm);
   text-align: center;
   color: var(--text-tertiary);
   font-size: 14px;
@@ -437,7 +437,7 @@
   justify-content: center;
   flex-shrink: 0;
   min-width: 20px;
-  padding: 0 6px;
+  padding: 0 var(--space-xss);
   background: var(--input-background-elevated);
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;

@@ -58,7 +58,7 @@
 .enrollment-popover__option-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   min-width: 0;
 }
 

@@ -73,7 +73,7 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
-  margin: 2px 0 0;
+  margin: var(--space-xxs) 0 0;
 }
 
 /* Push the CTA to the far right of the headline row */

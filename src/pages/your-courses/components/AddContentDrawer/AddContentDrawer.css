@@ -31,8 +31,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-m);
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: var(--space-m);
+  padding-right: var(--space-m);
 }
 
 .add-content-drawer__title {
@@ -73,6 +73,6 @@
 .add-content-drawer__menu {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   overflow-y: auto;
 }

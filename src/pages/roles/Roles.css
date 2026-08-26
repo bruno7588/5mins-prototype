@@ -149,7 +149,7 @@
   font-size: 14px;
   font-weight: 500;
   gap: var(--space-s);
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
 }
 
 .roles-panel-edit-alert .alert__message {
@@ -174,8 +174,8 @@
 .roles-chip--with-icon {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding-left: 12px;
+  gap: var(--space-xss);
+  padding-left: var(--space-sm);
 }
 
 .roles-chip:hover {
@@ -290,7 +290,7 @@
 }
 
 .roles-btn-ghost--small {
-  padding: 4px 10px;
+  padding: var(--space-xs) var(--space-ssm);
   font-size: 14px;
 }
 
@@ -322,7 +322,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  padding: var(--space-xss);
   background: none;
   border: none;
   border-radius: 50%;
@@ -346,7 +346,7 @@
   top: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 4px 8px;
+  padding: var(--space-xs) var(--space-s);
   font-size: 12px;
   line-height: 1.2;
   font-weight: 500;
@@ -374,7 +374,7 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-0);
   font-size: 12px;
@@ -550,7 +550,7 @@
 /* ===== Badges ===== */
 .roles-neutral-badge {
   display: inline-flex;
-  padding: 4px 10px;
+  padding: var(--space-xs) var(--space-ssm);
   border-radius: 40px;
   font-size: 12px;
   line-height: 1.2;
@@ -563,7 +563,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
@@ -616,7 +616,7 @@
 
 .roles-industry-tag {
   display: inline-flex;
-  padding: 4px 10px;
+  padding: var(--space-xs) var(--space-ssm);
   border-radius: 40px;
   font-size: 12px;
   line-height: 1.2;
@@ -629,8 +629,8 @@
 .roles-skill-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 12px;
+  gap: var(--space-xs);
+  padding: 5px var(--space-sm);
   border-radius: 40px;
   font-size: 14px;
   font-weight: 500;
@@ -687,7 +687,7 @@
 .roles-skill-card__remove {
   position: relative;
   display: flex;
-  padding: 2px;
+  padding: var(--space-xxs);
   border: none;
   background: none;
   border-radius: 50%;
@@ -707,7 +707,7 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-0);
   font-size: 12px;
@@ -748,7 +748,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-ml);
-  padding: 24px;
+  padding: var(--space-l);
   width: 100%;
   border-radius: 20px;
 }
@@ -818,8 +818,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  padding: 48px 24px;
+  gap: var(--space-l);
+  padding: 48px var(--space-l);
   width: 100%;
   border-radius: 20px;
 }
@@ -861,7 +861,7 @@
 
 .roles-empty-state__cta {
   display: flex;
-  gap: 16px;
+  gap: var(--space-m);
   align-items: center;
   justify-content: center;
 }
@@ -989,13 +989,13 @@
 .roles-panel-subtitle {
   font-size: 14px;
   color: var(--text-secondary);
-  margin-top: 4px;
+  margin-top: var(--space-xs);
   line-height: 1.5;
 }
 
 .roles-panel-close {
   display: flex;
-  padding: 4px;
+  padding: var(--space-xs);
   cursor: pointer;
   border-radius: 50%;
   transition: background 150ms ease;
@@ -1039,7 +1039,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-s);
-  margin-bottom: 4px;
+  margin-bottom: var(--space-xs);
 }
 
 .roles-panel-label {
@@ -1103,7 +1103,7 @@
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-xs);
   padding: 0;
   border: none;
   border-radius: var(--radius-sm);
@@ -1124,8 +1124,8 @@
 .roles-panel-file-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px 4px 10px;
+  gap: var(--space-xss);
+  padding: var(--space-xs) var(--space-s) var(--space-xs) var(--space-ssm);
   background: var(--page-background-hover);
   border: none;
   border-radius: 8px;
@@ -1149,7 +1149,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px;
+  padding: var(--space-xxs);
   border: none;
   background: none;
   border-radius: 50%;
@@ -1168,7 +1168,7 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-25);
   font-size: 12px;
@@ -1229,7 +1229,7 @@
 .roles-panel-checkbox-row div {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .roles-panel-helper {
@@ -1270,7 +1270,7 @@
 
 .roles-panel-ai-btn {
   white-space: nowrap;
-  padding: 10px 20px;
+  padding: var(--space-ssm) var(--space-ml);
   font-size: 14px;
   font-weight: 700;
   color: var(--neutral-25);
@@ -1306,7 +1306,7 @@
 
 .roles-ai-role-badge__name {
   display: inline-flex;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
   font-size: 14px;
   font-weight: 500;
@@ -1631,7 +1631,7 @@
   font-weight: 500;
   color: var(--text-success);
   background: rgba(24, 169, 87, 0.16);
-  padding: 2px 8px;
+  padding: var(--space-xxs) var(--space-s);
   border-radius: 10px;
   white-space: nowrap;
   animation: roles-tag-fade-in 200ms ease;
@@ -1847,7 +1847,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml) 10px var(--space-m);
+  padding: var(--space-ssm) var(--space-ml) var(--space-ssm) var(--space-m);
   font-size: 14px;
   font-weight: 700;
   color: var(--neutral-25);
@@ -1976,7 +1976,7 @@
 .roles-single-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-ml);
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -1992,7 +1992,7 @@
 .roles-toolbar-filters {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 /* ─── Function Dropdown ─── */

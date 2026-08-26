@@ -39,8 +39,11 @@ The Figma number variables and their CSS tokens. The same scale drives **both** 
 
 | Figma name | px | Spacing token | Radius token |
 |---|---|---|---|
+| XXS | 2 | `--space-xxs` | — |
 | XS | 4 | `--space-xs` | `--radius-xs` |
+| XSS | 6 | `--space-xss` | — |
 | S | 8 | `--space-s` | `--radius-s` |
+| SSM | 10 | `--space-ssm` | — |
 | SM | 12 | `--space-sm` | `--radius-sm` |
 | M | 16 | `--space-m` | `--radius-m` |
 | ML | 20 | `--space-ml` | `--radius-ml` |
@@ -49,6 +52,8 @@ The Figma number variables and their CSS tokens. The same scale drives **both** 
 | XXL | 40 | `--space-xxl` | — |
 | 0 | 0 | use `0` | use `0` |
 | 100 | 100 | use `100px` | — |
+
+XXS / XSS / SSM (2/6/10px) were added 2026-08-26 for micro spacing inside components. They are off the 4px grid on purpose and must not be used for layout spacing.
 
 Code-only extra: `--radius-full: 9999px` for circular elements (avatars, pills, icon-button hover backgrounds — icon-only buttons **always** use circular hover, never squared).
 

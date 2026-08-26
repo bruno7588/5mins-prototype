@@ -199,7 +199,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 4px;
+  padding: var(--space-xs);
   color: var(--text-tertiary);
   transition: color 150ms ease;
 }
@@ -251,7 +251,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: var(--space-xs);
   flex-shrink: 0;
 }
 
@@ -277,7 +277,7 @@
 .question-drawer-errors {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .question-drawer-error {
@@ -307,7 +307,7 @@
 .question-drawer-save {
   white-space: nowrap;
   align-self: flex-start;
-  padding: 10px var(--space-ml);
+  padding: var(--space-ssm) var(--space-ml);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;

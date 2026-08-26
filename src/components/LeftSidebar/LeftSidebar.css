@@ -15,14 +15,14 @@
 .left-sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   flex: 1;
 }
 
 .left-sidebar-footer {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   padding-top: var(--space-m);
   border-width: 0;
   margin-top: var(--space-m);
@@ -82,7 +82,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  margin-left: 6px;
+  margin-left: var(--space-xss);
   vertical-align: middle;
   background: var(--danger-500);
   border-radius: var(--radius-full);
@@ -103,7 +103,7 @@
 .sidebar-sub-items {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 /* Sub-menu item — same row metrics, indented to clear the parent icon. */
@@ -138,7 +138,7 @@
   justify-content: center;
   min-width: 20px;
   height: 20px;
-  padding: 0 6px;
+  padding: 0 var(--space-xss);
   background: var(--danger-500);
   color: var(--neutral-25);
   font-size: 12px;

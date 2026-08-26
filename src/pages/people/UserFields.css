@@ -51,7 +51,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-ml);
-  padding: 24px;
+  padding: var(--space-l);
   border-radius: 20px;
 }
 
@@ -90,7 +90,7 @@
 .uf-table {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .uf-table-header {
@@ -119,7 +119,7 @@
 
 /* Cells */
 .uf-table-cell {
-  padding: 12px 16px;
+  padding: var(--space-sm) var(--space-m);
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
@@ -151,7 +151,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-size: 14px;
   font-weight: 500;
@@ -173,7 +173,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: var(--space-xs);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: background 150ms ease;
@@ -201,7 +201,7 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 8px 16px;
+  padding: var(--space-s) var(--space-m);
   background: var(--tooltip-background);
   color: var(--neutral-25);
   font-size: 14px;

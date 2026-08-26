@@ -172,7 +172,7 @@
 /* "On specific date" calendar field inside the enrolment popover. */
 .co-date-row {
   position: relative;
-  padding: var(--space-xs) 0 0 32px;
+  padding: var(--space-xs) 0 0 var(--space-xl);
 }
 
 .co-date-trigger {

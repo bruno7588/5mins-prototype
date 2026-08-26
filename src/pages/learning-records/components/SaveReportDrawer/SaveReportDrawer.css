@@ -340,7 +340,7 @@
 .rd-toggle-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   flex: 1;
   min-width: 0;
 }
@@ -443,7 +443,7 @@
   align-items: center;
   gap: var(--space-xs);
   min-height: 48px;
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-s);
   background: transparent;
@@ -470,7 +470,7 @@
   align-items: center;
   gap: var(--space-xs);
   max-width: 100%;
-  padding: 6px 6px 6px 10px;
+  padding: var(--space-xss) var(--space-xss) var(--space-xss) var(--space-ssm);
   border-radius: var(--radius-full);
   background: var(--cards-background-hover, var(--neutral-50));
   font-size: 14px;
@@ -559,7 +559,7 @@
 .rcp-option-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   min-width: 0;
   line-height: 1.5;
 }

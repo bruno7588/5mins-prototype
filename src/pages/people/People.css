@@ -611,7 +611,7 @@
 .people-name-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   min-width: 0;
   cursor: pointer;
 }
@@ -644,7 +644,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 6px 12px;
+  padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
   font-size: 14px;
   font-weight: 500;
@@ -669,7 +669,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: var(--space-xs);
   border-radius: var(--radius-full);
   transition: background 150ms ease;
 }
@@ -688,7 +688,7 @@
   border-radius: var(--radius-sm);
   box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
   z-index: 100;
-  padding: 8px;
+  padding: var(--space-s);
   animation: menu-fade-in 150ms ease;
 }
 
@@ -729,7 +729,7 @@
   align-items: center;
   gap: var(--space-sm);
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--space-sm) var(--space-m);
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
@@ -846,7 +846,7 @@
 
 .confirm-modal-info svg {
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: var(--space-xxs);
 }
 
 /* Warning block (delete dialogs) — not used in new design, kept for custom content */
@@ -898,7 +898,7 @@
 .confirm-modal-user-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .confirm-modal-user-name {
@@ -942,7 +942,7 @@
 
 .confirm-modal-input {
   width: 100%;
-  padding: 12px var(--space-m);
+  padding: var(--space-sm) var(--space-m);
   font-family: inherit;
   font-size: 14px;
   font-weight: 400;
@@ -988,7 +988,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-sm);
-  padding: 16px;
+  padding: var(--space-m);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -1028,7 +1028,7 @@
   border: 1.5px solid var(--text-primary);
   position: relative;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: var(--space-xxs);
   transition: border-color 150ms ease;
 }
 
@@ -1065,7 +1065,7 @@
 .confirm-modal-radio-card-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .confirm-modal-radio-card-title {

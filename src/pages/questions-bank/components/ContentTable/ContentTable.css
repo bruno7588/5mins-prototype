@@ -163,7 +163,7 @@
   right: calc(100% + 12px);
   top: 50%;
   transform: translateY(-50%);
-  padding: 16px 20px;
+  padding: var(--space-m) var(--space-ml);
   background: var(--tooltip-background);
   color: var(--neutral-25);
   border-radius: 12px;
@@ -171,7 +171,7 @@
   z-index: 60;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
@@ -186,7 +186,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .qb-content-table-ai-tooltip-dismiss {
@@ -199,7 +199,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: var(--space-s) var(--space-sm);
   border-radius: var(--radius-sm);
   transition: color 150ms ease;
 }
@@ -215,7 +215,7 @@
   background: var(--primary-button-background);
   border: none;
   cursor: pointer;
-  padding: 8px 20px;
+  padding: var(--space-s) var(--space-ml);
   border-radius: var(--radius-sm);
   transition: background 150ms ease;
 }
@@ -253,7 +253,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  padding: var(--space-xss);
   border-radius: var(--radius-full);
   z-index: 101;
 }

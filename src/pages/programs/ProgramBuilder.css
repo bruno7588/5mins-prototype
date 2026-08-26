@@ -59,8 +59,8 @@
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px 8px 8px;
+  gap: var(--space-xss);
+  padding: var(--space-s) var(--space-sm) var(--space-s) var(--space-s);
   border: none;
   border-radius: var(--radius-full);
   background: rgba(15, 16, 20, 0.5);
@@ -160,7 +160,7 @@
 .pb-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 /* ---- Courses empty state (Figma node 2362:33058) ---- */
@@ -194,7 +194,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 10px var(--space-ml) 10px var(--space-m);
+  padding: var(--space-ssm) var(--space-ml) var(--space-ssm) var(--space-m);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);

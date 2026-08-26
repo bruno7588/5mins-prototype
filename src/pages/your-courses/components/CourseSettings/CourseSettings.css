@@ -42,7 +42,7 @@
   align-items: center;
   gap: var(--space-s); /* 8px — buttons.md gap for a 20px leading icon */
   height: 41px;
-  padding: 10px var(--space-ml) 10px var(--space-m); /* medium, leading icon — icon-side 4px tighter */
+  padding: var(--space-ssm) var(--space-ml) var(--space-ssm) var(--space-m); /* medium, leading icon — icon-side 4px tighter */
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm); /* 12px */
   background: transparent;

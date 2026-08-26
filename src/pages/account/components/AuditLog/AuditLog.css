@@ -137,7 +137,7 @@
 
 .audit-mo-soon-tag {
   margin-left: auto;
-  padding: 2px var(--space-xs); /* 2px 4px */
+  padding: var(--space-xxs) var(--space-xs); /* 2px 4px */
   border-radius: var(--radius-full);
   background: var(--button-background-disabled);
   color: var(--text-disabled);
@@ -292,7 +292,7 @@
 .audit-cell.audit-col-actor {
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .audit-cell.audit-col-expand {
@@ -378,7 +378,7 @@
 .audit-detail-field {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
   min-width: 0;
 }
 
@@ -401,7 +401,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 /* Copy details — Outlined-2 pill, same interaction as the Clear Filters button */
@@ -439,7 +439,7 @@
 .audit-change {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .audit-change-setting {
@@ -467,7 +467,7 @@
 .audit-value-pill {
   display: inline-flex;
   align-items: center;
-  padding: 6px var(--space-sm); /* 6px 12px — DS badge */
+  padding: var(--space-xss) var(--space-sm); /* 6px 12px — DS badge */
   border-radius: var(--radius-full);
   background: var(--input-background-elevated);
   font: 500 14px/1.2 'Poppins', sans-serif;
@@ -479,7 +479,7 @@
 .audit-value-more {
   display: inline-flex;
   align-items: center;
-  padding: 6px var(--space-sm); /* match .audit-value-pill height */
+  padding: var(--space-xss) var(--space-sm); /* match .audit-value-pill height */
   border: none;
   border-radius: var(--radius-full);
   background: var(--page-background-hover);
@@ -500,7 +500,7 @@
 .audit-value--object {
   display: inline-flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .audit-value-sub {
@@ -637,7 +637,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-xxs);
 }
 
 .audit-date-preset {
@@ -767,13 +767,13 @@
 .audit-cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: var(--space-xxs);
   border-radius: var(--radius-xs); /* 4px */
   overflow: hidden;
 }
 
 .audit-cal-grid--head {
-  margin-bottom: 2px;
+  margin-bottom: var(--space-xxs);
 }
 
 .audit-cal-weekday {

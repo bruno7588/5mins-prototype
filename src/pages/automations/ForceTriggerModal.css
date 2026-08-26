@@ -67,7 +67,7 @@
 .force-trigger-headline {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
   width: 100%;
   position: relative;
 }
@@ -185,5 +185,5 @@
 }
 
 .force-trigger-tooltip__caret {
-  margin-right: 16px;
+  margin-right: var(--space-m);
 }
