@@ -14,7 +14,7 @@ Spec source: Figma Library — parent frame `node 5453:38273` (dark board `10825
 > 2. **Outlined resting tint is gone.** New fill ladder: **transparent at rest → tint on hover → transparent on press**. Hover tint = Primary-500 @ 16% (primary) / family-500 @ **24%** (semantic families). Disabled is transparent too (the 16% neutral fill was removed).
 > 3. **Icons are now LEADING** (before the label), not trailing. Gap 4px (S) / 8px (M, L); icon-side padding is one step tighter.
 > 4. **AI gradients are per-state and per-mode**: the gradient start follows the primary filled ladder, the end is always Blaze `#8158EC`. AI hover gains a cyan border + purple glow. AI-Outlined lost its resting wash (wash only on hover, at 24%), and its 1px stroke is a **gradient**, not a flat cyan (corrected 2026-08-11 - see AI-Outlined below).
-> 5. Warning dark-mode filled hover goes **lighter** (Warning-500). Danger and Success darken in both modes (Success realigned to the Library variables 2026-08-26).
+> 5. The semantic families (Danger, Warning, Success) all darken on hover in both modes — Warning and Success were realigned to the Library variables 2026-08-26. Only the primary filled button lightens on dark hover.
 > 6. Coverage: Loading now exists for the semantic-outlined families; semantic-text variants (Danger/Warning/Success-text) are first-class.
 
 ## Button Architecture
@@ -180,13 +180,13 @@ Darkens on interaction in **both** modes:
 
 ### Warning (Caution Actions)
 
-Default is **Warning-600**. Dark mode goes **lighter** on hover:
+Default is **Warning-600**. One darkening ladder in both modes (Figma Library variables, 2026-08-26):
 
 | Token | Light | Dark |
 |-------|-------|------|
 | `--button-warning-background` | Warning-600 `#E88206` | Warning-600 `#E88206` |
-| `--button-warning-background-hover` | Warning-700 `#996322` | **Warning-500 `#FFA538`** |
-| `--button-warning-background-pressed` | Warning-800 `#664216` | **Warning-700 `#996322`** |
+| `--button-warning-background-hover` | Warning-700 `#996322` | Warning-700 `#996322` |
+| `--button-warning-background-pressed` | Warning-800 `#664216` | Warning-800 `#664216` |
 | `--text-warning` (outlined hover chrome) | Warning-600 `#E88206` | Warning-500 `#FFA538` |
 
 ```css
