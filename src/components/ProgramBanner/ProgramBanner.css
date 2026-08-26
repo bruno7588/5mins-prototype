@@ -10,12 +10,16 @@
   background-position: center;
 }
 
-/* Dark scrim over the photo so the text stays legible (Figma 2295:34395). */
+/* Two layers over the photo so the text stays legible (Figma 3664:48877): a flat
+   64% scrim across the whole banner, plus an angled Neutral-900 wash that keeps
+   the left side — where the copy sits — darker and fades out to the right. */
 .program-banner::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(15, 16, 20, 0.64);
+  background-image:
+    linear-gradient(96.9deg, rgba(15, 16, 20, 0.32) 20.44%, rgba(102, 102, 102, 0) 100%),
+    linear-gradient(rgba(15, 16, 20, 0.64), rgba(15, 16, 20, 0.64));
   pointer-events: none;
 }
 
