@@ -128,6 +128,9 @@
   align-items: center;
   justify-content: center;
   align-self: flex-start;
+  /* Slides stretch to the tallest, so pinning the CTA to the bottom keeps it
+     at one height across banners instead of riding up on the shorter ones. */
+  margin-top: auto;
   padding: var(--space-ssm) var(--space-ml);
   border: none;
   border-radius: var(--radius-s);
@@ -141,7 +144,35 @@
   white-space: nowrap;
 }
 
-/* Pager: a dot per slide, the resting one widening into a filled pill. */
+/* "Current course" / "Next course" subtext under the title. */
+.m-program-banner__course {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  min-width: 0;
+  margin: 0;
+  white-space: nowrap;
+  color: rgba(249, 249, 250, 0.72);
+}
+
+.m-program-banner__course-label {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.m-program-banner__course-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Pager: one tick per slide. The resting tick widens into a track whose amber
+   fill runs down the dwell time; the others collapse back to dots. */
 .m-program-banner__pager {
   display: flex;
   align-items: center;
@@ -150,26 +181,45 @@
   width: 100%;
 }
 
-.m-program-banner__dot {
+.m-program-banner__tick {
   width: 4px;
   height: 4px;
   border-radius: var(--radius-full);
   background: var(--border-elevated);
-}
-
-.m-program-banner__pill {
-  display: flex;
-  align-items: center;
-  width: 32px;
-  height: 4px;
-  border-radius: var(--radius-full);
-  background: var(--border-elevated);
   overflow: hidden;
+  transition: width 320ms ease-in-out;
 }
 
-.m-program-banner__pill-fill {
-  width: 20px;
+.m-program-banner__tick--active {
+  width: 32px;
+}
+
+.m-program-banner__tick-fill {
+  display: block;
+  width: 0;
   height: 100%;
   border-radius: var(--radius-full);
   background: var(--selected);
+  animation: m-program-banner-fill 3000ms linear forwards;
+}
+
+@keyframes m-program-banner-fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-program-banner__track {
+    scroll-behavior: auto;
+  }
+
+  .m-program-banner__tick {
+    transition: none;
+  }
+
+  /* No auto-advance without motion, so show the tick simply as filled. */
+  .m-program-banner__tick-fill {
+    width: 100%;
+    animation: none;
+  }
 }
