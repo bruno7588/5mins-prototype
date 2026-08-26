@@ -1,19 +1,17 @@
+/* Badge — Figma Library dark 5799:479 / light 12137:2230 (verified 2026-08-26).
+   Padding XSS/SM, gap XS, radius XXL (≡ --radius-full); same box with or without the leading icon. */
 .badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
+  gap: var(--space-xs);
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 1.2;
   white-space: nowrap;
-}
-
-.badge--icon {
-  gap: 4px;
-  padding-left: 8px;
 }
 
 .badge__icon {
@@ -23,33 +21,16 @@
   height: 16px;
 }
 
+/* Fills are 16% tints of the type's 500 colour and do not change per mode;
+   text tokens resolve per mode (see badges.md colour table). */
 .badge--success      { background: rgba(24, 169, 87, 0.16);  color: var(--text-success); }
 .badge--warning      { background: rgba(255, 165, 56, 0.16); color: var(--text-warning); }
 .badge--error        { background: rgba(223, 22, 66, 0.16);  color: var(--text-error); }
 .badge--in-progress  { background: rgba(0, 206, 230, 0.16);  color: var(--text-progress); }
 .badge--informative  { background: var(--input-background); color: var(--text-secondary); }
-/* Figma 9200:58569 — enrolment not open to the learner yet. */
-.badge--scheduled    { background: rgba(42, 144, 216, 0.16);  color: var(--course-assessments); }
-.badge--quiz         { background: var(--quiz-background); color: var(--text-quiz); }
 .badge--new          { background: var(--danger-400); color: var(--neutral-25); }
 
-/* Dismissible badge — has close button */
-.badge--dismissible {
-  gap: 4px;
-}
-
-.badge__dismiss {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: inherit;
-  flex-shrink: 0;
-}
-
-.badge__dismiss:hover {
-  opacity: 0.7;
-}
+/* App extensions — not in the Library Badge component. */
+.badge--quiz         { background: var(--quiz-background); color: var(--text-quiz); }
+/* Figma 9200:58569 — enrolment not open to the learner yet. */
+.badge--scheduled    { background: rgba(42, 144, 216, 0.16);  color: var(--course-assessments); }

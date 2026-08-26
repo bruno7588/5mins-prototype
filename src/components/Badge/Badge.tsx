@@ -36,32 +36,16 @@ interface BadgeProps {
   icon?: boolean
   customIcon?: ReactNode
   label?: string
-  onDismiss?: () => void
   className?: string
 }
 
-function Badge({ type = 'success', icon = false, customIcon, label, onDismiss, className = '' }: BadgeProps) {
+function Badge({ type = 'success', icon = false, customIcon, label, className = '' }: BadgeProps) {
   const showIcon = (icon || customIcon) && type !== 'new'
 
   return (
-    <span
-      className={`badge badge--${type}${showIcon ? ' badge--icon' : ''}${onDismiss ? ' badge--dismissible' : ''} ${className}`.trim()}
-      role="status"
-    >
+    <span className={`badge badge--${type} ${className}`.trim()} role="status">
       {showIcon && <span className="badge__icon">{customIcon ?? ICON_MAP[type]}</span>}
       {label ?? DEFAULT_LABELS[type]}
-      {onDismiss && (
-        <button
-          type="button"
-          className="badge__dismiss"
-          onClick={onDismiss}
-          aria-label={`Remove ${label ?? DEFAULT_LABELS[type]}`}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M11 5L5 11M5 5L11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </button>
-      )}
     </span>
   )
 }
