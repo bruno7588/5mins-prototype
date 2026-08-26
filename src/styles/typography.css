@@ -6,10 +6,15 @@ h4, .h4 { font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text
 h5, .h5 { font-size: 14px; font-weight: 700; line-height: 1.5; color: var(--text-primary); }
 h6, .h6 { font-size: 12px; font-weight: 700; line-height: 1.2; color: var(--text-primary); }
 
-/* Paragraph sizes */
+/* Paragraph regular (400) */
 .text-lg { font-size: 16px; font-weight: 400; line-height: 1.5; }
 .text-md { font-size: 14px; font-weight: 400; line-height: 1.5; }
 .text-sm { font-size: 12px; font-weight: 400; line-height: 1.2; }
+
+/* Paragraph medium (500) — subtle emphasis, badge/chip labels */
+.text-lg-medium { font-size: 16px; font-weight: 500; line-height: 1.5; }
+.text-md-medium { font-size: 14px; font-weight: 500; line-height: 1.5; }
+.text-sm-medium { font-size: 12px; font-weight: 500; line-height: 1.2; }
 
 /* Paragraph semibold (600) — form-field labels use .text-md-semibold */
 .text-lg-semibold { font-size: 16px; font-weight: 600; line-height: 1.5; }

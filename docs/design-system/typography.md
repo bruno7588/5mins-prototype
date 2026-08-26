@@ -48,9 +48,19 @@ font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
 
 **Color for body text:** `--neutral-500` (#454C5E)
 
+### Paragraph Medium (500)
+
+Figma Library `5445:24009` (row `12132:2824`, verified 2026-08-26). Subtle emphasis inside body copy, and the label weight of badges and chips.
+
+| Style | Font Size | Weight | Line Height |
+|-------|-----------|--------|-------------|
+| **Paragraph L medium** | 16px (1rem) | 500 | 1.5 |
+| **Paragraph M medium** | 14px (0.875rem) | 500 | 1.5 |
+| **Paragraph S medium** | 12px (0.75rem) | 500 | 1.2 |
+
 ### Paragraph Semibold (600)
 
-Added 2026-08-25 (Figma Library `5445:24009`). Semibold sits between Medium and Bold: heavier than emphasis, without reading as a heading.
+Figma Library `5445:24009` (row `6634:1291`, verified 2026-08-26). Semibold sits between Medium and Bold: heavier than emphasis, without reading as a heading.
 
 | Style | Font Size | Weight | Line Height |
 |-------|-----------|--------|-------------|
@@ -72,42 +82,32 @@ Added 2026-08-25 (Figma Library `5445:24009`). Semibold sits between Medium and 
 
 ### Headings
 ```css
-.heading-1  /* or use <h1> */
-.heading-2  /* or use <h2> */
-.heading-3  /* or use <h3> */
-.heading-4  /* or use <h4> */
-.heading-5  /* or use <h5> */
-.heading-6  /* or use <h6> */
+h1–h6            /* semantic elements carry the style */
+.h1 … .h6        /* same styles on any element */
 ```
 
-### Body Text
+### Paragraph (3 sizes × 3 weights)
 ```css
-/* Large (16px) */
-.text-body-l          /* Regular weight */
-.text-body-l-regular  /* Regular weight (explicit) */
-.text-body-l-medium   /* Medium weight */
+/* Regular 400 */
+.text-lg           /* 16px, 1.5 */
+.text-md           /* 14px, 1.5 */
+.text-sm           /* 12px, 1.2 */
 
-/* Medium (14px) */
-.text-body-m          /* Regular weight */
-.text-body-m-regular  /* Regular weight (explicit) */
-.text-body-m-medium   /* Medium weight */
+/* Medium 500 — subtle emphasis, badge/chip labels */
+.text-lg-medium
+.text-md-medium
+.text-sm-medium
 
-/* Small (12px) */
-.text-body-s          /* Regular weight */
-.text-body-s-regular  /* Regular weight (explicit) */
-.text-body-s-medium   /* Medium weight */
+/* Semibold 600 — form-field labels use .text-md-semibold */
+.text-lg-semibold
+.text-md-semibold
+.text-sm-semibold
+
+/* Weight only */
+.font-regular  .font-medium  .font-semibold  .font-bold
 ```
 
-### Paragraph Semibold
-```css
-.text-lg-semibold  /* 16px, 600, 1.5 */
-.text-md-semibold  /* 14px, 600, 1.5 — form-field labels */
-.text-sm-semibold  /* 12px, 600, 1.2 */
-
-.font-semibold     /* weight only */
-```
-
-> These are the names actually implemented in `src/styles/typography.css`, which uses the `.text-lg / .text-md / .text-sm` prefix rather than the `.text-body-*` names spelled out above.
+> These are the names implemented in `src/styles/typography.css`. There are no `.text-body-*` or `.heading-*` classes — use the `h1`–`h6` elements or `.h1`–`.h6`.
 
 ### Button Text
 ```css
@@ -120,9 +120,8 @@ Added 2026-08-25 (Figma Library `5445:24009`). Semibold sits between Medium and 
 ```css
 .text-primary    /* neutral-800 - Headings, primary content */
 .text-secondary  /* neutral-500 - Body text, descriptions */
-.text-label      /* neutral-400 - Labels, captions, placeholders */
-.text-muted      /* neutral-300 - Disabled, deemphasized */
-.text-link       /* primary-600 - Links (with hover state) */
+.text-tertiary   /* neutral-400 - Labels, captions, placeholders */
+.text-disabled   /* neutral-300 - Disabled, deemphasized */
 ```
 
 ## Usage Guidelines
@@ -202,30 +201,30 @@ Always use `.text-primary` (neutral-800) for all headings to maintain clear hier
 .text-md-semibold .text-secondary
 
 /* Captions and metadata */
-.text-body-s .text-label
+.text-sm .text-tertiary
 
 /* Disabled or deemphasized */
-.text-muted
+.text-disabled
 ```
 
 ### Common Combinations
 
 **Page Header:**
 ```html
-<h1 class="heading-1">Team Management</h1>
-<p class="text-body-m text-label">Manage your team's learning progress</p>
+<h1>Team Management</h1>
+<p class="text-md text-tertiary">Manage your team's learning progress</p>
 ```
 
 **Card:**
 ```html
-<h4 class="heading-4">Workplace Safety</h4>
-<p class="text-body-m text-secondary">Essential safety protocols</p>
+<h4>Workplace Safety</h4>
+<p class="text-md text-secondary">Essential safety protocols</p>
 ```
 
 **Stats:**
 ```html
-<p class="text-body-s text-label">Total Learners</p>
-<h2 class="heading-2">1,234</h2>
+<p class="text-sm text-tertiary">Total Learners</p>
+<h2>1,234</h2>
 ```
 
 **Button:**
@@ -336,8 +335,8 @@ All typography values available as CSS variables:
 **"What color for...?"**
 - Headings → text-primary (neutral-800)
 - Body → text-secondary (neutral-500)
-- Labels → text-label (neutral-400)
-- Disabled → text-muted (neutral-300)
+- Labels → text-tertiary (neutral-400)
+- Disabled → text-disabled (neutral-300)
 
 ## Resources
 
