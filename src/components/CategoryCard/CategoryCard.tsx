@@ -1,5 +1,6 @@
 import type { KeyboardEvent } from 'react'
-import { Element4, Lock, PlayCircle } from 'iconsax-react'
+import { Lock, PlayCircle } from 'iconsax-react'
+import CollectionPlayIcon from '../icons/CollectionPlayIcon'
 import './CategoryCard.css'
 
 export interface CategoryCardProps {
@@ -60,7 +61,7 @@ function CategoryCard({
         <h3 className="ws-cat-card__title">{name}</h3>
         <div className="ws-cat-card__meta">
           <span className="ws-cat-card__metaitem">
-            <Element4 size={20} color={metaColor} variant="Linear" />
+            <CollectionPlayIcon color={metaColor} />
             <span>{courseCount} courses</span>
           </span>
           <span className="ws-cat-card__metaitem">
