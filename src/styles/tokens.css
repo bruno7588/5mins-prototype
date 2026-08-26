@@ -245,14 +245,12 @@
   --text-button-outlined: var(--primary-500);
   --text-button-foreground: var(--neutral-800); /* dark label on the bright cyan filled button */
 
-  /* Buttons (buttons.md 2026-08-04) — dark hovers go LIGHTER; danger keeps one darkening ladder */
+  /* Buttons (buttons.md) — dark hovers go LIGHTER; danger and success keep one darkening ladder */
   --primary-button-background: var(--primary-500);
   --primary-button-background-hover: var(--primary-400);
   --primary-button-background-pressed: var(--primary-700);
   --button-warning-background-hover: var(--warning-500);
   --button-warning-background-pressed: var(--warning-700);
-  --button-success-background-hover: var(--success-400);
-  --button-success-background-pressed: var(--success-600);
   --button-background-disabled: var(--neutral-400);
 
   /* Selection amber flips 600 → 500 in dark (colors.md / chips-switcher spec) */
