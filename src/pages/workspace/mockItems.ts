@@ -259,7 +259,7 @@ export const workspacePrograms: WorkspaceProgram[] = [
     description:
       'Learn to turn data into action. This program covers analytics fundamentals, interpreting metrics, and communicating insights that move the business forward.',
     thumbnailGradient: 'linear-gradient(135deg, #f97316, #df1642)',
-    image: programBanner,
+    image: courseThumb3,
     courseCount: 12,
     durationLabel: '18 min',
     learnerCount: 61,
