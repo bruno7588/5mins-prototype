@@ -1,26 +1,73 @@
 import { useState } from 'react'
-import { ArrowLeft2, ArrowRight2, Routing } from 'iconsax-react'
-import type { WorkspaceProgram } from '../../pages/workspace/mockItems'
+import { ArrowLeft2, ArrowRight2, Clock, Routing } from 'iconsax-react'
+import CollectionPlayIcon from '../icons/CollectionPlayIcon'
+import type { ProgramCourse, WorkspaceProgram } from '../../pages/workspace/mockItems'
 import './ProgramBanner.css'
+
+const SEGMENTS = 8
+const META_ICON = 'rgba(249, 249, 250, 0.64)'
 
 interface Props {
   programs: WorkspaceProgram[]
+  /** Not enrolled yet — open the program overview. */
   onStart?: (program: WorkspaceProgram) => void
+  /** Enrolled — jump straight into the course the learner left off on. */
+  onResume?: (program: WorkspaceProgram, course: ProgramCourse) => void
+}
+
+/** The course the learner is part-way through, if any. */
+function currentCourse(program: WorkspaceProgram): ProgramCourse | undefined {
+  return program.outline.find((c) => c.state === 'continue')
+}
+
+/** The next course they can open: available to start, or failed and awaiting a retake. */
+function upNextCourse(program: WorkspaceProgram): ProgramCourse | undefined {
+  return program.outline.find((c) => c.state === 'jump-here' || c.state === 'retake')
+}
+
+/** Every course passed. A program with a locked (not yet released) course is not finished. */
+function isFinished(program: WorkspaceProgram): boolean {
+  return program.outline.length > 0 && program.outline.every((c) => c.state === 'review')
 }
 
 /**
  * Featured "Learning Program" banner shown at the top of the Workspace page.
  * Cycles through programs with the prev/next chevrons; the content crossfades
- * on each change. Text sits over a gradient + dark scrim so it stays legible
- * regardless of the program's gradient.
+ * on each change. Text sits over a photo + dark scrim so it stays legible
+ * regardless of the image.
+ *
+ * Finished programs drop out of the workspace, so the banner never offers a
+ * program with nothing left to do. What remains has three shapes, and the
+ * workspace features one of each:
+ *
+ *   - not started      → "Start Program"
+ *   - part-way through a course → "Resume Program" + "Current course: …"
+ *   - between courses  → "Resume Program" + "Next course: …"
  */
-export default function ProgramBanner({ programs, onStart }: Props) {
+export default function ProgramBanner({ programs, onStart, onResume }: Props) {
   const [index, setIndex] = useState(0)
-  if (programs.length === 0) return null
 
-  const program = programs[index]
-  const multiple = programs.length > 1
-  const go = (dir: number) => setIndex((i) => (i + dir + programs.length) % programs.length)
+  const open = programs.filter((p) => !isFinished(p))
+  const featured = [
+    open.find((p) => p.progress === 0),
+    open.find((p) => p.progress > 0 && currentCourse(p)),
+    open.find((p) => p.progress > 0 && !currentCourse(p) && upNextCourse(p)),
+  ].filter((p): p is WorkspaceProgram => p !== undefined)
+  if (featured.length === 0) return null
+
+  const program = featured[index % featured.length]
+  const multiple = featured.length > 1
+  const go = (dir: number) => setIndex((i) => (i + dir + featured.length) % featured.length)
+
+  const enrolled = program.progress > 0
+  const current = currentCourse(program)
+  /* Resume opens the course in progress; failing that, the next one they can start. */
+  const resumeCourse = current ?? upNextCourse(program)
+  const filled = Math.max(0, Math.min(SEGMENTS, Math.round((program.progress / 100) * SEGMENTS)))
+
+  const cta = enrolled ? 'Resume Program' : 'Start Program'
+  /* No specific course to open (everything left is still locked) — fall back to the program page. */
+  const onCta = () => (resumeCourse ? onResume?.(program, resumeCourse) : onStart?.(program))
 
   return (
     <section
@@ -31,18 +78,59 @@ export default function ProgramBanner({ programs, onStart }: Props) {
       }}
     >
       <div key={program.id} className="program-banner__content">
-        <span className="program-banner__label">
-          <Routing size={16} color="rgba(249, 249, 250, 0.5)" variant="Linear" />
-          <span>Program</span>
-        </span>
-        <h2 className="program-banner__title">{program.title}</h2>
-        <p className="program-banner__desc">{program.description}</p>
+        <div className="program-banner__meta">
+          <span className="program-banner__metaitem">
+            <Routing size={18} color={META_ICON} variant="Bold" />
+            <span>Program</span>
+          </span>
+          <span className="program-banner__metaitem">
+            <CollectionPlayIcon size={16} color={META_ICON} />
+            <span>{program.courseCount} courses</span>
+          </span>
+          <span className="program-banner__metaitem">
+            <Clock size={16} color={META_ICON} variant="Linear" />
+            <span>{program.durationLabel}</span>
+          </span>
+        </div>
+
+        <div className="program-banner__titleblock">
+          <h2 className="program-banner__title">{program.title}</h2>
+
+          <div className="program-banner__progress">
+            <span
+              className="program-banner__track"
+              role="progressbar"
+              aria-label="Program completion"
+              aria-valuenow={program.progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              {Array.from({ length: SEGMENTS }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`program-banner__seg${i < filled ? ' program-banner__seg--filled' : ''}`}
+                />
+              ))}
+            </span>
+            <span className="program-banner__pct">{program.progress}%</span>
+          </div>
+        </div>
       </div>
 
       <div className="program-banner__actions">
-        <button type="button" className="program-banner__cta" onClick={() => onStart?.(program)}>
-          Start Program
-        </button>
+        <div className="program-banner__ctagroup">
+          <button type="button" className="program-banner__cta" onClick={onCta}>
+            {cta}
+          </button>
+          {enrolled && resumeCourse ? (
+            <p className="program-banner__upnext">
+              <span className="program-banner__upnext-label">
+                {current ? 'Current course:' : 'Next course:'}
+              </span>
+              <span className="program-banner__upnext-title">{resumeCourse.title}</span>
+            </p>
+          ) : null}
+        </div>
         {multiple ? (
           <div className="program-banner__nav">
             <button

@@ -95,6 +95,7 @@ function Workspace() {
               <ProgramBanner
                 programs={getAllPrograms()}
                 onStart={(program) => navigate(`/programs/${program.id}`)}
+                onResume={(_program, course) => navigate(`/courses/${course.id}`)}
               />
 
               <section className="ws-section">

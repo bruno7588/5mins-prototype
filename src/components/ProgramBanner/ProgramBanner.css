@@ -2,7 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-ml);
+  gap: var(--space-l);
   padding: var(--space-l);
   border-radius: 16px;
   overflow: hidden;
@@ -10,19 +10,15 @@
   background-position: center;
 }
 
-/* Dark scrim over the photo/gradient — darkens on hover for an interactive feel. */
+/* Dark scrim over the photo so the text stays legible (Figma 2295:34395). */
 .program-banner::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(15, 16, 20, 0.72);
-  transition: background 200ms ease;
+  background: rgba(15, 16, 20, 0.64);
   pointer-events: none;
 }
 
-.program-banner:hover::before {
-  background: rgba(15, 16, 20, 0.8);
-}
 
 .program-banner > * {
   position: relative;
@@ -32,7 +28,7 @@
 .program-banner__content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   animation: program-banner-fade 0.4s ease;
 }
 
@@ -47,14 +43,31 @@
   }
 }
 
-.program-banner__label {
+/* Eyebrow labels above the title (Figma 3663:53729) */
+.program-banner__meta {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  font-size: 12px;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  font-size: 14px;
   font-weight: 400;
-  line-height: 1.2;
-  color: rgba(249, 249, 250, 0.5);
+  line-height: 1.5;
+  color: rgba(249, 249, 250, 0.72);
+}
+
+.program-banner__metaitem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+}
+
+/* Title + progress travel together, 8px apart (Figma 3664:48832). */
+.program-banner__titleblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  width: 100%;
 }
 
 .program-banner__title {
@@ -65,17 +78,74 @@
   color: var(--neutral-25);
 }
 
-.program-banner__desc {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: rgba(249, 249, 250, 0.72);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+/* Program completion — segmented bar, same 8 segments as the program page. */
+.program-banner__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.program-banner__track {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  height: 6px;
+  border-radius: var(--radius-l);
   overflow: hidden;
+}
+
+.program-banner__seg {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 100%;
+  background: rgba(249, 249, 250, 0.24);
+}
+
+.program-banner__seg--filled {
+  background: var(--primary-600);
+}
+
+
+.program-banner__pct {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--neutral-25);
+  white-space: nowrap;
+}
+
+/* "Current course" / "Next course" pill — DS Badge geometry (XSS/SM padding, XXL radius) on a solid
+   neutral-800 fill (Figma 3664:48869). The pill is dark in both modes, so its
+   text uses raw palette tokens rather than the mode-aware --text-* ones. */
+.program-banner__upnext {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-xss) var(--space-sm);
+  border-radius: var(--radius-full);
+  background: var(--neutral-800);
+  white-space: nowrap;
+}
+
+.program-banner__upnext-label {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--neutral-200);
+}
+
+.program-banner__upnext-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--neutral-200);
 }
 
 .program-banner__actions {
@@ -85,13 +155,22 @@
   gap: var(--space-m);
 }
 
+/* CTA and the course badge sit together on the left of the actions row. */
+.program-banner__ctagroup {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-m);
+  min-width: 0;
+}
+
 .program-banner__cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-ssm) var(--space-ml);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-s);
   background: var(--primary-button-background);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
