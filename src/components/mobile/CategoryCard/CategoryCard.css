@@ -27,6 +27,9 @@
   padding: var(--space-xl);
   display: grid;
   place-items: center;
+  border-radius: var(--radius-sm);
+  overflow: hidden; /* clips the 16px glow blur to the card (Figma: overflow-clip) */
+  isolation: isolate;
 }
 
 .m-cat-card--disabled .m-cat-card__thumb {

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowLeft2, ArrowRight2, Clock, Routing } from 'iconsax-react'
 import CollectionPlayIcon from '../icons/CollectionPlayIcon'
 import type { ProgramCourse, WorkspaceProgram } from '../../pages/workspace/mockItems'
+import { currentCourse, featuredPrograms, minutesLeft, upNextCourse } from '../../pages/programs/featuredPrograms'
 import './ProgramBanner.css'
 
 const SEGMENTS = 8
@@ -13,28 +14,6 @@ interface Props {
   onStart?: (program: WorkspaceProgram) => void
   /** Enrolled — jump straight into the course the learner left off on. */
   onResume?: (program: WorkspaceProgram, course: ProgramCourse) => void
-}
-
-/** The course the learner is part-way through, if any. */
-function currentCourse(program: WorkspaceProgram): ProgramCourse | undefined {
-  return program.outline.find((c) => c.state === 'continue')
-}
-
-/** The next course they can open: available to start, or failed and awaiting a retake. */
-function upNextCourse(program: WorkspaceProgram): ProgramCourse | undefined {
-  return program.outline.find((c) => c.state === 'jump-here' || c.state === 'retake')
-}
-
-/** Every course passed. A program with a locked (not yet released) course is not finished. */
-function isFinished(program: WorkspaceProgram): boolean {
-  return program.outline.length > 0 && program.outline.every((c) => c.state === 'review')
-}
-
-/** Runtime of everything still to take. Whole courses only — a part-watched one counts in full. */
-function minutesLeft(program: WorkspaceProgram): number {
-  return program.outline
-    .filter((c) => c.state !== 'review')
-    .reduce((sum, c) => sum + c.durationMinutes, 0)
 }
 
 /**
@@ -54,12 +33,7 @@ function minutesLeft(program: WorkspaceProgram): number {
 export default function ProgramBanner({ programs, onStart, onResume }: Props) {
   const [index, setIndex] = useState(0)
 
-  const open = programs.filter((p) => !isFinished(p))
-  const featured = [
-    open.find((p) => p.progress === 0),
-    open.find((p) => p.progress > 0 && currentCourse(p)),
-    open.find((p) => p.progress > 0 && !currentCourse(p) && upNextCourse(p)),
-  ].filter((p): p is WorkspaceProgram => p !== undefined)
+  const featured = featuredPrograms(programs)
   if (featured.length === 0) return null
 
   const program = featured[index % featured.length]

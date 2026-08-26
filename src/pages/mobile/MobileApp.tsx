@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import MobileTopNav from '@/components/mobile/TopNav/TopNav'
 import MobileTabNav, { type MobileTab } from '@/components/mobile/TabNav/TabNav'
+import WorkspaceScreen from './WorkspaceScreen'
 
 /**
  * Mobile app prototype shell (Figma scaffold 7632:8501) — the app chrome inside
@@ -61,7 +62,10 @@ function MobileApp() {
       footer={<MobileTabNav active={tab} onNavigate={setTab} />}
       onExit={() => navigate('/content-library')}
     >
-      {/* Empty content area, per the Figma scaffold — screens land here next. */}
+      {tab === 'home' && homeChip === 'Your Workspace' ? (
+        <WorkspaceScreen onOpenProgram={(id) => navigate(`/programs/${id}`)} />
+      ) : null}
+      {/* The remaining tab screens land here as they are built. */}
     </PhoneFrame>
   )
 }
