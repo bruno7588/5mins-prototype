@@ -6,6 +6,7 @@ import {
   type CourseStatus,
 } from '../workspace/mockItems'
 import { fiveMinsCourses } from './coursesCatalog'
+import defaultBanner from '../../assets/programs/unsplash_GP5EziJ_Cdo.jpg'
 import courseThumb1 from '../../assets/programs/course-1.png'
 import courseThumb2 from '../../assets/programs/course-2.png'
 import courseThumb3 from '../../assets/programs/course-3.png'
@@ -267,7 +268,9 @@ export function toWorkspaceProgram(draft: ProgramDraft): WorkspaceProgram {
     title: draft.title || 'Untitled program',
     description: draft.description,
     thumbnailGradient: draft.thumbnailGradient,
-    image: draft.image,
+    /* Builder programs have no artwork of their own — fall back to the stock banner
+       photo rather than a bare gradient. */
+    image: draft.image ?? defaultBanner,
     courseCount: courseSteps.length,
     durationLabel: `${totalMinutes} ${totalMinutes === 1 ? 'min' : 'mins'}`,
     learnerCount: 0,
