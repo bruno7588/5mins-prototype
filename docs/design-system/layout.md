@@ -47,7 +47,7 @@ The Figma number variables and their CSS tokens. The same scale drives **both** 
 | SM | 12 | `--space-sm` | `--radius-sm` |
 | M | 16 | `--space-m` | `--radius-m` |
 | ML | 20 | `--space-ml` | `--radius-ml` |
-| L | 24 | `--space-l` | — |
+| L | 24 | `--space-l` | `--radius-l` |
 | XL | 32 | `--space-xl` | — |
 | XXL | 40 | `--space-xxl` | — |
 | 0 | 0 | use `0` | use `0` |
