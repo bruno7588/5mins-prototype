@@ -5,7 +5,7 @@ import type { ProgramCourse, WorkspaceProgram } from '../../pages/workspace/mock
 import './ProgramBanner.css'
 
 const SEGMENTS = 8
-const META_ICON = 'rgba(249, 249, 250, 0.64)'
+const META_ICON = 'rgba(249, 249, 250, 0.72)'
 
 interface Props {
   programs: WorkspaceProgram[]
@@ -28,6 +28,13 @@ function upNextCourse(program: WorkspaceProgram): ProgramCourse | undefined {
 /** Every course passed. A program with a locked (not yet released) course is not finished. */
 function isFinished(program: WorkspaceProgram): boolean {
   return program.outline.length > 0 && program.outline.every((c) => c.state === 'review')
+}
+
+/** Runtime of everything still to take. Whole courses only — a part-watched one counts in full. */
+function minutesLeft(program: WorkspaceProgram): number {
+  return program.outline
+    .filter((c) => c.state !== 'review')
+    .reduce((sum, c) => sum + c.durationMinutes, 0)
 }
 
 /**
@@ -87,14 +94,27 @@ export default function ProgramBanner({ programs, onStart, onResume }: Props) {
             <CollectionPlayIcon size={16} color={META_ICON} />
             <span>{program.courseCount} courses</span>
           </span>
-          <span className="program-banner__metaitem">
-            <Clock size={16} color={META_ICON} variant="Linear" />
-            <span>{program.durationLabel}</span>
-          </span>
+          {/* Enrolled programs show the time remaining next to the percentage instead. */}
+          {!enrolled ? (
+            <span className="program-banner__metaitem">
+              <Clock size={16} color={META_ICON} variant="Linear" />
+              <span>{program.durationLabel}</span>
+            </span>
+          ) : null}
         </div>
 
         <div className="program-banner__titleblock">
-          <h2 className="program-banner__title">{program.title}</h2>
+          <div className="program-banner__heading">
+            <h2 className="program-banner__title">{program.title}</h2>
+            {enrolled && resumeCourse ? (
+              <p className="program-banner__upnext">
+                <span className="program-banner__upnext-label">
+                  {current ? 'Current course:' : 'Next course:'}
+                </span>
+                <span className="program-banner__upnext-title">{resumeCourse.title}</span>
+              </p>
+            ) : null}
+          </div>
 
           <div className="program-banner__progress">
             <span
@@ -113,24 +133,20 @@ export default function ProgramBanner({ programs, onStart, onResume }: Props) {
               ))}
             </span>
             <span className="program-banner__pct">{program.progress}%</span>
+            {enrolled ? (
+              <span className="program-banner__timeleft">
+                <Clock size={16} color="var(--neutral-25)" variant="Linear" />
+                <span>{minutesLeft(program)} min left</span>
+              </span>
+            ) : null}
           </div>
         </div>
       </div>
 
       <div className="program-banner__actions">
-        <div className="program-banner__ctagroup">
-          <button type="button" className="program-banner__cta" onClick={onCta}>
-            {cta}
-          </button>
-          {enrolled && resumeCourse ? (
-            <p className="program-banner__upnext">
-              <span className="program-banner__upnext-label">
-                {current ? 'Current course:' : 'Next course:'}
-              </span>
-              <span className="program-banner__upnext-title">{resumeCourse.title}</span>
-            </p>
-          ) : null}
-        </div>
+        <button type="button" className="program-banner__cta" onClick={onCta}>
+          {cta}
+        </button>
         {multiple ? (
           <div className="program-banner__nav">
             <button

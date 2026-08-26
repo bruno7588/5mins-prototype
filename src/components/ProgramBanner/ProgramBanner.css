@@ -70,6 +70,13 @@
   width: 100%;
 }
 
+.program-banner__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
 .program-banner__title {
   margin: 0;
   font-size: 24px;
@@ -109,33 +116,42 @@
 
 .program-banner__pct {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--neutral-25);
   white-space: nowrap;
 }
 
-/* "Current course" / "Next course" pill — DS Badge geometry (XSS/SM padding, XXL radius) on a solid
-   neutral-800 fill (Figma 3664:48869). The pill is dark in both modes, so its
-   text uses raw palette tokens rather than the mode-aware --text-* ones. */
-.program-banner__upnext {
+/* Time remaining, beside the percentage on enrolled programs. */
+.program-banner__timeleft {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--neutral-25);
+  white-space: nowrap;
+}
+
+/* "Current course" / "Next course" subtext under the title. Sits on the fixed
+   dark scrim, so it uses raw palette tokens rather than mode-aware --text-*. */
+.program-banner__upnext {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
   min-width: 0;
   margin: 0;
-  padding: var(--space-xss) var(--space-sm);
-  border-radius: var(--radius-full);
-  background: var(--neutral-800);
   white-space: nowrap;
 }
 
 .program-banner__upnext-label {
   flex-shrink: 0;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 1.2;
-  color: var(--neutral-200);
+  line-height: 1.5;
+  color: rgba(249, 249, 250, 0.72);
 }
 
 .program-banner__upnext-title {
@@ -144,8 +160,8 @@
   text-overflow: ellipsis;
   font-size: 14px;
   font-weight: 600;
-  line-height: 1.2;
-  color: var(--neutral-200);
+  line-height: 1.5;
+  color: rgba(249, 249, 250, 0.72);
 }
 
 .program-banner__actions {
@@ -155,14 +171,6 @@
   gap: var(--space-m);
 }
 
-/* CTA and the course badge sit together on the left of the actions row. */
-.program-banner__ctagroup {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-m);
-  min-width: 0;
-}
 
 .program-banner__cta {
   display: inline-flex;
