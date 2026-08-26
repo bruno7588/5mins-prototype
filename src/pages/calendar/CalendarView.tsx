@@ -156,7 +156,10 @@ export function CourseCard({ item, tab }: { item: CalendarItem; tab: CalendarTab
   const isOverdue = tab === 'past' && (item.progress ?? 0) < 100
   return (
     <article className="cal-card cal-card--course">
-      <div className="cal-card__media" style={{ background: item.thumbnailGradient }}>
+      <div
+        className="cal-card__media"
+        style={item.image ? { backgroundImage: `url(${item.image})` } : { background: item.thumbnailGradient }}
+      >
         <span className="cal-card__typetag" aria-label={item.type === 'course' ? 'Course' : 'Event'}>
           {item.type === 'course' ? (
             <CourseTypeIcon size={24} />
@@ -220,7 +223,10 @@ export function EventCard({
       role={interactive ? 'button' : undefined}
       tabIndex={interactive ? 0 : undefined}
     >
-      <div className="cal-card__media" style={{ background: item.thumbnailGradient }}>
+      <div
+        className="cal-card__media"
+        style={item.image ? { backgroundImage: `url(${item.image})` } : { background: item.thumbnailGradient }}
+      >
         <span className="cal-card__typetag" aria-label={item.type === 'course' ? 'Course' : 'Event'}>
           {item.type === 'course' ? (
             <CourseTypeIcon size={24} />
