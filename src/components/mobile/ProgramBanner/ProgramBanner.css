@@ -22,6 +22,9 @@
 .m-program-banner__slide {
   position: relative;
   flex: 0 0 100%;
+  /* Every slide is the same box, so nothing shifts as they advance. Sized to
+     the tallest case: 3-line title + 2-line course line + progress + CTA. */
+  height: 254px;
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
@@ -52,6 +55,10 @@
   flex-direction: column;
   gap: var(--space-sm);
   width: 100%;
+  /* At the tallest case the clamped lines add up a fraction over the fixed
+     slide height. This lets the copy absorb it — the clamp already hides the
+     overflow — so the progress bar and CTA never get trimmed at the bottom. */
+  min-height: 0;
 }
 
 /* Eyebrow labels: Program · N courses · duration */
@@ -93,11 +100,13 @@
   color: var(--neutral-25);
 }
 
+/* Pushed to the foot of the slide; the CTA follows one gap below it. */
 .m-program-banner__progress {
   display: flex;
   align-items: center;
   gap: var(--space-s);
   width: 100%;
+  margin-top: auto;
 }
 
 .m-program-banner__bar {
@@ -133,9 +142,6 @@
   align-items: center;
   justify-content: center;
   align-self: flex-start;
-  /* Slides stretch to the tallest, so pinning the CTA to the bottom keeps it
-     at one height across banners instead of riding up on the shorter ones. */
-  margin-top: auto;
   padding: var(--space-ssm) var(--space-ml);
   border: none;
   border-radius: var(--radius-s);
@@ -158,8 +164,8 @@
   line-clamp: 2;
   overflow: hidden;
   margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 12px;
+  line-height: 1.2;
   color: rgba(249, 249, 250, 0.72);
 }
 

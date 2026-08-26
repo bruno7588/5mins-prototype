@@ -232,7 +232,9 @@ export const workspacePrograms: WorkspaceProgram[] = [
       },
       {
         id: 'p2c2',
-        title: 'Coaching & Feedback Conversations',
+        // Long on purpose: the banner's "Current course:" line truncates at two.
+        title:
+          'Difficult Coaching Conversations: Giving Feedback that Changes Performance Without Damaging Trust',
         lessonCount: 11,
         durationMinutes: 18,
         thumbnail: courseThumb3,
@@ -351,7 +353,9 @@ export const workspacePrograms: WorkspaceProgram[] = [
   // Retake is course-level: the failed card shows a "Retake" CTA.
   {
     id: 'p5',
-    title: 'Fire Safety Essentials',
+    // Long on purpose: the banner title truncates at three lines.
+    title:
+      'Fire Safety, Emergency Evacuation and Incident Response Certification for Hospitality Operations and Front-of-House Teams',
     description:
       'Everything hospitality staff need to prevent, detect, and respond to fire. The certificate unlocks only once every course is passed.',
     thumbnailGradient: 'linear-gradient(135deg, #f97316, #ef4444)',

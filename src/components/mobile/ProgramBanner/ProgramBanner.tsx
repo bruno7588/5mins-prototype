@@ -124,27 +124,30 @@ function MobileProgramBanner({ programs, onOpen }: MobileProgramBannerProps) {
                       <span className="m-program-banner__course-title">{resumeCourse.title}</span>
                     </p>
                   ) : null}
-                  <div className="m-program-banner__progress">
-                    <span
-                      className="m-program-banner__bar"
-                      role="progressbar"
-                      aria-label="Program completion"
-                      aria-valuenow={program.progress}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                    >
-                      {Array.from({ length: SEGMENTS }).map((_, i) => (
-                        <span
-                          key={i}
-                          className={`m-program-banner__seg${
-                            i < filled ? ' m-program-banner__seg--filled' : ''
-                          }`}
-                        />
-                      ))}
-                    </span>
-                    <span className="m-program-banner__pct">{program.progress}%</span>
-                  </div>
                 </div>
+              </div>
+
+              {/* Sits directly above the CTA at the foot of every slide, however
+                  much copy is above it, so the pair never shifts between slides. */}
+              <div className="m-program-banner__progress">
+                <span
+                  className="m-program-banner__bar"
+                  role="progressbar"
+                  aria-label="Program completion"
+                  aria-valuenow={program.progress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  {Array.from({ length: SEGMENTS }).map((_, i) => (
+                    <span
+                      key={i}
+                      className={`m-program-banner__seg${
+                        i < filled ? ' m-program-banner__seg--filled' : ''
+                      }`}
+                    />
+                  ))}
+                </span>
+                <span className="m-program-banner__pct">{program.progress}%</span>
               </div>
 
               <button
