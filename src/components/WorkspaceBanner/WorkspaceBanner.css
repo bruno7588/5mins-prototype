@@ -188,6 +188,9 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
+  /* Bottom cluster: the bar sits above the CTAs at the foot of the slide
+     however much copy is above it, so neither shifts as the banners advance. */
+  margin-top: auto;
 }
 
 .wsb__bar {
@@ -223,9 +226,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-m);
-  /* Sits at the foot of the slide however much copy is above it, so the CTAs
-     never shift as the banners advance. */
-  margin-top: auto;
 }
 
 .wsb__nav {

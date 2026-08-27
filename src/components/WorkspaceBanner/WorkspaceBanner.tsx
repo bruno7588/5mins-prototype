@@ -212,8 +212,9 @@ function CourseSlide({
           <h2 className="wsb__title">{course.title}</h2>
         </div>
 
-        <Progress value={course.progress} label="Course completion" />
       </div>
+
+      <Progress value={course.progress} label="Course completion" />
 
       <div className="wsb__footer">
         <Button variant="outlined-2" onClick={onViewCourses}>
@@ -288,8 +289,9 @@ function ProgramSlide({
           ) : null}
         </div>
 
-        <Progress value={program.progress} label="Program completion" />
       </div>
+
+      <Progress value={program.progress} label="Program completion" />
 
       <div className="wsb__footer">
         <Button onClick={() => (resumeCourse ? onResume(resumeCourse) : onStart())}>
