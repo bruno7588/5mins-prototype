@@ -14,7 +14,10 @@ const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
 /** Dwell time per banner before it slides on to the next. */
 const SLIDE_MS = 4000
-const SLIDE_EASE = 'power2.inOut'
+/* Slower off the mark and slower into the stop than power2 — the banner eases
+   out of rest rather than snapping into the slide. */
+const SLIDE_EASE = 'power3.inOut'
+const SLIDE_SECONDS = 0.9
 
 interface Props {
   courses: WorkspaceCourse[]
@@ -74,7 +77,7 @@ function WorkspaceBanner({
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     gsap.to(el, {
       xPercent: -100 * index,
-      duration: reduced ? 0 : 0.6,
+      duration: reduced ? 0 : SLIDE_SECONDS,
       ease: SLIDE_EASE,
       overwrite: true,
     })
