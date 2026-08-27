@@ -1,11 +1,18 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { gsap } from 'gsap'
-import { ArrowLeft2, ArrowRight2, Clock, PlayCircle, Routing, TickCircle } from 'iconsax-react'
+import { ArrowLeft2, ArrowRight2, Calendar, Clock, PlayCircle, Routing, TickCircle } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import CourseIcon from '@/components/icons/CourseIcon'
-import { currentCourse, featuredPrograms, minutesLeft, upNextCourse } from '@/pages/programs/featuredPrograms'
+import {
+  currentCourse,
+  featuredPrograms,
+  isScheduled,
+  minutesLeft,
+  scheduledLabel,
+  upNextCourse,
+} from '@/pages/programs/featuredPrograms'
 import type { ProgramCourse, WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockItems'
 import { rgba, useThumbnailAccents } from '@/hooks/thumbnailAccents'
 import './WorkspaceBanner.css'
@@ -33,12 +40,12 @@ interface Props {
 }
 
 /**
- * The pair of hero banners at the top of the Workspace: the course the learner
- * is part-way through (Figma 3733:61924) and the program they can pick back up
- * (Figma 3733:62030).
+ * The hero banners at the top of the Workspace: the course the learner is
+ * part-way through (Figma 3733:61924), then one program banner per state a
+ * program can be in — ready, scheduled, mid-course, between (Figma 3733:62030).
  *
- * The two slide left every 3s on an ease-in-out ramp, and the chevrons in the
- * footer step between them by hand. Both sit on one track so they share a
+ * They slide left every 5s on an ease-in-out ramp, and the chevrons in the
+ * footer step between them by hand. All sit on one track so they share a
  * height and nothing shifts as they advance.
  */
 function WorkspaceBanner({
@@ -54,12 +61,11 @@ function WorkspaceBanner({
 
   /* The course they are part-way through — the one worth offering to resume. */
   const course = courses.find((c) => c.progress > 0 && c.progress < 100)
-  /* Featured programs are ordered fresh → enrolled; lead with one they've begun. */
+  /* One program per state it can be in: ready, scheduled, mid-course, between. */
   const featured = featuredPrograms(programs)
-  const program = featured.find((p) => p.progress > 0) ?? featured[0]
 
-  const slides = [course ? 'course' : null, program ? 'program' : null].filter(Boolean)
-  const count = slides.length
+  const keys = [course ? 'course' : null, ...featured.map((p) => p.id)].filter(Boolean)
+  const count = keys.length
 
   /* Auto-advance, unless the viewer asked for less motion. */
   useEffect(() => {
@@ -105,21 +111,22 @@ function WorkspaceBanner({
         {course ? (
           <CourseSlide
             course={course}
-            hidden={slides.indexOf('course') !== index}
+            hidden={keys.indexOf('course') !== index}
             nav={nav}
             onOpen={() => onOpenCourse?.(course)}
             onViewCourses={onViewCourses}
           />
         ) : null}
-        {program ? (
+        {featured.map((program) => (
           <ProgramSlide
+            key={program.id}
             program={program}
-            hidden={slides.indexOf('program') !== index}
+            hidden={keys.indexOf(program.id) !== index}
             nav={nav}
             onStart={() => onStartProgram?.(program)}
             onResume={(next) => onResumeProgram?.(program, next)}
           />
-        ) : null}
+        ))}
       </div>
     </section>
   )
@@ -244,6 +251,8 @@ function ProgramSlide({
   const current = currentCourse(program)
   /* Resume opens the course in progress; failing that, the next one they can start. */
   const resumeCourse = current ?? upNextCourse(program)
+  /* Enrolled but not open yet — nothing to start, so the CTA is the overview. */
+  const scheduled = isScheduled(program)
 
   return (
     <Shell
@@ -267,9 +276,16 @@ function ProgramSlide({
             <Clock size={16} color={META_ICON} variant="Linear" />
             <span>{enrolled ? `${minutesLeft(program)} min left` : program.durationLabel}</span>
           </span>
-          {/* Same two states the program screen shows (Figma 3716:83128 / 3716:83261). */}
+          {/* One per program state: live, scheduled to open later, or open and
+              untouched — the same three the program screen shows. */}
           {enrolled ? (
             <Badge type="success" label="Live" customIcon={<span className="wsb__livedot" />} />
+          ) : scheduled ? (
+            <Badge
+              type="scheduled"
+              label={scheduledLabel(program) ?? 'Scheduled'}
+              customIcon={<Calendar size={16} color="currentColor" variant="Linear" />}
+            />
           ) : (
             <Badge
               type="in-progress"
@@ -295,7 +311,7 @@ function ProgramSlide({
 
       <div className="wsb__footer">
         <Button onClick={() => (resumeCourse ? onResume(resumeCourse) : onStart())}>
-          {enrolled ? 'Resume Program' : 'Start Program'}
+          {scheduled ? 'View Program' : enrolled ? 'Resume Program' : 'Start Program'}
         </Button>
         {nav}
       </div>
