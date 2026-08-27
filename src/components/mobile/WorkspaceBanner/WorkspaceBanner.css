@@ -40,10 +40,10 @@
 /* ── Thumbnail ── */
 .m-wsb__thumb {
   position: relative;
-  /* Inset one step on the three outer sides so its 8px corners sit concentric
-     with the banner's 12px ones and the accent stroke is never clipped. */
+  /* Inset on the three outer sides so the banner's own clip can't cut the
+     corners off and take the accent stroke with them. */
   height: 120px;
-  margin: var(--space-xs) var(--space-xs) 0;
+  margin: var(--space-s) var(--space-s) 0;
   overflow: hidden;
   border-radius: var(--radius-s);
 }
