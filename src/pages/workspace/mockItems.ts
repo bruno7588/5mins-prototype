@@ -30,7 +30,7 @@ export interface WorkspaceCourse {
 export const workspaceCourses: WorkspaceCourse[] = [
   {
     id: 'c1',
-    title: 'Leadership that Drives Innovation',
+    title: 'Leadership that Drives Innovation: Building Teams that Challenge the Status Quo',
     thumbnailGradient: 'linear-gradient(135deg, #7c3aed, #a855f7)',
     image: enrolledThumb1,
     progress: 100,
@@ -39,7 +39,7 @@ export const workspaceCourses: WorkspaceCourse[] = [
   },
   {
     id: 'c2',
-    title: 'My first playlist as a Manager',
+    title: 'My First Playlist as a Manager: Coaching Conversations, Feedback and the Difficult Calls',
     thumbnailGradient: 'linear-gradient(135deg, #0f172a, #1e293b)',
     image: enrolledThumb2,
     progress: 40,
@@ -50,7 +50,7 @@ export const workspaceCourses: WorkspaceCourse[] = [
   },
   {
     id: 'c3',
-    title: 'GDPR Essentials (Global)',
+    title: 'GDPR Essentials (Global): Handling Personal Data, Consent and Breach Reporting',
     thumbnailGradient: 'linear-gradient(135deg, #38bdf8, #6366f1)',
     image: enrolledThumb3,
     progress: 25,
@@ -69,7 +69,7 @@ export const workspaceCourses: WorkspaceCourse[] = [
   },
   {
     id: 'c5',
-    title: 'Customer Conversations: Building Stronger Relationships',
+    title: 'Customer Conversations: Building Stronger Relationships from the First Hello to the Follow-Up',
     thumbnailGradient: 'linear-gradient(135deg, #14b8a6, #06b6d4)',
     image: enrolledThumb1,
     progress: 60,
