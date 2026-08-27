@@ -111,7 +111,7 @@ function Workspace() {
                       {workspaceCourses.length} courses · {workspaceCourses.filter((c) => c.progress > 0 && c.progress < 100).length} in progress · {workspaceCourses.filter((c) => c.progress >= 100).length} completed
                     </p>
                   </div>
-                  <button type="button" className="ws-section__cta ui-disabled" disabled>View All</button>
+                  <button type="button" className="ws-section__cta ui-disabled" disabled>View My Courses</button>
                 </header>
                 <Carousel trackClassName="ws-cards-track" ariaLabel="Enrolled courses">
                   {workspaceCourses.map((course) => (

@@ -34,7 +34,12 @@
 /* ── Thumbnail ── */
 .wsb__thumb {
   position: relative;
-  flex: 0 0 300px;
+  /* Inset by one step on the three outer sides, which puts its 12px corners
+     concentric with the banner's 16px ones (4 + 12 = 16) — otherwise the
+     banner's clip cuts the corners off and takes the accent stroke with them.
+     296 + the 4px inset keeps the body at Figma's 948. */
+  flex: 0 0 296px;
+  margin: var(--space-xs) 0 var(--space-xs) var(--space-xs);
   overflow: hidden;
   border-radius: var(--radius-sm);
 }
