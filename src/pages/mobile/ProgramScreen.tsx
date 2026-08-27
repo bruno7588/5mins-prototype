@@ -43,7 +43,7 @@ function ProgramScreen({ program }: { program: WorkspaceProgram }) {
       <header className="m-prog__banner">
         {complete ? null : isScheduled(program) ? (
           <Badge
-            type="scheduled"
+            type="informative"
             label={scheduledLabel(program) ?? 'Scheduled'}
             customIcon={<Calendar size={16} color="currentColor" variant="Linear" />}
           />

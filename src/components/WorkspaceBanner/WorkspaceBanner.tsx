@@ -282,7 +282,7 @@ function ProgramSlide({
             <Badge type="success" label="Live" customIcon={<span className="wsb__livedot" />} />
           ) : scheduled ? (
             <Badge
-              type="scheduled"
+              type="informative"
               label={scheduledLabel(program) ?? 'Scheduled'}
               customIcon={<Calendar size={16} color="currentColor" variant="Linear" />}
             />
