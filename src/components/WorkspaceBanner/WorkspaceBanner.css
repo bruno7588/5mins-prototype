@@ -36,8 +36,19 @@
   position: relative;
   flex: 0 0 300px;
   overflow: hidden;
-  border: 1px solid var(--wsb-accent);
   border-radius: var(--radius-sm);
+}
+
+/* The accent hairline is an overlay rather than a border so it paints in front
+   of the corner tag: the stroke reads as one unbroken line, with the tag
+   tucked behind it. Last child, so it lands on top. */
+.wsb__thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--wsb-accent);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .wsb__image {
