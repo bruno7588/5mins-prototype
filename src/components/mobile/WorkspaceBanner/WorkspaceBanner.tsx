@@ -13,9 +13,9 @@ import './WorkspaceBanner.css'
 const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
 /** Dwell per banner. The pager fill is animated over the same span. */
-const SLIDE_MS = 4000
+const SLIDE_MS = 5000
 const SLIDE_EASE = 'power3.inOut'
-const SLIDE_SECONDS = 0.9
+const SLIDE_SECONDS = 1.4
 
 interface Props {
   courses: WorkspaceCourse[]

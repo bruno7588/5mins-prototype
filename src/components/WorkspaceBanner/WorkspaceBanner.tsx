@@ -13,11 +13,11 @@ import './WorkspaceBanner.css'
 const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
 /** Dwell time per banner before it slides on to the next. */
-const SLIDE_MS = 4000
+const SLIDE_MS = 5000
 /* Slower off the mark and slower into the stop than power2 — the banner eases
    out of rest rather than snapping into the slide. */
 const SLIDE_EASE = 'power3.inOut'
-const SLIDE_SECONDS = 0.9
+const SLIDE_SECONDS = 1.4
 
 interface Props {
   courses: WorkspaceCourse[]
