@@ -1,0 +1,300 @@
+/* Mobile hero banners — the phone cut of the desktop pair (Figma "Banner course"
+   3733:61924 and "Banner program" 3733:62030). The thumbnail sits on top rather
+   than to the side; everything else carries over. */
+.m-wsb {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+/* Swiped horizontally; the resting scroll offset is the source of truth for
+   which banner is showing. */
+.m-wsb__track {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.m-wsb__track::-webkit-scrollbar {
+  display: none;
+}
+
+.m-wsb__slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  border-radius: var(--radius-sm);
+  /* Wash and hairline are read off the thumbnail image (see thumbnailAccents.ts)
+     and land as inline custom properties; neutral until the image decodes. */
+  --wsb-accent: var(--border);
+  --wsb-tint: linear-gradient(112.73deg, var(--input-background) 0%, var(--input-background) 100%);
+  background-image: var(--wsb-tint);
+}
+
+/* ── Thumbnail ── */
+.m-wsb__thumb {
+  position: relative;
+  /* Inset one step on the three outer sides so its 8px corners sit concentric
+     with the banner's 12px ones and the accent stroke is never clipped. */
+  height: 120px;
+  margin: var(--space-xs) var(--space-xs) 0;
+  overflow: hidden;
+  border-radius: var(--radius-s);
+}
+
+.m-wsb__image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Drawn over the tag, not around it, so the stroke reads as one line. */
+.m-wsb__thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--wsb-accent);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Content-type tag, tucked behind the stroke in the top-left corner. It carries
+   no top-left radius of its own — the thumbnail's clip rounds that corner, which
+   keeps it flush against the stroke. */
+.m-wsb__tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-s);
+  border-bottom-right-radius: var(--radius-s);
+  background-image: var(--wsb-tint), linear-gradient(var(--page-background), var(--page-background));
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* ── Body ── */
+.m-wsb__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 0 var(--space-m) var(--space-m);
+}
+
+.m-wsb__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.m-wsb__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+.m-wsb__metaitem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+}
+
+.m-wsb__livedot {
+  width: 12px;
+  height: 12px;
+  margin: auto;
+  border-radius: var(--radius-full);
+  background: currentColor;
+  animation: m-wsb-livedot 1.8s ease-in-out infinite;
+}
+
+@keyframes m-wsb-livedot {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.8);
+    opacity: 0.45;
+  }
+}
+
+.m-wsb__titleblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.m-wsb__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* "Current course:" / "Next course:" — label and course name wrap together as
+   one run of text, clamped at 2 lines. */
+.m-wsb__upnext {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+.m-wsb__upnext-label {
+  font-weight: 400;
+}
+
+.m-wsb__upnext-title {
+  font-weight: 600;
+}
+
+/* ── Progress ── */
+.m-wsb__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.m-wsb__bar {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  height: 4px;
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  background: rgba(249, 249, 250, 0.24); /* --neutral-25 @ 24% */
+}
+
+.m-wsb__seg {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 100%;
+}
+
+.m-wsb__seg--filled {
+  background: var(--primary-600);
+}
+
+.m-wsb__pct {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Footer ── */
+.m-wsb__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  /* Sits at the foot of the slide however much copy is above it, so the CTAs
+     never shift as the banners advance. */
+  margin-top: auto;
+}
+
+/* Same contrast divergence as the desktop banner: the neutral outlined button
+   takes --text-primary rather than the ladder's fainter hairline. */
+.m-wsb .ds-btn--outlined-2:not(:hover):not(:active) {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+/* The due-date chip is a plain page-fill pill, not the Badge's amber tint —
+   the tint would sit on top of the banner's own wash. */
+.m-wsb .badge--warning {
+  background: var(--page-background);
+}
+
+/* Pager: one tick per banner. The resting tick widens into a track whose amber
+   fill runs down the dwell time; the others collapse back to dots. */
+.m-wsb__pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.m-wsb__tick {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--border-elevated);
+  overflow: hidden;
+  transition: width 320ms ease-in-out;
+}
+
+.m-wsb__tick--active {
+  width: 32px;
+}
+
+.m-wsb__tick-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--selected);
+  /* Runs for exactly the dwell the component sets, so the two can't drift. */
+  animation: m-wsb-fill var(--m-wsb-dwell) linear forwards;
+}
+
+@keyframes m-wsb-fill {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-wsb__track {
+    scroll-behavior: auto;
+  }
+
+  .m-wsb__tick {
+    transition: none;
+  }
+
+  .m-wsb__livedot {
+    animation: none;
+  }
+
+  /* No auto-advance without motion, so show the tick simply as filled. */
+  .m-wsb__tick-fill {
+    width: 100%;
+    animation: none;
+  }
+}

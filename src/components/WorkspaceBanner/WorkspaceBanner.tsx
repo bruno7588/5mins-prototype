@@ -7,7 +7,7 @@ import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import CourseIcon from '@/components/icons/CourseIcon'
 import { currentCourse, featuredPrograms, minutesLeft, upNextCourse } from '@/pages/programs/featuredPrograms'
 import type { ProgramCourse, WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockItems'
-import { rgba, useThumbnailAccents } from './thumbnailAccents'
+import { rgba, useThumbnailAccents } from '@/hooks/thumbnailAccents'
 import './WorkspaceBanner.css'
 
 const SEGMENTS = 8

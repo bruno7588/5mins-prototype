@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react'
-import MobileProgramBanner from '@/components/mobile/ProgramBanner/ProgramBanner'
+import MobileWorkspaceBanner from '@/components/mobile/WorkspaceBanner/WorkspaceBanner'
 import MobileCourseCard from '@/components/mobile/CourseCard/CourseCard'
 import MobileCategoryCard from '@/components/mobile/CategoryCard/CategoryCard'
 import { workspaceCourses, workspaceCategories } from '@/pages/workspace/mockItems'
 import { getAllPrograms } from '@/pages/programs/programStore'
-import { featuredPrograms } from '@/pages/programs/featuredPrograms'
 import './WorkspaceScreen.css'
 
 /** Section heading with an optional count line and a "View All" text button. */
@@ -47,15 +46,22 @@ function CardRow({ label, children }: { label: string; children: ReactNode }) {
  * categories — each row swiped horizontally.
  */
 function WorkspaceScreen({ onOpenProgram }: { onOpenProgram?: (id: string) => void }) {
-  const programs = featuredPrograms(getAllPrograms())
   const inProgress = workspaceCourses.filter((c) => c.progress > 0 && c.progress < 100).length
   const completed = workspaceCourses.filter((c) => c.progress >= 100).length
 
   return (
     <div className="m-ws">
-      <MobileProgramBanner programs={programs} onOpen={(p) => onOpenProgram?.(p.id)} />
+      <MobileWorkspaceBanner
+        courses={workspaceCourses}
+        programs={getAllPrograms()}
+        onViewCourses={() =>
+          document.getElementById('m-ws-enrolled')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+        onStartProgram={(program) => onOpenProgram?.(program.id)}
+        onResumeProgram={(program) => onOpenProgram?.(program.id)}
+      />
 
-      <section className="m-ws-section">
+      <section className="m-ws-section" id="m-ws-enrolled">
         <SectionHeader
           title="Courses you're enrolled in"
           subtitle={`${workspaceCourses.length} courses · ${inProgress} in progress · ${completed} completed`}
