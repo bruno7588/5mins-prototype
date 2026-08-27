@@ -394,6 +394,53 @@ export const workspacePrograms: WorkspaceProgram[] = [
       },
     ],
   },
+  {
+    id: 'p6',
+    title: 'Allergen Awareness & Compliance',
+    description:
+      'Everything front-of-house and kitchen teams need to handle allergens safely: the 14 regulated allergens, how to take and record an allergy order, and what the law expects of you when a guest asks.',
+    thumbnailGradient: 'linear-gradient(135deg, #18a957, #00afc4)',
+    image: courseThumb5,
+    courseCount: 3,
+    durationLabel: '16 min',
+    learnerCount: 37,
+    // Enrolled but not open yet: every course is scheduled to release later, so
+    // there is nothing to start. The banner reads "Scheduled for …" off the
+    // earliest release date.
+    progress: 0,
+    outline: [
+      {
+        id: 'p6c1',
+        title: 'The 14 Regulated Allergens',
+        lessonCount: 6,
+        durationMinutes: 14,
+        thumbnail: courseThumb5,
+        state: 'locked',
+        status: 'scheduled',
+        statusLabel: 'Scheduled for 23 Jul',
+      },
+      {
+        id: 'p6c2',
+        title: 'Taking and Recording an Allergy Order',
+        lessonCount: 5,
+        durationMinutes: 11,
+        thumbnail: courseThumb6,
+        state: 'locked',
+        status: 'scheduled',
+        statusLabel: 'Scheduled for 30 Jul',
+      },
+      {
+        id: 'p6c3',
+        title: 'When a Guest Reacts: Your Legal Duties',
+        lessonCount: 4,
+        durationMinutes: 9,
+        thumbnail: courseThumb1,
+        state: 'locked',
+        status: 'scheduled',
+        statusLabel: '7d after previous course',
+      },
+    ],
+  },
 ]
 
 export interface WorkspaceCategory {

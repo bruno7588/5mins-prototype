@@ -57,8 +57,7 @@ function WorkspaceScreen({ onOpenProgram }: { onOpenProgram?: (id: string) => vo
         onViewCourses={() =>
           document.getElementById('m-ws-enrolled')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
-        onStartProgram={(program) => onOpenProgram?.(program.id)}
-        onResumeProgram={(program) => onOpenProgram?.(program.id)}
+        onOpenProgram={(program) => onOpenProgram?.(program.id)}
       />
 
       <section className="m-ws-section" id="m-ws-enrolled">

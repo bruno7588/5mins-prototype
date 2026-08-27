@@ -1,8 +1,9 @@
-import { Clock, TickCircle } from 'iconsax-react'
+import { Calendar, Clock, TickCircle } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import MobileProgramCourseCard from '@/components/mobile/ProgramCourseCard/ProgramCourseCard'
 import ProgramCertificate from '@/pages/programs/components/ProgramCertificate/ProgramCertificate'
+import { isScheduled, scheduledLabel } from '@/pages/programs/featuredPrograms'
 import type { WorkspaceProgram } from '@/pages/workspace/mockItems'
 import avatar1 from '@/assets/programs/avatar-1.png'
 import avatar2 from '@/assets/programs/avatar-2.png'
@@ -17,9 +18,10 @@ const STACK = [avatar1, avatar2, avatar3]
  * 3716:83261 in progress, 3716:83526 completed).
  *
  * One screen covers all three: the status badge above the title changes with
- * completion — "Ready to Start" before any course is opened, "Live" while the
- * program is running, and nothing at all once it is finished, when the filled
- * bar and the unlocked certificate carry the message instead.
+ * completion — "Scheduled for …" while every course is still to be released,
+ * "Ready to Start" once one can be opened, "Live" while the program is running,
+ * and nothing at all once it is finished, when the filled bar and the unlocked
+ * certificate carry the message instead.
  */
 function ProgramScreen({ program }: { program: WorkspaceProgram }) {
   const outline = program.outline
@@ -39,7 +41,13 @@ function ProgramScreen({ program }: { program: WorkspaceProgram }) {
   return (
     <div className="m-prog">
       <header className="m-prog__banner">
-        {complete ? null : program.progress === 0 ? (
+        {complete ? null : isScheduled(program) ? (
+          <Badge
+            type="scheduled"
+            label={scheduledLabel(program) ?? 'Scheduled'}
+            customIcon={<Calendar size={16} color="currentColor" variant="Linear" />}
+          />
+        ) : program.progress === 0 ? (
           <Badge
             type="in-progress"
             label="Ready to Start"

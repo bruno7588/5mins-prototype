@@ -105,6 +105,7 @@
 }
 
 .m-wsb__tag-status--warning { color: var(--text-warning); }
+.m-wsb__tag-status--muted { color: var(--text-secondary); }
 .m-wsb__tag-status--progress { color: var(--text-progress); }
 .m-wsb__tag-status--success { color: var(--text-success); }
 

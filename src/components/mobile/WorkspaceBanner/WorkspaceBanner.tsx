@@ -1,12 +1,19 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { gsap } from 'gsap'
-import { Clock, InfoCircle, PlayCircle, Routing, TickCircle } from 'iconsax-react'
+import { Calendar, Clock, InfoCircle, PlayCircle, Routing, TickCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import CourseIcon from '@/components/icons/CourseIcon'
 import { rgba, useThumbnailAccents } from '@/hooks/thumbnailAccents'
-import { currentCourse, featuredPrograms, minutesLeft, upNextCourse } from '@/pages/programs/featuredPrograms'
-import type { ProgramCourse, WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockItems'
+import {
+  currentCourse,
+  featuredPrograms,
+  isScheduled,
+  minutesLeft,
+  scheduledLabel,
+  upNextCourse,
+} from '@/pages/programs/featuredPrograms'
+import type { WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockItems'
 import './WorkspaceBanner.css'
 
 const SEGMENTS = 8
@@ -23,10 +30,8 @@ interface Props {
   programs: WorkspaceProgram[]
   /** "View My Courses" — the enrolled-courses shelf further down the screen. */
   onViewCourses?: () => void
-  /** Program not started yet — open its overview. */
-  onStartProgram?: (program: WorkspaceProgram) => void
-  /** Enrolled — open the program so they can pick the course back up. */
-  onResumeProgram?: (program: WorkspaceProgram, course?: ProgramCourse) => void
+  /** Every program CTA lands on the program screen; there is no course player yet. */
+  onOpenProgram?: (program: WorkspaceProgram) => void
 }
 
 /**
@@ -39,25 +44,18 @@ interface Props {
  * underneath mirrors it — the resting dot widens into a track whose amber fill
  * runs down the dwell time.
  */
-function MobileWorkspaceBanner({
-  courses,
-  programs,
-  onViewCourses,
-  onStartProgram,
-  onResumeProgram,
-}: Props) {
+function MobileWorkspaceBanner({ courses, programs, onViewCourses, onOpenProgram }: Props) {
   const trackRef = useRef<HTMLDivElement>(null)
   const sliding = useRef(false)
   const [index, setIndex] = useState(0)
 
   /* The course they are part-way through — the one worth offering to resume. */
   const course = courses.find((c) => c.progress > 0 && c.progress < 100)
-  /* Featured programs are ordered fresh → enrolled; lead with one they've begun. */
+  /* One program per state it can be in: ready, scheduled, mid-course, between. */
   const featured = featuredPrograms(programs)
-  const program = featured.find((p) => p.progress > 0) ?? featured[0]
 
-  const slides = [course ? 'course' : null, program ? 'program' : null].filter(Boolean)
-  const count = slides.length
+  const keys = [course ? 'course' : null, ...featured.map((p) => p.id)].filter(Boolean)
+  const count = keys.length
 
   /* Auto-advance, unless the viewer asked for less motion. */
   useEffect(() => {
@@ -112,22 +110,19 @@ function MobileWorkspaceBanner({
     >
       <div className="m-wsb__track" ref={trackRef} onScroll={handleScroll}>
         {course ? <CourseSlide course={course} onViewCourses={onViewCourses} /> : null}
-        {program ? (
+        {featured.map((program) => (
           <ProgramSlide
+            key={program.id}
             program={program}
-            onOpen={() =>
-              program.progress > 0
-                ? onResumeProgram?.(program, currentCourse(program) ?? upNextCourse(program))
-                : onStartProgram?.(program)
-            }
+            onOpen={() => onOpenProgram?.(program)}
           />
-        ) : null}
+        ))}
       </div>
 
       {count > 1 ? (
         <div className="m-wsb__pager" aria-hidden="true">
-          {slides.map((slide, i) => (
-            <span key={slide} className={`m-wsb__tick${i === index ? ' m-wsb__tick--active' : ''}`}>
+          {keys.map((key, i) => (
+            <span key={key} className={`m-wsb__tick${i === index ? ' m-wsb__tick--active' : ''}`}>
               {/* Keyed on the index so the fill restarts with each slide. */}
               {i === index ? <span key={index} className="m-wsb__tick-fill" /> : null}
             </span>
@@ -252,6 +247,9 @@ function ProgramSlide({ program, onOpen }: { program: WorkspaceProgram; onOpen: 
   const current = currentCourse(program)
   /* Resume points at the course in progress; failing that, the next one. */
   const resumeCourse = current ?? upNextCourse(program)
+  /* Enrolled but not open yet — nothing to start, so the CTA is the overview. */
+  const scheduled = isScheduled(program)
+  const cta = scheduled ? 'View Program' : enrolled ? 'Resume Program' : 'Start Program'
 
   return (
     <Shell
@@ -264,12 +262,17 @@ function ProgramSlide({ program, onOpen }: { program: WorkspaceProgram; onOpen: 
         </>
       }
       status={
-        /* The same two states the program screen shows (Figma 3747:67237 live,
-           3747:66969 ready to start). */
+        /* One per program state: live (Figma 3747:67237), scheduled to open
+           later (3747:66562), or open and untouched (3747:66969). */
         enrolled ? (
           <span className="m-wsb__tag-status m-wsb__tag-status--success">
             <span className="m-wsb__livedot" />
             <span>Live</span>
+          </span>
+        ) : scheduled ? (
+          <span className="m-wsb__tag-status m-wsb__tag-status--muted">
+            <Calendar size={16} color="currentColor" variant="Linear" />
+            <span>{scheduledLabel(program) ?? 'Scheduled'}</span>
           </span>
         ) : (
           <span className="m-wsb__tag-status m-wsb__tag-status--progress">
@@ -306,7 +309,7 @@ function ProgramSlide({ program, onOpen }: { program: WorkspaceProgram; onOpen: 
 
       <div className="m-wsb__footer">
         <Button className="m-wsb__cta" onClick={onOpen}>
-          {enrolled ? 'Resume Program' : 'Start Program'}
+          {cta}
         </Button>
       </div>
     </Shell>
