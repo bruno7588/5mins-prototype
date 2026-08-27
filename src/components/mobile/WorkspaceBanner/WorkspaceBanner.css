@@ -98,9 +98,11 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
+  /* Paragraph M medium — the same line box as the tag it sits beside, so the
+     two labels share a baseline. */
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.5;
   white-space: nowrap;
 }
 
