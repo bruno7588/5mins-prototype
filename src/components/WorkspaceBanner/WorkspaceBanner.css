@@ -48,8 +48,10 @@
 }
 
 /* Content-type tag, nested inside the top-left corner. It sits within the
-   hairline rather than over it — and follows the corner's own curve — so the
-   stroke runs unbroken all the way round the thumbnail. */
+   hairline rather than over it, so the stroke runs unbroken all the way round
+   the thumbnail — and carries no top-left radius of its own: the thumbnail's
+   own clip rounds that corner, which keeps the tag flush against the stroke
+   instead of curving away from it. */
 .wsb__tag {
   position: absolute;
   top: 0;
@@ -58,7 +60,6 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-xs) var(--space-s);
-  border-top-left-radius: var(--radius-sm);
   border-bottom-right-radius: var(--radius-s);
   /* The same wash as the banner, over the page fill so the label stays legible
      whatever the photo underneath is doing. */
@@ -103,13 +104,27 @@
   white-space: nowrap;
 }
 
-/* Program status: the dot takes the badge's own text colour. */
+/* Program status: the dot takes the badge's own text colour, and breathes so a
+   live program reads as live. */
 .wsb__livedot {
   width: 12px;
   height: 12px;
   margin: auto;
   border-radius: var(--radius-full);
   background: currentColor;
+  animation: wsb-livedot 1.8s ease-in-out infinite;
+}
+
+@keyframes wsb-livedot {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.8);
+    opacity: 0.45;
+  }
 }
 
 .wsb__titleblock {
@@ -235,4 +250,10 @@
 .wsb .ds-btn--outlined-2:not(:hover):not(:active) {
   color: var(--text-primary);
   border-color: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wsb__livedot {
+    animation: none;
+  }
 }

@@ -13,7 +13,7 @@ import './WorkspaceBanner.css'
 const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
 /** Dwell time per banner before it slides on to the next. */
-const SLIDE_MS = 3000
+const SLIDE_MS = 4000
 const SLIDE_EASE = 'power2.inOut'
 
 interface Props {
@@ -187,7 +187,7 @@ function CourseSlide({
       hidden={hidden}
       tag={
         <>
-          <CourseIcon size={16} color="var(--text-primary)" />
+          <CourseIcon size={16} color="var(--text-primary)" variant="Bold" />
           <span>Course</span>
         </>
       }

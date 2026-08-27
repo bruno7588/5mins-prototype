@@ -1,13 +1,42 @@
 interface CourseIconProps {
   size?: number
   color?: string
-  /** Accepted for Iconsax API compatibility; this glyph has a single style. */
+  /** `Bold` is the filled cut (Figma `courses` 9986:43080); the rest share the hairline glyph. */
   variant?: 'Linear' | 'Bold' | 'Outline'
   className?: string
 }
 
 /** Course / media glyph (custom). Use where an Iconsax course icon would go. */
-function CourseIcon({ size = 24, color = 'currentColor', className }: CourseIconProps) {
+function CourseIcon({ size = 24, color = 'currentColor', variant, className }: CourseIconProps) {
+  /* The filled cut is drawn on a 16 grid in the Library, so it keeps its own
+     viewBox rather than being scaled into the hairline glyph's 24. */
+  if (variant === 'Bold') {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={className}
+        aria-hidden="true"
+      >
+        <path
+          d="M11.3327 4.6667H4.66609C2.66609 4.6667 1.33276 5.6667 1.33276 8.00001V11.3334C1.33276 13.6667 2.66609 14.6667 4.66609 14.6667H11.3327C13.3327 14.6667 14.6661 13.6667 14.6661 11.3334V8.00001C14.6661 5.6667 13.3327 4.6667 11.3327 4.6667ZM9.59939 10.6667L8.66611 11.2L7.79943 11.7334C6.66609 12.4 5.79943 11.8667 5.79943 10.5334V9.53337V8.60001C5.79943 7.33337 6.66609 6.73337 7.79943 7.40004L8.66611 7.93337L9.53275 8.46673C10.7327 8.93337 10.7327 10.0667 9.59939 10.6667Z"
+          fill={color}
+        />
+        <path
+          d="M4 3H12M6 1.3333H10"
+          stroke={color}
+          strokeWidth="0.75"
+          strokeMiterlimit="10"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
   return (
     <svg
       width={size}

@@ -257,7 +257,7 @@ function ProgramDetails() {
                       </button>
                     ) : isLocked ? (
                       <span className="pd-course__lock" aria-label="Locked">
-                        <Lock size={24} color="var(--text-primary)" variant="Bold" />
+                        <Lock size={24} color="var(--text-secondary)" variant="Bold" />
                       </span>
                     ) : null}
                   </article>
