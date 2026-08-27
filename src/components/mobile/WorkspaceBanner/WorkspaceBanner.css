@@ -1,6 +1,7 @@
-/* Mobile hero banners — the phone cut of the desktop pair (Figma "Banner course"
-   3733:61924 and "Banner program" 3733:62030). The thumbnail sits on top rather
-   than to the side; everything else carries over. */
+/* Mobile hero banners — Figma "Banner course" 2522:41618 and "Banner program"
+   3747:66562 / 66969 / 67237 / 67520 (the scheduled, ready, live-current and
+   live-next states). The thumbnail sits on top with the content-type tag and the
+   status label sharing one strip in its corner. */
 .m-wsb {
   display: flex;
   flex-direction: column;
@@ -25,27 +26,27 @@
 
 .m-wsb__slide {
   flex: 0 0 100%;
+  /* The course line is a single nowrap run; without this the slide would widen
+     to fit it instead of letting it ellipsise. */
+  min-width: 0;
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  border-radius: var(--radius-sm);
+  padding: var(--space-s);
+  border-radius: var(--radius-m);
   /* Wash and hairline are read off the thumbnail image (see thumbnailAccents.ts)
      and land as inline custom properties; neutral until the image decodes. */
   --wsb-accent: var(--border);
-  --wsb-tint: linear-gradient(112.73deg, var(--input-background) 0%, var(--input-background) 100%);
+  --wsb-tint: linear-gradient(93.68deg, var(--input-background) 0%, var(--input-background) 100%);
   background-image: var(--wsb-tint);
 }
 
 /* ── Thumbnail ── */
 .m-wsb__thumb {
   position: relative;
-  /* Inset on the three outer sides so the banner's own clip can't cut the
-     corners off and take the accent stroke with them. */
-  height: 120px;
-  margin: var(--space-s) var(--space-s) 0;
+  height: 140px;
   overflow: hidden;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
 }
 
 .m-wsb__image {
@@ -55,7 +56,7 @@
   background-position: center;
 }
 
-/* Drawn over the tag, not around it, so the stroke reads as one line. */
+/* Drawn over the tag strip, not around it, so the stroke reads as one line. */
 .m-wsb__thumb::after {
   content: '';
   position: absolute;
@@ -65,62 +66,51 @@
   pointer-events: none;
 }
 
-/* Content-type tag, tucked behind the stroke in the top-left corner. It carries
-   no top-left radius of its own — the thumbnail's clip rounds that corner, which
-   keeps it flush against the stroke. */
+/* Corner strip: content-type tag, then the status label. Tucked behind the
+   stroke, and carrying no top-left radius of its own — the thumbnail's clip
+   rounds that corner, which keeps it flush against the stroke. */
 .m-wsb__tag {
   position: absolute;
   top: 0;
   left: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-xss) var(--space-s);
+  border-bottom-right-radius: var(--radius-s);
+  background-image: var(--wsb-tint), linear-gradient(var(--page-background), var(--page-background));
+}
+
+.m-wsb__tag-type {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-s);
-  border-bottom-right-radius: var(--radius-s);
-  background-image: var(--wsb-tint), linear-gradient(var(--page-background), var(--page-background));
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
-/* ── Body ── */
-.m-wsb__body {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding: 0 var(--space-m) var(--space-m);
-}
-
-.m-wsb__header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-}
-
-.m-wsb__meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.2;
-  color: var(--text-secondary);
-}
-
-.m-wsb__metaitem {
+/* Status reads as a plain icon + label here rather than the Badge's filled pill:
+   it shares the tag's own strip, so a second fill inside it would read as a
+   chip on a chip (Figma 3747:66941 / 3747:66951). */
+.m-wsb__tag-status {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
   white-space: nowrap;
 }
+
+.m-wsb__tag-status--warning { color: var(--text-warning); }
+.m-wsb__tag-status--progress { color: var(--text-progress); }
+.m-wsb__tag-status--success { color: var(--text-success); }
 
 .m-wsb__livedot {
   width: 12px;
   height: 12px;
-  margin: auto;
   border-radius: var(--radius-full);
   background: currentColor;
   animation: m-wsb-livedot 1.8s ease-in-out infinite;
@@ -138,10 +128,43 @@
   }
 }
 
+/* ── Body ── */
+.m-wsb__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-m) var(--space-s) var(--space-s);
+}
+
+.m-wsb__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.m-wsb__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.m-wsb__metaitem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+}
+
 .m-wsb__titleblock {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-s);
 }
 
 .m-wsb__title {
@@ -157,18 +180,15 @@
   color: var(--text-primary);
 }
 
-/* "Current course:" / "Next course:" — label and course name wrap together as
-   one run of text, clamped at 2 lines. */
+/* "Current course:" / "Next course:" — one line, ellipsised. */
 .m-wsb__upnext {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
   overflow: hidden;
   margin: 0;
-  font-size: 12px;
-  line-height: 1.2;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--text-secondary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .m-wsb__upnext-label {
@@ -190,7 +210,7 @@
   display: flex;
   flex: 1 0 0;
   min-width: 0;
-  height: 4px;
+  height: 6px;
   border-radius: var(--radius-l);
   overflow: hidden;
   background: rgba(249, 249, 250, 0.24); /* --neutral-25 @ 24% */
@@ -207,9 +227,9 @@
 }
 
 .m-wsb__pct {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.5;
   color: var(--text-secondary);
   white-space: nowrap;
 }
@@ -218,10 +238,17 @@
 .m-wsb__footer {
   display: flex;
   align-items: center;
-  gap: var(--space-s);
+  gap: var(--space-m);
   /* Sits at the foot of the slide however much copy is above it, so the CTAs
      never shift as the banners advance. */
   margin-top: auto;
+}
+
+/* The primary CTA takes the rest of the row beside the outlined one, and the
+   whole row when it stands alone (Figma 3747:64400 / 3747:66839). */
+.m-wsb__footer .m-wsb__cta {
+  flex: 1 0 0;
+  min-width: 0;
 }
 
 /* Same contrast divergence as the desktop banner: the neutral outlined button
@@ -229,12 +256,6 @@
 .m-wsb .ds-btn--outlined-2:not(:hover):not(:active) {
   color: var(--text-primary);
   border-color: var(--text-primary);
-}
-
-/* The due-date chip is a plain page-fill pill, not the Badge's amber tint —
-   the tint would sit on top of the banner's own wash. */
-.m-wsb .badge--warning {
-  background: var(--page-background);
 }
 
 /* Pager: one tick per banner. The resting tick widens into a track whose amber
@@ -251,7 +272,7 @@
   width: 4px;
   height: 4px;
   border-radius: var(--radius-full);
-  background: var(--border-elevated);
+  background: var(--border);
   overflow: hidden;
   transition: width 320ms ease-in-out;
 }

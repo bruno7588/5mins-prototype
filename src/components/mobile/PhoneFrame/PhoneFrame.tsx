@@ -20,6 +20,10 @@ export interface PhoneFrameProps {
 /**
  * Desktop-viewed phone frame for the mobile app prototype: a 375x812 screen in a
  * dark bezel, centered on the page. Mobile-only features render inside it.
+ *
+ * The mobile app ships dark-mode only, so the bezel pins `data-theme="dark"`
+ * over everything on the screen whichever mode the desktop around it is in.
+ * The stage outside the bezel is desktop chrome and follows the desktop theme.
  */
 function PhoneFrame({ header, footer, children, overlayHeader = false, onExit }: PhoneFrameProps) {
   return (
@@ -30,7 +34,7 @@ function PhoneFrame({ header, footer, children, overlayHeader = false, onExit }:
           <span>Back to Desktop</span>
         </button>
       ) : null}
-      <div className="m-phone">
+      <div className="m-phone" data-theme="dark">
         <div className="m-phone__screen">
           {header ? (
             <div className={`m-phone__header${overlayHeader ? ' m-phone__header--overlay' : ''}`}>{header}</div>

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { gsap } from 'gsap'
-import { Clock, PlayCircle, Routing, TickCircle } from 'iconsax-react'
-import Badge from '@/components/Badge/Badge'
+import { Clock, InfoCircle, PlayCircle, Routing, TickCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import CourseIcon from '@/components/icons/CourseIcon'
@@ -16,6 +15,8 @@ const META_ICON = 'var(--text-secondary)'
 const SLIDE_MS = 5000
 const SLIDE_EASE = 'power3.inOut'
 const SLIDE_SECONDS = 1.4
+/** The wash runs almost horizontally on the phone (Figma 3747:66818). */
+const TINT_ANGLE = '93.68deg'
 
 interface Props {
   courses: WorkspaceCourse[]
@@ -30,10 +31,10 @@ interface Props {
 
 /**
  * The pair of hero banners on the mobile workspace: the course the learner is
- * part-way through and the program they can pick back up — the phone cut of the
- * desktop pair (Figma 3733:61924 / 3733:62030), thumbnail stacked on top.
+ * part-way through (Figma 2522:41618) and the program they can pick back up
+ * (3747:66562 scheduled, 66969 ready, 67237 live-current, 67520 live-next).
  *
- * They advance on their own every 4s and can also be swiped; either way the
+ * They advance on their own every 5s and can also be swiped; either way the
  * scroll position is the source of truth for which one is showing. The pager
  * underneath mirrors it — the resting dot widens into a track whose amber fill
  * runs down the dwell time.
@@ -137,16 +138,20 @@ function MobileWorkspaceBanner({
   )
 }
 
-/** Shared shell: thumbnail with the content-type tag, then the body beneath. */
+/** Shared shell: thumbnail with the corner strip, then the body beneath. */
 function Shell({
   image,
   gradient,
-  tag,
+  type,
+  status,
   children,
 }: {
   image?: string
   gradient: string
-  tag: ReactNode
+  /** Content-type tag — icon plus "Course" / "Program". */
+  type: ReactNode
+  /** Status beside it in the same strip, when there is one. */
+  status?: ReactNode
   children: ReactNode
 }) {
   /* The banner wears its thumbnail's own colours: the dominant one draws the
@@ -155,7 +160,7 @@ function Shell({
   const accented = accents
     ? ({
         '--wsb-accent': rgba(accents.primary, 1),
-        '--wsb-tint': `linear-gradient(112.73deg, ${rgba(accents.primary, 0.24)} 0%, ${rgba(
+        '--wsb-tint': `linear-gradient(${TINT_ANGLE}, ${rgba(accents.primary, 0.24)} 0%, ${rgba(
           accents.secondary,
           0.24,
         )} 100%)`,
@@ -169,7 +174,10 @@ function Shell({
           className="m-wsb__image"
           style={image ? { backgroundImage: `url(${image})` } : { background: gradient }}
         />
-        <span className="m-wsb__tag">{tag}</span>
+        <div className="m-wsb__tag">
+          <span className="m-wsb__tag-type">{type}</span>
+          {status}
+        </div>
       </div>
       <div className="m-wsb__body">{children}</div>
     </article>
@@ -190,41 +198,48 @@ function CourseSlide({
     <Shell
       image={course.image}
       gradient={course.thumbnailGradient}
-      tag={
+      type={
         <>
           <CourseIcon size={16} color="var(--text-primary)" variant="Bold" />
           <span>Course</span>
         </>
       }
+      status={
+        course.dueLabel ? (
+          <span className="m-wsb__tag-status m-wsb__tag-status--warning">
+            <InfoCircle size={16} color="currentColor" variant="Linear" />
+            <span>{course.dueLabel}</span>
+          </span>
+        ) : undefined
+      }
     >
       <div className="m-wsb__header">
         <div className="m-wsb__meta">
           <span className="m-wsb__metaitem">
-            <PlayCircle size={14} color={META_ICON} variant="Linear" />
+            <PlayCircle size={16} color={META_ICON} variant="Linear" />
             <span>{course.lessonCount} lessons</span>
           </span>
           <span className="m-wsb__metaitem">
-            <Clock size={14} color={META_ICON} variant="Linear" />
+            <Clock size={16} color={META_ICON} variant="Linear" />
             <span>{course.progress > 0 ? `${left} min left` : `${course.durationMinutes} min`}</span>
           </span>
-          {course.dueLabel ? <Badge type="warning" icon label={course.dueLabel} /> : null}
         </div>
 
         <div className="m-wsb__titleblock">
           <h2 className="m-wsb__title">{course.title}</h2>
         </div>
+
+        <Progress value={course.progress} label="Course completion" />
       </div>
 
-      <Progress value={course.progress} label="Course completion" />
-
       <div className="m-wsb__footer">
-        <Button variant="outlined-2" size="sm" onClick={onViewCourses}>
+        <Button variant="outlined-2" onClick={onViewCourses}>
           View My Courses
         </Button>
         {/* No mobile course player yet, so the CTA is shown inert rather than as
             a decoy. `.ui-disabled` dims it and blocks the pointer; tabIndex keeps
             it off the keyboard path without repainting it in the disabled palette. */}
-        <Button size="sm" className="ui-disabled" tabIndex={-1} aria-disabled>
+        <Button className="m-wsb__cta ui-disabled" tabIndex={-1} aria-disabled>
           Start Course
         </Button>
       </div>
@@ -242,33 +257,38 @@ function ProgramSlide({ program, onOpen }: { program: WorkspaceProgram; onOpen: 
     <Shell
       image={program.image}
       gradient={program.thumbnailGradient}
-      tag={
+      type={
         <>
           <Routing size={16} color="var(--text-primary)" variant="Bold" />
           <span>Program</span>
         </>
       }
+      status={
+        /* The same two states the program screen shows (Figma 3747:67237 live,
+           3747:66969 ready to start). */
+        enrolled ? (
+          <span className="m-wsb__tag-status m-wsb__tag-status--success">
+            <span className="m-wsb__livedot" />
+            <span>Live</span>
+          </span>
+        ) : (
+          <span className="m-wsb__tag-status m-wsb__tag-status--progress">
+            <TickCircle size={16} color="currentColor" variant="Linear" />
+            <span>Ready to Start</span>
+          </span>
+        )
+      }
     >
       <div className="m-wsb__header">
         <div className="m-wsb__meta">
           <span className="m-wsb__metaitem">
-            <CollectionPlayIcon size={14} color={META_ICON} />
+            <CollectionPlayIcon size={16} color={META_ICON} />
             <span>{program.courseCount} courses</span>
           </span>
           <span className="m-wsb__metaitem">
-            <Clock size={14} color={META_ICON} variant="Linear" />
+            <Clock size={16} color={META_ICON} variant="Linear" />
             <span>{enrolled ? `${minutesLeft(program)} min left` : program.durationLabel}</span>
           </span>
-          {/* Same two states the program screen shows (Figma 3716:83128 / 3716:83261). */}
-          {enrolled ? (
-            <Badge type="success" label="Live" customIcon={<span className="m-wsb__livedot" />} />
-          ) : (
-            <Badge
-              type="in-progress"
-              label="Ready to Start"
-              customIcon={<TickCircle size={16} color="currentColor" variant="Linear" />}
-            />
-          )}
         </div>
 
         <div className="m-wsb__titleblock">
@@ -280,12 +300,12 @@ function ProgramSlide({ program, onOpen }: { program: WorkspaceProgram; onOpen: 
             </p>
           ) : null}
         </div>
+
+        <Progress value={program.progress} label="Program completion" />
       </div>
 
-      <Progress value={program.progress} label="Program completion" />
-
       <div className="m-wsb__footer">
-        <Button size="sm" onClick={onOpen}>
+        <Button className="m-wsb__cta" onClick={onOpen}>
           {enrolled ? 'Resume Program' : 'Start Program'}
         </Button>
       </div>
