@@ -1,0 +1,238 @@
+/* Workspace hero banners — Figma "Banner course" 3733:61924 and "Banner program"
+   3733:62030 (2026-08-27). Two slides on one track: the course the learner is
+   part-way through, then the program they can pick back up. */
+
+.wsb {
+  position: relative;
+  /* Clips the slide waiting off to the right. */
+  overflow: hidden;
+  border-radius: var(--radius-m);
+}
+
+.wsb__track {
+  display: flex;
+  /* Both slides take the height of the taller one, so nothing jumps as they
+     advance. */
+  align-items: stretch;
+}
+
+.wsb__slide {
+  flex: 0 0 100%;
+  display: flex;
+  align-items: stretch;
+  min-height: 250px;
+  border-radius: var(--radius-m);
+  /* The wash and the thumbnail hairline are read off the thumbnail image itself
+     (see thumbnailAccents.ts) and land as inline custom properties. Both are 24%
+     over the page, so the banner tints the background rather than covering it
+     and reads the same in either mode. Neutral until the image has decoded. */
+  --wsb-accent: var(--border);
+  --wsb-tint: linear-gradient(112.73deg, var(--input-background) 0%, var(--input-background) 100%);
+  background-image: var(--wsb-tint);
+}
+
+/* ── Thumbnail ── */
+.wsb__thumb {
+  position: relative;
+  flex: 0 0 300px;
+  overflow: hidden;
+  border: 1px solid var(--wsb-accent);
+  border-radius: var(--radius-sm);
+}
+
+.wsb__image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Content-type tag, nested inside the top-left corner. It sits within the
+   hairline rather than over it — and follows the corner's own curve — so the
+   stroke runs unbroken all the way round the thumbnail. */
+.wsb__tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-s);
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-s);
+  /* The same wash as the banner, over the page fill so the label stays legible
+     whatever the photo underneath is doing. */
+  background-image: var(--wsb-tint), linear-gradient(var(--page-background), var(--page-background));
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* ── Body ── */
+.wsb__body {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-l);
+}
+
+.wsb__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.wsb__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.wsb__metaitem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+}
+
+/* Program status: the dot takes the badge's own text colour. */
+.wsb__livedot {
+  width: 12px;
+  height: 12px;
+  margin: auto;
+  border-radius: var(--radius-full);
+  background: currentColor;
+}
+
+.wsb__titleblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.wsb__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* "Current course:" / "Next course:" — label and course name wrap together as
+   one run of text, clamped at 2 lines. */
+.wsb__upnext {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.wsb__upnext-label {
+  font-weight: 400;
+}
+
+.wsb__upnext-title {
+  font-weight: 600;
+}
+
+/* ── Progress ── */
+.wsb__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.wsb__bar {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  height: 6px;
+  border-radius: var(--radius-l);
+  overflow: hidden;
+  background: rgba(249, 249, 250, 0.24); /* --neutral-25 @ 24% */
+}
+
+.wsb__seg {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 100%;
+}
+
+.wsb__seg--filled {
+  background: var(--primary-600);
+}
+
+.wsb__pct {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Footer ── */
+.wsb__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  /* Sits at the foot of the slide however much copy is above it, so the CTAs
+     never shift as the banners advance. */
+  margin-top: auto;
+}
+
+.wsb__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  margin-left: auto;
+}
+
+.wsb__navbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.wsb__navbtn:hover {
+  background: var(--input-background-hover);
+}
+
+/* The due-date chip is a plain page-fill pill here, not the Badge's amber tint
+   (Figma 3733:61938) — the tint would sit on top of the banner's own wash. */
+.wsb .badge--warning {
+  background: var(--page-background);
+}
+
+/* Deliberate divergence from the button ladder: outlined-2 draws its hairline in
+   --border-elevated, which is too faint for contrast against the banner's wash.
+   At rest both the border and the label take --text-primary here; hover and
+   press keep the DS treatment. */
+.wsb .ds-btn--outlined-2:not(:hover):not(:active) {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}

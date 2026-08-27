@@ -16,7 +16,7 @@ import { EventCard } from '../calendar/CalendarView'
 import WorkspaceCourseCard from '../../components/WorkspaceCourseCard/WorkspaceCourseCard'
 import CategoryCard from '../../components/CategoryCard/CategoryCard'
 import Carousel from '../../components/Carousel/Carousel'
-import ProgramBanner from '../../components/ProgramBanner/ProgramBanner'
+import WorkspaceBanner from '@/components/WorkspaceBanner/WorkspaceBanner'
 import EventDetailsDrawer from './EventDetailsDrawer'
 import { workspaceCourses, workspaceCategories } from './mockItems'
 import { getAllPrograms } from '../programs/programStore'
@@ -92,13 +92,18 @@ function Workspace() {
 
         <section className="mt-body ws-body">
           <div className="ws-sections">
-              <ProgramBanner
+              <WorkspaceBanner
+                courses={workspaceCourses}
                 programs={getAllPrograms()}
-                onStart={(program) => navigate(`/programs/${program.id}`)}
-                onResume={(_program, course) => navigate(`/courses/${course.id}`)}
+                onOpenCourse={(course) => navigate(`/courses/${course.id}`)}
+                onViewCourses={() =>
+                  document.getElementById('ws-enrolled')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }
+                onStartProgram={(program) => navigate(`/programs/${program.id}`)}
+                onResumeProgram={(_program, course) => navigate(`/courses/${course.id}`)}
               />
 
-              <section className="ws-section">
+              <section className="ws-section" id="ws-enrolled">
                 <header className="ws-section__header">
                   <div className="ws-section__headline">
                     <h2 className="ws-section__title">Courses you're enrolled in</h2>
