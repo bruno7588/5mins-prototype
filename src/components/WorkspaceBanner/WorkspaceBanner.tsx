@@ -211,13 +211,10 @@ function CourseSlide({
           </span>
         </div>
 
-        <div className="wsb__titleblock">
-          <h2 className="wsb__title">{course.title}</h2>
-        </div>
+        <h2 className="wsb__title">{course.title}</h2>
 
+        <Progress value={course.progress} label="Course completion" />
       </div>
-
-      <Progress value={course.progress} label="Course completion" />
 
       <div className="wsb__footer">
         <Button variant="outlined-2" onClick={onViewCourses}>
@@ -274,19 +271,10 @@ function ProgramSlide({
           </span>
         </div>
 
-        <div className="wsb__titleblock">
-          <h2 className="wsb__title">{program.title}</h2>
-          {enrolled && resumeCourse ? (
-            <p className="wsb__upnext">
-              <span className="wsb__upnext-label">{current ? 'Current course:' : 'Next course:'}</span>{' '}
-              <span className="wsb__upnext-title">{resumeCourse.title}</span>
-            </p>
-          ) : null}
-        </div>
+        <h2 className="wsb__title">{program.title}</h2>
 
+        <Progress value={program.progress} label="Program completion" />
       </div>
-
-      <Progress value={program.progress} label="Program completion" />
 
       <div className="wsb__footer">
         <Button onClick={() => (resumeCourse ? onResume(resumeCourse) : onStart())}>

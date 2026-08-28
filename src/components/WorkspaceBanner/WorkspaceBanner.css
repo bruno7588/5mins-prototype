@@ -1,6 +1,8 @@
-/* Workspace hero banners — Figma "Banner course" 3733:61924 and "Banner program"
-   3733:62030 (2026-08-27). Two slides on one track: the course the learner is
-   part-way through, then the program they can pick back up. */
+/* Workspace hero banners — Figma "Banner course" 3733:58509. A 292px thumbnail
+   down the left with the content-type tag in its corner, then the body: metadata,
+   a two-line headline, the progress bar, and the CTA row with the chevrons at its
+   right end. Slides share one track — the course the learner is part-way through,
+   then the programs they can pick back up. */
 
 .wsb {
   position: relative;
@@ -20,7 +22,7 @@
   flex: 0 0 100%;
   display: flex;
   align-items: stretch;
-  min-height: 250px;
+  min-height: 235px;
   border-radius: var(--radius-m);
   /* The wash and the thumbnail hairline are read off the thumbnail image itself
      (see thumbnailAccents.ts) and land as inline custom properties. Both are 24%
@@ -98,7 +100,7 @@
 .wsb__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-s);
 }
 
 .wsb__meta {
@@ -119,18 +121,13 @@
   white-space: nowrap;
 }
 
-.wsb__titleblock {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-}
-
 .wsb__title {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
+  height: 72px; /* two 24px lines at 1.5 */
   margin: 0;
   font-size: 24px;
   font-weight: 700;
@@ -138,36 +135,12 @@
   color: var(--text-primary);
 }
 
-/* "Current course:" / "Next course:" — label and course name wrap together as
-   one run of text, clamped at 2 lines. */
-.wsb__upnext {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.wsb__upnext-label {
-  font-weight: 400;
-}
-
-.wsb__upnext-title {
-  font-weight: 600;
-}
 
 /* ── Progress ── */
 .wsb__progress {
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  /* Bottom cluster: the bar sits above the CTAs at the foot of the slide
-     however much copy is above it, so neither shifts as the banners advance. */
-  margin-top: auto;
 }
 
 .wsb__bar {
@@ -177,7 +150,7 @@
   height: 6px;
   border-radius: var(--radius-l);
   overflow: hidden;
-  background: rgba(249, 249, 250, 0.24); /* --neutral-25 @ 24% */
+  background: rgba(249, 249, 250, 0.5); /* --neutral-25 @ 50% */
 }
 
 .wsb__seg {
