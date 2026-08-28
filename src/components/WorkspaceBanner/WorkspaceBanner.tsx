@@ -14,6 +14,11 @@ import type { ProgramCourse, WorkspaceCourse, WorkspaceProgram } from '@/pages/w
 import { rgba, useThumbnailAccents } from '@/hooks/thumbnailAccents'
 import './WorkspaceBanner.css'
 
+/** The gap CSS puts between slides, in px — one step is a slide plus this. */
+function trackGap(el: HTMLElement) {
+  return parseFloat(getComputedStyle(el).columnGap) || 0
+}
+
 const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
 /** Dwell time per banner before it slides on to the next. */
@@ -73,13 +78,16 @@ function WorkspaceBanner({
   }, [index, count])
 
   /* One slide width per step. The track is as wide as the frame — the slides
-     overflow it — so a percentage of its own width is exactly one banner. */
+     overflow it — so a percentage of its own width is exactly one banner. The
+     gap between them rides along as a fixed pixel offset, which is why one step
+     is 100% plus one gap. */
   useEffect(() => {
     const el = trackRef.current
     if (!el) return
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     gsap.to(el, {
       xPercent: -100 * index,
+      x: -trackGap(el) * index,
       duration: reduced ? 0 : SLIDE_SECONDS,
       ease: SLIDE_EASE,
       overwrite: true,

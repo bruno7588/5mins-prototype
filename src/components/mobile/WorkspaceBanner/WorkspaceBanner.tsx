@@ -9,6 +9,11 @@ import { featuredPrograms, minutesLeft } from '@/pages/programs/featuredPrograms
 import type { WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockItems'
 import './WorkspaceBanner.css'
 
+/** The gap CSS puts between slides, in px — one step is a slide plus this. */
+function trackGap(el: HTMLElement) {
+  return parseFloat(getComputedStyle(el).columnGap) || 0
+}
+
 const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
 /** Dwell per banner. The pager fill is animated over the same span. */
@@ -68,7 +73,7 @@ function MobileWorkspaceBanner({ courses, programs, onOpenProgram }: Props) {
          afterwards, which keeps swiping snappy. */
       el.style.scrollSnapType = 'none'
       gsap.to(el, {
-        scrollLeft: next * el.clientWidth,
+        scrollLeft: next * (el.clientWidth + trackGap(el)),
         duration: SLIDE_SECONDS,
         ease: SLIDE_EASE,
         onComplete: () => {
@@ -83,12 +88,13 @@ function MobileWorkspaceBanner({ courses, programs, onOpenProgram }: Props) {
 
   if (count === 0) return null
 
-  /* A swipe wins: the resting scroll offset gives the index, since slides are
-     full-width. Skipped while the auto-advance tween is driving the scroll. */
+  /* A swipe wins: the resting scroll offset gives the index, since every slide
+     is one frame plus one gap along. Skipped while the auto-advance tween is
+     driving the scroll. */
   const handleScroll = () => {
     const el = trackRef.current
     if (!el || sliding.current) return
-    const next = Math.round(el.scrollLeft / el.clientWidth)
+    const next = Math.round(el.scrollLeft / (el.clientWidth + trackGap(el)))
     setIndex((i) => (i === next ? i : next))
   }
 

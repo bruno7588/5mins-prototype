@@ -16,6 +16,9 @@
   /* Both slides take the height of the taller one, so nothing jumps as they
      advance. */
   align-items: stretch;
+  /* Only ever seen mid-slide: at rest the gap sits just past the right edge,
+     and the frame clips it. */
+  gap: var(--space-s);
 }
 
 .wsb__slide {

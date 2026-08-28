@@ -18,6 +18,8 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  /* Only ever seen mid-swipe: at rest the gap sits just past the right edge. */
+  gap: var(--space-s);
 }
 
 .m-wsb__track::-webkit-scrollbar {
