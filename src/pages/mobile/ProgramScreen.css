@@ -15,14 +15,6 @@
   width: 100%;
 }
 
-/* The "Live" badge takes a plain dot rather than a glyph. */
-.m-prog__livedot {
-  width: 12px;
-  height: 12px;
-  margin: auto;
-  border-radius: var(--radius-full);
-  background: currentColor;
-}
 
 .m-prog__titleblock {
   display: flex;
