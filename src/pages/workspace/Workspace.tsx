@@ -99,8 +99,7 @@ function Workspace() {
                 onViewCourses={() =>
                   document.getElementById('ws-enrolled')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                 }
-                onStartProgram={(program) => navigate(`/programs/${program.id}`)}
-                onResumeProgram={(_program, course) => navigate(`/courses/${course.id}`)}
+                onOpenProgram={(program) => navigate(`/programs/${program.id}`)}
               />
 
               <section className="ws-section" id="ws-enrolled">

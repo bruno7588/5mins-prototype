@@ -4,13 +4,8 @@ import { ArrowLeft2, ArrowRight2, Clock, PlayCircle, Routing } from 'iconsax-rea
 import Button from '@/components/Button/Button'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import CourseIcon from '@/components/icons/CourseIcon'
-import {
-  currentCourse,
-  featuredPrograms,
-  minutesLeft,
-  upNextCourse,
-} from '@/pages/programs/featuredPrograms'
-import type { ProgramCourse, WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockItems'
+import { featuredPrograms, minutesLeft } from '@/pages/programs/featuredPrograms'
+import type { WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockItems'
 import { rgba, useThumbnailAccents } from '@/hooks/thumbnailAccents'
 import './WorkspaceBanner.css'
 
@@ -35,10 +30,8 @@ interface Props {
   onOpenCourse?: (course: WorkspaceCourse) => void
   /** "View My Courses" — the enrolled-courses shelf further down the page. */
   onViewCourses?: () => void
-  /** Program not started yet — open its overview. */
-  onStartProgram?: (program: WorkspaceProgram) => void
-  /** Enrolled — jump straight into the course they left off on. */
-  onResumeProgram?: (program: WorkspaceProgram, course: ProgramCourse) => void
+  /** Both program CTAs — Start and Continue alike — open the program page. */
+  onOpenProgram?: (program: WorkspaceProgram) => void
 }
 
 /**
@@ -55,8 +48,7 @@ function WorkspaceBanner({
   programs,
   onOpenCourse,
   onViewCourses,
-  onStartProgram,
-  onResumeProgram,
+  onOpenProgram,
 }: Props) {
   const trackRef = useRef<HTMLDivElement>(null)
   const [index, setIndex] = useState(0)
@@ -128,8 +120,7 @@ function WorkspaceBanner({
             program={program}
             hidden={keys.indexOf(program.id) !== index}
             nav={nav}
-            onStart={() => onStartProgram?.(program)}
-            onResume={(next) => onResumeProgram?.(program, next)}
+            onOpen={() => onOpenProgram?.(program)}
           />
         ))}
       </div>
@@ -239,21 +230,14 @@ function ProgramSlide({
   program,
   hidden,
   nav,
-  onStart,
-  onResume,
+  onOpen,
 }: {
   program: WorkspaceProgram
   hidden: boolean
   nav: React.ReactNode
-  onStart: () => void
-  onResume: (course: ProgramCourse) => void
+  onOpen: () => void
 }) {
   const enrolled = program.progress > 0
-  const current = currentCourse(program)
-  /* Continue opens the course in progress; failing that, the next one they can
-     start. A program with neither — nothing released yet — falls back to its
-     overview, which is what onStart opens. */
-  const resumeCourse = current ?? upNextCourse(program)
 
   return (
     <Shell
@@ -285,7 +269,7 @@ function ProgramSlide({
       </div>
 
       <div className="wsb__footer">
-        <Button onClick={() => (resumeCourse ? onResume(resumeCourse) : onStart())}>
+        <Button onClick={onOpen}>
           {enrolled ? 'Continue Program' : 'Start Program'}
         </Button>
         {nav}
