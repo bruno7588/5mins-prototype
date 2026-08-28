@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { Fragment, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { gsap } from 'gsap'
 import { ArrowLeft2, ArrowRight2, Clock, PlayCircle, Routing } from 'iconsax-react'
 import Button from '@/components/Button/Button'
@@ -51,6 +51,10 @@ function WorkspaceBanner({
   onOpenProgram,
 }: Props) {
   const trackRef = useRef<HTMLDivElement>(null)
+  /* Set when the track has just jumped off the wrap copy: the banner it lands on
+     has already been on screen for the slide, so it keeps only the rest of the
+     dwell and every banner gets the same time. */
+  const justWrapped = useRef(false)
   const [index, setIndex] = useState(0)
 
   /* The course they are part-way through — the one worth offering to resume. */
@@ -58,16 +62,52 @@ function WorkspaceBanner({
   /* One program per state it can be in: ready, scheduled, mid-course, between. */
   const featured = featuredPrograms(programs)
 
-  const keys = [course ? 'course' : null, ...featured.map((p) => p.id)].filter(Boolean)
-  const count = keys.length
+  /* Each banner as a render function, so the wrap copy at the end of the track
+     can draw the first one a second time. */
+  const items = [
+    ...(course
+      ? [
+          {
+            key: 'course',
+            render: (hidden: boolean) => (
+              <CourseSlide
+                course={course}
+                hidden={hidden}
+                nav={nav}
+                onOpen={() => onOpenCourse?.(course)}
+                onViewCourses={onViewCourses}
+              />
+            ),
+          },
+        ]
+      : []),
+    ...featured.map((program) => ({
+      key: program.id,
+      render: (hidden: boolean) => (
+        <ProgramSlide
+          program={program}
+          hidden={hidden}
+          nav={nav}
+          onOpen={() => onOpenProgram?.(program)}
+        />
+      ),
+    })),
+  ]
+  const count = items.length
+  /* Index `count` is the wrap copy: the first banner again, tacked on the end. */
+  const wrapped = index === count
 
-  /* Auto-advance, unless the viewer asked for less motion. */
+  /* Auto-advance, unless the viewer asked for less motion. Nothing is scheduled
+     while the wrap copy is showing — the jump back to the real first banner is
+     what ends that step, and it carries the rest of the dwell with it. */
   useEffect(() => {
-    if (count < 2) return
+    if (count < 2 || wrapped) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const timer = window.setTimeout(() => setIndex((i) => (i + 1) % count), SLIDE_MS)
+    const dwell = justWrapped.current ? SLIDE_MS - SLIDE_SECONDS * 1000 : SLIDE_MS
+    justWrapped.current = false
+    const timer = window.setTimeout(() => setIndex((i) => i + 1), dwell)
     return () => window.clearTimeout(timer)
-  }, [index, count])
+  }, [index, count, wrapped])
 
   /* One slide width per step. The track is as wide as the frame — the slides
      overflow it — so a percentage of its own width is exactly one banner. The
@@ -83,12 +123,45 @@ function WorkspaceBanner({
       duration: reduced ? 0 : SLIDE_SECONDS,
       ease: SLIDE_EASE,
       overwrite: true,
+      onComplete: () => {
+        /* The copy and the real first banner look the same, so resetting the
+           track under it is invisible — and the next step slides left again
+           rather than rewinding across everything. */
+        if (!wrapped) return
+        gsap.set(el, { xPercent: 0, x: 0 })
+        justWrapped.current = true
+        setIndex(0)
+      },
     })
-  }, [index])
+  }, [index, wrapped])
 
   if (count === 0) return null
 
-  const go = (dir: number) => setIndex((i) => (i + dir + count) % count)
+  /* The chevrons travel the same way the auto-advance does — forwards runs onto the
+     wrap copy rather than rewinding, and backwards off the first banner hops to the
+     copy first so it travels right onto the last one. */
+  const go = (dir: number) => {
+    const el = trackRef.current
+    if (!el) return
+    const end = { xPercent: -100 * count, x: -trackGap(el) * count }
+    if (index === count) {
+      /* Standing on the copy. Forwards drops back onto the real first banner and
+         carries on; backwards is already in the right place to travel right. */
+      if (dir > 0) {
+        gsap.set(el, { xPercent: 0, x: 0 })
+        setIndex(1)
+        return
+      }
+      setIndex(count - 1)
+      return
+    }
+    if (dir < 0 && index === 0) {
+      gsap.set(el, end)
+      setIndex(count - 1)
+      return
+    }
+    setIndex(index + dir)
+  }
 
   const nav =
     count > 1 ? (
@@ -105,24 +178,10 @@ function WorkspaceBanner({
   return (
     <section className="wsb" aria-roledescription="carousel" aria-label="Continue learning">
       <div className="wsb__track" ref={trackRef}>
-        {course ? (
-          <CourseSlide
-            course={course}
-            hidden={keys.indexOf('course') !== index}
-            nav={nav}
-            onOpen={() => onOpenCourse?.(course)}
-            onViewCourses={onViewCourses}
-          />
-        ) : null}
-        {featured.map((program) => (
-          <ProgramSlide
-            key={program.id}
-            program={program}
-            hidden={keys.indexOf(program.id) !== index}
-            nav={nav}
-            onOpen={() => onOpenProgram?.(program)}
-          />
+        {items.map((item, i) => (
+          <Fragment key={item.key}>{item.render(i !== index)}</Fragment>
         ))}
+        {count > 1 ? <Fragment key="wrap">{items[0].render(!wrapped)}</Fragment> : null}
       </div>
     </section>
   )

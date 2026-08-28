@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { Fragment, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { Clock, PlayCircle, Routing } from 'iconsax-react'
 import Button from '@/components/Button/Button'
@@ -43,6 +43,10 @@ interface Props {
 function MobileWorkspaceBanner({ courses, programs, onOpenProgram }: Props) {
   const trackRef = useRef<HTMLDivElement>(null)
   const sliding = useRef(false)
+  /* Set when the track has just jumped off the wrap copy: the banner it lands on
+     has already been on screen for the slide, so it keeps only the rest of the
+     dwell and every banner gets the same time. */
+  const justWrapped = useRef(false)
   const [index, setIndex] = useState(0)
 
   /* The course they are part-way through — the one worth offering to resume. */
@@ -50,18 +54,30 @@ function MobileWorkspaceBanner({ courses, programs, onOpenProgram }: Props) {
   /* One program per state it can be in: ready, scheduled, mid-course, between. */
   const featured = featuredPrograms(programs)
 
-  const keys = [course ? 'course' : null, ...featured.map((p) => p.id)].filter(Boolean)
-  const count = keys.length
+  /* Each banner as a render function, so the wrap copy at the end of the track
+     can draw the first one a second time. */
+  const items = [
+    ...(course ? [{ key: 'course', render: () => <CourseSlide course={course} /> }] : []),
+    ...featured.map((program) => ({
+      key: program.id,
+      render: () => <ProgramSlide program={program} onOpen={() => onOpenProgram?.(program)} />,
+    })),
+  ]
+  const count = items.length
 
   /* Auto-advance, unless the viewer asked for less motion. */
   useEffect(() => {
     if (count < 2) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
+    const dwell = justWrapped.current ? SLIDE_MS - SLIDE_SECONDS * 1000 : SLIDE_MS
+    justWrapped.current = false
+
     const timer = window.setTimeout(() => {
       const el = trackRef.current
       if (!el) return
-      const next = (index + 1) % count
+      /* Past the last banner comes the copy, not a rewind to the first. */
+      const next = index + 1
 
       /* Move the pager with the slide, and ignore the scroll events the tween
          itself fires — otherwise each frame would restart the dwell timer. */
@@ -77,11 +93,18 @@ function MobileWorkspaceBanner({ courses, programs, onOpenProgram }: Props) {
         duration: SLIDE_SECONDS,
         ease: SLIDE_EASE,
         onComplete: () => {
+          /* Landed on the copy: jump back onto the real first banner, which looks
+             the same, so the next step slides left again instead of rewinding. */
+          if (next === count) {
+            el.scrollLeft = 0
+            justWrapped.current = true
+            setIndex(0)
+          }
           el.style.scrollSnapType = ''
           sliding.current = false
         },
       })
-    }, SLIDE_MS)
+    }, dwell)
 
     return () => window.clearTimeout(timer)
   }, [index, count])
@@ -94,7 +117,17 @@ function MobileWorkspaceBanner({ courses, programs, onOpenProgram }: Props) {
   const handleScroll = () => {
     const el = trackRef.current
     if (!el || sliding.current) return
-    const next = Math.round(el.scrollLeft / (el.clientWidth + trackGap(el)))
+    const step = el.clientWidth + trackGap(el)
+    const next = Math.round(el.scrollLeft / step)
+    /* Swiped onto the copy and settled there — hop back onto the real first
+       banner underneath it, so the next swipe has somewhere to go. */
+    if (next === count && Math.abs(el.scrollLeft - count * step) < 2) {
+      el.style.scrollSnapType = 'none'
+      el.scrollLeft = 0
+      el.style.scrollSnapType = ''
+      setIndex(0)
+      return
+    }
     setIndex((i) => (i === next ? i : next))
   }
 
@@ -106,22 +139,18 @@ function MobileWorkspaceBanner({ courses, programs, onOpenProgram }: Props) {
       style={{ '--m-wsb-dwell': `${SLIDE_MS}ms` } as CSSProperties}
     >
       <div className="m-wsb__track" ref={trackRef} onScroll={handleScroll}>
-        {course ? <CourseSlide course={course} /> : null}
-        {featured.map((program) => (
-          <ProgramSlide
-            key={program.id}
-            program={program}
-            onOpen={() => onOpenProgram?.(program)}
-          />
+        {items.map((item) => (
+          <Fragment key={item.key}>{item.render()}</Fragment>
         ))}
+        {count > 1 ? <Fragment key="wrap">{items[0].render()}</Fragment> : null}
       </div>
 
       {count > 1 ? (
         <div className="m-wsb__pager" aria-hidden="true">
-          {keys.map((key, i) => (
-            <span key={key} className={`m-wsb__tick${i === index ? ' m-wsb__tick--active' : ''}`}>
+          {items.map((item, i) => (
+            <span key={item.key} className={`m-wsb__tick${i === index % count ? ' m-wsb__tick--active' : ''}`}>
               {/* Keyed on the index so the fill restarts with each slide. */}
-              {i === index ? <span key={index} className="m-wsb__tick-fill" /> : null}
+              {i === index % count ? <span key={index} className="m-wsb__tick-fill" /> : null}
             </span>
           ))}
         </div>
