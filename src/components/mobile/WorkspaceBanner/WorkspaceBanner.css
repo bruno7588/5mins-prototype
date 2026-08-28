@@ -1,7 +1,7 @@
-/* Mobile hero banners — Figma "Banner course" 2522:41618 and "Banner program"
-   3747:66562 / 66969 / 67237 / 67520 (the scheduled, ready, live-current and
-   live-next states). The thumbnail sits on top with the content-type tag and the
-   status label sharing one strip in its corner. */
+/* Mobile hero banners — Figma "Banner course" 3770:61592. A 240px thumbnail
+   carrying the content-type tag alone, the title block beneath it, and one
+   full-width CTA; 12px of padding, radius and gap throughout. Every program
+   reads as live, so no status sits beside the tag. */
 .m-wsb {
   display: flex;
   flex-direction: column;
@@ -32,8 +32,9 @@
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-  padding: var(--space-s);
-  border-radius: var(--radius-m);
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
   /* Wash and hairline are read off the thumbnail image (see thumbnailAccents.ts)
      and land as inline custom properties; neutral until the image decodes. */
   --wsb-accent: var(--border);
@@ -44,7 +45,7 @@
 /* ── Thumbnail ── */
 .m-wsb__thumb {
   position: relative;
-  height: 140px;
+  height: 240px;
   overflow: hidden;
   border-radius: var(--radius-sm);
 }
@@ -56,6 +57,7 @@
   background-position: center;
 }
 
+
 /* Drawn over the tag strip, not around it, so the stroke reads as one line. */
 .m-wsb__thumb::after {
   content: '';
@@ -66,9 +68,9 @@
   pointer-events: none;
 }
 
-/* Corner strip: content-type tag, then the status label. Tucked behind the
-   stroke, and carrying no top-left radius of its own — the thumbnail's clip
-   rounds that corner, which keeps it flush against the stroke. */
+/* Corner strip: the content-type tag. Tucked behind the stroke, and carrying
+   no top-left radius of its own — the thumbnail's clip rounds that corner,
+   which keeps it flush against the stroke. */
 .m-wsb__tag {
   position: absolute;
   top: 0;
@@ -77,7 +79,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-xss) var(--space-s);
-  border-bottom-right-radius: var(--radius-s);
+  border-bottom-right-radius: var(--radius-sm);
   background-image: var(--wsb-tint), linear-gradient(var(--page-background), var(--page-background));
 }
 
@@ -91,59 +93,18 @@
   color: var(--text-primary);
 }
 
-/* Status reads as a plain icon + label here rather than the Badge's filled pill:
-   it shares the tag's own strip, so a second fill inside it would read as a
-   chip on a chip (Figma 3747:66941 / 3747:66951). */
-.m-wsb__tag-status {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  /* Paragraph M medium — the same line box as the tag it sits beside, so the
-     two labels share a baseline. */
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  white-space: nowrap;
-}
-
-.m-wsb__tag-status--warning { color: var(--text-warning); }
-.m-wsb__tag-status--muted { color: var(--text-secondary); }
-.m-wsb__tag-status--progress { color: var(--text-progress); }
-.m-wsb__tag-status--success { color: var(--text-success); }
-
-.m-wsb__livedot {
-  width: 12px;
-  height: 12px;
-  border-radius: var(--radius-full);
-  background: currentColor;
-  animation: m-wsb-livedot 1.8s ease-in-out infinite;
-}
-
-@keyframes m-wsb-livedot {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(0.8);
-    opacity: 0.45;
-  }
-}
-
 /* ── Body ── */
 .m-wsb__body {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--space-m);
-  padding: var(--space-m) var(--space-s) var(--space-s);
+  gap: var(--space-sm);
 }
 
 .m-wsb__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-s);
 }
 
 .m-wsb__meta {
@@ -173,8 +134,8 @@
 .m-wsb__title {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
   margin: 0;
   font-size: 16px;
@@ -183,24 +144,6 @@
   color: var(--text-primary);
 }
 
-/* "Current course:" / "Next course:" — one line, ellipsised. */
-.m-wsb__upnext {
-  overflow: hidden;
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.m-wsb__upnext-label {
-  font-weight: 400;
-}
-
-.m-wsb__upnext-title {
-  font-weight: 600;
-}
 
 /* ── Progress ── */
 .m-wsb__progress {
@@ -247,19 +190,12 @@
   gap: var(--space-m);
 }
 
-/* The primary CTA takes the rest of the row beside the outlined one, and the
-   whole row when it stands alone (Figma 3747:64400 / 3747:66839). */
+/* One CTA per banner, spanning the slide (Figma 3770:62820). */
 .m-wsb__footer .m-wsb__cta {
   flex: 1 0 0;
   min-width: 0;
 }
 
-/* Same contrast divergence as the desktop banner: the neutral outlined button
-   takes --text-primary rather than the ladder's fainter hairline. */
-.m-wsb .ds-btn--outlined-2:not(:hover):not(:active) {
-  color: var(--text-primary);
-  border-color: var(--text-primary);
-}
 
 /* Pager: one tick per banner. The resting tick widens into a track whose amber
    fill runs down the dwell time; the others collapse back to dots. */
@@ -310,10 +246,6 @@
 
   .m-wsb__tick {
     transition: none;
-  }
-
-  .m-wsb__livedot {
-    animation: none;
   }
 
   /* No auto-advance without motion, so show the tick simply as filled. */

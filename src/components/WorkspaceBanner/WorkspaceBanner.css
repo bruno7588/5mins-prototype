@@ -119,29 +119,6 @@
   white-space: nowrap;
 }
 
-/* Program status: the dot takes the badge's own text colour, and breathes so a
-   live program reads as live. */
-.wsb__livedot {
-  width: 12px;
-  height: 12px;
-  margin: auto;
-  border-radius: var(--radius-full);
-  background: currentColor;
-  animation: wsb-livedot 1.8s ease-in-out infinite;
-}
-
-@keyframes wsb-livedot {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(0.8);
-    opacity: 0.45;
-  }
-}
-
 .wsb__titleblock {
   display: flex;
   flex-direction: column;
@@ -252,12 +229,6 @@
   background: var(--input-background-hover);
 }
 
-/* The due-date chip is a plain page-fill pill here, not the Badge's amber tint
-   (Figma 3733:61938) — the tint would sit on top of the banner's own wash. */
-.wsb .badge--warning {
-  background: var(--page-background);
-}
-
 /* Deliberate divergence from the button ladder: outlined-2 draws its hairline in
    --border-elevated, which is too faint for contrast against the banner's wash.
    At rest both the border and the label take --text-primary here; hover and
@@ -267,8 +238,3 @@
   border-color: var(--text-primary);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .wsb__livedot {
-    animation: none;
-  }
-}

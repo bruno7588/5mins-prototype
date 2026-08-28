@@ -43,9 +43,9 @@ export function minutesLeft(program: WorkspaceProgram): number {
  * with nothing left to do. What remains has four shapes:
  *
  *   - not started               → "Start Program"
- *   - scheduled to open later   → "View Program" + "Scheduled for …"
- *   - part-way through a course → "Resume Program" + "Current course: …"
- *   - between courses           → "Resume Program" + "Next course: …"
+ *   - scheduled to open later   → "Start Program" (opens the overview)
+ *   - part-way through a course → "Continue Program" + "Current course: …"
+ *   - between courses           → "Continue Program" + "Next course: …"
  */
 export function featuredPrograms(programs: WorkspaceProgram[]): WorkspaceProgram[] {
   const open = programs.filter((p) => !isFinished(p))

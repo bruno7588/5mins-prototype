@@ -1,18 +1,11 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { gsap } from 'gsap'
-import { Calendar, Clock, InfoCircle, PlayCircle, Routing, TickCircle } from 'iconsax-react'
+import { Clock, PlayCircle, Routing } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import CourseIcon from '@/components/icons/CourseIcon'
 import { rgba, useThumbnailAccents } from '@/hooks/thumbnailAccents'
-import {
-  currentCourse,
-  featuredPrograms,
-  isScheduled,
-  minutesLeft,
-  scheduledLabel,
-  upNextCourse,
-} from '@/pages/programs/featuredPrograms'
+import { featuredPrograms, minutesLeft } from '@/pages/programs/featuredPrograms'
 import type { WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockItems'
 import './WorkspaceBanner.css'
 
@@ -28,8 +21,6 @@ const TINT_ANGLE = '93.68deg'
 interface Props {
   courses: WorkspaceCourse[]
   programs: WorkspaceProgram[]
-  /** "View My Courses" — the enrolled-courses shelf further down the screen. */
-  onViewCourses?: () => void
   /** Every program CTA lands on the program screen; there is no course player yet. */
   onOpenProgram?: (program: WorkspaceProgram) => void
 }
@@ -44,7 +35,7 @@ interface Props {
  * underneath mirrors it — the resting dot widens into a track whose amber fill
  * runs down the dwell time.
  */
-function MobileWorkspaceBanner({ courses, programs, onViewCourses, onOpenProgram }: Props) {
+function MobileWorkspaceBanner({ courses, programs, onOpenProgram }: Props) {
   const trackRef = useRef<HTMLDivElement>(null)
   const sliding = useRef(false)
   const [index, setIndex] = useState(0)
@@ -109,7 +100,7 @@ function MobileWorkspaceBanner({ courses, programs, onViewCourses, onOpenProgram
       style={{ '--m-wsb-dwell': `${SLIDE_MS}ms` } as CSSProperties}
     >
       <div className="m-wsb__track" ref={trackRef} onScroll={handleScroll}>
-        {course ? <CourseSlide course={course} onViewCourses={onViewCourses} /> : null}
+        {course ? <CourseSlide course={course} /> : null}
         {featured.map((program) => (
           <ProgramSlide
             key={program.id}
@@ -138,15 +129,12 @@ function Shell({
   image,
   gradient,
   type,
-  status,
   children,
 }: {
   image?: string
   gradient: string
   /** Content-type tag — icon plus "Course" / "Program". */
   type: ReactNode
-  /** Status beside it in the same strip, when there is one. */
-  status?: ReactNode
   children: ReactNode
 }) {
   /* The banner wears its thumbnail's own colours: the dominant one draws the
@@ -171,7 +159,6 @@ function Shell({
         />
         <div className="m-wsb__tag">
           <span className="m-wsb__tag-type">{type}</span>
-          {status}
         </div>
       </div>
       <div className="m-wsb__body">{children}</div>
@@ -179,13 +166,7 @@ function Shell({
   )
 }
 
-function CourseSlide({
-  course,
-  onViewCourses,
-}: {
-  course: WorkspaceCourse
-  onViewCourses?: () => void
-}) {
+function CourseSlide({ course }: { course: WorkspaceCourse }) {
   /* Whole minutes of runtime still ahead of them. */
   const left = Math.max(1, Math.round(course.durationMinutes * (1 - course.progress / 100)))
 
@@ -198,14 +179,6 @@ function CourseSlide({
           <CourseIcon size={16} color="var(--text-primary)" variant="Bold" />
           <span>Course</span>
         </>
-      }
-      status={
-        course.dueLabel ? (
-          <span className="m-wsb__tag-status m-wsb__tag-status--warning">
-            <InfoCircle size={16} color="currentColor" variant="Linear" />
-            <span>{course.dueLabel}</span>
-          </span>
-        ) : undefined
       }
     >
       <div className="m-wsb__header">
@@ -229,14 +202,11 @@ function CourseSlide({
       <Progress value={course.progress} label="Course completion" />
 
       <div className="m-wsb__footer">
-        <Button variant="outlined-2" onClick={onViewCourses}>
-          View My Courses
-        </Button>
         {/* No mobile course player yet, so the CTA is shown inert rather than as
             a decoy. `.ui-disabled` dims it and blocks the pointer; tabIndex keeps
             it off the keyboard path without repainting it in the disabled palette. */}
         <Button className="m-wsb__cta ui-disabled" tabIndex={-1} aria-disabled>
-          Start Course
+          Continue Course
         </Button>
       </div>
     </Shell>
@@ -245,12 +215,7 @@ function CourseSlide({
 
 function ProgramSlide({ program, onOpen }: { program: WorkspaceProgram; onOpen: () => void }) {
   const enrolled = program.progress > 0
-  const current = currentCourse(program)
-  /* Resume points at the course in progress; failing that, the next one. */
-  const resumeCourse = current ?? upNextCourse(program)
-  /* Enrolled but not open yet — nothing to start, so the CTA is the overview. */
-  const scheduled = isScheduled(program)
-  const cta = scheduled ? 'View Program' : enrolled ? 'Resume Program' : 'Start Program'
+  const cta = enrolled ? 'Continue Program' : 'Start Program'
 
   return (
     <Shell
@@ -261,26 +226,6 @@ function ProgramSlide({ program, onOpen }: { program: WorkspaceProgram; onOpen: 
           <Routing size={16} color="var(--text-primary)" variant="Bold" />
           <span>Program</span>
         </>
-      }
-      status={
-        /* One per program state: live (Figma 3747:67237), scheduled to open
-           later (3747:66562), or open and untouched (3747:66969). */
-        enrolled ? (
-          <span className="m-wsb__tag-status m-wsb__tag-status--success">
-            <span className="m-wsb__livedot" />
-            <span>Live</span>
-          </span>
-        ) : scheduled ? (
-          <span className="m-wsb__tag-status m-wsb__tag-status--muted">
-            <Calendar size={16} color="currentColor" variant="Linear" />
-            <span>{scheduledLabel(program) ?? 'Scheduled'}</span>
-          </span>
-        ) : (
-          <span className="m-wsb__tag-status m-wsb__tag-status--progress">
-            <TickCircle size={16} color="currentColor" variant="Linear" />
-            <span>Ready to Start</span>
-          </span>
-        )
       }
     >
       <div className="m-wsb__header">
@@ -297,12 +242,6 @@ function ProgramSlide({ program, onOpen }: { program: WorkspaceProgram; onOpen: 
 
         <div className="m-wsb__titleblock">
           <h2 className="m-wsb__title">{program.title}</h2>
-          {enrolled && resumeCourse ? (
-            <p className="m-wsb__upnext">
-              <span className="m-wsb__upnext-label">{current ? 'Current course:' : 'Next course:'}</span>{' '}
-              <span className="m-wsb__upnext-title">{resumeCourse.title}</span>
-            </p>
-          ) : null}
         </div>
 
       </div>

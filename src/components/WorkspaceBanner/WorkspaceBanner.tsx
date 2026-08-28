@@ -1,16 +1,13 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { gsap } from 'gsap'
-import { ArrowLeft2, ArrowRight2, Calendar, Clock, PlayCircle, Routing, TickCircle } from 'iconsax-react'
-import Badge from '@/components/Badge/Badge'
+import { ArrowLeft2, ArrowRight2, Clock, PlayCircle, Routing } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import CourseIcon from '@/components/icons/CourseIcon'
 import {
   currentCourse,
   featuredPrograms,
-  isScheduled,
   minutesLeft,
-  scheduledLabel,
   upNextCourse,
 } from '@/pages/programs/featuredPrograms'
 import type { ProgramCourse, WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockItems'
@@ -212,7 +209,6 @@ function CourseSlide({
             <Clock size={16} color={META_ICON} variant="Linear" />
             <span>{course.progress > 0 ? `${left} min left` : `${course.durationMinutes} min`}</span>
           </span>
-          {course.dueLabel ? <Badge type="warning" icon label={course.dueLabel} /> : null}
         </div>
 
         <div className="wsb__titleblock">
@@ -249,10 +245,10 @@ function ProgramSlide({
 }) {
   const enrolled = program.progress > 0
   const current = currentCourse(program)
-  /* Resume opens the course in progress; failing that, the next one they can start. */
+  /* Continue opens the course in progress; failing that, the next one they can
+     start. A program with neither — nothing released yet — falls back to its
+     overview, which is what onStart opens. */
   const resumeCourse = current ?? upNextCourse(program)
-  /* Enrolled but not open yet — nothing to start, so the CTA is the overview. */
-  const scheduled = isScheduled(program)
 
   return (
     <Shell
@@ -276,23 +272,6 @@ function ProgramSlide({
             <Clock size={16} color={META_ICON} variant="Linear" />
             <span>{enrolled ? `${minutesLeft(program)} min left` : program.durationLabel}</span>
           </span>
-          {/* One per program state: live, scheduled to open later, or open and
-              untouched — the same three the program screen shows. */}
-          {enrolled ? (
-            <Badge type="success" label="Live" customIcon={<span className="wsb__livedot" />} />
-          ) : scheduled ? (
-            <Badge
-              type="informative"
-              label={scheduledLabel(program) ?? 'Scheduled'}
-              customIcon={<Calendar size={16} color="currentColor" variant="Linear" />}
-            />
-          ) : (
-            <Badge
-              type="in-progress"
-              label="Ready to Start"
-              customIcon={<TickCircle size={16} color="currentColor" variant="Linear" />}
-            />
-          )}
         </div>
 
         <div className="wsb__titleblock">
@@ -311,7 +290,7 @@ function ProgramSlide({
 
       <div className="wsb__footer">
         <Button onClick={() => (resumeCourse ? onResume(resumeCourse) : onStart())}>
-          {scheduled ? 'View Program' : enrolled ? 'Resume Program' : 'Start Program'}
+          {enrolled ? 'Continue Program' : 'Start Program'}
         </Button>
         {nav}
       </div>

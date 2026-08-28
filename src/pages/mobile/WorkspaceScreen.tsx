@@ -54,9 +54,6 @@ function WorkspaceScreen({ onOpenProgram }: { onOpenProgram?: (id: string) => vo
       <MobileWorkspaceBanner
         courses={workspaceCourses}
         programs={getAllPrograms()}
-        onViewCourses={() =>
-          document.getElementById('m-ws-enrolled')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
         onOpenProgram={(program) => onOpenProgram?.(program.id)}
       />
 
