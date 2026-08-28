@@ -126,7 +126,7 @@
   flex: 1 0 0;
   min-width: 0;
   height: 100%;
-  background: var(--border-elevated);
+  background: var(--border);
 }
 
 .pd-progress__seg--primary {
