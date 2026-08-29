@@ -1,0 +1,196 @@
+import { useRef, useState } from 'react'
+import { DocumentDownload } from 'iconsax-react'
+import { useOverlayA11y } from '@/hooks/useOverlayA11y'
+import Badge from '@/components/Badge/Badge'
+import CloseButton from '@/components/CloseButton/CloseButton'
+import Table, { type Column } from '@/components/Table/Table'
+import { typeLabel } from '@/data/aiAssessmentGeneration'
+import '@/pages/my-team/CoursesDrawer.css'
+import {
+  correctPct,
+  type AssessmentResult,
+  type ChoiceResponse,
+  type FileResponse,
+  type ResponseLearner,
+  type TextResponse,
+  type VoteResponse,
+} from './assessmentResults'
+import './AnswersDrawer.css'
+
+/** DS table.md avatar + two-line stack cell. */
+function person(learner: ResponseLearner) {
+  return (
+    <span className="tbl-media">
+      {learner.avatar ? (
+        <img className="avatar-32" src={learner.avatar} alt="" />
+      ) : (
+        <span className="avatar-32 answ-initials" aria-hidden="true">
+          {learner.initials}
+        </span>
+      )}
+      <span className="tbl-stack">
+        <span className="primary">{learner.name}</span>
+        <span className="supporting">{learner.role}</span>
+      </span>
+    </span>
+  )
+}
+
+function learnerColumn<T extends { learner: ResponseLearner }>(): Column<T> {
+  /* Basis at the DS sticky-column floor, free to take the slack the fixed
+     answer column leaves. */
+  return { key: 'learner', header: 'Learner', width: '1 1 240px', render: (r) => person(r.learner) }
+}
+
+interface Props {
+  assessment: AssessmentResult
+  onClose: () => void
+}
+
+function AnswersDrawer({ assessment: a, onClose }: Props) {
+  const [closing, setClosing] = useState(false)
+  const panelRef = useRef<HTMLElement>(null)
+
+  const handleClose = () => {
+    setClosing(true)
+    setTimeout(onClose, 300)
+  }
+
+  useOverlayA11y(panelRef, !closing, { onEscape: handleClose })
+
+  const pct = correctPct(a)
+
+  /* One table per response shape — the columns differ, and the union of arrays
+     cannot be narrowed from inside a shared renderer. */
+  const table = (() => {
+    if (a.kind === 'graded') {
+      const columns: Column<ChoiceResponse>[] = [
+        learnerColumn<ChoiceResponse>(),
+        {
+          key: 'answer',
+          header: 'Answer',
+          width: '0 0 140px',
+          /* The correct answer is stated above the table, so the row only has to
+             say whether they matched it. */
+          render: (r) =>
+            r.correct ? <Badge type="success" label="Correct" /> : <Badge type="error" label="Incorrect" />,
+        },
+      ]
+      return <Table columns={columns} rows={a.responses} getRowKey={(r) => r.learner.id} />
+    }
+
+    if (a.kind === 'poll') {
+      const columns: Column<VoteResponse>[] = [
+        learnerColumn<VoteResponse>(),
+        { key: 'vote', header: 'Voted for', width: '0 0 320px', render: (r) => a.options[r.optionIndex] },
+      ]
+      return <Table columns={columns} rows={a.responses} getRowKey={(r) => r.learner.id} />
+    }
+
+    if (a.kind === 'text') {
+      const columns: Column<TextResponse>[] = [
+        learnerColumn<TextResponse>(),
+        { key: 'text', header: 'Answer', width: '0 0 320px', render: (r) => r.text },
+      ]
+      return <Table columns={columns} rows={a.responses} getRowKey={(r) => r.learner.id} />
+    }
+
+    const columns: Column<FileResponse>[] = [
+      learnerColumn<FileResponse>(),
+      {
+        key: 'file',
+        header: 'File',
+        render: (r) => (
+          <span className="tbl-stack">
+            <span className="primary">{r.fileName}</span>
+            <span className="supporting">
+              {r.fileKind} · {r.fileSize}
+            </span>
+          </span>
+        ),
+      },
+      {
+        key: 'download',
+        header: '',
+        width: '0 0 52px',
+        cellClassName: 'tbl-action is-disabled',
+        render: (r) => (
+          <button className="icon-btn ui-disabled" disabled aria-label={`Download ${r.fileName}`}>
+            <DocumentDownload size={20} color="var(--text-primary)" variant="Linear" />
+          </button>
+        ),
+      },
+    ]
+    return <Table columns={columns} rows={a.responses} getRowKey={(r) => r.learner.id} />
+  })()
+
+  return (
+    <>
+      <div
+        className={`overlay-backdrop${closing ? ' overlay-backdrop--closing' : ''}`}
+        onClick={handleClose}
+        aria-hidden="true"
+      />
+      <aside
+        ref={panelRef}
+        className={`side-drawer${closing ? ' side-drawer--closing' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="answ-title"
+        tabIndex={-1}
+      >
+        <div className="side-drawer__header">
+          <div className="side-drawer__headline">
+            <div className="answ-headline">
+              <h2 className="answ-title" id="answ-title">
+                {a.title}
+              </h2>
+              <p className="answ-meta">
+                {typeLabel(a.type)} · {a.responses.length} of {a.enrolled} responded
+                {pct !== null ? ` · ${pct}% correct` : ''}
+              </p>
+            </div>
+            <CloseButton onClick={handleClose} />
+          </div>
+
+          {/* The question and the answer it was marked against, held above the
+              table so the rows can be read without scrolling back up. */}
+          <section className="answ-brief">
+            <div className="answ-brief__field">
+              <span className="answ-brief__label">Question</span>
+              <p className="answ-brief__value">{a.prompt}</p>
+            </div>
+            <div className="answ-brief__field">
+              {a.kind === 'graded' ? (
+                <>
+                  <span className="answ-brief__label answ-brief__label--right">Correct answer</span>
+                  <p className="answ-brief__value">{a.options[a.correctIndex]}</p>
+                </>
+              ) : (
+                <>
+                  <span className="answ-brief__label">Correct answer</span>
+                  {/* Poll, short text and exercise have no right answer to mark against. */}
+                  <p className="answ-brief__value answ-brief__value--none">
+                    {a.kind === 'poll'
+                      ? 'None — a poll records preference, not knowledge.'
+                      : 'None — written and uploaded answers are not scored.'}
+                  </p>
+                </>
+              )}
+            </div>
+          </section>
+        </div>
+
+        <div className="side-drawer__content">
+          {a.responses.length === 0 ? (
+            <p className="answ-none">Nobody has answered this yet.</p>
+          ) : (
+            table
+          )}
+        </div>
+      </aside>
+    </>
+  )
+}
+
+export default AnswersDrawer

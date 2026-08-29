@@ -1,0 +1,295 @@
+/* Learners as expandable rows (DES-331 Phase 3), following the Audit Log pattern.
+   One shared column grid for the header and the rows so they stay aligned. */
+
+.lrn {
+  --lrn-cols: minmax(240px, 1fr) 170px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.lrn-head {
+  display: grid;
+  grid-template-columns: var(--lrn-cols);
+  column-gap: var(--space-sm);
+  align-items: center;
+  padding: var(--space-s) var(--space-sm);
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.lrn-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.lrn-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  overflow: hidden;
+  transition: background-color 150ms ease;
+}
+
+/* Expanded: fill only — the border stays the same --border as collapsed. */
+.lrn-card.is-open {
+  background: var(--cards-background);
+}
+
+/* The whole row is the toggle. */
+.lrn-row {
+  display: grid;
+  grid-template-columns: var(--lrn-cols);
+  column-gap: var(--space-sm);
+  align-items: center;
+  width: 100%;
+  padding: var(--space-s) var(--space-sm);
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 150ms ease;
+}
+
+/* Translucent, so it tints the page when collapsed and the card when open. */
+.lrn-row:hover {
+  background: var(--input-background);
+}
+
+.lrn-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+/* ── Learner ─────────────────────────────────────────────────────────────── */
+.lrn-avatar {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.lrn-avatar--fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--input-background);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.lrn-person {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lrn-name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lrn-role {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Score ───────────────────────────────────────────────────────────────── */
+.lrn-c-score {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-s);
+}
+
+.lrn-bar {
+  display: block;
+  width: 100%;
+  max-width: 140px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  overflow: hidden;
+}
+
+.lrn-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--success-500);
+}
+
+/* Status colour is a raw palette token: it means the same in both modes. */
+.lrn-bar__fill--weak {
+  background: var(--warning-500);
+}
+
+.lrn-pct {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.lrn-none {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+/* ── Chevron ─────────────────────────────────────────────────────────────── */
+.lrn-c-expand {
+  justify-content: center;
+}
+
+.lrn-chevron {
+  transition: transform 200ms ease;
+}
+
+.lrn-card.is-open .lrn-chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lrn-chevron {
+    transition: none;
+  }
+}
+
+/* ── Expanded detail — Audit Log style: label-over-value pairs, no nested cards,
+   separated from the row by a hairline. ─────────────────────────────────────── */
+.lrn-detail {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+
+.lrn-answers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Question above answer, verdict to the right. The question is the quiet label;
+   the answer is the content, so it carries the primary colour. */
+.lrn-answer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  /* Side padding lives on the row, not the container, so the divider and the
+     row fill both run the full width of the card. */
+  padding: var(--space-sm);
+  border-top: 1px solid var(--border);
+}
+
+/* The list already sits under the row hairline — no double rule at the top. */
+.lrn-answer:first-child {
+  border-top: none;
+}
+
+/* Verdict as a wash on the row. Raw palette tokens: status means the same in
+   both modes; 16% keeps the text on it legible. */
+.lrn-answer--right {
+  background: color-mix(in srgb, var(--success-500) 16%, transparent);
+}
+
+.lrn-answer--wrong {
+  background: color-mix(in srgb, var(--danger-500) 16%, transparent);
+}
+
+.lrn-answer__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+.lrn-answer__title {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lrn-answer__a {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.lrn-answer__v {
+  flex: 0 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 21px;
+}
+
+/* ── Pagination ──────────────────────────────────────────────────────────── */
+.lrn-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-m);
+  padding-top: var(--space-s);
+}
+
+.lrn-count {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.lrn-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.lrn-nav:hover {
+  background: var(--page-background-hover);
+}
+
+.lrn-nav[aria-disabled='true'] {
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+/* Dark mode: --border all but disappears against the expanded card fill, so
+   dividers step up to the elevated weight. Light mode keeps --border. */
+[data-theme="dark"] .lrn-answer,
+[data-theme="dark"] .lrn-detail {
+  border-color: var(--border-elevated);
+}

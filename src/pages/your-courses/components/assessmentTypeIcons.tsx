@@ -5,6 +5,7 @@ import {
   Category,
   Chart1,
   Chart21,
+  ClipboardText,
   Edit,
   I3Square,
   RecordCircle,
@@ -40,6 +41,10 @@ export function assessmentTypeIcon(
       return <Edit size={size} color={c} variant={variant} />
     case 'exercise':
       return <ArchiveBook size={size} color={c} variant={variant} />
+    case 'situational-test':
+      /* Same glyph the Add Content rail uses for situational tests, so an admin who
+         learned it there recognises it in the results table. */
+      return <ClipboardText size={size} color={c} variant={variant} />
     case 'poll':
       /* iconsax-react splits this glyph's two styles across exports: Chart1 holds its
          Linear and Chart21 its Bold, and each one's *other* variant is a different,

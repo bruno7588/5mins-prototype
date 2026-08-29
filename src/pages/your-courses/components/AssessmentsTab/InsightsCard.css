@@ -1,0 +1,89 @@
+/* AI insights card (DES-331 Phase 4). Three states: not generated, generating,
+   generated-with-timestamp. Classes prefixed `asmi-`. */
+
+.asmi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+}
+
+
+/* Provenance, not a headline. */
+.asmi-stamp {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.asmi-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.asmi-refresh:hover {
+  background: var(--cards-background);
+}
+
+.asmi-body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.asmi-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.asmi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-m);
+}
+
+.asmi-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* Sentence case — the design system has no all-caps text. */
+.asmi-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* Two prose columns need real width; stack them before they get cramped. */
+@media (max-width: 1180px) {
+  .asmi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The card's own fill already separates the header from the body, so the
+   section rule adds a second boundary for nothing. Scoped: other SectionHeader
+   users (drawers, forms) still get their divider. */
+.asmi .section-header__divider {
+  display: none;
+}
+
+/* H4 (16px/1.5) rather than the section header's default H3 — this sits inside a
+   card, not at the top of a page section. Scoped: other SectionHeader users keep 20px. */
+.asmi .section-header__title {
+  font-size: 16px;
+}

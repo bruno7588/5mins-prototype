@@ -41,9 +41,10 @@
   z-index: 1;
 }
 
+/* Selected reads as H5 (14px/1.5 Bold) — it is the active section label. */
 .switcher__item.is-selected {
   color: var(--text-on-selected);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .switcher__item:disabled {

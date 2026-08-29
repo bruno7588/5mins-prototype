@@ -1,0 +1,87 @@
+/* Answers drawer (DES-331). Chrome is the shared side-drawer (overlays.md) and
+   the rows are the DS Table component (table.md) — only the brief block and its
+   cell content are local. Prefix `answ-`. */
+
+.answ-headline {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+.answ-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.answ-meta {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ── Brief: the question and what it was marked against ─────────────────── */
+.answ-brief {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+}
+
+.answ-brief__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+.answ-brief__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* The label carries the verdict colour; the answer itself stays body text. */
+.answ-brief__label--right {
+  color: var(--text-success);
+}
+
+.answ-brief__value {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.answ-brief__value--none {
+  color: var(--text-tertiary);
+}
+
+/* ── Cell content ───────────────────────────────────────────────────────── */
+/* Initials stand in for a missing photo; sized by the DS .avatar-32. */
+.answ-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--input-background);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.answ-none {
+  margin: 0;
+  padding: var(--space-sm);
+  font-size: 14px;
+  color: var(--text-tertiary);
+}

@@ -32,6 +32,7 @@ import Button from '../../components/Button/Button'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CourseSettings from './components/CourseSettings/CourseSettings'
+import AssessmentsTab from './components/AssessmentsTab/AssessmentsTab'
 import '../people/People.css'
 import './CourseDetails.css'
 
@@ -357,45 +358,53 @@ function CourseDetails() {
             {/* Stats */}
             <div className="cd-stats">
               <div className="cd-stat">
-                <div className="cd-stat-label">
-                  <TickCircle size={20} color="var(--success-500)" variant="Linear" />
-                  <span>Completed</span>
-                  <InfoMark />
-                </div>
-                <div className="cd-stat-value">
-                  <span className="cd-stat-pct">48%</span>
-                  <span className="cd-stat-sub">30 learners</span>
-                </div>
-              </div>
-              <div className="cd-stat">
-                <div className="cd-stat-label">
-                  <Clock size={20} color="var(--primary-600)" variant="Linear" />
-                  <span>In progress</span>
-                </div>
-                <div className="cd-stat-value">
-                  <span className="cd-stat-pct">21%</span>
-                  <span className="cd-stat-sub">19 learners</span>
+                <TickCircle size={32} color="var(--success-500)" variant="Linear" />
+                <div className="cd-stat-info">
+                  <div className="cd-stat-label">
+                    <span>Completed</span>
+                    <InfoMark />
+                  </div>
+                  <div className="cd-stat-value">
+                    <span className="cd-stat-pct">48%</span>
+                    <span className="cd-stat-sub">30 learners</span>
+                  </div>
                 </div>
               </div>
               <div className="cd-stat">
-                <div className="cd-stat-label">
-                  <InfoCircle size={20} color="var(--warning-500)" variant="Linear" />
-                  <span>At risk!</span>
-                  <InfoMark />
-                </div>
-                <div className="cd-stat-value">
-                  <span className="cd-stat-pct">11%</span>
-                  <span className="cd-stat-sub">14 Not Started/22 Failed</span>
+                <Clock size={32} color="var(--primary-600)" variant="Linear" />
+                <div className="cd-stat-info">
+                  <div className="cd-stat-label">
+                    <span>In progress</span>
+                  </div>
+                  <div className="cd-stat-value">
+                    <span className="cd-stat-pct">21%</span>
+                    <span className="cd-stat-sub">19 learners</span>
+                  </div>
                 </div>
               </div>
               <div className="cd-stat">
-                <div className="cd-stat-label">
-                  <Danger size={20} color="var(--text-error)" variant="Linear" />
-                  <span>Overdue</span>
+                <InfoCircle size={32} color="var(--warning-500)" variant="Linear" />
+                <div className="cd-stat-info">
+                  <div className="cd-stat-label">
+                    <span>At risk!</span>
+                    <InfoMark />
+                  </div>
+                  <div className="cd-stat-value">
+                    <span className="cd-stat-pct">11%</span>
+                    <span className="cd-stat-sub">14 Not Started/22 Failed</span>
+                  </div>
                 </div>
-                <div className="cd-stat-value">
-                  <span className="cd-stat-pct">20%</span>
-                  <span className="cd-stat-sub">17 learners</span>
+              </div>
+              <div className="cd-stat">
+                <Danger size={32} color="var(--text-error)" variant="Linear" />
+                <div className="cd-stat-info">
+                  <div className="cd-stat-label">
+                    <span>Overdue</span>
+                  </div>
+                  <div className="cd-stat-value">
+                    <span className="cd-stat-pct">20%</span>
+                    <span className="cd-stat-sub">17 learners</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -580,6 +589,8 @@ function CourseDetails() {
               </button>
             </div>
           </section>
+        ) : activeTab === 'assessments' ? (
+          <AssessmentsTab />
         ) : activeTab === 'settings' ? (
           <CourseSettings />
         ) : (

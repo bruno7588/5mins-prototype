@@ -70,6 +70,7 @@ const byLabel: Record<string, AssessmentType> = {
   'Fill in the Blanks': 'fill-blank',
   'Match the Pairs': 'match-pairs',
   Categorise: 'categorize',
+  'Situational Test': 'situational-test',
   Sequence: 'sequence',
 }
 

@@ -1,0 +1,137 @@
+/* Assessments as expandable rows (DES-331). Same Audit Log pattern as the learner
+   list, so the tab has one interaction model rather than two. Prefix `asl-`. */
+
+.asl {
+  --asl-cols: minmax(260px, 2fr) 170px 130px 220px 150px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.asl-head {
+  display: grid;
+  grid-template-columns: var(--asl-cols);
+  column-gap: var(--space-sm);
+  align-items: center;
+  padding: var(--space-s) var(--space-sm);
+  background: var(--input-background);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.asl-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.asl-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  overflow: hidden;
+  transition: background-color 150ms ease;
+}
+
+.asl-row {
+  display: grid;
+  grid-template-columns: var(--asl-cols);
+  column-gap: var(--space-sm);
+  align-items: center;
+  width: 100%;
+  padding: var(--space-s) var(--space-sm);
+}
+
+.asl-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+/* ── Title ───────────────────────────────────────────────────────────────── */
+.asl-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Type ────────────────────────────────────────────────────────────────── */
+.asl-c-type {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+/* Leading icons in lists are always primary, never secondary. */
+.asl-c-type svg {
+  flex: 0 0 auto;
+  color: var(--text-primary);
+}
+
+/* ── Responses ───────────────────────────────────────────────────────────── */
+.asl-c-responses {
+  gap: var(--space-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.asl-n {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.asl-of {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* ── Action ─────────────────────────────────────────────────────────────── */
+.asl-c-action {
+  justify-content: flex-end;
+}
+
+/* ── Pagination ──────────────────────────────────────────────────────────── */
+.asl-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-m);
+  padding-top: var(--space-s);
+}
+
+.asl-count {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.asl-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.asl-nav:hover {
+  background: var(--page-background-hover);
+}
+
+.asl-nav[aria-disabled='true'] {
+  color: var(--text-disabled);
+  cursor: default;
+}
+

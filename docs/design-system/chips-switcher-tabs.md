@@ -327,7 +327,7 @@ Optional icons per item: **left 20px** (e.g. trash) or **right 16px** (e.g. info
 .switcher__item.is-selected {
   background: var(--secondary-500);     /* #FFBB38 — raw token, both modes */
   color: var(--text-on-selected);
-  font-weight: 500;
+  font-weight: 700;                     /* H5 — the active section label */
 }
 
 .switcher__item:disabled {

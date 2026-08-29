@@ -1,0 +1,338 @@
+/* Assessments tab (DES-331). Classes are prefixed `at-` — CSS is globally bundled
+   and `.cd-` already belongs to CourseDetails. */
+
+.asm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+/* ── Summary stats ──────────────────────────────────────────────────────────
+   Deliberately the same anatomy as the Enrolments tab's `.cd-stat`, so the two
+   tabs read as siblings rather than as two different products. */
+.asm-stats {
+  display: flex;
+  gap: var(--space-m);
+  flex-wrap: wrap;
+}
+
+.asm-stat {
+  flex: 1 0 0;
+  min-width: 200px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+/* The status icon keeps its 32px box however narrow the card gets. */
+.asm-stat > svg {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+}
+
+.asm-stat__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.asm-stat__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.asm-stat__value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-s);
+}
+
+.asm-stat__figure {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.asm-stat__sub {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.asm-typefilter {
+  flex: 0 0 200px;
+}
+
+/* ── Title cell ─────────────────────────────────────────────────────────── */
+.asm-cell-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+/* The desktop artwork scaled to 48px — the one downscale gamification.md sanctions,
+   for exactly this admin row. */
+.asm-art {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+}
+
+.asm-cell-title__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+.asm-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.asm-prompt {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Type cell ──────────────────────────────────────────────────────────── */
+.asm-type {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  font-size: 14px;
+  color: var(--text-primary);
+  min-width: 0;
+}
+
+/* Menu and list leading icons are always primary, never secondary. */
+.asm-type svg {
+  flex: 0 0 auto;
+  color: var(--text-primary);
+}
+
+/* ── Responses cell ─────────────────────────────────────────────────────── */
+.asm-responses {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.asm-responses__n {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.asm-responses__of {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* ── Result cell ────────────────────────────────────────────────────────── */
+.asm-result {
+  display: flex;
+  max-width: 256px;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.asm-bar {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  overflow: hidden;
+}
+
+.asm-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--success-500);
+}
+
+/* Status colour is a raw palette token on purpose: correct is green in both modes. */
+.asm-bar__fill--weak {
+  background: var(--warning-500);
+}
+
+.asm-result__pct {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.asm-result__lead {
+  font-size: 14px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.asm-result__sub {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* A free-text question has no score, so the column carries what people actually
+   wrote instead. Never an em dash. */
+.asm-result__quote {
+  margin: 0;
+  max-width: 256px;
+  /* .tbl-cell sets white-space: nowrap, which the clamp inherits and dies on. */
+  white-space: normal;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.asm-result__none {
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+/* ── Empty states ───────────────────────────────────────────────────────── */
+.asm--empty,
+.asm-noresults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-m);
+  padding: var(--space-xxl) var(--space-l);
+  text-align: center;
+}
+
+.asm-empty__art {
+  width: 72px;
+  height: 72px;
+}
+
+.asm-empty__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.asm-empty__body {
+  margin: 0;
+  max-width: 600px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+
+/* ── Pivot row: switcher left, export right ─────────────────────────────── */
+.asm-pivotrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* Filter and export travel together on the right. */
+.asm-pivotrow__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.asm-pivot {
+  align-self: flex-start;
+}
+
+/* ── Learner cell ───────────────────────────────────────────────────────── */
+.asm-learner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.asm-learner__avatar {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.asm-learner__avatar--fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--input-background);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.asm-learner__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+/* ── Summary line ───────────────────────────────────────────────────────────
+   One quiet line where four stat cards used to be. The Insights card below does
+   the summarising; the count and the triage signal are legible in the list. */
+.asm-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.asm-summary__dot {
+  color: var(--text-tertiary);
+}
+
+.asm-summary__warn {
+  color: var(--warning-500);
+}
+
+/* In multi-select the trigger always shows its placeholder string, and the
+   component greys it as an empty prompt. Here "All assessments" is the current
+   state — no filter applied — so it reads as a selection, not a prompt.
+   Scoped to this instance: a genuinely empty dropdown elsewhere stays grey. */
+.asm-typefilter .dropdown-trigger-text--placeholder {
+  color: var(--text-primary);
+}
+

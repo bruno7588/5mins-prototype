@@ -3,7 +3,8 @@ import './SectionHeader.css'
 
 interface SectionHeaderProps {
   title: string
-  description?: string
+  /** Rich content allowed: some headers carry an inline status colour. */
+  description?: ReactNode
   ctas?: ReactNode
   /** Optional control before the title — a back button on a multi-step drawer. */
   leading?: ReactNode
