@@ -279,7 +279,7 @@
 }
 
 .lrn-nav:hover {
-  background: var(--page-background-hover);
+  background: var(--input-background-hover);
 }
 
 .lrn-nav[aria-disabled='true'] {

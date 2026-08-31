@@ -127,7 +127,7 @@
 }
 
 .asl-nav:hover {
-  background: var(--page-background-hover);
+  background: var(--input-background-hover);
 }
 
 .asl-nav[aria-disabled='true'] {
