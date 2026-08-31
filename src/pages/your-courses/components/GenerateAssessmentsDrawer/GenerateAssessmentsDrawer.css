@@ -175,27 +175,9 @@
   min-height: calc(5 * 1.5em + 2 * var(--space-sm));
 }
 
-/* The shimmer, over the thing being written rather than over the drawer. Both stops are
-   tokens, so the highlight stays lighter than its ground in either mode. */
-.is-writing::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--cards-background-hover) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: gen-drawer-shimmer 1.4s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes gen-drawer-shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
-}
+/* The shimmer that marks what is still being written lives in AIWorkingCard.css — the
+   insights card writes its summary the same way, so `.is-writing` belongs with the
+   pattern rather than with the first page that used it. */
 
 /* The write-head. Steady, not blinking: it marks where the text is up to, and a blink
    would compete with the sparkle above for the eye. */
@@ -237,9 +219,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* The fields and cards drop their movement in arrive.ts; what is left here is the
-     shimmer and the write-head. */
-  .is-writing::after,
+  /* The fields and cards drop their movement in arrive.ts, the shimmer in
+     AIWorkingCard.css; what is left here is the write-head. */
   .gen-drawer__caret {
     display: none;
   }

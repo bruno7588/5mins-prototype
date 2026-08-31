@@ -33,7 +33,10 @@
   background: var(--cards-background);
 }
 
+/* Relative so the `.is-writing` sweep (AIWorkingCard.css) has a box to run
+   across while the column is still typing itself out. */
 .asmi-body {
+  position: relative;
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
@@ -86,4 +89,24 @@
    card, not at the top of a page section. Scoped: other SectionHeader users keep 20px. */
 .asmi .section-header__title {
   font-size: 16px;
+}
+
+/* The write-head, while the summary is typing itself out. Steady, not blinking:
+   it marks where the text is up to, and a blink would compete with the sparkle
+   on the working card above it for the eye. */
+.asmi-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: var(--space-xxs);
+  vertical-align: text-bottom;
+  background: var(--text-button-outlined);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* useTyped hands the text over whole under reduced motion, so there is no
+     write-head to mark. */
+  .asmi-caret {
+    display: none;
+  }
 }

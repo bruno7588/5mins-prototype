@@ -149,3 +149,36 @@
     animation: none;
   }
 }
+
+/* ── The shimmer, on whatever the card is still writing ─────────────────────────────
+   Over the thing being written rather than over the surface around it, so the effect
+   and the content say the same thing: it lifts the moment that piece is finished.
+   Both stops are tokens, so the highlight stays lighter than its ground in either mode.
+   The element it is put on has to establish a containing block (`position: relative`). */
+.is-writing::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--cards-background-hover) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: ai-working-shimmer 1.4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes ai-working-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The text is handed over whole under reduced motion, so there is nothing part-written
+     for the sweep to mark. */
+  .is-writing::after {
+    display: none;
+  }
+}
