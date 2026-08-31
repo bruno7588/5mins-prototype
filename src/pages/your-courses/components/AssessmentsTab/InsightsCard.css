@@ -161,11 +161,31 @@
   min-width: 0;
 }
 
+/* The name is the door into that learner's answers, so it is underlined and it is a
+   button. Underlined at rest rather than on hover: a link the reader has to find by
+   sweeping the mouse is a link most readers never find. The brand colour surfaces on
+   interaction, the same rest/hover split the DS gives Outlined-2 and the table's link
+   cells. */
 .asmi-person__name {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
+  text-align: left;
   color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-skip-ink: none;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.asmi-person__name:hover {
+  color: var(--text-button-hover);
 }
 
 .asmi-person__reason {

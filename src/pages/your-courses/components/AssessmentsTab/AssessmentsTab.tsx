@@ -99,6 +99,9 @@ function AssessmentsTab() {
      actually looking at, not the whole course. */
   /* Which axis the admin is reading — the same responses, across or down. */
   const [pivot, setPivot] = useState<'assessment' | 'learner'>('assessment')
+  /* Which learner the Insights card last sent us to. The nonce is what makes a second
+     click on the same name arrive at all. */
+  const [focus, setFocus] = useState<{ id: string; n: number } | null>(null)
   /* Which assessment's answers are open in the drawer, if any. */
   const [viewing, setViewing] = useState<AssessmentResult | null>(null)
 
@@ -125,6 +128,16 @@ function AssessmentsTab() {
   )
 
   const filteredLearners = learnerRows
+
+  /* A name in the summary is a door into the row it describes: switch the pivot, page
+     to wherever that learner sits, and let the list open and reveal them. */
+  const openLearner = (id: string) => {
+    const i = learnerRows.findIndex((r) => r.learner.id === id)
+    if (i === -1) return
+    setPivot('learner')
+    setPage(Math.floor(i / PAGE_SIZE))
+    setFocus({ id, n: Date.now() })
+  }
 
   const stats = useMemo(() => {
     const scores = courseAssessments
@@ -167,6 +180,7 @@ function AssessmentsTab() {
   return (
     <section className="asm">
       <InsightsCard
+        onOpenLearner={openLearner}
         responseCount={totalResponses()}
         summary={
           <span className="asm-summary">
@@ -259,6 +273,7 @@ function AssessmentsTab() {
         />
       ) : (
         <LearnerList
+          focus={focus}
           rows={learnerPage}
           pagination={{
             from: from + 1,

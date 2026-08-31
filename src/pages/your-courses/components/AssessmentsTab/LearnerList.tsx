@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowDown2, CloseCircle, TickCircle } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
+import { prefersReducedMotion } from '@/components/AIWorkingCard/useTyped'
 import { courseAssessments, type LearnerRow } from './assessmentResults'
 import './LearnerList.css'
 
@@ -9,6 +10,9 @@ const WEAK_SCORE = 60
 interface Props {
   rows: LearnerRow[]
   pagination: { from: number; to: number; total: number; onPrev?: () => void; onNext?: () => void }
+  /** A learner to open and scroll to — sent by the Insights card when a name is
+   *  clicked. Carries a nonce so clicking the same name twice still arrives. */
+  focus?: { id: string; n: number } | null
 }
 
 /**
@@ -17,8 +21,21 @@ interface Props {
  * shared Table component has no slot for expanded content, so this is hand-rolled
  * on the same grid the header uses.
  */
-function LearnerList({ rows, pagination }: Props) {
+function LearnerList({ rows, pagination, focus }: Props) {
   const [open, setOpen] = useState<Set<string>>(new Set())
+
+  /* Arriving from a name in the Insights card: open that row and bring it into view.
+     Without the scroll the pivot switches and the row expands somewhere below the fold,
+     which reads as the click having done nothing. */
+  useEffect(() => {
+    if (!focus) return
+    setOpen((prev) => new Set(prev).add(focus.id))
+    const el = document.getElementById(`lrn-${focus.id}`)
+    el?.scrollIntoView({
+      block: 'center',
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    })
+  }, [focus])
 
   const toggle = (id: string) =>
     setOpen((prev) => {
@@ -41,7 +58,11 @@ function LearnerList({ rows, pagination }: Props) {
           const isOpen = open.has(r.learner.id)
           const missing = courseAssessments.length - r.answers.length
           return (
-            <li key={r.learner.id} className={`lrn-card${isOpen ? ' is-open' : ''}`}>
+            <li
+              key={r.learner.id}
+              id={`lrn-${r.learner.id}`}
+              className={`lrn-card${isOpen ? ' is-open' : ''}`}
+            >
               <button
                 type="button"
                 className="lrn-row"

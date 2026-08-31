@@ -11,22 +11,21 @@ import {
   ATTENTION_SHOWN,
   attentionRows,
   attentionSummary,
-  courseAssessments,
   courseInsight,
 } from './assessmentResults'
 import './InsightsCard.css'
 
 type Phase = 'idle' | 'generating' | 'ready'
 
-/* Every pass is paced to be read, not just seen. At the old 280/700 the card
-   ticked through both lines before the admin had finished the first, so the work
-   looked instant — which told them nothing about what it had done. The writing
-   pass is the long one on purpose: the summary is landing during it, so that
-   time is spent reading the result rather than waiting for it. */
+/* The writing pass is long on purpose — the summary lands during it, so that time is
+   spent reading the result rather than waiting for it. The reading pass was not: it
+   produced nothing the admin could not already see in the list below, and the titles it
+   cycled were padding dressed as progress. It keeps a beat, enough to say what the work
+   read, and no longer. */
 
-/** How long each assessment takes to "read". Real generation would stream. */
-const READ_MS = 400
-/** The writing pass — long enough for both columns to write themselves out. */
+/** A beat on the reading pass — long enough to register, not long enough to wait out. */
+const READING_MS = 800
+/** The writing pass — long enough for all three sections to write themselves out. */
 const WRITE_MS = 3600
 /** The beat between the tick landing on the last pass and the summary being handed over. */
 const HANDOVER_MS = 900
@@ -34,24 +33,6 @@ const HANDOVER_MS = 900
  *  still opening — the tween measures its target once, so text arriving mid-open is text
  *  the height it settles on never counted. */
 const OPEN_MS = 300
-/** How many titles share the line under the reading pass. */
-const GROUP = 3
-
-/* What is being read, in groups. One title per beat was a flicker — the line
-   changed before it could be finished — so a group shares the line and holds it
-   for as long as all of them take to read. */
-const READING_GROUPS = Array.from(
-  { length: Math.ceil(courseAssessments.length / GROUP) },
-  (_, i) =>
-    courseAssessments
-      .slice(i * GROUP, i * GROUP + GROUP)
-      .map((a) => a.title)
-      .join(' · '),
-)
-
-/** The reading pass is however long it takes to walk every group. */
-const READING_MS = READING_GROUPS.length * GROUP * READ_MS
-
 const STEPS = ['Reading assessment answers', 'Writing the summary']
 /** Below this, a summary says more about the sample than about the cohort. */
 const MIN_RESPONSES = 5
@@ -63,6 +44,9 @@ function stamp(): string {
 }
 
 interface Props {
+  /** Open a named learner's row in the By Learner pivot. The summary says who is
+   *  behind; this is what makes that a door rather than a sentence. */
+  onOpenLearner: (id: string) => void
   /** Every response across the course — the thing being summarised. */
   responseCount: number
   /** The one-line course summary, shown under the header in every state. */
@@ -73,21 +57,18 @@ interface Props {
    reading rows. Three is what fits before the block stops being a summary. */
 const NAMED = attentionRows.slice(0, ATTENTION_SHOWN)
 
-function InsightsCard({ responseCount, summary }: Props) {
+function InsightsCard({ onOpenLearner, responseCount, summary }: Props) {
   const [phase, setPhase] = useState<Phase>(courseInsight.generatedAt ? 'ready' : 'idle')
   const [generatedAt, setGeneratedAt] = useState<string | null>(courseInsight.generatedAt)
   /* Whether the finished summary is showing. Only ever false by the admin's hand —
      a run always ends with its result on screen. */
   const [expanded, setExpanded] = useState(true)
-  /* Which pass the card is on, and which group of titles it is reading. */
+  /* Which pass the card is on. */
   const [step, setStep] = useState(0)
-  const [group, setGroup] = useState(0)
   const timer = useRef<number | null>(null)
-  const ticker = useRef<number | null>(null)
 
   const stop = () => {
     if (timer.current) window.clearTimeout(timer.current)
-    if (ticker.current) window.clearInterval(ticker.current)
   }
 
   useEffect(() => stop, [])
@@ -104,21 +85,11 @@ function InsightsCard({ responseCount, summary }: Props) {
     stop()
     setExpanded(true)
     setStep(0)
-    setGroup(0)
     setPhase('generating')
 
-    /* The line under the reading pass moves a group at a time while the pass runs. */
-    ticker.current = window.setInterval(
-      () => setGroup((g) => Math.min(g + 1, READING_GROUPS.length - 1)),
-      GROUP * READ_MS,
-    )
-
-    /* One reading pass over every assessment, then the writing pass. The writing
-       pass ends when the text does rather than on a clock of its own — see below. */
-    timer.current = window.setTimeout(() => {
-      if (ticker.current) window.clearInterval(ticker.current)
-      setStep(1)
-    }, READING_MS)
+    /* A beat on the reading pass, then the writing pass — which ends when the text
+       does rather than on a clock of its own, see below. */
+    timer.current = window.setTimeout(() => setStep(1), READING_MS)
   }
 
   /* The summary writes itself out during the pass that claims to be writing it.
@@ -217,12 +188,10 @@ function InsightsCard({ responseCount, summary }: Props) {
           back. */}
       <Collapse open={phase === 'generating'}>
         <div className="asmi-region">
-          <AIWorkingCard
-            steps={STEPS}
-            activeStep={step}
-            detail={step === 0 ? READING_GROUPS[group] : undefined}
-            lastStepDone={written}
-          />
+          {/* No sub-line under the reading pass — naming the assessments restated the
+              list below at a pace nobody could read, and re-announced itself to a screen
+              reader every time it changed. */}
+          <AIWorkingCard steps={STEPS} activeStep={step} lastStepDone={written} />
         </div>
       </Collapse>
 
@@ -279,7 +248,13 @@ function InsightsCard({ responseCount, summary }: Props) {
                       </span>
                     )}
                     <span className="asmi-person__text">
-                      <span className="asmi-person__name">{r.learner.name}</span>
+                      <button
+                        type="button"
+                        className="asmi-person__name"
+                        onClick={() => onOpenLearner(r.learner.id)}
+                      >
+                        {r.learner.name}
+                      </button>
                       <span className="asmi-person__reason">{r.sentence}</span>
                     </span>
                   </li>
