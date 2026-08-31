@@ -85,3 +85,16 @@
   font-size: 14px;
   color: var(--text-tertiary);
 }
+
+/* Written answers run past one line. The DS cell is nowrap + clipped, so the
+   text opts back into wrapping and clamps at two lines — 2 × 21px + the cell's
+   8px padding is exactly the 58px row ceiling, so nothing is cut mid-line. */
+.answ-answer {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  max-width: 100%;
+  white-space: normal;
+  overflow: hidden;
+}

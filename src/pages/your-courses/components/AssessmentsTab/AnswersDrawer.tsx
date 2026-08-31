@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { DocumentDownload } from 'iconsax-react'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import Badge from '@/components/Badge/Badge'
+import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Table, { type Column } from '@/components/Table/Table'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
@@ -42,6 +43,47 @@ function learnerColumn<T extends { learner: ResponseLearner }>(): Column<T> {
   return { key: 'learner', header: 'Learner', width: '1 1 240px', render: (r) => person(r.learner) }
 }
 
+/* The answers as a sheet. The table renders them as badges, stacks and icons —
+   none of which survives a CSV — so each shape restates its answer in words, and
+   the columns follow the shape rather than being flattened to a common four. */
+function sheet(a: AssessmentResult): string[][] {
+  if (a.kind === 'graded')
+    return [
+      ['Learner', 'Role', 'Submitted', 'Answer', 'Result'],
+      ...a.responses.map((r) => [
+        r.learner.name,
+        r.learner.role,
+        r.submittedAt,
+        a.options[r.optionIndex],
+        r.correct ? 'Correct' : 'Incorrect',
+      ]),
+    ]
+
+  if (a.kind === 'poll')
+    return [
+      ['Learner', 'Role', 'Submitted', 'Voted for'],
+      ...a.responses.map((r) => [r.learner.name, r.learner.role, r.submittedAt, a.options[r.optionIndex]]),
+    ]
+
+  if (a.kind === 'text')
+    return [
+      ['Learner', 'Role', 'Submitted', 'Answer'],
+      ...a.responses.map((r) => [r.learner.name, r.learner.role, r.submittedAt, r.text]),
+    ]
+
+  return [
+    ['Learner', 'Role', 'Submitted', 'File', 'Type', 'Size'],
+    ...a.responses.map((r) => [
+      r.learner.name,
+      r.learner.role,
+      r.submittedAt,
+      r.fileName,
+      r.fileKind,
+      r.fileSize,
+    ]),
+  ]
+}
+
 interface Props {
   assessment: AssessmentResult
   onClose: () => void
@@ -59,6 +101,20 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
   useOverlayA11y(panelRef, !closing, { onEscape: handleClose })
 
   const pct = correctPct(a)
+
+  /* Every cell quoted: answers are free text and carry commas, quotes and line
+     breaks. The BOM is what stops Excel reading the accents as mojibake. */
+  const download = () => {
+    const body = sheet(a)
+      .map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(','))
+      .join('\r\n')
+    const url = URL.createObjectURL(new Blob(['\uFEFF' + body], { type: 'text/csv;charset=utf-8' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${a.title} answers.csv`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
 
   /* One table per response shape — the columns differ, and the union of arrays
      cannot be narrowed from inside a shared renderer. */
@@ -90,7 +146,12 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
     if (a.kind === 'text') {
       const columns: Column<TextResponse>[] = [
         learnerColumn<TextResponse>(),
-        { key: 'text', header: 'Answer', width: '0 0 320px', render: (r) => r.text },
+        {
+          key: 'text',
+          header: 'Answer',
+          width: '0 0 320px',
+          render: (r) => <span className="answ-answer">{r.text}</span>,
+        },
       ]
       return <Table columns={columns} rows={a.responses} getRowKey={(r) => r.learner.id} />
     }
@@ -187,6 +248,20 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
           ) : (
             table
           )}
+        </div>
+
+        <div className="side-drawer__footer">
+          <div className="side-drawer__footer-divider" />
+          <div className="side-drawer__buttons">
+            <Button
+              variant="outlined"
+              icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+              onClick={download}
+              disabled={a.responses.length === 0}
+            >
+              Download Answers
+            </Button>
+          </div>
         </div>
       </aside>
     </>
