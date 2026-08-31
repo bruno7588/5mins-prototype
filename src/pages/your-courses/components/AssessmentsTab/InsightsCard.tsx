@@ -174,11 +174,20 @@ function InsightsCard({ responseCount, summary }: Props) {
                 </Button>
               </>
             ) : null}
-            {phase === 'idle' ? (
+            {/* The button the admin pressed stays under their cursor and spins, rather
+                than vanishing on the click and leaving the cluster empty until the run
+                ends. The card below narrates the work; this only says the press landed
+                and that pressing again would do nothing. */}
+            {phase !== 'ready' ? (
               <Button
                 semantic="ai"
                 onClick={generate}
                 disabled={empty}
+                loading={phase === 'generating'}
+                /* Loading hides the label to make room for the spinner, and the label is
+                   the button's accessible name — without this it is announced as an
+                   unnamed disabled button for the length of the run. */
+                aria-label="Generate Insights"
                 icon={<SparkleIcon size={20} color="currentColor" />}
               >
                 Generate Insights
