@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { Refresh } from 'iconsax-react'
+import { ArrowDown2, Refresh } from 'iconsax-react'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import Button from '@/components/Button/Button'
 import Tooltip from '@/components/Tooltip/Tooltip'
@@ -76,6 +76,9 @@ const NAMED = attentionRows.slice(0, ATTENTION_SHOWN)
 function InsightsCard({ responseCount, summary }: Props) {
   const [phase, setPhase] = useState<Phase>(courseInsight.generatedAt ? 'ready' : 'idle')
   const [generatedAt, setGeneratedAt] = useState<string | null>(courseInsight.generatedAt)
+  /* Whether the finished summary is showing. Only ever false by the admin's hand —
+     a run always ends with its result on screen. */
+  const [expanded, setExpanded] = useState(true)
   /* Which pass the card is on, and which group of titles it is reading. */
   const [step, setStep] = useState(0)
   const [group, setGroup] = useState(0)
@@ -99,6 +102,7 @@ function InsightsCard({ responseCount, summary }: Props) {
 
   const generate = () => {
     stop()
+    setExpanded(true)
     setStep(0)
     setGroup(0)
     setPhase('generating')
@@ -172,31 +176,30 @@ function InsightsCard({ responseCount, summary }: Props) {
                 <Button variant="text" onClick={clear}>
                   Clear
                 </Button>
+                <button
+                  className={`asmi-toggle${expanded ? ' is-open' : ''}`}
+                  onClick={() => setExpanded((v) => !v)}
+                  aria-expanded={expanded}
+                  aria-controls="asmi-summary"
+                  aria-label={expanded ? 'Hide insights' : 'Show insights'}
+                >
+                  <ArrowDown2 size={20} color="var(--text-primary)" variant="Linear" />
+                </button>
               </>
             ) : null}
             {/* The button the admin pressed stays under their cursor and says what it is
                 doing, rather than vanishing on the click and leaving the cluster empty
-                until the run ends.
-
-                Not the Button `loading` prop: that is the DS state, which replaces the
-                label with a centred spinner (buttons.md § Loading State). This one keeps
-                a word, so the spinner rides the icon slot and `disabled` does the work
-                the state would otherwise have done. */}
+                until the run ends. */}
             {phase !== 'ready' ? (
               <Button
                 semantic="ai"
                 onClick={generate}
-                disabled={empty || phase === 'generating'}
-                aria-busy={phase === 'generating' || undefined}
-                icon={
-                  phase === 'generating' ? (
-                    <span className="asmi-spinner" aria-hidden="true" />
-                  ) : (
-                    <SparkleIcon size={20} color="currentColor" />
-                  )
-                }
+                disabled={empty}
+                loading={phase === 'generating'}
+                loadingLabel="Generating"
+                icon={<SparkleIcon size={20} color="currentColor" />}
               >
-                {phase === 'generating' ? 'Generating' : 'Generate Insights'}
+                Generate Insights
               </Button>
             ) : null}
           </>
@@ -232,8 +235,10 @@ function InsightsCard({ responseCount, summary }: Props) {
       {/* The summary is written inside the wait rather than after it, so the same
           stack serves both phases — when the run finishes there is nothing left to
           swap in, only the working card above it closing. */}
-      <Collapse open={phase === 'ready' || (phase === 'generating' && step >= 1)}>
-        <div className="asmi-stack asmi-region">
+      <Collapse
+        open={expanded && (phase === 'ready' || (phase === 'generating' && step >= 1))}
+      >
+        <div className="asmi-stack asmi-region" id="asmi-summary">
           <div className="asmi-section">
             <p className="asmi-label">Where learners struggled</p>
             <p className={`asmi-body${writing && !struggled.done ? ' is-writing' : ''}`}>

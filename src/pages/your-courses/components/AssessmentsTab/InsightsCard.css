@@ -174,14 +174,36 @@
   color: var(--text-secondary);
 }
 
-/* The DS spinner's own dimensions (Button.css .ds-btn__spinner) and its keyframe,
-   sitting in the icon slot rather than centred over a hidden label — this button
-   keeps its word while it works. */
-.asmi-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: ds-btn-spin 0.8s linear infinite;
+/* Expand/collapse. Same circular icon-button chrome as the refresh beside it, and the
+   same rotating chevron the learner rows use — one gesture, drawn one way. */
+.asmi-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.asmi-toggle:hover {
+  background: var(--input-background-hover);
+}
+
+/* Points down at rest — the summary is below, and that is where it goes. */
+.asmi-toggle svg {
+  transition: transform 200ms ease;
+}
+
+.asmi-toggle.is-open svg {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asmi-toggle svg {
+    transition: none;
+  }
 }
