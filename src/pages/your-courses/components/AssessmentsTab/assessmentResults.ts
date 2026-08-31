@@ -363,10 +363,12 @@ function describe(row: Omit<LearnerRow, 'signal' | 'headline' | 'sentence'>): Pi
   const missedPart = missed.length
     ? `Missed ${missed.length} of ${scored}, including “${missed[0].assessment.title}”.`
     : `Answered all ${scored} scored assessments correctly.`
+  /* The length, not a verdict on it. This used to read "specific, concrete" or "very
+     brief" off `answer.length < 24` — a character count laundered into a judgement the
+     system never made, and one the admin could not check. A word count says the same
+     thing about effort and can be checked against the answer itself. */
   const writtenPart = written
-    ? written.answer.length < 24
-      ? ' Their written answer was very brief.'
-      : ' Gave a specific, concrete written answer.'
+    ? ` Wrote ${written.answer.trim().split(/\s+/).length} words in free text.`
     : ''
   const skippedPart = skipped > 0 ? ` Still has ${skipped} to complete.` : ''
 
@@ -422,13 +424,30 @@ export const attentionRows: LearnerRow[] = learnerRows
 /** How many of them get named on the card. The rest are a click away in By Learner. */
 export const ATTENTION_SHOWN = 3
 
-/** The lead paragraph over the named rows. Every count is read off the rows underneath
- *  it, so the prose cannot drift from the list it introduces. */
+/* What the flagged learners actually miss, counted. The paragraph used to assert they
+   "miss in the same place — the situational questions" as a string literal wrapped
+   around a live count: true of today's fixture, unfalsifiable, and a sentence that would
+   have kept saying itself long after the data moved under it. */
+const missTally = new Map<string, number>()
+for (const r of attentionRows) {
+  for (const a of r.answers) {
+    if (a.correct === false) {
+      missTally.set(a.assessment.title, (missTally.get(a.assessment.title) ?? 0) + 1)
+    }
+  }
+}
+const [topMiss, topMissCount] = [...missTally.entries()].sort((x, y) => y[1] - x[1])[0] ?? ['', 0]
+
+/** The lead paragraph over the named rows. Every count — and now every claim — is read
+ *  off the rows underneath it, so the prose cannot drift from the list it introduces. */
 export const attentionSummary = [
-  `${attentionRows.length} learners are behind the cohort, and they miss in the same place rather than across the board — the situational questions, where the answer is a diagnosis rather than a recalled fact.`,
-  `${attentionRows.filter((r) => r.answers.length < courseAssessments.length).length} of them still have assessments outstanding, so part of the gap is attendance rather than understanding.`,
+  `${attentionRows.length} learners are behind the cohort.`,
+  /* Only worth saying when it is actually shared. One learner missing a question is not
+     a pattern, and the sentence would be describing an individual as a trend. */
+  topMissCount > 1 ? `${topMissCount} of them missed the same question — “${topMiss}”.` : '',
+  `${attentionRows.filter((r) => r.answers.length < courseAssessments.length).length} still have assessments outstanding, so part of the gap is attendance rather than understanding.`,
   attentionRows.length > ATTENTION_SHOWN
-    ? `The ${ATTENTION_SHOWN} who have answered enough to read are below; the rest are in By Learner.`
+    ? `The ${ATTENTION_SHOWN} furthest behind are below; the rest are in By Learner.`
     : '',
 ]
   .filter(Boolean)

@@ -42,9 +42,14 @@
 }
 
 /* Relative so the `.is-writing` sweep (AIWorkingCard.css) has a box to run
-   across while the column is still typing itself out. */
+   across while the column is still typing itself out.
+
+   Capped at a readable measure: the sections stack full-width now, which on a wide
+   monitor ran these to ~180 characters a line. Past about 90 the eye loses the return
+   sweep, and it lost it on the one thing the card exists to be — read. */
 .asmi-body {
   position: relative;
+  max-width: 72ch;
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
@@ -189,6 +194,7 @@
 }
 
 .asmi-person__reason {
+  max-width: 72ch;
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-secondary);
