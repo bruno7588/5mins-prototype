@@ -23,7 +23,7 @@ Spec source: Figma Library — parent frame `node 5453:38273` (dark board `10825
 |-----------|---------|
 | **Configuration** | Filled, Outlined, Outlined-2, Text, Link, Danger(-outlined/-text), Warning(-outlined/-text), Success(-outlined/-text), AI, AI-Outlined |
 | **Size** | Small (33px), Medium (41px), Large (48px) |
-| **State** | Enabled, Hover, Pressed, Disabled, Loading |
+| **State** | Enabled, Hover, Pressed, Disabled, Loading (bare or labelled) |
 | **Icon** | With leading icon, without (AI variants are always with icon) |
 
 ## Size System
@@ -333,6 +333,33 @@ Unchanged: the button takes the **disabled background** (`--button-background-di
 @keyframes spin { to { transform: rotate(360deg); } }
 ```
 
+**Accessibility.** The label is the button's accessible name, and this state hides it — so
+the component keeps it as an `aria-label` for the duration (only when the label is a
+string and the caller has not named the button themselves). Without that, a button in this
+state is announced as an unnamed disabled button for as long as the work runs.
+
+### Labelled Loading (`loadingLabel`)
+
+Not in the Figma board — an app extension for waits long enough that a bare spinner leaves
+the reader guessing what is happening. Pass a word and the spinner moves out of the centre
+into the **leading-icon slot**, and the button says what it is doing: "Generating",
+"Saving", "Uploading".
+
+```tsx
+<Button semantic="ai" loading={busy} loadingLabel="Generating" icon={<SparkleIcon />}>
+  Generate Insights
+</Button>
+```
+
+Everything else is the plain Loading state: disabled background, 20px `currentColor`
+spinner, no pointer events. **The one thing it gives up is the preserved width** — the
+button sizes to whichever word it is showing, so it changes width on entering and leaving
+the state. That is the cost of the label; use plain `loading` where the button sits in a
+row whose widths have to hold still.
+
+Title Case the label like any other, and keep it to one word where you can — it is read at
+a glance, not studied.
+
 ## Size / state coverage in Figma
 
 Both mode boards carry the identical matrix. Primary variants (Filled/Outlined/Outlined-2/Text/Link) and AI/AI-Outlined cover **all three sizes**. Semantic coverage:
@@ -367,7 +394,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   semantic?: ButtonSemantic;  // default 'primary'
   size?: ButtonSize;          // default 'md'
   icon?: ReactNode;           // leading icon — rendered BEFORE the label
+  trailingIcon?: ReactNode;   // AFTER the label — disclosure controls only
   loading?: boolean;
+  loadingLabel?: string;      // word shown beside the spinner while loading
   children?: ReactNode;
 }
 ```

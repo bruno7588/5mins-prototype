@@ -334,6 +334,11 @@
 .ds-btn--loading .ds-btn__label,
 .ds-btn--loading .ds-btn__icon { visibility: hidden; }
 
+/* Labelled loading (`loadingLabel`): the spinner takes the leading-icon slot so the
+   label can stay and say what the button is doing. The button sizes to that word — the
+   width the state above preserves is what a label costs. */
+.ds-btn--loading-labelled { pointer-events: none; }
+
 .ds-btn__spinner {
   position: absolute;
   top: 50%;
@@ -345,6 +350,12 @@
   border-top-color: transparent;
   border-radius: 50%;
   animation: ds-btn-spin 0.8s linear infinite;
+}
+
+/* In the icon slot rather than centred over the button. */
+.ds-btn__spinner--inline {
+  position: static;
+  margin: 0;
 }
 
 @keyframes ds-btn-spin { to { transform: rotate(360deg); } }

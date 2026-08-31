@@ -16,6 +16,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    *  (My Team courses button, Figma 10837:17669). Prefer `icon` otherwise. */
   trailingIcon?: ReactNode
   loading?: boolean
+  /** Word to show beside the spinner while `loading` — "Generating", "Saving".
+   *
+   *  Without it the button takes the DS Loading state: the label is replaced by a
+   *  centred spinner and the width is preserved. With it the spinner moves into the
+   *  leading-icon slot and the button says what it is doing, at the cost of that
+   *  preserved width — the button sizes to whichever word it is showing. Use it where
+   *  the wait is long enough that a bare spinner leaves the reader guessing. */
+  loadingLabel?: string
   children?: ReactNode
 }
 
@@ -31,23 +39,37 @@ function Button({
   icon,
   trailingIcon,
   loading = false,
+  loadingLabel,
   disabled,
   children,
   className = '',
   type = 'button',
+  'aria-label': ariaLabel,
   ...props
 }: ButtonProps) {
+  /* Two shapes of loading: the DS one that swaps the label for a centred spinner, and
+     the labelled one that keeps a word and moves the spinner to the icon slot. */
+  const labelled = loading && loadingLabel !== undefined
+  const label = labelled ? loadingLabel : children
+
   const classes = [
     'ds-btn',
     `ds-btn--${size}`,
     `ds-btn--${appearance(semantic, variant)}`,
-    icon && children && 'ds-btn--has-icon',
+    ((icon && children) || labelled) && 'ds-btn--has-icon',
     trailingIcon && children && 'ds-btn--has-trailing',
-    loading && 'ds-btn--loading',
+    loading && (labelled ? 'ds-btn--loading-labelled' : 'ds-btn--loading'),
     className,
   ]
     .filter(Boolean)
     .join(' ')
+
+  /* The DS Loading state hides the label to make room for the spinner, and the label is
+     what names the button — without this it is announced as an unnamed disabled button
+     for as long as the work runs. Only when the caller has not named it themselves, and
+     only when the label is a string there is a name to recover from. */
+  const name =
+    ariaLabel ?? (loading && !labelled && typeof children === 'string' ? children : undefined)
 
   return (
     <button
@@ -55,12 +77,19 @@ function Button({
       className={classes}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
+      aria-label={name}
       {...props}
     >
-      {icon && <span className="ds-btn__icon">{icon}</span>}
-      <span className="ds-btn__label">{children}</span>
+      {labelled ? (
+        <span className="ds-btn__icon">
+          <span className="ds-btn__spinner ds-btn__spinner--inline" aria-hidden="true" />
+        </span>
+      ) : (
+        icon && <span className="ds-btn__icon">{icon}</span>
+      )}
+      <span className="ds-btn__label">{label}</span>
       {trailingIcon && <span className="ds-btn__icon">{trailingIcon}</span>}
-      {loading && <span className="ds-btn__spinner" aria-hidden="true" />}
+      {loading && !labelled && <span className="ds-btn__spinner" aria-hidden="true" />}
     </button>
   )
 }
