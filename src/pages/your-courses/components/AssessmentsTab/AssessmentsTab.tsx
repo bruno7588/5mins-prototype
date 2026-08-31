@@ -11,6 +11,7 @@ import AnswersDrawer from './AnswersDrawer'
 import LearnerList from './LearnerList'
 import InsightsCard from './InsightsCard'
 import {
+  attentionRows,
   correctPct,
   courseAssessments,
   learnerRows,
@@ -138,7 +139,6 @@ function AssessmentsTab() {
       enrolled: courseAssessments[0]?.enrolled ?? 0,
       average: scores.length ? Math.round(scores.reduce((x, y) => x + y, 0) / scores.length) : null,
       scored: scores.length,
-      weak: scores.filter((s) => s < WEAK_SCORE).length,
     }
   }, [])
 
@@ -181,10 +181,18 @@ function AssessmentsTab() {
                 <span>{stats.average}% average score</span>
               </>
             ) : null}
-            {stats.weak > 0 ? (
+            {/* The people, not the papers: an admin acts on a learner who is behind,
+                and the block below names these same rows. A count of low-scoring
+                assessments is an authoring note, and "Where learners struggled"
+                already says which content is weak in words. */}
+            {attentionRows.length > 0 ? (
               <>
                 <span className="asm-summary__dot">·</span>
-                <span className="asm-summary__warn">{stats.weak} need attention</span>
+                <span className="asm-summary__warn">
+                  {attentionRows.length === 1
+                    ? '1 learner needs attention'
+                    : `${attentionRows.length} learners need attention`}
+                </span>
               </>
             ) : null}
           </span>

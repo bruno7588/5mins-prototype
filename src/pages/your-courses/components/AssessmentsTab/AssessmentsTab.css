@@ -324,7 +324,10 @@
   color: var(--text-tertiary);
 }
 
+/* Paragraph M medium — the one segment of the line that is a flag rather than a
+   figure, so it carries weight as well as colour. */
 .asm-summary__warn {
+  font-weight: 500;
   color: var(--text-warning);
 }
 
