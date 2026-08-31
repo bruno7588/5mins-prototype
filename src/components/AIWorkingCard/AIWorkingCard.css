@@ -24,7 +24,14 @@
    It waits only for the sparkle to clear the slot, not for it to land: the space is free
    early in that travel. `backwards` holds it invisible through the delay, or it would sit
    at full strength and then fade in from nothing. */
+/* Taken out of the slot's flow and centred on it: on a terminal step that was still
+   working, the tick arrives while the sparkle is still fading, and two icons sharing a
+   flex row would sit side by side and shove each other. Stacked, they cross. */
 .ai-working-step__tick {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   animation: ai-working-tick-in 260ms cubic-bezier(0.22, 1, 0.36, 1) 120ms backwards;
 }
 
@@ -49,13 +56,13 @@
   min-height: 28px;
 }
 
-/* Fixed box so the labels stay aligned as icons swap in and out, and so the 32px sparkle
-   and the 20px tick share one centre line rather than each finding its own.
+/* Fixed box so the labels stay aligned as icons swap in and out, and so the sparkle and
+   the tick — both 20px — share one centre line rather than each finding its own.
 
-   The box is one text line tall: the row is top-aligned, so a box as tall as the sparkle
-   would drop the glyph below the line it belongs to. The sparkle overflows it evenly,
-   which is what keeps the two icons centred on the same axis. */
+   The box is one text line tall: the row is top-aligned, so a taller box would drop the
+   glyph below the line it belongs to. */
 .ai-working-step__icon {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;

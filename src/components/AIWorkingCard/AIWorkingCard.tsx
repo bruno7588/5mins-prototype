@@ -1,5 +1,5 @@
 import { TickCircle } from 'iconsax-react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import { ARRIVE, arriveTransition } from './arrive'
 import './AIWorkingCard.css'
@@ -12,6 +12,11 @@ interface AIWorkingCardProps {
   /** What the running step is on right now — the lesson being read, say. Optional: a
    *  step that has nothing specific to report simply doesn't. */
   detail?: string
+  /** Whether the terminal step is finished. Default true, for a card whose last line is
+   *  a conclusion ("All done — …") and is therefore true the moment it is reached. Pass
+   *  false while a card whose last line is the work itself is still doing it: the step
+   *  keeps the sparkle until this turns true, then trades it for the tick. */
+  lastStepDone?: boolean
   className?: string
 }
 
@@ -31,7 +36,13 @@ interface AIWorkingCardProps {
  * Ported from the roles panel's `.roles-ai-working-card`, which still carries its own
  * copy of this markup — the two will drift until RolePanel is moved over.
  */
-function AIWorkingCard({ steps, activeStep, detail, className = '' }: AIWorkingCardProps) {
+function AIWorkingCard({
+  steps,
+  activeStep,
+  detail,
+  lastStepDone = true,
+  className = '',
+}: AIWorkingCardProps) {
   const reduce = useReducedMotion()
   return (
     <div className={`ai-working-card ${className}`.trim()}>
@@ -43,13 +54,27 @@ function AIWorkingCard({ steps, activeStep, detail, className = '' }: AIWorkingC
         {steps.slice(0, activeStep + 1).map((label, i) => {
           const isLast = i === steps.length - 1
           /* The terminal step ticks the moment it's reached — there's nothing after it to
-             be "in progress" for. */
-          const done = i < activeStep || (i === activeStep && isLast)
-          const active = i === activeStep && !isLast
+             be "in progress" for — unless the caller says it is still working, in which
+             case it runs like any other pass until it reports back. */
+          const settled = isLast && lastStepDone
+          const done = i < activeStep || (i === activeStep && settled)
+          const active = i === activeStep && !settled
           /* Ticked *and* behind the work. The terminal step is `done` too, but it is the
              line the card has arrived at rather than a pass the work has left, so it
              keeps its colour instead of receding with the others. */
           const past = i < activeStep
+          const sparkle = active ? (
+            <motion.span
+              key="sparkle"
+              className="ai-working-step__sparkle"
+              layoutId="ai-working-sparkle"
+              exit={{ opacity: 0 }}
+              transition={arriveTransition(reduce)}
+            >
+              <SparkleIcon size={20} gradient />
+            </motion.span>
+          ) : null
+
           return (
             /* Layout is what makes the card grow rather than jump: a new pass pushes the
                rows under it — and everything under the card — instead of teleporting them
@@ -74,19 +99,17 @@ function AIWorkingCard({ steps, activeStep, detail, className = '' }: AIWorkingC
                     variant="Bold"
                   />
                 )}
-                {active && (
-                  /* One sparkle for the whole card, not one per pass: sharing a layoutId
-                     means Framer moves it from the pass it was on to the pass it is on
-                     now. It used to vanish here and reappear there, which read as two
-                     sparkles rather than the same one following the work. */
-                  <motion.span
-                    className="ai-working-step__sparkle"
-                    layoutId="ai-working-sparkle"
-                    transition={arriveTransition(reduce)}
-                  >
-                    <SparkleIcon size={32} gradient />
-                  </motion.span>
-                )}
+                {/* One sparkle for the whole card, not one per pass: sharing a layoutId
+                    means Framer moves it from the pass it was on to the pass it is on
+                    now. It used to vanish here and reappear there, which read as two
+                    sparkles rather than the same one following the work.
+
+                    Only the last step gets an exit, and only it can afford one: every
+                    other sparkle leaves because it is travelling to the next pass, and
+                    holding it here to fade would put a second one on the card. The
+                    terminal sparkle has nowhere to travel to, so it fades out as the
+                    tick fades in over it. */}
+                {isLast ? <AnimatePresence>{sparkle}</AnimatePresence> : sparkle}
               </span>
               <span
                 className={`ai-working-step__text${active ? ' ai-working-step__text--active' : ''}${past ? ' ai-working-step__text--done' : ''}`}
