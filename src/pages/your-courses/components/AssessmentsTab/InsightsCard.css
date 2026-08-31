@@ -1,13 +1,21 @@
 /* AI insights card (DES-331 Phase 4). Three states: not generated, generating,
    generated-with-timestamp. Classes prefixed `asmi-`. */
 
+/* No gap: everything under the header is collapsible, and a gap sits outside its
+   wrapper — it survives the wrapper going to zero and leaves the idle card padded
+   for content that isn't there. The same 12px lives inside each region instead,
+   where the collapse clips it away with the content. */
 .asmi {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 0;
   padding: var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--input-background);
+}
+
+.asmi-region {
+  padding-top: var(--space-sm);
 }
 
 
@@ -30,7 +38,7 @@
 }
 
 .asmi-refresh:hover {
-  background: var(--cards-background);
+  background: var(--input-background-hover);
 }
 
 /* Relative so the `.is-writing` sweep (AIWorkingCard.css) has a box to run
@@ -49,9 +57,12 @@
   color: var(--text-tertiary);
 }
 
-.asmi-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+/* One column. Side by side, the two halves read as a comparison — struggled against
+   mastered — when they are three findings of the same summary, and the third had
+   nowhere to sit but underneath both. */
+.asmi-stack {
+  display: flex;
+  flex-direction: column;
   gap: var(--space-m);
 }
 
@@ -69,13 +80,6 @@
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
-}
-
-/* Two prose columns need real width; stack them before they get cramped. */
-@media (max-width: 1180px) {
-  .asmi-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* The card's own fill already separates the header from the body, so the
@@ -109,4 +113,63 @@
   .asmi-caret {
     display: none;
   }
+}
+
+/* Clear reads as a neutral tertiary action, not a brand one, so it sits at
+   --text-primary and lets the cyan surface only on interaction — the same
+   rest/hover split buttons.md gives Outlined-2. A divergence from the DS Text
+   button, which is cyan at rest; scoped to this card so nothing else moves. */
+.asmi .ds-btn--text:not(:hover):not(:active) {
+  color: var(--text-primary);
+}
+
+/* ── Who needs attention ───────────────────────────────────────────────────
+   Names under the paragraph that introduced them. Rows, not cards: the block is
+   part of the summary, and giving each person their own container would make
+   them read as a list to work through rather than as three examples. */
+.asmi-people {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: var(--space-xs) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.asmi-person {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+/* Initials stand in for a missing photo; sized by the DS .avatar-32. */
+.asmi-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cards-background);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.asmi-person__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+.asmi-person__name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.asmi-person__reason {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }

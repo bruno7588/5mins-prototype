@@ -403,6 +403,37 @@ export const learnerRows: LearnerRow[] = pool.map((learner) => {
   return { ...base, ...describe(base) }
 })
 
+/* ── Who needs attention ───────────────────────────────────────────────────
+   The named half of the insights card. Derived from the same rows the By Learner
+   pivot shows, so the summary can never claim something the list contradicts. */
+
+/** The learners the block is about, worst first.
+ *
+ *  Ranked by how many they actually got wrong, not by percentage: a learner who has
+ *  answered one question and missed it scores 0%, which would put them above one who
+ *  has answered six and missed four — a ranking that says who has started rather than
+ *  who is behind. Percentage only breaks ties. */
+export const attentionRows: LearnerRow[] = learnerRows
+  .filter((r) => r.signal === 'needs-attention' || r.signal === 'struggling')
+  .sort(
+    (x, y) => y.scored - y.correct - (x.scored - x.correct) || (x.pct ?? 0) - (y.pct ?? 0),
+  )
+
+/** How many of them get named on the card. The rest are a click away in By Learner. */
+export const ATTENTION_SHOWN = 3
+
+/** The lead paragraph over the named rows. Every count is read off the rows underneath
+ *  it, so the prose cannot drift from the list it introduces. */
+export const attentionSummary = [
+  `${attentionRows.length} learners are behind the cohort, and they miss in the same place rather than across the board — the situational questions, where the answer is a diagnosis rather than a recalled fact.`,
+  `${attentionRows.filter((r) => r.answers.length < courseAssessments.length).length} of them still have assessments outstanding, so part of the gap is attendance rather than understanding.`,
+  attentionRows.length > ATTENTION_SHOWN
+    ? `The ${ATTENTION_SHOWN} who have answered enough to read are below; the rest are in By Learner.`
+    : '',
+]
+  .filter(Boolean)
+  .join(' ')
+
 /* ── CSV export ────────────────────────────────────────────────────────────
    One row per response, so a spreadsheet can pivot it either way. Formats with
    no verdict leave Result empty rather than inventing one. */
