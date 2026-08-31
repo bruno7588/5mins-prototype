@@ -325,7 +325,7 @@
 }
 
 .asm-summary__warn {
-  color: var(--warning-500);
+  color: var(--text-warning);
 }
 
 /* In multi-select the trigger always shows its placeholder string, and the
