@@ -174,23 +174,29 @@ function InsightsCard({ responseCount, summary }: Props) {
                 </Button>
               </>
             ) : null}
-            {/* The button the admin pressed stays under their cursor and spins, rather
-                than vanishing on the click and leaving the cluster empty until the run
-                ends. The card below narrates the work; this only says the press landed
-                and that pressing again would do nothing. */}
+            {/* The button the admin pressed stays under their cursor and says what it is
+                doing, rather than vanishing on the click and leaving the cluster empty
+                until the run ends.
+
+                Not the Button `loading` prop: that is the DS state, which replaces the
+                label with a centred spinner (buttons.md § Loading State). This one keeps
+                a word, so the spinner rides the icon slot and `disabled` does the work
+                the state would otherwise have done. */}
             {phase !== 'ready' ? (
               <Button
                 semantic="ai"
                 onClick={generate}
-                disabled={empty}
-                loading={phase === 'generating'}
-                /* Loading hides the label to make room for the spinner, and the label is
-                   the button's accessible name — without this it is announced as an
-                   unnamed disabled button for the length of the run. */
-                aria-label="Generate Insights"
-                icon={<SparkleIcon size={20} color="currentColor" />}
+                disabled={empty || phase === 'generating'}
+                aria-busy={phase === 'generating' || undefined}
+                icon={
+                  phase === 'generating' ? (
+                    <span className="asmi-spinner" aria-hidden="true" />
+                  ) : (
+                    <SparkleIcon size={20} color="currentColor" />
+                  )
+                }
               >
-                Generate Insights
+                {phase === 'generating' ? 'Generating' : 'Generate Insights'}
               </Button>
             ) : null}
           </>
