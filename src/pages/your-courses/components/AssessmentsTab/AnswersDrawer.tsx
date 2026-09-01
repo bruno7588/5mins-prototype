@@ -138,18 +138,6 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
     URL.revokeObjectURL(url)
   }
 
-  /* Written answers are clamped to two lines in the row, so each one is also
-     downloadable on its own — reading one response should not mean exporting the
-     whole sheet. */
-  const downloadAnswer = (r: TextResponse) => {
-    const url = URL.createObjectURL(new Blob([r.text], { type: 'text/plain;charset=utf-8' }))
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${a.title} — ${r.learner.name}.txt`
-    link.click()
-    URL.revokeObjectURL(url)
-  }
-
   /* One table per response shape — the columns differ, and the union of arrays
      cannot be narrowed from inside a shared renderer. */
   const table = (() => {
@@ -185,21 +173,6 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
           header: 'Answer',
           width: '0 0 320px',
           render: (r) => <span className="answ-answer">{r.text}</span>,
-        },
-        {
-          key: 'download',
-          header: '',
-          width: '0 0 52px',
-          cellClassName: 'tbl-action',
-          render: (r) => (
-            <button
-              className="icon-btn"
-              onClick={() => downloadAnswer(r)}
-              aria-label={`Download ${r.learner.name}’s answer`}
-            >
-              <ImportCurve size={20} color="var(--text-primary)" variant="Linear" />
-            </button>
-          ),
         },
       ]
       return <Table columns={columns} rows={a.responses} getRowKey={(r) => r.learner.id} />

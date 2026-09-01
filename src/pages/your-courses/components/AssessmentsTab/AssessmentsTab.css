@@ -170,16 +170,15 @@
   overflow: hidden;
 }
 
+/* One colour, whatever the score. The bar length already says how much was right,
+   and recolouring it at 60% asserted a pass line the course does not have — its pass
+   score is 80%. Right and wrong are named in the answers themselves. */
 .asm-bar__fill {
   display: block;
   height: 100%;
   border-radius: var(--radius-full);
-  background: var(--success-500);
-}
-
-/* Status colour is a raw palette token on purpose: correct is green in both modes. */
-.asm-bar__fill--weak {
-  background: var(--warning-500);
+  /* Raw palette on purpose: the progress fill is the same blue in both modes. */
+  background: var(--primary-600);
 }
 
 .asm-result__pct {

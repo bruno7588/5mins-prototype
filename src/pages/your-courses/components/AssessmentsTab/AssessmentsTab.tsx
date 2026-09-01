@@ -23,8 +23,6 @@ import {
 } from './assessmentResults'
 import './AssessmentsTab.css'
 
-/** Below this, an assessment is worth an admin's attention rather than a glance. */
-const WEAK_SCORE = 60
 /* Under this many characters a written answer is a non-answer ("Not sure yet."). */
 const BRIEF_ANSWER = 24
 const PAGE_SIZE = 10
@@ -47,7 +45,7 @@ function ResultCell({ a }: { a: AssessmentResult }) {
       <div className="asm-result">
         <span className="asm-bar" aria-hidden="true">
           <span
-            className={`asm-bar__fill${pct < WEAK_SCORE ? ' asm-bar__fill--weak' : ''}`}
+            className="asm-bar__fill"
             style={{ width: `${pct}%` }}
           />
         </span>

@@ -131,16 +131,15 @@
   overflow: hidden;
 }
 
+/* One colour, whatever the score. The bar length already says how much they got
+   right, and recolouring it at 60% asserted a pass line the course does not have —
+   its pass score is 80%. Right and wrong are named in the answers below. */
 .lrn-bar__fill {
   display: block;
   height: 100%;
   border-radius: var(--radius-full);
-  background: var(--success-500);
-}
-
-/* Status colour is a raw palette token: it means the same in both modes. */
-.lrn-bar__fill--weak {
-  background: var(--warning-500);
+  /* Raw palette on purpose: the progress fill is the same blue in both modes. */
+  background: var(--primary-600);
 }
 
 .lrn-pct {
@@ -152,6 +151,19 @@
 .lrn-none {
   margin: 0;
   font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+/* The tail of the answer list, so it is a row like the others: same hairline and
+   padding, and indented past the verdict gutter (icon + its gap) so it starts on the
+   same edge as the questions above it rather than against the card border. */
+.lrn-missing {
+  margin: 0;
+  padding: var(--space-sm);
+  padding-left: calc(var(--space-sm) + 20px + var(--space-s));
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--text-tertiary);
 }
 
@@ -216,13 +228,32 @@
   min-width: 0;
 }
 
+/* Name and format on one line, over the answer they belong to. */
 .lrn-answer__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xxs);
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-tertiary);
+  min-width: 0;
+}
+
+.lrn-answer__name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Never the half that gets clipped: a title can lose its tail and still be
+   recognised, a format cannot. */
+.lrn-answer__type {
+  flex: 0 0 auto;
+}
+
+.lrn-answer__type::before {
+  content: '·';
+  margin-right: var(--space-xxs);
 }
 
 .lrn-answer__a {

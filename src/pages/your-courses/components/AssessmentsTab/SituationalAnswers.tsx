@@ -7,9 +7,6 @@ import { situationalScore, type SituationalAssessment } from './assessmentResult
 import './LearnerList.css'
 import './SituationalAnswers.css'
 
-/** Below this, a run through the scenario is worth an admin's attention. */
-const WEAK_SCORE = 60
-
 /**
  * One situational test, read down the learners. A scenario is answered over a dozen
  * questions, so the row states how the learner did across it and opens onto every
@@ -62,7 +59,7 @@ function SituationalAnswers({ assessment: a }: { assessment: SituationalAssessme
                 <span className="lrn-cell lrn-c-score">
                   <span className="lrn-bar" aria-hidden="true">
                     <span
-                      className={`lrn-bar__fill${pct < WEAK_SCORE ? ' lrn-bar__fill--weak' : ''}`}
+                      className="lrn-bar__fill"
                       style={{ width: `${pct}%` }}
                     />
                   </span>

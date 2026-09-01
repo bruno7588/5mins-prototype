@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { ArrowDown2, CloseCircle, TickCircle } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
+import { typeLabel } from '@/data/aiAssessmentGeneration'
 import { prefersReducedMotion } from '@/components/AIWorkingCard/useTyped'
 import { courseAssessments, type LearnerRow } from './assessmentResults'
 import './LearnerList.css'
-
-const WEAK_SCORE = 60
 
 interface Props {
   rows: LearnerRow[]
@@ -88,7 +87,7 @@ function LearnerList({ rows, pagination, focus }: Props) {
                     <>
                       <span className="lrn-bar" aria-hidden="true">
                         <span
-                          className={`lrn-bar__fill${r.pct < WEAK_SCORE ? ' lrn-bar__fill--weak' : ''}`}
+                          className="lrn-bar__fill"
                           style={{ width: `${r.pct}%` }}
                         />
                       </span>
@@ -122,7 +121,12 @@ function LearnerList({ rows, pagination, focus }: Props) {
                           )}
                         </span>
                         <span className="lrn-answer__body">
-                          <span className="lrn-answer__title">{x.assessment.title}</span>
+                          <span className="lrn-answer__title">
+                            <span className="lrn-answer__name">{x.assessment.title}</span>
+                            {/* The format, because several answers below are only legible
+                                with it — “All four pairs correct” is a score, not an answer. */}
+                            <span className="lrn-answer__type">{typeLabel(x.assessment.type)}</span>
+                          </span>
                           <span className="lrn-answer__a">{x.answer}</span>
                         </span>
                       </li>
@@ -130,7 +134,7 @@ function LearnerList({ rows, pagination, focus }: Props) {
                   </ul>
 
                   {missing > 0 ? (
-                    <p className="lrn-none">
+                    <p className="lrn-missing">
                       {missing} assessment{missing === 1 ? '' : 's'} not answered yet.
                     </p>
                   ) : null}
