@@ -99,6 +99,12 @@
   font-size: 16px;
 }
 
+/* The stamp is provenance on the title, not a line under it — closer than the 4px the
+   shared header gives a real supporting sentence. Scoped, like the size above it. */
+.asmi .section-header__title-group {
+  gap: var(--space-xxs);
+}
+
 /* The write-head, while the summary is typing itself out. Steady, not blinking:
    it marks where the text is up to, and a blink would compete with the sparkle
    on the working card above it for the eye. */
