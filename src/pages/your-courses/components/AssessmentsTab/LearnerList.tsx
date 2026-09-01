@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { ArrowDown2, CloseCircle, TickCircle } from 'iconsax-react'
+import { ArrowDown2 } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import { prefersReducedMotion } from '@/components/AIWorkingCard/useTyped'
-import { courseAssessments, type LearnerRow } from './assessmentResults'
+import { answerScore, courseAssessments, type LearnerRow } from './assessmentResults'
 import './LearnerList.css'
 
 interface Props {
@@ -55,7 +55,10 @@ function LearnerList({ rows, pagination, focus }: Props) {
       <ul className="lrn-list">
         {rows.map((r) => {
           const isOpen = open.has(r.learner.id)
-          const missing = courseAssessments.length - r.answers.length
+          /* Keyed so the detail can list every assessment in the course, not only the
+             ones this learner reached — a gap is a finding, and leaving it out of the
+             list turned it into a footnote nobody read. */
+          const byId = new Map(r.answers.map((x) => [x.assessment.id, x]))
           return (
             <li
               key={r.learner.id}
@@ -84,17 +87,7 @@ function LearnerList({ rows, pagination, focus }: Props) {
                   {r.pct === null ? (
                     <span className="lrn-none">Nothing scored</span>
                   ) : (
-                    <>
-                      <span className="lrn-bar" aria-hidden="true">
-                        <span
-                          className="lrn-bar__fill"
-                          style={{ width: `${r.pct}%` }}
-                        />
-                      </span>
-                      <span className="lrn-pct">
-                        {r.correct} of {r.scored} correct
-                      </span>
-                    </>
+                    <span className="lrn-pct">{r.pct}%</span>
                   )}
                 </span>
 
@@ -105,39 +98,29 @@ function LearnerList({ rows, pagination, focus }: Props) {
 
               <Collapse open={isOpen}>
                 <div className="lrn-detail">
-                  <ul className="lrn-answers">
-                    {r.answers.map((x) => (
-                      <li
-                        key={x.assessment.id}
-                        className="lrn-answer"
-                      >
-                        <span className="lrn-answer__v">
-                          {/* Only graded formats carry a verdict; the rest show none — the
-                              gutter stays, so every answer starts on the same line. */}
-                          {x.correct === null ? null : x.correct ? (
-                            <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-label="Correct" />
-                          ) : (
-                            <CloseCircle size={20} color="var(--danger-500)" variant="Bold" aria-label="Incorrect" />
-                          )}
-                        </span>
-                        <span className="lrn-answer__body">
-                          <span className="lrn-answer__title">
-                            <span className="lrn-answer__name">{x.assessment.title}</span>
-                            {/* The format, because several answers below are only legible
-                                with it — “All four pairs correct” is a score, not an answer. */}
-                            <span className="lrn-answer__type">{typeLabel(x.assessment.type)}</span>
+                  <ul className="lrn-answers lrn-answers--row">
+                    {courseAssessments.map((a) => {
+                      const x = byId.get(a.id)
+                      const score = x ? answerScore(x) : null
+                      return (
+                        <li key={a.id} className={`lrn-answer${x ? '' : ' is-missing'}`}>
+                          <span className="lrn-answer__body">
+                            <span className="lrn-answer__name">{a.title}</span>
+                            <span className="lrn-answer__type">
+                              {a.lesson ? 'Lesson Quiz' : typeLabel(a.type)}
+                            </span>
                           </span>
-                          <span className="lrn-answer__a">{x.answer}</span>
-                        </span>
-                      </li>
-                    ))}
+                          {/* A percentage where one can be counted. A poll has no right
+                              answer and neither short text nor an exercise is marked, so
+                              those say what is true — that it was answered — rather than
+                              wearing a score the data cannot support. */}
+                          <span className="lrn-answer__score">
+                            {!x ? 'Not attempted' : score === null ? 'Answered' : `${score}%`}
+                          </span>
+                        </li>
+                      )
+                    })}
                   </ul>
-
-                  {missing > 0 ? (
-                    <p className="lrn-missing">
-                      {missing} assessment{missing === 1 ? '' : 's'} not answered yet.
-                    </p>
-                  ) : null}
                 </div>
               </Collapse>
             </li>

@@ -734,6 +734,22 @@ function verdict(a: AssessmentResult, i: number): boolean | null {
   return a.kind === 'graded' ? a.responses[i].correct : null
 }
 
+/**
+ * One learner's score on one assessment, 0–100, or null where the format records no
+ * score at all: a poll has no right answer, and short text and exercise are not marked.
+ *
+ * The banded formats state their own fraction in the band they landed in ("3 of 4 pairs
+ * correct"), so the number is read from there rather than inferred from the band's
+ * position in the list.
+ */
+export function answerScore(x: LearnerAnswer): number | null {
+  if (x.partial) return Math.round((x.partial.correct / x.partial.of) * 100)
+  if (x.correct === null) return null
+  if (hasStatedAnswer(x.assessment)) return x.correct ? 100 : 0
+  const band = /^(\d+) of (\d+)/.exec(x.answer)
+  return band ? Math.round((Number(band[1]) / Number(band[2])) * 100) : x.correct ? 100 : 0
+}
+
 function describe(row: Omit<LearnerRow, 'signal' | 'headline' | 'sentence'>): Pick<LearnerRow, 'signal' | 'headline' | 'sentence'> {
   const { answers, scored, pct } = row
   const total = courseAssessments.length

@@ -142,28 +142,17 @@
   background: var(--primary-600);
 }
 
+/* The whole of the score cell now, so it carries the row's own size rather than the
+   caption size it had under a bar. */
 .lrn-pct {
-  font-size: 12px;
-  color: var(--text-secondary);
+  font-size: 14px;
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
 
 .lrn-none {
   margin: 0;
   font-size: 14px;
-  color: var(--text-tertiary);
-}
-
-/* The tail of the answer list, so it is a row like the others: same hairline and
-   padding, and indented past the verdict gutter (icon + its gap) so it starts on the
-   same edge as the questions above it rather than against the card border. */
-.lrn-missing {
-  margin: 0;
-  padding: var(--space-sm);
-  padding-left: calc(var(--space-sm) + 20px + var(--space-s));
-  border-top: 1px solid var(--border);
-  font-size: 14px;
-  line-height: 1.5;
   color: var(--text-tertiary);
 }
 
@@ -203,6 +192,17 @@
   flex-direction: column;
 }
 
+/* One assessment per row, on the same grid as the learner row above it: the question
+   sits under the learner, and its score under the Score column, so the eye reads one
+   column of figures rather than two. Scoped, because MultiQuestionAnswers borrows
+   .lrn-answer for a list that has no columns to keep. */
+.lrn-answers--row .lrn-answer {
+  display: grid;
+  grid-template-columns: var(--lrn-cols);
+  column-gap: var(--space-sm);
+  align-items: center;
+}
+
 /* Question above answer, verdict to the right. The question is the quiet label;
    the answer is the content, so it carries the primary colour. */
 .lrn-answer {
@@ -239,21 +239,25 @@
   min-width: 0;
 }
 
+/* The question, and under it the format — the same primary-over-supporting stack the
+   learner's name and role make in this column one row up. */
 .lrn-answer__name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Never the half that gets clipped: a title can lose its tail and still be
-   recognised, a format cannot. */
 .lrn-answer__type {
-  flex: 0 0 auto;
-}
-
-.lrn-answer__type::before {
-  content: '·';
-  margin-right: var(--space-xxs);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lrn-answer__a {
@@ -263,9 +267,25 @@
   word-break: break-word;
 }
 
-/* Leads the row: the verdict is what the list is scanned for, and at the trailing
-   edge it sat a full column away from the answer it judges. The gutter is held even
-   on an answer with no verdict, so every question starts on the same line. */
+/* The score for this one assessment, in the Score column and so directly under the
+   learner's own score. */
+.lrn-answer__score {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Nothing to report is not a bad score — an untouched assessment recedes rather
+   than reading as a nought. */
+.lrn-answer.is-missing .lrn-answer__score,
+.lrn-answer.is-missing .lrn-answer__name {
+  color: var(--text-tertiary);
+}
+
+/* Kept for MultiQuestionAnswers, which still marks each question right or wrong:
+   leads the row, and the gutter is held even on an answer with no verdict so every
+   question starts on the same line. */
 .lrn-answer__v {
   flex: 0 0 20px;
   display: flex;
