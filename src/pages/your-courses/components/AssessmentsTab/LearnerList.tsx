@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowDown2 } from 'iconsax-react'
+import { ArrowDown2, CloseCircle } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Collapse from '@/components/Collapse/Collapse'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
@@ -127,7 +127,17 @@ function LearnerList({ rows, pagination, focus }: Props) {
                             ) : score === null ? (
                               'Answered'
                             ) : score < PASS_SCORE ? (
-                              <Badge type="error" label={`${score}%`} icon />
+                              /* A cross rather than the Error badge's default caution
+                                 triangle: this is a mark that failed, not a hazard to be
+                                 careful of, and a cross is already how an incorrect answer
+                                 is drawn — in the expanded situational test, and in the
+                                 error toast. Scoped here; badges.md's default stands for
+                                 Overdue and Deactivated, where a triangle reads right. */
+                              <Badge
+                                type="error"
+                                label={`${score}%`}
+                                customIcon={<CloseCircle size={16} variant="Linear" color="currentColor" />}
+                              />
                             ) : (
                               `${score}%`
                             )}
