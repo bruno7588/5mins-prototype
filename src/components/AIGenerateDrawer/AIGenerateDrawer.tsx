@@ -12,7 +12,7 @@ interface AIGenerateDrawerProps {
 
 const STEPS = [
   'Analyzing your lesson',
-  'Writing questions...',
+  'Writing questions',
   'Adding options to your questions',
   'Finishing up',
 ]
@@ -188,7 +188,7 @@ function AIGenerateDrawer({ onComplete }: AIGenerateDrawerProps) {
         {/* Header */}
         <div className="ai-drawer-header">
           <h3 className="ai-drawer-title">
-            {phase === 'generating' ? 'Generating Questions' : 'Review Questions'}
+            {phase === 'generating' ? 'Generating Questions…' : 'Review Questions'}
           </h3>
           <CloseButton onClick={handleClose} className="ai-drawer-close" />
         </div>
@@ -215,7 +215,7 @@ function AIGenerateDrawer({ onComplete }: AIGenerateDrawerProps) {
                           <span className="ai-drawer-step-icon--pending" />
                         )}
                       </span>
-                      <span>{label}</span>
+                      <span>{status === 'active' ? `${label}…` : label}</span>
                     </div>
                   )
                 })}

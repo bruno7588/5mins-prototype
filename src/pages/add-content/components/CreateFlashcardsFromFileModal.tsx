@@ -14,7 +14,7 @@ interface CreateFlashcardsFromFileModalProps {
 const STEP_DELAY = 750
 
 const LOADING_STEPS = [
-  'Analyzing your content...',
+  'Analyzing your content',
   'Summarising key messages',
   'Adding images',
   'Sprinkling some magic',
@@ -180,7 +180,7 @@ function CreateFlashcardsFromFileModal({ open, onClose, onGenerate }: CreateFlas
         {step === 'generating' && (
           <div className="cffm-loading-panel">
             <div className="cffm-heading">
-              <h2 className="cffm-title">Generating flashcards...</h2>
+              <h2 className="cffm-title">Generating flashcards…</h2>
             </div>
 
             <div className="cffm-ai-wrapper">
@@ -200,7 +200,7 @@ function CreateFlashcardsFromFileModal({ open, onClose, onGenerate }: CreateFlas
                             <TickCircle size={20} color="var(--success-500)" variant="Bold" />
                           )}
                         </span>
-                        <span>{label}</span>
+                        <span>{isActive ? `${label}…` : label}</span>
                       </div>
                     )
                   })}
@@ -216,7 +216,7 @@ function CreateFlashcardsFromFileModal({ open, onClose, onGenerate }: CreateFlas
             </div>
 
             <button type="button" className="cffm-generating-btn" disabled>
-              Generating
+              Generating…
               <span className="cffm-generating-spinner" aria-hidden="true" />
             </button>
           </div>

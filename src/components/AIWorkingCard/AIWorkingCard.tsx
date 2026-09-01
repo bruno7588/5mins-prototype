@@ -114,7 +114,9 @@ function AIWorkingCard({
               <span
                 className={`ai-working-step__text${active ? ' ai-working-step__text--active' : ''}${past ? ' ai-working-step__text--done' : ''}`}
               >
-                {label}
+                {/* Trailing off only on the pass being run: a finished line has finished,
+                    and an ellipsis on it would say the work is still there. */}
+                {active ? `${label}…` : label}
                 {active && detail && (
                   /* Keyed on the text so a new one mounts rather than swapping in place:
                      the same node changing its words is the jump cut. */

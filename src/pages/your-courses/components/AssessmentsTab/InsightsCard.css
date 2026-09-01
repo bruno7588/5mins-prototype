@@ -87,6 +87,12 @@
   color: var(--text-primary);
 }
 
+/* The panel is one block inside a border of its own, so the header does not need a
+   rule under it to separate itself from what follows. */
+.asmi .section-header__divider {
+  display: none;
+}
+
 /* H4 (16px/1.5) rather than the section header's default H3 — this sits inside a
    card, not at the top of a page section. Scoped: other SectionHeader users keep 20px. */
 .asmi .section-header__title {

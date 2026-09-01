@@ -393,7 +393,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="var(--primary-500)" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
                         )}
                       </span>
-                      <span className="roles-ai-step__text">Analyzing your role</span>
+                      <span className="roles-ai-step__text">{aiStep >= 2 ? 'Analyzing your role' : 'Analyzing your role…'}</span>
                     </div>
                     <div className="roles-ai-step">
                       <span className={`roles-ai-step__icon ${aiStep >= 3 ? 'roles-ai-step__icon--done' : aiStep >= 2 ? 'roles-ai-step__icon--active' : ''}`}>
@@ -403,7 +403,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/><path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/></svg>
                         ) : null}
                       </span>
-                      <span className={`roles-ai-step__text ${aiStep < 2 ? 'roles-ai-step__text--disabled' : ''}`}>Matching skills</span>
+                      <span className={`roles-ai-step__text ${aiStep < 2 ? 'roles-ai-step__text--disabled' : ''}`}>{aiStep === 2 ? 'Matching skills…' : 'Matching skills'}</span>
                     </div>
                     <div className="roles-ai-step">
                       <span className="roles-ai-step__icon" />
@@ -611,7 +611,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="var(--primary-500)" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
                         )}
                       </span>
-                      <span className="roles-ai-step__text">Analyzing your role</span>
+                      <span className="roles-ai-step__text">{aiStep >= 2 ? 'Analyzing your role' : 'Analyzing your role…'}</span>
                     </div>
                     <div className="roles-ai-step">
                       <span className={`roles-ai-step__icon ${aiStep >= 3 ? 'roles-ai-step__icon--done' : aiStep >= 2 ? 'roles-ai-step__icon--active' : ''}`}>
@@ -621,7 +621,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/><path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/></svg>
                         ) : null}
                       </span>
-                      <span className={`roles-ai-step__text ${aiStep < 2 ? 'roles-ai-step__text--disabled' : ''}`}>Matching skills</span>
+                      <span className={`roles-ai-step__text ${aiStep < 2 ? 'roles-ai-step__text--disabled' : ''}`}>{aiStep === 2 ? 'Matching skills…' : 'Matching skills'}</span>
                     </div>
                     <div className="roles-ai-step">
                       <span className="roles-ai-step__icon" />

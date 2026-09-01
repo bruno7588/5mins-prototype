@@ -147,6 +147,14 @@ function InsightsCard({ onOpenLearner, responseCount, autoStart, onClose, stats 
     if (!autoStart || started.current || empty) return
     started.current = true
     generate()
+    /* Released on the way out, because the timer the run is waiting on is cleared on
+       the way out too. Without this the guard outlived the thing it was guarding: in
+       development React mounts, unmounts and remounts every effect, which cleared the
+       reading pass's timer and then found the latch already shut — the panel sat on
+       "Reading assessment answers" for ever. */
+    return () => {
+      started.current = false
+    }
   }, [autoStart, empty])
 
   const thin = responseCount > 0 && responseCount < MIN_RESPONSES
@@ -242,7 +250,7 @@ function InsightsCard({ onOpenLearner, responseCount, autoStart, onClose, stats 
             onClick={generate}
             disabled={empty}
             loading={phase === 'generating'}
-            loadingLabel="Generating"
+            loadingLabel="Generating…"
             icon={<SparkleIcon size={20} color="currentColor" />}
           >
             Generate Insights
