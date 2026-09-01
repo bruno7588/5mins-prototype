@@ -25,8 +25,18 @@
   gap: var(--space-l);
 }
 
+/* Width rather than flex-basis, because that is what the close animates; overflow so
+   the panel is clipped by the closing column instead of spilling out of it. */
 .asm-side {
-  flex: 0 0 360px;
+  flex: 0 0 auto;
+  width: 360px;
+  overflow: hidden;
+}
+
+/* Holds the panel's measure while the column narrows around it — without it every
+   paragraph re-wraps on every frame. */
+.asm-side__inner {
+  width: 360px;
 }
 
 /* Below this the table has nothing left to give, so the two stack and insights
@@ -34,6 +44,11 @@
 @media (max-width: 1200px) {
   .asm-split {
     flex-direction: column;
+  }
+
+  .asm-side,
+  .asm-side__inner {
+    width: auto;
   }
 
   .asm-side {

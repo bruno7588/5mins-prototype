@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Sort } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
 import SparkleIcon from '@/components/icons/SparkleIcon'
@@ -28,6 +29,8 @@ const PAGE_SIZE = 10
 /* Not a format — the filter value for a row that is a lesson quiz whatever its
    questions are. */
 const LESSON_QUIZ = 'lesson-quiz'
+/* Above this the results and the insights sit side by side; below it they stack. */
+const SIDE_BY_SIDE = '(min-width: 1201px)'
 
 /**
  * The fourth column. Every format gets something true here — a poll has no right
@@ -112,6 +115,22 @@ function AssessmentsTab() {
      memory would promise a persistence a reload does not have, and leave the button
      offering to show something the next visit cannot. */
   const [insightsOpen, setInsightsOpen] = useState(false)
+
+  /* The panel leaves by closing the space it held, so the results widen into it rather
+     than snapping across. Below 1200px the two stack (see the media query in the CSS) and
+     the panel is full-width — there is no horizontal space to close, so it only fades. */
+  const reduce = useReducedMotion()
+  const [wide, setWide] = useState(() => window.matchMedia(SIDE_BY_SIDE).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(SIDE_BY_SIDE)
+    const sync = () => setWide(mq.matches)
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+  /* What the panel occupies while it is open, mirroring .asm-side and .asm-split's gap:
+     Framer animates numbers, and these two are the ones the layout already uses. */
+  const room = wide ? { width: 360, marginLeft: 0 } : {}
+  const gone = wide ? { width: 0, marginLeft: -24 } : {}
 
   const downloadCsv = () => {
     const blob = new Blob([responsesCsv()], { type: 'text/csv;charset=utf-8' })
@@ -287,8 +306,23 @@ function AssessmentsTab() {
         </div>
 
         {/* Insights reads beside the results rather than over them. */}
-        {insightsOpen ? (
-        <aside className="asm-side">
+        <AnimatePresence initial={false}>
+          {insightsOpen ? (
+        <motion.aside
+          key="insights"
+          className="asm-side"
+          initial={{ opacity: 0, ...gone }}
+          animate={{ opacity: 1, ...room }}
+          exit={{ opacity: 0, ...gone }}
+          /* The panel fades first and the space closes after it, so the results are not
+             sliding under something still visible. */
+          transition={
+            reduce
+              ? { duration: 0 }
+              : { duration: 0.32, ease: [0.22, 1, 0.36, 1], opacity: { duration: 0.18 } }
+          }
+        >
+          <div className="asm-side__inner">
           <InsightsCard
             onOpenLearner={openLearner}
             responseCount={totalResponses()}
@@ -302,8 +336,10 @@ function AssessmentsTab() {
               attention: attentionRows.length,
             }}
           />
-        </aside>
-        ) : null}
+          </div>
+        </motion.aside>
+          ) : null}
+        </AnimatePresence>
       </div>
 
       {viewing ? <AnswersDrawer assessment={viewing} onClose={() => setViewing(null)} /> : null}
