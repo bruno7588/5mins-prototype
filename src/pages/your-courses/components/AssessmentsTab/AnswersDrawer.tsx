@@ -160,7 +160,7 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
     if (a.kind === 'poll') {
       const columns: Column<VoteResponse>[] = [
         learnerColumn<VoteResponse>(),
-        { key: 'vote', header: 'Voted for', width: '0 0 320px', render: (r) => a.options[r.optionIndex] },
+        { key: 'vote', header: 'Voted for', width: '1 1 240px', render: (r) => a.options[r.optionIndex] },
       ]
       return <Table columns={columns} rows={a.responses} getRowKey={(r) => r.learner.id} />
     }
@@ -171,7 +171,7 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
         {
           key: 'text',
           header: 'Answer',
-          width: '0 0 320px',
+          width: '1 1 240px',
           render: (r) => <span className="answ-answer">{r.text}</span>,
         },
       ]
@@ -269,7 +269,7 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
           {a.responses.length === 0 ? (
             <p className="answ-none">Nobody has answered this yet.</p>
           ) : (
-            table
+            <div className="answ-table">{table}</div>
           )}
         </div>
 

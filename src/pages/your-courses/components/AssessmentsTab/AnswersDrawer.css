@@ -107,3 +107,12 @@
   line-height: 1.2;
   color: var(--text-tertiary);
 }
+
+/* The DS table sizes to its content and scrolls the overflow, which is right on a
+   page with room to scroll sideways. In a 720px drawer that is capped by the window,
+   it means the Answer column leaves the panel entirely on a narrow screen — the one
+   column the drawer exists to show. Here the table takes the width it is given and
+   the columns share it. */
+.answ-table .tbl {
+  width: 100%;
+}
