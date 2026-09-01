@@ -1,7 +1,10 @@
+import { useState } from 'react'
+import Chip from '@/components/Chip/Chip'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import {
   hasStatedAnswer,
   optionTally,
+  questionOptionTally,
   questionTally,
   type AssessmentResult,
   type GradedAssessment,
@@ -10,6 +13,9 @@ import {
 } from './assessmentResults'
 import './AnswerStats.css'
 
+/** Past this many questions a chip per question is a row of chips, not a control. */
+const QUIZ_MAX = 6
+
 /** Whole percents, so nothing claims a precision the sample cannot carry. */
 const pct = (n: number, of: number) => Math.round((n / of) * 100)
 
@@ -17,12 +23,21 @@ const pct = (n: number, of: number) => Math.round((n / of) * 100)
    One question, one right answer: the thing worth seeing is what share of the
    cohort found it, so the options share a single bar rather than each getting
    a bar of its own. Share-of-whole is read in one mark instead of four. */
-function Split({ a, responded }: { a: GradedAssessment; responded: number }) {
-  const tally = optionTally(a)
+function Split({
+  options,
+  correctIndex,
+  tally,
+  responded,
+}: {
+  options: string[]
+  correctIndex: number
+  tally: number[]
+  responded: number
+}) {
   /* An option nobody chose gets no segment — a zero-width sliver between two
      gaps reads as a rendering fault. It keeps its line in the legend. */
-  const parts = a.options
-    .map((label, i) => ({ label, n: tally[i], correct: i === a.correctIndex }))
+  const parts = options
+    .map((label, i) => ({ label, n: tally[i], correct: i === correctIndex }))
     .filter((p) => p.n > 0)
 
   return (
@@ -47,10 +62,10 @@ function Split({ a, responded }: { a: GradedAssessment; responded: number }) {
       </div>
 
       <ul className="ast-legend">
-        {a.options.map((label, i) => (
+        {options.map((label, i) => (
           <li
             key={label}
-            className={`ast-legend__row${i === a.correctIndex ? ' is-correct' : ''}`}
+            className={`ast-legend__row${i === correctIndex ? ' is-correct' : ''}`}
           >
             <span className="ast-legend__swatch" aria-hidden="true" />
             <span className="ast-legend__label">{label}</span>
@@ -58,6 +73,40 @@ function Split({ a, responded }: { a: GradedAssessment; responded: number }) {
           </li>
         ))}
       </ul>
+    </div>
+  )
+}
+
+/* ── A quiz, a question at a time ─────────────────────────────────────────
+   Two or three questions, each a multiple choice underneath. Rather than three
+   charts stacked or three columns saying only how many got it right, one chart
+   at a time and a chip to move between them — the same divided bar the graded
+   format gets, so a quiz question is read the way a question is read. */
+function Quiz({ a, responded }: { a: MultiAssessment; responded: number }) {
+  const [sel, setSel] = useState(0)
+  const q = a.questions[sel]
+
+  return (
+    <div className="ast-quiz">
+      <div className="ast-quiz__chips">
+        {a.questions.map((_, i) => (
+          <Chip
+            key={i}
+            label={`Question ${i + 1}`}
+            selected={i === sel}
+            onClick={() => setSel(i)}
+          />
+        ))}
+      </div>
+      {/* The chip says which question; this says what it was. A lesson quiz has no
+          prompt of its own, so without this the chart is about nothing named. */}
+      <p className="ast-quiz__prompt">{q.prompt}</p>
+      <Split
+        options={q.options}
+        correctIndex={q.correctIndex}
+        tally={questionOptionTally(a, sel)}
+        responded={responded}
+      />
     </div>
   )
 }
@@ -172,13 +221,25 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
       </p>
 
       {a.kind === 'multi' ? (
-        <Columns cols={questionCols(a, responded)} />
+        /* A dozen questions are a sequence and the dip is the finding, so they stay
+           columns. Two or three are not a sequence — they are three questions, and
+           each deserves its own answers. */
+        a.questions.length > QUIZ_MAX ? (
+          <Columns cols={questionCols(a, responded)} />
+        ) : (
+          <Quiz a={a} responded={responded} />
+        )
       ) : a.kind === 'poll' ? (
         <Poll a={a} responded={responded} />
       ) : banded ? (
         <Columns cols={bandCols(a, responded)} />
       ) : (
-        <Split a={a} responded={responded} />
+        <Split
+          options={a.options}
+          correctIndex={a.correctIndex}
+          tally={optionTally(a)}
+          responded={responded}
+        />
       )}
     </section>
   )

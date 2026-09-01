@@ -175,6 +175,17 @@ export function multiScore(a: MultiAssessment, r: MultiResponse): number {
  * other source: a learner's picks say whether they were right, and only the question
  * they answer says which column that belongs in.
  */
+/**
+ * How many learners chose each option of one question, in option order. The whole
+ * distribution rather than only the right answer: a quiz question is a multiple
+ * choice underneath, and where the wrong answers went is the finding.
+ */
+export function questionOptionTally(a: MultiAssessment, qi: number): number[] {
+  return a.questions[qi].options.map(
+    (_, oi) => a.responses.filter((r) => r.picks[qi] === oi).length,
+  )
+}
+
 export function questionTally(a: MultiAssessment): number[] {
   return a.questions.map(
     (q, i) => a.responses.filter((r) => r.picks[i] === q.correctIndex).length,

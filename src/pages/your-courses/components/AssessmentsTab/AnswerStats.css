@@ -43,6 +43,26 @@
   cursor: default;
 }
 
+/* ── A quiz, a question at a time ────────────────────────────────────────── */
+.ast-quiz {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.ast-quiz__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.ast-quiz__prompt {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
 /* ── Where the answers went: one bar, divided ────────────────────────────── */
 .ast-split {
   display: flex;
