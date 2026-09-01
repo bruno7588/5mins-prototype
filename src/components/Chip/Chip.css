@@ -13,7 +13,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-s) var(--space-m);
+  padding: var(--space-s) var(--space-sm);
   border-radius: var(--radius-full);
   border: 1px solid var(--border-elevated);
   background: transparent;
@@ -27,22 +27,19 @@
   transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
-/* Padding overrides per icon variant */
+/* Gaps per icon variant; the padding is the same 8px 12px for every one of them
+   (chips-switcher-tabs.md § Spacing). */
 .chip--icon-left {
-  padding-left: var(--space-sm);
   gap: var(--space-xs);
 }
 
 .chip--icon-right {
-  padding-right: var(--space-sm);
   gap: var(--space-s);
 }
 
 /* Both icons — extension beyond the spec, used for selectable user chips
    that need a leading user avatar AND a trailing dismiss. */
 .chip--icon-both {
-  padding-left: var(--space-sm);
-  padding-right: var(--space-sm);
   gap: var(--space-s);
 }
 
