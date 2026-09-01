@@ -2,7 +2,10 @@
    list, so the tab has one interaction model rather than two. Prefix `asl-`. */
 
 .asl {
-  --asl-cols: minmax(260px, 2fr) 170px 130px 220px 150px;
+  /* Every track has give in it: with insights beside the table the row has about
+     900px to work in, and fixed tracks summing past that clipped the action off the
+     end. They take their old widths whenever there is room. */
+  --asl-cols: minmax(200px, 2fr) minmax(120px, 170px) minmax(90px, 130px) minmax(150px, 220px) minmax(112px, 150px);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);

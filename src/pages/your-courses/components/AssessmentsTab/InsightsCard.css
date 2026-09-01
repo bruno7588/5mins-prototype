@@ -233,3 +233,65 @@
     transition: none;
   }
 }
+
+/* Idle and generating: what the card does not have yet, and the one thing to press,
+   centred under the header. No illustration — at 360px in the side column the card is
+   a panel rather than a page, and the sentence is the thing to read. */
+.asmi-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-s);
+  text-align: center;
+}
+
+.asmi-empty__body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Its own line, clear of the sentence above it. */
+.asmi-empty .ds-btn {
+  margin-top: var(--space-s);
+}
+
+/* Clear sits with the two icons beside it, so it carries their weight rather than
+   the button family's link colour. */
+.asmi .asmi-clear,
+.asmi .asmi-clear:hover:not(:disabled) {
+  color: var(--text-secondary);
+}
+
+/* Two by two: four figures across a 360px column, so each card takes half of it. */
+.asmi-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+/* The Enrolments stat card, stacked rather than icon-left: at ~155px a row of
+   icon plus text leaves the label nowhere to go. */
+.asmi-stats .asm-stat {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xxs);
+  min-width: 0;
+  padding: var(--space-s) var(--space-sm);
+}
+
+.asmi-stats .asm-stat__label {
+  gap: var(--space-xs);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.asmi-stats .asm-stat__figure {
+  font-size: 20px;
+}
+
+/* The one figure that is a flag rather than a count. */
+.asmi-stat__warn {
+  color: var(--text-warning);
+}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Sort } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
+import SparkleIcon from '@/components/icons/SparkleIcon'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
@@ -103,6 +104,11 @@ function AssessmentsTab() {
   const [focus, setFocus] = useState<{ id: string; n: number } | null>(null)
   /* Which assessment's answers are open in the drawer, if any. */
   const [viewing, setViewing] = useState<AssessmentResult | null>(null)
+  /* Insights is a panel the admin asks for, not furniture: until it is opened the
+     table has the whole width. It stays mounted once opened, so closing and
+     reopening returns the summary rather than running it again. */
+  const [insightsOpen, setInsightsOpen] = useState(false)
+  const [hasInsights, setHasInsights] = useState(false)
 
   const downloadCsv = () => {
     const blob = new Blob([responsesCsv()], { type: 'text/csv;charset=utf-8' })
@@ -178,39 +184,8 @@ function AssessmentsTab() {
 
   return (
     <section className="asm">
-      <InsightsCard
-        onOpenLearner={openLearner}
-        responseCount={totalResponses()}
-        summary={
-          <span className="asm-summary">
-            <span>{stats.total} assessments</span>
-            <span className="asm-summary__dot">·</span>
-            <span>
-              {stats.responders} of {stats.enrolled} learners responded
-            </span>
-            {stats.average !== null ? (
-              <>
-                <span className="asm-summary__dot">·</span>
-                <span>{stats.average}% average score</span>
-              </>
-            ) : null}
-            {/* The people, not the papers: an admin acts on a learner who is behind,
-                and the block below names these same rows. A count of low-scoring
-                assessments is an authoring note, and "Where learners struggled"
-                already says which content is weak in words. */}
-            {attentionRows.length > 0 ? (
-              <>
-                <span className="asm-summary__dot">·</span>
-                <span className="asm-summary__warn">
-                  {attentionRows.length === 1
-                    ? '1 learner needs attention'
-                    : `${attentionRows.length} learners need attention`}
-                </span>
-              </>
-            ) : null}
-          </span>
-        }
-      />
+      <div className="asm-split">
+        <div className="asm-main">
 
       <div className="asm-pivotrow">
       <ContentSwitcher
@@ -247,6 +222,16 @@ function AssessmentsTab() {
         >
           Download Answers
         </Button>
+        {/* Only ever opens. A visible panel is closed from the panel. */}
+        {insightsOpen ? null : (
+          <Button
+            semantic="ai"
+            onClick={() => setInsightsOpen(true)}
+            icon={<SparkleIcon size={20} color="currentColor" />}
+          >
+            {hasInsights ? 'Show Insights' : 'Generate Insights'}
+          </Button>
+        )}
         </div>
       </div>
 
@@ -283,6 +268,27 @@ function AssessmentsTab() {
           }}
         />
       )}
+
+        </div>
+
+        {/* Insights reads beside the results rather than over them. */}
+        <aside className="asm-side" hidden={!insightsOpen}>
+          <InsightsCard
+            onOpenLearner={openLearner}
+            responseCount={totalResponses()}
+            autoStart={insightsOpen}
+            onHasInsights={setHasInsights}
+            onClose={() => setInsightsOpen(false)}
+            stats={{
+              assessments: stats.total,
+              responders: stats.responders,
+              enrolled: stats.enrolled,
+              average: stats.average,
+              attention: attentionRows.length,
+            }}
+          />
+        </aside>
+      </div>
 
       {viewing ? <AnswersDrawer assessment={viewing} onClose={() => setViewing(null)} /> : null}
     </section>

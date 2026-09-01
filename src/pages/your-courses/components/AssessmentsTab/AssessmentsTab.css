@@ -7,6 +7,42 @@
   gap: var(--space-l);
 }
 
+/* Results left, insights right. Full width, the card pushed the table — the thing
+   the tab is opened for — below the fold, and its three paragraphs read as a wall
+   before anything else. Beside the table it is a column to glance at. */
+.asm-split {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-l);
+}
+
+/* min-width: 0 or the table inside refuses to shrink and the column overflows. */
+.asm-main {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+.asm-side {
+  flex: 0 0 360px;
+}
+
+/* Below this the table has nothing left to give, so the two stack and insights
+   goes back above the results where it was. */
+@media (max-width: 1200px) {
+  .asm-split {
+    flex-direction: column;
+  }
+
+  .asm-side {
+    flex: 1 1 auto;
+    width: 100%;
+    order: -1;
+  }
+}
+
 /* ── Summary stats ──────────────────────────────────────────────────────────
    Deliberately the same anatomy as the Enrolments tab's `.cd-stat`, so the two
    tabs read as siblings rather than as two different products. */
@@ -309,27 +345,6 @@
 /* ── Summary line ───────────────────────────────────────────────────────────
    One quiet line where four stat cards used to be. The Insights card below does
    the summarising; the count and the triage signal are legible in the list. */
-.asm-summary {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.asm-summary__dot {
-  color: var(--text-tertiary);
-}
-
-/* Paragraph M medium — the one segment of the line that is a flag rather than a
-   figure, so it carries weight as well as colour. */
-.asm-summary__warn {
-  font-weight: 500;
-  color: var(--text-warning);
-}
-
 /* In multi-select the trigger always shows its placeholder string, and the
    component greys it as an empty prompt. Here "All assessments" is the current
    state — no filter applied — so it reads as a selection, not a prompt.
@@ -338,3 +353,15 @@
   color: var(--text-primary);
 }
 
+
+/* ── Insights in the side column ────────────────────────────────────────────
+   Title and its timestamp on the left, the three controls hard right — they fit
+   the 360px row now that the generate button lives in the toolbar. */
+.asm-side .section-header__ctas {
+  gap: var(--space-s);
+}
+
+/* Closed, the column gives its width back to the table. */
+.asm-side[hidden] {
+  display: none;
+}

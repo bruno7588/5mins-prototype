@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowDown2, Refresh } from 'iconsax-react'
 import SparkleIcon from '@/components/icons/SparkleIcon'
+import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import SectionHeader from '../SectionHeader/SectionHeader'
@@ -49,15 +50,29 @@ interface Props {
   onOpenLearner: (id: string) => void
   /** Every response across the course — the thing being summarised. */
   responseCount: number
-  /** The one-line course summary, shown under the header in every state. */
-  summary: ReactNode
+  /** Set when the panel is opened from the toolbar: opening is the ask, so the run
+   *  starts with it rather than making the admin press a second button. */
+  autoStart?: boolean
+  /** Whether a summary is standing, so the button that opened this can say so. */
+  onHasInsights?: (has: boolean) => void
+  /** Close the panel. The panel owns its own dismissal — a toolbar button that
+   *  hides a visible panel is a control looking for the thing it controls. */
+  onClose: () => void
+  /** What was answered, counted. Stated as figures over the summary read from them. */
+  stats: {
+    assessments: number
+    responders: number
+    enrolled: number
+    average: number | null
+    attention: number
+  }
 }
 
 /* Named on the card so the admin can act on a person without going to By Learner and
    reading rows. Three is what fits before the block stops being a summary. */
 const NAMED = attentionRows.slice(0, ATTENTION_SHOWN)
 
-function InsightsCard({ onOpenLearner, responseCount, summary }: Props) {
+function InsightsCard({ onOpenLearner, responseCount, autoStart, onHasInsights, onClose, stats }: Props) {
   const [phase, setPhase] = useState<Phase>(courseInsight.generatedAt ? 'ready' : 'idle')
   const [generatedAt, setGeneratedAt] = useState<string | null>(courseInsight.generatedAt)
   /* Whether the finished summary is showing. Only ever false by the admin's hand —
@@ -126,6 +141,20 @@ function InsightsCard({ onOpenLearner, responseCount, summary }: Props) {
   }, [writing, written])
 
   const empty = responseCount === 0
+
+  /* Opening the panel is the request: the run starts with it, once. A later Clear
+     leaves the card idle with its own button rather than re-firing this. */
+  const started = useRef(false)
+  useEffect(() => {
+    if (!autoStart || started.current || empty) return
+    started.current = true
+    generate()
+  }, [autoStart, empty])
+
+  useEffect(() => {
+    onHasInsights?.(phase === 'ready')
+  }, [phase, onHasInsights])
+
   const thin = responseCount > 0 && responseCount < MIN_RESPONSES
 
   return (
@@ -133,18 +162,19 @@ function InsightsCard({ onOpenLearner, responseCount, summary }: Props) {
       {/* DS Section Header: title, supporting text, CTA cluster (headers.md). */}
       <SectionHeader
         title="Insights"
-        description={summary}
+        /* Provenance under the title rather than in the cluster: it is a fact about
+           the summary, not a control. */
+        description={phase === 'ready' ? <span className="asmi-stamp">Updated {generatedAt}</span> : undefined}
         ctas={
           <>
             {phase === 'ready' ? (
               <>
-                <span className="asmi-stamp">Updated {generatedAt}</span>
                 <Tooltip text="Update insights" position="Top" icon={false}>
                   <button className="asmi-refresh" onClick={generate} aria-label="Update insights">
                     <Refresh size={20} color="var(--text-primary)" variant="Linear" />
                   </button>
                 </Tooltip>
-                <Button variant="text" onClick={clear}>
+                <Button variant="text" className="asmi-clear" onClick={clear}>
                   Clear
                 </Button>
                 <button
@@ -154,31 +184,76 @@ function InsightsCard({ onOpenLearner, responseCount, summary }: Props) {
                   aria-controls="asmi-summary"
                   aria-label={expanded ? 'Hide insights' : 'Show insights'}
                 >
-                  <ArrowDown2 size={20} color="var(--text-primary)" variant="Linear" />
+                  <ArrowDown2 size={20} color="var(--text-secondary)" variant="Linear" />
                 </button>
               </>
             ) : null}
-            {/* The button the admin pressed stays under their cursor and says what it is
-                doing, rather than vanishing on the click and leaving the cluster empty
-                until the run ends. */}
-            {phase !== 'ready' ? (
-              <Button
-                semantic="ai"
-                onClick={generate}
-                disabled={empty}
-                loading={phase === 'generating'}
-                loadingLabel="Generating"
-                icon={<SparkleIcon size={20} color="currentColor" />}
-              >
-                Generate Insights
-              </Button>
-            ) : null}
+            <CloseButton onClick={onClose} size={20} ariaLabel="Close insights" />
           </>
         }
       />
 
-      {phase === 'idle' && empty ? (
-        <p className="asmi-note asmi-region">No responses yet.</p>
+      {/* Counted from the responses, not written by the pass — but it is what the
+          summary below is read against, so it opens the panel. Same stat card as the
+          Enrolments tab, two by two in the column's width. */}
+      <div className="asmi-stats asmi-region">
+        <div className="asm-stat">
+          <span className="asm-stat__label">Assessments</span>
+          <span className="asm-stat__value">
+            <span className="asm-stat__figure">{stats.assessments}</span>
+          </span>
+        </div>
+
+        <div className="asm-stat">
+          <span className="asm-stat__label">Responded</span>
+          <span className="asm-stat__value">
+            <span className="asm-stat__figure">{stats.responders}</span>
+            <span className="asm-stat__sub">of {stats.enrolled}</span>
+          </span>
+        </div>
+
+        <div className="asm-stat">
+          <span className="asm-stat__label">Average score</span>
+          <span className="asm-stat__value">
+            <span className="asm-stat__figure">{stats.average === null ? '—' : `${stats.average}%`}</span>
+          </span>
+        </div>
+
+        <div className="asm-stat">
+          <span className="asm-stat__label">Need attention</span>
+          <span className="asm-stat__value">
+            {/* The flag the icon used to carry: without it the count reads as any
+                other figure. */}
+            <span className="asm-stat__figure asmi-stat__warn">{stats.attention}</span>
+            <span className="asm-stat__sub">learners</span>
+          </span>
+        </div>
+      </div>
+
+      {/* Until it has been run, the card says so and offers the one thing to press,
+          rather than opening with figures it did not produce. The button holds its
+          place through the run: pressed, it says what it is doing instead of
+          disappearing and leaving the block empty. */}
+      {phase !== 'ready' ? (
+        <div className="asmi-empty asmi-region">
+          {phase === 'idle' ? (
+            <p className="asmi-empty__body">
+              {empty
+                ? 'Nobody has answered an assessment on this course yet.'
+                : 'Generate insights to surface where learners struggled and who needs attention.'}
+            </p>
+          ) : null}
+          <Button
+            semantic="ai"
+            onClick={generate}
+            disabled={empty}
+            loading={phase === 'generating'}
+            loadingLabel="Generating"
+            icon={<SparkleIcon size={20} color="currentColor" />}
+          >
+            Generate Insights
+          </Button>
+        </div>
       ) : null}
 
       {/* The shared AI working card: the pass being run, and under the reading pass the
