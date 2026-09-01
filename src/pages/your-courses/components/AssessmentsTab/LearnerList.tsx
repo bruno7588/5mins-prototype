@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { ArrowDown2 } from 'iconsax-react'
+import Badge from '@/components/Badge/Badge'
 import Collapse from '@/components/Collapse/Collapse'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import { prefersReducedMotion } from '@/components/AIWorkingCard/useTyped'
-import { answerScore, courseAssessments, type LearnerRow } from './assessmentResults'
+import { answerScore, courseAssessments, PASS_SCORE, type LearnerRow } from './assessmentResults'
 import './LearnerList.css'
 
 interface Props {
@@ -103,19 +104,33 @@ function LearnerList({ rows, pagination, focus }: Props) {
                       const x = byId.get(a.id)
                       const score = x ? answerScore(x) : null
                       return (
-                        <li key={a.id} className={`lrn-answer${x ? '' : ' is-missing'}`}>
+                        <li key={a.id} className="lrn-answer">
                           <span className="lrn-answer__body">
                             <span className="lrn-answer__name">{a.title}</span>
                             <span className="lrn-answer__type">
                               {a.lesson ? 'Lesson Quiz' : typeLabel(a.type)}
                             </span>
                           </span>
-                          {/* A percentage where one can be counted. A poll has no right
-                              answer and neither short text nor an exercise is marked, so
-                              those say what is true — that it was answered — rather than
-                              wearing a score the data cannot support. */}
+                          {/* Marked only where there is something to do about it: a badge
+                              on every row is not a signal, it is a restyled column. A pass
+                              is plain text, a fail and a gap are not — so a learner who is
+                              fine shows one mark or none, and a learner who is not lights
+                              the whole card up.
+
+                              A percentage only where one can be counted. A poll has no right
+                              answer and neither short text nor an exercise is marked, so those
+                              say what is true — that it was answered — rather than wearing a
+                              score the data cannot support, in either direction. */}
                           <span className="lrn-answer__score">
-                            {!x ? 'Not attempted' : score === null ? 'Answered' : `${score}%`}
+                            {!x ? (
+                              <Badge type="warning" label="Not attempted" icon />
+                            ) : score === null ? (
+                              'Answered'
+                            ) : score < PASS_SCORE ? (
+                              <Badge type="error" label={`${score}%`} icon />
+                            ) : (
+                              `${score}%`
+                            )}
                           </span>
                         </li>
                       )

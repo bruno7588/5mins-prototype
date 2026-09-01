@@ -735,6 +735,13 @@ function verdict(a: AssessmentResult, i: number): boolean | null {
 }
 
 /**
+ * The course's pass score, as stated on its own header (CourseDetails.tsx). A score
+ * under this is a fail — and a fail, not a score short of perfect, is the thing an
+ * admin is scanning for.
+ */
+export const PASS_SCORE = 80
+
+/**
  * One learner's score on one assessment, 0–100, or null where the format records no
  * score at all: a poll has no right answer, and short text and exercise are not marked.
  *
