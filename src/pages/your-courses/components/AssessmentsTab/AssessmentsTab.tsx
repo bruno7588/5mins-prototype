@@ -23,8 +23,6 @@ import {
 } from './assessmentResults'
 import './AssessmentsTab.css'
 
-/* Under this many characters a written answer is a non-answer ("Not sure yet."). */
-const BRIEF_ANSWER = 24
 const PAGE_SIZE = 10
 
 /**
@@ -71,17 +69,14 @@ function ResultCell({ a }: { a: AssessmentResult }) {
   }
 
   if (a.kind === 'text') {
-    /* Written answers are not scored in V1, so there is no aggregate result. The
-       useful fact that survives is whether anyone fobbed it off — quoting one
-       arbitrary respondent said nothing about the other eight. */
-    const brief = a.responses.filter((r) => r.text.length < BRIEF_ANSWER).length
+    /* Written answers are not scored in V1, so there is no aggregate to report — just
+       how many there are to read. It used to call answers under 24 characters "very
+       brief" and advise a second look: a character count dressed as a judgement, which
+       an admin could neither see nor check. */
     return (
       <div className="asm-result">
         <span className="asm-result__lead">
-          {brief === 0 ? 'All replies substantive' : `${brief} very brief`}
-        </span>
-        <span className="asm-result__sub">
-          {brief === 0 ? 'nothing needs a second look' : 'may need a second look'}
+          {a.responses.length} answer{a.responses.length === 1 ? '' : 's'}
         </span>
       </div>
     )
