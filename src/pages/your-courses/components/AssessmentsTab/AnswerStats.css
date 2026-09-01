@@ -227,15 +227,10 @@
   gap: var(--space-xs);
 }
 
-/* A handful of columns rather than a dozen. Capped and centred: spread across the
-   full panel, four columns are slabs, and a slab is not read as a measurement. */
+/* A handful of columns rather than a dozen: they still fill the panel, but with
+   room between them, where twelve need every pixel of width they can get. */
 .ast-cols.is-sparse {
-  justify-content: center;
   gap: var(--space-m);
-}
-
-.ast-cols.is-sparse .ast-col {
-  max-width: 112px;
 }
 
 .ast-col {

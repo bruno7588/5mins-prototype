@@ -57,16 +57,12 @@ function MultiQuestionAnswers({ assessment: a }: { assessment: MultiAssessment }
                   </span>
                 </span>
 
+                {/* The same figure the By Learner pivot shows, drawn the same way: a
+                    percentage on its own. The bar beside it was redrawing what the
+                    number already said, and which questions they missed is one row
+                    below, ticked and crossed. */}
                 <span className="lrn-cell lrn-c-score">
-                  <span className="lrn-bar" aria-hidden="true">
-                    <span
-                      className="lrn-bar__fill"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </span>
-                  <span className="lrn-pct">
-                    {score} of {a.questions.length} correct
-                  </span>
+                  <span className="lrn-pct">{pct}%</span>
                 </span>
 
                 <span className="lrn-cell lrn-c-expand lrn-chevron" aria-hidden="true">

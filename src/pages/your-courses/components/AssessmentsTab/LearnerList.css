@@ -121,27 +121,10 @@
   gap: var(--space-s);
 }
 
-.lrn-bar {
-  display: block;
-  width: 100%;
-  max-width: 140px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--border);
-  overflow: hidden;
-}
 
 /* One colour, whatever the score. The bar length already says how much they got
    right, and recolouring it at 60% asserted a pass line the course does not have —
    its pass score is 80%. Right and wrong are named in the answers below. */
-.lrn-bar__fill {
-  display: block;
-  height: 100%;
-  border-radius: var(--radius-full);
-  /* Raw palette on purpose: the progress fill is the same blue in both modes. */
-  background: var(--primary-600);
-}
-
 /* The whole of the score cell now, so it carries the row's own size rather than the
    caption size it had under a bar. */
 .lrn-pct {
