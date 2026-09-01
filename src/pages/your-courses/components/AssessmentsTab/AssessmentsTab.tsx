@@ -25,6 +25,9 @@ import {
 import './AssessmentsTab.css'
 
 const PAGE_SIZE = 10
+/* Not a format — the filter value for a row that is a lesson quiz whatever its
+   questions are. */
+const LESSON_QUIZ = 'lesson-quiz'
 
 /**
  * The fourth column. Every format gets something true here — a poll has no right
@@ -36,9 +39,9 @@ function ResultCell({ a }: { a: AssessmentResult }) {
     return <span className="asm-result__none">Nothing submitted yet</span>
   }
 
-  /* A situational test scores the same way, just over its questions rather than over
-     its learners — correctPct does that division, so the cell does not have to. */
-  if (a.kind === 'graded' || a.kind === 'situational') {
+  /* A multi-question assessment scores the same way, just over its questions rather
+     than over its learners — correctPct does that division, so the cell does not. */
+  if (a.kind === 'graded' || a.kind === 'multi') {
     const pct = correctPct(a) ?? 0
     return (
       <div className="asm-result">
@@ -50,7 +53,7 @@ function ResultCell({ a }: { a: AssessmentResult }) {
         </span>
         <span className="asm-result__pct">
           {pct}% correct
-          {a.kind === 'situational' ? ` · ${a.questions.length} questions` : ''}
+          {a.kind === 'multi' ? ` · ${a.questions.length} questions` : ''}
         </span>
       </div>
     )
@@ -105,10 +108,10 @@ function AssessmentsTab() {
   /* Which assessment's answers are open in the drawer, if any. */
   const [viewing, setViewing] = useState<AssessmentResult | null>(null)
   /* Insights is a panel the admin asks for, not furniture: until it is opened the
-     table has the whole width. It stays mounted once opened, so closing and
-     reopening returns the summary rather than running it again. */
+     table has the whole width. Closing it ends the summary with it — keeping one in
+     memory would promise a persistence a reload does not have, and leave the button
+     offering to show something the next visit cannot. */
   const [insightsOpen, setInsightsOpen] = useState(false)
-  const [hasInsights, setHasInsights] = useState(false)
 
   const downloadCsv = () => {
     const blob = new Blob([responsesCsv()], { type: 'text/csv;charset=utf-8' })
@@ -120,15 +123,27 @@ function AssessmentsTab() {
     URL.revokeObjectURL(url)
   }
 
+  /* What a row calls itself: a lesson quiz by that name, everything else by its
+     format. The filter and the rows have to agree, so both read it from here. */
+  const rowType = (a: AssessmentResult) => (a.lesson ? LESSON_QUIZ : a.type)
+
   /* Only offer a filter for formats this course actually contains — a menu of nine
      when the course has three is a menu of dead ends. */
   const typeOptions = useMemo(() => {
-    const present = new Set(courseAssessments.map((a) => a.type))
-    return GENERATABLE_TYPES.filter((t) => present.has(t)).map((t) => ({ value: t, label: typeLabel(t) }))
+    const present = new Set(courseAssessments.map(rowType))
+    const formats = GENERATABLE_TYPES.filter((t) => present.has(t)).map((t) => ({
+      value: t as string,
+      label: typeLabel(t),
+    }))
+    /* First in the menu, because it is the one cut that is not a format: the checks
+       at the end of lessons, apart from what the admin placed on the course. */
+    return present.has(LESSON_QUIZ)
+      ? [{ value: LESSON_QUIZ, label: 'Lesson Quiz' }, ...formats]
+      : formats
   }, [])
 
   const filtered = useMemo(
-    () => (types.length ? courseAssessments.filter((a) => types.includes(a.type)) : courseAssessments),
+    () => (types.length ? courseAssessments.filter((a) => types.includes(rowType(a))) : courseAssessments),
     [types],
   )
 
@@ -229,7 +244,7 @@ function AssessmentsTab() {
             onClick={() => setInsightsOpen(true)}
             icon={<SparkleIcon size={20} color="currentColor" />}
           >
-            {hasInsights ? 'Show Insights' : 'Generate Insights'}
+            Generate Insights
           </Button>
         )}
         </div>
@@ -272,12 +287,12 @@ function AssessmentsTab() {
         </div>
 
         {/* Insights reads beside the results rather than over them. */}
-        <aside className="asm-side" hidden={!insightsOpen}>
+        {insightsOpen ? (
+        <aside className="asm-side">
           <InsightsCard
             onOpenLearner={openLearner}
             responseCount={totalResponses()}
             autoStart={insightsOpen}
-            onHasInsights={setHasInsights}
             onClose={() => setInsightsOpen(false)}
             stats={{
               assessments: stats.total,
@@ -288,6 +303,7 @@ function AssessmentsTab() {
             }}
           />
         </aside>
+        ) : null}
       </div>
 
       {viewing ? <AnswersDrawer assessment={viewing} onClose={() => setViewing(null)} /> : null}

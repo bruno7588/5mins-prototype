@@ -1,9 +1,12 @@
 // 5Mins assessment-type illustrations — Figma "Illustrations/ Assessments" (frame 9120:8850;
-// the six classic types downloaded 2026-07-13, the four interactive ones 2026-08-17). Ten
-// assessment types, each as distinct Mobile (56px) and Desktop (80px) artwork. Used in
+// the six classic types downloaded 2026-07-13, the four interactive ones 2026-08-17, lesson
+// quiz 2026-09-01). Eleven assessment types — the whole frame — each as distinct Mobile
+// (56px) and Desktop (80px) artwork. Used in
 // Assessment cards (56px mobile list card, 80px web app row; scale the desktop one down for
 // the 48px admin row).
 
+import lessonQuizMobile from './lesson-quiz-mobile.svg'
+import lessonQuizDesktop from './lesson-quiz-desktop.svg'
 import multipleChoiceMobile from './multiple-choice-mobile.svg'
 import multipleChoiceDesktop from './multiple-choice-desktop.svg'
 import shortTextMobile from './short-text-mobile.svg'
@@ -26,6 +29,7 @@ import matchPairsMobile from './match-pairs-mobile.svg'
 import matchPairsDesktop from './match-pairs-desktop.svg'
 
 export type AssessmentType =
+  | 'lesson-quiz'
   | 'multiple-choice'
   | 'short-text'
   | 'exercise'
@@ -40,6 +44,7 @@ export type AssessmentType =
 export type AssessmentIllustrationDevice = 'mobile' | 'desktop'
 
 const illustrations: Record<AssessmentType, Record<AssessmentIllustrationDevice, string>> = {
+  'lesson-quiz': { mobile: lessonQuizMobile, desktop: lessonQuizDesktop },
   'multiple-choice': { mobile: multipleChoiceMobile, desktop: multipleChoiceDesktop },
   'short-text': { mobile: shortTextMobile, desktop: shortTextDesktop },
   exercise: { mobile: exerciseMobile, desktop: exerciseDesktop },
@@ -63,6 +68,7 @@ export function getAssessmentIllustration(
    is the bridge. Label and artwork filename agree again since the type went back
    to Multiple Choice. */
 const byLabel: Record<string, AssessmentType> = {
+  'Lesson Quiz': 'lesson-quiz',
   'Multiple Choice': 'multiple-choice',
   'Short Text': 'short-text',
   Exercise: 'exercise',

@@ -58,6 +58,7 @@
 
 /* ── Title ───────────────────────────────────────────────────────────────── */
 .asl-title {
+  max-width: 100%;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -74,6 +75,14 @@
 }
 
 /* Leading icons in lists are always primary, never secondary. */
+/* Artwork, not an icon: it keeps its own colours and its box, whatever the row
+   does around it. */
+.asl-illu {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+}
+
 .asl-c-type svg {
   flex: 0 0 auto;
   color: var(--text-primary);

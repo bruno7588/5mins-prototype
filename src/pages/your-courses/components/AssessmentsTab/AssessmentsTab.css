@@ -360,8 +360,3 @@
 .asm-side .section-header__ctas {
   gap: var(--space-s);
 }
-
-/* Closed, the column gives its width back to the table. */
-.asm-side[hidden] {
-  display: none;
-}

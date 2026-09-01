@@ -52,15 +52,15 @@ export interface FileResponse {
   fileSize: string
 }
 
-/** One question inside a situational test. */
-export interface SituationalQuestion {
+/** One question inside a multi-question assessment. */
+export interface MultiQuestion {
   prompt: string
   options: string[]
   correctIndex: number
 }
 
-/** One run through the scenario: the option picked for each question, in order. */
-export interface SituationalResponse {
+/** One sitting: the option picked for each question, in order. */
+export interface MultiResponse {
   learner: ResponseLearner
   submittedAt: string
   picks: number[]
@@ -72,6 +72,12 @@ interface AssessmentBase {
   prompt: string
   /** Everyone enrolled on the course — the denominator a response count is read against. */
   enrolled: number
+  /**
+   * The lesson this closes, for a quiz that sits at the end of one. Absent on a
+   * course-level assessment — which is the difference between the two: not a flag,
+   * but whether there is a lesson to name.
+   */
+  lesson?: string
 }
 
 export interface GradedAssessment extends AssessmentBase {
@@ -102,16 +108,17 @@ export interface FileAssessment extends AssessmentBase {
 }
 
 /**
- * A scenario answered over several questions. Kept out of GradedAssessment rather
- * than bolted onto it: that shape has one prompt, one option list and one verdict
- * per learner, and every reader of it assumes so. Here the assessment carries the
- * scenario and the questions carry the answers.
+ * Several questions answered in one sitting — a situational test running a scenario,
+ * or a lesson quiz of two or three checks. Kept out of GradedAssessment rather than
+ * bolted onto it: that shape has one prompt, one option list and one verdict per
+ * learner, and every reader of it assumes so. Here the questions carry the answers,
+ * and `type` says which kind of sitting it was.
  */
-export interface SituationalAssessment extends AssessmentBase {
-  kind: 'situational'
-  type: 'situational-test'
-  questions: SituationalQuestion[]
-  responses: SituationalResponse[]
+export interface MultiAssessment extends AssessmentBase {
+  kind: 'multi'
+  type: 'situational-test' | GradedType
+  questions: MultiQuestion[]
+  responses: MultiResponse[]
 }
 
 export type AssessmentResult =
@@ -119,7 +126,7 @@ export type AssessmentResult =
   | PollAssessment
   | TextAssessment
   | FileAssessment
-  | SituationalAssessment
+  | MultiAssessment
 
 /* ── Derived values ───────────────────────────────────────────────────────── */
 
@@ -132,13 +139,13 @@ export function responseCount(a: AssessmentResult): number {
  * Null is the signal to render something else entirely — never an em dash.
  */
 export function correctPct(a: AssessmentResult): number | null {
-  if (a.kind !== 'graded' && a.kind !== 'situational') return null
+  if (a.kind !== 'graded' && a.kind !== 'multi') return null
   if (a.responses.length === 0) return null
-  if (a.kind === 'situational') {
+  if (a.kind === 'multi') {
     /* Averaged over answers, not over learners: a test where everyone missed the
        same two questions is not the same shape as one where two learners missed
        everything, and the answer count is what both claims are read off. */
-    const right = a.responses.reduce((n, r) => n + situationalScore(a, r), 0)
+    const right = a.responses.reduce((n, r) => n + multiScore(a, r), 0)
     return Math.round((right / (a.responses.length * a.questions.length)) * 100)
   }
   const right = a.responses.filter((r) => r.correct).length
@@ -159,7 +166,7 @@ export function hasStatedAnswer(a: AssessmentResult): a is GradedAssessment {
 }
 
 /** How many of one learner’s picks matched the right option. */
-export function situationalScore(a: SituationalAssessment, r: SituationalResponse): number {
+export function multiScore(a: MultiAssessment, r: MultiResponse): number {
   return r.picks.filter((pick, q) => pick === a.questions[q].correctIndex).length
 }
 
@@ -226,9 +233,9 @@ function choices(id: string, count: number, rightCount: number, options: number,
 function runs(
   id: string,
   count: number,
-  questions: SituationalQuestion[],
+  questions: MultiQuestion[],
   easiness: number[],
-): SituationalResponse[] {
+): MultiResponse[] {
   return pool.slice(0, count).map((learner, i) => ({
     learner,
     submittedAt: DATES[(seed(learner.id) + i) % DATES.length],
@@ -260,7 +267,7 @@ function texts(answers: string[]): TextResponse[] {
 /* The scenario the situational test runs on. Twelve questions over one incident,
    ordered as the incident unfolds — the last one deliberately returns to the first,
    so the test can show whether the lesson held. */
-const EXCLUDED_HIRE: SituationalQuestion[] = [
+const EXCLUDED_HIRE: MultiQuestion[] = [
   {
     prompt: 'A new hire tells you they feel excluded from team decisions. What do you do first?',
     options: [
@@ -383,6 +390,116 @@ const EXCLUDED_HIRE: SituationalQuestion[] = [
   },
 ]
 
+/* ── Lesson quiz questions ────────────────────────────────────────────────
+   Hoisted because the assessment and its responses are built from the same list:
+   a pick is only right or wrong against the question it answers. */
+const QUIZ_CULTURE: MultiQuestion[] = [
+  {
+    prompt: 'Which of these tells you most about a team’s real culture?',
+    options: [
+      'The values written on the wall',
+      'What gets rewarded and what gets ignored',
+      'How often the team socialises',
+      'The tone of the last all-hands',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'A team says it values candour but nobody disagrees in reviews. What does that tell you?',
+    options: [
+      'The team already agrees on everything',
+      'The stated value is not the practised one',
+      'Reviews are the wrong place for candour',
+      'The manager needs to ask more questions',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'Where does a new joiner learn what is really valued?',
+    options: [
+      'The handbook',
+      'What their first mistake is met with',
+      'The onboarding deck',
+      'The values page on the intranet',
+    ],
+    correctIndex: 1,
+  },
+]
+
+const QUIZ_BEHAVIOUR: MultiQuestion[] = [
+  {
+    prompt: 'Which sentence describes behaviour rather than character?',
+    options: [
+      'You are dismissive in reviews',
+      'You cut across Ana twice in yesterday’s review',
+      'You have an attitude problem',
+      'You never listen to the team',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'What makes an observation checkable by the person hearing it?',
+    options: [
+      'It names a specific moment they can recall',
+      'It is said kindly',
+      'It comes from more than one person',
+      'It avoids naming anyone else',
+    ],
+    correctIndex: 0,
+  },
+]
+
+const QUIZ_FEEDBACK: MultiQuestion[] = [
+  {
+    prompt: 'How soon after the event does feedback do the most good?',
+    options: ['Within the week', 'At the next review', 'Once the quarter closes', 'When they ask for it'],
+    correctIndex: 0,
+  },
+  {
+    prompt: 'What does feedback need to be actionable?',
+    options: [
+      'A judgement of how it came across',
+      'A named behaviour and its effect',
+      'A comparison with a colleague',
+      'A rating out of five',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'They disagree with your observation. What is the useful next move?',
+    options: [
+      'Restate it more firmly',
+      'Ask what they saw happen',
+      'Bring in a second opinion',
+      'Leave it for the review',
+    ],
+    correctIndex: 1,
+  },
+]
+
+const QUIZ_DECISIONS: MultiQuestion[] = [
+  {
+    prompt: 'A decision was made in a call. What makes it visible to the people it affects?',
+    options: [
+      'Telling the people who ask',
+      'Writing it down where the team already looks',
+      'Mentioning it at the next all-hands',
+      'Adding everyone to the call next time',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'What belongs in a decision record for it to be useful later?',
+    options: [
+      'Who attended',
+      'What was decided and what it rules out',
+      'How long the discussion took',
+      'Who disagreed',
+    ],
+    correctIndex: 1,
+  },
+]
+
 export const courseAssessments: AssessmentResult[] = [
   {
     id: 'a1',
@@ -431,7 +548,7 @@ export const courseAssessments: AssessmentResult[] = [
   },
   {
     id: 'a4',
-    kind: 'situational',
+    kind: 'multi',
     type: 'situational-test',
     title: 'A new hire feels excluded',
     /* The setup, not a question: what every question below is answered against. */
@@ -500,6 +617,58 @@ export const courseAssessments: AssessmentResult[] = [
     correctIndex: 0,
     responses: choices('a9', 11, 10, 4, 0),
   },
+
+  /* ── Lesson quizzes ──────────────────────────────────────────────────────
+     The check at the end of a lesson rather than an assessment the admin placed on
+     the course, and two or three questions rather than one — so they take the same
+     multi-question shape as the situational test, and the row names the lesson they
+     close. No prompt of their own: the questions are the whole of them. */
+  {
+    id: 'q1',
+    kind: 'multi',
+    type: 'single-choice',
+    /* Titled by the question it opens with: a lesson quiz is not named separately,
+       so inventing a title here would be inventing a field. */
+    title: 'Which of these tells you most about a team’s real culture?',
+    lesson: 'Culture is a system, not a slogan',
+    prompt: '',
+    enrolled: ENROLLED,
+    questions: QUIZ_CULTURE,
+    responses: runs('q1', 12, QUIZ_CULTURE, [9, 7, 8]),
+  },
+  {
+    id: 'q2',
+    kind: 'multi',
+    type: 'single-choice',
+    title: 'Which sentence describes behaviour rather than character?',
+    lesson: 'Naming what you see without blame',
+    prompt: '',
+    enrolled: ENROLLED,
+    questions: QUIZ_BEHAVIOUR,
+    responses: runs('q2', 11, QUIZ_BEHAVIOUR, [8, 6]),
+  },
+  {
+    id: 'q3',
+    kind: 'multi',
+    type: 'single-choice',
+    title: 'How soon after the event does feedback do the most good?',
+    lesson: 'Feedback that lands',
+    prompt: '',
+    enrolled: ENROLLED,
+    questions: QUIZ_FEEDBACK,
+    responses: runs('q3', 10, QUIZ_FEEDBACK, [6, 5, 7]),
+  },
+  {
+    id: 'q4',
+    kind: 'multi',
+    type: 'single-choice',
+    title: 'A decision was made in a call. What makes it visible to the people it affects?',
+    lesson: 'Decisions people can see',
+    prompt: '',
+    enrolled: ENROLLED,
+    questions: QUIZ_DECISIONS,
+    responses: runs('q4', 12, QUIZ_DECISIONS, [7, 5]),
+  },
 ]
 
 export const courseInsight: CourseInsight = {
@@ -545,8 +714,8 @@ function answerText(a: AssessmentResult, i: number): string {
   if (a.kind === 'text') return a.responses[i].text
   /* A whole run through a scenario, so the row states the score and the drawer
      holds the twelve answers behind it. */
-  if (a.kind === 'situational')
-    return `${situationalScore(a, a.responses[i])} of ${a.questions.length} correct`
+  if (a.kind === 'multi')
+    return `${multiScore(a, a.responses[i])} of ${a.questions.length} correct`
   return a.responses[i].fileName
 }
 
@@ -609,8 +778,8 @@ export const learnerRows: LearnerRow[] = pool.map((learner) => {
       assessment: a,
       answer: answerText(a, i),
       correct: verdict(a, i),
-      ...(a.kind === 'situational'
-        ? { partial: { correct: situationalScore(a, a.responses[i]), of: a.questions.length } }
+      ...(a.kind === 'multi'
+        ? { partial: { correct: multiScore(a, a.responses[i]), of: a.questions.length } }
         : {}),
       submittedAt: a.responses[i].submittedAt,
     })
@@ -692,7 +861,7 @@ export function responsesCsv(): string {
   for (const a of courseAssessments) {
     /* One row per question, so a situational test exports as what it is rather
        than as a score with the twelve answers thrown away. */
-    if (a.kind === 'situational') {
+    if (a.kind === 'multi') {
       for (const r of a.responses) {
         a.questions.forEach((q, qi) => {
           rows.push([

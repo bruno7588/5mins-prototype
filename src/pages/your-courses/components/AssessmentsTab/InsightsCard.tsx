@@ -53,8 +53,6 @@ interface Props {
   /** Set when the panel is opened from the toolbar: opening is the ask, so the run
    *  starts with it rather than making the admin press a second button. */
   autoStart?: boolean
-  /** Whether a summary is standing, so the button that opened this can say so. */
-  onHasInsights?: (has: boolean) => void
   /** Close the panel. The panel owns its own dismissal — a toolbar button that
    *  hides a visible panel is a control looking for the thing it controls. */
   onClose: () => void
@@ -72,7 +70,7 @@ interface Props {
    reading rows. Three is what fits before the block stops being a summary. */
 const NAMED = attentionRows.slice(0, ATTENTION_SHOWN)
 
-function InsightsCard({ onOpenLearner, responseCount, autoStart, onHasInsights, onClose, stats }: Props) {
+function InsightsCard({ onOpenLearner, responseCount, autoStart, onClose, stats }: Props) {
   const [phase, setPhase] = useState<Phase>(courseInsight.generatedAt ? 'ready' : 'idle')
   const [generatedAt, setGeneratedAt] = useState<string | null>(courseInsight.generatedAt)
   /* Whether the finished summary is showing. Only ever false by the admin's hand —
@@ -150,10 +148,6 @@ function InsightsCard({ onOpenLearner, responseCount, autoStart, onHasInsights, 
     started.current = true
     generate()
   }, [autoStart, empty])
-
-  useEffect(() => {
-    onHasInsights?.(phase === 'ready')
-  }, [phase, onHasInsights])
 
   const thin = responseCount > 0 && responseCount < MIN_RESPONSES
 

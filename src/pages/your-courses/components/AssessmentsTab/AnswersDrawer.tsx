@@ -6,7 +6,7 @@ import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Table, { type Column } from '@/components/Table/Table'
-import SituationalAnswers from './SituationalAnswers'
+import MultiQuestionAnswers from './MultiQuestionAnswers'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import '@/pages/my-team/CoursesDrawer.css'
@@ -77,7 +77,7 @@ function sheet(a: AssessmentResult): string[][] {
 
   /* A row per question rather than per learner: a scenario's answers are the twelve
      picks, and a sheet holding only the score throws away what was exported for. */
-  if (a.kind === 'situational')
+  if (a.kind === 'multi')
     return [
       ['Learner', 'Role', 'Submitted', 'Question', 'Answer', 'Result'],
       ...a.responses.flatMap((r) =>
@@ -178,9 +178,9 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
       return <Table columns={columns} rows={a.responses} getRowKey={(r) => r.learner.id} />
     }
 
-    /* Not a table: a scenario has no one answer to put in a cell, so each learner is
-       a row that opens onto the questions. */
-    if (a.kind === 'situational') return <SituationalAnswers assessment={a} />
+    /* Not a table: several questions have no one answer to put in a cell, so each
+       learner is a row that opens onto them. */
+    if (a.kind === 'multi') return <MultiQuestionAnswers assessment={a} />
 
     const columns: Column<FileResponse>[] = [
       learnerColumn<FileResponse>(),
@@ -247,12 +247,16 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
           {/* The question and the answer it was marked against, held above the
               table so the rows can be read without scrolling back up. */}
           <section className="answ-brief">
-            <div className="answ-brief__field">
-              <span className="answ-brief__label">
-                {a.kind === 'situational' ? `Brief · ${a.questions.length} questions` : 'Question'}
-              </span>
-              <p className="answ-brief__value">{a.prompt}</p>
-            </div>
+            {/* A scenario states its brief; a lesson quiz has no prompt of its own —
+                its questions are the whole of it, and they are in the rows below. */}
+            {a.prompt ? (
+              <div className="answ-brief__field">
+                <span className="answ-brief__label">
+                  {a.kind === 'multi' ? `Brief · ${a.questions.length} questions` : 'Question'}
+                </span>
+                <p className="answ-brief__value">{a.prompt}</p>
+              </div>
+            ) : null}
             {/* Only where there is an answer to state: a poll, a written answer and an
                 upload are not scored, and the banded formats record how much of an
                 arrangement was right rather than which option was picked. */}

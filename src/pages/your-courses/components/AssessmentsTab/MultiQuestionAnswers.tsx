@@ -1,18 +1,19 @@
 import { useState } from 'react'
 import { ArrowDown2, CloseCircle, TickCircle } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
-import { situationalScore, type SituationalAssessment } from './assessmentResults'
+import { multiScore, type MultiAssessment } from './assessmentResults'
 /* The By Learner pivot is this same shape one level up — learner rows that open onto
    their answers — so the row-card chrome is borrowed rather than restated. */
 import './LearnerList.css'
-import './SituationalAnswers.css'
+import './MultiQuestionAnswers.css'
 
 /**
- * One situational test, read down the learners. A scenario is answered over a dozen
- * questions, so the row states how the learner did across it and opens onto every
- * question they answered — the format has no single answer to put in a cell.
+ * One multi-question assessment, read down the learners — a situational test running a
+ * scenario, or a lesson quiz of two or three checks. The row states how the learner did
+ * across it and opens onto every question they answered: several questions have no
+ * single answer to put in a cell.
  */
-function SituationalAnswers({ assessment: a }: { assessment: SituationalAssessment }) {
+function MultiQuestionAnswers({ assessment: a }: { assessment: MultiAssessment }) {
   const [open, setOpen] = useState<Set<string>>(new Set())
 
   const toggle = (id: string) =>
@@ -34,7 +35,7 @@ function SituationalAnswers({ assessment: a }: { assessment: SituationalAssessme
       <ul className="lrn-list">
         {a.responses.map((r) => {
           const isOpen = open.has(r.learner.id)
-          const score = situationalScore(a, r)
+          const score = multiScore(a, r)
           const pct = Math.round((score / a.questions.length) * 100)
           return (
             <li key={r.learner.id} className={`lrn-card${isOpen ? ' is-open' : ''}`}>
@@ -75,7 +76,7 @@ function SituationalAnswers({ assessment: a }: { assessment: SituationalAssessme
 
               <Collapse open={isOpen}>
                 <div className="lrn-detail">
-                  <ul className="lrn-answers sit-answers">
+                  <ul className="lrn-answers mqa-answers">
                     {a.questions.map((q, qi) => {
                       const right = r.picks[qi] === q.correctIndex
                       return (
@@ -95,7 +96,7 @@ function SituationalAnswers({ assessment: a }: { assessment: SituationalAssessme
                             {/* Only where they missed it — on a right answer this is
                                 the line directly above. */}
                             {right ? null : (
-                              <span className="sit-right">
+                              <span className="mqa-right">
                                 Correct answer: {q.options[q.correctIndex]}
                               </span>
                             )}
@@ -114,4 +115,4 @@ function SituationalAnswers({ assessment: a }: { assessment: SituationalAssessme
   )
 }
 
-export default SituationalAnswers
+export default MultiQuestionAnswers

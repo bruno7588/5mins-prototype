@@ -1,6 +1,9 @@
 import Button from '@/components/Button/Button'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
-import { assessmentTypeIcon } from '../assessmentTypeIcons'
+import {
+  assessmentTypeFromLabel,
+  getAssessmentIllustration,
+} from '@/assets/assessment-illustrations'
 import type { AssessmentResult } from './assessmentResults'
 import './AssessmentList.css'
 
@@ -16,7 +19,7 @@ function AssessmentList({ rows, resultCell, onView, pagination }: Props) {
   return (
     <div className="asl">
       <div className="asl-head">
-        <span className="asl-c-title">Assessment</span>
+        <span className="asl-c-title">Title</span>
         <span className="asl-c-type">Type</span>
         <span className="asl-c-responses">Responses</span>
         <span className="asl-c-result">Result</span>
@@ -31,8 +34,23 @@ function AssessmentList({ rows, resultCell, onView, pagination }: Props) {
                 <span className="asl-title">{a.title}</span>
               </span>
               <span className="asl-cell asl-c-type">
-                {assessmentTypeIcon(a.type, { size: 20 })}
-                {typeLabel(a.type)}
+                {/* The format's own artwork rather than a line icon: the same
+                    illustration the learner met it by. A lesson quiz is a lesson quiz
+                    whatever its questions are made of — the formats are a detail
+                    inside it, and the drawer is where they are read. */}
+                {(() => {
+                  const art = a.lesson ? 'lesson-quiz' : assessmentTypeFromLabel(typeLabel(a.type))
+                  return art ? (
+                    <img
+                      className="asl-illu"
+                      src={getAssessmentIllustration(art, 'desktop')}
+                      alt=""
+                      width={20}
+                      height={20}
+                    />
+                  ) : null
+                })()}
+                {a.lesson ? 'Lesson Quiz' : typeLabel(a.type)}
               </span>
               <span className="asl-cell asl-c-responses">
                 <span className="asl-n">{a.responses.length}</span>
