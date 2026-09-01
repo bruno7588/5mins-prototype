@@ -276,13 +276,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Nothing to report is not a bad score — an untouched assessment recedes rather
-   than reading as a nought. */
-.lrn-answer.is-missing .lrn-answer__score,
-.lrn-answer.is-missing .lrn-answer__name {
-  color: var(--text-tertiary);
-}
-
 /* Kept for MultiQuestionAnswers, which still marks each question right or wrong:
    leads the row, and the gutter is held even on an answer with no verdict so every
    question starts on the same line. */
