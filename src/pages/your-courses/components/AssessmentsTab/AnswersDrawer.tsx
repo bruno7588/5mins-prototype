@@ -1,14 +1,18 @@
 import { useRef, useState } from 'react'
-import { DocumentDownload } from 'iconsax-react'
+import { ImportCurve } from 'iconsax-react'
+import CsvIcon from '@/components/icons/CsvIcon'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Table, { type Column } from '@/components/Table/Table'
+import SituationalAnswers from './SituationalAnswers'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import '@/pages/my-team/CoursesDrawer.css'
 import {
   correctPct,
+  hasStatedAnswer,
   type AssessmentResult,
   type ChoiceResponse,
   type FileResponse,
@@ -71,6 +75,23 @@ function sheet(a: AssessmentResult): string[][] {
       ...a.responses.map((r) => [r.learner.name, r.learner.role, r.submittedAt, r.text]),
     ]
 
+  /* A row per question rather than per learner: a scenario's answers are the twelve
+     picks, and a sheet holding only the score throws away what was exported for. */
+  if (a.kind === 'situational')
+    return [
+      ['Learner', 'Role', 'Submitted', 'Question', 'Answer', 'Result'],
+      ...a.responses.flatMap((r) =>
+        a.questions.map((q, qi) => [
+          r.learner.name,
+          r.learner.role,
+          r.submittedAt,
+          `${qi + 1}. ${q.prompt}`,
+          q.options[r.picks[qi]],
+          r.picks[qi] === q.correctIndex ? 'Correct' : 'Incorrect',
+        ]),
+      ),
+    ]
+
   return [
     ['Learner', 'Role', 'Submitted', 'File', 'Type', 'Size'],
     ...a.responses.map((r) => [
@@ -92,6 +113,7 @@ interface Props {
 function AnswersDrawer({ assessment: a, onClose }: Props) {
   const [closing, setClosing] = useState(false)
   const panelRef = useRef<HTMLElement>(null)
+  const { toasts, show: showToast } = useToast()
 
   const handleClose = () => {
     setClosing(true)
@@ -112,6 +134,18 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
     const link = document.createElement('a')
     link.href = url
     link.download = `${a.title} answers.csv`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
+  /* Written answers are clamped to two lines in the row, so each one is also
+     downloadable on its own — reading one response should not mean exporting the
+     whole sheet. */
+  const downloadAnswer = (r: TextResponse) => {
+    const url = URL.createObjectURL(new Blob([r.text], { type: 'text/plain;charset=utf-8' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${a.title} — ${r.learner.name}.txt`
     link.click()
     URL.revokeObjectURL(url)
   }
@@ -152,9 +186,28 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
           width: '0 0 320px',
           render: (r) => <span className="answ-answer">{r.text}</span>,
         },
+        {
+          key: 'download',
+          header: '',
+          width: '0 0 52px',
+          cellClassName: 'tbl-action',
+          render: (r) => (
+            <button
+              className="icon-btn"
+              onClick={() => downloadAnswer(r)}
+              aria-label={`Download ${r.learner.name}’s answer`}
+            >
+              <ImportCurve size={20} color="var(--text-primary)" variant="Linear" />
+            </button>
+          ),
+        },
       ]
       return <Table columns={columns} rows={a.responses} getRowKey={(r) => r.learner.id} />
     }
+
+    /* Not a table: a scenario has no one answer to put in a cell, so each learner is
+       a row that opens onto the questions. */
+    if (a.kind === 'situational') return <SituationalAnswers assessment={a} />
 
     const columns: Column<FileResponse>[] = [
       learnerColumn<FileResponse>(),
@@ -162,7 +215,7 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
         key: 'file',
         header: 'File',
         render: (r) => (
-          <span className="tbl-stack">
+          <span className="tbl-stack answ-file">
             <span className="primary">{r.fileName}</span>
             <span className="supporting">
               {r.fileKind} · {r.fileSize}
@@ -174,10 +227,14 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
         key: 'download',
         header: '',
         width: '0 0 52px',
-        cellClassName: 'tbl-action is-disabled',
+        cellClassName: 'tbl-action',
         render: (r) => (
-          <button className="icon-btn ui-disabled" disabled aria-label={`Download ${r.fileName}`}>
-            <DocumentDownload size={20} color="var(--text-primary)" variant="Linear" />
+          <button
+            className="icon-btn"
+            onClick={() => showToast('info', `Downloading ${r.fileName}`)}
+            aria-label={`Download ${r.fileName}`}
+          >
+            <ImportCurve size={20} color="var(--text-primary)" variant="Linear" />
           </button>
         ),
       },
@@ -218,27 +275,20 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
               table so the rows can be read without scrolling back up. */}
           <section className="answ-brief">
             <div className="answ-brief__field">
-              <span className="answ-brief__label">Question</span>
+              <span className="answ-brief__label">
+                {a.kind === 'situational' ? `Brief · ${a.questions.length} questions` : 'Question'}
+              </span>
               <p className="answ-brief__value">{a.prompt}</p>
             </div>
-            <div className="answ-brief__field">
-              {a.kind === 'graded' ? (
-                <>
-                  <span className="answ-brief__label answ-brief__label--right">Correct answer</span>
-                  <p className="answ-brief__value">{a.options[a.correctIndex]}</p>
-                </>
-              ) : (
-                <>
-                  <span className="answ-brief__label">Correct answer</span>
-                  {/* Poll, short text and exercise have no right answer to mark against. */}
-                  <p className="answ-brief__value answ-brief__value--none">
-                    {a.kind === 'poll'
-                      ? 'None — a poll records preference, not knowledge.'
-                      : 'None — written and uploaded answers are not scored.'}
-                  </p>
-                </>
-              )}
-            </div>
+            {/* Only where there is an answer to state: a poll, a written answer and an
+                upload are not scored, and the banded formats record how much of an
+                arrangement was right rather than which option was picked. */}
+            {hasStatedAnswer(a) && (
+              <div className="answ-brief__field">
+                <span className="answ-brief__label answ-brief__label--right">Correct answer</span>
+                <p className="answ-brief__value">{a.options[a.correctIndex]}</p>
+              </div>
+            )}
           </section>
         </div>
 
@@ -250,20 +300,26 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
           )}
         </div>
 
-        <div className="side-drawer__footer">
-          <div className="side-drawer__footer-divider" />
-          <div className="side-drawer__buttons">
-            <Button
-              variant="outlined"
-              icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
-              onClick={download}
-              disabled={a.responses.length === 0}
-            >
-              Download Answers
-            </Button>
+        {/* An exercise has nothing to export as a sheet — the answers are the
+            uploaded files themselves, fetched row by row. */}
+        {a.kind !== 'file' && (
+          <div className="side-drawer__footer">
+            <div className="side-drawer__footer-divider" />
+            <div className="side-drawer__buttons">
+              <Button
+                variant="outlined"
+                icon={<CsvIcon size={20} color="currentColor" />}
+                onClick={download}
+                disabled={a.responses.length === 0}
+              >
+                Download Answers
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </aside>
+
+      <ToastContainer toasts={toasts} />
     </>
   )
 }

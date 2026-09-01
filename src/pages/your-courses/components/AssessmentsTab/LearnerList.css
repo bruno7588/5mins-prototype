@@ -208,16 +208,6 @@
   border-top: none;
 }
 
-/* Verdict as a wash on the row. Raw palette tokens: status means the same in
-   both modes; 16% keeps the text on it legible. */
-.lrn-answer--right {
-  background: color-mix(in srgb, var(--success-500) 16%, transparent);
-}
-
-.lrn-answer--wrong {
-  background: color-mix(in srgb, var(--danger-500) 16%, transparent);
-}
-
 .lrn-answer__body {
   flex: 1 1 auto;
   display: flex;
@@ -242,11 +232,14 @@
   word-break: break-word;
 }
 
+/* Leads the row: the verdict is what the list is scanned for, and at the trailing
+   edge it sat a full column away from the answer it judges. The gutter is held even
+   on an answer with no verdict, so every question starts on the same line. */
 .lrn-answer__v {
   flex: 0 0 20px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   min-height: 21px;
 }
 

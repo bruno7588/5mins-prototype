@@ -1,0 +1,18 @@
+/* Situational answers — the By Learner row-card (LearnerList.css) reused inside the
+   answers drawer, with the two things a scenario question needs on top of it. */
+
+/* An assessment title fits a line; a scenario question does not, and the question is
+   what the answer under it is read against, so it wraps instead of truncating. */
+.sit-answers .lrn-answer__title {
+  white-space: normal;
+  overflow: visible;
+}
+
+/* What they should have picked, under what they did. Paragraph M in tertiary — the
+   same quiet register as the question above it, so the answer itself stays the only
+   line in primary. */
+.sit-right {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}

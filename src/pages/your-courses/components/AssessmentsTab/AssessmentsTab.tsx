@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { DocumentDownload, Sort } from 'iconsax-react'
+import { Sort } from 'iconsax-react'
+import CsvIcon from '@/components/icons/CsvIcon'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
@@ -26,7 +27,7 @@ import './AssessmentsTab.css'
 const WEAK_SCORE = 60
 /* Under this many characters a written answer is a non-answer ("Not sure yet."). */
 const BRIEF_ANSWER = 24
-const PAGE_SIZE = 6
+const PAGE_SIZE = 10
 
 /**
  * The fourth column. Every format gets something true here — a poll has no right
@@ -38,7 +39,9 @@ function ResultCell({ a }: { a: AssessmentResult }) {
     return <span className="asm-result__none">Nothing submitted yet</span>
   }
 
-  if (a.kind === 'graded') {
+  /* A situational test scores the same way, just over its questions rather than over
+     its learners — correctPct does that division, so the cell does not have to. */
+  if (a.kind === 'graded' || a.kind === 'situational') {
     const pct = correctPct(a) ?? 0
     return (
       <div className="asm-result">
@@ -48,7 +51,10 @@ function ResultCell({ a }: { a: AssessmentResult }) {
             style={{ width: `${pct}%` }}
           />
         </span>
-        <span className="asm-result__pct">{pct}% correct</span>
+        <span className="asm-result__pct">
+          {pct}% correct
+          {a.kind === 'situational' ? ` · ${a.questions.length} questions` : ''}
+        </span>
       </div>
     )
   }
@@ -244,7 +250,7 @@ function AssessmentsTab() {
         <Button
           variant="outlined-2"
           onClick={downloadCsv}
-          icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+          icon={<CsvIcon size={20} color="currentColor" />}
         >
           Download Answers
         </Button>

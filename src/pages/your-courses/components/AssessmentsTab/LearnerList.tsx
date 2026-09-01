@@ -110,19 +110,20 @@ function LearnerList({ rows, pagination, focus }: Props) {
                     {r.answers.map((x) => (
                       <li
                         key={x.assessment.id}
-                        className={`lrn-answer${x.correct === null ? '' : x.correct ? ' lrn-answer--right' : ' lrn-answer--wrong'}`}
+                        className="lrn-answer"
                       >
-                        <span className="lrn-answer__body">
-                          <span className="lrn-answer__title">{x.assessment.title}</span>
-                          <span className="lrn-answer__a">{x.answer}</span>
-                        </span>
                         <span className="lrn-answer__v">
-                          {/* Only graded formats carry a verdict; the rest show none. */}
+                          {/* Only graded formats carry a verdict; the rest show none — the
+                              gutter stays, so every answer starts on the same line. */}
                           {x.correct === null ? null : x.correct ? (
                             <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-label="Correct" />
                           ) : (
                             <CloseCircle size={20} color="var(--danger-500)" variant="Bold" aria-label="Incorrect" />
                           )}
+                        </span>
+                        <span className="lrn-answer__body">
+                          <span className="lrn-answer__title">{x.assessment.title}</span>
+                          <span className="lrn-answer__a">{x.answer}</span>
                         </span>
                       </li>
                     ))}

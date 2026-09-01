@@ -52,6 +52,20 @@ export interface FileResponse {
   fileSize: string
 }
 
+/** One question inside a situational test. */
+export interface SituationalQuestion {
+  prompt: string
+  options: string[]
+  correctIndex: number
+}
+
+/** One run through the scenario: the option picked for each question, in order. */
+export interface SituationalResponse {
+  learner: ResponseLearner
+  submittedAt: string
+  picks: number[]
+}
+
 interface AssessmentBase {
   id: string
   title: string
@@ -87,7 +101,25 @@ export interface FileAssessment extends AssessmentBase {
   responses: FileResponse[]
 }
 
-export type AssessmentResult = GradedAssessment | PollAssessment | TextAssessment | FileAssessment
+/**
+ * A scenario answered over several questions. Kept out of GradedAssessment rather
+ * than bolted onto it: that shape has one prompt, one option list and one verdict
+ * per learner, and every reader of it assumes so. Here the assessment carries the
+ * scenario and the questions carry the answers.
+ */
+export interface SituationalAssessment extends AssessmentBase {
+  kind: 'situational'
+  type: 'situational-test'
+  questions: SituationalQuestion[]
+  responses: SituationalResponse[]
+}
+
+export type AssessmentResult =
+  | GradedAssessment
+  | PollAssessment
+  | TextAssessment
+  | FileAssessment
+  | SituationalAssessment
 
 /* ── Derived values ───────────────────────────────────────────────────────── */
 
@@ -100,10 +132,35 @@ export function responseCount(a: AssessmentResult): number {
  * Null is the signal to render something else entirely — never an em dash.
  */
 export function correctPct(a: AssessmentResult): number | null {
-  if (a.kind !== 'graded') return null
+  if (a.kind !== 'graded' && a.kind !== 'situational') return null
   if (a.responses.length === 0) return null
+  if (a.kind === 'situational') {
+    /* Averaged over answers, not over learners: a test where everyone missed the
+       same two questions is not the same shape as one where two learners missed
+       everything, and the answer count is what both claims are read off. */
+    const right = a.responses.reduce((n, r) => n + situationalScore(a, r), 0)
+    return Math.round((right / (a.responses.length * a.questions.length)) * 100)
+  }
   const right = a.responses.filter((r) => r.correct).length
   return Math.round((right / a.responses.length) * 100)
+}
+
+/* Formats whose options are outcome bands rather than answers: what is recorded is
+   how much of the arrangement they got right, not which option they chose. */
+const BANDED = new Set<GradedType>(['match-pairs', 'sequencing', 'categorization'])
+
+/**
+ * Whether this assessment has a right answer worth stating. False for the banded
+ * formats above, where “All four pairs correct” is the score and stating it as the
+ * correct answer says nothing — the pairs themselves live in the question.
+ */
+export function hasStatedAnswer(a: AssessmentResult): a is GradedAssessment {
+  return a.kind === 'graded' && !BANDED.has(a.type)
+}
+
+/** How many of one learner’s picks matched the right option. */
+export function situationalScore(a: SituationalAssessment, r: SituationalResponse): number {
+  return r.picks.filter((pick, q) => pick === a.questions[q].correctIndex).length
 }
 
 /** Votes per option, in option order. */
@@ -159,6 +216,31 @@ function choices(id: string, count: number, rightCount: number, options: number,
   })
 }
 
+/* One run through a scenario per learner.
+ *
+ * `easiness[q]` is roughly how many of the pool get question q right, and a learner's
+ * position in the pool is roughly how well they do — but both are wobbled per question,
+ * so a strong learner still drops one and a weak one still gets the easy ones. Strictly
+ * honouring the counts instead makes every learner score within one of the average,
+ * which is the one thing a per-learner table is read to find out. */
+function runs(
+  id: string,
+  count: number,
+  questions: SituationalQuestion[],
+  easiness: number[],
+): SituationalResponse[] {
+  return pool.slice(0, count).map((learner, i) => ({
+    learner,
+    submittedAt: DATES[(seed(learner.id) + i) % DATES.length],
+    picks: questions.map((q, qi) => {
+      const grip = i + ((seed(id + learner.id) + qi * 3) % 7) - 3
+      if (grip < easiness[qi]) return q.correctIndex
+      const n = q.options.length
+      return (q.correctIndex + 1 + ((seed(id + learner.id) + qi) % (n - 1))) % n
+    }),
+  }))
+}
+
 function votes(id: string, count: number, options: number): VoteResponse[] {
   return pool.slice(0, count).map((learner, i) => ({
     learner,
@@ -174,6 +256,132 @@ function texts(answers: string[]): TextResponse[] {
     text,
   }))
 }
+
+/* The scenario the situational test runs on. Twelve questions over one incident,
+   ordered as the incident unfolds — the last one deliberately returns to the first,
+   so the test can show whether the lesson held. */
+const EXCLUDED_HIRE: SituationalQuestion[] = [
+  {
+    prompt: 'A new hire tells you they feel excluded from team decisions. What do you do first?',
+    options: [
+      'Raise it with their manager before speaking to them again',
+      'Ask them for a specific recent example',
+      'Add them to every recurring meeting',
+      'Tell them it is normal in the first few months',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'Her example: a launch date moved in a channel she is not in. What is the most useful response?',
+    options: [
+      'Forward her the thread',
+      'Add the channel to onboarding and check what else is missing',
+      'Ask why she did not request access',
+      'Explain that the channel is for leads',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'Two other recent joiners say the same thing. What does that change?',
+    options: [
+      'Nothing — three people is not a pattern',
+      'It becomes a team process problem rather than an individual one',
+      'It means the onboarding buddy failed',
+      'It should go to HR before anything else',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'You want to know how widespread this is. What is the best next step?',
+    options: [
+      'Send an anonymous survey to the whole company',
+      'Ask the last four joiners the same question in their 1:1s',
+      'Watch the channels for a month',
+      'Raise it at the all-hands',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'Your manager says the team is “just busy right now”. How do you respond?',
+    options: [
+      'Agree and revisit next quarter',
+      'Show the three examples and propose one change',
+      'Escalate over their head',
+      'Drop it — it is not your call',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'Which change is most likely to fix the cause rather than the symptom?',
+    options: [
+      'A written decision log everyone can read',
+      'A monthly team social',
+      'Another announcements channel',
+      'Longer stand-ups',
+    ],
+    correctIndex: 0,
+  },
+  {
+    prompt: 'How should the decision log be introduced?',
+    options: [
+      'Announce it and require it from Monday',
+      'Pilot it for four weeks with one owner, then review',
+      'Add it quietly and see who uses it',
+      'Ask everyone to vote on the format first',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'The new hire asks whether raising this hurt her standing. What do you say?',
+    options: [
+      'That it is fine and not to worry about it',
+      'Name what changed because she raised it',
+      'Ask her to keep it between the two of you',
+      'Tell her you will note it in her review as initiative',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'A senior colleague calls the log “process for its own sake”. What is the strongest reply?',
+    options: [
+      'Point to the three handovers it would have caught',
+      'Remind them it is mandatory',
+      'Offer to exempt their area',
+      'Ask them to give it a year',
+    ],
+    correctIndex: 0,
+  },
+  {
+    prompt: 'Four weeks in, three people are using the log. What do you conclude?',
+    options: [
+      'The team rejected it',
+      'Adoption is a design problem — find where it breaks',
+      'It needs enforcing',
+      'It needs a better template',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'What would tell you the culture actually changed?',
+    options: [
+      'The log has entries every week',
+      'New joiners can say where decisions live',
+      'Nobody raises it any more',
+      'Meeting attendance goes up',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'Six months on, another joiner raises the same feeling. What is the right first move?',
+    options: [
+      'Ask them for a specific recent example',
+      'Point them at the decision log',
+      'Assume the log has decayed and rewrite it',
+      'Take it to their manager',
+    ],
+    correctIndex: 0,
+  },
+]
 
 export const courseAssessments: AssessmentResult[] = [
   {
@@ -223,19 +431,15 @@ export const courseAssessments: AssessmentResult[] = [
   },
   {
     id: 'a4',
-    kind: 'graded',
+    kind: 'situational',
     type: 'situational-test',
     title: 'A new hire feels excluded',
-    prompt: 'A new hire tells you they feel excluded from team decisions. What do you do first?',
+    /* The setup, not a question: what every question below is answered against. */
+    prompt:
+      'Priya joined the team six weeks ago. In her first proper 1:1 she says she keeps hearing about decisions after they are made, and is not sure who to ask.',
     enrolled: ENROLLED,
-    options: [
-      'Raise it with their manager before speaking to them again',
-      'Ask them for a specific recent example',
-      'Add them to every recurring meeting',
-      'Tell them it is normal in the first few months',
-    ],
-    correctIndex: 1,
-    responses: choices('a4', 10, 4, 4, 1),
+    questions: EXCLUDED_HIRE,
+    responses: runs('a4', 10, EXCLUDED_HIRE, [4, 7, 8, 6, 9, 3, 7, 8, 5, 6, 9, 7]),
   },
   {
     id: 'a5',
@@ -301,7 +505,7 @@ export const courseAssessments: AssessmentResult[] = [
 export const courseInsight: CourseInsight = {
   generatedAt: null,
   struggled:
-    'Sequencing a culture rollout is the weakest area: only 3 of 8 put the steps in the right order, and most started with communication rather than with listening. The situational test shows the same instinct — 6 of 10 escalated to the manager or added the new hire to meetings instead of asking for a specific example first. Both point at a bias toward acting before diagnosing.',
+    'Sequencing a culture rollout is the weakest area: only 3 of 8 put the steps in the right order, and most started with communication rather than with listening. The situational test shows the same instinct — on its opening question 6 of 10 acted or reassured, escalating to her manager, adding her to every meeting or calling it normal, rather than asking for a specific example first. Both point at a bias toward acting before diagnosing.',
   mastered:
     'The definition of psychological safety is secure (10 of 11 correct), and learners reliably recognise it in behaviour rather than in policy. Free-text answers are notably concrete — most proposed a ritual with a named owner and a cadence rather than a general intention, which suggests the practical framing in lessons 3 and 4 landed.',
 }
@@ -315,8 +519,12 @@ export interface LearnerAnswer {
   assessment: AssessmentResult
   /** Their answer as text, whatever the format records underneath. */
   answer: string
-  /** Null for poll, short text and exercise — those carry no verdict at all. */
+  /** Null for poll, short text and exercise — those carry no verdict at all. Also
+   *  null for a situational test: twelve questions do not reduce to one verdict,
+   *  and the tally lands in a partial count instead. */
   correct: boolean | null
+  /** Situational tests only — how many of its questions they got right. */
+  partial?: { correct: number; of: number }
   submittedAt: string
 }
 
@@ -335,6 +543,10 @@ export interface LearnerRow {
 function answerText(a: AssessmentResult, i: number): string {
   if (a.kind === 'graded' || a.kind === 'poll') return a.options[a.responses[i].optionIndex]
   if (a.kind === 'text') return a.responses[i].text
+  /* A whole run through a scenario, so the row states the score and the drawer
+     holds the twelve answers behind it. */
+  if (a.kind === 'situational')
+    return `${situationalScore(a, a.responses[i])} of ${a.questions.length} correct`
   return a.responses[i].fileName
 }
 
@@ -355,14 +567,21 @@ function describe(row: Omit<LearnerRow, 'signal' | 'headline' | 'sentence'>): Pi
   }
 
   const missed = answers.filter((x) => x.correct === false)
+  /* A situational test is missed by the question, so its misses are counted rather
+     than listed — without this a learner who dropped five of its twelve reads as
+     having missed nothing. */
+  const partly = answers.filter((x) => x.partial && x.partial.correct < x.partial.of)
+  const missedCount =
+    missed.length + partly.reduce((n, x) => n + (x.partial!.of - x.partial!.correct), 0)
+  const worst = missed[0] ?? partly[0]
   const written = answers.find((x) => x.assessment.kind === 'text')
   const skipped = total - answers.length
 
   /* Name the thing they actually got wrong — a percentage alone tells an admin
      nothing they can act on. */
-  const missedPart = missed.length
-    ? `Missed ${missed.length} of ${scored}, including “${missed[0].assessment.title}”.`
-    : `Answered all ${scored} scored assessments correctly.`
+  const missedPart = missedCount
+    ? `Missed ${missedCount} of ${scored}, including “${worst.assessment.title}”.`
+    : `Answered all ${scored} scored questions correctly.`
   /* The length, not a verdict on it. This used to read "specific, concrete" or "very
      brief" off `answer.length < 24` — a character count laundered into a judgement the
      system never made, and one the admin could not check. A word count says the same
@@ -390,17 +609,25 @@ export const learnerRows: LearnerRow[] = pool.map((learner) => {
       assessment: a,
       answer: answerText(a, i),
       correct: verdict(a, i),
+      ...(a.kind === 'situational'
+        ? { partial: { correct: situationalScore(a, a.responses[i]), of: a.questions.length } }
+        : {}),
       submittedAt: a.responses[i].submittedAt,
     })
   }
   const graded = answers.filter((x) => x.correct !== null)
-  const correct = graded.filter((x) => x.correct).length
+  /* Questions, not assessments: the situational test scores twelve of them, and
+     counting it as one would hide most of what this learner was actually asked. */
+  const scored = graded.length + answers.reduce((n, x) => n + (x.partial?.of ?? 0), 0)
+  const correct =
+    graded.filter((x) => x.correct).length +
+    answers.reduce((n, x) => n + (x.partial?.correct ?? 0), 0)
   const base = {
     learner,
     answers,
-    scored: graded.length,
+    scored,
     correct,
-    pct: graded.length ? Math.round((correct / graded.length) * 100) : null,
+    pct: scored ? Math.round((correct / scored) * 100) : null,
   }
   return { ...base, ...describe(base) }
 })
@@ -463,6 +690,24 @@ export function responsesCsv(): string {
   const header = ['Assessment', 'Type', 'Learner', 'Role', 'Submitted', 'Response', 'Result']
   const rows: string[][] = []
   for (const a of courseAssessments) {
+    /* One row per question, so a situational test exports as what it is rather
+       than as a score with the twelve answers thrown away. */
+    if (a.kind === 'situational') {
+      for (const r of a.responses) {
+        a.questions.forEach((q, qi) => {
+          rows.push([
+            a.title,
+            a.type,
+            r.learner.name,
+            r.learner.role,
+            r.submittedAt,
+            `Q${qi + 1}: ${q.options[r.picks[qi]]}`,
+            r.picks[qi] === q.correctIndex ? 'Correct' : 'Incorrect',
+          ])
+        })
+      }
+      continue
+    }
     a.responses.forEach((_, i) => {
       const correct = a.kind === 'graded' ? (a.responses[i].correct ? 'Correct' : 'Incorrect') : ''
       rows.push([

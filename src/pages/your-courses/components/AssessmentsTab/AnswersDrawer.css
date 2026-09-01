@@ -63,10 +63,6 @@
   color: var(--text-primary);
 }
 
-.answ-brief__value--none {
-  color: var(--text-tertiary);
-}
-
 /* ── Cell content ───────────────────────────────────────────────────────── */
 /* Initials stand in for a missing photo; sized by the DS .avatar-32. */
 .answ-initials {
@@ -97,4 +93,17 @@
   max-width: 100%;
   white-space: normal;
   overflow: hidden;
+}
+
+/* The uploaded file cell reads as a filename with a quiet caption under it, so
+   it drops the table's default two-line emphasis: the name stays Paragraph M
+   Regular in primary, and the type · size line steps down to Text S tertiary. */
+.tbl-stack.answ-file .primary {
+  font-weight: 400;
+}
+
+.tbl-stack.answ-file .supporting {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-tertiary);
 }
