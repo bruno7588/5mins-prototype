@@ -235,7 +235,10 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
               </h2>
               {/* The format alone: how many answered is a fact about the answers, and
                   it now sits with the bars it is the denominator of. */}
-              <p className="answ-meta">{typeLabel(a.type)}</p>
+              {/* The same name the row carries: a lesson quiz's underlying type is
+                  Multiple Choice, and the drawer calling it that contradicted the
+                  list the admin opened it from. */}
+              <p className="answ-meta">{a.lesson ? 'Lesson Quiz' : typeLabel(a.type)}</p>
             </div>
             <CloseButton onClick={handleClose} />
           </div>

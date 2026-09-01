@@ -1,146 +1,208 @@
-import { useState, type CSSProperties } from 'react'
-import Button from '@/components/Button/Button'
-import Collapse from '@/components/Collapse/Collapse'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import {
   hasStatedAnswer,
   optionTally,
   questionTally,
   type AssessmentResult,
+  type GradedAssessment,
+  type MultiAssessment,
+  type PollAssessment,
 } from './assessmentResults'
 import './AnswerStats.css'
 
-/** One bar: what it is, how far it fills, and what it counts. */
-interface Row {
-  label: string
+/** Whole percents, so nothing claims a precision the sample cannot carry. */
+const pct = (n: number, of: number) => Math.round((n / of) * 100)
+
+/* ── Where the answers went ───────────────────────────────────────────────
+   One question, one right answer: the thing worth seeing is what share of the
+   cohort found it, so the options share a single bar rather than each getting
+   a bar of its own. Share-of-whole is read in one mark instead of four. */
+function Split({ a, responded }: { a: GradedAssessment; responded: number }) {
+  const tally = optionTally(a)
+  /* An option nobody chose gets no segment — a zero-width sliver between two
+     gaps reads as a rendering fault. It keeps its line in the legend. */
+  const parts = a.options
+    .map((label, i) => ({ label, n: tally[i], correct: i === a.correctIndex }))
+    .filter((p) => p.n > 0)
+
+  return (
+    <div className="ast-split">
+      <div
+        className="ast-split__track"
+        /* Grid tracks in the counts themselves, so the segments divide the bar
+           exactly. Four rounded percentages do not add up to a hundred. */
+        style={{ gridTemplateColumns: parts.map((p) => `${p.n}fr`).join(' ') }}
+      >
+        {parts.map((p) => (
+          <Tooltip
+            key={p.label}
+            className={`ast-seg${p.correct ? ' is-correct' : ''}`}
+            icon={false}
+            position="Top"
+            text={`${p.label} — ${p.n} of ${responded}`}
+          >
+            <span className="ast-seg__fill" />
+          </Tooltip>
+        ))}
+      </div>
+
+      <ul className="ast-legend">
+        {a.options.map((label, i) => (
+          <li
+            key={label}
+            className={`ast-legend__row${i === a.correctIndex ? ' is-correct' : ''}`}
+          >
+            <span className="ast-legend__swatch" aria-hidden="true" />
+            <span className="ast-legend__label">{label}</span>
+            <span className="ast-legend__value">{pct(tally[i], responded)}%</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/* ── How they voted ───────────────────────────────────────────────────────
+   A poll has no right answer, so the ranking is the whole story. The option
+   sits inside its own bar: the eye reads the words and the length together
+   rather than travelling from a label to a mark that belongs to it. */
+function Poll({ a, responded }: { a: PollAssessment; responded: number }) {
+  const tally = optionTally(a)
+  const ranked = a.options
+    .map((label, i) => ({ label, n: tally[i] }))
+    .sort((x, y) => y.n - x.n)
+
+  return (
+    <ol className="ast-poll">
+      {ranked.map((r, i) => (
+        <li key={r.label} className={`ast-poll__row${i === 0 && r.n > 0 ? ' is-lead' : ''}`}>
+          <span
+            className="ast-poll__fill"
+            style={{ '--ast-w': `${pct(r.n, responded)}%`, '--ast-i': i } as React.CSSProperties}
+            aria-hidden="true"
+          />
+          <span className="ast-poll__label">{r.label}</span>
+          <span className="ast-poll__value">{pct(r.n, responded)}%</span>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+/* ── Columns ──────────────────────────────────────────────────────────────
+   Shared by the two formats whose data has an order to it. Columns rather
+   than a stack of rows: along an axis the shape is the finding — the dip in a
+   scenario, the peak of a band distribution — and a list of bars hides it. */
+interface Column {
+  /** Under the column. Short: it repeats twelve times. */
+  tick: string
   pct: number
-  /** Spoken in place of the row, so the bar is not announced as a bare number. */
+  /** The whole sentence, for the hover and for a screen reader. */
   aria: string
-  correct?: boolean
-  lead?: boolean
+  full?: boolean
 }
 
-/** Beyond this many rows the block would push the answers out of the panel. */
-const SHOWN = 4
-
-function Bar({ pct, aria, correct, index }: { pct: number; aria: string; correct?: boolean; index: number }) {
+function Columns({ cols }: { cols: Column[] }) {
+  /* Few columns are capped and centred, many run the full width. Driven by how many
+     there are rather than by which format they came from: three lesson-quiz questions
+     spread across the panel are slabs for the same reason four bands were. */
+  const sparse = cols.length <= 6
   return (
-    <span
-      className="ast-track"
-      role="progressbar"
-      aria-valuenow={pct}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-label={aria}
-    >
-      <span
-        className={`ast-fill${correct ? ' is-correct' : ''}`}
-        style={{ '--ast-w': `${pct}%`, '--ast-i': Math.min(index, 8) } as CSSProperties}
-      />
-    </span>
+    <ol className={`ast-cols${sparse ? ' is-sparse' : ''}`}>
+      {cols.map((c, i) => (
+        <li key={c.tick} className="ast-col" aria-label={c.aria}>
+          <Tooltip className="ast-col__hit" icon={false} position="Top" text={c.aria}>
+            <span
+              className={`ast-col__bar${c.full ? ' is-full' : ''}`}
+              style={{ '--ast-h': `${c.pct}%`, '--ast-i': i } as React.CSSProperties}
+            >
+              {/* Rides the top of its own column, so the figures sit where the
+                  data does instead of in a row of their own. */}
+              <span className="ast-col__value">{c.pct}%</span>
+            </span>
+          </Tooltip>
+          <span className="ast-col__tick" aria-hidden="true">
+            {c.tick}
+          </span>
+        </li>
+      ))}
+    </ol>
   )
 }
 
-function RowItem({ row, index }: { row: Row; index: number }) {
-  return (
-    <li className="ast-row">
-      <span className={`ast-row__label${row.lead ? ' is-lead' : ''}`}>{row.label}</span>
-      {/* On the bar's own line, not the label's: a question can run to two lines, and a
-          figure parked at the end of a wrapping label lands nowhere in particular. */}
-      <span className="ast-row__meter">
-        <Bar pct={row.pct} aria={row.aria} correct={row.correct} index={index} />
-        <span className="ast-row__value">{row.pct}%</span>
-      </span>
-    </li>
-  )
+/** "3 of 4 pairs correct" → "3/4". The band's own fraction, room for four of them. */
+function bandTick(label: string): string {
+  const m = /^(\d+) of (\d+)/.exec(label)
+  return m ? `${m[1]}/${m[2]}` : label
 }
 
 /**
- * The shape of a result, above the rows that spell it out. Every figure is counted
- * from the responses in the table below — the formats that record no score (short
- * text, exercise) get no chart rather than an invented one.
+ * The shape of a result, above the rows that spell it out. Four formats, four
+ * forms: what the data is doing decides how it is drawn. The formats that record
+ * no score at all — short text, exercise — get no chart rather than an invented one.
  */
 function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
-  const [open, setOpen] = useState(false)
-
   if (a.responses.length === 0) return null
   /* Neither is scored: no ratio to meter, no options to count. */
   if (a.kind === 'text' || a.kind === 'file') return null
 
   const responded = a.responses.length
   /* The banded formats record how much of an arrangement was right rather than which
-     option was picked. Their "correct" band is full marks, not a chosen answer, and
-     saying "answered correctly" over it would be arithmetically right and false. */
+     option was picked. Their "correct" band is full marks, not a chosen answer. */
   const banded = a.kind === 'graded' && !hasStatedAnswer(a)
 
-  let heading: string
-  let rows: Row[]
-
-  if (a.kind === 'multi') {
-    const tally = questionTally(a)
-    heading = 'By question'
-    rows = a.questions.map((q, i) => ({
-      label: `${i + 1}. ${q.prompt}`,
-      pct: Math.round((tally[i] / responded) * 100),
-      aria: `Question ${i + 1}, ${q.prompt} — ${tally[i]} of ${responded} correct`,
-    }))
-  } else {
-    const tally = optionTally(a)
-    const top = Math.max(...tally)
-    heading =
-      a.kind === 'poll' ? 'How they voted' : banded ? 'Score bands, best first' : 'Answers'
-    rows = a.options.map((label, i) => {
-      const correct = a.kind === 'graded' && i === a.correctIndex
-      return {
-        label,
-        pct: Math.round((tally[i] / responded) * 100),
-        aria: `${label}${correct ? (banded ? ' — full marks' : ' — correct answer') : ''}: ${tally[i]} of ${responded}`,
-        correct,
-        /* Only a poll leans on its leader; elsewhere the right answer is the story. */
-        lead: a.kind === 'poll' && tally[i] === top && top > 0,
-      }
-    })
-  }
-
-  const folds = rows.length > SHOWN
-  const shown = folds ? rows.slice(0, SHOWN) : rows
-  const rest = folds ? rows.slice(SHOWN) : []
+  const heading =
+    a.kind === 'multi'
+      ? 'By question'
+      : a.kind === 'poll'
+        ? 'How they voted'
+        : banded
+          ? 'Score bands'
+          : 'Answers'
 
   return (
     <section className="ast" aria-label="Overview">
-      <div className="ast-block">
-        <p className="ast-heading">
-          <span>{heading}</span>
-          {/* Beside the bars rather than up in the drawer's header: it is the
-              denominator every row is counted against. */}
-          <span className="ast-heading__count">
-            {responded} of {a.enrolled} responded
-          </span>
-        </p>
-        <ul className="ast-rows">
-          {shown.map((r, i) => (
-            <RowItem key={i} row={r} index={i} />
-          ))}
-        </ul>
+      <p className="ast-heading">
+        <span>{heading}</span>
+        {/* Beside the chart rather than up in the drawer's header: it is the
+            denominator every figure is counted against. */}
+        <span className="ast-heading__count">
+          {responded} of {a.enrolled} responded
+        </span>
+      </p>
 
-        {/* The rest of a twelve-question scenario, folded: source order is the order
-            the incident unfolds in, so the tail is hidden rather than reordered. */}
-        {folds ? (
-          <>
-            <Collapse open={open}>
-              <ul className="ast-rows ast-rows--rest">
-                {rest.map((r, i) => (
-                  <RowItem key={i} row={r} index={SHOWN + i} />
-                ))}
-              </ul>
-            </Collapse>
-            <Button variant="text" onClick={() => setOpen((v) => !v)}>
-              {open ? 'Show fewer' : `Show ${rest.length} more`}
-            </Button>
-          </>
-        ) : null}
-      </div>
+      {a.kind === 'multi' ? (
+        <Columns cols={questionCols(a, responded)} />
+      ) : a.kind === 'poll' ? (
+        <Poll a={a} responded={responded} />
+      ) : banded ? (
+        <Columns cols={bandCols(a, responded)} />
+      ) : (
+        <Split a={a} responded={responded} />
+      )}
     </section>
   )
+}
+
+/** One column per question, in the order the scenario runs. */
+function questionCols(a: MultiAssessment, responded: number): Column[] {
+  const tally = questionTally(a)
+  return a.questions.map((q, i) => ({
+    tick: String(i + 1),
+    pct: pct(tally[i], responded),
+    aria: `Question ${i + 1}, ${q.prompt} — ${tally[i]} of ${responded} correct`,
+  }))
+}
+
+/** One column per band, best first, as the options are ordered. */
+function bandCols(a: GradedAssessment, responded: number): Column[] {
+  const tally = optionTally(a)
+  return a.options.map((label, i) => ({
+    tick: bandTick(label),
+    pct: pct(tally[i], responded),
+    aria: `${label} — ${tally[i]} of ${responded}`,
+    full: i === a.correctIndex,
+  }))
 }
 
 export default AnswerStats

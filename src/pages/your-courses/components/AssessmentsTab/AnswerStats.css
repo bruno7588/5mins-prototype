@@ -1,18 +1,12 @@
-/* The overview at the top of the answers drawer. Bars, not pies: every figure here is
-   a magnitude or a single ratio, and both read straighter as a length. Prefix `ast-`. */
+/* The charts at the top of the answers drawer. Four formats, four forms — a
+   distribution, a ranking, a sequence and a histogram are four different things,
+   and drawing them all as the same list of bars was the part that read as
+   templated. Prefix `ast-`. */
 
 /* The panel around this is on a 12px rhythm, so the block keeps to it. */
 .ast {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-}
-
-/* ── The rows ────────────────────────────────────────────────────────────── */
-.ast-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   gap: var(--space-sm);
 }
 
@@ -36,88 +30,161 @@
   font-variant-numeric: tabular-nums;
 }
 
-.ast-rows {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+/* The chart's own hover surface has no business being a text cursor, and the DS
+   tooltip's wrapper is a plain div that would otherwise size to its content. */
+.ast .tooltip-wrapper {
+  min-width: 0;
+}
+
+.ast .tooltip__trigger {
+  display: block;
   width: 100%;
+  height: 100%;
+  cursor: default;
+}
+
+/* ── Where the answers went: one bar, divided ────────────────────────────── */
+.ast-split {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
 }
 
-/* The folded tail keeps the same rhythm as the rows above it. */
-.ast-rows--rest {
-  padding-top: var(--space-sm);
+/* 2px of the surface between segments rather than a border: a rule would add a
+   colour, a gap removes one, and the eye still reads the join. */
+.ast-split__track {
+  display: grid;
+  gap: 2px;
+  height: 12px;
+  /* Swept open once the drawer has arrived rather than while it is travelling.
+     clip-path rather than width: the segments keep their proportions through the
+     reveal instead of reflowing on every frame. */
+  animation: ast-sweep 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: 300ms;
 }
 
-.ast-row {
+@keyframes ast-sweep {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.ast-seg__fill {
+  display: block;
+  height: 100%;
+  background: var(--primary-600);
+}
+
+/* Status colour for the one segment it means. Green against the blue of the rest
+   is a hue shift rather than a red/green pair, so it survives the common colour
+   deficiencies — and the legend names it in words underneath either way. */
+.ast-seg.is-correct .ast-seg__fill {
+  background: var(--success-500);
+}
+
+/* Rounded where the data ends, square where one segment meets the next. */
+.ast-seg:first-child .ast-seg__fill {
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
+}
+
+.ast-seg:last-child .ast-seg__fill {
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+}
+
+.ast-seg:only-child .ast-seg__fill {
+  border-radius: var(--radius-full);
+}
+
+/* ── The legend, which is also the numbers ───────────────────────────────── */
+.ast-legend {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-s);
 }
 
-/* Wraps rather than truncates: at the narrow end of the panel a four-option question
-   runs to two lines, and clipping the option clips the thing the chart is about. */
-.ast-row__label {
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-primary);
-  overflow-wrap: anywhere;
-}
-
-/* The one a poll is about. Weight, not colour — the bars stay one hue. */
-.ast-row__label.is-lead {
-  font-weight: 500;
-}
-
-/* The bar and its figure share a line. */
-.ast-row__meter {
+.ast-legend__row {
   display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-/* Right-aligned over a fixed measure so the column of figures lines up whatever the
-   digits, and tabular so 100% and 8% sit on the same stems. The measure is 4ch — just
-   what "100%" occupies, so a short figure like 8% is not pushed a whole character
-   clear of its own bar. */
-.ast-row__value {
-  flex: 0 0 auto;
-  min-width: 4ch;
-  text-align: right;
+  align-items: baseline;
+  gap: var(--space-s);
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/* A dot rather than a square: it is the same mark the bar is made of, shrunk. */
+.ast-legend__swatch {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--primary-600);
+  /* Sits on the text's baseline rather than above it. */
+  transform: translateY(-1px);
+}
+
+.ast-legend__row.is-correct .ast-legend__swatch {
+  background: var(--success-500);
+}
+
+/* The one that was right carries the weight, so the list has an answer in it. */
+.ast-legend__row.is-correct .ast-legend__label {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ast-legend__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ast-legend__value {
+  flex: 0 0 auto;
+  min-width: 4ch;
+  text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-/* ── The bar ─────────────────────────────────────────────────────────────── */
-/* The anatomy of .asm-bar and .lrn-bar, unchanged: the drawer's meter and the table
-   cell's meter are the same object, so they are drawn the same. What makes the hero
-   a hero is the 32px figure over it, not a fatter bar. */
-.ast-track {
-  display: block;
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--border);
-  overflow: hidden;
+/* ── How they voted: the option inside its own bar ───────────────────────── */
+.ast-poll {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
 }
 
-/* One colour whatever the score — see .asm-bar__fill. Raw palette on purpose: the
-   progress fill is the same blue in both modes. */
-.ast-fill {
-  display: block;
-  height: 100%;
+.ast-poll__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
+  border-radius: var(--radius-s);
+  background: var(--input-background);
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* A tint, not the solid fill: the words sit on top of it and have to stay
+   readable over both the fill and the track behind them. Same device the badges
+   use — a percentage of the hue, mixed rather than faded, so it is one colour
+   rather than a transparency over whatever happens to be underneath. */
+.ast-poll__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
   width: var(--ast-w);
-  border-radius: var(--radius-full);
-  background: var(--primary-600);
-  /* Grows once the panel has arrived rather than while it is travelling: the 300ms
-     delay is the drawer's own slide (side-drawer-in), and `backwards` holds the bar
-     at zero through it so nothing flashes full width first. */
-  animation: ast-grow 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  background: color-mix(in srgb, var(--primary-600) 22%, transparent);
+  animation: ast-grow 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(300ms + var(--ast-i, 0) * 60ms);
 }
 
@@ -127,16 +194,131 @@
   }
 }
 
-/* Status colour for the thing it actually means. Green against the blue of every
-   other bar separates under red/green deficiency too — it is a hue shift, not a
-   red/green pair — and the row's aria label still names it as the correct answer. */
-.ast-fill.is-correct {
+/* Above the fill. */
+.ast-poll__label,
+.ast-poll__value {
+  position: relative;
+}
+
+.ast-poll__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Weight, not colour — the bars stay one hue and the length already says which
+   option leads. */
+.ast-poll__row.is-lead .ast-poll__label {
+  font-weight: 500;
+}
+
+.ast-poll__value {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Columns: a sequence, and a distribution ─────────────────────────────── */
+.ast-cols {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-xs);
+}
+
+/* A handful of columns rather than a dozen. Capped and centred: spread across the
+   full panel, four columns are slabs, and a slab is not read as a measurement. */
+.ast-cols.is-sparse {
+  justify-content: center;
+  gap: var(--space-m);
+}
+
+.ast-cols.is-sparse .ast-col {
+  max-width: 112px;
+}
+
+.ast-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* The plot. A fixed height so every column is read against the same hundred. */
+.ast-col__hit {
+  height: 112px;
+}
+
+.ast-col__hit .tooltip__trigger {
+  display: flex;
+  align-items: flex-end;
+}
+
+.ast-col__bar {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: var(--ast-h);
+  /* A column at 0% would be nothing at all, so it keeps a hairline: the reader
+     needs to see that the question was asked and nobody got it. */
+  min-height: 2px;
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+  background: var(--primary-600);
+  animation: ast-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(300ms + var(--ast-i, 0) * 45ms);
+}
+
+/* Full marks — the same green the correct segment carries, so one colour means
+   one thing across all four charts. */
+.ast-col__bar.is-full {
   background: var(--success-500);
+}
+
+@keyframes ast-rise {
+  from {
+    height: 0;
+  }
+}
+
+/* Over the column, not inside it: a short column has no room for a figure, and
+   half of these are short. */
+.ast-col__value {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  padding-bottom: var(--space-xxs);
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  animation: ast-fade 300ms ease backwards;
+  animation-delay: calc(560ms + var(--ast-i, 0) * 45ms);
+}
+
+@keyframes ast-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.ast-col__tick {
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
 }
 
 /* The length is the data; the growing is decoration. */
 @media (prefers-reduced-motion: reduce) {
-  .ast-fill {
+  .ast-split__track,
+  .ast-poll__fill,
+  .ast-col__bar,
+  .ast-col__value {
     animation: none;
   }
 }
