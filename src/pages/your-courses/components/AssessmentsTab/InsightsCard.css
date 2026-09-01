@@ -10,8 +10,8 @@
   flex-direction: column;
   gap: 0;
   padding: var(--space-m);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--input-background);
 }
 
 .asmi-region {
@@ -85,13 +85,6 @@
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
-}
-
-/* The card's own fill already separates the header from the body, so the
-   section rule adds a second boundary for nothing. Scoped: other SectionHeader
-   users (drawers, forms) still get their divider. */
-.asmi .section-header__divider {
-  display: none;
 }
 
 /* H4 (16px/1.5) rather than the section header's default H3 — this sits inside a

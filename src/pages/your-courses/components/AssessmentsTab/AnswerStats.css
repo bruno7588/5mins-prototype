@@ -1,0 +1,142 @@
+/* The overview at the top of the answers drawer. Bars, not pies: every figure here is
+   a magnitude or a single ratio, and both read straighter as a length. Prefix `ast-`. */
+
+/* The panel around this is on a 12px rhythm, so the block keeps to it. */
+.ast {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ── The rows ────────────────────────────────────────────────────────────── */
+.ast-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.ast-heading {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.ast-heading__count {
+  flex: 0 0 auto;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ast-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* The folded tail keeps the same rhythm as the rows above it. */
+.ast-rows--rest {
+  padding-top: var(--space-sm);
+}
+
+.ast-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* Wraps rather than truncates: at the narrow end of the panel a four-option question
+   runs to two lines, and clipping the option clips the thing the chart is about. */
+.ast-row__label {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* The one a poll is about. Weight, not colour — the bars stay one hue. */
+.ast-row__label.is-lead {
+  font-weight: 500;
+}
+
+/* The bar and its figure share a line. */
+.ast-row__meter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Right-aligned over a fixed measure so the column of figures lines up whatever the
+   digits, and tabular so 100% and 8% sit on the same stems. The measure is 4ch — just
+   what "100%" occupies, so a short figure like 8% is not pushed a whole character
+   clear of its own bar. */
+.ast-row__value {
+  flex: 0 0 auto;
+  min-width: 4ch;
+  text-align: right;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── The bar ─────────────────────────────────────────────────────────────── */
+/* The anatomy of .asm-bar and .lrn-bar, unchanged: the drawer's meter and the table
+   cell's meter are the same object, so they are drawn the same. What makes the hero
+   a hero is the 32px figure over it, not a fatter bar. */
+.ast-track {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  overflow: hidden;
+}
+
+/* One colour whatever the score — see .asm-bar__fill. Raw palette on purpose: the
+   progress fill is the same blue in both modes. */
+.ast-fill {
+  display: block;
+  height: 100%;
+  width: var(--ast-w);
+  border-radius: var(--radius-full);
+  background: var(--primary-600);
+  /* Grows once the panel has arrived rather than while it is travelling: the 300ms
+     delay is the drawer's own slide (side-drawer-in), and `backwards` holds the bar
+     at zero through it so nothing flashes full width first. */
+  animation: ast-grow 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(300ms + var(--ast-i, 0) * 60ms);
+}
+
+@keyframes ast-grow {
+  from {
+    width: 0;
+  }
+}
+
+/* Status colour for the thing it actually means. Green against the blue of every
+   other bar separates under red/green deficiency too — it is a hue shift, not a
+   red/green pair — and the row's aria label still names it as the correct answer. */
+.ast-fill.is-correct {
+  background: var(--success-500);
+}
+
+/* The length is the data; the growing is decoration. */
+@media (prefers-reduced-motion: reduce) {
+  .ast-fill {
+    animation: none;
+  }
+}

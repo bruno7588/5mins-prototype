@@ -10,9 +10,11 @@
   min-width: 0;
 }
 
+/* H3 — the drawer is a place of its own, and its title carries the same weight as
+   any other section opened in full. */
 .answ-title {
   margin: 0;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -26,11 +28,19 @@
 }
 
 /* ── Brief: the question and what it was marked against ─────────────────── */
+/* The rule under the headline, as on a section header: the title block is one thing
+   and what follows it is another. */
+.answ-divider {
+  height: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}
+
 .answ-brief {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  padding: var(--space-sm);
+  padding: var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--input-background);
 }
@@ -42,18 +52,16 @@
   min-width: 0;
 }
 
+/* Paragraph M semibold: these name the fields under them, so they carry the weight
+   a field label carries elsewhere. */
 .answ-brief__label {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
   font-size: 14px;
+  font-weight: 600;
   line-height: 1.5;
   color: var(--text-tertiary);
-}
-
-/* The label carries the verdict colour; the answer itself stays body text. */
-.answ-brief__label--right {
-  color: var(--text-success);
 }
 
 .answ-brief__value {
@@ -115,4 +123,11 @@
    the columns share it. */
 .answ-table .tbl {
   width: 100%;
+}
+
+/* Two blocks share the scroller now: the overview, then the answers. */
+.answ-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
 }

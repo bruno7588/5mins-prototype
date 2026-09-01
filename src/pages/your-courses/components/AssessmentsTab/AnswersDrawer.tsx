@@ -6,13 +6,12 @@ import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Table, { type Column } from '@/components/Table/Table'
+import AnswerStats from './AnswerStats'
 import MultiQuestionAnswers from './MultiQuestionAnswers'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import '@/pages/my-team/CoursesDrawer.css'
 import {
-  correctPct,
-  hasStatedAnswer,
   type AssessmentResult,
   type ChoiceResponse,
   type FileResponse,
@@ -121,8 +120,6 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
   }
 
   useOverlayA11y(panelRef, !closing, { onEscape: handleClose })
-
-  const pct = correctPct(a)
 
   /* Every cell quoted: answers are free text and carry commas, quotes and line
      breaks. The BOM is what stops Excel reading the accents as mojibake. */
@@ -236,16 +233,18 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
               <h2 className="answ-title" id="answ-title">
                 {a.title}
               </h2>
-              <p className="answ-meta">
-                {typeLabel(a.type)} · {a.responses.length} of {a.enrolled} responded
-                {pct !== null ? ` · ${pct}% correct` : ''}
-              </p>
+              {/* The format alone: how many answered is a fact about the answers, and
+                  it now sits with the bars it is the denominator of. */}
+              <p className="answ-meta">{typeLabel(a.type)}</p>
             </div>
             <CloseButton onClick={handleClose} />
           </div>
+          <div className="answ-divider" aria-hidden="true" />
+        </div>
 
-          {/* The question and the answer it was marked against, held above the
-              table so the rows can be read without scrolling back up. */}
+        <div className="side-drawer__content answ-content">
+          {/* The question, the answer it was marked against, and the shape of the
+              result — one panel above the rows it summarises. */}
           <section className="answ-brief">
             {/* A scenario states its brief; a lesson quiz has no prompt of its own —
                 its questions are the whole of it, and they are in the rows below. */}
@@ -257,19 +256,12 @@ function AnswersDrawer({ assessment: a, onClose }: Props) {
                 <p className="answ-brief__value">{a.prompt}</p>
               </div>
             ) : null}
-            {/* Only where there is an answer to state: a poll, a written answer and an
-                upload are not scored, and the banded formats record how much of an
-                arrangement was right rather than which option was picked. */}
-            {hasStatedAnswer(a) && (
-              <div className="answ-brief__field">
-                <span className="answ-brief__label answ-brief__label--right">Correct answer</span>
-                <p className="answ-brief__value">{a.options[a.correctIndex]}</p>
-              </div>
-            )}
+            {/* The shape of the result, in the panel that states the question it is a
+                result of. It scrolls with the answers rather than sitting in the fixed
+                header: a twelve-question breakdown pinned up there would eat the panel. */}
+            <AnswerStats key={a.id} assessment={a} />
           </section>
-        </div>
 
-        <div className="side-drawer__content">
           {a.responses.length === 0 ? (
             <p className="answ-none">Nobody has answered this yet.</p>
           ) : (

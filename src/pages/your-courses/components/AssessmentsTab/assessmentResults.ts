@@ -170,6 +170,17 @@ export function multiScore(a: MultiAssessment, r: MultiResponse): number {
   return r.picks.filter((pick, q) => pick === a.questions[q].correctIndex).length
 }
 
+/**
+ * How many got each question right, in question order. The per-question view has no
+ * other source: a learner's picks say whether they were right, and only the question
+ * they answer says which column that belongs in.
+ */
+export function questionTally(a: MultiAssessment): number[] {
+  return a.questions.map(
+    (q, i) => a.responses.filter((r) => r.picks[i] === q.correctIndex).length,
+  )
+}
+
 /** Votes per option, in option order. */
 export function optionTally(a: GradedAssessment | PollAssessment): number[] {
   const tally = a.options.map(() => 0)
