@@ -32,12 +32,13 @@
   --ast-track-hover: var(--neutral-600);
 }
 
+/* Stacked, on the same 2px label-over-value rhythm as the Question field above it, so the
+   two blocks leading the panel read as one pattern rather than two. */
 .ast-heading {
   margin: 0;
   display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-s);
+  flex-direction: column;
+  gap: var(--space-xxs);
   width: 100%;
   font-size: 14px;
   font-weight: 500;
@@ -48,7 +49,7 @@
 .ast-heading__count {
   flex: 0 0 auto;
   font-weight: 400;
-  color: var(--text-tertiary);
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
 
@@ -262,7 +263,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: var(--input-background);
   overflow: hidden;
   font-size: 14px;
@@ -368,7 +369,7 @@
   /* A column at 0% would be nothing at all, so it keeps a hairline: the reader
      needs to see that the question was asked and nobody got it. */
   min-height: 2px;
-  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   background: var(--primary-600);
   animation: ast-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(300ms + var(--ast-i, 0) * 45ms);

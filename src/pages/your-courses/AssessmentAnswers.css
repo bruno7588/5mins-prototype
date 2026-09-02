@@ -84,10 +84,11 @@
   min-width: 0;
 }
 
-/* Paragraph M semibold, the weight a field label carries everywhere else here. */
+/* Paragraph M medium. Not the semibold a form-field label takes — nothing is being
+   filled in here, and the weight belongs to the question underneath. */
 .asp-brief__label {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--text-tertiary);
 }
