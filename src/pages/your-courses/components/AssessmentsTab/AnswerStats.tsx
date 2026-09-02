@@ -5,7 +5,6 @@ import {
   hasStatedAnswer,
   optionTally,
   questionOptionTally,
-  questionTally,
   type AssessmentResult,
   type GradedAssessment,
   type MultiAssessment,
@@ -13,17 +12,46 @@ import {
 } from './assessmentResults'
 import './AnswerStats.css'
 
-/** Past this many questions a chip per question is a row of chips, not a control. */
-const QUIZ_MAX = 6
-
 /** Whole percents, so nothing claims a precision the sample cannot carry. */
 const pct = (n: number, of: number) => Math.round((n / of) * 100)
 
-/* ── Where the answers went ───────────────────────────────────────────────
-   One question, one right answer: the thing worth seeing is what share of the
-   cohort found it, so the options share a single bar rather than each getting
-   a bar of its own. Share-of-whole is read in one mark instead of four. */
-function Split({
+/* ── One option, one bar ──────────────────────────────────────────────────
+   The row is the label. A divided bar packed every option into one mark and named
+   none of them, so the only way to read it was to point at it a segment at a time
+   and the legend underneath had to be matched back up by eye. Here each option gets
+   its own bar with its own words inside it, which is what a poll has always done —
+   the only thing that changes between a poll and a question is what the fill means. */
+type Tone = 'lead' | 'plain' | 'correct' | 'wrong'
+
+function Bars({
+  rows,
+  responded,
+}: {
+  rows: { label: string; n: number; tone: Tone }[]
+  responded: number
+}) {
+  return (
+    <ol className="ast-bars">
+      {rows.map((r, i) => (
+        <li key={r.label} className={`ast-bar is-${r.tone}`}>
+          <span
+            className="ast-bar__fill"
+            style={{ '--ast-w': `${pct(r.n, responded)}%`, '--ast-i': i } as React.CSSProperties}
+            aria-hidden="true"
+          />
+          <span className="ast-bar__label">{r.label}</span>
+          <span className="ast-bar__value">{pct(r.n, responded)}%</span>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+/* One question, one right answer. Green on the answer, red on the rest: which one
+   they found and how the people who missed it divided between the distractors are
+   both read straight off the list. The options keep the order they were asked in —
+   ranking them by popularity would detach the chart from the question above it. */
+function Choices({
   options,
   correctIndex,
   tally,
@@ -34,57 +62,30 @@ function Split({
   tally: number[]
   responded: number
 }) {
-  /* An option nobody chose gets no segment — a zero-width sliver between two
-     gaps reads as a rendering fault. It keeps its line in the legend. */
-  const parts = options
-    .map((label, i) => ({ label, n: tally[i], correct: i === correctIndex }))
-    .filter((p) => p.n > 0)
-
   return (
-    <div className="ast-split">
-      <div
-        className="ast-split__track"
-        /* Grid tracks in the counts themselves, so the segments divide the bar
-           exactly. Four rounded percentages do not add up to a hundred. */
-        style={{ gridTemplateColumns: parts.map((p) => `${p.n}fr`).join(' ') }}
-      >
-        {parts.map((p) => (
-          <Tooltip
-            key={p.label}
-            className={`ast-seg ${p.correct ? 'is-correct' : 'is-wrong'}`}
-            icon={false}
-            position="Top"
-            text={`${p.label} — ${pct(p.n, responded)}%`}
-          >
-            <span className="ast-seg__fill" />
-          </Tooltip>
-        ))}
-      </div>
-
-      <ul className="ast-legend">
-        {options.map((label, i) => (
-          <li
-            key={label}
-            className={`ast-legend__row ${i === correctIndex ? 'is-correct' : 'is-wrong'}`}
-          >
-            <span className="ast-legend__swatch" aria-hidden="true" />
-            <span className="ast-legend__label">{label}</span>
-            <span className="ast-legend__value">{pct(tally[i], responded)}%</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Bars
+      rows={options.map((label, i) => ({
+        label,
+        n: tally[i],
+        tone: (i === correctIndex ? 'correct' : 'wrong') as Tone,
+      }))}
+      responded={responded}
+    />
   )
 }
 
-/* ── A quiz, a question at a time ─────────────────────────────────────────
-   Two or three questions, each a multiple choice underneath. Rather than three
-   charts stacked or three columns saying only how many got it right, one chart
-   at a time and a chip to move between them — the same divided bar the graded
-   format gets, so a quiz question is read the way a question is read. */
+/* ── Several questions, one at a time ─────────────────────────────────────
+   Every format that asks more than one thing in a sitting: a lesson quiz, a
+   situational test running a scenario, a fill-in-the-blanks with more than one
+   blank. One chart at a time with a chip to move between them, rather than a
+   column per question saying only how many got it right — the score of a question
+   is not the same finding as which wrong answer took the people who missed it. */
 function Quiz({ a, responded, caption }: { a: MultiAssessment; responded: number; caption: ReactNode }) {
   const [sel, setSel] = useState(0)
   const q = a.questions[sel]
+  /* A blank is not a question, and calling it one on a fill-in-the-blanks reads as
+     though the sentence were a quiz. */
+  const unit = a.type === 'fill-blank' ? 'Blank' : 'Question'
 
   return (
     <div className="ast-quiz">
@@ -92,17 +93,17 @@ function Quiz({ a, responded, caption }: { a: MultiAssessment; responded: number
         {a.questions.map((_, i) => (
           <Chip
             key={i}
-            label={`Question ${i + 1}`}
+            label={`${unit} ${i + 1}`}
             selected={i === sel}
             onClick={() => setSel(i)}
           />
         ))}
       </div>
-      {/* The chip says which question; this says what it was. A lesson quiz has no
-          prompt of its own, so without this the chart is about nothing named. */}
+      {/* The chip says which one; this says what it was. A lesson quiz has no prompt
+          of its own, so without this the chart is about nothing named. */}
       <p className="ast-quiz__prompt">{q.prompt}</p>
       {caption}
-      <Split
+      <Choices
         options={q.options}
         correctIndex={q.correctIndex}
         tally={questionOptionTally(a, sel)}
@@ -113,9 +114,9 @@ function Quiz({ a, responded, caption }: { a: MultiAssessment; responded: number
 }
 
 /* ── How they voted ───────────────────────────────────────────────────────
-   A poll has no right answer, so the ranking is the whole story. The option
-   sits inside its own bar: the eye reads the words and the length together
-   rather than travelling from a label to a mark that belongs to it. */
+   A poll has no right answer, so the ranking is the whole story: the same bars,
+   ordered by how many chose each, with the leader carrying the weight instead of
+   a colour. */
 function Poll({ a, responded }: { a: PollAssessment; responded: number }) {
   const tally = optionTally(a)
   const ranked = a.options
@@ -123,33 +124,30 @@ function Poll({ a, responded }: { a: PollAssessment; responded: number }) {
     .sort((x, y) => y.n - x.n)
 
   return (
-    <ol className="ast-poll">
-      {ranked.map((r, i) => (
-        <li key={r.label} className={`ast-poll__row${i === 0 && r.n > 0 ? ' is-lead' : ''}`}>
-          <span
-            className="ast-poll__fill"
-            style={{ '--ast-w': `${pct(r.n, responded)}%`, '--ast-i': i } as React.CSSProperties}
-            aria-hidden="true"
-          />
-          <span className="ast-poll__label">{r.label}</span>
-          <span className="ast-poll__value">{pct(r.n, responded)}%</span>
-        </li>
-      ))}
-    </ol>
+    <Bars
+      rows={ranked.map((r, i) => ({
+        ...r,
+        tone: (i === 0 && r.n > 0 ? 'lead' : 'plain') as Tone,
+      }))}
+      responded={responded}
+    />
   )
 }
 
 /* ── Columns ──────────────────────────────────────────────────────────────
-   Shared by the two formats whose data has an order to it. Columns rather
-   than a stack of rows: along an axis the shape is the finding — the dip in a
-   scenario, the peak of a band distribution — and a list of bars hides it. */
+   The score bands, the one shape left whose data has an order to it: full marks
+   down to nearly none. Columns rather than a stack of rows, because along an axis
+   the peak of the distribution is the finding and a list of bars hides it. Every
+   other format now reads as bars — a band is not an option anybody chose. */
 interface Column {
-  /** Under the column. Short: it repeats twelve times. */
+  /** Under the column. Short, because it repeats. */
   tick: string
   pct: number
   /** The whole sentence, for the hover and for a screen reader. */
   aria: string
   full?: boolean
+  /** Set only by the band chart — see the note on .ast-col__bar.is-wrong. */
+  wrong?: boolean
 }
 
 function Columns({ cols }: { cols: Column[] }) {
@@ -163,7 +161,7 @@ function Columns({ cols }: { cols: Column[] }) {
         <li key={c.tick} className="ast-col" aria-label={c.aria}>
           <Tooltip className="ast-col__hit" icon={false} position="Top" text={c.aria}>
             <span
-              className={`ast-col__bar${c.full ? ' is-full' : ''}`}
+              className={`ast-col__bar${c.full ? ' is-full' : ''}${c.wrong ? ' is-wrong' : ''}`}
               style={{ '--ast-h': `${c.pct}%`, '--ast-i': i } as React.CSSProperties}
             >
               {/* Rides the top of its own column, so the figures sit where the
@@ -207,9 +205,6 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
   const heading = 'Answers'
   const counted = a.kind === 'poll' ? ' votes' : ' responses'
 
-  /* A quiz of a few questions is read a question at a time; a dozen are read across. */
-  const quiz = a.kind === 'multi' && a.questions.length <= QUIZ_MAX
-
   const caption = (
     <p className="ast-heading">
       {heading ? <span>{heading}</span> : null}
@@ -222,26 +217,19 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
 
   return (
     <section className="ast" aria-label="Overview">
-      {/* Directly above the chart it is the denominator of. On a quiz that means below
-          the question the chips select rather than above them, so it sits with the bar
-          it counts and not with the control that changes it. */}
-      {quiz ? null : caption}
+      {/* Directly above the chart it is the denominator of. On a multi-question format
+          that means below the question the chips select rather than above them, so it
+          sits with the bars it counts and not with the control that changes them. */}
+      {a.kind === 'multi' ? null : caption}
 
       {a.kind === 'multi' ? (
-        /* A dozen questions are a sequence and the dip is the finding, so they stay
-           columns. Two or three are not a sequence — they are three questions, and
-           each deserves its own answers. */
-        quiz ? (
-          <Quiz a={a} responded={responded} caption={caption} />
-        ) : (
-          <Columns cols={questionCols(a, responded)} />
-        )
+        <Quiz a={a} responded={responded} caption={caption} />
       ) : a.kind === 'poll' ? (
         <Poll a={a} responded={responded} />
       ) : banded ? (
         <Columns cols={bandCols(a, responded)} />
       ) : (
-        <Split
+        <Choices
           options={a.options}
           correctIndex={a.correctIndex}
           tally={optionTally(a)}
@@ -252,16 +240,6 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
   )
 }
 
-/** One column per question, in the order the scenario runs. */
-function questionCols(a: MultiAssessment, responded: number): Column[] {
-  const tally = questionTally(a)
-  return a.questions.map((q, i) => ({
-    tick: String(i + 1),
-    pct: pct(tally[i], responded),
-    aria: `Question ${i + 1}, ${q.prompt} — ${pct(tally[i], responded)}% correct`,
-  }))
-}
-
 /** One column per band, best first, as the options are ordered. */
 function bandCols(a: GradedAssessment, responded: number): Column[] {
   const tally = optionTally(a)
@@ -270,6 +248,7 @@ function bandCols(a: GradedAssessment, responded: number): Column[] {
     pct: pct(tally[i], responded),
     aria: `${label} — ${pct(tally[i], responded)}%`,
     full: i === a.correctIndex,
+    wrong: i !== a.correctIndex,
   }))
 }
 

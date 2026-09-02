@@ -91,164 +91,17 @@
   color: var(--text-primary);
 }
 
-/* ── Where the answers went: one bar, divided ────────────────────────────── */
-.ast-split {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
+/* ── One option, one bar ─────────────────────────────────────────────────────
+   The shared form, and the reason the divided bar is gone. A stacked bar says
+   share-of-whole in a single mark, but the marks it divides into carry no words:
+   every segment had to be hovered to find out what it was, and the legend beneath
+   asked the eye to travel from a name to a sliver that belonged to it. Here the
+   words sit inside the mark, so four options are four sentences with lengths
+   attached and nothing has to be pointed at to be read.
 
-/* 2px of the surface between segments rather than a border: a rule would add a
-   colour, a gap removes one, and the eye still reads the join. */
-.ast-split__track {
-  display: grid;
-  gap: 2px;
-  height: 12px;
-  /* Swept open once the drawer has arrived rather than while it is travelling.
-     clip-path rather than width: the segments keep their proportions through the
-     reveal instead of reflowing on every frame. */
-  animation: ast-sweep 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  animation-delay: 300ms;
-}
-
-@keyframes ast-sweep {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-.ast-seg__fill {
-  display: block;
-  height: 100%;
-  background: var(--primary-600);
-  transition: background 150ms ease;
-}
-
-/* The segment the tooltip is about. With four in one bar, a tooltip on its own leaves
-   the reader to work out which of them it is describing. */
-.ast-seg:hover .ast-seg__fill {
-  background: var(--ast-primary-hover);
-}
-
-.ast-seg.is-correct:hover .ast-seg__fill {
-  background: var(--ast-success-hover);
-}
-
-.ast-seg.is-wrong:hover .ast-seg__fill {
-  background: var(--ast-danger-hover);
-}
-
-/* The two facts the Result badge beside this table already states, in the two colours
-   it states them in: a neutral blue was calling a wrong answer "an answer" while the row
-   underneath called it Incorrect. --text-error rather than the raw danger, so the red
-   lightens in dark mode the way every other error on the page does.
-
-   Red and green touching is the pairing colour deficiency struggles with most, so the
-   2px surface gap between segments and the words in the legend under them are doing the
-   work colour cannot: no reader has to name a hue to read this chart. */
-.ast-seg.is-correct .ast-seg__fill {
-  background: var(--success-500);
-}
-
-.ast-seg.is-wrong .ast-seg__fill {
-  background: var(--text-error);
-}
-
-/* Rounded where the data ends, square where one segment meets the next. */
-.ast-seg:first-child .ast-seg__fill {
-  border-radius: var(--radius-full) 0 0 var(--radius-full);
-}
-
-.ast-seg:last-child .ast-seg__fill {
-  border-radius: 0 var(--radius-full) var(--radius-full) 0;
-}
-
-.ast-seg:only-child .ast-seg__fill {
-  border-radius: var(--radius-full);
-}
-
-/* ── The legend, which is also the numbers ───────────────────────────────── */
-/* Full width, so the column of figures ends where the bar above it ends — they are the
-   same measurements, and a capped list left them stopping in the middle of the card with
-   nothing to line up against. The distance from an option to its own figure is carried
-   by the row's hover instead of by a rule: nothing is drawn until the reader is looking. */
-.ast-legend {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-}
-
-.ast-legend__row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-s);
-  /* Its own padding rather than the list's gap, so the hover fill is a band the whole
-     row deep instead of a stripe behind the text. */
-  padding: var(--space-xs) var(--space-s);
-  margin: 0 calc(var(--space-s) * -1);
-  border-radius: var(--radius-xs);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  transition: background 150ms ease;
-}
-
-/* The one thing that binds an option to a percentage 700px away, and only while the
-   reader is asking. A rule drawn permanently would be four lines of chrome for a moment
-   of need.
-
-   The card's own hover fill, because that is the surface these rows sit on —
-   --input-background is a control's, and it happens to match in light mode while
-   diverging in dark. */
-.ast-legend__row:hover {
-  background: var(--cards-background-hover);
-}
-
-/* A dot rather than a square: it is the same mark the bar is made of, shrunk. */
-.ast-legend__swatch {
-  flex: 0 0 auto;
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--primary-600);
-  /* Sits on the text's baseline rather than above it. */
-  transform: translateY(-1px);
-}
-
-.ast-legend__row.is-correct .ast-legend__swatch {
-  background: var(--success-500);
-}
-
-.ast-legend__row.is-wrong .ast-legend__swatch {
-  background: var(--text-error);
-}
-
-/* The one that was right carries the weight, so the list has an answer in it. */
-.ast-legend__row.is-correct .ast-legend__label {
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.ast-legend__label {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.ast-legend__value {
-  flex: 0 0 auto;
-  min-width: 4ch;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── How they voted: the option inside its own bar ───────────────────────── */
-.ast-poll {
+   Used by the poll and by every question with a right answer. Only the fill
+   changes meaning. */
+.ast-bars {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -257,7 +110,7 @@
   gap: var(--space-s);
 }
 
-.ast-poll__row {
+.ast-bar {
   position: relative;
   display: flex;
   align-items: center;
@@ -274,18 +127,21 @@
 
 /* The track as well as the fill: the row is one mark, and lighting only the filled end
    of it left the half the pointer was actually over unchanged. */
-.ast-poll__row:hover {
+.ast-bar:hover {
   background: var(--ast-track-hover);
 }
 
-/* A tint, not the solid fill: the words sit on top of it and have to stay
-   readable over both the fill and the track behind them. Same device the badges
-   use — a percentage of the hue, mixed rather than faded, so it is one colour
-   rather than a transparency over whatever happens to be underneath. */
-.ast-poll__fill {
+/* A tint, not the solid fill: the words sit on top of it and have to stay readable
+   over both the fill and the track behind them. Same device the badges use — a
+   percentage of the hue, mixed rather than faded, so it is one colour rather than a
+   transparency over whatever happens to be underneath. */
+.ast-bar__fill {
   position: absolute;
   inset: 0 auto 0 0;
   width: var(--ast-w);
+  /* The track's own radius: the left end is already clipped to it, and a square right
+     end made the fill read as a rectangle laid over the bar rather than part of it. */
+  border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--primary-600) 22%, transparent);
   transition: background 150ms ease;
   animation: ast-grow 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
@@ -298,31 +154,61 @@
   }
 }
 
+/* Right and wrong in the two colours the Result badge beside this table states them in.
+   --text-error rather than the raw danger, so the red lightens in dark mode the way
+   every other error on the page does.
+
+   Red and green touching is the pairing colour deficiency struggles with most, so the
+   words inside each bar are doing the work colour cannot: nobody has to name a hue to
+   read this chart. */
+.ast-bar.is-correct .ast-bar__fill {
+  background: color-mix(in srgb, var(--success-500) 22%, transparent);
+}
+
+.ast-bar.is-wrong .ast-bar__fill {
+  background: color-mix(in srgb, var(--text-error) 22%, transparent);
+}
+
 /* A tint rather than a solid, so its hover deepens the same tint instead of jumping to
    another colour: the words sit on top of it and have to stay readable through it. */
-.ast-poll__row:hover .ast-poll__fill {
+.ast-bar:hover .ast-bar__fill {
   background: color-mix(in srgb, var(--primary-600) 34%, transparent);
 }
 
+.ast-bar.is-correct:hover .ast-bar__fill {
+  background: color-mix(in srgb, var(--success-500) 34%, transparent);
+}
+
+.ast-bar.is-wrong:hover .ast-bar__fill {
+  background: color-mix(in srgb, var(--text-error) 34%, transparent);
+}
+
 /* Above the fill. */
-.ast-poll__label,
-.ast-poll__value {
+.ast-bar__label,
+.ast-bar__value {
   position: relative;
 }
 
-.ast-poll__label {
+.ast-bar__label {
   flex: 1 1 auto;
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
-/* Weight, not colour — the bars stay one hue and the length already says which
-   option leads. */
-.ast-poll__row.is-lead .ast-poll__label {
+/* Weight, not colour. On a poll the bars are one hue and the length already says which
+   option leads; on a question the colour already says which answer was right. */
+.ast-bar.is-lead .ast-bar__label,
+.ast-bar.is-correct .ast-bar__label {
   font-weight: 500;
 }
 
-.ast-poll__value {
+/* A wrong option steps back a shade, so the answer is the one line at full strength and
+   the distractors read as what was picked instead of it. */
+.ast-bar.is-wrong .ast-bar__label {
+  color: var(--text-secondary);
+}
+
+.ast-bar__value {
   flex: 0 0 auto;
   font-variant-numeric: tabular-nums;
 }
@@ -385,10 +271,22 @@
   background: var(--ast-success-hover);
 }
 
+.ast-col__hit:hover .ast-col__bar.is-wrong {
+  background: var(--ast-danger-hover);
+}
+
 /* Full marks — the same green the correct segment carries, so one colour means
    one thing across all four charts. */
 .ast-col__bar.is-full {
   background: var(--success-500);
+}
+
+/* Short of full marks is not a neutral outcome — it is the band that got it wrong, in
+   the colour the Incorrect badge uses. Only the band chart marks its columns this way:
+   the sibling chart counts who got each question right, and a wall of red there would
+   say the opposite of what it means. */
+.ast-col__bar.is-wrong {
+  background: var(--text-error);
 }
 
 @keyframes ast-rise {
@@ -430,8 +328,7 @@
 
 /* The length is the data; the growing is decoration. */
 @media (prefers-reduced-motion: reduce) {
-  .ast-split__track,
-  .ast-poll__fill,
+  .ast-bar__fill,
   .ast-col__bar,
   .ast-col__value {
     animation: none;
