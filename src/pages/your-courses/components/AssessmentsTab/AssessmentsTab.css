@@ -207,7 +207,9 @@
   display: flex;
   max-width: 256px;
   flex-direction: column;
-  gap: var(--space-xs);
+  /* A line and the line that supports it, not two facts side by side — 4px let them
+     drift apart into a list of two. */
+  gap: var(--space-xxs);
   min-width: 0;
 }
 
