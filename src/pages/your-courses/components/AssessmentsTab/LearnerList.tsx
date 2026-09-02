@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeft2, ArrowRight2, ArrowDown2, CloseCircle } from 'iconsax-react'
+import { ArrowLeft2, ArrowRight2, ArrowDown2 } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Collapse from '@/components/Collapse/Collapse'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
@@ -123,21 +123,14 @@ function LearnerList({ rows, pagination, focus }: Props) {
                               score the data cannot support, in either direction. */}
                           <span className="lrn-answer__score">
                             {!x ? (
-                              <Badge type="warning" label="Not attempted" icon />
+                              <Badge type="warning" label="Not attempted" />
                             ) : score === null ? (
                               'Answered'
                             ) : score < PASS_SCORE ? (
-                              /* A cross rather than the Error badge's default caution
-                                 triangle: this is a mark that failed, not a hazard to be
-                                 careful of, and a cross is already how an incorrect answer
-                                 is drawn — in the expanded situational test, and in the
-                                 error toast. Scoped here; badges.md's default stands for
-                                 Overdue and Deactivated, where a triangle reads right. */
-                              <Badge
-                                type="error"
-                                label={`${score}%`}
-                                customIcon={<CloseCircle size={16} variant="Linear" color="currentColor" />}
-                              />
+                              /* No icon: the label is a percentage, and a mark beside a
+                                 number reads as part of it. The fill already says which
+                                 of the two states this is. */
+                              <Badge type="error" label={`${score}%`} />
                             ) : (
                               `${score}%`
                             )}
