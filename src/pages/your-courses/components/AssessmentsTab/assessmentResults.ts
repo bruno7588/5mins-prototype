@@ -380,26 +380,6 @@ const EXCLUDED_HIRE: MultiQuestion[] = [
     correctIndex: 1,
   },
   {
-    prompt: 'You want to know how widespread this is. What is the best next step?',
-    options: [
-      'Send an anonymous survey to the whole company',
-      'Ask the last four joiners the same question in their 1:1s',
-      'Watch the channels for a month',
-      'Raise it at the all-hands',
-    ],
-    correctIndex: 1,
-  },
-  {
-    prompt: 'Your manager says the team is “just busy right now”. How do you respond?',
-    options: [
-      'Agree and revisit next quarter',
-      'Show the three examples and propose one change',
-      'Escalate over their head',
-      'Drop it — it is not your call',
-    ],
-    correctIndex: 1,
-  },
-  {
     prompt: 'Which change is most likely to fix the cause rather than the symptom?',
     options: [
       'A written decision log everyone can read',
@@ -440,16 +420,6 @@ const EXCLUDED_HIRE: MultiQuestion[] = [
     correctIndex: 0,
   },
   {
-    prompt: 'Four weeks in, three people are using the log. What do you conclude?',
-    options: [
-      'The team rejected it',
-      'Adoption is a design problem — find where it breaks',
-      'It needs enforcing',
-      'It needs a better template',
-    ],
-    correctIndex: 1,
-  },
-  {
     prompt: 'What would tell you the culture actually changed?',
     options: [
       'The log has entries every week',
@@ -459,21 +429,32 @@ const EXCLUDED_HIRE: MultiQuestion[] = [
     ],
     correctIndex: 1,
   },
-  {
-    prompt: 'Six months on, another joiner raises the same feeling. What is the right first move?',
-    options: [
-      'Ask them for a specific recent example',
-      'Point them at the decision log',
-      'Assume the log has decayed and rewrite it',
-      'Take it to their manager',
-    ],
-    correctIndex: 0,
-  },
 ]
 
 /* ── Lesson quiz questions ────────────────────────────────────────────────
    Hoisted because the assessment and its responses are built from the same list:
    a pick is only right or wrong against the question it answers. */
+/* One sentence, three blanks. Each "question" is a blank, and its prompt is the clause
+   the blank sits in rather than the whole sentence — printing the sentence three times
+   would give away the other two answers. */
+const CULTURE_SENTENCE: MultiQuestion[] = [
+  {
+    prompt: 'A team’s culture is what gets ___',
+    options: ['rewarded', 'written', 'announced', 'measured'],
+    correctIndex: 0,
+  },
+  {
+    prompt: '… not what gets ___',
+    options: ['said', 'done', 'funded', 'repeated'],
+    correctIndex: 0,
+  },
+  {
+    prompt: '… and new joiners read it from ___',
+    options: ['behaviour', 'the handbook', 'the values page', 'the all-hands'],
+    correctIndex: 0,
+  },
+]
+
 const QUIZ_CULTURE: MultiQuestion[] = [
   {
     prompt: 'Which of these tells you most about a team’s real culture?',
@@ -664,7 +645,7 @@ export const courseAssessments: AssessmentResult[] = [
       'Priya joined the team six weeks ago. In her first proper 1:1 she says she keeps hearing about decisions after they are made, and is not sure who to ask.',
     enrolled: ENROLLED,
     questions: EXCLUDED_HIRE,
-    responses: runs('a4', 88, EXCLUDED_HIRE, [36, 62, 71, 53, 79, 27, 62, 71, 44, 53, 79, 62]),
+    responses: runs('a4', 88, EXCLUDED_HIRE, [36, 62, 71, 27, 62, 71, 44, 79]),
   },
   {
     id: 'a5',
@@ -720,6 +701,16 @@ export const courseAssessments: AssessmentResult[] = [
     options: ['interpersonal', 'commercial', 'operational', 'reputational'],
     correctIndex: 0,
     responses: choices('a9', 104, 95, 4, 0),
+  },
+  {
+    id: 'a10',
+    kind: 'multi',
+    type: 'fill-blank',
+    title:
+      'Complete the sentence: a team’s culture is what gets ___, not what gets ___, and new joiners read it from ___.',
+    enrolled: ENROLLED,
+    questions: CULTURE_SENTENCE,
+    responses: runs('a10', 97, CULTURE_SENTENCE, [78, 54, 61]),
   },
 
   /* ── Lesson quizzes ──────────────────────────────────────────────────────

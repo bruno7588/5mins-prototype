@@ -405,7 +405,9 @@ function AssessmentAnswers() {
               <p className="asp-meta">
                 {[
                   a.lesson ? 'Lesson Quiz' : typeLabel(a.type),
-                  a.kind === 'multi' ? `${a.questions.length} questions` : null,
+                  a.kind === 'multi'
+                    ? `${a.questions.length} ${a.type === 'fill-blank' ? 'blanks' : 'questions'}`
+                    : null,
                 ]
                   .filter(Boolean)
                   .join(' · ')}
