@@ -201,17 +201,11 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
      option was picked. Their "correct" band is full marks, not a chosen answer. */
   const banded = a.kind === 'graded' && !hasStatedAnswer(a)
 
-  /* Only where the chart is not already saying it. A situational test's columns are
-     numbered along their axis; the arrangement formats label every column with the
-     fraction it stands for ("3/4"), which is what "score bands" was trying to name and
-     nobody had to be told. */
-  const heading = a.kind === 'poll' ? 'How they voted' : a.kind === 'graded' && !banded ? 'Answers' : ''
-
-  /* The count needs a noun of its own wherever the heading is not one: "How they voted
-     96 of 128" leaves the reader to guess what was counted, while "Answers 112 of 128"
-     already says it and would stutter if it said it again. */
-  const counted =
-    a.kind === 'poll' ? ' votes' : a.kind === 'multi' || banded ? ' responses' : ''
+  /* The same label on every chart, so the four formats read as one page rather than four
+     — and the same shape as the Question label above it. What the count is counting rides
+     with the number: a poll collects votes, everything else responses. */
+  const heading = 'Answers'
+  const counted = a.kind === 'poll' ? ' votes' : ' responses'
 
   /* A quiz of a few questions is read a question at a time; a dozen are read across. */
   const quiz = a.kind === 'multi' && a.questions.length <= QUIZ_MAX

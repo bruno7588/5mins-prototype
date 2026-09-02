@@ -10,8 +10,19 @@
   flex-direction: column;
   gap: 0;
   padding: var(--space-m);
-  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
+  /* A card, like the charts panel beside it. Surface and lift rather than an outline:
+     the shadow token already carries the light/dark split, so dark gets neither and the
+     fill separates it on its own. */
+  background: var(--cards-background);
+  box-shadow: var(--shadow-card);
+}
+
+/* Where the card's own fill is doing the separating, the stats inside it need an edge of
+   their own — a card on a card is two fills a step apart, which dark mode does not have
+   to spare. */
+[data-theme='dark'] .asmi-stats .asm-stat {
+  border-color: var(--border-elevated);
 }
 
 .asmi-region {

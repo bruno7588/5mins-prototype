@@ -20,7 +20,9 @@
 [data-theme='dark'] .ast {
   --ast-primary-hover: var(--primary-500);
   --ast-success-hover: var(--success-400);
-  --ast-danger-hover: var(--danger-400);
+  /* Two steps, not one: --text-error already resolves to danger-400 in dark, so a hover
+     at 400 was the colour the segment was wearing and nothing moved. */
+  --ast-danger-hover: var(--danger-300);
 }
 
 .ast-heading {

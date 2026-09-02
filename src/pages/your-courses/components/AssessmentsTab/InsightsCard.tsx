@@ -173,7 +173,10 @@ function InsightsCard({ onOpenLearner, responseCount, autoStart, onClose, stats 
               <>
                 <Tooltip text="Update insights" position="Top" icon={false}>
                   <button className="asmi-refresh" onClick={generate} aria-label="Update insights">
-                    <Refresh size={20} color="var(--text-primary)" variant="Linear" />
+                    {/* The whole cluster is secondary: refresh, Clear, the chevron and
+                        the close are four controls of one weight, and the refresh was the
+                        only one drawn a step darker than its neighbours. */}
+                    <Refresh size={20} color="var(--text-secondary)" variant="Linear" />
                   </button>
                 </Tooltip>
                 <Button variant="text" className="asmi-clear" onClick={clear}>
