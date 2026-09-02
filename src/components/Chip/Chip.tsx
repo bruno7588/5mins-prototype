@@ -27,11 +27,9 @@ function Chip({
   onDismiss,
   className = '',
 }: ChipProps) {
-  const iconColor = disabled
-    ? 'var(--text-disabled)'
-    : selected
-    ? 'var(--neutral-800)'
-    : 'var(--text-secondary)'
+  /* The chip's own colour already resolves per state — secondary, on-selected or
+     disabled — so the icon inherits it rather than restating the ladder in raw tokens. */
+  const iconColor = 'currentColor'
 
   const classes = [
     'chip',
@@ -55,6 +53,18 @@ function Chip({
       aria-disabled={disabled || undefined}
       aria-pressed={onClick ? selected : undefined}
       onClick={disabled ? undefined : onClick}
+      /* It is a div wearing role="button", and a div does not press itself. Without
+         this the chip is reachable by Tab and does nothing when you hit Enter. */
+      onKeyDown={
+        disabled || !onClick
+          ? undefined
+          : (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onClick()
+              }
+            }
+      }
     >
       {customIconLeft ? customIconLeft : iconLeft && <User size={16} color={iconColor} variant="Linear" />}
       <span className="chip__label">{label}</span>

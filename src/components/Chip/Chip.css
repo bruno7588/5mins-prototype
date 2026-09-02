@@ -34,27 +34,39 @@
 }
 
 .chip--icon-right {
-  gap: var(--space-s);
+  gap: var(--space-xs);
 }
 
 /* Both icons — extension beyond the spec, used for selectable user chips
    that need a leading user avatar AND a trailing dismiss. */
 .chip--icon-both {
-  gap: var(--space-s);
+  gap: var(--space-xs);
 }
 
 .chip--no-icons {
   gap: 0;
 }
 
-/* Hover (enabled, non-selected) */
-.chip:hover {
+/* Hover. Excluded from the selected chip on purpose: the spec writes this as a bare
+   `.chip:hover`, which outranks `.chip--selected` and would turn a selected chip grey
+   on the way to clicking it. */
+.chip:not(.chip--disabled):not(.chip--selected):hover {
   background: var(--page-background-hover);
   border-color: var(--border-hover);
 }
 
+/* Every interactive element carries a visible focus ring (CLAUDE.md), and the chip is
+   reachable by keyboard. Same ring the buttons and the switcher use. */
+.chip:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
 /* Selected */
 .chip--selected {
+  /* Transparent rather than `border: none`, which the spec's CSS gives: dropping the
+     border makes a selected chip 2px smaller than its neighbours and shunts the row
+     sideways on every click. Same result to look at, stable to sit next to. */
   border-color: transparent;
   background: var(--secondary-500);
   color: var(--text-on-selected);
@@ -93,13 +105,10 @@
   flex-shrink: 0;
 }
 
-.chip__dismiss:hover {
-  opacity: 0.7;
-}
-
 .chip__dismiss:focus-visible {
-  outline: 2px solid var(--selected);
-  border-radius: 4px;
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 /* Warning variant */
