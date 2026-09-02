@@ -13,7 +13,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-s) var(--space-sm);
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   border: 1px solid var(--border-elevated);
   background: transparent;
@@ -27,20 +27,26 @@
   transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
-/* Gaps per icon variant; the padding is the same 8px 12px for every one of them
-   (chips-switcher-tabs.md § Spacing). */
+/* An icon sits 10px from the edge where the text sits 12px: a glyph has its own optical
+   margin built in, so the same 12px reads as a wider gap on the icon side than on the
+   word side. Figma 5162:28510 draws all three variants this way. */
 .chip--icon-left {
   gap: var(--space-xs);
+  padding-left: var(--space-ssm);
 }
 
 .chip--icon-right {
   gap: var(--space-xs);
+  padding-right: var(--space-ssm);
 }
 
-/* Both icons — extension beyond the spec, used for selectable user chips
-   that need a leading user avatar AND a trailing dismiss. */
+/* Both icons — an extension beyond the component set, which has no two-icon variant.
+   Used for selectable user chips that carry a leading avatar AND a trailing dismiss;
+   the icon inset applies at both ends for the same reason it applies at one. */
 .chip--icon-both {
   gap: var(--space-xs);
+  padding-left: var(--space-ssm);
+  padding-right: var(--space-ssm);
 }
 
 .chip--no-icons {

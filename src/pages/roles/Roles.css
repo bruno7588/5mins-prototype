@@ -158,7 +158,7 @@
 }
 
 .roles-chip {
-  padding: var(--space-s) var(--space-m);
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-size: 14px;
   font-weight: 400;
@@ -174,8 +174,9 @@
 .roles-chip--with-icon {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xss);
-  padding-left: var(--space-sm);
+  gap: var(--space-xs);
+  /* The icon side insets to 10px — see chips-switcher-tabs.md § Spacing. */
+  padding-left: var(--space-ssm);
 }
 
 .roles-chip:hover {

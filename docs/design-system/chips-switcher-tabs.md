@@ -61,7 +61,9 @@ All values use 5Mins.ai design tokens.
 
 ### Spacing
 
-- **Padding:** `8px 12px` (`--s` / `--sm`) — uniform for all variants
+- **Padding:** `6px` vertical (`--xss`), `12px` horizontal (`--sm`) — except on the side
+  that holds an icon, which insets to `10px` (`--ssm`). A glyph carries its own optical
+  margin, so an equal 12px reads wider beside an icon than beside a word.
 - **Gap:** `4px` (`--xs`) whenever an icon is present
 - **Icons:** 16 × 16 px, left or right (never both)
 - **Border radius:** `24px` (fully rounded pill)
@@ -99,7 +101,9 @@ All values use 5Mins.ai design tokens.
 | false      | true       | Enabled    | none           | `--secondary-500`      | `--text-on-selected` | 700         |
 | true       | false      | n/a        | `--border`     | transparent            | `--text-disabled` | 400         |
 
-**Padding rules:** `8px 12px` for every variant; add `gap: 4px` when an icon is present (left or right).
+**Padding rules:** `6px` top and bottom for every variant. Horizontally `12px`, dropping to
+`10px` on the side an icon sits on — `10px 12px` for icon-left, `12px 10px` for icon-right,
+`12px` both sides with no icon. Add `gap: 4px` whenever an icon is present.
 
 ## React TypeScript Implementation
 
@@ -149,6 +153,7 @@ export function Chip({
     : 'chip--enabled';                        /* border --border-elevated + CSS :hover */
 
   const padding = iconLeft || iconRight ? 'gap-[4px]' : '';
+  /* The icon side insets to 10px; see Padding rules above. */
 
   // Text: 14px/1.5 Poppins — Regular (--text-secondary), Bold 700 + --text-on-selected when
   // selected, Regular + --text-disabled when disabled
@@ -192,7 +197,7 @@ export function Chip({
   align-items: center;
   justify-content: center;
   border-radius: 24px;
-  padding: 8px 12px;
+  padding: var(--space-xss) var(--space-sm);   /* 6px 12px */
   border: 1px solid var(--border-elevated);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
