@@ -68,13 +68,18 @@
 }
 
 /* ── The question and its charts ─────────────────────────────────────────── */
+/* A card, not a field. --input-background is the fill a control wears, and this panel
+   holds the question and its charts — the same surface the rows beneath it sit on. */
 .asp-brief {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
   padding: var(--space-m);
   border-radius: var(--radius-sm);
-  background: var(--input-background);
+  background: var(--cards-background);
+  /* Shadow S in light, nothing in dark — the token already carries that split, because
+     over a dark ground the same shadow reads as grime rather than lift. */
+  box-shadow: var(--shadow-card);
 }
 
 .asp-brief__field {

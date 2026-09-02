@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams, Navigate } from 'react-router-dom'
-import { ImportCurve } from 'iconsax-react'
+import { ImportCurve, Sort } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
 import Badge from '@/components/Badge/Badge'
 import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'
@@ -129,10 +129,19 @@ function filterOptions(a: AssessmentResult): { value: string; label: string }[] 
       { value: 'fail', label: `Below ${PASS_SCORE}%` },
     ]
 
-  /* Graded and poll narrow by the answer itself — the same options the chart above
-     is drawn from, so picking one shows the people behind that bar. */
+  /* A graded question has a right answer, so the question worth asking of it is who
+     got it — not which of four options each person picked. Which wrong answer they
+     chose is in the chart above and in the row itself. */
+  if (a.kind === 'graded')
+    return [
+      { value: ALL, label: 'All answers' },
+      { value: 'correct', label: 'Correct' },
+      { value: 'incorrect', label: 'Incorrect' },
+    ]
+
+  /* A poll has no right answer, so its options are the only cut there is. */
   return [
-    { value: ALL, label: a.kind === 'poll' ? 'All votes' : 'All answers' },
+    { value: ALL, label: 'All votes' },
     ...a.options.map((label, i) => ({ value: String(i), label })),
   ]
 }
@@ -173,8 +182,11 @@ function AssessmentAnswers() {
       const pct = Math.round((multiScore(a, a.responses[i]) / a.questions.length) * 100)
       return answer === 'pass' ? pct >= PASS_SCORE : pct < PASS_SCORE
     }
-    if (a.kind === 'graded' || a.kind === 'poll') {
-      return String((a.responses[i] as ChoiceResponse | VoteResponse).optionIndex) === answer
+    if (a.kind === 'graded') {
+      return (a.responses[i] as ChoiceResponse).correct === (answer === 'correct')
+    }
+    if (a.kind === 'poll') {
+      return String((a.responses[i] as VoteResponse).optionIndex) === answer
     }
     return true
   }
@@ -423,6 +435,7 @@ function AssessmentAnswers() {
                     }}
                     size="md"
                     menuAlign="end"
+                    iconLeft={<Sort size={20} color="var(--text-primary)" variant="Linear" />}
                     className="asp-filter"
                   />
                 ) : null}
