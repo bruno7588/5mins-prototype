@@ -69,7 +69,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  padding: var(--space-m);
+  padding: var(--space-ml);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
   /* Shadow S in light, nothing in dark — the token already carries that split, because
@@ -77,11 +77,23 @@
   box-shadow: var(--shadow-card);
 }
 
+/* A rule under the question, separating what was asked from how it was answered. On the
+   field rather than on the block below it, so a lesson quiz — which has no line here —
+   does not draw a divider with nothing above it. */
 .asp-brief__field {
   display: flex;
   flex-direction: column;
   gap: var(--space-xxs);
   min-width: 0;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border);
+}
+
+/* --border is the divider token, but in dark it resolves to --neutral-700, which is what
+   --cards-background resolves to as well: on this card the rule was drawn in the colour
+   of the card behind it. One step up, only where the two collide. */
+[data-theme='dark'] .asp-brief__field {
+  border-bottom-color: var(--border-elevated);
 }
 
 /* Paragraph M medium. Not the semibold a form-field label takes — nothing is being
