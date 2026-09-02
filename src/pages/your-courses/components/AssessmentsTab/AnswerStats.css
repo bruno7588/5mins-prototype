@@ -15,6 +15,9 @@
   --ast-primary-hover: var(--primary-700);
   --ast-success-hover: var(--success-600);
   --ast-danger-hover: var(--danger-600);
+  /* The unfilled end of a poll bar. --input-background-hover is written for a control
+     sitting on the page, and here the control sits on a card. */
+  --ast-track-hover: var(--input-background-hover);
 }
 
 [data-theme='dark'] .ast {
@@ -23,6 +26,10 @@
   /* Two steps, not one: --text-error already resolves to danger-400 in dark, so a hover
      at 400 was the colour the segment was wearing and nothing moved. */
   --ast-danger-hover: var(--danger-300);
+  /* In dark --input-background-hover IS --cards-background, so the track was taking the
+     colour of the card behind it and vanishing instead of lifting. One step up from the
+     card, the step the legend rows already take. */
+  --ast-track-hover: var(--neutral-600);
 }
 
 .ast-heading {
@@ -261,6 +268,13 @@
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-primary);
+  transition: background 150ms ease;
+}
+
+/* The track as well as the fill: the row is one mark, and lighting only the filled end
+   of it left the half the pointer was actually over unchanged. */
+.ast-poll__row:hover {
+  background: var(--ast-track-hover);
 }
 
 /* A tint, not the solid fill: the words sit on top of it and have to stay
@@ -333,7 +347,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-s);
 }
 
 /* The plot. A fixed height so every column is read against the same hundred. */
@@ -389,10 +403,10 @@
   bottom: 100%;
   left: 0;
   right: 0;
-  padding-bottom: var(--space-xxs);
+  padding-bottom: var(--space-s);
   text-align: center;
-  font-size: 12px;
-  line-height: 1.2;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
   animation: ast-fade 300ms ease backwards;
@@ -407,9 +421,9 @@
 
 .ast-col__tick {
   text-align: center;
-  font-size: 12px;
-  line-height: 1.2;
-  color: var(--text-tertiary);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
 }
 
