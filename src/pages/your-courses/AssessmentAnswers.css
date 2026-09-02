@@ -82,27 +82,15 @@
   box-shadow: var(--shadow-card);
 }
 
-.asp-brief__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
-  min-width: 0;
-}
-
-/* Paragraph M semibold: it names the field under it. */
-.asp-brief__label {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
-/* Capped at a readable measure. The panel is now as wide as the page, and a question
-   run across 1400px is a line the eye loses on the way back. */
+/* The question the panel is about, leading it. H4: it is the heading of this block
+   rather than the value of a field, now that the field label is gone. Capped at a
+   readable measure — the panel is as wide as the page, and a line run across 1400px is
+   one the eye loses on the way back. */
 .asp-brief__value {
   margin: 0;
   max-width: 90ch;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
 }

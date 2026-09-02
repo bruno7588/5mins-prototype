@@ -373,12 +373,16 @@ function AssessmentAnswers() {
               <h1 className="asp-title">{a.title}</h1>
               {/* The same name the row carries: a lesson quiz's underlying type is
                   Multiple Choice, and saying so contradicts the list it was opened from. */}
+              {/* What kind of assessment this is, and how big. How many answered belongs
+                  to the chart below, where it is the denominator of every figure — said
+                  in both places it was the same sentence printed twice. */}
               <p className="asp-meta">
-                {a.lesson ? 'Lesson Quiz' : typeLabel(a.type)}
-                <span className="asp-meta__sep" aria-hidden="true">
-                  ·
-                </span>
-                {a.responses.length} of {a.enrolled} responded
+                {[
+                  a.lesson ? 'Lesson Quiz' : typeLabel(a.type),
+                  a.kind === 'multi' ? `${a.questions.length} questions` : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
               </p>
             </div>
             {/* An exercise has nothing to export as a sheet — the answers are the
@@ -401,15 +405,12 @@ function AssessmentAnswers() {
           ) : (
             <>
               {/* The question and the shape of the result, above the rows it summarises. */}
+              {/* What the learner was asked, then how they answered it. No field labels:
+                  the title above is a paraphrase of the question, so a panel that also
+                  announced "Question" over it read as the same thing said three times.
+                  A lesson quiz has no prompt of its own — its questions are in the chart. */}
               <section className="asp-brief">
-                {a.prompt ? (
-                  <div className="asp-brief__field">
-                    <span className="asp-brief__label">
-                      {a.kind === 'multi' ? `Brief · ${a.questions.length} questions` : 'Question'}
-                    </span>
-                    <p className="asp-brief__value">{a.prompt}</p>
-                  </div>
-                ) : null}
+                {a.prompt ? <p className="asp-brief__value">{a.prompt}</p> : null}
                 <AnswerStats key={a.id} assessment={a} />
               </section>
 

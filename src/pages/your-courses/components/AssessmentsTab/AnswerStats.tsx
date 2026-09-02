@@ -211,12 +211,14 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
 
   return (
     <section className="ast" aria-label="Overview">
+      {/* The whole fraction, beside the word it belongs to: with the heading reading
+          "Answers", this line says 112 of 128 answers without saying "answers" twice.
+          The one place the count appears — the page header above states the format and
+          leaves the counting to the chart the figures are in. */}
       <p className="ast-heading">
         <span>{heading}</span>
-        {/* Beside the chart rather than up in the drawer's header: it is the
-            denominator every figure is counted against. */}
         <span className="ast-heading__count">
-          {responded} of {a.enrolled} responded
+          {responded} of {a.enrolled}
         </span>
       </p>
 
