@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import Chip from '@/components/Chip/Chip'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import {
+  correctPct,
   hasStatedAnswer,
   optionTally,
   questionOptionTally,
@@ -191,8 +192,12 @@ function bandTick(label: string): string {
  */
 function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
   if (a.responses.length === 0) return null
-  /* Neither is scored: no ratio to meter, no options to count. */
-  if (a.kind === 'text' || a.kind === 'file') return null
+
+  /* Neither is scored: no ratio to meter and no options to count, so neither gets a
+     chart. They still get the caption — how many people answered is a fact about a
+     written answer as much as about a graded one, and it was the one thing these two
+     pages never stated. */
+  const charted = a.kind !== 'text' && a.kind !== 'file'
 
   const responded = a.responses.length
   /* The banded formats record how much of an arrangement was right rather than which
@@ -205,14 +210,50 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
   const heading = 'Answers'
   const counted = a.kind === 'poll' ? ' votes' : ' responses'
 
+  /* The same figure the Result column prints on the row the admin clicked to get here,
+     read off the same helper so the two cannot drift. Null on the formats with no right
+     answer — a poll and an exercise get the response count alone rather than a borrowed
+     correctness metric. */
+  const correct = correctPct(a)
+
+  /* Two facts, two labels. Run together on one line they read as a single sentence and
+     the reader has to work out where the first fact ends — and they answer different
+     questions: how many took part, and how they did.
+
+     "Correct" rather than "Completion": completion is how many finished, which is the
+     figure on the left. Naming this one completion too would put two meanings on one
+     word on the same line. It is also the word the Result column uses on the row the
+     admin clicked to get here. */
   const caption = (
-    <p className="ast-heading">
-      {heading ? <span>{heading}</span> : null}
-      <span className="ast-heading__count">
-        {responded} of {a.enrolled}
-        {counted}
-      </span>
-    </p>
+    <div className="ast-stats">
+      <p className="ast-stat">
+        <span className="ast-stat__label">{heading}</span>
+        <span className="ast-stat__value">
+          {/* An exercise collects work rather than answers, and a fraction of the cohort
+              is not what an admin comes here for — the pile is. */}
+          {a.kind === 'file' ? (
+            `${responded} files uploaded`
+          ) : (
+            <>
+              {responded} of {a.enrolled}
+              {counted}
+            </>
+          )}
+        </span>
+      </p>
+
+      {correct === null ? null : (
+        <p className="ast-stat">
+          {/* "Overall" only where it is needed: on a multi-question format the chips above
+              show one question and this figure is the whole assessment, which the reader
+              would otherwise read as the score of the question in front of them. */}
+          <span className="ast-stat__label">
+            {a.kind === 'multi' ? 'Correct overall' : 'Correct'}
+          </span>
+          <span className="ast-stat__value">{correct}%</span>
+        </p>
+      )}
+    </div>
   )
 
   return (
@@ -222,7 +263,7 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
           sits with the bars it counts and not with the control that changes them. */}
       {a.kind === 'multi' ? null : caption}
 
-      {a.kind === 'multi' ? (
+      {!charted ? null : a.kind === 'multi' ? (
         <Quiz a={a} responded={responded} caption={caption} />
       ) : a.kind === 'poll' ? (
         <Poll a={a} responded={responded} />

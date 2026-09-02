@@ -32,38 +32,37 @@
   --ast-track-hover: var(--neutral-600);
 }
 
-/* Stacked, on the same 2px label-over-value rhythm as the Question field above it, so the
-   two blocks leading the panel read as one pattern rather than two. */
-.ast-heading {
+/* The figures leading the chart, side by side: how many answered, and how they did. Two
+   of the same label-over-value pair the Question field above uses, so the head of the
+   panel reads as one pattern rather than three. */
+/* The caption: two label-over-value pairs side by side, each on the same 2px rhythm as
+   the Question field above them, so the head of the panel reads as one pattern. */
+.ast-stats {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+  width: 100%;
+}
+
+.ast-stat {
   margin: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-xxs);
-  width: 100%;
   font-size: 14px;
-  font-weight: 500;
   line-height: 1.5;
+}
+
+.ast-stat__label {
+  font-weight: 500;
   color: var(--text-secondary);
 }
 
-.ast-heading__count {
-  flex: 0 0 auto;
+.ast-stat__value {
   font-weight: 400;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
-}
-
-/* The chart's own hover surface has no business being a text cursor, and the DS
-   tooltip's wrapper is a plain div that would otherwise size to its content. */
-.ast .tooltip-wrapper {
-  min-width: 0;
-}
-
-.ast .tooltip__trigger {
-  display: block;
-  width: 100%;
-  height: 100%;
-  cursor: default;
 }
 
 /* ── A quiz, a question at a time ────────────────────────────────────────── */
