@@ -176,6 +176,17 @@ function AssessmentAnswers() {
   const a = assessment
   const options = filterOptions(a)
 
+  /* The line the card leads with, and what to call it.
+
+     A situational test names its brief — the scenario the questions run on — so the label
+     is Title. A fill-in-the-blanks states its whole sentence, because each chip below
+     shows one clause of it and the clauses alone never spell it out. Everything else has
+     one question and the title is it. A lesson quiz gets nothing: see the section below. */
+  const leadText =
+    a.kind !== 'multi' || a.type === 'fill-blank' || a.prompt ? a.title : null
+  const leadLabel =
+    a.kind === 'multi' && a.type === 'situational-test' ? 'Title' : 'Question'
+
   /* Both filters read the same rows, so they compose: a name and an answer together
      ask "did this person get it right", which is the question a search exists for. */
   const matches = <T extends { learner: ResponseLearner }>(r: T, i: number): boolean => {
@@ -419,30 +430,20 @@ function AssessmentAnswers() {
             <p className="asp-none">Nobody has answered this yet.</p>
           ) : (
             <>
-              {/* The question and the shape of the result, above the rows it summarises. */}
-              {/* Only a situational test has a line here: its scenario, which the
-                  questions run on. Everywhere else the title above is the question, so
-                  repeating it would be the same sentence twice on one screen. */}
-              {/* Questions live here rather than in the header. A single-question
-                  assessment states its one question; a situational test states the
-                  scenario its twelve run on, and the chart states the questions; a lesson
-                  quiz's chips do it a question at a time. */}
+              {/* What the card leads with, above the chart that summarises the rows.
+                  Questions live here rather than in the header, which carries only the
+                  format — the header cannot hold a question when a quiz has three.
+
+                  A lesson quiz is the one format with nothing to put here: it has no name
+                  of its own, its title IS its first question, and the chips below already
+                  show that one. Printing it would be the same sentence twice. */}
               <section className="asp-brief">
-                {a.prompt ?? (a.kind === 'multi' ? null : a.title) ? (
+                {leadText ? (
                   <div className="asp-brief__field">
                     {/* Named, now that the header no longer carries it: on its own the
                         line could be a heading, a note or an instruction. */}
-                    <span className="asp-brief__label">
-                      {/* Title, because that is what it is: a situational test's brief is
-                          the text the learner read, and this line is the name above it. */}
-                      {a.kind === 'multi' ? 'Title' : 'Question'}
-                    </span>
-                    {/* The title, which for a situational test is the name of the brief
-                        and the only place on the page it appears — the header cannot carry
-                        it, since a lesson quiz has three questions and no name. The brief's
-                        own text is what the learner read before the twelve questions; it
-                        belongs to them, not to a summary of how they were answered. */}
-                    <p className="asp-brief__value">{a.title}</p>
+                    <span className="asp-brief__label">{leadLabel}</span>
+                    <p className="asp-brief__value">{leadText}</p>
                   </div>
                 ) : null}
                 <AnswerStats key={a.id} assessment={a} />
