@@ -103,11 +103,20 @@
   background: var(--primary-600);
 }
 
-/* Status colour for the one segment it means. Green against the blue of the rest
-   is a hue shift rather than a red/green pair, so it survives the common colour
-   deficiencies — and the legend names it in words underneath either way. */
+/* The two facts the Result badge beside this table already states, in the two colours
+   it states them in: a neutral blue was calling a wrong answer "an answer" while the row
+   underneath called it Incorrect. --text-error rather than the raw danger, so the red
+   lightens in dark mode the way every other error on the page does.
+
+   Red and green touching is the pairing colour deficiency struggles with most, so the
+   2px surface gap between segments and the words in the legend under them are doing the
+   work colour cannot: no reader has to name a hue to read this chart. */
 .ast-seg.is-correct .ast-seg__fill {
   background: var(--success-500);
+}
+
+.ast-seg.is-wrong .ast-seg__fill {
+  background: var(--text-error);
 }
 
 /* Rounded where the data ends, square where one segment meets the next. */
@@ -155,6 +164,10 @@
 
 .ast-legend__row.is-correct .ast-legend__swatch {
   background: var(--success-500);
+}
+
+.ast-legend__row.is-wrong .ast-legend__swatch {
+  background: var(--text-error);
 }
 
 /* The one that was right carries the weight, so the list has an answer in it. */

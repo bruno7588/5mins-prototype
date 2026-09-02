@@ -440,7 +440,7 @@ function AssessmentAnswers() {
                     are the uploaded files, fetched row by row. */}
                 {a.kind !== 'file' ? (
                   <Button
-                    variant="outlined"
+                    variant="outlined-2"
                     icon={<CsvIcon size={20} color="currentColor" />}
                     onClick={download}
                     disabled={a.responses.length === 0}

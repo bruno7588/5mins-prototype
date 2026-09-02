@@ -51,7 +51,7 @@ function Split({
         {parts.map((p) => (
           <Tooltip
             key={p.label}
-            className={`ast-seg${p.correct ? ' is-correct' : ''}`}
+            className={`ast-seg ${p.correct ? 'is-correct' : 'is-wrong'}`}
             icon={false}
             position="Top"
             text={`${p.label} — ${p.n} of ${responded}`}
@@ -65,7 +65,7 @@ function Split({
         {options.map((label, i) => (
           <li
             key={label}
-            className={`ast-legend__row${i === correctIndex ? ' is-correct' : ''}`}
+            className={`ast-legend__row ${i === correctIndex ? 'is-correct' : 'is-wrong'}`}
           >
             <span className="ast-legend__swatch" aria-hidden="true" />
             <span className="ast-legend__label">{label}</span>
