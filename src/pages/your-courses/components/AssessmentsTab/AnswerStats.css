@@ -3,11 +3,12 @@
    and drawing them all as the same list of bars was the part that read as
    templated. Prefix `ast-`. */
 
-/* The panel around this is on a 12px rhythm, so the block keeps to it. */
+/* The two children are the caption and the chart, and 16px between them separates the
+   figures about the assessment from the control that changes what is charted. */
 .ast {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-m);
 
   /* The mark under the pointer, one palette step away: darker in light mode, lighter in
      dark, so the shift is toward the surface's opposite either way and reads as the same
@@ -46,23 +47,35 @@
   cursor: default;
 }
 
-/* The caption: two label-over-value pairs side by side, each on the same 2px rhythm as
-   the Question field above them, so the head of the panel reads as one pattern. */
+/* The caption: both stats on one line. Stacked, each label sat over a short number and
+   left the rest of a 1400px card empty — two pairs read across take one line and no more.
+   Wrapping is kept for the narrow case rather than letting them collide. */
 .ast-stats {
   display: flex;
-  align-items: flex-start;
+  /* Centred, not baseline: a flex item takes its baseline from its first child, and one
+     of these starts with an icon. An SVG has no text baseline, so aligning the two stats
+     that way sat one of them on the icon's bottom edge. */
+  align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-l);
+  gap: var(--space-xs) var(--space-l);
   width: 100%;
 }
 
+/* Icon, label, value on one line. Centred rather than baseline-aligned: an icon has no
+   baseline to share with the two type sizes beside it. */
 .ast-stat {
   margin: 0;
   display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
+  align-items: center;
+  gap: var(--space-xs);
   font-size: 14px;
   line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+
+.ast-stat svg {
+  flex: 0 0 auto;
 }
 
 .ast-stat__label {
@@ -71,8 +84,10 @@
 }
 
 /* Paragraph M regular, a shade back: "of 128" is the cohort the figure is read against
-   rather than the figure itself. */
+   rather than the figure itself. A step off its label, so each pair groups against the
+   24px between the two stats. */
 .ast-stat__value {
+  margin-left: var(--space-xs);
   font-weight: 400;
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
@@ -127,7 +142,7 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
 }
 
 .ast-bar {

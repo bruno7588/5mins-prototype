@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TickCircle } from 'iconsax-react'
 import Chip from '@/components/Chip/Chip'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import {
@@ -243,6 +244,10 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
           "overall", because the chips above are showing one of them. */}
       {a.kind === 'multi' && correct !== null ? (
         <p className="ast-stat">
+          {/* The tick names which figure this is; the two stats are the same weight of
+              information, so they read in the same colour. Green here would be taken as a
+              verdict on the number, and 64% is not a verdict the product makes. */}
+          <TickCircle size={16} color="currentColor" variant="Linear" />
           <span className="ast-stat__label">Correct overall</span>
           <span className="ast-stat__value">
             <span className="ast-stat__figure">{correct}%</span>
