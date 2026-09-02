@@ -133,28 +133,38 @@
 }
 
 /* ── The legend, which is also the numbers ───────────────────────────────── */
-/* Capped rather than run to the width of the bar above it. Full width put 700px of
-   nothing between the end of an option and the figure that belongs to it, which is a
-   long way for the eye to carry a line — and the reason a list like this usually ends up
-   with rules drawn through it. The rule is treating the gap; this removes it, and the
-   figures still line up in a column so the four can be compared at a glance. */
+/* Full width, so the column of figures ends where the bar above it ends — they are the
+   same measurements, and a capped list left them stopping in the middle of the card with
+   nothing to line up against. The distance from an option to its own figure is carried
+   by the row's hover instead of by a rule: nothing is drawn until the reader is looking. */
 .ast-legend {
   margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
-  max-width: 720px;
 }
 
 .ast-legend__row {
   display: flex;
   align-items: baseline;
   gap: var(--space-s);
+  /* Its own padding rather than the list's gap, so the hover fill is a band the whole
+     row deep instead of a stripe behind the text. */
+  padding: var(--space-xs) var(--space-s);
+  margin: 0 calc(var(--space-s) * -1);
+  border-radius: var(--radius-xs);
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-secondary);
+  transition: background 150ms ease;
+}
+
+/* The one thing that binds an option to a percentage 700px away, and only while the
+   reader is asking. A rule drawn permanently would be four lines of chrome for a moment
+   of need. */
+.ast-legend__row:hover {
+  background: var(--input-background);
 }
 
 /* A dot rather than a square: it is the same mark the bar is made of, shrunk. */
