@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft2, ArrowRight2, ArrowDown2, ArrowUp2, CloseCircle, TickCircle } from 'iconsax-react'
+import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowDown2, CloseCircle, TickCircle } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
 import { multiScore, type MultiAssessment, type MultiResponse } from './assessmentResults'
 /* The By Learner pivot is this same shape one level up — learner rows that open onto
@@ -49,18 +49,22 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
         <span className="lrn-c-learner">Learner</span>
         <button
           type="button"
-          className="lrn-cell lrn-c-score lrn-sort"
+          className="lrn-sort"
           onClick={onToggleSort}
           aria-label={`Sort by score, ${sort === 'asc' ? 'highest first' : 'lowest first'}`}
         >
           Score
-          {/* Points the way the next press will order it, so the control says what it
-              will do rather than only what it has done. */}
-          {sort === 'asc' ? (
-            <ArrowUp2 size={16} color="currentColor" variant="Linear" />
-          ) : (
-            <ArrowDown2 size={16} color="currentColor" variant="Linear" />
-          )}
+          {/* One arrow, turned — the way every other sortable header in the app draws it.
+              Hidden until the header is hovered or the column is actually ordered: an
+              arrow on an unsorted column claims an order that is not there. */}
+          <ArrowDown
+            size={16}
+            color="currentColor"
+            variant="Linear"
+            className={`lrn-sort__icon${sort !== 'none' ? ' is-active' : ''}${
+              sort === 'asc' ? ' is-asc' : ''
+            }`}
+          />
         </button>
         <span className="lrn-c-expand" aria-hidden="true" />
       </div>

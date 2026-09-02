@@ -20,16 +20,57 @@
   color: var(--text-secondary);
 }
 
-/* The sortable header cell. Chrome-free like the DS table's, which marks a sortable
-   header by its gap and its cursor and nothing else. */
+/* The sortable header cell, per table.md: the label with a 4px gap and a trailing arrow.
+   It cannot borrow .lrn-c-score — that is the row's stack below, and its column direction
+   put the arrow underneath the word instead of after it. */
 .lrn-sort {
+  display: flex;
+  align-items: center;
   gap: var(--space-xs);
+  min-width: 0;
   padding: 0;
   border: none;
   background: none;
   font: inherit;
   color: inherit;
   cursor: pointer;
+}
+
+.lrn-sort:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Always drawn, at two strengths. Dim, it is an invitation — the only thing that tells a
+   reader this column can be ordered at all, which a hover-only arrow says to nobody on a
+   touch screen and to nobody who never sweeps the header. Turned rather than swapped,
+   like .lrn-chevron below. */
+.lrn-sort__icon {
+  flex: 0 0 auto;
+  color: var(--text-tertiary);
+  transition: color 150ms ease, transform 200ms ease;
+}
+
+.lrn-sort:hover .lrn-sort__icon,
+.lrn-sort:focus-visible .lrn-sort__icon {
+  color: var(--text-secondary);
+}
+
+/* Solid, it is a claim: this column is ordered, and this is the way. Nothing shows it
+   until a sort is actually in force, so the arrow never asserts an order that is not. */
+.lrn-sort__icon.is-active {
+  color: var(--text-secondary);
+}
+
+.lrn-sort__icon.is-asc {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lrn-sort__icon {
+    transition: none;
+  }
 }
 
 .lrn-list {
