@@ -431,7 +431,9 @@ function AssessmentAnswers() {
                     {/* Named, now that the header no longer carries it: on its own the
                         line could be a heading, a note or an instruction. */}
                     <span className="asp-brief__label">
-                      {a.kind === 'multi' ? 'Brief' : 'Question'}
+                      {/* Title, because that is what it is: a situational test's brief is
+                          the text the learner read, and this line is the name above it. */}
+                      {a.kind === 'multi' ? 'Title' : 'Question'}
                     </span>
                     {/* The title, which for a situational test is the name of the brief
                         and the only place on the page it appears — the header cannot carry
