@@ -11,11 +11,3 @@
   color: var(--text-secondary);
 }
 
-/* What they should have picked, under what they did. Paragraph M in tertiary — the
-   same quiet register as the question above it, so the answer itself stays the only
-   line in primary. */
-.mqa-right {
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}

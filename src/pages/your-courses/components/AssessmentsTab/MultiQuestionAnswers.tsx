@@ -125,14 +125,12 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                             <span className="lrn-answer__title">
                               {qi + 1}. {q.prompt}
                             </span>
+                            {/* What they picked, and nothing else: the chart above names
+                                the right answer in green for the question its chips have
+                                selected, so restating it here was the same sentence twice
+                                on one screen. The tick or cross already says whether this
+                                was it. */}
                             <span className="lrn-answer__a">{q.options[r.picks[qi]]}</span>
-                            {/* Only where they missed it — on a right answer this is
-                                the line directly above. */}
-                            {right ? null : (
-                              <span className="mqa-right">
-                                Correct answer: {q.options[q.correctIndex]}
-                              </span>
-                            )}
                           </span>
                         </li>
                       )
