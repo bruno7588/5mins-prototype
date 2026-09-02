@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import Chip from '@/components/Chip/Chip'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import {
@@ -81,7 +81,7 @@ function Choices({
    blank. One chart at a time with a chip to move between them, rather than a
    column per question saying only how many got it right — the score of a question
    is not the same finding as which wrong answer took the people who missed it. */
-function Quiz({ a, responded, caption }: { a: MultiAssessment; responded: number; caption: ReactNode }) {
+function Quiz({ a, responded }: { a: MultiAssessment; responded: number }) {
   const [sel, setSel] = useState(0)
   const q = a.questions[sel]
   /* A blank is not a question, and calling it one on a fill-in-the-blanks reads as
@@ -103,7 +103,6 @@ function Quiz({ a, responded, caption }: { a: MultiAssessment; responded: number
       {/* The chip says which one; this says what it was. A lesson quiz has no prompt
           of its own, so without this the chart is about nothing named. */}
       <p className="ast-quiz__prompt">{q.prompt}</p>
-      {caption}
       <Choices
         options={q.options}
         correctIndex={q.correctIndex}
@@ -204,11 +203,12 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
      option was picked. Their "correct" band is full marks, not a chosen answer. */
   const banded = a.kind === 'graded' && !hasStatedAnswer(a)
 
-  /* The same label on every chart, so the four formats read as one page rather than four
-     — and the same shape as the Question label above it. What the count is counting rides
-     with the number: a poll collects votes, everything else responses. */
-  const heading = 'Answers'
-  const counted = a.kind === 'poll' ? ' votes' : ' responses'
+  /* The label carries the noun so the value can be nothing but the numbers: "Total
+     answers / 112 of 128" rather than a label and a unit saying the same word twice. The
+     noun still follows the format — a poll collects votes and an exercise files, and
+     calling either of them answers would be the wrong word for what is in the table. */
+  const heading =
+    a.kind === 'poll' ? 'Total votes' : a.kind === 'file' ? 'Total files' : 'Total answers'
 
   /* The same figure the Result column prints on the row the admin clicked to get here,
      read off the same helper so the two cannot drift. Null on the formats with no right
@@ -229,42 +229,40 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
       <p className="ast-stat">
         <span className="ast-stat__label">{heading}</span>
         <span className="ast-stat__value">
-          {/* An exercise collects work rather than answers, and a fraction of the cohort
-              is not what an admin comes here for — the pile is. */}
-          {a.kind === 'file' ? (
-            `${responded} files uploaded`
-          ) : (
-            <>
-              {responded} of {a.enrolled}
-              {counted}
-            </>
-          )}
+          {/* The figure carries the weight; the cohort it is out of is the context it is
+              read against, and does not need to compete with it. */}
+          <span className="ast-stat__figure">{responded}</span> of {a.enrolled}
         </span>
       </p>
 
-      {correct === null ? null : (
+      {/* Only where the chart below does not already state it. A single question draws
+          its right answer as a green bar with that very percentage on the end of it, and
+          a banded chart does the same with its full-marks column — printing it again up
+          here is the same number twice. A multi-question assessment's bars are one
+          question at a time and never add up to the whole, which is the gap this fills:
+          "overall", because the chips above are showing one of them. */}
+      {a.kind === 'multi' && correct !== null ? (
         <p className="ast-stat">
-          {/* "Overall" only where it is needed: on a multi-question format the chips above
-              show one question and this figure is the whole assessment, which the reader
-              would otherwise read as the score of the question in front of them. */}
-          <span className="ast-stat__label">
-            {a.kind === 'multi' ? 'Correct overall' : 'Correct'}
+          <span className="ast-stat__label">Correct overall</span>
+          <span className="ast-stat__value">
+            <span className="ast-stat__figure">{correct}%</span>
           </span>
-          <span className="ast-stat__value">{correct}%</span>
         </p>
-      )}
+      ) : null}
     </div>
   )
 
   return (
     <section className="ast" aria-label="Overview">
-      {/* Directly above the chart it is the denominator of. On a multi-question format
-          that means below the question the chips select rather than above them, so it
-          sits with the bars it counts and not with the control that changes them. */}
-      {a.kind === 'multi' ? null : caption}
+      {/* Above the chips, not below them. Both figures describe the assessment — 88 of
+          128 sat it, they averaged 64% — and printed under the question the chips select
+          they read as that question's, which is a different number entirely: 64% overall
+          beside a bar saying 31% is the same word meaning two things. Position says which
+          level each belongs to; no adjective has to. */}
+      {caption}
 
       {!charted ? null : a.kind === 'multi' ? (
-        <Quiz a={a} responded={responded} caption={caption} />
+        <Quiz a={a} responded={responded} />
       ) : a.kind === 'poll' ? (
         <Poll a={a} responded={responded} />
       ) : banded ? (
