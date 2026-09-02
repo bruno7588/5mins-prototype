@@ -197,11 +197,14 @@
   min-height: 58px;
 }
 
+/* Centred, not top-aligned. Whatever is tallest sets the row height and fills it anyway,
+   so centring only moves the shorter cells — which is exactly the case that looked wrong:
+   a one-line answer pinned to the top of a row an avatar block had made taller. */
 .asp-page .tbl-cell {
   max-height: none;
   overflow: visible;
   white-space: normal;
-  align-items: flex-start;
+  align-items: center;
   padding-top: var(--space-sm);
   padding-bottom: var(--space-sm);
 }
@@ -212,9 +215,9 @@
   white-space: nowrap;
 }
 
-/* The avatar keeps its own line height rather than stretching with the row. */
+/* The avatar rides with its name rather than stretching to the row. */
 .asp-page .tbl-cell .tbl-media {
-  align-items: flex-start;
+  align-items: center;
 }
 
 /* ── Nothing to show ─────────────────────────────────────────────────────── */

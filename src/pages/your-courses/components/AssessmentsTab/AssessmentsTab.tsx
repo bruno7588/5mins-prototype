@@ -55,7 +55,9 @@ function ResultCell({ a }: { a: AssessmentResult }) {
             so the column could not be compared as lengths anyway. */}
         <span className="asm-result__lead">{pct}% correct</span>
         {a.kind === 'multi' ? (
-          <span className="asm-result__sub">{a.questions.length} questions</span>
+          <span className="asm-result__sub">
+            {a.questions.length} {a.type === 'fill-blank' ? 'blanks' : 'questions'}
+          </span>
         ) : null}
       </div>
     )
