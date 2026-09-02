@@ -48,13 +48,15 @@ function ResultCell({ a }: { a: AssessmentResult }) {
     const pct = correctPct(a) ?? 0
     return (
       <div className="asm-result">
-        {/* The figure alone. The bar drew the same number printed under it, and only on
-            the rows that have a score — a poll, a short text and an exercise have
-            none — so the column could not be compared as lengths anyway. */}
-        <span className="asm-result__pct">
-          {pct}% correct
-          {a.kind === 'multi' ? ` · ${a.questions.length} questions` : ''}
-        </span>
+        {/* The score leads, as the winning option does on a poll and the file count on
+            an exercise; how many questions it was scored over is the supporting line, the
+            same stack every other row in this column uses. The bar that used to sit here
+            drew the same number printed under it, and only on the rows that have a score,
+            so the column could not be compared as lengths anyway. */}
+        <span className="asm-result__lead">{pct}% correct</span>
+        {a.kind === 'multi' ? (
+          <span className="asm-result__sub">{a.questions.length} questions</span>
+        ) : null}
       </div>
     )
   }
