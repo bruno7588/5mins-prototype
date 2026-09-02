@@ -103,6 +103,8 @@ function AssessmentsTab() {
   const location = useLocation()
   const [types, setTypes] = useState<string[]>([])
   const [page, setPage] = useState(0)
+  /* Unsorted until asked: the order the pool arrives in is a fact too. */
+  const [learnerSort, setLearnerSort] = useState<'none' | 'asc' | 'desc'>('none')
   /* Index into the *filtered* list — prev/next should walk what the admin is
      actually looking at, not the whole course. */
   /* Which axis the admin is reading — the same responses, across or down. */
@@ -166,7 +168,17 @@ function AssessmentsTab() {
     [types],
   )
 
-  const filteredLearners = learnerRows
+  /* Sorted before the slice, so the order is the cohort's rather than this page's.
+     Lowest first on the first press — the list is read to find who is behind. A learner
+     with nothing scored is not the lowest scorer, so those settle at the end either way
+     rather than crowding the top of an ascending sort. */
+  const filteredLearners = useMemo(() => {
+    if (learnerSort === 'none') return learnerRows
+    return [...learnerRows].sort((x, y) => {
+      if (x.pct === null || y.pct === null) return (x.pct === null ? 1 : 0) - (y.pct === null ? 1 : 0)
+      return learnerSort === 'asc' ? x.pct - y.pct : y.pct - x.pct
+    })
+  }, [learnerSort])
 
   /* A name in the summary is a door into the row it describes: switch the pivot, page
      to wherever that learner sits, and let the list open and reveal them. */
@@ -299,6 +311,11 @@ function AssessmentsTab() {
         <LearnerList
           focus={focus}
           rows={learnerPage}
+          sort={learnerSort}
+          onToggleSort={() => {
+            setLearnerSort(learnerSort === 'asc' ? 'desc' : 'asc')
+            setPage(0)
+          }}
           pagination={{
             from: from + 1,
             to: from + learnerPage.length,

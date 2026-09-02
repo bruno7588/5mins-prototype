@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeft2, ArrowRight2, ArrowDown2 } from 'iconsax-react'
+import { ArrowLeft2, ArrowRight2, ArrowDown2, ArrowUp2 } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Collapse from '@/components/Collapse/Collapse'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
@@ -9,6 +9,10 @@ import './LearnerList.css'
 
 interface Props {
   rows: LearnerRow[]
+  /** Which way the score column is ordered, and how to turn it. The tab owns this:
+   *  sorting the ten rows handed down would order a page rather than a cohort. */
+  sort?: 'none' | 'asc' | 'desc'
+  onToggleSort?: () => void
   pagination: { from: number; to: number; total: number; onPrev?: () => void; onNext?: () => void }
   /** A learner to open and scroll to — sent by the Insights card when a name is
    *  clicked. Carries a nonce so clicking the same name twice still arrives. */
@@ -21,7 +25,7 @@ interface Props {
  * shared Table component has no slot for expanded content, so this is hand-rolled
  * on the same grid the header uses.
  */
-function LearnerList({ rows, pagination, focus }: Props) {
+function LearnerList({ rows, sort = 'none', onToggleSort, pagination, focus }: Props) {
   const [open, setOpen] = useState<Set<string>>(new Set())
 
   /* Arriving from a name in the Insights card: open that row and bring it into view.
@@ -49,7 +53,21 @@ function LearnerList({ rows, pagination, focus }: Props) {
     <div className="lrn">
       <div className="lrn-head">
         <span className="lrn-c-learner">Learner</span>
-        <span className="lrn-c-score">Score</span>
+        <button
+          type="button"
+          className="lrn-cell lrn-c-score lrn-sort"
+          onClick={onToggleSort}
+          aria-label={`Sort by score, ${sort === 'asc' ? 'highest first' : 'lowest first'}`}
+        >
+          Score
+          {/* Points the way the next press will order it, so the control says what it
+              will do rather than only what it has done. */}
+          {sort === 'asc' ? (
+            <ArrowUp2 size={16} color="currentColor" variant="Linear" />
+          ) : (
+            <ArrowDown2 size={16} color="currentColor" variant="Linear" />
+          )}
+        </button>
         <span className="lrn-c-expand" aria-hidden="true" />
       </div>
 
