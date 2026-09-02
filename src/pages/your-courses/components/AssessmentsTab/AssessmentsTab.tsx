@@ -48,12 +48,9 @@ function ResultCell({ a }: { a: AssessmentResult }) {
     const pct = correctPct(a) ?? 0
     return (
       <div className="asm-result">
-        <span className="asm-bar" aria-hidden="true">
-          <span
-            className="asm-bar__fill"
-            style={{ width: `${pct}%` }}
-          />
-        </span>
+        {/* The figure alone. The bar drew the same number printed under it, and only on
+            the rows that have a score — a poll, a short text and an exercise have
+            none — so the column could not be compared as lengths anyway. */}
         <span className="asm-result__pct">
           {pct}% correct
           {a.kind === 'multi' ? ` · ${a.questions.length} questions` : ''}
