@@ -8,6 +8,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+
+  /* The mark under the pointer, one palette step away: darker in light mode, lighter in
+     dark, so the shift is toward the surface's opposite either way and reads as the same
+     gesture in both. Named here so each rule below asks for a hue, not a step. */
+  --ast-primary-hover: var(--primary-700);
+  --ast-success-hover: var(--success-600);
+  --ast-danger-hover: var(--danger-600);
+}
+
+[data-theme='dark'] .ast {
+  --ast-primary-hover: var(--primary-500);
+  --ast-success-hover: var(--success-400);
+  --ast-danger-hover: var(--danger-400);
 }
 
 .ast-heading {
@@ -101,6 +114,21 @@
   display: block;
   height: 100%;
   background: var(--primary-600);
+  transition: background 150ms ease;
+}
+
+/* The segment the tooltip is about. With four in one bar, a tooltip on its own leaves
+   the reader to work out which of them it is describing. */
+.ast-seg:hover .ast-seg__fill {
+  background: var(--ast-primary-hover);
+}
+
+.ast-seg.is-correct:hover .ast-seg__fill {
+  background: var(--ast-success-hover);
+}
+
+.ast-seg.is-wrong:hover .ast-seg__fill {
+  background: var(--ast-danger-hover);
 }
 
 /* The two facts the Result badge beside this table already states, in the two colours
@@ -242,6 +270,7 @@
   inset: 0 auto 0 0;
   width: var(--ast-w);
   background: color-mix(in srgb, var(--primary-600) 22%, transparent);
+  transition: background 150ms ease;
   animation: ast-grow 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(300ms + var(--ast-i, 0) * 60ms);
 }
@@ -250,6 +279,12 @@
   from {
     width: 0;
   }
+}
+
+/* A tint rather than a solid, so its hover deepens the same tint instead of jumping to
+   another colour: the words sit on top of it and have to stay readable through it. */
+.ast-poll__row:hover .ast-poll__fill {
+  background: color-mix(in srgb, var(--primary-600) 34%, transparent);
 }
 
 /* Above the fill. */
@@ -321,6 +356,16 @@
   background: var(--primary-600);
   animation: ast-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(300ms + var(--ast-i, 0) * 45ms);
+  transition: background 150ms ease;
+}
+
+/* The column being pointed at, the same step the segments take. */
+.ast-col__hit:hover .ast-col__bar {
+  background: var(--ast-primary-hover);
+}
+
+.ast-col__hit:hover .ast-col__bar.is-full {
+  background: var(--ast-success-hover);
 }
 
 /* Full marks — the same green the correct segment carries, so one colour means

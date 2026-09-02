@@ -8,6 +8,7 @@ import Button from '@/components/Button/Button'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'
 import Search from '@/components/Search/Search'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import Table, { type Column } from '@/components/Table/Table'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
@@ -155,6 +156,9 @@ function AssessmentAnswers() {
   const [query, setQuery] = useState('')
   const [answer, setAnswer] = useState(ALL)
   const [page, setPage] = useState(0)
+  /* Unsorted until asked: the order responses arrive in is a fact too, and a list that
+     sorts itself on arrival hides who answered first. */
+  const [sort, setSort] = useState<'none' | 'asc' | 'desc'>('none')
 
   /* Nothing in this app restores scroll on a route change, so a page opened from
      halfway down the assessments list would otherwise open halfway down itself. */
@@ -199,11 +203,21 @@ function AssessmentAnswers() {
     [a.id, query, answer],
   )
 
-  const total = kept.length
+  /* Before the slice, so the order is the cohort's rather than this page's. Lowest first
+     on the first press — a scenario is read to find who struggled. */
+  const ordered =
+    sort === 'none' || a.kind !== 'multi'
+      ? kept
+      : [...kept].sort(({ r: x }, { r: y }) => {
+          const d = multiScore(a, x as MultiResponse) - multiScore(a, y as MultiResponse)
+          return sort === 'asc' ? d : -d
+        })
+
+  const total = ordered.length
   const lastPage = Math.max(0, Math.ceil(total / PAGE_SIZE) - 1)
   const safePage = Math.min(page, lastPage)
   const from = safePage * PAGE_SIZE
-  const pageRows = kept.slice(from, from + PAGE_SIZE).map(({ r }) => r)
+  const pageRows = ordered.slice(from, from + PAGE_SIZE).map(({ r }) => r)
 
   const pagination = {
     from: total === 0 ? 0 : from + 1,
@@ -304,6 +318,11 @@ function AssessmentAnswers() {
         <MultiQuestionAnswers
           assessment={a}
           responses={pageRows as MultiResponse[]}
+          sort={sort}
+          onToggleSort={() => {
+            setSort(sort === 'asc' ? 'desc' : 'asc')
+            setPage(0)
+          }}
           pagination={pagination}
         />
       )
@@ -328,13 +347,17 @@ function AssessmentAnswers() {
         width: '0 0 52px',
         cellClassName: 'tbl-action',
         render: (r) => (
-          <button
-            className="icon-btn"
-            onClick={() => showToast('info', `Downloading ${r.fileName}`)}
-            aria-label={`Download ${r.fileName}`}
-          >
-            <ImportCurve size={20} color="var(--text-primary)" variant="Linear" />
-          </button>
+          /* An icon on its own in a column with no header — the tooltip is where it says
+             what it does. */
+          <Tooltip text="Download File" position="Top" icon={false}>
+            <button
+              className="icon-btn"
+              onClick={() => showToast('info', `Downloading ${r.fileName}`)}
+              aria-label={`Download ${r.fileName}`}
+            >
+              <ImportCurve size={20} color="var(--text-primary)" variant="Linear" />
+            </button>
+          </Tooltip>
         ),
       },
     ]
@@ -406,12 +429,16 @@ function AssessmentAnswers() {
                 {a.prompt ?? (a.kind === 'multi' ? null : a.title) ? (
                   <div className="asp-brief__field">
                     {/* Named, now that the header no longer carries it: on its own the
-                        line could be a heading, a note or an instruction. A situational
-                        test's is a scenario rather than a question, so it says so. */}
+                        line could be a heading, a note or an instruction. */}
                     <span className="asp-brief__label">
                       {a.kind === 'multi' ? 'Brief' : 'Question'}
                     </span>
-                    <p className="asp-brief__value">{a.prompt ?? a.title}</p>
+                    {/* The title, which for a situational test is the name of the brief
+                        and the only place on the page it appears — the header cannot carry
+                        it, since a lesson quiz has three questions and no name. The brief's
+                        own text is what the learner read before the twelve questions; it
+                        belongs to them, not to a summary of how they were answered. */}
+                    <p className="asp-brief__value">{a.title}</p>
                   </div>
                 ) : null}
                 <AnswerStats key={a.id} assessment={a} />

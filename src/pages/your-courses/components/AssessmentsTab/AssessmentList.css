@@ -124,26 +124,24 @@
   color: var(--text-secondary);
 }
 
+/* 16px icons, per table.md — these were a text glyph sized to whatever the font made
+   of it, which is why the footer never quite matched the spec. */
 .asl-nav {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
   border: none;
   background: transparent;
-  border-radius: var(--radius-full);
-  color: var(--text-primary);
-  font-size: 18px;
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
-.asl-nav:hover {
-  background: var(--input-background-hover);
-}
-
+/* "disabled nav uses opacity: 0.4" — dimming a token is not the same thing on an icon. */
 .asl-nav[aria-disabled='true'] {
-  color: var(--text-disabled);
+  opacity: 0.4;
   cursor: default;
 }
 

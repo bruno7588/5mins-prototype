@@ -1,4 +1,5 @@
 import Button from '@/components/Button/Button'
+import { ArrowLeft2, ArrowRight2 } from 'iconsax-react'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import {
   assessmentTypeFromLabel,
@@ -79,7 +80,7 @@ function AssessmentList({ rows, resultCell, onView, pagination }: Props) {
             aria-disabled={pagination.from <= 1}
             onClick={pagination.from <= 1 ? undefined : pagination.onPrev}
           >
-            ‹
+            <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
           </button>
           <button
             type="button"
@@ -88,7 +89,7 @@ function AssessmentList({ rows, resultCell, onView, pagination }: Props) {
             aria-disabled={pagination.to >= pagination.total}
             onClick={pagination.to >= pagination.total ? undefined : pagination.onNext}
           >
-            ›
+            <ArrowRight2 size={16} color="currentColor" variant="Linear" />
           </button>
         </div>
       ) : null}

@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState, type ReactNode } from 'react'
+import { ArrowLeft2, ArrowRight2 } from 'iconsax-react'
 import Checkbox from '../Checkbox/Checkbox'
 import './Table.css'
 
@@ -164,7 +165,7 @@ export function Table<T>({
             aria-disabled={pagination.from <= 1}
             onClick={pagination.from <= 1 ? undefined : pagination.onPrev}
           >
-            ‹
+            <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
           </button>
           <button
             type="button"
@@ -173,7 +174,7 @@ export function Table<T>({
             aria-disabled={pagination.to >= pagination.total}
             onClick={pagination.to >= pagination.total ? undefined : pagination.onNext}
           >
-            ›
+            <ArrowRight2 size={16} color="currentColor" variant="Linear" />
           </button>
         </div>
       )}

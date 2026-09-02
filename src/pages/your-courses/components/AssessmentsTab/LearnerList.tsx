@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowDown2, CloseCircle } from 'iconsax-react'
+import { ArrowLeft2, ArrowRight2, ArrowDown2, CloseCircle } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Collapse from '@/components/Collapse/Collapse'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
@@ -165,7 +165,7 @@ function LearnerList({ rows, pagination, focus }: Props) {
             aria-disabled={pagination.from <= 1}
             onClick={pagination.from <= 1 ? undefined : pagination.onPrev}
           >
-            ‹
+            <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
           </button>
           <button
             type="button"
@@ -174,7 +174,7 @@ function LearnerList({ rows, pagination, focus }: Props) {
             aria-disabled={pagination.to >= pagination.total}
             onClick={pagination.to >= pagination.total ? undefined : pagination.onNext}
           >
-            ›
+            <ArrowRight2 size={16} color="currentColor" variant="Linear" />
           </button>
         </div>
       ) : null}

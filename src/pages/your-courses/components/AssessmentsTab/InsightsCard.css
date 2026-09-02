@@ -262,11 +262,16 @@
   margin-top: var(--space-s);
 }
 
-/* Clear sits with the two icons beside it, so it carries their weight rather than
-   the button family's link colour. */
-.asmi .asmi-clear,
-.asmi .asmi-clear:hover:not(:disabled) {
+/* Clear sits with the two icons beside it, so at rest it carries their weight rather
+   than the button family's link colour. */
+.asmi .asmi-clear {
   color: var(--text-secondary);
+}
+
+/* On hover it says what it does: this one throws the summary away, and it is the only
+   control on the card that destroys anything. */
+.asmi .asmi-clear:hover:not(:disabled) {
+  color: var(--text-error);
 }
 
 /* Two by two: four figures across a 360px column, so each card takes half of it. */

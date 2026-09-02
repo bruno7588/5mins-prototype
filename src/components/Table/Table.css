@@ -371,21 +371,23 @@
   font: 400 14px/1.5 'Poppins', sans-serif;
 }
 
+/* 16px icons, per table.md — these were a text glyph sized to whatever the font made
+   of it, which is why the footer never quite matched the spec. */
 .tbl-pagination .nav {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
   border: none;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 18px;
-  line-height: 1;
   cursor: pointer;
 }
 
+/* "disabled nav uses opacity: 0.4" — dimming a token is not the same thing on an icon. */
 .tbl-pagination .nav[aria-disabled='true'] {
-  color: var(--text-disabled);
+  opacity: 0.4;
   cursor: default;
 }

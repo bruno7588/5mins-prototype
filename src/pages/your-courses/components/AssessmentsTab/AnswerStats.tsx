@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import Chip from '@/components/Chip/Chip'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import {
@@ -82,7 +82,7 @@ function Split({
    charts stacked or three columns saying only how many got it right, one chart
    at a time and a chip to move between them — the same divided bar the graded
    format gets, so a quiz question is read the way a question is read. */
-function Quiz({ a, responded }: { a: MultiAssessment; responded: number }) {
+function Quiz({ a, responded, caption }: { a: MultiAssessment; responded: number; caption: ReactNode }) {
   const [sel, setSel] = useState(0)
   const q = a.questions[sel]
 
@@ -101,6 +101,7 @@ function Quiz({ a, responded }: { a: MultiAssessment; responded: number }) {
       {/* The chip says which question; this says what it was. A lesson quiz has no
           prompt of its own, so without this the chart is about nothing named. */}
       <p className="ast-quiz__prompt">{q.prompt}</p>
+      {caption}
       <Split
         options={q.options}
         correctIndex={q.correctIndex}
@@ -200,14 +201,11 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
      option was picked. Their "correct" band is full marks, not a chosen answer. */
   const banded = a.kind === 'graded' && !hasStatedAnswer(a)
 
-  const heading =
-    a.kind === 'multi'
-      ? 'By question'
-      : a.kind === 'poll'
-        ? 'How they voted'
-        : banded
-          ? 'Score bands'
-          : 'Answers'
+  /* Only where the chart is not already saying it. A situational test's columns are
+     numbered along their axis; the arrangement formats label every column with the
+     fraction it stands for ("3/4"), which is what "score bands" was trying to name and
+     nobody had to be told. */
+  const heading = a.kind === 'poll' ? 'How they voted' : a.kind === 'graded' && !banded ? 'Answers' : ''
 
   /* The count needs a noun of its own wherever the heading is not one: "How they voted
      96 of 128" leaves the reader to guess what was counted, while "Answers 112 of 128"
@@ -215,28 +213,34 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
   const counted =
     a.kind === 'poll' ? ' votes' : a.kind === 'multi' || banded ? ' responses' : ''
 
+  /* A quiz of a few questions is read a question at a time; a dozen are read across. */
+  const quiz = a.kind === 'multi' && a.questions.length <= QUIZ_MAX
+
+  const caption = (
+    <p className="ast-heading">
+      {heading ? <span>{heading}</span> : null}
+      <span className="ast-heading__count">
+        {responded} of {a.enrolled}
+        {counted}
+      </span>
+    </p>
+  )
+
   return (
     <section className="ast" aria-label="Overview">
-      {/* The whole fraction, beside the word it belongs to: with the heading reading
-          "Answers", this line says 112 of 128 answers without saying "answers" twice.
-          The one place the count appears — the page header above states the format and
-          leaves the counting to the chart the figures are in. */}
-      <p className="ast-heading">
-        <span>{heading}</span>
-        <span className="ast-heading__count">
-          {responded} of {a.enrolled}
-          {counted}
-        </span>
-      </p>
+      {/* Directly above the chart it is the denominator of. On a quiz that means below
+          the question the chips select rather than above them, so it sits with the bar
+          it counts and not with the control that changes it. */}
+      {quiz ? null : caption}
 
       {a.kind === 'multi' ? (
         /* A dozen questions are a sequence and the dip is the finding, so they stay
            columns. Two or three are not a sequence — they are three questions, and
            each deserves its own answers. */
-        a.questions.length > QUIZ_MAX ? (
-          <Columns cols={questionCols(a, responded)} />
+        quiz ? (
+          <Quiz a={a} responded={responded} caption={caption} />
         ) : (
-          <Quiz a={a} responded={responded} />
+          <Columns cols={questionCols(a, responded)} />
         )
       ) : a.kind === 'poll' ? (
         <Poll a={a} responded={responded} />

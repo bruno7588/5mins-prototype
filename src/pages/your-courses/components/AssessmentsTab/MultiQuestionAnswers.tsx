@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowDown2, CloseCircle, TickCircle } from 'iconsax-react'
+import { ArrowLeft2, ArrowRight2, ArrowDown2, ArrowUp2, CloseCircle, TickCircle } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
 import { multiScore, type MultiAssessment, type MultiResponse } from './assessmentResults'
 /* The By Learner pivot is this same shape one level up — learner rows that open onto
@@ -17,6 +17,10 @@ interface Props {
   assessment: MultiAssessment
   /** The rows to draw. Defaults to every response — a caller that pages passes a slice. */
   responses?: MultiResponse[]
+  /** Which way the score column is ordered, and how to turn it. The page owns this:
+   *  sorting the ten rows it handed down would order a page rather than a cohort. */
+  sort?: 'none' | 'asc' | 'desc'
+  onToggleSort?: () => void
   /** Same footer the DS table draws, since this list is not one. */
   pagination?: {
     from: number
@@ -27,7 +31,7 @@ interface Props {
   }
 }
 
-function MultiQuestionAnswers({ assessment: a, responses, pagination }: Props) {
+function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggleSort, pagination }: Props) {
   const [open, setOpen] = useState<Set<string>>(new Set())
   const rows = responses ?? a.responses
 
@@ -43,7 +47,21 @@ function MultiQuestionAnswers({ assessment: a, responses, pagination }: Props) {
     <div className="lrn">
       <div className="lrn-head">
         <span className="lrn-c-learner">Learner</span>
-        <span className="lrn-c-score">Score</span>
+        <button
+          type="button"
+          className="lrn-cell lrn-c-score lrn-sort"
+          onClick={onToggleSort}
+          aria-label={`Sort by score, ${sort === 'asc' ? 'highest first' : 'lowest first'}`}
+        >
+          Score
+          {/* Points the way the next press will order it, so the control says what it
+              will do rather than only what it has done. */}
+          {sort === 'asc' ? (
+            <ArrowUp2 size={16} color="currentColor" variant="Linear" />
+          ) : (
+            <ArrowDown2 size={16} color="currentColor" variant="Linear" />
+          )}
+        </button>
         <span className="lrn-c-expand" aria-hidden="true" />
       </div>
 
@@ -138,7 +156,7 @@ function MultiQuestionAnswers({ assessment: a, responses, pagination }: Props) {
             aria-disabled={pagination.from <= 1}
             onClick={pagination.from <= 1 ? undefined : pagination.onPrev}
           >
-            ‹
+            <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
           </button>
           <button
             type="button"
@@ -147,7 +165,7 @@ function MultiQuestionAnswers({ assessment: a, responses, pagination }: Props) {
             aria-disabled={pagination.to >= pagination.total}
             onClick={pagination.to >= pagination.total ? undefined : pagination.onNext}
           >
-            ›
+            <ArrowRight2 size={16} color="currentColor" variant="Linear" />
           </button>
         </div>
       ) : null}
