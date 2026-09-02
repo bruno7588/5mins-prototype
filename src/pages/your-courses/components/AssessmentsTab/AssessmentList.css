@@ -40,6 +40,13 @@
   transition: background-color 150ms ease;
 }
 
+/* The same fill the By Learner rows take, so a row reads as one thing under the pointer.
+   No cursor with it: the row is not a control — only the View Answers button inside it
+   is — and a pointer over the whole row would promise a click that does nothing. */
+.asl-card:hover {
+  background: var(--input-background);
+}
+
 .asl-row {
   display: grid;
   grid-template-columns: var(--asl-cols);
