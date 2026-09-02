@@ -6,6 +6,7 @@ import YourCourses from './pages/your-courses/YourCourses'
 import YourCoursesList from './pages/your-courses/YourCoursesList'
 import CreateCourse from './pages/your-courses/CreateCourse'
 import CourseDetails from './pages/your-courses/CourseDetails'
+import AssessmentAnswers from './pages/your-courses/AssessmentAnswers'
 import AddContent from './pages/add-content/AddContent'
 
 import People from './pages/people/People'
@@ -110,6 +111,7 @@ function App() {
                 <Route path="/your-courses" element={<YourCourses />} />
                 <Route path="/your-courses/list" element={<YourCoursesList />} />
                 <Route path="/your-courses/course" element={<CourseDetails />} />
+                <Route path="/your-courses/course/assessments/:id" element={<AssessmentAnswers />} />
                 <Route path="/people" element={<People />} />
                 <Route path="/people/:id" element={<UserProfile />} />
                 <Route path="/learning-records" element={<LearningRecords />} />

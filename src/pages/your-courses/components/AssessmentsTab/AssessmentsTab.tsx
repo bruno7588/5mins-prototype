@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Sort } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
@@ -10,7 +11,6 @@ import { GENERATABLE_TYPES, typeLabel } from '@/data/aiAssessmentGeneration'
 import emptyBoxIllustration from '@/assets/empty-state-illustrations/empty-box.svg'
 import searchIllustration from '@/assets/empty-state-illustrations/search.svg'
 import AssessmentList from './AssessmentList'
-import AnswersDrawer from './AnswersDrawer'
 import LearnerList from './LearnerList'
 import InsightsCard from './InsightsCard'
 import {
@@ -99,6 +99,8 @@ function ResultCell({ a }: { a: AssessmentResult }) {
 }
 
 function AssessmentsTab() {
+  const navigate = useNavigate()
+  const location = useLocation()
   const [types, setTypes] = useState<string[]>([])
   const [page, setPage] = useState(0)
   /* Index into the *filtered* list — prev/next should walk what the admin is
@@ -108,8 +110,6 @@ function AssessmentsTab() {
   /* Which learner the Insights card last sent us to. The nonce is what makes a second
      click on the same name arrive at all. */
   const [focus, setFocus] = useState<{ id: string; n: number } | null>(null)
-  /* Which assessment's answers are open in the drawer, if any. */
-  const [viewing, setViewing] = useState<AssessmentResult | null>(null)
   /* Insights is a panel the admin asks for, not furniture: until it is opened the
      table has the whole width. Closing it ends the summary with it — keeping one in
      memory would promise a persistence a reload does not have, and leave the button
@@ -280,7 +280,13 @@ function AssessmentsTab() {
         <AssessmentList
           rows={rows}
           resultCell={(a) => <ResultCell a={a} />}
-          onView={setViewing}
+          onView={(a) =>
+              /* Carrying the course title on, because the course page holds it in router
+                 state and the answers page needs it for its breadcrumb. */
+              navigate(`/your-courses/course/assessments/${a.id}`, {
+                state: (location.state as object | null) ?? undefined,
+              })
+            }
           pagination={{
             from: from + 1,
             to: from + rows.length,
@@ -342,7 +348,6 @@ function AssessmentsTab() {
         </AnimatePresence>
       </div>
 
-      {viewing ? <AnswersDrawer assessment={viewing} onClose={() => setViewing(null)} /> : null}
     </section>
   )
 }

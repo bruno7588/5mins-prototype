@@ -1,0 +1,240 @@
+/* One assessment's answers, as a page. The drawer this replaces is gone; the rules it
+   owned that the page still needs — the initials chip, the file cell, the no-answers
+   line — moved here with it. Prefix `asp-`. */
+
+/* The shell every admin page assembles for itself: there is no shared layout component,
+   so this is the same trio as Learning Records and Roles. */
+.asp-layout {
+  display: flex;
+  flex: 1;
+}
+
+.asp-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.asp-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  padding: var(--space-l);
+  min-width: 0;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+/* Title left, the one export action right, per headers.md's page header. */
+.asp-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.asp-headline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+/* H1 — a page title, where the drawer's was an H3. */
+.asp-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.asp-meta {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.asp-meta__sep {
+  margin: 0 var(--space-xs);
+  color: var(--text-tertiary);
+}
+
+.asp-divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── The question and its charts ─────────────────────────────────────────── */
+.asp-brief {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+}
+
+.asp-brief__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+/* Paragraph M semibold: it names the field under it. */
+.asp-brief__label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* Capped at a readable measure. The panel is now as wide as the page, and a question
+   run across 1400px is a line the eye loses on the way back. */
+.asp-brief__value {
+  margin: 0;
+  max-width: 90ch;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
+.asp-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.asp-search {
+  width: 320px;
+  max-width: 100%;
+}
+
+/* Pushed to the far edge, opposite the search: one narrows by who, the other by what. */
+.asp-filter {
+  margin-left: auto;
+  width: 260px;
+}
+
+/* ── Cells ───────────────────────────────────────────────────────────────── */
+/* Initials stand in for a missing photo; sized by the DS .avatar-32. */
+.asp-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--input-background);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Whole, not clamped. The DS cell is nowrap and clipped, which is right for a name and
+   wrong for a paragraph — so a written answer opts back into wrapping and takes the
+   height it needs. Capped at a measure rather than a line count: the point of this page
+   is that the answer is readable, and the row grows to let it be. */
+.asp-answer {
+  display: block;
+  max-width: 75ch;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+
+/* A chosen option is a sentence, so it wraps like one. */
+.asp-choice {
+  display: block;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+
+/* The uploaded file cell reads as a filename with a quiet caption under it, so it drops
+   the table's default two-line emphasis. */
+.tbl-stack.asp-file .primary {
+  font-weight: 400;
+}
+
+.tbl-stack.asp-file .supporting {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+/* The DS table sizes to its content and scrolls the overflow, which is right on a page
+   whose columns are all short. Here the Answer column is a paragraph, so max-content
+   hands it the width of the longest one and the rest of the table leaves the screen.
+   The table takes the width it is given and the columns share it. */
+.asp-page .tbl {
+  width: 100%;
+}
+
+/* The DS cell is one line, clipped at 58px, with an ellipsis — exactly right for a name
+   and exactly wrong for a written answer, which is the thing this page exists to show.
+   Cells wrap and rows grow to fit them; the 58px becomes a floor rather than a ceiling,
+   so a table of one-line answers still has the rhythm it has everywhere else. */
+.asp-page .tbl-row {
+  align-items: stretch;
+  min-height: 58px;
+}
+
+.asp-page .tbl-cell {
+  max-height: none;
+  overflow: visible;
+  white-space: normal;
+  align-items: flex-start;
+  padding-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+}
+
+/* Still one line each: a name that wrapped would undo the alignment the row depends on. */
+.asp-page .tbl-cell .tbl-stack .primary,
+.asp-page .tbl-cell .tbl-stack .supporting {
+  white-space: nowrap;
+}
+
+/* The avatar keeps its own line height rather than stretching with the row. */
+.asp-page .tbl-cell .tbl-media {
+  align-items: flex-start;
+}
+
+/* ── Nothing to show ─────────────────────────────────────────────────────── */
+.asp-none {
+  margin: 0;
+  padding: var(--space-sm);
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+/* Per empty-state.md: 72px art, Bold 20 title, body capped at 600px. */
+.asp-noresults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-ml);
+  padding: var(--space-xxl) var(--space-l);
+  text-align: center;
+}
+
+.asp-empty__art {
+  display: block;
+}
+
+.asp-empty__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.asp-empty__body {
+  margin: 0;
+  max-width: 600px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}

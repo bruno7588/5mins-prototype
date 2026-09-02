@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type ComponentType } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Add,
   ArrowDown2,
@@ -31,6 +31,7 @@ import Alert from '../../components/Alert/Alert'
 import Button from '../../components/Button/Button'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
+import { COURSE_TITLE } from './courseTitle'
 import CourseSettings from './components/CourseSettings/CourseSettings'
 import AssessmentsTab from './components/AssessmentsTab/AssessmentsTab'
 import '../people/People.css'
@@ -62,7 +63,6 @@ const STATUS_LABELS: Record<LearnerStatus, string> = {
   failed: 'Failed',
 }
 
-const COURSE_TITLE = 'Building Company Culture A Guide for HR Teams'
 const TOTAL = 128
 
 // Course-level attempt policy. In the real app these come from the Settings tab
@@ -195,7 +195,25 @@ function CourseDetails() {
   const location = useLocation()
   // Course name passed from the list (Your Courses / Active Enrolments); falls back to the default.
   const courseTitle = (location.state as { courseTitle?: string } | null)?.courseTitle ?? COURSE_TITLE
-  const [activeTab, setActiveTab] = useState<Tab>('enrolments')
+  /* In the URL, not only in state: opening an assessment's answers unmounts this page,
+     and without a tab to come back to the browser's Back would land on Enrolments —
+     worse than the drawer the answers page replaces. Same device Account.tsx uses. */
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab') as Tab | null
+  const [activeTab, setActiveTab] = useState<Tab>(
+    tabParam && TABS.some((t) => t.key === tabParam) ? tabParam : 'enrolments',
+  )
+
+  /* Back and Forward move the param; the tab follows it. */
+  useEffect(() => {
+    if (tabParam && TABS.some((t) => t.key === tabParam)) setActiveTab(tabParam)
+  }, [tabParam])
+
+  const selectTab = (key: Tab) => {
+    setActiveTab(key)
+    /* Replace, so flicking through tabs does not fill the history with them. */
+    setSearchParams(key === 'enrolments' ? {} : { tab: key }, { replace: true })
+  }
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [learnerList, setLearnerList] = useState<Learner[]>(learners)
@@ -342,7 +360,7 @@ function CourseDetails() {
                 role="tab"
                 aria-selected={activeTab === tab.key}
                 className={`cd-tab${activeTab === tab.key ? ' cd-tab--active' : ''}`}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => selectTab(tab.key)}
               >
                 <span className="cd-tab-label">
                   {tab.label}

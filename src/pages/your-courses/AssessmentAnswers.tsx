@@ -1,0 +1,454 @@
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate, useParams, Navigate } from 'react-router-dom'
+import { ImportCurve } from 'iconsax-react'
+import CsvIcon from '@/components/icons/CsvIcon'
+import Badge from '@/components/Badge/Badge'
+import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'
+import Button from '@/components/Button/Button'
+import Dropdown from '@/components/Dropdown/Dropdown'
+import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'
+import Search from '@/components/Search/Search'
+import Table, { type Column } from '@/components/Table/Table'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
+import { typeLabel } from '@/data/aiAssessmentGeneration'
+import searchIllustration from '@/assets/empty-state-illustrations/search.svg'
+import AnswerStats from './components/AssessmentsTab/AnswerStats'
+import MultiQuestionAnswers from './components/AssessmentsTab/MultiQuestionAnswers'
+import {
+  courseAssessments,
+  multiScore,
+  PASS_SCORE,
+  type AssessmentResult,
+  type ChoiceResponse,
+  type FileResponse,
+  type MultiResponse,
+  type ResponseLearner,
+  type TextResponse,
+  type VoteResponse,
+} from './components/AssessmentsTab/assessmentResults'
+import { COURSE_TITLE } from './courseTitle'
+import './AssessmentAnswers.css'
+
+const PAGE_SIZE = 10
+
+/** Where the breadcrumb and the browser's Back both land. */
+const COURSE_PATH = '/your-courses/course?tab=assessments'
+
+/** DS table.md avatar + two-line stack cell. */
+function person(learner: ResponseLearner) {
+  return (
+    <span className="tbl-media">
+      {learner.avatar ? (
+        <img className="avatar-32" src={learner.avatar} alt="" />
+      ) : (
+        <span className="avatar-32 asp-initials" aria-hidden="true">
+          {learner.initials}
+        </span>
+      )}
+      <span className="tbl-stack">
+        <span className="primary">{learner.name}</span>
+        <span className="supporting">{learner.role}</span>
+      </span>
+    </span>
+  )
+}
+
+function learnerColumn<T extends { learner: ResponseLearner }>(): Column<T> {
+  return { key: 'learner', header: 'Learner', width: '1 1 240px', render: (r) => person(r.learner) }
+}
+
+/* The answers as a sheet. The table renders them as badges, stacks and icons —
+   none of which survives a CSV — so each shape restates its answer in words, and
+   the columns follow the shape rather than being flattened to a common four. */
+function sheet(a: AssessmentResult): string[][] {
+  if (a.kind === 'graded')
+    return [
+      ['Learner', 'Role', 'Submitted', 'Answer', 'Result'],
+      ...a.responses.map((r) => [
+        r.learner.name,
+        r.learner.role,
+        r.submittedAt,
+        a.options[r.optionIndex],
+        r.correct ? 'Correct' : 'Incorrect',
+      ]),
+    ]
+
+  if (a.kind === 'poll')
+    return [
+      ['Learner', 'Role', 'Submitted', 'Voted for'],
+      ...a.responses.map((r) => [r.learner.name, r.learner.role, r.submittedAt, a.options[r.optionIndex]]),
+    ]
+
+  if (a.kind === 'text')
+    return [
+      ['Learner', 'Role', 'Submitted', 'Answer'],
+      ...a.responses.map((r) => [r.learner.name, r.learner.role, r.submittedAt, r.text]),
+    ]
+
+  /* A row per question rather than per learner: a scenario's answers are the twelve
+     picks, and a sheet holding only the score throws away what was exported for. */
+  if (a.kind === 'multi')
+    return [
+      ['Learner', 'Role', 'Submitted', 'Question', 'Answer', 'Result'],
+      ...a.responses.flatMap((r) =>
+        a.questions.map((q, qi) => [
+          r.learner.name,
+          r.learner.role,
+          r.submittedAt,
+          `${qi + 1}. ${q.prompt}`,
+          q.options[r.picks[qi]],
+          r.picks[qi] === q.correctIndex ? 'Correct' : 'Incorrect',
+        ]),
+      ),
+    ]
+
+  return [
+    ['Learner', 'Role', 'Submitted', 'File', 'Type', 'Size'],
+    ...a.responses.map((r) => [
+      r.learner.name,
+      r.learner.role,
+      r.submittedAt,
+      r.fileName,
+      r.fileKind,
+      r.fileSize,
+    ]),
+  ]
+}
+
+/** The answer filter's options, which differ by what the format records. */
+const ALL = 'all'
+
+function filterOptions(a: AssessmentResult): { value: string; label: string }[] | null {
+  /* Neither is marked, so there is nothing to narrow by but the name. */
+  if (a.kind === 'text' || a.kind === 'file') return null
+
+  if (a.kind === 'multi')
+    return [
+      { value: ALL, label: 'All results' },
+      { value: 'pass', label: `Passed (${PASS_SCORE}% or above)` },
+      { value: 'fail', label: `Below ${PASS_SCORE}%` },
+    ]
+
+  /* Graded and poll narrow by the answer itself — the same options the chart above
+     is drawn from, so picking one shows the people behind that bar. */
+  return [
+    { value: ALL, label: a.kind === 'poll' ? 'All votes' : 'All answers' },
+    ...a.options.map((label, i) => ({ value: String(i), label })),
+  ]
+}
+
+function AssessmentAnswers() {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { toasts, show: showToast } = useToast()
+
+  const [query, setQuery] = useState('')
+  const [answer, setAnswer] = useState(ALL)
+  const [page, setPage] = useState(0)
+
+  /* Nothing in this app restores scroll on a route change, so a page opened from
+     halfway down the assessments list would otherwise open halfway down itself. */
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [id])
+
+  const assessment = courseAssessments.find((x) => x.id === id)
+  const courseTitle = (location.state as { courseTitle?: string } | null)?.courseTitle ?? COURSE_TITLE
+
+  /* An id that names nothing goes back to the list rather than rendering a page
+     about an assessment that does not exist. */
+  if (!assessment) return <Navigate to={COURSE_PATH} replace />
+
+  const a = assessment
+  const options = filterOptions(a)
+
+  /* Both filters read the same rows, so they compose: a name and an answer together
+     ask "did this person get it right", which is the question a search exists for. */
+  const matches = <T extends { learner: ResponseLearner }>(r: T, i: number): boolean => {
+    const q = query.trim().toLowerCase()
+    if (q && !r.learner.name.toLowerCase().includes(q)) return false
+    if (answer === ALL) return true
+    if (a.kind === 'multi') {
+      const pct = Math.round((multiScore(a, a.responses[i]) / a.questions.length) * 100)
+      return answer === 'pass' ? pct >= PASS_SCORE : pct < PASS_SCORE
+    }
+    if (a.kind === 'graded' || a.kind === 'poll') {
+      return String((a.responses[i] as ChoiceResponse | VoteResponse).optionIndex) === answer
+    }
+    return true
+  }
+
+  /* Indices kept alongside the rows: the multi filter scores a response against its
+     own assessment, which needs to know where in the original list it sat. */
+  const kept = useMemo(
+    () => a.responses.map((r, i) => ({ r, i })).filter(({ r, i }) => matches(r, i)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [a.id, query, answer],
+  )
+
+  const total = kept.length
+  const lastPage = Math.max(0, Math.ceil(total / PAGE_SIZE) - 1)
+  const safePage = Math.min(page, lastPage)
+  const from = safePage * PAGE_SIZE
+  const pageRows = kept.slice(from, from + PAGE_SIZE).map(({ r }) => r)
+
+  const pagination = {
+    from: total === 0 ? 0 : from + 1,
+    to: Math.min(from + PAGE_SIZE, total),
+    total,
+    onPrev: safePage > 0 ? () => setPage(safePage - 1) : undefined,
+    onNext: safePage < lastPage ? () => setPage(safePage + 1) : undefined,
+  }
+
+  /* Every cell quoted: answers are free text and carry commas, quotes and line
+     breaks. The BOM is what stops Excel reading the accents as mojibake. */
+  const download = () => {
+    const body = sheet(a)
+      .map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(','))
+      .join('\r\n')
+    const url = URL.createObjectURL(new Blob(['﻿' + body], { type: 'text/csv;charset=utf-8' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${a.title} answers.csv`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
+  /* One table per response shape — the columns differ, and the union of arrays
+     cannot be narrowed from inside a shared renderer. */
+  const table = (() => {
+    if (a.kind === 'graded') {
+      const columns: Column<ChoiceResponse>[] = [
+        learnerColumn<ChoiceResponse>(),
+        {
+          key: 'answer',
+          header: 'Answer',
+          width: '1 1 240px',
+          /* The page has the width the drawer did not, so the answer itself is here
+             rather than only the verdict on it. */
+          render: (r) => <span className="asp-choice">{a.options[r.optionIndex]}</span>,
+        },
+        {
+          key: 'result',
+          header: 'Result',
+          width: '0 0 140px',
+          render: (r) =>
+            r.correct ? <Badge type="success" label="Correct" /> : <Badge type="error" label="Incorrect" />,
+        },
+      ]
+      return (
+        <Table
+          columns={columns}
+          rows={pageRows as ChoiceResponse[]}
+          getRowKey={(r) => r.learner.id}
+          pagination={pagination}
+        />
+      )
+    }
+
+    if (a.kind === 'poll') {
+      const columns: Column<VoteResponse>[] = [
+        learnerColumn<VoteResponse>(),
+        { key: 'vote', header: 'Voted for', width: '1 1 240px', render: (r) => a.options[r.optionIndex] },
+      ]
+      return (
+        <Table
+          columns={columns}
+          rows={pageRows as VoteResponse[]}
+          getRowKey={(r) => r.learner.id}
+          pagination={pagination}
+        />
+      )
+    }
+
+    if (a.kind === 'text') {
+      const columns: Column<TextResponse>[] = [
+        learnerColumn<TextResponse>(),
+        {
+          key: 'text',
+          header: 'Answer',
+          width: '1 1 420px',
+          /* Whole, not clamped to two lines. A written answer has no length limit, and
+             a drawer row that showed the first hundred characters was the reason an
+             admin had to download the sheet to find out what their team had said. */
+          render: (r) => <span className="asp-answer">{r.text}</span>,
+        },
+      ]
+      return (
+        <Table
+          columns={columns}
+          rows={pageRows as TextResponse[]}
+          getRowKey={(r) => r.learner.id}
+          pagination={pagination}
+        />
+      )
+    }
+
+    /* Not a table: several questions have no one answer to put in a cell, so each
+       learner is a row that opens onto them. */
+    if (a.kind === 'multi')
+          return (
+        <MultiQuestionAnswers
+          assessment={a}
+          responses={pageRows as MultiResponse[]}
+          pagination={pagination}
+        />
+      )
+
+    const columns: Column<FileResponse>[] = [
+      learnerColumn<FileResponse>(),
+      {
+        key: 'file',
+        header: 'File',
+        render: (r) => (
+          <span className="tbl-stack asp-file">
+            <span className="primary">{r.fileName}</span>
+            <span className="supporting">
+              {r.fileKind} · {r.fileSize}
+            </span>
+          </span>
+        ),
+      },
+      {
+        key: 'download',
+        header: '',
+        width: '0 0 52px',
+        cellClassName: 'tbl-action',
+        render: (r) => (
+          <button
+            className="icon-btn"
+            onClick={() => showToast('info', `Downloading ${r.fileName}`)}
+            aria-label={`Download ${r.fileName}`}
+          >
+            <ImportCurve size={20} color="var(--text-primary)" variant="Linear" />
+          </button>
+        ),
+      },
+    ]
+    return (
+      <Table
+        columns={columns}
+        rows={pageRows as FileResponse[]}
+        getRowKey={(r) => r.learner.id}
+        pagination={pagination}
+      />
+    )
+  })()
+
+  const narrowed = query.trim() !== '' || answer !== ALL
+
+  return (
+    <div className="asp-layout">
+      <LeftSidebar />
+      <main className="asp-main">
+        <div className="asp-page">
+          <Breadcrumb
+            items={[
+              { label: 'Your Courses', onClick: () => navigate('/your-courses') },
+              {
+                label: courseTitle,
+                /* Carrying the title back, because the course page reads it from router
+                   state and would otherwise fall back to its own default. */
+                onClick: () => navigate(COURSE_PATH, { state: { courseTitle } }),
+              },
+              { label: a.title },
+            ]}
+          />
+
+          <header className="asp-header">
+            <div className="asp-headline">
+              <h1 className="asp-title">{a.title}</h1>
+              {/* The same name the row carries: a lesson quiz's underlying type is
+                  Multiple Choice, and saying so contradicts the list it was opened from. */}
+              <p className="asp-meta">
+                {a.lesson ? 'Lesson Quiz' : typeLabel(a.type)}
+                <span className="asp-meta__sep" aria-hidden="true">
+                  ·
+                </span>
+                {a.responses.length} of {a.enrolled} responded
+              </p>
+            </div>
+            {/* An exercise has nothing to export as a sheet — the answers are the
+                uploaded files themselves, fetched row by row. */}
+            {a.kind !== 'file' ? (
+              <Button
+                variant="outlined"
+                icon={<CsvIcon size={20} color="currentColor" />}
+                onClick={download}
+                disabled={a.responses.length === 0}
+              >
+                Download Answers
+              </Button>
+            ) : null}
+          </header>
+          <div className="asp-divider" aria-hidden="true" />
+
+          {a.responses.length === 0 ? (
+            <p className="asp-none">Nobody has answered this yet.</p>
+          ) : (
+            <>
+              {/* The question and the shape of the result, above the rows it summarises. */}
+              <section className="asp-brief">
+                {a.prompt ? (
+                  <div className="asp-brief__field">
+                    <span className="asp-brief__label">
+                      {a.kind === 'multi' ? `Brief · ${a.questions.length} questions` : 'Question'}
+                    </span>
+                    <p className="asp-brief__value">{a.prompt}</p>
+                  </div>
+                ) : null}
+                <AnswerStats key={a.id} assessment={a} />
+              </section>
+
+              <div className="asp-toolbar">
+                <Search
+                  size="M"
+                  value={query}
+                  onChange={(v) => {
+                    setQuery(v)
+                    setPage(0)
+                  }}
+                  placeholder="Search learners"
+                  ariaLabel="Search learners"
+                  className="asp-search"
+                />
+                {options ? (
+                  <Dropdown
+                    options={options}
+                    value={answer}
+                    onChange={(v) => {
+                      setAnswer(v)
+                      setPage(0)
+                    }}
+                    size="md"
+                    menuAlign="end"
+                    className="asp-filter"
+                  />
+                ) : null}
+              </div>
+
+              {total === 0 ? (
+                <div className="asp-noresults">
+                  <img className="asp-empty__art" src={searchIllustration} alt="" width={72} height={72} />
+                  <h2 className="asp-empty__title">No answers match</h2>
+                  <p className="asp-empty__body">
+                    {narrowed
+                      ? 'Clear the search or the answer filter to see every response.'
+                      : 'Nobody has answered this yet.'}
+                  </p>
+                </div>
+              ) : (
+                table
+              )}
+            </>
+          )}
+        </div>
+      </main>
+
+      <ToastContainer toasts={toasts} />
+    </div>
+  )
+}
+
+export default AssessmentAnswers

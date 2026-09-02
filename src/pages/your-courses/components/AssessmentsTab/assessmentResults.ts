@@ -214,14 +214,60 @@ export interface CourseInsight {
 
 const ENROLLED = 128
 
-/** The responder pool, drawn from the org directory so avatars and roles are real. */
-const pool: ResponseLearner[] = ORG_USERS.map((u, i) => ({
-  id: `L${i + 1}`,
-  name: u.name,
-  role: u.role ?? 'Team member',
-  initials: u.initials,
-  avatar: u.avatar,
-}))
+/* The org directory has thirteen people in it, which is the right size for the pages that
+   read it and far too small here: a course with 128 enrolments whose every assessment
+   shows twelve rows cannot demonstrate a search field, a filter or a page control. So the
+   thirteen lead the pool — real names, real roles, real avatars — and the rest of the
+   cohort is generated behind them. Generated here rather than in ORG_USERS, which People,
+   My Team and the user profile all read and would all grow with it. */
+const FIRST_NAMES = [
+  'Aisha', 'Andrei', 'Beatriz', 'Callum', 'Chiara', 'Daniel', 'Elena', 'Emeka',
+  'Farida', 'Felix', 'Grace', 'Hugo', 'Ines', 'Ivan', 'Jasmin', 'Joao',
+  'Katya', 'Liam', 'Lucia', 'Malik', 'Marta', 'Mateo', 'Nadia', 'Niall',
+  'Olga', 'Omar', 'Petra', 'Rafael', 'Rania', 'Ruben', 'Sofia', 'Tomas',
+  'Ursula', 'Viktor', 'Yara', 'Zoe',
+]
+
+const LAST_NAMES = [
+  'Almeida', 'Bakker', 'Costa', 'Duarte', 'Egan', 'Fischer', 'Gallagher', 'Haddad',
+  'Ibrahim', 'Jensen', 'Kowalski', 'Lindqvist', 'Moreau', 'Novak', 'Oyelaran', 'Petrov',
+  'Quintana', 'Reyes', 'Silva', 'Tanaka', 'Ustinov', 'Varga', 'Whelan', 'Zielinski',
+]
+
+/* Spread across the org so the pool reads as a company rather than a department. */
+const ROLES = [
+  'Customer Support Specialist', 'Operations Manager', 'Software Engineer', 'Marketing Lead',
+  'Data Analyst', 'UX Designer', 'Sales Representative', 'People Operations',
+  'Compliance Officer', 'Finance Manager', 'Product Manager', 'L&D Coordinator',
+  'Account Executive', 'Recruiter', 'Site Supervisor', 'Quality Lead',
+]
+
+/** How many of the 128 enrolled have answered anything at all. */
+const RESPONDERS = 118
+
+/** The responder pool: the org directory first, then the rest of the cohort. */
+const pool: ResponseLearner[] = [
+  ...ORG_USERS.map((u, i) => ({
+    id: `L${i + 1}`,
+    name: u.name,
+    role: u.role ?? 'Team member',
+    initials: u.initials,
+    avatar: u.avatar,
+  })),
+  /* No avatar, so these fall to the initials chip every avatar site here already draws.
+     Deterministic: the same name lands in the same place on every reload, which is what
+     lets the counts below be written down rather than discovered. */
+  ...Array.from({ length: RESPONDERS - ORG_USERS.length }, (_, n) => {
+    const first = FIRST_NAMES[(n * 7) % FIRST_NAMES.length]
+    const last = LAST_NAMES[(n * 5 + Math.floor(n / LAST_NAMES.length)) % LAST_NAMES.length]
+    return {
+      id: `L${ORG_USERS.length + n + 1}`,
+      name: `${first} ${last}`,
+      role: ROLES[n % ROLES.length],
+      initials: `${first[0]}${last[0]}`,
+    }
+  }),
+]
 
 const DATES = [
   'Aug 12, 2026', 'Aug 13, 2026', 'Aug 14, 2026', 'Aug 15, 2026',
@@ -277,6 +323,14 @@ function votes(id: string, count: number, options: number): VoteResponse[] {
     optionIndex: (seed(id + learner.id) + i) % options,
   }))
 }
+
+const FILE_NAMES = [
+  'culture-plan-q3.pdf', 'team-actions.docx', 'ops-culture-plan.pdf', 'my-plan.pdf',
+  'culture_workshop_notes.pdf', 'action-plan-final.pdf', 'team-charter.docx',
+  'reinforce-and-change.pdf', 'q3-culture-actions.pdf', 'one-page-plan.docx',
+]
+
+const FILE_SIZES = ['248 KB', '96 KB', '1.2 MB', '310 KB', '2.4 MB', '187 KB', '412 KB', '73 KB']
 
 function texts(answers: string[]): TextResponse[] {
   return answers.map((text, i) => ({
@@ -537,7 +591,7 @@ export const courseAssessments: AssessmentResult[] = [
       'Disagreements are moved to a private channel afterwards',
     ],
     correctIndex: 1,
-    responses: choices('a1', 12, 9, 4, 1),
+    responses: choices('a1', 112, 84, 4, 1),
   },
   {
     id: 'a2',
@@ -556,6 +610,36 @@ export const courseAssessments: AssessmentResult[] = [
       'A quarterly retro on the team charter itself, not just on the work. We wrote ours 18 months ago and nobody has read it since.',
       'Buddy system for new joiners for the first six weeks, with a check-in at weeks 1, 3 and 6.',
       'Honestly our team is too small for rituals, we talk constantly anyway.',
+      'A standing "what nearly went wrong" item. Not incidents — near misses. The stuff nobody reports because it worked out in the end.',
+      'Ten minutes at the end of every retro where the manager leaves the room and someone else writes up what was said. We tried this once after a project went badly and it was the only time I have seen people say what they actually thought. It should not have taken a disaster to get there, and it should not have stopped when the project ended. The write-up went to the manager afterwards with no names on it, which is what made it safe.',
+      'Swap the weekly status update for a weekly "what I am stuck on" update. Same meeting, opposite question.',
+      'Pair a new joiner with someone outside their function for the first month.',
+      'We run a Friday demo. I would add a rule that at least one thing shown has to be unfinished.',
+      'Nothing new. We have too many rituals already and half of them are theatre. I would rather we cancelled two and did the remaining ones properly. The stand-up has become a status report to the manager, the retro has become a list of things other teams should fix, and the demo has become a rehearsal. Fixing those three would do more than adding a fourth.',
+      'A monthly session where someone walks through a decision they got wrong and what they would do differently.',
+      'Written decision log. Every non-obvious call gets three lines: what we chose, what we rejected, why.',
+      'Rotate the note-taker. It sounds trivial but whoever writes the notes decides what the meeting was about.',
+      'Ask the question "who is not in this conversation who should be?" before any decision gets made.',
+      'A no-agenda 30 minutes each fortnight. Half the useful things I know came out of conversations nobody scheduled, and we have engineered all of those out of the week in the name of focus time. I am not arguing against focus time. I am arguing that we removed the thing it was crowding out and never replaced it.',
+      'Start the month by naming one behaviour we want more of, and end it by saying honestly whether we saw it.',
+      'Onboarding buddy, but the buddy is measured on it. Otherwise it is the first thing that gets dropped.',
+      'Have managers share their own feedback from their manager, redacted where they need to. Nobody believes feedback is safe until they have seen their boss receive some.',
+      'A quarterly "assumptions review" — what did we believe three months ago that turned out to be wrong?',
+      'Skip-level 1:1s on a fixed rota rather than on request. Requesting one is already a signal.',
+      'Every new person writes down what confused them in week one, and we fix the top three before the next hire.',
+      'I do not think a ritual fixes this. The behaviour follows what gets promoted, and until that changes the rest is decoration.',
+      'A shared channel where anyone can post a decision they disagree with, and the decision owner has to reply.',
+      'Team charter review every six months, with the new joiners leading it since they can still see it clearly.',
+      'Fifteen minutes at the start of every project to write down how we will know if this goes wrong.',
+      'Make praise specific in public and criticism specific in private. We currently do the reverse — vague praise in the all-hands and vague concern in the corridor.',
+      'A "one thing I changed my mind about" round at the monthly team meeting.',
+      'We could use the retro to look at how we made the decision, not just at what happened after it.',
+      'Give everyone a standing invitation to the planning meeting and stop treating attendance as a status marker.',
+      'A rotating chair for the weekly meeting, and the chair sets the agenda. Two weeks in you find out very quickly whose questions never got asked before, because the meeting looks completely different depending on who is running it.',
+      'Publish the roadmap changes with reasons attached. Right now they appear and everyone reverse-engineers the reason.',
+      'Ask leavers what they would have said six months earlier if they had felt able to.',
+      'Nothing formal — I would just want managers to answer the questions they get asked instead of taking them away.',
+      'A weekly fifteen minutes where the team reviews one piece of customer feedback together, unedited.',
     ]),
   },
   {
@@ -566,7 +650,7 @@ export const courseAssessments: AssessmentResult[] = [
     prompt: 'Which part of our culture needs the most attention right now?',
     enrolled: ENROLLED,
     options: ['Giving feedback', 'Recognising good work', 'Decision transparency', 'Work-life boundaries'],
-    responses: votes('a3', 11, 4),
+    responses: votes('a3', 96, 4),
   },
   {
     id: 'a4',
@@ -578,7 +662,7 @@ export const courseAssessments: AssessmentResult[] = [
       'Priya joined the team six weeks ago. In her first proper 1:1 she says she keeps hearing about decisions after they are made, and is not sure who to ask.',
     enrolled: ENROLLED,
     questions: EXCLUDED_HIRE,
-    responses: runs('a4', 10, EXCLUDED_HIRE, [4, 7, 8, 6, 9, 3, 7, 8, 5, 6, 9, 7]),
+    responses: runs('a4', 88, EXCLUDED_HIRE, [36, 62, 71, 53, 79, 27, 62, 71, 44, 53, 79, 62]),
   },
   {
     id: 'a5',
@@ -587,12 +671,13 @@ export const courseAssessments: AssessmentResult[] = [
     title: 'Your team culture action plan',
     prompt: 'Upload a one-page action plan for your team, covering one behaviour to reinforce and one to change.',
     enrolled: ENROLLED,
-    responses: pool.slice(0, 6).map((learner, i) => ({
+    /* Fewest of any format: an upload is the most work the course asks for. */
+    responses: pool.slice(0, 47).map((learner, i) => ({
       learner,
       submittedAt: DATES[(seed(learner.id) + i) % DATES.length],
-      fileName: ['culture-plan-q3.pdf', 'team-actions.docx', 'ops-culture-plan.pdf', 'my-plan.pdf', 'culture_workshop_notes.pdf', 'action-plan-final.pdf'][i],
-      fileKind: ['PDF', 'DOCX', 'PDF', 'PDF', 'PDF', 'PDF'][i],
-      fileSize: ['248 KB', '96 KB', '1.2 MB', '310 KB', '2.4 MB', '187 KB'][i],
+      fileName: FILE_NAMES[i % FILE_NAMES.length],
+      fileKind: FILE_NAMES[i % FILE_NAMES.length].endsWith('.docx') ? 'DOCX' : 'PDF',
+      fileSize: FILE_SIZES[(seed(learner.id) + i) % FILE_SIZES.length],
     })),
   },
   {
@@ -604,7 +689,7 @@ export const courseAssessments: AssessmentResult[] = [
     enrolled: ENROLLED,
     options: ['4 of 4 pairs correct', '3 of 4 pairs correct', '2 of 4 pairs correct', '1 of 4 pairs correct'],
     correctIndex: 0,
-    responses: choices('a6', 9, 6, 4, 0),
+    responses: choices('a6', 91, 61, 4, 0),
   },
   {
     id: 'a7',
@@ -615,7 +700,7 @@ export const courseAssessments: AssessmentResult[] = [
     enrolled: ENROLLED,
     options: ['5 of 5 steps in order', '4 of 5 steps in order', '3 of 5 steps in order', '2 of 5 steps in order'],
     correctIndex: 0,
-    responses: choices('a7', 8, 3, 4, 0),
+    responses: choices('a7', 84, 32, 4, 0),
   },
   {
     id: 'a8',
@@ -626,7 +711,7 @@ export const courseAssessments: AssessmentResult[] = [
     enrolled: ENROLLED,
     options: ['6 of 6 sorted correctly', '5 of 6 sorted correctly', '4 of 6 sorted correctly', '3 of 6 sorted correctly'],
     correctIndex: 0,
-    responses: choices('a8', 7, 5, 4, 0),
+    responses: choices('a8', 79, 56, 4, 0),
   },
   {
     id: 'a9',
@@ -637,7 +722,7 @@ export const courseAssessments: AssessmentResult[] = [
     enrolled: ENROLLED,
     options: ['interpersonal', 'commercial', 'operational', 'reputational'],
     correctIndex: 0,
-    responses: choices('a9', 11, 10, 4, 0),
+    responses: choices('a9', 104, 95, 4, 0),
   },
 
   /* ── Lesson quizzes ──────────────────────────────────────────────────────
@@ -656,7 +741,7 @@ export const courseAssessments: AssessmentResult[] = [
     prompt: '',
     enrolled: ENROLLED,
     questions: QUIZ_CULTURE,
-    responses: runs('q1', 12, QUIZ_CULTURE, [9, 7, 8]),
+    responses: runs('q1', 109, QUIZ_CULTURE, [82, 64, 73]),
   },
   {
     id: 'q2',
@@ -667,7 +752,7 @@ export const courseAssessments: AssessmentResult[] = [
     prompt: '',
     enrolled: ENROLLED,
     questions: QUIZ_BEHAVIOUR,
-    responses: runs('q2', 11, QUIZ_BEHAVIOUR, [8, 6]),
+    responses: runs('q2', 101, QUIZ_BEHAVIOUR, [73, 55]),
   },
   {
     id: 'q3',
@@ -678,7 +763,7 @@ export const courseAssessments: AssessmentResult[] = [
     prompt: '',
     enrolled: ENROLLED,
     questions: QUIZ_FEEDBACK,
-    responses: runs('q3', 10, QUIZ_FEEDBACK, [6, 5, 7]),
+    responses: runs('q3', 94, QUIZ_FEEDBACK, [56, 47, 66]),
   },
   {
     id: 'q4',
@@ -689,16 +774,40 @@ export const courseAssessments: AssessmentResult[] = [
     prompt: '',
     enrolled: ENROLLED,
     questions: QUIZ_DECISIONS,
-    responses: runs('q4', 12, QUIZ_DECISIONS, [7, 5]),
+    responses: runs('q4', 106, QUIZ_DECISIONS, [62, 44]),
   },
 ]
+
+/* Every figure below is counted off the assessments the summary is about, the same rule
+   attentionSummary states: prose that carries a number it did not count will eventually
+   contradict the chart printed beside it. */
+function tallyOf(id: string): { right: number; of: number } {
+  const a = courseAssessments.find((x) => x.id === id)
+  if (!a || a.kind !== 'graded') return { right: 0, of: 0 }
+  return { right: a.responses.filter((r) => r.correct).length, of: a.responses.length }
+}
+
+/** How many got the opening question of a multi-question assessment wrong. */
+function missedFirst(id: string): { missed: number; of: number } {
+  const a = courseAssessments.find((x) => x.id === id)
+  if (!a || a.kind !== 'multi') return { missed: 0, of: 0 }
+  const correct = a.questions[0].correctIndex
+  return {
+    missed: a.responses.filter((r) => r.picks[0] !== correct).length,
+    of: a.responses.length,
+  }
+}
+
+const SEQUENCE = tallyOf('a7')
+const DEFINITION = tallyOf('a9')
+const OPENING = missedFirst('a4')
 
 export const courseInsight: CourseInsight = {
   generatedAt: null,
   struggled:
-    'Sequencing a culture rollout is the weakest area: only 3 of 8 put the steps in the right order, and most started with communication rather than with listening. The situational test shows the same instinct — on its opening question 6 of 10 acted or reassured, escalating to her manager, adding her to every meeting or calling it normal, rather than asking for a specific example first. Both point at a bias toward acting before diagnosing.',
+    `Sequencing a culture rollout is the weakest area: only ${SEQUENCE.right} of ${SEQUENCE.of} put the steps in the right order, and most started with communication rather than with listening. The situational test shows the same instinct — on its opening question ${OPENING.missed} of ${OPENING.of} acted or reassured, escalating to her manager, adding her to every meeting or calling it normal, rather than asking for a specific example first. Both point at a bias toward acting before diagnosing.`,
   mastered:
-    'The definition of psychological safety is secure (10 of 11 correct), and learners reliably recognise it in behaviour rather than in policy. Free-text answers are notably concrete — most proposed a ritual with a named owner and a cadence rather than a general intention, which suggests the practical framing in lessons 3 and 4 landed.',
+    `The definition of psychological safety is secure (${DEFINITION.right} of ${DEFINITION.of} correct), and learners reliably recognise it in behaviour rather than in policy. Free-text answers are notably concrete — most proposed a ritual with a named owner and a cadence rather than a general intention, which suggests the practical framing in lessons 3 and 4 landed.`,
 }
 
 /* ── The learner pivot ─────────────────────────────────────────────────────
