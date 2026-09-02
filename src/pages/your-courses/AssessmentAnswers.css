@@ -77,15 +77,14 @@
   box-shadow: var(--shadow-card);
 }
 
-/* The question the panel is about, leading it. H4: it is the heading of this block
-   rather than the value of a field, now that the field label is gone. Capped at a
-   readable measure — the panel is as wide as the page, and a line run across 1400px is
-   one the eye loses on the way back. */
+/* The question the panel is about, leading it — Paragraph L semibold, per
+   typography.md. Capped at a readable measure: the panel is as wide as the page, and a
+   line run across 1400px is one the eye loses on the way back. */
 .asp-brief__value {
   margin: 0;
   max-width: 90ch;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
 }

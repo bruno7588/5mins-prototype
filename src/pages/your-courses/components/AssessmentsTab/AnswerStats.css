@@ -56,9 +56,14 @@
   gap: var(--space-s);
 }
 
+/* The selected question, which is the same kind of line as the one a single-question
+   assessment leads with — Paragraph L semibold, so a quiz's question does not read as
+   smaller than the question next door. */
 .ast-quiz__prompt {
   margin: 0;
-  font-size: 14px;
+  max-width: 90ch;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
 }
