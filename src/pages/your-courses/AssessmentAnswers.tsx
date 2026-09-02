@@ -421,6 +421,9 @@ function AssessmentAnswers() {
                   ariaLabel="Search learners"
                   className="asp-search"
                 />
+                {/* Grouped, so the export sits at the edge whether or not a filter is
+                    beside it — short text and exercise have nothing to filter by. */}
+                <div className="asp-toolbar__end">
                 {options ? (
                   <Dropdown
                     options={options}
@@ -448,6 +451,7 @@ function AssessmentAnswers() {
                     Download Answers
                   </Button>
                 ) : null}
+                </div>
               </div>
 
               {total === 0 ? (

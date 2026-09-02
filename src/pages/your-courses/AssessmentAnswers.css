@@ -101,11 +101,17 @@
   max-width: 100%;
 }
 
-/* Search on the left, the filter and the export on the right. Sized to its own labels —
-   Correct, Incorrect and the pass bands are short, and a wide field around a one-word
-   value reads as a field waiting to be filled in. */
-.asp-filter {
+/* Search on the left, the filter and the export together on the right. */
+.asp-toolbar__end {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* Sized to its own labels — Correct, Incorrect and the pass bands are short, and a wide
+   field around a one-word value reads as a field waiting to be filled in. */
+.asp-filter {
   width: 180px;
 }
 

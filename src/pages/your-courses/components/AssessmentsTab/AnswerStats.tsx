@@ -54,7 +54,7 @@ function Split({
             className={`ast-seg ${p.correct ? 'is-correct' : 'is-wrong'}`}
             icon={false}
             position="Top"
-            text={`${p.label} — ${p.n} of ${responded}`}
+            text={`${p.label} — ${pct(p.n, responded)}%`}
           >
             <span className="ast-seg__fill" />
           </Tooltip>
@@ -253,7 +253,7 @@ function questionCols(a: MultiAssessment, responded: number): Column[] {
   return a.questions.map((q, i) => ({
     tick: String(i + 1),
     pct: pct(tally[i], responded),
-    aria: `Question ${i + 1}, ${q.prompt} — ${tally[i]} of ${responded} correct`,
+    aria: `Question ${i + 1}, ${q.prompt} — ${pct(tally[i], responded)}% correct`,
   }))
 }
 
@@ -263,7 +263,7 @@ function bandCols(a: GradedAssessment, responded: number): Column[] {
   return a.options.map((label, i) => ({
     tick: bandTick(label),
     pct: pct(tally[i], responded),
-    aria: `${label} — ${tally[i]} of ${responded}`,
+    aria: `${label} — ${pct(tally[i], responded)}%`,
     full: i === a.correctIndex,
   }))
 }

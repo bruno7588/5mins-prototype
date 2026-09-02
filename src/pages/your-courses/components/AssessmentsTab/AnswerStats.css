@@ -162,9 +162,13 @@
 
 /* The one thing that binds an option to a percentage 700px away, and only while the
    reader is asking. A rule drawn permanently would be four lines of chrome for a moment
-   of need. */
+   of need.
+
+   The card's own hover fill, because that is the surface these rows sit on —
+   --input-background is a control's, and it happens to match in light mode while
+   diverging in dark. */
 .ast-legend__row:hover {
-  background: var(--input-background);
+  background: var(--cards-background-hover);
 }
 
 /* A dot rather than a square: it is the same mark the bar is made of, shrunk. */
