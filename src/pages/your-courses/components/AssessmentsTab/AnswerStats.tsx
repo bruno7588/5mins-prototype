@@ -209,6 +209,12 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
           ? 'Score bands'
           : 'Answers'
 
+  /* The count needs a noun of its own wherever the heading is not one: "How they voted
+     96 of 128" leaves the reader to guess what was counted, while "Answers 112 of 128"
+     already says it and would stutter if it said it again. */
+  const counted =
+    a.kind === 'poll' ? ' votes' : a.kind === 'multi' || banded ? ' responses' : ''
+
   return (
     <section className="ast" aria-label="Overview">
       {/* The whole fraction, beside the word it belongs to: with the heading reading
@@ -219,6 +225,7 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
         <span>{heading}</span>
         <span className="ast-heading__count">
           {responded} of {a.enrolled}
+          {counted}
         </span>
       </p>
 
