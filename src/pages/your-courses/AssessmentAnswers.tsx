@@ -364,13 +364,16 @@ function AssessmentAnswers() {
                    state and would otherwise fall back to its own default. */
                 onClick: () => navigate(COURSE_PATH, { state: { courseTitle } }),
               },
-              { label: a.title },
+              /* Not the assessment's name, because it does not have one — a question is
+                 its whole identity, and one of those is too long for a crumb while a
+                 lesson quiz has three. The crumb says where you are instead. */
+              { label: 'View Answers' },
             ]}
           />
 
           <header className="asp-header">
             <div className="asp-headline">
-              <h1 className="asp-title">{a.title}</h1>
+              <h1 className="asp-title">View Answers</h1>
               {/* The same name the row carries: a lesson quiz's underlying type is
                   Multiple Choice, and saying so contradicts the list it was opened from. */}
               {/* What kind of assessment this is, and how big. How many answered belongs
@@ -385,32 +388,24 @@ function AssessmentAnswers() {
                   .join(' · ')}
               </p>
             </div>
-            {/* An exercise has nothing to export as a sheet — the answers are the
-                uploaded files themselves, fetched row by row. */}
-            {a.kind !== 'file' ? (
-              <Button
-                variant="outlined"
-                icon={<CsvIcon size={20} color="currentColor" />}
-                onClick={download}
-                disabled={a.responses.length === 0}
-              >
-                Download Answers
-              </Button>
-            ) : null}
           </header>
-          <div className="asp-divider" aria-hidden="true" />
 
           {a.responses.length === 0 ? (
             <p className="asp-none">Nobody has answered this yet.</p>
           ) : (
             <>
               {/* The question and the shape of the result, above the rows it summarises. */}
-              {/* What the learner was asked, then how they answered it. No field labels:
-                  the title above is a paraphrase of the question, so a panel that also
-                  announced "Question" over it read as the same thing said three times.
-                  A lesson quiz has no prompt of its own — its questions are in the chart. */}
+              {/* Only a situational test has a line here: its scenario, which the
+                  questions run on. Everywhere else the title above is the question, so
+                  repeating it would be the same sentence twice on one screen. */}
+              {/* Questions live here rather than in the header. A single-question
+                  assessment states its one question; a situational test states the
+                  scenario its twelve run on, and the chart states the questions; a lesson
+                  quiz's chips do it a question at a time. */}
               <section className="asp-brief">
-                {a.prompt ? <p className="asp-brief__value">{a.prompt}</p> : null}
+                {a.prompt ?? (a.kind === 'multi' ? null : a.title) ? (
+                  <p className="asp-brief__value">{a.prompt ?? a.title}</p>
+                ) : null}
                 <AnswerStats key={a.id} assessment={a} />
               </section>
 
@@ -439,6 +434,19 @@ function AssessmentAnswers() {
                     iconLeft={<Sort size={20} color="var(--text-primary)" variant="Linear" />}
                     className="asp-filter"
                   />
+                ) : null}
+                {/* With the two controls that narrow the table, above the table it
+                    exports. An exercise has nothing to export as a sheet — its answers
+                    are the uploaded files, fetched row by row. */}
+                {a.kind !== 'file' ? (
+                  <Button
+                    variant="outlined"
+                    icon={<CsvIcon size={20} color="currentColor" />}
+                    onClick={download}
+                    disabled={a.responses.length === 0}
+                  >
+                    Download Answers
+                  </Button>
                 ) : null}
               </div>
 

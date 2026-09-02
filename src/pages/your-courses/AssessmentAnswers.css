@@ -62,11 +62,6 @@
   color: var(--text-tertiary);
 }
 
-.asp-divider {
-  height: 1px;
-  background: var(--border);
-}
-
 /* ── The question and its charts ─────────────────────────────────────────── */
 /* A card, not a field. --input-background is the fill a control wears, and this panel
    holds the question and its charts — the same surface the rows beneath it sit on. */
@@ -107,10 +102,17 @@
   max-width: 100%;
 }
 
-/* Pushed to the far edge, opposite the search: one narrows by who, the other by what. */
+/* Search on the left, the filter and the export on the right. Sized to its own labels —
+   Correct, Incorrect and the pass bands are short, and a wide field around a one-word
+   value reads as a field waiting to be filled in. */
 .asp-filter {
   margin-left: auto;
-  width: 260px;
+  width: 180px;
+}
+
+/* Never squeezed by the field beside it. */
+.asp-toolbar .ds-btn {
+  flex: 0 0 auto;
 }
 
 /* ── Cells ───────────────────────────────────────────────────────────────── */

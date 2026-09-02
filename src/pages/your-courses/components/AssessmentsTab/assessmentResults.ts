@@ -68,8 +68,13 @@ export interface MultiResponse {
 
 interface AssessmentBase {
   id: string
+  /** What the learner was asked. For every format but one this is the whole of it:
+   *  aiAssessmentGeneration writes a single string and uses it as the title, the
+   *  question text and the interactive prompt alike. */
   title: string
-  prompt: string
+  /** Only a situational test has something else to say — a scenario the questions run
+   *  on, which is not a paraphrase of its title but the setup for it. */
+  prompt?: string
   /** Everyone enrolled on the course — the denominator a response count is read against. */
   enrolled: number
   /**
@@ -581,8 +586,7 @@ export const courseAssessments: AssessmentResult[] = [
     id: 'a1',
     kind: 'graded',
     type: 'single-choice',
-    title: 'Signals of psychological safety',
-    prompt: 'Which behaviour best signals psychological safety in a team meeting?',
+    title: 'Which behaviour best signals psychological safety in a team meeting?',
     enrolled: ENROLLED,
     options: [
       'Everyone agrees quickly so the meeting ends on time',
@@ -597,8 +601,7 @@ export const courseAssessments: AssessmentResult[] = [
     id: 'a2',
     kind: 'text',
     type: 'short-text',
-    title: 'A ritual for your team',
-    prompt: 'Describe one ritual your team could adopt to reinforce the values in this course.',
+    title: 'Describe one ritual your team could adopt to reinforce the values in this course.',
     enrolled: ENROLLED,
     responses: texts([
       'A five-minute round at the end of each sprint review where anyone can flag something that felt off. No fixing, just naming it.',
@@ -646,8 +649,7 @@ export const courseAssessments: AssessmentResult[] = [
     id: 'a3',
     kind: 'poll',
     type: 'poll',
-    title: 'Where culture needs attention',
-    prompt: 'Which part of our culture needs the most attention right now?',
+    title: 'Which part of our culture needs the most attention right now?',
     enrolled: ENROLLED,
     options: ['Giving feedback', 'Recognising good work', 'Decision transparency', 'Work-life boundaries'],
     responses: votes('a3', 96, 4),
@@ -668,8 +670,7 @@ export const courseAssessments: AssessmentResult[] = [
     id: 'a5',
     kind: 'file',
     type: 'exercise',
-    title: 'Your team culture action plan',
-    prompt: 'Upload a one-page action plan for your team, covering one behaviour to reinforce and one to change.',
+    title: 'Upload a one-page action plan for your team, covering one behaviour to reinforce and one to change.',
     enrolled: ENROLLED,
     /* Fewest of any format: an upload is the most work the course asks for. */
     responses: pool.slice(0, 47).map((learner, i) => ({
@@ -684,8 +685,7 @@ export const courseAssessments: AssessmentResult[] = [
     id: 'a6',
     kind: 'graded',
     type: 'match-pairs',
-    title: 'Culture levers and outcomes',
-    prompt: 'Match each culture lever to the outcome it most directly drives.',
+    title: 'Match each culture lever to the outcome it most directly drives.',
     enrolled: ENROLLED,
     options: ['4 of 4 pairs correct', '3 of 4 pairs correct', '2 of 4 pairs correct', '1 of 4 pairs correct'],
     correctIndex: 0,
@@ -695,8 +695,7 @@ export const courseAssessments: AssessmentResult[] = [
     id: 'a7',
     kind: 'graded',
     type: 'sequencing',
-    title: 'Rolling out a culture change',
-    prompt: 'Put the steps of a culture change rollout in the right order.',
+    title: 'Put the steps of a culture change rollout in the right order.',
     enrolled: ENROLLED,
     options: ['5 of 5 steps in order', '4 of 5 steps in order', '3 of 5 steps in order', '2 of 5 steps in order'],
     correctIndex: 0,
@@ -706,8 +705,7 @@ export const courseAssessments: AssessmentResult[] = [
     id: 'a8',
     kind: 'graded',
     type: 'categorization',
-    title: 'Reinforce or redirect',
-    prompt: 'Sort each observed behaviour into Reinforce or Redirect.',
+    title: 'Sort each observed behaviour into Reinforce or Redirect.',
     enrolled: ENROLLED,
     options: ['6 of 6 sorted correctly', '5 of 6 sorted correctly', '4 of 6 sorted correctly', '3 of 6 sorted correctly'],
     correctIndex: 0,
@@ -717,8 +715,7 @@ export const courseAssessments: AssessmentResult[] = [
     id: 'a9',
     kind: 'graded',
     type: 'fill-blank',
-    title: 'Defining psychological safety',
-    prompt: 'Complete the definition: psychological safety is a shared belief that the team is safe for ___ risk-taking.',
+    title: 'Complete the definition: psychological safety is a shared belief that the team is safe for ___ risk-taking.',
     enrolled: ENROLLED,
     options: ['interpersonal', 'commercial', 'operational', 'reputational'],
     correctIndex: 0,
