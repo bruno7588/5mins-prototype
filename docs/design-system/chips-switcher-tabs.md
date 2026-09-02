@@ -96,7 +96,7 @@ All values use 5Mins.ai design tokens.
 |------------|------------|------------|----------------|------------------------|-------------------|-------------|
 | false      | false      | Enabled    | `--border-elevated` | transparent            | `--text-secondary`| 400         |
 | false      | false      | Hover      | `--border-hover`| `--page-background-hover`| `--text-secondary`| 400         |
-| false      | true       | Enabled    | none           | `--secondary-500`      | `--text-on-selected` | 500         |
+| false      | true       | Enabled    | none           | `--secondary-500`      | `--text-on-selected` | 700         |
 | true       | false      | n/a        | `--border`     | transparent            | `--text-disabled` | 400         |
 
 **Padding rules:** `8px 12px` for every variant; add `gap: 4px` when an icon is present (left or right).
@@ -150,7 +150,7 @@ export function Chip({
 
   const padding = iconLeft || iconRight ? 'gap-[4px]' : '';
 
-  // Text: 14px/1.5 Poppins — Regular (--text-secondary), Medium 500 + --text-on-selected when
+  // Text: 14px/1.5 Poppins — Regular (--text-secondary), Bold 700 + --text-on-selected when
   // selected, Regular + --text-disabled when disabled
   const textStyle = disabled ? 'chip__label--disabled' : selected ? 'chip__label--selected' : 'chip__label';
 
@@ -209,7 +209,7 @@ export function Chip({
   border: none;
   background-color: var(--secondary-500);   /* #FFBB38 — raw token, both modes */
   color: var(--text-on-selected);
-  font-weight: 500;
+  font-weight: 700;
 }
 .chip--disabled {
   border-color: var(--border);
