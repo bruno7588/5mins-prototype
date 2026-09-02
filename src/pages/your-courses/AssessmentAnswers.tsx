@@ -404,7 +404,15 @@ function AssessmentAnswers() {
                   quiz's chips do it a question at a time. */}
               <section className="asp-brief">
                 {a.prompt ?? (a.kind === 'multi' ? null : a.title) ? (
-                  <p className="asp-brief__value">{a.prompt ?? a.title}</p>
+                  <div className="asp-brief__field">
+                    {/* Named, now that the header no longer carries it: on its own the
+                        line could be a heading, a note or an instruction. A situational
+                        test's is a scenario rather than a question, so it says so. */}
+                    <span className="asp-brief__label">
+                      {a.kind === 'multi' ? 'Brief' : 'Question'}
+                    </span>
+                    <p className="asp-brief__value">{a.prompt ?? a.title}</p>
+                  </div>
                 ) : null}
                 <AnswerStats key={a.id} assessment={a} />
               </section>

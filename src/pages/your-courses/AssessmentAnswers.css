@@ -77,6 +77,21 @@
   box-shadow: var(--shadow-card);
 }
 
+.asp-brief__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+/* Paragraph M semibold, the weight a field label carries everywhere else here. */
+.asp-brief__label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
 /* The question the panel is about, leading it — Paragraph L semibold, per
    typography.md. Capped at a readable measure: the panel is as wide as the page, and a
    line run across 1400px is one the eye loses on the way back. */
