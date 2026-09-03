@@ -8,7 +8,7 @@
 .ast {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-sm);
 
   /* The mark under the pointer, one palette step away: darker in light mode, lighter in
      dark, so the shift is toward the surface's opposite either way and reads as the same
@@ -16,9 +16,6 @@
   --ast-primary-hover: var(--primary-700);
   --ast-success-hover: var(--success-600);
   --ast-danger-hover: var(--danger-600);
-  /* The unfilled end of a poll bar. --input-background-hover is written for a control
-     sitting on the page, and here the control sits on a card. */
-  --ast-track-hover: var(--input-background-hover);
 }
 
 [data-theme='dark'] .ast {
@@ -27,10 +24,6 @@
   /* Two steps, not one: --text-error already resolves to danger-400 in dark, so a hover
      at 400 was the colour the segment was wearing and nothing moved. */
   --ast-danger-hover: var(--danger-300);
-  /* In dark --input-background-hover IS --cards-background, so the track was taking the
-     colour of the card behind it and vanishing instead of lifting. One step up from the
-     card, the step the legend rows already take. */
-  --ast-track-hover: var(--neutral-600);
 }
 
 /* The chart's own hover surface has no business being a text cursor, and the DS tooltip's
@@ -47,49 +40,47 @@
   cursor: default;
 }
 
-/* The caption: both stats on one line. Stacked, each label sat over a short number and
-   left the rest of a 1400px card empty — two pairs read across take one line and no more.
-   Wrapping is kept for the narrow case rather than letting them collide. */
+/* Side by side, so a second stat sits beside the first rather than under it. Wrapping is
+   kept for the narrow case rather than letting them collide. */
 .ast-stats {
   display: flex;
-  /* Centred, not baseline: a flex item takes its baseline from its first child, and one
-     of these starts with an icon. An SVG has no text baseline, so aligning the two stats
-     that way sat one of them on the icon's bottom edge. */
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: var(--space-xs) var(--space-l);
   width: 100%;
 }
 
-/* Icon, label, value on one line. Centred rather than baseline-aligned: an icon has no
-   baseline to share with the two type sizes beside it. */
+/* Label over figure, the pairing the card's question block already uses: the name of the
+   number sits above it rather than in front of it. */
 .ast-stat {
   margin: 0;
   display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+}
+
+/* Paragraph M medium — the name of the figure below, a step back from it. */
+.ast-stat__label {
+  display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
   font-size: 14px;
+  font-weight: 500;
   line-height: 1.5;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
-
 
 .ast-stat svg {
   flex: 0 0 auto;
 }
 
-.ast-stat__label {
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-/* Paragraph M regular, a shade back: "of 128" is the cohort the figure is read against
-   rather than the figure itself. A step off its label, so each pair groups against the
-   24px between the two stats. */
+/* Paragraph S regular: "of 128" is the cohort the figure is read against rather than the
+   figure itself, so it sits smaller and a shade back on the same line. */
 .ast-stat__value {
-  margin-left: var(--space-xs);
+  font-size: 12px;
   font-weight: 400;
-  color: var(--text-secondary);
+  line-height: 1.2;
+  color: var(--text-tertiary);
   font-variant-numeric: tabular-nums;
 }
 
@@ -98,6 +89,7 @@
 .ast-stat__figure {
   font-size: 16px;
   font-weight: 600;
+  line-height: 1.5;
   color: var(--text-primary);
 }
 
@@ -151,19 +143,21 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-s);
   background: var(--input-background);
   overflow: hidden;
   font-size: 14px;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
   transition: background 150ms ease;
 }
 
 /* The track as well as the fill: the row is one mark, and lighting only the filled end
-   of it left the half the pointer was actually over unchanged. */
+   of it left the half the pointer was actually over unchanged. The card's own hover, the
+   step every other row on this page takes. */
 .ast-bar:hover {
-  background: var(--ast-track-hover);
+  background: var(--cards-background-hover);
 }
 
 /* A tint, not the solid fill: the words sit on top of it and have to stay readable
@@ -176,8 +170,8 @@
   width: var(--ast-w);
   /* The track's own radius: the left end is already clipped to it, and a square right
      end made the fill read as a rectangle laid over the bar rather than part of it. */
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--primary-600) 22%, transparent);
+  border-radius: var(--radius-s);
+  background: color-mix(in srgb, var(--primary-600) 24%, transparent);
   transition: background 150ms ease;
   animation: ast-grow 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(300ms + var(--ast-i, 0) * 60ms);
@@ -197,25 +191,25 @@
    words inside each bar are doing the work colour cannot: nobody has to name a hue to
    read this chart. */
 .ast-bar.is-correct .ast-bar__fill {
-  background: color-mix(in srgb, var(--success-500) 22%, transparent);
+  background: color-mix(in srgb, var(--success-500) 24%, transparent);
 }
 
 .ast-bar.is-wrong .ast-bar__fill {
-  background: color-mix(in srgb, var(--text-error) 22%, transparent);
+  background: color-mix(in srgb, var(--text-error) 24%, transparent);
 }
 
 /* A tint rather than a solid, so its hover deepens the same tint instead of jumping to
    another colour: the words sit on top of it and have to stay readable through it. */
 .ast-bar:hover .ast-bar__fill {
-  background: color-mix(in srgb, var(--primary-600) 34%, transparent);
+  background: color-mix(in srgb, var(--primary-600) 32%, transparent);
 }
 
 .ast-bar.is-correct:hover .ast-bar__fill {
-  background: color-mix(in srgb, var(--success-500) 34%, transparent);
+  background: color-mix(in srgb, var(--success-500) 32%, transparent);
 }
 
 .ast-bar.is-wrong:hover .ast-bar__fill {
-  background: color-mix(in srgb, var(--text-error) 34%, transparent);
+  background: color-mix(in srgb, var(--text-error) 32%, transparent);
 }
 
 /* Above the fill. */
@@ -230,16 +224,10 @@
   overflow-wrap: anywhere;
 }
 
-/* Weight, not colour. On a poll the bars are one hue and the length already says which
-   option leads; on a question the colour already says which answer was right. */
-.ast-bar.is-lead .ast-bar__label,
-.ast-bar.is-correct .ast-bar__label {
-  font-weight: 500;
-}
-
-/* A wrong option steps back a shade, so the answer is the one line at full strength and
-   the distractors read as what was picked instead of it. */
-.ast-bar.is-wrong .ast-bar__label {
+/* A wrong option steps back a shade — words and figure together, they are one line — so
+   the answer is the one row at full strength and the distractors read as what was picked
+   instead of it. */
+.ast-bar.is-wrong {
   color: var(--text-secondary);
 }
 
