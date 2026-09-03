@@ -111,9 +111,13 @@
   transition: background-color 150ms ease;
 }
 
-/* Translucent, so it tints the page when collapsed and the card when open. */
 .lrn-row:hover {
-  background: var(--input-background);
+  background: var(--page-background-hover);
+}
+
+/* Expanded, the row and its answers sit on the open card. */
+.lrn-card.is-open .lrn-row:hover {
+  background: var(--cards-background-hover);
 }
 
 .lrn-cell {
@@ -249,6 +253,11 @@
      row fill both run the full width of the card. */
   padding: var(--space-sm);
   border-top: 1px solid var(--border);
+  transition: background-color 150ms ease;
+}
+
+.lrn-answer:hover {
+  background: var(--cards-background-hover);
 }
 
 /* The list already sits under the row hairline — no double rule at the top. */
