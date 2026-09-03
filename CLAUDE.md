@@ -8,6 +8,7 @@
 
 - `npm run dev` — Vite dev server at http://localhost:5173
 - `npm run build` — type-check (`tsc -b`) + production build; run this to verify changes compile
+- Design Inspect (dev only): click the "Inspect" pill bottom-right (or Alt+I), click an element, type the change, press Send. Run `/inspect` in Claude Code so it listens (anything sent while it was off is applied when it starts); `/inspect stop` ends it. Copy puts the same context on the clipboard for any session.
 
 ## Project Structure
 

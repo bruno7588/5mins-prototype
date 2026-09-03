@@ -13,3 +13,4 @@ dist
 agents/
 .claude/worktrees/
 .playwright-mcp/
+.design-inspect/
