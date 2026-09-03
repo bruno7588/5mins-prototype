@@ -147,19 +147,18 @@
   background: var(--cards-background-hover);
 }
 
-/* Bold on the amber, per the selected-fill rule chips and switcher segments already
-   follow (colors.md: --secondary-500 always carries Bold --neutral-800). Stated on the
-   label too, or the supporting-text row's Semibold would win on the child span and the
-   selected row would come out lighter than an unselected one. */
+/* Medium on the amber, the weight listbox.md gives a selected item. Stated on the label
+   too, or the supporting-text row's Semibold would win on the child span and the selected
+   row would come out heavier than the spec. */
 .dropdown-option.is-selected .dropdown-option__label {
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .dropdown-option.is-selected,
 .dropdown-option.is-selected:hover:not(:disabled) {
   background: var(--secondary-500);
   color: var(--text-on-selected);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .dropdown-option.is-disabled,
