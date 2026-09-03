@@ -135,7 +135,7 @@
   align-items: center;
   gap: var(--space-xs);
   font-size: 14px;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
