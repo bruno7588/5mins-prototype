@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { TickCircle } from 'iconsax-react'
 import Chip from '@/components/Chip/Chip'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import {
@@ -144,6 +143,8 @@ interface Column {
   /** Under the column. Short, because it repeats. */
   tick: string
   pct: number
+  /** The band this column counts, e.g. "4 of 4 pairs correct". */
+  label: string
   /** The whole sentence, for the hover and for a screen reader. */
   aria: string
   full?: boolean
@@ -160,7 +161,18 @@ function Columns({ cols }: { cols: Column[] }) {
     <ol className={`ast-cols${sparse ? ' is-sparse' : ''}`}>
       {cols.map((c, i) => (
         <li key={c.tick} className="ast-col" aria-label={c.aria}>
-          <Tooltip className="ast-col__hit" icon={false} position="Top" text={c.aria}>
+          <Tooltip
+            className="ast-col__hit"
+            icon={false}
+            position="Top"
+            text={
+              <>
+                <BandLabel label={c.label} />
+                <span className="ast-band__rest"> — </span>
+                <span className="ast-band__figure">{c.pct}%</span>
+              </>
+            }
+          >
             <span
               className={`ast-col__bar${c.full ? ' is-full' : ''}${c.wrong ? ' is-wrong' : ''}`}
               style={{ '--ast-h': `${c.pct}%`, '--ast-i': i } as React.CSSProperties}
@@ -176,6 +188,22 @@ function Columns({ cols }: { cols: Column[] }) {
         </li>
       ))}
     </ol>
+  )
+}
+
+/**
+ * "4 of 4 pairs correct" — the count leads at full strength and the phrase it is
+ * counted in steps back, so a column of these reads as figures rather than sentences.
+ * One string, two weights of information: the same split the stats caption makes.
+ */
+export function BandLabel({ label }: { label: string }) {
+  const i = label.indexOf(' ')
+  if (i < 0) return <span className="ast-band__figure">{label}</span>
+  return (
+    <>
+      <span className="ast-band__figure">{label.slice(0, i)}</span>
+      <span className="ast-band__rest">{label.slice(i)}</span>
+    </>
   )
 }
 
@@ -244,13 +272,7 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
           "overall", because the chips above are showing one of them. */}
       {a.kind === 'multi' && correct !== null ? (
         <p className="ast-stat">
-          <span className="ast-stat__label">
-            {/* The tick names which figure this is; the two stats are the same weight of
-                information, so they read in the same colour. Green here would be taken as
-                a verdict on the number, and 64% is not a verdict the product makes. */}
-            <TickCircle size={16} color="currentColor" variant="Linear" />
-            Correct overall
-          </span>
+          <span className="ast-stat__label">Correct overall</span>
           <span className="ast-stat__value">
             <span className="ast-stat__figure">{correct}%</span>
           </span>
@@ -291,6 +313,7 @@ function bandCols(a: GradedAssessment, responded: number): Column[] {
   const tally = optionTally(a)
   return a.options.map((label, i) => ({
     tick: bandTick(label),
+    label,
     pct: pct(tally[i], responded),
     aria: `${label} — ${pct(tally[i], responded)}%`,
     full: i === a.correctIndex,

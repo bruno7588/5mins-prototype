@@ -13,10 +13,11 @@ import Table, { type Column } from '@/components/Table/Table'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import searchIllustration from '@/assets/empty-state-illustrations/search.svg'
-import AnswerStats from './components/AssessmentsTab/AnswerStats'
+import AnswerStats, { BandLabel } from './components/AssessmentsTab/AnswerStats'
 import MultiQuestionAnswers from './components/AssessmentsTab/MultiQuestionAnswers'
 import {
   courseAssessments,
+  hasStatedAnswer,
   multiScore,
   PASS_SCORE,
   type AssessmentResult,
@@ -256,6 +257,9 @@ function AssessmentAnswers() {
      cannot be narrowed from inside a shared renderer. */
   const table = (() => {
     if (a.kind === 'graded') {
+      /* Banded formats record how much of an arrangement was right, not which option
+         was chosen — see hasStatedAnswer. */
+      const banded = !hasStatedAnswer(a)
       const columns: Column<ChoiceResponse>[] = [
         learnerColumn<ChoiceResponse>(),
         {
@@ -263,8 +267,17 @@ function AssessmentAnswers() {
           header: 'Answer',
           width: '1 1 240px',
           /* The page has the width the drawer did not, so the answer itself is here
-             rather than only the verdict on it. */
-          render: (r) => <span className="asp-choice">{a.options[r.optionIndex]}</span>,
+             rather than only the verdict on it. A banded format has no answer to print —
+             its "option" is how much of the arrangement was right — so the count leads
+             and the phrase steps back, the way the chart above states it. */
+          render: (r) => {
+            const answer = a.options[r.optionIndex]
+            return (
+              <span className="asp-choice">
+                {banded ? <BandLabel label={answer} /> : answer}
+              </span>
+            )
+          },
         },
         {
           key: 'result',

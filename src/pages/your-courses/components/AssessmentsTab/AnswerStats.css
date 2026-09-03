@@ -61,17 +61,10 @@
 
 /* Paragraph M medium — the name of the figure below, a step back from it. */
 .ast-stat__label {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
   font-size: 14px;
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-tertiary);
-}
-
-.ast-stat svg {
-  flex: 0 0 auto;
 }
 
 /* Paragraph S regular: "of 128" is the cohort the figure is read against rather than the
@@ -236,6 +229,16 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* The band label's two halves: the count, and the phrase it is counted in. Used by the
+   column tooltip and by the Answer column of the table below it. */
+.ast-band__figure {
+  color: var(--text-primary);
+}
+
+.ast-band__rest {
+  color: var(--text-tertiary);
+}
+
 /* ── Columns: a sequence, and a distribution ─────────────────────────────── */
 .ast-cols {
   margin: 0;
@@ -278,7 +281,7 @@
   /* A column at 0% would be nothing at all, so it keeps a hairline: the reader
      needs to see that the question was asked and nobody got it. */
   min-height: 2px;
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border-radius: var(--radius-s) var(--radius-s) 0 0;
   background: var(--primary-600);
   animation: ast-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(300ms + var(--ast-i, 0) * 45ms);
