@@ -344,6 +344,13 @@
   color: var(--text-primary);
 }
 
+/* The type-filter menu (Figma 12143:73822) shows the whole list; only a short window
+   makes it scroll. The menu is portalled, hence a menu class rather than a descendant
+   selector. */
+.asm-typefilter-menu {
+  max-height: calc(100vh - var(--space-m));
+}
+
 
 /* ── Insights in the side column ────────────────────────────────────────────
    Title and its timestamp on the left, the three controls hard right — they fit

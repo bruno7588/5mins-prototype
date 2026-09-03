@@ -256,9 +256,12 @@ function AssessmentsTab() {
             values={types}
             onChangeValues={(v) => { setTypes(v); setPage(0) }}
             placeholder="All assessments"
+            allLabel="All assessments"
+            summaryLabel="Assessments"
             iconLeft={<Sort size={20} color="var(--text-primary)" variant="Linear" />}
             size="md"
             className="asm-typefilter"
+            menuClassName="asm-typefilter-menu"
             menuAlign="end"
           />
         ) : null}

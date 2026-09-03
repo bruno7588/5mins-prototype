@@ -222,8 +222,9 @@
   justify-content: flex-start;
 }
 
-/* The box states the selection, so the row keeps its normal fill: the amber
-   single-select row behind a ticked checkbox says the same thing twice. */
+/* The box states the selection, so the row keeps its normal fill and weight: the
+   amber single-select row (and its bold label) behind a ticked checkbox would say
+   the same thing twice. */
 .dropdown-option--check.is-selected,
 .dropdown-option--check.is-selected:hover {
   background: transparent;
@@ -231,12 +232,38 @@
   font-weight: 400;
 }
 
+.dropdown-option--check.is-selected .dropdown-option__label {
+  font-weight: 400;
+}
+
 .dropdown-option--check.is-selected:hover,
 .dropdown-option--check:hover {
-  background: var(--page-background-hover, var(--neutral-50));
+  background: var(--cards-background-hover);
 }
 
 .dropdown-option--check:focus-visible {
+  outline: 2px solid var(--text-selected);
+  outline-offset: -2px;
+}
+
+/* "All" row of a multi-select (allLabel): the listbox's selected item, no checkbox,
+   Medium not Bold. Figma: Course details, Type filter menu 12143:73822. Unselected it
+   is a plain row like any other. */
+.dropdown-option--all.is-selected,
+.dropdown-option--all.is-selected:hover {
+  background: var(--secondary-500);
+  color: var(--text-on-selected);
+}
+
+.dropdown-option--all.is-selected .dropdown-option__label {
+  font-weight: 500;
+}
+
+.dropdown-option--all:hover {
+  background: var(--cards-background-hover);
+}
+
+.dropdown-option--all:focus-visible {
   outline: 2px solid var(--text-selected);
   outline-offset: -2px;
 }

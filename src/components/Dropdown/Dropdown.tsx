@@ -30,6 +30,13 @@ export interface DropdownProps {
   /** Chosen values in `multiple` mode; `value`/`onChange` are ignored there. */
   values?: string[]
   onChangeValues?: (values: string[]) => void
+  /** `multiple` only: a first row that stands for "no filter", drawn as a selected
+      list item (no checkbox). Selected while nothing is picked; picking it clears the rest. */
+  allLabel?: string
+  /** `multiple` only: read the selection back in the trigger, the option's label for
+      one pick and "<summaryLabel>: N" for several. Without it the trigger keeps its
+      placeholder (callers that show chips beneath the field rely on that). */
+  summaryLabel?: string
   className?: string
   /** Class for the menu. It is portalled to <body>, so descendant selectors
       written against an ancestor of the field will not reach it. */
@@ -53,6 +60,8 @@ function Dropdown({
   multiple = false,
   values,
   onChangeValues,
+  allLabel,
+  summaryLabel,
   className = '',
   menuClassName = '',
   menuAlign = 'start',
@@ -119,10 +128,18 @@ function Dropdown({
     onChangeValues?.(isPicked(v) ? picked.filter((x) => x !== v) : [...picked, v])
 
   const selected = options.find((o) => o.value === value)
-  /* Multi keeps its placeholder: what is chosen is read back as chips beneath
-     the field, so repeating it in the trigger would say the same thing twice
-     and grow the control past the row. */
-  const triggerLabel = multiple ? placeholder : (selected?.label ?? placeholder)
+  /* Multi keeps its placeholder unless `summaryLabel` asks for the selection to be
+     read back: callers that show chips beneath the field would otherwise say the
+     same thing twice and grow the control past the row. */
+  const pickedOptions = options.filter((o) => picked.includes(o.value))
+  const multiLabel =
+    !summaryLabel || pickedOptions.length === 0
+      ? placeholder
+      : pickedOptions.length === 1
+        ? pickedOptions[0].label
+        : `${summaryLabel}: ${pickedOptions.length}`
+  const triggerLabel = multiple ? multiLabel : (selected?.label ?? placeholder)
+  const showsPlaceholder = multiple ? !summaryLabel || pickedOptions.length === 0 : !selected
 
   return (
     <div
@@ -155,7 +172,7 @@ function Dropdown({
         }}
       >
         {iconLeft && <span className="dropdown-trigger-leading">{iconLeft}</span>}
-        <span className={`dropdown-trigger-text${multiple || !selected ? ' dropdown-trigger-text--placeholder' : ''}`}>{triggerLabel}</span>
+        <span className={`dropdown-trigger-text${showsPlaceholder ? ' dropdown-trigger-text--placeholder' : ''}`}>{triggerLabel}</span>
         <ArrowDown2
           size={size === 'sm' ? 16 : 20}
           color="currentColor"
@@ -166,6 +183,28 @@ function Dropdown({
 
       {isActive && rect && createPortal(
         <ul ref={menuRef} className={`dropdown-menu ${menuClassName}`.trim()} role="listbox" style={menuStyle()}>
+          {multiple && allLabel && (
+            <li>
+              <div
+                role="option"
+                aria-selected={picked.length === 0}
+                tabIndex={0}
+                className={`dropdown-option dropdown-option--all${picked.length === 0 ? ' is-selected' : ''}`}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => onChangeValues?.([])}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    onChangeValues?.([])
+                  }
+                }}
+              >
+                <span className="dropdown-option__text">
+                  <span className="dropdown-option__label">{allLabel}</span>
+                </span>
+              </div>
+            </li>
+          )}
           {options.map((opt) => {
             const isSelected = multiple ? isPicked(opt.value) : opt.value === value
             const optionClass = [
