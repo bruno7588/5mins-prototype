@@ -226,7 +226,13 @@
   --input-background: rgba(69, 76, 94, 0.16); /* Neutral-500 @ 16% */
   --input-background-elevated: rgba(69, 76, 94, 0.24); /* Neutral-500 @ 24% */
   --input-background-hover: var(--neutral-700);
-  --border: var(--neutral-700);
+  /* Neutral-600, not the Neutral-700 the Figma surface table gives: there --border
+     is the same colour as --cards-background, so every border and divider drawn on a
+     card, menu or drawer is invisible. One step up resolves it at the source rather
+     than asking ~185 call sites to know which surface they sit on. The two border
+     tokens therefore hold the same value in both modes; --border-elevated keeps its
+     name for the elevated case so the distinction survives if the palette moves. */
+  --border: var(--neutral-600);
   --border-elevated: var(--neutral-600);
   --border-hover: var(--neutral-300);
   --tooltip-background: var(--neutral-900);

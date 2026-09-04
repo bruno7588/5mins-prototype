@@ -165,8 +165,8 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--input-background-elevated` | `#454C5E` @ 24% | `#BFC2CC` @ 16% | The same fill one step up, for a field sitting on a card surface (`--cards-background`) — identical to `--input-background` in light mode |
 | `--input-background-hover` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | Input background on hover |
 | `--selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Active/selected state — inputs, tabs, chips, radios, checkboxes |
-| `--border` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | The quiet border — table rows, dividers, cards, modals, dashed drop zones, skeletons, and disabled controls |
-| `--border-elevated` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | The border on an **elevated surface** — a card, menu, drawer or modal, and the controls inside one. Same value as `--border` in light; one step up in dark, where `--border` is the same neutral as `--cards-background` and a border drawn in it disappears |
+| `--border` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | The quiet border — table rows, dividers, cards, modals, dashed drop zones, skeletons, and disabled controls. **Diverges from the Figma variable, deliberately:** Figma gives Neutral-700 in dark, which is the same colour as `--cards-background`, so every border drawn on a card was invisible. Raised one step at the source rather than asking each call site to know its surface |
+| `--border-elevated` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | The border on an **elevated surface** — a card, menu, drawer or modal, and the controls inside one. Now the same value as `--border` in both modes; it keeps its own name so the distinction survives if either side of the palette moves |
 | `--border-hover` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` | Any border on hover |
 
 ### Button backgrounds
@@ -352,7 +352,7 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --input-background-elevated: rgba(69, 76, 94, 0.24);  /* #454C5E @ 24% */
   --input-background-hover: var(--neutral-700);
   --selected: var(--secondary-500);
-  --border: var(--neutral-700);
+  --border: var(--neutral-600);
   --border-elevated: var(--neutral-600);
   --border-hover: var(--neutral-300);
 
