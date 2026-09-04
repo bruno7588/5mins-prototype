@@ -114,15 +114,16 @@
 
   --cards-background-hover: var(--neutral-50);
   --input-background: rgba(191, 194, 204, 0.16); /* Neutral-200 @ 16% */
-  /* Same fill, one step up, for a field sitting on a card rather than on the page.
-     Only dark needs the extra step: over --cards-background the 16% tint lands within a
-     point of the card and the field disappears. Light already separates, so it holds. */
-  --input-background-elevated: rgba(191, 194, 204, 0.16); /* Neutral-200 @ 16% */
+  /* Same fill, one step up, for a field sitting on a card rather than on the page. */
+  --input-background-elevated: rgba(191, 194, 204, 0.24); /* Neutral-200 @ 24% */
   --input-background-hover: var(--neutral-100);
-  /* Two weights: --border is the quiet one (table rows, dividers, cards),
-     --border-elevated is the field chrome that has to hold its own edge. */
+  /* Two weights, chosen by what the border sits ON, not by what it draws:
+     --border on the page ground, --border-elevated on an elevated surface
+     (card, menu, drawer). Light needs no step because the page and the card
+     already separate; dark does, because there --border is the same neutral as
+     --cards-background and a border drawn in it disappears. */
   --border: var(--neutral-100);
-  --border-elevated: var(--neutral-200);
+  --border-elevated: var(--neutral-100);
   --border-hover: var(--neutral-300);
   --tooltip-background: var(--neutral-800);
   --text-primary: var(--neutral-800);

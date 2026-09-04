@@ -166,7 +166,7 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--input-background-hover` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | Input background on hover |
 | `--selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Active/selected state — inputs, tabs, chips, radios, checkboxes |
 | `--border` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | The quiet border — table rows, dividers, cards, modals, dashed drop zones, skeletons, and disabled controls |
-| `--border-elevated` | Neutral-600 `#383D4C` | Neutral-200 `#BFC2CC` | One step stronger, for enabled control chrome — text fields, integer steppers, dropdowns, date fields, chips, the calendar today-ring |
+| `--border-elevated` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | The border on an **elevated surface** — a card, menu, drawer or modal, and the controls inside one. Same value as `--border` in light; one step up in dark, where `--border` is the same neutral as `--cards-background` and a border drawn in it disappears |
 | `--border-hover` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` | Any border on hover |
 
 ### Button backgrounds
@@ -304,11 +304,11 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
   --cards-background: var(--neutral-0);
   --cards-background-hover: var(--neutral-50);
   --input-background: rgba(191, 194, 204, 0.16);  /* #BFC2CC @ 16% */
-  --input-background-elevated: rgba(191, 194, 204, 0.16);  /* #BFC2CC @ 16% */
+  --input-background-elevated: rgba(191, 194, 204, 0.24);  /* #BFC2CC @ 16% */
   --input-background-hover: var(--neutral-100);
   --selected: var(--secondary-600);
   --border: var(--neutral-100);
-  --border-elevated: var(--neutral-200);
+  --border-elevated: var(--neutral-100);
   --border-hover: var(--neutral-300);
 
   /* ── Button backgrounds (light mode) ── */
@@ -405,7 +405,8 @@ Light mode is the app default (`:root`); dark mode is a future `[data-theme="dar
 | Input / dropdown / search bg | `--input-background` (+ `-hover`; `-elevated` on a card fill) |
 | Tooltip / popover | `--tooltip-background` |
 | Table row, divider, card, modal | `--border` (hover: `--border-hover`) |
-| Enabled control chrome (field, dropdown, chip) | `--border-elevated` (hover: `--border-hover`) |
+| Border on the page ground (table rows, page dividers) | `--border` |
+| Border on an elevated surface (card, menu, drawer, modal, and controls inside one) | `--border-elevated` (hover: `--border-hover`) |
 | That same control when disabled | `--border` |
 | Primary CTA | `--primary-button-background` (+ `-hover`, `-pressed`) |
 | Destructive button | `--danger-500` (hover `--button-danger-hover`) |
