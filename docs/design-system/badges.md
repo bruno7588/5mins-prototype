@@ -1,6 +1,6 @@
 ---
 name: 5mins-badges
-description: Badge component for 5Mins.ai — pill-shaped status indicators (Success, Warning, Error, In Progress, Informative, New) with an optional leading type-icon. Use when implementing any status pill, state tag, category label, or count chip in tables, cards, headers, or lists.
+description: Badge component for 5Mins.ai — pill-shaped status indicators (Success, Warning, Error, In Progress, Informative, New) with an optional leading type-icon and an optional trailing dismiss ✕. Use when implementing any status pill, state tag, category label, or count chip in tables, cards, headers, or lists.
 ---
 
 # 5Mins.ai Badge Component System
@@ -17,19 +17,23 @@ Badges are small, pill-shaped status indicators that communicate state, category
 |-----------|---------|
 | **Type** | Success, Warning, Error, In Progress, Informative, New |
 | **iconLeft** | Optional leading 16px type-icon (not available on New) |
+| **iconRight** | Optional trailing 16px dismiss ✕ (not available on New) |
 
-There is **no size axis and no trailing/dismiss ✕** in the Library badge. For a dismissible pill use the Chip component (`chips-switcher-tabs.md`).
+There is **no size axis**. Both icons are independent: a badge can carry either, both, or neither.
+
+**Badge ✕ or Chip ✕?** A dismissible badge removes a value from a set that something else owns — the picks under a scope row, the filters applied to a table. A Chip is the interactive control itself: it is pressed, selected and toggled, and its ✕ clears its own selection. If the pill is only ever read and dismissed, it is a badge (`chips-switcher-tabs.md` covers the other case).
 
 Two extra types exist in code only (see [App extensions](#app-extensions)): `quiz` and `scheduled`.
 
 ## Anatomy
 
 ```
-┌────────────────────────────┐
-│  [iconLeft?]  Label Text   │   ← pill, radius XXL (40px ≡ --radius-full)
-└────────────────────────────┘
-      ↑            ↑
-    16px    14px Poppins Medium, line-height 1.2
+┌────────────────────────────────────┐
+│  [iconLeft?]  Label Text   [✕?]    │   ← pill, radius XXL (40px ≡ --radius-full)
+└────────────────────────────────────┘
+      ↑            ↑            ↑
+    16px    14px Poppins       16px
+            Medium, lh 1.2
 ```
 
 | Property | Figma variable | Token |
@@ -37,10 +41,13 @@ Two extra types exist in code only (see [App extensions](#app-extensions)): `qui
 | Padding (vertical) | XSS · 6 | `--space-xss` |
 | Padding (horizontal) | SM · 12 | `--space-sm` |
 | Gap icon → label | XS · 4 | `--space-xs` |
+| Gap once the badge carries a ✕ | S · 8 | `--space-s` |
 | Radius | XXL · 40 | `--radius-full` |
 | Icon | 16 × 16, `currentColor` | — |
 
-The box is identical with and without the leading icon — padding does **not** tighten on the icon side.
+The box is identical whichever icons are present — padding does **not** tighten on either icon side. Only the gap changes: XS normally, S once a ✕ is in the pill, so the label and the control it sits beside stay legibly apart.
+
+The Library draws the dismissible badge as `iconLeft + iconRight`, and there is no variant carrying a type icon **and** a ✕ — the ✕ takes the leading icon's place. The component allows both because the two props are independent, but pair them only if a spec calls for it.
 
 ```css
 .badge {
@@ -58,7 +65,31 @@ The box is identical with and without the leading icon — padding does **not** 
 }
 
 .badge__icon { display: flex; flex-shrink: 0; width: 16px; height: 16px; }
+
+/* Dismissible */
+.badge--dismissible { gap: var(--space-s); }
+
+/* Trailing dismiss — inherits the type's text colour, adds no chrome of its own */
+.badge__dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.badge__dismiss:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
 ```
+
+The ✕ is the same 24-viewBox stroked path the `CloseButton` draws, at 16px in `currentColor`, so it resolves to the badge's own text token in every type and both modes.
 
 ## Types and colours
 
@@ -115,6 +146,8 @@ interface BadgeProps {
   customIcon?: ReactNode  // replaces the type icon (16px, currentColor)
   label?: string          // overrides the default label
   className?: string
+  onDismiss?: () => void  // trailing ✕ (iconRight in Figma); passing it is what renders it
+  dismissLabel?: string   // aria-label for the ✕; defaults to `Remove ${label}`
 }
 ```
 
@@ -125,7 +158,10 @@ interface BadgeProps {
 <Badge type="informative" label="12 Lessons" />
 <Badge type="new" />
 <Badge type="quiz" customIcon={<LessonQuizIcon />} />
+<Badge type="informative" label="Harbour View" onDismiss={() => remove('Harbour View')} />
 ```
+
+`onDismiss` is the ✕: there is no boolean to draw one without a handler, because a dismiss that does nothing is a decoy control. `New` takes no icons at either end.
 
 Every icon is rendered `size={16} variant="Linear" color="currentColor"` — with iconsax-react 0.0.8 on React 19 the `color` prop must be passed explicitly.
 
@@ -146,5 +182,6 @@ Badges appear inside table cells, cards, headers, and list rows. The label is th
 
 ## Accessibility
 
+- The ✕ is a real `<button>` with an `aria-label` (`Remove <label>` by default) and a visible `:focus-visible` ring, so a dismissible badge is reachable and operable from the keyboard. Removing the last value should move focus somewhere deliberate — the control that adds values back, usually.
 - The component sets `role="status"` so state changes are announced. For purely decorative category tags, wrap in an element with `role="presentation"` or pass `aria-hidden` via the parent.
 - All text/fill pairs meet WCAG AA at 14px Medium in both modes — the light text tokens are the darker 600/700 steps for exactly this reason. Do not place badges on coloured surfaces that undercut that contrast.

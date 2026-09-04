@@ -743,3 +743,4 @@ const [active, setActive] = useState('overview');
 | Show counts alongside section labels                  | Tabs with `counter` |
 | Tag a person or entity (e.g. assignee, audience)      | Chips with `iconLeft` |
 | Navigate to a different page or route                 | Neither, use sidebar or buttons |
+| List values a control elsewhere owns, each removable   | Badge with `onDismiss` (`badges.md`) |

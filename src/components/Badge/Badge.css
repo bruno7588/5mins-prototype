@@ -21,6 +21,30 @@
   height: 16px;
 }
 
+/* Trailing close (Figma iconRight). The whole pill goes to the S gap once a ✕
+   is in it — Figma has no dismissible badge at XS. */
+.badge--dismissible {
+  gap: var(--space-s);
+}
+
+.badge__dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.badge__dismiss:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
 /* Fills are 16% tints of the type's 500 colour and do not change per mode;
    text tokens resolve per mode (see badges.md colour table). */
 .badge--success      { background: rgba(24, 169, 87, 0.16);  color: var(--text-success); }
