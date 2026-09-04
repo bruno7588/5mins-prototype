@@ -6,6 +6,7 @@ import {
   hasStatedAnswer,
   optionTally,
   questionOptionTally,
+  questionTally,
   type AssessmentResult,
   type GradedAssessment,
   type MultiAssessment,
@@ -160,23 +161,24 @@ function Columns({ cols }: { cols: Column[] }) {
   return (
     <ol className={`ast-cols${sparse ? ' is-sparse' : ''}`}>
       {cols.map((c, i) => (
-        <li key={c.tick} className="ast-col" aria-label={c.aria}>
+        <li
+          key={c.tick}
+          className="ast-col"
+          aria-label={c.aria}
+          /* On the column, not the bar: the tooltip's trigger is sized from these, so
+             it hugs the bar and the label appears just above it rather than above the
+             full-height plot. */
+          style={{ '--ast-h': `${c.pct}%`, '--ast-i': i } as React.CSSProperties}
+        >
           <Tooltip
             className="ast-col__hit"
             icon={false}
             position="Top"
-            text={
-              <>
-                <BandLabel label={c.label} />
-                <span className="ast-band__rest"> — </span>
-                <span className="ast-band__figure">{c.pct}%</span>
-              </>
-            }
+            /* The band alone: the percentage is already printed above the bar the
+               pointer is on, and repeating it here says the same thing twice. */
+            text={<BandLabel label={c.label} />}
           >
-            <span
-              className={`ast-col__bar${c.full ? ' is-full' : ''}${c.wrong ? ' is-wrong' : ''}`}
-              style={{ '--ast-h': `${c.pct}%`, '--ast-i': i } as React.CSSProperties}
-            >
+            <span className={`ast-col__bar${c.full ? ' is-full' : ''}${c.wrong ? ' is-wrong' : ''}`}>
               {/* Rides the top of its own column, so the figures sit where the
                   data does instead of in a row of their own. */}
               <span className="ast-col__value">{c.pct}%</span>
@@ -245,6 +247,16 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
      correctness metric. */
   const correct = correctPct(a)
 
+  /* The four arrangement formats are drawn as columns: what they record is how much
+     of a thing was right, and a column per band or per blank is that shape. The rest
+     keep the horizontal bars, where the option text is the row and has to be read. */
+  const cols =
+    a.kind === 'graded' && (banded || a.type === 'fill-blank')
+      ? bandCols(a, responded)
+      : a.kind === 'multi' && a.type === 'fill-blank'
+        ? blankCols(a, responded)
+        : null
+
   /* Two facts, two labels. Run together on one line they read as a single sentence and
      the reader has to work out where the first fact ends — and they answer different
      questions: how many took part, and how they did.
@@ -290,12 +302,12 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
           level each belongs to; no adjective has to. */}
       {caption}
 
-      {!charted ? null : a.kind === 'multi' ? (
+      {!charted ? null : cols ? (
+        <Columns cols={cols} />
+      ) : a.kind === 'multi' ? (
         <Quiz a={a} responded={responded} />
       ) : a.kind === 'poll' ? (
         <Poll a={a} responded={responded} />
-      ) : banded ? (
-        <Columns cols={bandCols(a, responded)} />
       ) : (
         <Choices
           options={a.options}
@@ -306,6 +318,16 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
       )}
     </section>
   )
+}
+
+/** One column per blank: how many learners filled that one in correctly. */
+function blankCols(a: MultiAssessment, responded: number): Column[] {
+  return questionTally(a).map((n, i) => ({
+    tick: `Blank ${i + 1}`,
+    label: a.questions[i].prompt,
+    pct: pct(n, responded),
+    aria: `Blank ${i + 1} — ${pct(n, responded)}%`,
+  }))
 }
 
 /** One column per band, best first, as the options are ordered. */

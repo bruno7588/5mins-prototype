@@ -8,7 +8,7 @@
 .ast {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-s);
 
   /* The mark under the pointer, one palette step away: darker in light mode, lighter in
      dark, so the shift is toward the surface's opposite either way and reads as the same
@@ -239,14 +239,44 @@
   color: var(--text-tertiary);
 }
 
+/* Inside a tooltip the label sits on the dark bubble in both modes, so it takes the
+   knockout pair rather than the page's text tokens — in light mode --text-primary is
+   the same near-black as the bubble and the figure disappears. */
+.tooltip__content .ast-band__figure {
+  color: var(--neutral-25);
+}
+
+.tooltip__content .ast-band__rest {
+  color: var(--neutral-200);
+}
+
 /* ── Columns: a sequence, and a distribution ─────────────────────────────── */
 .ast-cols {
+  position: relative;
   margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
   align-items: flex-end;
   gap: var(--space-xs);
+}
+
+/* The rules the columns are read against: hairlines every quarter, masked into
+   dashes so they sit behind the bars without competing with them. Height matches
+   the plot, so the bottom rule is the baseline the bars stand on. */
+.ast-cols::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 176px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to top,
+    var(--border-elevated) 0 1px,
+    transparent 1px 25%
+  );
+  -webkit-mask-image: repeating-linear-gradient(to right, #000 0 2px, transparent 2px 6px);
+  mask-image: repeating-linear-gradient(to right, #000 0 2px, transparent 2px 6px);
 }
 
 /* A handful of columns rather than a dozen: they still fill the panel, but with
@@ -261,27 +291,38 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
+  /* The bar is sized from this, so it tracks the column rather than a fixed width:
+     thick when four bands share the panel, thinner as the panel narrows. */
+  container-type: inline-size;
 }
 
 /* The plot. A fixed height so every column is read against the same hundred. */
 .ast-col__hit {
-  height: 112px;
-}
-
-.ast-col__hit .tooltip__trigger {
+  height: 176px;
   display: flex;
   align-items: flex-end;
+  justify-content: center;
+}
+
+/* The tooltip's trigger is the bar, so the label appears just above the mark it
+   describes rather than above the whole plot. Sized here because the trigger is the
+   component's own element: the column carries --ast-h and this reads it. */
+.ast-col__hit .tooltip__trigger {
+  display: block;
+  width: clamp(8px, 40cqw, 48px);
+  height: var(--ast-h);
+  min-height: 8px;
 }
 
 .ast-col__bar {
   position: relative;
   display: block;
+  /* Fills the trigger, which carries the width and the height. */
   width: 100%;
-  height: var(--ast-h);
-  /* A column at 0% would be nothing at all, so it keeps a hairline: the reader
-     needs to see that the question was asked and nobody got it. */
-  min-height: 2px;
-  border-radius: var(--radius-s) var(--radius-s) 0 0;
+  height: 100%;
+  /* Softened corners rather than a capsule: at full round a bar shorter than it is
+     wide becomes a circle, which reads as a dot on a scatter instead of a short bar. */
+  border-radius: var(--radius-m);
   background: var(--primary-600);
   animation: ast-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(300ms + var(--ast-i, 0) * 45ms);
@@ -326,8 +367,11 @@
 .ast-col__value {
   position: absolute;
   bottom: 100%;
-  left: 0;
-  right: 0;
+  /* Centred on a 12px bar, so the figure keeps its own width instead of wrapping
+     inside the stroke it labels. */
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
   padding-bottom: var(--space-s);
   text-align: center;
   font-size: 14px;
