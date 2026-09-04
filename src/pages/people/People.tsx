@@ -40,7 +40,8 @@ import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import type { RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import LimitedAdminDrawer from './components/LimitedAdminDrawer/LimitedAdminDrawer'
 import { loadUserFields } from '@/data/userFields'
-import { isScopeValid, scopeSummary, scopeValuesSummary } from './limitedAdmin'
+import type { UserField } from '@/data/userFields'
+import { isScopeValid, scopeCell, scopeGroups, scopeSummary, scopeValuesSummary } from './limitedAdmin'
 import type { FieldValues, LimitedAdminScope } from './limitedAdmin'
 import './People.css'
 
@@ -91,7 +92,7 @@ type ModalState =
 /* ─── Mock data ─── */
 
 const initialPeople: PersonRow[] = [
-  { id: 1, name: 'Anthonny Wallace', email: 'anthonny@example.com', avatar: 'AW', avatarImg: avatarAnthonny, role: 'Customer Support Specialist', team: 'Customer Support Team', reportsTo: 'Manuela Vilar', startDate: 'Jan 13, 2025', region: 'Southeast Asia', status: 'Registered', fieldValues: { 1: 'Harbour View', 2: 'Front of House', 3: 'United Kingdom', 4: 'Meridian', 5: 'Full time', 6: 'Morning' } },
+  { id: 1, name: 'Anthonny Wallace', email: 'anthonny@example.com', avatar: 'AW', avatarImg: avatarAnthonny, role: 'Customer Support Specialist', team: 'Customer Support Team', reportsTo: 'Manuela Vilar', startDate: 'Jan 13, 2025', region: 'Southeast Asia', status: 'Registered', fieldValues: { 1: 'Harbour View', 2: 'Front of House', 3: 'United Kingdom', 4: 'Meridian', 5: 'Full time', 6: 'Morning' }, limitedAdmin: { conditions: [{ fieldId: 1, values: ['The Grand Riverside', 'Harbour View', 'Airport Central', 'Lakeside Retreat'] }, { fieldId: 2, values: ['Front of House', 'Food & Beverage'] }] } },
   { id: 2, name: 'Brenda Kwasaki', email: 'brenda@email.com', avatar: 'BK', avatarImg: avatarBrenda, role: 'Operations Manager', team: 'Financial Services', reportsTo: '–', startDate: 'Jan 13, 2025', region: '–', status: 'Invited', fieldValues: { 1: 'The Grand Riverside', 2: 'Back Office', 3: 'Portugal', 4: 'Coastline', 5: 'Full time', 6: 'Afternoon' }, isTeamManager: true },
   { id: 3, name: 'Carlos Mendes', email: 'carlos@example.com', avatar: 'CM', avatarImg: avatarCarlos, role: 'Software Engineer', team: 'Product Engineering', reportsTo: 'Sofia Almeida', startDate: 'Feb 1, 2025', region: 'Europe', status: 'Registered', hrisJobTitle: 'Software Engineer', fieldValues: { 1: 'Airport Central', 2: 'Back Office', 3: 'Germany', 4: 'Urban Stay', 5: 'Contractor', 6: 'Morning' } },
   { id: 4, name: 'Diana Ross', email: 'diana.ross@company.com', avatar: 'DR', avatarImg: avatarDiana, role: 'Marketing Lead', team: 'Growth Team', reportsTo: 'Manuela Vilar', startDate: 'Mar 5, 2025', region: 'North America', status: 'Registered', fieldValues: { 1: 'Harbour View', 2: 'Food & Beverage', 3: 'United Kingdom', 4: 'Meridian', 5: 'Part time', 6: 'Night' }, limitedAdmin: { conditions: [{ fieldId: 1, values: ['Old Town Residence', 'Lakeside Retreat'] }] } },
@@ -120,6 +121,55 @@ const quicklinks = [
 ]
 
 const avatarColors = ['#4a90d9', '#7b68ee', '#e67e22', '#2ecc71', '#e74c3c']
+
+/**
+ * Scope as a table cell: the values it covers over the field they belong to,
+ * with the full sentence on hover. An out-of-date scope says so in its own
+ * right, because this tab is where an admin would notice.
+ *
+ * The cell opens the drawer, so the thing you read is the thing you edit and
+ * the row needs no button of its own.
+ */
+function ScopeCellView({
+  scope,
+  fields,
+  onOpen,
+}: {
+  scope: LimitedAdminScope
+  fields: UserField[]
+  onOpen: () => void
+}) {
+  const cell = scopeCell(scope, fields)
+  return (
+    <Tooltip
+      className="people-scope-tip"
+      position="Top"
+      icon={false}
+      text={
+        cell.invalid
+          ? 'A field or value this scope relies on has been removed. Nobody is in scope until it is repaired.'
+          : scopeSummary(scope, fields)
+      }
+    >
+      <div
+        className="people-scope"
+        role="link"
+        tabIndex={0}
+        onClick={onOpen}
+        onKeyDown={(e) => { if (e.key === 'Enter') onOpen() }}
+      >
+        <span className={`people-scope__values${cell.invalid ? ' people-scope__values--warning' : ''}`}>
+          {cell.invalid && (
+            <Danger size={16} variant="Bold" color="currentColor" className="people-scope__warn" />
+          )}
+          <span className="people-scope__list">{cell.values}</span>
+          {cell.more && <span className="people-scope__more">{cell.more}</span>}
+        </span>
+        {cell.field && <span className="people-scope__field">{cell.field}</span>}
+      </div>
+    </Tooltip>
+  )
+}
 
 function People() {
   const [activeTab, setActiveTab] = useState('Active People')
@@ -242,6 +292,7 @@ function People() {
   ]
 
   const isDeactivatedTab = activeTab.startsWith('Deactivated')
+  const isLimitedAdminsTab = activeTab === 'Limited Admins'
 
   /* ─── Filtered lists ─── */
 
@@ -650,6 +701,9 @@ function People() {
               {visibleKeys.includes('role') && <div className="people-table-cell people-table-cell--role">Role</div>}
               {visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">Team</div>}
               {visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">Reports to</div>}
+              {/* Only where every row has one: elsewhere the column would be
+                  empty for all but a handful of people. */}
+              {isLimitedAdminsTab && <div className="people-table-cell people-table-cell--scope">Scope</div>}
               {visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">Region</div>}
               {visibleKeys.includes('status') && <div className="people-table-cell people-table-cell--status">Status</div>}
               {visibleKeys.filter(k => k.startsWith('custom-')).map(key => {
@@ -727,6 +781,17 @@ function People() {
                 )}
                 {visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">{person.team}</div>}
                 {visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">{person.reportsTo}</div>}
+                {isLimitedAdminsTab && (
+                  <div className="people-table-cell people-table-cell--scope">
+                    {person.limitedAdmin && (
+                      <ScopeCellView
+                        scope={person.limitedAdmin}
+                        fields={userFields}
+                        onOpen={() => setLimitedAdminPerson(person)}
+                      />
+                    )}
+                  </div>
+                )}
                 {visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">{person.region}</div>}
                 {visibleKeys.includes('status') && (
                   <div className="people-table-cell people-table-cell--status">
@@ -1182,13 +1247,24 @@ function People() {
           <p className="confirm-modal-body">
             {removeAdminPerson?.name} loses admin access and stops managing the people
             in their scope.
-            {removeAdminPerson?.limitedAdmin && (
-              <>
-                <br />
-                Scope: {scopeSummary(removeAdminPerson.limitedAdmin, userFields)}
-              </>
-            )}
           </p>
+          {/* The scope reads as its conditions rather than a sentence: at three
+              fields deep the sentence is a paragraph nobody parses under a
+              destructive button. Same badges as the drawer that set it. */}
+          {removeAdminPerson?.limitedAdmin && (
+            <div className="people-remove-scope">
+              {scopeGroups(removeAdminPerson.limitedAdmin, userFields).map((group) => (
+                <div className="people-remove-scope__group" key={group.field}>
+                  <span className="people-remove-scope__field">{group.field}</span>
+                  <div className="people-remove-scope__values">
+                    {group.values.map((value) => (
+                      <Badge key={value} type="informative" label={value} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div className="confirm-modal-actions confirm-modal-actions--center">
           <Button variant="outlined-2" onClick={() => setRemoveAdminPerson(null)}>Cancel</Button>

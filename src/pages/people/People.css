@@ -564,6 +564,115 @@
   font-weight: 500;
 }
 
+/* The scope on the remove confirmation: a badge per value under the field it
+   belongs to. One badge per condition would run past the modal's width. */
+.people-remove-scope {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.people-remove-scope__group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.people-remove-scope__field {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.people-remove-scope__values {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-s);
+}
+
+/* Scope cell (Limited Admins tab): values over the field they belong to, the
+   same two-line pair as the name cell so the row reads at one weight. */
+.people-table-cell--scope {
+  width: 260px;
+  min-width: 160px;
+  flex-shrink: 1;
+  overflow: hidden;
+}
+
+/* The tooltip wrapper is inline-flex, which sizes to its text and pushes the
+   rest of the row out; both it and its trigger have to give way to the cell so
+   a long scope truncates instead. */
+.people-scope-tip,
+.people-scope-tip .tooltip__trigger {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  text-align: left;
+}
+
+.people-scope {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+  cursor: pointer;
+}
+
+/* Same hover as the name cell: the scope is the link to the drawer that edits
+   it. A scope in warning keeps its colour, which is the more urgent signal. */
+.people-scope:hover .people-scope__values:not(.people-scope__values--warning),
+.people-scope:hover .people-scope__field {
+  color: var(--text-button-hover);
+}
+
+.people-scope:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.people-scope__list,
+.people-scope__field {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.people-scope__values {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* The count of what is not named holds its ground while the list truncates. */
+.people-scope__more {
+  flex-shrink: 0;
+}
+
+/* Colour alone would not carry it, so the icon comes with the wording. */
+.people-scope__values--warning {
+  color: var(--text-warning);
+}
+
+.people-scope__warn {
+  vertical-align: text-bottom;
+  margin-right: var(--space-xs);
+}
+
+.people-scope__field {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
 /* Stacked date (two-line: "Jan 13," / "2025") */
 .people-date-stack {
   display: flex;

@@ -80,6 +80,64 @@ export function scopeValuesSummary(scope: LimitedAdminScope): string | null {
   return formatList(complete[0].values, 'or')
 }
 
+/**
+ * The Limited Admins table cell: what a scope covers on the first line, the
+ * field it covers it on underneath. A scope can be several fields deep and
+ * dozens of values wide, so the cell keeps the first condition and counts the
+ * rest; the whole sentence belongs in the tooltip.
+ */
+export interface ScopeCell {
+  values: string
+  /** Values the cell had no room to name, e.g. "+2". Kept apart from the list
+      so truncation eats a value rather than the count. */
+  more: string
+  field: string
+  /** A deleted field or value leaves the scope matching nobody. */
+  invalid: boolean
+}
+
+/**
+ * The scope as badges: one group per condition, so the values inside a group
+ * read as OR and the groups themselves as AND. A single flat list of every
+ * value would say the scope is any of them, which is the opposite of what an
+ * ANDed scope means.
+ */
+export function scopeGroups(
+  scope: LimitedAdminScope,
+  fields: UserField[],
+): { field: string; values: string[] }[] {
+  return scope.conditions.filter(isConditionComplete).map((c) => {
+    const field = fields.find((f) => f.id === c.fieldId)
+    return { field: field ? field.name : 'Deleted field', values: c.values }
+  })
+}
+
+/** Values named in the cell before the rest become a "+N". */
+const CELL_VALUES = 2
+
+export function scopeCell(scope: LimitedAdminScope, fields: UserField[]): ScopeCell {
+  const complete = scope.conditions.filter(isConditionComplete)
+  const first = complete[0]
+  if (!first) return { values: 'No scope set', more: '', field: '', invalid: true }
+
+  const field = fields.find((f) => f.id === first.fieldId)
+  const more = complete.length - 1
+  const rest = more > 0 ? ` · +${more} more field${more > 1 ? 's' : ''}` : ''
+  const fieldLine = `${field ? field.name : 'Deleted field'}${rest}`
+
+  if (!isScopeValid(scope, fields)) {
+    return { values: 'Scope is out of date', more: '', field: fieldLine, invalid: true }
+  }
+
+  const hidden = first.values.length - CELL_VALUES
+  return {
+    values: first.values.slice(0, CELL_VALUES).join(', '),
+    more: hidden > 0 ? `+${hidden}` : '',
+    field: fieldLine,
+    invalid: false,
+  }
+}
+
 function formatList(items: string[], joiner: 'and' | 'or'): string {
   if (items.length === 0) return ''
   if (items.length === 1) return items[0]
