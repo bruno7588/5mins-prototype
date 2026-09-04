@@ -35,7 +35,9 @@ interface BadgeProps {
   type?: BadgeType
   icon?: boolean
   customIcon?: ReactNode
-  label?: string
+  /** A node, not just a string: a label can pair two weights, as the scope
+      badge does with its "Hotel name · 3 of 5". */
+  label?: ReactNode
   className?: string
   /** Figma iconRight: a trailing 16px close icon. The handler is what renders it,
       because a dismiss the badge cannot act on is a decoy. */
@@ -75,7 +77,7 @@ function Badge({
           type="button"
           className="badge__dismiss"
           onClick={onDismiss}
-          aria-label={dismissLabel ?? `Remove ${text}`}
+          aria-label={dismissLabel ?? (typeof text === 'string' ? `Remove ${text}` : 'Remove')}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path

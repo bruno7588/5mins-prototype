@@ -144,7 +144,7 @@ interface BadgeProps {
   type?: BadgeType        // default 'success'
   icon?: boolean          // leading type-icon (iconLeft in Figma); ignored on 'new'
   customIcon?: ReactNode  // replaces the type icon (16px, currentColor)
-  label?: string          // overrides the default label
+  label?: ReactNode       // overrides the default label; a node can pair two weights
   className?: string
   onDismiss?: () => void  // trailing ✕ (iconRight in Figma); passing it is what renders it
   dismissLabel?: string   // aria-label for the ✕; defaults to `Remove ${label}`
