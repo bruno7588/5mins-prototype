@@ -41,7 +41,7 @@ import type { RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import LimitedAdminDrawer from './components/LimitedAdminDrawer/LimitedAdminDrawer'
 import { loadUserFields } from '@/data/userFields'
 import type { UserField } from '@/data/userFields'
-import { isScopeValid, scopeCell, scopeGroups, scopeSummary, scopeValuesSummary } from './limitedAdmin'
+import { isScopeValid, scopeCell, scopeGroups, scopeSummary } from './limitedAdmin'
 import type { FieldValues, LimitedAdminScope } from './limitedAdmin'
 import './People.css'
 
@@ -263,14 +263,13 @@ function People() {
       ),
     )
     setLimitedAdminPerson(null)
-    const values = scopeValuesSummary(scope)
+    /* The scope itself is not in the toast: it is on the row behind it, and a
+       list of values only reads correctly when the scope has one field. */
     showToast(
       'success',
       wasAdmin
-        ? values ? `Scope updated to ${values}` : `Scope updated for ${target.name}`
-        : values
-          ? `${target.name} is now a Limited Admin for ${values}`
-          : `${target.name} is now a Limited Admin`,
+        ? `Scope updated for ${target.name}`
+        : `${target.name} is now a Limited Admin`,
     )
   }
 

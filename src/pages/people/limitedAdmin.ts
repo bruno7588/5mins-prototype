@@ -70,28 +70,23 @@ export function scopeSummary(scope: LimitedAdminScope, fields: UserField[]): str
 }
 
 /**
- * The short form for a toast, e.g. "Harbour View or Airport Central". Only one
- * condition can be summarised by its values alone: across several fields the
- * values are ANDed, and a flat "a or b or c" list would misstate the scope.
+ * The Limited Admins table cell: one line per field, each naming the field and
+ * how much of it the scope takes. Naming the values themselves needs badges or
+ * a string that truncates mid-word, and neither survives a table of rows; the
+ * count carries the one thing the field name cannot say, which is how wide the
+ * reach is. The values are a hover and a click away.
  */
-export function scopeValuesSummary(scope: LimitedAdminScope): string | null {
-  const complete = scope.conditions.filter(isConditionComplete)
-  if (complete.length !== 1) return null
-  return formatList(complete[0].values, 'or')
+export interface ScopeCellLine {
+  field: string
+  /** The single value where a condition names one, e.g. "Contractor"; a count
+      of the field where it names several, e.g. "3 of 5". */
+  detail: string
 }
 
-/**
- * The Limited Admins table cell: what a scope covers on the first line, the
- * field it covers it on underneath. A scope can be several fields deep and
- * dozens of values wide, so the cell keeps the first condition and counts the
- * rest; the whole sentence belongs in the tooltip.
- */
 export interface ScopeCell {
-  values: string
-  /** Values the cell had no room to name, e.g. "+2". Kept apart from the list
-      so truncation eats a value rather than the count. */
+  lines: ScopeCellLine[]
+  /** Fields the cell had no room for, e.g. "+1 more field". */
   more: string
-  field: string
   /** A deleted field or value leaves the scope matching nobody. */
   invalid: boolean
 }
