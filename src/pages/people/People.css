@@ -409,12 +409,6 @@
   flex-shrink: 1;
 }
 
-.people-table-cell--date {
-  width: 130px;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
 .people-table-cell--region {
   width: 130px;
   min-width: 100px;

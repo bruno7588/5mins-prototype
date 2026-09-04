@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   SearchNormal1,
-  Add,
   ProfileAdd,
   DocumentText,
   People as PeopleIcon,
@@ -651,12 +650,6 @@ function People() {
               {visibleKeys.includes('role') && <div className="people-table-cell people-table-cell--role">Role</div>}
               {visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">Team</div>}
               {visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">Reports to</div>}
-              {visibleKeys.includes('startDate') && (
-                <div className="people-table-cell people-table-cell--date">
-                  Start Date
-                  <Add size={16} color="var(--text-tertiary)" style={{ transform: 'rotate(45deg)', opacity: 0 }} />
-                </div>
-              )}
               {visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">Region</div>}
               {visibleKeys.includes('status') && <div className="people-table-cell people-table-cell--status">Status</div>}
               {visibleKeys.filter(k => k.startsWith('custom-')).map(key => {
@@ -734,14 +727,6 @@ function People() {
                 )}
                 {visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">{person.team}</div>}
                 {visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">{person.reportsTo}</div>}
-                {visibleKeys.includes('startDate') && (
-                  <div className="people-table-cell people-table-cell--date">
-                    <div className="people-date-stack">
-                      <span>{person.startDate.replace(/,?\s*\d{4}$/, ',')}</span>
-                      <span className="people-date-stack__year">{person.startDate.match(/\d{4}$/)?.[0]}</span>
-                    </div>
-                  </div>
-                )}
                 {visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">{person.region}</div>}
                 {visibleKeys.includes('status') && (
                   <div className="people-table-cell people-table-cell--status">

@@ -27,14 +27,13 @@ const DEFAULT_COLUMNS: ColumnDef[] = [
   { key: 'role', label: 'Role', locked: true, isCustomField: false },
   { key: 'team', label: 'Team', locked: true, isCustomField: false },
   { key: 'reportsTo', label: 'Reports to', locked: true, isCustomField: false },
-  { key: 'startDate', label: 'Start Date', locked: true, isCustomField: false },
   { key: 'region', label: 'Region', locked: false, isCustomField: false },
   { key: 'status', label: 'Status', locked: true, isCustomField: false },
 ]
 
 const DEFAULT_VISIBLE_KEYS = DEFAULT_COLUMNS.filter(c => c.locked).map(c => c.key)
 
-const PREFS_VERSION = 2
+const PREFS_VERSION = 3
 
 const STORAGE_KEY = '5mins-people-columns'
 
