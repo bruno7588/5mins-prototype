@@ -29,7 +29,6 @@ export interface LimitedAdminPerson {
   email: string
   avatar: string
   avatarImg?: string
-  isTeamManager?: boolean
   limitedAdmin?: LimitedAdminScope | null
 }
 
@@ -111,13 +110,7 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
 
   const canSave = isScopeComplete(scope)
   const hasFields = fields.length > 0
-  const replacingTeamManager = Boolean(person.isTeamManager) && !isEditing
-
-  const saveLabel = replacingTeamManager
-    ? 'Replace Team Manager Role'
-    : isEditing
-      ? 'Save Scope'
-      : 'Make Limited Admin'
+  const saveLabel = isEditing ? 'Save' : 'Make Limited Admin'
 
   return (
     <div
@@ -174,15 +167,6 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
             />
           )}
 
-          {replacingTeamManager && (
-            <Alert
-              type="Alert"
-              customIcon={<Danger size={20} color="var(--text-warning)" variant="Bold" />}
-              title="This will replace their Team Manager role"
-              message={`${person.name} will no longer manage their current team.`}
-            />
-          )}
-
           {/* Scope: one row per field, read as a sentence. */}
           {!hasFields ? (
             <p className="lad-empty">
@@ -220,6 +204,7 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
                     {scope.conditions.length > 1 && (
                       <CloseButton
                         size={20}
+                        className="lad-scope-remove"
                         onClick={() => removeCondition(index)}
                         ariaLabel="Remove field"
                       />
@@ -231,7 +216,16 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
                   {condition.values.length > 1 && (
                     <div className="lad-scope-chips">
                       {condition.values.map((value) => (
-                        <Badge key={value} type="informative" label={value} />
+                        <Badge
+                          key={value}
+                          type="informative"
+                          label={value}
+                          onDismiss={() =>
+                            updateCondition(index, {
+                              values: condition.values.filter((v) => v !== value),
+                            })
+                          }
+                        />
                       ))}
                     </div>
                   )}
@@ -271,7 +265,7 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
               {saveLabel}
             </Button>
             {isEditing && (
-              <Button variant="text" semantic="danger" onClick={onRemove}>
+              <Button semantic="danger" onClick={onRemove}>
                 Remove Limited Admin
               </Button>
             )}

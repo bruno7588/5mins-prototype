@@ -199,6 +199,16 @@
   width: 100%;
 }
 
+/* The row's own remove: red under the pointer, so it reads as taking something
+   away rather than closing something. */
+.lad-scope-remove {
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.lad-scope-remove:hover {
+  color: var(--text-error);
+}
+
 .lad-scope-chips {
   display: flex;
   flex-wrap: wrap;

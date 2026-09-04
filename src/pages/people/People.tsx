@@ -161,12 +161,6 @@ function People() {
     const icon = (Icon: typeof Edit2, color = 'var(--text-primary)') => (
       <Icon size={20} color={color} variant="Linear" />
     )
-    const scopeLine = person.limitedAdmin
-      ? isScopeValid(person.limitedAdmin, userFields)
-        ? scopeSummary(person.limitedAdmin, userFields)
-        : 'Scope is out of date'
-      : 'Admin access for a specific set of people'
-
     return [
       { key: 'edit', label: 'Edit user profile', icon: icon(Edit2) },
       /* Every item in this menu stays enabled, including the ones that lead
@@ -179,12 +173,14 @@ function People() {
         icon: icon(ShieldSecurity),
         dividerBefore: true,
       },
-      {
-        key: 'limited-admin',
-        label: person.limitedAdmin ? 'Edit Limited Admin scope' : 'Make Limited Admin',
-        description: scopeLine,
-        icon: icon(UserOctagon),
-      },
+      person.limitedAdmin
+        ? { key: 'limited-admin', label: 'Edit Limited Admin', icon: icon(UserOctagon) }
+        : {
+            key: 'limited-admin',
+            label: 'Make Limited Admin',
+            description: 'Admin access for a specific set of people',
+            icon: icon(UserOctagon),
+          },
       {
         key: 'subject-expert',
         label: 'Make user Subject Expert',
@@ -214,7 +210,7 @@ function People() {
     const wasAdmin = Boolean(target.limitedAdmin)
     setPeople((prev) =>
       prev.map((p) =>
-        p.id === target.id ? { ...p, limitedAdmin: scope, isTeamManager: false } : p,
+        p.id === target.id ? { ...p, limitedAdmin: scope } : p,
       ),
     )
     setLimitedAdminPerson(null)
