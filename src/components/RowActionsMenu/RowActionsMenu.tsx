@@ -7,6 +7,9 @@ export interface RowMenuItem {
   key: string
   label: string
   icon: ReactNode
+  /** Second line under the label. Use where the label alone doesn't separate
+      one action from its neighbours (listbox.md supporting text). */
+  description?: string
   danger?: boolean
   /** Render a divider above this item (section break). */
   dividerBefore?: boolean
@@ -49,6 +52,9 @@ function RowActionsMenu({
   const btnRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const [rect, setRect] = useState<DOMRect | null>(null)
+  /* A tall menu on a low row would run past the bottom of the window, so it
+     flips above the trigger when there is more room there. */
+  const [flipped, setFlipped] = useState(false)
 
   useLayoutEffect(() => {
     if (!open) return
@@ -63,6 +69,13 @@ function RowActionsMenu({
       window.removeEventListener('resize', measure)
     }
   }, [open])
+
+  useLayoutEffect(() => {
+    if (!open || !rect) return
+    const menuH = menuRef.current?.getBoundingClientRect().height ?? 0
+    const roomBelow = window.innerHeight - rect.bottom
+    setFlipped(menuH + 16 > roomBelow && rect.top > roomBelow)
+  }, [open, rect, items])
 
   useEffect(() => {
     if (!open) return
@@ -111,26 +124,33 @@ function RowActionsMenu({
               position: 'fixed',
               right: Math.max(8, window.innerWidth - rect.right),
               zIndex: 2000,
-              ...(placement === 'top'
+              ...(placement === 'top' || flipped
                 ? { bottom: window.innerHeight - rect.top + 8 }
                 : { top: rect.bottom + 8 }),
             }}
           >
-            {caret && <span className={`ram-caret ram-caret--${placement === 'top' ? 'bottom' : 'top'}`} aria-hidden="true" />}
+            {caret && <span className={`ram-caret ram-caret--${placement === 'top' || flipped ? 'bottom' : 'top'}`} aria-hidden="true" />}
             {items.map((item) => (
               <Fragment key={item.key}>
                 {item.dividerBefore && <div className="ram-divider" role="separator" />}
                 <button
                   type="button"
                   role="menuitem"
-                  className={`ram-item${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}`}
+                  className={`ram-item${item.description ? ' ram-item--stacked' : ''}${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}`}
                   disabled={item.disabled}
                   aria-disabled={item.disabled || undefined}
                   title={item.title}
                   onClick={() => handleSelect(item.key)}
                 >
                   <span className="ram-item-icon">{item.icon}</span>
-                  <span className="ram-item-label">{item.label}</span>
+                  {item.description ? (
+                    <span className="ram-item-body">
+                      <span className="ram-item-label">{item.label}</span>
+                      <span className="ram-item-description">{item.description}</span>
+                    </span>
+                  ) : (
+                    <span className="ram-item-label">{item.label}</span>
+                  )}
                 </button>
               </Fragment>
             ))}

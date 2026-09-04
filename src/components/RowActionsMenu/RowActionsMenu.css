@@ -25,7 +25,7 @@
   min-width: 240px;
   max-width: 340px;
   background: var(--cards-background);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm); /* 12px */
   padding: var(--space-s); /* 8px */
   box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12); /* Shadow L */
@@ -53,15 +53,15 @@
 
 .ram-caret--top {
   top: -6px;
-  border-left: 1px solid var(--border);
-  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border-elevated);
+  border-top: 1px solid var(--border-elevated);
   transform: rotate(45deg);
 }
 
 .ram-caret--bottom {
   bottom: -6px;
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border-elevated);
+  border-bottom: 1px solid var(--border-elevated);
   transform: rotate(45deg);
 }
 
@@ -121,8 +121,34 @@
 }
 
 /* Section divider */
+/* The menu is an elevated surface, so its divider uses --border-elevated: the
+   same neutral as --border in light, one step up in dark where --border and
+   --cards-background are the same colour. */
 .ram-divider {
   height: 1px;
   margin: var(--space-xs) var(--space-xs);
-  background: var(--border);
+  background: var(--border-elevated);
+}
+
+/* Two-line item: label + supporting text (listbox.md, Figma People 8572:654). */
+.ram-item--stacked {
+  align-items: flex-start;
+}
+
+.ram-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* Label and supporting text are both Paragraph M regular, so an item with a
+   second line reads the same weight as one without. */
+.ram-item-description {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
