@@ -169,32 +169,6 @@
   min-width: 0;
 }
 
-.lad-scope-remove {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: var(--space-xs);
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.lad-scope-remove:hover {
-  background: var(--input-background-hover);
-  color: var(--text-primary);
-}
-
-.lad-scope-remove:focus-visible {
-  outline: 2px solid var(--selected);
-  outline-offset: 2px;
-}
-
 /* ── Footer ─────────────────────────────────────────────────────────────── */
 .lad-footer {
   display: flex;

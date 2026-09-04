@@ -93,11 +93,11 @@ type ModalState =
 /* ─── Mock data ─── */
 
 const initialPeople: PersonRow[] = [
-  { id: 1, name: 'Anthonny Wallace', email: 'anthonny@example.com', avatar: 'AW', avatarImg: avatarAnthonny, role: 'Customer Support Specialist', team: 'Customer Support Team', reportsTo: 'Manuela Vilar', startDate: 'Jan 13, 2025', region: 'Southeast Asia', status: 'Registered', fieldValues: { 1: 'Harbour View', 2: 'Front of House' } },
-  { id: 2, name: 'Brenda Kwasaki', email: 'brenda@email.com', avatar: 'BK', avatarImg: avatarBrenda, role: 'Operations Manager', team: 'Financial Services', reportsTo: '–', startDate: 'Jan 13, 2025', region: '–', status: 'Invited', fieldValues: { 1: 'The Grand Riverside', 2: 'Back Office' }, isTeamManager: true },
-  { id: 3, name: 'Carlos Mendes', email: 'carlos@example.com', avatar: 'CM', avatarImg: avatarCarlos, role: 'Software Engineer', team: 'Product Engineering', reportsTo: 'Sofia Almeida', startDate: 'Feb 1, 2025', region: 'Europe', status: 'Registered', hrisJobTitle: 'Software Engineer', fieldValues: { 1: 'Airport Central', 2: 'Back Office' } },
-  { id: 4, name: 'Diana Ross', email: 'diana.ross@company.com', avatar: 'DR', avatarImg: avatarDiana, role: 'Marketing Lead', team: 'Growth Team', reportsTo: 'Manuela Vilar', startDate: 'Mar 5, 2025', region: 'North America', status: 'Registered', fieldValues: { 1: 'Harbour View', 2: 'Food & Beverage' }, limitedAdmin: { conditions: [{ fieldId: 1, values: ['Old Town Residence', 'Lakeside Retreat'] }] } },
-  { id: 5, name: 'Erik Johansson', email: 'erik.j@email.com', avatar: 'EJ', role: 'Data Analyst', team: 'Business Intelligence', reportsTo: '–', startDate: 'Dec 10, 2024', region: 'Europe', status: 'Invited', hrisJobTitle: 'Senior Software Engineer', fieldValues: { 1: 'Old Town Residence', 2: 'Housekeeping' } },
+  { id: 1, name: 'Anthonny Wallace', email: 'anthonny@example.com', avatar: 'AW', avatarImg: avatarAnthonny, role: 'Customer Support Specialist', team: 'Customer Support Team', reportsTo: 'Manuela Vilar', startDate: 'Jan 13, 2025', region: 'Southeast Asia', status: 'Registered', fieldValues: { 1: 'Harbour View', 2: 'Front of House', 3: 'United Kingdom', 4: 'Meridian', 5: 'Full time', 6: 'Morning' } },
+  { id: 2, name: 'Brenda Kwasaki', email: 'brenda@email.com', avatar: 'BK', avatarImg: avatarBrenda, role: 'Operations Manager', team: 'Financial Services', reportsTo: '–', startDate: 'Jan 13, 2025', region: '–', status: 'Invited', fieldValues: { 1: 'The Grand Riverside', 2: 'Back Office', 3: 'Portugal', 4: 'Coastline', 5: 'Full time', 6: 'Afternoon' }, isTeamManager: true },
+  { id: 3, name: 'Carlos Mendes', email: 'carlos@example.com', avatar: 'CM', avatarImg: avatarCarlos, role: 'Software Engineer', team: 'Product Engineering', reportsTo: 'Sofia Almeida', startDate: 'Feb 1, 2025', region: 'Europe', status: 'Registered', hrisJobTitle: 'Software Engineer', fieldValues: { 1: 'Airport Central', 2: 'Back Office', 3: 'Germany', 4: 'Urban Stay', 5: 'Contractor', 6: 'Morning' } },
+  { id: 4, name: 'Diana Ross', email: 'diana.ross@company.com', avatar: 'DR', avatarImg: avatarDiana, role: 'Marketing Lead', team: 'Growth Team', reportsTo: 'Manuela Vilar', startDate: 'Mar 5, 2025', region: 'North America', status: 'Registered', fieldValues: { 1: 'Harbour View', 2: 'Food & Beverage', 3: 'United Kingdom', 4: 'Meridian', 5: 'Part time', 6: 'Night' }, limitedAdmin: { conditions: [{ fieldId: 1, values: ['Old Town Residence', 'Lakeside Retreat'] }] } },
+  { id: 5, name: 'Erik Johansson', email: 'erik.j@email.com', avatar: 'EJ', role: 'Data Analyst', team: 'Business Intelligence', reportsTo: '–', startDate: 'Dec 10, 2024', region: 'Europe', status: 'Invited', hrisJobTitle: 'Senior Software Engineer', fieldValues: { 1: 'Old Town Residence', 2: 'Housekeeping', 3: 'Spain', 4: 'Coastline', 5: 'Seasonal', 6: 'Night' } },
 ]
 
 const initialDeactivated: DeactivatedPerson[] = [
@@ -245,6 +245,7 @@ function People() {
   }
   const tabs = [
     'Active People',
+    'Limited Admins',
     'Managers',
     'Subject Experts',
     `Deactivated (${deactivatedPeople.length})`,
@@ -254,10 +255,13 @@ function People() {
 
   /* ─── Filtered lists ─── */
 
+  /* The tab narrows the same list rather than opening a different table: a Limited
+     Admin is still an active person, and appears under both. */
   const filteredPeople = people.filter(
     (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.email.toLowerCase().includes(search.toLowerCase())
+      (activeTab !== 'Limited Admins' || Boolean(p.limitedAdmin)) &&
+      (p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.email.toLowerCase().includes(search.toLowerCase()))
   )
 
   function toggleSort(col: typeof sortCol) {

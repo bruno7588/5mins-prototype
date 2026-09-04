@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Add, Danger, InfoCircle, Trash } from 'iconsax-react'
+import { Add, Danger, InfoCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
@@ -210,14 +210,11 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave }: Props) {
                       readOnly={!field}
                     />
                     {scope.conditions.length > 1 && (
-                      <button
-                        type="button"
-                        className="lad-scope-remove"
+                      <CloseButton
+                        size={20}
                         onClick={() => removeCondition(index)}
-                        aria-label="Remove field"
-                      >
-                        <Trash size={20} color="currentColor" variant="Linear" />
-                      </button>
+                        ariaLabel="Remove field"
+                      />
                     )}
                   </div>
                 )
