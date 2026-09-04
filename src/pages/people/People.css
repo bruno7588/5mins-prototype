@@ -332,11 +332,14 @@
   border-radius: var(--radius-sm);
 }
 
+/* Side padding follows the row's 16px (Figma People 9487:469143), not the 12px
+   in table.md. The 4px top and bottom is what the 32px checkbox needs to land on
+   the spec's 40px bar; the 8px the doc names assumes a bare 24px control. */
 .people-table-header .people-table-cell {
   font-size: 14px;
   font-weight: 400;
   color: var(--text-secondary);
-  padding: var(--space-s) var(--space-m);
+  padding: var(--space-xs) var(--space-m);
   white-space: nowrap;
 }
 
@@ -377,9 +380,10 @@
 }
 
 /* Column widths — All People */
+/* Fixed rather than flexible: the slack belongs to the scope, which has more
+   to say than a name and an email do. */
 .people-table-cell--name {
-  flex: 1;
-  min-width: 240px;
+  flex: 0 0 300px;
   gap: var(--space-m);
   overflow: hidden;
 }
@@ -597,9 +601,8 @@
 /* Scope cell (Limited Admins tab): values over the field they belong to, the
    same two-line pair as the name cell so the row reads at one weight. */
 .people-table-cell--scope {
-  width: 260px;
-  min-width: 160px;
-  flex-shrink: 1;
+  flex: 1;
+  min-width: 280px;
   overflow: hidden;
 }
 
@@ -614,19 +617,20 @@
   text-align: left;
 }
 
+/* Figma People 9487:469186 — one badge per field, "Hotel name: 3 of 5", on the
+   cell's own 12px gap. One line only: a wrapped badge takes the whole row's
+   height with it, so anything past the second field becomes a "+N" chip. */
 .people-scope {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--space-sm);
   min-width: 0;
   cursor: pointer;
 }
 
-/* Same hover as the name cell: the scope is the link to the drawer that edits
-   it. A scope in warning keeps its colour, which is the more urgent signal. */
-.people-scope:hover .people-scope__values:not(.people-scope__values--warning),
-.people-scope:hover .people-scope__field {
-  color: var(--text-button-hover);
+.people-scope .badge {
+  flex-shrink: 0;
 }
 
 .people-scope:focus-visible {
@@ -635,42 +639,34 @@
   border-radius: var(--radius-xs);
 }
 
-.people-scope__list,
-.people-scope__field {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Colour alone would not carry it, so the icon comes with the wording. */
+.people-scope__warn {
+  flex-shrink: 0;
 }
 
-.people-scope__values {
+/* One line per field, each saying how much of that field the scope takes: a
+   count is the one thing a field name on its own cannot tell you. */
+.people-scope__line {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
   min-width: 0;
   font-size: 14px;
-  font-weight: 500;
-  color: var(--text-primary);
+  font-weight: 400;
+  white-space: nowrap;
 }
 
-/* The count of what is not named holds its ground while the list truncates. */
-.people-scope__more {
-  flex-shrink: 0;
-}
-
-/* Colour alone would not carry it, so the icon comes with the wording. */
-.people-scope__values--warning {
+.people-scope__line--warning {
+  gap: var(--space-xs);
   color: var(--text-warning);
 }
 
-.people-scope__warn {
-  vertical-align: text-bottom;
-  margin-right: var(--space-xs);
-}
-
-.people-scope__field {
-  font-size: 14px;
+/* The quieter half of the badge: Regular, one step back from the field name it
+   qualifies (Figma binds it to Text-tertiary). */
+.people-scope__count {
+  margin-left: var(--space-xs);
   font-weight: 400;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 /* Stacked date (two-line: "Jan 13," / "2025") */

@@ -107,28 +107,35 @@ export function scopeGroups(
   })
 }
 
-/** Values named in the cell before the rest become a "+N". */
-const CELL_VALUES = 2
+/** Fields named in the cell before the rest become a "+N" badge. Two, because
+    the cell is one line: a third badge wraps and takes the row with it. */
+const CELL_FIELDS = 2
 
 export function scopeCell(scope: LimitedAdminScope, fields: UserField[]): ScopeCell {
   const complete = scope.conditions.filter(isConditionComplete)
-  const first = complete[0]
-  if (!first) return { values: 'No scope set', more: '', field: '', invalid: true }
-
-  const field = fields.find((f) => f.id === first.fieldId)
-  const more = complete.length - 1
-  const rest = more > 0 ? ` · +${more} more field${more > 1 ? 's' : ''}` : ''
-  const fieldLine = `${field ? field.name : 'Deleted field'}${rest}`
-
-  if (!isScopeValid(scope, fields)) {
-    return { values: 'Scope is out of date', more: '', field: fieldLine, invalid: true }
+  if (complete.length === 0 || !isScopeValid(scope, fields)) {
+    return { lines: [], more: '', invalid: true }
   }
 
-  const hidden = first.values.length - CELL_VALUES
+  const lines = complete.slice(0, CELL_FIELDS).map((c) => {
+    const field = fields.find((f) => f.id === c.fieldId)
+    return {
+      field: field ? field.name : 'Deleted field',
+      /* One value is worth naming; several are only worth counting, and the
+         count says how much of the field the scope takes. */
+      detail:
+        c.values.length === 1
+          ? c.values[0]
+          : field
+            ? `${c.values.length} of ${field.options.length}`
+            : '',
+    }
+  })
+
+  const hidden = complete.length - lines.length
   return {
-    values: first.values.slice(0, CELL_VALUES).join(', '),
+    lines,
     more: hidden > 0 ? `+${hidden}` : '',
-    field: fieldLine,
     invalid: false,
   }
 }

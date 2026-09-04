@@ -158,14 +158,28 @@ function ScopeCellView({
         onClick={onOpen}
         onKeyDown={(e) => { if (e.key === 'Enter') onOpen() }}
       >
-        <span className={`people-scope__values${cell.invalid ? ' people-scope__values--warning' : ''}`}>
-          {cell.invalid && (
+        {cell.invalid ? (
+          <span className="people-scope__line people-scope__line--warning">
             <Danger size={16} variant="Bold" color="currentColor" className="people-scope__warn" />
-          )}
-          <span className="people-scope__list">{cell.values}</span>
-          {cell.more && <span className="people-scope__more">{cell.more}</span>}
-        </span>
-        {cell.field && <span className="people-scope__field">{cell.field}</span>}
+            Scope is out of date
+          </span>
+        ) : (
+          <>
+            {cell.lines.map((line) => (
+              <Badge
+                key={line.field}
+                type="informative"
+                label={
+                  <>
+                    {line.field}:
+                    <span className="people-scope__count">{line.detail}</span>
+                  </>
+                }
+              />
+            ))}
+            {cell.more && <Badge type="informative" label={cell.more} />}
+          </>
+        )}
       </div>
     </Tooltip>
   )
@@ -292,6 +306,11 @@ function People() {
 
   const isDeactivatedTab = activeTab.startsWith('Deactivated')
   const isLimitedAdminsTab = activeTab === 'Limited Admins'
+  /* The tab answers "who has admin power, and over whom". A job title, a team
+     and a manager describe the person's place in the org, not their reach, and
+     they were taking the width the scope needed. They are still on the person's
+     own page. */
+  const showPersonCols = !isLimitedAdminsTab
 
   /* ─── Filtered lists ─── */
 
@@ -649,7 +668,9 @@ function People() {
               </div>
             </div>
           )}
-          {!isDeactivatedTab && userFields.length > 0 && (
+          {/* Nothing left to toggle on the Limited Admins tab: it shows the three
+              columns it needs and the picker would be a control that does nothing. */}
+          {!isDeactivatedTab && !isLimitedAdminsTab && userFields.length > 0 && (
             <div className="people-edit-cols-wrapper">
               <button
                 className="people-edit-cols-btn"
@@ -697,15 +718,15 @@ function People() {
                 <Checkbox checked={allSelected} onChange={toggleSelectAll} />
               </div>
               <div className="people-table-cell people-table-cell--name">Name</div>
-              {visibleKeys.includes('role') && <div className="people-table-cell people-table-cell--role">Role</div>}
-              {visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">Team</div>}
-              {visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">Reports to</div>}
+              {showPersonCols && visibleKeys.includes('role') && <div className="people-table-cell people-table-cell--role">Role</div>}
+              {showPersonCols && visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">Team</div>}
+              {showPersonCols && visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">Reports to</div>}
               {/* Only where every row has one: elsewhere the column would be
                   empty for all but a handful of people. */}
               {isLimitedAdminsTab && <div className="people-table-cell people-table-cell--scope">Scope</div>}
-              {visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">Region</div>}
+              {showPersonCols && visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">Region</div>}
               {visibleKeys.includes('status') && <div className="people-table-cell people-table-cell--status">Status</div>}
-              {visibleKeys.filter(k => k.startsWith('custom-')).map(key => {
+              {showPersonCols && visibleKeys.filter(k => k.startsWith('custom-')).map(key => {
                 const col = allColumns.find(c => c.key === key)
                 return col ? <div key={key} className="people-table-cell people-table-cell--custom">{col.label}</div> : null
               })}
@@ -762,7 +783,7 @@ function People() {
                     <span className="people-email">{person.email}</span>
                   </div>
                 </div>
-                {visibleKeys.includes('role') && (
+                {showPersonCols && visibleKeys.includes('role') && (
                   <div className="people-table-cell people-table-cell--role">
                     <span className="people-role-cell">
                       {person.role}
@@ -778,8 +799,8 @@ function People() {
                     </span>
                   </div>
                 )}
-                {visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">{person.team}</div>}
-                {visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">{person.reportsTo}</div>}
+                {showPersonCols && visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">{person.team}</div>}
+                {showPersonCols && visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">{person.reportsTo}</div>}
                 {isLimitedAdminsTab && (
                   <div className="people-table-cell people-table-cell--scope">
                     {person.limitedAdmin && (
@@ -791,7 +812,7 @@ function People() {
                     )}
                   </div>
                 )}
-                {visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">{person.region}</div>}
+                {showPersonCols && visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">{person.region}</div>}
                 {visibleKeys.includes('status') && (
                   <div className="people-table-cell people-table-cell--status">
                     <span className={`people-badge people-badge--${person.status.toLowerCase()}`}>
@@ -799,7 +820,7 @@ function People() {
                     </span>
                   </div>
                 )}
-                {visibleKeys.filter(k => k.startsWith('custom-')).map(key => (
+                {showPersonCols && visibleKeys.filter(k => k.startsWith('custom-')).map(key => (
                   <div key={key} className="people-table-cell people-table-cell--custom">
                     {person.fieldValues?.[Number(key.replace('custom-', ''))] ?? '–'}
                   </div>
