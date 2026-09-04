@@ -197,7 +197,7 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
                       multiple
                       values={condition.values}
                       onChangeValues={(values) => updateCondition(index, { values })}
-                      placeholder="Select field"
+                      placeholder="Select option"
                       summaryLabel="Selected"
                       readOnly={!field}
                     />
