@@ -265,7 +265,7 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
               {saveLabel}
             </Button>
             {isEditing && (
-              <Button semantic="danger" onClick={onRemove}>
+              <Button className="lad-remove" semantic="danger" onClick={onRemove}>
                 Remove Limited Admin
               </Button>
             )}

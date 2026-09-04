@@ -191,6 +191,13 @@
   color: var(--text-primary);
 }
 
+/* Taking the role away sits at the far end of the footer, out of the save
+   cluster: the two are a keystroke apart in consequence and should not be a
+   pixel apart on screen. */
+.lad-footer__row .lad-remove {
+  margin-left: auto;
+}
+
 /* One scope condition: the row of controls, and the picks it made under it. */
 .lad-scope-item {
   display: flex;
