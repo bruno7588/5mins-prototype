@@ -22,6 +22,7 @@
 .ram-menu {
   display: flex;
   flex-direction: column;
+  gap: var(--space-xs); /* 4px between items */
   min-width: 240px;
   max-width: 340px;
   background: var(--cards-background);
@@ -126,7 +127,7 @@
    --cards-background are the same colour. */
 .ram-divider {
   height: 1px;
-  margin: var(--space-xs) var(--space-xs);
+  margin: 0 var(--space-xs);
   background: var(--border-elevated);
 }
 
