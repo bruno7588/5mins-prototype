@@ -381,6 +381,7 @@
   flex: 1;
   min-width: 240px;
   gap: var(--space-m);
+  overflow: hidden;
 }
 
 .people-table-cell--role {
@@ -618,7 +619,7 @@
 
 .people-name {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -999,9 +1000,13 @@
   border-color: var(--border-hover);
 }
 
+/* Semantic @ 12%: a mode-invariant tint, lighter than the 16% the DS uses for
+   alerts and badges so the selected card reads as a surface, not a status.
+   The -100 palette steps are light-mode fills and leave white text unreadable
+   on them in dark mode. */
 .confirm-modal-radio-card--danger {
   border-color: var(--danger-500);
-  background: var(--danger-100);
+  background: rgba(223, 22, 66, 0.12);
 }
 
 .confirm-modal-radio-card--danger:hover {
@@ -1010,7 +1015,7 @@
 
 .confirm-modal-radio-card--warning {
   border-color: var(--warning-500);
-  background: var(--warning-100);
+  background: rgba(255, 165, 56, 0.12);
 }
 
 .confirm-modal-radio-card--warning:hover {
@@ -1099,4 +1104,33 @@
 .confirm-modal-reactivate-label--warning {
   font-weight: 500;
   color: var(--text-warning);
+}
+
+/* Limited Admin badge sits beside the name, so the role reads at a glance —
+   the Role column holds the person's job title, not their access level. */
+.people-name-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+/* Rows use min-width: fit-content, so anything extra in the name cell widens
+   that row alone and knocks its columns out of line with the rest of the table.
+   On a badged row the name block stops contributing intrinsic width: it takes
+   the space the cell already has and the name truncates inside it. */
+.people-name-info:has(.people-la-badge) {
+  width: 0;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.people-name-row .people-name {
+  white-space: nowrap;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.people-la-badge {
+  flex-shrink: 0;
 }

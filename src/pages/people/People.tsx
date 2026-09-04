@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   SearchNormal1,
@@ -11,12 +11,15 @@ import {
   Danger,
   Edit2,
   ShieldSecurity,
-  Devices,
   ArrowDown2,
   ArrowUp2,
   RowVertical,
   Lock,
   ImportCurve,
+  ShieldCross,
+  Profile2User,
+  UserOctagon,
+  MonitorMobbile,
 } from 'iconsax-react'
 import Badge from '../../components/Badge/Badge'
 import Button from '../../components/Button/Button'
@@ -35,6 +38,12 @@ import InviteModal from './components/InviteModal/InviteModal'
 import BulkUploadModal from './components/BulkUploadModal/BulkUploadModal'
 import EditColumnsPopover from './components/EditColumnsPopover/EditColumnsPopover'
 import { useColumnPreferences } from './hooks/useColumnPreferences'
+import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
+import type { RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
+import LimitedAdminDrawer from './components/LimitedAdminDrawer/LimitedAdminDrawer'
+import { loadUserFields } from '@/data/userFields'
+import { isScopeValid, scopeSummary, scopeValuesSummary } from './limitedAdmin'
+import type { FieldValues, LimitedAdminScope } from './limitedAdmin'
 import './People.css'
 
 /* ─── Types ─── */
@@ -52,6 +61,11 @@ interface PersonRow {
   region: string
   status: 'Registered' | 'Invited'
   hrisJobTitle?: string
+  /** Values for tenant custom fields, keyed by field id. */
+  fieldValues?: FieldValues
+  /** Team Manager and Limited Admin are mutually exclusive. */
+  isTeamManager?: boolean
+  limitedAdmin?: LimitedAdminScope | null
 }
 
 type DeactivateStatus = 'terminated' | 'long-leave'
@@ -79,11 +93,11 @@ type ModalState =
 /* ─── Mock data ─── */
 
 const initialPeople: PersonRow[] = [
-  { id: 1, name: 'Anthonny Wallace', email: 'anthonny@example.com', avatar: 'AW', avatarImg: avatarAnthonny, role: 'Customer Support Specialist', team: 'Customer Support Team', reportsTo: 'Manuela Vilar', startDate: 'Jan 13, 2025', region: 'Southeast Asia', status: 'Registered' },
-  { id: 2, name: 'Brenda Kwasaki', email: 'brenda@email.com', avatar: 'BK', avatarImg: avatarBrenda, role: 'Operations Manager', team: 'Financial Services', reportsTo: '–', startDate: 'Jan 13, 2025', region: '–', status: 'Invited' },
-  { id: 3, name: 'Carlos Mendes', email: 'carlos@example.com', avatar: 'CM', avatarImg: avatarCarlos, role: 'Software Engineer', team: 'Product Engineering', reportsTo: 'Sofia Almeida', startDate: 'Feb 1, 2025', region: 'Europe', status: 'Registered', hrisJobTitle: 'Software Engineer' },
-  { id: 4, name: 'Diana Ross', email: 'diana.ross@company.com', avatar: 'DR', avatarImg: avatarDiana, role: 'Marketing Lead', team: 'Growth Team', reportsTo: 'Manuela Vilar', startDate: 'Mar 5, 2025', region: 'North America', status: 'Registered' },
-  { id: 5, name: 'Erik Johansson', email: 'erik.j@email.com', avatar: 'EJ', role: 'Data Analyst', team: 'Business Intelligence', reportsTo: '–', startDate: 'Dec 10, 2024', region: 'Europe', status: 'Invited', hrisJobTitle: 'Senior Software Engineer' },
+  { id: 1, name: 'Anthonny Wallace', email: 'anthonny@example.com', avatar: 'AW', avatarImg: avatarAnthonny, role: 'Customer Support Specialist', team: 'Customer Support Team', reportsTo: 'Manuela Vilar', startDate: 'Jan 13, 2025', region: 'Southeast Asia', status: 'Registered', fieldValues: { 1: 'Harbour View', 2: 'Front of House' } },
+  { id: 2, name: 'Brenda Kwasaki', email: 'brenda@email.com', avatar: 'BK', avatarImg: avatarBrenda, role: 'Operations Manager', team: 'Financial Services', reportsTo: '–', startDate: 'Jan 13, 2025', region: '–', status: 'Invited', fieldValues: { 1: 'The Grand Riverside', 2: 'Back Office' }, isTeamManager: true },
+  { id: 3, name: 'Carlos Mendes', email: 'carlos@example.com', avatar: 'CM', avatarImg: avatarCarlos, role: 'Software Engineer', team: 'Product Engineering', reportsTo: 'Sofia Almeida', startDate: 'Feb 1, 2025', region: 'Europe', status: 'Registered', hrisJobTitle: 'Software Engineer', fieldValues: { 1: 'Airport Central', 2: 'Back Office' } },
+  { id: 4, name: 'Diana Ross', email: 'diana.ross@company.com', avatar: 'DR', avatarImg: avatarDiana, role: 'Marketing Lead', team: 'Growth Team', reportsTo: 'Manuela Vilar', startDate: 'Mar 5, 2025', region: 'North America', status: 'Registered', fieldValues: { 1: 'Harbour View', 2: 'Food & Beverage' }, limitedAdmin: { conditions: [{ fieldId: 1, values: ['Old Town Residence', 'Lakeside Retreat'] }] } },
+  { id: 5, name: 'Erik Johansson', email: 'erik.j@email.com', avatar: 'EJ', role: 'Data Analyst', team: 'Business Intelligence', reportsTo: '–', startDate: 'Dec 10, 2024', region: 'Europe', status: 'Invited', hrisJobTitle: 'Senior Software Engineer', fieldValues: { 1: 'Old Town Residence', 2: 'Housekeeping' } },
 ]
 
 const initialDeactivated: DeactivatedPerson[] = [
@@ -133,14 +147,102 @@ function People() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [isScrolled, setIsScrolled] = useState(false)
 
-  const userFields = (() => {
-    try {
-      const raw = localStorage.getItem('5mins-user-fields')
-      return raw ? JSON.parse(raw) : []
-    } catch { return [] }
-  })()
+  const userFields = useMemo(() => loadUserFields(), [])
+
+  /* Limited Admin drawer + the remove-role confirm it can lead to. */
+  const [limitedAdminPerson, setLimitedAdminPerson] = useState<PersonRow | null>(null)
+  const [removeAdminPerson, setRemoveAdminPerson] = useState<PersonRow | null>(null)
 
   const { visibleKeys, toggleColumn, resetToDefault, allColumns } = useColumnPreferences(userFields)
+
+  /* Row menu, per Figma People 8572:654. The three role actions carry a line of
+     supporting text: the access levels are close enough that their names alone
+     do not separate them. */
+  function rowMenuItems(person: PersonRow): RowMenuItem[] {
+    const icon = (Icon: typeof Edit2, color = 'var(--text-primary)') => (
+      <Icon size={20} color={color} variant="Linear" />
+    )
+    const scopeLine = person.limitedAdmin
+      ? isScopeValid(person.limitedAdmin, userFields)
+        ? scopeSummary(person.limitedAdmin, userFields)
+        : 'Scope is out of date'
+      : 'Admin access for a specific set of people'
+
+    return [
+      { key: 'edit', label: 'Edit user profile', icon: icon(Edit2) },
+      /* Every item in this menu stays enabled, including the ones that lead
+         nowhere yet: a greyed row in a short menu reads as broken. */
+      { key: 'change-manager', label: 'Change Manager', icon: icon(Profile2User) },
+      {
+        key: 'admin',
+        label: 'Make user Admin',
+        description: 'Full access to everything in the account',
+        icon: icon(ShieldSecurity),
+        dividerBefore: true,
+      },
+      {
+        key: 'limited-admin',
+        label: person.limitedAdmin ? 'Edit Limited Admin scope' : 'Make Limited Admin',
+        description: scopeLine,
+        icon: icon(UserOctagon),
+      },
+      ...(person.limitedAdmin
+        ? [{ key: 'remove-limited-admin', label: 'Remove Limited Admin', icon: icon(ShieldCross) }]
+        : []),
+      {
+        key: 'subject-expert',
+        label: 'Make user Subject Expert',
+        description: 'Can create and edit course content',
+        icon: icon(MonitorMobbile),
+      },
+      {
+        key: 'deactivate',
+        label: 'Deactivate user account',
+        /* currentColor so the item's own --text-error rule wins; a raw palette
+           colour here reads darker than the label in dark mode. */
+        icon: icon(ProfileRemove, 'currentColor'),
+        danger: true,
+        dividerBefore: true,
+      },
+    ]
+  }
+
+  function handleRowAction(key: string, person: PersonRow) {
+    if (key === 'limited-admin') setLimitedAdminPerson(person)
+    else if (key === 'remove-limited-admin') setRemoveAdminPerson(person)
+    else if (key === 'deactivate') setModal({ type: 'deactivate', person })
+  }
+
+  function handleSaveLimitedAdmin(scope: LimitedAdminScope) {
+    const target = limitedAdminPerson
+    if (!target) return
+    const wasAdmin = Boolean(target.limitedAdmin)
+    setPeople((prev) =>
+      prev.map((p) =>
+        p.id === target.id ? { ...p, limitedAdmin: scope, isTeamManager: false } : p,
+      ),
+    )
+    setLimitedAdminPerson(null)
+    const values = scopeValuesSummary(scope)
+    showToast(
+      'success',
+      wasAdmin
+        ? values ? `Scope updated to ${values}` : `Scope updated for ${target.name}`
+        : values
+          ? `${target.name} is now a Limited Admin for ${values}`
+          : `${target.name} is now a Limited Admin`,
+    )
+  }
+
+  function handleRemoveLimitedAdmin() {
+    const target = removeAdminPerson
+    if (!target) return
+    setPeople((prev) =>
+      prev.map((p) => (p.id === target.id ? { ...p, limitedAdmin: null } : p)),
+    )
+    setRemoveAdminPerson(null)
+    showToast('success', `${target.name} is no longer a Limited Admin`)
+  }
   const tabs = [
     'Active People',
     'Managers',
@@ -205,8 +307,16 @@ function People() {
         setOpenMenuId(null)
       }
     }
+    /* listbox.md: Esc closes the menu. */
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpenMenuId(null)
+    }
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
   }, [openMenuId])
 
   /* ─── Click outside to close filter ─── */
@@ -580,7 +690,16 @@ function People() {
                     onClick={() => navigate(`/people/${person.id}`)}
                     onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${person.id}`) }}
                   >
-                    <span className="people-name">{person.name}</span>
+                    <span className="people-name-row">
+                      <span className="people-name">{person.name}</span>
+                      {person.limitedAdmin && (
+                        <Badge
+                          type={isScopeValid(person.limitedAdmin, userFields) ? 'informative' : 'warning'}
+                          label="Limited Admin"
+                          className="people-la-badge"
+                        />
+                      )}
+                    </span>
                     <span className="people-email">{person.email}</span>
                   </div>
                 </div>
@@ -619,45 +738,18 @@ function People() {
                   </div>
                 )}
                 {visibleKeys.filter(k => k.startsWith('custom-')).map(key => (
-                  <div key={key} className="people-table-cell people-table-cell--custom">–</div>
+                  <div key={key} className="people-table-cell people-table-cell--custom">
+                    {person.fieldValues?.[Number(key.replace('custom-', ''))] ?? '–'}
+                  </div>
                 ))}
                 <div className="people-table-cell people-table-cell--actions">
-                  <div className="people-more-wrapper" ref={openMenuId === person.id ? menuRef : undefined}>
-                    <button
-                      className="people-more-btn"
-                      aria-label="More actions"
-                      onClick={() => setOpenMenuId(openMenuId === person.id ? null : person.id)}
-                    >
-                      <MoreIcon size={24} color="var(--text-tertiary)" />
-                    </button>
-                    {openMenuId === person.id && (
-                      <div className="people-action-menu">
-                        <div className="people-action-menu-caret" />
-                        <button className="people-action-menu-item" onClick={() => setOpenMenuId(null)}>
-                          <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
-                          Edit user profile
-                        </button>
-                        <button className="people-action-menu-item" onClick={() => setOpenMenuId(null)}>
-                          <ShieldSecurity size={20} color="var(--text-primary)" variant="Linear" />
-                          Make user Admin
-                        </button>
-                        <button className="people-action-menu-item" onClick={() => setOpenMenuId(null)}>
-                          <Devices size={20} color="var(--text-primary)" variant="Linear" />
-                          Make Subject Expert
-                        </button>
-                        <button
-                          className="people-action-menu-item people-action-menu-item--danger"
-                          onClick={() => {
-                            setOpenMenuId(null)
-                            setModal({ type: 'deactivate', person })
-                          }}
-                        >
-                          <ProfileRemove size={20} color="var(--danger-500)" variant="Linear" />
-                          Deactivate user account
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  <RowActionsMenu
+                    items={rowMenuItems(person)}
+                    onSelect={(key) => handleRowAction(key, person)}
+                    ariaLabel={`Actions for ${person.name}`}
+                    triggerClassName="people-more-btn"
+                    triggerContent={<MoreIcon size={24} color="var(--text-tertiary)" />}
+                  />
                 </div>
               </div>
             ))}
@@ -1064,6 +1156,41 @@ function People() {
       )}
 
       {/* Toast stack */}
+      <LimitedAdminDrawer
+        open={limitedAdminPerson !== null}
+        person={limitedAdminPerson}
+        fields={userFields}
+        onClose={() => setLimitedAdminPerson(null)}
+        onSave={handleSaveLimitedAdmin}
+      />
+
+      <ConfirmModal
+        open={removeAdminPerson !== null}
+        onClose={() => setRemoveAdminPerson(null)}
+        ariaLabel="Remove Limited Admin"
+      >
+        <div className="confirm-modal-header confirm-modal-header--center">
+          <div className="confirm-modal-icon">
+            <Danger size={72} color="var(--danger-500)" variant="Linear" />
+          </div>
+          <h2 className="confirm-modal-title">Remove Limited Admin</h2>
+          <p className="confirm-modal-body">
+            {removeAdminPerson?.name} loses admin access and stops managing the people
+            in their scope.
+            {removeAdminPerson?.limitedAdmin && (
+              <>
+                <br />
+                Scope: {scopeSummary(removeAdminPerson.limitedAdmin, userFields)}
+              </>
+            )}
+          </p>
+        </div>
+        <div className="confirm-modal-actions confirm-modal-actions--center">
+          <Button variant="outlined-2" onClick={() => setRemoveAdminPerson(null)}>Cancel</Button>
+          <Button semantic="danger" onClick={handleRemoveLimitedAdmin}>Remove Limited Admin</Button>
+        </div>
+      </ConfirmModal>
+
       <ToastContainer toasts={toasts} />
         </div>
       </main>

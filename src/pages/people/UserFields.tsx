@@ -5,28 +5,14 @@ import UserFieldDrawer from './components/UserFieldDrawer/UserFieldDrawer'
 import Button from '../../components/Button/Button'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
+import { loadUserFields, saveUserFields } from '@/data/userFields'
+import type { UserField } from '@/data/userFields'
 import './UserFields.css'
 
-interface UserField {
-  id: number
-  name: string
-  options: string[]
-  required: boolean
-}
-
-const STORAGE_KEY = '5mins-user-fields'
-
-function loadFields(): UserField[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch { return [] }
-}
-
-let nextId = (loadFields().reduce((max, f) => Math.max(max, f.id), 0)) + 1
+let nextId = (loadUserFields().reduce((max, f) => Math.max(max, f.id), 0)) + 1
 
 function UserFields() {
-  const [fields, setFields] = useState<UserField[]>(loadFields)
+  const [fields, setFields] = useState<UserField[]>(loadUserFields)
   const [showDrawer, setShowDrawer] = useState(false)
   const [editingField, setEditingField] = useState<UserField | null>(null)
   const [deleteField, setDeleteField] = useState<UserField | null>(null)
@@ -34,7 +20,7 @@ function UserFields() {
   const { toasts, show: showToast } = useToast()
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(fields))
+    saveUserFields(fields)
   }, [fields])
 
   const handleOpenDrawer = () => {
