@@ -92,32 +92,15 @@ export interface ScopeCell {
 }
 
 /**
- * The scope as badges: one group per condition, so the values inside a group
- * read as OR and the groups themselves as AND. A single flat list of every
- * value would say the scope is any of them, which is the opposite of what an
- * ANDed scope means.
+ * One line per condition, "Hotel name" + "3 of 5". The cell caps these and
+ * counts the rest; a confirmation shows them all, because hiding half a scope
+ * behind a "+1" under a destructive button is not a confirmation.
  */
-export function scopeGroups(
+export function scopeLines(
   scope: LimitedAdminScope,
   fields: UserField[],
-): { field: string; values: string[] }[] {
+): ScopeCellLine[] {
   return scope.conditions.filter(isConditionComplete).map((c) => {
-    const field = fields.find((f) => f.id === c.fieldId)
-    return { field: field ? field.name : 'Deleted field', values: c.values }
-  })
-}
-
-/** Fields named in the cell before the rest become a "+N" badge. Two, because
-    the cell is one line: a third badge wraps and takes the row with it. */
-const CELL_FIELDS = 2
-
-export function scopeCell(scope: LimitedAdminScope, fields: UserField[]): ScopeCell {
-  const complete = scope.conditions.filter(isConditionComplete)
-  if (complete.length === 0 || !isScopeValid(scope, fields)) {
-    return { lines: [], more: '', invalid: true }
-  }
-
-  const lines = complete.slice(0, CELL_FIELDS).map((c) => {
     const field = fields.find((f) => f.id === c.fieldId)
     return {
       field: field ? field.name : 'Deleted field',
@@ -131,7 +114,19 @@ export function scopeCell(scope: LimitedAdminScope, fields: UserField[]): ScopeC
             : '',
     }
   })
+}
 
+/** Fields named in the cell before the rest become a "+N" badge. Two, because
+    the cell is one line: a third badge wraps and takes the row with it. */
+const CELL_FIELDS = 2
+
+export function scopeCell(scope: LimitedAdminScope, fields: UserField[]): ScopeCell {
+  const complete = scope.conditions.filter(isConditionComplete)
+  if (complete.length === 0 || !isScopeValid(scope, fields)) {
+    return { lines: [], more: '', invalid: true }
+  }
+
+  const lines = scopeLines(scope, fields).slice(0, CELL_FIELDS)
   const hidden = complete.length - lines.length
   return {
     lines,

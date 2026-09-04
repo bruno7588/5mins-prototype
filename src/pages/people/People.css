@@ -568,34 +568,14 @@
   font-weight: 500;
 }
 
-/* The scope on the remove confirmation: a badge per value under the field it
-   belongs to. One badge per condition would run past the modal's width. */
+/* The scope on the remove confirmation: the table's badges, every field of
+   them. Wrapping, because a confirmation has no row height to protect. */
 .people-remove-scope {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-m);
-  width: 100%;
-}
-
-.people-remove-scope__group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-s);
-}
-
-.people-remove-scope__field {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-
-.people-remove-scope__values {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-s);
+  gap: var(--space-sm);
+  width: 100%;
 }
 
 /* Scope cell (Limited Admins tab): values over the field they belong to, the

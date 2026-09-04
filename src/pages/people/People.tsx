@@ -41,8 +41,8 @@ import type { RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import LimitedAdminDrawer from './components/LimitedAdminDrawer/LimitedAdminDrawer'
 import { loadUserFields } from '@/data/userFields'
 import type { UserField } from '@/data/userFields'
-import { isScopeValid, scopeCell, scopeGroups, scopeSummary } from './limitedAdmin'
-import type { FieldValues, LimitedAdminScope } from './limitedAdmin'
+import { isScopeValid, scopeCell, scopeLines, scopeSummary } from './limitedAdmin'
+import type { FieldValues, LimitedAdminScope, ScopeCellLine } from './limitedAdmin'
 import './People.css'
 
 /* ─── Types ─── */
@@ -122,6 +122,22 @@ const quicklinks = [
 
 const avatarColors = ['#4a90d9', '#7b68ee', '#e67e22', '#2ecc71', '#e74c3c']
 
+/** One badge per field, "Hotel name: 3 of 5" — the field in Medium, what it
+    takes in Regular. Figma People 9487:469186. */
+function scopeBadges(lines: ScopeCellLine[]) {
+  return lines.map((line) => (
+    <Badge
+      key={line.field}
+      type="informative"
+      label={
+        <>
+          {line.field}:<span className="people-scope__count">{line.detail}</span>
+        </>
+      }
+    />
+  ))
+}
+
 /**
  * Scope as a table cell: the values it covers over the field they belong to,
  * with the full sentence on hover. An out-of-date scope says so in its own
@@ -165,18 +181,7 @@ function ScopeCellView({
           </span>
         ) : (
           <>
-            {cell.lines.map((line) => (
-              <Badge
-                key={line.field}
-                type="informative"
-                label={
-                  <>
-                    {line.field}:
-                    <span className="people-scope__count">{line.detail}</span>
-                  </>
-                }
-              />
-            ))}
+            {scopeBadges(cell.lines)}
             {cell.more && <Badge type="informative" label={cell.more} />}
           </>
         )}
@@ -1273,16 +1278,7 @@ function People() {
               destructive button. Same badges as the drawer that set it. */}
           {removeAdminPerson?.limitedAdmin && (
             <div className="people-remove-scope">
-              {scopeGroups(removeAdminPerson.limitedAdmin, userFields).map((group) => (
-                <div className="people-remove-scope__group" key={group.field}>
-                  <span className="people-remove-scope__field">{group.field}</span>
-                  <div className="people-remove-scope__values">
-                    {group.values.map((value) => (
-                      <Badge key={value} type="informative" label={value} />
-                    ))}
-                  </div>
-                </div>
-              ))}
+              {scopeBadges(scopeLines(removeAdminPerson.limitedAdmin, userFields))}
             </div>
           )}
         </div>
