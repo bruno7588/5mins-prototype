@@ -12,9 +12,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Add, Danger, InfoCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
+import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import type { DropdownOption } from '@/components/Dropdown/Dropdown'
 import Alert from '@/components/Alert/Alert'
+import Badge from '@/components/Badge/Badge'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import type { UserField } from '@/data/userFields'
 import { emptyScope, isScopeComplete, orphanedConditions } from '../../limitedAdmin'
@@ -37,9 +39,12 @@ interface Props {
   fields: UserField[]
   onClose: () => void
   onSave: (scope: LimitedAdminScope) => void
+  /** Only offered while editing: taking the role away belongs with the scope it
+      would take away, not as a second row in the menu that opens this. */
+  onRemove: () => void
 }
 
-function LimitedAdminDrawer({ open, person, fields, onClose, onSave }: Props) {
+function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }: Props) {
   const [closing, setClosing] = useState(false)
   const [scope, setScope] = useState<LimitedAdminScope>(emptyScope)
   const panelRef = useRef<HTMLElement>(null)
@@ -85,8 +90,10 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave }: Props) {
     }))
   }
 
-  function addCondition() {
-    setScope((s) => ({ conditions: [...s.conditions, { fieldId: 0, values: [] }] }))
+  /* The field is chosen from the Add Field menu itself, so the new row arrives with
+     it already set: an empty row would ask for the same choice a second time. */
+  function addCondition(fieldId: number) {
+    setScope((s) => ({ conditions: [...s.conditions, { fieldId, values: [] }] }))
   }
 
   function removeCondition(index: number) {
@@ -187,7 +194,8 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave }: Props) {
               {scope.conditions.map((condition, index) => {
                 const field = fields.find((f) => f.id === condition.fieldId)
                 return (
-                  <div className="lad-scope-row" key={index}>
+                  <div className="lad-scope-item" key={index}>
+                  <div className="lad-scope-row">
                     <span className="lad-scope-lead">{index === 0 ? 'Scope is' : 'and'}</span>
                     <Dropdown
                       className="lad-scope-dropdown"
@@ -217,19 +225,36 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave }: Props) {
                       />
                     )}
                   </div>
+
+                  {/* Past one value the trigger can only say how many, so the picks
+                      are listed under the row where they can be read. */}
+                  {condition.values.length > 1 && (
+                    <div className="lad-scope-chips">
+                      {condition.values.map((value) => (
+                        <Badge key={value} type="informative" label={value} />
+                      ))}
+                    </div>
+                  )}
+                  </div>
                 )
               })}
 
               {availableFields(-1).length > 0 && (
-                <Button
-                  className="lad-add-field"
-                  variant="text"
-                  size="md"
-                  icon={<Add size={20} color="currentColor" />}
-                  onClick={addCondition}
-                >
-                  Add Field
-                </Button>
+                <RowActionsMenu
+                  items={availableFields(-1).map((o) => ({ key: o.value, label: o.label }))}
+                  onSelect={(key) => addCondition(Number(key))}
+                  ariaLabel="Add field"
+                  caret={false}
+                  /* The design system's own text-button classes on the menu's trigger,
+                     so it reads as the same control it replaced. */
+                  triggerClassName="ds-btn ds-btn--md ds-btn--text ds-btn--has-icon lad-add-field"
+                  triggerContent={
+                    <>
+                      <Add size={20} color="currentColor" />
+                      Add Field
+                    </>
+                  }
+                />
               )}
             </>
           )}
@@ -245,6 +270,11 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave }: Props) {
             >
               {saveLabel}
             </Button>
+            {isEditing && (
+              <Button variant="text" semantic="danger" onClick={onRemove}>
+                Remove Limited Admin
+              </Button>
+            )}
           </div>
         </div>
       </aside>

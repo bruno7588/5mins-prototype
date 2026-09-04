@@ -1106,31 +1106,28 @@
   color: var(--text-warning);
 }
 
-/* Limited Admin badge sits beside the name, so the role reads at a glance —
-   the Role column holds the person's job title, not their access level. */
-.people-name-row {
+/* The avatar carries the role mark, pinned to its corner. The wrapper is only as
+   big as the avatar so the mark has something to hang off. */
+.people-avatar-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+}
+
+.people-avatar-mark {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
   display: flex;
   align-items: center;
-  gap: var(--space-s);
-  min-width: 0;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  /* Its own ground, so the icon reads over a photo rather than sitting in it. */
+  background: var(--page-background);
 }
 
-/* Rows use min-width: fit-content, so anything extra in the name cell widens
-   that row alone and knocks its columns out of line with the rest of the table.
-   On a badged row the name block stops contributing intrinsic width: it takes
-   the space the cell already has and the name truncates inside it. */
-.people-name-info:has(.people-la-badge) {
-  width: 0;
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-.people-name-row .people-name {
-  white-space: nowrap;
-  min-width: 0;
-  flex: 0 1 auto;
-}
-
-.people-la-badge {
-  flex-shrink: 0;
+.people-avatar-mark .tooltip__trigger {
+  display: flex;
 }

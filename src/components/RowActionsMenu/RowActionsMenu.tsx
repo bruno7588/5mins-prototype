@@ -6,7 +6,9 @@ import './RowActionsMenu.css'
 export interface RowMenuItem {
   key: string
   label: string
-  icon: ReactNode
+  /** Optional: a list of plain choices carries no icons, and an empty slot in
+      front of every row would indent them for nothing. */
+  icon?: ReactNode
   /** Second line under the label. Use where the label alone doesn't separate
       one action from its neighbours (listbox.md supporting text). */
   description?: string
@@ -142,7 +144,7 @@ function RowActionsMenu({
                   title={item.title}
                   onClick={() => handleSelect(item.key)}
                 >
-                  <span className="ram-item-icon">{item.icon}</span>
+                  {item.icon && <span className="ram-item-icon">{item.icon}</span>}
                   {item.description ? (
                     <span className="ram-item-body">
                       <span className="ram-item-label">{item.label}</span>

@@ -16,7 +16,6 @@ import {
   RowVertical,
   Lock,
   ImportCurve,
-  ShieldCross,
   Profile2User,
   UserOctagon,
   MonitorMobbile,
@@ -186,9 +185,6 @@ function People() {
         description: scopeLine,
         icon: icon(UserOctagon),
       },
-      ...(person.limitedAdmin
-        ? [{ key: 'remove-limited-admin', label: 'Remove Limited Admin', icon: icon(ShieldCross) }]
-        : []),
       {
         key: 'subject-expert',
         label: 'Make user Subject Expert',
@@ -209,7 +205,6 @@ function People() {
 
   function handleRowAction(key: string, person: PersonRow) {
     if (key === 'limited-admin') setLimitedAdminPerson(person)
-    else if (key === 'remove-limited-admin') setRemoveAdminPerson(person)
     else if (key === 'deactivate') setModal({ type: 'deactivate', person })
   }
 
@@ -684,8 +679,35 @@ function People() {
                   <Checkbox checked={selectedIds.has(person.id)} onChange={() => toggleSelect(person.id)} />
                 </div>
                 <div className="people-table-cell people-table-cell--name">
-                  <div className="people-avatar" style={{ background: avatarColors[(person.id - 1) % avatarColors.length] }}>
-                    {person.avatarImg ? <img className="people-avatar-img" src={person.avatarImg} alt="" /> : person.avatar}
+                  <div className="people-avatar-wrap">
+                    <div className="people-avatar" style={{ background: avatarColors[(person.id - 1) % avatarColors.length] }}>
+                      {person.avatarImg ? <img className="people-avatar-img" src={person.avatarImg} alt="" /> : person.avatar}
+                    </div>
+                    {/* The role rides the avatar rather than the name: it belongs to the
+                        person, and a badge beside the name pushed the name out of a cell
+                        that is already the tightest in the row. */}
+                    {person.limitedAdmin && (
+                      <Tooltip
+                        className="people-avatar-mark"
+                        position="Top"
+                        icon={false}
+                        text={
+                          isScopeValid(person.limitedAdmin, userFields)
+                            ? `Limited Admin — ${scopeSummary(person.limitedAdmin, userFields)}`
+                            : 'Limited Admin — scope is out of date'
+                        }
+                      >
+                        <UserOctagon
+                          size={16}
+                          variant="Bold"
+                          color={
+                            isScopeValid(person.limitedAdmin, userFields)
+                              ? 'var(--text-primary)'
+                              : 'var(--text-warning)'
+                          }
+                        />
+                      </Tooltip>
+                    )}
                   </div>
                   <div
                     className="people-name-info"
@@ -694,16 +716,7 @@ function People() {
                     onClick={() => navigate(`/people/${person.id}`)}
                     onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${person.id}`) }}
                   >
-                    <span className="people-name-row">
-                      <span className="people-name">{person.name}</span>
-                      {person.limitedAdmin && (
-                        <Badge
-                          type={isScopeValid(person.limitedAdmin, userFields) ? 'informative' : 'warning'}
-                          label="Limited Admin"
-                          className="people-la-badge"
-                        />
-                      )}
-                    </span>
+                    <span className="people-name">{person.name}</span>
                     <span className="people-email">{person.email}</span>
                   </div>
                 </div>
@@ -1166,6 +1179,13 @@ function People() {
         fields={userFields}
         onClose={() => setLimitedAdminPerson(null)}
         onSave={handleSaveLimitedAdmin}
+        onRemove={() => {
+          /* The drawer closes first: the confirm that follows is about the whole
+             role, and two overlays deep would bury what it is asking. */
+          const target = limitedAdminPerson
+          setLimitedAdminPerson(null)
+          setRemoveAdminPerson(target)
+        }}
       />
 
       <ConfirmModal

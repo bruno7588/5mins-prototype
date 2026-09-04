@@ -190,3 +190,17 @@
   align-self: flex-start;
   color: var(--text-primary);
 }
+
+/* One scope condition: the row of controls, and the picks it made under it. */
+.lad-scope-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.lad-scope-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
