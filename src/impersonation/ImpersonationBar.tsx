@@ -1,4 +1,4 @@
-import { Eye, Clock, LogoutCurve } from 'iconsax-react'
+import { Clock, Eye, LogoutCurve } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import { useImpersonation } from './ImpersonationContext'
 import './ImpersonationBar.css'
@@ -12,10 +12,9 @@ function mmss(total: number): string {
 }
 
 /**
- * The fixed banner across the top of the app while impersonating. Carries the same
- * avatar + name + role identity block as the confirm modal, a live countdown to the
- * 60-minute cap, and one-click exit. It shifts to the DS warning then danger tokens
- * as the cap approaches (see .css).
+ * The floating "viewing as" pill shown while impersonating: identity inline on the
+ * left, the session countdown and a compact Exit on the right. Amber at rest,
+ * escalating to the DS warning then danger tokens as the 60-minute cap nears.
  */
 function ImpersonationBar() {
   const { person, remaining, phase, exit } = useImpersonation()
@@ -23,33 +22,30 @@ function ImpersonationBar() {
 
   return (
     <div className={`imp-bar imp-bar--${phase}`} role="status" aria-live="polite">
-      <Eye size={20} color="currentColor" variant="Bold" className="imp-bar__eye" />
-      <span className="imp-bar__label">Viewing as</span>
-
       <span className="imp-bar__who">
-        <span className="imp-bar__avatar" style={{ background: person.color }}>
+        <Eye size={20} color="currentColor" variant="Bold" className="imp-bar__eye" />
+        <span className="imp-bar__prefix">Viewing as</span>
+        <span className="imp-bar__avatar">
           {person.avatarImg ? <img src={person.avatarImg} alt="" /> : person.initials}
         </span>
-        <span className="imp-bar__id">
-          <span className="imp-bar__name">{person.name}</span>
-          <span className="imp-bar__role">{person.role}</span>
+        <span className="imp-bar__label">
+          <strong>{person.name}</strong>
+          <span className="imp-bar__role"> · {person.role}</span>
         </span>
       </span>
 
       <span className="imp-bar__spacer" />
 
-      <span className="imp-bar__pill">
+      <span className="imp-bar__timer">
         <Clock size={16} color="currentColor" variant="Linear" />
-        {/* 16px = DS standard icon size (13 was off-scale) */}
-        <span className="imp-bar__timer">{mmss(remaining)}</span>
+        <span className="imp-bar__time">{mmss(remaining)}</span>
       </span>
 
       <Button
-        variant="outlined-2"
         onClick={exit}
         icon={<LogoutCurve size={20} color="currentColor" variant="Linear" />}
       >
-        Exit Impersonation
+        End Impersonation
       </Button>
     </div>
   )

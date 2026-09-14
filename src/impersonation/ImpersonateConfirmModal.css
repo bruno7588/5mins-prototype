@@ -97,10 +97,6 @@
   line-height: 1.5;
   color: var(--text-secondary);
 }
-.imp-confirm__facts li b {
-  font-weight: 600;
-  color: var(--text-primary);
-}
 .imp-confirm__fi {
   flex: 0 0 20px;
   margin-top: 1px;

@@ -132,6 +132,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Minimum 16px between the search and the buttons — space-between distributes any
+     extra beyond this, but the gap keeps them from ever touching. */
+  gap: var(--space-m);
 }
 
 .people-search {

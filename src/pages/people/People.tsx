@@ -253,8 +253,12 @@ function People() {
       <Icon size={20} color={color} variant="Linear" />
     )
     return [
-      /* Lead action, highlighted. Disabled for Limited Admins — you can only
-         impersonate roles below your own (DES-337). */
+      { key: 'edit', label: 'Edit profile', icon: icon(Edit2) },
+      /* Every item in this menu stays enabled, including the ones that lead
+         nowhere yet: a greyed row in a short menu reads as broken. */
+      { key: 'change-manager', label: 'Change Manager', icon: icon(Profile2User) },
+      /* Support action — after the routine edits, before the role grants. Disabled
+         for Limited Admins: you can only impersonate roles below your own (DES-337). */
       {
         key: 'impersonate',
         label: 'Impersonate user',
@@ -262,16 +266,11 @@ function People() {
         disabled: !canImpersonate(person),
         title: canImpersonate(person) ? undefined : 'You can only impersonate roles below your own',
       },
-      { key: 'edit', label: 'Edit user profile', icon: icon(Edit2) },
-      /* Every item in this menu stays enabled, including the ones that lead
-         nowhere yet: a greyed row in a short menu reads as broken. */
-      { key: 'change-manager', label: 'Change Manager', icon: icon(Profile2User) },
       {
         key: 'admin',
-        label: 'Make user Admin',
+        label: 'Make Admin',
         description: 'Full access to everything in the account',
         icon: icon(ShieldSecurity),
-        dividerBefore: true,
       },
       person.limitedAdmin
         ? { key: 'limited-admin', label: 'Edit Limited Admin', icon: icon(UserOctagon) }
@@ -283,7 +282,7 @@ function People() {
           },
       {
         key: 'subject-expert',
-        label: 'Make user Subject Expert',
+        label: 'Make Subject Expert',
         description: 'Can create and edit course content',
         icon: icon(MonitorMobbile),
       },
@@ -294,7 +293,6 @@ function People() {
            colour here reads darker than the label in dark mode. */
         icon: icon(ProfileRemove, 'currentColor'),
         danger: true,
-        dividerBefore: true,
       },
     ]
   }

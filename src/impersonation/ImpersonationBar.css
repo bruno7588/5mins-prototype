@@ -1,20 +1,16 @@
-/* Fixed impersonation banner (DES-337), riding on top of the real app. DS primary
-   at rest, shifting to the DS warning then danger tokens as the 60-minute cap nears
-   — no bespoke prototype colours. */
+/* Impersonation banner (DES-337). Full-width, fixed at the top, over the real app —
+   a dark neutral bar with a multi-colour DS line + glow drifting beneath it. */
 
-/* Banner height — kept in sync with the body offset and nav offsets below. */
-
-/* Push the app down so the fixed banner doesn't cover its first rows. */
+/* Push the app down so the full-width fixed banner doesn't cover it. */
 body.imp-impersonating {
-  padding-top: 56px;
+  padding-top: 71px;
 }
 
-/* The banner is fixed at top:0, so the app's own sticky/fixed navs must sit below
-   it rather than slide behind it on scroll (.mt-topnav = learner/workspace nav,
-   .topnav = admin nav). */
+/* The banner is fixed at top:0, so the app's own sticky/fixed navs must sit below it
+   rather than slide behind it on scroll (.mt-topnav = learner/workspace, .topnav = admin). */
 body.imp-impersonating .mt-topnav,
 body.imp-impersonating .topnav {
-  top: 56px;
+  top: 71px;
 }
 
 .imp-bar {
@@ -23,134 +19,148 @@ body.imp-impersonating .topnav {
   left: 0;
   right: 0;
   z-index: 1090;
-  height: 56px;
   display: flex;
   align-items: center;
   gap: var(--space-sm); /* 12px */
-  padding: 0 var(--space-m); /* 16px */
-  /* Light text — the resting fill is a fixed dark neutral in both themes. */
+  padding: var(--space-m); /* 16px all sides */
   color: var(--neutral-25);
-}
-
-/* Resting fill is theme-paired and opaque: pale primary in light, deep primary in
-   dark. On the phase class so it never overrides the warning / critical states. */
-.imp-bar--normal {
   background: var(--neutral-900);
+  /* The line + glow rotate through a spread of DS hues. */
+  --imp-line: linear-gradient(
+    90deg,
+    var(--primary-500),
+    var(--certificate-quiz),
+    var(--blaze-quiz),
+    var(--flash-poll),
+    var(--lesson-quiz),
+    var(--warning-500),
+    var(--success-500),
+    var(--course-assessments),
+    var(--primary-500)
+  );
 }
 
-/* A soft gradient glow just below the banner, colours drifting slowly sideways —
-   an ambient, always-on reminder that this is someone else's session. Fades down
-   so it reads as a glow, not a second bar; pointer-events off so it never blocks. */
+/* Soft glow just below the banner — same gradient + drift as the line, blurred and
+   faded so it reads as a subtle shadow rather than a second bar. */
+.imp-bar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 10px;
+  background: var(--imp-line);
+  background-size: 300% 100%;
+  opacity: 0.55;
+  filter: blur(5px);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent);
+  animation: imp-drift 8s linear infinite;
+  pointer-events: none;
+}
+
+/* 1px line along the banner's bottom edge, its DS colours drifting sideways. */
 .imp-bar::after {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
   top: 100%;
-  height: 16px;
-  background: linear-gradient(
-    90deg,
-    var(--primary-500),
-    var(--blaze-quiz),
-    var(--primary-400),
-    var(--primary-500)
-  );
+  height: 1px;
+  background: var(--imp-line);
   background-size: 300% 100%;
-  opacity: 0.35;
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
-  animation: imp-drift 9s linear infinite;
+  animation: imp-drift 8s linear infinite;
   pointer-events: none;
 }
 
-@keyframes imp-drift {
-  from {
-    background-position: 0% 0;
-  }
-  to {
-    background-position: 300% 0;
-  }
-}
-
-.imp-bar__eye {
-  flex: 0 0 20px;
-}
-.imp-bar__label {
-  font-size: 12px;
-  font-weight: 500;
-  opacity: 0.9;
-}
-
-/* Identity chip — same avatar + name + role as the confirm modal. */
+/* Identity — eye + "Viewing as" + avatar + "{name} · {role}". */
 .imp-bar__who {
   display: flex;
   align-items: center;
-  gap: var(--space-s); /* 8px */
+  gap: var(--space-xs); /* 4px */
+}
+.imp-bar__eye {
+  flex: 0 0 20px;
+}
+.imp-bar__prefix {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--neutral-200);
 }
 .imp-bar__avatar {
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
+  /* 8px on top of the 4px who-gap = 12px between "Viewing as" and the avatar. */
+  margin-left: var(--space-s);
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   overflow: hidden;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 9.5px;
+  font-weight: 700;
   color: var(--neutral-25);
+  background: color-mix(in srgb, var(--neutral-25) 16%, transparent);
 }
 .imp-bar__avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.imp-bar__id {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs); /* 2px */
-  line-height: 1.1;
-}
-.imp-bar__name {
+.imp-bar__label {
+  /* 4px on top of the 4px who-gap = 8px between the avatar and the name/role. */
+  margin-left: var(--space-xs);
   font-size: 13px;
+  font-weight: 500;
+  color: var(--neutral-25);
+}
+.imp-bar__label strong {
   font-weight: 600;
 }
 .imp-bar__role {
-  font-size: 11px;
+  font-size: 12px; /* Paragraph S */
   font-weight: 400;
   color: var(--neutral-300);
-}
-
-/* Exit button (DS outlined-2) sits on the dark banner, so its enabled label + icon
-   are pinned light (neutral-25) in both themes, overriding the variant's adaptive
-   --text-primary. Hover keeps the DS cyan (higher-specificity rule wins). */
-.imp-bar .ds-btn--outlined-2 {
-  color: var(--neutral-25);
-}
-
-.imp-bar__pill {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xss); /* 6px */
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-full);
-  font-size: 12px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  color: var(--neutral-300);
-  background: var(--input-background);
-  border: 1px solid transparent;
 }
 
 .imp-bar__spacer {
   flex: 1;
 }
 
-/* ── Wrap-up states (DS warning → danger) ───────────────────────────────── */
-.imp-bar--warning {
-  background: var(--warning-600);
+/* Countdown — clock icon + time. */
+.imp-bar__timer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs); /* 4px */
+  color: var(--neutral-200);
 }
+.imp-bar__time {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--neutral-200);
+  font-variant-numeric: tabular-nums;
+  /* Fixed width for "MM:SS" so the clock + time never reflow as the digits change.
+     inline-block is required — width/min-width are ignored on an inline <span>. */
+  display: inline-block;
+  min-width: 5ch;
+  text-align: left;
+}
+
+/* Exit — DS filled button, neutral-25 fill with a dark label/icon, at the banner's
+   compact padding (8/16, 12 on the icon side). */
+.imp-bar .ds-btn {
+  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
+}
+.imp-bar .ds-btn--filled {
+  background: var(--neutral-25);
+  color: var(--neutral-900);
+}
+.imp-bar .ds-btn--filled:hover:not(:disabled) {
+  background: var(--neutral-200);
+}
+
+/* Final-minute urgency: a red pulse (the fill stays neutral). */
 .imp-bar--critical {
-  background: var(--danger-500);
   animation: imp-pulse 1.6s ease-in-out infinite;
 }
 
@@ -164,8 +174,19 @@ body.imp-impersonating .topnav {
   }
 }
 
+/* The DS-colour line drifts sideways, rotating through the hues. */
+@keyframes imp-drift {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 300% 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .imp-bar--critical,
+  .imp-bar::before,
   .imp-bar::after {
     animation: none;
   }

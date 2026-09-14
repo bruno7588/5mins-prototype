@@ -45,19 +45,19 @@ function ImpersonateConfirmModal({ person, onClose, onConfirm }: Props) {
         <ul className="imp-confirm__facts">
           <li>
             <TickCircle size={20} color="var(--success-500)" variant="Bold" className="imp-confirm__fi" />
-            <span>You'll see their home, courses and progress <b>as they do</b>.</span>
+            <span>You'll see their home, courses and progress as they do.</span>
           </li>
           <li>
             <Danger size={20} color="var(--warning-500)" variant="Bold" className="imp-confirm__fi" />
-            <span>Your actions are <b>real</b> and <b>logged under your name ({adminName})</b>.</span>
+            <span>Your actions are real and logged under your name ({adminName}).</span>
           </li>
           <li>
             <CloseCircle size={20} color="var(--text-error)" variant="Bold" className="imp-confirm__fi" />
-            <span>You <b>can't change</b> their password, email, role or notification settings.</span>
+            <span>You can't change their password, email, role or notification settings.</span>
           </li>
           <li>
             <Clock size={20} color="var(--text-tertiary)" variant="Bold" className="imp-confirm__fi" />
-            <span>The session <b>ends after 60 minutes</b>, with a warning first.</span>
+            <span>The session ends after 60 minutes, with a warning first.</span>
           </li>
         </ul>
       </div>
