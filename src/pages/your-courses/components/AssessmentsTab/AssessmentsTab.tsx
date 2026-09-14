@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Sort } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
-import SparkleIcon from '@/components/icons/SparkleIcon'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
@@ -272,16 +271,8 @@ function AssessmentsTab() {
         >
           Download Answers
         </Button>
-        {/* Only ever opens. A visible panel is closed from the panel. */}
-        {insightsOpen ? null : (
-          <Button
-            semantic="ai"
-            onClick={() => setInsightsOpen(true)}
-            icon={<SparkleIcon size={20} color="currentColor" />}
-          >
-            Generate Insights
-          </Button>
-        )}
+        {/* Generate Insights button removed for now — to be rebuilt later. The insights
+            panel machinery below stays wired so it can be reconnected to a new trigger. */}
         </div>
       </div>
 
