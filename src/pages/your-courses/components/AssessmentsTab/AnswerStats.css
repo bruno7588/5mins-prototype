@@ -8,7 +8,7 @@
 .ast {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-m); /* 16px between the stats caption and the chart/chips */
 
   /* The mark under the pointer, one palette step away: darker in light mode, lighter in
      dark, so the shift is toward the surface's opposite either way and reads as the same
