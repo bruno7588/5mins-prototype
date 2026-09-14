@@ -563,6 +563,19 @@ const QUIZ_DECISIONS: MultiQuestion[] = [
 ]
 
 export const courseAssessments: AssessmentResult[] = [
+  /* A lesson quiz surfaced on the first page of the list — the check at the end of a
+     lesson (two or three questions, no prompt of its own; the row names the lesson). */
+  {
+    id: 'q1',
+    kind: 'multi',
+    type: 'single-choice',
+    title: 'Which of these tells you most about a team’s real culture?',
+    lesson: 'Culture is a system, not a slogan',
+    prompt: '',
+    enrolled: ENROLLED,
+    questions: QUIZ_CULTURE,
+    responses: runs('q1', 109, QUIZ_CULTURE, [82, 64, 73]),
+  },
   {
     id: 'a1',
     kind: 'graded',
@@ -718,19 +731,6 @@ export const courseAssessments: AssessmentResult[] = [
      the course, and two or three questions rather than one — so they take the same
      multi-question shape as the situational test, and the row names the lesson they
      close. No prompt of their own: the questions are the whole of them. */
-  {
-    id: 'q1',
-    kind: 'multi',
-    type: 'single-choice',
-    /* Titled by the question it opens with: a lesson quiz is not named separately,
-       so inventing a title here would be inventing a field. */
-    title: 'Which of these tells you most about a team’s real culture?',
-    lesson: 'Culture is a system, not a slogan',
-    prompt: '',
-    enrolled: ENROLLED,
-    questions: QUIZ_CULTURE,
-    responses: runs('q1', 109, QUIZ_CULTURE, [82, 64, 73]),
-  },
   {
     id: 'q2',
     kind: 'multi',
