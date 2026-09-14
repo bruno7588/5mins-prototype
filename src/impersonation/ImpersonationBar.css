@@ -2,9 +2,19 @@
    at rest, shifting to the DS warning then danger tokens as the 60-minute cap nears
    — no bespoke prototype colours. */
 
+/* Banner height — kept in sync with the body offset and nav offsets below. */
+
 /* Push the app down so the fixed banner doesn't cover its first rows. */
 body.imp-impersonating {
-  padding-top: 44px;
+  padding-top: 56px;
+}
+
+/* The banner is fixed at top:0, so the app's own sticky/fixed navs must sit below
+   it rather than slide behind it on scroll (.mt-topnav = learner/workspace nav,
+   .topnav = admin nav). */
+body.imp-impersonating .mt-topnav,
+body.imp-impersonating .topnav {
+  top: 56px;
 }
 
 .imp-bar {
@@ -13,20 +23,53 @@ body.imp-impersonating {
   left: 0;
   right: 0;
   z-index: 1090;
-  height: 44px;
+  height: 56px;
   display: flex;
   align-items: center;
   gap: var(--space-sm); /* 12px */
-  padding: 0 var(--space-l);
+  padding: 0 var(--space-m); /* 16px */
+  /* Light text — the resting fill is a fixed dark neutral in both themes. */
   color: var(--neutral-25);
-  /* Soft blob (lighter primary, upper-left) over a base that fades smoothly down
-     the primary ramp — the banner's own glow rather than a flat fill. */
-  background:
-    radial-gradient(140% 220% at 18% -80%, var(--primary-400) 0%, rgba(0, 0, 0, 0) 55%),
-    linear-gradient(180deg, var(--primary-500) 0%, var(--primary-600) 50%, var(--primary-700) 100%);
-  border-bottom-left-radius: var(--radius-sm); /* 12px */
-  border-bottom-right-radius: var(--radius-sm);
-  box-shadow: var(--shadow-s);
+}
+
+/* Resting fill is theme-paired and opaque: pale primary in light, deep primary in
+   dark. On the phase class so it never overrides the warning / critical states. */
+.imp-bar--normal {
+  background: var(--neutral-900);
+}
+
+/* A soft gradient glow just below the banner, colours drifting slowly sideways —
+   an ambient, always-on reminder that this is someone else's session. Fades down
+   so it reads as a glow, not a second bar; pointer-events off so it never blocks. */
+.imp-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 16px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-500),
+    var(--blaze-quiz),
+    var(--primary-400),
+    var(--primary-500)
+  );
+  background-size: 300% 100%;
+  opacity: 0.35;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
+  animation: imp-drift 9s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes imp-drift {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 300% 0;
+  }
 }
 
 .imp-bar__eye {
@@ -64,6 +107,7 @@ body.imp-impersonating {
 .imp-bar__id {
   display: flex;
   flex-direction: column;
+  gap: var(--space-xxs); /* 2px */
   line-height: 1.1;
 }
 .imp-bar__name {
@@ -73,7 +117,14 @@ body.imp-impersonating {
 .imp-bar__role {
   font-size: 11px;
   font-weight: 400;
-  opacity: 0.85;
+  color: var(--neutral-300);
+}
+
+/* Exit button (DS outlined-2) sits on the dark banner, so its enabled label + icon
+   are pinned light (neutral-25) in both themes, overriding the variant's adaptive
+   --text-primary. Hover keeps the DS cyan (higher-specificity rule wins). */
+.imp-bar .ds-btn--outlined-2 {
+  color: var(--neutral-25);
 }
 
 .imp-bar__pill {
@@ -83,44 +134,24 @@ body.imp-impersonating {
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--neutral-300);
+  background: var(--input-background);
+  border: 1px solid transparent;
 }
 
 .imp-bar__spacer {
   flex: 1;
 }
 
-.imp-bar__exit {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xss);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-s);
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--primary-700);
-  background: var(--neutral-25);
-}
-.imp-bar__exit:hover {
-  background: var(--neutral-50);
-}
-
 /* ── Wrap-up states (DS warning → danger) ───────────────────────────────── */
 .imp-bar--warning {
   background: var(--warning-600);
 }
-.imp-bar--warning .imp-bar__exit {
-  color: var(--warning-700);
-}
 .imp-bar--critical {
   background: var(--danger-500);
   animation: imp-pulse 1.6s ease-in-out infinite;
-}
-.imp-bar--critical .imp-bar__exit {
-  color: var(--danger-600);
 }
 
 @keyframes imp-pulse {
@@ -134,7 +165,8 @@ body.imp-impersonating {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .imp-bar--critical {
+  .imp-bar--critical,
+  .imp-bar::after {
     animation: none;
   }
 }

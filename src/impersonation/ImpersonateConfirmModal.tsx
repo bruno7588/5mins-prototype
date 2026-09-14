@@ -64,7 +64,7 @@ function ImpersonateConfirmModal({ person, onClose, onConfirm }: Props) {
 
       <div className="imp-confirm__foot">
         <Button variant="outlined-2" onClick={onClose}>Cancel</Button>
-        <Button onClick={onConfirm}>Start impersonating</Button>
+        <Button onClick={onConfirm}>Start Impersonating</Button>
       </div>
     </ConfirmModal>
   )

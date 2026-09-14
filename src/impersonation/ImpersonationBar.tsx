@@ -1,4 +1,5 @@
 import { Eye, Clock, LogoutCurve } from 'iconsax-react'
+import Button from '@/components/Button/Button'
 import { useImpersonation } from './ImpersonationContext'
 import './ImpersonationBar.css'
 
@@ -13,8 +14,8 @@ function mmss(total: number): string {
 /**
  * The fixed banner across the top of the app while impersonating. Carries the same
  * avatar + name + role identity block as the confirm modal, a live countdown to the
- * 60-minute cap, and one-click exit. It shifts primary → amber → red as the cap
- * approaches (see .css).
+ * 60-minute cap, and one-click exit. It shifts to the DS warning then danger tokens
+ * as the cap approaches (see .css).
  */
 function ImpersonationBar() {
   const { person, remaining, phase, exit } = useImpersonation()
@@ -35,17 +36,21 @@ function ImpersonationBar() {
         </span>
       </span>
 
+      <span className="imp-bar__spacer" />
+
       <span className="imp-bar__pill">
-        <Clock size={13} color="currentColor" variant="Bold" />
+        <Clock size={16} color="currentColor" variant="Linear" />
+        {/* 16px = DS standard icon size (13 was off-scale) */}
         <span className="imp-bar__timer">{mmss(remaining)}</span>
       </span>
 
-      <span className="imp-bar__spacer" />
-
-      <button type="button" className="imp-bar__exit" onClick={exit}>
-        <LogoutCurve size={14} color="currentColor" variant="Linear" />
-        Exit impersonation
-      </button>
+      <Button
+        variant="outlined-2"
+        onClick={exit}
+        icon={<LogoutCurve size={20} color="currentColor" variant="Linear" />}
+      >
+        Exit Impersonation
+      </Button>
     </div>
   )
 }
