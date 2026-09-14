@@ -209,8 +209,10 @@ export default function DesignInspect() {
       return
     }
     pendingId.current = req.id
-    setStatus({ kind: 'sending' })
     hot.send('design-inspect:send', req)
+    /* Close the inspector once the request is on its way — the request lands in
+       Claude's chat, so the on-canvas panel has done its job. */
+    exit()
   }
 
   const hoverRect = hover && hover !== selected ? hover.getBoundingClientRect() : null

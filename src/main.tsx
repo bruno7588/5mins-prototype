@@ -5,6 +5,7 @@ import './styles/tokens.css'
 import './styles/reset.css'
 import './styles/typography.css'
 import App from './App'
+import { ImpersonationProvider } from './impersonation/ImpersonationContext'
 import './App.css'
 
 // Design Inspect is dev tooling; the lazy import keeps it out of the production bundle.
@@ -15,7 +16,9 @@ const DesignInspect = import.meta.env.DEV
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <ImpersonationProvider>
+        <App />
+      </ImpersonationProvider>
       {DesignInspect && (
         <Suspense fallback={null}>
           <DesignInspect />

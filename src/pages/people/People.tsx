@@ -18,6 +18,7 @@ import {
   Profile2User,
   UserOctagon,
   MonitorMobbile,
+  Eye,
 } from 'iconsax-react'
 import Badge from '../../components/Badge/Badge'
 import Button from '../../components/Button/Button'
@@ -39,6 +40,10 @@ import { useColumnPreferences } from './hooks/useColumnPreferences'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import type { RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import LimitedAdminDrawer from './components/LimitedAdminDrawer/LimitedAdminDrawer'
+import { useImpersonation } from '@/impersonation/ImpersonationContext'
+import ImpersonateConfirmModal from '@/impersonation/ImpersonateConfirmModal'
+import AuditTrail from '@/impersonation/AuditTrail'
+import type { ImpersonatedPerson } from '@/impersonation/types'
 import { loadUserFields } from '@/data/userFields'
 import type { UserField } from '@/data/userFields'
 import { isScopeValid, scopeCell, scopeLines, scopeSummary } from './limitedAdmin'
@@ -191,7 +196,7 @@ function ScopeCellView({
 }
 
 function People() {
-  const [activeTab, setActiveTab] = useState('Active People')
+  const [activeTab, setActiveTab] = useState('All People')
   const [search, setSearch] = useState('')
   const [people, setPeople] = useState(initialPeople)
   const [deactivatedPeople, setDeactivatedPeople] = useState(initialDeactivated)
@@ -219,6 +224,23 @@ function People() {
   /* Limited Admin drawer + the remove-role confirm it can lead to. */
   const [limitedAdminPerson, setLimitedAdminPerson] = useState<PersonRow | null>(null)
   const [removeAdminPerson, setRemoveAdminPerson] = useState<PersonRow | null>(null)
+  /* Impersonation (DES-337): the person the confirm dialog is armed for. */
+  const [impersonateTarget, setImpersonateTarget] = useState<PersonRow | null>(null)
+  const { start: startImpersonation } = useImpersonation()
+
+  /** A row carries a job title in `role`; admin power is `limitedAdmin`. An admin
+   *  can only impersonate roles below their own, so Limited Admins are off-limits. */
+  const canImpersonate = (person: PersonRow) => !person.limitedAdmin
+
+  /** Narrow a table row to the identity the session, bar and audit trail name. */
+  const toImpersonated = (person: PersonRow): ImpersonatedPerson => ({
+    id: person.id,
+    name: person.name,
+    email: person.email,
+    initials: person.avatar,
+    avatarImg: person.avatarImg,
+    color: avatarColors[(person.id - 1) % avatarColors.length],
+  })
 
   const { visibleKeys, toggleColumn, resetToDefault, allColumns } = useColumnPreferences(userFields)
 
@@ -230,6 +252,15 @@ function People() {
       <Icon size={20} color={color} variant="Linear" />
     )
     return [
+      /* Lead action, highlighted. Disabled for Limited Admins — you can only
+         impersonate roles below your own (DES-337). */
+      {
+        key: 'impersonate',
+        label: 'Impersonate user',
+        icon: icon(Eye),
+        disabled: !canImpersonate(person),
+        title: canImpersonate(person) ? undefined : 'You can only impersonate roles below your own',
+      },
       { key: 'edit', label: 'Edit user profile', icon: icon(Edit2) },
       /* Every item in this menu stays enabled, including the ones that lead
          nowhere yet: a greyed row in a short menu reads as broken. */
@@ -268,7 +299,9 @@ function People() {
   }
 
   function handleRowAction(key: string, person: PersonRow) {
-    if (key === 'limited-admin') setLimitedAdminPerson(person)
+    if (key === 'impersonate') {
+      if (canImpersonate(person)) setImpersonateTarget(person)
+    } else if (key === 'limited-admin') setLimitedAdminPerson(person)
     else if (key === 'deactivate') setModal({ type: 'deactivate', person })
   }
 
@@ -302,7 +335,7 @@ function People() {
     showToast('success', `${target.name} is no longer a Limited Admin`)
   }
   const tabs = [
-    'Active People',
+    'All People',
     'Limited Admins',
     'Managers',
     'Subject Experts',
@@ -500,7 +533,7 @@ function People() {
       return next
     })
     if (!person.team) {
-      showToast('warning', `${person.name} has been reactivated but their previous team no longer exists. Please assign them to a team from the Active People tab.`)
+      showToast('warning', `${person.name} has been reactivated but their previous team no longer exists. Please assign them to a team from the All People tab.`)
     } else {
       showToast('success', `${person.name} has been reactivated`)
     }
@@ -711,7 +744,7 @@ function People() {
       </div>
       )}
 
-      {/* ═══ Active People Table ═══ */}
+      {/* ═══ All People Table ═══ */}
       {!isDeactivatedTab && (
         <div
           className={`people-table-scroll${hasScroll ? ' people-table-scroll--has-scroll' : ''}${isScrolled ? ' people-table-scroll--scrolled' : ''}`}
@@ -853,7 +886,7 @@ function People() {
               <ProfileRemove size={48} color="var(--text-tertiary)" variant="Linear" />
               <h3 className="people-empty-state-title">No deactivated users</h3>
               <p className="people-empty-state-desc">
-                When you deactivate someone from the Active People tab, they'll appear here.
+                When you deactivate someone from the All People tab, they'll appear here.
               </p>
             </div>
           ) : (
@@ -976,7 +1009,10 @@ function People() {
         </>
       )}
 
-      {/* ═══ Bulk action bar — Active People ═══ */}
+      {/* ═══ Impersonation audit trail (DES-337) ═══ */}
+      {activeTab === 'All People' && <AuditTrail />}
+
+      {/* ═══ Bulk action bar — All People ═══ */}
       {/* Tab picks which bar; `count` drives show/hide so it can animate out. */}
       {!isDeactivatedTab && (
         <BulkActionBar count={selectedIds.size} onClear={() => setSelectedIds(new Set())}>
@@ -1008,6 +1044,16 @@ function People() {
       )}
 
       {/* ═══ Modals ═══ */}
+
+      {/* Impersonation confirm (DES-337) → starts the ghost session on confirm */}
+      <ImpersonateConfirmModal
+        person={impersonateTarget ? toImpersonated(impersonateTarget) : null}
+        onClose={() => setImpersonateTarget(null)}
+        onConfirm={() => {
+          if (impersonateTarget) startImpersonation(toImpersonated(impersonateTarget))
+          setImpersonateTarget(null)
+        }}
+      />
 
       {/* Deactivate single (radio reason cards — same flow as bulk) */}
       <ConfirmModal open={modal.type === 'deactivate'} onClose={closeModal}>
@@ -1231,7 +1277,7 @@ function People() {
           onClose={() => setShowInvite(false)}
           onInvite={(count) => {
             setShowInvite(false)
-            setActiveTab('Active People')
+            setActiveTab('All People')
             showToast('success', count === 1 ? 'Invite sent' : 'Invites sent')
           }}
           userFields={userFields}

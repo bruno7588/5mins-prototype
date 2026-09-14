@@ -1,0 +1,129 @@
+/* Impersonation confirm — DS Modal (overlays.md). Reuses the ConfirmModal shell
+   (scrim, focus trap, escape, backdrop-close) and overrides it to the 720px Modal
+   width; all type is on the scale and all spacing on --space-* tokens. */
+.imp-confirm {
+  position: relative;
+  width: 720px;
+  gap: var(--space-ml); /* 20px between header / content / footer */
+}
+
+.imp-confirm__close {
+  position: absolute;
+  top: var(--space-sm); /* 12px */
+  right: var(--space-sm);
+  color: var(--text-secondary);
+}
+
+/* ── Section header ─────────────────────────────────────────────────────── */
+.imp-confirm__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m); /* 16px between headline and divider */
+  width: 100%;
+}
+.imp-confirm__headline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs); /* 4px */
+  /* Leave room for the close button so the title doesn't run under it. */
+  padding-right: var(--space-xl);
+}
+.imp-confirm__title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+.imp-confirm__supporting {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.imp-confirm__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}
+
+/* ── Content ────────────────────────────────────────────────────────────── */
+.imp-confirm__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m); /* 16px */
+  width: 100%;
+}
+
+.imp-confirm__who {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm); /* 12px */
+  padding: var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--page-background);
+}
+.imp-confirm__avatar {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+  color: var(--neutral-25);
+  font-size: 14px;
+  font-weight: 600;
+}
+.imp-confirm__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.imp-confirm__who-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+.imp-confirm__who-email {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.imp-confirm__facts {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm); /* 12px */
+  margin: 0;
+  padding: 0;
+}
+.imp-confirm__facts li {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: flex-start;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.imp-confirm__facts li b {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.imp-confirm__fi {
+  flex: 0 0 20px;
+  margin-top: 1px;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.imp-confirm__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm); /* 12px */
+  width: 100%;
+}

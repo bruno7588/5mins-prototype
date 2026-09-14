@@ -1,0 +1,123 @@
+/* Persistent impersonation bar (DES-337). Orange at rest, shifting amber then a
+   pulsing red as the 60-minute cap approaches — the colour is the ambient warning
+   so the countdown pill isn't the only cue. Sits at the top of .imp-overlay. */
+
+.imp-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 20px;
+  color: var(--neutral-25);
+  background: linear-gradient(90deg, #b85e06, var(--warning-500));
+  box-shadow: 0 2px 14px rgba(184, 94, 6, 0.4);
+}
+
+.imp-bar__eye {
+  flex: 0 0 22px;
+}
+
+.imp-bar__who {
+  font-weight: 600;
+  font-size: 13.5px;
+  line-height: 1.25;
+}
+.imp-bar__who small {
+  display: block;
+  font-weight: 500;
+  opacity: 0.9;
+  font-size: 11.5px;
+}
+
+.imp-bar__pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* Prototype-only fast-forward — dashed so it reads as scaffolding, not product. */
+.imp-bar__demo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--neutral-25);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px dashed rgba(255, 255, 255, 0.5);
+}
+.imp-bar__demo:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.imp-bar__spacer {
+  flex: 1;
+}
+
+.imp-bar__audit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  opacity: 0.92;
+}
+
+.imp-bar__exit {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #a4520a;
+  background: var(--neutral-25);
+}
+.imp-bar__exit:hover {
+  background: #fff3e3;
+}
+
+/* ── Wrap-up states ─────────────────────────────────────────────────────── */
+.imp-bar--warning {
+  background: linear-gradient(90deg, #a8480a, #e8641a);
+}
+.imp-bar--warning .imp-bar__pill {
+  background: rgba(255, 255, 255, 0.28);
+}
+.imp-bar--critical {
+  background: linear-gradient(90deg, #9c0f1f, #e0344a);
+  animation: imp-pulse 1.6s ease-in-out infinite;
+}
+.imp-bar--critical .imp-bar__pill {
+  background: rgba(255, 255, 255, 0.34);
+}
+.imp-bar--critical .imp-bar__exit {
+  color: #9c0f1f;
+}
+
+@keyframes imp-pulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 14px rgba(224, 52, 74, 0.45);
+  }
+  50% {
+    box-shadow: 0 2px 24px rgba(224, 52, 74, 0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imp-bar--critical {
+    animation: none;
+  }
+}
