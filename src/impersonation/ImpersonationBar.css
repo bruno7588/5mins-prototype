@@ -155,11 +155,11 @@ body.imp-impersonating .topnav {
   background: var(--neutral-25);
   color: var(--neutral-900);
 }
-/* The banner is always dark, so hover uses the DS filled button's dark-mode hover
-   value (--primary-button-background-hover in dark = primary-400), pinned regardless
-   of the app's theme. */
+/* Hover mirrors the DS filled button per theme: light → primary-800 + light label,
+   dark → primary-400 + dark label (both are the DS filled hover pairing). */
 .imp-bar .ds-btn--filled:hover:not(:disabled) {
-  background: var(--primary-400);
+  background: var(--primary-button-background-hover);
+  color: var(--text-button-foreground);
 }
 
 /* Final-minute urgency: a red pulse (the fill stays neutral). */

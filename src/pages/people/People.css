@@ -431,6 +431,9 @@
   width: 56px;
   flex-shrink: 0;
   justify-content: center;
+  /* Pin the kebab to the far right — the columns don't fill the row, so absorb the
+     trailing space before this last cell. */
+  margin-left: auto;
 }
 
 /* Column widths — Deactivated */
