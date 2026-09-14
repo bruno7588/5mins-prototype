@@ -1,5 +1,4 @@
-import { Fragment, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { gsap } from 'gsap'
+import { Fragment, useEffect, useState, type CSSProperties } from 'react'
 import { ArrowLeft2, ArrowRight2, Clock, PlayCircle, Routing } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
@@ -9,19 +8,10 @@ import type { WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockIt
 import { rgba, useThumbnailAccents } from '@/hooks/thumbnailAccents'
 import './WorkspaceBanner.css'
 
-/** The gap CSS puts between slides, in px — one step is a slide plus this. */
-function trackGap(el: HTMLElement) {
-  return parseFloat(getComputedStyle(el).columnGap) || 0
-}
-
 const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
-/** Dwell time per banner before it slides on to the next. */
+/** Dwell time per banner before it crossfades to the next. */
 const SLIDE_MS = 5000
-/* Slower off the mark and slower into the stop than power2 — the banner eases
-   out of rest rather than snapping into the slide. */
-const SLIDE_EASE = 'power3.inOut'
-const SLIDE_SECONDS = 1.4
 
 interface Props {
   courses: WorkspaceCourse[]
@@ -50,11 +40,6 @@ function WorkspaceBanner({
   onViewCourses,
   onOpenProgram,
 }: Props) {
-  const trackRef = useRef<HTMLDivElement>(null)
-  /* Set when the track has just jumped off the wrap copy: the banner it lands on
-     has already been on screen for the slide, so it keeps only the rest of the
-     dwell and every banner gets the same time. */
-  const justWrapped = useRef(false)
   const [index, setIndex] = useState(0)
 
   /* The course they are part-way through — the one worth offering to resume. */
@@ -62,8 +47,7 @@ function WorkspaceBanner({
   /* One program per state it can be in: ready, scheduled, mid-course, between. */
   const featured = featuredPrograms(programs)
 
-  /* Each banner as a render function, so the wrap copy at the end of the track
-     can draw the first one a second time. */
+  /* Each banner as a render function; `hidden` drives its crossfade opacity and a11y. */
   const items = [
     ...(course
       ? [
@@ -94,74 +78,21 @@ function WorkspaceBanner({
     })),
   ]
   const count = items.length
-  /* Index `count` is the wrap copy: the first banner again, tacked on the end. */
-  const wrapped = index === count
 
-  /* Auto-advance, unless the viewer asked for less motion. Nothing is scheduled
-     while the wrap copy is showing — the jump back to the real first banner is
-     what ends that step, and it carries the rest of the dwell with it. */
+  /* Auto-advance, unless the viewer asked for less motion. The slides are stacked
+     and only the current one is opaque, so advancing just crossfades to the next
+     (wrapping back to the first) — no neighbour is ever partly in view. */
   useEffect(() => {
-    if (count < 2 || wrapped) return
+    if (count < 2) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const dwell = justWrapped.current ? SLIDE_MS - SLIDE_SECONDS * 1000 : SLIDE_MS
-    justWrapped.current = false
-    const timer = window.setTimeout(() => setIndex((i) => i + 1), dwell)
+    const timer = window.setTimeout(() => setIndex((i) => (i + 1) % count), SLIDE_MS)
     return () => window.clearTimeout(timer)
-  }, [index, count, wrapped])
-
-  /* One slide width per step. The track is as wide as the frame — the slides
-     overflow it — so a percentage of its own width is exactly one banner. The
-     gap between them rides along as a fixed pixel offset, which is why one step
-     is 100% plus one gap. */
-  useEffect(() => {
-    const el = trackRef.current
-    if (!el) return
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    gsap.to(el, {
-      xPercent: -100 * index,
-      x: -trackGap(el) * index,
-      duration: reduced ? 0 : SLIDE_SECONDS,
-      ease: SLIDE_EASE,
-      overwrite: true,
-      onComplete: () => {
-        /* The copy and the real first banner look the same, so resetting the
-           track under it is invisible — and the next step slides left again
-           rather than rewinding across everything. */
-        if (!wrapped) return
-        gsap.set(el, { xPercent: 0, x: 0 })
-        justWrapped.current = true
-        setIndex(0)
-      },
-    })
-  }, [index, wrapped])
+  }, [index, count])
 
   if (count === 0) return null
 
-  /* The chevrons travel the same way the auto-advance does — forwards runs onto the
-     wrap copy rather than rewinding, and backwards off the first banner hops to the
-     copy first so it travels right onto the last one. */
-  const go = (dir: number) => {
-    const el = trackRef.current
-    if (!el) return
-    const end = { xPercent: -100 * count, x: -trackGap(el) * count }
-    if (index === count) {
-      /* Standing on the copy. Forwards drops back onto the real first banner and
-         carries on; backwards is already in the right place to travel right. */
-      if (dir > 0) {
-        gsap.set(el, { xPercent: 0, x: 0 })
-        setIndex(1)
-        return
-      }
-      setIndex(count - 1)
-      return
-    }
-    if (dir < 0 && index === 0) {
-      gsap.set(el, end)
-      setIndex(count - 1)
-      return
-    }
-    setIndex(index + dir)
-  }
+  /* Chevrons crossfade to the neighbour, wrapping around either end. */
+  const go = (dir: number) => setIndex((i) => (i + dir + count) % count)
 
   const nav =
     count > 1 ? (
@@ -177,11 +108,10 @@ function WorkspaceBanner({
 
   return (
     <section className="wsb" aria-roledescription="carousel" aria-label="Continue learning">
-      <div className="wsb__track" ref={trackRef}>
+      <div className="wsb__track">
         {items.map((item, i) => (
           <Fragment key={item.key}>{item.render(i !== index)}</Fragment>
         ))}
-        {count > 1 ? <Fragment key="wrap">{items[0].render(!wrapped)}</Fragment> : null}
       </div>
     </section>
   )
@@ -216,7 +146,12 @@ function Shell({
     : undefined
 
   return (
-    <article className="wsb__slide" style={accented} aria-hidden={hidden} inert={hidden}>
+    <article
+      className={`wsb__slide${hidden ? '' : ' wsb__slide--active'}`}
+      style={accented}
+      aria-hidden={hidden}
+      inert={hidden}
+    >
       <div className="wsb__thumb">
         <div
           className="wsb__image"

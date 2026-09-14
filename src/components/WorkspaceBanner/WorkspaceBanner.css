@@ -12,21 +12,22 @@
 }
 
 .wsb__track {
-  display: flex;
-  /* Both slides take the height of the taller one, so nothing jumps as they
-     advance. */
-  align-items: stretch;
-  /* Only ever seen mid-slide: at rest the gap sits just past the right edge,
-     and the frame clips it. */
-  gap: var(--space-s);
+  /* Slides are stacked in one cell and crossfaded — only the active one is
+     visible, so a neighbour is never partly in view (at rest or mid-transition).
+     The grid row takes the height of the tallest slide, so nothing jumps. */
+  display: grid;
 }
 
 .wsb__slide {
-  flex: 0 0 100%;
+  grid-area: 1 / 1;
   display: flex;
   align-items: stretch;
   min-height: 235px;
   border-radius: var(--radius-m);
+  /* Crossfade: only the active slide is opaque. */
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
   /* The wash and the thumbnail hairline are read off the thumbnail image itself
      (see thumbnailAccents.ts) and land as inline custom properties. Both are 24%
      over the page, so the banner tints the background rather than covering it
@@ -34,6 +35,15 @@
   --wsb-accent: var(--border);
   --wsb-tint: linear-gradient(112.73deg, var(--input-background) 0%, var(--input-background) 100%);
   background-image: var(--wsb-tint);
+}
+.wsb__slide--active {
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wsb__slide {
+    transition: none;
+  }
 }
 
 /* ── Thumbnail ── */
