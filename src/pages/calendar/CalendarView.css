@@ -100,7 +100,7 @@
 
 .cal-card__media {
   position: relative;
-  width: 200px;                               /* Figma: w-[200px] */
+  width: 100%;                                /* fills its grid column (200px, or 120px ≤1024) */
   height: 120px;                              /* Figma: h-[120px] */
   border-radius: 12px;                        /* Figma: rounded-[--sm,12px] */
   background-size: cover;
@@ -472,10 +472,12 @@
     position: static;
   }
   .cal-card {
-    grid-template-columns: 160px minmax(0, 1fr);
+    /* Keep the button in its own right-hand column (just a smaller thumbnail) rather
+       than dropping it to a full-width row — the body already stacks the title above
+       its metadata, so the metadata sits on the second line. */
+    grid-template-columns: 120px minmax(0, 1fr) auto;
   }
-  .cal-card__actionwrap {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
+  .cal-card--course {
+    grid-template-columns: 120px minmax(0, 1fr);
   }
 }
