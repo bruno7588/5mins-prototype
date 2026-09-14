@@ -76,7 +76,9 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
   const isEdit = !!initial
   const config = TYPE_CONFIG[type]
 
-  const [prompt, setPrompt] = useState(initial?.prompt ?? '')
+  /* New question starts on the format's default instruction (editable); a reopened
+     one keeps whatever was saved. */
+  const [prompt, setPrompt] = useState(initial?.prompt ?? config.promptDefault)
   const [draft, setDraft] = useState<Draft>(() => (initial ? toDraft(initial) : emptyDraft(type)))
   const [previewing, setPreviewing] = useState(false)
 
@@ -86,6 +88,18 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
   useLayoutEffect(() => {
     autoGrow(promptRef.current)
   }, [prompt])
+
+  /* New question: focus the prompt with the caret after the default instruction — it
+     reads as active and pre-filled, ready to keep typing or backspace. No select-all, so
+     a stray keystroke can't wipe it. An edit keeps saved text untouched and unfocused. */
+  useEffect(() => {
+    if (isEdit) return
+    const el = promptRef.current
+    if (!el) return
+    el.focus()
+    const end = el.value.length
+    el.setSelectionRange(end, end)
+  }, [isEdit])
 
   const promptFilled = prompt.trim().length > 0
   const bodyErrors = draftErrors(draft)

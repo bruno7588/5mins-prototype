@@ -517,6 +517,11 @@ export const TYPE_CONFIG: Record<
      *  each one's prompt is the instruction the learner reads, so the placeholder
      *  is an example of that instruction. */
     promptPlaceholder: string
+    /** Value the prompt field starts with on a NEW question — the format's own
+     *  instruction, so an author who just wants the default can save without
+     *  typing, and everyone else edits it. Placeholder is the empty-field hint;
+     *  this is real, editable, saved text. */
+    promptDefault: string
   }
 > = {
   'fill-blank': {
@@ -528,6 +533,7 @@ export const TYPE_CONFIG: Record<
     callout:
       'Write the sentence in full, then click the words to blank out. Learners pick from a shared word bank, so add a few wrong words to make it count',
     promptPlaceholder: 'Fill in the missing words...',
+    promptDefault: 'Fill in the blanks',
   },
   'match-pairs': {
     label: 'Match the Pairs',
@@ -536,6 +542,7 @@ export const TYPE_CONFIG: Record<
     callout:
       'Each row is one correct pair. Fill in both sides of at least 3 pairs. Users see the matches shuffled.',
     promptPlaceholder: 'Match each term to its match...',
+    promptDefault: 'Match the pairs',
   },
   categorization: {
     label: 'Categorise',
@@ -544,6 +551,7 @@ export const TYPE_CONFIG: Record<
     callout:
       'Name each category, then add the concepts that belong in it. Users see all the concepts together, shuffled.',
     promptPlaceholder: 'Place each concept into the right category...',
+    promptDefault: 'Categorise the items',
   },
   sequencing: {
     label: 'Sequence',
@@ -551,5 +559,6 @@ export const TYPE_CONFIG: Record<
     description: 'Users put the steps back in order',
     callout: 'Users see these shuffled. The order you set here is the answer.',
     promptPlaceholder: 'Put the steps in the correct order...',
+    promptDefault: 'Put the steps in order',
   },
 }
