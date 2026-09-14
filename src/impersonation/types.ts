@@ -4,6 +4,8 @@ export interface ImpersonatedPerson {
   id: number
   name: string
   email: string
+  /** Job title shown beside the name on the banner + confirm card. */
+  role: string
   /** Initials fallback shown when there's no avatar image (e.g. "SR"). */
   initials: string
   avatarImg?: string

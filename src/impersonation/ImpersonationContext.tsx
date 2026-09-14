@@ -7,10 +7,10 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { useNavigate } from 'react-router-dom'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import ImpersonationBar from './ImpersonationBar'
-import ImpersonationView from './ImpersonationView'
 import type { AuditEntry, AuditKind, ImpersonatedPerson } from './types'
 
 /**
@@ -45,9 +45,6 @@ interface ImpersonationValue {
   logActivity: (text: string) => void
   /** Record + surface a blocked sensitive action (password, email, role, notifications). */
   logBlocked: (what: string) => void
-  /** Prototype-only: fast-forward the clock to the next threshold so the warning
-   *  and auto-exit states are demoable without waiting an hour. */
-  simulateTime: () => void
 }
 
 const ImpersonationCtx = createContext<ImpersonationValue | null>(null)
@@ -63,6 +60,7 @@ let auditIdCounter = 0
 export function ImpersonationProvider({ children }: { children: ReactNode }) {
   const admin = useCurrentUser()
   const adminFirst = admin.name.split(' ')[0]
+  const navigate = useNavigate()
 
   const [person, setPerson] = useState<ImpersonatedPerson | null>(null)
   const [remaining, setRemaining] = useState(SESSION_SECONDS)
@@ -89,9 +87,11 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
       setPerson(target)
       addAudit('start', `${admin.name} started impersonating ${target.name}`)
       show('success', `Impersonating ${target.name} · session started and logged`)
+      /* Drop into the learner's real home rather than a mock — the banner rides on top. */
+      navigate('/workspace')
       window.scrollTo(0, 0)
     },
-    [admin.name, addAudit, show],
+    [admin.name, addAudit, show, navigate],
   )
 
   const exit = useCallback(() => {
@@ -100,8 +100,9 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
       return null
     })
     show('success', `Impersonation ended · you're back as ${admin.name}`)
+    navigate('/people')
     window.scrollTo(0, 0)
-  }, [admin.name, addAudit, show])
+  }, [admin.name, addAudit, show, navigate])
 
   const logActivity = useCallback(
     (text: string) => {
@@ -121,13 +122,12 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
     [person, admin.name, addAudit, show],
   )
 
-  const simulateTime = useCallback(() => {
-    setRemaining((r) => {
-      if (r > WARN_AT) return WARN_AT + 3
-      if (r > CRIT_AT + 4) return CRIT_AT + 4
-      return 5
-    })
-  }, [])
+  /* Push the app down by the fixed banner's height while a session is live, so it
+     sits above the real page instead of covering its first rows. */
+  useEffect(() => {
+    document.body.classList.toggle('imp-impersonating', Boolean(person))
+    return () => document.body.classList.remove('imp-impersonating')
+  }, [person])
 
   /* One ticking clock, alive only while a session is. It decrements the second
      counter and fires the two wrap-up warnings; expiry is handled as a side
@@ -154,9 +154,10 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
       addAudit('expired', `Session with ${person.name} auto-expired after 60 minutes`)
       setPerson(null)
       show('success', `Session auto-expired after 60 minutes · back as ${admin.name}`)
+      navigate('/people')
       window.scrollTo(0, 0)
     }
-  }, [remaining, person, adminFirst, admin.name, addAudit, show])
+  }, [remaining, person, adminFirst, admin.name, addAudit, show, navigate])
 
   const value: ImpersonationValue = {
     person,
@@ -168,19 +169,13 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
     exit,
     logActivity,
     logBlocked,
-    simulateTime,
   }
 
   return (
     <ImpersonationCtx.Provider value={value}>
       {children}
-      {person && (
-        <div className="imp-overlay">
-          <ImpersonationBar />
-          <ImpersonationView />
-        </div>
-      )}
-      {/* Sibling of the overlay so warning / blocked toasts sit above it. */}
+      {/* Fixed banner over the real app (the learner's Workspace); toasts sit above it. */}
+      {person && <ImpersonationBar />}
       <ToastContainer toasts={toasts} />
     </ImpersonationCtx.Provider>
   )

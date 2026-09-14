@@ -237,6 +237,7 @@ function People() {
     id: person.id,
     name: person.name,
     email: person.email,
+    role: person.role,
     initials: person.avatar,
     avatarImg: person.avatarImg,
     color: avatarColors[(person.id - 1) % avatarColors.length],

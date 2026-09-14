@@ -1,4 +1,4 @@
-import { Eye, Clock, ShieldTick, LogoutCurve, Forward } from 'iconsax-react'
+import { Eye, Clock, LogoutCurve } from 'iconsax-react'
 import { useImpersonation } from './ImpersonationContext'
 import './ImpersonationBar.css'
 
@@ -11,45 +11,36 @@ function mmss(total: number): string {
 }
 
 /**
- * The persistent bar across the top of the impersonated view: who you're viewing
- * as, a live countdown to the 60-minute cap, the standing "audited" reminder, and
- * one-click exit. It shifts amber → red as the cap approaches (see .css). The
- * "Simulate time" control is prototype-only, so the warning states are demoable.
+ * The fixed banner across the top of the app while impersonating. Carries the same
+ * avatar + name + role identity block as the confirm modal, a live countdown to the
+ * 60-minute cap, and one-click exit. It shifts primary → amber → red as the cap
+ * approaches (see .css).
  */
 function ImpersonationBar() {
-  const { person, adminName, remaining, phase, exit, simulateTime } = useImpersonation()
+  const { person, remaining, phase, exit } = useImpersonation()
   if (!person) return null
-  const adminFirst = adminName.split(' ')[0]
 
   return (
     <div className={`imp-bar imp-bar--${phase}`} role="status" aria-live="polite">
-      <Eye size={22} color="currentColor" variant="Bold" className="imp-bar__eye" />
-      <div className="imp-bar__who">
-        You're viewing 5Mins as {person.name}
-        <small>{person.email}</small>
-      </div>
+      <Eye size={20} color="currentColor" variant="Bold" className="imp-bar__eye" />
+      <span className="imp-bar__label">Viewing as</span>
+
+      <span className="imp-bar__who">
+        <span className="imp-bar__avatar" style={{ background: person.color }}>
+          {person.avatarImg ? <img src={person.avatarImg} alt="" /> : person.initials}
+        </span>
+        <span className="imp-bar__id">
+          <span className="imp-bar__name">{person.name}</span>
+          <span className="imp-bar__role">{person.role}</span>
+        </span>
+      </span>
 
       <span className="imp-bar__pill">
         <Clock size={13} color="currentColor" variant="Bold" />
         <span className="imp-bar__timer">{mmss(remaining)}</span>
       </span>
 
-      <button
-        type="button"
-        className="imp-bar__demo"
-        onClick={simulateTime}
-        title="Prototype only — fast-forward the session clock"
-      >
-        <Forward size={13} color="currentColor" variant="Bold" />
-        Simulate time
-      </button>
-
       <span className="imp-bar__spacer" />
-
-      <span className="imp-bar__audit">
-        <ShieldTick size={14} color="currentColor" variant="Bold" />
-        Audited · acting as {adminFirst}
-      </span>
 
       <button type="button" className="imp-bar__exit" onClick={exit}>
         <LogoutCurve size={14} color="currentColor" variant="Linear" />
