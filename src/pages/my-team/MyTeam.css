@@ -418,107 +418,6 @@
   }
 }
 
-/* Table — mirrors .people-table pattern (flex rows, rounded) */
-.mt-cp__tablescroll {
-  overflow-x: auto;
-}
-
-.mt-cp__table {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  min-width: fit-content;
-}
-
-.mt-cp__table-header {
-  display: flex;
-  align-items: center;
-  background: var(--input-background);
-  border-radius: var(--radius-sm);
-}
-
-.mt-cp__table-header .mt-cp__table-cell {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  padding: var(--space-s) var(--space-sm);
-  white-space: nowrap;
-}
-
-.mt-cp__table-row {
-  display: flex;
-  align-items: center;
-  min-width: fit-content;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  transition: background 150ms ease;
-}
-
-.mt-cp__table-row:hover {
-  background: var(--input-background);
-}
-
-.mt-cp__table-cell {
-  display: flex;
-  align-items: center;
-  padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
-
-.mt-cp__table-cell--name {
-  flex: 1;
-  min-width: 260px;
-  gap: var(--space-sm);
-}
-
-/* Sticky first column — matches People page pattern */
-.mt-cp__tablescroll--has-scroll .mt-cp__table-cell--name {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-  flex: none;
-  width: 300px;
-  background: var(--page-background);
-}
-
-/* The frozen column has to stay opaque — it masks the cells sliding under it — so it
-   composites the row hover tint over the page ground rather than inheriting the
-   translucent fill directly. Same colour on screen, nothing showing through. */
-.mt-cp__tablescroll--has-scroll .mt-cp__table-row:hover .mt-cp__table-cell--name {
-  background:
-    linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-}
-
-.mt-cp__tablescroll--has-scroll .mt-cp__table-row--selected .mt-cp__table-cell--name {
-  background: var(--selected-fill);
-}
-
-.mt-cp__tablescroll--has-scroll .mt-cp__table-row--selected:hover .mt-cp__table-cell--name {
-  background: var(--selected-fill-hover);
-}
-
-/* Shadow on right edge when user has scrolled horizontally */
-.mt-cp__tablescroll--has-scroll .mt-cp__table-cell--name::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.mt-cp__tablescroll--scrolled .mt-cp__table-cell--name::after {
-  opacity: 1;
-}
-
 .mt-cp__table-cell--reports-to {
   width: 180px;
   flex-shrink: 0;
@@ -574,42 +473,18 @@
   display: block;
 }
 
-.mt-cp__table-row--selected {
-  background: var(--selected-fill);
-  border-color: var(--selected-fill);
-}
-
-.mt-cp__table-row--selected:hover {
-  background: var(--selected-fill-hover);
-}
-
 /* Sort button headers */
 .mt-cp__th-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
   background: transparent;
   border: none;
   cursor: pointer;
-  gap: var(--space-xs);
 }
 
-.mt-cp__th-btn:hover {
-  background: transparent;
-}
-
-/* Kill any background on the header and all descendants in every state,
-   but keep keyboard focus visible (see :focus-visible rule below). */
-.mt-cp__table-header {
-  background: var(--input-background) !important;
-}
-
-.mt-cp__table-header *,
-.mt-cp__table-header *:hover,
-.mt-cp__table-header *:focus,
-.mt-cp__table-header *:active {
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.mt-cp__table-header :focus-visible {
+.mt-cp__th-btn:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
@@ -637,14 +512,6 @@
 .mt-cp__th-btn:hover .mt-cp__th-sort-hint,
 .mt-cp__th-btn:focus-visible .mt-cp__th-sort-hint {
   visibility: visible;
-}
-
-/* Action column */
-.mt-cp__table-cell--action {
-  width: 52px;
-  flex-shrink: 0;
-  justify-content: center;
-  padding: var(--space-s) var(--space-m);
 }
 
 .mt-cp__row-action {
@@ -683,6 +550,11 @@
 }
 
 /* Progress bar */
+.mt-cp__progress-cell {
+  display: flex;
+  align-items: center;
+}
+
 .mt-cp__progress {
   display: flex;
   height: 8px;
@@ -739,38 +611,6 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 1.5;
-}
-
-/* Pagination */
-.mt-cp__pagination {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-m);
-  padding: var(--space-s) var(--space-m);
-}
-.mt-cp__pagination-label {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-.mt-cp__pagination-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  color: var(--text-secondary);
-}
-.mt-cp__pagination-btn:hover:not(:disabled) {
-  background: var(--page-background-hover);
-}
-.mt-cp__pagination-btn:disabled {
-  color: var(--text-disabled);
-  cursor: not-allowed;
 }
 
 /* Empty state */

@@ -91,7 +91,10 @@
 
 .tbl-scroll--scrolled .tbl-cell.is-sticky-last,
 .tbl-scroll--scrolled .tbl-head-cell.is-sticky-last {
-  box-shadow: 10px 0 12px -6px rgba(0, 0, 0, 0.08);
+  /* Rightward variant of Shadow L (layout.md §6). The clip keeps it off the
+     checkbox and inside the row's height, so only the right edge casts. */
+  box-shadow: 4px 0 24px 0 rgba(32, 34, 42, 0.12);
+  clip-path: inset(0 -32px 0 0);
 }
 
 /* Header — filled bar with 12px radius */

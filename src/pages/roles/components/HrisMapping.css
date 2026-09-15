@@ -122,14 +122,7 @@
   }
 }
 
-/* ===== Table column widths ===== */
-.hris-table .people-table-header {
-  position: sticky;
-  top: 0;
-  z-index: 5; /* above the sticky row cells (z-index 3) */
-  background: var(--input-background);
-}
-
+/* ===== Table ===== */
 .hris-th {
   display: inline-flex;
   align-items: center;
@@ -141,92 +134,8 @@
   flex-shrink: 0;
 }
 
-.hris-col--title {
-  width: 320px;
-  flex-shrink: 1;
-  min-width: 240px;
-}
-
-.hris-col--count {
-  width: 100px;
-  flex-shrink: 0;
-  justify-content: flex-end;
-  text-align: right;
-}
-
-.hris-col--role {
-  width: 240px;
-  flex-shrink: 0;
-}
-
-.hris-col--status {
-  width: 130px;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.hris-col--actions {
-  width: 130px;
-  flex-shrink: 0;
-  justify-content: flex-end;
+.hris-actions-cell {
   gap: var(--space-xs);
-  margin-left: var(--space-s);
-}
-
-/* ===== Sticky first column ===== */
-/* Scroll wrapper — the table overflows horizontally instead of squashing */
-.hris-table-scroll {
-  overflow-x: auto;
-  width: 100%;
-}
-
-/* First column (HRIS job title) pins while the rest scrolls — transparent at
-   rest so the row's own rounded border shows through untouched. The header's
-   first cell only needs the left pin: the vertical (top) pin lives on
-   .people-table-header itself, and the cell rides inside it. */
-.hris-table-scroll .hris-col--title {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-}
-
-/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks the
-   content sliding under it. Its top/bottom borders (aligned over the row's via
-   -1px margins) preserve the row separators; the left edge is square by design. */
-.hris-table-scroll--scrolled .people-table-row .hris-col--title {
-  align-self: stretch;
-  margin-top: -1px;
-  margin-bottom: -1px;
-  background: var(--page-background);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.hris-table-scroll--scrolled .people-table-row:hover .hris-col--title {
-  background: linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-}
-
-.hris-table-scroll--scrolled .people-table-header .hris-col--title {
-  background: var(--input-background);
-}
-
-/* Right-edge freeze shadow — only when scrolled */
-.hris-table-scroll .hris-col--title::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.hris-table-scroll--scrolled .hris-col--title::after {
-  opacity: 1;
 }
 
 .hris-role-cell {

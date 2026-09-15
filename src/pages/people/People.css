@@ -312,91 +312,7 @@
   background: var(--secondary-600);
 }
 
-/* ===== Table ===== */
-/* Scroll wrapper — only scrolls when content overflows */
-.people-table-scroll {
-  overflow-x: auto;
-}
-
-.people-table {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.people-table-header {
-  display: flex;
-  align-items: center;
-  min-width: fit-content;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: var(--input-background);
-  border-radius: var(--radius-sm);
-}
-
-/* Side padding follows the row's 16px (Figma People 9487:469143), not the 12px
-   in table.md. The 4px top and bottom is what the 32px checkbox needs to land on
-   the spec's 40px bar; the 8px the doc names assumes a bare 24px control. */
-.people-table-header .people-table-cell {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  padding: var(--space-xs) var(--space-m);
-  white-space: nowrap;
-}
-
-.people-table-header .people-table-cell--checkbox {
-  padding-right: 0;
-}
-
-.people-table-row {
-  display: flex;
-  align-items: center;
-  min-width: fit-content;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  transition: background 150ms ease;
-}
-
-.people-table-row:hover {
-  background: var(--input-background);
-}
-
-.people-table-row--selected {
-  background: var(--selected-fill);
-  border-color: var(--selected-fill);
-}
-
-.people-table-row--selected:hover {
-  background: var(--selected-fill-hover);
-}
-
-.people-table-cell {
-  display: flex;
-  align-items: center;
-  padding: var(--space-sm) var(--space-m);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
-
-/* Column widths — All People */
-/* Fixed rather than flexible: the slack belongs to the scope, which has more
-   to say than a name and an email do. */
-.people-table-cell--name {
-  flex: 0 0 300px;
-  gap: var(--space-m);
-  overflow: hidden;
-}
-
-.people-table-cell--role {
-  width: 180px;
-  min-width: 100px;
-  flex-shrink: 1;
-}
-
+/* ===== Table cells ===== */
 .people-role-cell {
   display: inline-flex;
   align-items: center;
@@ -404,172 +320,21 @@
   min-width: 0;
 }
 
-.people-table-cell--team {
-  width: 170px;
-  min-width: 100px;
-  flex-shrink: 1;
+/* Its own ellipsis: the lock sits beside the text, so the cell's clip would cut the icon off first. */
+.people-role-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.people-table-cell--reports {
-  width: 150px;
-  min-width: 100px;
-  flex-shrink: 1;
-}
-
-.people-table-cell--region {
-  width: 130px;
-  min-width: 100px;
-  flex-shrink: 1;
-}
-
-.people-table-cell--status {
-  width: 140px;
-  flex-shrink: 0;
-}
-
-.people-table-cell--actions {
-  width: 56px;
-  flex-shrink: 0;
-  justify-content: center;
-  /* Pin the kebab to the far right — the columns don't fill the row, so absorb the
-     trailing space before this last cell. */
-  margin-left: auto;
-}
-
-/* Column widths — Deactivated */
-.people-table-cell--checkbox {
-  width: 40px;
-  flex-shrink: 0;
-  justify-content: center;
-  padding-left: var(--space-m);
-  padding-right: 0;
-}
-
-.people-table-cell--checkbox + .people-table-cell--name {
-  padding-left: var(--space-m);
-}
-
-/* Custom field column */
-.people-table-cell--custom {
-  width: 160px;
-  min-width: 100px;
-  flex-shrink: 0;
-}
-
-/* ─── Sticky name column (checkbox + name act as one frozen group) ─── */
-.people-table-scroll--has-scroll .people-table-cell--checkbox,
-.people-table-scroll--has-scroll .people-table-cell--name {
-  position: sticky;
-  z-index: 3;
-}
-
-.people-table-scroll--has-scroll .people-table-cell--checkbox {
-  left: 0;
-}
-
-.people-table-scroll--has-scroll .people-table-cell--name {
-  left: 40px; /* checkbox width (border-box includes padding) */
-  flex: none;
-  width: 240px;
-}
-
-/* Opaque backgrounds on sticky cells so content doesn't show through.
-   Rows sit directly on the page, so they mask with --page-background. The
-   header is a filled bar and --input-background is a translucent tint, so its
-   pinned cells must repaint that tint over an opaque page base — masking with
-   bare --page-background punches a hole in the bar. */
-.people-table-scroll--has-scroll .people-table-row .people-table-cell--checkbox,
-.people-table-scroll--has-scroll .people-table-row .people-table-cell--name {
-  background: var(--page-background);
-}
-
-.people-table-scroll--has-scroll .people-table-header .people-table-cell--checkbox,
-.people-table-scroll--has-scroll .people-table-header .people-table-cell--name {
-  background: linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-}
-
-.people-table-scroll--has-scroll .people-table-row:hover .people-table-cell--checkbox,
-.people-table-scroll--has-scroll .people-table-row:hover .people-table-cell--name {
-  background: linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-}
-
-/* --selected-fill is translucent in dark mode, so the amber is layered over an
-   opaque page base — on its own it would let scrolled columns show through. */
-.people-table-scroll--has-scroll .people-table-row--selected .people-table-cell--checkbox,
-.people-table-scroll--has-scroll .people-table-row--selected .people-table-cell--name {
-  background: linear-gradient(var(--selected-fill), var(--selected-fill)), var(--page-background);
-}
-
-.people-table-scroll--has-scroll .people-table-row--selected:hover .people-table-cell--checkbox,
-.people-table-scroll--has-scroll .people-table-row--selected:hover .people-table-cell--name {
-  background: linear-gradient(var(--selected-fill-hover), var(--selected-fill-hover)),
-    var(--page-background);
-}
-
-/* Shadow on name cell edge — only when user has scrolled horizontally */
-.people-table-scroll--has-scroll .people-table-cell--name::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.people-table-scroll--scrolled .people-table-cell--name::after {
-  opacity: 1;
-}
-
-.people-table-cell--team-d {
-  width: 200px;
-  min-width: 100px;
-  flex-shrink: 1;
-}
-
-.people-table-cell--role-d {
-  width: 200px;
-  min-width: 100px;
-  flex-shrink: 1;
-}
-
-.people-table-cell--region-d {
-  width: 200px;
-  min-width: 100px;
-  flex-shrink: 1;
-}
-
-.people-table-cell--status-d {
-  width: 140px;
-  min-width: 100px;
-  flex-shrink: 0;
-}
-
-.people-table-cell--deactivated {
-  width: 140px;
-  min-width: 100px;
-  flex-shrink: 1;
-  white-space: nowrap;
-}
-
-/* Sortable header cells */
-.people-table-cell--sortable {
-  cursor: pointer;
+/* Sortable header label — the sorted column steps up so the order it follows is readable at a glance. */
+.people-th-sort {
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-xs);
-  user-select: none;
-  transition: color 150ms ease;
 }
 
-.people-table-cell--sortable:hover {
-  color: var(--text-primary);
-}
-
-.people-table-cell--sorted {
+.people-th-sort--sorted {
   color: var(--text-primary);
   font-weight: 500;
 }
@@ -582,14 +347,6 @@
   justify-content: center;
   gap: var(--space-sm);
   width: 100%;
-}
-
-/* Scope cell (Limited Admins tab): values over the field they belong to, the
-   same two-line pair as the name cell so the row reads at one weight. */
-.people-table-cell--scope {
-  flex: 1;
-  min-width: 280px;
-  overflow: hidden;
 }
 
 /* The tooltip wrapper is inline-flex, which sizes to its text and pushes the
@@ -746,11 +503,7 @@
   color: var(--text-warning);
 }
 
-/* ===== More button + action dropdown ===== */
-.people-more-wrapper {
-  position: relative;
-}
-
+/* ===== More button ===== */
 .people-more-btn {
   display: flex;
   align-items: center;
@@ -762,80 +515,6 @@
 
 .people-more-btn:hover {
   background: var(--cards-background-hover);
-}
-
-.people-action-menu {
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-  min-width: 250px;
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
-  z-index: 100;
-  padding: var(--space-s);
-  animation: menu-fade-in 150ms ease;
-}
-
-.people-action-menu-caret {
-  position: absolute;
-  top: -6px;
-  right: 12px;
-  width: 12px;
-  height: 6px;
-}
-
-.people-action-menu-caret::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid var(--border);
-}
-
-.people-action-menu-caret::after {
-  content: '';
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 5px solid var(--cards-background);
-}
-
-.people-action-menu-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
-  padding: var(--space-sm) var(--space-m);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  text-align: left;
-  cursor: pointer;
-  border-radius: var(--radius-s);
-  white-space: nowrap;
-  transition: background 150ms ease;
-}
-
-.people-action-menu-item:hover {
-  background: var(--cards-background-hover);
-}
-
-.people-action-menu-item--danger {
-  color: var(--text-error);
-}
-
-.people-action-menu-item svg {
-  flex-shrink: 0;
 }
 
 @keyframes menu-fade-in {

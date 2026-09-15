@@ -406,118 +406,16 @@
   color: var(--danger-400);
 }
 
-/* ===== Table column widths (5Mins Roles) ===== */
-.roles-col--name {
-  flex: 1;
-  min-width: 240px;
+/* ===== Table cells ===== */
+.roles-name-cell {
+  display: flex;
+  align-items: center;
   gap: var(--space-s);
+  min-width: 0;
 }
 
-.roles-col--category {
-  width: 130px;
-  flex-shrink: 0;
-}
-
-.roles-col--skills {
-  width: 80px;
-  flex-shrink: 0;
-  text-align: right;
-  justify-content: flex-end;
-}
-
-.roles-col--assigned {
-  width: 80px;
-  flex-shrink: 0;
-  text-align: right;
-  justify-content: flex-end;
-}
-
-.roles-col--action {
-  width: 90px;
-  flex-shrink: 0;
-  justify-content: flex-end;
-}
-
-/* ===== Table column widths (Company Roles) ===== */
-.roles-col--name-co {
-  flex: 1;
-  min-width: 240px;
-  gap: var(--space-s);
-}
-
-.roles-col--employees {
-  width: 100px;
-  flex-shrink: 0;
-  text-align: right;
-  justify-content: flex-end;
-}
-
-.roles-col--actions {
-  width: 120px;
-  flex-shrink: 0;
-  justify-content: flex-end;
+.roles-actions-cell {
   gap: var(--space-sm);
-  margin-left: var(--space-m);
-}
-
-/* ===== Sticky first column (5Mins + Company Roles tables) ===== */
-/* Scroll wrapper — the table overflows horizontally instead of squashing */
-.roles-table-scroll {
-  overflow-x: auto;
-  width: 100%;
-}
-
-/* First column (role name) pins while the rest scrolls — transparent at rest
-   so the row's own rounded border shows through untouched. */
-.roles-table-scroll .roles-col--name,
-.roles-table-scroll .roles-col--name-co {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-}
-
-/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks the
-   content sliding under it. Its top/bottom borders (aligned over the row's via
-   -1px margins) preserve the row separators; the left edge is square by design. */
-.roles-table-scroll--scrolled .people-table-row .roles-col--name,
-.roles-table-scroll--scrolled .people-table-row .roles-col--name-co {
-  align-self: stretch;
-  margin-top: -1px;
-  margin-bottom: -1px;
-  background: var(--page-background);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.roles-table-scroll--scrolled .people-table-row:hover .roles-col--name,
-.roles-table-scroll--scrolled .people-table-row:hover .roles-col--name-co {
-  background: linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-}
-
-.roles-table-scroll--scrolled .people-table-header .roles-col--name,
-.roles-table-scroll--scrolled .people-table-header .roles-col--name-co {
-  background: var(--input-background);
-}
-
-/* Right-edge freeze shadow — only when scrolled */
-.roles-table-scroll .roles-col--name::after,
-.roles-table-scroll .roles-col--name-co::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.roles-table-scroll--scrolled .roles-col--name::after,
-.roles-table-scroll--scrolled .roles-col--name-co::after {
-  opacity: 1;
 }
 
 /* ===== Expandable row overrides ===== */
@@ -865,46 +763,6 @@
   gap: var(--space-m);
   align-items: center;
   justify-content: center;
-}
-
-/* ===== Pagination ===== */
-.roles-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-m);
-}
-
-.roles-pagination-text {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.roles-pagination-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-elevated);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.roles-pagination-btn:hover:not(:disabled) {
-  background: var(--input-background);
-  color: var(--text-primary);
-}
-
-.roles-pagination-btn:disabled {
-  color: var(--text-disabled);
-  border-color: var(--text-disabled);
-  cursor: not-allowed;
 }
 
 /* ===== Company Roles Footer ===== */

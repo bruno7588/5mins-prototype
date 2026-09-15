@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { ArrowLeft2, ArrowRight2, Add, ArrowDown2, Danger, DocumentUpload } from 'iconsax-react'
+import { useEffect, useRef, useState } from 'react'
+import { Add, ArrowDown2, Danger, DocumentUpload } from 'iconsax-react'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Button from '../../components/Button/Button'
-import Checkbox from '../../components/Checkbox/Checkbox'
+import { Table, type Column } from '@/components/Table/Table'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import AddTrainingDrawer from './AddTrainingDrawer'
@@ -232,16 +232,108 @@ function formatDate(dateStr: string): { line1: string; line2: string } {
   return { line1: `${month} ${day},`, line2: `${year}` }
 }
 
+function DateCell({ value }: { value: string | null }) {
+  if (!value) return <span className="lr__date-dash">—</span>
+  const { line1, line2 } = formatDate(value)
+  return (
+    <div className="lr__date-cell">
+      <span className="lr__date-line1">{line1}</span>
+      <span className="lr__date-line2">{line2}</span>
+    </div>
+  )
+}
+
+const recordColumns: Column<LearningRecord>[] = [
+  {
+    key: 'name',
+    header: 'Name',
+    width: '1 0 260px',
+    render: (row) => (
+      <span className="tbl-stack">
+        <span className="primary">{row.name}</span>
+        <span className="supporting">{row.email}</span>
+      </span>
+    ),
+  },
+  { key: 'team', header: 'Team', width: '0 0 140px', render: (row) => row.team },
+  { key: 'region', header: 'Region', width: '0 0 140px', render: (row) => row.region },
+  { key: 'course', header: 'Course', width: '0 0 160px', render: (row) => row.course },
+  { key: 'category', header: 'Category', width: '0 0 140px', render: (row) => row.category },
+  {
+    key: 'enrollment',
+    header: 'Enrolment history',
+    width: '0 0 160px',
+    render: (row) => (
+      <span className={`lr__badge ${row.enrollmentHistory === 'Current' ? 'lr__badge--current' : 'lr__badge--archived'}`}>
+        {row.enrollmentHistory}
+      </span>
+    ),
+  },
+  { key: 'startDate', header: 'Start date', width: '0 0 104px', render: (row) => <DateCell value={row.startDate} /> },
+  { key: 'dueDate', header: 'Due date', width: '0 0 104px', render: (row) => <DateCell value={row.dueDate} /> },
+  { key: 'completionDate', header: 'Completion date', width: '0 0 144px', render: (row) => <DateCell value={row.completionDate} /> },
+  { key: 'duration', header: 'Duration', width: '0 0 84px', render: (row) => row.duration },
+  { key: 'progress', header: 'Progress', width: '0 0 88px', render: (row) => `${row.progress}%` },
+  {
+    key: 'status',
+    header: 'Status',
+    width: '0 0 128px',
+    render: (row) => (
+      <span className={`lr__badge ${row.status === 'Completed' ? 'lr__badge--completed' : 'lr__badge--failed'}`}>
+        {row.status}
+      </span>
+    ),
+  },
+]
+
+const externalColumns: Column<ExternalTraining>[] = [
+  { key: 'email', header: 'Email', width: '1 0 240px', render: (row) => row.email },
+  { key: 'training', header: 'Training', width: '0 0 200px', render: (row) => row.training },
+  { key: 'provider', header: 'Training provider', width: '0 0 200px', render: (row) => row.provider },
+  { key: 'startDate', header: 'Start date', width: '0 0 104px', render: (row) => <DateCell value={row.startDate} /> },
+  { key: 'completionDate', header: 'Completion date', width: '0 0 144px', render: (row) => <DateCell value={row.completionDate} /> },
+  { key: 'expiration', header: 'Expiration', width: '0 0 104px', render: (row) => <DateCell value={row.expiration} /> },
+  { key: 'duration', header: 'Duration', width: '0 0 84px', render: (row) => row.duration },
+  { key: 'score', header: 'Score', width: '0 0 72px', render: (row) => row.score ?? '—' },
+  {
+    key: 'result',
+    header: 'Result',
+    width: '0 0 128px',
+    render: (row) => (
+      <span className={`lr__badge ${row.result === 'Passed' ? 'lr__badge--completed' : 'lr__badge--not-passed'}`}>
+        {row.result}
+      </span>
+    ),
+  },
+  {
+    key: 'certificate',
+    header: 'Certificate',
+    width: '0 0 140px',
+    render: (row) => row.hasCertificate
+      ? <Button size="sm" variant="outlined" className="ui-disabled" disabled>Download</Button>
+      : <span className="lr__date-dash">—</span>,
+  },
+  {
+    key: 'more',
+    header: '',
+    width: '0 0 56px',
+    align: 'center',
+    render: () => (
+      <span className="ui-disabled">
+        <MoreIcon size={24} color="var(--text-tertiary)" />
+      </span>
+    ),
+  },
+]
+
 function LearningRecordsTab() {
   const [activeChip, setActiveChip] = useState<ChipType>('5mins')
-  const [isScrolled, setIsScrolled] = useState(false)
   const [selectedExtIds, setSelectedExtIds] = useState<Set<string>>(new Set())
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [confirmInput, setConfirmInput] = useState('')
   const [addMenuOpen, setAddMenuOpen] = useState(false)
   const [addDrawerOpen, setAddDrawerOpen] = useState(false)
   const addMenuRef = useRef<HTMLDivElement>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!addMenuOpen) return
@@ -281,12 +373,6 @@ function LearningRecordsTab() {
     setShowDeleteConfirm(false)
     setConfirmInput('')
   }
-
-  const handleScroll = useCallback(() => {
-    if (scrollRef.current) {
-      setIsScrolled(scrollRef.current.scrollLeft > 0)
-    }
-  }, [])
 
   return (
     <section className="lr" aria-label="Learning Records">
@@ -358,173 +444,27 @@ function LearningRecordsTab() {
         </span>
       </div>
 
-      {/* Data table */}
-      <div
-        className={`lr__table-wrap${isScrolled ? ' lr__table-wrap--scrolled' : ''}`}
-        ref={scrollRef}
-        onScroll={handleScroll}
-      >
-        {activeChip === '5mins' ? (
-          <div className="lr__table">
-            <div className="lr__header">
-              <div className="lr__cell lr__cell--name">Name</div>
-              <div className="lr__cell lr__cell--team">Team</div>
-              <div className="lr__cell lr__cell--region">Region</div>
-              <div className="lr__cell lr__cell--course">Course</div>
-              <div className="lr__cell lr__cell--category">Category</div>
-              <div className="lr__cell lr__cell--enrollment">Enrolment history</div>
-              <div className="lr__cell lr__cell--start-date">Start date</div>
-              <div className="lr__cell lr__cell--due-date">Due date</div>
-              <div className="lr__cell lr__cell--completion-date">Completion date</div>
-              <div className="lr__cell lr__cell--duration">Duration</div>
-              <div className="lr__cell lr__cell--progress">Progress</div>
-              <div className="lr__cell lr__cell--status">Status</div>
-            </div>
-
-            {mockData.map((row) => {
-              const start = formatDate(row.startDate)
-              const due = formatDate(row.dueDate)
-              const completion = row.completionDate ? formatDate(row.completionDate) : null
-              const enrollmentClass = row.enrollmentHistory === 'Current' ? 'lr__badge--current' : 'lr__badge--archived'
-              const statusClass = row.status === 'Completed' ? 'lr__badge--completed' : 'lr__badge--failed'
-
-              return (
-                <div className="lr__row" key={row.id}>
-                  <div className="lr__cell lr__cell--name">
-                    <span className="lr__name">{row.name}</span>
-                    <span className="lr__email">{row.email}</span>
-                  </div>
-                  <div className="lr__cell lr__cell--team">{row.team}</div>
-                  <div className="lr__cell lr__cell--region">{row.region}</div>
-                  <div className="lr__cell lr__cell--course">{row.course}</div>
-                  <div className="lr__cell lr__cell--category">{row.category}</div>
-                  <div className="lr__cell lr__cell--enrollment">
-                    <span className={`lr__badge ${enrollmentClass}`}>{row.enrollmentHistory}</span>
-                  </div>
-                  <div className="lr__cell lr__cell--start-date">
-                    <div className="lr__date-cell">
-                      <span className="lr__date-line1">{start.line1}</span>
-                      <span className="lr__date-line2">{start.line2}</span>
-                    </div>
-                  </div>
-                  <div className="lr__cell lr__cell--due-date">
-                    <div className="lr__date-cell">
-                      <span className="lr__date-line1">{due.line1}</span>
-                      <span className="lr__date-line2">{due.line2}</span>
-                    </div>
-                  </div>
-                  <div className="lr__cell lr__cell--completion-date">
-                    {completion ? (
-                      <div className="lr__date-cell">
-                        <span className="lr__date-line1">{completion.line1}</span>
-                        <span className="lr__date-line2">{completion.line2}</span>
-                      </div>
-                    ) : (
-                      <span className="lr__date-dash">—</span>
-                    )}
-                  </div>
-                  <div className="lr__cell lr__cell--duration">{row.duration}</div>
-                  <div className="lr__cell lr__cell--progress">{row.progress}%</div>
-                  <div className="lr__cell lr__cell--status">
-                    <span className={`lr__badge ${statusClass}`}>{row.status}</span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        ) : (
-          <div className="lr__table lr__table--external">
-            <div className="lr__header">
-              <div className="lr__cell lr__cell--ext-email">
-                <Checkbox checked={allExtSelected} onChange={toggleAllExt} />
-                <span>Email</span>
-              </div>
-              <div className="lr__cell lr__cell--ext-training">Training</div>
-              <div className="lr__cell lr__cell--ext-provider">Training provider</div>
-              <div className="lr__cell lr__cell--start-date">Start date</div>
-              <div className="lr__cell lr__cell--completion-date">Completion date</div>
-              <div className="lr__cell lr__cell--ext-expiration">Expiration</div>
-              <div className="lr__cell lr__cell--duration">Duration</div>
-              <div className="lr__cell lr__cell--ext-score">Score</div>
-              <div className="lr__cell lr__cell--ext-result">Result</div>
-              <div className="lr__cell lr__cell--ext-cert">Certificate</div>
-              <div className="lr__cell lr__cell--ext-more" />
-            </div>
-
-            {externalData.map((row) => {
-              const start = formatDate(row.startDate)
-              const completion = row.completionDate ? formatDate(row.completionDate) : null
-              const expiration = row.expiration ? formatDate(row.expiration) : null
-              const resultClass = row.result === 'Passed' ? 'lr__badge--completed' : 'lr__badge--not-passed'
-
-              return (
-                <div className={`lr__row${selectedExtIds.has(row.id) ? ' lr__row--selected' : ''}`} key={row.id}>
-                  <div className="lr__cell lr__cell--ext-email">
-                    <Checkbox checked={selectedExtIds.has(row.id)} onChange={() => toggleExtRow(row.id)} />
-                    <span>{row.email}</span>
-                  </div>
-                  <div className="lr__cell lr__cell--ext-training">{row.training}</div>
-                  <div className="lr__cell lr__cell--ext-provider">{row.provider}</div>
-                  <div className="lr__cell lr__cell--start-date">
-                    <div className="lr__date-cell">
-                      <span className="lr__date-line1">{start.line1}</span>
-                      <span className="lr__date-line2">{start.line2}</span>
-                    </div>
-                  </div>
-                  <div className="lr__cell lr__cell--completion-date">
-                    {completion ? (
-                      <div className="lr__date-cell">
-                        <span className="lr__date-line1">{completion.line1}</span>
-                        <span className="lr__date-line2">{completion.line2}</span>
-                      </div>
-                    ) : (
-                      <span className="lr__date-dash">—</span>
-                    )}
-                  </div>
-                  <div className="lr__cell lr__cell--ext-expiration">
-                    {expiration ? (
-                      <div className="lr__date-cell">
-                        <span className="lr__date-line1">{expiration.line1}</span>
-                        <span className="lr__date-line2">{expiration.line2}</span>
-                      </div>
-                    ) : (
-                      <span className="lr__date-dash">—</span>
-                    )}
-                  </div>
-                  <div className="lr__cell lr__cell--duration">{row.duration}</div>
-                  <div className="lr__cell lr__cell--ext-score">{row.score ?? '—'}</div>
-                  <div className="lr__cell lr__cell--ext-result">
-                    <span className={`lr__badge ${resultClass}`}>{row.result}</span>
-                  </div>
-                  <div className="lr__cell lr__cell--ext-cert">
-                    {row.hasCertificate ? (
-                      <Button size="sm" variant="outlined" className="ui-disabled" disabled>Download</Button>
-                    ) : (
-                      <span className="lr__date-dash">—</span>
-                    )}
-                  </div>
-                  <div className="lr__cell lr__cell--ext-more">
-                    <span className="ui-disabled">
-                      <MoreIcon size={24} color="var(--text-tertiary)" />
-                    </span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Pagination */}
-      <div className="lr__pagination">
-        <span className="lr__pagination-label">1-10 of 28</span>
-        <button type="button" className="lr__pagination-btn" aria-label="Previous page" disabled>
-          <ArrowLeft2 size={16} color="var(--text-secondary)" variant="Linear" />
-        </button>
-        <button type="button" className="lr__pagination-btn" aria-label="Next page">
-          <ArrowRight2 size={16} color="var(--text-secondary)" variant="Linear" />
-        </button>
-      </div>
+      {/* Data table — the pagination is a static mock, same as before. */}
+      {activeChip === '5mins' ? (
+        <Table
+          columns={recordColumns}
+          rows={mockData}
+          getRowKey={(row) => row.id}
+          pagination={{ from: 1, to: 10, total: 28 }}
+        />
+      ) : (
+        <Table
+          columns={externalColumns}
+          rows={externalData}
+          getRowKey={(row) => row.id}
+          selectable
+          isSelected={(row) => selectedExtIds.has(row.id)}
+          onToggleRow={(row) => toggleExtRow(row.id)}
+          onToggleAll={toggleAllExt}
+          allSelected={allExtSelected}
+          pagination={{ from: 1, to: 10, total: 28 }}
+        />
+      )}
 
       {/* Floating bulk action bar */}
       {selectedExtIds.size > 0 && activeChip === 'external' && (

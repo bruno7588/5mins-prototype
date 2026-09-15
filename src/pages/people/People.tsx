@@ -28,7 +28,7 @@ import avatarDiana from '../../assets/avatars/avatar-3.jpg'
 import avatarCarlos from '../../assets/avatars/avatar-4.jpg'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
-import Checkbox from '../../components/Checkbox/Checkbox'
+import { Table, type Column } from '@/components/Table/Table'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -201,7 +201,6 @@ function People() {
   const [people, setPeople] = useState(initialPeople)
   const [deactivatedPeople, setDeactivatedPeople] = useState(initialDeactivated)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null)
   const [modal, setModal] = useState<ModalState>({ type: 'none' })
   const [confirmInput, setConfirmInput] = useState('')
   const [deactivateReason, setDeactivateReason] = useState<'terminated' | 'long-leave'>('long-leave')
@@ -210,14 +209,11 @@ function People() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'terminated' | 'long-leave'>('all')
   const { toasts, show: showToast } = useToast()
   const navigate = useNavigate()
-  const menuRef = useRef<HTMLDivElement>(null)
   const [filterOpen, setFilterOpen] = useState(false)
   const filterRef = useRef<HTMLDivElement>(null)
   const [showInvite, setShowInvite] = useState(false)
   const [showBulkUpload, setShowBulkUpload] = useState(false)
   const [editColumnsOpen, setEditColumnsOpen] = useState(false)
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [isScrolled, setIsScrolled] = useState(false)
 
   const userFields = useMemo(() => loadUserFields(), [])
 
@@ -388,36 +384,14 @@ function People() {
       return 0
     })
 
-  /* ─── Tab switch: clear selection + menu ─── */
+  /* ─── Tab switch: clear selection ─── */
 
   function handleTabSwitch(tab: string) {
     setActiveTab(tab)
     setSelectedIds(new Set())
-    setOpenMenuId(null)
     setSearch('')
     setStatusFilter('all')
   }
-
-  /* ─── Click outside to close menu ─── */
-
-  useEffect(() => {
-    if (openMenuId === null) return
-    function handleClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpenMenuId(null)
-      }
-    }
-    /* listbox.md: Esc closes the menu. */
-    function handleEscape(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpenMenuId(null)
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('keydown', handleEscape)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [openMenuId])
 
   /* ─── Click outside to close filter ─── */
 
@@ -431,33 +405,6 @@ function People() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [filterOpen])
-
-  /* ─── Track horizontal scroll for frozen column styling ─── */
-
-  const [hasScroll, setHasScroll] = useState(false)
-
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-
-    function onScroll() {
-      setIsScrolled(el!.scrollLeft > 0)
-    }
-
-    function checkOverflow() {
-      setHasScroll(el!.scrollWidth > el!.clientWidth)
-    }
-
-    el.addEventListener('scroll', onScroll)
-    const ro = new ResizeObserver(checkOverflow)
-    ro.observe(el)
-    checkOverflow()
-
-    return () => {
-      el.removeEventListener('scroll', onScroll)
-      ro.disconnect()
-    }
-  }, [isDeactivatedTab, visibleKeys])
 
   /* ─── Selection helpers ─── */
 
@@ -606,6 +553,227 @@ function People() {
   const selectedPersons = deactivatedPeople.filter(p => selectedIds.has(p.id))
   const selectedPeoplePersons = people.filter(p => selectedIds.has(p.id))
 
+  /* ─── Table columns ─── */
+
+  const sortHeader = (col: typeof sortCol, label: string) => (
+    <span className={`people-th-sort${sortCol === col ? ' people-th-sort--sorted' : ''}`}>
+      {label}
+      {sortCol === col && (sortDir === 'asc'
+        ? <ArrowUp2 size={16} color="var(--text-tertiary)" />
+        : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
+    </span>
+  )
+
+  const peopleColumns: Column<PersonRow>[] = [
+    {
+      key: 'name',
+      header: 'Name',
+      width: '0 1 300px',
+      render: (person) => (
+        <span className="tbl-media">
+          <div className="people-avatar-wrap">
+            <div className="people-avatar" style={{ background: avatarColors[(person.id - 1) % avatarColors.length] }}>
+              {person.avatarImg ? <img className="people-avatar-img" src={person.avatarImg} alt="" /> : person.avatar}
+            </div>
+            {/* The role rides the avatar rather than the name: it belongs to the
+                person, and a badge beside the name pushed the name out of a cell
+                that is already the tightest in the row. */}
+            {person.limitedAdmin && (
+              <Tooltip
+                className="people-avatar-mark"
+                position="Top"
+                icon={false}
+                text={
+                  isScopeValid(person.limitedAdmin, userFields)
+                    ? `Limited Admin — ${scopeSummary(person.limitedAdmin, userFields)}`
+                    : 'Limited Admin — scope is out of date'
+                }
+              >
+                <UserOctagon
+                  size={16}
+                  variant="Bold"
+                  color={
+                    isScopeValid(person.limitedAdmin, userFields)
+                      ? 'var(--text-primary)'
+                      : 'var(--text-warning)'
+                  }
+                />
+              </Tooltip>
+            )}
+          </div>
+          <div
+            className="people-name-info"
+            role="link"
+            tabIndex={0}
+            onClick={() => navigate(`/people/${person.id}`)}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${person.id}`) }}
+          >
+            <span className="people-name">{person.name}</span>
+            <span className="people-email">{person.email}</span>
+          </div>
+        </span>
+      ),
+    },
+    ...(showPersonCols && visibleKeys.includes('role') ? [{
+      key: 'role',
+      header: 'Role',
+      width: '1 1 180px',
+      render: (person: PersonRow) => (
+        <span className="people-role-cell">
+          <span className="people-role-text">{person.role}</span>
+          {person.hrisJobTitle && (
+            <Tooltip
+              text={`Role managed by HRIS (${person.hrisJobTitle}). Only admins can change it.`}
+              position="Top"
+              icon={false}
+            >
+              <Lock size={16} variant="Bold" color="var(--text-tertiary)" />
+            </Tooltip>
+          )}
+        </span>
+      ),
+    }] : []),
+    ...(showPersonCols && visibleKeys.includes('team') ? [{
+      key: 'team', header: 'Team', width: '1 1 170px', render: (person: PersonRow) => person.team,
+    }] : []),
+    ...(showPersonCols && visibleKeys.includes('reportsTo') ? [{
+      key: 'reportsTo', header: 'Reports to', width: '1 1 150px', render: (person: PersonRow) => person.reportsTo,
+    }] : []),
+    /* Only where every row has one: elsewhere the column would be empty for
+       all but a handful of people. */
+    ...(isLimitedAdminsTab ? [{
+      key: 'scope',
+      header: 'Scope',
+      width: '1 0 280px',
+      render: (person: PersonRow) => person.limitedAdmin && (
+        <ScopeCellView
+          scope={person.limitedAdmin}
+          fields={userFields}
+          onOpen={() => setLimitedAdminPerson(person)}
+        />
+      ),
+    }] : []),
+    ...(showPersonCols && visibleKeys.includes('region') ? [{
+      key: 'region', header: 'Region', width: '1 1 130px', render: (person: PersonRow) => person.region,
+    }] : []),
+    ...(visibleKeys.includes('status') ? [{
+      key: 'status',
+      header: 'Status',
+      width: '0 0 140px',
+      render: (person: PersonRow) => (
+        <span className={`people-badge people-badge--${person.status.toLowerCase()}`}>
+          {person.status}
+        </span>
+      ),
+    }] : []),
+    ...(showPersonCols
+      ? visibleKeys.filter(k => k.startsWith('custom-')).flatMap(key => {
+          const col = allColumns.find(c => c.key === key)
+          return col ? [{
+            key,
+            header: col.label,
+            width: '0 0 160px',
+            render: (person: PersonRow) => person.fieldValues?.[Number(key.replace('custom-', ''))] ?? '–',
+          }] : []
+        })
+      : []),
+    {
+      key: 'actions',
+      header: '',
+      width: '0 0 56px',
+      align: 'center',
+      render: (person) => (
+        <RowActionsMenu
+          items={rowMenuItems(person)}
+          onSelect={(key) => handleRowAction(key, person)}
+          ariaLabel={`Actions for ${person.name}`}
+          triggerClassName="people-more-btn"
+          triggerContent={<MoreIcon size={24} color="var(--text-tertiary)" />}
+        />
+      ),
+    },
+  ]
+
+  function handleDeactivatedAction(key: string, person: DeactivatedPerson) {
+    if (key === 'reactivate') {
+      handleReactivateSingle(person)
+    } else if (key === 'change-status') {
+      setDeactivatedPeople(prev =>
+        prev.map(p =>
+          p.id === person.id
+            ? { ...p, status: person.status === 'terminated' ? 'long-leave' as const : 'terminated' as const }
+            : p
+        )
+      )
+      showToast('success', `${person.name} status changed to ${person.status === 'terminated' ? 'Long Leave' : 'Terminated'}`)
+    } else if (key === 'delete') {
+      setModal({ type: 'delete-single', person })
+    }
+  }
+
+  const deactivatedColumns: Column<DeactivatedPerson>[] = [
+    {
+      key: 'name',
+      header: sortHeader('name', 'Name'),
+      sortable: true,
+      width: '0 1 300px',
+      render: (person) => (
+        <span className="tbl-media">
+          <div className="people-avatar" style={{ background: avatarColors[(person.id - 1) % avatarColors.length] }}>
+            {person.avatar}
+          </div>
+          <div className="people-name-info">
+            <span className="people-name">{person.name}</span>
+            <span className="people-email">{person.email}</span>
+          </div>
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      header: sortHeader('status', 'Status'),
+      sortable: true,
+      width: '0 0 140px',
+      render: (person) => person.status === 'terminated'
+        ? <Badge type="error" label="Terminated" />
+        : <Badge type="warning" label="Long Leave" />,
+    },
+    { key: 'role', header: sortHeader('role', 'Role'), sortable: true, width: '1 1 200px', render: (person) => person.role },
+    { key: 'team', header: 'Team', width: '1 1 200px', render: (person) => person.team || '–' },
+    { key: 'region', header: sortHeader('region', 'Region'), sortable: true, width: '1 1 200px', render: (person) => person.region },
+    {
+      key: 'deactivatedOn',
+      header: sortHeader('deactivatedOn', 'Deactivated on'),
+      sortable: true,
+      width: '1 1 160px',
+      render: (person) => (
+        <div className="people-date-stack">
+          <span>{person.deactivatedOn.replace(/,?\s*\d{4}$/, ',')}</span>
+          <span className="people-date-stack__year">{person.deactivatedOn.match(/\d{4}$/)?.[0]}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'actions',
+      header: '',
+      width: '0 0 56px',
+      align: 'center',
+      render: (person) => (
+        <RowActionsMenu
+          items={[
+            { key: 'reactivate', label: 'Reactivate' },
+            { key: 'change-status', label: person.status === 'terminated' ? 'Change to Long Leave' : 'Change to Terminated' },
+            { key: 'delete', label: 'Delete Permanently', danger: true },
+          ]}
+          onSelect={(key) => handleDeactivatedAction(key, person)}
+          ariaLabel={`Actions for ${person.name}`}
+          triggerClassName="people-more-btn"
+          triggerContent={<MoreIcon size={24} color="var(--text-tertiary)" />}
+        />
+      ),
+    },
+  ]
+
   /* ─── Render ─── */
 
   return (
@@ -745,136 +913,16 @@ function People() {
 
       {/* ═══ All People Table ═══ */}
       {!isDeactivatedTab && (
-        <div
-          className={`people-table-scroll${hasScroll ? ' people-table-scroll--has-scroll' : ''}${isScrolled ? ' people-table-scroll--scrolled' : ''}`}
-          ref={scrollRef}
-        >
-          <div className="people-table">
-            <div className="people-table-header">
-              <div className="people-table-cell people-table-cell--checkbox">
-                <Checkbox checked={allSelected} onChange={toggleSelectAll} />
-              </div>
-              <div className="people-table-cell people-table-cell--name">Name</div>
-              {showPersonCols && visibleKeys.includes('role') && <div className="people-table-cell people-table-cell--role">Role</div>}
-              {showPersonCols && visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">Team</div>}
-              {showPersonCols && visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">Reports to</div>}
-              {/* Only where every row has one: elsewhere the column would be
-                  empty for all but a handful of people. */}
-              {isLimitedAdminsTab && <div className="people-table-cell people-table-cell--scope">Scope</div>}
-              {showPersonCols && visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">Region</div>}
-              {visibleKeys.includes('status') && <div className="people-table-cell people-table-cell--status">Status</div>}
-              {showPersonCols && visibleKeys.filter(k => k.startsWith('custom-')).map(key => {
-                const col = allColumns.find(c => c.key === key)
-                return col ? <div key={key} className="people-table-cell people-table-cell--custom">{col.label}</div> : null
-              })}
-              <div className="people-table-cell people-table-cell--actions" />
-            </div>
-
-            {filteredPeople.map((person) => (
-              <div
-                className={`people-table-row${selectedIds.has(person.id) ? ' people-table-row--selected' : ''}`}
-                key={person.id}
-              >
-                <div className="people-table-cell people-table-cell--checkbox">
-                  <Checkbox checked={selectedIds.has(person.id)} onChange={() => toggleSelect(person.id)} />
-                </div>
-                <div className="people-table-cell people-table-cell--name">
-                  <div className="people-avatar-wrap">
-                    <div className="people-avatar" style={{ background: avatarColors[(person.id - 1) % avatarColors.length] }}>
-                      {person.avatarImg ? <img className="people-avatar-img" src={person.avatarImg} alt="" /> : person.avatar}
-                    </div>
-                    {/* The role rides the avatar rather than the name: it belongs to the
-                        person, and a badge beside the name pushed the name out of a cell
-                        that is already the tightest in the row. */}
-                    {person.limitedAdmin && (
-                      <Tooltip
-                        className="people-avatar-mark"
-                        position="Top"
-                        icon={false}
-                        text={
-                          isScopeValid(person.limitedAdmin, userFields)
-                            ? `Limited Admin — ${scopeSummary(person.limitedAdmin, userFields)}`
-                            : 'Limited Admin — scope is out of date'
-                        }
-                      >
-                        <UserOctagon
-                          size={16}
-                          variant="Bold"
-                          color={
-                            isScopeValid(person.limitedAdmin, userFields)
-                              ? 'var(--text-primary)'
-                              : 'var(--text-warning)'
-                          }
-                        />
-                      </Tooltip>
-                    )}
-                  </div>
-                  <div
-                    className="people-name-info"
-                    role="link"
-                    tabIndex={0}
-                    onClick={() => navigate(`/people/${person.id}`)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/people/${person.id}`) }}
-                  >
-                    <span className="people-name">{person.name}</span>
-                    <span className="people-email">{person.email}</span>
-                  </div>
-                </div>
-                {showPersonCols && visibleKeys.includes('role') && (
-                  <div className="people-table-cell people-table-cell--role">
-                    <span className="people-role-cell">
-                      {person.role}
-                      {person.hrisJobTitle && (
-                        <Tooltip
-                          text={`Role managed by HRIS (${person.hrisJobTitle}). Only admins can change it.`}
-                          position="Top"
-                          icon={false}
-                        >
-                          <Lock size={16} variant="Bold" color="var(--text-tertiary)" />
-                        </Tooltip>
-                      )}
-                    </span>
-                  </div>
-                )}
-                {showPersonCols && visibleKeys.includes('team') && <div className="people-table-cell people-table-cell--team">{person.team}</div>}
-                {showPersonCols && visibleKeys.includes('reportsTo') && <div className="people-table-cell people-table-cell--reports">{person.reportsTo}</div>}
-                {isLimitedAdminsTab && (
-                  <div className="people-table-cell people-table-cell--scope">
-                    {person.limitedAdmin && (
-                      <ScopeCellView
-                        scope={person.limitedAdmin}
-                        fields={userFields}
-                        onOpen={() => setLimitedAdminPerson(person)}
-                      />
-                    )}
-                  </div>
-                )}
-                {showPersonCols && visibleKeys.includes('region') && <div className="people-table-cell people-table-cell--region">{person.region}</div>}
-                {visibleKeys.includes('status') && (
-                  <div className="people-table-cell people-table-cell--status">
-                    <span className={`people-badge people-badge--${person.status.toLowerCase()}`}>
-                      {person.status}
-                    </span>
-                  </div>
-                )}
-                {showPersonCols && visibleKeys.filter(k => k.startsWith('custom-')).map(key => (
-                  <div key={key} className="people-table-cell people-table-cell--custom">
-                    {person.fieldValues?.[Number(key.replace('custom-', ''))] ?? '–'}
-                  </div>
-                ))}
-                <div className="people-table-cell people-table-cell--actions">
-                  <RowActionsMenu
-                    items={rowMenuItems(person)}
-                    onSelect={(key) => handleRowAction(key, person)}
-                    ariaLabel={`Actions for ${person.name}`}
-                    triggerClassName="people-more-btn"
-                    triggerContent={<MoreIcon size={24} color="var(--text-tertiary)" />}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Table
+          columns={peopleColumns}
+          rows={filteredPeople}
+          getRowKey={(person) => String(person.id)}
+          selectable
+          isSelected={(person) => selectedIds.has(person.id)}
+          onToggleRow={(person) => toggleSelect(person.id)}
+          onToggleAll={toggleSelectAll}
+          allSelected={allSelected}
+        />
       )}
 
       {/* ═══ Deactivated Table ═══ */}
@@ -889,121 +937,17 @@ function People() {
               </p>
             </div>
           ) : (
-            <div className="people-table">
-              <div className="people-table-header">
-                <div className="people-table-cell people-table-cell--checkbox">
-                  <Checkbox checked={allSelected} onChange={toggleSelectAll} />
-                </div>
-                <div className={`people-table-cell people-table-cell--name people-table-cell--sortable${sortCol === 'name' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('name')}>
-                  Name
-                  {sortCol === 'name' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
-                </div>
-                <div className={`people-table-cell people-table-cell--status-d people-table-cell--sortable${sortCol === 'status' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('status')}>
-                  Status
-                  {sortCol === 'status' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
-                </div>
-                <div className={`people-table-cell people-table-cell--role-d people-table-cell--sortable${sortCol === 'role' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('role')}>
-                  Role
-                  {sortCol === 'role' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
-                </div>
-                <div className="people-table-cell people-table-cell--team-d">Team</div>
-                <div className={`people-table-cell people-table-cell--region-d people-table-cell--sortable${sortCol === 'region' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('region')}>
-                  Region
-                  {sortCol === 'region' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
-                </div>
-                <div className={`people-table-cell people-table-cell--deactivated people-table-cell--sortable${sortCol === 'deactivatedOn' ? ' people-table-cell--sorted' : ''}`} onClick={() => toggleSort('deactivatedOn')}>
-                  Deactivated on
-                  {sortCol === 'deactivatedOn' && (sortDir === 'asc' ? <ArrowUp2 size={16} color="var(--text-tertiary)" /> : <ArrowDown2 size={16} color="var(--text-tertiary)" />)}
-                </div>
-                <div className="people-table-cell people-table-cell--actions" />
-              </div>
-
-              {filteredDeactivated.map((person) => (
-                <div
-                  className={`people-table-row${selectedIds.has(person.id) ? ' people-table-row--selected' : ''}`}
-                  key={person.id}
-                >
-                  <div className="people-table-cell people-table-cell--checkbox">
-                    <Checkbox checked={selectedIds.has(person.id)} onChange={() => toggleSelect(person.id)} />
-                  </div>
-                  <div className="people-table-cell people-table-cell--name">
-                    <div className="people-avatar" style={{ background: avatarColors[(person.id - 1) % avatarColors.length] }}>
-                      {person.avatar}
-                    </div>
-                    <div className="people-name-info">
-                      <span className="people-name">{person.name}</span>
-                      <span className="people-email">{person.email}</span>
-                    </div>
-                  </div>
-                  <div className="people-table-cell people-table-cell--status-d">
-                    {person.status === 'terminated' ? (
-                      <Badge type="error" label="Terminated" />
-                    ) : (
-                      <Badge type="warning" label="Long Leave" />
-                    )}
-                  </div>
-                  <div className="people-table-cell people-table-cell--role-d">{person.role}</div>
-                  <div className="people-table-cell people-table-cell--team-d">{person.team || '–'}</div>
-                  <div className="people-table-cell people-table-cell--region-d">{person.region}</div>
-                  <div className="people-table-cell people-table-cell--deactivated">
-                    <div className="people-date-stack">
-                      <span>{person.deactivatedOn.replace(/,?\s*\d{4}$/, ',')}</span>
-                      <span className="people-date-stack__year">{person.deactivatedOn.match(/\d{4}$/)?.[0]}</span>
-                    </div>
-                  </div>
-                  <div className="people-table-cell people-table-cell--actions">
-                    <div className="people-more-wrapper" ref={openMenuId === person.id ? menuRef : undefined}>
-                      <button
-                        className="people-more-btn"
-                        aria-label="More actions"
-                        onClick={() => setOpenMenuId(openMenuId === person.id ? null : person.id)}
-                      >
-                        <MoreIcon size={24} color="var(--text-tertiary)" />
-                      </button>
-                      {openMenuId === person.id && (
-                        <div className="people-action-menu">
-                          <div className="people-action-menu-caret" />
-                          <button
-                            className="people-action-menu-item"
-                            onClick={() => {
-                              setOpenMenuId(null)
-                              handleReactivateSingle(person)
-                            }}
-                          >
-                            Reactivate
-                          </button>
-                          <button
-                            className="people-action-menu-item"
-                            onClick={() => {
-                              setOpenMenuId(null)
-                              setDeactivatedPeople(prev =>
-                                prev.map(p =>
-                                  p.id === person.id
-                                    ? { ...p, status: person.status === 'terminated' ? 'long-leave' as const : 'terminated' as const }
-                                    : p
-                                )
-                              )
-                              showToast('success', `${person.name} status changed to ${person.status === 'terminated' ? 'Long Leave' : 'Terminated'}`)
-                            }}
-                          >
-                            {person.status === 'terminated' ? 'Change to Long Leave' : 'Change to Terminated'}
-                          </button>
-                          <button
-                            className="people-action-menu-item people-action-menu-item--danger"
-                            onClick={() => {
-                              setOpenMenuId(null)
-                              setModal({ type: 'delete-single', person })
-                            }}
-                          >
-                            Delete Permanently
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Table
+              columns={deactivatedColumns}
+              rows={filteredDeactivated}
+              getRowKey={(person) => String(person.id)}
+              selectable
+              isSelected={(person) => selectedIds.has(person.id)}
+              onToggleRow={(person) => toggleSelect(person.id)}
+              onToggleAll={toggleSelectAll}
+              allSelected={allSelected}
+              onSort={(key) => toggleSort(key as typeof sortCol)}
+            />
           )}
         </>
       )}

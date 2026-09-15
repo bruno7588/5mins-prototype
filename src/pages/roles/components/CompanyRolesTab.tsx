@@ -1,6 +1,7 @@
-import { SearchNormal1, Edit2, Copy, ArrowLeft2, ArrowRight2, Add, Trash } from 'iconsax-react'
+import { SearchNormal1, Edit2, Copy, Add, Trash } from 'iconsax-react'
 import Button from '@/components/Button/Button'
-import { useCallback, useRef, useState } from 'react'
+import { Table, type Column } from '@/components/Table/Table'
+import { useState } from 'react'
 import type { CompanyRole } from '../data/mockRoles'
 
 interface Props {
@@ -15,27 +16,79 @@ interface Props {
 function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onDeleteRole, onBrowseLibrary }: Props) {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [isScrolled, setIsScrolled] = useState(false)
   const perPage = 10
-
-  /* Track horizontal scroll for frozen column styling */
-  const handleScroll = useCallback(() => {
-    if (scrollRef.current) setIsScrolled(scrollRef.current.scrollLeft > 0)
-  }, [])
 
   const filtered = roles.filter(r => {
     if (search && !r.name.toLowerCase().includes(search.toLowerCase())) return false
     return true
   })
 
-  const totalPages = Math.ceil(filtered.length / perPage)
   const paginated = filtered.slice((page - 1) * perPage, page * perPage)
   const pageStart = (page - 1) * perPage + 1
   const pageEnd = Math.min(page * perPage, filtered.length)
 
 
   const handleSearch = (val: string) => { setSearch(val); setPage(1) }
+
+  const columns: Column<CompanyRole>[] = [
+    {
+      key: 'name',
+      header: 'Role Name',
+      width: '1 0 240px',
+      render: (role) => (
+        <span className="roles-name-cell">
+          <button
+            className="roles-role-link"
+            onClick={() => onEditRole(role)}
+          >
+            {role.name}
+          </button>
+          {role.leadership && <span className="roles-leader-badge">Leadership</span>}
+        </span>
+      ),
+    },
+    { key: 'skills', header: 'Skills', width: '0 0 80px', align: 'right', render: (role) => role.skills.length },
+    { key: 'learners', header: 'Learners', width: '0 0 100px', align: 'right', render: (role) => role.employeeCount },
+    {
+      key: 'actions',
+      header: '',
+      width: '0 0 140px',
+      align: 'right',
+      // The icon tooltips hang below the buttons, outside the cell's clip.
+      cellClassName: 'is-overflow roles-actions-cell',
+      render: (role) => (
+        <>
+          <span className="roles-icon-btn-wrapper">
+            <button
+              className="roles-icon-btn"
+              onClick={() => onDuplicateRole(role)}
+            >
+              <Copy size={20} color="var(--text-tertiary)" />
+            </button>
+            <span className="roles-icon-tooltip">Duplicate</span>
+          </span>
+          <span className="roles-icon-btn-wrapper">
+            <button
+              className="roles-icon-btn"
+              onClick={() => onEditRole(role)}
+            >
+              <Edit2 size={20} color="var(--text-tertiary)" />
+            </button>
+            <span className="roles-icon-tooltip">Edit</span>
+          </span>
+          <span className="roles-icon-btn-wrapper">
+            <button
+              className="roles-icon-btn roles-icon-btn--danger"
+              onClick={() => onDeleteRole(role)}
+            >
+              <Trash size={20} color="currentColor" />
+            </button>
+            <span className="roles-icon-tooltip">Delete</span>
+          </span>
+        </>
+      ),
+    },
+  ]
 
   if (roles.length === 0) {
     return (
@@ -126,94 +179,18 @@ function CompanyRolesTab({ roles, onCreateRole, onEditRole, onDuplicateRole, onD
           </Button>
         </div>
       ) : (
-        <div
-          ref={scrollRef}
-          onScroll={handleScroll}
-          className={`roles-table-scroll${isScrolled ? ' roles-table-scroll--scrolled' : ''}`}
-        >
-          <div className="people-table">
-            {/* Header */}
-            <div className="people-table-header">
-              <div className="people-table-cell roles-col--name-co">Role Name</div>
-              <div className="people-table-cell roles-col--skills">Skills</div>
-              <div className="people-table-cell roles-col--employees">Learners</div>
-              <div className="people-table-cell roles-col--actions"></div>
-            </div>
-
-            {/* Rows */}
-            {paginated.map(role => (
-              <div key={role.id} className="people-table-row">
-                <div className="people-table-cell roles-col--name-co">
-                  <button
-                    className="roles-role-link"
-                    onClick={() => onEditRole(role)}
-                  >
-                    {role.name}
-                  </button>
-                  {role.leadership && <span className="roles-leader-badge">Leadership</span>}
-                </div>
-                <div className="people-table-cell roles-col--skills">
-                  {role.skills.length}
-                </div>
-                <div className="people-table-cell roles-col--employees">
-                  {role.employeeCount}
-                </div>
-                <div className="people-table-cell roles-col--actions">
-                  <span className="roles-icon-btn-wrapper">
-                    <button
-                      className="roles-icon-btn"
-                      onClick={() => onDuplicateRole(role)}
-                    >
-                      <Copy size={20} color="var(--text-tertiary)" />
-                    </button>
-                    <span className="roles-icon-tooltip">Duplicate</span>
-                  </span>
-                  <span className="roles-icon-btn-wrapper">
-                    <button
-                      className="roles-icon-btn"
-                      onClick={() => onEditRole(role)}
-                    >
-                      <Edit2 size={20} color="var(--text-tertiary)" />
-                    </button>
-                    <span className="roles-icon-tooltip">Edit</span>
-                  </span>
-                  <span className="roles-icon-btn-wrapper">
-                    <button
-                      className="roles-icon-btn roles-icon-btn--danger"
-                      onClick={() => onDeleteRole(role)}
-                    >
-                      <Trash size={20} color="currentColor" />
-                    </button>
-                    <span className="roles-icon-tooltip">Delete</span>
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {filtered.length > perPage && (
-        <div className="roles-pagination">
-          <span className="roles-pagination-text">
-            {pageStart}–{pageEnd} of {filtered.length}
-          </span>
-          <button
-            className="roles-pagination-btn"
-            disabled={page === 1}
-            onClick={() => setPage(p => p - 1)}
-          >
-            <ArrowLeft2 size={16} color="currentColor" />
-          </button>
-          <button
-            className="roles-pagination-btn"
-            disabled={page === totalPages}
-            onClick={() => setPage(p => p + 1)}
-          >
-            <ArrowRight2 size={16} color="currentColor" />
-          </button>
-        </div>
+        <Table
+          columns={columns}
+          rows={paginated}
+          getRowKey={(role) => String(role.id)}
+          pagination={{
+            from: pageStart,
+            to: pageEnd,
+            total: filtered.length,
+            onPrev: () => setPage(p => p - 1),
+            onNext: () => setPage(p => p + 1),
+          }}
+        />
       )}
 
     </>

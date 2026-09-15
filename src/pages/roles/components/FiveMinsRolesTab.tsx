@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import Button from '@/components/Button/Button'
+import { Table, type Column } from '@/components/Table/Table'
 import {
-  SearchNormal1, ArrowLeft2, ArrowRight2, ArrowDown2,
+  SearchNormal1, ArrowDown2,
   Judge, Headphone, Magicpen, DeviceMessage, Like1,
   Colorfilter, Code, Coin, Box2, SecuritySafe,
   Profile2User, Convert3DCube, ShoppingCart,
@@ -63,14 +64,7 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
   const [previewClosing, setPreviewClosing] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [isScrolled, setIsScrolled] = useState(false)
   const perPage = 10
-
-  /* ─── Track horizontal scroll for frozen column styling ── */
-  const handleScroll = useCallback(() => {
-    if (scrollRef.current) setIsScrolled(scrollRef.current.scrollLeft > 0)
-  }, [])
 
   /* ─── Filtered roles ─────────────────────────────────── */
   const filtered = useMemo(() => {
@@ -84,7 +78,6 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
   }, [selectedFunction, search])
 
   /* ─── Pagination ──────────────────────────────────────── */
-  const totalPages = Math.ceil(filtered.length / perPage)
   const paginated = filtered.slice((page - 1) * perPage, page * perPage)
   const pageStart = (page - 1) * perPage + 1
   const pageEnd = Math.min(page * perPage, filtered.length)
@@ -139,6 +132,44 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
     setPreviewRole(null)
     onCopy(role)
   }
+
+  /* ─── Table columns ──────────────────────────────────── */
+  const columns: Column<FiveMinsRole>[] = [
+    {
+      key: 'name',
+      header: search ? `${filtered.length} roles match '${search}'` : selectedFunction === 'All' ? 'All roles' : `${selectedFunction} roles`,
+      width: '1 0 240px',
+      render: (role) => (
+        <button
+          className="roles-role-link"
+          onClick={() => openPreview(role)}
+        >
+          {role.name}
+        </button>
+      ),
+    },
+    { key: 'skills', header: 'Skills', width: '0 0 80px', align: 'right', render: (role) => role.skills.length },
+    {
+      key: 'learners',
+      header: 'Learners',
+      width: '0 0 80px',
+      align: 'right',
+      render: (role) => (role.assignedCount > 0 ? role.assignedCount : '\u2014'),
+    },
+    {
+      key: 'action',
+      header: '',
+      width: '0 0 104px',
+      align: 'right',
+      render: (role) => (
+        <Button variant="outlined"
+          onClick={() => onCopy(role)}
+        >
+          Copy
+        </Button>
+      ),
+    },
+  ]
 
   /* ─── Escape key closes preview ──────────────────────── */
   useEffect(() => {
@@ -244,71 +275,18 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
           </Button>
         </div>
       ) : (
-        <div
-          ref={scrollRef}
-          onScroll={handleScroll}
-          className={`roles-table-scroll${isScrolled ? ' roles-table-scroll--scrolled' : ''}`}
-        >
-          <div className="people-table">
-            {/* Header */}
-            <div className="people-table-header">
-              <div className="people-table-cell roles-col--name">{search ? `${filtered.length} roles match '${search}'` : selectedFunction === 'All' ? 'All roles' : `${selectedFunction} roles`}</div>
-              <div className="people-table-cell roles-col--skills">Skills</div>
-              <div className="people-table-cell roles-col--assigned">Learners</div>
-              <div className="people-table-cell roles-col--action"></div>
-            </div>
-  
-            {/* Rows */}
-            {paginated.map(role => (
-              <div key={role.id} className="people-table-row">
-                <div className="people-table-cell roles-col--name">
-                  <button
-                    className="roles-role-link"
-                    onClick={() => openPreview(role)}
-                  >
-                    {role.name}
-                  </button>
-                </div>
-                <div className="people-table-cell roles-col--skills">
-                  {role.skills.length}
-                </div>
-                <div className="people-table-cell roles-col--assigned">
-                  {role.assignedCount > 0 ? role.assignedCount : '\u2014'}
-                </div>
-                <div className="people-table-cell roles-col--action">
-                  <Button variant="outlined"
-                    onClick={() => onCopy(role)}
-                  >
-                    Copy
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {filtered.length > perPage && (
-        <div className="roles-pagination">
-          <span className="roles-pagination-text">
-            {pageStart}&ndash;{pageEnd} of {filtered.length}
-          </span>
-          <button
-            className="roles-pagination-btn"
-            disabled={page === 1}
-            onClick={() => setPage(p => p - 1)}
-          >
-            <ArrowLeft2 size={16} color="currentColor" />
-          </button>
-          <button
-            className="roles-pagination-btn"
-            disabled={page === totalPages}
-            onClick={() => setPage(p => p + 1)}
-          >
-            <ArrowRight2 size={16} color="currentColor" />
-          </button>
-        </div>
+        <Table
+          columns={columns}
+          rows={paginated}
+          getRowKey={(role) => String(role.id)}
+          pagination={{
+            from: pageStart,
+            to: pageEnd,
+            total: filtered.length,
+            onPrev: () => setPage(p => p - 1),
+            onNext: () => setPage(p => p + 1),
+          }}
+        />
       )}
 
       {/* ─── Preview Panel Overlay ─────────────────────── */}

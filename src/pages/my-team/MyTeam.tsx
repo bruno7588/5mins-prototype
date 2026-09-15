@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import Button from '@/components/Button/Button'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Home2,
@@ -18,14 +18,13 @@ import {
   SmsNotification,
   ArrowDown,
   ArrowUp,
-  ArrowLeft2,
   ArrowRight2,
 } from 'iconsax-react'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Search from '../../components/Search/Search'
-import Checkbox from '../../components/Checkbox/Checkbox'
+import { Table, type Column } from '@/components/Table/Table'
 import Badge from '../../components/Badge/Badge'
 import ContentSwitcher from '../../components/ContentSwitcher/ContentSwitcher'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
@@ -366,25 +365,6 @@ function MyTeam() {
     setPage(1)
   }, [searchQuery, courseFilter, scopeFilter, sortKey, sortDir])
 
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [hasScroll, setHasScroll] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    const onScroll = () => setIsScrolled(el.scrollLeft > 0)
-    const checkOverflow = () => setHasScroll(el.scrollWidth > el.clientWidth)
-    el.addEventListener('scroll', onScroll)
-    const ro = new ResizeObserver(checkOverflow)
-    ro.observe(el)
-    checkOverflow()
-    return () => {
-      el.removeEventListener('scroll', onScroll)
-      ro.disconnect()
-    }
-  }, [showReportsTo])
-
   /* Selecting a row is how a reminder gets sent, so someone at 100% has nothing to be
      selected for — their checkbox is disabled, and select-all skips them rather than
      ticking boxes the row itself refuses. A page of finished learners leaves nothing to
@@ -414,6 +394,206 @@ function MyTeam() {
     })
 
   const selectedCount = selectedIds.size
+
+  const sortHeader = (key: 'overdue' | 'courses' | 'progress', label: string, tooltip?: string) => (
+    <button
+      type="button"
+      className="mt-cp__th-btn"
+      onClick={() => toggleSort(key)}
+      aria-label={`Sort by ${label}, currently ${sortKey === key ? sortDir : 'unsorted'}`}
+    >
+      {tooltip ? (
+        <Tooltip text={tooltip} position="Top" alignment="Center" icon={false}>
+          <span className="mt-cp__th-label">{label}</span>
+        </Tooltip>
+      ) : (
+        <span className="mt-cp__th-label">{label}</span>
+      )}
+      {sortKey === key ? (
+        sortDir === 'asc' ? (
+          <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
+        ) : (
+          <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
+        )
+      ) : (
+        <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
+      )}
+    </button>
+  )
+
+  const columns: Column<TeamMember>[] = [
+    {
+      key: 'name',
+      header: 'Name',
+      width: '1 0 260px',
+      render: (r) => (
+        <span className="tbl-media">
+          {r.avatarSrc ? (
+            <img className="mt-cp__avatar mt-cp__avatar--img" src={r.avatarSrc} alt="" />
+          ) : (
+            <div className="mt-cp__avatar" aria-hidden="true">{r.initials}</div>
+          )}
+          <div
+            className="mt-cp__member-info"
+            role="link"
+            tabIndex={0}
+            onClick={() => navigate(`/my-team/people/${r.id}`)}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/my-team/people/${r.id}`) }}
+          >
+            <span className="mt-cp__member-name">{r.name}</span>
+            <span className="mt-cp__member-role">{r.role}</span>
+          </div>
+        </span>
+      ),
+    },
+    ...(showReportsTo ? [{
+      key: 'reportsTo',
+      header: 'Reports to',
+      width: '0 0 180px',
+      // The "+N" listbox hangs below the cell, outside its clip; the name keeps its own ellipsis.
+      cellClassName: 'is-overflow mt-cp__table-cell--reports-to',
+      render: (r: TeamMember) => {
+        const sortedIds = sortedManagerIds(r.managerIds)
+        const primary = sortedIds[0]
+        const extras = sortedIds.slice(1)
+        return (
+          <>
+            <span className="mt-cp__reports-to-name">{managerNameById(primary)}</span>
+            {extras.length > 0 && (
+              <div className="mt-cp__reports-to-popover-wrap" tabIndex={0}>
+                <span
+                  className="mt-cp__reports-to-more"
+                  aria-haspopup="listbox"
+                >
+                  +{extras.length}
+                </span>
+                <ul className="dropdown-menu mt-cp__reports-to-listbox" role="listbox">
+                  {sortedIds.map((id) => (
+                    <li key={id}>
+                      <div className="dropdown-option" role="option" aria-selected={false}>
+                        <span>{managerNameById(id)}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
+        )
+      },
+    }] : []),
+    /* Overdue leads the metrics because it is what the tab is for: the number that
+       decides whether this row needs anything doing about it. */
+    {
+      key: 'overdue',
+      header: sortHeader('overdue', 'Overdue', 'Courses past their due date'),
+      width: '0 0 120px',
+      align: 'center',
+      cellClassName: 'mt-cp__table-cell--metric',
+      render: (r) => r.overdue > 0 ? (
+        <Tooltip
+          text={`${r.overdue} course${r.overdue === 1 ? '' : 's'} past its due date`}
+          position="Top"
+          alignment="Center"
+          icon={false}
+        >
+          <Badge
+            type="error"
+            className="mt-cp__overdue-badge"
+            customIcon={<span className="mt-cp__overdue-dot" aria-hidden="true" />}
+            label={String(r.overdue)}
+          />
+        </Tooltip>
+      ) : (
+        /* Nothing overdue is the good news, and a badge is for the row that needs
+           something doing. The dash is the same glyph the Courses column uses for
+           nothing-to-show, so the two empty states read alike instead of one being a
+           countable zero. */
+        <span className="mt-cp__status-dash">–</span>
+      ),
+    },
+    /* The count is a disclosure control, not a label — an outlined box + trailing
+       chevron so it reads as "opens something" without a hover (Figma 10837:17669).
+       The chevron points right because that is where the view goes: a down chevron
+       is the accordion convention and promises the row expands in place, but this
+       opens the drawer in from the right. */
+    {
+      key: 'courses',
+      header: sortHeader('courses', 'Courses', 'All courses assigned to this learner'),
+      width: '0 0 120px',
+      align: 'center',
+      cellClassName: 'mt-cp__table-cell--metric',
+      render: (r) => coursesTotal(r) > 0 ? (
+        <Button
+          variant="outlined-2"
+          size="sm"
+          trailingIcon={<ArrowRight2 size={12} color="var(--text-secondary)" variant="Linear" />}
+          onClick={() => setDrawerMemberId(r.id)}
+          aria-label={`View ${coursesTotal(r)} course${coursesTotal(r) === 1 ? '' : 's'} for ${r.name}`}
+        >
+          {coursesTotal(r)}
+        </Button>
+      ) : (
+        <span className="mt-cp__status-dash">–</span>
+      ),
+    },
+    {
+      key: 'progress',
+      header: sortHeader('progress', 'Overall progress'),
+      width: '0 0 180px',
+      align: 'center',
+      render: (r) => {
+        const progressMuted = r.overdue === 0 && r.atRisk === 0 && r.overallProgress === 0
+        return (
+          <span className={`mt-cp__progress-cell${progressMuted ? ' mt-cp__table-cell--muted' : ''}`}>
+            <ProgressBar value={r.overallProgress} muted={progressMuted} />
+            <span className="mt-cp__progress-pct">{r.overallProgress}%</span>
+          </span>
+        )
+      },
+    },
+    {
+      key: 'action',
+      header: '',
+      width: '0 0 56px',
+      align: 'center',
+      render: (r) => {
+        if (r.overdue === 0 && r.atRisk === 0) return null
+        const lastSent = lastSentFor(r)
+        return (
+          <Tooltip
+            position="Top"
+            alignment="End"
+            icon={false}
+            text={
+              <span className="mt-reminder-tip">
+                <span className="mt-reminder-tip__title">Send reminder</span>
+                {lastSent && (
+                  <span className="mt-reminder-tip__sub">Last sent {formatRelative(lastSent)}</span>
+                )}
+              </span>
+            }
+          >
+            <button
+              type="button"
+              className="mt-cp__row-action"
+              aria-label={
+                lastSent
+                  ? `Send reminder to ${r.name}, last sent ${formatRelative(lastSent)}`
+                  : `Send reminder to ${r.name}`
+              }
+              onClick={() => {
+                setSelectedIds(new Set([r.id]))
+                setReminderOpen(true)
+              }}
+            >
+              <SmsNotification size={20} color="var(--text-primary)" variant="Linear" />
+            </button>
+          </Tooltip>
+        )
+      },
+    },
+  ]
 
   return (
     <div className="mt-app">
@@ -554,271 +734,43 @@ function MyTeam() {
               </div>
             </div>
 
-            <div
-              className={`mt-cp__tablescroll${hasScroll ? ' mt-cp__tablescroll--has-scroll' : ''}${isScrolled ? ' mt-cp__tablescroll--scrolled' : ''}`}
-              ref={scrollRef}
-            >
-              <div className="mt-cp__table">
-                <div className="mt-cp__table-header">
-                  <div className="mt-cp__table-cell mt-cp__table-cell--name">
-                    <Checkbox checked={allVisibleSelected} onChange={toggleAll} disabled={visibleIds.length === 0} />
-                    <span className="mt-cp__th-label">Name</span>
-                  </div>
-                  {showReportsTo && (
-                    <div className="mt-cp__table-cell mt-cp__table-cell--reports-to">
-                      <span className="mt-cp__th-label">Reports to</span>
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    className="mt-cp__table-cell mt-cp__table-cell--metric mt-cp__th-btn"
-                    onClick={() => toggleSort('overdue')}
-                    aria-label={`Sort by Overdue, currently ${sortKey === 'overdue' ? sortDir : 'unsorted'}`}
-                  >
-                    <Tooltip text="Courses past their due date" position="Top" alignment="Center" icon={false}>
-                      <span className="mt-cp__th-label">Overdue</span>
-                    </Tooltip>
-                    {sortKey === 'overdue' ? (
-                      sortDir === 'asc' ? (
-                        <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
-                      ) : (
-                        <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
-                      )
-                    ) : (
-                      <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-cp__table-cell mt-cp__table-cell--metric mt-cp__th-btn"
-                    onClick={() => toggleSort('courses')}
-                    aria-label={`Sort by Courses, currently ${sortKey === 'courses' ? sortDir : 'unsorted'}`}
-                  >
-                    <Tooltip text="All courses assigned to this learner" position="Top" alignment="Center" icon={false}>
-                      <span className="mt-cp__th-label">Courses</span>
-                    </Tooltip>
-                    {sortKey === 'courses' ? (
-                      sortDir === 'asc' ? (
-                        <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
-                      ) : (
-                        <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
-                      )
-                    ) : (
-                      <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-cp__table-cell mt-cp__table-cell--metric mt-cp__th-btn"
-                    onClick={() => toggleSort('progress')}
-                    aria-label={`Sort by Overall progress, currently ${sortKey === 'progress' ? sortDir : 'unsorted'}`}
-                  >
-                    <span className="mt-cp__th-label">Overall progress</span>
-                    {sortKey === 'progress' ? (
-                      sortDir === 'asc' ? (
-                        <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
-                      ) : (
-                        <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
-                      )
-                    ) : (
-                      <span className="mt-cp__th-sort-hint"><ArrowDown size={16} color="var(--text-tertiary)" variant="Linear" /></span>
-                    )}
-                  </button>
-                  <div className="mt-cp__table-cell mt-cp__table-cell--action" aria-hidden="true" />
+            <Table
+              columns={columns}
+              rows={paginatedRows}
+              getRowKey={(r) => r.id}
+              selectable
+              isSelected={(r) => selectedIds.has(r.id)}
+              isRowSelectable={isSelectable}
+              onToggleRow={(r) => toggleRow(r.id)}
+              onToggleAll={toggleAll}
+              allSelected={allVisibleSelected}
+              selectAllDisabled={visibleIds.length === 0}
+              pagination={{
+                from: pageStart + 1,
+                to: pageEnd,
+                total: totalRows,
+                onPrev: () => setPage((p) => Math.max(1, p - 1)),
+                onNext: () => setPage((p) => Math.min(totalPages, p + 1)),
+              }}
+            />
+
+            {rows.length === 0 && (
+              <div className="mt-cp__empty">
+                <div className="mt-cp__empty-illustration">
+                  <span className="mt-cp__empty-zero">0</span>
+                  <svg className="mt-cp__empty-accents" width="61" height="50" viewBox="0 0 61 50" fill="none">
+                    <path d="M5.5 30C3.5 32 1.5 35.5 1 38" stroke="var(--text-tertiary)" strokeWidth="3" strokeLinecap="round"/>
+                    <path d="M10 37C8.5 38.5 7 41 6.5 43" stroke="var(--text-tertiary)" strokeWidth="3" strokeLinecap="round"/>
+                    <path d="M51 8C53 5.5 55.5 2.5 56 1" stroke="var(--text-tertiary)" strokeWidth="3" strokeLinecap="round"/>
+                    <path d="M55.5 15C57 13 59 10.5 59.5 9" stroke="var(--text-tertiary)" strokeWidth="3" strokeLinecap="round"/>
+                  </svg>
                 </div>
-
-                {rows.length === 0 ? (
-                  <div className="mt-cp__empty">
-                    <div className="mt-cp__empty-illustration">
-                      <span className="mt-cp__empty-zero">0</span>
-                      <svg className="mt-cp__empty-accents" width="61" height="50" viewBox="0 0 61 50" fill="none">
-                        <path d="M5.5 30C3.5 32 1.5 35.5 1 38" stroke="var(--text-tertiary)" strokeWidth="3" strokeLinecap="round"/>
-                        <path d="M10 37C8.5 38.5 7 41 6.5 43" stroke="var(--text-tertiary)" strokeWidth="3" strokeLinecap="round"/>
-                        <path d="M51 8C53 5.5 55.5 2.5 56 1" stroke="var(--text-tertiary)" strokeWidth="3" strokeLinecap="round"/>
-                        <path d="M55.5 15C57 13 59 10.5 59.5 9" stroke="var(--text-tertiary)" strokeWidth="3" strokeLinecap="round"/>
-                      </svg>
-                    </div>
-                    <div className="mt-cp__empty-info">
-                      <p className="mt-cp__empty-text">No results found!</p>
-                      <p className="mt-cp__empty-subtext">Search for a different name or email</p>
-                    </div>
-                  </div>
-                ) : paginatedRows.map((r) => {
-                  const needsAttention = r.overdue > 0 || r.atRisk > 0
-                  const progressMuted = !needsAttention && r.overallProgress === 0
-                  return (
-                    <div
-                      className={`mt-cp__table-row${selectedIds.has(r.id) ? ' mt-cp__table-row--selected' : ''}`}
-                      key={r.id}
-                    >
-                      <div className="mt-cp__table-cell mt-cp__table-cell--name">
-                        <Checkbox
-                          checked={selectedIds.has(r.id)}
-                          onChange={() => toggleRow(r.id)}
-                          disabled={!isSelectable(r)}
-                        />
-                        {r.avatarSrc ? (
-                          <img className="mt-cp__avatar mt-cp__avatar--img" src={r.avatarSrc} alt="" />
-                        ) : (
-                          <div className="mt-cp__avatar" aria-hidden="true">{r.initials}</div>
-                        )}
-                        <div
-                          className="mt-cp__member-info"
-                          role="link"
-                          tabIndex={0}
-                          onClick={() => navigate(`/my-team/people/${r.id}`)}
-                          onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/my-team/people/${r.id}`) }}
-                        >
-                          <span className="mt-cp__member-name">{r.name}</span>
-                          <span className="mt-cp__member-role">{r.role}</span>
-                        </div>
-                      </div>
-                      {showReportsTo && (() => {
-                        const sortedIds = sortedManagerIds(r.managerIds)
-                        const primary = sortedIds[0]
-                        const extras = sortedIds.slice(1)
-                        return (
-                          <div className="mt-cp__table-cell mt-cp__table-cell--reports-to">
-                            <span className="mt-cp__reports-to-name">{managerNameById(primary)}</span>
-                            {extras.length > 0 && (
-                              <div className="mt-cp__reports-to-popover-wrap" tabIndex={0}>
-                                <span
-                                  className="mt-cp__reports-to-more"
-                                  aria-haspopup="listbox"
-                                >
-                                  +{extras.length}
-                                </span>
-                                <ul className="dropdown-menu mt-cp__reports-to-listbox" role="listbox">
-                                  {sortedIds.map((id) => (
-                                    <li key={id}>
-                                      <div className="dropdown-option" role="option" aria-selected={false}>
-                                        <span>{managerNameById(id)}</span>
-                                      </div>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })()}
-                      {/* Overdue leads the metrics because it is what the tab is for:
-                          the number that decides whether this row needs anything doing
-                          about it. A zero is stated rather than dashed — "none overdue"
-                          is the good news, and a dash would read as missing data. */}
-                      <div className="mt-cp__table-cell mt-cp__table-cell--metric">
-                        {r.overdue > 0 ? (
-                          <Tooltip
-                            text={`${r.overdue} course${r.overdue === 1 ? '' : 's'} past its due date`}
-                            position="Top"
-                            alignment="Center"
-                            icon={false}
-                          >
-                            <Badge
-                              type="error"
-                              className="mt-cp__overdue-badge"
-                              customIcon={<span className="mt-cp__overdue-dot" aria-hidden="true" />}
-                              label={String(r.overdue)}
-                            />
-                          </Tooltip>
-                        ) : (
-                          /* Nothing overdue is the good news, and a badge is for the row
-                             that needs something doing. The dash is the same glyph the
-                             Courses column uses for nothing-to-show, so the two empty
-                             states read alike instead of one being a countable zero. */
-                          <span className="mt-cp__status-dash">–</span>
-                        )}
-                      </div>
-                      {/* The count is a disclosure control, not a label — an outlined
-                          box + trailing chevron so it reads as "opens something"
-                          without a hover (Figma 10837:17669). The chevron points
-                          right because that is where the view goes: a down chevron
-                          is the accordion convention and promises the row expands
-                          in place, but this opens the drawer in from the right. */}
-                      <div className="mt-cp__table-cell mt-cp__table-cell--metric">
-                        {coursesTotal(r) > 0 ? (
-                          <Button
-                            variant="outlined-2"
-                            size="sm"
-                            trailingIcon={<ArrowRight2 size={12} color="var(--text-secondary)" variant="Linear" />}
-                            onClick={() => setDrawerMemberId(r.id)}
-                            aria-label={`View ${coursesTotal(r)} course${coursesTotal(r) === 1 ? '' : 's'} for ${r.name}`}
-                          >
-                            {coursesTotal(r)}
-                          </Button>
-                        ) : (
-                          <span className="mt-cp__status-dash">–</span>
-                        )}
-                      </div>
-                      <div className={`mt-cp__table-cell mt-cp__table-cell--metric${progressMuted ? ' mt-cp__table-cell--muted' : ''}`}>
-                        <ProgressBar value={r.overallProgress} muted={progressMuted} />
-                        <span className="mt-cp__progress-pct">{r.overallProgress}%</span>
-                      </div>
-                      <div className="mt-cp__table-cell mt-cp__table-cell--action">
-                        {needsAttention && (() => {
-                          const lastSent = lastSentFor(r)
-                          return (
-                            <Tooltip
-                              position="Top"
-                              alignment="End"
-                              icon={false}
-                              text={
-                                <span className="mt-reminder-tip">
-                                  <span className="mt-reminder-tip__title">Send reminder</span>
-                                  {lastSent && (
-                                    <span className="mt-reminder-tip__sub">Last sent {formatRelative(lastSent)}</span>
-                                  )}
-                                </span>
-                              }
-                            >
-                              <button
-                                type="button"
-                                className="mt-cp__row-action"
-                                aria-label={
-                                  lastSent
-                                    ? `Send reminder to ${r.name}, last sent ${formatRelative(lastSent)}`
-                                    : `Send reminder to ${r.name}`
-                                }
-                                onClick={() => {
-                                  setSelectedIds(new Set([r.id]))
-                                  setReminderOpen(true)
-                                }}
-                              >
-                                <SmsNotification size={20} color="var(--text-primary)" variant="Linear" />
-                              </button>
-                            </Tooltip>
-                          )
-                        })()}
-                      </div>
-                    </div>
-                  )
-                })}
-
-                {totalPages > 1 && (
-                  <div className="mt-cp__pagination">
-                    <span className="mt-cp__pagination-label">{pageStart + 1}–{pageEnd} of {totalRows}</span>
-                    <button
-                      type="button"
-                      className="mt-cp__pagination-btn"
-                      aria-label="Previous page"
-                      disabled={safePage === 1}
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    >
-                      <ArrowLeft2 size={16} color="var(--text-secondary)" variant="Linear" />
-                    </button>
-                    <button
-                      type="button"
-                      className="mt-cp__pagination-btn"
-                      aria-label="Next page"
-                      disabled={safePage === totalPages}
-                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    >
-                      <ArrowRight2 size={16} color="var(--text-secondary)" variant="Linear" />
-                    </button>
-                  </div>
-                )}
+                <div className="mt-cp__empty-info">
+                  <p className="mt-cp__empty-text">No results found!</p>
+                  <p className="mt-cp__empty-subtext">Search for a different name or email</p>
+                </div>
               </div>
-            </div>
+            )}
           </section>}
         </section>
       </div>

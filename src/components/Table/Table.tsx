@@ -53,9 +53,12 @@ interface TableProps<T> {
   onRowClick?: (row: T) => void
   selectable?: boolean
   isSelected?: (row: T) => boolean
+  /** Rows that can't be selected get a disabled checkbox. Default: every row. */
+  isRowSelectable?: (row: T) => boolean
   onToggleRow?: (row: T) => void
   onToggleAll?: () => void
   allSelected?: boolean
+  selectAllDisabled?: boolean
   onSort?: (key: string) => void
   pagination?: TablePagination
 }
@@ -68,9 +71,11 @@ export function Table<T>({
   onRowClick,
   selectable,
   isSelected,
+  isRowSelectable,
   onToggleRow,
   onToggleAll,
   allSelected,
+  selectAllDisabled,
   onSort,
   pagination,
 }: TableProps<T>) {
@@ -97,7 +102,7 @@ export function Table<T>({
       <div className="tbl-head">
         {selectable && (
           <div className="tbl-head-cell is-checkbox is-sticky" style={{ flex: '0 0 52px', left: 0 }}>
-            <Checkbox checked={!!allSelected} onChange={onToggleAll} />
+            <Checkbox checked={!!allSelected} onChange={onToggleAll} disabled={selectAllDisabled} />
           </div>
         )}
         {columns.map((col, ci) => (
@@ -135,7 +140,11 @@ export function Table<T>({
                 style={{ flex: '0 0 52px', left: 0 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <Checkbox checked={!!selected} onChange={() => onToggleRow?.(row)} />
+                <Checkbox
+                  checked={!!selected}
+                  onChange={() => onToggleRow?.(row)}
+                  disabled={isRowSelectable ? !isRowSelectable(row) : false}
+                />
               </div>
             )}
             {columns.map((col, ci) => (
