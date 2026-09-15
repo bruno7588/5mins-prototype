@@ -1,4 +1,5 @@
-import { Fragment, useEffect, useState, type CSSProperties } from 'react'
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import { gsap } from 'gsap'
 import { ArrowLeft2, ArrowRight2, Clock, PlayCircle, Routing } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
@@ -8,10 +9,19 @@ import type { WorkspaceCourse, WorkspaceProgram } from '@/pages/workspace/mockIt
 import { rgba, useThumbnailAccents } from '@/hooks/thumbnailAccents'
 import './WorkspaceBanner.css'
 
+/** The gap CSS sets between slides mid-slide, in px (the track's column-gap token). */
+function trackGap(el: HTMLElement) {
+  return parseFloat(getComputedStyle(el).columnGap) || 0
+}
+
 const SEGMENTS = 8
 const META_ICON = 'var(--text-secondary)'
-/** Dwell time per banner before it crossfades to the next. */
+/** Dwell time per banner before it slides on to the next. */
 const SLIDE_MS = 5000
+/* Slower off the mark and slower into the stop than power2 — the banner eases
+   out of rest rather than snapping into the slide. */
+const SLIDE_EASE = 'power3.inOut'
+const SLIDE_SECONDS = 1.4
 
 interface Props {
   courses: WorkspaceCourse[]
@@ -30,8 +40,8 @@ interface Props {
  * program can be in — ready, scheduled, mid-course, between (Figma 3733:62030).
  *
  * They slide left every 5s on an ease-in-out ramp, and the chevrons in the
- * footer step between them by hand. All sit on one track so they share a
- * height and nothing shifts as they advance.
+ * footer step between them by hand. All are stacked in one grid cell so they
+ * share a height and nothing shifts as they advance.
  */
 function WorkspaceBanner({
   courses,
@@ -41,13 +51,18 @@ function WorkspaceBanner({
   onOpenProgram,
 }: Props) {
   const [index, setIndex] = useState(0)
+  const trackRef = useRef<HTMLDivElement>(null)
+  /* Where the last slide came from, and which way the next one travels:
+     1 slides in from the right (auto-advance, next), -1 from the left (previous). */
+  const shownIndex = useRef(0)
+  const direction = useRef(1)
 
   /* The course they are part-way through — the one worth offering to resume. */
   const course = courses.find((c) => c.progress > 0 && c.progress < 100)
   /* One program per state it can be in: ready, scheduled, mid-course, between. */
   const featured = featuredPrograms(programs)
 
-  /* Each banner as a render function; `hidden` drives its crossfade opacity and a11y. */
+  /* Each banner as a render function; `hidden` drives its a11y while off screen. */
   const items = [
     ...(course
       ? [
@@ -79,20 +94,70 @@ function WorkspaceBanner({
   ]
   const count = items.length
 
-  /* Auto-advance, unless the viewer asked for less motion. The slides are stacked
-     and only the current one is opaque, so advancing just crossfades to the next
-     (wrapping back to the first) — no neighbour is ever partly in view. */
+  /* Auto-advance, unless the viewer asked for less motion. Always forwards, so the
+     banners keep sliding left, wrapping from the last back to the first. */
   useEffect(() => {
     if (count < 2) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const timer = window.setTimeout(() => setIndex((i) => (i + 1) % count), SLIDE_MS)
+    const timer = window.setTimeout(() => {
+      direction.current = 1
+      setIndex((i) => (i + 1) % count)
+    }, SLIDE_MS)
     return () => window.clearTimeout(timer)
+  }, [index, count])
+
+  /* The slides are stacked in one cell. The incoming one slides in from the side it
+     travels from while the outgoing one slides out the other way, both on the same
+     ease, so the 8px between them holds steady. Everything not in view is parked off to the
+     side with visibility hidden — the old single track let the previous banner's
+     edge peek in during and after each slide; hidden slides can't. Runs before
+     paint so the stack never flashes on first render. */
+  useLayoutEffect(() => {
+    const track = trackRef.current
+    const slides = Array.from(track?.children ?? []) as HTMLElement[]
+    /* Each slide sits one width plus the gap away from the next, so the pair
+       travel with 8px of page between them. */
+    const gap = track ? trackGap(track) : 0
+    const from = shownIndex.current
+    shownIndex.current = index
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!slides[index]) return
+
+    slides.forEach((slide, i) => {
+      if (i === index || (i === from && !reduced)) return
+      gsap.killTweensOf(slide)
+      gsap.set(slide, { xPercent: 100, x: gap, visibility: 'hidden' })
+    })
+
+    if (from === index || reduced || !slides[from]) {
+      gsap.set(slides[index], { xPercent: 0, x: 0, visibility: 'visible' })
+      return
+    }
+
+    const dir = direction.current
+    gsap.fromTo(
+      slides[index],
+      { xPercent: 100 * dir, x: gap * dir, visibility: 'visible' },
+      { xPercent: 0, x: 0, duration: SLIDE_SECONDS, ease: SLIDE_EASE, overwrite: true },
+    )
+    gsap.to(slides[from], {
+      xPercent: -100 * dir,
+      x: -gap * dir,
+      duration: SLIDE_SECONDS,
+      ease: SLIDE_EASE,
+      overwrite: true,
+      onComplete: () => gsap.set(slides[from], { visibility: 'hidden' }),
+    })
   }, [index, count])
 
   if (count === 0) return null
 
-  /* Chevrons crossfade to the neighbour, wrapping around either end. */
-  const go = (dir: number) => setIndex((i) => (i + dir + count) % count)
+  /* Chevrons slide to the neighbour, wrapping around either end: next travels left
+     like the auto-advance, previous travels right. */
+  const go = (dir: number) => {
+    direction.current = dir
+    setIndex((i) => (i + dir + count) % count)
+  }
 
   const nav =
     count > 1 ? (
@@ -108,7 +173,7 @@ function WorkspaceBanner({
 
   return (
     <section className="wsb" aria-roledescription="carousel" aria-label="Continue learning">
-      <div className="wsb__track">
+      <div className="wsb__track" ref={trackRef}>
         {items.map((item, i) => (
           <Fragment key={item.key}>{item.render(i !== index)}</Fragment>
         ))}
@@ -147,7 +212,7 @@ function Shell({
 
   return (
     <article
-      className={`wsb__slide${hidden ? '' : ' wsb__slide--active'}`}
+      className="wsb__slide"
       style={accented}
       aria-hidden={hidden}
       inert={hidden}
