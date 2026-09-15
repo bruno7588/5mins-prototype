@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Moon, Setting2, Logout, Mobile } from 'iconsax-react'
 import Toggle from '../Toggle/Toggle'
 import { useTheme } from '../../hooks/useTheme'
+import { useImpersonation } from '@/impersonation/ImpersonationContext'
 import './ProfileMenu.css'
 
 interface ProfileMenuProps {
@@ -13,6 +14,8 @@ interface ProfileMenuProps {
 /**
  * Learner-sidebar profile card. Hovers to `--input-background-hover` and opens
  * a small menu (currently just "Log out", which restarts the onboarding flow).
+ * While impersonating, it names the impersonated person with the same name and
+ * role the People table and the banner show.
  */
 export default function ProfileMenu({
   name = 'Anthonny Wallace',
@@ -22,6 +25,9 @@ export default function ProfileMenu({
   const ref = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { isDark, toggle } = useTheme()
+  const { person } = useImpersonation()
+  const displayName = person ? person.name : name
+  const secondary = person ? person.role : email
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -84,8 +90,8 @@ export default function ProfileMenu({
         onClick={() => setOpen((o) => !o)}
       >
         <div className="mt-side__profile-info">
-          <p className="mt-side__profile-name">{name}</p>
-          <p className="mt-side__profile-email">{email}</p>
+          <p className="mt-side__profile-name">{displayName}</p>
+          <p className="mt-side__profile-email">{secondary}</p>
         </div>
         <Setting2 size={16} color="var(--text-secondary)" variant="Linear" />
       </button>

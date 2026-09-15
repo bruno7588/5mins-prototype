@@ -1,0 +1,5 @@
+/* Only there to catch clicks on the locked control; it takes no box of its own, so
+   the control lays out exactly as it would unlocked. */
+.imp-lock {
+  display: contents;
+}

@@ -1,16 +1,38 @@
-/* Impersonation banner (DES-337). Full-width, fixed at the top, over the real app —
-   a dark neutral bar with a multi-colour DS line + glow drifting beneath it. */
+/* Impersonation banner (DES-337) — spec: docs/design-system/impersonation-banner.md.
+   Full-width, fixed at the top, over the real app: a dark neutral bar with a
+   multi-colour DS line + glow drifting beneath it. */
 
-/* Push the app down so the full-width fixed banner doesn't cover it. */
+/* Push the app down so the full-width fixed banner doesn't cover it. One height
+   for every offset below — the banner's rendered height. */
 body.imp-impersonating {
-  padding-top: 71px;
+  --imp-bar-h: 71px;
+  padding-top: var(--imp-bar-h);
 }
 
 /* The banner is fixed at top:0, so the app's own sticky/fixed navs must sit below it
    rather than slide behind it on scroll (.mt-topnav = learner/workspace, .topnav = admin). */
 body.imp-impersonating .mt-topnav,
 body.imp-impersonating .topnav {
-  top: 71px;
+  top: var(--imp-bar-h);
+}
+
+/* Full-height overlays reachable from the learner app start below the banner too.
+   Otherwise the banner (z-index 1090) sits over their top strip — a drawer's title
+   and close button, the lesson feed's close — or, for the quiz stage (1100), the
+   overlay covers the banner and the admin loses sight of the session. The Add
+   Content drawer is excluded: it anchors to its page header, not the viewport top. */
+body.imp-impersonating .side-drawer:not(.add-content-drawer),
+body.imp-impersonating .overlay-backdrop,
+body.imp-impersonating .lf-overlay,
+body.imp-impersonating .confirm-modal-overlay,
+body.imp-impersonating .pcd-quizstage {
+  top: var(--imp-bar-h);
+}
+body.imp-impersonating .side-drawer:not(.add-content-drawer) {
+  height: auto;
+}
+body.imp-impersonating .confirm-modal {
+  max-height: calc(100vh - var(--imp-bar-h) - 64px);
 }
 
 .imp-bar {
@@ -73,7 +95,7 @@ body.imp-impersonating .topnav {
   pointer-events: none;
 }
 
-/* Identity — eye + "Viewing as" + avatar + "{name} · {role}". */
+/* Identity — mask + "Impersonating" + avatar + "{name} · {role}". */
 .imp-bar__who {
   display: flex;
   align-items: center;
@@ -86,12 +108,13 @@ body.imp-impersonating .topnav {
   color: var(--neutral-200);
 }
 .imp-bar__prefix {
-  font-size: 13px;
+  font-size: 14px; /* Paragraph M regular */
   font-weight: 400;
+  line-height: 1.5;
   color: var(--neutral-200);
 }
 .imp-bar__avatar {
-  /* 8px on top of the 4px who-gap = 12px between "Viewing as" and the avatar. */
+  /* 8px on top of the 4px who-gap = 12px between "Impersonating" and the avatar. */
   margin-left: var(--space-s);
   width: 24px;
   height: 24px;
@@ -100,8 +123,10 @@ body.imp-impersonating .topnav {
   place-items: center;
   border-radius: var(--radius-full);
   overflow: hidden;
-  font-size: 9.5px;
-  font-weight: 700;
+  /* Initials fallback at the 24px avatar's text size (avatars.md: 8px / 1.5). */
+  font-size: 8px;
+  font-weight: 400;
+  line-height: 1.5;
   color: var(--neutral-25);
   background: color-mix(in srgb, var(--neutral-25) 16%, transparent);
 }
@@ -113,8 +138,9 @@ body.imp-impersonating .topnav {
 .imp-bar__label {
   /* 4px on top of the 4px who-gap = 8px between the avatar and the name/role. */
   margin-left: var(--space-xs);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px; /* Paragraph M */
+  font-weight: 400;
+  line-height: 1.5;
   color: var(--neutral-25);
 }
 /* Paragraph M semibold */
@@ -124,8 +150,9 @@ body.imp-impersonating .topnav {
   line-height: 1.5;
 }
 .imp-bar__role {
-  font-size: 12px; /* Paragraph S */
+  font-size: 12px; /* Paragraph S regular */
   font-weight: 400;
+  line-height: 1.2;
   color: var(--neutral-300);
 }
 
@@ -171,8 +198,9 @@ body.imp-impersonating .topnav {
   animation: imp-dot-pulse 1.6s ease-out infinite;
 }
 .imp-bar__time {
-  font-size: 12.5px;
+  font-size: 14px; /* Paragraph M regular, tabular digits */
   font-weight: 400;
+  line-height: 1.5;
   color: var(--neutral-200);
   font-variant-numeric: tabular-nums;
   /* Fixed width for "MM:SS" so the clock + time never reflow as the digits change.

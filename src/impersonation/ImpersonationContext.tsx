@@ -43,8 +43,9 @@ interface ImpersonationValue {
   exit: () => void
   /** Record something the admin did inside the learner view (opened a course…). */
   logActivity: (text: string) => void
-  /** Record + surface a blocked sensitive action (password, email, role, notifications). */
-  logBlocked: (what: string) => void
+  /** Record an attempt at something not allowed while impersonating. `action` is the
+   *  same verb phrase the lock's tooltip uses ("open Admin", "change their email"). */
+  logBlocked: (action: string) => void
   /** Prototype review: jump the countdown to just before the next phase (5:03 → 1:03 → back to 60:00). */
   skipAhead: () => void
 }
@@ -61,7 +62,6 @@ let auditIdCounter = 0
 
 export function ImpersonationProvider({ children }: { children: ReactNode }) {
   const admin = useCurrentUser()
-  const adminFirst = admin.name.split(' ')[0]
   const navigate = useNavigate()
 
   const [person, setPerson] = useState<ImpersonatedPerson | null>(null)
@@ -87,8 +87,8 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
       critWarned.current = false
       setRemaining(SESSION_SECONDS)
       setPerson(target)
-      addAudit('start', `${admin.name} started impersonating ${target.name}`)
-      show('success', `Impersonating ${target.name} · session started and logged`)
+      addAudit('start', `Impersonation of ${target.name} by ${admin.name} started`)
+      show('success', `Impersonation started for ${target.name} - this session is logged`)
       /* Drop into the learner's real home rather than a mock — the banner rides on top. */
       navigate('/workspace')
       window.scrollTo(0, 0)
@@ -98,10 +98,10 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
 
   const exit = useCallback(() => {
     setPerson((current) => {
-      if (current) addAudit('end', `${admin.name} exited impersonation of ${current.name}`)
+      if (current) addAudit('end', `Impersonation of ${current.name} by ${admin.name} ended`)
       return null
     })
-    show('success', `Impersonation ended · you're back as ${admin.name}`)
+    show('success', `Impersonation ended - you're back as ${admin.name}`)
     navigate('/people')
     window.scrollTo(0, 0)
   }, [admin.name, addAudit, show, navigate])
@@ -110,18 +110,18 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
     (text: string) => {
       /* The standing "Audited · acting as …" line in the bar is the reminder, so
          activity is logged silently — no per-action toast. */
-      if (person) addAudit('action', `${text} — acting as ${person.name}`)
+      if (person) addAudit('action', `${text} while impersonating ${person.name}`)
     },
     [person, addAudit],
   )
 
+  /* No toast: the locked control's tooltip has already said why, so the attempt is
+     only recorded. */
   const logBlocked = useCallback(
-    (what: string) => {
-      const first = person ? person.name.split(' ')[0] : 'the learner'
-      addAudit('blocked', `Blocked: ${admin.name} tried to change ${first}'s ${what}`)
-      show('error', `Blocked while impersonating - you can't change someone else's ${what}`)
+    (action: string) => {
+      addAudit('blocked', `Blocked: ${admin.name} tried to ${action} while impersonating`)
     },
-    [person, admin.name, addAudit, show],
+    [admin.name, addAudit],
   )
 
   const skipAhead = useCallback(() => {
@@ -156,20 +156,20 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
     if (!person) return
     if (remaining <= WARN_AT && remaining > CRIT_AT && !warned.current) {
       warned.current = true
-      show('warning', '5 minutes left in this impersonation session - wrap up soon.')
+      show('warning', '5 minutes left - impersonation ends automatically after 60 minutes')
     }
     if (remaining <= CRIT_AT && remaining > 0 && !critWarned.current) {
       critWarned.current = true
-      show('warning', `Under a minute left - the session will end and return you to ${adminFirst} automatically.`)
+      show('warning', `Less than 1 minute left - impersonation will end automatically`)
     }
     if (remaining <= 0) {
-      addAudit('expired', `Session with ${person.name} auto-expired after 60 minutes`)
+      addAudit('expired', `Impersonation of ${person.name} by ${admin.name} expired after 60 minutes`)
       setPerson(null)
-      show('success', `Session auto-expired after 60 minutes · back as ${admin.name}`)
+      show('success', `Impersonation expired after 60 minutes - you're back as ${admin.name}`)
       navigate('/people')
       window.scrollTo(0, 0)
     }
-  }, [remaining, person, adminFirst, admin.name, addAudit, show, navigate])
+  }, [remaining, person, admin.name, addAudit, show, navigate])
 
   const value: ImpersonationValue = {
     person,

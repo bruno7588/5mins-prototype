@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Add, ArrowDown2, FlashCircle, Mobile, ShieldSecurity } from 'iconsax-react'
+import { Add, ArrowDown2, FlashCircle, Mobile } from 'iconsax-react'
 import { Logo, learnerSideItems } from '../my-team/MyTeam'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Carousel from '../../components/Carousel/Carousel'
@@ -12,6 +12,7 @@ import { heroSlides, skillCards, jumpBackIn } from './mockItems'
 import { feedLessons } from './feedItems'
 import '../my-team/MyTeam.css'
 import './ForYou.css'
+import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
 function ForYou() {
   const navigate = useNavigate()
@@ -59,10 +60,7 @@ function ForYou() {
                 </button>
               )
             })}
-            <button type="button" className="mt-side__item" onClick={() => navigate('/content-library')}>
-              <ShieldSecurity size={24} color="var(--text-secondary)" variant="Bold" />
-              <span>Admin</span>
-            </button>
+            <AdminMenuItem />
           </nav>
 
           <ProfileMenu />

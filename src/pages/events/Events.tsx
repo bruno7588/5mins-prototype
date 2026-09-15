@@ -4,7 +4,6 @@ import {
   Add,
   FlashCircle,
   Mobile,
-  ShieldSecurity,
 } from 'iconsax-react'
 import { Logo, learnerSideItems } from '../my-team/MyTeam'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
@@ -15,6 +14,7 @@ import './Events.css'
 import { EventCard } from '../calendar/CalendarView'
 import { upcomingItems, pastItems, type CalendarItem } from '../calendar/mockItems'
 import EventDetailsDrawer from '../workspace/EventDetailsDrawer'
+import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
 function Events() {
   const navigate = useNavigate()
@@ -69,14 +69,7 @@ function Events() {
                 </button>
               )
             })}
-            <button
-              type="button"
-              className="mt-side__item"
-              onClick={() => navigate('/content-library')}
-            >
-              <ShieldSecurity size={24} color="var(--text-secondary)" variant="Bold" />
-              <span>Admin</span>
-            </button>
+            <AdminMenuItem />
           </nav>
 
           <ProfileMenu />

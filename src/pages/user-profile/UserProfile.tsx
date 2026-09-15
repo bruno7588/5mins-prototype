@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle, ShieldSecurity } from 'iconsax-react'
+import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Badge from '../../components/Badge/Badge'
@@ -32,6 +32,7 @@ import thumb7 from '../../assets/programs/course-thumbs/course-thumb-7.jpg'
 import thumb8 from '../../assets/programs/course-thumbs/course-thumb-8.jpg'
 import thumb9 from '../../assets/programs/course-thumbs/course-thumb-9.jpg'
 import './UserProfile.css'
+import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
 /* ─── Header lookup ─── Mirrors the active People rows (src/pages/people/People.tsx)
    so a profile resolves from its route id. Kept minimal on purpose — a prototype
@@ -787,14 +788,7 @@ function UserProfile() {
                   </button>
                 )
               })}
-              <button
-                type="button"
-                className="mt-side__item"
-                onClick={() => navigate('/content-library')}
-              >
-                <ShieldSecurity size={24} color="var(--text-secondary)" variant="Bold" />
-                <span>Admin</span>
-              </button>
+              <AdminMenuItem />
             </nav>
 
             <ProfileMenu />

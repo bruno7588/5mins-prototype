@@ -3,7 +3,7 @@ import { useImpersonation } from './ImpersonationContext'
 import type { AuditKind } from './types'
 import './AuditTrail.css'
 
-/* One colour per kind, mirroring the bar/toast semantics: start = orange, exit =
+/* One colour per kind, mirroring the bar/toast semantics: start = orange, end =
    green, blocked = red, expired = grey, in-session activity = brand. */
 const DOT: Record<AuditKind, string> = {
   start: 'var(--warning-500)',
@@ -20,7 +20,7 @@ function when(at: number): string {
 
 /**
  * Admin-facing impersonation audit trail (DES-337). Renders under the People table
- * and lists every session event — start, exit, auto-expiry, blocked attempts and
+ * and lists every session event — start, end, expiry, blocked attempts and
  * in-session activity — newest first, read from the shared session context.
  */
 function AuditTrail() {
@@ -36,8 +36,8 @@ function AuditTrail() {
 
       {audit.length === 0 ? (
         <div className="imp-audit__empty">
-          No impersonation sessions yet. Start one from a person's ⋯ menu — every start, exit, blocked
-          attempt and in-session activity is recorded here.
+          No impersonations yet. Start one from a person's ⋯ menu. Every start, end, expiry,
+          blocked attempt and activity is recorded here.
         </div>
       ) : (
         audit.map((e) => (

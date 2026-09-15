@@ -57,14 +57,14 @@ function ImpersonateConfirmModal({ person, onClose, onConfirm }: Props) {
           </li>
           <li>
             <Clock size={20} color="var(--text-tertiary)" variant="Linear" className="imp-confirm__fi" />
-            <span>The session ends after 60 minutes, with a warning first.</span>
+            <span>Impersonation ends after 60 minutes, with a warning first.</span>
           </li>
         </ul>
       </div>
 
       <div className="imp-confirm__foot">
         <Button variant="outlined-2" onClick={onClose}>Cancel</Button>
-        <Button onClick={onConfirm}>Start Impersonating</Button>
+        <Button onClick={onConfirm}>Start Impersonation</Button>
       </div>
     </ConfirmModal>
   )

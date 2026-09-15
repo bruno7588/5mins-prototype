@@ -7,7 +7,6 @@ import {
   Mobile,
   PlayCircle,
   Routing,
-  ShieldSecurity,
 } from 'iconsax-react'
 import { Logo, learnerSideItems } from '../my-team/MyTeam'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
@@ -23,6 +22,7 @@ import avatar1 from '../../assets/programs/avatar-1.png'
 import avatar2 from '../../assets/programs/avatar-2.png'
 import avatar3 from '../../assets/programs/avatar-3.png'
 import coursesIcon from '../../assets/programs/courses-icon.svg'
+import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
 const SEGMENTS = 8
 
@@ -100,10 +100,7 @@ function ProgramDetails() {
                 </button>
               )
             })}
-            <button type="button" className="mt-side__item" onClick={() => navigate('/content-library')}>
-              <ShieldSecurity size={24} color="var(--text-secondary)" variant="Bold" />
-              <span>Admin</span>
-            </button>
+            <AdminMenuItem />
           </nav>
 
           <ProfileMenu />

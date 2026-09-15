@@ -1,0 +1,16 @@
+/* Disabled nav item (navigation.md): --text-disabled, not-allowed, no hover fill. */
+.mt-side__item.admin-menu-item--disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.mt-side__item.admin-menu-item--disabled:hover {
+  background: transparent;
+}
+
+/* The tooltip wrapper and trigger are inline by default; the menu item fills the row. */
+.admin-menu-item__tip,
+.admin-menu-item__tip > .tooltip__trigger {
+  display: flex;
+  width: 100%;
+}

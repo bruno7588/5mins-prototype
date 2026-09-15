@@ -13,7 +13,6 @@ import {
   Mobile,
   PlayCircle,
   Share,
-  ShieldSecurity,
 } from 'iconsax-react'
 import { Logo, learnerSideItems } from '../my-team/MyTeam'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
@@ -35,6 +34,7 @@ import type { CoursePreviewPayload } from '../your-courses/previewCourse'
 import '../quiz-lab/quiz-lab.css'
 import jewelsIllustration from '../../assets/programs/jewels.svg'
 import certificateIllustration from '../../assets/programs/certificate.svg'
+import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
 const SEGMENTS = 8
 
@@ -186,10 +186,7 @@ function ProgramCourseDetails() {
                 </button>
               )
             })}
-            <button type="button" className="mt-side__item" onClick={() => navigate('/content-library')}>
-              <ShieldSecurity size={24} color="var(--text-secondary)" variant="Bold" />
-              <span>Admin</span>
-            </button>
+            <AdminMenuItem />
           </nav>
 
           <ProfileMenu />

@@ -10,7 +10,6 @@ import {
   Award,
   Medal,
   UserSquare,
-  ShieldSecurity,
   FlashCircle,
   Messages2,
   Add,
@@ -44,6 +43,7 @@ import { formatRelative } from './relativeTime'
 import { coursesTotal, type CourseStatus } from './memberStatus'
 import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
 import './MyTeam.css'
+import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
 export function Logo({ size = 22 }: { size?: number }) {
   return (
@@ -635,14 +635,7 @@ function MyTeam() {
                 </button>
               )
             })}
-            <button
-              type="button"
-              className="mt-side__item"
-              onClick={() => navigate('/content-library')}
-            >
-              <ShieldSecurity size={24} color="var(--text-secondary)" variant="Bold" />
-              <span>Admin</span>
-            </button>
+            <AdminMenuItem />
           </nav>
 
           <ProfileMenu />

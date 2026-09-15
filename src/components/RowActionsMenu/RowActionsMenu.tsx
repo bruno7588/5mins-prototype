@@ -139,10 +139,12 @@ function RowActionsMenu({
                   type="button"
                   role="menuitem"
                   className={`ram-item${item.description ? ' ram-item--stacked' : ''}${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}`}
-                  disabled={item.disabled}
+                  /* aria-disabled only, not the native attribute: a natively disabled
+                     item drops out of the tab order, so keyboard and screen-reader
+                     users would never reach it or its reason. */
                   aria-disabled={item.disabled || undefined}
                   title={item.title}
-                  onClick={() => handleSelect(item.key)}
+                  onClick={item.disabled ? undefined : () => handleSelect(item.key)}
                 >
                   {item.icon && <span className="ram-item-icon">{item.icon}</span>}
                   {item.description ? (

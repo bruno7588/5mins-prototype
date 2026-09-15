@@ -224,9 +224,16 @@ function People() {
   const [impersonateTarget, setImpersonateTarget] = useState<PersonRow | null>(null)
   const { start: startImpersonation } = useImpersonation()
 
-  /** A row carries a job title in `role`; admin power is `limitedAdmin`. An admin
-   *  can only impersonate roles below their own, so Limited Admins are off-limits. */
-  const canImpersonate = (person: PersonRow) => !person.limitedAdmin
+  /** Why this person can't be impersonated, or undefined if they can. An admin can
+   *  only impersonate roles below their own, so Limited Admins are off-limits; and
+   *  an Invited person has never signed in, so there is no learner experience to
+   *  reproduce and nothing should be done on an account they haven't claimed. */
+  const impersonateBlockReason = (person: PersonRow): string | undefined => {
+    if (person.limitedAdmin) return 'Not available for admins'
+    if (person.status === 'Invited') return "Available once they've signed up"
+    return undefined
+  }
+  const canImpersonate = (person: PersonRow) => !impersonateBlockReason(person)
 
   /** Narrow a table row to the identity the session, bar and audit trail name. */
   const toImpersonated = (person: PersonRow): ImpersonatedPerson => ({
@@ -254,13 +261,15 @@ function People() {
          nowhere yet: a greyed row in a short menu reads as broken. */
       { key: 'change-manager', label: 'Change Manager', icon: icon(Profile2User) },
       /* Support action — after the routine edits, before the role grants. Disabled
-         for Limited Admins: you can only impersonate roles below your own (DES-337). */
+         for Limited Admins and Invited people (DES-337), with the reason as visible
+         supporting text rather than a hover title, so keyboard and screen-reader
+         users get it too. currentColor so the icon greys with the label. */
       {
         key: 'impersonate',
         label: 'Impersonate user',
-        icon: <ImpersonateIcon size={20} color="var(--text-primary)" />,
+        icon: <ImpersonateIcon size={20} color="currentColor" />,
         disabled: !canImpersonate(person),
-        title: canImpersonate(person) ? undefined : 'You can only impersonate roles below your own',
+        description: impersonateBlockReason(person),
       },
       {
         key: 'admin',

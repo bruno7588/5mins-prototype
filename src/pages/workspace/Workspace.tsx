@@ -4,7 +4,6 @@ import {
   Add,
   FlashCircle,
   Mobile,
-  ShieldSecurity,
 } from 'iconsax-react'
 import { Logo, learnerSideItems } from '../my-team/MyTeam'
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
@@ -20,6 +19,7 @@ import WorkspaceBanner from '@/components/WorkspaceBanner/WorkspaceBanner'
 import EventDetailsDrawer from './EventDetailsDrawer'
 import { workspaceCourses, workspaceCategories } from './mockItems'
 import { getAllPrograms } from '../programs/programStore'
+import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
 function Workspace() {
   const navigate = useNavigate()
@@ -72,14 +72,7 @@ function Workspace() {
                 </button>
               )
             })}
-            <button
-              type="button"
-              className="mt-side__item"
-              onClick={() => navigate('/content-library')}
-            >
-              <ShieldSecurity size={24} color="var(--text-secondary)" variant="Bold" />
-              <span>Admin</span>
-            </button>
+            <AdminMenuItem />
           </nav>
 
           <ProfileMenu />
