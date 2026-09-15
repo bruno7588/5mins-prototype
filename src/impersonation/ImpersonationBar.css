@@ -1,7 +1,7 @@
 /* Impersonation banner (DES-337) — spec: docs/design-system/impersonation-banner.md,
    Figma People 9600:43180 (normal), 9601:44620 (warning), 9601:46094 (critical).
-   Full-width, fixed at the top, over the real app: a tinted bar whose text, dot and
-   DS button all take one semantic colour per session state. */
+   Full-width, fixed at the top, over the real app: a tinted bar whose text and dot
+   take one semantic colour per session state. The End button is always DS Filled. */
 
 /* Push the app down so the full-width fixed banner doesn't cover it. One height
    for every offset below — the banner's rendered height. */

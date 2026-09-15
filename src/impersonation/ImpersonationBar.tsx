@@ -12,14 +12,12 @@ function mmss(total: number): string {
   return `${m}:${s}`
 }
 
-/** The End button follows the session state with the matching DS filled button. */
-const END_BUTTON_SEMANTIC = { normal: 'primary', warning: 'warning', critical: 'danger' } as const
-
 /**
  * The banner shown while impersonating: identity on the left, the session countdown and
  * End Impersonation on the right. A tinted bar whose colour escalates from primary to
  * warning to danger as the 60-minute cap nears (Figma People 9600:43180 / 9601:44620 /
- * 9601:46094).
+ * 9601:46094). The End button stays the primary Filled button in every state: ending is
+ * the safe exit, not a destructive or cautionary action.
  */
 function ImpersonationBar() {
   const { person, remaining, phase, exit, skipAhead } = useImpersonation()
@@ -53,7 +51,6 @@ function ImpersonationBar() {
         </button>
 
         <Button
-          semantic={END_BUTTON_SEMANTIC[phase]}
           onClick={exit}
           icon={<Logout size={20} color="currentColor" variant="Linear" />}
         >

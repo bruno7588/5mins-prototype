@@ -21,7 +21,7 @@ The bar is a flex row with `justify-content: space-between`: the identity group 
 | | Person (gap 8px) | 24px avatar (photo, or initials 8 / 400 / 1.5 on the state colour at 16%) + label |
 | | Label (gap 4px) | Name, Paragraph M semibold (14 / 600 / 1.5) + "· {role}", Paragraph S regular (12 / 400 / 1.2) |
 | Session (gap 16px) | Timer (gap 4px) | 16px dot slot + `mm:ss`, Paragraph M regular, tabular digits, 5ch minimum width |
-| | End Impersonation | DS medium filled button with `Logout` 20px, semantic per state (below) — no overrides |
+| | End Impersonation | DS medium Filled (primary) button with `Logout` 20px, the same in every state — no overrides |
 
 Every text colour and the mask icon use the state's foreground colour.
 
@@ -36,11 +36,13 @@ Background: the state tint layered over --page-background, so the fixed bar stay
 
 ## States
 
-| State | When | Background tint | Text + mask | Dot | End button |
-|---|---|---|---|---|---|
-| **Normal** | > 5:00 left | Primary-500 @ 16% | `--text-progress` | `--text-progress` | DS Filled (primary) |
-| **Warning** | ≤ 5:00 | Warning-500 @ 24% | `--text-warning` | `--text-warning` | DS Warning filled |
-| **Critical** | ≤ 1:00 | Danger-500 @ 24% | `--text-error` | centre `--text-error`, ring `--danger-300` | DS Danger filled |
+| State | When | Background tint | Text + mask | Dot |
+|---|---|---|---|---|
+| **Normal** | > 5:00 left | Primary-500 @ 16% | `--text-progress` | `--text-progress` |
+| **Warning** | ≤ 5:00 | Warning-500 @ 24% | `--text-warning` | `--text-warning` |
+| **Critical** | ≤ 1:00 | Danger-500 @ 24% | `--text-error` | centre `--text-error`, ring `--danger-300` |
+
+The End Impersonation button is DS Filled (primary) in all three states. Warning buttons mean "caution" and Danger buttons mean "destructive", but ending the session is the safe, recommended exit. The tint, text, dot and toasts carry the urgency; the button stays constant so the way out never changes.
 
 The text tokens are theme-aware (light: Primary-700 / Warning-600 / Danger-500; dark: Primary-500 / Warning-500 / Danger-400). The state switches instantly on the tick that crosses the threshold, and a toast announces 5:00 and 1:00 — see `alerts-toast.md` and the copy below.
 
