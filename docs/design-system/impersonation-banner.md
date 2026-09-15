@@ -30,7 +30,7 @@ Every text colour and the mask icon use the state's foreground colour.
 ```
 Position:  fixed, top 0, full width, z-index 1090 (above drawers 1000 and confirm modals 1050, below toasts 1100)
 Padding:   12px top/bottom (--space-sm), 24px sides (--space-l)
-Height:    67px (12px + the 43px DS medium button + 12px) — published as --imp-bar-h on body.imp-impersonating
+Height:    65px (12px + the 41px DS medium button + 12px) — published as --imp-bar-h on body.imp-impersonating
 Background: the state tint layered over --page-background, so the fixed bar stays opaque over scrolling content
 ```
 
@@ -68,7 +68,7 @@ One vocabulary for the whole feature: **impersonation** started / ended / expire
 | Row menu | Impersonate user — disabled with supporting text "Not available for admins" / "Available once they've signed up" |
 | Confirm button | Start Impersonation |
 | Banner | Impersonating · End Impersonation |
-| Toasts | Impersonation started for {name} - this session is logged · 5 minutes left - impersonation ends automatically after 60 minutes · Less than 1 minute left - impersonation will end automatically · Impersonation ended - you're back as {admin} · Impersonation expired after 60 minutes - you're back as {admin} |
+| Toasts | Impersonating {name} · 5 minutes left · Less than 1 minute left · Impersonation ended · Impersonation expired |
 | Locked action tooltip | You can't {action} while impersonating — e.g. "You can't open Admin while impersonating" |
 | Audit log entries (recorded in session state; no UI in the prototype) | Impersonation of {name} by {admin} started / ended / expired after 60 minutes · Blocked: {admin} tried to {action} while impersonating · {activity} while impersonating {name} |
 

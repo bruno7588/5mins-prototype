@@ -88,7 +88,7 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
       setRemaining(SESSION_SECONDS)
       setPerson(target)
       addAudit('start', `Impersonation of ${target.name} by ${admin.name} started`)
-      show('success', `Impersonation started for ${target.name} - this session is logged`)
+      show('success', `Impersonating ${target.name}`)
       /* Drop into the learner's real home rather than a mock — the banner rides on top. */
       navigate('/workspace')
       window.scrollTo(0, 0)
@@ -101,7 +101,7 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
       if (current) addAudit('end', `Impersonation of ${current.name} by ${admin.name} ended`)
       return null
     })
-    show('success', `Impersonation ended - you're back as ${admin.name}`)
+    show('success', 'Impersonation ended')
     navigate('/people')
     window.scrollTo(0, 0)
   }, [admin.name, addAudit, show, navigate])
@@ -156,16 +156,16 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
     if (!person) return
     if (remaining <= WARN_AT && remaining > CRIT_AT && !warned.current) {
       warned.current = true
-      show('warning', '5 minutes left - impersonation ends automatically after 60 minutes')
+      show('warning', '5 minutes left')
     }
     if (remaining <= CRIT_AT && remaining > 0 && !critWarned.current) {
       critWarned.current = true
-      show('warning', `Less than 1 minute left - impersonation will end automatically`)
+      show('warning', 'Less than 1 minute left')
     }
     if (remaining <= 0) {
       addAudit('expired', `Impersonation of ${person.name} by ${admin.name} expired after 60 minutes`)
       setPerson(null)
-      show('success', `Impersonation expired after 60 minutes - you're back as ${admin.name}`)
+      show('success', 'Impersonation expired')
       navigate('/people')
       window.scrollTo(0, 0)
     }
