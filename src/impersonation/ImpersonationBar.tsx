@@ -37,19 +37,13 @@ function ImpersonationBar() {
 
       <span className="imp-bar__spacer" />
 
-      {/* Dev only: click the timer to jump to 5:03, then 1:03, then back to 60:00, so the
-          warning and critical states can be reviewed without waiting out the session. */}
-      {import.meta.env.DEV ? (
-        <button type="button" className="imp-bar__timer imp-bar__timer--dev" onClick={skipAhead} title="Dev: skip ahead">
-          <span className="imp-bar__dot" aria-hidden="true" />
-          <span className="imp-bar__time">{mmss(remaining)}</span>
-        </button>
-      ) : (
-        <span className="imp-bar__timer">
-          <span className="imp-bar__dot" aria-hidden="true" />
-          <span className="imp-bar__time">{mmss(remaining)}</span>
-        </span>
-      )}
+      {/* Prototype review: click the timer to jump to 5:03, then 1:03, then back to 60:00,
+          so the warning and critical states can be seen without waiting out the session.
+          Kept in deployed builds too, so reviewers can use it. */}
+      <button type="button" className="imp-bar__timer imp-bar__timer--dev" onClick={skipAhead} title="Skip ahead">
+        <span className="imp-bar__dot" aria-hidden="true" />
+        <span className="imp-bar__time">{mmss(remaining)}</span>
+      </button>
 
       <Button
         onClick={exit}

@@ -45,7 +45,7 @@ interface ImpersonationValue {
   logActivity: (text: string) => void
   /** Record + surface a blocked sensitive action (password, email, role, notifications). */
   logBlocked: (what: string) => void
-  /** Dev only: jump the countdown to just before the next phase (5:03 → 1:03 → back to 60:00). */
+  /** Prototype review: jump the countdown to just before the next phase (5:03 → 1:03 → back to 60:00). */
   skipAhead: () => void
 }
 
