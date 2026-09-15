@@ -5,7 +5,7 @@
 /* Push the app down so the full-width fixed banner doesn't cover it. One height
    for every offset below — the banner's rendered height. */
 body.imp-impersonating {
-  --imp-bar-h: 71px;
+  --imp-bar-h: 63px; /* 12px + 39px End button + 12px */
   padding-top: var(--imp-bar-h);
 }
 
@@ -44,7 +44,7 @@ body.imp-impersonating .confirm-modal {
   display: flex;
   align-items: center;
   gap: var(--space-sm); /* 12px */
-  padding: var(--space-m) var(--space-l); /* 16px top/bottom, 24px sides */
+  padding: var(--space-sm) var(--space-l); /* 12px top/bottom, 24px sides */
   color: var(--neutral-25);
   background: var(--neutral-900);
   /* The line + glow rotate through a spread of DS hues. */
