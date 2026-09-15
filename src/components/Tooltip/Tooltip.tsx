@@ -17,6 +17,8 @@ interface TooltipProps {
   disabled?: boolean
   children?: ReactNode
   className?: string
+  /** Extra class on the portaled bubble, e.g. to change its distance from the trigger. */
+  bodyClassName?: string
 }
 
 function Tooltip({
@@ -29,6 +31,7 @@ function Tooltip({
   disabled = false,
   children,
   className = '',
+  bodyClassName,
 }: TooltipProps) {
   const [visible, setVisible] = useState(false)
   const triggerRef = useRef<HTMLElement | null>(null)
@@ -128,7 +131,7 @@ function Tooltip({
               zIndex: 2000,
             }}
           >
-            <div role="tooltip" className={`tooltip__body ${posClass}`}>
+            <div role="tooltip" className={`tooltip__body ${posClass}${bodyClassName ? ` ${bodyClassName}` : ''}`}>
               {caretBefore && caret}
               <div className="tooltip__content">{text}</div>
               {caretAfter && caret}

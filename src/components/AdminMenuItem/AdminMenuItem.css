@@ -8,9 +8,10 @@
   background: transparent;
 }
 
-/* The tooltip wrapper and trigger are inline by default; the menu item fills the row. */
-.admin-menu-item__tip,
-.admin-menu-item__tip > .tooltip__trigger {
+/* The wrapper takes the menu row; the trigger hugs the item (icon + label + its
+   padding), so the tooltip anchors to the item's own edge rather than the far side
+   of the side menu. */
+.admin-menu-item__tip {
   display: flex;
   width: 100%;
 }

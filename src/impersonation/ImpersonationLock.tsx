@@ -29,6 +29,7 @@ function ImpersonationLock({ action, children, position = 'Top', className }: Pr
   return (
     <Tooltip
       className={className}
+      bodyClassName="imp-lock__tip"
       text={`You can't ${action} while impersonating`}
       position={position}
       icon={false}

@@ -92,7 +92,7 @@ The reference implementation is the learner side menu's **Admin** item (`src/com
 |---|---|
 | Visibility | The control stays in place — never hidden, so the page matches what the learner sees |
 | State | Disabled look (`--text-disabled` label and icon, `cursor: not-allowed`, no hover fill), `aria-disabled="true"` — **not** the native `disabled` attribute, so it stays in the tab order |
-| Reason | DS Tooltip (no info icon) on hover **and** keyboard focus: "You can't {action} while impersonating". Position it where it doesn't cover the control's neighbours (Right for a side-menu item) |
+| Reason | DS Tooltip (no info icon) on hover **and** keyboard focus: "You can't {action} while impersonating". Position it where it doesn't cover the control's neighbours (Right for a side-menu item), 4px from the control's own edge — anchor to the control itself, not a full-width row |
 | Click | Swallowed — nothing happens, no toast — and recorded in the audit trail as "Blocked: {admin} tried to {action} while impersonating" |
 | Outside a session | The control renders untouched |
 

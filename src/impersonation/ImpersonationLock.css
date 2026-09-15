@@ -1,3 +1,17 @@
+/* The reason sits 4px from the locked control's edge (the DS default is 2px). */
+.imp-lock__tip[class*='tooltip__body--right'] {
+  left: calc(100% + var(--space-xs));
+}
+.imp-lock__tip[class*='tooltip__body--left'] {
+  right: calc(100% + var(--space-xs));
+}
+.imp-lock__tip[class*='tooltip__body--top'] {
+  bottom: calc(100% + var(--space-xs));
+}
+.imp-lock__tip[class*='tooltip__body--bottom'] {
+  top: calc(100% + var(--space-xs));
+}
+
 /* Only there to catch clicks on the locked control; it takes no box of its own, so
    the control lays out exactly as it would unlocked. */
 .imp-lock {
