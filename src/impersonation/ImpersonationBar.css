@@ -1,11 +1,12 @@
-/* Impersonation banner (DES-337) — spec: docs/design-system/impersonation-banner.md.
-   Full-width, fixed at the top, over the real app: a dark neutral bar with a
-   multi-colour DS line + glow drifting beneath it. */
+/* Impersonation banner (DES-337) — spec: docs/design-system/impersonation-banner.md,
+   Figma People 9600:43180 (normal), 9601:44620 (warning), 9601:46094 (critical).
+   Full-width, fixed at the top, over the real app: a tinted bar whose text, dot and
+   DS button all take one semantic colour per session state. */
 
 /* Push the app down so the full-width fixed banner doesn't cover it. One height
    for every offset below — the banner's rendered height. */
 body.imp-impersonating {
-  --imp-bar-h: 63px; /* 12px + 39px End button + 12px */
+  --imp-bar-h: 67px; /* 12px + 43px DS medium button + 12px */
   padding-top: var(--imp-bar-h);
 }
 
@@ -43,79 +44,59 @@ body.imp-impersonating .confirm-modal {
   z-index: 1090;
   display: flex;
   align-items: center;
-  gap: var(--space-sm); /* 12px */
+  justify-content: space-between;
+  gap: var(--space-m);
   padding: var(--space-sm) var(--space-l); /* 12px top/bottom, 24px sides */
-  color: var(--neutral-25);
-  background: var(--neutral-900);
-  /* The line + glow rotate through a spread of DS hues. */
-  --imp-line: linear-gradient(
-    90deg,
-    var(--primary-500),
-    var(--certificate-quiz),
-    var(--blaze-quiz),
-    var(--flash-poll),
-    var(--lesson-quiz),
-    var(--warning-500),
-    var(--success-500),
-    var(--course-assessments),
-    var(--primary-500)
-  );
+  /* One colour per state drives the text and mask; the dot has its own. The tint is
+     layered over the page ground so the fixed bar stays opaque over scrolling content. */
+  --imp-fg: var(--text-progress);
+  --imp-dot: var(--text-progress);
+  --imp-tint: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% */
+  color: var(--imp-fg);
+  background: linear-gradient(var(--imp-tint), var(--imp-tint)), var(--page-background);
 }
 
-/* Soft glow just below the banner — same gradient + drift as the line, blurred and
-   faded so it reads as a subtle shadow rather than a second bar. */
-.imp-bar::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: 10px;
-  background: var(--imp-line);
-  background-size: 300% 100%;
-  opacity: 0.55;
-  filter: blur(5px);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent);
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent);
-  animation: imp-drift 8s linear infinite;
-  pointer-events: none;
+/* Under 5 minutes */
+.imp-bar--warning {
+  --imp-fg: var(--text-warning);
+  --imp-dot: var(--text-warning);
+  --imp-tint: rgba(255, 165, 56, 0.24); /* Warning-500 @ 24% */
 }
 
-/* 1px line along the banner's bottom edge, its DS colours drifting sideways. */
-.imp-bar::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: 1px;
-  background: var(--imp-line);
-  background-size: 300% 100%;
-  animation: imp-drift 8s linear infinite;
-  pointer-events: none;
+/* Final minute */
+.imp-bar--critical {
+  --imp-fg: var(--text-error);
+  --imp-dot: var(--danger-300);
+  --imp-dot-core: var(--text-error); /* the centre dot takes the text colour; the ring stays Danger-300 */
+  --imp-tint: rgba(223, 22, 66, 0.24); /* Danger-500 @ 24% */
 }
 
-/* Identity — mask + "Impersonating" + avatar + "{name} · {role}". */
-.imp-bar__who {
+/* Identity — [mask + "Impersonating"] [avatar + "{name} · {role}"] */
+.imp-bar__identity,
+.imp-bar__prefix,
+.imp-bar__person,
+.imp-bar__session,
+.imp-bar__timer {
   display: flex;
   align-items: center;
-  gap: var(--space-xs); /* 4px */
+  min-width: 0;
 }
-.imp-bar__eye {
+.imp-bar__identity { gap: var(--space-sm); } /* 12px */
+.imp-bar__prefix,
+.imp-bar__person { gap: var(--space-s); } /* 8px */
+.imp-bar__timer { gap: var(--space-xs); } /* 4px */
+.imp-bar__session { gap: var(--space-m); flex-shrink: 0; } /* 16px */
+
+.imp-bar__mask {
   flex: 0 0 20px;
-  /* 4px on top of the 4px who-gap = 8px between the mask and "Impersonating". */
-  margin-right: var(--space-xs);
-  color: var(--neutral-200);
 }
-.imp-bar__prefix {
+.imp-bar__prefix-text {
   font-size: 14px; /* Paragraph M regular */
   font-weight: 400;
   line-height: 1.5;
-  color: var(--neutral-200);
+  white-space: nowrap;
 }
 .imp-bar__avatar {
-  /* 8px on top of the 4px who-gap = 12px between "Impersonating" and the avatar. */
-  margin-left: var(--space-s);
   width: 24px;
   height: 24px;
   flex: 0 0 24px;
@@ -127,8 +108,7 @@ body.imp-impersonating .confirm-modal {
   font-size: 8px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--neutral-25);
-  background: color-mix(in srgb, var(--neutral-25) 16%, transparent);
+  background: color-mix(in srgb, currentColor 16%, transparent);
 }
 .imp-bar__avatar img {
   width: 100%;
@@ -136,16 +116,13 @@ body.imp-impersonating .confirm-modal {
   object-fit: cover;
 }
 .imp-bar__label {
-  /* 4px on top of the 4px who-gap = 8px between the avatar and the name/role. */
-  margin-left: var(--space-xs);
-  font-size: 14px; /* Paragraph M */
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--neutral-25);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs); /* 4px */
+  white-space: nowrap;
 }
-/* Paragraph M semibold */
-.imp-bar__label strong {
-  font-size: 14px;
+.imp-bar__name {
+  font-size: 14px; /* Paragraph M semibold */
   font-weight: 600;
   line-height: 1.5;
 }
@@ -153,173 +130,74 @@ body.imp-impersonating .confirm-modal {
   font-size: 12px; /* Paragraph S regular */
   font-weight: 400;
   line-height: 1.2;
-  color: var(--neutral-300);
 }
 
-.imp-bar__spacer {
-  flex: 1;
-}
-
-/* Countdown — a live dot pulsing in primary-500 + time. */
+/* Countdown — pulsing dot + time. The timer is a button for the prototype's
+   click-to-skip review shortcut, so it drops the native button chrome. */
 .imp-bar__timer {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s); /* 8px */
-  /* 4px on top of the 12px bar gap = 16px between the timer and the End button. */
-  margin-right: var(--space-xs);
-  color: var(--neutral-200);
-}
-.imp-bar__timer--dev {
   padding: 0;
   border: none;
   background: transparent;
   font: inherit;
+  color: inherit;
   cursor: pointer;
 }
-.imp-bar__timer--dev:focus-visible {
-  outline: 2px solid var(--neutral-25);
+.imp-bar__timer:focus-visible {
+  outline: 2px solid currentColor;
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
+/* 16px slot: an 8px live dot with a ring that grows out of it and fades. */
 .imp-bar__dot {
   position: relative;
-  width: 8px;
-  height: 8px;
-  flex: 0 0 8px;
-  border-radius: var(--radius-full);
-  background: var(--primary-500);
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
 }
-/* The ring expands and fades from the dot, so it reads as "live" without the dot
-   itself changing size. */
+.imp-bar__dot::before,
 .imp-bar__dot::after {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: inherit;
+  inset: 4px;
+  border-radius: var(--radius-full);
+  background: var(--imp-dot);
+}
+.imp-bar__dot::before {
+  background: var(--imp-dot-core, var(--imp-dot));
+}
+.imp-bar__dot::after {
   animation: imp-dot-pulse 1.6s ease-out infinite;
 }
 .imp-bar__time {
   font-size: 14px; /* Paragraph M regular, tabular digits */
   font-weight: 400;
   line-height: 1.5;
-  color: var(--neutral-200);
   font-variant-numeric: tabular-nums;
-  /* Fixed width for "MM:SS" so the clock + time never reflow as the digits change.
+  /* Fixed width for "MM:SS" so the dot + time never reflow as the digits change.
      inline-block is required — width/min-width are ignored on an inline <span>. */
   display: inline-block;
   min-width: 5ch;
   text-align: left;
 }
 
-/* Exit — DS filled button, neutral-25 fill with a neutral-800 label/icon, at the
-   banner's compact padding (8/16, 12 on the icon side). */
-.imp-bar .ds-btn {
-  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
-}
-.imp-bar .ds-btn--filled {
-  background: var(--neutral-25);
-  color: var(--neutral-800);
-}
-/* Hover mirrors the DS filled button per theme: light → primary-800 + light label,
-   dark → primary-400 + dark label (both are the DS filled hover pairing). */
-.imp-bar .ds-btn--filled:hover:not(:disabled) {
-  background: var(--primary-button-background-hover);
-  color: var(--text-button-foreground);
-}
-
-/* Under 5 minutes: the banner, the live dot and the line + glow all shift to the
-   warning hue, so the change reads at a glance rather than only in the digits. */
-.imp-bar--warning {
-  background: var(--warning-600);
-  --imp-line: linear-gradient(
-    90deg,
-    var(--warning-300),
-    var(--warning-500),
-    var(--warning-700),
-    var(--warning-400),
-    var(--warning-600),
-    var(--warning-300)
-  );
-}
-.imp-bar--warning .imp-bar__dot {
-  background: var(--warning-300);
-}
-/* The dark-banner greys wash out on warning-600 (role text was 1.1:1), so every label
-   and the mask go to neutral-25, matching the danger banner. The End button keeps
-   its light fill. */
-.imp-bar--warning .imp-bar__eye,
-.imp-bar--warning .imp-bar__prefix,
-.imp-bar--warning .imp-bar__role,
-.imp-bar--warning .imp-bar__timer,
-.imp-bar--warning .imp-bar__time {
-  color: var(--neutral-25);
-}
-
-/* Final minute: the same shift to the danger hue, plus the red pulse. */
-.imp-bar--critical {
-  background: var(--danger-500);
-  --imp-line: linear-gradient(
-    90deg,
-    var(--danger-300),
-    var(--danger-500),
-    var(--danger-700),
-    var(--danger-400),
-    var(--danger-600),
-    var(--danger-300)
-  );
-  animation: imp-pulse 1.6s ease-in-out infinite;
-}
-.imp-bar--critical .imp-bar__dot {
-  background: var(--danger-300);
-}
-/* On danger-500 the greys drop below 3:1, so every label and the mask go to
-   neutral-25 (4.6:1). */
-.imp-bar--critical .imp-bar__eye,
-.imp-bar--critical .imp-bar__prefix,
-.imp-bar--critical .imp-bar__role,
-.imp-bar--critical .imp-bar__timer,
-.imp-bar--critical .imp-bar__time {
-  color: var(--neutral-25);
-}
-
-@keyframes imp-pulse {
-  0%,
-  100% {
-    box-shadow: 0 2px 14px rgba(223, 22, 66, 0.4);
-  }
-  50% {
-    box-shadow: 0 2px 24px rgba(223, 22, 66, 0.75);
-  }
-}
-
+/* The ring reaches the edge of the 16px slot (2x) at the 35% opacity of the Figma
+   ring, then fades out. */
 @keyframes imp-dot-pulse {
   0% {
     transform: scale(1);
-    opacity: 0.6;
+    opacity: 0.35;
   }
   80%,
   100% {
-    transform: scale(2.6);
+    transform: scale(2);
     opacity: 0;
   }
 }
 
-/* The DS-colour line drifts sideways, rotating through the hues. */
-@keyframes imp-drift {
-  from {
-    background-position: 0% 0;
-  }
-  to {
-    background-position: 300% 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .imp-bar--critical,
-  .imp-bar::before,
-  .imp-bar::after,
   .imp-bar__dot::after {
     animation: none;
+    transform: scale(2);
+    opacity: 0.35;
   }
 }

@@ -7,55 +7,48 @@ description: Impersonation session banner (DES-337) — the full-width bar fixed
 
 The bar that stays fixed to the top of the app for the whole of an impersonation session. It tells the admin who they are acting as, how long is left, and gives them one way out.
 
-> **Spec source:** code-defined, reviewed in the prototype with the designer (2026-09). There is no Figma node yet — when one lands, verify against it and add the node ref here.
+> **Spec source:** Figma People — Normal `9600:43180`, Warning `9601:44620`, Critical `9601:46094` (2026-09-15).
 >
 > **Code:** `src/impersonation/ImpersonationBar.tsx` + `.css`, driven by `ImpersonationContext.tsx`.
 
 ## Anatomy (left → right)
 
-| Part | Spec |
-|---|---|
-| Mask icon | `ImpersonateIcon` (Lucide "venetian-mask", redrawn at Iconsax's 1.5px Linear stroke), 20px, `--neutral-200` |
-| Prefix | "Impersonating" — Paragraph M regular (14 / 400 / 1.5), `--neutral-200` |
-| Avatar | 24px circle (avatars.md), photo or initials at 8px / 400 / 1.5 on `--neutral-25` @ 16% |
-| Name | Paragraph M semibold (14 / 600 / 1.5), `--neutral-25` |
-| Role | " · {role}" — Paragraph S regular (12 / 400 / 1.2), `--neutral-300` |
-| Spacer | flexes to push the timer and button right |
-| Timer | 8px live dot + `mm:ss` in Paragraph M regular (14 / 400 / 1.5) with tabular digits and a 5ch minimum width, `--neutral-200` |
-| End button | DS filled button, "End Impersonation", `LogoutCurve` 20px — `--neutral-25` fill with `--neutral-800` label and icon at rest; hover takes the DS filled hover pair |
+The bar is a flex row with `justify-content: space-between`: the identity group sits at the far left, the session group at the far right, and the space between them flexes with the viewport.
+
+| Group | Part | Spec |
+|---|---|---|
+| Identity (gap 12px) | Prefix (gap 8px) | `ImpersonateIcon` 20px + "Impersonating", Paragraph M regular (14 / 400 / 1.5) |
+| | Person (gap 8px) | 24px avatar (photo, or initials 8 / 400 / 1.5 on the state colour at 16%) + label |
+| | Label (gap 4px) | Name, Paragraph M semibold (14 / 600 / 1.5) + "· {role}", Paragraph S regular (12 / 400 / 1.2) |
+| Session (gap 16px) | Timer (gap 4px) | 16px dot slot + `mm:ss`, Paragraph M regular, tabular digits, 5ch minimum width |
+| | End Impersonation | DS medium filled button with `Logout` 20px, semantic per state (below) — no overrides |
+
+Every text colour and the mask icon use the state's foreground colour.
 
 ## Layout
 
 ```
 Position:  fixed, top 0, full width, z-index 1090 (above drawers 1000 and confirm modals 1050, below toasts 1100)
 Padding:   12px top/bottom (--space-sm), 24px sides (--space-l)
-Alignment: identity group pinned left, timer + End button pinned right; the space between them flexes with the viewport (a flex: 1 spacer), never below 24px
-Gap:       12px flex gap between bar children (--space-sm)
-Identity:  4px base gap (--space-xs); +4px after the mask (8px), +8px before the avatar (12px), +4px before the name (8px)
-Timer:     8px between dot and digits (--space-s); 16px from the timer to the End button (12px gap + 4px)
-Button:    8px 16px, 12px on the icon side
-Height:    63px (12px + the 39px End button + 12px) — published as --imp-bar-h on body.imp-impersonating
-Edge:      1px line + 10px blurred glow below the bar, a gradient of DS hues drifting sideways (8s loop)
+Height:    67px (12px + the 43px DS medium button + 12px) — published as --imp-bar-h on body.imp-impersonating
+Background: the state tint layered over --page-background, so the fixed bar stays opaque over scrolling content
 ```
 
 ## States
 
-| State | When | Fill | Dot | Line + glow | Text & icon |
+| State | When | Background tint | Text + mask | Dot | End button |
 |---|---|---|---|---|---|
-| **Normal** | > 5:00 left | `--neutral-900` | `--primary-500` | DS hue spread (primary, quiz colours, warning, success) | as in Anatomy |
-| **Warning** | ≤ 5:00 | `--warning-600` | `--warning-300` | warning 300–700 | all `--neutral-25` |
-| **Critical** | ≤ 1:00 | `--danger-500` | `--danger-300` | danger 300–700 | all `--neutral-25`, plus a red box-shadow pulse |
+| **Normal** | > 5:00 left | Primary-500 @ 16% | `--text-progress` | `--text-progress` | DS Filled (primary) |
+| **Warning** | ≤ 5:00 | Warning-500 @ 24% | `--text-warning` | `--text-warning` | DS Warning filled |
+| **Critical** | ≤ 1:00 | Danger-500 @ 24% | `--text-error` | centre `--text-error`, ring `--danger-300` | DS Danger filled |
 
-> **Known contrast gap:** `--neutral-25` on `--warning-600` is 2.6:1 (below AA). Deliberate design choice so both escalation states read the same; revisit if the bar needs to pass an accessibility audit (`--warning-700` would pass).
-
-A toast accompanies each threshold (5:00 and 1:00) and the end of the session — see `alerts-toast.md` and the copy below.
+The text tokens are theme-aware (light: Primary-700 / Warning-600 / Danger-500; dark: Primary-500 / Warning-500 / Danger-400). The state switches instantly on the tick that crosses the threshold, and a toast announces 5:00 and 1:00 — see `alerts-toast.md` and the copy below.
 
 ## Motion
 
-- Live dot: a ring grows from the dot and fades (scale 1 → 2.6, 1.6s, ease-out, infinite).
-- Edge line and glow: background drifts sideways, 8s linear, infinite.
-- Critical: box-shadow pulse, 1.6s ease-in-out.
-- All three stop under `prefers-reduced-motion: reduce`.
+- Live dot: an 8px dot centred in a 16px slot; a ring of the same colour grows from it (scale 1 → 2, opacity 0.35 → 0, 1.6s ease-out, infinite).
+- Under `prefers-reduced-motion: reduce` the ring stops, shown still at full size and 35% opacity.
+- No other animation: no gradient line, glow or shadow pulse.
 
 ## Page offsets
 
@@ -111,7 +104,7 @@ For a whole form, wrap each field and its submit button in its own `Impersonatio
 
 ## Do / Don't
 
-✓ Keep every value on the type scale and spacing tokens above
+✓ Keep every value on the type scale and spacing tokens above, and use the DS buttons as they are
 ✓ Offset any new full-height overlay by `--imp-bar-h`
 ✗ Don't cover the banner with another layer — the admin must always see they are acting as someone else
 ✗ Don't add a second action to the bar; ending the session is the only one
