@@ -173,7 +173,7 @@ function Roles() {
     }
     showToast(
       'success',
-      parts.length > 0 ? `Re-sync complete — ${parts.join(', ')}` : 'Re-sync complete — no changes',
+      parts.length > 0 ? `Re-sync complete - ${parts.join(', ')}` : 'Re-sync complete - no changes',
     )
   }
 

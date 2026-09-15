@@ -119,7 +119,7 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
     (what: string) => {
       const first = person ? person.name.split(' ')[0] : 'the learner'
       addAudit('blocked', `Blocked: ${admin.name} tried to change ${first}'s ${what}`)
-      show('error', `Blocked while impersonating — you can't change someone else's ${what}`)
+      show('error', `Blocked while impersonating - you can't change someone else's ${what}`)
     },
     [person, admin.name, addAudit, show],
   )
@@ -156,11 +156,11 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
     if (!person) return
     if (remaining <= WARN_AT && remaining > CRIT_AT && !warned.current) {
       warned.current = true
-      show('warning', '5 minutes left in this impersonation session — wrap up soon.')
+      show('warning', '5 minutes left in this impersonation session - wrap up soon.')
     }
     if (remaining <= CRIT_AT && remaining > 0 && !critWarned.current) {
       critWarned.current = true
-      show('warning', `Under a minute left — the session will end and return you to ${adminFirst} automatically.`)
+      show('warning', `Under a minute left - the session will end and return you to ${adminFirst} automatically.`)
     }
     if (remaining <= 0) {
       addAudit('expired', `Session with ${person.name} auto-expired after 60 minutes`)

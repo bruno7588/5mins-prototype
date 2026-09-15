@@ -353,7 +353,7 @@ function UserProfile() {
       showToast('warning', `${person.name} would be unenrolled from “${row.course}”`)
       return
     }
-    showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} — coming soon`)
+    showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} - coming soon`)
   }
 
   /* Rows in the selection an action can actually touch. A mixed selection runs
@@ -379,7 +379,7 @@ function UserProfile() {
       showToast('warning', `${n} ${n === 1 ? 'enrolment' : 'enrolments'} would be unenrolled`)
       return
     }
-    showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} — ${n} selected — coming soon`)
+    showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} - ${n} selected - coming soon`)
   }
 
   /* Apply the new due date to every selected enrolment. A specific date lands on
