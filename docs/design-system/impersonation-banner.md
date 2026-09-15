@@ -28,7 +28,7 @@ The bar that stays fixed to the top of the app for the whole of an impersonation
 
 ```
 Position:  fixed, top 0, full width, z-index 1090 (above drawers 1000 and confirm modals 1050, below toasts 1100)
-Padding:   16px all sides (--space-m)
+Padding:   16px top/bottom (--space-m), 24px sides (--space-l)
 Alignment: identity group pinned left, timer + End button pinned right; the space between them flexes with the viewport (a flex: 1 spacer), never below 24px
 Gap:       12px flex gap between bar children (--space-sm)
 Identity:  4px base gap (--space-xs); +4px after the mask (8px), +8px before the avatar (12px), +4px before the name (8px)
