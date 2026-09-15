@@ -165,6 +165,8 @@ body.imp-impersonating .confirm-modal {
   display: flex;
   align-items: center;
   gap: var(--space-s); /* 8px */
+  /* 4px on top of the 12px bar gap = 16px between the timer and the End button. */
+  margin-right: var(--space-xs);
   color: var(--neutral-200);
 }
 .imp-bar__timer--dev {
