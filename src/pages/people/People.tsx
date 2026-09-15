@@ -18,7 +18,6 @@ import {
   Profile2User,
   UserOctagon,
   MonitorMobbile,
-  Eye,
 } from 'iconsax-react'
 import Badge from '../../components/Badge/Badge'
 import Button from '../../components/Button/Button'
@@ -38,6 +37,7 @@ import BulkUploadModal from './components/BulkUploadModal/BulkUploadModal'
 import EditColumnsPopover from './components/EditColumnsPopover/EditColumnsPopover'
 import { useColumnPreferences } from './hooks/useColumnPreferences'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
+import ImpersonateIcon from '@/components/icons/ImpersonateIcon'
 import type { RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import LimitedAdminDrawer from './components/LimitedAdminDrawer/LimitedAdminDrawer'
 import { useImpersonation } from '@/impersonation/ImpersonationContext'
@@ -258,7 +258,7 @@ function People() {
       {
         key: 'impersonate',
         label: 'Impersonate user',
-        icon: icon(Eye),
+        icon: <ImpersonateIcon size={20} color="var(--text-primary)" />,
         disabled: !canImpersonate(person),
         title: canImpersonate(person) ? undefined : 'You can only impersonate roles below your own',
       },

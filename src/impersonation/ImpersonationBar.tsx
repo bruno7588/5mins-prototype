@@ -1,5 +1,6 @@
-import { Clock, Eye, LogoutCurve } from 'iconsax-react'
+import { LogoutCurve } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import ImpersonateIcon from '@/components/icons/ImpersonateIcon'
 import { useImpersonation } from './ImpersonationContext'
 import './ImpersonationBar.css'
 
@@ -12,7 +13,7 @@ function mmss(total: number): string {
 }
 
 /**
- * The floating "viewing as" pill shown while impersonating: identity inline on the
+ * The floating "Impersonating" pill shown while impersonating: identity inline on the
  * left, the session countdown and a compact Exit on the right. Amber at rest,
  * escalating to the DS warning then danger tokens as the 60-minute cap nears.
  */
@@ -23,8 +24,8 @@ function ImpersonationBar() {
   return (
     <div className={`imp-bar imp-bar--${phase}`} role="status" aria-live="polite">
       <span className="imp-bar__who">
-        <Eye size={20} color="currentColor" variant="Bold" className="imp-bar__eye" />
-        <span className="imp-bar__prefix">Viewing as</span>
+        <ImpersonateIcon size={20} className="imp-bar__eye" />
+        <span className="imp-bar__prefix">Impersonating</span>
         <span className="imp-bar__avatar">
           {person.avatarImg ? <img src={person.avatarImg} alt="" /> : person.initials}
         </span>
@@ -37,7 +38,7 @@ function ImpersonationBar() {
       <span className="imp-bar__spacer" />
 
       <span className="imp-bar__timer">
-        <Clock size={16} color="currentColor" variant="Linear" />
+        <span className="imp-bar__dot" aria-hidden="true" />
         <span className="imp-bar__time">{mmss(remaining)}</span>
       </span>
 
