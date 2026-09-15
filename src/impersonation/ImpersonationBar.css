@@ -135,19 +135,18 @@ body.imp-impersonating .confirm-modal {
 
 /* End Impersonation — DS Filled with a neutral fill that inverts the page: Neutral-800
    fill + Neutral-25 label in light, Neutral-25 fill + Neutral-800 label in dark
-   (Figma 9616:47761 light, 9584:28195 dark). Hover/pressed step one neutral toward the
-   page; focus ring in the label-contrast colour. Tighter than the DS medium padding:
-   8px top/bottom, 12px left, 16px right (Figma 9591:30161), so the button is 37px. */
-.ds-btn.ds-btn--filled.imp-bar__end {
-  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
+   (Figma 9616:47761 light, 9584:28195 dark). Hover and pressed are the DS primary
+   Filled ones: the fill override stays at two classes so the DS :hover/:active rules
+   (three) win. Tighter than the DS medium padding: 8px top/bottom, 12px left, 16px
+   right (Figma 9591:30161), so the button is 37px. */
+.ds-btn--filled.imp-bar__end {
   background: var(--text-primary);
   color: var(--page-background);
 }
-.ds-btn--filled.imp-bar__end:hover:not(:disabled) { background: var(--neutral-700); }
-.ds-btn--filled.imp-bar__end:active:not(:disabled) { background: var(--neutral-600); }
+.ds-btn.ds-btn--filled.imp-bar__end {
+  padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
+}
 .ds-btn--filled.imp-bar__end:focus-visible { outline-color: var(--text-primary); }
-[data-theme='dark'] .ds-btn--filled.imp-bar__end:hover:not(:disabled) { background: var(--neutral-50); }
-[data-theme='dark'] .ds-btn--filled.imp-bar__end:active:not(:disabled) { background: var(--neutral-100); }
 
 /* Countdown — pulsing dot + time. The timer is a button for the prototype's
    click-to-skip review shortcut, so it drops the native button chrome. */

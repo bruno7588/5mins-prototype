@@ -42,7 +42,7 @@ Background: the state tint layered over --page-background, so the fixed bar stay
 | **Warning** | ≤ 5:00 | Warning-500 @ 24% | `--text-warning` | `--text-warning` |
 | **Critical** | ≤ 1:00 | Danger-500 @ 24% | `--text-error` | centre `--text-error`, ring `--danger-300` |
 
-The End Impersonation button is DS Filled with a neutral fill in all three states: Neutral-800 fill + Neutral-25 label and icon in light mode, Neutral-25 fill + Neutral-800 label in dark (Figma `9616:47761` light, `9584:28195` dark). Hover steps to Neutral-700 (light) / Neutral-50 (dark), pressed to Neutral-600 / Neutral-100. Warning buttons mean "caution" and Danger buttons mean "destructive", but ending the session is the safe, recommended exit. The tint, text, dot and toasts carry the urgency; the button stays constant so the way out never changes.
+The End Impersonation button is DS Filled with a neutral fill in all three states: Neutral-800 fill + Neutral-25 label and icon in light mode, Neutral-25 fill + Neutral-800 label in dark (Figma `9616:47761` light, `9584:28195` dark). Hover and pressed are the DS primary Filled states (`--primary-button-background-hover` / `-pressed`). Warning buttons mean "caution" and Danger buttons mean "destructive", but ending the session is the safe, recommended exit. The tint, text, dot and toasts carry the urgency; the button stays constant so the way out never changes.
 
 The text tokens are theme-aware (light: Primary-700 / Warning-600 / Danger-500; dark: Primary-500 / Warning-500 / Danger-400). The state switches instantly on the tick that crosses the threshold, and a toast announces 5:00 and 1:00 — see `alerts-toast.md` and the copy below.
 
