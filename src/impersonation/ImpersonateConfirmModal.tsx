@@ -24,7 +24,7 @@ function ImpersonateConfirmModal({ person, onClose, onConfirm }: Props) {
   if (!person) return null
 
   return (
-    <ConfirmModal open onClose={onClose} ariaLabel="Impersonate this user" className="imp-confirm">
+    <ConfirmModal open onClose={onClose} ariaLabel={`Impersonate ${person.name}`} className="imp-confirm">
       <CloseButton onClick={onClose} size={24} className="imp-confirm__close" />
 
       <div className="imp-confirm__headline">
