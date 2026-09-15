@@ -18,7 +18,7 @@ function mmss(total: number): string {
  * escalating to the DS warning then danger tokens as the 60-minute cap nears.
  */
 function ImpersonationBar() {
-  const { person, remaining, phase, exit } = useImpersonation()
+  const { person, remaining, phase, exit, skipAhead } = useImpersonation()
   if (!person) return null
 
   return (
@@ -37,10 +37,19 @@ function ImpersonationBar() {
 
       <span className="imp-bar__spacer" />
 
-      <span className="imp-bar__timer">
-        <span className="imp-bar__dot" aria-hidden="true" />
-        <span className="imp-bar__time">{mmss(remaining)}</span>
-      </span>
+      {/* Dev only: click the timer to jump to 5:03, then 1:03, then back to 60:00, so the
+          warning and critical states can be reviewed without waiting out the session. */}
+      {import.meta.env.DEV ? (
+        <button type="button" className="imp-bar__timer imp-bar__timer--dev" onClick={skipAhead} title="Dev: skip ahead">
+          <span className="imp-bar__dot" aria-hidden="true" />
+          <span className="imp-bar__time">{mmss(remaining)}</span>
+        </button>
+      ) : (
+        <span className="imp-bar__timer">
+          <span className="imp-bar__dot" aria-hidden="true" />
+          <span className="imp-bar__time">{mmss(remaining)}</span>
+        </span>
+      )}
 
       <Button
         onClick={exit}

@@ -45,6 +45,8 @@ interface ImpersonationValue {
   logActivity: (text: string) => void
   /** Record + surface a blocked sensitive action (password, email, role, notifications). */
   logBlocked: (what: string) => void
+  /** Dev only: jump the countdown to just before the next phase (5:03 → 1:03 → back to 60:00). */
+  skipAhead: () => void
 }
 
 const ImpersonationCtx = createContext<ImpersonationValue | null>(null)
@@ -122,6 +124,16 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
     [person, admin.name, addAudit, show],
   )
 
+  const skipAhead = useCallback(() => {
+    setRemaining((r) => {
+      if (r > WARN_AT + 3) return WARN_AT + 3
+      if (r > CRIT_AT + 3) return CRIT_AT + 3
+      warned.current = false
+      critWarned.current = false
+      return SESSION_SECONDS
+    })
+  }, [])
+
   /* Push the app down by the fixed banner's height while a session is live, so it
      sits above the real page instead of covering its first rows. */
   useEffect(() => {
@@ -169,6 +181,7 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
     exit,
     logActivity,
     logBlocked,
+    skipAhead,
   }
 
   return (

@@ -140,6 +140,18 @@ body.imp-impersonating .topnav {
   gap: var(--space-s); /* 8px */
   color: var(--neutral-200);
 }
+.imp-bar__timer--dev {
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+.imp-bar__timer--dev:focus-visible {
+  outline: 2px solid var(--neutral-25);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
 .imp-bar__dot {
   position: relative;
   width: 8px;
@@ -186,9 +198,64 @@ body.imp-impersonating .topnav {
   color: var(--text-button-foreground);
 }
 
-/* Final-minute urgency: a red pulse (the fill stays neutral). */
+/* Under 5 minutes: the banner, the live dot and the line + glow all shift to the
+   warning hue, so the change reads at a glance rather than only in the digits. */
+.imp-bar--warning {
+  background: var(--warning-600);
+  --imp-line: linear-gradient(
+    90deg,
+    var(--warning-300),
+    var(--warning-500),
+    var(--warning-700),
+    var(--warning-400),
+    var(--warning-600),
+    var(--warning-300)
+  );
+}
+.imp-bar--warning .imp-bar__dot {
+  background: var(--warning-300);
+}
+/* The dark-banner greys wash out on warning-600 (role text was 1.1:1), so every label
+   and the mask go to neutral-900 (6.9:1). The End button keeps its light fill. */
+.imp-bar--warning,
+.imp-bar--warning .imp-bar__eye,
+.imp-bar--warning .imp-bar__prefix,
+.imp-bar--warning .imp-bar__avatar,
+.imp-bar--warning .imp-bar__label,
+.imp-bar--warning .imp-bar__role,
+.imp-bar--warning .imp-bar__timer,
+.imp-bar--warning .imp-bar__time {
+  color: var(--neutral-900);
+}
+.imp-bar--warning .imp-bar__timer--dev:focus-visible {
+  outline-color: var(--neutral-900);
+}
+
+/* Final minute: the same shift to the danger hue, plus the red pulse. */
 .imp-bar--critical {
+  background: var(--danger-500);
+  --imp-line: linear-gradient(
+    90deg,
+    var(--danger-300),
+    var(--danger-500),
+    var(--danger-700),
+    var(--danger-400),
+    var(--danger-600),
+    var(--danger-300)
+  );
   animation: imp-pulse 1.6s ease-in-out infinite;
+}
+.imp-bar--critical .imp-bar__dot {
+  background: var(--danger-300);
+}
+/* On danger-500 the greys drop below 3:1, so every label and the mask go to
+   neutral-25 (4.6:1). */
+.imp-bar--critical .imp-bar__eye,
+.imp-bar--critical .imp-bar__prefix,
+.imp-bar--critical .imp-bar__role,
+.imp-bar--critical .imp-bar__timer,
+.imp-bar--critical .imp-bar__time {
+  color: var(--neutral-25);
 }
 
 @keyframes imp-pulse {
