@@ -492,7 +492,10 @@ Width:     hugs content (no fixed width)
 
 ## Code reality (src/components/Toast)
 
-`src/components/Toast/Toast.tsx` implements the pill with a `useToast()` stack hook (5s auto-dismiss + 300ms fade). Drift from the node: Warning uses `--warning-500` + `--neutral-800` text (Figma: `--warning-600` + near-white), Info uses `--neutral-500` (Figma: `#383D4C`), Success/Error label color is `--neutral-0` (Figma: `--neutral-25`), and the Error icon is `CloseCircle` (Figma: warning triangle).
+`src/components/Toast/Toast.tsx` implements the pill with a `useToast()` stack hook (5s auto-dismiss + 300ms fade) and matches the spec above: near-white `--neutral-25` label on every fill, Warning on `--warning-600`, Info on `--neutral-600`, the warning triangle for both Warning and Error, and `role="alert"` / `role="status"`. Two deliberate extensions:
+
+- **Info icon** is Iconsax `InfoCircle` (Figma: io5 `IoInformationCircleOutline`) — Iconsax is the project's only icon set.
+- **Optional action** (`show(type, message, { label, onClick })`, rendered as an underlined inline button) — used for Undo in the course content list. Not in the Figma node; the "no buttons" rule still holds for everything else.
 
 ---
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { TickCircle, CloseCircle, InfoCircle, Danger } from 'iconsax-react'
+import { TickCircle, InfoCircle, Danger } from 'iconsax-react'
 import './Toast.css'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
@@ -24,9 +24,12 @@ interface ToastEntry extends ToastItem {
   fading: boolean
 }
 
+/* Warning and Error share the triangle, per the Figma node. Info is Iconsax's
+   InfoCircle — the node uses io5's outline info icon, and Iconsax is the project's
+   only icon set. */
 const ICON_MAP: Record<ToastType, typeof TickCircle> = {
   success: TickCircle,
-  error: CloseCircle,
+  error: Danger,
   warning: Danger,
   info: InfoCircle,
 }
@@ -51,7 +54,10 @@ function ToastPill({
 }) {
   const Icon = ICON_MAP[type]
   return (
-    <div className={`toast toast--${type}${fading ? ' toast--fading' : ''}`}>
+    <div
+      className={`toast toast--${type}${fading ? ' toast--fading' : ''}`}
+      role={type === 'warning' || type === 'error' ? 'alert' : 'status'}
+    >
       {icon && <Icon size={24} color="currentColor" variant="Linear" />}
       <span>{message}</span>
       {action && (
