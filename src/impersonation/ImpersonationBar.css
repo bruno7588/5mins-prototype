@@ -216,19 +216,14 @@ body.imp-impersonating .topnav {
   background: var(--warning-300);
 }
 /* The dark-banner greys wash out on warning-600 (role text was 1.1:1), so every label
-   and the mask go to neutral-900 (6.9:1). The End button keeps its light fill. */
-.imp-bar--warning,
+   and the mask go to neutral-25, matching the danger banner. The End button keeps
+   its light fill. */
 .imp-bar--warning .imp-bar__eye,
 .imp-bar--warning .imp-bar__prefix,
-.imp-bar--warning .imp-bar__avatar,
-.imp-bar--warning .imp-bar__label,
 .imp-bar--warning .imp-bar__role,
 .imp-bar--warning .imp-bar__timer,
 .imp-bar--warning .imp-bar__time {
-  color: var(--neutral-900);
-}
-.imp-bar--warning .imp-bar__timer--dev:focus-visible {
-  outline-color: var(--neutral-900);
+  color: var(--neutral-25);
 }
 
 /* Final minute: the same shift to the danger hue, plus the red pulse. */
