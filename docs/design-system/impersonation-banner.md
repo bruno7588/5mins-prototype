@@ -22,7 +22,7 @@ The bar that stays fixed to the top of the app for the whole of an impersonation
 | Role | " · {role}" — Paragraph S regular (12 / 400 / 1.2), `--neutral-300` |
 | Spacer | flexes to push the timer and button right |
 | Timer | 8px live dot + `mm:ss` in Paragraph M regular (14 / 400 / 1.5) with tabular digits and a 5ch minimum width, `--neutral-200` |
-| End button | DS filled button, "End Impersonation", `LogoutCurve` 20px — `--neutral-25` fill with `--neutral-900` label at rest; hover takes the DS filled hover pair |
+| End button | DS filled button, "End Impersonation", `LogoutCurve` 20px — `--neutral-25` fill with `--neutral-800` label and icon at rest; hover takes the DS filled hover pair |
 
 ## Layout
 

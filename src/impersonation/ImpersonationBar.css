@@ -212,14 +212,14 @@ body.imp-impersonating .confirm-modal {
   text-align: left;
 }
 
-/* Exit — DS filled button, neutral-25 fill with a dark label/icon, at the banner's
-   compact padding (8/16, 12 on the icon side). */
+/* Exit — DS filled button, neutral-25 fill with a neutral-800 label/icon, at the
+   banner's compact padding (8/16, 12 on the icon side). */
 .imp-bar .ds-btn {
   padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
 }
 .imp-bar .ds-btn--filled {
   background: var(--neutral-25);
-  color: var(--neutral-900);
+  color: var(--neutral-800);
 }
 /* Hover mirrors the DS filled button per theme: light → primary-800 + light label,
    dark → primary-400 + dark label (both are the DS filled hover pairing). */
