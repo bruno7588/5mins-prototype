@@ -16,8 +16,8 @@ function mmss(total: number): string {
  * The banner shown while impersonating: identity on the left, the session countdown and
  * End Impersonation on the right. A tinted bar whose colour escalates from primary to
  * warning to danger as the 60-minute cap nears (Figma People 9600:43180 / 9601:44620 /
- * 9601:46094). The End button stays the primary Filled button in every state: ending is
- * the safe exit, not a destructive or cautionary action.
+ * 9601:46094). The End button is a neutral Filled button in every state: ending is the
+ * safe exit, not a destructive or cautionary action.
  */
 function ImpersonationBar() {
   const { person, remaining, phase, exit, skipAhead } = useImpersonation()
@@ -51,6 +51,7 @@ function ImpersonationBar() {
         </button>
 
         <Button
+          className="imp-bar__end"
           onClick={exit}
           icon={<Logout size={20} color="currentColor" variant="Linear" />}
         >
