@@ -475,7 +475,7 @@ Contrast: the light filled base darkened to Primary-700 and the dark filled base
 
 ## Code reality
 
-**`src/components/Button/Button.tsx` is the canonical component** — use it for all new work: `import Button from '@/components/Button/Button'`. Component, `Button.css`, and the token definitions in `src/styles/tokens.css` were migrated to this spec on 2026-08-04 (mode-aware ladders, leading icons, transparent outlined rest, per-state AI gradients — the AI hover's 2px border is rendered as 1px border + 1px inset ring to avoid layout shift).
+**`src/components/Button/Button.tsx` is the canonical component** — use it for all new work: `import Button from '@/components/Button/Button'`. Component, `Button.css`, and the token definitions in `src/styles/tokens.css` were migrated to this spec on 2026-08-04 (mode-aware ladders, leading icons, transparent outlined rest, per-state AI gradients). Borders (2026-09-15): fill configurations (Filled, Danger, Warning, Success, AI) render **no border**; bordered configurations draw their 1px border inside the size by taking that pixel out of the padding (`--btn-bw`), so every configuration of a size matches the heights above (S 33 · M 41 · L 48). The AI hover's 2px cyan border is an inset 2px ring (1px on press), since the fill has no border to colour.
 
 Two legacy button patterns also still exist, to be migrated opportunistically (convert a call site when you're already editing that file — no big-bang sweep):
 

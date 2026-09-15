@@ -665,8 +665,9 @@
   /* The DS md button's box, icon variant (buttons.md / .ds-btn--md.ds-btn--has-icon):
      10px vertical, 20px on the label side, 16px on the icon side. This is a dashed
      affordance rather than a DS Button, so the padding has to be matched by hand or it
-     sits shorter than the Add Content button beside it. */
-  padding: var(--space-ssm) var(--space-ml) var(--space-ssm) var(--space-m);
+     sits shorter than the Add Content button beside it. Like the DS bordered buttons,
+     its 1px border comes out of the padding so it stays at the 41px DS height. */
+  padding: calc(var(--space-ssm) - 1px) calc(var(--space-ml) - 1px) calc(var(--space-ssm) - 1px) calc(var(--space-m) - 1px);
   background: transparent;
   border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);

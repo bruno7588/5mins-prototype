@@ -6,7 +6,7 @@
 /* Push the app down so the full-width fixed banner doesn't cover it. One height
    for every offset below — the banner's rendered height. */
 body.imp-impersonating {
-  --imp-bar-h: 67px; /* 12px + 43px DS medium button + 12px */
+  --imp-bar-h: 65px; /* 12px + 41px DS medium button + 12px */
   padding-top: var(--imp-bar-h);
 }
 
