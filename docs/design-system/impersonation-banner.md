@@ -76,7 +76,7 @@ One vocabulary for the whole feature: **impersonation** started / ended / expire
 | Banner | Impersonating · End Impersonation |
 | Toasts | Impersonation started for {name} - this session is logged · 5 minutes left - impersonation ends automatically after 60 minutes · Less than 1 minute left - impersonation will end automatically · Impersonation ended - you're back as {admin} · Impersonation expired after 60 minutes - you're back as {admin} |
 | Locked action tooltip | You can't {action} while impersonating — e.g. "You can't open Admin while impersonating" |
-| Audit trail | Impersonation of {name} by {admin} started / ended / expired after 60 minutes · Blocked: {admin} tried to {action} while impersonating · {activity} while impersonating {name} |
+| Audit log entries (recorded in session state; no UI in the prototype) | Impersonation of {name} by {admin} started / ended / expired after 60 minutes · Blocked: {admin} tried to {action} while impersonating · {activity} while impersonating {name} |
 
 ## Behaviour
 

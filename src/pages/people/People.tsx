@@ -42,7 +42,6 @@ import type { RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import LimitedAdminDrawer from './components/LimitedAdminDrawer/LimitedAdminDrawer'
 import { useImpersonation } from '@/impersonation/ImpersonationContext'
 import ImpersonateConfirmModal from '@/impersonation/ImpersonateConfirmModal'
-import AuditTrail from '@/impersonation/AuditTrail'
 import type { ImpersonatedPerson } from '@/impersonation/types'
 import { loadUserFields } from '@/data/userFields'
 import type { UserField } from '@/data/userFields'
@@ -960,9 +959,6 @@ function People() {
           )}
         </>
       )}
-
-      {/* ═══ Impersonation audit trail (DES-337) ═══ */}
-      {activeTab === 'All People' && <AuditTrail />}
 
       {/* ═══ Bulk action bar — All People ═══ */}
       {/* Tab picks which bar; `count` drives show/hide so it can animate out. */}
