@@ -130,6 +130,12 @@
   flex-wrap: wrap;
 }
 
+.cd-helper-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
 .cd-helper-item {
   display: flex;
   align-items: center;

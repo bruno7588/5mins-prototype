@@ -31,6 +31,7 @@ import Alert from '../../components/Alert/Alert'
 import Button from '../../components/Button/Button'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
+import jewelsIllustration from '../../assets/programs/jewels.svg'
 import { COURSE_TITLE } from './courseTitle'
 import CourseSettings from './components/CourseSettings/CourseSettings'
 import AssessmentsTab from './components/AssessmentsTab/AssessmentsTab'
@@ -335,10 +336,7 @@ function CourseDetails() {
             <h1 className="cd-title">{courseTitle}</h1>
             <div className="cd-helper">
               <span className="cd-helper-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M6.5 3h11l3.5 5.2L12 21.5 1.5 8.2 6.5 3Z" fill="#00CEE6" stroke="#00AFC4" strokeWidth="1.2" strokeLinejoin="round" />
-                  <path d="M6.5 3 12 8.2 17.5 3M1.5 8.2h21" stroke="#00AFC4" strokeWidth="1.2" strokeLinejoin="round" />
-                </svg>
+                <img className="cd-helper-icon" src={jewelsIllustration} alt="" />
                 Earn 100 jewels
               </span>
               <span className="cd-helper-item">
