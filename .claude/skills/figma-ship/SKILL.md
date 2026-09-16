@@ -24,7 +24,7 @@ If the route, the flows or the section are missing, ask. Do not invent flows fro
 
 ## 1. Settle the inputs
 
-1. Parse the arguments. Extract `fileKey` and the section `nodeId` from the link (`node-id=12-34` becomes `12:34`).
+1. Parse the arguments. Extract `fileKey` and the section `nodeId` from the link (`node-id=12-34` becomes `12:34`). The section may live on any page of the file, not the first one; always address it by node id.
 2. Confirm the dev server answers: `curl -s -o /dev/null -w '%{http_code}' http://localhost:5173`.
 3. **Why callout content.** Three short lines: Context, Problem to solve, Solution. Draft them from the PRD when `--ticket` is given (its Context section has the problem and the decisions), otherwise from what the user said. Show the three lines to the user with `AskUserQuestion` before spawning the agent, with an option to accept and an option to edit. Keep each line to one or two plain sentences a new teammate could read in ten seconds.
 4. **Flow callout content.** For each flow: its title as given, plus one plain sentence saying what the admin does and what they get. Draft these too and show them in the same question.
@@ -63,9 +63,9 @@ The prototype is the source of truth. Every frame must match what the browser sh
 - For every state, in order: perform the clicks that reach it, then take a screenshot and **confirm the state matches its name** before capturing. Tips for this prototype: row kebabs are `Actions for <name>` buttons; clicking by ref sometimes closes a freshly opened menu, so click by coordinates when that happens; modals are `role="alertdialog"`; the bulk bar appears after a row checkbox is ticked.
 - Keep the browser screenshot of each state. It is the reference the Figma frame is checked against in step F.
 
-### C. Capture each state into the section (optional, best effort)
+### C. Captures: off by default
 
-Captures are a nice-to-have reference, never a blocker. The browser screenshot from step B is the real 1:1 reference. Try the capture on the **first** state only; if it does not complete within its polling window, or the script cannot run in the tab, **skip captures for every state** and go straight to step D. Never let a capture hold up the rebuild.
+**Skip this step unless the user asks for captures.** In practice captures stalled the run and landed as loose frames on the page outside the target section, which breaks the "nothing outside the section" rule. The browser screenshot from step B is the 1:1 reference. If the user does ask, try the **first** state only; if it does not complete within its polling window, skip captures for every state.
 
 `generate_figma_design` captures a live page by URL, so a state that needs clicks (an open menu or modal) cannot be captured by URL alone. For each state:
 
@@ -106,6 +106,9 @@ Row 3   [ Proposed components ]   (only if any were built)
 1. **Row 0 — Why callout**, alone. One instance of the callout component with the heading "Why" and the three approved lines, labelled Context, Problem to solve, Solution.
 2. **One row per flow**, in the order given, each directly below the previous. The row opens with that flow's **Flow callout** (heading = the flow title, body = the approved sentence) at the left edge, followed by the flow's screens to its right, named `<Flow> · NN · <state>` (`Single enrolment · 03 · Mark as completed modal`). Never put two flows on the same row.
 3. **Every state is a full screen**, the base page plus whatever is open on it. If two states share the same base, duplicate it. A designer reads the flow by scanning the row; never a floating modal on white.
+   - **Every screen must visibly differ from the one before it.** Duplicating the base is only the start: each state adds its own layers as children of its frame, above the base in z-order (open menu, scrim plus modal or dialog, ticked rows plus bulk bar, changed row data plus toast). A row of identical base pages is the most common failure; check for it before reporting.
+   - Build the flow's **start state once** (for example the rows ticked with the bar showing) and duplicate *that* for the later screens of the flow, so the selection carries through.
+   - Overlays sit where the browser viewport shows them. A frame is the full page height, so a centred modal can look low in it; that is expected, not a defect.
 4. Page states are 1440 wide; an overlay's own width comes from its CSS (the modal is 600, the confirmation 480).
 5. Copy comes from the prototype verbatim (Title Case buttons, sentence case everything else). Do not rewrite it.
 6. If captures were taken, move each next to its rebuilt frame, named `<Flow> · NN · <state> · capture`. Do not delete captures; the user decides when the reference has served its purpose.
@@ -113,9 +116,11 @@ Row 3   [ Proposed components ]   (only if any were built)
 
 ### F. Verify and report
 
+- Before reporting, list each state frame's top-level layers with `get_metadata` and confirm every state after the first has its own overlay or data layers. If any does not, build it before reporting.
+
 - `get_screenshot` each rebuilt frame and compare it side by side with the browser screenshot of the same state. Anything that differs is a defect: clipped text, overlapping nodes, wrong variants, missing copy, different spacing, a control in a different state. Fix it before moving on. The only allowed difference is a gap named in the report.
 - Close every browser tab the agent opened.
-- Return: the section link, one line per state with its rebuilt node id (and capture node id if any), whether captures were taken or skipped, every proposed component with what it stands in for, any step skipped and why, and anything left unverified.
+- Return: the section link, one line per state with its rebuilt node id (and capture node id if any), whether captures were taken or skipped, every proposed component with what it stands in for **and why the library version could not be used 1:1**, whether any frames in the section were pre-existing, any step skipped and why, and anything left unverified.
 
 ## 3. Report back
 
