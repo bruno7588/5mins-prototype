@@ -125,30 +125,6 @@
   margin-top: var(--space-s);
 }
 
-/* ── Acknowledgement (bulk only) — checkbox row with label + supporting text. */
-.scm__ack {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-xs);
-}
-
-.scm__ack > .checkbox {
-  margin-top: var(--space-xxs);
-}
-
-.scm__ack-label {
-  padding: 0;
-  border: none;
-  background: none;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-primary);
-  cursor: pointer;
-  text-align: left;
-}
-
 /* ── CTA ── DS modal spec puts a single filled button, centred. */
 .scm__cta {
   align-self: center;

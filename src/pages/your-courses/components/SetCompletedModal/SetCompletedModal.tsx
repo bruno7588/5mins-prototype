@@ -1,10 +1,8 @@
 import { useEffect, useId, useState } from 'react'
-import { InfoCircle } from 'iconsax-react'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
 import Radio from '@/components/Radio/Radio'
-import Checkbox from '@/components/Checkbox/Checkbox'
 import Alert from '@/components/Alert/Alert'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import InputInteger from '@/components/InputInteger/InputInteger'
@@ -62,13 +60,12 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
   const [date, setDate] = useState(today)
   const [scoreMode, setScoreMode] = useState<'course' | 'custom'>('course')
   const [customScore, setCustomScore] = useState(passScore ?? 100)
-  const [acknowledged, setAcknowledged] = useState(false)
   /* Commit is one round trip in the real app; the button shows it (3.5). */
   const [busy, setBusy] = useState(false)
 
   const dateError = date > today ? 'Choose a completion date that is today or earlier' : undefined
   const score = scoreMode === 'custom' ? customScore : passScore
-  const canContinue = !nothingToDo && date !== '' && !dateError && (!isBulk || acknowledged)
+  const canContinue = !nothingToDo && date !== '' && !dateError
 
   const scope = isBulk ? plural(eligibleCount, 'enrolment') : `${learnerName}’s enrolment`
   const scoreCopy = score == null ? 'no score' : `a score of ${score}%`
@@ -89,9 +86,10 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
     track('enrolment_completion_confirm_shown', { scope: scopeKey, eligible: eligibleCount, skipped })
     setStep('confirm')
   }
+  /* Cancelling the confirmation abandons the whole run and returns to the page. */
   const cancelConfirm = () => {
     track('enrolment_completion_confirm_cancelled', { scope: scopeKey })
-    setStep('form')
+    onClose()
   }
 
   if (step === 'confirm') {
@@ -101,10 +99,7 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
     return (
       <ConfirmModal open onClose={() => !busy && cancelConfirm()} className="scm-confirm" ariaLabel="Confirm mark as completed">
         <div className="confirm-modal-header confirm-modal-header--center">
-          {/* Info-type dialog (overlays.md): cyan info circle, primary CTA pair. */}
-          <div className="confirm-modal-icon">
-            <InfoCircle size={56} color="var(--primary-button-background)" variant="Linear" />
-          </div>
+          {/* Info-type dialog (overlays.md), icon hidden. */}
           <h2 className="confirm-modal-title">Mark {scope} as completed</h2>
           <p className="confirm-modal-body">
             {isBulk ? plural(eligibleCount, 'enrolment') : `${learnerName}’s enrolment`} will be marked as completed on {longDate(date)} with {scoreCopy}.
@@ -113,8 +108,7 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
           </p>
         </div>
         <div className="confirm-modal-actions">
-          {/* Cancel returns to the form with every input intact (PRD 2.6). */}
-          <Button variant="outlined" onClick={cancelConfirm} disabled={busy}>
+          <Button variant="outlined-2" onClick={cancelConfirm} disabled={busy}>
             Cancel
           </Button>
           <Button
@@ -198,25 +192,12 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
             </div>
           </fieldset>
 
-          {isBulk && (
-            <>
-              {skipped > 0 && (
-                <Alert
-                  type="Callout"
-                  icon
-                  message={`${plural(skipped, 'selected enrolment')} ${skipped === 1 ? 'is' : 'are'} already completed and will be skipped`}
-                />
-              )}
-              <div className="scm__ack">
-                <Checkbox checked={acknowledged} onChange={() => setAcknowledged((a) => !a)} />
-                <div className="scm__info">
-                  <button type="button" className="scm__ack-label" onClick={() => setAcknowledged((a) => !a)}>
-                    I understand this can’t be undone
-                  </button>
-                  <p className="scm__desc">Only 5Mins support can reverse a manual completion</p>
-                </div>
-              </div>
-            </>
+          {isBulk && skipped > 0 && (
+            <Alert
+              type="Callout"
+              icon
+              message={`${plural(skipped, 'selected enrolment')} ${skipped === 1 ? 'is' : 'are'} already completed and will be skipped`}
+            />
           )}
         </div>
       )}

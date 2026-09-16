@@ -487,8 +487,15 @@
     var(--page-background);
 }
 
+/* Selected row: until the table is actually scrolled nothing sits under the
+   sticky cell, so it stays transparent and the row's own tint shows through. */
 .cd-table-scroll--has-scroll .cd-row--selected .cd-cell--name,
 .cd-table-scroll--has-scroll .cd-row--selected:hover .cd-cell--name {
+  background: transparent;
+}
+
+.cd-table-scroll--scrolled .cd-row--selected .cd-cell--name,
+.cd-table-scroll--scrolled .cd-row--selected:hover .cd-cell--name {
   /* Opaque selected fill for sticky cells over scrolling content */
   background: var(--selected-fill);
 }

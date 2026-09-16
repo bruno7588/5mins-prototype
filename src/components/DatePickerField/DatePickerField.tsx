@@ -65,10 +65,12 @@ function DatePickerField({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
     }
-    document.addEventListener('mousedown', onDown)
+    // Capture phase: a host that stops mousedown from bubbling (a modal panel
+    // guarding its scrim) would otherwise hide every click inside it from us.
+    document.addEventListener('mousedown', onDown, true)
     document.addEventListener('keydown', onKey)
     return () => {
-      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('mousedown', onDown, true)
       document.removeEventListener('keydown', onKey)
     }
   }, [open])

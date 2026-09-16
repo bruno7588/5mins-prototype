@@ -90,8 +90,15 @@
   pointer-events: none;
 }
 
+/* Current day (calendar.md): hairline ring, 8px radius. The grid sits on an
+   elevated surface, so the ring uses --border-elevated. */
+.mc__day--today {
+  box-shadow: inset 0 0 0 1px var(--border-elevated);
+}
+
 .mc__day--selected {
   background: var(--selected);
   color: var(--text-on-selected);
   font-weight: 500;
+  box-shadow: none;
 }

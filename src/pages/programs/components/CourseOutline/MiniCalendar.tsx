@@ -42,6 +42,7 @@ function MiniCalendar({ value, onSelect, maxDate }: Props) {
   const trimmed = weeks > 5 && cells.slice(35).every((c) => !c.inMonth) ? cells.slice(0, 35) : cells
 
   const selISO = toISO(selected)
+  const todayISO = toISO(new Date())
   const monthLabel = view.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
   const shift = (delta: number) => setView(new Date(year, month + delta, 1))
 
@@ -74,8 +75,9 @@ function MiniCalendar({ value, onSelect, maxDate }: Props) {
             <button
               key={i}
               type="button"
-              className={`mc__day${inMonth ? '' : ' mc__day--muted'}${iso === selISO ? ' mc__day--selected' : ''}${disabled ? ' mc__day--disabled' : ''}`}
+              className={`mc__day${inMonth ? '' : ' mc__day--muted'}${iso === todayISO ? ' mc__day--today' : ''}${iso === selISO ? ' mc__day--selected' : ''}${disabled ? ' mc__day--disabled' : ''}`}
               disabled={disabled}
+              aria-current={iso === todayISO ? 'date' : undefined}
               onClick={() => onSelect(iso)}
             >
               {date.getDate()}
