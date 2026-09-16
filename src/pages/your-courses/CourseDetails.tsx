@@ -133,7 +133,7 @@ const ROW_MENU: RowMenuItem[] = [
   { key: 'complete', label: 'Mark as completed', description: 'Record this enrolment as completed', icon: <TickCircle size={20} color="currentColor" variant="Linear" /> },
   { key: 'reset', label: 'Give another attempt', description: 'Archive this attempt and start over', icon: <ArrowRotateLeft size={20} color="currentColor" variant="Linear" /> },
   { key: 'restart', label: 'Restart enrolment', description: 'Start a new enrolment with new dates', icon: <Repeat size={20} color="currentColor" variant="Bold" /> },
-  { key: 'unenrol', label: 'Unenrol', description: 'Remove this learner from the course', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
+  { key: 'unenrol', label: 'Unenrol', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
 ]
 
 /* Only "Give another attempt" and "Mark as completed" are built on this page;

@@ -63,7 +63,9 @@ The prototype is the source of truth. Every frame must match what the browser sh
 - For every state, in order: perform the clicks that reach it, then take a screenshot and **confirm the state matches its name** before capturing. Tips for this prototype: row kebabs are `Actions for <name>` buttons; clicking by ref sometimes closes a freshly opened menu, so click by coordinates when that happens; modals are `role="alertdialog"`; the bulk bar appears after a row checkbox is ticked.
 - Keep the browser screenshot of each state. It is the reference the Figma frame is checked against in step F.
 
-### C. Capture each state into the section
+### C. Capture each state into the section (optional, best effort)
+
+Captures are a nice-to-have reference, never a blocker. The browser screenshot from step B is the real 1:1 reference. Try the capture on the **first** state only; if it does not complete within its polling window, or the script cannot run in the tab, **skip captures for every state** and go straight to step D. Never let a capture hold up the rebuild.
 
 `generate_figma_design` captures a live page by URL, so a state that needs clicks (an open menu or modal) cannot be captured by URL alone. For each state:
 
@@ -72,7 +74,11 @@ The prototype is the source of truth. Every frame must match what the browser sh
 3. Poll with the `captureId` every 5 seconds, up to 10 times, until `completed`.
 4. Record the capture's root node id per state.
 
-Capture every state before rebuilding any, so the section carries the whole flow even if the rebuild stalls.
+If captures work, take them all before rebuilding, so the section carries the whole flow even if the rebuild stalls.
+
+### Staying unstuck
+
+Long runs stall when one call waits on something that never arrives. Keep every `use_figma` call small (one screen section or one overlay per call). Never write a script that waits on timers or polls the browser. For short-lived UI like a toast, trigger it, screenshot at once, and if it has gone, rebuild it from the prototype's markup rather than waiting for it again. If a step fails twice, skip it, note it for the report, and move on.
 
 ### D. Map the 5Mins library
 
@@ -80,28 +86,36 @@ Follow `figma-generate-design` step 2. Repo-specific facts:
 
 - There are **no Code Connect files** here. Step 2a-i is N/A; log it and move on.
 - `get_libraries` on the file, find the 5Mins library, and scope every `search_design_system` call to it with `includeLibraryKeys`. Query with the component names from `docs/design-system/*.md`; those docs also carry the library node ids.
-- Also search the library for an annotation or callout component to use for the Why and Flow callouts (try "callout", "annotation", "note", "documentation").
+- For the Why and Flow callouts, use the library's **Callout flow** component (types `Flow description` and `Note`). Only build a proposed callout if that component cannot hold the content.
+- Before building, check the section for frames that already exist (a base page frame, a callout). Reuse what the run itself created; never modify pre-existing frames, duplicate them instead.
 - Tokens: the docs and `src/styles/tokens.css` name every colour, space and radius token. Bind the matching library variables; never type a hex or a pixel value that a token covers.
 
 **If the library has no component for something the prototype shows** (a callout, a bulk action bar, a badge variant, a menu with descriptions): build it. Follow `figma-generate-library`: a proper component or variant set with token bindings, named `5Mins / <Component> / <name> (proposed)`, placed in its own frame named `Proposed components` at the bottom of the section. Use instances of it in the screens. Report every proposed component so the design team can adopt or replace it. Never approximate with loose rectangles inside a screen.
 
 ### E. Build the section
 
-Everything goes inside the given section node, laid out top to bottom, 200px between rows, 120px between frames in a row:
+Everything goes inside the given section node as **stacked rows, one row per flow**. Every row starts at the same left x; rows are separated by 200px measured from the bottom of the tallest item in the row above; items inside a row are 120px apart with their top edges aligned.
 
-1. **Why callout** at the top. One instance of the callout component with the heading "Why" and the three approved lines, labelled Context, Problem to solve, Solution. Width 1440.
-2. **Per flow**, in order: a **Flow callout** (heading = the flow title, body = the approved sentence), then that flow's screens in one row, left to right, named `<Flow> · NN · <state>` (`Single enrolment · 03 · Mark as completed modal`).
+```
+Row 0   [ Why callout ]
+Row 1   [ Flow callout: Single enrolment ]  [ 01 ]  [ 02 ]  [ 03 ]  [ 04 ]  [ 05 ]
+Row 2   [ Flow callout: Bulk ]              [ 01 ]  [ 02 ]  [ 03 ]  [ 04 ]  [ 05 ]
+Row 3   [ Proposed components ]   (only if any were built)
+```
+
+1. **Row 0 — Why callout**, alone. One instance of the callout component with the heading "Why" and the three approved lines, labelled Context, Problem to solve, Solution.
+2. **One row per flow**, in the order given, each directly below the previous. The row opens with that flow's **Flow callout** (heading = the flow title, body = the approved sentence) at the left edge, followed by the flow's screens to its right, named `<Flow> · NN · <state>` (`Single enrolment · 03 · Mark as completed modal`). Never put two flows on the same row.
 3. **Every state is a full screen**, the base page plus whatever is open on it. If two states share the same base, duplicate it. A designer reads the flow by scanning the row; never a floating modal on white.
 4. Page states are 1440 wide; an overlay's own width comes from its CSS (the modal is 600, the confirmation 480).
 5. Copy comes from the prototype verbatim (Title Case buttons, sentence case everything else). Do not rewrite it.
-6. Move each capture next to its rebuilt frame, named `<Flow> · NN · <state> · capture`. Do not delete captures; the user decides when the reference has served its purpose.
-7. `Proposed components` frame last, if any were built.
+6. If captures were taken, move each next to its rebuilt frame, named `<Flow> · NN · <state> · capture`. Do not delete captures; the user decides when the reference has served its purpose.
+7. `Proposed components` frame on its own last row, if any were built. Any scratch or reference frame the run makes stays out of the rows (to the right of the widest row, or below everything).
 
 ### F. Verify and report
 
 - `get_screenshot` each rebuilt frame and compare it side by side with the browser screenshot of the same state. Anything that differs is a defect: clipped text, overlapping nodes, wrong variants, missing copy, different spacing, a control in a different state. Fix it before moving on. The only allowed difference is a gap named in the report.
 - Close every browser tab the agent opened.
-- Return: the section link, one line per state with rebuilt and capture node ids, every proposed component with what it stands in for, any state marked "rebuild only" or "capture only" and why, and anything left unverified.
+- Return: the section link, one line per state with its rebuilt node id (and capture node id if any), whether captures were taken or skipped, every proposed component with what it stands in for, any step skipped and why, and anything left unverified.
 
 ## 3. Report back
 
