@@ -28,7 +28,7 @@ If the route, the flows or the section are missing, ask. Do not invent flows fro
 2. Confirm the dev server answers: `curl -s -o /dev/null -w '%{http_code}' http://localhost:5173`.
 3. **Why callout content.** Three short lines: Context, Problem to solve, Solution. Draft them from the PRD when `--ticket` is given (its Context section has the problem and the decisions), otherwise from what the user said. Show the three lines to the user with `AskUserQuestion` before spawning the agent, with an option to accept and an option to edit. Keep each line to one or two plain sentences a new teammate could read in ten seconds.
 4. **Flow callout content.** For each flow: its title as given, plus one plain sentence saying what the admin does and what they get. Draft these too and show them in the same question.
-5. Defaults when the user does not say otherwise: **light theme, 1440 wide, admin shell**. Ask only if a state could be reached two ways or the theme or viewport matters for what ships.
+5. Defaults when the user does not say otherwise: **light theme, 1536 wide, admin shell**. Ask only if a state could be reached two ways or the theme or viewport matters for what ships.
 
 ## 2. Spawn the agent
 
@@ -109,7 +109,7 @@ Row 3   [ Proposed components ]   (only if any were built)
    - **Every screen must visibly differ from the one before it.** Duplicating the base is only the start: each state adds its own layers as children of its frame, above the base in z-order (open menu, scrim plus modal or dialog, ticked rows plus bulk bar, changed row data plus toast). A row of identical base pages is the most common failure; check for it before reporting.
    - Build the flow's **start state once** (for example the rows ticked with the bar showing) and duplicate *that* for the later screens of the flow, so the selection carries through.
    - Overlays sit where the browser viewport shows them. A frame is the full page height, so a centred modal can look low in it; that is expected, not a defect.
-4. Page states are 1440 wide; an overlay's own width comes from its CSS (the modal is 600, the confirmation 480).
+4. Page states are **1536 wide**, the default screen width in the 5Mins Figma files. Size the browser viewport to 1536 in step B so the layout matches 1:1. An overlay's own width comes from its CSS (the modal is 600, the confirmation 480).
 5. Copy comes from the prototype verbatim (Title Case buttons, sentence case everything else). Do not rewrite it.
 6. If captures were taken, move each next to its rebuilt frame, named `<Flow> · NN · <state> · capture`. Do not delete captures; the user decides when the reference has served its purpose.
 7. `Proposed components` frame on its own last row, if any were built. Any scratch or reference frame the run makes stays out of the rows (to the right of the widest row, or below everything).
