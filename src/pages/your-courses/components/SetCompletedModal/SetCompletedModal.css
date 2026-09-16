@@ -97,12 +97,6 @@
   width: 100%;
 }
 
-/* Nudge the 18px control onto the label's cap height. */
-.scm__option > input {
-  margin-top: var(--space-xxs);
-  flex-shrink: 0;
-}
-
 .scm__info {
   display: flex;
   flex-direction: column;
@@ -111,9 +105,14 @@
   min-width: 0;
 }
 
+/* The label's first line is as tall as the 24px radio and centres its text,
+   so radio and label stay centred even when the score stepper opens below. */
 .scm__option-label {
+  display: flex;
+  align-items: center;
+  min-height: var(--space-l);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
   cursor: pointer;

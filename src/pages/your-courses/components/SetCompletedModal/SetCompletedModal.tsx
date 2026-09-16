@@ -172,9 +172,6 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
               <Radio id={`${name}-custom`} name={`${name}-score`} checked={scoreMode === 'custom'} onChange={() => setScoreMode('custom')} />
               <div className="scm__info">
                 <label className="scm__option-label" htmlFor={`${name}-custom`}>Set a specific score</label>
-                <p className="scm__desc">
-                  {isBulk ? 'Same score for every enrolment' : 'Recorded as the final score'}
-                </p>
                 {scoreMode === 'custom' && (
                   <InputInteger value={customScore} onChange={setCustomScore} min={0} max={100} suffix="%" ariaLabel="Score" />
                 )}
