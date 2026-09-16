@@ -101,10 +101,6 @@
 }
 
 /* Row actions (⋯) menu trigger — hover uses input-background */
-.cd-cell--actions .cd-icon-btn:hover {
-  background: var(--input-background);
-}
-
 .cd-link-icon {
   transform: rotate(-45deg);
 }
@@ -226,9 +222,11 @@
 }
 
 /* Stats */
+/* One row of four on a full-width screen; the 2×2 grid is only for when the
+   width demands it (see the 1200px breakpoint). */
 .cd-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-m);
 }
 
@@ -386,6 +384,10 @@
 
 /* Narrow: search and Download Report move above the selection controls */
 @media (max-width: 1200px) {
+  .cd-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .cd-actions {
     flex-wrap: wrap;
   }
@@ -609,111 +611,10 @@
   cursor: pointer;
 }
 
-.cd-attempt-info,
-.cd-attempt-info .tooltip__trigger {
-  display: inline-flex;
-  align-items: center;
-}
-
-.cd-attempt-info .tooltip__trigger {
-  cursor: default;
-}
-
-/* Keep the attempt-no tooltip on a single line */
-.cd-attempt-info .tooltip__content {
-  max-width: none;
-  white-space: nowrap;
-}
-
 .cd-cell--actions {
   width: 48px;
   flex-shrink: 0;
   justify-content: center;
-  position: relative;
-}
-
-/* Row action menu — DS Listbox */
-.cd-row-menu {
-  position: absolute;
-  top: calc(100% + var(--space-s));
-  right: 0;
-  z-index: 60;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  padding: var(--space-s);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);
-}
-
-/* Caret pointing up toward the trigger */
-.cd-row-menu::before {
-  content: '';
-  position: absolute;
-  top: -5px;
-  right: 14px;
-  width: 10px;
-  height: 10px;
-  background: var(--cards-background);
-  border-top: 1px solid var(--border);
-  border-left: 1px solid var(--border);
-  transform: rotate(45deg);
-}
-
-.cd-row-menu-item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-s);
-  width: 100%;
-  padding: var(--space-s) var(--space-sm);
-  border: none;
-  background: none;
-  border-radius: var(--radius-s);
-  text-align: left;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.cd-row-menu-item:hover {
-  background: var(--cards-background-hover);
-}
-
-.cd-row-menu-text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
-.cd-row-menu-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-primary);
-  line-height: 1.5;
-  white-space: nowrap;
-}
-
-.cd-row-menu-desc {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  white-space: nowrap;
-}
-
-.cd-row-menu-item--danger .cd-row-menu-title,
-.cd-row-menu-item--danger .cd-row-menu-desc {
-  color: var(--text-error);
-}
-
-.cd-row-menu-divider {
-  height: 1px;
-  width: 100%;
-  margin: var(--space-s) 0;
-  background: var(--border);
-  border-radius: var(--radius-xs);
 }
 
 /* Reset-progress dialog width (Figma: 600px, vs ConfirmModal default 560px) */
@@ -729,12 +630,6 @@
 .cd-reset-cap-alert .alert__message {
   font-size: 14px;
   font-weight: 500;
-}
-
-.cd-menu-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
 }
 
 /* Status badge */
@@ -767,7 +662,7 @@
   color: var(--text-warning);
 }
 
-.cd-status--passed {
+.cd-status--completed {
   background: rgba(24, 169, 87, 0.16);
   color: var(--text-success);
 }

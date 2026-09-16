@@ -14,10 +14,13 @@ const parseISO = (iso: string) => {
 interface Props {
   value: string // ISO yyyy-mm-dd
   onSelect: (iso: string) => void
+  /** ISO yyyy-mm-dd. Days after it render disabled (calendar.md "Outside month
+      / disabled" cell) so the grid itself enforces the bound. */
+  maxDate?: string
 }
 
 /** Month-grid date picker (Figma 2420:44116 calendar). Mon-first week. */
-function MiniCalendar({ value, onSelect }: Props) {
+function MiniCalendar({ value, onSelect, maxDate }: Props) {
   const selected = parseISO(value)
   const [view, setView] = useState(new Date(selected.getFullYear(), selected.getMonth(), 1))
 
@@ -65,11 +68,14 @@ function MiniCalendar({ value, onSelect }: Props) {
       <div className="mc__grid">
         {trimmed.map(({ date, inMonth }, i) => {
           const iso = toISO(date)
+          // ISO strings order the same as the dates they name.
+          const disabled = maxDate !== undefined && iso > maxDate
           return (
             <button
               key={i}
               type="button"
-              className={`mc__day${inMonth ? '' : ' mc__day--muted'}${iso === selISO ? ' mc__day--selected' : ''}`}
+              className={`mc__day${inMonth ? '' : ' mc__day--muted'}${iso === selISO ? ' mc__day--selected' : ''}${disabled ? ' mc__day--disabled' : ''}`}
+              disabled={disabled}
               onClick={() => onSelect(iso)}
             >
               {date.getDate()}

@@ -1,0 +1,160 @@
+/* Set as completed modal (DES-333). Shell (scrim, radius, 24px padding, 20px
+   section gap, animations) comes from ConfirmModal; the width and body layout
+   mirror the user-profile date modals (ExtendDueDateModal). */
+
+.scm {
+  width: 600px;
+  position: relative;
+}
+
+.scm__close {
+  position: absolute;
+  top: var(--space-s);
+  right: var(--space-s);
+}
+
+/* ── Header ── */
+.scm__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.scm__headline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-right: var(--space-xl);
+}
+
+.scm__title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.scm__supporting {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.scm__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}
+
+/* ── Body ── */
+.scm__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  width: 100%;
+}
+
+.scm__field,
+.scm__fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  align-items: flex-start;
+}
+
+.scm__fieldset {
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+/* Field label — Paragraph M semibold, as the calendar.md date field label. */
+.scm__label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  padding: 0;
+}
+
+.scm__option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+/* Nudge the 18px control onto the label's cap height. */
+.scm__option > input {
+  margin-top: var(--space-xxs);
+  flex-shrink: 0;
+}
+
+.scm__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.scm__option-label {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.scm__desc {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.scm__info > .input-integer {
+  margin-top: var(--space-s);
+}
+
+/* ── Acknowledgement (bulk only) — checkbox row with label + supporting text. */
+.scm__ack {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.scm__ack > .checkbox {
+  margin-top: var(--space-xxs);
+}
+
+.scm__ack-label {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+}
+
+/* ── CTA ── DS modal spec puts a single filled button, centred. */
+.scm__cta {
+  align-self: center;
+}
+
+/* Step 2 — the confirmation dialog (overlays.md Dialog, Info type). */
+.confirm-modal.scm-confirm {
+  width: 480px;
+}

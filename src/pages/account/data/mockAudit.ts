@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from 'react'
+
 // Mock audit-log data for Account & Settings → Audit Log (DES-318).
 //
 // Model = OPERATIONS, not items. One save is ONE row, however many fields it
@@ -554,20 +556,84 @@ export const EVENT_TYPE_OPTIONS = (Object.keys(EVENT_TYPES) as AuditEventType[])
   .map((key) => ({ value: key, label: EVENT_TYPES[key].label, disabled: !EVENT_TYPES[key].live }))
   .sort((a, b) => Number(a.disabled) - Number(b.disabled))
 
-export const ACTOR_OPTIONS = distinctBy(
-  auditOperations.map((op) => ({ value: op.actor, label: op.actor })),
-).sort((a, b) => a.label.localeCompare(b.label))
+export const actorOptionsFor = (ops: AuditOperation[]) =>
+  distinctBy(ops.map((op) => ({ value: op.actor, label: op.actor }))).sort((a, b) =>
+    a.label.localeCompare(b.label),
+  )
 
 /**
  * The Target filter options — every object the log has touched. Deliberately flat
  * and heterogeneous (courses alongside users and roles), mirroring the Target
  * column: the Events filter is what narrows it to one kind.
  */
-export const TARGET_OPTIONS = distinctBy(
-  auditOperations
-    .filter((op) => targetKeyForOp(op) !== '')
-    .map((op) => ({ value: targetKeyForOp(op), label: targetLabelForOp(op) })),
-).sort((a, b) => a.label.localeCompare(b.label))
+export const targetOptionsFor = (ops: AuditOperation[]) =>
+  distinctBy(
+    ops
+      .filter((op) => targetKeyForOp(op) !== '')
+      .map((op) => ({ value: targetKeyForOp(op), label: targetLabelForOp(op) })),
+  ).sort((a, b) => a.label.localeCompare(b.label))
+
+// ── Live store ──────────────────────────────────────────────────────────────
+// Operations recorded during the session (e.g. a manual completion on the
+// Enrolments tab, DES-333) land in front of the seeded rows, so the Audit Log
+// shows them the moment it opens. In-memory only, like every other mock.
+
+let live: AuditOperation[] = auditOperations
+const listeners = new Set<() => void>()
+let liveIdCounter = 0
+
+const subscribe = (listener: () => void) => {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
+}
+
+/** Seeded rows plus anything recorded this session, newest first. */
+export function useAuditOperations(): AuditOperation[] {
+  return useSyncExternalStore(subscribe, () => live)
+}
+
+const longDate = (iso: string) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+
+/**
+ * DES-333: an admin marked enrolments as completed by hand. One operation per run,
+ * however many learners it covered; actor and role are captured as they are now.
+ */
+export function recordCompletionOperation(input: {
+  actor: string
+  role: string
+  courseId: string
+  learners: { name: string; email: string }[]
+  /** ISO yyyy-mm-dd. */
+  date: string
+  score: number | null
+}) {
+  const n = input.learners.length
+  const changes: AuditChange[] = [
+    {
+      settingKey: 'set-completed',
+      setting: `Marked ${n} ${n === 1 ? 'learner' : 'learners'} as completed`,
+      value: { kind: 'list', items: input.learners.map((l) => l.name), emails: input.learners.map((l) => l.email) },
+    },
+    { settingKey: 'completion-date', setting: 'Completion date', value: t(longDate(input.date)) },
+  ]
+  if (input.score != null) changes.push({ settingKey: 'score', setting: 'Score', value: t(`${input.score}%`) })
+  changes.push({ settingKey: 'completion-source', setting: 'Source', value: t('Manual') })
+
+  const op: AuditOperation = {
+    id: `op-live-${++liveIdCounter}`,
+    eventType: 'course-enrolment',
+    actor: input.actor,
+    actorEmail: emailFor(input.actor),
+    role: input.role,
+    surfaceKey: 'enrolment',
+    timestamp: new Date().toISOString(),
+    courseId: input.courseId,
+    changes,
+  }
+  live = [op, ...live]
+  listeners.forEach((l) => l())
+}
 
 /** Preset date-range windows (days back from today). `null` = All time. */
 export const DATE_RANGE_OPTIONS: { value: string; label: string; days: number | null }[] = [

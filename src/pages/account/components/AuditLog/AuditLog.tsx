@@ -10,14 +10,14 @@ import ImpactedUsersDrawer from './ImpactedUsersDrawer'
 import noActivityIllustration from '@/assets/empty-state-illustrations/no-activity.svg'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import {
-  auditOperations,
+  useAuditOperations,
+  actorOptionsFor,
+  targetOptionsFor,
   operationLabel,
   targetLabelForOp,
   targetKeyForOp,
   EVENT_TYPES,
-  ACTOR_OPTIONS,
   EVENT_TYPE_OPTIONS,
-  TARGET_OPTIONS,
   DATE_RANGE_OPTIONS,
   SURFACES,
   type AuditValue,
@@ -193,6 +193,10 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
     setPage(0)
   }
 
+  const ops = useAuditOperations()
+  const actorOptions = useMemo(() => actorOptionsFor(ops), [ops])
+  const targetOptions = useMemo(() => targetOptionsFor(ops), [ops])
+
   const filtered = useMemo(() => {
     const rangeOpt = DATE_RANGE_OPTIONS.find((o) => o.value === filters.dateRange)
     const cutoff = rangeOpt?.days != null ? Date.now() - rangeOpt.days * 86_400_000 : null
@@ -205,7 +209,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
           }
         : null
 
-    return auditOperations.filter((op) => {
+    return ops.filter((op) => {
       if (filters.eventType.length && !filters.eventType.includes(op.eventType)) return false
       if (filters.actor.length && !filters.actor.includes(op.actor)) return false
       if (filters.target.length && !filters.target.includes(targetKeyForOp(op))) return false
@@ -214,7 +218,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
       if (custom && (t < custom.from || t > custom.to)) return false
       return true
     })
-  }, [filters])
+  }, [filters, ops])
 
   const anyApplied =
     filters.dateRange !== ALL ||
@@ -306,7 +310,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
           <AuditMultiSelect
             allLabel="All users"
             noun="users"
-            options={ACTOR_OPTIONS}
+            options={actorOptions}
             selected={filters.actor}
             onChange={(v) => patch({ actor: v })}
           />
@@ -320,7 +324,7 @@ function AuditLog({ initialCourseId }: AuditLogProps) {
           <AuditMultiSelect
             allLabel="All targets"
             noun="targets"
-            options={TARGET_OPTIONS}
+            options={targetOptions}
             selected={filters.target}
             onChange={(v) => patch({ target: v })}
           />

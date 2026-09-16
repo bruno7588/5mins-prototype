@@ -82,6 +82,14 @@
   color: var(--text-disabled);
 }
 
+/* Out of range (after maxDate) — calendar.md disabled cell: text-disabled at
+   50% opacity, and inert so the grid is what enforces the bound. */
+.mc__day--disabled {
+  color: var(--text-disabled);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .mc__day--selected {
   background: var(--selected);
   color: var(--text-on-selected);

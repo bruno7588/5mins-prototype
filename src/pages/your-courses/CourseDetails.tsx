@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type ComponentType } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Add,
@@ -31,6 +31,12 @@ import Alert from '../../components/Alert/Alert'
 import Button from '../../components/Button/Button'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
+import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
+import BulkActionBar from '@/components/BulkActionBar/BulkActionBar'
+import SetCompletedModal, { type Completion } from './components/SetCompletedModal/SetCompletedModal'
+import { useCurrentUser, type UserRole } from '@/hooks/useCurrentUser'
+import { recordCompletionOperation, SETTINGS_TAB_COURSE_ID } from '@/pages/account/data/mockAudit'
+import { track } from '@/utils/analytics'
 import jewelsIllustration from '../../assets/programs/jewels.svg'
 import { COURSE_TITLE } from './courseTitle'
 import CourseSettings from './components/CourseSettings/CourseSettings'
@@ -40,7 +46,17 @@ import './CourseDetails.css'
 
 type Tab = 'content' | 'enrolments' | 'assessments' | 'settings' | 'overview'
 
-type LearnerStatus = 'not-started' | 'in-progress' | 'quizzes-pending' | 'passed' | 'failed'
+type LearnerStatus = 'not-started' | 'in-progress' | 'quizzes-pending' | 'completed' | 'failed'
+
+/* Who recorded a manual completion, and when (DES-333 AC 8). Role is the
+   admin's role at the time; a manual score is never recalculated later. */
+interface ManualCompletion {
+  by: string
+  role: string
+  /** ISO 8601. */
+  at: string
+  source: 'manual'
+}
 
 interface Learner {
   id: number
@@ -54,13 +70,16 @@ interface Learner {
   attemptNo: number
   completionDate: string | null
   repeat: string
+  completion?: ManualCompletion
 }
+
+const ROLE_LABELS: Record<UserRole, string> = { admin: 'Admin', manager: 'Team Manager', learner: 'Learner' }
 
 const STATUS_LABELS: Record<LearnerStatus, string> = {
   'not-started': 'Not Started',
   'in-progress': 'In Progress',
   'quizzes-pending': 'Retaking Quizzes',
-  passed: 'Passed',
+  completed: 'Completed',
   failed: 'Failed',
 }
 
@@ -71,17 +90,19 @@ const TOTAL = 128
 // The cap is only enforced while auto-reset is on, so it only frames the manual reset when on.
 const AUTO_RESET_ON_FAILURE = true
 const MAX_COURSE_ATTEMPTS = 3
+// Settings tab `enablePassScore` + pass score; null when no pass score is configured (DES-333 BL4).
+const COURSE_PASS_SCORE: number | null = 80
 
 const learners: Learner[] = [
   { id: 1, name: 'Anthony Wallace', email: 'anthony.wallace@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 60, status: 'failed', attemptNo: 2, completionDate: 'Sep 25, 2025', repeat: 'Every 12 months' },
-  { id: 2, name: 'Sophia Carter', email: 'sophia.carter@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 92, status: 'passed', attemptNo: 1, completionDate: 'Sep 25, 2025', repeat: 'Never' },
+  { id: 2, name: 'Sophia Carter', email: 'sophia.carter@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 92, status: 'completed', attemptNo: 1, completionDate: 'Sep 25, 2025', repeat: 'Never' },
   { id: 3, name: 'Oliver Bennett', email: 'oliver.bennett@email.com', startDate: 'Jul 14, 2024', dueDate: 'Oct 25, 2025', progress: 0, score: null, status: 'not-started', attemptNo: 1, completionDate: null, repeat: 'Every 12 months' },
   { id: 4, name: 'Emma Thompson', email: 'emma.thompson@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 50, status: 'quizzes-pending', attemptNo: 2, completionDate: null, repeat: 'Every 6 months' },
   { id: 5, name: 'Liam Johnson', email: 'liam.johnson@email.com', startDate: 'Sep 02, 2024', dueDate: 'Nov 30, 2025', progress: 0, score: null, status: 'not-started', attemptNo: 1, completionDate: null, repeat: 'Never' },
   { id: 6, name: 'Ava Martinez', email: 'ava.martinez@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 78, status: 'failed', attemptNo: 3, completionDate: 'Oct 01, 2025', repeat: 'Every 12 months' },
   { id: 7, name: 'Noah Davis', email: 'noah.davis@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 50, score: 65, status: 'in-progress', attemptNo: 2, completionDate: null, repeat: 'Every 12 months' },
-  { id: 8, name: 'Isabella Lewis', email: 'isabella.lewis@email.com', startDate: 'Jun 18, 2024', dueDate: 'Sep 15, 2025', progress: 100, score: 96, status: 'passed', attemptNo: 1, completionDate: 'Sep 12, 2025', repeat: 'Never' },
-  { id: 9, name: 'James Walker', email: 'james.walker@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 96, status: 'passed', attemptNo: 1, completionDate: 'Aug 30, 2025', repeat: 'Every 12 months' },
+  { id: 8, name: 'Isabella Lewis', email: 'isabella.lewis@email.com', startDate: 'Jun 18, 2024', dueDate: 'Sep 15, 2025', progress: 100, score: 96, status: 'completed', attemptNo: 1, completionDate: 'Sep 12, 2025', repeat: 'Never' },
+  { id: 9, name: 'James Walker', email: 'james.walker@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 100, score: 96, status: 'completed', attemptNo: 1, completionDate: 'Aug 30, 2025', repeat: 'Every 12 months' },
   { id: 10, name: 'Mia Robinson', email: 'mia.robinson@email.com', startDate: 'Aug 27, 2024', dueDate: 'Oct 25, 2025', progress: 88, score: 80, status: 'in-progress', attemptNo: 2, completionDate: null, repeat: 'Every 6 months' },
 ]
 
@@ -93,10 +114,8 @@ const TABS: { key: Tab; label: string; count?: number }[] = [
   { key: 'overview', label: 'Overview' },
 ]
 
-type IconComponent = ComponentType<{ size?: number; color?: string; variant?: 'Linear' | 'Bold' }>
-
 // Recurring/repeat-rules glyph (partial arc + dashed arc).
-function RepeatRules({ size = 20, color = 'currentColor' }: { size?: number; color?: string; variant?: 'Linear' | 'Bold' }) {
+function RepeatRules({ size = 20, color = 'currentColor' }: { size?: number; color?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 20" fill="none" aria-hidden="true">
       <path d="M12.1243 18.0557C15.6993 17.1141 18.3327 13.8641 18.3327 9.9974C18.3327 5.3974 14.6327 1.66406 9.99935 1.66406C4.44102 1.66406 1.66602 6.2974 1.66602 6.2974M5.36602 6.2974H3.34102H1.66602V2.4974" stroke={color} strokeWidth="1.04167" strokeLinecap="round" strokeLinejoin="round" />
@@ -105,26 +124,50 @@ function RepeatRules({ size = 20, color = 'currentColor' }: { size?: number; col
   )
 }
 
-interface RowMenuAction {
-  key: string
-  label: string
-  description: string
-  Icon: IconComponent
-  variant?: 'Linear' | 'Bold'
-  danger?: boolean
-  /** Render a divider above this item. */
-  dividerBefore?: boolean
-}
-
-const ROW_MENU: RowMenuAction[] = [
-  { key: 'view', label: 'View progress', description: "See learner's lesson and quiz progress", Icon: TaskSquare },
-  { key: 'extend', label: 'Extend due date', description: 'Give more time to complete the course', Icon: CalendarAdd },
-  { key: 'editStart', label: 'Edit start date', description: 'Change when the enrolment begins', Icon: CalendarEdit },
-  { key: 'editRepeat', label: 'Edit repeat rules', description: 'How often this course repeats', Icon: RepeatRules },
-  { key: 'reset', label: 'Give another attempt', description: 'Archive this attempt and start over', Icon: ArrowRotateLeft },
-  { key: 'restart', label: 'Restart enrolment', description: 'Start a new enrolment with new dates', Icon: Repeat, variant: 'Bold' },
-  { key: 'unenrol', label: 'Unenrol', description: 'Remove this learner from the course', Icon: UserMinus, danger: true, dividerBefore: true },
+/* Row kebab (shared RowActionsMenu, as on People and the user profile). */
+const ROW_MENU: RowMenuItem[] = [
+  { key: 'view', label: 'View progress', description: "See learner's lesson and quiz progress", icon: <TaskSquare size={20} color="currentColor" variant="Linear" /> },
+  { key: 'extend', label: 'Extend due date', description: 'Give more time to complete the course', icon: <CalendarAdd size={20} color="currentColor" variant="Linear" /> },
+  { key: 'editStart', label: 'Edit start date', description: 'Change when the enrolment begins', icon: <CalendarEdit size={20} color="currentColor" variant="Linear" /> },
+  { key: 'editRepeat', label: 'Edit repeat rules', description: 'How often this course repeats', icon: <RepeatRules size={20} color="currentColor" /> },
+  { key: 'complete', label: 'Mark as completed', description: 'Record this enrolment as completed', icon: <TickCircle size={20} color="currentColor" variant="Linear" /> },
+  { key: 'reset', label: 'Give another attempt', description: 'Archive this attempt and start over', icon: <ArrowRotateLeft size={20} color="currentColor" variant="Linear" /> },
+  { key: 'restart', label: 'Restart enrolment', description: 'Start a new enrolment with new dates', icon: <Repeat size={20} color="currentColor" variant="Bold" /> },
+  { key: 'unenrol', label: 'Unenrol', description: 'Remove this learner from the course', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
 ]
+
+/* Only "Give another attempt" and "Mark as completed" are built on this page;
+   the rest stay visible but greyed, with the reason on hover. */
+const NOT_IN_PROTOTYPE = 'Not part of this prototype yet'
+const ALREADY_COMPLETED = 'Already completed'
+/* D3: every tenant Admin gets the action; roles below Admin see it greyed. */
+const NOT_ADMIN = 'Only admins can mark enrolments as completed'
+const rowMenuFor = (row: Learner, canComplete: boolean): RowMenuItem[] =>
+  ROW_MENU.map((item) => {
+    if (item.key === 'reset') return item
+    if (item.key === 'complete') {
+      if (!canComplete) return { ...item, disabled: true, title: NOT_ADMIN }
+      return row.status === 'completed' ? { ...item, disabled: true, title: ALREADY_COMPLETED } : item
+    }
+    return { ...item, disabled: true, title: NOT_IN_PROTOTYPE }
+  })
+
+/* The bulk bar's menu (DES-333 M1): the row actions that can act on a whole
+   selection, derived from ROW_MENU so the glyphs and wording can never drift
+   between the row and the bar. Label-only, as the bar's listbox in the design. */
+const BULK_ACTION_KEYS = new Set(['extend', 'editStart', 'editRepeat', 'complete', 'reset', 'restart', 'unenrol'])
+const BULK_MENU_ITEMS: RowMenuItem[] = ROW_MENU.filter((item) => BULK_ACTION_KEYS.has(item.key)).map(
+  ({ description: _description, ...item }) => item,
+)
+const bulkMenuFor = (canComplete: boolean): RowMenuItem[] =>
+  BULK_MENU_ITEMS.map((item) => {
+    if (item.key === 'complete') return canComplete ? item : { ...item, disabled: true, title: NOT_ADMIN }
+    return { ...item, disabled: true, title: NOT_IN_PROTOTYPE }
+  })
+
+/* Table dates read "Sep 25, 2025" (see the mock rows). */
+const tableDate = (iso: string) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
 
 // Info icon (circle-i) used for column/stat hints.
 function InfoMark({ size = 16, color = 'var(--text-secondary)' }: { size?: number; color?: string }) {
@@ -218,8 +261,10 @@ function CourseDetails() {
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [learnerList, setLearnerList] = useState<Learner[]>(learners)
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null)
   const [resetTarget, setResetTarget] = useState<Learner | null>(null)
+  const [completeTarget, setCompleteTarget] = useState<Learner | 'bulk' | null>(null)
+  const user = useCurrentUser()
+  const canComplete = user.role === 'admin'
   const { toasts, show: showToast } = useToast()
 
   /* ─── Sticky first column: track horizontal scroll ─── */
@@ -270,6 +315,55 @@ function CourseDetails() {
 
   function toggleAll() {
     setSelected(allSelected ? new Set() : new Set(rows.map((r) => r.id)))
+  }
+
+  /* Already-completed rows stay selectable (D2); the run skips them. */
+  const eligibleForCompletion = learnerList.filter((l) => selected.has(l.id) && l.status !== 'completed')
+
+  /* One date and one score land on every eligible enrolment (AC 5, AC 6). */
+  function applyCompletion({ date, score, scoreSource }: Completion) {
+    const isBulk = completeTarget === 'bulk'
+    const ids = isBulk
+      ? new Set(eligibleForCompletion.map((l) => l.id))
+      : new Set(completeTarget ? [completeTarget.id] : [])
+    const skipped = isBulk ? selected.size - ids.size : 0
+    const completion: ManualCompletion = {
+      by: user.name,
+      role: ROLE_LABELS[user.role],
+      at: new Date().toISOString(),
+      source: 'manual',
+    }
+    setLearnerList((prev) =>
+      prev.map((l) =>
+        ids.has(l.id)
+          ? { ...l, status: 'completed' as LearnerStatus, progress: 100, score, completionDate: tableDate(date), completion }
+          : l,
+      ),
+    )
+    // One audit operation per run, listing every learner it touched (AC 8).
+    recordCompletionOperation({
+      actor: completion.by,
+      role: completion.role,
+      courseId: SETTINGS_TAB_COURSE_ID,
+      learners: learnerList.filter((l) => ids.has(l.id)).map((l) => ({ name: l.name, email: l.email })),
+      date,
+      score,
+    })
+    const applied = ids.size
+    track('enrolment_completion_applied', {
+      scope: isBulk ? 'bulk' : 'single',
+      applied,
+      skipped,
+      score_source: score == null ? 'none' : scoreSource,
+    })
+    showToast(
+      'success',
+      skipped === 0
+        ? `${applied} ${applied === 1 ? 'enrolment' : 'enrolments'} marked as completed`
+        : `${applied} ${applied === 1 ? 'enrolment' : 'enrolments'} marked as completed · ${skipped} skipped`,
+    )
+    setCompleteTarget(null)
+    if (isBulk) setSelected(new Set())
   }
 
   function confirmReset(id: number) {
@@ -497,15 +591,7 @@ function CourseDetails() {
                 </div>
                 <div className="cd-cell cd-cell--status">Status</div>
                 <div className="cd-cell cd-cell--attempt">
-                  Re-attempts
-                  <Tooltip
-                    icon={false}
-                    position="Top"
-                    text="Course re-attempts (current/max allowed)"
-                    className="cd-attempt-info"
-                  >
-                    <InfoMark />
-                  </Tooltip>
+                  Attempt nº
                 </div>
                 <div className="cd-cell cd-cell--completion">Completion date</div>
                 <div className="cd-cell cd-cell--repeat">Repeat</div>
@@ -554,44 +640,14 @@ function CourseDetails() {
                   </div>
                   <div className="cd-cell cd-cell--repeat">{row.repeat}</div>
                   <div className="cd-cell cd-cell--actions">
-                    <button
-                      className="cd-icon-btn cd-icon-btn--sm"
-                      aria-label={`Actions for ${row.name}`}
-                      aria-haspopup="menu"
-                      aria-expanded={openMenuId === row.id}
-                      onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}
-                    >
-                      <MoreIcon size={20} color="var(--text-secondary)" />
-                    </button>
-                    {openMenuId === row.id && (
-                      <div className="cd-row-menu" role="menu">
-                        {ROW_MENU.map(({ key, label, description, Icon, variant, danger, dividerBefore }) => (
-                          <Fragment key={key}>
-                            {dividerBefore && <div className="cd-row-menu-divider" role="separator" />}
-                            <button
-                              type="button"
-                              role="menuitem"
-                              className={`cd-row-menu-item${danger ? ' cd-row-menu-item--danger' : ''}${key === 'reset' ? '' : ' ui-disabled'}`}
-                              disabled={key !== 'reset'}
-                              onClick={() => {
-                                setOpenMenuId(null)
-                                if (key === 'reset') setResetTarget(row)
-                              }}
-                            >
-                              <Icon
-                                size={20}
-                                color={danger ? 'var(--text-error)' : 'var(--text-primary)'}
-                                variant={variant ?? 'Linear'}
-                              />
-                              <span className="cd-row-menu-text">
-                                <span className="cd-row-menu-title">{label}</span>
-                                <span className="cd-row-menu-desc">{description}</span>
-                              </span>
-                            </button>
-                          </Fragment>
-                        ))}
-                      </div>
-                    )}
+                    <RowActionsMenu
+                      items={rowMenuFor(row, canComplete)}
+                      onSelect={(key) => {
+                        if (key === 'reset') setResetTarget(row)
+                        if (key === 'complete') setCompleteTarget(row)
+                      }}
+                      ariaLabel={`Actions for ${row.name}`}
+                    />
                   </div>
                 </div>
               ))}
@@ -618,7 +674,6 @@ function CourseDetails() {
           <section className="cd-placeholder">This tab isn’t part of this prototype yet.</section>
         )}
 
-        {openMenuId !== null && <div className="cd-menu-backdrop" onClick={() => setOpenMenuId(null)} />}
 
         <ConfirmModal open={!!resetTarget} onClose={() => setResetTarget(null)} className="cd-reset-modal">
           {(() => {
@@ -664,6 +719,48 @@ function CourseDetails() {
             )
           })()}
         </ConfirmModal>
+
+        {/* Always mounted — the bar shows/hides itself off `count` so it can animate out. */}
+        <BulkActionBar count={selected.size} label={selected.size === 1 ? 'enrolment selected' : 'enrolments selected'} onClear={() => setSelected(new Set())}>
+          <button
+            className="bulk-bar-btn bulk-bar-btn--primary"
+            onClick={() => {
+              showToast('success', `Reminder sent to ${selected.size} ${selected.size === 1 ? 'learner' : 'learners'}`)
+              setSelected(new Set())
+            }}
+          >
+            Send Reminder
+          </button>
+          <RowActionsMenu
+            items={bulkMenuFor(canComplete)}
+            onSelect={(key) => {
+              if (key === 'complete') setCompleteTarget('bulk')
+            }}
+            ariaLabel="Actions for the selected enrolments"
+            placement="top"
+            caret={false}
+            triggerClassName="bulk-bar-btn bulk-bar-btn--outlined bulk-bar-trigger"
+            triggerContent={
+              <>
+                Actions
+                <span className="bulk-bar-trigger-chevron">
+                  <ArrowDown2 size={20} color="currentColor" variant="Linear" />
+                </span>
+              </>
+            }
+          />
+        </BulkActionBar>
+
+        {completeTarget && (
+          <SetCompletedModal
+            learnerName={completeTarget === 'bulk' ? undefined : completeTarget.name}
+            selectedCount={completeTarget === 'bulk' ? selected.size : 1}
+            eligibleCount={completeTarget === 'bulk' ? eligibleForCompletion.length : 1}
+            passScore={COURSE_PASS_SCORE}
+            onClose={() => setCompleteTarget(null)}
+            onApply={applyCompletion}
+          />
+        )}
 
         <ToastContainer toasts={toasts} />
       </main>

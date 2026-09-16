@@ -28,6 +28,28 @@
   border-color: var(--selected);
 }
 
+/* Error state (calendar.md): error border, value stays primary. */
+.dpf-field--error {
+  border-color: var(--text-error);
+}
+
+.dpf-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+/* Helper line under the field — 8px gap per the calendar.md column. */
+.dpf-helper {
+  display: block;
+  margin-top: var(--space-s);
+  font: 400 14px/1.5 'Poppins', sans-serif;
+}
+
+.dpf-helper--error {
+  color: var(--text-error);
+}
+
 .dpf-value {
   color: var(--text-primary);
 }

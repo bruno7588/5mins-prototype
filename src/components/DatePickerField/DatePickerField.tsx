@@ -1,6 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Calendar } from 'iconsax-react'
+import { Calendar, Danger } from 'iconsax-react'
 import MiniCalendar from '@/pages/programs/components/CourseOutline/MiniCalendar'
 import './DatePickerField.css'
 
@@ -14,6 +14,11 @@ interface DatePickerFieldProps {
   placeholder?: string
   className?: string
   ariaLabel?: string
+  /** ISO yyyy-mm-dd. Later days are disabled in the grid. */
+  maxDate?: string
+  /** Shows the DS Error state (calendar.md): error border, warning icon before
+      the calendar icon, and this text as the helper line below the field. */
+  error?: string
 }
 
 const formatDisplay = (iso: string) => {
@@ -31,7 +36,16 @@ const todayISO = () => {
  * Date field + DS month-grid popover (MiniCalendar). Replaces the native
  * <input type="date"> browser picker so date entry matches the design system.
  */
-function DatePickerField({ value, onChange, placeholder = 'dd/mm/yyyy', className = '', ariaLabel = 'Choose a date' }: DatePickerFieldProps) {
+function DatePickerField({
+  value,
+  onChange,
+  placeholder = 'dd/mm/yyyy',
+  className = '',
+  ariaLabel = 'Choose a date',
+  maxDate,
+  error,
+}: DatePickerFieldProps) {
+  const helperId = useId()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const popRef = useRef<HTMLDivElement>(null)
@@ -104,20 +118,31 @@ function DatePickerField({ value, onChange, placeholder = 'dd/mm/yyyy', classNam
     <div className={`dpf ${className}`.trim()} ref={ref}>
       <button
         type="button"
-        className={`dpf-field${open ? ' dpf-field--active' : ''}`}
+        className={`dpf-field${open ? ' dpf-field--active' : ''}${error ? ' dpf-field--error' : ''}`}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={ariaLabel}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? helperId : undefined}
         onClick={() => setOpen((o) => !o)}
       >
         <span className={`dpf-value${display ? '' : ' dpf-value--placeholder'}`}>{display || placeholder}</span>
-        <Calendar size={20} color="var(--text-primary)" variant="Linear" />
+        <span className="dpf-icons">
+          {error && <Danger size={20} color="var(--text-error)" variant="Linear" />}
+          <Calendar size={20} color="var(--text-primary)" variant="Linear" />
+        </span>
       </button>
+      {error && (
+        <span id={helperId} className="dpf-helper dpf-helper--error">
+          {error}
+        </span>
+      )}
       {open && rect &&
         createPortal(
           <div ref={popRef} className="dpf-popover" style={placement()}>
             <MiniCalendar
               value={value || todayISO()}
+              maxDate={maxDate}
               onSelect={(iso) => {
                 onChange(iso)
                 setOpen(false)
