@@ -359,7 +359,9 @@ function CourseDetails() {
     showToast(
       'success',
       skipped === 0
-        ? `${applied} ${applied === 1 ? 'enrolment' : 'enrolments'} marked as completed`
+        ? isBulk
+          ? `${applied} ${applied === 1 ? 'enrolment' : 'enrolments'} marked as completed`
+          : 'Enrolment marked as completed'
         : `${applied} ${applied === 1 ? 'enrolment' : 'enrolments'} marked as completed · ${skipped} skipped`,
     )
     setCompleteTarget(null)

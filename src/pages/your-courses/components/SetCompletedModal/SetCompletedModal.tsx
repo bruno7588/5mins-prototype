@@ -64,7 +64,6 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
   const score = scoreMode === 'custom' ? customScore : passScore
   const canContinue = !nothingToDo && date !== '' && !dateError
 
-  const scope = isBulk ? plural(eligibleCount, 'enrolment') : `${learnerName}’s enrolment`
   const scopeKey = isBulk ? 'bulk' : 'single'
 
   /* Instrumentation (PRD 4.2). The confirm-cancelled rate is the signal for
@@ -96,7 +95,8 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
       <ConfirmModal open onClose={() => !busy && cancelConfirm()} className="scm-confirm" ariaLabel="Confirm mark as completed">
         <div className="confirm-modal-header confirm-modal-header--center">
           {/* Info-type dialog (overlays.md), icon hidden. */}
-          <h2 className="confirm-modal-title">Mark {scope} as completed</h2>
+          {/* The body names the learner or the count, so the title doesn't repeat it. */}
+          <h2 className="confirm-modal-title">{isBulk ? 'Mark enrolments as completed' : 'Mark enrolment as completed'}</h2>
           <p className="confirm-modal-body">
             {isBulk ? plural(eligibleCount, 'enrolment') : `${learnerName}’s enrolment`} will be marked as completed on {longDate(date)} with {score == null ? 'no score' : `a score of ${score}%`}.
           </p>
