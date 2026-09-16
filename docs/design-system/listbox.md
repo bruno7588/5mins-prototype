@@ -82,7 +82,7 @@ All combinable per the Figma variant axes; gaps are the load-bearing detail:
 | **Skill icon** | 20px illustration (see skill card) | 8px |
 | **Checkbox** | 32px checkbox (see `selection-controls.md`) — multi-select lists | 8px |
 | **Radio** | 24px radio — single-select lists | 8px |
-| **Supporting text** | second line, Regular 14 `--text-secondary`; the label becomes **Semibold 14** (Paragraph M semibold — the same primary-over-supporting pair as a table cell, see `typography.md`); 2px column gap | — |
+| **Supporting text** | second line, **Regular 14 `--text-tertiary`**; the label becomes **Medium 14** (Paragraph M medium); **4px** column gap; items top-aligned; both lines stay on one row (no wrap). Read-only turns both lines `--text-disabled`. Figma Library List items `10187:2585` (verified 2026-09-16) | — |
 | **Search** | an embedded search field as the first item: 240px, `--input-background` fill, radius 12, `8px 12px` padding, 18px icon, placeholder `--text-disabled` | — |
 
 Item heights for reference: 37px plain · 40px with avatar/radio · ~60–62px with supporting text · 53px search row.
@@ -115,10 +115,12 @@ Item heights for reference: 37px plain · 40px with avatar/radio · ~60–62px w
 }
 
 /* Supporting-text rows */
-.listbox__item--rich { align-items: center; }
-.listbox__item--rich .listbox__item-info { display: flex; flex-direction: column; gap: 2px; }
+.listbox__item--rich { align-items: flex-start; }
+.listbox__item--rich .listbox__item-info { display: flex; flex-direction: column; gap: var(--space-xs); white-space: nowrap; }
 .listbox__item--rich .listbox__item-title { font-weight: 500; }
-.listbox__item--rich .listbox__item-supporting { color: var(--text-secondary); }
+.listbox__item--rich .listbox__item-supporting { font-weight: 400; color: var(--text-tertiary); }
+.listbox__item--rich.is-readonly .listbox__item-title,
+.listbox__item--rich.is-readonly .listbox__item-supporting { color: var(--text-disabled); }
 ```
 
 ### React sketch

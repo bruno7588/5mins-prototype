@@ -20,6 +20,9 @@ export interface RowMenuItem {
   disabled?: boolean
   /** Native tooltip — says why a greyed item is unavailable. */
   title?: string
+  /** Looks enabled but does nothing (e.g. an action not built yet). Only the
+      arrow cursor signals it; use `disabled` when the grey carries meaning. */
+  inert?: boolean
 }
 
 interface RowActionsMenuProps {
@@ -138,13 +141,13 @@ function RowActionsMenu({
                 <button
                   type="button"
                   role="menuitem"
-                  className={`ram-item${item.description ? ' ram-item--stacked' : ''}${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}`}
+                  className={`ram-item${item.description ? ' ram-item--stacked' : ''}${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}${item.inert ? ' ram-item--inert' : ''}`}
                   /* aria-disabled only, not the native attribute: a natively disabled
                      item drops out of the tab order, so keyboard and screen-reader
                      users would never reach it or its reason. */
-                  aria-disabled={item.disabled || undefined}
+                  aria-disabled={item.disabled || item.inert || undefined}
                   title={item.title}
-                  onClick={item.disabled ? undefined : () => handleSelect(item.key)}
+                  onClick={item.disabled || item.inert ? undefined : () => handleSelect(item.key)}
                 >
                   {item.icon && <span className="ram-item-icon">{item.icon}</span>}
                   {item.description ? (

@@ -16,7 +16,7 @@ import {
   MedalStar,
   PlayCircle,
   Repeat,
-  ArrowRotateLeft,
+  RotateRight,
   Sort,
   TaskSquare,
   TickCircle,
@@ -126,43 +126,43 @@ function RepeatRules({ size = 20, color = 'currentColor' }: { size?: number; col
 
 /* Row kebab (shared RowActionsMenu, as on People and the user profile). */
 const ROW_MENU: RowMenuItem[] = [
-  { key: 'view', label: 'View progress', description: "See learner's lesson and quiz progress", icon: <TaskSquare size={20} color="currentColor" variant="Linear" /> },
+  { key: 'view', label: 'View progress', description: "View learner's lessons and quiz progress", icon: <TaskSquare size={20} color="currentColor" variant="Linear" /> },
   { key: 'extend', label: 'Extend due date', description: 'Give more time to complete the course', icon: <CalendarAdd size={20} color="currentColor" variant="Linear" /> },
   { key: 'editStart', label: 'Edit start date', description: 'Change when the enrolment begins', icon: <CalendarEdit size={20} color="currentColor" variant="Linear" /> },
   { key: 'editRepeat', label: 'Edit repeat rules', description: 'How often this course repeats', icon: <RepeatRules size={20} color="currentColor" /> },
   { key: 'complete', label: 'Mark as completed', description: 'Record this enrolment as completed', icon: <TickCircle size={20} color="currentColor" variant="Linear" /> },
-  { key: 'reset', label: 'Give another attempt', description: 'Archive this attempt and start over', icon: <ArrowRotateLeft size={20} color="currentColor" variant="Linear" /> },
+  { key: 'resetProgress', label: 'Reset progress', description: 'Start over from 0% in a new attempt', icon: <RotateRight size={20} color="currentColor" variant="Linear" /> },
   { key: 'restart', label: 'Restart enrolment', description: 'Start a new enrolment with new dates', icon: <Repeat size={20} color="currentColor" variant="Bold" /> },
   { key: 'unenrol', label: 'Unenrol', icon: <UserMinus size={20} color="currentColor" variant="Linear" />, danger: true, dividerBefore: true },
 ]
 
-/* Only "Give another attempt" and "Mark as completed" are built on this page;
-   the rest stay visible but greyed, with the reason on hover. */
+/* Only "Mark as completed" and "Reset progress" are built on this page;
+   the rest look enabled but do nothing, shown by the arrow cursor. */
 const NOT_IN_PROTOTYPE = 'Not part of this prototype yet'
 const ALREADY_COMPLETED = 'Already completed'
 /* D3: every tenant Admin gets the action; roles below Admin see it greyed. */
 const NOT_ADMIN = 'Only admins can mark enrolments as completed'
 const rowMenuFor = (row: Learner, canComplete: boolean): RowMenuItem[] =>
   ROW_MENU.map((item) => {
-    if (item.key === 'reset') return item
+    if (item.key === 'resetProgress') return item
     if (item.key === 'complete') {
       if (!canComplete) return { ...item, disabled: true, title: NOT_ADMIN }
       return row.status === 'completed' ? { ...item, disabled: true, title: ALREADY_COMPLETED } : item
     }
-    return { ...item, disabled: true, title: NOT_IN_PROTOTYPE }
+    return { ...item, inert: true, title: NOT_IN_PROTOTYPE }
   })
 
 /* The bulk bar's menu (DES-333 M1): the row actions that can act on a whole
    selection, derived from ROW_MENU so the glyphs and wording can never drift
    between the row and the bar. Label-only, as the bar's listbox in the design. */
-const BULK_ACTION_KEYS = new Set(['extend', 'editStart', 'editRepeat', 'complete', 'reset', 'restart', 'unenrol'])
+const BULK_ACTION_KEYS = new Set(['extend', 'editStart', 'editRepeat', 'complete', 'resetProgress', 'restart', 'unenrol'])
 const BULK_MENU_ITEMS: RowMenuItem[] = ROW_MENU.filter((item) => BULK_ACTION_KEYS.has(item.key)).map(
   ({ description: _description, ...item }) => item,
 )
 const bulkMenuFor = (canComplete: boolean): RowMenuItem[] =>
   BULK_MENU_ITEMS.map((item) => {
     if (item.key === 'complete') return canComplete ? item : { ...item, disabled: true, title: NOT_ADMIN }
-    return { ...item, disabled: true, title: NOT_IN_PROTOTYPE }
+    return { ...item, inert: true, title: NOT_IN_PROTOTYPE }
   })
 
 /* Table dates read "Sep 25, 2025" (see the mock rows). */
@@ -382,7 +382,7 @@ function CourseDetails() {
       ),
     )
     const name = learnerList.find((l) => l.id === id)?.name ?? 'Learner'
-    showToast('success', `New attempt started for ${name}`)
+    showToast('success', `Progress reset for ${name}`)
     setResetTarget(null)
   }
 
@@ -557,8 +557,8 @@ function CourseDetails() {
                 size="M"
                 value={search}
                 onChange={setSearch}
-                placeholder="Search for people"
-                ariaLabel="Search for people"
+                placeholder="Search for learners"
+                ariaLabel="Search for learners"
                 className="cd-search"
               />
               <Button
@@ -643,7 +643,7 @@ function CourseDetails() {
                     <RowActionsMenu
                       items={rowMenuFor(row, canComplete)}
                       onSelect={(key) => {
-                        if (key === 'reset') setResetTarget(row)
+                        if (key === 'resetProgress') setResetTarget(row)
                         if (key === 'complete') setCompleteTarget(row)
                       }}
                       ariaLabel={`Actions for ${row.name}`}
@@ -684,21 +684,14 @@ function CourseDetails() {
             <>
               <div className="confirm-modal-header confirm-modal-header--center">
                 <div className="confirm-modal-icon">
-                  <ArrowRotateLeft size={72} color="var(--primary-600)" variant="Linear" />
+                  <RotateRight size={72} color="var(--primary-600)" variant="Linear" />
                 </div>
-                <h2 className="confirm-modal-title">Give another attempt at this course</h2>
+                <h2 className="confirm-modal-title">Reset {resetTarget.name}&apos;s progress</h2>
                 <p className="confirm-modal-body">
-                  Reset {resetTarget.name}&apos;s progress and start over
+                  Their progress goes back to 0 and they start a new course attempt. Their current attempt
+                  is saved to their history. Their start date, due date, and recurrence stay the same.
                 </p>
               </div>
-              <Alert
-                type="Callout"
-                title="What happens:"
-                bullets={[
-                  'Their current attempt is archived and a new attempt begins in the same enrolment',
-                  'Their start date and recurrence stay the same',
-                ]}
-              />
               {exceedsCap && (
                 <Alert
                   type="Alert"
@@ -712,7 +705,7 @@ function CourseDetails() {
                   Cancel
                 </Button>
                 <Button onClick={() => confirmReset(resetTarget.id)}>
-                  Give Another Attempt
+                  Reset Progress
                 </Button>
               </div>
             </>
