@@ -221,15 +221,13 @@
 
 /* Stats */
 .cd-stats {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-m);
-  flex-wrap: wrap;
 }
 
 /* Icon on the left at 32px, then a column with the label above the figure. */
 .cd-stat {
-  flex: 1 0 0;
-  min-width: 200px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -264,7 +262,7 @@
 .cd-stat-value {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-s);
 }
 
 .cd-stat-pct {
@@ -376,21 +374,30 @@
 }
 
 .cd-actions .cd-search {
-  width: 400px;
-  flex: none;
+  flex: 1;
+  max-width: 400px;
 }
 
-.cd-download-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  white-space: nowrap;
+/* Narrow: search and Download Report move above the selection controls */
+@media (max-width: 1200px) {
+  .cd-actions {
+    flex-wrap: wrap;
+  }
+
+  .cd-actions .cd-search {
+    order: -1;
+  }
+
+  .cd-download-btn {
+    order: -1;
+    /* Search is capped at 400px, so pin the button to the right edge of the
+       wrapped row instead of letting it float beside the field. */
+    margin-left: auto;
+  }
+
+  .cd-select-info {
+    flex-basis: 100%;
+  }
 }
 
 /* Table */

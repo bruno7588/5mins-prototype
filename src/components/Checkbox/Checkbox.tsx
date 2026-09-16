@@ -2,21 +2,28 @@ import './Checkbox.css'
 
 interface CheckboxProps {
   checked: boolean
+  /** Partial selection — some but not all children selected. Renders the DS minus bar. */
+  indeterminate?: boolean
   onChange?: () => void
   disabled?: boolean
 }
 
-function Checkbox({ checked, onChange, disabled = false }: CheckboxProps) {
+function Checkbox({ checked, indeterminate = false, onChange, disabled = false }: CheckboxProps) {
   return (
     <button
       className={`checkbox${disabled ? ' checkbox--disabled' : ''}`}
       onClick={disabled ? undefined : onChange}
       disabled={disabled}
       role="checkbox"
-      aria-checked={checked}
+      aria-checked={indeterminate ? 'mixed' : checked}
       aria-disabled={disabled || undefined}
     >
-      {checked ? (
+      {indeterminate ? (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="16" height="16" rx="4" fill={disabled ? 'var(--text-disabled)' : 'var(--selected)'} />
+          <path d="M4.5 8H11.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      ) : checked ? (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="16" height="16" rx="4" fill={disabled ? 'var(--text-disabled)' : 'var(--selected)'} />
           <path d="M4.5 8.5L7 11L11.5 5.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

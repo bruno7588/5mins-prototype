@@ -256,6 +256,7 @@ function CourseDetails() {
   }, [activeTab, rows.length])
 
   const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.id))
+  const someSelected = !allSelected && rows.some((r) => selected.has(r.id))
 
   function toggleRow(id: number) {
     setSelected((prev) => {
@@ -468,10 +469,14 @@ function CourseDetails() {
                 ariaLabel="Search for people"
                 className="cd-search"
               />
-              <button className="cd-download-btn ui-disabled" disabled>
-                <DocumentDownload size={20} color="var(--text-primary)" variant="Linear" />
+              <Button
+                variant="outlined-2"
+                className="cd-download-btn ui-disabled"
+                disabled
+                icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+              >
                 Download Report
-              </button>
+              </Button>
             </div>
 
             {/* Table */}
@@ -482,7 +487,7 @@ function CourseDetails() {
             <div className="cd-table">
               <div className="cd-row cd-row--head">
                 <div className="cd-cell cd-cell--name">
-                  <Checkbox checked={allSelected} onChange={toggleAll} />
+                  <Checkbox checked={allSelected} indeterminate={someSelected} onChange={toggleAll} />
                   <span>Name</span>
                 </div>
                 <div className="cd-cell cd-cell--start">Start date</div>
