@@ -45,6 +45,9 @@ function MiniCalendar({ value, onSelect, maxDate }: Props) {
   const todayISO = toISO(new Date())
   const monthLabel = view.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
   const shift = (delta: number) => setView(new Date(year, month + delta, 1))
+  // No later month holds a selectable day once the view reaches maxDate's month.
+  const max = maxDate ? parseISO(maxDate) : null
+  const atMaxMonth = max !== null && year * 12 + month >= max.getFullYear() * 12 + max.getMonth()
 
   return (
     <div className="mc" role="dialog" aria-label="Choose a date">
@@ -52,10 +55,10 @@ function MiniCalendar({ value, onSelect, maxDate }: Props) {
         <span className="mc__title">{monthLabel}</span>
         <div className="mc__nav">
           <button type="button" className="mc__nav-btn" aria-label="Previous month" onClick={() => shift(-1)}>
-            <ArrowLeft2 size={20} color="currentColor" variant="Linear" />
+            <ArrowLeft2 size={12} color="currentColor" variant="Linear" />
           </button>
-          <button type="button" className="mc__nav-btn" aria-label="Next month" onClick={() => shift(1)}>
-            <ArrowRight2 size={20} color="currentColor" variant="Linear" />
+          <button type="button" className="mc__nav-btn" aria-label="Next month" onClick={() => shift(1)} disabled={atMaxMonth}>
+            <ArrowRight2 size={12} color="currentColor" variant="Linear" />
           </button>
         </div>
       </div>

@@ -60,19 +60,22 @@ Label:    Poppins Semibold 14, var(--text-secondary)   (Paragraph M semibold)
 
 ```
 Background:  var(--cards-background)
-Border:      1px solid var(--border)
+Border:      1px solid var(--border-elevated)
 Radius:      12px (--radius-sm)
 Shadow:      Shadow L — -4px 0 24px rgba(32, 34, 42, 0.12)
-Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
+Width:       352px  (7×40px cells + 6×8px gaps + 2×12px padding)
+Gap:         0 between sections
+Height:      344px (40 header + 48 weekday row + 256 six-week grid)
+Source:      Figma Library Calendar 11529:430 (verified 2026-09-16)
 ```
 
 ### Sections (top → bottom)
 
 | Section | Padding | Content |
 |---|---|---|
-| Month header | 16px 16px 8px | Month + year, Poppins **Bold 16** (H4), `--text-primary`; prev/next chevrons 20px (Iconsax `ArrowLeft2`/`ArrowRight2`), 16px apart |
-| Weekday row | 8px 16px 4px | Mon–Sun, 40×40 cells, Poppins Regular 14, `--text-secondary` |
-| Date grid | 4px 16px 16px | Rows of 7 day items, 8px horizontal gap, no vertical gap |
+| Month header | 12px 12px 4px | Month + year, Poppins **Semibold 16** (Paragraph L semibold), `--text-primary`; prev/next Library **Chevron** (`7443:1760`, overflow=false) at 20px: 12px Iconsax `ArrowLeft2`/`ArrowRight2` glyph in `--text-secondary`, hover circle `--page-background-hover`, disabled glyph `--text-disabled`; **4px** apart |
+| Weekday row | 4px 12px | Mon–Sun, 40×40 cells, 8px gap, Poppins Regular 14, `--text-secondary` |
+| Date grid | 4px 12px 12px | Rows of 7 day items, 8px horizontal gap, no vertical gap |
 
 ---
 
@@ -115,17 +118,18 @@ Width:       360px  (7×40px cells + 6×8px gaps + 2×16px padding)
 /* ── Popover ── */
 .calendar {
   background: var(--cards-background);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);   /* Shadow L, leftward */
+  display: flex; flex-direction: column;
 }
-.calendar__header { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 8px; }
-.calendar__title  { font: 700 16px/1.5 'Poppins'; color: var(--text-primary); }
-.calendar__nav    { display: flex; gap: var(--space-m); }
-.calendar__weekdays { display: flex; gap: var(--space-s); padding: 8px 16px 4px; }
+.calendar__header { display: flex; align-items: center; justify-content: space-between; padding: 12px 12px 4px; }
+.calendar__title  { font: 600 16px/1.5 'Poppins'; color: var(--text-primary); }
+.calendar__nav    { display: flex; gap: var(--space-xs); }
+.calendar__weekdays { display: flex; gap: var(--space-s); padding: 4px 12px; }
 .calendar__weekday  { width: 40px; height: 40px; display: grid; place-items: center;
                       font: 400 14px/1.5 'Poppins'; color: var(--text-secondary); }
-.calendar__grid  { padding: 4px 16px 16px; }
+.calendar__grid  { padding: 4px 12px 12px; }
 .calendar__row   { display: flex; gap: var(--space-s); }
 
 /* ── Day item ── */

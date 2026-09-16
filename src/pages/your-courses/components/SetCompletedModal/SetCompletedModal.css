@@ -90,6 +90,12 @@
   margin-bottom: var(--space-sm);
 }
 
+/* Constraint in brackets after a label: Regular, tertiary. */
+.scm__label-hint {
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
 .scm__option {
   display: flex;
   align-items: flex-start;

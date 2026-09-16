@@ -145,7 +145,9 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
       ) : (
         <div className="scm__body">
           <div className="scm__field">
-            <span className="scm__label">Completion date</span>
+            <span className="scm__label">
+              Completion date <span className="scm__label-hint">(today or earlier)</span>
+            </span>
             <DatePickerField
               value={date}
               onChange={setDate}
