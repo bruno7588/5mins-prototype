@@ -81,32 +81,34 @@ Rules for the agent on external research:
 
 ## 4. PRD structure
 
-The agent writes these sections, in this order.
+Three sections. Nothing else. A PRD for a single ticket should land in **under 10 pages** — if it is running longer, the spec has stopped being a brief and become a document nobody will read.
 
-**Part 1 — Product**
-1. **Summary** — two or three sentences; what ships and for whom.
-2. **Problem & context** — drawn from the ticket, expanded with what the code shows about today's behaviour.
-3. **Goals / Non-goals** — non-goals matter most; they are what stops scope creep in review.
-4. **Users** — which 5Mins persona (L&D lead, compliance lead, HR, coordinator, Super Admin) and what they are trying to finish.
-5. **Success metrics** — how anyone would know this worked.
-6. **Scope** — in this ticket vs. deliberately deferred.
+### 1. Context
 
-**Part 2 — Prior art**
-7. **Prior art & references** — per pattern found: source, what it does, and a one-line verdict on whether we follow it or deliberately do not. This section must then visibly shape Part 3; cite adopted patterns inline where they land.
+What the reader needs before they can judge anything else:
 
-**Part 3 — Design & UX spec**
-8. **User flows** — step by step, one subsection per distinct path (e.g. single vs. bulk).
-9. **Screen-by-screen** — entry points, layout, and the named design-system components for each screen or overlay.
-10. **States** — default, loading, empty, partial success, error, disabled, permission-denied.
-11. **Edge cases** — enumerate them; every AC that says "skipped", "cannot", or "already" is an edge case that needs a defined behaviour and a message.
-12. **Copy** — every label, heading, button, toast, confirmation, and error, in a table.
-13. **Data & permissions** — what is stored, what is audited, who can do it.
-14. **Analytics** — events worth firing and their properties.
+- **The problem** — why this exists, in a short paragraph. Whether it is table stakes in the category or genuinely novel.
+- **What the code does today** — a compact table of the relevant current behaviour, naming real files, constants and components. This is the half a ticket never carries and the agent's research exists to supply.
+- **Decisions taken** — whatever the user settled in step 2, as a table. Specified, not re-debated.
+- **Acceptance criteria** — verbatim from the ticket.
+- **Out of scope** — one line, semicolon-separated. Non-goals stop scope creep in review.
 
-**Part 4 — Closing**
-15. **Risks**.
-16. **Open questions** — numbered, each one addressed to a named role where possible. Ambiguity in the ticket belongs here, not resolved silently in the spec.
-17. **AC traceability** — a table mapping each acceptance criterion from the ticket to the section that specifies it. Any AC without a section is a gap; say so.
+### 2. Research
+
+The external pass, as tables: source, what it does, and an adopt/reject verdict. **Every row carries a real link.** Group by the interaction being studied, not by vendor.
+
+Keep Mobbin and Build For Mars as their own subsections — they answer different questions (shipped pattern vs. underlying principle). Say plainly where a source yielded nothing; an honest "BFM had no close match for X" is worth more than a padded row.
+
+### 3. Implementation
+
+The plan of action, and the reason the document gets opened twice:
+
+- **Blockers** — what must be settled before feature code is written, each with a recommendation, not just a question. Anything that makes an AC unbuildable belongs here and is labelled as such.
+- **Phases** — ordered steps as a table of change + what verifies it. Map steps to AC numbers. Mark anything already shipped as done rather than deleting it, so the plan stays readable as a record.
+- **Risks to watch during build** — short, and only ones that change what someone does.
+- **Still open** — one line, semicolon-separated. Genuine ambiguity the user did not settle.
+
+Do not add a separate goals/metrics/personas section, a copy table, a screen-by-screen walkthrough or an AC traceability matrix unless the user asks. Fold what matters from those into the three sections above.
 
 ## 5. Report back
 
