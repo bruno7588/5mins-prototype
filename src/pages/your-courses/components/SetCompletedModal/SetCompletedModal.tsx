@@ -28,11 +28,8 @@ const todayISO = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-const longDate = (iso: string) => {
-  if (!iso) return ''
-  const d = new Date(`${iso}T00:00:00`)
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-}
+const longDate = (iso: string) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
 
@@ -68,7 +65,6 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
   const canContinue = !nothingToDo && date !== '' && !dateError
 
   const scope = isBulk ? plural(eligibleCount, 'enrolment') : `${learnerName}’s enrolment`
-  const scoreCopy = score == null ? 'no score' : `a score of ${score}%`
   const scopeKey = isBulk ? 'bulk' : 'single'
 
   /* Instrumentation (PRD 4.2). The confirm-cancelled rate is the signal for
@@ -102,9 +98,7 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
           {/* Info-type dialog (overlays.md), icon hidden. */}
           <h2 className="confirm-modal-title">Mark {scope} as completed</h2>
           <p className="confirm-modal-body">
-            {isBulk ? plural(eligibleCount, 'enrolment') : `${learnerName}’s enrolment`} will be marked as completed on {longDate(date)} with {scoreCopy}.
-            {skipped > 0 && ` ${plural(skipped, 'enrolment')} that ${skipped === 1 ? 'is' : 'are'} already completed will be skipped.`}
-            {' '}This can’t be undone.
+            {isBulk ? plural(eligibleCount, 'enrolment') : `${learnerName}’s enrolment`} will be marked as completed on {longDate(date)} with {score == null ? 'no score' : `a score of ${score}%`}.
           </p>
         </div>
         <div className="confirm-modal-actions">
@@ -113,7 +107,7 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
           </Button>
           <Button
             loading={busy}
-            loadingLabel="Setting…"
+            loadingLabel="Marking…"
             onClick={() => {
               setBusy(true)
               window.setTimeout(() => onApply({ date, score, scoreSource: scoreMode }), 600)
@@ -134,7 +128,7 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
         <div className="scm__headline">
           <h2 className="scm__title">Mark as completed</h2>
           <p className="scm__supporting">
-            {isBulk ? `Mark ${plural(selectedCount, 'selected enrolment')} as completed` : `Mark ${learnerName}’s enrolment as completed`}
+            {isBulk ? `${plural(selectedCount, 'enrolment')} selected` : learnerName}
           </p>
         </div>
         <div className="scm__divider" />
@@ -146,7 +140,7 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
         <Alert
           type="Callout"
           icon
-          message={`All ${plural(selectedCount, 'selected enrolment')} are already completed, so there is nothing to mark.`}
+          message={selectedCount === 1 ? 'This enrolment is already completed.' : `All ${selectedCount} enrolments are already completed. Select one that isn’t to continue.`}
         />
       ) : (
         <div className="scm__body">
@@ -168,13 +162,9 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
               <Radio id={`${name}-course`} name={`${name}-score`} checked={scoreMode === 'course'} onChange={() => setScoreMode('course')} />
               <div className="scm__info">
                 <label className="scm__option-label" htmlFor={`${name}-course`}>
-                  {passScore == null ? 'No score' : 'Use the course pass score'}
+                  {passScore == null ? 'No score' : `Use the course pass score - ${passScore}%`}
                 </label>
-                <p className="scm__desc">
-                  {passScore == null
-                    ? 'This course has no pass score, so the enrolment completes without one'
-                    : `${passScore}%, as set in this course’s settings`}
-                </p>
+                {passScore == null && <p className="scm__desc">This course has no pass score</p>}
               </div>
             </div>
 
@@ -183,7 +173,7 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
               <div className="scm__info">
                 <label className="scm__option-label" htmlFor={`${name}-custom`}>Set a specific score</label>
                 <p className="scm__desc">
-                  {isBulk ? 'The same score is recorded on every enrolment' : 'Recorded on this enrolment as the final score'}
+                  {isBulk ? 'Same score for every enrolment' : 'Recorded as the final score'}
                 </p>
                 {scoreMode === 'custom' && (
                   <InputInteger value={customScore} onChange={setCustomScore} min={0} max={100} suffix="%" ariaLabel="Score" />
@@ -196,7 +186,7 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
             <Alert
               type="Callout"
               icon
-              message={`${plural(skipped, 'selected enrolment')} ${skipped === 1 ? 'is' : 'are'} already completed and will be skipped`}
+              message={`${plural(skipped, 'enrolment')} ${skipped === 1 ? 'is' : 'are'} already completed and will be skipped`}
             />
           )}
         </div>

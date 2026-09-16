@@ -722,15 +722,6 @@ function CourseDetails() {
 
         {/* Always mounted — the bar shows/hides itself off `count` so it can animate out. */}
         <BulkActionBar count={selected.size} label={selected.size === 1 ? 'enrolment selected' : 'enrolments selected'} onClear={() => setSelected(new Set())}>
-          <button
-            className="bulk-bar-btn bulk-bar-btn--primary"
-            onClick={() => {
-              showToast('success', `Reminder sent to ${selected.size} ${selected.size === 1 ? 'learner' : 'learners'}`)
-              setSelected(new Set())
-            }}
-          >
-            Send Reminder
-          </button>
           <RowActionsMenu
             items={bulkMenuFor(canComplete)}
             onSelect={(key) => {
@@ -749,6 +740,16 @@ function CourseDetails() {
               </>
             }
           />
+          {/* The filled button is the bar's primary action, so it ends the row. */}
+          <button
+            className="bulk-bar-btn bulk-bar-btn--primary"
+            onClick={() => {
+              showToast('success', `Reminder sent to ${selected.size} ${selected.size === 1 ? 'learner' : 'learners'}`)
+              setSelected(new Set())
+            }}
+          >
+            Send Reminder
+          </button>
         </BulkActionBar>
 
         {completeTarget && (
