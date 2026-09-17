@@ -4,7 +4,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-s); /* 8px label → field → helper, as input.md and dropdown.md's helper */
   width: 100%;
 }
 

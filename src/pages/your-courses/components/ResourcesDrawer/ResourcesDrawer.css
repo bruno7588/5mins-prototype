@@ -16,6 +16,25 @@
   overflow-y: auto;
 }
 
+.resources-drawer__type {
+  align-self: flex-start; /* the Type field fits its content rather than the drawer width */
+  width: auto;
+}
+
+/* Holds the width of the longest option, so the field doesn't resize as the type
+   changes. An invisible, zero-height copy of that label sizes the text slot. */
+.resources-drawer__type .dropdown-trigger-text::after {
+  content: 'External Link';
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.resources-drawer__type .dropdown-chevron {
+  color: var(--text-secondary);
+}
+
 .resources-drawer__field {
   display: flex;
   flex-direction: column;
@@ -42,4 +61,9 @@
   padding-top: var(--space-m);
   border-top: 1px solid var(--border);
   flex-shrink: 0;
+}
+
+/* The uploader fits its content here instead of the L size's 240px minimum. */
+.resources-drawer__field .file-uploader--L {
+  min-height: 0;
 }

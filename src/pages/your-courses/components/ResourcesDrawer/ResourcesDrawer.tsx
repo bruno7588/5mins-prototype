@@ -89,12 +89,13 @@ export function ResourcesDrawerContent({ initial, onClose, onSave }: Props) {
     <>
       <SectionHeader
         title={initial ? 'Edit resource' : 'Add resource'}
-        description="Files and links learners can open from this course."
+        description="Add Word docs, PDFs, Excel files, and external links here. Learners can download or open them from the Resources section."
         ctas={<CloseButton onClick={onClose} />}
       />
 
       <div className="resources-drawer__body">
         <Dropdown
+          className="resources-drawer__type"
           label="Type"
           options={TYPE_OPTIONS}
           value={type}
@@ -122,7 +123,7 @@ export function ResourcesDrawerContent({ initial, onClose, onSave }: Props) {
         ) : (
           <div className="resources-drawer__field">
             <span className="resources-drawer__label">
-              File <span className="resources-drawer__label-hint">Up to 50 MB</span>
+              Select a document to upload <span className="resources-drawer__label-hint">(max. 50MB)</span>
             </span>
             <FileUploader
               key={type}
