@@ -49,6 +49,7 @@ Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 M
 | Gap | 12 (`--space-sm`) | 8 (`--space-s`) |
 | Radius | 12 (`--radius-sm`) | 12 (`--radius-sm`) |
 | Background | `--cards-background`; Hover `--cards-background-hover` | `--cards-background`; no hover (touch) |
+| Shadow | `--shadow-card` (Shadow S in light mode, none in dark) | same |
 | Type tile | 48 × 48 | 56 × 56 |
 | Title | Poppins Bold 16 / 1.5, `--text-primary`, one line with ellipsis | Bold 14 / 1.5, `--text-primary`, wraps |
 | Meta | Regular 14 / 1.5, `--text-tertiary` | Regular 12 / 1.2, `--text-tertiary` |
