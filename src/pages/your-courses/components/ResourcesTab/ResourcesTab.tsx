@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Add, DocumentDownload, Edit2, ExportSquare, Link1, Trash } from 'iconsax-react'
+import { Add, Edit2, ExportSquare, ImportCurve, Link1, Trash } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import resourcesIllustration from '@/assets/empty-state-illustrations/resources.svg'
@@ -57,7 +57,8 @@ function openResource(resource: CourseResource) {
 }
 
 /* Course builder → Resources tab. Rows are the Course Content card (ContentList.css):
-   drag handle, card with title actions and a badge, trash outside the card. */
+   drag handle, card with title actions, trash outside the card. No type badge: every
+   row here is a resource, and the tile and meta line already say which kind. */
 function ResourcesTab({ resources, onReorder, onAdd, onEdit, onRemove }: Props) {
   const [dragId, setDragId] = useState<number | null>(null)
 
@@ -151,11 +152,10 @@ function ResourcesTab({ resources, onReorder, onAdd, onEdit, onRemove }: Props) 
                           {isLink ? (
                             <ExportSquare size={16} color="currentColor" variant="Linear" />
                           ) : (
-                            <DocumentDownload size={16} color="currentColor" variant="Linear" />
+                            <ImportCurve size={16} color="currentColor" variant="Linear" />
                           )}
                         </button>
                       </Tooltip>
-                      <span className="content-card-badge">Resource</span>
                     </div>
                     <div className="content-card-meta">
                       <span>{resourceMeta(resource)}</span>

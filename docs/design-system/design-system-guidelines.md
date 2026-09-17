@@ -402,7 +402,7 @@ Only use these four sizes. Never use non-standard sizes (e.g. 18px, 23px).
 | Category | Icons |
 |----------|-------|
 | **Navigation** | `Home`, `Book1`, `Profile2User`, `Setting2`, `NotificationBing` |
-| **Actions** | `Add`, `Edit`, `Trash`, `Eye`, `Download`, `Share` |
+| **Actions** | `Add`, `Edit`, `Trash`, `Eye`, `ImportCurve` (download), `Share` |
 | **Status** | `TickCircle` (success), `InfoCircle` (warning), `CloseCircle` (error), `Clock` (pending) |
 | **Forms** | `SearchNormal1`, `Calendar`, `Location`, `Sms`, `Lock` |
 | **Content** | `Video`, `Image`, `DocumentText`, `MicrophoneSlash` |

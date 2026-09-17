@@ -10,7 +10,7 @@ import {
   CalendarEdit,
   Clock,
   Danger,
-  DocumentDownload,
+  ImportCurve,
   InfoCircle,
   Link2,
   MedalStar,
@@ -567,7 +567,7 @@ function CourseDetails() {
                 variant="outlined-2"
                 className="cd-download-btn ui-disabled"
                 disabled
-                icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+                icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
               >
                 Download Report
               </Button>

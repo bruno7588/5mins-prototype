@@ -220,7 +220,7 @@ When an icon is used as a standalone clickable element (e.g. close button, actio
 - `Edit` - Edit
 - `Trash` - Delete
 - `Eye` - View
-- `Download` - Download
+- `ImportCurve` - Download (the one download icon across the product; Iconsax React has no `Download`)
 - `Share` - Share
 
 ### Status

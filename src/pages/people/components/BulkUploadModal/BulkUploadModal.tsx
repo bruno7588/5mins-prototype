@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { ArrowDown2, ArrowLeft2, ArrowRight2, Danger, DocumentDownload, ImportCurve, UserAdd, UserEdit, UserMinus } from 'iconsax-react'
+import { ArrowDown2, ArrowLeft2, ArrowRight2, Danger, ImportCurve, UserAdd, UserEdit, UserMinus } from 'iconsax-react'
 import Button from '../../../../components/Button/Button'
 import Chip from '../../../../components/Chip/Chip'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
@@ -639,7 +639,7 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
                   </div>
                   <Button
                     className="bulk-preview-download-error"
-                    icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+                    icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
                     onClick={handleDownloadErrorFile}
                   >
                     Download Error File
