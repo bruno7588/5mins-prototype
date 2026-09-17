@@ -87,7 +87,7 @@ function ResourcesTab({ resources, onReorder, onAdd, onEdit, onRemove }: Props) 
               </p>
             </div>
             <div className="course-empty-state__cta">
-              <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={onAdd}>
+              <Button variant="outlined" icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={onAdd}>
                 Add Resource
               </Button>
             </div>

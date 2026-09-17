@@ -21,8 +21,19 @@ import type { Plugin, ViteDevServer } from 'vite'
 
 export const ATTR = 'data-inspect'
 export const QUEUE_FILE = '.design-inspect/queue.jsonl'
-/** Present only while the /inspect monitor runs; lets the overlay say whether anyone is listening. */
+/** Heartbeat touched every second by tools/design-inspect/wait.sh while Claude waits for requests. */
 export const LISTENING_FILE = '.design-inspect/listening'
+/* The waiter exits while Claude applies a batch and is relaunched afterwards, so the
+   heartbeat can pause for a few minutes without anyone having stopped listening. */
+const LISTENING_GRACE_MS = 5 * 60 * 1000
+
+function isListening(root: string): boolean {
+  try {
+    return Date.now() - fs.statSync(path.join(root, LISTENING_FILE)).mtimeMs < LISTENING_GRACE_MS
+  } catch {
+    return false
+  }
+}
 
 export function inspectBabel(root: string) {
   return function inspectBabelPlugin({ types: t }: typeof Babel): PluginObj<PluginPass> {
@@ -170,7 +181,7 @@ export function designInspect(root: string): Plugin {
         }
         fs.mkdirSync(path.dirname(file), { recursive: true })
         fs.appendFileSync(file, JSON.stringify({ ...payload, ts: new Date().toISOString() }) + '\n')
-        const listening = fs.existsSync(path.join(root, LISTENING_FILE))
+        const listening = isListening(root)
         client.send('design-inspect:queued', { id: payload?.id, listening })
       })
 
@@ -189,7 +200,7 @@ export function designInspect(root: string): Plugin {
         }
         fs.mkdirSync(path.dirname(file), { recursive: true })
         fs.appendFileSync(file, JSON.stringify({ ...edit.request, ts: new Date().toISOString() }) + '\n')
-        const listening = fs.existsSync(path.join(root, LISTENING_FILE))
+        const listening = isListening(root)
         client.send('design-inspect:queued', { id: edit?.id, listening })
       })
 
