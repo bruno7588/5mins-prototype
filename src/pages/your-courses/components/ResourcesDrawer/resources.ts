@@ -15,14 +15,12 @@ export interface CourseResource {
   url?: string
 }
 
-/* `tag` is printed on the card's file glyph; `color` fills its tile, in each app's
-   familiar colour (PDF red, Word blue, Excel green, PowerPoint orange). */
-export const RESOURCE_TYPES: Record<ResourceType, { label: string; tag: string; color: string; accept?: string }> = {
-  pdf: { label: 'PDF', tag: 'PDF', color: 'var(--danger-500)', accept: '.pdf' },
-  word: { label: 'Word', tag: 'DOC', color: 'var(--course-assessments)', accept: '.doc,.docx' },
-  excel: { label: 'Excel', tag: 'XLS', color: 'var(--success-500)', accept: '.xls,.xlsx' },
-  powerpoint: { label: 'PowerPoint', tag: 'PPT', color: 'var(--warning-500)', accept: '.ppt,.pptx' },
-  link: { label: 'External Link', tag: '', color: 'var(--certificate-quiz)' },
+export const RESOURCE_TYPES: Record<ResourceType, { label: string; accept?: string }> = {
+  pdf: { label: 'PDF', accept: '.pdf' },
+  word: { label: 'Word', accept: '.doc,.docx' },
+  excel: { label: 'Excel', accept: '.xls,.xlsx' },
+  powerpoint: { label: 'PowerPoint', accept: '.ppt,.pptx' },
+  link: { label: 'External Link' },
 }
 
 /** "1.1 MB", "240 KB". */
@@ -31,15 +29,9 @@ export function formatSize(bytes: number): string {
   return `${Math.max(1, Math.round(bytes / 1024))} KB`
 }
 
-/** The card's second line: "PDF • 1.1 MB", or "Link • hse.gov.uk". */
+/** The card's second line: "PDF • 1.1 MB", or "External link". */
 export function resourceMeta(r: CourseResource): string {
-  if (r.type === 'link') {
-    try {
-      return `Link • ${new URL(r.url ?? '').hostname.replace(/^www\./, '')}`
-    } catch {
-      return 'Link'
-    }
-  }
+  if (r.type === 'link') return 'External link'
   return `${RESOURCE_TYPES[r.type].label}${r.size !== undefined ? ` • ${formatSize(r.size)}` : ''}`
 }
 

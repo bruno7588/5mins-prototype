@@ -1,9 +1,15 @@
 import { useState } from 'react'
-import { Add, Edit2, ExportSquare, ImportCurve, Link1, Trash } from 'iconsax-react'
+import { Add, Edit2, ExportSquare, ImportCurve, Trash } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import resourcesIllustration from '@/assets/empty-state-illustrations/resources.svg'
-import { RESOURCE_TYPES, resourceMeta, type CourseResource } from '../ResourcesDrawer/resources'
+import excelThumb from '@/assets/resource-type-illustrations/excel.svg'
+import linkIcon from '@/assets/resource-type-illustrations/link-icon.svg'
+import pdfThumb from '@/assets/resource-type-illustrations/pdf.svg'
+import powerpointThumb from '@/assets/resource-type-illustrations/powerpoint.svg'
+import wordThumb from '@/assets/resource-type-illustrations/word.svg'
+import { resourceMeta, type CourseResource, type ResourceType } from '../ResourcesDrawer/resources'
 import '../ContentList/ContentList.css'
 import './ResourcesTab.css'
 
@@ -15,28 +21,26 @@ interface Props {
   onRemove: (resource: CourseResource) => void
 }
 
-/* File glyph with the format printed across it, on a tile in the format's colour. */
+/* Type thumbnails from Figma (Create Course 9951:48595): each file format is a finished
+   48px tile; a link is the Link-2 glyph on a --certificate-quiz tile. */
+const FILE_THUMBS: Record<Exclude<ResourceType, 'link'>, string> = {
+  pdf: pdfThumb,
+  word: wordThumb,
+  excel: excelThumb,
+  powerpoint: powerpointThumb,
+}
+
 function ResourceThumb({ resource }: { resource: CourseResource }) {
-  const { tag, color } = RESOURCE_TYPES[resource.type]
+  if (resource.type === 'link') {
+    return (
+      <div className="content-card-thumb resources-tab__thumb resources-tab__thumb--link">
+        <img src={linkIcon} width={24} height={24} alt="" />
+      </div>
+    )
+  }
   return (
-    <div className="content-card-thumb resources-tab__thumb" style={{ background: color }}>
-      {resource.type === 'link' ? (
-        <Link1 size={24} color="var(--neutral-0)" variant="Linear" />
-      ) : (
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <path
-            d="M9 27V7a2 2 0 0 1 2-2h7l6 6v4"
-            stroke="var(--neutral-0)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path d="M18 5v6h6" stroke="var(--neutral-0)" strokeWidth="2" strokeLinejoin="round" />
-          <text x="12" y="26" fill="var(--neutral-0)" fontFamily="Poppins, sans-serif" fontSize="8" fontWeight="700">
-            {tag}
-          </text>
-        </svg>
-      )}
+    <div className="content-card-thumb">
+      <img className="content-card-thumb-illustration" src={FILE_THUMBS[resource.type]} width={48} height={48} alt="" />
     </div>
   )
 }
@@ -56,9 +60,28 @@ function openResource(resource: CourseResource) {
   URL.revokeObjectURL(href)
 }
 
+/* One ⋯ menu per card (DS listbox): Download or Open link, then Edit. Remove stays the
+   trash beside the card, as on Course Content. Download is greyed, not hidden, when the
+   file isn't in this session. */
+function menuFor(resource: CourseResource): RowMenuItem[] {
+  const isLink = resource.type === 'link'
+  return [
+    isLink
+      ? { key: 'open', label: 'Open link', icon: <ExportSquare size={20} color="currentColor" variant="Linear" /> }
+      : {
+          key: 'open',
+          label: 'Download',
+          icon: <ImportCurve size={20} color="currentColor" variant="Linear" />,
+          disabled: !resource.file,
+          title: resource.file ? undefined : 'Re-upload the file to download it',
+        },
+    { key: 'edit', label: 'Edit', icon: <Edit2 size={20} color="currentColor" variant="Linear" /> },
+  ]
+}
+
 /* Course builder → Resources tab. Rows are the Course Content card (ContentList.css):
-   drag handle, card with title actions, trash outside the card. No type badge: every
-   row here is a resource, and the tile and meta line already say which kind. */
+   drag handle, the card with a ⋯ actions menu top right, trash outside the card. No type badge: every row here is a
+   resource, and the tile and meta line already say which kind. */
 function ResourcesTab({ resources, onReorder, onAdd, onEdit, onRemove }: Props) {
   const [dragId, setDragId] = useState<number | null>(null)
 
@@ -103,8 +126,6 @@ function ResourcesTab({ resources, onReorder, onAdd, onEdit, onRemove }: Props) 
       <section className="content-list">
         <div className="resources-tab__list">
           {resources.map((resource) => {
-            const isLink = resource.type === 'link'
-            const openLabel = isLink ? 'Open link' : 'Download'
             return (
               <div
                 key={resource.id}
@@ -129,33 +150,15 @@ function ResourcesTab({ resources, onReorder, onAdd, onEdit, onRemove }: Props) 
                   <div className="content-card-info">
                     <div className="content-card-title-row">
                       <h4 className="content-card-title">{resource.name}</h4>
-                      <Tooltip text="Edit" position="Top" icon={false}>
-                        <button
-                          type="button"
-                          className="content-card-title-edit"
-                          aria-label={`Edit ${resource.name}`}
-                          onClick={() => onEdit(resource)}
-                        >
-                          <Edit2 size={16} color="currentColor" variant="Linear" />
-                        </button>
-                      </Tooltip>
-                      {/* Greyed rather than hidden when the file isn't in this session, so
-                          every card keeps the same actions. */}
-                      <Tooltip text={openLabel} position="Top" icon={false}>
-                        <button
-                          type="button"
-                          className={`content-card-title-edit${!isLink && !resource.file ? ' ui-disabled' : ''}`}
-                          aria-label={`${openLabel} ${resource.name}`}
-                          aria-disabled={!isLink && !resource.file ? true : undefined}
-                          onClick={() => openResource(resource)}
-                        >
-                          {isLink ? (
-                            <ExportSquare size={16} color="currentColor" variant="Linear" />
-                          ) : (
-                            <ImportCurve size={16} color="currentColor" variant="Linear" />
-                          )}
-                        </button>
-                      </Tooltip>
+                      <RowActionsMenu
+                        items={menuFor(resource)}
+                        onSelect={(key) => {
+                          if (key === 'open') openResource(resource)
+                          if (key === 'edit') onEdit(resource)
+                        }}
+                        ariaLabel={`Actions for ${resource.name}`}
+                        menuClassName="resources-tab__menu"
+                      />
                     </div>
                     <div className="content-card-meta">
                       <span>{resourceMeta(resource)}</span>

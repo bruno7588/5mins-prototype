@@ -7,9 +7,22 @@
   gap: var(--space-sm); /* 12px, as between outline items */
 }
 
-/* Coloured tile behind the file glyph; the colour comes from the resource type. */
-.resources-tab__thumb {
+/* Link tile (Figma 9956:49134): 24px glyph centred on an 8px-radius purple tile. File
+   types are finished SVG tiles and need no styling here. */
+.resources-tab__thumb--link {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: var(--radius-s);
+  background: var(--certificate-quiz);
+}
+
+/* Two short actions, so the menu hugs them instead of the listbox's 240px minimum. */
+.ram-menu.resources-tab__menu {
+  min-width: 0;
+}
+
+/* Figma 9951:48595: the meta line is tertiary here (Course Content keeps secondary). */
+.resources-tab__list .content-card-meta {
+  color: var(--text-tertiary);
 }
