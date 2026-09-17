@@ -12,8 +12,8 @@
 .pcd-cover {
   position: absolute;
   top: 20px;
-  left: 24px;
-  right: 24px;
+  left: 0;
+  right: 0; /* spans the full width of the body */
   /* Figma draws this 600px tall, but against a taller header card. Here the
      card is shorter, so 600 pushes the fade well past the tabs and the image
      sits behind the outline. 420 restores the designed relationship: opaque
