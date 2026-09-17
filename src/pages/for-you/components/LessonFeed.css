@@ -23,18 +23,22 @@
   min-width: 0;
   min-height: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  /* Video sits in the top-left of the stage, with the close button beside it. */
+  align-items: flex-start;
+  justify-content: flex-start;
+  /* Sizes the video against the stage in both axes (see .lf-video-wrap). */
+  container-type: size;
 }
 
 /* Wrapper shrink-wraps the (overflow-clipped) video so the close button can
    sit just outside its top-left corner with an 8px gap. */
 .lf-video-wrap {
   position: relative;
-  height: 100%;
-  max-height: 100%;
-  max-width: 100%;
+  /* 9:16 either way: full height until the stage is too narrow, then the height
+     follows the width instead of the video being squashed. */
   aspect-ratio: 1080 / 1920;
+  height: min(100cqh, 100cqw * 1920 / 1080);
+  width: auto;
 }
 
 .lf-feed .lf-close {

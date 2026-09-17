@@ -161,6 +161,16 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             <h2 className="lf-info__title">{lesson.title}</h2>
             <span className="lf-info__link ui-disabled">Take a deep dive</span>
           </div>
+          <div className="lf-skill">
+            <img
+              className="lf-skill__icon"
+              src={getLevelIllustration(lesson.skillLevel, { size: 'small' })}
+              alt=""
+              width={20}
+              height={20}
+            />
+            <span className="lf-skill__name">{lesson.skillName}</span>
+          </div>
           {resources.length > 0 && (
             /* Resources sit beside the episodes, as on every course player: content,
                not a social action. */
@@ -201,16 +211,6 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
           )}
         </div>
 
-        <div className="lf-skill">
-          <img
-            className="lf-skill__icon"
-            src={getLevelIllustration(lesson.skillLevel, { size: 'small' })}
-            alt=""
-            width={20}
-            height={20}
-          />
-          <span className="lf-skill__name">{lesson.skillName}</span>
-        </div>
 
         <div className="lf-menu">
           <button type="button" className="lf-menu__item ui-disabled" disabled>
