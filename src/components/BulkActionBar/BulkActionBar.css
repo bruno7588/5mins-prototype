@@ -12,16 +12,22 @@
 
 /* The pill — same dark surface as the tooltip, so it flips per mode */
 .bulk-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm);
+  overflow: hidden; /* clips content while the width animates */
   background: var(--tooltip-background);
   border-radius: var(--radius-m); /* 16px */
   box-shadow: 0 8px 32px rgba(15, 16, 20, 0.24), 0 2px 8px rgba(15, 16, 20, 0.12);
   pointer-events: auto;
   /* Enter/exit (opacity + 16px slide) is owned by Framer in BulkActionBar.tsx —
      a CSS keyframe can only play on mount, so it can't animate the bar out. */
+}
+
+/* Measured by BulkActionBar.tsx; padding lives here so focus rings aren't clipped. */
+.bulk-bar-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: max-content;
+  padding: var(--space-sm);
 }
 
 .bulk-bar-close {
@@ -109,10 +115,9 @@
    the mode-aware --border / --text-primary the doc names: this pill is dark in
    both modes, so those tokens would flip light and wash out here. */
 .bulk-bar-trigger {
-  /* Reads as a field, not a button: Regular 14 with the chevron pushed to the
-     right edge, so the trigger keeps one width as its label never changes. */
+  /* Reads as a field, not a button: Regular 14 with the chevron on the right,
+     sized to its content. */
   justify-content: space-between;
-  min-width: 160px;
   font-weight: 400;
 }
 

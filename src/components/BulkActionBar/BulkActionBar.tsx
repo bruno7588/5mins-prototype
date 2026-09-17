@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Add } from 'iconsax-react'
 import './BulkActionBar.css'
@@ -27,10 +27,29 @@ interface BulkActionBarProps {
  */
 function BulkActionBar({ count, onClear, children, label = 'selected' }: BulkActionBarProps) {
   const reduceMotion = useReducedMotion()
+  /* The pill's width follows its content (count label, enabled actions), so it
+     is measured and animated rather than jumping when the selection changes. */
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState<number>()
+  const visible = count > 0
+
+  useLayoutEffect(() => {
+    const el = contentRef.current
+    if (!visible || !el) return
+    setWidth(el.offsetWidth)
+    const ro = new ResizeObserver(() => setWidth(el.offsetWidth))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [visible])
+
   const motionProps = reduceMotion
     ? { transition: { duration: 0 } }
     : {
-        transition: { duration: 0.14, ease: 'easeOut' as const },
+        transition: {
+          duration: 0.14,
+          ease: 'easeOut' as const,
+          width: { duration: 0.2, ease: 'easeInOut' as const },
+        },
         // Leaves a touch quicker than it arrives, so dismissal feels responsive.
         exit: { opacity: 0, y: 16, transition: { duration: 0.1, ease: 'easeIn' as const } },
       }
@@ -38,22 +57,24 @@ function BulkActionBar({ count, onClear, children, label = 'selected' }: BulkAct
   return (
     <div className="bulk-bar-layer">
       <AnimatePresence>
-        {count > 0 && (
+        {visible && (
           <motion.div
             className="bulk-bar"
             role="region"
             aria-label="Bulk actions"
             initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0, ...(width !== undefined && { width }) }}
             exit={{ opacity: 0, y: 16 }}
             {...motionProps}
           >
-            <button className="bulk-bar-close" aria-label="Clear selection" onClick={onClear}>
-              <Add size={20} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
-            </button>
-            <span className="bulk-bar-count">{count} {label}</span>
-            <div className="bulk-bar-divider" />
-            <div className="bulk-bar-actions">{children}</div>
+            <div ref={contentRef} className="bulk-bar-content">
+              <button className="bulk-bar-close" aria-label="Clear selection" onClick={onClear}>
+                <Add size={20} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
+              </button>
+              <span className="bulk-bar-count">{count} {label}</span>
+              <div className="bulk-bar-divider" />
+              <div className="bulk-bar-actions">{children}</div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
