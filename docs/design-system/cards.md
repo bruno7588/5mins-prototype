@@ -36,6 +36,8 @@ Specs below are the desktop variants unless a section is explicitly marked Mobil
 | A content folder (admin library grouping) | Folder card | 0/1/2/3+ course stack + "New Folder" creator tile |
 | An instructor (photo, bio, skills) | Instructor card | desktop card, mobile card |
 
+A course **resource** (a PDF, Word, Excel or PowerPoint file, or an external link) is not one of these seven: use the Resource card in `resource-card.md` (`src/components/ResourceCard`).
+
 For Lesson and Assessment cards, pick the variant by surface: an **admin panel** screen uses the admin list row; a **learner web app** screen uses the web app row; a **grid or library browse** layout uses the Lesson grid tile. When unsure, read the surrounding chrome: dark admin chrome means admin.
 
 ## Design tokens

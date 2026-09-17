@@ -1,4 +1,5 @@
 import { workspacePrograms, type ProgramCourse } from '../workspace/mockItems'
+import type { ResourceType } from '@/components/ResourceCard/ResourceCard'
 import thumb1 from '../../assets/programs/course-1.png'
 import thumb2 from '../../assets/programs/course-2.png'
 import thumb3 from '../../assets/programs/course-3.png'
@@ -27,6 +28,17 @@ export interface CourseSection {
   lessons: CourseLesson[]
 }
 
+/** A file or link the admin attached to the course (Create Course → Resources). */
+export interface CourseResourceItem {
+  id: string
+  type: ResourceType
+  title: string
+  /** Bytes; files only. */
+  size?: number
+  /** Links only. */
+  url?: string
+}
+
 export interface CourseDetail {
   id: string
   title: string
@@ -39,6 +51,8 @@ export interface CourseDetail {
   progress: number
   thumbnail: string
   sections: CourseSection[]
+  /** Empty when the admin added none (and in the builder preview). */
+  resources?: CourseResourceItem[]
 }
 
 /** Find a course across every program's outline by id. */
@@ -133,6 +147,14 @@ const sections: CourseSection[] = [
   },
 ]
 
+const resources: CourseResourceItem[] = [
+  { id: 'r1', type: 'pdf', title: 'Resources that everyone should know', size: 1153434 },
+  { id: 'r2', type: 'word', title: 'Team charter template', size: 819200 },
+  { id: 'r3', type: 'excel', title: 'Innovation ideas tracker', size: 2097152 },
+  { id: 'r4', type: 'powerpoint', title: 'Innovation workshop slides', size: 8493465 },
+  { id: 'r5', type: 'link', title: 'HSE leadership and worker involvement', url: 'https://www.hse.gov.uk/involvement/' },
+]
+
 /** Build a course-detail view model from a program course (falls back gracefully). */
 export function getCourseDetail(id: string | undefined): CourseDetail {
   const course = findProgramCourse(id)
@@ -156,5 +178,6 @@ export function getCourseDetail(id: string | undefined): CourseDetail {
     progress,
     thumbnail: course?.thumbnail ?? thumb3,
     sections: courseSections,
+    resources,
   }
 }

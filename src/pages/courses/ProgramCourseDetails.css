@@ -85,7 +85,7 @@
 .pcd-header__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-s);
+  gap: var(--space-xs);
 }
 
 .pcd-iconbtn {
@@ -481,6 +481,13 @@
   height: 1px;
   border-radius: 4px;
   background: var(--border);
+}
+
+/* Resources tab: the shared ResourceCard, stacked. */
+.pcd-resources {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
 .pcd-empty {

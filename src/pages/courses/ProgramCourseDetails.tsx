@@ -19,6 +19,8 @@ import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Badge from '../../components/Badge/Badge'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Collapse from '../../components/Collapse/Collapse'
+import ResourceCard from '@/components/ResourceCard/ResourceCard'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import '../my-team/MyTeam.css'
 import '../workspace/Workspace.css'
 import './ProgramCourseDetails.css'
@@ -104,6 +106,8 @@ function ProgramCourseDetails() {
   const openQuiz = openQuizId === null ? null : preview?.questions[openQuizId] ?? null
 
   const [tab, setTab] = useState<'course' | 'about' | 'resources'>('course')
+  const resources = course.resources ?? []
+  const { toasts, show: showToast, dismiss: dismissToast } = useToast()
   const [open, setOpen] = useState<Record<string, boolean>>(
     () => Object.fromEntries(course.sections.map((s) => [s.id, true])),
   )
@@ -225,13 +229,13 @@ function ProgramCourseDetails() {
                 </div>
                 <div className="pcd-header__actions">
                   <button type="button" className="pcd-iconbtn" aria-label="Save">
-                    <ArchiveAdd size={24} color="var(--text-primary)" variant="Linear" />
+                    <ArchiveAdd size={20} color="var(--text-primary)" variant="Linear" />
                   </button>
                   <button type="button" className="pcd-iconbtn" aria-label="Share">
-                    <Share size={24} color="var(--text-primary)" variant="Linear" />
+                    <Share size={20} color="var(--text-primary)" variant="Linear" />
                   </button>
                   <button type="button" className="pcd-iconbtn" aria-label="Add to calendar">
-                    <CalendarAdd size={24} color="var(--text-primary)" variant="Linear" />
+                    <CalendarAdd size={20} color="var(--text-primary)" variant="Linear" />
                   </button>
                 </div>
               </div>
@@ -290,7 +294,7 @@ function ProgramCourseDetails() {
                 onClick={() => setTab('resources')}
               >
                 Resources
-                <span className="pcd-tab__count">3</span>
+                {resources.length > 0 && <span className="pcd-tab__count">{resources.length}</span>}
               </button>
             </nav>
 
@@ -334,12 +338,30 @@ function ProgramCourseDetails() {
                   </Fragment>
                 ))}
               </div>
+            ) : tab === 'resources' && resources.length > 0 ? (
+              /* The same ResourceCard the admin sees in Create Course → Resources. */
+              <div className="pcd-resources">
+                {resources.map((r) => (
+                  <ResourceCard
+                    key={r.id}
+                    type={r.type}
+                    title={r.title}
+                    size={r.size}
+                    onOpen={() =>
+                      r.url
+                        ? window.open(r.url, '_blank', 'noopener,noreferrer')
+                        : showToast('info', `Downloading ${r.title}`)
+                    }
+                  />
+                ))}
+              </div>
             ) : (
               <div className="pcd-empty">Nothing here yet.</div>
             )}
           </div>
         </section>
       </div>
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   )
 }

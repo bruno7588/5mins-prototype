@@ -220,7 +220,7 @@ When an icon is used as a standalone clickable element (e.g. close button, actio
 - `Edit` - Edit
 - `Trash` - Delete
 - `Eye` - View
-- `ImportCurve` - Download (the one download icon across the product; Iconsax React has no `Download`)
+- `ImportCurve` - Download (the one download icon across the product; Iconsax React has no `Download`). Resource cards pair it with `ExportSquare` for Open link (`resource-card.md`)
 - `Share` - Share
 
 ### Status

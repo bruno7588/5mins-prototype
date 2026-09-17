@@ -36,8 +36,6 @@ interface RowActionsMenuProps {
   triggerContent?: ReactNode
   /** Show the caret pointing at the trigger (default true; off for attached dropdowns). */
   caret?: boolean
-  /** Extra class on the portalled menu surface, for page-level sizing. */
-  menuClassName?: string
 }
 
 /**
@@ -54,7 +52,6 @@ function RowActionsMenu({
   triggerClassName = 'ram-trigger',
   triggerContent,
   caret = true,
-  menuClassName,
 }: RowActionsMenuProps) {
   const [open, setOpen] = useState(false)
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -127,7 +124,7 @@ function RowActionsMenu({
           <div
             ref={menuRef}
             role="menu"
-            className={`ram-menu${menuClassName ? ` ${menuClassName}` : ''}`}
+            className="ram-menu"
             style={{
               position: 'fixed',
               right: Math.max(8, window.innerWidth - rect.right),

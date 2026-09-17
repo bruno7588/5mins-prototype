@@ -56,7 +56,17 @@ let nextSituationalTestId = 200
    `Assessment-<id>` key namespace with classic assessments — 1000 keeps the two
    counters clear of each other. */
 let nextInteractiveId = 1000
-let nextResourceId = 1
+/* One sample of every resource type, so the Resources tab opens populated. Each file
+   carries a small placeholder File so Download hands something back. */
+const sampleFile = (name: string) => new File([`Sample resource: ${name}`], name)
+const SAMPLE_RESOURCES: CourseResource[] = [
+  { id: 1, type: 'pdf', name: 'Resources that everyone should know', fileName: 'Resources that everyone should know.pdf', size: 1153434, file: sampleFile('Resources that everyone should know.pdf') },
+  { id: 2, type: 'word', name: 'Team charter template', fileName: 'Team charter template.docx', size: 819200, file: sampleFile('Team charter template.docx') },
+  { id: 3, type: 'excel', name: 'Innovation ideas tracker', fileName: 'Innovation ideas tracker.xlsx', size: 2097152, file: sampleFile('Innovation ideas tracker.xlsx') },
+  { id: 4, type: 'powerpoint', name: 'Innovation workshop slides', fileName: 'Innovation workshop slides.pptx', size: 8493465, file: sampleFile('Innovation workshop slides.pptx') },
+  { id: 5, type: 'link', name: 'HSE leadership and worker involvement', url: 'https://www.hse.gov.uk/involvement/' },
+]
+let nextResourceId = SAMPLE_RESOURCES.length + 1
 /* Generated assessments ride the same two card types, so they need their own
    stretch of the id space again (DES-279). */
 let nextGeneratedId = 3000
@@ -170,7 +180,7 @@ function CreateCourse() {
     thumbnail: DEFAULT_COURSE_THUMBNAIL,
   })
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
-  const [resources, setResources] = useState<CourseResource[]>([])
+  const [resources, setResources] = useState<CourseResource[]>(SAMPLE_RESOURCES)
   const [editingResourceId, setEditingResourceId] = useState<number | null>(null)
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
   const [assessmentType, setAssessmentType] = useState<AssessmentType>('single-choice')
@@ -931,7 +941,6 @@ function CreateCourse() {
               resources={resources}
               onReorder={setResources}
               onAdd={() => openResource(null)}
-              onEdit={(r) => openResource(r.id)}
               onRemove={handleRemoveResource}
             />
           )}
