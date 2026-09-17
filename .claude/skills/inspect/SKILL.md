@@ -28,6 +28,10 @@ Each request is one JSON line: `{ id, ts, url, theme, instruction, target }`. `i
 4. If the instruction is ambiguous or would break a design-system rule, ask in chat and wait; do not guess.
 5. Reply in one line: what changed and where (`file:line`). Vite hot-reloads the browser and the overlay shows "Updated". No commit unless asked.
 
+## Text typed on the page
+
+Double-clicking text in the overlay lets Bruno type over it. The dev server writes that wording straight into the source when it maps to one place, and nothing reaches this session. When it can't (text from data, props or interpolation, or a match it can't pin down), a request arrives whose `instruction` reads `Change the text "…" to "…". Use this exact wording…`. Put the new wording in the source verbatim: find where the old string comes from (data arrays, props, the component that renders it), and if the same string is also used as a key or in logic, change only the displayed copy.
+
 ## `/inspect stop`
 
 TaskStop the Design Inspect monitor (its trap removes the `listening` marker) and confirm in one line.

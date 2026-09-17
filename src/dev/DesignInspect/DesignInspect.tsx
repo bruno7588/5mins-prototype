@@ -20,6 +20,10 @@ import './DesignInspect.css'
  * opens an inline prompt on the element (the box label carries the source line). Send posts the request to the dev server over
  * the HMR socket (the /inspect skill picks it up); Copy puts the same context on the
  * clipboard. Esc steps out, ArrowUp climbs to the parent.
+ *
+ * Double-click text (or "Edit text" in the panel) to type over it in place. Enter
+ * saves: the dev server writes the exact wording into the source when it can find
+ * it, otherwise the edit goes to Claude as a request. Esc puts the old text back.
  */
 
 type Status =
@@ -30,6 +34,8 @@ type Status =
   | { kind: 'updated' }
   | { kind: 'reloading' }
   | { kind: 'copied' }
+  | { kind: 'saved'; id: string; source: string }
+  | { kind: 'undone' }
   | { kind: 'error'; message: string }
 
 const PANEL_W = 380
@@ -45,7 +51,12 @@ declare global {
 
 // Dev-server events reach the component through a window-level bus: a hot reload of this
 // module prunes its import.meta.hot listeners, while the bus and the mounted component survive.
-type BusEvent = { kind: 'queued' | 'refused' | 'updated' | 'reloading'; id?: string; listening?: boolean }
+type BusEvent = {
+  kind: 'queued' | 'refused' | 'updated' | 'reloading' | 'text-saved' | 'text-undone' | 'text-undo-failed'
+  id?: string
+  listening?: boolean
+  source?: string
+}
 const BUS_EVENT = 'design-inspect'
 const bus: EventTarget = (window.__designInspectBus ??= new EventTarget())
 const emit = (detail: BusEvent) => bus.dispatchEvent(new CustomEvent(BUS_EVENT, { detail }))
@@ -56,6 +67,30 @@ if (import.meta.hot) {
   import.meta.hot.on('design-inspect:refused', () => emit({ kind: 'refused' }))
   import.meta.hot.on('vite:afterUpdate', () => emit({ kind: 'updated' }))
   import.meta.hot.on('vite:beforeFullReload', () => emit({ kind: 'reloading' }))
+  import.meta.hot.on('design-inspect:text-saved', (d: { id: string; source: string }) =>
+    emit({ kind: 'text-saved', id: d.id, source: d.source }),
+  )
+  import.meta.hot.on('design-inspect:text-undone', (d: { id: string }) => emit({ kind: 'text-undone', id: d.id }))
+  import.meta.hot.on('design-inspect:text-undo-failed', (d: { id: string }) => emit({ kind: 'text-undo-failed', id: d.id }))
+}
+
+/** Only text-only elements are edited in place, so no child element can be lost while typing. */
+function isTextLeaf(el: Element): boolean {
+  const nodes = Array.from(el.childNodes)
+  return (
+    nodes.length > 0 &&
+    nodes.every((n) => n.nodeType === Node.TEXT_NODE) &&
+    !!el.textContent?.trim() &&
+    !(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)
+  )
+}
+
+interface TextEditSession {
+  el: HTMLElement
+  /** React owns these text nodes; they go back into the element when editing ends. */
+  nodes: Text[]
+  data: string[]
+  text: string
 }
 
 export default function DesignInspect() {
@@ -67,6 +102,8 @@ export default function DesignInspect() {
   const [, setTick] = useState(0)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const pendingId = useRef<string | null>(null)
+  const [editing, setEditing] = useState<HTMLElement | null>(null)
+  const editRef = useRef<TextEditSession | null>(null)
 
   // Own container so app CSS and the app's portals never interleave with the overlay.
   const root = useMemo(() => {
@@ -79,12 +116,71 @@ export default function DesignInspect() {
     return el
   }, [])
 
+  const startEdit = useCallback((el: Element) => {
+    if (!(el instanceof HTMLElement) || !isTextLeaf(el)) return
+    const nodes = Array.from(el.childNodes) as Text[]
+    editRef.current = { el, nodes, data: nodes.map((n) => n.data), text: el.textContent ?? '' }
+    setSelected(el)
+    setHover(null)
+    setEditing(el)
+    el.contentEditable = 'plaintext-only'
+    el.focus()
+    const range = document.createRange()
+    range.selectNodeContents(el)
+    const sel = window.getSelection()
+    sel?.removeAllRanges()
+    sel?.addRange(range)
+  }, [])
+
+  const finishEdit = useCallback((save: boolean) => {
+    const session = editRef.current
+    if (!session) return
+    editRef.current = null
+    setEditing(null)
+    const { el, nodes, data, text } = session
+    const typed = (el.textContent ?? '').replace(/\u00a0/g, ' ')
+    el.removeAttribute('contenteditable')
+    window.getSelection()?.removeAllRanges()
+    // Hand React back its own nodes. Until the source change hot-reloads, they carry
+    // the new wording so the page doesn't flash the old text.
+    el.replaceChildren(...nodes)
+    const before = text.trim()
+    const after = typed.trim()
+    if (!save || after === before || !after) {
+      nodes.forEach((n, i) => (n.data = data[i]))
+      setStatus({ kind: 'idle' })
+      return
+    }
+    nodes.forEach((n, i) => (n.data = i === 0 ? typed : ''))
+    const req = buildRequest(
+      el,
+      `Change the text "${before}" to "${after}". Use this exact wording; it was typed directly on the page.`,
+    )
+    const hot = import.meta.hot
+    if (!hot) {
+      void navigator.clipboard.writeText(toMarkdown(req))
+      setStatus({ kind: 'copied' })
+      return
+    }
+    pendingId.current = req.id
+    setStatus({ kind: 'sending' })
+    hot.send('design-inspect:text', {
+      id: req.id,
+      source: req.target.source,
+      tag: req.target.tag,
+      before,
+      after,
+      request: req,
+    })
+  }, [])
+
   const exit = useCallback(() => {
+    finishEdit(true)
     setActive(false)
     setHover(null)
     setSelected(null)
     setStatus({ kind: 'idle' })
-  }, [])
+  }, [finishEdit])
 
   const select = useCallback((el: Element) => {
     setSelected(el)
@@ -97,6 +193,20 @@ export default function DesignInspect() {
   // Global keys: Alt+I toggles, Esc steps out, ArrowUp climbs to the parent.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (editRef.current) {
+        // Enter saves (not mid-IME composition, not Shift+Enter); Esc restores.
+        if (e.key === 'Escape' || (e.key === 'Enter' && !e.shiftKey && !e.isComposing)) {
+          e.preventDefault()
+          e.stopPropagation()
+          finishEdit(e.key === 'Enter')
+        }
+        // Inside a <button>, Space would press the button instead of typing a space.
+        if (e.key === ' ' && !e.isComposing) {
+          e.preventDefault()
+          document.execCommand('insertText', false, ' ')
+        }
+        return
+      }
       if (e.altKey && e.code === 'KeyI') {
         e.preventDefault()
         if (active) exit()
@@ -122,7 +232,7 @@ export default function DesignInspect() {
     }
     window.addEventListener('keydown', onKey, true)
     return () => window.removeEventListener('keydown', onKey, true)
-  }, [active, selected, exit, select])
+  }, [active, selected, exit, select, finishEdit])
 
   // While active, own the pointer: highlight on hover, swallow clicks so the app never sees them.
   useEffect(() => {
@@ -136,11 +246,24 @@ export default function DesignInspect() {
     const onMove = (e: MouseEvent) => setHover(pick(e))
     const swallow = (e: Event) => {
       if (isInspectorNode(e.target as Element)) return
+      // Let the caret land and move inside the text being edited, but never press it.
+      if (editRef.current?.el.contains(e.target as Node)) {
+        if (e.type === 'click' || e.type === 'dblclick') {
+          e.preventDefault()
+          e.stopPropagation()
+        }
+        return
+      }
       e.preventDefault()
       e.stopPropagation()
+      if (editRef.current && e.type === 'mousedown') finishEdit(true)
       if (e.type === 'click') {
         const el = pick(e)
         if (el) select(el)
+      }
+      if (e.type === 'dblclick') {
+        const el = pick(e)
+        if (el) startEdit(el)
       }
     }
     const blocked = ['pointerdown', 'mousedown', 'mouseup', 'click', 'dblclick']
@@ -151,7 +274,7 @@ export default function DesignInspect() {
       document.removeEventListener('mousemove', onMove, true)
       blocked.forEach((ev) => document.removeEventListener(ev, swallow, true))
     }
-  }, [active, select])
+  }, [active, select, startEdit, finishEdit])
 
   // Re-measure on scroll/resize so the boxes and panel stay glued to their elements.
   useEffect(() => {
@@ -168,7 +291,7 @@ export default function DesignInspect() {
   // Dev-server round trip: the queued ack, then the HMR update Claude's edit triggers.
   useEffect(() => {
     const onBus = (e: Event) => {
-      const { kind, id, listening } = (e as CustomEvent<BusEvent>).detail
+      const { kind, id, listening, source } = (e as CustomEvent<BusEvent>).detail
       // The dev server says whether /inspect is running; without it the line just sits in the queue.
       if (kind === 'queued' && id === pendingId.current) setStatus(listening ? { kind: 'queued' } : { kind: 'unheard' })
       if (kind === 'refused') {
@@ -179,13 +302,19 @@ export default function DesignInspect() {
         pendingId.current = null
       }
       if (kind === 'reloading' && pendingId.current) setStatus({ kind: 'reloading' })
+      if (kind === 'text-saved' && id) {
+        pendingId.current = null
+        setStatus({ kind: 'saved', id, source: source ?? '' })
+      }
+      if (kind === 'text-undone') setStatus({ kind: 'undone' })
+      if (kind === 'text-undo-failed') setStatus({ kind: 'error', message: 'That text changed since; undo it in the file.' })
     }
     bus.addEventListener(BUS_EVENT, onBus)
     return () => bus.removeEventListener(BUS_EVENT, onBus)
   }, [])
 
   useLayoutEffect(() => {
-    if (selected) textareaRef.current?.focus()
+    if (selected && !editRef.current) textareaRef.current?.focus()
   }, [selected])
 
   const copy = async (text: string) => {
@@ -230,12 +359,17 @@ export default function DesignInspect() {
         {active ? 'Inspecting · Esc to exit' : 'Inspect'}
       </button>
 
+      {active && editing && (
+        <div className="di-hint" style={placeHint(editing.getBoundingClientRect())}>
+          Enter to save · Esc to cancel
+        </div>
+      )}
       {active && hover && hoverRect && <Box rect={hoverRect} label={`${shortLabel(hover)} · ${shortSource(hover)}`} />}
       {active && selected && selRect && (
         <Box rect={selRect} label={`${shortLabel(selected)} · ${shortSource(selected)}`} selected />
       )}
 
-      {active && selected && selRect && (
+      {active && selected && selRect && !editing && (
         <div className="di-panel" style={placePanel(selRect)} role="dialog" aria-label="Design Inspect">
           <textarea
             ref={textareaRef}
@@ -267,6 +401,20 @@ export default function DesignInspect() {
             >
               Copy
             </button>
+            {isTextLeaf(selected) && (
+              <button type="button" className="di-btn" onClick={() => startEdit(selected)}>
+                Edit Text
+              </button>
+            )}
+            {status.kind === 'saved' && (
+              <button
+                type="button"
+                className="di-btn"
+                onClick={() => import.meta.hot?.send('design-inspect:text-undo', { id: status.id })}
+              >
+                Undo
+              </button>
+            )}
             <span className={`di-status${statusClass(status)}`} role="status">
               {statusText(status)}
             </span>
@@ -301,10 +449,14 @@ function placePanel(r: DOMRect): CSSProperties {
   return { top, left, width: PANEL_W }
 }
 
+function placeHint(r: DOMRect): CSSProperties {
+  return r.bottom + GAP + 28 <= window.innerHeight ? { top: r.bottom + GAP, left: r.left } : { top: r.top - GAP - 24, left: r.left }
+}
+
 function statusText(s: Status): string {
   switch (s.kind) {
     case 'idle':
-      return 'Enter to send'
+      return 'Enter to send · double-click text to edit'
     case 'sending':
       return 'Sending…'
     case 'queued':
@@ -317,13 +469,19 @@ function statusText(s: Status): string {
       return 'Reloading…'
     case 'copied':
       return 'Copied'
+    case 'saved':
+      return `Saved to ${s.source.slice(s.source.lastIndexOf('/') + 1)}`
+    case 'undone':
+      return 'Undone'
     case 'error':
       return s.message
   }
 }
 
 function statusClass(s: Status): string {
-  if (s.kind === 'queued' || s.kind === 'updated' || s.kind === 'copied') return ' di-status--ok'
+  if (s.kind === 'queued' || s.kind === 'updated' || s.kind === 'copied' || s.kind === 'saved' || s.kind === 'undone') {
+    return ' di-status--ok'
+  }
   if (s.kind === 'error') return ' di-status--error'
   return ''
 }

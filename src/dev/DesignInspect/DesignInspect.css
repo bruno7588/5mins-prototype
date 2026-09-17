@@ -96,6 +96,23 @@ html.di-active *:not(#design-inspect-root, #design-inspect-root *) {
   }
 }
 
+/* Text being edited in place */
+html.di-active [contenteditable] {
+  cursor: text !important;
+  outline: 2px solid #7c5cff;
+  outline-offset: 2px;
+}
+
+.di-hint {
+  position: fixed;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #15161c;
+  color: #a0a3b1;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
 /* Inline prompt panel */
 .di-panel {
   position: fixed;
