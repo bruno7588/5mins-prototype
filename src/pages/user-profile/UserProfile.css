@@ -135,9 +135,9 @@
 
 /* One line: icon · share · label + info anchor (Figma 9193:44018). */
 .up-stat {
-  flex: 1 0 0;
-  /* Real min so the wrap actually kicks in — 4 up, then 2×2 when narrow. */
-  min-width: 200px;
+  /* 4 up while each stat gets 200px (4 × 200 + 3 × 16 gaps = 848px), otherwise 2×2,
+     never 3 + 1: the middle term flips from negative to huge at 848px. */
+  flex: 1 0 clamp(calc(25% - 12px), calc((848px - 100%) * 999), calc(50% - 8px));
   display: flex;
   align-items: center;
   gap: var(--space-s);
@@ -305,4 +305,20 @@
 /* Inside the learner shell the page sits in .mt-body, which already pads. */
 .up-page--in-shell {
   padding: 0;
+}
+
+/* Unenrol dialog (Figma People 9714:97247): 600 wide, 16px icon → text, 4px title → body, 12px between buttons. */
+.confirm-modal.up-unenrol-modal {
+  width: 600px;
+  align-items: center;
+}
+
+.up-unenrol-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.confirm-modal-actions.up-unenrol-actions {
+  gap: var(--space-sm);
 }

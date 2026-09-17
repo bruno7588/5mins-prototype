@@ -9,6 +9,7 @@ import Tooltip from '../../components/Tooltip/Tooltip'
 import Table, { type Column } from '../../components/Table/Table'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterValue } from './components/CourseFilters/CourseFilters'
 import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDateModal/ExtendDueDateModal'
@@ -175,7 +176,7 @@ const ROW_MENU_ITEMS: RowMenuItem[] = [
 
 /* Floating-bar actions — the subset of the row menu that means something across a
    whole selection. Derived from ROW_MENU_ITEMS so the glyphs and wording can never
-   drift between the two menus; the divider before Unenrol comes with it. */
+   drift between the two menus. No divider before Unenrol here. */
 const BULK_ACTION_KEYS = new Set([
   'extend-due-date',
   'edit-start-date',
@@ -183,7 +184,9 @@ const BULK_ACTION_KEYS = new Set([
   'restart-enrolment',
   'unenrol',
 ])
-const BULK_MENU_ITEMS: RowMenuItem[] = ROW_MENU_ITEMS.filter((item) => BULK_ACTION_KEYS.has(item.key))
+const BULK_MENU_ITEMS: RowMenuItem[] = ROW_MENU_ITEMS.filter((item) => BULK_ACTION_KEYS.has(item.key)).map(
+  ({ dividerBefore: _divider, ...item }) => item,
+)
 
 /* Which statuses an action can act on. The test is whether the action still has
    something ahead of the learner to change: dates only matter while the course
@@ -306,6 +309,7 @@ function UserProfile() {
   const [extendTarget, setExtendTarget] = useState<'bulk' | CourseProgress | null>(null)
   const [startDateTarget, setStartDateTarget] = useState<'bulk' | CourseProgress | null>(null)
   const [attemptTarget, setAttemptTarget] = useState<'bulk' | CourseProgress | null>(null)
+  const [unenrolTarget, setUnenrolTarget] = useState<'bulk' | CourseProgress | null>(null)
   const [sortKey, setSortKey] = useState<SortKey>('startDate')
   const [sortDesc, setSortDesc] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -351,7 +355,7 @@ function UserProfile() {
       return
     }
     if (key === 'unenrol') {
-      showToast('warning', `${person.name} would be unenrolled from “${row.course}”`)
+      setUnenrolTarget(row)
       return
     }
     showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} - coming soon`)
@@ -377,10 +381,22 @@ function UserProfile() {
       return
     }
     if (key === 'unenrol') {
-      showToast('warning', `${n} ${n === 1 ? 'enrolment' : 'enrolments'} would be unenrolled`)
+      setUnenrolTarget('bulk')
       return
     }
     showToast('info', `${ROW_ACTION_LABEL[key] ?? 'Action'} - ${n} selected - coming soon`)
+  }
+
+  /* Remove the targeted enrolments from the list (Figma People 9714:97247). */
+  const confirmUnenrol = () => {
+    const isBulk = unenrolTarget === 'bulk'
+    const ids = isBulk ? new Set(selected) : new Set(unenrolTarget ? [unenrolTarget.id] : [])
+    setCourses((prev) => prev.filter((c) => !ids.has(c.id)))
+    showToast('success', ids.size === 1 ? 'Enrolment removed' : `${ids.size} enrolments removed`)
+    setUnenrolTarget(null)
+    if (isBulk) setSelected(new Set())
+    // A row unenrolled while selected shouldn't linger in the selection count.
+    else setSelected((prev) => new Set([...prev].filter((id) => !ids.has(id))))
   }
 
   /* Apply the new due date to every selected enrolment. A specific date lands on
@@ -740,6 +756,31 @@ function UserProfile() {
           onApply={applyAnotherAttempt}
         />
       )}
+
+      <ConfirmModal
+        open={!!unenrolTarget}
+        onClose={() => setUnenrolTarget(null)}
+        className="up-unenrol-modal"
+        ariaLabel="Unenrol learners"
+      >
+        <div className="confirm-modal-header confirm-modal-header--center">
+          <UserMinus size={56} color="var(--danger-500)" variant="Linear" />
+          <div className="up-unenrol-text">
+            <h2 className="confirm-modal-title">Unenrol learners</h2>
+            <p className="confirm-modal-body">
+              The current enrolments will be removed and the learners will no longer be able to access the course.
+            </p>
+          </div>
+        </div>
+        <div className="confirm-modal-actions up-unenrol-actions">
+          <Button variant="outlined-2" onClick={() => setUnenrolTarget(null)}>
+            Cancel
+          </Button>
+          <Button semantic="danger" onClick={confirmUnenrol}>
+            Unenrol
+          </Button>
+        </div>
+      </ConfirmModal>
 
       <ToastContainer toasts={toasts} />
     </>
