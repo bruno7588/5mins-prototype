@@ -1,0 +1,45 @@
+/* Resources form, hosted in the shared ContentDrawer shell (panel, padding and slide
+   come from .side-drawer). Field and footer chrome match InteractiveDrawer.css so the
+   builder's drawers read as one family. Prefix: .resources-drawer__ */
+
+/* The rule under the header belongs to SectionHeader; the shell's flex gap spaces it. */
+.resources-drawer-shell .section-header {
+  padding-bottom: 0;
+}
+
+.resources-drawer__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  overflow-y: auto;
+}
+
+.resources-drawer__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.resources-drawer__label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.resources-drawer__label-hint {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+.resources-drawer__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}

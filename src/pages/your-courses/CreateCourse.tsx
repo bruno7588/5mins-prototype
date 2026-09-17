@@ -15,6 +15,8 @@ import { QUESTION_BEAT_MS } from './components/GenerateAssessmentsDrawer/Generat
 import AddContentIconStrip from './components/AddContentIconStrip/AddContentIconStrip'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
+import type { CourseResource } from './components/ResourcesDrawer/resources'
+import ResourcesTab from './components/ResourcesTab/ResourcesTab'
 import ContentDrawer from './components/ContentDrawer/ContentDrawer'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import type { AssessmentData } from './components/AssessmentModal/AssessmentModal'
@@ -54,6 +56,7 @@ let nextSituationalTestId = 200
    `Assessment-<id>` key namespace with classic assessments — 1000 keeps the two
    counters clear of each other. */
 let nextInteractiveId = 1000
+let nextResourceId = 1
 /* Generated assessments ride the same two card types, so they need their own
    stretch of the id space again (DES-279). */
 let nextGeneratedId = 3000
@@ -65,6 +68,7 @@ type ActiveDrawer =
   | 'situational-test'
   | 'interactive'
   | 'ai-generate'
+  | 'resources'
   | null
 
 /* How long the mock holds each step. The real generator's pace comes from the
@@ -166,6 +170,8 @@ function CreateCourse() {
     thumbnail: DEFAULT_COURSE_THUMBNAIL,
   })
   const [scormItems, setScormItems] = useState<ContentItem[]>([])
+  const [resources, setResources] = useState<CourseResource[]>([])
+  const [editingResourceId, setEditingResourceId] = useState<number | null>(null)
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
   const [assessmentType, setAssessmentType] = useState<AssessmentType>('single-choice')
   const [activeDrawer, setActiveDrawer] = useState<ActiveDrawer>(null)
@@ -386,6 +392,34 @@ function CreateCourse() {
       return
     }
     closeDrawer()
+  }
+
+  /* Course-level, so they live on their own tab rather than in the outline. Not
+     persisted: commit() doesn't store outline items either. */
+  const openResource = (id: number | null) => {
+    setEditingResourceId(id)
+    setActiveTab('Resources')
+    openDrawer('resources')
+  }
+
+  const handleSaveResource = (resource: Omit<CourseResource, 'id'>) => {
+    if (editingResourceId !== null) {
+      setResources((prev) => prev.map((r) => (r.id === editingResourceId ? { ...resource, id: r.id } : r)))
+      showToast('success', 'Resource updated')
+    } else {
+      setResources((prev) => [...prev, { ...resource, id: nextResourceId++ }])
+      showToast('success', 'Resource added')
+    }
+    closeDrawer()
+  }
+
+  const handleRemoveResource = (resource: CourseResource) => {
+    const index = resources.findIndex((r) => r.id === resource.id)
+    setResources((prev) => prev.filter((r) => r.id !== resource.id))
+    showToast('success', 'Resource removed', {
+      label: 'Undo',
+      onClick: () => setResources((prev) => [...prev.slice(0, index), resource, ...prev.slice(index)]),
+    })
   }
 
   const handleAddScorm = (file: ScormFile) => {
@@ -848,6 +882,12 @@ function CreateCourse() {
       <PageHeader
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        tabs={[
+          { label: 'Details' },
+          { label: 'Course Content' },
+          { label: 'Resources' },
+          { label: 'Settings', disabled: true },
+        ]}
         secondaryDisabled={!canCreate}
         onSecondary={() => commit('draft')}
         primaryDisabled={!canCreate}
@@ -886,6 +926,15 @@ function CreateCourse() {
             onRestoreExtra={handleRestoreExtra}
           />
           )}
+          {activeTab === 'Resources' && (
+            <ResourcesTab
+              resources={resources}
+              onReorder={setResources}
+              onAdd={() => openResource(null)}
+              onEdit={(r) => openResource(r.id)}
+              onRemove={handleRemoveResource}
+            />
+          )}
         </main>
       </div>
       <AddContentIconStrip
@@ -901,6 +950,7 @@ function CreateCourse() {
         onInteractiveClick={openInteractive}
         onGenerateWithAIClick={openGenerate}
         activeGenerateScope={activeDrawer === 'ai-generate' ? generationScope : null}
+        onResourcesClick={() => openResource(null)}
       />
       <ContentDrawer
         activeDrawer={activeDrawer}
@@ -968,6 +1018,8 @@ function CreateCourse() {
         generationCoverage={coverage}
         onGenerate={handleGenerate}
         onAddLessons={() => openDrawer('library')}
+        resourceInitial={editingResourceId === null ? null : resources.find((r) => r.id === editingResourceId) ?? null}
+        onResourceSave={handleSaveResource}
       />
       {/* One modal for both authoring drawers — only the nouns change, so a second
           copy of the scrim, icon and actions would be four lines of difference. */}

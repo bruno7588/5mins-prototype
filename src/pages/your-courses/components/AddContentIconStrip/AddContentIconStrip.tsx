@@ -39,6 +39,7 @@ export type StripActive =
   | 'situational-test'
   | 'interactive'
   | 'ai-generate'
+  | 'resources'
   | null
 
 const ICON = 20
@@ -108,6 +109,7 @@ interface AddContentIconStripProps {
   onGenerateWithAIClick?: (scope: GenerationScope) => void
   /** Which scope the open generate drawer is working in. */
   activeGenerateScope?: GenerationScope | null
+  onResourcesClick?: () => void
 }
 
 /* Right-edge Add Content sidebar per Figma 8949:70435 (rail) / 8953:70671 (items).
@@ -127,6 +129,7 @@ function AddContentIconStrip({
   onInteractiveClick,
   onGenerateWithAIClick,
   activeGenerateScope = null,
+  onResourcesClick,
 }: AddContentIconStripProps) {
   const [assessmentsOpen, setAssessmentsOpen] = useState(false)
   const [situationalOpen, setSituationalOpen] = useState(false)
@@ -418,7 +421,12 @@ function AddContentIconStrip({
         </>
       )}
 
-      {item('Resources', <DocumentText size={ICON} color={C} variant="Linear" />, false)}
+      {item(
+        'Resources',
+        <DocumentText size={ICON} color={C} variant={active === 'resources' ? 'Bold' : 'Linear'} />,
+        active === 'resources',
+        onResourcesClick,
+      )}
     </aside>
     </>
   )

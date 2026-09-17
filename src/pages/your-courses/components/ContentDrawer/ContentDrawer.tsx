@@ -10,6 +10,8 @@ import SituationalTestDrawerContent, {
 } from '../SituationalTestDrawer/SituationalTestDrawer'
 import InteractiveDrawer from '../InteractiveDrawer/InteractiveDrawer'
 import GenerateAssessmentsDrawer from '../GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
+import { ResourcesDrawerContent } from '../ResourcesDrawer/ResourcesDrawer'
+import type { CourseResource } from '../ResourcesDrawer/resources'
 import type {
   CoverageReport,
   GeneratableType,
@@ -35,6 +37,7 @@ export type ActiveDrawer =
   | 'situational-test'
   | 'interactive'
   | 'ai-generate'
+  | 'resources'
   | null
 
 interface Props {
@@ -105,6 +108,9 @@ interface Props {
     onEdit: (index: number, patch: Partial<SituationalQuestion>) => void
     onGenerateAgain: () => void
   } | null
+  /* Resources — non-null when a card's Edit reopened one. */
+  resourceInitial: CourseResource | null
+  onResourceSave: (resource: Omit<CourseResource, 'id'>) => void
 }
 
 /* Single drawer shell that hosts library or SCORM content. Stays mounted across
@@ -139,6 +145,8 @@ function ContentDrawer({
   generating,
   generationReview,
   generationAssessmentReview,
+  resourceInitial,
+  onResourceSave,
 }: Props) {
   // What content to actually render. Lags activeDrawer when closing so the
   // close animation can complete before unmounting.
@@ -191,6 +199,7 @@ function ContentDrawer({
     : rendered === 'assessment' ? (assessmentInitial ? 'Edit assessment' : 'Add assessment')
     : rendered === 'interactive'
       ? `${interactiveInitial ? 'Edit' : 'Add'} assessment - ${TYPE_CONFIG[interactiveType].label}`
+    : rendered === 'resources' ? (resourceInitial ? 'Edit resource' : 'Add resource')
     : rendered === 'ai-generate' ? (generationScope === 'situational' ? 'Generate situational tests with AI' : 'Generate assessments with AI')
     : situationalTest ? 'Edit Situational Test'
     : 'Add Situational Test'
@@ -203,7 +212,7 @@ function ContentDrawer({
         aria-hidden="true"
       />
       <aside
-        className={`side-drawer side-drawer--with-sidebar${sidebarExpanded ? ' side-drawer--sidebar-expanded' : ''}${closing ? ' side-drawer--closing' : ''} ${rendered === 'library' ? 'library-drawer' : rendered === 'scorm' ? 'scorm-drawer-shell' : rendered === 'situational-test' ? 'situational-test-drawer-shell' : rendered === 'interactive' ? 'interactive-drawer-shell' : rendered === 'ai-generate' ? `generate-drawer-shell${generationReview ? ' situational-test-drawer-shell' : ''}` : 'assessment-drawer-shell'}`}
+        className={`side-drawer side-drawer--with-sidebar${sidebarExpanded ? ' side-drawer--sidebar-expanded' : ''}${closing ? ' side-drawer--closing' : ''} ${rendered === 'library' ? 'library-drawer' : rendered === 'scorm' ? 'scorm-drawer-shell' : rendered === 'situational-test' ? 'situational-test-drawer-shell' : rendered === 'interactive' ? 'interactive-drawer-shell' : rendered === 'resources' ? 'resources-drawer-shell' : rendered === 'ai-generate' ? `generate-drawer-shell${generationReview ? ' situational-test-drawer-shell' : ''}` : 'assessment-drawer-shell'}`}
         ref={panelRef}
         role="dialog"
         aria-modal="true"
@@ -280,6 +289,15 @@ function ContentDrawer({
             generating={generating}
             review={generationReview}
             assessmentReview={generationAssessmentReview}
+          />
+        )}
+        {rendered === 'resources' && (
+          /* Keyed so Edit on another card remounts the form with that resource. */
+          <ResourcesDrawerContent
+            key={resourceInitial?.id ?? 'new'}
+            initial={resourceInitial}
+            onClose={onClose}
+            onSave={onResourceSave}
           />
         )}
       </aside>

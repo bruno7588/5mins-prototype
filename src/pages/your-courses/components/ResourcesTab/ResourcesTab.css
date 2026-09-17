@@ -1,0 +1,15 @@
+/* Resources tab. The rows reuse the Course Content card (ContentList.css); only the
+   list spacing and the file tile are this page's own. Prefix: .resources-tab__ */
+
+.resources-tab__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm); /* 12px, as between outline items */
+}
+
+/* Coloured tile behind the file glyph; the colour comes from the resource type. */
+.resources-tab__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
