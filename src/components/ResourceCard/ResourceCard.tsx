@@ -1,4 +1,4 @@
-import { ExportSquare, ImportCurve } from 'iconsax-react'
+import { ExportSquare, ImportCurve, Trash } from 'iconsax-react'
 import excelThumb from '@/assets/resource-type-illustrations/excel.svg'
 import linkIcon from '@/assets/resource-type-illustrations/link-icon.svg'
 import pdfThumb from '@/assets/resource-type-illustrations/pdf.svg'
@@ -48,6 +48,8 @@ interface ResourceCardProps {
   onOpen?: () => void
   /** Greys the action when there is nothing to download yet. */
   openDisabled?: boolean
+  /** Adds a Remove action beside Download / Open link (authoring surfaces only). */
+  onRemove?: () => void
   className?: string
 }
 
@@ -56,7 +58,7 @@ interface ResourceCardProps {
  * Download (or Open link) action. Same card on the admin course builder and the
  * learner course page. See docs/design-system/resource-card.md.
  */
-function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled = false, className }: ResourceCardProps) {
+function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled = false, onRemove, className }: ResourceCardProps) {
   const isLink = type === 'link'
   const openLabel = isLink ? 'Open link' : 'Download'
   const Icon = isLink ? ExportSquare : ImportCurve
@@ -74,17 +76,31 @@ function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled 
         <p className="resource-card__title">{title}</p>
         <p className="resource-card__meta">{resourceMeta(type, size)}</p>
       </div>
-      <Tooltip text={openLabel} position="Top" icon={false}>
-        <button
-          type="button"
-          className={`resource-card__open${openDisabled ? ' ui-disabled' : ''}`}
-          aria-label={`${openLabel} ${title}`}
-          aria-disabled={openDisabled || undefined}
-          onClick={openDisabled ? undefined : onOpen}
-        >
-          <Icon size={device === 'mobile' ? 24 : 20} color="currentColor" variant="Linear" />
-        </button>
-      </Tooltip>
+      <div className="resource-card__actions">
+        <Tooltip text={openLabel} position="Top" icon={false}>
+          <button
+            type="button"
+            className={`resource-card__open${openDisabled ? ' ui-disabled' : ''}`}
+            aria-label={`${openLabel} ${title}`}
+            aria-disabled={openDisabled || undefined}
+            onClick={openDisabled ? undefined : onOpen}
+          >
+            <Icon size={device === 'mobile' ? 24 : 20} color="currentColor" variant="Linear" />
+          </button>
+        </Tooltip>
+        {onRemove && (
+          <Tooltip text="Remove" position="Top" alignment="End" icon={false}>
+            <button
+              type="button"
+              className="resource-card__open resource-card__remove"
+              aria-label={`Remove ${title}`}
+              onClick={onRemove}
+            >
+              <Trash size={device === 'mobile' ? 24 : 20} color="currentColor" variant="Linear" />
+            </button>
+          </Tooltip>
+        )}
+      </div>
     </div>
   )
 }

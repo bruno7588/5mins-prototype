@@ -18,6 +18,8 @@ export interface CourseLesson {
   progress?: number
   /** Builder preview only: an authored interactive question this row opens. */
   questionId?: number
+  /** Files and links attached to this lesson (DES-334), authored in the content library. */
+  resources?: CourseResourceItem[]
 }
 
 export interface CourseSection {
@@ -93,6 +95,10 @@ const sections: CourseSection[] = [
         thumbnail: thumb1,
         state: 'active',
         progress: 60,
+        resources: [
+          { id: 'l1r1', type: 'pdf', title: 'Innovation leadership primer', size: 1153434 },
+          { id: 'l1r2', type: 'link', title: 'Harvard Business Review: the innovator\u2019s DNA', url: 'https://hbr.org/2009/12/the-innovators-dna' },
+        ],
       },
       {
         id: 'l2',
@@ -114,6 +120,9 @@ const sections: CourseSection[] = [
         meta: 'Lesson · James Whitfield · 5 min',
         thumbnail: thumb3,
         state: 'locked',
+        resources: [
+          { id: 'l3r1', type: 'powerpoint', title: 'Team safety workshop slides', size: 8493465 },
+        ],
       },
       {
         id: 'l4',

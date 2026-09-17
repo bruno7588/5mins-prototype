@@ -15,7 +15,7 @@ import { QUESTION_BEAT_MS } from './components/GenerateAssessmentsDrawer/Generat
 import AddContentIconStrip from './components/AddContentIconStrip/AddContentIconStrip'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
-import type { CourseResource } from './components/ResourcesDrawer/resources'
+import type { CourseResource } from '@/components/ResourceCard/resources'
 import ResourcesTab from './components/ResourcesTab/ResourcesTab'
 import ContentDrawer from './components/ContentDrawer/ContentDrawer'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'

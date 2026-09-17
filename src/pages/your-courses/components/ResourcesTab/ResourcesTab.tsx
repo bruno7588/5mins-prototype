@@ -4,7 +4,7 @@ import Button from '@/components/Button/Button'
 import ResourceCard from '@/components/ResourceCard/ResourceCard'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import resourcesIllustration from '@/assets/empty-state-illustrations/resources.svg'
-import type { CourseResource } from '../ResourcesDrawer/resources'
+import type { CourseResource } from '@/components/ResourceCard/resources'
 import '../ContentList/ContentList.css'
 import './ResourcesTab.css'
 

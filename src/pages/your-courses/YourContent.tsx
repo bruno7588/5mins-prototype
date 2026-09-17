@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import ContentTable from './components/ContentTable/ContentTable'
 import type { ContentRow } from './components/ContentTable/ContentTable'
+import { lessonKey } from '@/data/lessonResources'
 import LessonEditorModal from '../../components/LessonEditorModal/LessonEditorModal'
 import FlashcardEditor from '../add-content/components/FlashcardEditor/FlashcardEditor'
 import { readAddedLessons, updateAddedLesson, removeAddedLesson } from '../../utils/addedLessons'
@@ -108,6 +109,7 @@ function YourContent() {
           onPublish={handlePublish}
           onQuizReviewed={handleQuizReviewed}
           hasGeneratedQuizzes={publishedWithQuizIds.includes(selectedLesson.id)}
+          resourceKey={lessonKey(activeTab === 'scorm' ? 'scorm' : 'library', selectedLesson.id)}
         />
       )}
     </div>

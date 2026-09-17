@@ -10,6 +10,9 @@ import {
   Send2,
 } from 'iconsax-react'
 import CloseButton from '../../../components/CloseButton/CloseButton'
+import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
+import ResourceCard from '@/components/ResourceCard/ResourceCard'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { getLevelIllustration } from '../../../assets/level-illustrations'
 import type { FeedEpisode, FeedLesson } from '../feedItems'
 import './LessonFeed.css'
@@ -49,6 +52,10 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
   const [active, setActive] = useState(startIndex)
   const [following, setFollowing] = useState(false)
   const [bookmarked, setBookmarked] = useState(false)
+  const [tab, setTab] = useState<'episodes' | 'resources'>('episodes')
+  const { toasts, show: showToast, dismiss: dismissToast } = useToast()
+
+  const resources = lessons[active]?.resources ?? []
 
   const lesson = lessons[active]
   const atFirst = active === 0
@@ -58,6 +65,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
   useEffect(() => {
     setFollowing(false)
     setBookmarked(false)
+    setTab('episodes')
   }, [active])
 
   // Escape closes; lock body scroll while open.
@@ -153,11 +161,44 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             <h2 className="lf-info__title">{lesson.title}</h2>
             <span className="lf-info__link ui-disabled">Take a deep dive</span>
           </div>
-          <div className="lf-episodes">
-            {lesson.episodes.map((ep, i) => (
-              <EpisodeCard key={i} ep={ep} />
-            ))}
-          </div>
+          {resources.length > 0 && (
+            /* Resources sit beside the episodes, as on every course player: content,
+               not a social action. */
+            <ContentSwitcher
+              className="lf-switcher"
+              ariaLabel="Lesson details"
+              items={[
+                { key: 'episodes', label: 'Episodes' },
+                { key: 'resources', label: `Resources (${resources.length})` },
+              ]}
+              activeKey={tab}
+              onChange={(key) => setTab(key as 'episodes' | 'resources')}
+            />
+          )}
+
+          {tab === 'episodes' || resources.length === 0 ? (
+            <div className="lf-episodes">
+              {lesson.episodes.map((ep, i) => (
+                <EpisodeCard key={i} ep={ep} />
+              ))}
+            </div>
+          ) : (
+            <div className="lf-resources">
+              {resources.map((r) => (
+                <ResourceCard
+                  key={r.id}
+                  type={r.type}
+                  title={r.title}
+                  size={r.size}
+                  onOpen={() =>
+                    r.url
+                      ? window.open(r.url, '_blank', 'noopener,noreferrer')
+                      : showToast('info', `Downloading ${r.title}`)
+                  }
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="lf-skill">
@@ -202,6 +243,8 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
           </p>
         </div>
       </aside>
+
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   )
 }

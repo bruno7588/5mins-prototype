@@ -83,7 +83,15 @@
 }
 
 /* Mobile: a bare 24px icon, no hover (touch). */
-.resource-card--mobile .resource-card__open {
+.resource-card--mobile /* Download / Open link, plus Remove where the card is being authored. */
+.resource-card__actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: var(--space-xs);
+}
+
+.resource-card__open {
   padding: 0;
 }
 
@@ -114,4 +122,10 @@
 .resource-card__open:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
+}
+
+/* Destructive action: red icon on hover, never a red fill. */
+.resource-card__remove:hover {
+  background: var(--input-background-hover);
+  color: var(--text-error);
 }

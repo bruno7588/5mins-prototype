@@ -2,6 +2,7 @@ import { useState } from 'react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import ContentTable from './components/ContentTable/ContentTable'
 import type { ContentRow } from './components/ContentTable/ContentTable'
+import { lessonKey } from '@/data/lessonResources'
 import LessonEditorModal from '../../components/LessonEditorModal/LessonEditorModal'
 import './QuestionsBankContent.css'
 
@@ -84,6 +85,7 @@ function QuestionsBankContent() {
           onPublish={handlePublish}
           onQuizReviewed={handleQuizReviewed}
           hasGeneratedQuizzes={publishedWithQuizIds.includes(selectedLesson.id)}
+          resourceKey={lessonKey('questions', selectedLesson.id)}
         />
       )}
     </div>

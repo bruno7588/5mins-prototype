@@ -24,7 +24,9 @@
 
 /* Centered content area */
 .lesson-editor-content {
-  max-width: 900px;
+  /* Always leaves room for the close button in the overlay's corner, so the
+     Publish/Update button can never slide under it on a narrow window. */
+  width: min(900px, 100% - 176px);
   margin: 0 auto;
   padding: var(--space-xl) 0;
   display: flex;
@@ -244,27 +246,6 @@
   opacity: 0.8;
 }
 
-/* Info banner */
-.lesson-editor-info-banner {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-sm) var(--space-m);
-  background: var(--input-background);
-  border-radius: var(--radius-sm);
-}
-
-.lesson-editor-info-banner svg {
-  flex-shrink: 0;
-}
-
-.lesson-editor-info-text {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
 /* Tab bar */
 .lesson-editor-tabs {
   display: flex;
@@ -284,6 +265,19 @@
   cursor: pointer;
   line-height: 1.5;
   position: relative;
+}
+
+/* Resource count beside the tab label, as on the learner course page. */
+.lesson-editor-tab__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xxs) var(--space-s);
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .lesson-editor-tab::after {

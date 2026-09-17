@@ -24,7 +24,7 @@ import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import '../my-team/MyTeam.css'
 import '../workspace/Workspace.css'
 import './ProgramCourseDetails.css'
-import { getCourseDetail, findProgramForCourse, type CourseLesson } from './mockCourse'
+import { getCourseDetail, findProgramForCourse, type CourseLesson, type CourseResourceItem } from './mockCourse'
 import PhoneFrame from '../../components/mobile/PhoneFrame/PhoneFrame'
 import QuizHeader from '../quiz-lab/components/QuizHeader'
 import MatchPairsPartial from '../quiz-lab/formats/MatchPairsPartial'
@@ -42,6 +42,7 @@ const SEGMENTS = 8
 
 function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => void }) {
   const isLocked = lesson.state === 'locked'
+  const resourceCount = lesson.resources?.length ?? 0
   const filled = Math.max(0, Math.min(SEGMENTS, Math.round(((lesson.progress ?? 0) / 100) * SEGMENTS)))
   return (
     <article
@@ -75,6 +76,13 @@ function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => v
         <h4 className="pcd-lesson__title">{lesson.title}</h4>
         <div className="pcd-lesson__meta">
           <span className="pcd-lesson__metatext">{lesson.meta}</span>
+          {resourceCount > 0 && (
+            /* A marker only (DES-334): the learner opens the lesson to get the files. */
+            <span className="pcd-lesson__resources-count">
+              <span aria-hidden="true">·</span>
+              {resourceCount} {resourceCount === 1 ? 'resource' : 'resources'}
+            </span>
+          )}
           {isLocked ? (
             <Lock size={24} color="var(--text-disabled)" variant="Bold" />
           ) : (
@@ -108,6 +116,11 @@ function ProgramCourseDetails() {
   const [tab, setTab] = useState<'course' | 'about' | 'resources'>('course')
   const resources = course.resources ?? []
   const { toasts, show: showToast, dismiss: dismissToast } = useToast()
+  /* The prototype has no files behind these cards, so a download is a toast; links open. */
+  const openResource = (resource: CourseResourceItem) =>
+    resource.url
+      ? window.open(resource.url, '_blank', 'noopener,noreferrer')
+      : showToast('info', `Downloading ${resource.title}`)
   const [open, setOpen] = useState<Record<string, boolean>>(
     () => Object.fromEntries(course.sections.map((s) => [s.id, true])),
   )
@@ -347,11 +360,7 @@ function ProgramCourseDetails() {
                     type={r.type}
                     title={r.title}
                     size={r.size}
-                    onOpen={() =>
-                      r.url
-                        ? window.open(r.url, '_blank', 'noopener,noreferrer')
-                        : showToast('info', `Downloading ${r.title}`)
-                    }
+                    onOpen={() => openResource(r)}
                   />
                 ))}
               </div>

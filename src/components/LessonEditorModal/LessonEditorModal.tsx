@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { ArrowDown2, Eye } from 'iconsax-react'
+import LessonResourcesTab from '@/components/LessonResourcesTab/LessonResourcesTab'
+import type { CourseResource } from '@/components/ResourceCard/resources'
+import { getLessonResources, lessonKey, nextLessonResourceId, setLessonResources } from '@/data/lessonResources'
 import QuizTab from '../QuizTab/QuizTab'
 import CloseButton from '../CloseButton/CloseButton'
-import InfoIcon from '../icons/InfoIcon'
 import './LessonEditorModal.css'
 
 /** Row shape the editor needs — structurally matches the page-level ContentRow. */
@@ -25,15 +27,27 @@ interface LessonEditorModalProps {
   onPublish?: (lessonId: number, aiOptIn: boolean) => void
   onQuizReviewed?: (lessonId: number) => void
   hasGeneratedQuizzes?: boolean
+  /** Scopes this lesson's resources. Lesson, SCORM and question-bank ids overlap, so
+      each table passes its own key (see src/data/lessonResources.ts). */
+  resourceKey?: string
 }
 
-type EditorTab = 'quiz' | 'skills' | 'category'
+type EditorTab = 'quiz' | 'resources' | 'skills' | 'category'
 
-function LessonEditorModal({ lesson, isNew, onClose, onPublish, onQuizReviewed, hasGeneratedQuizzes }: LessonEditorModalProps) {
+function LessonEditorModal({ lesson, isNew, onClose, onPublish, onQuizReviewed, hasGeneratedQuizzes, resourceKey }: LessonEditorModalProps) {
   const [activeTab, setActiveTab] = useState<EditorTab>('quiz')
   const [guidelinesOpen, setGuidelinesOpen] = useState(false)
   const [lessonName, setLessonName] = useState(lesson.fileName)
   const [aiOptIn, setAiOptIn] = useState(true)
+
+  /* Resources outlive the modal, so the store is the source of truth and this state
+     just mirrors it for rendering. */
+  const resourcesKey = resourceKey ?? lessonKey('library', lesson.id)
+  const [resources, setResources] = useState(() => getLessonResources(resourcesKey))
+  const saveResources = (next: CourseResource[]) => {
+    setLessonResources(resourcesKey, next)
+    setResources(next)
+  }
 
   const slugName = lesson.fileName
     .toLowerCase()
@@ -306,12 +320,6 @@ function LessonEditorModal({ lesson, isNew, onClose, onPublish, onQuizReviewed, 
                 <button className="lesson-editor-change-file">Change File</button>
               </div>
             </div>
-            <div className="lesson-editor-info-banner">
-              <InfoIcon size={20} />
-              <p className="lesson-editor-info-text">
-                This file will be converted to PDF in the background after you publish. The lesson will appear as "Processing" in your content library until conversion is complete.
-              </p>
-            </div>
           </div>
         </div>
 
@@ -322,6 +330,13 @@ function LessonEditorModal({ lesson, isNew, onClose, onPublish, onQuizReviewed, 
             onClick={() => setActiveTab('quiz')}
           >
             Quiz
+          </button>
+          <button
+            className={`lesson-editor-tab${activeTab === 'resources' ? ' lesson-editor-tab--active' : ''}`}
+            onClick={() => setActiveTab('resources')}
+          >
+            Resources
+            {resources.length > 0 && <span className="lesson-editor-tab__count">{resources.length}</span>}
           </button>
           <button
             className="lesson-editor-tab lesson-editor-tab--disabled"
@@ -340,6 +355,14 @@ function LessonEditorModal({ lesson, isNew, onClose, onPublish, onQuizReviewed, 
         {/* Tab content */}
         <div className="lesson-editor-tab-content">
           {activeTab === 'quiz' && <QuizTab isNew={isNew} hasGeneratedQuizzes={hasGeneratedQuizzes} onAIOptInChange={setAiOptIn} />}
+          {activeTab === 'resources' && (
+            <LessonResourcesTab
+              resources={resources}
+              isNew={isNew}
+              onAdd={(resource) => saveResources([...resources, { ...resource, id: nextLessonResourceId() }])}
+              onRemove={(resource) => saveResources(resources.filter((r) => r.id !== resource.id))}
+            />
+          )}
         </div>
       </div>
     </div>

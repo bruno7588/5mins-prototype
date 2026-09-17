@@ -14,6 +14,8 @@
   display: flex;
   gap: var(--space-l);
   padding: var(--space-l);
+  /* Room for the close button, which hangs 48px to the left of the video. */
+  padding-left: calc(var(--space-l) + 48px);
 }
 
 .lf-stage {
@@ -177,6 +179,7 @@
 .lf-panel {
   flex-shrink: 0;
   width: 544px;
+  min-width: 540px;
   max-width: 45%;
   display: flex;
   flex-direction: column;
@@ -402,4 +405,16 @@
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/* Episodes / Resources switcher (DES-334): resources are content, so they sit as a
+   peer of the episode list rather than beside Bookmark and Share. */
+.lf-switcher {
+  align-self: flex-start;
+}
+
+.lf-resources {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }

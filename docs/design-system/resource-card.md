@@ -7,6 +7,7 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel or 
 
 > **Figma source:** Library `EC26cSVe9KNTCWXvYovakw`. Card set `12213:3040` (Web/Admin Enabled `12213:3062`, Web/Admin Hover `12213:3965`, Mobile app `12213:3041`); Type thumbnail set `12213:2984` (PDF `12213:2985`, Excel `12213:2989`, Word `12213:2993`, PowerPoint `12213:2997`, External Link `12213:3001`). Verified 2026-09-17. Status in Figma: proposed.
 > **Component:** `src/components/ResourceCard/ResourceCard.tsx` — use it, don't hand-roll.
+> **Model + form:** `src/components/ResourceCard/resources.ts` (types, accepted extensions, 50MB cap, validation) and `src/components/ResourceForm/ResourceForm.tsx` (add or edit one resource — `variant="drawer"` on the course builder, `variant="inline"` in the lesson editor).
 
 ---
 
@@ -16,9 +17,14 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel or 
 |---|---|---|
 | Admin: Create Course → Resources tab | `device="web"` | Course Content row chrome: drag handle before, trash icon after (`ResourcesTab.tsx`) |
 | Learner web app: course page → Resources tab | `device="web"` | Stacked list, 12px gap (`ProgramCourseDetails.tsx`) |
+| Admin: content library → lesson editor → Resources tab | `device="web"` | Stacked list, card carries its own Remove (`LessonResourcesTab.tsx`) |
+| Learner web app: course page → a lesson's own resources | `device="web"` | Expanded under the lesson row, indented past the thumbnail |
+| Learner web app: lesson feed → Resources action | `device="web"` | Stacked list in the feed's right panel (`LessonFeed.tsx`) |
 | Mobile app | `device="mobile"` | Not placed on a screen yet |
 
-The card carries **one action only**: Download for files, Open link for links. Delete and reorder belong to the admin row around it, not the card. There is no type badge: the tile and meta line already say what kind of resource it is.
+Lesson-level resources (DES-334) are authored only in the content library's lesson editor and stored in `src/data/lessonResources.ts`; the course builder's Resources tab stays course-level.
+
+The card carries **one action** for learners: Download for files, Open link for links. Where an admin authors resources it can take a second, `onRemove`, which puts a Remove (trash) beside it inside the card; the trash turns `--text-error` on hover. Reordering still belongs to the row around the card (the course builder's Resources tab), not to the card. There is no type badge: the tile and meta line already say what kind of resource it is.
 
 ## Props
 
@@ -32,6 +38,7 @@ interface ResourceCardProps {
   device?: 'web' | 'mobile' // default 'web'
   onOpen?: () => void       // download the file / open the link
   openDisabled?: boolean    // greys the action (e.g. no file to hand back yet)
+  onRemove?: () => void     // authoring surfaces only: adds Remove beside the open action
   className?: string
 }
 ```
@@ -55,6 +62,7 @@ Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 M
 | Meta | Regular 14 / 1.5, `--text-tertiary` | Regular 12 / 1.2, `--text-tertiary` |
 | Title → meta gap | 4 (`--space-xs`) | 4 (`--space-xs`) |
 | Action | 20px Iconsax Linear in a 28px round button (4px padding, `--space-xs`), `--text-secondary`; on hover `--text-primary` on an `--input-background-hover` fill (`12215:4063`) plus the Tooltip | 24px icon, no fill (touch) |
+| Actions gap | 4 (`--space-xs`) between the open action and Remove | same |
 
 ## Type tiles
 

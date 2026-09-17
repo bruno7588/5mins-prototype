@@ -1,3 +1,4 @@
+import type { CourseResourceItem } from '../courses/mockCourse'
 import heroGif from '../../assets/for-you/v3-Hugo-FullCorrect-Anim.gif'
 import avatar1 from '../../assets/programs/avatar-1.png'
 import avatar2 from '../../assets/programs/avatar-2.png'
@@ -26,6 +27,8 @@ export interface FeedLesson {
   skillLevel: 1 | 2 | 3 | 4 | 5 | 'advanced' | 'expert' | 'master'
   quizPoints: number
   episodes: FeedEpisode[]
+  /** Files and links attached to this lesson (DES-334). */
+  resources?: CourseResourceItem[]
 }
 
 // One entry per "Jump back in" / hero card — the feed navigates this list.
@@ -44,6 +47,10 @@ export const feedLessons: FeedLesson[] = [
       { label: 'Episode 1', title: 'How to Disagree with Your Boss - Disagreeing Is Not Bad With The Best Practices (Episode 1)', progress: 1, duration: '1:42' },
       { label: 'Episode 2', title: 'Timeline, Data and Goals', progress: 0, duration: '1:42', upcoming: true },
     ],
+    resources: [
+      { id: 'f1r1', type: 'pdf', title: 'Pricing teardown worksheet', size: 842752 },
+      { id: 'f1r2', type: 'link', title: 'Zendesk pricing page', url: 'https://www.zendesk.co.uk/pricing/' },
+    ],
   },
   {
     instructor: 'Daniel Okoro',
@@ -58,6 +65,9 @@ export const feedLessons: FeedLesson[] = [
     episodes: [
       { label: 'Episode 1', title: 'Setting the Cadence: Standups, Async and Trust', progress: 0.5, duration: '4:12' },
       { label: 'Episode 2', title: 'When to Jump on a Call vs. Write it Down', progress: 0, duration: '3:05', upcoming: true },
+    ],
+    resources: [
+      { id: 'f2r1', type: 'word', title: 'Remote team charter template', size: 819200 },
     ],
   },
   {

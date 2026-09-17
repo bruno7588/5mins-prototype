@@ -11,7 +11,7 @@ import SituationalTestDrawerContent, {
 import InteractiveDrawer from '../InteractiveDrawer/InteractiveDrawer'
 import GenerateAssessmentsDrawer from '../GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
 import { ResourcesDrawerContent } from '../ResourcesDrawer/ResourcesDrawer'
-import type { CourseResource } from '../ResourcesDrawer/resources'
+import type { CourseResource } from '@/components/ResourceCard/resources'
 import type {
   CoverageReport,
   GeneratableType,

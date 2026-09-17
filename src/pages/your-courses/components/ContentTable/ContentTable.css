@@ -72,6 +72,14 @@
   flex-direction: column;
   gap: var(--space-sm);
   width: 100%;
+  /* Narrow screens scroll the columns sideways; the file name stays put. */
+  overflow-x: auto;
+}
+
+/* 320 for the name + 600 of fixed columns: below that the table scrolls. */
+.content-table-header,
+.content-table-row {
+  min-width: 920px;
 }
 
 .content-table-header {
@@ -114,8 +122,22 @@
 /* Column widths — File name flexes; Type/Uploaded by/Updated at fixed; Actions auto */
 .content-table-cell--name {
   flex: 1;
-  min-width: 0;
+  min-width: 320px;
   gap: var(--space-sm);
+  /* Pinned while the rest scrolls under it (needs its own background to hide them). */
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--page-background);
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.content-table-header .content-table-cell--name {
+  background: var(--input-background);
+}
+
+.content-table-row:hover .content-table-cell--name {
+  background: var(--input-background);
 }
 
 .content-table-cell--type {
