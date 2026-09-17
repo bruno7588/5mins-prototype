@@ -17,7 +17,8 @@ const TYPE_LABEL: Record<ResourceType, string> = {
   link: 'External link',
 }
 
-const FILE_THUMBS: Record<Exclude<ResourceType, 'link'>, string> = {
+/** Type thumbnail artwork per file type (Figma Library 12213:2984). */
+export const FILE_THUMBS: Record<Exclude<ResourceType, 'link'>, string> = {
   pdf: pdfThumb,
   word: wordThumb,
   excel: excelThumb,

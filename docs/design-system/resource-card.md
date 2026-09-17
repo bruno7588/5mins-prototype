@@ -66,6 +66,8 @@ Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 M
 | PowerPoint | `powerpoint.svg` (orange) | `PowerPoint • <size>` |
 | External link | `link-icon.svg` (Linear link-2 glyph, 24px) centred on a `--certificate-quiz` tile with `--radius-s` | `External link` |
 
+The same artwork (exported as `FILE_THUMBS`) shows at 40px in the Resources drawer's File uploader once a file is picked (`fileIcon`, Create Course Figma `9979:86223`).
+
 File tiles are finished artwork with their colours baked in; don't recolour them or rebuild them from tokens. Scale the same SVG to 56px for Mobile.
 
 ## Action icon

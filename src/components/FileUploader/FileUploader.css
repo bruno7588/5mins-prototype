@@ -81,6 +81,11 @@
   width: 100%;
 }
 
+/* Filled with a file-type thumbnail (Create Course Resources, Figma 9979:86223) */
+.file-uploader__icon-group--thumb {
+  gap: var(--space-m);
+}
+
 /* ─── Body text ─── */
 .file-uploader__body {
   font-family: 'Poppins', sans-serif;

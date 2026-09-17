@@ -4,6 +4,7 @@ import CloseButton from '@/components/CloseButton/CloseButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import InputField from '@/components/InputField/InputField'
 import { FileUploader } from '@/components/FileUploader/FileUploader'
+import { FILE_THUMBS } from '@/components/ResourceCard/ResourceCard'
 import SectionHeader from '../SectionHeader/SectionHeader'
 import {
   MAX_FILE_BYTES,
@@ -132,6 +133,7 @@ export function ResourcesDrawerContent({ initial, onClose, onSave }: Props) {
               state={fileError ? 'Error' : hasFile ? 'Filled' : 'Enabled'}
               fileName={file?.name ?? kept?.fileName}
               errorMessage={fileError}
+              fileIcon={<img src={FILE_THUMBS[type as Exclude<ResourceType, 'link'>]} width={40} height={40} alt="" />}
               onFileSelect={pickFile}
               onChangeFile={() => {
                 setFile(null)

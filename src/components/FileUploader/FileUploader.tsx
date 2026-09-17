@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { ExportCurve, ClipboardText } from 'iconsax-react'
 import './FileUploader.css'
 
@@ -14,6 +14,8 @@ interface FileUploaderProps {
   onFileSelect?: (file: File) => void
   onChangeFile?: () => void
   accept?: string
+  /** Filled state: replaces the default document icon, e.g. a file-type thumbnail. */
+  fileIcon?: ReactNode
   className?: string
 }
 
@@ -26,6 +28,7 @@ export function FileUploader({
   onFileSelect,
   onChangeFile,
   accept,
+  fileIcon,
   className,
 }: FileUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -151,8 +154,8 @@ export function FileUploader({
       {/* FILLED */}
       {state === 'Filled' && (
         <>
-          <div className="file-uploader__icon-group">
-            <ClipboardText size={iconSize} color="var(--text-secondary)" variant="Bold" />
+          <div className={`file-uploader__icon-group${fileIcon ? ' file-uploader__icon-group--thumb' : ''}`}>
+            {fileIcon ?? <ClipboardText size={iconSize} color="var(--text-secondary)" variant="Bold" />}
             <p className="file-uploader__body file-uploader__body--filename">{fileName}</p>
           </div>
           <button className="file-uploader__btn-outlined" onClick={openPicker}>

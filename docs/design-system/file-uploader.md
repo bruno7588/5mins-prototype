@@ -26,6 +26,7 @@ interface FileUploaderProps {
   onChangeFile? : () => void;                // fired when "Change File" is clicked
   onPreview?    : () => void;                // fired when "Preview" is clicked
   accept?       : string;                    // e.g. ".pdf,.csv"
+  fileIcon?     : ReactNode;                 // Filled: replaces the icon, e.g. a 40px type thumbnail (gap to filename becomes 16px)
   className?    : string;
 }
 ```
