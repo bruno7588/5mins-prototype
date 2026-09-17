@@ -52,7 +52,7 @@ function ResourcesTab({ resources, onReorder, onAdd, onRemove }: Props) {
   if (resources.length === 0) {
     return (
       <div className="content-list-layout content-list-layout--empty">
-        <section className="content-list">
+        <section className="content-list resources-tab">
           <div className="course-empty-state" role="status">
             <img className="course-empty-state__icon" src={resourcesIllustration} width={72} height={72} alt="" />
             <div className="course-empty-state__info">
@@ -74,7 +74,7 @@ function ResourcesTab({ resources, onReorder, onAdd, onRemove }: Props) {
 
   return (
     <div className="content-list-layout" onDragOver={(e) => e.preventDefault()}>
-      <section className="content-list">
+      <section className="content-list resources-tab">
         <div className="resources-tab__list">
           {resources.map((resource) => {
             return (

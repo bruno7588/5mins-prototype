@@ -7,6 +7,11 @@
   gap: var(--space-sm); /* 12px, as between outline items */
 }
 
+/* 16px between the card list and Add Resource (Course Content keeps its 20px). */
+.content-list-layout .content-list.resources-tab {
+  gap: var(--space-m);
+}
+
 /* The shared ResourceCard fills the row between the drag handle and the trash. */
 .resources-tab__card {
   flex: 1;
