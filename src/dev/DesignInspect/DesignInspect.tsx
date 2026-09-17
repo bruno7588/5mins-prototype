@@ -74,23 +74,31 @@ if (import.meta.hot) {
   import.meta.hot.on('design-inspect:text-undo-failed', (d: { id: string }) => emit({ kind: 'text-undo-failed', id: d.id }))
 }
 
-/** Only text-only elements are edited in place, so no child element can be lost while typing. */
-function isTextLeaf(el: Element): boolean {
+const isText = (n: Node): n is Text => n.nodeType === Node.TEXT_NODE
+
+/**
+ * The text that can be typed over: every text node of a text-only element, or the one
+ * labelled text node beside icons (a button or dropdown trigger). Null when there is
+ * no text, or several labels would make "the text" ambiguous.
+ */
+function editableText(el: Element): { texts: Text[]; wrap: boolean } | null {
+  if (!(el instanceof HTMLElement) || el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return null
   const nodes = Array.from(el.childNodes)
-  return (
-    nodes.length > 0 &&
-    nodes.every((n) => n.nodeType === Node.TEXT_NODE) &&
-    !!el.textContent?.trim() &&
-    !(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)
-  )
+  if (nodes.length > 0 && nodes.every(isText)) return el.textContent?.trim() ? { texts: nodes, wrap: false } : null
+  const labels = nodes.filter(isText).filter((n) => n.data.trim())
+  return labels.length === 1 ? { texts: labels, wrap: true } : null
 }
 
 interface TextEditSession {
+  /** The inspected element; its source line and request describe the edit. */
   el: HTMLElement
-  /** React owns these text nodes; they go back into the element when editing ends. */
-  nodes: Text[]
+  /** What the caret lives in: the element itself, or a temporary span around its label. */
+  field: HTMLElement
+  /** React owns these nodes; exactly these go back into the element when editing ends. */
+  nodes: ChildNode[]
+  texts: Text[]
   data: string[]
-  text: string
+  wrap: boolean
 }
 
 export default function DesignInspect() {
@@ -117,16 +125,25 @@ export default function DesignInspect() {
   }, [])
 
   const startEdit = useCallback((el: Element) => {
-    if (!(el instanceof HTMLElement) || !isTextLeaf(el)) return
-    const nodes = Array.from(el.childNodes) as Text[]
-    editRef.current = { el, nodes, data: nodes.map((n) => n.data), text: el.textContent ?? '' }
+    const target = editableText(el)
+    if (!target || !(el instanceof HTMLElement)) return
+    const { texts, wrap } = target
+    const nodes = Array.from(el.childNodes)
+    // Beside icons, only the label is typed in, so the icons can't be deleted.
+    let field = el
+    if (wrap) {
+      field = document.createElement('span')
+      field.textContent = texts[0].data.trim()
+      texts[0].replaceWith(field)
+    }
+    editRef.current = { el, field, nodes, texts, data: texts.map((n) => n.data), wrap }
     setSelected(el)
     setHover(null)
-    setEditing(el)
-    el.contentEditable = 'plaintext-only'
-    el.focus()
+    setEditing(field)
+    field.contentEditable = 'plaintext-only'
+    field.focus()
     const range = document.createRange()
-    range.selectNodeContents(el)
+    range.selectNodeContents(field)
     const sel = window.getSelection()
     sel?.removeAllRanges()
     sel?.addRange(range)
@@ -137,21 +154,23 @@ export default function DesignInspect() {
     if (!session) return
     editRef.current = null
     setEditing(null)
-    const { el, nodes, data, text } = session
-    const typed = (el.textContent ?? '').replace(/\u00a0/g, ' ')
-    el.removeAttribute('contenteditable')
+    const { el, field, nodes, texts, data, wrap } = session
+    const typed = (field.textContent ?? '').replace(/\u00a0/g, ' ')
+    field.removeAttribute('contenteditable')
     window.getSelection()?.removeAllRanges()
     // Hand React back its own nodes. Until the source change hot-reloads, they carry
     // the new wording so the page doesn't flash the old text.
     el.replaceChildren(...nodes)
-    const before = text.trim()
+    const original = data.join('')
+    const before = original.trim()
     const after = typed.trim()
+    texts.forEach((n, i) => (n.data = data[i]))
     if (!save || after === before || !after) {
-      nodes.forEach((n, i) => (n.data = data[i]))
       setStatus({ kind: 'idle' })
       return
     }
-    nodes.forEach((n, i) => (n.data = i === 0 ? typed : ''))
+    if (wrap) texts[0].data = original.replace(before, after)
+    else texts.forEach((n, i) => (n.data = i === 0 ? typed : ''))
     const req = buildRequest(
       el,
       `Change the text "${before}" to "${after}". Use this exact wording; it was typed directly on the page.`,
@@ -168,6 +187,7 @@ export default function DesignInspect() {
       id: req.id,
       source: req.target.source,
       tag: req.target.tag,
+      ancestry: req.target.ancestry.map((a) => a.source),
       before,
       after,
       request: req,
@@ -247,7 +267,7 @@ export default function DesignInspect() {
     const swallow = (e: Event) => {
       if (isInspectorNode(e.target as Element)) return
       // Let the caret land and move inside the text being edited, but never press it.
-      if (editRef.current?.el.contains(e.target as Node)) {
+      if (editRef.current?.field.contains(e.target as Node)) {
         if (e.type === 'click' || e.type === 'dblclick') {
           e.preventDefault()
           e.stopPropagation()
@@ -401,7 +421,7 @@ export default function DesignInspect() {
             >
               Copy
             </button>
-            {isTextLeaf(selected) && (
+            {editableText(selected) && (
               <button type="button" className="di-btn" onClick={() => startEdit(selected)}>
                 Edit Text
               </button>

@@ -52,6 +52,8 @@ interface TextEdit {
   /** `src/…/File.tsx:LINE:COL` of the edited element. */
   source?: string
   tag?: string
+  /** Sources of the stamped ancestors, for text passed in as children from another file. */
+  ancestry?: string[]
   before: string
   after: string
   /** Full inspect request, queued for Claude when the text can't be written directly. */
@@ -88,37 +90,62 @@ function fits(ctx: string, after: string): boolean {
   return ctx === '`' ? !after.includes('${') : !after.includes('\n')
 }
 
-/**
- * Write a text edit into the element's own source file. Picks the match between the
- * element's opening tag and its closing tag; failing that, the file's only match
- * that reads like copy (a space or a capital), so a key like 'completed' shown
- * through a lookup is never rewritten by mistake. Returns null when unsure.
- */
-function applyText(root: string, edit: TextEdit): AppliedEdit | null {
-  const [rel, lineStr, colStr] = (edit.source ?? '').split(':')
-  const srcDir = path.join(root, 'src') + path.sep
+/** A `src/…:LINE:COL` stamp resolved to its file, contents and the tag's offset. */
+function readSource(root: string, source: string | undefined) {
+  const [rel, lineStr, colStr] = (source ?? '').split(':')
   const file = path.resolve(root, rel ?? '')
-  if (!rel || !file.startsWith(srcDir) || !fs.existsSync(file) || !edit.before) return null
+  if (!rel || !file.startsWith(path.join(root, 'src') + path.sep) || !fs.existsSync(file)) return null
   const code = fs.readFileSync(file, 'utf8')
-
   const lines = code.split('\n')
-  const line = Number(lineStr)
-  if (!(line >= 1 && line <= lines.length)) return null
+  const line = Math.min(Math.max(1, Number(lineStr) || 1), lines.length)
   const open = lines.slice(0, line - 1).reduce((n, l) => n + l.length + 1, 0) + Math.max(0, Number(colStr) - 1)
-  const close = edit.tag ? code.indexOf(`</${edit.tag}`, open) : -1
+  return { file, code, open }
+}
 
+function hitsIn(code: string, text: string) {
   const hits: { i: number; ctx: string }[] = []
-  for (let i = code.indexOf(edit.before); i !== -1; i = code.indexOf(edit.before, i + 1)) {
-    const ctx = contextAt(code, i, edit.before.length)
+  for (let i = code.indexOf(text); i !== -1; i = code.indexOf(text, i + 1)) {
+    const ctx = contextAt(code, i, text.length)
     if (ctx) hits.push({ i, ctx })
   }
-  const inside = hits.filter((h) => h.i > open && close !== -1 && h.i < close)
-  const looksLikeCopy = /\s|[A-Z]/.test(edit.before)
-  const pick = inside.length === 1 ? inside[0] : hits.length === 1 && looksLikeCopy ? hits[0] : null
-  if (!pick || !fits(pick.ctx, edit.after)) return null
+  return hits
+}
 
-  fs.writeFileSync(file, code.slice(0, pick.i) + edit.after + code.slice(pick.i + edit.before.length))
-  return { file, index: pick.i, before: edit.before, after: edit.after }
+/**
+ * Write a text edit into the source. In the element's own file: the match between
+ * its opening and closing tag, or else the file's only match that reads like copy
+ * (a space or a capital), so a key like 'completed' shown through a lookup is never
+ * rewritten by mistake. Failing that, text handed down as children (a DS Button's
+ * label, a dropdown trigger's content) is looked for as JSX text in the ancestors'
+ * files, again only when it's the one match there. Returns null when unsure.
+ */
+function applyText(root: string, edit: TextEdit): AppliedEdit | null {
+  if (!edit.before) return null
+  const looksLikeCopy = /\s|[A-Z]/.test(edit.before)
+  let target: { file: string; code: string; i: number; ctx: string } | null = null
+
+  const own = readSource(root, edit.source)
+  if (own) {
+    const hits = hitsIn(own.code, edit.before)
+    const close = edit.tag ? own.code.indexOf(`</${edit.tag}`, own.open) : -1
+    const inside = hits.filter((h) => h.i > own.open && close !== -1 && h.i < close)
+    const pick = inside.length === 1 ? inside[0] : hits.length === 1 && looksLikeCopy ? hits[0] : null
+    if (pick) target = { file: own.file, code: own.code, ...pick }
+  }
+  for (const source of target || !looksLikeCopy ? [] : edit.ancestry ?? []) {
+    const up = readSource(root, source)
+    if (!up || up.file === own?.file) continue
+    const jsx = hitsIn(up.code, edit.before).filter((h) => h.ctx === 'jsx')
+    if (jsx.length === 1) {
+      target = { file: up.file, code: up.code, ...jsx[0] }
+      break
+    }
+  }
+  if (!target || !fits(target.ctx, edit.after)) return null
+
+  const { file, code, i } = target
+  fs.writeFileSync(file, code.slice(0, i) + edit.after + code.slice(i + edit.before.length))
+  return { file, index: i, before: edit.before, after: edit.after }
 }
 
 export function designInspect(root: string): Plugin {
