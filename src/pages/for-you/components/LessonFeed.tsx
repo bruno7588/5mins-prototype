@@ -4,7 +4,7 @@ import {
   ArrowDown2,
   ArrowUp2,
   Maximize4,
-  Messages2,
+  MessageText,
   More,
   Send2,
 } from 'iconsax-react'
@@ -190,7 +190,8 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
           </div>
           {/* Bookmark / Share / Comments act on the lesson, so they sit with the
               lesson's identity — the tab row below is navigation only. Icon-only
-              per Figma 6574:54271, each naming itself on hover. */}
+              per Figma 6574:54271, each naming itself on hover. All three read as
+              enabled for visual consistency; only Bookmark is wired. */}
           <div className="lf-social">
             <Tooltip text={bookmarked ? 'Bookmarked' : 'Bookmark'} position="Top" icon={false}>
               <button
@@ -204,13 +205,13 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
               </button>
             </Tooltip>
             <Tooltip text="Share" position="Top" icon={false}>
-              <button type="button" className="lf-social__item ui-disabled" disabled aria-label="Share this lesson">
+              <button type="button" className="lf-social__item" aria-label="Share this lesson">
                 <Send2 size={20} color="currentColor" variant="Linear" />
               </button>
             </Tooltip>
             <Tooltip text="Comments" position="Top" icon={false}>
-              <button type="button" className="lf-social__item ui-disabled" disabled aria-label="Comments on this lesson">
-                <Messages2 size={20} color="currentColor" variant="Linear" />
+              <button type="button" className="lf-social__item" aria-label="Comments on this lesson">
+                <MessageText size={20} color="currentColor" variant="Linear" />
               </button>
             </Tooltip>
           </div>
@@ -236,14 +237,10 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             </div>
           )}
 
-          {/* One section is not a choice — a tablist of one is wrong for a screen
-              reader too — so it becomes a plain heading. */}
-          {tabs.length === 1 && (
-            <h3 className="lf-section-head">
-              {tabs[0].label}
-              {tabs[0].count ? <span className="lf-tab__count">{tabs[0].count}</span> : null}
-            </h3>
-          )}
+          {/* One section gets no heading at all: a tablist of one is not a choice,
+              and the section already names itself — Learnings carries its own
+              "Learning goals" and "Key concepts" subheads, resources are a list of
+              file cards. A label above either just repeats them. */}
 
           <div className="lf-tabpanel">
           {current?.key === 'episodes' && (

@@ -516,18 +516,6 @@
   }
 }
 
-/* Stands in for the tab row when the lesson has just one section. */
-.lf-section-head {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
 /* ── Learnings tab (Figma 6574:54634) ── */
 .lf-learnings {
   display: flex;
