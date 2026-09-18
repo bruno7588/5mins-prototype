@@ -62,13 +62,18 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
   const lesson = lessons[active]
   const hasLearnings = Boolean(lesson?.learningGoal || lesson?.keyConcepts?.length)
 
-  /* A tab with nothing behind it is a dead end, so each one appears only when the
-     lesson has that content. Most lessons carry no resources. */
+  /* A tab with nothing behind it is a dead end, so each appears only when the
+     lesson has that content, in a fixed order so the survivors never swap places.
+     Episodes is series navigation, not content: with a single episode the card
+     would restate the lesson you are already watching, so it earns no tab. */
+  const episodes = lesson?.episodes ?? []
   const tabs: { key: LessonTab; label: string; count?: number }[] = [
-    { key: 'episodes', label: 'Episodes' },
+    ...(episodes.length > 1 ? [{ key: 'episodes' as const, label: 'Episodes' }] : []),
     ...(resources.length ? [{ key: 'resources' as const, label: 'Resources', count: resources.length }] : []),
     ...(hasLearnings ? [{ key: 'learnings' as const, label: 'Learnings' }] : []),
   ]
+  /* The stored tab may not exist on the lesson just swiped to. */
+  const current = tabs.find((t) => t.key === tab) ?? tabs[0]
 
   const atFirst = active === 0
   const atLast = active === lessons.length - 1
@@ -108,7 +113,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
               <div className="lf-video__gradient" />
               <div className="lf-video__progress">
                 <div className="lf-video__bars">
-                  {lesson.episodes.map((ep, i) => (
+                  {episodes.map((ep, i) => (
                     <Bar key={i} progress={ep.progress} tone={ep.progress >= 1 ? 'success' : 'primary'} height={2} />
                   ))}
                 </div>
@@ -210,14 +215,15 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             </Tooltip>
           </div>
 
-          <div className="lf-tabs" role="tablist" aria-label="Lesson details">
-            {tabs.map(({ key, label, count }) => (
+          {tabs.length > 1 && (
+            <div className="lf-tabs" role="tablist" aria-label="Lesson details">
+              {tabs.map(({ key, label, count }) => (
                 <button
                   key={key}
                   type="button"
                   role="tab"
-                  aria-selected={tab === key}
-                  className={`lf-tab${tab === key ? ' lf-tab--active' : ''}`}
+                  aria-selected={current?.key === key}
+                  className={`lf-tab${current?.key === key ? ' lf-tab--active' : ''}`}
                   onClick={() => setTab(key)}
                 >
                   <span className="lf-tab__label">
@@ -226,19 +232,29 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
                   </span>
                   <span className="lf-tab__indicator" />
                 </button>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
+          {/* One section is not a choice — a tablist of one is wrong for a screen
+              reader too — so it becomes a plain heading. */}
+          {tabs.length === 1 && (
+            <h3 className="lf-section-head">
+              {tabs[0].label}
+              {tabs[0].count ? <span className="lf-tab__count">{tabs[0].count}</span> : null}
+            </h3>
+          )}
 
           <div className="lf-tabpanel">
-          {tab === 'episodes' && (
+          {current?.key === 'episodes' && (
             <div className="lf-episodes">
-              {lesson.episodes.map((ep, i) => (
+              {episodes.map((ep, i) => (
                 <EpisodeCard key={i} ep={ep} />
               ))}
             </div>
           )}
 
-          {tab === 'resources' && (
+          {current?.key === 'resources' && (
             <div className="lf-resources">
               {resources.map((r) => (
                 <ResourceCard
@@ -257,7 +273,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             </div>
           )}
 
-          {tab === 'learnings' && (
+          {current?.key === 'learnings' && (
             <div className="lf-learnings">
               {lesson.learningGoal && (
                 <section className="lf-learn">
