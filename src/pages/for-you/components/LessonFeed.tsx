@@ -4,7 +4,7 @@ import {
   ArrowDown2,
   ArrowUp2,
   Maximize4,
-  MessageText,
+  MessageText1,
   More,
   Send2,
 } from 'iconsax-react'
@@ -211,7 +211,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             </Tooltip>
             <Tooltip text="Comments" position="Top" icon={false}>
               <button type="button" className="lf-social__item" aria-label="Comments on this lesson">
-                <MessageText size={20} color="currentColor" variant="Linear" />
+                <MessageText1 size={20} color="currentColor" variant="Linear" />
               </button>
             </Tooltip>
           </div>
