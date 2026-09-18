@@ -1,7 +1,9 @@
 /* Resource card — Figma Library 12213:3040 (docs/design-system/resource-card.md).
    Web/Admin: 12px padding (16px right), 12px gap, 48px tile, Bold 16 title,
-   Regular 14 tertiary meta, hover fill. Mobile app: 12px padding, 8px gap, 56px
-   tile, Bold 14 title that wraps, Regular 12 meta, no hover (touch). */
+   Regular 14 tertiary meta, hover fill. Mobile app: 12px padding, 8px gap, 40px
+   tile, Bold 14 title on one line, Regular 12 meta, 20px icon. Hover is gated on
+   (hover: hover), not on the variant — the lesson feed shows the mobile card in a
+   desktop browser and still wants it. */
 .resource-card {
   display: flex;
   align-items: center;
@@ -14,8 +16,10 @@
   transition: background-color 150ms ease-in-out;
 }
 
-.resource-card--web:hover {
-  background: var(--cards-background-hover);
+@media (hover: hover) {
+  .resource-card:hover {
+    background: var(--cards-background-hover);
+  }
 }
 
 .resource-card--mobile {
@@ -31,8 +35,8 @@
 }
 
 .resource-card--mobile .resource-card__thumb {
-  width: 56px;
-  height: 56px;
+  width: 40px;
+  height: 40px;
 }
 
 /* External link: the Link-2 glyph centred on a Certificate quiz tile. */
@@ -74,7 +78,6 @@
 
 .resource-card--mobile .resource-card__title {
   font-size: 14px;
-  white-space: normal;
 }
 
 .resource-card--mobile .resource-card__meta {
@@ -91,20 +94,11 @@
 }
 
 .resource-card__open {
-  padding: 0;
-}
-
-/* Mobile: a bare 24px icon, no hover (touch). */
-.resource-card--mobile .resource-card__open:hover {
-  background: transparent;
-}
-
-.resource-card__open {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: var(--space-xs); /* Web: 20px icon in a 28px round button (Figma 12215:4063) */
+  padding: var(--space-xs); /* 20px icon in a 28px round button (Figma 12215:4063) */
   border: none;
   border-radius: var(--radius-full);
   background: transparent;
@@ -114,18 +108,20 @@
 }
 
 /* Round fill behind the icon on hover. */
-.resource-card__open:hover {
-  background: var(--input-background-hover);
-  color: var(--text-primary);
+@media (hover: hover) {
+  .resource-card__open:hover {
+    background: var(--input-background-hover);
+    color: var(--text-primary);
+  }
+
+  /* Destructive action: red icon on hover, never a red fill. */
+  .resource-card__remove:hover {
+    background: var(--input-background-hover);
+    color: var(--text-error);
+  }
 }
 
 .resource-card__open:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
-}
-
-/* Destructive action: red icon on hover, never a red fill. */
-.resource-card__remove:hover {
-  background: var(--input-background-hover);
-  color: var(--text-error);
 }

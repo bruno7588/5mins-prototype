@@ -197,6 +197,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
               {resources.map((r) => (
                 <ResourceCard
                   key={r.id}
+                  device="mobile"
                   type={r.type}
                   title={r.title}
                   size={r.size}

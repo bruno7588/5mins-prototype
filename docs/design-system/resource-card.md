@@ -5,7 +5,7 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel or 
 
 # Resource Card
 
-> **Figma source:** Library `EC26cSVe9KNTCWXvYovakw`. Card set `12213:3040` (Web/Admin Enabled `12213:3062`, Web/Admin Hover `12213:3965`, Mobile app `12213:3041`); Type thumbnail set `12213:2984` (PDF `12213:2985`, Excel `12213:2989`, Word `12213:2993`, PowerPoint `12213:2997`, External Link `12213:3001`). Verified 2026-09-17. Status in Figma: proposed.
+> **Figma source:** Library `EC26cSVe9KNTCWXvYovakw`. Card set `12213:3040` (Web/Admin Enabled `12213:3062`, Web/Admin Hover `12213:3965`, Mobile app `12213:3041`); Type thumbnail set `12213:2984` (PDF `12213:2985`, Excel `12213:2989`, Word `12213:2993`, PowerPoint `12213:2997`, External Link `12213:3001`). Verified 2026-09-18. Status in Figma: proposed.
 > **Component:** `src/components/ResourceCard/ResourceCard.tsx` — use it, don't hand-roll.
 > **Model + form:** `src/components/ResourceCard/resources.ts` (types, accepted extensions, 50MB cap, validation) and `src/components/ResourceForm/ResourceForm.tsx` (add or edit one resource — `variant="drawer"` on the course builder, `variant="inline"` in the lesson editor).
 
@@ -19,7 +19,7 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel or 
 | Learner web app: course page → Resources tab | `device="web"` | Stacked list, 12px gap (`ProgramCourseDetails.tsx`) |
 | Admin: content library → lesson editor → Resources tab | `device="web"` | Stacked list, card carries its own Remove (`LessonResourcesTab.tsx`) |
 | Learner web app: course page → a lesson's own resources | `device="web"` | Expanded under the lesson row, indented past the thumbnail |
-| Learner web app: lesson feed → Resources action | `device="web"` | Stacked list in the feed's right panel (`LessonFeed.tsx`) |
+| Learner web app: lesson feed → Resources action | `device="mobile"` | Stacked list in the feed's right panel (`LessonFeed.tsx`) — the feed is the app player, so it takes the app card |
 | Mobile app | `device="mobile"` | Not placed on a screen yet |
 
 Lesson-level resources (DES-334) are authored only in the content library's lesson editor and stored in `src/data/lessonResources.ts`; the course builder's Resources tab stays course-level.
@@ -55,14 +55,14 @@ Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 M
 | Padding | 12 top, 16 right, 12 bottom, 12 left (`--space-sm` / `--space-m`) | 12 all sides (`--space-sm`) |
 | Gap | 12 (`--space-sm`) | 8 (`--space-s`) |
 | Radius | 12 (`--radius-sm`) | 12 (`--radius-sm`) |
-| Background | `--cards-background`; Hover `--cards-background-hover` | `--cards-background`; no hover (touch) |
+| Background | `--cards-background`; Hover `--cards-background-hover` | same — hover is gated on `@media (hover: hover)`, not on the variant |
 | Shadow | `--shadow-card` (Shadow S in light mode, none in dark) | same |
-| Type tile | 48 × 48 | 56 × 56 |
-| Title | Poppins Bold 16 / 1.5, `--text-primary`, one line with ellipsis | Bold 14 / 1.5, `--text-primary`, wraps |
+| Type tile | 48 × 48 | 40 × 40 |
+| Title | Poppins Bold 16 / 1.5, `--text-primary`, one line with ellipsis | Bold 14 / 1.5, `--text-primary`, one line with ellipsis |
 | Meta | Regular 14 / 1.5, `--text-tertiary` | Regular 12 / 1.2, `--text-tertiary` |
 | Title → meta gap | 4 (`--space-xs`) | 4 (`--space-xs`) |
-| Action | 20px Iconsax Linear in a 28px round button (4px padding, `--space-xs`), `--text-secondary`; on hover `--text-primary` on an `--input-background-hover` fill (`12215:4063`) plus the Tooltip | 24px icon, no fill (touch) |
-| Actions gap | 4 (`--space-xs`) between the open action and Remove | same |
+| Action | 20px Iconsax Linear in a 28px round button (4px padding, `--space-xs`), `--text-secondary`; on hover `--text-primary` on an `--input-background-hover` fill (`12215:4063`) plus the Tooltip | same 20px icon and 28px button; the button is invisible at rest, so it reads as Figma's bare icon |
+| Actions gap | 8 (`--space-s`) between the open action and Remove | same |
 
 ## Type tiles
 

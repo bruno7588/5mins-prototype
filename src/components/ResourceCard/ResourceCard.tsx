@@ -42,7 +42,7 @@ interface ResourceCardProps {
   title: string
   /** File size in bytes; files only. */
   size?: number
-  /** 'web' for the admin and learner web app (48px tile), 'mobile' for the app (56px tile). */
+  /** 'web' for the admin and learner web app (48px tile), 'mobile' for the app (40px tile). */
   device?: 'web' | 'mobile'
   /** Download a file, or open a link. */
   onOpen?: () => void
@@ -85,7 +85,7 @@ function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled 
             aria-disabled={openDisabled || undefined}
             onClick={openDisabled ? undefined : onOpen}
           >
-            <Icon size={device === 'mobile' ? 24 : 20} color="currentColor" variant="Linear" />
+            <Icon size={20} color="currentColor" variant="Linear" />
           </button>
         </Tooltip>
         {onRemove && (
@@ -96,7 +96,7 @@ function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled 
               aria-label={`Remove ${title}`}
               onClick={onRemove}
             >
-              <Trash size={device === 'mobile' ? 24 : 20} color="currentColor" variant="Linear" />
+              <Trash size={20} color="currentColor" variant="Linear" />
             </button>
           </Tooltip>
         )}
