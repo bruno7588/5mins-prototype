@@ -172,87 +172,23 @@
   line-height: 1.5;
 }
 
-/* ── Table ── */
-.automations-table-scroll {
-  overflow-x: auto;
-  width: 100%;
+/* Text columns truncate inside the cell: .tbl-cell clips its flex items, so
+   the ellipsis has to live on the span rather than on the cell. */
+.automations-cell-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
-.automations-table {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm); /* 12px */
-  width: 100%;
-  min-width: fit-content;
-}
-
-.automations-table-header {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  min-width: fit-content;
-  background: var(--input-background);
-  border-radius: var(--radius-sm);
-}
-
-.automations-table-row {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  min-width: fit-content;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm); /* 12px */
-  transition: background 150ms ease;
-}
-
-.automations-table-row:hover {
-  background: var(--input-background);
-}
-
-.automations-table-cell {
-  display: flex;
-  align-items: center;
-  padding: var(--space-sm) var(--space-m); /* 12px 16px */
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.automations-table-header .automations-table-cell {
-  color: var(--text-secondary);
-  padding-top: var(--space-s);
-  padding-bottom: var(--space-s);
-}
-
-.automations-table-cell--name {
-  flex: 1 0 240px;
-  min-width: 240px;
-  color: var(--text-primary);
-}
-
-.automations-table-cell--date {
-  width: 200px;
-  flex-shrink: 0;
-  color: var(--text-primary);
+/* Inactive automations read muted on both text columns. */
+.automations-cell--muted {
+  color: var(--text-tertiary);
 }
 
 .automations-table-cell--toggle {
-  width: 200px;
-  flex-shrink: 0;
   gap: var(--space-m);
   padding: var(--space-m);
-}
-
-.automations-table-cell--actions {
-  width: 64px;
-  flex-shrink: 0;
-  justify-content: center;
-}
-
-/* Inactive row → muted text */
-.automations-table-row--inactive .automations-table-cell--name,
-.automations-table-row--inactive .automations-table-cell--date {
-  color: var(--text-tertiary);
 }
 
 /* ── Toggle switch ── */
@@ -675,15 +611,6 @@
   margin-right: var(--space-xs);
 }
 
-/* ── Activity table cells ── */
-.automations-table-cell--user {
-  flex: 1.4 0 240px;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-xxs);
-  min-width: 240px;
-}
-
 .automations-user-name {
   font-size: 14px;
   font-weight: 600;
@@ -699,10 +626,15 @@
 }
 
 .automations-table-cell--automation {
-  flex: 1.6 0 240px;
-  gap: var(--space-s);
-  min-width: 240px;
   color: var(--text-primary);
+}
+
+/* Dot + name + optional badge on one line inside the cell. */
+.automations-automation-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-width: 0;
 }
 
 .automations-status-dot {
@@ -729,12 +661,6 @@
   text-decoration: line-through;
 }
 
-.automations-table-cell--triggered {
-  width: 180px;
-  flex-shrink: 0;
-  color: var(--text-primary);
-}
-
 .automations-trigger-date {
   display: flex;
   flex-direction: column;
@@ -754,82 +680,6 @@
   color: var(--text-secondary);
 }
 
-.automations-table-cell--sortable {
-  background: transparent;
-  border: none;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  cursor: pointer;
-  gap: var(--space-xs);
-  text-align: left;
-}
-
-.automations-table-cell--sortable:hover {
-  color: var(--text-primary);
-}
-
-/* ── Sticky first column (Automation on Manage, User on Activity) ──
-   Transparent at rest so the row's own rounded border shows through
-   untouched (no squared corners). */
-.automations-table-scroll .automations-table-cell--name,
-.automations-table-scroll .automations-table-cell--user {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-}
-
-/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks
-   the content sliding under it. Its top/bottom borders (aligned over the
-   row's via -1px margins) preserve the row separators; the right-edge shadow
-   (::after) signals the freeze. The left edge is square by design — a rounded
-   mask over a row whose real corner has scrolled off-screen produces corner
-   artifacts. */
-.automations-table-scroll--scrolled .automations-table-row .automations-table-cell--name,
-.automations-table-scroll--scrolled .automations-table-row .automations-table-cell--user {
-  align-self: stretch;
-  margin-top: -1px;
-  margin-bottom: -1px;
-  background: var(--page-background);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-/* User cell stacks name/email vertically — keep it centered when stretched */
-.automations-table-scroll--scrolled .automations-table-row .automations-table-cell--user {
-  justify-content: center;
-}
-
-.automations-table-scroll--scrolled .automations-table-row:hover .automations-table-cell--name,
-.automations-table-scroll--scrolled .automations-table-row:hover .automations-table-cell--user {
-  background: linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-}
-
-.automations-table-scroll--scrolled .automations-table-header .automations-table-cell--name,
-.automations-table-scroll--scrolled .automations-table-header .automations-table-cell--user {
-  background: var(--page-background);
-}
-
-/* Shadow on the pinned cell's right edge — only when scrolled */
-.automations-table-scroll .automations-table-cell--name::after,
-.automations-table-scroll .automations-table-cell--user::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.automations-table-scroll--scrolled .automations-table-cell--name::after,
-.automations-table-scroll--scrolled .automations-table-cell--user::after {
-  opacity: 1;
-}
 
 .automations-table-empty {
   display: flex;

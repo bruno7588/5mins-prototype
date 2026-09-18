@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import {
   UserCirlceAdd,
   Medal,
@@ -25,6 +25,7 @@ import ForceTriggerModal from './ForceTriggerModal'
 import AutomationDetailsModal, { type AutomationDetailsMode } from './AutomationDetailsModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import Badge from '../../components/Badge/Badge'
+import Table, { type Column } from '@/components/Table/Table'
 import WorkflowsTab from '../your-courses/components/WorkflowsTab/WorkflowsTab'
 import './Automations.css'
 import Button from '@/components/Button/Button'
@@ -601,18 +602,6 @@ function Automations() {
   // Manage tab pagination
   const [managePage, setManagePage] = useState(1)
 
-  // Horizontal scroll tracking for the sticky first column (one per table)
-  const manageScrollRef = useRef<HTMLDivElement>(null)
-  const [manageScrolled, setManageScrolled] = useState(false)
-  const handleManageScroll = useCallback(() => {
-    if (manageScrollRef.current) setManageScrolled(manageScrollRef.current.scrollLeft > 0)
-  }, [])
-  const activityScrollRef = useRef<HTMLDivElement>(null)
-  const [activityScrolled, setActivityScrolled] = useState(false)
-  const handleActivityScroll = useCallback(() => {
-    if (activityScrollRef.current) setActivityScrolled(activityScrollRef.current.scrollLeft > 0)
-  }, [])
-
   // Delete confirmation modal
   const [pendingDelete, setPendingDelete] = useState<AutomationRow | null>(null)
   const [confirmInput, setConfirmInput] = useState('')
@@ -908,6 +897,227 @@ function Automations() {
     { value: 'deleted', label: 'Deleted' },
   ]
 
+  /* DS Table (table.md): the shared component owns the row-card structure, the
+     horizontal scroll and the pinned first column on both tabs. */
+  const manageColumns: Column<AutomationRow>[] = [
+    {
+      key: 'name',
+      header: 'Automation',
+      width: '1 0 240px',
+      render: (row) => (
+        <span className={`automations-cell-text${row.active ? '' : ' automations-cell--muted'}`}>
+          {row.name}
+        </span>
+      ),
+    },
+    {
+      key: 'lastUpdated',
+      header: 'Last updated',
+      width: '0 0 200px',
+      render: (row) => (
+        <span className={`automations-cell-text${row.active ? '' : ' automations-cell--muted'}`}>
+          {row.lastUpdated}
+        </span>
+      ),
+    },
+    {
+      key: 'toggle',
+      header: '',
+      width: '0 0 200px',
+      cellClassName: 'automations-table-cell--toggle',
+      render: (row) => (
+        <>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={row.active}
+            className={`automations-toggle${row.active ? ' automations-toggle--on' : ''}`}
+            onClick={() => toggleActive(row.id)}
+          >
+            <span className="automations-toggle-thumb" />
+          </button>
+          <span className="automations-toggle-label">{row.active ? 'Active' : 'Inactive'}</span>
+        </>
+      ),
+    },
+    {
+      key: 'actions',
+      header: '',
+      width: '0 0 64px',
+      align: 'center',
+      // The row menu is a popover anchored in this cell.
+      cellClassName: 'is-overflow',
+      render: (row) => (
+        <div
+          className="automations-more-wrapper"
+          ref={openMenuId === row.id ? menuRef : undefined}
+        >
+          <button
+            type="button"
+            className="automations-row-action"
+            aria-label="More actions"
+            aria-haspopup="menu"
+            aria-expanded={openMenuId === row.id}
+            onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}
+          >
+            <MoreIcon size={20} color="var(--text-secondary)" />
+          </button>
+          {openMenuId === row.id && (
+            <div className="automations-action-menu" role="menu">
+              <div className="automations-action-menu-caret" />
+              <button
+                type="button"
+                className="automations-action-menu-item"
+                role="menuitem"
+                onClick={() => {
+                  setOpenMenuId(null)
+                  editAutomation(row.id)
+                }}
+              >
+                <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
+                Edit automation
+              </button>
+              <button
+                type="button"
+                className="automations-action-menu-item"
+                role="menuitem"
+                onClick={() => {
+                  setOpenMenuId(null)
+                  duplicateAutomation(row.id)
+                }}
+              >
+                <Copy size={20} color="var(--text-primary)" variant="Linear" />
+                Duplicate
+              </button>
+              <button
+                type="button"
+                className="automations-action-menu-item"
+                role="menuitem"
+                onClick={() => {
+                  setOpenMenuId(null)
+                  setAutomationFilterId(row.id)
+                  setActiveTab('activity')
+                }}
+              >
+                <Activity size={20} color="var(--text-primary)" variant="Linear" />
+                View activity
+              </button>
+              <button
+                type="button"
+                className="automations-action-menu-item"
+                role="menuitem"
+                disabled={!row.active}
+                data-tooltip={row.active ? undefined : 'Automation must be active'}
+                onClick={() => {
+                  if (!row.active) return
+                  setOpenMenuId(null)
+                  setForceTriggerAutomation(row)
+                }}
+              >
+                <Flash
+                  size={20}
+                  color={row.active ? 'var(--text-primary)' : 'var(--text-disabled)'}
+                  variant="Linear"
+                />
+                Trigger automation
+              </button>
+              <button
+                type="button"
+                className="automations-action-menu-item automations-action-menu-item--danger"
+                role="menuitem"
+                onClick={() => {
+                  setOpenMenuId(null)
+                  requestDeleteAutomation(row.id)
+                }}
+              >
+                <Trash size={20} color="var(--danger-500)" variant="Linear" />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      ),
+    },
+  ]
+
+  const activityColumns: Column<TriggerRow>[] = [
+    {
+      key: 'user',
+      header: 'User',
+      width: '1.4 0 240px',
+      render: (row) => (
+        <span className="tbl-stack">
+          <span className="automations-user-name">{row.user.name}</span>
+          <span className="automations-user-email">{row.user.email}</span>
+        </span>
+      ),
+    },
+    {
+      key: 'automation',
+      header: 'Automation',
+      width: '1.6 0 240px',
+      cellClassName: 'automations-table-cell--automation',
+      render: (row) => {
+        const automation = automationsById.get(row.automationId)
+        const isDeleted = !automation
+        const isInactive = !isDeleted && !automation!.active
+        return (
+          <span
+            className={`automations-automation-cell${
+              isDeleted || isInactive ? ' automations-table-cell--automation-muted' : ''
+            }`}
+          >
+            {isDeleted ? (
+              <>
+                <span className="automations-automation-name--deleted">
+                  {row.automationNameSnapshot ?? 'Deleted automation'}
+                </span>
+                <Badge type="informative" label="Deleted" />
+              </>
+            ) : (
+              <>
+                <span
+                  className={`automations-status-dot${
+                    automation!.active
+                      ? ' automations-status-dot--active'
+                      : ' automations-status-dot--inactive'
+                  }`}
+                />
+                <span>{automation!.name}</span>
+                {isInactive && <Badge type="informative" label="Inactive" />}
+              </>
+            )}
+          </span>
+        )
+      },
+    },
+    {
+      key: 'triggered',
+      header: (
+        <>
+          Triggered
+          {sortDirection === 'desc' ? (
+            <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
+          ) : (
+            <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
+          )}
+        </>
+      ),
+      sortable: true,
+      width: '0 0 180px',
+      render: (row) => {
+        const date = formatTriggerDate(row.triggeredAt)
+        return (
+          <span className="automations-trigger-date">
+            <span className="automations-trigger-date-day">{date.day}</span>
+            <span className="automations-trigger-date-year">{date.year}</span>
+          </span>
+        )
+      },
+    },
+  ]
+
+
   return (
     <div className="automations-layout">
       <LeftSidebar />
@@ -1024,134 +1234,11 @@ function Automations() {
             </div>
 
             {automations.length > 0 && (
-            <div
-              ref={manageScrollRef}
-              onScroll={handleManageScroll}
-              className={`automations-table-scroll${manageScrolled ? ' automations-table-scroll--scrolled' : ''}`}
-            >
-            <div className="automations-table">
-              <div className="automations-table-header">
-                <div className="automations-table-cell automations-table-cell--name">Automation</div>
-                <div className="automations-table-cell automations-table-cell--date">Last updated</div>
-                <div className="automations-table-cell automations-table-cell--toggle" />
-                <div className="automations-table-cell automations-table-cell--actions" />
-              </div>
-
-              {managePageRows.map((row) => (
-                <div
-                  key={row.id}
-                  className={`automations-table-row${row.active ? '' : ' automations-table-row--inactive'}`}
-                >
-                  <div className="automations-table-cell automations-table-cell--name">{row.name}</div>
-                  <div className="automations-table-cell automations-table-cell--date">{row.lastUpdated}</div>
-                  <div className="automations-table-cell automations-table-cell--toggle">
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={row.active}
-                      className={`automations-toggle${row.active ? ' automations-toggle--on' : ''}`}
-                      onClick={() => toggleActive(row.id)}
-                    >
-                      <span className="automations-toggle-thumb" />
-                    </button>
-                    <span className="automations-toggle-label">{row.active ? 'Active' : 'Inactive'}</span>
-                  </div>
-                  <div className="automations-table-cell automations-table-cell--actions">
-                    <div
-                      className="automations-more-wrapper"
-                      ref={openMenuId === row.id ? menuRef : undefined}
-                    >
-                      <button
-                        type="button"
-                        className="automations-row-action"
-                        aria-label="More actions"
-                        aria-haspopup="menu"
-                        aria-expanded={openMenuId === row.id}
-                        onClick={() =>
-                          setOpenMenuId(openMenuId === row.id ? null : row.id)
-                        }
-                      >
-                        <MoreIcon size={20} color="var(--text-secondary)" />
-                      </button>
-                      {openMenuId === row.id && (
-                        <div className="automations-action-menu" role="menu">
-                          <div className="automations-action-menu-caret" />
-                          <button
-                            type="button"
-                            className="automations-action-menu-item"
-                            role="menuitem"
-                            onClick={() => {
-                              setOpenMenuId(null)
-                              editAutomation(row.id)
-                            }}
-                          >
-                            <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
-                            Edit automation
-                          </button>
-                          <button
-                            type="button"
-                            className="automations-action-menu-item"
-                            role="menuitem"
-                            onClick={() => {
-                              setOpenMenuId(null)
-                              duplicateAutomation(row.id)
-                            }}
-                          >
-                            <Copy size={20} color="var(--text-primary)" variant="Linear" />
-                            Duplicate
-                          </button>
-                          <button
-                            type="button"
-                            className="automations-action-menu-item"
-                            role="menuitem"
-                            onClick={() => {
-                              setOpenMenuId(null)
-                              setAutomationFilterId(row.id)
-                              setActiveTab('activity')
-                            }}
-                          >
-                            <Activity size={20} color="var(--text-primary)" variant="Linear" />
-                            View activity
-                          </button>
-                          <button
-                            type="button"
-                            className="automations-action-menu-item"
-                            role="menuitem"
-                            disabled={!row.active}
-                            data-tooltip={row.active ? undefined : 'Automation must be active'}
-                            onClick={() => {
-                              if (!row.active) return
-                              setOpenMenuId(null)
-                              setForceTriggerAutomation(row)
-                            }}
-                          >
-                            <Flash
-                              size={20}
-                              color={row.active ? 'var(--text-primary)' : 'var(--text-disabled)'}
-                              variant="Linear"
-                            />
-                            Trigger automation
-                          </button>
-                          <button
-                            type="button"
-                            className="automations-action-menu-item automations-action-menu-item--danger"
-                            role="menuitem"
-                            onClick={() => {
-                              setOpenMenuId(null)
-                              requestDeleteAutomation(row.id)
-                            }}
-                          >
-                            <Trash size={20} color="var(--danger-500)" variant="Linear" />
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            </div>
+            <Table
+              columns={manageColumns}
+              rows={managePageRows}
+              getRowKey={(row) => row.id}
+            />
             )}
 
             {manageTotalPages > 1 && (
@@ -1357,125 +1444,52 @@ function Automations() {
             )}
 
             {/* Activity table */}
-            <div
-              ref={activityScrollRef}
-              onScroll={handleActivityScroll}
-              className={`automations-table-scroll${activityScrolled ? ' automations-table-scroll--scrolled' : ''}`}
-            >
-            <div className="automations-table">
-              {pageRows.length > 0 && (
-                <div className="automations-table-header">
-                  <div className="automations-table-cell automations-table-cell--user">User</div>
-                  <div className="automations-table-cell automations-table-cell--automation">Automation</div>
+            {pageRows.length === 0 ? (
+              !hasAnyTriggers ? (
+                <div className="automations-empty-state">
+                  <Activity size={40} color="var(--text-tertiary)" variant="Linear" />
+                  <p className="automations-empty-state-title">
+                    {automations.length === 0 ? 'No automations yet' : 'No activity yet'}
+                  </p>
+                  <p className="automations-empty-state-body">
+                    {automations.length === 0
+                      ? "You haven't created any automations yet. Once an automation runs, every enrolment will show up here."
+                      : "Your automations haven't run yet. Once one fires, every enrolment will show up here. If you were expecting activity, check that your automations are active in the Manage tab."}
+                  </p>
                   <button
                     type="button"
-                    className="automations-table-cell automations-table-cell--triggered automations-table-cell--sortable"
-                    onClick={toggleSort}
-                    aria-label={`Sort by triggered date, currently ${sortDirection === 'desc' ? 'descending' : 'ascending'}`}
+                    className="automations-empty-state-action"
+                    onClick={() => setActiveTab('manage')}
                   >
-                    Triggered
-                    {sortDirection === 'desc' ? (
-                      <ArrowDown size={16} color="var(--text-secondary)" variant="Linear" />
-                    ) : (
-                      <ArrowUp size={16} color="var(--text-secondary)" variant="Linear" />
-                    )}
+                    Go to Manage tab
                   </button>
                 </div>
-              )}
-
-              {pageRows.length === 0 ? (
-                !hasAnyTriggers ? (
-                  <div className="automations-empty-state">
-                    <Activity size={40} color="var(--text-tertiary)" variant="Linear" />
-                    <p className="automations-empty-state-title">
-                      {automations.length === 0 ? 'No automations yet' : 'No activity yet'}
-                    </p>
-                    <p className="automations-empty-state-body">
-                      {automations.length === 0
-                        ? "You haven't created any automations yet. Once an automation runs, every enrolment will show up here."
-                        : "Your automations haven't run yet. Once one fires, every enrolment will show up here. If you were expecting activity, check that your automations are active in the Manage tab."}
-                    </p>
+              ) : (
+                <div className="automations-empty-state">
+                  <SearchNormal1 size={40} color="var(--text-tertiary)" variant="Linear" />
+                  <p className="automations-empty-state-title">No results match your filters</p>
+                  <p className="automations-empty-state-body">
+                    Try a different search or adjust your filters.
+                  </p>
+                  {hasActiveFilters && (
                     <button
                       type="button"
                       className="automations-empty-state-action"
-                      onClick={() => setActiveTab('manage')}
+                      onClick={clearFilters}
                     >
-                      Go to Manage tab
+                      Clear filters
                     </button>
-                  </div>
-                ) : (
-                  <div className="automations-empty-state">
-                    <SearchNormal1 size={40} color="var(--text-tertiary)" variant="Linear" />
-                    <p className="automations-empty-state-title">No results match your filters</p>
-                    <p className="automations-empty-state-body">
-                      Try a different search or adjust your filters.
-                    </p>
-                    {hasActiveFilters && (
-                      <button
-                        type="button"
-                        className="automations-empty-state-action"
-                        onClick={clearFilters}
-                      >
-                        Clear filters
-                      </button>
-                    )}
-                  </div>
-                )
-              ) : (
-                pageRows.map((row) => {
-                  const automation = automationsById.get(row.automationId)
-                  const isDeleted = !automation
-                  const isInactive = !isDeleted && !automation!.active
-                  const automationCellClass =
-                    'automations-table-cell automations-table-cell--automation' +
-                    (isDeleted || isInactive ? ' automations-table-cell--automation-muted' : '')
-                  return (
-                    <div key={row.id} className="automations-table-row">
-                      <div className="automations-table-cell automations-table-cell--user">
-                        <span className="automations-user-name">{row.user.name}</span>
-                        <span className="automations-user-email">{row.user.email}</span>
-                      </div>
-                      <div className={automationCellClass}>
-                        {isDeleted ? (
-                          <>
-                            <span className="automations-automation-name--deleted">
-                              {row.automationNameSnapshot ?? 'Deleted automation'}
-                            </span>
-                            <Badge type="informative" label="Deleted" />
-                          </>
-                        ) : (
-                          <>
-                            <span
-                              className={`automations-status-dot${
-                                automation!.active
-                                  ? ' automations-status-dot--active'
-                                  : ' automations-status-dot--inactive'
-                              }`}
-                            />
-                            <span>{automation!.name}</span>
-                            {isInactive && (
-                              <Badge type="informative" label="Inactive" />
-                            )}
-                          </>
-                        )}
-                      </div>
-                      <div className="automations-table-cell automations-table-cell--triggered">
-                        {(() => {
-                          const date = formatTriggerDate(row.triggeredAt)
-                          return (
-                            <div className="automations-trigger-date">
-                              <span className="automations-trigger-date-day">{date.day}</span>
-                              <span className="automations-trigger-date-year">{date.year}</span>
-                            </div>
-                          )
-                        })()}
-                      </div>
-                    </div>
-                  )
-                })
-              )}
-            </div>
-            </div>
+                  )}
+                </div>
+              )
+            ) : (
+              <Table
+                columns={activityColumns}
+                rows={pageRows}
+                getRowKey={(row) => row.id}
+                onSort={toggleSort}
+              />
+            )}
 
             {/* Pagination */}
             {totalPages > 1 && (

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { ArrowDown2, ArrowLeft2, ArrowRight2, Danger, ImportCurve, UserAdd, UserEdit, UserMinus } from 'iconsax-react'
+import Table, { type Column } from '@/components/Table/Table'
+import { ArrowDown2, Danger, ImportCurve, UserAdd, UserEdit, UserMinus } from 'iconsax-react'
 import Button from '../../../../components/Button/Button'
 import Chip from '../../../../components/Chip/Chip'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
@@ -229,21 +230,6 @@ function CellError({ value, error }: { value: string; error: CellError }) {
   )
 }
 
-function DataCell({ colClass, value, warning, error }: { colClass: string; value: string; warning?: CellWarning; error?: CellError }) {
-  if (error) {
-    return (
-      <span className={`bulk-preview-col ${colClass} bulk-preview-col--error`}>
-        <CellError value={value} error={error} />
-      </span>
-    )
-  }
-  return (
-    <span className={`bulk-preview-col ${colClass}`}>
-      <CellWithWarning value={value} warning={warning} />
-    </span>
-  )
-}
-
 function loadUserFields(): UserField[] {
   try {
     const raw = localStorage.getItem('5mins-user-fields')
@@ -267,23 +253,6 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
   // Custom fields from admin settings
   const [userFields, setUserFields] = useState<UserField[]>(loadUserFields)
   useEffect(() => { setUserFields(loadUserFields()) }, [])
-
-  // Scroll tracking for sticky name column
-  const previewScrollRef = useRef<HTMLDivElement>(null)
-  const [previewHasScroll, setPreviewHasScroll] = useState(false)
-  const [previewIsScrolled, setPreviewIsScrolled] = useState(false)
-
-  useEffect(() => {
-    const el = previewScrollRef.current
-    if (!el) return
-    function onScroll() { setPreviewIsScrolled(el!.scrollLeft > 0) }
-    function checkOverflow() { setPreviewHasScroll(el!.scrollWidth > el!.clientWidth) }
-    el.addEventListener('scroll', onScroll)
-    const ro = new ResizeObserver(checkOverflow)
-    ro.observe(el)
-    checkOverflow()
-    return () => { el.removeEventListener('scroll', onScroll); ro.disconnect() }
-  }, [step, previewFilter, userFields])
 
   // Build mock data with custom field values — first upload shows errors,
   // re-upload (count >= 2) is clean, matching the "fix your CSV and re-upload" flow.
@@ -327,7 +296,6 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
     ? visibleErrorEntries
     : previewData.filter(e => e.type === previewFilter)
 
-  const totalPages = Math.ceil(filteredEntries.length / rowsPerPage)
   const paginatedEntries = filteredEntries.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
   const paginationStart = (currentPage - 1) * rowsPerPage + 1
   const paginationEnd = Math.min(currentPage * rowsPerPage, filteredEntries.length)
@@ -462,6 +430,74 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
   const handleBackToUpload = () => {
     setStep('upload')
   }
+
+  /* DS Table (table.md): the shared component owns the row-card structure, the
+     horizontal scroll and the pinned First name column. Every column flexes
+     equally with a 100px floor, as the old hand-rolled grid did. A cell holding
+     a validation error carries the red tint through `cellClassName`. */
+  const errorTint = (col: ErrorColumn) => (row: PreviewEntry) =>
+    row.errors?.[col] ? 'bulk-preview-col--error' : undefined
+
+  const previewColumns: Column<PreviewEntry>[] = [
+    { key: 'firstName', header: 'First name', width: '1 1 100px', render: (row) => row.firstName || '—' },
+    { key: 'lastName', header: 'Last name', width: '1 1 100px', render: (row) => row.lastName || '—' },
+    {
+      key: 'email',
+      header: 'Email',
+      width: '1 1 100px',
+      cellClassName: errorTint('email'),
+      render: (row) =>
+        row.errors?.email ? (
+          <CellError value={row.email} error={row.errors.email} />
+        ) : (
+          <CellWithWarning value={row.email} />
+        ),
+    },
+    {
+      key: 'team',
+      header: 'Team',
+      width: '1 1 100px',
+      render: (row) => <CellWithWarning value={row.team} warning={row.warnings?.team} />,
+    },
+    {
+      key: 'role',
+      header: 'Role',
+      width: '1 1 100px',
+      cellClassName: errorTint('role'),
+      render: (row) =>
+        row.errors?.role ? (
+          <CellError value={row.role} error={row.errors.role} />
+        ) : (
+          <CellWithWarning value={row.role} warning={row.warnings?.role} />
+        ),
+    },
+    {
+      key: 'reportsTo',
+      header: 'Reports to',
+      width: '1 1 100px',
+      cellClassName: errorTint('reportsTo'),
+      render: (row) =>
+        row.errors?.reportsTo ? (
+          <CellError value={row.reportsTo} error={row.errors.reportsTo} />
+        ) : (
+          <CellWithWarning value={row.reportsTo} warning={row.warnings?.reportsTo} />
+        ),
+    },
+    { key: 'startDate', header: 'Start date', width: '1 1 100px', render: (row) => row.startDate },
+    {
+      key: 'region',
+      header: 'Region',
+      width: '1 1 100px',
+      render: (row) => <CellWithWarning value={row.region} warning={row.warnings?.region} />,
+    },
+    ...userFields.map((f) => ({
+      key: `custom-${f.id}`,
+      header: f.name,
+      width: '1 1 100px',
+      render: (row: PreviewEntry) => row.customFields?.[f.id] || '—',
+    })),
+  ]
+
 
   return (
     <div className="bulk-upload-modal">
@@ -689,82 +725,18 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
               )}
 
               {/* Data table — 5Mins card-row style */}
-              <div
-                className={`bulk-preview-scroll${previewHasScroll ? ' bulk-preview-scroll--has-scroll' : ''}${previewIsScrolled ? ' bulk-preview-scroll--scrolled' : ''}`}
-                ref={previewScrollRef}
-              >
-                <div className="bulk-preview-table-5m">
-                  {/* Header */}
-                  <div className="bulk-preview-table-header">
-                    <span className="bulk-preview-col bulk-preview-col--firstname">First name</span>
-                    <span className="bulk-preview-col bulk-preview-col--lastname">Last name</span>
-                    <span className="bulk-preview-col bulk-preview-col--email">Email</span>
-                    <span className="bulk-preview-col bulk-preview-col--team">Team</span>
-                    <span className="bulk-preview-col bulk-preview-col--role">Role</span>
-                    <span className="bulk-preview-col bulk-preview-col--reportsto">Reports to</span>
-                    <span className="bulk-preview-col bulk-preview-col--startdate">Start date</span>
-                    <span className="bulk-preview-col bulk-preview-col--region">Region</span>
-                    {userFields.map(f => (
-                      <span key={f.id} className="bulk-preview-col bulk-preview-col--custom">{f.name}</span>
-                    ))}
-                  </div>
-
-                  {/* Rows */}
-                  <div className="bulk-preview-table-rows">
-                    {paginatedEntries.map((entry, i) => (
-                      <div
-                        key={i}
-                        className={`bulk-preview-table-row ${entry.type === 'error' ? 'bulk-preview-table-row--error' : ''}`}
-                      >
-                        <span className="bulk-preview-col bulk-preview-col--firstname">
-                          {entry.firstName || '—'}
-                        </span>
-                        <span className="bulk-preview-col bulk-preview-col--lastname">
-                          {entry.lastName || '—'}
-                        </span>
-                        <DataCell colClass="bulk-preview-col--email" value={entry.email} error={entry.errors?.email} />
-                        <span className="bulk-preview-col bulk-preview-col--team">
-                          <CellWithWarning value={entry.team} warning={entry.warnings?.team} />
-                        </span>
-                        <DataCell colClass="bulk-preview-col--role" value={entry.role} warning={entry.warnings?.role} error={entry.errors?.role} />
-                        <DataCell colClass="bulk-preview-col--reportsto" value={entry.reportsTo} warning={entry.warnings?.reportsTo} error={entry.errors?.reportsTo} />
-                        <span className="bulk-preview-col bulk-preview-col--startdate">{entry.startDate}</span>
-                        <span className="bulk-preview-col bulk-preview-col--region">
-                          <CellWithWarning value={entry.region} warning={entry.warnings?.region} />
-                        </span>
-                        {userFields.map(f => (
-                          <span key={f.id} className="bulk-preview-col bulk-preview-col--custom">
-                            {entry.customFields?.[f.id] || '—'}
-                          </span>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Pagination */}
-              {filteredEntries.length > rowsPerPage && (
-                <div className="bulk-preview-pagination">
-                  <span className="bulk-preview-pagination-text">
-                    {paginationStart}-{paginationEnd} of {filteredEntries.length}
-                  </span>
-                  <button
-                    className="bulk-preview-pagination-btn"
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(p => p - 1)}
-                  >
-                    <ArrowLeft2 size={16} color="currentColor" />
-                  </button>
-                  <button
-                    className="bulk-preview-pagination-btn"
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(p => p + 1)}
-                  >
-                    <ArrowRight2 size={16} color="currentColor" />
-                  </button>
-                </div>
-              )}
+              <Table
+                columns={previewColumns}
+                rows={paginatedEntries}
+                getRowKey={(_row, i) => String(i)}
+                pagination={{
+                  from: paginationStart,
+                  to: paginationEnd,
+                  total: filteredEntries.length,
+                  onPrev: () => setCurrentPage((p) => p - 1),
+                  onNext: () => setCurrentPage((p) => p + 1),
+                }}
+              />
 
               {/* Action bar */}
               <div className="bulk-preview-actions">

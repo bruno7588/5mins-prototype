@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import Button from '@/components/Button/Button'
+import Table, { type Column } from '@/components/Table/Table'
 import { Add, ArrowDown2, Calendar, Note1, Sort } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
@@ -167,7 +168,6 @@ function DateCell({ value }: { value: string | null }) {
 
 function LearningRecords() {
   const [activeTab, setActiveTab] = useState<TabKey>('5mins')
-  const [isScrolled, setIsScrolled] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filtersExpanded, setFiltersExpanded] = useState(false)
   const [activeFilters, setActiveFilters] = useState<string[]>([])
@@ -191,7 +191,6 @@ function LearningRecords() {
   // True when the edit drawer is opened as a handoff from the reports list, so
   // it swaps content in place instead of sliding in over a closing list drawer.
   const [drawerInstant, setDrawerInstant] = useState(false)
-  const scrollRef = useRef<HTMLDivElement>(null)
   const headerAddRef = useRef<HTMLDivElement>(null)
   const bottomAddRef = useRef<HTMLDivElement>(null)
   const { toasts, show: showToast } = useToast()
@@ -403,10 +402,6 @@ function LearningRecords() {
     </div>
   )
 
-  const handleScroll = useCallback(() => {
-    if (scrollRef.current) setIsScrolled(scrollRef.current.scrollLeft > 0)
-  }, [])
-
   const tabs: { key: TabKey; label: string }[] = [
     { key: '5mins', label: '5Mins Courses' },
     { key: 'external', label: 'External Training' },
@@ -523,6 +518,112 @@ function LearningRecords() {
         )
     }
   }
+
+  /* DS Table (table.md): the shared component owns the row-card structure, the
+     horizontal scroll and the pinned first column. Widths carry over from the
+     old hand-rolled grid. */
+  const courseColumns: Column<CourseRecord>[] = [
+    {
+      key: 'user',
+      header: 'User',
+      width: '1 0 240px',
+      render: (row) => (
+        <span className={`tbl-stack${row.deactivation ? ' lrp-stack--deactivated' : ''}`}>
+          <span className="lrp-name-row">
+            <span className="lrp-name">{row.name}</span>
+            {row.deactivation && <Badge type="error" label="Deactivated" />}
+          </span>
+          <span className="lrp-email">{row.email}</span>
+        </span>
+      ),
+    },
+    { key: 'team', header: 'Team', width: '0 0 180px', render: (row) => row.team },
+    { key: 'region', header: 'Region', width: '0 0 160px', render: (row) => row.region },
+    {
+      key: 'course',
+      header: 'Course',
+      width: '0 0 200px',
+      cellClassName: 'lrp-cell--wrap',
+      render: (row) => row.course,
+    },
+    { key: 'category', header: 'Category', width: '0 0 160px', render: (row) => row.category },
+    {
+      key: 'enrolment',
+      header: 'Enrolment history',
+      width: '0 0 146px',
+      render: (row) => (
+        <span className={`lrp-badge ${row.enrolment === 'Current' ? 'lrp-badge--current' : 'lrp-badge--archived'}`}>
+          {row.enrolment}
+        </span>
+      ),
+    },
+    { key: 'startDate', header: 'Start date', width: '0 0 94px', render: (row) => <DateCell value={row.startDate} /> },
+    { key: 'dueDate', header: 'Due date', width: '0 0 94px', render: (row) => <DateCell value={row.dueDate} /> },
+    { key: 'completionDate', header: 'Completion date', width: '0 0 94px', render: (row) => <DateCell value={row.completionDate} /> },
+    {
+      key: 'daysLate',
+      header: 'Days late',
+      width: '0 0 90px',
+      render: (row) => (row.daysLate != null ? row.daysLate : <span className="lrp-dash">–</span>),
+    },
+    { key: 'duration', header: 'Duration', width: '0 0 84px', render: (row) => row.duration },
+    { key: 'progress', header: 'Progress', width: '0 0 86px', render: (row) => `${row.progress}%` },
+    {
+      key: 'status',
+      header: 'Status',
+      width: '0 0 128px',
+      render: (row) => <span className={`lrp-badge ${STATUS_BADGE[row.status]}`}>{row.status}</span>,
+    },
+  ]
+
+  const externalColumns: Column<ExternalRecord>[] = [
+    { key: 'email', header: 'Email', width: '0 0 240px', render: (row) => row.email },
+    { key: 'training', header: 'Training', width: '0 0 200px', render: (row) => row.training },
+    { key: 'provider', header: 'Training provider', width: '0 0 200px', render: (row) => row.provider },
+    { key: 'startDate', header: 'Start date', width: '0 0 94px', render: (row) => <DateCell value={row.startDate} /> },
+    { key: 'completionDate', header: 'Completion date', width: '0 0 94px', render: (row) => <DateCell value={row.completionDate} /> },
+    { key: 'expiration', header: 'Expiration', width: '0 0 94px', render: (row) => <DateCell value={row.expiration} /> },
+    { key: 'duration', header: 'Duration', width: '0 0 84px', render: (row) => row.duration },
+    {
+      key: 'score',
+      header: 'Score',
+      width: '0 0 64px',
+      render: (row) => row.score ?? <span className="lrp-dash">–</span>,
+    },
+    {
+      key: 'result',
+      header: 'Result',
+      width: '0 0 128px',
+      render: (row) => (
+        <span className={`lrp-badge ${row.result === 'Passed' ? 'lrp-badge--completed' : 'lrp-badge--overdue'}`}>
+          {row.result}
+        </span>
+      ),
+    },
+    {
+      key: 'certificate',
+      header: 'Certificate',
+      width: '0 0 140px',
+      render: (row) =>
+        row.hasCertificate ? (
+          <Button size="sm" variant="outlined" className="ui-disabled" disabled>Download</Button>
+        ) : (
+          <span className="lrp-dash">–</span>
+        ),
+    },
+    {
+      key: 'more',
+      header: '',
+      width: '0 0 48px',
+      align: 'center',
+      render: () => (
+        <span className="ui-disabled">
+          <MoreIcon size={20} color="var(--text-tertiary)" />
+        </span>
+      ),
+    },
+  ]
+
 
   return (
     <div className="lrp-layout">
@@ -739,109 +840,20 @@ function LearningRecords() {
           </div>
 
           {/* Table */}
-          <div
-            ref={scrollRef}
-            onScroll={handleScroll}
-            className={`lrp-table-wrap${isScrolled ? ' lrp-table-wrap--scrolled' : ''}`}
-          >
-            {activeTab === '5mins' ? (
-              <div className="lrp-table">
-                <div className="lrp-header-row">
-                  <div className="lrp-cell lrp-cell--user">User</div>
-                  <div className="lrp-cell lrp-cell--team">Team</div>
-                  <div className="lrp-cell lrp-cell--region">Region</div>
-                  <div className="lrp-cell lrp-cell--course">Course</div>
-                  <div className="lrp-cell lrp-cell--category">Category</div>
-                  <div className="lrp-cell lrp-cell--enrolment">Enrolment history</div>
-                  <div className="lrp-cell lrp-cell--date">Start date</div>
-                  <div className="lrp-cell lrp-cell--date">Due date</div>
-                  <div className="lrp-cell lrp-cell--date">Completion date</div>
-                  <div className="lrp-cell lrp-cell--days-late">Days late</div>
-                  <div className="lrp-cell lrp-cell--duration">Duration</div>
-                  <div className="lrp-cell lrp-cell--progress">Progress</div>
-                  <div className="lrp-cell lrp-cell--status">Status</div>
-                </div>
+          {activeTab === '5mins' ? (
+            <Table
+              columns={courseColumns}
+              rows={displayedCourseRows}
+              getRowKey={(row) => row.id}
+            />
+          ) : (
+            <Table
+              columns={externalColumns}
+              rows={externalData}
+              getRowKey={(row) => row.id}
+            />
+          )}
 
-                {displayedCourseRows.map((row) => (
-                  <div className={`lrp-row${row.deactivation ? ' lrp-row--deactivated' : ''}`} key={row.id}>
-                    <div className="lrp-cell lrp-cell--user">
-                      <span className="lrp-name-row">
-                        <span className="lrp-name">{row.name}</span>
-                        {row.deactivation && <Badge type="error" label="Deactivated" />}
-                      </span>
-                      <span className="lrp-email">{row.email}</span>
-                    </div>
-                    <div className="lrp-cell lrp-cell--team">{row.team}</div>
-                    <div className="lrp-cell lrp-cell--region">{row.region}</div>
-                    <div className="lrp-cell lrp-cell--course">{row.course}</div>
-                    <div className="lrp-cell lrp-cell--category">{row.category}</div>
-                    <div className="lrp-cell lrp-cell--enrolment">
-                      <span className={`lrp-badge ${row.enrolment === 'Current' ? 'lrp-badge--current' : 'lrp-badge--archived'}`}>
-                        {row.enrolment}
-                      </span>
-                    </div>
-                    <div className="lrp-cell lrp-cell--date"><DateCell value={row.startDate} /></div>
-                    <div className="lrp-cell lrp-cell--date"><DateCell value={row.dueDate} /></div>
-                    <div className="lrp-cell lrp-cell--date"><DateCell value={row.completionDate} /></div>
-                    <div className="lrp-cell lrp-cell--days-late">
-                      {row.daysLate != null ? row.daysLate : <span className="lrp-dash">–</span>}
-                    </div>
-                    <div className="lrp-cell lrp-cell--duration">{row.duration}</div>
-                    <div className="lrp-cell lrp-cell--progress">{row.progress}%</div>
-                    <div className="lrp-cell lrp-cell--status">
-                      <span className={`lrp-badge ${STATUS_BADGE[row.status]}`}>{row.status}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="lrp-table">
-                <div className="lrp-header-row">
-                  <div className="lrp-cell lrp-cell--ext-email">Email</div>
-                  <div className="lrp-cell lrp-cell--ext-training">Training</div>
-                  <div className="lrp-cell lrp-cell--ext-provider">Training provider</div>
-                  <div className="lrp-cell lrp-cell--date">Start date</div>
-                  <div className="lrp-cell lrp-cell--date">Completion date</div>
-                  <div className="lrp-cell lrp-cell--date">Expiration</div>
-                  <div className="lrp-cell lrp-cell--duration">Duration</div>
-                  <div className="lrp-cell lrp-cell--ext-score">Score</div>
-                  <div className="lrp-cell lrp-cell--ext-result">Result</div>
-                  <div className="lrp-cell lrp-cell--ext-cert">Certificate</div>
-                  <div className="lrp-cell lrp-cell--ext-more" />
-                </div>
-
-                {externalData.map((row) => (
-                  <div className="lrp-row" key={row.id}>
-                    <div className="lrp-cell lrp-cell--ext-email">{row.email}</div>
-                    <div className="lrp-cell lrp-cell--ext-training">{row.training}</div>
-                    <div className="lrp-cell lrp-cell--ext-provider">{row.provider}</div>
-                    <div className="lrp-cell lrp-cell--date"><DateCell value={row.startDate} /></div>
-                    <div className="lrp-cell lrp-cell--date"><DateCell value={row.completionDate} /></div>
-                    <div className="lrp-cell lrp-cell--date"><DateCell value={row.expiration} /></div>
-                    <div className="lrp-cell lrp-cell--duration">{row.duration}</div>
-                    <div className="lrp-cell lrp-cell--ext-score">{row.score ?? <span className="lrp-dash">–</span>}</div>
-                    <div className="lrp-cell lrp-cell--ext-result">
-                      <span className={`lrp-badge ${row.result === 'Passed' ? 'lrp-badge--completed' : 'lrp-badge--overdue'}`}>
-                        {row.result}
-                      </span>
-                    </div>
-                    <div className="lrp-cell lrp-cell--ext-cert">
-                      {row.hasCertificate ? (
-                        <Button size="sm" variant="outlined" className="ui-disabled" disabled>Download</Button>
-                      ) : (
-                        <span className="lrp-dash">–</span>
-                      )}
-                    </div>
-                    <div className="lrp-cell lrp-cell--ext-more">
-                      <span className="ui-disabled">
-                        <MoreIcon size={20} color="var(--text-tertiary)" />
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
 
         </div>

@@ -26,13 +26,17 @@ export interface Column<T> {
   /** Horizontal alignment of the header + cell content. Default: left. */
   align?: 'left' | 'right' | 'center'
   /** Extra class on this column's data cells — e.g. `is-overflow` to let an
-      anchored tooltip escape the cell's text-ellipsis clip. */
-  cellClassName?: string
+      anchored tooltip escape the cell's text-ellipsis clip. A function gets the
+      row, for a cell whose treatment depends on its value (a validation tint). */
+  cellClassName?: string | ((row: T) => string | undefined)
   render: (row: T) => ReactNode
 }
 
 const justifyFor = (align?: Column<unknown>['align']) =>
   align === 'right' ? 'flex-end' : align === 'center' ? 'center' : undefined
+
+const cellExtraClass = <T,>(col: Column<T>, row: T) =>
+  typeof col.cellClassName === 'function' ? col.cellClassName(row) : col.cellClassName
 
 const cellStyle = (col: { width?: string; align?: Column<unknown>['align'] }) =>
   col.width || col.align ? { flex: col.width, justifyContent: justifyFor(col.align) } : undefined
@@ -58,6 +62,8 @@ interface TableProps<T> {
   onToggleRow?: (row: T) => void
   onToggleAll?: () => void
   allSelected?: boolean
+  /** Select-all shows the mixed mark when only some rows are selected. */
+  selectAllIndeterminate?: boolean
   selectAllDisabled?: boolean
   onSort?: (key: string) => void
   pagination?: TablePagination
@@ -75,6 +81,7 @@ export function Table<T>({
   onToggleRow,
   onToggleAll,
   allSelected,
+  selectAllIndeterminate,
   selectAllDisabled,
   onSort,
   pagination,
@@ -102,7 +109,12 @@ export function Table<T>({
       <div className="tbl-head">
         {selectable && (
           <div className="tbl-head-cell is-checkbox is-sticky" style={{ flex: '0 0 52px', left: 0 }}>
-            <Checkbox checked={!!allSelected} onChange={onToggleAll} disabled={selectAllDisabled} />
+            <Checkbox
+              checked={!!allSelected}
+              indeterminate={!!selectAllIndeterminate}
+              onChange={onToggleAll}
+              disabled={selectAllDisabled}
+            />
           </div>
         )}
         {columns.map((col, ci) => (
@@ -150,7 +162,7 @@ export function Table<T>({
             {columns.map((col, ci) => (
               <div
                 key={col.key}
-                className={stickyClass(ci, `tbl-cell${col.cellClassName ? ` ${col.cellClassName}` : ''}`)}
+                className={stickyClass(ci, `tbl-cell${cellExtraClass(col, row) ? ` ${cellExtraClass(col, row)}` : ''}`)}
                 style={stickyStyle(ci, cellStyle(col))}
               >
                 {col.render(row)}

@@ -629,66 +629,6 @@
   color: var(--text-warning);
 }
 
-/* ─── 5Mins card-row table ─── */
-.bulk-preview-table-5m {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.bulk-preview-table-header {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--space-m);
-  min-width: fit-content;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: var(--input-background);
-  border-radius: var(--radius-sm);
-}
-
-.bulk-preview-table-rows {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.bulk-preview-table-row {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  transition: border-color 150ms ease;
-  min-width: fit-content;
-}
-
-.bulk-preview-table-row:hover {
-  border-color: var(--border);
-  background: var(--input-background);
-  transition: background 150ms ease;
-}
-
-/* Error is conveyed by the cell tint + warning icon, not a colored row border
-   (table.md has no danger row-border state) — keep the neutral border. */
-.bulk-preview-table-row--error,
-.bulk-preview-table-row--error:hover {
-  border-color: var(--border);
-}
-
-/* Column sizing */
-.bulk-preview-col {
-  padding: var(--space-sm) var(--space-m);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* ─── Cell warning icon + tooltip ─── */
 .bulk-cell-warning {
   position: relative;
@@ -716,23 +656,6 @@
   z-index: 200;
 }
 
-.bulk-preview-table-header .bulk-preview-col {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  padding-top: var(--space-s);
-  padding-bottom: var(--space-s);
-}
-
-.bulk-preview-col--firstname { flex: 1; min-width: 100px; position: relative; }
-.bulk-preview-col--lastname { flex: 1; min-width: 100px; }
-.bulk-preview-col--email { flex: 1; min-width: 100px; }
-.bulk-preview-col--team { flex: 1; min-width: 100px; }
-.bulk-preview-col--role { flex: 1; min-width: 100px; }
-.bulk-preview-col--reportsto { flex: 1; min-width: 100px; }
-.bulk-preview-col--startdate { flex: 1; min-width: 100px; }
-.bulk-preview-col--region { flex: 1; min-width: 100px; }
-.bulk-preview-col--custom { flex: 1; min-width: 100px; }
 .bulk-preview-col--detail { flex: 1; min-width: 100px; white-space: normal; }
 
 .bulk-preview-col--missing {
@@ -740,47 +663,6 @@
   font-style: italic;
 }
 
-/* ─── Scroll wrapper for preview table (same pattern as Active People table) ─── */
-.bulk-preview-scroll {
-  overflow-x: auto;
-}
-
-/* ─── Sticky name column when table overflows ─── */
-.bulk-preview-scroll--has-scroll .bulk-preview-col--firstname {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-}
-
-/* Opaque background on sticky cell so content doesn't show through */
-.bulk-preview-scroll--has-scroll .bulk-preview-col--firstname,
-.bulk-preview-scroll--has-scroll .bulk-preview-table-header .bulk-preview-col--firstname {
-  background: var(--page-background);
-}
-
-.bulk-preview-scroll--has-scroll .bulk-preview-table-row:hover .bulk-preview-col--firstname {
-  background: linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-  transition: background 150ms ease;
-}
-
-/* Shadow on name cell edge — only when user has scrolled horizontally */
-.bulk-preview-scroll--has-scroll .bulk-preview-col--firstname::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.bulk-preview-scroll--scrolled .bulk-preview-col--firstname::after {
-  opacity: 1;
-}
 
 /* Action type badges — follows 5Mins badge spec */
 .bulk-preview-type-badge {
@@ -814,46 +696,6 @@
   color: var(--text-tertiary);
   font-style: italic;
 }
-
-/* Pagination */
-.bulk-preview-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-m);
-}
-
-.bulk-preview-pagination-text {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.bulk-preview-pagination-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: none;
-  border-radius: var(--radius-full);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.bulk-preview-pagination-btn:hover:not(:disabled) {
-  background: var(--input-background);
-  color: var(--text-primary);
-}
-
-.bulk-preview-pagination-btn:disabled {
-  color: var(--text-disabled);
-  cursor: not-allowed;
-}
-
 /* ─── Preview actions ─── */
 .bulk-preview-btn-wrapper {
   position: relative;

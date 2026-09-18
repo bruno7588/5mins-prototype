@@ -66,110 +66,6 @@
   color: var(--text-disabled);
 }
 
-/* Table — flex-based, mirrors Figma Your Content / 4839:937 and People table pattern */
-.content-table {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  width: 100%;
-  /* Narrow screens scroll the columns sideways; the file name stays put. */
-  overflow-x: auto;
-}
-
-/* 320 for the name + 600 of fixed columns: below that the table scrolls. */
-.content-table-header,
-.content-table-row {
-  min-width: 920px;
-}
-
-.content-table-header {
-  display: flex;
-  align-items: center;
-  background: var(--input-background);
-  border-radius: var(--radius-sm);
-}
-
-.content-table-header .content-table-cell {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  padding: var(--space-s) var(--space-m);
-  white-space: nowrap;
-}
-
-.content-table-row {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  transition: background 150ms ease;
-}
-
-.content-table-row:hover {
-  background: var(--input-background);
-}
-
-.content-table-cell {
-  display: flex;
-  align-items: center;
-  padding: var(--space-sm) var(--space-m);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
-
-/* Column widths — File name flexes; Type/Uploaded by/Updated at fixed; Actions auto */
-.content-table-cell--name {
-  flex: 1;
-  min-width: 320px;
-  gap: var(--space-sm);
-  /* Pinned while the rest scrolls under it (needs its own background to hide them). */
-  position: sticky;
-  left: 0;
-  z-index: 1;
-  background: var(--page-background);
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-}
-
-.content-table-header .content-table-cell--name {
-  background: var(--input-background);
-}
-
-.content-table-row:hover .content-table-cell--name {
-  background: var(--input-background);
-}
-
-.content-table-cell--type {
-  width: 136px;
-  flex-shrink: 0;
-  color: var(--text-secondary);
-}
-
-.content-table-cell--uploader {
-  width: 200px;
-  flex-shrink: 0;
-}
-
-.content-table-cell--date {
-  width: 136px;
-  flex-shrink: 0;
-  gap: var(--space-xs);
-  white-space: nowrap;
-}
-
-.content-table-cell--sortable {
-  cursor: pointer;
-}
-
-.content-table-cell--actions {
-  width: 128px;
-  flex-shrink: 0;
-  justify-content: flex-end;
-  gap: var(--space-s);
-}
-
-/* File name cell */
 .content-table-file {
   display: flex;
   align-items: center;
@@ -237,6 +133,12 @@
 }
 
 /* Type cell */
+.content-table-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
 .content-table-type {
   color: var(--text-secondary);
 }
@@ -251,20 +153,6 @@
   color: var(--text-primary);
   white-space: nowrap;
 }
-
-.content-table-date-stack {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.3;
-}
-
-.content-table-date-stack-year {
-  font-size: 12px;
-  line-height: 1.2;
-  color: var(--text-tertiary);
-}
-
-/* Action icons */
 .content-table-actions {
   display: flex;
   align-items: center;
@@ -427,41 +315,6 @@
   color: var(--text-error);
 }
 
-/* Pagination */
-.content-table-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-sm);
-  padding: var(--space-m) 0;
-}
-
-.content-table-pagination-text {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-
-.content-table-pagination-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  transition: background 150ms ease;
-}
-
-.content-table-pagination-btn:hover {
-  background: var(--page-background-hover);
-}
-
-.content-table-pagination-btn--disabled {
-  color: var(--text-disabled);
-  pointer-events: none;
-}
-
-/* Preview overlay */
 .content-table-preview-overlay {
   position: fixed;
   inset: 0;

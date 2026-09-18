@@ -454,12 +454,18 @@
 
 /* Deactivated rows carry no fill (per Figma) — the dimmed identity text is the
    signal; the Permanent / Long Leave status shows in the badge/column. */
-.lrp-row--deactivated .lrp-name {
+.lrp-stack--deactivated .lrp-name {
   color: var(--text-tertiary);
 }
 
-.lrp-row--deactivated .lrp-email {
+.lrp-stack--deactivated .lrp-email {
   color: var(--text-disabled);
+}
+
+/* Course is the one cell allowed to wrap to a second line. */
+.lrp-cell--wrap {
+  white-space: normal;
+  line-height: 1.3;
 }
 
 .lrp-filter-row {
@@ -578,130 +584,6 @@
   cursor: not-allowed;
 }
 
-/* ===== Table ===== */
-.lrp-table-wrap {
-  overflow-x: auto;
-  width: 100%;
-}
-
-.lrp-table {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  min-width: fit-content;
-}
-
-.lrp-header-row {
-  display: flex;
-  align-items: center;
-  background: var(--input-background);
-  border-radius: var(--radius-sm);
-}
-
-.lrp-header-row .lrp-cell {
-  display: block;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  padding: var(--space-s) var(--space-sm);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Sticky first header cell must show the header fill, not the page bg */
-.lrp-table-wrap .lrp-header-row .lrp-cell--ext-email {
-  background: var(--input-background);
-}
-
-.lrp-row {
-  display: flex;
-  align-items: center;
-  min-width: fit-content;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  transition: background 150ms ease;
-}
-
-.lrp-row:hover {
-  background: var(--input-background);
-}
-
-.lrp-cell {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
-
-/* Column widths — 5Mins Courses (matches Figma) */
-.lrp-cell--user      { flex: 1 0 240px; min-width: 240px; flex-direction: column; align-items: flex-start; gap: 2px; }
-.lrp-cell--team      { width: 180px; }
-.lrp-cell--region    { width: 160px; }
-.lrp-cell--course    { width: 200px; }
-.lrp-cell--category  { width: 160px; }
-.lrp-cell--enrolment { width: 146px; }
-.lrp-cell--date      { width: 94px; }
-.lrp-cell--days-late { width: 90px; }
-.lrp-cell--duration  { width: 84px; }
-.lrp-cell--progress  { width: 86px; }
-.lrp-cell--status    { width: 128px; }
-
-/* Course can wrap to two lines */
-.lrp-cell--course {
-  white-space: normal;
-  line-height: 1.3;
-}
-
-/* Sticky first column (User) — transparent at rest so the row's own rounded
-   border shows through untouched (no squared corners). */
-.lrp-table-wrap .lrp-cell--user {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-}
-
-/* Once scrolled, the pinned cell becomes an opaque frozen panel that masks the
-   content sliding under it. Its top/bottom borders (aligned over the row's via
-   -1px margins) preserve the row separators; the right-edge shadow (::after)
-   signals the freeze. The left edge is square by design — a rounded mask over a
-   row whose real corner has scrolled off-screen produces corner artifacts. */
-.lrp-table-wrap--scrolled .lrp-row .lrp-cell--user {
-  align-self: stretch;
-  justify-content: center;
-  margin-top: -1px;
-  margin-bottom: -1px;
-  background: var(--page-background);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.lrp-table-wrap--scrolled .lrp-row:hover .lrp-cell--user {
-  background: linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-}
-
-.lrp-cell--user::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.lrp-table-wrap--scrolled .lrp-cell--user::after {
-  opacity: 1;
-}
-
 /* User cell content */
 .lrp-name {
   font-size: 14px;
@@ -767,45 +649,6 @@
 .lrp-badge--in-progress  { background: rgba(0, 206, 230, 0.16); color: var(--primary-600); }
 .lrp-badge--not-started  { background: var(--input-background); color: var(--text-secondary); }
 .lrp-badge--overdue      { background: rgba(223, 22, 66, 0.16); color: var(--danger-400); }
-
-/* ===== External Training columns ===== */
-.lrp-cell--ext-email     { width: 240px; }
-.lrp-cell--ext-training  { width: 200px; }
-.lrp-cell--ext-provider  { width: 200px; }
-.lrp-cell--ext-score     { width: 64px; }
-.lrp-cell--ext-result    { width: 128px; }
-.lrp-cell--ext-cert      { width: 140px; }
-.lrp-cell--ext-more      { width: 48px; justify-content: center; }
-
-/* Sticky email column (external table) */
-.lrp-table-wrap .lrp-cell--ext-email {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-  background: var(--page-background);
-}
-
-.lrp-row:hover .lrp-cell--ext-email {
-  background: linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-}
-
-.lrp-cell--ext-email::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.lrp-table-wrap--scrolled .lrp-cell--ext-email::after {
-  opacity: 1;
-}
 
 /* ===== Pagination ===== */
 .lrp-pagination {

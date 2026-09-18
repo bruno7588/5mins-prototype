@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Add,
   ArrowDown2,
-  ArrowLeft2,
   ArrowRight2,
   Briefcase,
   CalendarAdd,
@@ -22,9 +21,9 @@ import {
   TickCircle,
   UserMinus,
 } from 'iconsax-react'
+import Table, { type Column } from '@/components/Table/Table'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
-import Checkbox from '../../components/Checkbox/Checkbox'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import Alert from '../../components/Alert/Alert'
@@ -268,38 +267,11 @@ function CourseDetails() {
   const { toasts, show: showToast } = useToast()
 
   /* ─── Sticky first column: track horizontal scroll ─── */
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [hasScroll, setHasScroll] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q) return learnerList
     return learnerList.filter((l) => l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q))
   }, [search, learnerList])
-
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-
-    function onScroll() {
-      setIsScrolled(el!.scrollLeft > 0)
-    }
-
-    function checkOverflow() {
-      setHasScroll(el!.scrollWidth > el!.clientWidth)
-    }
-
-    el.addEventListener('scroll', onScroll)
-    const ro = new ResizeObserver(checkOverflow)
-    ro.observe(el)
-    checkOverflow()
-
-    return () => {
-      el.removeEventListener('scroll', onScroll)
-      ro.disconnect()
-    }
-  }, [activeTab, rows.length])
 
   const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.id))
   const someSelected = !allSelected && rows.some((r) => selected.has(r.id))
@@ -387,6 +359,93 @@ function CourseDetails() {
     showToast('success', `Progress reset for ${name}`)
     setResetTarget(null)
   }
+
+  /* DS Table (table.md): the shared component owns the row-card structure, the
+     horizontal scroll, the select-all checkbox column and the pinned Name
+     column. Widths carry over from the old hand-rolled grid. */
+  const columns: Column<Learner>[] = [
+    {
+      key: 'name',
+      header: 'Name',
+      width: '1 1 260px',
+      render: (row) => (
+        <span className="tbl-stack">
+          <span className="cd-learner-name">{row.name}</span>
+          <span className="cd-learner-email">{row.email}</span>
+        </span>
+      ),
+    },
+    { key: 'startDate', header: 'Start date', width: '0 0 118px', render: (row) => <StackedDate value={row.startDate} /> },
+    { key: 'dueDate', header: 'Due date', width: '0 0 112px', render: (row) => <StackedDate value={row.dueDate} /> },
+    {
+      key: 'progress',
+      header: 'Progress',
+      width: '0 0 138px',
+      cellClassName: 'cd-cell--progress',
+      render: (row) => (
+        <>
+          <div className="cd-progress">
+            <div className="cd-progress-fill" style={{ width: `${row.progress}%` }} />
+          </div>
+          <span className="cd-progress-pct">{row.progress}%</span>
+        </>
+      ),
+    },
+    {
+      key: 'score',
+      header: (
+        <span className="cd-head-inline">
+          Score
+          <InfoMark />
+        </span>
+      ),
+      width: '0 0 88px',
+      render: (row) => (row.score != null ? `${row.score}%` : <span className="cd-cell-muted">—</span>),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      width: '0 0 150px',
+      cellClassName: 'cd-cell--status',
+      render: (row) => <EnrolmentStatus {...row} />,
+    },
+    {
+      key: 'attempt',
+      header: 'Attempt nº',
+      width: '0 0 120px',
+      align: 'center',
+      render: (row) =>
+        AUTO_RESET_ON_FAILURE ? (
+          <span className="cd-attempt">
+            {row.attemptNo}
+            <span className="cd-attempt-max">/{MAX_COURSE_ATTEMPTS}</span>
+          </span>
+        ) : (
+          row.attemptNo
+        ),
+    },
+    { key: 'completionDate', header: 'Completion date', width: '0 0 166px', render: (row) => <StackedDate value={row.completionDate} /> },
+    { key: 'repeat', header: 'Repeat', width: '0 0 94px', render: (row) => row.repeat },
+    {
+      key: 'actions',
+      header: '',
+      width: '0 0 48px',
+      align: 'center',
+      // The row menu is a popover anchored in this cell.
+      cellClassName: 'is-overflow',
+      render: (row) => (
+        <RowActionsMenu
+          items={rowMenuFor(row, canComplete)}
+          onSelect={(key) => {
+            if (key === 'resetProgress') setResetTarget(row)
+            if (key === 'complete') setCompleteTarget(row)
+          }}
+          ariaLabel={`Actions for ${row.name}`}
+        />
+      ),
+    },
+  ]
+
 
   return (
     <div className="cd-layout">
@@ -574,99 +633,21 @@ function CourseDetails() {
             </div>
 
             {/* Table */}
-            <div
-              ref={scrollRef}
-              className={`cd-table-scroll${hasScroll ? ' cd-table-scroll--has-scroll' : ''}${isScrolled ? ' cd-table-scroll--scrolled' : ''}`}
-            >
-            <div className="cd-table">
-              <div className="cd-row cd-row--head">
-                <div className="cd-cell cd-cell--name">
-                  <Checkbox checked={allSelected} indeterminate={someSelected} onChange={toggleAll} />
-                  <span>Name</span>
-                </div>
-                <div className="cd-cell cd-cell--start">Start date</div>
-                <div className="cd-cell cd-cell--due">Due date</div>
-                <div className="cd-cell cd-cell--progress">Progress</div>
-                <div className="cd-cell cd-cell--score">
-                  Score
-                  <InfoMark />
-                </div>
-                <div className="cd-cell cd-cell--status">Status</div>
-                <div className="cd-cell cd-cell--attempt">
-                  Attempt nº
-                </div>
-                <div className="cd-cell cd-cell--completion">Completion date</div>
-                <div className="cd-cell cd-cell--repeat">Repeat</div>
-                <div className="cd-cell cd-cell--actions" aria-hidden="true" />
-              </div>
+            <Table
+              columns={columns}
+              rows={rows}
+              getRowKey={(row) => String(row.id)}
+              selectable
+              isSelected={(row) => selected.has(row.id)}
+              onToggleRow={(row) => toggleRow(row.id)}
+              onToggleAll={toggleAll}
+              allSelected={allSelected}
+              selectAllIndeterminate={someSelected}
+              pagination={{ from: 1, to: rows.length, total: TOTAL }}
+            />
 
-              {rows.map((row) => (
-                <div className={`cd-row${selected.has(row.id) ? ' cd-row--selected' : ''}`} key={row.id}>
-                  <div className="cd-cell cd-cell--name">
-                    <Checkbox checked={selected.has(row.id)} onChange={() => toggleRow(row.id)} />
-                    <div className="cd-learner">
-                      <span className="cd-learner-name">{row.name}</span>
-                      <span className="cd-learner-email">{row.email}</span>
-                    </div>
-                  </div>
-                  <div className="cd-cell cd-cell--start">
-                    <StackedDate value={row.startDate} />
-                  </div>
-                  <div className="cd-cell cd-cell--due">
-                    <StackedDate value={row.dueDate} />
-                  </div>
-                  <div className="cd-cell cd-cell--progress">
-                    <div className="cd-progress">
-                      <div className="cd-progress-fill" style={{ width: `${row.progress}%` }} />
-                    </div>
-                    <span className="cd-progress-pct">{row.progress}%</span>
-                  </div>
-                  <div className="cd-cell cd-cell--score">
-                    {row.score != null ? `${row.score}%` : <span className="cd-cell-muted">—</span>}
-                  </div>
-                  <div className="cd-cell cd-cell--status">
-                    <EnrolmentStatus {...row} />
-                  </div>
-                  <div className="cd-cell cd-cell--attempt">
-                    {AUTO_RESET_ON_FAILURE ? (
-                      <span className="cd-attempt">
-                        {row.attemptNo}
-                        <span className="cd-attempt-max">/{MAX_COURSE_ATTEMPTS}</span>
-                      </span>
-                    ) : (
-                      row.attemptNo
-                    )}
-                  </div>
-                  <div className="cd-cell cd-cell--completion">
-                    <StackedDate value={row.completionDate} />
-                  </div>
-                  <div className="cd-cell cd-cell--repeat">{row.repeat}</div>
-                  <div className="cd-cell cd-cell--actions">
-                    <RowActionsMenu
-                      items={rowMenuFor(row, canComplete)}
-                      onSelect={(key) => {
-                        if (key === 'resetProgress') setResetTarget(row)
-                        if (key === 'complete') setCompleteTarget(row)
-                      }}
-                      ariaLabel={`Actions for ${row.name}`}
-                    />
-                  </div>
-                </div>
-              ))}
+            {rows.length === 0 && <div className="cd-empty">No people match your search.</div>}
 
-              {rows.length === 0 && <div className="cd-empty">No people match your search.</div>}
-            </div>
-            </div>
-
-            <div className="cd-pagination">
-              <span className="cd-pagination-text">1-{rows.length} of {TOTAL}</span>
-              <button className="cd-pagination-btn cd-pagination-btn--disabled" aria-label="Previous page">
-                <ArrowLeft2 size={16} color="var(--text-tertiary)" />
-              </button>
-              <button className="cd-pagination-btn" aria-label="Next page">
-                <ArrowRight2 size={16} color="var(--text-secondary)" />
-              </button>
-            </div>
           </section>
         ) : activeTab === 'assessments' ? (
           <AssessmentsTab />

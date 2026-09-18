@@ -408,154 +408,18 @@
   }
 }
 
-/* Table */
-/* Scroll wrapper — only scrolls when content overflows */
-.cd-table-scroll {
-  overflow-x: auto;
-}
-
-.cd-table {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  width: 100%;
-}
-
-.cd-row {
-  display: flex;
-  align-items: center;
-  min-width: fit-content;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  transition: background 150ms ease;
-}
-
-.cd-row:hover {
-  background: var(--input-background);
-}
-
-/* Selected row — var(--selected-tint) for both fill and border */
-.cd-row--selected,
-.cd-row--selected:hover {
-  background: var(--selected-tint);
-  border-color: var(--selected-tint);
-}
-
-.cd-row--head,
-.cd-row--head:hover {
-  border: none;
-  background: var(--input-background);
-  border-radius: var(--radius-sm);
-}
-
-.cd-cell {
-  display: flex;
-  align-items: center;
-  padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.cd-row--head .cd-cell {
-  padding-top: var(--space-s);
-  padding-bottom: var(--space-s);
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
-/* Columns */
-.cd-cell--name {
-  flex: 1;
-  min-width: 0;
-  gap: var(--space-sm);
-}
-
-/* ─── Sticky first (Name) column — frozen only when the table overflows ─── */
-.cd-table-scroll--has-scroll .cd-cell--name {
-  position: sticky;
-  left: 0;
-  z-index: 3;
-  flex: none;
-  width: 260px;
-  /* Opaque bg so scrolled-under content doesn't bleed through */
-  background: var(--page-background);
-}
-
-.cd-table-scroll--has-scroll .cd-row:hover .cd-cell--name {
-  background: linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-}
-
-/* Selected row: until the table is actually scrolled nothing sits under the
-   sticky cell, so it stays transparent and the row's own tint shows through. */
-.cd-table-scroll--has-scroll .cd-row--selected .cd-cell--name,
-.cd-table-scroll--has-scroll .cd-row--selected:hover .cd-cell--name {
-  background: transparent;
-}
-
-.cd-table-scroll--scrolled .cd-row--selected .cd-cell--name,
-.cd-table-scroll--scrolled .cd-row--selected:hover .cd-cell--name {
-  /* Opaque selected fill for sticky cells over scrolling content */
-  background: var(--selected-fill);
-}
-
-/* The header's own fill (--input-background) is translucent, so the sticky Name
-   cell can't just reuse it — it must stay opaque or scrolled-under columns bleed
-   through. Layer the same fill over an opaque page bg: composites to exactly what
-   the rest of the header row shows, with nothing showing through. */
-.cd-table-scroll--has-scroll .cd-row--head .cd-cell--name {
-  background:
-    linear-gradient(var(--input-background), var(--input-background)),
-    var(--page-background);
-  /* Round the left edge back — the opaque fill would otherwise square off the
-     header row's own radius. */
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-}
-
-/* Edge shadow — revealed only once the user scrolls horizontally */
-.cd-table-scroll--has-scroll .cd-cell--name::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.cd-table-scroll--scrolled .cd-cell--name::after {
-  opacity: 1;
-}
-
-.cd-cell--start {
-  width: 118px;
-  flex-shrink: 0;
-}
-
-.cd-cell--due {
-  width: 112px;
-  flex-shrink: 0;
-}
-
 .cd-cell--progress {
-  width: 138px;
-  flex-shrink: 0;
   gap: var(--space-s);
 }
 
-.cd-cell--score {
-  width: 88px;
-  flex-shrink: 0;
+.cd-cell--status {
   gap: var(--space-xs);
 }
 
-.cd-cell--status {
-  width: 150px;
-  flex-shrink: 0;
+/* Header label sitting beside an info mark */
+.cd-head-inline {
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-xs);
 }
 
@@ -569,24 +433,6 @@
   cursor: default;
 }
 
-.cd-cell--completion {
-  width: 166px;
-  flex-shrink: 0;
-}
-
-.cd-cell--repeat {
-  width: 94px;
-  flex-shrink: 0;
-}
-
-.cd-cell--attempt {
-  width: 120px;
-  flex-shrink: 0;
-  gap: var(--space-xs);
-  justify-content: center;
-}
-
-/* Attempt count "2/3" — current attempt prominent, max muted */
 .cd-attempt {
   color: var(--text-primary);
 }
@@ -616,12 +462,6 @@
   color: var(--text-secondary);
   white-space: nowrap;
   cursor: pointer;
-}
-
-.cd-cell--actions {
-  width: 48px;
-  flex-shrink: 0;
-  justify-content: center;
 }
 
 /* Reset-progress dialog width (Figma: 600px, vs ConfirmModal default 560px) */
@@ -679,25 +519,25 @@
   color: var(--text-secondary);
 }
 
-/* Learner cell */
-.cd-learner {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
 .cd-learner-name {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cd-learner-email {
   font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.5;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Stacked dates */
@@ -747,43 +587,6 @@
   color: var(--text-tertiary);
   font-size: 14px;
 }
-
-.cd-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-m);
-  margin-top: var(--space-xs);
-}
-
-.cd-pagination-text {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.cd-pagination-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-full);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.cd-pagination-btn:hover {
-  background: var(--page-background-hover);
-}
-
-.cd-pagination-btn--disabled {
-  cursor: default;
-  pointer-events: none;
-}
-
-/* Placeholder for non-implemented tabs */
 .cd-placeholder {
   padding: var(--space-xxl);
   text-align: center;

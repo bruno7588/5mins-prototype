@@ -8,11 +8,10 @@ import {
   EyeSlash,
   Edit2,
   Trash,
-  ArrowLeft2,
-  ArrowRight2,
   Danger,
 } from 'iconsax-react'
 import AddScormModal from '../../../../components/AddScormModal/AddScormModal'
+import Table, { type Column } from '@/components/Table/Table'
 import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
@@ -189,6 +188,172 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
     return () => document.removeEventListener('mousedown', handleClick)
   }, [menuOpenId])
 
+  /* DS Table (table.md): the shared component owns the row-card structure, the
+     horizontal scroll and the pinned first column — same as the SCORM content
+     table. Column widths match the old hand-rolled grid. */
+  const columns: Column<ContentRow>[] = [
+    {
+      key: 'fileName',
+      header: 'File name',
+      width: '1 1 320px',
+      render: (row) => (
+        <div className="tbl-media">
+          <div className="content-table-thumb">
+            <div
+              className="content-table-thumb-img"
+              style={{
+                backgroundImage: `url(${row.thumbnail})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+          </div>
+          <span
+            className="content-table-filename content-table-filename--clickable"
+            onClick={() => isScorm ? setEditScormRow(row) : onLessonClick?.(row)}
+            title={isScorm ? 'Click to edit SCORM' : 'Click to edit lesson'}
+          >
+            {row.fileName}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: 'type',
+      header: 'Type',
+      width: '0 0 136px',
+      render: (row) => <span className="content-table-type">{row.type}</span>,
+    },
+    { key: 'uploadedBy', header: 'Uploaded by', width: '0 0 200px', render: (row) => row.uploadedBy },
+    {
+      key: 'updatedAt',
+      // Arrow marks the column the list is already ordered by.
+      header: (
+        <span className="content-table-sort">
+          Updated at
+          <ArrowDown2 size={16} color="var(--text-secondary)" />
+        </span>
+      ),
+      width: '0 0 136px',
+      render: (row) => (
+        <span className="tbl-date">
+          <span className="day">{row.updatedAt.replace(/,?\s*\d{4}$/, ',')}</span>
+          <span className="year">{row.updatedAt.match(/\d{4}$/)?.[0]}</span>
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: '',
+      width: '0 0 128px',
+      align: 'right',
+      // The AI tooltip and the kebab menu are popovers anchored in this cell.
+      cellClassName: 'is-overflow',
+      render: (row) => (
+        <div className="content-table-actions">
+          {isScorm && (
+            <button className="content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
+              <Eye size={20} color="var(--text-tertiary)" variant="Linear" />
+            </button>
+          )}
+          {!isScorm && aiQuizReadyIds.includes(row.id) && (
+            <div className="content-table-ai-badge-wrapper">
+              {!dismissedTooltipIds.includes(row.id) && (
+                <div className="content-table-ai-tooltip">
+                  <p className="content-table-ai-tooltip-text">AI generated quizzes are ready for review</p>
+                  <div className="content-table-ai-tooltip-actions">
+                    <button
+                      className="content-table-ai-tooltip-dismiss"
+                      onClick={() => setDismissedTooltipIds(prev => [...prev, row.id])}
+                    >
+                      Dismiss
+                    </button>
+                    <button
+                      className="content-table-ai-tooltip-review"
+                      onClick={() => {
+                        setDismissedTooltipIds(prev => [...prev, row.id])
+                        onLessonClick?.(row)
+                      }}
+                    >
+                      Review Quiz
+                    </button>
+                  </div>
+                  <div className="content-table-ai-tooltip-arrow" />
+                </div>
+              )}
+              <button
+                className="content-table-ai-badge"
+                aria-label="AI quizzes ready for review"
+                onClick={() => onLessonClick?.(row)}
+              >
+                <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12.6948 9.22578C13.0267 7.85703 14.9733 7.85703 15.3052 9.22578L16.2185 12.992C16.337 13.4807 16.7185 13.8622 17.2072 13.9807L20.9734 14.894C22.3422 15.2259 22.3422 17.1726 20.9734 17.5045L17.2072 18.4177C16.7185 18.5362 16.337 18.9178 16.2185 19.4064L15.3052 23.1727C14.9733 24.5414 13.0267 24.5414 12.6948 23.1727L11.7815 19.4064C11.663 18.9178 11.2815 18.5362 10.7928 18.4177L7.02656 17.5045C5.65781 17.1726 5.65781 15.2259 7.02656 14.894L10.7928 13.9807C11.2815 13.8622 11.663 13.4807 11.7815 12.992L12.6948 9.22578Z" fill="url(#sparkle-gradient)" />
+                  <path d="M22.3705 6.71184C22.4795 6.26272 23.1182 6.26272 23.2271 6.71184L23.5268 7.94763C23.5657 8.10798 23.6909 8.23318 23.8512 8.27206L25.087 8.57172C25.5361 8.68062 25.5361 9.31938 25.087 9.42828L23.8512 9.72794C23.6909 9.76682 23.5657 9.89202 23.5268 10.0524L23.2271 11.2882C23.1182 11.7373 22.4795 11.7373 22.3705 11.2882L22.0709 10.0524C22.032 9.89202 21.9068 9.76682 21.7465 9.72794L20.5107 9.42828C20.0615 9.31938 20.0615 8.68062 20.5107 8.57172L21.7465 8.27206C21.9068 8.23318 22.032 8.10798 22.0709 7.94763L22.3705 6.71184Z" fill="url(#sparkle-gradient)" />
+                  <defs>
+                    <linearGradient id="sparkle-gradient" x1="5" y1="6" x2="26" y2="24" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#00AFC4" />
+                      <stop offset="1" stopColor="#8158EC" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </button>
+            </div>
+          )}
+          {!isScorm && !aiQuizReadyIds.includes(row.id) && (
+            <button className="content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
+              <ExportSquare size={20} color="var(--text-tertiary)" variant="Linear" />
+            </button>
+          )}
+          <div className="content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
+            <button
+              className="content-table-action-btn"
+              aria-label="More options"
+              onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
+            >
+              <MoreIcon size={20} color="var(--text-tertiary)" />
+            </button>
+            {menuOpenId === row.id && (
+              <div className="content-table-menu">
+                {isScorm ? (
+                  <button
+                    className="content-table-menu-item"
+                    onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
+                  >
+                    <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
+                    Edit SCORM
+                  </button>
+                ) : (
+                  <button
+                    className="content-table-menu-item"
+                    onClick={() => { setMenuOpenId(null); onLessonClick?.(row) }}
+                  >
+                    <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
+                    Edit lesson
+                  </button>
+                )}
+                <button className="content-table-menu-item ui-disabled" disabled>
+                  <EyeSlash size={20} color="var(--text-primary)" variant="Linear" />
+                  Hide
+                </button>
+                <button
+                  className="content-table-menu-item content-table-menu-item--danger"
+                  onClick={() => {
+                    setMenuOpenId(null)
+                    setDeleteRow(row)
+                  }}
+                >
+                  <Trash size={20} color="var(--danger-500)" variant="Linear" />
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      ),
+    },
+  ]
+
+
   return (
     <div className="content-table-wrapper">
       {showAddScorm && (
@@ -251,161 +416,13 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
       </div>
 
       {/* Table */}
-      <div className="content-table">
-        <div className="content-table-header">
-          <div className="content-table-cell content-table-cell--name">File name</div>
-          <div className="content-table-cell content-table-cell--type">Type</div>
-          <div className="content-table-cell content-table-cell--uploader">Uploaded by</div>
-          <div className="content-table-cell content-table-cell--date content-table-cell--sortable">
-            Updated at
-            <ArrowDown2 size={16} color="var(--text-secondary)" />
-          </div>
-          <div className="content-table-cell content-table-cell--actions" aria-hidden="true" />
-        </div>
-        {rows.map((row) => (
-          <div className="content-table-row" key={row.id}>
-            <div className="content-table-cell content-table-cell--name">
-              <div className="content-table-thumb">
-                <div
-                  className="content-table-thumb-img"
-                  style={{
-                    backgroundImage: `url(${row.thumbnail})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                />
-              </div>
-              <span
-                className="content-table-filename content-table-filename--clickable"
-                onClick={() => isScorm ? setEditScormRow(row) : onLessonClick?.(row)}
-                title={isScorm ? 'Click to edit SCORM' : 'Click to edit lesson'}
-              >
-                {row.fileName}
-              </span>
-            </div>
-            <div className="content-table-cell content-table-cell--type">{row.type}</div>
-            <div className="content-table-cell content-table-cell--uploader">{row.uploadedBy}</div>
-            <div className="content-table-cell content-table-cell--date">
-              <div className="content-table-date-stack">
-                <span>{row.updatedAt.replace(/,?\s*\d{4}$/, ',')}</span>
-                <span className="content-table-date-stack-year">{row.updatedAt.match(/\d{4}$/)?.[0]}</span>
-              </div>
-            </div>
-            <div className="content-table-cell content-table-cell--actions">
-              <div className="content-table-actions">
-                  {isScorm && (
-                    <button className="content-table-action-btn" aria-label="Preview" onClick={() => setPreviewRow(row)}>
-                      <Eye size={20} color="var(--text-tertiary)" variant="Linear" />
-                    </button>
-                  )}
-                  {!isScorm && aiQuizReadyIds.includes(row.id) && (
-                    <div className="content-table-ai-badge-wrapper">
-                      {!dismissedTooltipIds.includes(row.id) && (
-                        <div className="content-table-ai-tooltip">
-                          <p className="content-table-ai-tooltip-text">AI generated quizzes are ready for review</p>
-                          <div className="content-table-ai-tooltip-actions">
-                            <button
-                              className="content-table-ai-tooltip-dismiss"
-                              onClick={() => setDismissedTooltipIds(prev => [...prev, row.id])}
-                            >
-                              Dismiss
-                            </button>
-                            <button
-                              className="content-table-ai-tooltip-review"
-                              onClick={() => {
-                                setDismissedTooltipIds(prev => [...prev, row.id])
-                                onLessonClick?.(row)
-                              }}
-                            >
-                              Review Quiz
-                            </button>
-                          </div>
-                          <div className="content-table-ai-tooltip-arrow" />
-                        </div>
-                      )}
-                      <button
-                        className="content-table-ai-badge"
-                        aria-label="AI quizzes ready for review"
-                        onClick={() => onLessonClick?.(row)}
-                      >
-                        <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12.6948 9.22578C13.0267 7.85703 14.9733 7.85703 15.3052 9.22578L16.2185 12.992C16.337 13.4807 16.7185 13.8622 17.2072 13.9807L20.9734 14.894C22.3422 15.2259 22.3422 17.1726 20.9734 17.5045L17.2072 18.4177C16.7185 18.5362 16.337 18.9178 16.2185 19.4064L15.3052 23.1727C14.9733 24.5414 13.0267 24.5414 12.6948 23.1727L11.7815 19.4064C11.663 18.9178 11.2815 18.5362 10.7928 18.4177L7.02656 17.5045C5.65781 17.1726 5.65781 15.2259 7.02656 14.894L10.7928 13.9807C11.2815 13.8622 11.663 13.4807 11.7815 12.992L12.6948 9.22578Z" fill="url(#sparkle-gradient)" />
-                          <path d="M22.3705 6.71184C22.4795 6.26272 23.1182 6.26272 23.2271 6.71184L23.5268 7.94763C23.5657 8.10798 23.6909 8.23318 23.8512 8.27206L25.087 8.57172C25.5361 8.68062 25.5361 9.31938 25.087 9.42828L23.8512 9.72794C23.6909 9.76682 23.5657 9.89202 23.5268 10.0524L23.2271 11.2882C23.1182 11.7373 22.4795 11.7373 22.3705 11.2882L22.0709 10.0524C22.032 9.89202 21.9068 9.76682 21.7465 9.72794L20.5107 9.42828C20.0615 9.31938 20.0615 8.68062 20.5107 8.57172L21.7465 8.27206C21.9068 8.23318 22.032 8.10798 22.0709 7.94763L22.3705 6.71184Z" fill="url(#sparkle-gradient)" />
-                          <defs>
-                            <linearGradient id="sparkle-gradient" x1="5" y1="6" x2="26" y2="24" gradientUnits="userSpaceOnUse">
-                              <stop stopColor="#00AFC4" />
-                              <stop offset="1" stopColor="#8158EC" />
-                            </linearGradient>
-                          </defs>
-                        </svg>
-                      </button>
-                    </div>
-                  )}
-                  {!isScorm && !aiQuizReadyIds.includes(row.id) && (
-                    <button className="content-table-action-btn ui-disabled" aria-label="Share (coming soon)" disabled>
-                      <ExportSquare size={20} color="var(--text-tertiary)" variant="Linear" />
-                    </button>
-                  )}
-                  <div className="content-table-more-wrapper" ref={menuOpenId === row.id ? menuRef : undefined}>
-                    <button
-                      className="content-table-action-btn"
-                      aria-label="More options"
-                      onClick={() => setMenuOpenId(menuOpenId === row.id ? null : row.id)}
-                    >
-                      <MoreIcon size={20} color="var(--text-tertiary)" />
-                    </button>
-                    {menuOpenId === row.id && (
-                      <div className="content-table-menu">
-                        {isScorm ? (
-                          <button
-                            className="content-table-menu-item"
-                            onClick={() => { setMenuOpenId(null); setEditScormRow(row) }}
-                          >
-                            <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
-                            Edit SCORM
-                          </button>
-                        ) : (
-                          <button
-                            className="content-table-menu-item"
-                            onClick={() => { setMenuOpenId(null); onLessonClick?.(row) }}
-                          >
-                            <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
-                            Edit lesson
-                          </button>
-                        )}
-                        <button className="content-table-menu-item ui-disabled" disabled>
-                          <EyeSlash size={20} color="var(--text-primary)" variant="Linear" />
-                          Hide
-                        </button>
-                        <button
-                          className="content-table-menu-item content-table-menu-item--danger"
-                          onClick={() => {
-                            setMenuOpenId(null)
-                            setDeleteRow(row)
-                          }}
-                        >
-                          <Trash size={20} color="var(--danger-500)" variant="Linear" />
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <Table
+        columns={columns}
+        rows={rows}
+        getRowKey={(row) => String(row.id)}
+        pagination={{ from: 1, to: rows.length, total: rows.length }}
+      />
 
-      {/* Pagination */}
-      <div className="content-table-pagination">
-        <span className="content-table-pagination-text">1-{rows.length} of {rows.length}</span>
-        <button className="content-table-pagination-btn content-table-pagination-btn--disabled" aria-label="Previous page">
-          <ArrowLeft2 size={16} color="var(--text-disabled)" />
-        </button>
-        <button className="content-table-pagination-btn content-table-pagination-btn--disabled" aria-label="Next page">
-          <ArrowRight2 size={16} color="var(--text-disabled)" />
-        </button>
-      </div>
 
       <ConfirmModal open={!!deleteRow} onClose={closeDeleteModal}>
         {deleteRow && (
