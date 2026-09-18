@@ -3,15 +3,15 @@ import {
   ArchiveAdd,
   ArrowDown2,
   ArrowUp2,
-  Discover,
   Maximize4,
   Messages2,
   More,
   Send2,
 } from 'iconsax-react'
 import CloseButton from '../../../components/CloseButton/CloseButton'
-import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import ResourceCard from '@/components/ResourceCard/ResourceCard'
+import Tooltip from '@/components/Tooltip/Tooltip'
+import { getLearningsIllustration } from '../../../assets/learnings-illustrations'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { getLevelIllustration } from '../../../assets/level-illustrations'
 import type { FeedEpisode, FeedLesson } from '../feedItems'
@@ -42,6 +42,8 @@ function EpisodeCard({ ep }: { ep: FeedEpisode }) {
   )
 }
 
+type LessonTab = 'episodes' | 'resources' | 'learnings'
+
 interface LessonFeedProps {
   lessons: FeedLesson[]
   startIndex: number
@@ -52,12 +54,22 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
   const [active, setActive] = useState(startIndex)
   const [following, setFollowing] = useState(false)
   const [bookmarked, setBookmarked] = useState(false)
-  const [tab, setTab] = useState<'episodes' | 'resources'>('episodes')
+  const [tab, setTab] = useState<LessonTab>('episodes')
   const { toasts, show: showToast, dismiss: dismissToast } = useToast()
 
   const resources = lessons[active]?.resources ?? []
 
   const lesson = lessons[active]
+  const hasLearnings = Boolean(lesson?.learningGoal || lesson?.keyConcepts?.length)
+
+  /* A tab with nothing behind it is a dead end, so each one appears only when the
+     lesson has that content. Most lessons carry no resources. */
+  const tabs: { key: LessonTab; label: string; count?: number }[] = [
+    { key: 'episodes', label: 'Episodes' },
+    ...(resources.length ? [{ key: 'resources' as const, label: 'Resources', count: resources.length }] : []),
+    ...(hasLearnings ? [{ key: 'learnings' as const, label: 'Learnings' }] : []),
+  ]
+
   const atFirst = active === 0
   const atLast = active === lessons.length - 1
 
@@ -171,28 +183,62 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             />
             <span className="lf-skill__name">{lesson.skillName}</span>
           </div>
-          {resources.length > 0 && (
-            /* Resources sit beside the episodes, as on every course player: content,
-               not a social action. */
-            <ContentSwitcher
-              className="lf-switcher"
-              ariaLabel="Lesson details"
-              items={[
-                { key: 'episodes', label: 'Episodes' },
-                { key: 'resources', label: `Resources (${resources.length})` },
-              ]}
-              activeKey={tab}
-              onChange={(key) => setTab(key as 'episodes' | 'resources')}
-            />
-          )}
+          {/* Bookmark / Share / Comments act on the lesson, so they sit with the
+              lesson's identity — the tab row below is navigation only. Icon-only
+              per Figma 6574:54271, each naming itself on hover. */}
+          <div className="lf-social">
+            <Tooltip text={bookmarked ? 'Bookmarked' : 'Bookmark'} position="Top" icon={false}>
+              <button
+                type="button"
+                className="lf-social__item"
+                onClick={() => setBookmarked((b) => !b)}
+                aria-pressed={bookmarked}
+                aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark this lesson'}
+              >
+                <ArchiveAdd size={20} color="currentColor" variant={bookmarked ? 'Bold' : 'Linear'} />
+              </button>
+            </Tooltip>
+            <Tooltip text="Share" position="Top" icon={false}>
+              <button type="button" className="lf-social__item ui-disabled" disabled aria-label="Share this lesson">
+                <Send2 size={20} color="currentColor" variant="Linear" />
+              </button>
+            </Tooltip>
+            <Tooltip text="Comments" position="Top" icon={false}>
+              <button type="button" className="lf-social__item ui-disabled" disabled aria-label="Comments on this lesson">
+                <Messages2 size={20} color="currentColor" variant="Linear" />
+              </button>
+            </Tooltip>
+          </div>
 
-          {tab === 'episodes' || resources.length === 0 ? (
+          <div className="lf-tabs" role="tablist" aria-label="Lesson details">
+            {tabs.map(({ key, label, count }) => (
+                <button
+                  key={key}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === key}
+                  className={`lf-tab${tab === key ? ' lf-tab--active' : ''}`}
+                  onClick={() => setTab(key)}
+                >
+                  <span className="lf-tab__label">
+                    {label}
+                    {count ? <span className="lf-tab__count">{count}</span> : null}
+                  </span>
+                  <span className="lf-tab__indicator" />
+                </button>
+            ))}
+          </div>
+
+          <div className="lf-tabpanel">
+          {tab === 'episodes' && (
             <div className="lf-episodes">
               {lesson.episodes.map((ep, i) => (
                 <EpisodeCard key={i} ep={ep} />
               ))}
             </div>
-          ) : (
+          )}
+
+          {tab === 'resources' && (
             <div className="lf-resources">
               {resources.map((r) => (
                 <ResourceCard
@@ -210,32 +256,55 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
               ))}
             </div>
           )}
+
+          {tab === 'learnings' && (
+            <div className="lf-learnings">
+              {lesson.learningGoal && (
+                <section className="lf-learn">
+                  <h3 className="lf-learn__head">
+                    <img
+                      className="lf-learn__icon"
+                      src={getLearningsIllustration('learning-goals')}
+                      alt=""
+                      width={20}
+                      height={20}
+                    />
+                    Learning goals
+                  </h3>
+                  <div className="lf-learn__card">
+                    <p className="lf-learn__goal">{lesson.learningGoal}</p>
+                  </div>
+                </section>
+              )}
+              {lesson.keyConcepts?.length ? (
+                <section className="lf-learn">
+                  <h3 className="lf-learn__head">
+                    <img
+                      className="lf-learn__icon"
+                      src={getLearningsIllustration('key-concepts')}
+                      alt=""
+                      width={20}
+                      height={20}
+                    />
+                    Key concepts
+                  </h3>
+                  {lesson.keyConcepts.map((concept) => (
+                    <div className="lf-learn__card" key={concept.heading}>
+                      <p className="lf-learn__concept">{concept.heading}</p>
+                      <ul className="lf-learn__points">
+                        {concept.points.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+              ) : null}
+            </div>
+          )}
+          </div>
         </div>
 
-
-        <div className="lf-menu">
-          <button type="button" className="lf-menu__item ui-disabled" disabled>
-            <Discover size={20} color="var(--text-primary)" variant="Linear" />
-            <span>Learnings</span>
-          </button>
-          <button
-            type="button"
-            className="lf-menu__item"
-            onClick={() => setBookmarked((b) => !b)}
-            aria-pressed={bookmarked}
-          >
-            <ArchiveAdd size={20} color="var(--text-primary)" variant={bookmarked ? 'Bold' : 'Linear'} />
-            <span>Bookmark</span>
-          </button>
-          <button type="button" className="lf-menu__item ui-disabled" disabled>
-            <Send2 size={20} color="var(--text-primary)" variant="Linear" />
-            <span>Share</span>
-          </button>
-          <button type="button" className="lf-menu__item ui-disabled" disabled>
-            <Messages2 size={20} color="var(--text-primary)" variant="Linear" />
-            <span>Comments</span>
-          </button>
-        </div>
 
         <div className="lf-quiz">
           <span className="lf-quiz__mark" aria-hidden="true">?</span>

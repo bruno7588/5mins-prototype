@@ -29,6 +29,15 @@ export interface FeedLesson {
   episodes: FeedEpisode[]
   /** Files and links attached to this lesson (DES-334). */
   resources?: CourseResourceItem[]
+  /** Learnings tab (Figma 6574:54443): what the learner walks away with. */
+  learningGoal?: string
+  keyConcepts?: FeedConcept[]
+}
+
+/** One "Key concepts" card: a heading over its bullets. */
+export interface FeedConcept {
+  heading: string
+  points: string[]
 }
 
 // One entry per "Jump back in" / hero card — the feed navigates this list.
@@ -51,6 +60,25 @@ export const feedLessons: FeedLesson[] = [
       { id: 'f1r1', type: 'pdf', title: 'Pricing teardown worksheet', size: 842752 },
       { id: 'f1r2', type: 'link', title: 'Zendesk pricing page', url: 'https://www.zendesk.co.uk/pricing/' },
     ],
+    learningGoal:
+      'You\'ll understand effective product positioning and how to avoid common mistakes',
+    keyConcepts: [
+      {
+        heading: 'Reading a pricing page',
+        points: [
+          'Market segmentation strategies',
+          'Common positioning pitfalls',
+          'Clear value proposition importance',
+        ],
+      },
+      {
+        heading: 'Spotting your own bias',
+        points: [
+          'Where anchoring creeps in',
+          'Testing a price against a segment',
+        ],
+      },
+    ],
   },
   {
     instructor: 'Daniel Okoro',
@@ -69,6 +97,25 @@ export const feedLessons: FeedLesson[] = [
     resources: [
       { id: 'f2r1', type: 'word', title: 'Remote team charter template', size: 819200 },
     ],
+    learningGoal:
+      'You\'ll run a remote team without losing the momentum a room gives you',
+    keyConcepts: [
+      {
+        heading: 'Rhythm over presence',
+        points: [
+          'Written updates beat status meetings',
+          'Make the default asynchronous',
+          'Protect one shared hour',
+        ],
+      },
+      {
+        heading: 'Trust at a distance',
+        points: [
+          'Show the work, not the hours',
+          'Disagree in writing, decide on a call',
+        ],
+      },
+    ],
   },
   {
     instructor: 'Sofia Marin',
@@ -84,6 +131,25 @@ export const feedLessons: FeedLesson[] = [
       { label: 'Episode 1', title: 'Naming the Tension Without Escalating', progress: 1, duration: '2:40' },
       { label: 'Episode 2', title: 'Finding the Shared Goal', progress: 0.68, duration: '5:03' },
     ],
+    learningGoal:
+      'You\'ll give feedback people can act on instead of just absorb',
+    keyConcepts: [
+      {
+        heading: 'Separate the act from the person',
+        points: [
+          'Describe what you saw',
+          'Name the effect it had',
+          'Ask before advising',
+        ],
+      },
+      {
+        heading: 'Make it usable',
+        points: [
+          'One thing, not five',
+          'Agree the next step together',
+        ],
+      },
+    ],
   },
   {
     instructor: 'Liam Walsh',
@@ -97,6 +163,25 @@ export const feedLessons: FeedLesson[] = [
     quizPoints: 4,
     episodes: [
       { label: 'Episode 1', title: 'Delegate the Outcome, Not the Task', progress: 1, duration: '2:58' },
+    ],
+    learningGoal:
+      'You\'ll delegate work without either abandoning it or taking it back',
+    keyConcepts: [
+      {
+        heading: 'Hand over the outcome',
+        points: [
+          'Say what done looks like',
+          'Agree the check-in, not the method',
+          'Let the first attempt be imperfect',
+        ],
+      },
+      {
+        heading: 'Stay useful, not involved',
+        points: [
+          'Answer questions, don\'t pre-empt them',
+          'Review once, properly',
+        ],
+      },
     ],
   },
   {
@@ -112,6 +197,25 @@ export const feedLessons: FeedLesson[] = [
     episodes: [
       { label: 'Episode 1', title: 'The Myth of Time Management', progress: 0.1, duration: '3:30' },
       { label: 'Episode 2', title: 'Designing Your Peak Window', progress: 0, duration: '4:01', upcoming: true },
+    ],
+    learningGoal:
+      'You\'ll tell a story people remember instead of a report they skim',
+    keyConcepts: [
+      {
+        heading: 'Find the turn',
+        points: [
+          'Start where something changed',
+          'Cut the setup to one line',
+          'Keep one idea per beat',
+        ],
+      },
+      {
+        heading: 'Make it theirs',
+        points: [
+          'Use their vocabulary',
+          'End on the decision you want',
+        ],
+      },
     ],
   },
 ]
