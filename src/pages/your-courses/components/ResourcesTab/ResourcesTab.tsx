@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Add, Trash } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ResourceCard from '@/components/ResourceCard/ResourceCard'
+import EmptyState from '@/components/EmptyState/EmptyState'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import resourcesIllustration from '@/assets/empty-state-illustrations/resources.svg'
 import type { CourseResource } from '@/components/ResourceCard/resources'
@@ -53,20 +54,17 @@ function ResourcesTab({ resources, onReorder, onAdd, onRemove }: Props) {
     return (
       <div className="content-list-layout content-list-layout--empty">
         <section className="content-list resources-tab">
-          <div className="course-empty-state" role="status">
-            <img className="course-empty-state__icon" src={resourcesIllustration} width={72} height={72} alt="" />
-            <div className="course-empty-state__info">
-              <h2 className="course-empty-state__title">Add resources to your course</h2>
-              <p className="course-empty-state__body">
-                Upload PDF, Word, Excel, or PowerPoint files, or add links.
-              </p>
-            </div>
-            <div className="course-empty-state__cta">
-              <Button variant="outlined" icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={onAdd}>
-                Add Resource
-              </Button>
-            </div>
-          </div>
+          <EmptyState
+            surface="dropzone"
+            illustration={<img src={resourcesIllustration} width={72} height={72} alt="" />}
+            title="Add resources to your course"
+            description="Upload PDF, Word, Excel, or PowerPoint files, or add links."
+            secondaryAction={{
+              label: 'Add Resource',
+              icon: <Add size={20} color="currentColor" variant="Linear" />,
+              onClick: onAdd,
+            }}
+          />
         </section>
       </div>
     )

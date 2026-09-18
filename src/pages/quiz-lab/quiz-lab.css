@@ -337,9 +337,9 @@
   color: transparent;
 }
 
-/* ── Crisp dashed border overlay (see DashedBorder.tsx) ─────────────────────
+/* ── Crisp dashed border overlay (shared components/DashedBorder) ───────────
    Real inline SVG so the 4px dash stays sharp at any size; stroke colour is a
-   token (theme-aware) and reacts to the bucket's hover/active state. */
+   token and reacts to the bucket's hover/active state. */
 .ql-bucket,
 .ql-pairs__empty,
 .ql-seq__answer,
@@ -347,15 +347,10 @@
   position: relative;
 }
 
-.ql-dash {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
+/* Receivers ease their stroke between drop states. Known cost: Chrome latches a
+   transitioned var()-backed property, so a receiver's stroke keeps whichever
+   theme it first rendered in until remount. */
 .ql-dash rect {
-  stroke: var(--border-elevated);
   transition: stroke 150ms ease;
 }
 

@@ -3,7 +3,7 @@ import type { FillBlankQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
-import DashedBorder from '../components/DashedBorder'
+import DashedBorder from '@/components/DashedBorder/DashedBorder'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
@@ -91,7 +91,7 @@ function FillBlank({ question }: { question: FillBlankQuestion; formatKey: Forma
     else cls.push('ql-blank--empty')
     return (
       <button key={i} type="button" className={cls.join(' ')} onClick={() => clearGap(gapIndex)}>
-        {placed !== null ? bank[placed] : <DashedBorder />}
+        {placed !== null ? bank[placed] : <DashedBorder className="ql-dash" />}
       </button>
     )
   })

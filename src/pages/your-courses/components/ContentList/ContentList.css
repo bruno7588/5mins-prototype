@@ -165,65 +165,6 @@
   background-color: var(--selected-tint);
 }
 
-/* ── Course empty state (per Figma 8565:12932) ──────────────── */
-.course-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-m);
-  padding: var(--space-xxl) var(--space-l);
-  background-color: var(--input-background);
-  /* Plain CSS dashed border. The old SVG data-URI stroked `currentColor`, but a
-     background-image SVG is its own document — it can't see the host element's
-     colour, so the dashes rendered near-black instead of --border. */
-  border: 1px dashed var(--border-elevated);
-  border-radius: var(--radius-ml);
-  width: 100%;
-}
-
-.course-empty-state__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 72px;
-  height: 72px;
-}
-
-.course-empty-state__info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-s);
-  text-align: center;
-}
-
-.course-empty-state__title {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.course-empty-state__body {
-  margin: 0;
-  max-width: 600px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.course-empty-state__cta {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: var(--space-m);
-}
-
 /* ── Curriculum section card ────────────────────────────────── */
 /* Outer section wrapper — 2-column grid: [drag column][content].
    Grid puts the drag column in the SAME ROW as the header so its height

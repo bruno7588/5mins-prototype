@@ -34,7 +34,7 @@ Spec source: Figma Library — light `11921:5779` / dark `5452:37234` (verified 
 
 ## Visual Spec (Mobile)
 
-Figma-verified 2026-07-13 (variant `Device=Mobile`, dark node `5452:37381`). Used in the mobile app prototype (phone-frame). Implemented as the shared component `src/components/mobile/EmptyState` — use it, don't hand-roll.
+Figma-verified 2026-07-13 (variant `Device=Mobile`, dark node `5452:37381`). Used in the mobile app prototype (phone-frame).
 
 Differences from desktop — everything else (illustration 72px, info gap 8px, CTA row 16px gap, Medium buttons, radius 20px, tokens) is identical:
 
@@ -54,10 +54,37 @@ Certificates `9120:8373` · Pie chart `9120:8385` · Empty box `9120:8397` · Se
 
 Download the SVG from Figma per context when a page needs one; don't redraw them.
 
+## Implementation
+
+One shared component, `src/components/EmptyState/EmptyState.tsx`, carries both device variants — **use it, don't hand-roll**. Desktop is the default; pass `device="mobile"` inside the phone frame.
+
+```tsx
+<EmptyState
+  illustration={<img src={resourcesIllustration} width={72} height={72} alt="" />}
+  title="Add resources to your course"
+  description="Upload PDF, Word, Excel, or PowerPoint files, or add links."
+  secondaryAction={{ label: 'Add Resource', icon: <Add size={20} color="currentColor" />, onClick: add }}
+/>
+```
+
+| Prop | Purpose |
+|---|---|
+| `illustration` | 72×72 node from the set below |
+| `title` / `description` | Bold-20 (Bold-16 on mobile) / Regular-14 |
+| `secondaryAction` | outlined button, renders BEFORE the primary |
+| `primaryAction` | filled button — the action that fills the empty area |
+| `device` | `desktop` (default) \| `mobile` — the Figma `Device` variant |
+| `surface` | `plain` (default) \| `dropzone` — see below |
+
+### `surface="dropzone"` — code-only extra
+
+Not a Figma variant. Puts the empty state on `--input-background` inside a dashed outline, for an area the admin fills themselves (the course builder's Content and Resources tabs, the lesson editor's Resources tab). The outline is a `DashedBorder` overlay rather than `border: dashed`, because CSS gives no control over dash length or the space between dashes.
+
 ## CSS
 
 ```css
 .empty-state {
+  position: relative;               /* anchors the dropzone outline */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,42 +114,6 @@ Download the SVG from Figma per context when a page needs one; don't redraw them
 .empty-state__cta { display: flex; gap: var(--space-m); justify-content: center; }
 ```
 
-## React TypeScript
-
-```tsx
-import { ReactNode } from 'react';
-
-interface EmptyStateProps {
-  illustration?: ReactNode;      // 72×72 graphic for the context
-  title: string;
-  description?: string;
-  primaryAction?: { label: string; onClick: () => void };
-  secondaryAction?: { label: string; onClick: () => void };  // outlined, renders BEFORE primary
-}
-
-export function EmptyState({ illustration, title, description, primaryAction, secondaryAction }: EmptyStateProps) {
-  return (
-    <div className="empty-state" role="status">
-      {illustration && <div className="empty-state__illustration">{illustration}</div>}
-      <div className="empty-state__info">
-        <h3 className="empty-state__title">{title}</h3>
-        {description && <p className="empty-state__description">{description}</p>}
-      </div>
-      {(primaryAction || secondaryAction) && (
-        <div className="empty-state__cta">
-          {secondaryAction && (
-            <button className="btn-outlined" onClick={secondaryAction.onClick}>{secondaryAction.label}</button>
-          )}
-          {primaryAction && (
-            <button className="btn-primary" onClick={primaryAction.onClick}>{primaryAction.label}</button>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-```
-
 ## Content guidelines
 
 - **Title:** short and stateful ("No courses yet", "Nothing assigned"), not apologetic.
@@ -141,3 +132,4 @@ export function EmptyState({ illustration, title, description, primaryAction, se
 
 - `buttons.md` — the outlined/filled Medium buttons in the CTA row
 - `5mins-colors` (colors.md) — text tokens
+- `layout.md` — the 20px radius and the spacing scale

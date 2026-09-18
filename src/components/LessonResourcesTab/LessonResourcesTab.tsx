@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Add } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ResourceCard from '@/components/ResourceCard/ResourceCard'
+import EmptyState from '@/components/EmptyState/EmptyState'
 import LessonResourceDrawer from './LessonResourceDrawer'
 import resourcesIllustration from '@/assets/empty-state-illustrations/resources.svg'
 import type { CourseResource } from '@/components/ResourceCard/resources'
@@ -47,20 +48,21 @@ function LessonResourcesTab({ resources, isNew, onAdd, onRemove }: Props) {
   if (resources.length === 0) {
     return (
       <div className="lesson-resources">
-        <div className="lesson-resources__empty" role="status">
-          <img className="lesson-resources__illustration" src={resourcesIllustration} width={72} height={72} alt="" />
-          <div className="lesson-resources__empty-info">
-            <h3 className="lesson-resources__empty-title">Add resources to this lesson</h3>
-            <p className="lesson-resources__empty-body">
-              {isNew
-                ? 'Give learners a deep dive to take after the lesson: PDF, Word, Excel or PowerPoint files, or links.'
-                : 'Upload PDF, Word, Excel, or PowerPoint files, or add links.'}
-            </p>
-          </div>
-          <Button variant="outlined" icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setAdding(true)}>
-            Add Resource
-          </Button>
-        </div>
+        <EmptyState
+          surface="dropzone"
+          illustration={<img src={resourcesIllustration} width={72} height={72} alt="" />}
+          title="Add resources to this lesson"
+          description={
+            isNew
+              ? 'Give learners a deep dive to take after the lesson: PDF, Word, Excel or PowerPoint files, or links.'
+              : 'Upload PDF, Word, Excel, or PowerPoint files, or add links.'
+          }
+          secondaryAction={{
+            label: 'Add Resource',
+            icon: <Add size={20} color="currentColor" variant="Linear" />,
+            onClick: () => setAdding(true),
+          }}
+        />
         {adding && <LessonResourceDrawer onClose={() => setAdding(false)} onSave={save} />}
       </div>
     )

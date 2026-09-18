@@ -3,7 +3,7 @@ import type { SequencingQuestion } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
-import DashedBorder from '../components/DashedBorder'
+import DashedBorder from '@/components/DashedBorder/DashedBorder'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
@@ -154,7 +154,7 @@ function SequencingDnd({ question }: { question: SequencingQuestion }) {
             setDragging(null)
           }}
         >
-          <DashedBorder />
+          <DashedBorder className="ql-dash" />
           {placed.length === 0 ? (
             <p className="ql-seq__hint">Drag a step up here to put it in order</p>
           ) : (
@@ -217,7 +217,7 @@ function SequencingDnd({ question }: { question: SequencingQuestion }) {
               setDragging(null)
             }}
           >
-            {overBank && <DashedBorder />}
+            {overBank && <DashedBorder className="ql-dash" />}
             {bank.map((stepIndex) => (
               <button
                 key={stepIndex}

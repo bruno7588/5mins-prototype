@@ -1,0 +1,16 @@
+/* Overlay sits on the host's edge; the host owns `position: relative`. */
+.dashed-border {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dashed-border rect {
+  stroke: var(--border-elevated);
+}
+
+/* No `transition: stroke` here. Chrome latches a transitioned property whose
+   value comes from a custom property: the stroke keeps its first-resolved
+   colour and never picks up the light/dark swap. A host that animates the
+   stroke on hover opts in on its own class (see quiz-lab's .ql-dash). */

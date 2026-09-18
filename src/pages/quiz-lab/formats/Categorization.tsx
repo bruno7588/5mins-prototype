@@ -4,7 +4,7 @@ import type { CategorizationQuestion, FormatKey } from '../quizData'
 import { shuffle } from '../quizData'
 import FeedbackFooter from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
-import DashedBorder from '../components/DashedBorder'
+import DashedBorder from '@/components/DashedBorder/DashedBorder'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
@@ -126,7 +126,7 @@ function Categorization({ question }: { question: CategorizationQuestion; format
                   }
                 }}
               >
-                <DashedBorder />
+                <DashedBorder className="ql-dash" />
                 {selected !== null && status === 'idle' && !hasDropped && (
                   <span className="ql-bucket__nudge" aria-hidden="true">
                     <ArrowDown size={24} color="var(--selected)" />
