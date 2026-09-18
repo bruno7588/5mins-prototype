@@ -4,6 +4,7 @@ import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import MobileTopNav from '@/components/mobile/TopNav/TopNav'
 import MobileTabNav, { type MobileTab } from '@/components/mobile/TabNav/TabNav'
 import { getAllPrograms } from '@/pages/programs/programStore'
+import ForYouScreen from './ForYouScreen'
 import WorkspaceScreen from './WorkspaceScreen'
 import ProgramScreen from './ProgramScreen'
 
@@ -82,6 +83,7 @@ function MobileApp() {
       onExit={() => navigate('/content-library')}
     >
       {openProgram ? <ProgramScreen program={openProgram} /> : null}
+      {!openProgram && tab === 'home' && homeChip === 'For You' ? <ForYouScreen /> : null}
       {!openProgram && tab === 'home' && homeChip === 'Your Workspace' ? (
         <WorkspaceScreen onOpenProgram={setOpenProgramId} />
       ) : null}

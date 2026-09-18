@@ -1,0 +1,96 @@
+/* Mobile "For You" screen — Figma Your Content 6571:52755 (Body 6571:52757). */
+.m-fy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  padding: var(--space-m);
+  width: 100%;
+}
+
+.m-fy-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  width: 100%;
+  min-width: 0;
+}
+
+/* The hero section centres its picker and indicator over the card. */
+.m-fy-section--hero {
+  align-items: center;
+}
+
+.m-fy-picker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  width: 100%;
+  padding: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  text-align: left;
+}
+
+.m-fy-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.m-fy-section__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-fy-section__action {
+  flex-shrink: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-button-outlined);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Horizontally swiped row, bleeding past the screen's 16px gutter. */
+.m-fy-row {
+  display: flex;
+  gap: var(--space-m);
+  align-items: flex-start;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  margin-right: calc(var(--space-m) * -1);
+  padding-right: var(--space-m);
+}
+
+.m-fy-row::-webkit-scrollbar {
+  display: none;
+}
+
+.m-fy-row > * {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+/* Both cards are the shared DS components; the screen only narrows them from
+   their 170px desktop width to the 154px this frame uses. */
+.m-fy-row > .skill-card,
+.m-fy-row > .lesson-grid-card {
+  width: 154px;
+}

@@ -1,0 +1,140 @@
+/* Mobile For You hero — Figma Your Content 6571:52760 (indicator 6571:52766). */
+
+.m-fy-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.m-fy-hero__slide {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: var(--radius-m); /* 16px */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-m);
+  text-align: left;
+}
+
+.m-fy-hero__slide--interactive {
+  cursor: pointer;
+}
+
+.m-fy-hero__slide--interactive:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
+.m-fy-hero__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Bottom-weighted fade so the caption reads over any frame. */
+.m-fy-hero__gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(38, 41, 51, 0) 0%,
+    rgba(38, 41, 51, 0.04) 56.4%,
+    rgba(38, 41, 51, 0.08) 63.5%,
+    rgba(38, 41, 51, 0.24) 72.3%,
+    rgba(38, 41, 51, 0.5) 85.3%,
+    rgb(38, 41, 51) 100%
+  );
+  pointer-events: none;
+}
+
+/* Notched into the corner: square where it meets the card edges. */
+.m-fy-hero__tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-s);
+  background: var(--border);
+  border-bottom-right-radius: var(--radius-s);
+}
+
+.m-fy-hero__caption {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.m-fy-hero__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-fy-hero__skill {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Indicator: 6px dots, and the active slide a 40px track that fills as it plays. */
+.m-fy-hero__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+}
+
+.m-fy-hero__dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--cards-background-hover);
+  cursor: pointer;
+}
+
+.m-fy-hero__dot--active {
+  width: 40px;
+  height: 6px;
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+}
+
+.m-fy-hero__dot-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-xs);
+  background: var(--selected);
+  transform-origin: left center;
+  animation: m-fy-hero-fill linear forwards;
+}
+
+/* Reduced motion: the track shows the resting half-fill instead of animating. */
+.m-fy-hero__dot-fill--static {
+  animation: none;
+  width: 50%;
+}
+
+@keyframes m-fy-hero-fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
