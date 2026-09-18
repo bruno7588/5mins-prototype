@@ -70,5 +70,6 @@
    dash length and the space between dashes are ours to set. */
 .empty-state--dropzone {
   width: 100%;
+  padding: var(--space-xl); /* 32px — Figma Your Content 6549:33792 */
   background-color: var(--input-background);
 }

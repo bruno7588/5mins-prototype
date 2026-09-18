@@ -82,19 +82,19 @@
   line-height: 1.2;
 }
 
-/* Mobile: a bare 24px icon, no hover (touch). */
-.resource-card--mobile /* Download / Open link, plus Remove where the card is being authored. */
+/* Download / Open link, plus Remove where the card is being authored. */
 .resource-card__actions {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: var(--space-xs);
+  gap: var(--space-s);
 }
 
 .resource-card__open {
   padding: 0;
 }
 
+/* Mobile: a bare 24px icon, no hover (touch). */
 .resource-card--mobile .resource-card__open:hover {
   background: transparent;
 }
