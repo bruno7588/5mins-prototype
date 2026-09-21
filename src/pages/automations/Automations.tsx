@@ -713,6 +713,14 @@ function Automations() {
     )
   }
 
+  function renameAutomation(automationId: string, name: string) {
+    const apply = (a: AutomationRow): AutomationRow => ({ ...a, name })
+    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
+    setDetailsAutomation((current) =>
+      current && current.id === automationId ? apply(current) : current,
+    )
+  }
+
   function patchFilters(automationId: string, filters: TriggerFilter[]) {
     const apply = (a: AutomationRow): AutomationRow => ({ ...a, filters })
     setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
@@ -1505,6 +1513,7 @@ function Automations() {
         onSave={saveAutomation}
         onTriggerChange={patchTrigger}
         onFiltersChange={patchFilters}
+        onRename={renameAutomation}
         onCourseChange={patchCourse}
         onCourseAdd={addCourse}
         onCourseRemove={removeCourse}

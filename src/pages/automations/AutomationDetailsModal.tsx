@@ -67,6 +67,7 @@ interface AutomationDetailsModalProps {
   onSave?: (automation: AutomationRow) => void
   onTriggerChange?: (automationId: string, trigger: AutomationTrigger) => void
   onFiltersChange?: (automationId: string, filters: TriggerFilter[]) => void
+  onRename?: (automationId: string, name: string) => void
   onCourseChange?: (automationId: string, courseId: string, patch: Partial<AutomationCourse>) => void
   onCourseAdd?: (automationId: string, course: AutomationCatalogCourse) => void
   onCourseRemove?: (automationId: string, courseId: string) => void
@@ -86,6 +87,7 @@ function AutomationDetailsModal({
   onSave,
   onTriggerChange,
   onFiltersChange,
+  onRename,
   onCourseChange,
   onCourseAdd,
   onCourseRemove,
@@ -96,23 +98,47 @@ function AutomationDetailsModal({
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
   const draggingIndexRef = useRef<number | null>(null)
   const { toasts, show: showToast } = useToast()
+  /* Rename is a committed edit, not a live one: the draft only reaches the
+     automation on Save, so Cancel and Escape can put the old name back. */
+  const [renaming, setRenaming] = useState(false)
+  const [draftName, setDraftName] = useState('')
 
   useEffect(() => {
     if (automation) {
       setClosing(false)
       setOpenPopover(null)
+      setRenaming(false)
     }
   }, [automation?.id])
 
   useEffect(() => {
     if (!automation) return
     function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') handleClose()
+      if (e.key !== 'Escape') return
+      /* One Escape at a time: an open rename swallows it, so the admin does not
+         lose the whole screen while backing out of a text field. */
+      if (renaming) {
+        setRenaming(false)
+        return
+      }
+      handleClose()
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [automation])
+  }, [automation, renaming])
+
+  function startRename() {
+    setDraftName(automation?.name ?? '')
+    setRenaming(true)
+  }
+
+  function commitRename() {
+    const next = draftName.trim()
+    if (!automation || next === '') return
+    if (next !== automation.name) onRename?.(automation.id, next)
+    setRenaming(false)
+  }
 
   function handleClose() {
     setClosing(true)
@@ -133,14 +159,53 @@ function AutomationDetailsModal({
       <div className="automation-details-content">
         <header className="automation-details-header">
           <div className="automation-details-headline">
-            <h2 id="automation-details-title" className="automation-details-title">
-              {automation.name}
-            </h2>
-            <button type="button" className="automation-details-edit-name" aria-label="Edit name">
-              <Edit2 size={20} color="currentColor" variant="Linear" />
-            </button>
+            {renaming ? (
+              /* The inline editor keeps the title's own type, so the text stays
+                 where it was and only the affordance changes (input.md). */
+              <input
+                id="automation-details-title"
+                className="automation-details-title automation-details-title-input"
+                value={draftName}
+                aria-label="Automation name"
+                onChange={(e) => setDraftName(e.target.value.slice(0, 100))}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') commitRename()
+                }}
+                autoFocus
+              />
+            ) : (
+              <h2 id="automation-details-title" className="automation-details-title">
+                {automation.name}
+              </h2>
+            )}
+            {!renaming && (
+              <Tooltip text="Edit rule name" position="Top" alignment="End" icon={false}>
+                <button
+                  type="button"
+                  className="automation-details-edit-name"
+                  aria-label="Edit rule name"
+                  onClick={startRename}
+                >
+                  <Edit2 size={20} color="currentColor" variant="Linear" />
+                </button>
+              </Tooltip>
+            )}
           </div>
-          <div className="automation-details-divider" />
+          {/* The rule under the title doubles as the field's active state: it goes
+              amber while the name is being edited, per the input Active spec. */}
+          <div
+            className={`automation-details-divider${renaming ? ' automation-details-divider--active' : ''}`}
+          />
+          {renaming && (
+            <div className="automation-details-rename-actions">
+              <Button variant="outlined" size="sm" onClick={() => setRenaming(false)}>
+                Cancel
+              </Button>
+              <Button size="sm" onClick={commitRename} disabled={draftName.trim() === ''}>
+                Save
+              </Button>
+            </div>
+          )}
         </header>
 
         <section className="automation-details-section">
