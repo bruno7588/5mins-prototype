@@ -54,23 +54,25 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
   const [active, setActive] = useState(startIndex)
   const [following, setFollowing] = useState(false)
   const [bookmarked, setBookmarked] = useState(false)
-  const [tab, setTab] = useState<LessonTab>('episodes')
+  const [tab, setTab] = useState<LessonTab>('learnings')
   const { toasts, show: showToast, dismiss: dismissToast } = useToast()
 
   const resources = lessons[active]?.resources ?? []
 
   const lesson = lessons[active]
-  const hasLearnings = Boolean(lesson?.learningGoal || lesson?.keyConcepts?.length)
+  const hasLearnings = Boolean(lesson?.keyConcepts?.length)
 
   /* A tab with nothing behind it is a dead end, so each appears only when the
      lesson has that content, in a fixed order so the survivors never swap places.
-     Episodes is series navigation, not content: with a single episode the card
-     would restate the lesson you are already watching, so it earns no tab. */
+     Learnings leads: every lesson carries concepts, so it is the one tab that is
+     always there and the one the panel should open on. Episodes is series
+     navigation, not content: with a single episode the card would restate the
+     lesson you are already watching, so it earns no tab. */
   const episodes = lesson?.episodes ?? []
   const tabs: { key: LessonTab; label: string; count?: number }[] = [
+    ...(hasLearnings ? [{ key: 'learnings' as const, label: 'Learnings' }] : []),
     ...(episodes.length > 1 ? [{ key: 'episodes' as const, label: 'Episodes' }] : []),
     ...(resources.length ? [{ key: 'resources' as const, label: 'Resources', count: resources.length }] : []),
-    ...(hasLearnings ? [{ key: 'learnings' as const, label: 'Learnings' }] : []),
   ]
   /* The stored tab may not exist on the lesson just swiped to. */
   const current = tabs.find((t) => t.key === tab) ?? tabs[0]
@@ -82,7 +84,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
   useEffect(() => {
     setFollowing(false)
     setBookmarked(false)
-    setTab('episodes')
+    setTab('learnings')
   }, [active])
 
   // Escape closes; lock body scroll while open.
@@ -239,8 +241,8 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
 
           {/* One section gets no heading at all: a tablist of one is not a choice,
               and the section already names itself — Learnings carries its own
-              "Learning goals" and "Key concepts" subheads, resources are a list of
-              file cards. A label above either just repeats them. */}
+              "Key concepts" subhead, resources are a list of file cards. A label
+              above either just repeats them. */}
 
           <div className="lf-tabpanel">
           {current?.key === 'episodes' && (
@@ -272,23 +274,6 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
 
           {current?.key === 'learnings' && (
             <div className="lf-learnings">
-              {lesson.learningGoal && (
-                <section className="lf-learn">
-                  <h3 className="lf-learn__head">
-                    <img
-                      className="lf-learn__icon"
-                      src={getLearningsIllustration('learning-goals')}
-                      alt=""
-                      width={20}
-                      height={20}
-                    />
-                    Learning goals
-                  </h3>
-                  <div className="lf-learn__card">
-                    <p className="lf-learn__goal">{lesson.learningGoal}</p>
-                  </div>
-                </section>
-              )}
               {lesson.keyConcepts?.length ? (
                 <section className="lf-learn">
                   <h3 className="lf-learn__head">

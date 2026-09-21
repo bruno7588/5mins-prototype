@@ -554,20 +554,11 @@
   width: 100%;
 }
 
-.lf-learn__goal,
 .lf-learn__concept {
   margin: 0;
   font-size: 14px;
-  line-height: 1.5;
-}
-
-.lf-learn__goal {
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-
-.lf-learn__concept {
   font-weight: 600;
+  line-height: 1.5;
   color: var(--text-primary);
 }
 
