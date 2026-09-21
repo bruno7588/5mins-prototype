@@ -1,0 +1,194 @@
+/* Criteria builder inside the automation trigger card (DEV-4403). */
+.trigger-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+/* One row per criterion. The value column takes the slack so every control
+   lines up whatever the field name's length. */
+.trigger-filters__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  width: 100%;
+}
+
+.trigger-filters__field {
+  flex: 0 0 96px;
+  padding-top: var(--space-ssm);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.trigger-filters__operator {
+  flex: 0 0 152px;
+}
+
+.trigger-filters__operator-static {
+  flex: 0 0 152px;
+  padding-top: var(--space-ssm);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.trigger-filters__value {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Icon-only action: round --input-background-hover fill on hover, per the
+   destructive-icon convention, turning --text-error because it removes. */
+.trigger-filters__remove {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-top: var(--space-xxs);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.trigger-filters__remove:hover {
+  background: var(--input-background-hover);
+  color: var(--text-error);
+}
+
+.trigger-filters__remove:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.trigger-filters__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.trigger-filters__add-wrap {
+  position: relative;
+}
+
+.trigger-filters__add,
+.trigger-filters__clear {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-button-outlined);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.trigger-filters__add:hover,
+.trigger-filters__clear:hover {
+  color: var(--text-button-hover);
+}
+
+.trigger-filters__add:focus-visible,
+.trigger-filters__clear:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.trigger-filters__clear {
+  color: var(--text-secondary);
+}
+
+/* Listbox surface, per listbox.md. */
+.trigger-filters__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 260px;
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
+  z-index: 100;
+  padding: var(--space-s);
+  display: flex;
+  flex-direction: column;
+}
+
+.trigger-filters__menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xxs);
+  width: 100%;
+  padding: var(--space-ssm) var(--space-sm);
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-s);
+  transition: background 150ms ease;
+}
+
+.trigger-filters__menu-item:hover {
+  background: var(--cards-background-hover);
+}
+
+/* Visible but inert: the admin should see the field exists and why it is closed. */
+.trigger-filters__menu-item--gated,
+.trigger-filters__menu-item--gated:hover {
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.trigger-filters__menu-item--gated .trigger-filters__menu-label,
+.trigger-filters__menu-item--gated .trigger-filters__menu-hint {
+  color: var(--text-disabled);
+}
+
+.trigger-filters__menu-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.trigger-filters__menu-hint {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+}
+
+.trigger-filters__menu-empty {
+  padding: var(--space-sm);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+/* The Tooltip wrapper around a gated item must not shrink the row. */
+.trigger-filters__menu .tooltip__trigger {
+  display: block;
+  width: 100%;
+}

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowDown2, Edit2, Trash } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
-import Search from '../../components/Search/Search'
+import CourseSearch from './CourseSearch'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -18,10 +18,11 @@ import type {
   RecurrenceConfig,
   TrackedAttribute,
 } from './Automations'
-import {
-  MOCK_COURSE_CATALOG,
-  getAttributeValues,
-} from './Automations'
+import { getAttributeValues } from './Automations'
+import type { AutomationCatalogCourse } from './courseCatalog'
+import TriggerFilters from './TriggerFilters'
+import { matchesCriteria, type TriggerFilter } from './triggerCriteria'
+import { mockUsers } from './mockPeople'
 import './AutomationDetailsModal.css'
 import Button from '@/components/Button/Button'
 
@@ -65,8 +66,9 @@ interface AutomationDetailsModalProps {
   onClose: () => void
   onSave?: (automation: AutomationRow) => void
   onTriggerChange?: (automationId: string, trigger: AutomationTrigger) => void
+  onFiltersChange?: (automationId: string, filters: TriggerFilter[]) => void
   onCourseChange?: (automationId: string, courseId: string, patch: Partial<AutomationCourse>) => void
-  onCourseAdd?: (automationId: string, courseName: string) => void
+  onCourseAdd?: (automationId: string, course: AutomationCatalogCourse) => void
   onCourseRemove?: (automationId: string, courseId: string) => void
   onCoursesReorder?: (automationId: string, fromIndex: number, toIndex: number) => void
 }
@@ -83,14 +85,13 @@ function AutomationDetailsModal({
   onClose,
   onSave,
   onTriggerChange,
+  onFiltersChange,
   onCourseChange,
   onCourseAdd,
   onCourseRemove,
   onCoursesReorder,
 }: AutomationDetailsModalProps) {
   const [closing, setClosing] = useState(false)
-  const [courseQuery, setCourseQuery] = useState('')
-  const [searchFocused, setSearchFocused] = useState(false)
   const [openPopover, setOpenPopover] = useState<{ courseId: string; column: 'enrollment' | 'due' | 'frequency' } | null>(null)
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
   const draggingIndexRef = useRef<number | null>(null)
@@ -99,20 +100,9 @@ function AutomationDetailsModal({
   useEffect(() => {
     if (automation) {
       setClosing(false)
-      setCourseQuery('')
-      setSearchFocused(false)
       setOpenPopover(null)
     }
   }, [automation?.id])
-
-  const courseSuggestions = useMemo(() => {
-    if (!automation) return []
-    const alreadyAdded = new Set(automation.courses.map((c) => c.name))
-    const q = courseQuery.trim().toLowerCase()
-    return MOCK_COURSE_CATALOG
-      .filter((name) => !alreadyAdded.has(name))
-      .filter((name) => (q ? name.toLowerCase().includes(q) : true))
-  }, [courseQuery, automation])
 
   useEffect(() => {
     if (!automation) return
@@ -163,6 +153,9 @@ function AutomationDetailsModal({
           <div className="automation-details-card">
             {automation.trigger.kind === 'user-registered' && (
               <p className="automation-details-card-lead">When a user registers on 5Mins.ai</p>
+            )}
+            {automation.trigger.kind === 'existing-users' && (
+              <p className="automation-details-card-lead">For users already on 5Mins.ai</p>
             )}
             {automation.trigger.kind === 'attribute-changed' && (
               <div className="automation-details-trigger-attribute">
@@ -222,6 +215,33 @@ function AutomationDetailsModal({
                 )}
               </div>
             )}
+
+            {/* Criteria narrow who the trigger applies to. None means everyone,
+                so there is no "all roles" row to clear. */}
+            <TriggerFilters
+              filters={automation.filters}
+              onChange={(next) => onFiltersChange?.(automation.id, next)}
+            />
+
+            {/* Existing-employee automations enrol people who are already here, so
+                the count is the whole point: it moves as the criteria change and
+                says plainly when nobody is left (DEV-4403). New-employee ones fire
+                on future registrations, where a count of today's people would be
+                a number about the wrong population. */}
+            {automation.trigger.kind === 'existing-users' && (
+              <p className="automation-details-eligible">
+                {(() => {
+                  const total = mockUsers.length
+                  if (automation.filters.length === 0) {
+                    return `Applies to all ${total} people. Add a filter to narrow it.`
+                  }
+                  const matched = mockUsers.filter((u) => matchesCriteria(u, automation.filters)).length
+                  if (matched === 0) return 'No one matches these criteria.'
+                  // "people" counts the total, so only the verb agrees with the match count.
+                  return `${matched} of ${total} people ${matched === 1 ? 'matches' : 'match'} these criteria.`
+                })()}
+              </p>
+            )}
           </div>
         </section>
 
@@ -235,48 +255,17 @@ function AutomationDetailsModal({
           <div className="automation-details-card">
             <div className="automation-details-actions-toolbar">
               <p className="automation-details-card-lead">Then enrol them in these courses</p>
-              <div className="automation-details-search">
-                <Search
-                  size="M"
-                  value={courseQuery}
-                  placeholder="Search for courses"
-                  onChange={setCourseQuery}
-                  onFocus={() => setSearchFocused(true)}
-                  onBlur={() => setSearchFocused(false)}
-                />
-                {searchFocused && (
-                  <div
-                    className="automation-details-search-suggestions"
-                    role="listbox"
-                  >
-                    {courseSuggestions.length > 0 ? (
-                      courseSuggestions.map((name) => (
-                        <button
-                          key={name}
-                          type="button"
-                          role="option"
-                          className="automation-details-search-suggestion"
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => {
-                            onCourseAdd?.(automation.id, name)
-                            setCourseQuery('')
-                            showToast('success', 'Course added')
-                          }}
-                        >
-                          {name}
-                        </button>
-                      ))
-                    ) : (
-                      <div className="automation-details-search-empty">
-                        No courses found
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+              {/* Keyed per automation so the query resets when you swipe to another. */}
+              <CourseSearch
+                key={automation.id}
+                excludeIds={automation.courses.map((c) => c.catalogId ?? c.name)}
+                onSelect={(course) => {
+                  onCourseAdd?.(automation.id, course)
+                  showToast('success', 'Course added')
+                }}
+              />
             </div>
 
-            {automation.courses.length > 0 && (
             <div className="automation-details-table">
               <div className="automation-details-table-header">
                 <div className="automation-details-th automation-details-th--course">Course</div>
@@ -357,7 +346,6 @@ function AutomationDetailsModal({
                 />
               ))}
             </div>
-            )}
           </div>
         </section>
 
@@ -459,12 +447,7 @@ function CourseRow({
       <div className="automation-details-row-card">
         <div className="automation-details-td automation-details-td--course">
           <span className="automation-details-row-counter">{index + 1}</span>
-          <img
-            className="automation-details-row-thumb"
-            src={`https://picsum.photos/seed/${encodeURIComponent(course.id)}/160/84`}
-            alt=""
-            aria-hidden="true"
-          />
+          <img className="automation-details-row-thumb" src={course.thumb} alt="" aria-hidden="true" />
           <span className="automation-details-row-name">{course.name}</span>
         </div>
         <div className="automation-details-td automation-details-td--editable">

@@ -1,0 +1,95 @@
+/* Course typeahead in the automation builder's Actions card. Container follows
+   listbox.md; the thumbnail slot is page-local (see the note in CourseSearch.tsx). */
+.course-search {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.course-search-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--cards-background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
+  z-index: 100;
+  padding: var(--space-s);
+  display: flex;
+  flex-direction: column;
+  /* listbox.md's cap. At ~60px a row it lands on the five rows the frame draws,
+     and scrolls past that rather than growing. */
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.course-search-item {
+  display: flex;
+  align-items: center;
+  /* table.md's gap for a cell holding a thumbnail beside text. */
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-s) var(--space-sm);
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-s);
+  transition: background 150ms ease;
+}
+
+.course-search-item:hover {
+  background: var(--cards-background-hover);
+}
+
+/* 72x44 per table.md. The Automations frame draws 64x40 — the doc wins. */
+.course-search-item-thumb {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 44px;
+  border-radius: var(--radius-s);
+  background: linear-gradient(135deg, var(--neutral-100), var(--neutral-50));
+  object-fit: cover;
+  display: block;
+}
+
+.course-search-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* Supporting-text list item (listbox.md): the label goes Medium so it leads. */
+.course-search-item-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  /* The slot is spec'd nowrap, and a 72px thumb plus a long compliance title will
+     outrun the popover — so it truncates rather than wrapping the row taller. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.course-search-item-source {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.course-search-empty {
+  padding: var(--space-sm);
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}

@@ -196,56 +196,6 @@
   gap: var(--space-sm); /* 12px between text and search */
 }
 
-.automation-details-search {
-  flex: 1;
-  max-width: 400px;
-  position: relative;
-}
-
-.automation-details-search-suggestions {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
-  z-index: 100;
-  padding: var(--space-s);
-  display: flex;
-  flex-direction: column;
-  max-height: 320px;
-  overflow-y: auto;
-}
-
-.automation-details-search-suggestion {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: var(--space-ssm) var(--space-sm);
-  border: none;
-  background: transparent;
-  color: var(--text-primary);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  text-align: left;
-  cursor: pointer;
-  border-radius: var(--radius-xs);
-  transition: background 150ms ease;
-}
-
-.automation-details-search-suggestion:hover {
-  background: var(--cards-background-hover);
-}
-
-.automation-details-search-empty {
-  padding: var(--space-sm);
-  text-align: center;
-  color: var(--text-tertiary);
-  font-size: 14px;
-}
 
 /* ===== Table ===== */
 .automation-details-table {
@@ -373,7 +323,8 @@
   width: auto;
   display: flex;
   align-items: center;
-  gap: var(--space-s);
+  /* table.md: 12px when the cell holds a thumbnail beside text. */
+  gap: var(--space-sm);
 }
 
 .automation-details-td--editable {
@@ -447,10 +398,12 @@
   color: var(--text-secondary);
 }
 
+/* 72x44 per table.md's thumbnail cell. The Automations frame draws 64x40; the
+   doc wins, and the gap is flagged for the Library. */
 .automation-details-row-thumb {
-  flex-shrink: 0;
-  width: 80px;
-  height: 42px;
+  flex: 0 0 72px;
+  width: 72px;
+  height: 44px;
   border-radius: var(--radius-s);
   background: linear-gradient(135deg, var(--neutral-100), var(--neutral-50));
   object-fit: cover;
@@ -470,4 +423,14 @@
 
 .automation-details-row-name:hover {
   color: var(--primary-700);
+}
+
+/* Live count under the criteria on existing-employee automations. */
+.automation-details-eligible {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
