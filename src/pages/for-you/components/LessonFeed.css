@@ -397,13 +397,12 @@
   background: var(--input-background-elevated);
   color: var(--text-primary);
   cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
+  transition: background 150ms ease;
 }
 
 @media (hover: hover) {
   .lf-social__item:not(:disabled):hover {
     background: var(--input-background-hover);
-    color: var(--text-button-hover);
   }
 }
 
