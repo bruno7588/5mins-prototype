@@ -31,6 +31,16 @@ const TYPE_OPTIONS = (Object.keys(RESOURCE_TYPES) as ResourceType[]).map((value)
 
 const withoutExtension = (fileName: string) => fileName.replace(/\.[^.]+$/, '')
 
+/** "a PDF", "an Excel", "an Image" — the type labels are fixed, so the first letter decides. */
+const article = (label: string) => (/^[AEIOU]/i.test(label) ? 'an' : 'a')
+
+/** ".pdf" · ".doc or .docx" · ".jpg or .png" */
+const extList = (accept?: string) => {
+  const parts = accept?.split(',') ?? []
+  if (parts.length < 2) return parts.join('')
+  return `${parts.slice(0, -1).join(', ')} or ${parts[parts.length - 1]}`
+}
+
 /* One resource per save: a file of the chosen type, or an external link. Seeds from
    `initial` at mount only, so the host keys it per resource. Used by the course
    builder's Resources drawer and by the lesson editor's Resources tab. */
@@ -61,7 +71,8 @@ function ResourceForm({ initial, variant = 'drawer', onSave, onCancel }: Props) 
   const pickFile = (picked: File) => {
     if (!matchesType(picked.name, type)) {
       setFile(null)
-      setFileError(`This isn't a ${RESOURCE_TYPES[type].label} file. Choose a ${RESOURCE_TYPES[type].accept?.split(',').join(' or ')} file.`)
+      const { label, accept } = RESOURCE_TYPES[type]
+      setFileError(`This isn't ${article(label)} ${label} file. Choose a ${extList(accept)} file.`)
       return
     }
     if (picked.size > MAX_FILE_BYTES) {
@@ -118,8 +129,13 @@ function ResourceForm({ initial, variant = 'drawer', onSave, onCancel }: Props) 
           />
         ) : (
           <div className="resource-form__field">
+            {/* Formats and size cap are the same kind of fact — what this field
+                takes — so they read as one line above the zone. */}
             <span className="resource-form__label">
-              Select a document to upload <span className="resource-form__label-hint">(max. 50MB)</span>
+              Select a file to upload{' '}
+              <span className="resource-form__label-hint">
+                ({extList(RESOURCE_TYPES[type].acceptLabel ?? RESOURCE_TYPES[type].accept)} • max. 50MB)
+              </span>
             </span>
             <FileUploader
               key={type}

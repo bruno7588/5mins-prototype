@@ -1,5 +1,5 @@
 /* Course-level resources: files and links learners open from the course's Resources
-   section. Production takes PDF, Word and Excel; PowerPoint and external links are new. */
+   section. Production takes PDF, Word and Excel; PowerPoint, images and external links are new. */
 
 import type { ResourceType } from '@/components/ResourceCard/ResourceCard'
 
@@ -17,11 +17,15 @@ export interface CourseResource {
   url?: string
 }
 
-export const RESOURCE_TYPES: Record<ResourceType, { label: string; accept?: string }> = {
+/* `accept` is the machine list the file dialog and matchesType() use; `acceptLabel`
+   is what an admin is shown, for types where the two differ. */
+export const RESOURCE_TYPES: Record<ResourceType, { label: string; accept?: string; acceptLabel?: string }> = {
   pdf: { label: 'PDF', accept: '.pdf' },
   word: { label: 'Word', accept: '.doc,.docx' },
   excel: { label: 'Excel', accept: '.xls,.xlsx' },
   powerpoint: { label: 'PowerPoint', accept: '.ppt,.pptx' },
+  // .jpeg uploads fine; showing both spellings of one format only adds noise.
+  image: { label: 'Image', accept: '.jpg,.jpeg,.png', acceptLabel: '.jpg,.png' },
   link: { label: 'External Link' },
 }
 

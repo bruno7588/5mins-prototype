@@ -161,7 +161,8 @@ const resources: CourseResourceItem[] = [
   { id: 'r2', type: 'word', title: 'Team charter template', size: 819200 },
   { id: 'r3', type: 'excel', title: 'Innovation ideas tracker', size: 2097152 },
   { id: 'r4', type: 'powerpoint', title: 'Innovation workshop slides', size: 8493465 },
-  { id: 'r5', type: 'link', title: 'HSE leadership and worker involvement', url: 'https://www.hse.gov.uk/involvement/' },
+  { id: 'r5', type: 'image', title: 'Idea funnel diagram', size: 432128 },
+  { id: 'r6', type: 'link', title: 'HSE leadership and worker involvement', url: 'https://www.hse.gov.uk/involvement/' },
 ]
 
 /** Build a course-detail view model from a program course (falls back gracefully). */

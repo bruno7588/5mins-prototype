@@ -54,8 +54,8 @@ function LessonResourcesTab({ resources, isNew, onAdd, onRemove }: Props) {
           title="Add resources to this lesson"
           description={
             isNew
-              ? 'Give learners a deep dive to take after the lesson: PDF, Word, Excel or PowerPoint files, or links.'
-              : 'Upload PDF, Word, Excel, PowerPoint files, or add links.'
+              ? 'Give learners a deep dive to take after the lesson: PDF, Word, Excel, PowerPoint or image files, or links.'
+              : 'Upload PDF, Word, Excel, PowerPoint or image files, or add links.'
           }
           secondaryAction={{
             label: 'Add Resource',

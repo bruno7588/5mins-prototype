@@ -27,10 +27,11 @@ const store: Record<string, CourseResource[]> = {
   ],
   [lessonKey('library', 4)]: [
     { id: 3, type: 'powerpoint', name: 'Release planning slides', fileName: 'Release planning slides.pptx', size: 8493465, file: sampleFile('Release planning slides.pptx') },
+    { id: 4, type: 'image', name: 'Release train diagram', fileName: 'Release train diagram.png', size: 432128, file: sampleFile('Release train diagram.png') },
   ],
 }
 
-let nextId = 4
+let nextId = 5
 
 export function getLessonResources(key: string): CourseResource[] {
   return store[key] ?? []

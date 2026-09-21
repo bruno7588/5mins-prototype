@@ -62,7 +62,7 @@ One shared component, `src/components/EmptyState/EmptyState.tsx`, carries both d
 <EmptyState
   illustration={<img src={resourcesIllustration} width={72} height={72} alt="" />}
   title="Add resources to your course"
-  description="Upload PDF, Word, Excel, or PowerPoint files, or add links."
+  description="Upload PDF, Word, Excel, PowerPoint or image files, or add links."
   secondaryAction={{ label: 'Add Resource', icon: <Add size={20} color="currentColor" />, onClick: add }}
 />
 ```

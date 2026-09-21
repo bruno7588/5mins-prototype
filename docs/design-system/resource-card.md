@@ -1,11 +1,11 @@
 ---
 name: 5mins-resource-card
-description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel or PowerPoint file, or an external link) shown as a type tile, title, meta line and one Download or Open link action. Web/Admin and Mobile app variants. Use for any list of course resources, attachments or downloadable files, on the admin course builder or the learner course page.
+description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel, PowerPoint or image file, or an external link) shown as a type tile, title, meta line and one Download or Open link action. Web/Admin and Mobile app variants. Use for any list of course resources, attachments or downloadable files, on the admin course builder or the learner course page.
 ---
 
 # Resource Card
 
-> **Figma source:** Library `EC26cSVe9KNTCWXvYovakw`. Card set `12213:3040` (Web/Admin Enabled `12213:3062`, Web/Admin Hover `12213:3965`, Mobile app `12213:3041`); Type thumbnail set `12213:2984` (PDF `12213:2985`, Excel `12213:2989`, Word `12213:2993`, PowerPoint `12213:2997`, External Link `12213:3001`). Verified 2026-09-18. Status in Figma: proposed.
+> **Figma source:** Library `EC26cSVe9KNTCWXvYovakw`. Card set `12213:3040` (Web/Admin Enabled `12213:3062`, Web/Admin Hover `12213:3965`, Mobile app `12213:3041`); Type thumbnail set `12213:2984` (PDF `12213:2985`, Excel `12213:2989`, Word `12213:2993`, PowerPoint `12213:2997`, Image `12213:3001`, External Link `12230:2631`). Verified 2026-09-21 — the set gained Image, and External Link moved to `12230:2631`. Status in Figma: proposed.
 > **Component:** `src/components/ResourceCard/ResourceCard.tsx` — use it, don't hand-roll.
 > **Model + form:** `src/components/ResourceCard/resources.ts` (types, accepted extensions, 50MB cap, validation) and `src/components/ResourceForm/ResourceForm.tsx` (add or edit one resource — `variant="drawer"` on the course builder, `variant="inline"` in the lesson editor).
 
@@ -29,7 +29,7 @@ The card carries **one action** for learners: Download for files, Open link for 
 ## Props
 
 ```tsx
-type ResourceType = 'pdf' | 'word' | 'excel' | 'powerpoint' | 'link'
+type ResourceType = 'pdf' | 'word' | 'excel' | 'powerpoint' | 'image' | 'link'
 
 interface ResourceCardProps {
   type: ResourceType
@@ -72,7 +72,10 @@ Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 M
 | Word | `word.svg` (blue) | `Word • <size>` |
 | Excel | `excel.svg` (green) | `Excel • <size>` |
 | PowerPoint | `powerpoint.svg` (orange) | `PowerPoint • <size>` |
+| Image | `image.svg` (purple `#9B55C9`, Iconsax **Linear** `gallery` glyph at 1.5 stroke — the one tile whose glyph is stroked, not solid) | `Image • <size>` |
 | External link | `link-icon.svg` (Linear link-2 glyph, 24px) centred on a `--certificate-quiz` tile with `--radius-s` | `External link` |
+
+Accepted extensions per type live in `RESOURCE_TYPES` (`resources.ts`): `.pdf` · `.doc,.docx` · `.xls,.xlsx` · `.ppt,.pptx` · `.jpg,.jpeg,.png` (shown to admins as `.jpg or .png` via `acceptLabel`).
 
 The same artwork (exported as `FILE_THUMBS`) shows at 40px in the Resources drawer's File uploader once a file is picked (`fileIcon`, Create Course Figma `9979:86223`).
 

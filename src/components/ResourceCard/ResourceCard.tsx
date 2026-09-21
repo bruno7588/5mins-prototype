@@ -1,5 +1,6 @@
 import { ExportSquare, ImportCurve, Trash } from 'iconsax-react'
 import excelThumb from '@/assets/resource-type-illustrations/excel.svg'
+import imageThumb from '@/assets/resource-type-illustrations/image.svg'
 import linkIcon from '@/assets/resource-type-illustrations/link-icon.svg'
 import pdfThumb from '@/assets/resource-type-illustrations/pdf.svg'
 import powerpointThumb from '@/assets/resource-type-illustrations/powerpoint.svg'
@@ -7,13 +8,14 @@ import wordThumb from '@/assets/resource-type-illustrations/word.svg'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import './ResourceCard.css'
 
-export type ResourceType = 'pdf' | 'word' | 'excel' | 'powerpoint' | 'link'
+export type ResourceType = 'pdf' | 'word' | 'excel' | 'powerpoint' | 'image' | 'link'
 
 const TYPE_LABEL: Record<ResourceType, string> = {
   pdf: 'PDF',
   word: 'Word',
   excel: 'Excel',
   powerpoint: 'PowerPoint',
+  image: 'Image',
   link: 'External link',
 }
 
@@ -23,6 +25,7 @@ export const FILE_THUMBS: Record<Exclude<ResourceType, 'link'>, string> = {
   word: wordThumb,
   excel: excelThumb,
   powerpoint: powerpointThumb,
+  image: imageThumb,
 }
 
 /** "1.1 MB", "240 KB". */
