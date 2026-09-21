@@ -541,13 +541,15 @@
   color: var(--text-primary);
 }
 
+/* Outlined, not filled: the border groups each card's lines without laying a
+   slab of tone behind them, which the panel reads as quieter. */
 .lf-learn__card {
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
   padding: var(--space-sm);
   border-radius: var(--radius-sm);
-  background: var(--input-background);
+  border: 1px solid var(--border);
   box-sizing: border-box;
   width: 100%;
 }
