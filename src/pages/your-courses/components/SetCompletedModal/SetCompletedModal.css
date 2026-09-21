@@ -103,10 +103,11 @@
   width: 100%;
 }
 
+/* No gap: the score stepper below is a collapsing box, and a group gap would
+   hold its 4px open while it is closed. Each child carries its own offset. */
 .scm__info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
   align-items: flex-start;
   min-width: 0;
 }
@@ -129,11 +130,13 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
-  margin: 0;
+  margin: var(--space-xs) 0 0;
 }
 
-.scm__info > .input-integer {
-  margin-top: var(--space-s);
+/* 12px under the label, as the old 4px gap + 8px margin came to. It sits inside
+   the collapsing box so it animates away with the stepper. */
+.scm__score .input-integer {
+  margin-top: var(--space-sm);
 }
 
 /* ── CTA ── DS modal spec puts a single filled button, centred. */

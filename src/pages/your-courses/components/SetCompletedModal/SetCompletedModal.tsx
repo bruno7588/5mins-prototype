@@ -3,6 +3,7 @@ import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
 import Radio from '@/components/Radio/Radio'
+import Collapse from '@/components/Collapse/Collapse'
 import Alert from '@/components/Alert/Alert'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import InputInteger from '@/components/InputInteger/InputInteger'
@@ -174,9 +175,11 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
               <Radio id={`${name}-custom`} name={`${name}-score`} checked={scoreMode === 'custom'} onChange={() => setScoreMode('custom')} />
               <div className="scm__info">
                 <label className="scm__option-label" htmlFor={`${name}-custom`}>Set a specific score</label>
-                {scoreMode === 'custom' && (
+                {/* Switching radios opens and closes the stepper rather than snapping
+                    it in — GSAP height + opacity on power2.inOut, via Collapse. */}
+                <Collapse open={scoreMode === 'custom'} className="scm__score">
                   <InputInteger value={customScore} onChange={setCustomScore} min={0} max={100} suffix="%" ariaLabel="Score" />
-                )}
+                </Collapse>
               </div>
             </div>
           </fieldset>
