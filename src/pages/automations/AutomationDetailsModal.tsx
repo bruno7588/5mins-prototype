@@ -97,6 +97,23 @@ function describeFilterTerms(filter: TriggerFilter): string {
   return `${operator} ${labels.join(', ') || '—'}`
 }
 
+/**
+ * Why the primary action is off. It names one fix and works down the page, so
+ * it points at the topmost thing still open — except on a builder where
+ * nothing is set at all, which is how a new automation opens: naming only the
+ * title there would hide the two steps behind it.
+ */
+function blockedReason(hasName: boolean, hasTrigger: boolean, hasAction: boolean): string {
+  if (hasName && hasTrigger && hasAction) return ''
+  if (!hasName && !hasTrigger && !hasAction) {
+    return 'Add a title, a trigger filter and at least one course'
+  }
+  if (!hasName) return 'Add a title to this automation'
+  if (!hasTrigger && !hasAction) return 'Set a trigger filter and add at least one course'
+  if (!hasTrigger) return 'Set a trigger filter with at least one value'
+  return 'Add at least one course to enrol people in'
+}
+
 /* A filter row only counts once it carries what it matches on. An added but
    empty row is an unfinished thought, not a criterion, so it blocks save the
    same way a missing row does (DEV-4403 validation). */
@@ -214,22 +231,13 @@ function AutomationDetailsModal({
   if (!automation) return null
 
   /* Save needs a name and both halves of the rule: something to match on, and
-     something to enrol. The tooltip names one fix rather than a checklist, and
-     works down the page, so it always points at the topmost thing still open. */
+     something to enrol. */
   const hasName = automation.name.trim() !== ''
   const hasTrigger =
     automation.filters.length > 0 && automation.filters.every(isFilterComplete)
   const hasAction = automation.courses.length > 0
   const canSave = hasName && hasTrigger && hasAction
-  const saveBlockedReason = canSave
-    ? ''
-    : !hasName
-      ? 'Add a title to this automation'
-      : !hasTrigger && !hasAction
-        ? 'Set a trigger filter and add at least one course'
-        : !hasTrigger
-          ? 'Set a trigger filter with at least one value'
-          : 'Add at least one course to enrol people in'
+  const saveBlockedReason = blockedReason(hasName, hasTrigger, hasAction)
 
   return (
     <div
@@ -521,7 +529,7 @@ function AutomationDetailsModal({
         {/* Section Header (headers.md): 20px title over a divider, no
             supporting text — the sections below say what they are. */}
         <div className="confirm-modal-header">
-          <h3 className="confirm-modal-title">Review this automation before you save it</h3>
+          <h3 className="confirm-modal-title">Review automation</h3>
           <div className="automation-review-divider" />
         </div>
 
