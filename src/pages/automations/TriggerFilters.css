@@ -68,7 +68,6 @@
 .trigger-filters__actions {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--space-m);
 }
 

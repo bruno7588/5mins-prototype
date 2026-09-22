@@ -163,15 +163,16 @@ function AutomationDetailsModal({
   onCourseRemove,
   onCoursesReorder,
 }: AutomationDetailsModalProps) {
-  const [closing, setClosing] = useState(false)
   const [openPopover, setOpenPopover] = useState<{ courseId: string; column: 'enrollment' | 'due' | 'frequency' } | null>(null)
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
   const draggingIndexRef = useRef<number | null>(null)
   const { toasts, show: showToast } = useToast()
   /* Rename is a committed edit, not a live one: the draft only reaches the
-     automation on Save, so Cancel and Escape can put the old name back. */
-  const [renaming, setRenaming] = useState(false)
-  const [draftName, setDraftName] = useState('')
+     automation on Save, so Cancel and Escape can put the old name back.
+     It opens active, because naming the rule is the first thing to do on one
+     that arrives called "Copy of ..." or "New automation". */
+  const [renaming, setRenaming] = useState(true)
+  const [draftName, setDraftName] = useState(automation?.name ?? '')
   /* The two safeguards on the way out and the way in: an exit guard when the
      draft has moved (DEV-4770), and a review of what will run before it is
      written (DEV-4768). */
@@ -180,9 +181,9 @@ function AutomationDetailsModal({
 
   useEffect(() => {
     if (automation) {
-      setClosing(false)
       setOpenPopover(null)
-      setRenaming(false)
+      setRenaming(true)
+      setDraftName(automation.name)
       setConfirmDiscard(false)
       setReviewing(false)
     }
@@ -219,11 +220,6 @@ function AutomationDetailsModal({
     setRenaming(false)
   }
 
-  function handleClose() {
-    setClosing(true)
-    setTimeout(onClose, 200)
-  }
-
   /* Every exit route runs through here, so the guard cannot be walked around by
      using the X instead of Escape. Nothing changed means nothing to warn about. */
   function requestClose() {
@@ -231,7 +227,7 @@ function AutomationDetailsModal({
       setConfirmDiscard(true)
       return
     }
-    handleClose()
+    onClose()
   }
 
   if (!automation) return null
@@ -253,7 +249,7 @@ function AutomationDetailsModal({
 
   return (
     <div
-      className={`automation-details-modal${closing ? ' automation-details-modal--closing' : ''}`}
+      className="automation-details-modal"
       role="dialog"
       aria-modal="true"
       aria-labelledby="automation-details-title"
@@ -433,6 +429,9 @@ function AutomationDetailsModal({
             </div>
 
             <div className="automation-details-table">
+              {/* Column names with no rows under them label nothing, so the
+                  header waits for the first course. */}
+              {automation.courses.length > 0 && (
               <div className="automation-details-table-header">
                 <div className="automation-details-th automation-details-th--course">Course</div>
                 <div className="automation-details-th">Enrolment</div>
@@ -462,6 +461,7 @@ function AutomationDetailsModal({
                   </Tooltip>
                 </div>
               </div>
+              )}
 
               {automation.courses.map((course, i) => (
                 <CourseRow
@@ -553,7 +553,7 @@ function AutomationDetailsModal({
             semantic="warning"
             onClick={() => {
               setConfirmDiscard(false)
-              handleClose()
+              onClose()
             }}
           >
             Discard Changes

@@ -10,28 +10,6 @@
   z-index: 90;
   background: var(--page-background);
   overflow-y: auto;
-  animation: automation-details-fade-in 200ms ease-in-out;
-}
-
-.automation-details-modal--closing {
-  animation: automation-details-fade-out 200ms ease-in-out forwards;
-}
-
-@keyframes automation-details-fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes automation-details-fade-out {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(8px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .automation-details-modal,
-  .automation-details-modal--closing {
-    animation: none;
-  }
 }
 
 /* Close button — top-right relative to the modal. Same filled 40px circle the
@@ -132,9 +110,15 @@
   caret-color: var(--text-primary);
 }
 
+/* Equal-width pair: a grid of 1fr columns sized to fit its content gives both
+   buttons the width of the wider label, without pinning either to a number.
+   `margin-left: auto` keeps the hugging box against the right edge. */
 .automation-details-rename-actions {
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  width: fit-content;
+  margin-left: auto;
   gap: var(--space-sm);
 }
 
