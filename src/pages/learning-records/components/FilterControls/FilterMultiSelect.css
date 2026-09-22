@@ -55,16 +55,11 @@
   margin-top: var(--space-sm);
 }
 
-.fms-chips .chip {
+/* The DS badge brings its own padding and type; the row only decides that a
+   badge keeps its width rather than stretching or being squeezed. */
+.fms-chips .badge {
   flex: 0 0 auto;
   max-width: 100%;
-}
-
-.fms-chips .chip {
-  padding: var(--space-xs) var(--space-ssm);
-  gap: var(--space-xs);
-  font-size: 12px;
-  line-height: 1.2;
 }
 
 .fms-input {

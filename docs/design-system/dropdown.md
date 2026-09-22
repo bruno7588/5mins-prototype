@@ -34,7 +34,7 @@ Implementation guide for the 5Mins.ai Dropdown/Select. Cross-reference with `col
 | **Leading icon** | With icon, Without icon |
 | **Label** | No label, Label on top, Label on start |
 | **Helper text** | With, Without |
-| **Size** | Small (33px), Medium (41px), Large (48px) |
+| **Size** | Small (33px), Medium (37px), Large (48px) |
 
 States in the Figma library are exactly **Enabled / Hover / Active / Read-only**. There is no separate "Selected" or "Open" state at the trigger level — `Active` covers the open/focused state. Use `aria-disabled` + the Read-only styling for disabled.
 
@@ -113,12 +113,12 @@ The leading-icon (when present) is also tinted `--text-disabled` in read-only st
 | Size | Height | Padding | Font | Icon |
 |------|--------|---------|------|------|
 | Small | 33px | 4px 12px | 12px | 16px |
-| **Medium (default)** | ~37px | 8px 12px | 14px | 20px |
+| **Medium (default)** | 37px | 8px 12px | 14px | 20px |
 | Large | 48px | 12px 16px | 16px | 20px |
 
 ```css
 .dropdown-sm .dropdown-trigger { height: 33px; padding: 4px 12px; font-size: 12px; }
-.dropdown-md .dropdown-trigger { padding: 8px 12px;  font-size: 14px; }
+.dropdown-md .dropdown-trigger { height: 37px; padding: 8px 12px;  font-size: 14px; }
 .dropdown-lg .dropdown-trigger { height: 48px; padding: 12px 16px; font-size: 16px; }
 ```
 

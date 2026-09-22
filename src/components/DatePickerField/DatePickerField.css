@@ -7,7 +7,9 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-s);
-  width: 160px;
+  /* A floor, not a fixed width: the Error state adds a second 20px icon, and at
+     a hard 160px that pair overran the right padding. */
+  min-width: 160px;
   min-height: 37px;
   padding: var(--space-xs) var(--space-sm);
   border: 1px solid var(--border-elevated);

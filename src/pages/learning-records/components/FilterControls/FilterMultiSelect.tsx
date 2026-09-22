@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { SearchNormal1 } from 'iconsax-react'
 import { type DropdownOption } from '@/components/Dropdown/Dropdown'
-import Chip from '@/components/Chip/Chip'
+import Badge from '@/components/Badge/Badge'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import './FilterMultiSelect.css'
 
@@ -101,7 +101,12 @@ function FilterMultiSelect({ options, value, onChange, placeholder, trailing }: 
       {selected.length > 0 && (
         <div className="fms-chips">
           {selected.map((o) => (
-            <Chip key={o.value} label={o.label} selected iconRight onDismiss={() => toggle(o.value)} />
+            <Badge
+              key={o.value}
+              type="informative"
+              label={o.label}
+              onDismiss={() => toggle(o.value)}
+            />
           ))}
         </div>
       )}
