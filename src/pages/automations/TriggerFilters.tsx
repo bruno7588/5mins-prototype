@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { Add, CloseCircle } from 'iconsax-react'
+import { Add } from 'iconsax-react'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import Tooltip from '@/components/Tooltip/Tooltip'
+import CloseButton from '@/components/CloseButton/CloseButton'
 import FilterMultiSelect from '@/pages/learning-records/components/FilterControls/FilterMultiSelect'
 import {
   FILTER_FIELDS,
@@ -105,14 +106,12 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
             </div>
 
             <Tooltip text="Remove filter" position="Top" alignment="End" icon={false}>
-              <button
-                type="button"
+              <CloseButton
+                size={20}
                 className="trigger-filters__remove"
-                aria-label={`Remove ${def.label} filter`}
+                ariaLabel={`Remove ${def.label} filter`}
                 onClick={() => onChange(filters.filter((f) => f.id !== filter.id))}
-              >
-                <CloseCircle size={20} color="currentColor" variant="Linear" />
-              </button>
+              />
             </Tooltip>
           </div>
         )

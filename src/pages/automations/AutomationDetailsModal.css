@@ -34,15 +34,28 @@
   }
 }
 
-/* Close button — top-right relative to the modal */
+/* Close button — top-right relative to the modal. Same filled 40px circle the
+   course and program builders use (PageHeader's .page-header-close).
+   `right` tracks the content column's own right edge (its gutter once the
+   column is capped at 1024px) so the close always lines up with the title
+   row's edit icon, whatever the viewport width. */
 .automation-details-close {
   position: absolute;
   top: 24px;
-  right: 40px;
+  right: max(var(--space-m), calc(50% - 512px + var(--space-m)));
   z-index: 1;
+  width: 40px;
+  height: 40px;
+  background: var(--input-background);
 }
 
-/* Centered 1024px content column */
+.automation-details-close:hover {
+  background: var(--input-background-hover);
+}
+
+/* Centered 1024px content column. The top padding clears the close button's
+   own row (24px offset + 40px button) and leaves a 16px gap below it, so the
+   title row's edit icon sits 16px under the close button. */
 .automation-details-content {
   display: flex;
   flex-direction: column;
@@ -50,7 +63,7 @@
   width: 100%;
   max-width: 1024px;
   margin: 0 auto;
-  padding: var(--space-l) var(--space-m);
+  padding: calc(var(--space-l) + var(--space-xxl) + var(--space-m)) var(--space-m) var(--space-l);
 }
 
 /* ===== Header ===== */
@@ -74,8 +87,6 @@
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
-  /* Leave room for the absolute-positioned close button */
-  padding-right: 56px;
 }
 
 .automation-details-edit-name {
@@ -116,7 +127,6 @@
   border: none;
   background: none;
   padding: 0;
-  padding-right: 56px;
   outline: none;
   font-family: 'Poppins', sans-serif;
   caret-color: var(--text-primary);
@@ -126,7 +136,6 @@
   display: flex;
   justify-content: flex-end;
   gap: var(--space-sm);
-  padding-right: 56px;
 }
 
 /* ===== Footer (save / update action) ===== */
@@ -460,4 +469,92 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/* ── Review summary dialog (DEV-4768) ──────────────────────────────────────
+   Wider than the default confirm dialog and left-aligned, because it is read
+   rather than answered: the admin checks a list before committing. */
+.automation-review {
+  width: 600px;
+}
+
+.automation-review .confirm-modal-actions {
+  justify-content: flex-end;
+}
+
+.automation-review-list {
+  width: 100%;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.automation-review-row {
+  display: flex;
+  gap: var(--space-ml);
+  padding: var(--space-sm) var(--space-m);
+  border-top: 1px solid var(--border);
+}
+
+.automation-review-row:first-child {
+  border-top: none;
+}
+
+.automation-review-key {
+  flex: 0 0 120px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.automation-review-value {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.automation-review-value p {
+  margin: 0;
+}
+
+/* The per-course terms sit under the course they belong to, so the list does not
+   claim one enrolment or due date for the whole automation. */
+.automation-review-terms {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.automation-review-empty {
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+.automation-review-audience {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  width: 100%;
+  margin: 0;
+  padding: var(--space-sm) var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.automation-review-audience svg {
+  flex-shrink: 0;
 }

@@ -11,7 +11,7 @@
 .trigger-filters__row {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   width: 100%;
 }
 
@@ -42,40 +42,33 @@
 .trigger-filters__value {
   flex: 1;
   min-width: 0;
+  max-width: 400px;
 }
 
-/* Icon-only action: round --input-background-hover fill on hover, per the
-   destructive-icon convention, turning --text-error because it removes. */
+/* FilterMultiSelect sizes its field to the content; in this row it fills the
+   value column instead, so the remove button's 12px gap is measured from the
+   field's own edge rather than from empty column. */
+.trigger-filters__value .fms-field-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Same remove control as the Limited Admin form's scope rows: the shared
+   CloseButton, which only gains the destructive hover colour here because it
+   removes the row. */
 .trigger-filters__remove {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
   margin-top: var(--space-xxs);
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
 
 .trigger-filters__remove:hover {
-  background: var(--input-background-hover);
   color: var(--text-error);
-}
-
-.trigger-filters__remove:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
 }
 
 .trigger-filters__actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-m);
 }
 

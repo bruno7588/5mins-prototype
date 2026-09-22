@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDown2, Edit2, Trash } from 'iconsax-react'
+import { ArrowDown2, Danger, Edit2, People, Trash } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import CourseSearch from './CourseSearch'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import Tooltip from '../../components/Tooltip/Tooltip'
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import EnrollmentPopover from './EnrollmentPopover'
 import DueDatePopover from './DueDatePopover'
@@ -18,10 +19,15 @@ import type {
   RecurrenceConfig,
   TrackedAttribute,
 } from './Automations'
-import { getAttributeValues } from './Automations'
+import { ATTRIBUTE_LABELS, getAttributeValues } from './Automations'
 import type { AutomationCatalogCourse } from './courseCatalog'
 import TriggerFilters from './TriggerFilters'
-import { matchesCriteria, type TriggerFilter } from './triggerCriteria'
+import {
+  FILTER_FIELDS,
+  OPERATOR_LABELS,
+  matchesCriteria,
+  type TriggerFilter,
+} from './triggerCriteria'
 import { mockUsers } from './mockPeople'
 import './AutomationDetailsModal.css'
 import Button from '@/components/Button/Button'
@@ -58,11 +64,74 @@ function formatFrequency(c: AutomationCourse): { title: string; description?: st
   }
 }
 
+/* ── Review summary (DEV-4768) ──────────────────────────────────────────────
+   The summary restates the automation in sentences rather than controls, so the
+   admin reads what it will do rather than re-reading the form they just filled. */
+
+function describeTrigger(trigger: AutomationTrigger): string {
+  switch (trigger.kind) {
+    case 'user-registered':
+      return 'When a user registers on 5Mins.ai'
+    case 'existing-users':
+      return 'For users already on 5Mins.ai'
+    case 'attribute-changed': {
+      const value =
+        getAttributeValues(trigger.attribute).find((v) => v.value === trigger.toValue)?.label ??
+        trigger.toValue
+      return `When a user's ${ATTRIBUTE_LABELS[trigger.attribute]} changes to ${value}`
+    }
+  }
+}
+
+function describeFilter(filter: TriggerFilter): string {
+  const def = FILTER_FIELDS[filter.field]
+  const operator = OPERATOR_LABELS[filter.operator]
+  if (def.control === 'date') {
+    return `${def.label} ${operator} ${filter.date ?? '—'}`
+  }
+  const labels = filter.values.map(
+    (v) => def.options.find((o) => o.value === v)?.label ?? v,
+  )
+  return `${def.label} ${operator} ${labels.join(', ') || '—'}`
+}
+
+/* A filter row only counts once it carries what it matches on. An added but
+   empty row is an unfinished thought, not a criterion, so it blocks save the
+   same way a missing row does (DEV-4403 validation). */
+function isFilterComplete(filter: TriggerFilter): boolean {
+  return FILTER_FIELDS[filter.field].control === 'date'
+    ? !!filter.date
+    : filter.values.length > 0
+}
+
+/** Who the automation lands on, in the terms that population is counted in. */
+function describeAudience(automation: AutomationRow): string {
+  const total = mockUsers.length
+  const matched =
+    automation.filters.length === 0
+      ? total
+      : mockUsers.filter((u) => matchesCriteria(u, automation.filters)).length
+
+  if (automation.trigger.kind === 'existing-users') {
+    if (matched === 0) return 'No one matches these criteria, so nobody will be enrolled.'
+    return `${matched} of ${total} people ${matched === 1 ? 'matches' : 'match'} these criteria and will be enrolled.`
+  }
+
+  const from =
+    automation.trigger.kind === 'user-registered'
+      ? 'Everyone who registers from now on'
+      : 'Anyone whose details change to match from now on'
+  if (automation.filters.length === 0) return `${from}.`
+  return `${from} — ${matched} of today's ${total} people would match.`
+}
+
 export type AutomationDetailsMode = 'edit' | 'new' | 'duplicate'
 
 interface AutomationDetailsModalProps {
   automation: AutomationRow | null
   mode?: AutomationDetailsMode
+  /** Whether the draft differs from what was opened — drives the exit guard. */
+  dirty?: boolean
   onClose: () => void
   onSave?: (automation: AutomationRow) => void
   onTriggerChange?: (automationId: string, trigger: AutomationTrigger) => void
@@ -83,6 +152,7 @@ const SAVE_BUTTON_LABEL: Record<AutomationDetailsMode, string> = {
 function AutomationDetailsModal({
   automation,
   mode = 'edit',
+  dirty = false,
   onClose,
   onSave,
   onTriggerChange,
@@ -102,12 +172,19 @@ function AutomationDetailsModal({
      automation on Save, so Cancel and Escape can put the old name back. */
   const [renaming, setRenaming] = useState(false)
   const [draftName, setDraftName] = useState('')
+  /* The two safeguards on the way out and the way in: an exit guard when the
+     draft has moved (DEV-4770), and a review of what will run before it is
+     written (DEV-4768). */
+  const [confirmDiscard, setConfirmDiscard] = useState(false)
+  const [reviewing, setReviewing] = useState(false)
 
   useEffect(() => {
     if (automation) {
       setClosing(false)
       setOpenPopover(null)
       setRenaming(false)
+      setConfirmDiscard(false)
+      setReviewing(false)
     }
   }, [automation?.id])
 
@@ -116,17 +193,19 @@ function AutomationDetailsModal({
     function handleKey(e: KeyboardEvent) {
       if (e.key !== 'Escape') return
       /* One Escape at a time: an open rename swallows it, so the admin does not
-         lose the whole screen while backing out of a text field. */
+         lose the whole screen while backing out of a text field. The two dialogs
+         close themselves, so this listener stays out of their way. */
+      if (confirmDiscard || reviewing) return
       if (renaming) {
         setRenaming(false)
         return
       }
-      handleClose()
+      requestClose()
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [automation, renaming])
+  }, [automation, renaming, confirmDiscard, reviewing, dirty])
 
   function startRename() {
     setDraftName(automation?.name ?? '')
@@ -145,7 +224,32 @@ function AutomationDetailsModal({
     setTimeout(onClose, 200)
   }
 
+  /* Every exit route runs through here, so the guard cannot be walked around by
+     using the X instead of Escape. Nothing changed means nothing to warn about. */
+  function requestClose() {
+    if (dirty) {
+      setConfirmDiscard(true)
+      return
+    }
+    handleClose()
+  }
+
   if (!automation) return null
+
+  /* Save needs both halves of the rule: something to match on, and something to
+     enrol. The tooltip names whichever half is missing rather than restating
+     both, so the admin reads the fix and not a checklist. */
+  const hasTrigger =
+    automation.filters.length > 0 && automation.filters.every(isFilterComplete)
+  const hasAction = automation.courses.length > 0
+  const canSave = hasTrigger && hasAction
+  const saveBlockedReason = canSave
+    ? ''
+    : !hasTrigger && !hasAction
+      ? 'Set a trigger filter and add at least one course'
+      : !hasTrigger
+        ? 'Set a trigger filter with at least one value'
+        : 'Add at least one course to enrol people in'
 
   return (
     <div
@@ -154,7 +258,7 @@ function AutomationDetailsModal({
       aria-modal="true"
       aria-labelledby="automation-details-title"
     >
-      <CloseButton onClick={handleClose} className="automation-details-close" />
+      <CloseButton onClick={requestClose} className="automation-details-close" />
 
       <div className="automation-details-content">
         <header className="automation-details-header">
@@ -324,10 +428,7 @@ function AutomationDetailsModal({
               <CourseSearch
                 key={automation.id}
                 excludeIds={automation.courses.map((c) => c.catalogId ?? c.name)}
-                onSelect={(course) => {
-                  onCourseAdd?.(automation.id, course)
-                  showToast('success', 'Course added')
-                }}
+                onSelect={(course) => onCourseAdd?.(automation.id, course)}
               />
             </div>
 
@@ -415,13 +516,119 @@ function AutomationDetailsModal({
         </section>
 
         <footer className="automation-details-footer">
+          <Tooltip
+            text={saveBlockedReason}
+            position="Top"
+            icon={false}
+            disabled={canSave}
+          >
+            <Button disabled={!canSave} onClick={() => setReviewing(true)}>
+              {SAVE_BUTTON_LABEL[mode]}
+            </Button>
+          </Tooltip>
+        </footer>
+      </div>
+
+      {/* Warning, not Error: the admin is walking away from work that has not
+          landed, not destroying anything. Same shape as the course editor's
+          unsaved-changes dialog (DEV-4770). */}
+      <ConfirmModal
+        open={confirmDiscard}
+        onClose={() => setConfirmDiscard(false)}
+        ariaLabel="Unsaved changes"
+      >
+        <div className="confirm-modal-header confirm-modal-header--center">
+          <Danger size={72} color="var(--warning-500)" variant="Linear" />
+          <h3 className="confirm-modal-title">You've got unsaved changes!</h3>
+          <p className="confirm-modal-body">
+            Changes to this automation will be lost if you exit now. Do you want to leave
+            without saving?
+          </p>
+        </div>
+        <div className="confirm-modal-actions confirm-modal-actions--center">
+          <Button variant="outlined-2" onClick={() => setConfirmDiscard(false)}>
+            Keep Editing
+          </Button>
           <Button
-            onClick={() => onSave?.(automation)}
+            semantic="warning"
+            onClick={() => {
+              setConfirmDiscard(false)
+              handleClose()
+            }}
+          >
+            Discard Changes
+          </Button>
+        </div>
+      </ConfirmModal>
+
+      {/* Last look before it runs, mirroring the Enrol People review step: what
+          fires, what it enrols, and who it lands on (DEV-4768). */}
+      <ConfirmModal
+        open={reviewing}
+        onClose={() => setReviewing(false)}
+        className="automation-review"
+        ariaLabel="Review this automation"
+      >
+        <div className="confirm-modal-header">
+          <h3 className="confirm-modal-title">Review this automation before you save it</h3>
+          <p className="confirm-modal-body">
+            Check what will run and who it affects. You can go back to edit anything.
+          </p>
+        </div>
+
+        <dl className="automation-review-list">
+          <div className="automation-review-row">
+            <dt className="automation-review-key">Trigger</dt>
+            <dd className="automation-review-value">
+              <p>{describeTrigger(automation.trigger)}</p>
+              {automation.filters.map((f) => (
+                <p key={f.id}>{describeFilter(f)}</p>
+              ))}
+            </dd>
+          </div>
+          <div className="automation-review-row">
+            <dt className="automation-review-key">
+              {automation.courses.length === 1 ? 'Course' : 'Courses'}
+            </dt>
+            <dd className="automation-review-value">
+              {automation.courses.length === 0 ? (
+                <p className="automation-review-empty">No courses yet</p>
+              ) : (
+                automation.courses.map((c) => (
+                  <p key={c.id}>
+                    {c.name}
+                    {/* Start, due date and recurrence are set per course, so they
+                        read as that course's terms rather than the rule's. */}
+                    <span className="automation-review-terms">
+                      {formatEnrollment(c).title} · {formatDueDate(c).title} ·{' '}
+                      {formatFrequency(c).title}
+                    </span>
+                  </p>
+                ))
+              )}
+            </dd>
+          </div>
+        </dl>
+
+        <p className="automation-review-audience">
+          <People size={20} color="currentColor" variant="Linear" />
+          {describeAudience(automation)}
+        </p>
+
+        <div className="confirm-modal-actions">
+          <Button variant="outlined-2" onClick={() => setReviewing(false)}>
+            Back to Edit
+          </Button>
+          <Button
+            onClick={() => {
+              setReviewing(false)
+              onSave?.(automation)
+            }}
           >
             {SAVE_BUTTON_LABEL[mode]}
           </Button>
-        </footer>
-      </div>
+        </div>
+      </ConfirmModal>
 
       <ToastContainer toasts={toasts} />
     </div>

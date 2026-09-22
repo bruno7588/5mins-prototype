@@ -496,10 +496,15 @@ function Automations() {
   // Automation details modal (full-screen)
   const [detailsAutomation, setDetailsAutomation] = useState<AutomationRow | null>(null)
   const [detailsMode, setDetailsMode] = useState<AutomationDetailsMode>('edit')
+  /* The modal edits a draft: every change lands on detailsAutomation and only Save
+     writes it back to the list. This is what the draft looked like when it opened,
+     so closing can tell whether anything would be lost (DEV-4770). */
+  const [detailsBaseline, setDetailsBaseline] = useState('')
 
   function openDetails(automation: AutomationRow, mode: AutomationDetailsMode) {
     setDetailsMode(mode)
     setDetailsAutomation(automation)
+    setDetailsBaseline(JSON.stringify(automation))
   }
 
   function closeDetails() {
@@ -512,7 +517,7 @@ function Automations() {
   function saveAutomation(automation: AutomationRow) {
     if (detailsMode === 'edit') {
       setAutomations((rows) =>
-        rows.map((r) => (r.id === automation.id ? { ...r, lastUpdated: 'Just now' } : r)),
+        rows.map((r) => (r.id === automation.id ? { ...automation, lastUpdated: 'Just now' } : r)),
       )
       showToast('success', 'Automation updated')
     } else {
@@ -677,7 +682,6 @@ function Automations() {
       ...a,
       courses: a.courses.map((c) => (c.id === courseId ? { ...c, ...patch } : c)),
     })
-    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
     setDetailsAutomation((current) =>
       current && current.id === automationId ? apply(current) : current,
     )
@@ -699,7 +703,6 @@ function Automations() {
         },
       ],
     })
-    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
     setDetailsAutomation((current) =>
       current && current.id === automationId ? apply(current) : current,
     )
@@ -707,7 +710,6 @@ function Automations() {
 
   function patchTrigger(automationId: string, trigger: AutomationTrigger) {
     const apply = (a: AutomationRow): AutomationRow => ({ ...a, trigger })
-    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
     setDetailsAutomation((current) =>
       current && current.id === automationId ? apply(current) : current,
     )
@@ -715,7 +717,6 @@ function Automations() {
 
   function renameAutomation(automationId: string, name: string) {
     const apply = (a: AutomationRow): AutomationRow => ({ ...a, name })
-    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
     setDetailsAutomation((current) =>
       current && current.id === automationId ? apply(current) : current,
     )
@@ -723,7 +724,6 @@ function Automations() {
 
   function patchFilters(automationId: string, filters: TriggerFilter[]) {
     const apply = (a: AutomationRow): AutomationRow => ({ ...a, filters })
-    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
     setDetailsAutomation((current) =>
       current && current.id === automationId ? apply(current) : current,
     )
@@ -734,7 +734,6 @@ function Automations() {
       ...a,
       courses: a.courses.filter((c) => c.id !== courseId),
     })
-    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
     setDetailsAutomation((current) =>
       current && current.id === automationId ? apply(current) : current,
     )
@@ -748,7 +747,6 @@ function Automations() {
       next.splice(toIndex, 0, moved)
       return { ...a, courses: next }
     }
-    setAutomations((rows) => rows.map((r) => (r.id === automationId ? apply(r) : r)))
     setDetailsAutomation((current) =>
       current && current.id === automationId ? apply(current) : current,
     )
@@ -1509,6 +1507,7 @@ function Automations() {
       <AutomationDetailsModal
         automation={detailsAutomation}
         mode={detailsMode}
+        dirty={!!detailsAutomation && JSON.stringify(detailsAutomation) !== detailsBaseline}
         onClose={closeDetails}
         onSave={saveAutomation}
         onTriggerChange={patchTrigger}
