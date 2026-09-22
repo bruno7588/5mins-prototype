@@ -150,13 +150,12 @@
   color: var(--text-error);
 }
 
-/* Add Filter / Clear all sit 16px under the last criterion. The margin tops
-   the list's own 12px up, so the rows keep their spacing to each other. */
+/* No margin needed: the actions are a card child now, so the card's own 16px
+   gap puts them under the criteria list. */
 .trigger-filters__actions {
   display: flex;
   align-items: center;
   gap: var(--space-m);
-  margin-top: calc(var(--space-m) - var(--space-sm));
 }
 
 /* Flex, not block: as a block the wrapper carried inline line-box space and

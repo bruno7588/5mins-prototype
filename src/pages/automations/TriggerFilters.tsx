@@ -91,7 +91,12 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
   }
 
   return (
-    <div className="trigger-filters">
+    /* The rows and the actions are siblings, not one block: Add Filter belongs
+       to the card, so it takes the card's own spacing rather than the criteria
+       list's. The list only renders when there is something in it. */
+    <>
+      {filters.length > 0 && (
+      <div className="trigger-filters">
       {filters.map((filter) => {
         const def = getFilterField(filter.field)
         const FieldIcon = fieldIcon(filter.field)
@@ -169,6 +174,8 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
           </div>
         )
       })}
+      </div>
+      )}
 
       <div className="trigger-filters__actions">
         <div className="trigger-filters__add-wrap" ref={addRef}>
@@ -272,7 +279,7 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
           </button>
         )}
       </div>
-    </div>
+    </>
   )
 }
 
