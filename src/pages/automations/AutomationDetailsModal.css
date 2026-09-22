@@ -51,75 +51,34 @@
   gap: var(--space-s);
 }
 
-.automation-details-headline {
-  display: flex;
-  align-items: center;
-  gap: var(--space-m);
-}
-
+/* Inline input (input.md; Figma 9051:91247 annotates this title as the shared
+   Input-inline, the same one Course and Programs use). Borderless by design:
+   the type is the whole affordance, so there is no box, no hover and no focus
+   ring — Active is the caret and nothing else. H3 20 here rather than the
+   library's Bold 32, which is what this instance specifies. */
 .automation-details-title {
-  flex: 1;
+  width: 100%;
   margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  outline: none;
   font-family: 'Poppins', sans-serif;
   font-size: 20px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
+  caret-color: var(--text-primary);
 }
 
-.automation-details-edit-name {
-  all: unset;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-full);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.automation-details-edit-name:hover {
-  background: var(--cards-background-hover);
-  color: var(--text-primary);
+.automation-details-title::placeholder {
+  color: var(--text-disabled);
 }
 
 .automation-details-divider {
   height: 1px;
   background: var(--border);
   border-radius: var(--radius-xs);
-  transition: background 150ms ease, height 150ms ease;
-}
-
-/* Active state for the name field: the rule the header already draws turns amber
-   rather than the input growing a border of its own. */
-.automation-details-divider--active {
-  height: 2px;
-  background: var(--selected);
-}
-
-/* Borderless by design — the title's own type is the affordance (input.md). */
-.automation-details-title-input {
-  width: 100%;
-  border: none;
-  background: none;
-  padding: 0;
-  outline: none;
-  font-family: 'Poppins', sans-serif;
-  caret-color: var(--text-primary);
-}
-
-/* Equal-width pair: a grid of 1fr columns sized to fit its content gives both
-   buttons the width of the wider label, without pinning either to a number.
-   `margin-left: auto` keeps the hugging box against the right edge. */
-.automation-details-rename-actions {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  width: fit-content;
-  margin-left: auto;
-  gap: var(--space-sm);
 }
 
 /* ===== Footer (save / update action) ===== */

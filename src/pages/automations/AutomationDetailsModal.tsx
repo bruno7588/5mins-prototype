@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDown2, Danger, Edit2, People, Trash } from 'iconsax-react'
+import { ArrowDown2, Danger, People, Trash } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import CourseSearch from './CourseSearch'
 import Dropdown from '../../components/Dropdown/Dropdown'
@@ -167,12 +167,6 @@ function AutomationDetailsModal({
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
   const draggingIndexRef = useRef<number | null>(null)
   const { toasts, show: showToast } = useToast()
-  /* Rename is a committed edit, not a live one: the draft only reaches the
-     automation on Save, so Cancel and Escape can put the old name back.
-     It opens active, because naming the rule is the first thing to do on one
-     that arrives called "Copy of ..." or "New automation". */
-  const [renaming, setRenaming] = useState(true)
-  const [draftName, setDraftName] = useState(automation?.name ?? '')
   /* The two safeguards on the way out and the way in: an exit guard when the
      draft has moved (DEV-4770), and a review of what will run before it is
      written (DEV-4768). */
@@ -182,8 +176,6 @@ function AutomationDetailsModal({
   useEffect(() => {
     if (automation) {
       setOpenPopover(null)
-      setRenaming(true)
-      setDraftName(automation.name)
       setConfirmDiscard(false)
       setReviewing(false)
     }
@@ -193,32 +185,14 @@ function AutomationDetailsModal({
     if (!automation) return
     function handleKey(e: KeyboardEvent) {
       if (e.key !== 'Escape') return
-      /* One Escape at a time: an open rename swallows it, so the admin does not
-         lose the whole screen while backing out of a text field. The two dialogs
-         close themselves, so this listener stays out of their way. */
+      /* The two dialogs close themselves, so this listener stays out of their way. */
       if (confirmDiscard || reviewing) return
-      if (renaming) {
-        setRenaming(false)
-        return
-      }
       requestClose()
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [automation, renaming, confirmDiscard, reviewing, dirty])
-
-  function startRename() {
-    setDraftName(automation?.name ?? '')
-    setRenaming(true)
-  }
-
-  function commitRename() {
-    const next = draftName.trim()
-    if (!automation || next === '') return
-    if (next !== automation.name) onRename?.(automation.id, next)
-    setRenaming(false)
-  }
+  }, [automation, confirmDiscard, reviewing, dirty])
 
   /* Every exit route runs through here, so the guard cannot be walked around by
      using the X instead of Escape. Nothing changed means nothing to warn about. */
@@ -232,20 +206,23 @@ function AutomationDetailsModal({
 
   if (!automation) return null
 
-  /* Save needs both halves of the rule: something to match on, and something to
-     enrol. The tooltip names whichever half is missing rather than restating
-     both, so the admin reads the fix and not a checklist. */
+  /* Save needs a name and both halves of the rule: something to match on, and
+     something to enrol. The tooltip names one fix rather than a checklist, and
+     works down the page, so it always points at the topmost thing still open. */
+  const hasName = automation.name.trim() !== ''
   const hasTrigger =
     automation.filters.length > 0 && automation.filters.every(isFilterComplete)
   const hasAction = automation.courses.length > 0
-  const canSave = hasTrigger && hasAction
+  const canSave = hasName && hasTrigger && hasAction
   const saveBlockedReason = canSave
     ? ''
-    : !hasTrigger && !hasAction
-      ? 'Set a trigger filter and add at least one course'
-      : !hasTrigger
-        ? 'Set a trigger filter with at least one value'
-        : 'Add at least one course to enrol people in'
+    : !hasName
+      ? 'Add a title to this automation'
+      : !hasTrigger && !hasAction
+        ? 'Set a trigger filter and add at least one course'
+        : !hasTrigger
+          ? 'Set a trigger filter with at least one value'
+          : 'Add at least one course to enrol people in'
 
   return (
     <div
@@ -258,54 +235,18 @@ function AutomationDetailsModal({
 
       <div className="automation-details-content">
         <header className="automation-details-header">
-          <div className="automation-details-headline">
-            {renaming ? (
-              /* The inline editor keeps the title's own type, so the text stays
-                 where it was and only the affordance changes (input.md). */
-              <input
-                id="automation-details-title"
-                className="automation-details-title automation-details-title-input"
-                value={draftName}
-                aria-label="Automation name"
-                onChange={(e) => setDraftName(e.target.value.slice(0, 100))}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') commitRename()
-                }}
-                autoFocus
-              />
-            ) : (
-              <h2 id="automation-details-title" className="automation-details-title">
-                {automation.name}
-              </h2>
-            )}
-            {!renaming && (
-              <Tooltip text="Edit rule name" position="Top" alignment="End" icon={false}>
-                <button
-                  type="button"
-                  className="automation-details-edit-name"
-                  aria-label="Edit rule name"
-                  onClick={startRename}
-                >
-                  <Edit2 size={20} color="currentColor" variant="Linear" />
-                </button>
-              </Tooltip>
-            )}
-          </div>
-          {/* The rule under the title doubles as the field's active state: it goes
-              amber while the name is being edited, per the input Active spec. */}
-          <div
-            className={`automation-details-divider${renaming ? ' automation-details-divider--active' : ''}`}
+          {/* Inline input (input.md), the same title editor Course and Programs
+              use — the name is the field, so it is always editable and reaches
+              the draft as it is typed, like every other control here. */}
+          <input
+            id="automation-details-title"
+            className="automation-details-title"
+            value={automation.name}
+            placeholder="Add a title to automation"
+            aria-label="Automation name"
+            onChange={(e) => onRename?.(automation.id, e.target.value.slice(0, 100))}
           />
-          {renaming && (
-            <div className="automation-details-rename-actions">
-              <Button variant="outlined" size="sm" onClick={() => setRenaming(false)}>
-                Cancel
-              </Button>
-              <Button size="sm" onClick={commitRename} disabled={draftName.trim() === ''}>
-                Save
-              </Button>
-            </div>
-          )}
+          <div className="automation-details-divider" />
         </header>
 
         <section className="automation-details-section">
