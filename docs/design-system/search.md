@@ -81,7 +81,7 @@ Font:           Poppins 16px / 1.5  (Regular 400)
 - **SearchIcon** — Iconsax `SearchNormal1` Outline, `--text-tertiary` (18px M / 20px L)
 - **Placeholder** — Regular 400, `--text-disabled`
 - **Value text** — Regular 400, `--text-primary`, `flex: 1`
-- **Clear** — `IoCloseOutline` (io5 set, same glyph as dismissible badges), 20px M / 24px L, `--text-tertiary`, calls `onClear`
+- **Clear** — `IoCloseOutline` (io5 set, same glyph as dismissible badges), 20px M / 24px L, `--text-secondary`, calls `onClear`. Note it is one step stronger than the leading SearchIcon: the clear is an action, the search icon is decoration.
 
 ---
 
@@ -264,6 +264,12 @@ export const Search: React.FC<SearchProps> = ({
 ## Code reality
 
 `src/components/Search/Search.tsx` implements this component. Drift from the node: the active border uses raw `--secondary-500` instead of `--selected` (`Search.css` line ~37 — a one-line fix), and the clear glyph is an Iconsax `Add` rotated to an × instead of io5 `IoCloseOutline`. Sizes, padding, radius, and the other state tokens match.
+
+## Change Log
+
+- **2026-09-22** — Clear icon moved from `--text-tertiary` to `--text-secondary`, matching the close glyph on CloseButton and the dismissible badge. The border stays on `--border` (see States) — that is deliberate and was re-confirmed.
+
+---
 
 ## Related Skills
 

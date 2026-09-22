@@ -53,7 +53,7 @@ The trigger is **transparent by default** with only a border — it is *not* a f
   gap: 8px;
   width: 100%;
   background: transparent;
-  border: 1px solid var(--border-elevated); /* #BFC2CC light / #383D4C dark */
+  border: 1px solid var(--border-elevated); /* #DFE1E6 light / #383D4C dark */
   border-radius: var(--radius-sm);          /* 12px */
   padding: 8px 12px;                        /* --s, --sm */
   font-family: 'Poppins', sans-serif;
@@ -145,7 +145,7 @@ Use `ArrowDown2` from Iconsax. Rotate 180° in the Active state, OR swap to `Arr
 .dropdown-trigger.is-active .dropdown-chevron { transform: rotate(180deg); }
 ```
 
-Chevron color tracks the current text color.
+Chevron color is `--text-secondary`, not the value's colour — it is the control's affordance, not part of the text. Read-only tints it `--text-disabled` with the rest of the trigger.
 
 ---
 
@@ -438,7 +438,7 @@ Constrain the width at the wrapper level (`<div style={{ width: 'auto' }}>` or a
 |---|---|---|
 | Trigger background (Enabled/Active) | *none (transparent)* | — |
 | Trigger background (Hover) | `--input-background` | `#BFC2CC` @16% light / `#454C5E` @16% dark |
-| Border default | `--border-elevated` | `#BFC2CC` light / `#383D4C` dark |
+| Border default | `--border-elevated` | `#DFE1E6` light / `#383D4C` dark |
 | Border hover | `--border-hover` | `#9EA4B3` |
 | Border disabled / read-only | `--border` | `#DFE1E6` light / `#2D313D` dark |
 | Border active / focus | `--selected` | `#EDA30D` light / `#FFBB38` dark |
@@ -455,5 +455,6 @@ Constrain the width at the wrapper level (`<div style={{ width: 'auto' }}>` or a
 
 ## Change Log
 
+- **2026-09-22** — Re-verified the trigger against library `8925:1408`. **Medium is 37px**: that node states no height at all, and 37px is the frame with its 1px stroke drawn inside, so the stated frame wins over padding arithmetic (the same way `lg`'s 48px does). The overview table's `41px` had no source and is gone, and the `md` CSS rule now carries the height like `sm` and `lg` do. Chevron colour is `--text-secondary`, not the value's colour. `--border-elevated` is `#DFE1E6` in light, not `#BFC2CC`. Note that node has **no size axis** — Small and Large are not in it and still need their own link.
 - **2026-07-03** — Re-verified against light `11920:5290` / dark `8925:1408`. Corrected: medium padding is `8px 12px` (not `8px 16px`); hover background is the translucent `--input-background` (not `--page-background-hover`); label line-height 1.5; helper gap 8px; token table now lists light/dark values.
 - **2026-04-14** — Rewritten to match the Figma library (node `11659:2103`). Corrected: trigger radius is `12px` (not 8px); trigger background is transparent (not filled `--surface-input`); hover bg is `--page-background-hover` (not `--surface-input-hover`); padding for medium is `8px 16px` (not `10px 16px`); state names are **Enabled / Hover / Active / Read-only**; `iconLeft` is first-class. Multi-select and searchable-within-dropdown are not in the current Figma library node and have been removed from the doc until they are added.

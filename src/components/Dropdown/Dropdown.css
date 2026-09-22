@@ -98,9 +98,18 @@
   color: var(--text-disabled);
 }
 
+/* The chevron is --text-secondary whatever colour the value is, so it reads as
+   the control's affordance rather than part of the text. Read-only still tints
+   it with everything else. */
 .dropdown-chevron {
   flex-shrink: 0;
+  color: var(--text-secondary);
   transition: transform 150ms ease;
+}
+
+.dropdown-trigger:disabled .dropdown-chevron,
+.dropdown-trigger[aria-disabled='true'] .dropdown-chevron {
+  color: var(--text-disabled);
 }
 
 .dropdown-trigger.is-active .dropdown-chevron {

@@ -7,16 +7,19 @@
   z-index: 1050;
   background: var(--scrim);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  /* The panel centres with `margin: auto` rather than `align-items: center`,
+     because centring a dialog taller than the viewport pushes its top out of
+     reach — you cannot scroll back up to it. This way the overlay scrolls. */
+  overflow-y: auto;
+  padding: var(--space-l);
   animation: confirm-overlay-in 200ms ease;
 }
 
 .confirm-modal {
   width: 560px;
-  max-width: calc(100vw - 48px);
-  max-height: calc(100vh - 64px);
-  overflow-y: auto;
+  max-width: 100%;
+  margin: auto;
+  flex-shrink: 0;
   background: var(--page-background);
   border-radius: var(--radius-sm);
   padding: var(--space-l);

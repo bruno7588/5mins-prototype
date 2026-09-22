@@ -3,6 +3,8 @@
 .search {
   display: flex;
   align-items: center;
+  /* The quiet --border, not --border-elevated: Search is the one field with a
+     fill at rest, so it does not need the stronger edge (search.md). */
   border: 1px solid var(--border);
   background: var(--input-background);
   cursor: text;

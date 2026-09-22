@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useOverlayA11y } from '../../hooks/useOverlayA11y'
 import './ConfirmModal.css'
 
@@ -17,7 +18,11 @@ function ConfirmModal({ open, onClose, children, className, ariaLabel }: Confirm
 
   if (!open) return null
 
-  return (
+  /* Portalled to <body>: a confirm opened from inside a panel that sets its own
+     z-index (the automations details modal is 90) would otherwise be trapped in
+     that stacking context, and the topnav at 100 would paint over its top edge
+     however high this overlay's z-index went. */
+  return createPortal(
     <div className="confirm-modal-overlay" onMouseDown={onClose}>
       <div
         ref={panelRef}
@@ -30,7 +35,8 @@ function ConfirmModal({ open, onClose, children, className, ariaLabel }: Confirm
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
