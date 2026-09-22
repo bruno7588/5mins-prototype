@@ -37,6 +37,7 @@
 
 .summary-card__badge--icon {
   background: none;
+  color: var(--text-primary);
 }
 
 .summary-card__body {

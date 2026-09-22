@@ -106,7 +106,13 @@ function isFilterComplete(filter: TriggerFilter): boolean {
     : filter.values.length > 0
 }
 
-/** Who the automation lands on, in the terms that population is counted in. */
+/**
+ * Who the automation lands on — only ever shown for an existing-employee
+ * trigger, where the count IS the enrolment set. A future-facing trigger fires
+ * on registrations that have not happened yet, so counting today's people is a
+ * number about the wrong population (DEV-4403); the builder already withholds
+ * its live count for the same reason.
+ */
 function describeAudience(automation: AutomationRow): string {
   const total = mockUsers.length
   const matched =
@@ -114,17 +120,8 @@ function describeAudience(automation: AutomationRow): string {
       ? total
       : mockUsers.filter((u) => matchesCriteria(u, automation.filters)).length
 
-  if (automation.trigger.kind === 'existing-users') {
-    if (matched === 0) return 'No one matches these criteria, so nobody will be enrolled.'
-    return `${matched} of ${total} people ${matched === 1 ? 'matches' : 'match'} these criteria and will be enrolled.`
-  }
-
-  const from =
-    automation.trigger.kind === 'user-registered'
-      ? 'Everyone who registers from now on'
-      : 'Anyone whose details change to match from now on'
-  if (automation.filters.length === 0) return `${from}.`
-  return `${from} — ${matched} of today's ${total} people would match.`
+  if (matched === 0) return 'No one matches these criteria, so nobody will be enrolled.'
+  return `${matched} of ${total} people ${matched === 1 ? 'matches' : 'match'} these criteria and will be enrolled.`
 }
 
 export type AutomationDetailsMode = 'edit' | 'new' | 'duplicate'
@@ -562,10 +559,12 @@ function AutomationDetailsModal({
           )}
         </div>
 
-        <p className="automation-review-audience">
-          <InfoCircle size={20} color="currentColor" variant="Linear" />
-          {describeAudience(automation)}
-        </p>
+        {automation.trigger.kind === 'existing-users' && (
+          <p className="automation-review-audience">
+            <InfoCircle size={20} color="currentColor" variant="Linear" />
+            {describeAudience(automation)}
+          </p>
+        )}
 
         <div className="confirm-modal-actions">
           <Button variant="outlined-2" onClick={() => setReviewing(false)}>

@@ -930,7 +930,10 @@ function Automations() {
                   requestDeleteAutomation(row.id)
                 }}
               >
-                <Trash size={20} color="var(--danger-500)" variant="Linear" />
+                {/* currentColor, so the glyph tracks the row's --text-error
+                    instead of pinning the raw --danger-500, which is a ramp
+                    step darker than the label in dark mode. */}
+                <Trash size={20} color="currentColor" variant="Linear" />
                 Delete
               </button>
             </div>
