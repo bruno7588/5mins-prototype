@@ -72,7 +72,10 @@
   font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
-  padding: var(--space-xs) 0;
+  /* No vertical padding: it pushed the input's line box to 29px, which
+     overran the field's 37px floor and left it 2px above the control rail
+     the dropdown and date field sit on. */
+  padding: 0;
 }
 
 .fms-input::placeholder {

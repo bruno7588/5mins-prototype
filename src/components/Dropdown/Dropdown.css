@@ -65,8 +65,11 @@
   cursor: not-allowed;
 }
 
-.dropdown-trigger.has-error { border-color: var(--text-error); }
-.dropdown-trigger.has-error:hover { border-color: var(--text-error); }
+/* --danger-500 rather than --text-error, which resolves to --danger-400 in
+   dark and pulled the border a ramp step lighter there. Hover darkens, so a
+   hovered error field answers like every other state does (dropdown.md). */
+.dropdown-trigger.has-error { border-color: var(--danger-500); }
+.dropdown-trigger.has-error:hover { border-color: var(--danger-600); }
 
 /* Sizes */
 .dropdown-sm .dropdown-trigger { height: 33px; padding: 4px 12px; font-size: 12px;
@@ -166,9 +169,12 @@
   font-weight: 500;
 }
 
+/* --selected, not raw --secondary-500: the raw token is the dark value, so a
+   selected row came out #FFBB38 in light where the ramp wants #EDA30D. Same
+   fix the trigger border carries above. */
 .dropdown-option.is-selected,
 .dropdown-option.is-selected:hover:not(:disabled) {
-  background: var(--secondary-500);
+  background: var(--selected);
   color: var(--text-on-selected);
   font-weight: 500;
 }
@@ -262,7 +268,7 @@
    is a plain row like any other. */
 .dropdown-option--all.is-selected,
 .dropdown-option--all.is-selected:hover {
-  background: var(--secondary-500);
+  background: var(--selected);
   color: var(--text-on-selected);
 }
 
