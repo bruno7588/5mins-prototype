@@ -12,6 +12,9 @@
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
+  /* Shadow S in light, nothing in dark — a shadow over a dark surface only
+     muddies it, which is what --shadow-card already encodes. */
+  box-shadow: var(--shadow-card);
 }
 
 /* Holds an ordinal or a 20px field icon, so it is sized for the icon and the
@@ -30,6 +33,10 @@
   font-size: 12px;
   font-weight: 500;
   line-height: 1.5;
+}
+
+.summary-card__badge--icon {
+  background: none;
 }
 
 .summary-card__body {
@@ -53,4 +60,64 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/* Grouped: the list itself is the card, and the rows sit inside it. */
+/* The container carries the padding so the gap between rows is the gap you
+   asked for, rather than that gap plus two rows' worth of padding. */
+.summary-cards--grouped {
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-card);
+}
+
+.summary-cards--grouped .summary-card {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* The rest of a long list, held behind View all. The inner wrapper carries the
+   row gap, because Collapse animates the height of its own single child. */
+.summary-cards__rest-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  padding-top: var(--space-s);
+}
+
+.summary-cards--grouped .summary-cards__rest-inner {
+  gap: var(--space-sm);
+  padding-top: var(--space-sm);
+}
+
+.summary-cards__toggle {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-xs);
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.summary-cards__toggle:hover {
+  color: var(--text-primary);
+}
+
+.summary-cards__toggle-icon {
+  transition: transform 150ms ease;
+}
+
+.summary-cards__toggle-icon--down {
+  transform: rotate(180deg);
 }

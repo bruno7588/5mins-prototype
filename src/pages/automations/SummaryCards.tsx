@@ -1,4 +1,6 @@
-import type { ReactNode } from 'react'
+import { Children, useState, type ReactNode } from 'react'
+import { ArrowUp2 } from 'iconsax-react'
+import Collapse from '@/components/Collapse/Collapse'
 import type { AutomationCourse } from './Automations'
 import './SummaryCards.css'
 
@@ -44,8 +46,49 @@ export function formatCourseMeta(c: AutomationCourse): string {
  * it is saved (DEV-4768) and the Trigger automation drawer. They showed the
  * same facts in two different shapes before this.
  */
-export function SummaryCardList({ children }: { children: ReactNode }) {
-  return <div className="summary-cards">{children}</div>
+export function SummaryCardList({
+  children,
+  /** One container holding every row, for facts that read as a set — the
+      criteria of a single trigger — rather than as separate things. */
+  grouped = false,
+  /** Show this many, then a View all that eases the rest open. */
+  previewCount,
+}: {
+  children: ReactNode
+  grouped?: boolean
+  previewCount?: number
+}) {
+  const [expanded, setExpanded] = useState(false)
+  const items = Children.toArray(children)
+  const overflows = previewCount != null && items.length > previewCount
+  const shown = overflows ? items.slice(0, previewCount) : items
+  const rest = overflows ? items.slice(previewCount) : []
+
+  return (
+    <div className={`summary-cards${grouped ? ' summary-cards--grouped' : ''}`}>
+      {shown}
+      {overflows && (
+        <>
+          <Collapse open={expanded} className="summary-cards__rest">
+            <div className="summary-cards__rest-inner">{rest}</div>
+          </Collapse>
+          <button
+            type="button"
+            className="summary-cards__toggle"
+            onClick={() => setExpanded((v) => !v)}
+          >
+            {expanded ? 'View less' : `View all ${items.length}`}
+            <ArrowUp2
+              size={16}
+              color="currentColor"
+              variant="Linear"
+              className={`summary-cards__toggle-icon${expanded ? '' : ' summary-cards__toggle-icon--down'}`}
+            />
+          </button>
+        </>
+      )}
+    </div>
+  )
 }
 
 interface SummaryCardProps {
@@ -57,9 +100,14 @@ interface SummaryCardProps {
 }
 
 export function SummaryCard({ badge, title, meta }: SummaryCardProps) {
+  /* An icon is its own mark; only an ordinal needs a disc behind it to read as
+     a number in a sequence. */
+  const ordinal = typeof badge === 'number' || typeof badge === 'string'
   return (
     <div className="summary-card">
-      <span className="summary-card__badge">{badge}</span>
+      <span className={`summary-card__badge${ordinal ? '' : ' summary-card__badge--icon'}`}>
+        {badge}
+      </span>
       <span className="summary-card__body">
         <span className="summary-card__title">{title}</span>
         {meta && <span className="summary-card__meta">{meta}</span>}

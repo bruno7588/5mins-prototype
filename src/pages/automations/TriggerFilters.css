@@ -15,8 +15,14 @@
   width: 100%;
 }
 
+/* The chips belong to the row, not to the value column. Flattening the value
+   wrapper lets the field, the remove and the chips all be row items, so the
+   remove can sit beside the field while the chips take a full-width line of
+   their own and run to the card's edge. `order` puts the chips last, since in
+   the DOM they come before the remove. */
 .trigger-filters__row {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--space-s);
   width: 100%;
@@ -79,25 +85,39 @@
 
 
 
-.trigger-filters__value {
-  flex: 0 1 auto;
-  min-width: 0;
-  max-width: 400px;
+.trigger-filters__value,
+.trigger-filters__value .fms {
+  display: contents;
 }
 
-/* The 400px cap belongs to the input, not the column: selected badges wrap
-   under it and run the full width of the row, rather than folding early
-   against a width the field needed. */
+/* Only the searchable multi-select earns the 400px: it holds typed text. */
 .trigger-filters__value .fms-field-row {
-  max-width: 400px;
+  flex: 0 1 400px;
+  min-width: 0;
 }
 
-/* FilterMultiSelect sizes its field to the content; in this row it fills the
-   space instead, so the remove button's gap is measured from the field's own
-   edge rather than from empty column. */
+/* The single-select and the date field size to their own content, so the
+   remove sits beside them instead of after an empty stretch. */
+.trigger-filters__value > .dropdown-field {
+  flex: 0 0 auto;
+  width: fit-content;
+}
+
+.trigger-filters__value > .dpf {
+  flex: 0 0 auto;
+}
+
 .trigger-filters__value .fms-field-wrap {
   flex: 1;
   min-width: 0;
+}
+
+/* Last in the row and on a line of its own, so the badges have the full width
+   to fill before they wrap. */
+.trigger-filters__value .fms-chips {
+  order: 1;
+  flex: 0 0 100%;
+  margin-top: 0;
 }
 
 /* Same remove control as the Limited Admin form's scope rows: the shared

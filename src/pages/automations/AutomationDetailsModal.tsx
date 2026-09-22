@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDown2, Danger, Flash, People, Trash } from 'iconsax-react'
+import { ArrowDown2, Danger, InfoCircle, Trash } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import CourseSearch from './CourseSearch'
 import Dropdown from '../../components/Dropdown/Dropdown'
@@ -521,22 +521,20 @@ function AutomationDetailsModal({
         className="automation-review"
         ariaLabel="Review this automation"
       >
+        {/* Section Header (headers.md): 20px title over a divider, no
+            supporting text — the sections below say what they are. */}
         <div className="confirm-modal-header">
           <h3 className="confirm-modal-title">Review this automation before you save it</h3>
-          <p className="confirm-modal-body">
-            Check what will run and who it affects. You can go back to edit anything.
-          </p>
+          <div className="automation-review-divider" />
         </div>
 
         <div className="automation-review-section">
-          <p className="automation-review-heading">Trigger</p>
-          <SummaryCardList>
-            <SummaryCard
-              badge={<Flash size={16} color="currentColor" variant="Linear" />}
-              title={describeTrigger(automation.trigger)}
-            />
-            {/* One card per criterion, so the trigger reads the same way the
-                courses do rather than as a paragraph of sentences. */}
+          {/* The event is the sentence the criteria narrow, so it reads as one
+              rather than as the first card in the list — and it names the
+              trigger well enough that a "Trigger" label over it would only
+              repeat it. */}
+          <p className="automation-review-lead">{describeTrigger(automation.trigger)}</p>
+          <SummaryCardList grouped previewCount={3}>
             {automation.filters.map((f) => {
               const Icon = fieldIcon(f.field)
               return (
@@ -552,13 +550,11 @@ function AutomationDetailsModal({
         </div>
 
         <div className="automation-review-section">
-          <p className="automation-review-heading">
-            {automation.courses.length === 1 ? 'Course' : 'Courses'}
-          </p>
+          <p className="automation-review-heading">Enrol them in these courses</p>
           {automation.courses.length === 0 ? (
             <p className="automation-review-empty">No courses yet</p>
           ) : (
-            <SummaryCardList>
+            <SummaryCardList previewCount={3}>
               {automation.courses.map((c, i) => (
                 <SummaryCard key={c.id} badge={i + 1} title={c.name} meta={formatCourseMeta(c)} />
               ))}
@@ -567,7 +563,7 @@ function AutomationDetailsModal({
         </div>
 
         <p className="automation-review-audience">
-          <People size={20} color="currentColor" variant="Linear" />
+          <InfoCircle size={20} color="currentColor" variant="Linear" />
           {describeAudience(automation)}
         </p>
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowUp2, TickCircle, UserTick } from 'iconsax-react'
+import { TickCircle, UserTick } from 'iconsax-react'
 import Button from '../../components/Button/Button'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import Search from '../../components/Search/Search'
@@ -30,7 +30,6 @@ function ForceTriggerModal({
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [searchFocused, setSearchFocused] = useState(false)
-  const [coursesExpanded, setCoursesExpanded] = useState(false)
   const [enrolledTooltip, setEnrolledTooltip] = useState<{ top: number; right: number } | null>(null)
   const [triggered, setTriggered] = useState(false)
   const searchWrapperRef = useRef<HTMLDivElement>(null)
@@ -42,7 +41,6 @@ function ForceTriggerModal({
       setSearchQuery('')
       setSelectedUserIds([])
       setSearchFocused(false)
-      setCoursesExpanded(false)
       setTriggered(false)
     }
   }, [automation])
@@ -109,8 +107,6 @@ function ForceTriggerModal({
   const showResults = searchFocused && filteredResults.length > 0
   const triggerLabel = 'Run Automation'
   const COURSE_PREVIEW_COUNT = 3
-  const previewCourses = automation.courses.slice(0, COURSE_PREVIEW_COUNT)
-  const overflowCourses = automation.courses.slice(COURSE_PREVIEW_COUNT)
 
   function handleTrigger() {
     if (!automation || selectedUsers.length === 0) return
@@ -181,42 +177,10 @@ function ForceTriggerModal({
                 <p className="force-trigger-courses-label">
                   Users will be enrolled in these courses
                 </p>
-                <SummaryCardList>
-                  {previewCourses.map((c, i) => (
+                <SummaryCardList previewCount={COURSE_PREVIEW_COUNT}>
+                  {automation.courses.map((c, i) => (
                     <SummaryCard key={i} badge={i + 1} title={c.name} meta={formatCourseMeta(c)} />
                   ))}
-                  {overflowCourses.length > 0 && (
-                    <div
-                      className={`force-trigger-courses-collapsible${coursesExpanded ? ' force-trigger-courses-collapsible--open' : ''}`}
-                      aria-hidden={!coursesExpanded}
-                    >
-                      <SummaryCardList>
-                        {overflowCourses.map((c, i) => (
-                          <SummaryCard
-                            key={i}
-                            badge={COURSE_PREVIEW_COUNT + i + 1}
-                            title={c.name}
-                            meta={formatCourseMeta(c)}
-                          />
-                        ))}
-                      </SummaryCardList>
-                    </div>
-                  )}
-                  {overflowCourses.length > 0 && (
-                    <button
-                      type="button"
-                      className="force-trigger-toggle-courses"
-                      onClick={() => setCoursesExpanded((v) => !v)}
-                    >
-                      {coursesExpanded ? 'View less' : 'View all'}
-                      <ArrowUp2
-                        size={16}
-                        color="currentColor"
-                        variant="Linear"
-                        className={`force-trigger-toggle-chevron${coursesExpanded ? '' : ' force-trigger-toggle-chevron--down'}`}
-                      />
-                    </button>
-                  )}
                 </SummaryCardList>
               </div>
 

@@ -134,7 +134,7 @@
   margin: 0;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
   white-space: nowrap;
@@ -421,15 +421,27 @@
   width: 600px;
 }
 
-.automation-review .confirm-modal-actions {
-  justify-content: flex-end;
-}
-
 .automation-review-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   width: 100%;
+}
+
+.automation-review-divider {
+  height: 1px;
+  width: 100%;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}
+
+.automation-review-lead {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
 
 .automation-review-heading {
