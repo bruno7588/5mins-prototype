@@ -1027,7 +1027,7 @@ function Automations() {
             <h2 className="automations-title">Automations</h2>
             <p className="automations-description">
               Manage enrolment automations, review trigger history, and configure course workflows.{' '}
-              <span className="automations-description-link ui-disabled" aria-disabled="true">
+              <span className="automations-description-link" aria-disabled="true">
                 Here is how it works
               </span>
             </p>
@@ -1065,7 +1065,10 @@ function Automations() {
                   openDetails(
                     {
                       id: 'template-new-employee',
-                      name: 'Copy of New Employee Onboarding',
+                      /* Opens on the Inline input's first state: no text, just
+                         the placeholder, so the admin names it rather than
+                         editing a name they did not choose (input.md). */
+                      name: '',
                       lastUpdated: new Date().toISOString().slice(0, 10),
                       active: false,
                       trigger: { kind: 'user-registered' },
@@ -1097,7 +1100,7 @@ function Automations() {
                   openDetails(
                     {
                       id: `existing-employee-${Date.now()}`,
-                      name: 'Copy of Existing Employee Automation',
+                      name: '',
                       lastUpdated: new Date().toISOString().slice(0, 10),
                       active: false,
                       trigger: { kind: 'existing-users' },
@@ -1126,7 +1129,7 @@ function Automations() {
                   openDetails(
                     {
                       id: `template-attribute-change-${Date.now()}`,
-                      name: 'Untitled attribute change automation',
+                      name: '',
                       lastUpdated: new Date().toISOString().slice(0, 10),
                       active: false,
                       trigger: {

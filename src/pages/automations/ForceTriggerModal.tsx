@@ -5,40 +5,9 @@ import CloseButton from '../../components/CloseButton/CloseButton'
 import Search from '../../components/Search/Search'
 import Badge from '../../components/Badge/Badge'
 import Chip from '../../components/Chip/Chip'
-import type { AutomationRow, AutomationCourse, User } from './Automations'
+import type { AutomationRow, User } from './Automations'
+import { SummaryCard, SummaryCardList, formatCourseMeta } from './SummaryCards'
 import './ForceTriggerModal.css'
-
-function formatCourseMeta(c: AutomationCourse): string {
-  const parts: string[] = []
-
-  // Enrollment
-  if (c.enrollmentType.kind === 'immediate') {
-    parts.push('Immediate')
-  } else {
-    const unit = c.enrollmentType.days === 1 ? 'day' : 'days'
-    parts.push(`${c.enrollmentType.days} ${unit} after previous course`)
-  }
-
-  // Due date
-  if (c.dueDate.kind === 'none') {
-    parts.push('No due date')
-  } else {
-    const unit = c.dueDate.daysAfterStart === 1 ? 'day' : 'days'
-    parts.push(`Due ${c.dueDate.daysAfterStart} ${unit} after start date`)
-  }
-
-  // Recurrence
-  if (c.recurrence.enabled) {
-    const { interval, unit } = c.recurrence
-    const unitLabel =
-      unit === 'months' ? (interval === 1 ? 'month' : 'months') : interval === 1 ? 'week' : 'weeks'
-    parts.push(`Repeats every ${interval} ${unitLabel}`)
-  } else {
-    parts.push('Never repeats')
-  }
-
-  return parts.join(' \u00b7 ')
-}
 
 interface ForceTriggerModalProps {
   automation: AutomationRow | null
@@ -212,32 +181,25 @@ function ForceTriggerModal({
                 <p className="force-trigger-courses-label">
                   Users will be enrolled in these courses
                 </p>
-                <div className="force-trigger-courses-card">
+                <SummaryCardList>
                   {previewCourses.map((c, i) => (
-                    <div key={i} className="force-trigger-course-item">
-                      <span className="force-trigger-course-badge">{i + 1}</span>
-                      <div className="force-trigger-course-info">
-                        <span className="force-trigger-course-name">{c.name}</span>
-                        <span className="force-trigger-course-meta">{formatCourseMeta(c)}</span>
-                      </div>
-                    </div>
+                    <SummaryCard key={i} badge={i + 1} title={c.name} meta={formatCourseMeta(c)} />
                   ))}
                   {overflowCourses.length > 0 && (
                     <div
                       className={`force-trigger-courses-collapsible${coursesExpanded ? ' force-trigger-courses-collapsible--open' : ''}`}
                       aria-hidden={!coursesExpanded}
                     >
-                      <div className="force-trigger-courses-collapsible-inner">
+                      <SummaryCardList>
                         {overflowCourses.map((c, i) => (
-                          <div key={i} className="force-trigger-course-item">
-                            <span className="force-trigger-course-badge">{COURSE_PREVIEW_COUNT + i + 1}</span>
-                            <div className="force-trigger-course-info">
-                              <span className="force-trigger-course-name">{c.name}</span>
-                              <span className="force-trigger-course-meta">{formatCourseMeta(c)}</span>
-                            </div>
-                          </div>
+                          <SummaryCard
+                            key={i}
+                            badge={COURSE_PREVIEW_COUNT + i + 1}
+                            title={c.name}
+                            meta={formatCourseMeta(c)}
+                          />
                         ))}
-                      </div>
+                      </SummaryCardList>
                     </div>
                   )}
                   {overflowCourses.length > 0 && (
@@ -255,7 +217,7 @@ function ForceTriggerModal({
                       />
                     </button>
                   )}
-                </div>
+                </SummaryCardList>
               </div>
 
               {/* User picker */}

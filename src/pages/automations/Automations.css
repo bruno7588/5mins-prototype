@@ -38,15 +38,12 @@
   line-height: 1.5;
 }
 
+/* Reads as a link in the brand colour, but nothing is wired behind it yet, so
+   it keeps the arrow cursor and does not answer hover. */
 .automations-description-link {
-  color: var(--text-secondary);
+  color: var(--primary-button-background);
   text-decoration: underline;
-  cursor: pointer;
-  transition: color 150ms ease;
-}
-
-.automations-description-link:hover {
-  color: var(--primary-700);
+  cursor: default;
 }
 
 .automations-tabs {

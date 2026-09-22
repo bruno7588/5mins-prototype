@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDown2, Danger, People, Trash } from 'iconsax-react'
+import { ArrowDown2, Danger, Flash, People, Trash } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import CourseSearch from './CourseSearch'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
+import { SummaryCard, SummaryCardList, formatCourseMeta } from './SummaryCards'
+import { fieldIcon } from './TriggerFilters'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import EnrollmentPopover from './EnrollmentPopover'
 import DueDatePopover from './DueDatePopover'
@@ -23,7 +25,7 @@ import { ATTRIBUTE_LABELS, getAttributeValues } from './Automations'
 import type { AutomationCatalogCourse } from './courseCatalog'
 import TriggerFilters from './TriggerFilters'
 import {
-  FILTER_FIELDS,
+  getFilterField,
   OPERATOR_LABELS,
   matchesCriteria,
   type TriggerFilter,
@@ -83,23 +85,23 @@ function describeTrigger(trigger: AutomationTrigger): string {
   }
 }
 
-function describeFilter(filter: TriggerFilter): string {
-  const def = FILTER_FIELDS[filter.field]
+/* The card already carries the field name in its title, so the terms start at
+   the operator — "is one of Account Executive", not "Role is one of Role". */
+function describeFilterTerms(filter: TriggerFilter): string {
+  const def = getFilterField(filter.field)
   const operator = OPERATOR_LABELS[filter.operator]
-  if (def.control === 'date') {
-    return `${def.label} ${operator} ${filter.date ?? '—'}`
-  }
+  if (def.control === 'date') return `${operator} ${filter.date ?? '—'}`
   const labels = filter.values.map(
     (v) => def.options.find((o) => o.value === v)?.label ?? v,
   )
-  return `${def.label} ${operator} ${labels.join(', ') || '—'}`
+  return `${operator} ${labels.join(', ') || '—'}`
 }
 
 /* A filter row only counts once it carries what it matches on. An added but
    empty row is an unfinished thought, not a criterion, so it blocks save the
    same way a missing row does (DEV-4403 validation). */
 function isFilterComplete(filter: TriggerFilter): boolean {
-  return FILTER_FIELDS[filter.field].control === 'date'
+  return getFilterField(filter.field).control === 'date'
     ? !!filter.date
     : filter.values.length > 0
 }
@@ -143,10 +145,12 @@ interface AutomationDetailsModalProps {
   onCoursesReorder?: (automationId: string, fromIndex: number, toIndex: number) => void
 }
 
+/* Save when the automation already exists, Create when this click is what
+   brings it into being — a duplicate is a new automation, so it creates too. */
 const SAVE_BUTTON_LABEL: Record<AutomationDetailsMode, string> = {
-  edit: 'Update Automation',
-  new: 'Save Automation',
-  duplicate: 'Create new automation',
+  edit: 'Save Automation',
+  new: 'Create Automation',
+  duplicate: 'Create Automation',
 }
 
 function AutomationDetailsModal({
@@ -166,6 +170,7 @@ function AutomationDetailsModal({
   const [openPopover, setOpenPopover] = useState<{ courseId: string; column: 'enrollment' | 'due' | 'frequency' } | null>(null)
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
   const draggingIndexRef = useRef<number | null>(null)
+  const titleRef = useRef<HTMLInputElement>(null)
   const { toasts, show: showToast } = useToast()
   /* The two safeguards on the way out and the way in: an exit guard when the
      draft has moved (DEV-4770), and a review of what will run before it is
@@ -178,6 +183,11 @@ function AutomationDetailsModal({
       setOpenPopover(null)
       setConfirmDiscard(false)
       setReviewing(false)
+      /* Opens Active (Figma 9051:91164): the caret sits in the title, so an
+         automation that arrives untitled can be named without a click first.
+         Here rather than autoFocus, which only fires on mount and would miss
+         swiping from one automation to another. */
+      titleRef.current?.focus()
     }
   }, [automation?.id])
 
@@ -239,6 +249,7 @@ function AutomationDetailsModal({
               use — the name is the field, so it is always editable and reaches
               the draft as it is typed, like every other control here. */}
           <input
+            ref={titleRef}
             id="automation-details-title"
             className="automation-details-title"
             value={automation.name}
@@ -517,39 +528,43 @@ function AutomationDetailsModal({
           </p>
         </div>
 
-        <dl className="automation-review-list">
-          <div className="automation-review-row">
-            <dt className="automation-review-key">Trigger</dt>
-            <dd className="automation-review-value">
-              <p>{describeTrigger(automation.trigger)}</p>
-              {automation.filters.map((f) => (
-                <p key={f.id}>{describeFilter(f)}</p>
+        <div className="automation-review-section">
+          <p className="automation-review-heading">Trigger</p>
+          <SummaryCardList>
+            <SummaryCard
+              badge={<Flash size={16} color="currentColor" variant="Linear" />}
+              title={describeTrigger(automation.trigger)}
+            />
+            {/* One card per criterion, so the trigger reads the same way the
+                courses do rather than as a paragraph of sentences. */}
+            {automation.filters.map((f) => {
+              const Icon = fieldIcon(f.field)
+              return (
+                <SummaryCard
+                  key={f.id}
+                  badge={<Icon size={16} color="currentColor" variant="Linear" />}
+                  title={getFilterField(f.field).label}
+                  meta={describeFilterTerms(f)}
+                />
+              )
+            })}
+          </SummaryCardList>
+        </div>
+
+        <div className="automation-review-section">
+          <p className="automation-review-heading">
+            {automation.courses.length === 1 ? 'Course' : 'Courses'}
+          </p>
+          {automation.courses.length === 0 ? (
+            <p className="automation-review-empty">No courses yet</p>
+          ) : (
+            <SummaryCardList>
+              {automation.courses.map((c, i) => (
+                <SummaryCard key={c.id} badge={i + 1} title={c.name} meta={formatCourseMeta(c)} />
               ))}
-            </dd>
-          </div>
-          <div className="automation-review-row">
-            <dt className="automation-review-key">
-              {automation.courses.length === 1 ? 'Course' : 'Courses'}
-            </dt>
-            <dd className="automation-review-value">
-              {automation.courses.length === 0 ? (
-                <p className="automation-review-empty">No courses yet</p>
-              ) : (
-                automation.courses.map((c) => (
-                  <p key={c.id}>
-                    {c.name}
-                    {/* Start, due date and recurrence are set per course, so they
-                        read as that course's terms rather than the rule's. */}
-                    <span className="automation-review-terms">
-                      {formatEnrollment(c).title} · {formatDueDate(c).title} ·{' '}
-                      {formatFrequency(c).title}
-                    </span>
-                  </p>
-                ))
-              )}
-            </dd>
-          </div>
-        </dl>
+            </SummaryCardList>
+          )}
+        </div>
 
         <p className="automation-review-audience">
           <People size={20} color="currentColor" variant="Linear" />

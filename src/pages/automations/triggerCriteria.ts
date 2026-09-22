@@ -13,6 +13,7 @@
  */
 
 import type { ContentSource } from './courseCatalog'
+import { loadUserFields } from '@/data/userFields'
 
 /** Roles come from 5Mins' public library or the tenant's own set. */
 export type RoleSource = ContentSource
@@ -82,7 +83,10 @@ export const TEAM_VALUES = [
 
 /* ── Filters ─────────────────────────────────────────────────────────────── */
 
-export type FilterField = 'role' | 'rights' | 'region' | 'cohort' | 'team' | 'joinDate'
+export type BuiltInFilterField = 'role' | 'rights' | 'region' | 'cohort' | 'team' | 'joinDate'
+
+/** Built-ins plus the tenant's own user fields, keyed `custom:<id>` (DEV-4403). */
+export type FilterField = BuiltInFilterField | `custom:${number}`
 
 export type FilterOperator = 'one-of' | 'not-one-of' | 'before' | 'after' | 'on'
 
@@ -107,7 +111,7 @@ export interface TriggerFilter {
 
 type ControlKind = 'multi' | 'single' | 'date'
 
-interface FilterFieldDef {
+export interface FilterFieldDef {
   label: string
   control: ControlKind
   operators: FilterOperator[]
@@ -130,7 +134,7 @@ export const TENANT_FLAGS = {
   SHOW_JOIN_DATE_IN_AUTOMATIONS: true,
 }
 
-export const FILTER_FIELDS: Record<FilterField, FilterFieldDef> = {
+export const FILTER_FIELDS: Record<BuiltInFilterField, FilterFieldDef> = {
   role: {
     label: 'Role',
     control: 'multi',
@@ -154,7 +158,7 @@ export const FILTER_FIELDS: Record<FilterField, FilterFieldDef> = {
     gate: 'SHOW_REGION_IN_AUTOMATIONS',
   },
   cohort: {
-    label: 'Cohort',
+    label: 'Cohorts',
     control: 'multi',
     operators: ['one-of'],
     options: COHORT_VALUES,
@@ -178,12 +182,45 @@ export const FILTER_FIELDS: Record<FilterField, FilterFieldDef> = {
 }
 
 /** Order the Add Filter menu and the rows, so added filters never swap places. */
-export const FILTER_ORDER: FilterField[] = ['role', 'rights', 'region', 'cohort', 'team', 'joinDate']
+export const FILTER_ORDER: BuiltInFilterField[] = ['role', 'rights', 'joinDate', 'region', 'cohort', 'team']
+
+export function isCustomField(field: FilterField): boolean {
+  return field.startsWith('custom:')
+}
+
+/* The tenant's user fields, read when the Add Filter menu opens so a field
+   added on the User fields page shows up without a reload. Cached between
+   reads because matching walks every person for every criterion. */
+let customDefs: Record<string, FilterFieldDef> = {}
+
+/** Offered under "Custom Fields" in the Add Filter menu, newest store wins. */
+export function customFilterFields(): { field: FilterField; def: FilterFieldDef }[] {
+  const fields = loadUserFields().map((f) => ({
+    field: `custom:${f.id}` as FilterField,
+    def: {
+      label: f.name,
+      control: 'multi' as ControlKind,
+      /* "All" means any value set for the field, per DEV-4403. */
+      options: f.options.map((o) => ({ value: o, label: o })),
+      operators: ['one-of', 'not-one-of'] as FilterOperator[],
+      placeholder: `Search ${f.name.toLowerCase()}`,
+    },
+  }))
+  customDefs = Object.fromEntries(fields.map((f) => [f.field, f.def]))
+  return fields
+}
+
+/** The definition behind a criterion, built-in or custom. */
+export function getFilterField(field: FilterField): FilterFieldDef {
+  if (!isCustomField(field)) return FILTER_FIELDS[field as BuiltInFilterField]
+  if (!customDefs[field]) customFilterFields()
+  return customDefs[field] ?? { label: field, control: 'multi', operators: ['one-of'], options: [] }
+}
 
 /** A field the tenant cannot use yet still lists, disabled, with this reason. */
 export const GATED_REASON = 'Requires HRIS integration with 5Mins — contact Customer Success'
 
-export function isFieldAvailable(field: FilterField): boolean {
+export function isFieldAvailable(field: BuiltInFilterField): boolean {
   const gate = FILTER_FIELDS[field].gate
   if (gate) return TENANT_FLAGS[gate]
   if (field === 'joinDate') return TENANT_FLAGS.SHOW_JOIN_DATE_IN_AUTOMATIONS
@@ -191,7 +228,7 @@ export function isFieldAvailable(field: FilterField): boolean {
 }
 
 export function newFilter(field: FilterField): TriggerFilter {
-  const def = FILTER_FIELDS[field]
+  const def = getFilterField(field)
   return {
     id: `${field}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     field,
@@ -202,7 +239,7 @@ export function newFilter(field: FilterField): TriggerFilter {
 
 /** "Role is one of Account Executive, CRO Manager" — used by the list summary. */
 export function describeFilter(filter: TriggerFilter): string {
-  const def = FILTER_FIELDS[filter.field]
+  const def = getFilterField(filter.field)
   const op = OPERATOR_LABELS[filter.operator]
   if (def.control === 'date') return `${def.label} ${op} ${filter.date || '—'}`
   const labels = filter.values.map((v) => def.options.find((o) => o.value === v)?.label ?? v)
@@ -236,6 +273,11 @@ function matchesOne(person: FilterablePerson, filter: TriggerFilter): boolean {
 
   // An empty value list is an unfinished row, not "match nothing".
   if (filter.values.length === 0) return true
+
+  /* The prototype's people carry no values for the tenant's own fields, so a
+     custom criterion cannot be evaluated here. It is left as not-narrowing
+     rather than compared against whichever built-in attribute fell through. */
+  if (isCustomField(filter.field)) return true
 
   const actual =
     filter.field === 'role' ? person.role

@@ -8,46 +8,93 @@
 
 /* One row per criterion. The value column takes the slack so every control
    lines up whatever the field name's length. */
-.trigger-filters__row {
+.trigger-filters__row-group {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
+  flex-direction: column;
+  gap: var(--space-xs);
   width: 100%;
 }
 
-.trigger-filters__field {
-  flex: 0 0 96px;
-  padding-top: var(--space-ssm);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-primary);
+.trigger-filters__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  width: 100%;
 }
 
-.trigger-filters__operator {
-  flex: 0 0 152px;
+/* DatePickerField keeps its own helper as the aria-describedby target; it is
+   taken out of sight here so the visible copy can sit at the row's left edge
+   instead of under the field. */
+.trigger-filters__row .dpf-helper {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.trigger-filters__operator-static {
-  flex: 0 0 152px;
-  padding-top: var(--space-ssm);
+.trigger-filters__row-error {
+  margin: 0;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text-secondary);
+  color: var(--text-error);
 }
 
+/* Field name and operator read as one phrase — same size, same weight, same
+   colour — with the field's own icon leading it.
+
+   The row is top-aligned so a value that grows (selected badges wrap under the
+   input) does not drag the labels down with it. These two cells therefore take
+   the height of one control line and centre inside it, rather than carrying a
+   hand-tuned top padding that drifts whenever the label's height changes. */
+.trigger-filters__field,
+.trigger-filters__operator-static {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: 37px; /* the control rail — see note below */
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.trigger-filters__field {
+  gap: var(--space-s);
+}
+
+/* The Dropdown is width:100% by default, which in a packed row would swallow
+   the slack meant for the value; sized to its own label instead. */
+.trigger-filters__operator {
+  flex: 0 0 auto;
+  width: fit-content;
+}
+
+
+
 .trigger-filters__value {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
   max-width: 400px;
 }
 
+/* The 400px cap belongs to the input, not the column: selected badges wrap
+   under it and run the full width of the row, rather than folding early
+   against a width the field needed. */
+.trigger-filters__value .fms-field-row {
+  max-width: 400px;
+}
+
 /* FilterMultiSelect sizes its field to the content; in this row it fills the
-   value column instead, so the remove button's 12px gap is measured from the
-   field's own edge rather than from empty column. */
+   space instead, so the remove button's gap is measured from the field's own
+   edge rather than from empty column. */
 .trigger-filters__value .fms-field-wrap {
   flex: 1;
   min-width: 0;
@@ -57,8 +104,23 @@
    CloseButton, which only gains the destructive hover colour here because it
    removes the row. */
 .trigger-filters__remove {
-  margin-top: var(--space-xxs);
   transition: background 150ms ease, color 150ms ease;
+}
+
+/* 37px is the control height from the Figma library, now shared by Dropdown
+   and DatePickerField. FilterMultiSelect still renders 39px because its inner
+   input carries its own padding, so a role/region/cohort row is 2px out until
+   that component is brought onto the same rail. */
+
+/* The Tooltip wraps the button in a div, so the row sees the wrapper; give it
+   the control line's height so the ✕ centres with the rest of the row. The
+   margin tops the row's 8px up to the 12px the remove sits at, so it reads as
+   an action on the row rather than one more of its parts. */
+.trigger-filters__row > .tooltip-wrapper {
+  display: flex;
+  align-items: center;
+  min-height: 37px;
+  margin-left: calc(var(--space-sm) - var(--space-s));
 }
 
 .trigger-filters__remove:hover {
@@ -71,8 +133,12 @@
   gap: var(--space-m);
 }
 
+/* Flex, not block: as a block the wrapper carried inline line-box space and
+   stood taller than the button inside it, so centring the row put Add Filter
+   3px above Clear all. */
 .trigger-filters__add-wrap {
   position: relative;
+  display: flex;
 }
 
 .trigger-filters__add,
@@ -114,6 +180,8 @@
   top: calc(100% + 4px);
   left: 0;
   min-width: 260px;
+  max-height: 320px;
+  overflow-y: auto;
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -124,18 +192,26 @@
   flex-direction: column;
 }
 
+/* The embedded search is the listbox's first item. Search at size M is already
+   the fill, radius, padding and icon size that spec asks for, so it is the
+   component rather than a copy of it. */
+.trigger-filters__menu .search {
+  margin-bottom: var(--space-xs);
+}
+
 .trigger-filters__menu-item {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-xxs);
+  align-items: center;
+  gap: var(--space-s);
   width: 100%;
-  padding: var(--space-ssm) var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
   border: none;
   background: transparent;
-  text-align: left;
-  cursor: pointer;
   border-radius: var(--radius-s);
+  color: var(--text-primary);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
   transition: background 150ms ease;
 }
 
@@ -148,10 +224,10 @@
 .trigger-filters__menu-item--gated:hover {
   background: transparent;
   cursor: not-allowed;
+  color: var(--text-disabled);
 }
 
-.trigger-filters__menu-item--gated .trigger-filters__menu-label,
-.trigger-filters__menu-item--gated .trigger-filters__menu-hint {
+.trigger-filters__menu-item--gated .trigger-filters__menu-label {
   color: var(--text-disabled);
 }
 
@@ -160,14 +236,23 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: inherit;
 }
 
-.trigger-filters__menu-hint {
+/* Grouped items (listbox.md): a 1px rule, then a Medium 14 tertiary header. */
+.trigger-filters__menu-divider {
+  height: 1px;
+  margin: var(--space-xs) var(--space-xs) 0;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}
+
+.trigger-filters__menu-group {
+  padding: var(--space-s) var(--space-xs);
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.2;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
   color: var(--text-tertiary);
 }
 
