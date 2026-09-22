@@ -526,6 +526,15 @@ function AutomationDetailsModal({
         className="automation-review"
         ariaLabel="Review this automation"
       >
+        {/* overlays.md puts the close at a modal's top right. Note it also says
+            a Dialog has none — this surface is a review to read, not a confirm
+            to answer, so it takes the modal's affordance. */}
+        <CloseButton
+          onClick={() => setReviewing(false)}
+          className="automation-review-close"
+          ariaLabel="Close review"
+        />
+
         {/* Section Header (headers.md): 20px title over a divider, no
             supporting text — the sections below say what they are. */}
         <div className="confirm-modal-header">

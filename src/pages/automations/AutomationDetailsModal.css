@@ -418,7 +418,15 @@
    Wider than the default confirm dialog and left-aligned, because it is read
    rather than answered: the admin checks a list before committing. */
 .automation-review {
+  position: relative;
   width: 600px;
+}
+
+/* Top right of the panel, per overlays.md's modal close. */
+.automation-review-close {
+  position: absolute;
+  top: var(--space-ssm);
+  right: var(--space-ssm);
 }
 
 .automation-review-section {
