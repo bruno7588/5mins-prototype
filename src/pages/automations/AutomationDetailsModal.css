@@ -123,7 +123,9 @@
 .automation-details-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  /* 16px between what the card holds: its lead sentence, the criteria or the
+     course table under it, and anything that follows. */
+  gap: var(--space-m);
   padding: var(--space-m);
   background: var(--cards-background);
   border-radius: var(--radius-sm);

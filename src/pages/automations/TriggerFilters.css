@@ -24,7 +24,10 @@
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: var(--space-s);
+  /* 8px between the parts of the row, 12px before the badges that wrap onto
+     the line below — the two gaps do different jobs. */
+  column-gap: var(--space-s);
+  row-gap: var(--space-sm);
   width: 100%;
 }
 
@@ -147,10 +150,13 @@
   color: var(--text-error);
 }
 
+/* Add Filter / Clear all sit 16px under the last criterion. The margin tops
+   the list's own 12px up, so the rows keep their spacing to each other. */
 .trigger-filters__actions {
   display: flex;
   align-items: center;
   gap: var(--space-m);
+  margin-top: calc(var(--space-m) - var(--space-sm));
 }
 
 /* Flex, not block: as a block the wrapper carried inline line-box space and
