@@ -23,22 +23,6 @@
   gap: var(--space-m);
 }
 
-.sc-page-header-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border-radius: var(--radius-full);
-  background: var(--input-background);
-  transition: background 150ms ease;
-}
-
-.sc-page-header-close:hover {
-  background: var(--input-background-hover);
-}
-
 /* Tabs */
 .sc-page-header-tabs {
   display: flex;

@@ -112,7 +112,7 @@ function CreateFlashcardsFromFileModal({ open, onClose, onGenerate }: CreateFlas
     <div className="cffm-fullscreen">
       {step === 'upload' && (
         <div className="cffm-topbar">
-          <CloseButton onClick={onClose} />
+          <CloseButton variant="fullscreen" onClick={onClose} />
         </div>
       )}
 

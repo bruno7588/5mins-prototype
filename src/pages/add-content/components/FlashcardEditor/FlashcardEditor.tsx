@@ -375,7 +375,7 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
 
   return (
     <div className="fce-overlay" role="dialog" aria-modal="true" aria-label="Create flashcard lesson">
-      <CloseButton className="fce-close" onClick={onClose} ariaLabel="Close flashcard editor" />
+      <CloseButton variant="fullscreen" className="fce-close" onClick={onClose} ariaLabel="Close flashcard editor" />
 
       <div className="fce-content">
         {/* Header */}

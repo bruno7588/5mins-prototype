@@ -167,7 +167,7 @@ function LaunchSuccessModal({ open, onClose, onTrackProgress }: Props) {
       <MotionConfig reducedMotion="user">
         <AnimatePresence>{raining && <ConfettiLayer />}</AnimatePresence>
 
-        <CloseButton onClick={onClose} className="lsm-close" />
+        <CloseButton variant="fullscreen" onClick={onClose} className="lsm-close" />
 
         <div className="lsm-content">
           {/* Choreographed entrance: tick pops, text and CTA follow. */}

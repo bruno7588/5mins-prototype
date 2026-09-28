@@ -71,7 +71,7 @@ function LessonEditorModal({ lesson, isNew, onClose, onPublish, onQuizReviewed, 
 
   return (
     <div className="lesson-editor-overlay">
-      <CloseButton onClick={onClose} size={32} className="lesson-editor-close" />
+      <CloseButton variant="fullscreen" onClick={onClose} className="lesson-editor-close" />
 
       <div className="lesson-editor-content">
         {/* Header */}

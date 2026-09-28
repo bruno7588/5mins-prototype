@@ -247,7 +247,7 @@ function AutomationDetailsModal({
       aria-modal="true"
       aria-labelledby="automation-details-title"
     >
-      <CloseButton onClick={requestClose} className="automation-details-close" />
+      <CloseButton variant="fullscreen" onClick={requestClose} className="automation-details-close" />
 
       <div className="automation-details-content">
         <header className="automation-details-header">

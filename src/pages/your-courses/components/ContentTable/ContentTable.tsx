@@ -383,7 +383,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
       {/* Preview overlay */}
       {previewRow && (
         <div className="content-table-preview-overlay">
-          <CloseButton onClick={() => setPreviewRow(null)} size={32} className="content-table-preview-close" />
+          <CloseButton variant="fullscreen" onClick={() => setPreviewRow(null)} className="content-table-preview-close" />
           <div className="content-table-preview-content">
             <h2 className="content-table-preview-title">{previewRow.fileName}</h2>
             <div className="content-table-preview-divider" />

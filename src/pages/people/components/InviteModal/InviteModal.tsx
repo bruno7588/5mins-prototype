@@ -91,7 +91,7 @@ function InviteModal({ onClose, onInvite, userFields }: InviteModalProps) {
       {/* Header */}
       <div className="invite-modal-header">
         <h2 className="invite-modal-title">Invite people to 5Mins</h2>
-        <CloseButton onClick={onClose} />
+        <CloseButton variant="fullscreen" onClick={onClose} />
       </div>
 
       {/* Alert banner */}

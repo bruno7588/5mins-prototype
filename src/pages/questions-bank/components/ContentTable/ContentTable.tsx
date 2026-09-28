@@ -300,7 +300,7 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
       {/* Preview overlay */}
       {previewRow && (
         <div className="qb-content-table-preview-overlay">
-          <CloseButton onClick={() => setPreviewRow(null)} size={32} className="qb-content-table-preview-close" />
+          <CloseButton variant="fullscreen" onClick={() => setPreviewRow(null)} className="qb-content-table-preview-close" />
           <div className="qb-content-table-preview-content">
             <h2 className="qb-content-table-preview-title">{previewRow.fileName}</h2>
             <div className="qb-content-table-preview-divider" />

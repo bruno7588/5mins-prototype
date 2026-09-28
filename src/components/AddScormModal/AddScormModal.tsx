@@ -35,7 +35,7 @@ function AddScormModal({ onClose, editRow, onPreview, onPublish }: AddScormModal
 
   return (
     <div className="add-scorm-overlay">
-      <CloseButton onClick={onClose} size={32} className="add-scorm-close" />
+      <CloseButton variant="fullscreen" onClick={onClose} className="add-scorm-close" />
 
       {published ? (
         <div className="add-scorm-success">

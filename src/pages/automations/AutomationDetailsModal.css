@@ -22,13 +22,6 @@
   top: 24px;
   right: max(var(--space-m), calc(50% - 512px + var(--space-m)));
   z-index: 1;
-  width: 40px;
-  height: 40px;
-  background: var(--input-background);
-}
-
-.automation-details-close:hover {
-  background: var(--input-background-hover);
 }
 
 /* Centered 1024px content column. The top padding clears the close button's
@@ -176,7 +169,6 @@
   align-items: center;
   gap: var(--space-sm); /* 12px between text and search */
 }
-
 
 /* ===== Table ===== */
 .automation-details-table {

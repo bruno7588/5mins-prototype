@@ -109,7 +109,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
       <div className="lf-feed">
         <div className="lf-stage">
           <div className="lf-video-wrap">
-            <CloseButton className="lf-close" onClick={onClose} ariaLabel="Close lesson feed" />
+            <CloseButton variant="fullscreen" className="lf-close" onClick={onClose} ariaLabel="Close lesson feed" />
             <div className="lf-video">
               <img className="lf-video__media" src={lesson.media} alt="" />
               <div className="lf-video__gradient" />

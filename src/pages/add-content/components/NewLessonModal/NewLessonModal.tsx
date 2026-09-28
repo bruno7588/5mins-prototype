@@ -161,7 +161,7 @@ function NewLessonModal({ kind, onClose, onPublish }: NewLessonModalProps) {
 
   return (
     <div className="lesson-editor-overlay" role="dialog" aria-modal="true" aria-label={fileKind ? fileKind.title : 'Add external link'}>
-      <CloseButton onClick={onClose} size={32} className="lesson-editor-close" />
+      <CloseButton variant="fullscreen" onClick={onClose} className="lesson-editor-close" />
 
       <div className="lesson-editor-content">
         <div className="lesson-editor-header">

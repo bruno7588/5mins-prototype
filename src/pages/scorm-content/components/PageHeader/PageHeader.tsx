@@ -17,7 +17,7 @@ function PageHeader() {
         <div className="sc-page-header-actions">
           <Button variant="outlined" disabled>Save Draft</Button>
           <Button disabled>Create Course</Button>
-          <CloseButton className="sc-page-header-close" />
+          <CloseButton variant="fullscreen" className="sc-page-header-close" />
         </div>
       </div>
       <nav className="sc-page-header-tabs">

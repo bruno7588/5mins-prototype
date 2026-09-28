@@ -267,7 +267,7 @@ function ContentTable({ variant = 'lessons' }: ContentTableProps) {
       {/* Preview overlay */}
       {previewRow && (
         <div className="sc-content-table-preview-overlay">
-          <CloseButton onClick={() => setPreviewRow(null)} size={32} className="sc-content-table-preview-close" />
+          <CloseButton variant="fullscreen" onClick={() => setPreviewRow(null)} className="sc-content-table-preview-close" />
           <div className="sc-content-table-preview-content">
             <h2 className="sc-content-table-preview-title">{previewRow.fileName}</h2>
             <div className="sc-content-table-preview-divider" />

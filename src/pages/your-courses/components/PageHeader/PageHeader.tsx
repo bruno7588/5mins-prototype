@@ -81,7 +81,7 @@ function PageHeader({
           <Button icon={primaryIcon} disabled={primaryDisabled} onClick={onPrimary}>
             {primaryLabel}
           </Button>
-          <CloseButton onClick={handleClose} className="page-header-close" />
+          <CloseButton variant="fullscreen" onClick={handleClose} className="page-header-close" />
         </div>
       </div>
       <div className="page-header-divider" aria-hidden="true" />
