@@ -7,6 +7,13 @@ import { autoGrow, autoGrowRef } from '../autoGrow'
 
 type CategorizationDraft = Extract<Draft, { type: 'categorization' }>
 
+/* Placeholder examples, one set per category, so each block and each concept row
+   reads differently. */
+const EXAMPLES = [
+  { category: 'Fruits', concepts: ['Kiwi', 'Apple', 'Mango'] },
+  { category: 'Vegetables', concepts: ['Carrot', 'Broccoli', 'Spinach'] },
+]
+
 /**
  * Categorise authoring: each category owns the concepts that belong in it.
  *
@@ -40,6 +47,7 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
           const own = items.filter((i) => i.b === category.id)
           const named = category.a.trim() || `Category ${index + 1}`
           const categoryConflict = conflictFor(conflicts, 'categories', category.a)
+          const example = EXAMPLES[index % EXAMPLES.length]
           return (
             <div className="iq-drawer__category" key={category.id}>
               {/* Figma numbers each category in its own label rather than heading the
@@ -55,7 +63,7 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
                   rows={1}
                   className="iq-drawer__row-input"
                   readOnly={readOnly}
-                  placeholder="Write category name..."
+                  placeholder={`Write category name, e.g. ${example.category}`}
                   aria-label={`Category ${index + 1} name`}
                   aria-invalid={categoryConflict ? true : undefined}
                   aria-describedby={categoryConflict ? `iq-conflict-${category.id}` : undefined}
@@ -105,7 +113,7 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
                         rows={1}
                         className="iq-drawer__row-input"
                         readOnly={readOnly}
-                        placeholder={`Concept ${i + 1}`}
+                        placeholder={`Concept ${i + 1}, e.g. ${example.concepts[i % example.concepts.length]}`}
                         aria-label={`Concept ${i + 1} in ${named}`}
                         aria-invalid={itemConflict ? true : undefined}
                         aria-describedby={itemConflict ? `iq-conflict-${item.id}` : undefined}
