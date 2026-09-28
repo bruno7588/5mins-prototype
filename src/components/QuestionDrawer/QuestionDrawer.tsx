@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Add, TickCircle } from 'iconsax-react'
 import type { Answer, Question } from '../../data/mockQuestions'
+import Button from '../Button/Button'
 import CloseButton from '../CloseButton/CloseButton'
+import InputField from '../InputField/InputField'
 import './QuestionDrawer.css'
 
 interface QuestionDrawerProps {
@@ -54,12 +56,6 @@ function QuestionDrawer({ question, onSave, onClose }: QuestionDrawerProps) {
   const [answers, setAnswers] = useState<Answer[]>(question?.answers ?? DEFAULT_ANSWERS.map(a => ({ ...a, id: `new_a${Date.now()}_${Math.random()}` })))
   const [explanation, setExplanation] = useState('')
   const [errors, setErrors] = useState<string[]>([])
-  const textRef = useRef<HTMLTextAreaElement>(null)
-
-  useEffect(() => {
-    textRef.current?.focus()
-  }, [])
-
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -121,28 +117,31 @@ function QuestionDrawer({ question, onSave, onClose }: QuestionDrawerProps) {
   return (
     <>
       <div className="question-drawer-overlay" onClick={onClose} />
-      <div className="question-drawer-panel">
+      <div
+        className="question-drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label={isNew ? 'Create new question' : 'Edit question'}
+      >
         {/* Header */}
-        <div className="question-drawer-header">
-          <h3 className="question-drawer-title">{isNew ? 'Create new question' : 'Edit question'}</h3>
-          <CloseButton onClick={onClose} className="question-drawer-close" />
+        <div className="question-drawer-heading">
+          <div className="question-drawer-header">
+            <h3 className="question-drawer-title">{isNew ? 'Create new question' : 'Edit question'}</h3>
+            <CloseButton onClick={onClose} className="question-drawer-close" />
+          </div>
+          <div className="question-drawer-divider" />
         </div>
-        <div className="question-drawer-divider" />
 
         {/* Body */}
         <div className="question-drawer-body">
           {/* Question text */}
-          <div className="question-drawer-field">
-            <label className="question-drawer-label">What is your question?</label>
-            <textarea
-              ref={textRef}
-              className="question-drawer-textarea"
-              value={text}
-              onChange={e => { setText(e.target.value); setErrors([]) }}
-              placeholder="Write your question here..."
-              rows={3}
-            />
-          </div>
+          <InputField
+            label="What is your question?"
+            placeholder="Write your question here..."
+            value={text}
+            onChange={e => { setText(e.target.value); setErrors([]) }}
+            autoFocus
+          />
 
           {/* Answer options */}
           {questionType !== 'free_text' && (
@@ -226,9 +225,11 @@ function QuestionDrawer({ question, onSave, onClose }: QuestionDrawerProps) {
 
         {/* Footer */}
         <div className="question-drawer-footer">
-          <button className="question-drawer-save" onClick={handleSave}>
-            Save
-          </button>
+          <div className="question-drawer-divider" />
+          <div className="question-drawer-footer__buttons">
+            <Button onClick={handleSave}>Save</Button>
+            <Button variant="outlined" onClick={onClose}>Cancel</Button>
+          </div>
         </div>
       </div>
     </>
