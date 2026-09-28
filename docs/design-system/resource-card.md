@@ -19,7 +19,7 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel, Po
 | Learner web app: course page → Resources tab | `device="web"` | Stacked list, 12px gap (`ProgramCourseDetails.tsx`) |
 | Admin: content library → lesson editor → Resources tab | `device="web"` | Stacked list, card carries its own Remove (`LessonResourcesTab.tsx`) |
 | Learner web app: course page → a lesson's own resources | `device="web"` | Expanded under the lesson row, indented past the thumbnail |
-| Learner web app: lesson feed → Resources action | `device="mobile"` | Stacked list in the feed's right panel (`LessonFeed.tsx`) — the feed is the app player, so it takes the app card |
+| Learner web app: lesson feed → Take a deep dive panel | `device="mobile"` | Stacked list under the instructor link in the Take a deep dive panel (`LessonFeed.tsx`) — the feed is the app player, so it takes the app card |
 | Mobile app | `device="mobile"` | Not placed on a screen yet |
 
 Lesson-level resources (DES-334) are authored only in the content library's lesson editor and stored in `src/data/lessonResources.ts`; the course builder's Resources tab stays course-level.

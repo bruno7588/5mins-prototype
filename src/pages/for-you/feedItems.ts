@@ -27,10 +27,13 @@ export interface FeedLesson {
   skillLevel: 1 | 2 | 3 | 4 | 5 | 'advanced' | 'expert' | 'master'
   quizPoints: number
   episodes: FeedEpisode[]
+  /** The instructor's own page (blog, YouTube channel, site) that Take a deep
+      dive links to. Placeholder URLs in the prototype. */
+  deepDiveUrl?: string
   /** Files and links attached to this lesson (DES-334). */
   resources?: CourseResourceItem[]
   /** Learnings tab (Figma 6574:54443): what the learner walks away with. */
-  learningGoal?: string
+  learningGoals?: string[]
   keyConcepts?: FeedConcept[]
 }
 
@@ -45,6 +48,7 @@ export const feedLessons: FeedLesson[] = [
   {
     instructor: 'Michaela Scott',
     instructorAvatar: avatar1,
+    deepDiveUrl: 'https://example.com/michaela-scott',
     title: "Tearing Down Zendesk's Pricing. What is behind our Unconscious Bias? (Episode 1/4)",
     media: heroGif,
     progress: 0.37,
@@ -60,8 +64,11 @@ export const feedLessons: FeedLesson[] = [
       { id: 'f1r1', type: 'pdf', title: 'Pricing teardown worksheet', size: 842752 },
       { id: 'f1r2', type: 'link', title: 'Zendesk pricing page', url: 'https://www.zendesk.co.uk/pricing/' },
     ],
-    learningGoal:
-      'You\'ll understand effective product positioning and how to avoid common mistakes',
+    learningGoals: [
+      'Reading a competitor\'s pricing page critically',
+      'Understanding effective product positioning',
+      'Spotting the bias in your own judgement',
+    ],
     keyConcepts: [
       {
         heading: 'Reading a pricing page',
@@ -83,6 +90,7 @@ export const feedLessons: FeedLesson[] = [
   {
     instructor: 'Priya Nair',
     instructorAvatar: avatar2,
+    deepDiveUrl: 'https://example.com/priya-nair',
     title: 'How Top Performers Manage Their Energy (Episode 1/3)',
     media: heroGif,
     progress: 0.05,
@@ -94,8 +102,11 @@ export const feedLessons: FeedLesson[] = [
       { label: 'Episode 1', title: 'The Myth of Time Management', progress: 0.1, duration: '3:30' },
       { label: 'Episode 2', title: 'Designing Your Peak Window', progress: 0, duration: '4:01', upcoming: true },
     ],
-    learningGoal:
-      'You\'ll manage your energy across the day instead of hunting for more hours',
+    learningGoals: [
+      'Managing energy rather than hunting for more hours',
+      'Designing a week around your peak times',
+      'Protecting recovery as part of the work',
+    ],
     keyConcepts: [
       {
         heading: 'Energy, not time',
@@ -117,6 +128,7 @@ export const feedLessons: FeedLesson[] = [
   {
     instructor: 'Noor Haddad',
     instructorAvatar: avatar3,
+    deepDiveUrl: 'https://example.com/noor-haddad',
     title: 'What Counts as a Conflict of Interest',
     media: heroGif,
     progress: 0.2,
@@ -132,8 +144,11 @@ export const feedLessons: FeedLesson[] = [
       { id: 'f6r2', type: 'word', title: 'Declaration form', size: 48128 },
       { id: 'f6r3', type: 'link', title: 'Who to ask if you are unsure', url: 'https://www.gov.uk/' },
     ],
-    learningGoal:
-      'You\'ll recognise a conflict of interest early and know what to do about it',
+    learningGoals: [
+      'Recognising a conflict of interest early',
+      'Knowing what triggers one',
+      'Knowing what to do and who to tell',
+    ],
     keyConcepts: [
       {
         heading: 'What triggers one',
@@ -155,6 +170,7 @@ export const feedLessons: FeedLesson[] = [
   {
     instructor: 'Liam Walsh',
     instructorAvatar: avatar1,
+    deepDiveUrl: 'https://example.com/liam-walsh',
     title: "The Manager's Guide to Delegation",
     media: heroGif,
     progress: 1,
@@ -165,8 +181,11 @@ export const feedLessons: FeedLesson[] = [
     episodes: [
       { label: 'Episode 1', title: 'Delegate the Outcome, Not the Task', progress: 1, duration: '2:58' },
     ],
-    learningGoal:
-      'You\'ll delegate work without either abandoning it or taking it back',
+    learningGoals: [
+      'Handing over the outcome, not just the task',
+      'Staying useful without taking the work back',
+      'Avoiding common delegation pitfalls',
+    ],
     keyConcepts: [
       {
         heading: 'Hand over the outcome',
