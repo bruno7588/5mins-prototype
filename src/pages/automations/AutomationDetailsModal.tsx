@@ -90,7 +90,7 @@ function describeTrigger(trigger: AutomationTrigger): string {
 function describeFilterTerms(filter: TriggerFilter): string {
   const def = getFilterField(filter.field)
   const operator = OPERATOR_LABELS[filter.operator]
-  if (def.control === 'date') return `${operator} ${filter.date ?? '—'}`
+  if (def.control === 'date') return `is ${operator} ${filter.date ?? '—'}`
   const labels = filter.values.map(
     (v) => def.options.find((o) => o.value === v)?.label ?? v,
   )

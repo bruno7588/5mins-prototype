@@ -107,7 +107,7 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
             {/* The row names its field the same way the menu offered it. */}
             <span className="trigger-filters__field">
               <FieldIcon size={20} color="currentColor" variant="Linear" />
-              {def.label}
+              {def.control === 'date' ? `${def.label} is` : def.label}
             </span>
 
             {def.operators.length > 1 ? (

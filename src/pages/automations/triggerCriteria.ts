@@ -88,14 +88,15 @@ export type BuiltInFilterField = 'role' | 'rights' | 'region' | 'cohort' | 'team
 /** Built-ins plus the tenant's own user fields, keyed `custom:<id>` (DEV-4403). */
 export type FilterField = BuiltInFilterField | `custom:${number}`
 
-export type FilterOperator = 'one-of' | 'not-one-of' | 'before' | 'after' | 'on'
+export type FilterOperator = 'one-of' | 'not-one-of' | 'on-or-after' | 'before' | 'after' | 'on'
 
 export const OPERATOR_LABELS: Record<FilterOperator, string> = {
   'one-of':     'is one of',
   'not-one-of': 'is not one of',
-  before:       'is before',
-  after:        'is after',
-  on:           'is on',
+  'on-or-after': 'equal to or after',
+  before:       'before',
+  after:        'after',
+  on:           'on',
 }
 
 export interface TriggerFilter {
@@ -175,7 +176,7 @@ export const FILTER_FIELDS: Record<BuiltInFilterField, FilterFieldDef> = {
   joinDate: {
     label: 'Join date',
     control: 'date',
-    operators: ['before', 'after', 'on'],
+    operators: ['on-or-after', 'before', 'after', 'on'],
     options: [],
     hint: 'Requires HRIS integration',
   },
@@ -266,6 +267,7 @@ export interface FilterablePerson {
 function matchesOne(person: FilterablePerson, filter: TriggerFilter): boolean {
   if (filter.field === 'joinDate') {
     if (!filter.date) return true // an unset date constrains nothing yet
+    if (filter.operator === 'on-or-after') return person.joinDate >= filter.date
     if (filter.operator === 'before') return person.joinDate < filter.date
     if (filter.operator === 'after') return person.joinDate > filter.date
     return person.joinDate === filter.date
