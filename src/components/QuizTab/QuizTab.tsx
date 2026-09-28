@@ -48,9 +48,12 @@ interface QuizTabProps {
   isNew?: boolean
   hasGeneratedQuizzes?: boolean
   onAIOptInChange?: (optedIn: boolean) => void
+  /** False where AI cannot read the source (an external link): a new lesson then
+      offers only Add Question Manually. */
+  aiAvailable?: boolean
 }
 
-function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange }: QuizTabProps) {
+function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, aiAvailable = true }: QuizTabProps) {
   const [state, setState] = useState<QuizTabState>({
     poolEnabled: hasGeneratedQuizzes,
     aiQuizzesOptIn: true,
@@ -141,6 +144,7 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange }
   if (!state.poolEnabled && isNew) {
     return (
       <div className="quiz-tab">
+        {aiAvailable && (
         <div className="quiz-tab-empty-banner" onClick={handleAICheckbox}>
           <Checkbox checked={state.aiQuizzesOptIn} />
           <div className="quiz-tab-empty-banner-content">
@@ -152,6 +156,7 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange }
             </p>
           </div>
         </div>
+        )}
         <button className="quiz-tab-add-manual" onClick={handleStartAdd}>
           <Add size={20} color="currentColor" />
           Add Question Manually

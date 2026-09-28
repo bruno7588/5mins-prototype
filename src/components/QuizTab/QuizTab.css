@@ -51,9 +51,9 @@
 .quiz-tab-empty-banner {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-xs);
-  padding: 0;
-  background: none;
+  gap: var(--space-s);
+  padding: var(--space-m);
+  background: var(--cards-background);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
