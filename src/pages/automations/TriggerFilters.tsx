@@ -65,6 +65,19 @@ const DATE_REQUIRED =
 export const fieldIcon = (field: FilterField) =>
   isCustomField(field) ? Setting4 : FIELD_ICONS[field as BuiltInFilterField]
 
+/* Each field's thumbnail colour in the review modal (Figma "Filters thumbnail",
+   9136:22791). Team is not an automations filter, so it has none. */
+const FIELD_TONES: Partial<Record<BuiltInFilterField, string>> = {
+  role: 'var(--blaze-quiz)',
+  rights: 'var(--flash-poll)',
+  joinDate: 'var(--lesson-quiz)',
+  region: 'var(--certificate-quiz)',
+  cohort: 'var(--course-assessments)',
+}
+
+export const fieldTone = (field: FilterField) =>
+  isCustomField(field) ? 'var(--secondary-500)' : FIELD_TONES[field as BuiltInFilterField]
+
 function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [menuQuery, setMenuQuery] = useState('')

@@ -6,7 +6,7 @@ import Dropdown from '../../components/Dropdown/Dropdown'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import { SummaryCard, SummaryCardList, formatCourseMeta } from './SummaryCards'
-import { fieldIcon } from './TriggerFilters'
+import { fieldIcon, fieldTone } from './TriggerFilters'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import EnrollmentPopover from './EnrollmentPopover'
 import DueDatePopover from './DueDatePopover'
@@ -558,6 +558,7 @@ function AutomationDetailsModal({
                   badge={<Icon size={16} color="currentColor" variant="Linear" />}
                   title={`${getFilterField(f.field).label} is`}
                   meta={describeFilterTerms(f)}
+                  tone={fieldTone(f.field)}
                 />
               )
             })}
