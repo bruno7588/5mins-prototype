@@ -91,8 +91,8 @@ export type FilterField = BuiltInFilterField | `custom:${number}`
 export type FilterOperator = 'one-of' | 'not-one-of' | 'on-or-after' | 'before' | 'after' | 'on'
 
 export const OPERATOR_LABELS: Record<FilterOperator, string> = {
-  'one-of':     'is one of',
-  'not-one-of': 'is not one of',
+  'one-of':     'one of',
+  'not-one-of': 'not one of',
   'on-or-after': 'equal to or after',
   before:       'before',
   after:        'after',

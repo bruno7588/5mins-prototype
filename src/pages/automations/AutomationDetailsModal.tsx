@@ -85,16 +85,17 @@ function describeTrigger(trigger: AutomationTrigger): string {
   }
 }
 
-/* The card already carries the field name in its title, so the terms start at
-   the operator — "is one of Account Executive", not "Role is one of Role". */
+/* The card title carries "Role is", so the terms are just the values, led by
+   the operator only when the admin had a choice of one ("not one of Europe",
+   "equal to or after 2026-09-15"). */
 function describeFilterTerms(filter: TriggerFilter): string {
   const def = getFilterField(filter.field)
-  const operator = OPERATOR_LABELS[filter.operator]
-  if (def.control === 'date') return `is ${operator} ${filter.date ?? '—'}`
+  const operator = def.operators.length > 1 ? `${OPERATOR_LABELS[filter.operator]} ` : ''
+  if (def.control === 'date') return `${operator}${filter.date ?? '—'}`
   const labels = filter.values.map(
     (v) => def.options.find((o) => o.value === v)?.label ?? v,
   )
-  return `${operator} ${labels.join(', ') || '—'}`
+  return `${operator}${labels.join(' · ') || '—'}`
 }
 
 /**
@@ -555,7 +556,7 @@ function AutomationDetailsModal({
                 <SummaryCard
                   key={f.id}
                   badge={<Icon size={16} color="currentColor" variant="Linear" />}
-                  title={getFilterField(f.field).label}
+                  title={`${getFilterField(f.field).label} is`}
                   meta={describeFilterTerms(f)}
                 />
               )

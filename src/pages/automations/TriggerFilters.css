@@ -62,8 +62,7 @@
    input) does not drag the labels down with it. These two cells therefore take
    the height of one control line and centre inside it, rather than carrying a
    hand-tuned top padding that drifts whenever the label's height changes. */
-.trigger-filters__field,
-.trigger-filters__operator-static {
+.trigger-filters__field {
   display: flex;
   align-items: center;
   flex: 0 0 auto;

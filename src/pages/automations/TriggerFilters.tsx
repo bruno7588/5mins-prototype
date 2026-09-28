@@ -107,10 +107,15 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
             {/* The row names its field the same way the menu offered it. */}
             <span className="trigger-filters__field">
               <FieldIcon size={20} color="currentColor" variant="Linear" />
-              {def.control === 'date' ? `${def.label} is` : def.label}
+              {/* "is" always sits in the label, outside any input. One operator is
+                  not a choice, so it joins the label too ("Role is one of"); a
+                  single-select reads straight into its value ("Rights is Admin"). */}
+              {def.operators.length > 1 || def.control === 'single'
+                ? `${def.label} is`
+                : `${def.label} is ${OPERATOR_LABELS[filter.operator]}`}
             </span>
 
-            {def.operators.length > 1 ? (
+            {def.operators.length > 1 && (
               <Dropdown
                 size="md"
                 className="trigger-filters__operator"
@@ -118,9 +123,6 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
                 value={filter.operator}
                 onChange={(value) => patch(filter.id, { operator: value as TriggerFilter['operator'] })}
               />
-            ) : (
-              /* One operator is not a choice, so it reads as the sentence it is. */
-              <span className="trigger-filters__operator-static">{OPERATOR_LABELS[filter.operator]}</span>
             )}
 
             <div className="trigger-filters__value">
