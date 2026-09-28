@@ -22,6 +22,9 @@ import InputField from '../../../../components/InputField/InputField'
 import Checkbox from '../../../../components/Checkbox/Checkbox'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
 import AddImageModal from '../AddImageModal/AddImageModal'
+import LessonResourcesTab from '@/components/LessonResourcesTab/LessonResourcesTab'
+import type { CourseResource } from '@/components/ResourceCard/resources'
+import { getLessonResources, lessonKey, nextLessonResourceId, setLessonResources } from '@/data/lessonResources'
 import type { ContentRow } from '../../../your-courses/components/ContentTable/ContentTable'
 import flashcardThumb from '../../../../assets/programs/course-thumbs/course-thumb-1.jpg'
 import './FlashcardEditor.css'
@@ -44,7 +47,7 @@ interface FlashcardEditorProps {
   initialCards?: Card[]
 }
 
-type EditorTab = 'quiz' | 'skills' | 'category'
+type EditorTab = 'quiz' | 'resources' | 'skills' | 'category'
 
 const createEmptyCard = (): Card => ({
   id: Date.now() + Math.random(),
@@ -148,6 +151,14 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
   const [activeIndex, setActiveIndex] = useState(0)
   const [activeTab, setActiveTab] = useState<EditorTab>('quiz')
   const [aiQuizChecked, setAiQuizChecked] = useState(false)
+  /* Same store as the lesson editor, so an existing lesson's resources show here too.
+     A new lesson has no id until it publishes, so its resources stay local. */
+  const resourcesKey = initialLessonId != null ? lessonKey('library', initialLessonId) : null
+  const [resources, setResources] = useState<CourseResource[]>(() => (resourcesKey ? getLessonResources(resourcesKey) : []))
+  const saveResources = (next: CourseResource[]) => {
+    if (resourcesKey) setLessonResources(resourcesKey, next)
+    setResources(next)
+  }
   const [toolbarOpen, setToolbarOpen] = useState(false)
   const [imageMenuOpen, setImageMenuOpen] = useState(false)
   const [imageSubmenuOpen, setImageSubmenuOpen] = useState(false)
@@ -185,8 +196,9 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
     } else {
       setLessonName(initialLessonName)
       setCards(nextCards)
+      setResources(resourcesKey ? getLessonResources(resourcesKey) : [])
     }
-  }, [open, initialLessonName, initialCards])
+  }, [open, initialLessonName, initialCards, resourcesKey])
 
   useEffect(() => {
     setToolbarOpen(false)
@@ -678,7 +690,7 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
 
         {/* Tabs */}
         <div className="fce-tabs">
-          {(['quiz', 'skills', 'category'] as EditorTab[]).map(t => (
+          {(['quiz', 'resources', 'skills', 'category'] as EditorTab[]).map(t => (
             <button
               key={t}
               type="button"
@@ -686,6 +698,7 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
               onClick={() => setActiveTab(t)}
             >
               {t === 'quiz' && 'Quiz'}
+              {t === 'resources' && 'Resources'}
               {t === 'skills' && 'Skills'}
               {t === 'category' && 'Add to Category'}
             </button>
@@ -709,6 +722,14 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
               Add Question Manually
             </button>
           </div>
+        )}
+        {activeTab === 'resources' && (
+          <LessonResourcesTab
+            resources={resources}
+            isNew={mode === 'create'}
+            onAdd={(resource) => saveResources([...resources, { ...resource, id: nextLessonResourceId() }])}
+            onRemove={(resource) => saveResources(resources.filter((r) => r.id !== resource.id))}
+          />
         )}
       </div>
 
