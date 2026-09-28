@@ -500,6 +500,17 @@
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
+  transition: color 150ms ease;
+}
+
+/* Enabled items take the Text button's hover and pressed colours (buttons.md);
+   label and icon change together since the icon draws in currentColor. */
+.lf-menu__item:hover:not(:disabled) {
+  color: var(--text-button-hover);
+}
+
+.lf-menu__item:active:not(:disabled) {
+  color: var(--primary-button-background-pressed);
 }
 
 .lf-menu__item:focus-visible {
