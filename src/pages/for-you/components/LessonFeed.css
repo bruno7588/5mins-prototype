@@ -280,17 +280,18 @@
   background: none;
   font-family: inherit;
   font-size: 14px;
-  line-height: 1.4;
-  color: var(--text-button-outlined);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--primary-button-background);
   text-decoration: underline;
-  text-decoration-skip-ink: none;
+  text-decoration-skip-ink: auto;
   transition: color 150ms ease;
   cursor: pointer;
 }
 
-/* buttons.md Link: hover and pressed follow the Text colour ladder. */
+/* buttons.md Link, Medium: the filled button's colour ladder. */
 .lf-info__link:hover {
-  color: var(--text-button-hover);
+  color: var(--primary-button-background-hover);
 }
 
 .lf-info__link:active {

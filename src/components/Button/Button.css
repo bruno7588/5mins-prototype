@@ -130,19 +130,25 @@
   border-color: var(--text-disabled);
 }
 
-/* Text + Link */
-.ds-btn--text,
-.ds-btn--link {
-  color: var(--text-button-outlined);
-}
-.ds-btn--text:hover:not(:disabled),
-.ds-btn--link:hover:not(:disabled)  { color: var(--text-button-hover); }
-.ds-btn--text:active:not(:disabled),
-.ds-btn--link:active:not(:disabled) { color: var(--primary-button-background-pressed); }
-.ds-btn--text:disabled,
-.ds-btn--link:disabled { color: var(--text-disabled); }
+/* Text */
+.ds-btn--text { color: var(--text-button-outlined); }
+.ds-btn--text:hover:not(:disabled)  { color: var(--text-button-hover); }
+.ds-btn--text:active:not(:disabled) { color: var(--primary-button-background-pressed); }
+.ds-btn--text:disabled { color: var(--text-disabled); }
 
-.ds-btn--link { text-decoration: underline; text-decoration-skip-ink: none; }
+/* Link (Library Buttons 10825:3269, updated 2026-09-28): Medium, not Bold, on the
+   filled button's colour ladder; the underline skips descenders. Paragraph S/M/L
+   medium, so Small is 12/1.2 rather than the other buttons' 1.4. */
+.ds-btn--link {
+  font-weight: 500;
+  color: var(--primary-button-background);
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+}
+.ds-btn--sm.ds-btn--link { line-height: 1.2; }
+.ds-btn--link:hover:not(:disabled)  { color: var(--primary-button-background-hover); }
+.ds-btn--link:active:not(:disabled) { color: var(--primary-button-background-pressed); }
+.ds-btn--link:disabled { color: var(--text-disabled); }
 
 /* ══ Danger family ══ */
 .ds-btn--danger {
