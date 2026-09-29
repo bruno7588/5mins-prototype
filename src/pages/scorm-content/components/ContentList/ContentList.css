@@ -72,8 +72,8 @@
   top: 0;
   left: 0;
   background: var(--border);
-  padding: 3px;
-  border-radius: 0 0 6px 0;
+  padding: var(--space-xs);
+  border-radius: 0 0 var(--radius-s) 0;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -213,6 +213,22 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 | MobileCategoryCard | _to be mapped by engineering_ | | |
 | MobileProgramCourseCard | _to be mapped by engineering_ | | |
 
+## Media type tag
+
+The square tag that sits flush in the top-left corner of a card thumbnail and says what the content is. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `4603:27712`. No shared component; each card draws it with a page-prefixed `__tag` class.
+
+| Size | Icon | Padding | Bottom-right radius | Used on |
+|---|---|---|---|---|
+| L | 32px | `var(--space-xs)` (4px) | `var(--radius-sm)` (12px) | large thumbnails and heroes |
+| M | 20px | `var(--space-xs)` (4px) | `var(--radius-s)` (8px) | lesson grid tiles, course lesson rows |
+| S | 16px | `var(--space-xs)` (4px) | `var(--radius-s)` (8px) | compact rows, mobile lesson cards, outline cards |
+
+- Fill `var(--border)`; icon Iconsax **Bold** in `var(--text-secondary)`. Only the bottom-right corner is rounded; the other three sit flush with the thumbnail edge.
+- Icon by media type: Video `PlayCircle`, Audio `VolumeHigh`, PDF `DocumentText`, Link `Link2`, SCORM `DirectboxNotif`, Flashcard `Note2`.
+- Don't round all four corners, and don't use 6px or other off-scale radii: 12px for L, 8px for M and S.
+
+> **Updated 2026-09-29 (Figma `4603:27712`):** the tag radius is 12px on L and 8px on M and S. Six prototype tags were corrected (they used 6px, 9.1px, raw 8px, or 8px on an L tag).
+
 ## Design tokens
 
 The cards use the standard 5Mins token system. If the prototype already defines these (via `5mins-colors` or the prototype-builder scaffold), reuse them. Otherwise the hex values below apply so this skill works standalone. These are the only theme values; build desktop cards in the light theme (dark mode flips the same tokens). Mobile cards render in dark mode only, because `PhoneFrame` pins `data-theme="dark"`.
@@ -296,7 +312,7 @@ Anatomy, top to bottom:
 .content-tag {
   position: absolute; top: 0; left: 0;
   display: flex; padding: 4px;
-  background: var(--border); border-bottom-right-radius: 8px;
+  background: var(--border); border-bottom-right-radius: var(--radius-s);
 }
 .duration-badge {
   position: absolute; top: 6px; right: 6px;
@@ -350,7 +366,7 @@ Container: 343px wide in Figma (375 viewport − 16px side margins; in code, fil
 Anatomy, top to bottom:
 
 - **Content row**: 12px padding, 12px gap, items top-aligned.
-  - **Thumbnail** 56 x 56, radius 4px. Content-type tag flush top-left: `--border` background, 4px padding, bottom-right corner rounded 8px, **14px** play-circle icon (Bold).
+  - **Thumbnail** 56 x 56, radius 4px. Content-type tag flush top-left: `--border` background, 4px padding, bottom-right corner rounded 8px, **16px** play-circle icon (Bold): the S tag (see Media type tag).
   - **Info column** fills the row, 4px gap. Title Poppins Bold 14px/1.5 `--text-primary`, wraps freely (no clamp in Figma). Metadata Poppins Regular 12px/1.2 `--text-secondary`, single line with ellipsis, format `Lesson · Instructor name · 4min`.
 - **Progress bar** flush at the very bottom of the card: 2px tall, full width, 8 equal segments, radius 20px ends. Filled `--primary-600`, empty `--border`; completed lesson uses `--success-500` for all segments.
 

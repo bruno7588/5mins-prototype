@@ -47,7 +47,7 @@ The docs live in the prototype repo `bruno7588/5mins-prototype`. They are read f
 | Top nav, side panel, breadcrumb | `navigation.md` |
 | Page header, section header | `headers.md` |
 | Expand / collapse animation | `collapse.md` |
-| Cards (lesson, course, skill, category...) | `cards.md`, `resource-card.md` |
+| Cards (lesson, course, skill, category...), media type tag | `cards.md`, `resource-card.md` |
 | Colour, type, spacing, radius, shadows, icons | `colors.md`, `typography.md`, `layout.md`, `iconography.md` |
 
 Foundations for every audit: `design-system-guidelines.md`.

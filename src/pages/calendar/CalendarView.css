@@ -114,7 +114,7 @@
   top: 0;
   left: 0;
   padding: var(--space-xs);
-  border-bottom-right-radius: 9.143px;
+  border-bottom-right-radius: var(--radius-s);
   background: var(--border);
   color: var(--text-tertiary);
   display: inline-flex;

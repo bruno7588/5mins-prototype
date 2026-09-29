@@ -50,7 +50,7 @@
   display: flex;
   padding: var(--space-xs);
   background: var(--border);
-  border-bottom-right-radius: 8px;
+  border-bottom-right-radius: var(--radius-s);
 }
 
 .m-lesson-card__info {

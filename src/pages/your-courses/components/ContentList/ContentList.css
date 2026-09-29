@@ -794,7 +794,7 @@
   left: 0;
   background: var(--border);
   padding: var(--space-xs);
-  border-radius: 0 0 6px 0;
+  border-radius: 0 0 var(--radius-s) 0;
   display: flex;
   align-items: center;
   justify-content: center;
