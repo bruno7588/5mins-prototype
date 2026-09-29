@@ -3,8 +3,8 @@ import './BottomSheet.css'
 
 /** Drag distance (px) past which letting go closes the sheet. */
 const DISMISS_DISTANCE = 80
-/** Matches the exit transition in BottomSheet.css. */
-const EXIT_MS = 240
+/** Unmount after the exit transitions in BottomSheet.css (240ms) have fully run. */
+const EXIT_MS = 280
 
 interface BottomSheetProps {
   /** Called once the sheet has finished sliding out; unmount it then. */
@@ -29,10 +29,12 @@ function BottomSheet({ onClose, ariaLabel, children, className }: BottomSheetPro
   const sheetRef = useRef<HTMLDivElement>(null)
   const closing = useRef(false)
 
-  /* Mount below the edge, then rise on the next frame so the transition runs. */
+  /* Mount below the edge, then rise on the next frame so the transition runs.
+     preventScroll: focusing the still-offscreen sheet would otherwise scroll the
+     screen behind it up to meet it, and the content visibly jumps. */
   useEffect(() => {
     const id = requestAnimationFrame(() => setShown(true))
-    sheetRef.current?.focus()
+    sheetRef.current?.focus({ preventScroll: true })
     return () => cancelAnimationFrame(id)
   }, [])
 

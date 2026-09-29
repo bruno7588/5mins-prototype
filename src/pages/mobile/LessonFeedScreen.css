@@ -107,15 +107,15 @@
   border-radius: var(--radius-xs);
 }
 
-/* Skill pill: a 32% dark wash multiplied over the video (Figma), so it reads on
-   light and dark frames alike. */
+/* Skill pill: Neutral-900 at 50% over the video (Figma 10748:32836), so it reads
+   on light and dark frames alike. */
 .m-lf-info__skill {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-xxs) var(--space-xs);
   border-radius: var(--radius-xs);
-  background: rgba(38, 41, 51, 0.32);
+  background: rgba(15, 16, 20, 0.5);
   font: 500 12px/20px 'Poppins', sans-serif;
   color: var(--neutral-0);
 }
@@ -223,7 +223,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-s);
   background: var(--cards-background);
   font: 400 12px/1.2 'Poppins', sans-serif;
   color: var(--text-secondary);
