@@ -96,6 +96,7 @@ Two kinds of target:
      | Dialog / Modal / Drawer | a `position: fixed` scrim + panel outside the shared overlay |
      | Row actions menu | a `More` icon toggling an absolutely positioned list |
      | Avatar | `<img>` with a full radius, or an initials chip |
+     | Inline title | a borderless `<input>` or `<textarea>` styled as a Bold 20 or 32 heading |
      | Table | `<table>`, or rows built from divs outside the shared Table |
      | Checkbox / Radio / Toggle | raw `input type="checkbox"` / `"radio"` or `role="switch"` |
      | Date field | `input type="date"` |
