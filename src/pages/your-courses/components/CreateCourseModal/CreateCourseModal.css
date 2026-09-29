@@ -70,7 +70,7 @@
 /* Tabs */
 .create-course-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
   border-bottom: 1px solid var(--border);
 }
 

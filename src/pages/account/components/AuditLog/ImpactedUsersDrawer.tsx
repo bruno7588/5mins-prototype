@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Table, { type Column } from '@/components/Table/Table'
+import Avatar from '@/components/Avatar/Avatar'
 import '@/pages/my-team/CoursesDrawer.css'
 import './ImpactedUsersDrawer.css'
 
@@ -18,21 +19,13 @@ interface Props {
   onClose: () => void
 }
 
-/** Two uppercase initials from a display name (handles "M. Silva" style too). */
-function initials(name: string): string {
-  const parts = name.split(/\s+/).filter(Boolean)
-  const first = parts[0]?.[0] ?? ''
-  const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
-  return (first + last).toUpperCase()
-}
-
 const columns: Column<ImpactedUser>[] = [
   {
     key: 'name',
     header: 'Name',
     render: (u) => (
       <span className="tbl-media">
-        <span className="iud-avatar" aria-hidden="true">{initials(u.name)}</span>
+        <Avatar size={40} />
         <span className="tbl-stack">
           <span className="primary">{u.name}</span>
           <span className="supporting">{u.email}</span>

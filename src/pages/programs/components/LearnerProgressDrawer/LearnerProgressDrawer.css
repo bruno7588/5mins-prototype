@@ -42,14 +42,6 @@
   gap: var(--space-m);
 }
 
-.lpd-avatar {
-  flex: 0 0 auto;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
-}
-
 .lpd-headline {
   flex: 1;
   min-width: 0;

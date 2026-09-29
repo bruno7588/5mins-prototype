@@ -67,7 +67,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
   min-width: 160px;
 }
 
@@ -257,7 +257,7 @@
   background: var(--cards-background, var(--neutral-0));
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
 }
 
 .rfe-value-opt {
@@ -536,7 +536,7 @@
   background: var(--cards-background, var(--neutral-0));
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
 }
 
 .rcp-option {
@@ -584,7 +584,7 @@
   white-space: nowrap;
 }
 
-/* Initials avatar (suggestion rows) — 40px per the Listbox spec */
+/* 40px circle holding the envelope icon on the "Add external email" row */
 .rcp-avatar {
   display: inline-flex;
   align-items: center;
@@ -593,17 +593,6 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background: var(--neutral-300);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.rcp-avatar--photo {
-  object-fit: cover;
-  background: var(--cards-background-hover, var(--neutral-100));
 }
 
 /* Envelope avatar for the "Add external email" row (Figma 11597:116482) */

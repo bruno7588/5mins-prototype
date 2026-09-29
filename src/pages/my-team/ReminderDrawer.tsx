@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Button from '../../components/Button/Button'
 import CloseButton from '../../components/CloseButton/CloseButton'
+import Avatar from '@/components/Avatar/Avatar'
 import { formatRelativeShort } from './relativeTime'
 import { coursesTotal } from './memberStatus'
 import './ReminderDrawer.css'
@@ -129,11 +130,7 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
                   return (
                     <div className="rd-table__row" key={m.id}>
                       <div className="rd-table__cell rd-table__cell--name">
-                        {m.avatarSrc ? (
-                          <img className="rd-avatar rd-avatar--img" src={m.avatarSrc} alt="" />
-                        ) : (
-                          <div className="rd-avatar" aria-hidden="true">{m.initials}</div>
-                        )}
+                        <Avatar src={m.avatarSrc} size={40} />
                         <div className="rd-member-info">
                           <span className="rd-member-name">{m.name}</span>
                           <span className="rd-member-role">

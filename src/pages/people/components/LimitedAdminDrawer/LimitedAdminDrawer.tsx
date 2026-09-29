@@ -17,6 +17,7 @@ import Dropdown from '@/components/Dropdown/Dropdown'
 import type { DropdownOption } from '@/components/Dropdown/Dropdown'
 import Alert from '@/components/Alert/Alert'
 import Badge from '@/components/Badge/Badge'
+import Avatar from '@/components/Avatar/Avatar'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import type { UserField } from '@/data/userFields'
 import { emptyScope, isScopeComplete, orphanedConditions } from '../../limitedAdmin'
@@ -142,9 +143,7 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
         <div className="lad-body">
           {/* Who this is about */}
           <div className="lad-person">
-            <div className="lad-person__avatar">
-              {person.avatarImg ? <img src={person.avatarImg} alt="" /> : person.avatar}
-            </div>
+            <Avatar size={40} src={person.avatarImg} />
             <div className="lad-person__text">
               <p className="lad-person__name">{person.name}</p>
               <p className="lad-person__email">{person.email}</p>

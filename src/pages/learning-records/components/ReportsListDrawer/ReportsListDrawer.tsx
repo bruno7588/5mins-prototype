@@ -3,6 +3,8 @@ import { Calendar, Clock, ArrowRight } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
+import Avatar from '@/components/Avatar/Avatar'
+import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
 import CsvIcon from '../../../../components/icons/CsvIcon'
 import { cadenceRecurrence, cadenceTime, type SavedReport } from '../../../../utils/lrSavedFilters'
 import { orgUserByEmail } from '@/data/orgUsers'
@@ -10,39 +12,32 @@ import './ReportsListDrawer.css'
 
 const MAX_AVATARS = 3
 
-/** Two-letter initials from an email's local part (e.g. lewis-ferrari → LF). */
-function emailInitials(email: string): string {
-  const local = email.split('@')[0] ?? email
-  const parts = local.split(/[.\-_]+/).filter(Boolean)
-  const letters = parts.length >= 2 ? parts[0][0] + parts[1][0] : local.slice(0, 2)
-  return letters.toUpperCase()
-}
-
-/** A single 24px avatar — the recipient's photo, or their initials. */
+/** A single 24px avatar: the recipient's photo, or the fallback smiley. */
 function AvatarCircle({ email }: { email: string }) {
-  const user = orgUserByEmail(email)
-  if (user?.avatar) return <img className="rl-avatar rl-avatar--photo" src={user.avatar} alt="" />
-  return <span className="rl-avatar">{user ? user.initials : emailInitials(email)}</span>
+  return <Avatar src={orgUserByEmail(email)?.avatar} size={24} />
 }
 
 /**
- * Overlapping recipient avatars. Each shows the email on hover; a "+N" chip
- * (when there are more than MAX_AVATARS) opens the full recipients modal.
+ * Overlapping recipient avatars. Each shows the email on hover; a "+N" button
+ * (when there are more than MAX_AVATARS) opens the full recipients modal. The
+ * button is page-local because AvatarGroup's own "+N" bubble isn't clickable.
  */
 function RecipientAvatars({ emails, onMore }: { emails: string[]; onMore?: () => void }) {
   const shown = emails.slice(0, MAX_AVATARS)
   const overflow = emails.length - shown.length
   return (
     <div className="rl-recipients" aria-label={`${emails.length} recipient${emails.length === 1 ? '' : 's'}`}>
-      {shown.map((email) => (
-        <Tooltip key={email} text={email} position="Bottom" alignment="Start" icon={false} className="rl-avatar-tip">
-          <AvatarCircle email={email} />
-        </Tooltip>
-      ))}
+      <AvatarGroup size={24} className="rl-avatars">
+        {shown.map((email) => (
+          <Tooltip key={email} text={email} position="Bottom" alignment="Start" icon={false} className="rl-avatar-tip">
+            <AvatarCircle email={email} />
+          </Tooltip>
+        ))}
+      </AvatarGroup>
       {overflow > 0 && (
         <button
           type="button"
-          className="rl-avatar rl-avatar--more"
+          className="rl-avatar-more"
           onClick={onMore}
           aria-label={`Show all ${emails.length} recipients`}
         >

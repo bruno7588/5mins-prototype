@@ -2,6 +2,8 @@ import { Clock } from 'iconsax-react'
 import CollectionPlayIcon from '@/components/icons/CollectionPlayIcon'
 import MobileProgramCourseCard from '@/components/mobile/ProgramCourseCard/ProgramCourseCard'
 import ProgramCertificate from '@/pages/programs/components/ProgramCertificate/ProgramCertificate'
+import Avatar from '@/components/Avatar/Avatar'
+import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
 import type { WorkspaceProgram } from '@/pages/workspace/mockItems'
 import avatar1 from '@/assets/programs/avatar-1.png'
 import avatar2 from '@/assets/programs/avatar-2.png'
@@ -54,12 +56,11 @@ function ProgramScreen({ program }: { program: WorkspaceProgram }) {
             <span>{program.durationLabel}</span>
           </span>
           {stack.length > 0 ? (
-            <span className="m-prog__avatars" aria-hidden="true">
+            <AvatarGroup size={24} remaining={overflow}>
               {stack.map((src, i) => (
-                <img key={i} className="m-prog__avatar" src={src} alt="" />
+                <Avatar key={i} size={24} src={src} />
               ))}
-              {overflow > 0 ? <span className="m-prog__avatar m-prog__avatar--count">+{overflow}</span> : null}
-            </span>
+            </AvatarGroup>
           ) : null}
           <span className="m-prog__metaitem">
             {program.learnerCount} {program.learnerCount === 1 ? 'learner' : 'learners'}

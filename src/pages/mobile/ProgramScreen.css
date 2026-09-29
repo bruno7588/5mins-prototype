@@ -58,36 +58,6 @@
   white-space: nowrap;
 }
 
-.m-prog__avatars {
-  display: inline-flex;
-  align-items: center;
-}
-
-.m-prog__avatar {
-  width: 24px;
-  height: 24px;
-  margin-right: -8px;
-  border: 1px solid var(--page-background);
-  border-radius: var(--radius-full);
-  object-fit: cover;
-}
-
-.m-prog__avatar--count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--page-background-hover);
-  font-size: 8px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
-/* Only the overlap between avatars is negative — the stack ends flush. */
-.m-prog__avatars > :last-child {
-  margin-right: 0;
-}
-
 .m-prog__progress {
   display: flex;
   align-items: center;

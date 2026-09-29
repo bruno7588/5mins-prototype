@@ -28,6 +28,7 @@ import avatarCarlos from '../../assets/avatars/avatar-4.jpg'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
 import { Table, type Column } from '@/components/Table/Table'
+import Avatar from '@/components/Avatar/Avatar'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -580,9 +581,7 @@ function People() {
       render: (person) => (
         <span className="tbl-media">
           <div className="people-avatar-wrap">
-            <div className="people-avatar" style={{ background: avatarColors[(person.id - 1) % avatarColors.length] }}>
-              {person.avatarImg ? <img className="people-avatar-img" src={person.avatarImg} alt="" /> : person.avatar}
-            </div>
+            <Avatar size={40} src={person.avatarImg} />
             {/* The role rides the avatar rather than the name: it belongs to the
                 person, and a badge beside the name pushed the name out of a cell
                 that is already the tightest in the row. */}
@@ -727,9 +726,7 @@ function People() {
       width: '0 1 300px',
       render: (person) => (
         <span className="tbl-media">
-          <div className="people-avatar" style={{ background: avatarColors[(person.id - 1) % avatarColors.length] }}>
-            {person.avatar}
-          </div>
+          <Avatar size={40} />
           <div className="people-name-info">
             <span className="people-name">{person.name}</span>
             <span className="people-email">{person.email}</span>

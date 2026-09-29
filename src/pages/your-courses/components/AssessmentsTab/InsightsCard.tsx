@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowDown2, Refresh } from 'iconsax-react'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import CloseButton from '@/components/CloseButton/CloseButton'
+import Avatar from '@/components/Avatar/Avatar'
 import Button from '@/components/Button/Button'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import SectionHeader from '../SectionHeader/SectionHeader'
@@ -320,13 +321,7 @@ function InsightsCard({ onOpenLearner, responseCount, autoStart, onClose, stats 
               <ul className="asmi-people">
                 {NAMED.map((r) => (
                   <li key={r.learner.id} className="asmi-person">
-                    {r.learner.avatar ? (
-                      <img className="avatar-32" src={r.learner.avatar} alt="" />
-                    ) : (
-                      <span className="avatar-32 asmi-initials" aria-hidden="true">
-                        {r.learner.initials}
-                      </span>
-                    )}
+                    <Avatar src={r.learner.avatar} size={32} />
                     <span className="asmi-person__text">
                       <button
                         type="button"

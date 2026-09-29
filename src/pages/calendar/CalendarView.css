@@ -94,7 +94,7 @@
 }
 
 .cal-card--interactive:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -182,36 +182,10 @@
 }
 
 /* ── Attendee stack (Figma node 10113:207839) ──────────────── */
-.cal-card__avatars {
-  display: inline-flex;
-  align-items: center;
-}
-
-.cal-card__avatar {
-  width: 24px;                                /* Figma: size-[24px] */
-  height: 24px;
-  border-radius: 100px;                       /* Figma: rounded-[--100,100px] */
-  background: var(--neutral-300);
-  color: var(--neutral-0);
-  font-size: 10px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--cards-background);   /* Figma uses 0.5px; CSS rounds to 1px */
-  margin-left: -8px;                          /* Figma: mr-[-8px] overlap */
-  letter-spacing: 0.02em;
-}
-
-.cal-card__avatar:first-child {
-  margin-left: 0;
-}
-
-.cal-card__avatar--overflow {
-  background: var(--cards-background-hover);
-  color: var(--text-tertiary);
-  font-size: 8px;                             /* Figma overflow pill: text-[8px] */
-  font-weight: 400;
+/* The stack sits on the card, so the ring matches the card surface. Doubled
+   class so it wins over AvatarGroup's own default whatever the bundle order. */
+.ds-avatar-group.cal-card__avatars {
+  --avatar-group-ring: var(--cards-background);
 }
 
 /* ── Action button (Figma node 10113:207840) ─────────────────── */
@@ -403,7 +377,7 @@
 
 .cal-mini__day:focus-visible {
   outline: none;
-  border-color: var(--selected);
+  border-color: var(--primary-button-background);
   border-radius: 8px;
 }
 

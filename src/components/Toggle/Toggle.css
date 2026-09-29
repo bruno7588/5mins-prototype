@@ -78,7 +78,7 @@
 }
 
 .toggle__input:focus-visible + .toggle__track {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 

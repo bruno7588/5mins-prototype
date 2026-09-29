@@ -23,6 +23,8 @@ import avatar2 from '../../assets/programs/avatar-2.png'
 import avatar3 from '../../assets/programs/avatar-3.png'
 import coursesIcon from '../../assets/programs/courses-icon.svg'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
+import Avatar from '@/components/Avatar/Avatar'
+import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
 
 const SEGMENTS = 8
 
@@ -134,12 +136,11 @@ function ProgramDetails() {
               </span>
               <span className="pd-learners">
                 {stackAvatars.length > 0 && (
-                  <span className="pd-avatars">
+                  <AvatarGroup size={24} remaining={stackOverflow}>
                     {stackAvatars.map((src, i) => (
-                      <img key={i} className="pd-avatar" src={src} alt="" />
+                      <Avatar key={i} src={src} size={24} />
                     ))}
-                    {stackOverflow > 0 && <span className="pd-avatar pd-avatar--count">+{stackOverflow}</span>}
-                  </span>
+                  </AvatarGroup>
                 )}
                 <span className="pd-learners__label">
                   {program.learnerCount} {program.learnerCount === 1 ? 'learner' : 'learners'}

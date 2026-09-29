@@ -173,7 +173,7 @@
 
 .hris-panel-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
 }
 
 .hris-panel-tab {

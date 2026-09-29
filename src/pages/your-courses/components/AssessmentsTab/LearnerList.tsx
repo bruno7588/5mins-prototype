@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowDown2 } from 'iconsax-react'
+import Avatar from '@/components/Avatar/Avatar'
 import Badge from '@/components/Badge/Badge'
 import Collapse from '@/components/Collapse/Collapse'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
@@ -95,11 +96,7 @@ function LearnerList({ rows, sort = 'none', onToggleSort, pagination, focus }: P
                 onClick={() => toggle(r.learner.id)}
               >
                 <span className="lrn-cell lrn-c-learner">
-                  {r.learner.avatar ? (
-                    <img className="lrn-avatar" src={r.learner.avatar} alt="" />
-                  ) : (
-                    <span className="lrn-avatar lrn-avatar--fallback">{r.learner.initials}</span>
-                  )}
+                  <Avatar src={r.learner.avatar} size={40} />
                   <span className="lrn-person">
                     <span className="lrn-name">{r.learner.name}</span>
                     <span className="lrn-role">{r.learner.role}</span>

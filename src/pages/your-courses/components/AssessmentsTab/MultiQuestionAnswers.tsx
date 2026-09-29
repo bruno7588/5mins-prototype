@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowDown2, CloseCircle, TickCircle } from 'iconsax-react'
+import Avatar from '@/components/Avatar/Avatar'
 import Collapse from '@/components/Collapse/Collapse'
 import { multiScore, type MultiAssessment, type MultiResponse } from './assessmentResults'
 /* The By Learner pivot is this same shape one level up — learner rows that open onto
@@ -83,11 +84,7 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                 onClick={() => toggle(r.learner.id)}
               >
                 <span className="lrn-cell lrn-c-learner">
-                  {r.learner.avatar ? (
-                    <img className="lrn-avatar" src={r.learner.avatar} alt="" />
-                  ) : (
-                    <span className="lrn-avatar lrn-avatar--fallback">{r.learner.initials}</span>
-                  )}
+                  <Avatar src={r.learner.avatar} size={40} />
                   <span className="lrn-person">
                     <span className="lrn-name">{r.learner.name}</span>
                     <span className="lrn-role">{r.learner.role}</span>

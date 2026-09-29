@@ -13,6 +13,8 @@ import {
 } from 'iconsax-react'
 import Badge from '../../components/Badge/Badge'
 import Button from '../../components/Button/Button'
+import Avatar from '@/components/Avatar/Avatar'
+import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
 import { pastItems, upcomingItems, type CalendarItem } from './mockItems'
 import './CalendarView.css'
 
@@ -112,15 +114,19 @@ function groupByDate(items: CalendarItem[], direction: 'asc' | 'desc'): DateGrou
 }
 
 export function AttendeeStack({ attendees, overflow }: { attendees: CalendarItem['attendees']; overflow?: number }) {
+  // At most 3 faces (avatars.md); any 4th attendee rolls into the "+N" count.
+  const shown = attendees.slice(0, 3)
   return (
-    <div className="cal-card__avatars" aria-label={`${attendees.length}${overflow ? '+' : ''} attendees`}>
-      {attendees.slice(0, 4).map((a, i) => (
-        <span key={`${a.initials}-${i}`} className="cal-card__avatar" style={{ background: a.background }}>
-          {a.initials}
-        </span>
+    <AvatarGroup
+      size={24}
+      remaining={attendees.length - shown.length + (overflow ?? 0)}
+      ariaLabel={`${attendees.length}${overflow ? '+' : ''} attendees`}
+      className="cal-card__avatars"
+    >
+      {shown.map((a, i) => (
+        <Avatar key={`${a.initials}-${i}`} size={24} />
       ))}
-      {overflow ? <span className="cal-card__avatar cal-card__avatar--overflow">+{overflow}</span> : null}
-    </div>
+    </AvatarGroup>
   )
 }
 

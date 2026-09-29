@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { ArrowDown, InfoCircle } from 'iconsax-react'
 import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
+import Avatar from '@/components/Avatar/Avatar'
 import type { CourseStep } from '../../programStore'
 import './LearnerProgressDrawer.css'
 
@@ -49,7 +50,7 @@ function LearnerProgressDrawer({ learner, courses, onClose }: Props) {
         onMouseDown={(e) => e.stopPropagation()}
       >
         <header className="lpd-header">
-          <img className="lpd-avatar" src={learner.avatar} alt="" />
+          <Avatar src={learner.avatar} size={48} />
           <div className="lpd-headline">
             <p className="lpd-name" id="lpd-name">{learner.name}</p>
             <p className="lpd-role">{learner.role}</p>

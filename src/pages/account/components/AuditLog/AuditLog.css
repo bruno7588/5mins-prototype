@@ -627,7 +627,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12); /* Shadow L */
+  box-shadow: var(--shadow-l); /* Shadow L */
   padding: var(--space-s);
 }
 
@@ -702,7 +702,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12); /* Shadow L */
+  box-shadow: var(--shadow-l); /* Shadow L */
   padding: var(--space-s);
   transform-origin: top left;
   animation: audit-cal-in 150ms ease;
@@ -827,7 +827,7 @@
 
 .audit-cal-day:focus-visible {
   outline: none;
-  border-color: var(--selected);
+  border-color: var(--primary-button-background);
   border-radius: var(--radius-s);
 }
 

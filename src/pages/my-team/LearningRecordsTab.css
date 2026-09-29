@@ -71,7 +71,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
   padding: var(--space-s);
   margin: 0;
   list-style: none;

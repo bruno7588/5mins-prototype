@@ -189,7 +189,7 @@
 .pcd-tabs {
   display: flex;
   align-items: center;
-  gap: var(--space-l);
+  gap: var(--space-m);
 }
 
 .pcd-tab {
@@ -552,7 +552,7 @@
 }
 
 .pcd-lesson--openable:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 

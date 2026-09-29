@@ -92,8 +92,8 @@ export function Table<T>({
     if (scrollRef.current) setScrolled(scrollRef.current.scrollLeft > 0)
   }, [])
 
-  // First data column pins after the checkbox column (52px) when selectable.
-  const stickyLeft = selectable ? 52 : 0
+  // First data column pins after the checkbox column (48px) when selectable.
+  const stickyLeft = selectable ? 48 : 0
   const stickyClass = (i: number, base: string) =>
     i === 0 ? `${base} is-sticky is-sticky-last` : base
   const stickyStyle = (i: number, style?: React.CSSProperties) =>
@@ -108,7 +108,7 @@ export function Table<T>({
     <div className="tbl">
       <div className="tbl-head">
         {selectable && (
-          <div className="tbl-head-cell is-checkbox is-sticky" style={{ flex: '0 0 52px', left: 0 }}>
+          <div className="tbl-head-cell is-checkbox is-sticky" style={{ flex: '0 0 48px', left: 0 }}>
             <Checkbox
               checked={!!allSelected}
               indeterminate={!!selectAllIndeterminate}
@@ -149,7 +149,7 @@ export function Table<T>({
             {selectable && (
               <div
                 className="tbl-cell is-sticky"
-                style={{ flex: '0 0 52px', left: 0 }}
+                style={{ flex: '0 0 48px', left: 0 }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <Checkbox

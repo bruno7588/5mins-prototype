@@ -37,7 +37,7 @@
 }
 
 .lrn-sort:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
@@ -128,24 +128,6 @@
 }
 
 /* ── Learner ─────────────────────────────────────────────────────────────── */
-.lrn-avatar {
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
-}
-
-.lrn-avatar--fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--input-background);
-  color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 600;
-}
-
 .lrn-person {
   display: flex;
   flex-direction: column;

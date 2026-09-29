@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowDown2, Diagram } from 'iconsax-react'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import Tooltip from '../../components/Tooltip/Tooltip'
+import Avatar from '@/components/Avatar/Avatar'
 import { getSkillIllustrationByName } from '../../assets/skill-icons'
 import avatar1 from './assets/m1.jpg'
 import avatar2 from './assets/m2.jpg'
@@ -328,11 +329,7 @@ function Leaderboard() {
               )}
             </div>
 
-            {entry.avatarSrc ? (
-              <img className="eng-lb__avatar" src={entry.avatarSrc} alt="" />
-            ) : (
-              <div className="eng-lb__avatar-placeholder">{entry.initials}</div>
-            )}
+            <Avatar src={entry.avatarSrc} size={40} />
 
             <div className="eng-lb__info">
               <p className="eng-lb__name">{entry.name}</p>

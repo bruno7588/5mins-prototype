@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { ArrowLeft, Add, FlashCircle, Notification, More, Setting2, SearchNormal1 } from 'iconsax-react'
 import { getProgressIllustration } from '@/assets/progress-illustrations'
+import Avatar from '@/components/Avatar/Avatar'
 import './TopNav.css'
 
 export interface MobileTopNavChip {
@@ -189,10 +190,7 @@ function MobileTopNav({
         <>
           <div className="m-topnav__profile">
             <span className="m-topnav__avatarwrap">
-              <span
-                className="m-topnav__avatar"
-                style={avatar ? { backgroundImage: `url(${avatar})` } : undefined}
-              />
+              <Avatar size={40} src={avatar} />
               <button type="button" className="m-topnav__editbadge" aria-label="Profile settings" onClick={onEditProfile}>
                 <Setting2 size={16} color="var(--text-primary)" variant="Linear" />
               </button>

@@ -163,7 +163,7 @@
 }
 
 .lf-icon-btn:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -195,14 +195,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-}
-
-.lf-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
-  flex-shrink: 0;
 }
 
 .lf-instructor__info {
@@ -244,7 +236,7 @@
 }
 
 .lf-follow:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 

@@ -31,7 +31,7 @@
 
 .acs-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
   margin-top: var(--space-m);
   padding-bottom: var(--space-xs);
   overflow-x: auto; /* 10 tabs — scroll rather than wrap/break on smaller viewports */

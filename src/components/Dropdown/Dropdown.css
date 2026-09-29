@@ -65,11 +65,9 @@
   cursor: not-allowed;
 }
 
-/* --danger-500 rather than --text-error, which resolves to --danger-400 in
-   dark and pulled the border a ramp step lighter there. Hover darkens, so a
-   hovered error field answers like every other state does (dropdown.md). */
-.dropdown-trigger.has-error { border-color: var(--danger-500); }
-.dropdown-trigger.has-error:hover { border-color: var(--danger-600); }
+/* Same error token as InputField (--text-error), held on hover (dropdown.md). */
+.dropdown-trigger.has-error,
+.dropdown-trigger.has-error:hover { border-color: var(--text-error); }
 
 /* Sizes */
 .dropdown-sm .dropdown-trigger { height: 33px; padding: 4px 12px; font-size: 12px;
@@ -130,9 +128,9 @@
   max-height: 240px;
   overflow-y: auto;
   background: var(--cards-background);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
   margin: 0;
   padding: var(--space-s);
   list-style: none;

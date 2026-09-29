@@ -146,23 +146,21 @@
   line-height: 1.5;
 }
 
-/* Recipient avatar group — Figma Library "Avatar group / 24px" (10589:3574):
-   24px circles overlapping 8px, each ringed with the surface colour so the
-   stack reads as separate chips. */
+/* Recipient avatar group (shared AvatarGroup, 24px) plus a clickable "+N".
+   The ring follows the card surface, including its hover fill. */
 .rl-recipients {
+  --rl-avatar-ring: var(--cards-background);
   display: flex;
   align-items: center;
   flex-shrink: 0;
 }
 
-/* Overlap each avatar (each wrapped in a hover-email tooltip) by 8px; the last
-   one closes the stack. */
-.rl-recipients > * {
-  margin-right: -8px;
+.rl-item:hover .rl-recipients {
+  --rl-avatar-ring: var(--cards-background-hover);
 }
 
-.rl-recipients > :last-child {
-  margin-right: 0;
+.rl-recipients .rl-avatars {
+  --avatar-group-ring: var(--rl-avatar-ring);
 }
 
 /* Tooltip wrapper around each avatar — must not add its own box beyond 24px. */
@@ -170,7 +168,9 @@
   display: inline-flex;
 }
 
-.rl-avatar {
+/* "+N remaining": AvatarGroup's 24px count bubble, as a button that opens the
+   full recipients modal. Tucked 8px under the last avatar. */
+.rl-avatar-more {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -178,38 +178,28 @@
   flex-shrink: 0;
   width: 24px;
   height: 24px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--cards-background);
-  background: var(--neutral-300, #cbd5e1);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  object-fit: cover;
-}
-
-.rl-item:hover .rl-avatar {
-  border-color: var(--cards-background-hover);
-}
-
-/* "+N remaining" — quieter fill, smaller regular numerals per the Figma.
-   Rendered as a button: clicking opens the full recipients modal. */
-.rl-avatar--more {
+  margin-left: -8px;
   padding: 0;
-  background: var(--cards-background-hover);
+  border: 0.5px solid var(--rl-avatar-ring);
+  border-radius: var(--radius-full);
+  background: var(--border);
   color: var(--text-tertiary);
   font-family: 'Poppins', sans-serif;
   font-size: 8px;
   font-weight: 400;
-  letter-spacing: 0;
+  line-height: 1.5;
   cursor: pointer;
   transition: background 120ms ease, color 120ms ease;
 }
 
-.rl-avatar--more:hover {
+.rl-avatar-more:hover {
   background: var(--input-background-hover);
   color: var(--text-secondary);
+}
+
+.rl-avatar-more:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }
 
 /* "Report sent to" modal — full recipient list (Figma 11643:136449) */

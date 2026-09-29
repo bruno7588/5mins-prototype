@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Sms } from 'iconsax-react'
+import Avatar from '@/components/Avatar/Avatar'
 import { searchOrgUsers, orgUserByEmail } from '@/data/orgUsers'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -179,11 +180,7 @@ function RecipientsField({ recipients, onChange, error, onPendingEmailChange }: 
                 onMouseEnter={() => setActiveIndex(i)}
                 onClick={() => addEmail(u.email)}
               >
-                {u.avatar ? (
-                  <img className="rcp-avatar rcp-avatar--photo" src={u.avatar} alt="" aria-hidden="true" />
-                ) : (
-                  <span className="rcp-avatar" aria-hidden="true">{u.initials}</span>
-                )}
+                <Avatar src={u.avatar} size={40} />
                 <span className="rcp-option-text">
                   <span className="rcp-option-name">{u.name}</span>
                   <span className="rcp-option-email">{u.email}</span>

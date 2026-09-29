@@ -164,17 +164,6 @@
   min-width: 0;
 }
 
-/* Initials stand in for a missing photo; sized by the DS .avatar-32. */
-.asmi-initials {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--cards-background);
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 600;
-}
-
 .asmi-person__text {
   display: flex;
   flex-direction: column;

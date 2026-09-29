@@ -99,21 +99,6 @@
   min-width: 0;
 }
 
-.cd-drawer__avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--input-background);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-primary);
-  flex-shrink: 0;
-}
-.cd-drawer__avatar--img { object-fit: cover; }
-
 .cd-drawer__member-info {
   display: flex;
   flex-direction: column;

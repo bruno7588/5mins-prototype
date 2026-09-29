@@ -204,7 +204,7 @@
   padding: var(--space-xs) var(--space-sm);
   background: var(--cards-background);
   border-radius: 12px;
-  box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
   color: var(--text-primary);
   z-index: 2;
 }

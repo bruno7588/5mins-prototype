@@ -47,7 +47,7 @@
 
 .lrp-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
 }
 
 /* Right-side header actions: Reports + Save Report */

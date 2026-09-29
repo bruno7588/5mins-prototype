@@ -48,7 +48,7 @@
 
 .automations-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
 }
 
 .automations-tab {
@@ -262,7 +262,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
   z-index: 100;
   padding: var(--space-s);
 }
@@ -553,7 +553,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
   padding: var(--space-s);
   display: flex;
   flex-direction: column;

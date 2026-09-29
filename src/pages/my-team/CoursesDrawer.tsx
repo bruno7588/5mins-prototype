@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowDown, ArrowUp, Sort } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
+import Avatar from '@/components/Avatar/Avatar'
 import Search from '../../components/Search/Search'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
 import StatusBadge from './StatusBadge'
@@ -27,7 +28,6 @@ interface Props {
   memberName: string
   memberRole: string
   memberAvatarSrc?: string
-  memberInitials: string
   courses: DrawerCourse[]
   onClose: () => void
 }
@@ -37,7 +37,6 @@ function CoursesDrawer({
   memberName,
   memberRole,
   memberAvatarSrc,
-  memberInitials,
   courses,
   onClose,
 }: Props) {
@@ -109,11 +108,7 @@ function CoursesDrawer({
         <div className="side-drawer__header">
           <div className="side-drawer__headline">
             <div className="cd-drawer__member">
-              {memberAvatarSrc ? (
-                <img className="cd-drawer__avatar cd-drawer__avatar--img" src={memberAvatarSrc} alt="" />
-              ) : (
-                <div className="cd-drawer__avatar" aria-hidden="true">{memberInitials}</div>
-              )}
+              <Avatar src={memberAvatarSrc} size={56} />
               <div className="cd-drawer__member-info">
                 <h2 id="drawer-title" className="cd-drawer__member-name">{memberName}</h2>
                 <p className="cd-drawer__member-role">{memberRole}</p>

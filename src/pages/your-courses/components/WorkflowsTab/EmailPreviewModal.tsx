@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Profile2User, Book1, Diagram } from 'iconsax-react'
+import Avatar from '@/components/Avatar/Avatar'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import '../../../../components/ConfirmModal/ConfirmModal.css'
 import './EmailPreviewModal.css'
@@ -9,12 +10,12 @@ interface Props {
   onClose: () => void
 }
 
-const SAMPLE_ROWS: { emoji: string; bg: string; filled: number }[] = [
-  { emoji: '😊', bg: '#FDE68A', filled: 0 },
-  { emoji: '🙂', bg: '#FBCFE8', filled: 1 },
-  { emoji: '😀', bg: '#A7F3D0', filled: 2 },
-  { emoji: '😄', bg: '#DDD6FE', filled: 3 },
-  { emoji: '😁', bg: '#FCA5A5', filled: 4 },
+const SAMPLE_ROWS: { filled: number }[] = [
+  { filled: 0 },
+  { filled: 1 },
+  { filled: 2 },
+  { filled: 3 },
+  { filled: 4 },
 ]
 
 const SEGMENTS = 8
@@ -83,13 +84,7 @@ function EmailPreviewModal({ open, onClose }: Props) {
             {SAMPLE_ROWS.map((row, i) => (
               <div key={i} className="email-preview__row">
                 <div className="email-preview__col email-preview__col--name">
-                  <div
-                    className="email-preview__avatar"
-                    style={{ background: row.bg }}
-                    aria-hidden="true"
-                  >
-                    {row.emoji}
-                  </div>
+                  <Avatar size={32} />
                   <div className="email-preview__name-bars">
                     <span className="email-preview__bar email-preview__bar--name" />
                     <span className="email-preview__bar email-preview__bar--role" />

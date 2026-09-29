@@ -62,15 +62,15 @@
 }
 
 .tbl-scroll--scrolled .tbl-row.is-selected .tbl-cell.is-sticky {
-  background: linear-gradient(var(--selected-tint), var(--selected-tint)), var(--page-background);
-  border-color: var(--selected-tint);
+  background: linear-gradient(var(--selected-row), var(--selected-row)), var(--page-background);
+  border-color: var(--selected-row);
 }
 
 .tbl-scroll--scrolled .tbl-row.is-selected:hover .tbl-cell.is-sticky,
 .tbl-scroll--scrolled .tbl-row.is-selected.is-hover .tbl-cell.is-sticky {
-  background: linear-gradient(var(--selected-tint-hover), var(--selected-tint-hover)),
+  background: linear-gradient(var(--selected-row-hover), var(--selected-row-hover)),
     var(--page-background);
-  border-color: var(--selected-tint-hover);
+  border-color: var(--selected-row-hover);
 }
 
 /* The pinned column shrinks with the viewport down to 240px, then holds — past
@@ -153,14 +153,14 @@
 }
 
 .tbl-row.is-selected {
-  background: var(--selected-tint);
-  border-color: var(--selected-tint);
+  background: var(--selected-row);
+  border-color: var(--selected-row);
 }
 
 .tbl-row.is-selected.is-hover,
 .tbl-row.is-selected:hover {
-  background: var(--selected-tint-hover);
-  border-color: var(--selected-tint-hover);
+  background: var(--selected-row-hover);
+  border-color: var(--selected-row-hover);
 }
 
 .tbl-row.is-disabled .tbl-cell {
@@ -168,8 +168,7 @@
 }
 
 .tbl-row.is-disabled .tbl-thumb,
-.tbl-row.is-disabled .avatar-32,
-.tbl-row.is-disabled .avatar-40 {
+.tbl-row.is-disabled .ds-avatar {
   mix-blend-mode: luminosity;
 }
 
@@ -265,23 +264,6 @@
   font-size: 12px;
   line-height: 1.2;
   color: var(--text-tertiary);
-}
-
-/* Avatars */
-.avatar-32 {
-  width: 32px;
-  height: 32px;
-  border-radius: 100px;
-  object-fit: cover;
-  flex: 0 0 32px;
-}
-
-.avatar-40 {
-  width: 40px;
-  height: 40px;
-  border-radius: 100px;
-  object-fit: cover;
-  flex: 0 0 40px;
 }
 
 /* Thumbnail (90x44 rounded). Use a <span> with background-image for gradients. */
@@ -393,4 +375,13 @@
 .tbl-pagination .nav[aria-disabled='true'] {
   opacity: 0.4;
   cursor: default;
+}
+
+/* Row and header checkboxes sit in a 24px hit area (Figma table data cell 11766:619),
+   not the standalone 32px, so a checkbox row stays one text line tall. */
+.tbl-head-cell.is-checkbox .checkbox,
+.tbl-cell.is-sticky > .checkbox {
+  width: 24px;
+  height: 24px;
+  padding: var(--space-xs);
 }

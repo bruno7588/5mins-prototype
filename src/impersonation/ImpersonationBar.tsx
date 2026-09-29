@@ -1,5 +1,6 @@
 import { Logout } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import Avatar from '@/components/Avatar/Avatar'
 import ImpersonateIcon from '@/components/icons/ImpersonateIcon'
 import { useImpersonation } from './ImpersonationContext'
 import './ImpersonationBar.css'
@@ -31,9 +32,7 @@ function ImpersonationBar() {
           <span className="imp-bar__prefix-text">Impersonating</span>
         </span>
         <span className="imp-bar__person">
-          <span className="imp-bar__avatar">
-            {person.avatarImg ? <img src={person.avatarImg} alt="" /> : person.initials}
-          </span>
+          <Avatar size={24} src={person.avatarImg} />
           <span className="imp-bar__label">
             <strong className="imp-bar__name">{person.name}</strong>
             <span className="imp-bar__role">· {person.role}</span>

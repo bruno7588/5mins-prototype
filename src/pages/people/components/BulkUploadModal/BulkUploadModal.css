@@ -539,7 +539,7 @@
 /* Filter tabs */
 .bulk-preview-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
   align-items: flex-start;
 }
 

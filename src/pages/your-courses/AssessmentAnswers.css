@@ -139,17 +139,6 @@
 }
 
 /* ── Cells ───────────────────────────────────────────────────────────────── */
-/* Initials stand in for a missing photo; sized by the DS .avatar-32. */
-.asp-initials {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--input-background);
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 600;
-}
-
 /* Whole, not clamped. The DS cell is nowrap and clipped, which is right for a name and
    wrong for a paragraph — so a written answer opts back into wrapping and takes the
    height it needs. Capped at a measure rather than a line count: the point of this page

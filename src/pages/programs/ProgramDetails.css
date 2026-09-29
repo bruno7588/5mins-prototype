@@ -74,31 +74,6 @@
   gap: var(--space-s);
 }
 
-.pd-avatars {
-  display: inline-flex;
-  align-items: center;
-}
-
-.pd-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 100px;
-  border: 1.5px solid var(--page-background);
-  margin-right: -8px;
-  object-fit: cover;
-}
-
-.pd-avatar--count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--page-background-hover);
-  font-size: 8px;
-  font-weight: 400;
-  color: var(--text-tertiary);
-  margin-right: 0;
-}
-
 .pd-learners__label {
   font-size: 14px;
   line-height: 1.5;

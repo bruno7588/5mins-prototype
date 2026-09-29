@@ -68,7 +68,7 @@
 }
 
 .radio__input:focus-visible + .radio__ring {
-  outline: 2px solid var(--control-selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 

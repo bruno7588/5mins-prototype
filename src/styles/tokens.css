@@ -165,6 +165,10 @@
   --selected: var(--secondary-600);
   --selected-tint: rgba(237, 163, 13, 0.15); /* selected-row / highlight fill derived from --selected */
   --selected-tint-hover: rgba(237, 163, 13, 0.24); /* hover state of --selected-tint rows */
+  /* Table row selection (Figma Selected-row / Selected-row-hover): Secondary-500 at
+     16% / 24% in both modes, so no dark override. */
+  --selected-row: rgba(255, 187, 56, 0.16);
+  --selected-row-hover: rgba(255, 187, 56, 0.24);
   --selected-fill: var(--secondary-100); /* opaque fill for sticky cells over scrolling content */
   --selected-fill-hover: #FDECC5; /* hover state of --selected-fill / selected rows (opaque) */
   --control-selected: var(--secondary-600); /* radio/checkbox selected amber, per selection-controls.md */
@@ -200,7 +204,7 @@
 
   /* Shadows — see docs/design-system/layout.md */
   --shadow-s: -1px -1px 4px 0 rgba(32, 34, 42, 0.04), 1px 1px 4px 0 rgba(32, 34, 42, 0.04);
-  --shadow-l: 4px 4px 24px 0 rgba(32, 34, 42, 0.12);
+  --shadow-l: -4px 0 24px 0 rgba(32, 34, 42, 0.12); /* Figma effect style Shadow L: offset -4, 0, blur 24 */
   --shadow-xl: 0 4px 32px 0 rgba(32, 34, 42, 0.24);
   --shadow-panel: -24px 0px 24px 0px rgba(32, 34, 42, 0.04);
   /* Lift for a filled card sitting on the page. Light mode needs it — --cards-background

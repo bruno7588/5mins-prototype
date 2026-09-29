@@ -24,6 +24,7 @@ import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Search from '../../components/Search/Search'
 import { Table, type Column } from '@/components/Table/Table'
+import Avatar from '@/components/Avatar/Avatar'
 import Badge from '../../components/Badge/Badge'
 import ContentSwitcher from '../../components/ContentSwitcher/ContentSwitcher'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
@@ -428,11 +429,7 @@ function MyTeam() {
       width: '1 0 260px',
       render: (r) => (
         <span className="tbl-media">
-          {r.avatarSrc ? (
-            <img className="mt-cp__avatar mt-cp__avatar--img" src={r.avatarSrc} alt="" />
-          ) : (
-            <div className="mt-cp__avatar" aria-hidden="true">{r.initials}</div>
-          )}
+          <Avatar src={r.avatarSrc} size={40} />
           <div
             className="mt-cp__member-info"
             role="link"
@@ -777,7 +774,6 @@ function MyTeam() {
             memberName={member.name}
             memberRole={member.role}
             memberAvatarSrc={member.avatarSrc}
-            memberInitials={member.initials}
             courses={allCoursesFor(member)}
             onClose={() => setDrawerMemberId(null)}
           />

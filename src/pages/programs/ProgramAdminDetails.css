@@ -135,33 +135,6 @@
   white-space: nowrap;
 }
 
-.pad-avatars {
-  display: inline-flex;
-  align-items: center;
-}
-
-.pad-avatars__img {
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
-  border: 1px solid var(--page-background);
-  margin-right: -8px;
-}
-
-.pad-avatars__more {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 24px;
-  padding: 0 var(--space-xss);
-  border-radius: var(--radius-full);
-  background: var(--cards-background-hover);
-  border: 1px solid var(--page-background);
-  font-size: 10px;
-  color: var(--text-tertiary);
-}
-
 /* ── CTAs ───────────────────────────────────────────────────────────────── */
 .pad-cta {
   display: flex;
@@ -199,7 +172,7 @@
 
 .pad-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
 }
 
 .pad-tab {
@@ -445,14 +418,6 @@
   padding: var(--space-s) var(--space-sm);
 }
 
-.pad-lavatar {
-  flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
-}
-
 .pad-row__date {
   flex: 0 0 auto;
   width: 160px;
@@ -548,7 +513,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
 }
 
 .pad-menu__item {

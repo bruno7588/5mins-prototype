@@ -18,6 +18,8 @@ import avatar3 from '../../assets/programs/avatar-3.png'
 import '../people/People.css' // confirm-modal-* styles
 import './ProgramAdminDetails.css'
 import Button from '@/components/Button/Button'
+import Avatar from '@/components/Avatar/Avatar'
+import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
 
 const TABS = ['Courses', 'Enrolments', 'Settings']
 const PAGE_SIZE = 10
@@ -286,12 +288,11 @@ function ProgramAdminDetails() {
               {totalMins} {totalMins === 1 ? 'min' : 'mins'}
             </span>
             {enrolledCount > 0 && (
-              <span className="pad-avatars" aria-hidden="true">
+              <AvatarGroup size={24} remaining={enrolledCount - 3}>
                 {[avatar1, avatar2, avatar3].slice(0, enrolledCount).map((src, i) => (
-                  <img key={i} className="pad-avatars__img" src={src} alt="" />
+                  <Avatar key={i} src={src} size={24} />
                 ))}
-                {enrolledCount > 3 && <span className="pad-avatars__more">+{enrolledCount - 3}</span>}
-              </span>
+              </AvatarGroup>
             )}
             <span className="pad-meta__item">
               {enrolledCount} {enrolledCount === 1 ? 'learner' : 'learners'}
@@ -524,7 +525,7 @@ function ProgramAdminDetails() {
                   onClick={() => setProgressLearner(l)}
                 >
                   <div className="pad-row__name">
-                    <img className="pad-lavatar" src={l.avatar} alt="" />
+                    <Avatar src={l.avatar} size={32} />
                     <span className="pad-row__title pad-row__title--link">{l.name}</span>
                   </div>
                   <div className="pad-row__date">

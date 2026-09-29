@@ -71,7 +71,7 @@
 /* ===== Tabs ===== */
 .people-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
 }
 
 .people-tab {
@@ -276,7 +276,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: var(--space-s);
-  box-shadow: -4px 0px 24px 0px rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-l);
   z-index: 200;
   display: flex;
   flex-direction: column;
@@ -428,27 +428,6 @@
   font-size: 12px;
   line-height: 1.2;
   color: var(--text-tertiary);
-}
-
-/* Avatar */
-.people-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--neutral-0);
-  flex-shrink: 0;
-}
-
-.people-avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: inherit;
 }
 
 .people-name-info {

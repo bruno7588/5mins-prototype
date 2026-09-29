@@ -69,7 +69,7 @@
 /* ── Tabs (short underline under the active tab only) ───────────────────── */
 .cpd-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
   padding: var(--space-m) var(--space-l) 0;
 }
 

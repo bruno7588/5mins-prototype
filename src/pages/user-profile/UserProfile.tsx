@@ -10,6 +10,7 @@ import Table, { type Column } from '../../components/Table/Table'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
+import Avatar from '@/components/Avatar/Avatar'
 import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'
 import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterValue } from './components/CourseFilters/CourseFilters'
 import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDateModal/ExtendDueDateModal'
@@ -609,9 +610,7 @@ function UserProfile() {
           {/* Profile header — divider sits between the headline and the tabs (per headers.md) */}
           <header className="up-header">
             <div className="up-headline">
-              <div className="up-avatar">
-                {person.avatarImg ? <img src={person.avatarImg} alt="" /> : person.avatar}
-              </div>
+              <Avatar size={56} src={person.avatarImg} />
               <div className="up-title-group">
                 <h1 className="up-name">{person.name}</h1>
                 <p className="up-meta">{person.role} · {person.email}</p>

@@ -2,6 +2,7 @@ import { TickCircle, Danger, CloseCircle, Clock } from 'iconsax-react'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
+import Avatar from '@/components/Avatar/Avatar'
 import { useImpersonation } from './ImpersonationContext'
 import type { ImpersonatedPerson } from './types'
 import './ImpersonateConfirmModal.css'
@@ -33,9 +34,7 @@ function ImpersonateConfirmModal({ person, onClose, onConfirm }: Props) {
 
       <div className="imp-confirm__content">
         <div className="imp-confirm__who">
-          <span className="imp-confirm__avatar" style={{ background: person.color }}>
-            {person.avatarImg ? <img src={person.avatarImg} alt="" /> : person.initials}
-          </span>
+          <Avatar size={40} src={person.avatarImg} />
           <div className="imp-confirm__who-id">
             <div className="imp-confirm__who-name">{person.name}</div>
             <div className="imp-confirm__who-role">{person.role}</div>

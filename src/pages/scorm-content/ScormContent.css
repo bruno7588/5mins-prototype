@@ -36,7 +36,7 @@
 
 .content-tabs {
   display: flex;
-  gap: var(--space-l);
+  gap: var(--space-m);
 }
 
 .content-tab {

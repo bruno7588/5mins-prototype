@@ -1,0 +1,42 @@
+/* Avatar group - docs/design-system/avatars.md */
+.ds-avatar-group {
+  /* The ring matches the surface behind the group; override on cards. */
+  --avatar-group-ring: var(--page-background);
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  isolation: isolate;
+}
+
+.ds-avatar-group__item {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.ds-avatar-group--24 .ds-avatar-group__item:not(:last-child) { margin-right: -8px; }
+.ds-avatar-group--32 .ds-avatar-group__item:not(:last-child) { margin-right: -12px; }
+.ds-avatar-group--40 .ds-avatar-group__item:not(:last-child) { margin-right: -16px; }
+
+/* Ring inside the diameter, as in Figma, so a 24px avatar stays 24px. */
+.ds-avatar-group .ds-avatar {
+  box-sizing: border-box;
+  border: 1px solid var(--avatar-group-ring);
+}
+
+.ds-avatar-group__count {
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--avatar-group-ring);
+  border-radius: var(--radius-full);
+  background: var(--border);
+  color: var(--text-tertiary);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.ds-avatar-group--24 .ds-avatar-group__count { width: 24px; height: 24px; font-size: 8px; line-height: 1.5; border-width: 0.5px; }
+.ds-avatar-group--32 .ds-avatar-group__count { width: 32px; height: 32px; font-size: 10px; line-height: 1.5; }
+.ds-avatar-group--40 .ds-avatar-group__count { width: 40px; height: 40px; font-size: 12px; line-height: 1.2; }

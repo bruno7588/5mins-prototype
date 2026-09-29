@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams, Navigate } from 'react-router-dom'
 import { ImportCurve, Sort } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
+import Avatar from '@/components/Avatar/Avatar'
 import Badge from '@/components/Badge/Badge'
 import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'
 import Button from '@/components/Button/Button'
@@ -40,13 +41,7 @@ const COURSE_PATH = '/your-courses/course?tab=assessments'
 function person(learner: ResponseLearner) {
   return (
     <span className="tbl-media">
-      {learner.avatar ? (
-        <img className="avatar-32" src={learner.avatar} alt="" />
-      ) : (
-        <span className="avatar-32 asp-initials" aria-hidden="true">
-          {learner.initials}
-        </span>
-      )}
+      <Avatar src={learner.avatar} size={32} />
       <span className="tbl-stack">
         <span className="primary">{learner.name}</span>
         <span className="supporting">{learner.role}</span>

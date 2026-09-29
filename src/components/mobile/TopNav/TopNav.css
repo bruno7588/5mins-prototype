@@ -104,7 +104,7 @@
 }
 
 .m-topnav__chip:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -129,7 +129,7 @@
 }
 
 .m-topnav__iconbtn:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -161,7 +161,7 @@
 }
 
 .m-topnav__search:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -214,7 +214,7 @@
 }
 
 .m-topnav__back:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 
@@ -239,17 +239,8 @@
 
 .m-topnav__avatarwrap {
   position: relative;
+  display: flex;
   flex-shrink: 0;
-}
-
-.m-topnav__avatar {
-  display: block;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--border);
-  background-size: cover;
-  background-position: center;
 }
 
 .m-topnav__editbadge {
@@ -267,7 +258,7 @@
 }
 
 .m-topnav__editbadge:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 1px;
 }
 
@@ -305,6 +296,6 @@
 }
 
 .m-topnav__fab:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
