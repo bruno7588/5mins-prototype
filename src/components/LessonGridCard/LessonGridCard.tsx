@@ -41,7 +41,7 @@ function LessonGridCard({ title, instructor, thumbnail, durationLabel, filled, c
         style={{ backgroundImage: `url(${thumbnail})` }}
       >
         <span className="lesson-grid-card__tag">
-          <PlayCircle size={20} color="var(--text-primary)" variant="Bold" />
+          <PlayCircle size={20} color="var(--text-secondary)" variant="Bold" />
         </span>
         <span className="lesson-grid-card__duration">{durationLabel}</span>
         <div

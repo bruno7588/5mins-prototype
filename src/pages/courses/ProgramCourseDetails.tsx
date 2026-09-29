@@ -69,7 +69,7 @@ function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => v
       <div className="pcd-lesson__thumb">
         <img src={lesson.thumbnail} alt="" />
         <span className="pcd-lesson__tag">
-          <PlayCircle size={20} color="var(--text-primary)" variant="Bold" />
+          <PlayCircle size={20} color="var(--text-secondary)" variant="Bold" />
         </span>
       </div>
       <div className="pcd-lesson__info">

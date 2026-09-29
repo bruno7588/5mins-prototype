@@ -144,7 +144,7 @@ export function LibraryDrawerContent({ onClose, addedIds, onAdd, onRemove }: Con
               <article key={lesson.id} className="library-lesson">
                 <div className="library-lesson__thumb" style={{ background: lesson.thumbColor }}>
                   <span className="library-lesson__tag" aria-hidden="true">
-                    <PlayCircle size={16} color="var(--text-tertiary)" variant="Bold" />
+                    <PlayCircle size={16} color="var(--text-secondary)" variant="Bold" />
                   </span>
                 </div>
                 <div className="library-lesson__info">

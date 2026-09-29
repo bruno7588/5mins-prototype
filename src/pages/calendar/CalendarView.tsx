@@ -170,7 +170,7 @@ export function CourseCard({ item, tab }: { item: CalendarItem; tab: CalendarTab
           {item.type === 'course' ? (
             <CourseTypeIcon size={24} />
           ) : (
-            <CalendarIcon size={24} color="var(--text-tertiary)" variant="Linear" />
+            <CalendarIcon size={24} color="var(--text-secondary)" variant="Linear" />
           )}
         </span>
       </div>
@@ -237,7 +237,7 @@ export function EventCard({
           {item.type === 'course' ? (
             <CourseTypeIcon size={24} />
           ) : (
-            <CalendarIcon size={24} color="var(--text-tertiary)" variant="Linear" />
+            <CalendarIcon size={24} color="var(--text-secondary)" variant="Linear" />
           )}
         </span>
       </div>

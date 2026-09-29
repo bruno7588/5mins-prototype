@@ -54,7 +54,7 @@ function MobileFeedHero({ slides, onOpen }: { slides: HeroSlide[]; onOpen?: (ind
         <img className="m-fy-hero__media" src={slide.media} alt="" />
         <span className="m-fy-hero__gradient" />
         <span className="m-fy-hero__tag">
-          <PlayCircle size={44} color="var(--text-primary)" variant="Bold" />
+          <PlayCircle size={44} color="var(--text-secondary)" variant="Bold" />
         </span>
         <div className="m-fy-hero__caption">
           <h2 className="m-fy-hero__title">{slide.title}</h2>
