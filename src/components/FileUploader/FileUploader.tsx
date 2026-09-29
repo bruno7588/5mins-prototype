@@ -14,6 +14,8 @@ interface FileUploaderProps {
   onFileSelect?: (file: File) => void
   onChangeFile?: () => void
   accept?: string
+  /** Enabled/Hover: replaces the upload icon, e.g. a video or audio glyph for a media upload. */
+  icon?: ReactNode
   /** Filled state: replaces the default document icon, e.g. a file-type thumbnail. */
   fileIcon?: ReactNode
   className?: string
@@ -28,6 +30,7 @@ export function FileUploader({
   onFileSelect,
   onChangeFile,
   accept,
+  icon,
   fileIcon,
   className,
 }: FileUploaderProps) {
@@ -100,7 +103,7 @@ export function FileUploader({
       {(state === 'Enabled' || state === 'Hover') && (
         <>
           <div className="file-uploader__icon-group">
-            <ExportCurve size={iconSize} color="var(--text-secondary)" variant="Linear" />
+            {icon ?? <ExportCurve size={iconSize} color="var(--text-secondary)" variant="Linear" />}
             <p className="file-uploader__body">
               Drag and drop file here or click to upload
             </p>

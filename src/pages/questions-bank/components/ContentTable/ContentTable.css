@@ -250,16 +250,7 @@
   position: absolute;
   top: 20px;
   right: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xss);
-  border-radius: var(--radius-full);
   z-index: 101;
-}
-
-.qb-content-table-preview-close:hover {
-  background: var(--page-background-hover);
 }
 
 .qb-content-table-preview-content {

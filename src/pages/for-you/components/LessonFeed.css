@@ -4,6 +4,8 @@
   z-index: 1000;
   display: flex;
   background: var(--page-background);
+  /* Clips the panel while it slides in from the right. */
+  overflow: hidden;
 }
 
 /* ---- Left: video stage + feed controls ---- */
@@ -44,23 +46,8 @@
 .lf-feed .lf-close {
   position: absolute;
   top: 0;
-  left: -48px; /* 40px button + 8px gap to the video */
+  left: -52px; /* 44px button + 8px gap to the video */
   z-index: 2;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-full);
-  background: var(--input-background);
-  color: var(--text-primary);
-  cursor: pointer;
-}
-
-.lf-feed .lf-close:hover {
-  background: var(--input-background-hover);
 }
 
 .lf-video {
@@ -169,7 +156,8 @@
 }
 
 .lf-icon-btn:disabled {
-  background: var(--button-background-disabled);
+  /* Keeps its fill; only the chevron dims. */
+  background: var(--input-background);
   color: var(--text-disabled);
   cursor: default;
 }
@@ -182,6 +170,8 @@
 /* ---- Right: lesson details panel ---- */
 .lf-panel {
   flex-shrink: 0;
+  /* Anchors the Learnings / deep dive sheet, which drops over the details. */
+  position: relative;
   width: 544px;
   min-width: 540px;
   max-width: 45%;
@@ -263,21 +253,10 @@
   flex-direction: column;
   gap: var(--space-m);
   width: 100%;
-  flex: 1 1 auto;
+  /* Sized to its content, so the quiz banner follows the episodes instead of
+     sinking to the bottom of the column. */
+  flex: 0 1 auto;
   min-height: 0;
-}
-
-/* The scrolling region — the tab row above it and the quiz below stay fixed. */
-.lf-tabpanel {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-width: thin;
-}
-
-/* A horizontal row of episode cards shouldn't stretch to the panel's height. */
-.lf-tabpanel > .lf-episodes {
-  align-items: flex-start;
 }
 
 .lf-info__title-block {
@@ -296,18 +275,43 @@
 
 .lf-info__link {
   align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
   font-size: 14px;
-  line-height: 1.4;
-  color: var(--text-button-outlined);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--primary-button-background);
   text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  transition: color 150ms ease;
   cursor: pointer;
+}
+
+/* buttons.md Link, Medium: the filled button's colour ladder. */
+.lf-info__link:hover {
+  color: var(--primary-button-background-hover);
+}
+
+.lf-info__link:active {
+  color: var(--primary-button-background-pressed);
+}
+
+.lf-info__link:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 .lf-episodes {
   display: flex;
   gap: var(--space-m);
   width: 100%;
-  overflow: hidden;
+  /* Scrolls sideways so a series longer than the panel stays reachable. */
+  overflow-x: auto;
+  scrollbar-width: thin;
+  flex-shrink: 0;
 }
 
 .lf-ep {
@@ -376,41 +380,6 @@
   color: var(--text-tertiary);
 }
 
-/* Bookmark / Share / Comments — lesson-scoped, so they sit with the lesson's
-   identity rather than on the tab row, which is navigation (Figma 6574:54271).
-   Icon-only 32px pills; each names itself in a Tooltip on hover. */
-.lf-social {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-}
-
-.lf-social__item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: var(--space-xss);
-  border: none;
-  border-radius: var(--radius-full);
-  background: var(--input-background-elevated);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-@media (hover: hover) {
-  .lf-social__item:not(:disabled):hover {
-    background: var(--input-background-hover);
-  }
-}
-
-.lf-social__item:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
-
 .lf-quiz {
   flex-shrink: 0;
   display: flex;
@@ -443,78 +412,6 @@
 }
 
 /* Episodes / Resources / Learnings — tabs per chips-switcher-tabs.md. */
-.lf-tabs {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-m);
-  align-self: flex-start;
-}
-
-.lf-tab {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.lf-tab__label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.lf-tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-/* 2px indicator sized to the label row, shown only on the active tab. */
-.lf-tab__indicator {
-  width: 100%;
-  height: 2px;
-  border-radius: var(--radius-xs);
-  background: transparent;
-}
-
-.lf-tab--active .lf-tab__indicator {
-  background: var(--selected);
-}
-
-.lf-tab__count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  box-sizing: border-box;
-  border-radius: var(--radius-full);
-  background: var(--input-background);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1;
-  color: var(--text-tertiary);
-}
-
-.lf-tab--active .lf-tab__count {
-  color: var(--text-secondary);
-}
-
-@media (hover: hover) {
-  .lf-tab:hover {
-    color: var(--text-primary);
-  }
-}
-
 /* ── Learnings tab (Figma 6574:54634) ── */
 .lf-learnings {
   display: flex;
@@ -580,4 +477,133 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+}
+
+/* Learnings · Bookmark · Share · Comments — labelled row, label before icon. */
+.lf-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-l);
+  width: 100%;
+}
+
+.lf-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  transition: color 150ms ease;
+}
+
+/* Enabled items take the Text button's hover and pressed colours (buttons.md);
+   label and icon change together since the icon draws in currentColor. */
+.lf-menu__item:hover:not(:disabled) {
+  color: var(--text-button-hover);
+}
+
+.lf-menu__item:active:not(:disabled) {
+  color: var(--primary-button-background-pressed);
+}
+
+.lf-menu__item:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Learnings / Take a deep dive: the right column swaps to this panel until it
+   is closed. Section header per overlays.md (title, close, divider). */
+.lf-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  padding: var(--space-l);
+  background: var(--page-background);
+  /* Slides in from the right: the feed uses up/down for next/previous lesson,
+     so the panel moves sideways to read as "more on this lesson", not a new one. */
+  animation: lf-sheet-in 300ms ease-in-out;
+}
+
+/* Leaves the way it came: back out to the right. */
+.lf-sheet--closing {
+  animation: lf-sheet-out 250ms ease-in-out forwards;
+}
+
+@keyframes lf-sheet-out {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes lf-sheet-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lf-sheet {
+    animation: none;
+  }
+}
+
+.lf-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.lf-sheet__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.lf-sheet__divider {
+  flex-shrink: 0;
+  height: 1px;
+  background: var(--border);
+  border-radius: var(--radius-xs);
+}
+
+.lf-sheet__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+/* The instructor's own page (blog, YouTube channel), where Take a deep dive
+   used to link straight to: a plain link above the resources. */
+.lf-deep__link {
+  overflow-wrap: anywhere;
+}
+
+/* Take a deep dive: Learn more and Resources sit 16px apart, labels quieter. */
+.lf-sheet__body--deep {
+  gap: var(--space-m);
+}
+
+.lf-learn__head--secondary {
+  color: var(--text-secondary);
+}
+
+/* Learn more: the label sits 8px above its link. */
+.lf-learn--tight {
+  gap: var(--space-s);
 }

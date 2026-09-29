@@ -18,14 +18,16 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 500px;
+  width: 720px;
   max-width: 100vw;
+  padding: var(--space-ml) var(--space-l);
   background: var(--page-background);
   z-index: 201;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-panel);
-  animation: drawer-slide-in 250ms ease;
+  gap: var(--space-ml);
+  /* overlays.md Side Drawer: flush to the edge, no shadow, no radius. */
+  animation: drawer-slide-in 300ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @keyframes drawer-slide-in {
@@ -33,13 +35,18 @@
   to { transform: translateX(0); }
 }
 
-/* Header */
+/* Section header: title row, then the divider 16px under it (overlays.md). */
+.question-drawer-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
 .question-drawer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-l);
-  padding-bottom: var(--space-m);
+  gap: var(--space-m);
 }
 
 .question-drawer-title {
@@ -67,13 +74,14 @@
 .question-drawer-divider {
   height: 1px;
   background: var(--border);
+  border-radius: var(--radius-xs);
 }
 
 /* Body (scrollable) */
 .question-drawer-body {
-  flex: 1;
+  flex: 1 0 0;
+  min-height: 0;
   overflow-y: auto;
-  padding: var(--space-l);
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
@@ -97,34 +105,6 @@
   font-weight: 400;
 }
 
-/* Question textarea */
-.question-drawer-textarea {
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  padding: var(--space-sm) var(--space-m);
-  resize: vertical;
-  min-height: 60px;
-  outline: none;
-  transition: border-color 150ms ease;
-}
-
-.question-drawer-textarea:hover {
-  border-color: var(--border-hover);
-}
-
-.question-drawer-textarea:focus {
-  border-color: var(--selected);
-}
-
-.question-drawer-textarea::placeholder {
-  color: var(--text-disabled);
-}
-
 /* Answer cards */
 .question-drawer-answers {
   display: flex;
@@ -142,9 +122,15 @@
   transition: border-color 150ms ease, background 150ms ease;
 }
 
-.question-drawer-answer--correct {
-  border-color: var(--border-elevated);
-  background: var(--cards-background);
+/* input.md: hover = --border-hover + --input-background; focus = amber border, no fill. */
+.question-drawer-answer:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background);
+}
+
+.question-drawer-answer:focus-within {
+  border-color: var(--selected);
+  background: transparent;
 }
 
 /* Radio circle */
@@ -182,7 +168,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-s) var(--space-m);
+  /* Short enough to sit inside the 28px radio line, so the correct row is
+     the same height as the others. */
+  padding: var(--space-xxs) var(--space-sm);
   border-radius: 40px;
   background: rgba(24, 169, 87, 0.16);
   color: var(--success-500);
@@ -214,7 +202,9 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-s) var(--space-sm);
+  /* 10px, not 8px: its 24px icon is 4px shorter than the answers' 28px radio,
+     so the rows come out the same height. */
+  padding: var(--space-ssm) var(--space-sm);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   font-size: 14px;
@@ -241,10 +231,12 @@
 
 .question-drawer-explanation:hover {
   border-color: var(--border-hover);
+  background: var(--input-background);
 }
 
 .question-drawer-explanation:focus-within {
   border-color: var(--selected);
+  background: transparent;
 }
 
 .question-drawer-explanation-icon {
@@ -287,36 +279,22 @@
   color: var(--text-error);
 }
 
-/* Footer */
+/* Sticky footer: divider, then the button row (overlays.md). */
 .question-drawer-footer {
   display: flex;
   flex-direction: column;
   gap: var(--space-m);
-  padding: var(--space-m) var(--space-l);
 }
 
-.question-drawer-footer::before {
-  content: '';
-  display: block;
-  height: 1px;
-  background: var(--border);
-  margin: 0 calc(-1 * var(--space-l));
-  margin-top: calc(-1 * var(--space-m));
+.question-drawer-footer__buttons {
+  display: flex;
+  gap: var(--space-m);
+  align-items: flex-start;
 }
 
-.question-drawer-save {
-  white-space: nowrap;
-  align-self: flex-start;
-  padding: var(--space-ssm) var(--space-ml);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-button-foreground);
-  background: var(--primary-button-background);
-  border-radius: var(--radius-sm);
-  transition: background 150ms ease;
-}
-
-.question-drawer-save:hover {
-  background: var(--primary-button-background-hover);
+@media (prefers-reduced-motion: reduce) {
+  .question-drawer-overlay,
+  .question-drawer-panel {
+    animation: none;
+  }
 }

@@ -1,4 +1,4 @@
-import { Children, useState, type ReactNode } from 'react'
+import { Children, useState, type CSSProperties, type ReactNode } from 'react'
 import { ArrowUp2 } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
 import type { AutomationCourse } from './Automations'
@@ -97,15 +97,20 @@ interface SummaryCardProps {
   title: string
   /** The terms, already joined — "Immediate · No due date · Never repeats". */
   meta?: string
+  /** An icon badge's colour: the glyph takes it, the thumbnail a 16% tint of it. */
+  tone?: string
 }
 
-export function SummaryCard({ badge, title, meta }: SummaryCardProps) {
-  /* An icon is its own mark; only an ordinal needs a disc behind it to read as
-     a number in a sequence. */
+export function SummaryCard({ badge, title, meta, tone }: SummaryCardProps) {
+  /* An ordinal sits on a neutral disc; an icon sits on a thumbnail tinted in
+     its field's colour. */
   const ordinal = typeof badge === 'number' || typeof badge === 'string'
   return (
     <div className="summary-card">
-      <span className={`summary-card__badge${ordinal ? '' : ' summary-card__badge--icon'}`}>
+      <span
+        className={`summary-card__badge${ordinal ? '' : ' summary-card__badge--icon'}`}
+        style={tone ? ({ '--summary-card-tone': tone } as CSSProperties) : undefined}
+      >
         {badge}
       </span>
       <span className="summary-card__body">

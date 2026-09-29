@@ -509,7 +509,7 @@ function BulkUploadModal({ onClose }: BulkUploadModalProps) {
               <h2 className="bulk-upload-title">
                 {step === 'upload' ? 'Bulk manage people' : 'Review CSV file'}
               </h2>
-              <CloseButton onClick={onClose} />
+              <CloseButton variant="fullscreen" onClick={onClose} />
             </div>
           )}
 

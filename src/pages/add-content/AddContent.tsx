@@ -12,6 +12,7 @@ import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import CreateFlashcardsModal from './components/CreateFlashcardsModal'
 import CreateFlashcardsFromFileModal from './components/CreateFlashcardsFromFileModal'
 import FlashcardEditor, { type Card } from './components/FlashcardEditor/FlashcardEditor'
+import NewLessonModal, { type NewLessonKind } from './components/NewLessonModal/NewLessonModal'
 import type { ContentRow } from '../your-courses/components/ContentTable/ContentTable'
 import { appendAddedLesson } from '../../utils/addedLessons'
 import './AddContent.css'
@@ -109,12 +110,14 @@ function AddContent() {
   const [showFlashcardEditor, setShowFlashcardEditor] = useState(false)
   const [editorLessonName, setEditorLessonName] = useState('')
   const [editorInitialCards, setEditorInitialCards] = useState<Card[] | undefined>(undefined)
+  const [newLessonKind, setNewLessonKind] = useState<NewLessonKind | null>(null)
 
   const handleCardClick = (key: CardKey) => {
     if (key === 'flashcards') {
       setShowFlashcardsModal(true)
+    } else {
+      setNewLessonKind(key)
     }
-    // other card destinations wired in follow-up work
   }
 
   const handleCreateEmpty = () => {
@@ -205,6 +208,17 @@ function AddContent() {
         initialLessonName={editorLessonName}
         initialCards={editorInitialCards}
       />
+
+      {newLessonKind && (
+        <NewLessonModal
+          kind={newLessonKind}
+          onClose={() => setNewLessonKind(null)}
+          onPublish={(lesson) => {
+            setNewLessonKind(null)
+            handlePublishLesson(lesson)
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -65,6 +65,19 @@ const DATE_REQUIRED =
 export const fieldIcon = (field: FilterField) =>
   isCustomField(field) ? Setting4 : FIELD_ICONS[field as BuiltInFilterField]
 
+/* Each field's thumbnail colour in the review modal (Figma "Filters thumbnail",
+   9136:22791). Team is not an automations filter, so it has none. */
+const FIELD_TONES: Partial<Record<BuiltInFilterField, string>> = {
+  role: 'var(--blaze-quiz)',
+  rights: 'var(--flash-poll)',
+  joinDate: 'var(--lesson-quiz)',
+  region: 'var(--certificate-quiz)',
+  cohort: 'var(--course-assessments)',
+}
+
+export const fieldTone = (field: FilterField) =>
+  isCustomField(field) ? 'var(--secondary-500)' : FIELD_TONES[field as BuiltInFilterField]
+
 function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [menuQuery, setMenuQuery] = useState('')
@@ -107,10 +120,15 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
             {/* The row names its field the same way the menu offered it. */}
             <span className="trigger-filters__field">
               <FieldIcon size={20} color="currentColor" variant="Linear" />
-              {def.label}
+              {/* "is" always sits in the label, outside any input. One operator is
+                  not a choice, so it joins the label too ("Role is one of"); a
+                  single-select reads straight into its value ("Rights is Admin"). */}
+              {def.operators.length > 1 || def.control === 'single'
+                ? `${def.label} is`
+                : `${def.label} is ${OPERATOR_LABELS[filter.operator]}`}
             </span>
 
-            {def.operators.length > 1 ? (
+            {def.operators.length > 1 && (
               <Dropdown
                 size="md"
                 className="trigger-filters__operator"
@@ -118,9 +136,6 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
                 value={filter.operator}
                 onChange={(value) => patch(filter.id, { operator: value as TriggerFilter['operator'] })}
               />
-            ) : (
-              /* One operator is not a choice, so it reads as the sentence it is. */
-              <span className="trigger-filters__operator-static">{OPERATOR_LABELS[filter.operator]}</span>
             )}
 
             <div className="trigger-filters__value">

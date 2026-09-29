@@ -1,0 +1,139 @@
+/* Add Content → new lesson form (default state). Layout comes from
+   LessonEditorModal.css; these are the parts only the empty form has.
+   Prefix: .new-lesson- */
+
+.new-lesson-headline {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.new-lesson-subtitle {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.new-lesson-subtitle a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Figma sizes the media drop zone to the fields beside it: 200 × 292. */
+.new-lesson-uploader.file-uploader--S {
+  width: 200px;
+  min-height: 292px;
+  gap: var(--space-ml);
+  flex-shrink: 0;
+}
+
+.new-lesson-file-placeholder {
+  color: var(--text-tertiary);
+}
+
+.new-lesson-thumb-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  border: 1px dashed var(--border-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.new-lesson-link-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+.new-lesson-link-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.new-lesson-sources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s) var(--space-sm);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.new-lesson-source {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.new-lesson-source img {
+  mix-blend-mode: luminosity;
+}
+
+/* Guidelines: one bordered container holding the toggle row and the list. */
+.new-lesson-guidelines {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 150ms ease;
+}
+
+.new-lesson-guidelines:hover {
+  border-color: var(--border-hover);
+}
+
+.new-lesson-guidelines__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-m);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.new-lesson-guidelines__toggle:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.new-lesson-guidelines__title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-align: left;
+}
+
+.new-lesson-guidelines__toggle svg {
+  flex-shrink: 0;
+  transition: transform 200ms ease;
+}
+
+.new-lesson-guidelines__toggle--open svg {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .new-lesson-guidelines__toggle svg {
+    transition: none;
+  }
+}
+
+.new-lesson-guidelines__list {
+  margin: 0;
+  padding: 0 var(--space-m) var(--space-m) calc(var(--space-m) + var(--space-l));
+  list-style: disc;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}

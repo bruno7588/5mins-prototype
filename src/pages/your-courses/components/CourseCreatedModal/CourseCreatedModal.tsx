@@ -37,7 +37,7 @@ function CourseCreatedModal({ open, course, onClose }: Props) {
       tabIndex={-1}
     >
       <MotionConfig reducedMotion="user">
-        <CloseButton onClick={onClose} className="ccs-close" />
+        <CloseButton variant="fullscreen" onClick={onClose} className="ccs-close" />
 
         <motion.div
           className="ccs-content"

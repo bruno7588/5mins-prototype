@@ -167,6 +167,17 @@ When an icon is used as a standalone clickable element (e.g. close button, actio
 ✓ Always use `border-radius: 50%` for icon hover backgrounds
 ✗ Never use squared corners (`border-radius: 4px` or `8px`) for icon hover states
 
+### Close Icon
+
+Two close treatments exist; both are the shared `CloseButton` (`src/components/CloseButton/CloseButton.tsx`), never a hand-rolled × or an Iconsax `CloseCircle` (that one is a status icon, see below).
+
+| Where | Variant | Look |
+|---|---|---|
+| Side drawers, centred modals, popovers, chips | `CloseButton` (default) | Bare glyph in `--text-secondary`, circular `--input-background` fill on hover only |
+| **Full-screen modals** | `CloseButton variant="fullscreen"` | 44px `--input-background` disc, 4px padding, 36px `IoCloseOutline` glyph (1.5px stroke) in `--text-secondary`; hover lifts to `--input-background-hover` + `--text-primary` |
+
+> **Figma:** full-screen close is Programs `4221:63780` (DS `Icons` set, `Name=close, Type=linear`, overridden to 44px with an `Input-background` fill and a `Text-secondary` stroke). Full spec in `overlays.md` → Close Button (Full-screen modal).
+
 ### Input Icons
 
 ```jsx

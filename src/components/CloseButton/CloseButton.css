@@ -21,3 +21,20 @@
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
+
+/* Full-screen modal close (Figma Programs 4221:63780, DS Icons "close" instance):
+   44px disc, 4px padding, --input-background fill, --text-secondary glyph.
+   Hover lifts the fill and the glyph, as the Icons set's Hover state does. */
+.close-btn--fullscreen {
+  width: 44px;
+  height: 44px;
+  padding: var(--space-xs);
+  background: var(--input-background);
+  color: var(--text-secondary);
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.close-btn--fullscreen:hover {
+  background: var(--input-background-hover);
+  color: var(--text-primary);
+}

@@ -67,6 +67,31 @@ Scrim values (Neutral-900 @ 25% light / 50% dark) are defined in `layout.md` —
 
 **Icon:** `IoCloseOutline` (Ionicons 5) at 24×24px.
 
+### Close Button (Full-screen modal)
+
+> **Figma:** Programs `4221:63780` — DS `Icons` set, `Name=close, Type=linear` instance with overrides (verified 2026-09-28).
+
+A full-screen modal (lesson editors, Create Flashcard, the Add Content lesson forms: anything that replaces the whole viewport with `--page-background`) closes with a **filled disc**, not the bare glyph above. It sits in the overlay's top-right corner, outside the centred content column.
+
+| Property | Value |
+|---|---|
+| Size | 44 × 44px |
+| Padding | 4px (`--space-xs`) |
+| Shape | Circle (`--radius-full`) |
+| Fill | `--input-background` (Neutral-500 @ 16% dark, Neutral-200 @ 16% light) |
+| Glyph | `IoCloseOutline`, 36 × 36px box, two 15.75px strokes at 1.5px, round caps |
+| Glyph colour | `--text-secondary` |
+| Hover | Fill `--input-background-hover`, glyph `--text-primary` |
+| Focus | 2px `--primary-button-background` outline, 2px offset (shared `.close-btn`) |
+
+**Use the component, never hand-roll it:**
+
+```tsx
+<CloseButton variant="fullscreen" onClick={onClose} className="lesson-editor-close" />
+```
+
+The page-level class only positions it (`position: absolute; top: var(--space-l); right: 40px`); size, fill, glyph and hover all come from `.close-btn--fullscreen` in `src/components/CloseButton/CloseButton.css`. Side drawers and centred modals keep the default `CloseButton`.
+
 ### Shared Design Tokens
 
 | Token | Light | Dark | Usage |

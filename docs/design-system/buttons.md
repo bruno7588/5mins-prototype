@@ -151,10 +151,34 @@ No background, border, or padding — just the bold label. Same chrome ladder as
 
 ### Link
 
-Same as Text plus underline (`text-decoration-skip-ink: none`). Use for navigation-like actions within content.
+> **Updated 2026-09-28 against Library `10825:3269`.** Link is no longer "Text plus underline": it is **Medium (500), not Bold**, it takes the **Filled button's colour ladder** rather than the Text/Outlined chrome ladder, and the underline **skips descenders** (`skip-ink: auto`, it was `none`).
+
+Use for navigation-like actions within content. No box, no padding, no icon.
+
+| Size | Text style | Font | Line height |
+|---|---|---|---|
+| Small | Paragraph S medium | 12px / 500 | 1.2 |
+| Medium | Paragraph M medium | 14px / 500 | 1.5 |
+| Large | Paragraph L medium | 16px / 500 | 1.5 |
+
+| State | Colour |
+|---|---|
+| Enabled | `--primary-button-background` |
+| Hover | `--primary-button-background-hover` |
+| Pressed | `--primary-button-background-pressed` |
+| Disabled | `--text-disabled` |
 
 ```css
-.btn-link { /* .btn-text + */ text-decoration: underline; text-decoration-skip-ink: none; }
+.btn-link {
+  font-weight: 500;
+  color: var(--primary-button-background);
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+}
+.btn-link:hover    { color: var(--primary-button-background-hover); }
+.btn-link:active   { color: var(--primary-button-background-pressed); }
+.btn-link:disabled { color: var(--text-disabled); }
+.btn-link.btn-sm   { line-height: 1.2; }  /* Paragraph S medium */
 ```
 
 ## Semantic Variants
@@ -465,13 +489,13 @@ Contrast: the light filled base darkened to Primary-700 and the dark filled base
 
 ### States Cheatsheet
 
-| State | Filled bg | Outlined (fill / chrome) | Text/Link color |
-|-------|-----------|--------------------------|-----------------|
-| Enabled | `--primary-button-background` (L: 700 / D: 500) | **transparent** / `--text-button-outlined` | `--text-button-outlined` |
-| Hover | `…-hover` (L: 800 / D: **400** ↑) | **16% cyan** (24% for semantic families) / `--text-button-hover` | `--text-button-hover` |
-| Pressed | `…-pressed` (L: 900 / D: 700) | **transparent** / `…-pressed` | `--primary-button-background-pressed` |
-| Disabled | `--button-background-disabled` + `--text-button-disabled` | transparent / `--text-disabled` | `--text-disabled` |
-| Loading | `--button-background-disabled` + 20px spinner, width preserved | same pattern | spinner replaces label |
+| State | Filled bg | Outlined (fill / chrome) | Text color | Link color |
+|-------|-----------|--------------------------|------------|------------|
+| Enabled | `--primary-button-background` (L: 700 / D: 500) | **transparent** / `--text-button-outlined` | `--text-button-outlined` | `--primary-button-background` |
+| Hover | `…-hover` (L: 800 / D: **400** ↑) | **16% cyan** (24% for semantic families) / `--text-button-hover` | `--text-button-hover` | `--primary-button-background-hover` |
+| Pressed | `…-pressed` (L: 900 / D: 700) | **transparent** / `…-pressed` | `--primary-button-background-pressed` | `--primary-button-background-pressed` |
+| Disabled | `--button-background-disabled` + `--text-button-disabled` | transparent / `--text-disabled` | `--text-disabled` | `--text-disabled` |
+| Loading | `--button-background-disabled` + 20px spinner, width preserved | same pattern | spinner replaces label | n/a |
 
 ## Code reality
 
