@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
@@ -194,6 +194,9 @@ function CreateCourse() {
      reads from here when reopened for editing (FR-4). */
   const [situationalTests, setSituationalTests] = useState<Record<number, SituationalTestData>>({})
   const [editingSituationalId, setEditingSituationalId] = useState<number | null>(null)
+  /* The card step 1 of a new test created, so step 2's save updates it rather than
+     adding a second. A ref, not state: the drawer stays in create mode throughout. */
+  const createdSituationalId = useRef<number | null>(null)
   /* Same store for assessments. Without it the card was built from the answers and the
      answers thrown away, so the row could only ever be deleted and re-authored. */
   const [assessments, setAssessments] = useState<Record<number, AssessmentData>>({})
@@ -298,6 +301,7 @@ function CreateCourse() {
   }
 
   const openSituationalTest = (id: number | null) => {
+    createdSituationalId.current = null
     setEditingSituationalId(id)
     openDrawer('situational-test')
   }
@@ -539,12 +543,14 @@ function CreateCourse() {
   const situationalMetadata = (questions: SituationalQuestion[]) =>
     `${questions.length} question${questions.length === 1 ? '' : 's'}`
 
-  const handleSaveSituationalTest = (
+  /* Adds the test's card to the outline, or replaces it when it already has one. */
+  const upsertSituationalTest = (
     title: string,
     brief: string,
     questions: SituationalQuestion[],
   ) => {
-    const id = editingSituationalId ?? nextSituationalTestId++
+    const existingId = editingSituationalId ?? createdSituationalId.current
+    const id = existingId ?? nextSituationalTestId++
     setSituationalTests((prev) => ({ ...prev, [id]: { id, title, brief, questions } }))
 
     const card: ContentItem = {
@@ -555,12 +561,27 @@ function CreateCourse() {
       thumbnail: '',
     }
     setScormItems((prev) =>
-      editingSituationalId === null
+      existingId === null
         ? [...prev, card]
         : prev.map((item) =>
             item.type === 'SituationalTest' && item.id === id ? card : item,
           ),
     )
+    return id
+  }
+
+  /* Step 1 of a new test: the card exists from here, with no questions yet, while the
+     drawer moves on to step 2. */
+  const handleCreateSituationalTest = (title: string, brief: string) => {
+    createdSituationalId.current = upsertSituationalTest(title, brief, [])
+  }
+
+  const handleSaveSituationalTest = (
+    title: string,
+    brief: string,
+    questions: SituationalQuestion[],
+  ) => {
+    upsertSituationalTest(title, brief, questions)
     if (editingSituationalId !== null) showToast('success', 'Situational test updated')
     closeDrawer()
   }
@@ -977,6 +998,7 @@ function CreateCourse() {
         onAssessmentAdd={handleAddAssessment}
         situationalTest={editingSituationalId === null ? null : situationalTests[editingSituationalId] ?? null}
         onSituationalTestSave={handleSaveSituationalTest}
+        onSituationalTestCreate={handleCreateSituationalTest}
         onSituationalTestDirtyChange={setSituationalDirty}
         interactiveType={interactiveType}
         interactiveInitial={editingInteractiveId === null ? null : interactive[editingInteractiveId] ?? null}

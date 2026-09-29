@@ -122,6 +122,8 @@ interface Props {
   initial?: SituationalTestData | null
   onClose: () => void
   onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void
+  /** Create path only: step 1's commit adds the card to the outline before step 2. */
+  onCreate?: (title: string, brief: string) => void
   /** Lets the page guard the close paths while there is unsaved work. */
   onDirtyChange?: (dirty: boolean) => void
   /**
@@ -138,7 +140,7 @@ interface Props {
    before questions — deliberate friction so it exists before the questions that depend
    on it. */
 function SituationalTestDrawerContent({
-  initial = null, onClose, onSave, onDirtyChange, review,
+  initial = null, onClose, onSave, onCreate, onDirtyChange, review,
 }: Props) {
   /* A review carries a draft, so it takes the two-pane editor rather than the
      create wizard — there is nothing to gate when the fields arrive filled in. */
@@ -252,6 +254,9 @@ function SituationalTestDrawerContent({
       setBriefBlurred(true)
       return
     }
+    onCreate?.(title.trim(), brief.trim())
+    /* The title and brief are saved now, so only what step 2 adds counts as unsaved. */
+    pristine.current = current
     setStep(2)
   }
 
@@ -504,9 +509,8 @@ function SituationalTestDrawerContent({
             </Button>
           ) : step === 1 ? (
             /* Wrapped rather than conditionally rendered so the tooltip fires over the
-               *disabled* button — handlers sit on Tooltip's own wrapper. The label names
-               where it goes rather than claiming to save: nothing persists until Create
-               Situational Test on step 2. */
+               *disabled* button — handlers sit on Tooltip's own wrapper. It saves: the
+               card joins the outline here, and step 2 fills in its questions. */
             <Tooltip
               /* Names whichever field is actually missing — "write a brief first" over a
                  filled brief would send the admin looking in the wrong place. */
@@ -517,13 +521,13 @@ function SituationalTestDrawerContent({
               disabled={canContinue}
             >
               <Button onClick={handleContinue} disabled={!canContinue}>
-                Add Questions
+                Save & Add Questions
               </Button>
             </Tooltip>
           ) : (
-            /* Same label as step 1's commit — one action shouldn't have two names. */
+            /* The card already exists from step 1, so this saves rather than creates. */
             <Button onClick={handleSave} disabled={!canSubmit}>
-              Create Situational Test
+              Save Situational Test
             </Button>
           )}
         </div>

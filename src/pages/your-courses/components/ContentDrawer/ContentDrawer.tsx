@@ -69,6 +69,8 @@ interface Props {
     questions: SituationalQuestion[],
   ) => void
   onSituationalTestDirtyChange: (dirty: boolean) => void
+  /** Step 1 of a new test creates its card before questions are written. */
+  onSituationalTestCreate: (title: string, brief: string) => void
   /* Interactive question (fill in the blanks / match the pairs / categorise / sequence) */
   interactiveType: InteractiveQuestionType
   /** Prefilled when an interactive row was reopened from the outline. */
@@ -133,6 +135,7 @@ function ContentDrawer({
   situationalTest,
   onSituationalTestSave,
   onSituationalTestDirtyChange,
+  onSituationalTestCreate,
   interactiveType,
   interactiveInitial,
   interactiveInitialId,
@@ -257,6 +260,7 @@ function ContentDrawer({
             initial={situationalTest}
             onClose={onClose}
             onSave={onSituationalTestSave}
+            onCreate={onSituationalTestCreate}
             onDirtyChange={onSituationalTestDirtyChange}
           />
         )}
