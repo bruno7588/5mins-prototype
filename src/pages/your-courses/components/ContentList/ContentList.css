@@ -838,9 +838,8 @@
   min-width: 0;
 }
 
-/* Edit, sitting between the title and the badge. Icon-only, so the hover fill is
-   circular; 24px box around the 16px glyph keeps it on the title's line rather than
-   stretching the row. */
+/* Edit, sitting after the metadata. Icon-only, so the hover fill is circular; 24px
+   box around the 16px glyph. */
 .content-card-title-edit {
   display: inline-flex;
   align-items: center;

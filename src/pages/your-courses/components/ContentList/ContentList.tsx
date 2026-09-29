@@ -218,10 +218,12 @@ function ContentCard({
         <div className="content-card-info">
           <div className="content-card-title-row">
             <h4 className="content-card-title">{item.title}</h4>
-            {/* Beside the title, not the metadata: it edits the whole test — title, brief
-                and questions — and sitting next to "8 questions" would imply it only
-                reaches the questions. Out of the trailing cluster too, so that column
-                stays a single trash icon on every row type. */}
+            <span className="content-card-badge">{badgeLabel}</span>
+          </div>
+          <div className="content-card-meta">
+            <span>{item.metadata}</span>
+            {/* Beside the metadata. Out of the trailing cluster, so that column stays a
+                single trash icon on every row type. */}
             {onEdit && (
               <Tooltip text="Edit" position="Top" icon={false}>
                 <button
@@ -234,10 +236,6 @@ function ContentCard({
                 </button>
               </Tooltip>
             )}
-            <span className="content-card-badge">{badgeLabel}</span>
-          </div>
-          <div className="content-card-meta">
-            <span>{item.metadata}</span>
           </div>
         </div>
       </div>
