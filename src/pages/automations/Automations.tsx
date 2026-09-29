@@ -33,6 +33,7 @@ import {
   type AutomationCatalogCourse,
 } from './courseCatalog'
 import { mockUsers, type User } from './mockPeople'
+import { workspacePrograms, type WorkspaceProgram } from '@/pages/workspace/mockItems'
 export type { User } from './mockPeople'
 import {
   COHORT_VALUES,
@@ -82,6 +83,23 @@ export interface AutomationCourse {
   recurrence: RecurrenceConfig
 }
 
+/* DES-341: an automation enrols in courses or in programs, never both. */
+export type AutomationActionType = 'courses' | 'programs'
+
+/* A program runs its own drip, so the only timing the automation owns is when
+   the enrolment starts. `date` is '' until the admin picks one. */
+export type ProgramEnrollment =
+  | { kind: 'immediate' }
+  | { kind: 'specific-date'; date: string }
+
+export interface AutomationProgram {
+  id: string
+  programId: string
+  name: string
+  thumb: string
+  enrollment: ProgramEnrollment
+}
+
 export type TrackedAttribute = 'role' | 'cohort' | 'region'
 
 export type AutomationTrigger =
@@ -98,6 +116,9 @@ export interface AutomationRow {
   /** AND-combined criteria. Empty means the automation applies to everyone. */
   filters: TriggerFilter[]
   courses: AutomationCourse[]
+  /** Absent means courses, so every automation made before DES-341 stays one. */
+  actionType?: AutomationActionType
+  programs?: AutomationProgram[]
 }
 
 
@@ -162,7 +183,30 @@ function mkCourses(
   })
 }
 
+/* The one program automation in the seed (DES-341), so the list opens on a
+   real example of the Programs side. */
+const leadershipProgram = workspacePrograms.find((p) => p.id === 'p2')!
+
 const mockAutomations: AutomationRow[] = [
+  {
+    id: '18',
+    name: 'New Managers Leadership Program',
+    lastUpdated: 'Sep 29, 2026',
+    active: true,
+    trigger: { kind: 'user-registered' },
+    filters: [{ id: 'seed-f18', field: 'cohort', operator: 'one-of', values: ['q4-2025'] }],
+    courses: [],
+    actionType: 'programs',
+    programs: [
+      {
+        id: '18-p1',
+        programId: leadershipProgram.id,
+        name: leadershipProgram.title,
+        thumb: leadershipProgram.image ?? '',
+        enrollment: { kind: 'specific-date', date: '2026-10-12' },
+      },
+    ],
+  },
   {
     id: '1',
     name: 'New Hire Compliance Onboarding',
@@ -668,6 +712,11 @@ function Automations() {
           ...c,
           id: `${tempId}-c${i + 1}`,
         })),
+        actionType: automation.actionType,
+        programs: automation.programs?.map((p, i) => ({
+          ...p,
+          id: `${tempId}-p${i + 1}`,
+        })),
       },
       'duplicate',
     )
@@ -702,6 +751,59 @@ function Automations() {
           recurrence: { enabled: false },
         },
       ],
+    })
+    setDetailsAutomation((current) =>
+      current && current.id === automationId ? apply(current) : current,
+    )
+  }
+
+  /* Switching type drops whatever the other type held: the modal confirms first
+     when there is anything to lose. */
+  function setActionType(automationId: string, actionType: AutomationActionType) {
+    const apply = (a: AutomationRow): AutomationRow => ({
+      ...a,
+      actionType,
+      courses: [],
+      programs: [],
+    })
+    setDetailsAutomation((current) =>
+      current && current.id === automationId ? apply(current) : current,
+    )
+  }
+
+  function addProgram(automationId: string, program: WorkspaceProgram) {
+    const apply = (a: AutomationRow): AutomationRow => ({
+      ...a,
+      programs: [
+        ...(a.programs ?? []),
+        {
+          id: `${automationId}-p-${Date.now()}`,
+          programId: program.id,
+          name: program.title,
+          thumb: program.image ?? '',
+          enrollment: { kind: 'immediate' },
+        },
+      ],
+    })
+    setDetailsAutomation((current) =>
+      current && current.id === automationId ? apply(current) : current,
+    )
+  }
+
+  function patchProgram(automationId: string, programId: string, enrollment: ProgramEnrollment) {
+    const apply = (a: AutomationRow): AutomationRow => ({
+      ...a,
+      programs: (a.programs ?? []).map((p) => (p.id === programId ? { ...p, enrollment } : p)),
+    })
+    setDetailsAutomation((current) =>
+      current && current.id === automationId ? apply(current) : current,
+    )
+  }
+
+  function removeProgram(automationId: string, programId: string) {
+    const apply = (a: AutomationRow): AutomationRow => ({
+      ...a,
+      programs: (a.programs ?? []).filter((p) => p.id !== programId),
     })
     setDetailsAutomation((current) =>
       current && current.id === automationId ? apply(current) : current,
@@ -1523,6 +1625,10 @@ function Automations() {
         onCourseAdd={addCourse}
         onCourseRemove={removeCourse}
         onCoursesReorder={reorderCourses}
+        onActionTypeChange={setActionType}
+        onProgramAdd={addProgram}
+        onProgramChange={patchProgram}
+        onProgramRemove={removeProgram}
       />
 
       <ToastContainer toasts={toasts} />

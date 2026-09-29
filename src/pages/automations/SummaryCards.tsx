@@ -1,8 +1,20 @@
 import { Children, useState, type CSSProperties, type ReactNode } from 'react'
 import { ArrowUp2 } from 'iconsax-react'
 import Collapse from '@/components/Collapse/Collapse'
-import type { AutomationCourse } from './Automations'
+import type { AutomationCourse, AutomationProgram } from './Automations'
 import './SummaryCards.css'
+
+/** "Starts immediately" or "Starts 12 Oct 2026" (DES-341). */
+export function formatProgramMeta(p: AutomationProgram): string {
+  if (p.enrollment.kind === 'immediate' || !p.enrollment.date) return 'Starts immediately'
+  const [y, m, d] = p.enrollment.date.split('-').map(Number)
+  const label = new Date(y, m - 1, d).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+  return `Starts ${label}`
+}
 
 /** "Immediate · Due 7 days after start date · Repeats every 12 months" */
 export function formatCourseMeta(c: AutomationCourse): string {

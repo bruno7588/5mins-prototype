@@ -6,7 +6,7 @@ import Search from '../../components/Search/Search'
 import Badge from '../../components/Badge/Badge'
 import Chip from '../../components/Chip/Chip'
 import type { AutomationRow, User } from './Automations'
-import { SummaryCard, SummaryCardList, formatCourseMeta } from './SummaryCards'
+import { SummaryCard, SummaryCardList, formatCourseMeta, formatProgramMeta } from './SummaryCards'
 import './ForceTriggerModal.css'
 
 interface ForceTriggerModalProps {
@@ -175,12 +175,16 @@ function ForceTriggerModal({
               {/* Course list */}
               <div className="force-trigger-courses">
                 <p className="force-trigger-courses-label">
-                  Users will be enrolled in these courses
+                  Users will be enrolled in these {automation.actionType === 'programs' ? 'programs' : 'courses'}
                 </p>
                 <SummaryCardList previewCount={COURSE_PREVIEW_COUNT}>
-                  {automation.courses.map((c, i) => (
-                    <SummaryCard key={i} badge={i + 1} title={c.name} meta={formatCourseMeta(c)} />
-                  ))}
+                  {automation.actionType === 'programs'
+                    ? (automation.programs ?? []).map((p, i) => (
+                        <SummaryCard key={p.id} badge={i + 1} title={p.name} meta={formatProgramMeta(p)} />
+                      ))
+                    : automation.courses.map((c, i) => (
+                        <SummaryCard key={i} badge={i + 1} title={c.name} meta={formatCourseMeta(c)} />
+                      ))}
                 </SummaryCardList>
               </div>
 

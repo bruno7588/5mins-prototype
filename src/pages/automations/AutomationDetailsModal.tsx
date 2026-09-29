@@ -3,10 +3,13 @@ import { ArrowDown2, Danger, InfoCircle, Trash } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import InputInline from '../../components/InputInline/InputInline'
 import CourseSearch from './CourseSearch'
+import ProgramSearch from './ProgramSearch'
+import ProgramEnrollmentPopover from './ProgramEnrollmentPopover'
+import Radio from '../../components/Radio/Radio'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
-import { SummaryCard, SummaryCardList, formatCourseMeta } from './SummaryCards'
+import { SummaryCard, SummaryCardList, formatCourseMeta, formatProgramMeta } from './SummaryCards'
 import { fieldIcon, fieldTone } from './TriggerFilters'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import EnrollmentPopover from './EnrollmentPopover'
@@ -14,7 +17,10 @@ import DueDatePopover from './DueDatePopover'
 import FrequencyPopover from './FrequencyPopover'
 import RoleSearch from './RoleSearch'
 import type {
+  AutomationActionType,
   AutomationCourse,
+  AutomationProgram,
+  ProgramEnrollment,
   AutomationRow,
   AutomationTrigger,
   DueDateConfig,
@@ -24,6 +30,7 @@ import type {
 } from './Automations'
 import { ATTRIBUTE_LABELS, getAttributeValues } from './Automations'
 import type { AutomationCatalogCourse } from './courseCatalog'
+import type { WorkspaceProgram } from '@/pages/workspace/mockItems'
 import TriggerFilters from './TriggerFilters'
 import {
   getFilterField,
@@ -67,6 +74,18 @@ function formatFrequency(c: AutomationCourse): { title: string; description?: st
   }
 }
 
+function formatProgramEnrollment(p: AutomationProgram): { title: string; description?: string } {
+  if (p.enrollment.kind === 'immediate') return { title: 'Immediate' }
+  if (!p.enrollment.date) return { title: 'Specific date', description: 'Pick a date' }
+  const [y, m, d] = p.enrollment.date.split('-').map(Number)
+  const label = new Date(y, m - 1, d).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+  return { title: 'Specific date', description: label }
+}
+
 /* ── Review summary (DEV-4768) ──────────────────────────────────────────────
    The summary restates the automation in sentences rather than controls, so the
    admin reads what it will do rather than re-reading the form they just filled. */
@@ -105,15 +124,22 @@ function describeFilterTerms(filter: TriggerFilter): string {
  * nothing is set at all, which is how a new automation opens: naming only the
  * title there would hide the two steps behind it.
  */
-function blockedReason(hasName: boolean, hasTrigger: boolean, hasAction: boolean): string {
+function blockedReason(
+  hasName: boolean,
+  hasTrigger: boolean,
+  hasAction: boolean,
+  noun: 'course' | 'program',
+  missingDate: boolean,
+): string {
   if (hasName && hasTrigger && hasAction) return ''
   if (!hasName && !hasTrigger && !hasAction) {
-    return 'Add a title, a trigger filter and at least one course'
+    return `Add a title, a trigger filter and at least one ${noun}`
   }
   if (!hasName) return 'Add a title to this automation'
-  if (!hasTrigger && !hasAction) return 'Set a trigger filter and add at least one course'
+  if (!hasTrigger && !hasAction) return `Set a trigger filter and add at least one ${noun}`
   if (!hasTrigger) return 'Set a trigger filter with at least one value'
-  return 'Add at least one course to enrol people in'
+  if (missingDate) return 'Pick an enrolment date for each program'
+  return `Add at least one ${noun} to enrol people in`
 }
 
 /* A filter row only counts once it carries what it matches on. An added but
@@ -159,6 +185,10 @@ interface AutomationDetailsModalProps {
   onCourseAdd?: (automationId: string, course: AutomationCatalogCourse) => void
   onCourseRemove?: (automationId: string, courseId: string) => void
   onCoursesReorder?: (automationId: string, fromIndex: number, toIndex: number) => void
+  onActionTypeChange?: (automationId: string, actionType: AutomationActionType) => void
+  onProgramAdd?: (automationId: string, program: WorkspaceProgram) => void
+  onProgramChange?: (automationId: string, programId: string, enrollment: ProgramEnrollment) => void
+  onProgramRemove?: (automationId: string, programId: string) => void
 }
 
 /* Save when the automation already exists, Create when this click is what
@@ -182,8 +212,16 @@ function AutomationDetailsModal({
   onCourseAdd,
   onCourseRemove,
   onCoursesReorder,
+  onActionTypeChange,
+  onProgramAdd,
+  onProgramChange,
+  onProgramRemove,
 }: AutomationDetailsModalProps) {
   const [openPopover, setOpenPopover] = useState<{ courseId: string; column: 'enrollment' | 'due' | 'frequency' } | null>(null)
+  const [openProgramId, setOpenProgramId] = useState<string | null>(null)
+  /* The type the admin asked to switch to while the other list still holds
+     items; the switch waits on the confirm dialog. */
+  const [pendingActionType, setPendingActionType] = useState<AutomationActionType | null>(null)
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null)
   const draggingIndexRef = useRef<number | null>(null)
   const titleRef = useRef<HTMLInputElement>(null)
@@ -197,6 +235,8 @@ function AutomationDetailsModal({
   useEffect(() => {
     if (automation) {
       setOpenPopover(null)
+      setOpenProgramId(null)
+      setPendingActionType(null)
       setConfirmDiscard(false)
       setReviewing(false)
       /* Opens Active (Figma 9051:91164): the caret sits in the title, so an
@@ -212,13 +252,13 @@ function AutomationDetailsModal({
     function handleKey(e: KeyboardEvent) {
       if (e.key !== 'Escape') return
       /* The two dialogs close themselves, so this listener stays out of their way. */
-      if (confirmDiscard || reviewing) return
+      if (confirmDiscard || reviewing || pendingActionType) return
       requestClose()
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [automation, confirmDiscard, reviewing, dirty])
+  }, [automation, confirmDiscard, reviewing, pendingActionType, dirty])
 
   /* Every exit route runs through here, so the guard cannot be walked around by
      using the X instead of Escape. Nothing changed means nothing to warn about. */
@@ -237,9 +277,34 @@ function AutomationDetailsModal({
   const hasName = automation.name.trim() !== ''
   const hasTrigger =
     automation.filters.length > 0 && automation.filters.every(isFilterComplete)
-  const hasAction = automation.courses.length > 0
+  const actionType: AutomationActionType = automation.actionType ?? 'courses'
+  const programs = automation.programs ?? []
+  const missingDate = programs.some(
+    (p) => p.enrollment.kind === 'specific-date' && !p.enrollment.date,
+  )
+  const hasAction =
+    actionType === 'programs'
+      ? programs.length > 0 && !missingDate
+      : automation.courses.length > 0
   const canSave = hasName && hasTrigger && hasAction
-  const saveBlockedReason = blockedReason(hasName, hasTrigger, hasAction)
+  const saveBlockedReason = blockedReason(
+    hasName,
+    hasTrigger,
+    hasAction,
+    actionType === 'programs' ? 'program' : 'course',
+    missingDate,
+  )
+  const actionCount = actionType === 'programs' ? programs.length : automation.courses.length
+
+  /* Changing type only asks when there is something to lose. */
+  function requestActionType(next: AutomationActionType) {
+    if (next === actionType || !automation) return
+    if (actionCount > 0) {
+      setPendingActionType(next)
+      return
+    }
+    onActionTypeChange?.(automation.id, next)
+  }
 
   return (
     <div
@@ -372,12 +437,71 @@ function AutomationDetailsModal({
           <div className="automation-details-section-header">
             <h3 className="automation-details-section-title">Actions</h3>
             <p className="automation-details-section-desc">
-              Select which courses to assign when conditions in the trigger are met
+              Select which courses or programs to assign when conditions in the trigger are met
             </p>
           </div>
           <div className="automation-details-card">
+            {/* DES-341: an automation enrols in courses or programs, never both.
+                A saved setting, so radios (selection-controls.md), not a switcher. */}
+            <div
+              className="automation-details-action-type"
+              role="radiogroup"
+              aria-labelledby="automation-action-type-label"
+            >
+              <span id="automation-action-type-label" className="automation-details-card-lead">
+                Then enrol them in
+              </span>
+              <Radio
+                name="automation-action-type"
+                label="Courses"
+                checked={actionType === 'courses'}
+                onChange={() => requestActionType('courses')}
+              />
+              <Radio
+                name="automation-action-type"
+                label="Programs"
+                checked={actionType === 'programs'}
+                onChange={() => requestActionType('programs')}
+              />
+            </div>
+
+            {actionType === 'programs' ? (
+              <>
+                <div className="automation-details-actions-toolbar">
+                  <ProgramSearch
+                    key={automation.id}
+                    excludeIds={programs.map((p) => p.programId)}
+                    onSelect={(program) => onProgramAdd?.(automation.id, program)}
+                  />
+                </div>
+                <div className="automation-details-table">
+                  {programs.length > 0 && (
+                    <div className="automation-details-table-header automation-details-table-header--programs">
+                      <div className="automation-details-th automation-details-th--course">Program</div>
+                      <div className="automation-details-th">Enrolment</div>
+                    </div>
+                  )}
+                  {programs.map((program) => (
+                    <ProgramRow
+                      key={program.id}
+                      program={program}
+                      isOpen={openProgramId === program.id}
+                      onToggle={() =>
+                        setOpenProgramId((prev) => (prev === program.id ? null : program.id))
+                      }
+                      onClose={() => setOpenProgramId(null)}
+                      onChange={(next) => onProgramChange?.(automation.id, program.id, next)}
+                      onRemove={() => {
+                        onProgramRemove?.(automation.id, program.id)
+                        showToast('success', 'Program removed')
+                      }}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+            <>
             <div className="automation-details-actions-toolbar">
-              <p className="automation-details-card-lead">Then enrol them in these courses</p>
               {/* Keyed per automation so the query resets when you swipe to another. */}
               <CourseSearch
                 key={automation.id}
@@ -470,6 +594,8 @@ function AutomationDetailsModal({
                 />
               ))}
             </div>
+            </>
+            )}
           </div>
         </section>
 
@@ -515,6 +641,43 @@ function AutomationDetailsModal({
             }}
           >
             Discard Changes
+          </Button>
+        </div>
+      </ConfirmModal>
+
+      {/* Switching type empties the list the admin built, so it asks first
+          (DES-341). Warning, as with discard: work is lost, nothing is destroyed. */}
+      <ConfirmModal
+        open={pendingActionType !== null}
+        onClose={() => setPendingActionType(null)}
+        ariaLabel="Switch enrolment type"
+      >
+        <div className="confirm-modal-header confirm-modal-header--center">
+          <Danger size={72} color="var(--warning-500)" variant="Linear" />
+          <h3 className="confirm-modal-title">
+            Switch to {pendingActionType === 'programs' ? 'programs' : 'courses'}?
+          </h3>
+          <p className="confirm-modal-body">
+            {actionCount === 1
+              ? `The ${actionType === 'programs' ? 'program' : 'course'} you added`
+              : `The ${actionCount} ${actionType === 'programs' ? 'programs' : 'courses'} you added`}{' '}
+            will be removed from this automation.
+          </p>
+        </div>
+        <div className="confirm-modal-actions confirm-modal-actions--center">
+          <Button variant="outlined-2" onClick={() => setPendingActionType(null)}>
+            Cancel
+          </Button>
+          <Button
+            semantic="warning"
+            onClick={() => {
+              if (pendingActionType) onActionTypeChange?.(automation.id, pendingActionType)
+              setPendingActionType(null)
+              setOpenPopover(null)
+              setOpenProgramId(null)
+            }}
+          >
+            Switch to {pendingActionType === 'programs' ? 'Programs' : 'Courses'}
           </Button>
         </div>
       </ConfirmModal>
@@ -565,6 +728,16 @@ function AutomationDetailsModal({
           </SummaryCardList>
         </div>
 
+        {actionType === 'programs' ? (
+          <div className="automation-review-section">
+            <p className="automation-review-heading">Enrol them in these programs</p>
+            <SummaryCardList previewCount={3}>
+              {programs.map((p, i) => (
+                <SummaryCard key={p.id} badge={i + 1} title={p.name} meta={formatProgramMeta(p)} />
+              ))}
+            </SummaryCardList>
+          </div>
+        ) : (
         <div className="automation-review-section">
           <p className="automation-review-heading">Enrol them in these courses</p>
           {automation.courses.length === 0 ? (
@@ -577,6 +750,7 @@ function AutomationDetailsModal({
             </SummaryCardList>
           )}
         </div>
+        )}
 
         {automation.trigger.kind === 'existing-users' && (
           <p className="automation-review-audience">
@@ -791,6 +965,75 @@ function CourseRow({
           type="button"
           className="automation-details-row-remove"
           aria-label="Remove course"
+          onClick={onRemove}
+        >
+          <Trash size={20} color="currentColor" variant="Linear" />
+        </button>
+      </Tooltip>
+    </div>
+  )
+}
+
+interface ProgramRowProps {
+  program: AutomationProgram
+  isOpen: boolean
+  onToggle: () => void
+  onClose: () => void
+  onChange: (next: ProgramEnrollment) => void
+  onRemove: () => void
+}
+
+/* A program row (DES-341): the course row's card, without the drag handle
+   (programs don't run in sequence) and with Enrolment as its only setting,
+   since the program's own drip owns everything after the start. */
+function ProgramRow({ program, isOpen, onToggle, onClose, onChange, onRemove }: ProgramRowProps) {
+  const enrollmentRef = useRef<HTMLButtonElement>(null)
+  const enrollment = formatProgramEnrollment(program)
+
+  return (
+    <div className="automation-details-row">
+      <div className="automation-details-row-card">
+        <div className="automation-details-td automation-details-td--course">
+          <img className="automation-details-row-thumb" src={program.thumb} alt="" aria-hidden="true" />
+          <span className="automation-details-row-name">{program.name}</span>
+        </div>
+        <div className="automation-details-td automation-details-td--editable">
+          <button
+            ref={enrollmentRef}
+            type="button"
+            className={`automation-details-cell-trigger${isOpen ? ' automation-details-cell-trigger--open' : ''}`}
+            aria-haspopup="dialog"
+            aria-expanded={isOpen}
+            onClick={onToggle}
+          >
+            <span className="automation-details-cell-trigger__body">
+              <span className="automation-details-cell-trigger__title">{enrollment.title}</span>
+              {enrollment.description && (
+                <span className="automation-details-cell-trigger__desc">{enrollment.description}</span>
+              )}
+            </span>
+            <ArrowDown2
+              size={20}
+              color="currentColor"
+              variant="Linear"
+              className="automation-details-cell-trigger__chevron"
+            />
+          </button>
+          {isOpen && (
+            <ProgramEnrollmentPopover
+              value={program.enrollment}
+              onChange={onChange}
+              onClose={onClose}
+              anchorRef={enrollmentRef}
+            />
+          )}
+        </div>
+      </div>
+      <Tooltip text="Remove program" position="Top" alignment="Center" icon={false}>
+        <button
+          type="button"
+          className="automation-details-row-remove"
+          aria-label="Remove program"
           onClick={onRemove}
         >
           <Trash size={20} color="currentColor" variant="Linear" />

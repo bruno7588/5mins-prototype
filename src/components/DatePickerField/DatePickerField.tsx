@@ -16,6 +16,8 @@ interface DatePickerFieldProps {
   ariaLabel?: string
   /** ISO yyyy-mm-dd. Later days are disabled in the grid. */
   maxDate?: string
+  /** ISO yyyy-mm-dd. Earlier days are disabled in the grid. */
+  minDate?: string
   /** Shows the DS Error state (calendar.md): error border, warning icon before
       the calendar icon, and this text as the helper line below the field. */
   error?: string
@@ -43,6 +45,7 @@ function DatePickerField({
   className = '',
   ariaLabel = 'Choose a date',
   maxDate,
+  minDate,
   error,
 }: DatePickerFieldProps) {
   const helperId = useId()
@@ -145,6 +148,7 @@ function DatePickerField({
             <MiniCalendar
               value={value || todayISO()}
               maxDate={maxDate}
+              minDate={minDate}
               onSelect={(iso) => {
                 onChange(iso)
                 setOpen(false)

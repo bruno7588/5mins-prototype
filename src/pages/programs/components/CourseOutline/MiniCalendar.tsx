@@ -17,10 +17,12 @@ interface Props {
   /** ISO yyyy-mm-dd. Days after it render disabled (calendar.md "Outside month
       / disabled" cell) so the grid itself enforces the bound. */
   maxDate?: string
+  /** ISO yyyy-mm-dd. Days before it render disabled, the mirror of maxDate. */
+  minDate?: string
 }
 
 /** Month-grid date picker (Figma 2420:44116 calendar). Mon-first week. */
-function MiniCalendar({ value, onSelect, maxDate }: Props) {
+function MiniCalendar({ value, onSelect, maxDate, minDate }: Props) {
   const selected = parseISO(value)
   const [view, setView] = useState(new Date(selected.getFullYear(), selected.getMonth(), 1))
 
@@ -48,13 +50,15 @@ function MiniCalendar({ value, onSelect, maxDate }: Props) {
   // No later month holds a selectable day once the view reaches maxDate's month.
   const max = maxDate ? parseISO(maxDate) : null
   const atMaxMonth = max !== null && year * 12 + month >= max.getFullYear() * 12 + max.getMonth()
+  const min = minDate ? parseISO(minDate) : null
+  const atMinMonth = min !== null && year * 12 + month <= min.getFullYear() * 12 + min.getMonth()
 
   return (
     <div className="mc" role="dialog" aria-label="Choose a date">
       <div className="mc__head">
         <span className="mc__title">{monthLabel}</span>
         <div className="mc__nav">
-          <button type="button" className="mc__nav-btn" aria-label="Previous month" onClick={() => shift(-1)}>
+          <button type="button" className="mc__nav-btn" aria-label="Previous month" onClick={() => shift(-1)} disabled={atMinMonth}>
             <ArrowLeft2 size={12} color="currentColor" variant="Linear" />
           </button>
           <button type="button" className="mc__nav-btn" aria-label="Next month" onClick={() => shift(1)} disabled={atMaxMonth}>
@@ -73,7 +77,8 @@ function MiniCalendar({ value, onSelect, maxDate }: Props) {
         {trimmed.map(({ date, inMonth }, i) => {
           const iso = toISO(date)
           // ISO strings order the same as the dates they name.
-          const disabled = maxDate !== undefined && iso > maxDate
+          const disabled =
+            (maxDate !== undefined && iso > maxDate) || (minDate !== undefined && iso < minDate)
           return (
             <button
               key={i}

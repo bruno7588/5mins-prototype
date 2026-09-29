@@ -146,6 +146,13 @@
   gap: var(--space-sm); /* 12px between text and search */
 }
 
+/* DES-341: Courses / Programs choice at the top of the Actions card. */
+.automation-details-action-type {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
 /* ===== Table ===== */
 .automation-details-table {
   display: flex;
@@ -160,6 +167,11 @@
   padding-right: var(--space-xxl); /* aligns with row body (remove btn width + gap) */
   background: var(--input-background-elevated);
   border-radius: var(--radius-sm);
+}
+
+/* Program rows have no drag handle, so the header starts at the row padding. */
+.automation-details-table-header--programs {
+  padding-left: var(--space-s);
 }
 
 .automation-details-th {
@@ -246,9 +258,15 @@
   display: flex;
   align-items: center;
   background: var(--cards-background);
-  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-s);
   transition: background-color 150ms ease;
+}
+
+/* Dark mode keeps the border instead of the shadow. */
+[data-theme='dark'] .automation-details-row-card {
+  border: 1px solid var(--border);
+  box-shadow: none;
 }
 
 .automation-details-row:hover .automation-details-row-card {
