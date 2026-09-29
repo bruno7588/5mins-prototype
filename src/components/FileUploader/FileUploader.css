@@ -10,6 +10,11 @@
   cursor: pointer;
 }
 
+.file-uploader:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
 .file-uploader__input {
   display: none;
 }
@@ -19,7 +24,7 @@
   width: 100%;
   min-height: 240px;
   padding: var(--space-l);
-  gap: var(--space-m);
+  gap: var(--space-ml);
 }
 
 .file-uploader--S {
@@ -43,15 +48,10 @@
   background: var(--input-background);
 }
 
-/* ─── State: Error ─── */
+/* ─── State: Error ─── (Danger-500 border over a 16% Danger-500 wash) */
 .file-uploader--error {
-  border: 1px dashed var(--text-error);
-  background: rgba(223, 22, 66, 0.08);
-  gap: var(--space-l);
-}
-
-.file-uploader--S.file-uploader--error {
-  gap: var(--space-l);
+  border: 1px dashed var(--danger-500);
+  background: rgba(223, 22, 66, 0.16);
 }
 
 /* ─── State: Uploading ─── */
@@ -81,6 +81,10 @@
   width: 100%;
 }
 
+.file-uploader--L .file-uploader__icon-group {
+  gap: var(--space-m);
+}
+
 /* Filled with a file-type thumbnail (Create Course Resources, Figma 9979:86223) */
 .file-uploader__icon-group--thumb {
   gap: var(--space-m);
@@ -105,32 +109,56 @@
   line-height: 1.2;
 }
 
+/* The S prompt runs to two lines, so it takes the looser 1.4 (Library Enabled / Hover). */
+.file-uploader--S.file-uploader--enabled .file-uploader__body,
+.file-uploader--S.file-uploader--hover .file-uploader__body {
+  line-height: 1.4;
+}
+
 .file-uploader__body--filename {
   word-break: break-all;
 }
 
-/* ─── Error text ─── */
-.file-uploader__error-text {
+/* ─── Error list ─── */
+.file-uploader__errors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
   font-family: 'Poppins', sans-serif;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--text-error);
-  text-align: center;
-  margin: 0;
 }
 
-.file-uploader--L .file-uploader__error-text {
-  font-size: 16px;
+.file-uploader--S .file-uploader__errors {
+  gap: var(--space-xxs);
+}
+
+.file-uploader__error-list {
+  margin: 0;
+  padding-left: var(--space-ml);
+  list-style: disc;
+}
+
+.file-uploader--L .file-uploader__error-list {
+  font-size: 14px;
   line-height: 1.5;
 }
 
-.file-uploader--S .file-uploader__error-text {
+.file-uploader--S .file-uploader__error-list {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.file-uploader__error-more {
+  margin: 0;
+  padding-left: var(--space-ml);
   font-size: 12px;
   line-height: 1.2;
 }
 
 /* ─── Outlined button (Select File / Change File) ─── */
 .file-uploader__btn-outlined {
-  border: 1px solid var(--text-primary);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   padding: var(--space-s) var(--space-m);
   background: transparent;
@@ -144,22 +172,28 @@
 }
 
 .file-uploader--L .file-uploader__btn-outlined {
-  white-space: nowrap;
+  padding: var(--space-ssm) var(--space-ml);
   font-size: 14px;
   line-height: 1.5;
 }
 
 .file-uploader--S .file-uploader__btn-outlined {
-  white-space: nowrap;
   font-size: 12px;
   line-height: 1.4;
 }
 
+/* Hovering the zone lights the button too (Library Hover state). */
 .file-uploader__btn-outlined--hover,
-.file-uploader__btn-outlined:hover {
+.file-uploader__btn-outlined:hover,
+.file-uploader--enabled:hover .file-uploader__btn-outlined {
   background: var(--button-outline-fill-hover);
-  border-color: var(--text-button-hover);
-  color: var(--text-button-hover);
+  border-color: var(--primary-button-background-hover);
+  color: var(--primary-button-background-hover);
+}
+
+.file-uploader__btn-outlined:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }
 
 .file-uploader__btn-outlined:active {

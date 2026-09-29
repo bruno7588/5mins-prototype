@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, type ReactNode } from 'react'
-import { ExportCurve, ClipboardText } from 'iconsax-react'
+import { DocumentUpload, DocumentText } from 'iconsax-react'
 import './FileUploader.css'
 
 type FileUploaderSize = 'L' | 'S'
@@ -10,7 +10,8 @@ interface FileUploaderProps {
   state?: FileUploaderState
   fileName?: string
   progress?: number
-  errorMessage?: string
+  /** One message, or several: up to three show as a list, the rest as "+N errors". */
+  errorMessage?: string | string[]
   onFileSelect?: (file: File) => void
   onChangeFile?: () => void
   accept?: string
@@ -74,6 +75,20 @@ export function FileUploader({
   const circ = 2 * Math.PI * r
   const iconSize = isL ? 40 : 32
 
+  const errors = Array.isArray(errorMessage) ? errorMessage : [errorMessage]
+
+  /* One label in every state, as in the Library. stopPropagation: the zone behind it
+     opens the picker too, and both firing opened it twice. */
+  const selectButton = (
+    <button
+      type="button"
+      className={`file-uploader__btn-outlined${isHover ? ' file-uploader__btn-outlined--hover' : ''}`}
+      onClick={e => { e.stopPropagation(); openPicker() }}
+    >
+      Select File
+    </button>
+  )
+
   const sizeClass = isL ? 'file-uploader--L' : 'file-uploader--S'
   const stateClass = `file-uploader--${state.toLowerCase()}`
   const dragClass = isDragging ? 'file-uploader--dragging' : ''
@@ -103,28 +118,28 @@ export function FileUploader({
       {(state === 'Enabled' || state === 'Hover') && (
         <>
           <div className="file-uploader__icon-group">
-            {icon ?? <ExportCurve size={iconSize} color="var(--text-secondary)" variant="Linear" />}
+            {icon ?? <DocumentUpload size={iconSize} color="var(--text-secondary)" variant="Linear" />}
             <p className="file-uploader__body">
               Drag and drop file here or click to upload
             </p>
           </div>
-          <button
-            className={`file-uploader__btn-outlined ${isHover ? 'file-uploader__btn-outlined--hover' : ''}`}
-            onClick={e => { e.stopPropagation(); openPicker() }}
-          >
-            Select File
-          </button>
+          {selectButton}
         </>
       )}
 
       {/* ERROR */}
       {state === 'Error' && (
         <>
-          <ExportCurve size={iconSize} color="var(--danger-500)" variant="Linear" />
-          <p className="file-uploader__error-text">{errorMessage}</p>
-          <button className="file-uploader__btn-outlined" onClick={openPicker}>
-            Select File
-          </button>
+          <DocumentUpload size={iconSize} color="var(--text-error)" variant="Linear" />
+          <div className="file-uploader__errors" role="alert">
+            <ul className="file-uploader__error-list">
+              {errors.slice(0, 3).map((message, i) => <li key={i}>{message}</li>)}
+            </ul>
+            {errors.length > 3 && (
+              <p className="file-uploader__error-more">+{errors.length - 3} errors</p>
+            )}
+          </div>
+          {selectButton}
         </>
       )}
 
@@ -137,7 +152,7 @@ export function FileUploader({
                 <circle cx="32" cy="32" r={r} fill="none" stroke="var(--border)" strokeWidth="4" />
                 <circle
                   cx="32" cy="32" r={r} fill="none"
-                  stroke="var(--primary-500)"
+                  stroke="var(--primary-600)"
                   strokeWidth="4"
                   strokeDasharray={circ}
                   strokeDashoffset={circ - (progress / 100) * circ}
@@ -148,9 +163,7 @@ export function FileUploader({
             </div>
             <p className="file-uploader__body">Uploading file...</p>
           </div>
-          <button className="file-uploader__btn-outlined" onClick={openPicker}>
-            Change File
-          </button>
+          {selectButton}
         </>
       )}
 
@@ -158,12 +171,10 @@ export function FileUploader({
       {state === 'Filled' && (
         <>
           <div className={`file-uploader__icon-group${fileIcon ? ' file-uploader__icon-group--thumb' : ''}`}>
-            {fileIcon ?? <ClipboardText size={iconSize} color="var(--text-secondary)" variant="Bold" />}
+            {fileIcon ?? <DocumentText size={iconSize} color="var(--text-secondary)" variant="Bold" />}
             <p className="file-uploader__body file-uploader__body--filename">{fileName}</p>
           </div>
-          <button className="file-uploader__btn-outlined" onClick={openPicker}>
-            Change File
-          </button>
+          {selectButton}
         </>
       )}
     </div>
