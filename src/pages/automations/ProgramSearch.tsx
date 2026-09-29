@@ -8,6 +8,7 @@ interface ProgramSearchProps {
   /** Program ids already on the automation. They drop out of the results. */
   excludeIds: string[]
   onSelect: (program: WorkspaceProgram) => void
+  placeholder?: string
 }
 
 /**
@@ -15,7 +16,7 @@ interface ProgramSearchProps {
  * twin of CourseSearch, drawn with its classes. Only enabled programs can be
  * picked, and getAllPrograms already returns published ones only.
  */
-function ProgramSearch({ excludeIds, onSelect }: ProgramSearchProps) {
+function ProgramSearch({ excludeIds, onSelect, placeholder = 'Search for a program' }: ProgramSearchProps) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -41,6 +42,7 @@ function ProgramSearch({ excludeIds, onSelect }: ProgramSearchProps) {
   function handleSelect(program: WorkspaceProgram) {
     onSelect(program)
     setQuery('')
+    setOpen(false) // single choice: nothing left to pick
   }
 
   return (
@@ -48,10 +50,13 @@ function ProgramSearch({ excludeIds, onSelect }: ProgramSearchProps) {
       <Search
         size="M"
         value={query}
-        placeholder="Search for programs"
-        onChange={setQuery}
+        placeholder={placeholder}
+        onChange={(q) => {
+          setQuery(q)
+          setOpen(true)
+        }}
         onFocus={() => setOpen(true)}
-        ariaLabel="Search for programs"
+        ariaLabel={placeholder}
       />
       {open && (
         <div className="course-search-popover" role="listbox">

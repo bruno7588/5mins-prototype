@@ -175,7 +175,7 @@ function ForceTriggerModal({
               {/* Course list */}
               <div className="force-trigger-courses">
                 <p className="force-trigger-courses-label">
-                  Users will be enrolled in these {automation.actionType === 'programs' ? 'programs' : 'courses'}
+                  Users will be enrolled in {automation.actionType === 'programs' ? 'this program' : 'these courses'}
                 </p>
                 <SummaryCardList previewCount={COURSE_PREVIEW_COUNT}>
                   {automation.actionType === 'programs'

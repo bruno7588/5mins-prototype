@@ -774,8 +774,8 @@ function Automations() {
   function addProgram(automationId: string, program: WorkspaceProgram) {
     const apply = (a: AutomationRow): AutomationRow => ({
       ...a,
+      /* Single selection: a pick replaces, never adds. */
       programs: [
-        ...(a.programs ?? []),
         {
           id: `${automationId}-p-${Date.now()}`,
           programId: program.id,

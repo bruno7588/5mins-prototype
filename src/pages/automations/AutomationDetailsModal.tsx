@@ -83,7 +83,7 @@ function formatProgramEnrollment(p: AutomationProgram): { title: string; descrip
     month: 'short',
     year: 'numeric',
   })
-  return { title: 'Specific date', description: label }
+  return { title: 'Start at', description: label }
 }
 
 /* ── Review summary (DEV-4768) ──────────────────────────────────────────────
@@ -128,18 +128,18 @@ function blockedReason(
   hasName: boolean,
   hasTrigger: boolean,
   hasAction: boolean,
-  noun: 'course' | 'program',
+  item: string, // "at least one course" or "a program"
   missingDate: boolean,
 ): string {
   if (hasName && hasTrigger && hasAction) return ''
   if (!hasName && !hasTrigger && !hasAction) {
-    return `Add a title, a trigger filter and at least one ${noun}`
+    return `Add a title, a trigger filter and ${item}`
   }
   if (!hasName) return 'Add a title to this automation'
-  if (!hasTrigger && !hasAction) return `Set a trigger filter and add at least one ${noun}`
+  if (!hasTrigger && !hasAction) return `Set a trigger filter and add ${item}`
   if (!hasTrigger) return 'Set a trigger filter with at least one value'
-  if (missingDate) return 'Pick an enrolment date for each program'
-  return `Add at least one ${noun} to enrol people in`
+  if (missingDate) return 'Pick an enrolment date for the program'
+  return `Add ${item} to enrol people in`
 }
 
 /* A filter row only counts once it carries what it matches on. An added but
@@ -291,7 +291,7 @@ function AutomationDetailsModal({
     hasName,
     hasTrigger,
     hasAction,
-    actionType === 'programs' ? 'program' : 'course',
+    actionType === 'programs' ? 'a program' : 'at least one course',
     missingDate,
   )
   const actionCount = actionType === 'programs' ? programs.length : automation.courses.length
@@ -467,10 +467,13 @@ function AutomationDetailsModal({
 
             {actionType === 'programs' ? (
               <>
+                {/* One program per automation: the search stays, and a new pick
+                    replaces the current one, as a single-select picker does. */}
                 <div className="automation-details-actions-toolbar">
                   <ProgramSearch
                     key={automation.id}
                     excludeIds={programs.map((p) => p.programId)}
+                    placeholder={programs.length > 0 ? 'Search to change program' : undefined}
                     onSelect={(program) => onProgramAdd?.(automation.id, program)}
                   />
                 </div>
@@ -730,7 +733,7 @@ function AutomationDetailsModal({
 
         {actionType === 'programs' ? (
           <div className="automation-review-section">
-            <p className="automation-review-heading">Enrol them in these programs</p>
+            <p className="automation-review-heading">Enrol them in this program</p>
             <SummaryCardList previewCount={3}>
               {programs.map((p, i) => (
                 <SummaryCard key={p.id} badge={i + 1} title={p.name} meta={formatProgramMeta(p)} />
