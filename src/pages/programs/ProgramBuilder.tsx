@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Add, GalleryAdd } from 'iconsax-react'
 import PageHeader from '../your-courses/components/PageHeader/PageHeader'
 import Button from '../../components/Button/Button'
 import Checkbox from '../../components/Checkbox/Checkbox'
+import InputInline from '@/components/InputInline/InputInline'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import {
   loadDraftForBuilder,
@@ -31,15 +32,6 @@ function ProgramBuilder() {
   const [activeTab, setActiveTab] = useState('Details')
   const [pickerOpen, setPickerOpen] = useState(false)
   const [imageModalOpen, setImageModalOpen] = useState(false)
-  const descInputRef = useRef<HTMLTextAreaElement>(null)
-
-  // Keep the inline description textarea sized to its content (it has no border/scroll).
-  useEffect(() => {
-    const el = descInputRef.current
-    if (!el || activeTab !== 'Details') return
-    el.style.height = 'auto'
-    el.style.height = `${el.scrollHeight}px`
-  }, [draft.description, activeTab])
 
   const patchStep = (stepId: string, patch: Partial<ProgramStep>) =>
     setDraft((d) => ({ ...d, steps: d.steps.map((s) => (s.id === stepId ? ({ ...s, ...patch } as ProgramStep) : s)) }))
@@ -142,24 +134,18 @@ function ProgramBuilder() {
                 </button>
               </div>
 
-              <div className="pb-headline">
-                <input
-                  className="pb-headline__title"
-                  placeholder="Add program title"
-                  value={draft.title}
-                  onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-                  aria-label="Program title"
-                />
-                <textarea
-                  ref={descInputRef}
-                  className="pb-headline__desc"
-                  rows={1}
-                  placeholder="Add a description to your program"
-                  value={draft.description}
-                  onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
-                  aria-label="Program description"
-                />
-              </div>
+              {/* Inline input (input.md), size L. */}
+              <InputInline
+                size="L"
+                title={draft.title}
+                onTitleChange={(title) => setDraft((d) => ({ ...d, title }))}
+                titlePlaceholder="Add program title"
+                titleAriaLabel="Program title"
+                description={draft.description}
+                onDescriptionChange={(description) => setDraft((d) => ({ ...d, description }))}
+                descriptionPlaceholder="Add a description to your program"
+                descriptionAriaLabel="Program description"
+              />
 
               <div className="pb-details__footer">
                 <button type="button" className="pb-next-btn" onClick={() => setActiveTab('Courses')}>

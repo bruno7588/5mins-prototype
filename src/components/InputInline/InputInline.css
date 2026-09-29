@@ -1,0 +1,63 @@
+/* Input inline - docs/design-system/input.md (Inline), Figma 10330:4736 */
+.input-inline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.input-inline__title,
+.input-inline__desc {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.5;
+  caret-color: var(--text-primary);
+}
+
+/* Active is the caret and nothing else: a box or ring would give the editor the
+   chrome it exists to avoid. */
+.input-inline__title:focus,
+.input-inline__desc:focus {
+  outline: none;
+}
+
+.input-inline__title {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.input-inline__desc {
+  font-weight: 400;
+  color: var(--text-secondary);
+  resize: none;
+  overflow: hidden;
+}
+
+.input-inline__title::placeholder,
+.input-inline__desc::placeholder {
+  color: var(--text-disabled);
+}
+
+/* Error: the title and its message turn --text-error; the description keeps its colour. */
+.input-inline__title--error {
+  color: var(--text-error);
+}
+
+.input-inline__error {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-error);
+}
+
+/* Sizes: L = H1 32 over Paragraph L 16; M = H3 20 over Paragraph M 14. */
+.input-inline--l .input-inline__title { font-size: 32px; }
+.input-inline--l .input-inline__desc { font-size: 16px; }
+.input-inline--m .input-inline__title { font-size: 20px; }
+.input-inline--m .input-inline__desc { font-size: 14px; }

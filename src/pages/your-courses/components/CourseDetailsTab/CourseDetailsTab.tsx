@@ -1,9 +1,9 @@
-import { useLayoutEffect, useRef, useState } from 'react'
-import { Danger, GalleryAdd } from 'iconsax-react'
+import { useState } from 'react'
+import { GalleryAdd } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import SparkleIcon from '@/components/icons/SparkleIcon'
+import InputInline from '@/components/InputInline/InputInline'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
-import { autoGrow } from '../InteractiveDrawer/autoGrow'
 import defaultThumbnail from '@/assets/programs/course-thumbs/04.png'
 import './CourseDetailsTab.css'
 
@@ -38,53 +38,22 @@ function CourseDetailsTab({ draft, onChange }: Props) {
   const [titleBlurred, setTitleBlurred] = useState(false)
   const titleError = titleBlurred && !draft.title.trim()
 
-  /* The description grows with its content; height must reset to auto before
-     reading scrollHeight or the box can only ever get taller. */
-  const descRef = useRef<HTMLTextAreaElement>(null)
-  useLayoutEffect(() => {
-    autoGrow(descRef.current)
-  }, [draft.description])
-
   const set = (patch: Partial<CourseDetailsDraft>) => onChange({ ...draft, ...patch })
 
   return (
     <div className="cdt">
-      {/* Inline input (input.md): 4px gap, Bold 32 title over Regular 16 description.
-          Enabled → Active → Filled, plus the Error state: red title, a 24px Danger
-          at the row end and a message under the title. No hover, no focus box —
-          the type scale is the whole affordance. */}
-      <div className="cdt-headline">
-        <div className="cdt-headline__row">
-          <input
-            className={`cdt-headline__title${titleError ? ' cdt-headline__title--error' : ''}`}
-            placeholder="Add Title"
-            value={draft.title}
-            onChange={(e) => set({ title: e.target.value })}
-            onBlur={() => setTitleBlurred(true)}
-            aria-label="Course title"
-            aria-invalid={titleError || undefined}
-            aria-describedby={titleError ? 'cdt-title-error' : undefined}
-          />
-          {titleError && (
-            <Danger size={24} color="var(--text-error)" variant="Linear" aria-hidden="true" />
-          )}
-        </div>
-        {titleError && (
-          <span className="cdt-headline__error" id="cdt-title-error" role="alert">
-            Your course needs a title
-          </span>
-        )}
-        <textarea
-          ref={descRef}
-          className="cdt-headline__desc"
-          rows={1}
-          placeholder="Add a description"
-          value={draft.description}
-          onInput={(e) => autoGrow(e.currentTarget)}
-          onChange={(e) => set({ description: e.target.value })}
-          aria-label="Course description"
-        />
-      </div>
+      {/* Inline input (input.md), size L. */}
+      <InputInline
+        size="L"
+        title={draft.title}
+        onTitleChange={(title) => set({ title })}
+        onTitleBlur={() => setTitleBlurred(true)}
+        titleAriaLabel="Course title"
+        error={titleError ? 'Your course needs a title' : undefined}
+        description={draft.description}
+        onDescriptionChange={(description) => set({ description })}
+        descriptionAriaLabel="Course description"
+      />
 
       <section className="cdt-thumb">
         <h3 className="cdt-thumb__label">Course thumbnail</h3>

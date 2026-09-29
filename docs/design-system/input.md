@@ -10,7 +10,7 @@ description: Input field system for 5Mins.ai — four types. Outlined (standard 
 | Type | What it is | Built component |
 |---|---|---|
 | **Outlined** | Standard labeled text field | `src/components/InputField` |
-| **Inline** | Borderless title (Bold 32) + description (Regular 16) editor — e.g. course title | page-local patterns |
+| **Inline** | Borderless title + optional description editor, sizes L (Bold 32 / Regular 16) and M (Bold 20 / Regular 14) — e.g. course title | `src/components/InputInline` |
 | **Radio** | Bordered field row with a 21px radio inside — pick an option AND type its value | not built yet |
 | **Integer** | Compact numeric stepper (− / value / +) | `src/components/InputInteger` |
 
@@ -21,6 +21,8 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — set light `12111:3346`
 > **Disabled drops back to `--border`.** A disabled field should not hold an edge as firmly as a live one, so every disabled control — Outlined, Radio, Integer, and the Chip and Dropdown outside this doc — uses the quiet weight. The Radio, Integer, Chip and Dropdown sets all bind their disabled variants to `Border` in Figma; only the Outlined set still paints `Border-elevated`. Four-to-one — treat the Outlined disabled binding as stale, and `--border` as the rule.
 
 > **Updated 2026-09-29 (verified against code):** fixed the border-weight note (cards use `--border-elevated`), the card-fill hover wording (`InputField` always uses `--input-background`; callers override), light `--input-background-elevated` (24%, not 16%), the Integer resting value colour (`--text-primary`), the Radio label weight (600) and the error-timing guidance; removed raw hex fallbacks and the search example.
+
+> **Updated 2026-09-29 (Inline re-verified against Figma `10330:4736`):** Inline is now a shared component, `InputInline`, with sizes L (Bold 32 / Regular 16) and M (Bold 20 / Regular 14). The error message sits between the title and the description, and there is no error icon (the earlier "24px Danger at the row end" is removed). Course details, Program builder and Automation details use it.
 
 > **Updated 2026-09-29 (aligned to prototype usage):** `InputField` is a default export at `@/components/InputField/InputField` (there is no `ui/` folder), and it also takes `validation="warning"`, `onBlur` and `autoFocus`. `InputInteger` takes a `suffix` (e.g. `%`). The Import and Props sections below now match the code.
 
@@ -39,7 +41,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — set light `12111:3346`
 - The value is a small whole number → use InputInteger (below)
 - The value is a date → use DatePickerField ([doc](date-picker-field.md)), not `type="date"`
 - The user picks from a fixed list → use Dropdown ([doc](dropdown.md))
-- The text is a page-level title edited in place → use the Inline pattern (see the Inline section below)
+- The text is a page-level title edited in place → use `InputInline` (see InputInline below)
 
 **Do**
 - Use `InputField` for every labelled single-line field; never build a raw `<input>` with custom styles.
@@ -106,6 +108,44 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — set light `12111:3346`
 | Design system | `@web/ui` component | Props mapping | Known drift |
 |---|---|---|---|
 | InputInteger (Integer) | _to be mapped by engineering_ | | |
+
+### InputInline (Inline)
+
+**Intent:** edits a title (and optional description) in place where the text is the content, so the page reads as the finished thing rather than a form.
+
+**Use when**
+- The field is the headline of what is being built: a course, program or automation name.
+- The value should look like the page heading it becomes, with no label or box.
+
+**Don't use when**
+- The field sits in a form with other labelled fields → use InputField (above)
+- The title only needs a short name in a drawer or card form (e.g. a situational test title) → use InputField
+
+**Do**
+- Use `size="L"` for page headlines (course, program) and `size="M"` inside modals and drawers (automation details).
+- Pass `titleAriaLabel` (and `descriptionAriaLabel`); there is no visible label.
+- Pass the error as a short message via `error`; it shows between the title and the description, and the title turns `--text-error`.
+- Hold the error back until the field has been left (`onTitleBlur`), so an untouched form never opens in red.
+
+**Don't**
+- Don't add a box, border, hover fill or focus ring; Active is the caret alone.
+- Don't add an error icon; the red title and the message carry the error.
+- Don't hand-roll a borderless title `<input>`; use `InputInline`.
+
+**Canonical spec:** L title H1 Bold 32 / 1.5, description Paragraph L Regular 16 / 1.5; M title H3 Bold 20 / 1.5, description Paragraph M Regular 14 / 1.5. Gap `var(--space-xs)` (4px). Placeholders `--text-disabled` ("Add Title", "Add a description"); filled title `--text-primary`, description `--text-secondary`; caret `--text-primary`. Error: title and message `--text-error`, message Paragraph M Regular 14. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12111:3347` / dark `10330:4736`.
+
+**Prototype:** `src/components/InputInline/InputInline.tsx` (default export)
+- `size`: `'L' | 'M'` (default L)
+- `title`, `onTitleChange`, `titlePlaceholder`, `titleAriaLabel`, `onTitleBlur`, `titleRef`, `titleId`
+- `description`, `onDescriptionChange` (the description line only renders with this), `descriptionPlaceholder`, `descriptionAriaLabel`
+- `error` (message string)
+- Used by Course details (L, with error), Program builder (L) and Automation details (M, title only)
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| InputInline (Inline) | _to be mapped by engineering_ | | |
 
 ## Overview — Outlined
 
@@ -324,32 +364,34 @@ const [password, setPassword] = useState('');
 
 ## Overview — Inline
 
-A borderless editor for a page-level title and optional description — used where the content IS the field (course builder title, card names). No box, no label: the text styles are the affordance.
+A borderless editor for a title and optional description, used where the content IS the field (course, program and automation names). No box, no label: the text styles are the affordance. Built as `src/components/InputInline`.
 
-| Element | Style | Placeholder | Filled |
-|---|---|---|---|
-| Title | Poppins **Bold 32** (H1), 1.5 | `--text-disabled` ("Add Title") | `--text-primary` |
-| Description (optional) | Poppins Regular 16, 1.5 | `--text-disabled` ("Add a description") | `--text-secondary` |
+| Element | Size L | Size M | Placeholder | Filled |
+|---|---|---|---|---|
+| Title | H1 Bold 32 / 1.5 | H3 Bold 20 / 1.5 | `--text-disabled` ("Add Title") | `--text-primary` |
+| Description (optional) | Paragraph L Regular 16 / 1.5 | Paragraph M Regular 14 / 1.5 | `--text-disabled` ("Add a description") | `--text-secondary` |
+| Error message | Paragraph M Regular 14 | Paragraph M Regular 14 | - | `--text-error` |
 
-- Column gap **4px**; reference width 900px.
-- **States:** Enabled (placeholders) → Active (blinking `--text-primary` caret) → Filled.
-- **Error (Filled):** title turns `--text-error`, a 24px `Danger` (Linear) icon appears at the row end, and an "Error message" line (Regular 14, `--text-error`) renders under the title. The description keeps its normal color.
-- No hover treatment — the inline editor reads as text until clicked.
+- Column gap `var(--space-xs)` (4px); reference width 900px.
+- **States:** Enabled (placeholders), Active (blinking `--text-primary` caret, nothing else), Filled.
+- **Error (Filled):** the title turns `--text-error` and the message renders **between the title and the description**. The description keeps its normal colour. There is no error icon.
+- No hover treatment and no focus ring: the editor reads as text until clicked, and the caret is the focus indicator.
+- The description wraps and grows with its text; it never scrolls.
 
 ```tsx
-<div className="inline-input">
-  <input className="inline-input__title" placeholder="Add Title" />
-  <input className="inline-input__description" placeholder="Add a description" />
-</div>
-```
+import InputInline from '@/components/InputInline/InputInline'
 
-```css
-.inline-input { display: flex; flex-direction: column; gap: 4px; }
-.inline-input__title { border: 0; background: none; font: 700 32px/1.5 Poppins; color: var(--text-primary); }
-.inline-input__title::placeholder { color: var(--text-disabled); }
-.inline-input__title.has-error { color: var(--text-error); }
-.inline-input__description { border: 0; background: none; font: 400 16px/1.5 Poppins; color: var(--text-secondary); }
-.inline-input__description::placeholder { color: var(--text-disabled); }
+<InputInline
+  size="L"
+  title={draft.title}
+  onTitleChange={(title) => set({ title })}
+  onTitleBlur={() => setTitleBlurred(true)}
+  titleAriaLabel="Course title"
+  error={titleError ? 'Your course needs a title' : undefined}
+  description={draft.description}
+  onDescriptionChange={(description) => set({ description })}
+  descriptionAriaLabel="Course description"
+/>
 ```
 
 ---

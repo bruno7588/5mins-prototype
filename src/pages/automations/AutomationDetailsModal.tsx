@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowDown2, Danger, InfoCircle, Trash } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
+import InputInline from '../../components/InputInline/InputInline'
 import CourseSearch from './CourseSearch'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import Tooltip from '../../components/Tooltip/Tooltip'
@@ -251,17 +252,16 @@ function AutomationDetailsModal({
 
       <div className="automation-details-content">
         <header className="automation-details-header">
-          {/* Inline input (input.md), the same title editor Course and Programs
-              use — the name is the field, so it is always editable and reaches
-              the draft as it is typed, like every other control here. */}
-          <input
-            ref={titleRef}
-            id="automation-details-title"
-            className="automation-details-title"
-            value={automation.name}
-            placeholder="Add a title to automation"
-            aria-label="Automation name"
-            onChange={(e) => onRename?.(automation.id, e.target.value.slice(0, 100))}
+          {/* Inline input (input.md), size M: the name is the field, so it is always
+              editable and reaches the draft as it is typed. */}
+          <InputInline
+            size="M"
+            titleRef={titleRef}
+            titleId="automation-details-title"
+            title={automation.name}
+            onTitleChange={(name) => onRename?.(automation.id, name.slice(0, 100))}
+            titlePlaceholder="Add a title to automation"
+            titleAriaLabel="Automation name"
           />
           <div className="automation-details-divider" />
         </header>
