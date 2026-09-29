@@ -48,6 +48,8 @@ Paste everything between the two lines into the production repo's root `CLAUDE.m
 | Editable page or modal title | Inline input: size L on pages, M in modals and drawers; no box or focus ring, error message under the title |
 | Selected table row | `--selected-row` fill and border, `--selected-row-hover` on hover; 24px checkbox in a 48px column |
 | Page tab bar | Tabs, 16px gap, `--selected` indicator |
+| Admin top bar | Exit Admin as a Small Outlined-2 button; theme and log-out as 20px `--text-primary` icons in 36px circular hover buttons, 16px apart |
+| Side navigation | 4px between top-level items; sub-items stack flush under their group, padded 12px 16px 12px 42px |
 
 ### Token scale (theme must expose these)
 | Kind | Tokens |

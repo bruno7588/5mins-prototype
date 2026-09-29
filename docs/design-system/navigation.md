@@ -28,8 +28,8 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — Top nav light `11925:5
 
 **Do**
 - Mount it once in the app shell (`App.tsx`), never per page.
-- Keep Exit Admin as the Outlined-2 `Button`.
-- Icon-only buttons: 40px, circular `var(--radius-full)` hover on `--page-background-hover`, with a Tooltip naming the action.
+- Keep Exit Admin as the Outlined-2 `Button`, size Small (`size="sm"`, Bold 12).
+- Icon-only buttons: 36px, circular `var(--radius-full)` hover on `--page-background-hover`, 20px glyphs in `--text-primary` (Moon/Sun Linear, Logout Bold), with a Tooltip naming the action. They sit flush in one group, so the hover circles carry the 16px spacing between glyphs.
 - Hide an icon button's tooltip while its menu is open.
 - Give the icon buttons an `aria-label`; the theme toggle also carries `aria-pressed`.
 
@@ -37,7 +37,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — Top nav light `11925:5
 - Don't add page-specific actions to the top nav.
 - Don't use a squared hover on the icon buttons.
 
-**Canonical spec:** height 70px; `var(--page-background)` with a `1px solid var(--border)` bottom edge; padding `var(--space-s) var(--space-xl)` (8px 32px); logo 102×22; icon buttons 40px, `var(--radius-full)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11925:5139` / dark `5385:20137`.
+**Canonical spec:** height 70px; `var(--page-background)` with a `1px solid var(--border)` bottom edge; padding `var(--space-s) var(--space-l) var(--space-s) var(--space-xl)` (the right 24px plus the icon button's 8px inset puts the last glyph 32px from the edge); logo 102×22; Exit Admin Small Outlined-2; 16px from Exit Admin to the first glyph and between glyphs; icon buttons 36px, `var(--radius-full)`, 20px `--text-primary` glyphs. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11925:5139` / dark `5385:20137` (Admin large `5385:20161`).
 
 **Prototype:** `src/components/TopNav/TopNav.tsx`
 - No props. Logo and Exit Admin go to `/workspace`; the Moon/Sun button calls `useTheme().toggle`; the Logout button opens a menu (Log Out, Mobile App).
@@ -71,7 +71,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — Top nav light `11925:5
 - Don't use a filled amber row for the selected item.
 - Don't use raw `--secondary-*` for selected text; use the mode-aware `--text-selected`.
 
-**Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11925:5294`, Admin items `11925:5713` / dark `4697:13314`, `4674:25675`, `5453:37876`.
+**Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); menu padding 16px top, 12px sides; 4px between top-level entries; sub-items (padding 12px 16px 12px 42px) stack flush, 0 gap, directly under their group heading; 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11925:5294`, Admin items `11925:5713` / dark `4697:13314`, `4674:25675`, `5453:37876`.
 
 **Prototype:** `src/components/LeftSidebar/LeftSidebar.tsx`
 - No props. Expandable People & Teams and Content groups; selection from `useLocation().pathname`.
@@ -151,6 +151,8 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — Top nav light `11925:5
 
 ## Top Navigation
 
+> **Updated 2026-09-29 (re-verified against Figma `5385:20161`):** Exit Admin is Small; the icons are 20px `--text-primary` (Logout Bold) in 36px hover circles, 16px apart and 32px from the edge.
+
 Shared container:
 
 ```
@@ -166,7 +168,7 @@ Logo:        5Mins.ai SVG, 102×22
 | Variant | Left | Right (CTA cluster) |
 |---|---|---|
 | **Web app · large** | Logo (content column is centered at 1536px, `padding-left: 32px`) | gap 24: **Get App** text button (Bold 14 `--text-secondary` + 20px `Mobile` icon, 4px gap) · **Create** outlined button (Bold 14 `--text-primary`, 1px `--text-primary` border, `8px 16px`, radius 8, + 20px `Add` icon) · icon group gap 16: `FlashCircle` 24px (4px padding) + events/calendar 24px with an 8px `--danger-500` notification dot at its top-right |
-| **Admin · large** | Logo, with a 16px-gap slot before it for the sidebar expand/collapse control | gap 16: **Exit Admin** Outlined-2 button (Bold **12** `--text-primary`, 1px `--text-primary` border, `8px 16px`, radius 8) · `Moon` 21px (theme toggle) · `Logout` 21px |
+| **Admin · large** | Logo, with a 16px-gap slot before it for the sidebar expand/collapse control | gap 16: **Exit Admin** Outlined-2 Small button (Bold **12** `--text-primary`, 1px `--border-elevated` border, `8px 16px`, radius 12) · `Moon` (theme toggle) · `Logout` (Bold), both `--text-primary`; Figma draws them at 21px, the prototype uses 20px, the nearest icon-scale size |
 | **Admin · small** (375) | Hamburger menu icon 32px | gap 12: **Exit Admin** (same as large) · 34×34 icon button (radius 4) with 21px logout icon |
 
 Notes:

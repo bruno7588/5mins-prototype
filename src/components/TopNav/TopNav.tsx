@@ -52,7 +52,10 @@ function TopNav() {
         </button>
       </div>
       <div className="topnav-right">
-        <Button variant="outlined-2" onClick={goToApp}>Exit Admin</Button>
+        <Button variant="outlined-2" size="sm" onClick={goToApp}>Exit Admin</Button>
+        {/* Icon buttons sit flush: their 36px hover circles carry the 16px spacing
+            between the 20px glyphs (Figma 5385:20161). */}
+        <div className="topnav-icons">
         <Tooltip text={isDark ? 'Light mode' : 'Dark mode'} position="Bottom" alignment="End" icon={false}>
           <button
             className="topnav-icon-btn"
@@ -61,9 +64,9 @@ function TopNav() {
             onClick={toggle}
           >
             {isDark ? (
-              <Sun1 size={24} color="var(--text-secondary)" variant="Linear" />
+              <Sun1 size={20} color="var(--text-primary)" variant="Linear" />
             ) : (
-              <Moon size={24} color="var(--text-secondary)" variant="Linear" />
+              <Moon size={20} color="var(--text-primary)" variant="Linear" />
             )}
           </button>
         </Tooltip>
@@ -77,7 +80,7 @@ function TopNav() {
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen((o) => !o)}
               >
-                <Logout size={24} color="var(--text-secondary)" variant="Linear" />
+                <Logout size={20} color="var(--text-primary)" variant="Bold" />
               </button>
             )
             // Tooltip would overlap the open menu — show it only while closed.
@@ -117,6 +120,7 @@ function TopNav() {
               </button>
             </div>
           )}
+        </div>
         </div>
       </div>
     </nav>

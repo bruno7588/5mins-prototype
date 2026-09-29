@@ -5,7 +5,7 @@
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: var(--space-s) var(--space-sm);
+  padding: var(--space-m) var(--space-sm) var(--space-s); /* Figma menu: 16px top, 12px sides */
   overflow-y: auto;
   height: calc(100vh - 70px);
   position: sticky;
@@ -15,7 +15,7 @@
 .left-sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xxs);
+  gap: var(--space-xs); /* 4px between top-level entries (Figma 4738:15003) */
   flex: 1;
 }
 
@@ -103,7 +103,10 @@
 .sidebar-sub-items {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xxs);
+  gap: 0;
+  /* Sub-items stack flush under their group heading, as in Figma: cancel the
+     nav's 4px gap above the first one. */
+  margin-top: calc(-1 * var(--space-xs));
 }
 
 /* Sub-menu item — same row metrics, indented to clear the parent icon. */
