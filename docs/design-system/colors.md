@@ -165,8 +165,8 @@ Backgrounds, borders, and button fills. Dark/light columns per the Figma variabl
 | `--input-background-elevated` | `#454C5E` @ 24% | `#BFC2CC` @ 16% | The same fill one step up, for a field sitting on a card surface (`--cards-background`) — identical to `--input-background` in light mode |
 | `--input-background-hover` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | Input background on hover |
 | `--selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Active/selected state — inputs, tabs, chips, radios, checkboxes |
-| `--border` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | The quiet border — table rows, dividers, cards, modals, dashed drop zones, skeletons, and disabled controls. **Diverges from the Figma variable, deliberately:** Figma gives Neutral-700 in dark, which is the same colour as `--cards-background`, so every border drawn on a card was invisible. Raised one step at the source rather than asking each call site to know its surface |
-| `--border-elevated` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | The border on an **elevated surface** — a card, menu, drawer or modal, and the controls inside one. Now the same value as `--border` in both modes; it keeps its own name so the distinction survives if either side of the palette moves |
+| `--border` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | The quiet border: table rows, dividers, dashed drop zones, skeletons and disabled controls on the page. Follows the Figma variable (Bruno, 2026-09-29). In dark mode it is the same colour as `--cards-background`, so on a card, menu, drawer or modal use `--border-elevated` |
+| `--border-elevated` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | The border on an **elevated surface**: a card, menu, drawer or modal, and the controls inside one. One step lighter than `--border` in dark mode, as in Figma |
 | `--border-hover` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` | Any border on hover |
 
 ### Button backgrounds
