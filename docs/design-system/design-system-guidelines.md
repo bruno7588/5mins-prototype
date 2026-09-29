@@ -434,7 +434,7 @@ Component-level specs are **not duplicated here**. Each component has a verified
 | Page & Section Headers | `headers.md` |
 | Cards (Lesson, Assessment, Course, Skill, Category, Folder) | `cards.md` |
 | Resource card (course files and links) | `resource-card.md` |
-| Dialog, Modal, Side Drawer | `overlays.md` |
+| Dialog, Modal, Side Drawer, mobile Bottom Sheet | `overlays.md` |
 | Alert, Callout, Toast, Tooltip | `alerts-toast.md` |
 | Table (card-row spec) | `table.md` |
 | Inputs (outlined, inline, radio-row, integer) | `input.md` |

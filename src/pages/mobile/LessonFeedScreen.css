@@ -1,0 +1,273 @@
+/* Mobile lessons feed (Figma Lessons-Feed 10748:32498) and its "more" sheet
+   (10752:24652). The mobile app is dark only; text over the video uses the
+   mode-invariant neutrals. */
+
+/* ── Feed: one lesson per page, swiped vertically ── */
+.m-lf {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.m-lf::-webkit-scrollbar {
+  display: none;
+}
+
+.m-lf-slide {
+  position: relative;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+}
+
+.m-lf-slide__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 16% black at the top and bottom edges so the header and info stay legible
+   over any frame (Figma gradients). */
+.m-lf-slide__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0) 27.5%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0) 25.5%);
+}
+
+.m-lf-slide__tap {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.m-lf-slide__tap:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: -4px;
+}
+
+/* 10-second skip controls, shown while paused. */
+.m-lf-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-l);
+  pointer-events: none;
+  filter: drop-shadow(1px 1px 2px rgba(32, 34, 42, 0.04));
+}
+
+/* ── Bottom-left info ── */
+.m-lf-info {
+  position: absolute;
+  left: var(--space-m);
+  bottom: var(--space-s);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: var(--space-xs) 0;
+  width: 286px;
+  pointer-events: none;
+}
+
+.m-lf-info__title {
+  margin: 0;
+  font: 700 12px/1.4 'Poppins', sans-serif;
+  color: var(--neutral-25);
+}
+
+.m-lf-info__more {
+  padding: 0;
+  border: none;
+  background: none;
+  font: 400 12px/1.2 'Poppins', sans-serif;
+  color: var(--neutral-25);
+  text-decoration: underline;
+  text-underline-position: from-font;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.m-lf-info__more:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Skill pill: a 32% dark wash multiplied over the video (Figma), so it reads on
+   light and dark frames alike. */
+.m-lf-info__skill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xxs) var(--space-xs);
+  border-radius: var(--radius-xs);
+  background: rgba(38, 41, 51, 0.32);
+  font: 500 12px/20px 'Poppins', sans-serif;
+  color: var(--neutral-0);
+}
+
+/* ── Right-hand action column ── */
+.m-lf-side {
+  position: absolute;
+  right: 0;
+  bottom: var(--space-s);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-s);
+}
+
+.m-lf-side__avatar {
+  box-sizing: border-box;
+  border: 1px solid var(--neutral-0);
+  box-shadow: 1px 1px 4px rgba(15, 16, 20, 0.04);
+}
+
+.m-lf-side__action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.m-lf-side__icon {
+  display: flex;
+  padding: var(--space-xs);
+  filter: drop-shadow(1px 1px 2px rgba(15, 16, 20, 0.04));
+}
+
+.m-lf-side__label {
+  font: 400 10px/1.5 'Poppins', sans-serif;
+  color: var(--neutral-0);
+  white-space: nowrap;
+}
+
+.m-lf-side__more {
+  display: flex;
+  padding: 5px;
+  border: none;
+  background: none;
+}
+
+.m-lf-side__time {
+  font: 400 12px/1.2 'Poppins', sans-serif;
+  color: var(--neutral-0);
+}
+
+/* ── "more" sheet content (inside the shared BottomSheet) ── */
+.m-lsheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+}
+
+.m-lsheet__about {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.m-lsheet__instructor {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.m-lsheet__who {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.m-lsheet__name {
+  margin: 0;
+  font: 600 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+.m-lsheet__bio {
+  margin: 0;
+  font: 400 12px/1.2 'Poppins', sans-serif;
+  color: var(--text-secondary);
+}
+
+.m-lsheet__skills {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-s);
+}
+
+/* Skill chip (cards.md skill chip; no shared component yet). */
+.m-lsheet__skill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  font: 400 12px/1.2 'Poppins', sans-serif;
+  color: var(--text-secondary);
+}
+
+.m-lsheet__more {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.m-lsheet__section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-sm);
+}
+
+.m-lsheet__section--link {
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.m-lsheet__heading {
+  margin: 0;
+  font: 500 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+}
+
+/* ── In-app web view (Figma 10757:35298 / 10757:35373) ── */
+.m-webview {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  background: var(--page-background);
+}
+
+/* The capture is wider than the screen in Figma and cropped to the centre. */
+.m-webview__page {
+  flex-shrink: 0;
+  max-width: none;
+  height: auto;
+  align-self: flex-start;
+}

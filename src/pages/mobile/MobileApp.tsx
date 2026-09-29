@@ -7,6 +7,12 @@ import { getAllPrograms } from '@/pages/programs/programStore'
 import ForYouScreen from './ForYouScreen'
 import WorkspaceScreen from './WorkspaceScreen'
 import ProgramScreen from './ProgramScreen'
+import LessonFeedScreen from './LessonFeedScreen'
+import LessonSheet from './LessonSheet'
+import WebViewScreen from './WebViewScreen'
+import deepDivePage from '@/assets/for-you/webview-deep-dive.png'
+import resourcePage from '@/assets/for-you/webview-resource.png'
+import { feedLessons } from '@/pages/for-you/feedItems'
 
 /**
  * Mobile app prototype shell (Figma scaffold 7632:8501) — the app chrome inside
@@ -20,12 +26,29 @@ function MobileApp() {
   const [progressChip, setProgressChip] = useState('My Team')
   /** Detail screens push over the tabs rather than leaving the phone frame. */
   const [openProgramId, setOpenProgramId] = useState<string | null>(null)
+  /** The lessons feed opens over the Home tab; `sheetIndex` is its open "more" sheet. */
+  const [feedIndex, setFeedIndex] = useState<number | null>(null)
+  const [sheetIndex, setSheetIndex] = useState<number | null>(null)
+  /** A link from the sheet, open in the in-app web view; back returns to the sheet. */
+  const [webView, setWebView] = useState<{ url: string; kind: 'deep-dive' | 'resource' } | null>(null)
 
   const openProgram = openProgramId
     ? getAllPrograms().find((p) => p.id === openProgramId)
     : undefined
 
   const header = (() => {
+    if (webView) {
+      return (
+        <MobileTopNav
+          variant="detail"
+          title={webView.kind === 'deep-dive' ? 'Take a deep dive' : 'Resource'}
+          onBack={() => setWebView(null)}
+        />
+      )
+    }
+    if (feedIndex !== null) {
+      return <MobileTopNav variant="lesson-feed" pointsLabel="45 Pt" onBack={() => setFeedIndex(null)} />
+    }
     if (openProgram) {
       return <MobileTopNav variant="detail" title="Program" onBack={() => setOpenProgramId(null)} />
     }
@@ -71,20 +94,51 @@ function MobileApp() {
   return (
     <PhoneFrame
       header={header}
+      overlayHeader={feedIndex !== null && !webView}
+      overlay={
+        sheetIndex !== null && !webView ? (
+          <LessonSheet
+            lesson={feedLessons[sheetIndex]}
+            onClose={() => setSheetIndex(null)}
+            onOpenLink={(url, kind) => setWebView({ url, kind })}
+          />
+        ) : null
+      }
       footer={
         <MobileTabNav
           active={tab}
           onNavigate={(next) => {
             setOpenProgramId(null)
+            setFeedIndex(null)
+            setSheetIndex(null)
+            setWebView(null)
             setTab(next)
           }}
         />
       }
       onExit={() => navigate('/content-library')}
     >
-      {openProgram ? <ProgramScreen program={openProgram} /> : null}
-      {!openProgram && tab === 'home' && homeChip === 'For You' ? <ForYouScreen /> : null}
-      {!openProgram && tab === 'home' && homeChip === 'Your Workspace' ? (
+      {webView ? (
+        <WebViewScreen
+          url={webView.url}
+          image={webView.kind === 'deep-dive' ? deepDivePage : resourcePage}
+          width={webView.kind === 'deep-dive' ? 617 : 468}
+        />
+      ) : null}
+      {!webView && feedIndex !== null ? (
+        <LessonFeedScreen
+          lessons={feedLessons}
+          startIndex={feedIndex}
+          sheetIndex={sheetIndex}
+          onMore={setSheetIndex}
+          onIndexChange={setFeedIndex}
+        />
+      ) : null}
+      {feedIndex === null && openProgram ? <ProgramScreen program={openProgram} /> : null}
+      {feedIndex === null && !openProgram && tab === 'home' && homeChip === 'For You' ? (
+        <ForYouScreen onOpenLesson={(i) => setFeedIndex(i % feedLessons.length)} />
+      ) : null}
+      {feedIndex === null && !openProgram && tab === 'home' && homeChip === 'Your Workspace' ? (
         <WorkspaceScreen onOpenProgram={setOpenProgramId} />
       ) : null}
       {/* The remaining tab screens land here as they are built. */}

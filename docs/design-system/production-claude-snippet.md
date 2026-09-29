@@ -35,6 +35,7 @@ Paste everything between the two lines into the production repo's root `CLAUDE.m
 | Quick yes/no decision | Dialog (ConfirmModal): 56px type icon, centred, Cancel + commit, close button |
 | Moderate content task | Modal, 720px centred |
 | Full working area beside the page | Side drawer, right-anchored, 720px |
+| Details or options in the mobile app | Bottom sheet over a 50% scrim; drag down, tap outside or Escape to close |
 | Row actions | Row actions menu (kebab), not a custom menu |
 | Status label | Badge (type by meaning, not colour) |
 | Inline notice | Callout / Alert; confirmation after an action: Toast |

@@ -28,7 +28,7 @@ The docs live in the prototype repo `bruno7588/5mins-prototype`. They are read f
 |---|---|
 | Button (all variants, AI buttons) | `buttons.md` |
 | Dialog / ConfirmModal | `confirm-modal.md`, `overlays.md` |
-| Modal, Side Drawer | `overlays.md` |
+| Modal, Side Drawer, Bottom Sheet (mobile) | `overlays.md` |
 | Bulk action bar | `bulk-action-bar.md` |
 | Row actions / kebab menu | `row-actions-menu.md`, `listbox.md` |
 | Menu, listbox, option list | `listbox.md` |
@@ -94,6 +94,7 @@ Two kinds of target:
      | Button | raw `<button>` or `styled('button')` with its own padding/colour |
      | Tooltip | native `title=` or a custom `*tooltip*` element |
      | Dialog / Modal / Drawer | a `position: fixed` scrim + panel outside the shared overlay |
+     | Bottom sheet | a bottom-anchored panel with its own slide-up or drag handling |
      | Row actions menu | a `More` icon toggling an absolutely positioned list |
      | Avatar | `<img>` with a full radius, or an initials chip |
      | Inline title | a borderless `<input>` or `<textarea>` styled as a Bold 20 or 32 heading |

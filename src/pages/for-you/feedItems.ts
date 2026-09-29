@@ -17,6 +17,8 @@ export interface FeedEpisode {
 export interface FeedLesson {
   instructor: string
   instructorAvatar: string
+  /** One-line bio under the instructor in the mobile lesson sheet. */
+  instructorBio?: string
   title: string
   /** Playing-video media (the GIF stands in for the lesson video). */
   media: string
@@ -48,6 +50,7 @@ export const feedLessons: FeedLesson[] = [
   {
     instructor: 'Michaela Scott',
     instructorAvatar: avatar1,
+    instructorBio: 'Driving projects to success with strategic planning and team collaboration.',
     deepDiveUrl: 'https://example.com/michaela-scott',
     title: "Tearing Down Zendesk's Pricing. What is behind our Unconscious Bias? (Episode 1/4)",
     media: heroGif,
@@ -90,6 +93,7 @@ export const feedLessons: FeedLesson[] = [
   {
     instructor: 'Priya Nair',
     instructorAvatar: avatar2,
+    instructorBio: 'Helps teams turn raw numbers into decisions people act on.',
     deepDiveUrl: 'https://example.com/priya-nair',
     title: 'How Top Performers Manage Their Energy (Episode 1/3)',
     media: heroGif,
@@ -128,6 +132,7 @@ export const feedLessons: FeedLesson[] = [
   {
     instructor: 'Noor Haddad',
     instructorAvatar: avatar3,
+    instructorBio: 'Compliance lead who makes the rules easy to follow on shift.',
     deepDiveUrl: 'https://example.com/noor-haddad',
     title: 'What Counts as a Conflict of Interest',
     media: heroGif,
@@ -170,6 +175,7 @@ export const feedLessons: FeedLesson[] = [
   {
     instructor: 'Liam Walsh',
     instructorAvatar: avatar1,
+    instructorBio: 'Coaches first-time managers on delegation and trust.',
     deepDiveUrl: 'https://example.com/liam-walsh',
     title: "The Manager's Guide to Delegation",
     media: heroGif,

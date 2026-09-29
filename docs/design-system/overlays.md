@@ -1,13 +1,15 @@
 ---
 name: 5mins-overlays
-description: Dialog (Error/Warning/Info/Success types, 56px icons), Modal (720px, centered), and Side Drawer (right-anchored) for 5Mins.ai — shared scrim, close behavior, animations. Use for any overlay, confirmation, popup, panel, or drawer.
+description: Dialog (Error/Warning/Info/Success types, 56px icons), Modal (720px, centered), Side Drawer (right-anchored) and the mobile Bottom Sheet for 5Mins.ai — shared scrim, close behavior, animations. Use for any overlay, confirmation, popup, panel, drawer or mobile bottom sheet.
 ---
 
 # 5Mins.ai Overlay Component System
 
-Complete implementation guide for the three overlay components in the 5Mins.ai design system: **Dialog**, **Modal**, and **Side Drawer**. All three share a common overlay backdrop but serve distinct interaction purposes.
+Complete implementation guide for the overlay components in the 5Mins.ai design system: **Dialog**, **Modal** and **Side Drawer** on desktop, and the **Bottom Sheet** in the mobile app. All of them share a common overlay backdrop but serve distinct interaction purposes.
 
 > **Updated 2026-09-29 (verified against code):** Side Drawer prototype pointers now name the drawers that use `useOverlayA11y` + `CloseButton` (and where `.side-drawer__*` lives); the hand-rolled `.overlay-close` CSS is replaced by `<CloseButton />`; the Dialog React sample is now `ConfirmModal` + `Button`; Modal and Side Drawer samples use `CloseButton` and `Button`; Warning and Error filled labels are `--neutral-25`; buttons use `--radius-sm` (12px); `.dialog` max-width is 100%; shadows are `var(--shadow-l)`; the drawer backdrop is `var(--scrim)`; divider hex fallbacks removed; the Accessibility table reflects `ConfirmModal`'s `alertdialog` + `aria-label`.
+
+> **Updated 2026-09-29 (Bottom Sheet added, Figma Library `7479:106`):** the mobile Bottom Sheet is a shared component, `BottomSheet`, with a `--scrim` overlay, a long decelerating rise and drag-to-dismiss.
 
 > **Updated 2026-09-29 (aligned to prototype usage):** Dialogs carry a Close (×) button, and close on backdrop click and Escape, like Modals and Side Drawers.
 
@@ -120,6 +122,42 @@ Complete implementation guide for the three overlay components in the 5Mins.ai d
 |---|---|---|---|
 | Side Drawer | _to be mapped by engineering_ | | |
 
+### Bottom Sheet (mobile)
+
+**Intent:** shows more about the thing on screen, or a short set of actions, without leaving it: the sheet rises from the bottom edge and the screen behind stays in place, dimmed.
+
+**Use when**
+- The mobile app needs details or options for what is on screen (e.g. a lesson's instructor, skills, deep dive and resources behind "more").
+- The content is short enough to read in one sheet; long or multi-step work gets its own screen.
+
+**Don't use when**
+- On desktop → use a Modal or Side Drawer (above)
+- A destructive or blocking decision → use a Dialog ([doc](confirm-modal.md))
+
+**Do**
+- Use the shared `BottomSheet`; put your content in its children.
+- Mount it to open and unmount it in `onClose`, which fires after the slide-out completes.
+- Let every way out work: tapping the overlay, Escape, and dragging the handle down more than 80px.
+- Pause or freeze what is behind it (e.g. a playing lesson) while it is open.
+- Keep links from the sheet inside the app (an in-app web view), so back returns to the sheet.
+
+**Don't**
+- Don't hand-roll a sheet or its drag; reuse the component.
+- Don't use a raw overlay colour; it is `var(--scrim)`.
+- Don't animate it linearly or with a short ease; it rises on a long decelerating curve (see Animation).
+
+**Canonical spec:** fills its positioned parent (the phone screen). Overlay `var(--scrim)` (Neutral-900 at 50% in the dark mobile app). Sheet `var(--page-background)`, top corners `var(--radius-sm)` (12px), padding `0 var(--space-m) var(--space-ml)` (0 16px 20px), gap `var(--space-s)` (8px), max height 90%, content scrolls. Header: `var(--space-m)` (16px) padding around a 64 × 4px handle, `var(--neutral-500)`, radius `var(--radius-s)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `7479:106`.
+
+**Prototype:** `src/components/BottomSheet/BottomSheet.tsx` (default export)
+- `onClose` (called after the slide-out), `ariaLabel`, `children`, `className`
+- Used by the mobile lesson sheet (`src/pages/mobile/LessonSheet.tsx`)
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Bottom Sheet | _to be mapped by engineering_ | | |
+
 ## When to Use What
 
 | Component | Purpose | Use For |
@@ -127,8 +165,9 @@ Complete implementation guide for the three overlay components in the 5Mins.ai d
 | **Dialog** | Urgent decisions or confirmations | Delete confirmations, destructive action warnings, success/error feedback, simple yes/no decisions |
 | **Modal** | Focused tasks with moderate content | Form inputs, detail views, content previews, settings, multi-step flows |
 | **Side Drawer** | Extended workflows with scrollable content | Editing panels, detailed configurations, long forms, record details, bulk operations |
+| **Bottom Sheet** (mobile) | Details or options for what is on screen | Lesson details behind "more", short option lists |
 
-**Decision rule:** If the user needs to make a quick binary decision → Dialog. If they need to interact with a moderate amount of content → Modal. If they need a full working area that doesn't fully occlude the page → Side Drawer.
+**Decision rule:** If the user needs to make a quick binary decision → Dialog. If they need to interact with a moderate amount of content → Modal. If they need a full working area that doesn't fully occlude the page → Side Drawer. In the mobile app, details or options for what is on screen → Bottom Sheet.
 
 ---
 
@@ -740,6 +779,7 @@ export function SideDrawer({
 | **Dialog** | Scale up + fade (0.95 → 1, opacity 0 → 1) | 200ms | ease-out |
 | **Modal** | Scale up + fade (0.95 → 1, opacity 0 → 1) | 250ms | ease-out |
 | **Side Drawer** | Slide in from right (translateX(100%) → 0) | 300ms | cubic-bezier(0.32, 0.72, 0, 1) |
+| **Bottom Sheet** | Rise from bottom (translateY(100%) → 0); overlay fades with it | in 420ms, out 240ms | in cubic-bezier(0.32, 0.72, 0, 1), out cubic-bezier(0.4, 0, 1, 1); follows the finger while dragged |
 
 ```css
 /* Entry animations */

@@ -10,6 +10,8 @@ export interface PhoneFrameProps {
   children?: ReactNode
   /** Float the header over the content (Lesson-feed style transparent header) */
   overlayHeader?: boolean
+  /** Layer over the whole screen, footer included (e.g. a bottom sheet). */
+  overlay?: ReactNode
   /**
    * Prototype-scaffolding control: renders a "Back to desktop" pill on the stage,
    * outside the phone bezel, so it never appears to be part of the mobile app.
@@ -25,7 +27,7 @@ export interface PhoneFrameProps {
  * over everything on the screen whichever mode the desktop around it is in.
  * The stage outside the bezel is desktop chrome and follows the desktop theme.
  */
-function PhoneFrame({ header, footer, children, overlayHeader = false, onExit }: PhoneFrameProps) {
+function PhoneFrame({ header, footer, children, overlayHeader = false, overlay, onExit }: PhoneFrameProps) {
   return (
     <div className="m-phone-stage">
       {onExit ? (
@@ -41,6 +43,7 @@ function PhoneFrame({ header, footer, children, overlayHeader = false, onExit }:
           ) : null}
           <div className="m-phone__content">{children}</div>
           {footer ? <div className="m-phone__footer">{footer}</div> : null}
+          {overlay}
         </div>
       </div>
     </div>
