@@ -70,6 +70,9 @@
 }
 
 /* ── Clear button ── */
+/* 2px of padding takes the hit area to 24px (28px at L) without growing the field:
+   the matching negative margin keeps the row height the glyph's. Icon-only, so the
+   hover is a circle in --input-background-hover, never an opacity fade. */
 .search__clear {
   display: flex;
   align-items: center;
@@ -77,15 +80,19 @@
   flex-shrink: 0;
   background: transparent;
   border: none;
-  padding: 0;
+  border-radius: var(--radius-full);
+  padding: var(--space-xxs);
+  margin: calc(-1 * var(--space-xxs));
+  color: var(--text-secondary);
   cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
 }
 
 .search__clear:hover {
-  opacity: 0.7;
+  background: var(--input-background-hover);
+  color: var(--text-primary);
 }
 
 .search__clear:focus-visible {
   outline: 2px solid var(--primary-button-background);
-  border-radius: 4px;
 }

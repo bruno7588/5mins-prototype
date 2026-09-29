@@ -11,6 +11,8 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — light `11927:6338` / d
 
 > **Updated 2026-09-29 (verified against code):** the clear icon is `--text-secondary` in the Token Summary and CSS sketch (the sketch also now shows the built hover and the cyan focus ring); the Do / Don't no longer mentions an `onKeyDown` prop, which does not exist.
 
+> **Updated 2026-09-29 (clear button):** the clear (×) hover is a circular `--input-background-hover` fill with the icon moving to `--text-primary`, replacing the opacity fade; the hit area is 24px (28px at L), padded inside a negative margin so the field height is unchanged.
+
 > **Updated 2026-09-29 (aligned to prototype usage):** every call site in the prototype uses size **M**, including page-level searches (Programs header, course list, My Team toolbar), so the size guidance in "Do / Don't" now says M is the default everywhere and L is unused. "Code reality" now reflects that the active border already uses `--selected` and lists the built props.
 
 ## Usage
@@ -39,7 +41,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — light `11927:6338` / d
 - Don't wrap it in a `<form>` or add a submit button.
 - Don't change the font weight on focus or fill; it stays Regular 400.
 
-**Canonical spec:** size M: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), 18px search icon, 20px clear icon, text 14px / 400 / 1.5. Fill `--input-background` (`--input-background-hover` on hover); border `--border`, `--border-hover` on hover, `--selected` on focus. Search icon `--text-tertiary`, clear icon `--text-secondary`, placeholder `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11927:6338` / dark `697:33529`.
+**Canonical spec:** size M: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), 18px search icon, 20px clear icon, text 14px / 400 / 1.5. Fill `--input-background` (`--input-background-hover` on hover); border `--border`, `--border-hover` on hover, `--selected` on focus. Search icon `--text-tertiary`, clear icon `--text-secondary` (`--text-primary` on hover, with a circular `--input-background-hover` fill; 24px hit area, 28px at L), placeholder `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11927:6338` / dark `697:33529`.
 
 **Prototype:** `src/components/Search/Search.tsx` (default export)
 - `value`, `onChange(value)` (required), `placeholder` (default "Search")
@@ -125,7 +127,7 @@ Font:           Poppins 16px / 1.5  (Regular 400)
 - **SearchIcon** — Iconsax `SearchNormal1` Outline, `--text-tertiary` (18px M / 20px L)
 - **Placeholder** — Regular 400, `--text-disabled`
 - **Value text** — Regular 400, `--text-primary`, `flex: 1`
-- **Clear** — `IoCloseOutline` (io5 set, same glyph as dismissible badges), 20px M / 24px L, `--text-secondary`, calls `onClear`. Note it is one step stronger than the leading SearchIcon: the clear is an action, the search icon is decoration.
+- **Clear** — `IoCloseOutline` (io5 set, same glyph as dismissible badges), 20px M / 24px L in a 24px / 28px circular hit area, `--text-secondary` (hover `--text-primary` on an `--input-background-hover` circle), calls `onClear`. Note it is one step stronger than the leading SearchIcon: the clear is an action, the search icon is decoration.
 
 ---
 
@@ -256,6 +258,8 @@ export const Search: React.FC<SearchProps> = ({
 .search__input::placeholder { color: var(--text-disabled); }
 
 /* ── Clear button ── */
+/* 24px hit area (28px at L): 2px padding, cancelled by a -2px margin so the
+   field height doesn't grow. Icon-only, so a circular hover; never opacity. */
 .search__clear {
   display: flex;
   align-items: center;
@@ -263,14 +267,19 @@ export const Search: React.FC<SearchProps> = ({
   flex-shrink: 0;
   background: transparent;
   border: none;
-  padding: 0;
+  border-radius: var(--radius-full);
+  padding: var(--space-xxs);
+  margin: calc(-1 * var(--space-xxs));
+  color: var(--text-secondary); /* the icon uses color="currentColor" */
   cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
 }
-/* glyph colour is set on the icon: color="var(--text-secondary)" */
-.search__clear:hover { opacity: 0.7; }
+.search__clear:hover {
+  background: var(--input-background-hover);
+  color: var(--text-primary);
+}
 .search__clear:focus-visible {
   outline: 2px solid var(--primary-button-background);
-  border-radius: var(--radius-xs);
 }
 ```
 

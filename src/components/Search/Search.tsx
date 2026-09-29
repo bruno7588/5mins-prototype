@@ -75,7 +75,7 @@ function Search({
         >
           <Add
             size={clearSize}
-            color="var(--text-secondary)"
+            color="currentColor"
             variant="Linear"
             style={{ transform: 'rotate(45deg)' }}
           />
