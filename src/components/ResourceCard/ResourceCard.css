@@ -125,3 +125,9 @@
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
+
+/* Learner cards: the whole card downloads or opens (the icon stays the keyboard
+   target). */
+.resource-card--clickable {
+  cursor: pointer;
+}

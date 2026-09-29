@@ -65,9 +65,31 @@ function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled 
   const isLink = type === 'link'
   const openLabel = isLink ? 'Open link' : 'Download'
   const Icon = isLink ? ExportSquare : ImportCurve
+  /* Learner cards open from anywhere on the card. Authoring cards (with Remove) keep
+     icon-only actions, so a tap meant for the row never downloads by accident. The
+     icon button stays the keyboard and screen-reader target. */
+  const clickable = !!onOpen && !openDisabled && !onRemove
+
+  const openButton = (
+    <button
+      type="button"
+      className={`resource-card__open${openDisabled ? ' ui-disabled' : ''}`}
+      aria-label={`${openLabel} ${title}`}
+      aria-disabled={openDisabled || undefined}
+      onClick={(e) => {
+        e.stopPropagation()
+        if (!openDisabled) onOpen?.()
+      }}
+    >
+      <Icon size={20} color="currentColor" variant="Linear" />
+    </button>
+  )
 
   return (
-    <div className={`resource-card resource-card--${device}${className ? ` ${className}` : ''}`}>
+    <div
+      className={`resource-card resource-card--${device}${clickable ? ' resource-card--clickable' : ''}${className ? ` ${className}` : ''}`}
+      onClick={clickable ? onOpen : undefined}
+    >
       {isLink ? (
         <span className="resource-card__thumb resource-card__thumb--link" aria-hidden="true">
           <img src={linkIcon} width={24} height={24} alt="" />
@@ -80,17 +102,14 @@ function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled 
         <p className="resource-card__meta">{resourceMeta(type, size)}</p>
       </div>
       <div className="resource-card__actions">
-        <Tooltip text={openLabel} position="Top" icon={false}>
-          <button
-            type="button"
-            className={`resource-card__open${openDisabled ? ' ui-disabled' : ''}`}
-            aria-label={`${openLabel} ${title}`}
-            aria-disabled={openDisabled || undefined}
-            onClick={openDisabled ? undefined : onOpen}
-          >
-            <Icon size={20} color="currentColor" variant="Linear" />
-          </button>
-        </Tooltip>
+        {/* No tooltip on mobile: there is no hover on a phone to reveal it. */}
+        {device === 'mobile' ? (
+          openButton
+        ) : (
+          <Tooltip text={openLabel} position="Top" icon={false}>
+            {openButton}
+          </Tooltip>
+        )}
         {onRemove && (
           <Tooltip text="Remove" position="Top" alignment="End" icon={false}>
             <button

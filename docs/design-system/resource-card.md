@@ -11,6 +11,8 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel, Po
 
 > **Updated 2026-09-29 (aligned to prototype usage):** the Mobile type tile is 40px (as in the code and the Anatomy table), not 56px; the code sample section is renamed "Example" so this doc has one Usage section.
 
+> **Updated 2026-09-29 (learner cards):** the whole card downloads or opens on learner surfaces; the mobile card drops the tooltip, since there is no hover on a phone.
+
 ## Usage
 
 **Intent:** show one course or lesson resource (a file or an external link) with its type, name and size, and let the learner download or open it in one tap.
@@ -25,6 +27,7 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel, Po
 - You are picking or uploading a file → use `ResourceForm` and its File uploader, which reuses the same tile artwork (`FILE_THUMBS`)
 
 **Do**
+- On learner surfaces (no `onRemove`), let the whole card download or open: it does by default when `onOpen` is set. The icon button stays the keyboard and screen-reader target.
 - Set `type` to `pdf`, `word`, `excel`, `powerpoint`, `image` or `link`; the tile, meta line and action icon follow from it.
 - Pass `size` in bytes for files so the meta reads "PDF • 1.1 MB"; leave it off for links.
 - Use `device="web"` on admin and learner web pages, and `device="mobile"` in the app player (the lesson feed).
@@ -130,7 +133,8 @@ File tiles are finished artwork with their colours baked in; don't recolour them
 
 - **Files:** `ImportCurve` (the product's one download icon, see `iconography.md`).
 - **Links:** `ExportSquare`, opening in a new tab.
-- Hovering the icon shows the DS Tooltip (`Position=Top, Alignment=Center, Icon=False`) reading "Download" or "Open link", as in the Web/Admin Hover variant.
+- Hovering the icon shows the DS Tooltip (`Position=Top, Alignment=Center, Icon=False`) reading "Download" or "Open link", as in the Web/Admin Hover variant. The mobile card (`device="mobile"`) has no tooltip: there is no hover on a phone.
+- Learner cards (no `onRemove`) are clickable end to end; authoring cards with Remove keep icon-only actions so a tap on the row never downloads by accident.
 - The button has a visible `:focus-visible` ring (`--primary-button-background`) and an `aria-label` of "Download <title>" or "Open link <title>".
 - When there's nothing to download (e.g. an admin's file isn't in the session any more), set `openDisabled`: the icon greys out but stays in place, so every card keeps the same shape.
 

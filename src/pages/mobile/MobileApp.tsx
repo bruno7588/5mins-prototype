@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ImportCurve } from 'iconsax-react'
 import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import MobileTopNav from '@/components/mobile/TopNav/TopNav'
 import MobileTabNav, { type MobileTab } from '@/components/mobile/TabNav/TabNav'
 import { getAllPrograms } from '@/pages/programs/programStore'
@@ -31,6 +33,7 @@ function MobileApp() {
   const [sheetIndex, setSheetIndex] = useState<number | null>(null)
   /** A link from the sheet, open in the in-app web view; back returns to the sheet. */
   const [webView, setWebView] = useState<{ url: string; kind: 'deep-dive' | 'resource' } | null>(null)
+  const { toasts, show: showToast } = useToast()
 
   const openProgram = openProgramId
     ? getAllPrograms().find((p) => p.id === openProgramId)
@@ -96,13 +99,18 @@ function MobileApp() {
       header={header}
       overlayHeader={feedIndex !== null && !webView}
       overlay={
-        sheetIndex !== null && !webView ? (
-          <LessonSheet
-            lesson={feedLessons[sheetIndex]}
-            onClose={() => setSheetIndex(null)}
-            onOpenLink={(url, kind) => setWebView({ url, kind })}
-          />
-        ) : null
+        <>
+          {sheetIndex !== null ? (
+            <LessonSheet
+              hidden={!!webView}
+              lesson={feedLessons[sheetIndex]}
+              onClose={() => setSheetIndex(null)}
+              onOpenLink={(url, kind) => setWebView({ url, kind })}
+              onDownload={() => showToast('success', 'Downloading...', undefined, ImportCurve)}
+            />
+          ) : null}
+          <ToastContainer toasts={toasts} />
+        </>
       }
       footer={
         <MobileTabNav

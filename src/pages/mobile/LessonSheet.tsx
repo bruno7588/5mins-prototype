@@ -11,17 +11,21 @@ interface LessonSheetProps {
   onClose: () => void
   /** Opens a link in the in-app web view; `kind` picks the screen title. */
   onOpenLink: (url: string, kind: 'deep-dive' | 'resource') => void
+  /** A file resource was tapped; the prototype confirms with a toast. */
+  onDownload: (title: string) => void
+  /** A web view it opened is on top: stay open, out of sight. */
+  hidden?: boolean
 }
 
 /**
  * The lesson sheet behind "more" (Figma Lessons-Feed 10752:24652), in the shared
  * BottomSheet: instructor, the skill it builds, Take a deep dive and Resources.
  */
-function LessonSheet({ lesson, onClose, onOpenLink }: LessonSheetProps) {
+function LessonSheet({ lesson, onClose, onOpenLink, onDownload, hidden }: LessonSheetProps) {
   const deepDiveLabel = lesson.deepDiveUrl?.replace(/^https?:\/\/(www\.)?/, '')
 
   return (
-    <BottomSheet onClose={onClose} ariaLabel={`About ${lesson.title}`}>
+    <BottomSheet onClose={onClose} ariaLabel={`About ${lesson.title}`} hidden={hidden}>
       <div className="m-lsheet">
         <div className="m-lsheet__about">
           <div className="m-lsheet__instructor">
@@ -59,8 +63,7 @@ function LessonSheet({ lesson, onClose, onOpenLink }: LessonSheetProps) {
                     type={r.type}
                     title={r.title}
                     size={r.size}
-                    onOpen={r.url ? () => onOpenLink(r.url!, 'resource') : undefined}
-                    openDisabled={!r.url}
+                    onOpen={() => (r.url ? onOpenLink(r.url, 'resource') : onDownload(r.title))}
                   />
                 ))}
               </section>

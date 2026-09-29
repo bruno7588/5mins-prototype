@@ -126,9 +126,9 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — Alert/Callout light `n
 - Don't shorten the 5s auto-dismiss; long messages need the reading time
 - Don't hand-roll a toast or recolour the fills
 
-**Canonical spec:** padding `var(--space-sm) var(--space-m)` (12px 16px); radius `var(--radius-sm)` (12px); gap `var(--space-s)` (8px); label 16px Bold `var(--neutral-25)` on every fill; icon 24px; fills `var(--success-500)`, `var(--danger-500)`, `var(--warning-600)`, `var(--neutral-600)` (info); stacked bottom centre, `var(--space-l)` (24px) from the bottom, above drawers; 5s including a 300ms fade. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5045:14119` (single node, no light/dark pair).
+**Canonical spec:** padding `var(--space-sm) var(--space-m)` (12px 16px); radius `var(--radius-sm)` (12px); gap `var(--space-s)` (8px); label 16px Bold `var(--neutral-25)` on every fill; icon 24px; fills `var(--success-500)`, `var(--danger-500)`, `var(--warning-600)`, `var(--neutral-600)` (info); stacked bottom centre, `var(--space-l)` (24px) from the bottom, above drawers; 5s including a 300ms fade. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5045:14119` (single node, no light/dark pair). **Mobile app:** full width with `var(--space-m)` (16px) sides, `var(--space-ml)` (20px) from the bottom edge, label wraps (Figma Lessons-Feed `10758:36883`); the phone frame scopes this, so pages call Toast as usual.
 
-**Prototype:** `src/components/Toast/Toast.tsx`
+**Prototype:** `src/components/Toast/Toast.tsx`. `show(type, message, action?, icon?)`: pass an Iconsax icon to replace the type icon when the action has its own glyph, e.g. `show('success', 'Downloading...', undefined, ImportCurve)`.
 - `useToast()` returns `{ toasts, show, dismiss }`
 - `show(type: 'success' | 'error' | 'warning' | 'info', message, action?)`
 - `<ToastContainer toasts icon? onDismiss? />` (`icon` defaults to true)

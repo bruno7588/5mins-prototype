@@ -18,6 +18,8 @@ export interface ToastItem {
   type: ToastType
   message: string
   action?: ToastAction
+  /** Replaces the type icon, e.g. a download glyph on a "Downloading..." toast. */
+  icon?: typeof TickCircle
 }
 
 interface ToastEntry extends ToastItem {
@@ -43,16 +45,17 @@ const FADE_DURATION_MS = 300
 /* --- Single toast pill --- */
 
 function ToastPill({
-  type, message, fading, icon, action, onAction,
+  type, message, fading, icon, customIcon, action, onAction,
 }: {
   type: ToastType
   message: string
   fading: boolean
   icon: boolean
+  customIcon?: typeof TickCircle
   action?: ToastAction
   onAction?: () => void
 }) {
-  const Icon = ICON_MAP[type]
+  const Icon = customIcon ?? ICON_MAP[type]
   return (
     <div
       className={`toast toast--${type}${fading ? ' toast--fading' : ''}`}
@@ -84,9 +87,9 @@ export function useToast() {
   const [toasts, setToasts] = useState<ToastEntry[]>([])
   const timersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map())
 
-  function show(type: ToastType, message: string, action?: ToastAction) {
+  function show(type: ToastType, message: string, action?: ToastAction, icon?: typeof TickCircle) {
     const id = ++globalIdCounter
-    setToasts(prev => [...prev, { id, type, message, action, fading: false }])
+    setToasts(prev => [...prev, { id, type, message, action, icon, fading: false }])
 
     const fadeTimer = setTimeout(() => {
       setToasts(prev => prev.map(t => t.id === id ? { ...t, fading: true } : t))
@@ -139,6 +142,7 @@ export default function ToastContainer({ toasts, icon = true, onDismiss }: Toast
           message={toast.message}
           fading={toast.fading}
           icon={icon}
+          customIcon={toast.icon}
           action={toast.action}
           onAction={() => onDismiss?.(toast.id)}
         />

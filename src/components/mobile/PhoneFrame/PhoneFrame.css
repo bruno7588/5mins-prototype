@@ -84,3 +84,21 @@
 .m-phone__footer {
   flex-shrink: 0;
 }
+
+/* Toasts inside the phone (Figma Lessons-Feed 10758:36883): full width with 16px
+   sides, 20px off the bottom edge, anchored to the screen instead of the browser
+   window the desktop container is fixed to. Long labels wrap. */
+.m-phone__screen .toast-container {
+  position: absolute;
+  left: var(--space-m);
+  right: var(--space-m);
+  bottom: var(--space-ml);
+  transform: none;
+  align-items: stretch;
+}
+
+.m-phone__screen .toast {
+  width: auto;
+  white-space: normal;
+  text-align: center;
+}

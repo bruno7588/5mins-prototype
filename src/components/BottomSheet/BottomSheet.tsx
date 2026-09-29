@@ -11,6 +11,9 @@ interface BottomSheetProps {
   onClose: () => void
   /** Names the dialog for assistive tech. */
   ariaLabel: string
+  /** Keeps the sheet open but out of sight (e.g. while a screen it opened sits on
+      top), so it comes back exactly as it was: no replayed animation, same scroll. */
+  hidden?: boolean
   children: ReactNode
   className?: string
 }
@@ -22,7 +25,7 @@ interface BottomSheetProps {
  * dragging the handle down closes it. It fills its nearest positioned ancestor
  * (the phone screen in the mobile prototype).
  */
-function BottomSheet({ onClose, ariaLabel, children, className }: BottomSheetProps) {
+function BottomSheet({ onClose, ariaLabel, hidden = false, children, className }: BottomSheetProps) {
   const [shown, setShown] = useState(false)
   const [dragY, setDragY] = useState(0)
   const dragStart = useRef<number | null>(null)
@@ -48,7 +51,7 @@ function BottomSheet({ onClose, ariaLabel, children, className }: BottomSheetPro
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
+      if (e.key === 'Escape' && !hidden) close()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -72,7 +75,10 @@ function BottomSheet({ onClose, ariaLabel, children, className }: BottomSheetPro
   const dragging = dragY > 0 && dragStart.current !== null
 
   return (
-    <div className={`bottom-sheet${shown ? ' bottom-sheet--shown' : ''}${className ? ` ${className}` : ''}`}>
+    <div
+      className={`bottom-sheet${shown ? ' bottom-sheet--shown' : ''}${className ? ` ${className}` : ''}`}
+      hidden={hidden}
+    >
       <button type="button" className="bottom-sheet__overlay" aria-label="Close" tabIndex={-1} onClick={close} />
       <div
         ref={sheetRef}
