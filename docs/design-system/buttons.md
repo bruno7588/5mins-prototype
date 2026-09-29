@@ -7,7 +7,11 @@ description: Button component system for 5Mins.ai — Filled, Outlined, Outlined
 
 Complete button implementation guide for the 5Mins.ai micro-learning platform with all variants, states, sizes, and accessibility patterns.
 
-Spec source: Figma Library — parent frame `node 5453:38273` (dark board `10825:3269`, light board `12016:14084`), re-verified 2026-08-04. All colors are semantic tokens; **both light- and dark-mode resolutions are listed** because the two modes now use different state ladders.
+Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — parent frame `node 5453:38273` (dark board `10825:3269`, light board `12016:14084`), re-verified 2026-08-04. All colors are semantic tokens; **both light- and dark-mode resolutions are listed** because the two modes now use different state ladders.
+
+> **Updated 2026-09-29 (verified against code):** Cancel position split by container (dialogs: Cancel first; side-drawer footers: primary first); the "commit label differs from the opener" rule softened to a recommendation; the icon-only accessibility example no longer uses `<Button>` (it has no circular icon-only shape) and passes `color`.
+
+> **Updated 2026-09-29 (aligned to prototype usage):** Cancel is **Outlined-2**, not Outlined; modal and dialog footers use **Medium**, not Large.
 
 > **Updated 2026-08-04:** major rework of both modes —
 > 1. **Primary filled ladder is now mode-specific.** Light darkened one step (bg Primary-**700**, was 600); dark uses Primary-**500** with a **dark label** (`Neutral-800`) and goes **lighter on hover** (Primary-400).
@@ -16,6 +20,57 @@ Spec source: Figma Library — parent frame `node 5453:38273` (dark board `10825
 > 4. **AI gradients are per-state and per-mode**: the gradient start follows the primary filled ladder, the end is always Blaze `#8158EC`. AI hover gains a cyan border + purple glow. AI-Outlined lost its resting wash (wash only on hover, at 24%), and its 1px stroke is a **gradient**, not a flat cyan (corrected 2026-08-11 - see AI-Outlined below).
 > 5. The semantic families (Danger, Warning, Success) all darken on hover in both modes — Warning and Success were realigned to the Library variables 2026-08-26. Only the primary filled button lightens on dark hover.
 > 6. Coverage: Loading now exists for the semantic-outlined families; semantic-text variants (Danger/Warning/Success-text) are first-class.
+
+## Usage
+
+**Intent:** triggers a single action the user chooses to take, with the variant telling them how important or how risky that action is.
+
+**Use when**
+- The user commits, saves, submits or starts something (filled primary).
+- A secondary action sits beside the primary one, such as Save Draft or Add Content (outlined).
+- The user backs out of a dialog, modal or drawer (Cancel, outlined-2).
+- The action destroys or removes something (`semantic="danger"`), or is a Hugo AI action (`semantic="ai"`).
+
+**Don't use when**
+- The action applies to one row of a table or list → use the row kebab menu ([doc](row-actions-menu.md))
+- The action applies to the rows the user has selected → use the bulk action bar and its `.bulk-bar-btn` children ([doc](bulk-action-bar.md))
+- The control closes an overlay → use `CloseButton` ([doc](overlays.md))
+
+**Do**
+- Use the shared component: `import Button from '@/components/Button/Button'`.
+- Keep Filled for the one most important action in the view.
+- Pair Cancel as `variant="outlined-2"`. In dialogs Cancel comes before the filled or danger commit button; in side-drawer footers the filled primary comes first, then Cancel.
+- Use `variant="outlined"` for secondary actions (Save Draft, Add Content), not for Cancel.
+- Use `semantic="danger"` for the commit button of a destructive confirmation.
+- Keep modal, dialog and drawer footers at the default Medium size; use `size="sm"` in table rows and compact lists.
+- Put icons in the leading `icon` slot: Iconsax at 16/20/24px with `color="currentColor"`.
+- Keep `trailingIcon` for disclosure controls whose Figma shows a trailing chevron.
+- Show async work with `loading`; add `loadingLabel` ("Marking…", "Generating…") when the wait is long enough that a bare spinner leaves the user guessing.
+- Where it helps, name what the commit button acts on (the count or the person), so it reads differently from the button that opened the dialog.
+- Write labels in Title Case ("Save Changes", "Delete Report").
+- Give an icon-only button an `aria-label`.
+
+**Don't**
+- Don't hand-roll a `<button>` with page-level classes that copy the button styles.
+- Don't fake a loading state with a disabled button and your own spinner; use `loading`.
+- Don't use the legacy global `.btn-primary` / `.btn-outlined` classes in new work.
+- Don't use Large buttons in modal or dialog footers.
+- Don't use `--text-button-foreground` for semantic filled labels; they stay `--neutral-25` in both modes.
+- Don't use `--primary-500` as text on white, and don't write raw hex or px values; use the tokens below.
+
+**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12016:14084` / dark `10825:3269` (parent frame `5453:38273`).
+
+**Prototype:** `src/components/Button/Button.tsx`
+- `variant`: `filled` (default) · `outlined` · `outlined-2` · `text` · `link`
+- `semantic`: `primary` (default) · `danger` · `warning` · `success` · `ai`
+- `size`: `sm` · `md` (default) · `lg`
+- `icon` (leading) · `trailingIcon` (disclosure only) · `loading` · `loadingLabel`
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Button | _to be mapped by engineering_ | | |
 
 ## Button Architecture
 
@@ -432,8 +487,8 @@ The component composes one appearance class from `(semantic, variant)` — `ds-b
 ### Variant Selection
 
 - **Filled** — primary CTA, form submits, the one most-important action on the page
-- **Outlined** — secondary actions, Cancel (paired with Filled)
-- **Outlined-2** — tertiary/neutral actions that shouldn't read as brand-colored at rest
+- **Outlined** — secondary actions (Save Draft, Download, Add Content), not Cancel
+- **Outlined-2** — Cancel (paired with Filled, including every dialog footer) and other neutral actions that shouldn't read as brand-coloured at rest
 - **Text** — inline, subtle actions
 - **Link** — navigation-like actions within content
 
@@ -443,13 +498,17 @@ The component composes one appearance class from `(semantic, variant)` — `ds-b
 
 ### Size Selection
 
-**Large:** hero sections, primary CTAs, modal footers · **Medium:** standard (most common) · **Small:** tables, compact UIs
+**Large:** hero sections, primary CTAs · **Medium:** standard (most common), including modal and dialog footers · **Small:** tables, compact UIs
 
 ## Accessibility
 
 ```tsx
 <Button>Save Changes</Button>                              // always descriptive, Title Case
-<Button icon={<Trash />} aria-label="Delete item" />       // icon-only needs aria-label
+// Icon-only: not <Button> (it has no circular shape). Use a plain button with a
+// circular var(--radius-full) hover, an aria-label, and an explicit icon colour.
+<button type="button" className="page-icon-btn" aria-label="Delete Item">
+  <Trash size={20} color="currentColor" />
+</button>
 <Button loading aria-busy="true">Submitting…</Button>
 ```
 
@@ -463,11 +522,11 @@ Contrast: the light filled base darkened to Primary-700 and the dark filled base
 
 ```tsx
 {/* Primary + secondary pair */}
-<Button variant="outlined">Cancel</Button>
+<Button variant="outlined-2">Cancel</Button>
 <Button variant="filled">Save Changes</Button>
 
 {/* Destructive confirmation */}
-<Button variant="outlined">Cancel</Button>
+<Button variant="outlined-2">Cancel</Button>
 <Button semantic="danger">Delete Course</Button>
 
 {/* AI action */}
@@ -480,7 +539,7 @@ Contrast: the light filled base darkened to Primary-700 and the dark filled base
 |--------|---------|----------|------|
 | Main CTA | Filled | Primary | Large |
 | Form submit | Filled | Primary | Medium |
-| Cancel | Outlined | Primary | Medium |
+| Cancel | Outlined-2 | Primary | Medium |
 | Delete | Filled | Danger | Medium |
 | Neutral tertiary | Outlined-2 | Primary | Medium |
 | Inline link | Link | Primary | — |

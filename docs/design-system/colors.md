@@ -14,7 +14,7 @@ Two layers:
 1. **Raw palettes** (sections 1–3) — mode-independent hex scales. Never reference these directly in component CSS except where a semantic token doesn't exist yet.
 2. **Semantic tokens** (sections 4–5) — express *intent* (page background, primary text, selected state) and carry a **dark-mode and light-mode value each**. Always prefer these: `--text-primary` over `--neutral-800`, `--cards-background` over `--neutral-0`, `--border` over `--neutral-200`.
 
-The prototype currently ships **light mode only** — light-mode values live in `src/styles/tokens.css` `:root`; the dark-mode column is the spec for a future `[data-theme="dark"]` override block (included in section 6).
+The prototype ships **light and dark mode**: light values live in `src/styles/tokens.css` `:root`, dark values in its `[data-theme="dark"]` block (section 6).
 
 ---
 
@@ -435,8 +435,10 @@ Code-only tokens that intentionally extend this spec (keep them). Dark-mode valu
 
 | Token | Light | Dark | Purpose |
 |---|---|---|---|
-| `--selected-tint` | `rgba(237, 163, 13, 0.15)` | `rgba(255, 187, 56, 0.15)` | Selected-row / highlight fill derived from `--selected` |
+| `--selected-tint` | `rgba(237, 163, 13, 0.15)` | `rgba(255, 187, 56, 0.15)` | Highlight fill derived from `--selected` (table rows use `--selected-row`) |
 | `--selected-tint-hover` | `rgba(237, 163, 13, 0.24)` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-tint` rows |
+| `--selected-row` | `rgba(255, 187, 56, 0.16)` | `rgba(255, 187, 56, 0.16)` | Figma `Selected-row`: selected table row fill and border (Secondary-500 @ 16%, both modes) |
+| `--selected-row-hover` | `rgba(255, 187, 56, 0.24)` | `rgba(255, 187, 56, 0.24)` | Figma `Selected-row-hover`: selected row on hover (Secondary-500 @ 24%) |
 | `--selected-fill` | `#FCF1DB` | `rgba(255, 187, 56, 0.16)` | Opaque equivalent of `--selected-tint` for sticky cells over scrolling content |
 | `--selected-fill-hover` | `#FDECC5` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-fill` / selected rows |
 | `--control-selected` | `var(--secondary-600)` | `var(--secondary-500)` | Radio/checkbox selected amber, per selection-controls.md |

@@ -27,6 +27,134 @@ All colors are semantic tokens that resolve per mode (see `colors.md`).
 
 Spec source (verified 2026-07-03): Chips light `11918:4167` / dark `5162:28510` · Content Switcher light `8953:10123` + item `11908:5278` / dark `7128:23859` + `8497:24186` · Tabs light `11916:6696` + item `11490:8863` / dark `8497:24855` + `1939:18281`.
 
+> **Updated 2026-09-29 (aligned to prototype usage):** Chip props, radius, selected border and the two-icon case now match `src/components/Chip`; the Content Switcher selected label is Bold and the component has no icon slot. There is no shared Tabs component; pages build their own tab bars to this spec.
+
+> **Updated 2026-09-29 (verified against code):** a second level inside a tabbed page is chips only (a Content Switcher stays allowed for two views of one object in a drawer); tab focus ring is cyan `--primary-button-background`; the Tabs prototype examples now say which is compliant (Roles) and which drifts (Course details); tab gap confirmed at 16px.
+
+---
+
+## Usage
+
+### Chip
+
+**Intent:** a small pill the admin presses to filter or pick an option, or that stands for a chosen value they can remove.
+
+**Use when**
+- Filtering a list by category, single or multi-select (e.g. error categories in a bulk upload, the question picker in assessment results)
+- Picking one mode from a short set inside a form (e.g. All / People / Cohort when enrolling)
+- Showing chosen people or filter values that can be removed with a ×
+- Filtering inside a page that already has a tab bar, instead of nesting a second tab bar
+
+**Don't use when**
+- Switching between exclusive views of the same content → Content Switcher (this doc)
+- Moving between sibling sections of a page → Tabs (this doc)
+- Navigating to another page → sidebar or buttons ([doc](navigation.md))
+- Showing a read-only status or a value that is only ever read and removed → Badge ([doc](badges.md))
+
+**Do**
+- Use `selected` + `onClick` to toggle; the component supplies `role="button"`, `aria-pressed` and Enter/Space handling
+- Pass `iconRight` and `onDismiss` together: `iconRight` draws the ×, `onDismiss` makes it act
+- Use `iconLeft` for a person; `customIconLeft` for any other 16px icon
+- Use `disabled` when an option is unavailable, not merely unselected
+- Keep labels short, 1 to 3 words
+
+**Don't**
+- Don't nest a tab bar inside an already tabbed page; filter with chips
+- Don't use chips for navigation
+- Don't use both a left icon and `iconRight`, except on a person or filter chip that also needs its × (code extension, not in the Library)
+- Don't hardcode hover styles inline; CSS `:hover` handles it
+- Don't change the radius; it is always `var(--radius-full)`
+
+**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px), `var(--space-ssm)` (10px) on the icon side; radius `var(--radius-full)`; gap `var(--space-xs)` (4px) with an icon; border 1px `var(--border-elevated)`, hover `var(--border-hover)` on `var(--page-background-hover)`; selected fill `var(--secondary-500)` with `var(--text-on-selected)` Bold; label 14px Regular `var(--text-secondary)`; icons 16px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11918:4167` / dark `5162:28510`.
+
+**Prototype:** `src/components/Chip/Chip.tsx`
+- `label` (required), `selected`, `disabled`
+- `onClick` makes it a keyboard-operable toggle
+- `iconLeft` (user icon) or `customIconLeft`; `iconRight` + `onDismiss` for the ×
+- `variant="warning"` (warning border; not used on any page yet)
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Chip | _to be mapped by engineering_ | | |
+
+### Content Switcher
+
+**Intent:** a segmented control that switches between 2 to 5 exclusive views of the same content, read as one connected control.
+
+**Use when**
+- Pivoting the same results (e.g. By Assessment / By Learner)
+- Switching the axis you browse by (e.g. Functions / Skills)
+- Showing two views of one object inside a drawer or panel, especially over a page that already has its own tab bar
+
+**Don't use when**
+- Filtering by category or picking several values → Chip (this doc)
+- Moving between sibling sections of a page → Tabs (this doc)
+- Walking through steps that must happen in order → a stepped flow with footer buttons
+
+**Do**
+- Use the shared `ContentSwitcher` with `items`, `activeKey` and `onChange`, and give it an `ariaLabel`
+- Put a count in the label when needed, e.g. "Questions (3)"; there is no counter slot
+- Keep the sliding selection pill; it already respects reduced motion
+- Keep labels short, one word where possible
+
+**Don't**
+- Don't add icons; the shared component has no icon slot
+- Don't use it for sibling page sections
+
+**Canonical spec:** track `var(--input-background)`, padding and gap `var(--space-xs)` (4px), radius `var(--radius-sm)` (12px); item padding `var(--space-xss) var(--space-sm)` (6px 12px), radius `var(--radius-s)` (8px), 14px Regular `var(--text-secondary)`; unselected hover `var(--input-background-hover)`; selected `var(--secondary-500)` with `var(--text-on-selected)` Bold. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `8953:10123` + item `11908:5278` / dark `7128:23859` + `8497:24186`.
+
+**Prototype:** `src/components/ContentSwitcher/ContentSwitcher.tsx`
+- `items: { key, label, disabled? }[]`, `activeKey`, `onChange(key)`
+- `ariaLabel` labels the tablist
+- Renders `role="tablist"` with `role="tab"` buttons; the selected pill slides via Framer Motion `layoutId`
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Content Switcher | _to be mapped by engineering_ | | |
+
+### Tabs
+
+**Intent:** an underlined bar that moves between sibling sections of one page or object.
+
+**Use when**
+- Splitting a page into sibling sections (e.g. 5Mins Roles / Company Roles, the sections of a course)
+- Showing a count beside a section label, when the count is genuinely informative
+
+**Don't use when**
+- Filtering a list → Chip (this doc)
+- Adding a second level inside a page that already has tabs → Chip (this doc)
+- Switching views of the same data → Content Switcher (this doc)
+- Navigating between unrelated pages → sidebar ([doc](navigation.md))
+
+**Do**
+- Mark up with `role="tablist"`, `role="tab"` and `aria-selected`
+- Show the selected tab with a 2px `var(--selected)` indicator and a Bold `var(--text-primary)` label; others Medium `var(--text-secondary)`, `var(--text-primary)` on hover
+- Let CSS `:hover` drive the hover state
+- Give each tab a visible `:focus-visible` outline: `2px solid var(--primary-button-background)`, 2px offset (the same cyan ring Chip and ContentSwitcher use)
+- Add a 1px `var(--border)` divider in the parent if the panel needs separating
+- Select the first tab on mount unless the URL or saved state says otherwise
+- Keep labels to 1 or 2 words, 3 at most
+
+**Don't**
+- Don't nest tabs inside tabs
+- Don't render more than about 6 tabs in a row; use a dropdown or secondary filter, or split the view
+- Don't change the indicator colour or thickness, and never hide it on the selected tab
+- Don't put tabs and chips in the same row
+
+**Canonical spec:** label 14px, Medium (500) unselected / Bold (700) selected; indicator 2px `var(--selected)` (#EDA30D light / #FFBB38 dark); label to indicator gap `var(--space-xs)` (4px); gap between tabs `var(--space-m)` (16px); counter pill `var(--input-background)`, radius `var(--radius-full)`, text `var(--text-tertiary)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11916:6696` + item `11490:8863` / dark `8497:24855` + `1939:18281`.
+
+**Prototype:** no shared component. Each page builds its own bar with a page-prefixed class, an `--active` modifier and an `::after` indicator. Reference: `src/pages/roles/Roles.tsx` (`.roles-header__tab`): `--selected` indicator, 16px tab gap, cyan focus ring; its one drift is an 8px label-to-indicator gap (spec 4px). `src/pages/your-courses/CourseDetails.tsx` (`.cd-tab`) drifts: `.cd-tab-count` text is `--text-secondary` (spec `--text-tertiary`) and `.cd-tab` has no `:focus-visible` style; don't copy it.
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Tabs | _to be mapped by engineering_ | | |
+
 ---
 
 # Part 1: Chips Component
@@ -65,8 +193,8 @@ All values use 5Mins.ai design tokens.
   that holds an icon, which insets to `10px` (`--ssm`). A glyph carries its own optical
   margin, so an equal 12px reads wider beside an icon than beside a word.
 - **Gap:** `4px` (`--xs`) whenever an icon is present
-- **Icons:** 16 × 16 px, left or right (never both)
-- **Border radius:** `24px` (fully rounded pill)
+- **Icons:** 16 × 16 px, left or right; both only for a person chip with a leading icon and a trailing × (code extension, insets 10px at both ends)
+- **Border radius:** `var(--radius-full)` (fully rounded pill)
 
 ### Typography
 
@@ -80,17 +208,19 @@ All values use 5Mins.ai design tokens.
 
 | Prop        | Type                          | Default     | Description                          |
 |-------------|-------------------------------|-------------|--------------------------------------|
-| `label`     | `string`                      | `"Content"` | Text displayed inside chip           |
+| `label`     | `string`                      | required    | Text displayed inside chip           |
 | `selected`  | `boolean`                     | `false`     | Yellow fill, bold dark text          |
 | `disabled`  | `boolean`                     | `false`     | Muted border + text, non-interactive |
 | `iconLeft`  | `boolean`                     | `false`     | Show 16×16 user icon before label    |
+| `customIconLeft` | `ReactNode`              | -           | Replaces the user icon with any 16px node |
 | `iconRight` | `boolean`                     | `false`     | Show 16×16 close (×) icon after label|
-| `state`     | `"Enabled" \| "Hover"`        | `"Enabled"` | Visual state (Hover is usually CSS)  |
+| `variant`   | `"default" \| "warning"`      | `"default"` | `warning` swaps the border for `--button-warning-background` |
+| `state`     | -                             | -           | Not a prop in code; hover is CSS `:hover` only |
 | `onClick`   | `() => void`                  | -           | Click handler                        |
 | `onDismiss` | `() => void`                  | -           | Close-icon click (only with iconRight)|
 | `className` | `string`                      | -           | Extra CSS classes                    |
 
-> **Note:** `state` is typically driven by CSS `:hover` in prototypes. Only use the prop for forced-hover stories/tests.
+> **Note:** hover is driven by CSS `:hover`; the prototype component has no `state` prop.
 
 ## State × Appearance Matrix
 
@@ -98,7 +228,7 @@ All values use 5Mins.ai design tokens.
 |------------|------------|------------|----------------|------------------------|-------------------|-------------|
 | false      | false      | Enabled    | `--border-elevated` | transparent            | `--text-secondary`| 400         |
 | false      | false      | Hover      | `--border-hover`| `--page-background-hover`| `--text-secondary`| 400         |
-| false      | true       | Enabled    | none           | `--secondary-500`      | `--text-on-selected` | 700         |
+| false      | true       | Enabled    | transparent (keeps the 1px, so the row doesn't shift) | `--secondary-500`, `--secondary-600` on hover | `--text-on-selected` | 700         |
 | true       | false      | n/a        | `--border`     | transparent            | `--text-disabled` | 400         |
 
 **Padding rules:** `6px` top and bottom for every variant. Horizontally `12px`, dropping to
@@ -196,7 +326,7 @@ export function Chip({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 24px;
+  border-radius: var(--radius-full);
   padding: var(--space-xss) var(--space-sm);   /* 6px 12px */
   border: 1px solid var(--border-elevated);
   font-family: 'Poppins', sans-serif;
@@ -206,12 +336,12 @@ export function Chip({
   cursor: pointer;
   transition: background-color 0.15s, border-color 0.15s;
 }
-.chip:hover {
+.chip:not(.chip--disabled):not(.chip--selected):hover {
   border-color: var(--border-hover);
   background-color: var(--page-background-hover);
 }
 .chip--selected {
-  border: none;
+  border-color: transparent;
   background-color: var(--secondary-500);   /* #FFBB38 — raw token, both modes */
   color: var(--text-on-selected);
   font-weight: 700;
@@ -257,18 +387,7 @@ filters.map(f => (
 
 ## Do's and Don'ts (Chips)
 
-**Do:**
-- Use `selected` + `onClick` to toggle filter state
-- Use `iconRight` + `onDismiss` for dismissible chips (e.g. applied filters)
-- Use `iconLeft` for chips that represent people/users
-- Use `disabled` when the option is unavailable (not just unselected)
-- Keep chip label short, 1 to 3 words max
-
-**Don't:**
-- Don't use both `iconLeft` and `iconRight` simultaneously (not in the design spec)
-- Don't use chips for navigation, use tabs or buttons instead
-- Don't hardcode hover styles inline; let CSS `:hover` handle it unless forcing a state in tests
-- Don't change border-radius, `24px` is fixed for all chip sizes
+Consolidated into [Usage → Chip](#chip) above.
 
 ---
 
@@ -292,12 +411,12 @@ A segmented control: mutually exclusive sections inside a filled track. Use it t
 
 | Item state | Background | Text |
 |---|---|---|
-| Selected | `--secondary-500` `#FFBB38` (both modes) | Medium 500, `--text-on-selected` |
+| Selected | `--secondary-500` `#FFBB38` (both modes) | Bold 700, `--text-on-selected` |
 | Unselected | transparent | Regular, `--text-secondary` |
 | Unselected hover | `--input-background-hover` | Regular, `--text-secondary` |
 | Disabled | transparent | Regular, `--text-disabled` |
 
-Optional icons per item: **left 20px** (e.g. trash) or **right 16px** (e.g. info-circle), `gap: 4px`, `currentColor`. The selected item's hover has no further change — it is already the active segment.
+Optional icons per item in Figma: **left 20px** (e.g. trash) or **right 16px** (e.g. info-circle), `gap: 4px`, `currentColor`. The prototype `ContentSwitcher` has no icon slot (items are `key`, `label`, `disabled`). The selected item's hover has no further change — it is already the active segment.
 
 ## CSS
 
@@ -373,8 +492,7 @@ export function ContentSwitcher({ items, activeKey, onChange }: SwitcherProps) {
 
 ## Do's and Don'ts (Content Switcher)
 
-**Do:** use for 2–5 exclusive views of the same content; keep labels one word where possible.
-**Don't:** use for filters (chips) or for sibling page sections (tabs); don't mix icon and no-icon items in one track.
+Consolidated into [Usage → Content Switcher](#content-switcher) above. Figma also allows per-item icons; if the component gains them, don't mix icon and no-icon items in one track.
 
 ---
 
@@ -716,21 +834,7 @@ const [active, setActive] = useState('overview');
 
 ## Do's and Don'ts (Tabs)
 
-**Do:**
-- Use tabs for switching between sibling views of the same object (e.g. Overview / Enrolments / Completions for a course)
-- Use `counter` for tabs where a count is genuinely informative (queue size, badge count)
-- Keep labels short, 1 to 2 words is ideal, 3 is the upper limit
-- Pair the tab bar with a 1px `--border` divider in the parent container if the panels below need a clear separation
-- Let CSS `:hover` drive the hover state in production code; only use `state="Hover"` in stories or visual tests
-- Default to the first tab being selected on mount unless the URL or saved state says otherwise
-
-**Don't:**
-- Don't use tabs for primary navigation between unrelated pages, use the sidebar instead
-- Don't use tabs as a filter mechanism, use chips for that
-- Don't render more than ~6 tabs in a single row; if you need more, consider a dropdown, secondary filter, or splitting the view
-- Don't change the indicator color or thickness, `var(--selected)` and `2px` are fixed
-- Don't combine tabs with chips in the same row, it makes the visual hierarchy ambiguous
-- Don't hide the indicator on the selected tab, it's the primary affordance signalling which tab is active
+Consolidated into [Usage → Tabs](#tabs) above.
 
 ## Chips vs Switcher vs Tabs: which one to use
 

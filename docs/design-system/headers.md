@@ -7,14 +7,84 @@ description: Page Header and Section Header for 5Mins.ai — slot-based base com
 
 Complete header implementation matching the Figma design system with Page Headers and Section Headers.
 
-Spec source: Figma Library — light `9531:2974` / dark `7902:1018` (verified 2026-07-03). The base component exposes three swappable slots: **label** (eyebrow metadata ↔ breadcrumb), **header** (headline + CTA cluster), and **navigation** (tabs ↔ chips).
+Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — light `9531:2974` / dark `7902:1018` (verified 2026-07-03). The base component exposes three swappable slots: **label** (eyebrow metadata ↔ breadcrumb), **header** (headline + CTA cluster), and **navigation** (tabs ↔ chips).
+
+> **Updated 2026-09-29 (aligned to prototype usage):** breadcrumb link and current rows in the Page Header typography table are now 14px Regular / 1.5, matching `Breadcrumb.css` (was 12px / 1.2).
+
+> **Updated 2026-09-29 (verified against code):** Page Header prototype now cites Roles (24px `<h1>`) instead of User profile (20px); page tab gap is 16px; CTA gap is 16px and the Section Header section gap 16px, matching code (Figma draws 12px); the stale `SectionHeaderProps` and sample are replaced by the real prototype props; the non-existent `assets/headers.css` links are removed; focus rings are cyan `--primary-button-background`; the Section Header divider stays `--border` inside drawers and modals.
+
+## Usage
+
+### Page Header
+
+**Intent:** name the page, say what it is for, and hold the page-level actions and section tabs in one predictable block at the top.
+
+**Use when**
+- The top of any admin or learner page.
+
+**Don't use when**
+- Titling a card, drawer, modal or a block within a page → use the Section Header (below)
+- The app bar itself → TopNav ([doc](navigation.md))
+
+**Do**
+- Render the title as the page's single `<h1>` at 24px Bold `--text-primary`, with the description at 16px Regular `--text-secondary` 4px below it.
+- Put a 1px `--border` divider between the headline block and the tabs.
+- Use the Breadcrumb component in the label slot when the page sits under a parent ([doc](navigation.md)).
+- Mark up tabs as `role="tablist"` with `role="tab"` and `aria-selected`.
+- Keep header CTAs right-aligned with a 16px gap (`var(--space-m)`); icon-only CTAs keep the circular hover.
+- Button labels are Title Case; the title and description are sentence case.
+
+**Don't**
+- Don't nest a second row of tabs inside a page that already has tabs; filter within a tab with chips instead ([doc](chips-switcher-tabs.md)).
+- Don't use a Content Switcher for page sections; tabs are for sibling sections, the switcher for two views of one object.
+- Don't use raw hex or `--neutral-*` for header text; semantic `--text-*` tokens only.
+
+**Canonical spec:** title Poppins Bold 24px/1.5 `--text-primary`; description Regular 16px/1.5 `--text-secondary`; section gap `var(--space-m)` (16px); title/description gap `var(--space-xs)` (4px); CTA gap `var(--space-m)` (16px; Figma draws 12px); tabs gap `var(--space-m)` (16px); divider `1px var(--border)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `9531:2974` / dark `7902:1018`.
+
+**Prototype:** no shared component. Each page builds its own header with a page-prefixed class, e.g. `.roles-header` in `src/pages/roles/Roles.tsx` (24px title group, divider, tabs) and `.cd-header` in `src/pages/your-courses/CourseDetails.tsx` (CTA cluster at 16px gap, tabs). The code examples below describe a `PageHeader` API that does not exist; treat them as a composition reference.
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Page Header | _to be mapped by engineering_ | | |
+
+### Section Header
+
+**Intent:** title a block inside a page, card, drawer or modal, with optional description, actions and a rule underneath.
+
+**Use when**
+- The title of a drawer or modal form, a card, or a titled block within a page.
+
+**Don't use when**
+- The top of a page → use the Page Header (above)
+- Confirm dialogs (ConfirmModal) → follow the dialog title spec ([doc](overlays.md))
+
+**Do**
+- Render the title as `<h2>` at 20px Bold, description 14px Regular `--text-secondary`.
+- Put CTAs in the `ctas` slot and a back button (multi-step drawer) in the `leading` slot.
+- Keep the 1px divider under the headline to separate it from the form or content below. It is `--border` everywhere, including drawers and modals (their panels are `--page-background`).
+
+**Don't**
+- Don't hand-roll a new title block for a drawer or modal; reuse the Section Header.
+
+**Canonical spec:** title Bold 20px/1.5 `--text-primary`; description Regular 14px/1.5 `--text-secondary`; title/description gap `var(--space-xs)` (4px); CTA gap `var(--space-m)` (16px); divider `1px var(--border)`; section gap `var(--space-m)` (16px; Figma draws 12px). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `9531:2974` / dark `7902:1018`.
+
+**Prototype:** `src/pages/your-courses/components/SectionHeader/SectionHeader.tsx` (page-local, used by the course drawers and modals)
+- `title: string`, `description?: ReactNode`, `ctas?: ReactNode`, `leading?: ReactNode`.
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Section Header | _to be mapped by engineering_ | | |
 
 ## Component Overview
 
 | Component | Purpose | Title Size | Gap | Unique Feature |
 |-----------|---------|------------|-----|----------------|
 | **Page Header** | Main page identification | 24px (H2) | 16px | Breadcrumb support |
-| **Section Header** | Content sections, modals | 20px (H3) | 12px | Compact layout |
+| **Section Header** | Content sections, modals | 20px (H3) | 16px (Figma 12px) | Compact layout |
 
 Both components share the same configurable properties:
 
@@ -64,8 +134,8 @@ Primary header for page-level identification. Uses larger typography (24px title
 |---------|------|--------|-------------|-------|
 | Title | 24px | Bold (700) | 1.5 | `--text-primary` |
 | Description | 16px | Regular (400) | 1.5 | `--text-secondary` |
-| Breadcrumb link | 12px | Regular (400) | 1.2 | `--text-tertiary` |
-| Breadcrumb current | 12px | Regular (400) | 1.2 | `--text-secondary` |
+| Breadcrumb link | 14px | Regular (400) | 1.5 | `--text-tertiary` |
+| Breadcrumb current | 14px | Regular (400) | 1.5 | `--text-secondary` |
 | Eyebrow metadata | 14px | Regular (400) | 1.5 | `--text-tertiary` |
 | Tab selected | 14px | Bold (700) | 1.5 | `--text-primary` |
 | Tab unselected | 14px | Medium (500) | 1.5 | `--text-secondary` |
@@ -81,8 +151,8 @@ Primary header for page-level identification. Uses larger typography (24px title
 | Eyebrow item gap | 8px (`--space-s`) |
 | Eyebrow internal gap | 4px (`--space-xs`) |
 | Title/description gap | 4px (`--space-xs`) |
-| CTA cluster gap | 12px (`--space-sm`) |
-| Tabs gap | 24px (`--space-l`) |
+| CTA cluster gap | 16px (`--space-m`; Figma 12px) |
+| Tabs gap | 16px (`--space-m`) |
 | Chips gap | 16px (`--space-m`) |
 
 ### Colors
@@ -98,7 +168,7 @@ Primary header for page-level identification. Uses larger typography (24px title
 
 ### CTA cluster (reference composition)
 
-The `ctas` slot is free-form, but the Figma base ships this reference layout, right-aligned with a **12px gap**:
+The `ctas` slot is free-form, but the Figma base ships this reference layout, right-aligned with a **12px gap** (the prototype pages use 16px, `var(--space-m)`):
 
 1. **Search field** — 400px wide (Page) / 300px (Section); `--input-background` fill, 1px `--border`, radius 12, `8px 12px` padding, 18px search icon, placeholder Regular 14 `--text-disabled` (see `search.md`)
 2. **AI icon button** — 40px circular hit area (`radius-full`), 24px AI-sparkle icon
@@ -548,7 +618,7 @@ function Chip({ label, selected, onClick }: ChipProps) {
 .page-header__breadcrumb-link:focus-visible,
 .page-header__tab:focus-visible,
 .page-header__chip:focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
 ```
@@ -577,15 +647,11 @@ function Chip({ label, selected, onClick }: ChipProps) {
 | Team list | - | ✓ | ✓ | ✓ | - | ✓ | - | - |
 | Settings | - | ✓ | - | ✓ | ✓ | - | - | - |
 
-## Assets
-
-Complete CSS implementation: `assets/headers.css`
-
 ---
 
 ## Section Header
 
-Secondary header for content sections and modals. Uses smaller typography (20px title) and tighter spacing (16px gap).
+Secondary header for content sections and modals. Uses smaller typography (20px title); the prototype keeps the 16px section gap (Figma draws 12px).
 
 ### Visual Structure
 
@@ -608,244 +674,43 @@ Secondary header for content sections and modals. Uses smaller typography (20px 
 |---------|-------------|----------------|
 | Title | 24px Bold | 20px Bold |
 | Description | 16px Regular | 14px Regular |
-| Section gap | 16px | 12px |
+| Section gap | 16px | 16px (Figma 12px) |
 | Eyebrow icon / text | 16px / 14px (1.5) | 14px / 12px (1.2) |
-| Tabs gap | 24px | 20px |
+| Tabs gap | 16px | 20px (Figma; no prototype tabs) |
 | Search width (reference) | 400px | 300px |
 
-### Types
+### Props (prototype)
+
+> Superseded, see Usage: the older `SectionHeaderProps` here (eyebrow, tabs, chips, icon, avatar) and its component sample described an API the prototype never built. The real component is `src/pages/your-courses/components/SectionHeader/SectionHeader.tsx`:
 
 ```tsx
 interface SectionHeaderProps {
-  // Core content
-  title: string;
-  description?: string;
-  
-  // Feature toggles (matching Figma properties)
-  eyebrow?: {
-    icon?: ReactNode;
-    label: string;
-  };
-  ctas?: ReactNode;
-  tabs?: {
-    items: TabItem[];
-    activeValue: string;
-    onChange?: (value: string) => void;
-  };
-  chips?: {
-    items: ChipItem[];
-    selectedValues: string[];
-    onChange?: (values: string[]) => void;
-  };
-  icon?: ReactNode;
-  avatar?: {
-    src: string;
-    alt: string;
-  };
+  title: string
+  /** Rich content allowed: some headers carry an inline status colour. */
+  description?: ReactNode
+  ctas?: ReactNode
+  /** Optional control before the title, e.g. a back button on a multi-step drawer. */
+  leading?: ReactNode
 }
 ```
 
-### Component
+It renders an `<h2>` title (20px Bold) with the description 4px below, the `ctas` cluster on the right (16px gap), and always draws the 1px `--border` divider under the headline, 16px below it. It has no eyebrow, tabs, chips, icon or avatar slots; compose those around it if a design needs them.
+
+### Section Header usage examples
 
 ```tsx
-export function SectionHeader({
-  title,
-  description,
-  eyebrow,
-  ctas,
-  tabs,
-  chips,
-  icon,
-  avatar
-}: SectionHeaderProps) {
-  const hasBottomSection = tabs || chips;
-  
-  return (
-    <header className="section-header">
-      {/* Row 1: Eyebrow + CTAs */}
-      {(eyebrow || ctas) && (
-        <div className="section-header__top-row">
-          {eyebrow && (
-            <div className="section-header__eyebrow">
-              {eyebrow.icon && (
-                <span className="section-header__eyebrow-icon">
-                  {eyebrow.icon}
-                </span>
-              )}
-              <span>{eyebrow.label}</span>
-            </div>
-          )}
-          
-          {ctas && (
-            <div className="section-header__ctas">
-              {ctas}
-            </div>
-          )}
-        </div>
-      )}
-      
-      {/* Row 2: Title with optional Icon/Avatar */}
-      <div className="section-header__headline">
-        {(icon || avatar) && (
-          <div className="section-header__media">
-            {avatar ? (
-              <img 
-                src={avatar.src} 
-                alt={avatar.alt} 
-                className="section-header__avatar"
-              />
-            ) : icon}
-          </div>
-        )}
-        <div className="section-header__title-group">
-          <h2 className="section-header__title">{title}</h2>
-          {description && (
-            <p className="section-header__description">{description}</p>
-          )}
-        </div>
-      </div>
-      
-      {/* Divider */}
-      {hasBottomSection && (
-        <div className="section-header__divider" />
-      )}
-      
-      {/* Row 3: Tabs OR Chips */}
-      {tabs && (
-        <div className="section-header__tabs" role="tablist">
-          {tabs.items.map((tab) => (
-            <button
-              key={tab.value}
-              role="tab"
-              aria-selected={tab.value === tabs.activeValue}
-              className={`section-header__tab ${
-                tab.value === tabs.activeValue ? 'section-header__tab--active' : ''
-              }`}
-              onClick={() => tabs.onChange?.(tab.value)}
-            >
-              {tab.label}
-              {tab.value === tabs.activeValue && (
-                <span className="section-header__tab-indicator" />
-              )}
-            </button>
-          ))}
-        </div>
-      )}
-      
-      {chips && (
-        <div className="section-header__chips">
-          {chips.items.map((chip) => {
-            const isSelected = chips.selectedValues.includes(chip.value);
-            return (
-              <button
-                key={chip.value}
-                className={`section-header__chip ${
-                  isSelected ? 'section-header__chip--selected' : ''
-                }`}
-                onClick={() => {
-                  const newValues = isSelected
-                    ? chips.selectedValues.filter(v => v !== chip.value)
-                    : [...chips.selectedValues, chip.value];
-                  chips.onChange?.(newValues);
-                }}
-              >
-                {chip.label}
-              </button>
-            );
-          })}
-        </div>
-      )}
-    </header>
-  );
-}
-```
+import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'
 
-### Section Header Usage Examples
-
-#### Minimal (Title Only)
-
-```tsx
-<SectionHeader title="Your Progress" />
-```
-
-#### With Description
-
-```tsx
-<SectionHeader 
-  title="Assigned Courses" 
-  description="Complete these by the end of the month"
+// Drawer or modal title with description and a close button
+<SectionHeader
+  title="Attach media"
+  description="Add an image or audio file to your quiz"
+  ctas={<CloseButton onClick={handleClose} />}
 />
+
+// Multi-step drawer: a back control goes in `leading`
+<SectionHeader title="Choose questions" leading={backButton} />
 ```
-
-#### With Eyebrow and CTAs
-
-```tsx
-<SectionHeader 
-  title="Course Library"
-  description="Browse available courses"
-  eyebrow={{
-    icon: <BookIcon />,
-    label: "Courses"
-  }}
-  ctas={
-    <>
-      <Search placeholder="Search courses" />
-      <Dropdown options={sortOptions} />
-      <IconButton icon={<More />} />
-      <Button variant="outlined">Export</Button>
-      <Button icon={<Add />}>Add Course</Button>
-    </>
-  }
-/>
-```
-
-#### With Tabs
-
-```tsx
-<SectionHeader 
-  title="Team Activity"
-  eyebrow={{ icon: <UsersIcon />, label: "Team" }}
-  tabs={{
-    items: [
-      { label: "All Activity", value: "all" },
-      { label: "Completions", value: "completions" },
-      { label: "In Progress", value: "progress" },
-    ],
-    activeValue: "all",
-    onChange: setActiveTab
-  }}
-/>
-```
-
-#### With Chips
-
-```tsx
-<SectionHeader 
-  title="Filter Results"
-  description="Select categories to filter"
-  chips={{
-    items: [
-      { label: "All", value: "all" },
-      { label: "Compliance", value: "compliance" },
-      { label: "Safety", value: "safety" },
-    ],
-    selectedValues: ["all"],
-    onChange: setFilters
-  }}
-/>
-```
-
-#### With Icon
-
-```tsx
-<SectionHeader 
-  title="Food Safety Module"
-  description="4 lessons remaining"
-  icon={<CourseIcon size={40} />}
-/>
-```
-
----
 
 ## When to Use Each Header
 
@@ -893,10 +758,10 @@ export function SectionHeader({
 
 | Element | Page Header | Section Header |
 |---------|-------------|----------------|
-| Section gap | 16px | 12px |
+| Section gap | 16px | 16px (Figma 12px) |
 | Title/description gap | 4px | 4px |
-| CTA cluster gap | 12px | 12px |
-| Tabs gap | 24px | 20px |
+| CTA cluster gap | 16px (Figma 12px) | 16px (Figma 12px) |
+| Tabs gap | 16px | 20px (Figma) |
 | Chips gap | 16px | 16px |
 
 ### CSS Class Prefixes
@@ -906,6 +771,3 @@ export function SectionHeader({
 | Page Header | `.page-header__*` |
 | Section Header | `.section-header__*` |
 
-## Assets
-
-Complete CSS implementation: `assets/headers.css`

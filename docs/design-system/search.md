@@ -7,7 +7,51 @@ description: Search input component for 5Mins.ai. Use when implementing any sear
 
 A standalone search input with a leading search icon, placeholder text, and a clear (×) button when there is text.
 
-Spec source: Figma Library — light `11927:6338` / dark `697:33529` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`). Reference width in Figma: 400px.
+Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — light `11927:6338` / dark `697:33529` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`). Reference width in Figma: 400px.
+
+> **Updated 2026-09-29 (verified against code):** the clear icon is `--text-secondary` in the Token Summary and CSS sketch (the sketch also now shows the built hover and the cyan focus ring); the Do / Don't no longer mentions an `onKeyDown` prop, which does not exist.
+
+> **Updated 2026-09-29 (aligned to prototype usage):** every call site in the prototype uses size **M**, including page-level searches (Programs header, course list, My Team toolbar), so the size guidance in "Do / Don't" now says M is the default everywhere and L is unused. "Code reality" now reflects that the active border already uses `--selected` and lists the built props.
+
+## Usage
+
+**Intent:** a field whose only job is to narrow a list, table or menu as the user types.
+
+**Use when**
+- Filtering a table or list on a page, e.g. "Search for courses", "Search programs", "Search for learners".
+- Filtering inside a drawer or picker, e.g. the course picker and enrol-people drawers.
+- Typeahead over a listbox, e.g. the automation course search or the "Search filters" row pinned in a menu.
+
+**Don't use when**
+- The value is form data that gets saved → use InputField ([doc](input.md))
+- The user picks from a short fixed list → use Dropdown ([doc](dropdown.md))
+
+**Do**
+- Use the `Search` component; don't hand-roll a `SearchNormal1` icon next to a raw `<input>`.
+- Use size `M`; it is the size every prototype call site uses, including page-level searches.
+- Pass `ariaLabel` (it falls back to the placeholder) so the field has an accessible name.
+- Filter on `onChange`; the leading search icon is decoration, not a submit button.
+- Let the built-in clear (×) empty the field; it appears whenever there is text.
+
+**Don't**
+- Don't switch the border to `--border-elevated`; Search keeps the quiet `--border` because it carries a fill at rest.
+- Don't use raw `--secondary-500` for the focus border; use the mode-aware `--selected`.
+- Don't wrap it in a `<form>` or add a submit button.
+- Don't change the font weight on focus or fill; it stays Regular 400.
+
+**Canonical spec:** size M: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), 18px search icon, 20px clear icon, text 14px / 400 / 1.5. Fill `--input-background` (`--input-background-hover` on hover); border `--border`, `--border-hover` on hover, `--selected` on focus. Search icon `--text-tertiary`, clear icon `--text-secondary`, placeholder `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11927:6338` / dark `697:33529`.
+
+**Prototype:** `src/components/Search/Search.tsx` (default export)
+- `value`, `onChange(value)` (required), `placeholder` (default "Search")
+- `size`: `'M' | 'L'` (default `'M'`; L is not used anywhere yet)
+- `onClear` (optional; without it the clear button calls `onChange('')` and refocuses the input)
+- `onFocus`, `onBlur`, `ariaLabel`, `className`
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Search | _to be mapped by engineering_ | | |
 
 ---
 
@@ -221,11 +265,11 @@ export const Search: React.FC<SearchProps> = ({
   border: none;
   padding: 0;
   cursor: pointer;
-  color: var(--text-tertiary);
 }
-.search__clear:hover { color: var(--text-secondary); }
+/* glyph colour is set on the icon: color="var(--text-secondary)" */
+.search__clear:hover { opacity: 0.7; }
 .search__clear:focus-visible {
-  outline: 2px solid var(--selected);
+  outline: 2px solid var(--primary-button-background);
   border-radius: var(--radius-xs);
 }
 ```
@@ -241,20 +285,20 @@ export const Search: React.FC<SearchProps> = ({
 | `--border` / `--border-hover` | `#DFE1E6` / `#9EA4B3` | `#2D313D` / `#9EA4B3` | Default / hover border |
 | `--selected` | `#EDA30D` | `#FFBB38` | Active/focused border |
 | `--text-primary` | `#20222A` | `#F9F9FA` | Value text |
-| `--text-tertiary` | `#656B7C` | `#9EA4B3` | Search + clear icons |
+| `--text-tertiary` | `#656B7C` | `#9EA4B3` | Search icon |
+| `--text-secondary` | `#454C5E` | `#BFC2CC` | Clear (×) icon |
 | `--text-disabled` | `#9EA4B3` | `#656B7C` | Placeholder (empty field) |
 
 ---
 
 ## Do / Don't
 
-✓ Use size **L** for prominent page-level search (top of a table, main content search)
-✓ Use size **M** for compact search within panels, drawers, or filter rows
+✓ Use size **M** everywhere, including page-level search at the top of a table; the prototype has no size **L** call site
 ✓ Always show the clear button when there is text — never hide it on hover only
 ✓ Use `:focus-within` on the wrapper (not just the `<input>`) to trigger Active state
 ✓ Derive `filled` from `value.length > 0`
 
-✗ Don't use a `<form>` wrapper — handle search with `onChange` and `onKeyDown` directly
+✗ Don't use a `<form>` wrapper; filter live from `onChange` (the component has no `onKeyDown` or submit prop)
 ✗ Don't show a submit/search button — the search icon is decorative, not interactive
 ✗ Don't use raw `--secondary-500` for the active border — use mode-aware `--selected`
 ✗ Don't change font weight on focus or fill — always Regular 400
@@ -263,7 +307,7 @@ export const Search: React.FC<SearchProps> = ({
 
 ## Code reality
 
-`src/components/Search/Search.tsx` implements this component. Drift from the node: the active border uses raw `--secondary-500` instead of `--selected` (`Search.css` line ~37 — a one-line fix), and the clear glyph is an Iconsax `Add` rotated to an × instead of io5 `IoCloseOutline`. Sizes, padding, radius, and the other state tokens match.
+`src/components/Search/Search.tsx` implements this component. The active border uses `--selected`, as specified. Remaining drift from the node: the clear glyph is an Iconsax `Add` rotated to an × instead of io5 `IoCloseOutline`, and the L radius is written as a raw `16px` rather than `var(--radius-m)`. The built props are `size`, `value`, `placeholder`, `onChange`, `onClear`, `onFocus`, `onBlur`, `className` and `ariaLabel`; `state` and `filled` in the Props table are Figma variant axes, derived from `:hover`, `:focus-within` and `value.length` rather than passed in. Sizes, padding and the other state tokens match.
 
 ## Change Log
 

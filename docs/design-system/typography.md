@@ -7,6 +7,48 @@ description: Typography system for 5Mins.ai — Poppins type scale (6 heading le
 
 Complete typography guidelines for 5Mins.ai using Poppins font family with a clear, semantic type scale.
 
+> **Updated 2026-09-29 (aligned to prototype usage):** heading and body colours are the semantic tokens `--text-primary` / `--text-secondary` used in `src/styles/typography.css` (were raw `--neutral-800` / `--neutral-500`, which don't flip in dark mode). The "CSS Custom Properties" list is marked as not defined in `tokens.css`.
+
+> **Updated 2026-09-29 (verified against code):** removed the `.text-button-*` classes (they don't exist) and the responsive size steps (not implemented, off-scale); field labels are `--text-secondary`, not tertiary; removed links to `assets/typography.css` and `references/usage-guidelines.md` (neither exists); listed the sanctioned off-scale component exceptions.
+
+## Usage
+
+**Intent:** one Poppins type scale so hierarchy reads the same on every screen: weight and size say what a piece of text is, colour says how important it is.
+
+**Use when**
+- Any text decision: font size, weight, line height, text colour.
+
+**Don't use when**
+- Button labels → sizes come with the Button component ([doc](buttons.md))
+- Page or section titles → take the header specs ([doc](headers.md))
+
+**Do**
+- Poppins only, weights 400/500/600/700.
+- Bold (700) for headings and buttons; Semibold (600) for form-field labels; Medium (500) for emphasis and badge/chip labels; Regular (400) for body.
+- Stay on the scale: 12, 14, 16, 20, 24, 32px. Round an off-scale size to the nearest step (13px becomes 14px).
+- 14px and 16px at line height 1.5; 12px at 1.2 (Button S keeps 1.4).
+- Colour with semantic tokens: `--text-primary` headings and key content, `--text-secondary` body, `--text-tertiary` captions and metadata, `--text-disabled` disabled.
+- Use semantic `h1`-`h6` elements in order; one `h1` per page.
+- Button labels in Title Case; headings and other UI copy in sentence case.
+
+**Don't**
+- Don't load or mix another font family.
+- Don't use Bold for body paragraphs, or Semibold for option text inside a radio, checkbox or toggle row.
+- Don't use raw `--neutral-*` or hex for text colour; it won't flip in dark mode.
+- Don't skip heading levels.
+
+**Canonical spec:** Poppins; H1 32 / H2 24 / H3 20 / H4 16 / H5 14 Bold at 1.5, H6 12 Bold at 1.2; Paragraph L/M/S 16/14/12 at 1.5/1.5/1.2; Button L/M/S 16/14/12 Bold. Field label = Paragraph M semibold. The prototype writes these as literal px in component CSS (no font tokens exist). Figma: Library `EC26cSVe9KNTCWXvYovakw`, paragraph styles `5445:24009`; light/dark node ids not recorded (type does not change per mode).
+
+**Prototype:** `src/styles/typography.css` (no component)
+- `h1`-`h6` and `.h1`-`.h6`; `.text-lg|md|sm` with `-medium` and `-semibold` variants; `.text-primary|secondary|tertiary|disabled`; `.font-regular|medium|semibold|bold`.
+- Poppins is set on `body` in `src/styles/reset.css` and loaded from Google Fonts in `index.html`.
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Typography | _to be mapped by engineering_ | | |
+
 ## Overview
 
 5Mins.ai uses Poppins as the primary font for all text, providing a modern, clean, and highly readable experience across all interfaces. The system includes 6 heading levels, 3 body text sizes, and 3 button text sizes with consistent weights and line heights.
@@ -36,7 +78,7 @@ font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
 | **H5** | 14px (0.875rem) | 1.5 | Small headers, labels |
 | **H6** | 12px (0.75rem) | 1.2 | Micro headers, tags |
 
-**Color for all headings:** `--neutral-800` (#20222A)
+**Color for all headings:** `--text-primary` (#20222A light / #F9F9FA dark)
 
 ### Body Text (Regular 400 / Medium 500 / Semibold 600)
 
@@ -46,7 +88,7 @@ font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
 | **Medium** | 14px (0.875rem) | 400, 500, 600 | 1.5 | Secondary descriptions, lists |
 | **Small** | 12px (0.75rem) | 400, 500, 600 | 1.2 | Captions, help text, labels |
 
-**Color for body text:** `--neutral-500` (#454C5E)
+**Color for body text:** `--text-secondary` (#454C5E light / #BFC2CC dark)
 
 ### Paragraph Medium (500)
 
@@ -110,17 +152,14 @@ h1–h6            /* semantic elements carry the style */
 > These are the names implemented in `src/styles/typography.css`. There are no `.text-body-*` or `.heading-*` classes — use the `h1`–`h6` elements or `.h1`–`.h6`.
 
 ### Button Text
-```css
-.text-button-l  /* 16px, Bold */
-.text-button-m  /* 14px, Bold */
-.text-button-s  /* 12px, Bold */
-```
+
+There are no button text classes; button label sizes (Button L/M/S, 16/14/12 Bold) come with the `Button` component ([doc](buttons.md)).
 
 ### Text Colors
 ```css
 .text-primary    /* neutral-800 - Headings, primary content */
 .text-secondary  /* neutral-500 - Body text, descriptions */
-.text-tertiary   /* neutral-400 - Labels, captions, placeholders */
+.text-tertiary   /* neutral-400 - Captions, metadata */
 .text-disabled   /* neutral-300 - Disabled, deemphasized */
 ```
 
@@ -227,22 +266,19 @@ Always use `.text-primary` (neutral-800) for all headings to maintain clear hier
 <h2>1,234</h2>
 ```
 
-**Button:**
-```html
-<button class="btn-primary text-button-m">Continue Learning</button>
-```
+**Button:** use the `Button` component; don't style a label with typography classes.
 
-## Responsive Typography
+## Responsive typography
 
-### Tablet (≤768px)
-- H1: 32px → 28px
-- H2: 24px → 22px
-- Other sizes remain consistent
+Not implemented: the type scale is the same at every width, and `typography.css` has no media queries. The older tablet and mobile steps listed here (28px, 22px) were off the type scale and have been removed.
 
-### Mobile (≤480px)
-- H1: 32px → 24px
-- H2: 24px → 20px
-- Body text maintains 16px minimum for readability
+## Sanctioned component exceptions
+
+These component-level uses sit off the scale on purpose; keep them inside their components and don't copy them elsewhere:
+- Avatar group "+N" counter: 8px at 24px and 10px at 32px (`AvatarGroup.css`)
+- Badge label: 14px Medium at line height 1.2 (`badges.md`)
+- Toast label: Bold 16 on every fill (`alerts-toast.md`)
+- Mobile tab bar label: Regular 10px / 1.4 (`navigation.md`)
 
 ## Accessibility
 
@@ -275,7 +311,7 @@ The typography system loads Poppins from Google Fonts:
 
 ## CSS Custom Properties
 
-All typography values available as CSS variables:
+These variables are **not defined** in `src/styles/tokens.css`; the prototype writes sizes and weights as literal px in component CSS, or uses the classes above. Treat the list as proposed naming only:
 
 ```css
 /* Font families */
@@ -335,23 +371,13 @@ All typography values available as CSS variables:
 **"What color for...?"**
 - Headings → text-primary (neutral-800)
 - Body → text-secondary (neutral-500)
-- Labels → text-tertiary (neutral-400)
+- Field labels → text-secondary (neutral-500)
+- Captions and metadata → text-tertiary (neutral-400)
 - Disabled → text-disabled (neutral-300)
 
 ## Resources
 
-**Complete Typography CSS:** `assets/typography.css`
-- All font imports
-- Complete type scale
-- All utility classes
-- Responsive adjustments
-
-**Detailed Usage Guidelines:** `references/usage-guidelines.md`
-- Comprehensive examples
-- Common patterns
-- Semantic usage rules
-- Accessibility guidelines
-- Mobile considerations
+**Implemented classes:** `src/styles/typography.css`
 
 ## Best Practices
 
@@ -369,4 +395,4 @@ All typography values available as CSS variables:
 ✗ Make body text smaller than 14px
 ✗ Use bold for entire paragraphs
 ✗ Mix font families
-✗ Ignore responsive adjustments
+

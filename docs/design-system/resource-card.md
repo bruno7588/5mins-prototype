@@ -9,6 +9,51 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel, Po
 > **Component:** `src/components/ResourceCard/ResourceCard.tsx` — use it, don't hand-roll.
 > **Model + form:** `src/components/ResourceCard/resources.ts` (types, accepted extensions, 50MB cap, validation) and `src/components/ResourceForm/ResourceForm.tsx` (add or edit one resource — `variant="drawer"` on the course builder, `variant="inline"` in the lesson editor).
 
+> **Updated 2026-09-29 (aligned to prototype usage):** the Mobile type tile is 40px (as in the code and the Anatomy table), not 56px; the code sample section is renamed "Example" so this doc has one Usage section.
+
+## Usage
+
+**Intent:** show one course or lesson resource (a file or an external link) with its type, name and size, and let the learner download or open it in one tap.
+
+**Use when**
+- Listing course resources on the learner course page (Resources tab).
+- Listing a lesson's resources in the lesson feed's Take a deep dive panel (`device="mobile"`).
+- Authoring resources in the admin course builder Resources tab or the lesson editor Resources tab.
+
+**Don't use when**
+- The item is a lesson, course, category or skill → use the matching content card ([doc](cards.md))
+- You are picking or uploading a file → use `ResourceForm` and its File uploader, which reuses the same tile artwork (`FILE_THUMBS`)
+
+**Do**
+- Set `type` to `pdf`, `word`, `excel`, `powerpoint`, `image` or `link`; the tile, meta line and action icon follow from it.
+- Pass `size` in bytes for files so the meta reads "PDF • 1.1 MB"; leave it off for links.
+- Use `device="web"` on admin and learner web pages, and `device="mobile"` in the app player (the lesson feed).
+- Pass `onRemove` only on authoring surfaces; learner surfaces get the single Download or Open link action.
+- Set `openDisabled` when there is no file to hand back, so the icon greys but every card keeps its shape.
+- In a row with a drag handle or trash, pass a `className` with `flex: 1; min-width: 0` so the card fills the row.
+
+**Don't**
+- Don't add a type badge; the tile and meta line already say what the resource is.
+- Don't recolour the file tiles or rebuild them from tokens; they are complete artwork.
+- Don't put reordering inside the card; it belongs to the row around it.
+- Don't give Remove a red fill; the trash icon turns `--text-error` on hover over the usual `--input-background-hover` circle.
+
+**Canonical spec:** tile 48 x 48 web, 40 x 40 mobile; padding `var(--space-sm)` top/bottom/left and `var(--space-m)` right (12px / 16px) on web, `var(--space-sm)` (12px) on mobile; gap `var(--space-sm)` (12px) web, `var(--space-s)` (8px) mobile; radius `var(--radius-sm)` (12px); `--cards-background`, hover `--cards-background-hover`; `var(--shadow-card)`; title Poppins Bold 16px/1.5 web, 14px/1.5 mobile, `--text-primary`; meta `--text-tertiary`; action a 20px icon in a 28px round button (`var(--radius-full)`), `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, card set `12213:3040` (Web/Admin `12213:3062`, hover `12213:3965`, Mobile `12213:3041`); light / dark split not recorded.
+
+**Prototype:** `src/components/ResourceCard/ResourceCard.tsx`
+- `type`: `pdf | word | excel | powerpoint | image | link`
+- `title`, `size?` (bytes, files only)
+- `device?`: `web` (default) or `mobile`
+- `onOpen?`, `openDisabled?`
+- `onRemove?`: authoring only, adds Remove beside the open action
+- `className?`
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| ResourceCard | _to be mapped by engineering_ | | |
+
 ---
 
 ## Where it's used
@@ -79,7 +124,7 @@ Accepted extensions per type live in `RESOURCE_TYPES` (`resources.ts`): `.pdf` �
 
 The same artwork (exported as `FILE_THUMBS`) shows at 40px in the Resources drawer's File uploader once a file is picked (`fileIcon`, Create Course Figma `9979:86223`).
 
-File tiles are finished artwork with their colours baked in; don't recolour them or rebuild them from tokens. Scale the same SVG to 56px for Mobile.
+File tiles are finished artwork with their colours baked in; don't recolour them or rebuild them from tokens. Scale the same SVG to 40px for Mobile.
 
 ## Action icon
 
@@ -89,7 +134,7 @@ File tiles are finished artwork with their colours baked in; don't recolour them
 - The button has a visible `:focus-visible` ring (`--primary-button-background`) and an `aria-label` of "Download <title>" or "Open link <title>".
 - When there's nothing to download (e.g. an admin's file isn't in the session any more), set `openDisabled`: the icon greys out but stays in place, so every card keeps the same shape.
 
-## Usage
+## Example
 
 ```tsx
 import ResourceCard from '@/components/ResourceCard/ResourceCard'

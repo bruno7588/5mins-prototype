@@ -7,9 +7,50 @@ description: Badge component for 5Mins.ai — pill-shaped status indicators (Suc
 
 Badges are small, pill-shaped status indicators that communicate state, category, or metadata at a glance.
 
-**Spec source:** Figma Library — dark `node 5799:479`, light `node 12137:2230` (verified 2026-08-26). Both nodes have the same structure; only the resolved text/fill tokens differ per mode.
+**Spec source:** Figma Library (`EC26cSVe9KNTCWXvYovakw`) — dark `node 5799:479`, light `node 12137:2230` (verified 2026-08-26). Both nodes have the same structure; only the resolved text/fill tokens differ per mode.
 
 **Implementation:** `src/components/Badge/Badge.tsx` + `Badge.css`. Use it — never hand-roll a pill.
+
+## Usage
+
+**Intent:** a small, read-only pill that tells the admin a record's state, category or a piece of metadata at a glance.
+
+**Use when**
+- Showing a status in a table row, card or header (enrolment, course or mapping status)
+- Showing metadata such as a count or content type, with a 16px icon
+- Listing values a control elsewhere owns, each removable with its own ×
+
+**Don't use when**
+- The pill is pressed, selected or toggled → Chip ([doc](chips-switcher-tabs.md))
+- The message needs a sentence or an action → Alert or Callout ([doc](alerts-toast.md))
+- Switching between views → Content Switcher or Tabs ([doc](chips-switcher-tabs.md))
+
+**Do**
+- Pick the type by meaning, using the scenario table under Usage guidelines below
+- Let the label carry the meaning; the icon is a secondary cue and colour is never the only signal
+- Use `customIcon` for a context-specific icon: 16px, `variant="Linear"`, `color="currentColor"`
+- Make a badge removable by passing `onDismiss` (the × only renders with a handler); give it a `dismissLabel` when the label is not a plain string
+- Move focus somewhere deliberate when the last removable value goes
+
+**Don't**
+- Don't hand-roll a status pill with its own classes and literal colours; use `Badge`
+- Don't give `new` an icon at either end
+- Don't pair a type icon with a × unless a spec calls for it
+- Don't place badges on coloured surfaces that undercut the text contrast
+
+**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px); radius `var(--radius-full)`; gap `var(--space-xs)` (4px), `var(--space-s)` (8px) once a × is present; label 14px Medium, line height 1.2; icons 16px `currentColor`; text tokens `--text-success`, `--text-warning`, `--text-error`, `--text-progress`, `--text-secondary`; fills are 16% tints of the type colour, `var(--input-background)` for informative, solid `var(--danger-400)` for new. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12137:2230` / dark `5799:479`.
+
+**Prototype:** `src/components/Badge/Badge.tsx`
+- `type`: `success` (default) | `warning` | `error` | `in-progress` | `informative` | `new`, plus code extensions `quiz` | `scheduled`
+- `icon` shows the type icon; `customIcon` replaces it
+- `label` (string or node) overrides the default label
+- `onDismiss` renders the trailing ×; `dismissLabel` sets its accessible name
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Badge | _to be mapped by engineering_ | | |
 
 ## Architecture
 

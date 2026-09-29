@@ -447,6 +447,13 @@ Component-level specs are **not duplicated here**. Each component has a verified
 | Avatars + avatar groups | `avatars.md` |
 | Empty states | `empty-state.md` |
 | Top nav + side panel navigation | `navigation.md` |
+| Dialog shell (ConfirmModal) | `confirm-modal.md` |
+| Row actions menu (kebab) | `row-actions-menu.md` |
+| Bulk action bar | `bulk-action-bar.md` |
+| Date picker field | `date-picker-field.md` |
+| Expand / collapse (Collapse) | `collapse.md` |
+
+Every component doc opens with a `## Usage` block (intent, use when, don't use when, do / don't, canonical spec, prototype and production mapping). Read it first. Known hand-rolled duplicates inside the prototype are listed in `drift-report.md`.
 
 If a component is not in this list, it has no verified spec yet — ask for the Figma link instead of improvising.
 

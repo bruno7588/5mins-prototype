@@ -7,7 +7,53 @@ description: Empty State component for 5Mins.ai — centered illustration + titl
 
 A centered composition shown when a content area has nothing to display — always paired with the action(s) that fill it.
 
-Spec source: Figma Library — light `11921:5779` / dark `5452:37234` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`).
+Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — light `11921:5779` / dark `5452:37234` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`).
+
+> **Updated 2026-09-29 (verified against code):** the CTA rule now matches code: a single action may be the outlined button alone (Resources), a pair is outlined then filled (Content); the loading rule is softened, since there is no shared skeleton component.
+
+---
+
+## Usage
+
+**Intent:** tells the admin that an area has nothing in it yet, and hands them the action that fills it.
+
+**Use when**
+- A list, table, tab, folder or search result has nothing to show
+- A course builder area is empty and the admin fills it by adding content (use `surface="dropzone"`)
+- Prompting a first action, such as adding content or resources
+
+**Don't use when**
+- Content is loading → a loading placeholder instead (there is no shared skeleton component; Roles uses a page-local one)
+- Something failed → Alert ([doc](alerts-toast.md)) or a dialog ([doc](overlays.md))
+
+**Do**
+- Use the shared `EmptyState`
+- Use a real 72px illustration from the Library "Illustrations Empty state" set, chosen for the context
+- Include the action that fills the area when the admin can fix the emptiness themselves: one action on its own as `secondaryAction` (outlined, e.g. `ResourcesTab.tsx`), or a pair of outlined `secondaryAction` then filled `primaryAction` (e.g. `ContentList.tsx`)
+- Use `surface="dropzone"` only for an area the admin fills by adding or dropping content
+- Pass `device="mobile"` inside the phone frame
+- Write a short, stateful title, a benefit-led description of one or two lines, and Title Case CTA labels
+- Centre it in the space the missing content would occupy
+
+**Don't**
+- Don't hand-roll a page-level empty block with its own title and button styles
+- Don't wrap the plain empty state in card chrome (border or fill); only the dropzone surface has a fill
+- Don't scale or redraw the illustration
+- Don't stack more than two CTAs
+
+**Canonical spec:** padding `var(--space-l)` (24px), `var(--space-xl)` (32px) on the dropzone; gap `var(--space-ml)` (20px); info gap `var(--space-s)` (8px); illustration 72 × 72px; title 20px Bold `var(--text-primary)` (16px on mobile); description 14px Regular `var(--text-secondary)`, max width 600px; CTA gap `var(--space-m)` (16px); radius `var(--radius-ml)` (20px); dropzone fill `var(--input-background)` with a 2px dashed `DashedBorder` outline. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11921:5779` / dark `5452:37234` (mobile `5452:37381`).
+
+**Prototype:** `src/components/EmptyState/EmptyState.tsx`
+- `title` (required), `description`, `illustration` (72px node)
+- `primaryAction` (filled) and `secondaryAction` (outlined, renders first): `{ label, onClick, icon? }`
+- `device`: `desktop` (default) | `mobile`
+- `surface`: `plain` (default) | `dropzone` (code-only extension)
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Empty State | _to be mapped by engineering_ | | |
 
 ---
 
@@ -118,14 +164,14 @@ Not a Figma variant. Puts the empty state on `--input-background` inside a dashe
 
 - **Title:** short and stateful ("No courses yet", "Nothing assigned"), not apologetic.
 - **Description:** sell the action's benefit — the Figma example copy is benefit-led ("…drives a 38% boost in information retention"). One or two lines, never more than the 600px measure.
-- **CTA labels:** Title Case, 1–3 words; the filled button is the action that fills the empty area.
+- **CTA labels:** Title Case, 1–3 words; with a pair, the filled button is the action that fills the empty area.
 - Swap the illustration per context (courses, people, folders); keep it at 72px.
 
 ## Do / Don't
 
 ✓ Center the empty state in the space the missing content would occupy  
-✓ Include at least the filled CTA when the user can fix the emptiness themselves  
-✗ Don't use it for loading (use skeletons) or errors (use alerts/dialogs)  
+✓ Include the action that fills the area when the user can fix the emptiness themselves (outlined alone, or outlined + filled)  
+✗ Don't use it for loading (show a loading placeholder) or errors (use alerts/dialogs)  
 ✗ Don't scale the illustration or stack more than two CTAs  
 
 ## Related Skills

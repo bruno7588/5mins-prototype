@@ -7,7 +7,60 @@ description: Data table component for 5Mins.ai — card-style bordered rows (not
 
 Data table component for the 5Mins.ai admin and learner platform. Use for any rows of records: learners, enrolments, courses, roles, reports, audit logs, or any "show me rows of data" screen.
 
-Spec source: Figma Library — full table light `11927:7332` / dark `7896:2624`, row states light `11927:7487` / dark `7896:2804`, header light `11927:7554` / dark `11872:3077`, cell types light `11927:7602` / dark `11766:619` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`).
+Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — full table light `11927:7332` / dark `7896:2624`, row states light `11927:7487` / dark `7896:2804`, header light `11927:7554` / dark `11872:3077`, cell types light `11927:7602` / dark `11766:619` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`).
+
+> **Updated 2026-09-29 (aligned to prototype usage):** the sort arrow in "Header types" is 16px `ArrowDown`, revealed on hover and rotated for direction, matching `UserProfile.tsx`; it was listed as a 20px arrow.
+
+> **Updated 2026-09-29 (verified against code):** selected rows now read `--selected-row` / `--selected-row-hover` throughout (the raw Secondary-500 12%/24% text is gone); the stale CSS block and React sample are replaced by a short example of the real `Table` API; date year is `--text-tertiary`, thumbnail 90×44, action-icon hover `--input-background`; avatar cells use `<Avatar>` / `<AvatarGroup>`; `RowActionsMenu` takes `ariaLabel`; tables in drawers and modals keep `--border`.
+
+> **Updated 2026-09-29 (re-verified against Figma table data `11766:619`):** selected rows use the new `--selected-row` / `--selected-row-hover` tokens (Figma `Selected-row` / `Selected-row-hover`, Secondary-500 at 16% / 24%, both modes); row and header checkboxes sit in a 24px hit area in a 48px column (was 32px in 52px); single-line cell text is Regular 400 and only the primary line of a two-line cell is Semibold 600.
+
+## Usage
+
+**Intent:** show a set of records as rows the user can scan, compare, select in bulk and act on one at a time.
+
+**Use when**
+- The screen is "rows of records" with shared columns: people, courses, roles, enrolments, records, uploads.
+- Users need to select several rows for a bulk action, sort by a column, or page through a long list.
+
+**Don't use when**
+- The items are rich visual content (thumbnails first, few fields) → use cards ([doc](cards.md))
+- It is a short picker list inside a menu or dropdown → use Listbox ([doc](listbox.md))
+- There are no rows yet → keep the header and show an empty state in place of the rows ([doc](empty-state.md))
+
+**Do**
+- Use `src/components/Table` for every data table; don't hand-roll one.
+- Keep the card-row structure: filled header bar, then a stack of separate bordered rounded rows with a 12px gap. No gridlines, no outer border.
+- Pass `pagination` and let the table render the "1-10 of 28" footer; it hides itself when everything fits on one page.
+- Give fixed-width columns (actions, status) a `width` flex value such as `'0 0 56px'`; the header cell takes the same width automatically.
+- For selection, pass `selectable`, `isSelected`, `onToggleRow`, `onToggleAll` and `allSelected`, and pair it with the BulkActionBar for the bulk actions.
+- Put row actions in a trailing column with `RowActionsMenu` and an `ariaLabel` prop naming the row.
+- Mark sortable columns with `sortable: true` and a 16px `ArrowDown` trailing the label: shown on the active column (rotated 180° for descending), revealed on hover for the others.
+- Use a Toggle, Checkbox, Badge or Button component inside cells, not a restyled native control.
+- Colours from semantic tokens only; rows sit on the page ground, so the row border is `--border`. The same holds inside drawers and modals, whose panels are `--page-background`.
+
+**Don't**
+- Don't build a gridlined `<table>` or a custom div table with its own classes.
+- Don't write your own pagination row under a table.
+- Don't hand-roll a switch in a cell; use Toggle.
+- Don't wrap the table in your own horizontal scroll container; the table owns its scroll and pins the first column.
+- Don't show the pagination footer for a single page of results.
+- Don't turn cell text `--text-button-hover` on hover unless the cell is actually clickable.
+
+**Canonical spec:** header bar `var(--input-background)`, `var(--radius-sm)` (12px); row `1px solid var(--border)`, radius 12px; row gap `var(--space-sm)` (12px); cell padding `var(--space-s) var(--space-sm)` (8px 12px); Poppins Regular 14px/1.5, header `--text-secondary`, cells `--text-primary`; row hover `--input-background`; selected row `var(--selected-row)` / `var(--selected-row-hover)`; checkbox column 48px with a 24px checkbox; single-line cell text Regular 400, primary line of a two-line cell Semibold 600. Figma: Library `EC26cSVe9KNTCWXvYovakw`, full table light `11927:7332` / dark `7896:2624`, row states light `11927:7487` / dark `7896:2804`.
+
+**Prototype:** `src/components/Table/Table.tsx`
+- `columns: Column<T>[]` with `key`, `header`, `render`, optional `sortable`, `width` (CSS flex shorthand), `align` (`left` | `right` | `center`), `cellClassName`.
+- `rows`, `getRowKey` (required), `getRowState` (`enabled` | `hover` | `selected` | `disabled`), `onRowClick`.
+- Selection: `selectable`, `isSelected`, `isRowSelectable`, `onToggleRow`, `onToggleAll`, `allSelected`, `selectAllIndeterminate`, `selectAllDisabled`.
+- `onSort(key)`; the sort arrow itself is rendered by the caller inside `header`.
+- `pagination: { from, to, total, onPrev, onNext }`.
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Table | _to be mapped by engineering_ | | |
 
 ## The one thing to get right first
 
@@ -57,16 +110,16 @@ Use the semantic token names, not raw hex. Cross-reference `colors.md`, `layout.
 | `--space-s` | `8px` | `8px` | cell padding-y |
 | `--space-xs` | `4px` | `4px` | tight gaps |
 | `--border` | `#DFE1E6` | `#2D313D` | row border, progress track |
-| `--input-background` | `rgba(191,194,204,0.16)` | `rgba(69,76,94,0.16)` | header bar fill, row hover background |
-| `--input-background-hover` | `#EFF0F2` | `#2D313D` | action-icon hover pill |
+| `--input-background` | `rgba(191,194,204,0.16)` | `rgba(69,76,94,0.16)` | header bar fill, row hover background, action-icon hover pill |
 | `--text-primary` | `#20222A` | `#F9F9FA` | cell content |
-| `--text-secondary` | `#454C5E` | `#BFC2CC` | header text, supporting text, date year |
+| `--text-secondary` | `#454C5E` | `#BFC2CC` | header text, supporting text |
+| `--text-tertiary` | `#656B7C` | `#9EA4B3` | date year line |
 | `--text-disabled` | `#9EA4B3` | `#656B7C` | read-only / disabled cell text |
 | `--text-button-hover` | `#008393` | `#00CEE6` | hovered link-cell text |
 | `--text-success` | `#11763D` | `#18A957` | success badge text |
 | `--primary-600` | `#00AFC4` | `#00AFC4` | progress bar fill |
 
-Selected rows use raw Secondary-500 (`#FFBB38`) at **12%** opacity when enabled and **24%** on hover, applied to both background and border — both modes. Do not use the solid amber for the row fill. (Note: this is the Secondary-500 tint from Figma, not the `--selected-tint` token, which is based on `#EDA30D`.) Checkboxes take their checked fill from `selection-controls.md` (`--control-selected`).
+Selected rows use `var(--selected-row)` when enabled and `var(--selected-row-hover)` on hover, applied to both background and border (`Table.css`). They mirror the Figma variables `Selected-row` / `Selected-row-hover`: Secondary-500 `#FFBB38` at 16% / 24% in both modes, so there is no dark override. Do not use the solid amber for the row fill. Checkboxes take their checked fill from `selection-controls.md` (`--control-selected`).
 
 ## Typography
 
@@ -76,10 +129,10 @@ All table text is Poppins, `14px`, `line-height: 1.5`.
 |---|---|---|
 | Header cell | Regular (400) | `--text-secondary` |
 | Data cell (single line) | Regular (400) | `--text-primary` |
-| Primary line of a two-line cell | **Semibold (600)** — Paragraph M semibold | `--text-primary` |
+| Primary line of a two-line cell | **Semibold (600)**, Paragraph M semibold (Regular when the stack has no supporting line) | `--text-primary` |
 | Supporting text line | Regular (400) | `--text-secondary` |
 | Date day line | Regular (400), 14px | `--text-primary` |
-| Date year line | Regular (400), 12px | `--text-secondary` |
+| Date year line | Regular (400), 12px | `--text-tertiary` |
 | Badge label | Medium (500), 14px, line-height 1.2 | semantic |
 | Button label | Bold (700), 12px | semantic |
 
@@ -89,8 +142,8 @@ All table text is Poppins, `14px`, `line-height: 1.5`.
 |---|---|---|---|
 | Enabled | transparent | `--border` | `--text-primary` |
 | Hover | `--input-background` | `--border` | `--text-primary` (interactive cells go to `--text-button-hover`) |
-| Selected | `rgba(255,187,56,0.12)` | `rgba(255,187,56,0.12)` | `--text-primary` |
-| Selected + Hover | `rgba(255,187,56,0.24)` | `rgba(255,187,56,0.24)` | `--text-primary` |
+| Selected | `--selected-row` | `--selected-row` | `--text-primary` |
+| Selected + Hover | `--selected-row-hover` | `--selected-row-hover` | `--text-primary` |
 | Disabled (read-only) | transparent | `--border` | `--text-disabled` |
 
 ## Header types
@@ -101,7 +154,7 @@ Header cells carry the same `flex` widths as the row below. Text is `--text-seco
 |---|---|
 | Text | label only |
 | Checkbox + text | 24px select-all checkbox + label, `gap: 12px` |
-| Text + sort | label + trailing 20px arrow-down, `gap: 4px` (sortable column) |
+| Text + sort | label + trailing 16px `ArrowDown`, `gap: 4px` (sortable column); hidden until hover except on the active column, rotated 180° for descending |
 | Checkbox + text + sort | all three |
 
 ## Cell content types
@@ -112,16 +165,16 @@ Every cell is `flex: 1; display: flex; align-items: center; padding: 8px 12px; m
 |---|---|
 | Text | single line, `--text-primary` |
 | Text + supporting | two lines: **Semibold (600)** primary + Regular secondary, `2px` gap |
-| Date | two lines: "Jan 1," (14px) over "2025" (12px secondary) |
+| Date | two lines: "Jan 1," (14px) over "2025" (12px `--text-tertiary`) |
 | Text + icon | text + trailing 20px icon, `gap: 12px` |
 | Checkbox | leading 24px checkbox + text, `gap: 12px` (checked fill per `selection-controls.md`) |
-| Avatar | 32px round avatar + text, `gap: 12px` |
-| Avatar + supporting | 40px avatar + two-line info |
-| Avatar group | overlapping 32px avatars (`-8px` margin, 1px page-bg border) + "+N" pill |
+| Avatar | `<Avatar size={32}>` + text, `gap: 12px` |
+| Avatar + supporting | `<Avatar size={40}>` + two-line info |
+| Avatar group | `<AvatarGroup size={32}>`: overlapping 32px avatars (`-12px` overlap, 1px `--page-background` ring); "+N" is a same-size 32px circle via `remaining` ([avatars.md](avatars.md)) |
 | Illustration | 24px skill / gamification icon + text |
-| Thumbnail | 72x44 rounded (`8px`) image + text |
+| Thumbnail | 90×44 rounded (`8px`) image + text (`.tbl-thumb`) |
 | Progress bar | 72px x 8px segmented bar (8 segments) + % label; row height 56px |
-| Action icon | centered 20px kebab; hover shows a 40px pill bg + tooltip |
+| Action icon | centred 20px kebab in a 28px circular button; hover fills it with `--input-background` |
 | Badge | status pill (e.g. success: tick + label on `rgba(24,169,87,0.16)`) |
 | Button | small outlined button (`12px` Bold label, `8px` radius) |
 | Dropdown | bordered input + chevron (`12px` radius) |
@@ -129,9 +182,9 @@ Every cell is `flex: 1; display: flex; align-items: center; padding: 8px 12px; m
 ### Cell states (apply within any content type)
 
 - Enabled: base styling.
-- Hover: interactive text turns `--text-button-hover` (`#008393` light / `#00CEE6` dark) — with a two-line stack, the whole cluster turns; action icons gain a circular `--input-background-hover` pill (4px padding) plus a tooltip.
+- Hover: interactive text turns `--text-button-hover` (`#008393` light / `#00CEE6` dark) — with a two-line stack, the whole cluster turns; action icons gain a circular `--input-background` fill.
 - Selected: checkbox shows the amber tick.
-- Read-only / disabled: text goes to `--text-disabled`; avatars, thumbnails and illustrations get `mix-blend-mode: luminosity`; action icons drop to `50%` opacity.
+- Read-only / disabled: text goes to `--text-disabled`; avatars and thumbnails get `mix-blend-mode: luminosity`; action icons turn `--text-disabled`.
 
 > Checkboxes, radios and toggles in cells follow `selection-controls.md`. The 24px box with the amber checked fill comes from that spec; do not reinvent it here.
 
@@ -139,296 +192,62 @@ Every cell is `flex: 1; display: flex; align-items: center; padding: 8px 12px; m
 
 Label format: `"1-10 of 28"`. The footer right-aligns because the table container uses `align-items: flex-end`. Prev/next are 16px icons; disabled nav uses `opacity: 0.4`.
 
-## Full CSS
+## CSS and React
 
-```css
-.tbl {
-  display: flex; flex-direction: column; gap: var(--space-sm);
-  align-items: flex-end; width: 100%;
-  font-family: "Poppins", sans-serif;
-}
+> Superseded, see Usage: the full CSS block and hand-written React component that lived here predated `src/components/Table` (raw amber selected rows, a `.sort` span, fake checkboxes, `.avatar-32` / `.avatar-40` classes, `key={i}`, no `getRowKey`). `Table.tsx` and `Table.css` are the reference; don't copy styles out of them, use the component.
 
-/* Header — filled bar, 12px radius */
-.tbl-head { display: flex; align-items: center; width: 100%; background: var(--input-background); border-radius: var(--radius-sm); }
-.tbl-head-cell {
-  flex: 1 1 0; min-width: 0; display: flex; align-items: center;
-  padding: var(--space-s) var(--space-sm); color: var(--text-secondary);
-  font: 400 14px/1.5 "Poppins", sans-serif;
-  max-height: 42px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.tbl-head-cell.is-sortable { gap: var(--space-xs); cursor: pointer; }
-.tbl-head-cell.is-checkbox { gap: var(--space-sm); }
-.tbl-head-cell.is-disabled { color: var(--text-disabled); }
-.tbl-head-cell .sort { width: 20px; height: 20px; flex: 0 0 20px; }
-
-/* Row */
-.tbl-row {
-  display: flex; align-items: center; width: 100%;
-  border: 1px solid var(--border); border-radius: var(--space-sm);
-}
-.tbl-row.is-hover, .tbl-row:hover { background: var(--input-background); }
-.tbl-row.is-selected { background: rgba(255,187,56,0.12); border-color: rgba(255,187,56,0.12); }
-.tbl-row.is-selected.is-hover, .tbl-row.is-selected:hover { background: rgba(255,187,56,0.24); border-color: rgba(255,187,56,0.24); }
-.tbl-row.is-disabled .tbl-cell { color: var(--text-disabled); }
-.tbl-row.is-disabled img.avatar-32,
-.tbl-row.is-disabled img.avatar-40,
-.tbl-row.is-disabled img.thumbnail,
-.tbl-row.is-disabled .illustration-24 { mix-blend-mode: luminosity; }
-
-/* Cell base */
-.tbl-cell {
-  flex: 1 1 0; min-width: 0; display: flex; align-items: center;
-  padding: var(--space-s) var(--space-sm); color: var(--text-primary);
-  font: 400 14px/1.5 "Poppins", sans-serif;
-  max-height: 58px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.tbl-row:hover .tbl-cell.is-link, .tbl-cell.is-hover { color: var(--text-button-hover); }
-
-/* Two-line stacks */
-.tbl-stack { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; min-width: 0; }
-.tbl-stack .primary { font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; }
-.tbl-stack .supporting { font-weight: 400; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; }
-
-/* Date */
-.tbl-date { flex-direction: column; align-items: flex-start; gap: 0; }
-.tbl-date .day  { font-size: 14px; line-height: 1.5; color: var(--text-primary); }
-.tbl-date .year { font-size: 12px; line-height: 1.2; color: var(--text-secondary); }
-
-/* Avatars */
-.avatar-32 { width: 32px; height: 32px; border-radius: 100px; object-fit: cover; flex: 0 0 32px; }
-.avatar-40 { width: 40px; height: 40px; border-radius: 100px; object-fit: cover; flex: 0 0 40px; }
-.avatar-group { display: flex; align-items: center; }
-.avatar-group .avatar-32 { margin-right: -8px; border: 1px solid var(--page-background); }
-.avatar-group .avatar-more {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 30px; height: 30px; border-radius: 85px;
-  background: var(--page-background-hover); color: var(--text-secondary);
-  font: 400 11px/1.5 "Poppins", sans-serif;
-}
-
-/* Icons / illustration / thumbnail */
-.icon-20 { width: 20px; height: 20px; flex: 0 0 20px; }
-.illustration-24 { width: 24px; height: 24px; flex: 0 0 24px; display: inline-flex; align-items: center; justify-content: center; }
-.thumbnail { width: 72px; height: 44px; border-radius: var(--space-s); object-fit: cover; flex: 0 0 72px; }
-
-/* Checkbox (mirror of selection-controls.md) */
-.checkbox {
-  width: 24px; height: 24px; flex: 0 0 24px;
-  border: 1.5px solid var(--border); border-radius: 6px;
-  display: inline-flex; align-items: center; justify-content: center;
-}
-.checkbox[data-checked="true"] { background: var(--control-selected); border-color: var(--control-selected); }
-.checkbox[data-checked="true"]::after {
-  content: ""; width: 5px; height: 9px; margin-top: -2px;
-  border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
-}
-
-/* Progress bar */
-.tbl-progress { gap: var(--space-sm); height: 56px; }
-.tbl-progress .bar { display: flex; width: 72px; height: 8px; border-radius: var(--space-s); overflow: hidden; flex: 0 0 72px; }
-.tbl-progress .seg { flex: 1 1 0; min-width: 0; height: 100%; background: var(--border); }
-.tbl-progress .seg.fill { background: var(--primary-600); }
-.tbl-progress .pct { width: 33px; flex: 0 0 33px; color: var(--text-primary); font: 400 14px/1.5 "Poppins", sans-serif; }
-
-/* Action icon */
-.tbl-action { justify-content: center; }
-.tbl-action .icon-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; border: none; background: transparent;
-  border-radius: 40px; cursor: pointer;
-}
-.tbl-action .icon-btn:hover { background: var(--input-background-hover); }
-.tbl-action .more-20 { width: 20px; height: 20px; }
-.tbl-action.is-disabled .icon-btn { opacity: 0.5; cursor: default; }
-
-/* Badge */
-.badge { display: inline-flex; align-items: center; gap: var(--space-xs); padding: 6px 12px; border-radius: 40px; font: 500 14px/1.2 "Poppins", sans-serif; }
-.badge .tick-16 { width: 16px; height: 16px; }
-.badge-success { background: rgba(24,169,87,0.16); color: var(--text-success); }
-.badge.is-disabled { background: rgba(69,76,94,0.16); color: var(--text-disabled); mix-blend-mode: luminosity; }
-
-/* Button cell */
-.tbl-btn { padding: 8px 16px; border: 1px solid var(--primary-600); border-radius: var(--space-s); background: transparent; color: var(--primary-600); font: 700 12px/1.4 "Poppins", sans-serif; cursor: pointer; }
-.tbl-btn:disabled { border-color: var(--text-disabled); color: var(--text-disabled); cursor: default; }
-
-/* Dropdown cell */
-.tbl-dropdown { display: inline-flex; align-items: center; gap: var(--space-s); padding: var(--space-s) var(--space-sm); border: 1px solid var(--border); border-radius: var(--space-sm); background: transparent; color: var(--text-primary); font: 400 14px/1.5 "Poppins", sans-serif; cursor: pointer; }
-.tbl-dropdown:disabled { color: var(--text-disabled); }
-.tbl-dropdown .chevron-20 { width: 20px; height: 20px; }
-
-/* Pagination */
-.tbl-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; }
-.tbl-pagination .count { color: var(--text-secondary); font: 400 14px/1.5 "Poppins", sans-serif; }
-.tbl-pagination .nav { width: 16px; height: 16px; cursor: pointer; }
-.tbl-pagination .nav[aria-disabled="true"] { opacity: 0.4; cursor: default; }
-
-/* Fixed-width helper: apply to both header cell and data cell */
-.tbl-col-action { flex: 0 0 52px; }
-```
-
-## React TypeScript implementation
-
-A generic, column-driven table. Columns declare their own cell renderer so any of the content types above can be dropped in.
+Helper classes `Table.css` provides for cell content: `.tbl-media` (media + text, 12px gap), `.tbl-stack` with `.primary` / `.supporting` (two-line stack, 2px gap), `.tbl-date` with `.day` / `.year`, `.tbl-thumb` (90×44), `.tbl-progress`, `.tbl-action`, `.tbl-col-action` (`flex: 0 0 52px`), and `is-link` / `is-overflow` via `cellClassName`.
 
 ```tsx
-import { ReactNode } from "react";
+import { ArrowDown } from 'iconsax-react'
+import Table from '@/components/Table/Table'
+import Avatar from '@/components/Avatar/Avatar'
+import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 
-type RowState = "enabled" | "hover" | "selected" | "disabled";
-
-interface Column<T> {
-  key: string;
-  header: ReactNode;
-  sortable?: boolean;
-  width?: string;              // e.g. "0 0 52px" for an action column
-  render: (row: T) => ReactNode;
-}
-
-interface TableProps<T> {
-  columns: Column<T>[];
-  rows: T[];
-  getRowState?: (row: T) => RowState;
-  selectable?: boolean;
-  isSelected?: (row: T) => boolean;
-  onToggleRow?: (row: T) => void;
-  onToggleAll?: () => void;
-  onSort?: (key: string) => void;
-  pagination?: { from: number; to: number; total: number; onPrev?: () => void; onNext?: () => void };
-}
-
-export function Table<T>({
-  columns, rows, getRowState, selectable, isSelected,
-  onToggleRow, onToggleAll, onSort, pagination,
-}: TableProps<T>) {
-  return (
-    <div className="tbl">
-      <div className="tbl-head">
-        {selectable && (
-          <div className="tbl-head-cell is-checkbox" style={{ flex: "0 0 52px" }}>
-            <span className="checkbox" role="checkbox" onClick={onToggleAll} />
-          </div>
-        )}
-        {columns.map((col) => (
-          <div
-            key={col.key}
-            className={`tbl-head-cell${col.sortable ? " is-sortable" : ""}`}
-            style={col.width ? { flex: col.width } : undefined}
-            onClick={col.sortable ? () => onSort?.(col.key) : undefined}
-          >
-            <span>{col.header}</span>
-            {col.sortable && <span className="sort" aria-hidden />}
-          </div>
-        ))}
-      </div>
-
-      {rows.map((row, i) => {
-        const state = getRowState?.(row) ?? "enabled";
-        const selected = isSelected?.(row);
-        return (
-          <div
-            key={i}
-            className={[
-              "tbl-row",
-              state === "hover" && "is-hover",
-              (state === "selected" || selected) && "is-selected",
-              state === "disabled" && "is-disabled",
-            ].filter(Boolean).join(" ")}
-          >
-            {selectable && (
-              <div className="tbl-cell" style={{ flex: "0 0 52px" }}>
-                <span
-                  className="checkbox"
-                  role="checkbox"
-                  aria-checked={selected}
-                  data-checked={selected ? "true" : "false"}
-                  onClick={() => onToggleRow?.(row)}
-                />
-              </div>
-            )}
-            {columns.map((col) => (
-              <div
-                key={col.key}
-                className="tbl-cell"
-                style={col.width ? { flex: col.width } : undefined}
-              >
-                {col.render(row)}
-              </div>
-            ))}
-          </div>
-        );
-      })}
-
-      {pagination && (
-        <div className="tbl-pagination">
-          <span className="count">
-            {pagination.from}-{pagination.to} of {pagination.total}
-          </span>
-          <span
-            className="nav"
-            role="button"
-            aria-label="Previous page"
-            aria-disabled={pagination.from <= 1}
-            onClick={pagination.onPrev}
-          />
-          <span
-            className="nav"
-            role="button"
-            aria-label="Next page"
-            aria-disabled={pagination.to >= pagination.total}
-            onClick={pagination.onNext}
-          />
-        </div>
-      )}
-    </div>
-  );
-}
-```
-
-Usage:
-
-```tsx
 <Table
-  selectable
   columns={[
-    { key: "name", header: "Name", render: (u) => (
-      <span style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <img className="avatar-40" src={u.avatar} alt="" />
+    { key: 'name', header: 'Name', render: (u) => (
+      <span className="tbl-media">
+        <Avatar size={40} src={u.avatar} />
         <span className="tbl-stack">
           <span className="primary">{u.name}</span>
           <span className="supporting">{u.email}</span>
         </span>
       </span>
     )},
-    { key: "role", header: "Role", sortable: true, render: (u) => u.role },
-    { key: "joined", header: "Joined", render: (u) => (
-      <span className="tbl-date">
-        <span className="day">{u.joinedDay}</span>
-        <span className="year">{u.joinedYear}</span>
-      </span>
+    { key: 'role', sortable: true, render: (u) => u.role, header: (
+      <>Role <ArrowDown size={16} color="currentColor" className={sortArrowClass('role')} /></>
     )},
-    { key: "actions", header: "", width: "0 0 52px", render: () => (
-      <button className="icon-btn" aria-label="More actions" />
-    )},
+    { key: 'actions', header: '', width: '0 0 56px', align: 'center', cellClassName: 'is-overflow',
+      render: (u) => <RowActionsMenu ariaLabel={`Actions for ${u.name}`} items={actionsFor(u)} /> },
   ]}
   rows={people}
-  isSelected={(u) => selectedIds.includes(u.id)}
+  getRowKey={(u) => u.id}
+  selectable
+  isSelected={(u) => selectedIds.has(u.id)}
   onToggleRow={(u) => toggle(u.id)}
-  pagination={{ from: 1, to: 10, total: 28 }}
+  onToggleAll={toggleAll}
+  allSelected={allSelected}
+  onSort={handleSort}
+  pagination={{ from: 1, to: 10, total: 28, onPrev, onNext }}
 />
 ```
+
+The sort arrow class (`sortArrowClass` above) is the caller's: show it on the active column, rotate 180° for descending, reveal it on hover for the others (see `.up-sort` in `UserProfile.css`).
 
 ## Usage guidance
 
 - Column count: equal `flex: 1` columns are the default. Give an action-icon column a fixed `flex: 0 0 52px` and match it in the header so columns line up.
 - Selection tables: lead with a checkbox header (select-all) and checkbox cells; apply the selected row state when checked.
 - A progress-bar cell sets the row height to 56px; check vertical rhythm when mixing it with short cells.
-- Read-only rows (e.g. archived records): apply `.is-disabled` to the row, not to individual cells.
+- Read-only rows (e.g. archived records): return `'disabled'` from `getRowState`, which styles the whole row, not individual cells.
 - Empty state: when there are no rows, show an empty-state block in place of the rows, keep the header, and hide pagination.
 - Hover affordance: only turn cell text to `--text-button-hover` for cells that are actually clickable (a name that links to a profile, not a plain status cell).
 - Accessibility: every interactive cell element needs a visible `:focus-visible` indicator and an `aria-label` where there is no text (action icons, pagination nav).
 
 ## Code reality
 
-`src/components/Table/` is the reusable implementation of this spec — use it for any data table, don't hand-roll. Drift from the nodes (flagged, not changed): row hover uses `--input-background` — the translucent tint every table in the app now shares, and the same fill the header bar carries — where the nodes specify `--page-background-hover`; and the selected-row tint uses `--selected-tint` / `rgba(237,163,13,…)` (the `#EDA30D` amber) where Figma specifies Secondary-500 `#FFBB38` @12%/24%.
+`src/components/Table/` is the reusable implementation of this spec — use it for any data table, don't hand-roll. Drift from the nodes (flagged, not changed): row hover uses `--input-background` — the translucent tint every table in the app now shares, and the same fill the header bar carries — which matches the Figma row-state variable `Input-background`. Selected rows use `--selected-row` / `--selected-row-hover`, matching the Figma variables.
 
 ## Related docs
 

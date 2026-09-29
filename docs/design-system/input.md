@@ -14,11 +14,98 @@ description: Input field system for 5Mins.ai — four types. Outlined (standard 
 | **Radio** | Bordered field row with a 21px radio inside — pick an option AND type its value | not built yet |
 | **Integer** | Compact numeric stepper (− / value / +) | `src/components/InputInteger` |
 
-Spec source: Figma Library — set light `12111:3346` / dark `11180:1982`; Outlined `12111:2866`/`8974:24610`; Inline `12111:3347`/`10330:4736`; Radio `12111:3351`/`8974:30479`; Integer `12111:2565`/`10145:10895` (re-verified 2026-08-20). Hexes below are dark-mode fallbacks; tokens resolve per mode (see `colors.md`).
+Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — set light `12111:3346` / dark `11180:1982`; Outlined `12111:2866`/`8974:24610`; Inline `12111:3347`/`10330:4736`; Radio `12111:3351`/`8974:30479`; Integer `12111:2565`/`10145:10895` (re-verified 2026-08-20). Hexes below are dark-mode fallbacks; tokens resolve per mode (see `colors.md`).
 
-> **2026-08-20 — field borders use `--border-elevated`.** The border token was split in two: `--border` is the quiet weight for table rows, dividers and cards, and `--border-elevated` is one step stronger for field chrome. Enabled, filled and success borders are `--border-elevated`.
+> **2026-08-20 — field borders use `--border-elevated`.** The border token was split in two: `--border` is the quiet weight for the page ground and inside drawers and modals, and `--border-elevated` is one step stronger, used on cards and menus and for field chrome. Enabled, filled and success borders are `--border-elevated`.
 >
 > **Disabled drops back to `--border`.** A disabled field should not hold an edge as firmly as a live one, so every disabled control — Outlined, Radio, Integer, and the Chip and Dropdown outside this doc — uses the quiet weight. The Radio, Integer, Chip and Dropdown sets all bind their disabled variants to `Border` in Figma; only the Outlined set still paints `Border-elevated`. Four-to-one — treat the Outlined disabled binding as stale, and `--border` as the rule.
+
+> **Updated 2026-09-29 (verified against code):** fixed the border-weight note (cards use `--border-elevated`), the card-fill hover wording (`InputField` always uses `--input-background`; callers override), light `--input-background-elevated` (24%, not 16%), the Integer resting value colour (`--text-primary`), the Radio label weight (600) and the error-timing guidance; removed raw hex fallbacks and the search example.
+
+> **Updated 2026-09-29 (aligned to prototype usage):** `InputField` is a default export at `@/components/InputField/InputField` (there is no `ui/` folder), and it also takes `validation="warning"`, `onBlur` and `autoFocus`. `InputInteger` takes a `suffix` (e.g. `%`). The Import and Props sections below now match the code.
+
+## Usage
+
+### InputField (Outlined)
+
+**Intent:** the standard labelled single-line text field for any form value (names, emails, links, subjects).
+
+**Use when**
+- A form needs a single line of free text with a visible label, e.g. "Name of the lesson" or "Role Name".
+- The value needs inline validation feedback (error, warning or success) under the field.
+
+**Don't use when**
+- The field filters or finds content → use Search ([doc](search.md))
+- The value is a small whole number → use InputInteger (below)
+- The value is a date → use DatePickerField ([doc](date-picker-field.md)), not `type="date"`
+- The user picks from a fixed list → use Dropdown ([doc](dropdown.md))
+- The text is a page-level title edited in place → use the Inline pattern (see the Inline section below)
+
+**Do**
+- Use `InputField` for every labelled single-line field; never build a raw `<input>` with custom styles.
+- Pass `label` so the component links `<label htmlFor>` to the input; labels are Paragraph M semibold (14px / 600) in `--text-secondary`.
+- Pair `validation="error"` with `helperText` for the message; call sites show it on blur (`ResourceForm`) or after a save attempt (`SaveReportDrawer`).
+- Use `validation="warning"` (amber, Linear `Danger` icon) for a soft block such as a duplicate name.
+- Put trailing affordances (password eye, calendar icon) in `iconRight`; the validation icon stacks before it automatically.
+- Use `disabled` for a non-editable field, not `readOnly`.
+
+**Don't**
+- Don't colour a placeholder with `--text-tertiary`; placeholders are `--text-disabled` everywhere.
+- Don't hard-code hex values or px sizes in overrides; use tokens.
+- Don't use `helperText` alone to signal an error; it only turns red with `validation="error"`.
+- Don't drop the label weight to 500 or raise it to 700; 600 is the label weight.
+
+**Canonical spec:** padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); label to field to helper gap `var(--space-s)` (8px); text Paragraph M (14px / 400 / 1.5). Border `--border-elevated` at rest, `--border-hover` + `--input-background` fill on hover (the component always uses `--input-background`; a caller on a card fill overrides it with `--input-background-elevated`), `--selected` on focus, `--border` when disabled, `--text-error` on error. Placeholder `--text-disabled`, helper `--text-tertiary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12111:2866` / dark `8974:24610`.
+
+**Prototype:** `src/components/InputField/InputField.tsx` (default export)
+- `label`, `placeholder` (default "Input text"), `value`, `onChange`, `onBlur`
+- `validation`: `'none' | 'error' | 'warning' | 'success'`, with `helperText`
+- `iconRight` for a trailing 20px icon; `type` passes through (`text`, `email`, `password`, `url`)
+- `disabled`, `autoFocus`, `className`
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| InputField (Outlined) | _to be mapped by engineering_ | | |
+
+### InputInteger (Integer)
+
+**Intent:** a compact − / value / + stepper for small whole-number settings that can also be typed into.
+
+**Use when**
+- A setting is a small bounded whole number, e.g. "Maximum retakes allowed", "Days to complete each re-attempt", "Days to add".
+- A range filter needs a from/to pair of numbers (two steppers with `ariaLabel`s like "from" and "to").
+- The number carries a unit such as a percentage (`suffix="%"`).
+
+**Don't use when**
+- The value is free text or a long number such as an ID → use InputField (above)
+- The value is a date → use DatePickerField ([doc](date-picker-field.md))
+
+**Do**
+- Set `min` (and `max` where one exists); `−` and `+` disable at the bounds and typed values clamp.
+- Give an `ariaLabel` whenever there is no visible `label`.
+- Use `className="input-integer--inline"` to put the label to the left of the field.
+- Keep the unit inside the control with `suffix` when it is a symbol such as `%`.
+
+**Don't**
+- Don't hand-roll − / + buttons next to a text input; `InputInteger` is the numeric stepper.
+- Don't show native number spinners; the − / + controls are the only steppers.
+- Don't give the whole box a hover fill; hover shows on the − / + control under the pointer (circular `--page-background-hover`).
+
+**Canonical spec:** padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); gap between controls `var(--space-sm)` (12px); 20px Iconsax glyph in a 24px `var(--radius-full)` hover target; width fits content. Border `--border-elevated`, `--border-hover` on hover, `--selected` on focus, `--text-error` on error, `--border` when disabled. Helper `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12111:2565` / dark `10145:10895`.
+
+**Prototype:** `src/components/InputInteger/InputInteger.tsx` (default export)
+- `value`, `onChange(n)` (required), `min` (default 0), `max`, `step` (default 1)
+- `label` or `ariaLabel`; `helperText` accepts rich content
+- `suffix` for a static unit after the value (e.g. `%`)
+- `validation`: `'none' | 'error' | 'success'`; `disabled`; `className` (`input-integer--inline`)
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| InputInteger (Integer) | _to be mapped by engineering_ | | |
 
 ## Overview — Outlined
 
@@ -29,7 +116,7 @@ The `InputField` component is the standard text entry control across the 5Mins.a
 ## Import
 
 ```tsx
-import { InputField } from '@/components/ui/InputField';
+import InputField from '@/components/InputField/InputField';
 // Icon library
 import { Eye, Danger, TickCircle } from 'iconsax-react';
 ```
@@ -44,12 +131,14 @@ import { Eye, Danger, TickCircle } from 'iconsax-react';
 | `placeholder` | `string` | `'Input text'` | Greyed placeholder shown when empty |
 | `value` | `string` | — | Controlled value |
 | `onChange` | `ChangeEventHandler` | — | Input change handler |
+| `onBlur` | `FocusEventHandler` | none | Input blur handler |
 | `helperText` | `string` | — | Hint below the field; styled as error when `validation="error"` |
-| `validation` | `'none' \| 'error' \| 'success'` | `'none'` | Drives border, icon, and text colours |
+| `validation` | `'none' \| 'error' \| 'warning' \| 'success'` | `'none'` | Drives border, icon, and text colours; `warning` uses `--text-warning` and a Linear `Danger` icon |
 | `iconRight` | `ReactNode` | — | Optional 20px icon slot on the trailing edge |
 | `disabled` | `boolean` | `false` | Mutes all colours and blocks interaction |
 | `type` | `string` | `'text'` | HTML input type (`text`, `email`, `password`, etc.) |
 | `className` | `string` | — | Extra class names on the outer wrapper |
+| `autoFocus` | `boolean` | none | Focuses the input on mount |
 
 ---
 
@@ -124,7 +213,7 @@ const [password, setPassword] = useState('');
       aria-label={show ? 'Hide password' : 'Show password'}
       style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex' }}
     >
-      <Eye size={20} color="var(--text-tertiary, #9ea4b3)" variant="Linear" />
+      <Eye size={20} color="var(--text-tertiary)" variant="Linear" />
     </button>
   }
 />
@@ -143,7 +232,7 @@ const [password, setPassword] = useState('');
 --selected:               #ffbb38;   /* focused / active border */
 --text-error:             #e95c7b;   /* error label + border + helper */
 --input-background:       rgba(69,76,94,0.16);   /* hover background fill (light: #BFC2CC @16%) */
---input-background-elevated: rgba(69,76,94,0.24);   /* same fill for a field on a card surface (light: #BFC2CC @16%) */
+--input-background-elevated: rgba(69,76,94,0.24);   /* same fill for a field on a card surface (light: #BFC2CC @24%) */
 --page-background-hover:  #2d313d;   /* circular hover fill behind an Integer − / + control */
 --text-primary:           #f9f9fa;   /* filled input value */
 --text-secondary:         #bfc2cc;   /* label; Integer helper text */
@@ -154,7 +243,7 @@ const [password, setPassword] = useState('');
 
 > **Helper text is not one colour.** Outlined helper text is `--text-tertiary`; **Integer** helper text is `--text-secondary`. Error helper text is `--text-error` in both.
 
-> **Two field fills, one rule.** `--input-background` is the default — any field, search, dropdown, or chip sitting on the page surface. Reach for `--input-background-elevated` only when the field sits on a card fill (`--cards-background`): in dark mode the default 16% tint lands within a point of the card and the field visually disappears, so the elevated token steps the tint up to 24%. Light mode already separates page and card, so both tokens hold at 16% there and are interchangeable.
+> **Two field fills, one rule.** `--input-background` is the default — any field, search, dropdown, or chip sitting on the page surface. Reach for `--input-background-elevated` only when the field sits on a card fill (`--cards-background`): in dark mode the default 16% tint lands within a point of the card and the field visually disappears, so the elevated token steps the tint up to 24%. Light mode already separates page and card, but the elevated token still steps up to 24% there (`tokens.css`), so the two are not interchangeable in either mode.
 
 ---
 
@@ -200,7 +289,7 @@ const [password, setPassword] = useState('');
 | Wrong | Right |
 |-------|-------|
 | Raw `<input>` with custom styles | `<InputField>` |
-| Hard-coded hex colors | Design tokens (`var(--border-elevated, ...)`) |
+| Hard-coded hex colors | Design tokens (`var(--border-elevated)`) |
 | `helperText` alone for errors | `helperText` + `validation="error"` |
 | Building your own password icon layout | Pass `iconRight`; composition is automatic |
 | `readOnly` for disabled | `disabled={true}` |
@@ -210,8 +299,8 @@ const [password, setPassword] = useState('');
 ## Examples at a Glance
 
 ```tsx
-{/* 1. Simple */}
-<InputField placeholder="Search learners..." value={q} onChange={e => setQ(e.target.value)} />
+{/* 1. Simple (to search or filter, use Search instead) */}
+<InputField placeholder="Role Name" value={role} onChange={e => setRole(e.target.value)} />
 
 {/* 2. Full — label + helper */}
 <InputField label="Full name" placeholder="Jane Smith" helperText="As it appears on your ID" value={name} onChange={e => setName(e.target.value)} />
@@ -271,7 +360,7 @@ A borderless editor for a page-level title and optional description — used whe
 
 A bordered field row with a **21px radio button inside** — the user both selects the option and can type into it (e.g. quiz answer options, "other" choices). Shares the Outlined field chrome.
 
-- Layout: `[radio 21px] [text]`, gap **8px**, padding `8px 12px`, radius 12px, optional label above (Medium 14 `--text-secondary`, gap 8).
+- Layout: `[radio 21px] [text]`, gap **8px**, padding `8px 12px`, radius 12px, optional label above (Semibold 600 14 `--text-secondary`, gap 8).
 - Text: placeholder `--text-disabled`, value `--text-primary` (Regular 14).
 
 | State | Border | Radio | Notes |
@@ -320,6 +409,7 @@ import InputInteger from '@/components/InputInteger/InputInteger';
 | `disabled` | `boolean` | `false` | Mutes colours and blocks interaction |
 | `className` | `string` | — | Extra class names (e.g. `input-integer--inline` for label-before-field) |
 | `ariaLabel` | `string` | — | Accessible name when no visible `label` |
+| `suffix` | `string` | none | Static unit shown right after the value, inside the control (e.g. `%`) |
 
 ---
 
@@ -339,7 +429,7 @@ import InputInteger from '@/components/InputInteger/InputInteger';
 | **Enabled** | Default | Border `--border-elevated`; helper `--text-secondary` |
 | **Hover** | Mouse over field | Border `--border-hover`. **The field itself gets no fill** — instead the − / + control under the pointer picks up a circular `--page-background-hover` background |
 | **Active / Focused** | Field focused (typing) | Border `--selected` (gold), blinking caret |
-| **Filled** | Value set by the user | Value `--text-primary` (the resting `0` renders `--text-disabled`) |
+| **Filled** | Value set by the user | Value `--text-primary`, including the resting `0` |
 | **Error** | `validation="error"` | Border, **label** and helper all `--text-error` |
 | **Success** | `validation="success"` | Border stays `--border-elevated` — no tick icon; the Integer has no icon slot |
 | **Disabled** | `disabled={true}` | Border drops to `--border`; label / value / helper `--text-disabled` |

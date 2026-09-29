@@ -7,7 +7,145 @@ description: Navigation system for 5Mins.ai — Top Navigation bar (Web app and 
 
 The app shell chrome: a fixed **Top Navigation** bar and a left **Side Panel Navigation**. Both come in two systems — **Web app** (learner) and **Admin** — that share tokens but differ in density and item styling.
 
-Spec source: Figma Library — Top nav light `11925:5139` / dark `5385:20137`; Side navigation light `11925:5294`, Web-app items `11925:5226`, Admin items `11925:5713` / dark `4697:13314`, `4674:25675`, `5453:37876` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`).
+Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — Top nav light `11925:5139` / dark `5385:20137`; Side navigation light `11925:5294`, Web-app items `11925:5226`, Admin items `11925:5713` / dark `4697:13314`, `4674:25675`, `5453:37876` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`).
+
+> **Updated 2026-09-29 (aligned to prototype usage):** "Code reality" now matches `TopNav.tsx`: the background is `--page-background`, the Moon/Sun button toggles dark mode, and Logout opens a menu. It also records the `LeftSidebar` drift (sub-menus mount without `Collapse`, no `aria-current`, selected icons on `--secondary-600`).
+
+> **Updated 2026-09-29 (verified against code):** the learner (Web app) shell is recorded as hand-rolled per page (`.mt-topnav` / `.mt-side`), not "not built"; the section-eyebrow claim is removed; Admin menu metrics, sub-item padding (42px / 12px) and mobile header chips now match the CSS; the program-course breadcrumb sits in `.pcd-header`; Breadcrumb focus ring is cyan `--primary-button-background`.
+
+## Usage
+
+### TopNav
+
+**Intent:** the fixed admin app bar: brand, the way back to the learner app, theme and account actions.
+
+**Use when**
+- Any admin route. It is mounted once for the whole app shell.
+
+**Don't use when**
+- Inside the mobile phone-frame prototype → use the mobile TopNav (see "Mobile nav" below)
+- For a page's own title, actions or tabs → use a Page Header ([doc](headers.md))
+
+**Do**
+- Mount it once in the app shell (`App.tsx`), never per page.
+- Keep Exit Admin as the Outlined-2 `Button`.
+- Icon-only buttons: 40px, circular `var(--radius-full)` hover on `--page-background-hover`, with a Tooltip naming the action.
+- Hide an icon button's tooltip while its menu is open.
+- Give the icon buttons an `aria-label`; the theme toggle also carries `aria-pressed`.
+
+**Don't**
+- Don't add page-specific actions to the top nav.
+- Don't use a squared hover on the icon buttons.
+
+**Canonical spec:** height 70px; `var(--page-background)` with a `1px solid var(--border)` bottom edge; padding `var(--space-s) var(--space-xl)` (8px 32px); logo 102×22; icon buttons 40px, `var(--radius-full)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11925:5139` / dark `5385:20137`.
+
+**Prototype:** `src/components/TopNav/TopNav.tsx`
+- No props. Logo and Exit Admin go to `/workspace`; the Moon/Sun button calls `useTheme().toggle`; the Logout button opens a menu (Log Out, Mobile App).
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| TopNav | _to be mapped by engineering_ | | |
+
+### LeftSidebar
+
+**Intent:** the admin side panel that shows where the user is and moves them between admin sections.
+
+**Use when**
+- Any admin page with the standard shell. Render it as the first child of the page layout.
+
+**Don't use when**
+- The learner app → it has its own hand-rolled shell (`.mt-topnav` / `.mt-side`, see "Code reality"); mobile uses TabNav
+- Switching views inside one page → use tabs or chips ([doc](chips-switcher-tabs.md))
+
+**Do**
+- Render `<LeftSidebar />` with no props; the selected item comes from the current route.
+- Add a new admin section as a route plus an item in `LeftSidebar.tsx`, so selection follows the URL.
+- Selected = Bold label in `--text-selected` with the amber Bold icon; no filled row.
+- Hover fills the row with `--input-background`.
+- Animate group expand/collapse with `Collapse` (see "Behaviour").
+
+**Don't**
+- Don't pass or store "active page" state; derive it from the route.
+- Don't use a filled amber row for the selected item.
+- Don't use raw `--secondary-*` for selected text; use the mode-aware `--text-selected`.
+
+**Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11925:5294`, Admin items `11925:5713` / dark `4697:13314`, `4674:25675`, `5453:37876`.
+
+**Prototype:** `src/components/LeftSidebar/LeftSidebar.tsx`
+- No props. Expandable People & Teams and Content groups; selection from `useLocation().pathname`.
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| LeftSidebar | _to be mapped by engineering_ | | |
+
+### Breadcrumb
+
+**Intent:** show where the current page sits in the hierarchy and give a one-click way back up.
+
+**Use when**
+- A page sits below a parent the user came from: a person under People, a course under a program, answers under a course.
+
+**Don't use when**
+- The page is a top-level section already selected in the sidebar → no breadcrumb
+- Moving between sibling views of one page → use tabs ([doc](chips-switcher-tabs.md))
+
+**Do**
+- Use `src/components/Breadcrumb`; don't hand-roll a trail.
+- Make the last item the current page: plain `{ label }`, no `onClick`.
+- Navigate with `onClick` + `useNavigate`, not `href`.
+- Place it as the first row of the Page Header (the label slot).
+- Render it only when the parent exists (e.g. only when the course belongs to a program).
+
+**Don't**
+- Don't add a chevron after the last item or make it a link.
+- Don't restyle the hover; links go `--text-primary` with an underline.
+
+**Canonical spec:** Poppins Regular 14px/1.5; items gap `var(--space-xs)` (4px); 16px `ArrowRight2` Linear separator in `--text-tertiary`; links `--text-tertiary` (hover `--text-primary` + underline), current `--text-secondary`, disabled `--text-disabled`; focus ring `2px solid var(--primary-button-background)`, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11935:2368` / `8517:34946`, dark `8497:2231` / `8497:1494`.
+
+**Prototype:** `src/components/Breadcrumb/Breadcrumb.tsx`
+- `items: { label, onClick?, disabled? }[]`; the last entry renders as the current page (`aria-current="page"`).
+- `className` for page-level placement only.
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Breadcrumb | _to be mapped by engineering_ | | |
+
+### Mobile nav
+
+**Intent:** the learner mobile app chrome: a per-page top header and a five-tab bottom bar.
+
+**Use when**
+- Screens inside the mobile phone-frame prototype (`/mobile`).
+
+**Don't use when**
+- Desktop admin pages → use TopNav and LeftSidebar (above)
+
+**Do**
+- Use `src/components/mobile/TopNav` with the `variant` that matches the page, and `src/components/mobile/TabNav` for the bottom bar.
+- Show the selected tab with colour only: icon and label switch to `--selected`, with `aria-current="page"`.
+
+**Don't**
+- Don't add weight changes, dots, pills or underlines to the selected tab.
+- Don't use `--scrim` for the Lesson feed back-button fill; it is a fixed legibility fill.
+
+**Canonical spec:** tab bar 375×66, `var(--page-background)`, `1px solid var(--border)` top; 24px Bold icons; label Regular 10px/1.4; header rows 65px with `1px solid var(--border)` bottom (none on Home and Lesson feed); back button 40px `var(--radius-full)` on `--input-background`. Figma: `Top nav/ App` `1910:18375`, `Tab nav` `1324:35285` (dark nodes).
+
+**Prototype:**
+- `src/components/mobile/TabNav/TabNav.tsx`: `active` (`home` | `search` | `progress` | `feed` | `profile`), `onNavigate(tab)`.
+- `src/components/mobile/TopNav/TopNav.tsx`: `variant` (`home` | `search` | `chips` | `title` | `detail` | `skill` | `lesson-feed` | `profile`) plus per-variant props (`chips`, `title`, `onBack`, `pointsLabel`, `name`, `hideStatusBar`, and so on).
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Mobile TabNav | _to be mapped by engineering_ | | |
+| Mobile TopNav | _to be mapped by engineering_ | | |
 
 ---
 
@@ -63,7 +201,7 @@ Border:      Admin only — 1px solid var(--border), right side
 | System | Padding | Item gap |
 |---|---|---|
 | Web app | `16px` | 0 |
-| Admin | `16px 12px` (expanded) · `16px 8px` (collapsed) | 4px |
+| Admin | `8px 12px` (`--space-s --space-sm`, expanded; `LeftSidebar`) · `16px 8px` (collapsed, Figma only) | 2px (`--space-xxs`) |
 
 ### Menu items — Web app
 
@@ -73,7 +211,7 @@ Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regul
 
 Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records, Events, Account & Settings.
 
-**Expandable groups** (People & Teams, Content) append a 14px `ArrowDown2`/`ArrowUp2` chevron right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`.
+**Expandable groups** (People & Teams, Content) append a 16px `ArrowDown2`/`ArrowUp2` chevron in `--text-tertiary`, right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`.
 
 > Reversed 2026-08-13. The assembled panel (`11925:5294`) draws sub-items at `44px` left / `8px` vertical, the item component at `42px` / `12px`; this doc previously took the panel as reference. The component set — `10372:4045`, which carries the full Menu/Sub-menu × selected × Enabled/Hover matrix — is now the reference, so sub-items are **42px / 12px** and menu items share the same `12px 16px` row metrics. `LeftSidebar` follows this.
 
@@ -85,7 +223,7 @@ Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label 
 | Hover | `--input-background` | unchanged | unchanged |
 | **Selected** | transparent | **amber Bold variant** | **Bold**, `--text-selected` (`#EDA30D` light / `#FFBB38` dark) |
 | Selected + Hover | `--input-background` | amber Bold | Bold `--text-selected` |
-| Open group with selected child (Admin) | `--page-background-hover` | unchanged | Regular `--text-secondary`, chevron up |
+| Open group with selected child (Admin) | `--page-background-hover` (Figma; `LeftSidebar` leaves it transparent) | unchanged | Regular `--text-secondary`, chevron up |
 
 - Selection is expressed by **color + weight only** — no filled amber row (unlike listbox items).
 - `--text-selected` = `--secondary-600` light / `--secondary-500` dark — the text-safe amber ramp (see `colors.md`).
@@ -108,7 +246,7 @@ Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label 
 | System | Spec |
 |---|---|
 | Web app | `padding: 12px 24px` — "Powered by" Regular **10** `--text-tertiary` + logo at 12px height, 4px gap |
-| Admin | `padding: 12px 28px` — "Powered by" Regular **12** `--text-tertiary` + logo at 14px height, 4px gap |
+| Admin | `padding: 12px 28px` (Figma; `LeftSidebar` uses `12px`) — "Powered by" Regular **12** `--text-tertiary` + logo at 14px height, 4px gap |
 
 ### CSS (Admin panel, matches `LeftSidebar`)
 
@@ -118,8 +256,9 @@ Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label 
   display: flex; flex-direction: column;
   background: var(--page-background);
   border-right: 1px solid var(--border);       /* Admin only */
+  padding: var(--space-s) var(--space-sm);     /* 8px 12px */
 }
-.side-nav__menu { flex: 1; padding: var(--space-m) var(--space-sm); display: flex; flex-direction: column; gap: var(--space-xs); }
+.side-nav__menu { flex: 1; display: flex; flex-direction: column; gap: var(--space-xxs); }  /* 2px */
 
 .side-nav__item {
   display: flex; align-items: center; gap: var(--space-s);
@@ -135,8 +274,8 @@ Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label 
 .side-nav__item--open      { background: var(--page-background-hover); }
 
 .side-nav__sub-item {
-  padding: var(--space-s) var(--space-m);
-  padding-left: 44px;
+  padding: var(--space-sm) var(--space-m);     /* 12px 16px */
+  padding-left: 42px;
   font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-tertiary);
 }
@@ -149,7 +288,7 @@ Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label 
 ## Breadcrumb
 
 A chevron-separated trail showing where the current page sits in the hierarchy. Component: `src/components/Breadcrumb/`.
-Spec source: Figma Library — dark `8497:2231` / `8497:1494`, light `11935:2368` / `8517:34946` (verified 2026-07-07). Same structure in both modes; all colours are semantic tokens, so it flips automatically.
+Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — dark `8497:2231` / `8497:1494`, light `11935:2368` / `8517:34946` (verified 2026-07-07). Same structure in both modes; all colours are semantic tokens, so it flips automatically.
 
 **Structure.** A horizontal list, `4px` gap between items. Each item is a label (Poppins **Regular 14px**, line-height 1.5 — the app uses 14px; the Figma Library frames show 12px) followed by an `ArrowRight2` (Iconsax Linear, 16px) chevron separator — **except the last item**, which is the current page and has **no chevron**. Label↔chevron gap is `2px`.
 
@@ -180,7 +319,7 @@ import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'
 
 `items: { label, onClick?, disabled? }[]`. Provide `onClick` (the app navigates via `useNavigate`, not `href`). Full CSS lives with the component.
 
-> Usage note: the learner **course-inside-a-program** header uses this component as the first child of `.cd-header` — `{Program} › {Course}` (the program links back to `/programs/{id}`, the course is the current page). It only renders when the course belongs to a program (`findProgramForCourse`).
+> Usage note: the learner **course-inside-a-program** header uses this component as the first child of `.pcd-header` (`pages/courses/ProgramCourseDetails.tsx`) — `{Program} › {Course}` (the program links back to `/programs/{id}`, the course is the current page). It only renders when the course belongs to a program (`findProgramForCourse`).
 
 ### Code reality
 
@@ -228,7 +367,7 @@ The Figma component includes the iOS status bar (clock "9:41" + signal/wifi/batt
 Shared elements:
 
 - **Back button**: 40px circle — 8px padding around a 24px `ArrowLeft` Linear icon, radius full, `--input-background` fill (`rgba(15,16,20,0.5)` on Lesson feed, a fixed legibility fill over video — not the `--scrim` overlay token, which is mode-aware; see `layout.md` §7).
-- **Header chips** (Home/Progress): selected = `--secondary-500` fill, Poppins Bold 14, `--neutral-800` text (always-dark text on amber, both modes); unselected = transparent, 1px `--border`, Regular 14 `--text-secondary`. Both: 12px/8px padding, **radius 24px**, 8px gap (16px between chip group items on Progress).
+- **Header chips** (Home/Progress), per `mobile/TopNav.css`: selected = `--secondary-500` fill and border, Poppins Medium 14, `--text-on-selected` text (always-dark text on amber); unselected = transparent, 1px `--border-elevated`, Regular 14 `--text-secondary`. Both: `var(--space-xss) var(--space-sm)` (6px 12px) padding, `var(--radius-full)`, 8px gap; focus ring `2px solid var(--primary-button-background)`. (Figma draws selected Bold, 12px/8px padding, radius 24px.)
 - Title is Bold 16 when alone, Bold 14 when paired with a leading icon (Skill).
 
 ---
@@ -259,10 +398,10 @@ Shared elements:
 
 ## Code reality
 
-- `src/components/TopNav/TopNav.tsx` — the Admin top nav (inline SVG logo, Exit Admin, disabled Moon toggle, Logout with tooltip). Drift from the node: background is `--neutral-25` instead of `--page-background` (same value in light mode) and the Moon/Logout icons render at 24px vs Figma's 21px.
-- `src/components/LeftSidebar/LeftSidebar.tsx` — the Admin side panel (expandable People & Teams / Content groups, route-driven selection). Aligned to `10372:4045` on 2026-08-13: row metrics `12px 16px`, sub-items indented 42px, hover `--input-background`, selected `--text-selected` (was `--secondary-600`, which matched only in light mode). Remaining drift: it adds section eyebrows and red count badges that aren't part of the Library component.
+- `src/components/TopNav/TopNav.tsx` — the Admin top nav (inline SVG logo, Exit Admin, Moon/Sun dark-mode toggle, Logout button that opens a menu with Log Out and Mobile App). Background is `--page-background`. Drift from the node: the Moon/Logout icons render at 24px vs Figma's 21px.
+- `src/components/LeftSidebar/LeftSidebar.tsx` — the Admin side panel (expandable People & Teams / Content groups, route-driven selection). Aligned to `10372:4045` on 2026-08-13: row metrics `12px 16px`, sub-items indented 42px, hover `--input-background`, selected `--text-selected` (was `--secondary-600`, which matched only in light mode). Remaining drift: it adds a red count badge on the Roles sub-item and a red dot on the collapsed People & Teams group, neither part of the Library component; it draws no open-group fill. Sub-menus mount and unmount instantly (`{peopleOpen && ...}`) instead of animating with `Collapse`; the active item has no `aria-current="page"`; selected icons use `--secondary-600` rather than `--text-selected`; items have no `:focus-visible` style.
 - `src/pages/your-courses/components/AddContentIconStrip/` — the Create Course rail reuses this menu-item language. Its Assessments group and sub-items follow the same states, per the product file (`9051:187870` expanded group, `9052:198939` selected sub-item): Bold label for an open group, Bold `--text-selected` for the selected sub-item, neither with a fill. Note its sub-items sit at `8px 40px`, not the Library's `12px 42px`.
-- The **Web app** top nav and side panel are not built in this prototype.
+- The **Web app** (learner) top nav and side panel have no shared component: each learner page hand-rolls the shell with `.mt-topnav` / `.mt-side` classes (defined in `pages/my-team/MyTeam.css`), in `MyTeam.tsx`, `ForYou.tsx`, `Workspace.tsx`, `ProgramDetails.tsx`, `ProgramCourseDetails.tsx`, `UserProfile.tsx` and `Events.tsx`. The side panel reuses the shared `AdminMenuItem` and `ProfileMenu` components, which have no doc yet. Its selected icon is raw `--secondary-500`, not `--text-selected`. Extracting a shared learner shell is a candidate clean-up.
 - Collapsed states are not implemented (`LeftSidebar` is fixed-width 240px).
 - `src/components/mobile/TabNav/TabNav.tsx` and `src/components/mobile/TopNav/TopNav.tsx` — the mobile app chrome (see "Mobile App Navigation" above). TopNav's status bar is a lightweight stand-in (system font clock + simple glyphs, not the Figma SF Pro assets); the Mobile web (browser chrome) variant is not built.
 

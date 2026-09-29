@@ -5,9 +5,61 @@ description: Dropdown / Select component for 5Mins.ai. Covers states (Enabled, H
 
 # 5Mins.ai Dropdown Component
 
-> **Figma source:** Library — light `11920:5290` / dark `8925:1408` (verified 2026-07-03; earlier baseline node `11659:2103`)
+> **Figma source:** Library (`EC26cSVe9KNTCWXvYovakw`) — light `11920:5290` / dark `8925:1408` (verified 2026-07-03; earlier baseline node `11659:2103`)
 
 Implementation guide for the 5Mins.ai Dropdown/Select. Cross-reference with `colors`, `typography`, and `iconography` for raw token values.
+
+> **Updated 2026-09-29 (verified against code):** the superseded Menu sketch (selected `--secondary-500` + `--neutral-800`, `TickCircle`) is replaced by what `Dropdown.css` draws (`--selected` / `--text-on-selected`, no tick) and the React sketch no longer renders a tick; error helper text is `--text-error`; `role="combobox"` and arrow-key navigation marked as not built; the read-only leading-icon grey now depends on `currentColor`; Dropdown and InputField now share the `--text-error` error border (ruled 2026-09-29); the menu border is now `--border-elevated`, matching Figma `9162:1042`.
+
+> **Updated 2026-09-29 (aligned to prototype usage):** the built Dropdown supports multi-select (`multiple`, `values`, `onChangeValues`, `allLabel`, `summaryLabel`), option `description` lines, `menuClassName` and `menuAlign`, and portals its menu to `<body>`. The 2026-04-14 changelog line saying multi-select was removed no longer holds, and the "React TypeScript Implementation" sketch below predates these props; `src/components/Dropdown/Dropdown.tsx` is the reference.
+
+## Usage
+
+**Intent:** a closed field that opens a listbox so the user picks one value (or several, with `multiple`) from a known list.
+
+**Use when**
+- A form field takes one value from a fixed list, e.g. Region, Department, lesson Type.
+- A toolbar or tab filters by a set of values, usually with a leading `Sort` icon, e.g. course status or timeframe.
+- A filter takes several values at once (`multiple`), e.g. assessment type or a scope condition.
+- A value sits inside a sentence, e.g. "Repeat every [Week]" in a reminder card.
+
+**Don't use when**
+- The value is free text → use InputField ([doc](input.md))
+- The user narrows a list by typing → use Search ([doc](search.md))
+- The value is a date → use DatePickerField ([doc](date-picker-field.md))
+- A few (2 to 6) exclusive options should all stay visible → use Radio ([doc](selection-controls.md))
+- The menu runs actions rather than setting a value → use RowActionsMenu on the Listbox surface ([doc](listbox.md))
+
+**Do**
+- Reuse the DS `Dropdown` for single-select, multi-select and date-adjacent filter rows rather than building a page-local trigger and popover.
+- For multi-select, pass `multiple` with `values` / `onChangeValues`; add `allLabel` for a "no filter" first row.
+- Pass `summaryLabel` to read the picks back in the trigger ("Selected: 3"); leave it out when chips below the field already list the picks.
+- Use `readOnly` for a disabled dropdown (e.g. while its card's toggle is off).
+- Default to `size="md"` (the most used size); `size="sm"` is used for compact filter rows, small popovers and the label-start course status filter. `lg` has no call site.
+- Style the menu through `menuClassName`; it is portalled to `<body>`, so descendant selectors from the field's ancestors won't reach it.
+- Show errors with the `error` prop: it draws the `--text-error` border and replaces the helper text.
+- Colour a leading icon `--text-primary`, the same as the trigger text; the chevron is `--text-secondary`.
+
+**Don't**
+- Don't give the trigger a fill at rest; it is transparent with a border only.
+- Don't use raw `--secondary-500` for the active border or the selected row; use the mode-aware `--selected`.
+- Don't use `--danger-500` for the error border; Dropdown and InputField share `--text-error`, held on hover.
+- Don't copy the `.dropdown-*` classes into a new component; extend `Dropdown` instead.
+
+**Canonical spec:** md trigger 37px high, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), text 14px / 400 / 1.5; sm is 33px with 4px 12px padding and 12px text. Border `--border-elevated`, hover `--border-hover` + `--input-background`, open or focused `--selected`, read-only `--border` with `--text-disabled`, error `--text-error`. Placeholder `--text-disabled`, label Paragraph M semibold `--text-secondary`, helper `--text-tertiary`. Menu: `--cards-background`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), max height 240px, selected row `--selected` with `--text-on-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11920:5290` / dark `8925:1408`.
+
+**Prototype:** `src/components/Dropdown/Dropdown.tsx` (default export)
+- `options` (`value`, `label`, optional `description`, `disabled`), `value`, `onChange`, `placeholder` (default "Select")
+- `size`: `'sm' | 'md' | 'lg'` (default `'md'`); `label` with `labelPlacement` `'top' | 'start'`; `helperText`; `error`
+- `iconLeft`; `readOnly`
+- `multiple` with `values`, `onChangeValues`, `allLabel`, `summaryLabel`
+- `className`, `menuClassName`, `menuAlign` `'start' | 'end'`
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Dropdown | _to be mapped by engineering_ | | |
 
 ---
 
@@ -99,14 +151,16 @@ The trigger is **transparent by default** with only a border — it is *not* a f
 }
 ```
 
-The leading-icon (when present) is also tinted `--text-disabled` in read-only state.
+The leading icon (when present) greys to `--text-disabled` in read-only only if the caller passes `color="currentColor"`; `.dropdown-trigger-leading` sets no colour, so an icon given an explicit colour keeps it.
 
 ### Error (extension — not in the Figma library, follow pattern)
 
 ```css
-.dropdown-trigger.has-error { border-color: var(--danger-500); }  /* #DF1642 */
-.dropdown-trigger.has-error:hover { border-color: var(--danger-600); }
+.dropdown-trigger.has-error,
+.dropdown-trigger.has-error:hover { border-color: var(--text-error); }
 ```
+
+The error border and helper text are both `var(--text-error)`, the same token InputField uses (`InputField.css`).
 
 ### Size variants
 
@@ -134,7 +188,7 @@ First-class in the Figma library. Use any Iconsax Linear icon at the size matchi
 />
 ```
 
-The leading icon color follows the current trigger text color (`--text-primary` Enabled/Hover/Active, `--text-disabled` Read-only).
+With `color="currentColor"` the leading icon follows the trigger text colour (`--text-primary` Enabled/Hover/Active, `--text-disabled` Read-only). Current call sites pass an explicit colour, so their icon does not grey in read-only.
 
 ### Chevron icon
 
@@ -151,52 +205,17 @@ Chevron color is `--text-secondary`, not the value's colour — it is the contro
 
 ## Menu
 
-> **Superseded:** the menu surface is now fully specced as the **Listbox** — see `listbox.md` (container with caret/grouped variants, full item slot matrix, selected = `--secondary-500` + `--neutral-800`). The pattern below predates it; prefer listbox.md values where they differ.
+> **Superseded, see Usage and `listbox.md`:** the older menu sketch that stood here (selected row `--secondary-500` + `--neutral-800`, a `TickCircle` on the selected option, `--neutral-25` fill) no longer matches the built component and has been removed.
 
-```css
-.dropdown-menu {
-  position: absolute;
-  z-index: 1000;
-  margin-top: 8px;                          /* column gap --s */
-  min-width: 160px;
-  max-height: 240px;
-  overflow-y: auto;
-  background: var(--neutral-25);            /* #F9F9FA */
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);          /* 12px — match trigger */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  padding: 4px 0;
-  list-style: none;
-}
+What `src/components/Dropdown/Dropdown.css` draws today:
 
-.dropdown-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  height: 40px;
-  padding: 0 16px;
-  font: 400 14px/1.5 'Poppins', sans-serif;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: background 100ms ease;
-}
+- `.dropdown-menu`: portalled to `<body>`, `position: fixed`, `z-index: 1060`, `var(--cards-background)`, 1px border, radius `var(--radius-sm)` (12px), `var(--shadow-l)`, padding `var(--space-s)` (8px), max height 240px then scroll.
+- `.dropdown-option`: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), 14px / 400 / 1.5 `var(--text-primary)`; hover `var(--cards-background-hover)`.
+- Selected: `var(--selected)` fill with `var(--text-on-selected)` text at weight 500. No tick icon.
+- Disabled: `var(--text-disabled)`, not clickable.
+- Option with `description`: label 600 over a `var(--text-secondary)` description that may wrap.
 
-.dropdown-option:hover { background: var(--page-background-hover); }
-
-.dropdown-option.is-selected {
-  background: var(--selected);              /* #FFBB38 */
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.dropdown-option.is-disabled {
-  color: var(--text-disabled);
-  cursor: not-allowed;
-}
-```
-
-A 16px `TickCircle` (color `--selected`) marks the selected option.
+The menu border is `var(--border-elevated)` (Figma `9162:1042`), as `RowActionsMenu` uses; `--border` would vanish against `--cards-background` in dark mode.
 
 ---
 
@@ -234,7 +253,7 @@ Required-field indicator:
   color: var(--text-tertiary);              /* #9EA4B3 */
   margin-top: 8px;                          /* column gap --s */
 }
-.dropdown-helper.is-error { color: var(--danger-500); }
+.dropdown-helper.is-error { color: var(--text-error); }
 ```
 
 Visible only when `helperText` is true (matches the Figma variant). In error state, the helper text replaces the neutral helper.
@@ -245,7 +264,7 @@ Visible only when `helperText` is true (matches the Figma variant). In error sta
 
 ```tsx
 import { useState, useRef, useEffect, ReactNode } from 'react';
-import { ArrowDown2, TickCircle } from 'iconsax-react';
+import { ArrowDown2 } from 'iconsax-react';
 
 export interface DropdownOption {
   value: string;
@@ -364,9 +383,6 @@ export function Dropdown({
                   }}
                 >
                   <span>{opt.label}</span>
-                  {isSelected && (
-                    <TickCircle size={16} color="var(--selected)" variant="Bold" />
-                  )}
                 </button>
               </li>
             );
@@ -390,12 +406,12 @@ export function Dropdown({
 
 ```tsx
 // ARIA
-<button role="combobox" aria-expanded={isActive} aria-haspopup="listbox" aria-disabled={readOnly} />
+<button aria-haspopup="listbox" aria-expanded={isActive} aria-disabled={readOnly} />  // no role="combobox" yet
 <ul role="listbox" />
 <button role="option" aria-selected={isSelected} />
 ```
 
-Keyboard: `Enter` / `Space` opens, `Esc` closes, `Tab` closes and moves focus, `↑ ↓` navigates options.
+Keyboard today: `Enter` / `Space` opens (native button), `Esc` closes, `Tab` moves focus. `role="combobox"` on the trigger and `↑ ↓` option navigation are the target but are not built yet.
 
 ---
 
@@ -442,7 +458,7 @@ Constrain the width at the wrapper level (`<div style={{ width: 'auto' }}>` or a
 | Border hover | `--border-hover` | `#9EA4B3` |
 | Border disabled / read-only | `--border` | `#DFE1E6` light / `#2D313D` dark |
 | Border active / focus | `--selected` | `#EDA30D` light / `#FFBB38` dark |
-| Border error | `--danger-500` | `#DF1642` |
+| Border error | `--text-error` | `#DF1642` light / `#E95C7B` dark |
 | Value text (something selected) | `--text-primary` | `#20222A` |
 | Placeholder text (nothing selected) | `--text-disabled` | `#9EA4B3` light / `#656B7C` dark |
 | Label text | `--text-secondary` | `#454C5E` light / `#BFC2CC` dark |
@@ -457,4 +473,4 @@ Constrain the width at the wrapper level (`<div style={{ width: 'auto' }}>` or a
 
 - **2026-09-22** — Re-verified the trigger against library `8925:1408`. **Medium is 37px**: that node states no height at all, and 37px is the frame with its 1px stroke drawn inside, so the stated frame wins over padding arithmetic (the same way `lg`'s 48px does). The overview table's `41px` had no source and is gone, and the `md` CSS rule now carries the height like `sm` and `lg` do. Chevron colour is `--text-secondary`, not the value's colour. `--border-elevated` is `#DFE1E6` in light, not `#BFC2CC`. Note that node has **no size axis** — Small and Large are not in it and still need their own link.
 - **2026-07-03** — Re-verified against light `11920:5290` / dark `8925:1408`. Corrected: medium padding is `8px 12px` (not `8px 16px`); hover background is the translucent `--input-background` (not `--page-background-hover`); label line-height 1.5; helper gap 8px; token table now lists light/dark values.
-- **2026-04-14** — Rewritten to match the Figma library (node `11659:2103`). Corrected: trigger radius is `12px` (not 8px); trigger background is transparent (not filled `--surface-input`); hover bg is `--page-background-hover` (not `--surface-input-hover`); padding for medium is `8px 16px` (not `10px 16px`); state names are **Enabled / Hover / Active / Read-only**; `iconLeft` is first-class. Multi-select and searchable-within-dropdown are not in the current Figma library node and have been removed from the doc until they are added.
+- **2026-04-14** — Rewritten to match the Figma library (node `11659:2103`). Corrected: trigger radius is `12px` (not 8px); trigger background is transparent (not filled `--surface-input`); hover bg is `--page-background-hover` (not `--surface-input-hover`); padding for medium is `8px 16px` (not `10px 16px`); state names are **Enabled / Hover / Active / Read-only**; `iconLeft` is first-class. Multi-select and searchable-within-dropdown are not in the current Figma library node and have been removed from the doc until they are added. (Superseded 2026-09-29: the built component now supports multi-select; see Usage.)
