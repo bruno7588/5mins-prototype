@@ -247,21 +247,9 @@ function AutomationDetailsModal({
     }
   }, [automation?.id])
 
-  useEffect(() => {
-    if (!automation) return
-    function handleKey(e: KeyboardEvent) {
-      if (e.key !== 'Escape') return
-      /* The two dialogs close themselves, so this listener stays out of their way. */
-      if (confirmDiscard || reviewing || pendingActionType) return
-      requestClose()
-    }
-    document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [automation, confirmDiscard, reviewing, pendingActionType, dirty])
-
-  /* Every exit route runs through here, so the guard cannot be walked around by
-     using the X instead of Escape. Nothing changed means nothing to warn about. */
+  /* The X is the only exit: no Escape-to-close, so a key meant for a popover or
+     menu can never raise the discard dialog. Nothing changed means nothing to
+     warn about. */
   function requestClose() {
     if (dirty) {
       setConfirmDiscard(true)
@@ -477,10 +465,12 @@ function AutomationDetailsModal({
               <>
                 {/* One program per automation (DES-341): a single-choice dropdown says
                     "pick one" without explaining it; a new pick replaces the current one
-                    in the table below. */}
+                    in the table below. Once picked it reads "Change program", so the
+                    name lives only in the table. */}
                 <div className="automation-details-actions-toolbar">
                   <Dropdown
                     placeholder="Select a program"
+                    triggerText={programs.length > 0 ? 'Change program' : undefined}
                     iconLeft={<Routing size={20} color="var(--text-primary)" variant="Linear" />}
                     options={programOptions}
                     value={programs[0]?.programId}

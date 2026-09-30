@@ -50,6 +50,9 @@ export interface DropdownProps {
   searchPlaceholder?: string
   /** Single-select rows carry the listbox radio item instead of the amber fill. */
   radio?: boolean
+  /** Fixed trigger text that replaces the selection read-back, e.g. "Change program"
+      when the pick is already shown elsewhere. The menu still marks the selection. */
+  triggerText?: string
 }
 
 function Dropdown({
@@ -75,6 +78,7 @@ function Dropdown({
   searchable = false,
   searchPlaceholder = 'Search',
   radio = false,
+  triggerText,
 }: DropdownProps) {
   const [isActive, setIsActive] = useState(false)
   const [query, setQuery] = useState('')
@@ -162,8 +166,12 @@ function Dropdown({
       : pickedOptions.length === 1
         ? pickedOptions[0].label
         : `${summaryLabel}: ${pickedOptions.length}`
-  const triggerLabel = multiple ? multiLabel : (selected?.label ?? placeholder)
-  const showsPlaceholder = multiple ? !summaryLabel || pickedOptions.length === 0 : !selected
+  const triggerLabel = triggerText ?? (multiple ? multiLabel : (selected?.label ?? placeholder))
+  const showsPlaceholder = triggerText
+    ? false
+    : multiple
+      ? !summaryLabel || pickedOptions.length === 0
+      : !selected
 
   return (
     <div

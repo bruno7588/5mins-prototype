@@ -565,7 +565,8 @@ function Automations() {
       )
       showToast('success', 'Automation updated')
     } else {
-      setAutomations((rows) => [{ ...automation, lastUpdated: 'Just now' }, ...rows])
+      /* A new automation starts running as soon as it is created. */
+      setAutomations((rows) => [{ ...automation, active: true, lastUpdated: 'Just now' }, ...rows])
       showToast('success', 'Automation created')
     }
     closeDetails()
