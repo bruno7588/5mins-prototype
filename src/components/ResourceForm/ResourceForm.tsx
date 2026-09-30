@@ -3,6 +3,11 @@ import Button from '@/components/Button/Button'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import InputField from '@/components/InputField/InputField'
 import { FileUploader } from '@/components/FileUploader/FileUploader'
+import { Gallery, Link2 } from 'iconsax-react'
+import pdfIcon from '@/assets/resource-type-icons/pdf.svg'
+import wordIcon from '@/assets/resource-type-icons/word.svg'
+import excelIcon from '@/assets/resource-type-icons/excel.svg'
+import powerpointIcon from '@/assets/resource-type-icons/powerpoint.svg'
 import { FILE_THUMBS } from '@/components/ResourceCard/ResourceCard'
 import {
   MAX_FILE_BYTES,
@@ -24,9 +29,34 @@ interface Props {
   onCancel?: () => void
 }
 
+/* A glyph per type so the list scans at a glance (Figma Your Content 6551:35298;
+   file icons from the Library icon set 9986:42891, the rest Iconsax).
+   The file glyphs are masks filled with currentColor, so they follow the row's
+   text colour in both themes and on the selected row. Quoted, because Vite
+   inlines small SVGs as data URLs that contain spaces. */
+const FILE_ICONS: Partial<Record<ResourceType, string>> = {
+  pdf: pdfIcon,
+  word: wordIcon,
+  excel: excelIcon,
+  powerpoint: powerpointIcon,
+}
+
+function TypeIcon({ type }: { type: ResourceType }) {
+  if (type === 'image') return <Gallery size={20} color="currentColor" variant="Linear" />
+  if (type === 'link') return <Link2 size={20} color="currentColor" variant="Linear" />
+  return (
+    <span
+      className="resource-form__type-icon"
+      style={{ maskImage: `url("${FILE_ICONS[type]}")`, WebkitMaskImage: `url("${FILE_ICONS[type]}")` }}
+      aria-hidden="true"
+    />
+  )
+}
+
 const TYPE_OPTIONS = (Object.keys(RESOURCE_TYPES) as ResourceType[]).map((value) => ({
   value,
   label: RESOURCE_TYPES[value].label,
+  icon: <TypeIcon type={value} />,
 }))
 
 const withoutExtension = (fileName: string) => fileName.replace(/\.[^.]+$/, '')

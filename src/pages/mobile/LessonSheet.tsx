@@ -55,6 +55,7 @@ function LessonSheet({ lesson, onClose, onOpenLink, onDownload, hidden }: Lesson
                 <ResourceCard
                   key={r.id}
                   device="mobile"
+                  tooltip={false}
                   type={r.type}
                   title={r.title}
                   size={r.size}

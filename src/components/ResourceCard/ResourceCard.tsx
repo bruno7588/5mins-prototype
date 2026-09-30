@@ -53,6 +53,8 @@ interface ResourceCardProps {
   openDisabled?: boolean
   /** Adds a Remove action beside Download / Open link (authoring surfaces only). */
   onRemove?: () => void
+  /** Hover tooltip on the icon action. Off in the mobile app, which has no hover. */
+  tooltip?: boolean
   className?: string
 }
 
@@ -61,7 +63,7 @@ interface ResourceCardProps {
  * Download (or Open link) action. Same card on the admin course builder and the
  * learner course page. See docs/design-system/resource-card.md.
  */
-function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled = false, onRemove, className }: ResourceCardProps) {
+function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled = false, onRemove, tooltip = true, className }: ResourceCardProps) {
   const isLink = type === 'link'
   const openLabel = isLink ? 'Open link' : 'Download'
   const Icon = isLink ? ExportSquare : ImportCurve
@@ -102,10 +104,14 @@ function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled 
         <p className="resource-card__meta">{resourceMeta(type, size)}</p>
       </div>
       <div className="resource-card__actions">
-        {/* Every icon action names itself on hover, at every card size. */}
-        <Tooltip text={openLabel} position="Top" icon={false}>
-          {openButton}
-        </Tooltip>
+        {/* Every icon action names itself on hover, except in the mobile app. */}
+        {tooltip ? (
+          <Tooltip text={openLabel} position="Top" icon={false}>
+            {openButton}
+          </Tooltip>
+        ) : (
+          openButton
+        )}
         {onRemove && (
           <Tooltip text="Remove" position="Top" alignment="End" icon={false}>
             <button

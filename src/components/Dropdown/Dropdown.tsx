@@ -11,6 +11,8 @@ export interface DropdownOption {
   label: string
   description?: string
   disabled?: boolean
+  /** Leading icon (listbox.md icon-left slot); the trigger shows the picked one. */
+  icon?: ReactNode
 }
 
 type Size = 'sm' | 'md' | 'lg'
@@ -203,7 +205,9 @@ function Dropdown({
           if (e.key === 'Escape') setIsActive(false)
         }}
       >
-        {iconLeft && <span className="dropdown-trigger-leading">{iconLeft}</span>}
+        {(iconLeft || (!multiple && !triggerText && selected?.icon)) && (
+          <span className="dropdown-trigger-leading">{iconLeft ?? selected?.icon}</span>
+        )}
         <span className={`dropdown-trigger-text${showsPlaceholder ? ' dropdown-trigger-text--placeholder' : ''}`}>{triggerLabel}</span>
         <ArrowDown2
           size={size === 'sm' ? 16 : 20}
@@ -261,10 +265,13 @@ function Dropdown({
               .filter(Boolean)
               .join(' ')
             const text = (
+              <>
+              {opt.icon && <span className="dropdown-option__icon">{opt.icon}</span>}
               <span className={`dropdown-option__text${opt.description ? ' is-rich' : ''}`}>
                 <span className="dropdown-option__label">{opt.label}</span>
                 {opt.description && <span className="dropdown-option__desc">{opt.description}</span>}
               </span>
+              </>
             )
 
             /* Multi rows are a div, not a button: the Checkbox is itself a

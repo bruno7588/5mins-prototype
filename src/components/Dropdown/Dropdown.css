@@ -327,3 +327,14 @@
 .dropdown-option--radio.is-selected .dropdown-option__desc {
   color: var(--text-secondary);
 }
+
+/* Leading icon slot (listbox.md): sits before the label; rows put the text first
+   in the flow, so the icon keeps its size and the text takes the rest. */
+.dropdown-option__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.dropdown-option:has(.dropdown-option__icon) {
+  justify-content: flex-start;
+}

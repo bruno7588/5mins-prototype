@@ -80,3 +80,18 @@
 .resource-form__field .file-uploader--L {
   min-height: 0;
 }
+
+/* Type dropdown file glyph: the Figma SVG as a mask over the text colour. */
+.resource-form__type-icon {
+  display: block;
+  flex-shrink: 0;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  background: currentColor;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
