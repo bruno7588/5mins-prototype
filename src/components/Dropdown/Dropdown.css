@@ -282,3 +282,48 @@
   outline: 2px solid var(--text-selected);
   outline-offset: -2px;
 }
+
+
+/* ===== Searchable menu (listbox.md search item) ===== */
+
+/* Pinned while the options scroll. The negative top cancels the menu's own
+   padding so rows don't show above it; the fill hides the rows beneath. */
+.dropdown-search {
+  position: sticky;
+  top: calc(var(--space-s) * -1);
+  z-index: 1;
+  margin: calc(var(--space-s) * -1) 0 0;
+  padding: var(--space-s) 0;
+  background: var(--cards-background);
+}
+
+.dropdown-empty {
+  padding: var(--space-s) var(--space-sm);
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* ===== Single-select radio rows (listbox.md radio item) ===== */
+
+/* Radio sits on the label's line when there is supporting text beneath. */
+.dropdown-option--radio {
+  align-items: flex-start;
+}
+
+.dropdown-option--radio .radio {
+  pointer-events: none;
+}
+
+/* Radio rows title Medium, like the course and program picker rows (Bruno,
+   2026-09-30). The ring states the pick, so a selected row reads like any other:
+   no amber-row weight, no dark supporting text. */
+.dropdown-option--radio .dropdown-option__text.is-rich .dropdown-option__label,
+.dropdown-option--radio.is-selected .dropdown-option__text.is-rich .dropdown-option__label {
+  font-weight: 500;
+}
+
+.dropdown-option--radio.is-selected .dropdown-option__desc {
+  color: var(--text-secondary);
+}

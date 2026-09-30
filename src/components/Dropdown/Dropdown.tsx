@@ -2,6 +2,8 @@ import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 're
 import { createPortal } from 'react-dom'
 import { ArrowDown2 } from 'iconsax-react'
 import Checkbox from '../Checkbox/Checkbox'
+import Radio from '../Radio/Radio'
+import Search from '../Search/Search'
 import './Dropdown.css'
 
 export interface DropdownOption {
@@ -43,6 +45,11 @@ export interface DropdownProps {
   menuClassName?: string
   /** Which edge the menu lines up with (default 'start' = the trigger's left). */
   menuAlign?: 'start' | 'end'
+  /** Pins the listbox search item at the top of the menu; it filters options by label. */
+  searchable?: boolean
+  searchPlaceholder?: string
+  /** Single-select rows carry the listbox radio item instead of the amber fill. */
+  radio?: boolean
 }
 
 function Dropdown({
@@ -65,13 +72,19 @@ function Dropdown({
   className = '',
   menuClassName = '',
   menuAlign = 'start',
+  searchable = false,
+  searchPlaceholder = 'Search',
+  radio = false,
 }: DropdownProps) {
   const [isActive, setIsActive] = useState(false)
+  const [query, setQuery] = useState('')
   const ref = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
   const [rect, setRect] = useState<DOMRect | null>(null)
   const [menuSize, setMenuSize] = useState<{ w: number; h: number } | null>(null)
+  /* A searchable menu keeps the width it opened at, so filtering never makes it jump. */
+  const openWidth = useRef<number | null>(null)
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -87,6 +100,8 @@ function Dropdown({
   useLayoutEffect(() => {
     if (!isActive) {
       setMenuSize(null)
+      setQuery('')
+      openWidth.current = null
       return
     }
     const measure = () => {
@@ -104,11 +119,17 @@ function Dropdown({
   useLayoutEffect(() => {
     if (!isActive || !menuRef.current) return
     const { offsetWidth: w, offsetHeight: h } = menuRef.current
+    if (searchable && openWidth.current === null) openWidth.current = w
     setMenuSize((prev) => (prev?.w === w && prev?.h === h ? prev : { w, h }))
-  }, [isActive, rect, options.length])
+  }, [isActive, rect, options.length, query])
 
   const menuStyle = (): React.CSSProperties => {
     if (!rect) return {}
+    if (searchable && openWidth.current !== null) return { ...menuStyleFor(rect), width: openWidth.current }
+    return menuStyleFor(rect)
+  }
+
+  const menuStyleFor = (rect: DOMRect): React.CSSProperties => {
     // min-width: 100% would resolve against the viewport once fixed, so the
     // trigger's width has to be passed through explicitly.
     if (!menuSize) return { minWidth: rect.width, top: rect.bottom + 4, left: rect.left, visibility: 'hidden' }
@@ -121,6 +142,9 @@ function Dropdown({
       top: Math.max(8, Math.min(wantTop, window.innerHeight - menuSize.h - 8)),
     }
   }
+
+  const q = query.trim().toLowerCase()
+  const visibleOptions = q ? options.filter((o) => o.label.toLowerCase().includes(q)) : options
 
   const picked = values ?? []
   const isPicked = (v: string) => picked.includes(v)
@@ -205,7 +229,21 @@ function Dropdown({
               </div>
             </li>
           )}
-          {options.map((opt) => {
+          {searchable && (
+            <li className="dropdown-search">
+              <Search
+                value={query}
+                placeholder={searchPlaceholder}
+                onChange={setQuery}
+                ariaLabel={searchPlaceholder}
+                elevated
+              />
+            </li>
+          )}
+          {searchable && visibleOptions.length === 0 && (
+            <li className="dropdown-empty">No results</li>
+          )}
+          {visibleOptions.map((opt) => {
             const isSelected = multiple ? isPicked(opt.value) : opt.value === value
             const optionClass = [
               'dropdown-option',
@@ -244,6 +282,38 @@ function Dropdown({
                     }}
                   >
                     <Checkbox checked={isSelected} disabled={opt.disabled} />
+                    {text}
+                  </div>
+                </li>
+              )
+            }
+
+            /* Radio rows follow the multi rows: a div that owns the click, since the
+               Radio draws an input of its own. The ring states the pick, so no fill. */
+            if (radio) {
+              const pick = () => {
+                if (opt.disabled) return
+                onChange?.(opt.value)
+                setIsActive(false)
+              }
+              return (
+                <li key={opt.value}>
+                  <div
+                    role="option"
+                    aria-selected={isSelected}
+                    aria-disabled={opt.disabled || undefined}
+                    tabIndex={opt.disabled ? -1 : 0}
+                    className={`${optionClass} dropdown-option--check dropdown-option--radio`}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={pick}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        pick()
+                      }
+                    }}
+                  >
+                    <Radio checked={isSelected} disabled={opt.disabled} readOnly tabIndex={-1} aria-hidden="true" />
                     {text}
                   </div>
                 </li>

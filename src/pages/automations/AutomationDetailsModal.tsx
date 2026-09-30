@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDown2, Danger, InfoCircle, Trash } from 'iconsax-react'
+import { ArrowDown2, Danger, InfoCircle, Routing, Trash } from 'iconsax-react'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import InputInline from '../../components/InputInline/InputInline'
 import CourseSearch from './CourseSearch'
-import ProgramSearch from './ProgramSearch'
 import ProgramEnrollmentPopover from './ProgramEnrollmentPopover'
 import Radio from '../../components/Radio/Radio'
 import Dropdown from '../../components/Dropdown/Dropdown'
@@ -16,6 +15,7 @@ import EnrollmentPopover from './EnrollmentPopover'
 import DueDatePopover from './DueDatePopover'
 import FrequencyPopover from './FrequencyPopover'
 import RoleSearch from './RoleSearch'
+import { getAllPrograms } from '@/pages/programs/programStore'
 import type {
   AutomationActionType,
   AutomationCourse,
@@ -279,6 +279,12 @@ function AutomationDetailsModal({
     automation.filters.length > 0 && automation.filters.every(isFilterComplete)
   const actionType: AutomationActionType = automation.actionType ?? 'courses'
   const programs = automation.programs ?? []
+  const allPrograms = getAllPrograms()
+  const programOptions = allPrograms.map((p) => ({
+    value: p.id,
+    label: p.title,
+    description: `${p.courseCount} ${p.courseCount === 1 ? 'course' : 'courses'}`,
+  }))
   const missingDate = programs.some(
     (p) => p.enrollment.kind === 'specific-date' && !p.enrollment.date,
   )
@@ -461,7 +467,7 @@ function AutomationDetailsModal({
               />
               <Radio
                 name="automation-action-type"
-                label="Programs"
+                label="Program"
                 checked={actionType === 'programs'}
                 onChange={() => requestActionType('programs')}
               />
@@ -469,14 +475,23 @@ function AutomationDetailsModal({
 
             {actionType === 'programs' ? (
               <>
-                {/* One program per automation: the search stays, and a new pick
-                    replaces the current one, as a single-select picker does. */}
+                {/* One program per automation (DES-341): a single-choice dropdown says
+                    "pick one" without explaining it; a new pick replaces the current one
+                    in the table below. */}
                 <div className="automation-details-actions-toolbar">
-                  <ProgramSearch
-                    key={automation.id}
-                    excludeIds={programs.map((p) => p.programId)}
-                    placeholder={programs.length > 0 ? 'Search to change program' : undefined}
-                    onSelect={(program) => onProgramAdd?.(automation.id, program)}
+                  <Dropdown
+                    placeholder="Select a program"
+                    iconLeft={<Routing size={20} color="var(--text-primary)" variant="Linear" />}
+                    options={programOptions}
+                    value={programs[0]?.programId}
+                    onChange={(id) => {
+                      const picked = allPrograms.find((p) => p.id === id)
+                      if (picked) onProgramAdd?.(automation.id, picked)
+                    }}
+                    searchable
+                    searchPlaceholder="Search programs"
+                    radio
+                    className="automation-details-program-dropdown"
                   />
                 </div>
                 <div className="automation-details-table">
