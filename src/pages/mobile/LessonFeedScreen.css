@@ -242,9 +242,9 @@
   gap: var(--space-sm);
 }
 
-.m-lsheet__section--link {
-  align-items: flex-start;
-  gap: var(--space-xs);
+/* The instructor's page sits under the resources as a plain link, at its own width. */
+.m-lsheet__link {
+  align-self: flex-start;
 }
 
 .m-lsheet__heading {

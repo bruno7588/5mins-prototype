@@ -187,7 +187,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             <h2 className="lf-info__title">{lesson.title}</h2>
             {lesson.deepDiveUrl || resources.length ? (
               <button type="button" className="lf-info__link" onClick={() => setPanel('deep-dive')}>
-                Take a deep dive
+                Resources
               </button>
             ) : null}
           </div>
@@ -253,14 +253,14 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
                 setClosing(false)
               }
             }}
-            aria-label={panel === 'learnings' ? 'Learnings' : 'Take a deep dive'}>
+            aria-label={panel === 'learnings' ? 'Learnings' : 'Resources'}>
             <div className="lf-sheet__header">
-              <h2 className="lf-sheet__title">{panel === 'learnings' ? 'Learnings' : 'Take a deep dive'}</h2>
+              <h2 className="lf-sheet__title">{panel === 'learnings' ? 'Learnings' : `Resources (${resources.length})`}</h2>
               <CloseButton onClick={closePanel} ariaLabel="Back to the lesson" />
             </div>
             <div className="lf-sheet__divider" />
 
-            <div className={`lf-sheet__body${panel === 'deep-dive' ? ' lf-sheet__body--deep' : ''}`}>
+            <div className="lf-sheet__body">
               {panel === 'learnings' && lesson.learningGoals?.length ? (
                 <section className="lf-learn">
                   <h3 className="lf-learn__head">
@@ -308,44 +308,37 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
                 </section>
               ) : null}
 
+              {/* The resources, then the instructor's own page as a plain link below
+                  them (Figma Lessons-Feed 10761:5563). */}
               {panel === 'deep-dive' && (
-                <>
-                  {/* Where the link used to go straight to: the instructor's own page. */}
+                <div className="lf-deep">
+                <div className="lf-resources">
+                  {resources.map((r) => (
+                    <ResourceCard
+                      key={r.id}
+                      device="mobile"
+                      type={r.type}
+                      title={r.title}
+                      size={r.size}
+                      onOpen={() =>
+                        r.url
+                          ? window.open(r.url, '_blank', 'noopener,noreferrer')
+                          : showToast('info', `Downloading ${r.title}`)
+                      }
+                    />
+                  ))}
+                </div>
                   {lesson.deepDiveUrl && (
-                    <section className="lf-learn lf-learn--tight">
-                      <h3 className="lf-learn__head lf-learn__head--secondary">Learn more</h3>
-                      <a
-                        className="lf-info__link lf-deep__link"
-                        href={lesson.deepDiveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {lesson.deepDiveUrl.replace(/^https?:\/\/(www\.)?/, '')}
-                      </a>
-                    </section>
+                    <a
+                      className="lf-info__link lf-deep__link"
+                      href={lesson.deepDiveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {lesson.deepDiveUrl.replace(/^https?:\/\/(www\.)?/, '')}
+                    </a>
                   )}
-                  {resources.length > 0 && (
-                    <section className="lf-learn">
-                      <h3 className="lf-learn__head lf-learn__head--secondary">Resources</h3>
-                      <div className="lf-resources">
-                        {resources.map((r) => (
-                          <ResourceCard
-                            key={r.id}
-                            device="mobile"
-                            type={r.type}
-                            title={r.title}
-                            size={r.size}
-                            onOpen={() =>
-                              r.url
-                                ? window.open(r.url, '_blank', 'noopener,noreferrer')
-                                : showToast('info', `Downloading ${r.title}`)
-                            }
-                          />
-                        ))}
-                      </div>
-                    </section>
-                  )}
-                </>
+                </div>
               )}
             </div>
           </section>

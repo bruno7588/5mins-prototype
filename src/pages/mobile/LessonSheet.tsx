@@ -19,7 +19,7 @@ interface LessonSheetProps {
 
 /**
  * The lesson sheet behind "more" (Figma Lessons-Feed 10752:24652), in the shared
- * BottomSheet: instructor, the skill it builds, Take a deep dive and Resources.
+ * BottomSheet: instructor, the skill it builds, and Resources.
  */
 function LessonSheet({ lesson, onClose, onOpenLink, onDownload, hidden }: LessonSheetProps) {
   const deepDiveLabel = lesson.deepDiveUrl?.replace(/^https?:\/\/(www\.)?/, '')
@@ -43,31 +43,30 @@ function LessonSheet({ lesson, onClose, onOpenLink, onDownload, hidden }: Lesson
           </div>
         </div>
 
+        {/* As on desktop: the resources, then the instructor's own page
+            as a plain link below them (Figma Lessons-Feed 10761:5563). */}
         {(lesson.deepDiveUrl || lesson.resources?.length) && (
           <div className="m-lsheet__more">
-            {lesson.deepDiveUrl && (
-              <section className="m-lsheet__section m-lsheet__section--link">
-                <h3 className="m-lsheet__heading">Take a deep dive</h3>
-                <Button variant="link" onClick={() => onOpenLink(lesson.deepDiveUrl!, 'deep-dive')}>
+            <section className="m-lsheet__section">
+              {lesson.resources?.length ? (
+                <h3 className="m-lsheet__heading">Resources ({lesson.resources.length})</h3>
+              ) : null}
+              {lesson.resources?.map((r) => (
+                <ResourceCard
+                  key={r.id}
+                  device="mobile"
+                  type={r.type}
+                  title={r.title}
+                  size={r.size}
+                  onOpen={() => (r.url ? onOpenLink(r.url, 'resource') : onDownload(r.title))}
+                />
+              ))}
+              {lesson.deepDiveUrl && (
+                <Button variant="link" className="m-lsheet__link" onClick={() => onOpenLink(lesson.deepDiveUrl!, 'deep-dive')}>
                   {deepDiveLabel}
                 </Button>
-              </section>
-            )}
-            {lesson.resources?.length ? (
-              <section className="m-lsheet__section">
-                <h3 className="m-lsheet__heading">Resources</h3>
-                {lesson.resources.map((r) => (
-                  <ResourceCard
-                    key={r.id}
-                    device="mobile"
-                    type={r.type}
-                    title={r.title}
-                    size={r.size}
-                    onOpen={() => (r.url ? onOpenLink(r.url, 'resource') : onDownload(r.title))}
-                  />
-                ))}
-              </section>
-            ) : null}
+              )}
+            </section>
           </div>
         )}
       </div>

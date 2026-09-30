@@ -149,6 +149,11 @@
   width: auto;
 }
 
+/* "Change program" is an action, not the value, so it reads quieter. */
+.automation-details-program-dropdown .dropdown-trigger-text:not(.dropdown-trigger-text--placeholder) {
+  color: var(--text-tertiary);
+}
+
 /* DES-341: Courses / Programs choice at the top of the Actions card. */
 .automation-details-action-type {
   display: flex;

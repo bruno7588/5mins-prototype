@@ -44,7 +44,7 @@ function MobileApp() {
       return (
         <MobileTopNav
           variant="detail"
-          title={webView.kind === 'deep-dive' ? 'Take a deep dive' : 'Resource'}
+          title="Resource"
           onBack={() => setWebView(null)}
         />
       )

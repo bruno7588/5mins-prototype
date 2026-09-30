@@ -25,9 +25,9 @@
   min-width: 0;
   min-height: 0;
   display: flex;
-  /* Video sits in the top-left of the stage, with the close button beside it. */
-  align-items: flex-start;
-  justify-content: flex-start;
+  /* Video is centred in the stage, with the close button beside it. */
+  align-items: center;
+  justify-content: center;
   /* Sizes the video against the stage in both axes (see .lf-video-wrap). */
   container-type: size;
 }
@@ -471,6 +471,17 @@
   gap: var(--space-sm);
 }
 
+/* Resources panel: the cards, then the instructor's page as a link 16px below. */
+.lf-deep {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.lf-deep__link {
+  overflow-wrap: anywhere;
+}
+
 /* Learnings · Bookmark · Share · Comments — labelled row, label before icon. */
 .lf-menu {
   display: flex;
@@ -580,22 +591,3 @@
   gap: var(--space-l);
 }
 
-/* The instructor's own page (blog, YouTube channel), where Take a deep dive
-   used to link straight to: a plain link above the resources. */
-.lf-deep__link {
-  overflow-wrap: anywhere;
-}
-
-/* Take a deep dive: Learn more and Resources sit 16px apart, labels quieter. */
-.lf-sheet__body--deep {
-  gap: var(--space-m);
-}
-
-.lf-learn__head--secondary {
-  color: var(--text-secondary);
-}
-
-/* Learn more: the label sits 8px above its link. */
-.lf-learn--tight {
-  gap: var(--space-s);
-}
