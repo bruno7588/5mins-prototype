@@ -371,7 +371,7 @@ function AssessmentAnswers() {
           <Tooltip text="Download File" position="Top" icon={false}>
             <button
               className="icon-btn"
-              onClick={() => showToast('info', `Downloading ${r.fileName}`)}
+              onClick={() => showToast('success', `Downloading ${r.fileName}`)}
               aria-label={`Download ${r.fileName}`}
             >
               <ImportCurve size={20} color="var(--text-primary)" variant="Linear" />

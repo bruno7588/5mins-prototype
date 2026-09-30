@@ -102,14 +102,10 @@ function ResourceCard({ type, title, size, device = 'web', onOpen, openDisabled 
         <p className="resource-card__meta">{resourceMeta(type, size)}</p>
       </div>
       <div className="resource-card__actions">
-        {/* No tooltip on mobile: there is no hover on a phone to reveal it. */}
-        {device === 'mobile' ? (
-          openButton
-        ) : (
-          <Tooltip text={openLabel} position="Top" icon={false}>
-            {openButton}
-          </Tooltip>
-        )}
+        {/* Every icon action names itself on hover, at every card size. */}
+        <Tooltip text={openLabel} position="Top" icon={false}>
+          {openButton}
+        </Tooltip>
         {onRemove && (
           <Tooltip text="Remove" position="Top" alignment="End" icon={false}>
             <button

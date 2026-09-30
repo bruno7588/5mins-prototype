@@ -323,7 +323,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
                       onOpen={() =>
                         r.url
                           ? window.open(r.url, '_blank', 'noopener,noreferrer')
-                          : showToast('info', `Downloading ${r.title}`)
+                          : showToast('success', `Downloading ${r.title}`)
                       }
                     />
                   ))}

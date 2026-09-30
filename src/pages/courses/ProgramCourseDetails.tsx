@@ -120,7 +120,7 @@ function ProgramCourseDetails() {
   const openResource = (resource: CourseResourceItem) =>
     resource.url
       ? window.open(resource.url, '_blank', 'noopener,noreferrer')
-      : showToast('info', `Downloading ${resource.title}`)
+      : showToast('success', `Downloading ${resource.title}`)
   const [open, setOpen] = useState<Record<string, boolean>>(
     () => Object.fromEntries(course.sections.map((s) => [s.id, true])),
   )

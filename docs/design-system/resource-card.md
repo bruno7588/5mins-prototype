@@ -133,7 +133,7 @@ File tiles are finished artwork with their colours baked in; don't recolour them
 
 - **Files:** `ImportCurve` (the product's one download icon, see `iconography.md`).
 - **Links:** `ExportSquare`, opening in a new tab.
-- Hovering the icon shows the DS Tooltip (`Position=Top, Alignment=Center, Icon=False`) reading "Download" or "Open link", as in the Web/Admin Hover variant. The mobile card (`device="mobile"`) has no tooltip: there is no hover on a phone.
+- Hovering the icon shows the DS Tooltip (`Position=Top, Alignment=Center, Icon=False`) reading "Download" or "Open link", as in the Web/Admin Hover variant. This applies at every size, including `device="mobile"` (also used on desktop For You): every icon control shows a tooltip on hover (Bruno, 2026-09-30).
 - Learner cards (no `onRemove`) are clickable end to end; authoring cards with Remove keep icon-only actions so a tap on the row never downloads by accident.
 - The button has a visible `:focus-visible` ring (`--primary-button-background`) and an `aria-label` of "Download <title>" or "Open link <title>".
 - When there's nothing to download (e.g. an admin's file isn't in the session any more), set `openDisabled`: the icon greys out but stays in place, so every card keeps the same shape.
