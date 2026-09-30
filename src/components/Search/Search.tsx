@@ -14,6 +14,9 @@ interface SearchProps {
   onBlur?: () => void
   className?: string
   ariaLabel?: string
+  /** On a card or menu: the border steps up to --border-elevated, which stays
+      visible where --border matches the card fill (dark mode). */
+  elevated?: boolean
 }
 
 function Search({
@@ -26,6 +29,7 @@ function Search({
   onBlur,
   className = '',
   ariaLabel,
+  elevated = false,
 }: SearchProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const filled = value.length > 0
@@ -43,7 +47,7 @@ function Search({
 
   return (
     <div
-      className={`search search--${size.toLowerCase()} ${className}`.trim()}
+      className={`search search--${size.toLowerCase()}${elevated ? " search--elevated" : ""} ${className}`.trim()}
       onClick={() => inputRef.current?.focus()}
     >
       <SearchNormal1

@@ -9,7 +9,7 @@
   align-items: stretch;
   padding: var(--space-s);
   background: var(--cards-background);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   filter: drop-shadow(-4px 0 24px rgba(32, 34, 42, 0.12));
 }
@@ -22,7 +22,7 @@
   width: 14px;
   height: 8px;
   background: var(--cards-background);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-bottom: none;
   border-right: none;
   transform: rotate(45deg);

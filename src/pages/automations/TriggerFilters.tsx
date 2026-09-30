@@ -227,6 +227,7 @@ function TriggerFilters({ filters, onChange }: TriggerFiltersProps) {
                   size="M"
                   value={menuQuery}
                   placeholder="Search filters"
+                  elevated
                   onChange={setMenuQuery}
                   ariaLabel="Search filters"
                 />

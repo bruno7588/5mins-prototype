@@ -1,13 +1,10 @@
-/* Full-screen modal that covers everything below the top nav (70px).
-   Sits BELOW the topnav (z-index 100) so the topnav stays interactive and its
-   downward tooltips (theme / log out) aren't clipped by this panel. */
+/* Full-screen modal that covers the whole viewport, top nav included
+   (overlays.md): the close is the only way out, so unsaved work always gets
+   the discard check. Sits above the topnav (z-index 100). */
 .automation-details-modal {
   position: fixed;
-  top: 70px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 90;
+  inset: 0;
+  z-index: 110;
   background: var(--page-background);
   overflow-y: auto;
 }
@@ -17,10 +14,11 @@
    `right` tracks the content column's own right edge (its gutter once the
    column is capped at 1024px) so the close always lines up with the title
    row's edit icon, whatever the viewport width. */
-.automation-details-close {
+/* Doubled class so it beats .tooltip-wrapper { position: relative }. */
+.tooltip-wrapper.automation-details-close {
   position: absolute;
   top: 24px;
-  right: max(var(--space-m), calc(50% - 512px + var(--space-m)));
+  right: var(--space-l);
   z-index: 1;
 }
 

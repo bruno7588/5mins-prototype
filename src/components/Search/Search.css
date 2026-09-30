@@ -13,6 +13,12 @@
   transition: border-color 150ms ease, background 150ms ease;
 }
 
+/* On a card or menu the quiet --border matches the card fill in dark mode,
+   so the edge steps up to --border-elevated (hover and focus still win). */
+.search--elevated {
+  border-color: var(--border-elevated);
+}
+
 /* ── Size M ── */
 .search--m {
   gap: var(--space-s);

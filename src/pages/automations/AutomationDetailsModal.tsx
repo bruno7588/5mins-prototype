@@ -313,7 +313,9 @@ function AutomationDetailsModal({
       aria-modal="true"
       aria-labelledby="automation-details-title"
     >
-      <CloseButton variant="fullscreen" onClick={requestClose} className="automation-details-close" />
+      <Tooltip text="Exit automation" position="Left" icon={false} className="automation-details-close">
+        <CloseButton variant="fullscreen" onClick={requestClose} ariaLabel="Exit automation" />
+      </Tooltip>
 
       <div className="automation-details-content">
         <header className="automation-details-header">

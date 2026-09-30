@@ -36,7 +36,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — light `11927:6338` / d
 - Let the built-in clear (×) empty the field; it appears whenever there is text.
 
 **Don't**
-- Don't switch the border to `--border-elevated`; Search keeps the quiet `--border` because it carries a fill at rest.
+- Don't use `--border-elevated` on the page ground or inside drawers and modals; there Search keeps the quiet `--border`. On a card or menu, pass `elevated` instead (see below).
 - Don't use raw `--secondary-500` for the focus border; use the mode-aware `--selected`.
 - Don't wrap it in a `<form>` or add a submit button.
 - Don't change the font weight on focus or fill; it stays Regular 400.
@@ -106,7 +106,8 @@ Font:           Poppins 16px / 1.5  (Regular 400)
 | Active (focused) | `--input-background` | `--selected` (`#EDA30D` light / `#FFBB38` dark) |
 
 - The border is the primary state signal — background only changes on Hover.
-- **Search keeps the quiet `--border`, not `--border-elevated`.** It is the one field that carries a fill at rest, so it does not need the stronger edge the transparent fields (input, dropdown, date) use to define themselves. Both Figma nodes agree — the dark set has no `Border-elevated` binding at all. Do not "fix" this to match the other fields.
+- **On the page ground and inside drawers and modals, Search keeps the quiet `--border`.** It carries a fill at rest, so there it does not need the stronger edge the transparent fields use.
+- **On a card or menu, Search uses `--border-elevated`** (Bruno, 2026-09-30): pass `elevated`. In dark mode `--border` equals `--cards-background`, so the quiet border disappears on a card. Hover (`--border-hover`) and Active (`--selected`) are unchanged. This overrides the earlier "never elevated" note and the Figma dark set, which has no `Border-elevated` binding yet.
 - Token rule: **form-field active borders use the mode-aware `--selected` token** (same as inputs, dropdowns, date fields).
 - In Figma, Active is modeled on the unfilled variant and shows in-progress typing (value text + clear button) — i.e. Active = focused, whatever the content; `filled` styling applies once the field has a value.
 

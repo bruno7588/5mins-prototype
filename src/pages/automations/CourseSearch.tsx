@@ -60,6 +60,7 @@ function CourseSearch({ excludeIds, onSelect }: CourseSearchProps) {
         size="M"
         value={query}
         placeholder="Search for courses"
+        elevated
         onChange={setQuery}
         onFocus={() => setOpen(true)}
         ariaLabel="Search for courses"

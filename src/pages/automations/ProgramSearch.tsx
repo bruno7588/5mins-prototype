@@ -51,6 +51,7 @@ function ProgramSearch({ excludeIds, onSelect, placeholder = 'Search for a progr
         size="M"
         value={query}
         placeholder={placeholder}
+        elevated
         onChange={(q) => {
           setQuery(q)
           setOpen(true)

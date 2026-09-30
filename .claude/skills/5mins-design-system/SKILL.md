@@ -49,6 +49,7 @@ All component docs are Figma-verified (2026-07, with node refs in each file). **
 ## Strict rules
 
 - **Never improvise design values.** Use only tokens defined in the design system (colors, spacing, radius, font sizes).
+- **Borders on a card or menu use `--border-elevated`**, including field borders such as Search (`elevated` prop). `--border` is for the page ground and inside drawers and modals; in dark mode it matches the card fill and disappears.
 - **Always use semantic tokens over raw palette values.** Prefer `--text-primary` over `--neutral-800`, `--cards-background` over `--neutral-0`, `--border` over `--neutral-100`.
 - **Always use Poppins** as the font family. Weights: 400, 500, 600, 700 only.
 - **Always use Iconsax React** for icons. Standard sizes: 16, 20, 24, 32px only.
