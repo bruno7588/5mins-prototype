@@ -685,8 +685,9 @@ function AutomationDetailsModal({
           </p>
         </div>
         <div className="confirm-modal-actions confirm-modal-actions--center">
+          {/* Names what staying keeps, not a bare Cancel (5mins-copy-review). */}
           <Button variant="outlined-2" onClick={() => setPendingActionType(null)}>
-            Cancel
+            Keep {actionType === 'programs' ? 'Program' : 'Courses'}
           </Button>
           <Button
             semantic="warning"

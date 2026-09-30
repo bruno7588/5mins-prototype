@@ -71,7 +71,7 @@ function ProgramEnrollmentPopover({ value, onChange, onClose, anchorRef }: Props
           type="button"
           className="enrollment-popover__option"
           onClick={() => {
-            if (isImmediate) onChange({ kind: 'specific-date', date: '' })
+            if (isImmediate) onChange({ kind: 'specific-date', date: todayISO() })
           }}
         >
           <Radio checked={!isImmediate} readOnly tabIndex={-1} />
@@ -83,16 +83,16 @@ function ProgramEnrollmentPopover({ value, onChange, onClose, anchorRef }: Props
           </span>
         </button>
 
-        {value.kind === 'specific-date' && (
-          <div className="enrollment-popover__stepper-row">
-            <DatePickerField
-              value={value.date}
-              onChange={(date) => onChange({ kind: 'specific-date', date })}
-              minDate={todayISO()}
-              ariaLabel="Enrolment date"
-            />
-          </div>
-        )}
+        {/* Always shown (Figma 9166:34409), holding today until a date is picked;
+            picking one selects Specific date. */}
+        <div className="enrollment-popover__stepper-row">
+          <DatePickerField
+            value={value.kind === 'specific-date' && value.date ? value.date : todayISO()}
+            onChange={(date) => onChange({ kind: 'specific-date', date })}
+            minDate={todayISO()}
+            ariaLabel="Enrolment date"
+          />
+        </div>
       </div>
     </div>
   )
