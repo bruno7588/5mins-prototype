@@ -675,7 +675,7 @@ function AutomationDetailsModal({
         <div className="confirm-modal-header confirm-modal-header--center">
           <Danger size={72} color="var(--warning-500)" variant="Linear" />
           <h3 className="confirm-modal-title">
-            Switch to {pendingActionType === 'programs' ? 'programs' : 'courses'}?
+            Switch to {pendingActionType === 'programs' ? 'program' : 'courses'}?
           </h3>
           <p className="confirm-modal-body">
             {actionCount === 1
@@ -697,7 +697,7 @@ function AutomationDetailsModal({
               setOpenProgramId(null)
             }}
           >
-            Switch to {pendingActionType === 'programs' ? 'Programs' : 'Courses'}
+            Switch to {pendingActionType === 'programs' ? 'Program' : 'Courses'}
           </Button>
         </div>
       </ConfirmModal>
