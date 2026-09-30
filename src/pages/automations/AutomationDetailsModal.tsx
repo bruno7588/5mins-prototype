@@ -133,7 +133,7 @@ function blockedReason(
 ): string {
   if (hasName && hasTrigger && hasAction) return ''
   if (!hasName && !hasTrigger && !hasAction) {
-    return `Add a title, a trigger filter and ${item}`
+    return 'Add a title, a trigger filter and a course or program'
   }
   if (!hasName) return 'Add a title to this automation'
   if (!hasTrigger && !hasAction) return `Set a trigger filter and add ${item}`
