@@ -94,6 +94,7 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
               {/* The indent alone left it to the reader to infer that these
                   belong to the category above; the arrow says it. */}
               <div className="iq-drawer__category-items">
+                <span className="iq-drawer__label iq-drawer__label--items">Items</span>
                 {own.map((item, i) => {
                   const itemConflict = conflictFor(conflicts, 'items', item.a)
                   return (
@@ -113,8 +114,8 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
                         rows={1}
                         className="iq-drawer__row-input"
                         readOnly={readOnly}
-                        placeholder={`Concept ${i + 1}, e.g. ${example.concepts[i % example.concepts.length]}`}
-                        aria-label={`Concept ${i + 1} in ${named}`}
+                        placeholder={`Item ${i + 1}, e.g. ${example.concepts[i % example.concepts.length]}`}
+                        aria-label={`Item ${i + 1} in ${named}`}
                         aria-invalid={itemConflict ? true : undefined}
                         aria-describedby={itemConflict ? `iq-conflict-${item.id}` : undefined}
                         value={item.a}
@@ -137,7 +138,7 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
                         <CloseButton
                           size={16}
                           className="iq-drawer__row-remove"
-                          ariaLabel={`Remove concept ${i + 1} from ${named}`}
+                          ariaLabel={`Remove item ${i + 1} from ${named}`}
                           onClick={() => onChange({ ...draft, items: items.filter((x) => x.id !== item.id) })}
                         />
                       )}
@@ -158,7 +159,7 @@ function CategorizationBody({ draft, onChange, readOnly = false }: BodyProps<Cat
                     icon={<Add size={20} color="currentColor" variant="Linear" />}
                     onClick={() => onChange({ ...draft, items: [...items, makeRow('', category.id)] })}
                   >
-                    Add Concept
+                    Add Item
                   </Button>
                 )}
               </div>

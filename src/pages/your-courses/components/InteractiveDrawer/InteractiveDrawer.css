@@ -375,8 +375,8 @@
   min-width: 0;
 }
 
-/* Lines up with the concepts it heads, not with the arrows pointing at them. */
-.iq-drawer__label--concepts {
+/* Lines up with the items it heads, not with the arrows pointing at them. */
+.iq-drawer__label--items {
   margin-left: calc(var(--space-ml) + var(--space-s));
 }
 
