@@ -1,11 +1,11 @@
-import { Choices } from '@/pages/your-courses/components/AssessmentsTab/AnswerStats'
+import { AnswerBars } from '@/pages/your-courses/components/AssessmentsTab/AnswerStats'
 import {
   questionOptionTally,
   type MultiAssessment,
 } from '@/pages/your-courses/components/AssessmentsTab/assessmentResults'
 
 /** B — every question's option breakdown stacked at once, no chip to click between
- *  them. The bars are the real `Choices` mark, so the only thing being tested here is
+ *  them. The rows are the real `AnswerBars` mark, so the only thing being tested here is
  *  the information architecture: see the whole quiz vs. one question at a time. */
 function SmallMultiples({ quiz }: { quiz: MultiAssessment }) {
   const responded = quiz.responses.length
@@ -17,7 +17,7 @@ function SmallMultiples({ quiz }: { quiz: MultiAssessment }) {
             <span className="cl-sm__num">Q{qi + 1}</span>
             {q.prompt}
           </p>
-          <Choices
+          <AnswerBars
             options={q.options}
             correctIndex={q.correctIndex}
             tally={questionOptionTally(quiz, qi)}

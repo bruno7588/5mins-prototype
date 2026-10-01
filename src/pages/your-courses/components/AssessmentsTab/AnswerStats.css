@@ -1,7 +1,6 @@
-/* The charts at the top of the answers drawer. Four formats, four forms — a
-   distribution, a ranking, a sequence and a histogram are four different things,
-   and drawing them all as the same list of bars was the part that read as
-   templated. Prefix `ast-`. */
+/* The chart at the top of the answers page. Every charted format draws the same rows
+   — a single question, a banded score, a blank, a quiz a question at a time, a poll —
+   so an admin learns one chart, not five. Prefix `ast-`. */
 
 /* The two children are the caption and the chart, and 16px between them separates the
    figures about the assessment from the control that changes what is charted. */
@@ -10,34 +9,20 @@
   flex-direction: column;
   gap: var(--space-m); /* 16px between the stats caption and the chart/chips */
 
-  /* The mark under the pointer, one palette step away: darker in light mode, lighter in
-     dark, so the shift is toward the surface's opposite either way and reads as the same
-     gesture in both. Named here so each rule below asks for a hue, not a step. */
-  --ast-primary-hover: var(--primary-700);
-  --ast-success-hover: var(--success-600);
-  --ast-danger-hover: var(--danger-600);
+  /* Raw palette steps do not flip with the theme, so each mode names its own: the
+     resting neutral row, and the step a row recedes to while another is pointed at
+     (further from the text colour, toward the surface, in both modes). */
+  --ast-plain: var(--neutral-300);
+  --ast-recede: var(--neutral-100);
+  --ast-correct-recede: var(--success-200);
+  --ast-lead-recede: var(--primary-200);
 }
 
 [data-theme='dark'] .ast {
-  --ast-primary-hover: var(--primary-500);
-  --ast-success-hover: var(--success-400);
-  /* Two steps, not one: --text-error already resolves to danger-400 in dark, so a hover
-     at 400 was the colour the segment was wearing and nothing moved. */
-  --ast-danger-hover: var(--danger-300);
-}
-
-/* The chart's own hover surface has no business being a text cursor, and the DS tooltip's
-   wrapper is a plain div that would otherwise size to its content — a column inside it
-   would then be as wide as its own percentage label rather than as wide as its slot. */
-.ast .tooltip-wrapper {
-  min-width: 0;
-}
-
-.ast .tooltip__trigger {
-  display: block;
-  width: 100%;
-  height: 100%;
-  cursor: default;
+  --ast-plain: var(--neutral-400);
+  --ast-recede: var(--neutral-600);
+  --ast-correct-recede: var(--success-700);
+  --ast-lead-recede: var(--primary-800);
 }
 
 /* Side by side, so a second stat sits beside the first rather than under it. Wrapping is
@@ -90,7 +75,7 @@
 .ast-quiz {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-m);
 }
 
 .ast-quiz__chips {
@@ -111,63 +96,164 @@
   color: var(--text-primary);
 }
 
-/* ── One option, one bar ─────────────────────────────────────────────────────
-   The shared form, and the reason the divided bar is gone. A stacked bar says
-   share-of-whole in a single mark, but the marks it divides into carry no words:
-   every segment had to be hovered to find out what it was, and the legend beneath
-   asked the eye to travel from a name to a sliver that belonged to it. Here the
-   words sit inside the mark, so four options are four sentences with lengths
-   attached and nothing has to be pointed at to be read.
+/* ── The rows and the figure over them ───────────────────────────────────── */
+.ast-answers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
 
-   Used by the poll and by every question with a right answer. Only the fill
-   changes meaning. */
-.ast-bars {
+/* The headline number. Fixed height so swapping it never nudges the rows. */
+.ast-readout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 48px;
+}
+
+.ast-readout__figure {
+  min-width: 72px;
+  font: 700 32px/1.2 'Poppins', sans-serif;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  animation: ast-readout-in 180ms ease-out;
+}
+
+/* Green whenever the figure is the right answer's share. */
+.ast-readout__figure.is-correct {
+  color: var(--success-500);
+}
+
+@keyframes ast-readout-in {
+  from {
+    transform: translateY(4px);
+  }
+}
+
+.ast-readout__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+.ast-readout__label {
+  font: 500 14px/1.4 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ast-readout__sub {
+  font: 400 12px/1.2 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ast-rows {
   margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
-.ast-bar {
-  position: relative;
+/* The whole row is the hit target, not just the bar. */
+.ast-row {
+  width: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-s);
-  padding: var(--space-s) var(--space-sm);
-  border-radius: var(--radius-s);
-  background: var(--input-background);
-  overflow: hidden;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-primary);
-  transition: background 150ms ease;
+  padding: var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease, transform 120ms ease;
 }
 
-/* The track as well as the fill: the row is one mark, and lighting only the filled end
-   of it left the half the pointer was actually over unchanged. The card's own hover, the
-   step every other row on this page takes. */
-.ast-bar:hover {
+.ast-row:hover,
+.ast-row.is-focused {
   background: var(--cards-background-hover);
 }
 
-/* A tint, not the solid fill: the words sit on top of it and have to stay readable
-   over both the fill and the track behind them. Same device the badges use — a
-   percentage of the hue, mixed rather than faded, so it is one colour rather than a
-   transparency over whatever happens to be underneath. */
-.ast-bar__fill {
+.ast-row:active {
+  transform: scale(0.99);
+}
+
+.ast-row:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.ast-row__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.ast-row__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+  transition: color 150ms ease;
+}
+
+/* The right answer, and a poll's outright leader: the one row at full strength. */
+.ast-row.is-correct .ast-row__label,
+.ast-row.is-lead .ast-row__label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Wears the bar's own colour, so the two step back together while another row is
+   pointed at. */
+.ast-row__tick {
+  flex-shrink: 0;
+  color: var(--success-500);
+  transition: color 150ms ease;
+}
+
+.ast-row__pct {
+  flex-shrink: 0;
+  font: 600 16px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  transition: color 150ms ease;
+}
+
+/* A neutral row's figure steps back with its label; only the right answer's (or the
+   poll leader's) reads at full strength. */
+.ast-row.is-plain .ast-row__pct {
+  color: var(--text-secondary);
+}
+
+.ast-row__track {
+  position: relative;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  overflow: hidden;
+}
+
+.ast-row__fill {
   position: absolute;
   inset: 0 auto 0 0;
   width: var(--ast-w);
-  /* The track's own radius: the left end is already clipped to it, and a square right
-     end made the fill read as a rectangle laid over the bar rather than part of it. */
-  border-radius: var(--radius-s);
-  background: color-mix(in srgb, var(--primary-600) 24%, transparent);
+  border-radius: var(--radius-full);
+  background: var(--ast-plain);
+  animation: ast-grow 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(120ms + var(--ast-i, 0) * 45ms);
   transition: background 150ms ease;
-  animation: ast-grow 560ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  animation-delay: calc(300ms + var(--ast-i, 0) * 60ms);
 }
 
 @keyframes ast-grow {
@@ -176,61 +262,41 @@
   }
 }
 
-/* Right and wrong in the two colours the Result badge beside this table states them in.
-   --text-error rather than the raw danger, so the red lightens in dark mode the way
-   every other error on the page does.
-
-   Red and green touching is the pairing colour deficiency struggles with most, so the
-   words inside each bar are doing the work colour cannot: nobody has to name a hue to
-   read this chart. */
-.ast-bar.is-correct .ast-bar__fill {
-  background: color-mix(in srgb, var(--success-500) 24%, transparent);
+/* Green for the right answer — the colour the Result badge in the table states it in. */
+.ast-row.is-correct .ast-row__fill {
+  background: var(--success-500);
 }
 
-.ast-bar.is-wrong .ast-bar__fill {
-  background: color-mix(in srgb, var(--text-error) 24%, transparent);
+/* A poll's leader: the brand colour, because "most chosen" is not "correct". */
+.ast-row.is-lead .ast-row__fill {
+  background: var(--primary-600);
 }
 
-/* A tint rather than a solid, so its hover deepens the same tint instead of jumping to
-   another colour: the words sit on top of it and have to stay readable through it. */
-.ast-bar:hover .ast-bar__fill {
-  background: color-mix(in srgb, var(--primary-600) 32%, transparent);
+/* Focus mode: the rows not being pointed at step back a shade - a palette step, never
+   opacity. */
+.ast-rows[data-focused] .ast-row:not(.is-focused) .ast-row__fill {
+  background: var(--ast-recede);
 }
 
-.ast-bar.is-correct:hover .ast-bar__fill {
-  background: color-mix(in srgb, var(--success-500) 32%, transparent);
+.ast-rows[data-focused] .ast-row.is-correct:not(.is-focused) .ast-row__fill {
+  background: var(--ast-correct-recede);
 }
 
-.ast-bar.is-wrong:hover .ast-bar__fill {
-  background: color-mix(in srgb, var(--text-error) 32%, transparent);
+.ast-rows[data-focused] .ast-row.is-correct:not(.is-focused) .ast-row__tick {
+  color: var(--ast-correct-recede);
 }
 
-/* Above the fill. */
-.ast-bar__label,
-.ast-bar__value {
-  position: relative;
+.ast-rows[data-focused] .ast-row.is-lead:not(.is-focused) .ast-row__fill {
+  background: var(--ast-lead-recede);
 }
 
-.ast-bar__label {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-/* A wrong option steps back a shade — words and figure together, they are one line — so
-   the answer is the one row at full strength and the distractors read as what was picked
-   instead of it. */
-.ast-bar.is-wrong {
-  color: var(--text-secondary);
-}
-
-.ast-bar__value {
-  flex: 0 0 auto;
-  font-variant-numeric: tabular-nums;
+.ast-rows[data-focused] .ast-row:not(.is-focused) .ast-row__label,
+.ast-rows[data-focused] .ast-row:not(.is-focused) .ast-row__pct {
+  color: var(--text-disabled);
 }
 
 /* The band label's two halves: the count, and the phrase it is counted in. Used by the
-   column tooltip and by the Answer column of the table below it. */
+   Answer column of the table below the chart. */
 .ast-band__figure {
   color: var(--text-primary);
 }
@@ -250,157 +316,14 @@
   color: var(--neutral-200);
 }
 
-/* ── Columns: a sequence, and a distribution ─────────────────────────────── */
-.ast-cols {
-  position: relative;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  align-items: flex-end;
-  gap: var(--space-xs);
-}
-
-/* The rules the columns are read against: hairlines every quarter, masked into
-   dashes so they sit behind the bars without competing with them. Height matches
-   the plot, so the bottom rule is the baseline the bars stand on. */
-.ast-cols::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 176px;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    to top,
-    var(--border-elevated) 0 1px,
-    transparent 1px 25%
-  );
-  -webkit-mask-image: repeating-linear-gradient(to right, #000 0 2px, transparent 2px 6px);
-  mask-image: repeating-linear-gradient(to right, #000 0 2px, transparent 2px 6px);
-}
-
-/* A handful of columns rather than a dozen: they still fill the panel, but with
-   room between them, where twelve need every pixel of width they can get. */
-.ast-cols.is-sparse {
-  gap: var(--space-m);
-}
-
-.ast-col {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-  /* The bar is sized from this, so it tracks the column rather than a fixed width:
-     thick when four bands share the panel, thinner as the panel narrows. */
-  container-type: inline-size;
-}
-
-/* The plot. A fixed height so every column is read against the same hundred. */
-.ast-col__hit {
-  height: 176px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-/* The tooltip's trigger is the bar, so the label appears just above the mark it
-   describes rather than above the whole plot. Sized here because the trigger is the
-   component's own element: the column carries --ast-h and this reads it. */
-.ast-col__hit .tooltip__trigger {
-  display: block;
-  width: clamp(8px, 40cqw, 48px);
-  height: var(--ast-h);
-  min-height: 8px;
-}
-
-.ast-col__bar {
-  position: relative;
-  display: block;
-  /* Fills the trigger, which carries the width and the height. */
-  width: 100%;
-  height: 100%;
-  /* Softened corners rather than a capsule: at full round a bar shorter than it is
-     wide becomes a circle, which reads as a dot on a scatter instead of a short bar. */
-  border-radius: var(--radius-m);
-  background: var(--primary-600);
-  animation: ast-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  animation-delay: calc(300ms + var(--ast-i, 0) * 45ms);
-  transition: background 150ms ease;
-}
-
-/* The column being pointed at, the same step the segments take. */
-.ast-col__hit:hover .ast-col__bar {
-  background: var(--ast-primary-hover);
-}
-
-.ast-col__hit:hover .ast-col__bar.is-full {
-  background: var(--ast-success-hover);
-}
-
-.ast-col__hit:hover .ast-col__bar.is-wrong {
-  background: var(--ast-danger-hover);
-}
-
-/* Full marks — the same green the correct segment carries, so one colour means
-   one thing across all four charts. */
-.ast-col__bar.is-full {
-  background: var(--success-500);
-}
-
-/* Short of full marks is not a neutral outcome — it is the band that got it wrong, in
-   the colour the Incorrect badge uses. Only the band chart marks its columns this way:
-   the sibling chart counts who got each question right, and a wall of red there would
-   say the opposite of what it means. */
-.ast-col__bar.is-wrong {
-  background: var(--text-error);
-}
-
-@keyframes ast-rise {
-  from {
-    height: 0;
-  }
-}
-
-/* Over the column, not inside it: a short column has no room for a figure, and
-   half of these are short. */
-.ast-col__value {
-  position: absolute;
-  bottom: 100%;
-  /* Centred on a 12px bar, so the figure keeps its own width instead of wrapping
-     inside the stroke it labels. */
-  left: 50%;
-  transform: translateX(-50%);
-  width: max-content;
-  padding-bottom: var(--space-s);
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
-  animation: ast-fade 300ms ease backwards;
-  animation-delay: calc(560ms + var(--ast-i, 0) * 45ms);
-}
-
-@keyframes ast-fade {
-  from {
-    opacity: 0;
-  }
-}
-
-.ast-col__tick {
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
 /* The length is the data; the growing is decoration. */
 @media (prefers-reduced-motion: reduce) {
-  .ast-bar__fill,
-  .ast-col__bar,
-  .ast-col__value {
+  .ast-row__fill,
+  .ast-readout__figure {
     animation: none;
+  }
+
+  .ast-row:active {
+    transform: none;
   }
 }
