@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { TickCircle } from 'iconsax-react'
 import Chip from '@/components/Chip/Chip'
 import {
-  correctPct,
   optionTally,
   questionOptionTally,
   type AssessmentResult,
@@ -214,71 +213,30 @@ export function BandLabel({ label }: { label: string }) {
 function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
   if (a.responses.length === 0) return null
 
-  /* Neither is scored: no ratio to meter and no options to count, so neither gets a
-     chart. They still get the caption — how many people answered is a fact about a
-     written answer as much as about a graded one, and it was the one thing these two
-     pages never stated. */
-  const charted = a.kind !== 'text' && a.kind !== 'file'
-
   const responded = a.responses.length
 
-  /* The label carries the noun so the value can be nothing but the numbers: "Total
-     answers / 112 of 128" rather than a label and a unit saying the same word twice. The
-     noun still follows the format — a poll collects votes and an exercise files, and
-     calling either of them answers would be the wrong word for what is in the table. */
-  const heading =
-    a.kind === 'poll' ? 'Total votes' : a.kind === 'file' ? 'Total files' : 'Total answers'
-
-  /* The same figure the Result column prints on the row the admin clicked to get here,
-     read off the same helper so the two cannot drift. Null on the formats with no right
-     answer — a poll and an exercise get the response count alone rather than a borrowed
-     correctness metric. */
-  const correct = correctPct(a)
-
-  /* Two facts, two labels. Run together on one line they read as a single sentence and
-     the reader has to work out where the first fact ends — and they answer different
-     questions: how many took part, and how they did.
-
-     "Correct" rather than "Completion": completion is how many finished, which is the
-     figure on the left. Naming this one completion too would put two meanings on one
-     word on the same line. It is also the word the Result column uses on the row the
-     admin clicked to get here. */
-  const caption = (
-    <div className="ast-stats">
-      <p className="ast-stat">
-        <span className="ast-stat__label">{heading}</span>
-        <span className="ast-stat__value">
-          {/* The figure carries the weight; the cohort it is out of is the context it is
-              read against, and does not need to compete with it. */}
-          <span className="ast-stat__figure">{responded}</span> of {a.enrolled}
-        </span>
-      </p>
-
-      {/* Only where the chart below does not already state it. A single question leads
-          its rows with that very percentage as the big figure — printing it again up
-          here is the same number twice. A multi-question assessment's rows are one
-          question at a time and never add up to the whole, which is the gap this fills:
-          "overall", because the chips above are showing one of them. */}
-      {a.kind === 'multi' && correct !== null ? (
+  /* Short text and exercise are not scored: no ratio to meter and no options to count,
+     so they get no chart. They keep the one stat instead — how many answered, out of
+     everyone enrolled — because with no big figure it is the only summary they have.
+     The charted formats drop it: the big figure over the rows already says it. */
+  if (a.kind === 'text' || a.kind === 'file') {
+    return (
+      <section className="ast" aria-label="Overview">
         <p className="ast-stat">
-          <span className="ast-stat__label">Correct overall</span>
+          <span className="ast-stat__label">
+            {a.kind === 'file' ? 'Total files' : 'Total answers'}
+          </span>
           <span className="ast-stat__value">
-            <span className="ast-stat__figure">{correct}%</span>
+            <span className="ast-stat__figure">{responded}</span> of {a.enrolled}
           </span>
         </p>
-      ) : null}
-    </div>
-  )
+      </section>
+    )
+  }
 
   return (
     <section className="ast" aria-label="Overview">
-      {/* Above the chips, not below them. Both figures describe the assessment — 88 of
-          128 sat it, they averaged 64% — and printed under the question the chips select
-          they read as that question's, which is a different number entirely. Position
-          says which level each belongs to; no adjective has to. */}
-      {caption}
-
-      {!charted ? null : a.kind === 'multi' ? (
+      {a.kind === 'multi' ? (
         <Quiz a={a} responded={responded} />
       ) : a.kind === 'poll' ? (
         <Poll a={a} responded={responded} />

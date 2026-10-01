@@ -2,12 +2,10 @@
    — a single question, a banded score, a blank, a quiz a question at a time, a poll —
    so an admin learns one chart, not five. Prefix `ast-`. */
 
-/* The two children are the caption and the chart, and 16px between them separates the
-   figures about the assessment from the control that changes what is charted. */
 .ast {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m); /* 16px between the stats caption and the chart/chips */
+  gap: var(--space-m);
 
   /* Raw palette steps do not flip with the theme, so each mode names its own: the
      resting neutral row, and the step a row recedes to while another is pointed at
@@ -25,18 +23,8 @@
   --ast-lead-recede: var(--primary-800);
 }
 
-/* Side by side, so a second stat sits beside the first rather than under it. Wrapping is
-   kept for the narrow case rather than letting them collide. */
-.ast-stats {
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: var(--space-xs) var(--space-l);
-  width: 100%;
-}
-
-/* Label over figure, the pairing the card's question block already uses: the name of the
-   number sits above it rather than in front of it. */
+/* ── The count, for the formats with no chart ────────────────────────────── */
+/* Label over figure, the pairing the card's question block already uses. */
 .ast-stat {
   margin: 0;
   display: flex;
@@ -52,8 +40,7 @@
   color: var(--text-tertiary);
 }
 
-/* Paragraph S regular: "of 128" is the cohort the figure is read against rather than the
-   figure itself, so it sits smaller and a shade back on the same line. */
+/* "of 128" is the cohort the figure is read against, so it sits smaller and back. */
 .ast-stat__value {
   font-size: 12px;
   font-weight: 400;
@@ -62,8 +49,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Paragraph L semibold, per typography.md — the number the line is about, at full
-   strength against the context around it. */
+/* Paragraph L semibold — the number the line is about. */
 .ast-stat__figure {
   font-size: 16px;
   font-weight: 600;
@@ -109,6 +95,8 @@
   align-items: center;
   gap: var(--space-sm);
   min-height: 48px;
+  /* The rows' own inset, so the figure lines up with the bars under it. */
+  padding-inline: var(--space-sm);
 }
 
 .ast-readout__figure {
