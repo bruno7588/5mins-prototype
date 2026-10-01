@@ -24,6 +24,7 @@ import ScormCreateCourse from './pages/scorm-content/ScormCreateCourse'
 import Onboarding from './pages/onboarding/Onboarding'
 import MobileApp from './pages/mobile/MobileApp'
 import QuizLab from './pages/quiz-lab/QuizLab'
+import ChartLab from './pages/chart-lab/ChartLab'
 
 import MyTeam from './pages/my-team/MyTeam'
 import Workspace from './pages/workspace/Workspace'
@@ -64,6 +65,7 @@ function App() {
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/mobile" element={<MobileApp />} />
       <Route path="/quiz-lab" element={<QuizLab />} />
+      <Route path="/chart-lab" element={<ChartLab />} />
       <Route path="/my-team" element={<MyTeam />} />
       {/* A learner profile opened from My Team — top-level so it keeps the
           learner shell instead of picking up the admin TopNav below. */}

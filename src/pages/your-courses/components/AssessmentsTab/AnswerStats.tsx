@@ -53,7 +53,7 @@ function Bars({
    they found and how the people who missed it divided between the distractors are
    both read straight off the list. The options keep the order they were asked in —
    ranking them by popularity would detach the chart from the question above it. */
-function Choices({
+export function Choices({
   options,
   correctIndex,
   tally,
