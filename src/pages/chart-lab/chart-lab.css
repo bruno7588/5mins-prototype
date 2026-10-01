@@ -63,14 +63,13 @@
 
 /* The surface the chart sits on in the Assessments tab — a card on the page ground. */
 .cl-card {
-  padding: var(--space-xl);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-l);
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
   background: var(--cards-background);
 }
 
 /* ── B · All at once ─────────────────────────────────────────────────────────
-   Each question is its prompt over the real `Choices` bars, stacked. */
+   Each question is its prompt over the real `AnswerBars` rows, stacked. */
 .cl-sm {
   display: flex;
   flex-direction: column;
@@ -172,5 +171,223 @@
 @media (prefers-reduced-motion: reduce) {
   .cl-score__fill {
     animation: none;
+  }
+}
+
+/* ── D · Snappy ──────────────────────────────────────────────────────────────
+   Ranked single-accent rows. Green + tick is the right answer, every wrong
+   answer is a quiet neutral. The big
+   readout swaps to whichever option is hovered or tapped, and the other rows
+   recede by a palette step - never by opacity. */
+.cl-snap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+
+  /* Raw palette steps do not flip with the theme, so each mode names its own:
+     the resting distractor, and the step a row recedes to in focus mode (further
+     from the text colour, toward the surface, in both modes). */
+  --cl-snap-plain: var(--neutral-300);
+  --cl-snap-recede: var(--neutral-100);
+  --cl-snap-correct-recede: var(--success-200);
+}
+
+[data-theme='dark'] .cl-snap {
+  --cl-snap-plain: var(--neutral-400);
+  --cl-snap-recede: var(--neutral-600);
+  --cl-snap-correct-recede: var(--success-700);
+}
+
+.cl-snap__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.cl-snap__prompt {
+  margin: 0;
+  font: 600 16px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+}
+
+/* The headline number. Fixed height so swapping it never nudges the bars. */
+.cl-snap__readout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 48px;
+}
+
+.cl-snap__figure {
+  min-width: 72px;
+  font: 700 32px/1.2 'Poppins', sans-serif;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  animation: cl-snap-in 180ms ease-out;
+}
+
+.cl-snap__figure.is-correct {
+  color: var(--success-500);
+}
+
+@keyframes cl-snap-in {
+  from {
+    transform: translateY(4px);
+  }
+}
+
+.cl-snap__readout-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  min-width: 0;
+}
+
+.cl-snap__readout-label {
+  font: 500 14px/1.4 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cl-snap__readout-sub {
+  font: 400 12px/1.2 'Poppins', sans-serif;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-snap__bars {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* The whole row is the hit target, not just the bar. */
+.cl-snap__bar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  padding: var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease, transform 120ms ease;
+}
+
+.cl-snap__bar:hover,
+.cl-snap__bar.is-focused {
+  background: var(--cards-background-hover);
+}
+
+.cl-snap__bar:active {
+  transform: scale(0.99);
+}
+
+.cl-snap__bar:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.cl-snap__bar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.cl-snap__bar-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+  font: 400 14px/1.5 'Poppins', sans-serif;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+  transition: color 150ms ease;
+}
+
+.cl-snap__bar.is-correct .cl-snap__bar-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Wears the bar's own colour, so the two step back together in focus mode. */
+.cl-snap__tick {
+  flex-shrink: 0;
+  color: var(--success-500);
+  transition: color 150ms ease;
+}
+
+.cl-snap__bars[data-focused] .cl-snap__bar.is-correct:not(.is-focused) .cl-snap__tick {
+  color: var(--cl-snap-correct-recede);
+}
+
+.cl-snap__bar-pct {
+  flex-shrink: 0;
+  font: 600 16px/1.5 'Poppins', sans-serif;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  transition: color 150ms ease;
+}
+
+/* A wrong answer's figure steps back with its label; only the right answer's
+   reads at full strength. */
+.cl-snap__bar.is-plain .cl-snap__bar-pct {
+  color: var(--text-secondary);
+}
+
+.cl-snap__track {
+  position: relative;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  overflow: hidden;
+}
+
+.cl-snap__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--cl-w);
+  border-radius: var(--radius-full);
+  background: var(--cl-snap-plain);
+  animation: cl-grow 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(120ms + var(--cl-i, 0) * 45ms);
+  transition: background 150ms ease;
+}
+
+.cl-snap__bar.is-correct .cl-snap__fill {
+  background: var(--success-500);
+}
+
+/* Focus mode: the rows not being pointed at step back a shade. */
+.cl-snap__bars[data-focused] .cl-snap__bar:not(.is-focused) .cl-snap__fill {
+  background: var(--cl-snap-recede);
+}
+
+.cl-snap__bars[data-focused] .cl-snap__bar.is-correct:not(.is-focused) .cl-snap__fill {
+  background: var(--cl-snap-correct-recede);
+}
+
+.cl-snap__bars[data-focused] .cl-snap__bar:not(.is-focused) .cl-snap__bar-label,
+.cl-snap__bars[data-focused] .cl-snap__bar:not(.is-focused) .cl-snap__bar-pct {
+  color: var(--text-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-snap__fill,
+  .cl-snap__figure {
+    animation: none;
+  }
+
+  .cl-snap__bar:active {
+    transform: none;
   }
 }

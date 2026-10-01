@@ -7,6 +7,7 @@ import {
 import BaselineQuiz from './variants/BaselineQuiz'
 import SmallMultiples from './variants/SmallMultiples'
 import Scoreboard from './variants/Scoreboard'
+import SnappyBars from './variants/SnappyBars'
 import './chart-lab.css'
 
 /**
@@ -19,6 +20,7 @@ const VARIANTS = [
   { key: 'baseline', label: 'A · Current' },
   { key: 'small-multiples', label: 'B · All at once' },
   { key: 'scoreboard', label: 'C · Scoreboard' },
+  { key: 'snappy', label: 'D · Snappy' },
 ] as const
 type VariantKey = (typeof VARIANTS)[number]['key']
 
@@ -27,6 +29,8 @@ const NOTES: Record<VariantKey, string> = {
   'small-multiples':
     'Every question’s breakdown stacked, so the whole quiz reads without clicking. Costs vertical space.',
   scoreboard: 'Overview first: one “correct” bar per question, in order. The breakdown would open on click.',
+  snappy:
+    'Green + tick is the right answer, every wrong answer stays muted. Hover or tap an option to read it out.',
 }
 
 /* q1 is the lesson quiz Bruno clicked — a three-question single-choice multi. */
@@ -59,6 +63,7 @@ function ChartLab() {
           {variant === 'baseline' && <BaselineQuiz quiz={quiz} />}
           {variant === 'small-multiples' && <SmallMultiples quiz={quiz} />}
           {variant === 'scoreboard' && <Scoreboard quiz={quiz} />}
+          {variant === 'snappy' && <SnappyBars quiz={quiz} />}
         </div>
       </div>
     </div>
