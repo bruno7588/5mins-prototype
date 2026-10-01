@@ -7,12 +7,6 @@
   position: relative;
 }
 
-.scm__close {
-  position: absolute;
-  top: var(--space-s);
-  right: var(--space-s);
-}
-
 /* ── Header ── */
 .scm__header {
   display: flex;

@@ -7,13 +7,6 @@
   gap: var(--space-ml); /* 20px between header / content / footer */
 }
 
-.imp-confirm__close {
-  position: absolute;
-  top: var(--space-sm); /* 12px */
-  right: var(--space-sm);
-  color: var(--text-secondary);
-}
-
 /* ── Section header ─────────────────────────────────────────────────────── */
 .imp-confirm__headline {
   display: flex;

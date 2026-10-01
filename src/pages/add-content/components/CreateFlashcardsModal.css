@@ -9,6 +9,8 @@
   justify-content: space-between;
   gap: var(--space-xl);
   width: 100%;
+  /* Clear of the modal's own close, pinned top right by ConfirmModal. */
+  padding-right: var(--space-xl);
 }
 
 .cfm-title {
@@ -16,24 +18,6 @@
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
-}
-
-.cfm-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  background: none;
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 150ms ease;
-}
-
-.cfm-close:hover {
-  background: var(--cards-background-hover);
 }
 
 .cfm-options {

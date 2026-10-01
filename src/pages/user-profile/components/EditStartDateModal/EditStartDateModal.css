@@ -8,12 +8,6 @@
   position: relative;
 }
 
-.esd__close {
-  position: absolute;
-  top: var(--space-s);
-  right: var(--space-s);
-}
-
 /* ── Header ── */
 .esd__header {
   display: flex;

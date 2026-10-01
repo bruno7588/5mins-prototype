@@ -1,6 +1,5 @@
 import { useId, useState } from 'react'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
 import Radio from '@/components/Radio/Radio'
 import Alert from '@/components/Alert/Alert'
@@ -68,8 +67,7 @@ function ExtendDueDateModal({ count, courseName, onClose, onApply }: ExtendDueDa
   const apply = () => onApply(isDate ? { mode: 'date', date } : { mode: 'days', days })
 
   return (
-    <ConfirmModal open onClose={onClose} className="edd" ariaLabel="Extend due date">
-      <CloseButton onClick={onClose} className="edd__close" size={24} />
+    <ConfirmModal open onClose={onClose} className="edd" ariaLabel="Extend due date" closable>
 
       <header className="edd__header">
         <div className="edd__headline">

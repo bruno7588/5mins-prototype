@@ -6,12 +6,6 @@
   position: relative;
 }
 
-.gaa__close {
-  position: absolute;
-  top: var(--space-s);
-  right: var(--space-s);
-}
-
 .gaa__header {
   display: flex;
   flex-direction: column;

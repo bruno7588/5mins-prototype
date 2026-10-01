@@ -29,6 +29,15 @@
   gap: var(--space-ml);
   box-shadow: var(--shadow-l);
   animation: confirm-pop-in 250ms ease;
+  position: relative;
+}
+
+/* Library Modal 7479:4350: a 32px close 10px in from the top and right edges,
+   above the header rather than in line with it. */
+.confirm-modal__close {
+  position: absolute;
+  top: var(--space-ssm);
+  right: var(--space-ssm);
 }
 
 @keyframes confirm-overlay-in {

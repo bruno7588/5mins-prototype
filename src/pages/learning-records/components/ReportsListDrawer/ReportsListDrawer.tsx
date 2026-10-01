@@ -193,12 +193,10 @@ function ReportsListDrawer({
         open={!!recipientsReport}
         onClose={() => setRecipientsReport(null)}
         className="recipients-modal"
+        closable
       >
         {recipientsReport && (
           <>
-            <div className="recipients-modal-close">
-              <CloseButton onClick={() => setRecipientsReport(null)} />
-            </div>
             <div className="recipients-modal-header">
               <h2 className="recipients-modal-title">Recipients</h2>
               <div className="recipients-modal-divider" />

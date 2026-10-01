@@ -1,6 +1,5 @@
 import { useEffect, useId, useState } from 'react'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
 import Radio from '@/components/Radio/Radio'
 import Collapse from '@/components/Collapse/Collapse'
@@ -122,8 +121,7 @@ function SetCompletedModal({ learnerName, selectedCount, eligibleCount, passScor
   }
 
   return (
-    <ConfirmModal open onClose={cancel} className="scm" ariaLabel="Mark as completed">
-      <CloseButton onClick={cancel} className="scm__close" size={24} />
+    <ConfirmModal open onClose={cancel} className="scm" ariaLabel="Mark as completed" closable>
 
       <header className="scm__header">
         <div className="scm__headline">

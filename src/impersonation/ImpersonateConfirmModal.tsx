@@ -1,6 +1,5 @@
 import { TickCircle, Danger, CloseCircle, Clock } from 'iconsax-react'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
 import Avatar from '@/components/Avatar/Avatar'
 import { useImpersonation } from './ImpersonationContext'
@@ -25,8 +24,7 @@ function ImpersonateConfirmModal({ person, onClose, onConfirm }: Props) {
   if (!person) return null
 
   return (
-    <ConfirmModal open onClose={onClose} ariaLabel={`Impersonate ${person.name}`} className="imp-confirm">
-      <CloseButton onClick={onClose} size={24} className="imp-confirm__close" />
+    <ConfirmModal open onClose={onClose} ariaLabel={`Impersonate ${person.name}`} className="imp-confirm" closable>
 
       <div className="imp-confirm__headline">
         <h3 className="imp-confirm__title">Impersonate this user?</h3>

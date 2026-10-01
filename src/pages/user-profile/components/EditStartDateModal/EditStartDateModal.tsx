@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
 import Dropdown, { type DropdownOption } from '@/components/Dropdown/Dropdown'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
@@ -54,8 +53,7 @@ function EditStartDateModal({ count, courseName, startDate, onClose, onApply }: 
     : `Update the enrolment start date on ${plural(count, 'course')}`
 
   return (
-    <ConfirmModal open onClose={onClose} className="esd" ariaLabel="Edit start date">
-      <CloseButton onClick={onClose} className="esd__close" size={24} />
+    <ConfirmModal open onClose={onClose} className="esd" ariaLabel="Edit start date" closable>
 
       <header className="esd__header">
         <div className="esd__headline">

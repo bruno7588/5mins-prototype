@@ -1,4 +1,4 @@
-import { Edit, Add, ArrowRight } from 'iconsax-react'
+import { Edit, ArrowRight } from 'iconsax-react'
 import ConfirmModal from '../../../components/ConfirmModal/ConfirmModal'
 import './CreateFlashcardsModal.css'
 
@@ -32,17 +32,9 @@ const AiSparkleIcon = ({ size = 32 }: { size?: number }) => (
 
 function CreateFlashcardsModal({ open, onClose, onCreateEmpty, onAiTransformer }: CreateFlashcardsModalProps) {
   return (
-    <ConfirmModal open={open} onClose={onClose} className="cfm-modal">
+    <ConfirmModal open={open} onClose={onClose} className="cfm-modal" closable>
       <div className="cfm-header">
         <h2 className="cfm-title">How would you like to create flashcards?</h2>
-        <button
-          type="button"
-          className="cfm-close"
-          aria-label="Close"
-          onClick={onClose}
-        >
-          <Add size={24} color="var(--text-secondary)" style={{ transform: 'rotate(45deg)' }} />
-        </button>
       </div>
       <div className="cfm-options">
         <button type="button" className="cfm-option cfm-option--empty" onClick={onCreateEmpty}>

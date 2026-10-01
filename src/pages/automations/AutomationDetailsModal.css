@@ -418,13 +418,6 @@
   width: 600px;
 }
 
-/* Top right of the panel, per overlays.md's modal close. */
-.automation-review-close {
-  position: absolute;
-  top: var(--space-ssm);
-  right: var(--space-ssm);
-}
-
 .automation-review-section {
   display: flex;
   flex-direction: column;

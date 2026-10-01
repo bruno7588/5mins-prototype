@@ -173,19 +173,7 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
 
 
   return (
-    <ConfirmModal open={open} onClose={onClose} className="aim-modal">
-      <button type="button" className="aim-close" aria-label="Close" onClick={onClose}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path
-            d="M17.25 17.25L6.75 6.75M17.25 6.75L6.75 17.25"
-            stroke="var(--text-secondary)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-
+    <ConfirmModal open={open} onClose={onClose} className="aim-modal" closable>
       <div className="aim-header">
         <h2 className="aim-title">Add image</h2>
         <div className="aim-divider" />

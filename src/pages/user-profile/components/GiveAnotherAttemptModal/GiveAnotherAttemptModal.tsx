@@ -1,5 +1,4 @@
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
 import Alert from '@/components/Alert/Alert'
 import './GiveAnotherAttemptModal.css'
@@ -20,8 +19,7 @@ function GiveAnotherAttemptModal({ count, courseName, learnerName, onClose, onAp
   const scope = courseName ? `“${courseName}”` : plural(count, 'course')
 
   return (
-    <ConfirmModal open onClose={onClose} className="gaa" ariaLabel="Give another attempt">
-      <CloseButton onClick={onClose} className="gaa__close" size={24} />
+    <ConfirmModal open onClose={onClose} className="gaa" ariaLabel="Give another attempt" closable>
 
       <header className="gaa__header">
         <div className="gaa__headline">
