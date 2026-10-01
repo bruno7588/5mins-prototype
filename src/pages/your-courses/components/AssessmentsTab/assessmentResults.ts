@@ -455,6 +455,32 @@ const CULTURE_SENTENCE: MultiQuestion[] = [
   },
 ]
 
+/* The definition of psychological safety, four blanks. A fill-in-the-blanks always
+   runs to several gaps, so this is split the same way as the culture sentence: each
+   blank's prompt is the clause it sits in. */
+const DEFINITION_SENTENCE: MultiQuestion[] = [
+  {
+    prompt: 'Psychological safety is a shared belief that the team is safe for ___ risk-taking',
+    options: ['interpersonal', 'commercial', 'operational', 'reputational'],
+    correctIndex: 0,
+  },
+  {
+    prompt: '… where people can ___',
+    options: ['speak up', 'work remotely', 'skip meetings', 'avoid conflict'],
+    correctIndex: 0,
+  },
+  {
+    prompt: '… without fear of ___',
+    options: ['punishment', 'deadlines', 'audits', 'overtime'],
+    correctIndex: 0,
+  },
+  {
+    prompt: '… and mistakes are treated as ___',
+    options: ['learning', 'failures', 'exceptions', 'risks'],
+    correctIndex: 0,
+  },
+]
+
 const QUIZ_CULTURE: MultiQuestion[] = [
   {
     prompt: 'Which of these tells you most about a team’s real culture?',
@@ -707,13 +733,13 @@ export const courseAssessments: AssessmentResult[] = [
   },
   {
     id: 'a9',
-    kind: 'graded',
+    kind: 'multi',
     type: 'fill-blank',
-    title: 'Complete the definition: psychological safety is a shared belief that the team is safe for ___ risk-taking.',
+    title:
+      'Complete the definition: psychological safety is a shared belief that the team is safe for ___ risk-taking, where people can ___ without fear of ___, and mistakes are treated as ___.',
     enrolled: ENROLLED,
-    options: ['interpersonal', 'commercial', 'operational', 'reputational'],
-    correctIndex: 0,
-    responses: choices('a9', 104, 95, 4, 0),
+    questions: DEFINITION_SENTENCE,
+    responses: runs('a9', 104, DEFINITION_SENTENCE, [95, 74, 83, 61]),
   },
   {
     id: 'a10',
@@ -786,8 +812,17 @@ function missedFirst(id: string): { missed: number; of: number } {
   }
 }
 
+/** How many got one blank (or question) of a multi-question assessment right. */
+function rightOn(id: string, qi: number): { right: number; of: number } {
+  const a = courseAssessments.find((x) => x.id === id)
+  if (!a || a.kind !== 'multi') return { right: 0, of: 0 }
+  return { right: questionTally(a)[qi], of: a.responses.length }
+}
+
 const SEQUENCE = tallyOf('a7')
-const DEFINITION = tallyOf('a9')
+/* The definition's key term — the first blank. The sentence below claims the definition
+   is secure, which is a claim about the term, not about every clause around it. */
+const DEFINITION = rightOn('a9', 0)
 const OPENING = missedFirst('a4')
 
 export const courseInsight: CourseInsight = {
@@ -795,7 +830,7 @@ export const courseInsight: CourseInsight = {
   struggled:
     `Sequencing a culture rollout is the weakest area: only ${SEQUENCE.right} of ${SEQUENCE.of} put the steps in the right order, and most started with communication rather than with listening. The situational test shows the same instinct — on its opening question ${OPENING.missed} of ${OPENING.of} acted or reassured, escalating to her manager, adding her to every meeting or calling it normal, rather than asking for a specific example first. Both point at a bias toward acting before diagnosing.`,
   mastered:
-    `The definition of psychological safety is secure (${DEFINITION.right} of ${DEFINITION.of} correct), and learners reliably recognise it in behaviour rather than in policy. Free-text answers are notably concrete — most proposed a ritual with a named owner and a cadence rather than a general intention, which suggests the practical framing in lessons 3 and 4 landed.`,
+    `The definition of psychological safety is secure (${DEFINITION.right} of ${DEFINITION.of} named its key term, interpersonal risk-taking), and learners reliably recognise it in behaviour rather than in policy. Free-text answers are notably concrete — most proposed a ritual with a named owner and a cadence rather than a general intention, which suggests the practical framing in lessons 3 and 4 landed.`,
 }
 
 /* ── The learner pivot ─────────────────────────────────────────────────────
