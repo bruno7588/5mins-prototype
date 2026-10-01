@@ -197,7 +197,6 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
                       values={condition.values}
                       onChangeValues={(values) => updateCondition(index, { values })}
                       placeholder="Select option"
-                      summaryLabel="Selected"
                       readOnly={!field}
                     />
                     {scope.conditions.length > 1 && (
@@ -210,9 +209,11 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
                     )}
                   </div>
 
-                  {/* Past one value the trigger can only say how many, so the picks
-                      are listed under the row where they can be read. */}
-                  {condition.values.length > 1 && (
+                  {/* The picks always live here, one chip each, from the first one on:
+                      the trigger keeps its placeholder, so the selection never moves
+                      between the field and this row as the count changes, and a long
+                      name is never truncated in the trigger. */}
+                  {condition.values.length > 0 && (
                     <div className="lad-scope-chips">
                       {condition.values.map((value) => (
                         <Badge
