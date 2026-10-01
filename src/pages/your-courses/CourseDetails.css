@@ -500,7 +500,7 @@
 
 .cd-status--in-progress {
   background: rgba(0, 206, 230, 0.16);
-  color: var(--primary-700);
+  color: var(--text-progress);
 }
 
 /* Content done but quizzes not yet passed — warning styling */
