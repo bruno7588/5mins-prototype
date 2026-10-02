@@ -107,6 +107,9 @@
   padding: 0;
   background: transparent;
   border: none;
+  /* A <button> doesn't inherit colour, so without this the X took the browser's
+     default button text colour instead of the chip's. */
+  color: inherit;
   cursor: pointer;
   flex-shrink: 0;
 }
