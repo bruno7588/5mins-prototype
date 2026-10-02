@@ -7,7 +7,7 @@ description: Badge component for 5Mins.ai — pill-shaped status indicators (Suc
 
 Badges are small, pill-shaped status indicators that communicate state, category, or metadata at a glance.
 
-**Spec source:** Figma Library (`EC26cSVe9KNTCWXvYovakw`) — dark `node 5799:479`, light `node 12137:2230` (verified 2026-08-26). Both nodes have the same structure; only the resolved text/fill tokens differ per mode.
+**Spec source:** Figma Library (`EC26cSVe9KNTCWXvYovakw`) — dark `node 5799:479`, light `node 12137:2230` (verified 2026-08-26; the light node no longer resolves as of 2026-10-02). Both nodes have the same structure; only the resolved text/fill tokens differ per mode. Re-verified dark 2026-10-02: adds a Hover state on dismissible badges and the io5 `IoCloseOutline` ✕.
 
 **Implementation:** `src/components/Badge/Badge.tsx` + `Badge.css`. Use it — never hand-roll a pill.
 
@@ -38,7 +38,7 @@ Badges are small, pill-shaped status indicators that communicate state, category
 - Don't pair a type icon with a × unless a spec calls for it
 - Don't place badges on coloured surfaces that undercut the text contrast
 
-**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px); radius `var(--radius-full)`; gap `var(--space-xs)` (4px), `var(--space-s)` (8px) once a × is present; label 14px Medium, line height 1.2; icons 16px `currentColor`; text tokens `--text-success`, `--text-warning`, `--text-error`, `--text-progress`, `--text-secondary`; fills are 16% tints of the type colour, `var(--input-background)` for informative, solid `var(--danger-400)` for new. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12137:2230` / dark `5799:479`.
+**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px); radius `var(--radius-full)`; gap `var(--space-xs)` (4px), `var(--space-s)` (8px) once a × is present; label 14px Medium, line height 1.2; icons 16px `currentColor`; text tokens `--text-success`, `--text-warning`, `--text-error`, `--text-progress`, `--text-secondary`; fills are 16% tints of the type colour, `var(--input-background)` for informative, solid `var(--danger-400)` for new; ✕ is io5 `IoCloseOutline` (1px stroke, 16px box); Hover (dismissible only) doubles the fill to 32% and puts the ✕ on a 24% disc of the type colour (informative: Neutral-200 light / Neutral-500 dark). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12137:2230` / dark `5799:479`.
 
 **Prototype:** `src/components/Badge/Badge.tsx`
 - `type`: `success` (default) | `warning` | `error` | `in-progress` | `informative` | `new`, plus code extensions `quiz` | `scheduled`

@@ -79,11 +79,11 @@ function Badge({
           onClick={onDismiss}
           aria-label={dismissLabel ?? (typeof text === 'string' ? `Remove ${text}` : 'Remove')}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          {/* io5 IoCloseOutline, as drawn in the Library (1px stroke in a 16px box). */}
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path
-              d="M18 6L6 18M6 6l12 12"
+              d="M11.5 11.5L4.5 4.5M11.5 4.5L4.5 11.5"
               stroke="currentColor"
-              strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             />

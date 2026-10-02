@@ -35,8 +35,10 @@
   padding: 0;
   background: transparent;
   border: none;
+  border-radius: var(--radius-full);
   color: inherit;
   cursor: pointer;
+  transition: background 150ms ease;
 }
 
 .badge__dismiss:focus-visible {
@@ -58,3 +60,25 @@
 .badge--quiz         { background: var(--quiz-background); color: var(--text-quiz); }
 /* Figma 9200:58569 — enrolment not open to the learner yet. */
 .badge--scheduled    { background: rgba(42, 144, 216, 0.16);  color: var(--course-assessments); }
+
+/* Hover (Library 5799:479, dismissible only): the pill fill doubles to 32% and
+   the ✕ sits on a 24% disc of the same colour. */
+.badge--dismissible { transition: background 150ms ease; }
+.badge--success.badge--dismissible:hover      { background: rgba(24, 169, 87, 0.32); }
+.badge--success.badge--dismissible:hover .badge__dismiss      { background: rgba(24, 169, 87, 0.24); }
+.badge--warning.badge--dismissible:hover      { background: rgba(255, 165, 56, 0.32); }
+.badge--warning.badge--dismissible:hover .badge__dismiss      { background: rgba(255, 165, 56, 0.24); }
+.badge--error.badge--dismissible:hover        { background: rgba(223, 22, 66, 0.32); }
+.badge--error.badge--dismissible:hover .badge__dismiss        { background: rgba(223, 22, 66, 0.24); }
+.badge--in-progress.badge--dismissible:hover  { background: rgba(0, 206, 230, 0.32); }
+.badge--in-progress.badge--dismissible:hover .badge__dismiss  { background: rgba(0, 206, 230, 0.24); }
+/* Informative follows --input-background's per-mode neutral (200 light, 500 dark). */
+.badge--informative.badge--dismissible:hover  { background: rgba(191, 194, 204, 0.32); }
+.badge--informative.badge--dismissible:hover .badge__dismiss  { background: rgba(191, 194, 204, 0.24); }
+[data-theme='dark'] .badge--informative.badge--dismissible:hover { background: rgba(69, 76, 94, 0.32); }
+[data-theme='dark'] .badge--informative.badge--dismissible:hover .badge__dismiss { background: rgba(69, 76, 94, 0.24); }
+
+@media (prefers-reduced-motion: reduce) {
+  .badge--dismissible,
+  .badge__dismiss { transition: none; }
+}
