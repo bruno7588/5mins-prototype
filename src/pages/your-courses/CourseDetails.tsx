@@ -40,6 +40,7 @@ import jewelsIllustration from '../../assets/programs/jewels.svg'
 import { COURSE_TITLE } from './courseTitle'
 import CourseSettings from './components/CourseSettings/CourseSettings'
 import AssessmentsTab from './components/AssessmentsTab/AssessmentsTab'
+import EnrolCourseModal from './components/EnrolCourseModal/EnrolCourseModal'
 import '../people/People.css'
 import './CourseDetails.css'
 
@@ -262,6 +263,7 @@ function CourseDetails() {
   const [learnerList, setLearnerList] = useState<Learner[]>(learners)
   const [resetTarget, setResetTarget] = useState<Learner | null>(null)
   const [completeTarget, setCompleteTarget] = useState<Learner | 'bulk' | null>(null)
+  const [enrolOpen, setEnrolOpen] = useState(false)
   const user = useCurrentUser()
   const canComplete = user.role === 'admin'
   const { toasts, show: showToast } = useToast()
@@ -483,7 +485,7 @@ function CourseDetails() {
               <button className="cd-icon-btn ui-disabled" aria-label="More options (coming soon)" disabled>
                 <MoreIcon size={20} color="var(--text-secondary)" />
               </button>
-              <Button className="ui-disabled" disabled>Enrol People</Button>
+              <Button onClick={() => setEnrolOpen(true)}>Enrol People</Button>
             </div>
           </div>
 
@@ -739,6 +741,14 @@ function CourseDetails() {
           />
         )}
 
+        <EnrolCourseModal
+          open={enrolOpen}
+          onClose={() => setEnrolOpen(false)}
+          onEnrol={(count) => {
+            setEnrolOpen(false)
+            showToast('success', `${count} ${count === 1 ? 'person' : 'people'} enrolled`)
+          }}
+        />
         <ToastContainer toasts={toasts} />
       </main>
     </div>

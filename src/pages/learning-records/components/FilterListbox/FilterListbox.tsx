@@ -21,14 +21,14 @@ import './FilterListbox.css'
 
 type IconType = ComponentType<{ size?: number; color?: string; variant?: 'Linear' | 'Bold' | 'Outline' }>
 
-interface FilterItem {
+export interface FilterItem {
   id: string
   title: string
   description?: string
   Icon: IconType
 }
 
-interface FilterGroup {
+export interface FilterGroup {
   section: string
   items: FilterItem[]
 }
@@ -224,9 +224,11 @@ interface FilterListboxProps {
   onSelect: (id: string) => void
   /** Wrapper element (trigger + listbox) used for click-outside detection. */
   anchorRef: RefObject<HTMLElement | null>
+  /** Filters to offer. Default: the Learning Records set. */
+  groups?: FilterGroup[]
 }
 
-function FilterListbox({ open, onClose, onSelect, anchorRef }: FilterListboxProps) {
+function FilterListbox({ open, onClose, onSelect, anchorRef, groups: source = FILTER_GROUPS }: FilterListboxProps) {
   const [query, setQuery] = useState('')
   const ref = useRef<HTMLDivElement>(null)
 
@@ -247,11 +249,11 @@ function FilterListbox({ open, onClose, onSelect, anchorRef }: FilterListboxProp
 
   const groups = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return FILTER_GROUPS
-    return FILTER_GROUPS
+    if (!q) return source
+    return source
       .map((g) => ({ ...g, items: g.items.filter((i) => i.title.toLowerCase().includes(q)) }))
       .filter((g) => g.items.length > 0)
-  }, [query])
+  }, [query, source])
 
   if (!open) return null
 
