@@ -135,7 +135,7 @@ type FilterControl =
   | { kind: 'multi'; options: DropdownOption[]; placeholder: string }
 
 const CONTROLS: Record<string, FilterControl> = {
-  enrolment: { kind: 'single', options: opt(['Not Enrolled', 'Enrolled']), placeholder: 'Select enrolment' },
+  enrolment: { kind: 'single', options: opt(['Not enrolled', 'Enrolled']), placeholder: 'Select enrolment' },
   team: { kind: 'multi', options: opt(TEAMS), placeholder: 'Select teams' },
   cohort: { kind: 'multi', options: COHORTS.map((c) => ({ value: c.id, label: c.name })), placeholder: 'Select cohorts' },
   region: { kind: 'multi', options: opt(REGIONS), placeholder: 'Select regions' },
@@ -379,7 +379,7 @@ function EnrolCourseModal({ open, onClose, onEnrol }: Props) {
         p.enrolled ? (
           <Badge type="success" label="Enrolled" customIcon={<UserTick size={16} color="currentColor" variant="Linear" />} />
         ) : (
-          <Badge type="informative" label="Not Enrolled" customIcon={<UserAdd size={16} color="currentColor" variant="Linear" />} />
+          <Badge type="informative" label="Not enrolled" customIcon={<UserAdd size={16} color="currentColor" variant="Linear" />} />
         ),
     },
   ]
