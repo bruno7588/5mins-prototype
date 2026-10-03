@@ -101,7 +101,7 @@
 }
 
 .your-courses-new-folder:hover {
-  background-color: var(--cards-background-hover);
+  background-color: var(--input-background-hover);
   border-color: var(--border-hover);
 }
 
