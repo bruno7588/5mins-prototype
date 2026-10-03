@@ -1,119 +1,12 @@
-/* Enrol people to your course: full-screen modal (overlays.md, full-screen
-   variant). Opaque page surface over the whole viewport, close disc top-right. */
-.ecm-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1100;
-  background: var(--page-background);
-  overflow-y: auto;
-  animation: ecm-fade-in 200ms ease;
-}
-
-@keyframes ecm-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ecm-overlay { animation: none; }
-}
-
-/* Centred on the 48px Review & Launch button: shell top (32) + 24 - 22 (half the 44px disc). */
-.ecm-close {
-  position: absolute;
-  top: calc(var(--space-xl) + var(--space-xxs));
-  right: 40px;
-  z-index: 3;
-}
-
-.ecm-shell {
-  max-width: 1224px;
-  min-height: 100%;
-  margin: 0 auto;
-  padding: var(--space-xl) var(--space-xxl) 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.ecm-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-l);
-  padding-bottom: var(--space-xl);
-  border-bottom: 1px solid var(--border);
-}
-
-.ecm-title {
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.ecm-body {
-  flex: 1;
-  display: flex;
-}
-
-/* ── Step rail ── */
-.ecm-steps {
-  flex: 0 0 300px;
+/* People step shared by the Enrol people and Assign courses wizards. */
+.ppk {
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
-  padding: var(--space-xl) var(--space-l);
-  border-right: 1px solid var(--border);
-}
-
-.ecm-step {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.ecm-step-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.ecm-step-title {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.ecm-step-sub {
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.ecm-step--active .ecm-step-title,
-.ecm-step--active .ecm-step-sub {
-  color: var(--text-selected);
-}
-
-/* ── Main column ── */
-.ecm-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-l);
-  padding: var(--space-xl) 0 var(--space-xxl) var(--space-l);
-}
-
-.ecm-section-title {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
 }
 
 /* ── Filters panel (same anatomy as the Learning Records filter bar) ── */
-.ecm-filters {
+.ppk-filters {
   display: flex;
   flex-direction: column;
   padding: var(--space-s) var(--space-sm);
@@ -121,14 +14,14 @@
   border-radius: var(--radius-sm);
 }
 
-.ecm-filters-head {
+.ppk-filters-head {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   min-height: 37px;
 }
 
-.ecm-filters-toggle {
+.ppk-filters-toggle {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
@@ -140,14 +33,14 @@
   cursor: pointer;
 }
 
-.ecm-filters-label {
+.ppk-filters-label {
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
-.ecm-filters-badge {
+.ppk-filters-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -160,19 +53,19 @@
   color: var(--text-secondary);
 }
 
-.ecm-filters-collapsed {
+.ppk-filters-collapsed {
   display: flex;
   align-items: center;
   min-width: 0;
   transition: opacity 220ms ease;
 }
 
-.ecm-filters-collapsed--hidden {
+.ppk-filters-collapsed--hidden {
   opacity: 0;
   pointer-events: none;
 }
 
-.ecm-pills {
+.ppk-pills {
   display: flex;
   align-items: center;
   gap: var(--space-s);
@@ -180,7 +73,7 @@
   overflow: hidden;
 }
 
-.ecm-filters-chevron-btn {
+.ppk-filters-chevron-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -195,27 +88,27 @@
   transition: background 120ms ease;
 }
 
-.ecm-filters-chevron-btn:hover {
+.ppk-filters-chevron-btn:hover {
   background: var(--cards-background-hover);
 }
 
-.ecm-filters-chevron {
+.ppk-filters-chevron {
   display: flex;
   transition: transform 200ms ease;
 }
 
-.ecm-filters-chevron--open {
+.ppk-filters-chevron--open {
   transform: rotate(180deg);
 }
 
-.ecm-filters-body {
+.ppk-filters-body {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
   padding-top: var(--space-m);
 }
 
-.ecm-filter-row {
+.ppk-filter-row {
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
@@ -223,16 +116,16 @@
   min-height: 37px;
 }
 
-.ecm-filter-icon,
-.ecm-filter-label,
-.ecm-filter-remove-slot {
+.ppk-filter-icon,
+.ppk-filter-label,
+.ppk-filter-remove-slot {
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
   min-height: 37px;
 }
 
-.ecm-filter-label {
+.ppk-filter-label {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -242,84 +135,100 @@
 
 /* On the card surface the default --input-background hover barely shows; use the
    card hover fill with a primary glyph, like the chevron and Learning Records filters. */
-.ecm-filter-remove-slot .close-btn:hover {
+.ppk-filter-remove-slot .close-btn:hover {
   background: var(--cards-background-hover);
   color: var(--text-primary);
 }
 
-.ecm-filters .ecm-filter-dropdown {
+.ppk-filters .ppk-filter-dropdown {
   flex: 0 0 auto;
   width: fit-content;
   min-width: 150px;
 }
 
-.ecm-filter-actions {
+.ppk-filter-actions {
   display: flex;
   align-items: center;
   gap: var(--space-m);
   padding-top: var(--space-xs);
 }
 
-.ecm-filter-add-wrap {
+.ppk-filter-add-wrap {
   position: relative;
   display: inline-flex;
 }
 
 
 
-.ecm-filters-toggle:focus-visible,
-.ecm-filters-chevron-btn:focus-visible {
+.ppk-filters-toggle:focus-visible,
+.ppk-filters-chevron-btn:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
 
 /* ── Mode chips + All row ── */
-.ecm-chips {
+.ppk-chips {
   display: flex;
   gap: var(--space-s);
 }
 
-.ecm-all-check {
+.ppk-all-check {
   flex: 0 0 48px;
 }
 
 /* ── Tables ── */
-.ecm-th-sort {
+.ppk-th-sort {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
 }
 
-.ecm-sort {
+.ppk-sort {
   flex-shrink: 0;
   color: var(--text-tertiary);
   transition: transform 150ms ease;
 }
 
-.ecm-sort--desc {
+.ppk-sort--desc {
   transform: rotate(180deg);
 }
 
-.ecm-strong {
+.ppk-strong {
   font-weight: 600;
   color: var(--text-primary);
 }
 
-.ecm-empty {
+.ppk-empty {
   padding: var(--space-l) 0;
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-secondary);
 }
 
-.ecm-step-actions {
+.ppk-step-actions {
   display: flex;
   align-items: center;
   gap: var(--space-m);
 }
 
 /* Clear All rests in --text-secondary; hover/pressed keep the DS Text ladder. */
-.ds-btn--text.ecm-filter-clear:not(:hover):not(:active):not(:disabled) {
+.ds-btn--text.ppk-filter-clear:not(:hover):not(:active):not(:disabled) {
   color: var(--text-secondary);
+}
+
+/* Partial status (DES-332 D17): focusable so the Tooltip reaches keyboard users. */
+.ppk-status-partial {
+  display: inline-flex;
+  border-radius: var(--radius-full);
+}
+
+.ppk-status-partial:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* Select People sits 20px under the table (the column gap is 24px). */
+.ppk-step-actions {
+  margin-top: calc(var(--space-ml) - var(--space-l));
 }
