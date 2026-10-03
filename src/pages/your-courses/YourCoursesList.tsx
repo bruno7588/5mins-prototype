@@ -10,6 +10,7 @@ import MoreIcon from '../../components/icons/MoreIcon'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import CourseCreatedModal from './components/CourseCreatedModal/CourseCreatedModal'
 import { formatCourseDate, loadCourses } from './courseStore'
+import AssignCoursesWizard from './components/AssignCoursesWizard/AssignCoursesWizard'
 import './YourCoursesList.css'
 
 const thumbImage = 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=180&h=88&fit=crop'
@@ -61,6 +62,7 @@ function YourCoursesList() {
   const createdId = (location.state as { createdCourseId?: number } | null)?.createdCourseId
   const createdCourse = stored.find((c) => c.id === createdId) ?? null
   const [successOpen, setSuccessOpen] = useState(!!createdCourse)
+  const [assignOpen, setAssignOpen] = useState(false)
 
   /* Saving a draft gets a toast rather than the modal — it isn't a finished
      course, so it doesn't earn the celebration. The ref guard stops StrictMode's
@@ -122,9 +124,14 @@ function YourCoursesList() {
 
           <div className="courses-list-headline">
             <h2 className="courses-list-title">Your Courses</h2>
-            <Button icon={<Add size={20} color="currentColor" />} onClick={() => navigate('/create-course')}>
-              Create Course
-            </Button>
+            <div className="courses-list-cta">
+              <Button variant="outlined" onClick={() => setAssignOpen(true)}>
+                Assign Courses
+              </Button>
+              <Button icon={<Add size={20} color="currentColor" />} onClick={() => navigate('/create-course')}>
+                Create Course
+              </Button>
+            </div>
           </div>
 
           <div className="page-header-divider" />
@@ -237,6 +244,7 @@ function YourCoursesList() {
         course={createdCourse}
         onClose={() => setSuccessOpen(false)}
       />
+      {assignOpen && <AssignCoursesWizard onClose={() => setAssignOpen(false)} onDone={() => setAssignOpen(false)} />}
     </div>
   )
 }

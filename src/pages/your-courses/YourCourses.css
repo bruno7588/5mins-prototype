@@ -388,3 +388,10 @@
   cursor: default;
   pointer-events: none;
 }
+
+/* Assign Courses sits left of Create Course (DES-332 AC 1). */
+.your-courses-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}

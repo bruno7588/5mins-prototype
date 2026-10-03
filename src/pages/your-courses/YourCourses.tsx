@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, UserAdd } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Button from '../../components/Button/Button'
+import AssignCoursesWizard from './components/AssignCoursesWizard/AssignCoursesWizard'
 import './YourCourses.css'
 
 type Tab = 'created' | 'enrolments' | 'dashboard'
@@ -33,6 +34,7 @@ const enrolmentRows: EnrolmentRow[] = [
 function YourCourses() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<Tab>('created')
+  const [assignOpen, setAssignOpen] = useState(false)
 
   return (
     <div className="your-courses-layout">
@@ -41,9 +43,14 @@ function YourCourses() {
         <div className="your-courses-header">
           <div className="your-courses-headline">
             <h2 className="your-courses-title">Your Courses</h2>
-            <Button icon={<Add size={20} color="currentColor" />} onClick={() => navigate('/create-course')}>
-              Create Course
-            </Button>
+            <div className="your-courses-actions">
+              <Button variant="outlined" onClick={() => setAssignOpen(true)}>
+                Assign Courses
+              </Button>
+              <Button icon={<Add size={20} color="currentColor" />} onClick={() => navigate('/create-course')}>
+                Create Course
+              </Button>
+            </div>
           </div>
           <div className="page-header-divider" />
           <div className="your-courses-tabs">
@@ -159,6 +166,7 @@ function YourCourses() {
         </div>
         )}
       </main>
+      {assignOpen && <AssignCoursesWizard onClose={() => setAssignOpen(false)} onDone={() => setAssignOpen(false)} />}
     </div>
   )
 }

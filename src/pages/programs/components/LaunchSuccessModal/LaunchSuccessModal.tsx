@@ -6,13 +6,13 @@ import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import './LaunchSuccessModal.css'
 
-function SuccessTick() {
+export function SuccessTick() {
   return (
     <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path d="M35.959 69.7246C54.5986 69.7246 69.709 54.6142 69.709 35.9746C69.709 17.335 54.5986 2.22461 35.959 2.22461C17.3194 2.22461 2.20898 17.335 2.20898 35.9746C2.20898 54.6142 17.3194 69.7246 35.959 69.7246Z" fill="#11763D"/>
       <path d="M33.7652 67.0246C51.1933 67.0246 65.3215 52.8964 65.3215 35.4684C65.3215 18.0403 51.1933 3.91211 33.7652 3.91211C16.3372 3.91211 2.20898 18.0403 2.20898 35.4684C2.20898 52.8964 16.3372 67.0246 33.7652 67.0246Z" fill="#18A957"/>
       <path d="M13.48 16.7094C16.0112 12.7156 21.4112 9.39687 27.0362 8.38437C28.4425 8.15937 29.8487 8.04688 31.03 8.49688C31.93 8.83438 32.6612 9.67812 32.155 10.6344C31.7612 11.4219 30.6925 11.7594 29.8487 12.0406C24.5725 13.7844 20.0219 17.2212 16.9112 21.8281C15.7862 23.5156 14.0987 28.1844 12.0175 27.0031C9.82374 25.7094 10.2737 21.6594 13.48 16.7094Z" fill="#A3DDBC"/>
-      <path d="M23.25 36.0056L31.74 44.4956L48.75 27.5156" stroke="#F9F9FA" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M23.25 36.0056L31.74 44.4956L48.75 27.5156" stroke="var(--page-background)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
@@ -64,11 +64,11 @@ const CONFETTI = Array.from({ length: 60 }, (_, i) => {
 })
 
 /** When the very last in-flight piece lands. */
-const LAST_LANDING_MS = Math.max(...CONFETTI.map((c) => c.delay + c.plays * c.duration)) * 1000
+export const LAST_LANDING_MS = Math.max(...CONFETTI.map((c) => c.delay + c.plays * c.duration)) * 1000
 
 /* Confetti rain — GSAP drives each piece (fall, sway, 3D tumble, edge fades);
    Framer Motion fades the layer out when it leaves the tree. */
-function ConfettiLayer() {
+export function ConfettiLayer() {
   const layerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {

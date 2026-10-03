@@ -1,0 +1,231 @@
+/* Assign courses wizard (DES-332). Page classes prefixed .acw-. */
+
+.acw-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.wzs-main > div:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+/* ── Courses step: DS Table rows (table.md) ── */
+.acw-courses {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.acw-empty {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* Rows reuse the Automations course-row styles (AutomationDetailsModal.css);
+   only what that list lacks is added here. */
+.acw-courses .automation-details-row {
+  position: relative;
+}
+
+/* Drop target: a 2px var(--selected) insertion line in the gap, not a ring.
+   Rows sit var(--space-sm) apart. */
+.acw-row--drop-before::before,
+.acw-row--drop-after::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: var(--radius-xs);
+  background: var(--selected);
+}
+
+.acw-row--drop-before::before {
+  top: calc(-1 * var(--space-sm) / 2 - 1px);
+}
+
+.acw-row--drop-after::after {
+  bottom: calc(-1 * var(--space-sm) / 2 - 1px);
+}
+
+.acw-row--dragging .automation-details-row-drag {
+  cursor: grabbing;
+}
+
+/* Keyboard drag: the picked-up row is outlined in the selection colour. */
+.acw-row--grabbed {
+  box-shadow: 0 0 0 2px var(--selected);
+}
+
+/* The Automations buttons use `all: unset`, which drops the focus ring. */
+.acw-courses .automation-details-row-drag:focus-visible,
+.acw-courses .automation-details-row-remove:focus-visible,
+.acw-courses .automation-details-cell-trigger:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.acw-courses .automation-details-row-drag:disabled {
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+/* Schedule popover: listbox.md container spec */
+.acw-pop {
+  /* Portalled to <body>; top/left come from the trigger. Above the wizard
+     overlay (900), below Tooltip (1000) and the Dropdown menu (1060). */
+  position: fixed;
+  z-index: 950;
+  width: 340px;
+  padding: var(--space-s);
+  background: var(--cards-background);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-l);
+  animation: acw-pop-in 150ms ease-in-out;
+}
+
+@keyframes acw-pop-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.acw-pop-caret {
+  position: absolute;
+  top: -5px;
+  left: var(--space-l);
+  width: 8px;
+  height: 8px;
+  background: var(--cards-background);
+  border-top: 1px solid var(--border-elevated);
+  border-left: 1px solid var(--border-elevated);
+  transform: rotate(45deg);
+}
+
+/* The last column opens leftwards so the panel stays on screen. */
+.acw-pop--end .acw-pop-caret {
+  left: auto;
+  right: var(--space-l);
+}
+
+.acw-pop-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.acw-pop-option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-sm);
+  border-radius: var(--radius-s);
+}
+
+.acw-pop-option .radio-row__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.acw-pop-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.acw-pop-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.acw-pop-unit {
+  flex: 0 0 112px;
+}
+
+/* ── Review (Mobbin: Klaviyo heading, Podia tiles, DoorDash section cards) ── */
+.acw-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.acw-review-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.acw-review-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.acw-review-sub {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ── Success ── */
+.acw-success {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-l);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acw-cell-chevron { transition: none; }
+  .acw-pop { animation: none; }
+}
+
+/* Step headings are H4 (typography.md): 16px Bold. */
+.wzs-section-title.acw-step-title {
+  font-size: 16px;
+}
+
+/* Section heading row: label left, Edit right (Automations review shape). */
+.acw-review-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.acw-review-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.acw-review-heading {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
