@@ -3,7 +3,7 @@ import Button from '@/components/Button/Button'
 import gsap from 'gsap'
 import { Add, ArrowDown2, Edit2, Trash } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
-import MoreIcon from '../../../../components/icons/MoreIcon'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import type { ReactNode } from 'react'
 
 export interface Section {
@@ -11,68 +11,6 @@ export interface Section {
   name: string
   items: ReactNode[]
   collapsed?: boolean
-}
-
-interface KebabItem {
-  label: string
-  onClick: () => void
-  danger?: boolean
-  icon?: ReactNode
-}
-
-function KebabMenu({ items, ariaLabel = 'More actions' }: { items: KebabItem[]; ariaLabel?: string }) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!open) return
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-    }
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false)
-    }
-    document.addEventListener('mousedown', handler)
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('mousedown', handler)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [open])
-
-  return (
-    <div ref={ref} className="kebab">
-      <button
-        type="button"
-        className="kebab__trigger"
-        aria-label={ariaLabel}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
-      >
-        <MoreIcon size={20} color="var(--text-secondary)" />
-      </button>
-      {open && (
-        <div className="kebab__menu" role="menu">
-          {items.map((it) => (
-            <button
-              key={it.label}
-              type="button"
-              role="menuitem"
-              className={`kebab__item${it.danger ? ' kebab__item--danger' : ''}`}
-              onClick={() => {
-                setOpen(false)
-                it.onClick()
-              }}
-            >
-              {it.icon && <span className="kebab__item-icon" aria-hidden="true">{it.icon}</span>}
-              <span className="kebab__item-label">{it.label}</span>
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  )
 }
 
 const DragHandle = ({ innerRef, disabled }: { innerRef?: React.Ref<HTMLDivElement>; disabled?: boolean }) => (
@@ -339,25 +277,31 @@ function CurriculumSection({
                 <p ref={summaryRef} className="curriculum-section__summary">{summary}</p>
               )}
             </div>
-            {(canRename || canDelete) && (
-              <div className="curriculum-section__kebab-wrap" onClick={(e) => e.stopPropagation()}>
-              <KebabMenu
-                ariaLabel={`Actions for ${section.name}`}
-                items={[
-                  canRename && {
-                    label: 'Rename',
-                    onClick: startRename,
-                    icon: <Edit2 size={16} color="currentColor" variant="Linear" />,
-                  },
-                  canDelete && {
-                    label: 'Remove Section',
-                    onClick: onDelete,
-                    danger: true,
-                    icon: <Trash size={16} color="currentColor" variant="Linear" />,
-                  },
-                ].filter(Boolean) as { label: string; onClick: () => void; danger?: boolean; icon?: ReactNode }[]}
-              />
-              </div>
+            {/* Rename and Remove sit in the header as icons, beside the collapse arrow,
+                rather than behind a three-dot menu: one click instead of two. */}
+            {canRename && (
+              <Tooltip text="Rename section" position="Top" icon={false}>
+                <button
+                  type="button"
+                  className="curriculum-section__action"
+                  onClick={(e) => { e.stopPropagation(); startRename() }}
+                  aria-label={`Rename ${section.name}`}
+                >
+                  <Edit2 size={20} color="var(--text-primary)" variant="Linear" />
+                </button>
+              </Tooltip>
+            )}
+            {canDelete && (
+              <Tooltip text="Remove section" position="Top" icon={false}>
+                <button
+                  type="button"
+                  className="curriculum-section__action"
+                  onClick={(e) => { e.stopPropagation(); onDelete() }}
+                  aria-label={`Remove ${section.name}`}
+                >
+                  <Trash size={20} color="var(--text-primary)" variant="Linear" />
+                </button>
+              </Tooltip>
             )}
             <button
               type="button"

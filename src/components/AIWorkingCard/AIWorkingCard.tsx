@@ -143,7 +143,7 @@ function AIWorkingCard({
                       ? fade
                       : { layout: 'position' as const, ...ARRIVE(reduce), transition: arriveTransition(reduce) })}
                   >
-                    {detail}
+                    <span className="ai-working-step__detail--shimmer">{detail}</span>
                   </motion.span>
                 )}
               </span>

@@ -297,10 +297,30 @@
   background: var(--cards-background);
 }
 
-/* Click-guard wrapper around the kebab — keeps menu clicks from toggling collapse.
-   display: contents so it adds no box and the kebab stays the header's flex item. */
-.curriculum-section__kebab-wrap {
-  display: contents;
+/* Rename and Remove: icon buttons beside the collapse arrow, same 32px round box and
+   hover as the arrow (icon-only controls hover circular). */
+.curriculum-section__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms ease;
+}
+
+.curriculum-section__action:hover {
+  background: var(--cards-background-hover);
+}
+
+.curriculum-section__action:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }
 
 /* Section drag-and-drop */
@@ -482,98 +502,6 @@
 .curriculum-section__placeholder:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
-}
-
-/* ── Kebab (3-dot) menu ─────────────────────────────────────── */
-.kebab {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.kebab__trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.kebab__trigger:hover {
-  background: var(--cards-background-hover);
-}
-
-.kebab__trigger:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
-
-.kebab__menu {
-  position: absolute;
-  top: calc(100% + var(--space-xs));
-  right: 0;
-  z-index: 20;
-  min-width: 180px;
-  padding: var(--space-xs);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: -1px -1px 4px rgba(32, 34, 42, 0.06), 1px 1px 4px rgba(32, 34, 42, 0.06);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
-}
-
-.kebab__item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-s) var(--space-sm);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  cursor: pointer;
-  text-align: left;
-  transition: background 150ms ease;
-}
-
-.kebab__item-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-}
-
-.kebab__item-label {
-  flex: 1;
-  min-width: 0;
-}
-
-.kebab__item:hover {
-  background: var(--cards-background-hover);
-}
-
-.kebab__item:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: -2px;
-}
-
-/* Only the label/icon go red — the hover fill stays the shared menu-item fill.
-   (--danger-100 is a raw light-mode pink that never flipped in dark mode.) */
-.kebab__item--danger {
-  color: var(--text-error);
 }
 
 /* ── Add Content / Add Section CTAs (bottom row) ────────────── */

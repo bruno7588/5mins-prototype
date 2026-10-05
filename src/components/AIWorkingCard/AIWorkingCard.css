@@ -87,23 +87,31 @@
   font-weight: 500;
 }
 
-/* A light sweep across the running pass's words: the text itself is the gradient
-   (clipped to the glyphs), primary with a tertiary band moving through it, so it
-   reads in both themes on whatever surface the card sits on. */
-.ai-working-step__label--shimmer {
+/* The running pass shimmers: an AI-gradient band (the sparkle's own cyan to purple)
+   sweeps across the words, clipped to the glyphs. Bright enough to read as "working" on
+   either theme. The label runs on --text-primary and the detail line on --text-tertiary,
+   so each keeps its weight in the hierarchy between sweeps. */
+.ai-working-step__label--shimmer,
+.ai-working-step__detail--shimmer {
+  --shimmer-base: var(--text-primary);
   background: linear-gradient(
     90deg,
-    var(--text-primary) 0%,
-    var(--text-primary) 35%,
-    var(--text-tertiary) 50%,
-    var(--text-primary) 65%,
-    var(--text-primary) 100%
+    var(--shimmer-base) 0%,
+    var(--shimmer-base) 30%,
+    var(--text-button-outlined) 45%,
+    var(--blaze-quiz) 55%,
+    var(--shimmer-base) 70%,
+    var(--shimmer-base) 100%
   );
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: ai-working-label-shimmer 1.8s linear infinite;
+  animation: ai-working-label-shimmer 1.6s linear infinite;
+}
+
+.ai-working-step__detail--shimmer {
+  --shimmer-base: var(--text-tertiary);
 }
 
 @keyframes ai-working-label-shimmer {
@@ -112,10 +120,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ai-working-step__label--shimmer {
+  .ai-working-step__label--shimmer,
+  .ai-working-step__detail--shimmer {
     animation: none;
     background: none;
-    color: var(--text-primary);
+    color: var(--shimmer-base);
   }
 }
 
