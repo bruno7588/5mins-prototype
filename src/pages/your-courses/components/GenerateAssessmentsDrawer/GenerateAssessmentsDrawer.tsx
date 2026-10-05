@@ -632,7 +632,7 @@ function AssessmentReview({
       showToast('success', 'Assessment saved')
       onSaveOne(0)
     } else {
-      showToast('error', 'Assessment discarded')
+      showToast('info', 'Assessment discarded')
       onDiscard(0)
     }
     setReviewed((n) => n + 1)

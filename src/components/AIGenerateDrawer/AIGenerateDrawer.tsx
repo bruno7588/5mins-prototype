@@ -222,7 +222,7 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
   }
 
   function handleDiscard() {
-    showToast('error', 'Question discarded')
+    showToast('info', 'Question discarded')
     advanceOrFinish(savedQuestions)
   }
 
