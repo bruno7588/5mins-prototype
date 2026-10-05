@@ -17,6 +17,9 @@ interface AIWorkingCardProps {
    *  false while a card whose last line is the work itself is still doing it: the step
    *  keeps the sparkle until this turns true, then trades it for the tick. */
   lastStepDone?: boolean
+  /** One row instead of a growing list: only the current pass shows, and each new pass
+   *  replaces the last in the same place (the old line leaves upward as the next rises). */
+  singleLine?: boolean
   className?: string
 }
 
@@ -41,9 +44,19 @@ function AIWorkingCard({
   activeStep,
   detail,
   lastStepDone = true,
+  singleLine = false,
   className = '',
 }: AIWorkingCardProps) {
   const reduce = useReducedMotion()
+  const first = singleLine ? activeStep : 0
+  /* One line swapping in place: a plain fade out, then the next pass fades in where it
+     was. No rise and no layout travel, which read as stiff when the row never moves. */
+  const fade = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: reduce ? { duration: 0 } : { duration: 0.3, ease: 'easeInOut' as const },
+  }
   return (
     <div className={`ai-working-card ${className}`.trim()}>
       {/* Announced as a whole so a screen reader hears the current step, not every tick. */}
@@ -51,7 +64,9 @@ function AIWorkingCard({
         {/* Only what has happened and what is happening. A list of passes still to come
             is a promise about work not started, and it filled the card with lines the
             admin can do nothing with. */}
-        {steps.slice(0, activeStep + 1).map((label, i) => {
+        <AnimatePresence mode={singleLine ? 'wait' : 'sync'} initial={false}>
+        {steps.slice(first, activeStep + 1).map((label, offset) => {
+          const i = first + offset
           const isLast = i === steps.length - 1
           /* The terminal step ticks the moment it's reached — there's nothing after it to
              be "in progress" for — unless the caller says it is still working, in which
@@ -67,7 +82,7 @@ function AIWorkingCard({
             <motion.span
               key="sparkle"
               className="ai-working-step__sparkle"
-              layoutId="ai-working-sparkle"
+              layoutId={singleLine ? undefined : 'ai-working-sparkle'}
               exit={{ opacity: 0 }}
               transition={arriveTransition(reduce)}
             >
@@ -84,9 +99,9 @@ function AIWorkingCard({
             <motion.div
               className="ai-working-step"
               key={label}
-              layout="position"
-              {...ARRIVE(reduce)}
-              transition={arriveTransition(reduce)}
+              {...(singleLine
+                ? fade
+                : { layout: 'position' as const, ...ARRIVE(reduce), transition: arriveTransition(reduce) })}
             >
               <span
                 className={`ai-working-step__icon${active ? ' ai-working-step__icon--active' : ''}`}
@@ -116,16 +131,17 @@ function AIWorkingCard({
               >
                 {/* Trailing off only on the pass being run: a finished line has finished,
                     and an ellipsis on it would say the work is still there. */}
-                {active ? `${label}…` : label}
+                {/* The running pass shimmers, so the line itself says the AI is still at it. */}
+                {active ? <span className="ai-working-step__label--shimmer">{`${label}…`}</span> : label}
                 {active && detail && (
                   /* Keyed on the text so a new one mounts rather than swapping in place:
                      the same node changing its words is the jump cut. */
                   <motion.span
                     className="ai-working-step__detail"
                     key={detail}
-                    layout="position"
-                    {...ARRIVE(reduce)}
-                    transition={arriveTransition(reduce)}
+                    {...(singleLine
+                      ? fade
+                      : { layout: 'position' as const, ...ARRIVE(reduce), transition: arriveTransition(reduce) })}
                   >
                     {detail}
                   </motion.span>
@@ -134,6 +150,7 @@ function AIWorkingCard({
             </motion.div>
           )
         })}
+        </AnimatePresence>
       </div>
     </div>
   )

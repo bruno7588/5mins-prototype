@@ -1,81 +1,57 @@
-import { useState } from 'react'
-import { Edit2, Trash, TickCircle } from 'iconsax-react'
+import { Edit2 } from 'iconsax-react'
+import { getAssessmentIllustration, type AssessmentType } from '@/assets/assessment-illustrations'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import type { Question } from '../../data/mockQuestions'
 import './QuestionCard.css'
 
 interface QuestionCardProps {
   question: Question
   onEdit: () => void
-  onDelete: () => void
 }
 
-function ChevronIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )
+/* The type line and artwork for each question type. Labels match the editor's type picker. */
+const TYPE: Record<Question['type'], { label: string; art: AssessmentType }> = {
+  multiple_choice: { label: 'Multiple choice', art: 'multiple-choice' },
+  multi_select: { label: 'Select all that apply', art: 'multiple-choice' },
+  true_false: { label: 'True or false', art: 'multiple-choice' },
+  free_text: { label: 'Free text', art: 'short-text' },
 }
 
-function QuestionCard({ question, onEdit, onDelete }: QuestionCardProps) {
-  const [expanded, setExpanded] = useState(false)
-
+/**
+ * One question in a lesson's question bank: the DS Assessment admin list row
+ * (cards.md, Figma Card/Assessments 10867:5413). Illustration, title, type line, and
+ * the Edit + "Assessment" pill cluster on the right. Deleting lives in the edit drawer.
+ */
+function QuestionCard({ question, onEdit }: QuestionCardProps) {
+  const type = TYPE[question.type]
   return (
-    <div className={`question-card${expanded ? ' question-card--expanded' : ''}`}>
-      <div className="question-card-row">
-        <div className="question-card-content">
-          <div className="question-card-text">{question.text}</div>
+    <article className="question-card">
+      {/* The desktop artwork is drawn at 80px and scales down for the 48px admin row. */}
+      <img
+        className="question-card__art"
+        src={getAssessmentIllustration(type.art, 'desktop')}
+        width={48}
+        height={48}
+        alt=""
+      />
+      <div className="question-card__info">
+        <h4 className="question-card__title">{question.text}</h4>
+        <span className="question-card__type">{type.label}</span>
+      </div>
+      <div className="question-card__actions">
+        <Tooltip text="Edit question" position="Top" icon={false}>
           <button
-            className="question-card-toggle"
-            onClick={() => setExpanded(prev => !prev)}
-          >
-            <span className="question-card-toggle-text">
-              {expanded ? 'Hide options' : 'View options'}
-            </span>
-            <span className={`question-card-toggle-chevron${expanded ? ' question-card-toggle-chevron--open' : ''}`}>
-              <ChevronIcon />
-            </span>
-          </button>
-        </div>
-        <div className="question-card-actions">
-          <button
-            className="question-card-action"
+            type="button"
+            className="question-card__edit"
             aria-label="Edit question"
-            data-tooltip="Edit question"
             onClick={onEdit}
           >
-            <Edit2 size={16} color="var(--text-tertiary)" variant="Linear" />
+            <Edit2 size={16} color="currentColor" variant="Linear" />
           </button>
-          <button
-            className="question-card-action question-card-action--delete"
-            aria-label="Delete question"
-            data-tooltip="Delete question"
-            onClick={onDelete}
-          >
-            <Trash size={16} color="var(--text-tertiary)" variant="Linear" />
-          </button>
-        </div>
+        </Tooltip>
+        <span className="question-card__pill">Assessment</span>
       </div>
-
-      {expanded && (
-        <div className="question-card-options">
-          {question.answers.map(answer => (
-            <div
-              key={answer.id}
-              className={`question-card-option${answer.isCorrect ? ' question-card-option--correct' : ''}`}
-            >
-              <span className={`question-card-option-dot${answer.isCorrect ? ' question-card-option-dot--correct' : ''}`}>
-                {answer.isCorrect && <TickCircle size={16} color="var(--neutral-0)" variant="Bold" />}
-              </span>
-              <span className="question-card-option-text">{answer.text}</span>
-              {answer.isCorrect && (
-                <span className="question-card-option-badge">Correct</span>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    </article>
   )
 }
 

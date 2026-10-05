@@ -1,11 +1,10 @@
 import { forwardRef, useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Add, Danger } from 'iconsax-react'
+import { Add } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import { prefersReducedMotion, useTyped } from '@/components/AIWorkingCard/useTyped'
@@ -26,6 +25,7 @@ import SituationalTestDrawerContent, {
 } from '../SituationalTestDrawer/SituationalTestDrawer'
 import QuestionCard from '../QuestionCard/QuestionCard'
 import SectionHeader from '../SectionHeader/SectionHeader'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import './GenerateAssessmentsDrawer.css'
 
 interface Props {
@@ -63,11 +63,10 @@ interface Props {
    */
   assessmentReview?: {
     drafts: GeneratedAssessment[]
-    onSave: () => void
-    onRemove: (index: number) => void
+    onSaveOne: (index: number) => void
+    onDiscard: (index: number) => void
     /** Edits land on the pending drafts, so save writes them without being told. */
     onEdit: (index: number, patch: Partial<SituationalQuestion>) => void
-    onGenerateAgain: () => void
   } | null
 }
 
@@ -184,10 +183,9 @@ function GenerateAssessmentsDrawer({
             <AssessmentReview
               drafts={assessmentReview.drafts}
               onClose={onClose}
-              onSave={assessmentReview.onSave}
-              onRemove={assessmentReview.onRemove}
+              onSaveOne={assessmentReview.onSaveOne}
+              onDiscard={assessmentReview.onDiscard}
               onEdit={assessmentReview.onEdit}
-              onGenerateAgain={assessmentReview.onGenerateAgain}
             />
           </motion.div>
         ) : review ? (
@@ -604,152 +602,116 @@ const LiveQuestion = forwardRef<
 })
 
 /**
- * The set, before any of it is course content (FR-12).
- *
- * Each card is the assessment as the admin would have authored it, read-only — the same
- * QuestionCard the situational review hands its questions to, which is the same form the
- * manual drawers are. Folded to its question by default, since the decision in front of
- * the admin is which of them to keep; opened to read the answer it would give.
+ * The generated set, reviewed one assessment at a time (the lesson quiz pattern in
+ * AIGenerateDrawer): each is read and edited in place, then saved to the course or
+ * discarded, and the next one rises in. The drawer closes after the last.
  */
 function AssessmentReview({
-  drafts, onClose, onSave, onRemove, onEdit, onGenerateAgain,
+  drafts, onClose, onSaveOne, onDiscard, onEdit,
 }: {
   drafts: GeneratedAssessment[]
   onClose: () => void
-  onSave: () => void
-  onRemove: (index: number) => void
+  /** Adds this one to the course and drops it from the pending set. */
+  onSaveOne: (index: number) => void
+  onDiscard: (index: number) => void
   onEdit: (index: number, patch: Partial<SituationalQuestion>) => void
-  onGenerateAgain: () => void
 }) {
-  /* Folded by default, so the set can be scanned at once — the same ruling the
-     situational drawer makes when it reopens a finished test. */
-  const [opened, setOpened] = useState<Set<number>>(() => new Set())
-  /* Same guard the situational review carries: Generate Again replaces the set, and the
-     cards are editable now, so it asks once there is something to lose. */
-  const [touched, setTouched] = useState(false)
-  const [confirmRegenerate, setConfirmRegenerate] = useState(false)
-  const editAndMark = (index: number, patch: Partial<SituationalQuestion>) => {
-    setTouched(true)
-    onEdit(index, patch)
+  const reduce = useReducedMotion()
+  const { toasts, show: showToast } = useToast()
+  /* Saved and discarded drafts leave the pending set, so the one on screen is always the
+     first; the count of those already reviewed keeps the "2/5" position honest. */
+  const [reviewed, setReviewed] = useState(0)
+  const [open, setOpen] = useState(true)
+  const total = reviewed + drafts.length
+  const draft = drafts[0]
+  const question = draft?.questions?.[0]
+
+  const advance = (kind: 'save' | 'discard') => {
+    if (kind === 'save') {
+      showToast('success', 'Assessment saved')
+      onSaveOne(0)
+    } else {
+      showToast('error', 'Assessment discarded')
+      onDiscard(0)
+    }
+    setReviewed((n) => n + 1)
+    setOpen(true)
   }
-  const toggle = (i: number) =>
-    setOpened((prev) => {
-      const next = new Set(prev)
-      if (next.has(i)) next.delete(i)
-      else next.add(i)
-      return next
-    })
 
   return (
     <>
-      <SectionHeader title="Review assessments" ctas={<CloseButton onClick={onClose} />} />
+      <SectionHeader
+        title="Review assessments"
+        description="Select which assessments you want to save and which you want to discard. You can always edit them later."
+        ctas={<CloseButton onClick={onClose} />}
+      />
 
       <div className="gen-drawer__body">
-        {drafts.map((draft, i) => {
-          /* Every generated draft carries its question; the guard is for the formats a
-             future bank might not cover yet. */
-          const question = draft.questions?.[0]
-          if (!question) return null
-          return (
-            <QuestionCard
-              key={`${draft.type}-${draft.sourceLessonId}-${i}`}
-              question={{
-                id: `gen-${draft.type}-${i}`,
-                text: question.text,
-                options: question.options,
-                correctIndex: question.correctIndex,
-                format: question.format,
-                ...(question.interactive ? { interactive: question.interactive } : {}),
-              }}
-              /* Numbered head, format on the badge beside it — the same card the
-                 situational review uses, called the same way. The head used to be the
-                 format itself, which left the set with no running order and pushed the
-                 question field into needing a label of its own to make up for it. */
-              label={`Question ${i + 1}`}
-              format={draft.type}
-              isOpen={opened.has(i)}
-              onToggle={() => toggle(i)}
-              onRemove={() => onRemove(i)}
-              removeLabel="Remove assessment"
-              readOnly={false}
-              generated
-              edit={{
-                onChange: (patch) => editAndMark(i, patch),
-                onOptionChange: (optionIndex, value) =>
-                  editAndMark(i, {
-                    options: question.options.map((o, k) => (k === optionIndex ? value : o)),
-                  }),
-                onAddOption: () => editAndMark(i, { options: [...question.options, ''] }),
-                onRemoveOption: (optionIndex) =>
-                  editAndMark(i, {
-                    options: question.options.filter((_, k) => k !== optionIndex),
-                    /* The mark travels with the options: drop the one below it and it
-                       shifts up, drop the marked one itself and nothing is marked. */
-                    correctIndex:
-                      optionIndex === question.correctIndex
-                        ? -1
-                        : optionIndex < question.correctIndex
-                          ? question.correctIndex - 1
-                          : question.correctIndex,
-                  }),
-                /* Validation on this surface is the Save button's job — the set is
-                   approved as a whole, so a per-field error state has nothing to gate. */
-                onBlur: () => {},
-                errors: { text: false, options: false, correctBlank: false },
-              }}
-            />
-          )
-        })}
+        {/* One screen per assessment: the one on screen leaves upward as the next rises
+            into its place, as the lesson quiz review does. */}
+        <AnimatePresence mode="wait" initial={false}>
+          {draft && question && (
+            <motion.div
+              key={`review-${reviewed}`}
+              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+              transition={arriveTransition(reduce)}
+            >
+              <QuestionCard
+                question={{
+                  id: `gen-${draft.type}-${reviewed}`,
+                  text: question.text,
+                  options: question.options,
+                  correctIndex: question.correctIndex,
+                  format: question.format,
+                  ...(question.interactive ? { interactive: question.interactive } : {}),
+                }}
+                label={`Question ${reviewed + 1}/${total}`}
+                format={draft.type}
+                isOpen={open}
+                onToggle={() => setOpen((v) => !v)}
+                readOnly={false}
+                generated
+                edit={{
+                  onChange: (patch) => onEdit(0, patch),
+                  onOptionChange: (optionIndex, value) =>
+                    onEdit(0, {
+                      options: question.options.map((o, k) => (k === optionIndex ? value : o)),
+                    }),
+                  onAddOption: () => onEdit(0, { options: [...question.options, ''] }),
+                  onRemoveOption: (optionIndex) =>
+                    onEdit(0, {
+                      options: question.options.filter((_, k) => k !== optionIndex),
+                      /* The mark travels with the options: drop the one below it and it
+                         shifts up, drop the marked one itself and nothing is marked. */
+                      correctIndex:
+                        optionIndex === question.correctIndex
+                          ? -1
+                          : optionIndex < question.correctIndex
+                            ? question.correctIndex - 1
+                            : question.correctIndex,
+                    }),
+                  onBlur: () => {},
+                  errors: { text: false, options: false, correctBlank: false },
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="gen-drawer__footer">
-        {/* Nothing to save once every card has been dropped — Generate Again is the way
-            back from an empty set. */}
-        <Button disabled={drafts.length === 0} onClick={onSave}>
-          Save Assessments
-        </Button>
-        <Button
-          semantic="ai"
-          variant="outlined"
-          /* The label gradient is background-clip: text, which an SVG cannot take — so
-             the sparkle paints its own, from the same two stops. */
-          icon={<SparkleIcon size={20} gradient />}
-          onClick={() => (touched ? setConfirmRegenerate(true) : onGenerateAgain())}
-        >
-          Generate Again
-        </Button>
+        <div className="gen-drawer__review-buttons">
+          <Button disabled={!draft} onClick={() => advance('save')}>
+            Save
+          </Button>
+          <Button variant="outlined-2" disabled={!draft} onClick={() => advance('discard')}>
+            Discard
+          </Button>
+          <ToastContainer toasts={toasts} className="gen-drawer__toasts" />
+        </div>
       </div>
-
-      <ConfirmModal
-        open={confirmRegenerate}
-        onClose={() => setConfirmRegenerate(false)}
-        ariaLabel="Replace this set"
-      >
-        <div className="confirm-modal-header confirm-modal-header--center">
-          <div className="confirm-modal-icon">
-            <Danger size={56} color="var(--danger-500)" variant="Linear" />
-          </div>
-          <h2 className="confirm-modal-title">Replace this set?</h2>
-          <p className="confirm-modal-body">
-            Generating again writes a new set from scratch. The edits you've made to these
-            assessments can't be recovered.
-          </p>
-        </div>
-        <div className="confirm-modal-actions">
-          <Button variant="outlined-2" onClick={() => setConfirmRegenerate(false)}>
-            Keep This Set
-          </Button>
-          <Button
-            semantic="danger"
-            onClick={() => {
-              setConfirmRegenerate(false)
-              onGenerateAgain()
-            }}
-          >
-            Generate Again
-          </Button>
-        </div>
-      </ConfirmModal>
     </>
   )
 }

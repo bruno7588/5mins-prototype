@@ -201,7 +201,7 @@ function LessonEditorModal({ lesson, isNew, onClose, onPublish, onQuizReviewed, 
 
         {/* Tab content */}
         <div className="lesson-editor-tab-content">
-          {activeTab === 'quiz' && <QuizTab isNew={isNew} hasGeneratedQuizzes={hasGeneratedQuizzes} onAIOptInChange={setAiOptIn} />}
+          {activeTab === 'quiz' && <QuizTab isNew={isNew} hasGeneratedQuizzes={hasGeneratedQuizzes} onAIOptInChange={setAiOptIn} lessonTitle={lessonName} />}
           {activeTab === 'resources' && (
             <LessonResourcesTab
               resources={resources}

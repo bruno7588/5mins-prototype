@@ -26,10 +26,17 @@
 /* Header */
 .ai-drawer-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   padding: var(--space-l);
   padding-bottom: var(--space-m);
+}
+
+.ai-drawer-headline {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .ai-drawer-title {
@@ -70,114 +77,110 @@
 }
 
 /* ──────────────────────────────────────────
-   Stepper (generating phase)
+   Working card (generating phase)
    ────────────────────────────────────────── */
 
-.ai-drawer-stepper {
+/* Shared AIWorkingCard, as in the course builder's generate drawer. The sparkle
+   overhangs its one-line box, so leave room above the first row. */
+/* One screen of the body (the wait, or one question), swapped with AnimatePresence. */
+.ai-drawer-phase {
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
-  padding-top: var(--space-l);
 }
 
-.ai-drawer-steps {
+.ai-drawer-working {
+  padding-top: var(--space-s);
+}
+
+/* One line, swapped in place: held at its two-line height (pass + detail) so the
+   question under it doesn't shift as the passes change. */
+.ai-drawer-working .ai-working-steps {
+  min-height: calc(2 * 14px * 1.5 + var(--space-xs));
+}
+
+/* Each question is a card, the course builder's question card (.st-drawer__question):
+   card fill, 12px radius, card shadow. Used for the one being written and the one under
+   review, so what is watched is what is handed over. */
+.ai-drawer-question-card {
+  padding: var(--space-sm) var(--space-m);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+
+/* The first question writing itself in, in the review's own field and option rows so
+   what is watched is what is handed over. The shimmer is the shared `.is-writing`
+   (AIWorkingCard.css), which needs a containing block on the element it sits on. */
+.ai-drawer-live {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-l);
 }
 
-.ai-drawer-step {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+.ai-drawer-live-input {
+  position: relative;
+  overflow: hidden;
+  min-height: calc(1.5em + 2 * var(--space-s) + 2px);
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.5;
-  color: var(--text-tertiary);
-  transition: color 300ms ease;
-}
-
-.ai-drawer-step--done {
   color: var(--text-primary);
 }
 
-.ai-drawer-step--active {
-  color: var(--text-primary);
-}
-
-.ai-drawer-step-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-.ai-drawer-step-icon--pending {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  margin: var(--space-xxs);
-}
-
-/* Sparkle pulse animation for active step */
-.ai-drawer-step--active .ai-drawer-step-icon {
-  animation: sparkle-pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes sparkle-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* Progress bar */
-.ai-drawer-progress {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-}
-
-.ai-drawer-progress-track {
-  height: 6px;
-  background: var(--border);
-  border-radius: 3px;
+.ai-drawer-live-answer {
+  position: relative;
   overflow: hidden;
 }
 
-.ai-drawer-progress-fill {
-  height: 100%;
-  background: var(--gradient-ai);
-  border-radius: 3px;
-  transition: width 300ms ease;
+/* Nothing to pick yet while the options are being written. */
+.ai-drawer-live-answer .ai-drawer-radio {
+  cursor: default;
 }
 
-.ai-drawer-progress-label {
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 500;
-  color: var(--text-secondary);
-  text-align: right;
+.ai-drawer-live-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* The write-head, as in the course builder: steady, not blinking. */
+.ai-drawer-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: var(--space-xxs);
+  vertical-align: text-bottom;
+  background: var(--text-button-outlined);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-drawer-caret {
+    display: none;
+  }
 }
 
 /* ──────────────────────────────────────────
    Review phase
    ────────────────────────────────────────── */
 
+/* The gap to the title sits inside the Collapse, so nothing is left behind while it
+   is closed during generation. */
 .ai-drawer-review-subtitle {
+  margin-top: var(--space-xs);
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
 }
 
-.ai-drawer-review-counter {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
 
 /* Reuse question-drawer field styling */
 .ai-drawer-field {
@@ -190,39 +193,9 @@
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 
-.ai-drawer-label--regular {
-  font-weight: 400;
-}
-
-.ai-drawer-textarea {
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  padding: var(--space-sm) var(--space-m);
-  resize: vertical;
-  min-height: 60px;
-  outline: none;
-  transition: border-color 150ms ease;
-}
-
-.ai-drawer-textarea:hover {
-  border-color: var(--border-hover);
-}
-
-.ai-drawer-textarea:focus {
-  border-color: var(--selected);
-}
-
-.ai-drawer-textarea::placeholder {
-  color: var(--text-disabled);
-}
 
 /* Answer cards */
 .ai-drawer-answers {
@@ -241,132 +214,27 @@
   transition: border-color 150ms ease, background 150ms ease;
 }
 
-.ai-drawer-answer--correct {
-  border-color: var(--border-elevated);
-  background: var(--cards-background);
-}
 
 .ai-drawer-radio {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
   flex-shrink: 0;
   cursor: pointer;
   padding: 0;
 }
 
-.ai-drawer-answer-input {
-  flex: 1;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  border: none;
-  background: transparent;
-  outline: none;
-  min-width: 0;
-}
 
-.ai-drawer-answer-input::placeholder {
-  color: var(--text-disabled);
-}
 
-.ai-drawer-correct-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-s) var(--space-m);
-  border-radius: 40px;
-  background: rgba(24, 169, 87, 0.16);
-  color: var(--success-500);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
 
-.ai-drawer-answer-remove {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  padding: var(--space-xs);
-  color: var(--text-tertiary);
-  transition: color 150ms ease;
-}
 
-.ai-drawer-answer-remove:hover {
-  color: var(--text-primary);
-}
 
-/* Add option */
-.ai-drawer-add-option {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  transition: background 150ms ease;
-}
 
-.ai-drawer-add-option:hover {
-  background: var(--page-background-hover);
-}
 
-/* Explanation */
-.ai-drawer-explanation {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-s);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  padding: var(--space-s) var(--space-sm);
-  transition: border-color 150ms ease;
-}
 
-.ai-drawer-explanation:hover {
-  border-color: var(--border-hover);
-}
 
-.ai-drawer-explanation:focus-within {
-  border-color: var(--selected);
-}
 
-.ai-drawer-explanation-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xs);
-  flex-shrink: 0;
-}
 
-.ai-drawer-explanation-input {
-  flex: 1;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  border: none;
-  background: transparent;
-  outline: none;
-  resize: vertical;
-  min-height: 60px;
-}
-
-.ai-drawer-explanation-input::placeholder {
-  color: var(--text-disabled);
-}
 
 /* ──────────────────────────────────────────
    Footer
@@ -393,38 +261,16 @@
   align-items: center;
   gap: var(--space-sm);
   align-self: flex-start;
+  position: relative;
 }
 
-.ai-drawer-btn-discard {
-  white-space: nowrap;
-  padding: var(--space-ssm) var(--space-ml);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-  background: transparent;
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  transition: background 150ms ease;
-}
-
-.ai-drawer-btn-discard:hover {
-  background: var(--page-background-hover);
-}
-
-.ai-drawer-btn-save {
-  white-space: nowrap;
-  padding: var(--space-ssm) var(--space-ml);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-button-foreground);
-  background: var(--primary-button-background);
-  border-radius: var(--radius-sm);
-  transition: background 150ms ease;
-}
-
-.ai-drawer-btn-save:hover {
-  background: var(--primary-button-background-hover);
+/* Toasts sit to the right of Save/Discard instead of bottom centre, so they never cover the buttons */
+.ai-drawer-toasts {
+  position: absolute;
+  bottom: auto;
+  top: 50%;
+  left: calc(100% + var(--space-m));
+  transform: translateY(-50%);
+  align-items: flex-start;
 }
 

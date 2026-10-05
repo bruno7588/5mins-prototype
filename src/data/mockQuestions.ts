@@ -177,12 +177,19 @@ const additionalQuestions: Question[] = [
 
 let generateCallCount = 0
 
+/* AI questions come with three options by default: the correct one plus the first two
+   wrong ones, kept in their original order. Admins can add more in the review. */
+function threeOptions(answers: Answer[]): Answer[] {
+  let wrong = 0
+  return answers.filter(a => a.isCorrect || wrong++ < 2)
+}
+
 export function generateMoreQuestions(): Question[] {
   generateCallCount++
   return additionalQuestions.map(q => ({
     ...q,
     id: `${q.id}_gen${generateCallCount}`,
-    answers: q.answers.map(a => ({ ...a, id: `${a.id}_gen${generateCallCount}` })),
+    answers: threeOptions(q.answers).map(a => ({ ...a, id: `${a.id}_gen${generateCallCount}` })),
     createdAt: new Date().toISOString(),
   }))
 }

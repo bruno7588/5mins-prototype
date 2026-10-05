@@ -128,13 +128,15 @@ interface ToastContainerProps {
   icon?: boolean
   /** Pass `dismiss` from useToast when any toast carries an action. */
   onDismiss?: (id: number) => void
+  /** Extra class to place the stack somewhere other than bottom centre. */
+  className?: string
 }
 
-export default function ToastContainer({ toasts, icon = true, onDismiss }: ToastContainerProps) {
+export default function ToastContainer({ toasts, icon = true, onDismiss, className }: ToastContainerProps) {
   if (toasts.length === 0) return null
 
   return (
-    <div className="toast-container">
+    <div className={className ? `toast-container ${className}` : 'toast-container'}>
       {toasts.map(toast => (
         <ToastPill
           key={toast.id}

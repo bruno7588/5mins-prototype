@@ -1,46 +1,38 @@
-import { useEffect, useRef, useState } from 'react'
-import { Add, TickCircle } from 'iconsax-react'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { generateMoreQuestions } from '../../data/mockQuestions'
 import type { Answer, Question } from '../../data/mockQuestions'
 import ToastContainer, { useToast } from '../Toast/Toast'
+import Button from '../Button/Button'
 import CloseButton from '../CloseButton/CloseButton'
+import QuestionCard from '@/pages/your-courses/components/QuestionCard/QuestionCard'
+import Collapse from '../Collapse/Collapse'
+import AIWorkingCard from '../AIWorkingCard/AIWorkingCard'
+import { ARRIVE, arriveTransition } from '../AIWorkingCard/arrive'
+import { useTyped, prefersReducedMotion } from '../AIWorkingCard/useTyped'
 import './AIGenerateDrawer.css'
 
 interface AIGenerateDrawerProps {
   onComplete: (savedQuestions: Question[]) => void
+  lessonTitle?: string
 }
 
 const STEPS = [
-  'Analyzing your lesson',
-  'Writing questions',
-  'Adding options to your questions',
-  'Finishing up',
+  'Reading the lesson',
+  'Writing the questions',
+  'Adding the answer options',
+  'All done, your questions are ready',
 ]
 
-const STEP_DELAY = 750
-
-function SparkleIcon({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12.6948 9.22578C13.0267 7.85703 14.9733 7.85703 15.3052 9.22578L16.2185 12.992C16.337 13.4807 16.7185 13.8622 17.2072 13.9807L20.9734 14.894C22.3422 15.2259 22.3422 17.1726 20.9734 17.5045L17.2072 18.4177C16.7185 18.5362 16.337 18.9178 16.2185 19.4064L15.3052 23.1727C14.9733 24.5414 13.0267 24.5414 12.6948 23.1727L11.7815 19.4064C11.663 18.9178 11.2815 18.5362 10.7928 18.4177L7.02656 17.5045C5.65781 17.1726 5.65781 15.2259 7.02656 14.894L10.7928 13.9807C11.2815 13.8622 11.663 13.4807 11.7815 12.992L12.6948 9.22578Z" fill="url(#sparkle-gen-gradient)" />
-      <path d="M22.3705 6.71184C22.4795 6.26272 23.1182 6.26272 23.2271 6.71184L23.5268 7.94763C23.5657 8.10798 23.6909 8.23318 23.8512 8.27206L25.087 8.57172C25.5361 8.68062 25.5361 9.31938 25.087 9.42828L23.8512 9.72794C23.6909 9.76682 23.5657 9.89202 23.5268 10.0524L23.2271 11.2882C23.1182 11.7373 22.4795 11.7373 22.3705 11.2882L22.0709 10.0524C22.032 9.89202 21.9068 9.76682 21.7465 9.72794L20.5107 9.42828C20.0615 9.31938 20.0615 8.68062 20.5107 8.57172L21.7465 8.27206C21.9068 8.23318 22.032 8.10798 22.0709 7.94763L22.3705 6.71184Z" fill="url(#sparkle-gen-gradient)" />
-      <defs>
-        <linearGradient id="sparkle-gen-gradient" x1="5" y1="6" x2="26" y2="24" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#00AFC4" />
-          <stop offset="1" stopColor="#8158EC" />
-        </linearGradient>
-      </defs>
-    </svg>
-  )
-}
-
-function CloseSmallIcon() {
-  return (
-    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15.75 5.25L5.25 15.75M5.25 5.25L15.75 15.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )
-}
+/* How long each pass holds the screen. The reveal below is paced to these: the question
+   types itself in during the second pass and the options one by one during the third,
+   as the course builder's generate drawer does. */
+const READING_MS = 1200
+const QUESTION_MS = 1400
+const OPTION_MS = 700
+const DONE_MS = 700
+const WRITING = 1
+const OPTIONS = 2
 
 function RadioIcon({ selected }: { selected: boolean }) {
   if (selected) {
@@ -53,9 +45,97 @@ function RadioIcon({ selected }: { selected: boolean }) {
   }
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="9" cy="9" r="8" stroke="var(--border)" strokeWidth="2"/>
+      <circle cx="9" cy="9" r="8" stroke="var(--border-elevated)" strokeWidth="2"/>
     </svg>
   )
+}
+
+/**
+ * The first question writing itself in while the AI works, in the same field and option
+ * rows the review then opens on. Nothing while the lesson is read; the question types in
+ * during the writing pass, then one option at a time. Whatever is still being written
+ * wears the shared `.is-writing` shimmer (AIWorkingCard.css), as in the course builder.
+ */
+function LiveQuestion({ question, activeStep }: { question: Question; activeStep: number }) {
+  const reduce = useReducedMotion()
+  const text = useTyped(question.text, activeStep === WRITING, QUESTION_MS * 0.8)
+  const [landed, setLanded] = useState(0)
+
+  useEffect(() => {
+    if (activeStep < OPTIONS) {
+      setLanded(0)
+      return
+    }
+    if (activeStep > OPTIONS || prefersReducedMotion()) {
+      setLanded(question.answers.length)
+      return
+    }
+    setLanded(1)
+    const id = window.setInterval(
+      () => setLanded(n => Math.min(question.answers.length, n + 1)),
+      OPTION_MS,
+    )
+    return () => window.clearInterval(id)
+  }, [activeStep, question.answers.length])
+
+  if (activeStep < WRITING) return null
+
+  return (
+    <div className="ai-drawer-live ai-drawer-question-card" aria-hidden="true">
+      <motion.div className="ai-drawer-field" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
+        <span className="ai-drawer-label">What is your question?</span>
+        <div className={`ai-drawer-live-input${text.done ? '' : ' is-writing'}`}>
+          {text.shown}
+          {!text.done && <span className="ai-drawer-caret" />}
+        </div>
+      </motion.div>
+
+      {landed > 0 && (
+        <motion.div className="ai-drawer-field" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
+          <span className="ai-drawer-label">What are the options?</span>
+          <div className="ai-drawer-answers">
+            {question.answers.slice(0, landed).map((answer, i) => (
+              <LiveOption
+                key={answer.id}
+                text={answer.text}
+                writing={activeStep === OPTIONS && i === landed - 1}
+                reduce={reduce}
+              />
+            ))}
+          </div>
+        </motion.div>
+      )}
+    </div>
+  )
+}
+
+function LiveOption({ text, writing, reduce }: { text: string; writing: boolean; reduce: boolean | null }) {
+  const typed = useTyped(text, writing, OPTION_MS * 0.7)
+  return (
+    <motion.div
+      className={`ai-drawer-answer ai-drawer-live-answer${writing && !typed.done ? ' is-writing' : ''}`}
+      layout="position"
+      {...ARRIVE(reduce)}
+      transition={arriveTransition(reduce)}
+    >
+      <span className="ai-drawer-radio">
+        <RadioIcon selected={false} />
+      </span>
+      <span className="ai-drawer-live-text">
+        {typed.shown}
+        {writing && !typed.done && <span className="ai-drawer-caret" />}
+      </span>
+    </motion.div>
+  )
+}
+
+/* The line under the pass name, as in the course builder's situational test: what the
+   pass is on right now. The last pass is the conclusion, so it has none. */
+function stepDetail(step: number, lessonTitle: string | undefined, first: Question | undefined) {
+  if (step === 0) return lessonTitle ? `Reading "${lessonTitle}"` : 'Reading the lesson content'
+  if (step === WRITING) return 'Writing a multiple-choice question'
+  if (step === OPTIONS && first) return `Writing ${first.answers.length} options and marking the correct one`
+  return undefined
 }
 
 function makeEmptyAnswer(index: number): Answer {
@@ -66,11 +146,11 @@ function makeEmptyAnswer(index: number): Answer {
   }
 }
 
-function AIGenerateDrawer({ onComplete }: AIGenerateDrawerProps) {
+function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
   const [phase, setPhase] = useState<'generating' | 'reviewing'>('generating')
+  const reduce = useReducedMotion()
   const [currentStep, setCurrentStep] = useState(0)
-  const [progress, setProgress] = useState(0)
-  const [generatedQuestions, setGeneratedQuestions] = useState<Question[]>([])
+  const [generatedQuestions] = useState<Question[]>(() => generateMoreQuestions())
   const [currentIndex, setCurrentIndex] = useState(0)
   const [savedQuestions, setSavedQuestions] = useState<Question[]>([])
 
@@ -78,8 +158,8 @@ function AIGenerateDrawer({ onComplete }: AIGenerateDrawerProps) {
   const [editText, setEditText] = useState('')
   const [editAnswers, setEditAnswers] = useState<Answer[]>([])
   const [editExplanation, setEditExplanation] = useState('')
+  const [cardOpen, setCardOpen] = useState(true)
 
-  const textRef = useRef<HTMLTextAreaElement>(null)
   const totalQuestions = generatedQuestions.length
   const { toasts, show: showToast } = useToast()
 
@@ -92,41 +172,28 @@ function AIGenerateDrawer({ onComplete }: AIGenerateDrawerProps) {
     return () => window.removeEventListener('keydown', handleKey)
   }, [])
 
-  // Simulate generation steps
+  // Simulate generation passes
   useEffect(() => {
     if (phase !== 'generating') return
 
-    const timers: ReturnType<typeof setTimeout>[] = []
+    const optionsMs = OPTION_MS * Math.max(1, generatedQuestions[0]?.answers.length ?? 1)
+    const starts = [0, READING_MS, READING_MS + QUESTION_MS, READING_MS + QUESTION_MS + optionsMs]
+    const timers = starts.map((at, i) => setTimeout(() => setCurrentStep(i), at))
 
-    STEPS.forEach((_, i) => {
-      timers.push(setTimeout(() => {
-        setCurrentStep(i)
-        setProgress(Math.round(((i + 1) / STEPS.length) * 100))
-      }, STEP_DELAY * (i + 1)))
-    })
-
-    // Complete generation
+    // Complete generation: the review opens on the question that was just written
     timers.push(setTimeout(() => {
-      const questions = generateMoreQuestions()
-      setGeneratedQuestions(questions)
       setPhase('reviewing')
-      loadQuestion(questions[0])
-    }, STEP_DELAY * (STEPS.length + 1)))
+      loadQuestion(generatedQuestions[0])
+    }, starts[starts.length - 1] + DONE_MS))
 
     return () => timers.forEach(clearTimeout)
   }, [])
-
-  // Focus textarea when entering review
-  useEffect(() => {
-    if (phase === 'reviewing') {
-      textRef.current?.focus()
-    }
-  }, [phase, currentIndex])
 
   function loadQuestion(q: Question) {
     setEditText(q.text)
     setEditAnswers(q.answers.map(a => ({ ...a })))
     setEditExplanation('')
+    setCardOpen(true)
   }
 
   function advanceOrFinish(newSaved: Question[]) {
@@ -187,159 +254,107 @@ function AIGenerateDrawer({ onComplete }: AIGenerateDrawerProps) {
       <div className="ai-drawer-panel">
         {/* Header */}
         <div className="ai-drawer-header">
-          <h3 className="ai-drawer-title">
-            {phase === 'generating' ? 'Generating Questions…' : 'Review Questions'}
-          </h3>
+          <div className="ai-drawer-headline">
+            <h3 className="ai-drawer-title">
+              {phase === 'generating' ? 'Generating Questions…' : 'Review Questions'}
+            </h3>
+            <Collapse open={phase !== 'generating'}>
+              <p className="ai-drawer-review-subtitle">
+                Select which quizzes you want to save and which you want to discard. You can always edit them later.
+              </p>
+            </Collapse>
+          </div>
           <CloseButton onClick={handleClose} className="ai-drawer-close" />
         </div>
         <div className="ai-drawer-divider" />
 
         {/* Body */}
         <div className="ai-drawer-body">
+          {/* The wait and each question are screens: the one on screen leaves upward as
+              the next rises into its place, as in the course builder's generate drawer.
+              AnimatePresence keeps the leaving screen's last render, so it shows the
+              question it was, not the one loading in. */}
+          <AnimatePresence mode="wait" initial={false}>
           {phase === 'generating' ? (
-            <div className="ai-drawer-stepper">
-              <div className="ai-drawer-steps">
-                {STEPS.map((label, i) => {
-                  let status: 'done' | 'active' | 'pending' = 'pending'
-                  if (i < currentStep) status = 'done'
-                  else if (i === currentStep) status = 'active'
-
-                  return (
-                    <div key={i} className={`ai-drawer-step ai-drawer-step--${status}`}>
-                      <span className="ai-drawer-step-icon">
-                        {status === 'done' ? (
-                          <TickCircle size={24} color="var(--success-500)" variant="Bold" />
-                        ) : status === 'active' ? (
-                          <SparkleIcon size={24} />
-                        ) : (
-                          <span className="ai-drawer-step-icon--pending" />
-                        )}
-                      </span>
-                      <span>{status === 'active' ? `${label}…` : label}</span>
-                    </div>
-                  )
-                })}
-              </div>
-
-              <div className="ai-drawer-progress">
-                <div className="ai-drawer-progress-track">
-                  <div
-                    className="ai-drawer-progress-fill"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-                <span className="ai-drawer-progress-label">{progress}%</span>
-              </div>
-            </div>
+            <motion.div
+              key="working"
+              className="ai-drawer-phase"
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+              transition={arriveTransition(reduce)}
+            >
+              <AIWorkingCard
+                className="ai-drawer-working"
+                steps={STEPS}
+                activeStep={currentStep}
+                detail={stepDetail(currentStep, lessonTitle, generatedQuestions[0])}
+                singleLine
+              />
+              {generatedQuestions[0] && (
+                <LiveQuestion question={generatedQuestions[0]} activeStep={currentStep} />
+              )}
+            </motion.div>
           ) : (
-            <>
-              <p className="ai-drawer-review-subtitle">
-                Select which quizzes you want to save and which you want to discard. You can always edit them later.
-              </p>
-
-              <span className="ai-drawer-review-counter">
-                Question {currentIndex + 1}/{totalQuestions}
-              </span>
-
-              {/* Question text */}
-              <div className="ai-drawer-field">
-                <label className="ai-drawer-label">What is your question?</label>
-                <textarea
-                  ref={textRef}
-                  className="ai-drawer-textarea"
-                  value={editText}
-                  onChange={e => setEditText(e.target.value)}
-                  placeholder="Type your question here..."
-                  rows={3}
-                />
-              </div>
-
-              {/* Answer options */}
-              <div className="ai-drawer-field">
-                <label className="ai-drawer-label">What are the options?</label>
-                <div className="ai-drawer-answers">
-                  {editAnswers.map((answer, i) => (
-                    <div
-                      key={answer.id}
-                      className={`ai-drawer-answer${answer.isCorrect ? ' ai-drawer-answer--correct' : ''}`}
-                    >
-                      <button
-                        className="ai-drawer-radio"
-                        onClick={() => setCorrectAnswer(i)}
-                        aria-label={answer.isCorrect ? 'Correct answer' : 'Mark as correct'}
-                      >
-                        <RadioIcon selected={answer.isCorrect} />
-                      </button>
-                      <input
-                        className="ai-drawer-answer-input"
-                        value={answer.text}
-                        onChange={e => updateAnswer(i, { text: e.target.value })}
-                        placeholder={`Option ${i + 1}...`}
-                      />
-                      {answer.isCorrect && (
-                        <span className="ai-drawer-correct-badge">Correct</span>
-                      )}
-                      {editAnswers.length > 2 && (
-                        <button
-                          className="ai-drawer-answer-remove"
-                          onClick={() => removeAnswer(i)}
-                          aria-label="Remove answer"
-                        >
-                          <CloseSmallIcon />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-
-                  {editAnswers.length < 6 && (
-                    <button className="ai-drawer-add-option" onClick={addAnswer}>
-                      <Add size={24} color="var(--text-primary)" />
-                      <span>Add option</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Explanation */}
-              <div className="ai-drawer-field">
-                <label className="ai-drawer-label">
-                  Add an explanation <span className="ai-drawer-label--regular">(optional)</span>
-                </label>
-                <div className={`ai-drawer-explanation${editExplanation.trim() ? ' ai-drawer-explanation--filled' : ''}`}>
-                  {editExplanation.trim() && (
-                    <span className="ai-drawer-explanation-icon">
-                      <TickCircle size={24} color="var(--success-500)" variant="Bold" />
-                    </span>
-                  )}
-                  <textarea
-                    className="ai-drawer-explanation-input"
-                    value={editExplanation}
-                    onChange={e => setEditExplanation(e.target.value)}
-                    placeholder="Explain the correct answer..."
-                    rows={3}
-                  />
-                </div>
-              </div>
-            </>
+            <motion.div
+              key={`question-${currentIndex}`}
+              className="ai-drawer-phase"
+              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+              transition={arriveTransition(reduce)}
+            >
+              {/* The course builder's question card, so both AI reviews read the same:
+                  "Question 1/6" and the format in the card's own head. */}
+              <QuestionCard
+                question={{
+                  id: `ai-q-${currentIndex}`,
+                  text: editText,
+                  options: editAnswers.map(a => a.text),
+                  correctIndex: editAnswers.findIndex(a => a.isCorrect),
+                  format: 'single-choice',
+                  explanation: editExplanation,
+                }}
+                label={`Question ${currentIndex + 1}/${totalQuestions}`}
+                format="single-choice"
+                isOpen={cardOpen}
+                onToggle={() => setCardOpen(v => !v)}
+                readOnly={false}
+                generated
+                edit={{
+                  onChange: (patch) => {
+                    if (patch.text !== undefined) setEditText(patch.text)
+                    if (patch.explanation !== undefined) setEditExplanation(patch.explanation)
+                    if (patch.correctIndex !== undefined) setCorrectAnswer(patch.correctIndex)
+                  },
+                  onOptionChange: (i, value) => updateAnswer(i, { text: value }),
+                  onAddOption: addAnswer,
+                  onRemoveOption: removeAnswer,
+                  onBlur: () => {},
+                  errors: { text: false, options: false, correctBlank: false },
+                }}
+              />
+            </motion.div>
           )}
+          </AnimatePresence>
         </div>
 
         {/* Footer — only in review phase */}
+        <AnimatePresence initial={false}>
         {phase === 'reviewing' && (
-          <div className="ai-drawer-footer">
+          <motion.div
+            className="ai-drawer-footer"
+            {...ARRIVE(reduce)}
+            transition={arriveTransition(reduce)}
+          >
             <div className="ai-drawer-footer-buttons">
-              <button className="ai-drawer-btn-discard" onClick={handleDiscard}>
-                Discard
-              </button>
-              <button className="ai-drawer-btn-save" onClick={handleSave}>
-                Save
-              </button>
+              <Button onClick={handleSave}>Save</Button>
+              <Button variant="outlined-2" onClick={handleDiscard}>Discard</Button>
+              <ToastContainer toasts={toasts} className="ai-drawer-toasts" />
             </div>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </div>
 
-      <ToastContainer toasts={toasts} />
     </>
   )
 }

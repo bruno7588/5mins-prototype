@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Add, TickCircle } from 'iconsax-react'
+import { Add, Danger, TickCircle } from 'iconsax-react'
 import type { Answer, Question } from '../../data/mockQuestions'
 import Button from '../Button/Button'
 import CloseButton from '../CloseButton/CloseButton'
+import ConfirmModal from '../ConfirmModal/ConfirmModal'
 import InputField from '../InputField/InputField'
 import './QuestionDrawer.css'
 
@@ -10,6 +11,9 @@ interface QuestionDrawerProps {
   question?: Question
   onSave: (question: Question) => void
   onClose: () => void
+  /** Editing an existing question: offers Delete Question in the footer (the bank row
+   *  carries only Edit, per the DS Assessment admin row). */
+  onDelete?: () => void
 }
 
 function CloseSmallIcon() {
@@ -49,7 +53,8 @@ const DEFAULT_ANSWERS: Answer[] = [
   { id: `new_a2_${Date.now()}`, text: '', isCorrect: false },
 ]
 
-function QuestionDrawer({ question, onSave, onClose }: QuestionDrawerProps) {
+function QuestionDrawer({ question, onSave, onClose, onDelete }: QuestionDrawerProps) {
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const isNew = !question
   const questionType = question?.type ?? 'multiple_choice'
   const [text, setText] = useState(question?.text ?? '')
@@ -229,9 +234,45 @@ function QuestionDrawer({ question, onSave, onClose }: QuestionDrawerProps) {
           <div className="question-drawer-footer__buttons">
             <Button onClick={handleSave}>Save</Button>
             <Button variant="outlined" onClick={onClose}>Cancel</Button>
+            {onDelete && (
+              <Button
+                className="question-drawer-delete"
+                semantic="danger"
+                variant="outlined"
+                onClick={() => setConfirmDelete(true)}
+              >
+                Delete Question
+              </Button>
+            )}
           </div>
         </div>
       </div>
+
+      <ConfirmModal open={confirmDelete} onClose={() => setConfirmDelete(false)}>
+        <div className="confirm-modal-header confirm-modal-header--center">
+          <div className="confirm-modal-icon">
+            <Danger size={72} color="var(--danger-500)" variant="Linear" />
+          </div>
+          <h2 className="confirm-modal-title">Delete question</h2>
+          <p className="confirm-modal-body">
+            This question will be removed from the lesson's question bank. This can't be undone.
+          </p>
+        </div>
+        <div className="confirm-modal-actions">
+          <Button variant="outlined-2" onClick={() => setConfirmDelete(false)}>
+            Cancel
+          </Button>
+          <Button
+            semantic="danger"
+            onClick={() => {
+              setConfirmDelete(false)
+              onDelete?.()
+            }}
+          >
+            Delete Question
+          </Button>
+        </div>
+      </ConfirmModal>
     </>
   )
 }

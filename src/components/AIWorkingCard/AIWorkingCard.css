@@ -87,6 +87,38 @@
   font-weight: 500;
 }
 
+/* A light sweep across the running pass's words: the text itself is the gradient
+   (clipped to the glyphs), primary with a tertiary band moving through it, so it
+   reads in both themes on whatever surface the card sits on. */
+.ai-working-step__label--shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--text-primary) 0%,
+    var(--text-primary) 35%,
+    var(--text-tertiary) 50%,
+    var(--text-primary) 65%,
+    var(--text-primary) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ai-working-label-shimmer 1.8s linear infinite;
+}
+
+@keyframes ai-working-label-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-working-step__label--shimmer {
+    animation: none;
+    background: none;
+    color: var(--text-primary);
+  }
+}
+
 /* A pass the work has left steps back to tertiary. It stays on the card as the record of
    what happened, but it is no longer the line to read, so it stops competing with the one
    that is. The green tick, not the colour, is what says it succeeded.

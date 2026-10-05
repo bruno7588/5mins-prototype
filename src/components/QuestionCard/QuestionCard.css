@@ -1,214 +1,96 @@
+/* Assessment admin list row (cards.md § Assessment card, Figma Card/Assessments
+   enabled 10867:5413 / hover 11054:9903). 12px padding and gap, items at the top,
+   12px radius, card fill and shadow. */
 .question-card {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
   padding: var(--space-sm);
   background: var(--cards-background);
-  border: none;
   border-radius: var(--radius-sm);
-  transition: background 150ms ease, opacity 200ms ease, transform 200ms ease;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: background 150ms ease;
 }
 
 .question-card:hover {
   background: var(--cards-background-hover);
 }
 
-/* Top row: content + actions */
-.question-card-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+.question-card__art {
+  flex: none;
+  width: 48px;
+  height: 48px;
 }
 
-/* Content */
-.question-card-content {
+.question-card__info {
+  flex: 1 0 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-  flex: 1;
   min-width: 0;
 }
 
-.question-card-text {
-  font-size: 14px;
-  font-weight: 500;
+.question-card__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-/* View options toggle */
-.question-card-toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.question-card-toggle-text {
+.question-card__type {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
-.question-card-toggle-chevron {
+/* Edit + pill, top-aligned with the illustration, 8px apart. */
+.question-card__actions {
   display: flex;
+  flex: none;
   align-items: center;
-  justify-content: center;
-  color: var(--text-tertiary);
-  transition: transform 200ms ease;
-}
-
-.question-card-toggle-chevron--open {
-  transform: rotate(90deg);
-}
-
-/* Actions */
-.question-card-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-m);
-  flex-shrink: 0;
-}
-
-.question-card-action {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 100px;
-  transition: background 150ms ease;
-}
-
-.question-card-action:hover {
-  background: var(--page-background-hover);
-}
-
-.question-card-action--delete:hover {
-  background: var(--danger-100);
-}
-
-.question-card-action--delete:hover svg {
-  color: var(--danger-500) !important;
-}
-
-/* Tooltip */
-.question-card-action[data-tooltip]::before,
-.question-card-action[data-tooltip]::after {
-  position: absolute;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.question-card-action[data-tooltip]::before {
-  content: attr(data-tooltip);
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: var(--space-xss) var(--space-sm);
-  background: var(--tooltip-background);
-  color: var(--neutral-0);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  white-space: nowrap;
-  border-radius: var(--radius-s);
-}
-
-.question-card-action[data-tooltip]::after {
-  content: '';
-  bottom: calc(100% + 2px);
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-top-color: var(--tooltip-background);
-}
-
-.question-card-action[data-tooltip]:hover::before,
-.question-card-action[data-tooltip]:hover::after {
-  opacity: 1;
-}
-
-/* Expanded options list */
-.question-card-options {
-  display: flex;
-  flex-direction: column;
   gap: var(--space-s);
-  padding-top: var(--space-sm);
-  margin-top: var(--space-sm);
-  border-top: 1px solid var(--border);
 }
 
-.question-card-option {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-s) var(--space-sm);
-  border-radius: var(--radius-s);
-}
-
-.question-card-option--correct {
-  background: rgba(24, 169, 87, 0.06);
-}
-
-/* Radio dot */
-.question-card-option-dot {
+/* 16px edit icon in a 22px hit box; circular hover like every icon-only control. */
+.question-card__edit {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--border-hover);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.question-card-option-dot--correct {
-  border-color: var(--success-500);
-  background: var(--success-500);
-}
-
-/* Answer text */
-.question-card-option-text {
-  flex: 1;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.question-card-option--correct .question-card-option-text {
-  font-weight: 500;
-  color: var(--success-600);
-}
-
-/* Correct badge */
-.question-card-option-badge {
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 500;
-  color: var(--success-600);
-  background: var(--success-100);
-  padding: var(--space-xxs) var(--space-s);
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
   border-radius: var(--radius-full);
-  flex-shrink: 0;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
 }
 
-/* Animation for entering/leaving */
-.question-card-enter {
-  opacity: 0;
-  transform: translateY(8px);
+.question-card__edit:hover {
+  background: var(--input-background-hover);
+  color: var(--text-primary);
 }
 
-.question-card-exit {
-  opacity: 0;
-  transform: translateY(-4px);
+.question-card__edit:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* Content-type pill: the same fill the course outline's type badge uses. */
+.question-card__pill {
+  flex: none;
+  padding: var(--space-xs) var(--space-s);
+  border-radius: var(--radius-full);
+  background: var(--input-background-elevated);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-secondary);
 }

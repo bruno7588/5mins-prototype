@@ -51,9 +51,11 @@ interface QuizTabProps {
   /** False where AI cannot read the source (an external link): a new lesson then
       offers only Add Question Manually. */
   aiAvailable?: boolean
+  /** Named back by the AI drawer while it reads the lesson. */
+  lessonTitle?: string
 }
 
-function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, aiAvailable = true }: QuizTabProps) {
+function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, aiAvailable = true, lessonTitle }: QuizTabProps) {
   const [state, setState] = useState<QuizTabState>({
     poolEnabled: hasGeneratedQuizzes,
     aiQuizzesOptIn: true,
@@ -209,6 +211,7 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
         {state.showAIDrawer && (
           <AIGenerateDrawer
             onComplete={handleAIDrawerComplete}
+            lessonTitle={lessonTitle}
           />
         )}
       </div>
@@ -234,7 +237,6 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
               key={q.id}
               question={q}
               onEdit={() => handleStartEdit(q.id)}
-              onDelete={() => handleDelete(q.id)}
             />
         ))}
       </div>
@@ -250,6 +252,7 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
             question={editQuestion}
             onSave={state.editingQuestionId ? handleSaveEdit : handleSaveNew}
             onClose={handleCloseDrawer}
+            onDelete={editQuestion ? () => handleDelete(editQuestion.id) : undefined}
           />
         )
       })()}
@@ -258,6 +261,7 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
       {state.showAIDrawer && (
         <AIGenerateDrawer
           onComplete={handleAIDrawerComplete}
+          lessonTitle={lessonTitle}
         />
       )}
     </div>

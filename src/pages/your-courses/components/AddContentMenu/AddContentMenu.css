@@ -1,105 +1,119 @@
-/* Anchored "Add Content" dropdown — replaces the old picker drawer.
-   Geometry per Figma 8695:16349 (container r12 / p8, rows 12·16, shadow L).
-   Rendered in a body portal as position:fixed so it can't be clipped by the
-   content area's overflow. Light panel to match this project's overlay rule. */
-.acm-popover {
-  position: fixed;
-  z-index: 1100;
+/* Anchored Add Content menu (Create Course, Figma 10210:26756), built as the DS listbox
+   (listbox.md canonical spec). Portalled to body as position: fixed so the content
+   area's overflow can't clip it. Entrance motion lives in Framer (AddContentMenu.tsx). */
+
+/* Shared listbox container: the menu and each flyout. */
+.acm-panel {
   display: flex;
   flex-direction: column;
   padding: var(--space-s);
   background: var(--cards-background);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12), 0 12px 28px 0 rgba(32, 34, 42, 0.14);
-  transform-origin: top left;
-  animation: acm-pop-in 120ms ease;
-}
-.acm-popover--up {
-  transform-origin: bottom left;
+  box-shadow: var(--shadow-l);
 }
 
-@keyframes acm-pop-in {
-  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+.acm-popover {
+  position: fixed;
+  z-index: 1100;
 }
 
-/* Rows are fully self-styled here — this portal menu must NOT depend on
-   .add-content-menu-item from AddContentSidebar.css, whose stylesheet isn't
-   loaded on every screen that opens this menu (e.g. Create Course), which left
-   the rows unstyled: centred text, icons colliding with labels. */
+/* List item: 8px 12px, 8px radius, 20px icon, 8px gap, 14 / 400 / 1.5 primary. */
 .acm-row {
   display: flex;
   align-items: center;
   gap: var(--space-s);
   width: 100%;
-  padding: var(--space-sm) var(--space-m);
+  padding: var(--space-s) var(--space-sm);
   border: none;
   border-radius: var(--radius-s);
   background: transparent;
-  font: 400 14px/1.5 'Poppins', sans-serif;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
   color: var(--text-primary);
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.acm-row .add-content-menu-item-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  /* Iconsax rows pass color=currentColor, so the icon tracks the row's color. */
-  color: currentColor;
-}
-
-.acm-row .add-content-menu-item-label {
-  flex: 1;
   text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease;
 }
-/* Rows live on the --cards-background popover, so override the shared
-   .add-content-menu-item hover (page-background-hover collides with the card
-   surface in dark mode → invisible). */
-.acm-row:hover {
-  background: var(--cards-background-hover);
-}
+
+.acm-row:hover,
 .acm-row--open {
   background: var(--cards-background-hover);
 }
 
+.acm-row:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: -2px;
+}
+
+/* Menu icons are always primary (project ruling), including on read-only rows. */
+.acm-row__icon {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--text-primary);
+}
+
+.acm-row__label {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.acm-row__chevron {
+  flex-shrink: 0;
+}
+
+/* Read-only: not built yet. Text in --text-disabled, no hover, not clickable. */
+.acm-row--readonly {
+  cursor: default;
+  color: var(--text-disabled);
+}
+
+.acm-row--readonly:hover {
+  background: transparent;
+}
+
+.acm-row--readonly .acm-row__icon {
+  color: var(--text-disabled);
+}
+
+/* Parent row anchors its flyout. */
 .acm-has-sub {
   position: relative;
-  width: 100%;
 }
 
-/* Side-by-side flyout panel (Figma 8695:16555). Offset up by the container padding so
-   its first item lines up with the Assessments row. */
+/* Flyout: top-aligned with its parent row, beside the menu. The padding offset lines
+   the first child row up with the parent row. */
 .acm-submenu {
   position: absolute;
-  top: calc(-1 * var(--space-s));
-  width: 200px;
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-s);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: -4px 0 24px 0 rgba(32, 34, 42, 0.12), 0 12px 28px 0 rgba(32, 34, 42, 0.14);
-  animation: acm-pop-in 120ms ease;
-}
-/* Offset = popover padding (8px) + the visible gap (8px) so the two cards read as
-   separate floating panels, matching Figma rather than sharing an edge. */
-.acm-submenu--right {
-  left: calc(100% + 16px);
-  transform-origin: top left;
-}
-.acm-submenu--left {
-  right: calc(100% + 16px);
-  transform-origin: top right;
+  top: calc(-1 * var(--space-s) - 1px);
+  z-index: 1;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .acm-popover,
-  .acm-submenu {
-    animation: none;
-  }
+.acm-submenu--right {
+  left: calc(100% + var(--space-s) + var(--space-xs));
+}
+
+.acm-submenu--left {
+  right: calc(100% + var(--space-s) + var(--space-xs));
+}
+
+/* Invisible bridge across the gap, so the pointer can cross into the flyout
+   without leaving the hover area. */
+.acm-submenu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--space-s) + var(--space-xs) + 2px);
+}
+
+.acm-submenu--right::before {
+  right: 100%;
+}
+
+.acm-submenu--left::before {
+  left: 100%;
 }

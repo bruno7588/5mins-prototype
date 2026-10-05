@@ -191,6 +191,21 @@ const between = (min: number, max: number) => min + Math.floor(Math.random() * (
 
 /** One draft assessment of `type`, written from `lesson`'s transcript. Situational
  *  tests are course-wide, so they go through generateSituationalTest instead. */
+function threeOptions<B extends { options: string[]; correctIndex: number }>(beat: B): B {
+  const keep = beat.options
+    .map((_, i) => i)
+    .filter((i) => i === beat.correctIndex)
+  for (let i = 0; i < beat.options.length && keep.length < 3; i++) {
+    if (i !== beat.correctIndex) keep.push(i)
+  }
+  keep.sort((a, b) => a - b)
+  return {
+    ...beat,
+    options: keep.map((i) => beat.options[i]),
+    correctIndex: keep.indexOf(beat.correctIndex),
+  }
+}
+
 export function generateOne(
   type: Exclude<GeneratableType, 'situational-test'>,
   lesson: TranscriptSource,
@@ -206,7 +221,13 @@ export function generateOne(
      read what the learner will actually be asked to do, so the draft has to carry it —
      a title on its own is a promise the review cannot show. The beat supplies the
      structure; the question over it is the one written from this lesson. */
-  const beat = pick(BEATS_BY_FORMAT[type] ?? [])
+  const picked = pick(BEATS_BY_FORMAT[type] ?? [])
+  /* Multiple choice is drafted with three options by default: the correct one and the
+     first two wrong ones, in their original order. Trimmed here rather than in the
+     shared bank, so the situational test keeps its four. */
+  const beat = picked && type === 'single-choice' && picked.options.length > 3
+    ? threeOptions(picked)
+    : picked
   return {
     type,
     title,

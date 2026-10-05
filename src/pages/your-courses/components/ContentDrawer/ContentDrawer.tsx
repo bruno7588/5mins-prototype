@@ -43,9 +43,6 @@ export type ActiveDrawer =
 interface Props {
   activeDrawer: ActiveDrawer
   onClose: () => void
-  /* The Add Content rail can be expanded over an open drawer; the panel then needs
-     240px of clearance on the right instead of the rail's 60px. */
-  sidebarExpanded: boolean
   /* Library */
   libraryAddedIds: Set<number>
   onLibraryAdd: (lesson: LibraryLesson) => void
@@ -105,10 +102,9 @@ interface Props {
    *  is one artefact; this is N cards, so it carries per-card actions too. */
   generationAssessmentReview: {
     drafts: GeneratedAssessment[]
-    onSave: () => void
-    onRemove: (index: number) => void
+    onSaveOne: (index: number) => void
+    onDiscard: (index: number) => void
     onEdit: (index: number, patch: Partial<SituationalQuestion>) => void
-    onGenerateAgain: () => void
   } | null
   /* Resources — non-null when a card's Edit reopened one. */
   resourceInitial: CourseResource | null
@@ -121,7 +117,6 @@ interface Props {
 function ContentDrawer({
   activeDrawer,
   onClose,
-  sidebarExpanded,
   libraryAddedIds,
   onLibraryAdd,
   onLibraryRemove,
@@ -210,12 +205,12 @@ function ContentDrawer({
   return (
     <>
       <div
-        className={`overlay-backdrop overlay-backdrop--with-sidebar${sidebarExpanded ? ' overlay-backdrop--sidebar-expanded' : ''}${closing ? ' overlay-backdrop--closing' : ''}`}
+        className={`overlay-backdrop overlay-backdrop--with-sidebar${closing ? ' overlay-backdrop--closing' : ''}`}
         onClick={onClose}
         aria-hidden="true"
       />
       <aside
-        className={`side-drawer side-drawer--with-sidebar${sidebarExpanded ? ' side-drawer--sidebar-expanded' : ''}${closing ? ' side-drawer--closing' : ''} ${rendered === 'library' ? 'library-drawer' : rendered === 'scorm' ? 'scorm-drawer-shell' : rendered === 'situational-test' ? 'situational-test-drawer-shell' : rendered === 'interactive' ? 'interactive-drawer-shell' : rendered === 'resources' ? 'resources-drawer-shell' : rendered === 'ai-generate' ? `generate-drawer-shell${generationReview ? ' situational-test-drawer-shell' : ''}` : 'assessment-drawer-shell'}`}
+        className={`side-drawer side-drawer--with-sidebar${closing ? ' side-drawer--closing' : ''} ${rendered === 'library' ? 'library-drawer' : rendered === 'scorm' ? 'scorm-drawer-shell' : rendered === 'situational-test' ? 'situational-test-drawer-shell' : rendered === 'interactive' ? 'interactive-drawer-shell' : rendered === 'resources' ? 'resources-drawer-shell' : rendered === 'ai-generate' ? `generate-drawer-shell${generationReview ? ' situational-test-drawer-shell' : ''}` : 'assessment-drawer-shell'}`}
         ref={panelRef}
         role="dialog"
         aria-modal="true"

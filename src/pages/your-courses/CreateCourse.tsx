@@ -12,7 +12,7 @@ import type { CourseDetailsDraft } from './components/CourseDetailsTab/CourseDet
 import { saveCourse, type StoredCourse } from './courseStore'
 import type { ContentItem } from './components/ContentList/ContentList'
 import { QUESTION_BEAT_MS } from './components/GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
-import AddContentIconStrip from './components/AddContentIconStrip/AddContentIconStrip'
+import AddContentMenu, { type AddContentAction } from './components/AddContentMenu/AddContentMenu'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
 import type { CourseResource } from '@/components/ResourceCard/resources'
@@ -185,9 +185,8 @@ function CreateCourse() {
   const [addedScormIds, setAddedScormIds] = useState<Set<number>>(new Set())
   const [assessmentType, setAssessmentType] = useState<AssessmentType>('single-choice')
   const [activeDrawer, setActiveDrawer] = useState<ActiveDrawer>(null)
-  /* The builder opens with the Add Content panel already expanded — it's the first
-     thing an admin needs on an empty course. */
-  const [sidebarExpanded, setSidebarExpanded] = useState(true)
+  /* The Add Content menu, anchored to whichever Add Content button opened it. */
+  const [addMenuAnchor, setAddMenuAnchor] = useState<HTMLElement | null>(null)
   const [addedLibraryIds, setAddedLibraryIds] = useState<Set<number>>(new Set())
   const [targetSectionId, setTargetSectionId] = useState<string | null>(null)
   /* Authored situational tests, keyed by the id their outline card carries — the drawer
@@ -270,16 +269,13 @@ function CreateCourse() {
   /* Every "Add Content" CTA opens the sidebar's first source, the 5Mins Library, so
      the admin lands on content rather than an empty panel. The section it was fired
      from is remembered so the pick lands in the right place. */
-  const openAddContent = (sectionId: string) => {
+  /* Every Add Content button (empty state, each section, the bottom row) opens the
+     menu under itself; the pick then opens its drawer for that section. */
+  const openAddContent = (sectionId: string, anchor: HTMLElement) => {
     setTargetSectionId(sectionId)
-    openDrawer('library')
+    setAddMenuAnchor(anchor)
   }
 
-  /* Opening a drawer leaves the sidebar however the admin left it. It used to force the
-     rail closed, which meant clicking Add Content collapsed the very menu the admin was
-     reading — and picking a second source then meant re-expanding it. The drawer shifts
-     left by the panel's width instead (.side-drawer--sidebar-expanded), so both fit.
-     Collapsing is the rail's own toggle, not a side effect of opening something. */
   const openDrawer = (drawer: ActiveDrawer) => {
     setActiveDrawer(drawer)
   }
@@ -809,20 +805,23 @@ function CreateCourse() {
     closeDrawer()
   }
 
-  /* The set is approved. placeDrafts is what records where each card came from, which is
-     what the outline's own Delete & Regenerate reads later — so approval goes through it
-     rather than appending the cards directly. */
-  const handleSaveGeneratedAssessments = () => {
+  /* Reviewed one at a time (the lesson quiz pattern): a saved draft goes straight onto the
+     course through placeDrafts, which records where it came from for the outline's own
+     Delete & Regenerate; a discarded one is just dropped. Either way it leaves the pending
+     set, and the drawer closes once nothing is left, after a beat so the last toast reads. */
+  const settlePendingAssessment = (index: number, save: boolean) => {
     if (!pendingAssessments) return
-    setScormItems((prev) => [...prev, ...placeDrafts(pendingAssessments)])
-    setPendingAssessments(null)
-    closeDrawer()
-  }
-
-  /* One card the admin does not want. It is dropped from the set rather than generated
-     over — a set of six they chose beats seven they have to keep explaining away. */
-  const handleRemovePendingAssessment = (index: number) => {
-    setPendingAssessments((prev) => (prev ? prev.filter((_, i) => i !== index) : prev))
+    const draft = pendingAssessments[index]
+    if (save && draft) setScormItems((prev) => [...prev, ...placeDrafts([draft])])
+    const rest = pendingAssessments.filter((_, i) => i !== index)
+    if (rest.length) {
+      setPendingAssessments(rest)
+      return
+    }
+    window.setTimeout(() => {
+      setPendingAssessments(null)
+      closeDrawer()
+    }, 400)
   }
 
   /* The same rule the situational review follows: a draft is edited where it is read, so
@@ -930,8 +929,7 @@ function CreateCourse() {
         className={[
           'app-content-area',
           'acd-content-area',
-          sidebarExpanded && 'acd-content-area--sidebar-expanded',
-        ].filter(Boolean).join(' ')}
+        ].join(' ')}
       >
         <main className="main-content">
           {activeTab === 'Details' && (
@@ -967,25 +965,26 @@ function CreateCourse() {
           )}
         </main>
       </div>
-      <AddContentIconStrip
-        active={activeDrawer}
-        activeAssessment={assessmentType}
-        expanded={sidebarExpanded}
-        onToggleExpanded={() => setSidebarExpanded((v) => !v)}
-        onLibraryClick={() => openDrawer('library')}
-        onScormClick={() => openDrawer('scorm')}
-        onAssessmentClick={openAssessment}
-        onSituationalTestClick={() => openSituationalTest(null)}
-        activeInteractive={interactiveType}
-        onInteractiveClick={openInteractive}
-        onGenerateWithAIClick={openGenerate}
-        activeGenerateScope={activeDrawer === 'ai-generate' ? generationScope : null}
-        onResourcesClick={() => openResource(null)}
+      <AddContentMenu
+        open={addMenuAnchor !== null}
+        anchor={addMenuAnchor}
+        onClose={() => setAddMenuAnchor(null)}
+        onSelect={(action: AddContentAction) => {
+          switch (action.kind) {
+            case 'library': openDrawer('library'); break
+            case 'scorm': openDrawer('scorm'); break
+            case 'resources': openResource(null); break
+            case 'situational-ai': openGenerate('situational'); break
+            case 'situational-manual': openSituationalTest(null); break
+            case 'assessments-ai': openGenerate('assessments'); break
+            case 'assessment': openAssessment(action.type); break
+            case 'interactive': openInteractive(action.type); break
+          }
+        }}
       />
       <ContentDrawer
         activeDrawer={activeDrawer}
         onClose={requestCloseDrawer}
-        sidebarExpanded={sidebarExpanded}
         libraryAddedIds={addedLibraryIds}
         onLibraryAdd={handleAddLibraryLesson}
         onLibraryRemove={handleRemoveLibraryLesson}
@@ -1036,13 +1035,9 @@ function CreateCourse() {
           pendingAssessments
             ? {
                 drafts: pendingAssessments,
-                onSave: handleSaveGeneratedAssessments,
-                onRemove: handleRemovePendingAssessment,
+                onSaveOne: (index) => settlePendingAssessment(index, true),
+                onDiscard: (index) => settlePendingAssessment(index, false),
                 onEdit: handleEditPendingAssessment,
-                onGenerateAgain: () => {
-                  setPendingAssessments(null)
-                  startRun(pickedFormats, pickedPrompt)
-                },
               }
             : null
         }

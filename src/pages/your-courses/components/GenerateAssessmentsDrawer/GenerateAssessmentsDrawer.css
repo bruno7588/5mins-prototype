@@ -355,3 +355,21 @@
 .gen-drawer__prompt-cta {
   display: flex;
 }
+
+/* One-at-a-time review (the lesson quiz pattern): Save then Discard, with the toast
+   to the right of them rather than bottom centre, where it would cover them. */
+.gen-drawer__review-buttons {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.gen-drawer__toasts {
+  position: absolute;
+  bottom: auto;
+  top: 50%;
+  left: calc(100% + var(--space-m));
+  transform: translateY(-50%);
+  align-items: flex-start;
+}
