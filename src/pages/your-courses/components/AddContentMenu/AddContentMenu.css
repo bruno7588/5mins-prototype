@@ -43,12 +43,17 @@
   background: var(--cards-background-hover);
 }
 
+/* No destination yet: same look and hover, arrow cursor so it doesn't promise a click. */
+.acm-row--unrouted {
+  cursor: default;
+}
+
 .acm-row:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: -2px;
 }
 
-/* Menu icons are always primary (project ruling), including on read-only rows. */
+/* Menu icons are always primary (project ruling). */
 .acm-row__icon {
   display: flex;
   flex-shrink: 0;
@@ -63,20 +68,6 @@
 
 .acm-row__chevron {
   flex-shrink: 0;
-}
-
-/* Read-only: not built yet. Text in --text-disabled, no hover, not clickable. */
-.acm-row--readonly {
-  cursor: default;
-  color: var(--text-disabled);
-}
-
-.acm-row--readonly:hover {
-  background: transparent;
-}
-
-.acm-row--readonly .acm-row__icon {
-  color: var(--text-disabled);
 }
 
 /* Parent row anchors its flyout. */

@@ -58,7 +58,7 @@ interface Leaf {
   action?: AddContentAction
 }
 
-/* Not built yet: listed so the menu shows the whole catalogue, but read-only. */
+/* Not built yet: listed so the menu shows the whole catalogue; picking it closes the menu. */
 const UNBUILT = undefined
 
 const SITUATIONAL: Leaf[] = [
@@ -175,26 +175,21 @@ function AddContentMenu({ open, anchor, onClose, onSelect }: AddContentMenuProps
 
   const pick = (action: AddContentAction) => { onSelect(action); onClose() }
 
-  const leafRow = (leaf: Leaf, onEnter?: () => void) =>
-    leaf.action ? (
-      <button
-        key={leaf.key}
-        type="button"
-        role="menuitem"
-        className="acm-row"
-        onMouseEnter={onEnter}
-        onClick={() => pick(leaf.action!)}
-      >
-        <span className="acm-row__icon">{leaf.icon}</span>
-        <span className="acm-row__label">{leaf.label}</span>
-      </button>
-    ) : (
-      /* Read-only (listbox.md): shown so the catalogue is complete, not clickable. */
-      <div key={leaf.key} role="menuitem" aria-disabled="true" className="acm-row acm-row--readonly" onMouseEnter={onEnter}>
-        <span className="acm-row__icon">{leaf.icon}</span>
-        <span className="acm-row__label">{leaf.label}</span>
-      </div>
-    )
+  /* Every row looks enabled, including sources with nothing behind them yet (Your Content,
+     Embed Links, Events): those keep the arrow cursor, as the only hint, and close the menu. */
+  const leafRow = (leaf: Leaf, onEnter?: () => void) => (
+    <button
+      key={leaf.key}
+      type="button"
+      role="menuitem"
+      className={`acm-row${leaf.action ? '' : ' acm-row--unrouted'}`}
+      onMouseEnter={onEnter}
+      onClick={() => (leaf.action ? pick(leaf.action) : onClose())}
+    >
+      <span className="acm-row__icon">{leaf.icon}</span>
+      <span className="acm-row__label">{leaf.label}</span>
+    </button>
+  )
 
   const parentRow = (which: Sub, label: string, icon: ReactNode, items: Leaf[]) => (
     <div className="acm-has-sub" onMouseEnter={() => openSub(which)} onMouseLeave={scheduleCloseSub}>

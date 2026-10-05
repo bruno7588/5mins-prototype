@@ -722,9 +722,29 @@ function ContentList({
     .filter(Boolean)
     .join(' ')
 
+  /* When a drawer opens or closes, the column switches between centred and left-anchored.
+     Auto margins can't transition, so the move is animated FLIP-style: remember where the
+     column sat, and after the class change slide it from there to its new place, in step
+     with the drawer's own 300ms slide. */
+  const columnRef = useRef<HTMLElement>(null)
+  const lastLeft = useRef<number | null>(null)
+  useLayoutEffect(() => {
+    const el = columnRef.current
+    if (!el) return
+    const left = el.getBoundingClientRect().left
+    const from = lastLeft.current
+    lastLeft.current = left
+    if (from === null || Math.abs(from - left) < 1) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    el.animate(
+      [{ transform: `translateX(${from - left}px)` }, { transform: 'translateX(0)' }],
+      { duration: 300, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+    )
+  }, [drawerOpen, showEmptyState])
+
   return (
     <div className={layoutClass} onDragOver={(e) => e.preventDefault()}>
-      <section className="content-list">
+      <section ref={columnRef} className="content-list">
         <Presence show={showMeta} skipExit={showEmptyState} className="presence--meta">
           <div
             className={`course-meta${isFlatMode ? '' : ' course-meta--indented'}`}
