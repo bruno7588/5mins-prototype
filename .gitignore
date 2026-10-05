@@ -10,7 +10,8 @@ dist
 .claude/settings.local.json
 
 # Local agent tooling / scratch output (not part of the app)
-/agents/
+/agents/*
+!/agents/output/
 .claude/worktrees/
 .playwright-mcp/
 .design-inspect/

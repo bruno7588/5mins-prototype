@@ -27,7 +27,7 @@ Two audiences, weighted equally in design decisions.
 
 - Admins work in the admin portal: courses, programs, content library, people, roles, user fields, automations, learning records and audit log.
 - Learners use the learner web app and the mobile app (dark mode only).
-- Product work starts from Jira tickets (DES-xxx), is specified as PRDs in `docs/prd/`, prototyped here, and shipped to Figma for handoff.
+- Product work starts from Jira tickets (DES-xxx), is specified as PRDs in `agents/output/`, prototyped here, and shipped to Figma for handoff.
 
 ## Capabilities and Constraints
 

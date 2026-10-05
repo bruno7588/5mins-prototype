@@ -48,13 +48,13 @@ This is table stakes at the enterprise end of the category. Cornerstone's Learni
 | D14 | People who have completed a course can be enrolled again, so they do not count as enrolled and are never skipped. Only not started, in progress and overdue enrolments count as enrolled. |
 | D15 | Published courses can be assigned (5Mins and your own); drafts cannot. |
 | D16 | Course order and timing replicate Automations: courses are a numbered sequence; each course enrols "Immediate" (at launch) or "After delay", x days after the previous course's enrolment; dragging a course changes the chain and so its dates. This replaces the ticket's "X days from today". |
-| D17 | Multi-course Status follows `DES-332-status-research.md`: "Not enrolled" (informative `Badge`, `UserAdd`, selectable), "Enrolled in 2 of 3" (informative `Badge` with a DS `Tooltip` naming the courses, selectable), "Enrolled in all" (success `Badge`, `UserTick`, row disabled). With one course: "Not enrolled" / "Enrolled". Badge copy is sentence case in both wizards. |
+| D17 | Multi-course Status follows `2026-10-02-DES-332-assign-courses.status-research.md`: "Not enrolled" (informative `Badge`, `UserAdd`, selectable), "Enrolled in 2 of 3" (informative `Badge` with a DS `Tooltip` naming the courses, selectable), "Enrolled in all" (success `Badge`, `UserTick`, row disabled). With one course: "Not enrolled" / "Enrolled". Badge copy is sentence case in both wizards. |
 | D18 | Review keeps a line for people left out because they are already enrolled in every selected course. |
 | D19 | The Enrolment filter offers "Not enrolled" / "Enrolled in some" / "Enrolled in all" with no default; the course wizard keeps its "Not enrolled" default. |
 | D20 | Courses show their resulting dates, in the timing cells ("Starts 16 Oct 2026") and on Review, so reordering visibly changes dates. |
 | D21 | Reorder is drag and drop only; no visible Move up / Move down buttons. Keyboard users drag with the grip (Space to pick up, arrow keys to move, Space to drop, Escape to cancel), announced to screen readers. |
 | D22 | The success screen plays the confetti animation (as the Programs launch success does), respecting reduced motion. |
-| D23 | Designs for the five undocumented pieces follow `docs/prd/DES-332-design-research.md`, amended by D20-D22. |
+| D23 | Designs for the five undocumented pieces follow `agents/output/2026-10-02-DES-332-assign-courses.design-research.md`, amended by D20-D22. |
 
 ### Acceptance criteria
 
@@ -138,9 +138,9 @@ Sources were checked on 2026-10-02. Two help centres (Docebo, TalentLMS) returne
 | B2 | **"Already enrolled".** Settled by D14: not started, in progress and overdue count as enrolled and are skipped; completed does not, so those people are enrolled again. | Review copy should say completed people will be re-enrolled, so the admin is not surprised. |
 | B3 | **Timing anchor vs drag order.** Settled by D16: replicate Automations (`EnrollmentType` in `Automations.tsx`, `EnrollmentPopover`, `reorderCourses`). Enrolment is Immediate or x days after the previous course; order drives the chain. | Reuse the `EnrollmentType` model as is; Review shows each course's resulting start ("Immediately", "3 days after Fire Safety"). |
 | B4 | **Teams and Managers have no data model.** Team is a string on each person; nothing marks who is a manager beyond the Is Manager filter. Meaning settled by D5: a manager is enrolled alone, never their reports. | Teams: list teams with member counts (derived from `team`). Managers: list people flagged as managers; selecting one adds that person only. No `managerId` link is needed. |
-| B5 | **Components with no DS doc**: step rail, drag-reorder list, scheduling popover, Review summary cards, success screen. Designs settled by D23 (`DES-332-design-research.md`); the drag grip is a hand-drawn SVG, not Iconsax. | Before production, check the Figma Library for each piece and get links for any it lacks; confirm the grip glyph. Prototype builds from the research doc. |
+| B5 | **Components with no DS doc**: step rail, drag-reorder list, scheduling popover, Review summary cards, success screen. Designs settled by D23 (`2026-10-02-DES-332-assign-courses.design-research.md`); the drag grip is a hand-drawn SVG, not Iconsax. | Before production, check the Figma Library for each piece and get links for any it lacks; confirm the grip glyph. Prototype builds from the research doc. |
 | B6 | **Which courses can be assigned.** Settled by D15: published courses from both sources; drafts never appear in the search. | None. |
-| B7 | **Status with several courses.** Settled by D17-D19; full rationale, edge cases and accessibility notes in `docs/prd/DES-332-status-research.md`. | Partial badge needs a focusable wrapper with a full-sentence `aria-label` (Tooltip sets no `aria-describedby`); drop `Badge`'s `role="status"` inside table cells. |
+| B7 | **Status with several courses.** Settled by D17-D19; full rationale, edge cases and accessibility notes in `agents/output/2026-10-02-DES-332-assign-courses.status-research.md`. | Partial badge needs a focusable wrapper with a full-sentence `aria-label` (Tooltip sets no `aria-describedby`); drop `Badge`'s `role="status"` inside table cells. |
 
 ### Phases
 

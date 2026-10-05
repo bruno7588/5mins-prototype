@@ -7,7 +7,7 @@ import './WizardShell.css'
 
 /* Full-screen wizard shell shared by "Enrol people to your course" and
    "Assign courses": header with one action, a left step rail, the step content.
-   No DS doc yet (DES-332 B5); anatomy per docs/prd/DES-332-design-research.md (a). */
+   No DS doc yet (DES-332 B5); anatomy per agents/output/2026-10-02-DES-332-assign-courses.design-research.md (a). */
 
 type IconType = ComponentType<{ size?: number; color?: string; variant?: 'Linear' | 'Bold' }>
 

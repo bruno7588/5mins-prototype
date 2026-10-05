@@ -77,7 +77,7 @@ Rules for the agent on external research:
 
 ### Output location
 
-> Write the PRD to `docs/prd/<TICKET-KEY>-<kebab-slug>.md` and return a short summary plus the open questions.
+> Write the PRD to `agents/output/<YYYY-MM-DD>-<TICKET-KEY>-<kebab-slug>.md` (supporting research alongside as `<same-name>.research.md`) and return a short summary plus the open questions.
 
 ## 4. PRD structure
 
@@ -110,8 +110,18 @@ The plan of action, and the reason the document gets opened twice:
 
 Do not add a separate goals/metrics/personas section, a copy table, a screen-by-screen walkthrough or an AC traceability matrix unless the user asks. Fold what matters from those into the three sections above.
 
-## 5. Report back
+## 5. Render the PDF
 
-In the main session: the file path, a short summary, and the open questions listed in full. Open questions are the reason the document gets read, so do not bury them.
+Once the PRD markdown is written, render it alongside (same name, `.pdf`):
+
+```
+cd agents/jira-prd-agent && npx tsx src/render-pdf.ts ../output/<prd-file>.md
+```
+
+Re-run this whenever the user edits the markdown, so the PDF never drifts from it. Research files get no PDF.
+
+## 6. Report back
+
+In the main session: the file path (markdown and PDF), a short summary, and the open questions listed in full. Open questions are the reason the document gets read, so do not bury them.
 
 Do **not** post the PRD to Jira or Confluence, and do not change the ticket, unless the user asks. If it seems useful, offer it in one line.
