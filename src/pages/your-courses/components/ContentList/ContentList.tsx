@@ -779,7 +779,11 @@ function ContentList({
             }
             title="Add content to your course"
             description="Add content, upload resources, and create assessments, or start by creating a section to organise what's coming."
-            secondaryAction={{ label: 'Start With A Section', onClick: startSectioning }}
+            secondaryAction={{
+              label: 'Start With A Section',
+              icon: <TextalignJustifyleft size={20} color="currentColor" variant="Linear" />,
+              onClick: startSectioning,
+            }}
             primaryAction={{
               label: 'Add Content',
               icon: <Add size={20} color="currentColor" variant="Linear" />,
