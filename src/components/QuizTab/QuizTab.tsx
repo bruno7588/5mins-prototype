@@ -7,6 +7,7 @@ import PoolHeader from '../PoolHeader/PoolHeader'
 import QuestionCard from '../QuestionCard/QuestionCard'
 import QuestionDrawer from '../QuestionDrawer/QuestionDrawer'
 import AIGenerateDrawer from '../AIGenerateDrawer/AIGenerateDrawer'
+import ToastContainer, { useToast } from '../Toast/Toast'
 import './QuizTab.css'
 
 interface QuizTabState {
@@ -56,6 +57,7 @@ interface QuizTabProps {
 }
 
 function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, aiAvailable = true, lessonTitle }: QuizTabProps) {
+  const { toasts, show: showToast } = useToast()
   const [state, setState] = useState<QuizTabState>({
     poolEnabled: hasGeneratedQuizzes,
     aiQuizzesOptIn: true,
@@ -124,7 +126,13 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
     setState(s => ({ ...s, showAIDrawer: true }))
   }
 
-  const handleAIDrawerComplete = (savedQuestions: Question[]) => {
+  const handleAIDrawerComplete = (savedQuestions: Question[], finished: boolean) => {
+    /* Back on the lesson, one toast sums up a completed review: how many were saved.
+       Nothing to confirm when every one was discarded. */
+    const saved = savedQuestions.length
+    if (finished && saved > 0) {
+      showToast('success', `${saved} ${saved === 1 ? 'question' : 'questions'} saved`)
+    }
     setState(s => ({
       ...s,
       showAIDrawer: false,
@@ -214,6 +222,7 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
             lessonTitle={lessonTitle}
           />
         )}
+        <ToastContainer toasts={toasts} />
       </div>
     )
   }
@@ -264,6 +273,7 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
           lessonTitle={lessonTitle}
         />
       )}
+      <ToastContainer toasts={toasts} />
     </div>
   )
 }

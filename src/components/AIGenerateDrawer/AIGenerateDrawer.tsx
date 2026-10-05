@@ -15,7 +15,9 @@ import { useTyped, prefersReducedMotion } from '../AIWorkingCard/useTyped'
 import './AIGenerateDrawer.css'
 
 interface AIGenerateDrawerProps {
-  onComplete: (savedQuestions: Question[]) => void
+  /** `finished` is true when the last question was reviewed, false when the drawer was
+   *  closed part-way. */
+  onComplete: (savedQuestions: Question[], finished: boolean) => void
   lessonTitle?: string
 }
 
@@ -201,7 +203,7 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
     const nextIndex = currentIndex + 1
     if (nextIndex >= totalQuestions) {
       // All reviewed — close after a short delay so toast shows
-      setTimeout(() => onComplete(newSaved), 400)
+      setTimeout(() => onComplete(newSaved, true), 400)
     } else {
       setCurrentIndex(nextIndex)
       loadQuestion(generatedQuestions[nextIndex])
@@ -228,7 +230,7 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
 
   function handleClose() {
     // Close drawer — previously saved questions are kept
-    onComplete(savedQuestions)
+    onComplete(savedQuestions, false)
   }
 
   // Answer editing helpers

@@ -250,6 +250,8 @@ function CreateCourse() {
      the moment the run ended, which asked the admin to undo rather than to approve —
      eight cards they had not read yet, mixed in with the ones they wrote themselves. */
   const [pendingAssessments, setPendingAssessments] = useState<GeneratedAssessment[] | null>(null)
+  /* How many of the current review's assessments were saved, for the summary toast. */
+  const savedInReview = useRef(0)
 
   /* The Add Content drawer snaps to the bottom edge of the PageHeader's divider —
      so the panel butts directly against the divider line and the tabs row sits
@@ -761,6 +763,7 @@ function CreateCourse() {
 
       /* A set is approved the same way the test is: the drawer holds it, and nothing
          reaches the outline until the admin says so. */
+      savedInReview.current = 0
       setPendingAssessments(drafts)
     }, offsets[offsets.length - 1] + GENERATION_TAIL_MS)
 
@@ -812,15 +815,22 @@ function CreateCourse() {
   const settlePendingAssessment = (index: number, save: boolean) => {
     if (!pendingAssessments) return
     const draft = pendingAssessments[index]
-    if (save && draft) setScormItems((prev) => [...prev, ...placeDrafts([draft])])
+    if (save && draft) {
+      setScormItems((prev) => [...prev, ...placeDrafts([draft])])
+      savedInReview.current += 1
+    }
     const rest = pendingAssessments.filter((_, i) => i !== index)
     if (rest.length) {
       setPendingAssessments(rest)
       return
     }
+    /* Back on the course, one toast sums up the review: how many were saved. Nothing to
+       confirm when every one was discarded, so no toast then. */
+    const saved = savedInReview.current
     window.setTimeout(() => {
       setPendingAssessments(null)
       closeDrawer()
+      if (saved > 0) showToast('success', `${saved} ${saved === 1 ? 'assessment' : 'assessments'} saved`)
     }, 400)
   }
 
