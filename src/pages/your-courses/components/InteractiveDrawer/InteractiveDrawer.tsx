@@ -200,7 +200,7 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
           disabled={!previewQuestion}
           onClick={() => setPreviewing(true)}
         >
-          View
+          Preview
         </Button>
       </div>
 

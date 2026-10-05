@@ -236,6 +236,18 @@
   cursor: pointer;
 }
 
+/* Flat question (one-at-a-time AI reviews): no card fill, so none of the on-card
+   overrides keyed on .st-drawer__question apply and fields keep their drawer styling. */
+.st-drawer__question-flat {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Non-collapsible card (one-at-a-time AI reviews): the head is a label, not a toggle. */
+.st-drawer__question-toggle--static {
+  cursor: default;
+}
+
 .st-drawer__question-toggle:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
@@ -486,15 +498,6 @@
    than stretching a two-item control across 720px. */
 .st-drawer__panes {
   align-self: flex-start;
-}
-
-/* On a generated draft the marked answer is the generator.s claim, not a choice the admin
-   has made — so it takes the same green as the "Correct" badge beside it rather than the
-   amber that means "you picked this". Still selectable: editing the draft is the point. */
-.st-drawer__question--generated .radio--selected .radio__ring,
-.st-drawer__question--generated .radio--selected .radio__ring::after {
-  border-color: var(--success-500);
-  background: var(--success-500);
 }
 
 /* ===== Fields on a card take the elevated fill =====

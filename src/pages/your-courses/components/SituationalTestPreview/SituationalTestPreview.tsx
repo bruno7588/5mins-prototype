@@ -120,6 +120,37 @@ function SituationalTestPreview({ title, brief, questions, onClose }: Props) {
   )
 }
 
+/**
+ * One question on its own, as the learner meets it: the Preview of the one-at-a-time
+ * AI reviews (course assessments and the lesson quiz). Same stage and renderers as the
+ * situational walkthrough, minus the brief and the paging.
+ */
+export function QuestionPreview({ question, onClose }: { question: SituationalQuestion; onClose: () => void }) {
+  return createPortal(
+    <ConfirmModal
+      open
+      onClose={onClose}
+      className="st-preview-modal"
+      ariaLabel={`Preview - ${typeLabel(question.format ?? 'single-choice')}`}
+    >
+      <div className="st-preview__stage">
+        <DesktopPreview>
+          <div className="ql-quizview">
+            <QuizHeader
+              label={typeLabel(question.format ?? 'single-choice')}
+              showHearts={false}
+              showAttempts={false}
+              onClose={onClose}
+            />
+            <QuestionScreen question={question} />
+          </div>
+        </DesktopPreview>
+      </div>
+    </ConfirmModal>,
+    document.body,
+  )
+}
+
 /** The real renderer for the four interactive formats; the options for the rest. */
 function QuestionScreen({ question }: { question: SituationalQuestion }) {
   const payload = question.interactive

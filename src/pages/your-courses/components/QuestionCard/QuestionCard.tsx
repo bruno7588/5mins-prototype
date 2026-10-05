@@ -57,6 +57,10 @@ interface Props {
   generated?: boolean
   /** Required when the card is not read-only. */
   edit?: QuestionCardEdit
+  /** False where the card is the only thing on screen (the one-at-a-time AI reviews):
+   *  no chevron, the head is a plain label rather than a fold toggle, and there is no
+   *  card fill, so the fields sit straight on the drawer with their base styling. */
+  collapsible?: boolean
 }
 
 const isOptionQuestion = (q: SituationalQuestion) =>
@@ -85,6 +89,7 @@ function QuestionCard({
   readOnly,
   generated = false,
   edit,
+  collapsible = true,
 }: Props) {
   const optionQuestion = isOptionQuestion(question)
   const marked = marksCorrect(question)
@@ -93,23 +98,30 @@ function QuestionCard({
   return (
     <div
       className={[
-        'st-drawer__question',
+        collapsible ? 'st-drawer__question' : 'st-drawer__question-flat',
         readOnly && 'st-drawer__question--read-only',
         generated && 'st-drawer__question--generated',
       ].filter(Boolean).join(' ')}
     >
       <div className="st-drawer__question-head">
-        <button
-          type="button"
-          className="st-drawer__question-toggle"
-          onClick={onToggle}
-          aria-expanded={isOpen}
-        >
-          <span className="st-drawer__question-index">{label}</span>
-          {/* Generated questions say which format they are: the admin picked the
-              formats, so the output has to show which one it got. */}
-          {format && <span className="st-drawer__question-format">{typeLabel(format)}</span>}
-        </button>
+        {collapsible ? (
+          <button
+            type="button"
+            className="st-drawer__question-toggle"
+            onClick={onToggle}
+            aria-expanded={isOpen}
+          >
+            <span className="st-drawer__question-index">{label}</span>
+            {/* Generated questions say which format they are: the admin picked the
+                formats, so the output has to show which one it got. */}
+            {format && <span className="st-drawer__question-format">{typeLabel(format)}</span>}
+          </button>
+        ) : (
+          <div className="st-drawer__question-toggle st-drawer__question-toggle--static">
+            <span className="st-drawer__question-index">{label}</span>
+            {format && <span className="st-drawer__question-format">{typeLabel(format)}</span>}
+          </div>
+        )}
         {onRemove && (
           <Tooltip
             text={removeLabel}
@@ -129,17 +141,19 @@ function QuestionCard({
           </Tooltip>
         )}
         {/* Chevron last, hard against the card's right edge. */}
-        <button
-          type="button"
-          className="st-drawer__question-chevron"
-          onClick={onToggle}
-          aria-expanded={isOpen}
-          aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${label}`}
-        >
-          {isOpen
-            ? <ArrowUp2 size={20} color="currentColor" variant="Linear" />
-            : <ArrowDown2 size={20} color="currentColor" variant="Linear" />}
-        </button>
+        {collapsible && (
+          <button
+            type="button"
+            className="st-drawer__question-chevron"
+            onClick={onToggle}
+            aria-expanded={isOpen}
+            aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${label}`}
+          >
+            {isOpen
+              ? <ArrowUp2 size={20} color="currentColor" variant="Linear" />
+              : <ArrowDown2 size={20} color="currentColor" variant="Linear" />}
+          </button>
+        )}
       </div>
 
       {/* The question itself stays visible when the card is folded — it is what

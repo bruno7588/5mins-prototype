@@ -24,6 +24,7 @@ import SituationalTestDrawerContent, {
   type SituationalTestData,
 } from '../SituationalTestDrawer/SituationalTestDrawer'
 import QuestionCard from '../QuestionCard/QuestionCard'
+import { QuestionPreview } from '../SituationalTestPreview/SituationalTestPreview'
 import SectionHeader from '../SectionHeader/SectionHeader'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import './GenerateAssessmentsDrawer.css'
@@ -621,7 +622,7 @@ function AssessmentReview({
   /* Saved and discarded drafts leave the pending set, so the one on screen is always the
      first; the count of those already reviewed keeps the "2/5" position honest. */
   const [reviewed, setReviewed] = useState(0)
-  const [open, setOpen] = useState(true)
+  const [previewing, setPreviewing] = useState(false)
   const total = reviewed + drafts.length
   const draft = drafts[0]
   const question = draft?.questions?.[0]
@@ -635,7 +636,6 @@ function AssessmentReview({
       onDiscard(0)
     }
     setReviewed((n) => n + 1)
-    setOpen(true)
   }
 
   return (
@@ -669,8 +669,9 @@ function AssessmentReview({
                 }}
                 label={`Question ${reviewed + 1}/${total}`}
                 format={draft.type}
-                isOpen={open}
-                onToggle={() => setOpen((v) => !v)}
+                isOpen
+                onToggle={() => {}}
+                collapsible={false}
                 readOnly={false}
                 generated
                 edit={{
@@ -706,12 +707,23 @@ function AssessmentReview({
           <Button disabled={!draft} onClick={() => advance('save')}>
             Save
           </Button>
-          <Button variant="outlined-2" disabled={!draft} onClick={() => advance('discard')}>
+          <Button variant="outlined" disabled={!draft} onClick={() => advance('discard')}>
             Discard
+          </Button>
+          {/* The learner's view of this one, as the course assessment drawers offer. */}
+          <Button variant="outlined-2" disabled={!question} onClick={() => setPreviewing(true)}>
+            Preview
           </Button>
           <ToastContainer toasts={toasts} className="gen-drawer__toasts" />
         </div>
       </div>
+
+      {previewing && question && (
+        <QuestionPreview
+          question={{ ...question, id: `gen-preview-${reviewed}`, format: question.format ?? draft.type }}
+          onClose={() => setPreviewing(false)}
+        />
+      )}
     </>
   )
 }

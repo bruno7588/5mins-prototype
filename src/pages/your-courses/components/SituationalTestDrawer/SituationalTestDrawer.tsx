@@ -538,7 +538,7 @@ function SituationalTestDrawerContent({
             this one only looks at it. */}
         {review && (
           <Button variant="outlined-2" onClick={() => setPreviewing(true)}>
-            View
+            Preview
           </Button>
         )}
       </div>

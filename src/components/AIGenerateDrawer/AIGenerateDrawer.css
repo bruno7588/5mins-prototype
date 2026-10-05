@@ -99,17 +99,6 @@
   min-height: calc(2 * 14px * 1.5 + var(--space-xs));
 }
 
-/* Each question is a card, the course builder's question card (.st-drawer__question):
-   card fill, 12px radius, card shadow. Used for the one being written and the one under
-   review, so what is watched is what is handed over. */
-.ai-drawer-question-card {
-  padding: var(--space-sm) var(--space-m);
-  background: var(--cards-background);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-card);
-}
-
-
 /* The first question writing itself in, in the review's own field and option rows so
    what is watched is what is handed over. The shimmer is the shared `.is-writing`
    (AIWorkingCard.css), which needs a containing block on the element it sits on. */

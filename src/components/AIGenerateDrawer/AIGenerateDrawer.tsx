@@ -6,6 +6,8 @@ import ToastContainer, { useToast } from '../Toast/Toast'
 import Button from '../Button/Button'
 import CloseButton from '../CloseButton/CloseButton'
 import QuestionCard from '@/pages/your-courses/components/QuestionCard/QuestionCard'
+import { QuestionPreview } from '@/pages/your-courses/components/SituationalTestPreview/SituationalTestPreview'
+import type { SituationalQuestion } from '@/pages/your-courses/components/SituationalTestDrawer/SituationalTestDrawer'
 import Collapse from '../Collapse/Collapse'
 import AIWorkingCard from '../AIWorkingCard/AIWorkingCard'
 import { ARRIVE, arriveTransition } from '../AIWorkingCard/arrive'
@@ -81,7 +83,7 @@ function LiveQuestion({ question, activeStep }: { question: Question; activeStep
   if (activeStep < WRITING) return null
 
   return (
-    <div className="ai-drawer-live ai-drawer-question-card" aria-hidden="true">
+    <div className="ai-drawer-live" aria-hidden="true">
       <motion.div className="ai-drawer-field" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
         <span className="ai-drawer-label">What is your question?</span>
         <div className={`ai-drawer-live-input${text.done ? '' : ' is-writing'}`}>
@@ -158,7 +160,7 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
   const [editText, setEditText] = useState('')
   const [editAnswers, setEditAnswers] = useState<Answer[]>([])
   const [editExplanation, setEditExplanation] = useState('')
-  const [cardOpen, setCardOpen] = useState(true)
+  const [previewing, setPreviewing] = useState(false)
 
   const totalQuestions = generatedQuestions.length
   const { toasts, show: showToast } = useToast()
@@ -193,7 +195,6 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
     setEditText(q.text)
     setEditAnswers(q.answers.map(a => ({ ...a })))
     setEditExplanation('')
-    setCardOpen(true)
   }
 
   function advanceOrFinish(newSaved: Question[]) {
@@ -248,6 +249,16 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
     setEditAnswers(prev => [...prev, makeEmptyAnswer(prev.length)])
   }
 
+
+  /* The question under review, in the shape the course builder's card and preview take. */
+  const reviewQuestion: SituationalQuestion = {
+    id: `ai-q-${currentIndex}`,
+    text: editText,
+    options: editAnswers.map(a => a.text),
+    correctIndex: editAnswers.findIndex(a => a.isCorrect),
+    format: 'single-choice',
+    explanation: editExplanation,
+  }
   return (
     <>
       <div className="ai-drawer-overlay" onClick={handleClose} />
@@ -305,18 +316,12 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
               {/* The course builder's question card, so both AI reviews read the same:
                   "Question 1/6" and the format in the card's own head. */}
               <QuestionCard
-                question={{
-                  id: `ai-q-${currentIndex}`,
-                  text: editText,
-                  options: editAnswers.map(a => a.text),
-                  correctIndex: editAnswers.findIndex(a => a.isCorrect),
-                  format: 'single-choice',
-                  explanation: editExplanation,
-                }}
+                question={reviewQuestion}
                 label={`Question ${currentIndex + 1}/${totalQuestions}`}
                 format="single-choice"
-                isOpen={cardOpen}
-                onToggle={() => setCardOpen(v => !v)}
+                isOpen
+                onToggle={() => {}}
+                collapsible={false}
                 readOnly={false}
                 generated
                 edit={{
@@ -347,7 +352,8 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
           >
             <div className="ai-drawer-footer-buttons">
               <Button onClick={handleSave}>Save</Button>
-              <Button variant="outlined-2" onClick={handleDiscard}>Discard</Button>
+              <Button variant="outlined" onClick={handleDiscard}>Discard</Button>
+              <Button variant="outlined-2" onClick={() => setPreviewing(true)}>Preview</Button>
               <ToastContainer toasts={toasts} className="ai-drawer-toasts" />
             </div>
           </motion.div>
@@ -355,6 +361,9 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
         </AnimatePresence>
       </div>
 
+      {previewing && (
+        <QuestionPreview question={reviewQuestion} onClose={() => setPreviewing(false)} />
+      )}
     </>
   )
 }
