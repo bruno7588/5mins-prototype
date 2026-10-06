@@ -86,6 +86,8 @@ function ReviewStep({ courses, committedIds, leftOut, reEnrol, onToggleReEnrol, 
       header: 'Course',
       render: (r) => (
         <span className="tbl-media">
+          {/* Same position counter as the Courses step (AutomationDetailsModal.css). */}
+          <span className="automation-details-row-counter">{r.index + 1}</span>
           <img className="tbl-thumb" src={r.course.thumb} alt="" />
           <span className="tbl-stack">
             <span className="primary">{r.course.name}</span>
@@ -116,12 +118,7 @@ function ReviewStep({ courses, committedIds, leftOut, reEnrol, onToggleReEnrol, 
       header: 'People',
       width: '0 0 240px',
       align: 'right',
-      render: (r) => (
-        <span className="tbl-stack acw-review-people">
-          <span className="primary">{plural(r.enrol, 'person', 'people')} to enrol</span>
-          {r.completed > 0 && <span className="supporting">Includes {r.completed} who completed it</span>}
-        </span>
-      ),
+      render: (r) => `${plural(r.enrol, 'person', 'people')} to enrol`,
     },
   ]
 
@@ -129,7 +126,7 @@ function ReviewStep({ courses, committedIds, leftOut, reEnrol, onToggleReEnrol, 
     <div className="acw-review">
       <div className="acw-review-section">
         <div className="acw-review-section-head">
-          <p className="acw-review-heading">Courses, in order</p>
+          <h4 className="acw-review-heading">Courses</h4>
           <span className="acw-review-edits">
             <Button variant="text" size="md" onClick={() => onEdit('courses')}>
               Edit Courses

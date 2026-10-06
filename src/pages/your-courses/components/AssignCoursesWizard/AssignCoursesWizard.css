@@ -196,7 +196,7 @@
 .acw-review-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-ml);
 }
 
 .acw-review-section-head {
@@ -207,8 +207,8 @@
 
 .acw-review-heading {
   margin: 0;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px; /* H4 */
+  font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
 }
@@ -231,10 +231,4 @@
   height: 100%;
   z-index: 0;
   pointer-events: none;
-}
-
-/* The People cell is right-aligned, so its two lines are too. */
-.acw-review-people {
-  align-items: flex-end;
-  text-align: right;
 }
