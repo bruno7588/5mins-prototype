@@ -152,37 +152,25 @@
   color: var(--text-tertiary);
 }
 
-/* The running step pulses: the two sparkles trade size, the big one shrinking as the
-   small one swells and back again. One glyph breathing rather than the whole icon
-   throbbing — it reads as working without claiming a position on a scale nobody can
-   measure.
+/* The running step turns: only the big sparkle is drawn, and it rotates a quarter turn
+   at a time, resting between turns. The sparkle is four-fold symmetric, so every turn
+   lands on the same shape and the loop has no seam.
 
-   Each path scales about its own centre (fill-box), or they would both swing around the
-   icon's corner instead of staying where they are drawn. */
-.ai-working-step__icon--active .sparkle-icon__big,
+   The path turns about its own centre (fill-box), or it would swing around the icon's
+   corner instead of staying where it is drawn. */
 .ai-working-step__icon--active .sparkle-icon__small {
+  display: none;
+}
+
+.ai-working-step__icon--active .sparkle-icon__big {
   transform-box: fill-box;
   transform-origin: center;
+  animation: ai-sparkle-turn 1.4s ease-in-out infinite;
 }
 
-/* Slower than the arrivals around it — it runs the whole time, and at their pace the two
-   read as one busy surface — but not so slow it stops looking like something working. */
-.ai-working-step__icon--active .sparkle-icon__big {
-  animation: ai-sparkle-big 2.2s ease-in-out infinite;
-}
-
-.ai-working-step__icon--active .sparkle-icon__small {
-  animation: ai-sparkle-small 2.2s ease-in-out infinite;
-}
-
-@keyframes ai-sparkle-big {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(0.72); }
-}
-
-@keyframes ai-sparkle-small {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.45); }
+@keyframes ai-sparkle-turn {
+  0%, 35% { transform: rotate(0deg); }
+  100%    { transform: rotate(90deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -192,8 +180,7 @@
 
   /* Still marked as the running step by its icon and its weight — the motion is what
      goes, not the meaning. */
-  .ai-working-step__icon--active .sparkle-icon__big,
-  .ai-working-step__icon--active .sparkle-icon__small {
+  .ai-working-step__icon--active .sparkle-icon__big {
     animation: none;
   }
 }
