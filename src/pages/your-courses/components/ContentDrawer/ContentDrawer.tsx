@@ -9,7 +9,7 @@ import SituationalTestDrawerContent, {
   type SituationalTestData,
 } from '../SituationalTestDrawer/SituationalTestDrawer'
 import InteractiveDrawer from '../InteractiveDrawer/InteractiveDrawer'
-import GenerateAssessmentsDrawer from '../GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
+import GenerateAssessmentsDrawer, { type GenerationFailure } from '../GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
 import { ResourcesDrawerContent } from '../ResourcesDrawer/ResourcesDrawer'
 import type { CourseResource } from '@/components/ResourceCard/resources'
 import type {
@@ -106,6 +106,8 @@ interface Props {
     onDiscard: (index: number) => void
     onEdit: (index: number, patch: Partial<SituationalQuestion>) => void
   } | null
+  /** The last AI run failed; the drawer shows why above the form or the review. */
+  generationFailure: GenerationFailure | null
   /* Resources — non-null when a card's Edit reopened one. */
   resourceInitial: CourseResource | null
   onResourceSave: (resource: Omit<CourseResource, 'id'>) => void
@@ -143,6 +145,7 @@ function ContentDrawer({
   generating,
   generationReview,
   generationAssessmentReview,
+  generationFailure,
   resourceInitial,
   onResourceSave,
 }: Props) {
@@ -288,6 +291,7 @@ function ContentDrawer({
             generating={generating}
             review={generationReview}
             assessmentReview={generationAssessmentReview}
+            failure={generationFailure}
           />
         )}
         {rendered === 'resources' && (

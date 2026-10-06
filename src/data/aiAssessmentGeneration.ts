@@ -277,7 +277,7 @@ const BEATS_BY_FORMAT: Partial<Record<GeneratableType, Beat[]>> = {
   'single-choice': [
     {
       text: 'A colleague asks you to bend the process "just this once". What do you do first?',
-      options: ['Agree — it saves everyone time', 'Ask what they are trying to achieve', 'Escalate immediately', 'Say nothing and carry on'],
+      options: ['Agree, it saves everyone time', 'Ask what they are trying to achieve', 'Escalate immediately', 'Say nothing and carry on'],
       correctIndex: 1,
     },
     {
@@ -575,7 +575,7 @@ export function generateSituationalTest(
     sourceLessonId: lessons[0].id,
     sourceLessonTitle: lessons[0].title,
     brief:
-      `${opening}${covered} Over the next few decisions you'll be asked to apply it — ` +
+      `${opening}${covered} Over the next few decisions you'll be asked to apply it: ` +
       `there is rarely a perfect option, so pick the one you could defend afterwards.`,
     questions,
   }

@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Add } from 'iconsax-react'
+import { Add, Danger } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
@@ -69,6 +69,28 @@ interface Props {
     /** Edits land on the pending drafts, so save writes them without being told. */
     onEdit: (index: number, patch: Partial<SituationalQuestion>) => void
   } | null
+  /** The last run failed. Shown above the form (nothing was written) or above the
+   *  review (some drafts were written before it stopped). */
+  failure?: GenerationFailure | null
+}
+
+/** What went wrong with a run, in the words the admin reads. */
+export interface GenerationFailure {
+  title: string
+  message: string
+}
+
+/* The DS Alert type (alerts-toast.md): warning, not error, because nothing on the course
+   is lost. It sits where the run happened, not in a toast. */
+function FailureAlert({ failure }: { failure: GenerationFailure }) {
+  return (
+    <Alert
+      type="Alert"
+      customIcon={<Danger size={24} color="currentColor" variant="Bold" className="alert__icon" />}
+      title={failure.title}
+      message={failure.message}
+    />
+  )
 }
 
 /* Names what it makes, not just how — two rail rows share the label "Create With AI",
@@ -129,7 +151,7 @@ const COPY: Record<
  */
 function GenerateAssessmentsDrawer({
   scope, coverage, onClose, onGenerate, onAddLessons,
-  generating = null, review = null, assessmentReview = null,
+  generating = null, review = null, assessmentReview = null, failure = null,
 }: Props) {
   const copy = COPY[scope]
 
@@ -187,6 +209,7 @@ function GenerateAssessmentsDrawer({
               onSaveOne={assessmentReview.onSaveOne}
               onDiscard={assessmentReview.onDiscard}
               onEdit={assessmentReview.onEdit}
+              failure={failure}
             />
           </motion.div>
         ) : review ? (
@@ -292,6 +315,10 @@ function GenerateAssessmentsDrawer({
       <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
 
       <div className="gen-drawer__body">
+        {/* A failed run comes back to the form it started from, instructions intact, so
+            Generate is the retry. */}
+        {failure && <FailureAlert failure={failure} />}
+
         {/* No standing callout about what the generator reads — the source chips below
             say it concretely, and naming the actual sources beats a paragraph
             promising the same thing. */}
@@ -608,9 +635,11 @@ const LiveQuestion = forwardRef<
  * discarded, and the next one rises in. The drawer closes after the last.
  */
 function AssessmentReview({
-  drafts, onClose, onSaveOne, onDiscard, onEdit,
+  drafts, onClose, onSaveOne, onDiscard, onEdit, failure = null,
 }: {
   drafts: GeneratedAssessment[]
+  /** Set when the run stopped early: says how many were written before it did. */
+  failure?: GenerationFailure | null
   onClose: () => void
   /** Adds this one to the course and drops it from the pending set. */
   onSaveOne: (index: number) => void
@@ -647,6 +676,8 @@ function AssessmentReview({
       />
 
       <div className="gen-drawer__body">
+        {failure && <FailureAlert failure={failure} />}
+
         {/* One screen per assessment: the one on screen leaves upward as the next rises
             into its place, as the lesson quiz review does. */}
         <AnimatePresence mode="wait" initial={false}>

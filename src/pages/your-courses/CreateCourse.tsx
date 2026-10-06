@@ -11,7 +11,7 @@ import CourseDetailsTab, {
 import type { CourseDetailsDraft } from './components/CourseDetailsTab/CourseDetailsTab'
 import { saveCourse, type StoredCourse } from './courseStore'
 import type { ContentItem } from './components/ContentList/ContentList'
-import { QUESTION_BEAT_MS } from './components/GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
+import { QUESTION_BEAT_MS, type GenerationFailure } from './components/GenerateAssessmentsDrawer/GenerateAssessmentsDrawer'
 import AddContentMenu, { type AddContentAction } from './components/AddContentMenu/AddContentMenu'
 import type { AssessmentType } from './components/AddContentSidebar/AddContentSidebar'
 import type { ScormFile } from './components/ScormDrawer/ScormDrawer'
@@ -130,14 +130,14 @@ export const ASSESSMENT_CREATING_PASS = 1
 const ASSESSMENT_STEPS = [
   'Reading the source transcripts',
   'Creating assessments',
-  'All done — your assessments are ready',
+  'All done. Your assessments are ready.',
 ]
 
 const SITUATIONAL_STEPS = [
   'Reading the source transcripts',
   'Writing the title and brief',
   'Writing the questions',
-  'All done — your situational test is ready',
+  'All done. Your situational test is ready.',
 ]
 
 /* A generated draft's provenance: which format it is and which lesson it was read
@@ -228,6 +228,8 @@ function CreateCourse() {
     /** The set, for the same reason: an assessments run reveals its cards as they are
      *  written, so they have to exist before the wait does. Empty on a situational run. */
     drafts: GeneratedAssessment[]
+    /** Demo only: how this run fails, if it does (see startRun). */
+    fail: 'total' | 'partial' | null
   } | null>(null)
   const [activeStep, setActiveStep] = useState(0)
   /* Which lesson the first pass is naming. */
@@ -252,6 +254,9 @@ function CreateCourse() {
   const [pendingAssessments, setPendingAssessments] = useState<GeneratedAssessment[] | null>(null)
   /* How many of the current review's assessments were saved, for the summary toast. */
   const savedInReview = useRef(0)
+  /* The last run failed. Shown in the drawer above the form, or above the review when
+     some drafts were written before it stopped; cleared by the next run or by closing. */
+  const [genFailure, setGenFailure] = useState<GenerationFailure | null>(null)
 
   /* The Add Content drawer snaps to the bottom edge of the PageHeader's divider —
      so the panel butts directly against the divider line and the tabs row sits
@@ -330,6 +335,7 @@ function CreateCourse() {
     setPendingTest(null)
     setPendingAssessments(null)
     setTargetSectionId(null)
+    setGenFailure(null)
     setEditingSituationalId(null)
     setEditingAssessmentId(null)
     setEditingInteractiveId(null)
@@ -664,6 +670,7 @@ function CreateCourse() {
         : requested
     setPickedFormats(types)
     setPickedPrompt(prompt)
+    setGenFailure(null)
     /* The working card lives in the drawer, so both routes in — the first generation
        and a confirmed replace, which closed the drawer to show the outline — need it
        open again by the time the run starts. */
@@ -676,6 +683,16 @@ function CreateCourse() {
       : null
     const drafts = situational ? [] : generateSet(types, coverage.withTranscript, details)
     const steps = situational ? SITUATIONAL_STEPS : ASSESSMENT_STEPS
+    /* Demo triggers, since the mock never fails on its own: "#fail" in the instructions
+       fails the run before anything is written; "#partial" stops an assessments run part
+       way, with some drafts complete. A half-written situational test is unusable, so
+       "#partial" fails it outright. */
+    const note = prompt.instructions ?? ''
+    const fail = /#fail\b/i.test(note)
+      ? 'total'
+      : /#partial\b/i.test(note)
+        ? (situational ? 'total' : 'partial')
+        : null
     setRun({
       /* Assessments are written a lesson at a time, so the wait names the lesson
          being read; a situational test is one artefact built in three passes, so it
@@ -695,6 +712,7 @@ function CreateCourse() {
       types: situational ? [...TYPES_BY_SCOPE.situational, ...types] : types,
       draft,
       drafts,
+      fail,
     })
   }
 
@@ -739,6 +757,35 @@ function CreateCourse() {
       return start
     })
     const steps = offsets.map((start, i) => window.setTimeout(() => setActiveStep(i), start))
+
+    /* A failed run stops halfway through writing. Total: back to the form, instructions
+       intact, with the reason above it and Generate as the retry. Partial: the drafts
+       complete by then go to review as usual, with a note that it stopped early. */
+    if (run.fail) {
+      const failAt = offsets[1] + run.stepDurations[1] / 2
+      const failure = window.setTimeout(() => {
+        const kept = run.fail === 'partial' ? run.drafts.slice(0, Math.max(1, Math.floor(run.drafts.length / 2))) : []
+        setRun(null)
+        if (kept.length) {
+          savedInReview.current = 0
+          setPendingAssessments(kept)
+          setGenFailure({
+            title: 'Generation stopped early',
+            message: `We wrote ${kept.length} ${kept.length === 1 ? 'assessment' : 'assessments'} before it stopped. Review ${kept.length === 1 ? 'it' : 'them'}, then generate again for more.`,
+          })
+          return
+        }
+        setGenFailure({
+          title: run.draft ? "Your situational test wasn't created" : "Your assessments weren't created",
+          message: 'Something went wrong on our side. Your instructions are still here, so you can try again.',
+        })
+      }, failAt)
+      return () => {
+        window.clearInterval(reader)
+        steps.forEach(window.clearTimeout)
+        window.clearTimeout(failure)
+      }
+    }
     /* The last step is the card's terminal one — it ticks the moment it's reached
        rather than spinning — so the run ends a beat after it, not a full step. */
     const finish = window.setTimeout(() => {
@@ -1051,6 +1098,7 @@ function CreateCourse() {
               }
             : null
         }
+        generationFailure={genFailure}
         generationCoverage={coverage}
         onGenerate={handleGenerate}
         onAddLessons={() => openDrawer('library')}

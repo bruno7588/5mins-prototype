@@ -342,10 +342,10 @@ function SituationalTestDrawerContent({
               <GuidanceCallout
                 title="Guidelines for writing a brief"
                 bullets={[
-                  'Position — who the user is in this situation',
-                  'Situation — the context, tied to the skill being tested',
-                  'Complication — the specific thing they have to respond to',
-                  'Question and goal — what to decide, and what a good answer achieves',
+                  'Position: who the user is in this situation',
+                  'Situation: the context, tied to the skill being tested',
+                  'Complication: the specific thing they have to respond to',
+                  'Question and goal: what to decide, and what a good answer achieves',
                 ]}
               />
             )}
