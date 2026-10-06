@@ -146,6 +146,7 @@
   padding: 0;
   border: none;
   background: none;
+  cursor: pointer;
 }
 
 .m-lf-side__icon {
@@ -165,6 +166,14 @@
   padding: 5px;
   border: none;
   background: none;
+  cursor: pointer;
+}
+
+.m-lf-side__action:focus-visible,
+.m-lf-side__more:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 .m-lf-side__time {
@@ -224,7 +233,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   border-radius: var(--radius-s);
-  background: var(--cards-background);
+  background: var(--input-background);
   font: 400 12px/1.2 'Poppins', sans-serif;
   color: var(--text-secondary);
 }
@@ -245,6 +254,11 @@
 /* The instructor's page sits under the resources as a plain link, at its own width. */
 .m-lsheet__link {
   align-self: flex-start;
+}
+
+/* 24px under the last resource (the section gap is 12px); only when there are resources above it. */
+.m-lsheet__section > :not(.m-lsheet__link) + .m-lsheet__link {
+  margin-top: calc(var(--space-l) - var(--space-sm));
 }
 
 .m-lsheet__heading {

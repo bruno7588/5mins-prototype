@@ -32,7 +32,7 @@ interface LessonFeedScreenProps {
    prototype yet, so they are inert. */
 function SideAction({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <button type="button" className="m-lf-side__action ui-disabled" disabled>
+    <button type="button" className="m-lf-side__action">
       <span className="m-lf-side__icon">{icon}</span>
       <span className="m-lf-side__label">{label}</span>
     </button>
@@ -115,7 +115,7 @@ function LessonFeedScreen({ lessons, startIndex, onMore, sheetIndex, onIndexChan
                 icon={<MessageText1 size={24} color="var(--neutral-0)" variant="Linear" />}
                 label={`${COMMENT_COUNTS[i % COMMENT_COUNTS.length]} Comments`}
               />
-              <button type="button" className="m-lf-side__more ui-disabled" disabled aria-label="More options">
+              <button type="button" className="m-lf-side__more" aria-label="More options">
                 <More size={32} color="var(--neutral-0)" variant="Linear" style={{ transform: 'rotate(90deg)' }} />
               </button>
               <span className="m-lf-side__time">{lesson.duration.padStart(5, '0')}</span>

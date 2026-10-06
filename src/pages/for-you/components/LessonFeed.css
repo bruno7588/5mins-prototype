@@ -16,7 +16,7 @@
   display: flex;
   gap: var(--space-l);
   padding: var(--space-l);
-  /* Room for the close button, which hangs 48px to the left of the video. */
+  /* Room for the close button, pinned to the far left of the feed. */
   padding-left: calc(var(--space-l) + 48px);
 }
 
@@ -25,15 +25,14 @@
   min-width: 0;
   min-height: 0;
   display: flex;
-  /* Video is centred in the stage, with the close button beside it. */
+  /* Video is centred in the stage. */
   align-items: center;
   justify-content: center;
   /* Sizes the video against the stage in both axes (see .lf-video-wrap). */
   container-type: size;
 }
 
-/* Wrapper shrink-wraps the (overflow-clipped) video so the close button can
-   sit just outside its top-left corner with an 8px gap. */
+/* Wrapper shrink-wraps the (overflow-clipped) video. */
 .lf-video-wrap {
   position: relative;
   /* 9:16 either way: full height until the stage is too narrow, then the height
@@ -45,8 +44,8 @@
 
 .lf-feed .lf-close {
   position: absolute;
-  top: 0;
-  left: -52px; /* 44px button + 8px gap to the video */
+  top: var(--space-l);
+  left: var(--space-l);
   z-index: 2;
 }
 
