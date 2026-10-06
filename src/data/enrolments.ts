@@ -29,10 +29,19 @@ export function enrolmentStatus(person: PersonRow, courseId: string): EnrolmentS
     // 37 is coprime with 716, so exactly 128 indices land below 128.
     return (person.index * 37) % HEADCOUNT < 128 ? 'in-progress' : 'none'
   }
-  // About 10% hold a live enrolment and 5% a completed one, per course.
+  // Groups are picked from a scrambled index: names cycle every 30 people, so a plain
+  // modulo would line whole groups up on one name-sorted page.
+  const g = (person.index * 7919) % 100
+  // About 4% hold a live enrolment in every course ("Enrolled in 4 of 4").
+  if (g < 4) return SEEDED[person.index % 3]
+  // About 8% hold a live enrolment in roughly 60% of courses (5 of 8, say), so partly
+  // enrolled people with a long course list show up too.
+  if (g < 12 && (hash(courseId) * 31 + person.index * 17) % 5 < 3) return SEEDED[person.index % 3]
+  // About 4% hold a live enrolment and 2% a completed one, per course, so most people
+  // show as Not enrolled even with several courses picked.
   const n = (person.index * 53 + hash(courseId) * 7) % 100
-  if (n < 10) return SEEDED[n % 3]
-  if (n < 15) return SEEDED[3]
+  if (n < 4) return SEEDED[n % 3]
+  if (n < 6) return SEEDED[3]
   return 'none'
 }
 

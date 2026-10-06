@@ -10,7 +10,6 @@ import {
   Setting4,
   UserAdd,
   UserEdit,
-  UserTick,
 } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import Badge from '@/components/Badge/Badge'
@@ -78,16 +77,11 @@ type FilterControl =
   | { kind: 'single'; options: DropdownOption[]; placeholder: string }
   | { kind: 'multi'; options: DropdownOption[]; placeholder: string }
 
-// Enrolment values: "enrolled" means enrolled in every selected course, so the
-// single-course "Enrolled" and the multi-course "Enrolled in all" share it.
-const ENROLMENT_SINGLE: DropdownOption[] = [
+// Enrolment values: "enrolled" means enrolled in at least one selected course, matching
+// the "Enrolled in X of N" badge, which no longer has a separate all-courses state.
+const ENROLMENT_OPTIONS: DropdownOption[] = [
   { value: 'not-enrolled', label: 'Not enrolled' },
   { value: 'enrolled', label: 'Enrolled' },
-]
-const ENROLMENT_MULTI: DropdownOption[] = [
-  { value: 'not-enrolled', label: 'Not enrolled' },
-  { value: 'enrolled-in-some', label: 'Enrolled in some' },
-  { value: 'enrolled', label: 'Enrolled in all' },
 ]
 
 const BASE_CONTROLS: Record<string, FilterControl> = {
@@ -164,7 +158,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
   const enrolmentField = (p: PersonRow) => {
     const n = enrolledIn.get(p.id)!.length
-    return n === 0 ? 'not-enrolled' : n === courseIds.length ? 'enrolled' : 'enrolled-in-some'
+    return n === 0 ? 'not-enrolled' : 'enrolled'
   }
 
   const FIELD: Record<string, (p: PersonRow) => string> = {
@@ -178,7 +172,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
   const controls: Record<string, FilterControl> = {
     ...BASE_CONTROLS,
-    enrolment: { kind: 'single', options: single ? ENROLMENT_SINGLE : ENROLMENT_MULTI, placeholder: 'Select enrolment' },
+    enrolment: { kind: 'single', options: ENROLMENT_OPTIONS, placeholder: 'Select enrolment' },
   }
 
   const matches = (p: PersonRow) =>
@@ -366,22 +360,26 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
     if (inCourses.length === 0) {
       return <Badge type="informative" label="Not enrolled" customIcon={<UserAdd size={16} color="currentColor" variant="Linear" />} />
     }
-    if (inCourses.length === n) {
-      return (
-        <Badge
-          type="success"
-          label={single ? 'Enrolled' : 'Enrolled in all'}
-          customIcon={<UserTick size={16} color="currentColor" variant="Linear" />}
-        />
-      )
-    }
-    const names = (ids: string[]) => ids.map((id) => courseNames[id] ?? id).join(', ')
-    const missing = courseIds.filter((c) => !inCourses.includes(c))
-    const sentence = `Enrolled in ${names(inCourses)}. Not yet in ${names(missing)}.`
+    if (single) return <Badge type="success" label="Enrolled" />
+    /* With several courses, one pattern whether partly or fully enrolled ("4 of 4"):
+       hovering the badge lists the courses this person is enrolled in, one per line. */
+    const label = `Enrolled in ${inCourses.length} of ${n}`
+    const courses = inCourses.map((id) => courseNames[id] ?? id)
     return (
-      <Tooltip text={sentence} position="Top" icon={false}>
-        <span className="ppk-status-partial" tabIndex={0} aria-label={sentence}>
-          <Badge type="informative" label={`Enrolled in ${inCourses.length} of ${n}`} />
+      <Tooltip
+        text={
+          <span className="ppk-course-tip">
+            <span className="ppk-course-tip__title">Courses</span>
+            <ul className="ppk-course-tip__list">
+              {courses.map((c) => <li key={c}>{c}</li>)}
+            </ul>
+          </span>
+        }
+        position="Top"
+        icon={false}
+      >
+        <span className="ppk-status-partial" tabIndex={0} aria-label={`${label}: ${courses.join(', ')}`}>
+          <Badge type="informative" label={label} />
         </span>
       </Tooltip>
     )
@@ -411,7 +409,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
       ),
     },
     { key: 'team', header: 'Team', width: '0 0 200px', render: (p) => p.team },
-    { key: 'status', header: 'Status', width: '0 0 180px', align: 'right', render: statusBadge },
+    { key: 'status', header: 'Status', width: '0 0 260px', align: 'right', render: statusBadge },
   ]
 
   // With one course the count reads as "not enrolled"; with several, as people
