@@ -172,7 +172,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
             transition={{ delay: 0.25, duration: 0.35, ease: 'easeOut' }}
           >
             <Button size="lg" onClick={onDone} autoFocus>
-              Back to Your Courses
+              Continue To Courses
             </Button>
           </motion.div>
         </div>

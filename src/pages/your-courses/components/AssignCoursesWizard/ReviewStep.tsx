@@ -126,7 +126,7 @@ function ReviewStep({ courses, committedIds, leftOut, reEnrol, onToggleReEnrol, 
     <div className="acw-review">
       <div className="acw-review-section">
         <div className="acw-review-section-head">
-          <h4 className="acw-review-heading">Courses</h4>
+          <h4 className="acw-review-heading">Review</h4>
           <span className="acw-review-edits">
             <Button variant="text" size="md" onClick={() => onEdit('courses')}>
               Edit Courses
