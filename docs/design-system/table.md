@@ -7,7 +7,9 @@ description: Data table component for 5Mins.ai — card-style bordered rows (not
 
 Data table component for the 5Mins.ai admin and learner platform. Use for any rows of records: learners, enrolments, courses, roles, reports, audit logs, or any "show me rows of data" screen.
 
-Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — full table light `11927:7332` / dark `7896:2624`, row states light `11927:7487` / dark `7896:2804`, header light `11927:7554` / dark `11872:3077`, cell types light `11927:7602` / dark `11766:619` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`).
+Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — full table light `11927:7332` / dark `7896:2624`, row states light `11927:7487` / dark `7896:2804`, header light `11927:7554` / dark `11872:3077`, cell types light `12422:2181` / dark `11766:619` (re-verified 2026-10-06). Colors are semantic tokens resolving per mode (see `colors.md`).
+
+> **Updated 2026-10-06 (re-verified against Figma table data, light `12422:2181` / dark `11766:619`):** the primary line of a two-line cell is Poppins **Medium 500** (was Semibold 600); hovered cell text is `--primary-button-background-hover` (the Figma binding; was `--text-button-hover`); thumbnails are 72×44 (was 90×44); the action-icon hover disc is `--input-background-hover` (was `--input-background`); a progress-bar cell has an 8px gap between bar and label (was 12px); a checkbox in a row hovers with a circular `--cards-background-hover` disc. Single-line cell text stays Regular 400.
 
 > **Updated 2026-09-29 (aligned to prototype usage):** the sort arrow in "Header types" is 16px `ArrowDown`, revealed on hover and rotated for direction, matching `UserProfile.tsx`; it was listed as a 20px arrow.
 
@@ -45,9 +47,9 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — full table light `1192
 - Don't hand-roll a switch in a cell; use Toggle.
 - Don't wrap the table in your own horizontal scroll container; the table owns its scroll and pins the first column.
 - Don't show the pagination footer for a single page of results.
-- Don't turn cell text `--text-button-hover` on hover unless the cell is actually clickable.
+- Don't turn cell text `--primary-button-background-hover` on hover unless the cell is actually clickable.
 
-**Canonical spec:** header bar `var(--input-background)`, `var(--radius-sm)` (12px); row `1px solid var(--border)`, radius 12px; row gap `var(--space-sm)` (12px); cell padding `var(--space-s) var(--space-sm)` (8px 12px); Poppins Regular 14px/1.5, header `--text-secondary`, cells `--text-primary`; row hover `--input-background`; selected row `var(--selected-row)` / `var(--selected-row-hover)`; checkbox column 48px with a 24px checkbox; single-line cell text Regular 400, primary line of a two-line cell Semibold 600. Figma: Library `EC26cSVe9KNTCWXvYovakw`, full table light `11927:7332` / dark `7896:2624`, row states light `11927:7487` / dark `7896:2804`.
+**Canonical spec:** header bar `var(--input-background)`, `var(--radius-sm)` (12px); row `1px solid var(--border)`, radius 12px; row gap `var(--space-sm)` (12px); cell padding `var(--space-s) var(--space-sm)` (8px 12px); Poppins Regular 14px/1.5, header `--text-secondary`, cells `--text-primary`; row hover `--input-background`; selected row `var(--selected-row)` / `var(--selected-row-hover)`; checkbox column 48px with a 24px checkbox; single-line cell text Regular 400, primary line of a two-line cell Medium 500; hovered cell text `--primary-button-background-hover`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, full table light `11927:7332` / dark `7896:2624`, row states light `11927:7487` / dark `7896:2804`.
 
 **Prototype:** `src/components/Table/Table.tsx`
 - `columns: Column<T>[]` with `key`, `header`, `render`, optional `sortable`, `width` (CSS flex shorthand), `align` (`left` | `right` | `center`), `cellClassName`.
@@ -55,6 +57,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — full table light `1192
 - Selection: `selectable`, `isSelected`, `isRowSelectable`, `onToggleRow`, `onToggleAll`, `allSelected`, `selectAllIndeterminate`, `selectAllDisabled`.
 - `onSort(key)`; the sort arrow itself is rendered by the caller inside `header`.
 - `pagination: { from, to, total, onPrev, onNext }`.
+- `footerStart`: content for the left of the footer line, level with the pagination and 20px under the last row (e.g. a step's commit button). Without it the footer is the right-aligned pagination alone.
 
 **Production:**
 
@@ -115,7 +118,9 @@ Use the semantic token names, not raw hex. Cross-reference `colors.md`, `layout.
 | `--text-secondary` | `#454C5E` | `#BFC2CC` | header text, supporting text |
 | `--text-tertiary` | `#656B7C` | `#9EA4B3` | date year line |
 | `--text-disabled` | `#9EA4B3` | `#656B7C` | read-only / disabled cell text |
-| `--text-button-hover` | `#008393` | `#00CEE6` | hovered link-cell text |
+| `--primary-button-background-hover` | `#005862` | `#33E2F7` | hovered link-cell text (Figma `Primary-button-background-hover`) |
+| `--input-background-hover` | `#DFE1E6` | `#2D313D` | action-icon hover disc |
+| `--cards-background-hover` | `#EFF0F2` | `#383D4C` | row checkbox hover disc |
 | `--text-success` | `#11763D` | `#18A957` | success badge text |
 | `--primary-600` | `#00AFC4` | `#00AFC4` | progress bar fill |
 
@@ -129,7 +134,7 @@ All table text is Poppins, `14px`, `line-height: 1.5`.
 |---|---|---|
 | Header cell | Regular (400) | `--text-secondary` |
 | Data cell (single line) | Regular (400) | `--text-primary` |
-| Primary line of a two-line cell | **Semibold (600)**, Paragraph M semibold (Regular when the stack has no supporting line) | `--text-primary` |
+| Primary line of a two-line cell | **Medium (500)** (Regular when the stack has no supporting line) | `--text-primary` |
 | Supporting text line | Regular (400) | `--text-secondary` |
 | Date day line | Regular (400), 14px | `--text-primary` |
 | Date year line | Regular (400), 12px | `--text-tertiary` |
@@ -141,7 +146,7 @@ All table text is Poppins, `14px`, `line-height: 1.5`.
 | State | Background | Border | Cell text |
 |---|---|---|---|
 | Enabled | transparent | `--border` | `--text-primary` |
-| Hover | `--input-background` | `--border` | `--text-primary` (interactive cells go to `--text-button-hover`) |
+| Hover | `--input-background` | `--border` | `--text-primary` (interactive cells go to `--primary-button-background-hover`) |
 | Selected | `--selected-row` | `--selected-row` | `--text-primary` |
 | Selected + Hover | `--selected-row-hover` | `--selected-row-hover` | `--text-primary` |
 | Disabled (read-only) | transparent | `--border` | `--text-disabled` |
@@ -164,17 +169,17 @@ Every cell is `flex: 1; display: flex; align-items: center; padding: 8px 12px; m
 | Type | Composition |
 |---|---|
 | Text | single line, `--text-primary` |
-| Text + supporting | two lines: **Semibold (600)** primary + Regular secondary, `2px` gap |
+| Text + supporting | two lines: **Medium (500)** primary + Regular secondary, `2px` gap |
 | Date | two lines: "Jan 1," (14px) over "2025" (12px `--text-tertiary`) |
 | Text + icon | text + trailing 20px icon, `gap: 12px` |
-| Checkbox | leading 24px checkbox + text, `gap: 12px` (checked fill per `selection-controls.md`) |
+| Checkbox | leading 24px checkbox + text, `gap: 12px` (checked fill per `selection-controls.md`); hover is a circular `--cards-background-hover` disc |
 | Avatar | `<Avatar size={32}>` + text, `gap: 12px` |
 | Avatar + supporting | `<Avatar size={40}>` + two-line info |
 | Avatar group | `<AvatarGroup size={32}>`: overlapping 32px avatars (`-12px` overlap, 1px `--page-background` ring); "+N" is a same-size 32px circle via `remaining` ([avatars.md](avatars.md)) |
 | Illustration | 24px skill / gamification icon + text |
-| Thumbnail | 90×44 rounded (`8px`) image + text (`.tbl-thumb`) |
-| Progress bar | 72px x 8px segmented bar (8 segments) + % label; row height 56px |
-| Action icon | centred 20px kebab in a 28px circular button; hover fills it with `--input-background` |
+| Thumbnail | 72×44 rounded (`8px`) image + text (`.tbl-thumb`) |
+| Progress bar | 72px x 8px segmented bar (8 segments) + % label, `gap: 8px`; row height 56px |
+| Action icon | centred 20px kebab in a 28px circular button; hover fills it with `--input-background-hover` |
 | Badge | status pill (e.g. success: tick + label on `rgba(24,169,87,0.16)`) |
 | Button | small outlined button (`12px` Bold label, `8px` radius) |
 | Dropdown | bordered input + chevron (`12px` radius) |
@@ -182,7 +187,7 @@ Every cell is `flex: 1; display: flex; align-items: center; padding: 8px 12px; m
 ### Cell states (apply within any content type)
 
 - Enabled: base styling.
-- Hover: interactive text turns `--text-button-hover` (`#008393` light / `#00CEE6` dark) — with a two-line stack, the whole cluster turns; action icons gain a circular `--input-background` fill.
+- Hover: interactive text turns `--primary-button-background-hover` (`#005862` light / `#33E2F7` dark) — with a two-line stack, the whole cluster turns; action icons gain a circular `--input-background-hover` fill; row checkboxes gain a circular `--cards-background-hover` fill.
 - Selected: checkbox shows the amber tick.
 - Read-only / disabled: text goes to `--text-disabled`; avatars and thumbnails get `mix-blend-mode: luminosity`; action icons turn `--text-disabled`.
 
@@ -196,7 +201,7 @@ Label format: `"1-10 of 28"`. The footer right-aligns because the table containe
 
 > Superseded, see Usage: the full CSS block and hand-written React component that lived here predated `src/components/Table` (raw amber selected rows, a `.sort` span, fake checkboxes, `.avatar-32` / `.avatar-40` classes, `key={i}`, no `getRowKey`). `Table.tsx` and `Table.css` are the reference; don't copy styles out of them, use the component.
 
-Helper classes `Table.css` provides for cell content: `.tbl-media` (media + text, 12px gap), `.tbl-stack` with `.primary` / `.supporting` (two-line stack, 2px gap), `.tbl-date` with `.day` / `.year`, `.tbl-thumb` (90×44), `.tbl-progress`, `.tbl-action`, `.tbl-col-action` (`flex: 0 0 52px`), and `is-link` / `is-overflow` via `cellClassName`.
+Helper classes `Table.css` provides for cell content: `.tbl-media` (media + text, 12px gap), `.tbl-stack` with `.primary` / `.supporting` (two-line stack, 2px gap), `.tbl-date` with `.day` / `.year`, `.tbl-thumb` (72×44), `.tbl-progress`, `.tbl-action`, `.tbl-col-action` (`flex: 0 0 52px`), and `is-link` / `is-overflow` via `cellClassName`.
 
 ```tsx
 import { ArrowDown } from 'iconsax-react'
@@ -242,12 +247,14 @@ The sort arrow class (`sortArrowClass` above) is the caller's: show it on the ac
 - A progress-bar cell sets the row height to 56px; check vertical rhythm when mixing it with short cells.
 - Read-only rows (e.g. archived records): return `'disabled'` from `getRowState`, which styles the whole row, not individual cells.
 - Empty state: when there are no rows, show an empty-state block in place of the rows, keep the header, and hide pagination.
-- Hover affordance: only turn cell text to `--text-button-hover` for cells that are actually clickable (a name that links to a profile, not a plain status cell).
+- Hover affordance: only turn cell text to `--primary-button-background-hover` for cells that are actually clickable (a name that links to a profile, not a plain status cell).
 - Accessibility: every interactive cell element needs a visible `:focus-visible` indicator and an `aria-label` where there is no text (action icons, pagination nav).
 
 ## Code reality
 
 `src/components/Table/` is the reusable implementation of this spec — use it for any data table, don't hand-roll. Drift from the nodes (flagged, not changed): row hover uses `--input-background` — the translucent tint every table in the app now shares, and the same fill the header bar carries — which matches the Figma row-state variable `Input-background`. Selected rows use `--selected-row` / `--selected-row-hover`, matching the Figma variables.
+
+**Flagged, not changed (2026-10-06):** the Avatar group cell in Figma table data overlaps its 32px avatars by `-8px` with an 11px "+N" on `Page-background-hover` in `--text-secondary`, while the Avatar Group component (`avatars.md`, `AvatarGroup.css`) uses `-12px` and a `--border` bubble with `--text-tertiary` text. The table keeps using `<AvatarGroup>` until the two are reconciled. The checkbox + avatar single-line Enabled variant also uses a 40px avatar where its Hover, Selected and Read-only siblings use 32px; the table follows 32px.
 
 ## Related docs
 

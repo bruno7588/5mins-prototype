@@ -194,11 +194,6 @@
   transform: rotate(180deg);
 }
 
-.ppk-strong {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
 .ppk-empty {
   padding: var(--space-l) 0;
   font-size: 14px;

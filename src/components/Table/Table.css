@@ -189,7 +189,7 @@
 
 .tbl-row:hover .tbl-cell.is-link,
 .tbl-cell.is-hover {
-  color: var(--text-button-hover);
+  color: var(--primary-button-background-hover);
 }
 
 /* Opt-out of the ellipsis clip, for a cell that anchors its own popover.
@@ -226,12 +226,12 @@
   text-overflow: ellipsis;
 }
 
-/* Semibold is what separates a primary line from the supporting one under it,
+/* Medium is what separates a primary line from the supporting one under it,
    so it only applies when there is something to separate from. A lone line in a
    cell is body text and takes Regular — otherwise every one-line cell reads as
-   emphasised against nothing. */
+   emphasised against nothing. Figma table data binds Poppins Medium. */
 .tbl-stack:has(.supporting) .primary {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .tbl-stack .supporting {
@@ -266,20 +266,20 @@
   color: var(--text-tertiary);
 }
 
-/* Thumbnail (90x44 rounded). Use a <span> with background-image for gradients. */
+/* Thumbnail (72x44 rounded, Figma "Thumbnail type"). Use a <span> with background-image for gradients. */
 .tbl-thumb {
-  width: 90px;
+  width: 72px;
   height: 44px;
   border-radius: var(--space-s);
   object-fit: cover;
   background-size: cover;
   background-position: center;
-  flex: 0 0 90px;
+  flex: 0 0 72px;
 }
 
 /* Progress bar */
 .tbl-progress {
-  gap: var(--space-sm);
+  gap: var(--space-s);
   height: 56px;
 }
 
@@ -328,7 +328,7 @@
 }
 
 .tbl-action .icon-btn:hover {
-  background: var(--input-background);
+  background: var(--input-background-hover);
 }
 
 .tbl-action.is-disabled .icon-btn {
@@ -384,4 +384,28 @@
   width: 24px;
   height: 24px;
   padding: var(--space-xs);
+}
+
+/* Checkbox hover in a row is the circular --cards-background-hover disc (Figma
+   table data), one step stronger than the standalone checkbox so it still reads
+   over the row's own --input-background hover. */
+.tbl .checkbox:not(.checkbox--disabled):hover {
+  background: var(--cards-background-hover);
+}
+
+/* Footer line with caller content on the left (footerStart) and the pagination on
+   the right. The extra 8px on top of the 12px row gap puts it 20px under the last
+   row; the start content stays pinned while the table scrolls sideways. */
+.tbl-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  width: 100%;
+  margin-top: var(--space-s);
+}
+
+.tbl-footer-start {
+  position: sticky;
+  left: 0;
 }

@@ -331,7 +331,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
     const ctrl = controls[id]
     const value = filters[id]
     if (ctrl.kind === 'multi') {
-      // The × rides in the field row, 8px after the input; .fms keeps a 260px
+      // The ï¿½ rides in the field row, 8px after the input; .fms keeps a 260px
       // minimum width that would otherwise leave a gap before it.
       return (
         <FilterMultiSelect
@@ -416,7 +416,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
     label: string,
     members: (id: string) => PersonRow[],
   ): Column<T>[] => [
-    { key: 'name', header: label, width: '1 0 240px', render: (r) => <span className="ppk-strong">{r.name}</span> },
+    { key: 'name', header: label, width: '1 0 240px', render: (r) => r.name },
     { key: 'members', header: countHeader, width: '0 0 160px', align: 'right', render: (r) => members(r.id).length },
   ]
 
@@ -441,6 +441,18 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
     />
   )
 
+  // Commits the draft; only committed people count towards the enrolment. Under a
+  // table it sits on the pagination line (footerStart); otherwise on its own.
+  const stepActions = (
+    <Button variant="outlined" size="md" disabled={draftMatchesCommitted} onClick={() => onCommit([...draftIds], leftOut)}>
+      {draftIds.size === 0 ? 'Select People' : `Select ${draftIds.size} ${draftIds.size === 1 ? 'Person' : 'People'}`}
+    </Button>
+  )
+  const tableShown =
+    ((mode === 'people' || mode === 'managers') && visiblePeople.length > 0) ||
+    (mode === 'teams' && visibleTeams.length > 0) ||
+    (mode === 'cohorts' && visibleCohorts.length > 0)
+
   const peopleTable = (
     <Table
       columns={peopleColumns}
@@ -458,6 +470,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
       onToggleAll={togglePage}
       onSort={() => setSortDesc((d) => !d)}
       pagination={pagination(listedPeople.length)}
+      footerStart={stepActions}
     />
   )
 
@@ -600,6 +613,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
               selectAllIndeterminate={!teamsPage.all && teamsPage.some}
               onToggleAll={teamsPage.toggle}
               pagination={pagination(listedTeams.length)}
+              footerStart={stepActions}
             />
           )}
         </>
@@ -623,17 +637,13 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
               selectAllIndeterminate={!cohortsPage.all && cohortsPage.some}
               onToggleAll={cohortsPage.toggle}
               pagination={pagination(listedCohorts.length)}
+              footerStart={stepActions}
             />
           )}
         </>
       )}
 
-      {/* Commits the draft; only committed people count towards the enrolment. */}
-      <div className="ppk-step-actions">
-        <Button variant="outlined" size="md" disabled={draftMatchesCommitted} onClick={() => onCommit([...draftIds], leftOut)}>
-          {draftIds.size === 0 ? 'Select People' : `Select ${draftIds.size} ${draftIds.size === 1 ? 'Person' : 'People'}`}
-        </Button>
-      </div>
+      {!tableShown && <div className="ppk-step-actions">{stepActions}</div>}
     </div>
   )
 }

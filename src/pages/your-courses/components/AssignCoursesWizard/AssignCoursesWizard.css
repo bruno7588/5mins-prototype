@@ -22,7 +22,7 @@
 .acw-courses {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-ml);
 }
 
 /* Rows reuse the Automations course-row styles (AutomationDetailsModal.css);

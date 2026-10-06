@@ -67,6 +67,9 @@ interface TableProps<T> {
   selectAllDisabled?: boolean
   onSort?: (key: string) => void
   pagination?: TablePagination
+  /** Content on the left of the footer line, level with the pagination (e.g. a
+      step's commit button). The footer sits 20px under the last row. */
+  footerStart?: ReactNode
 }
 
 export function Table<T>({
@@ -85,6 +88,7 @@ export function Table<T>({
   selectAllDisabled,
   onSort,
   pagination,
+  footerStart,
 }: TableProps<T>) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [scrolled, setScrolled] = useState(false)
@@ -98,6 +102,34 @@ export function Table<T>({
     i === 0 ? `${base} is-sticky is-sticky-last` : base
   const stickyStyle = (i: number, style?: React.CSSProperties) =>
     i === 0 ? { ...style, left: stickyLeft } : style
+
+  // Single page: the footer would be a count that restates the visible rows
+  // plus two arrows that can never fire.
+  const pager = pagination && (pagination.from > 1 || pagination.to < pagination.total) && (
+    <div className="tbl-pagination">
+      <span className="count">
+        {pagination.from}-{pagination.to} of {pagination.total}
+      </span>
+      <button
+        type="button"
+        className="nav"
+        aria-label="Previous page"
+        aria-disabled={pagination.from <= 1}
+        onClick={pagination.from <= 1 ? undefined : pagination.onPrev}
+      >
+        <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
+      </button>
+      <button
+        type="button"
+        className="nav"
+        aria-label="Next page"
+        aria-disabled={pagination.to >= pagination.total}
+        onClick={pagination.to >= pagination.total ? undefined : pagination.onNext}
+      >
+        <ArrowRight2 size={16} color="currentColor" variant="Linear" />
+      </button>
+    </div>
+  )
 
   return (
     <div
@@ -172,32 +204,13 @@ export function Table<T>({
         )
       })}
 
-      {/* Single page: the footer would be a count that restates the visible rows
-          plus two arrows that can never fire. */}
-      {pagination && (pagination.from > 1 || pagination.to < pagination.total) && (
-        <div className="tbl-pagination">
-          <span className="count">
-            {pagination.from}-{pagination.to} of {pagination.total}
-          </span>
-          <button
-            type="button"
-            className="nav"
-            aria-label="Previous page"
-            aria-disabled={pagination.from <= 1}
-            onClick={pagination.from <= 1 ? undefined : pagination.onPrev}
-          >
-            <ArrowLeft2 size={16} color="currentColor" variant="Linear" />
-          </button>
-          <button
-            type="button"
-            className="nav"
-            aria-label="Next page"
-            aria-disabled={pagination.to >= pagination.total}
-            onClick={pagination.to >= pagination.total ? undefined : pagination.onNext}
-          >
-            <ArrowRight2 size={16} color="currentColor" variant="Linear" />
-          </button>
+      {footerStart ? (
+        <div className="tbl-footer">
+          <div className="tbl-footer-start">{footerStart}</div>
+          {pager}
         </div>
+      ) : (
+        pager
       )}
     </div>
     </div>
