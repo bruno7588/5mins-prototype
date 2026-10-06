@@ -127,24 +127,25 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
       <>
         <div className="acw-pop-option">
           <Radio name={name} label="No due date" checked={!hasDue} onChange={() => onChange({ due: { kind: 'none' } })} />
-          <p className="acw-pop-desc">People can complete it any time</p>
+          <p className="acw-pop-desc">No time limit to complete the course</p>
         </div>
         <div className="acw-pop-option">
           <Radio
             name={name}
-            label="Days after it starts"
+            label="Relative to start date"
             checked={hasDue}
             onChange={() => onChange({ due: { kind: 'relative', daysAfterStart: days } })}
           />
+          <p className="acw-pop-desc">X days after start date</p>
           <div className="acw-pop-inline">
             <InputInteger
               value={days}
               min={1}
               disabled={!hasDue}
-              ariaLabel="Days after it starts"
+              ariaLabel="Days after start date"
               onChange={(n) => onChange({ due: { kind: 'relative', daysAfterStart: n } })}
             />
-            <span className="acw-pop-desc">days</span>
+            <span className="acw-pop-desc">{days === 1 ? 'day' : 'days'}</span>
           </div>
           {hasDue && <p className="acw-pop-desc">Due {fmtDate(offset + days)}</p>}
         </div>
@@ -157,8 +158,8 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
     body = (
       <>
         <div className="acw-pop-option">
-          <Radio name={name} label="Once" checked={!on} onChange={() => onChange({ repeat: { enabled: false } })} />
-          <p className="acw-pop-desc">Enrol once only</p>
+          <Radio name={name} label="One time only" checked={!on} onChange={() => onChange({ repeat: { enabled: false } })} />
+          <p className="acw-pop-desc">Single enrolment with no repetition</p>
         </div>
         <div className="acw-pop-option">
           <Radio
@@ -167,8 +168,9 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
             checked={on}
             onChange={() => onChange({ repeat: { enabled: true, interval, unit } })}
           />
+          <p className="acw-pop-desc">Re-enrol every x months/weeks after start date</p>
           <div className="acw-pop-inline">
-            <span className="acw-pop-desc">Every</span>
+            <span className="acw-pop-desc">Repeat every</span>
             <InputInteger
               value={interval}
               min={1}
@@ -177,11 +179,10 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
               onChange={(n) => onChange({ repeat: { enabled: true, interval: n, unit } })}
             />
             <Dropdown
-              size="sm"
               className="acw-pop-unit"
               options={[
-                { value: 'weeks', label: 'Weeks' },
-                { value: 'months', label: 'Months' },
+                { value: 'weeks', label: 'weeks' },
+                { value: 'months', label: 'months' },
               ]}
               value={unit}
               readOnly={!on}

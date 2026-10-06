@@ -51,7 +51,7 @@ export function dueSummary(c: AssignCourse, offset: number): CellSummary {
 }
 
 export function repeatSummary(c: AssignCourse): CellSummary {
-  if (!c.repeat.enabled) return { title: 'Once' }
+  if (!c.repeat.enabled) return { title: 'One time only' }
   const unit = c.repeat.unit === 'weeks' ? 'week' : 'month'
   return { title: `Every ${plural(c.repeat.interval, unit)}` }
 }

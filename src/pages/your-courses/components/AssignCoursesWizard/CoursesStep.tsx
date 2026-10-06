@@ -1,6 +1,8 @@
 import { useRef, useState, type DragEvent, type KeyboardEvent } from 'react'
 import { ArrowDown2, Trash } from 'iconsax-react'
 import Tooltip from '@/components/Tooltip/Tooltip'
+import EmptyState from '@/components/EmptyState/EmptyState'
+import searchIllustration from '@/assets/empty-state-illustrations/search.svg'
 import '@/pages/automations/AutomationDetailsModal.css'
 import CourseSearch from '@/pages/automations/CourseSearch'
 import SchedulePopover, { type ScheduleColumn } from './SchedulePopover'
@@ -193,7 +195,11 @@ function CoursesStep({ courses, onChange }: Props) {
       <CourseSearch excludeIds={courses.map((c) => c.id)} onSelect={(c) => onChange([...courses, newAssignCourse(c)])} />
 
       {courses.length === 0 ? (
-        <p className="acw-empty">No courses added yet. Search for a course to add it.</p>
+        <EmptyState
+          illustration={<img src={searchIllustration} width={72} height={72} alt="" />}
+          title="No courses added yet"
+          description="Search for a course to add it."
+        />
       ) : (
         <div className="automation-details-table" onDragOver={(e) => dragIndex !== null && e.preventDefault()} onDrop={onDrop}>
           <div className="automation-details-table-header">

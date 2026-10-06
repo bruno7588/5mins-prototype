@@ -25,12 +25,6 @@
   gap: var(--space-s);
 }
 
-.acw-empty {
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
 /* Rows reuse the Automations course-row styles (AutomationDetailsModal.css);
    only what that list lacks is added here. */
 .acw-courses .automation-details-row {
@@ -86,7 +80,7 @@
      overlay (900), below Tooltip (1000) and the Dropdown menu (1060). */
   position: fixed;
   z-index: 950;
-  width: 340px;
+  width: 432px;
   padding: var(--space-s);
   background: var(--cards-background);
   border: 1px solid var(--border-elevated);
@@ -135,9 +129,20 @@
   border-radius: var(--radius-s);
 }
 
+/* Everything under the radio lines up with its label: 24px radio + 8px gap. */
+.acw-pop-option > :not(:first-child) {
+  margin-left: var(--space-xl);
+}
+
+/* The popover is a card, where the disabled --border matches the fill and the
+   stepper loses its edge; keep the card border weight instead. */
+.acw-pop .input-integer--disabled .input-integer__control {
+  border-color: var(--border-elevated);
+}
+
 .acw-pop-option .radio-row__label {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
@@ -145,13 +150,15 @@
   margin: 0;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 .acw-pop-inline {
   display: flex;
   align-items: center;
-  gap: var(--space-s);
+  gap: var(--space-sm);
+  margin-top: var(--space-s);
+  white-space: nowrap;
 }
 
 .acw-pop-unit {
