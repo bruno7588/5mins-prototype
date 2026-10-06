@@ -160,7 +160,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
