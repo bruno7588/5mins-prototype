@@ -1,4 +1,3 @@
-import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import { PEOPLE } from '@/data/people'
@@ -63,7 +62,6 @@ export function reviewCounts(
 interface Props {
   courses: AssignCourse[]
   committedIds: string[]
-  leftOut: number
   /** Courses where the admin chose to restart people still in progress. */
   reEnrol: ReadonlySet<string>
   onToggleReEnrol: (courseId: string) => void
@@ -72,7 +70,7 @@ interface Props {
 
 type CourseRow = ReviewCounts['perCourse'][number] & { index: number }
 
-function ReviewStep({ courses, committedIds, leftOut, reEnrol, onToggleReEnrol, onEdit }: Props) {
+function ReviewStep({ courses, committedIds, reEnrol, onToggleReEnrol, onEdit }: Props) {
   const counts = reviewCounts(courses, committedIds, reEnrol)
   const offsets = startOffsets(courses)
 
@@ -98,7 +96,7 @@ function ReviewStep({ courses, committedIds, leftOut, reEnrol, onToggleReEnrol, 
     },
     {
       key: 'existing',
-      header: 'Currently enrolled',
+      header: 'Already enrolled',
       width: '0 0 280px',
       render: (r) =>
         r.inProgress === 0 ? (
@@ -106,19 +104,22 @@ function ReviewStep({ courses, committedIds, leftOut, reEnrol, onToggleReEnrol, 
         ) : (
           <label className="tbl-media acw-reenrol">
             <Checkbox checked={reEnrol.has(r.course.id)} onChange={() => onToggleReEnrol(r.course.id)} />
+            {/* The label is the action the tick performs, its count underneath (Mobbin:
+                PlanetScale, Calendly import). No consequence line: what a restart
+                does to due dates varies too much to state. */}
             <span className="tbl-stack">
-              <span className="primary">Restart {r.inProgress} in progress</span>
-              <span className="supporting">Resets their progress</span>
+              <span className="primary">Restart enrolment</span>
+              <span className="supporting">{plural(r.inProgress, 'person', 'people')}</span>
             </span>
           </label>
         ),
     },
     {
       key: 'people',
-      header: 'People',
-      width: '0 0 240px',
+      header: 'People to enrol',
+      width: '0 0 160px',
       align: 'right',
-      render: (r) => `${plural(r.enrol, 'person', 'people')} to enrol`,
+      render: (r) => r.enrol,
     },
   ]
 
@@ -142,14 +143,6 @@ function ReviewStep({ courses, committedIds, leftOut, reEnrol, onToggleReEnrol, 
           getRowKey={(r) => r.course.id}
         />
       </div>
-
-      {leftOut > 0 && (
-        <Alert
-          type="Callout"
-          icon
-          title={`${plural(leftOut, 'person', 'people')} ${leftOut === 1 ? 'is' : 'are'} already enrolled in every course, so they've been left out.`}
-        />
-      )}
     </div>
   )
 }

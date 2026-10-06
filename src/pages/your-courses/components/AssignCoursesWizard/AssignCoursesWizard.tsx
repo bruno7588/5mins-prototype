@@ -4,8 +4,7 @@ import { Book1, Danger, Profile2User, TaskSquare } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Tooltip from '@/components/Tooltip/Tooltip'
-import { recordEnrolments, isActivelyEnrolled } from '@/data/enrolments'
-import { PEOPLE } from '@/data/people'
+import { recordEnrolments } from '@/data/enrolments'
 import { SuccessTick } from '@/pages/programs/components/LaunchSuccessModal/LaunchSuccessModal'
 import { confetti } from '@/lib/confetti'
 import WizardShell, { type WizardStep } from '../WizardShell/WizardShell'
@@ -19,8 +18,6 @@ import './AssignCoursesWizard.css'
    enrolment of several people into several courses, from Your Courses. */
 
 type Step = 'courses' | 'people' | 'review'
-
-const BY_ID = new Map(PEOPLE.map((p) => [p.id, p]))
 
 /* One burst on launch (Confetti Studio, src/lib/confetti.js), on a canvas over the
    success screen. The canvas goes once the last piece has faded; with reduced motion
@@ -46,7 +43,6 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   const [step, setStep] = useState<Step>('courses')
   const [courses, setCourses] = useState<AssignCourse[]>([])
   const [committed, setCommitted] = useState<string[]>([])
-  const [leftOut, setLeftOut] = useState(0)
   // Courses where the admin chose to re-enrol people already on them (skipped by default).
   const [reEnrol, setReEnrol] = useState<Set<string>>(new Set())
   const toggleReEnrol = (courseId: string) =>
@@ -63,12 +59,9 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   const courseIds = useMemo(() => courses.map((c) => c.id), [courses])
   const courseNames = useMemo(() => Object.fromEntries(courses.map((c) => [c.id, c.name])), [courses])
 
-  // Removing or adding a course can make a committed person fully enrolled;
-  // they drop out of the count rather than lingering with nothing to enrol.
-  const activeCommitted = useMemo(
-    () => committed.filter((id) => courses.some((c) => !isActivelyEnrolled(BY_ID.get(id)!, c.id))),
-    [committed, courses],
-  )
+  // Everyone picked stays in, including people already in progress on every course:
+  // Review shows them per course and the admin decides whether to restart them.
+  const activeCommitted = committed
 
   const hasWork = courses.length > 0 || committed.length > 0
   const requestClose = () => {
@@ -213,16 +206,14 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
               courseNames={courseNames}
               modes={['all', 'people', 'teams', 'managers', 'cohorts']}
               committedIds={committed}
-              onCommit={(ids, out) => {
-                setCommitted(ids)
-                setLeftOut(out)
-              }}
+              onCommit={(ids) => setCommitted(ids)}
+              includeEnrolled
               onDraftChange={setDraftCount}
             />
           )}
         </div>
         <div hidden={step !== 'review'}>
-          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} leftOut={leftOut} reEnrol={reEnrol} onToggleReEnrol={toggleReEnrol} onEdit={setStep} />}
+          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} reEnrol={reEnrol} onToggleReEnrol={toggleReEnrol} onEdit={setStep} />}
         </div>
       </WizardShell>
 

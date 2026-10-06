@@ -124,9 +124,12 @@ interface Props {
   onDraftChange?: (count: number) => void
   /** Limited Admins only see people inside their scope (D8). */
   inScope?: (p: PersonRow) => boolean
+  /** People already enrolled in every course stay pickable; the caller decides what
+   *  happens to them (Assign courses asks per course on Review). */
+  includeEnrolled?: boolean
 }
 
-function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, committedIds, onCommit, onDraftChange, inScope }: Props) {
+function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, committedIds, onCommit, onDraftChange, inScope, includeEnrolled = false }: Props) {
   const [mode, setMode] = useState<PickerMode>(modes[0])
 
   const [filters, setFilters] = useState<Record<string, FilterValue>>(initialFilters)
@@ -157,7 +160,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
   }, [courseKey])
 
   const isFull = (p: PersonRow) => courseIds.length > 0 && enrolledIn.get(p.id)!.length === courseIds.length
-  const selectable = (p: PersonRow) => !isFull(p)
+  const selectable = (p: PersonRow) => includeEnrolled || !isFull(p)
 
   const enrolmentField = (p: PersonRow) => {
     const n = enrolledIn.get(p.id)!.length
@@ -413,7 +416,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
   // With one course the count reads as "not enrolled"; with several, as people
   // who can still be enrolled in at least one course.
-  const countHeader = single ? 'Not enrolled' : 'People'
+  const countHeader = single && !includeEnrolled ? 'Not enrolled' : 'People'
   const groupColumns = <T extends { id: string; name: string }>(
     label: string,
     members: (id: string) => PersonRow[],
