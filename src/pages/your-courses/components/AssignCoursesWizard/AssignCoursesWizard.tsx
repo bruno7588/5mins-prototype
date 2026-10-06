@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useState } from 'react'
-import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { MotionConfig, motion } from 'framer-motion'
 import { Book1, Danger, Profile2User, TaskSquare } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { recordEnrolments, isActivelyEnrolled } from '@/data/enrolments'
 import { PEOPLE } from '@/data/people'
-import { ConfettiLayer, LAST_LANDING_MS, SuccessTick } from '@/pages/programs/components/LaunchSuccessModal/LaunchSuccessModal'
+import { SuccessTick } from '@/pages/programs/components/LaunchSuccessModal/LaunchSuccessModal'
+import { confetti } from '@/lib/confetti'
 import WizardShell, { type WizardStep } from '../WizardShell/WizardShell'
 import PeoplePicker from '../PeoplePicker/PeoplePicker'
 import CoursesStep from './CoursesStep'
-import ReviewStep, { reviewCounts } from './ReviewStep'
+import ReviewStep, { reviewCounts, willEnrol } from './ReviewStep'
 import { plural, type AssignCourse } from './schedule'
 import './AssignCoursesWizard.css'
 
@@ -20,6 +21,20 @@ import './AssignCoursesWizard.css'
 type Step = 'courses' | 'people' | 'review'
 
 const BY_ID = new Map(PEOPLE.map((p) => [p.id, p]))
+
+/* One burst on launch (Confetti Studio, src/lib/confetti.js), on a canvas over the
+   success screen. The canvas goes once the last piece has faded; with reduced motion
+   the script draws nothing. */
+function LaunchConfetti() {
+  const ref = useRef<HTMLCanvasElement>(null)
+  const [done, setDone] = useState(false)
+  useEffect(() => {
+    if (!ref.current) return
+    return confetti(ref.current, { transparent: true, onComplete: () => setDone(true) })
+  }, [])
+  if (done) return null
+  return <canvas ref={ref} className="acw-confetti" aria-hidden="true" />
+}
 
 interface Props {
   onClose: () => void
@@ -32,10 +47,18 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   const [courses, setCourses] = useState<AssignCourse[]>([])
   const [committed, setCommitted] = useState<string[]>([])
   const [leftOut, setLeftOut] = useState(0)
+  // Courses where the admin chose to re-enrol people already on them (skipped by default).
+  const [reEnrol, setReEnrol] = useState<Set<string>>(new Set())
+  const toggleReEnrol = (courseId: string) =>
+    setReEnrol((prev) => {
+      const next = new Set(prev)
+      if (next.has(courseId)) next.delete(courseId)
+      else next.add(courseId)
+      return next
+    })
   const [draftCount, setDraftCount] = useState(0)
   const [confirmDiscard, setConfirmDiscard] = useState(false)
   const [launched, setLaunched] = useState<{ courses: number; people: number } | null>(null)
-  const [raining, setRaining] = useState(false)
 
   const courseIds = useMemo(() => courses.map((c) => c.id), [courses])
   const courseNames = useMemo(() => Object.fromEntries(courses.map((c) => [c.id, c.name])), [courses])
@@ -54,20 +77,13 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
     else onClose()
   }
 
-  useEffect(() => {
-    if (!launched) return
-    setRaining(true)
-    const t = setTimeout(() => setRaining(false), LAST_LANDING_MS + 100)
-    return () => clearTimeout(t)
-  }, [launched])
-
   const launch = () => {
     const pairs = courses.flatMap((c) =>
       activeCommitted
-        .filter((id) => !isActivelyEnrolled(BY_ID.get(id)!, c.id))
+        .filter((id) => willEnrol(id, c.id, reEnrol))
         .map((personId) => ({ personId, courseId: c.id })),
     )
-    const counts = reviewCounts(courses, activeCommitted)
+    const counts = reviewCounts(courses, activeCommitted, reEnrol)
     recordEnrolments(pairs)
     setLaunched({ courses: courses.length, people: counts.people })
   }
@@ -128,7 +144,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
 
   const success = launched && (
     <MotionConfig reducedMotion="user">
-      <AnimatePresence>{raining && <ConfettiLayer />}</AnimatePresence>
+      <LaunchConfetti />
       <div className="acw-success">
         <div className="lsm-content">
           <motion.div
@@ -206,7 +222,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
           )}
         </div>
         <div hidden={step !== 'review'}>
-          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} leftOut={leftOut} onEdit={setStep} />}
+          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} leftOut={leftOut} reEnrol={reEnrol} onToggleReEnrol={toggleReEnrol} onEdit={setStep} />}
         </div>
       </WizardShell>
 

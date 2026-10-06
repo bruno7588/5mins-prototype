@@ -18,6 +18,7 @@ import Checkbox from '@/components/Checkbox/Checkbox'
 import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Collapse from '@/components/Collapse/Collapse'
+import EmptyState from '@/components/EmptyState/EmptyState'
 import Dropdown, { type DropdownOption } from '@/components/Dropdown/Dropdown'
 import Search from '@/components/Search/Search'
 import Table, { type Column } from '@/components/Table/Table'
@@ -26,6 +27,7 @@ import FilterListbox, { type FilterGroup, type FilterItem } from '@/pages/learni
 import FilterMultiSelect from '@/pages/learning-records/components/FilterControls/FilterMultiSelect'
 import { COHORTS, COMPANY, JOB_ROLES, PEOPLE, REGIONS, TEAMS, type CohortRow, type PersonRow } from '@/data/people'
 import { isActivelyEnrolled } from '@/data/enrolments'
+import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import './PeoplePicker.css'
 
 /* People step shared by "Enrol people to your course" (one course) and
@@ -452,6 +454,21 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
     ((mode === 'people' || mode === 'managers') && visiblePeople.length > 0) ||
     (mode === 'teams' && visibleTeams.length > 0) ||
     (mode === 'cohorts' && visibleCohorts.length > 0)
+  // Nothing to pick: the no-results empty state stands in for the list, and the
+  // commit button goes with it.
+  const allCount = filteredPeople.filter(selectable).length
+  const noResults =
+    (mode === 'all' && allCount === 0) ||
+    ((mode === 'people' || mode === 'managers') && visiblePeople.length === 0) ||
+    (mode === 'teams' && visibleTeams.length === 0) ||
+    (mode === 'cohorts' && visibleCohorts.length === 0)
+  const emptyState = (title: string) => (
+    <EmptyState
+      illustration={<img src={noResultsIllustration} width={72} height={72} alt="" />}
+      title={title}
+      description={query.trim() ? 'Try a different search or remove a filter.' : 'Try removing a filter.'}
+    />
+  )
 
   const peopleTable = (
     <Table
@@ -572,7 +589,8 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
         ))}
       </div>
 
-      {mode === 'all' && (
+      {mode === 'all' && allCount === 0 && emptyState('No people match these filters')}
+      {mode === 'all' && allCount > 0 && (
         /* A single DS table row (table.md), so padding, hover and selected
            states match the tables. */
         <div
@@ -583,7 +601,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
             <Checkbox checked={allSelected} onChange={() => setAllSelected((v) => !v)} />
           </div>
           <div className="tbl-cell">
-            All {COMPANY} people ({filteredPeople.filter(selectable).length})
+            All {COMPANY} people ({allCount})
           </div>
         </div>
       )}
@@ -591,7 +609,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
       {(mode === 'people' || mode === 'managers') && (
         <>
           {searchFor(mode === 'managers' ? 'Search for managers' : 'Search for people')}
-          {visiblePeople.length === 0 ? <p className="ppk-empty">No people match these filters.</p> : peopleTable}
+          {visiblePeople.length === 0 ? emptyState('No people match these filters') : peopleTable}
         </>
       )}
 
@@ -599,7 +617,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
         <>
           {searchFor('Search for teams')}
           {visibleTeams.length === 0 ? (
-            <p className="ppk-empty">No teams match “{query.trim()}”.</p>
+            emptyState(query.trim() ? `No teams match “${query.trim()}”` : 'No teams match these filters')
           ) : (
             <Table
               columns={groupColumns<TeamRow>('Team', teamMembers)}
@@ -623,7 +641,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
         <>
           {searchFor('Search for cohorts')}
           {visibleCohorts.length === 0 ? (
-            <p className="ppk-empty">No cohorts match “{query.trim()}”.</p>
+            emptyState(query.trim() ? `No cohorts match “${query.trim()}”` : 'No cohorts match these filters')
           ) : (
             <Table
               columns={groupColumns<CohortRow>('Cohort', cohortMembers)}
@@ -643,7 +661,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
         </>
       )}
 
-      {!tableShown && <div className="ppk-step-actions">{stepActions}</div>}
+      {!tableShown && !noResults && <div className="ppk-step-actions">{stepActions}</div>}
     </div>
   )
 }

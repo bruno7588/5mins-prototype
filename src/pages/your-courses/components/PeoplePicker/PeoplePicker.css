@@ -194,13 +194,6 @@
   transform: rotate(180deg);
 }
 
-.ppk-empty {
-  padding: var(--space-l) 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
 .ppk-step-actions {
   display: flex;
   align-items: center;

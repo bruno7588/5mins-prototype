@@ -1,14 +1,12 @@
-import { Profile2User, TickCircle } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
+import Checkbox from '@/components/Checkbox/Checkbox'
 import { PEOPLE } from '@/data/people'
 import { hasCompleted, isActivelyEnrolled } from '@/data/enrolments'
-import { SummaryCard, SummaryCardList } from '@/pages/automations/SummaryCards'
+import Table, { type Column } from '@/components/Table/Table'
 import { plural, startOffsets, timingLine, type AssignCourse } from './schedule'
 
-/* Review (DES-332 AC 10-12, D2, D14, D18) in the Automations review language:
-   grouped summary rows, each a tinted 32px icon square (Figma "Filters
-   thumbnail" 9136:22791) over a title and a secondary meta line. */
+/* Review (DES-332 AC 10-12, D2, D14, D18): one card row per course, in launch order. */
 
 const BY_ID = new Map(PEOPLE.map((p) => [p.id, p]))
 
@@ -16,18 +14,39 @@ export interface ReviewCounts {
   people: number
   enrolments: number
   skipped: number
-  perCourse: { course: AssignCourse; enrol: number; skipped: number }[]
+  perCourse: {
+    course: AssignCourse
+    enrol: number
+    skipped: number
+    /** Already on the course: still in progress, and completed. */
+    inProgress: number
+    completed: number
+  }[]
   reEnrolled: number
   teams: [string, number][]
 }
 
-export function reviewCounts(courses: AssignCourse[], committedIds: string[]): ReviewCounts {
+/** Whether this person gets an enrolment in this course. Completing a course ends the
+ *  enrolment, so people who completed it are enrolled again as a matter of course;
+ *  people still in progress are skipped unless the admin chose to restart them. */
+export function willEnrol(personId: string, courseId: string, reEnrol: ReadonlySet<string>) {
+  const p = BY_ID.get(personId)!
+  return reEnrol.has(courseId) || !isActivelyEnrolled(p, courseId)
+}
+
+export function reviewCounts(
+  courses: AssignCourse[],
+  committedIds: string[],
+  reEnrol: ReadonlySet<string> = new Set(),
+): ReviewCounts {
   const people = committedIds.map((id) => BY_ID.get(id)!).filter(Boolean)
   const perCourse = courses.map((course) => {
-    const skipped = people.filter((p) => isActivelyEnrolled(p, course.id)).length
-    return { course, enrol: people.length - skipped, skipped }
+    const inProgress = people.filter((p) => isActivelyEnrolled(p, course.id)).length
+    const completed = people.filter((p) => hasCompleted(p, course.id)).length
+    const skipped = reEnrol.has(course.id) ? 0 : inProgress
+    return { course, enrol: people.length - skipped, skipped, inProgress, completed }
   })
-  const enrolling = people.filter((p) => courses.some((c) => !isActivelyEnrolled(p, c.id)))
+  const enrolling = people.filter((p) => courses.some((c) => willEnrol(p.id, c.id, reEnrol)))
   const reEnrolled = people.filter((p) => courses.some((c) => hasCompleted(p, c.id))).length
   const byTeam = new Map<string, number>()
   enrolling.forEach((p) => byTeam.set(p.team, (byTeam.get(p.team) ?? 0) + 1))
@@ -45,95 +64,95 @@ interface Props {
   courses: AssignCourse[]
   committedIds: string[]
   leftOut: number
+  /** Courses where the admin chose to restart people still in progress. */
+  reEnrol: ReadonlySet<string>
+  onToggleReEnrol: (courseId: string) => void
   onEdit: (step: 'courses' | 'people') => void
 }
 
-const MAX_TEAMS = 3
+type CourseRow = ReviewCounts['perCourse'][number] & { index: number }
 
-function ReviewStep({ courses, committedIds, leftOut, onEdit }: Props) {
-  const counts = reviewCounts(courses, committedIds)
+function ReviewStep({ courses, committedIds, leftOut, reEnrol, onToggleReEnrol, onEdit }: Props) {
+  const counts = reviewCounts(courses, committedIds, reEnrol)
   const offsets = startOffsets(courses)
 
-  const skipBullets = counts.perCourse
-    .filter((r) => r.skipped > 0)
-    .map(
-      (r) =>
-        `${plural(r.skipped, 'person', 'people')} ${r.skipped === 1 ? 'is' : 'are'} already enrolled in ${r.course.name}, so they'll be skipped for that course.`,
-    )
-  const notes = [
-    ...skipBullets,
-    counts.reEnrolled > 0 && 'People who have completed a course will be enrolled again.',
-    leftOut > 0 &&
-      `${plural(leftOut, 'person', 'people')} ${leftOut === 1 ? 'is' : 'are'} already enrolled in every course, so they've been left out.`,
-  ].filter(Boolean) as string[]
-
-  const teamNames = counts.teams.slice(0, MAX_TEAMS).map(([t]) => t)
-  const moreTeams = counts.teams.length - teamNames.length
-  const teamsMeta = [...teamNames, moreTeams > 0 && `${moreTeams} more ${moreTeams === 1 ? 'team' : 'teams'}`]
-    .filter(Boolean)
-    .join(' · ')
-
-  const icon = (I: typeof TickCircle) => <I size={16} color="currentColor" variant="Linear" />
+  /* Admins think courses first, then people: one card row per course, in launch order,
+     with who it enrols. People who completed a course are enrolled again; people still in
+     progress are skipped by default, and the admin decides per course whether to restart
+     them, since that resets their progress. */
+  const columns: Column<CourseRow>[] = [
+    {
+      key: 'course',
+      header: 'Course',
+      render: (r) => (
+        <span className="tbl-media">
+          <img className="tbl-thumb" src={r.course.thumb} alt="" />
+          <span className="tbl-stack">
+            <span className="primary">{r.course.name}</span>
+            <span className="supporting">{timingLine(r.course, offsets[r.index])}</span>
+          </span>
+        </span>
+      ),
+    },
+    {
+      key: 'existing',
+      header: 'Currently enrolled',
+      width: '0 0 280px',
+      render: (r) =>
+        r.inProgress === 0 ? (
+          'None'
+        ) : (
+          <label className="tbl-media acw-reenrol">
+            <Checkbox checked={reEnrol.has(r.course.id)} onChange={() => onToggleReEnrol(r.course.id)} />
+            <span className="tbl-stack">
+              <span className="primary">Restart {r.inProgress} in progress</span>
+              <span className="supporting">Resets their progress</span>
+            </span>
+          </label>
+        ),
+    },
+    {
+      key: 'people',
+      header: 'People',
+      width: '0 0 240px',
+      align: 'right',
+      render: (r) => (
+        <span className="tbl-stack acw-review-people">
+          <span className="primary">{plural(r.enrol, 'person', 'people')} to enrol</span>
+          {r.completed > 0 && <span className="supporting">Includes {r.completed} who completed it</span>}
+        </span>
+      ),
+    },
+  ]
 
   return (
     <div className="acw-review">
-      <div className="acw-review-intro">
-        <h3 className="acw-review-title">Ready to launch?</h3>
-        <p className="acw-review-sub">Check who will be enrolled and when before you launch.</p>
-      </div>
-
-      <div className="acw-review-section">
-        <div className="acw-review-section-head">
-          <p className="acw-review-heading">Summary</p>
-          <Button variant="text" size="md" onClick={() => onEdit('people')}>
-            Edit People
-          </Button>
-        </div>
-        <SummaryCardList grouped>
-          <SummaryCard
-            badge={icon(Profile2User)}
-            tone="var(--course-assessments)"
-            title={`${plural(counts.people, 'person', 'people')} will be enrolled in ${plural(courses.length, 'course')}`}
-            meta={teamsMeta ? `From ${teamsMeta}` : undefined}
-          />
-          <SummaryCard
-            badge={icon(TickCircle)}
-            tone="var(--success-500)"
-            title={`${plural(counts.enrolments, 'enrolment')} to create`}
-            meta={counts.skipped > 0 ? `${counts.skipped} skipped, already enrolled` : 'None skipped'}
-          />
-        </SummaryCardList>
-      </div>
-
-      {notes.length > 0 && (
-        <Alert
-          type="Callout"
-          icon
-          title={skipBullets.length > 0 ? 'Some enrolments will be skipped' : notes[0]}
-          bullets={skipBullets.length > 0 ? notes : notes.slice(1)}
-        />
-      )}
-
       <div className="acw-review-section">
         <div className="acw-review-section-head">
           <p className="acw-review-heading">Courses, in order</p>
-          <Button variant="text" size="md" onClick={() => onEdit('courses')}>
-            Edit Courses
-          </Button>
+          <span className="acw-review-edits">
+            <Button variant="text" size="md" onClick={() => onEdit('courses')}>
+              Edit Courses
+            </Button>
+            <Button variant="text" size="md" onClick={() => onEdit('people')}>
+              Edit People
+            </Button>
+          </span>
         </div>
-        <SummaryCardList grouped>
-          {counts.perCourse.map((r, i) => (
-            <SummaryCard
-              key={r.course.id}
-              badge={i + 1}
-              title={r.course.name}
-              meta={[timingLine(r.course, offsets[i]), `${r.enrol} to enrol`, r.skipped > 0 && `${r.skipped} skipped`]
-                .filter(Boolean)
-                .join(' · ')}
-            />
-          ))}
-        </SummaryCardList>
+        <Table
+          columns={columns}
+          rows={counts.perCourse.map((r, index) => ({ ...r, index }))}
+          getRowKey={(r) => r.course.id}
+        />
       </div>
+
+      {leftOut > 0 && (
+        <Alert
+          type="Callout"
+          icon
+          title={`${plural(leftOut, 'person', 'people')} ${leftOut === 1 ? 'is' : 'are'} already enrolled in every course, so they've been left out.`}
+        />
+      )}
     </div>
   )
 }

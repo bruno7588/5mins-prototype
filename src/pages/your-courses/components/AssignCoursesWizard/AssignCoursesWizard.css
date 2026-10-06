@@ -171,30 +171,6 @@
   flex-direction: column;
   gap: var(--space-l);
   width: 100%;
-  max-width: 880px;
-  margin: 0 auto;
-}
-
-.acw-review-intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-xs);
-}
-
-.acw-review-title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.acw-review-sub {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
 }
 
 /* ── Success ── */
@@ -235,4 +211,30 @@
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
+}
+
+.acw-review-edits {
+  display: flex;
+  gap: var(--space-m);
+}
+
+/* The re-enrol choice: the label text toggles the checkbox too. */
+.acw-reenrol {
+  cursor: pointer;
+}
+
+/* Launch confetti canvas: fills the success screen, under its content, never in the way. */
+.acw-confetti {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* The People cell is right-aligned, so its two lines are too. */
+.acw-review-people {
+  align-items: flex-end;
+  text-align: right;
 }

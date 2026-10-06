@@ -287,7 +287,7 @@ button.wzs-stepper-step:focus-visible {
 .wzs-footer {
   position: sticky;
   bottom: 0;
-  z-index: 2;
+  z-index: 4; /* above a table's pinned first column (z-index 3, Table.css) */
   background: var(--page-background);
   border-top: 1px solid var(--border);
 }
