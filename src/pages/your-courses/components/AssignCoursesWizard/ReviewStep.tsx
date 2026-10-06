@@ -1,83 +1,129 @@
+import { useState } from 'react'
 import Button from '@/components/Button/Button'
 import Checkbox from '@/components/Checkbox/Checkbox'
+import InfoIcon from '@/components/icons/InfoIcon'
+import AffectedPeopleDrawer from './AffectedPeopleDrawer'
 import { PEOPLE } from '@/data/people'
-import { hasCompleted, isActivelyEnrolled } from '@/data/enrolments'
+import { enrolmentStatus, type EnrolmentStatus } from '@/data/enrolments'
 import Table, { type Column } from '@/components/Table/Table'
 import { plural, startOffsets, timingLine, type AssignCourse } from './schedule'
 
-/* Review (DES-332 AC 10-12, D2, D14, D18): one card row per course, in launch order. */
+/* Review (DES-332 AC 10-12): one card row per course, in launch order, and one callout
+   for people who already have some of the courses. */
 
 const BY_ID = new Map(PEOPLE.map((p) => [p.id, p]))
 
-export interface ReviewCounts {
-  people: number
-  enrolments: number
-  skipped: number
-  perCourse: {
-    course: AssignCourse
-    enrol: number
-    skipped: number
-    /** Already on the course: still in progress, and completed. */
-    inProgress: number
-    completed: number
-  }[]
-  reEnrolled: number
-  teams: [string, number][]
+/** What the admin chose for people who already have a course. Both off by default:
+ *  launching without touching them leaves every existing enrolment and completion alone. */
+export interface ExistingChoice {
+  /** Restart people with an active enrolment (not started, in progress, overdue). */
+  restart: boolean
+  /** Enrol people who completed the course again. */
+  again: boolean
 }
 
-/** Whether this person gets an enrolment in this course. Completing a course ends the
- *  enrolment, so people who completed it are enrolled again as a matter of course;
- *  people still in progress are skipped unless the admin chose to restart them. */
-export function willEnrol(personId: string, courseId: string, reEnrol: ReadonlySet<string>) {
-  const p = BY_ID.get(personId)!
-  return reEnrol.has(courseId) || !isActivelyEnrolled(p, courseId)
+export type Outcome = 'new' | 'skip' | 'restart' | 'again'
+
+const isActive = (s: EnrolmentStatus) => s === 'not-started' || s === 'in-progress' || s === 'overdue'
+
+/** What launching does for one person in one course. */
+export function outcomeFor(personId: string, courseId: string, choice: ExistingChoice): Outcome {
+  const s = enrolmentStatus(BY_ID.get(personId)!, courseId)
+  if (isActive(s)) return choice.restart ? 'restart' : 'skip'
+  if (s === 'completed') return choice.again ? 'again' : 'skip'
+  return 'new'
+}
+
+export interface CourseCounts {
+  course: AssignCourse
+  /** Enrolments this course will create: new + restarted + enrolled again. */
+  enrol: number
+  fresh: number
+  skipped: number
+  restarted: number
+  again: number
+}
+
+export interface AffectedRow {
+  personId: string
+  name: string
+  courseId: string
+  courseName: string
+  status: EnrolmentStatus
+}
+
+export interface ReviewCounts {
+  /** Unique people who get at least one enrolment. */
+  people: number
+  perCourse: CourseCounts[]
+  /** Unique people with an active enrolment in at least one selected course. */
+  current: number
+  /** Of those, unique people overdue in at least one selected course. */
+  overdue: number
+  /** Unique people who completed at least one selected course. */
+  completed: number
+  /** Every person × course pair that already exists, for the View People list. */
+  affected: AffectedRow[]
 }
 
 export function reviewCounts(
   courses: AssignCourse[],
   committedIds: string[],
-  reEnrol: ReadonlySet<string> = new Set(),
+  choice: ExistingChoice = { restart: false, again: false },
 ): ReviewCounts {
-  const people = committedIds.map((id) => BY_ID.get(id)!).filter(Boolean)
+  const enrolling = new Set<string>()
+  const current = new Set<string>()
+  const overdue = new Set<string>()
+  const completed = new Set<string>()
+  const affected: AffectedRow[] = []
+
   const perCourse = courses.map((course) => {
-    const inProgress = people.filter((p) => isActivelyEnrolled(p, course.id)).length
-    const completed = people.filter((p) => hasCompleted(p, course.id)).length
-    const skipped = reEnrol.has(course.id) ? 0 : inProgress
-    return { course, enrol: people.length - skipped, skipped, inProgress, completed }
+    const c: CourseCounts = { course, enrol: 0, fresh: 0, skipped: 0, restarted: 0, again: 0 }
+    committedIds.forEach((id) => {
+      const s = enrolmentStatus(BY_ID.get(id)!, course.id)
+      if (isActive(s)) current.add(id)
+      if (s === 'overdue') overdue.add(id)
+      if (s === 'completed') completed.add(id)
+      if (s !== 'none') {
+        affected.push({ personId: id, name: BY_ID.get(id)!.name, courseId: course.id, courseName: course.name, status: s })
+      }
+      const o = outcomeFor(id, course.id, choice)
+      if (o === 'skip') c.skipped++
+      else {
+        enrolling.add(id)
+        if (o === 'new') c.fresh++
+        else if (o === 'restart') c.restarted++
+        else c.again++
+      }
+    })
+    c.enrol = c.fresh + c.restarted + c.again
+    return c
   })
-  const enrolling = people.filter((p) => courses.some((c) => willEnrol(p.id, c.id, reEnrol)))
-  const reEnrolled = people.filter((p) => courses.some((c) => hasCompleted(p, c.id))).length
-  const byTeam = new Map<string, number>()
-  enrolling.forEach((p) => byTeam.set(p.team, (byTeam.get(p.team) ?? 0) + 1))
+
   return {
-    people: enrolling.length,
-    enrolments: perCourse.reduce((n, r) => n + r.enrol, 0),
-    skipped: perCourse.reduce((n, r) => n + r.skipped, 0),
+    people: enrolling.size,
     perCourse,
-    reEnrolled,
-    teams: [...byTeam.entries()].sort((a, b) => b[1] - a[1]),
+    current: current.size,
+    overdue: overdue.size,
+    completed: completed.size,
+    affected,
   }
 }
 
 interface Props {
   courses: AssignCourse[]
   committedIds: string[]
-  /** Courses where the admin chose to restart people still in progress. */
-  reEnrol: ReadonlySet<string>
-  onToggleReEnrol: (courseId: string) => void
-  onEdit: (step: 'courses' | 'people') => void
+  choice: ExistingChoice
+  onChoiceChange: (choice: ExistingChoice) => void
 }
 
-type CourseRow = ReviewCounts['perCourse'][number] & { index: number }
+type CourseRow = CourseCounts & { index: number }
 
-function ReviewStep({ courses, committedIds, reEnrol, onToggleReEnrol, onEdit }: Props) {
-  const counts = reviewCounts(courses, committedIds, reEnrol)
+function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
+  const counts = reviewCounts(courses, committedIds, choice)
   const offsets = startOffsets(courses)
+  const [viewing, setViewing] = useState(false)
 
-  /* Admins think courses first, then people: one card row per course, in launch order,
-     with who it enrols. People who completed a course are enrolled again; people still in
-     progress are skipped by default, and the admin decides per course whether to restart
-     them, since that resets their progress. */
   const columns: Column<CourseRow>[] = [
     {
       key: 'course',
@@ -95,26 +141,6 @@ function ReviewStep({ courses, committedIds, reEnrol, onToggleReEnrol, onEdit }:
       ),
     },
     {
-      key: 'existing',
-      header: 'Already enrolled',
-      width: '0 0 280px',
-      render: (r) =>
-        r.inProgress === 0 ? (
-          'None'
-        ) : (
-          <label className="tbl-media acw-reenrol">
-            <Checkbox checked={reEnrol.has(r.course.id)} onChange={() => onToggleReEnrol(r.course.id)} />
-            {/* The label is the action the tick performs, its count underneath (Mobbin:
-                PlanetScale, Calendly import). No consequence line: what a restart
-                does to due dates varies too much to state. */}
-            <span className="tbl-stack">
-              <span className="primary">Restart enrolment</span>
-              <span className="supporting">{plural(r.inProgress, 'person', 'people')}</span>
-            </span>
-          </label>
-        ),
-    },
-    {
       key: 'people',
       header: 'People to enrol',
       width: '0 0 160px',
@@ -123,26 +149,66 @@ function ReviewStep({ courses, committedIds, reEnrol, onToggleReEnrol, onEdit }:
     },
   ]
 
+  const hasExisting = counts.current > 0 || counts.completed > 0
+
   return (
     <div className="acw-review">
       <div className="acw-review-section">
-        <div className="acw-review-section-head">
-          <h4 className="acw-review-heading">Review</h4>
-          <span className="acw-review-edits">
-            <Button variant="text" size="md" onClick={() => onEdit('courses')}>
-              Edit Courses
-            </Button>
-            <Button variant="text" size="md" onClick={() => onEdit('people')}>
-              Edit People
-            </Button>
-          </span>
-        </div>
+        {/* No Edit buttons: the stepper's completed steps and Back already lead there. */}
+        <h4 className="acw-review-heading">Review</h4>
+
+        {/* One callout for everyone who already has some of the courses, above the table so
+            a long course list can't push it out of view. Built from Alert's own classes
+            (alerts-toast.md) because it holds checkboxes, which the Alert component has no
+            slot for. Nothing here blocks Launch. */}
+        {hasExisting && (
+          <div className="alert alert--callout alert--with-body acw-existing">
+            <InfoIcon size={20} color="currentColor" className="alert__icon" />
+            <div className="alert__body">
+              <p className="alert__title">Some people already have these courses</p>
+              <p className="alert__message">They'll only be enrolled in the courses they don't have yet.</p>
+              <div className="acw-existing__options">
+                {counts.current > 0 && (
+                  <label className="acw-existing__option">
+                    <Checkbox
+                      checked={choice.restart}
+                      onChange={() => onChoiceChange({ ...choice, restart: !choice.restart })}
+                    />
+                    <span className="acw-existing__text">
+                      <span>Restart for {plural(counts.current, 'person', 'people')} currently enrolled</span>
+                      {counts.overdue > 0 && (
+                        <span className="acw-existing__helper">{counts.overdue} of them are overdue.</span>
+                      )}
+                    </span>
+                  </label>
+                )}
+                {counts.completed > 0 && (
+                  <label className="acw-existing__option">
+                    <Checkbox
+                      checked={choice.again}
+                      onChange={() => onChoiceChange({ ...choice, again: !choice.again })}
+                    />
+                    <span className="acw-existing__text">
+                      <span>Enrol {plural(counts.completed, 'person', 'people')} who completed again</span>
+                    </span>
+                  </label>
+                )}
+              </div>
+              <Button variant="text" size="md" className="acw-existing__view" onClick={() => setViewing(true)}>
+                View People
+              </Button>
+            </div>
+          </div>
+        )}
+
         <Table
           columns={columns}
           rows={counts.perCourse.map((r, index) => ({ ...r, index }))}
           getRowKey={(r) => r.course.id}
         />
       </div>
+
+      <AffectedPeopleDrawer open={viewing} rows={counts.affected} onClose={() => setViewing(false)} />
     </div>
   )
 }

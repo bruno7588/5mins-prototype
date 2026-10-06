@@ -199,12 +199,6 @@
   gap: var(--space-ml);
 }
 
-.acw-review-section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .acw-review-heading {
   margin: 0;
   font-size: 16px; /* H4 */
@@ -213,14 +207,58 @@
   color: var(--text-primary);
 }
 
-.acw-review-edits {
+/* Callout for people who already have some of the courses (built from .alert). */
+.acw-existing__options {
   display: flex;
-  gap: var(--space-m);
+  flex-direction: column;
+  gap: var(--space-s);
+  margin-top: var(--space-sm);
 }
 
-/* The re-enrol choice: the label text toggles the checkbox too. */
-.acw-reenrol {
+/* The label text toggles its checkbox too. */
+.acw-existing__option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  color: var(--text-primary);
   cursor: pointer;
+}
+
+/* Nudges the first text line level with the checkbox in its 32px hit area. */
+.acw-existing__text {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--space-xs);
+}
+
+.acw-existing__helper {
+  color: var(--text-secondary);
+}
+
+.acw-existing__view {
+  align-self: flex-start;
+  margin-top: var(--space-s);
+}
+
+/* View People side drawer (overlays.md: 20px Bold title; shell from CoursesDrawer.css). */
+.acw-affected__title {
+  flex: 1;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.acw-affected__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+}
+
+/* Content Switcher (chips-switcher-tabs.md) hugs its segments instead of stretching. */
+.acw-affected__switcher {
+  align-self: flex-start;
 }
 
 /* Launch confetti canvas: fills the success screen, under its content, never in the way. */

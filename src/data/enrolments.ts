@@ -4,7 +4,7 @@
  * are layered on top for the rest of the session.
  */
 import type { PersonRow } from './people'
-import { HEADCOUNT } from './people'
+import { HEADCOUNT, PEOPLE } from './people'
 
 export type EnrolmentStatus = 'none' | 'not-started' | 'in-progress' | 'overdue' | 'completed'
 
@@ -29,6 +29,10 @@ export function enrolmentStatus(person: PersonRow, courseId: string): EnrolmentS
     // 37 is coprime with 716, so exactly 128 indices land below 128.
     return (person.index * 37) % HEADCOUNT < 128 ? 'in-progress' : 'none'
   }
+  // Pin two people on the name-sorted first page so it shows every status badge: Alice
+  // Bennett completed most courses with no live enrolment, Alice Clarke has none at all.
+  if (person.index === 240) return hash(courseId) % 3 !== 0 ? 'completed' : 'none'
+  if (person.index === 390) return 'none'
   // Groups are picked from a scrambled index: names cycle every 30 people, so a plain
   // modulo would line whole groups up on one name-sorted page.
   const g = (person.index * 7919) % 100
@@ -55,7 +59,26 @@ export function hasCompleted(person: PersonRow, courseId: string) {
   return enrolmentStatus(person, courseId) === 'completed'
 }
 
-/** Records new enrolments so the wizard shows them as enrolled afterwards. */
+/** Past enrolments a restart or re-enrolment replaced. Kept, never overwritten, so an
+ *  overdue or completed record stays in the person's history (prototype stand-in for
+ *  the backend archive). */
+export interface ArchivedEnrolment {
+  personId: string
+  courseId: string
+  status: EnrolmentStatus
+  archivedAt: string
+}
+const history: ArchivedEnrolment[] = []
+export const enrolmentHistory = (): readonly ArchivedEnrolment[] => history
+
+/** Records new enrolments so the wizard shows them as enrolled afterwards. Anything the
+ *  person already had in that course (active or completed) is archived first. */
 export function recordEnrolments(pairs: { personId: string; courseId: string }[]) {
-  pairs.forEach((p) => launched.set(key(p.personId, p.courseId), 'not-started'))
+  const byId = new Map(PEOPLE.map((p) => [p.id, p]))
+  const now = new Date().toISOString()
+  pairs.forEach(({ personId, courseId }) => {
+    const previous = enrolmentStatus(byId.get(personId)!, courseId)
+    if (previous !== 'none') history.push({ personId, courseId, status: previous, archivedAt: now })
+    launched.set(key(personId, courseId), 'not-started')
+  })
 }

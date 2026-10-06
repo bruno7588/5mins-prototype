@@ -211,12 +211,19 @@
   border-radius: var(--radius-full);
 }
 
-/* Tooltip body: a "Courses" title, then one course per line. */
+/* Tooltip body: up to two groups ("Enrolled", "Completed"), each a title then one
+   course per line. */
 .ppk-course-tip {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   text-align: left;
+}
+
+.ppk-course-tip__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
 }
 
 /* The bubble is dark in both themes, so these are the dark-theme values of

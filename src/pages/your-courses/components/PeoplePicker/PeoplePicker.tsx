@@ -25,7 +25,7 @@ import Tooltip from '@/components/Tooltip/Tooltip'
 import FilterListbox, { type FilterGroup, type FilterItem } from '@/pages/learning-records/components/FilterListbox/FilterListbox'
 import FilterMultiSelect from '@/pages/learning-records/components/FilterControls/FilterMultiSelect'
 import { COHORTS, COMPANY, JOB_ROLES, PEOPLE, REGIONS, TEAMS, type CohortRow, type PersonRow } from '@/data/people'
-import { isActivelyEnrolled } from '@/data/enrolments'
+import { hasCompleted, isActivelyEnrolled } from '@/data/enrolments'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import './PeoplePicker.css'
 
@@ -77,11 +77,13 @@ type FilterControl =
   | { kind: 'single'; options: DropdownOption[]; placeholder: string }
   | { kind: 'multi'; options: DropdownOption[]; placeholder: string }
 
-// Enrolment values: "enrolled" means enrolled in at least one selected course, matching
-// the "Enrolled in X of N" badge, which no longer has a separate all-courses state.
-const ENROLMENT_OPTIONS: DropdownOption[] = [
+// Enrolment values, measured against the selected courses: "enrolled" = an active
+// enrolment in at least one, "completed" = completed at least one. A person can match
+// both; "not-enrolled" = neither.
+const enrolmentOptions = (single: boolean): DropdownOption[] => [
   { value: 'not-enrolled', label: 'Not enrolled' },
-  { value: 'enrolled', label: 'Enrolled' },
+  { value: 'enrolled', label: single ? 'Enrolled' : 'Enrolled in some' },
+  { value: 'completed', label: single ? 'Completed' : 'Completed some' },
 ]
 
 const BASE_CONTROLS: Record<string, FilterControl> = {
@@ -153,15 +155,26 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseKey])
 
+  // And which of the selected courses each person has completed.
+  const completedIn = useMemo(() => {
+    const map = new Map<string, string[]>()
+    PEOPLE.forEach((p) => map.set(p.id, courseIds.filter((c) => hasCompleted(p, c))))
+    return map
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseKey])
+
   const isFull = (p: PersonRow) => courseIds.length > 0 && enrolledIn.get(p.id)!.length === courseIds.length
   const selectable = (p: PersonRow) => includeEnrolled || !isFull(p)
 
-  const enrolmentField = (p: PersonRow) => {
-    const n = enrolledIn.get(p.id)!.length
-    return n === 0 ? 'not-enrolled' : 'enrolled'
+  const enrolmentField = (p: PersonRow): string[] => {
+    const tags = [
+      enrolledIn.get(p.id)!.length > 0 && 'enrolled',
+      completedIn.get(p.id)!.length > 0 && 'completed',
+    ].filter(Boolean) as string[]
+    return tags.length ? tags : ['not-enrolled']
   }
 
-  const FIELD: Record<string, (p: PersonRow) => string> = {
+  const FIELD: Record<string, (p: PersonRow) => string | string[]> = {
     enrolment: enrolmentField,
     team: (p) => slug(p.team),
     cohort: (p) => p.cohortId,
@@ -172,15 +185,17 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
   const controls: Record<string, FilterControl> = {
     ...BASE_CONTROLS,
-    enrolment: { kind: 'single', options: ENROLMENT_OPTIONS, placeholder: 'Select enrolment' },
+    enrolment: { kind: 'single', options: enrolmentOptions(single), placeholder: 'Select enrolment' },
   }
 
   const matches = (p: PersonRow) =>
     Object.entries(filters).every(([id, v]) => {
       const field = FIELD[id]
       if (!field) return true
-      if (Array.isArray(v)) return v.length === 0 || v.includes(field(p))
-      return !v || field(p) === v
+      const raw = field(p)
+      const values = Array.isArray(raw) ? raw : [raw]
+      if (Array.isArray(v)) return v.length === 0 || v.some((x) => values.includes(x))
+      return !v || values.includes(v)
     })
 
   const pool = useMemo(() => (inScope ? PEOPLE.filter(inScope) : PEOPLE), [inScope])
@@ -355,30 +370,45 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
   }
 
   const statusBadge = (p: PersonRow) => {
-    const inCourses = enrolledIn.get(p.id)!
+    const active = enrolledIn.get(p.id)!
+    const done = completedIn.get(p.id)!
     const n = courseIds.length
-    if (inCourses.length === 0) {
+    if (active.length === 0 && done.length === 0) {
       return <Badge type="informative" label="Not enrolled" customIcon={<UserAdd size={16} color="currentColor" variant="Linear" />} />
     }
-    if (single) return <Badge type="success" label="Enrolled" />
-    /* With several courses, one pattern whether partly or fully enrolled ("4 of 4"):
-       hovering the badge lists the courses this person is enrolled in, one per line. */
-    const label = `Enrolled in ${inCourses.length} of ${n}`
-    const courses = inCourses.map((id) => courseNames[id] ?? id)
+    /* An active enrolment outranks a completion: "Enrolled in X of N" when they have
+       any, else "Completed X of N". One course needs no count and no list. */
+    const label = active.length
+      ? single ? 'Enrolled' : `Enrolled in ${active.length} of ${n}`
+      : single ? 'Completed' : `Completed ${done.length} of ${n}`
+    if (single) return <Badge type="informative" label={label} />
+    /* Hovering or focusing the badge lists the courses, grouped, one per line. */
+    const groups = [
+      { title: 'Courses Enrolled', courses: active.map((id) => courseNames[id] ?? id) },
+      { title: 'Courses Completed', courses: done.map((id) => courseNames[id] ?? id) },
+    ].filter((g) => g.courses.length > 0)
     return (
       <Tooltip
         text={
           <span className="ppk-course-tip">
-            <span className="ppk-course-tip__title">Courses</span>
-            <ul className="ppk-course-tip__list">
-              {courses.map((c) => <li key={c}>{c}</li>)}
-            </ul>
+            {groups.map((g) => (
+              <span key={g.title} className="ppk-course-tip__group">
+                <span className="ppk-course-tip__title">{g.title}</span>
+                <ul className="ppk-course-tip__list">
+                  {g.courses.map((c) => <li key={c}>{c}</li>)}
+                </ul>
+              </span>
+            ))}
           </span>
         }
         position="Top"
         icon={false}
       >
-        <span className="ppk-status-partial" tabIndex={0} aria-label={`${label}: ${courses.join(', ')}`}>
+        <span
+          className="ppk-status-partial"
+          tabIndex={0}
+          aria-label={`${label}. ${groups.map((g) => `${g.title}: ${g.courses.join(', ')}`).join('. ')}`}
+        >
           <Badge type="informative" label={label} />
         </span>
       </Tooltip>
@@ -419,7 +449,12 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
     label: string,
     members: (id: string) => PersonRow[],
   ): Column<T>[] => [
-    { key: 'name', header: label, width: '1 0 240px', render: (r) => r.name },
+    {
+      key: 'name',
+      header: label,
+      width: '1 0 240px',
+      render: (r) => r.name,
+    },
     { key: 'members', header: countHeader, width: '0 0 160px', align: 'right', render: (r) => members(r.id).length },
   ]
 

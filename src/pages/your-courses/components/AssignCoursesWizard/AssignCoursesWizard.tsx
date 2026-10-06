@@ -10,7 +10,7 @@ import { confetti } from '@/lib/confetti'
 import WizardShell, { type WizardStep } from '../WizardShell/WizardShell'
 import PeoplePicker from '../PeoplePicker/PeoplePicker'
 import CoursesStep from './CoursesStep'
-import ReviewStep, { reviewCounts, willEnrol } from './ReviewStep'
+import ReviewStep, { outcomeFor, reviewCounts, type ExistingChoice } from './ReviewStep'
 import { plural, type AssignCourse } from './schedule'
 import './AssignCoursesWizard.css'
 
@@ -43,15 +43,9 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   const [step, setStep] = useState<Step>('courses')
   const [courses, setCourses] = useState<AssignCourse[]>([])
   const [committed, setCommitted] = useState<string[]>([])
-  // Courses where the admin chose to re-enrol people already on them (skipped by default).
-  const [reEnrol, setReEnrol] = useState<Set<string>>(new Set())
-  const toggleReEnrol = (courseId: string) =>
-    setReEnrol((prev) => {
-      const next = new Set(prev)
-      if (next.has(courseId)) next.delete(courseId)
-      else next.add(courseId)
-      return next
-    })
+  // What happens to people who already have a course; both off by default, so a
+  // straight Launch leaves every existing enrolment and completion alone.
+  const [choice, setChoice] = useState<ExistingChoice>({ restart: false, again: false })
   const [draftCount, setDraftCount] = useState(0)
   const [confirmDiscard, setConfirmDiscard] = useState(false)
   const [launched, setLaunched] = useState<{ courses: number; people: number } | null>(null)
@@ -59,8 +53,8 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   const courseIds = useMemo(() => courses.map((c) => c.id), [courses])
   const courseNames = useMemo(() => Object.fromEntries(courses.map((c) => [c.id, c.name])), [courses])
 
-  // Everyone picked stays in, including people already in progress on every course:
-  // Review shows them per course and the admin decides whether to restart them.
+  // Everyone picked stays in, including people who already have every course: Review
+  // skips them by default and lets the admin restart or re-enrol them.
   const activeCommitted = committed
 
   const hasWork = courses.length > 0 || committed.length > 0
@@ -73,10 +67,10 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   const launch = () => {
     const pairs = courses.flatMap((c) =>
       activeCommitted
-        .filter((id) => willEnrol(id, c.id, reEnrol))
+        .filter((id) => outcomeFor(id, c.id, choice) !== 'skip')
         .map((personId) => ({ personId, courseId: c.id })),
     )
-    const counts = reviewCounts(courses, activeCommitted, reEnrol)
+    const counts = reviewCounts(courses, activeCommitted, choice)
     recordEnrolments(pairs)
     setLaunched({ courses: courses.length, people: counts.people })
   }
@@ -213,7 +207,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
           )}
         </div>
         <div hidden={step !== 'review'}>
-          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} reEnrol={reEnrol} onToggleReEnrol={toggleReEnrol} onEdit={setStep} />}
+          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} choice={choice} onChoiceChange={setChoice} />}
         </div>
       </WizardShell>
 
