@@ -335,9 +335,10 @@
 
 .cffm-progress-fill {
   height: 100%;
+  width: 100%;
   background: var(--gradient-ai);
   border-radius: var(--radius-ml);
-  transition: width 300ms ease;
+  transition: transform 300ms ease; /* translateX inline, not width */
 }
 
 .cffm-progress-label {

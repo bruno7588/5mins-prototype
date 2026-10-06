@@ -748,12 +748,10 @@
   75% { transform: translateX(-2px); }
 }
 
-@keyframes ql-bounce {
+/* A single smooth lift and settle for a correct answer, not a double bounce. */
+@keyframes ql-pop {
   0%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-8px); }
-  50% { transform: translateY(0); }
-  68% { transform: translateY(-4px); }
-  84% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
 }
 
 .ql-token--incorrect,
@@ -765,7 +763,7 @@
 .ql-token--correct,
 .ql-pair--correct,
 .ql-blank--correct {
-  animation: ql-bounce 0.5s ease both;
+  animation: ql-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -568,9 +568,10 @@
 
 .cd-progress-fill {
   height: 100%;
+  width: 100%;
   background: var(--primary-600);
   border-radius: var(--radius-s);
-  transition: width 200ms ease;
+  transition: transform 200ms ease; /* translateX inline, not width */
 }
 
 .cd-progress-pct {

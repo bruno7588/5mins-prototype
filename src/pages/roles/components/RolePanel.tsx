@@ -412,7 +412,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                   </div>
                   <div className="roles-ai-progress">
                     <div className="roles-ai-progress__bar">
-                      <div className="roles-ai-progress__fill" style={{ width: `${aiProgress}%` }} />
+                      <div className="roles-ai-progress__fill" style={{ transform: `translateX(${aiProgress - 100}%)` }} />
                     </div>
                     <span className="roles-ai-progress__text">{aiProgress}%</span>
                   </div>
@@ -630,7 +630,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                   </div>
                   <div className="roles-ai-progress">
                     <div className="roles-ai-progress__bar">
-                      <div className="roles-ai-progress__fill" style={{ width: `${aiProgress}%` }} />
+                      <div className="roles-ai-progress__fill" style={{ transform: `translateX(${aiProgress - 100}%)` }} />
                     </div>
                     <span className="roles-ai-progress__text">{aiProgress}%</span>
                   </div>

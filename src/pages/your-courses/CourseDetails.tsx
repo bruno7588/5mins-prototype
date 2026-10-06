@@ -387,7 +387,7 @@ function CourseDetails() {
       render: (row) => (
         <>
           <div className="cd-progress">
-            <div className="cd-progress-fill" style={{ width: `${row.progress}%` }} />
+            <div className="cd-progress-fill" style={{ transform: `translateX(${row.progress - 100}%)` }} />
           </div>
           <span className="cd-progress-pct">{row.progress}%</span>
         </>

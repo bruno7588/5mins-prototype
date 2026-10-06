@@ -41,7 +41,7 @@ function RatioBar({ drawCount, poolSize }: RatioBarProps) {
     <div className="ratio-bar">
       <div
         className={`ratio-bar-fill ratio-bar-fill--${tier}`}
-        style={{ width: `${fillPercent}%` }}
+        style={{ transform: `translateX(${fillPercent - 100}%)` }}
       />
     </div>
   )

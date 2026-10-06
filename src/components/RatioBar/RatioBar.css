@@ -8,8 +8,10 @@
 
 .ratio-bar-fill {
   height: 100%;
+  width: 100%;
   border-radius: var(--radius-ml);
-  transition: width 400ms ease, background-color 300ms ease;
+  /* Slides in from the left (translateX set inline) rather than animating width. */
+  transition: transform 400ms ease, background-color 300ms ease;
 }
 
 .ratio-bar-fill--strong {

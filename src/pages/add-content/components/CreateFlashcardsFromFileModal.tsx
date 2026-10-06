@@ -208,7 +208,7 @@ function CreateFlashcardsFromFileModal({ open, onClose, onGenerate }: CreateFlas
 
                 <div className="cffm-progress">
                   <div className="cffm-progress-track">
-                    <div className="cffm-progress-fill" style={{ width: `${progress}%` }} />
+                    <div className="cffm-progress-fill" style={{ transform: `translateX(${progress - 100}%)` }} />
                   </div>
                   <span className="cffm-progress-label">{progress}%</span>
                 </div>
