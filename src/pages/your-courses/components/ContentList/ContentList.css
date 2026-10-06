@@ -17,13 +17,18 @@
   max-width: none;
 }
 
-/* With a drawer open, the list anchors left at its full 900px rather than centring in
-   the strip. Centring hides its left edge under the drawer, and narrowing it to fit the
-   free space shrinks the rows — the rows keep their width and simply run under the
-   drawer on the right. */
-.content-list-layout--drawer-open,
+/* With a drawer open, the list moves left only as far as it must to clear the 720px
+   drawer (plus a 24px gap), so admins can still see it. On a wide screen it stays
+   centred or moves part of the way; on a narrow one it anchors left at its full 900px,
+   and the rows run under the drawer rather than shrinking. The layout spans the page
+   so 100% is the page width. */
+.content-list-layout--drawer-open {
+  max-width: none;
+  margin: 0;
+}
+
 .content-list-layout--drawer-open .content-list {
-  margin-left: 0;
+  margin-left: max(0px, min((100% - 900px) / 2, 100% - 900px - 720px - var(--space-l)));
   margin-right: auto;
 }
 
