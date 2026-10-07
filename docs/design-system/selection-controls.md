@@ -18,6 +18,8 @@ Cross-reference:
 
 > **Updated 2026-09-29 (aligned to prototype usage):** Toggles are used inside Save forms in the prototype (report scheduling, course settings), so the "never inside a Save form" rule is replaced by the Key rule below. `--control-selected` is `#FFBB38` in dark mode, not `#EDA30D`. The built Checkbox is a button with no label prop, draws its unchecked border in `--text-secondary` and fills with `--selected`. The unselected Radio ring turns `--border-hover` on hover. Toggle has a `size="sm"` variant.
 
+> **Updated 2026-10-07 (Figma `6339:10484`, verified against code):** the checkbox tick and minus bar are not white. They are cut out of the filled box, so the surface behind shows through: light on light pages, dark in dark mode. `Checkbox.tsx` draws the Figma shapes as single filled paths in `--selected`. Figma has no disabled-checked variant (Disabled exists only as Not checked), so a disabled box that is checked keeps the `--selected` fill; only the empty box turns `--text-disabled`.
+
 ## Usage
 
 ### Checkbox
@@ -45,7 +47,7 @@ Cross-reference:
 - Don't hard-code the amber; checked fill is `--selected`.
 - Don't use a checkbox for mutually exclusive choices.
 
-**Canonical spec:** 32 × 32px hit area with `var(--space-s)` (8px) padding and a `var(--radius-full)` hover halo in `--page-background-hover`; 16 × 16px box, 4px radius, 1.5px border `--text-secondary`; checked and indeterminate fill `--selected` with a white glyph; disabled `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3924` / dark `6339:10484`.
+**Canonical spec:** 32 × 32px hit area with `var(--space-s)` (8px) padding and a `var(--radius-full)` hover halo in `--page-background-hover`; 16 × 16px box, 4px radius, 1.5px border `--text-secondary`; checked and indeterminate fill `--selected` with the tick or minus bar cut out of the box, so the surface shows through; disabled `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3924` / dark `6339:10484`.
 
 **Prototype:** `src/components/Checkbox/Checkbox.tsx` (default export)
 - `checked` (required), `indeterminate`, `onChange()`, `disabled`
@@ -365,7 +367,7 @@ Always wrap a set of radios in a `<fieldset>` with a `<legend>`, or a container 
 
 Multi-select or single acknowledgement indicator. Also supports an **indeterminate** state for partial selection (e.g. a parent row where only some children are selected).
 
-> **Built component differs from the sketch below.** `src/components/Checkbox/Checkbox.tsx` is a `<button role="checkbox">` with `aria-checked` (`'mixed'` when indeterminate), not a hidden native input. Its props are `checked`, `indeterminate`, `onChange()` (no event) and `disabled`; there is no `label`, `id` or `aria-label` prop, so callers build the label row themselves. Checked and indeterminate fill `--selected`; disabled checked fills `--text-disabled`.
+> **Built component.** `src/components/Checkbox/Checkbox.tsx` is a `<button role="checkbox">` with `aria-checked` (`'mixed'` when indeterminate), not a hidden native input. Its props are `checked`, `indeterminate`, `onChange()` (no event) and `disabled`; there is no `label`, `id` or `aria-label` prop, so callers build the label row themselves. Checked and indeterminate fill `--selected`, also when disabled (Figma has no disabled-checked variant). The tick and minus bar are cut out of that fill (Figma's paths, not a stroke), so they take the colour of the surface behind.
 
 ### Dimensions
 
@@ -383,166 +385,16 @@ Multi-select or single acknowledgement indicator. Also supports an **indetermina
 | State | Checked variant | Box fill | Box border | Glyph | Halo |
 |---|---|---|---|---|---|
 | Enabled, not checked | Not checked | transparent | `--text-secondary` | none | none |
-| Enabled, checked | Checked | `#EDA30D` | `#EDA30D` | white check | none |
-| Enabled, indeterminate | Indeterminate | `#EDA30D` | `#EDA30D` | white minus bar | none |
+| Enabled, checked | Checked | `#EDA30D` | `#EDA30D` | check, cut out | none |
+| Enabled, indeterminate | Indeterminate | `#EDA30D` | `#EDA30D` | minus bar, cut out | none |
 | Hover, not checked | Not checked | transparent | `--text-secondary` | none | 32 × 32 `#EFF0F2` |
-| Hover, checked | Checked | `#EDA30D` | `#EDA30D` | white check | 32 × 32 `#EFF0F2` |
-| Hover, indeterminate | Indeterminate | `#EDA30D` | `#EDA30D` | white minus bar | 32 × 32 `#EFF0F2` |
+| Hover, checked | Checked | `#EDA30D` | `#EDA30D` | check, cut out | 32 × 32 `#EFF0F2` |
+| Hover, indeterminate | Indeterminate | `#EDA30D` | `#EDA30D` | minus bar, cut out | 32 × 32 `#EFF0F2` |
 | Disabled, not checked | Not checked | transparent | `#9EA4B3` | none | none |
 
 ### CSS
 
-```css
-.checkbox {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 8px;
-  box-sizing: border-box;
-  border-radius: 40px;
-  background: transparent;
-  cursor: pointer;
-  transition: background 120ms ease;
-}
-
-.checkbox:hover:not(.checkbox--disabled) {
-  background: var(--page-background-hover);
-}
-
-.checkbox__box {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 1.5px solid var(--text-secondary);
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #FFFFFF;
-  box-sizing: border-box;
-}
-
-/* Checked + indeterminate share fill/border */
-.checkbox--checked .checkbox__box,
-.checkbox--indeterminate .checkbox__box {
-  background: var(--selected);
-  border-color: var(--selected);
-}
-
-.checkbox__check,
-.checkbox__dash {
-  width: 10px;
-  height: 10px;
-  display: none;
-}
-.checkbox--checked .checkbox__check { display: block; }
-.checkbox--indeterminate .checkbox__dash { display: block; }
-
-/* Disabled */
-.checkbox--disabled {
-  cursor: not-allowed;
-}
-.checkbox--disabled .checkbox__box {
-  border-color: var(--text-disabled);
-  background: transparent;
-}
-
-/* Hidden but focusable native input */
-.checkbox__input {
-  position: absolute;
-  opacity: 0;
-  inset: 0;
-  margin: 0;
-  cursor: inherit;
-}
-.checkbox__input:focus-visible + .checkbox__box {
-  outline: 2px solid var(--selected);
-  outline-offset: 2px;
-}
-```
-
-Use inline SVG for the check and dash glyphs (both 10 × 10, white stroke, 2 px):
-
-```tsx
-// Checkmark glyph
-<svg className="checkbox__check" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-  <path d="M1.5 5.2 L4 7.5 L8.5 2.5" stroke="currentColor" strokeWidth="2"
-        strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
-
-// Indeterminate dash
-<svg className="checkbox__dash" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-  <path d="M2 5 H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-</svg>
-```
-
-### React TypeScript
-
-```tsx
-import { InputHTMLAttributes, forwardRef, useEffect, useRef } from 'react';
-
-type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> & {
-  label?: string;
-  indeterminate?: boolean;
-};
-
-export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ label, checked, indeterminate = false, disabled, id, className, ...props }, ref) => {
-    const innerRef = useRef<HTMLInputElement | null>(null);
-
-    // Support the indeterminate DOM property
-    useEffect(() => {
-      if (innerRef.current) innerRef.current.indeterminate = indeterminate;
-    }, [indeterminate]);
-
-    const controlId = id ?? `cb-${props.name ?? ''}-${props.value ?? ''}`;
-    const wrapperClass = [
-      'checkbox',
-      checked && !indeterminate ? 'checkbox--checked' : '',
-      indeterminate ? 'checkbox--indeterminate' : '',
-      disabled ? 'checkbox--disabled' : '',
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    const control = (
-      <span className={wrapperClass}>
-        <input
-          ref={(node) => {
-            innerRef.current = node;
-            if (typeof ref === 'function') ref(node);
-            else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
-          }}
-          type="checkbox"
-          id={controlId}
-          className="checkbox__input"
-          checked={checked}
-          disabled={disabled}
-          aria-checked={indeterminate ? 'mixed' : checked ? 'true' : 'false'}
-          {...props}
-        />
-        <span className="checkbox__box" aria-hidden="true">
-          {/* svg check */}
-          {/* svg dash */}
-        </span>
-      </span>
-    );
-
-    if (!label) return control;
-
-    return (
-      <label htmlFor={controlId} className={`checkbox-row ${className ?? ''}`}>
-        {control}
-        <span className="checkbox-row__label">{label}</span>
-      </label>
-    );
-  }
-);
-Checkbox.displayName = 'Checkbox';
-```
+`src/components/Checkbox/Checkbox.css` holds the hit area and hover halo; the box, tick and minus bar are inline SVG in `Checkbox.tsx`. The tick and minus bar are cut out of a single filled path copied from Figma (`CHECKED_PATH`, `INDETERMINATE_PATH`), filled `--selected` (also when disabled), so the surface behind shows through. Never give the glyph its own colour.
 
 ### Indeterminate pattern
 
