@@ -18,7 +18,6 @@ interface Props {
   course: AssignCourse
   /** Position in the list; course 1 counts from launch. */
   index: number
-  previousName?: string
   /** Days from launch this course starts. */
   offset: number
   onChange: (patch: Partial<AssignCourse>) => void
@@ -28,7 +27,7 @@ interface Props {
   align?: 'start' | 'end'
 }
 
-function SchedulePopover({ column, course, index, previousName, offset, onChange, onClose, anchorRef, align = 'start' }: Props) {
+function SchedulePopover({ column, course, index, offset, onChange, onClose, anchorRef, align = 'start' }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [pos, setPos] = useState<{ top: number; left?: number; right?: number } | null>(null)
 
@@ -82,7 +81,6 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
   }, [!!pos])
 
   const name = `acw-${column}-${course.id}`
-  const anchor = index === 0 ? 'launch' : previousName ?? 'the previous course'
 
   let body
   if (column === 'enrolment') {
@@ -97,15 +95,17 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
             checked={!delayed}
             onChange={() => onChange({ enrolment: { kind: 'immediate' } })}
           />
-          <p className="acw-pop-desc">{index === 0 ? 'Starts on launch' : 'Starts with the previous course'}</p>
+          <p className="acw-pop-desc">Starts on assignment</p>
         </div>
         <div className="acw-pop-option">
           <Radio
             name={name}
-            label="After a delay"
+            label="After delay"
             checked={delayed}
             onChange={() => onChange({ enrolment: { kind: 'after-delay', days, relativeTo: 'previous-course' } })}
           />
+          {/* Same layout as Automations' After delay: the rule, then the stepper and unit. */}
+          <p className="acw-pop-desc">{index === 0 ? 'X days after assignment' : 'X days after previous course enrolment'}</p>
           <div className="acw-pop-inline">
             <InputInteger
               value={days}
@@ -114,7 +114,7 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
               ariaLabel="Days"
               onChange={(n) => onChange({ enrolment: { kind: 'after-delay', days: n, relativeTo: 'previous-course' } })}
             />
-            <span className="acw-pop-desc">days after {anchor}</span>
+            <span className="acw-pop-days">{days === 1 ? 'day' : 'days'}</span>
           </div>
         </div>
       </>
@@ -144,7 +144,7 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
               ariaLabel="Days after start date"
               onChange={(n) => onChange({ due: { kind: 'relative', daysAfterStart: n } })}
             />
-            <span className="acw-pop-desc">{days === 1 ? 'day' : 'days'}</span>
+            <span className="acw-pop-days">{days === 1 ? 'day' : 'days'}</span>
           </div>
           {hasDue && <p className="acw-pop-desc">Due {fmtDate(offset + days)}</p>}
         </div>
@@ -198,12 +198,11 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
   return createPortal(
     <div
       ref={ref}
-      className={`acw-pop${align === 'end' ? ' acw-pop--end' : ''}`}
+      className="acw-pop"
       style={pos}
       role="dialog"
       aria-label={LEGEND[column]}
     >
-      <span className="acw-pop-caret" aria-hidden="true" />
       <fieldset className="acw-pop-fieldset">
         <legend className="acw-visually-hidden">{LEGEND[column]}</legend>
         {body}

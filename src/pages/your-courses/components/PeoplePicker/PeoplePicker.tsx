@@ -316,17 +316,20 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
   /* ── Rendering helpers ── */
   const renderAddButton = (ref: typeof bottomAddRef, isOpen: boolean) => (
     <div className="ppk-filter-add-wrap" ref={ref}>
-      <Button
-        variant="text"
-        size="md"
-        icon={<Add size={20} color="currentColor" variant="Linear" />}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        disabled={availableGroups.length === 0}
-        onClick={() => setAddOpen((o) => !o)}
-      >
-        Add Filter
-      </Button>
+      {/* A disabled control says why on hover. */}
+      <Tooltip text="All filters are already added" position="Top" icon={false} disabled={availableGroups.length > 0}>
+        <Button
+          variant="text"
+          size="md"
+          icon={<Add size={20} color="currentColor" variant="Linear" />}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          disabled={availableGroups.length === 0}
+          onClick={() => setAddOpen((o) => !o)}
+        >
+          Add Filter
+        </Button>
+      </Tooltip>
       <FilterListbox
         open={isOpen}
         onClose={() => setAddOpen(false)}
@@ -482,9 +485,16 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
   // Commits the draft; only committed people count towards the enrolment. Under a
   // table it sits on the pagination line (footerStart); otherwise on its own.
   const stepActions = (
-    <Button variant="outlined" size="md" disabled={draftMatchesCommitted} onClick={() => onCommit([...draftIds], leftOut)}>
-      {draftIds.size === 0 ? 'Select People' : `Select ${draftIds.size} ${draftIds.size === 1 ? 'Person' : 'People'}`}
-    </Button>
+    <Tooltip
+      text={draftIds.size === 0 ? 'Tick people to select them' : 'These people are already selected'}
+      position="Top"
+      icon={false}
+      disabled={!draftMatchesCommitted}
+    >
+      <Button variant="outlined" size="md" disabled={draftMatchesCommitted} onClick={() => onCommit([...draftIds], leftOut)}>
+        {draftIds.size === 0 ? 'Select People' : `Select ${draftIds.size} ${draftIds.size === 1 ? 'Person' : 'People'}`}
+      </Button>
+    </Tooltip>
   )
   const tableShown =
     ((mode === 'people' || mode === 'managers') && visiblePeople.length > 0) ||
@@ -602,18 +612,20 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
             <div className="ppk-filter-actions">
               {renderAddButton(bottomAddRef, addOpen && filtersExpanded)}
-              <Button
-                variant="text"
-                size="md"
-                className="ppk-filter-clear"
-                disabled={activeIds.length === 0}
-                onClick={() => {
-                  setFilters({})
-                  resetPage()
-                }}
-              >
-                Clear All
-              </Button>
+              <Tooltip text="No filters to clear" position="Top" icon={false} disabled={activeIds.length > 0}>
+                <Button
+                  variant="text"
+                  size="md"
+                  className="ppk-filter-clear"
+                  disabled={activeIds.length === 0}
+                  onClick={() => {
+                    setFilters({})
+                    resetPage()
+                  }}
+                >
+                  Clear All
+                </Button>
+              </Tooltip>
             </div>
           </div>
         </Collapse>

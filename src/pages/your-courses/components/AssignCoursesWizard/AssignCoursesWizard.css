@@ -94,24 +94,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.acw-pop-caret {
-  position: absolute;
-  top: -5px;
-  left: var(--space-l);
-  width: 8px;
-  height: 8px;
-  background: var(--cards-background);
-  border-top: 1px solid var(--border-elevated);
-  border-left: 1px solid var(--border-elevated);
-  transform: rotate(45deg);
-}
-
-/* The last column opens leftwards so the panel stays on screen. */
-.acw-pop--end .acw-pop-caret {
-  left: auto;
-  right: var(--space-l);
-}
-
 .acw-pop-fieldset {
   display: flex;
   flex-direction: column;
@@ -121,12 +103,20 @@
   border: none;
 }
 
+/* Each option is a Library List item (listbox.md): Radio + Supporting text, and the
+   Integer variant (Figma 12432:11845) where a stepper and unit follow. The selected
+   option shows only its ring, no amber fill; hover is --cards-background-hover. */
 .acw-pop-option {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
   padding: var(--space-s) var(--space-sm);
   border-radius: var(--radius-s);
+  transition: background-color 150ms ease;
+}
+
+.acw-pop-option:hover {
+  background: var(--cards-background-hover);
 }
 
 /* Everything under the radio lines up with its label: 24px radio + 8px gap. */
@@ -142,7 +132,7 @@
 
 .acw-pop-option .radio-row__label {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
@@ -153,10 +143,17 @@
   color: var(--text-tertiary);
 }
 
+/* The unit after a stepper ("day", "days"). */
+.acw-pop-days {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
 .acw-pop-inline {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-s);
   margin-top: var(--space-s);
   white-space: nowrap;
 }
