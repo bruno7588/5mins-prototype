@@ -237,12 +237,14 @@ function EnrolmentStatus({ status }: Learner) {
 function CourseDetails() {
   const navigate = useNavigate()
   const location = useLocation()
-  // Course name passed from the list (Your Courses / Active Enrolments); falls back to the default.
-  const courseTitle = (location.state as { courseTitle?: string } | null)?.courseTitle ?? COURSE_TITLE
   /* In the URL, not only in state: opening an assessment's answers unmounts this page,
      and without a tab to come back to the browser's Back would land on Enrolments —
      worse than the drawer the answers page replaces. Same device Account.tsx uses. */
   const [searchParams, setSearchParams] = useSearchParams()
+  // Course name passed from the list (Your Courses / Active Enrolments) in state, or as
+  // ?title= when opened in a new tab from a course row; falls back to the default.
+  const courseTitle =
+    (location.state as { courseTitle?: string } | null)?.courseTitle ?? searchParams.get('title') ?? COURSE_TITLE
   const tabParam = searchParams.get('tab') as Tab | null
   const [activeTab, setActiveTab] = useState<Tab>(
     tabParam && TABS.some((t) => t.key === tabParam) ? tabParam : 'enrolments',

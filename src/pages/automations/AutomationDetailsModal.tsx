@@ -867,7 +867,15 @@ function CourseRow({
         <div className="automation-details-td automation-details-td--course">
           <span className="automation-details-row-counter">{index + 1}</span>
           <img className="automation-details-row-thumb" src={course.thumb} alt="" aria-hidden="true" />
-          <span className="automation-details-row-name">{course.name}</span>
+          {/* Opens the course in a new tab so the automation keeps its edits. */}
+          <a
+            className="automation-details-row-name"
+            href={`/your-courses/course?title=${encodeURIComponent(course.name)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {course.name}
+          </a>
         </div>
         <div className="automation-details-td automation-details-td--editable">
           <button

@@ -260,7 +260,15 @@ function CoursesStep({ courses, onChange }: Props) {
                 <div className="automation-details-td automation-details-td--course">
                   <span className="automation-details-row-counter">{i + 1}</span>
                   <img className="automation-details-row-thumb" src={c.thumb} alt="" aria-hidden="true" />
-                  <span className="automation-details-row-name">{c.name}</span>
+                  {/* Opens the course in a new tab so the wizard keeps its selections. */}
+                  <a
+                    className="automation-details-row-name"
+                    href={`/your-courses/course?title=${encodeURIComponent(c.name)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {c.name}
+                  </a>
                 </div>
                 {cell(c, i, 'enrolment', enrolmentSummary(c, offsets[i]))}
                 {cell(c, i, 'due', dueSummary(c, offsets[i]))}

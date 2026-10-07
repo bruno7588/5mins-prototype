@@ -268,7 +268,6 @@
   background: var(--cards-background);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-s);
-  transition: background-color 150ms ease;
 }
 
 /* Dark mode keeps the border instead of the shadow. */
@@ -392,12 +391,21 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
   transition: color 120ms ease;
 }
 
-.automation-details-row-name:hover {
-  color: var(--primary-700);
+/* A course name links to its course page (table.md: clickable cell text hovers to
+   --primary-button-background-hover). A program name stays plain text. */
+a.automation-details-row-name:hover {
+  color: var(--primary-button-background-hover);
+}
+
+a.automation-details-row-name:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 /* Live count under the criteria on existing-employee automations. */
