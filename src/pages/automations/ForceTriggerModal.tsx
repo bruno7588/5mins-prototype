@@ -180,10 +180,10 @@ function ForceTriggerModal({
                 <SummaryCardList previewCount={COURSE_PREVIEW_COUNT}>
                   {automation.actionType === 'programs'
                     ? (automation.programs ?? []).map((p, i) => (
-                        <SummaryCard key={p.id} badge={i + 1} title={p.name} meta={formatProgramMeta(p)} />
+                        <SummaryCard key={p.id} badge={i + 1} thumb={p.thumb} title={p.name} meta={formatProgramMeta(p)} />
                       ))
                     : automation.courses.map((c, i) => (
-                        <SummaryCard key={i} badge={i + 1} title={c.name} meta={formatCourseMeta(c)} />
+                        <SummaryCard key={i} badge={i + 1} thumb={c.thumb} title={c.name} meta={formatCourseMeta(c)} />
                       ))}
                 </SummaryCardList>
               </div>

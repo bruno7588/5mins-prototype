@@ -438,7 +438,7 @@
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 
 .automation-review-heading {
@@ -447,7 +447,7 @@
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 
 .automation-review-list {

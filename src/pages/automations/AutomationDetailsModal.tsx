@@ -736,7 +736,7 @@ function AutomationDetailsModal({
             <p className="automation-review-heading">Enrol them in this program</p>
             <SummaryCardList previewCount={3}>
               {programs.map((p, i) => (
-                <SummaryCard key={p.id} badge={i + 1} title={p.name} meta={formatProgramMeta(p)} />
+                <SummaryCard key={p.id} badge={i + 1} thumb={p.thumb} title={p.name} meta={formatProgramMeta(p)} />
               ))}
             </SummaryCardList>
           </div>
@@ -748,7 +748,7 @@ function AutomationDetailsModal({
           ) : (
             <SummaryCardList previewCount={3}>
               {automation.courses.map((c, i) => (
-                <SummaryCard key={c.id} badge={i + 1} title={c.name} meta={formatCourseMeta(c)} />
+                <SummaryCard key={c.id} badge={i + 1} thumb={c.thumb} title={c.name} meta={formatCourseMeta(c)} />
               ))}
             </SummaryCardList>
           )}

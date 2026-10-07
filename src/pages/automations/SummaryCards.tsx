@@ -111,20 +111,23 @@ interface SummaryCardProps {
   meta?: string
   /** An icon badge's colour: the glyph takes it, the thumbnail a 16% tint of it. */
   tone?: string
+  /** Course or program artwork, shown after the ordinal (Figma 9203:23396). */
+  thumb?: string
 }
 
-export function SummaryCard({ badge, title, meta, tone }: SummaryCardProps) {
+export function SummaryCard({ badge, title, meta, tone, thumb }: SummaryCardProps) {
   /* An ordinal sits on a neutral disc; an icon sits on a thumbnail tinted in
      its field's colour. */
   const ordinal = typeof badge === 'number' || typeof badge === 'string'
   return (
-    <div className="summary-card">
+    <div className={`summary-card${ordinal ? ' summary-card--ordinal' : ''}`}>
       <span
         className={`summary-card__badge${ordinal ? '' : ' summary-card__badge--icon'}`}
         style={tone ? ({ '--summary-card-tone': tone } as CSSProperties) : undefined}
       >
         {badge}
       </span>
+      {thumb && <img className="summary-card__thumb" src={thumb} alt="" />}
       <span className="summary-card__body">
         <span className="summary-card__title">{title}</span>
         {meta && <span className="summary-card__meta">{meta}</span>}
