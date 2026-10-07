@@ -109,7 +109,7 @@
 .acw-pop-option {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-xxs); /* Radio + Supporting text row: 2px label to description */
   padding: var(--space-s) var(--space-sm);
   border-radius: var(--radius-s);
   transition: background-color 150ms ease;
@@ -117,6 +117,11 @@
 
 .acw-pop-option:hover {
   background: var(--cards-background-hover);
+}
+
+/* Integer row (a stepper under the text): 4px label to description. */
+.acw-pop-option:has(.acw-pop-inline) {
+  gap: var(--space-xs);
 }
 
 /* Everything under the radio lines up with its label: 24px radio + 8px gap. */
@@ -143,11 +148,16 @@
   color: var(--text-tertiary);
 }
 
-/* The unit after a stepper ("day", "days"). */
+/* The unit after a stepper ("day", "days"): secondary on the selected option, and
+   --text-disabled with its stepper when the option is not selected (Library Integer row). */
 .acw-pop-days {
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+.acw-pop-inline:has(.input-integer--disabled) .acw-pop-days {
+  color: var(--text-disabled);
 }
 
 .acw-pop-inline {

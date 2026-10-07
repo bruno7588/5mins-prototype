@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import Radio from '@/components/Radio/Radio'
 import InputInteger from '@/components/InputInteger/InputInteger'
 import Dropdown from '@/components/Dropdown/Dropdown'
-import { fmtDate, type AssignCourse } from './schedule'
+import type { AssignCourse } from './schedule'
 
 /* One anchored settings popover with three configurations (DES-332 design
    research c): DS Radio rows in a fieldset, InputInteger always rendered and
@@ -19,7 +19,6 @@ interface Props {
   /** Position in the list; course 1 counts from launch. */
   index: number
   /** Days from launch this course starts. */
-  offset: number
   onChange: (patch: Partial<AssignCourse>) => void
   onClose: () => void
   anchorRef: RefObject<HTMLElement | null>
@@ -27,7 +26,7 @@ interface Props {
   align?: 'start' | 'end'
 }
 
-function SchedulePopover({ column, course, index, offset, onChange, onClose, anchorRef, align = 'start' }: Props) {
+function SchedulePopover({ column, course, index, onChange, onClose, anchorRef, align = 'start' }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [pos, setPos] = useState<{ top: number; left?: number; right?: number } | null>(null)
 
@@ -146,7 +145,6 @@ function SchedulePopover({ column, course, index, offset, onChange, onClose, anc
             />
             <span className="acw-pop-days">{days === 1 ? 'day' : 'days'}</span>
           </div>
-          {hasDue && <p className="acw-pop-desc">Due {fmtDate(offset + days)}</p>}
         </div>
       </>
     )

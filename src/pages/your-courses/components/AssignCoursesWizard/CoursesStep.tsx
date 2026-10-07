@@ -176,7 +176,6 @@ function CoursesStep({ courses, onChange }: Props) {
             column={column}
             course={c}
             index={i}
-            offset={offsets[i]}
             align={column === 'repeat' ? 'end' : 'start'}
             onChange={(patch) => update(c.id, patch)}
             onClose={() => setOpen(null)}
@@ -269,7 +268,7 @@ function CoursesStep({ courses, onChange }: Props) {
                     {c.name}
                   </a>
                 </div>
-                {cell(c, i, 'enrolment', enrolmentSummary(c, offsets[i]))}
+                {cell(c, i, 'enrolment', enrolmentSummary(c, i))}
                 {cell(c, i, 'due', dueSummary(c, offsets[i]))}
                 {cell(c, i, 'repeat', repeatSummary(c))}
               </div>
