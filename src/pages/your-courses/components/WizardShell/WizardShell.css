@@ -242,8 +242,9 @@ button.wzs-stepper-step:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
   border: 1px solid var(--border-hover);
   border-radius: var(--radius-full);
   font-size: 14px;
@@ -261,10 +262,22 @@ button.wzs-stepper-step:focus-visible {
   white-space: nowrap;
 }
 
-.wzs-stepper-step--current .wzs-stepper-num {
-  border-color: var(--selected);
-  background: var(--selected);
-  color: var(--text-on-selected);
+/* Current: the orange progress illustration with the number on top (Semibold 14,
+   --page-background), popping in when the step becomes current. */
+.wzs-stepper-num--current {
+  position: relative;
+  border: none;
+  animation: wzs-step-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.wzs-stepper-num--current img {
+  position: absolute;
+  inset: 0;
+}
+
+.wzs-stepper-num--current span {
+  position: relative;
+  color: var(--page-background);
 }
 
 .wzs-stepper-step--current .wzs-stepper-label {
@@ -314,8 +327,20 @@ button.wzs-stepper-step:focus-visible {
   top: calc(var(--space-xl) - var(--space-xs));
 }
 
+/* Done: the green progress illustration, popping in when the step completes. */
 .wzs-stepper-tick {
   flex-shrink: 0;
+  animation: wzs-step-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes wzs-step-pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wzs-stepper-tick,
+  .wzs-stepper-num--current { animation: none; }
 }
 
 .wzs-stepper-count {
