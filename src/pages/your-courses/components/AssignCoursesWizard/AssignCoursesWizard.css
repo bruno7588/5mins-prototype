@@ -208,7 +208,7 @@
 }
 
 /* Review course rows are borderless filled cards: Shadow S in light mode, none in dark
-   (--shadow-card). Not interactive, so no hover. */
+   (--shadow-card). The card hovers, but only the course name is a link. */
 .acw-review-list {
   display: flex;
   flex-direction: column;
@@ -228,6 +228,11 @@
   box-shadow: var(--shadow-card);
   font-size: 14px;
   line-height: 1.5;
+  transition: background-color 150ms ease;
+}
+
+.acw-review-row:hover {
+  background: var(--cards-background-hover);
 }
 
 .acw-review-counter {
@@ -247,8 +252,8 @@
 
 .acw-review-thumb {
   flex-shrink: 0;
-  width: 110px;
-  height: 54px;
+  width: 88px;
+  height: 48px;
   border-radius: var(--radius-sm);
   object-fit: cover;
 }
@@ -261,13 +266,24 @@
   min-width: 0;
 }
 
-/* Course name is H5. */
+/* Course name is H5 and wraps, as in Figma. It links to the course page, so it
+   hovers to --primary-button-background-hover (table.md clickable cell text). */
 .acw-review-course {
-  overflow: hidden;
+  align-self: flex-start;
   font-weight: 700;
   color: var(--text-primary);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.acw-review-course:hover {
+  color: var(--primary-button-background-hover);
+}
+
+.acw-review-course:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 .acw-review-info {
@@ -290,9 +306,11 @@
 }
 
 /* Callout for people who already have some of the courses (built from .alert). */
-/* Title is Paragraph M semibold (14 / 600), one step up from Alert's Medium. */
+/* Title is Paragraph M semibold (14 / 600) in --text-primary, one step up from
+   Alert's Medium --text-secondary. */
 .acw-existing .alert__title {
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .acw-existing__options {
@@ -356,4 +374,11 @@
   height: 100%;
   z-index: 0;
   pointer-events: none;
+}
+
+/* Courses step thumbnails match the Review rows (88 x 48), Assign courses only. */
+.acw-courses .automation-details-row-thumb {
+  flex-basis: 88px;
+  width: 88px;
+  height: 48px;
 }

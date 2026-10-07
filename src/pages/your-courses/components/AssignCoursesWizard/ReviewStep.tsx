@@ -185,7 +185,15 @@ function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
                 <span className="acw-review-counter">{index + 1}</span>
                 <img className="acw-review-thumb" src={r.course.thumb} alt="" />
                 <div className="acw-review-body">
-                  <span className="acw-review-course">{r.course.name}</span>
+                  {/* Opens the course in a new tab so the wizard keeps its selections. */}
+                  <a
+                    className="acw-review-course"
+                    href={`/your-courses/course?title=${encodeURIComponent(r.course.name)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {r.course.name}
+                  </a>
                   <span className="acw-review-info">
                     <span className="acw-review-info-item">
                       <PlayCircle size={16} color="var(--text-tertiary)" variant="Linear" />
