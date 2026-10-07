@@ -21,7 +21,8 @@
 }
 
 /* Centred on the 48px Review & Launch button: shell top (32) + 24 - 22 (half the 44px disc). */
-.wzs-close {
+/* On the Tooltip wrapper, which sets position: relative, so qualify to win. */
+.tooltip-wrapper.wzs-close {
   position: absolute;
   top: calc(var(--space-xl) + var(--space-xxs));
   right: 40px;
@@ -308,7 +309,7 @@ button.wzs-stepper-step:focus-visible {
 }
 
 /* Centred on the 36px title row: shell top (32) + 18 - 22 (half the 44px disc). */
-.wzs-overlay--top .wzs-close {
+.wzs-overlay--top .tooltip-wrapper.wzs-close {
   top: calc(var(--space-xl) - var(--space-xs));
 }
 

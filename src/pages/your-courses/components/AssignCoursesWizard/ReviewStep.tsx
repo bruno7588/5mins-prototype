@@ -1,12 +1,13 @@
 import { useState } from 'react'
+import { Calendar, PlayCircle, Refresh } from 'iconsax-react'
+import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import InfoIcon from '@/components/icons/InfoIcon'
 import AffectedPeopleDrawer from './AffectedPeopleDrawer'
 import { PEOPLE } from '@/data/people'
 import { enrolmentStatus, type EnrolmentStatus } from '@/data/enrolments'
-import Table, { type Column } from '@/components/Table/Table'
-import { plural, startOffsets, timingLine, type AssignCourse } from './schedule'
+import { plural, startOffsets, timingParts, type AssignCourse } from './schedule'
 
 /* Review (DES-332 AC 10-12): one card row per course, in launch order, and one callout
    for people who already have some of the courses. */
@@ -117,37 +118,10 @@ interface Props {
   onChoiceChange: (choice: ExistingChoice) => void
 }
 
-type CourseRow = CourseCounts & { index: number }
-
 function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
   const counts = reviewCounts(courses, committedIds, choice)
   const offsets = startOffsets(courses)
   const [viewing, setViewing] = useState(false)
-
-  const columns: Column<CourseRow>[] = [
-    {
-      key: 'course',
-      header: 'Course',
-      render: (r) => (
-        <span className="tbl-media">
-          {/* Same position counter as the Courses step (AutomationDetailsModal.css). */}
-          <span className="automation-details-row-counter">{r.index + 1}</span>
-          <img className="tbl-thumb" src={r.course.thumb} alt="" />
-          <span className="tbl-stack">
-            <span className="primary">{r.course.name}</span>
-            <span className="supporting">{timingLine(r.course, offsets[r.index])}</span>
-          </span>
-        </span>
-      ),
-    },
-    {
-      key: 'people',
-      header: 'People to enrol',
-      width: '0 0 160px',
-      align: 'right',
-      render: (r) => r.enrol,
-    },
-  ]
 
   const hasExisting = counts.current > 0 || counts.completed > 0
 
@@ -201,11 +175,37 @@ function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
           </div>
         )}
 
-        <Table
-          columns={columns}
-          rows={counts.perCourse.map((r, index) => ({ ...r, index }))}
-          getRowKey={(r) => r.course.id}
-        />
+        {/* A short list (1 to 5 courses), so no column header: each row labels its own
+            number inline. Figma Programs "Card/course" (4240:92985). */}
+        <ul className="acw-review-list">
+          {counts.perCourse.map((r, index) => {
+            const t = timingParts(r.course, offsets[index])
+            return (
+              <li key={r.course.id} className="acw-review-row">
+                <span className="acw-review-counter">{index + 1}</span>
+                <img className="acw-review-thumb" src={r.course.thumb} alt="" />
+                <div className="acw-review-body">
+                  <span className="acw-review-course">{r.course.name}</span>
+                  <span className="acw-review-info">
+                    <span className="acw-review-info-item">
+                      <PlayCircle size={16} color="var(--text-tertiary)" variant="Linear" />
+                      {t.start}
+                    </span>
+                    <span className="acw-review-info-item">
+                      <Calendar size={16} color="var(--text-tertiary)" variant="Linear" />
+                      {t.due}
+                    </span>
+                    <span className="acw-review-info-item">
+                      <Refresh size={16} color="var(--text-tertiary)" variant="Linear" />
+                      {t.repeat}
+                    </span>
+                  </span>
+                </div>
+                <Badge type="in-progress" className="acw-review-people" label={`${plural(r.enrol, 'person', 'people')} to enrol`} />
+              </li>
+            )
+          })}
+        </ul>
       </div>
 
       <AffectedPeopleDrawer open={viewing} rows={counts.affected} onClose={() => setViewing(false)} />

@@ -116,7 +116,6 @@ function SchedulePopover({ column, course, index, previousName, offset, onChange
             />
             <span className="acw-pop-desc">days after {anchor}</span>
           </div>
-          {delayed && <p className="acw-pop-desc">Starts {fmtDate(offset)}</p>}
         </div>
       </>
     )

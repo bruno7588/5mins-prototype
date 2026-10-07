@@ -77,7 +77,7 @@ function CoursesStep({ courses, onChange }: Props) {
     const i = list.findIndex((c) => c.id === id)
     const at = startOffsets(list)[i]
     setAnnouncement(
-      `${list[i].name} moved to position ${i + 1} of ${list.length}. ${at === 0 ? 'Starts on launch' : `Starts ${fmtDate(at)}`}.`,
+      `${list[i].name} moved to position ${i + 1} of ${list.length}. ${at === 0 ? 'Starts on launch' : `Starts on ${fmtDate(at)}`}.`,
     )
   }
 

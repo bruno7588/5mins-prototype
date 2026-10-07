@@ -172,7 +172,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
       <WizardShell
         open
         title="Assign courses"
-        closeLabel="Close Assign courses"
+        closeLabel="Exit"
         onClose={requestClose}
         action={action}
         backAction={

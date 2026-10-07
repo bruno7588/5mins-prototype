@@ -207,7 +207,94 @@
   color: var(--text-primary);
 }
 
+/* Review course rows are borderless filled cards: Shadow S in light mode, none in dark
+   (--shadow-card). Not interactive, so no hover. */
+.acw-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.acw-review-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-card);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.acw-review-counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--input-background-elevated);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--text-secondary);
+}
+
+.acw-review-thumb {
+  flex-shrink: 0;
+  width: 110px;
+  height: 54px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.acw-review-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+/* Course name is H5. */
+.acw-review-course {
+  overflow: hidden;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.acw-review-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
+  color: var(--text-tertiary);
+}
+
+.acw-review-info-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+}
+
+.acw-review-people {
+  flex-shrink: 0;
+}
+
 /* Callout for people who already have some of the courses (built from .alert). */
+/* Title is Paragraph M semibold (14 / 600), one step up from Alert's Medium. */
+.acw-existing .alert__title {
+  font-weight: 600;
+}
+
 .acw-existing__options {
   display: flex;
   flex-direction: column;

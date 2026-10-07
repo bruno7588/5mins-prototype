@@ -18,10 +18,11 @@ import type { AffectedRow } from './ReviewStep'
 const BY_ID = new Map(PEOPLE.map((p) => [p.id, p]))
 const PAGE = 10
 
-const STATUS: Partial<Record<EnrolmentStatus, { type: 'informative' | 'in-progress' | 'error'; label: string }>> = {
+const STATUS: Partial<Record<EnrolmentStatus, { type: 'informative' | 'in-progress' | 'error' | 'success'; label: string }>> = {
   'not-started': { type: 'informative', label: 'Not started' },
   'in-progress': { type: 'in-progress', label: 'In progress' },
   overdue: { type: 'error', label: 'Overdue' },
+  completed: { type: 'success', label: 'Completed' },
 }
 
 const nameColumn: Column<AffectedRow> = {
@@ -48,7 +49,7 @@ const statusColumn: Column<AffectedRow> = {
   },
 }
 
-/** One tab's list with its own pagination. Completed rows need no status column. */
+/** One tab's list with its own pagination. */
 function AffectedTable({ rows, columns }: { rows: AffectedRow[]; columns: Column<AffectedRow>[] }) {
   const [page, setPage] = useState(0)
   return (
@@ -126,7 +127,7 @@ function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
   const completed = rows.filter((r) => r.status === 'completed')
   const tabs = [
     { id: 'current' as const, label: 'Currently enrolled', rows: current, columns: [nameColumn, courseColumn, statusColumn] },
-    { id: 'completed' as const, label: 'Completed', rows: completed, columns: [nameColumn, courseColumn] },
+    { id: 'completed' as const, label: 'Completed', rows: completed, columns: [nameColumn, courseColumn, statusColumn] },
   ].filter((t) => t.rows.length > 0)
   const active = tabs.find((t) => t.id === tab) ?? tabs[0]
 

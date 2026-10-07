@@ -122,7 +122,10 @@ function WizardShell({ open, title, closeLabel, onClose, action, backAction, ste
   if (layout === 'top') {
     return (
       <div ref={panelRef} className="wzs-overlay wzs-overlay--top" role="dialog" aria-modal="true" aria-label={title} tabIndex={-1}>
-        <CloseButton variant="fullscreen" onClick={onClose} className="wzs-close" ariaLabel={closeLabel} />
+        {/* Icon-only, so it shows its aria-label as a DS Tooltip. */}
+        <Tooltip text={closeLabel} position="Left" icon={false} className="wzs-close">
+          <CloseButton variant="fullscreen" onClick={onClose} ariaLabel={closeLabel} />
+        </Tooltip>
         {takeover ?? (
           <>
             <div className="wzs-shell">
@@ -148,7 +151,10 @@ function WizardShell({ open, title, closeLabel, onClose, action, backAction, ste
 
   return (
     <div ref={panelRef} className="wzs-overlay" role="dialog" aria-modal="true" aria-label={title} tabIndex={-1}>
-      <CloseButton variant="fullscreen" onClick={onClose} className="wzs-close" ariaLabel={closeLabel} />
+      {/* Icon-only, so it shows its aria-label as a DS Tooltip. */}
+      <Tooltip text={closeLabel} position="Left" icon={false} className="wzs-close">
+        <CloseButton variant="fullscreen" onClick={onClose} ariaLabel={closeLabel} />
+      </Tooltip>
 
       {takeover ?? (
         <div className="wzs-shell">

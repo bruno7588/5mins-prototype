@@ -30,7 +30,7 @@ const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? o
 export function fmtDate(daysFromToday: number) {
   const d = new Date()
   d.setDate(d.getDate() + daysFromToday)
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 export interface CellSummary {
@@ -40,9 +40,9 @@ export interface CellSummary {
 
 export function enrolmentSummary(c: AssignCourse, offset: number): CellSummary {
   if (c.enrolment.kind === 'immediate') {
-    return { title: 'Immediate', desc: offset === 0 ? 'Starts on launch' : `Starts ${fmtDate(offset)}` }
+    return { title: 'Immediate', desc: offset === 0 ? 'Starts on launch' : `Starts on ${fmtDate(offset)}` }
   }
-  return { title: `After ${plural(c.enrolment.days, 'day')}`, desc: `Starts ${fmtDate(offset)}` }
+  return { title: `After ${plural(c.enrolment.days, 'day')}`, desc: `Starts on ${fmtDate(offset)}` }
 }
 
 export function dueSummary(c: AssignCourse, offset: number): CellSummary {
@@ -56,11 +56,13 @@ export function repeatSummary(c: AssignCourse): CellSummary {
   return { title: `Every ${plural(c.repeat.interval, unit)}` }
 }
 
-/** "Starts on launch · No due date · Once", for Review. */
-export function timingLine(c: AssignCourse, offset: number) {
-  const start = offset === 0 ? 'Starts on launch' : `Starts ${fmtDate(offset)}`
-  const due = c.due.kind === 'none' ? 'No due date' : `Due ${fmtDate(offset + c.due.daysAfterStart)}`
-  return [start, due, repeatSummary(c).title].join(' · ')
+/** Start, due and repeat terms for a Review row ("Starts on launch", "No due date", "One time only"). */
+export function timingParts(c: AssignCourse, offset: number) {
+  return {
+    start: offset === 0 ? 'Starts on launch' : `Starts on ${fmtDate(offset)}`,
+    due: c.due.kind === 'none' ? 'No due date' : `Due ${fmtDate(offset + c.due.daysAfterStart)}`,
+    repeat: repeatSummary(c).title,
+  }
 }
 
 export { plural }
