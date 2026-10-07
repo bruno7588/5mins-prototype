@@ -13,6 +13,8 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — date field light `1191
 
 > **Updated 2026-09-29 (aligned to prototype usage):** the built date field (`DatePickerField`) rests on `--border-elevated`, shows its value in `--text-primary` with a `--text-disabled` placeholder, and has no hover fill (border only). The current-day ring is `--border-elevated`. Arrow-key movement between days is not built. "Code reality" now points to the shared `DatePickerField` component.
 
+> **Updated 2026-10-07 (Figma `11529:406`):** the calendar defaults to today's date. A date field opens with today already filled in (`dd/mm/yyyy`, `--text-primary`), and the month grid opens on today's month with today selected. The `dd/mm/yyyy` placeholder only shows in date filters, which start empty: the user profile's from/to range and the automations join-date filter (which shows "Date is required" until a date is picked).
+
 ## Usage
 
 ### Date field
@@ -28,6 +30,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — date field light `1191
 
 **Do**
 - Use `DatePickerField` rather than `<input type="date">` or `InputField type="date"`.
+- Default the value to today's date. Only leave it empty (placeholder showing) in date filters, where the user picks the date deliberately (e.g. the automations join-date filter).
 - Show a missing or invalid date with the Error state (error border, warning icon, helper text).
 
 **Don't**
@@ -57,6 +60,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — date field light `1191
 
 **Do**
 - Reuse `MiniCalendar` rather than building a new picker.
+- Open on today's month with today selected when there is no value yet.
 - Pass `maxDate` when later days aren't valid (e.g. a completion date of today or earlier); later days then render disabled and the next-month chevron stops.
 - Mark the selected day with `--selected` fill and `--text-on-selected` label (dark in both modes).
 
@@ -104,7 +108,7 @@ Padding:  4px 12px   (--space-xs --space-sm), min height 37px
 Radius:   12px       (--radius-sm)
 Gap:      8px between value and icon   (--space-s)
 Icon:     calendar, 20px, trailing
-Value:    Poppins Regular 14 — placeholder "dd/mm/yyyy"
+Value:    Poppins Regular 14, defaults to today's date; placeholder "dd/mm/yyyy" only when deliberately empty
 Label:    Poppins Semibold 14, var(--text-secondary)   (Paragraph M semibold)
 ```
 
@@ -224,6 +228,7 @@ Source:      Figma Library Calendar 11529:430 (verified 2026-09-16)
 
 ## Behaviour
 
+- **Default: today's date.** The field opens with today filled in, and the grid opens on today's month with today drawn as selected. If a field is deliberately empty, the grid still opens on today's month with today selected.
 - Clicking the field toggles the popover; selecting a day fills the field (`dd/mm/yyyy`) and closes it.
 - Chevrons page months; the grid always renders full weeks, padding with prev/next-month days (outside-month styling).
 - Weeks are **Monday-first**.

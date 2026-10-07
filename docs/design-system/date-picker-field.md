@@ -11,6 +11,8 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`), date field light `11916:6
 
 > **Updated 2026-09-29 (verified against code):** the popover's Shadow L is named as `var(--shadow-l)`, the z-index wording now gives the layer numbers, the label colour in Error is stated (stays `--text-secondary`), and a keyboard note records that focus does not enter the popover.
 
+> **Updated 2026-10-07 (Figma `11529:406`):** the field defaults to today's date. Callers initialise `value` to today (or the saved date when editing one); `''` is only for date filters, which start empty: the user profile's from/to range and the automations join-date filter (which shows "Date is required" until a date is picked).
+
 ## Usage
 
 **Intent:** lets the user pick a single calendar date from a month grid, stored as an ISO date.
@@ -31,6 +33,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`), date field light `11916:6
 - Pass `maxDate` when later days aren't valid, and say so in the label hint (e.g. "today or earlier").
 - Pass `error` with the message when a missing or invalid date blocks saving, so the field shows the problem where it is rather than only on the button.
 - For a range, place two fields side by side with "from" and "to" `ariaLabel`s.
+- Initialise the value to today's date (ISO), or to the saved date when editing one. Leave it `''` only in date filters, where the user picks the date deliberately (e.g. the automations join-date filter).
 - Store and pass the value as ISO `yyyy-mm-dd` (`''` when empty); the field formats it for display.
 
 **Don't**
@@ -58,7 +61,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`), date field light `11916:6
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `value` | `string` | required | ISO `yyyy-mm-dd`, or `''` when empty |
+| `value` | `string` | required | ISO `yyyy-mm-dd`, or `''` when empty. Callers default it to today's date |
 | `onChange` | `(iso: string) => void` | required | Fires with the picked day as ISO; the popover then closes |
 | `placeholder` | `string` | `'dd/mm/yyyy'` | Shown in `--text-disabled` while `value` is empty |
 | `ariaLabel` | `string` | `'Choose a date'` | Accessible name of the trigger button |
@@ -82,7 +85,8 @@ Date is required.                 ← helper line (Error only)
 - **Trigger.** A `<button>` with `aria-haspopup="dialog"`, `aria-expanded`, and `aria-invalid` plus `aria-describedby` (pointing at the helper) when `error` is set. Clicking toggles the popover.
 - **Display.** The ISO value is shown as `dd/mm/yyyy`; an empty value shows the placeholder.
 - **Popover.** Rendered with `createPortal` into `<body>` at `position: fixed` and `z-index: 1060`, which sits above the modal and drawer layers (1000 to 1050) and below toasts (1100), 6px below the field. It follows the field on scroll and resize, flips above the field when there isn't room below, and is clamped 8px inside the viewport.
-- **Selecting.** Picking a day calls `onChange(iso)` and closes the popover. With no value set, the grid opens on today's month with today drawn as the selection (the component passes today to `MiniCalendar`).
+- **Default.** Today's date. Every single-date call site (`ExtendDueDateModal`, `EditStartDateModal`, `SetCompletedModal`, `ProgramEnrollmentPopover`) initialises its value to today, or to the saved date when editing. With no value set, the grid still opens on today's month with today drawn as the selection (the component passes today to `MiniCalendar`).
+- **Selecting.** Picking a day calls `onChange(iso)` and closes the popover.
 - **Closing.** A mousedown outside both the field and the popover closes it (listened for in the capture phase, so a modal that stops mousedown bubbling doesn't block it), and so does Escape.
 - **Keyboard.** Focus does not move into the portalled popover, so Tab from the field does not reach the day cells; arrow-key movement is not built.
 - **States.** Enabled, Hover (border only), Active while open (`--selected` border), Error (`--text-error` border, warning icon, helper). Placeholder and value colours follow `input.md`: `--text-disabled` empty, `--text-primary` filled.
