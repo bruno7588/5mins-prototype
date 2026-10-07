@@ -136,9 +136,11 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
             } else setStep('people')
           }}
         >
-          {step === 'people' && draftIds.length > 0
-            ? `Select ${draftIds.length} ${draftIds.length === 1 ? 'Person' : 'People'} & Continue`
-            : 'Next'}
+          {step === 'people'
+            ? draftIds.length === 0
+              ? 'Select People & Continue'
+              : `Select ${draftIds.length} ${draftIds.length === 1 ? 'Person' : 'People'} & Continue`
+            : 'Continue'}
         </Button>
       </Tooltip>
     )
