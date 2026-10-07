@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Add, Danger } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
+import InputField from '@/components/InputField/InputField'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
@@ -113,7 +114,7 @@ const COPY: Record<
     noun: 'assessments',
     title: 'Create Assessments with AI',
     callout:
-      'AI reads your lessons, links and resources and writes the assessments it thinks ' +
+      'AI reads your lessons and writes the assessments it thinks ' +
       'fit the course. You review every one before it lands on your course content.',
     instructionsPlaceholder: 'Types of assessment to use, tone, anything to avoid…',
     emptyBody:
@@ -155,7 +156,7 @@ function GenerateAssessmentsDrawer({
 }: Props) {
   const copy = COPY[scope]
 
-  /* The situational prompt. Both free text, both optional — what the admin knows
+  /* The prompt, in either scope. Both free text, both optional — what the admin knows
      about the audience and how the test should read, which the course content
      cannot say on its own. */
   const [audience, setAudience] = useState('')
@@ -355,26 +356,20 @@ function GenerateAssessmentsDrawer({
           />
         )}
 
-        {/* Who the scenarios are written for. Situational only — a set of assessments is
-            written for whoever the course is, and a second optional field to say so was
-            one more thing to skip past. */}
-        {scope === 'situational' && (
-          <div className="gen-drawer__field gen-drawer__field--prompt">
-            <label className="gen-drawer__label" htmlFor="gen-audience">
+        {/* Who the questions are written for, in either scope: what the admin knows
+            about the learners that the course content cannot say on its own. */}
+        <InputField
+          label={
+            <>
               Audience <span className="gen-drawer__label-optional">(optional)</span>
-            </label>
-            <input
-              id="gen-audience"
-              type="text"
-              className="gen-drawer__input"
-              placeholder="Front-of-house staff in their first month"
-              value={audience}
-              onChange={(e) => setAudience(e.target.value)}
-            />
-          </div>
-        )}
+            </>
+          }
+          placeholder="Front-of-house staff in their first month"
+          value={audience}
+          onChange={(e) => setAudience(e.target.value)}
+        />
 
-        {/* The only lever either scope has. The format picker used to stand here for
+        {/* The steer on how they read. The format picker used to stand here for
             assessments — eight chips and a count each — and it asked for a decision the
             admin could not make until they had seen what came back. The generator reads
             the course and picks the formats it thinks fit; this is where anything it

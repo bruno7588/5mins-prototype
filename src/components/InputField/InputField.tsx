@@ -3,7 +3,8 @@ import { Danger, TickCircle } from 'iconsax-react'
 import './InputField.css'
 
 interface InputFieldProps {
-  label?: string
+  /** Text, or a node for a label with an inline aside such as "(optional)". */
+  label?: ReactNode
   placeholder?: string
   value?: string
   onChange?: ChangeEventHandler<HTMLInputElement>

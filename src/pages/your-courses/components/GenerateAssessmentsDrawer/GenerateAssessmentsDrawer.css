@@ -278,10 +278,12 @@
   color: var(--text-tertiary);
 }
 
-.gen-drawer__input,
+/* DS has no multi-line input, so the textarea wears the Outlined InputField chrome
+   (input.md): 8px 12px padding, --border-elevated rest, --border-hover + --input-background
+   on hover, --selected on focus. */
 .gen-drawer__textarea {
   width: 100%;
-  padding: var(--space-sm) var(--space-m);
+  padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;
@@ -300,18 +302,15 @@
   resize: none;
 }
 
-.gen-drawer__input::placeholder,
 .gen-drawer__textarea::placeholder {
   color: var(--text-disabled);
 }
 
-.gen-drawer__input:hover,
 .gen-drawer__textarea:hover {
   border-color: var(--border-hover);
   background: var(--input-background);
 }
 
-.gen-drawer__input:focus,
 .gen-drawer__textarea:focus {
   border-color: var(--selected);
   background: transparent;
