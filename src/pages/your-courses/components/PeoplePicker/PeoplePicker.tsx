@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Add,
-  ArrowDown,
   ArrowDown2,
   Briefcase,
   Location,
@@ -116,8 +115,11 @@ interface Props {
   committedIds: string[]
   /** `leftOut`: people a group pick reached who are already enrolled in every course (D18). */
   onCommit: (ids: string[], leftOut: number) => void
-  /** Reports how many people the draft picks would enrol, as they change. */
-  onDraftChange?: (count: number) => void
+  /** Reports the people the draft picks would enrol, as they change. */
+  onDraftChange?: (count: number, ids: string[]) => void
+  /** The caller's footer button commits the draft, so the picker drops its own
+   *  Select People button (Assign courses: "Select N People & Continue"). */
+  commitInFooter?: boolean
   /** Limited Admins only see people inside their scope (D8). */
   inScope?: (p: PersonRow) => boolean
   /** People already enrolled in every course stay pickable; the caller decides what
@@ -125,7 +127,7 @@ interface Props {
   includeEnrolled?: boolean
 }
 
-function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, committedIds, onCommit, onDraftChange, inScope, includeEnrolled = false }: Props) {
+function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, committedIds, onCommit, onDraftChange, inScope, includeEnrolled = false, commitInFooter = false }: Props) {
   const [mode, setMode] = useState<PickerMode>(modes[0])
 
   const [filters, setFilters] = useState<Record<string, FilterValue>>(initialFilters)
@@ -141,7 +143,6 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(0)
-  const [sortDesc, setSortDesc] = useState(false)
 
   const single = courseIds.length === 1
   const courseKey = courseIds.join('|')
@@ -229,9 +230,9 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
   }, [allSelected, filteredPeople, selectedPeople, selectedTeams, selectedCohorts, enrolledIn])
 
   useEffect(() => {
-    onDraftChange?.(draftIds.size)
+    onDraftChange?.(draftIds.size, [...draftIds])
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draftIds.size])
+  }, [draftIds])
 
   const committed = useMemo(() => new Set(committedIds), [committedIds])
   const draftMatchesCommitted = draftIds.size === committed.size && [...draftIds].every((id) => committed.has(id))
@@ -271,15 +272,14 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
   /* ── Lists per mode ── */
   const q = query.trim().toLowerCase()
-  const byName = (a: { name: string }, b: { name: string }) =>
-    sortDesc ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)
+  const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name)
 
   const listedPeople = useMemo(() => {
     const base = mode === 'managers' ? filteredPeople.filter((p) => p.isManager) : filteredPeople
     const rows = q ? base.filter((p) => p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q)) : base
     return [...rows].sort(byName)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredPeople, mode, q, sortDesc])
+  }, [filteredPeople, mode, q])
 
   const listedTeams = q ? TEAM_ROWS.filter((t) => t.name.toLowerCase().includes(q)) : TEAM_ROWS
   const listedCohorts = q ? COHORTS.filter((c) => c.name.toLowerCase().includes(q)) : COHORTS
@@ -421,18 +421,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
   const peopleColumns: Column<PersonRow>[] = [
     {
       key: 'name',
-      header: (
-        <span className="ppk-th-sort">
-          Name
-          <ArrowDown
-            size={16}
-            color="currentColor"
-            variant="Linear"
-            className={`ppk-sort${sortDesc ? ' ppk-sort--desc' : ''}`}
-          />
-        </span>
-      ),
-      sortable: true,
+      header: 'Name',
       width: '1 0 240px',
       render: (p) => (
         <span className="tbl-stack">
@@ -484,7 +473,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
   // Commits the draft; only committed people count towards the enrolment. Under a
   // table it sits on the pagination line (footerStart); otherwise on its own.
-  const stepActions = (
+  const stepActions = commitInFooter ? null : (
     <Tooltip
       text={draftIds.size === 0 ? 'Tick people to select them' : 'These people are already selected'}
       position="Top"
@@ -531,7 +520,6 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
       selectAllIndeterminate={!allSelected && !pageAllChecked && pageSomeChecked}
       selectAllDisabled={allSelected || selectableVisible.length === 0}
       onToggleAll={togglePage}
-      onSort={() => setSortDesc((d) => !d)}
       pagination={pagination(listedPeople.length)}
       footerStart={stepActions}
     />
@@ -709,7 +697,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
         </>
       )}
 
-      {!tableShown && !noResults && <div className="ppk-step-actions">{stepActions}</div>}
+      {!tableShown && !noResults && stepActions && <div className="ppk-step-actions">{stepActions}</div>}
     </div>
   )
 }

@@ -178,22 +178,6 @@
 }
 
 /* ── Tables ── */
-.ppk-th-sort {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.ppk-sort {
-  flex-shrink: 0;
-  color: var(--text-tertiary);
-  transition: transform 150ms ease;
-}
-
-.ppk-sort--desc {
-  transform: rotate(180deg);
-}
-
 .ppk-step-actions {
   display: flex;
   align-items: center;

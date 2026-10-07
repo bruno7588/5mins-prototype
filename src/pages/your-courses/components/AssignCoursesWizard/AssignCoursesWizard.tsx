@@ -46,7 +46,8 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   // What happens to people who already have a course; both off by default, so a
   // straight Launch leaves every existing enrolment and completion alone.
   const [choice, setChoice] = useState<ExistingChoice>({ restart: false, again: false })
-  const [draftCount, setDraftCount] = useState(0)
+  // The ticked people on the People step; the footer button commits them.
+  const [draftIds, setDraftIds] = useState<string[]>([])
   const [confirmDiscard, setConfirmDiscard] = useState(false)
   const [launched, setLaunched] = useState<{ courses: number; people: number } | null>(null)
 
@@ -113,7 +114,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
     step === 'courses'
       ? courses.length === 0 && 'Add at least one course to continue'
       : step === 'people'
-        ? (activeCommitted.length === 0 || draftCount === 0) && 'Select people to continue'
+        ? draftIds.length === 0 && 'Select people to continue'
         : false
 
   const action =
@@ -123,8 +124,21 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
       </Button>
     ) : (
       <Tooltip text={nextBlocked || ''} position="Top" icon={false} disabled={!nextBlocked}>
-        <Button size="lg" disabled={!!nextBlocked} onClick={() => setStep(step === 'courses' ? 'people' : 'review')}>
-          Next
+        {/* People step: one button commits the ticked people and moves on, instead of a
+            separate Select People in the picker plus Next. */}
+        <Button
+          size="lg"
+          disabled={!!nextBlocked}
+          onClick={() => {
+            if (step === 'people') {
+              setCommitted(draftIds)
+              setStep('review')
+            } else setStep('people')
+          }}
+        >
+          {step === 'people' && draftIds.length > 0
+            ? `Select ${draftIds.length} ${draftIds.length === 1 ? 'Person' : 'People'} & Continue`
+            : 'Next'}
         </Button>
       </Tooltip>
     )
@@ -202,7 +216,8 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
               committedIds={committed}
               onCommit={(ids) => setCommitted(ids)}
               includeEnrolled
-              onDraftChange={setDraftCount}
+              onDraftChange={(_, ids) => setDraftIds(ids)}
+              commitInFooter
             />
           )}
         </div>
