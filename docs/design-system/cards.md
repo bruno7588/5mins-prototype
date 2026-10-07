@@ -689,52 +689,69 @@ Same glow-stack anatomy as desktop, scaled down. Container: **272px** wide (fixe
 
 ## Folder card
 
-An admin library grouping ("folder") that previews its courses as a stacked deck. 308px wide; card area 308 x 272, info below. The stack depth mirrors the course count (variant axis: 0, 1, 2, 3+). Source: `Card/category` (named "category" in Figma but it is the **Folder** card — the creator tile inside it is labelled "New Folder"), light `10175:3183`, dark `10175:3106`.
+An admin library grouping ("folder") that previews its courses as a stacked deck. 308px wide; card area 308 x 272, info below. The stack depth mirrors the course count (variant axis: 0, 1, 2, 3+). Source: `Card/Folder`, light `10175:3183`, dark `10175:3106` (re-verified 2026-10-07). Built in `src/pages/your-courses/YourCourses.tsx` (`.your-courses-folder-*`, `.your-courses-new-folder*`).
 
-Anatomy (16px gap between card and info):
+> **Updated 2026-10-07 (Figma `10175:3106`):** hover now shrinks the whole course stack to 5/6 (240 x 164 → 200 x 137) with a smooth 300ms ease-in-out, instead of scaling layers one by one; back layer `--input-background`, middle layer `--cards-background-hover` (hover `--input-background-elevated`); count text `--text-tertiary`; the New Folder tile has a 1.5px dashed `--border-elevated` border and hovers to `--input-background`. Keyboard focus shows the hover state plus the cyan ring. Card-to-info gap is 12px (was 16px).
 
-- **Card surface:** `--cards-background`, radius 12px, 24px padding, Shadow S.
-- **Thumb stack** centered (240 x 164 area), all layers radius 8px, bottom-anchored front image:
-  - Back layer (3+ only): 208 x 118, `--cards-background-hover` fill, offset up 23px
-  - Middle layer (2 and 3+): 224 x 132, `--border` fill, offset up 4px
+Anatomy (12px gap between card and info, `var(--space-sm)`):
+
+- **Card surface:** `--cards-background`, radius 12px, 24px padding, `var(--shadow-card)` (Shadow S in light, none in dark).
+- **Thumb stack** centred in a 240 x 164 area, all layers radius 8px, front image bottom-anchored:
+  - Back layer (3+ only): 208 x 118, `--input-background`, centred 23px above the middle
+  - Middle layer (2 and 3+): 224 x 132, `--cards-background-hover`, centred 4px above the middle
   - Front: the folder's cover image, 240 x 140
-  - **0 courses:** a gray video-player glyph placeholder instead of the stack
-- **Info** below, 4px gap: folder name Poppins Bold 16px `--text-primary`; count Poppins Regular 14px `--text-secondary` (`3+ courses`, `1 course`, `0 courses`).
+  - **0 courses:** a grey video-player illustration (155 x 96) instead of the stack
+- **Info** below, 4px gap: folder name H4 (Poppins Bold 16px) `--text-primary`; count Paragraph M regular (14px) `--text-tertiary` (`3+ courses`, `1 course`, `0 courses`).
+
+### Folder states
+
+| State | Surface | Stack | Middle layer |
+|---|---|---|---|
+| Enabled | `--cards-background` | 240 x 164 | `--cards-background-hover` |
+| Hover / focus-visible | `--cards-background-hover` | scaled to 5/6 (200 x 137), centred | `--input-background-elevated` |
+
+- **Animation:** surface fill, stack scale and middle-layer fill all ease over 300ms `cubic-bezier(0.42, 0, 0.58, 1)` (ease-in-out), in and out. Under `prefers-reduced-motion` the change snaps.
+- **Focus:** keyboard focus shows the hover state plus a 2px `--primary-button-background` ring, 2px offset, on the surface.
+- **Stack depth:** render only as many layers as the folder has courses, capped at 3. The 0-course illustration shrinks with the stack (155 x 96 → 117 x 72).
 
 ```css
-.folder-card { width: 308px; display: flex; flex-direction: column; gap: 16px; }
+.folder-card { width: 308px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; }
 .folder-card__surface {
-  height: 272px; display: grid; place-items: center; padding: 24px;
-  background: var(--cards-background); border-radius: 12px;
-  box-shadow: var(--shadow-s);
+  height: 272px; display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: var(--cards-background); border-radius: 12px; box-shadow: var(--shadow-card);
+  transition: background-color 300ms cubic-bezier(0.42, 0, 0.58, 1);
 }
-.folder-card__surface:hover { background: var(--cards-background-hover); }
-.folder-card__stack { position: relative; width: 240px; height: 164px; }
-.folder-card__stack .back   { position: absolute; left: 50%; transform: translateX(-50%); top: 0;    width: 208px; height: 118px; background: var(--cards-background-hover); border-radius: 8px; }
-.folder-card__stack .middle { position: absolute; left: 50%; transform: translateX(-50%); top: 15px; width: 224px; height: 132px; background: var(--border); border-radius: 8px; }
-.folder-card__stack .front  { position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; width: 240px; height: 140px; object-fit: cover; border-radius: 8px; }
+.folder-card:hover .folder-card__surface { background: var(--cards-background-hover); }
+.folder-card__stack {
+  position: relative; width: 240px; height: 164px;
+  transition: transform 300ms cubic-bezier(0.42, 0, 0.58, 1);
+}
+.folder-card:hover .folder-card__stack { transform: scale(0.8333); }
+.folder-card__stack .back   { position: absolute; left: 50%; top: calc(50% - 23px); transform: translate(-50%, -50%); width: 208px; height: 118px; background: var(--input-background); border-radius: 8px; }
+.folder-card__stack .middle { position: absolute; left: 50%; top: calc(50% - 4px);  transform: translate(-50%, -50%); width: 224px; height: 132px; background: var(--cards-background-hover); border-radius: 8px; transition: background-color 300ms cubic-bezier(0.42, 0, 0.58, 1); }
+.folder-card:hover .folder-card__stack .middle { background: var(--input-background-elevated); }
+.folder-card__stack .front  { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 240px; height: 140px; object-fit: cover; border-radius: 8px; }
 .folder-card__info { display: flex; flex-direction: column; gap: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .folder-card__surface, .folder-card__stack, .folder-card__stack .middle { transition: none; }
+}
 ```
 
 ### "New Folder" creator tile
 
-The last tile in a folder grid is the creator affordance: 308 x 272, transparent fill, **1.5px dashed `--border`** border, radius 12px, centered column in `--text-secondary` — a 48px `+` over a 16px Regular "New Folder" label. Hover fills with `--cards-background-hover`.
+The first tile in a folder grid is the creator affordance: 308 x 272, transparent fill, **1.5px dashed `--border-elevated`** border, radius 12px, centred column in `--text-secondary`: a 48px `+` over a 16px Regular "New Folder" label. Hover eases the fill to `--input-background` over 300ms; the border stays put.
 
 ```css
 .folder-card--new {
   height: 272px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  border: 1.5px dashed var(--border); border-radius: 12px;
+  border: 1.5px dashed var(--border-elevated); border-radius: 12px;
   color: var(--text-secondary); text-align: center; cursor: pointer;
+  transition: background-color 300ms cubic-bezier(0.42, 0, 0.58, 1);
 }
 .folder-card--new .plus  { font: 400 48px/1.5 Poppins; }
 .folder-card--new .label { font: 400 16px/1.5 Poppins; }
-.folder-card--new:hover  { background: var(--cards-background-hover); }
+.folder-card--new:hover  { background: var(--input-background); }
 ```
-
-### Folder states
-
-- **Hover:** card surface (or creator tile) fills with `--cards-background-hover`.
-- **Stack depth:** render only as many layers as the folder has courses, capped at 3.
 
 ---
 

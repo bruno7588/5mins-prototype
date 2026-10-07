@@ -81,13 +81,11 @@
   gap: var(--space-xl);
 }
 
-/* New Folder card */
+/* New Folder card (Figma Card/Folder, New folder=true, dark 10175:3173 / 3176) */
 .your-courses-new-folder {
   width: 308px;
   height: 272px;
-  /* Plain CSS dashed border. The old data-URI SVG hardcoded its stroke hexes, so
-     the frame never followed --border across themes. */
-  border: 1px dashed var(--border-elevated);
+  border: 1.5px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
@@ -96,13 +94,12 @@
   cursor: pointer;
   color: var(--text-secondary);
   text-align: center;
-  transition: background 150ms ease, border-color 150ms ease;
+  transition: background-color 300ms var(--folder-ease);
   position: relative;
 }
 
 .your-courses-new-folder:hover {
-  background-color: var(--input-background-hover);
-  border-color: var(--border-hover);
+  background-color: var(--input-background);
 }
 
 .your-courses-new-folder-icon {
@@ -117,14 +114,19 @@
   line-height: 1.5;
 }
 
-/* Course folder card */
+/* Course folder card (Figma Card/Folder, light 10175:3183 / dark 10175:3106).
+   Hover eases the surface to --cards-background-hover and shrinks the whole course
+   stack to 200 x 137 (5/6), so the deck settles back into the card. */
+.your-courses-folders {
+  --folder-ease: cubic-bezier(0.42, 0, 0.58, 1); /* ease-in-out */
+}
+
 .your-courses-folder-card {
   width: 308px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-sm);
   align-items: center;
-  overflow: hidden;
   cursor: pointer;
 }
 
@@ -138,21 +140,39 @@
   justify-content: center;
   padding: var(--space-l);
   position: relative;
-  box-shadow: var(--shadow-s);
-  transition: box-shadow 150ms ease, background-color 150ms ease;
+  box-shadow: var(--shadow-card);
+  transition: background-color 300ms var(--folder-ease);
 }
 
-.your-courses-folder-card:hover .your-courses-folder-thumb {
+.your-courses-folder-card:hover .your-courses-folder-thumb,
+.your-courses-folder-card:focus-visible .your-courses-folder-thumb {
   background: var(--cards-background-hover);
-  box-shadow: var(--shadow-s);
+}
+
+/* Keyboard focus shows the hover state plus the cyan ring, on the surface rather than
+   the whole card so the ring hugs the visible box. */
+.your-courses-folder-card:focus-visible {
+  outline: none;
+}
+
+.your-courses-folder-card:focus-visible .your-courses-folder-thumb {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }
 
 .your-courses-folder-thumbs {
   width: 240px;
   height: 164px;
   position: relative;
+  transition: transform 300ms var(--folder-ease);
 }
 
+.your-courses-folder-card:hover .your-courses-folder-thumbs,
+.your-courses-folder-card:focus-visible .your-courses-folder-thumbs {
+  transform: scale(0.8333);
+}
+
+/* Back layer (3+ courses). */
 .your-courses-folder-img-back {
   position: absolute;
   width: 208px;
@@ -160,16 +180,12 @@
   left: 50%;
   top: calc(50% - 23px);
   transform: translate(-50%, -50%);
-  background: var(--cards-background-hover);
+  background: var(--input-background);
   border-radius: var(--radius-s);
-  transition: background-color 300ms ease-in-out, transform 300ms ease-in-out;
 }
 
-.your-courses-folder-card:hover .your-courses-folder-img-back {
-  background: var(--border);
-  transform: translate(-50%, -50%) scale(0.833);
-}
-
+/* Middle layer (2 and 3+ courses): steps up a shade on hover so it still reads
+   against the lighter hovered surface. */
 .your-courses-folder-img-mid {
   position: absolute;
   width: 224px;
@@ -177,14 +193,14 @@
   left: 50%;
   top: calc(50% - 4px);
   transform: translate(-50%, -50%);
-  background: var(--border);
+  background: var(--cards-background-hover);
   border-radius: var(--radius-s);
-  transition: background-color 300ms ease-in-out, transform 300ms ease-in-out;
+  transition: background-color 300ms var(--folder-ease);
 }
 
-.your-courses-folder-card:hover .your-courses-folder-img-mid {
-  background: var(--border-hover);
-  transform: translate(-50%, -50%) scale(0.833);
+.your-courses-folder-card:hover .your-courses-folder-img-mid,
+.your-courses-folder-card:focus-visible .your-courses-folder-img-mid {
+  background: var(--input-background-elevated);
 }
 
 .your-courses-folder-img-front {
@@ -194,14 +210,8 @@
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  transform-origin: bottom center;
   border-radius: var(--radius-s);
   overflow: hidden;
-  transition: transform 300ms ease-in-out;
-}
-
-.your-courses-folder-card:hover .your-courses-folder-img-front {
-  transform: translateX(-50%) scale(0.833);
 }
 
 .your-courses-folder-img-front img {
@@ -209,6 +219,15 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .your-courses-new-folder,
+  .your-courses-folder-thumb,
+  .your-courses-folder-thumbs,
+  .your-courses-folder-img-mid {
+    transition: none;
+  }
 }
 
 .your-courses-folder-info {
@@ -228,7 +247,7 @@
 .your-courses-folder-count {
   font-size: 14px;
   font-weight: 400;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 /* Active Enrolments table */
