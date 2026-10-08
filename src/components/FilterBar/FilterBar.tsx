@@ -138,7 +138,10 @@ function FilterBar({
               {f.control}
               {f.removable !== false && (
                 <span className="filter-bar__row-remove">
-                  <CloseButton size={16} ariaLabel={`Remove ${f.title} filter`} onClick={() => onRemove(f.id)} />
+                  {/* Icon-only, so it names its action on hover (iconography.md). */}
+                  <Tooltip text={`Remove ${f.title} filter`} position="Top" icon={false}>
+                    <CloseButton size={16} ariaLabel={`Remove ${f.title} filter`} onClick={() => onRemove(f.id)} />
+                  </Tooltip>
                 </span>
               )}
             </div>

@@ -330,7 +330,9 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
   )
 
   const removeButton = (id: string) => (
-    <CloseButton size={16} ariaLabel={`Remove ${FILTER_BY_ID[id].title} filter`} onClick={() => removeFilter(id)} />
+    <Tooltip text={`Remove ${FILTER_BY_ID[id].title} filter`} position="Top" icon={false}>
+      <CloseButton size={16} ariaLabel={`Remove ${FILTER_BY_ID[id].title} filter`} onClick={() => removeFilter(id)} />
+    </Tooltip>
   )
 
   const renderControl = (id: string) => {

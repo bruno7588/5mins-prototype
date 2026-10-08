@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Sort, Status, Calendar, Clock, CalendarTick, StatusUp, Star1 } from 'iconsax-react'
 import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import FilterBar, { FilterBarAddButton, type FilterBarFilter } from '@/components/FilterBar/FilterBar'
 import InputInteger from '@/components/InputInteger/InputInteger'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
@@ -261,7 +262,11 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
     // Multi-select renders the × on the field's line (via trailing) so it
     // sits next to the 400px search bar while chips flow full-width below.
     const trailing =
-      def.kind === 'multi' ? <CloseButton size={16} ariaLabel={`Remove ${def.label} filter`} onClick={() => onRemove(id)} /> : undefined
+      def.kind === 'multi' ? (
+        <Tooltip text={`Remove ${def.label} filter`} position="Top" icon={false}>
+          <CloseButton size={16} ariaLabel={`Remove ${def.label} filter`} onClick={() => onRemove(id)} />
+        </Tooltip>
+      ) : undefined
     return {
       id,
       title: def.label,

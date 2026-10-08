@@ -48,7 +48,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) component set "Filter bar"
 | Collapsed, filled | one Chip per filter (16px field icon, label, ×), gap `--space-sm` (12); past `maxPills` (default 6) a "+N" chip. Clicking a pill expands the bar; its × removes the filter. |
 | Chevron | 16px `ArrowDown2`, `--text-tertiary`, in a 28px circle (hover `--cards-background-hover`); rotates 180° when expanded |
 | Body (expanded) | column, gap `--space-sm` (12); `--space-m` (16) under the head, `--space-sm` (12) when empty |
-| Filter row | 20px field icon (`--text-secondary`), "<Field> is" Regular 14 `--text-primary`, the control, 16px CloseButton remove; gap `--space-s` (8), min height 37 |
+| Filter row | 20px field icon (`--text-secondary`), "<Field> is" Regular 14 `--text-primary`, the control, 16px CloseButton remove (hover: `--cards-background-hover` circle, glyph `--text-error`, Tooltip "Remove <Field> filter"); gap `--space-s` (8), min height 37 |
 | Actions | Add Filter + Clear All text buttons, gap `--space-m` (16). Clear All rests `--text-primary`, disabled `--text-disabled` |
 
 The collapsed summary fades out (220ms) while the body opens with `Collapse` (GSAP), so the head never jumps. Reduced motion turns both off.

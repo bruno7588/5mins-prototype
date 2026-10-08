@@ -133,11 +133,12 @@
   white-space: nowrap;
 }
 
-/* On the card surface the default close hover barely shows; use the card hover fill.
-   Covers a control's own trailing remove too (multi select). */
+/* Remove on hover: the card hover fill (the default close fill barely shows on a card)
+   and the glyph turns --text-error, since it deletes the filter. Covers a control's own
+   trailing remove too (multi select). */
 .filter-bar__row .close-btn:hover {
   background: var(--cards-background-hover);
-  color: var(--text-primary);
+  color: var(--text-error);
 }
 
 .filter-bar__actions {
