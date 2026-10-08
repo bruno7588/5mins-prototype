@@ -35,6 +35,7 @@ import thumb8 from '../../assets/programs/course-thumbs/course-thumb-8.jpg'
 import thumb9 from '../../assets/programs/course-thumbs/course-thumb-9.jpg'
 import './UserProfile.css'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
+import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 
 /* ─── Header lookup ─── Mirrors the active People rows (src/pages/people/People.tsx)
    so a profile resolves from its route id. Kept minimal on purpose — a prototype
@@ -72,6 +73,8 @@ interface CourseProgress {
   score: number | null
   status: Status
   completionDate: string | null
+  /** Mandatory compliance training; drives the Compliance Only view. */
+  compliance: boolean
 }
 
 /* Covers every status so each row action has a row to act on. Rules the data
@@ -79,18 +82,18 @@ interface CourseProgress {
    100% progress; Failed finished its attempt but scored under the pass mark;
    Scheduled starts in the future, so progress is 0 and nothing is late. */
 const COURSES: CourseProgress[] = [
-  { id: '1', course: 'Anti Money Laundering and Terrorist Financing', thumb: thumb1, startDate: '2026-01-12', dueDate: '2026-02-13', progress: 100, score: 80, status: 'Completed', completionDate: '2026-02-02' },
-  { id: '2', course: 'Fraud Prevention and Risk Assessment', thumb: thumb2, startDate: '2026-02-02', dueDate: '2026-03-06', progress: 100, score: 92, status: 'Completed', completionDate: '2026-02-27' },
-  { id: '3', course: 'Compliance Strategies for Financial Institutions', thumb: thumb3, startDate: '2026-03-09', dueDate: '2026-04-10', progress: 100, score: 75, status: 'Completed', completionDate: '2026-04-01' },
-  { id: '4', course: 'Counteracting Financial Crimes and Corruption', thumb: thumb4, startDate: '2026-06-01', dueDate: '2026-07-03', progress: 100, score: 41, status: 'Failed', completionDate: null },
-  { id: '5', course: 'Regulatory Frameworks for Money Laundering Prevention', thumb: thumb5, startDate: '2026-06-15', dueDate: '2026-07-17', progress: 100, score: 38, status: 'Failed', completionDate: null },
-  { id: '6', course: 'Financial Integrity and Security Management', thumb: thumb6, startDate: '2026-05-18', dueDate: '2026-06-19', progress: 45, score: null, status: 'Overdue', completionDate: null },
-  { id: '7', course: 'Terrorism Financing and Economic Stability', thumb: thumb7, startDate: '2026-06-22', dueDate: '2026-07-24', progress: 0, score: null, status: 'Overdue', completionDate: null },
-  { id: '8', course: 'Sanctions Screening and Reporting Obligations', thumb: thumb8, startDate: '2026-07-20', dueDate: '2026-08-21', progress: 65, score: null, status: 'In Progress', completionDate: null },
-  { id: '9', course: 'Know Your Customer Due Diligence', thumb: thumb9, startDate: '2026-07-27', dueDate: '2026-08-28', progress: 20, score: null, status: 'In Progress', completionDate: null },
-  { id: '10', course: 'Bribery and Corruption Awareness', thumb: thumb1, startDate: '2026-08-03', dueDate: '2026-09-04', progress: 0, score: null, status: 'Not Started', completionDate: null },
-  { id: '11', course: 'Data Protection for Financial Services', thumb: thumb2, startDate: '2026-09-07', dueDate: '2026-10-09', progress: 0, score: null, status: 'Scheduled', completionDate: null },
-  { id: '12', course: 'Whistleblowing and Speak-Up Culture', thumb: thumb3, startDate: '2026-10-05', dueDate: '2026-11-06', progress: 0, score: null, status: 'Scheduled', completionDate: null },
+  { id: '1', course: 'Anti Money Laundering and Terrorist Financing', thumb: thumb1, startDate: '2026-01-12', dueDate: '2026-02-13', progress: 100, score: 80, status: 'Completed', completionDate: '2026-02-02', compliance: true },
+  { id: '2', course: 'Fraud Prevention and Risk Assessment', thumb: thumb2, startDate: '2026-02-02', dueDate: '2026-03-06', progress: 100, score: 92, status: 'Completed', completionDate: '2026-02-27', compliance: false },
+  { id: '3', course: 'Compliance Strategies for Financial Institutions', thumb: thumb3, startDate: '2026-03-09', dueDate: '2026-04-10', progress: 100, score: 75, status: 'Completed', completionDate: '2026-04-01', compliance: true },
+  { id: '4', course: 'Counteracting Financial Crimes and Corruption', thumb: thumb4, startDate: '2026-06-01', dueDate: '2026-07-03', progress: 100, score: 41, status: 'Failed', completionDate: null, compliance: true },
+  { id: '5', course: 'Regulatory Frameworks for Money Laundering Prevention', thumb: thumb5, startDate: '2026-06-15', dueDate: '2026-07-17', progress: 100, score: 38, status: 'Failed', completionDate: null, compliance: true },
+  { id: '6', course: 'Financial Integrity and Security Management', thumb: thumb6, startDate: '2026-05-18', dueDate: '2026-06-19', progress: 45, score: null, status: 'Overdue', completionDate: null, compliance: true },
+  { id: '7', course: 'Terrorism Financing and Economic Stability', thumb: thumb7, startDate: '2026-06-22', dueDate: '2026-07-24', progress: 0, score: null, status: 'Overdue', completionDate: null, compliance: true },
+  { id: '8', course: 'Sanctions Screening and Reporting Obligations', thumb: thumb8, startDate: '2026-07-20', dueDate: '2026-08-21', progress: 65, score: null, status: 'In Progress', completionDate: null, compliance: true },
+  { id: '9', course: 'Know Your Customer Due Diligence', thumb: thumb9, startDate: '2026-07-27', dueDate: '2026-08-28', progress: 20, score: null, status: 'In Progress', completionDate: null, compliance: true },
+  { id: '10', course: 'Bribery and Corruption Awareness', thumb: thumb1, startDate: '2026-08-03', dueDate: '2026-09-04', progress: 0, score: null, status: 'Not Started', completionDate: null, compliance: false },
+  { id: '11', course: 'Data Protection for Financial Services', thumb: thumb2, startDate: '2026-09-07', dueDate: '2026-10-09', progress: 0, score: null, status: 'Scheduled', completionDate: null, compliance: false },
+  { id: '12', course: 'Whistleblowing and Speak-Up Culture', thumb: thumb3, startDate: '2026-10-05', dueDate: '2026-11-06', progress: 0, score: null, status: 'Scheduled', completionDate: null, compliance: false },
 ]
 
 /* Standing for the whole course list — deliberately NOT derived from the
@@ -110,12 +113,15 @@ const STAT_GROUPS: Record<CourseStatusCard['key'], Status[]> = {
   overdue: ['Overdue'],
 }
 
-const ACTIVE_COURSES = COURSES.filter((c) => c.status !== 'Scheduled')
-
-const shareOf = (statuses: Status[]) => {
-  const count = ACTIVE_COURSES.filter((c) => statuses.includes(c.status)).length
-  return ACTIVE_COURSES.length ? Math.round((count / ACTIVE_COURSES.length) * 100) : 0
+const shareOf = (list: CourseProgress[], statuses: Status[]) => {
+  const active = list.filter((c) => c.status !== 'Scheduled')
+  const count = active.filter((c) => statuses.includes(c.status)).length
+  return active.length ? Math.round((count / active.length) * 100) : 0
 }
+
+/* Course Progress view (Figma People 10259:62567): all enrolments, or only the
+   compliance ones. Scopes the stats, filters and table alike. */
+type CourseView = 'all' | 'compliance'
 
 /* Overdue and Failed intentionally share the red error pill — colour carries
    severity, the label carries which. Matches how Failed reads on My Team. */
@@ -305,6 +311,8 @@ function UserProfile() {
   const [activeTab, setActiveTab] = useState<Tab>('Course Progress')
   // Due dates are editable via the bulk actions, so the list is state, not the const.
   const [courses, setCourses] = useState<CourseProgress[]>(COURSES)
+  const [view, setView] = useState<CourseView>('all')
+  const inView = (c: CourseProgress) => view === 'all' || c.compliance
   /* Which enrolments the Extend-due-date modal is acting on: the whole
      selection ('bulk') or the single row its menu was opened from. */
   const [extendTarget, setExtendTarget] = useState<'bulk' | CourseProgress | null>(null)
@@ -460,10 +468,10 @@ function UserProfile() {
   }
 
   const rows = useMemo(() => {
-    const filtered = courses.filter((c) => matchesCourse(c, filterActive, filterValues))
+    const filtered = courses.filter((c) => (view === 'all' || c.compliance) && matchesCourse(c, filterActive, filterValues))
     const sorted = [...filtered].sort((a, b) => compareCourses(a, b, sortKey))
     return sortDesc ? sorted.reverse() : sorted
-  }, [courses, sortKey, sortDesc, filterActive, filterValues])
+  }, [courses, view, sortKey, sortDesc, filterActive, filterValues])
 
   // Click a sortable header: same column flips direction, a new column starts ascending.
   const handleSort = (key: SortKey) => {
@@ -642,9 +650,24 @@ function UserProfile() {
             </div>
           </header>
 
+          <ContentSwitcher
+            className="up-view-switcher"
+            ariaLabel="Course view"
+            items={[
+              { key: 'all', label: 'All Courses' },
+              { key: 'compliance', label: `Compliance Only (${courses.filter((c) => c.compliance).length})` },
+            ]}
+            activeKey={view}
+            onChange={(key) => {
+              setView(key as CourseView)
+              // Rows outside the new view shouldn't stay silently selected.
+              setSelected(new Set())
+            }}
+          />
+
           {/* Standing at a glance, before the rows (Figma People 9192:42911).
-              Always the learner's full course list — search and filters below
-              narrow the table, never this. */}
+              Follows the view switcher above; search and filters below narrow
+              the table, never this. */}
           <div className="up-stats">
             {COURSE_STATUS_CARDS.map((c) => (
               <StatCard
@@ -652,14 +675,14 @@ function UserProfile() {
                 icon={c.icon}
                 label={c.label}
                 tooltip={c.tooltip}
-                share={shareOf(STAT_GROUPS[c.key])}
+                share={shareOf(COURSES.filter(inView), STAT_GROUPS[c.key])}
               />
             ))}
           </div>
 
           {/* Smart filters */}
           <CourseFilters
-            courses={courses}
+            courses={courses.filter(inView)}
             active={filterActive}
             values={filterValues}
             expanded={filtersExpanded}

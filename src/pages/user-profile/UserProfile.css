@@ -301,3 +301,8 @@
 .confirm-modal-actions.up-unenrol-actions {
   gap: var(--space-sm);
 }
+
+/* Course view switcher (Figma People 10259:62567): hugs its items, left-aligned. */
+.up-view-switcher {
+  align-self: flex-start;
+}
