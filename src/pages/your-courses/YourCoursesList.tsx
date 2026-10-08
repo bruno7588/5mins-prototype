@@ -244,7 +244,7 @@ function YourCoursesList() {
         course={createdCourse}
         onClose={() => setSuccessOpen(false)}
       />
-      {assignOpen && <AssignCoursesWizard onClose={() => setAssignOpen(false)} onDone={() => setAssignOpen(false)} />}
+      {assignOpen && <AssignCoursesWizard onClose={() => setAssignOpen(false)} onDone={() => navigate('/your-courses', { state: { tab: 'enrolments' } })} />}
     </div>
   )
 }

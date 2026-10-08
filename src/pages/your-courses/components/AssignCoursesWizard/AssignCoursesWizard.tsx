@@ -35,7 +35,7 @@ function LaunchConfetti() {
 
 interface Props {
   onClose: () => void
-  /** Success: back to Your Courses, where the admin started (D10). */
+  /** Success: View Enrolments, to the Active Enrolments tab where the new enrolments show. */
   onDone: () => void
 }
 
@@ -175,7 +175,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
             transition={{ delay: 0.25, duration: 0.35, ease: 'easeOut' }}
           >
             <Button size="lg" onClick={onDone} autoFocus>
-              Continue To Courses
+              View Enrolments
             </Button>
           </motion.div>
         </div>

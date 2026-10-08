@@ -41,7 +41,7 @@ This is table stakes at the enterprise end of the category. Cornerstone's Learni
 | D7 | People are selected first, then committed with "Select People", following the Enrol people wizard: table picks are a draft until committed. |
 | D8 | Limited Admins (DES-308) only see people inside their scope in the picker. |
 | D9 | Learner emails are out of scope for now. |
-| D10 | The success screen returns admins to Your Courses, where they started. |
+| D10 | The success screen button, View Enrolments, takes admins to the Active Enrolments tab of Your Courses, where the new enrolments show (changed 2026-10-08; was: back to where they started). |
 | D11 | The "Assign Courses" button appears on both `/your-courses` and `/your-courses/list`. |
 | D12 | A recurring course re-enrols the same group of people each time; it does not re-evaluate who matches. |
 | D13 | Enrolment data is mock data in `src/data/` for the prototype. |
@@ -73,7 +73,7 @@ Derived from the ticket (no formal ACs on DES-332).
 11. Review states the totals (people, enrolments to create, enrolments skipped) and the skip reason in plain words, for example "12 people are already enrolled in Fire Safety, so they'll be skipped for that course."
 12. Review has a single "Launch" button. The admin can go back to Courses or People from the step rail without losing their selections.
 13. Launch creates one enrolment per selected person per selected course, minus the skipped pairs, each with that course's enrolment, due date and repeat settings. Nothing is written to Automations.
-14. After launch, a full-screen success screen with the confetti animation (D22) states what was assigned (courses and people counts) and returns the admin to Your Courses, where they started (D10).
+14. After launch, a full-screen success screen with the confetti animation (D22) states what was assigned (courses and people counts) and its View Enrolments button takes the admin to the Active Enrolments tab (D10).
 15. All copy follows the 5Mins copy rules (British English, sentence case, Title Case buttons, no em dashes); all styling uses `tokens.css` tokens; every interactive element has a visible `:focus-visible` ring; the flow works in light and dark mode.
 
 ### Out of scope

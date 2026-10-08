@@ -340,16 +340,23 @@
 .acw-existing__text {
   display: flex;
   flex-direction: column;
-  padding-top: var(--space-xs);
+}
+
+/* Callout checkboxes sit in a 20px hit area (Figma 7630:1171), not the standalone 32px,
+   so the box lines up with the first text line; the 16px box itself is unchanged. */
+.acw-existing__option .checkbox {
+  width: var(--space-ml);
+  height: var(--space-ml);
+  padding: var(--space-xxs);
 }
 
 .acw-existing__helper {
-  color: var(--text-secondary);
+  color: var(--text-warning);
 }
 
 .acw-existing__view {
   align-self: flex-start;
-  margin-top: var(--space-s);
+  margin-top: var(--space-sm);
 }
 
 /* View People side drawer (overlays.md: 20px Bold title; shell from CoursesDrawer.css). */

@@ -4,11 +4,14 @@ import Avatar from '@/components/Avatar/Avatar'
 import Badge from '@/components/Badge/Badge'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
+import EmptyState from '@/components/EmptyState/EmptyState'
+import Search from '@/components/Search/Search'
 import Table, { type Column } from '@/components/Table/Table'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import { PEOPLE } from '@/data/people'
 import type { EnrolmentStatus } from '@/data/enrolments'
 import type { AffectedRow } from './ReviewStep'
+import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 
 /* "View People" on Review: everyone who already has one of the selected courses, one row
    per person and course, split by a Content Switcher: currently enrolled or completed. DS Side Drawer
@@ -78,6 +81,7 @@ function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
   const panelRef = useRef<HTMLElement>(null)
   const [closing, setClosing] = useState(false)
   const [tab, setTab] = useState<'current' | 'completed'>('current')
+  const [query, setQuery] = useState('')
 
   const handleClose = () => {
     setClosing(true)
@@ -90,7 +94,10 @@ function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
   useOverlayA11y(panelRef, open && !closing)
 
   useEffect(() => {
-    if (open) setTab('current')
+    if (open) {
+      setTab('current')
+      setQuery('')
+    }
   }, [open])
 
   /* The wizard behind traps Tab and treats Escape as "discard". Catch both first, on
@@ -130,6 +137,9 @@ function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
     { id: 'completed' as const, label: 'Completed', rows: completed, columns: [nameColumn, courseColumn, statusColumn] },
   ].filter((t) => t.rows.length > 0)
   const active = tabs.find((t) => t.id === tab) ?? tabs[0]
+  // Search narrows the open tab by person or course; the switcher counts stay the totals.
+  const q = query.trim().toLowerCase()
+  const visible = active ? active.rows.filter((r) => !q || r.name.toLowerCase().includes(q) || r.courseName.toLowerCase().includes(q)) : []
 
   return createPortal(
     <>
@@ -164,10 +174,20 @@ function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
             onChange={(key) => setTab(key as 'current' | 'completed')}
             ariaLabel="People who already have these courses"
           />
+          <Search value={query} onChange={setQuery} placeholder="Search for people or courses" ariaLabel="Search for people or courses" />
           {active && (
-            /* Switching swaps the list instantly; only the switcher pill moves. */
-            <div key={active.id} role="tabpanel">
-              <AffectedTable rows={active.rows} columns={active.columns} />
+            /* Switching swaps the list instantly; only the switcher pill moves. Keyed on
+               the query too, so a new search starts on the first page. */
+            <div key={`${active.id}|${q}`} role="tabpanel">
+              {visible.length === 0 ? (
+                <EmptyState
+                  illustration={<img src={noResultsIllustration} width={72} height={72} alt="" />}
+                  title="No results"
+                  description="Try a different search."
+                />
+              ) : (
+                <AffectedTable rows={visible} columns={active.columns} />
+              )}
             </div>
           )}
         </div>

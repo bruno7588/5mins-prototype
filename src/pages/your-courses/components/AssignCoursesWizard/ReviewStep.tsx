@@ -124,12 +124,17 @@ function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
   const [viewing, setViewing] = useState(false)
 
   const hasExisting = counts.current > 0 || counts.completed > 0
+  /* Every count on this step is anchored to the people picked on the People step,
+     the same number the stepper shows, so admins see one total and parts of it. */
+  const selected = committedIds.length
 
   return (
     <div className="acw-review">
       <div className="acw-review-section">
         {/* No Edit buttons: the stepper's completed steps and Back already lead there. */}
-        <h4 className="acw-review-heading">Review</h4>
+        <h4 className="acw-review-heading">
+          Assign {plural(courses.length, 'course')} to {plural(selected, 'person', 'people')}
+        </h4>
 
         {/* One callout for everyone who already has some of the courses, above the table so
             a long course list can't push it out of view. Built from Alert's own classes
@@ -139,8 +144,7 @@ function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
           <div className="alert alert--callout alert--with-body acw-existing">
             <InfoIcon size={20} color="currentColor" className="alert__icon" />
             <div className="alert__body">
-              <p className="alert__title">Some people already have these courses</p>
-              <p className="alert__message">They'll only be enrolled in the courses they don't have yet.</p>
+              <p className="alert__title">Some people already have these courses and will be skipped</p>
               <div className="acw-existing__options">
                 {counts.current > 0 && (
                   <label className="acw-existing__option">
@@ -149,10 +153,10 @@ function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
                       onChange={() => onChoiceChange({ ...choice, restart: !choice.restart })}
                     />
                     <span className="acw-existing__text">
-                      <span>Restart for {plural(counts.current, 'person', 'people')} currently enrolled</span>
-                      {counts.overdue > 0 && (
-                        <span className="acw-existing__helper">{counts.overdue} of them are overdue.</span>
-                      )}
+                      <span>
+                        Restart for {plural(counts.current, 'person', 'people')} currently enrolled
+                        {counts.overdue > 0 && <span className="acw-existing__helper"> · {counts.overdue} overdue</span>}
+                      </span>
                     </span>
                   </label>
                 )}
@@ -163,7 +167,7 @@ function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
                       onChange={() => onChoiceChange({ ...choice, again: !choice.again })}
                     />
                     <span className="acw-existing__text">
-                      <span>Enrol {plural(counts.completed, 'person', 'people')} who completed again</span>
+                      <span>Re-enrol {plural(counts.completed, 'person', 'people')} who’ve completed</span>
                     </span>
                   </label>
                 )}

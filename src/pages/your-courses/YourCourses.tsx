@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, UserAdd } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Button from '../../components/Button/Button'
@@ -33,7 +33,9 @@ const enrolmentRows: EnrolmentRow[] = [
 
 function YourCourses() {
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<Tab>('created')
+  // Assign Courses from the list page lands here on Active Enrolments.
+  const initialTab = (useLocation().state as { tab?: Tab } | null)?.tab ?? 'created'
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab)
   const [assignOpen, setAssignOpen] = useState(false)
 
   return (
@@ -166,7 +168,10 @@ function YourCourses() {
         </div>
         )}
       </main>
-      {assignOpen && <AssignCoursesWizard onClose={() => setAssignOpen(false)} onDone={() => setAssignOpen(false)} />}
+      {assignOpen && <AssignCoursesWizard onClose={() => setAssignOpen(false)} onDone={() => {
+        setAssignOpen(false)
+        setActiveTab('enrolments')
+      }} />}
     </div>
   )
 }
