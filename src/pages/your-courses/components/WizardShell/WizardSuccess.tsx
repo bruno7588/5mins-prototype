@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { MotionConfig, motion } from 'framer-motion'
 import Button from '@/components/Button/Button'
 import { SuccessTick } from '@/pages/programs/components/LaunchSuccessModal/LaunchSuccessModal'
@@ -23,7 +23,8 @@ function LaunchConfetti() {
 
 interface Props {
   title: string
-  message: string
+  /** May carry <strong> for names (Semibold), e.g. the course. */
+  message: ReactNode
   actionLabel: string
   onAction: () => void
 }

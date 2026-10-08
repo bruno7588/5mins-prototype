@@ -45,7 +45,7 @@ export const defaultTiming = (): EnrolTiming => ({
 /** "Oct 8, 2026" */
 // Same format as the Assign courses dates (schedule.ts fmtDate).
 export const fmtIso = (s: string) => fromIso(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-const fmtShort = (s: string) => fromIso(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+export const fmtShortIso = (s: string) => fromIso(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 
 /** The due date as ISO, or null when there is none. */
 export function dueIso(t: EnrolTiming): string | null {
@@ -57,7 +57,7 @@ export function dueIso(t: EnrolTiming): string | null {
 /** Stepper sub-line: "Oct 8 to Oct 22, 2026", or "Starts Oct 8, 2026" with no due date. */
 export function timingSummary(t: EnrolTiming): string {
   const due = dueIso(t)
-  return due ? `${fmtShort(t.start)} to ${fmtIso(due)}` : `Starts ${fmtIso(t.start)}`
+  return due ? `${fmtShortIso(t.start)} to ${fmtIso(due)}` : `Starts ${fmtIso(t.start)}`
 }
 
 export function dueLabel(t: EnrolTiming): string {

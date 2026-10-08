@@ -366,3 +366,8 @@ button.wzs-stepper-step:focus-visible {
   z-index: 0;
   pointer-events: none;
 }
+
+/* Names inside the success line (the course) are Semibold. */
+.wzs-success .lsm-sub strong {
+  font-weight: 600;
+}

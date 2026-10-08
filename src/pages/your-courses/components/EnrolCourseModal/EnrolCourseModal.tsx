@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Calendar, Danger, PlayCircle, Profile2User, Refresh, TaskSquare, User, UserTick } from 'iconsax-react'
-import Badge from '@/components/Badge/Badge'
+import { Calendar, Danger, Profile2User, TaskSquare, User } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Tooltip from '@/components/Tooltip/Tooltip'
+import WorkspaceCourseCard from '@/components/WorkspaceCourseCard/WorkspaceCourseCard'
 import { COURSE_DETAILS_ID, recordEnrolments } from '@/data/enrolments'
 import courseThumb from '@/assets/programs/course-thumbs/course-thumb-1.jpg'
 import WizardShell, { type WizardStep } from '../WizardShell/WizardShell'
@@ -12,7 +12,7 @@ import PeoplePicker from '../PeoplePicker/PeoplePicker'
 import ExistingEnrolmentsCallout from '../AssignCoursesWizard/ExistingEnrolmentsCallout'
 import { outcomeFor, reviewCounts, type ExistingChoice } from '../AssignCoursesWizard/ReviewStep'
 import { plural, type AssignCourse } from '../AssignCoursesWizard/schedule'
-import EnrolTimingStep, { defaultTiming, dueIso, fmtIso, repeatLabel, timingSummary, type EnrolTiming } from './EnrolTimingStep'
+import EnrolTimingStep, { defaultTiming, dueIso, fmtIso, fmtShortIso, timingSummary, type EnrolTiming } from './EnrolTimingStep'
 import EnrolSponsorStep, { type Sponsor } from './EnrolSponsorStep'
 import '../AssignCoursesWizard/AssignCoursesWizard.css'
 import './EnrolCourseModal.css'
@@ -21,6 +21,9 @@ import './EnrolCourseModal.css'
    success. Same shell, footer, stepper and success screen as Assign courses. */
 
 type Step = 'people' | 'dates' | 'sponsor' | 'review'
+// The Course details header's figures for this course (17 lessons, 20 min).
+const COURSE_LESSONS = 17
+const COURSE_MINUTES = 20
 const ORDER: Step[] = ['people', 'dates', 'sponsor', 'review']
 
 interface Props {
@@ -144,18 +147,26 @@ function EnrolCourseModal({ open, onClose, onEnrol, courseTitle = 'This course' 
             ? draftIds.length === 0
               ? 'Select People & Continue'
               : `Select ${draftIds.length} ${draftIds.length === 1 ? 'Person' : 'People'} & Continue`
-            : 'Continue'}
+            : step === 'dates'
+              ? 'Save & Continue'
+              : 'Continue'}
         </Button>
       </Tooltip>
     )
 
   const due = dueIso(timing)
+  // People who will actually get the enrolment: the picked people minus any skipped.
+  const enrolCount = counts.perCourse[0].enrol
   const sponsorLine = sponsor.name.trim() ? [sponsor.name.trim(), sponsor.role.trim()].filter(Boolean).join(', ') : ''
 
   const success = launched !== null && (
     <WizardSuccess
-      title={launched === 1 ? 'Person enrolled' : 'People enrolled'}
-      message={`${plural(launched, 'person', 'people')} ${launched === 1 ? 'is' : 'are'} now enrolled in ${courseTitle}.`}
+      title="Success"
+      message={
+        <>
+          {plural(launched, 'person', 'people')} {launched === 1 ? 'is' : 'are'} now enrolled in <strong>{courseTitle}</strong>.
+        </>
+      }
       actionLabel="View Enrolments"
       onAction={() => onEnrol(launched)}
     />
@@ -187,7 +198,7 @@ function EnrolCourseModal({ open, onClose, onEnrol, courseTitle = 'This course' 
           <PeoplePicker
             courseIds={[COURSE_DETAILS_ID]}
             courseNames={{ [COURSE_DETAILS_ID]: courseTitle }}
-            modes={['all', 'people', 'cohorts']}
+            modes={['all', 'people', 'teams', 'managers', 'cohorts']}
             // Production opens with "Enrolment is Not enrolled" already applied.
             initialFilters={{ enrolment: 'not-enrolled' }}
             committedIds={committed}
@@ -209,46 +220,58 @@ function EnrolCourseModal({ open, onClose, onEnrol, courseTitle = 'This course' 
           {step === 'review' && (
             <div className="acw-review">
               <div className="acw-review-section">
-                <h4 className="acw-review-heading">Enrol {plural(committed.length, 'person', 'people')} in this course</h4>
+                {/* A decision point, so above the summary. */}
                 <ExistingEnrolmentsCallout
                   counts={counts}
                   choice={choice}
                   onChoiceChange={setChoice}
                   title="Some people already have this course and will be skipped"
                 />
-                <ul className="acw-review-list">
-                  <li className="acw-review-row">
-                    <img className="acw-review-thumb" src={courseThumb} alt="" />
-                    <div className="acw-review-body">
-                      <span className="acw-review-course ecm-review-course">{courseTitle}</span>
-                      <span className="acw-review-info">
-                        <span className="acw-review-info-item">
-                          <PlayCircle size={16} color="var(--text-tertiary)" variant="Linear" />
-                          Starts {fmtIso(timing.start)}
-                        </span>
-                        <span className="acw-review-info-item">
-                          <Calendar size={16} color="var(--text-tertiary)" variant="Linear" />
-                          {due ? `Due ${fmtIso(due)}` : 'No due date'}
-                        </span>
-                        <span className="acw-review-info-item">
-                          <Refresh size={16} color="var(--text-tertiary)" variant="Linear" />
-                          {repeatLabel(timing)}
-                        </span>
-                        {sponsorLine && (
-                          <span className="acw-review-info-item">
-                            <UserTick size={16} color="var(--text-tertiary)" variant="Linear" />
-                            Sponsor: {sponsorLine}
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                    <Badge
-                      type="in-progress"
-                      className="acw-review-people"
-                      label={`${plural(counts.perCourse[0].enrol, 'person', 'people')} to enrol`}
-                    />
-                  </li>
-                </ul>
+                {/* The course as learners will see it (DS Course card, static preview, as on
+                    Course created), then the summary in words: who, when, whether it repeats. */}
+                <div className="ecm-review-launch">
+                  <h3 className="ecm-review-title">Your course is ready to launch 🙌</h3>
+                  <WorkspaceCourseCard
+                    course={{
+                      id: COURSE_DETAILS_ID,
+                      title: courseTitle,
+                      image: courseThumb,
+                      // The photo is always set, so the gradient fallback never shows.
+                      thumbnailGradient: '',
+                      progress: 0,
+                      lessonCount: COURSE_LESSONS,
+                      durationMinutes: COURSE_MINUTES,
+                      // Library Card/Courses "New + Due date" (10276:13283): new to the learner, due pill when dated.
+                      isNew: true,
+                      dueLabel: due ? `Due on ${fmtShortIso(due)}` : undefined,
+                    }}
+                  />
+                  <div className="ecm-review-summary">
+                    <p className="ecm-review-text">
+                      It will be assigned to <strong>{plural(enrolCount, 'person', 'people')}</strong>
+                      {due ? (
+                        <>
+                          , scheduled for <strong>{fmtIso(timing.start)}</strong> to <strong>{fmtIso(due)}</strong>.
+                        </>
+                      ) : (
+                        <>
+                          , starting <strong>{fmtIso(timing.start)}</strong> with no due date.
+                        </>
+                      )}
+                    </p>
+                    <p className="ecm-review-text">
+                      {timing.repeat.enabled
+                        ? `It repeats every ${timing.repeat.interval} ${timing.repeat.unit} from the start date.`
+                        : "This is a one-time enrolment and won't repeat."}
+                    </p>
+                    {sponsorLine && (
+                      <p className="ecm-review-text">
+                        Sponsored by <strong>{sponsorLine}</strong>.
+                      </p>
+                    )}
+                    <p className="ecm-review-text">You can find this course on the Courses page.</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
