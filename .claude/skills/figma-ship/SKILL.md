@@ -37,6 +37,7 @@ One `general-purpose` agent. Pass it the route, the flows and states verbatim, t
 - `Skill: figma:figma-generate-design` and `Skill: figma:figma-use` — the mandatory Figma workflow. Every `use_figma` call must follow them.
 - `Skill: figma:figma-generate-library` — for building any component the library lacks.
 - `Skill: 5mins-design-system` — so the rebuild uses the right components and tokens.
+- `Skill: figma-conventions` — Bruno's house rules for the canvas grid, screen anatomy, auto-layout, tokens, naming, Note callouts, cursors and arrows. Where it is more specific than this brief, it wins.
 
 And to load its tools in **two** ToolSearch calls, one per server:
 
@@ -117,6 +118,7 @@ Row 3   [ Proposed components ]   (only if any were built)
 ### F. Verify and report
 
 - Before reporting, list each state frame's top-level layers with `get_metadata` and confirm every state after the first has its own overlay or data layers. If any does not, build it before reporting.
+- Run `.claude/skills/figma-conventions/audit.js` on the section with `use_figma` and fix every finding in frames this run built. Put the audit summary in the report.
 
 - `get_screenshot` each rebuilt frame and compare it side by side with the browser screenshot of the same state. Anything that differs is a defect: clipped text, overlapping nodes, wrong variants, missing copy, different spacing, a control in a different state. Fix it before moving on. The only allowed difference is a gap named in the report.
 - Close every browser tab the agent opened.
