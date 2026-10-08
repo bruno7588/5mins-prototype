@@ -120,7 +120,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   const action =
     step === 'review' ? (
       <Button size="lg" onClick={launch}>
-        Launch
+        Assign Courses
       </Button>
     ) : (
       <Tooltip text={nextBlocked || ''} position="Top" icon={false} disabled={!nextBlocked}>
