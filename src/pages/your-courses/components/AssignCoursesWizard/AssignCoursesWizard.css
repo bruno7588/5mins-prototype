@@ -156,6 +156,8 @@
   color: var(--text-secondary);
 }
 
+/* The row's text ("Repeat every", "days") goes disabled with its stepper, until its radio is picked. */
+.acw-pop-inline:has(.input-integer--disabled) .acw-pop-desc,
 .acw-pop-inline:has(.input-integer--disabled) .acw-pop-days {
   color: var(--text-disabled);
 }
@@ -181,13 +183,6 @@
 }
 
 /* ── Success ── */
-.acw-success {
-  min-height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-l);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .acw-cell-chevron { transition: none; }
@@ -380,15 +375,6 @@
   align-self: flex-start;
 }
 
-/* Launch confetti canvas: fills the success screen, under its content, never in the way. */
-.acw-confetti {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
 
 /* Courses step thumbnails match the Review rows (88 x 48), Assign courses only. */
 .acw-courses .automation-details-row-thumb {

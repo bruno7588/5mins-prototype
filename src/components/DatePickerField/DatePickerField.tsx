@@ -66,15 +66,18 @@ function DatePickerField({
       if (!inField && !inPopover) setOpen(false)
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false)
+      if (e.key !== 'Escape') return
+      // Close the calendar only, not the modal, drawer or wizard it sits in.
+      e.stopPropagation()
+      setOpen(false)
     }
     // Capture phase: a host that stops mousedown from bubbling (a modal panel
     // guarding its scrim) would otherwise hide every click inside it from us.
     document.addEventListener('mousedown', onDown, true)
-    document.addEventListener('keydown', onKey)
+    document.addEventListener('keydown', onKey, true)
     return () => {
       document.removeEventListener('mousedown', onDown, true)
-      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('keydown', onKey, true)
     }
   }, [open])
 

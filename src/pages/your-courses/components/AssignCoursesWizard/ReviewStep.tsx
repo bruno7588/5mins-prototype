@@ -1,10 +1,6 @@
-import { useState } from 'react'
 import { Calendar, PlayCircle, Refresh } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
-import Button from '@/components/Button/Button'
-import Checkbox from '@/components/Checkbox/Checkbox'
-import InfoIcon from '@/components/icons/InfoIcon'
-import AffectedPeopleDrawer from './AffectedPeopleDrawer'
+import ExistingEnrolmentsCallout from './ExistingEnrolmentsCallout'
 import { PEOPLE } from '@/data/people'
 import { enrolmentStatus, type EnrolmentStatus } from '@/data/enrolments'
 import { plural, startOffsets, timingParts, type AssignCourse } from './schedule'
@@ -121,9 +117,7 @@ interface Props {
 function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
   const counts = reviewCounts(courses, committedIds, choice)
   const offsets = startOffsets(courses)
-  const [viewing, setViewing] = useState(false)
 
-  const hasExisting = counts.current > 0 || counts.completed > 0
   /* Every count on this step is anchored to the people picked on the People step,
      the same number the stepper shows, so admins see one total and parts of it. */
   const selected = committedIds.length
@@ -136,48 +130,8 @@ function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
           Assign {plural(courses.length, 'course')} to {plural(selected, 'person', 'people')}
         </h4>
 
-        {/* One callout for everyone who already has some of the courses, above the table so
-            a long course list can't push it out of view. Built from Alert's own classes
-            (alerts-toast.md) because it holds checkboxes, which the Alert component has no
-            slot for. Nothing here blocks Launch. */}
-        {hasExisting && (
-          <div className="alert alert--callout alert--with-body acw-existing">
-            <InfoIcon size={20} color="currentColor" className="alert__icon" />
-            <div className="alert__body">
-              <p className="alert__title">Some people already have these courses and will be skipped</p>
-              <div className="acw-existing__options">
-                {counts.current > 0 && (
-                  <label className="acw-existing__option">
-                    <Checkbox
-                      checked={choice.restart}
-                      onChange={() => onChoiceChange({ ...choice, restart: !choice.restart })}
-                    />
-                    <span className="acw-existing__text">
-                      <span>
-                        Restart for {plural(counts.current, 'person', 'people')} currently enrolled
-                        {counts.overdue > 0 && <span className="acw-existing__helper"> · {counts.overdue} overdue</span>}
-                      </span>
-                    </span>
-                  </label>
-                )}
-                {counts.completed > 0 && (
-                  <label className="acw-existing__option">
-                    <Checkbox
-                      checked={choice.again}
-                      onChange={() => onChoiceChange({ ...choice, again: !choice.again })}
-                    />
-                    <span className="acw-existing__text">
-                      <span>Re-enrol {plural(counts.completed, 'person', 'people')} who’ve completed</span>
-                    </span>
-                  </label>
-                )}
-              </div>
-              <Button variant="text" size="md" className="acw-existing__view" onClick={() => setViewing(true)}>
-                View People
-              </Button>
-            </div>
-          </div>
-        )}
+        {/* Above the list so a long course list can't push it out of view. */}
+        <ExistingEnrolmentsCallout counts={counts} choice={choice} onChoiceChange={onChoiceChange} />
 
         {/* A short list (1 to 5 courses), so no column header: each row labels its own
             number inline. Figma Programs "Card/course" (4240:92985). */}
@@ -220,7 +174,6 @@ function ReviewStep({ courses, committedIds, choice, onChoiceChange }: Props) {
         </ul>
       </div>
 
-      <AffectedPeopleDrawer open={viewing} rows={counts.affected} onClose={() => setViewing(false)} />
     </div>
   )
 }

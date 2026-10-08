@@ -1,0 +1,100 @@
+/* Enrol people wizard: page-level pieces on top of the shared WizardShell and the
+   Assign courses classes (acw-pop-*, acw-review-*). Prefix: ecm-. */
+
+/* ── Dates step ── */
+.ecm-timing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  max-width: 800px;
+}
+
+.ecm-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+}
+
+/* Label above its field, as InputField (input.md): 8px gap, Semibold 14 secondary. */
+.ecm-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.ecm-label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.ecm-optional {
+  font-weight: 400;
+}
+
+/* Both fields fit their content (start date, due trigger). */
+.ecm-field > .dpf,
+.ecm-field > .dropdown-field {
+  align-self: flex-start;
+}
+
+.ecm-field > .dropdown-field .dropdown-trigger {
+  width: auto;
+}
+
+/* The specific due date sits under its radio, full width of the popover row. */
+.ecm-due-date {
+  white-space: normal;
+}
+
+.ecm-due-date .dpf {
+  flex: 1;
+}
+
+.ecm-frequency {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.ecm-frequency-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-s);
+  padding: 0;
+  font-size: 16px;
+  font-weight: 700; /* H4 */
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* On the page ground the option rows lose the popover's hover fill and side padding,
+   so the radios line up with the fields above. */
+.acw-pop-option.ecm-option {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.acw-pop-option.ecm-option:hover {
+  background: transparent;
+}
+
+/* ── Sponsor step ── */
+.ecm-sponsor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  max-width: 800px;
+}
+
+/* ── Review ── the course is the one on screen, so its name is not a link. */
+.acw-review-course.ecm-review-course:hover {
+  color: var(--text-primary);
+}
+

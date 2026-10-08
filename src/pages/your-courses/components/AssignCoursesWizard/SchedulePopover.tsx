@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { createPortal } from 'react-dom'
 import Radio from '@/components/Radio/Radio'
 import InputInteger from '@/components/InputInteger/InputInteger'
@@ -26,7 +26,20 @@ interface Props {
   align?: 'start' | 'end'
 }
 
-function SchedulePopover({ column, course, index, onChange, onClose, anchorRef, align = 'start' }: Props) {
+interface ShellProps {
+  anchorRef: RefObject<HTMLElement | null>
+  onClose: () => void
+  /** Accessible name of the dialog and its fieldset legend. */
+  label: string
+  /** "end" opens leftwards, for a trigger near the right edge. */
+  align?: 'start' | 'end'
+  children: ReactNode
+}
+
+/** The anchored popover frame: portalled card under its trigger, Radio fieldset inside,
+ *  closes on outside click or Escape. Used by the Assign courses timing cells and the
+ *  Enrol people due date. */
+export function SchedulePopoverShell({ anchorRef, onClose, label, align = 'start', children }: ShellProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [pos, setPos] = useState<{ top: number; left?: number; right?: number } | null>(null)
 
@@ -54,8 +67,8 @@ function SchedulePopover({ column, course, index, onChange, onClose, anchorRef, 
     const onDown = (e: MouseEvent) => {
       const t = e.target as Node
       if (ref.current?.contains(t) || anchorRef.current?.contains(t)) return
-      // Dropdown menus portal to <body>; a click inside one isn't "outside".
-      if ((t as HTMLElement).closest?.('.dropdown-menu, [role="listbox"]')) return
+      // Dropdown menus and the date picker portal to <body>; a click inside one isn't "outside".
+      if ((t as HTMLElement).closest?.('.dropdown-menu, [role="listbox"], .dpf-popover')) return
       onClose()
     }
     const onKey = (e: KeyboardEvent) => {
@@ -79,6 +92,20 @@ function SchedulePopover({ column, course, index, onChange, onClose, anchorRef, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [!!pos])
 
+  if (!pos) return null
+
+  return createPortal(
+    <div ref={ref} className="acw-pop" style={pos} role="dialog" aria-label={label}>
+      <fieldset className="acw-pop-fieldset">
+        <legend className="acw-visually-hidden">{label}</legend>
+        {children}
+      </fieldset>
+    </div>,
+    document.body,
+  )
+}
+
+function SchedulePopover({ column, course, index, onChange, onClose, anchorRef, align = 'start' }: Props) {
   const name = `acw-${column}-${course.id}`
 
   let body
@@ -191,22 +218,10 @@ function SchedulePopover({ column, course, index, onChange, onClose, anchorRef, 
     )
   }
 
-  if (!pos) return null
-
-  return createPortal(
-    <div
-      ref={ref}
-      className="acw-pop"
-      style={pos}
-      role="dialog"
-      aria-label={LEGEND[column]}
-    >
-      <fieldset className="acw-pop-fieldset">
-        <legend className="acw-visually-hidden">{LEGEND[column]}</legend>
-        {body}
-      </fieldset>
-    </div>,
-    document.body,
+  return (
+    <SchedulePopoverShell anchorRef={anchorRef} onClose={onClose} label={LEGEND[column]} align={align}>
+      {body}
+    </SchedulePopoverShell>
   )
 }
 

@@ -14,6 +14,8 @@ This is table stakes at the enterprise end of the category. Cornerstone's Learni
 
 ### What the code does today
 
+> **Updated 2026-10-08:** the course-level Enrol people wizard (rows below) now shares the Assign courses wizard: top stepper People → Dates → Sponsor → Review, footer Back / Continue, the existing-enrolments banner, `recordEnrolments` and the confetti success screen ("View Enrolments" opens the Enrolments tab). Dates use a calendar start date and a due date that is none, relative or a specific day; the sponsor (name, role) is optional. The rows below describe the earlier state.
+
 | Area | Current behaviour | Where |
 |---|---|---|
 | Entry point | "Your Courses" page header has one filled `Button` "Create Course" (navigates to `/create-course`). The same header is duplicated on the list view. No "Assign Courses" button. | `src/pages/your-courses/YourCourses.tsx` (`/your-courses`), `YourCoursesList.tsx` (`/your-courses/list`); routes in `src/App.tsx` |

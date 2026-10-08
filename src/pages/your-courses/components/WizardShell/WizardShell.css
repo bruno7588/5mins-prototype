@@ -347,3 +347,22 @@ button.wzs-stepper-step:focus-visible {
   font-weight: 400;
   color: var(--text-secondary);
 }
+
+/* Launch success takeover (WizardSuccess). */
+.wzs-success {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-l);
+}
+
+/* Launch confetti canvas: fills the success screen, under its content, never in the way. */
+.wzs-confetti {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}

@@ -113,6 +113,9 @@ interface CourseFiltersProps {
   onSetValue: (id: FilterId, value: FilterValue) => void
   onClear: () => void
   onToggleExpanded: () => void
+  /** Which filters the Add Filter menu offers. Defaults to all of them; Course details
+      leaves out Course, since the page is one course. */
+  filterIds?: FilterId[]
 }
 
 /* Self-contained Add-Filter picker. It owns its open state + ref so it can be
@@ -160,7 +163,7 @@ function AddFilterMenu({ available, onSelect }: { available: FilterDef[]; onSele
   )
 }
 
-function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onSetValue, onClear, onToggleExpanded }: CourseFiltersProps) {
+function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onSetValue, onClear, onToggleExpanded, filterIds }: CourseFiltersProps) {
   // Options for the multi-select filters, derived from the data.
   const optionsById = useMemo(() => {
     const uniq = (arr: string[]) => [...new Set(arr)]
@@ -171,7 +174,7 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
     } as Record<string, DropdownOption[]>
   }, [courses])
 
-  const available = FILTER_DEFS.filter((d) => !active.includes(d.id))
+  const available = FILTER_DEFS.filter((d) => (!filterIds || filterIds.includes(d.id)) && !active.includes(d.id))
 
   const renderControl = (def: FilterDef, trailing?: ReactNode) => {
     const v = values[def.id] ?? defaultValueFor(def.kind)

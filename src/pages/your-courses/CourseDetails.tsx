@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
-  Add,
   ArrowDown2,
   ArrowRight2,
   Briefcase,
@@ -16,7 +15,6 @@ import {
   PlayCircle,
   Repeat,
   RotateRight,
-  Sort,
   TaskSquare,
   TickCircle,
   UserMinus,
@@ -42,6 +40,7 @@ import CourseSettings from './components/CourseSettings/CourseSettings'
 import AssessmentsTab from './components/AssessmentsTab/AssessmentsTab'
 import EnrolCourseModal from './components/EnrolCourseModal/EnrolCourseModal'
 import '../people/People.css'
+import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterRow, type FilterValue } from '@/pages/user-profile/components/CourseFilters/CourseFilters'
 import './CourseDetails.css'
 
 type Tab = 'content' | 'enrolments' | 'assessments' | 'settings' | 'overview'
@@ -84,6 +83,24 @@ const STATUS_LABELS: Record<LearnerStatus, string> = {
 }
 
 const TOTAL = 128
+
+const CD_FILTER_IDS: FilterId[] = ['status', 'progress', 'score', 'dueDate', 'startDate', 'completionDate']
+const FILTER_KIND = Object.fromEntries(FILTER_DEFS.map((d) => [d.id, d.kind])) as Record<FilterId, FilterValue['kind']>
+
+/** "Aug 27, 2024" -> "2024-08-27", the format the date filters compare against. */
+const toIso = (d: string) => {
+  const t = new Date(d)
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`
+}
+const toFilterRow = (l: Learner): FilterRow => ({
+  course: COURSE_TITLE,
+  status: STATUS_LABELS[l.status],
+  startDate: toIso(l.startDate),
+  dueDate: toIso(l.dueDate),
+  completionDate: l.completionDate ? toIso(l.completionDate) : null,
+  progress: l.progress,
+  score: l.score,
+})
 
 // Course-level attempt policy. In the real app these come from the Settings tab
 // (CourseSettings: `autoReset` + `maxAttempts`); mirrored here as constants for the prototype.
@@ -270,12 +287,36 @@ function CourseDetails() {
   const canComplete = user.role === 'admin'
   const { toasts, show: showToast } = useToast()
 
+  /* Enrolment filters: the user profile's Course progress set, minus Course (this page
+     is one course). Rows are mapped to its FilterRow shape: status as the label the
+     table shows, dates as ISO so they compare with the date pickers. */
+  const [filterActive, setFilterActive] = useState<FilterId[]>([])
+  const [filterValues, setFilterValues] = useState<Record<string, FilterValue>>({})
+  const [filtersExpanded, setFiltersExpanded] = useState(false)
+  const addFilter = (id: FilterId) => {
+    setFilterActive((prev) => (prev.includes(id) ? prev : [...prev, id]))
+    setFilterValues((prev) => ({ ...prev, [id]: prev[id] ?? defaultValueFor(FILTER_KIND[id]) }))
+    setFiltersExpanded(true)
+  }
+  const removeFilter = (id: FilterId) => {
+    setFilterActive((prev) => prev.filter((f) => f !== id))
+    setFilterValues((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
+  }
+  const filterRows = useMemo(() => new Map(learnerList.map((l) => [l.id, toFilterRow(l)])), [learnerList])
+
   /* ─── Sticky first column: track horizontal scroll ─── */
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase()
-    if (!q) return learnerList
-    return learnerList.filter((l) => l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q))
-  }, [search, learnerList])
+    return learnerList.filter(
+      (l) =>
+        (!q || l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q)) &&
+        matchesCourse(filterRows.get(l.id)!, filterActive, filterValues),
+    )
+  }, [search, learnerList, filterRows, filterActive, filterValues])
 
   const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.id))
   const someSelected = !allSelected && rows.some((r) => selected.has(r.id))
@@ -585,21 +626,22 @@ function CourseDetails() {
               </div>
             </div>
 
-            {/* Filters */}
-            <div className="cd-filters">
-              <div className="cd-filters-headline">
-                <Sort size={20} color="var(--text-secondary)" variant="Linear" />
-                <span className="cd-filters-label">Filters</span>
-                <span className="cd-filters-count">0</span>
-                <button className="cd-filters-add ui-disabled" disabled>
-                  <Add size={20} color="currentColor" />
-                  Add
-                </button>
-              </div>
-              <button className="cd-icon-btn cd-icon-btn--sm" aria-label="Collapse filters">
-                <ArrowDown2 size={16} color="var(--text-secondary)" variant="Linear" />
-              </button>
-            </div>
+            {/* Filters (DS Filter bar, via the user profile's enrolment filters) */}
+            <CourseFilters
+              courses={[...filterRows.values()]}
+              filterIds={CD_FILTER_IDS}
+              active={filterActive}
+              values={filterValues}
+              expanded={filtersExpanded}
+              onAdd={addFilter}
+              onRemove={removeFilter}
+              onSetValue={(id, value) => setFilterValues((prev) => ({ ...prev, [id]: value }))}
+              onClear={() => {
+                setFilterActive([])
+                setFilterValues({})
+              }}
+              onToggleExpanded={() => setFiltersExpanded((e) => !e)}
+            />
 
             {/* Actions */}
             <div className="cd-actions">
@@ -743,14 +785,19 @@ function CourseDetails() {
           />
         )}
 
-        <EnrolCourseModal
-          open={enrolOpen}
-          onClose={() => setEnrolOpen(false)}
-          onEnrol={(count) => {
-            setEnrolOpen(false)
-            showToast('success', `${count} ${count === 1 ? 'person' : 'people'} enrolled`)
-          }}
-        />
+        {/* Mounted only while open, so every Enrol People starts fresh. */}
+        {enrolOpen && (
+          <EnrolCourseModal
+            open
+            courseTitle={COURSE_TITLE}
+            onClose={() => setEnrolOpen(false)}
+            // The success screen confirms the enrolment; View Enrolments lands on the list.
+            onEnrol={() => {
+              setEnrolOpen(false)
+              selectTab('enrolments')
+            }}
+          />
+        )}
         <ToastContainer toasts={toasts} />
       </main>
     </div>

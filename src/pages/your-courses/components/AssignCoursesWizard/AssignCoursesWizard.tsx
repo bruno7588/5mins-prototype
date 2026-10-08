@@ -1,13 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { MotionConfig, motion } from 'framer-motion'
+import { useMemo, useState } from 'react'
 import { Book1, Danger, Profile2User, TaskSquare } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { recordEnrolments } from '@/data/enrolments'
-import { SuccessTick } from '@/pages/programs/components/LaunchSuccessModal/LaunchSuccessModal'
-import { confetti } from '@/lib/confetti'
 import WizardShell, { type WizardStep } from '../WizardShell/WizardShell'
+import WizardSuccess from '../WizardShell/WizardSuccess'
 import PeoplePicker from '../PeoplePicker/PeoplePicker'
 import CoursesStep from './CoursesStep'
 import ReviewStep, { outcomeFor, reviewCounts, type ExistingChoice } from './ReviewStep'
@@ -18,20 +16,6 @@ import './AssignCoursesWizard.css'
    enrolment of several people into several courses, from Your Courses. */
 
 type Step = 'courses' | 'people' | 'review'
-
-/* One burst on launch (Confetti Studio, src/lib/confetti.js), on a canvas over the
-   success screen. The canvas goes once the last piece has faded; with reduced motion
-   the script draws nothing. */
-function LaunchConfetti() {
-  const ref = useRef<HTMLCanvasElement>(null)
-  const [done, setDone] = useState(false)
-  useEffect(() => {
-    if (!ref.current) return
-    return confetti(ref.current, { transparent: true, onComplete: () => setDone(true) })
-  }, [])
-  if (done) return null
-  return <canvas ref={ref} className="acw-confetti" aria-hidden="true" />
-}
 
 interface Props {
   onClose: () => void
@@ -146,41 +130,12 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
     )
 
   const success = launched && (
-    <MotionConfig reducedMotion="user">
-      <LaunchConfetti />
-      <div className="acw-success">
-        <div className="lsm-content">
-          <motion.div
-            initial={{ scale: 0.4, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 320, damping: 18 }}
-          >
-            <SuccessTick />
-          </motion.div>
-          <motion.div
-            className="lsm-info"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
-          >
-            <h2 className="lsm-title">{launched.courses === 1 ? 'Course assigned' : 'Courses assigned'}</h2>
-            <p className="lsm-sub">
-              {plural(launched.courses, 'course')} {launched.courses === 1 ? 'is' : 'are'} now assigned to{' '}
-              {plural(launched.people, 'person', 'people')}.
-            </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.35, ease: 'easeOut' }}
-          >
-            <Button size="lg" onClick={onDone} autoFocus>
-              View Enrolments
-            </Button>
-          </motion.div>
-        </div>
-      </div>
-    </MotionConfig>
+    <WizardSuccess
+      title={launched.courses === 1 ? 'Course assigned' : 'Courses assigned'}
+      message={`${plural(launched.courses, 'course')} ${launched.courses === 1 ? 'is' : 'are'} now assigned to ${plural(launched.people, 'person', 'people')}.`}
+      actionLabel="View Enrolments"
+      onAction={onDone}
+    />
   )
 
   return (

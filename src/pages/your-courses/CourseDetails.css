@@ -282,53 +282,6 @@
   line-height: 1.2;
 }
 
-/* Filters */
-.cd-filters {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-s) var(--space-sm);
-  border-radius: var(--radius-sm);
-  background: var(--cards-background);
-  box-shadow: var(--shadow-s);
-}
-
-.cd-filters-headline {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-}
-
-.cd-filters-label {
-  font-size: 14px;
-  color: var(--text-primary);
-}
-
-.cd-filters-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 21px;
-  padding: 0 var(--space-xs);
-  border-radius: var(--radius-full);
-  background: var(--input-background-elevated);
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.cd-filters-add {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-button-outlined);
-}
-
 /* Actions row */
 .cd-actions {
   display: flex;
