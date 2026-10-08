@@ -470,7 +470,7 @@ function SituationalTestDrawerContent({
                   icon={<Add size={20} color="currentColor" variant="Linear" />}
                   onClick={() => setQuestions((prev) => [...prev, makeQuestion()])}
                 >
-                  Add Question
+                  Add New Question
                 </Button>
               </div>
             )}
