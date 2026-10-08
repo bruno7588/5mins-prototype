@@ -1,12 +1,13 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, Calendar, Sort, UserTick } from 'iconsax-react'
+import { ArrowLeft2, ArrowRight2, Calendar, UserTick } from 'iconsax-react'
 import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Checkbox from '../../../../components/Checkbox/Checkbox'
 import Search from '../../../../components/Search/Search'
 import Chip from '../../../../components/Chip/Chip'
 import Radio from '../../../../components/Radio/Radio'
+import FilterBar, { FilterBarAddButton } from '@/components/FilterBar/FilterBar'
 import MiniCalendar from '../CourseOutline/MiniCalendar'
 import bellIllustration from '../../../../assets/programs/bell.svg'
 import './EnrolPeopleDrawer.css'
@@ -344,17 +345,15 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
           {mode === 'people' && (
             <div className="epd-section">
               {/* Filters — not built yet; shown disabled instead of as a decoy. */}
-              <div className="epd-filters ui-disabled" aria-disabled="true">
-                <span className="epd-filters__count">
-                  <Sort size={20} color="var(--text-primary)" variant="Linear" />
-                  <span className="epd-filters__label">Filters</span>
-                  <span className="epd-filters__badge">0</span>
-                </span>
-                <button type="button" className="epd-filters__add" disabled>
-                  <Add size={20} color="currentColor" variant="Linear" />
-                  Add Filter
-                </button>
-                <ArrowDown2 size={16} color="var(--text-secondary)" variant="Linear" />
+              <div className="ui-disabled" aria-disabled="true" inert>
+                <FilterBar
+                  filters={[]}
+                  expanded={false}
+                  onToggleExpanded={() => {}}
+                  onRemove={() => {}}
+                  onClearAll={() => {}}
+                  renderAddFilter={() => <FilterBarAddButton open={false} onClick={() => {}} />}
+                />
               </div>
 
               <Search

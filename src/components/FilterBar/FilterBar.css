@@ -1,0 +1,169 @@
+/* Filter bar (DS filter-bar.md, Library 12438:2724). Card surface, Shadow S. */
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-s) var(--space-sm);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-s);
+}
+
+.filter-bar__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 37px;
+}
+
+.filter-bar__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+}
+
+.filter-bar__label {
+  font-size: 14px;
+  font-weight: 700; /* H5 */
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.filter-bar__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  padding: 1px var(--space-xss);
+  border-radius: var(--radius-full);
+  background: var(--input-background-elevated);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* The collapsed summary fades out while the body opens, so the head doesn't jump. */
+.filter-bar__collapsed {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  transition: opacity 220ms ease;
+}
+
+.filter-bar__collapsed--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.filter-bar__pills {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.filter-bar__chevron-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.filter-bar__chevron-btn:hover {
+  background: var(--cards-background-hover);
+}
+
+.filter-bar__chevron {
+  display: flex;
+  transition: transform 200ms ease;
+}
+
+.filter-bar__chevron--open {
+  transform: rotate(180deg);
+}
+
+.filter-bar__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: var(--space-m);
+}
+
+/* No rows yet: just the actions, 12px under the head (Library Empty + Expanded). */
+.filter-bar__body--empty {
+  padding-top: var(--space-sm);
+}
+
+.filter-bar__row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  min-height: 37px;
+}
+
+.filter-bar__row-icon,
+.filter-bar__row-label,
+.filter-bar__row-remove {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 37px;
+}
+
+.filter-bar__row-label {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/* On the card surface the default close hover barely shows; use the card hover fill.
+   Covers a control's own trailing remove too (multi select). */
+.filter-bar__row .close-btn:hover {
+  background: var(--cards-background-hover);
+  color: var(--text-primary);
+}
+
+.filter-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.filter-bar__add {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Clear All rests in --text-primary (Library); hover, pressed and disabled keep the DS Text ladder. */
+.ds-btn--text.filter-bar__clear:not(:hover):not(:active):not(:disabled) {
+  color: var(--text-primary);
+}
+
+.filter-bar__toggle:focus-visible,
+.filter-bar__chevron-btn:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-bar__collapsed,
+  .filter-bar__chevron { transition: none; }
+}

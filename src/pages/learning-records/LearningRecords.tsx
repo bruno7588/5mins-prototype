@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import Button from '@/components/Button/Button'
 import Table, { type Column } from '@/components/Table/Table'
-import { Add, ArrowDown2, Calendar, Note1, Sort } from 'iconsax-react'
+import { Calendar, Note1 } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CsvIcon from '../../components/icons/CsvIcon'
@@ -10,10 +10,10 @@ import Toggle from '../../components/Toggle/Toggle'
 import Badge from '../../components/Badge/Badge'
 import InputInteger from '../../components/InputInteger/InputInteger'
 import InputField from '../../components/InputField/InputField'
-import Collapse from '../../components/Collapse/Collapse'
+import FilterBar, { FilterBarAddButton, type FilterBarFilter } from '@/components/FilterBar/FilterBar'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
-import FilterListbox, { FILTER_BY_ID, filterOptions, filterControl, OPERATOR_OPTIONS } from './components/FilterListbox/FilterListbox'
+import FilterListbox, { FILTER_BY_ID, filterControl, filterOptions, OPERATOR_OPTIONS } from './components/FilterListbox/FilterListbox'
 import FilterMultiSelect from './components/FilterControls/FilterMultiSelect'
 import ReportsListDrawer from './components/ReportsListDrawer/ReportsListDrawer'
 import SaveReportDrawer from './components/SaveReportDrawer/SaveReportDrawer'
@@ -131,9 +131,6 @@ const STATUS_BADGE: Record<Status, string> = {
   'Not Started': 'lrp-badge--not-started',
   Overdue: 'lrp-badge--overdue',
 }
-
-/* How many filter pills to show inline before collapsing the rest into "+N" */
-const MAX_VISIBLE_PILLS = 5
 
 /* ── Filtering ── Maps a filter id to the CourseRecord field it constrains.
    Filters without an entry (compliance-course, custom fields) don't narrow the
@@ -314,22 +311,6 @@ function LearningRecords() {
     [editingReport, showToast],
   )
 
-  // Label shown on a collapsed pill: the chosen value, else the filter name.
-  // Only single-select filters carry a plain string value; the rest collapse to
-  // their title (their richer state isn't summarised on the pill).
-  const valueLabel = (id: string): string => {
-    const v = filterValues[id]
-    if (v) {
-      const ctrl = filterControl(id)
-      const opts = ctrl.kind === 'single' ? ctrl.options : filterOptions(id)
-      return opts.find((o) => o.value === v)?.label ?? FILTER_BY_ID[id]?.title ?? id
-    }
-    return FILTER_BY_ID[id]?.title ?? id
-  }
-
-  const visibleFilters = activeFilters.slice(0, MAX_VISIBLE_PILLS)
-  const overflowCount = activeFilters.length - visibleFilters.length
-
   // Does a row satisfy every active filter that maps to a table column?
   const matchesFilters = (row: CourseRecord): boolean => {
     for (const id of activeFilters) {
@@ -378,29 +359,6 @@ function LearningRecords() {
     if (showDeactivated) rows = [...deactivatedData, ...rows]
     return rows.filter(matchesFilters)
   })()
-
-  // Add+ relocates between header (collapsed) and bottom actions (expanded).
-  // Only the live instance gets an open listbox so their click-outside handlers don't clash.
-  const renderAddButton = (ref: typeof bottomAddRef, open: boolean) => (
-    <div className="lrp-filters-add-wrap" ref={ref}>
-      <button
-        type="button"
-        className="lrp-filter-add"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        onClick={() => setFiltersOpen((o) => !o)}
-      >
-        <Add size={20} color="currentColor" variant="Linear" />
-        Add Filter
-      </button>
-      <FilterListbox
-        open={open}
-        onClose={() => setFiltersOpen(false)}
-        onSelect={addFilter}
-        anchorRef={ref}
-      />
-    </div>
-  )
 
   const tabs: { key: TabKey; label: string }[] = [
     { key: '5mins', label: '5Mins Courses' },
@@ -518,6 +476,32 @@ function LearningRecords() {
         )
     }
   }
+
+  // Collapsed pill text: the chosen option for a set filter, else the field name.
+  const pillLabel = (id: string): string => {
+    const v = filterValues[id]
+    if (v) {
+      const ctrl = filterControl(id)
+      const opts = ctrl.kind === 'single' ? ctrl.options : filterOptions(id)
+      return opts.find((o) => o.value === v)?.label ?? FILTER_BY_ID[id]?.title ?? id
+    }
+    return FILTER_BY_ID[id]?.title ?? id
+  }
+
+  // Active filters for the shared Filter bar, in the order they were added.
+  const filterBarFilters: FilterBarFilter[] = activeFilters.flatMap((id) => {
+    const meta = FILTER_BY_ID[id]
+    if (!meta) return []
+    return [{
+      id,
+      title: meta.title,
+      pillLabel: pillLabel(id),
+      Icon: meta.Icon,
+      // Custom fields read as the bare field name, not "<Field> is".
+      rowLabel: meta.section === 'Custom Fields' ? meta.title : undefined,
+      control: renderControl(id),
+    }]
+  })
 
   /* DS Table (table.md): the shared component owns the row-card structure, the
      horizontal scroll and the pinned first column. Widths carry over from the
@@ -679,136 +663,35 @@ function LearningRecords() {
             </div>
           </div>
 
-          {/* Filters bar */}
-          <div className="lrp-filters">
-            <div className="lrp-filters-head">
-              <button
-                type="button"
-                className="lrp-filters-toggle"
-                aria-expanded={filtersExpanded}
-                onClick={toggleExpanded}
-              >
-                <span className="lrp-filters-icon">
-                  <Sort size={20} color="var(--text-primary)" variant="Linear" />
-                </span>
-                <span className="lrp-filters-label">Filters</span>
-                <span className="lrp-filters-badge">{activeFilters.length}</span>
-              </button>
+          {/* Filters bar (DS filter-bar.md) */}
+          <div className="lrp-filters-wrap">
+            <FilterBar
+              className="lrp-filters"
+              filters={filterBarFilters}
+              expanded={filtersExpanded}
+              onToggleExpanded={toggleExpanded}
+              onRemove={removeFilter}
+              onClearAll={clearAllFilters}
+              renderAddFilter={(placement) => {
+                // Only the live instance gets an open listbox so their click-outside handlers don't clash.
+                const ref = placement === 'header' ? headerAddRef : bottomAddRef
+                const open = filtersOpen && (placement === 'header' ? !filtersExpanded : filtersExpanded)
+                return (
+                  <FilterBarAddButton ref={ref} open={open} onClick={() => setFiltersOpen((o) => !o)}>
+                    <FilterListbox
+                      open={open}
+                      onClose={() => setFiltersOpen(false)}
+                      onSelect={addFilter}
+                      anchorRef={ref}
+                    />
+                  </FilterBarAddButton>
+                )
+              }}
+            />
 
-              {/* Collapsed cluster: with no filters, Add Filter is the main action;
-                  once filters exist, show pills (Add Filter returns when expanded). */}
-              <div className={`lrp-filters-collapsed${filtersExpanded ? ' lrp-filters-collapsed--hidden' : ''}`}>
-                {activeFilters.length === 0 ? (
-                  renderAddButton(headerAddRef, filtersOpen && !filtersExpanded)
-                ) : (
-                  <div className="lrp-filters-pills">
-                    {visibleFilters.map((id) => {
-                      const meta = FILTER_BY_ID[id]
-                      if (!meta) return null
-                      return (
-                        <span className="lrp-pill" key={id}>
-                          <span className="lrp-pill-icon">
-                            <meta.Icon size={16} color="var(--text-secondary)" variant="Linear" />
-                          </span>
-                          <span className="lrp-pill-label">{valueLabel(id)}</span>
-                          <button
-                            type="button"
-                            className="lrp-pill-remove"
-                            aria-label={`Remove ${meta.title} filter`}
-                            onClick={() => removeFilter(id)}
-                          >
-                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                              <path d="M11 5L5 11M5 5L11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
-                          </button>
-                        </span>
-                      )
-                    })}
-                    {overflowCount > 0 && (
-                      <button
-                        type="button"
-                        className="lrp-pill lrp-pill--more"
-                        onClick={() => setFiltersExpanded(true)}
-                      >
-                        +{overflowCount}
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="lrp-filters-trailing">
-                {viewingName && (
-                  <span className="lrp-viewing" title={`Viewing ${viewingName}`}>
-                    <span className="lrp-viewing-dot" aria-hidden="true" />
-                    <span className="lrp-viewing-label">Viewing</span>
-                    <span className="lrp-viewing-text">{viewingName}</span>
-                  </span>
-                )}
-
-                <button
-                  type="button"
-                  className="lrp-filters-chevron-btn"
-                  aria-label={filtersExpanded ? 'Collapse filters' : 'Expand filters'}
-                  aria-expanded={filtersExpanded}
-                  onClick={toggleExpanded}
-                >
-                  <span className={`lrp-filters-chevron${filtersExpanded ? ' lrp-filters-chevron--open' : ''}`}>
-                    <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            <Collapse open={filtersExpanded}>
-              <div className="lrp-filters-body">
-                {activeFilters.map((id) => {
-                  const meta = FILTER_BY_ID[id]
-                  if (!meta) return null
-                  const isCustom = meta.section === 'Custom Fields'
-                  const label = isCustom ? meta.title : `${meta.title} is`
-                  return (
-                    <div className="lrp-filter-row" key={id}>
-                      <span className="lrp-filter-icon">
-                        <meta.Icon size={20} color="var(--text-secondary)" variant="Linear" />
-                      </span>
-                      <span className="lrp-filter-label">{label}</span>
-                      {renderControl(id)}
-                      <span className="lrp-filter-remove-slot">
-                        <button
-                          type="button"
-                          className="lrp-filter-remove"
-                          aria-label={`Remove ${meta.title} filter`}
-                          onClick={() => removeFilter(id)}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                            <path d="M11 5L5 11M5 5L11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                          </svg>
-                        </button>
-                      </span>
-                    </div>
-                  )
-                })}
-
-                <div className="lrp-filter-actions">
-                  {/* Add + lives in the bottom actions when expanded */}
-                  {renderAddButton(bottomAddRef, filtersOpen && filtersExpanded)}
-                  <button
-                    type="button"
-                    className="lrp-filter-clear"
-                    disabled={activeFilters.length === 0}
-                    onClick={clearAllFilters}
-                  >
-                    Clear All
-                  </button>
-                </div>
-
-              </div>
-            </Collapse>
-
-            {/* "Also show" scope toggles — persistent so they stay visible even when
-                the filter list is collapsed. Both widen the view, OFF by default. */}
-            <div className={`lrp-also-show${filtersExpanded ? ' lrp-also-show--divided' : ''}`}>
+            {/* "Also show" scope toggles, plus the saved report being viewed. The shared
+                Filter bar has no footer or head slot, so they sit just below it. */}
+            <div className="lrp-also-show">
               <span className="lrp-also-show-label">Include</span>
               <div className="lrp-also-item">
                 <Toggle
@@ -836,6 +719,14 @@ function LearningRecords() {
                   text="Include learners whose accounts were deactivated in People (Permanent or Long Leave). Off by default."
                 />
               </div>
+
+              {viewingName && (
+                <span className="lrp-viewing" title={`Viewing ${viewingName}`}>
+                  <span className="lrp-viewing-dot" aria-hidden="true" />
+                  <span className="lrp-viewing-label">Viewing</span>
+                  <span className="lrp-viewing-text">{viewingName}</span>
+                </span>
+              )}
             </div>
           </div>
 

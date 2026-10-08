@@ -91,76 +91,18 @@
   border-radius: 2px;
 }
 
-/* ===== Filters bar (expand / collapse) ===== */
-.lrp-filters {
+/* ===== Filters bar (DS FilterBar) + the "Include" row below it ===== */
+.lrp-filters-wrap {
   display: flex;
   flex-direction: column;
-  padding: var(--space-s) var(--space-sm);
-  background: var(--cards-background);
-  border-radius: var(--radius-sm);
-}
-
-.lrp-filters-head {
-  display: flex;
-  align-items: center;
   gap: var(--space-sm);
-  width: 100%;
-  min-height: 37px;
 }
 
-.lrp-filters-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  flex-shrink: 0;
-  padding: 0;
-  background: transparent;
-  border: none;
-  font-family: 'Poppins', sans-serif;
-  text-align: left;
-  cursor: pointer;
-}
-
-.lrp-filters-icon {
-  display: flex;
-  align-items: center;
-  color: var(--text-primary);
-}
-
-.lrp-filters-label {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.lrp-filters-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  padding: 1px var(--space-xss);
-  border-radius: var(--radius-full);
-  background: var(--input-background-elevated);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-/* "Viewing" indicator — a live pulsing dot + the report name, shown next to the
-   Filters title after a report is opened via "View in Table". */
-/* Right-aligned group: the "viewing" status + the collapse chevron. */
-.lrp-filters-trailing {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
+/* "Viewing" indicator: a live pulsing dot + the report name, at the end of the
+   Include row after a report is opened via "View in Table". */
 .lrp-viewing {
   display: inline-flex;
+  margin-left: auto;
   align-items: center;
   gap: var(--space-s);
   flex-shrink: 0;
@@ -244,132 +186,12 @@
   color: var(--text-button-hover);
 }
 
-/* Collapsed-only cluster (Add+ and pills) — fades as the container expands */
-.lrp-filters-collapsed {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  min-width: 0;
-  transition: opacity 220ms ease;
-}
-
-.lrp-filters-collapsed--hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Collapsed: selected filters as compact pills */
-.lrp-filters-pills {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  min-width: 0;
-  overflow: hidden;
-}
-
-.lrp-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  flex-shrink: 0;
-  max-width: 200px;
-  height: 37px;
-  padding: 0 var(--space-sm);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-full);
-  background: var(--cards-background);
-  font-size: 14px;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.lrp-pill-icon {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  color: var(--text-secondary);
-}
-
-.lrp-pill-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.lrp-pill-remove {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: var(--radius-full);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--text-tertiary);
-  transition: background 120ms ease, color 120ms ease;
-}
-
-.lrp-pill-remove:hover {
-  background: var(--cards-background-hover);
-  color: var(--text-primary);
-}
-
-.lrp-pill--more {
-  cursor: pointer;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.lrp-pill--more:hover {
-  background: var(--cards-background-hover);
-}
-
-/* Chevron toggle */
-.lrp-filters-chevron-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-full);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: background 120ms ease;
-}
-
-.lrp-filters-chevron-btn:hover {
-  background: var(--cards-background-hover);
-}
-
-.lrp-filters-chevron {
-  display: flex;
-  align-items: center;
-  color: var(--text-tertiary);
-  transition: transform 200ms ease;
-}
-
-.lrp-filters-chevron--open {
-  transform: rotate(180deg);
-}
-
-/* ── "Also show" scope toggles — persistent footer of the filters panel ── */
+/* ── "Also show" scope toggles, in a row just below the filter bar ── */
 .lrp-also-show {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-m);
-  padding-top: var(--space-sm);
-}
-
-/* Divider only when the filter list is expanded (separates from the actions row) */
-.lrp-also-show--divided {
-  margin-top: var(--space-s);
-  padding-top: var(--space-m);
-  border-top: 1px solid var(--border);
 }
 
 .lrp-also-show-label {
@@ -403,14 +225,6 @@
   color: var(--text-primary);
 }
 
-/* ── Expanded body ── */
-.lrp-filters-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding-top: var(--space-m);
-}
-
 /* ── Inline multi-part controls (range / operator / date) ── */
 .lrp-control-inline {
   display: flex;
@@ -429,6 +243,12 @@
 
 .lrp-filters .lrp-date-input {
   width: 188px;
+}
+
+.lrp-filters .lrp-filter-dropdown {
+  flex: 0 0 auto;
+  width: fit-content;
+  min-width: 150px;
 }
 
 /* Name + deactivation badge on one row inside the User cell */
@@ -466,122 +286,6 @@
 .lrp-cell--wrap {
   white-space: normal;
   line-height: 1.3;
-}
-
-.lrp-filter-row {
-  display: flex;
-  align-items: flex-start; /* align label/icon to the control's first line, not the tall block's center */
-  flex-wrap: wrap;
-  gap: var(--space-s);
-  min-height: 37px;
-}
-
-.lrp-filter-icon {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  min-height: 37px;
-  color: var(--text-secondary);
-}
-
-.lrp-filter-label {
-  display: inline-flex;
-  align-items: center;
-  min-height: 37px; /* match the control height so the label centers against the input, not the chips */
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.5;
-  white-space: nowrap;
-}
-
-.lrp-filters .lrp-filter-dropdown {
-  flex: 0 0 auto;
-  width: fit-content;
-  min-width: 150px;
-}
-
-/* Keeps the circular 28px remove button vertically centered on the control's first line */
-.lrp-filter-remove-slot {
-  display: inline-flex;
-  align-items: center;
-  min-height: 37px;
-  flex-shrink: 0;
-}
-
-.lrp-filter-remove {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-full);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--text-tertiary);
-  transition: background 120ms ease, color 120ms ease;
-}
-
-.lrp-filter-remove:hover {
-  background: var(--cards-background-hover);
-  color: var(--text-primary);
-}
-
-/* ── Actions row (Add / Clear All) ── */
-.lrp-filter-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-m); /* 16px */
-  padding-top: var(--space-xs);
-  padding-left: var(--space-sm); /* 12px */
-}
-
-.lrp-filters-add-wrap {
-  position: relative;
-  display: inline-flex;
-}
-
-.lrp-filter-add {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-button-outlined);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  line-height: 1.5;
-  padding: 0;
-}
-
-.lrp-filter-add:hover {
-  color: var(--text-button-hover);
-}
-
-.lrp-filter-clear {
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  line-height: 1.5;
-  padding: 0;
-}
-
-.lrp-filter-clear:hover:not(:disabled) {
-  color: var(--text-error);
-}
-
-.lrp-filter-clear:disabled {
-  color: var(--text-disabled);
-  cursor: not-allowed;
 }
 
 /* User cell content */

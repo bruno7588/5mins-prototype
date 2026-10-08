@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  Add,
-  ArrowDown2,
   Briefcase,
   Location,
   People,
@@ -15,7 +13,7 @@ import Badge from '@/components/Badge/Badge'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import Collapse from '@/components/Collapse/Collapse'
+import FilterBar, { FilterBarAddButton } from '@/components/FilterBar/FilterBar'
 import EmptyState from '@/components/EmptyState/EmptyState'
 import Dropdown, { type DropdownOption } from '@/components/Dropdown/Dropdown'
 import Search from '@/components/Search/Search'
@@ -315,21 +313,12 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
   /* ── Rendering helpers ── */
   const renderAddButton = (ref: typeof bottomAddRef, isOpen: boolean) => (
-    <div className="ppk-filter-add-wrap" ref={ref}>
-      {/* A disabled control says why on hover. */}
-      <Tooltip text="All filters are already added" position="Top" icon={false} disabled={availableGroups.length > 0}>
-        <Button
-          variant="text"
-          size="md"
-          icon={<Add size={20} color="currentColor" variant="Linear" />}
-          aria-haspopup="listbox"
-          aria-expanded={isOpen}
-          disabled={availableGroups.length === 0}
-          onClick={() => setAddOpen((o) => !o)}
-        >
-          Add Filter
-        </Button>
-      </Tooltip>
+    <FilterBarAddButton
+      ref={ref}
+      open={isOpen}
+      disabled={availableGroups.length === 0}
+      onClick={() => setAddOpen((o) => !o)}
+    >
       <FilterListbox
         open={isOpen}
         onClose={() => setAddOpen(false)}
@@ -337,7 +326,7 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
         anchorRef={ref}
         groups={availableGroups}
       />
-    </div>
+    </FilterBarAddButton>
   )
 
   const removeButton = (id: string) => (
@@ -527,97 +516,37 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
 
   return (
     <div className="ppk">
-      {/* Filters */}
-      <div className="ppk-filters">
-        <div className="ppk-filters-head">
-          <button
-            type="button"
-            className="ppk-filters-toggle"
-            aria-expanded={filtersExpanded}
-            onClick={() => {
-              setFiltersExpanded((e) => !e)
-              setAddOpen(false)
-            }}
-          >
-            <span className="ppk-filters-label">Filters</span>
-            <span className="ppk-filters-badge">{activeIds.length}</span>
-          </button>
-
-          <div className={`ppk-filters-collapsed${filtersExpanded ? ' ppk-filters-collapsed--hidden' : ''}`}>
-            {activeIds.length === 0 ? (
-              renderAddButton(headerAddRef, addOpen && !filtersExpanded)
-            ) : (
-              <div className="ppk-pills">
-                {activeIds.map((id) => {
-                  const meta = FILTER_BY_ID[id]
-                  return (
-                    <Chip
-                      key={id}
-                      label={meta.title}
-                      customIconLeft={<meta.Icon size={16} color="currentColor" variant="Linear" />}
-                      iconRight
-                      onClick={() => setFiltersExpanded(true)}
-                      onDismiss={() => removeFilter(id)}
-                    />
-                  )
-                })}
-              </div>
-            )}
-          </div>
-
-          <button
-            type="button"
-            className="ppk-filters-chevron-btn"
-            aria-label={filtersExpanded ? 'Collapse filters' : 'Expand filters'}
-            aria-expanded={filtersExpanded}
-            onClick={() => {
-              setFiltersExpanded((e) => !e)
-              setAddOpen(false)
-            }}
-          >
-            <span className={`ppk-filters-chevron${filtersExpanded ? ' ppk-filters-chevron--open' : ''}`}>
-              <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
-            </span>
-          </button>
-        </div>
-
-        <Collapse open={filtersExpanded}>
-          <div className="ppk-filters-body">
-            {activeIds.map((id) => {
-              const meta = FILTER_BY_ID[id]
-              const label = meta.section === 'Custom Fields' ? meta.title : `${meta.title} is`
-              return (
-                <div className="ppk-filter-row" key={id}>
-                  <span className="ppk-filter-icon">
-                    <meta.Icon size={20} color="var(--text-secondary)" variant="Linear" />
-                  </span>
-                  <span className="ppk-filter-label">{label}</span>
-                  {renderControl(id)}
-                  {controls[id].kind !== 'multi' && <span className="ppk-filter-remove-slot">{removeButton(id)}</span>}
-                </div>
-              )
-            })}
-
-            <div className="ppk-filter-actions">
-              {renderAddButton(bottomAddRef, addOpen && filtersExpanded)}
-              <Tooltip text="No filters to clear" position="Top" icon={false} disabled={activeIds.length > 0}>
-                <Button
-                  variant="text"
-                  size="md"
-                  className="ppk-filter-clear"
-                  disabled={activeIds.length === 0}
-                  onClick={() => {
-                    setFilters({})
-                    resetPage()
-                  }}
-                >
-                  Clear All
-                </Button>
-              </Tooltip>
-            </div>
-          </div>
-        </Collapse>
-      </div>
+      <FilterBar
+        filters={activeIds.map((id) => {
+          const meta = FILTER_BY_ID[id]
+          return {
+            id,
+            title: meta.title,
+            // Same iconsax icon; FilterListbox types it with more variants than FilterBar accepts.
+            Icon: meta.Icon,
+            // Custom fields read as the bare field name, not "<Field> is".
+            rowLabel: meta.section === 'Custom Fields' ? meta.title : undefined,
+            control: renderControl(id),
+            // Multi selects carry their own remove (see renderControl).
+            removable: controls[id].kind !== 'multi',
+          }
+        })}
+        expanded={filtersExpanded}
+        onToggleExpanded={() => {
+          setFiltersExpanded((e) => !e)
+          setAddOpen(false)
+        }}
+        onRemove={removeFilter}
+        onClearAll={() => {
+          setFilters({})
+          resetPage()
+        }}
+        renderAddFilter={(placement) =>
+          placement === 'header'
+            ? renderAddButton(headerAddRef, addOpen && !filtersExpanded)
+            : renderAddButton(bottomAddRef, addOpen && filtersExpanded)
+        }
+      />
 
       <div className="ppk-chips">
         {modes.map((m) => (

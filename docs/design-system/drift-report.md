@@ -7,6 +7,8 @@ description: A list of known prototype drift to fix, not guidance. Places in the
 
 Places inside the prototype where a page hand-rolls UI that a shared component (or a DS spec) already covers. This is a to-fix list, not guidance: when a page below looks like a pattern to copy, use the "Should use" column instead. Every entry was confirmed by grep on 2026-09-29; line numbers drift as files change, so re-grep the class name before fixing.
 
+> **Updated 2026-10-08:** the hand-rolled filter cards in PeoplePicker, Learning Records, the Enrol people drawer and the user profile Course progress filters now use the shared `FilterBar` ([filter-bar.md](filter-bar.md)), which removed the `.up-filter-row-remove` CloseButton and `.lrp-pill` Chip entries. Automations `TriggerFilters` is a criteria form, not a filter bar, and stays as is.
+
 ## Overlays (drawers and modals)
 
 There is no shared Drawer or Modal shell component yet, so each drawer and modal builds its own backdrop. Fix target: the [overlays.md](overlays.md) spec (no shared shell yet).
@@ -58,7 +60,6 @@ There is no shared Drawer or Modal shell component yet, so each drawer and modal
 |---|---|---|
 | CloseButton | `.aim-close`, `pages/add-content/components/AddImageModal/AddImageModal.tsx:177` | `CloseButton` |
 | CloseButton | `.cfm-close` (rotated `Add` icon), `pages/add-content/components/CreateFlashcardsModal.tsx:40` | `CloseButton` |
-| CloseButton | `.up-filter-row-remove` (rotated `Add` icon), `pages/user-profile/components/CourseFilters/CourseFilters.tsx:307` | `CloseButton` with `ariaLabel` |
 | CloseButton | `.assessment-modal-media-remove` (rotated `Add` icon), `pages/your-courses/components/AssessmentModal/AssessmentModal.tsx:507` | `CloseButton` with `ariaLabel` |
 | CloseButton | `.assessment-modal-audio-pill-close` (rotated `Add` icon), `pages/your-courses/components/AssessmentModal/AssessmentModal.tsx:584` | `CloseButton` with `ariaLabel` |
 
@@ -143,7 +144,6 @@ Each of these builds its own `SearchNormal1` icon plus text input.
 |---|---|---|
 | Badge | `pages/my-team/StatusBadge.tsx` (`.mt-cp__status-badge--*`, literal rgba fills in `pages/my-team/MyTeam.css:801`) | `Badge` ([badges.md](badges.md)) |
 | Badge | `.lrp-badge--*` with literal rgba fills, `pages/learning-records/LearningRecords.css:646` | `Badge` |
-| Chip | `.lrp-pill` (filter pill with remove), `pages/learning-records/LearningRecords.tsx:709` | `Chip` with `onDismiss` ([chips-switcher-tabs.md](chips-switcher-tabs.md)) |
 
 ## Switcher, breadcrumb, collapse
 

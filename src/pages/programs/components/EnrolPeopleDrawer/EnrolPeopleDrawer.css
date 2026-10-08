@@ -167,56 +167,6 @@
   color: var(--text-secondary);
 }
 
-/* ── Filters bar (People) ───────────────────────────────────────────────── */
-.epd-filters {
-  display: flex;
-  align-items: center;
-  gap: var(--space-m);
-  padding: var(--space-s) var(--space-sm);
-  background: var(--cards-background);
-  border-radius: var(--radius-sm);
-  box-shadow: -1px -1px 2px rgba(32, 34, 42, 0.04), 1px 1px 2px rgba(32, 34, 42, 0.04);
-}
-
-.epd-filters__count {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.epd-filters__label {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.epd-filters__badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 var(--space-xss);
-  border-radius: var(--radius-full);
-  background: var(--cards-background-hover);
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.epd-filters__add {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 0 var(--space-s) 0 var(--space-xs);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--primary-button-background);
-}
-
 .epd-search { width: 100%; }
 
 /* ── Tables ─────────────────────────────────────────────────────────────── */

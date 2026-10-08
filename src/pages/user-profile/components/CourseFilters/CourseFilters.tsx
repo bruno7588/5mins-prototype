@@ -1,8 +1,8 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Sort, Add, ArrowDown2, Status, Calendar, Clock, CalendarTick, StatusUp, Star1 } from 'iconsax-react'
-import Collapse from '@/components/Collapse/Collapse'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { Sort, Status, Calendar, Clock, CalendarTick, StatusUp, Star1 } from 'iconsax-react'
 import Chip from '@/components/Chip/Chip'
+import CloseButton from '@/components/CloseButton/CloseButton'
+import FilterBar, { FilterBarAddButton, type FilterBarFilter } from '@/components/FilterBar/FilterBar'
 import InputInteger from '@/components/InputInteger/InputInteger'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import FilterMultiSelect from '@/pages/learning-records/components/FilterControls/FilterMultiSelect'
@@ -89,8 +89,19 @@ export function matchesCourse(row: FilterRow, active: FilterId[], values: Record
 
 /* How many pills before collapsing the rest into "+N". Three keeps the row on
    one line at the narrowest supported width, even with the longest labels
-   ("Completion date", "Progress 20–80%"). */
+   ("Completion date"). */
 const MAX_PILLS = 3
+
+/* FilterBar takes an icon component; wrap each def's renderIcon once, at module
+   level, so the bar can set size and colour without remounting the icon. */
+const ICON_BY_ID = Object.fromEntries(
+  FILTER_DEFS.map((d) => [
+    d.id,
+    ({ size = 20, color = 'currentColor' }: { size?: number | string; color?: string }) => (
+      <span style={{ display: 'inline-flex', color }}>{d.renderIcon(Number(size))}</span>
+    ),
+  ]),
+) as Record<FilterId, FilterBarFilter['Icon']>
 
 interface CourseFiltersProps {
   courses: FilterRow[]
@@ -121,11 +132,7 @@ function AddFilterMenu({ available, onSelect }: { available: FilterDef[]; onSele
   }, [open])
 
   return (
-    <div className="up-filter-add-wrap" ref={ref}>
-      <button type="button" className="up-filter-add" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <Add size={20} color="currentColor" variant="Linear" />
-        Add
-      </button>
+    <FilterBarAddButton ref={ref} open={open} onClick={() => setOpen((o) => !o)}>
       {open && (
         <div className="up-filter-add-menu" role="listbox">
           {available.length === 0 ? (
@@ -149,13 +156,11 @@ function AddFilterMenu({ available, onSelect }: { available: FilterDef[]; onSele
           )}
         </div>
       )}
-    </div>
+    </FilterBarAddButton>
   )
 }
 
 function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onSetValue, onClear, onToggleExpanded }: CourseFiltersProps) {
-  const reduceMotion = useReducedMotion()
-
   // Options for the multi-select filters, derived from the data.
   const optionsById = useMemo(() => {
     const uniq = (arr: string[]) => [...new Set(arr)]
@@ -167,19 +172,6 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
   }, [courses])
 
   const available = FILTER_DEFS.filter((d) => !active.includes(d.id))
-
-  // Short label for a collapsed pill: the chosen value(s) if any, else the filter name.
-  const pillLabel = (id: FilterId): string => {
-    const def = DEF_BY_ID[id]
-    const v = values[id]
-    if (v?.kind === 'multi' && v.values.length) return v.values.length === 1 ? v.values[0] : `${def.label}: ${v.values.length}`
-    if (v?.kind === 'range' && (v.min > 0 || v.max < 100)) return `${def.label} ${v.min}–${v.max}${def.suffix ?? ''}`
-    if (v?.kind === 'date' && (v.from || v.to)) return `${def.label} ${v.from || '…'} → ${v.to || '…'}`
-    return def.label
-  }
-
-  const visiblePills = active.slice(0, MAX_PILLS)
-  const overflow = active.length - visiblePills.length
 
   const renderControl = (def: FilterDef, trailing?: ReactNode) => {
     const v = values[def.id] ?? defaultValueFor(def.kind)
@@ -251,84 +243,43 @@ function CourseFilters({ courses, active, values, expanded, onAdd, onRemove, onS
     )
   }
 
+  // Short label for a collapsed pill: the chosen value(s) if any, else the filter name.
+  const pillLabel = (id: FilterId): string => {
+    const def = DEF_BY_ID[id]
+    const v = values[id]
+    if (v?.kind === 'multi' && v.values.length) return v.values.length === 1 ? v.values[0] : `${def.label}: ${v.values.length}`
+    if (v?.kind === 'range' && (v.min > 0 || v.max < 100)) return `${def.label} ${v.min}–${v.max}${def.suffix ?? ''}`
+    if (v?.kind === 'date' && (v.from || v.to)) return `${def.label} ${v.from || '…'} → ${v.to || '…'}`
+    return def.label
+  }
+
+  const filters: FilterBarFilter[] = active.map((id) => {
+    const def = DEF_BY_ID[id]
+    // Multi-select renders the × on the field's line (via trailing) so it
+    // sits next to the 400px search bar while chips flow full-width below.
+    const trailing =
+      def.kind === 'multi' ? <CloseButton size={16} ariaLabel={`Remove ${def.label} filter`} onClick={() => onRemove(id)} /> : undefined
+    return {
+      id,
+      title: def.label,
+      pillLabel: pillLabel(id),
+      Icon: ICON_BY_ID[id],
+      control: renderControl(def, trailing),
+      removable: def.kind !== 'multi',
+    }
+  })
+
   return (
-    <div className="up-filters">
-      <div className="up-filters-head">
-        <button type="button" className="up-filters-toggle" aria-expanded={expanded} onClick={onToggleExpanded}>
-          <span className="up-filters-icon"><Sort size={20} color="var(--text-primary)" variant="Linear" /></span>
-          <span className="up-filters-label">Filters</span>
-          <span className="up-filters-badge">{active.length}</span>
-        </button>
-
-        <AnimatePresence initial={false}>
-          {!expanded && (
-            <motion.div
-              className="up-filters-collapsed"
-              initial={reduceMotion ? false : { opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
-              transition={{ duration: reduceMotion ? 0 : 0.22, ease: [0.4, 0, 0.2, 1] }}
-            >
-              {active.length === 0 ? (
-                <AddFilterMenu available={available} onSelect={onAdd} />
-              ) : (
-                <div className="up-filters-pills">
-                  {visiblePills.map((id) => (
-                    <Chip
-                      key={id}
-                      label={pillLabel(id)}
-                      customIconLeft={<span className="up-pill-chip-icon">{DEF_BY_ID[id].renderIcon(16)}</span>}
-                      iconRight
-                      onDismiss={() => onRemove(id)}
-                    />
-                  ))}
-                  {overflow > 0 && <Chip label={`+${overflow}`} onClick={onToggleExpanded} />}
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="up-filters-trailing">
-          <button type="button" className="up-filters-chevron-btn" aria-label={expanded ? 'Collapse filters' : 'Expand filters'} aria-expanded={expanded} onClick={onToggleExpanded}>
-            <span className={`up-filters-chevron${expanded ? ' up-filters-chevron--open' : ''}`}>
-              <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
-            </span>
-          </button>
-        </div>
-      </div>
-
-      <Collapse open={expanded}>
-        <div className="up-filters-body">
-          {active.map((id) => {
-            const def = DEF_BY_ID[id]
-            const removeBtn = (
-              <button type="button" className="up-filter-row-remove" aria-label={`Remove ${def.label} filter`} onClick={() => onRemove(id)}>
-                <Add size={16} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
-              </button>
-            )
-            // Multi-select renders the × on the field's line (via trailing) so it
-            // sits next to the 400px search bar while chips flow full-width below.
-            return (
-              <Fragment key={id}>
-                <div className="up-filter-row">
-                  <span className="up-filter-row-icon">{def.renderIcon(20)}</span>
-                  <span className="up-filter-row-label">{def.label} is</span>
-                  {def.kind === 'multi' ? renderControl(def, removeBtn) : renderControl(def)}
-                  {def.kind !== 'multi' && removeBtn}
-                </div>
-              </Fragment>
-            )
-          })}
-          <div className="up-filters-actions">
-            <AddFilterMenu available={available} onSelect={onAdd} />
-            <button type="button" className="up-filters-clear" disabled={active.length === 0} onClick={onClear}>
-              Clear All
-            </button>
-          </div>
-        </div>
-      </Collapse>
-    </div>
+    <FilterBar
+      className="up-filters"
+      filters={filters}
+      expanded={expanded}
+      onToggleExpanded={onToggleExpanded}
+      onRemove={(id) => onRemove(id as FilterId)}
+      onClearAll={onClear}
+      maxPills={MAX_PILLS}
+      renderAddFilter={() => <AddFilterMenu available={available} onSelect={onAdd} />}
+    />
   )
 }
 

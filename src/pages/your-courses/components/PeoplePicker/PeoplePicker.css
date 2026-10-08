@@ -5,166 +5,11 @@
   gap: var(--space-l);
 }
 
-/* ── Filters panel (same anatomy as the Learning Records filter bar) ── */
-.ppk-filters {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-s) var(--space-sm);
-  background: var(--cards-background);
-  border-radius: var(--radius-sm);
-}
-
-.ppk-filters-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  min-height: 37px;
-}
-
-.ppk-filters-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  flex-shrink: 0;
-  padding: 0;
-  background: transparent;
-  border: none;
-  font-family: 'Poppins', sans-serif;
-  cursor: pointer;
-}
-
-.ppk-filters-label {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.ppk-filters-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  padding: 1px var(--space-xss);
-  border-radius: var(--radius-full);
-  background: var(--input-background-elevated);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.ppk-filters-collapsed {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  transition: opacity 220ms ease;
-}
-
-.ppk-filters-collapsed--hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.ppk-pills {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  min-width: 0;
-  overflow: hidden;
-}
-
-.ppk-filters-chevron-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  margin-left: auto;
-  border-radius: var(--radius-full);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: background 120ms ease;
-}
-
-.ppk-filters-chevron-btn:hover {
-  background: var(--cards-background-hover);
-}
-
-.ppk-filters-chevron {
-  display: flex;
-  transition: transform 200ms ease;
-}
-
-.ppk-filters-chevron--open {
-  transform: rotate(180deg);
-}
-
-.ppk-filters-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding-top: var(--space-m);
-}
-
-.ppk-filter-row {
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-  min-height: 37px;
-}
-
-.ppk-filter-icon,
-.ppk-filter-label,
-.ppk-filter-remove-slot {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  min-height: 37px;
-}
-
-.ppk-filter-label {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
-
-/* On the card surface the default --input-background hover barely shows; use the
-   card hover fill with a primary glyph, like the chevron and Learning Records filters. */
-.ppk-filter-remove-slot .close-btn:hover {
-  background: var(--cards-background-hover);
-  color: var(--text-primary);
-}
-
-.ppk-filters .ppk-filter-dropdown {
+/* Single-select filter controls in the shared Filter bar size to their content. */
+.filter-bar .ppk-filter-dropdown {
   flex: 0 0 auto;
   width: fit-content;
   min-width: 150px;
-}
-
-.ppk-filter-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-m);
-  padding-top: var(--space-xs);
-}
-
-.ppk-filter-add-wrap {
-  position: relative;
-  display: inline-flex;
-}
-
-
-
-.ppk-filters-toggle:focus-visible,
-.ppk-filters-chevron-btn:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-  border-radius: var(--radius-xs);
 }
 
 /* ── Mode chips + All row ── */
@@ -182,11 +27,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-m);
-}
-
-/* Clear All rests in --text-secondary; hover/pressed keep the DS Text ladder. */
-.ds-btn--text.ppk-filter-clear:not(:hover):not(:active):not(:disabled) {
-  color: var(--text-secondary);
 }
 
 /* Partial status (DES-332 D17): focusable so the course tooltip reaches keyboard users. */
