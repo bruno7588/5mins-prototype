@@ -9,12 +9,12 @@ import {
   Clock,
   Danger,
   ImportCurve,
-  InfoCircle,
   Link2,
   MedalStar,
   PlayCircle,
   Repeat,
   RotateRight,
+  StatusUp,
   TaskSquare,
   TickCircle,
   UserMinus,
@@ -588,7 +588,7 @@ function CourseDetails() {
                 </div>
               </div>
               <div className="cd-stat">
-                <Clock size={32} color="var(--primary-600)" variant="Linear" />
+                <StatusUp size={32} color="var(--primary-500)" variant="Linear" />
                 <div className="cd-stat-info">
                   <div className="cd-stat-label">
                     <span>In progress</span>
@@ -600,7 +600,7 @@ function CourseDetails() {
                 </div>
               </div>
               <div className="cd-stat">
-                <InfoCircle size={32} color="var(--warning-500)" variant="Linear" />
+                <Danger size={32} color="var(--warning-500)" variant="Linear" />
                 <div className="cd-stat-info">
                   <div className="cd-stat-label">
                     <span>At risk!</span>
@@ -613,7 +613,7 @@ function CourseDetails() {
                 </div>
               </div>
               <div className="cd-stat">
-                <Danger size={32} color="var(--text-error)" variant="Linear" />
+                <Clock size={32} color="var(--danger-400)" variant="Linear" />
                 <div className="cd-stat-info">
                   <div className="cd-stat-label">
                     <span>Overdue</span>

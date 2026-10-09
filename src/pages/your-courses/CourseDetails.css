@@ -227,7 +227,7 @@
 .cd-stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-m);
+  gap: var(--space-l);
 }
 
 /* Icon on the left at 32px, then a column with the label above the figure. */
@@ -251,7 +251,6 @@
 .cd-stat-info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
   min-width: 0;
 }
 
@@ -260,7 +259,7 @@
   align-items: center;
   gap: var(--space-xs);
   font-size: 14px;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 .cd-stat-value {
