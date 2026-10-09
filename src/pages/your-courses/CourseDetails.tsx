@@ -583,7 +583,6 @@ function CourseDetails() {
                   </div>
                   <div className="cd-stat-value">
                     <span className="cd-stat-pct">48%</span>
-                    <span className="cd-stat-sub">30 learners</span>
                   </div>
                 </div>
               </div>
@@ -592,10 +591,10 @@ function CourseDetails() {
                 <div className="cd-stat-info">
                   <div className="cd-stat-label">
                     <span>In progress</span>
+                    <InfoMark />
                   </div>
                   <div className="cd-stat-value">
                     <span className="cd-stat-pct">21%</span>
-                    <span className="cd-stat-sub">19 learners</span>
                   </div>
                 </div>
               </div>
@@ -608,7 +607,6 @@ function CourseDetails() {
                   </div>
                   <div className="cd-stat-value">
                     <span className="cd-stat-pct">11%</span>
-                    <span className="cd-stat-sub">14 Not Started/22 Failed</span>
                   </div>
                 </div>
               </div>
@@ -620,7 +618,6 @@ function CourseDetails() {
                   </div>
                   <div className="cd-stat-value">
                     <span className="cd-stat-pct">20%</span>
-                    <span className="cd-stat-sub">17 learners</span>
                   </div>
                 </div>
               </div>

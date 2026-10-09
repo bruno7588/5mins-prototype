@@ -275,12 +275,6 @@
   line-height: 1.5;
 }
 
-.cd-stat-sub {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  line-height: 1.2;
-}
-
 /* Actions row */
 .cd-actions {
   display: flex;
