@@ -44,6 +44,7 @@ All component docs are Figma-verified (2026-07, with node refs in each file). **
    - `docs/design-system/row-actions-menu.md` - Row actions menu (`RowActionsMenu`): kebab trigger, item fields (icon, description, danger, divider, disabled), placement | Any per-row or toolbar action menu
    - `docs/design-system/bulk-action-bar.md` - Bulk action bar (`BulkActionBar`): count-driven enter/exit, action button classes, attached Actions menu | Any multi-select bulk actions on a table or list
    - `docs/design-system/date-picker-field.md` - Date picker field (`DatePickerField`): ISO value (defaults to today's date), maxDate, error, portalled calendar popover | Any date input; never a native date input
+   - `docs/design-system/stepper.md` - Stepper (wizard step bar, `WizardShell` `layout="top"`, Library 8108:5539): Current/Done/Upcoming steps, Enabled/Hover/Focus, optional count, 3/4/5 steps; not-reached steps look Upcoming, never disabled | Any wizard, multi-step flow, or step progress header
    - `docs/design-system/collapse.md` - Collapse (GSAP height animation): keep mounted, `open` prop, reduced motion | Any expand/collapse section, accordion, or revealed field group
    - `docs/design-system/drift-report.md` - Known hand-rolled duplicates inside the prototype (report, not guidance) | Before refactoring a page, or when unsure whether a local pattern is sanctioned
 
