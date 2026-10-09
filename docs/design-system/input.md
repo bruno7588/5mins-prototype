@@ -20,6 +20,8 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — set light `12111:3346`
 >
 > **Disabled drops back to `--border`.** A disabled field should not hold an edge as firmly as a live one, so every disabled control — Outlined, Radio, Integer, and the Chip and Dropdown outside this doc — uses the quiet weight. The Radio, Integer, Chip and Dropdown sets all bind their disabled variants to `Border` in Figma; only the Outlined set still paints `Border-elevated`. Four-to-one — treat the Outlined disabled binding as stale, and `--border` as the rule.
 
+> **Updated 2026-10-09 (Integer re-verified against Figma `10145:10895`):** the Integer field is **37px** high, the same as the medium Dropdown (`8925:1408`), so the two line up in a row. Its 24px hover circles overhang the 8px padding instead of growing the field to 42px.
+
 > **Updated 2026-09-29 (verified against code):** fixed the border-weight note (cards use `--border-elevated`), the card-fill hover wording (`InputField` always uses `--input-background`; callers override), light `--input-background-elevated` (24%, not 16%), the Integer resting value colour (`--text-primary`), the Radio label weight (600) and the error-timing guidance; removed raw hex fallbacks and the search example.
 
 > **Updated 2026-09-29 (Inline re-verified against Figma `10330:4736`):** Inline is now a shared component, `InputInline`, with sizes L (Bold 32 / Regular 16) and M (Bold 20 / Regular 14). The error message sits between the title and the description, and there is no error icon (the earlier "24px Danger at the row end" is removed). Course details, Program builder and Automation details use it.
@@ -95,7 +97,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — set light `12111:3346`
 - Don't show native number spinners; the − / + controls are the only steppers.
 - Don't give the whole box a hover fill; hover shows on the − / + control under the pointer (circular `--page-background-hover`).
 
-**Canonical spec:** padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); gap between controls `var(--space-sm)` (12px); 20px Iconsax glyph in a 24px `var(--radius-full)` hover target; width fits content. Border `--border-elevated`, `--border-hover` on hover, `--selected` on focus, `--text-error` on error, `--border` when disabled. Helper `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12111:2565` / dark `10145:10895`.
+**Canonical spec:** height 37px (matches the medium Dropdown); padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); gap between controls `var(--space-sm)` (12px); 20px Iconsax glyph in a 24px `var(--radius-full)` hover target; width fits content. Border `--border-elevated`, `--border-hover` on hover, `--selected` on focus, `--text-error` on error, `--border` when disabled. Helper `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12111:2565` / dark `10145:10895`.
 
 **Prototype:** `src/components/InputInteger/InputInteger.tsx` (default export)
 - `value`, `onChange(n)` (required), `min` (default 0), `max`, `step` (default 1)

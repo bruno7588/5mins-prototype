@@ -30,6 +30,10 @@
   align-items: center;
   gap: var(--space-sm);
   width: fit-content;
+  /* 37px is the Figma frame (library 10145:10895), the same as the medium
+     Dropdown. The 24px hover circles overhang the 8px padding rather than
+     growing the field to 42px. */
+  height: 37px;
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);

@@ -14,9 +14,11 @@ Cross-reference:
 - `5mins-typography` for label typography
 - `5mins-iconography` for icon sizing conventions
 
+> **Updated 2026-10-09 (re-verified against Figma light `11917:3950` / dark `5001:18926`):** the Radio ring keeps its resting colour on hover (`--text-primary` unselected, `--control-selected` selected); hover adds only the `--page-background-hover` halo. The earlier `--border-hover` ring on hover had no Figma source and is removed.
+
 > **Updated 2026-09-29 (verified against code):** the Common Patterns and indeterminate examples now compile against the real Checkbox API (`checked`, `indeterminate`, `onChange()`, `disabled`; no label, name or aria-label); the unchecked checkbox border is `--text-secondary`; `--control-selected` light/dark values stated; halo radius is `var(--radius-full)`; Radio and Toggle CSS and React samples now mirror the built components (tokens, no raw hex); `className` behaviour and `size="sm"` usage corrected.
 
-> **Updated 2026-09-29 (aligned to prototype usage):** Toggles are used inside Save forms in the prototype (report scheduling, course settings), so the "never inside a Save form" rule is replaced by the Key rule below. `--control-selected` is `#FFBB38` in dark mode, not `#EDA30D`. The built Checkbox is a button with no label prop, draws its unchecked border in `--text-secondary` and fills with `--selected`. The unselected Radio ring turns `--border-hover` on hover. Toggle has a `size="sm"` variant.
+> **Updated 2026-09-29 (aligned to prototype usage):** Toggles are used inside Save forms in the prototype (report scheduling, course settings), so the "never inside a Save form" rule is replaced by the Key rule below. `--control-selected` is `#FFBB38` in dark mode, not `#EDA30D`. The built Checkbox is a button with no label prop, draws its unchecked border in `--text-secondary` and fills with `--selected`. Toggle has a `size="sm"` variant.
 
 > **Updated 2026-10-07 (Figma `6339:10484`, verified against code):** the checkbox tick and minus bar are not white. They are cut out of the filled box, so the surface behind shows through: light on light pages, dark in dark mode. `Checkbox.tsx` draws the Figma shapes as single filled paths in `--selected`. Figma has no disabled-checked variant (Disabled exists only as Not checked), so a disabled box that is checked keeps the `--selected` fill; only the empty box turns `--text-disabled`.
 
@@ -83,7 +85,7 @@ Cross-reference:
 - Don't re-implement radios with `div`s.
 - Don't ship a lone radio; with one option use a checkbox or toggle.
 
-**Canonical spec:** 24 × 24px hit area with a `var(--radius-full)` hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (`--border-hover` on hover when unselected); selected ring and 7px dot `--control-selected`; disabled `--text-disabled`; focus-visible 2px `--primary-button-background` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3950` / dark `5001:18926`.
+**Canonical spec:** 24 × 24px hit area with a `var(--radius-full)` hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--control-selected`; disabled `--text-disabled`; focus-visible 2px `--primary-button-background` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3950` / dark `5001:18926`.
 
 **Prototype:** `src/components/Radio/Radio.tsx` (default export, forwards ref)
 - All native radio props (`name`, `checked`, `onChange`, `disabled`, `value`, `id`)
@@ -182,7 +184,7 @@ Single-select indicator. Sits inside a labelled row; the label itself should als
 |---|---|---|---|
 | Enabled, unselected | no | `--text-primary` ring | none |
 | Enabled, selected | yes | `#EDA30D` ring + filled dot | none |
-| Hover, unselected | no | `--border-hover` ring | 24 × 24 px `#EFF0F2` circle |
+| Hover, unselected | no | `--text-primary` ring (unchanged) | 24 × 24 px `#EFF0F2` circle |
 | Hover, selected | yes | `#EDA30D` ring + dot | 24 × 24 px `#EFF0F2` circle |
 | Disabled, unselected | no | `#9EA4B3` ring | none |
 | Disabled, selected | yes | `#9EA4B3` ring + dot | none |
@@ -207,11 +209,6 @@ Single-select indicator. Sits inside a labelled row; the label itself should als
 
 .radio:hover:not(.radio--disabled) {
   background: var(--page-background-hover);
-}
-
-/* Unselected ring picks up the hover border colour (selected keeps its amber). */
-.radio:hover:not(.radio--disabled):not(.radio--selected) .radio__ring {
-  border-color: var(--border-hover);
 }
 
 .radio__ring {
@@ -275,10 +272,6 @@ Single-select indicator. Sits inside a labelled row; the label itself should als
 /* Hovering anywhere on the labelled row shows the radio hover state. */
 .radio-row:hover .radio:not(.radio--disabled) {
   background: var(--page-background-hover);
-}
-
-.radio-row:hover .radio:not(.radio--disabled):not(.radio--selected) .radio__ring {
-  border-color: var(--border-hover);
 }
 
 .radio-row__label {
