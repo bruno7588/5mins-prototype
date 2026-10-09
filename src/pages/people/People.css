@@ -593,28 +593,6 @@
   margin-top: var(--space-xxs);
 }
 
-/* Warning block (delete dialogs) — not used in new design, kept for custom content */
-.confirm-modal-warning {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  padding: var(--space-m);
-  background: rgba(223, 22, 66, 0.08);
-  border-left: 3px solid var(--danger-500);
-  border-radius: var(--radius-s);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.confirm-modal-warning svg {
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
 /* User list (bulk dialogs) */
 .confirm-modal-user-list {
   display: flex;
