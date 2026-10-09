@@ -210,7 +210,7 @@ button.wzs-step:disabled {
   width: 40px;
   height: 1px;
   margin: 0 var(--space-s);
-  background: var(--border-hover);
+  background: var(--border);
 }
 
 .wzs-stepper-step {
@@ -233,6 +233,11 @@ button.wzs-stepper-step:hover:not(.wzs-stepper-step--locked) {
   background: var(--page-background-hover);
 }
 
+/* Library 12451:95: the Upcoming ring steps up to --border-elevated on hover. */
+button.wzs-stepper-step:hover:not(.wzs-stepper-step--locked) .wzs-stepper-num:not(.wzs-stepper-num--current) {
+  border-color: var(--border-elevated);
+}
+
 button.wzs-stepper-step:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
@@ -245,7 +250,7 @@ button.wzs-stepper-step:focus-visible {
   flex-shrink: 0;
   width: 24px;
   height: 24px;
-  border: 1px solid var(--border-hover);
+  border: 1px solid var(--border);
   border-radius: var(--radius-full);
   font-size: 14px;
   font-weight: 600;
@@ -256,7 +261,7 @@ button.wzs-stepper-step:focus-visible {
 
 .wzs-stepper-label {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
   white-space: nowrap;

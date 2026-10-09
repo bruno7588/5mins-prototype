@@ -7,7 +7,7 @@ description: Stepper for 5Mins.ai - the numbered step bar in a multi-step wizard
 
 A row of numbered steps across the top of a multi-step wizard. It shows where the admin is, what is done and what comes next, and lets them jump back to a step they have already reached.
 
-Spec source: Figma Library `EC26cSVe9KNTCWXvYovakw`, page "Stepper" `8108:4254`, doc frame `8108:5539` - light `12451:237` / dark `8108:5543` (built and verified against the prototype 2026-10-09).
+Spec source: Figma Library `EC26cSVe9KNTCWXvYovakw`, page "Stepper" `8108:4254`, doc frame `8108:5539` - light `12451:237` / dark `8108:5543`; step sets light `12452:1541` / dark `12451:95` (re-verified 2026-10-09).
 
 ## Usage
 
@@ -36,12 +36,12 @@ Spec source: Figma Library `EC26cSVe9KNTCWXvYovakw`, page "Stepper" `8108:4254`,
 **Canonical spec:**
 - Step pill: radius `var(--radius-full)`, padding `var(--space-xs) var(--space-sm) var(--space-xs) var(--space-xs)` (4px 12px 4px 4px), gap `var(--space-s)` (8px), 32px high, hugs content.
 - Badge 24 × 24px:
-  - Upcoming: 1px `--border-hover` ring, number 14px / 600 `--text-primary`.
+  - Upcoming: 1px `--border` ring (`--border-elevated` on hover), number 14px / 600 `--text-primary`.
   - Current: Library `Illustrations/ Progress` (orange) with the number 14px / 600 in `--page-background` on top; pops in (320ms overshoot) when the step becomes current.
   - Done: Library `Illustrations/ Progress` `Type=Passed` (green) with a `--page-background` tick, 1.5px.
-- Label: 14px / 500 `--text-secondary`; Current is 14px / 600 `--text-primary`. Count "(N)" 14px / 400 `--text-secondary` after the label.
+- Label: 14px / 400 `--text-secondary` (Paragraph M regular); Current is 14px / 600 `--text-primary`. Count "(N)" 14px / 400 `--text-secondary` after the label.
 - Hover (clickable steps only): pill fill `--page-background-hover`. Focus-visible: 2px `--primary-button-background` outline, 2px offset.
-- Line between steps: 40 × 1px `--border-hover`, `var(--space-s)` (8px) each side.
+- Line between steps: the Library Divider, 40 × 1px `--border`, `var(--space-s)` (8px) each side.
 
 **Figma component properties** (Library naming, same pattern as Breadcrumb item):
 
@@ -89,4 +89,5 @@ The Course details file used a local `5Mins / Wizard / Stepper step (proposed)`.
 
 ## Changelog
 
+- **2026-10-09 (Library edits)** - Upcoming ring is `--border`, stepping up to `--border-elevated` on hover (was `--border-hover`); labels are Regular 400 (was Medium 500); lines are the Library Divider in `--border` (was `--border-hover`). Light set rebuilt: step set `12452:1541`, Stepper `12452:1419`, usage `12452:1378`.
 - **2026-10-09** - Built in the Library with Light and Dark sets. Steps not reached yet no longer use a disabled look (`--text-disabled` / `--border`); they match Upcoming and are only non-clickable.
