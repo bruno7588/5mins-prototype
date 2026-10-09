@@ -285,17 +285,10 @@ button.wzs-stepper-step:focus-visible {
   color: var(--text-primary);
 }
 
+/* Not reached yet: looks like any upcoming step, just not clickable (no hover, plain cursor).
+   The Tooltip says what unlocks it. */
 .wzs-stepper-step--locked {
-  cursor: not-allowed;
-}
-
-.wzs-stepper-step--locked .wzs-stepper-num {
-  border-color: var(--border);
-  color: var(--text-disabled);
-}
-
-.wzs-stepper-step--locked .wzs-stepper-label {
-  color: var(--text-disabled);
+  cursor: default;
 }
 
 /* Sticky footer: the step's primary action, always in reach. */
