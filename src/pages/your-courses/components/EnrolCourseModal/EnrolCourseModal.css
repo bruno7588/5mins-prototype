@@ -12,7 +12,7 @@
 .ecm-dates {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-l);
+  gap: var(--space-m);
 }
 
 /* Label above its field, as InputField (input.md): 8px gap, Semibold 14 secondary. */
@@ -56,7 +56,7 @@
 .ecm-frequency {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
   margin: 0;
   padding: 0;
   border: none;
@@ -85,12 +85,22 @@
   background: transparent;
 }
 
-/* ── Sponsor step ── */
+/* ── Sponsor step ── (dates shares the width cap) */
+.ecm-dates-step,
+.ecm-sponsor-step {
+  max-width: 600px;
+}
+
+.ecm-step-optional {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
 .ecm-sponsor {
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
-  max-width: 800px;
 }
 
 /* ── Review ── the Course card centred, the summary in words under it. */

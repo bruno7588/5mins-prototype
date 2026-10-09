@@ -147,7 +147,7 @@ function EnrolCourseModal({ open, onClose, onEnrol, courseTitle = 'This course' 
             ? draftIds.length === 0
               ? 'Select People & Continue'
               : `Select ${draftIds.length} ${draftIds.length === 1 ? 'Person' : 'People'} & Continue`
-            : step === 'dates'
+            : step === 'dates' || (step === 'sponsor' && sponsor.name.trim() !== '')
               ? 'Save & Continue'
               : 'Continue'}
         </Button>
@@ -208,12 +208,12 @@ function EnrolCourseModal({ open, onClose, onEnrol, courseTitle = 'This course' 
             commitInFooter
           />
         </div>
-        <div hidden={step !== 'dates'}>
+        <div className="ecm-dates-step" hidden={step !== 'dates'}>
           <h3 className="wzs-section-title acw-step-title">Set a start and due date</h3>
           <EnrolTimingStep timing={timing} onChange={setTiming} />
         </div>
-        <div hidden={step !== 'sponsor'}>
-          <h3 className="wzs-section-title acw-step-title">Name a sponsor (optional)</h3>
+        <div className="ecm-sponsor-step" hidden={step !== 'sponsor'}>
+          <h3 className="wzs-section-title acw-step-title">Name a sponsor <span className="ecm-step-optional">(optional)</span></h3>
           <EnrolSponsorStep sponsor={sponsor} onChange={setSponsor} />
         </div>
         <div hidden={step !== 'review'}>

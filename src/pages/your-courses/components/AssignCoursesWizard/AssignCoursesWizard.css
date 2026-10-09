@@ -137,7 +137,7 @@
 
 .acw-pop-option .radio-row__label {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
@@ -145,7 +145,7 @@
   margin: 0;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
 /* The unit after a stepper ("day", "days"): secondary on the selected option, and
