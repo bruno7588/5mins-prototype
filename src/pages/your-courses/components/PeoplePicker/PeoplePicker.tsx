@@ -521,9 +521,16 @@ function PeoplePicker({ courseIds, courseNames, modes, initialFilters = {}, comm
       <FilterBar
         filters={activeIds.map((id) => {
           const meta = FILTER_BY_ID[id]
+          const ctrl = controls[id]
+          const value = filters[id]
           return {
             id,
             title: meta.title,
+            // Collapsed pill text: the chosen option for a set single select, else the field name.
+            pillLabel:
+              ctrl.kind === 'single' && typeof value === 'string' && value
+                ? ctrl.options.find((o) => o.value === value)?.label
+                : undefined,
             // Same iconsax icon; FilterListbox types it with more variants than FilterBar accepts.
             Icon: meta.Icon,
             // Custom fields read as the bare field name, not "<Field> is".
