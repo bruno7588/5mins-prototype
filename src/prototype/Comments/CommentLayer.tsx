@@ -259,7 +259,7 @@ function CommentLayer({ active, comments, error, onAdd, onResolve, onExit, curre
         </div>
         {error && <p className="pcm-panel__error">{error}</p>}
         {visibleRoots.length === 0 ? (
-          <p className="pcm-panel__empty">{roots.length ? 'All comments are resolved.' : 'No comments yet'}</p>
+          <p className="pcm-panel__empty">{roots.length ? 'All comments are resolved.' : 'Give feedback, ask a question, or leave a note'}</p>
         ) : (
           <div className="pcm-list">
             {groups.map((g) => (
