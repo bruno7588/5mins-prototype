@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Edit2, MessageAdd, Mobile, Monitor } from 'iconsax-react'
+import { Edit2, MessageAdd1, Mobile, Monitor } from 'iconsax-react'
 import CommentLayer from '../Comments/CommentLayer'
 import { useComments } from '../Comments/useComments'
 import './DemoSwitcher.css'
@@ -133,7 +133,7 @@ function DemoSwitcher() {
             setCommenting((c) => !c)
           }}
         >
-          <MessageAdd size={20} color="currentColor" variant="Linear" />
+          <MessageAdd1 size={20} color="currentColor" variant="Linear" />
           {openCount > 0 && <span className="demosw-badge" aria-hidden="true">{openCount}</span>}
         </button>
         {import.meta.env.DEV && (
