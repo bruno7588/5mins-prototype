@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Edit2, Mobile, Monitor } from 'iconsax-react'
+import { Edit2, MessageAdd, Mobile, Monitor } from 'iconsax-react'
+import CommentLayer from '../Comments/CommentLayer'
+import { useComments } from '../Comments/useComments'
 import './DemoSwitcher.css'
 
 /* Prototype chrome, not product UI: one segmented switcher for the demo surfaces
-   (Desktop opens Web App / Admin, Mobile opens the native app) plus, locally, the
-   Design Inspect toggle. Ships to Vercel too, so shared demo links can switch.
-   shadcn-style in plain CSS, off the 5Mins brand. Prefix: demosw- */
+   (Desktop opens Web App / Admin, Mobile opens the native app), Comment mode for anyone
+   with the link and, locally, the Design Inspect toggle. Ships to Vercel too, so shared
+   demo links can switch and comment. shadcn-style in plain CSS, off the 5Mins brand.
+   Prefix: demosw- */
 
 // Learner routes render outside the admin layout (see App.tsx).
 const WEB_ROUTES = /^\/(workspace|for-you|my-team|programs\/[^/]+$|courses\/|events)/
@@ -24,10 +27,19 @@ function DemoSwitcher() {
   const { pathname } = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
   const [inspecting, setInspecting] = useState(false)
+  const [commenting, setCommenting] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
+  const { comments, error, add, setResolved } = useComments(pathname, true)
+  const openCount = comments.filter((c) => !c.parentId && !c.resolved).length
+  const exitComments = useCallback(() => setCommenting(false), [])
 
   const onMobile = pathname.startsWith('/mobile')
   const desktopDemo = WEB_ROUTES.test(pathname) ? 'web' : 'admin'
+
+  // Edit and Comment both take over clicks on the page, so only one runs at a time.
+  useEffect(() => {
+    if (inspecting) setCommenting(false)
+  }, [inspecting])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -109,6 +121,21 @@ function DemoSwitcher() {
           {/* iconsax 0.0.8 draws this glyph off-centre (x 1-17, y 1-21 of 24); the class re-centres it. */}
           <Mobile size={20} color="currentColor" variant="Linear" className="demosw-icon-mobile" />
         </button>
+        <button
+          type="button"
+          className={`demosw-seg${commenting ? ' demosw-seg--active' : ''}`}
+          aria-label={openCount ? `Comment (${openCount} open)` : 'Comment'}
+          data-tip={commenting ? 'Commenting · Esc to exit' : 'Comment'}
+          aria-pressed={commenting}
+          onClick={() => {
+            setMenuOpen(false)
+            if (!commenting && inspecting) window.dispatchEvent(new Event(TOGGLE_INSPECT))
+            setCommenting((c) => !c)
+          }}
+        >
+          <MessageAdd size={20} color="currentColor" variant="Linear" />
+          {openCount > 0 && <span className="demosw-badge" aria-hidden="true">{openCount}</span>}
+        </button>
         {import.meta.env.DEV && (
           <button
             type="button"
@@ -125,6 +152,15 @@ function DemoSwitcher() {
           </button>
         )}
       </div>
+
+      <CommentLayer
+        active={commenting}
+        comments={comments}
+        error={error}
+        onAdd={add}
+        onResolve={setResolved}
+        onExit={exitComments}
+      />
     </div>
   )
 }

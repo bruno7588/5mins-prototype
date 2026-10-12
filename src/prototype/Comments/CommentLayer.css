@@ -1,0 +1,399 @@
+/* Prototype comments, deliberately off the 5Mins brand: the Demos switcher's scheme in both
+   modes (neutral-900 surface, neutral-700 hover, neutral-800 selected), shadcn-style shapes,
+   system font. Prefix: pcm- */
+
+.pcm-root {
+  position: fixed;
+  inset: 0;
+  /* Below the Demos switcher, above the app and PhoneFrame. */
+  z-index: 2147481000;
+  pointer-events: none;
+  font: 400 14px/20px ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #fafafa;
+}
+
+.pcm-root :where(button, input, textarea, .pcm-pop, .pcm-panel) {
+  pointer-events: auto;
+}
+
+html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
+  cursor: crosshair !important;
+}
+
+.pcm-hover {
+  position: fixed;
+  box-sizing: border-box;
+  border: 1px dashed var(--neutral-300);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* Numbered pin, its point sitting on the clicked spot */
+.pcm-pin {
+  position: fixed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border: 2px solid #fafafa;
+  border-radius: 999px 999px 999px 0;
+  background: var(--neutral-900);
+  color: #fafafa;
+  font: inherit;
+  font-weight: 600;
+  font-size: 12px;
+  transform: translateY(-100%);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.pcm-pin:hover {
+  background: var(--neutral-700);
+}
+
+.pcm-pin--open {
+  background: var(--neutral-800);
+}
+
+.pcm-pin--resolved {
+  border-color: var(--neutral-400);
+  color: var(--neutral-300);
+}
+
+/* Popover: new comment or a thread */
+.pcm-pop {
+  position: fixed;
+  /* Above the page list, which can sit in the same corner. */
+  z-index: 2;
+  width: 300px;
+  padding: 12px;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  background: var(--neutral-900);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+}
+
+.pcm-pop__head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.pcm-pop__title {
+  flex: 1;
+  font-weight: 600;
+}
+
+.pcm-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 240px;
+  margin-bottom: 12px;
+  overflow-y: auto;
+}
+
+.pcm-msg__meta {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.pcm-msg__author {
+  font-weight: 600;
+}
+
+.pcm-msg__time {
+  color: var(--neutral-300);
+  font-size: 12px;
+}
+
+.pcm-msg__text {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Composer */
+.pcm-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pcm-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid var(--neutral-700);
+  border-radius: 6px;
+  background: var(--neutral-800);
+  color: #fafafa;
+  font: inherit;
+}
+
+.pcm-input::placeholder {
+  color: var(--neutral-300);
+}
+
+/* Focus stays a 1px border, one step lighter, so typing has a visible cue. */
+.pcm-input:focus,
+.pcm-input:focus-visible {
+  outline: none;
+  border-color: var(--neutral-400);
+}
+
+.pcm-textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+.pcm-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.pcm-composer__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.pcm-composer__error,
+.pcm-panel__error {
+  margin: 0;
+  color: #fca5a5;
+  font-size: 12px;
+}
+
+/* shadcn Button, outline and default */
+.pcm-btn {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  background: var(--neutral-900);
+  color: #fafafa;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.pcm-btn:hover {
+  background: var(--neutral-700);
+}
+
+.pcm-btn--primary {
+  border-color: #fafafa;
+  background: #fafafa;
+  color: #09090b;
+}
+
+.pcm-btn--primary:hover {
+  background: #e4e4e7;
+}
+
+.pcm-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pcm-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: #fafafa;
+  cursor: pointer;
+}
+
+.pcm-icon-btn:hover {
+  background: var(--neutral-700);
+}
+
+.pcm-icon-btn::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #09090b;
+  color: #fafafa;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms;
+}
+
+.pcm-icon-btn:hover::after,
+.pcm-icon-btn:focus-visible::after {
+  opacity: 1;
+}
+
+.pcm-pin:focus-visible,
+.pcm-btn:focus-visible,
+.pcm-icon-btn:focus-visible,
+.pcm-list__item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(212, 212, 216, 0.5);
+}
+
+/* Page list, above the Demos switcher */
+.pcm-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 76px;
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  max-height: min(420px, calc(100vh - 120px));
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  background: var(--neutral-900);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+}
+
+.pcm-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 12px 8px;
+}
+
+.pcm-panel__title {
+  font-weight: 600;
+}
+
+.pcm-panel__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--neutral-300);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pcm-panel__toggle input {
+  accent-color: #fafafa;
+  cursor: pointer;
+}
+
+.pcm-panel__error,
+.pcm-panel__empty {
+  padding: 0 12px 12px;
+}
+
+.pcm-panel__empty {
+  margin: 0;
+  color: var(--neutral-300);
+}
+
+.pcm-panel__hint {
+  margin: 0;
+  padding: 8px 12px;
+  border-top: 1px solid #27272a;
+  color: var(--neutral-300);
+  font-size: 12px;
+}
+
+.pcm-list {
+  flex: 1;
+  margin: 0;
+  padding: 0 4px 4px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.pcm-list__item {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pcm-list__item:hover {
+  background: var(--neutral-700);
+}
+
+.pcm-list__item--open,
+.pcm-list__item--open:hover {
+  background: var(--neutral-800);
+}
+
+.pcm-list__num {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid #fafafa;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pcm-list__num--resolved {
+  border-color: var(--neutral-400);
+  color: var(--neutral-300);
+}
+
+.pcm-list__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pcm-list__meta {
+  color: var(--neutral-300);
+  font-size: 12px;
+}
+
+.pcm-list__text {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+}
+
+.pcm-list__tag {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 0 6px;
+  border: 1px solid var(--neutral-500);
+  border-radius: 999px;
+  color: var(--neutral-300);
+  font-size: 11px;
+  line-height: 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pcm-icon-btn::after {
+    transition: none;
+  }
+}

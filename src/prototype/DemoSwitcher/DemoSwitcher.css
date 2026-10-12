@@ -158,3 +158,21 @@ html[data-theme='dark'] .demosw-menu__item[aria-current='page'] {
     transition: none;
   }
 }
+
+/* Open comments on this page, on the Comment segment */
+.demosw-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #fafafa;
+  color: #09090b;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  pointer-events: none;
+}
