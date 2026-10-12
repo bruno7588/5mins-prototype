@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { createPortal } from 'react-dom'
-import { CloseCircle, TickCircle, Trash } from 'iconsax-react'
+import { TickCircle, Trash } from 'iconsax-react'
 import { anchorFor, locate, type Anchor } from './commentAnchor'
 import type { NewComment, PrototypeComment } from './useComments'
 import './CommentLayer.css'
@@ -48,6 +48,7 @@ interface Props {
   active: boolean
   /** The comments list panel (the arrow beside Comment); pins show either way. */
   showList: boolean
+  onCloseList: () => void
   comments: PrototypeComment[]
   error: string | null
   onAdd: (c: NewComment) => Promise<PrototypeComment | undefined>
@@ -62,7 +63,7 @@ interface Props {
   focusId?: string | null
 }
 
-function CommentLayer({ active, showList, comments, error, onAdd, onResolve, onDelete, onExit, currentRoute, onGoTo, focusId }: Props) {
+function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, onResolve, onDelete, onExit, currentRoute, onGoTo, focusId }: Props) {
   const [, setTick] = useState(0)
   const [hover, setHover] = useState<DOMRect | null>(null)
   const [draft, setDraft] = useState<{ anchor: Anchor; x: number; y: number } | null>(null)
@@ -239,7 +240,9 @@ function CommentLayer({ active, showList, comments, error, onAdd, onResolve, onD
               <Trash size={18} color="currentColor" variant="Linear" />
             </button>
             <button type="button" className="pcm-icon-btn" aria-label="Close" data-tip="Close" onClick={() => setOpenId(null)}>
-              <CloseCircle size={18} color="currentColor" variant="Linear" />
+              <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M17.25 17.25L6.75 6.75M17.25 6.75L6.75 17.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
           </div>
           {confirmDelete && (
@@ -294,6 +297,12 @@ function CommentLayer({ active, showList, comments, error, onAdd, onResolve, onD
             <input type="checkbox" checked={showResolved} onChange={(e) => setShowResolved(e.target.checked)} />
             Show resolved
           </label>
+          <button type="button" className="pcm-icon-btn" aria-label="Close comments" data-tip="Close" onClick={onCloseList}>
+            {/* The side drawer close (RolePanel), inside the chrome icon button. */}
+            <svg width={24} height={24} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M17.25 17.25L6.75 6.75M17.25 6.75L6.75 17.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </div>
         {error && <p className="pcm-panel__error">{error}</p>}
         {visibleRoots.length === 0 ? (

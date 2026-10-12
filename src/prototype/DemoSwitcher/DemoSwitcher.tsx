@@ -179,6 +179,7 @@ function DemoSwitcher() {
       <CommentLayer
         active={commenting}
         showList={listOpen}
+        onCloseList={() => setListOpen(false)}
         comments={comments}
         error={error}
         onAdd={add}

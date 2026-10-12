@@ -280,6 +280,7 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
 }
 
 .pcm-panel__title {
+  flex: 1;
   font-weight: 600;
 }
 
