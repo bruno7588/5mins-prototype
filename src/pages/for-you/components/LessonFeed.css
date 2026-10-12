@@ -253,7 +253,7 @@
 .lf-info__title-block {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-s);
 }
 
 .lf-info__title {

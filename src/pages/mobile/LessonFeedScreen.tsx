@@ -97,7 +97,7 @@ function LessonFeedScreen({ lessons, startIndex, onMore, sheetIndex, onIndexChan
               <p className="m-lf-info__title">
                 {lesson.title}{' '}
                 <button type="button" className="m-lf-info__more" onClick={() => onMore(i)}>
-                  more
+                  {lesson.resources?.length ? `View Resources (${lesson.resources.length})` : 'more'}
                 </button>
               </p>
               <span className="m-lf-info__skill">

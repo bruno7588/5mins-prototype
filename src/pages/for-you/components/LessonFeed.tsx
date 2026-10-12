@@ -187,7 +187,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             <h2 className="lf-info__title">{lesson.title}</h2>
             {lesson.deepDiveUrl || resources.length ? (
               <button type="button" className="lf-info__link" onClick={() => setPanel('deep-dive')}>
-                Resources
+                {resources.length ? `View Resources (${resources.length})` : 'View Resources'}
               </button>
             ) : null}
           </div>
