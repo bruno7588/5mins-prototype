@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   ArrowDown2,
-  ArrowRight2,
   Briefcase,
   CalendarAdd,
   CalendarEdit,
@@ -25,6 +24,7 @@ import Search from '../../components/Search/Search'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import Alert from '../../components/Alert/Alert'
+import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
 import Button from '../../components/Button/Button'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import MoreIcon from '../../components/icons/MoreIcon'
@@ -496,13 +496,12 @@ function CourseDetails() {
     <div className="cd-layout">
       <LeftSidebar />
       <main className="cd-main">
-        <nav className="cd-breadcrumb" aria-label="Breadcrumb">
-          <button type="button" className="cd-breadcrumb-link" onClick={() => navigate('/your-courses')}>
-            Your Courses
-          </button>
-          <ArrowRight2 size={16} color="var(--text-tertiary)" variant="Linear" />
-          <span className="cd-breadcrumb-current">{courseTitle}</span>
-        </nav>
+        <Breadcrumb
+          items={[
+            { label: 'Your Courses', onClick: () => navigate('/your-courses') },
+            { label: courseTitle },
+          ]}
+        />
 
         {/* Page header */}
         <header className="cd-header">
