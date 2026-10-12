@@ -105,6 +105,7 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
 }
 
 .pcm-msg__author {
+  color: var(--neutral-200);
   font-weight: 600;
 }
 
