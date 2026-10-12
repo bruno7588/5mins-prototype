@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Moon, Logout, Sun1, Mobile } from 'iconsax-react'
+import { Moon, Logout, Sun1 } from 'iconsax-react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../Button/Button'
 import Tooltip from '../Tooltip/Tooltip'
@@ -105,18 +105,6 @@ function TopNav() {
               >
                 <Logout size={20} color="var(--text-primary)" variant="Linear" />
                 <span>Log Out</span>
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="topnav-menu__item"
-                onClick={() => {
-                  setMenuOpen(false)
-                  navigate('/mobile')
-                }}
-              >
-                <Mobile size={20} color="var(--text-primary)" variant="Linear" />
-                <span>Mobile App</span>
               </button>
             </div>
           )}

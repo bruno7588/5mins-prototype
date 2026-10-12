@@ -6,6 +6,7 @@ import './styles/reset.css'
 import './styles/typography.css'
 import App from './App'
 import { ImpersonationProvider } from './impersonation/ImpersonationContext'
+import DemoSwitcher from './prototype/DemoSwitcher/DemoSwitcher'
 import './App.css'
 
 // Design Inspect is dev tooling; the lazy import keeps it out of the production bundle.
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
       <ImpersonationProvider>
         <App />
       </ImpersonationProvider>
+      <DemoSwitcher />
       {DesignInspect && (
         <Suspense fallback={null}>
           <DesignInspect />

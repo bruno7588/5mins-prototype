@@ -1,0 +1,160 @@
+/* Prototype chrome, deliberately off the 5Mins design system: shadcn zinc-dark
+   values, system font, ignores the app theme. Prefix: demosw- */
+
+.demosw-root {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  /* Above PhoneFrame (10), below the Design Inspect overlay. */
+  z-index: 2147482000;
+  font: 500 14px/20px ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #fafafa;
+}
+
+/* Segmented switcher: black track, white icons, the current segment a raised circle. */
+.demosw-bar {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #27272a;
+  border-radius: 999px;
+  background: var(--neutral-900);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.demosw-seg {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: #fafafa;
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms;
+}
+
+/* Light mode steps lighter so the states read against a light page. */
+.demosw-seg:hover {
+  background: var(--neutral-700);
+}
+
+.demosw-seg--active,
+.demosw-seg--active:hover {
+  background: var(--neutral-600);
+}
+
+html[data-theme='dark'] .demosw-seg:hover {
+  background: var(--neutral-800);
+}
+
+html[data-theme='dark'] .demosw-seg--active,
+html[data-theme='dark'] .demosw-seg--active:hover {
+  background: var(--neutral-700);
+}
+
+/* 3 x 1 viewBox units at 20px (20/24 px each). */
+.demosw-icon-mobile {
+  transform: translate(2.5px, 0.83px);
+}
+
+.demosw-seg:focus-visible,
+.demosw-menu__item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(212, 212, 216, 0.5);
+}
+
+/* shadcn Tooltip, above the segment on hover / focus. Right-aligned so it grows to
+   the left: the switcher hugs the right edge, a centred tooltip would be cut off. */
+.demosw-seg::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  /* Black, as the switcher track. */
+  background: #09090b;
+  color: #fafafa;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms;
+}
+
+.demosw-seg:hover::after,
+.demosw-seg:focus-visible::after {
+  opacity: 1;
+}
+
+/* No tooltip over the open Desktop menu. */
+.demosw-seg[aria-expanded='true']::after {
+  display: none;
+}
+
+/* shadcn DropdownMenuContent, opening upwards; right-aligned so it stays on screen */
+.demosw-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  min-width: 160px;
+  padding: 4px;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  background: var(--neutral-900);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* shadcn DropdownMenuItem */
+.demosw-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Same state steps as the segments: hover, then the current demo. */
+.demosw-menu__item:hover,
+.demosw-menu__item:focus-visible {
+  background: var(--neutral-700);
+}
+
+.demosw-menu__item[aria-current='page'] {
+  background: var(--neutral-600);
+}
+
+html[data-theme='dark'] .demosw-menu__item:hover,
+html[data-theme='dark'] .demosw-menu__item:focus-visible {
+  background: var(--neutral-800);
+}
+
+html[data-theme='dark'] .demosw-menu__item[aria-current='page'] {
+  background: var(--neutral-700);
+}
+
+.demosw-menu__check {
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demosw-seg,
+  .demosw-seg::after {
+    transition: none;
+  }
+}

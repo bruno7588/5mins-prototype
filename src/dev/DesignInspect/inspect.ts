@@ -45,7 +45,8 @@ export interface InspectRequest {
 }
 
 export function isInspectorNode(el: Element | null): boolean {
-  return !!el?.closest?.(`#${ROOT_ID}`)
+  // [data-inspect-ignore]: prototype chrome outside the root (the Demos switcher, which toggles Inspect).
+  return !!el?.closest?.(`#${ROOT_ID}, [data-inspect-ignore]`)
 }
 
 /** SVG internals and text wrappers are never what you mean; snap to the nearest stamped element. */

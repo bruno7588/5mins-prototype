@@ -16,7 +16,7 @@ import './DesignInspect.css'
 /**
  * Design Inspect overlay (dev only, mounted from main.tsx).
  *
- * Pill bottom-right or Alt+I enters inspect mode: hover highlights, click selects and
+ * The Inspect button in the Demos switcher (TOGGLE_EVENT) or Alt+I enters inspect mode: hover highlights, click selects and
  * opens an inline prompt on the element (the box label carries the source line). Send posts the request to the dev server over
  * the HMR socket (the /inspect skill picks it up); Copy puts the same context on the
  * clipboard. Esc steps out, ArrowUp climbs to the parent.
@@ -58,6 +58,7 @@ type BusEvent = {
   source?: string
 }
 const BUS_EVENT = 'design-inspect'
+const TOGGLE_EVENT = 'design-inspect:toggle'
 const bus: EventTarget = (window.__designInspectBus ??= new EventTarget())
 const emit = (detail: BusEvent) => bus.dispatchEvent(new CustomEvent(BUS_EVENT, { detail }))
 if (import.meta.hot) {
@@ -209,6 +210,13 @@ export default function DesignInspect() {
     setStatus({ kind: 'idle' })
     pendingId.current = null
   }, [])
+
+  // The Demos switcher's Inspect button (src/prototype/DemoSwitcher) toggles through a window event.
+  useEffect(() => {
+    const onToggle = () => (active ? exit() : setActive(true))
+    window.addEventListener(TOGGLE_EVENT, onToggle)
+    return () => window.removeEventListener(TOGGLE_EVENT, onToggle)
+  }, [active, exit])
 
   // Global keys: Alt+I toggles, Esc steps out, ArrowUp climbs to the parent.
   useEffect(() => {
@@ -369,16 +377,6 @@ export default function DesignInspect() {
 
   return createPortal(
     <>
-      <button
-        type="button"
-        className={`di-pill${active ? ' di-pill--active' : ''}`}
-        onClick={() => (active ? exit() : setActive(true))}
-        aria-pressed={active}
-        title="Design Inspect (Alt+I)"
-      >
-        {active ? 'Inspecting · Esc to exit' : 'Inspect'}
-      </button>
-
       {active && editing && (
         <div className="di-hint" style={placeHint(editing.getBoundingClientRect())}>
           Enter to save · Esc to cancel

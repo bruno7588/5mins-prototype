@@ -10,47 +10,19 @@
   color: #f4f4f7;
 }
 
-#design-inspect-root .di-pill,
 #design-inspect-root .di-panel {
   pointer-events: auto;
 }
 
-html.di-active *:not(#design-inspect-root, #design-inspect-root *) {
+html.di-active *:not(#design-inspect-root, #design-inspect-root *, [data-inspect-ignore], [data-inspect-ignore] *) {
   cursor: crosshair !important;
 }
 
-.di-pill:focus-visible,
 .di-btn:focus-visible,
 .di-close:focus-visible,
 .di-textarea:focus-visible {
   outline: 2px solid #b8a6ff;
   outline-offset: 2px;
-}
-
-/* Toggle pill */
-.di-pill {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: #15161c;
-  color: #f4f4f7;
-  font: inherit;
-  font-weight: 600;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
-  cursor: pointer;
-}
-
-.di-pill:hover {
-  border-color: #7c5cff;
-}
-
-.di-pill--active {
-  background: #7c5cff;
-  border-color: #7c5cff;
-  color: #fff;
 }
 
 /* Hover / selection boxes */
