@@ -112,13 +112,10 @@
   padding-top: var(--space-l);
 }
 
-.ecm-review-summary {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-s);
-  max-width: 600px;
-  text-align: center;
+/* Figma 12413:2867 hugs its text with 8px 12px padding (DS Callout body is 16px). */
+.alert.ecm-review-summary {
+  width: auto;
+  padding: var(--space-s) var(--space-sm);
 }
 
 .ecm-review-title {
@@ -130,15 +127,4 @@
   color: var(--text-primary);
 }
 
-.ecm-review-text {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.ecm-review-text strong {
-  font-weight: 600;
-  color: var(--text-primary);
-}
 

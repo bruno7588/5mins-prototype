@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Calendar, Danger, Profile2User, TaskSquare, User } from 'iconsax-react'
+import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Tooltip from '@/components/Tooltip/Tooltip'
@@ -246,31 +247,21 @@ function EnrolCourseModal({ open, onClose, onEnrol, courseTitle = 'This course' 
                       dueLabel: due ? `Due on ${fmtShortIso(due)}` : undefined,
                     }}
                   />
-                  <div className="ecm-review-summary">
-                    <p className="ecm-review-text">
-                      It will be assigned to <strong>{plural(enrolCount, 'person', 'people')}</strong>
-                      {due ? (
-                        <>
-                          , scheduled for <strong>{fmtIso(timing.start)}</strong> to <strong>{fmtIso(due)}</strong>.
-                        </>
-                      ) : (
-                        <>
-                          , starting <strong>{fmtIso(timing.start)}</strong> with no due date.
-                        </>
-                      )}
-                    </p>
-                    <p className="ecm-review-text">
-                      {timing.repeat.enabled
+                  {/* Figma 12413:2867: the summary as a DS Callout with bullets. */}
+                  <Alert
+                    className="ecm-review-summary"
+                    bullets={[
+                      `It will be assigned to ${plural(enrolCount, 'person', 'people')}${
+                        due
+                          ? `, scheduled for ${fmtIso(timing.start)} to ${fmtIso(due)}.`
+                          : `, starting ${fmtIso(timing.start)} with no due date.`
+                      }`,
+                      timing.repeat.enabled
                         ? `It repeats every ${timing.repeat.interval} ${timing.repeat.unit} from the start date.`
-                        : "This is a one-time enrolment and won't repeat."}
-                    </p>
-                    {sponsorLine && (
-                      <p className="ecm-review-text">
-                        Sponsored by <strong>{sponsorLine}</strong>.
-                      </p>
-                    )}
-                    <p className="ecm-review-text">You can find this course on the Courses page.</p>
-                  </div>
+                        : "This is a one-time enrolment and won't repeat.",
+                      ...(sponsorLine ? [`Sponsored by ${sponsorLine}.`] : []),
+                    ]}
+                  />
                 </div>
               </div>
             </div>
