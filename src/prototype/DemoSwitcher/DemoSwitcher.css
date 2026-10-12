@@ -38,23 +38,23 @@
   transition: background 150ms, border-color 150ms;
 }
 
-/* Light mode steps lighter so the states read against a light page. */
+/* neutral-900 track. Light: 600 hover, 700 selected. Dark: 700 hover, 800 selected. */
 .demosw-seg:hover {
-  background: var(--neutral-700);
+  background: var(--neutral-600);
 }
 
 .demosw-seg--active,
 .demosw-seg--active:hover {
-  background: var(--neutral-600);
+  background: var(--neutral-700);
 }
 
 html[data-theme='dark'] .demosw-seg:hover {
-  background: var(--neutral-800);
+  background: var(--neutral-700);
 }
 
 html[data-theme='dark'] .demosw-seg--active,
 html[data-theme='dark'] .demosw-seg--active:hover {
-  background: var(--neutral-700);
+  background: var(--neutral-800);
 }
 
 /* 3 x 1 viewBox units at 20px (20/24 px each). */
@@ -132,20 +132,20 @@ html[data-theme='dark'] .demosw-seg--active:hover {
 /* Same state steps as the segments: hover, then the current demo. */
 .demosw-menu__item:hover,
 .demosw-menu__item:focus-visible {
-  background: var(--neutral-700);
+  background: var(--neutral-600);
 }
 
 .demosw-menu__item[aria-current='page'] {
-  background: var(--neutral-600);
+  background: var(--neutral-700);
 }
 
 html[data-theme='dark'] .demosw-menu__item:hover,
 html[data-theme='dark'] .demosw-menu__item:focus-visible {
-  background: var(--neutral-800);
+  background: var(--neutral-700);
 }
 
 html[data-theme='dark'] .demosw-menu__item[aria-current='page'] {
-  background: var(--neutral-700);
+  background: var(--neutral-800);
 }
 
 .demosw-menu__check {
