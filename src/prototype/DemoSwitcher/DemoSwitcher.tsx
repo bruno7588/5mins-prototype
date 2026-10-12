@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Edit2, MessageAdd1, Mobile, Monitor } from 'iconsax-react'
+import { ArrowUp2, Edit2, MessageAdd1, Mobile, Monitor } from 'iconsax-react'
 import CommentLayer from '../Comments/CommentLayer'
 import { useComments } from '../Comments/useComments'
 import './DemoSwitcher.css'
@@ -30,6 +30,8 @@ function DemoSwitcher() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [inspecting, setInspecting] = useState(false)
   const [commenting, setCommenting] = useState(!!linkedComment)
+  // The comments list is opt-in (the arrow beside Comment), so it doesn't cover the page.
+  const [listOpen, setListOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const { comments, error, add, setResolved, remove } = useComments(pathname, true)
   const openCount = comments.filter((c) => !c.parentId && !c.resolved).length
@@ -42,6 +44,10 @@ function DemoSwitcher() {
   useEffect(() => {
     if (inspecting) setCommenting(false)
   }, [inspecting])
+
+  useEffect(() => {
+    if (!commenting) setListOpen(false)
+  }, [commenting])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -127,7 +133,7 @@ function DemoSwitcher() {
           type="button"
           className={`demosw-seg${commenting ? ' demosw-seg--active' : ''}`}
           aria-label={openCount ? `Comment (${openCount} open)` : 'Comment'}
-          data-tip={commenting ? 'Commenting · Esc to exit' : 'Comment'}
+          data-tip={commenting ? 'Commenting · Esc to exit' : 'Add a comment'}
           aria-pressed={commenting}
           onClick={() => {
             setMenuOpen(false)
@@ -137,6 +143,21 @@ function DemoSwitcher() {
         >
           <MessageAdd1 size={20} color="currentColor" variant="Linear" />
           {openCount > 0 && <span className="demosw-badge" aria-hidden="true">{openCount}</span>}
+        </button>
+        <button
+          type="button"
+          className={`demosw-seg demosw-seg--arrow${listOpen ? ' demosw-seg--active' : ''}`}
+          aria-label={listOpen ? 'Hide comments' : 'Show comments'}
+          data-tip={listOpen ? 'Hide comments' : 'Show comments'}
+          aria-expanded={listOpen}
+          onClick={() => {
+            setMenuOpen(false)
+            if (!commenting && inspecting) window.dispatchEvent(new Event(TOGGLE_INSPECT))
+            setCommenting(true)
+            setListOpen((o) => !o)
+          }}
+        >
+          <ArrowUp2 size={16} color="currentColor" variant="Linear" />
         </button>
         {import.meta.env.DEV && (
           <button
@@ -157,6 +178,7 @@ function DemoSwitcher() {
 
       <CommentLayer
         active={commenting}
+        showList={listOpen}
         comments={comments}
         error={error}
         onAdd={add}

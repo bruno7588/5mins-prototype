@@ -176,3 +176,23 @@ html[data-theme='dark'] .demosw-menu__item[aria-current='page'] {
   text-align: center;
   pointer-events: none;
 }
+
+/* Arrow beside Comment: opens the comments list. Half-width so it reads as part of Comment. */
+.demosw-seg--arrow {
+  width: 20px;
+  margin-left: -4px;
+}
+
+.demosw-seg--arrow svg {
+  transition: transform 150ms;
+}
+
+.demosw-seg--arrow[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demosw-seg--arrow svg {
+    transition: none;
+  }
+}

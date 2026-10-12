@@ -46,6 +46,8 @@ const isChrome = (t: EventTarget | null) => !!(t as Element | null)?.closest?.('
 
 interface Props {
   active: boolean
+  /** The comments list panel (the arrow beside Comment); pins show either way. */
+  showList: boolean
   comments: PrototypeComment[]
   error: string | null
   onAdd: (c: NewComment) => Promise<PrototypeComment | undefined>
@@ -60,7 +62,7 @@ interface Props {
   focusId?: string | null
 }
 
-function CommentLayer({ active, comments, error, onAdd, onResolve, onDelete, onExit, currentRoute, onGoTo, focusId }: Props) {
+function CommentLayer({ active, showList, comments, error, onAdd, onResolve, onDelete, onExit, currentRoute, onGoTo, focusId }: Props) {
   const [, setTick] = useState(0)
   const [hover, setHover] = useState<DOMRect | null>(null)
   const [draft, setDraft] = useState<{ anchor: Anchor; x: number; y: number } | null>(null)
@@ -284,6 +286,7 @@ function CommentLayer({ active, comments, error, onAdd, onResolve, onDelete, onE
         </div>
       )}
 
+      {showList && (
       <section className="pcm-panel" aria-label="Comments">
         <div className="pcm-panel__head">
           <span className="pcm-panel__title">Comments</span>
@@ -331,6 +334,7 @@ function CommentLayer({ active, comments, error, onAdd, onResolve, onDelete, onE
         )}
         <p className="pcm-panel__hint">Click anything to comment · Esc to exit</p>
       </section>
+      )}
     </div>,
     document.body,
   )
