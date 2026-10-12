@@ -16,8 +16,10 @@
   pointer-events: auto;
 }
 
+/* Figma-style comment cursor: the pin's bubble shape (point bottom-left) with a plus,
+   its tip on the click point. Crosshair is the fallback. */
 html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
-  cursor: crosshair !important;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M3 25V14A11 11 0 1 1 14 25Z' fill='%230F1014' stroke='%23fff' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M14 9.5v9M9.5 14h9' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 3 25, crosshair !important;
 }
 
 .pcm-hover {
@@ -396,4 +398,29 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
   .pcm-icon-btn::after {
     transition: none;
   }
+}
+
+/* Page groups in the list: this page first, then every other page with comments */
+.pcm-group + .pcm-group {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #27272a;
+}
+
+.pcm-group__title {
+  margin: 0;
+  padding: 6px 8px 2px;
+  color: var(--neutral-300);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pcm-group__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }

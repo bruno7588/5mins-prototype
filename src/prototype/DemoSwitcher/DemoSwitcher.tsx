@@ -24,10 +24,12 @@ const TOGGLE_INSPECT = 'design-inspect:toggle'
 
 function DemoSwitcher() {
   const navigate = useNavigate()
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
+  // ?comment=<id> (the Slack "Open in prototype" link) opens comment mode on that thread.
+  const linkedComment = new URLSearchParams(search).get('comment')
   const [menuOpen, setMenuOpen] = useState(false)
   const [inspecting, setInspecting] = useState(false)
-  const [commenting, setCommenting] = useState(false)
+  const [commenting, setCommenting] = useState(!!linkedComment)
   const rootRef = useRef<HTMLDivElement>(null)
   const { comments, error, add, setResolved } = useComments(pathname, true)
   const openCount = comments.filter((c) => !c.parentId && !c.resolved).length
@@ -160,6 +162,9 @@ function DemoSwitcher() {
         onAdd={add}
         onResolve={setResolved}
         onExit={exitComments}
+        currentRoute={pathname}
+        onGoTo={(c) => navigate(`${c.route}?comment=${c.id}`)}
+        focusId={linkedComment}
       />
     </div>
   )

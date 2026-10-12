@@ -51,9 +51,15 @@ interface Props {
   onAdd: (c: NewComment) => Promise<PrototypeComment | undefined>
   onResolve: (id: string, resolved: boolean) => void
   onExit: () => void
+  /** The page on screen: its comments get pins; the list shows every page. */
+  currentRoute: string
+  /** Go to a comment on another page (navigates there with ?comment=<id>). */
+  onGoTo: (c: PrototypeComment) => void
+  /** Thread to open once loaded (?comment=<id> from the Slack link). */
+  focusId?: string | null
 }
 
-function CommentLayer({ active, comments, error, onAdd, onResolve, onExit }: Props) {
+function CommentLayer({ active, comments, error, onAdd, onResolve, onExit, currentRoute, onGoTo, focusId }: Props) {
   const [, setTick] = useState(0)
   const [hover, setHover] = useState<DOMRect | null>(null)
   const [draft, setDraft] = useState<{ anchor: Anchor; x: number; y: number } | null>(null)
@@ -64,6 +70,12 @@ function CommentLayer({ active, comments, error, onAdd, onResolve, onExit }: Pro
   const repliesOf = (id: string) => comments.filter((c) => c.parentId === id)
   const numberOf = (id: string) => roots.findIndex((c) => c.id === id) + 1
   const visibleRoots = roots.filter((c) => showResolved || !c.resolved)
+  const pageRoots = visibleRoots.filter((c) => c.route === currentRoute)
+  // The list groups by page: this page first, then the others in order of first comment.
+  const groups = [currentRoute, ...new Set(visibleRoots.map((c) => c.route))]
+    .filter((r, i, all) => all.indexOf(r) === i)
+    .map((route) => ({ route, items: visibleRoots.filter((c) => c.route === route) }))
+    .filter((g) => g.items.length > 0)
   const open = roots.find((c) => c.id === openId) ?? null
 
   // Pins follow their elements through scroll, resize and route animations.
@@ -129,14 +141,27 @@ function CommentLayer({ active, comments, error, onAdd, onResolve, onExit }: Pro
     }
   }, [active, draft, openId, onExit])
 
-  if (!active) return null
-
   const openThread = (c: PrototypeComment) => {
     setDraft(null)
+    if (c.route !== currentRoute) return onGoTo(c)
     const at = locate(c.anchor)
     at?.el.scrollIntoView({ block: 'center', behavior: 'smooth' })
     setOpenId(c.id)
   }
+
+  // Open the linked thread once, when its comment has loaded.
+  const focusedRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!active || !focusId || focusedRef.current === focusId) return
+    const target = roots.find((c) => c.id === focusId)
+    if (!target) return
+    focusedRef.current = focusId
+    if (target.resolved) setShowResolved(true)
+    openThread(target)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, focusId, comments])
+
+  if (!active) return null
 
   const openAt = open ? locate(open.anchor) : null
 
@@ -149,7 +174,7 @@ function CommentLayer({ active, comments, error, onAdd, onResolve, onExit }: Pro
         />
       )}
 
-      {visibleRoots.map((c) => {
+      {pageRoots.map((c) => {
         const at = locate(c.anchor)
         if (!at) return null
         return (
@@ -224,9 +249,9 @@ function CommentLayer({ active, comments, error, onAdd, onResolve, onExit }: Pro
         </div>
       )}
 
-      <section className="pcm-panel" aria-label="Comments on this page">
+      <section className="pcm-panel" aria-label="Comments">
         <div className="pcm-panel__head">
-          <span className="pcm-panel__title">Comments on this page</span>
+          <span className="pcm-panel__title">Comments</span>
           <label className="pcm-panel__toggle">
             <input type="checkbox" checked={showResolved} onChange={(e) => setShowResolved(e.target.checked)} />
             Show resolved
@@ -234,36 +259,40 @@ function CommentLayer({ active, comments, error, onAdd, onResolve, onExit }: Pro
         </div>
         {error && <p className="pcm-panel__error">{error}</p>}
         {visibleRoots.length === 0 ? (
-          <p className="pcm-panel__empty">
-            {roots.length
-              ? 'All comments on this page are resolved.'
-              : 'No comments yet. Click anything on the page to add one.'}
-          </p>
+          <p className="pcm-panel__empty">{roots.length ? 'All comments are resolved.' : 'No comments yet'}</p>
         ) : (
-          <ul className="pcm-list">
-            {visibleRoots.map((c) => {
-              const replies = repliesOf(c.id).length
-              return (
-                <li key={c.id}>
-                  <button
-                    type="button"
-                    className={`pcm-list__item${openId === c.id ? ' pcm-list__item--open' : ''}`}
-                    onClick={() => openThread(c)}
-                  >
-                    <span className={`pcm-list__num${c.resolved ? ' pcm-list__num--resolved' : ''}`}>{numberOf(c.id)}</span>
-                    <span className="pcm-list__body">
-                      <span className="pcm-list__meta">
-                        {c.author} · {timeAgo(c.createdAt)}
-                        {replies > 0 && ` · ${replies} ${replies === 1 ? 'reply' : 'replies'}`}
-                      </span>
-                      <span className="pcm-list__text">{c.text}</span>
-                      {!locate(c.anchor) && <span className="pcm-list__tag">Not on screen</span>}
-                    </span>
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
+          <div className="pcm-list">
+            {groups.map((g) => (
+              <section key={g.route} className="pcm-group" aria-label={g.route}>
+                <h3 className="pcm-group__title">{g.route === currentRoute ? 'This page' : g.route}</h3>
+                <ul className="pcm-group__items">
+                  {g.items.map((c) => {
+                    const replies = repliesOf(c.id).length
+                    const onThisPage = c.route === currentRoute
+                    return (
+                      <li key={c.id}>
+                        <button
+                          type="button"
+                          className={`pcm-list__item${openId === c.id ? ' pcm-list__item--open' : ''}`}
+                          onClick={() => openThread(c)}
+                        >
+                          <span className={`pcm-list__num${c.resolved ? ' pcm-list__num--resolved' : ''}`}>{numberOf(c.id)}</span>
+                          <span className="pcm-list__body">
+                            <span className="pcm-list__meta">
+                              {c.author} · {timeAgo(c.createdAt)}
+                              {replies > 0 && ` · ${replies} ${replies === 1 ? 'reply' : 'replies'}`}
+                            </span>
+                            <span className="pcm-list__text">{c.text}</span>
+                            {onThisPage && !locate(c.anchor) && <span className="pcm-list__tag">Not on screen</span>}
+                          </span>
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </section>
+            ))}
+          </div>
         )}
         <p className="pcm-panel__hint">Click anything to comment · Esc to exit</p>
       </section>

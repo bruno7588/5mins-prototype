@@ -49,7 +49,41 @@ async function redis(...command: (string | number)[]): Promise<unknown> {
   return data.result
 }
 
+async function redisPipeline(commands: (string | number)[][]): Promise<unknown[]> {
+  if (!commands.length) return []
+  const res = await fetch(`${REDIS_URL}/pipeline`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${REDIS_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(commands),
+  })
+  const data = (await res.json()) as { result?: unknown; error?: string }[]
+  return data.map((d) => {
+    if (d.error) throw new Error(d.error)
+    return d.result
+  })
+}
+
 const keyFor = (route: string) => `pcm:${route}`
+
+// HGETALL returns a flat [field, value, field, value, ...] list.
+const parseHash = (flat: string[] | null): StoredComment[] => {
+  const out: StoredComment[] = []
+  for (let i = 1; i < (flat ?? []).length; i += 2) out.push(JSON.parse(flat![i]))
+  return out
+}
+
+/** Every page's comments. Routes starting with /__ are internal test data and skipped. */
+async function allComments(): Promise<StoredComment[]> {
+  const keys: string[] = []
+  let cursor = '0'
+  do {
+    const [next, batch] = (await redis('SCAN', cursor, 'MATCH', 'pcm:/*', 'COUNT', 200)) as [string, string[]]
+    keys.push(...batch.filter((k) => !k.startsWith('pcm:/__')))
+    cursor = next
+  } while (cursor !== '0')
+  const hashes = (await redisPipeline(keys.map((k) => ['HGETALL', k]))) as (string[] | null)[]
+  return hashes.flatMap(parseHash)
+}
 const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(Math.max(v, 0), 100) : 0)
 
@@ -69,12 +103,12 @@ export function OPTIONS() {
 
 export async function GET(request: Request) {
   if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
-  const route = str(new URL(request.url).searchParams.get('route'), MAX_ROUTE)
-  if (!route) return json({ error: 'route is required' }, 400)
-  // HGETALL returns a flat [field, value, field, value, ...] list.
-  const flat = ((await redis('HGETALL', keyFor(route))) as string[] | null) ?? []
-  const comments: StoredComment[] = []
-  for (let i = 1; i < flat.length; i += 2) comments.push(JSON.parse(flat[i]))
+  const params = new URL(request.url).searchParams
+  const route = str(params.get('route'), MAX_ROUTE)
+  if (!route && params.get('all') === null) return json({ error: 'route or all is required' }, 400)
+  const comments = route
+    ? parseHash((await redis('HGETALL', keyFor(route))) as string[] | null)
+    : await allComments()
   comments.sort((a, b) => a.createdAt.localeCompare(b.createdAt))
   return json({ comments })
 }
@@ -112,7 +146,32 @@ export async function POST(request: Request) {
     parentId: str(body.parentId, 64) || null,
   }
   await redis('HSET', keyFor(route), comment.id, JSON.stringify(comment))
+  await notifySlack(comment, request)
   return json({ comment }, 201)
+}
+
+/* New comments and replies go to the #prototype-comments Slack channel through an
+   incoming webhook (SLACK_WEBHOOK_URL). A Slack failure never blocks the comment. */
+async function notifySlack(c: StoredComment, request: Request) {
+  const webhook = process.env.SLACK_WEBHOOK_URL
+  if (!webhook) return
+  const origin = new URL(request.url).origin
+  const link = `${origin}${c.route}?comment=${c.parentId ?? c.id}`
+  const action = c.parentId ? 'replied on' : 'commented on'
+  // Slack treats <...> as links and mentions (<!channel>), so viewer text is escaped.
+  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const quote = esc(c.text).split('\n').map((line) => `> ${line}`).join('\n')
+  try {
+    await fetch(webhook, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: `*${esc(c.author)}* ${action} \`${esc(c.route)}\`\n${quote}\n<${link}|Open in prototype>`,
+      }),
+    })
+  } catch {
+    /* the comment is saved either way */
+  }
 }
 
 export async function PATCH(request: Request) {

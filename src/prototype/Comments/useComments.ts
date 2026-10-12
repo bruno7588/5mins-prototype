@@ -46,7 +46,7 @@ export function useComments(route: string, enabled: boolean) {
     try {
       const { comments } = await request<{ comments: PrototypeComment[] }>({
         method: 'GET',
-        query: `?route=${encodeURIComponent(route)}`,
+        query: '?all=1',
       })
       // Until the API is deployed the URL serves the app's HTML, so there is no list.
       if (!Array.isArray(comments)) throw new Error('Comments are not available yet.')
@@ -57,11 +57,25 @@ export function useComments(route: string, enabled: boolean) {
     } finally {
       setLoading(false)
     }
-  }, [route])
+  }, [])
 
   // Fetch on every page; the switcher shows the count even before comment mode is on.
+  // Comments posted elsewhere (Vercel, another reviewer) arrive on a 30s refresh and
+  // whenever the tab comes back into focus.
   useEffect(() => {
-    if (enabled) void load()
+    if (!enabled) return
+    void load()
+    const refresh = () => {
+      if (document.visibilityState === 'visible') void load()
+    }
+    const timer = window.setInterval(refresh, 30000)
+    window.addEventListener('focus', refresh)
+    document.addEventListener('visibilitychange', refresh)
+    return () => {
+      window.clearInterval(timer)
+      window.removeEventListener('focus', refresh)
+      document.removeEventListener('visibilitychange', refresh)
+    }
   }, [enabled, load])
 
   const add = useCallback(
@@ -84,17 +98,20 @@ export function useComments(route: string, enabled: boolean) {
     [route],
   )
 
+  // Comments live per page in storage, so resolving uses the comment's own page.
   const setResolved = useCallback(
     async (id: string, resolved: boolean) => {
+      const target = comments.find((c) => c.id === id)
+      if (!target) return
       setComments((prev) => prev.map((c) => (c.id === id ? { ...c, resolved } : c)))
       try {
-        await request({ method: 'PATCH', body: JSON.stringify({ route, id, resolved }) })
+        await request({ method: 'PATCH', body: JSON.stringify({ route: target.route, id, resolved }) })
       } catch (e) {
         setComments((prev) => prev.map((c) => (c.id === id ? { ...c, resolved: !resolved } : c)))
         setError((e as Error).message)
       }
     },
-    [route],
+    [comments],
   )
 
   return { comments, error, loading, add, setResolved, reload: load }
