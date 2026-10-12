@@ -31,7 +31,7 @@ export interface StoredComment {
 // Same-origin in production; the dev build calls the deployed API cross-origin.
 const CORS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 }
 
@@ -187,4 +187,19 @@ export async function PATCH(request: Request) {
   const comment = { ...(JSON.parse(raw) as StoredComment), resolved: body.resolved }
   await redis('HSET', keyFor(route), id, JSON.stringify(comment))
   return json({ comment })
+}
+
+/* Delete a comment and, for a top-level comment, its whole thread. There are no accounts,
+   so anyone with the link can delete, like resolving. */
+export async function DELETE(request: Request) {
+  if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
+  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
+  const route = str(body?.route, MAX_ROUTE)
+  const id = str(body?.id, 64)
+  if (!route || !id) return json({ error: 'route and id are required' }, 400)
+  const all = parseHash((await redis('HGETALL', keyFor(route))) as string[] | null)
+  if (!all.some((c) => c.id === id)) return json({ error: 'Not found' }, 404)
+  const ids = [id, ...all.filter((c) => c.parentId === id).map((c) => c.id)]
+  await redis('HDEL', keyFor(route), ...ids)
+  return json({ deleted: ids })
 }

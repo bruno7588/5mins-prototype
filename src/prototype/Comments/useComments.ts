@@ -114,5 +114,16 @@ export function useComments(route: string, enabled: boolean) {
     [comments],
   )
 
-  return { comments, error, loading, add, setResolved, reload: load }
+  // Deleting a top-level comment removes its replies too (the API does the same).
+  const remove = useCallback(
+    async (id: string) => {
+      const target = comments.find((c) => c.id === id)
+      if (!target) return
+      await request({ method: 'DELETE', body: JSON.stringify({ route: target.route, id }) })
+      setComments((prev) => prev.filter((c) => c.id !== id && c.parentId !== id))
+    },
+    [comments],
+  )
+
+  return { comments, error, loading, add, setResolved, remove, reload: load }
 }

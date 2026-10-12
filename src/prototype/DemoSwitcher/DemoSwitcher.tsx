@@ -31,7 +31,7 @@ function DemoSwitcher() {
   const [inspecting, setInspecting] = useState(false)
   const [commenting, setCommenting] = useState(!!linkedComment)
   const rootRef = useRef<HTMLDivElement>(null)
-  const { comments, error, add, setResolved } = useComments(pathname, true)
+  const { comments, error, add, setResolved, remove } = useComments(pathname, true)
   const openCount = comments.filter((c) => !c.parentId && !c.resolved).length
   const exitComments = useCallback(() => setCommenting(false), [])
 
@@ -161,6 +161,7 @@ function DemoSwitcher() {
         error={error}
         onAdd={add}
         onResolve={setResolved}
+        onDelete={remove}
         onExit={exitComments}
         currentRoute={pathname}
         onGoTo={(c) => navigate(`${c.route}?comment=${c.id}`)}

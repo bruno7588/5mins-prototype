@@ -424,3 +424,30 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
   padding: 0;
   list-style: none;
 }
+
+/* Delete confirmation inside the thread popover */
+.pcm-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid var(--neutral-700);
+  border-radius: 6px;
+  background: var(--neutral-800);
+}
+
+.pcm-confirm__text {
+  margin: 0;
+}
+
+/* shadcn Button, variant destructive */
+.pcm-btn--danger {
+  border-color: #dc2626;
+  background: #dc2626;
+  color: #fafafa;
+}
+
+.pcm-btn--danger:hover {
+  background: #b91c1c;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { createPortal } from 'react-dom'
-import { CloseCircle, TickCircle } from 'iconsax-react'
+import { CloseCircle, TickCircle, Trash } from 'iconsax-react'
 import { anchorFor, locate, type Anchor } from './commentAnchor'
 import type { NewComment, PrototypeComment } from './useComments'
 import './CommentLayer.css'
@@ -50,6 +50,7 @@ interface Props {
   error: string | null
   onAdd: (c: NewComment) => Promise<PrototypeComment | undefined>
   onResolve: (id: string, resolved: boolean) => void
+  onDelete: (id: string) => Promise<void>
   onExit: () => void
   /** The page on screen: its comments get pins; the list shows every page. */
   currentRoute: string
@@ -59,12 +60,14 @@ interface Props {
   focusId?: string | null
 }
 
-function CommentLayer({ active, comments, error, onAdd, onResolve, onExit, currentRoute, onGoTo, focusId }: Props) {
+function CommentLayer({ active, comments, error, onAdd, onResolve, onDelete, onExit, currentRoute, onGoTo, focusId }: Props) {
   const [, setTick] = useState(0)
   const [hover, setHover] = useState<DOMRect | null>(null)
   const [draft, setDraft] = useState<{ anchor: Anchor; x: number; y: number } | null>(null)
   const [openId, setOpenId] = useState<string | null>(null)
   const [showResolved, setShowResolved] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  useEffect(() => setConfirmDelete(false), [openId])
 
   const roots = comments.filter((c) => !c.parentId)
   const repliesOf = (id: string) => comments.filter((c) => c.parentId === id)
@@ -224,10 +227,42 @@ function CommentLayer({ active, comments, error, onAdd, onResolve, onExit, curre
             >
               <TickCircle size={18} color="currentColor" variant={open.resolved ? 'Bold' : 'Linear'} />
             </button>
+            <button
+              type="button"
+              className="pcm-icon-btn"
+              aria-label="Delete"
+              data-tip="Delete"
+              onClick={() => setConfirmDelete(true)}
+            >
+              <Trash size={18} color="currentColor" variant="Linear" />
+            </button>
             <button type="button" className="pcm-icon-btn" aria-label="Close" data-tip="Close" onClick={() => setOpenId(null)}>
               <CloseCircle size={18} color="currentColor" variant="Linear" />
             </button>
           </div>
+          {confirmDelete && (
+            <div className="pcm-confirm" role="alertdialog" aria-label="Delete this comment?">
+              <p className="pcm-confirm__text">
+                Delete this comment{repliesOf(open.id).length ? ' and its replies' : ''}? This can't be undone.
+              </p>
+              <div className="pcm-composer__actions">
+                <button type="button" className="pcm-btn" onClick={() => setConfirmDelete(false)}>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="pcm-btn pcm-btn--danger"
+                  onClick={async () => {
+                    await onDelete(open.id)
+                    setConfirmDelete(false)
+                    setOpenId(null)
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
           <div className="pcm-thread">
             {[open, ...repliesOf(open.id)].map((c) => (
               <div key={c.id} className="pcm-msg">
