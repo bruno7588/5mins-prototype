@@ -102,3 +102,19 @@
   color: var(--text-secondary);
   white-space: nowrap;
 }
+
+/* Pressed (touch): the fill lightens while a finger is on the card, the mobile
+   stand-in for the web hover (cards.md). Only when the card is tappable. */
+.m-course-card[role='button'] {
+  transition: background 150ms ease;
+}
+
+/Users/brunocarvalho/Desktop/01.Projectos/Cursor/5Mins-prototype/.m-course-card[role='button']ctive {
+  background: var(--cards-background-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-course-card[role='button'] {
+    transition: none;
+  }
+}

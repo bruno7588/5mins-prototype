@@ -175,3 +175,19 @@
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
+
+/* Pressed (touch): the fill lightens while a finger is on the card, the mobile
+   stand-in for the web hover (cards.md). Only when the card is tappable. */
+.m-pcourse__card--tappable {
+  transition: background 150ms ease;
+}
+
+/Users/brunocarvalho/Desktop/01.Projectos/Cursor/5Mins-prototype/.m-pcourse__card--tappablective {
+  background: var(--cards-background-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-pcourse__card--tappable {
+    transition: none;
+  }
+}
