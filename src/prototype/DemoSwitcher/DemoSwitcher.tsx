@@ -104,10 +104,6 @@ function DemoSwitcher() {
       )}
 
       <div className={`demosw-bar${menuOpen ? ' demosw-bar--expanded' : ''}`} role="toolbar" aria-label="Prototype demos">
-        {/* Collapsed face: hover or focus opens the bar (see DemoSwitcher.css). */}
-        <span className="demosw-launcher" aria-hidden="true">
-          <Category size={20} color="currentColor" variant="Linear" />
-        </span>
         <button
           type="button"
           className={`demosw-seg${!onMobile ? ' demosw-seg--active' : ''}`}
@@ -178,6 +174,10 @@ function DemoSwitcher() {
             <Edit2 size={20} color="currentColor" variant="Linear" />
           </button>
         )}
+        {/* Collapsed face: hover or focus opens the bar (see DemoSwitcher.css). */}
+        <span className="demosw-launcher" aria-hidden="true">
+          <Category size={20} color="currentColor" variant="Linear" />
+        </span>
       </div>
 
       <CommentLayer

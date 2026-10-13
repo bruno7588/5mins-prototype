@@ -11,66 +11,18 @@
   color: #fafafa;
 }
 
-/* Segmented switcher: black track, white icons, the current segment a raised circle.
-   Collapsed until hovered or focused, so it doesn't cover the page: a single launcher
-   circle bottom-right. Opening reveals the track leftwards (clip-path) and fades the
-   segments in; only clip-path, transform and opacity animate, nothing re-lays out. */
+/* Segmented switcher: black track, white icons, the current segment a raised circle. */
 .demosw-bar {
-  position: relative;
   display: flex;
-  gap: 4px;
-  /* 4px + the 1px track border, which lives on ::before so the clip can shape it. */
-  padding: 5px;
-  border-radius: 999px;
-}
-
-.demosw-bar::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+  padding: 4px;
   border: 1px solid #27272a;
   border-radius: 999px;
   background: var(--neutral-900);
-  clip-path: inset(0 0 0 0 round 999px);
-  transition: clip-path 250ms ease-in-out;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
+.demosw-seg,
 .demosw-launcher {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  color: #fafafa;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 250ms ease-in-out;
-}
-
-.demosw-bar:not(:hover):not(:focus-within):not(.demosw-bar--expanded) {
-  pointer-events: none;
-}
-
-.demosw-bar:not(:hover):not(:focus-within):not(.demosw-bar--expanded)::before {
-  /* Track border (1px) + padding (4px) + 36px segment + 4px + 1px = 46px circle */
-  clip-path: inset(0 0 0 calc(100% - 46px) round 999px);
-}
-
-.demosw-bar:not(:hover):not(:focus-within):not(.demosw-bar--expanded) .demosw-launcher {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.demosw-bar:not(:hover):not(:focus-within):not(.demosw-bar--expanded) .demosw-seg {
-  opacity: 0;
-  transform: translateX(8px);
-  pointer-events: none;
-}
-
-.demosw-seg {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -82,9 +34,29 @@
   border-radius: 999px;
   background: none;
   color: #fafafa;
+  transition: background 150ms, border-color 150ms, width 250ms ease-in-out,
+    margin-left 250ms ease-in-out, opacity 250ms ease-in-out;
+}
+
+.demosw-seg {
   cursor: pointer;
-  transition: background 150ms, border-color 150ms, opacity 250ms ease-in-out,
-    transform 250ms ease-in-out;
+}
+
+/* 4px between segments; a margin rather than gap so it can collapse to 0. */
+.demosw-seg + .demosw-seg {
+  margin-left: 4px;
+}
+
+/* Collapsed until hovered or focused, so it doesn't cover the page: the bar shrinks
+   to the launcher circle, and grows leftwards from the right edge to open. Width
+   animation is deliberate (Bruno preferred it to a clip-and-fade). */
+.demosw-bar:not(:hover):not(:focus-within):not(.demosw-bar--expanded) .demosw-seg,
+.demosw-bar:is(:hover, :focus-within, .demosw-bar--expanded) .demosw-launcher {
+  width: 0;
+  margin-left: 0;
+  border-width: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* neutral-900 track. Light: 600 hover, 700 selected. Dark: 700 hover, 800 selected. */
@@ -204,7 +176,6 @@ html[data-theme='dark'] .demosw-menu__item[aria-current='page'] {
 @media (prefers-reduced-motion: reduce) {
   .demosw-seg,
   .demosw-seg::after,
-  .demosw-bar::before,
   .demosw-launcher {
     transition: none;
   }
@@ -229,9 +200,9 @@ html[data-theme='dark'] .demosw-menu__item[aria-current='page'] {
 }
 
 /* Arrow beside Comment: opens the comments list. Half-width so it reads as part of Comment. */
-.demosw-seg--arrow {
+.demosw-seg + .demosw-seg--arrow {
   width: 20px;
-  margin-left: -4px;
+  margin-left: 0;
 }
 
 .demosw-seg--arrow svg {
