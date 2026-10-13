@@ -41,20 +41,23 @@ const LOCKED_SUB: Record<SignOffStep, string> = {
  * Web sign-off (DES-335) on the shared full-screen wizard (WizardShell, top stepper,
  * as Assign Courses): hand over (learner), licence details (licence holder), signed
  * off and hand the device back. Mounted only while open, so each opening starts at
- * the handover. The record is saved at Sign Off Training; until the device is handed
- * back, Back returns to the form and re-submitting replaces it. Closing then counts as done.
+ * the handover. The record becomes final only at step 3's button (Agree & Continue as
+ * [learner]); until then Back returns to the form, and closing saves nothing.
  */
 function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
   const reduce = useReducedMotion()
   const [step, setStep] = useState<SignOffStep>('handover')
   const [record, setRecord] = useState<SignOffRecord | null>(null)
   const form = useSignOffForm(courseId)
+  /* Closing (X, Escape, Cancel) never saves: back to the course, certificate still locked. */
   const close = () => {
-    if (form.busy) return
-    if (record) {
-      form.finalise(record)
-      onSigned(record)
-    } else onClose()
+    if (!form.busy) onClose()
+  }
+  /* Only step 3's button makes the record final: the course completes, the certificate unlocks. */
+  const handBack = () => {
+    if (!record) return
+    form.finalise(record)
+    onSigned(record)
   }
   const motionProps = { ...ARRIVE(reduce), exit: { opacity: 0 }, transition: arriveTransition(reduce) }
 
@@ -96,7 +99,7 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
         Sign Off Training
       </Button>
     ) : (
-      <Button variant="filled" autoFocus onClick={close}>
+      <Button variant="filled" autoFocus onClick={handBack}>
         {doneAction(form.learnerName)}
       </Button>
     )

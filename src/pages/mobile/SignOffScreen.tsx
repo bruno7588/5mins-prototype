@@ -34,7 +34,7 @@ interface SignOffScreenProps {
  * screen, same three steps and copy as web (hand over, licence details, hand back),
  * the primary button pinned at the bottom. Back returns to the course from any step
  * (as web's Cancel and X), except step 3, which goes back to the form; typed details
- * are kept, and once signed it counts as done. Not a bottom sheet: three fields and the keyboard need the room.
+ * are kept. Nothing is saved until step 3's Agree & Continue. Not a bottom sheet: three fields and the keyboard need the room.
  */
 function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
   const reduce = useReducedMotion()
@@ -43,16 +43,16 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
   const form = useSignOffForm(courseId)
 
   /* Step 3 goes back to the form so the licence holder can correct a detail (re-submitting
-     replaces the record); elsewhere back returns to the course. */
+     replaces the record); elsewhere back returns to the course and saves nothing. */
   const back = () => {
     if (form.busy) return
     if (step === 'done') setStep('form')
-    else if (record) handBack()
     else onClose()
   }
-  /* The hand-back makes the record final (the course completes, the certificate unlocks). */
+  /* Only step 3's button makes the record final (the course completes, the certificate unlocks). */
   function handBack() {
-    if (record) form.finalise(record)
+    if (!record) return
+    form.finalise(record)
     onSigned()
   }
 

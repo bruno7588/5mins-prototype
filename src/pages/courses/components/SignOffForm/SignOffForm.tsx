@@ -27,7 +27,7 @@ export const STEP_NUMBER: Record<SignOffStep, number> = { handover: 1, form: 2, 
 
 export const DONE_TITLE = 'Training signed off'
 /** Step 3's button: the device goes back to the learner, mirroring "Continue as Licence Holder". */
-export const doneAction = (learnerName: string) => `Continue as ${learnerName.split(' ')[0]}`
+export const doneAction = (learnerName: string) => `Agree & Continue as ${learnerName.split(' ')[0]}`
 export const doneNote = (learnerName: string) => `Hand the device back to ${learnerName}.`
 
 export const FORM_TITLE = 'Your licence details'
