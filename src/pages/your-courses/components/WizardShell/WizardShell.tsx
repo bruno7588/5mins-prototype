@@ -9,7 +9,7 @@ import './WizardShell.css'
    tick can take var(--page-background) and follow the theme like the current step's number. */
 function StepDone() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="wzs-stepper-tick" role="img" aria-label="Completed">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="wzs-stepper-tick" role="img" aria-label="Completed">
       <path d="M11.9861 23.2417C18.1993 23.2417 23.2361 18.2049 23.2361 11.9917C23.2361 5.77849 18.1993 0.741691 11.9861 0.741691C5.77293 0.741691 0.736133 5.77849 0.736133 11.9917C0.736133 18.2049 5.77293 23.2417 11.9861 23.2417Z" fill="#11763D" />
       <path d="M11.2549 22.3417C17.0642 22.3417 21.7736 17.6323 21.7736 11.823C21.7736 6.01361 17.0642 1.3042 11.2549 1.3042C5.44554 1.3042 0.736133 6.01361 0.736133 11.823C0.736133 17.6323 5.44554 22.3417 11.2549 22.3417Z" fill="#18A957" />
       <path d="M4.49321 5.5698C5.33696 4.23855 7.13696 3.1323 9.01196 2.7948C9.48071 2.7198 9.94946 2.6823 10.3432 2.8323C10.6432 2.9448 10.887 3.22605 10.7182 3.5448C10.587 3.8073 10.2307 3.9198 9.94946 4.01355C8.19071 4.5948 6.67384 5.74042 5.63696 7.27605C5.26196 7.83855 4.69946 9.3948 4.00571 9.00105C3.27446 8.5698 3.42446 7.2198 4.49321 5.5698Z" fill="#A3DDBC" />
@@ -104,7 +104,7 @@ function WizardShell({ open, title, closeLabel, onClose, action, backAction, ste
                 <StepDone />
               ) : s.state === 'current' ? (
                 <span className="wzs-stepper-num wzs-stepper-num--current">
-                  <img src={stepCurrent} width={24} height={24} alt="" />
+                  <img src={stepCurrent} width={20} height={20} alt="" />
                   <span>{i + 1}</span>
                 </span>
               ) : (
@@ -112,7 +112,7 @@ function WizardShell({ open, title, closeLabel, onClose, action, backAction, ste
               )}
               <span className="wzs-stepper-label">
                 {s.title}
-                {s.count ? <span className="wzs-stepper-count"> ({s.count})</span> : null}
+                {s.count ? <span className="wzs-stepper-count">({s.count})</span> : null}
               </span>
             </>
           )

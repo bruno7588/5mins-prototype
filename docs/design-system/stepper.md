@@ -7,7 +7,7 @@ description: Stepper for 5Mins.ai - the numbered step bar in a multi-step wizard
 
 A row of numbered steps across the top of a multi-step wizard. It shows where the admin is, what is done and what comes next, and lets them jump back to a step they have already reached.
 
-Spec source: Figma Library `EC26cSVe9KNTCWXvYovakw`, page "Stepper" `8108:4254`, doc frame `8108:5539` - light `12451:237` / dark `8108:5543`; step sets light `12452:1541` / dark `12451:95` (re-verified 2026-10-09).
+Spec source: Figma Library `EC26cSVe9KNTCWXvYovakw`, page "Stepper" `8108:4254`, doc frame `8108:5539` - light `12451:237` / dark `8108:5543`; step sets light `12452:1541` / dark `12451:95`; Stepper dark `12451:207` (re-verified 2026-10-13 against the dark sets; the light step set still has the earlier 24px badge, see Known differences).
 
 ## Usage
 
@@ -34,12 +34,12 @@ Spec source: Figma Library `EC26cSVe9KNTCWXvYovakw`, page "Stepper" `8108:4254`,
 - Don't hand-roll a stepper on a page; use `WizardShell`.
 
 **Canonical spec:**
-- Step pill: radius `var(--radius-full)`, padding `var(--space-xs) var(--space-sm) var(--space-xs) var(--space-xs)` (4px 12px 4px 4px), gap `var(--space-s)` (8px), 32px high, hugs content.
-- Badge 24 × 24px:
-  - Upcoming: 1px `--border-elevated` ring (same on hover), number 14px / 600 `--text-primary`.
-  - Current: Library `Illustrations/ Progress` (orange) with the number 14px / 600 in `--page-background` on top; pops in (320ms overshoot) when the step becomes current.
-  - Done: Library `Illustrations/ Progress` `Type=Passed` (green) with a `--page-background` tick, 1.5px.
-- Label: 14px / 400 `--text-secondary` (Paragraph M regular); Current is 14px / 600 `--text-primary`. Count "(N)" 14px / 400 `--text-secondary` after the label.
+- Step pill: radius `var(--radius-full)`, padding `var(--space-xs)` (4px all round), gap `var(--space-s)` (8px), 29px high, hugs content.
+- Badge 20 × 20px:
+  - Upcoming: 1px `--border-elevated` ring (same on hover), number 12px / 500 `--text-primary`, line height 1.
+  - Current: Library `Illustrations/ Progress` `Type=Nearly there` (orange) with the number 12px / 500 in `--page-background` on top; pops in (320ms overshoot) when the step becomes current.
+  - Done: Library `Illustrations/ Progress` `Type=Passed` (green) with a `--page-background` tick, 1.25px.
+- Label: 14px / 400 `--text-secondary` (Paragraph M regular); Current is 14px / 500 `--text-primary` (Paragraph M medium). Count "(N)" 14px / 400 `--text-secondary`, `var(--space-xs)` (4px) after the label.
 - Hover (clickable steps only): pill fill `--page-background-hover`. Focus-visible: 2px `--primary-button-background` outline, 2px offset.
 - Line between steps: the Library Divider, 40 × 1px `--border-elevated`, `var(--space-s)` (8px) each side.
 
@@ -83,12 +83,13 @@ The Course details file used a local `5Mins / Wizard / Stepper step (proposed)`.
 
 ## Known differences between Figma and code
 
-- Count spacing: code uses a space character before "(N)"; Figma uses a 4px gap (about 0.4px wider).
-- Number line height: code uses 1; the Figma text style is 150%. Both centre in the 24px badge.
+- The light step set (`12452:1541`) has not had the 2026-10-13 edits: it still shows a 24px badge, a 14px / 600 number, 12px right padding and a Semibold Current label. Code follows the dark set.
+- The number has no Library text style (12px Medium, line height 100%).
 - Light mode Current badge: near-white number on orange is low contrast. It matches the prototype; flag before production.
 
 ## Changelog
 
+- **2026-10-13 (Library edits)** - Smaller badge and pill: badge 20px (was 24), number 12px / 500 (was 14px / 600), pill padding 4px all round (was 4px 12px 4px 4px), step 29px high (was 32), Current label Medium 500 (was Semibold 600), count 4px after the label (was a space), Done tick 1.25px. Verified against step set `12451:95` and Stepper `12451:207` (dark).
 - **2026-10-12 (Library edits)** - Upcoming ring is `--border-elevated` at rest as well as on hover (was `--border`); lines between steps are `--border-elevated` (was `--border`). Verified against Stepper `12451:207` and step set `12451:95`.
 
 - **2026-10-09 (Library edits)** - Upcoming ring is `--border`, stepping up to `--border-elevated` on hover (was `--border-hover`); labels are Regular 400 (was Medium 500); lines are the Library Divider in `--border` (was `--border-hover`). Light set rebuilt: step set `12452:1541`, Stepper `12452:1419`, usage `12452:1378`.

@@ -217,7 +217,7 @@ button.wzs-step:disabled {
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-xs) var(--space-sm) var(--space-xs) var(--space-xs);
+  padding: var(--space-xs);
   background: transparent;
   border: none;
   border-radius: var(--radius-full);
@@ -243,18 +243,20 @@ button.wzs-stepper-step:focus-visible {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-full);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
   line-height: 1;
   color: var(--text-primary);
   transition: background 200ms ease-in-out, border-color 200ms ease-in-out, color 200ms ease-in-out;
 }
 
 .wzs-stepper-label {
+  display: inline-flex;
+  gap: var(--space-xs);
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -262,7 +264,7 @@ button.wzs-stepper-step:focus-visible {
   white-space: nowrap;
 }
 
-/* Current: the orange progress illustration with the number on top (Semibold 14,
+/* Current: the orange progress illustration with the number on top (Medium 12,
    --page-background), popping in when the step becomes current. */
 .wzs-stepper-num--current {
   position: relative;
@@ -281,7 +283,7 @@ button.wzs-stepper-step:focus-visible {
 }
 
 .wzs-stepper-step--current .wzs-stepper-label {
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
