@@ -26,9 +26,9 @@ interface CourseCertificateProps {
 }
 
 /** A label over a value, the certificate's field pattern (Figma "date of issue"). */
-function Field({ label, value }: { label: string; value: string }) {
+function Field({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
   return (
-    <div className="ccert__field">
+    <div className={`ccert__field${muted ? ' ccert__field--muted' : ''}`}>
       <dt>{label}</dt>
       <dd>{value}</dd>
     </div>
@@ -66,14 +66,16 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, si
             <Field label="Signed by personal licence holder" value={signOff.holderName} />
             <Field label="Licence nº" value={signOff.licenceNumber} />
             <Field label="Issuing licensing board" value={signOff.issuingBoard} />
+            <Field label="Date of issue" value={formatSignOffDate(issuedOn)} />
           </dl>
         ) : null}
       </div>
 
       <footer className="ccert__footer">
         <dl className="ccert__fields">
-          <Field label="Date of issue" value={formatSignOffDate(issuedOn)} />
-          <Field label="Certificate ID" value={CERTIFICATE_ID} />
+          {/* With a sign-off the date sits in its row (issued when signed); otherwise here. */}
+          {signOff ? null : <Field label="Date of issue" value={formatSignOffDate(issuedOn)} />}
+          <Field label="Certificate ID" value={CERTIFICATE_ID} muted />
         </dl>
         <div className="ccert__logos">
           <div className="ccert__iso">

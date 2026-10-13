@@ -141,16 +141,33 @@
   color: var(--neutral-500);
 }
 
+/* Certificate ID, quieter than the record above it (Figma 17637:93384): label
+   12px / 1.2, value 14px regular, both --neutral-400, 6px apart. */
+.ccert__field--muted {
+  gap: var(--space-xss);
+}
+
+.ccert__field--muted dt {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.ccert__field--muted dd {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--neutral-400);
+}
+
 .ccert__footer {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
 }
 
 .ccert__logos {
   display: flex;
   align-items: center;
-  gap: var(--space-l);
+  gap: var(--space-xl);
 }
 
 /* ISO mark, 48px square, cropped from its PNG as in the Figma. */
@@ -177,8 +194,8 @@
 .ccert__powered {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  align-self: stretch;
+  justify-content: flex-end;
+  gap: var(--space-s);
   font-size: 12px;
   font-weight: 400;
   line-height: 1.4;
