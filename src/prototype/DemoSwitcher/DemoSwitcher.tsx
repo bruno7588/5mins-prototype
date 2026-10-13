@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ArrowUp2, Edit2, MessageAdd1, Mobile, Monitor } from 'iconsax-react'
+import { ArrowUp2, Category, Edit2, MessageAdd1, Mobile, Monitor } from 'iconsax-react'
 import CommentLayer from '../Comments/CommentLayer'
 import { useComments } from '../Comments/useComments'
 import './DemoSwitcher.css'
@@ -104,6 +104,10 @@ function DemoSwitcher() {
       )}
 
       <div className={`demosw-bar${menuOpen ? ' demosw-bar--expanded' : ''}`} role="toolbar" aria-label="Prototype demos">
+        {/* Collapsed face: hover or focus opens the bar (see DemoSwitcher.css). */}
+        <span className="demosw-launcher" aria-hidden="true">
+          <Category size={20} color="currentColor" variant="Linear" />
+        </span>
         <button
           type="button"
           className={`demosw-seg${!onMobile ? ' demosw-seg--active' : ''}`}
