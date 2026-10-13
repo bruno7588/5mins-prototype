@@ -1,44 +1,34 @@
-/* Course certificate, Figma Certificates 8303:357 (900 x 599). Paper: raw palette
-   tokens so it prints the same in light and dark mode. Prefixed .ccert-. */
+/* Course certificate, Figma Course details page App 17637:93334: 900 x 597 with a
+   24px warning-100 frame outside it (948 x 645 overall). Paper: raw palette tokens
+   so it prints the same in light and dark mode. Prefixed .ccert-. */
 
 .ccert {
-  /* The 5Mins logo draws in --text-primary; pin it to the paper's ink. */
-  --text-primary: var(--neutral-800);
-
   position: relative;
+  /* The 900px sheet plus its 24px frame each side; padding sits inside the sheet. */
   box-sizing: border-box;
-  width: 900px;
-  /* Hugs its content: with the sign-off band and no attestation there is no empty
-     band above the footer (was a fixed 599px, the Figma's height). */
+  width: calc(900px + 2 * var(--space-l));
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
-  padding: var(--space-l) var(--space-xl) var(--space-l);
-  border: var(--space-ml) solid var(--neutral-25);
-  border-radius: var(--radius-sm);
+  /* Figma 56 and 48 have no spacing token: built from XXL + M and XXL + S. */
+  gap: calc(var(--space-xxl) + var(--space-m));
+  padding: var(--space-xl) calc(var(--space-xxl) + var(--space-s));
+  /* The frame sits outside the 900px sheet; its inner corner keeps the 12px radius. */
+  border: var(--space-l) solid var(--warning-100);
+  border-radius: calc(var(--radius-sm) + var(--space-l));
   background: var(--neutral-0);
   overflow: hidden;
   text-align: left;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Inner hairline frame (Figma Rectangle 1490, 2px warning-100). */
-.ccert::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 2px solid var(--warning-100);
-  border-radius: var(--radius-sm);
-  pointer-events: none;
-}
-
-/* Gold medallion, 240px at the Figma's top-right spot. The exported SVG carries
-   its drop shadow, so the image box overhangs the 240px badge on every side by
-   the export's own insets (top 109.2px, sides 67.32px). */
+/* Gold medallion: a 240px badge 8px from the top and 56px from the right. The
+   exported SVG carries its drop shadow, so the image overhangs the badge by the
+   export's insets (top 109.2px, sides 67.32px). */
 .ccert__medallion {
   position: absolute;
-  top: -121.2px;
-  right: -31.32px;
+  top: -101.2px;
+  right: -11.32px;
   width: 374.632px;
   height: 426.81px;
   pointer-events: none;
@@ -48,42 +38,51 @@
   margin: 0;
 }
 
+.ccert__header,
+.ccert__info,
+.ccert__footer {
+  position: relative;
+}
+
 .ccert__header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 72px;
-}
-
-.ccert__company {
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--neutral-800);
-}
-
-.ccert__body {
-  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  min-height: 0;
+  gap: var(--space-l);
+}
+
+/* Tenant logo, 105 x 72, cropped from its PNG as in the Figma. */
+.ccert__company-logo {
+  position: relative;
+  width: 105px;
+  height: 72px;
+  overflow: hidden;
+}
+
+.ccert__company-logo img {
+  position: absolute;
+  top: -25%;
+  left: -18.57%;
+  width: 135.26%;
+  height: 150%;
+  max-width: none;
 }
 
 .ccert__kicker {
   font-size: 24px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.5;
-  color: var(--neutral-500);
+  color: var(--neutral-800);
+}
+
+.ccert__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
 }
 
 .ccert__group {
   display: flex;
   flex-direction: column;
-}
-
-.ccert__group--course {
-  gap: var(--space-xs);
 }
 
 .ccert__small {
@@ -94,95 +93,107 @@
 }
 
 .ccert__learner {
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.5;
   color: var(--neutral-800);
 }
 
 .ccert__course {
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.25;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.5;
   color: var(--neutral-800);
 }
 
-/* ── Sign-off band (DES-335, D12) ── */
-.ccert__signoff {
+/* Label over value: Paragraph M regular over Paragraph L semibold, 2px apart. */
+.ccert__fields {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-  margin-top: var(--space-xs);
-  padding-top: var(--space-sm);
-  border-top: 1px solid var(--warning-100);
-}
-
-.ccert__signoff-grid {
-  /* Columns size to their values; a long board name wraps in its own column. */
-  display: flex;
+  align-items: center;
   gap: var(--space-l);
   margin: 0;
+  white-space: nowrap;
 }
 
-.ccert__signoff-grid > div {
-  flex: 0 1 auto;
-  min-width: 0;
+/* The Figma's course title carries an empty second line: 36px more above the row. */
+.ccert__fields--signoff {
+  gap: var(--space-xl);
+  margin-top: calc(var(--space-xl) + var(--space-xs));
 }
 
-.ccert__signoff-grid dt {
-  font-size: 12px;
+.ccert__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+}
+
+.ccert__field dt {
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--neutral-400);
 }
 
-.ccert__signoff-grid dd {
+.ccert__field dd {
   margin: 0;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.5;
   color: var(--neutral-500);
 }
 
-/* ── Footer ── */
 .ccert__footer {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-top: auto;
 }
 
-.ccert__issued {
+.ccert__logos {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
+  align-items: center;
+  gap: var(--space-l);
 }
 
-.ccert__date {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--neutral-500);
+/* ISO mark, 48px square, cropped from its PNG as in the Figma. */
+.ccert__iso {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+}
+
+.ccert__iso img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 115.31%;
+  height: 100%;
+  max-width: none;
+}
+
+.ccert__iaf {
+  object-fit: cover;
 }
 
 .ccert__powered {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
-  font-size: 10px;
+  gap: var(--space-sm);
+  align-self: stretch;
+  font-size: 12px;
   font-weight: 400;
   line-height: 1.4;
   color: var(--neutral-400);
 }
 
 /* FittedCourseCertificate: the box takes the scaled size; the sheet inside keeps its
-   900 x 599 layout and is scaled from the top-left corner. */
+   948px layout and is scaled from the top-left corner. */
 .ccert-fit {
   flex-shrink: 0;
   overflow: hidden;
 }
 
 .ccert-fit__sheet {
-  width: 900px;
+  width: 948px;
   transform-origin: top left;
 }

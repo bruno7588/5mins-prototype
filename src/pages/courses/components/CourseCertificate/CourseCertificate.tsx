@@ -1,29 +1,44 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Logo } from '@/pages/my-team/MyTeam'
 import { formatSignOffDate, type SignOffRecord } from '@/data/trainerSignOff'
-import medallion from '@/assets/sign-off/medallion-gold.svg'
+import medallion from '@/assets/certificate/medallion.svg'
+import companyLogo from '@/assets/certificate/company-logo-sjp.png'
+import isoLogo from '@/assets/certificate/iso.png'
+import iafLogo from '@/assets/certificate/iaf.png'
+import cpdLogo from '@/assets/certificate/cpd.svg'
+import fiveMinsLogo from '@/assets/certificate/5mins-logo.svg'
 import './CourseCertificate.css'
 
-/** The demo tenant printed in the certificate header (web and the mobile app). */
-export const CERTIFICATE_COMPANY = 'Thistle and Pine Hotels'
+/** The demo tenant whose logo heads the certificate (web and the mobile app). */
+export const CERTIFICATE_COMPANY = "St James's Place"
+
+/** Demo certificate ID, as in the Figma (17637:93386). */
+const CERTIFICATE_ID = '7897hkiyu79479hf'
 
 interface CourseCertificateProps {
+  /** Alt text for the tenant logo. */
   companyName: string
   learnerName: string
   courseTitle: string
   /** ISO date of issue. */
   issuedOn: string
-  /** DES-335: printed as a band above the footer when the course needs sign-off. */
+  /** DES-335: the licence holder row, shown when the course needs sign-off. */
   signOff?: SignOffRecord
 }
 
+/** A label over a value, the certificate's field pattern (Figma "date of issue"). */
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="ccert__field">
+      <dt>{label}</dt>
+      <dd>{value}</dd>
+    </div>
+  )
+}
+
 /**
- * Course certificate document, Figma Certificates 8303:357 (company-name header,
- * Powered by footer), 900 x 599. It is paper, so it reads the same in light and
- * dark mode: raw palette tokens only, and --text-primary pinned for the 5Mins logo.
- *
- * The sign-off band fits on the same page (D12): the body spacing is tightened
- * from the Figma's 64/24px gaps to make room for it above the footer.
+ * Course certificate document, Figma Course details page App 17637:93334: 900 x 597
+ * inside a 24px warning-100 frame (948 x 645 overall). It is paper, so it reads the
+ * same in light and dark mode: raw palette tokens only.
  */
 function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, signOff }: CourseCertificateProps) {
   return (
@@ -31,55 +46,53 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, si
       <img className="ccert__medallion" src={medallion} alt="" width={374.632} height={426.81} />
 
       <header className="ccert__header">
-        <p className="ccert__company">{companyName}</p>
+        <div className="ccert__company-logo">
+          <img src={companyLogo} alt={companyName} />
+        </div>
+        <p className="ccert__kicker">Certificate of Completion</p>
       </header>
 
-      <div className="ccert__body">
-        <p className="ccert__kicker">Certificate of Completion</p>
+      <div className="ccert__info">
         <div className="ccert__group">
           <p className="ccert__small">This is to certify that</p>
           <p className="ccert__learner">{learnerName}</p>
         </div>
-        <div className="ccert__group ccert__group--course">
+        <div className="ccert__group">
           <p className="ccert__small">has successfully completed the course</p>
           <p className="ccert__course">{courseTitle}</p>
         </div>
-
         {signOff ? (
-          <section className="ccert__signoff" aria-label="Training sign-off">
-            <dl className="ccert__signoff-grid">
-              <div>
-                <dt>Signed by</dt>
-                <dd>{signOff.holderName}, personal licence holder</dd>
-              </div>
-              <div>
-                <dt>Personal licence number</dt>
-                <dd>{signOff.licenceNumber}</dd>
-              </div>
-              <div>
-                <dt>Issuing licensing board</dt>
-                <dd>{signOff.issuingBoard}</dd>
-              </div>
-            </dl>
-          </section>
+          <dl className="ccert__fields ccert__fields--signoff" aria-label="Training sign-off">
+            <Field label="Signed by personal licence holder" value={signOff.holderName} />
+            <Field label="Licence nº" value={signOff.licenceNumber} />
+            <Field label="Issuing licensing board" value={signOff.issuingBoard} />
+          </dl>
         ) : null}
+      </div>
 
-        <footer className="ccert__footer">
-          <div className="ccert__issued">
-            <span className="ccert__small">Date of issue</span>
-            <span className="ccert__date">{formatSignOffDate(issuedOn)}</span>
+      <footer className="ccert__footer">
+        <dl className="ccert__fields">
+          <Field label="Date of issue" value={formatSignOffDate(issuedOn)} />
+          <Field label="Certificate ID" value={CERTIFICATE_ID} />
+        </dl>
+        <div className="ccert__logos">
+          <div className="ccert__iso">
+            <img src={isoLogo} alt="ISO" />
           </div>
+          <img className="ccert__iaf" src={iafLogo} alt="IAF" width={76.8} height={48} />
+          <img src={cpdLogo} alt="CPD Certification Service" width={75.7353} height={47.9982} />
           <div className="ccert__powered">
             <span>Powered by</span>
-            <Logo size={16} />
+            <img src={fiveMinsLogo} alt="5Mins.ai" width={74} height={16} />
           </div>
-        </footer>
-      </div>
+        </div>
+      </footer>
     </article>
   )
 }
 
-const SHEET_W = 900
+/** The sheet's full width: 900 plus the 24px frame on each side. */
+const SHEET_W = 948
 
 type FitProps =
   /** Web modal: fit the window, less the modal chrome around the sheet. */
@@ -88,7 +101,7 @@ type FitProps =
   | { width: number; reservedHeight?: never; reservedWidth?: never }
 
 /**
- * The certificate scaled down (never above full size), keeping its 900px-wide
+ * The certificate scaled down (never above full size), keeping its 948px-wide
  * layout. The sheet's height follows its content, so it is measured, not fixed.
  */
 export function FittedCourseCertificate({ reservedHeight, reservedWidth, width, ...props }: CourseCertificateProps & FitProps) {
