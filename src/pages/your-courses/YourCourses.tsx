@@ -4,11 +4,13 @@ import { Add, ArrowDown2, ArrowLeft2, ArrowRight2, UserAdd } from 'iconsax-react
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Button from '../../components/Button/Button'
 import AssignCoursesWizard from './components/AssignCoursesWizard/AssignCoursesWizard'
+import licensingThumb from '@/assets/sign-off/licensing-course.jpg'
 import './YourCourses.css'
 
 type Tab = 'created' | 'enrolments' | 'dashboard'
 
 const courseImage = 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=480&h=300&fit=crop'
+
 const enrolThumb = 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=180&h=88&fit=crop'
 
 interface EnrolmentRow {
@@ -16,11 +18,13 @@ interface EnrolmentRow {
   title: string
   lastEnrolment: string
   enrolledUsers: number
+  /** Course image; defaults to the shared placeholder. */
+  thumb?: string
 }
 
 const enrolmentRows: EnrolmentRow[] = [
   // DES-335 demo: the licensing course with the trainer sign-off (opens with a Sign-off tab).
-  { id: 11, title: 'Licensing (Scotland) Staff Training', lastEnrolment: 'Today', enrolledUsers: 25 },
+  { id: 11, title: 'Licensing (Scotland) Staff Training', lastEnrolment: 'Today', enrolledUsers: 25, thumb: licensingThumb },
   { id: 1, title: 'Marketing Tools and Resources that Everyone Should know Tools and Resources for Everyone', lastEnrolment: '3 days ago', enrolledUsers: 23 },
   { id: 2, title: 'Mastering Customer Discovery: Interviews, Surveys and Insights', lastEnrolment: '5 days ago', enrolledUsers: 41 },
   { id: 3, title: 'Foundations of Data Privacy and Compliance for Teams', lastEnrolment: '1 week ago', enrolledUsers: 12 },
@@ -94,7 +98,7 @@ function YourCourses() {
               <div className="your-courses-enrol-row" key={row.id}>
                 <div className="your-courses-enrol-cell your-courses-enrol-cell--course">
                   <div className="your-courses-enrol-thumb">
-                    <img src={enrolThumb} alt="" />
+                    <img src={row.thumb ?? enrolThumb} alt="" />
                   </div>
                   <span
                     className="your-courses-enrol-course-title"

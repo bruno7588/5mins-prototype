@@ -1,9 +1,14 @@
 import { useMemo, useState } from 'react'
-import { Danger } from 'iconsax-react'
+import { Danger, SmsNotification } from 'iconsax-react'
 import { Table, type Column } from '@/components/Table/Table'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import Search from '@/components/Search/Search'
+import Tooltip from '@/components/Tooltip/Tooltip'
+import BulkActionBar from '@/components/BulkActionBar/BulkActionBar'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
+import Avatar from '@/components/Avatar/Avatar'
+import { ReminderDrawerShell, ReminderRecipients } from '@/pages/my-team/ReminderDrawer'
 import EmptyState from '@/components/EmptyState/EmptyState'
 import CsvIcon from '@/components/icons/CsvIcon'
 import {
@@ -27,9 +32,25 @@ const STATUS_BADGE: Record<SignOffStatus, 'success' | 'warning' | 'in-progress'>
   'in-progress': 'in-progress',
 }
 
-/** Status order for the list: who still needs a licence holder comes first; signed
- *  off and not completed follow mixed, in the order learners were enrolled. */
+/** Status order for the list: who still needs a licence holder comes first, longest
+ *  wait (earliest completion) first; signed off and not completed follow mixed, in
+ *  the order learners were enrolled. */
 const STATUS_ORDER: Record<SignOffStatus, number> = { awaiting: 0, signed: 1, 'in-progress': 1 }
+
+const byPriority = (a: SignOffRow, b: SignOffRow) =>
+  STATUS_ORDER[a.status] - STATUS_ORDER[b.status] ||
+  (a.status === 'awaiting' && b.status === 'awaiting' ? (a.completedOn ?? '').localeCompare(b.completedOn ?? '') : 0)
+
+/** Sign-off reminder copy, in the My Team reminder drawer. */
+const reminderSubject = (rows: SignOffRow[]) =>
+  rows.length === 1
+    ? `${rows[0].name.split(' ')[0]}, your training needs signing off`
+    : 'Your training needs signing off'
+const REMINDER_MESSAGE =
+  `Hi there,\nYou've completed ${SIGN_OFF_DEMO_COURSE.title}. To get your certificate, find your personal licence holder, open the course on your device and hand it to them to sign off.\nThanks.`
+
+/** Only learners whose course is complete and not yet signed off can be reminded. */
+const canRemind = (r: SignOffRow) => r.status === 'awaiting'
 
 const empty = <span className="cd-signoff-muted">-</span>
 
@@ -48,16 +69,30 @@ function DateCell({ value }: { value?: string | null }) {
 /**
  * Admin Sign-off tab on the course details page (DES-335, D1/D2): each learner's
  * sign-off status, the licence holder's details and the date, with a CSV export.
- * No filters and no reset (deferred to DEV-4734).
+ * No filters and no reset (deferred to DEV-4734). Learners who need sign-off can be
+ * sent a reminder, one at a time or in bulk: the learner is the only person the
+ * admin can reach, since the licence holder is only known once they sign.
  */
 function SignOffTab() {
   const ownRecord = useSignOff(SIGN_OFF_DEMO_COURSE.id)
   const allRows = useMemo(
-    () => [...getSignOffRows(ownRecord)].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]),
+    () => [...getSignOffRows(ownRecord)].sort(byPriority),
     [ownRecord],
   )
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(0)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const { toasts, show: showToast } = useToast()
+
+  /* Who the open reminder drawer is for: one row (its icon) or the selection (bulk bar). */
+  const [recipients, setRecipients] = useState<SignOffRow[] | null>(null)
+  const remind = (ids: string[]) => setRecipients(allRows.filter((r) => ids.includes(r.id)))
+  const sendReminders = () => {
+    if (!recipients) return
+    showToast('success', recipients.length === 1 ? `Reminder sent to ${recipients[0].name}` : `Reminder sent to ${recipients.length} learners`)
+    setRecipients(null)
+    setSelected(new Set())
+  }
 
   const q = search.trim().toLowerCase()
   const rows = q
@@ -69,6 +104,23 @@ function SignOffTab() {
   const safePage = Math.min(page, lastPage)
   const from = safePage * PAGE_SIZE
   const pageRows = rows.slice(from, from + PAGE_SIZE)
+
+  const remindable = pageRows.filter(canRemind)
+  const allSelected = remindable.length > 0 && remindable.every((r) => selected.has(r.id))
+  const someSelected = remindable.some((r) => selected.has(r.id))
+  const toggleRow = (r: SignOffRow) =>
+    setSelected((s) => {
+      const next = new Set(s)
+      if (next.has(r.id)) next.delete(r.id)
+      else next.add(r.id)
+      return next
+    })
+  const toggleAll = () =>
+    setSelected((s) => {
+      const next = new Set(s)
+      remindable.forEach((r) => (allSelected ? next.delete(r.id) : next.add(r.id)))
+      return next
+    })
 
   /* Always the whole course: search only finds people on screen, never trims the record. */
   const downloadCsv = () => {
@@ -140,6 +192,21 @@ function SignOffTab() {
       width: '0 0 112px',
       render: (r) => <DateCell value={r.signedOn} />,
     },
+    {
+      key: 'remind',
+      header: '',
+      width: '0 0 56px',
+      cellClassName: 'tbl-action is-overflow',
+      /* Same row action as My Team's Course tracker: SmsNotification with a tooltip. */
+      render: (r) =>
+        canRemind(r) ? (
+          <Tooltip text="Send reminder" position="Top" alignment="End" icon={false}>
+            <button type="button" className="icon-btn" aria-label={`Send reminder to ${r.name}`} onClick={() => remind([r.id])}>
+              <SmsNotification size={20} color="var(--text-primary)" variant="Linear" />
+            </button>
+          </Tooltip>
+        ) : null,
+    },
   ]
 
   if (allRows.length === 0) {
@@ -182,6 +249,14 @@ function SignOffTab() {
           columns={columns}
           rows={pageRows}
           getRowKey={(r) => r.id}
+          selectable
+          isSelected={(r) => selected.has(r.id)}
+          isRowSelectable={canRemind}
+          onToggleRow={toggleRow}
+          onToggleAll={toggleAll}
+          allSelected={allSelected}
+          selectAllIndeterminate={someSelected && !allSelected}
+          selectAllDisabled={remindable.length === 0}
           pagination={{
             from: from + 1,
             to: from + pageRows.length,
@@ -191,6 +266,50 @@ function SignOffTab() {
           }}
         />
       )}
+
+      <BulkActionBar count={selected.size} onClear={() => setSelected(new Set())}>
+        <button
+          type="button"
+          className="bulk-bar-btn bulk-bar-btn--primary"
+          onClick={() => remind([...selected])}
+        >
+          <SmsNotification size={20} color="currentColor" variant="Linear" />
+          Send Reminders
+        </button>
+      </BulkActionBar>
+      <ReminderDrawerShell
+        open={recipients !== null}
+        onClose={() => setRecipients(null)}
+        onSend={sendReminders}
+        content={{
+          subject: reminderSubject(recipients ?? []),
+          message: REMINDER_MESSAGE,
+          count: recipients?.length ?? 0,
+          table: recipients ? (
+            <ReminderRecipients total={recipients.length} shown={Math.min(5, recipients.length)}>
+              <div className="rd-table__header">
+                <div className="rd-table__cell rd-table__cell--name">Name</div>
+                <div className="rd-table__cell rd-table__cell--head-progress">Completed on</div>
+              </div>
+              {recipients.slice(0, 5).map((r) => (
+                <div className="rd-table__row" key={r.id}>
+                  <div className="rd-table__cell rd-table__cell--name">
+                    <Avatar size={40} />
+                    <div className="rd-member-info">
+                      <span className="rd-member-name">{r.name}</span>
+                      <span className="rd-member-role">{r.email}</span>
+                    </div>
+                  </div>
+                  <div className="rd-table__cell rd-table__cell--progress">
+                    <DateCell value={r.completedOn} />
+                  </div>
+                </div>
+              ))}
+            </ReminderRecipients>
+          ) : null,
+        }}
+      />
+      <ToastContainer toasts={toasts} />
     </section>
   )
 }

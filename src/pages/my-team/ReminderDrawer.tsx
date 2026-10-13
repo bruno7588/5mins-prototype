@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import Button from '../../components/Button/Button'
 import CloseButton from '../../components/CloseButton/CloseButton'
 import Avatar from '@/components/Avatar/Avatar'
@@ -27,22 +27,117 @@ interface Props {
   onSend: (count: number) => void
 }
 
+/** The drawer's copy and recipient list, so another page can send its own reminder
+ *  (DES-335 Sign-off tab) in the same drawer. Defaults are My Team's. */
+export interface ReminderContent {
+  subject: string
+  message: string
+  count: number
+  table: ReactNode
+}
+
+const SEGMENTS = 8
+
 function ReminderDrawer({ open, members, onClose, onSend }: Props) {
+  const firstName = members[0]?.name.split(' ')[0] ?? ''
+  return (
+    <ReminderDrawerShell
+      open={open}
+      onClose={onClose}
+      onSend={onSend}
+      content={{
+        subject: `${members.length === 1 ? firstName : 'Team'}, quick reminder about your 5Mins courses ⏰`,
+        message: 'Hi there,\nJust a gentle reminder to complete the courses that you are enrolled in.\nThanks.',
+        count: members.length,
+        table: <MemberTable members={members} />,
+      }}
+    />
+  )
+}
+
+/** Recipient table with the same row look as My Team's: name and a supporting line,
+ *  then whatever columns the page needs. */
+export function ReminderRecipients({ children, total, shown }: { children: ReactNode; total: number; shown: number }) {
+  return (
+    <>
+      <div className="rd-table">{children}</div>
+      {total > shown && (
+        <div className="rd-pagination">
+          <span>1–{shown} of {total}</span>
+        </div>
+      )}
+    </>
+  )
+}
+
+function MemberTable({ members }: { members: ReminderMember[] }) {
+  const total = members.length
+  const shown = Math.min(5, total)
+  return (
+    <ReminderRecipients total={total} shown={shown}>
+      <div className="rd-table__header">
+        <div className="rd-table__cell rd-table__cell--name">Name</div>
+        <div className="rd-table__cell rd-table__cell--head-courses">Courses</div>
+        <div className="rd-table__cell rd-table__cell--head-progress">Overall progress</div>
+      </div>
+
+      {members.slice(0, shown).map((m) => {
+        const filled = Math.round((m.overallProgress / 100) * SEGMENTS)
+        return (
+          <div className="rd-table__row" key={m.id}>
+            <div className="rd-table__cell rd-table__cell--name">
+              <Avatar src={m.avatarSrc} size={40} />
+              <div className="rd-member-info">
+                <span className="rd-member-name">{m.name}</span>
+                <span className="rd-member-role">
+                  {m.role}
+                  {m.lastReminderSentAt && (
+                    <span className="rd-member-lastsent">
+                      {' · '}Last remind {formatRelativeShort(m.lastReminderSentAt)}
+                    </span>
+                  )}
+                </span>
+              </div>
+            </div>
+            <div className="rd-table__cell rd-table__cell--courses">
+              {coursesTotal(m) > 0 ? <span>{coursesTotal(m)}</span> : <span>–</span>}
+            </div>
+            <div className="rd-table__cell rd-table__cell--progress">
+              <div className="rd-progress" role="progressbar" aria-valuenow={m.overallProgress} aria-valuemin={0} aria-valuemax={100}>
+                {Array.from({ length: SEGMENTS }).map((_, i) => (
+                  <span key={i} className={`rd-progress__seg${i < filled ? ' rd-progress__seg--filled' : ''}`} />
+                ))}
+              </div>
+              <span className="rd-progress__pct">{m.overallProgress}%</span>
+            </div>
+          </div>
+        )
+      })}
+    </ReminderRecipients>
+  )
+}
+
+interface ShellProps {
+  open: boolean
+  content: ReminderContent
+  onClose: () => void
+  onSend: (count: number) => void
+}
+
+/** The reminder side drawer: title, editable subject and message, recipients, send. */
+export function ReminderDrawerShell({ open, content, onClose, onSend }: ShellProps) {
   const [closing, setClosing] = useState(false)
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
 
-  // Reset form fields when drawer opens with new members
+  // Reset form fields each time the drawer opens
   useEffect(() => {
-    if (open && members.length > 0) {
-      const firstName = members[0].name.split(' ')[0]
-      const subjectPrefix = members.length === 1 ? firstName : 'Team'
-      setSubject(`${subjectPrefix}, quick reminder about your 5Mins courses ⏰`)
-      setMessage(
-        'Hi there,\nJust a gentle reminder to complete the courses that you are enrolled in.\nThanks.',
-      )
+    if (open) {
+      setSubject(content.subject)
+      setMessage(content.message)
     }
-  }, [open, members])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   const handleClose = () => {
     setClosing(true)
@@ -63,10 +158,6 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
   }, [open])
 
   if (!open) return null
-
-  const segments = 8
-  const total = members.length
-  const shown = Math.min(5, total)
 
   return (
     <>
@@ -117,61 +208,14 @@ function ReminderDrawer({ open, members, onClose, onSend }: Props) {
               />
             </div>
 
-            <div className="rd-field">
-              <div className="rd-table">
-                <div className="rd-table__header">
-                  <div className="rd-table__cell rd-table__cell--name">Name</div>
-                  <div className="rd-table__cell rd-table__cell--head-courses">Courses</div>
-                  <div className="rd-table__cell rd-table__cell--head-progress">Overall progress</div>
-                </div>
-
-                {members.slice(0, shown).map((m) => {
-                  const filled = Math.round((m.overallProgress / 100) * segments)
-                  return (
-                    <div className="rd-table__row" key={m.id}>
-                      <div className="rd-table__cell rd-table__cell--name">
-                        <Avatar src={m.avatarSrc} size={40} />
-                        <div className="rd-member-info">
-                          <span className="rd-member-name">{m.name}</span>
-                          <span className="rd-member-role">
-                            {m.role}
-                            {m.lastReminderSentAt && (
-                              <span className="rd-member-lastsent">
-                                {' · '}Last remind {formatRelativeShort(m.lastReminderSentAt)}
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="rd-table__cell rd-table__cell--courses">
-                        {coursesTotal(m) > 0 ? <span>{coursesTotal(m)}</span> : <span>–</span>}
-                      </div>
-                      <div className="rd-table__cell rd-table__cell--progress">
-                        <div className="rd-progress" role="progressbar" aria-valuenow={m.overallProgress} aria-valuemin={0} aria-valuemax={100}>
-                          {Array.from({ length: segments }).map((_, i) => (
-                            <span key={i} className={`rd-progress__seg${i < filled ? ' rd-progress__seg--filled' : ''}`} />
-                          ))}
-                        </div>
-                        <span className="rd-progress__pct">{m.overallProgress}%</span>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-
-              {total > shown && (
-                <div className="rd-pagination">
-                  <span>1–{shown} of {total}</span>
-                </div>
-              )}
-            </div>
+            <div className="rd-field">{content.table}</div>
           </div>
         </div>
 
         <div className="side-drawer__footer">
           <div className="side-drawer__footer-divider" />
           <div className="side-drawer__buttons">
-            <Button onClick={() => onSend(total)}>Send Reminders ({total})</Button>
+            <Button onClick={() => onSend(content.count)}>Send Reminders ({content.count})</Button>
           </div>
         </div>
       </aside>
