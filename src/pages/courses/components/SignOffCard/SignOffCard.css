@@ -1,0 +1,81 @@
+/* Sign-off section (DES-335), built from the Electronic Signature Figma row
+   (16575:140879) with tokens. Prefixed .pcd-signoff- (CSS is globally bundled). */
+
+.pcd-signoff {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.pcd-signoff__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* Shared with the Certification heading on the course page. */
+.pcd-signoff__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.pcd-signoff__card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  padding: var(--space-m);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  transition: background 150ms ease;
+}
+
+/* DS list-card hover (cards.md, Assessment card): the fill lightens, in every state,
+   locked included. Covers the Sign-off and Certification rows (same class). */
+.pcd-signoff__card:hover {
+  background: var(--cards-background-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pcd-signoff__card {
+    transition: none;
+  }
+}
+
+.pcd-signoff__art {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+}
+
+.pcd-signoff__info {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.pcd-signoff__name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.pcd-signoff__body {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.pcd-signoff__card .ds-btn {
+  flex-shrink: 0;
+}

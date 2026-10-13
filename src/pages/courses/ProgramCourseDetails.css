@@ -275,7 +275,7 @@
 
 .pcd-section__name {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
 }
@@ -583,4 +583,22 @@
 
 .pcd-lesson--locked .pcd-lesson__resources-count {
   color: var(--text-disabled);
+}
+
+/* DES-335 course certificate viewer: the 900px certificate plus the modal's
+   24px padding either side, on the ConfirmModal shell. */
+.pcd-cert-modal {
+  width: calc(900px + 2 * var(--space-l));
+}
+
+.pcd-cert-modal__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.pcd-cert-modal__cta {
+  align-self: flex-end;
 }

@@ -37,6 +37,19 @@ import '../quiz-lab/quiz-lab.css'
 import jewelsIllustration from '../../assets/programs/jewels.svg'
 import certificateIllustration from '../../assets/programs/certificate.svg'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
+import Button from '@/components/Button/Button'
+import CourseCertificateCard from './components/CourseCertificateCard/CourseCertificateCard'
+import CertificateReady from './components/CertificateReady/CertificateReady'
+import SignOffCard from './components/SignOffCard/SignOffCard'
+import SignOffModal from './components/SignOffModal/SignOffModal'
+import CourseCertificate, { CERTIFICATE_COMPANY } from './components/CourseCertificate/CourseCertificate'
+import {
+  SIGN_OFF_LEARNER,
+  courseProgressWithSignOff,
+  signOffState,
+  useSignOff,
+} from '@/data/trainerSignOff'
 
 const SEGMENTS = 8
 
@@ -108,7 +121,10 @@ function ProgramCourseDetails() {
      yet. Everything below renders the same either way. */
   const preview = (location.state as { preview?: CoursePreviewPayload } | null)?.preview ?? null
   const course = preview?.course ?? getCourseDetail(id)
-  const program = preview ? undefined : findProgramForCourse(id)
+  /* The program breadcrumb only when the learner came from that program's page;
+     the same course opened from Your Workspace is a standalone course. */
+  const fromProgram = !!(location.state as { fromProgram?: boolean } | null)?.fromProgram
+  const program = preview || !fromProgram ? undefined : findProgramForCourse(id)
 
   const [openQuizId, setOpenQuizId] = useState<number | null>(null)
   const openQuiz = openQuizId === null ? null : preview?.questions[openQuizId] ?? null
@@ -125,6 +141,20 @@ function ProgramCourseDetails() {
     () => Object.fromEntries(course.sections.map((s) => [s.id, true])),
   )
   const toggle = (sid: string) => setOpen((o) => ({ ...o, [sid]: !o[sid] }))
+
+  /* DES-335: a course with a trainer sign-off ends with it. The sign-off is the
+     last step, so the course reads under 100% and the certificate stays locked
+     until the licence holder signs. */
+  const signOff = useSignOff(course.id)
+  const needsSignOff = !!course.requiresSignOff
+  const lessonTotal = course.sections.reduce((n, s) => n + s.lessons.length, 0)
+  const progress = needsSignOff
+    ? courseProgressWithSignOff(course.progress, lessonTotal, !!signOff)
+    : course.progress
+  const [signOffOpen, setSignOffOpen] = useState(false)
+  /* The "Congratulations" takeover shown once the sign-off completes the course. */
+  const [certReadyOpen, setCertReadyOpen] = useState(false)
+  const [certificateOpen, setCertificateOpen] = useState(false)
 
   return (
     <div className="mt-app">
@@ -238,7 +268,11 @@ function ProgramCourseDetails() {
                     <Clock size={16} color="var(--text-tertiary)" variant="Linear" />
                     <span>{course.durationLabel}</span>
                   </span>
-                  <Badge type="warning" icon label={course.statusLabel} />
+                  {signOff ? (
+                    <Badge type="success" icon label="Completed" />
+                  ) : (
+                    <Badge type="warning" icon label={course.statusLabel} />
+                  )}
                 </div>
                 <div className="pcd-header__actions">
                   <button type="button" className="pcd-iconbtn" aria-label="Save">
@@ -275,13 +309,13 @@ function ProgramCourseDetails() {
                 <div
                   className="pcd-progress__track"
                   role="progressbar"
-                  aria-valuenow={course.progress}
+                  aria-valuenow={progress}
                   aria-valuemin={0}
                   aria-valuemax={100}
                 >
-                  <div className="pcd-progress__fill" style={{ width: `${course.progress}%` }} />
+                  <div className="pcd-progress__fill" style={{ width: `${progress}%` }} />
                 </div>
-                <span className="pcd-progress__pct">{course.progress}%</span>
+                <span className="pcd-progress__pct">{progress}%</span>
               </div>
             </header>
 
@@ -350,6 +384,22 @@ function ProgramCourseDetails() {
                     {idx < course.sections.length - 1 ? <div className="pcd-divider" /> : null}
                   </Fragment>
                 ))}
+                {needsSignOff ? (
+                  <>
+                    <div className="pcd-divider" />
+                    <SignOffCard
+                      state={signOffState(course.progress, signOff)}
+                      record={signOff}
+                      onStart={() => setSignOffOpen(true)}
+                    />
+                    <section className="pcd-signoff" aria-labelledby="pcd-certification-title">
+                      <h2 id="pcd-certification-title" className="pcd-signoff__title">
+                        Certification
+                      </h2>
+                      <CourseCertificateCard unlocked={!!signOff} onGetCertificate={() => setCertificateOpen(true)} />
+                    </section>
+                  </>
+                ) : null}
               </div>
             ) : tab === 'resources' && resources.length > 0 ? (
               /* The same ResourceCard the admin sees in Create Course → Resources. */
@@ -370,6 +420,50 @@ function ProgramCourseDetails() {
           </div>
         </section>
       </div>
+      {signOffOpen ? (
+        <SignOffModal
+          courseId={course.id}
+          onClose={() => setSignOffOpen(false)}
+          onSigned={() => {
+            setSignOffOpen(false)
+            setCertReadyOpen(true)
+          }}
+        />
+      ) : null}
+      {certReadyOpen ? (
+        <CertificateReady
+          courseTitle={course.title}
+          onClose={() => setCertReadyOpen(false)}
+          onGetCertificate={() => {
+            setCertReadyOpen(false)
+            setCertificateOpen(true)
+          }}
+        />
+      ) : null}
+      <ConfirmModal
+        open={certificateOpen && !!signOff}
+        onClose={() => setCertificateOpen(false)}
+        className="pcd-cert-modal"
+        ariaLabel="Course certificate"
+        closable
+      >
+        <h2 className="pcd-cert-modal__title">Your certificate</h2>
+        <CourseCertificate
+          companyName={CERTIFICATE_COMPANY}
+          learnerName={SIGN_OFF_LEARNER.name}
+          courseTitle={course.title}
+          issuedOn={signOff?.signedAt ?? new Date().toISOString()}
+          signOff={signOff}
+        />
+        <Button
+          variant="filled"
+          className="pcd-cert-modal__cta"
+          data-autofocus
+          onClick={() => showToast('success', 'Downloading certificate')}
+        >
+          Download Certificate
+        </Button>
+      </ConfirmModal>
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   )

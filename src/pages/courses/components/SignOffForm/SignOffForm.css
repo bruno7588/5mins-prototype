@@ -1,0 +1,83 @@
+/* Sign-off fields + statement panel (DES-335), shared by the web modal and the
+   mobile screen. Prefixed .pcd-signoff- (CSS is globally bundled). */
+
+.pcd-signoff-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+/* Grey statement panel from the Figma "Sign course" modal (16575:141375): the
+   filled field surface, holding the declaration and the date (D13). */
+.pcd-signoff-statement {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-ml);
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  /* Card lift in light mode; none in dark (token is mode-aware). */
+  box-shadow: var(--shadow-card);
+}
+
+.pcd-signoff-statement__check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  cursor: pointer;
+}
+
+/* The control is a 32px hit area around a 16px box: pull it out by its halo so
+   the box lines up with the panel edge and the first line of text, and so the row
+   is only as tall as the text (keeping the 16px gap to the date true). */
+.pcd-signoff-statement__check .checkbox {
+  flex-shrink: 0;
+  margin: calc(var(--space-xs) * -1) 0 calc(var(--space-s) * -1) calc(var(--space-s) * -1);
+}
+
+/* Paragraph L regular: the .text-lg type class sets size, weight and line height. */
+.pcd-signoff-statement__text {
+  color: var(--text-primary);
+}
+
+.pcd-signoff-statement__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  padding-left: var(--space-xl);
+}
+
+.pcd-signoff-statement__label {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.pcd-signoff-statement__value {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* Placeholder handover art (HandoverArt.tsx): two phones, dashed arrow arcing
+   from the learner's to the licence holder's. 72px tall like a DS illustration. */
+.pcd-signoff-handover-art {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 96px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.pcd-signoff-handover-art__arc {
+  position: absolute;
+  top: var(--space-xs);
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-tertiary);
+}

@@ -1,0 +1,97 @@
+/* Mobile sign-off screen (DES-335). Covers the whole phone screen, tab bar
+   included, as a pushed full screen. Prefixed .m-signoff (globally bundled CSS). */
+
+.m-signoff {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--page-background);
+}
+
+.m-signoff__body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-m);
+  display: flex;
+  flex-direction: column;
+}
+
+.m-signoff__step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+}
+
+.m-signoff__step--center {
+  align-items: center;
+  gap: var(--space-m);
+  padding-top: var(--space-xxl);
+  text-align: center;
+}
+
+.m-signoff__headline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.m-signoff__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-signoff__text {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.m-signoff__footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  padding: var(--space-sm) var(--space-m) var(--space-l);
+  border-top: 1px solid var(--border);
+  background: var(--page-background);
+}
+
+.m-signoff__cta {
+  width: 100%;
+}
+
+/* Onboarding progress dots, centred at the top of the screen above each step. */
+.m-signoff__dots {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-l);
+}
+
+/* "Only the licence holder should continue." at the bottom of the body, just above
+   the pinned button. */
+.m-signoff__note {
+  margin: auto 0 0;
+  padding-top: var(--space-m);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+/* Step 3 sits in the vertical middle of the screen (the body is a flex column). */
+.m-signoff__step--middle {
+  margin-block: auto;
+}
+
+.m-signoff__text--muted {
+  color: var(--text-tertiary);
+}

@@ -13,7 +13,8 @@ export interface CourseLesson {
   /** e.g. "Lesson · Dr. Amara Okafor · 6 min" */
   meta: string
   thumbnail: string
-  state: 'active' | 'locked'
+  /** `done` = completed (a course the learner has worked all the way through). */
+  state: 'active' | 'locked' | 'done'
   /** 0..100 — inline progress shown for the active lesson */
   progress?: number
   /** Builder preview only: an authored interactive question this row opens. */
@@ -55,6 +56,8 @@ export interface CourseDetail {
   sections: CourseSection[]
   /** Empty when the admin added none (and in the builder preview). */
   resources?: CourseResourceItem[]
+  /** DES-335: a Personal Licence Holder signs off the training after the last step. */
+  requiresSignOff?: boolean
 }
 
 /** Find a course across every program's outline by id. */
@@ -174,7 +177,11 @@ export function getCourseDetail(id: string | undefined): CourseDetail {
   const courseSections = sections.map((section) => ({
     ...section,
     lessons: section.lessons.map((lesson) =>
-      lesson.state === 'active' ? { ...lesson, progress } : lesson,
+      progress >= 100
+        ? { ...lesson, state: 'done' as const, progress: 100 }
+        : lesson.state === 'active'
+          ? { ...lesson, progress }
+          : lesson,
     ),
   }))
   return {
@@ -189,5 +196,6 @@ export function getCourseDetail(id: string | undefined): CourseDetail {
     thumbnail: course?.thumbnail ?? thumb3,
     sections: courseSections,
     resources,
+    requiresSignOff: course?.requiresSignOff ?? false,
   }
 }

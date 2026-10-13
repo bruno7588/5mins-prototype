@@ -1,0 +1,28 @@
+/* Admin Sign-off tab (DES-335). Prefixed .cd-signoff- (CSS is globally bundled). */
+
+.cd-signoff {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+.cd-signoff-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-m);
+}
+
+.cd-signoff-search {
+  flex: 1;
+  max-width: 400px;
+}
+
+.cd-signoff-muted {
+  color: var(--text-tertiary);
+}
+
+/* Status count, left of the search (styled as the Enrolments selection count). */
+.cd-signoff-summary {
+  margin-right: auto;
+}

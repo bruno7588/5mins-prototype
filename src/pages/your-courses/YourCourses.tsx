@@ -19,6 +19,8 @@ interface EnrolmentRow {
 }
 
 const enrolmentRows: EnrolmentRow[] = [
+  // DES-335 demo: the licensing course with the trainer sign-off (opens with a Sign-off tab).
+  { id: 11, title: 'Licensing (Scotland) Staff Training', lastEnrolment: 'Today', enrolledUsers: 25 },
   { id: 1, title: 'Marketing Tools and Resources that Everyone Should know Tools and Resources for Everyone', lastEnrolment: '3 days ago', enrolledUsers: 23 },
   { id: 2, title: 'Mastering Customer Discovery: Interviews, Surveys and Insights', lastEnrolment: '5 days ago', enrolledUsers: 41 },
   { id: 3, title: 'Foundations of Data Privacy and Compliance for Teams', lastEnrolment: '1 week ago', enrolledUsers: 12 },

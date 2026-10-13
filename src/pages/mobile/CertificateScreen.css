@@ -1,0 +1,45 @@
+/* Mobile certificate view (DES-335). A pushed full screen like the sign-off screen.
+   Prefix: .m-cert-screen (globally bundled CSS). */
+
+.m-cert-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--page-background);
+}
+
+.m-cert-screen__body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-m);
+}
+
+/* The certificate is a fixed 900 x 599 sheet; on the 343px content width it is
+   scaled down as a preview (343 / 900), and the frame reserves the scaled height. */
+.m-cert-screen__frame {
+  width: 343px;
+  height: calc(599px * 343 / 900);
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-s);
+}
+
+.m-cert-screen__paper {
+  width: 900px;
+  transform: scale(calc(343 / 900));
+  transform-origin: top left;
+}
+
+.m-cert-screen__footer {
+  flex-shrink: 0;
+  padding: var(--space-sm) var(--space-m) var(--space-l);
+  border-top: 1px solid var(--border);
+  background: var(--page-background);
+}
+
+.m-cert-screen__cta {
+  width: 100%;
+}

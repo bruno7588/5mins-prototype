@@ -1,0 +1,91 @@
+/* Certificate-ready takeover (DES-335). Shell, confetti and type come from the
+   launch success screen (.lsm-*); only the medallion glow and course name live here. */
+
+.pcd-cert-ready__medallion {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 120px;
+  height: 120px;
+  margin-bottom: var(--space-m);
+}
+
+/* The gold glow behind the medallion, from the secondary (gold) palette. */
+.pcd-cert-ready__medallion::before {
+  content: '';
+  position: absolute;
+  inset: -100px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--secondary-500) 30%, transparent) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.pcd-cert-ready__medallion img {
+  position: relative;
+}
+
+/* DS H1 (typography.css) without the default heading margin. */
+.pcd-cert-ready__title {
+  margin: 0;
+}
+
+.pcd-cert-ready__course {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* More air than the launch screen, as production has it: the course name on its
+   own line and room between medallion, message and button. */
+.pcd-cert-ready .lsm-content {
+  gap: var(--space-xl);
+}
+
+.pcd-cert-ready .lsm-info {
+  gap: var(--space-l);
+  max-width: 480px;
+}
+
+.pcd-cert-ready__course {
+  display: block;
+}
+
+/* Mobile app: fills the phone screen (above the course and tab bar), not the window. */
+.pcd-cert-ready--contained {
+  position: absolute;
+  z-index: 30;
+}
+
+.pcd-cert-ready--contained .lsm-close {
+  top: var(--space-xl);
+  right: var(--space-m);
+}
+
+/* App screens pin the main button full width in a footer (as the sign-off and
+   certificate screens), so the contained version does the same. */
+.pcd-cert-ready--contained .pcd-cert-ready__action {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: var(--space-sm) var(--space-m) var(--space-l);
+  border-top: 1px solid var(--border);
+  background: var(--page-background);
+}
+
+.pcd-cert-ready--contained .pcd-cert-ready__action .ds-btn {
+  width: 100%;
+}
+
+/* Let the footer anchor to the phone screen, not the centred content block. */
+.pcd-cert-ready--contained .lsm-content {
+  position: static;
+}
+
+.pcd-cert-ready--contained .pcd-cert-ready__course {
+  color: var(--text-secondary);
+}

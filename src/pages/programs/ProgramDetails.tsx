@@ -187,7 +187,7 @@ function ProgramDetails() {
                             <button
                               type="button"
                               className="pd-course__titlelink"
-                              onClick={() => navigate(`/courses/${course.id}`)}
+                              onClick={() => navigate(`/courses/${course.id}`, { state: { fromProgram: true } })}
                             >
                               {course.title}
                             </button>
@@ -225,7 +225,7 @@ function ProgramDetails() {
                       <button
                         type="button"
                         className="pd-course__cta pd-course__cta--review"
-                        onClick={() => navigate(`/courses/${course.id}`)}
+                        onClick={() => navigate(`/courses/${course.id}`, { state: { fromProgram: true } })}
                       >
                         Review
                       </button>
@@ -233,7 +233,7 @@ function ProgramDetails() {
                       <button
                         type="button"
                         className={`pd-course__cta${course.status === 'overdue' ? '' : ' pd-course__cta--outline'}`}
-                        onClick={() => navigate(`/courses/${course.id}`)}
+                        onClick={() => navigate(`/courses/${course.id}`, { state: { fromProgram: true } })}
                       >
                         Continue
                       </button>
@@ -241,7 +241,7 @@ function ProgramDetails() {
                       <button
                         type="button"
                         className={`pd-course__cta${index === primaryStartIdx ? '' : ' pd-course__cta--outline'}`}
-                        onClick={() => navigate(`/courses/${course.id}`)}
+                        onClick={() => navigate(`/courses/${course.id}`, { state: { fromProgram: true } })}
                       >
                         Start Course
                       </button>
@@ -249,7 +249,7 @@ function ProgramDetails() {
                       <button
                         type="button"
                         className="pd-course__cta pd-course__cta--retake"
-                        onClick={() => navigate(`/courses/${course.id}`)}
+                        onClick={() => navigate(`/courses/${course.id}`, { state: { fromProgram: true } })}
                       >
                         Retake
                       </button>

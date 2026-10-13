@@ -1,0 +1,317 @@
+/* Mobile course details (DES-335), Figma 13760:212196. Dark mode only (PhoneFrame
+   pins data-theme="dark"). Prefixed .m-course__ (.m-course-card is a different
+   component; CSS is globally bundled). */
+
+.m-course {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ── Header ("Home Header" 13760:212197): cover photo, round icon buttons, card ── */
+.m-course__hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 0 var(--space-m) var(--space-m);
+  border-radius: 0 0 var(--radius-ml) var(--radius-ml);
+  background-size: cover;
+  background-position: center;
+}
+
+/* The status bar sits on the cover, edge to edge. */
+.m-course__hero .m-topnav__statusbar {
+  margin: 0 calc(var(--space-m) * -1);
+}
+
+.m-course__hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.m-course__hero-cta {
+  display: flex;
+  gap: var(--space-m);
+}
+
+/* 40px round buttons on a scrim over the photo (Figma rgba(15,16,20,.5) = dark --scrim). */
+.m-course__iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--scrim);
+  cursor: pointer;
+}
+
+.m-course__iconbtn:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.m-course__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--page-background);
+}
+
+.m-course__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.m-course__metaitem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.m-course__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-course__helper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-m);
+  margin-top: var(--space-xs);
+}
+
+.m-course__helperitem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* Two-tone segmented bar (Figma 13760:212226): 8 segments, 8px tall. */
+.m-course__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  margin-top: var(--space-xs);
+}
+
+.m-course__track {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  height: 8px;
+  border-radius: var(--radius-ml);
+  overflow: hidden;
+  background: var(--border);
+}
+
+.m-course__seg {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 100%;
+}
+
+.m-course__seg--done {
+  background: var(--selected);
+}
+
+.m-course__seg--active {
+  background: var(--primary-600);
+}
+
+.m-course__pct {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ── Tabs (chips-switcher-tabs.md) ── */
+.m-course__tabs {
+  display: flex;
+  gap: var(--space-m);
+  padding: var(--space-m) var(--space-m) 0;
+}
+
+.m-course__tab {
+  position: relative;
+  padding: 0 0 var(--space-xs);
+  border: none;
+  background: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.m-course__tab--active {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.m-course__tab--active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: var(--radius-full);
+  background: var(--selected);
+}
+
+.m-course__tab:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.m-course__tabrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.m-course__tabcount {
+  padding: 0 var(--space-xss);
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
+/* ── Body ── */
+.m-course__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  padding: var(--space-m);
+}
+
+.m-course__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.m-course__sectiontitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* Sign-off and Certification cards, laid out as the DS mobile Assessment card
+   (cards.md "Assessment mobile list card"): 12px padding, 8px gap, 56px art, info
+   column, button stacked under the text, 20px lock when locked. No hover (touch). */
+.m-course__signoff {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-s);
+}
+
+/* With a button under the text the card grows, so the art sits at the top. */
+.m-course__signoff--ready,
+.m-course__signoff--action {
+  align-items: flex-start;
+}
+
+.m-course__signoff-art {
+  flex-shrink: 0;
+}
+
+.m-course__signoff-info {
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+
+.m-course__signoff-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.m-course__signoff-body {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Completed: "Signed off" with a 16px success tick, as the completed Assessment card. */
+.m-course__signoff-title--done {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.m-course__signoff-title--done svg {
+  flex-shrink: 0;
+}
+
+/* Locked: art desaturated, text in the disabled colour (Assessment card Disabled). */
+.m-course__signoff--locked .m-course__signoff-art {
+  mix-blend-mode: luminosity;
+  filter: grayscale(1);
+}
+
+.m-course__signoff--locked .m-course__signoff-title,
+.m-course__signoff--locked .m-course__signoff-body {
+  color: var(--text-disabled);
+}
+
+/* 4px title-to-text gap from the info column, plus 8px: 12px above the button,
+   as the Assessment card's header-to-button gap. */
+.m-course__signoff-cta {
+  align-self: flex-start;
+  margin-top: var(--space-s);
+}
+
+.m-course__empty {
+  margin: 0;
+  padding: var(--space-xl) var(--space-m);
+  font-size: 14px;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+/* PLACEHOLDER: production's locked medallion is grey with a tick; the Library only
+   has the gold one, so it is greyed until the grey asset exists (as on web). */
+.m-course__cert-art--locked {
+  filter: grayscale(1);
+}

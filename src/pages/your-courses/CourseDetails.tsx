@@ -38,12 +38,14 @@ import jewelsIllustration from '../../assets/programs/jewels.svg'
 import { COURSE_TITLE } from './courseTitle'
 import CourseSettings from './components/CourseSettings/CourseSettings'
 import AssessmentsTab from './components/AssessmentsTab/AssessmentsTab'
+import SignOffTab from './components/SignOffTab/SignOffTab'
+import { SIGN_OFF_DEMO_COURSE } from '@/data/trainerSignOff'
 import EnrolCourseModal from './components/EnrolCourseModal/EnrolCourseModal'
 import '../people/People.css'
 import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterRow, type FilterValue } from '@/pages/user-profile/components/CourseFilters/CourseFilters'
 import './CourseDetails.css'
 
-type Tab = 'content' | 'enrolments' | 'assessments' | 'settings' | 'overview'
+type Tab = 'content' | 'enrolments' | 'assessments' | 'signoff' | 'settings' | 'overview'
 
 type LearnerStatus = 'not-started' | 'in-progress' | 'quizzes-pending' | 'completed' | 'failed'
 
@@ -130,6 +132,13 @@ const TABS: { key: Tab; label: string; count?: number }[] = [
   { key: 'settings', label: 'Settings' },
   { key: 'overview', label: 'Overview' },
 ]
+
+/* DES-335: a course with the trainer sign-off requirement gets a Sign-off tab
+   after Assessments. In the prototype that is the one demo licensing course. */
+const tabsFor = (requiresSignOff: boolean) =>
+  requiresSignOff
+    ? TABS.flatMap((t) => (t.key === 'assessments' ? [t, { key: 'signoff' as const, label: 'Sign-off' }] : [t]))
+    : TABS
 
 // Recurring/repeat-rules glyph (partial arc + dashed arc).
 function RepeatRules({ size = 20, color = 'currentColor' }: { size?: number; color?: string }) {
@@ -262,20 +271,27 @@ function CourseDetails() {
   // ?title= when opened in a new tab from a course row; falls back to the default.
   const courseTitle =
     (location.state as { courseTitle?: string } | null)?.courseTitle ?? searchParams.get('title') ?? COURSE_TITLE
+  const tabs = tabsFor(courseTitle === SIGN_OFF_DEMO_COURSE.title)
   const tabParam = searchParams.get('tab') as Tab | null
   const [activeTab, setActiveTab] = useState<Tab>(
-    tabParam && TABS.some((t) => t.key === tabParam) ? tabParam : 'enrolments',
+    tabParam && tabs.some((t) => t.key === tabParam) ? tabParam : 'enrolments',
   )
 
   /* Back and Forward move the param; the tab follows it. */
   useEffect(() => {
-    if (tabParam && TABS.some((t) => t.key === tabParam)) setActiveTab(tabParam)
+    if (tabParam && tabs.some((t) => t.key === tabParam)) setActiveTab(tabParam)
   }, [tabParam])
 
   const selectTab = (key: Tab) => {
     setActiveTab(key)
     /* Replace, so flicking through tabs does not fill the history with them. */
-    setSearchParams(key === 'enrolments' ? {} : { tab: key }, { replace: true })
+    /* Keep the course (router state or ?title=) across tab switches: the Sign-off
+       tab only exists for the course that needs it (DES-335). */
+    const title = searchParams.get('title')
+    setSearchParams(
+      { ...(title ? { title } : {}), ...(key === 'enrolments' ? {} : { tab: key }) },
+      { replace: true, state: location.state },
+    )
   }
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Set<number>>(new Set())
@@ -552,7 +568,7 @@ function CourseDetails() {
           <div className="cd-divider" />
 
           <div className="cd-tabs" role="tablist">
-            {TABS.map((tab) => (
+            {tabs.map((tab) => (
               <button
                 key={tab.key}
                 role="tab"
@@ -693,6 +709,8 @@ function CourseDetails() {
           </section>
         ) : activeTab === 'assessments' ? (
           <AssessmentsTab />
+        ) : activeTab === 'signoff' ? (
+          <SignOffTab />
         ) : activeTab === 'settings' ? (
           <CourseSettings />
         ) : (

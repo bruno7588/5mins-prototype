@@ -10,6 +10,7 @@ import enrolledThumb1 from '../../assets/workspace/course-1.png'
 import enrolledThumb2 from '../../assets/workspace/course-2.png'
 import enrolledThumb3 from '../../assets/workspace/course-3.png'
 import enrolledThumb4 from '../../assets/workspace/course-4.png'
+import licensingThumb from '../../assets/sign-off/licensing-course.jpg'
 
 export interface WorkspaceCourse {
   id: string
@@ -23,11 +24,26 @@ export interface WorkspaceCourse {
   durationMinutes: number
   /** e.g. "Due on Aug 20" — when present, renders the floating warning pill */
   dueLabel?: string
+  /** DES-335: completes only once the licence holder signs off. */
+  requiresSignOff?: boolean
   /** Overhang "New" badge on top-left of the card */
   isNew?: boolean
 }
 
 export const workspaceCourses: WorkspaceCourse[] = [
+  /* DES-335 demo: every lesson done, waiting on the licence holder's sign-off, so it
+     reads 85% (Workspace lifts it to 100% once signed). */
+  {
+    id: 'p7c1',
+    title: 'Licensing (Scotland) Staff Training',
+    thumbnailGradient: 'linear-gradient(135deg, #6368db, #00afc4)',
+    image: licensingThumb,
+    progress: 85,
+    lessonCount: 6,
+    durationMinutes: 25,
+    dueLabel: 'Due on 31 Oct',
+    requiresSignOff: true,
+  },
   {
     id: 'c1',
     title: 'Leadership that Drives Innovation: Building Teams that Challenge the Status Quo',
@@ -108,6 +124,8 @@ export interface ProgramCourse {
   status?: CourseStatus
   /** Label for overdue/scheduled/due badges (e.g. "Due on 15 Jun"); completed uses a fixed label */
   statusLabel?: string
+  /** DES-335: the course ends with a Personal Licence Holder sign-off (Scottish licensing). */
+  requiresSignOff?: boolean
 }
 
 export interface WorkspaceProgram {
@@ -438,6 +456,46 @@ export const workspacePrograms: WorkspaceProgram[] = [
         state: 'locked',
         status: 'scheduled',
         statusLabel: '7d after previous course',
+      },
+    ],
+  },
+  {
+    id: 'p7',
+    title: 'Responsible Alcohol Service (Scotland)',
+    description:
+      'The staff training the Licensing (Scotland) Act 2005 requires before anyone serves alcohol. Each course ends with your personal licence holder signing off the training.',
+    thumbnailGradient: 'linear-gradient(135deg, #6368db, #00afc4)',
+    image: courseThumb4,
+    courseCount: 2,
+    durationLabel: '45 min',
+    learnerCount: 26,
+    progress: 50,
+    // DES-335 demo: every lesson in the first course is done, so it waits on the
+    // licence holder; the second is still in progress, so its sign-off is locked.
+    outline: [
+      {
+        id: 'p7c1',
+        title: 'Licensing (Scotland) Staff Training',
+        lessonCount: 6,
+        durationMinutes: 25,
+        thumbnail: courseThumb4,
+        state: 'continue',
+        progress: 100,
+        status: 'due',
+        statusLabel: 'Due on 31 Oct',
+        requiresSignOff: true,
+      },
+      {
+        id: 'p7c2',
+        title: 'Refusing a Sale and Challenge 25',
+        lessonCount: 6,
+        durationMinutes: 20,
+        thumbnail: courseThumb2,
+        state: 'continue',
+        progress: 60,
+        status: 'due',
+        statusLabel: 'Due on 14 Nov',
+        requiresSignOff: true,
       },
     ],
   },

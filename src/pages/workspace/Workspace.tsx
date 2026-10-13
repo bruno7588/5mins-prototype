@@ -17,9 +17,17 @@ import CategoryCard from '../../components/CategoryCard/CategoryCard'
 import Carousel from '../../components/Carousel/Carousel'
 import WorkspaceBanner from '@/components/WorkspaceBanner/WorkspaceBanner'
 import EventDetailsDrawer from './EventDetailsDrawer'
-import { workspaceCourses, workspaceCategories } from './mockItems'
+import { workspaceCourses, workspaceCategories, type WorkspaceCourse } from './mockItems'
+import { useSignOff } from '@/data/trainerSignOff'
 import { getAllPrograms } from '../programs/programStore'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
+
+/* A sign-off course (DES-335) completes when the licence holder signs: 100% and no due pill. */
+function EnrolledCourseCard({ course, onOpen }: { course: WorkspaceCourse; onOpen: () => void }) {
+  const signed = useSignOff(course.id)
+  const shown = course.requiresSignOff && signed ? { ...course, progress: 100, dueLabel: undefined } : course
+  return <WorkspaceCourseCard course={shown} onOpen={onOpen} />
+}
 
 function Workspace() {
   const navigate = useNavigate()
@@ -86,7 +94,8 @@ function Workspace() {
         <section className="mt-body ws-body">
           <div className="ws-sections">
               <WorkspaceBanner
-                courses={workspaceCourses}
+                /* Sign-off courses stay out: "min left" means nothing when only the sign-off remains. */
+                courses={workspaceCourses.filter((c) => !c.requiresSignOff)}
                 programs={getAllPrograms()}
                 onOpenCourse={(course) => navigate(`/courses/${course.id}`)}
                 onViewCourses={() =>
@@ -107,7 +116,7 @@ function Workspace() {
                 </header>
                 <Carousel trackClassName="ws-cards-track" ariaLabel="Enrolled courses">
                   {workspaceCourses.map((course) => (
-                    <WorkspaceCourseCard
+                    <EnrolledCourseCard
                       key={course.id}
                       course={course}
                       onOpen={() => navigate(`/courses/${course.id}`)}

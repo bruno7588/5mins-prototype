@@ -14,9 +14,18 @@ interface ProgramCertificateProps {
   /** Omit where there is nowhere to download to — the CTA is then left out
    *  rather than rendered as a button that does nothing (mobile, Figma 3716:83526). */
   onGetCertificate?: () => void
+  /** Locked-state heading. Defaults to the program wording; a course passes its own (DES-335). */
+  lockedTitle?: string
+  /** Unlocked-card illustration. Defaults to the program medallion; a course passes its own (DES-335). */
+  medallion?: string
 }
 
-function ProgramCertificate({ unlocked, onGetCertificate }: ProgramCertificateProps) {
+function ProgramCertificate({
+  unlocked,
+  onGetCertificate,
+  lockedTitle = 'Earn your Program certificate',
+  medallion = certMedallion,
+}: ProgramCertificateProps) {
   if (!unlocked) {
     return (
       <div className="pcert-locked">
@@ -24,7 +33,7 @@ function ProgramCertificate({ unlocked, onGetCertificate }: ProgramCertificatePr
           <Lock size={32} color="var(--neutral-400)" variant="Bold" />
         </span>
         <div className="pcert-locked__body">
-          <p className="pcert-locked__title">Earn your Program certificate</p>
+          <p className="pcert-locked__title">{lockedTitle}</p>
           <div className="pcert-locked__lines" aria-hidden="true">
             <span className="pcert-locked__line" />
             <span className="pcert-locked__line pcert-locked__line--short" />
@@ -36,7 +45,7 @@ function ProgramCertificate({ unlocked, onGetCertificate }: ProgramCertificatePr
 
   return (
     <div className="pcert-card">
-      <img className="pcert-card__medallion" src={certMedallion} alt="" aria-hidden="true" />
+      <img className="pcert-card__medallion" src={medallion} alt="" aria-hidden="true" />
       <p className="pcert-card__title">Certificate of Completion</p>
       {onGetCertificate ? (
         <button type="button" className="pcert-card__cta" onClick={onGetCertificate}>

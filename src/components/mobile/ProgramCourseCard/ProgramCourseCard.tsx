@@ -26,6 +26,8 @@ export interface MobileProgramCourseCardProps {
    * not begun the program should start (Figma 3716:83255).
    */
   startMarker?: boolean
+  /** Opens the course (DES-335). Ignored on a locked course, which has nothing to open. */
+  onClick?: () => void
 }
 
 /**
@@ -37,7 +39,7 @@ export interface MobileProgramCourseCardProps {
  * 2px track along its bottom edge, filled primary while in progress and success
  * green once passed.
  */
-function MobileProgramCourseCard({ course, startMarker = false }: MobileProgramCourseCardProps) {
+function MobileProgramCourseCard({ course, startMarker = false, onClick }: MobileProgramCourseCardProps) {
   const locked = course.state === 'locked'
   const passed = course.state === 'review' && course.status === 'completed'
   const metaColor = locked ? 'var(--text-disabled)' : 'var(--text-tertiary)'
@@ -49,6 +51,7 @@ function MobileProgramCourseCard({ course, startMarker = false }: MobileProgramC
   // The success track is the completion signal, so its badge would be noise.
   const badge = course.status && course.status !== 'completed' ? STATUS_BADGE[course.status] : undefined
   const retake = course.state === 'retake'
+  const tappable = !!onClick && !locked
 
   return (
     /* The marker sits outside the card so the card can clip its own progress
@@ -60,7 +63,22 @@ function MobileProgramCourseCard({ course, startMarker = false }: MobileProgramC
         </span>
       ) : null}
 
-      <article className={`m-pcourse__card${locked ? ' m-pcourse__card--locked' : ''}`}>
+      <article
+        className={`m-pcourse__card${locked ? ' m-pcourse__card--locked' : ''}${tappable ? ' m-pcourse__card--tappable' : ''}`}
+        role={tappable ? 'button' : undefined}
+        tabIndex={tappable ? 0 : undefined}
+        onClick={tappable ? onClick : undefined}
+        onKeyDown={
+          tappable
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onClick?.()
+                }
+              }
+            : undefined
+        }
+      >
         <div className="m-pcourse__row">
           <span
             className="m-pcourse__thumb"

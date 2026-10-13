@@ -1,0 +1,183 @@
+/* Course certificate, Figma Certificates 8303:357 (900 x 599). Paper: raw palette
+   tokens so it prints the same in light and dark mode. Prefixed .ccert-. */
+
+.ccert {
+  /* The 5Mins logo draws in --text-primary; pin it to the paper's ink. */
+  --text-primary: var(--neutral-800);
+
+  position: relative;
+  box-sizing: border-box;
+  width: 900px;
+  height: 599px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-l) var(--space-xl) var(--space-l);
+  border: var(--space-ml) solid var(--neutral-25);
+  border-radius: var(--radius-sm);
+  background: var(--neutral-0);
+  overflow: hidden;
+  text-align: left;
+}
+
+/* Inner hairline frame (Figma Rectangle 1490, 2px warning-100). */
+.ccert::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--warning-100);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+
+/* Gold medallion, 240px at the Figma's top-right spot. The exported SVG carries
+   its drop shadow, so the image box overhangs the 240px badge on every side by
+   the export's own insets (top 109.2px, sides 67.32px). */
+.ccert__medallion {
+  position: absolute;
+  top: -121.2px;
+  right: -31.32px;
+  width: 374.632px;
+  height: 426.81px;
+  pointer-events: none;
+}
+
+.ccert p {
+  margin: 0;
+}
+
+.ccert__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 72px;
+}
+
+.ccert__company {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--neutral-800);
+}
+
+.ccert__body {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-height: 0;
+}
+
+.ccert__kicker {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--neutral-500);
+}
+
+.ccert__group {
+  display: flex;
+  flex-direction: column;
+}
+
+.ccert__group--course {
+  gap: var(--space-xs);
+}
+
+.ccert__small {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--neutral-400);
+}
+
+.ccert__learner {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--neutral-800);
+}
+
+.ccert__course {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--neutral-800);
+}
+
+/* ── Sign-off band (DES-335, D12) ── */
+.ccert__signoff {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  margin-top: var(--space-xs);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--warning-100);
+}
+
+.ccert__signoff-title {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--neutral-500);
+}
+
+.ccert__signoff-grid {
+  /* Columns size to their values; a long board name wraps in its own column. */
+  display: flex;
+  gap: var(--space-l);
+  margin: 0;
+}
+
+.ccert__signoff-grid > div {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.ccert__signoff-grid dt {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--neutral-400);
+}
+
+.ccert__signoff-grid dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--neutral-500);
+}
+
+/* ── Footer ── */
+.ccert__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.ccert__issued {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.ccert__date {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--neutral-500);
+}
+
+.ccert__powered {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--neutral-400);
+}

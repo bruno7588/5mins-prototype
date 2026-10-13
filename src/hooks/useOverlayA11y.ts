@@ -9,7 +9,9 @@ const FOCUSABLE =
  *  scroll while open, and (optionally) closes on Escape.
  *
  *  Usage: attach the ref to the overlay panel element (give it `tabIndex={-1}`
- *  so it can receive focus when it has no focusable children). */
+ *  so it can receive focus when it has no focusable children). Mark a child
+ *  `data-autofocus` to focus it instead of the first focusable (React's
+ *  `autoFocus` would steal focus before the trigger is recorded). */
 export function useOverlayA11y(
   ref: RefObject<HTMLElement | null>,
   open: boolean,
@@ -24,7 +26,7 @@ export function useOverlayA11y(
     const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null
 
     const focusables = () => Array.from(panel?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])
-    ;(focusables()[0] ?? panel)?.focus()
+    ;(panel?.querySelector<HTMLElement>('[data-autofocus]') ?? focusables()[0] ?? panel)?.focus()
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {

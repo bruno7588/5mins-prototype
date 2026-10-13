@@ -165,3 +165,13 @@
   background: var(--primary-button-background);
   clip-path: polygon(0 0, 100% 0, 50% 100%);
 }
+
+/* Opens the course screen (DES-335). */
+.m-pcourse__card--tappable {
+  cursor: pointer;
+}
+
+.m-pcourse__card--tappable:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}

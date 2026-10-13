@@ -2,7 +2,8 @@ import type { ReactNode } from 'react'
 import MobileWorkspaceBanner from '@/components/mobile/WorkspaceBanner/WorkspaceBanner'
 import MobileCourseCard from '@/components/mobile/CourseCard/CourseCard'
 import MobileCategoryCard from '@/components/mobile/CategoryCard/CategoryCard'
-import { workspaceCourses, workspaceCategories } from '@/pages/workspace/mockItems'
+import { workspaceCourses, workspaceCategories, type WorkspaceCourse } from '@/pages/workspace/mockItems'
+import { useSignOff } from '@/data/trainerSignOff'
 import { getAllPrograms } from '@/pages/programs/programStore'
 import './WorkspaceScreen.css'
 
@@ -40,19 +41,45 @@ function CardRow({ label, children }: { label: string; children: ReactNode }) {
   )
 }
 
+/* A sign-off course (DES-335) completes when the licence holder signs: 100% and no due pill. */
+function EnrolledCourseCard({ course, onOpen }: { course: WorkspaceCourse; onOpen?: () => void }) {
+  const signed = useSignOff(course.id)
+  const shown = course.requiresSignOff && signed ? { ...course, progress: 100, dueLabel: undefined } : course
+  return (
+    <MobileCourseCard
+      title={shown.title}
+      lessonCount={shown.lessonCount}
+      durationMinutes={shown.durationMinutes}
+      image={shown.image}
+      thumbnailGradient={shown.thumbnailGradient}
+      progress={shown.progress}
+      isNew={shown.isNew}
+      dueLabel={shown.dueLabel}
+      onClick={onOpen}
+    />
+  )
+}
+
 /**
  * "Your Workspace" home screen for the mobile prototype (Figma 3716:82886):
  * the featured program banners, then enrolled courses, then the 5Mins
  * categories — each row swiped horizontally.
  */
-function WorkspaceScreen({ onOpenProgram }: { onOpenProgram?: (id: string) => void }) {
+function WorkspaceScreen({
+  onOpenProgram,
+  onOpenCourse,
+}: {
+  onOpenProgram?: (id: string) => void
+  onOpenCourse?: (id: string) => void
+}) {
   const inProgress = workspaceCourses.filter((c) => c.progress > 0 && c.progress < 100).length
   const completed = workspaceCourses.filter((c) => c.progress >= 100).length
 
   return (
     <div className="m-ws">
       <MobileWorkspaceBanner
-        courses={workspaceCourses}
+        /* Sign-off courses stay out of the banner, as on web: "min left" means nothing when only the sign-off remains. */
+        courses={workspaceCourses.filter((c) => !c.requiresSignOff)}
         programs={getAllPrograms()}
         onOpenProgram={(program) => onOpenProgram?.(program.id)}
       />
@@ -64,16 +91,10 @@ function WorkspaceScreen({ onOpenProgram }: { onOpenProgram?: (id: string) => vo
         />
         <CardRow label="Enrolled courses">
           {workspaceCourses.map((course) => (
-            <MobileCourseCard
+            <EnrolledCourseCard
               key={course.id}
-              title={course.title}
-              lessonCount={course.lessonCount}
-              durationMinutes={course.durationMinutes}
-              image={course.image}
-              thumbnailGradient={course.thumbnailGradient}
-              progress={course.progress}
-              isNew={course.isNew}
-              dueLabel={course.dueLabel}
+              course={course}
+              onOpen={onOpenCourse ? () => onOpenCourse(course.id) : undefined}
             />
           ))}
         </CardRow>

@@ -40,7 +40,7 @@ export interface MobileTopNavProps {
   hideStatusBar?: boolean
 }
 
-function StatusBar({ transparent }: { transparent?: boolean }) {
+export function MobileStatusBar({ transparent }: { transparent?: boolean }) {
   return (
     <div className={`m-topnav__statusbar${transparent ? ' m-topnav__statusbar--transparent' : ''}`} aria-hidden="true">
       <span className="m-topnav__clock">9:41</span>
@@ -218,7 +218,7 @@ function MobileTopNav({
 
   return (
     <header className={`m-topnav${transparent ? ' m-topnav--overlay' : ''}`}>
-      {!hideStatusBar ? <StatusBar transparent={transparent} /> : null}
+      {!hideStatusBar ? <MobileStatusBar transparent={transparent} /> : null}
       <div className={headerClass}>{header}</div>
     </header>
   )

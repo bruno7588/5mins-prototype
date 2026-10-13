@@ -1,0 +1,15 @@
+/* Course Certification row (production card). Layout comes from the Sign-off card
+   (.pcd-signoff__*); only the locked bits live here. Prefix: .pcd-cert-row- */
+
+/* PLACEHOLDER: production's locked medallion is a grey one with a tick; the Library
+   set (Illustrations/Certificate) only has the gold one, so it is greyed until the
+   grey asset exists. */
+.pcd-cert-row__art--locked {
+  filter: grayscale(1);
+}
+
+.pcd-cert-row__lock {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: var(--space-s);
+}

@@ -20,7 +20,14 @@ const STACK = [avatar1, avatar2, avatar3]
  * One screen covers all three: the progress bar and the certificate carry where
  * the learner has got to, so no status sits above the title.
  */
-function ProgramScreen({ program }: { program: WorkspaceProgram }) {
+function ProgramScreen({
+  program,
+  onOpenCourse,
+}: {
+  program: WorkspaceProgram
+  /** Pushes the course screen (DES-335). */
+  onOpenCourse?: (courseId: string) => void
+}) {
   const outline = program.outline
   const filled = Math.max(0, Math.min(SEGMENTS, Math.round((program.progress / 100) * SEGMENTS)))
   const complete = program.progress >= 100
@@ -92,7 +99,12 @@ function ProgramScreen({ program }: { program: WorkspaceProgram }) {
       <section className="m-prog__section">
         <h2 className="m-prog__sectiontitle">Courses</h2>
         {outline.map((course, i) => (
-          <MobileProgramCourseCard key={course.id} course={course} startMarker={i === startIdx} />
+          <MobileProgramCourseCard
+            key={course.id}
+            course={course}
+            startMarker={i === startIdx}
+            onClick={onOpenCourse ? () => onOpenCourse(course.id) : undefined}
+          />
         ))}
       </section>
 
