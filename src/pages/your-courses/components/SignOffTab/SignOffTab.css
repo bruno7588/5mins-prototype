@@ -22,13 +22,11 @@
   color: var(--text-tertiary);
 }
 
-/* An empty cell's dash sits in the middle of its cell (the cell is a flex row). */
-.tbl-cell > .cd-signoff-muted {
-  margin-inline: auto;
-}
-
 /* Long licence holder or board names wrap onto a second line (the 58px row
    max height fits two) instead of being cut off with an ellipsis. */
 .tbl-cell.cd-signoff-wrap {
   white-space: normal;
+  /* Size from the column's flex basis, not the unwrapped text, so a long name
+     wraps rather than widening the whole table (as the pinned column does). */
+  contain: inline-size;
 }

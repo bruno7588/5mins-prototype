@@ -176,15 +176,9 @@ function SignOffTab() {
     {
       key: 'board',
       header: 'Issuing board',
-      width: '1 1 200px',
+      width: '1 1 176px',
       cellClassName: 'cd-signoff-wrap',
       render: (r) => r.issuingBoard ?? empty,
-    },
-    {
-      key: 'completed',
-      header: 'Completed on',
-      width: '0 0 112px',
-      render: (r) => <DateCell value={r.completedOn} />,
     },
     {
       key: 'signed',
@@ -195,7 +189,7 @@ function SignOffTab() {
     {
       key: 'remind',
       header: '',
-      width: '0 0 56px',
+      width: '0 0 52px',
       cellClassName: 'tbl-action is-overflow',
       /* Same row action as My Team's Course tracker: SmsNotification with a tooltip. */
       render: (r) =>
