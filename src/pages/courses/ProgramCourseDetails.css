@@ -587,8 +587,9 @@
 
 /* DES-335 course certificate viewer: the 900px certificate plus the modal's
    24px padding either side, on the ConfirmModal shell. */
+/* Hugs the certificate, which scales to fit the window (FittedCourseCertificate). */
 .pcd-cert-modal {
-  width: calc(900px + 2 * var(--space-l));
+  width: max-content;
 }
 
 .pcd-cert-modal__title {
@@ -600,5 +601,5 @@
 }
 
 .pcd-cert-modal__cta {
-  align-self: flex-end;
+  align-self: center;
 }

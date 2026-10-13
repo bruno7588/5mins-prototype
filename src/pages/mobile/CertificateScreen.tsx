@@ -4,7 +4,7 @@ import Button from '@/components/Button/Button'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import { getCourseDetail } from '@/pages/courses/mockCourse'
 import { SIGN_OFF_LEARNER, useSignOff } from '@/data/trainerSignOff'
-import CourseCertificate, { CERTIFICATE_COMPANY } from '@/pages/courses/components/CourseCertificate/CourseCertificate'
+import { CERTIFICATE_COMPANY, FittedCourseCertificate } from '@/pages/courses/components/CourseCertificate/CourseCertificate'
 import './CertificateScreen.css'
 
 interface CertificateScreenProps {
@@ -15,7 +15,7 @@ interface CertificateScreenProps {
 
 /**
  * Mobile certificate view (DES-335): a full screen pushed over the course, the same
- * certificate as web scaled to the phone's width (it is a 900 x 599 sheet), with
+ * certificate as web scaled to the phone's width (a 900px-wide sheet), with
  * Download Certificate pinned at the bottom. Holds the sign-off details the course
  * card no longer shows.
  */
@@ -38,15 +38,14 @@ function CertificateScreen({ courseId, onClose, onDownload }: CertificateScreenP
 
       <div className="m-cert-screen__body">
         <div className="m-cert-screen__frame">
-          <div className="m-cert-screen__paper">
-            <CourseCertificate
-              companyName={CERTIFICATE_COMPANY}
-              learnerName={SIGN_OFF_LEARNER.name}
-              courseTitle={course.title}
-              issuedOn={signOff?.signedAt ?? new Date().toISOString()}
-              signOff={signOff}
-            />
-          </div>
+          <FittedCourseCertificate
+            width={343}
+            companyName={CERTIFICATE_COMPANY}
+            learnerName={SIGN_OFF_LEARNER.name}
+            courseTitle={course.title}
+            issuedOn={signOff?.signedAt ?? new Date().toISOString()}
+            signOff={signOff}
+          />
         </div>
       </div>
 

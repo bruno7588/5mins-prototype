@@ -43,7 +43,7 @@ import CourseCertificateCard from './components/CourseCertificateCard/CourseCert
 import CertificateReady from './components/CertificateReady/CertificateReady'
 import SignOffCard from './components/SignOffCard/SignOffCard'
 import SignOffModal from './components/SignOffModal/SignOffModal'
-import CourseCertificate, { CERTIFICATE_COMPANY } from './components/CourseCertificate/CourseCertificate'
+import { CERTIFICATE_COMPANY, FittedCourseCertificate } from './components/CourseCertificate/CourseCertificate'
 import {
   SIGN_OFF_LEARNER,
   courseProgressWithSignOff,
@@ -448,7 +448,11 @@ function ProgramCourseDetails() {
         closable
       >
         <h2 className="pcd-cert-modal__title">Your certificate</h2>
-        <CourseCertificate
+        {/* Scaled to fit the window. Reserved: overlay and panel padding (2 x 48px) across;
+            the same plus the title, two 20px gaps and the button (208px) down. */}
+        <FittedCourseCertificate
+          reservedWidth={96}
+          reservedHeight={208}
           companyName={CERTIFICATE_COMPANY}
           learnerName={SIGN_OFF_LEARNER.name}
           courseTitle={course.title}

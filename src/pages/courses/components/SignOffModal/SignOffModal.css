@@ -49,3 +49,10 @@
 .pcd-signoff-wizard__step--form {
   max-width: 900px;
 }
+
+/* The whole sign-off page (header, steps, footer) is 900px wide: the shell and the
+   footer pad their content by --space-xxl, so each caps at 900px plus that padding. */
+.pcd-signoff-wizard .wzs-shell,
+.pcd-signoff-wizard .wzs-footer-inner {
+  max-width: calc(900px + 2 * var(--space-xxl));
+}

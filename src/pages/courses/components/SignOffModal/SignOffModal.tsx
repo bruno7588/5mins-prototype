@@ -96,7 +96,8 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
     <WizardShell
       open
       layout="top"
-      title="Licence holder sign-off"
+      className="pcd-signoff-wizard"
+      title="Sign-off"
       closeLabel="Close"
       onClose={close}
       steps={steps}

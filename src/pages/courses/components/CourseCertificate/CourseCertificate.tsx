@@ -1,3 +1,4 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Logo } from '@/pages/my-team/MyTeam'
 import { formatSignOffDate, type SignOffRecord } from '@/data/trainerSignOff'
 import medallion from '@/assets/sign-off/medallion-gold.svg'
@@ -46,7 +47,6 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, si
 
         {signOff ? (
           <section className="ccert__signoff" aria-label="Training sign-off">
-            <p className="ccert__signoff-title">Training sign-off</p>
             <dl className="ccert__signoff-grid">
               <div>
                 <dt>Signed by</dt>
@@ -59,10 +59,6 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, si
               <div>
                 <dt>Issuing licensing board</dt>
                 <dd>{signOff.issuingBoard}</dd>
-              </div>
-              <div>
-                <dt>Signed on</dt>
-                <dd>{formatSignOffDate(signOff.signedAt)}</dd>
               </div>
             </dl>
           </section>
@@ -80,6 +76,46 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, si
         </footer>
       </div>
     </article>
+  )
+}
+
+const SHEET_W = 900
+
+type FitProps =
+  /** Web modal: fit the window, less the modal chrome around the sheet. */
+  | { reservedHeight: number; reservedWidth: number; width?: never }
+  /** App: a fixed width (the phone's content width). */
+  | { width: number; reservedHeight?: never; reservedWidth?: never }
+
+/**
+ * The certificate scaled down (never above full size), keeping its 900px-wide
+ * layout. The sheet's height follows its content, so it is measured, not fixed.
+ */
+export function FittedCourseCertificate({ reservedHeight, reservedWidth, width, ...props }: CourseCertificateProps & FitProps) {
+  const sheetRef = useRef<HTMLDivElement>(null)
+  const [sheetH, setSheetH] = useState(0)
+  const [win, setWin] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }))
+
+  useLayoutEffect(() => {
+    if (sheetRef.current) setSheetH(sheetRef.current.offsetHeight)
+  })
+  useEffect(() => {
+    const onResize = () => setWin({ w: window.innerWidth, h: window.innerHeight })
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  const scale =
+    width !== undefined
+      ? width / SHEET_W
+      : Math.min(1, (win.h - reservedHeight!) / Math.max(sheetH, 1), (win.w - reservedWidth!) / SHEET_W)
+
+  return (
+    <div className="ccert-fit" style={{ width: SHEET_W * scale, height: sheetH * scale }}>
+      <div ref={sheetRef} className="ccert-fit__sheet" style={{ transform: `scale(${scale})` }}>
+        <CourseCertificate {...props} />
+      </div>
+    </div>
   )
 }
 

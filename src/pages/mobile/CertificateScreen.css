@@ -17,20 +17,13 @@
   padding: var(--space-m);
 }
 
-/* The certificate is a fixed 900 x 599 sheet; on the 343px content width it is
-   scaled down as a preview (343 / 900), and the frame reserves the scaled height. */
+/* The 900px-wide certificate scaled to the 343px content width (FittedCourseCertificate
+   sizes the box to the sheet's measured height). */
 .m-cert-screen__frame {
-  width: 343px;
-  height: calc(599px * 343 / 900);
+  width: fit-content;
   overflow: hidden;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-s);
-}
-
-.m-cert-screen__paper {
-  width: 900px;
-  transform: scale(calc(343 / 900));
-  transform-origin: top left;
 }
 
 .m-cert-screen__footer {

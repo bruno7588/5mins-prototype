@@ -62,6 +62,8 @@ interface Props {
   /** "rail": steps down the left, action in the header (Enrol people).
       "top": a numbered stepper in the header, action in a sticky footer. */
   layout?: 'rail' | 'top'
+  /** Extra class on the overlay, for a wizard that needs its own width (e.g. sign-off). */
+  className?: string
   children: ReactNode
 }
 
@@ -72,7 +74,7 @@ const ICON_COLOR: Record<StepState, string> = {
   inert: 'var(--text-primary)',
 }
 
-function WizardShell({ open, title, closeLabel, onClose, action, backAction, steps, onStepSelect, takeover, layout = 'rail', children }: Props) {
+function WizardShell({ open, title, closeLabel, onClose, action, backAction, steps, onStepSelect, takeover, layout = 'rail', className, children }: Props) {
   const panelRef = useRef<HTMLDivElement>(null)
   useOverlayA11y(panelRef, open, { onEscape: onClose })
 
@@ -141,7 +143,7 @@ function WizardShell({ open, title, closeLabel, onClose, action, backAction, ste
 
   if (layout === 'top') {
     return (
-      <div ref={panelRef} className="wzs-overlay wzs-overlay--top" role="dialog" aria-modal="true" aria-label={title} tabIndex={-1}>
+      <div ref={panelRef} className={`wzs-overlay wzs-overlay--top${className ? ` ${className}` : ''}`} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1}>
         {/* Icon-only, so it shows its aria-label as a DS Tooltip. */}
         <Tooltip text={closeLabel} position="Left" icon={false} className="wzs-close">
           <CloseButton variant="fullscreen" onClick={onClose} ariaLabel={closeLabel} />
@@ -170,7 +172,7 @@ function WizardShell({ open, title, closeLabel, onClose, action, backAction, ste
   }
 
   return (
-    <div ref={panelRef} className="wzs-overlay" role="dialog" aria-modal="true" aria-label={title} tabIndex={-1}>
+    <div ref={panelRef} className={`wzs-overlay${className ? ` ${className}` : ''}`} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1}>
       {/* Icon-only, so it shows its aria-label as a DS Tooltip. */}
       <Tooltip text={closeLabel} position="Left" icon={false} className="wzs-close">
         <CloseButton variant="fullscreen" onClick={onClose} ariaLabel={closeLabel} />
