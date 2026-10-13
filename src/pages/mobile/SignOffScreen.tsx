@@ -10,8 +10,8 @@ import {
   HANDOVER_NOTE,
   HANDOVER_TITLE,
   SignOffFields,
-  doneBody,
-  DONE_NOTE,
+  SignOffSummary,
+  doneNote,
   HANDOVER_BODY,
   STEP_NUMBER,
   useSignOffForm,
@@ -20,6 +20,7 @@ import {
 import HandoverArt from '@/pages/courses/components/SignOffForm/HandoverArt'
 import { SuccessTick } from '@/pages/programs/components/LaunchSuccessModal/LaunchSuccessModal'
 import Progress from '@/pages/onboarding/Progress'
+import type { SignOffRecord } from '@/data/trainerSignOff'
 import './SignOffScreen.css'
 
 interface SignOffScreenProps {
@@ -32,18 +33,27 @@ interface SignOffScreenProps {
  * Mobile sign-off (DES-335, D10 + D11): a full screen pushed over the course
  * screen, same three steps and copy as web (hand over, licence details, hand back),
  * the primary button pinned at the bottom. Back returns to the course from any step
- * (as web's Cancel and X); typed details are kept, and after step 2 it counts as done. Not a bottom sheet: three fields and the keyboard need the room.
+ * (as web's Cancel and X), except step 3, which goes back to the form; typed details
+ * are kept, and once signed it counts as done. Not a bottom sheet: three fields and the keyboard need the room.
  */
 function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
   const reduce = useReducedMotion()
   const [step, setStep] = useState<SignOffStep>('handover')
-  const [signed, setSigned] = useState(false)
+  const [record, setRecord] = useState<SignOffRecord | null>(null)
   const form = useSignOffForm(courseId)
 
+  /* Step 3 goes back to the form so the licence holder can correct a detail (re-submitting
+     replaces the record); elsewhere back returns to the course. */
   const back = () => {
     if (form.busy) return
-    if (signed) onSigned()
+    if (step === 'done') setStep('form')
+    else if (record) handBack()
     else onClose()
+  }
+  /* The hand-back makes the record final (the course completes, the certificate unlocks). */
+  function handBack() {
+    if (record) form.finalise(record)
+    onSigned()
   }
 
   return (
@@ -86,8 +96,8 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
             >
               <SuccessTick />
               <h2 className="m-signoff__title">{DONE_TITLE}</h2>
-              <p className="m-signoff__text">{doneBody(form.learnerName)}</p>
-              <p className="m-signoff__text m-signoff__text--muted">{DONE_NOTE}</p>
+              {record ? <SignOffSummary record={record} /> : null}
+              <p className="m-signoff__text m-signoff__text--muted">{doneNote(form.learnerName)}</p>
             </motion.div>
           ) : (
             <motion.div
@@ -123,8 +133,8 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
             loading={form.busy}
             loadingLabel="Signing off..."
             onClick={() =>
-              form.submit(() => {
-                setSigned(true)
+              form.submit((r) => {
+                setRecord(r)
                 setStep('done')
               })
             }
@@ -132,7 +142,7 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
             Sign Off Training
           </Button>
         ) : (
-          <Button variant="filled" size="lg" className="m-signoff__cta" onClick={onSigned}>
+          <Button variant="filled" size="lg" className="m-signoff__cta" onClick={handBack}>
             {doneAction(form.learnerName)}
           </Button>
         )}

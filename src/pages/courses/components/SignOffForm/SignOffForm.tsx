@@ -28,9 +28,7 @@ export const STEP_NUMBER: Record<SignOffStep, number> = { handover: 1, form: 2, 
 export const DONE_TITLE = 'Training signed off'
 /** Step 3's button: the device goes back to the learner, mirroring "Continue as Licence Holder". */
 export const doneAction = (learnerName: string) => `Continue as ${learnerName.split(' ')[0]}`
-export const doneBody = (learnerName: string) =>
-  `${learnerName}'s course is complete and their certificate is unlocked.`
-export const DONE_NOTE = 'Hand the device back to them.'
+export const doneNote = (learnerName: string) => `Hand the device back to ${learnerName}.`
 
 export const FORM_TITLE = 'Your licence details'
 
@@ -82,16 +80,22 @@ export function useSignOffForm(courseId: string) {
       attestation,
       signedAt: today,
     }
-    /* A short wait stands in for the save. */
+    /* A short wait stands in for the save. The record is held, not yet final: the
+       licence holder can still go back from step 3 and correct it. */
     window.setTimeout(() => {
-      saveSignOff(record)
-      drafts.delete(courseId)
       setBusy(false)
       onDone(record)
     }, 900)
   }
 
-  return { learnerName, attestation, values, setValues, touched, setTouched, agreed, setAgreed, busy, today, missing, complete, submit }
+  /** At the hand-back (step 3's Continue, or closing after signing): the record becomes
+   *  final, the course completes and the certificate unlocks. */
+  const finalise = (record: SignOffRecord) => {
+    saveSignOff(record)
+    drafts.delete(courseId)
+  }
+
+  return { learnerName, attestation, values, setValues, touched, setTouched, agreed, setAgreed, busy, today, missing, complete, submit, finalise }
 }
 
 export type SignOffFormState = ReturnType<typeof useSignOffForm>
@@ -132,5 +136,26 @@ export function SignOffFields({ form, autoFocus = true }: { form: SignOffFormSta
         </div>
       </div>
     </div>
+  )
+}
+
+/** Step 3: what was recorded, read only, so the licence holder can check it before
+ *  handing the device back (Back returns to the form to correct it). */
+export function SignOffSummary({ record }: { record: SignOffRecord }) {
+  const rows: [string, string][] = [
+    ['Signed by', `${record.holderName}, personal licence holder`],
+    ['Personal licence number', record.licenceNumber],
+    ['Issuing licensing board', record.issuingBoard],
+    ['Date', formatSignOffDate(record.signedAt)],
+  ]
+  return (
+    <dl className="pcd-signoff-statement pcd-signoff-summary">
+      {rows.map(([label, value]) => (
+        <div key={label} className="pcd-signoff-statement__meta pcd-signoff-summary__row">
+          <dt className="pcd-signoff-statement__label">{label}</dt>
+          <dd className="pcd-signoff-statement__value">{value}</dd>
+        </div>
+      ))}
+    </dl>
   )
 }

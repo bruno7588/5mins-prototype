@@ -6,15 +6,15 @@ import Button from '@/components/Button/Button'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import type { SignOffRecord } from '@/data/trainerSignOff'
 import {
-  DONE_NOTE,
+  doneNote,
   DONE_TITLE,
   FORM_TITLE,
   HANDOVER_BODY,
   HANDOVER_NOTE,
   HANDOVER_TITLE,
   SignOffFields,
+  SignOffSummary,
   doneAction,
-  doneBody,
   useSignOffForm,
   type SignOffStep,
 } from '../SignOffForm/SignOffForm'
@@ -41,7 +41,8 @@ const LOCKED_SUB: Record<SignOffStep, string> = {
  * Web sign-off (DES-335) on the shared full-screen wizard (WizardShell, top stepper,
  * as Assign Courses): hand over (learner), licence details (licence holder), signed
  * off and hand the device back. Mounted only while open, so each opening starts at
- * the handover. Once signed, the earlier steps lock and closing counts as done.
+ * the handover. The record is saved at Sign Off Training; until the device is handed
+ * back, Back returns to the form and re-submitting replaces it. Closing then counts as done.
  */
 function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
   const reduce = useReducedMotion()
@@ -50,8 +51,10 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
   const form = useSignOffForm(courseId)
   const close = () => {
     if (form.busy) return
-    if (record) onSigned(record)
-    else onClose()
+    if (record) {
+      form.finalise(record)
+      onSigned(record)
+    } else onClose()
   }
   const motionProps = { ...ARRIVE(reduce), exit: { opacity: 0 }, transition: arriveTransition(reduce) }
 
@@ -62,8 +65,14 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
     sub: LOCKED_SUB[id],
     Icon: STEP_ICON[id],
     done: i < at,
-    /* Back to the handover from the form only; nothing goes back once signed. */
-    state: id === step ? 'current' : step === 'form' && id === 'handover' ? 'reachable' : 'locked',
+    /* One step back at a time: the form back to the handover, and step 3 back to the
+       form so the licence holder can correct a detail before handing the device back. */
+    state:
+      id === step
+        ? 'current'
+        : (step === 'form' && id === 'handover') || (step === 'done' && id === 'form')
+          ? 'reachable'
+          : 'locked',
   }))
 
   const action =
@@ -104,7 +113,11 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
       onStepSelect={(id) => setStep(id as SignOffStep)}
       action={action}
       backAction={
-        step === 'done' ? undefined : (
+        step === 'done' ? (
+          <Button variant="outlined-2" onClick={() => setStep('form')}>
+            Back
+          </Button>
+        ) : (
           <Button variant="outlined-2" disabled={form.busy} onClick={close}>
             Cancel
           </Button>
@@ -131,9 +144,9 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
             <SuccessTick />
             <div className="pcd-signoff-wizard__headline">
               <h2 className="pcd-signoff-wizard__title">{DONE_TITLE}</h2>
-              <p className="pcd-signoff-wizard__body">{doneBody(form.learnerName)}</p>
-              <p className="pcd-signoff-wizard__body pcd-signoff-wizard__body--muted">{DONE_NOTE}</p>
             </div>
+            {record ? <SignOffSummary record={record} /> : null}
+            <p className="pcd-signoff-wizard__body pcd-signoff-wizard__body--muted">{doneNote(form.learnerName)}</p>
           </motion.div>
         )}
       </AnimatePresence>

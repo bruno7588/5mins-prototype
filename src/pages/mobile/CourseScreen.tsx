@@ -212,7 +212,7 @@ function CourseScreen({ courseId, onBack, onStartSignOff, onGetCertificate }: Co
                         <p className="m-course__signoff-body">
                           {state === 'locked'
                             ? 'Complete the course first. Then your personal licence holder signs off your training here.'
-                            : 'Find your personal licence holder, tap Sign-Off and hand them your device. They fill in their licence details.'}
+                            : 'Find your personal licence holder and hand them your device. They fill in their licence details.'}
                         </p>
                       </>
                     )}

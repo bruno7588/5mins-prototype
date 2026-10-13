@@ -81,3 +81,27 @@
   transform: translateX(-50%);
   color: var(--text-tertiary);
 }
+
+/* Step 3 summary: the statement panel's card, holding the recorded details. */
+.pcd-signoff-summary {
+  width: 100%;
+  margin: 0;
+  text-align: left;
+}
+
+.pcd-signoff-summary__row {
+  padding-left: 0;
+}
+
+.pcd-signoff-summary dd {
+  margin: 0;
+}
+
+/* Summary type: labels Paragraph M regular, values Paragraph M medium. */
+.pcd-signoff-summary .pcd-signoff-statement__label {
+  font-size: 14px;
+}
+
+.pcd-signoff-summary .pcd-signoff-statement__value {
+  font-weight: 500;
+}
