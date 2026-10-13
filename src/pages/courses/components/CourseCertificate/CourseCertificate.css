@@ -10,8 +10,8 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  /* Figma 56 and 48 have no spacing token: built from XXL + M and XXL + S. */
-  gap: calc(var(--space-xxl) + var(--space-m));
+  /* Figma 64 and 48 have no spacing token: built from XXL + L and XXL + S. */
+  gap: calc(var(--space-xxl) + var(--space-l));
   padding: var(--space-xl) calc(var(--space-xxl) + var(--space-s));
   /* The frame sits outside the 900px sheet; its inner corner keeps the 12px radius. */
   border: var(--space-l) solid var(--warning-100);
@@ -77,7 +77,7 @@
 .ccert__info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-s);
 }
 
 .ccert__group {
@@ -110,14 +110,13 @@
 .ccert__fields {
   display: flex;
   align-items: center;
-  gap: var(--space-l);
+  gap: var(--space-xl);
   margin: 0;
   white-space: nowrap;
 }
 
 /* The Figma's course title carries an empty second line: 36px more above the row. */
 .ccert__fields--signoff {
-  gap: var(--space-xl);
   margin-top: calc(var(--space-xl) + var(--space-xs));
 }
 

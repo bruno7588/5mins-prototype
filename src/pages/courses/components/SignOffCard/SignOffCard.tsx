@@ -48,7 +48,7 @@ function SignOffCard({ state, record, onStart }: SignOffCardProps) {
                   Licence {record.licenceNumber} · {record.issuingBoard}
                 </p>
               </div>
-              <Badge type="success" icon label="Signed off" />
+              <Badge type="success" icon label="Signed" />
             </>
           ) : (
             <>
