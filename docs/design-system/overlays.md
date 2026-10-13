@@ -11,7 +11,7 @@ Complete implementation guide for the overlay components in the 5Mins.ai design 
 
 > **Updated 2026-09-29 (Bottom Sheet added, Figma Library `7479:106`):** the mobile Bottom Sheet is a shared component, `BottomSheet`, with a `--scrim` overlay, a long decelerating rise and drag-to-dismiss.
 
-> **Updated 2026-09-29 (aligned to prototype usage):** Dialogs carry a Close (×) button, and close on backdrop click and Escape, like Modals and Side Drawers.
+> **Updated 2026-10-13 (Bruno's ruling, replaces the 2026-09-29 note):** a Dialog has **no** Close (×) button and does **not** close on backdrop click or Escape; the user leaves only through its action buttons. Modals and Side Drawers keep the Close (×), backdrop click and Escape. In code, `ConfirmModal`'s `closable` prop is the switch: off = Dialog, on = Modal.
 
 > **Updated 2026-09-29 (aligned to prototype usage):** Dialog and Side Drawer Cancel buttons are **Outlined-2** (`<Button variant="outlined-2">`), not primary Outlined; the Dialog is **560px** wide (`ConfirmModal.css`), not 345px; the Accessibility table now matches the Dialog close behaviour above.
 
@@ -32,8 +32,8 @@ Complete implementation guide for the overlay components in the 5Mins.ai design 
 - The user needs feedback after an action completes → use a Toast ([doc](alerts-toast.md))
 
 **Do**
-- Build it on `ConfirmModal` ([doc](confirm-modal.md)); it portals to `<body>`, traps focus and closes on Escape and backdrop click.
-- Put a `CloseButton` in the top-right corner.
+- Build it on `ConfirmModal` ([doc](confirm-modal.md)) without `closable`; it portals to `<body>` and traps focus.
+- Let the action buttons be the only way out: no Close (×), no backdrop click, no Escape.
 - End with an Outlined-2 Cancel followed by the commit button, both Medium.
 - Use `semantic="danger"` for destructive commits and `semantic="warning"` for discarding unsaved changes.
 - Write the title as a short sentence-case statement of the action ("Delete report") and let the body name what is affected and the consequence.
@@ -47,7 +47,7 @@ Complete implementation guide for the overlay components in the 5Mins.ai design 
 **Canonical spec:** width 560px (max 100%); padding `var(--space-l)` (24px); radius `var(--radius-sm)` (12px); gap `var(--space-ml)` (20px); surface `var(--page-background)`; scrim `var(--scrim)`; title 20px Bold `var(--text-primary)`; body 16px Regular `var(--text-secondary)`; type icon 56px (72px Iconsax in current call sites). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light not recorded / dark not recorded.
 
 **Prototype:** `src/components/ConfirmModal/ConfirmModal.tsx`
-- `open`, `onClose` (Escape, backdrop, Cancel), `ariaLabel`, `className` for sizing; content is composed from `.confirm-modal-*` classes.
+- `open`, `onClose` (called by your Cancel; Escape and backdrop only when `closable`), `ariaLabel`, `className` for sizing; content is composed from `.confirm-modal-*` classes.
 
 **Production:**
 
@@ -192,8 +192,8 @@ Scrim values (Neutral-900 @ 25% light / 50% dark) are defined in `layout.md` —
 
 ### Close Behavior
 
-- **Dialog:** Close (×) button (`CloseButton`) in the top-right corner, plus the action buttons (confirm/cancel). Clicking the backdrop or pressing Escape also closes it (`ConfirmModal`).
-- **Modal:** Close (×) button in the top-right corner. Clicking backdrop closes the modal.
+- **Dialog:** only the action buttons (confirm/cancel). No Close (×); backdrop click and Escape do nothing (`ConfirmModal` without `closable`).
+- **Modal:** Close (×) button in the top-right corner. Clicking backdrop or pressing Escape closes the modal (`ConfirmModal` with `closable`).
 - **Side Drawer:** Close (×) button in the top-right corner. Clicking backdrop closes the drawer.
 
 ### Close Button (Dialog, Modal & Side Drawer)
@@ -256,7 +256,7 @@ box-shadow: var(--shadow-l);
 
 ## 1. Dialog Component
 
-A compact, centered overlay for critical decisions. Dialogs block the page until the user responds: an action button, the Close (×) button, a backdrop click or Escape.
+A compact, centered overlay for critical decisions. Dialogs block the page until the user responds with one of the action buttons; there is no Close (×), and backdrop click and Escape do not close them.
 
 ### Architecture
 
@@ -633,15 +633,13 @@ The Side Drawer CTA section uses **two buttons** side by side: a filled primary 
 
 ### Dialog
 
-Compose the dialog inside `ConfirmModal` ([doc](confirm-modal.md)) with the shared `CloseButton` and `Button`. `ConfirmModal` supplies the scrim, portal, focus trap, Escape and backdrop close.
+Compose the dialog inside `ConfirmModal` ([doc](confirm-modal.md)) with `Button`, and leave `closable` off. `ConfirmModal` supplies the scrim, portal and focus trap; only the buttons close it.
 
 ```tsx
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import Button from '@/components/Button/Button'
 
 <ConfirmModal open={open} onClose={() => !busy && setOpen(false)} ariaLabel="Delete report">
-  <CloseButton onClick={() => setOpen(false)} />
   <div className="confirm-modal-header confirm-modal-header--center">
     <h2 className="confirm-modal-title">Delete report</h2>
     <p className="confirm-modal-body">This can't be undone. Recipients will stop receiving it.</p>
@@ -812,8 +810,8 @@ export function SideDrawer({
 | Accessible name | `aria-label` via `ConfirmModal`'s `ariaLabel` | `aria-label` via `ariaLabel` on `ConfirmModal`, or `aria-labelledby` pointing to the title | `aria-labelledby` pointing to the title |
 | Focus trap | ✓ (mandatory) | ✓ (mandatory) | ✓ (mandatory) |
 | Return focus on close | ✓ | ✓ | ✓ |
-| Escape key closes | ✓ | ✓ | ✓ |
-| Backdrop click closes | ✓ | ✓ | ✓ |
+| Escape key closes | ✗ (buttons only) | ✓ | ✓ |
+| Backdrop click closes | ✗ (buttons only) | ✓ | ✓ |
 
 ### Focus Management
 
@@ -902,9 +900,9 @@ See the `ConfirmModal` sample under React TypeScript Implementation > Dialog abo
 | **Padding** | 24px uniform | 24px uniform | 20px vert / 24px horiz |
 | **Border radius** | 12px | 12px | None (flush) |
 | **Shadow** | Shadow L | Shadow L | None |
-| **Close button** | ✓ top-right | ✓ top-right | ✓ top-right |
-| **Backdrop click** | Closes | Closes | Closes |
-| **Escape key** | Closes | Closes | Closes |
+| **Close button** | None | ✓ top-right | ✓ top-right |
+| **Backdrop click** | Does nothing | Closes | Closes |
+| **Escape key** | Does nothing | Closes | Closes |
 | **Header style** | Centered, type icon | Left-aligned, section header | Left-aligned, section header |
 | **CTA buttons** | 2 (type-colored) | 1 (primary centered) | 2 (primary, sticky footer) |
 | **Scrollable content** | No | Optional | Yes (flex body) |

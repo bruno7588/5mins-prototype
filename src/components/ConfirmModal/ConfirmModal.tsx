@@ -11,14 +11,15 @@ interface ConfirmModalProps {
   className?: string
   /** Accessible name for the dialog (falls back to a generic one). */
   ariaLabel?: string
-  /** Shows the close X in the top-right corner. Off by default: a confirm dialog
-      has no close by rule (overlays.md); a modal to read or fill in turns it on. */
+  /** Makes it a modal: the close X in the top-right corner, and backdrop click and
+      Escape close it. Off by default: a dialog has no close X and leaves only through
+      its buttons (overlays.md); a modal to read or fill in turns it on. */
   closable?: boolean
 }
 
 function ConfirmModal({ open, onClose, children, className, ariaLabel, closable = false }: ConfirmModalProps) {
   const panelRef = useRef<HTMLDivElement>(null)
-  useOverlayA11y(panelRef, open, { onEscape: onClose })
+  useOverlayA11y(panelRef, open, { onEscape: closable ? onClose : undefined })
 
   if (!open) return null
 
@@ -27,7 +28,7 @@ function ConfirmModal({ open, onClose, children, className, ariaLabel, closable 
      that stacking context, and the topnav at 100 would paint over its top edge
      however high this overlay's z-index went. */
   return createPortal(
-    <div className="confirm-modal-overlay" onMouseDown={onClose}>
+    <div className="confirm-modal-overlay" onMouseDown={closable ? onClose : undefined}>
       <div
         ref={panelRef}
         className={`confirm-modal${className ? ` ${className}` : ''}`}
