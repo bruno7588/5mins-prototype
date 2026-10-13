@@ -103,7 +103,7 @@ function DemoSwitcher() {
         </div>
       )}
 
-      <div className="demosw-bar" role="toolbar" aria-label="Prototype demos">
+      <div className={`demosw-bar${menuOpen ? ' demosw-bar--expanded' : ''}`} role="toolbar" aria-label="Prototype demos">
         <button
           type="button"
           className={`demosw-seg${!onMobile ? ' demosw-seg--active' : ''}`}
