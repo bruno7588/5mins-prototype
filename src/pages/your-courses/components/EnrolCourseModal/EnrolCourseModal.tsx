@@ -177,6 +177,7 @@ function EnrolCourseModal({ open, onClose, onEnrol, courseTitle = 'This course' 
     <>
       <WizardShell
         open={open}
+        className="ecm-wizard"
         title="Enrol people"
         closeLabel="Exit"
         onClose={requestClose}

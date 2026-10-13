@@ -116,6 +116,8 @@
 .alert.ecm-review-summary {
   width: auto;
   padding: var(--space-s) var(--space-sm);
+  /* No callout fill here: the bullets sit on the page ground. */
+  background: none;
 }
 
 .ecm-review-title {
@@ -127,4 +129,24 @@
   color: var(--text-primary);
 }
 
+/* The whole Enrol People page (header, steps, footer) is 900px wide, as the
+   sign-off: the shell and footer pad their content by --space-xxl, so each caps
+   at 900px plus that padding. Scoped here so Assign Courses keeps its width. */
+.ecm-wizard .wzs-shell,
+.ecm-wizard .wzs-footer-inner {
+  max-width: calc(900px + 2 * var(--space-xxl));
+}
 
+/* At 900px the stepper squeezes the title onto two lines; keep it on one. */
+.ecm-wizard .wzs-title {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* When the stepper drops below the title (WizardShell, under 960px), it stays
+   centred on the page like the step content, rather than hugging the left. */
+@media (max-width: 960px) {
+  .ecm-wizard .wzs-header--top .wzs-stepper {
+    justify-self: center;
+  }
+}
