@@ -93,7 +93,7 @@
 .tbl-scroll--scrolled .tbl-head-cell.is-sticky-last {
   /* Rightward variant of Shadow L (layout.md §6). The clip keeps it off the
      checkbox and inside the row's height, so only the right edge casts. */
-  box-shadow: 4px 0 24px 0 rgba(32, 34, 42, 0.12);
+  box-shadow: var(--shadow-sticky);
   clip-path: inset(0 -32px 0 0);
 }
 

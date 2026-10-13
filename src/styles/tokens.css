@@ -207,6 +207,8 @@
   --shadow-l: -4px 0 24px 0 rgba(32, 34, 42, 0.12); /* Figma effect style Shadow L: offset -4, 0, blur 24 */
   --shadow-xl: 0 4px 32px 0 rgba(32, 34, 42, 0.24);
   --shadow-panel: -24px 0px 24px 0px rgba(32, 34, 42, 0.04);
+  /* A table's frozen first column once scrolled: Shadow L cast rightward. */
+  --shadow-sticky: 4px 0 24px 0 rgba(32, 34, 42, 0.12);
   /* Lift for a filled card sitting on the page. Light mode needs it — --cards-background
      is one step off --page-background and the fill alone barely separates. Dark mode
      doesn't: there the same two tokens are a visible step apart, and a shadow over a dark
@@ -226,6 +228,8 @@
   --page-background-hover: var(--neutral-700);
   --cards-background: var(--neutral-700);
   --shadow-card: none;
+  /* Neutral-800 on the Neutral-800 page casts nothing; black reads on dark. */
+  --shadow-sticky: 4px 0 24px 0 rgba(0, 0, 0, 0.48);
   --cards-background-hover: var(--neutral-600);
   --input-background: rgba(69, 76, 94, 0.16); /* Neutral-500 @ 16% */
   --input-background-elevated: rgba(69, 76, 94, 0.24); /* Neutral-500 @ 24% */
