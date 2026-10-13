@@ -320,7 +320,7 @@ function ProgramAdminDetails() {
               <More size={24} color="var(--text-secondary)" variant="Linear" />
             </button>
             {openMenuId === 'header-more' && (
-              <div className="pad-menu__list" role="menu">
+              <div className="pad-menu__list pad-menu__list--fit" role="menu">
                 <button
                   type="button"
                   className="pad-menu__item"
@@ -635,8 +635,12 @@ function ProgramAdminDetails() {
       </ConfirmModal>
 
       {/* Delete program — Figma 2469:52244 */}
-      <ConfirmModal open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)}>
-        <div className="confirm-modal-header">
+      <ConfirmModal open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)} ariaLabel="Delete program">
+        {/* DS Dialog (Error type), as the programs list's delete: centred header with the 72px danger icon. */}
+        <div className="confirm-modal-header confirm-modal-header--center">
+          <div className="confirm-modal-icon">
+            <Danger size={72} color="var(--danger-500)" variant="Linear" />
+          </div>
           <h2 className="confirm-modal-title">Delete program</h2>
           <p className="confirm-modal-body">
             Delete <strong>{title}</strong>? This removes it from the list and the learner experience. This

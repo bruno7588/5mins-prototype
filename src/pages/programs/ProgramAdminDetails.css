@@ -604,3 +604,9 @@
   color: var(--text-secondary);
   line-height: 1.5;
 }
+
+/* Header More menu (Edit, Delete): hugs its items rather than the 180px minimum.
+   Note: row-actions-menu.md specifies a 240px minimum; this menu departs from it. */
+.pad-menu__list--fit {
+  min-width: 0;
+}
