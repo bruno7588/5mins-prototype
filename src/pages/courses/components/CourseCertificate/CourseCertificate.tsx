@@ -64,7 +64,7 @@ function CourseCertificate({ companyName, learnerName, courseTitle, issuedOn, si
         {signOff ? (
           <dl className="ccert__fields ccert__fields--signoff" aria-label="Training sign-off">
             <Field label="Signed by personal licence holder" value={signOff.holderName} />
-            <Field label="Licence nº" value={signOff.licenceNumber} />
+            <Field label="Licence number" value={signOff.licenceNumber} />
             <Field label="Issuing licensing board" value={signOff.issuingBoard} />
             <Field label="Date of issue" value={formatSignOffDate(issuedOn)} />
           </dl>

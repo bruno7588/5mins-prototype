@@ -50,21 +50,18 @@
   gap: var(--space-l);
 }
 
-/* Tenant logo, 105 x 72, cropped from its PNG as in the Figma. */
+/* Tenant logo: any uploaded logo fits a 72px-high box, its width following the
+   logo's proportions. */
 .ccert__company-logo {
-  position: relative;
-  width: 105px;
+  display: flex;
   height: 72px;
-  overflow: hidden;
 }
 
 .ccert__company-logo img {
-  position: absolute;
-  top: -25%;
-  left: -18.57%;
-  width: 135.26%;
-  height: 150%;
-  max-width: none;
+  height: 100%;
+  width: auto;
+  max-width: 320px;
+  object-fit: contain;
 }
 
 .ccert__kicker {
@@ -115,9 +112,17 @@
   white-space: nowrap;
 }
 
-/* The Figma's course title carries an empty second line: 36px more above the row. */
+/* The Figma's course title carries an empty second line: 36px more above the row.
+   Long values wrap onto a second line rather than being cut off. */
 .ccert__fields--signoff {
+  align-items: flex-start;
   margin-top: calc(var(--space-xl) + var(--space-xs));
+  white-space: normal;
+}
+
+.ccert__fields--signoff .ccert__field {
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .ccert__field {
