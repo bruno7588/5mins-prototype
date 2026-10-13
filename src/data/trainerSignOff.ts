@@ -109,15 +109,15 @@ const HOLDERS = [
 const SEEDS: Seed[] = [
   ['Sophia Carter', 'Bar, Glasgow Central', 'signed', '2026-09-02', 0, '2026-09-02'],
   ['Oliver Bennett', 'Bar, Glasgow Central', 'signed', '2026-09-03', 0, '2026-09-04'],
+  ['Charlotte Hughes', 'Bar, Inverness', 'in-progress'],
   ['Emma Thompson', 'Restaurant, Edinburgh', 'signed', '2026-09-05', 1, '2026-09-05'],
+  ['Noah Davis', 'Bar, Aberdeen', 'in-progress'],
   ['Liam Johnson', 'Restaurant, Edinburgh', 'awaiting', '2026-10-08'],
   ['Ava Martinez', 'Room Service, Edinburgh', 'signed', '2026-09-09', 1, '2026-09-10'],
-  ['Noah Davis', 'Bar, Aberdeen', 'in-progress'],
   ['Isabella Lewis', 'Bar, Aberdeen', 'signed', '2026-09-11', 2, '2026-09-11'],
   ['James Walker', 'Banqueting, Aberdeen', 'awaiting', '2026-10-09'],
   ['Mia Robinson', 'Banqueting, Aberdeen', 'signed', '2026-09-14', 2, '2026-09-15'],
   ['Lucas Wright', 'Bar, Inverness', 'signed', '2026-09-16', 3, '2026-09-16'],
-  ['Charlotte Hughes', 'Bar, Inverness', 'in-progress'],
   ['Ethan Clarke', 'Restaurant, Inverness', 'signed', '2026-09-18', 3, '2026-09-19'],
   ['Amelia Scott', 'Bar, Glasgow Central', 'awaiting', '2026-10-10'],
   ['Harris Campbell', 'Bar, Glasgow Central', 'signed', '2026-09-22', 0, '2026-09-22'],
@@ -188,8 +188,8 @@ export const SIGN_OFF_DEMO_COURSE = { id: 'p7c1', title: 'Licensing (Scotland) S
 
 export const SIGN_OFF_STATUS_LABEL: Record<SignOffStatus, string> = {
   signed: 'Signed off',
-  awaiting: 'Awaiting sign-off',
-  'in-progress': 'Course in progress',
+  awaiting: 'Needs sign-off',
+  'in-progress': 'Course not completed',
 }
 
 const csvCell = (v: string | null | undefined) => {

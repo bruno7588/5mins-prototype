@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   ArrowDown2,
-  Briefcase,
   CalendarAdd,
   CalendarEdit,
   Clock,
@@ -19,6 +18,7 @@ import {
   UserMinus,
 } from 'iconsax-react'
 import Table, { type Column } from '@/components/Table/Table'
+import CourseIcon from '@/components/icons/CourseIcon'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Search from '../../components/Search/Search'
 import Tooltip from '../../components/Tooltip/Tooltip'
@@ -524,7 +524,7 @@ function CourseDetails() {
           <div className="cd-header-top">
             <div className="cd-metadata">
               <span className="cd-meta-item">
-                <Briefcase size={16} color="var(--text-secondary)" variant="Linear" />
+                <CourseIcon size={16} color="var(--text-secondary)" />
                 Course
               </span>
               <span className="cd-meta-item">

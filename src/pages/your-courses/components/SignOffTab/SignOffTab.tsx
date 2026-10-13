@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Danger } from 'iconsax-react'
 import { Table, type Column } from '@/components/Table/Table'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
@@ -8,7 +9,6 @@ import CsvIcon from '@/components/icons/CsvIcon'
 import {
   SIGN_OFF_DEMO_COURSE,
   SIGN_OFF_STATUS_LABEL,
-  formatSignOffDate,
   getSignOffRows,
   signOffCsv,
   useSignOff,
@@ -27,10 +27,23 @@ const STATUS_BADGE: Record<SignOffStatus, 'success' | 'warning' | 'in-progress'>
   'in-progress': 'in-progress',
 }
 
-/** Status order for the list: who still needs a licence holder comes first. */
-const STATUS_ORDER: Record<SignOffStatus, number> = { awaiting: 0, 'in-progress': 1, signed: 2 }
+/** Status order for the list: who still needs a licence holder comes first; signed
+ *  off and not completed follow mixed, in the order learners were enrolled. */
+const STATUS_ORDER: Record<SignOffStatus, number> = { awaiting: 0, signed: 1, 'in-progress': 1 }
 
 const empty = <span className="cd-signoff-muted">-</span>
+
+/** Table date cell per table.md: "Oct 8," over the year in --text-tertiary. */
+function DateCell({ value }: { value?: string | null }) {
+  if (!value) return empty
+  const d = new Date(value.length === 10 ? `${value}T00:00:00` : value)
+  return (
+    <span className="tbl-date">
+      <span className="day">{d.toLocaleString('en-US', { month: 'short' })} {d.getDate()},</span>
+      <span className="year">{d.getFullYear()}</span>
+    </span>
+  )
+}
 
 /**
  * Admin Sign-off tab on the course details page (DES-335, D1/D2): each learner's
@@ -57,9 +70,6 @@ function SignOffTab() {
   const from = safePage * PAGE_SIZE
   const pageRows = rows.slice(from, from + PAGE_SIZE)
 
-  const counts = (status: SignOffStatus) => allRows.filter((r) => r.status === status).length
-  const summary = `${counts('awaiting')} awaiting sign-off · ${counts('in-progress')} course in progress · ${counts('signed')} signed off`
-
   /* Always the whole course: search only finds people on screen, never trims the record. */
   const downloadCsv = () => {
     const url = URL.createObjectURL(new Blob([signOffCsv(allRows)], { type: 'text/csv;charset=utf-8' }))
@@ -85,13 +95,24 @@ function SignOffTab() {
     {
       key: 'status',
       header: 'Status',
-      width: '0 0 184px',
-      render: (r) => <Badge type={STATUS_BADGE[r.status]} icon label={SIGN_OFF_STATUS_LABEL[r.status]} />,
+      /* Fits the widest badge, "Course not completed" with no icon, plus the cell padding. */
+      width: '0 0 208px',
+      render: (r) => (
+        <Badge
+          type={STATUS_BADGE[r.status]}
+          // Course not completed has no icon, to keep the column narrow; Needs sign-off
+          // takes Danger; Signed off keeps the badge default tick.
+          icon={r.status !== 'in-progress'}
+          customIcon={r.status === 'awaiting' ? <Danger size={16} color="currentColor" variant="Linear" /> : undefined}
+          label={SIGN_OFF_STATUS_LABEL[r.status]}
+        />
+      ),
     },
     {
       key: 'holder',
       header: 'Licence holder',
       width: '1 1 140px',
+      cellClassName: 'cd-signoff-wrap',
       render: (r) => r.holderName ?? empty,
     },
     {
@@ -104,19 +125,20 @@ function SignOffTab() {
       key: 'board',
       header: 'Issuing board',
       width: '1 1 200px',
+      cellClassName: 'cd-signoff-wrap',
       render: (r) => r.issuingBoard ?? empty,
     },
     {
       key: 'completed',
       header: 'Completed on',
       width: '0 0 112px',
-      render: (r) => (r.completedOn ? formatSignOffDate(r.completedOn) : empty),
+      render: (r) => <DateCell value={r.completedOn} />,
     },
     {
       key: 'signed',
       header: 'Signed on',
       width: '0 0 112px',
-      render: (r) => (r.signedOn ? formatSignOffDate(r.signedOn) : empty),
+      render: (r) => <DateCell value={r.signedOn} />,
     },
   ]
 
@@ -133,7 +155,6 @@ function SignOffTab() {
   return (
     <section className="cd-signoff">
       <div className="cd-signoff-actions">
-        <span className="cd-select-count cd-signoff-summary">{summary}</span>
         <Search
           size="M"
           value={search}

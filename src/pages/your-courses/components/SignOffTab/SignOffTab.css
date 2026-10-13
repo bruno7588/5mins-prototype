@@ -9,7 +9,7 @@
 .cd-signoff-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: var(--space-m);
 }
 
@@ -22,7 +22,8 @@
   color: var(--text-tertiary);
 }
 
-/* Status count, left of the search (styled as the Enrolments selection count). */
-.cd-signoff-summary {
-  margin-right: auto;
+/* Long licence holder or board names wrap onto a second line (the 58px row
+   max height fits two) instead of being cut off with an ellipsis. */
+.tbl-cell.cd-signoff-wrap {
+  white-space: normal;
 }
