@@ -1,25 +1,25 @@
 /* Headings — Poppins Bold 700 */
-h1, .h1 { font-size: 32px; font-weight: 700; line-height: 1.5; color: var(--text-primary); }
-h2, .h2 { font-size: 24px; font-weight: 700; line-height: 1.5; color: var(--text-primary); }
-h3, .h3 { font-size: 20px; font-weight: 700; line-height: 1.5; color: var(--text-primary); }
-h4, .h4 { font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text-primary); }
-h5, .h5 { font-size: 14px; font-weight: 700; line-height: 1.5; color: var(--text-primary); }
-h6, .h6 { font-size: 12px; font-weight: 700; line-height: 1.2; color: var(--text-primary); }
+h1, .h1 { font-size: var(--font-size-h1); font-weight: 700; line-height: 1.5; color: var(--text-primary); }
+h2, .h2 { font-size: var(--font-size-h2); font-weight: 700; line-height: 1.5; color: var(--text-primary); }
+h3, .h3 { font-size: var(--font-size-h3); font-weight: 700; line-height: 1.5; color: var(--text-primary); }
+h4, .h4 { font-size: var(--font-size-h4); font-weight: 700; line-height: 1.5; color: var(--text-primary); }
+h5, .h5 { font-size: var(--font-size-h5); font-weight: 700; line-height: 1.5; color: var(--text-primary); }
+h6, .h6 { font-size: var(--font-size-h6); font-weight: 700; line-height: 1.2; color: var(--text-primary); }
 
 /* Paragraph regular (400) */
-.text-lg { font-size: 16px; font-weight: 400; line-height: 1.5; }
-.text-md { font-size: 14px; font-weight: 400; line-height: 1.5; }
-.text-sm { font-size: 12px; font-weight: 400; line-height: 1.2; }
+.text-lg { font-size: var(--font-size-lg); font-weight: 400; line-height: 1.5; }
+.text-md { font-size: var(--font-size-md); font-weight: 400; line-height: 1.5; }
+.text-sm { font-size: var(--font-size-sm); font-weight: 400; line-height: 1.2; }
 
 /* Paragraph medium (500) — subtle emphasis, badge/chip labels */
-.text-lg-medium { font-size: 16px; font-weight: 500; line-height: 1.5; }
-.text-md-medium { font-size: 14px; font-weight: 500; line-height: 1.5; }
-.text-sm-medium { font-size: 12px; font-weight: 500; line-height: 1.2; }
+.text-lg-medium { font-size: var(--font-size-lg); font-weight: 500; line-height: 1.5; }
+.text-md-medium { font-size: var(--font-size-md); font-weight: 500; line-height: 1.5; }
+.text-sm-medium { font-size: var(--font-size-sm); font-weight: 500; line-height: 1.2; }
 
 /* Paragraph semibold (600) — form-field labels use .text-md-semibold */
-.text-lg-semibold { font-size: 16px; font-weight: 600; line-height: 1.5; }
-.text-md-semibold { font-size: 14px; font-weight: 600; line-height: 1.5; }
-.text-sm-semibold { font-size: 12px; font-weight: 600; line-height: 1.2; }
+.text-lg-semibold { font-size: var(--font-size-lg); font-weight: 600; line-height: 1.5; }
+.text-md-semibold { font-size: var(--font-size-md); font-weight: 600; line-height: 1.5; }
+.text-sm-semibold { font-size: var(--font-size-sm); font-weight: 600; line-height: 1.2; }
 
 /* Text colors */
 .text-primary   { color: var(--text-primary); }

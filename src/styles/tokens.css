@@ -115,7 +115,7 @@
   --cards-background-hover: var(--neutral-50);
   --input-background: rgba(191, 194, 204, 0.16); /* Neutral-200 @ 16% */
   /* Same fill, one step up, for a field sitting on a card rather than on the page. */
-  --input-background-elevated: rgba(191, 194, 204, 0.24); /* Neutral-200 @ 24% */
+  --input-background-elevated: rgba(191, 194, 204, 0.32); /* Neutral-200 @ 32% */
   --input-background-hover: var(--neutral-100);
   /* Two weights, chosen by what the border sits ON, not by what it draws:
      --border on the page ground, --border-elevated on an elevated surface
@@ -196,6 +196,18 @@
   --radius-l: 1.5rem;    /* 24px */
   --radius-full: 9999px;
 
+  /* Font sizes - type scale from typography.css (H1-H6, Paragraph L/M/S) */
+  --font-size-h1: 32px;
+  --font-size-h2: 24px;
+  --font-size-h3: 20px;
+  --font-size-h4: 16px;
+  --font-size-h5: 14px;
+  --font-size-h6: 12px;
+  --font-size-lg: 16px;
+  --font-size-md: 14px;
+  --font-size-sm: 12px;
+  --font-size-button: 14px; /* .btn-* label */
+
   /* Icon Sizes */
   --icon-size-sm: 16px;
   --icon-size-md: 20px;
@@ -232,7 +244,7 @@
   --shadow-sticky: 4px 0 24px 0 rgba(0, 0, 0, 0.48);
   --cards-background-hover: var(--neutral-600);
   --input-background: rgba(69, 76, 94, 0.16); /* Neutral-500 @ 16% */
-  --input-background-elevated: rgba(69, 76, 94, 0.24); /* Neutral-500 @ 24% */
+  --input-background-elevated: rgba(69, 76, 94, 0.32); /* Neutral-500 @ 32% */
   --input-background-hover: var(--neutral-700);
   /* Figma variables (Bruno, 2026-09-29): Border is Neutral-700, Border-elevated
      Neutral-600. Border now matches --cards-background in dark mode, so use
@@ -260,7 +272,7 @@
   /* Buttons (buttons.md) — primary lightens on dark hover; the semantic families all darken */
   --primary-button-background: var(--primary-500);
   --primary-button-background-hover: var(--primary-400);
-  --primary-button-background-pressed: var(--primary-700);
+  --primary-button-background-pressed: var(--primary-600);
   --button-background-disabled: var(--neutral-400);
 
   /* Selection amber flips 600 → 500 in dark (colors.md / chips-switcher spec) */
@@ -296,7 +308,7 @@
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);
   color: var(--text-button-foreground);
-  font-size: 14px;
+  font-size: var(--font-size-button);
   font-weight: 700;
   line-height: 1.5;
   cursor: pointer;
@@ -318,7 +330,7 @@
   background: var(--button-outline-fill);
   border: 1px solid var(--text-button-outlined);
   color: var(--text-button-outlined);
-  font-size: 14px;
+  font-size: var(--font-size-button);
   font-weight: 700;
   line-height: 1.5;
   cursor: pointer;
@@ -353,7 +365,7 @@
   border-radius: var(--radius-sm);
   background: var(--button-success-background);
   color: var(--neutral-25);
-  font-size: 14px;
+  font-size: var(--font-size-button);
   font-weight: 700;
   line-height: 1.5;
   cursor: pointer;
@@ -374,7 +386,7 @@
   border-radius: var(--radius-sm);
   background: var(--danger-500);
   color: var(--neutral-25);
-  font-size: 14px;
+  font-size: var(--font-size-button);
   font-weight: 700;
   line-height: 1.5;
   cursor: pointer;
