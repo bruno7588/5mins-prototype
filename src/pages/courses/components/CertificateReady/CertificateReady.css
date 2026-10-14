@@ -59,9 +59,30 @@
   z-index: 30;
 }
 
+/* App close (Figma 17684:28144): 40px, 32px from the top, 20px from the right. */
 .pcd-cert-ready--contained .lsm-close {
   top: var(--space-xl);
-  right: var(--space-m);
+  right: var(--space-ml);
+  width: 40px;
+  height: 40px;
+}
+
+/* App layout (Figma 17683:28101): medallion 16px above the title, 24px to the
+   message, whose three lines sit 8px apart in a 311px column. */
+.pcd-cert-ready--contained .lsm-content {
+  gap: var(--space-m);
+}
+
+.pcd-cert-ready--contained .pcd-cert-ready__medallion {
+  margin-bottom: 0;
+}
+
+.pcd-cert-ready--contained .lsm-sub {
+  max-width: 311px;
+}
+
+.pcd-cert-ready--contained .pcd-cert-ready__course {
+  margin-block: var(--space-s);
 }
 
 /* App screens pin the main button full width in a footer (as the sign-off and

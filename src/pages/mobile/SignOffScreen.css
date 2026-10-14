@@ -19,16 +19,16 @@
   flex-direction: column;
 }
 
+/* Each step starts 24px under the dots (Figma 17679:29006, 17680:29018, 17681:29110).
+   Licence details: 16px from the title to the fields. */
 .m-signoff__step {
   display: flex;
   flex-direction: column;
-  gap: var(--space-ml);
+  gap: var(--space-m);
 }
 
 .m-signoff__step--center {
   align-items: center;
-  gap: var(--space-m);
-  padding-top: var(--space-xxl);
   text-align: center;
 }
 
@@ -38,9 +38,10 @@
   gap: var(--space-xs);
 }
 
+/* H4 on every step. */
 .m-signoff__title {
   margin: 0;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -48,7 +49,7 @@
 
 .m-signoff__text {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -87,11 +88,19 @@
   text-align: center;
 }
 
-/* Step 3 sits in the vertical middle of the screen (the body is a flex column). */
-.m-signoff__step--middle {
-  margin-block: auto;
+/* Signed off: tick and title 16px apart, then 24px to the summary and to the note. */
+.m-signoff__step--done {
+  gap: var(--space-l);
+}
+
+.m-signoff__success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-m);
 }
 
 .m-signoff__text--muted {
+  font-size: 16px;
   color: var(--text-tertiary);
 }

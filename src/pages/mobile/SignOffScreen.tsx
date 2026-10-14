@@ -89,13 +89,15 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
           ) : step === 'done' ? (
             <motion.div
               key="done"
-              className="m-signoff__step m-signoff__step--center m-signoff__step--middle"
+              className="m-signoff__step m-signoff__step--center m-signoff__step--done"
               {...ARRIVE(reduce)}
               exit={{ opacity: 0 }}
               transition={arriveTransition(reduce)}
             >
-              <SuccessTick />
-              <h2 className="m-signoff__title">{DONE_TITLE}</h2>
+              <div className="m-signoff__success">
+                <SuccessTick />
+                <h2 className="m-signoff__title">{DONE_TITLE}</h2>
+              </div>
               {record ? <SignOffSummary record={record} /> : null}
               <p className="m-signoff__text m-signoff__text--muted">{doneNote(form.learnerName)}</p>
             </motion.div>

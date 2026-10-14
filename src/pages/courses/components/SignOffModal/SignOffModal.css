@@ -85,29 +85,17 @@
   padding-top: var(--space-l);
 }
 
+.pcd-signoff-wizard__step--done .pcd-signoff-wizard__title {
+  font-size: 16px;
+}
+
 .pcd-signoff-wizard__step--done .pcd-signoff-summary {
   margin-top: var(--space-s);
-  padding: var(--space-m);
 }
 
 .pcd-signoff-wizard__step--done .pcd-signoff-wizard__body {
   margin-top: var(--space-s);
   font-size: 14px;
-}
-
-/* Statement panel on the web form (Figma 17663:24187): 12px padding, box 16px in
-   from the edge, text 4px after the 32px hit area, 6px down to the date. */
-.pcd-signoff-wizard .pcd-signoff-form > .pcd-signoff-statement {
-  padding: var(--space-sm);
-  gap: var(--space-xss);
-}
-
-.pcd-signoff-wizard .pcd-signoff-statement__check {
-  gap: var(--space-xs);
-}
-
-.pcd-signoff-wizard .pcd-signoff-statement__check .checkbox {
-  margin-left: calc(var(--space-xs) * -1);
 }
 
 /* The whole sign-off page (header, steps, footer) is 900px wide: the shell and the

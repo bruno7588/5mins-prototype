@@ -13,13 +13,14 @@
   margin-top: var(--space-s);
 }
 
-/* Grey statement panel from the Figma "Sign course" modal (16575:141375): the
-   filled field surface, holding the declaration and the date (D13). */
+/* Grey statement panel (D13), web Figma 17663:24187 and app 17689:28430: the card
+   surface holding the declaration and the date. 12px padding, box 16px in from the
+   edge, text 4px after the 32px hit area, 6px down to the date. */
 .pcd-signoff-statement {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
-  padding: var(--space-ml);
+  gap: var(--space-xss);
+  padding: var(--space-sm);
   background: var(--cards-background);
   border-radius: var(--radius-sm);
   /* Card lift in light mode; none in dark (token is mode-aware). */
@@ -29,7 +30,7 @@
 .pcd-signoff-statement__check {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-s);
+  gap: var(--space-xs);
   cursor: pointer;
 }
 
@@ -38,7 +39,7 @@
    is only as tall as the text (keeping the gap to the date true). */
 .pcd-signoff-statement__check .checkbox {
   flex-shrink: 0;
-  margin: calc(var(--space-xs) * -1) 0 calc(var(--space-s) * -1) calc(var(--space-s) * -1);
+  margin: calc(var(--space-xs) * -1) 0 calc(var(--space-s) * -1) calc(var(--space-xs) * -1);
 }
 
 /* Paragraph L regular: the .text-lg type class sets size, weight and line height. */
@@ -88,10 +89,13 @@
   color: var(--text-tertiary);
 }
 
-/* Step 3 summary: the statement panel's card, holding the recorded details. */
+/* Step 3 summary: the statement panel's card, holding the recorded details
+   (16px padding, 8px between rows). */
 .pcd-signoff-summary {
   width: 100%;
   margin: 0;
+  gap: var(--space-s);
+  padding: var(--space-m);
   text-align: left;
 }
 
