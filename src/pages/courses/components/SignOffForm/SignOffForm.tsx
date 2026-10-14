@@ -20,15 +20,22 @@ export const HANDOVER_TITLE = 'Hand this device to your personal licence holder'
 export const HANDOVER_BODY = "They'll confirm the training and sign using their licence number and issuing licensing board."
 export const HANDOVER_NOTE = 'Only the licence holder should continue.'
 
-/* Three steps: hand over (learner), licence details (licence holder), hand back. */
-export type SignOffStep = 'handover' | 'form' | 'done'
+/* Four steps: hand over (learner), licence details and review (licence holder; the
+   review's Sign-Off saves), then hand back (learner). */
+export type SignOffStep = 'handover' | 'form' | 'done' | 'handback'
 /** Drives the progress dots (web and app). */
-export const STEP_NUMBER: Record<SignOffStep, number> = { handover: 1, form: 2, done: 3 }
+export const STEP_NUMBER: Record<SignOffStep, number> = { handover: 1, form: 2, done: 3, handback: 4 }
 
-export const DONE_TITLE = 'Training signed off'
-/** Step 3's button: the device goes back to the learner, mirroring "Continue as Licence Holder". */
-export const doneAction = (learnerName: string) => `Agree & Continue as ${learnerName.split(' ')[0]}`
-export const doneNote = (learnerName: string) => `Hand the device back to ${learnerName}.`
+/* Step 3 is a review: nothing is final until its Sign-Off button, so no tick or "signed off" before then. */
+/** Review title, saying why the details matter. */
+export const doneTitle = (learnerName: string) => `Check your details - these will appear on ${learnerName.split(' ')[0]}'s certificate`
+export const DONE_ACTION = 'Sign-Off'
+
+/* Step 4, after the save: the tick is true now. The learner takes the device back with
+   their own button, mirroring "Continue as Licence Holder". */
+export const HANDBACK_TITLE = 'Training signed off'
+export const handbackBody = (learnerName: string) => `Hand the device back to ${learnerName}.`
+export const handbackAction = (learnerName: string) => `Continue as ${learnerName.split(' ')[0]}`
 
 export const FORM_TITLE = 'Your licence details'
 
@@ -61,11 +68,12 @@ export function useSignOffForm(courseId: string) {
     drafts.set(courseId, { values, agreed })
   }, [courseId, values, agreed])
 
-  const missing = [
-    ...FIELDS.filter((f) => !values[f.key].trim()).map((f) => f.missing),
-    ...(agreed ? [] : ['the confirmation tick']),
-  ]
+  /* Step 2 needs the three fields; the confirmation tick is on step 3, next to Sign-Off. */
+  const missing = FIELDS.filter((f) => !values[f.key].trim()).map((f) => f.missing)
   const complete = missing.length === 0
+  /* Why Save & Review is disabled, naming only the fields still empty (web tooltip). */
+  const listed = missing.length > 1 ? `${missing.slice(0, -1).join(', ')} and ${missing[missing.length - 1]}` : missing[0]
+  const missingHint = listed ? `Add the ${listed}.` : ''
 
   const submit = (onDone: (record: SignOffRecord) => void) => {
     if (!complete || busy) return
@@ -95,14 +103,14 @@ export function useSignOffForm(courseId: string) {
     drafts.delete(courseId)
   }
 
-  return { learnerName, attestation, values, setValues, touched, setTouched, agreed, setAgreed, busy, today, missing, complete, submit, finalise }
+  return { learnerName, attestation, values, setValues, touched, setTouched, agreed, setAgreed, busy, today, missing, missingHint, complete, submit, finalise }
 }
 
 export type SignOffFormState = ReturnType<typeof useSignOffForm>
 
-/** The three fields and the statement panel. */
+/** Step 2: the three licence fields. */
 export function SignOffFields({ form, autoFocus = true }: { form: SignOffFormState; autoFocus?: boolean }) {
-  const { values, setValues, touched, setTouched, agreed, setAgreed, attestation, today, busy } = form
+  const { values, setValues, touched, setTouched, busy } = form
 
   return (
     <div className="pcd-signoff-form">
@@ -123,24 +131,27 @@ export function SignOffFields({ form, autoFocus = true }: { form: SignOffFormSta
           />
         )
       })}
-
-      {/* The grey statement panel from the Figma "Sign course" modal (D13). */}
-      <div className="pcd-signoff-statement">
-        <label className="pcd-signoff-statement__check">
-          <Checkbox checked={agreed} disabled={busy} onChange={() => setAgreed(!agreed)} />
-          <span className="text-lg pcd-signoff-statement__text">{attestation}</span>
-        </label>
-        <div className="pcd-signoff-statement__meta">
-          <span className="pcd-signoff-statement__label">Date</span>
-          <span className="pcd-signoff-statement__value">{formatSignOffDate(today)}</span>
-        </div>
-      </div>
     </div>
   )
 }
 
-/** Step 3: what was recorded, read only, so the licence holder can check it before
- *  handing the device back (Back returns to the form to correct it). */
+/** Step 3: the grey statement panel (D13) under the summary, so the licence holder
+ *  confirms what they have just checked, right before Sign-Off. The date is in the
+ *  summary above, so the panel holds only the declaration. */
+export function SignOffStatement({ form }: { form: SignOffFormState }) {
+  const { agreed, setAgreed, attestation } = form
+  return (
+    <div className="pcd-signoff-statement">
+      <label className="pcd-signoff-statement__check">
+        <Checkbox checked={agreed} onChange={() => setAgreed(!agreed)} />
+        <span className="text-lg pcd-signoff-statement__text">{attestation}</span>
+      </label>
+    </div>
+  )
+}
+
+/** Step 3: what will be recorded, read only, so the licence holder can check it before
+ *  signing off (Edit Details returns to the form to correct it). */
 export function SignOffSummary({ record }: { record: SignOffRecord }) {
   const rows: [string, string][] = [
     ['Signed by', `${record.holderName}, personal licence holder`],
@@ -149,7 +160,7 @@ export function SignOffSummary({ record }: { record: SignOffRecord }) {
     ['Date', formatSignOffDate(record.signedAt)],
   ]
   return (
-    <dl className="pcd-signoff-statement pcd-signoff-summary">
+    <dl className="pcd-signoff-summary">
       {rows.map(([label, value]) => (
         <div key={label} className="pcd-signoff-statement__meta pcd-signoff-summary__row">
           <dt className="pcd-signoff-statement__label">{label}</dt>

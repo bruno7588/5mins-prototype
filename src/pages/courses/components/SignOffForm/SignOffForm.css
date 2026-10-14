@@ -8,11 +8,6 @@
   width: 100%;
 }
 
-/* 24px between the last field and the statement panel: the form's 16px gap + 8px. */
-.pcd-signoff-form > .pcd-signoff-statement {
-  margin-top: var(--space-s);
-}
-
 /* Grey statement panel (D13), web Figma 17663:24187 and app 17689:28430: the card
    surface holding the declaration and the date. 12px padding, box 16px in from the
    edge, text 4px after the 32px hit area, 6px down to the date. */
@@ -89,13 +84,13 @@
   color: var(--text-tertiary);
 }
 
-/* Step 3 summary: the statement panel's card, holding the recorded details
-   (16px padding, 8px between rows). */
+/* Step 3 summary: the recorded details on the page itself (no card), 8px apart. */
 .pcd-signoff-summary {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  margin: 0;
   gap: var(--space-s);
-  padding: var(--space-m);
+  margin: 0;
   text-align: left;
 }
 

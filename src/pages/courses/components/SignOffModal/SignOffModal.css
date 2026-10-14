@@ -76,25 +76,30 @@
   font-size: 16px;
 }
 
-/* Signed off (Figma 17664:24129): tick 48px under the header (shell 24 + 24),
-   16px to the title, then 24px to the summary (16px padding, full 900px width) and
-   24px to the 14px note. */
+/* Review: laid out as the licence details step (starts under the header, 16px
+   from the H4 title to the summary). No tick until the save (step 4). */
 .pcd-signoff-wizard .wzs-main > .pcd-signoff-wizard__step--done {
   max-width: 900px;
   gap: var(--space-m);
-  padding-top: var(--space-l);
+  padding-top: 0;
 }
 
 .pcd-signoff-wizard__step--done .pcd-signoff-wizard__title {
   font-size: 16px;
 }
-
-.pcd-signoff-wizard__step--done .pcd-signoff-summary {
-  margin-top: var(--space-s);
+/* Hand back (after the save): tick 48px under the header (shell 24 + 24), 16px to
+   the H4 title, the 14px body under it. */
+.pcd-signoff-wizard .wzs-main > .pcd-signoff-wizard__step--handback {
+  max-width: 900px;
+  gap: var(--space-m);
+  padding-top: var(--space-l);
 }
 
-.pcd-signoff-wizard__step--done .pcd-signoff-wizard__body {
-  margin-top: var(--space-s);
+.pcd-signoff-wizard__step--handback .pcd-signoff-wizard__title {
+  font-size: 16px;
+}
+
+.pcd-signoff-wizard__step--handback .pcd-signoff-wizard__body {
   font-size: 14px;
 }
 
