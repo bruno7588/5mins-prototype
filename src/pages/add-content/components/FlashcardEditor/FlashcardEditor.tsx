@@ -380,7 +380,7 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
       <div className="fce-content">
         {/* Header */}
         <div className="fce-header">
-          <h1 className="fce-title">{mode === 'edit' ? 'Edit Flashcard' : 'Create Flashcard'}</h1>
+          <h2 className="fce-title">{mode === 'edit' ? 'Edit Flashcard' : 'Create Flashcard'}</h2>
           <div className="fce-header-actions">
             <button type="button" className="fce-icon-btn" aria-label="AI actions">
               <AiSparkleIcon size={24} />

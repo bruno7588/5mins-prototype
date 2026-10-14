@@ -4,20 +4,10 @@ import './Toast.css'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
-/* PLACEHOLDER — alerts-toast.md specs the pill as label-only, with no action slot,
-   so there is no Figma ref for this yet. Added because an undo affordance has to
-   live on the toast: the alternative is a confirmation dialog in front of every
-   delete, which is the thing the undo exists to avoid. */
-export interface ToastAction {
-  label: string
-  onClick: () => void
-}
-
 export interface ToastItem {
   id: number
   type: ToastType
   message: string
-  action?: ToastAction
   /** Replaces the type icon, e.g. a download glyph on a "Downloading..." toast. */
   icon?: typeof TickCircle
 }
@@ -45,15 +35,13 @@ const FADE_DURATION_MS = 300
 /* --- Single toast pill --- */
 
 function ToastPill({
-  type, message, fading, icon, customIcon, action, onAction,
+  type, message, fading, icon, customIcon,
 }: {
   type: ToastType
   message: string
   fading: boolean
   icon: boolean
   customIcon?: typeof TickCircle
-  action?: ToastAction
-  onAction?: () => void
 }) {
   const Icon = customIcon ?? ICON_MAP[type]
   return (
@@ -63,18 +51,6 @@ function ToastPill({
     >
       {icon && <Icon size={24} color="currentColor" variant="Linear" />}
       <span>{message}</span>
-      {action && (
-        <button
-          type="button"
-          className="toast__action"
-          onClick={() => {
-            action.onClick()
-            onAction?.()
-          }}
-        >
-          {action.label}
-        </button>
-      )}
     </div>
   )
 }
@@ -87,9 +63,9 @@ export function useToast() {
   const [toasts, setToasts] = useState<ToastEntry[]>([])
   const timersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map())
 
-  function show(type: ToastType, message: string, action?: ToastAction, icon?: typeof TickCircle) {
+  function show(type: ToastType, message: string, icon?: typeof TickCircle) {
     const id = ++globalIdCounter
-    setToasts(prev => [...prev, { id, type, message, action, icon, fading: false }])
+    setToasts(prev => [...prev, { id, type, message, icon, fading: false }])
 
     const fadeTimer = setTimeout(() => {
       setToasts(prev => prev.map(t => t.id === id ? { ...t, fading: true } : t))
@@ -105,34 +81,23 @@ export function useToast() {
     timersRef.current.set(id, fadeTimer)
   }
 
-  /* Taking the action is an answer, so the pill goes rather than sitting there
-     offering an undo that has already happened. */
-  function dismiss(id: number) {
-    const timer = timersRef.current.get(id)
-    if (timer) clearTimeout(timer)
-    timersRef.current.delete(id)
-    setToasts(prev => prev.filter(t => t.id !== id))
-  }
-
   useEffect(() => {
     return () => {
       timersRef.current.forEach(clearTimeout)
     }
   }, [])
 
-  return { toasts, show, dismiss }
+  return { toasts, show }
 }
 
 interface ToastContainerProps {
   toasts: ToastEntry[]
   icon?: boolean
-  /** Pass `dismiss` from useToast when any toast carries an action. */
-  onDismiss?: (id: number) => void
   /** Extra class to place the stack somewhere other than bottom centre. */
   className?: string
 }
 
-export default function ToastContainer({ toasts, icon = true, onDismiss, className }: ToastContainerProps) {
+export default function ToastContainer({ toasts, icon = true, className }: ToastContainerProps) {
   if (toasts.length === 0) return null
 
   return (
@@ -145,8 +110,6 @@ export default function ToastContainer({ toasts, icon = true, onDismiss, classNa
           fading={toast.fading}
           icon={icon}
           customIcon={toast.icon}
-          action={toast.action}
-          onAction={() => onDismiss?.(toast.id)}
         />
       ))}
     </div>

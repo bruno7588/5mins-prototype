@@ -647,7 +647,7 @@ function MyTeam() {
           <header className="mt-pageheader">
             <div className="mt-pageheader__row">
               <div className="mt-pageheader__headline">
-                <h1 className="mt-pageheader__title">My Team</h1>
+                <h2 className="mt-pageheader__title">My Team</h2>
                 <p className="mt-pageheader__subtitle">18 Active users · 3 Pending users</p>
               </div>
             </div>

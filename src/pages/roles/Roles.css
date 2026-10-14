@@ -811,7 +811,7 @@
   padding: var(--space-ml) var(--space-l);
   gap: var(--space-ml);
   z-index: 1001;
-  animation: roles-panel-slide 350ms cubic-bezier(0.32, 0.72, 0, 1);
+  animation: roles-panel-slide 350ms ease-in-out;
   animation-delay: 80ms;
   animation-fill-mode: backwards;
 }
@@ -822,7 +822,7 @@
 }
 
 .roles-panel--closing {
-  animation: roles-panel-slide-out 300ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: roles-panel-slide-out 300ms ease-in-out forwards;
 }
 
 @keyframes roles-panel-slide-out {
@@ -2073,7 +2073,7 @@
   gap: var(--space-ml);
   padding: var(--space-ml) var(--space-l);
   z-index: 1001;
-  animation: roles-panel-slide 350ms cubic-bezier(0.32, 0.72, 0, 1);
+  animation: roles-panel-slide 350ms ease-in-out;
   animation-delay: 80ms;
   animation-fill-mode: backwards;
 }

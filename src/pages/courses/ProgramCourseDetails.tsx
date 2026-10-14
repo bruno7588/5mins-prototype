@@ -131,7 +131,7 @@ function ProgramCourseDetails() {
 
   const [tab, setTab] = useState<'course' | 'about' | 'resources'>('course')
   const resources = course.resources ?? []
-  const { toasts, show: showToast, dismiss: dismissToast } = useToast()
+  const { toasts, show: showToast } = useToast()
   /* The prototype has no files behind these cards, so a download is a toast; links open. */
   const openResource = (resource: CourseResourceItem) =>
     resource.url
@@ -288,7 +288,7 @@ function ProgramCourseDetails() {
               </div>
 
               <div className="pcd-header__title">
-                <h1 className="pcd-title">{course.title}</h1>
+                <h2 className="pcd-title">{course.title}</h2>
                 <div className="pcd-helper">
                   <span className="pcd-helper__item">
                     <img className="pcd-helper__icon" src={jewelsIllustration} alt="" />
@@ -468,7 +468,7 @@ function ProgramCourseDetails() {
           Download Certificate
         </Button>
       </ConfirmModal>
-      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+      <ToastContainer toasts={toasts} />
     </div>
   )
 }

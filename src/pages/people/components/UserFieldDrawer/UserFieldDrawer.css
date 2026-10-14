@@ -35,7 +35,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-ml);
-  animation: uf-drawer-slide 300ms ease;
+  animation: uf-drawer-slide 300ms ease-in-out;
 }
 
 @keyframes uf-drawer-slide {
@@ -44,7 +44,7 @@
 }
 
 .uf-drawer--closing {
-  animation: uf-drawer-slide-out 300ms ease forwards;
+  animation: uf-drawer-slide-out 300ms ease-in-out forwards;
 }
 
 @keyframes uf-drawer-slide-out {

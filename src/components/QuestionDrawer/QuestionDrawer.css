@@ -27,7 +27,7 @@
   flex-direction: column;
   gap: var(--space-ml);
   /* overlays.md Side Drawer: flush to the edge, no shadow, no radius. */
-  animation: drawer-slide-in 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  animation: drawer-slide-in 300ms ease-in-out;
 }
 
 @keyframes drawer-slide-in {

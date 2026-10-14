@@ -38,7 +38,7 @@
   flex-direction: column;
   gap: var(--space-ml);
   z-index: 1001;
-  animation: force-trigger-drawer-slide 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  animation: force-trigger-drawer-slide 300ms ease-in-out;
 }
 
 @keyframes force-trigger-drawer-slide {
@@ -47,7 +47,7 @@
 }
 
 .force-trigger-drawer--closing {
-  animation: force-trigger-drawer-slide-out 300ms ease forwards;
+  animation: force-trigger-drawer-slide-out 300ms ease-in-out forwards;
 }
 
 @keyframes force-trigger-drawer-slide-out {

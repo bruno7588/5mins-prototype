@@ -124,7 +124,7 @@ function MobileApp() {
               lesson={feedLessons[sheetIndex]}
               onClose={() => setSheetIndex(null)}
               onOpenLink={(url, kind) => setWebView({ url, kind })}
-              onDownload={() => showToast('success', 'Downloading...', undefined, ImportCurve)}
+              onDownload={() => showToast('success', 'Downloading...', ImportCurve)}
             />
           ) : null}
           <AnimatePresence>
@@ -144,7 +144,7 @@ function MobileApp() {
                 key="certificate"
                 courseId={openCourseId}
                 onClose={() => setCertificateOpen(false)}
-                onDownload={() => showToast('success', 'Downloading certificate', undefined, ImportCurve)}
+                onDownload={() => showToast('success', 'Downloading certificate', ImportCurve)}
               />
             ) : null}
           </AnimatePresence>

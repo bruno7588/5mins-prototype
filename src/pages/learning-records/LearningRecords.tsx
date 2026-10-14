@@ -616,7 +616,7 @@ function LearningRecords() {
         <div className="lrp-page">
           {/* Header */}
           <div className="lrp-header">
-            <h1 className="lrp-title">Learning Records</h1>
+            <h2 className="lrp-title">Learning Records</h2>
             <div className="lrp-divider" />
             <div className="lrp-tabs-row">
               <div className="lrp-tabs" role="tablist">

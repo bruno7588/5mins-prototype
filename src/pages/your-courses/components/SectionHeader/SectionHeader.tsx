@@ -16,7 +16,7 @@ function SectionHeader({ title, description, ctas, leading }: SectionHeaderProps
       <div className="section-header__headline">
         {leading}
         <div className="section-header__title-group">
-          <h2 className="section-header__title">{title}</h2>
+          <h3 className="section-header__title">{title}</h3>
           {description && (
             <p className="section-header__description">{description}</p>
           )}

@@ -548,7 +548,7 @@ function CourseDetails() {
           </div>
 
           <div className="cd-headline-block">
-            <h1 className="cd-title">{courseTitle}</h1>
+            <h2 className="cd-title">{courseTitle}</h2>
             <div className="cd-helper">
               <span className="cd-helper-item">
                 <img className="cd-helper-icon" src={jewelsIllustration} alt="" />

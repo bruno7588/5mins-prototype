@@ -26,7 +26,7 @@
   flex-direction: column;
   background: var(--page-background);
   box-shadow: var(--shadow-panel);
-  animation: lesson-resource-drawer-in 250ms ease;
+  animation: lesson-resource-drawer-in 250ms ease-in-out;
 }
 
 @keyframes lesson-resource-drawer-in {

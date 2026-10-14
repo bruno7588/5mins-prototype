@@ -40,7 +40,7 @@
   flex-direction: column;
   gap: var(--space-l);
   overflow-y: auto;
-  animation: scorm-drawer-slide 300ms ease;
+  animation: scorm-drawer-slide 300ms ease-in-out;
 }
 
 @keyframes scorm-drawer-slide {
@@ -49,7 +49,7 @@
 }
 
 .scorm-drawer--closing {
-  animation: scorm-drawer-slide-out 300ms ease forwards;
+  animation: scorm-drawer-slide-out 300ms ease-in-out forwards;
 }
 
 @keyframes scorm-drawer-slide-out {

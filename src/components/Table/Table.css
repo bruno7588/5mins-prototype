@@ -338,7 +338,7 @@
 
 /* Fixed-width helper: apply to both header cell and data cell */
 .tbl-col-action {
-  flex: 0 0 52px;
+  flex: 0 0 56px;
 }
 
 /* Pagination — sticky so it stays in view while the table scrolls horizontally */

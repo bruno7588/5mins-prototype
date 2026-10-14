@@ -184,7 +184,7 @@ function ProgramsAdmin() {
       <main className="programs-main">
         <header className="programs-header">
           <div className="programs-header-top">
-            <h1 className="programs-title">Programs</h1>
+            <h2 className="programs-title">Programs</h2>
             <div className="programs-header-actions">
               <Search
                 size="M"

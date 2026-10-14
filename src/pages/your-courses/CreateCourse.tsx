@@ -210,7 +210,7 @@ function CreateCourse() {
   const [confirmDiscard, setConfirmDiscard] = useState(false)
   /* AI generation (DES-279). `run` is non-null only while the generator is working;
      the outline shows the working card in the place the drafts will land. */
-  const [generatedSources, setGeneratedSources] = useState<Record<number, GeneratedSource>>({})
+  const [, setGeneratedSources] = useState<Record<number, GeneratedSource>>({})
   /* Which rail group the generator was opened from. It scopes everything downstream:
      what gets written, what "Regenerate All" replaces, and which rows light up in the
      confirmation. */
@@ -243,7 +243,7 @@ function CreateCourse() {
   /* Confirms an edit landed. Authoring needs no toast — a new card arrives on the
      outline, which is the confirmation — but re-saving changes a row in place, behind
      a drawer that is closing, and that is easy to miss. */
-  const { toasts, show: showToast, dismiss: dismissToast } = useToast()
+  const { toasts, show: showToast } = useToast()
   /* A finished situational test waiting for the admin to approve it. It is not course
      content until they save — closing the drawer discards it, which is the point of
      asking. */
@@ -432,12 +432,8 @@ function CreateCourse() {
   }
 
   const handleRemoveResource = (resource: CourseResource) => {
-    const index = resources.findIndex((r) => r.id === resource.id)
     setResources((prev) => prev.filter((r) => r.id !== resource.id))
-    showToast('success', 'Resource removed', {
-      label: 'Undo',
-      onClick: () => setResources((prev) => [...prev.slice(0, index), resource, ...prev.slice(index)]),
-    })
+    showToast('success', 'Resource removed')
   }
 
   const handleAddScorm = (file: ScormFile) => {
@@ -909,13 +905,6 @@ function CreateCourse() {
     )
   }
 
-  /* Undo on the delete toast. The outline position is restored by ContentList,
-     which is the only thing that knows it; this puts the item back in the list. */
-  const handleRestoreExtra = (item: ContentItem) => {
-    setScormItems((prev) => (prev.some((i) => i.id === item.id) ? prev : [...prev, item]))
-    const payload = generatedSources[item.id]?.payload
-    if (payload) setSituationalTests((prev) => ({ ...prev, [item.id]: payload }))
-  }
 
 
   const handleAddLibraryLesson = (lesson: LibraryLesson) => {
@@ -1009,7 +998,6 @@ function CreateCourse() {
             onAddContent={openAddContent}
             targetSectionId={targetSectionId}
             drawerOpen={activeDrawer !== null}
-            onRestoreExtra={handleRestoreExtra}
           />
           )}
           {activeTab === 'Resources' && (
@@ -1141,7 +1129,7 @@ function CreateCourse() {
 
       {/* Sits above the drawers (z-index 1100) so the confirmation is readable while a
           panel is still sliding out. */}
-      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+      <ToastContainer toasts={toasts} />
     </>
   )
 }

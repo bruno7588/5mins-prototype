@@ -620,7 +620,7 @@ function UserProfile() {
             <div className="up-headline">
               <Avatar size={56} src={person.avatarImg} />
               <div className="up-title-group">
-                <h1 className="up-name">{person.name}</h1>
+                <h2 className="up-name">{person.name}</h2>
                 <p className="up-meta">{person.role} · {person.email}</p>
               </div>
               <Button variant="filled" className="up-edit ui-disabled" disabled>

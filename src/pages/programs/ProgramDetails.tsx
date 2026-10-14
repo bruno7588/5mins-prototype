@@ -121,7 +121,7 @@ function ProgramDetails() {
                 <Routing size={16} color="var(--text-tertiary)" variant="Bold" />
                 <span>Program</span>
               </span>
-              <h1 className="pd-banner__heading">{program.title}</h1>
+              <h2 className="pd-banner__heading">{program.title}</h2>
               <p className="pd-banner__desc">{program.description}</p>
             </div>
 

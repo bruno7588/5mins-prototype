@@ -276,7 +276,7 @@ function ProgramAdminDetails() {
       {/* Header */}
       <header className="pad-header">
         <div className="pad-headline">
-          <h1 className="pad-headline__title">{title}</h1>
+          <h2 className="pad-headline__title">{title}</h2>
           {draft.description && <p className="pad-headline__desc">{draft.description}</p>}
           <div className="pad-meta">
             <span className="pad-meta__item">

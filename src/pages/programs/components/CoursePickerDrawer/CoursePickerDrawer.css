@@ -21,11 +21,11 @@
   flex-direction: column;
   background: var(--page-background);
   box-shadow: -8px 0 24px rgba(32, 34, 42, 0.12);
-  animation: cpd-slide-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: cpd-slide-in 280ms ease-in-out;
 }
 
 .cpd-panel--closing {
-  animation: cpd-slide-out 300ms ease forwards;
+  animation: cpd-slide-out 300ms ease-in-out forwards;
 }
 
 @keyframes cpd-fade-in { from { opacity: 0; } to { opacity: 1; } }

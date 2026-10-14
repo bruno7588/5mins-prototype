@@ -75,7 +75,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) setPanel(null)
     else setClosing(true)
   }
-  const { toasts, show: showToast, dismiss: dismissToast } = useToast()
+  const { toasts, show: showToast } = useToast()
 
   const lesson = lessons[active]
   const resources = lesson?.resources ?? []
@@ -345,7 +345,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
         )}
       </aside>
 
-      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+      <ToastContainer toasts={toasts} />
     </div>
   )
 }

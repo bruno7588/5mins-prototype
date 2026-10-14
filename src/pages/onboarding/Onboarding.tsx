@@ -221,7 +221,7 @@ export default function Onboarding() {
             <Logo />
             <div className="onboarding__loading-body" role="status" aria-live="polite">
               <div className="onboarding__loading-text">
-                <h1 className="onboarding__title">Setting things up...</h1>
+                <h2 className="onboarding__title">Setting things up...</h2>
                 <p className="onboarding__loading-sub">
                   Your account will be ready in a moment!
                 </p>
@@ -253,7 +253,7 @@ export default function Onboarding() {
 
           <div className="onboarding__form" ref={formRef}>
             <div className="onboarding__header">
-              <h1 className="onboarding__title">{current.title}</h1>
+              <h2 className="onboarding__title">{current.title}</h2>
               <p className="onboarding__subtitle">{current.subtitle}</p>
             </div>
 

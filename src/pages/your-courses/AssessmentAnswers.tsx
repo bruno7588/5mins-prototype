@@ -415,7 +415,7 @@ function AssessmentAnswers() {
 
           <header className="asp-header">
             <div className="asp-headline">
-              <h1 className="asp-title">View Answers</h1>
+              <h2 className="asp-title">View Answers</h2>
               {/* The same name the row carries: a lesson quiz's underlying type is
                   Multiple Choice, and saying so contradicts the list it was opened from. */}
               {/* What kind of assessment this is, and how big. How many answered belongs

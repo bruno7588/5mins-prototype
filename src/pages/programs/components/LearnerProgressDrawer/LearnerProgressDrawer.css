@@ -23,11 +23,11 @@
   padding: var(--space-ml) var(--space-l);
   background: var(--page-background);
   box-shadow: -8px 0 24px rgba(32, 34, 42, 0.12);
-  animation: lpd-slide-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: lpd-slide-in 280ms ease-in-out;
 }
 
 .lpd-panel--closing {
-  animation: lpd-slide-out 300ms ease forwards;
+  animation: lpd-slide-out 300ms ease-in-out forwards;
 }
 
 @keyframes lpd-fade-in { from { opacity: 0; } to { opacity: 1; } }

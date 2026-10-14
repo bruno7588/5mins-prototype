@@ -45,7 +45,7 @@ function Account() {
       <LeftSidebar />
       <main className="acs-main">
         <header className="acs-header">
-          <h1 className="acs-title">Account &amp; Settings</h1>
+          <h2 className="acs-title">Account &amp; Settings</h2>
           <div className="acs-divider" aria-hidden="true" />
           <div className="acs-tabs" role="tablist">
             {TABS.map((tab) => (

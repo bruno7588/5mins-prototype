@@ -271,9 +271,6 @@ interface ContentListProps {
       Sections and their order live in here, not in the parent. */
   onOutlineChange?: (sections: OutlineSection[]) => void
   /* --- AI generation (DES-279) --- */
-  /** Puts a deleted item back in extras. Paired with the undo toast, which restores
-      the outline position this component holds. */
-  onRestoreExtra?: (item: ContentItem) => void
   /** FR-09b — a full regeneration is being confirmed, so the outline shows what it
       would take: generated rows of this card type lit, everything else pulled back.
       Null when nothing is being confirmed. */
@@ -295,7 +292,6 @@ function ContentList({
   targetSectionId,
   drawerOpen = false,
   onOutlineChange,
-  onRestoreExtra,
   highlightGenerated = null,
 }: ContentListProps) {
   const [itemsByKey, setItemsByKey] = useState<Record<string, ContentItem>>({})
@@ -320,7 +316,7 @@ function ContentList({
   const isDoomed = (item: ContentItem) =>
     !!highlightGenerated && item.source === 'ai' && item.type === highlightGenerated
 
-  const { toasts, show: showToast, dismiss: dismissToast } = useToast()
+  const { toasts, show: showToast } = useToast()
   const prevExtraRef = useRef<string>(extraItems.map(itemKey).join(','))
 
   // Sync extraItems into sections. New items go to targetSectionId if set; otherwise the first section.
@@ -498,31 +494,8 @@ function ContentList({
     const removed = removeItem(key)
     if (!removed || removed.item.source !== 'ai') return
 
-    /* FR-08: generated assessments are deleted outright, and the way back is the
-       toast rather than a dialog in front of every row. Restoring locally as well
-       as in extras means the row returns to its own place in its own section —
-       the sync effect then sees the key already present and leaves it alone. */
-    showToast('success', 'Assessment deleted', {
-      label: 'Undo',
-      onClick: () => {
-        setItemsByKey((prev) => ({ ...prev, [removed.key]: removed.item }))
-        setSections((prev) =>
-          prev.map((s) =>
-            s.id === removed.sectionId
-              ? {
-                  ...s,
-                  itemKeys: [
-                    ...s.itemKeys.slice(0, removed.index),
-                    removed.key,
-                    ...s.itemKeys.slice(removed.index),
-                  ],
-                }
-              : s,
-          ),
-        )
-        onRestoreExtra?.(removed.item)
-      },
-    })
+    /* FR-08: generated assessments are deleted outright, with no dialog in front of every row. */
+    showToast('success', 'Assessment deleted')
   }
 
   /* Drag-and-drop */
@@ -890,7 +863,7 @@ function ContentList({
         )}
 
         {/* onDismiss so taking the undo closes the pill offering it. */}
-        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+        <ToastContainer toasts={toasts} />
       </section>
     </div>
   )
