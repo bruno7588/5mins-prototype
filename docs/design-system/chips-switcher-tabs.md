@@ -309,8 +309,8 @@ Figma: `Content switcher` (`7128:23859`, standalone component with no properties
 | Selected (item) | True / False | `activeKey` | the selected item's `key` | `onChange(key)` sets it |
 | Disabled (item) | false / true | `items[].disabled` | `boolean` | |
 | State (item) | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props |
-| icon left (item) + Leading icon (swap) | false / true, glyph | n/a | n/a | no icon slot in code |
-| icon right (item) + Trailing icon (swap) | false / true, glyph | n/a | n/a | no icon slot in code |
+| Show leading icon (switch) + Leading icon (swap) | off / on, glyph | n/a | n/a | no icon slot in code |
+| Show trailing icon (switch) + Trailing icon (swap) | off / on, glyph | n/a | n/a | no icon slot in code |
 | Label (item text) | section label | `items[].label` | `string` | each item also needs a `key` |
 
 - **Figma only:** per-item icons (left 20px, right 16px) and their swaps; the fixed 4-item track.

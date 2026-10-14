@@ -5,9 +5,7 @@ export type ButtonVariant = 'filled' | 'outlined' | 'outlined-2' | 'text' | 'lin
 export type ButtonSemantic = 'primary' | 'danger' | 'warning' | 'success' | 'ai'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant
-  semantic?: ButtonSemantic
+interface ButtonBaseProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize
   /** Leading icon — rendered BEFORE the label. Pass an Iconsax icon sized 16/20/24 with color="currentColor". */
   icon?: ReactNode
@@ -26,6 +24,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loadingLabel?: string
   children?: ReactNode
 }
+
+/** AI exists only as filled and outlined (no AI text or link in the DS). */
+type ButtonProps = ButtonBaseProps &
+  (
+    | { variant?: ButtonVariant; semantic?: Exclude<ButtonSemantic, 'ai'> }
+    | { variant?: 'filled' | 'outlined'; semantic: 'ai' }
+  )
 
 /**
  * Button — implements docs/design-system/buttons.md.

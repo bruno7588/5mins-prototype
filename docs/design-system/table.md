@@ -75,8 +75,8 @@ The Figma table is four component sets; code is one data-driven `Table` whose ce
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Type | Text | `columns[].header` | ReactNode | single value |
-| Checkbox | false / true | `selectable` | `true` | select-all; `onToggleAll`, `allSelected`, `selectAllIndeterminate`, `selectAllDisabled` |
-| Icon | false / true | `columns[].sortable` + `onSort` | `true` | the sort arrow itself is rendered by the caller inside `header` |
+| Show checkbox (switch) | off / on | `selectable` | `true` | select-all; `onToggleAll`, `allSelected`, `selectAllIndeterminate`, `selectAllDisabled` |
+| Show icon (switch) + Icon glyph | off / on, glyph | `columns[].sortable` + `onSort` | `true` | the sort arrow itself is rendered by the caller inside `header`; if both switches are on, Figma shows checkbox and arrow together |
 | Disabled | false / true | n/a | CSS `.tbl-head-cell.is-disabled` | no prop sets it |
 | Label (text) | "Text" | `columns[].header` | ReactNode | |
 | Icon glyph (instance swap) | arrow-down | sort arrow inside `header` | 16px `ArrowDown` | shown when Icon=true |

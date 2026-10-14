@@ -8,7 +8,7 @@ description: Gamification asset libraries for 5Mins.ai - skill-level shield/meda
 Asset libraries for learner progression UI. All are exact Figma exports: never redraw, recolour, or substitute them.
 
 **Code:** no shared React component; typed asset indexes in `src/assets/` (`level-illustrations`, `progress-illustrations`, `assessment-illustrations`, `certificate-illustrations`, `gamification-illustrations`, `skill-icons`), rendered with `<img>`.
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Gamification page. Learning path levels `9120:9437`; Progress `10157:9081`; Assessments dark `9120:8850` / light `12154:10371`; Certificate `9120:9301`; Gamification heroes `11196:7607`.
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Gamification page. Learning path levels `9120:9437`; Progress `10157:9081`; Assessments `9120:8850`; Certificate `9120:9301`; Gamification heroes `11196:7607`.
 **Last verified:** 2026-08-17
 
 ## Usage

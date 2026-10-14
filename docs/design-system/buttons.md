@@ -86,7 +86,7 @@ All colours are semantic tokens. Both light- and dark-mode resolutions are liste
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Variant | Filled / Outlined / Outlined-2 / Text / Link | `variant` | `filled` (default) / `outlined` / `outlined-2` / `text` / `link` | one-to-one |
-| Semantic | Primary / Danger / Warning / Success / AI | `semantic` | `primary` (default) / `danger` / `warning` / `success` / `ai` | one-to-one. AI exists only with Filled and Outlined; `variant="outlined-2"` with a semantic renders the Outlined treatment, `variant="link"` with a semantic renders the Text treatment |
+| Semantic | Primary / Danger / Warning / Success / AI | `semantic` | `primary` (default) / `danger` / `warning` / `success` / `ai` | one-to-one. AI exists only with Filled and Outlined, and the props type rejects `semantic="ai"` with any other variant; `variant="outlined-2"` with a semantic renders the Outlined treatment, `variant="link"` with a semantic renders the Text treatment |
 | Size | Large / Medium / Small | `size` | `lg` / `md` (default) / `sm` | Figma default is Large; code default is `md` |
 | State | Enabled / Hover / Pressed / Focus | n/a | CSS `:hover`, `:active`, `:focus-visible` | states are CSS, not props. Focus draws a 2px `Primary-button-background` ring 2px outside the button (a `Focus ring` layer) |
 | State | Loading | `loading` | `true` / `false` | |

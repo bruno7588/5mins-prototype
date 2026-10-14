@@ -13,6 +13,7 @@ Add new entries here, not in the docs.
 
 ## [alerts-toast.md](alerts-toast.md)
 
+- 2026-10-14: Callout default Message and Body text replaced with generic copy (the old sample had a typo).
 - 2026-10-14: Figma settings rework. Alert gains Title, Message and Body text properties plus Icon glyph (Callout) and Warning glyph (Alert) swaps; its variant axes stay. Toast's Icon variant is now a Show icon boolean (Icon=False variants removed) and gains a Message text property. Tooltip gains a Text property; its Icon axis stays a variant. Figma to code tables updated; Carbon description and link removed from Tooltip.
 - 2026-10-14: Toast has no action slot. The Undo action (and its `ToastAction` type, `dismiss` and `onDismiss`) was removed from `Toast.tsx`, along with the Undo on the "Resource removed" and "Assessment deleted" toasts.
 - 2026-10-14: Toast Types table said "**Info** | `--border` (`#2D313D` dark) - a dark neutral pill | io5 `IoInformationCircleOutline`". Changed to `--neutral-600` and Iconsax `InfoCircle` to match `Toast.css` / `Toast.tsx` (the doc's own CSS block and Code reality section already said so); io5 kept as Figma drift.
@@ -44,6 +45,7 @@ Add new entries here, not in the docs.
 
 ## [buttons.md](buttons.md)
 
+- 2026-10-14: `semantic="ai"` is accepted only with `variant="filled"` or `"outlined"` (props type); the unstyled AI text and link combinations are gone.
 - 2026-10-14: Figma Buttons `Configuration` (16 values) split into `Variant` and `Semantic`, matching the code props one-to-one. Description updated.
 - 2026-10-14: Figma Buttons gained the 95 missing Small variants (Warning, Success, Danger families in filled, outlined and text, plus states), built from the Medium twins with Small spacing, radius, text style and icon size.
 - 2026-10-14: Figma Buttons set gained a `Label` text property, an `Icon glyph` instance-swap property, 65 `State=Focus` variants (2px ring at 2px offset) and a description with the code mapping. Icon stays a variant because it changes padding.
@@ -96,6 +98,7 @@ Add new entries here, not in the docs.
 
 ## [chips-switcher-tabs.md](chips-switcher-tabs.md)
 
+- 2026-10-14: Figma Content switcher item `icon left` / `icon right` axes became `Show leading icon` / `Show trailing icon` switches; 12 variants deleted.
 - 2026-10-14: Figma to code updated: Chip, Content switcher item and Tab items gain `Label` TEXT properties (plus `Count` on tabs), leading and trailing icon swaps, and `State=Focus` variants; the icon axes stay variants because they change padding or gap.
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** a second level inside a tabbed page is chips only (a Content Switcher stays allowed for two views of one object in a drawer); tab focus ring is cyan `--primary-button-background`; the Tabs prototype examples now say which is compliant (Roles) and which drifts (Course details); tab gap confirmed at 16px.
 - 2026-09-29: **Updated 2026-09-29 (aligned to prototype usage):** Chip props, radius, selected border and the two-icon case now match `src/components/Chip`; the Content Switcher selected label is Bold and the component has no icon slot. There is no shared Tabs component; pages build their own tab bars to this spec.
@@ -167,6 +170,7 @@ Add new entries here, not in the docs.
 
 ## [gamification.md](gamification.md)
 
+- 2026-10-14: Illustrations/ Assessments light copy merged into the dark set (44px Lesson quiz mobile artwork kept).
 - 2026-10-14: Figma Learning path gained Description and Progress text properties, Quiz/Options gained Label and Explanation text properties and desktop State=Focus; every Gamification set description rewritten.
 - 2026-08-17: Assessment illustrations: Source: Figma `Illustrations/ Assessments`, frame `9120:8850` (classic six downloaded 2026-07-13, interactive four 2026-08-17).
 - 2026-07-13: Skill level illustrations: Source: Figma `Illustrations/ Learning path`, frame `9120:9437` (downloaded 2026-07-13).
@@ -243,6 +247,7 @@ Add new entries here, not in the docs.
 
 ## [overlays.md](overlays.md)
 
+- 2026-10-14: Figma Dialog buttons swapped from an orphaned old Buttons set to the current Buttons set (labels kept).
 - 2026-10-14: Side Drawer slides in and out with `ease-in-out` (was cubic-bezier(0.32, 0.72, 0, 1) in the doc, and four different curves across the 13 page drawers); code updated on every right-hand drawer and the content that shifts with it.
 - 2026-10-14: Modal entrance is scale 0.96 → 1 with `ease` over 250ms, matching the Dialog. Bottom Sheet bottom padding is `var(--space-l)` (24px) in doc and code (was 20px in the doc, 32px in code).
 - 2026-10-13: (Bruno's ruling, replaces the 2026-09-29 note): a Dialog has **no** Close (×) button and does **not** close on backdrop click or Escape; the user leaves only through its action buttons. Modals and Side Drawers keep the Close (×), backdrop click and Escape. In code, `ConfirmModal`'s `closable` prop is the switch: off = Dialog, on = Modal.
@@ -299,6 +304,7 @@ Add new entries here, not in the docs.
 
 ## [table.md](table.md)
 
+- 2026-10-14: Figma Table header `Checkbox` and `Icon` axes became `Show checkbox` / `Show icon` switches (gap 4px, checkbox wrapped with 8px right padding so spacing is unchanged); 6 variants deleted.
 - 2026-10-14: Figma Table row gained State=Focus (unselected and selected); Table header gained Label and Icon glyph; Table data gained Label, Supporting label, Date label, Percentage, Icon glyph, Info icon and Action icon; all Table set descriptions rewritten; no on/off axis converted.
 - 2026-10-14: Action column is `flex: 0 0 56px`; `.tbl-col-action` in `Table.css` updated from 52px.
 - 2026-10-14: Frontmatter description and the ASCII diagram said the header is "borderless"; changed to "filled header bar" to match `Table.css` (`.tbl-head { background: var(--input-background) }`) and the body rule.
