@@ -52,8 +52,8 @@ function CertificateReady({ courseTitle, onClose, onGetCertificate, contained = 
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
           >
-            {/* DS H1 on web (as production), H3 in the phone. */}
-            <h2 className={`${contained ? 'h3' : 'h1'} pcd-cert-ready__title`}>Congratulations!</h2>
+            {/* DS H3 (Figma 17665:24187). */}
+            <h2 className="h3 pcd-cert-ready__title">Congratulations!</h2>
             <p className="lsm-sub">
               Your certificate for completing the course <strong className="pcd-cert-ready__course">{courseTitle}</strong>{' '}
               is ready to download.

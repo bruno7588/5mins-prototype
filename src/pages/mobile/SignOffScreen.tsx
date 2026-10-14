@@ -107,7 +107,7 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
           ) : step === 'handback' ? (
             <motion.div
               key="handback"
-              className="m-signoff__step m-signoff__step--center"
+              className="m-signoff__step m-signoff__step--center m-signoff__step--handback"
               {...ARRIVE(reduce)}
               exit={{ opacity: 0 }}
               transition={arriveTransition(reduce)}

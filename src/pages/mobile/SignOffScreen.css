@@ -87,3 +87,10 @@
   color: var(--text-tertiary);
   text-align: center;
 }
+
+/* Hand back (Figma 17694:27656): tick, title and body centred in the space
+   between the dots and the footer. */
+.m-signoff__step--handback {
+  flex: 1 1 auto;
+  justify-content: center;
+}

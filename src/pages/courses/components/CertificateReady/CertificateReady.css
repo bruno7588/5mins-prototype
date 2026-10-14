@@ -1,13 +1,19 @@
 /* Certificate-ready takeover (DES-335). Shell, confetti and type come from the
    launch success screen (.lsm-*); only the medallion glow and course name live here. */
 
+/* It only opens straight from the sign-off's Hand back screen, so it appears at
+   once over it: the launch screen's 200ms fade-in would show the course page
+   underneath for a moment. The medallion, text and button still animate in. */
+.lsm-overlay.pcd-cert-ready {
+  animation: none;
+}
+
 .pcd-cert-ready__medallion {
   position: relative;
   display: grid;
   place-items: center;
   width: 120px;
   height: 120px;
-  margin-bottom: var(--space-m);
 }
 
 /* The gold glow behind the medallion, from the secondary (gold) palette. */
@@ -28,7 +34,7 @@
   position: relative;
 }
 
-/* DS H1 (typography.css) without the default heading margin. */
+/* DS H3 (typography.css) without the default heading margin. */
 .pcd-cert-ready__title {
   margin: 0;
 }
@@ -38,10 +44,14 @@
   color: var(--text-primary);
 }
 
-/* More air than the launch screen, as production has it: the course name on its
-   own line and room between medallion, message and button. */
+/* Figma 17665:24174 (web) and 17683:28101 (app): medallion 16px above the title,
+   24px to the message (course name on its own line), 24px to the button. */
 .pcd-cert-ready .lsm-content {
-  gap: var(--space-xl);
+  gap: var(--space-m);
+}
+
+.pcd-cert-ready__action {
+  margin-top: var(--space-s);
 }
 
 .pcd-cert-ready .lsm-info {
@@ -67,16 +77,7 @@
   height: 40px;
 }
 
-/* App layout (Figma 17683:28101): medallion 16px above the title, 24px to the
-   message, whose three lines sit 8px apart in a 311px column. */
-.pcd-cert-ready--contained .lsm-content {
-  gap: var(--space-m);
-}
-
-.pcd-cert-ready--contained .pcd-cert-ready__medallion {
-  margin-bottom: 0;
-}
-
+/* App: the message's three lines sit 8px apart in a 311px column. */
 .pcd-cert-ready--contained .lsm-sub {
   max-width: 311px;
 }
