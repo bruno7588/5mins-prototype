@@ -8,7 +8,7 @@ description: RowActionsMenu for 5Mins.ai - the kebab (more) button on a table or
 The kebab button at the end of a table row and the action menu it opens: the DS listbox ([listbox.md](listbox.md)) in its action-menu form, a floating surface of items that each run one action on that row, portalled to `<body>` so it escapes the table cell's `overflow: hidden` and stays glued to its trigger on scroll and resize.
 
 **Code:** `import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'` (code is the reference for the trigger)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, via [listbox.md](listbox.md): Listbox `9162:1042`; List items `9162:941`; two-line item People `8572:654` <!-- TODO: node id unknown -->
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, via [listbox.md](listbox.md): Listbox `9162:1042`; List items `9162:941`
 **Last verified:** 2026-09-29
 
 ## Usage
