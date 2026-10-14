@@ -14,7 +14,7 @@
 }
 
 .page-header-title {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -64,7 +64,7 @@
 
 .page-header-tab {
   position: relative;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   padding: var(--space-s) 0 var(--space-sm) 0;

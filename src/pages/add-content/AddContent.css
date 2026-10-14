@@ -31,7 +31,7 @@
 }
 
 .add-content-breadcrumb-link {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.2;
@@ -49,14 +49,14 @@
 }
 
 .add-content-breadcrumb-current {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.2;
 }
 
 .add-content-title {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -110,8 +110,8 @@
   padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
   background: var(--danger-400);
-  color: var(--neutral-25, #F9F9FA);
-  font-size: 14px;
+  color: var(--neutral-25, var(--neutral-25));
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
 }
@@ -123,21 +123,21 @@
 }
 
 .add-content-card-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .add-content-card-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
 }
 
 .add-content-card-caption {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.5;

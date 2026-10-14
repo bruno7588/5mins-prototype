@@ -25,14 +25,14 @@
 }
 
 .automations-title {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .automations-description {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -57,7 +57,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   background: none;
@@ -117,27 +117,27 @@
 }
 
 .automations-template--purple {
-  background: rgba(129, 88, 236, 0.16);
+  background: var(--ai-tint);
 }
 
 .automations-template--purple:hover {
-  background: rgba(129, 88, 236, 0.32);
+  background: color-mix(in srgb, var(--blaze-quiz) 32%, transparent);
 }
 
 .automations-template--blue {
-  background: rgba(42, 144, 216, 0.16);
+  background: var(--course-assessments-tint);
 }
 
 .automations-template--blue:hover {
-  background: rgba(42, 144, 216, 0.32);
+  background: color-mix(in srgb, var(--course-assessments) 32%, transparent);
 }
 
 .automations-template--quiz {
-  background: rgba(250, 113, 95, 0.16);
+  background: color-mix(in srgb, var(--lesson-quiz) 16%, transparent);
 }
 
 .automations-template--quiz:hover {
-  background: rgba(250, 113, 95, 0.32);
+  background: color-mix(in srgb, var(--lesson-quiz) 32%, transparent);
 }
 
 .automations-template-icon {
@@ -156,14 +156,14 @@
 }
 
 .automations-template-title {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .automations-template-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -223,7 +223,7 @@
 }
 
 .automations-toggle-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   white-space: nowrap;
@@ -306,7 +306,7 @@
   width: 100%;
   padding: var(--space-sm) var(--space-m);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   text-align: left;
@@ -343,9 +343,9 @@
   transform: translateY(-50%);
   padding: var(--space-s) var(--space-sm);
   background: var(--tooltip-background);
-  color: var(--neutral-25, #f9f9fa);
+  color: var(--neutral-25, var(--neutral-25));
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   border-radius: var(--radius-sm);
@@ -419,14 +419,14 @@
 }
 
 .automations-stat-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.5;
 }
 
 .automations-stat-value {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -474,7 +474,7 @@
   border: none;
   background: transparent;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   outline: none;
@@ -518,7 +518,7 @@
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   cursor: pointer;
@@ -571,7 +571,7 @@
   border-radius: var(--radius-s);
   background: transparent;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   cursor: pointer;
@@ -602,21 +602,21 @@
 }
 
 .automations-filter-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   margin-right: var(--space-xs);
 }
 
 .automations-user-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .automations-user-email {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.2;
@@ -664,14 +664,14 @@
 }
 
 .automations-trigger-date-day {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
 .automations-trigger-date-year {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.2;
   color: var(--text-secondary);
@@ -683,7 +683,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-xl) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
   border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-s);
@@ -700,7 +700,7 @@
 }
 
 .automations-empty-state-title {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
   margin-top: var(--space-sm);
@@ -708,7 +708,7 @@
 }
 
 .automations-empty-state-body {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.5;
@@ -726,7 +726,7 @@
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -761,7 +761,7 @@
 }
 
 .automations-pagination-info {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   white-space: nowrap;

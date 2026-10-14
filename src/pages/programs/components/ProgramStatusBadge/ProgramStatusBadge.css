@@ -5,7 +5,7 @@
   gap: var(--space-xs);
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
@@ -45,7 +45,7 @@
 
 /* In Progress badge family (badges.md): Primary-500 @16% + --text-progress. */
 .psb--ready {
-  background: rgba(0, 206, 230, 0.16);
+  background: var(--primary-tint);
   color: var(--text-progress);
 }
 
@@ -56,6 +56,6 @@
 }
 
 .psb--live {
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--text-success);
 }

@@ -177,7 +177,7 @@
 }
 
 .m-topnav__title--s {
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 .m-topnav__titlewrap {
@@ -217,7 +217,7 @@
 }
 
 .m-topnav__back--scrim {
-  background: rgba(15, 16, 20, 0.5);
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
 }
 
 .m-topnav__back:focus-visible {

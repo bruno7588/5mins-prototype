@@ -136,14 +136,14 @@
 }
 
 .acw-pop-option .radio-row__label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .acw-pop-desc {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -151,7 +151,7 @@
 /* The unit after a stepper ("day", "days"): secondary on the selected option, and
    --text-disabled with its stepper when the option is not selected (Library Integer row). */
 .acw-pop-days {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -191,7 +191,7 @@
 
 /* Step headings are H4 (typography.md): 16px Bold. */
 .wzs-section-title.acw-step-title {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
 }
 
 /* Section heading row: label left, Edit right (Automations review shape). */
@@ -203,7 +203,7 @@
 
 .acw-review-heading {
   margin: 0;
-  font-size: 16px; /* H4 */
+  font-size: var(--font-size-h4); /* H4 */
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -228,7 +228,7 @@
   border-radius: var(--radius-sm);
   background: var(--cards-background);
   box-shadow: var(--shadow-card);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   transition: background-color 150ms ease;
 }
@@ -246,7 +246,7 @@
   height: 24px;
   border-radius: var(--radius-full);
   background: var(--input-background-elevated);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1;
   color: var(--text-secondary);
@@ -358,7 +358,7 @@
 .acw-affected__title {
   flex: 1;
   margin: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);

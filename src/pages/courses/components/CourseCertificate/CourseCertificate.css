@@ -65,7 +65,7 @@
 }
 
 .ccert__kicker {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 600;
   line-height: 1.5;
   color: var(--neutral-800);
@@ -83,21 +83,21 @@
 }
 
 .ccert__small {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--neutral-400);
 }
 
 .ccert__learner {
-  font-size: 32px;
+  font-size: var(--font-size-h1);
   font-weight: 600;
   line-height: 1.5;
   color: var(--neutral-800);
 }
 
 .ccert__course {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 600;
   line-height: 1.5;
   color: var(--neutral-800);
@@ -132,7 +132,7 @@
 }
 
 .ccert__field dt {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--neutral-400);
@@ -140,7 +140,7 @@
 
 .ccert__field dd {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   line-height: 1.5;
   color: var(--neutral-500);
@@ -153,12 +153,12 @@
 }
 
 .ccert__field--muted dt {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
 }
 
 .ccert__field--muted dd {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--neutral-400);
 }
@@ -201,7 +201,7 @@
   flex-direction: column;
   justify-content: flex-end;
   gap: var(--space-s);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.4;
   color: var(--neutral-400);

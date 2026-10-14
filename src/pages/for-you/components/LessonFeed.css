@@ -72,7 +72,7 @@
 .lf-video__gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(15, 16, 20, 0) 86%, rgba(15, 16, 20, 0.5) 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--neutral-900) 0%, transparent) 86%, color-mix(in srgb, var(--neutral-900) 50%, transparent) 100%);
   pointer-events: none;
 }
 
@@ -95,7 +95,7 @@
 }
 
 .lf-video__time {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--neutral-25);
   white-space: nowrap;
@@ -202,14 +202,14 @@
 }
 
 .lf-instructor__name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
 .lf-instructor__role {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-secondary);
 }
@@ -221,7 +221,7 @@
   background: transparent;
   color: var(--text-button-outlined);
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
+  font-size: var(--font-size-h6);
   font-weight: 700;
   line-height: 1.4;
   cursor: pointer;
@@ -258,7 +258,7 @@
 
 .lf-info__title {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -270,7 +270,7 @@
   border: none;
   background: none;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--primary-button-background);
@@ -318,14 +318,14 @@
 }
 
 .lf-ep__label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
 
 .lf-ep__title {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
@@ -347,7 +347,7 @@
 }
 
 .lf-ep__time {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-primary);
   white-space: nowrap;
@@ -366,7 +366,7 @@
 }
 
 .lf-skill__name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
 }
@@ -387,7 +387,7 @@
   flex-shrink: 0;
   width: 28px;
   text-align: center;
-  font-size: 32px;
+  font-size: var(--font-size-h1);
   font-weight: 700;
   line-height: 1;
   color: var(--lesson-quiz);
@@ -397,7 +397,7 @@
   margin: 0;
   flex: 1 1 0;
   min-width: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -423,7 +423,7 @@
   align-items: center;
   gap: var(--space-s);
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
@@ -444,7 +444,7 @@
 
 .lf-learn__concept {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
@@ -458,7 +458,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -498,7 +498,7 @@
   background: none;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -567,7 +567,7 @@
 
 .lf-sheet__title {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);

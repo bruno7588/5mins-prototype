@@ -10,7 +10,7 @@
 }
 
 .sc-add-content-sidebar-title {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
   padding: var(--space-sm) var(--space-m);
@@ -24,7 +24,7 @@
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-s);
   width: 100%;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   cursor: pointer;

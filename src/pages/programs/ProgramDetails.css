@@ -22,7 +22,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.2;
   color: var(--text-tertiary);
@@ -30,7 +30,7 @@
 
 .pd-banner__heading {
   margin: 0;
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -38,7 +38,7 @@
 
 .pd-banner__desc {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -55,7 +55,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -75,7 +75,7 @@
 }
 
 .pd-learners__label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
   white-space: nowrap;
@@ -109,7 +109,7 @@
 }
 
 .pd-progress__pct {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1;
   color: var(--text-secondary);
@@ -125,7 +125,7 @@
 
 .pd-section__title {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -192,7 +192,7 @@
 
 .pd-course__title {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -237,7 +237,7 @@
   border-radius: var(--radius-sm);
   background: var(--primary-button-background);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-button-foreground);

@@ -48,7 +48,7 @@
   padding: var(--space-xs) var(--space-s);
   background: var(--danger-400);
   color: var(--neutral-25);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1.5;
   border-radius: 20px;
@@ -82,7 +82,7 @@
   border-radius: 40px;
   background: var(--cards-background);
   color: var(--text-warning);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
@@ -120,7 +120,7 @@
 
 .ws-course-card__title {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -142,7 +142,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
   white-space: nowrap;

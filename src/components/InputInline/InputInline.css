@@ -50,14 +50,14 @@
 }
 
 .input-inline__error {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-error);
 }
 
 /* Sizes: L = H1 32 over Paragraph L 16; M = H3 20 over Paragraph M 14. */
-.input-inline--l .input-inline__title { font-size: 32px; }
-.input-inline--l .input-inline__desc { font-size: 16px; }
-.input-inline--m .input-inline__title { font-size: 20px; }
-.input-inline--m .input-inline__desc { font-size: 14px; }
+.input-inline--l .input-inline__title { font-size: var(--font-size-h1); }
+.input-inline--l .input-inline__desc { font-size: var(--font-size-lg); }
+.input-inline--m .input-inline__title { font-size: var(--font-size-h3); }
+.input-inline--m .input-inline__desc { font-size: var(--font-size-md); }

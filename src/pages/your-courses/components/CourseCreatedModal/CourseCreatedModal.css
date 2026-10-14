@@ -44,7 +44,7 @@
 }
 
 .ccs-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -52,7 +52,7 @@
 }
 
 .ccs-sub {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);

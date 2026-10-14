@@ -33,7 +33,7 @@
 
 .question-card__title {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -43,7 +43,7 @@
 }
 
 .question-card__type {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -89,7 +89,7 @@
   padding: var(--space-xs) var(--space-s);
   border-radius: var(--radius-full);
   background: var(--input-background-elevated);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1.2;
   color: var(--text-secondary);

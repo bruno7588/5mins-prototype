@@ -18,7 +18,7 @@
 
 /* Paragraph L semibold */
 .mc__title {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
@@ -80,7 +80,7 @@
   align-items: center;
   justify-content: center;
   height: 40px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -94,7 +94,7 @@
   border: none;
   border-radius: var(--radius-xs);
   background: none;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
   cursor: pointer;

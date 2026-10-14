@@ -57,7 +57,7 @@
   padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-25);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
@@ -79,7 +79,7 @@
 }
 
 .add-content-sidebar-title {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
   padding: var(--space-sm) var(--space-m);
@@ -93,7 +93,7 @@
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-s);
   width: 100%;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   cursor: pointer;

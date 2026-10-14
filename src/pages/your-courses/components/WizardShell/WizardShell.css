@@ -48,7 +48,7 @@
 }
 
 .wzs-title {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -82,14 +82,14 @@
 }
 
 .wzs-step-title {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
 .wzs-step-sub {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -110,7 +110,7 @@
 }
 
 .wzs-section-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -247,7 +247,7 @@ button.wzs-stepper-step:focus-visible {
   height: 20px;
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-full);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1;
   color: var(--text-primary);
@@ -257,7 +257,7 @@ button.wzs-stepper-step:focus-visible {
 .wzs-stepper-label {
   display: inline-flex;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);

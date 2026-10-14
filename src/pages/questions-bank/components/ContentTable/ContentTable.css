@@ -12,7 +12,7 @@
 }
 
 .qb-content-table-filter-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -27,7 +27,7 @@
   border-radius: var(--radius-sm);
   background: unset;
   background-color: unset;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
   cursor: pointer;
@@ -56,7 +56,7 @@
   outline: none;
   background: transparent;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   width: 100%;
@@ -73,7 +73,7 @@
   padding: var(--space-s) var(--space-ml) var(--space-s) var(--space-m);
   background: var(--primary-button-background);
   color: var(--text-button-foreground);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   border-radius: var(--radius-s);
   white-space: nowrap;
@@ -93,7 +93,7 @@
 }
 
 .qb-content-table-filename {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   overflow: hidden;
@@ -148,7 +148,7 @@
   width: 40px;
   height: 40px;
   border-radius: 100px;
-  background: var(--input-background, rgba(191, 194, 204, 0.16));
+  background: var(--input-background, color-mix(in srgb, var(--neutral-200) 16%, transparent));
   transition: background 150ms ease;
   cursor: pointer;
 }
@@ -176,7 +176,7 @@
 }
 
 .qb-content-table-ai-tooltip-text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--neutral-25);
   line-height: 1.4;
@@ -190,7 +190,7 @@
 }
 
 .qb-content-table-ai-tooltip-dismiss {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   /* Deliberate: this sits on --tooltip-background, dark in BOTH modes, so the
      "no --primary-500 as text" rule (which is about light grounds) does not
@@ -209,7 +209,7 @@
 }
 
 .qb-content-table-ai-tooltip-review {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-button-foreground);
   background: var(--primary-button-background);
@@ -264,7 +264,7 @@
 }
 
 .qb-content-table-preview-title {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -286,7 +286,7 @@
 }
 
 .qb-content-table-preview-placeholder-text {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-tertiary);
 }

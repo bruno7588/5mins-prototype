@@ -7,7 +7,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: 0 4px 12px rgba(15, 16, 20, 0.08);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--neutral-900) 8%, transparent);
   padding: var(--space-s);
   display: flex;
   flex-direction: column;

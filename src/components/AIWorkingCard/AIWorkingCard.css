@@ -75,7 +75,7 @@
    The pass being said is primary — the running one and, at the end, the one the card has
    arrived at. */
 .ai-working-step__text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -146,7 +146,7 @@
   /* Bound to the pass above it: 4px is close enough to read as one block, far enough
      that the two lines don't run together. */
   margin-top: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);

@@ -42,14 +42,14 @@
 }
 
 .up-name {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
 }
 
 .up-meta {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   margin: var(--space-xxs) 0 0;
@@ -75,7 +75,7 @@
 .up-tab {
   position: relative;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   background: transparent;
@@ -134,7 +134,7 @@
 }
 
 .up-stat-value {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -145,7 +145,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -242,7 +242,7 @@
 }
 
 .up-empty-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -250,7 +250,7 @@
 
 .up-empty-desc {
   max-width: 600px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);

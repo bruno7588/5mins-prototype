@@ -22,13 +22,13 @@
 }
 
 .edit-cols-title {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .edit-cols-reset {
-  font-size: 12px;
+  font-size: var(--font-size-h6);
   line-height: 1.2;
   font-weight: 700;
   color: var(--text-button-outlined);
@@ -54,7 +54,7 @@
 }
 
 .edit-cols-section-label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
   color: var(--text-tertiary);
@@ -87,7 +87,7 @@
 }
 
 .edit-cols-item-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;

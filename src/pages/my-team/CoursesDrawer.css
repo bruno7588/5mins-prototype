@@ -89,14 +89,14 @@
 }
 
 .cd-drawer__member-name {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
 }
 
 .cd-drawer__member-role {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   margin: 0;
 }
@@ -175,7 +175,7 @@
 }
 
 .cd-table__header .cd-table__cell {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   padding: 0 var(--space-m);
@@ -192,7 +192,7 @@
   display: flex;
   align-items: center;
   padding: var(--space-sm) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   line-height: 1.5;
   white-space: nowrap;
@@ -221,7 +221,7 @@
 }
 
 .cd-table__course-title {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   margin: 0;
   overflow: hidden;
@@ -261,13 +261,13 @@
   text-align: center;
 }
 .cd-table__empty-text {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 500;
   color: var(--text-primary);
   margin: 0;
 }
 .cd-table__empty-subtext {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   margin: 0;
 }
@@ -290,7 +290,7 @@
   background: var(--primary-600);
 }
 .cd-table__progress-pct {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   min-width: 33px;
   text-align: left;

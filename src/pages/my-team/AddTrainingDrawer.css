@@ -9,7 +9,7 @@
 }
 
 .at-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -17,7 +17,7 @@
 }
 
 .at-subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
@@ -37,7 +37,7 @@
 }
 
 .at-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -45,7 +45,7 @@
 
 .at-optional {
   font-weight: 400;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
@@ -132,7 +132,7 @@
   background: transparent;
   border: none;
   font-family: 'Poppins', sans-serif;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 400;
   color: var(--text-primary);
   cursor: pointer;
@@ -151,7 +151,7 @@
   border: none;
   text-align: center;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-disabled);
   background: transparent;
   outline: none;

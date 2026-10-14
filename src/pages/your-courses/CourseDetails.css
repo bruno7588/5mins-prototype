@@ -37,7 +37,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   white-space: nowrap;
 }
@@ -83,7 +83,7 @@
 }
 
 .cd-title {
-  font-size: 32px;
+  font-size: var(--font-size-h1);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -106,7 +106,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   white-space: nowrap;
 }
@@ -140,7 +140,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -178,7 +178,7 @@
   padding: var(--space-xxs) var(--space-xs);
   border-radius: var(--radius-full);
   background: var(--input-background);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.2;
   color: var(--text-secondary);
@@ -228,7 +228,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
 }
 
@@ -239,7 +239,7 @@
 }
 
 .cd-stat-pct {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -261,7 +261,7 @@
 }
 
 .cd-select-count {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   white-space: nowrap;
 }
@@ -277,7 +277,7 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -374,7 +374,7 @@
   background: none;
   border: none;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   white-space: nowrap;
   cursor: pointer;
@@ -391,7 +391,7 @@
 }
 
 .cd-reset-cap-alert .alert__message {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
 }
 
@@ -403,30 +403,30 @@
   gap: var(--space-xs);
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
 }
 
 .cd-status--failed {
-  background: rgba(223, 22, 66, 0.16);
+  background: var(--danger-tint);
   color: var(--text-error);
 }
 
 .cd-status--in-progress {
-  background: rgba(0, 206, 230, 0.16);
+  background: var(--primary-tint);
   color: var(--text-progress);
 }
 
 /* Content done but quizzes not yet passed — warning styling */
 .cd-status--quizzes-pending {
-  background: rgba(255, 187, 56, 0.16);
+  background: color-mix(in srgb, var(--secondary-500) 16%, transparent);
   color: var(--text-warning);
 }
 
 .cd-status--completed {
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--text-success);
 }
 
@@ -436,7 +436,7 @@
 }
 
 .cd-learner-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.5;
@@ -447,7 +447,7 @@
 }
 
 .cd-learner-email {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   line-height: 1.5;
   max-width: 100%;
@@ -464,7 +464,7 @@
 }
 
 .cd-date-year {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-secondary);
 }
@@ -491,7 +491,7 @@
 }
 
 .cd-progress-pct {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   width: 33px;
   flex-shrink: 0;
@@ -502,13 +502,13 @@
   padding: var(--space-xl);
   text-align: center;
   color: var(--text-tertiary);
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 .cd-placeholder {
   padding: var(--space-xxl);
   text-align: center;
   color: var(--text-tertiary);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
 }

@@ -44,7 +44,7 @@
   padding: var(--space-s) var(--space-s) var(--space-s) var(--space-xs);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   line-height: 1.5;
   color: var(--text-secondary);
   cursor: pointer;
@@ -61,7 +61,7 @@
   padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   line-height: 1.5;
   color: var(--text-primary);
   cursor: pointer;
@@ -103,7 +103,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--danger-500, #DF1642);
+  background: var(--danger-500, var(--danger-500));
   border: 2px solid var(--page-background);
 }
 
@@ -144,7 +144,7 @@
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   line-height: 1.5;
   color: var(--text-secondary);
   text-align: left;
@@ -186,7 +186,7 @@
 .mt-side__profile-name {
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
   margin: 0;
@@ -195,7 +195,7 @@
 .mt-side__profile-email {
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-secondary);
   margin: 0;
@@ -210,7 +210,7 @@
   font-weight: 400;
   font-size: 10px;
   line-height: 1.4;
-  color: var(--text-tertiary, #9EA4B3);
+  color: var(--text-tertiary, var(--neutral-300));
 }
 
 /* Body */
@@ -242,7 +242,7 @@
 .mt-pageheader__title {
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   line-height: 1.5;
   color: var(--text-primary);
   margin: 0;
@@ -251,7 +251,7 @@
 .mt-pageheader__subtitle {
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   line-height: 1.5;
   color: var(--text-secondary);
   margin: 0;
@@ -276,7 +276,7 @@
   padding: 0 0 var(--space-s) 0;
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
   cursor: pointer;
@@ -336,7 +336,7 @@
 }
 
 .mt-stat-value {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -347,7 +347,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -447,7 +447,7 @@
   background: var(--input-background);
   color: var(--text-secondary);
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1.2;
   cursor: default;
@@ -495,7 +495,7 @@
   margin: 0;
 }
 .mt-cp__th-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
 }
@@ -542,7 +542,7 @@
 }
 .mt-reminder-tip__sub {
   color: var(--neutral-300);
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 .mt-cp__table-cell--muted {
@@ -580,7 +580,7 @@
   background: var(--border);
 }
 .mt-cp__progress-pct {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   min-width: 36px;
   text-align: left;
@@ -609,7 +609,7 @@
 .mt-cp__status-dash {
   color: var(--text-disabled);
   font-weight: 400;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
 }
 
@@ -661,7 +661,7 @@
 
 .mt-cp__empty-text {
   font-family: 'Poppins', sans-serif;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -670,7 +670,7 @@
 
 .mt-cp__empty-subtext {
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -732,7 +732,7 @@
 }
 
 .mt-cp__metric-plain {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
 }
@@ -763,7 +763,7 @@
   background: transparent;
   border: none;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   text-align: center;
@@ -792,18 +792,18 @@
   gap: var(--space-xs);
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
 }
 
-.mt-cp__status-badge--overdue      { background: rgba(223, 22, 66, 0.16);    color: var(--text-error); }
-.mt-cp__status-badge--failed       { background: rgba(223, 22, 66, 0.16);    color: var(--text-error); }
+.mt-cp__status-badge--overdue      { background: var(--danger-tint);    color: var(--text-error); }
+.mt-cp__status-badge--failed       { background: var(--danger-tint);    color: var(--text-error); }
 .mt-cp__status-badge--not-started  { background: var(--input-background);    color: var(--text-secondary); }
-.mt-cp__status-badge--low-progress { background: rgba(255, 165, 56, 0.16);   color: var(--text-warning, #FFA538); }
-.mt-cp__status-badge--on-track     { background: rgba(0, 206, 230, 0.16);    color: var(--primary-600); }
-.mt-cp__status-badge--completed    { background: rgba(24, 169, 87, 0.16);    color: var(--success-500); }
+.mt-cp__status-badge--low-progress { background: var(--warning-tint);   color: var(--text-warning, var(--warning-500)); }
+.mt-cp__status-badge--on-track     { background: var(--primary-tint);    color: var(--primary-600); }
+.mt-cp__status-badge--completed    { background: var(--success-tint);    color: var(--success-500); }
 
 .mt-cp__metric-plain--zero {
   color: var(--text-disabled);
@@ -831,20 +831,20 @@
 }
 
 .mt-cp__member-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .mt-cp__member-role {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-secondary);
 }
 
 .mt-cp__zero {
   display: inline-block;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
 }
 

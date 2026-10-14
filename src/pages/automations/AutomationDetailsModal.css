@@ -71,7 +71,7 @@
 .automation-details-section-title {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -80,7 +80,7 @@
 .automation-details-section-desc {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -102,7 +102,7 @@
 .automation-details-card-lead {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
@@ -127,7 +127,7 @@
   width: auto;
   height: auto;
   padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 /* Keep the role search inline next to "changes to". Page-scoped to beat the
@@ -187,7 +187,7 @@
   width: 180px;
   padding: var(--space-s) var(--space-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -285,7 +285,7 @@
   width: 180px;
   padding: var(--space-s) var(--space-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -327,7 +327,7 @@
 }
 
 .automation-details-cell-trigger__title {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -337,7 +337,7 @@
 }
 
 .automation-details-cell-trigger__desc {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.2;
   color: var(--text-secondary);
@@ -366,7 +366,7 @@
   background: var(--input-background-elevated);
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -412,7 +412,7 @@ a.automation-details-row-name:focus-visible {
 .automation-details-eligible {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -443,7 +443,7 @@ a.automation-details-row-name:focus-visible {
 .automation-review-lead {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -452,7 +452,7 @@ a.automation-details-row-name:focus-visible {
 .automation-review-heading {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -479,7 +479,7 @@ a.automation-details-row-name:focus-visible {
 
 .automation-review-key {
   flex: 0 0 120px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -492,7 +492,7 @@ a.automation-details-row-name:focus-visible {
   flex-direction: column;
   gap: var(--space-s);
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
@@ -506,7 +506,7 @@ a.automation-details-row-name:focus-visible {
    claim one enrolment or due date for the whole automation. */
 .automation-review-terms {
   display: block;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   color: var(--text-secondary);
 }
@@ -525,7 +525,7 @@ a.automation-details-row-name:focus-visible {
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--input-background);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);

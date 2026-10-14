@@ -12,7 +12,7 @@
 .library-drawer__title {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -21,7 +21,7 @@
 .library-drawer__subtitle {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -41,7 +41,7 @@
 .library-drawer__empty {
   margin: 0;
   padding: var(--space-l) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -96,7 +96,7 @@
 .library-lesson__title {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -110,7 +110,7 @@
 .library-lesson__meta {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.2;
   color: var(--text-secondary);

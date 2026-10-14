@@ -5,7 +5,7 @@
 .iud-drawer__title {
   flex: 1;
   min-width: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;

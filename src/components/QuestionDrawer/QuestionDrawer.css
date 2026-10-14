@@ -50,7 +50,7 @@
 }
 
 .question-drawer-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -95,7 +95,7 @@
 }
 
 .question-drawer-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
@@ -149,7 +149,7 @@
 .question-drawer-answer-input {
   flex: 1;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -172,9 +172,9 @@
      the same height as the others. */
   padding: var(--space-xxs) var(--space-sm);
   border-radius: 40px;
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--success-500);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   white-space: nowrap;
@@ -207,7 +207,7 @@
   padding: var(--space-ssm) var(--space-sm);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -250,7 +250,7 @@
 .question-drawer-explanation-input {
   flex: 1;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -273,7 +273,7 @@
 }
 
 .question-drawer-error {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 400;
   color: var(--text-error);

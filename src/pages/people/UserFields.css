@@ -20,14 +20,14 @@
 }
 
 .user-fields-title {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .user-fields-subtitle {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -72,14 +72,14 @@
 }
 
 .user-fields-empty-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .user-fields-empty-desc {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -120,7 +120,7 @@
 /* Cells */
 .uf-table-cell {
   padding: var(--space-sm) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -153,13 +153,13 @@
   justify-content: center;
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
 }
 
 .uf-badge--yes {
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--text-success);
 }
 
@@ -204,7 +204,7 @@
   padding: var(--space-s) var(--space-m);
   background: var(--tooltip-background);
   color: var(--neutral-25);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   white-space: nowrap;

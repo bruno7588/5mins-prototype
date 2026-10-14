@@ -51,14 +51,14 @@
 
 /* Paragraph S regular (Figma 17663:24193). */
 .pcd-signoff-statement__label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.2;
   color: var(--text-tertiary);
 }
 
 .pcd-signoff-statement__value {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -105,11 +105,11 @@
 /* Summary (Figma 17696:28319): rows 12px apart; labels Paragraph M regular,
    values Paragraph L medium. */
 .pcd-signoff-summary .pcd-signoff-statement__label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
 }
 
 .pcd-signoff-summary .pcd-signoff-statement__value {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 500;
 }

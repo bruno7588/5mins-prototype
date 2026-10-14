@@ -26,7 +26,7 @@
 }
 
 .courses-list-breadcrumb-link {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.2;
@@ -44,7 +44,7 @@
 }
 
 .courses-list-breadcrumb-current {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.2;
@@ -58,7 +58,7 @@
 
 .courses-list-title {
   flex: 1;
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -128,7 +128,7 @@
   display: flex;
   align-items: center;
   padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;
@@ -220,7 +220,7 @@
 }
 
 .courses-list-date-year {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
@@ -247,7 +247,7 @@
   padding: var(--space-xl);
   text-align: center;
   color: var(--text-tertiary);
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 /* Pagination */
@@ -260,7 +260,7 @@
 }
 
 .courses-list-pagination-text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }
 

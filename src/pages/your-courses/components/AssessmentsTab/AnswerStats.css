@@ -34,7 +34,7 @@
 
 /* Paragraph M medium — the name of the figure below, a step back from it. */
 .ast-stat__label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -42,7 +42,7 @@
 
 /* "of 128" is the cohort the figure is read against, so it sits smaller and back. */
 .ast-stat__value {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.2;
   color: var(--text-tertiary);
@@ -51,7 +51,7 @@
 
 /* Paragraph L semibold — the number the line is about. */
 .ast-stat__figure {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
@@ -76,7 +76,7 @@
 .ast-quiz__prompt {
   margin: 0;
   max-width: 90ch;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);

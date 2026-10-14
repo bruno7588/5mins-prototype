@@ -28,7 +28,7 @@
 }
 
 .filter-bar__label {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700; /* H5 */
   line-height: 1.5;
   color: var(--text-primary);
@@ -42,7 +42,7 @@
   padding: 1px var(--space-xss);
   border-radius: var(--radius-full);
   background: var(--input-background-elevated);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -127,7 +127,7 @@
 }
 
 .filter-bar__row-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
   white-space: nowrap;

@@ -52,7 +52,7 @@ body.imp-impersonating .confirm-modal {
      layered over the page ground so the fixed bar stays opaque over scrolling content. */
   --imp-fg: var(--text-progress);
   --imp-dot: var(--text-progress);
-  --imp-tint: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% */
+  --imp-tint: var(--primary-tint); /* Primary-500 @ 16% */
   color: var(--imp-fg);
   background: linear-gradient(var(--imp-tint), var(--imp-tint)), var(--page-background);
 }
@@ -92,7 +92,7 @@ body.imp-impersonating .confirm-modal {
   flex: 0 0 20px;
 }
 .imp-bar__prefix-text {
-  font-size: 14px; /* Paragraph M regular */
+  font-size: var(--font-size-md); /* Paragraph M regular */
   font-weight: 400;
   line-height: 1.5;
   white-space: nowrap;
@@ -104,12 +104,12 @@ body.imp-impersonating .confirm-modal {
   white-space: nowrap;
 }
 .imp-bar__name {
-  font-size: 14px; /* Paragraph M semibold */
+  font-size: var(--font-size-md); /* Paragraph M semibold */
   font-weight: 600;
   line-height: 1.5;
 }
 .imp-bar__role {
-  font-size: 12px; /* Paragraph S regular */
+  font-size: var(--font-size-sm); /* Paragraph S regular */
   font-weight: 400;
   line-height: 1.2;
 }
@@ -166,7 +166,7 @@ body.imp-impersonating .confirm-modal {
   animation: imp-dot-pulse 1.6s ease-out infinite;
 }
 .imp-bar__time {
-  font-size: 14px; /* Paragraph M regular, tabular digits */
+  font-size: var(--font-size-md); /* Paragraph M regular, tabular digits */
   font-weight: 400;
   line-height: 1.5;
   font-variant-numeric: tabular-nums;

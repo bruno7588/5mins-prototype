@@ -20,7 +20,7 @@
   display: flex;
   flex-direction: column;
   background: var(--page-background);
-  box-shadow: -8px 0 24px rgba(32, 34, 42, 0.12);
+  box-shadow: -8px 0 24px color-mix(in srgb, var(--neutral-800) 12%, transparent);
   animation: cpd-slide-in 280ms ease-in-out;
 }
 
@@ -54,7 +54,7 @@
 
 .cpd-header__title {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -79,7 +79,7 @@
   border-bottom: 2px solid transparent;
   background: transparent;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
@@ -134,7 +134,7 @@
 .cpd-col-head {
   margin: var(--space-xs) 0 var(--space-sm);
   padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   background: var(--input-background);
@@ -181,7 +181,7 @@
 
 .cpd-row__title {
   min-width: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -191,7 +191,7 @@
 }
 
 .cpd-row__meta {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.2;
   color: var(--text-tertiary);
@@ -207,7 +207,7 @@
   padding: var(--space-s) var(--space-m);
   border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
+  font-size: var(--font-size-h6);
   font-weight: 700;
   line-height: 1.4;
   cursor: pointer;
@@ -241,7 +241,7 @@
   padding: 48px var(--space-l);
   text-align: center;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 .cpd-empty p {

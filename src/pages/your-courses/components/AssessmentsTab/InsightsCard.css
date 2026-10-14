@@ -32,7 +32,7 @@
 
 /* Provenance, not a headline. */
 .asmi-stamp {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--text-tertiary);
 }
 
@@ -62,14 +62,14 @@
   position: relative;
   max-width: 72ch;
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.6;
   color: var(--text-secondary);
 }
 
 .asmi-note {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--text-tertiary);
 }
 
@@ -92,7 +92,7 @@
 /* Sentence case — the design system has no all-caps text. */
 .asmi-label {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
@@ -107,7 +107,7 @@
 /* H4 (16px/1.5) rather than the section header's default H3 — this sits inside a
    card, not at the top of a page section. Scoped: other SectionHeader users keep 20px. */
 .asmi .section-header__title {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
 }
 
 /* The stamp is provenance on the title, not a line under it — closer than the 4px the
@@ -182,7 +182,7 @@
   border: none;
   background: none;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   text-align: left;
@@ -200,7 +200,7 @@
 
 .asmi-person__reason {
   max-width: 72ch;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -252,7 +252,7 @@
 
 .asmi-empty__body {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -293,12 +293,12 @@
 
 .asmi-stats .asm-stat__label {
   gap: var(--space-xs);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
 }
 
 .asmi-stats .asm-stat__figure {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
 }
 
 /* The one figure that is a flag rather than a count. */

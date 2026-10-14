@@ -55,7 +55,7 @@
 }
 
 .cffm-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -66,7 +66,7 @@
 }
 
 .cffm-subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -96,7 +96,7 @@
   border: none;
   background: transparent;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -131,7 +131,7 @@
 .cffm-guidelines-body {
   padding: var(--space-sm) var(--space-m);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -176,7 +176,7 @@
   background: radial-gradient(circle at top left, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
   color: var(--neutral-25);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.5;
   cursor: pointer;
@@ -240,12 +240,12 @@
   background:
     conic-gradient(
       from var(--cffm-stroke-angle),
-      #00CEE6 0deg,
-      #8158EC 120deg,
-      #00CEE6 240deg,
-      #8158EC 360deg
+      var(--primary-500) 0deg,
+      var(--blaze-quiz) 120deg,
+      var(--primary-500) 240deg,
+      var(--blaze-quiz) 360deg
     );
-  box-shadow: 0 0 32px 0 rgba(129, 88, 236, 0.16);
+  box-shadow: 0 0 32px 0 var(--ai-tint);
   animation: cffm-rotate-stroke 4s linear infinite;
 }
 
@@ -264,9 +264,9 @@
   background:
     linear-gradient(
       135deg,
-      rgba(0, 206, 230, 0.08) 0%,
+      color-mix(in srgb, var(--primary-500) 8%, transparent) 0%,
       rgba(65, 147, 233, 0.08) 50%,
-      rgba(129, 88, 236, 0.08) 100%
+      color-mix(in srgb, var(--blaze-quiz) 8%, transparent) 100%
     ),
     var(--cards-background);
 }
@@ -284,7 +284,7 @@
   gap: var(--space-xs);
   height: 28px;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -343,7 +343,7 @@
 
 .cffm-progress-label {
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   width: 34px;
@@ -366,7 +366,7 @@
   background: var(--button-background-disabled);
   color: var(--text-button-disabled);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.5;
   cursor: not-allowed;

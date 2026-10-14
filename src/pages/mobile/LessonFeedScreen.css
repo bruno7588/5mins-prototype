@@ -115,7 +115,7 @@
   gap: var(--space-xs);
   padding: var(--space-xxs) var(--space-xs);
   border-radius: var(--radius-xs);
-  background: rgba(15, 16, 20, 0.5);
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
   font: 500 12px/20px 'Poppins', sans-serif;
   color: var(--neutral-0);
 }
@@ -135,7 +135,7 @@
 .m-lf-side__avatar {
   box-sizing: border-box;
   border: 1px solid var(--neutral-0);
-  box-shadow: 1px 1px 4px rgba(15, 16, 20, 0.04);
+  box-shadow: 1px 1px 4px color-mix(in srgb, var(--neutral-900) 4%, transparent);
 }
 
 .m-lf-side__action {

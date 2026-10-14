@@ -77,7 +77,7 @@
 
 .m-fy-hero__title {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -85,7 +85,7 @@
 
 .m-fy-hero__skill {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);

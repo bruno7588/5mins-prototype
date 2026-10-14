@@ -16,7 +16,7 @@
   padding: var(--space-s) var(--space-sm);
   background: var(--input-background);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }
 
@@ -135,7 +135,7 @@
 }
 
 .lrn-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
@@ -145,7 +145,7 @@
 }
 
 .lrn-role {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
   overflow: hidden;
@@ -167,14 +167,14 @@
 /* The whole of the score cell now, so it carries the row's own size rather than the
    caption size it had under a bar. */
 .lrn-pct {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
 
 .lrn-none {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
 }
 
@@ -260,7 +260,7 @@
   display: flex;
   align-items: baseline;
   gap: var(--space-xxs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
   min-width: 0;
@@ -269,7 +269,7 @@
 /* The question, and under it the format — the same primary-over-supporting stack the
    learner's name and role make in this column one row up. */
 .lrn-answer__name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
@@ -279,7 +279,7 @@
 }
 
 .lrn-answer__type {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
   overflow: hidden;
@@ -288,7 +288,7 @@
 }
 
 .lrn-answer__a {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
   word-break: break-word;
@@ -297,7 +297,7 @@
 /* The score for this one assessment, in the Score column and so directly under the
    learner's own score. */
 .lrn-answer__score {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
@@ -324,7 +324,7 @@
 }
 
 .lrn-count {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }
 

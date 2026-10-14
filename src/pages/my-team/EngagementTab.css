@@ -38,7 +38,7 @@
 
 .eng-card__title {
   flex: 1;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -62,7 +62,7 @@
   padding: var(--space-s) var(--space-m);
   border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   background: transparent;
@@ -99,7 +99,7 @@
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   line-height: 1.5;
   cursor: pointer;
@@ -123,7 +123,7 @@
 .eng-skills__header-name {
   flex: 1;
   min-width: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -134,7 +134,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -164,7 +164,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   line-height: 1.5;
 }
@@ -217,7 +217,7 @@
 }
 
 .eng-skills__score {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   width: 26px;
@@ -239,7 +239,7 @@
 }
 
 .eng-chart__headline h3 {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -247,7 +247,7 @@
 }
 
 .eng-chart__headline p {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   line-height: 1.5;
   margin: 0;
@@ -276,7 +276,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--text-tertiary);
   line-height: 1.2;
 }
@@ -293,7 +293,7 @@
 }
 
 .eng-chart__legend-swatch--quizzes {
-  background: #33E2F7;
+  background: var(--primary-400);
 }
 
 .eng-chart__area {
@@ -312,7 +312,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
   line-height: 1.2;
 }
@@ -359,7 +359,7 @@
 .eng-chart__x-label {
   flex: 1;
   text-align: center;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
   line-height: 1.2;
 }
@@ -488,14 +488,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--neutral-0);
   line-height: 1.5;
 }
 
 .eng-lb__rank-plain {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-tertiary);
   line-height: 1.5;
@@ -510,7 +510,7 @@
 }
 
 .eng-lb__name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
@@ -521,7 +521,7 @@
 }
 
 .eng-lb__role {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--text-tertiary);
   line-height: 1.2;
   margin: 0;
@@ -531,7 +531,7 @@
 }
 
 .eng-lb__points {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   white-space: nowrap;

@@ -51,7 +51,7 @@
   right: 6px;
   padding: var(--space-xs) var(--space-xss);
   border-radius: var(--radius-xs);
-  background: rgba(15, 16, 20, 0.5);
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
   font-size: 10px;
   line-height: 1;
   color: var(--neutral-0);
@@ -92,7 +92,7 @@
 
 .lesson-grid-card__title {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -106,7 +106,7 @@
 
 .lesson-grid-card__meta {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-secondary);
 }

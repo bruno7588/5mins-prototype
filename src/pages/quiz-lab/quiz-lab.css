@@ -127,7 +127,7 @@
   /* Figma option chip (fill-blank bank + categorize) — 12/16 padding, 45px. */
   min-height: 0;
   padding: var(--space-sm) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 /* Active states (DS Quiz Option, Figma): solid fill + Medium (500) weight.
@@ -228,7 +228,7 @@
 
 .ql-pair--correct .ql-pair__def,
 .ql-pair--incorrect .ql-pair__def {
-  color: rgba(255, 255, 255, 0.82);
+  color: color-mix(in srgb, var(--neutral-0) 82%, transparent);
 }
 
 .ql-pair__body {
@@ -270,7 +270,7 @@
 }
 
 .ql-pair__remove:hover {
-  background: rgba(32, 34, 42, 0.1);
+  background: color-mix(in srgb, var(--neutral-800) 10%, transparent);
   color: var(--neutral-800);
 }
 
@@ -562,7 +562,7 @@
 }
 
 .ql-seq__remove:hover {
-  background: rgba(32, 34, 42, 0.1);
+  background: color-mix(in srgb, var(--neutral-800) 10%, transparent);
 }
 
 .ql-seq__remove:focus-visible {

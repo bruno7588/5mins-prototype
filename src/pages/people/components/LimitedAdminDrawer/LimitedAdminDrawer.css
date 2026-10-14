@@ -23,7 +23,7 @@
   gap: var(--space-ml);
   padding: var(--space-ml) var(--space-l);
   background: var(--page-background);
-  box-shadow: -8px 0 24px rgba(32, 34, 42, 0.12);
+  box-shadow: -8px 0 24px color-mix(in srgb, var(--neutral-800) 12%, transparent);
   animation: lad-slide-in 300ms ease-in-out;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .lad-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -97,14 +97,14 @@
 }
 
 .lad-person__name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
 .lad-person__email {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -112,7 +112,7 @@
 
 /* Empty state when the tenant has no custom fields yet */
 .lad-empty {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -130,7 +130,7 @@
 .lad-scope-lead,
 .lad-scope-operator {
   flex-shrink: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
 }

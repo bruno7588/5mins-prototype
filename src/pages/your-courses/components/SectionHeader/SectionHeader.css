@@ -18,14 +18,14 @@
 }
 
 .section-header__title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .section-header__description {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;

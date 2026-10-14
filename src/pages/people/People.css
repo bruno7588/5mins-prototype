@@ -55,14 +55,14 @@
 }
 
 .people-quicklink-title {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .people-quicklink-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -76,7 +76,7 @@
 
 .people-tab {
   position: relative;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   padding: 0;
@@ -111,9 +111,9 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-sm);
-  background: rgba(255, 187, 56, 0.12);
+  background: color-mix(in srgb, var(--secondary-500) 12%, transparent);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-warning);
   line-height: 1.5;
@@ -161,7 +161,7 @@
   border: none;
   background: transparent;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   outline: none;
@@ -188,7 +188,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-primary);
   border: 1px solid var(--border-elevated);
@@ -217,7 +217,7 @@
 }
 
 .people-filter-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -236,7 +236,7 @@
   border-radius: var(--radius-sm);
   padding: var(--space-s) var(--space-m);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;
@@ -288,7 +288,7 @@
   display: flex;
   align-items: center;
   padding: var(--space-sm) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   border-radius: var(--radius-s);
@@ -394,7 +394,7 @@
   align-items: center;
   gap: var(--space-xs);
   min-width: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   white-space: nowrap;
 }
@@ -416,7 +416,7 @@
 .people-date-stack {
   display: flex;
   flex-direction: column;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.4;
@@ -425,7 +425,7 @@
 /* Year drops back so the day line carries the scan — table.md's date cell,
    dimmed one further step to --text-tertiary. */
 .people-date-stack__year {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
@@ -439,7 +439,7 @@
 }
 
 .people-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
   overflow: hidden;
@@ -448,7 +448,7 @@
 }
 
 .people-email {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   overflow: hidden;
@@ -468,17 +468,17 @@
   gap: var(--space-xs);
   padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
 }
 
 .people-badge--registered {
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--text-success);
 }
 
 .people-badge--invited {
-  background: rgba(255, 165, 56, 0.16);
+  background: var(--warning-tint);
   color: var(--text-warning);
 }
 
@@ -525,7 +525,7 @@
 }
 
 .people-empty-state-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   max-width: 360px;
@@ -559,14 +559,14 @@
 }
 
 .confirm-modal-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .confirm-modal-body {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -578,9 +578,9 @@
   align-items: flex-start;
   gap: var(--space-s);
   padding: var(--space-sm) var(--space-m);
-  background: rgba(255, 187, 56, 0.12);
+  background: color-mix(in srgb, var(--secondary-500) 12%, transparent);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-warning);
   line-height: 1.5;
@@ -624,19 +624,19 @@
 }
 
 .confirm-modal-user-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
 }
 
 .confirm-modal-user-email {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
 }
 
 .confirm-modal-user-team {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
 }
@@ -651,7 +651,7 @@
 }
 
 .confirm-modal-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -666,7 +666,7 @@
   width: 100%;
   padding: var(--space-sm) var(--space-m);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   background: var(--cards-background);
@@ -727,7 +727,7 @@
    on them in dark mode. */
 .confirm-modal-radio-card--danger {
   border-color: var(--danger-500);
-  background: rgba(223, 22, 66, 0.12);
+  background: color-mix(in srgb, var(--danger-500) 12%, transparent);
 }
 
 .confirm-modal-radio-card--danger:hover {
@@ -736,7 +736,7 @@
 
 .confirm-modal-radio-card--warning {
   border-color: var(--warning-500);
-  background: rgba(255, 165, 56, 0.12);
+  background: color-mix(in srgb, var(--warning-500) 12%, transparent);
 }
 
 .confirm-modal-radio-card--warning:hover {
@@ -795,14 +795,14 @@
 }
 
 .confirm-modal-radio-card-title {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .confirm-modal-radio-card-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.5;
@@ -810,7 +810,7 @@
 
 /* ═══ Reactivate breakdown ═══ */
 .confirm-modal-reactivate-subtitle {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;

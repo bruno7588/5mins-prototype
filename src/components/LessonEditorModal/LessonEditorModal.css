@@ -43,7 +43,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -59,7 +59,7 @@
 .lesson-editor-publish-btn {
   white-space: nowrap;
   padding: var(--space-ssm) var(--space-ml);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-button-foreground);
   border-radius: var(--radius-sm);
@@ -97,7 +97,7 @@
 
 .lesson-editor-guidelines-text {
   flex: 1;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -114,7 +114,7 @@
 }
 
 .lesson-editor-guidelines-body {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.6;
@@ -146,7 +146,7 @@
 .lesson-editor-preview-scrim {
   position: absolute;
   inset: 0;
-  background: rgba(15, 16, 20, 0.5);
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -182,7 +182,7 @@
 }
 
 .lesson-editor-label {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -191,7 +191,7 @@
 .lesson-editor-input {
   padding: var(--space-s) var(--space-sm);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   background: none;
@@ -225,7 +225,7 @@
 
 .lesson-editor-file-name {
   flex: 1;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;
@@ -235,7 +235,7 @@
 }
 
 .lesson-editor-change-file {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--primary-button-background);
   white-space: nowrap;
@@ -273,7 +273,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-xs);
-  background: rgba(15, 16, 20, 0.5);
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
   border-radius: var(--radius-full);
 }
 
@@ -288,7 +288,7 @@
 
 .lesson-editor-thumb-copy {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -306,7 +306,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: 0 0 var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   background: none;
@@ -324,7 +324,7 @@
   padding: var(--space-xxs) var(--space-s);
   border-radius: var(--radius-full);
   background: var(--input-background);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
 }

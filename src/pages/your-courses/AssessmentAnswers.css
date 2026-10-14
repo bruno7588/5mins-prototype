@@ -44,7 +44,7 @@
 /* H1 — a page title, where the drawer's was an H3. */
 .asp-title {
   margin: 0;
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -52,7 +52,7 @@
 
 .asp-meta {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -89,7 +89,7 @@
 /* Paragraph M medium. Not the semibold a form-field label takes — nothing is being
    filled in here, and the weight belongs to the question underneath. */
 .asp-brief__label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -101,7 +101,7 @@
 .asp-brief__value {
   margin: 0;
   max-width: 90ch;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
@@ -166,7 +166,7 @@
 }
 
 .tbl-stack.asp-file .supporting {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
@@ -215,7 +215,7 @@
 .asp-none {
   margin: 0;
   padding: var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
 }
 
@@ -235,7 +235,7 @@
 
 .asp-empty__title {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -244,7 +244,7 @@
 .asp-empty__body {
   margin: 0;
   max-width: 600px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }

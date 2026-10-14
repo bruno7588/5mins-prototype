@@ -16,7 +16,7 @@
 .alert--callout {
   background: var(--input-background);
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
 }
@@ -24,9 +24,9 @@
 /* ── Alert (warning) ── */
 .alert--alert {
   /* Warning-500 #FFA538 @ 16% (was Secondary-500 @ 12%) */
-  background: rgba(255, 165, 56, 0.16);
+  background: var(--warning-tint);
   color: var(--text-warning);
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   line-height: 1.5;
   /* 12px icon → text; the inline button adds another 12px for the 24px
@@ -78,7 +78,7 @@
 
 .alert__title {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -90,7 +90,7 @@
 }
 
 .alert--alert .alert__body .alert__message {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-warning);
 }
@@ -101,7 +101,7 @@
      markers it never drew. Restore them — the indent above assumes they exist. */
   list-style: disc;
   padding-left: 21px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -123,7 +123,7 @@
 
 /* Outlined — Callout */
 .alert__btn--outlined {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   border: 1px solid var(--text-primary);
   border-radius: var(--radius-sm);
@@ -138,7 +138,7 @@
 /* Inline underline — Alert */
 .alert__btn--inline {
   margin-left: var(--space-sm); /* + the row's 12px gap = 24px from the info area */
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   color: var(--text-warning);
   background: transparent;
   border: none;

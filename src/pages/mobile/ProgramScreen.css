@@ -25,7 +25,7 @@
 
 .m-prog__title {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -33,7 +33,7 @@
 
 .m-prog__desc {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -51,7 +51,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);
@@ -91,7 +91,7 @@
 }
 
 .m-prog__pct {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
   color: var(--text-secondary);
@@ -108,7 +108,7 @@
 
 .m-prog__sectiontitle {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);

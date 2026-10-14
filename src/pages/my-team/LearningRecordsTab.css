@@ -28,7 +28,7 @@
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   background: transparent;
@@ -87,7 +87,7 @@
   border: none;
   border-radius: var(--radius-s);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -117,7 +117,7 @@
 }
 
 .lr__filters-label {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -131,7 +131,7 @@
   padding: 1px var(--space-xss);
   border-radius: var(--radius-full);
   background: var(--input-background-elevated);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -143,7 +143,7 @@
   align-items: center;
   gap: var(--space-xs);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-button-outlined);
   background: transparent;
@@ -173,19 +173,19 @@
 }
 
 .lr__date-line1 {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .lr__date-line2 {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
   line-height: 1.2;
 }
 
 .lr__date-dash {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
 }
 
@@ -196,7 +196,7 @@
   justify-content: center;
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
@@ -204,7 +204,7 @@
 
 /* Enrollment badges */
 .lr__badge--current {
-  background: rgba(0, 206, 230, 0.16);
+  background: var(--primary-tint);
   color: var(--primary-600);
 }
 
@@ -215,22 +215,22 @@
 
 /* Status badges */
 .lr__badge--completed {
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--success-500);
 }
 
 .lr__badge--failed {
-  background: rgba(223, 22, 66, 0.16);
+  background: var(--danger-tint);
   color: var(--danger-400);
 }
 
 .lr__badge--in-progress {
-  background: rgba(0, 206, 230, 0.16);
+  background: var(--primary-tint);
   color: var(--primary-600);
 }
 
 .lr__badge--not-passed {
-  background: rgba(223, 22, 66, 0.16);
+  background: var(--danger-tint);
   color: var(--danger-400);
 }
 
@@ -265,12 +265,12 @@
 }
 
 .lr__bulk-bar-close:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--neutral-0) 10%, transparent);
   color: var(--neutral-0);
 }
 
 .lr__bulk-bar-count {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--neutral-200);
   white-space: nowrap;
@@ -279,7 +279,7 @@
 .lr__bulk-bar-divider {
   width: 1px;
   height: 24px;
-  background: rgba(255, 255, 255, 0.16);
+  background: color-mix(in srgb, var(--neutral-0) 16%, transparent);
   flex-shrink: 0;
 }
 
@@ -289,7 +289,7 @@
   gap: var(--space-xs);
   padding: var(--space-xss) var(--space-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   border-radius: var(--radius-sm);
   cursor: pointer;

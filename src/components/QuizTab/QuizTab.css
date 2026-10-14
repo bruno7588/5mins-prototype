@@ -32,7 +32,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) 0;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-primary);
   transition: opacity 150ms ease;
@@ -74,7 +74,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   /* Canonical AI text chrome (Button.css .ds-btn--ai-outlined label) */
   background: radial-gradient(circle at top left, var(--text-button-outlined) 0%, var(--blaze-quiz) 100%);
@@ -84,7 +84,7 @@
 }
 
 .quiz-tab-empty-banner-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
 }
@@ -108,14 +108,14 @@
 }
 
 .quiz-tab-empty-state-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .quiz-tab-empty-state-desc {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;

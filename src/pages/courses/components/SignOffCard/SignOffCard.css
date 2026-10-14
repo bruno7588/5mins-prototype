@@ -16,7 +16,7 @@
 /* Shared with the Certification heading on the course page. */
 .pcd-signoff__title {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -62,7 +62,7 @@
 
 .pcd-signoff__name {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -70,7 +70,7 @@
 
 .pcd-signoff__body {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);

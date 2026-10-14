@@ -67,7 +67,7 @@
 
 .uf-drawer-title {
   flex: 1;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -108,7 +108,7 @@
 }
 
 .uf-drawer-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -121,7 +121,7 @@
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   font-family: inherit;
   line-height: 1.5;
@@ -154,14 +154,14 @@
 }
 
 .uf-drawer-error {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-error);
   line-height: 1.5;
 }
 
 .uf-drawer-hint {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.5;
@@ -175,7 +175,7 @@
 }
 
 .uf-drawer-preview-title {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -231,7 +231,7 @@
   padding: var(--space-s) var(--space-m);
   background: var(--tooltip-background);
   color: var(--neutral-25);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   white-space: nowrap;
@@ -261,7 +261,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -289,14 +289,14 @@
 }
 
 .uf-drawer-checkbox-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .uf-drawer-checkbox-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;

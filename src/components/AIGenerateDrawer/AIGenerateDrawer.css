@@ -40,7 +40,7 @@
 }
 
 .ai-drawer-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -115,7 +115,7 @@
   padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -134,7 +134,7 @@
 .ai-drawer-live-text {
   flex: 1;
   min-width: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -164,7 +164,7 @@
    is closed during generation. */
 .ai-drawer-review-subtitle {
   margin-top: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -179,7 +179,7 @@
 }
 
 .ai-drawer-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-secondary);

@@ -43,7 +43,7 @@
 .audit .audit-filter.dropdown-sm .dropdown-trigger {
   height: auto;
   padding: var(--space-s) var(--space-sm); /* 8px 12px */
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 /* Clear-all filters — pill button matching the filter dropdowns, shown only
@@ -322,7 +322,7 @@
 }
 
 .audit-actor-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-primary);
   overflow: hidden;
@@ -332,19 +332,19 @@
 }
 
 .audit-actor-meta {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
 
 .audit-row-date {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.4;
   color: var(--text-primary);
 }
 
 .audit-row-clock {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
@@ -383,13 +383,13 @@
 }
 
 .audit-detail-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
 }
 
 .audit-detail-value {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
   word-break: break-word;
@@ -443,14 +443,14 @@
 }
 
 .audit-change-setting {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
 }
 
 .audit-change-value {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
 }
@@ -504,7 +504,7 @@
 }
 
 .audit-value-sub {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
@@ -519,7 +519,7 @@
 }
 
 .audit-pagination-count {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }
 
@@ -576,14 +576,14 @@
 }
 
 .audit-empty-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.4;
 }
 
 .audit-empty-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;

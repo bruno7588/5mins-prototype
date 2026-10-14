@@ -10,14 +10,14 @@
 }
 
 .rl-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .rl-subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -25,7 +25,7 @@
 
 .rl-empty {
   padding: var(--space-l) 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
   line-height: 1.5;
 }
@@ -67,7 +67,7 @@
   border: none;
   background: transparent;
   font-family: 'Poppins', sans-serif;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
@@ -95,7 +95,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -140,7 +140,7 @@
   align-items: center;
   gap: var(--space-xs);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.5;
@@ -217,7 +217,7 @@
 }
 
 .recipients-modal-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -246,7 +246,7 @@
 }
 
 .recipients-modal-email {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;

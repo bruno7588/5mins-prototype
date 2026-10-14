@@ -63,13 +63,13 @@
   padding: var(--space-s) var(--space-sm) var(--space-s) var(--space-s);
   border: none;
   border-radius: var(--radius-full);
-  background: rgba(15, 16, 20, 0.5);
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
   cursor: pointer;
   transition: background 120ms ease;
 }
 
 .pb-banner__btn:hover {
-  background: rgba(15, 16, 20, 0.7);
+  background: color-mix(in srgb, var(--neutral-900) 70%, transparent);
 }
 
 .pb-banner__btn-label {
@@ -96,7 +96,7 @@
   background: var(--primary-button-background);
   color: var(--text-button-foreground);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   cursor: pointer;
   transition: background 150ms ease;
@@ -137,7 +137,7 @@
 
 .pb-empty__title {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -154,7 +154,7 @@
   background: var(--primary-button-background);
   color: var(--text-button-foreground);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   cursor: pointer;
   transition: background 150ms ease;
@@ -178,7 +178,7 @@
 
 .pb-settings__title {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -211,7 +211,7 @@
 
 .pb-setting-name {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
@@ -219,7 +219,7 @@
 
 .pb-setting-desc {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);

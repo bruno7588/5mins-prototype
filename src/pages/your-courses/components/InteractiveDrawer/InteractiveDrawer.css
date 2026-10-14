@@ -37,14 +37,14 @@
 }
 
 .iq-drawer__label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
 }
 
 .iq-drawer__label-optional {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   line-height: 1.2;
   color: var(--text-tertiary);
@@ -62,7 +62,7 @@
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -91,7 +91,7 @@
    two rows, so the line appears under both — each field states its own problem
    rather than pointing at a message somewhere below the list. */
 .iq-drawer__conflict {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-error);
@@ -181,7 +181,7 @@
   border: none;
   background: transparent;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -217,7 +217,7 @@
   flex-shrink: 0;
   min-width: 20px;
   margin-top: var(--space-xxs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -412,7 +412,7 @@
   border-radius: var(--radius-sm);
   background: var(--cards-background);
   box-shadow: var(--shadow-s);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 2;
   color: var(--text-primary);
@@ -460,7 +460,7 @@
 
 /* Sub-label above the preview — instruction, not a field label. */
 .iq-drawer__label-sub {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);

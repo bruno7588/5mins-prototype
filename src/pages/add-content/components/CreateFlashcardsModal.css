@@ -14,7 +14,7 @@
 }
 
 .cfm-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -41,8 +41,8 @@
   border: none;
   background-color: var(--cards-background);
   box-shadow:
-    -1px -1px 4px 0 rgba(32, 34, 42, 0.06),
-    1px 1px 4px 0 rgba(32, 34, 42, 0.06);
+    -1px -1px 4px 0 color-mix(in srgb, var(--neutral-800) 6%, transparent),
+    1px 1px 4px 0 color-mix(in srgb, var(--neutral-800) 6%, transparent);
   cursor: pointer;
   text-align: left;
 }
@@ -88,12 +88,12 @@
 }
 
 .cfm-option--empty {
-  --cfm-grad-fill: linear-gradient(135deg, rgba(255, 187, 56, 0.08), rgba(233, 92, 123, 0.08));
+  --cfm-grad-fill: linear-gradient(135deg, color-mix(in srgb, var(--secondary-500) 8%, transparent), color-mix(in srgb, var(--danger-400) 8%, transparent));
   --cfm-grad-stroke: linear-gradient(135deg, var(--secondary-600), var(--danger-400));
 }
 
 .cfm-option--ai {
-  --cfm-grad-fill: linear-gradient(135deg, rgba(0, 206, 230, 0.08), rgba(129, 88, 236, 0.08));
+  --cfm-grad-fill: linear-gradient(135deg, color-mix(in srgb, var(--primary-500) 8%, transparent), color-mix(in srgb, var(--blaze-quiz) 8%, transparent));
   /* Canonical AI gradient chrome (Button.css) — mode-aware start, Blaze end */
   --cfm-grad-stroke: radial-gradient(circle at top left, var(--text-button-outlined), var(--blaze-quiz));
 }
@@ -162,14 +162,14 @@
 }
 
 .cfm-option-title {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .cfm-option-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.5;

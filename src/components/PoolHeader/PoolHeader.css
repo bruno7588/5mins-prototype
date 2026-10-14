@@ -26,13 +26,13 @@
 }
 
 .pool-header-title {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .pool-header-count {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
 }
@@ -50,7 +50,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) var(--space-m) var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-primary);
   border: none;
@@ -73,7 +73,7 @@
 }
 
 .pool-header-draw-text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
 }
@@ -90,7 +90,7 @@
   gap: var(--space-xs);
   padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 120%;
 }
@@ -100,12 +100,12 @@
 }
 
 .pool-header-coverage--strong {
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--text-success);
 }
 
 .pool-header-coverage--good {
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--text-success);
 }
 

@@ -9,14 +9,14 @@
 }
 
 .rd-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
 }
 
 .rd-subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
@@ -36,7 +36,7 @@
 }
 
 .rd-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-secondary);
   margin: 0;
@@ -47,7 +47,7 @@
   border-radius: var(--radius-sm);
   padding: var(--space-sm) var(--space-m);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
   background: transparent;
@@ -79,7 +79,7 @@
 }
 
 .rd-table__header .rd-table__cell {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   padding: var(--space-s) var(--space-sm);
@@ -96,7 +96,7 @@
   display: flex;
   align-items: center;
   padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   line-height: 1.5;
   white-space: nowrap;
@@ -133,7 +133,7 @@
 }
 
 .rd-member-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
   overflow: hidden;
@@ -142,7 +142,7 @@
 }
 
 .rd-member-role {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -152,7 +152,7 @@
 /* Carries the spam warning the top banner used to make: amber marks a learner
    who has been reminded recently. */
 .rd-member-lastsent {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-warning);
 }
@@ -178,7 +178,7 @@
 }
 
 .rd-progress__pct {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   width: 33px;
   flex-shrink: 0;
@@ -192,6 +192,6 @@
   justify-content: flex-end;
   gap: var(--space-s);
   padding-top: var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }

@@ -77,7 +77,7 @@
 
 .fy-hero__title {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -96,7 +96,7 @@
 }
 
 .fy-hero__skill-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   /* Neutral-25 at 50% opacity */
   color: color-mix(in srgb, var(--neutral-25) 50%, transparent);

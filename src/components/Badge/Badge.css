@@ -9,7 +9,7 @@
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.2;
   white-space: nowrap;
 }
@@ -49,34 +49,34 @@
 
 /* Fills are 16% tints of the type's 500 colour and do not change per mode;
    text tokens resolve per mode (see badges.md colour table). */
-.badge--success      { background: rgba(24, 169, 87, 0.16);  color: var(--text-success); }
-.badge--warning      { background: rgba(255, 165, 56, 0.16); color: var(--text-warning); }
-.badge--error        { background: rgba(223, 22, 66, 0.16);  color: var(--text-error); }
-.badge--in-progress  { background: rgba(0, 206, 230, 0.16);  color: var(--text-progress); }
+.badge--success      { background: var(--success-tint);  color: var(--text-success); }
+.badge--warning      { background: var(--warning-tint); color: var(--text-warning); }
+.badge--error        { background: var(--danger-tint);  color: var(--text-error); }
+.badge--in-progress  { background: var(--primary-tint);  color: var(--text-progress); }
 .badge--informative  { background: var(--input-background); color: var(--text-secondary); }
 .badge--new          { background: var(--danger-400); color: var(--neutral-25); }
 
 /* App extensions — not in the Library Badge component. */
 .badge--quiz         { background: var(--quiz-background); color: var(--text-quiz); }
 /* Figma 9200:58569 — enrolment not open to the learner yet. */
-.badge--scheduled    { background: rgba(42, 144, 216, 0.16);  color: var(--course-assessments); }
+.badge--scheduled    { background: var(--course-assessments-tint);  color: var(--course-assessments); }
 
 /* Hover (Library 5799:479, dismissible only): the pill fill doubles to 32% and
    the ✕ sits on a 24% disc of the same colour. */
 .badge--dismissible { transition: background 150ms ease; }
-.badge--success.badge--dismissible:hover      { background: rgba(24, 169, 87, 0.32); }
-.badge--success.badge--dismissible:hover .badge__dismiss      { background: rgba(24, 169, 87, 0.24); }
-.badge--warning.badge--dismissible:hover      { background: rgba(255, 165, 56, 0.32); }
-.badge--warning.badge--dismissible:hover .badge__dismiss      { background: rgba(255, 165, 56, 0.24); }
-.badge--error.badge--dismissible:hover        { background: rgba(223, 22, 66, 0.32); }
-.badge--error.badge--dismissible:hover .badge__dismiss        { background: rgba(223, 22, 66, 0.24); }
-.badge--in-progress.badge--dismissible:hover  { background: rgba(0, 206, 230, 0.32); }
-.badge--in-progress.badge--dismissible:hover .badge__dismiss  { background: rgba(0, 206, 230, 0.24); }
+.badge--success.badge--dismissible:hover      { background: color-mix(in srgb, var(--success-500) 32%, transparent); }
+.badge--success.badge--dismissible:hover .badge__dismiss      { background: color-mix(in srgb, var(--success-500) 24%, transparent); }
+.badge--warning.badge--dismissible:hover      { background: color-mix(in srgb, var(--warning-500) 32%, transparent); }
+.badge--warning.badge--dismissible:hover .badge__dismiss      { background: color-mix(in srgb, var(--warning-500) 24%, transparent); }
+.badge--error.badge--dismissible:hover        { background: color-mix(in srgb, var(--danger-500) 32%, transparent); }
+.badge--error.badge--dismissible:hover .badge__dismiss        { background: color-mix(in srgb, var(--danger-500) 24%, transparent); }
+.badge--in-progress.badge--dismissible:hover  { background: color-mix(in srgb, var(--primary-500) 32%, transparent); }
+.badge--in-progress.badge--dismissible:hover .badge__dismiss  { background: color-mix(in srgb, var(--primary-500) 24%, transparent); }
 /* Informative follows --input-background's per-mode neutral (200 light, 500 dark). */
-.badge--informative.badge--dismissible:hover  { background: rgba(191, 194, 204, 0.32); }
-.badge--informative.badge--dismissible:hover .badge__dismiss  { background: rgba(191, 194, 204, 0.24); }
-[data-theme='dark'] .badge--informative.badge--dismissible:hover { background: rgba(69, 76, 94, 0.32); }
-[data-theme='dark'] .badge--informative.badge--dismissible:hover .badge__dismiss { background: rgba(69, 76, 94, 0.24); }
+.badge--informative.badge--dismissible:hover  { background: color-mix(in srgb, var(--neutral-200) 32%, transparent); }
+.badge--informative.badge--dismissible:hover .badge__dismiss  { background: color-mix(in srgb, var(--neutral-200) 24%, transparent); }
+[data-theme='dark'] .badge--informative.badge--dismissible:hover { background: color-mix(in srgb, var(--neutral-500) 32%, transparent); }
+[data-theme='dark'] .badge--informative.badge--dismissible:hover .badge__dismiss { background: color-mix(in srgb, var(--neutral-500) 24%, transparent); }
 
 @media (prefers-reduced-motion: reduce) {
   .badge--dismissible,

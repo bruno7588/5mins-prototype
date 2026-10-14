@@ -33,7 +33,7 @@
 }
 
 .roles-header__title {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -41,7 +41,7 @@
 }
 
 .roles-header__description {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -60,7 +60,7 @@
 
 .roles-header__tab {
   position: relative;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   padding: 0;
@@ -113,9 +113,9 @@
   align-items: flex-start;
   gap: var(--space-s);
   padding: var(--space-m);
-  background: rgba(0, 206, 230, 0.08);
+  background: color-mix(in srgb, var(--primary-500) 8%, transparent);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -146,21 +146,21 @@
 
 /* DS Alert override for the role-edit warning — 14px per Figma (DS default is 16px) */
 .roles-panel-edit-alert.alert--alert {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
 }
 
 .roles-panel-edit-alert .alert__message {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
 }
 
 .roles-chip {
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   background: transparent;
@@ -235,7 +235,7 @@
   border: none;
   background: transparent;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -275,7 +275,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-secondary);
   border: 1px solid var(--border-elevated);
@@ -292,7 +292,7 @@
 
 .roles-btn-ghost--small {
   padding: var(--space-xs) var(--space-ssm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 .roles-btn-text {
@@ -301,7 +301,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) 0;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-primary);
   background: none;
@@ -348,7 +348,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: var(--space-xs) var(--space-s);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
   color: var(--neutral-25);
@@ -378,7 +378,7 @@
   padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-0);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
   border-radius: 6px;
@@ -451,7 +451,7 @@
   display: inline-flex;
   padding: var(--space-xs) var(--space-ssm);
   border-radius: 40px;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
   background: var(--input-background);
@@ -465,7 +465,7 @@
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
@@ -483,7 +483,7 @@
 }
 
 .roles-expanded-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   line-height: 1.6;
 }
@@ -495,7 +495,7 @@
 }
 
 .roles-expanded-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   text-transform: none;
@@ -517,10 +517,10 @@
   display: inline-flex;
   padding: var(--space-xs) var(--space-ssm);
   border-radius: 40px;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
-  background: rgba(255, 187, 56, 0.12);
+  background: color-mix(in srgb, var(--secondary-500) 12%, transparent);
   color: var(--text-warning);
 }
 
@@ -531,7 +531,7 @@
   gap: var(--space-xs);
   padding: 5px var(--space-sm);
   border-radius: 40px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
 }
 
@@ -541,7 +541,7 @@
 }
 
 .roles-skill-chip--cyan {
-  background: rgba(0, 206, 230, 0.12);
+  background: color-mix(in srgb, var(--primary-500) 12%, transparent);
   color: var(--primary-700);
 }
 
@@ -609,7 +609,7 @@
   padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-0);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
   border-radius: 6px;
@@ -634,7 +634,7 @@
 }
 
 .roles-skill-card__name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -680,7 +680,7 @@
 
 .roles-empty__text {
   font-family: 'Poppins', sans-serif;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -689,7 +689,7 @@
 }
 
 .roles-empty__subtext {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -698,7 +698,7 @@
 }
 
 .roles-empty-link {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-button-outlined);
   cursor: pointer;
@@ -741,7 +741,7 @@
 
 .roles-empty-state__title {
   font-family: 'Poppins', sans-serif;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -750,7 +750,7 @@
 
 .roles-empty-state__description {
   font-family: 'Poppins', sans-serif;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -767,7 +767,7 @@
 
 /* ===== Company Roles Footer ===== */
 .roles-footer {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
   padding-top: var(--space-s);
 }
@@ -846,7 +846,7 @@
 }
 
 .roles-panel-subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   margin-top: var(--space-xs);
   line-height: 1.5;
@@ -902,7 +902,7 @@
 }
 
 .roles-panel-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
 }
@@ -916,7 +916,7 @@
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   background: var(--input-background);
   outline: none;
@@ -970,7 +970,7 @@
   cursor: pointer;
   color: var(--text-primary);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.5;
   transition: color 150ms ease;
@@ -989,7 +989,7 @@
   border: none;
   border-radius: 8px;
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   max-width: 100%;
 }
 
@@ -1030,7 +1030,7 @@
   padding: var(--space-xss) var(--space-sm);
   background: var(--tooltip-background);
   color: var(--neutral-25);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
   white-space: nowrap;
@@ -1064,7 +1064,7 @@
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   background: var(--input-background);
   outline: none;
@@ -1081,7 +1081,7 @@
   align-items: flex-start;
   gap: var(--space-s);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
 }
 
@@ -1092,7 +1092,7 @@
 }
 
 .roles-panel-helper {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
   font-weight: 400;
@@ -1113,7 +1113,7 @@
 }
 
 .roles-panel-skip {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   background: none;
@@ -1130,7 +1130,7 @@
 .roles-panel-ai-btn {
   white-space: nowrap;
   padding: var(--space-ssm) var(--space-ml);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--neutral-25);
   background: var(--blaze-quiz);
@@ -1158,7 +1158,7 @@
 }
 
 .roles-ai-role-badge__label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
 }
@@ -1167,9 +1167,9 @@
   display: inline-flex;
   padding: var(--space-xss) var(--space-sm);
   border-radius: 40px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
-  background: rgba(0, 206, 230, 0.16);
+  background: var(--primary-tint);
   color: var(--primary-600);
 }
 
@@ -1222,7 +1222,7 @@
 }
 
 .roles-ai-step__text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -1256,7 +1256,7 @@
 }
 
 .roles-ai-progress__text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   width: 34px;
   text-align: right;
@@ -1273,8 +1273,8 @@
   gap: var(--space-s);
   padding: var(--space-m);
   border-radius: var(--radius-s);
-  background: rgba(129, 88, 236, 0.06);
-  font-size: 14px;
+  background: color-mix(in srgb, var(--blaze-quiz) 6%, transparent);
+  font-size: var(--font-size-md);
   color: var(--blaze-quiz);
 }
 
@@ -1300,7 +1300,7 @@
 
 .roles-panel-skeleton {
   height: 12px;
-  background: rgba(129, 88, 236, 0.12);
+  background: color-mix(in srgb, var(--blaze-quiz) 12%, transparent);
   border-radius: 6px;
   animation: roles-skeleton-shimmer 1.5s ease-in-out infinite;
 }
@@ -1319,7 +1319,7 @@
   padding: var(--space-sm) var(--space-m);
   background: var(--input-background);
   border-radius: var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
 }
@@ -1334,7 +1334,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   background: transparent;
   border: 1px solid var(--primary-500);
@@ -1352,8 +1352,8 @@
 }
 
 .roles-panel-ai-resuggest:hover {
-  background: linear-gradient(135deg, rgba(51, 226, 247, 0.08) 0%, rgba(129, 88, 236, 0.08) 100%);
-  box-shadow: 1px 1px 32px rgba(129, 88, 236, 0.16);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary-400) 8%, transparent) 0%, color-mix(in srgb, var(--blaze-quiz) 8%, transparent) 100%);
+  box-shadow: 1px 1px 32px var(--ai-tint);
 }
 
 .roles-panel-ai-resuggest:disabled {
@@ -1386,7 +1386,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
   background: none;
@@ -1411,7 +1411,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--space-sm);
-  box-shadow: 0 8px 24px rgba(32, 34, 42, 0.18), 0 2px 8px rgba(32, 34, 42, 0.10);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--neutral-800) 18%, transparent), 0 2px 8px color-mix(in srgb, var(--neutral-800) 10%, transparent);
   /* Inset so the options' 8px corners don't sit flush against the surface edge. */
   padding: var(--space-s);
   max-height: 240px;
@@ -1440,7 +1440,7 @@
   width: 100%;
   padding: var(--space-s) var(--space-sm);
   text-align: left;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   cursor: pointer;
   border: none;
@@ -1475,7 +1475,7 @@
 }
 
 .roles-panel-skill-option-cat {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
@@ -1486,11 +1486,11 @@
 }
 
 .roles-panel-skill-option-tag {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
   color: var(--text-success);
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   padding: var(--space-xxs) var(--space-s);
   border-radius: 10px;
   white-space: nowrap;
@@ -1532,12 +1532,12 @@
 }
 
 .roles-panel-summary-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
 }
 
 .roles-panel-summary-value {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
 }
@@ -1557,7 +1557,7 @@
   gap: var(--space-xs);
   padding: 0;
   margin-left: auto;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--danger-500);
   background: transparent;
@@ -1581,7 +1581,7 @@
 }
 
 .roles-panel-delete-confirm__text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   line-height: 1.5;
 }
@@ -1636,7 +1636,7 @@
 }
 
 .roles-panel-step-indicator {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
 }
@@ -1663,7 +1663,7 @@
 }
 
 .roles-panel-section-header__title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -1671,7 +1671,7 @@
 }
 
 .roles-panel-section-header__description {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -1708,7 +1708,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-ssm) var(--space-ml) var(--space-ssm) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--neutral-25);
   /* Canonical AI filled gradient (Button.css .ds-btn--ai) */
@@ -1743,7 +1743,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: 0;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   background: transparent;
   border: none;
@@ -1783,7 +1783,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   background: transparent;
   border: 1px solid var(--primary-500);
@@ -1801,8 +1801,8 @@
 }
 
 .roles-btn-ai-outlined-sm:hover {
-  background: linear-gradient(135deg, rgba(51, 226, 247, 0.08) 0%, rgba(129, 88, 236, 0.08) 100%);
-  box-shadow: 1px 1px 32px rgba(129, 88, 236, 0.16);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary-400) 8%, transparent) 0%, color-mix(in srgb, var(--blaze-quiz) 8%, transparent) 100%);
+  box-shadow: 1px 1px 32px var(--ai-tint);
 }
 
 .roles-btn-ai-outlined-sm:disabled {
@@ -1818,7 +1818,7 @@
 }
 
 .roles-panel-back {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   background: none;
@@ -1857,7 +1857,7 @@
 
 /* ─── Function Dropdown ─── */
 .roles-function-dropdown__label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -1873,7 +1873,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   background: transparent;
@@ -1912,7 +1912,7 @@
   background: var(--cards-background);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: 0 4px 16px rgba(32, 34, 42, 0.12);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--neutral-800) 12%, transparent);
   padding: var(--space-xs);
   display: flex;
   flex-direction: column;
@@ -1923,7 +1923,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   background: none;
@@ -1957,7 +1957,7 @@
 
 .roles-function-dropdown__count {
   margin-left: auto;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
 }
@@ -1975,7 +1975,7 @@
 
 /* ─── Role Name Link ─── */
 .roles-role-link {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   background: none;
@@ -2016,7 +2016,7 @@
 }
 
 .roles-preview-header__title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -2024,7 +2024,7 @@
 }
 
 .roles-preview-header__description {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;

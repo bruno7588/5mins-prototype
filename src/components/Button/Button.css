@@ -38,9 +38,9 @@
 }
 
 /* ── Sizes ── */
-.ds-btn--sm { padding: calc(var(--space-s) - var(--btn-bw)) calc(var(--space-m) - var(--btn-bw)); font-size: 12px; line-height: 1.4; }
-.ds-btn--md { padding: calc(10px - var(--btn-bw)) calc(var(--space-ml) - var(--btn-bw));          font-size: 14px; gap: var(--space-s); /* 8px */ }
-.ds-btn--lg { padding: calc(var(--space-sm) - var(--btn-bw)) calc(var(--space-l) - var(--btn-bw)); font-size: 16px; gap: var(--space-s); /* 8px */ }
+.ds-btn--sm { padding: calc(var(--space-s) - var(--btn-bw)) calc(var(--space-m) - var(--btn-bw)); font-size: var(--font-size-sm); line-height: 1.4; }
+.ds-btn--md { padding: calc(10px - var(--btn-bw)) calc(var(--space-ml) - var(--btn-bw));          font-size: var(--font-size-md); gap: var(--space-s); /* 8px */ }
+.ds-btn--lg { padding: calc(var(--space-sm) - var(--btn-bw)) calc(var(--space-l) - var(--btn-bw)); font-size: var(--font-size-lg); gap: var(--space-s); /* 8px */ }
 
 /* With a leading icon the icon side is one padding step tighter (buttons.md 2026-08-04) */
 .ds-btn--sm.ds-btn--has-icon { padding-left: calc(var(--space-sm) - var(--btn-bw)); } /* 12px */
@@ -164,7 +164,7 @@
   border-color: var(--danger-500);
 }
 .ds-btn--danger-outlined:hover:not(:disabled) {
-  background: rgba(223, 22, 66, 0.24); /* Danger-500 @ 24% */
+  background: color-mix(in srgb, var(--danger-500) 24%, transparent); /* Danger-500 @ 24% */
   color: var(--text-error);
   border-color: var(--text-error);
 }
@@ -189,7 +189,7 @@
   border-color: var(--button-warning-background);
 }
 .ds-btn--warning-outlined:hover:not(:disabled) {
-  background: rgba(255, 165, 56, 0.24); /* Warning-500 @ 24% */
+  background: color-mix(in srgb, var(--warning-500) 24%, transparent); /* Warning-500 @ 24% */
   color: var(--text-warning);
   border-color: var(--text-warning);
 }
@@ -214,7 +214,7 @@
   border-color: var(--button-success-background);
 }
 .ds-btn--success-outlined:hover:not(:disabled) {
-  background: rgba(24, 169, 87, 0.24); /* Success-500 @ 24% */
+  background: color-mix(in srgb, var(--success-500) 24%, transparent); /* Success-500 @ 24% */
   color: var(--button-success-background); /* text stays base on hover — per Figma */
   border-color: var(--button-success-background-hover);
 }
@@ -292,9 +292,9 @@
   background: radial-gradient(
     circle at top left,
     color-mix(in srgb, var(--primary-button-background-hover) 24%, transparent) 0%,
-    rgba(129, 88, 236, 0.24) 100%
+    color-mix(in srgb, var(--blaze-quiz) 24%, transparent) 100%
   );
-  box-shadow: 1px 1px 32px 0 rgba(129, 88, 236, 0.16);
+  box-shadow: 1px 1px 32px 0 var(--ai-tint);
 }
 .ds-btn--ai-outlined:active:not(:disabled) {
   background: transparent;

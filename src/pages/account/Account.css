@@ -41,7 +41,7 @@
   position: relative;
   flex-shrink: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   background: transparent;
@@ -80,6 +80,6 @@
 .acs-placeholder {
   padding: var(--space-xxl) var(--space-l);
   text-align: center;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
 }

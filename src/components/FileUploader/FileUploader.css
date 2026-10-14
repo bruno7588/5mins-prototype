@@ -51,7 +51,7 @@
 /* ─── State: Error ─── (Danger-500 border over a 16% Danger-500 wash) */
 .file-uploader--error {
   border: 1px dashed var(--danger-500);
-  background: rgba(223, 22, 66, 0.16);
+  background: var(--danger-tint);
 }
 
 /* ─── State: Uploading ─── */
@@ -100,12 +100,12 @@
 }
 
 .file-uploader--L .file-uploader__body {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
 }
 
 .file-uploader--S .file-uploader__body {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
 }
 
@@ -140,19 +140,19 @@
 }
 
 .file-uploader--L .file-uploader__error-list {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
 }
 
 .file-uploader--S .file-uploader__error-list {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
 }
 
 .file-uploader__error-more {
   margin: 0;
   padding-left: var(--space-ml);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
 }
 
@@ -173,12 +173,12 @@
 
 .file-uploader--L .file-uploader__btn-outlined {
   padding: var(--space-ssm) var(--space-ml);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
 }
 
 .file-uploader--S .file-uploader__btn-outlined {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.4;
 }
 
@@ -216,6 +216,6 @@
   align-items: center;
   justify-content: center;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }

@@ -25,7 +25,7 @@
 
 .create-course-title {
   flex: 1;
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -43,7 +43,7 @@
   border-radius: var(--radius-s);
   background: var(--button-background-disabled);
   border: none;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-button-disabled);
   line-height: 1.5;
@@ -81,7 +81,7 @@
   gap: var(--space-xs);
   padding: 0;
   padding-bottom: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   background: none;
@@ -151,13 +151,13 @@
 }
 
 .create-course-empty-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .create-course-empty-desc {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
 }
@@ -174,7 +174,7 @@
 
 .create-course-menu-header {
   padding: var(--space-sm) var(--space-m);
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -186,7 +186,7 @@
   gap: var(--space-s);
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-s);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;

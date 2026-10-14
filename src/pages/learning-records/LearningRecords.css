@@ -27,7 +27,7 @@
 }
 
 .lrp-title {
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -61,7 +61,7 @@
 .lrp-tab {
   position: relative;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   background: transparent;
@@ -116,19 +116,19 @@
   height: 8px;
   border-radius: var(--radius-full);
   background: var(--selected);
-  box-shadow: 0 0 0 0 rgba(237, 163, 13, 0.5);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--secondary-600) 50%, transparent);
   animation: lrp-viewing-pulse 1.8s ease-out infinite;
 }
 
 @keyframes lrp-viewing-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(237, 163, 13, 0.5);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--secondary-600) 50%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 6px rgba(237, 163, 13, 0);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--secondary-600) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(237, 163, 13, 0);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--secondary-600) 0%, transparent);
   }
 }
 
@@ -139,14 +139,14 @@
 }
 
 .lrp-viewing-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.5;
 }
 
 .lrp-viewing-text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
@@ -162,7 +162,7 @@
   border: none;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-button-outlined);
   line-height: 1.5;
@@ -195,7 +195,7 @@
 }
 
 .lrp-also-show-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -212,7 +212,7 @@
 }
 
 .lrp-also-text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary); /* off (inactive) */
   line-height: 1.5;
@@ -234,7 +234,7 @@
 }
 
 .lrp-filter-connector {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;
@@ -266,7 +266,7 @@
 /* Keep the DS Badge from being squeezed by a long name; Body Small / Medium (per Figma) */
 .lrp-name-row .badge {
   flex-shrink: 0;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
   padding: var(--space-xs) var(--space-s);
@@ -290,7 +290,7 @@
 
 /* User cell content */
 .lrp-name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.5;
@@ -301,7 +301,7 @@
 }
 
 .lrp-email {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   line-height: 1.5;
   overflow: hidden;
@@ -318,19 +318,19 @@
 }
 
 .lrp-date-1 {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .lrp-date-2 {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
   line-height: 1.2;
 }
 
 .lrp-dash {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
 }
 
@@ -341,18 +341,18 @@
   justify-content: center;
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
 }
 
-.lrp-badge--current      { background: rgba(0, 206, 230, 0.16); color: var(--primary-600); }
+.lrp-badge--current      { background: var(--primary-tint); color: var(--primary-600); }
 .lrp-badge--archived     { background: var(--input-background); color: var(--text-secondary); }
-.lrp-badge--completed    { background: rgba(24, 169, 87, 0.16); color: var(--success-500); }
-.lrp-badge--in-progress  { background: rgba(0, 206, 230, 0.16); color: var(--primary-600); }
+.lrp-badge--completed    { background: var(--success-tint); color: var(--success-500); }
+.lrp-badge--in-progress  { background: var(--primary-tint); color: var(--primary-600); }
 .lrp-badge--not-started  { background: var(--input-background); color: var(--text-secondary); }
-.lrp-badge--overdue      { background: rgba(223, 22, 66, 0.16); color: var(--danger-400); }
+.lrp-badge--overdue      { background: var(--danger-tint); color: var(--danger-400); }
 
 /* ===== Pagination ===== */
 .lrp-pagination {
@@ -364,7 +364,7 @@
 }
 
 .lrp-pagination-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }
 

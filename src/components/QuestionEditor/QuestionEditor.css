@@ -20,14 +20,14 @@
 }
 
 .question-editor-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-secondary);
 }
 
 .question-editor-textarea {
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   border: 1px solid var(--border-elevated);
@@ -54,7 +54,7 @@
 
 .question-editor-select {
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   border: 1px solid var(--border-elevated);
@@ -119,7 +119,7 @@
 .question-editor-answer-input {
   flex: 1;
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   border: none;
@@ -155,7 +155,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-s) 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-button-outlined);
   cursor: pointer;
@@ -178,7 +178,7 @@
 }
 
 .question-editor-error {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 400;
   color: var(--text-error);
@@ -195,7 +195,7 @@
 .question-editor-cancel {
   white-space: nowrap;
   padding: var(--space-s) var(--space-m);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-secondary);
   border-radius: var(--radius-sm);
@@ -209,7 +209,7 @@
 .question-editor-save {
   white-space: nowrap;
   padding: var(--space-s) var(--space-ml);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-button-foreground);
   background: var(--primary-button-background);

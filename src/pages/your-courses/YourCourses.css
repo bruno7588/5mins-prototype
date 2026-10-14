@@ -26,7 +26,7 @@
 
 .your-courses-title {
   flex: 1;
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -43,7 +43,7 @@
   align-items: center;
   gap: var(--space-xs);
   padding: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   background: none;
@@ -109,7 +109,7 @@
 }
 
 .your-courses-new-folder-label {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   line-height: 1.5;
 }
@@ -239,13 +239,13 @@
 }
 
 .your-courses-folder-name {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .your-courses-folder-count {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
 }
@@ -281,7 +281,7 @@
   display: flex;
   align-items: center;
   padding: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;
@@ -382,7 +382,7 @@
 }
 
 .your-courses-enrol-pagination-text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }
 

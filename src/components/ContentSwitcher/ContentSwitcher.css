@@ -33,7 +33,7 @@
   inset: 0;
   z-index: 0;
   border-radius: var(--radius-s);
-  background: var(--secondary-500); /* #FFBB38 — raw token, both modes */
+  background: var(--secondary-500); /* var(--secondary-500) — raw token, both modes */
 }
 
 .switcher__label {

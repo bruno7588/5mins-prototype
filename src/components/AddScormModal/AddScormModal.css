@@ -38,7 +38,7 @@
 
 .add-scorm-title {
   flex: 1;
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -65,7 +65,7 @@
 }
 
 .add-scorm-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -74,7 +74,7 @@
 .add-scorm-input {
   padding: var(--space-sm) var(--space-m);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   background: none;
@@ -131,7 +131,7 @@
 }
 
 .add-scorm-thumbnail-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.5;
@@ -149,7 +149,7 @@
 
 .add-scorm-file-name {
   flex: 1;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.5;
@@ -173,14 +173,14 @@
 }
 
 .add-scorm-success-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
 }
 
 .add-scorm-success-desc {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;

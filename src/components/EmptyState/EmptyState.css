@@ -58,7 +58,7 @@
 }
 
 .empty-state--mobile .empty-state__title {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
 }
 
 .empty-state--mobile .empty-state__description {

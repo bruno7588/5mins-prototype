@@ -23,7 +23,7 @@
 }
 
 .scm__title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -31,7 +31,7 @@
 }
 
 .scm__supporting {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -71,7 +71,7 @@
 
 /* Field label — Paragraph M semibold, as the calendar.md date field label. */
 .scm__label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -112,7 +112,7 @@
   display: flex;
   align-items: center;
   min-height: var(--space-l);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
@@ -120,7 +120,7 @@
 }
 
 .scm__desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);

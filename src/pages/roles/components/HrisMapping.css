@@ -3,21 +3,21 @@
 .hris-dry-run-alert.alert--alert {
   padding: var(--space-s) var(--space-m);
   gap: var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   align-items: center;
 }
 
 .hris-dry-run-alert.alert--alert .alert__body .alert__message {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
 }
 
 .hris-dry-run-alert .alert__btn--inline {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-warning);
-  background: rgba(255, 165, 56, 0.16);
+  background: var(--warning-tint);
   border: 1px solid var(--text-warning);
   border-radius: var(--radius-s);
   padding: var(--space-s) var(--space-m);
@@ -25,7 +25,7 @@
 }
 
 .hris-dry-run-alert .alert__btn--inline:hover {
-  background: rgba(255, 165, 56, 0.24);
+  background: color-mix(in srgb, var(--warning-500) 24%, transparent);
 }
 
 .hris-search-row {
@@ -45,7 +45,7 @@
   padding: var(--space-s) var(--space-sm);
   font-family: 'Poppins', sans-serif;
   color: var(--text-success);
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   border: 1px solid var(--success-500);
   border-radius: var(--radius-sm);
   white-space: nowrap;
@@ -53,7 +53,7 @@
 
 .hris-sync-pill--dry-run {
   color: var(--text-warning);
-  background: rgba(255, 165, 56, 0.16);
+  background: var(--warning-tint);
   border-color: var(--text-warning);
 }
 
@@ -73,7 +73,7 @@
 
 .hris-sync-pill__name {
   color: var(--text-success);
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.5;
 }
@@ -83,10 +83,10 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-xxs) var(--space-xs);
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   border-radius: var(--radius-full);
   color: var(--text-success);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1.2;
 }
@@ -97,7 +97,7 @@
 }
 
 .hris-sync-pill--dry-run .hris-sync-pill__status {
-  background: rgba(255, 165, 56, 0.16);
+  background: var(--warning-tint);
 }
 
 .hris-sync-pill__dot::after {
@@ -145,19 +145,19 @@
 }
 
 .hris-role-cell__name {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .hris-role-cell__source {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
 
 .hris-role-cell__missing {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
   font-style: italic;
 }
@@ -185,7 +185,7 @@
   background: none;
   border: none;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
@@ -255,7 +255,7 @@
   background: var(--input-background);
   color: var(--text-secondary);
   border-radius: var(--radius-full);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 500;
   letter-spacing: 0;
@@ -271,7 +271,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   cursor: pointer;
   text-align: left;
@@ -288,7 +288,7 @@
 }
 
 .hris-panel-option--selected:hover {
-  background: rgba(237, 163, 13, 0.24);
+  background: color-mix(in srgb, var(--secondary-600) 24%, transparent);
 }
 
 .hris-panel-option__name {
@@ -323,7 +323,7 @@
 }
 
 .hris-panel-options__empty {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
   font-style: italic;
   padding: var(--space-s) 0;
@@ -333,7 +333,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
   padding: var(--space-s) 0;
@@ -351,17 +351,17 @@
   align-items: center;
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
 }
 
 .hris-preview-meta__pill--skipped {
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--text-success);
 }
 
 .hris-preview-meta__pill--manual {
-  background: rgba(255, 165, 56, 0.16);
+  background: var(--warning-tint);
   color: var(--text-warning);
 }
 
@@ -391,18 +391,18 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 24px;
+  font-size: var(--font-size-h2);
 }
 
 .hris-preview-screen__heading {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
 }
 
 .hris-preview-screen__subhead {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
   margin: 0;
   max-width: 320px;
@@ -428,7 +428,7 @@
 }
 
 .hris-preview-screen__role-card-label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
   text-transform: uppercase;
@@ -436,13 +436,13 @@
 }
 
 .hris-preview-screen__role-card-name {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .hris-preview-screen__role-card-source {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
@@ -459,7 +459,7 @@
 }
 
 .hris-preview-screen__footnote {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
   margin: 0;
@@ -484,7 +484,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-primary);
   cursor: pointer;
   text-align: left;

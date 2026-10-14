@@ -12,7 +12,7 @@
 
 .new-lesson-subtitle {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -62,7 +62,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-s) var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -107,7 +107,7 @@
 
 .new-lesson-guidelines__title {
   flex: 1;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -133,7 +133,7 @@
   margin: 0;
   padding: 0 var(--space-m) var(--space-m) calc(var(--space-m) + var(--space-l));
   list-style: disc;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }

@@ -13,10 +13,10 @@
   --text-secondary: #bfc2cc;
   --text-tertiary: #9ea4b3;
   --text-disabled: #656b7c;
-  --border: #2d313d;
-  --border-elevated: #383d4c;
-  --border-hover: #9ea4b3;
-  --input-background: rgba(69, 76, 94, 0.16);
+  --border: var(--neutral-700);
+  --border-elevated: var(--neutral-600);
+  --border-hover: var(--neutral-300);
+  --input-background: color-mix(in srgb, var(--neutral-500) 16%, transparent);
   --input-background-hover: #2d313d;
   --button-background-disabled: #656b7c; /* neutral-400, per Figma */
 
@@ -34,7 +34,7 @@
   position: absolute;
   inset: 32px;
   border-radius: 32px;
-  background: rgba(15, 16, 20, 0.72);
+  background: color-mix(in srgb, var(--neutral-900) 72%, transparent);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -127,7 +127,7 @@
 }
 
 .onboarding__loading-sub {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -176,7 +176,7 @@
   width: 8px;
   height: 8px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.18);
+  background: color-mix(in srgb, var(--neutral-0) 18%, transparent);
   transition: background 250ms ease, width 250ms ease;
 }
 
@@ -200,7 +200,7 @@
 }
 
 .onboarding__title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -208,7 +208,7 @@
 }
 
 .onboarding__subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -238,14 +238,14 @@
   height: 32px;
   border: none;
   border-radius: 9999px;
-  background: rgba(69, 76, 94, 0.16);
+  background: color-mix(in srgb, var(--neutral-500) 16%, transparent);
   color: var(--neutral-200);
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
 
 .onboarding__back:hover {
-  background: rgba(69, 76, 94, 0.3);
+  background: color-mix(in srgb, var(--neutral-500) 30%, transparent);
   color: var(--neutral-25);
 }
 
@@ -261,10 +261,10 @@
 }
 
 .onboarding__section-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
-  color: var(--neutral-200); /* #bfc2cc */
+  color: var(--neutral-200); /* var(--neutral-200) */
 }
 
 .onboarding__section-hint {
@@ -323,16 +323,16 @@
 }
 
 .onboarding__skill-label {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
-  color: var(--neutral-25); /* #f9f9fa */
+  color: var(--neutral-25); /* var(--neutral-25) */
   white-space: nowrap;
 }
 
 /* Chip hover on dark (base uses light --neutral-50) */
 .onboarding .chip:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: color-mix(in srgb, var(--neutral-0) 4%, transparent);
 }
 
 .onboarding .chip--selected:hover {
@@ -345,7 +345,7 @@
 }
 
 .onboarding .dropdown-trigger:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.03);
+  background: color-mix(in srgb, var(--neutral-0) 3%, transparent);
 }
 
 .onboarding-menu {
@@ -366,30 +366,30 @@
 
 /* ---- InputField overrides for the dark panel (per DS input.md) ---- */
 .onboarding .input-field__label {
-  color: var(--neutral-200); /* #bfc2cc */
+  color: var(--neutral-200); /* var(--neutral-200) */
 }
 
 .onboarding .input-field__wrapper:hover {
-  border-color: var(--border-hover, #9ea4b3);
+  border-color: var(--border-hover, var(--neutral-300));
   background: var(--input-background);
 }
 
 /* Active / Focused — gold border (--selected) */
 .onboarding .input-field__wrapper:focus-within {
-  border-color: var(--selected, #EDA30D);
+  border-color: var(--selected, var(--secondary-600));
   background: transparent;
 }
 
 /* Filled variant (Company) — no border, subtle fill, roomier padding */
 .onboarding .input-field--filled .input-field__wrapper {
   border-color: transparent;
-  background: rgba(69, 76, 94, 0.16);
+  background: color-mix(in srgb, var(--neutral-500) 16%, transparent);
   padding: var(--space-sm) var(--space-m);
 }
 
 .onboarding .input-field--filled .input-field__wrapper:hover {
   border-color: transparent;
-  background: rgba(69, 76, 94, 0.22);
+  background: color-mix(in srgb, var(--neutral-500) 22%, transparent);
 }
 
 /* Keep the disabled (auto-filled) Company field readable on dark */

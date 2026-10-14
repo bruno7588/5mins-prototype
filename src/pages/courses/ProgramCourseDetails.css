@@ -76,7 +76,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
   white-space: nowrap;
@@ -113,7 +113,7 @@
 
 .pcd-title {
   margin: 0;
-  font-size: 24px;
+  font-size: var(--font-size-h2);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -130,7 +130,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
   white-space: nowrap;
@@ -178,7 +178,7 @@
 }
 
 .pcd-progress__pct {
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1;
   color: var(--text-secondary);
@@ -203,7 +203,7 @@
   background: none;
   border: none;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   white-space: nowrap;
@@ -235,7 +235,7 @@
   padding: var(--space-xxs) var(--space-s);
   border-radius: 40px;
   background: var(--input-background);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
 }
@@ -274,14 +274,14 @@
 }
 
 .pcd-section__name {
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
 .pcd-section__summary {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-tertiary);
 }
@@ -342,12 +342,12 @@
   border-radius: 12px;
   background: var(--primary-button-background);
   font-family: 'Poppins', sans-serif;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-button-foreground);
   white-space: nowrap;
-  box-shadow: -4px 0 12px rgba(32, 34, 42, 0.12);
+  box-shadow: -4px 0 12px color-mix(in srgb, var(--neutral-800) 12%, transparent);
   cursor: pointer;
   transition: background 120ms ease;
   animation: pcd-tooltip-bob 1.6s ease-in-out infinite;
@@ -430,7 +430,7 @@
 .pcd-lesson__title {
   margin: 0;
   max-width: 100%;
-  font-size: 16px;
+  font-size: var(--font-size-h4);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -460,7 +460,7 @@
 .pcd-lesson__metatext {
   flex: 0 1 auto;
   min-width: 0;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -499,7 +499,7 @@
 .pcd-empty {
   padding: 48px var(--space-m);
   text-align: center;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }
 
@@ -522,7 +522,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-secondary);
 }
 
@@ -536,7 +536,7 @@
   background: transparent;
   color: var(--text-primary);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   cursor: pointer;
   transition: background 150ms ease;
@@ -576,7 +576,7 @@
   flex: 0 0 auto;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -594,7 +594,7 @@
 
 .pcd-cert-modal__title {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);

@@ -29,7 +29,7 @@
 }
 
 .left-sidebar-powered {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   font-weight: 400;
   color: var(--text-tertiary);
@@ -51,7 +51,7 @@
   gap: var(--space-s);
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-s);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   cursor: pointer;
@@ -116,7 +116,7 @@
   padding: var(--space-sm) var(--space-m);
   padding-left: 42px;
   border-radius: var(--radius-s);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-tertiary);
   cursor: pointer;
@@ -144,7 +144,7 @@
   padding: 0 var(--space-xss);
   background: var(--danger-500);
   color: var(--neutral-25);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   border-radius: var(--radius-full);
   line-height: 1.2;

@@ -52,7 +52,7 @@
 }
 
 .bulk-upload-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -77,7 +77,7 @@
 }
 
 .bulk-upload-alert-text {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
@@ -90,7 +90,7 @@
 }
 
 .bulk-upload-alert-bullet {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.7;
@@ -113,7 +113,7 @@
   padding: var(--space-xss) var(--space-sm);
   background: var(--input-background);
   border-radius: var(--radius-full);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   line-height: 1.2;
@@ -123,7 +123,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 400;
   color: var(--text-tertiary);
   line-height: 1.2;
@@ -171,7 +171,7 @@
 
 .bulk-upload-accordion-title {
   flex: 1;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 500;
   color: var(--text-primary);
   line-height: 1.5;
@@ -224,7 +224,7 @@
 }
 
 .bulk-upload-accordion-desc {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -253,7 +253,7 @@
   text-align: left;
   white-space: nowrap;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
 }
 
@@ -261,7 +261,7 @@
   background: var(--input-background);
   font-weight: 500;
   color: var(--text-tertiary);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   border-bottom: 1px solid var(--border);
   border-right: 1px solid var(--border);
 }
@@ -316,7 +316,7 @@
 
 .csv-preview-badge {
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   line-height: 1.4;
   white-space: nowrap;
@@ -329,7 +329,7 @@
 
 .csv-preview-result-text {
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-primary);
   line-height: 1.4;
@@ -355,7 +355,7 @@
   border: none;
   background: none;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   color: var(--text-primary);
   cursor: pointer;
@@ -399,7 +399,7 @@
   min-width: 160px;
   padding: var(--space-m) var(--space-sm);
   border: 1px solid var(--border);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   line-height: 1.5;
   text-align: left;
   vertical-align: top;
@@ -425,7 +425,7 @@
 
 .bulk-upload-table-optional {
   font-weight: 400;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 1.2;
   color: var(--text-tertiary);
 }
@@ -443,10 +443,10 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  background: rgba(24, 169, 87, 0.12);
+  background: color-mix(in srgb, var(--success-500) 12%, transparent);
   border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--success-500);
 }
@@ -474,10 +474,10 @@
   flex: 1;
   min-width: 0;
   padding: var(--space-s) var(--space-sm);
-  background: rgba(223, 22, 66, 0.12);
+  background: color-mix(in srgb, var(--danger-500) 12%, transparent);
   border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-error);
 }
@@ -488,10 +488,10 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
-  background: rgba(255, 165, 56, 0.12);
+  background: color-mix(in srgb, var(--warning-500) 12%, transparent);
   border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-warning);
   line-height: 1.5;
@@ -516,14 +516,14 @@
 }
 
 .bulk-preview-summary-count {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.2;
 }
 
 .bulk-preview-summary-label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text-tertiary);
   line-height: 1.2;
@@ -553,7 +553,7 @@
   background: none;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -595,7 +595,7 @@
   padding: 0 var(--space-xss);
   border-radius: 100px;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
 }
@@ -610,22 +610,22 @@
 }
 
 .bulk-preview-tab-counter--error {
-  background: rgba(223, 22, 66, 0.16);
+  background: var(--danger-tint);
   color: var(--danger-400);
 }
 
 .bulk-preview-tab-counter--success {
-  background: rgba(24, 169, 87, 0.16);
+  background: var(--success-tint);
   color: var(--text-success);
 }
 
 .bulk-preview-tab-counter--primary {
-  background: rgba(0, 206, 230, 0.16);
+  background: var(--primary-tint);
   color: var(--primary-700);
 }
 
 .bulk-preview-tab-counter--warning {
-  background: rgba(255, 165, 56, 0.16);
+  background: var(--warning-tint);
   color: var(--text-warning);
 }
 
@@ -645,7 +645,7 @@
   background: var(--tooltip-background);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.4;
   border-radius: var(--radius-sm);
@@ -672,27 +672,27 @@
   padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
 }
 
-.bulk-preview-type-badge--invite { background: rgba(24, 169, 87, 0.16); color: var(--text-success); }
-.bulk-preview-type-badge--update { background: rgba(0, 206, 230, 0.16); color: var(--primary-700); }
-.bulk-preview-type-badge--deactivation { background: rgba(255, 165, 56, 0.16); color: var(--text-warning); }
+.bulk-preview-type-badge--invite { background: var(--success-tint); color: var(--text-success); }
+.bulk-preview-type-badge--update { background: var(--primary-tint); color: var(--primary-700); }
+.bulk-preview-type-badge--deactivation { background: var(--warning-tint); color: var(--text-warning); }
 .bulk-preview-type-badge--no-change { background: var(--input-background); color: var(--text-secondary); }
-.bulk-preview-type-badge--error { background: rgba(223, 22, 66, 0.16); color: var(--danger-400); }
+.bulk-preview-type-badge--error { background: var(--danger-tint); color: var(--danger-400); }
 
 /* Detail text */
 .bulk-preview-detail-error {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-error);
   font-weight: 500;
 }
 
 .bulk-preview-detail-change {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   color: var(--text-tertiary);
   font-style: italic;
 }
@@ -710,7 +710,7 @@
   background: var(--tooltip-background);
   color: var(--neutral-0);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.4;
   border-radius: var(--radius-sm);
@@ -753,7 +753,7 @@
 }
 
 .bulk-success-title {
-  font-size: 20px;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -780,13 +780,13 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--text-secondary);
 }
 
 .bulk-success-value {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--text-secondary);
 }
@@ -822,7 +822,7 @@
   align-self: stretch;
   display: flex;
   align-items: center;
-  background: rgba(223, 22, 66, 0.12);
+  background: color-mix(in srgb, var(--danger-500) 12%, transparent);
 }
 
 .bulk-cell-error {
@@ -868,7 +868,7 @@
    description Neutral-200 (secondary on dark) / weight 400. */
 .bulk-cell-error-tooltip-title {
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
   color: var(--neutral-25);
@@ -877,7 +877,7 @@
 
 .bulk-cell-error-tooltip-solution {
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
   color: var(--neutral-200);

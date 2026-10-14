@@ -44,10 +44,10 @@
   padding: var(--space-ssm);
   border-radius: 54px;
   /* Device hardware — intentionally unthemed */
-  background: #0f1014;
+  background: var(--neutral-900);
   box-shadow:
-    0 24px 48px rgba(15, 16, 20, 0.35),
-    0 4px 12px rgba(15, 16, 20, 0.25);
+    0 24px 48px color-mix(in srgb, var(--neutral-900) 35%, transparent),
+    0 4px 12px color-mix(in srgb, var(--neutral-900) 25%, transparent);
 }
 
 .m-phone__screen {

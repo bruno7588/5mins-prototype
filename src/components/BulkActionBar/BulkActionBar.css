@@ -15,7 +15,7 @@
   overflow: hidden; /* clips content while the width animates */
   background: var(--tooltip-background);
   border-radius: var(--radius-m); /* 16px */
-  box-shadow: 0 8px 32px rgba(15, 16, 20, 0.24), 0 2px 8px rgba(15, 16, 20, 0.12);
+  box-shadow: 0 8px 32px color-mix(in srgb, var(--neutral-900) 24%, transparent), 0 2px 8px color-mix(in srgb, var(--neutral-900) 12%, transparent);
   pointer-events: auto;
   /* Enter/exit (opacity + 16px slide) is owned by Framer in BulkActionBar.tsx —
      a CSS keyframe can only play on mount, so it can't animate the bar out. */
@@ -46,12 +46,12 @@
 }
 
 .bulk-bar-close:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--neutral-0) 10%, transparent);
   color: var(--neutral-0);
 }
 
 .bulk-bar-count {
-  font-size: 14px;
+  font-size: var(--font-size-md);
   font-weight: 400;
   color: var(--neutral-200);
   white-space: nowrap;
@@ -60,7 +60,7 @@
 .bulk-bar-divider {
   width: 1px;
   height: 24px;
-  background: rgba(255, 255, 255, 0.16);
+  background: color-mix(in srgb, var(--neutral-0) 16%, transparent);
   flex-shrink: 0;
 }
 
@@ -77,7 +77,7 @@
   gap: var(--space-s);
   padding: var(--space-s) var(--space-sm);
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-h5);
   font-weight: 700;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
@@ -150,10 +150,10 @@
 /* Outlined action — neutral hairline when Enabled, brighter on Hover. */
 .bulk-bar-btn--outlined {
   background: transparent;
-  border-color: rgba(255, 255, 255, 0.24);
+  border-color: color-mix(in srgb, var(--neutral-0) 24%, transparent);
   color: var(--neutral-0);
 }
 .bulk-bar-btn--outlined:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: color-mix(in srgb, var(--neutral-0) 8%, transparent);
+  border-color: color-mix(in srgb, var(--neutral-0) 40%, transparent);
 }
