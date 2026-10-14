@@ -239,7 +239,7 @@
   --page-background: var(--neutral-800);
   --page-background-hover: var(--neutral-700);
   --cards-background: var(--neutral-700);
-  --shadow-card: none;
+  --shadow-card: var(--shadow-s); /* Cards carry Shadow S in both modes, matching Figma */
   /* Neutral-800 on the Neutral-800 page casts nothing; black reads on dark. */
   --shadow-sticky: 4px 0 24px 0 rgba(0, 0, 0, 0.48);
   --cards-background-hover: var(--neutral-600);

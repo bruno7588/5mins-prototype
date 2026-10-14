@@ -11,7 +11,7 @@
      a hard 160px that pair overran the right padding. */
   min-width: 160px;
   min-height: 37px;
-  padding: var(--space-xs) var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   background: transparent;

@@ -11,7 +11,7 @@
   padding: var(--space-sm) var(--space-m) var(--space-sm) var(--space-sm);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
-  box-shadow: var(--shadow-card); /* Shadow S in light mode, none in dark */
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   transition: background-color 150ms ease-in-out;
 }
