@@ -356,7 +356,7 @@ All spacing uses a **4px base unit**. Layout spacing (padding, margins, gaps bet
 Use **Iconsax React** as the sole icon library. Never mix icon libraries. The one exception is `IoCloseOutline` and `IoInformationCircleOutline` from **Ionicons 5** (used in overlays and informative badges).
 
 ```bash
-npm install iconsax-react react-icons
+pnpm add iconsax-react react-icons
 ```
 
 ```jsx

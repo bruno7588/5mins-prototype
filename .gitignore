@@ -18,3 +18,7 @@ dist
 
 # Impeccable engine binary (downloaded on first run)
 .claude/skills/impeccable/scripts/bin/
+
+# Playwright output
+/test-results/
+/playwright-report/

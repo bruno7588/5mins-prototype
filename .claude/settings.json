@@ -1,9 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build:*)",
-      "Bash(npm run dev:*)",
-      "Bash(npx tsc -b)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm exec tsc -b)",
       "mcp__claude_ai_Figma__get_screenshot",
       "mcp__claude_ai_Figma__get_metadata",
       "mcp__claude_ai_Figma__get_design_context",

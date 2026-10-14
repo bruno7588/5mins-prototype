@@ -14,7 +14,7 @@ Complete icon guidelines for 5Mins.ai using Iconsax React as the primary icon li
 ## Installation
 
 ```bash
-npm install iconsax-react
+pnpm add iconsax-react
 ```
 
 ## Basic Usage

@@ -6,8 +6,9 @@
 
 ## Commands
 
-- `npm run dev` — Vite dev server at http://localhost:5173
-- `npm run build` — type-check (`tsc -b`) + production build; run this to verify changes compile
+- `pnpm dev` — Vite dev server at http://localhost:5173
+- `pnpm build` — type-check (`tsc -b`) + production build; run this to verify changes compile
+- `pnpm test` - Vitest unit tests (`src/**/*.test.tsx`); `pnpm test:e2e` - Playwright specs in `tests/` (pinned to 1.56 for macOS 13)
 - Design Inspect (dev only): click the "Inspect" pill bottom-right (or Alt+I), click an element, type the change, press Send. Double-click text to edit it in place (Enter saves straight to the source, with Undo; text it can't place goes to Claude). Run `/inspect` in Claude Code so it listens (anything sent while it was off is applied when it starts); `/inspect stop` ends it. Copy puts the same context on the clipboard for any session.
 
 ## Project Structure

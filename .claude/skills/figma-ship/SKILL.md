@@ -15,7 +15,7 @@ The heavy lifting (driving the browser, capturing, discovering library component
 /figma-ship <route> "<Flow title>: state, state, state; <Flow title>: state, state" --section <figma section URL> [--ticket <KEY>]
 ```
 
-- `<route>` — a route in `src/App.tsx`, e.g. `/your-courses/course`. The dev server must already be running at `http://localhost:5173`; if it is not, say `npm run dev` is needed and stop.
+- `<route>` — a route in `src/App.tsx`, e.g. `/your-courses/course`. The dev server must already be running at `http://localhost:5173`; if it is not, say `pnpm dev` is needed and stop.
 - Flows are separated by `;`. Each flow is `Title: state, state, ...`. Each state is one full screen. Example: `"Single enrolment: Enrolments tab, row menu open, Mark as completed modal, Confirmation, Success toast; Bulk: rows selected, bulk bar menu open, modal with skip callout, Confirmation, Success toast"`.
 - `--section` — a link to a **section** inside a Figma design file (`https://figma.com/design/<fileKey>/...?node-id=<id>`). **Ask for it every run if it is not given.** Everything is built inside that section; nothing outside it is touched. Refuse `/board/`, `/slides/` and `/make/` URLs, and a link with no `node-id`.
 - `--ticket` — optional Jira key. Used to read `~/Documents/Projetos/5Mins/PRDs/<KEY>-*.md` for the Why callout.

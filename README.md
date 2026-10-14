@@ -6,16 +6,16 @@ state persists in the browser's `localStorage`.
 
 ## Prerequisites
 
-- **Node.js 18+** (Vite 6 requires it) — check with `node -v`
-- **npm** (ships with Node)
+- **Node.js 20.19+** (Vite 7 requires it) — check with `node -v`
+- **pnpm 10** (run `corepack enable` once; the version is pinned in `package.json`)
 
 ## Getting started
 
 ```bash
 git clone https://github.com/bruno7588/5mins-admin.git
 cd 5mins-admin
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 The dev server starts at **http://localhost:5173** with hot reload.
@@ -24,9 +24,11 @@ The dev server starts at **http://localhost:5173** with hot reload.
 
 | Command           | What it does                                          |
 | ----------------- | ----------------------------------------------------- |
-| `npm run dev`     | Start the dev server with hot reload (localhost:5173) |
-| `npm run build`   | Type-check (`tsc -b`) and build for production         |
-| `npm run preview` | Serve the production build locally to verify it        |
+| `pnpm dev`         | Start the dev server with hot reload (localhost:5173) |
+| `pnpm build`       | Type-check (`tsc -b`) and build for production         |
+| `pnpm preview`     | Serve the production build locally to verify it        |
+| `pnpm test`        | Run Vitest unit tests                                 |
+| `pnpm test:e2e`    | Run Playwright smoke tests (starts the dev server)    |
 
 ## Project structure
 
@@ -54,7 +56,7 @@ git push -u origin feature/short-description
 ```
 
 Then open a Pull Request on GitHub for a quick review before merging into `main`.
-Run `npm run build` before pushing to catch type errors.
+Run `pnpm build` before pushing to catch type errors.
 
 ## Notes
 

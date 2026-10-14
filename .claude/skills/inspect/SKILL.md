@@ -11,7 +11,7 @@ The dev-only overlay in the prototype (pill bottom-right, or Alt+I) lets Bruno c
 
 1. Bash: `mkdir -p .design-inspect && cat .design-inspect/queue.jsonl .design-inspect/batch-*.jsonl 2>/dev/null`. Anything printed is requests sent while nobody was listening: handle each one (see below), then `rm -f .design-inspect/batch-*.jsonl && : > .design-inspect/queue.jsonl`.
 2. If a Design Inspect waiter is already running in this session, say so and stop here. Otherwise launch it with Bash, `run_in_background: true`, description `Design Inspect waiter`: `sh tools/design-inspect/wait.sh`
-3. Reply in one or two lines: listening (and how many queued requests were just applied); click an element in the browser, type the change, press Send; `/inspect stop` ends it. Do not start the dev server yourself; if it isn't running, say `npm run dev` is needed.
+3. Reply in one or two lines: listening (and how many queued requests were just applied); click an element in the browser, type the change, press Send; `/inspect stop` ends it. Do not start the dev server yourself; if it isn't running, say `pnpm dev` is needed.
 
 ### Why a background Bash waiter, not Monitor
 
