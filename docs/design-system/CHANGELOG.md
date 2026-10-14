@@ -13,6 +13,7 @@ Add new entries here, not in the docs.
 
 ## [alerts-toast.md](alerts-toast.md)
 
+- 2026-10-14: Alert and Callout buttons and the close × gained a `:focus-visible` ring (was the browser default).
 - 2026-10-14: Callout default Message and Body text replaced with generic copy (the old sample had a typo).
 - 2026-10-14: Figma settings rework. Alert gains Title, Message and Body text properties plus Icon glyph (Callout) and Warning glyph (Alert) swaps; its variant axes stay. Toast's Icon variant is now a Show icon boolean (Icon=False variants removed) and gains a Message text property. Tooltip gains a Text property; its Icon axis stays a variant. Figma to code tables updated; Carbon description and link removed from Tooltip.
 - 2026-10-14: Toast has no action slot. The Undo action (and its `ToastAction` type, `dismiss` and `onDismiss`) was removed from `Toast.tsx`, along with the Undo on the "Resource removed" and "Assessment deleted" toasts.
@@ -121,6 +122,7 @@ Add new entries here, not in the docs.
 
 ## [date-picker-field.md](date-picker-field.md)
 
+- 2026-10-14: The date field shows the amber `--selected` border on `:focus-visible`.
 - 2026-10-14: Date field ("Calendar" set) `Label` variant axis replaced by a `Show label` boolean (Label=false variants deleted); new text properties `Label`, `Value`, `Helper text` and `Month`. No Focus variant: Active is the focus look. Description rewritten.
 - 2026-10-14: Date field padding is 8px 12px (`var(--space-s) var(--space-sm)`), matching Figma (was 4px 12px in doc and code); height stays 37px.
 - 2026-10-14: Removed "There is no `label`, `disabled` or `minDate` prop." The component has a `minDate` prop (`DatePickerField.tsx`); the doc now lists it. There is still no `label` or `disabled` prop.
@@ -189,6 +191,7 @@ Add new entries here, not in the docs.
 
 ## [iconography.md](iconography.md)
 
+- 2026-10-14: Figma Linear `Mobile` and `Refresh` redrawn from the iconsax-react paths (Mobile centred) and renamed; every icon used in code is now findable in both styles.
 - 2026-10-14: Figma Icons page renamed to exact iconsax-react names (1,969 of 2,016 glyphs, matched by path geometry, style prefix kept: `vuesax/linear/ArrowDown2`). All 88 icons used in code are findable in Bold; Linear lacks `Mobile` and `Refresh`. Some old names changed meaning by geometry (e.g. `send` is `Transmit`, `undo` is `Back`).
 - 2026-10-14: Restructured to the foundation template (Figma glyph and `Icons` set to Iconsax / custom component mapping, Known drift for icon names). Icon colours moved from raw `--neutral-800/500/300` to `--text-primary/secondary/disabled` (raw neutrals don't flip in dark mode; code already uses the semantic tokens). Navigation example corrected to `navigation.md`: inactive `--text-secondary` Linear, active `--text-selected` Bold (was `--neutral-500` / `--primary-600`). Quiz example uses `--course-assessments` (`--case-study-quiz` does not exist). Ionicons exception (`IoCloseOutline`, `IoInformationCircleOutline`, inline SVG) and the explicit `color` prop rule moved in from design-system-guidelines.md / project notes. Removed the Resources links to `assets/iconography.css` and `references/usage-guidelines.md` (neither exists).
 - 2026-07-13: Skill illustrations source: "Source: Figma `Icons/Skill Icon/*` + `Illustrations/Skill Hugo/*` (frame `9120:10291`, downloaded 2026-07-13)."
@@ -286,6 +289,7 @@ Add new entries here, not in the docs.
 
 ## [selection-controls.md](selection-controls.md)
 
+- 2026-10-14: Checkbox gained its `:focus-visible` ring (2px `--primary-button-background`, 2px outside the box).
 - 2026-10-14: Figma to code updated: Checkbox and Radio gain `State=Focus` variants, Toggle gains a `State` axis (Enabled / Focus); the Checkbox focus ring is Figma only until `Checkbox.css` adds one.
 - 2026-10-09: > **Updated 2026-10-09 (re-verified against Figma light `11917:3950` / dark `5001:18926`):** the Radio ring keeps its resting colour on hover (`--text-primary` unselected, `--control-selected` selected); hover adds only the `--page-background-hover` halo. The earlier `--border-hover` ring on hover had no Figma source and is removed.
 - 2026-10-07: > **Updated 2026-10-07 (Figma `6339:10484`, verified against code):** the checkbox tick and minus bar are not white. They are cut out of the filled box, so the surface behind shows through: light on light pages, dark in dark mode. `Checkbox.tsx` draws the Figma shapes as single filled paths in `--selected`. Figma has no disabled-checked variant (Disabled exists only as Not checked), so a disabled box that is checked keeps the `--selected` fill; only the empty box turns `--text-disabled`.
@@ -304,6 +308,7 @@ Add new entries here, not in the docs.
 
 ## [table.md](table.md)
 
+- 2026-10-14: The action icon button and the row kebab trigger gained a `:focus-visible` ring.
 - 2026-10-14: Figma Table header `Checkbox` and `Icon` axes became `Show checkbox` / `Show icon` switches (gap 4px, checkbox wrapped with 8px right padding so spacing is unchanged); 6 variants deleted.
 - 2026-10-14: Figma Table row gained State=Focus (unselected and selected); Table header gained Label and Icon glyph; Table data gained Label, Supporting label, Date label, Percentage, Icon glyph, Info icon and Action icon; all Table set descriptions rewritten; no on/off axis converted.
 - 2026-10-14: Action column is `flex: 0 0 56px`; `.tbl-col-action` in `Table.css` updated from 52px.
@@ -319,6 +324,7 @@ Add new entries here, not in the docs.
 
 ## [typography.md](typography.md)
 
+- 2026-10-14: Figma H6 (12) text style line height set to 120%, matching code (`h6` 1.2); the Typography page labels updated. Drift resolved.
 - 2026-10-14: Restructured to the foundation template (Figma text style to CSS class and `--font-size-*` token table, Known drift for H6). The `--font-size-*` tokens now exist in `tokens.css`; the doc no longer says the prototype writes sizes as literal px. Page title corrected to 24px (H2 style, rendered as the page's `<h1>`) and section header to 20px (H3 style), per `headers.md`. Text colour class comments now name the semantic tokens.
 - 2026-09-29: > **Updated 2026-09-29 (aligned to prototype usage):** heading and body colours are the semantic tokens `--text-primary` / `--text-secondary` used in `src/styles/typography.css` (were raw `--neutral-800` / `--neutral-500`, which don't flip in dark mode). The "CSS Custom Properties" list is marked as not defined in `tokens.css`.
 - 2026-09-29: > **Updated 2026-09-29 (verified against code):** removed the `.text-button-*` classes (they don't exist) and the responsive size steps (not implemented, off-scale); field labels are `--text-secondary`, not tertiary; removed links to `assets/typography.css` and `references/usage-guidelines.md` (neither exists); listed the sanctioned off-scale component exceptions.

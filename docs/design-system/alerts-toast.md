@@ -231,9 +231,9 @@ Alert and Callout are static; only their buttons are interactive.
 
 | Element | Rest | Hover | Focus-visible |
 |---|---|---|---|
-| Callout outlined button | transparent, 1px `--text-primary` border | `var(--page-background-hover)` fill | no custom style in `Alert.css` (browser default) |
-| Alert underlined button | `--text-warning`, underlined | no hover style | no custom style in `Alert.css` (browser default) |
-| Close × (`onClose`) | transparent 24px circle | `var(--page-background-hover)` | no custom style in `Alert.css` (browser default) |
+| Callout outlined button | transparent, 1px `--text-primary` border | `var(--page-background-hover)` fill | 2px `--primary-button-background` outline, 2px offset |
+| Alert underlined button | `--text-warning`, underlined | no hover style | 2px `--primary-button-background` outline, 2px offset |
+| Close × (`onClose`) | transparent 24px circle | `var(--page-background-hover)` | 2px `--primary-button-background` outline, 2px offset |
 
 ### Tokens
 

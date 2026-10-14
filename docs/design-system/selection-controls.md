@@ -127,7 +127,6 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 | State | n/a | n/a | n/a | only used with Disabled=true |
 | Disabled | false / true | `disabled` | `true` / `false` (default) | |
 
-- **Figma only:** the Focus ring: `Checkbox.css` has no `:focus-visible` rule yet.
 - **Code only:** `onChange()` (no event); disabled + checked and disabled + indeterminate (Figma has Disabled only as Not checked, so a disabled box that is checked keeps the `--selected` fill).
 
 ### Radio (`5001:18926`, "radio-button instances")

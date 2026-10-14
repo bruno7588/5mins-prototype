@@ -18,6 +18,11 @@
   background: var(--input-background);
 }
 
+.ram-trigger:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
 /* Menu surface — DS listbox (listbox.md) */
 .ram-menu {
   display: flex;

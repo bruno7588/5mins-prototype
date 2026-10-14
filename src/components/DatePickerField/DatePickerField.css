@@ -30,6 +30,12 @@
   border-color: var(--selected);
 }
 
+/* Keyboard focus shows the Active look, like Dropdown and the inputs. */
+.dpf-field:focus-visible {
+  outline: none;
+  border-color: var(--selected);
+}
+
 /* Error state (calendar.md): error border, value stays primary. */
 .dpf-field--error {
   border-color: var(--text-error);

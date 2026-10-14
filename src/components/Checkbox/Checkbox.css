@@ -15,6 +15,17 @@
   background: var(--page-background-hover);
 }
 
+/* Keyboard focus: 2px ring, 2px outside the 16px box (selection-controls.md). */
+.checkbox:focus-visible {
+  outline: none;
+}
+
+.checkbox:focus-visible svg {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
 .checkbox--disabled {
   cursor: default;
 }

@@ -169,3 +169,9 @@
   opacity: 1;
   background: var(--page-background-hover);
 }
+
+.alert__btn:focus-visible,
+.alert__close:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}

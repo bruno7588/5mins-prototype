@@ -78,7 +78,7 @@ Figma text styles map to CSS classes; their sizes map to the `--font-size-*` tok
 
 ### Known drift
 
-- **H6 line height:** Figma H6 (12) is 140%; code `h6`/`.h6` is 1.2. Don't change either side without a ruling.
+None: Figma text styles and `typography.css` match.
 
 ## Variants
 

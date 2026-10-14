@@ -60,7 +60,7 @@ Icon rules for 5Mins.ai: **Iconsax React** for all UI icons, two variants (Linea
 
 ### Known drift
 
-- **Names match code:** Figma glyphs carry their exact iconsax-react names (matched by shape). Two Linear glyphs used in code are still unnamed because their paths differ from iconsax-react: `Mobile` (Figma `mobile` 10215:71222) and `Refresh` (`refresh` 10215:68679); the Bold versions exist. 22 glyphs with no iconsax-react equivalent and 25 duplicate copies keep their old kebab-case names.
+- **Names match code:** Figma glyphs carry their exact iconsax-react names (matched by shape). All 88 icons used in code exist in both Linear and Bold. iconsax-react 0.0.8 draws Linear `Mobile` off-centre (shifted 3 x 1 units up-left in its 24 box); Figma shows it centred, so code that needs it centred compensates (see `.demosw-icon-mobile`). 22 glyphs with no iconsax-react equivalent and 25 duplicate copies keep their old kebab-case names.
 - **Informative badge icon:** Figma draws Ionicons `IoInformationCircleOutline`; code uses Iconsax `InfoCircle` Linear as the approved stand-in (`badges.md`).
 
 ## Variants

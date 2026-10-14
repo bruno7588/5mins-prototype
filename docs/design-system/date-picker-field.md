@@ -53,7 +53,7 @@ description: DatePickerField for 5Mins.ai, the shared date input that shows a dd
 | Helper text | text | `error` | the error message | Error only |
 | Month | text | n/a | month title computed from the value | inside the Active popover |
 
-- **Figma only:** the `Show label` boolean and `Label` text; Figma's Error variant reds the label, which no call site does. There is no separate Focus variant: like Dropdown, the focused field shows the amber `Active` border. The code has no `:focus-visible` style on `.dpf-field` yet.
+- **Figma only:** the `Show label` boolean and `Label` text; Figma's Error variant reds the label, which no call site does. There is no separate Focus variant: like Dropdown, the focused field shows the amber `Active` border. Keyboard focus (`:focus-visible`) shows the same amber `--selected` border.
 - **Code only:** `value`, `onChange`, `placeholder`, `ariaLabel`, `maxDate`, `minDate`, `className`. There is no Disabled state in Figma or code.
 
 | Prop | Type | Default | Description |
