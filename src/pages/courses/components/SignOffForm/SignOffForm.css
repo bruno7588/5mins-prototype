@@ -69,7 +69,7 @@
   color: var(--text-primary);
 }
 
-/* Placeholder handover art (HandoverArt.tsx): two phones, dashed arrow arcing
+/* Placeholder handover art (HandoverArt.tsx): two devices, dashed arrow arcing
    from the learner's to the licence holder's. 72px tall like a DS illustration. */
 .pcd-signoff-handover-art {
   position: relative;
