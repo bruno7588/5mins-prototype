@@ -2,6 +2,10 @@
    The shell owns the header, stepper, close and footer; this lays out each step's
    content as a centred column. Prefix: .pcd-signoff-wizard- */
 
+.pcd-signoff-wizard .wzs-header--top {
+  padding-bottom: var(--space-ml);
+}
+
 .pcd-signoff-wizard__step {
   display: flex;
   flex-direction: column;

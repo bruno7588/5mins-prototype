@@ -8,6 +8,11 @@
   width: 100%;
 }
 
+/* 24px between the last field and the statement panel: the form's 16px gap + 8px. */
+.pcd-signoff-form > .pcd-signoff-statement {
+  margin-top: var(--space-s);
+}
+
 /* Grey statement panel from the Figma "Sign course" modal (16575:141375): the
    filled field surface, holding the declaration and the date (D13). */
 .pcd-signoff-statement {
