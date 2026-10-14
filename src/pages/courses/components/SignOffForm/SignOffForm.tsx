@@ -78,7 +78,7 @@ export function useSignOffForm(courseId: string) {
   /* Step 2 needs the three fields; the confirmation tick is on step 3, next to Sign Off. */
   const missing = FIELDS.filter((f) => !values[f.key].trim()).map((f) => f.missing)
   const complete = missing.length === 0
-  /* Why Save & Review is disabled, naming only the fields still empty (web tooltip). */
+  /* Why Review Details is disabled, naming only the fields still empty (web tooltip). */
   const listed = missing.length > 1 ? `${missing.slice(0, -1).join(', ')} and ${missing[missing.length - 1]}` : missing[0]
   const missingHint = listed ? `Add the ${listed}.` : ''
 
@@ -95,7 +95,7 @@ export function useSignOffForm(courseId: string) {
       attestation,
       signedAt: today,
     }
-    /* A short wait stands in for the save. The record is held, not yet final: the
+    /* A short wait stands in for the request. The record is held, not yet final: the
        licence holder can still go back from step 3 and correct it. */
     window.setTimeout(() => {
       setBusy(false)

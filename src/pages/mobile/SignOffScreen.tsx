@@ -149,7 +149,7 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
             className="m-signoff__cta"
             disabled={!form.complete}
             loading={form.busy}
-            loadingLabel="Saving..."
+            loadingLabel="Loading..."
             onClick={() =>
               form.submit((r) => {
                 setRecord(r)
@@ -157,7 +157,7 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
               })
             }
           >
-            Save &amp; Review
+            Review Details
           </Button>
         ) : step === 'done' ? (
           <Button variant="filled" size="lg" className="m-signoff__cta" disabled={!form.agreed} onClick={signOff}>

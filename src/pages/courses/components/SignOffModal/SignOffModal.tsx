@@ -106,7 +106,7 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
           variant="filled"
           disabled={!form.complete}
           loading={form.busy}
-          loadingLabel="Saving..."
+          loadingLabel="Loading..."
           onClick={() =>
             form.submit((r) => {
               setRecord(r)
@@ -114,7 +114,7 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
             })
           }
         >
-          Save &amp; Review
+          Review Details
         </Button>
       </Tooltip>
     ) : step === 'done' ? (
