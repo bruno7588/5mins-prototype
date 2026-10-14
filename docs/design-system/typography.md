@@ -50,6 +50,7 @@ Figma text styles map to CSS classes; their sizes map to the `--font-size-*` tok
 
 | Figma text style | CSS class | Size token | Size | Weight | Line height |
 |---|---|---|---|---|---|
+| Display (48) | n/a | `--font-size-display` | 48px | 700 | 1.5 |
 | H1 (32) | `h1`, `.h1` | `--font-size-h1` | 32px (2rem) | 700 | 1.5 |
 | H2 (24) | `h2`, `.h2` | `--font-size-h2` | 24px (1.5rem) | 700 | 1.5 |
 | H3 (20) | `h3`, `.h3` | `--font-size-h3` | 20px (1.25rem) | 700 | 1.5 |
@@ -172,6 +173,7 @@ These component-level uses sit off the scale on purpose; keep them inside their 
 Font sizes are tokens in `src/styles/tokens.css`:
 
 ```css
+--font-size-display: 48px; /* hero stat numbers */
 --font-size-h1: 32px;
 --font-size-h2: 24px;
 --font-size-h3: 20px;

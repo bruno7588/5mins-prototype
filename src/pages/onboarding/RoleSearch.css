@@ -19,7 +19,7 @@
   background: var(--neutral-700);
   border: 1px solid var(--border);
   border-radius: 12px;
-  box-shadow: -4px 0 24px 0 rgba(0, 0, 0, 0.35);
+  box-shadow: -4px 0 24px 0 color-mix(in srgb, var(--neutral-900) 35%, transparent);
 }
 
 .role-search__group {

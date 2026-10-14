@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:quiz": "PORT=5174 vite",
-    "build": "tsc -b && vite build",
+    "build": "stylelint \"src/**/*.css\" && tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:e2e": "playwright test",

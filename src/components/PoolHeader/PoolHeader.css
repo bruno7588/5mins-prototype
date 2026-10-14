@@ -7,7 +7,7 @@
   background: unset;
   border-width: 0;
   border-style: none;
-  border-color: rgba(0, 0, 0, 0);
+  border-color: transparent;
   border-image: none;
   border-radius: var(--radius-sm);
 }
@@ -110,7 +110,7 @@
 }
 
 .pool-header-coverage--weak {
-  background: rgba(245, 166, 35, 0.16);
+  background: var(--warning-tint);
   color: var(--text-warning);
 }
 

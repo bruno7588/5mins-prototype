@@ -351,7 +351,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-xxs);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--neutral-900) 8%, transparent);
   max-height: 200px;
   overflow-y: auto;
 }

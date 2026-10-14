@@ -144,6 +144,7 @@
   height: 560px;
   border-radius: 16px;
   padding: 64px var(--space-xxl) var(--space-xxl);
+  /* stylelint-disable-next-line -- decorative flashcard artwork gradient */
   background: linear-gradient(135deg, #4B3A99 0%, #2B1F6B 100%);
   display: flex;
   flex-direction: column;

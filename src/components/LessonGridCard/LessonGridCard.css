@@ -52,6 +52,7 @@
   padding: var(--space-xs) var(--space-xss);
   border-radius: var(--radius-xs);
   background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
+  /* stylelint-disable-next-line -- tiny duration label on a 170px tile: below the type scale on purpose */
   font-size: 10px;
   line-height: 1;
   color: var(--neutral-0);

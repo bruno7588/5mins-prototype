@@ -204,6 +204,7 @@
   --radius-full: 9999px;
 
   /* Font sizes - type scale from typography.css (H1-H6, Paragraph L/M/S) */
+  --font-size-display: 48px; /* Figma Display (48): hero stat numbers */
   --font-size-h1: 32px;
   --font-size-h2: 24px;
   --font-size-h3: 20px;

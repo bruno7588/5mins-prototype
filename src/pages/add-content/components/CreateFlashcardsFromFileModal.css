@@ -265,7 +265,7 @@
     linear-gradient(
       135deg,
       color-mix(in srgb, var(--primary-500) 8%, transparent) 0%,
-      rgba(65, 147, 233, 0.08) 50%,
+      color-mix(in srgb, var(--course-assessments) 8%, transparent) 50%,
       color-mix(in srgb, var(--blaze-quiz) 8%, transparent) 100%
     ),
     var(--cards-background);

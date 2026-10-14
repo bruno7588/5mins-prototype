@@ -289,6 +289,7 @@
 }
 
 .eng-chart__legend-swatch--lessons {
+  /* stylelint-disable-next-line -- chart series colour: no chart palette in the DS yet */
   background: #33DCCC;
 }
 
@@ -414,6 +415,7 @@
 }
 
 .eng-chart__bar--lessons {
+  /* stylelint-disable-next-line -- chart series colour: no chart palette in the DS yet */
   background: #00D3BF;
 }
 

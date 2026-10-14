@@ -185,6 +185,7 @@
   background: var(--border);
   color: var(--text-tertiary);
   font-family: 'Poppins', sans-serif;
+  /* stylelint-disable-next-line -- tiny label: below the type scale on purpose */
   font-size: 8px;
   font-weight: 400;
   line-height: 1.5;

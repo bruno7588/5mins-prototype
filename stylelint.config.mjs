@@ -5,7 +5,7 @@ const COLOUR_PROP_NAMES =
   '(color|background|background-color|border|border-(top|right|bottom|left|block|inline)(-(start|end))?|border(-(top|right|bottom|left|block|inline)(-(start|end))?)?-color|outline|outline-color|fill|stroke|box-shadow|caret-color|text-decoration-color|column-rule-color)';
 const COLOUR_PROPS = `/^${COLOUR_PROP_NAMES}$/`;
 
-const RAW_COLOUR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?)\(/i;
+const RAW_COLOUR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?)\((?!\s*var\()/i;
 
 export default {
   plugins: [
@@ -22,7 +22,7 @@ export default {
       {
         [COLOUR_PROPS]: [
           '/#[0-9a-fA-F]{3,8}\\b/',
-          '/\\b(rgba?|hsla?)\\(/i',
+          '/\\b(rgba?|hsla?)\\((?!\\s*var\\()/i',
           '/var\\(--(neutral|primary|secondary)-[0-9]/',
         ],
         // Font sizes must come from the --font-size-* scale.

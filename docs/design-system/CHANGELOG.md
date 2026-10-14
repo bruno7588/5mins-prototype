@@ -107,6 +107,7 @@ Add new entries here, not in the docs.
 
 ## [colors.md](colors.md)
 
+- 2026-10-14: Added six status tint tokens (`--success-tint` etc., 16%). Every raw colour in `src/` now uses a token (`color-mix` for other opacities); pure-black shadows use Neutral-900; near-palette purples, greens and near-blacks snapped to Blaze, Success-500 and Neutral-900. Chart colours and decorative gradients are marked exceptions. `pnpm build` now fails on any new raw colour or font size.
 - 2026-10-14: Dark-mode `--primary-button-background-pressed` is Primary-600 `#00AFC4`, matching Figma (was Primary-700 `#008393` in code). Applies to filled, outlined, text, link and AI pressed states.
 - 2026-10-14: `--input-background-elevated` now matches Figma at 32% in both modes (was 24% in code); `tokens.css` updated.
 - 2026-10-14: Restructured to the foundation template (Figma to code tables, Known drift). Corrected to match `tokens.css`: dark Warning/Success button hover and pressed (they darken with the same values as light, they do not go lighter in dark mode); `--input-background-elevated` light is 24% (was documented as 16%); `--selected-fill` is Secondary-100 light / Secondary-800 dark (was documented as `#FCF1DB` / 16% translucent); primary CTA ladder is `--primary-button-background(-hover/-pressed)` (was documented as Primary-600/700/800); overlay panels sit on `--page-background`, not `--cards-background`; border on a modal or drawer is `--border`. Added `--text-quiz` and the remaining code-only tokens. Removed the duplicated CSS token block (it said dark mode was "future" and had a wrong dark `--border`); `tokens.css` is the source.
@@ -324,6 +325,7 @@ Add new entries here, not in the docs.
 
 ## [typography.md](typography.md)
 
+- 2026-10-14: Added `--font-size-display` (48px, Figma Display). Every raw font size in `src/` now uses a token; the 60px stat numbers became 48px, 18px became 16px, 22px and 28px became 24px. 8px and 10px avatar counters and tiny labels are marked exceptions.
 - 2026-10-14: Figma H6 (12) text style line height set to 120%, matching code (`h6` 1.2); the Typography page labels updated. Drift resolved.
 - 2026-10-14: Restructured to the foundation template (Figma text style to CSS class and `--font-size-*` token table, Known drift for H6). The `--font-size-*` tokens now exist in `tokens.css`; the doc no longer says the prototype writes sizes as literal px. Page title corrected to 24px (H2 style, rendered as the page's `<h1>`) and section header to 20px (H3 style), per `headers.md`. Text colour class comments now name the semantic tokens.
 - 2026-09-29: > **Updated 2026-09-29 (aligned to prototype usage):** heading and body colours are the semantic tokens `--text-primary` / `--text-secondary` used in `src/styles/typography.css` (were raw `--neutral-800` / `--neutral-500`, which don't flip in dark mode). The "CSS Custom Properties" list is marked as not defined in `tokens.css`.

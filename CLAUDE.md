@@ -9,7 +9,7 @@
 - `pnpm dev` — Vite dev server at http://localhost:5173
 - `pnpm build` — type-check (`tsc -b`) + production build; run this to verify changes compile
 - `pnpm test` - Vitest unit tests (`src/**/*.test.tsx`); `pnpm test:e2e` - Playwright specs in `tests/` (pinned to 1.56 for macOS 13)
-- `pnpm lint:css` - Stylelint token check on `src/**/*.css` (`stylelint.config.mjs`): errors on raw colours and raw font sizes, warns on raw palette tokens; not part of `build`, existing violations remain
+- `pnpm lint:css` - Stylelint token check on `src/**/*.css` (`stylelint.config.mjs`): errors on raw colours and raw font sizes, warns on raw palette tokens. Runs first in `pnpm build`, so any raw value fails the build; a deliberate exception needs a `/* stylelint-disable-next-line -- reason */` comment
 - Design Inspect (dev only): click the "Inspect" pill bottom-right (or Alt+I), click an element, type the change, press Send. Double-click text to edit it in place (Enter saves straight to the source, with Undo; text it can't place goes to Claude). Run `/inspect` in Claude Code so it listens (anything sent while it was off is applied when it starts); `/inspect stop` ends it. Copy puts the same context on the clipboard for any session.
 
 ## Project Structure

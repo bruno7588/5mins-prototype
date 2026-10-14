@@ -663,7 +663,7 @@
 
 .roles-empty__zero {
   font-family: 'Poppins', sans-serif;
-  font-size: 60px;
+  font-size: var(--font-size-display);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-disabled);
@@ -839,7 +839,7 @@
 }
 
 .roles-panel-title {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -1141,7 +1141,7 @@
 }
 
 .roles-panel-ai-btn:hover {
-  background: #6d44d4;
+  background: var(--blaze-quiz);
 }
 
 .roles-panel-ai-btn:disabled {
@@ -1764,7 +1764,7 @@
 }
 
 .roles-btn-ai-text:hover > svg path {
-  fill: #6B45D1;
+  fill: var(--blaze-quiz);
 }
 
 .roles-btn-ai-text:disabled {

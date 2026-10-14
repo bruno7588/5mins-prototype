@@ -261,6 +261,7 @@ Backgrounds, borders, and button fills.
 |---|---|---|---|
 | `--selected-tint` | `rgba(237, 163, 13, 0.15)` | `rgba(255, 187, 56, 0.15)` | Highlight fill derived from `--selected` (table rows use `--selected-row`) |
 | `--selected-tint-hover` | `rgba(237, 163, 13, 0.24)` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-tint` rows |
+| `--success-tint` / `--warning-tint` / `--primary-tint` / `--danger-tint` / `--ai-tint` / `--course-assessments-tint` | the 500 colour (Blaze, Course assessments) @ 16% | same | Status backgrounds behind badges, chips and callouts. For another opacity use `color-mix(in srgb, var(--success-500) 32%, transparent)` |
 | `--selected-fill` | Secondary-100 `#FFF8EB` | Secondary-800 `#33250B` | Opaque fill for sticky cells over scrolling content |
 | `--selected-fill-hover` | `#FDECC5` | `rgba(255, 187, 56, 0.24)` | Hover state of `--selected-fill` / selected rows. The dark value is a translucent stand-in pending designer review |
 | `--control-selected` | `var(--secondary-600)` | `var(--secondary-500)` | Radio/checkbox selected amber, per selection-controls.md |

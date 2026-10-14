@@ -5,7 +5,7 @@
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: #0e0f14;
+  background: var(--neutral-900);
   z-index: 100;
 
   /* Dark token overrides consumed by reused components (InputField, etc.) */
@@ -351,7 +351,7 @@
 .onboarding-menu {
   background: var(--neutral-700);
   border-color: var(--border);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 8px 28px color-mix(in srgb, var(--neutral-900) 45%, transparent);
 }
 
 .onboarding-menu .dropdown-option:hover:not(:disabled) {
