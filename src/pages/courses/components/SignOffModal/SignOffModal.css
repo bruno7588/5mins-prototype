@@ -76,15 +76,17 @@
   font-size: 16px;
 }
 
-/* Signed off (Figma 17664:24129): starts 24px under the header, full 900px width,
-   16px gaps, 16px summary padding, and the 14px note 24px below the summary. */
+/* Signed off (Figma 17664:24129): tick 48px under the header (shell 24 + 24),
+   16px to the title, then 24px to the summary (16px padding, full 900px width) and
+   24px to the 14px note. */
 .pcd-signoff-wizard .wzs-main > .pcd-signoff-wizard__step--done {
   max-width: 900px;
   gap: var(--space-m);
-  padding-top: 0;
+  padding-top: var(--space-l);
 }
 
 .pcd-signoff-wizard__step--done .pcd-signoff-summary {
+  margin-top: var(--space-s);
   padding: var(--space-m);
 }
 
