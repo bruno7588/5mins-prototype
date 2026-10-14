@@ -13,9 +13,9 @@
   /* Figma 64 and 48 have no spacing token: built from XXL + L and XXL + S. */
   gap: calc(var(--space-xxl) + var(--space-l));
   padding: var(--space-xl) calc(var(--space-xxl) + var(--space-s));
-  /* The frame sits outside the 900px sheet; its inner corner keeps the 12px radius. */
+  /* The frame sits outside the 900px sheet: 32px outer corner, 8px inner. */
   border: var(--space-l) solid var(--warning-100);
-  border-radius: calc(var(--radius-sm) + var(--space-l));
+  border-radius: calc(var(--radius-s) + var(--space-l));
   background: var(--neutral-0);
   overflow: hidden;
   text-align: left;
