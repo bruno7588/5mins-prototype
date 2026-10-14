@@ -18,6 +18,7 @@ import {
   SignOffFields,
   SignOffStatement,
   SignOffSummary,
+  STEP_LABEL,
   DONE_ACTION,
   useSignOffForm,
   type SignOffStep,
@@ -33,7 +34,6 @@ interface SignOffModalProps {
 }
 
 const ORDER: SignOffStep[] = ['handover', 'form', 'done', 'handback']
-const STEP_TITLE: Record<SignOffStep, string> = { handover: 'Hand over', form: 'Licence details', done: 'Review', handback: 'Hand back' }
 const STEP_ICON = { handover: Mobile, form: Edit2, done: DocumentText, handback: TickCircle }
 const LOCKED_SUB: Record<SignOffStep, string> = {
   handover: 'Already signed off',
@@ -47,7 +47,7 @@ const LOCKED_SUB: Record<SignOffStep, string> = {
  * as Assign Courses): hand over (learner), licence details (licence holder), then a
  * review the licence holder signs off before handing the device back. Mounted only
  * while open, so each opening starts at the handover. The record becomes final only at
- * step 3's Sign-Off button; until then Edit Details returns to the form, and closing
+ * step 3's Sign Off button; until then Edit Details returns to the form, and closing
  * saves nothing.
  */
 function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
@@ -55,7 +55,7 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
   const [step, setStep] = useState<SignOffStep>('handover')
   const [record, setRecord] = useState<SignOffRecord | null>(null)
   const form = useSignOffForm(courseId)
-  /* Step 3's Sign-Off makes the record final (the course completes, the certificate
+  /* Step 3's Sign Off makes the record final (the course completes, the certificate
      unlocks), then step 4 asks for the device back. */
   const signOff = () => {
     if (!record) return
@@ -78,7 +78,7 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
   const at = ORDER.indexOf(step)
   const steps: WizardStep[] = ORDER.map((id, i) => ({
     id,
-    title: STEP_TITLE[id],
+    title: STEP_LABEL[id],
     sub: step === 'handback' && id !== 'handback' ? 'Already signed off' : LOCKED_SUB[id],
     Icon: STEP_ICON[id],
     done: i < at,

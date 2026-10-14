@@ -152,7 +152,9 @@ function MobileTopNav({
     case 'detail':
       header = (
         <>
-          <BackButton onBack={onBack} />
+          {/* No onBack, no way back (e.g. sign-off after the save): an empty slot the
+              button's size keeps the header height and the title centred. */}
+          {onBack ? <BackButton onBack={onBack} /> : <span className="m-topnav__back-slot" aria-hidden="true" />}
           <div className="m-topnav__titlewrap">
             <h1 className="m-topnav__title">{title}</h1>
           </div>

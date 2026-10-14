@@ -21,15 +21,22 @@ export const HANDOVER_BODY = "They'll confirm the training and sign using their 
 export const HANDOVER_NOTE = 'Only the licence holder should continue.'
 
 /* Four steps: hand over (learner), licence details and review (licence holder; the
-   review's Sign-Off saves), then hand back (learner). */
+   review's Sign Off saves), then hand back (learner). */
 export type SignOffStep = 'handover' | 'form' | 'done' | 'handback'
 /** Drives the progress dots (web and app). */
 export const STEP_NUMBER: Record<SignOffStep, number> = { handover: 1, form: 2, done: 3, handback: 4 }
+/** Step names: the web stepper labels and the app's top-nav title (Figma app 04-07). */
+export const STEP_LABEL: Record<SignOffStep, string> = {
+  handover: 'Hand over',
+  form: 'Licence details',
+  done: 'Sign off',
+  handback: 'Hand back',
+}
 
-/* Step 3 is a review: nothing is final until its Sign-Off button, so no tick or "signed off" before then. */
+/* Step 3 is a review: nothing is final until its Sign Off button, so no tick or "signed off" before then. */
 /** Review title, saying why the details matter. */
 export const doneTitle = (learnerName: string) => `Check your details - these will appear on ${learnerName.split(' ')[0]}'s certificate`
-export const DONE_ACTION = 'Sign-Off'
+export const DONE_ACTION = 'Sign Off'
 
 /* Step 4, after the save: the tick is true now. The learner takes the device back with
    their own button, mirroring "Continue as Licence Holder". */
@@ -68,7 +75,7 @@ export function useSignOffForm(courseId: string) {
     drafts.set(courseId, { values, agreed })
   }, [courseId, values, agreed])
 
-  /* Step 2 needs the three fields; the confirmation tick is on step 3, next to Sign-Off. */
+  /* Step 2 needs the three fields; the confirmation tick is on step 3, next to Sign Off. */
   const missing = FIELDS.filter((f) => !values[f.key].trim()).map((f) => f.missing)
   const complete = missing.length === 0
   /* Why Save & Review is disabled, naming only the fields still empty (web tooltip). */
@@ -136,7 +143,7 @@ export function SignOffFields({ form, autoFocus = true }: { form: SignOffFormSta
 }
 
 /** Step 3: the grey statement panel (D13) under the summary, so the licence holder
- *  confirms what they have just checked, right before Sign-Off. The date is in the
+ *  confirms what they have just checked, right before Sign Off. The date is in the
  *  summary above, so the panel holds only the declaration. */
 export function SignOffStatement({ form }: { form: SignOffFormState }) {
   const { agreed, setAgreed, attestation } = form

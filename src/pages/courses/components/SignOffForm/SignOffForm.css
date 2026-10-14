@@ -84,12 +84,12 @@
   color: var(--text-tertiary);
 }
 
-/* Step 3 summary: the recorded details on the page itself (no card), 8px apart. */
+/* Step 3 summary: the recorded details on the page itself (no card). */
 .pcd-signoff-summary {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: var(--space-s);
+  gap: var(--space-sm);
   margin: 0;
   text-align: left;
 }
@@ -102,12 +102,14 @@
   margin: 0;
 }
 
-/* Summary type: labels Paragraph M regular, values Paragraph M medium. */
+/* Summary (Figma 17696:28319): rows 12px apart; labels Paragraph M regular,
+   values Paragraph L medium. */
 .pcd-signoff-summary .pcd-signoff-statement__label {
   font-size: 14px;
   line-height: 1.5;
 }
 
 .pcd-signoff-summary .pcd-signoff-statement__value {
+  font-size: 16px;
   font-weight: 500;
 }

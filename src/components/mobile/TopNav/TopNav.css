@@ -209,6 +209,13 @@
   flex-shrink: 0;
 }
 
+/* The back button's footprint (8px padding around a 24px icon) when it is hidden. */
+.m-topnav__back-slot {
+  width: calc(24px + 2 * var(--space-s));
+  height: calc(24px + 2 * var(--space-s));
+  flex-shrink: 0;
+}
+
 .m-topnav__back--scrim {
   background: rgba(15, 16, 20, 0.5);
 }

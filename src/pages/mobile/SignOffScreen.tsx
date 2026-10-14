@@ -16,6 +16,7 @@ import {
   handbackAction,
   handbackBody,
   HANDOVER_BODY,
+  STEP_LABEL,
   STEP_NUMBER,
   useSignOffForm,
   type SignOffStep,
@@ -37,7 +38,7 @@ interface SignOffScreenProps {
  * screen, same four steps and copy as web (hand over, licence details, review, hand back),
  * the primary button pinned at the bottom. Back returns to the course from steps 1-2
  * (as web's Cancel and X), goes back to the form from step 3 (typed details are kept)
- * and, after the save, acts as step 4's Continue. Nothing is final until step 3's Sign-Off. Not a bottom sheet: three fields and the keyboard need the room.
+ * and is hidden on step 4 (already saved). Nothing is final until step 3's Sign Off. Not a bottom sheet: three fields and the keyboard need the room.
  */
 function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
   const reduce = useReducedMotion()
@@ -46,15 +47,14 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
   const form = useSignOffForm(courseId)
 
   /* Step 3 goes back to the form so the licence holder can correct a detail (re-submitting
-     replaces the record); after the save it hands back; before that it returns to the
-     course and saves nothing. */
+     replaces the record); steps 1-2 return to the course and save nothing. Step 4 has no
+     back: the record is saved. */
   const back = () => {
     if (form.busy) return
     if (step === 'done') setStep('form')
-    else if (step === 'handback') onSigned()
     else onClose()
   }
-  /* Step 3's Sign-Off makes the record final (the course completes, the certificate
+  /* Step 3's Sign Off makes the record final (the course completes, the certificate
      unlocks), then step 4 asks for the device back. */
   function signOff() {
     if (!record) return
@@ -72,7 +72,8 @@ function SignOffScreen({ courseId, onClose, onSigned }: SignOffScreenProps) {
       exit={{ opacity: 0 }}
       transition={arriveTransition(reduce)}
     >
-      <MobileTopNav variant="detail" title="Sign-off" onBack={back} />
+      {/* No back on step 4: the sign-off is already saved. */}
+      <MobileTopNav variant="detail" title={STEP_LABEL[step]} onBack={step === 'handback' ? undefined : back} />
 
       <div className="m-signoff__body">
         {/* The onboarding progress dots in place of "Step N of 3", above the art. */}
