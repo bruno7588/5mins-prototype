@@ -5,9 +5,11 @@ description: Collapse for 5Mins.ai - the animated expand/collapse container that
 
 # Collapse
 
-An invisible wrapper that opens and closes its children in place. It tweens height and opacity with GSAP on an ease-in-ease-out curve, so the page around it moves smoothly instead of jumping.
+An invisible wrapper that opens and closes its children in place, tweening height and opacity with GSAP on an ease-in-ease-out curve so the page around it moves smoothly instead of jumping.
 
-Spec source: Figma: not recorded; code is the reference (`src/components/Collapse/Collapse.tsx`).
+**Code:** `import Collapse from '@/components/Collapse/Collapse'` (`src/components/Collapse/Collapse.tsx`; code is the reference)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, no component (node not recorded)
+**Last verified:** not recorded
 
 ## Usage
 
@@ -35,21 +37,20 @@ Spec source: Figma: not recorded; code is the reference (`src/components/Collaps
 - Don't hand-roll a `grid-template-rows: 0fr` / `1fr` transition or measure heights yourself for a plain open/close.
 - Don't add your own `aria-hidden` or `inert` to the content; Collapse sets both while closed.
 
-**Canonical spec:** GSAP `height` 0 ↔ `auto` and `opacity` 0 ↔ 1, ease `power2.inOut`, duration 0.3s; `overflow: hidden` while animating and closed, cleared once open. First render sets the state with no animation. Figma: Library `EC26cSVe9KNTCWXvYovakw`, node not recorded.
+**Canonical spec:** GSAP `height` 0 ↔ `auto` and `opacity` 0 ↔ 1, ease `power2.inOut`, duration 0.3s; `overflow: hidden` while animating and closed, cleared once open. First render sets the state with no animation.
 
-**Prototype:** `src/components/Collapse/Collapse.tsx`
-- `open: boolean` (required) - expanded when true, height 0 when false.
-- `children: ReactNode` - the content; it stays mounted.
-- `duration?: number` - seconds, default `0.3`.
-- `className?: string` - class on the wrapper.
+## Figma to code
 
-**Production:**
+There is no Collapse component in the Figma Library; expand and collapse is behaviour, drawn in Figma as separate open and closed frames.
 
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| Collapse | _to be mapped by engineering_ | | |
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| n/a (open frame / closed frame) | n/a | `open` | `true` / `false` | Expanded to natural height, or collapsed to 0 |
 
-## Props
+- **Figma only:** none.
+- **Code only:** `open`, `children`, `duration`, `className`.
+
+**Props**
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
@@ -58,17 +59,44 @@ Spec source: Figma: not recorded; code is the reference (`src/components/Collaps
 | `duration` | `number` | `0.3` | Tween length in seconds. |
 | `className` | `string` | none | Extra class on the wrapper `div`. |
 
-## Anatomy and behaviour
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Collapse | _to be mapped by engineering_ | | |
+
+**Code reality:** used in 15 files (22 instances), e.g. the Learning Records filters panel, the Save report drawer, the New lesson guidelines, Set completed, Insights and Summary cards. Places that still open and close without it:
+
+| File | What it does instead |
+|---|---|
+| `src/components/LeftSidebar/LeftSidebar.tsx` | Sub-menus mount and unmount instantly (`{peopleOpen && ...}`) |
+| `src/pages/your-courses/components/WorkflowsTab/WorkflowsTab.css` | `grid-template-rows: 0fr` / `1fr` transition on `.workflow-card__collapsible` |
+| `src/pages/people/components/BulkUploadModal/BulkUploadModal.css` | `grid-template-rows: 0fr` / `1fr` transition on `.bulk-upload-accordion-panel` |
+
+## Anatomy
 
 - **Wrapper:** a single `div` with no styling of its own. Everything visual belongs to the children.
-- **First render:** no animation. If `open` is false the wrapper is set to `height: 0; opacity: 0; overflow: hidden`; if true, `height: auto; opacity: 1`.
-- **Opening:** kills any running tween, then animates to `height: auto`, `opacity: 1` with `overflow: hidden`. When the tween ends, the inline `overflow` is cleared so focus rings and menus inside are not clipped.
-- **Closing:** animates to `height: 0`, `opacity: 0`, `overflow: hidden`.
-- **Interrupting:** toggling mid-tween starts the new tween from the current height, so rapid clicks don't jump.
-- **Accessibility:** while closed the wrapper has `aria-hidden="true"` and `inert`, so hidden buttons and inputs can't take keyboard focus or be read out. The trigger is the caller's; give it `aria-expanded`.
-- **Reduced motion:** Collapse does not check `prefers-reduced-motion` today; the tween always runs. Callers only switch off their own chevron transitions.
 
-### Example
+## States
+
+| State | Behaviour |
+|---|---|
+| First render | No animation. If `open` is false the wrapper is set to `height: 0; opacity: 0; overflow: hidden`; if true, `height: auto; opacity: 1`. |
+| Opening | Kills any running tween, then animates to `height: auto`, `opacity: 1` with `overflow: hidden`. When the tween ends, the inline `overflow` is cleared so focus rings and menus inside are not clipped. |
+| Open | `height: auto`, `opacity: 1`, no inline `overflow`. |
+| Closing | Animates to `height: 0`, `opacity: 0`, `overflow: hidden`. |
+| Closed | `height: 0`, `opacity: 0`, `aria-hidden="true"` and `inert`. |
+| Interrupted | Toggling mid-tween starts the new tween from the current height, so rapid clicks don't jump. |
+| Focus-visible | Belongs to the caller's trigger; Collapse itself takes no focus. |
+
+**Reduced motion:** Collapse does not check `prefers-reduced-motion` today; the tween always runs. Callers only switch off their own chevron transitions.
+
+## Accessibility
+
+- While closed the wrapper has `aria-hidden="true"` and `inert`, so hidden buttons and inputs can't take keyboard focus or be read out.
+- The trigger is the caller's; give it `aria-expanded` and a visible `:focus-visible` style.
+
+## Examples
 
 ```tsx
 import Collapse from '@/components/Collapse/Collapse'
@@ -87,18 +115,8 @@ import Collapse from '@/components/Collapse/Collapse'
 </Collapse>
 ```
 
-## Code reality
+## Related
 
-Used in 15 files (22 instances), e.g. the Learning Records filters panel, the Save report drawer, the New lesson guidelines, Set completed, Insights and Summary cards. Places that still open and close without it:
-
-| File | What it does instead |
-|---|---|
-| `src/components/LeftSidebar/LeftSidebar.tsx` | Sub-menus mount and unmount instantly (`{peopleOpen && ...}`) |
-| `src/pages/your-courses/components/WorkflowsTab/WorkflowsTab.css` | `grid-template-rows: 0fr` / `1fr` transition on `.workflow-card__collapsible` |
-| `src/pages/people/components/BulkUploadModal/BulkUploadModal.css` | `grid-template-rows: 0fr` / `1fr` transition on `.bulk-upload-accordion-panel` |
-
-## Related docs
-
-- `overlays.md` - drawers, modals and dialogs, for content that sits over the page
-- `navigation.md` - sidebar groups, which should expand with Collapse
-- `iconography.md` - the `ArrowDown2` chevron used on triggers
+- [overlays.md](overlays.md) - drawers, modals and dialogs, for content that sits over the page
+- [navigation.md](navigation.md) - sidebar groups, which should expand with Collapse
+- [iconography.md](iconography.md) - the `ArrowDown2` chevron used on triggers

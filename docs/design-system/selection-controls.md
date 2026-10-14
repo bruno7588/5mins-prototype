@@ -1,28 +1,40 @@
 ---
 name: 5mins-selection-controls
-description: Selection controls for 5Mins.ai — Radio button, Checkbox (including indeterminate), and Toggle switch in one file. All states (enabled, hover halo, disabled), dimensions, amber selected tokens, CSS and React implementations, grouping and accessibility patterns. Use for any single-choice option group, multi-choice list, consent acknowledgement, select-all table header, or instant on/off setting.
+description: Selection controls for 5Mins.ai - Radio button, Checkbox (including indeterminate), and Toggle switch in one file. All states (enabled, hover halo, disabled), dimensions, amber selected tokens, CSS and React implementations, grouping and accessibility patterns. Use for any single-choice option group, multi-choice list, consent acknowledgement, select-all table header, or instant on/off setting.
 ---
 
-# 5Mins.ai Selection Controls
+# Selection controls
 
-Complete implementation guide for Radio buttons, Checkboxes, and Toggle switches in the 5Mins.ai micro-learning platform.
+Checkbox, Radio and Toggle: the controls that pick options or switch a setting on or off.
 
-Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — Checkbox light `11917:3924` / dark `6339:10484`, Radio light `11917:3950` / dark `5001:18926`, Toggle light `11917:3970` / dark `8160:364` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`); hexes below are light-mode values.
+**Code:** `import Checkbox from '@/components/Checkbox/Checkbox'`, `import Radio from '@/components/Radio/Radio'`, `import Toggle from '@/components/Toggle/Toggle'`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Checkbox dark `6339:10484` / light `11917:3924`; Radio dark `5001:18926` / light `11917:3950`; Toggle dark `8160:364` / light `11917:3970`
+**Last verified:** 2026-10-09
 
-Cross-reference:
-- `5mins-colors` (colors.md) for the raw palette and semantic surface tokens
-- `5mins-typography` for label typography
-- `5mins-iconography` for icon sizing conventions
-
-> **Updated 2026-10-09 (re-verified against Figma light `11917:3950` / dark `5001:18926`):** the Radio ring keeps its resting colour on hover (`--text-primary` unselected, `--control-selected` selected); hover adds only the `--page-background-hover` halo. The earlier `--border-hover` ring on hover had no Figma source and is removed.
-
-> **Updated 2026-09-29 (verified against code):** the Common Patterns and indeterminate examples now compile against the real Checkbox API (`checked`, `indeterminate`, `onChange()`, `disabled`; no label, name or aria-label); the unchecked checkbox border is `--text-secondary`; `--control-selected` light/dark values stated; halo radius is `var(--radius-full)`; Radio and Toggle CSS and React samples now mirror the built components (tokens, no raw hex); `className` behaviour and `size="sm"` usage corrected.
-
-> **Updated 2026-09-29 (aligned to prototype usage):** Toggles are used inside Save forms in the prototype (report scheduling, course settings), so the "never inside a Save form" rule is replaced by the Key rule below. `--control-selected` is `#FFBB38` in dark mode, not `#EDA30D`. The built Checkbox is a button with no label prop, draws its unchecked border in `--text-secondary` and fills with `--selected`. Toggle has a `size="sm"` variant.
-
-> **Updated 2026-10-07 (Figma `6339:10484`, verified against code):** the checkbox tick and minus bar are not white. They are cut out of the filled box, so the surface behind shows through: light on light pages, dark in dark mode. `Checkbox.tsx` draws the Figma shapes as single filled paths in `--selected`. Figma has no disabled-checked variant (Disabled exists only as Not checked), so a disabled box that is checked keeps the `--selected` fill; only the empty box turns `--text-disabled`.
+Colours are semantic tokens resolving per mode (see `colors.md`); hexes below are light-mode values unless a dark value is given. Cross-reference: `5mins-colors` (colors.md) for the raw palette and semantic surface tokens, `5mins-typography` for label typography, `5mins-iconography` for icon sizing conventions.
 
 ## Usage
+
+### Choosing a control
+
+| Control | Use for | Never use for |
+|---|---|---|
+| **Radio** | One choice from a small list of mutually exclusive options (2 to 6) | Binary on/off, very long option lists (use a dropdown instead) |
+| **Checkbox** | Zero or more choices from a list, a single acknowledgement (terms, consent), or "select all" behaviour in tables and lists | Mutually exclusive choices, immediate state changes (use a toggle) |
+| **Toggle** | A single binary setting: one that applies immediately (notifications on/off, feature flags), or one that switches a feature on inside a settings form or drawer and reveals its fields, saved with the form | Choosing between options, multi-option selection, a yes/no answer to a form question |
+
+Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggles switch something **on or off**; on a card or list row they apply instantly, and inside a form with a Save button (e.g. "Schedule this report", course settings) they are saved with the form.
+
+| I need to... | Use |
+|---|---|
+| Pick one of 2 to 6 mutually exclusive options | Radio group |
+| Pick zero or more from a list | Checkbox group |
+| Toggle a setting immediately (no Save) | Toggle |
+| Acknowledge terms / consent | Single checkbox |
+| "Select all" in a table | Checkbox with indeterminate |
+| Enable/disable a feature flag | Toggle |
+| Switch between two views or modes | Tabs, not a toggle |
+| Answer a single yes/no question in a form | Radio group (Yes / No) or checkbox, not a toggle |
 
 ### Checkbox
 
@@ -48,18 +60,9 @@ Cross-reference:
 - Don't nest the Checkbox inside a `<button>`; it is a button itself, so a clickable row must be a `div` or `label`.
 - Don't hard-code the amber; checked fill is `--selected`.
 - Don't use a checkbox for mutually exclusive choices.
+- Never give the glyph its own colour.
 
 **Canonical spec:** 32 × 32px hit area with `var(--space-s)` (8px) padding and a `var(--radius-full)` hover halo in `--page-background-hover`; 16 × 16px box, 4px radius, 1.5px border `--text-secondary`; checked and indeterminate fill `--selected` with the tick or minus bar cut out of the box, so the surface shows through; disabled `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3924` / dark `6339:10484`.
-
-**Prototype:** `src/components/Checkbox/Checkbox.tsx` (default export)
-- `checked` (required), `indeterminate`, `onChange()`, `disabled`
-- Renders `<button role="checkbox" aria-checked>`; no label prop
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| Checkbox | _to be mapped by engineering_ | | |
 
 ### Radio
 
@@ -85,18 +88,7 @@ Cross-reference:
 - Don't re-implement radios with `div`s.
 - Don't ship a lone radio; with one option use a checkbox or toggle.
 
-**Canonical spec:** 24 × 24px hit area with a `var(--radius-full)` hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--control-selected`; disabled `--text-disabled`; focus-visible 2px `--primary-button-background` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3950` / dark `5001:18926`.
-
-**Prototype:** `src/components/Radio/Radio.tsx` (default export, forwards ref)
-- All native radio props (`name`, `checked`, `onChange`, `disabled`, `value`, `id`)
-- `label` renders a `<label class="radio-row">` around control and text
-- `className` goes on the `.radio` wrapper, and also on the `radio-row` label when `label` is set
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| Radio | _to be mapped by engineering_ | | |
+**Canonical spec:** 24 × 24px hit area with a fully round (30px) hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--control-selected`; disabled `--text-disabled`; focus-visible 2px `--primary-button-background` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3950` / dark `5001:18926`.
 
 ### Toggle
 
@@ -124,52 +116,75 @@ Cross-reference:
 
 **Canonical spec:** md track 36 × 20px, sm track 28 × 16px; thumb 16px (sm 12px) in `--neutral-25` with a 2px inset. Track off `--neutral-400`, on `--selected`; disabled off `--text-disabled`, disabled on `--selected` at 40% opacity. Row gap `var(--space-s)` (8px), label 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3970` / dark `8160:364`.
 
-**Prototype:** `src/components/Toggle/Toggle.tsx` (default export, forwards ref)
-- Native checkbox props (`checked`, `onChange`, `disabled`, `id`)
-- `size`: `'md' | 'sm'` (default `'md'`); `label` (ReactNode); `labelPosition` `'left' | 'right'`; `className` (applied to the `toggle-row` label only, so it is dropped when there is no `label`)
+## Figma to code
+
+### Checkbox (`6339:10484`, "Checkbox instances")
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Checked | Not checked / Checked / Indeterminate | `checked` + `indeterminate` | `checked={false}` / `checked={true}` / `indeterminate` | `checked` is required; `indeterminate` wins over `checked` |
+| State | Enabled / Hover | n/a | CSS `:hover` | states are CSS, not props |
+| State | n/a | n/a | n/a | only used with Disabled=true |
+| Disabled | false / true | `disabled` | `true` / `false` (default) | |
+
+- **Figma only:** none.
+- **Code only:** `onChange()` (no event); disabled + checked and disabled + indeterminate (Figma has Disabled only as Not checked, so a disabled box that is checked keeps the `--selected` fill).
+
+### Radio (`5001:18926`, "radio-button instances")
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Selected | true / false | `checked` | `true` / `false` | native radio prop |
+| State | Enabled / Hover | n/a | CSS `:hover` | hovering the labelled row also shows the halo |
+| State | n/a | n/a | n/a | only used with Disabled=true |
+| Disabled | false / true | `disabled` | `true` / `false` | native radio prop |
+
+- **Figma only:** none.
+- **Code only:** `label` (Figma has no label in the component), `className`, all native radio props (`name`, `onChange`, `value`, `id`), the focus-visible ring.
+
+### Toggle (`8160:364`)
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Toggle | true / false | `checked` | `true` / `false` | On / Off |
+
+- **Figma only:** none.
+- **Code only:** `size` (`'md' | 'sm'`), `label`, `labelPosition` (`'left' | 'right'`), `disabled` and the disabled states, the focus-visible ring, `className`.
+
+### Props
+
+**Checkbox** (`src/components/Checkbox/Checkbox.tsx`, default export): `checked` (required), `indeterminate`, `onChange()`, `disabled`. Renders `<button role="checkbox" aria-checked>` (`'mixed'` when indeterminate), not a hidden native input; there is no `label`, `id` or `aria-label` prop, so callers build the label row themselves.
+
+**Radio** (`src/components/Radio/Radio.tsx`, default export, forwards ref): all native radio props (`name`, `checked`, `onChange`, `disabled`, `value`, `id`); `label` renders a `<label class="radio-row">` around control and text; `className` goes on the `.radio` wrapper, and also on the `radio-row` label when `label` is set.
+
+**Toggle** (`src/components/Toggle/Toggle.tsx`, default export, forwards ref): native checkbox props (`checked`, `onChange`, `disabled`, `id`); `size`: `'md' | 'sm'` (default `'md'`); `label` (ReactNode); `labelPosition` `'left' | 'right'`; `className` (applied to the `toggle-row` label only, so it is dropped when there is no `label`).
 
 **Production:**
 
 | Design system | `@web/ui` component | Props mapping | Known drift |
 |---|---|---|---|
+| Checkbox | _to be mapped by engineering_ | | |
+| Radio | _to be mapped by engineering_ | | |
 | Toggle | _to be mapped by engineering_ | | |
 
----
+## Anatomy
 
-## When to Use Which Control
+### Checkbox
 
-| Control | Use for | Never use for |
-|---|---|---|
-| **Radio** | One choice from a small list of mutually exclusive options (2 to 6) | Binary on/off, very long option lists (use a dropdown instead) |
-| **Checkbox** | Zero or more choices from a list, a single acknowledgement (terms, consent), or "select all" behaviour in tables and lists | Mutually exclusive choices, immediate state changes (use a toggle) |
-| **Toggle** | A single binary setting: one that applies immediately (notifications on/off, feature flags), or one that switches a feature on inside a settings form or drawer and reveals its fields, saved with the form | Choosing between options, multi-option selection, a yes/no answer to a form question |
+| Property | Value |
+|---|---|
+| Interactive target (hover halo) | 32 × 32 px |
+| Inner padding | 8 px |
+| Visible box / fill | 16 × 16 px |
+| Halo border-radius | fully round, `var(--radius-full)` |
+| Box border-radius | 4 px |
+| Box border width | 1.5 px |
 
-Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggles switch something **on or off**; on a card or list row they apply instantly, and inside a form with a Save button (e.g. "Schedule this report", course settings) they are saved with the form.
+`src/components/Checkbox/Checkbox.css` holds the hit area and hover halo; the box, tick and minus bar are inline SVG in `Checkbox.tsx`. The tick and minus bar are not white: they are cut out of a single filled path copied from Figma (`CHECKED_PATH`, `INDETERMINATE_PATH`), filled `--selected` (also when disabled), so the surface behind shows through (light on light pages, dark in dark mode).
 
----
-
-## Shared Design Tokens
-
-All three controls pull from the same token set. Selected/on state colour differs slightly between controls (see each section for the exact hex); everything else is shared.
-
-| Role | Token | Light | Dark | Notes |
-|---|---|---|---|---|
-| Selected colour (radio, checkbox) | `--control-selected` (radio) / `--selected` (checkbox) | `#EDA30D` | `#FFBB38` | Ring + dot, box fill; mode-aware, both tokens resolve to the same values |
-| On colour (toggle track) | `--selected` | `#EDA30D` | `#FFBB38` | Mode-aware — brighter amber in dark mode |
-| Hover halo background | `--page-background-hover` | `#EFF0F2` | `#2D313D` | Circular halo around radio and checkbox on hover |
-| Default stroke colour | `--text-primary` (radio) / `--text-secondary` (checkbox) | `#20222A` / `#454C5E` | `#F9F9FA` / `#BFC2CC` | Unselected radio ring; unchecked checkbox border |
-| Disabled colour | `--text-disabled` | `#9EA4B3` | `#656B7C` | Rings, borders, off-track when disabled |
-| Thumb colour (toggle) | `--neutral-25` | `#F9F9FA` | `#F9F9FA` | Toggle knob |
-
-> Always use the semantic token; the hexes are documented so prototypes render correctly if tokens are not yet wired up. `--control-selected` is defined in `tokens.css` as `var(--secondary-600)` in light and `var(--secondary-500)` in dark.
-
----
-
-## 1. Radio Button
+### Radio
 
 Single-select indicator. Sits inside a labelled row; the label itself should also be clickable.
-
-### Dimensions
 
 | Property | Value |
 |---|---|
@@ -178,18 +193,56 @@ Single-select indicator. Sits inside a labelled row; the label itself should als
 | Halo border-radius | 30 px (fully round) |
 | Ring stroke width | 1.5 px |
 
-### States & variants
+### Toggle
+
+Binary on/off control. On a card or row it applies immediately; inside a form with a Save button it is saved with the form (see Key rule).
+
+| Property | Value |
+|---|---|
+| Track | 36 × 20 px, border-radius 10 px (fully pill) |
+| Thumb | 16 × 16 px circle |
+| Inset (thumb edge to track edge) | 2 px all sides |
+| Thumb travel | 16 px horizontal |
+
+## Variants
+
+Checkbox has three checked variants: Not checked, Checked (tick) and Indeterminate (minus bar, for a parent row where some but not all children are selected). Radio has Selected and unselected. Toggle has On and Off.
+
+## Sizes
+
+Checkbox and Radio have one size. Toggle has two:
+
+| Size | Track | Track radius | Thumb | Thumb travel |
+|---|---|---|---|---|
+| `md` (default) | 36 × 20 px | 10 px | 16 × 16 px | 16 px |
+| `sm` | 28 × 16 px | 8 px | 12 × 12 px | 12 px |
+
+## States
+
+### Checkbox
+
+| State | Checked variant | Box fill | Box border | Glyph | Halo |
+|---|---|---|---|---|---|
+| Enabled, not checked | Not checked | transparent | `--text-secondary` | none | none |
+| Enabled, checked | Checked | `--selected` (`#EDA30D`) | `--selected` | check, cut out | none |
+| Enabled, indeterminate | Indeterminate | `--selected` | `--selected` | minus bar, cut out | none |
+| Hover, not checked | Not checked | transparent | `--text-secondary` | none | 32 × 32 `--page-background-hover` (`#EFF0F2`) |
+| Hover, checked | Checked | `--selected` | `--selected` | check, cut out | 32 × 32 `--page-background-hover` |
+| Hover, indeterminate | Indeterminate | `--selected` | `--selected` | minus bar, cut out | 32 × 32 `--page-background-hover` |
+| Disabled, not checked | Not checked | transparent | `--text-disabled` (`#9EA4B3`) | none | none |
+| Disabled, checked or indeterminate | (code only) | `--selected` | `--selected` | cut out | none |
+
+### Radio
 
 | State | Selected | Ring / dot colour | Halo |
 |---|---|---|---|
 | Enabled, unselected | no | `--text-primary` ring | none |
-| Enabled, selected | yes | `#EDA30D` ring + filled dot | none |
-| Hover, unselected | no | `--text-primary` ring (unchanged) | 24 × 24 px `#EFF0F2` circle |
-| Hover, selected | yes | `#EDA30D` ring + dot | 24 × 24 px `#EFF0F2` circle |
-| Disabled, unselected | no | `#9EA4B3` ring | none |
-| Disabled, selected | yes | `#9EA4B3` ring + dot | none |
-
-### CSS
+| Enabled, selected | yes | `--control-selected` (`#EDA30D`) ring + filled dot | none |
+| Hover, unselected | no | `--text-primary` ring (unchanged) | 24 × 24 px `--page-background-hover` (`#EFF0F2`) circle |
+| Hover, selected | yes | `--control-selected` ring + dot (unchanged) | 24 × 24 px `--page-background-hover` circle |
+| Disabled, unselected | no | `--text-disabled` (`#9EA4B3`) ring | none |
+| Disabled, selected | yes | `--text-disabled` ring + dot | none |
+| Focus-visible | either | unchanged | 2px `--primary-button-background` outline, 2px offset, on the ring |
 
 ```css
 /* src/components/Radio/Radio.css */
@@ -283,156 +336,17 @@ Single-select indicator. Sits inside a labelled row; the label itself should als
 }
 ```
 
-### React TypeScript
-
-```tsx
-// src/components/Radio/Radio.tsx
-import { type InputHTMLAttributes, forwardRef, useId } from 'react'
-import './Radio.css'
-
-type RadioProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> & {
-  label?: string
-}
-
-const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
-  { label, checked, disabled, className, id, ...props },
-  ref,
-) {
-  const reactId = useId()
-  const controlId = id ?? `radio-${reactId}`
-
-  /* className lands on the wrapper, not the input: the wrapper is what carries the
-     state classes and what a host scopes its overrides to. It was accepted and then
-     dropped, so callers styling a radio in context silently got nothing. */
-  const wrapperClass = [
-    'radio',
-    checked ? 'radio--selected' : '',
-    disabled ? 'radio--disabled' : '',
-    className ?? '',
-  ]
-    .filter(Boolean)
-    .join(' ')
-
-  const control = (
-    <span className={wrapperClass}>
-      <input
-        ref={ref}
-        type="radio"
-        id={controlId}
-        className="radio__input"
-        checked={checked}
-        disabled={disabled}
-        {...props}
-      />
-      <span className="radio__ring" aria-hidden="true" />
-    </span>
-  )
-
-  if (!label) return control
-
-  return (
-    <label htmlFor={controlId} className={`radio-row${className ? ` ${className}` : ''}`}>
-      {control}
-      <span className="radio-row__label">{label}</span>
-    </label>
-  )
-})
-
-export default Radio
-```
-
-### Grouping
-
-Always wrap a set of radios in a `<fieldset>` with a `<legend>`, or a container with `role="radiogroup"` and `aria-labelledby`. Never ship a lone radio; if only one option exists, use a checkbox or toggle instead.
-
-```tsx
-<fieldset className="radio-group">
-  <legend>Enrolment mode</legend>
-  <Radio name="mode" value="auto" label="Automatic" defaultChecked />
-  <Radio name="mode" value="manual" label="Manual review" />
-  <Radio name="mode" value="hybrid" label="Hybrid" />
-</fieldset>
-```
-
----
-
-## 2. Checkbox
-
-Multi-select or single acknowledgement indicator. Also supports an **indeterminate** state for partial selection (e.g. a parent row where only some children are selected).
-
-> **Built component.** `src/components/Checkbox/Checkbox.tsx` is a `<button role="checkbox">` with `aria-checked` (`'mixed'` when indeterminate), not a hidden native input. Its props are `checked`, `indeterminate`, `onChange()` (no event) and `disabled`; there is no `label`, `id` or `aria-label` prop, so callers build the label row themselves. Checked and indeterminate fill `--selected`, also when disabled (Figma has no disabled-checked variant). The tick and minus bar are cut out of that fill (Figma's paths, not a stroke), so they take the colour of the surface behind.
-
-### Dimensions
-
-| Property | Value |
-|---|---|
-| Interactive target (hover halo) | 32 × 32 px |
-| Inner padding | 8 px |
-| Visible box / fill | 16 × 16 px |
-| Halo border-radius | fully round, `var(--radius-full)` |
-| Box border-radius | 4 px |
-| Box border width | 1.5 px |
-
-### States & variants
-
-| State | Checked variant | Box fill | Box border | Glyph | Halo |
-|---|---|---|---|---|---|
-| Enabled, not checked | Not checked | transparent | `--text-secondary` | none | none |
-| Enabled, checked | Checked | `#EDA30D` | `#EDA30D` | check, cut out | none |
-| Enabled, indeterminate | Indeterminate | `#EDA30D` | `#EDA30D` | minus bar, cut out | none |
-| Hover, not checked | Not checked | transparent | `--text-secondary` | none | 32 × 32 `#EFF0F2` |
-| Hover, checked | Checked | `#EDA30D` | `#EDA30D` | check, cut out | 32 × 32 `#EFF0F2` |
-| Hover, indeterminate | Indeterminate | `#EDA30D` | `#EDA30D` | minus bar, cut out | 32 × 32 `#EFF0F2` |
-| Disabled, not checked | Not checked | transparent | `#9EA4B3` | none | none |
-
-### CSS
-
-`src/components/Checkbox/Checkbox.css` holds the hit area and hover halo; the box, tick and minus bar are inline SVG in `Checkbox.tsx`. The tick and minus bar are cut out of a single filled path copied from Figma (`CHECKED_PATH`, `INDETERMINATE_PATH`), filled `--selected` (also when disabled), so the surface behind shows through. Never give the glyph its own colour.
-
-### Indeterminate pattern
-
-Use indeterminate for a parent row where some (but not all) children are selected, most commonly in table headers and tree lists.
-
-```tsx
-const allSelected = rows.every(r => selected.has(r.id));
-const someSelected = rows.some(r => selected.has(r.id));
-
-<Checkbox
-  checked={allSelected}
-  indeterminate={!allSelected && someSelected}
-  onChange={() => (allSelected ? clearAll() : selectAll())}
-/>
-```
-
----
-
-## 3. Toggle
-
-Binary on/off control. On a card or row it applies immediately; inside a form with a Save button it is saved with the form (see Key rule above).
-
-### Dimensions
-
-| Property | Value |
-|---|---|
-| Track | 36 × 20 px, border-radius 10 px (fully pill) |
-| Thumb | 16 × 16 px circle |
-| Inset (thumb edge to track edge) | 2 px all sides |
-| Thumb travel | 16 px horizontal |
-| Small (`size="sm"`) | track 28 × 16 px (radius 8 px), thumb 12 × 12 px, travel 12 px |
-
-### States
+### Toggle
 
 | State | Track colour | Thumb colour | Thumb position |
 |---|---|---|---|
-| Off (enabled) | `#656B7C` (neutral-400) | `#F9F9FA` (neutral-25) | left |
-| On (enabled) | `var(--selected)` (`#EDA30D` light / `#FFBB38` dark) | `#F9F9FA` | right |
-| Off (disabled) | `#9EA4B3` (neutral-300) | `#F9F9FA` | left |
-| On (disabled) | `var(--selected)` at 40% opacity | `#F9F9FA` | right |
-| Focus (either) | same + 2 px outline around track | - | - |
+| Off (enabled) | `--neutral-400` (`#656B7C`) | `--neutral-25` (`#F9F9FA`) | left |
+| On (enabled) | `var(--selected)` (`#EDA30D` light / `#FFBB38` dark) | `--neutral-25` | right |
+| Off (disabled) | `--text-disabled` (`#9EA4B3`, neutral-300) | `--neutral-25` | left |
+| On (disabled) | `var(--selected)` at 40% opacity | `--neutral-25` | right |
+| Focus-visible (either) | same + 2px `--primary-button-background` outline around track, 2px offset | n/a | n/a |
 
 No hover halo on the toggle (unlike radio/checkbox). Optional subtle darkening of the track on hover is acceptable.
-
-### CSS
 
 ```css
 .toggle {
@@ -491,101 +405,81 @@ No hover halo on the toggle (unlike radio/checkbox). Optional subtle darkening o
 }
 ```
 
-### React TypeScript
+## Tokens
 
-```tsx
-// src/components/Toggle/Toggle.tsx
-import { InputHTMLAttributes, forwardRef, useId } from 'react'
-import './Toggle.css'
+All three controls pull from the same token set. Selected/on state colour differs slightly between controls; everything else is shared.
 
-type ToggleProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> & {
-  label?: React.ReactNode
-  labelPosition?: 'left' | 'right'
-  size?: 'md' | 'sm'
-}
+| Role | Token | Light | Dark | Notes |
+|---|---|---|---|---|
+| Selected colour (radio, checkbox) | `--control-selected` (radio) / `--selected` (checkbox) | `#EDA30D` | `#FFBB38` | Ring + dot, box fill; mode-aware, both tokens resolve to the same values |
+| On colour (toggle track) | `--selected` | `#EDA30D` | `#FFBB38` | Mode-aware, brighter amber in dark mode |
+| Hover halo background | `--page-background-hover` | `#EFF0F2` | `#2D313D` | Circular halo around radio and checkbox on hover |
+| Default stroke colour | `--text-primary` (radio) / `--text-secondary` (checkbox) | `#20222A` / `#454C5E` | `#F9F9FA` / `#BFC2CC` | Unselected radio ring; unchecked checkbox border |
+| Disabled colour | `--text-disabled` | `#9EA4B3` | `#656B7C` | Rings, borders, off-track when disabled |
+| Thumb colour (toggle) | `--neutral-25` | `#F9F9FA` | `#F9F9FA` | Toggle knob |
 
-const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
-  ({ label, labelPosition = 'right', size = 'md', checked, disabled, id, className, ...props }, ref) => {
-    const reactId = useId()
-    const controlId = id ?? `toggle-${reactId}`
-    const wrapperClass = [
-      'toggle',
-      size === 'sm' ? 'toggle--sm' : '',
-      checked ? 'toggle--on' : '',
-      disabled ? 'toggle--disabled' : '',
-    ]
-      .filter(Boolean)
-      .join(' ')
+Always use the semantic token; the hexes are documented so prototypes render correctly if tokens are not yet wired up. `--control-selected` is defined in `tokens.css` as `var(--secondary-600)` in light and `var(--secondary-500)` in dark.
 
-    const control = (
-      <span className={wrapperClass}>
-        <input
-          ref={ref}
-          type="checkbox"
-          role="switch"
-          id={controlId}
-          className="toggle__input"
-          checked={checked}
-          disabled={disabled}
-          aria-checked={checked ? 'true' : 'false'}
-          {...props}
-        />
-        <span className="toggle__track" aria-hidden="true" />
-        <span className="toggle__thumb" aria-hidden="true" />
-      </span>
-    )
+| Control | Selected / On colour | Hover halo | Disabled colour |
+|---|---|---|---|
+| Radio | `var(--control-selected)` | `var(--page-background-hover)`, 24 × 24 | `var(--text-disabled)` (ring + dot) |
+| Checkbox | `var(--selected)` | `var(--page-background-hover)`, 32 × 32 | `var(--text-disabled)` (border) |
+| Toggle | `var(--selected)` | none | off track `var(--text-disabled)`; on track `var(--selected)` at 40% opacity |
 
-    if (!label) return control
-
-    return (
-      <label
-        htmlFor={controlId}
-        className={`toggle-row toggle-row--${labelPosition} ${className ?? ''}`.trim()}
-      >
-        {labelPosition === 'left' && <span className="toggle-row__label">{label}</span>}
-        {control}
-        {labelPosition === 'right' && <span className="toggle-row__label">{label}</span>}
-      </label>
-    )
-  },
-)
-
-Toggle.displayName = 'Toggle'
-
-export default Toggle
-```
-
-Note the use of `role="switch"` so assistive tech announces this as a toggle rather than a generic checkbox.
-
----
-
-## Accessibility Rules (apply to all three)
+## Accessibility
 
 1. **Always pair with a visible label** via `<label htmlFor>`, or provide `aria-label` / `aria-labelledby` for unlabelled controls (Radio and Toggle pass `aria-label` through; the built Checkbox has no `aria-label` prop, so its name has to come from the surrounding row).
 2. **Hit target is the label row**, not just the control glyph. The entire row should be clickable.
 3. **Keyboard support is free** if you use real native inputs: Space toggles, Tab moves focus, arrow keys move within a radio group. Do not re-implement with `div`s.
 4. **Focus indicator** must be visible (2 px outline). Never set `outline: none` without a replacement.
-5. **Group radios** in a `<fieldset><legend>` or `role="radiogroup"`.
+5. **Group radios** in a `<fieldset><legend>` or `role="radiogroup"` with `aria-labelledby`.
 6. **Do not use colour alone** to convey selection; the glyph (dot, check, thumb position) must differ between states.
 7. **Contrast**: all selected-state colours meet WCAG AA against the paired backgrounds.
+8. **Roles**: Checkbox is `<button role="checkbox">` with `aria-checked` (`'mixed'` when indeterminate); Radio is a native `<input type="radio">`; Toggle is a native checkbox with `role="switch"`, so assistive tech announces it as a toggle rather than a generic checkbox.
 
----
+## Examples
 
-## Common Patterns
-
-### Settings row with toggle
+### Radio
 
 ```tsx
-<div className="settings-row">
-  <div>
-    <div className="settings-row__title">Email notifications</div>
-    <div className="settings-row__help">Get an email when a learner finishes a course</div>
-  </div>
-  <Toggle checked={emailOn} onChange={e => setEmailOn(e.target.checked)} aria-label="Email notifications" />
-</div>
+import Radio from '@/components/Radio/Radio'
+
+<Radio name="mode" value="auto" label="Automatic" checked={mode === 'auto'} onChange={() => setMode('auto')} />
 ```
 
-### Filter list with checkboxes
+Always wrap a set of radios in a `<fieldset>` with a `<legend>`, or a container with `role="radiogroup"` and `aria-labelledby`. Never ship a lone radio; if only one option exists, use a checkbox or toggle instead.
+
+```tsx
+<fieldset className="radio-group">
+  <legend>Enrolment mode</legend>
+  <Radio name="mode" value="auto" label="Automatic" defaultChecked />
+  <Radio name="mode" value="manual" label="Manual review" />
+  <Radio name="mode" value="hybrid" label="Hybrid" />
+</fieldset>
+```
+
+**Radio card group (radios inside visual cards):** the radio itself remains the same; the card handles its own selected border using `--selected`. Only one radio can be `checked` per group.
+
+### Checkbox: indeterminate and select all
+
+Use indeterminate for a parent row where some (but not all) children are selected, most commonly in table headers and tree lists.
+
+```tsx
+const allSelected = rows.every(r => selected.has(r.id));
+const someSelected = rows.some(r => selected.has(r.id));
+
+<th>
+  <Checkbox
+    checked={allSelected}
+    indeterminate={!allSelected && someSelected}
+    onChange={() => (allSelected ? clearAll() : selectAll())}
+  />
+</th>
+```
+
+The built `Table` component already renders this header (`src/components/Table/Table.tsx`); prefer it over a hand-built table.
+
+### Checkbox: filter list
 
 ```tsx
 <fieldset className="filter-group">
@@ -599,55 +493,30 @@ Note the use of `role="switch"` so assistive tech announces this as a toggle rat
 </fieldset>
 ```
 
-### Table "select all" header
+### Toggle
 
 ```tsx
-<th>
-  <Checkbox
-    checked={allSelected}
-    indeterminate={!allSelected && someSelected}
-    onChange={() => (allSelected ? clearAll() : selectAll())}
-  />
-</th>
+import Toggle from '@/components/Toggle/Toggle'
+
+<Toggle label="Send reminders" checked={reminders} onChange={(e) => setReminders(e.target.checked)} />
 ```
 
-The built `Table` component already renders this header (`src/components/Table/Table.tsx`); prefer it over a hand-built table.
+Settings row with toggle:
 
 ```tsx
+<div className="settings-row">
+  <div>
+    <div className="settings-row__title">Email notifications</div>
+    <div className="settings-row__help">Get an email when a learner finishes a course</div>
+  </div>
+  <Toggle checked={emailOn} onChange={e => setEmailOn(e.target.checked)} aria-label="Email notifications" />
+</div>
 ```
 
-### Radio card group (radios inside visual cards)
+## Related
 
-The radio itself remains the same; the card handles its own selected border using `--selected`. Only one radio can be `checked` per group.
-
----
-
-## Quick Reference Cheatsheet
-
-| I need to... | Use |
-|---|---|
-| Pick one of 2 to 6 mutually exclusive options | Radio group |
-| Pick zero or more from a list | Checkbox group |
-| Toggle a setting immediately (no Save) | Toggle |
-| Acknowledge terms / consent | Single checkbox |
-| "Select all" in a table | Checkbox with indeterminate |
-| Enable/disable a feature flag | Toggle |
-| Switch between two views or modes | Tabs, not a toggle |
-| Answer a single yes/no question in a form | Radio group (Yes / No) or checkbox, not a toggle |
-
-### Colour summary
-
-| Control | Selected / On colour | Hover halo |
-|---|---|---|
-| Radio | `var(--control-selected)` | `var(--page-background-hover)`, 24 × 24 |
-| Checkbox | `var(--selected)` | `var(--page-background-hover)`, 32 × 32 |
-| Toggle | `var(--selected)` | none |
-
-### Disabled summary
-
-| Control | Disabled colour |
-|---|---|
-| Radio (ring + dot) | `var(--text-disabled)` |
-| Checkbox (border) | `var(--text-disabled)` |
-| Toggle off (track) | `var(--text-disabled)` |
-| Toggle on (track) | `var(--selected)` at 40% opacity |
+- [dropdown.md](dropdown.md) - long option lists and multi-select fields
+- [chips-switcher-tabs.md](chips-switcher-tabs.md) - switching between views or modes
+- [table.md](table.md) - select-all header in the shared Table
+- [collapse.md](collapse.md) - revealing a switched-on feature's fields
+- [colors.md](colors.md) - palette and semantic surface tokens

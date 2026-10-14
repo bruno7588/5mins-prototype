@@ -3,19 +3,19 @@ name: 5mins-card-components
 description: Self-contained build specs for the seven official 5Mins.ai content card components - Lesson, Assessment, Course, Skill, Category, Folder, and Instructor cards (desktop + mobile variants). Use this skill whenever a 5Mins prototype, mockup, or admin/learner UI needs to show a lesson, assessment, course, skill, category, or content folder as a card or tile; whenever the user references content cards, content tiles, library items, or course/lesson lists in the 5Mins admin panel or learner web app; and whenever building or modifying any 5Mins screen that displays these content types. Trigger this even if the word "card" is not used, as long as content items need to be shown visually. Build cards from the specs in this file; do not invent ad-hoc card layouts.
 ---
 
-# 5Mins Card Components
+# Card components
 
 5Mins.ai has seven official content card components. When a prototype shows a lesson, assessment, course, skill, category, folder, or instructor, build the card from the spec in this file. Do not invent a card layout. Matching the real component keeps prototypes accurate and on-brand, so stakeholders react to the new work and not to layout drift.
 
-This skill is fully self-contained. Every dimension, token, and structure below is the real spec, so no Figma connection is needed to build a card. The Figma source is listed only for anyone who wants to re-verify later (file `EC26cSVe9KNTCWXvYovakw`, "Library" — verified against the light/dark nodes on 2026-07-03: Lesson `11916:9353`/`5144:14181`, Assessment `11916:9875`/`10242:2782`, Course `11916:10292`/`5132:5756`, Skill `11828:5184`/`11802:3704`, Category `10574:3913`/`10176:1806`, Folder `10175:3183`/`10175:3106`, Instructor `9926:2477`/`5149:27386`; Mobile variants verified 2026-07-13 against the dark nodes).
+This doc is fully self-contained. Every dimension, token, and structure below is the real spec, so no Figma connection is needed to build a card. The Figma nodes are listed only for anyone who wants to re-verify.
 
-> **Updated 2026-09-29 (aligned to prototype usage):** the shared `SkillCard` is a skill-progress tile, not the skill chip (see Skill card); mobile cards render in dark mode only; the mobile For you screen reuses the Lesson grid tile; the Lesson grid tile has no shadow; the desktop Course card's empty segments use `--border-elevated` and a completed course fills them `--success-500`; the Course mobile card title clamps to 2 lines; the desktop Category card hover zooms the image inside a fixed frame and brightens the glow, and its Disabled state has no tooltip in code.
+**Code:** `WorkspaceCourseCard`, `CategoryCard`, `LessonGridCard`, `SkillCard` in `src/components/<Name>/<Name>.tsx`; mobile `CourseCard`, `CategoryCard`, `ProgramCourseCard`, `LessonCard`, `AssessmentCard`, `InstructorCard` in `src/components/mobile/`. No shared component yet for the Lesson list rows, Assessment rows, Folder card (`src/pages/your-courses/YourCourses.tsx`), desktop Instructor card, skill chip or media type tag.
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, light / dark: Lesson `11916:9353` / `5144:14181`, Assessment `12429:9793` / `10242:2782`, Course `11916:10292` / `5132:5756`, Skill `11828:5184` / `11802:3704`, Category `10574:3913` / `10176:1806`, Folder `12427:9698` / `10175:3106`, Instructor `9926:2477` / `5149:27386`, Media type tag `4603:27712`
+**Last verified:** 2026-10-07
 
-> **Updated 2026-09-29 (verified against code):** card focus rings are cyan `--primary-button-background`; the desktop Category card's Disabled state dims only the title and meta icons (meta labels stay `--text-secondary`); under reduced motion its hover zoom snaps rather than being removed; MobileProgramCourseCard lists all five course states; mobile card states are stated per card.
+## Usage
 
-## When to use this skill
-
-Use it before building any card or tile that represents a piece of 5Mins content:
+Use this doc before building any card or tile that represents a piece of 5Mins content:
 
 - A screen that lists or grids lessons, assessments, courses, or skills.
 - An admin panel page (library, course builder, content picker) showing content items.
@@ -24,11 +24,11 @@ Use it before building any card or tile that represents a piece of 5Mins content
 
 For the surrounding admin shell (header, tabs, sidebars, modals), pair this with `5mins-prototype-builder`, which owns the chrome.
 
-## Scope: desktop + mobile (where documented)
+### Scope: desktop and mobile
 
-Specs below are the desktop variants unless a section is explicitly marked Mobile. The mobile app prototype (phone-frame wrapper, ~390px) uses the Mobile variants — documented for Lesson, Assessment, Course, Category, and Instructor (Figma-verified 2026-07-13). Each has a shared component under `src/components/mobile/` — use those, don't hand-roll. The Skill card has no device split; the Folder card is admin-only and has no mobile variant. **No card has a Mobile hover state** (touch surface); the mobile states each card supports are listed in its own section (for example, the mobile Course card is Default only). **Pressed (2026-10-13, Bruno's ruling):** a mobile card that is tappable as a whole (`role="button"`, or the program course card's tappable variant) lightens its fill to `--cards-background-hover` while pressed (`:active`, 150ms, none under reduced motion). It is the touch stand-in for the web hover; cards whose only action is a button inside them, and the Category card (no fill), have none.
+Specs below are the desktop variants unless a section is explicitly marked Mobile. The mobile app prototype (phone-frame wrapper, ~390px) uses the Mobile variants, documented for Lesson, Assessment, Course, Category, and Instructor. Each has a shared component under `src/components/mobile/`; use those, don't hand-roll. The Skill card has no device split; the Folder card is admin-only and has no mobile variant. Mobile cards render in dark mode only (see [States](#states) for the mobile state rules).
 
-## Picking the right card
+### Picking the right card
 
 | Content item | Card | Variants to choose from |
 |---|---|---|
@@ -44,9 +44,7 @@ A course **resource** (a PDF, Word, Excel or PowerPoint file, or an external lin
 
 For Lesson and Assessment cards, pick the variant by surface: an **admin panel** screen uses the admin list row; a **learner web app** screen uses the web app row; a **grid or library browse** layout uses the Lesson grid tile. When unsure, read the surrounding chrome: dark admin chrome means admin.
 
-## Usage
-
-Only the cards below have a shared component. Lesson list rows, Assessment rows, the Folder card, the Instructor card (desktop) and the skill chip are spec-only: build them from the sections further down.
+Only the cards below have a shared component. Lesson list rows, Assessment rows, the Folder card, the Instructor card (desktop) and the skill chip are spec-only: build them from the [Anatomy](#anatomy) sections.
 
 ### WorkspaceCourseCard (desktop Course card)
 
@@ -73,16 +71,6 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 
 **Canonical spec:** width 300px; radius `var(--radius-sm)` (12px); `var(--shadow-s)`; image 140px tall; body padding `var(--space-l)` (24px), gap `var(--space-m)` (16px); title Poppins Bold 16px/1.5 `--text-primary`, 3 lines; meta Regular 14px `--text-secondary`; empty segments `--border-elevated`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11916:10292` / dark `5132:5756`.
 
-**Prototype:** `src/components/WorkspaceCourseCard/WorkspaceCourseCard.tsx`
-- `course: WorkspaceCourse`: `title`, `image` or `thumbnailGradient`, `progress` (0-100), `lessonCount`, `durationMinutes`, `isNew?`, `dueLabel?`
-- `onOpen?`: makes the card interactive
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| WorkspaceCourseCard | _to be mapped by engineering_ | | |
-
 ### CategoryCard (desktop Category card)
 
 **Intent:** show one category of 5Mins content (course and lesson counts) in the learner browse experience.
@@ -105,16 +93,6 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 
 **Canonical spec:** width 300px; thumbnail 204px tall with the sharp image 240 x 140 at `var(--radius-sm)` (12px); glow `blur(16px)` at 32% opacity; gap `var(--space-m)` (16px); title Poppins Bold 16px/1.5, one line; "New Courses" badge `--danger-400` fill, `--neutral-25` text. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `10574:3913` / dark `10176:1806`.
 
-**Prototype:** `src/components/CategoryCard/CategoryCard.tsx`
-- `name`, `courseCount`, `lessonCount`, `image?` or `thumbnailGradient?`
-- `isNew?`: overlapping "New Courses" badge; `disabled?`: lock state; `onClick?`
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| CategoryCard | _to be mapped by engineering_ | | |
-
 ### LessonGridCard (Lesson grid tile)
 
 **Intent:** show one lesson as a compact tile with duration and progress, in a browse carousel.
@@ -134,17 +112,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 **Don't**
 - Don't hand-roll the segmented progress bar; it is 8 equal segments, `--primary-600` filled, `--border` empty.
 
-**Canonical spec:** 170 x 230px; radius `var(--radius-sm)` (12px); `--cards-background`, hover `--cards-background-hover`; info padding 16px, gap 12px; title Poppins Bold 14px/1.5, 3 lines; instructor Regular 12px/1.2 `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11916:9353` / dark `5144:14181`.
-
-**Prototype:** `src/components/LessonGridCard/LessonGridCard.tsx`
-- `title`, `instructor`, `thumbnail`, `durationLabel` (e.g. "3m 45s"), `filled` (0-8)
-- `completed?`, `onOpen?`
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| LessonGridCard | _to be mapped by engineering_ | | |
+**Canonical spec:** 170 x 230px; radius `var(--radius-sm)` (12px); `--cards-background`, hover `--cards-background-hover`; no shadow; info padding 16px, gap 12px; title Poppins Bold 14px/1.5, 3 lines; instructor Regular 12px/1.2 `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11916:9353` / dark `5144:14181`.
 
 ### SkillCard (skill-progress tile)
 
@@ -165,15 +133,6 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 
 **Canonical spec:** width 170px; padding and gap `var(--space-m)` (16px); radius `var(--radius-sm)` (12px); `--cards-background`, hover `--cards-background-hover`; 32px skill illustration; name Poppins Bold 14px/1.5, 3 lines reserved; progress filled `--primary-600`, empty `--border`; pending label `--text-warning`. Figma: not recorded.
 
-**Prototype:** `src/components/SkillCard/SkillCard.tsx`
-- `skillName`, `level`, `bottom: { kind: 'progress'; filled } | { kind: 'pending' }`
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| SkillCard | _to be mapped by engineering_ | | |
-
 ### Mobile cards (MobileCourseCard, MobileCategoryCard, MobileProgramCourseCard)
 
 **Intent:** the mobile app versions of the Course and Category cards, plus the course row of a program outline, sized for the 375px phone frame.
@@ -189,7 +148,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 
 **Do**
 - Treat mobile cards as dark mode only; check them inside `PhoneFrame`, not on a light page.
-- Leave out hover states. States per card: MobileCourseCard is Default only; MobileCategoryCard is Default or Disabled; MobileProgramCourseCard follows the course state (below); the mobile Lesson and Assessment cards are Enabled, Completed or Disabled.
+- Leave out hover states (per-card states are in [States](#states)).
 - On MobileProgramCourseCard, pass `startMarker` only on the course a learner who has not begun should start with.
 - Show course status on MobileProgramCourseCard with the DS `Badge`; a completed course shows no badge, because the full success track already says it.
 
@@ -199,21 +158,122 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 
 **Canonical spec:** MobileCourseCard 272px wide, image 120px, body padding `var(--space-m)` (16px), gap `var(--space-sm)` (12px), title Bold 14px/1.5 two lines. MobileCategoryCard 272px wide, thumbnail 180px with 208 x 116 image, gap `var(--space-sm)` (12px). MobileProgramCourseCard fills its container, radius `var(--radius-sm)` (12px), row padding `var(--space-sm)` (12px), 56px thumbnail at `var(--radius-s)` (8px), track filled `--primary-600`, passed `--success-500`, empty `--border-elevated`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, Course dark `5132:5756`, Category dark `10176:1806`; program course card not recorded.
 
-**Prototype:**
-- `src/components/mobile/CourseCard/CourseCard.tsx` (`MobileCourseCard`): `title`, `lessonCount`, `durationMinutes`, `image?` / `thumbnailGradient?`, `progress?`, `isNew?`, `dueLabel?`, `onClick?`
-- `src/components/mobile/CategoryCard/CategoryCard.tsx` (`MobileCategoryCard`): same props as CategoryCard
-- `src/components/mobile/ProgramCourseCard/ProgramCourseCard.tsx` (`MobileProgramCourseCard`): `course: ProgramCourse` (state `review` / `continue` / `jump-here` / `locked` / `retake`, per `pages/workspace/mockItems.ts`; status, progress), `startMarker?`
-- `src/components/mobile/AssessmentCard`, `InstructorCard` and `LessonCard` exist and match the specs below, but no screen imports them yet.
+## Figma to code
 
-**Production:**
+Figma card sets carry no TEXT or INSTANCE_SWAP properties: titles, metadata and images are layer overrides, which map to the props named in the Notes column.
+
+### Card/Lessons (`5144:14181`)
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| View | grid / list | component choice | `LessonGridCard` (grid) / `mobile/LessonCard` or spec-only rows (list) | |
+| Device | n/a / Admin / Web app / Mobile | component choice | `n/a` = `LessonGridCard`; `Mobile` = `mobile/LessonCard`; `Admin`, `Web app` = spec-only rows | grid view uses `Device=n/a` |
+| Completed | false / true | `completed` | `boolean` | both components |
+| Disabled | false / true | `disabled` | `boolean` | `mobile/LessonCard` only |
+| State | Enabled / Hover | n/a | CSS `:hover` | states are CSS, not props |
+| Quiz | n/a / Pending / Completed | `quiz` | `'none'` / `'pending'` / `'completed'` | `mobile/LessonCard`; `onQuizClick` acts |
+
+- **Figma only:** Disabled on the grid tile (`LessonGridCard` has no `disabled`).
+- **Code only:** `LessonGridCard`: `title`, `instructor`, `thumbnail`, `durationLabel`, `filled` (0-8), `onOpen`. `mobile/LessonCard`: `title`, `instructor`, `durationLabel`, `typeLabel`, `image`, `progress`, `onClick`, `onQuizClick`.
+
+### Card/Assessments (`10242:2782`)
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Device | Admin / Web App / Mobile app | component choice | `Mobile app` = `mobile/AssessmentCard`; `Admin`, `Web App` = spec-only rows | |
+| Disabled | false / true | `disabled` | `boolean` | |
+| Completed | false / true | `completed` | `boolean` | `onReviewClick` acts on the Review button |
+| State | Enabled / Hover | n/a | CSS `:hover` | mobile has no hover |
+
+- **Figma only:** none.
+- **Code only:** `title`, `assessmentType`, `illustrationType` (defaults to multiple choice), `illustration`, `onClick`, `onReviewClick`.
+
+### Card/Courses (`5132:5756`)
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Device | Desktop / Mobile | component choice | `WorkspaceCourseCard` / `mobile/CourseCard` | |
+| New | false / true | `course.isNew` / `isNew` | `boolean` | |
+| Due date | false / true | `course.dueLabel` / `dueLabel` | `string` (e.g. "Due on Aug 20"); omit for false | |
+| State | Enabled / Hover | n/a | CSS `:hover` | desktop only; hover needs `onOpen` |
+
+- **Figma only:** none.
+- **Code only:** `WorkspaceCourseCard`: `course` (`title`, `image` or `thumbnailGradient`, `progress` 0-100, `lessonCount`, `durationMinutes`, `isNew?`, `dueLabel?`), `onOpen`. `mobile/CourseCard`: `title`, `lessonCount`, `durationMinutes`, `image`, `thumbnailGradient`, `progress`, `onClick`. Completed course (all segments `--success-500`). `mobile/ProgramCourseCard` (`course: ProgramCourse` with state `review` / `continue` / `jump-here` / `locked` / `retake`, per `pages/workspace/mockItems.ts`; status, progress; `startMarker?`, `onClick?`) has no Figma node recorded.
+
+### Card/ Category (`10176:1806`)
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Device | Desktop / Mobile | component choice | `CategoryCard` / `mobile/CategoryCard` | same props |
+| New | false / true | `isNew` | `boolean` | |
+| Disabled | false / true | `disabled` | `boolean` | |
+| State | Enabled / Hover | n/a | CSS `:hover` | desktop only |
+
+- **Figma only:** the Disabled hover tooltip (not rendered in code).
+- **Code only:** `name`, `courseCount`, `lessonCount`, `image`, `thumbnailGradient`, `onClick`.
+
+### Card/skill (`11802:3704`)
+
+No shared component: the chip is built with the `.skill-chip` classes below. The shared `SkillCard` is the unrelated skill-progress tile, with no Figma node recorded.
+
+| Figma property | Figma values | Code | Values | Notes |
+|---|---|---|---|---|
+| Remove | false / true | `.skill-chip__remove` | rendered / omitted | |
+| Disabled | false / true | `aria-disabled="true"` | | |
+| State | Enabled / Hover / n/a | n/a | CSS `:hover` | `n/a` is the disabled variants |
+
+- **Figma only:** the whole set (no shared component).
+- **Code only:** `SkillCard` props `skillName`, `level`, `bottom: { kind: 'progress'; filled } | { kind: 'pending' }`.
+
+### Card/Folder (`10175:3106`)
+
+No shared component: built in `src/pages/your-courses/YourCourses.tsx`.
+
+| Figma property | Figma values | Code | Values | Notes |
+|---|---|---|---|---|
+| Number of courses | 0 / 1 / 2 / 3+ / n/a | `.your-courses-folder-*` stack layers | render as many layers as courses, capped at 3; 0 shows the illustration | `n/a` is the New folder tile |
+| New folder | false / true | `.your-courses-new-folder*` | creator tile | |
+| State | Enabled / Hover | n/a | CSS `:hover` and `:focus-visible` | |
+
+- **Figma only:** none.
+- **Code only:** the focus-visible ring.
+
+### Card/Instructor (`5149:27386`)
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Device | Desktop / Mobile | component choice | spec-only (desktop) / `mobile/InstructorCard` | |
+| State | Enabled / Hover | n/a | CSS `:hover` | desktop only |
+
+- **Figma only:** none.
+- **Code only:** `name`, `bio`, `photo`, `skills` (`{ label, icon? }[]`), `onClick`.
+
+### Tags (media type tag, `4603:27712`)
+
+No shared component: each card draws it with a page-prefixed `__tag` class.
+
+| Figma property | Figma values | Code | Values | Notes |
+|---|---|---|---|---|
+| Media Type | Video / Audio / PDF / Link / SCORM / Flashcard | Iconsax Bold icon | `PlayCircle` / `VolumeHigh` / `DocumentText` / `Link2` / `DirectboxNotif` / `Note2` | |
+| Size | L / M / S | icon size + bottom-right radius | 32px + 12px / 20px + 8px / 16px + 8px | |
+
+### Production
 
 | Design system | `@web/ui` component | Props mapping | Known drift |
 |---|---|---|---|
+| WorkspaceCourseCard | _to be mapped by engineering_ | | |
+| CategoryCard | _to be mapped by engineering_ | | |
+| LessonGridCard | _to be mapped by engineering_ | | |
+| SkillCard | _to be mapped by engineering_ | | |
 | MobileCourseCard | _to be mapped by engineering_ | | |
 | MobileCategoryCard | _to be mapped by engineering_ | | |
 | MobileProgramCourseCard | _to be mapped by engineering_ | | |
 
-## Media type tag
+`src/components/mobile/AssessmentCard`, `InstructorCard` and `LessonCard` exist and match the specs below, but no screen imports them yet.
+
+## Anatomy
+
+### Media type tag
 
 The square tag that sits flush in the top-left corner of a card thumbnail and says what the content is. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `4603:27712`. No shared component; each card draws it with a page-prefixed `__tag` class.
 
@@ -227,52 +287,13 @@ The square tag that sits flush in the top-left corner of a card thumbnail and sa
 - Icon by media type: Video `PlayCircle`, Audio `VolumeHigh`, PDF `DocumentText`, Link `Link2`, SCORM `DirectboxNotif`, Flashcard `Note2`.
 - Don't round all four corners, and don't use 6px or other off-scale radii: 12px for L, 8px for M and S.
 
-> **Updated 2026-09-29 (Figma `4603:27712`):** the tag radius is 12px on L and 8px on M and S. Six prototype tags were corrected (they used 6px, 9.1px, raw 8px, or 8px on an L tag).
+### Lesson card
 
-## Design tokens
+A single video micro-lesson. Three desktop variants plus a mobile list card. Source: `Card/Lessons`, node `5144:14181`.
 
-The cards use the standard 5Mins token system. If the prototype already defines these (via `5mins-colors` or the prototype-builder scaffold), reuse them. Otherwise the hex values below apply so this skill works standalone. These are the only theme values; build desktop cards in the light theme (dark mode flips the same tokens). Mobile cards render in dark mode only, because `PhoneFrame` pins `data-theme="dark"`.
+#### Lesson grid tile (170 x 230)
 
-```css
-:root {
-  /* Card surfaces */
-  --cards-background:        #FFFFFF;  /* card fill (Neutral-0) */
-  --cards-background-hover:  #EFF0F2;  /* card fill on hover (Neutral-50) */
-  --border:                  #DFE1E6;  /* card border, empty progress (Neutral-100) */
-  --border-hover:            #9EA4B3;  /* border on hover (Neutral-300) */
-
-  /* Text */
-  --text-primary:    #20222A;  /* titles (Neutral-800) */
-  --text-secondary:  #454C5E;  /* metadata, captions (Neutral-500) */
-  --text-disabled:   #9EA4B3;  /* disabled card text (Neutral-300, light mode) */
-
-  /* Accents */
-  --primary-600:   #00AFC4;  /* lesson progress fill */
-  --success-500:   #18A957;  /* completed progress + completed state */
-  --selected:      #EDA30D;  /* course progress fill (Secondary-600 in light mode) */
-  --text-warning:  #E88206;  /* course due-date text (Warning-600 in light mode) */
-  --badge-new:     #E95C7B;  /* "New" badge fill (--danger-400) */
-  --type-badge-bg: rgba(69, 76, 94, 0.16);  /* content-type pill background (--input-background) */
-}
-```
-
-Shared values used by every card:
-
-- **Font:** Poppins. Title = Bold 700. Metadata = Regular 400. Pills = Medium 500.
-- **Type scale:** H4 = 16px / line-height 1.5. H5 = 14px / 1.5. Paragraph M = 14px / 1.5. Paragraph S = 12px / 1.2.
-- **Radius:** cards use 12px. Inner thumbnails use 8px.
-- **Card shadow (Shadow S):** `box-shadow: var(--shadow-s);` — see `layout.md` for the shadow scale.
-- **Spacing tokens:** XS 4px, S 8px, SM 12px, M 16px, L 24px, ML 20px, XXL 40px.
-
----
-
-## Lesson card
-
-A single video micro-lesson. Three desktop variants plus a mobile list card. Source: `Card/Lessons`, node `11608:3985`.
-
-### Lesson grid tile (170 x 230)
-
-Use in grid or library browse layouts.
+Use in grid or library browse layouts. No shadow.
 
 Anatomy, top to bottom:
 
@@ -335,31 +356,31 @@ Anatomy, top to bottom:
 .card-meta { margin: 0; font: 400 12px/1.2 Poppins; color: var(--text-secondary); }
 ```
 
-### Lesson admin list row (900 x 74)
+#### Lesson admin list row (900 x 74)
 
-Use in admin panel lists. Source variant nodes: `11608:4100` (default), `11608:4107` (hover).
+Use in admin panel lists. Source variant nodes: `6121:3026` (default), `11338:3695` (hover).
 
 Layout is a horizontal row: 12px padding, 12px gap, radius 12px, card background and shadow.
 
 - **Thumbnail** 48 x 48, radius 8px, with the same corner play-circle tag.
 - **Info** fills the row, 4px gap, column. Title Poppins Bold 16px `--text-primary`, single line, ellipsis. Metadata Poppins Regular 14px `--text-secondary`, format `Lesson - Instructor name - 4min`.
-- **Content-type pill** on the right: `--type-badge-bg` background, 8px / 4px padding, radius 40px, label `Lesson` Poppins Medium 12px `--text-secondary`.
+- **Content-type pill** on the right: `--input-background` background, 8px / 4px padding, radius 40px, label `Lesson` Poppins Medium 12px `--text-secondary`.
 
-### Lesson web app list row (900 x 112)
+#### Lesson web app list row (900 x 112)
 
-Use in learner web app lists. Source variant nodes: `11608:4148` (default), `11608:4156` (hover), plus Quiz Pending and Completed variants from `11608:4164` onward.
+Use in learner web app lists. Source variant nodes: `11052:9113` (default), `11340:3721` (hover), plus Quiz Pending and Completed variants from `9126:28264` onward.
 
 Horizontal row: 16px padding, 16px gap, items centered, radius 12px, card background and shadow.
 
 - **Thumbnail** 80 x 80, radius 8px, corner play-circle tag.
 - **Info** fills the row, 8px gap, column. Title Poppins Bold 16px `--text-primary`, up to 2 lines. Metadata row with 24px gap: the `Lesson - Instructor name - 4min` line in Poppins Regular 14px `--text-secondary`, followed by a 96 x 4px progress bar (same segmented style as the grid tile, radius 20px).
-- A **completed** lesson swaps the progress bar for a 20px success tick icon. A lesson with an attached quiz adds a small-outlined button on the right (12px Bold label, 8px/16px padding, radius 8px): `Take Quiz` — border+text `--button-warning-background` with a 16px danger icon; `Retake Quiz` — border+text `--primary-button-background` (quiz pending) or `--text-disabled` (already passed).
+- A **completed** lesson swaps the progress bar for a 20px success tick icon. A lesson with an attached quiz adds a small-outlined button on the right (12px Bold label, 8px/16px padding, radius 8px): `Take Quiz` - border+text `--button-warning-background` with a 16px danger icon; `Retake Quiz` - border+text `--primary-button-background` (quiz pending) or `--text-disabled` (already passed).
 
-### Lesson mobile list card (343 x auto)
+#### Lesson mobile list card (343 x auto)
 
-Use in the mobile app prototype (phone-frame). Figma-verified 2026-07-13 against the Mobile list variants of `Card/Lessons` in dark node `5144:14181` (base `5908:21918`, quiz pending `11306:6798`, completed `11608:3841`, completed + retake `11608:3863`, quiz completed `9126:28239`, disabled `9122:7860`). Mobile lesson lists use this list card; the only exception is the "Jump back in" carousel on the mobile For you screen, which reuses the Lesson grid tile (`LessonGridCard`). Mobile has **no hover state** (touch surface); the only states are Enabled, Completed, and Disabled.
+Use in the mobile app prototype (phone-frame). Source: the Mobile list variants of `Card/Lessons` in dark node `5144:14181` (base `5908:21918`, quiz pending `11306:6798`, completed `11608:3841`, completed + retake `11608:3863`, quiz completed `9126:28239`, disabled `9122:7860`). Mobile lesson lists use this list card; the only exception is the "Jump back in" carousel on the mobile For you screen, which reuses the Lesson grid tile (`LessonGridCard`).
 
-Implemented as the shared component `src/components/mobile/LessonCard` — use it, don't hand-roll.
+Implemented as the shared component `src/components/mobile/LessonCard`; use it, don't hand-roll.
 
 Container: 343px wide in Figma (375 viewport − 16px side margins; in code, fill the parent's width), column layout, `--cards-background`, radius **8px** (smaller than the desktop 12px), overflow hidden, Shadow S.
 
@@ -372,40 +393,30 @@ Anatomy, top to bottom:
 
 Quiz variants (info column gap grows to 12px: header block keeps its 4px gap, then the button below):
 
-- **Take Quiz** (quiz pending, lesson not completed): small outlined button — 1px border + text `--button-warning-background`, Poppins Bold 12px/1.4, 8px/16px padding, radius 8px, 4px gap, trailing 16px danger icon (Linear, warning color).
+- **Take Quiz** (quiz pending, lesson not completed): small outlined button - 1px border + text `--button-warning-background`, Poppins Bold 12px/1.4, 8px/16px padding, radius 8px, 4px gap, trailing 16px danger icon (Linear, warning color).
 - **Retake Quiz** (lesson completed, quiz pending): same button, border + text `--primary-button-background`, no icon.
 - **Retake Quiz** (lesson completed, quiz already passed): same button, border + text `--text-disabled`, no icon.
-- **No quiz attached**: no button — plain title + metadata (with the success progress bar when completed).
+- **No quiz attached**: no button - plain title + metadata (with the success progress bar when completed).
 
-Disabled: thumbnail desaturated (`mix-blend-mode: luminosity`), all text `--text-disabled`, a 20px lock icon (Bold) right-aligned in the content row, **no progress bar**.
+### Assessment card
 
-### Lesson states
-
-- **Hover:** card background switches to `--cards-background-hover`; in list rows the title shifts to `--text-button-hover` (cyan).
-- **Disabled:** thumbnail desaturated (`filter: grayscale(1)` or `mix-blend-mode: luminosity`); all text uses `--text-disabled`; a lock icon may replace interactive affordances.
-- **Completed:** progress fill uses `--success-500`.
-
----
-
-## Assessment card
-
-A quiz or assessment item. Three devices — admin, web app, mobile — each with its own row height. Source: `Card/Assessments`, node `10242:2782` (Library file `EC26cSVe9KNTCWXvYovakw`), re-verified 2026-08-18.
+A quiz or assessment item. Three devices (admin, web app, mobile), each with its own row height. Source: `Card/Assessments`, node `10242:2782` (Library file `EC26cSVe9KNTCWXvYovakw`).
 
 The variant matrix is `Device × Disabled × State × Completed`, and it is deliberately sparse: admin has enabled and hover only, web app carries all six (enabled / hover, each × disabled and × completed), mobile has no hover and no disabled+completed combination.
 
-Assessment cards use a built-in illustration in place of a thumbnail. The official illustrations are in `src/assets/assessment-illustrations/` (Figma `Illustrations/ Assessments` `9120:8850`): ten types — Multiple choice, Short text, Exercise, Situational test, Fast Track, Poll, Fill in the blank, Sequence, Categorize, Match the pairs — each as distinct Mobile (56px) and Desktop (80px) artwork. Use `getAssessmentIllustration(type, device)`; scale the desktop one down for the 48px admin row. Keep the size and placement exact. Full set and node refs: `gamification.md` → Assessment illustrations.
+Assessment cards use a built-in illustration in place of a thumbnail. The official illustrations are in `src/assets/assessment-illustrations/` (Figma `Illustrations/ Assessments` `9120:8850`): ten types (Multiple choice, Short text, Exercise, Situational test, Fast Track, Poll, Fill in the blank, Sequence, Categorize, Match the pairs), each as distinct Mobile (56px) and Desktop (80px) artwork. Use `getAssessmentIllustration(type, device)`; scale the desktop one down for the 48px admin row. Keep the size and placement exact. Full set and node refs: `gamification.md` → Assessment illustrations.
 
-### Assessment admin list row (900 x 73)
+#### Assessment admin list row (900 x 73)
 
 Use in admin panel lists. Source variant nodes: `10867:5413` (enabled), `11054:9903` (hover).
 
 Horizontal row: **12px padding all round**, 12px gap, items at top, radius 12px, card background and shadow.
 
 - **Illustration** 48 x 48 on the left.
-- **Info** fills the row, 4px gap, column. Title Poppins Bold 16px/1.5 `--text-primary`, single line, ellipsis. Under it the assessment type on its own line: `Type of assessment`, Poppins Regular 14px/1.5 `--text-secondary`. **Not prefixed with "Assessment ·"** — the pill on the right already says that.
+- **Info** fills the row, 4px gap, column. Title Poppins Bold 16px/1.5 `--text-primary`, single line, ellipsis. Under it the assessment type on its own line: `Type of assessment`, Poppins Regular 14px/1.5 `--text-secondary`.
 - **Edit + badge cluster** on the right, top-aligned with the illustration, 8px gap:
   - 16px edit icon (`vuesax/linear/edit-2`) centred in a 22 x 22 hit box, `--text-secondary`.
-  - Content-type pill: `--type-badge-bg` background, 8px / 4px padding, radius 40px, label `Assessment` Poppins Medium 12px `--text-secondary`.
+  - Content-type pill: `--input-background` background, 8px / 4px padding, radius 40px, label `Assessment` Poppins Medium 12px `--text-secondary`.
 
 ```html
 <article class="assessment-row assessment-row--admin">
@@ -441,54 +452,43 @@ Horizontal row: **12px padding all round**, 12px gap, items at top, radius 12px,
 }
 .type-pill {
   flex: none; padding: 4px 8px; border-radius: 40px;
-  background: var(--type-badge-bg);
+  background: var(--input-background);
   font: 500 12px/1.2 Poppins; color: var(--text-secondary);
 }
 ```
 
-### Assessment web app list row (900 x 112)
+#### Assessment web app list row (900 x 112)
 
 Use in learner web app lists. Source variant nodes: `11052:9148` (enabled), `10242:3208` (hover), `10242:3246` (disabled), `10242:3289` (disabled + hover), `10242:3407` (completed), `10242:3469` (completed + hover).
 
 Horizontal row: **16px padding all round**, 16px gap, items centred, radius 12px, card background and shadow.
 
 - **Illustration** 80 x 80 on the left.
-- **Info** fills the row, 8px gap, column. Title Poppins Bold 16px/1.5 `--text-primary`. Under it `Type of assessment`, Poppins Regular 14px/1.5 `--text-secondary` — the type alone, same as the admin row.
+- **Info** fills the row, 8px gap, column. Title Poppins Bold 16px/1.5 `--text-primary`. Under it `Type of assessment`, Poppins Regular 14px/1.5 `--text-secondary`.
 - No content-type pill on the web app variant.
 - **Right slot**, one element at a time, vertically centred:
   - **Disabled** → 24px lock (`vuesax/bold/lock`) `--text-disabled`, 24px in from the right edge.
   - **Completed** → a **Review** button, 84 x 37, 16px in from the right edge.
   - **Enabled** → nothing; the info column takes the width.
 
-**Completed** also adds a 20px success tick (`vuesax/bold/tick-circle`, `--success-500`) after the type, on an 8px gap — the metadata becomes a row rather than a lone line.
+**Completed** also adds a 20px success tick (`vuesax/bold/tick-circle`, `--success-500`) after the type, on an 8px gap; the metadata becomes a row rather than a lone line.
 
-**Disabled** desaturates the illustration (`mix-blend-mode: luminosity`) and drops both title and type to `--text-disabled`. It combines with hover: the disabled row still lightens, since the card stays clickable enough to explain itself.
+The Review button is outlined with no fill: 1px border and label both `--primary-button-background`, going to `--text-button-hover` on the row's hover variant. Its box is 8px / 16px padding with a **14px/1.5 Bold** label, which lands at 37px tall: between the DS Small (33px) and Medium (41px) rungs in `buttons.md`. Figma is the source of truth here, so build it at 37px, but flag it if the button ladder is ever reconciled. (The mobile card's Review button is a true DS Small: 12px/1.4 label, 33px.)
 
-The Review button is outlined with no fill — 1px border and label both `--primary-button-background`, going to `--text-button-hover` on the row's hover variant. Its box is 8px / 16px padding with a **14px/1.5 Bold** label, which lands at 37px tall: between the DS Small (33px) and Medium (41px) rungs in `buttons.md`. Figma is the source of truth here, so build it at 37px, but flag it if the button ladder is ever reconciled. (The mobile card's Review button is a true DS Small — 12px/1.4 label, 33px.)
+#### Assessment mobile list card (344 x auto)
 
-### Assessment mobile list card (344 x auto)
-
-Use in the mobile app prototype. Figma-verified 2026-08-18 against the Mobile app variants of `Card/Assessments` in dark node `10242:2782` (enabled `10242:2877`, disabled `10867:5445`, completed `10867:5489`). No hover state; no disabled+completed combo. Implemented as the shared component `src/components/mobile/AssessmentCard`.
+Use in the mobile app prototype. Source: the Mobile app variants of `Card/Assessments` in dark node `10242:2782` (enabled `10242:2877`, disabled `10867:5445`, completed `10867:5489`). Implemented as the shared component `src/components/mobile/AssessmentCard`.
 
 Container: 344px in Figma (fill the parent in code), `--cards-background`, radius 12px, **12px padding**, horizontal row with **8px gap**, items vertically centered (top-aligned in the completed variant).
 
-- **Illustration** 56 x 56 (desktop admin row uses 48, web app 80) — the mobile-device artwork from `src/assets/assessment-illustrations/`, picked by assessment type (the component's `illustrationType` prop; defaults to multiple choice).
-- **Info column** fills the row, 4px gap. Title Poppins Bold 14px/1.5 `--text-primary`, wraps freely (two lines in the completed variant). Below it `Type of assessment`, Poppins Regular 12px/1.2 `--text-secondary`, single line, nowrap — the type alone, as on the other two devices.
+- **Illustration** 56 x 56 (desktop admin row uses 48, web app 80): the mobile-device artwork from `src/assets/assessment-illustrations/`, picked by assessment type (the component's `illustrationType` prop; defaults to multiple choice).
+- **Info column** fills the row, 4px gap. Title Poppins Bold 14px/1.5 `--text-primary`, wraps freely (two lines in the completed variant). Below it `Type of assessment`, Poppins Regular 12px/1.2 `--text-secondary`, single line, nowrap.
 - **Disabled**: illustration desaturated (`mix-blend-mode: luminosity`), all text `--text-disabled`, trailing **20px** lock icon (Bold; web app uses 24px).
-- **Completed** (card grows to 131px): info column gap becomes 12px — header (title + metadata, 4px gap) with a **16px** success tick (`vuesax/bold/tick-circle`, `--success-500`) appended to the metadata row on an 8px gap, then a **Review** button below: 77 x 33, outlined with no fill, 1px border and label both `--primary-button-background`, Poppins Bold 12px/1.4, 8px/16px padding, radius 8px — a true DS Small.
+- **Completed** (card grows to 131px): info column gap becomes 12px: header (title + metadata, 4px gap) with a **16px** success tick (`vuesax/bold/tick-circle`, `--success-500`) appended to the metadata row on an 8px gap, then a **Review** button below: 77 x 33, outlined with no fill, 1px border and label both `--primary-button-background`, Poppins Bold 12px/1.4, 8px/16px padding, radius 8px, a true DS Small.
 
-### Assessment states
+### Course card
 
-- **Hover:** card background switches to `--cards-background-hover`. Admin and web app only — mobile has no hover variant. It combines with every other state: a disabled row still lightens, and a completed row lightens *and* takes its Review button to `--text-button-hover`.
-- **Disabled:** illustration desaturated (`mix-blend-mode: luminosity`), title and type both `--text-disabled`, and a bold lock in the trailing slot — 24px on web app, 20px on mobile. Admin has no disabled variant.
-- **Completed:** a bold success tick in `--success-500` after the type — 20px on web app, 16px on mobile — plus a **Review** button. Web app puts it in the trailing slot; mobile stacks it under the metadata, which is why that card is the only one that changes height. Admin has no completed variant: the row is a management view, not a learner's.
-- **Metadata is the type alone** on all three devices — `Type of assessment`, never `Assessment · Type of assessment`. Only the admin row names the content type, and it does so in the pill.
-
----
-
-## Course card
-
-A course or playlist, that is a group of lessons. One desktop card, 300px wide, roughly 297px tall. Source: `Card/Courses`, set `5132:5756` (re-verified 2026-08-26). Desktop variant nodes: `6122:3185` (base), `10274:13124` (new), `10276:13252` (due date), `10276:13283` (new + due), `10229:3173` (hover), `10276:13379` (new + due, hover). Implemented as `src/components/WorkspaceCourseCard`.
+A course or playlist, that is a group of lessons. One desktop card, 300px wide, roughly 297px tall. Source: `Card/Courses`, set `5132:5756`. Desktop variant nodes: `6122:3185` (base), `10274:13124` (new), `10276:13252` (due date), `10276:13283` (new + due), `10229:3173` (hover), `10276:13379` (new + due, hover). Implemented as `src/components/WorkspaceCourseCard`.
 
 Anatomy, top to bottom:
 
@@ -537,12 +537,13 @@ Anatomy, top to bottom:
   .course-card__picture { transition: none; }
   .course-card:hover .course-card__picture { transform: none; }
 }
+.progress-bar--course i { background: var(--border-elevated); }  /* empty segments sit on the card */
 .progress-bar--course i.on { background: var(--selected); }   /* gold, not cyan */
 .badge-new {
   position: absolute; top: 10px; left: 10px;
   padding: 4px 8px; border-radius: 20px;
-  background: var(--badge-new);
-  font: 500 12px/1.5 Poppins; color: #fff;
+  background: var(--danger-400);
+  font: 500 12px/1.5 Poppins; color: var(--neutral-25);
 }
 .badge-due {
   position: absolute; top: 10px; right: 10px;
@@ -565,27 +566,18 @@ Anatomy, top to bottom:
 .meta-item i { width: 16px; height: 16px; }
 ```
 
-### Course variants
+#### Course mobile card (272 x 248)
 
-- **New:** adds the rose `New` pill in the top-left of the image. Use for recently added courses.
-- **Due date:** adds the white due-date pill in the top-right, text in `--text-warning`. Use when a course has a compliance deadline.
-- New and Due date can both appear at once.
-- **Hover:** card background switches to `--cards-background-hover` **and the picture zooms 1.12x** (Figma draws it at 336 x 157 inside the clipped 300 x 140 frame). Badges and the progress bar stay put on top; the zoom is animated (300ms ease-out) and disabled under `prefers-reduced-motion`.
+Use in the mobile app prototype. Source: the Mobile variants of `Card/Courses` in dark node `5132:5756` (base `5132:5757`, due `10276:13190`, new+due `10276:13220`, new `10276:13316`). Implemented as the shared component `src/components/mobile/CourseCard`.
 
-### Course mobile card (272 x 248)
+Same anatomy as desktop, scaled down. Container: **272px** wide (fixed; mobile course cards sit in horizontal scrollers), column, `--cards-background`, radius 12px.
 
-Use in the mobile app prototype. Figma-verified 2026-07-13 against the Mobile variants of `Card/Courses` in dark node `5132:5756` (base `5132:5757`, due `10276:13190`, new+due `10276:13220`, new `10276:13316`). Mobile has State=Default only — no hover, no completed/disabled variants. Implemented as the shared component `src/components/mobile/CourseCard`.
-
-Same anatomy as desktop, scaled down. Container: **272px** wide (fixed — mobile course cards sit in horizontal scrollers), column, `--cards-background`, radius 12px.
-
-- **Image area** 272 x **120** (desktop 300 x 140), top corners rounded 12px, with the 2px 8-segment progress bar flush at the bottom (fill `--selected` gold, empty `--border`). `New` badge top-left at 10px inset (same tokens as desktop: `--badge-new` fill, 4px/8px padding, radius 20px, Medium 12px/1.2 white). Due-date pill top-right at 10px inset: `--cards-background` fill, 6px/12px padding, radius 40px — text drops to Poppins **Regular 12px/1.2** `--text-warning` (desktop uses Medium 14px).
+- **Image area** 272 x **120** (desktop 300 x 140), top corners rounded 12px, with the 2px 8-segment progress bar flush at the bottom (fill `--selected` gold, empty `--border`). `New` badge top-left at 10px inset (same tokens as desktop: `--danger-400` fill, 4px/8px padding, radius 20px, Medium 12px/1.2 white `--neutral-0`). Due-date pill top-right at 10px inset: `--cards-background` fill, 6px/12px padding, radius 40px; text drops to Poppins **Regular 12px/1.2** `--text-warning` (desktop uses Medium 14px).
 - **Body** **16px padding, 12px gap** (desktop 24px/16px). Title Poppins Bold **14px**/1.5 `--text-primary`, clamped to 2 lines (height 42px). Duration row 8px gap, items 4px icon gap: **14px** play-circle icon + `17 lessons`, 14px clock icon + `20 min`, Poppins Regular **12px/1.2** `--text-secondary`.
 
----
+### Skill card
 
-## Skill card
-
-A skill tag, shown as a compact chip. One component, no device split, roughly 40px tall. Source: `Card/skill`, node `9577:3697`.
+A skill tag, shown as a compact chip. One component, no device split, roughly 40px tall. Source: `Card/skill`, node `11802:3704`; variant nodes (light): `11828:5185` (enabled), `11828:5188` (hover), `11828:5191` (removable), `11828:5199` (disabled).
 
 The chip below has no shared component yet. The shared `src/components/SkillCard` is a different card: the 170px skill-progress tile described in Usage → SkillCard.
 
@@ -597,7 +589,7 @@ Anatomy, left to right: a 1px `--border` outline, transparent fill, 12px horizon
 
 ```html
 <span class="skill-chip">
-  <i class="skill-chip__icon"><!-- 24px skill illustration --></i>
+  <i class="skill-chip__icon"><!-- 20px skill illustration --></i>
   <span class="skill-chip__label">Pricing Strategy Automation</span>
   <button class="skill-chip__remove" aria-label="Remove skill"><!-- 20px close icon --></button>
 </span>
@@ -617,25 +609,15 @@ Anatomy, left to right: a 1px `--border` outline, transparent fill, 12px horizon
 .skill-chip[aria-disabled="true"] .skill-chip__icon  { mix-blend-mode: luminosity; }
 ```
 
-### Skill variants
-
-- **Remove:** set the variant with the close icon when the chip appears in an editable context, for example a skill picker or a tag editor. Omit the close icon in read-only contexts.
-- **Hover:** border switches to `--border-hover` **and** the chip fills with `--page-background-hover`.
-- **Disabled:** label in `--text-disabled`, illustration desaturated (`mix-blend-mode: luminosity`), non-interactive, no remove control.
-
-Source variant nodes (light): `11828:5185` (enabled), `11828:5188` (hover), `11828:5191` (removable), `11828:5199` (disabled).
-
----
-
-## Category card
+### Category card
 
 A category of courses in the learner browse experience. Desktop card 300px wide, ~273px tall; mobile card 272px wide (see below). Source: `Card/ Category`, light `10574:3913`, dark `10176:1806`.
 
 Anatomy, top to bottom (16px gap between thumbnail area and info):
 
-- **Thumbnail stack:** a blurred "glow" copy of the category image fills the full 300 x 204 area (`filter: blur(16px)`, 32% opacity, radius 12px) with the sharp 240 x 140 image (radius 12px) centered on top — the card has **no surface fill**; the glow is the card.
+- **Thumbnail stack:** a blurred "glow" copy of the category image fills the full 300 x 204 area (`filter: blur(16px)`, 32% opacity, radius 12px) with the sharp 240 x 140 image (radius 12px) centered on top. The card has **no surface fill**; the glow is the card.
 - **Info** below: 8px gap. Title Poppins Bold 16px `--text-primary`, single line, ellipsis. Metadata row, 16px gap, two items in Poppins Regular 14px `--text-secondary`, each with a 4px icon gap: a 20px collection-play icon + `12 courses`, and a 16px play-circle icon + `24 lessons`.
-- **"New Courses" badge** (New variant): overlaps the card's top edge — absolute, top −11px, left 30px; `--badge-new` (`--danger-400`) fill, 6px / 8px padding, radius 40px, label Poppins Medium 12px `--neutral-25`.
+- **"New Courses" badge** (New variant): overlaps the card's top edge (absolute, top −11px, left 30px); `--danger-400` fill, 6px / 8px padding, radius 40px, label Poppins Medium 12px `--neutral-25`.
 
 ```html
 <article class="category-card">
@@ -668,30 +650,19 @@ Anatomy, top to bottom (16px gap between thumbnail area and info):
 .badge-new--category { position: absolute; top: -11px; left: 30px; }
 ```
 
-### Category mobile card (272 x 238)
+#### Category mobile card (272 x 238)
 
-Use in the mobile app prototype. Figma-verified 2026-07-13 against the Mobile variants of `Card/ Category` in dark node `10176:1806` (default `10176:1807`, new `10301:4930`, disabled `10301:3233`). Mobile has State=Default only — no hover (and disabled shows no tooltip on mobile). No disabled+new combo. Implemented as the shared component `src/components/mobile/CategoryCard`.
+Use in the mobile app prototype. Source: the Mobile variants of `Card/ Category` in dark node `10176:1806` (default `10176:1807`, new `10301:4930`, disabled `10301:3233`). No disabled+new combo. Implemented as the shared component `src/components/mobile/CategoryCard`.
 
 Same glow-stack anatomy as desktop, scaled down. Container: **272px** wide (fixed), column, centered, **12px gap** (desktop 16px), no surface fill.
 
 - **Thumbnail stack** 272 x **180** (desktop 300 x 204), 32px padding: blurred glow copy fills the area (`blur(16px)`, 32% opacity, radius 12px) with the sharp **208 x 116** image (radius 12px) centered on top.
 - **Info**: **4px gap** (desktop 8px). Title Poppins Bold **14px**/1.5 `--text-primary`, single line, ellipsis. Metadata row **8px gap** (desktop 16px), items 4px icon gap: **18px** collection-play icon + `12 courses`, 16px play-circle icon + `24 lessons`, Poppins Regular **12px/1.2** `--text-secondary`.
-- **"New Courses" badge**: identical to desktop — absolute, top −11px, left 30px, `--badge-new` fill, 6px/8px padding, radius 40px, Poppins Medium 12px/1.2 `--neutral-25`.
-- **Disabled**: thumbnail stack desaturated (`mix-blend-mode: luminosity`), sharp image at 50% opacity with a centered **40px lock icon** (Bold) overlay, all text `--text-disabled`.
+- **"New Courses" badge**: identical to desktop (absolute, top −11px, left 30px, `--danger-400` fill, 6px/8px padding, radius 40px, Poppins Medium 12px/1.2 `--neutral-25`).
 
-### Category states
+### Folder card
 
-- **Hover:** the sharp image zooms in (1.17x) inside its fixed 240 x 140 frame and the glow brightens from 32% to 48% opacity. Under `prefers-reduced-motion` only the transition is removed, so the zoom and glow snap in rather than animate.
-- **Disabled:** image at 50% opacity with a 40px lock; the title and meta icons turn `--text-disabled` while the meta labels stay `--text-secondary` (`CategoryCard.css`); not clickable. Figma also shows a tooltip on hover ("Category not available in your plan. Please contact **Customer Success**"); the shared component does not render it yet.
-- **New:** adds the overlapping "New Courses" badge.
-
----
-
-## Folder card
-
-An admin library grouping ("folder") that previews its courses as a stacked deck. 308px wide; card area 308 x 272, info below. The stack depth mirrors the course count (variant axis: 0, 1, 2, 3+). Source: `Card/Folder`, light `10175:3183`, dark `10175:3106` (re-verified 2026-10-07). Built in `src/pages/your-courses/YourCourses.tsx` (`.your-courses-folder-*`, `.your-courses-new-folder*`).
-
-> **Updated 2026-10-07 (Figma `10175:3106`):** hover now shrinks the whole course stack to 5/6 (240 x 164 → 200 x 137) with a smooth 300ms ease-in-out, instead of scaling layers one by one; back layer `--input-background`, middle layer `--cards-background-hover` (hover `--input-background-elevated`); count text `--text-tertiary`; the New Folder tile has a 1.5px dashed `--border-elevated` border and hovers to `--input-background`. Keyboard focus shows the hover state plus the cyan ring. Card-to-info gap is 12px (was 16px).
+An admin library grouping ("folder") that previews its courses as a stacked deck. 308px wide; card area 308 x 272, info below. The stack depth mirrors the course count (variant axis: 0, 1, 2, 3+). Source: `Card/Folder`, light `12427:9698`, dark `10175:3106`. Built in `src/pages/your-courses/YourCourses.tsx` (`.your-courses-folder-*`, `.your-courses-new-folder*`).
 
 Anatomy (12px gap between card and info, `var(--space-sm)`):
 
@@ -702,17 +673,7 @@ Anatomy (12px gap between card and info, `var(--space-sm)`):
   - Front: the folder's cover image, 240 x 140
   - **0 courses:** a grey video-player illustration (155 x 96) instead of the stack
 - **Info** below, 4px gap: folder name H4 (Poppins Bold 16px) `--text-primary`; count Paragraph M regular (14px) `--text-tertiary` (`3+ courses`, `1 course`, `0 courses`).
-
-### Folder states
-
-| State | Surface | Stack | Middle layer |
-|---|---|---|---|
-| Enabled | `--cards-background` | 240 x 164 | `--cards-background-hover` |
-| Hover / focus-visible | `--cards-background-hover` | scaled to 5/6 (200 x 137), centred | `--input-background-elevated` |
-
-- **Animation:** surface fill, stack scale and middle-layer fill all ease over 300ms `cubic-bezier(0.42, 0, 0.58, 1)` (ease-in-out), in and out. Under `prefers-reduced-motion` the change snaps.
-- **Focus:** keyboard focus shows the hover state plus a 2px `--primary-button-background` ring, 2px offset, on the surface.
-- **Stack depth:** render only as many layers as the folder has courses, capped at 3. The 0-course illustration shrinks with the stack (155 x 96 → 117 x 72).
+- **Stack depth:** render only as many layers as the folder has courses, capped at 3.
 
 ```css
 .folder-card { width: 308px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; }
@@ -737,7 +698,7 @@ Anatomy (12px gap between card and info, `var(--space-sm)`):
 }
 ```
 
-### "New Folder" creator tile
+#### "New Folder" creator tile
 
 The first tile in a folder grid is the creator affordance: 308 x 272, transparent fill, **1.5px dashed `--border-elevated`** border, radius 12px, centred column in `--text-secondary`: a 48px `+` over a 16px Regular "New Folder" label. Hover eases the fill to `--input-background` over 300ms; the border stays put.
 
@@ -753,11 +714,9 @@ The first tile in a folder grid is the creator affordance: 308 x 272, transparen
 .folder-card--new:hover  { background: var(--input-background); }
 ```
 
----
+### Instructor card
 
-## Instructor card
-
-An instructor presented as a compact horizontal card — photo, name, short bio, and a list of skill rows. Figma-verified 2026-07-13: `Card/Instructor`, dark `5149:27386`, light `9926:2477`. Variants: Desktop Default `6124:3237`/`9926:2491`, Desktop Hover `9590:2718`/`9926:2504`, Mobile Default `5149:27385`/`9926:2478`. No mobile hover, no disabled/selected states. The mobile variant is implemented as the shared component `src/components/mobile/InstructorCard`.
+An instructor presented as a compact horizontal card: photo, name, short bio, and a list of skill rows. Source: `Card/Instructor`, dark `5149:27386`, light `9926:2477`. Variants: Desktop Default `6124:3237`/`9926:2491`, Desktop Hover `9590:2718`/`9926:2504`, Mobile Default `5149:27385`/`9926:2478`. The mobile variant is implemented as the shared component `src/components/mobile/InstructorCard`.
 
 | | Desktop | Mobile |
 |---|---|---|
@@ -770,16 +729,136 @@ Shared anatomy, left to right (horizontal flex, items centered, radius 12px, `ov
 
 - **Photo** 120px wide, full card height, `object-fit: cover`, no own radius.
 - **Info column** fills the rest:
-  - **Instructor block**, 8px gap: name in `--text-primary`; bio in `--text-secondary` (clamp to fit — desktop shows ~2 lines, mobile 1–2).
-  - **Skills block**, 8px gap, up to 2 rows. Each row: 4px gap, items centered, radius 8px — a **16px skill-category icon** (the multi-color skill icons from `src/assets/skill-icons/`) + label Poppins Regular 12px/1.2 `--text-tertiary`, single line, ellipsis.
+  - **Instructor block**, 8px gap: name in `--text-primary`; bio in `--text-secondary` (clamp to fit: desktop shows ~2 lines, mobile 1-2).
+  - **Skills block**, 8px gap, up to 2 rows. Each row: 4px gap, items centered, radius 8px: a **16px skill-category icon** (the multi-color skill icons from `src/assets/skill-icons/`) + label Poppins Regular 12px/1.2 `--text-tertiary`, single line, ellipsis.
 
-States: **Hover (desktop only)** — background switches to `--cards-background-hover`, nothing else changes.
+## Variants
 
----
+### Course variants
 
-## Related skills
+- **New:** adds the rose `New` pill in the top-left of the image. Use for recently added courses.
+- **Due date:** adds the due-date pill (`--cards-background` fill) in the top-right, text in `--text-warning`. Use when a course has a compliance deadline.
+- New and Due date can both appear at once.
+
+### Skill variants
+
+- **Remove:** set the variant with the close icon when the chip appears in an editable context, for example a skill picker or a tag editor. Omit the close icon in read-only contexts.
+
+### Category variants
+
+- **New:** adds the overlapping "New Courses" badge.
+
+## States
+
+### Mobile cards
+
+**No card has a Mobile hover state** (touch surface). States per card: MobileCourseCard is Default only (no hover, no completed/disabled variants); MobileCategoryCard is Default or Disabled (no hover; disabled shows no tooltip on mobile); MobileProgramCourseCard follows the course state; the mobile Lesson and Assessment cards are Enabled, Completed or Disabled (Assessment has no disabled+completed combination).
+
+**Pressed:** a mobile card that is tappable as a whole (`role="button"`, or the program course card's tappable variant) lightens its fill to `--cards-background-hover` while pressed (`:active`, 150ms, none under reduced motion). It is the touch stand-in for the web hover; cards whose only action is a button inside them, and the Category card (no fill), have none.
+
+### Lesson states
+
+- **Hover:** card background switches to `--cards-background-hover`; in list rows the title shifts to `--text-button-hover` (cyan).
+- **Disabled:** thumbnail desaturated (`filter: grayscale(1)` or `mix-blend-mode: luminosity`); all text uses `--text-disabled`; a lock icon may replace interactive affordances.
+- **Completed:** progress fill uses `--success-500`.
+- **Mobile disabled:** thumbnail desaturated (`mix-blend-mode: luminosity`), all text `--text-disabled`, a 20px lock icon (Bold) right-aligned in the content row, **no progress bar**.
+
+### Assessment states
+
+- **Hover:** card background switches to `--cards-background-hover`. Admin and web app only; mobile has no hover variant. It combines with every other state: a disabled row still lightens, since the card stays clickable enough to explain itself, and a completed row lightens *and* takes its Review button to `--text-button-hover`.
+- **Disabled:** illustration desaturated (`mix-blend-mode: luminosity`), title and type both `--text-disabled`, and a bold lock in the trailing slot: 24px on web app, 20px on mobile. Admin has no disabled variant.
+- **Completed:** a bold success tick in `--success-500` after the type (20px on web app, 16px on mobile) plus a **Review** button. Web app puts it in the trailing slot; mobile stacks it under the metadata, which is why that card is the only one that changes height. Admin has no completed variant: the row is a management view, not a learner's.
+
+### Course states
+
+| State | Surface | Picture | Progress |
+|---|---|---|---|
+| Enabled | `--cards-background` | 300 x 140 | filled `--selected`, empty `--border-elevated` |
+| Hover | `--cards-background-hover` | zooms 1.12x (Figma draws it at 336 x 157 inside the clipped 300 x 140 frame), 300ms ease-out | unchanged |
+| Completed | unchanged | unchanged | every segment `--success-500` |
+
+Badges and the progress bar stay put on top during the hover zoom; the zoom is disabled under `prefers-reduced-motion`. Hover and focus apply only when `onOpen` is set.
+
+### Skill chip states
+
+- **Hover:** border switches to `--border-hover` **and** the chip fills with `--page-background-hover`.
+- **Disabled:** label in `--text-disabled`, illustration desaturated (`mix-blend-mode: luminosity`), non-interactive, no remove control.
+
+### Category states
+
+- **Hover:** the sharp image zooms in (1.17x) inside its fixed 240 x 140 frame and the glow brightens from 32% to 48% opacity. Under `prefers-reduced-motion` only the transition is removed, so the zoom and glow snap in rather than animate.
+- **Disabled (desktop):** image at 50% opacity with a 40px lock; the title and meta icons turn `--text-disabled` while the meta labels stay `--text-secondary` (`CategoryCard.css`); not clickable. Figma also shows a tooltip on hover ("Category not available in your plan. Please contact **Customer Success**"); the shared component does not render it yet.
+- **Disabled (mobile):** thumbnail stack desaturated (`mix-blend-mode: luminosity`), sharp image at 50% opacity with a centered **40px lock icon** (Bold) overlay, all text `--text-disabled`.
+
+### Folder states
+
+| State | Surface | Stack | Middle layer |
+|---|---|---|---|
+| Enabled | `--cards-background` | 240 x 164 | `--cards-background-hover` |
+| Hover / focus-visible | `--cards-background-hover` | scaled to 5/6 (200 x 137), centred | `--input-background-elevated` |
+
+- **Animation:** surface fill, stack scale and middle-layer fill all ease over 300ms `cubic-bezier(0.42, 0, 0.58, 1)` (ease-in-out), in and out. Under `prefers-reduced-motion` the change snaps.
+- **Focus:** keyboard focus shows the hover state plus a 2px `--primary-button-background` ring, 2px offset, on the surface.
+- The 0-course illustration shrinks with the stack (155 x 96 → 117 x 72).
+- **New Folder tile:** hover eases the fill to `--input-background` over 300ms; the border stays put.
+
+### Instructor states
+
+- **Hover (desktop only):** background switches to `--cards-background-hover`, nothing else changes. No mobile hover, no disabled/selected states.
+
+## Tokens
+
+All colour tokens come from `src/styles/tokens.css`, the only token source; never redefine them with raw hex. Mobile cards render in dark mode only, because `PhoneFrame` pins `data-theme="dark"`.
+
+Shared values used by every card:
+
+- **Font:** Poppins. Title = Bold 700. Metadata = Regular 400. Pills = Medium 500.
+- **Type scale:** H4 = 16px / line-height 1.5. H5 = 14px / 1.5. Paragraph M = 14px / 1.5. Paragraph S = 12px / 1.2.
+- **Radius:** cards use 12px. Inner thumbnails use 8px.
+- **Card shadow (Shadow S):** `box-shadow: var(--shadow-s);` (see `layout.md` for the shadow scale).
+- **Spacing tokens:** XS 4px, S 8px, SM 12px, M 16px, L 24px, ML 20px, XXL 40px.
+- **Progress:** lesson and skill progress `--primary-600` (cyan); course progress `--selected` (gold); completed `--success-500`.
+
+## Accessibility
+
+- Interactive cards (`onOpen` or `onClick` set) get `role="button"`, Enter/Space handling and a visible `:focus-visible` ring: 2px `--primary-button-background` (cyan), 2px offset. Without the handler they are static.
+- `LessonGridCard` with `onOpen` also gets an `aria-label`.
+- Icon-only controls carry an `aria-label` (e.g. "Edit assessment", "Remove skill").
+- Disabled cards are not clickable (desktop Category card, Assessment and Lesson disabled variants).
+- Every hover animation (Course zoom, Category zoom and glow, Folder stack) respects `prefers-reduced-motion`.
+
+## Content
+
+- **Lesson metadata:** `Lesson - Instructor name - 4min` on desktop rows, `Lesson · Instructor name · 4min` on mobile.
+- **Assessment metadata is the type alone** on all three devices: `Type of assessment`, never `Assessment · Type of assessment`. Only the admin row names the content type, and it does so in the pill.
+- **Course duration:** `17 lessons`, `20 min`. **Category meta:** `12 courses`, `24 lessons`. **Folder count:** `3+ courses`, `1 course`, `0 courses`.
+- **Badges:** `New` (course), `New Courses` (category), due date as `Due on Aug 20`.
+- **Skill level** is the label shown in the design ("Master", "Level 5").
+
+## Examples
+
+Use the shared components; don't re-implement them.
+
+```tsx
+import WorkspaceCourseCard from '@/components/WorkspaceCourseCard/WorkspaceCourseCard'
+import LessonGridCard from '@/components/LessonGridCard/LessonGridCard'
+
+<WorkspaceCourseCard course={course} onOpen={() => openCourse(course.id)} />
+<LessonGridCard
+  title="The importance of Authentic Stories and How to Tell"
+  instructor="Instructor name"
+  thumbnail={thumb}
+  durationLabel="3m 45s"
+  filled={4}
+  onOpen={() => openLesson(id)}
+/>
+```
+
+## Related
 
 - `5mins-prototype-builder` - the admin platform chrome the cards sit inside.
-- `5mins-colors` - the colour token system these card tokens belong to.
-- `5mins-typography`, `5mins-iconography` - the Poppins type scale and the icon set (play-circle, clock, edit, close, lock, tick).
-- `buttons` - the quiz buttons used on the Lesson web app row.
+- [colors.md](colors.md) - the colour token system these card tokens belong to.
+- [typography.md](typography.md), [iconography.md](iconography.md) - the Poppins type scale and the icon set (play-circle, clock, edit, close, lock, tick).
+- [buttons.md](buttons.md) - the quiz buttons used on the Lesson web app row.
+- [resource-card.md](resource-card.md) - course resource files and links.
+- [gamification.md](gamification.md) - assessment illustrations.

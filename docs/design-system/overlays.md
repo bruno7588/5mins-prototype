@@ -1,21 +1,26 @@
 ---
 name: 5mins-overlays
-description: Dialog (Error/Warning/Info/Success types, 56px icons), Modal (720px, centered), Side Drawer (right-anchored) and the mobile Bottom Sheet for 5Mins.ai — shared scrim, close behavior, animations. Use for any overlay, confirmation, popup, panel, drawer or mobile bottom sheet.
+description: Dialog (Error/Warning/Info/Success types, 56px icons), Modal (720px, centered), Side Drawer (right-anchored) and the mobile Bottom Sheet for 5Mins.ai - shared scrim, close behavior, animations. Use for any overlay, confirmation, popup, panel, drawer or mobile bottom sheet.
 ---
 
-# 5Mins.ai Overlay Component System
+# Overlays
 
-Complete implementation guide for the overlay components in the 5Mins.ai design system: **Dialog**, **Modal** and **Side Drawer** on desktop, and the **Bottom Sheet** in the mobile app. All of them share a common overlay backdrop but serve distinct interaction purposes.
+The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and the **Bottom Sheet** in the mobile app, share a common backdrop but serve distinct interaction purposes.
 
-> **Updated 2026-09-29 (verified against code):** Side Drawer prototype pointers now name the drawers that use `useOverlayA11y` + `CloseButton` (and where `.side-drawer__*` lives); the hand-rolled `.overlay-close` CSS is replaced by `<CloseButton />`; the Dialog React sample is now `ConfirmModal` + `Button`; Modal and Side Drawer samples use `CloseButton` and `Button`; Warning and Error filled labels are `--neutral-25`; buttons use `--radius-sm` (12px); `.dialog` max-width is 100%; shadows are `var(--shadow-l)`; the drawer backdrop is `var(--scrim)`; divider hex fallbacks removed; the Accessibility table reflects `ConfirmModal`'s `alertdialog` + `aria-label`.
-
-> **Updated 2026-09-29 (Bottom Sheet added, Figma Library `7479:106`):** the mobile Bottom Sheet is a shared component, `BottomSheet`, with a `--scrim` overlay, a long decelerating rise and drag-to-dismiss.
-
-> **Updated 2026-10-13 (Bruno's ruling, replaces the 2026-09-29 note):** a Dialog has **no** Close (×) button and does **not** close on backdrop click or Escape; the user leaves only through its action buttons. Modals and Side Drawers keep the Close (×), backdrop click and Escape. In code, `ConfirmModal`'s `closable` prop is the switch: off = Dialog, on = Modal.
-
-> **Updated 2026-09-29 (aligned to prototype usage):** Dialog and Side Drawer Cancel buttons are **Outlined-2** (`<Button variant="outlined-2">`), not primary Outlined; the Dialog is **560px** wide (`ConfirmModal.css`), not 345px; the Accessibility table now matches the Dialog close behaviour above.
+**Code:** Dialog and centred Modal: `import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'` ([confirm-modal.md](confirm-modal.md)); Bottom Sheet: `import BottomSheet from '@/components/BottomSheet/BottomSheet'`; close buttons: `import CloseButton from '@/components/CloseButton/CloseButton'`; Side Drawer and full-screen Modal: no shared component yet, page-local shells with `src/hooks/useOverlayA11y.ts`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Dialog dark `7789:24651` / light `12242:5728`; Modal dark `7479:4350` / light `11919:4717` (instance); Side Drawer dark `10871:12768` / light `11919:4738` (instance); Bottom sheet dark `7479:106` / light `12279:281` (instance); full-screen close: Programs `4221:63780`
+**Last verified:** 2026-10-13
 
 ## Usage
+
+| Component | Purpose | Use For |
+|-----------|---------|---------|
+| **Dialog** | Urgent decisions or confirmations | Delete confirmations, destructive action warnings, success/error feedback, simple yes/no decisions |
+| **Modal** | Focused tasks with moderate content | Form inputs, detail views, content previews, settings, multi-step flows |
+| **Side Drawer** | Extended workflows with scrollable content | Editing panels, detailed configurations, long forms, record details, bulk operations |
+| **Bottom Sheet** (mobile) | Details or options for what is on screen | Lesson details behind "more", short option lists |
+
+**Decision rule:** If the user needs to make a quick binary decision → Dialog. If they need to interact with a moderate amount of content → Modal. If they need a full working area that doesn't fully occlude the page → Side Drawer. In the mobile app, details or options for what is on screen → Bottom Sheet.
 
 ### Dialog
 
@@ -36,24 +41,13 @@ Complete implementation guide for the overlay components in the 5Mins.ai design 
 - Let the action buttons be the only way out: no Close (×), no backdrop click, no Escape.
 - End with an Outlined-2 Cancel followed by the commit button, both Medium.
 - Use `semantic="danger"` for destructive commits and `semantic="warning"` for discarding unsaved changes.
-- Write the title as a short sentence-case statement of the action ("Delete report") and let the body name what is affected and the consequence.
-- Label the commit button with the action and its object in Title Case ("Delete Report", "Mark 3 As Completed").
 
 **Don't**
 - Don't render a dialog inside a panel that sets its own `z-index`; it gets trapped under that stacking context. `ConfirmModal` portals for this reason.
 - Don't use primary Outlined for Cancel.
 - Don't hard-code the scrim colour; use `var(--scrim)`.
 
-**Canonical spec:** width 560px (max 100%); padding `var(--space-l)` (24px); radius `var(--radius-sm)` (12px); gap `var(--space-ml)` (20px); surface `var(--page-background)`; scrim `var(--scrim)`; title 20px Bold `var(--text-primary)`; body 16px Regular `var(--text-secondary)`; type icon 56px (72px Iconsax in current call sites). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light not recorded / dark not recorded.
-
-**Prototype:** `src/components/ConfirmModal/ConfirmModal.tsx`
-- `open`, `onClose` (called by your Cancel; Escape and backdrop only when `closable`), `ariaLabel`, `className` for sizing; content is composed from `.confirm-modal-*` classes.
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| Dialog | _to be mapped by engineering_ | | |
+**Canonical spec:** width 560px (max 100%); padding `var(--space-l)` (24px); radius `var(--radius-sm)` (12px); gap `var(--space-ml)` (20px); surface `var(--page-background)`; scrim `var(--scrim)`; title 20px Bold `var(--text-primary)`; body 16px Regular `var(--text-secondary)`; type icon 56px (72px Iconsax in current call sites).
 
 ### Modal
 
@@ -69,7 +63,7 @@ Complete implementation guide for the overlay components in the 5Mins.ai design 
 - The content is long, scrolls, or edits a record's many fields → use a Side Drawer (below)
 
 **Do**
-- Build centred modals on the `ConfirmModal` shell and set the width through `className`.
+- Build centred modals on the `ConfirmModal` shell with `closable` and set the width through `className`.
 - Head it with a title, supporting text and a divider (the Section Header pattern).
 - Put a `CloseButton` in the top-right corner; close on Escape and backdrop click.
 - Use `<CloseButton variant="fullscreen">` on full-screen modals.
@@ -79,15 +73,7 @@ Complete implementation guide for the overlay components in the 5Mins.ai design 
 - Don't hand-roll the full-screen close disc; use the `CloseButton` component.
 - Don't hard-code the panel colour; use `var(--page-background)`.
 
-**Canonical spec:** width 720px in the Figma spec (current prototype modals set their own width, e.g. 600px); padding `var(--space-l)` (24px); radius `var(--radius-sm)` (12px); gap `var(--space-ml)` (20px); surface `var(--page-background)`; title 20px Bold `var(--text-primary)`, supporting text 14px Regular `var(--text-secondary)`; full-screen close 44px disc `var(--input-background)`, `var(--radius-full)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light not recorded / dark not recorded (full-screen close: Programs `4221:63780`).
-
-**Prototype:** no dedicated component; centred modals use `src/components/ConfirmModal/ConfirmModal.tsx` with a `className`, full-screen ones use their own shell with `src/hooks/useOverlayA11y.ts` and `src/components/CloseButton/CloseButton.tsx` (`variant="fullscreen"`).
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| Modal | _to be mapped by engineering_ | | |
+**Canonical spec:** width 720px in the Figma spec (current prototype modals set their own width, e.g. 600px); padding `var(--space-l)` (24px); radius `var(--radius-sm)` (12px); gap `var(--space-ml)` (20px); surface `var(--page-background)`; title 20px Bold `var(--text-primary)`, supporting text 14px Regular `var(--text-secondary)`; full-screen close 44px disc `var(--input-background)`, `var(--radius-full)`.
 
 ### Side Drawer
 
@@ -112,15 +98,7 @@ Complete implementation guide for the overlay components in the 5Mins.ai design 
 - Don't give the drawer a radius or a shadow; it sits flush with the viewport edge.
 - Don't hard-code the panel colour; use `var(--page-background)`.
 
-**Canonical spec:** width 720px; height 100vh; padding `var(--space-ml)` (20px) top and bottom, `var(--space-l)` (24px) sides; gap `var(--space-ml)` (20px); no radius, no shadow; surface `var(--page-background)`; footer gap `var(--space-m)` (16px). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light not recorded / dark not recorded.
-
-**Prototype:** no shared component; each drawer is page-local. Follow `src/pages/people/components/LimitedAdminDrawer/LimitedAdminDrawer.tsx`, `src/pages/programs/components/EnrolPeopleDrawer/EnrolPeopleDrawer.tsx` or `src/pages/programs/components/CoursePickerDrawer/CoursePickerDrawer.tsx`, which use `useOverlayA11y` and `CloseButton`. The `.side-drawer__*` classes live in `src/pages/my-team/CoursesDrawer.css` (globally bundled; `SaveReportDrawer` also reuses them). Older drawers (`RolePanel`, `SaveReportDrawer`) run their own Escape handlers, and `RolePanel` hand-rolls its close button (`.roles-panel-close`); don't copy those.
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| Side Drawer | _to be mapped by engineering_ | | |
+**Canonical spec:** width 720px; height 100vh; padding `var(--space-ml)` (20px) top and bottom, `var(--space-l)` (24px) sides; gap `var(--space-ml)` (20px); no radius, no shadow; surface `var(--page-background)`; footer gap `var(--space-m)` (16px).
 
 ### Bottom Sheet (mobile)
 
@@ -144,38 +122,48 @@ Complete implementation guide for the overlay components in the 5Mins.ai design 
 **Don't**
 - Don't hand-roll a sheet or its drag; reuse the component.
 - Don't use a raw overlay colour; it is `var(--scrim)`.
-- Don't animate it linearly or with a short ease; it rises on a long decelerating curve (see Animation).
+- Don't animate it linearly or with a short ease; it rises on a long decelerating curve (see States).
 
-**Canonical spec:** fills its positioned parent (the phone screen). Overlay `var(--scrim)` (Neutral-900 at 50% in the dark mobile app). Sheet `var(--page-background)`, top corners `var(--radius-sm)` (12px), padding `0 var(--space-m) var(--space-ml)` (0 16px 20px), gap `var(--space-s)` (8px), max height 90%, content scrolls. Header: `var(--space-m)` (16px) padding around a 64 × 4px handle, `var(--neutral-500)`, radius `var(--radius-s)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `7479:106`.
+**Canonical spec:** fills its positioned parent (the phone screen). Overlay `var(--scrim)` (Neutral-900 at 50% in the dark mobile app). Sheet `var(--page-background)`, top corners `var(--radius-sm)` (12px), padding `0 var(--space-m) var(--space-l)` (0 16px 24px), gap `var(--space-s)` (8px), max height 90%, content scrolls. Header: `var(--space-m)` (16px) padding around a 64 × 4px handle, `var(--neutral-500)`, radius `var(--radius-s)`.
 
-**Prototype:** `src/components/BottomSheet/BottomSheet.tsx` (default export)
-- `onClose` (called after the slide-out), `ariaLabel`, `children`, `className`
-- Used by the mobile lesson sheet (`src/pages/mobile/LessonSheet.tsx`)
+## Figma to code
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Dialog (component) | n/a | `ConfirmModal` `closable` | `false` (default) | Buttons are the only way out |
+| Dialog > Type | Error / Warning / Info / Success | n/a | composed | No `type` prop: the type icon goes in `.confirm-modal-icon`; commit `Button` Error `semantic="danger"`, Warning `semantic="warning"`, Info and Success default primary |
+| Dialog > Icon | True / False | n/a | composed | Include or omit `.confirm-modal-icon` |
+| Dialog > Secondary text | True / False | n/a | composed | Include or omit `.confirm-modal-body` |
+| Dialog > Info (slot) | content | `ConfirmModal` `children` | `ReactNode` | |
+| Modal (component) | n/a | `ConfirmModal` `closable` | `true` | Width through `className` |
+| Modal > Placeholder (slot) | content | `ConfirmModal` `children` | `ReactNode` | |
+| Modal/Full screen > Device | Desktop / Mobile | n/a | n/a | Page-local shell with `useOverlayA11y` and `<CloseButton variant="fullscreen">` |
+| Modal/Full screen > State | Default | n/a | n/a | Single-value axis |
+| Side Drawer > Form (slot) | content | n/a | page-local | No shared component; `.side-drawer__*` classes |
+| Bottom sheet > Sheet content (slot) | content | `BottomSheet` `children` | `ReactNode` | |
+| Close icon (Modal, Side Drawer) | `io5/IoCloseOutline` | `CloseButton` `variant` | `'default'` / `'fullscreen'` | Full-screen modals use `fullscreen` |
+
+- **Figma only:** Modal/Full screen `Device=Mobile`; Modal/Send (`5399:12437`, Type Team / Company), a feature screen with no code.
+- **Code only:** `ConfirmModal` `open`, `onClose`, `ariaLabel`, `className`; `BottomSheet` `onClose`, `ariaLabel`, `hidden` (keeps the sheet open but out of sight, so it comes back as it was), `className`; `CloseButton` `onClick`, `onMouseDown`, `size`, `className`, `ariaLabel`.
+
+**Prototype pointers**
+- **Dialog:** `src/components/ConfirmModal/ConfirmModal.tsx`. `open`, `onClose` (called by your Cancel; Escape and backdrop only when `closable`), `ariaLabel`, `className` for sizing; content is composed from `.confirm-modal-*` classes.
+- **Modal:** no dedicated component; centred modals use `src/components/ConfirmModal/ConfirmModal.tsx` with a `className`, full-screen ones use their own shell with `src/hooks/useOverlayA11y.ts` and `src/components/CloseButton/CloseButton.tsx` (`variant="fullscreen"`).
+- **Side Drawer:** no shared component; each drawer is page-local. Follow `src/pages/people/components/LimitedAdminDrawer/LimitedAdminDrawer.tsx`, `src/pages/programs/components/EnrolPeopleDrawer/EnrolPeopleDrawer.tsx` or `src/pages/programs/components/CoursePickerDrawer/CoursePickerDrawer.tsx`, which use `useOverlayA11y` and `CloseButton`. The `.side-drawer__*` classes live in `src/pages/my-team/CoursesDrawer.css` (globally bundled; `SaveReportDrawer` also reuses them). Older drawers (`RolePanel`, `SaveReportDrawer`) run their own Escape handlers, and `RolePanel` hand-rolls its close button (`.roles-panel-close`); don't copy those.
+- **Bottom Sheet:** `src/components/BottomSheet/BottomSheet.tsx` (default export). `onClose` (called after the slide-out), `ariaLabel`, `children`, `className`. Used by the mobile lesson sheet (`src/pages/mobile/LessonSheet.tsx`).
 
 **Production:**
 
 | Design system | `@web/ui` component | Props mapping | Known drift |
 |---|---|---|---|
+| Dialog | _to be mapped by engineering_ | | |
+| Modal | _to be mapped by engineering_ | | |
+| Side Drawer | _to be mapped by engineering_ | | |
 | Bottom Sheet | _to be mapped by engineering_ | | |
 
-## When to Use What
+## Anatomy
 
-| Component | Purpose | Use For |
-|-----------|---------|---------|
-| **Dialog** | Urgent decisions or confirmations | Delete confirmations, destructive action warnings, success/error feedback, simple yes/no decisions |
-| **Modal** | Focused tasks with moderate content | Form inputs, detail views, content previews, settings, multi-step flows |
-| **Side Drawer** | Extended workflows with scrollable content | Editing panels, detailed configurations, long forms, record details, bulk operations |
-| **Bottom Sheet** (mobile) | Details or options for what is on screen | Lesson details behind "more", short option lists |
-
-**Decision rule:** If the user needs to make a quick binary decision → Dialog. If they need to interact with a moderate amount of content → Modal. If they need a full working area that doesn't fully occlude the page → Side Drawer. In the mobile app, details or options for what is on screen → Bottom Sheet.
-
----
-
-## Shared Foundation
-
-All overlays share these building blocks:
-
-### Overlay Backdrop
+### Overlay backdrop
 
 A full-screen semi-transparent layer that dims the page content and prevents interaction with elements behind the overlay.
 
@@ -188,15 +176,15 @@ A full-screen semi-transparent layer that dims the page content and prevents int
 }
 ```
 
-Scrim values (Neutral-900 @ 25% light / 50% dark) are defined in `layout.md` — always use `var(--scrim)`, never a literal.
+Scrim values (Neutral-900 @ 25% light / 50% dark) are defined in `layout.md`; always use `var(--scrim)`, never a literal.
 
-### Close Behavior
+### Close behaviour
 
 - **Dialog:** only the action buttons (confirm/cancel). No Close (×); backdrop click and Escape do nothing (`ConfirmModal` without `closable`).
 - **Modal:** Close (×) button in the top-right corner. Clicking backdrop or pressing Escape closes the modal (`ConfirmModal` with `closable`).
-- **Side Drawer:** Close (×) button in the top-right corner. Clicking backdrop closes the drawer.
+- **Side Drawer:** Close (×) button in the top-right corner. Clicking backdrop or pressing Escape closes the drawer.
 
-### Close Button (Dialog, Modal & Side Drawer)
+### Close button (Modal and Side Drawer)
 
 Use the shared component; don't hand-roll a close button:
 
@@ -208,9 +196,9 @@ import CloseButton from '@/components/CloseButton/CloseButton'
 
 `src/components/CloseButton/CloseButton.css`: 32 × 32px, circular `var(--radius-full)`, transparent at rest with a `var(--text-secondary)` glyph, `var(--input-background)` fill on hover, 2px `var(--primary-button-background)` focus outline with 2px offset. The page-level wrapper only positions it in the top-right corner.
 
-### Close Button (Full-screen modal)
+### Close button (full-screen modal)
 
-> **Figma:** Programs `4221:63780` — DS `Icons` set, `Name=close, Type=linear` instance with overrides (verified 2026-09-28).
+> **Figma:** Programs `4221:63780` - DS `Icons` set, `Name=close, Type=linear` instance with overrides.
 
 A full-screen modal (lesson editors, Create Flashcard, the Add Content lesson forms: anything that replaces the whole viewport with `--page-background`) closes with a **filled disc**, not the bare glyph above. It sits in the overlay's top-right corner, outside the centred content column.
 
@@ -233,44 +221,9 @@ A full-screen modal (lesson editors, Create Flashcard, the Add Content lesson fo
 
 The page-level class only positions it (`position: absolute; top: var(--space-l); right: 40px`); size, fill, glyph and hover all come from `.close-btn--fullscreen` in `src/components/CloseButton/CloseButton.css`. Side drawers and centred modals keep the default `CloseButton`.
 
-### Shared Design Tokens
-
-| Token | Light | Dark | Usage |
-|-------|-------|------|-------|
-| `--page-background` | `#F9F9FA` | `#20222A` | Surface color for all overlay panels |
-| `--text-primary` | `#20222A` | `#F9F9FA` | Titles and primary text |
-| `--text-secondary` | `#454C5E` | `#BFC2CC` | Supporting text and descriptions |
-| `--border` | `#DFE1E6` | `#2D313D` | Divider lines |
-| `--scrim` | Neutral-900 @ 25% | Neutral-900 @ 50% | Backdrop fill (see `layout.md`) |
-| `--radius-sm` | `12px` | — | Panel corner rounding (Dialog & Modal; Drawer has none) and button corner rounding |
-
-### Shadow
-
-Modal and Dialog panels use Shadow L:
-
-```css
-box-shadow: var(--shadow-l);
-```
-
----
-
-## 1. Dialog Component
+### Dialog
 
 A compact, centered overlay for critical decisions. Dialogs block the page until the user responds with one of the action buttons; there is no Close (×), and backdrop click and Escape do not close them.
-
-### Architecture
-
-The Dialog has three configurable dimensions:
-
-| Property | Options |
-|----------|---------|
-| **Type** | Error, Warning, Info, Success |
-| **Icon** | Shown / Hidden |
-| **Secondary Text** | Shown / Hidden |
-
-This produces 16 variants (4 types × 2 icon states × 2 text states).
-
-### Visual Anatomy
 
 ```
 ┌─────────────────────────────────────┐
@@ -286,8 +239,6 @@ This produces 16 variants (4 types × 2 icon states × 2 text states).
 │                                     │
 └─────────────────────────────────────┘
 ```
-
-### Dimensions & Spacing
 
 ```css
 .dialog {
@@ -305,20 +256,7 @@ This produces 16 variants (4 types × 2 icon states × 2 text states).
 }
 ```
 
-### Icon by Type
-
-Each dialog type has a distinct 56×56px icon:
-
-| Type | Icon | Description |
-|------|------|-------------|
-| **Error** | Red triangle with exclamation | Danger/alert symbol |
-| **Warning** | Orange triangle with exclamation | Caution symbol |
-| **Info** | Cyan outlined info circle (`IoInformationCircleOutline`) | Informational |
-| **Success** | Green circle with checkmark | Confirmation/completion |
-
-All four icons render at 56×56px; the Info icon sits inside a plain flex wrapper (no extra padding).
-
-### Text Content
+**Text content**
 
 ```css
 .dialog__title {
@@ -348,9 +286,7 @@ All four icons render at 56×56px; the Info icon sits inside a plain flex wrappe
 }
 ```
 
-### Button Styling per Type
-
-The CTA row always contains two buttons side by side: an Outlined-2 Cancel button (`<Button variant="outlined-2">`) and a filled (primary) button. Colors change based on the dialog type:
+**CTA row:** always two buttons side by side, an Outlined-2 Cancel (`<Button variant="outlined-2">`) and a filled (primary) button; colours per type are under Variants.
 
 ```css
 .dialog__cta {
@@ -361,15 +297,6 @@ The CTA row always contains two buttons side by side: an Outlined-2 Cancel butto
   width: 100%;
 }
 ```
-
-| Type | Cancel Button | Filled Button |
-|------|----------------|---------------|
-| **Error** | `border: 1px solid var(--border-elevated)` / text `var(--text-primary)` (Outlined-2) | `background: var(--danger-500)` / text `var(--neutral-25)` |
-| **Warning** | `border: 1px solid var(--border-elevated)` / text `var(--text-primary)` (Outlined-2) | `background: var(--button-warning-background)` / text `var(--neutral-25)` |
-| **Info** | `border: 1px solid var(--border-elevated)` / text `var(--text-primary)` (Outlined-2) | `background: var(--primary-button-background, #00AFC4)` / text `var(--text-button-foreground, #F9F9FA)` |
-| **Success** | `border: 1px solid var(--border-elevated)` / text `var(--text-primary)` (Outlined-2) | `background: var(--primary-button-background, #00AFC4)` / text `var(--text-button-foreground, #F9F9FA)` |
-
-**Button shared styles:**
 
 ```css
 .dialog__btn {
@@ -383,15 +310,9 @@ The CTA row always contains two buttons side by side: an Outlined-2 Cancel butto
 }
 ```
 
-**Pattern:** Error and Warning use high-contrast/urgent colors. Info and Success share the primary cyan brand color, reinforcing positive or neutral actions.
-
----
-
-## 2. Modal Component
+### Modal
 
 A centered overlay panel for focused tasks with moderate content. Modals include a section header with title, supporting text, a content area, and an action button.
-
-### Visual Anatomy
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -409,8 +330,6 @@ A centered overlay panel for focused tasks with moderate content. Modals include
 │                      └──────────┘                            │
 └──────────────────────────────────────────────────────────────┘
 ```
-
-### Dimensions & Spacing
 
 ```css
 .modal {
@@ -431,9 +350,7 @@ A centered overlay panel for focused tasks with moderate content. Modals include
 }
 ```
 
-### Section Header
-
-The header contains a title, optional supporting text, and a divider. It reuses the standard 5Mins Section Header pattern.
+**Section header:** a title, optional supporting text, and a divider. It reuses the standard 5Mins Section Header pattern.
 
 ```css
 .modal__header {
@@ -474,9 +391,7 @@ The header contains a title, optional supporting text, and a divider. It reuses 
 }
 ```
 
-### Content Area
-
-A flexible container for modal body content. Minimum height is 320px to ensure visual presence. Content can include forms, lists, previews, etc.
+**Content area:** a flexible container for modal body content. Minimum height is 320px to ensure visual presence. Content can include forms, lists, previews, etc.
 
 ```css
 .modal__content {
@@ -486,9 +401,7 @@ A flexible container for modal body content. Minimum height is 320px to ensure v
 }
 ```
 
-### CTA Button
-
-A single centered primary (filled) button at the bottom:
+**CTA button:** a single centered primary (filled) button at the bottom.
 
 ```css
 .modal__cta {
@@ -505,13 +418,9 @@ A single centered primary (filled) button at the bottom:
 }
 ```
 
----
-
-## 3. Side Drawer Component
+### Side Drawer
 
 A right-anchored panel that slides in from the edge of the viewport. The drawer spans the full height of the viewport and provides an extended working area with a sticky footer CTA section.
-
-### Visual Anatomy
 
 ```
 ┌───────────────────┬──────────────────────────────────────────┐
@@ -530,8 +439,6 @@ A right-anchored panel that slides in from the edge of the viewport. The drawer 
 └───────────────────┴──────────────────────────────────────────┘
 ```
 
-### Dimensions & Spacing
-
 ```css
 .side-drawer {
   position: fixed;
@@ -548,15 +455,11 @@ A right-anchored panel that slides in from the edge of the viewport. The drawer 
 }
 ```
 
-**Key difference from Modal:** The Side Drawer uses `padding: 20px 24px` (not uniform 24px) and anchors to the right edge instead of centering. It has no border-radius (flush to viewport edge) and no box-shadow.
+**Key difference from Modal:** the Side Drawer uses `padding: 20px 24px` (not uniform 24px) and anchors to the right edge instead of centering. It has no border-radius (flush to viewport edge) and no box-shadow.
 
-### Section Header
+**Section header:** identical to the Modal section header (title + supporting text + divider).
 
-Identical to the Modal section header (title + supporting text + divider). See Modal Section Header above.
-
-### Scrollable Content Area
-
-The content area flexes to fill all available vertical space between the header and the footer CTA.
+**Scrollable content area:** flexes to fill all available vertical space between the header and the footer CTA.
 
 ```css
 .side-drawer__content {
@@ -568,9 +471,7 @@ The content area flexes to fill all available vertical space between the header 
 }
 ```
 
-### Sticky Footer CTA
-
-The footer is pinned to the bottom and contains a divider line followed by a row of buttons. The width is constrained to 656px (720px panel − 2×24px padding − 2×8px internal).
+**Sticky footer CTA:** pinned to the bottom, a divider line followed by a row of buttons. The width is constrained to 656px (720px panel − 2×24px padding − 2×8px internal).
 
 ```css
 .side-drawer__footer {
@@ -627,9 +528,137 @@ The Side Drawer CTA section uses **two buttons** side by side: a filled primary 
 }
 ```
 
----
+## Variants
 
-## React TypeScript Implementation
+### Dialog
+
+| Property | Options |
+|----------|---------|
+| **Type** | Error, Warning, Info, Success |
+| **Icon** | Shown / Hidden |
+| **Secondary Text** | Shown / Hidden |
+
+This produces 16 variants (4 types × 2 icon states × 2 text states).
+
+**Icon by type:** each dialog type has a distinct 56×56px icon.
+
+| Type | Icon | Description |
+|------|------|-------------|
+| **Error** | Red triangle with exclamation | Danger/alert symbol |
+| **Warning** | Orange triangle with exclamation | Caution symbol |
+| **Info** | Cyan outlined info circle (`IoInformationCircleOutline`) | Informational |
+| **Success** | Green circle with checkmark | Confirmation/completion |
+
+All four icons render at 56×56px; the Info icon sits inside a plain flex wrapper (no extra padding).
+
+**Button styling per type**
+
+| Type | Cancel Button | Filled Button |
+|------|----------------|---------------|
+| **Error** | `border: 1px solid var(--border-elevated)` / text `var(--text-primary)` (Outlined-2) | `background: var(--danger-500)` / text `var(--neutral-25)` |
+| **Warning** | `border: 1px solid var(--border-elevated)` / text `var(--text-primary)` (Outlined-2) | `background: var(--button-warning-background)` / text `var(--neutral-25)` |
+| **Info** | `border: 1px solid var(--border-elevated)` / text `var(--text-primary)` (Outlined-2) | `background: var(--primary-button-background, #00AFC4)` / text `var(--text-button-foreground, #F9F9FA)` |
+| **Success** | `border: 1px solid var(--border-elevated)` / text `var(--text-primary)` (Outlined-2) | `background: var(--primary-button-background, #00AFC4)` / text `var(--text-button-foreground, #F9F9FA)` |
+
+**Pattern:** Error and Warning use high-contrast/urgent colors. Info and Success share the primary cyan brand color, reinforcing positive or neutral actions.
+
+### Modal
+
+- **Centred modal:** `ConfirmModal` with `closable`, default `CloseButton`.
+- **Full-screen modal:** replaces the whole viewport with `--page-background`; own shell, `<CloseButton variant="fullscreen">`.
+
+## Sizes
+
+| Property | Dialog | Modal | Side Drawer |
+|----------|--------|-------|-------------|
+| **Width** | 560px | 720px | 720px |
+| **Height** | Auto (content) | Auto (content) | 100vh |
+| **Position** | Centered | Centered | Right-anchored |
+| **Padding** | 24px uniform | 24px uniform | 20px vert / 24px horiz |
+| **Border radius** | 12px | 12px | None (flush) |
+| **Shadow** | Shadow L | Shadow L | None |
+| **Close button** | None | ✓ top-right | ✓ top-right |
+| **Backdrop click** | Does nothing | Closes | Closes |
+| **Escape key** | Does nothing | Closes | Closes |
+| **Header style** | Centered, type icon | Left-aligned, section header | Left-aligned, section header |
+| **CTA buttons** | 2 (type-colored) | 1 (primary centered) | 2 (primary, sticky footer) |
+| **Scrollable content** | No | Optional | Yes (flex body) |
+
+## States
+
+**Open and close transitions**
+
+| Component | Animation | Duration | Easing |
+|-----------|-----------|----------|--------|
+| **Backdrop** | Fade in (opacity 0 → 1, scrim carries its own alpha) | 200ms | ease-out |
+| **Dialog** | Scale up + fade (0.96 → 1, opacity 0 → 1) | 250ms | ease |
+| **Modal** | Scale up + fade (0.96 → 1, opacity 0 → 1) | 250ms | ease |
+| **Side Drawer** | Slide in from right (translateX(100%) → 0) | 300ms | ease-in-out (in and out) |
+| **Bottom Sheet** | Rise from bottom (translateY(100%) → 0); overlay fades with it | in 420ms, out 240ms | in cubic-bezier(0.32, 0.72, 0, 1), out cubic-bezier(0.4, 0, 1, 1); follows the finger while dragged |
+
+```css
+/* Entry animations */
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dialog-enter {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.96); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes drawer-slide-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+```
+
+**Close button states**
+
+| State | Default `CloseButton` | Full-screen `CloseButton` |
+|---|---|---|
+| Rest | transparent, glyph `var(--text-secondary)` | fill `var(--input-background)`, glyph `var(--text-secondary)` |
+| Hover | fill `var(--input-background)` | fill `var(--input-background-hover)`, glyph `var(--text-primary)` |
+| Focus-visible | 2px `var(--primary-button-background)` outline, 2px offset | 2px `var(--primary-button-background)` outline, 2px offset |
+
+Dialog and drawer buttons take their states from [buttons.md](buttons.md).
+
+## Tokens
+
+| Token | Light | Dark | Usage |
+|-------|-------|------|-------|
+| `--page-background` | `#F9F9FA` | `#20222A` | Surface color for all overlay panels |
+| `--text-primary` | `#20222A` | `#F9F9FA` | Titles and primary text |
+| `--text-secondary` | `#454C5E` | `#BFC2CC` | Supporting text and descriptions |
+| `--border` | `#DFE1E6` | `#2D313D` | Divider lines |
+| `--scrim` | Neutral-900 @ 25% | Neutral-900 @ 50% | Backdrop fill (see `layout.md`) |
+| `--radius-sm` | `12px` | same | Panel corner rounding (Dialog & Modal; Drawer has none) and button corner rounding |
+
+**Shadow:** Modal and Dialog panels use Shadow L, `box-shadow: var(--shadow-l);`.
+
+## Accessibility
+
+| Requirement | Dialog | Modal | Side Drawer |
+|-------------|--------|-------|-------------|
+| `role` attribute | `alertdialog` (set by `ConfirmModal`) | `dialog` (`alertdialog` when built on `ConfirmModal`) | `dialog` |
+| `aria-modal="true"` | ✓ | ✓ | ✓ |
+| Accessible name | `aria-label` via `ConfirmModal`'s `ariaLabel` | `aria-label` via `ariaLabel` on `ConfirmModal`, or `aria-labelledby` pointing to the title | `aria-labelledby` pointing to the title |
+| Focus trap | ✓ (mandatory) | ✓ (mandatory) | ✓ (mandatory) |
+| Return focus on close | ✓ | ✓ | ✓ |
+| Escape key closes | ✗ (buttons only) | ✓ | ✓ |
+| Backdrop click closes | ✗ (buttons only) | ✓ | ✓ |
+
+**Focus management:** when any overlay opens, focus must move to the first interactive element inside the panel. When closed, focus returns to the element that triggered the overlay. Tab key must cycle only through elements inside the overlay (focus trap). Use `useOverlayA11y(panelRef, open, { onEscape })` (`src/hooks/useOverlayA11y.ts`), which `ConfirmModal` already calls.
+
+**Focus-visible:** close buttons show a 2px `var(--primary-button-background)` outline with 2px offset (see States).
+
+## Content
+
+- Dialog title: a short sentence-case statement of the action ("Delete report"); let the body name what is affected and the consequence.
+- Dialog commit button: the action and its object in Title Case ("Delete Report", "Mark 3 As Completed").
+
+## Examples
 
 ### Dialog
 
@@ -653,57 +682,21 @@ import Button from '@/components/Button/Button'
 
 ### Modal
 
+Build centred modals on the shared `ConfirmModal` shell with `closable` on (close ×, backdrop click and Escape), and set the width through `className`.
+
 ```tsx
-import { ReactNode } from 'react';
-import CloseButton from '@/components/CloseButton/CloseButton';
-import Button from '@/components/Button/Button';
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
+import Button from '@/components/Button/Button'
 
-interface ModalProps {
-  title: string;
-  supportingText?: string;
-  children: ReactNode;
-  ctaLabel?: string;
-  onAction?: () => void;
-  onClose: () => void;
-}
-
-export function Modal({
-  title,
-  supportingText,
-  children,
-  ctaLabel = 'Save',
-  onAction,
-  onClose,
-}: ModalProps) {
-  return (
-    <>
-      <div className="overlay-backdrop" onClick={onClose} />
-
-      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <CloseButton onClick={onClose} />
-
-        <div className="modal__header">
-          <div className="modal__headline">
-            <h2 id="modal-title" className="modal__title">{title}</h2>
-            {supportingText && (
-              <p className="modal__supporting-text">{supportingText}</p>
-            )}
-          </div>
-          <div className="modal__divider" />
-        </div>
-
-        <div className="modal__content">
-          {children}
-        </div>
-
-        {onAction && <Button onClick={onAction}>{ctaLabel}</Button>}
-      </div>
-    </>
-  );
-}
+<ConfirmModal open={open} onClose={() => setOpen(false)} closable ariaLabel="Edit details" className="people-details-modal">
+  {/* header, content and CTA composed per the spec above */}
+  <Button onClick={handleSave}>Save</Button>
+</ConfirmModal>
 ```
 
 ### Side Drawer
+
+There is no shared drawer component; this is the page-local shape to follow.
 
 ```tsx
 import { ReactNode } from 'react';
@@ -765,112 +758,7 @@ export function SideDrawer({
 }
 ```
 
----
-
-## Animation Guidelines
-
-### Recommended Transitions
-
-| Component | Animation | Duration | Easing |
-|-----------|-----------|----------|--------|
-| **Backdrop** | Fade in (opacity 0 → 1, scrim carries its own alpha) | 200ms | ease-out |
-| **Dialog** | Scale up + fade (0.95 → 1, opacity 0 → 1) | 200ms | ease-out |
-| **Modal** | Scale up + fade (0.95 → 1, opacity 0 → 1) | 250ms | ease-out |
-| **Side Drawer** | Slide in from right (translateX(100%) → 0) | 300ms | cubic-bezier(0.32, 0.72, 0, 1) |
-| **Bottom Sheet** | Rise from bottom (translateY(100%) → 0); overlay fades with it | in 420ms, out 240ms | in cubic-bezier(0.32, 0.72, 0, 1), out cubic-bezier(0.4, 0, 1, 1); follows the finger while dragged |
-
-```css
-/* Entry animations */
-@keyframes overlay-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes dialog-enter {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
-  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-@keyframes drawer-slide-in {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
-}
-```
-
----
-
-## Accessibility
-
-### Required Practices
-
-| Requirement | Dialog | Modal | Side Drawer |
-|-------------|--------|-------|-------------|
-| `role` attribute | `alertdialog` (set by `ConfirmModal`) | `dialog` (`alertdialog` when built on `ConfirmModal`) | `dialog` |
-| `aria-modal="true"` | ✓ | ✓ | ✓ |
-| Accessible name | `aria-label` via `ConfirmModal`'s `ariaLabel` | `aria-label` via `ariaLabel` on `ConfirmModal`, or `aria-labelledby` pointing to the title | `aria-labelledby` pointing to the title |
-| Focus trap | ✓ (mandatory) | ✓ (mandatory) | ✓ (mandatory) |
-| Return focus on close | ✓ | ✓ | ✓ |
-| Escape key closes | ✗ (buttons only) | ✓ | ✓ |
-| Backdrop click closes | ✗ (buttons only) | ✓ | ✓ |
-
-### Focus Management
-
-When any overlay opens, focus must move to the first interactive element inside the panel. When closed, focus returns to the element that triggered the overlay. Tab key must cycle only through elements inside the overlay (focus trap).
-
-```tsx
-// Minimal focus trap hook
-function useFocusTrap(ref: React.RefObject<HTMLElement>, isOpen: boolean) {
-  useEffect(() => {
-    if (!isOpen || !ref.current) return;
-
-    const focusable = ref.current.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-
-    first?.focus();
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last?.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first?.focus();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, ref]);
-}
-```
-
----
-
-## Usage Examples
-
-### Delete Confirmation (Dialog)
-
-See the `ConfirmModal` sample under React TypeScript Implementation > Dialog above.
-
-### Edit Course Settings (Modal)
-
-```tsx
-<Modal
-  title="Course Settings"
-  supportingText="Configure visibility and access controls"
-  ctaLabel="Save Changes"
-  onAction={handleSave}
-  onClose={closeModal}
->
-  <CourseSettingsForm />
-</Modal>
-```
-
-### User Detail Panel (Side Drawer)
+Usage, e.g. a user detail panel:
 
 ```tsx
 <SideDrawer
@@ -886,23 +774,9 @@ See the `ConfirmModal` sample under React TypeScript Implementation > Dialog abo
 </SideDrawer>
 ```
 
----
+## Related
 
-## Quick Reference
-
-### Component Comparison
-
-| Property | Dialog | Modal | Side Drawer |
-|----------|--------|-------|-------------|
-| **Width** | 560px | 720px | 720px |
-| **Height** | Auto (content) | Auto (content) | 100vh |
-| **Position** | Centered | Centered | Right-anchored |
-| **Padding** | 24px uniform | 24px uniform | 20px vert / 24px horiz |
-| **Border radius** | 12px | 12px | None (flush) |
-| **Shadow** | Shadow L | Shadow L | None |
-| **Close button** | None | ✓ top-right | ✓ top-right |
-| **Backdrop click** | Does nothing | Closes | Closes |
-| **Escape key** | Does nothing | Closes | Closes |
-| **Header style** | Centered, type icon | Left-aligned, section header | Left-aligned, section header |
-| **CTA buttons** | 2 (type-colored) | 1 (primary centered) | 2 (primary, sticky footer) |
-| **Scrollable content** | No | Optional | Yes (flex body) |
+- [confirm-modal.md](confirm-modal.md) - the shell behind Dialog and centred Modal
+- [buttons.md](buttons.md) - Outlined-2 Cancel and semantic commit buttons
+- [alerts-toast.md](alerts-toast.md) - Toast, for feedback after an action
+- [layout.md](layout.md) - scrim values

@@ -12,8 +12,8 @@ When building any UI component, feature, or screen, read the relevant design sys
 
 All component docs are Figma-verified (2026-07, with node refs in each file). **Prototype directly from these md files — do not fetch Figma links or screenshots for components that have a doc.** If a task needs a component that has no doc below, do not improvise or adapt a "close enough" pattern silently: say which component is missing and ask for the Figma link, then create its doc before/while building.
 
-1. **Always start** with `docs/design-system/design-system-guidelines.md` — the design foundations (colors incl. the three-amber selection tokens, typography, spacing, radius, icons, accessibility) plus quick decision tables. Component specs live in the per-component docs.
-2. **Then read the specific component doc** for detailed implementation (React TypeScript code, full CSS, usage examples): Each doc opens with a `## Usage` block (intent, use when, don't use when, do / don't, canonical spec); read it first.
+1. **Always start** with `docs/design-system/design-system-guidelines.md` - a short index: the global rules, a map of every doc, and quick decision tables. Foundations live in `colors.md`, `typography.md`, `layout.md` and `iconography.md`; component specs live in the per-component docs.
+2. **Then read the specific component doc.** Every doc follows `docs/design-system/_template.md`: header lines (Code import, Figma node ids, Last verified), then `## Usage` (intent, use when, don't use when, do / don't, canonical spec), then `## Figma to code` - the table that maps each Figma property and value to the React prop and value. Use that table when translating a Figma frame; never guess props from variant names. History lives in `docs/design-system/CHANGELOG.md`; you don't need it to build.
    - `docs/design-system/buttons.md` — Button system: Filled/Outlined/Outlined-2/Text/Link + Danger/Warning/Success families + AI gradient buttons; 3 sizes, all states incl. Loading; trailing icons
    - `docs/design-system/badges.md` — Status badges, pill indicators, quiz badges
    - `docs/design-system/chips-switcher-tabs.md` - Chip component (filter pills, dismissible tags, selection chips with optional left/right icons), Content Switcher (segmented control in a filled track), and Tabs component (underlined horizontal switcher with optional counter pills); all variants, states, design tokens, React implementation, plus a Chips vs Switcher vs Tabs decision table | Any filter chip, selection pill, dismissible tag, segmented control, tab bar, section switcher, or small pill-shaped interactive label
@@ -50,7 +50,7 @@ All component docs are Figma-verified (2026-07, with node refs in each file). **
 
 ## Strict rules
 
-- **Never improvise design values.** Use only tokens defined in the design system (colors, spacing, radius, font sizes).
+- **Never improvise design values.** Use only tokens defined in the design system (colors, spacing, radius, font sizes via `--font-size-*`). Run `pnpm lint:css` on the CSS you touched; it flags raw colours and raw font sizes.
 - **Borders on a card or menu use `--border-elevated`**, including field borders such as Search (`elevated` prop). `--border` is for the page ground and inside drawers and modals; in dark mode it matches the card fill and disappears.
 - **Always use semantic tokens over raw palette values.** Prefer `--text-primary` over `--neutral-800`, `--cards-background` over `--neutral-0`, `--border` over `--neutral-100`.
 - **Always use Poppins** as the font family. Weights: 400, 500, 600, 700 only.

@@ -3,16 +3,13 @@ name: 5mins-file-uploader
 description: File upload drop zone for 5Mins.ai - two sizes (L full-width, S 180px), five states (Enabled, Hover, Error with a bulleted message list, Uploading with circular progress, Filled with the file name; one "Select File" button in every state). Use for any file input, drag-and-drop zone, CSV import, document or media upload.
 ---
 
-# FileUploader Component
+# File uploader
 
-> **Figma source:** Library (`EC26cSVe9KNTCWXvYovakw`) — light `11921:6366` / dark `11546:1560` (verified 2026-07-03; earlier baseline `11362-1265`)  
-> **React + TypeScript** · **Iconsax icons**
+A drop zone that lets the user drag in or pick one file, then shows its progress and the file that is held. React + TypeScript, Iconsax icons.
 
-> **Updated 2026-09-29 (verified against code):** frontmatter description updated (single error line, no Preview); `onChangeFile` is only called from Filled; the stale 8px button radius, token names and hover override now match `FileUploader.css`; the Preview button section and the outdated full-component sketch are removed; the progress track is `var(--border)`; the recipes compile against the real props.
-
-> **Updated 2026-09-29 (aligned to prototype usage):** the built component takes a single `errorMessage` (not `errors[]`), has no `onPreview` or Preview button, adds an `icon` prop, uses `ExportCurve` / `ClipboardText` glyphs, draws the Error border in `--text-error` over an 8% danger tint, gives the outlined button a 12px radius and uses a 16px main gap on L. The glyphs, error styling and gaps in this note are superseded by the Figma re-verification note below.
-
-> **Updated 2026-09-29 (re-verified against Figma `11546:1560`):** icons are `DocumentUpload` (Linear; `--text-error` in Error) and `DocumentText` (Bold, Filled); the button reads "Select File" in every state, with a `--border-elevated` border and Medium / Small padding (10px 20px L, 8px 16px S), lighting to `--primary-button-background-hover` over a 16% fill on hover, including when the zone is hovered; the L main gap is 20px and the L icon-to-text gap 16px; Error is a `--danger-500` dashed border over a 16% Danger-500 wash with a Regular bulleted list (up to three, then "+N errors"); the progress arc is `--primary-600`. The zone and button have cyan focus rings, and the button no longer opens the picker twice.
+**Code:** `import FileUploader from '@/components/FileUploader/FileUploader'` (named and default export)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `11546:1560` / light `12308:6617`
+**Last verified:** 2026-09-29
 
 ## Usage
 
@@ -33,27 +30,23 @@ description: File upload drop zone for 5Mins.ai - two sizes (L full-width, S 180
 - Clear the held file in `onChangeFile`; in the Filled state "Select File" calls it before reopening the picker. In other states it only reopens the picker.
 
 **Don't**
-- Don't hard-code hex values; use tokens.
-- Don't fix the L width to the Figma canvas width (900px); it is `100%`.
+- Don't hard-code hex values; use tokens (`var(--danger-500)`, not `#df1642`).
+- Don't fix the L width to the Figma canvas width (900px); it is `100%`. The Figma fixed value is design canvas only.
 - Don't show the Uploading state without `progress`; it renders a static 0% ring.
 
-**Canonical spec:** radius `var(--radius-sm)` (12px). L: width 100%, min height 240px, padding `var(--space-l)` (24px), gap `var(--space-ml)` (20px), icon-to-text gap 16px, 40px icon, body 14px / 1.5. S: width 180px, min height 260px, padding `var(--space-m)` (16px), gap 16px (24px when Filled), icon-to-text gap 8px, 32px icon, body 12px / 1.4 (1.2 when Uploading or Filled). Border dashed `--border-elevated` (solid when Filled), `--border-hover` + `--input-background` on hover or drag, `--danger-500` over a 16% Danger-500 wash on error. Body text `--text-secondary`; error list Regular `--text-error` (14px / 1.5 L, 12px / 1.2 S), "+N errors" 12px. Button "Select File": 1px `--border-elevated`, radius 12px, padding 10px 20px (L) / 8px 16px (S), Bold `--text-primary`; hover `--button-outline-fill-hover` with `--primary-button-background-hover`. Progress ring 64px, `--primary-600` on `--border`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11921:6366` / dark `11546:1560`.
+**Canonical spec:** radius `var(--radius-sm)` (12px). L: width 100%, min height 240px, padding `var(--space-l)` (24px), gap `var(--space-ml)` (20px), icon-to-text gap 16px, 40px icon, body 14px / 1.5. S: width 180px, min height 260px, padding `var(--space-m)` (16px), gap 16px (24px when Filled), icon-to-text gap 8px, 32px icon, body 12px / 1.4 (1.2 when Uploading or Filled). Border dashed `--border-elevated` (solid when Filled), `--border-hover` + `--input-background` on hover or drag, `--danger-500` over a 16% Danger-500 wash on error. Body text `--text-secondary`; error list Regular `--text-error` (14px / 1.5 L, 12px / 1.2 S), "+N errors" 12px. Button "Select File": 1px `--border-elevated`, radius 12px, padding 10px 20px (L) / 8px 16px (S), Bold `--text-primary`; hover `--button-outline-fill-hover` with `--primary-button-background-hover`. Progress ring 64px, `--primary-600` on `--border`.
 
-**Prototype:** `src/components/FileUploader/FileUploader.tsx` (named and default export)
-- `size`: `'L' | 'S'` (default `'L'`); `state`: `'Enabled' | 'Hover' | 'Error' | 'Uploading' | 'Filled'` (uncontrolled if omitted)
-- `accept`, `onFileSelect(file)`, `onChangeFile()`
-- `fileName`, `progress`, `errorMessage`
-- `icon` (Enabled/Hover glyph), `fileIcon` (Filled thumbnail), `className`
+## Figma to code
 
-**Production:**
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Size | L / S | `size` | `'L'` (default) / `'S'` | same casing |
+| State | Enabled / Hover / Error / Uploading / Filled | `state` | `'Enabled'` / `'Hover'` / `'Error'` / `'Uploading'` / `'Filled'` | controlled; omit for uncontrolled. Hover also comes from CSS `:hover` and drag-over |
+| Info (slot) | body content | `fileName`, `progress`, `errorMessage` | string / 0-100 / string or string[] | content depends on state |
+| Info2 (slot) | body content | `fileName`, `progress`, `errorMessage` | as above | |
 
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| FileUploader | _to be mapped by engineering_ | | |
-
----
-
-## Props
+- **Figma only:** the `Info` / `Info2` slots as free containers; no Focus or Disabled variant (focus-visible is CSS in code).
+- **Code only:** `onFileSelect(file)`, `onChangeFile()`, `accept`, `icon` (Enabled/Hover glyph), `fileIcon` (Filled thumbnail), `className`.
 
 ```tsx
 type FileUploaderSize  = 'L' | 'S';
@@ -74,81 +67,32 @@ interface FileUploaderProps {
 }
 ```
 
----
+**Production:**
 
-## States & Visual Rules
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| FileUploader | _to be mapped by engineering_ | | |
 
-| State | Border style | Border color | Background | Icon |
-|-------|-------------|--------------|------------|------|
-| `Enabled` | dashed | `--border-elevated` | transparent | `DocumentUpload` Linear, `--text-secondary` |
-| `Hover` | dashed | `--border-hover` | `--input-background` | `DocumentUpload` Linear; the button lights up too |
-| `Error` | dashed | `--danger-500` | Danger-500 at 16% (no token yet) | `DocumentUpload` Linear, `--text-error` |
-| `Uploading` | dashed | `--border-elevated` | `--input-background` | 64px circular progress |
-| `Filled` | **solid** | `--border-elevated` | `--input-background` | `DocumentText` Bold (or `fileIcon`) |
+## Anatomy
 
----
+- Zone: dashed (solid when Filled) border, radius 12px, icon, body text, one "Select File" button.
+- Icon: 40px (L) / 32px (S) Iconsax, or a 64px circular progress ring while Uploading.
+- Button: outlined "Select File", the only label in every state. There is no Preview button.
 
-## Sizes
+### Icons (Iconsax)
 
-| | L | S |
-|---|---|---|
-| Width | `100%` | `180px` |
-| Min-height | `240px` | `260px` |
-| Padding | `24px` | `16px` |
-| Icon | `40×40px` | `32×32px` |
-| Main gap | `20px` | `16px` (Filled: `24px`) |
-| Icon-to-text gap | `16px` | `8px` |
-| Body font | `14px / 1.5` | `12px / 1.4` (Uploading, Filled: `1.2`) |
-| Button font | `14px Bold` | `12px Bold` |
+```tsx
+import { DocumentUpload, DocumentText } from 'iconsax-react';
 
----
-
-## Design Tokens
-
-```css
---border-elevated:                 #383d4c;               /* Filled solid */
---border-elevated:                 #383d4c;               /* Enabled/Uploading dashed */
---border-hover:                    #9ea4b3;               /* Hover dashed */
---border:                          #2d313d;               /* Uploading progress-ring track */
---danger-500:                      #df1642;               /* Error border; the wash is Danger-500 at 16% */
---input-background:                rgba(69,76,94,0.16);   /* tinted bg */
---text-primary:                    #f9f9fa;               /* button labels */
---text-secondary:                  #bfc2cc;               /* body copy, filename */
---text-error:                      #e95c7b;               /* error icon and list */
---button-outline-fill-hover:       /* per mode */         /* hover button fill */
---primary-button-background-hover: /* per mode */          /* hover button border + label */
---radius-sm:  12px;   /* outer border-radius AND button border-radius */
---space-m:    16px;   /* S padding and gap, L icon-to-text gap */
---space-ml:   20px;   /* L main gap, L button side padding */
---space-l:    24px;   /* L padding */
+<DocumentUpload size={40} color="var(--text-secondary)" variant="Linear" />  // Enabled/Hover (or the `icon` prop)
+<DocumentUpload size={40} color="var(--text-error)"     variant="Linear" />  // Error
+<DocumentText size={40} color="var(--text-secondary)" variant="Bold" />        // Filled (or the `fileIcon` prop)
+// S size: use size={32} instead of 40
 ```
 
----
+### Circular progress (Uploading)
 
-## Button Variants
-
-### Outlined, "Select File" (the only label, every state)
-```css
-border: 1px solid var(--border-elevated);
-border-radius: var(--radius-sm);   /* 12px */
-padding: var(--space-ssm) var(--space-ml);   /* L 10px 20px; S var(--space-s) var(--space-m), 8px 16px */
-background: transparent;
-color: var(--text-primary);
-font: 700 14px/1.5 'Poppins';   /* S: 12px/1.4 */
-```
-**Hover** (when the button itself is hovered, or the whole zone is in `state === 'Hover'` or being dragged over):
-```css
-background: var(--button-outline-fill-hover);
-border-color: var(--primary-button-background-hover);
-color: var(--primary-button-background-hover);
-```
-**Pressed:** transparent fill, border and label `--primary-button-background-pressed`.
-
----
-
-## Circular Progress (Uploading)
-
-Pure SVG, no external lib needed. Ring: `r=26`, `strokeWidth=4`, `64×64px`.
+Pure SVG, no external lib needed. Ring: `r=26`, `strokeWidth=4`, `64×64px`, `--primary-600` arc on a `--border` track.
 
 ```tsx
 const CircularProgress = ({ pct }: { pct: number }) => {
@@ -173,31 +117,84 @@ const CircularProgress = ({ pct }: { pct: number }) => {
 };
 ```
 
----
+### Button: outlined "Select File"
 
-## Icons (Iconsax)
-
-```tsx
-import { DocumentUpload, DocumentText } from 'iconsax-react';
-
-<DocumentUpload size={40} color="var(--text-secondary)" variant="Linear" />  // Enabled/Hover (or the `icon` prop)
-<DocumentUpload size={40} color="var(--text-error)"     variant="Linear" />  // Error
-<DocumentText size={40} color="var(--text-secondary)" variant="Bold" />        // Filled (or the `fileIcon` prop)
-// S size: use size={32} instead of 40
+```css
+border: 1px solid var(--border-elevated);
+border-radius: var(--radius-sm);   /* 12px */
+padding: var(--space-ssm) var(--space-ml);   /* L 10px 20px; S var(--space-s) var(--space-m), 8px 16px */
+background: transparent;
+color: var(--text-primary);
+font: 700 14px/1.5 'Poppins';   /* S: 12px/1.4 */
 ```
 
----
+## Sizes
 
-## Full Component
+| | L | S |
+|---|---|---|
+| Width | `100%` | `180px` |
+| Min-height | `240px` | `260px` |
+| Padding | `24px` | `16px` |
+| Icon | `40×40px` | `32×32px` |
+| Main gap | `20px` | `16px` (Filled: `24px`) |
+| Icon-to-text gap | `16px` | `8px` |
+| Body font | `14px / 1.5` | `12px / 1.4` (Uploading, Filled: `1.2`) |
+| Button font | `14px Bold` | `12px Bold` |
 
-> **Superseded, see Usage.** The earlier inline-styled sketch (with `errors[]`, `onPreview` and a Preview button) has been removed because it did not match the built component. Use `src/components/FileUploader/FileUploader.tsx` with `FileUploader.css` as the reference.
+## States
 
----
+| State | Border style | Border colour | Background | Icon |
+|-------|-------------|--------------|------------|------|
+| `Enabled` | dashed | `--border-elevated` | transparent | `DocumentUpload` Linear, `--text-secondary` |
+| `Hover` | dashed | `--border-hover` | `--input-background` | `DocumentUpload` Linear; the button lights up too |
+| `Error` | dashed | `--danger-500` | Danger-500 at 16% (no token yet) | `DocumentUpload` Linear, `--text-error` |
+| `Uploading` | dashed | `--border-elevated` | `--input-background` | 64px circular progress |
+| `Filled` | **solid** | `--border-elevated` | `--input-background` | `DocumentText` Bold (or `fileIcon`) |
 
-## Usage Recipes
+- **Drag-over** mimics Hover styling: `isDragging` overrides the border to `--border-hover`.
+- **Error:** `errorMessage` only renders in `state="Error"`: a bulleted Regular list in `--text-error` (14px L / 12px S), up to three items, then "+N errors" for the rest. Pass a string for one message or an array for several.
+
+| Button state | Tokens |
+|---|---|
+| Rest | transparent fill, 1px `--border-elevated`, label `--text-primary` |
+| Hover (the button itself is hovered, or the whole zone is in `state === 'Hover'` or being dragged over) | `background: var(--button-outline-fill-hover)`; border and label `var(--primary-button-background-hover)` |
+| Pressed | transparent fill, border and label `--primary-button-background-pressed` |
+| Focus-visible (zone and button) | cyan ring, `outline: 2px solid var(--primary-button-background)`, offset 2px |
+
+## Tokens
+
+Dark-mode resolutions shown for reference; light values resolve per mode.
+
+```css
+--border-elevated:                 #383d4c;               /* Enabled/Uploading dashed, Filled solid */
+--border-hover:                    #9ea4b3;               /* Hover dashed */
+--border:                          #2d313d;               /* Uploading progress-ring track */
+--danger-500:                      #df1642;               /* Error border; the wash is Danger-500 at 16% */
+--input-background:                rgba(69,76,94,0.16);   /* tinted bg */
+--text-primary:                    #f9f9fa;               /* button labels */
+--text-secondary:                  #bfc2cc;               /* body copy, filename */
+--text-error:                      #e95c7b;               /* error icon and list */
+--button-outline-fill-hover:       /* per mode */         /* hover button fill */
+--primary-button-background-hover: /* per mode */          /* hover button border + label */
+--radius-sm:  12px;   /* outer border-radius AND button border-radius */
+--space-m:    16px;   /* S padding and gap, L icon-to-text gap */
+--space-ml:   20px;   /* L main gap, L button side padding */
+--space-l:    24px;   /* L padding */
+```
+
+## Accessibility
+
+- The zone is `role="button"`, `tabIndex={0}`, named "File upload drop zone"; Enter opens the file picker (not while Uploading or Filled).
+- The hidden file input is named "Upload file"; the visible "Select File" button opens the picker once.
+- The error list is `role="alert"`.
+- Zone and button show the cyan focus-visible ring (see States).
+
+## Examples
 
 ### Uncontrolled (simplest)
 ```tsx
+import FileUploader from '@/components/FileUploader/FileUploader'
+
 <FileUploader
   accept=".pdf,.csv,.xlsx"
   onFileSelect={file => console.log(file.name)}
@@ -241,13 +238,7 @@ const handleSelect = async (file: File) => {
 <FileUploader size="S" onFileSelect={handleSelect} />
 ```
 
----
+## Related
 
-## Gotchas
-
-- **L width = `100%`, not `900px`** — the Figma fixed value is design canvas only.
-- **`progress` required in Uploading** — omitting it renders a static `0%` ring.
-- **`errorMessage` only renders in `state="Error"`**: a bulleted Regular list in `--text-error` (14px L / 12px S), up to three items, then "+N errors" for the rest. Pass a string for one message or an array for several.
-- **No "Preview" button in the built component**: every state shows one "Select File" button.
-- **Drag-over mimics Hover styling** — `isDragging` overrides border to `--border-hover`.
-- **Always use design tokens, not raw hex** — `var(--danger-500)` not `#df1642`.
+- [input.md](input.md) - InputField `type="url"` for links
+- [buttons.md](buttons.md) - outlined button tokens

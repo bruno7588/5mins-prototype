@@ -1,15 +1,15 @@
 ---
 name: 5mins-typography
-description: Typography system for 5Mins.ai — Poppins type scale (6 heading levels, body and button sizes), weights 400/500/600/700, line heights, and text color pairing rules. Use for any font-size, weight, or text-style decision.
+description: Typography system for 5Mins.ai - Poppins type scale (6 heading levels, body and button sizes), weights 400/500/600/700, line heights, font-size tokens and text color pairing rules. Use for any font-size, weight, or text-style decision.
 ---
 
-# 5Mins.ai Typography System
+# Typography
 
-Complete typography guidelines for 5Mins.ai using Poppins font family with a clear, semantic type scale.
+One Poppins type scale for every 5Mins.ai screen: 6 heading levels, 3 body sizes in three weights, and 3 button sizes.
 
-> **Updated 2026-09-29 (aligned to prototype usage):** heading and body colours are the semantic tokens `--text-primary` / `--text-secondary` used in `src/styles/typography.css` (were raw `--neutral-800` / `--neutral-500`, which don't flip in dark mode). The "CSS Custom Properties" list is marked as not defined in `tokens.css`.
-
-> **Updated 2026-09-29 (verified against code):** removed the `.text-button-*` classes (they don't exist) and the responsive size steps (not implemented, off-scale); field labels are `--text-secondary`, not tertiary; removed links to `assets/typography.css` and `references/usage-guidelines.md` (neither exists); listed the sanctioned off-scale component exceptions.
+**Code:** `src/styles/typography.css` (classes), `--font-size-*` in `src/styles/tokens.css`; Poppins is set on `body` in `src/styles/reset.css` and loaded from Google Fonts in `index.html`. No component.
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Typography page `5445:24004`, paragraph styles `5445:24009` (medium row `12132:2824`, semibold row `6634:1291`); type does not change per mode
+**Last verified:** 2026-10-14
 
 ## Usage
 
@@ -25,7 +25,7 @@ Complete typography guidelines for 5Mins.ai using Poppins font family with a cle
 **Do**
 - Poppins only, weights 400/500/600/700.
 - Bold (700) for headings and buttons; Semibold (600) for form-field labels; Medium (500) for emphasis and badge/chip labels; Regular (400) for body.
-- Stay on the scale: 12, 14, 16, 20, 24, 32px. Round an off-scale size to the nearest step (13px becomes 14px).
+- Stay on the scale: 12, 14, 16, 20, 24, 32px, written as `var(--font-size-*)`. Round an off-scale size to the nearest step (13px becomes 14px).
 - 14px and 16px at line height 1.5; 12px at 1.2 (Button S keeps 1.4).
 - Colour with semantic tokens: `--text-primary` headings and key content, `--text-secondary` body, `--text-tertiary` captions and metadata, `--text-disabled` disabled.
 - Use semantic `h1`-`h6` elements in order; one `h1` per page.
@@ -35,13 +35,40 @@ Complete typography guidelines for 5Mins.ai using Poppins font family with a cle
 - Don't load or mix another font family.
 - Don't use Bold for body paragraphs, or Semibold for option text inside a radio, checkbox or toggle row.
 - Don't use raw `--neutral-*` or hex for text colour; it won't flip in dark mode.
-- Don't skip heading levels.
+- Don't skip heading levels (H1 → H3).
+- Don't make body text smaller than 14px; main content is 16px.
+- Don't use muted text for important content.
 
-**Canonical spec:** Poppins; H1 32 / H2 24 / H3 20 / H4 16 / H5 14 Bold at 1.5, H6 12 Bold at 1.2; Paragraph L/M/S 16/14/12 at 1.5/1.5/1.2; Button L/M/S 16/14/12 Bold. Field label = Paragraph M semibold. The prototype writes these as literal px in component CSS (no font tokens exist). Figma: Library `EC26cSVe9KNTCWXvYovakw`, paragraph styles `5445:24009`; light/dark node ids not recorded (type does not change per mode).
+**Canonical spec:** Poppins; H1 32 / H2 24 / H3 20 / H4 16 / H5 14 Bold at 1.5, H6 12 Bold at 1.2; Paragraph L/M/S 16/14/12 at 1.5/1.5/1.2; Button L/M/S 16/14/12 Bold. Field label = Paragraph M semibold. Sizes are `--font-size-*` tokens; run `pnpm lint:css`, which flags raw font sizes.
 
-**Prototype:** `src/styles/typography.css` (no component)
+**Prototype:** `src/styles/typography.css`
 - `h1`-`h6` and `.h1`-`.h6`; `.text-lg|md|sm` with `-medium` and `-semibold` variants; `.text-primary|secondary|tertiary|disabled`; `.font-regular|medium|semibold|bold`.
-- Poppins is set on `body` in `src/styles/reset.css` and loaded from Google Fonts in `index.html`.
+
+## Figma to code
+
+Figma text styles map to CSS classes; their sizes map to the `--font-size-*` tokens.
+
+| Figma text style | CSS class | Size token | Size | Weight | Line height |
+|---|---|---|---|---|---|
+| H1 (32) | `h1`, `.h1` | `--font-size-h1` | 32px (2rem) | 700 | 1.5 |
+| H2 (24) | `h2`, `.h2` | `--font-size-h2` | 24px (1.5rem) | 700 | 1.5 |
+| H3 (20) | `h3`, `.h3` | `--font-size-h3` | 20px (1.25rem) | 700 | 1.5 |
+| H4 (16) | `h4`, `.h4` | `--font-size-h4` | 16px (1rem) | 700 | 1.5 |
+| H5 (14) | `h5`, `.h5` | `--font-size-h5` | 14px (0.875rem) | 700 | 1.5 |
+| H6 (12) | `h6`, `.h6` | `--font-size-h6` | 12px (0.75rem) | 700 | 1.2 |
+| Paragraph L regular (16) | `.text-lg` | `--font-size-lg` | 16px | 400 | 1.5 |
+| Paragraph M regular (14) | `.text-md` | `--font-size-md` | 14px | 400 | 1.5 |
+| Paragraph S regular (12) | `.text-sm` | `--font-size-sm` | 12px | 400 | 1.2 |
+| Paragraph L medium | `.text-lg-medium` | `--font-size-lg` | 16px | 500 | 1.5 |
+| Paragraph M medium | `.text-md-medium` | `--font-size-md` | 14px | 500 | 1.5 |
+| Paragraph S medium | `.text-sm-medium` | `--font-size-sm` | 12px | 500 | 1.2 |
+| Paragraph L semibold (16) | `.text-lg-semibold` | `--font-size-lg` | 16px | 600 | 1.5 |
+| Paragraph M semibold (14) | `.text-md-semibold` | `--font-size-md` | 14px | 600 | 1.5 |
+| Paragraph S semibold (12) | `.text-sm-semibold` | `--font-size-sm` | 12px | 600 | 1.2 |
+| Button M (Typography page only) | `.btn-*` labels | `--font-size-button` | 14px | 700 | 1.5 |
+
+- **Figma only:** Button L/M/S are drawn on the Typography page but have no Figma text style; button label sizes come with the `Button` component ([doc](buttons.md)). The Figma Typography variable collection is empty.
+- **Code only:** `--font-size-button` (14px, the legacy `.btn-*` label). There are no `.text-body-*`, `.heading-*` or `.text-button-*` classes.
 
 **Production:**
 
@@ -49,192 +76,164 @@ Complete typography guidelines for 5Mins.ai using Poppins font family with a cle
 |---|---|---|---|
 | Typography | _to be mapped by engineering_ | | |
 
-## Overview
+### Known drift
 
-5Mins.ai uses Poppins as the primary font for all text, providing a modern, clean, and highly readable experience across all interfaces. The system includes 6 heading levels, 3 body text sizes, and 3 button text sizes with consistent weights and line heights.
+- **H6 line height:** Figma H6 (12) is 140%; code `h6`/`.h6` is 1.2. Don't change either side without a ruling.
 
-## Font Family
+## Variants
 
-**Primary Font:** Poppins (Google Fonts)
+### Font family
+
+**Primary font:** Poppins (Google Fonts)
 - **Weights:** 400 (Regular), 500 (Medium), 600 (Semibold), 700 (Bold)
-- **Fallback:** System fonts (-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif)
+- **Fallback:** system fonts (-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif)
 
-> **Every 12px text style has a 120% line height** — H6, Paragraph S, badges, tooltips, captions. **The one exception is Button S, which stays at 140%** so the Small button holds its 33px height. 16px and 14px stay at 150%.
+> **Every 12px text style has a 120% line height** - H6, Paragraph S, badges, tooltips, captions. **The one exception is Button S, which stays at 140%** so the Small button holds its 33px height. 16px and 14px stay at 150%.
 
 ```css
 font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 ```
 
-## Type Scale
+### Headings (all Bold, 700)
 
-### Headings (All Bold, 700 weight)
-
-| Level | Size | Line Height | Usage |
+| Level | Size | Line height | Usage |
 |-------|------|-------------|-------|
-| **H1** | 32px (2rem) | 1.5 | Page titles, main headers |
-| **H2** | 24px (1.5rem) | 1.5 | Section headers, major blocks |
-| **H3** | 20px (1.25rem) | 1.5 | Subsection headers |
+| **H1** | 32px (2rem) | 1.5 | Course titles, main headers |
+| **H2** | 24px (1.5rem) | 1.5 | Page titles (the Page Header renders it as `<h2>`, see `headers.md`), major blocks |
+| **H3** | 20px (1.25rem) | 1.5 | Section headers, subsection headers |
 | **H4** | 16px (1rem) | 1.5 | Component titles, card headers |
 | **H5** | 14px (0.875rem) | 1.5 | Small headers, labels |
 | **H6** | 12px (0.75rem) | 1.2 | Micro headers, tags |
 
-**Color for all headings:** `--text-primary` (#20222A light / #F9F9FA dark)
+**Colour for all headings:** `--text-primary` (#20222A light / #F9F9FA dark)
 
-### Body Text (Regular 400 / Medium 500 / Semibold 600)
+### Body text (Regular 400 / Medium 500 / Semibold 600)
 
-| Size | Font Size | Weights | Line Height | Usage |
+| Size | Font size | Weights | Line height | Usage |
 |------|-----------|---------|-------------|-------|
 | **Large** | 16px (1rem) | 400, 500, 600 | 1.5 | Main body content, default text |
-| **Medium** | 14px (0.875rem) | 400, 500, 600 | 1.5 | Secondary descriptions, lists |
-| **Small** | 12px (0.75rem) | 400, 500, 600 | 1.2 | Captions, help text, labels |
+| **Medium** | 14px (0.875rem) | 400, 500, 600 | 1.5 | Secondary descriptions, lists, table content |
+| **Small** | 12px (0.75rem) | 400, 500, 600 | 1.2 | Captions, help text, timestamps, labels |
 
-**Color for body text:** `--text-secondary` (#454C5E light / #BFC2CC dark)
+**Colour for body text:** `--text-secondary` (#454C5E light / #BFC2CC dark)
 
-### Paragraph Medium (500)
+**Paragraph medium (500):** subtle emphasis inside body copy, and the label weight of badges and chips.
 
-Figma Library `5445:24009` (row `12132:2824`, verified 2026-08-26). Subtle emphasis inside body copy, and the label weight of badges and chips.
+**Paragraph semibold (600):** sits between Medium and Bold: heavier than emphasis, without reading as a heading.
 
-| Style | Font Size | Weight | Line Height |
-|-------|-----------|--------|-------------|
-| **Paragraph L medium** | 16px (1rem) | 500 | 1.5 |
-| **Paragraph M medium** | 14px (0.875rem) | 500 | 1.5 |
-| **Paragraph S medium** | 12px (0.75rem) | 500 | 1.2 |
+**Form-field labels use Paragraph M semibold** (14px / 600 / 1.5, `--text-secondary`). Every visible label above (or beside) an input, dropdown, date field, textarea, or stepper - see `input.md`. Option text inside a radio, checkbox, or toggle row is *not* a field label and stays Regular 400.
 
-### Paragraph Semibold (600)
+### Button text (all Bold, 700)
 
-Figma Library `5445:24009` (row `6634:1291`, verified 2026-08-26). Semibold sits between Medium and Bold: heavier than emphasis, without reading as a heading.
-
-| Style | Font Size | Weight | Line Height |
-|-------|-----------|--------|-------------|
-| **Paragraph L semibold** | 16px (1rem) | 600 | 1.5 |
-| **Paragraph M semibold** | 14px (0.875rem) | 600 | 1.5 |
-| **Paragraph S semibold** | 12px (0.75rem) | 600 | 1.2 |
-
-**Form-field labels use Paragraph M semibold.** Every visible label above (or beside) an input, dropdown, date field, textarea, or stepper — see `input.md`. Option text inside a radio, checkbox, or toggle row is *not* a field label and stays Regular 400.
-
-### Button Text (All Bold, 700 weight)
-
-| Size | Font Size | Line Height | Usage |
+| Size | Font size | Line height | Usage |
 |------|-----------|-------------|-------|
 | **Large** | 16px (1rem) | 1.5 | Primary CTAs, hero buttons |
 | **Medium** | 14px (0.875rem) | 1.5 | Standard buttons (most common) |
-| **Small** | 12px (0.75rem) | 1.4 | Compact buttons, toolbars |
+| **Small** | 12px (0.75rem) | 1.4 | Compact buttons, tables, toolbars |
 
-## CSS Classes
+All button text is Bold (700) with no text-transform. There are no button text classes; use the `Button` component ([doc](buttons.md)).
 
-### Headings
+### Hierarchy rules
+
+- **H1 (32px):** course titles and main headers. Page titles do not use `<h1>`: the Page Header title is a 24px `<h2>` and Section Header titles are `<h3>` (see `headers.md`).
+- **H2 (24px):** page titles and major content divisions. Examples: "Team Dashboard", "Course Library".
+- **H3 (20px):** section and subsection headers. Examples: "Your Progress", "Completed Courses", "Learning Objectives".
+- **H4 (16px):** component titles: card headers, modal titles. Examples: course card names, dialog headers.
+- **H5 (14px):** small component headers: sidebar labels, table headers, navigation section labels.
+- **H6 (12px):** micro headers: tags, badges, metadata labels. Use sparingly.
+
+### Body size selection
+
+- **Large (16px):** main content paragraphs, course descriptions, primary readable content.
+- **Medium (14px):** secondary descriptions, list items, table content, card descriptions.
+- **Small (12px):** captions and help text, timestamps and metadata, footer text, very compact UIs.
+
+### Weight selection
+
+- **Regular (400):** default for body text.
+- **Medium (500):** subtle emphasis without bold.
+- **Semibold (600):** form-field labels; text that must lead a control without becoming a heading.
+- **Bold (700):** headings and buttons only. Never for entire paragraphs.
+
+### Responsive typography
+
+Not implemented: the type scale is the same at every width, and `typography.css` has no media queries.
+
+### Sanctioned component exceptions
+
+These component-level uses sit off the scale on purpose; keep them inside their components and don't copy them elsewhere:
+- Avatar group "+N" counter: 8px at 24px and 10px at 32px (`AvatarGroup.css`)
+- Badge label: 14px Medium at line height 1.2 (`badges.md`)
+- Toast label: Bold 16 on every fill (`alerts-toast.md`)
+- Mobile tab bar label: Regular 10px / 1.4 (`navigation.md`)
+
+## Tokens
+
+Font sizes are tokens in `src/styles/tokens.css`:
+
 ```css
-h1–h6            /* semantic elements carry the style */
-.h1 … .h6        /* same styles on any element */
+--font-size-h1: 32px;
+--font-size-h2: 24px;
+--font-size-h3: 20px;
+--font-size-h4: 16px;
+--font-size-h5: 14px;
+--font-size-h6: 12px;
+--font-size-lg: 16px;
+--font-size-md: 14px;
+--font-size-sm: 12px;
+--font-size-button: 14px; /* .btn-* label */
 ```
 
-### Paragraph (3 sizes × 3 weights)
+Text colour classes in `typography.css`:
+
 ```css
-/* Regular 400 */
-.text-lg           /* 16px, 1.5 */
-.text-md           /* 14px, 1.5 */
-.text-sm           /* 12px, 1.2 */
-
-/* Medium 500 — subtle emphasis, badge/chip labels */
-.text-lg-medium
-.text-md-medium
-.text-sm-medium
-
-/* Semibold 600 — form-field labels use .text-md-semibold */
-.text-lg-semibold
-.text-md-semibold
-.text-sm-semibold
-
-/* Weight only */
-.font-regular  .font-medium  .font-semibold  .font-bold
+.text-primary    /* --text-primary - headings, primary content */
+.text-secondary  /* --text-secondary - body text, descriptions */
+.text-tertiary   /* --text-tertiary - captions, metadata */
+.text-disabled   /* --text-disabled - disabled, deemphasised */
 ```
 
-> These are the names implemented in `src/styles/typography.css`. There are no `.text-body-*` or `.heading-*` classes — use the `h1`–`h6` elements or `.h1`–`.h6`.
+Font family, weight and line-height tokens are **not defined**; weights and line heights are written as literals (400/500/600/700; 1.2/1.4/1.5) or come from the classes. Treat these names as proposed only:
 
-### Button Text
-
-There are no button text classes; button label sizes (Button L/M/S, 16/14/12 Bold) come with the `Button` component ([doc](buttons.md)).
-
-### Text Colors
 ```css
-.text-primary    /* neutral-800 - Headings, primary content */
-.text-secondary  /* neutral-500 - Body text, descriptions */
-.text-tertiary   /* neutral-400 - Captions, metadata */
-.text-disabled   /* neutral-300 - Disabled, deemphasized */
+--font-family-primary
+--font-weight-regular: 400;
+--font-weight-medium: 500;
+--font-weight-semibold: 600;
+--font-weight-bold: 700;
+--line-height-tight: 1.2;    /* 12px text (Button S uses 1.4) */
+--line-height-compact: 1.4;
+--line-height-normal: 1.5;
+--line-height-loose: 1.6;
 ```
 
-## Usage Guidelines
+### Font loading
 
-### Hierarchy Rules
+Poppins loads from Google Fonts:
 
-**H1 - Page Titles**
-- Use once per page
-- Main page identifier
-- Examples: "Team Dashboard", "Course Library"
+```css
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+```
 
-**H2 - Section Headers**
-- Major content divisions
-- Examples: "Your Progress", "Course Overview"
+- `display=swap` keeps text visible during font load.
+- Falls back to system fonts if the load fails.
 
-**H3 - Subsection Headers**
-- Content groups within H2 sections
-- Examples: "Completed Courses", "Learning Objectives"
+## Accessibility
 
-**H4 - Component Titles**
-- Card headers, modal titles
-- Examples: Course card names, dialog headers
+- Primary text (`--text-primary`) on white: AAA.
+- Secondary text (`--text-secondary`) on white: AA.
+- Tertiary text (`--text-tertiary`) on white: AA.
+- Disabled text (`--text-disabled`): use for disabled only.
+- Use semantic HTML headings (`h1`-`h6`) in logical order; don't skip levels.
+- Line height 1.5 for 16px and 14px body text, 1.2 for 12px text (Button S excepted at 1.4).
+- Body text minimum 16px for main content.
+- Test with screen readers and on actual devices.
 
-**H5 - Small Component Headers**
-- Sidebar labels, table headers
-- Examples: Navigation section labels
+## Examples
 
-**H6 - Micro Headers**
-- Tags, badges, metadata labels
-- Use sparingly for very small text
-
-### Body Text Selection
-
-**Use Large (16px) for:**
-- Main content paragraphs
-- Course descriptions
-- Primary readable content
-
-**Use Medium (14px) for:**
-- Secondary descriptions
-- List items
-- Table content
-- Card descriptions
-
-**Use Small (12px) for:**
-- Captions and help text
-- Timestamps and metadata
-- Footer text
-- Very compact UIs
-
-### Weight Selection
-
-**Regular (400):** Default for body text
-**Medium (500):** Subtle emphasis without bold
-**Semibold (600):** Form-field labels; text that must lead a control without becoming a heading
-**Bold (700):** Headings and buttons only
-
-### Button Text Guidelines
-
-- **Large buttons:** Primary CTAs, hero sections
-- **Medium buttons:** Standard interface buttons (most common)
-- **Small buttons:** Compact interfaces, tables, toolbars
-
-All button text is bold (700) with no text-transform.
-
-## Text Color Patterns
-
-### Headings
-Always use `.text-primary` (neutral-800) for all headings to maintain clear hierarchy.
-
-### Body Content
 ```css
 /* Standard body text */
-.text-secondary  /* Default for paragraphs */
+.text-secondary  /* default for paragraphs */
 
 /* Form-field labels */
 .text-md-semibold .text-secondary
@@ -242,13 +241,11 @@ Always use `.text-primary` (neutral-800) for all headings to maintain clear hier
 /* Captions and metadata */
 .text-sm .text-tertiary
 
-/* Disabled or deemphasized */
+/* Disabled or deemphasised */
 .text-disabled
 ```
 
-### Common Combinations
-
-**Page Header:**
+**Page header:**
 ```html
 <h1>Team Management</h1>
 <p class="text-md text-tertiary">Manage your team's learning progress</p>
@@ -268,91 +265,12 @@ Always use `.text-primary` (neutral-800) for all headings to maintain clear hier
 
 **Button:** use the `Button` component; don't style a label with typography classes.
 
-## Responsive typography
-
-Not implemented: the type scale is the same at every width, and `typography.css` has no media queries. The older tablet and mobile steps listed here (28px, 22px) were off the type scale and have been removed.
-
-## Sanctioned component exceptions
-
-These component-level uses sit off the scale on purpose; keep them inside their components and don't copy them elsewhere:
-- Avatar group "+N" counter: 8px at 24px and 10px at 32px (`AvatarGroup.css`)
-- Badge label: 14px Medium at line height 1.2 (`badges.md`)
-- Toast label: Bold 16 on every fill (`alerts-toast.md`)
-- Mobile tab bar label: Regular 10px / 1.4 (`navigation.md`)
-
-## Accessibility
-
-### Contrast Requirements Met
-- Primary text (neutral-800) on white: ✓ AAA
-- Secondary text (neutral-500) on white: ✓ AA
-- Label text (neutral-400) on white: ✓ AA
-- Muted text (neutral-300): Use for disabled only
-
-### Best Practices
-✓ Use semantic HTML headings (h1-h6)
-✓ Maintain logical heading order
-✓ Don't skip heading levels
-✓ Line height 1.5 for 16px and 14px body text, 1.2 for 12px text (Button S excepted at 1.4)
-✓ Body text minimum 16px for main content
-✓ Test with screen readers
-
-## Font Loading
-
-The typography system loads Poppins from Google Fonts:
-
-```css
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-```
-
-**Strategy:**
-- Uses `display=swap` for better performance
-- Text visible during font load (FOIT prevention)
-- Falls back to system fonts if load fails
-
-## CSS Custom Properties
-
-These variables are **not defined** in `src/styles/tokens.css`; the prototype writes sizes and weights as literal px in component CSS, or uses the classes above. Treat the list as proposed naming only:
-
-```css
-/* Font families */
---font-family-primary
-
-/* Font weights */
---font-weight-regular: 400;
---font-weight-medium: 500;
---font-weight-semibold: 600;
---font-weight-bold: 700;
-
-/* Font sizes - Headings */
---font-size-h1: 32px;
---font-size-h2: 24px;
---font-size-h3: 20px;
---font-size-h4: 16px;
---font-size-h5: 14px;
---font-size-h6: 12px;
-
-/* Font sizes - Body */
---font-size-body-l: 16px;
---font-size-body-m: 14px;
---font-size-body-s: 12px;
-
-/* Font sizes - Buttons */
---font-size-button-l: 16px;
---font-size-button-m: 14px;
---font-size-button-s: 12px;
-
-/* Line heights */
---line-height-tight: 1.2;    /* 12px text (Button S uses 1.4) */
---line-height-compact: 1.4;
---line-height-normal: 1.5;
---line-height-loose: 1.6;
-```
-
-## Quick Decisions
+### Quick decisions
 
 **"What heading size for...?"**
-- Page title → H1 (32px)
-- Section header → H2 (24px)
+- Course title → H1 (32px)
+- Page title → 24px `<h2>`
+- Section header → 20px (H3 style)
 - Card header → H4 (16px)
 - Small label → H5 (14px)
 
@@ -368,31 +286,17 @@ These variables are **not defined** in `src/styles/tokens.css`; the prototype wr
 - Form-field labels → Semibold (600)
 - Buttons → Bold (700)
 
-**"What color for...?"**
-- Headings → text-primary (neutral-800)
-- Body → text-secondary (neutral-500)
-- Field labels → text-secondary (neutral-500)
-- Captions and metadata → text-tertiary (neutral-400)
-- Disabled → text-disabled (neutral-300)
+**"What colour for...?"**
+- Headings → `--text-primary`
+- Body → `--text-secondary`
+- Field labels → `--text-secondary`
+- Captions and metadata → `--text-tertiary`
+- Disabled → `--text-disabled`
+- Links → the Link button colour ladder, `--primary-button-background` ([doc](buttons.md))
 
-## Resources
+## Related
 
-**Implemented classes:** `src/styles/typography.css`
-
-## Best Practices
-
-### Do:
-✓ Use semantic heading hierarchy
-✓ Apply text colors consistently
-✓ Use medium weight for subtle emphasis
-✓ Test on actual devices
-✓ Maintain line-height for readability
-✓ Use Poppins for brand consistency
-
-### Don't:
-✗ Skip heading levels (H1 → H3)
-✗ Use muted text for important content
-✗ Make body text smaller than 14px
-✗ Use bold for entire paragraphs
-✗ Mix font families
-
+- [colors.md](colors.md) - text colour tokens and their light/dark values
+- [headers.md](headers.md) - page and section title specs
+- [buttons.md](buttons.md) - button label sizes
+- [input.md](input.md) - field label rule

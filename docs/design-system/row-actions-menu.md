@@ -3,13 +3,13 @@ name: 5mins-row-actions-menu
 description: RowActionsMenu for 5Mins.ai - the kebab (more) button on a table or list row that opens a portalled action menu built on the DS listbox, with icons, supporting text, danger items, dividers and disabled items. Use when a row, card or toolbar needs an overflow menu of actions.
 ---
 
-# 5Mins.ai Row Actions Menu
+# Row actions menu
 
-The kebab button at the end of a table row and the action menu it opens. The menu is the DS listbox ([listbox.md](listbox.md)) in its action-menu form: a floating surface of items that each run one action on that row. It is portalled to `<body>` so it escapes the table cell's `overflow: hidden`, and stays glued to its trigger on scroll and resize.
+The kebab button at the end of a table row and the action menu it opens: the DS listbox ([listbox.md](listbox.md)) in its action-menu form, a floating surface of items that each run one action on that row, portalled to `<body>` so it escapes the table cell's `overflow: hidden` and stays glued to its trigger on scroll and resize.
 
-> **Updated 2026-09-29 (verified against code):** leading icons now `color="currentColor"` (`.ram-item-icon` supplies `--text-primary`); the unsupported "single action → Small Button" rule removed; disabled-item wording reworded; shadow named `var(--shadow-l)`; focus ring corrected to `--primary-button-background` (what `RowActionsMenu.css` uses); stale listbox `--border` bullet removed.
-
-Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) via [listbox.md](listbox.md) - Listbox light `11923:3466` / dark `9162:1042`, List items light `11908:6300` / dark `9162:941`; two-line item People `8572:654`. Code is the reference for the trigger.
+**Code:** `import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'` (code is the reference for the trigger)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, via [listbox.md](listbox.md): Listbox dark `9162:1042` / light `11923:3466`; List items dark `9162:941` / light `12432:13357`; two-line item People `8572:654` <!-- TODO: node id unknown -->
+**Last verified:** 2026-09-29
 
 ## Usage
 
@@ -42,26 +42,32 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) via [listbox.md](listbox.m
 - Don't give a danger item's icon a raw palette colour such as `var(--danger-500)`; it reads darker than the label in dark mode.
 - Don't wrap the menu in your own portal or popover; it already portals and positions itself.
 
-**Canonical spec:** trigger 28px circle `var(--radius-full)`, hover and open `var(--input-background)`, kebab icon 20px; menu min-width 240px, `var(--cards-background)`, 1px `var(--border-elevated)`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), item gap `var(--space-xs)` (4px), shadow `var(--shadow-l)`, 8px from the trigger; item padding `var(--space-s)` `var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), hover `var(--cards-background-hover)`, label 14px Regular `var(--text-primary)` (Medium when stacked), icon `var(--text-primary)`, description 14px `var(--text-tertiary)`, danger `var(--text-error)`, disabled `var(--text-disabled)`; divider 1px `var(--border-elevated)`; focus 2px `var(--primary-button-background)` inset outline. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11923:3466` / dark `9162:1042` (items light `11908:6300` / dark `9162:941`).
+**Canonical spec:** trigger 28px circle `var(--radius-full)`, hover and open `var(--input-background)`, kebab icon 20px; menu min-width 240px, `var(--cards-background)`, 1px `var(--border-elevated)`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), item gap `var(--space-xs)` (4px), shadow `var(--shadow-l)`, 8px from the trigger; item padding `var(--space-s)` `var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), hover `var(--cards-background-hover)`, label 14px Regular `var(--text-primary)` (Medium when stacked), icon `var(--text-primary)`, description 14px `var(--text-tertiary)`, danger `var(--text-error)`, disabled `var(--text-disabled)`; divider 1px `var(--border-elevated)`; focus 2px `var(--primary-button-background)` inset outline.
 
-**Prototype:** `src/components/RowActionsMenu/RowActionsMenu.tsx`
-- `items: RowMenuItem[]` (`key`, `label`, `icon`, `description`, `danger`, `dividerBefore`, `disabled`, `title`, `inert`).
-- `onSelect(key)`: called on click; the menu closes first.
-- `ariaLabel`, `placement` (`bottom` default, `top`), `caret` (default `true`).
-- `triggerClassName` (default `ram-trigger`), `triggerContent` (default kebab icon).
+## Figma to code
 
-**Production:**
+The trigger has no Figma component; the menu maps to the Listbox and List items sets.
 
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| RowActionsMenu (Listbox action menu) | _to be mapped by engineering_ | | |
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Listbox > Caret | true / false | `caret` | `true` (default) / `false` | |
+| Listbox > Position | Bottom / Top / n/a | `placement` | `'bottom'` (default) / `'top'` | `n/a` has no code equivalent |
+| Listbox > Wrapping menu itens | false / true | n/a | n/a | Code labels are one line, no wrap (the `false` form) |
+| Listbox > List-1 / List-2 / List-3 (slots) | content | `items` | `RowMenuItem[]` | Groups are separated with `dividerBefore` |
+| List itens > Supporting text | false / true | `items[].description` | `string` | Turns the item into the stacked (two-line) form |
+| List itens > Icon left | false / true | `items[].icon` | `ReactNode` | |
+| List itens > Disabled | false / true | `items[].disabled` | `boolean` | |
+| List itens > State | Enabled / Hover / Read-only | n/a | CSS `:hover` | Read-only has no code equivalent |
 
-## Props
+- **Figma only:** Listbox `Position=n/a`, `Wrapping menu itens=true`; List itens `State=Read-only`, `Selected`, `Helper text`, `Icon right`, `Avatar`, `Skill icon`, `Checkbox`, `Radio`, `Search`, `Integer` (those belong to the Dropdown, [dropdown.md](dropdown.md)).
+- **Code only:** `onSelect`, `ariaLabel`, `triggerClassName`, `triggerContent`; item `key`, `label`, `danger`, `dividerBefore`, `title`, `inert`.
+
+**Props**
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `items` | `RowMenuItem[]` | required | Rendered in order. |
-| `onSelect` | `(key: string) => void` | required | Not called for `disabled` or `inert` items. |
+| `onSelect` | `(key: string) => void` | required | Called on click; the menu closes first. Not called for `disabled` or `inert` items. |
 | `ariaLabel` | `string` | `'Row actions'` | Trigger's `aria-label`. |
 | `placement` | `'bottom' \| 'top'` | `'bottom'` | `top` opens above the trigger. |
 | `triggerClassName` | `string` | `'ram-trigger'` | Replaces the trigger's class. |
@@ -81,7 +87,17 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) via [listbox.md](listbox.m
 | `title` | Native tooltip, e.g. why an item is unavailable. |
 | `inert` | Looks enabled but does nothing; only the arrow cursor signals it. Use `disabled` when the grey carries meaning. |
 
-## Anatomy and behaviour
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| RowActionsMenu (Listbox action menu) | _to be mapped by engineering_ | | |
+
+**Known drift**
+- Hand-rolled kebab menus still exist: `.programs-kebab-menu` (`ProgramsAdmin.tsx`), `.content-table-menu` (`your-courses/components/ContentTable/ContentTable.tsx`), `.lf-menu` (`for-you/components/LessonFeed.tsx`).
+- The questions-bank and scorm-content content tables colour the Delete icon `var(--danger-500)` instead of `currentColor`.
+
+## Anatomy
 
 ```
 button.ram-trigger   aria-haspopup="menu", aria-expanded
@@ -95,10 +111,47 @@ button.ram-trigger   aria-haspopup="menu", aria-expanded
 
 - **Position:** right-aligned to the trigger, 8px below it (or above with `placement="top"`). A tall menu on a low row flips above the trigger when there is more room there. It re-measures on scroll and resize.
 - **Close:** selecting an item, Escape, or mousedown outside the trigger and menu.
-- **Keyboard:** items are buttons, so Tab moves through them; arrow-key navigation (listbox.md) is not implemented yet.
 - **Motion:** the menu fades and slides 4px in over 120ms; `prefers-reduced-motion` removes it.
-- **Trigger focus:** `.ram-trigger` has no `:focus-visible` ring of its own yet; add one when touching it.
 
-**Known drift**
-- Hand-rolled kebab menus still exist: `.programs-kebab-menu` (`ProgramsAdmin.tsx`), `.content-table-menu` (`your-courses/components/ContentTable/ContentTable.tsx`), `.lf-menu` (`for-you/components/LessonFeed.tsx`).
-- The questions-bank and scorm-content content tables colour the Delete icon `var(--danger-500)` instead of `currentColor`.
+## Variants
+
+- **Single-line item:** label, optional icon.
+- **Stacked (two-line) item:** `description` adds a second line; the label goes Medium.
+- **Danger item:** `danger: true`, usually last with `dividerBefore: true`.
+- **Plain choices:** no `icon` on any item.
+- **Custom trigger:** `triggerClassName` + `triggerContent` (text button, bulk bar "Actions" trigger).
+
+## States
+
+| State | Trigger | Item |
+|---|---|---|
+| Enabled | transparent | label and icon `var(--text-primary)`, description `var(--text-tertiary)` |
+| Hover | `var(--input-background)` | `var(--cards-background-hover)` |
+| Open | `var(--input-background)` | n/a |
+| Danger | n/a | label and icon `var(--text-error)` |
+| Disabled | n/a | label, icon and description `var(--text-disabled)`, `aria-disabled`, not clickable |
+| Inert | n/a | looks enabled, arrow cursor, does nothing |
+| Focus-visible | no ring of its own yet; add one when touching it | 2px `var(--primary-button-background)` inset outline |
+
+## Tokens
+
+`var(--input-background)`, `var(--cards-background)`, `var(--cards-background-hover)`, `var(--border-elevated)`, `var(--shadow-l)`, `var(--radius-full)`, `var(--radius-sm)`, `var(--radius-s)`, `var(--space-xs)`, `var(--space-s)`, `var(--space-sm)`, `var(--text-primary)`, `var(--text-tertiary)`, `var(--text-error)`, `var(--text-disabled)`, `var(--primary-button-background)`.
+
+## Accessibility
+
+- **Roles:** trigger `aria-haspopup="menu"` + `aria-expanded`; menu `role="menu"`; items `role="menuitem"`; dividers `role="separator"`.
+- **Label:** `ariaLabel` names the row ("Actions for Jane Doe").
+- **Disabled:** `aria-disabled`, not the native attribute, so the item and its reason stay reachable.
+- **Keyboard:** items are buttons, so Tab moves through them; Escape closes. Arrow-key navigation ([listbox.md](listbox.md)) is not implemented yet.
+- **Focus-visible:** items have a 2px inset ring; `.ram-trigger` has none yet.
+
+## Content
+
+- Label is one line, no wrap.
+- Add `description` only where the label alone doesn't separate an action from its neighbours; use it, or `title`, to say why a disabled item is unavailable.
+
+## Related
+
+- [listbox.md](listbox.md) - the menu surface and item spec
+- [dropdown.md](dropdown.md) - picking a value for a field or filter
+- [bulk-action-bar.md](bulk-action-bar.md) - actions on several selected rows

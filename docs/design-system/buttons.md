@@ -1,25 +1,17 @@
 ---
 name: 5mins-buttons
-description: Button component system for 5Mins.ai — Filled, Outlined, Outlined-2, Text, and Link variants; Danger/Warning/Success semantic families (filled, outlined, text); AI gradient buttons; three sizes; Enabled/Hover/Pressed/Disabled/Loading states; leading-icon support. Use when implementing any button, CTA, or clickable action.
+description: Button component system for 5Mins.ai - Filled, Outlined, Outlined-2, Text, and Link variants; Danger/Warning/Success semantic families (filled, outlined, text); AI gradient buttons; three sizes; Enabled/Hover/Pressed/Disabled/Loading states; leading-icon support. Use when implementing any button, CTA, or clickable action.
 ---
 
-# 5Mins.ai Button Component System
+# Buttons
 
-Complete button implementation guide for the 5Mins.ai micro-learning platform with all variants, states, sizes, and accessibility patterns.
+Triggers a single action, with the variant telling the user how important or how risky that action is.
 
-Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — parent frame `node 5453:38273` (dark board `10825:3269`, light board `12016:14084`), re-verified 2026-08-04. All colors are semantic tokens; **both light- and dark-mode resolutions are listed** because the two modes now use different state ladders.
+**Code:** `import Button from '@/components/Button/Button'`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `10825:3269` / light `12141:7567` (parent frame `5453:38273`)
+**Last verified:** 2026-09-29
 
-> **Updated 2026-09-29 (verified against code):** Cancel position split by container (dialogs: Cancel first; side-drawer footers: primary first); the "commit label differs from the opener" rule softened to a recommendation; the icon-only accessibility example no longer uses `<Button>` (it has no circular icon-only shape) and passes `color`.
-
-> **Updated 2026-09-29 (aligned to prototype usage):** Cancel is **Outlined-2**, not Outlined; modal and dialog footers use **Medium**, not Large.
-
-> **Updated 2026-08-04:** major rework of both modes —
-> 1. **Primary filled ladder is now mode-specific.** Light darkened one step (bg Primary-**700**, was 600); dark uses Primary-**500** with a **dark label** (`Neutral-800`) and goes **lighter on hover** (Primary-400).
-> 2. **Outlined resting tint is gone.** New fill ladder: **transparent at rest → tint on hover → transparent on press**. Hover tint = Primary-500 @ 16% (primary) / family-500 @ **24%** (semantic families). Disabled is transparent too (the 16% neutral fill was removed).
-> 3. **Icons are now LEADING** (before the label), not trailing. Gap 4px (S) / 8px (M, L); icon-side padding is one step tighter.
-> 4. **AI gradients are per-state and per-mode**: the gradient start follows the primary filled ladder, the end is always Blaze `#8158EC`. AI hover gains a cyan border + purple glow. AI-Outlined lost its resting wash (wash only on hover, at 24%), and its 1px stroke is a **gradient**, not a flat cyan (corrected 2026-08-11 - see AI-Outlined below).
-> 5. The semantic families (Danger, Warning, Success) all darken on hover in both modes — Warning and Success were realigned to the Library variables 2026-08-26. Only the primary filled button lightens on dark hover.
-> 6. Coverage: Loading now exists for the semantic-outlined families; semantic-text variants (Danger/Warning/Success-text) are first-class.
+All colours are semantic tokens. Both light- and dark-mode resolutions are listed because the two modes use different state ladders.
 
 ## Usage
 
@@ -58,13 +50,104 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — parent frame `node 545
 - Don't use `--text-button-foreground` for semantic filled labels; they stay `--neutral-25` in both modes.
 - Don't use `--primary-500` as text on white, and don't write raw hex or px values; use the tokens below.
 
-**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12016:14084` / dark `10825:3269` (parent frame `5453:38273`).
+### Variant selection
 
-**Prototype:** `src/components/Button/Button.tsx`
-- `variant`: `filled` (default) · `outlined` · `outlined-2` · `text` · `link`
-- `semantic`: `primary` (default) · `danger` · `warning` · `success` · `ai`
-- `size`: `sm` · `md` (default) · `lg`
-- `icon` (leading) · `trailingIcon` (disclosure only) · `loading` · `loadingLabel`
+- **Filled** - primary CTA, form submits, the one most-important action on the page
+- **Outlined** - secondary actions (Save Draft, Download, Add Content), not Cancel
+- **Outlined-2** - Cancel (paired with Filled, including every dialog footer) and other neutral actions that shouldn't read as brand-coloured at rest
+- **Text** - inline, subtle actions
+- **Link** - navigation-like actions within content
+
+### Semantic selection
+
+**Primary (Cyan):** default · **Danger (Red):** delete/destructive · **Warning (Orange):** consequence-laden actions · **Success (Green):** confirm/complete · **AI (Gradient):** Hugo AI and AI-powered features
+
+### Size selection
+
+**Large:** hero sections, primary CTAs · **Medium:** standard (most common), including modal and dialog footers · **Small:** tables, compact UIs
+
+### Quick reference
+
+| Action | Variant | Semantic | Size |
+|--------|---------|----------|------|
+| Main CTA | Filled | Primary | Large |
+| Form submit | Filled | Primary | Medium |
+| Cancel | Outlined-2 | Primary | Medium |
+| Delete | Filled | Danger | Medium |
+| Neutral tertiary | Outlined-2 | Primary | Medium |
+| Inline link | Link | Primary | n/a |
+| AI feature | Filled (gradient) | AI | Medium |
+| Mark complete | Filled | Success | Medium |
+
+**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12141:7567` / dark `10825:3269` (parent frame `5453:38273`).
+
+## Figma to code
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Configuration | Filled | `variant` + `semantic` | `variant="filled"` (default), `semantic="primary"` (default) | |
+| Configuration | Outlined | `variant` | `outlined` | |
+| Configuration | Outlined-2 | `variant` | `outlined-2` | |
+| Configuration | Text | `variant` | `text` | |
+| Configuration | Link | `variant` | `link` | |
+| Configuration | Danger / Warning / Success | `semantic` | `danger` / `warning` / `success` (with `variant="filled"`) | |
+| Configuration | Danger-outlined / Warning-outlined / Success-outlined | `variant` + `semantic` | `variant="outlined"` + `semantic="danger"` etc. | `variant="outlined-2"` with a semantic renders the same `-outlined` treatment |
+| Configuration | Danger-text / Warning-text / Success-text | `variant` + `semantic` | `variant="text"` + `semantic="danger"` etc. | `variant="link"` with a semantic renders the same `-text` treatment |
+| Configuration | AI | `semantic` | `semantic="ai"` (with `variant="filled"`) | |
+| Configuration | AI-Outlined | `variant` + `semantic` | `variant="outlined"` + `semantic="ai"` | Figma casing "AI-Outlined" differs from "Danger-outlined" |
+| Size | Large / Medium / Small | `size` | `lg` / `md` (default) / `sm` | Figma default is Large; code default is `md` |
+| State | Enabled / Hover / Pressed | n/a | CSS `:hover`, `:active` | states are CSS, not props |
+| State | Loading | `loading` | `true` / `false` | |
+| State | n/a | n/a | n/a | only used with Disabled=true |
+| Disabled | false / true | `disabled` | native attribute | `loading` also sets `disabled` |
+| Icon | true / false | `icon` | ReactNode, rendered before the label | Figma toggles a fixed icon; code takes any Iconsax node |
+
+The component composes one appearance class from `(semantic, variant)`: `ds-btn--filled`, `ds-btn--danger-outlined`, `ds-btn--ai`, etc. Semantic families (danger/warning/success) mirror filled/outlined/text; AI is filled + outlined only. See `Button.css` for the full class matrix.
+
+- **Figma only:** Figma has no TEXT property for the label (code: `children`) and no icon swap property. The Figma `State=n/a` value exists only to pair with `Disabled=true`.
+- **Code only:** `trailingIcon` (disclosure controls only), `loadingLabel` (labelled loading, see States), the focus-visible ring (Figma has no Focus state), and Small sizes for semantic families Figma draws only at larger sizes (extrapolate from Sizes).
+
+**Props**
+
+```tsx
+import Button from '@/components/Button/Button';
+
+type ButtonVariant = 'filled' | 'outlined' | 'outlined-2' | 'text' | 'link';
+type ButtonSemantic = 'primary' | 'danger' | 'warning' | 'success' | 'ai';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;    // default 'filled'
+  semantic?: ButtonSemantic;  // default 'primary'
+  size?: ButtonSize;          // default 'md'
+  icon?: ReactNode;           // leading icon, rendered BEFORE the label
+  trailingIcon?: ReactNode;   // AFTER the label, disclosure controls only
+  loading?: boolean;
+  loadingLabel?: string;      // word shown beside the spinner while loading
+  children?: ReactNode;
+}
+```
+
+**Size and state coverage in Figma.** Both mode boards carry the identical matrix. Primary variants (Filled/Outlined/Outlined-2/Text/Link) and AI/AI-Outlined cover all three sizes. Semantic coverage:
+
+| Family | Sizes in Figma |
+|--------|----------------|
+| Danger | S, M, L |
+| Danger-outlined | L only |
+| Danger-text | M, L |
+| Warning | M, L |
+| Warning-outlined | S, M, L |
+| Warning-text | L only |
+| Success | M, L |
+| Success-outlined | M, L |
+| Success-text | L only |
+
+Every present size has all five states (incl. Loading). For missing sizes, extrapolate from the Sizes table.
+
+**Implementation notes.** `src/components/Button/Button.tsx` is the canonical component; use it for all new work. It is namespaced `ds-btn` rather than `btn` so it doesn't collide with the legacy global `.btn-*` utility classes (CSS is globally bundled in this app). Two legacy button patterns also still exist, to be migrated opportunistically (convert a call site when you're already editing that file, no big-bang sweep):
+
+- **Legacy global classes** in `src/styles/tokens.css`: `.btn-primary`, `.btn-outlined`, `.btn-success`, `.btn-danger`, `.btn-text` (~50 usages). These predate the component and cover only the common cases.
+- **Raw `<button>` elements** with hand-rolled styling across pages.
 
 **Production:**
 
@@ -72,68 +155,31 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — parent frame `node 545
 |---|---|---|---|
 | Button | _to be mapped by engineering_ | | |
 
-## Button Architecture
+## Anatomy
 
-| Dimension | Options |
-|-----------|---------|
-| **Configuration** | Filled, Outlined, Outlined-2, Text, Link, Danger(-outlined/-text), Warning(-outlined/-text), Success(-outlined/-text), AI, AI-Outlined |
-| **Size** | Small (33px), Medium (41px), Large (48px) |
-| **State** | Enabled, Hover, Pressed, Disabled, Loading (bare or labelled) |
-| **Icon** | With leading icon, without (AI variants are always with icon) |
+`[leading icon?] Label [trailing icon?]`, with a centred spinner replacing the label in the Loading state.
 
-## Size System
-
-All sizes share `border-radius: var(--radius-sm)` (12px) and Poppins **Bold** labels.
-
-| Size | Height | Padding (no icon) | Padding (with icon) | Icon gap | Font | Icon |
-|------|--------|-------------------|---------------------|----------|------|------|
-| **Small** | 33px | 8px 16px | 8px **12px**/16px | 4px (`--space-xs`) | 12px / 1.4 (Button S) | 16px |
-| **Medium** | 41px | **10px** 20px (10px is intentionally off the 4px scale) | 10px **16px**/20px | 8px (`--space-s`) | 14px / 1.5 (H5) | 20px |
-| **Large** | 48px | 12px 24px | 12px **20px**/24px | 8px (`--space-s`) | 16px / 1.5 (H4) | 24px |
-
-With an icon, the **icon-side (left) padding is one step tighter** than the label-side padding — the icon leads.
-
-```css
-.btn    { border-radius: var(--radius-sm); font-family: 'Poppins'; font-weight: 700; }
-.btn-sm { padding: var(--space-s) var(--space-m);  font-size: 12px; line-height: 1.4; gap: var(--space-xs); }
-.btn-md { padding: 10px var(--space-ml);           font-size: 14px; line-height: 1.5; gap: var(--space-s); }
-.btn-lg { padding: var(--space-sm) var(--space-l); font-size: 16px; line-height: 1.5; gap: var(--space-s); }
-/* with icon: tighten the leading (icon) side one step */
-.btn-sm.has-icon { padding-left: var(--space-sm); }  /* 12px */
-.btn-md.has-icon { padding-left: var(--space-m); }   /* 16px */
-.btn-lg.has-icon { padding-left: var(--space-ml); }  /* 20px */
-```
-
-## Icon Support
-
-Icons are **leading** — before the label, Iconsax Linear at the size-bound dimension (16/20/24px), `currentColor`:
+Icons are **leading**: before the label, Iconsax Linear at the size-bound dimension (16/20/24px), `currentColor`. AI variants always carry an icon.
 
 ```tsx
 <Button icon={<Add size={20} color="currentColor" />}>Add Course</Button>
-{/* renders: [ + Button ] — icon first, label after */}
+{/* renders: [ + Button ], icon first, label after */}
 ```
 
-> This flips the previous trailing-icon spec. Any call site that visually relies on a trailing icon should be re-checked against Figma.
+Any call site that visually relies on a trailing icon should be re-checked against Figma; `trailingIcon` is for disclosure controls only.
 
-## Primary Variants
+**Borders.** Fill configurations (Filled, Danger, Warning, Success, AI) render **no border**; bordered configurations draw their 1px border inside the size by taking that pixel out of the padding (`--btn-bw`), so every configuration of a size matches the heights in Sizes (S 33 · M 41 · L 48).
 
-### Filled (Default)
+## Variants
 
-The ladder is **mode-aware** — light gets darker on interaction, dark gets *lighter* on hover, and the label flips to dark on the bright dark-mode fill:
+### Filled (default)
 
-| Token | Light | Dark |
-|-------|-------|------|
-| `--primary-button-background` | Primary-700 `#008393` | Primary-500 `#00CEE6` |
-| `--primary-button-background-hover` | Primary-800 `#005862` | Primary-400 `#33E2F7` |
-| `--primary-button-background-pressed` | Primary-900 `#002C31` | Primary-700 `#008393` |
-| `--text-button-foreground` (label) | Neutral-25 `#F9F9FA` | **Neutral-800 `#20222A`** |
-| `--button-background-disabled` | Neutral-100 `#DFE1E6` | Neutral-400 `#656B7C` |
-| `--text-button-disabled` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` |
+The ladder is **mode-aware**: light gets darker on interaction, dark gets *lighter* on hover, and the label flips to dark on the bright dark-mode fill. Token values are in [Tokens](#tokens).
 
 ```css
 .btn-filled {
   background: var(--primary-button-background);
-  color: var(--text-button-foreground);           /* dark on cyan in dark mode — token handles it */
+  color: var(--text-button-foreground);           /* dark on cyan in dark mode, the token handles it */
   border: none;
 }
 .btn-filled:hover    { background: var(--primary-button-background-hover); }
@@ -143,16 +189,16 @@ The ladder is **mode-aware** — light gets darker on interaction, dark gets *li
 
 ### Outlined
 
-**Transparent at rest** (the 16% resting tint is gone). Fill ladder: transparent → **16% Primary-500 tint on hover** → transparent on press. Border and text share one color per state:
+**Transparent at rest.** Fill ladder: transparent → **16% Primary-500 tint on hover** → transparent on press. Border and text share one colour per state:
 
 | State | Fill | Border + text | Light | Dark |
 |-------|------|---------------|-------|------|
 | Enabled | transparent | `--text-button-outlined` | Primary-700 `#008393` | Primary-500 `#00CEE6` |
 | Hover | `rgba(0,206,230,0.16)` | `--text-button-hover` | Primary-700 `#008393` | Primary-400 `#33E2F7` |
-| Pressed | transparent | `--primary-button-background-pressed` | Primary-900 `#002C31` | Primary-700 `#008393` |
+| Pressed | transparent | `--primary-button-background-pressed` | Primary-900 `#002C31` | Primary-600 `#00AFC4` |
 | Disabled | transparent | `--text-disabled` | Neutral-300 | Neutral-400 |
 
-Note: in **light** mode the rest and hover chrome are the same color — the hover cue is the 16% fill. In **dark** mode the chrome also brightens.
+In **light** mode the rest and hover chrome are the same colour; the hover cue is the 16% fill. In **dark** mode the chrome also brightens.
 
 ```css
 .btn-outlined {
@@ -179,7 +225,7 @@ Note: in **light** mode the rest and hover chrome are the same color — the hov
 
 ### Outlined-2
 
-Neutral at rest: `--border-elevated` hairline + `--text-primary` label, transparent fill. Hover/Pressed are **identical to Outlined** (16% cyan tint on hover, brand chrome). Use for tertiary actions where the brand color should only surface on interaction. Has Loading in all three sizes.
+Neutral at rest: `--border-elevated` hairline + `--text-primary` label, transparent fill. Hover/Pressed are **identical to Outlined** (16% cyan tint on hover, brand chrome). Use for tertiary actions where the brand colour should only surface on interaction. Has Loading in all three sizes.
 
 ```css
 .btn-outlined-2 {
@@ -187,12 +233,12 @@ Neutral at rest: `--border-elevated` hairline + `--text-primary` label, transpar
   color: var(--text-primary);
   border: 1px solid var(--border-elevated);
 }
-/* :hover / :active — same as .btn-outlined */
+/* :hover / :active, same as .btn-outlined */
 ```
 
 ### Text
 
-No background, border, or padding — just the bold label. Same chrome ladder as Outlined:
+No background, border, or padding, just the bold label. Same chrome ladder as Outlined:
 
 ```css
 .btn-text {
@@ -206,9 +252,7 @@ No background, border, or padding — just the bold label. Same chrome ladder as
 
 ### Link
 
-> **Updated 2026-09-28 against Library `10825:3269`.** Link is no longer "Text plus underline": it is **Medium (500), not Bold**, it takes the **Filled button's colour ladder** rather than the Text/Outlined chrome ladder, and the underline **skips descenders** (`skip-ink: auto`, it was `none`).
-
-Use for navigation-like actions within content. No box, no padding, no icon.
+Use for navigation-like actions within content. No box, no padding, no icon. Link is **Medium (500), not Bold**, it takes the **Filled button's colour ladder** rather than the Text/Outlined chrome ladder, and the underline **skips descenders** (`skip-ink: auto`).
 
 | Size | Text style | Font | Line height |
 |---|---|---|---|
@@ -236,11 +280,11 @@ Use for navigation-like actions within content. No box, no padding, no icon.
 .btn-link.btn-sm   { line-height: 1.2; }  /* Paragraph S medium */
 ```
 
-## Semantic Variants
+### Semantic variants
 
-Semantic **filled labels are always `Neutral-25`** (`--neutral-25`, both modes) — do **not** use `--text-button-foreground`, which flips dark in dark mode. Semantic **outlined** follows the same fill ladder as primary Outlined but with a **24%** hover tint (vs 16% for primary).
+Semantic **filled labels are always `Neutral-25`** (`--neutral-25`, both modes); do **not** use `--text-button-foreground`, which flips dark in dark mode. Semantic **outlined** follows the same fill ladder as primary Outlined but with a **24%** hover tint (vs 16% for primary). The semantic families (Danger, Warning, Success) all darken on hover in both modes; only the primary filled button lightens on dark hover. Semantic-text variants (Danger/Warning/Success-text) are first-class, and Loading exists for the semantic-outlined families.
 
-### Danger (Destructive Actions)
+#### Danger (destructive actions)
 
 Darkens on interaction in **both** modes:
 
@@ -253,20 +297,13 @@ Darkens on interaction in **both** modes:
 .btn-danger-outlined:hover    { background: rgba(223, 22, 66, 0.24); /* Danger-500 @ 24% */
                                 color: var(--text-error); border-color: var(--text-error); } /* light #DF1642 / dark Danger-400 #E95C7B */
 .btn-danger-outlined:active   { background: transparent;
-                                color: var(--button-danger-hover); border-color: var(--button-danger-pressed); } /* text and border differ — per Figma */
+                                color: var(--button-danger-hover); border-color: var(--button-danger-pressed); } /* text and border differ, per Figma */
 .btn-danger-text     { background: transparent; border: none; padding: 0; color: var(--danger-500); }
 ```
 
-### Warning (Caution Actions)
+#### Warning (caution actions)
 
-Default is **Warning-600**. One darkening ladder in both modes (Figma Library variables, 2026-08-26):
-
-| Token | Light | Dark |
-|-------|-------|------|
-| `--button-warning-background` | Warning-600 `#E88206` | Warning-600 `#E88206` |
-| `--button-warning-background-hover` | Warning-700 `#996322` | Warning-700 `#996322` |
-| `--button-warning-background-pressed` | Warning-800 `#664216` | Warning-800 `#664216` |
-| `--text-warning` (outlined hover chrome) | Warning-600 `#E88206` | Warning-500 `#FFA538` |
+Default is **Warning-600**. One darkening ladder in both modes (token values in [Tokens](#tokens)).
 
 ```css
 .btn-warning          { background: var(--button-warning-background); color: var(--neutral-25); }
@@ -281,15 +318,9 @@ Default is **Warning-600**. One darkening ladder in both modes (Figma Library va
 .btn-warning-text     { background: transparent; border: none; padding: 0; color: var(--button-warning-background); }
 ```
 
-### Success (Positive Actions)
+#### Success (positive actions)
 
-One darkening ladder in both modes (Figma Library variables, 2026-08-26):
-
-| Token | Light | Dark |
-|-------|-------|------|
-| `--button-success-background` | Success-500 `#18A957` | Success-500 `#18A957` |
-| `--button-success-background-hover` | Success-600 `#11763D` | Success-600 `#11763D` |
-| `--button-success-background-pressed` | Success-700 `#0A4423` | Success-700 `#0A4423` |
+One darkening ladder in both modes (token values in [Tokens](#tokens)).
 
 ```css
 .btn-success          { background: var(--button-success-background); color: var(--neutral-25); }
@@ -299,7 +330,7 @@ One darkening ladder in both modes (Figma Library variables, 2026-08-26):
 .btn-success-outlined          { background: transparent; color: var(--button-success-background); border: 1px solid var(--button-success-background); }
 .btn-success-outlined:hover    { background: rgba(24, 169, 87, 0.24); /* Success-500 @ 24% */
                                  border-color: var(--button-success-background-hover);
-                                 color: var(--button-success-background); }  /* text stays base on hover — per Figma */
+                                 color: var(--button-success-background); }  /* text stays base on hover, per Figma */
 .btn-success-outlined:active   { background: transparent;
                                  color: var(--button-success-background-pressed); border-color: var(--button-success-background-pressed); }
 .btn-success-text     { background: transparent; border: none; padding: 0; color: var(--button-success-background); }
@@ -307,42 +338,42 @@ One darkening ladder in both modes (Figma Library variables, 2026-08-26):
 
 Disabled state for all semantic variants = the shared disabled treatment (`--button-background-disabled` fill for filled; transparent fill + `--text-disabled` chrome for outlined/text).
 
-## AI Variants (Hugo AI)
+### AI (Hugo AI)
 
-AI buttons use a diagonal **gradient that ends at Blaze `#8158EC`** and *starts* at the primary filled color for the current state and mode — so the gradient follows the same mode-aware ladder as `.btn-filled`. The sparkle "AI Generate" icon is **leading** and size-bound. Label is `--neutral-25` (white) in both modes. All three sizes, all five states.
+AI buttons use a diagonal **gradient that ends at Blaze `#8158EC`** and *starts* at the primary filled colour for the current state and mode, so the gradient follows the same mode-aware ladder as `.btn-filled`. The sparkle "AI Generate" icon is **leading** and size-bound. Label is `--neutral-25` (white) in both modes. All three sizes, all five states.
 
 | State | Light gradient start | Dark gradient start | Extra chrome |
 |-------|---------------------|---------------------|--------------|
-| Enabled | Primary-700 `#008393` | Primary-500 `#00CEE6` | — |
-| Hover | Primary-800 `#005862` | Primary-400 `#33E2F7` | **2px `#00CEE6` border + glow** `drop-shadow(1px 1px 16px rgba(129,88,236,0.5))` |
-| Pressed | Primary-900 `#002C31` | Primary-700 `#008393` | 1px `#00CEE6` border |
-| Disabled | standard disabled fill + label | standard | — |
+| Enabled | Primary-700 `#008393` | Primary-500 `#00CEE6` | none |
+| Hover | Primary-800 `#005862` | Primary-400 `#33E2F7` | **2px `#00CEE6` ring + glow** `drop-shadow(1px 1px 16px rgba(129,88,236,0.5))` |
+| Pressed | Primary-900 `#002C31` | Primary-600 `#00AFC4` | 1px `#00CEE6` ring |
+| Disabled | standard disabled fill + label | standard | none |
 
-**Gradient geometry (verified against rendered pixels 2026-08-04):** Figma uses a **diamond gradient centered at the button's top-left corner** (its 6 stops are collinear, so only the two endpoint colors matter). The closest CSS equivalent is `radial-gradient(circle at top left, start, end)` — corner samples match within ~4%. A `linear-gradient(120deg, …)` is an acceptable fallback; ~100deg is too flat (the left edge visibly shifts toward purple as it descends).
+**Gradient geometry:** Figma uses a **diamond gradient centred at the button's top-left corner** (its 6 stops are collinear, so only the two endpoint colours matter). The closest CSS equivalent is `radial-gradient(circle at top left, start, end)`; corner samples match within ~4%. A `linear-gradient(120deg, …)` is an acceptable fallback; ~100deg is too flat (the left edge visibly shifts toward purple as it descends).
+
+The fill has no border to colour, so the AI hover's 2px cyan ring is drawn as an inset 2px ring (1px on press); nothing reflows.
 
 ```css
 .btn-ai {
   /* start = the mode-resolved primary filled token, end = Blaze */
-  background: radial-gradient(circle at top left, var(--primary-button-background) 0%, var(--blaze-quiz, #8158EC) 100%);
+  background: radial-gradient(circle at top left, var(--primary-button-background) 0%, var(--blaze-quiz) 100%);
   color: var(--neutral-25);
   border: none;
 }
 .btn-ai:hover {
-  background: radial-gradient(circle at top left, var(--primary-button-background-hover) 0%, #8158EC 100%);
-  border: 2px solid #00cee6;                       /* raw Primary-500, both modes */
+  background: radial-gradient(circle at top left, var(--primary-button-background-hover) 0%, var(--blaze-quiz) 100%);
+  box-shadow: inset 0 0 0 2px var(--primary-500);   /* 2px cyan ring, both modes */
   filter: drop-shadow(1px 1px 16px rgba(129, 88, 236, 0.5));
 }
 .btn-ai:active {
-  background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, #8158EC 100%);
-  border: 1px solid #00cee6;
+  background: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
+  box-shadow: inset 0 0 0 1px var(--primary-500);   /* 1px cyan ring */
 }
 ```
 
-### AI-Outlined
+#### AI-Outlined
 
-**Transparent at rest** (the old 16% resting wash is gone). The 1px stroke is **the AI gradient, not a flat cyan** - it sweeps cyan through purple along the edge, on the same per-state ladder as the label it frames. The **label + icon are gradient-filled** via background-clip with that same gradient.
-
-> **Verified 2026-08-11 against Figma `8998:65562`** by sampling the rendered stroke: `rgb(19,171,202)` → `rgb(143,94,203)` → `rgb(5,201,228)` → `rgb(90,105,210)` across the top edge. Note the MCP code export flattens this stroke to its first stop and reports `border: 1px solid #00cee6` - that export is wrong, and this doc said the same thing until the pixels were checked. Figma paints a diamond gradient, so CSS uses the documented `radial-gradient(circle at top left, …)` approximation, exactly as `.btn-ai` already does for its fill.
+**Transparent at rest**; the wash appears only on hover, at 24%. The 1px stroke is **the AI gradient, not a flat cyan**: it sweeps cyan through purple along the edge, on the same per-state ladder as the label it frames. The **label + icon are gradient-filled** via background-clip with that same gradient. The MCP code export flattens this stroke to its first stop and reports `border: 1px solid #00cee6`; that export is wrong. Figma paints a diamond gradient, so CSS uses the `radial-gradient(circle at top left, …)` approximation, exactly as `.btn-ai` does for its fill.
 
 The ring is drawn as a **masked pseudo-element**, not a border: the button is transparent at rest, so the usual two-background border trick (which needs an opaque inner fill) does not apply, and `border-image` ignores the 12px radius. Keep the transparent `border` in the box model so nothing reflows between states.
 
@@ -391,16 +422,50 @@ The ring is drawn as a **masked pseudo-element**, not a border: the button is tr
 .btn-ai-outlined:active .btn-label { background-image: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, #8158EC 100%); }
 ```
 
-## Loading State
+## Sizes
 
-Unchanged: the button takes the **disabled background** (`--button-background-disabled` for filled variants; text/outlined keep their chrome), the label is replaced by a **20px spinner** (arc, `currentColor`), and the width is preserved.
+All sizes share `border-radius: var(--radius-sm)` (12px) and Poppins **Bold** labels (Link is Medium, see Variants).
+
+| Size | Height | Padding (no icon) | Padding (with icon) | Icon gap | Font | Icon |
+|------|--------|-------------------|---------------------|----------|------|------|
+| **Small** | 33px | 8px 16px | 8px **12px**/16px | 4px (`--space-xs`) | 12px / 1.4 (Button S) | 16px |
+| **Medium** | 41px | **10px** 20px (10px is intentionally off the 4px scale) | 10px **16px**/20px | 8px (`--space-s`) | 14px / 1.5 (H5) | 20px |
+| **Large** | 48px | 12px 24px | 12px **20px**/24px | 8px (`--space-s`) | 16px / 1.5 (H4) | 24px |
+
+With an icon, the **icon-side (left) padding is one step tighter** than the label-side padding; the icon leads.
+
+```css
+.btn    { border-radius: var(--radius-sm); font-family: 'Poppins'; font-weight: 700; }
+.btn-sm { padding: var(--space-s) var(--space-m);  font-size: 12px; line-height: 1.4; gap: var(--space-xs); }
+.btn-md { padding: 10px var(--space-ml);           font-size: 14px; line-height: 1.5; gap: var(--space-s); }
+.btn-lg { padding: var(--space-sm) var(--space-l); font-size: 16px; line-height: 1.5; gap: var(--space-s); }
+/* with icon: tighten the leading (icon) side one step */
+.btn-sm.has-icon { padding-left: var(--space-sm); }  /* 12px */
+.btn-md.has-icon { padding-left: var(--space-m); }   /* 16px */
+.btn-lg.has-icon { padding-left: var(--space-ml); }  /* 20px */
+```
+
+## States
+
+| State | Filled bg | Outlined (fill / chrome) | Text colour | Link colour |
+|-------|-----------|--------------------------|------------|------------|
+| Enabled | `--primary-button-background` (L: 700 / D: 500) | **transparent** / `--text-button-outlined` | `--text-button-outlined` | `--primary-button-background` |
+| Hover | `…-hover` (L: 800 / D: **400** ↑) | **16% cyan** (24% for semantic families) / `--text-button-hover` | `--text-button-hover` | `--primary-button-background-hover` |
+| Pressed | `…-pressed` (L: 900 / D: 700) | **transparent** / `…-pressed` | `--primary-button-background-pressed` | `--primary-button-background-pressed` |
+| Disabled | `--button-background-disabled` + `--text-button-disabled` | transparent / `--text-disabled` | `--text-disabled` | `--text-disabled` |
+| Loading | `--button-background-disabled` + 20px spinner, width preserved | same pattern | spinner replaces label | n/a |
+| Focus-visible | 2px `var(--primary-button-background)` outline, 2px offset | same | same | same |
+
+### Loading
+
+The button takes the **disabled background** (`--button-background-disabled` for filled variants; text/outlined keep their chrome), the label is replaced by a **20px spinner** (arc, `currentColor`), and the width is preserved: the label and icon are hidden with `visibility: hidden`, so they still hold the width.
 
 ```css
 .btn-loading {
   pointer-events: none;
   background: var(--button-background-disabled);  /* filled variants */
 }
-.btn-loading .btn-label { display: none; }
+.btn-loading .btn-label { visibility: hidden; }
 .btn-loading::after {
   content: '';
   width: 20px; height: 20px;
@@ -412,93 +477,47 @@ Unchanged: the button takes the **disabled background** (`--button-background-di
 @keyframes spin { to { transform: rotate(360deg); } }
 ```
 
-**Accessibility.** The label is the button's accessible name, and this state hides it — so
-the component keeps it as an `aria-label` for the duration (only when the label is a
-string and the caller has not named the button themselves). Without that, a button in this
-state is announced as an unnamed disabled button for as long as the work runs.
+### Labelled loading (`loadingLabel`)
 
-### Labelled Loading (`loadingLabel`)
+Not in the Figma board; an app extension for waits long enough that a bare spinner leaves the reader guessing what is happening. Pass a word and the spinner moves out of the centre into the **leading-icon slot**, and the button says what it is doing: "Generating", "Saving", "Uploading".
 
-Not in the Figma board — an app extension for waits long enough that a bare spinner leaves
-the reader guessing what is happening. Pass a word and the spinner moves out of the centre
-into the **leading-icon slot**, and the button says what it is doing: "Generating",
-"Saving", "Uploading".
+Everything else is the plain Loading state: disabled background, 20px `currentColor` spinner, no pointer events. **The one thing it gives up is the preserved width**: the button sizes to whichever word it is showing, so it changes width on entering and leaving the state. That is the cost of the label; use plain `loading` where the button sits in a row whose widths have to hold still.
 
-```tsx
-<Button semantic="ai" loading={busy} loadingLabel="Generating" icon={<SparkleIcon />}>
-  Generate Insights
-</Button>
-```
+## Tokens
 
-Everything else is the plain Loading state: disabled background, 20px `currentColor`
-spinner, no pointer events. **The one thing it gives up is the preserved width** — the
-button sizes to whichever word it is showing, so it changes width on entering and leaving
-the state. That is the cost of the label; use plain `loading` where the button sits in a
-row whose widths have to hold still.
+**Primary filled.** The ladder is mode-aware:
 
-Title Case the label like any other, and keep it to one word where you can — it is read at
-a glance, not studied.
+| Token | Light | Dark |
+|-------|-------|------|
+| `--primary-button-background` | Primary-700 `#008393` | Primary-500 `#00CEE6` |
+| `--primary-button-background-hover` | Primary-800 `#005862` | Primary-400 `#33E2F7` |
+| `--primary-button-background-pressed` | Primary-900 `#002C31` | Primary-600 `#00AFC4` |
+| `--text-button-foreground` (label) | Neutral-25 `#F9F9FA` | **Neutral-800 `#20222A`** |
+| `--button-background-disabled` | Neutral-100 `#DFE1E6` | Neutral-400 `#656B7C` |
+| `--text-button-disabled` | Neutral-300 `#9EA4B3` | Neutral-300 `#9EA4B3` |
 
-## Size / state coverage in Figma
+**Outlined chrome:** `--text-button-outlined`, `--text-button-hover`, `--text-disabled` (values in the Outlined table above).
 
-Both mode boards carry the identical matrix. Primary variants (Filled/Outlined/Outlined-2/Text/Link) and AI/AI-Outlined cover **all three sizes**. Semantic coverage:
+**Danger:** `--danger-500`, `--button-danger-hover` (Danger-600 `#9C0F2E`), `--button-danger-pressed` (Danger-700 `#59091A`), `--text-error` (light `#DF1642` / dark Danger-400 `#E95C7B`).
 
-| Family | Sizes in Figma |
-|--------|----------------|
-| Danger | S, M, L |
-| Danger-outlined | L only |
-| Danger-text | M, L |
-| Warning | M, L |
-| Warning-outlined | S, M, L |
-| Warning-text | L only |
-| Success | M, L |
-| Success-outlined | M, L |
-| Success-text | L only |
+**Warning** (Figma Library variables):
 
-Every present size has all five states (incl. Loading). For missing sizes, extrapolate from the Size System table.
+| Token | Light | Dark |
+|-------|-------|------|
+| `--button-warning-background` | Warning-600 `#E88206` | Warning-600 `#E88206` |
+| `--button-warning-background-hover` | Warning-700 `#996322` | Warning-700 `#996322` |
+| `--button-warning-background-pressed` | Warning-800 `#664216` | Warning-800 `#664216` |
+| `--text-warning` (outlined hover chrome) | Warning-600 `#E88206` | Warning-500 `#FFA538` |
 
-## React TypeScript Implementation
+**Success** (Figma Library variables):
 
-Built as `src/components/Button/Button.tsx` (import `@/components/Button/Button`). It is namespaced `ds-btn` rather than `btn` so it doesn't collide with the legacy global `.btn-*` utility classes (CSS is globally bundled in this app). Props:
+| Token | Light | Dark |
+|-------|-------|------|
+| `--button-success-background` | Success-500 `#18A957` | Success-500 `#18A957` |
+| `--button-success-background-hover` | Success-600 `#11763D` | Success-600 `#11763D` |
+| `--button-success-background-pressed` | Success-700 `#0A4423` | Success-700 `#0A4423` |
 
-```tsx
-import Button from '@/components/Button/Button';
-
-type ButtonVariant = 'filled' | 'outlined' | 'outlined-2' | 'text' | 'link';
-type ButtonSemantic = 'primary' | 'danger' | 'warning' | 'success' | 'ai';
-type ButtonSize = 'sm' | 'md' | 'lg';
-
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant;    // default 'filled'
-  semantic?: ButtonSemantic;  // default 'primary'
-  size?: ButtonSize;          // default 'md'
-  icon?: ReactNode;           // leading icon — rendered BEFORE the label
-  trailingIcon?: ReactNode;   // AFTER the label — disclosure controls only
-  loading?: boolean;
-  loadingLabel?: string;      // word shown beside the spinner while loading
-  children?: ReactNode;
-}
-```
-
-The component composes one appearance class from `(semantic, variant)` — `ds-btn--filled`, `ds-btn--danger-outlined`, `ds-btn--ai`, etc. Semantic families (danger/warning/success) mirror filled/outlined/text; AI is filled + outlined only. See `Button.css` for the full class matrix.
-
-## Usage Guidelines
-
-### Variant Selection
-
-- **Filled** — primary CTA, form submits, the one most-important action on the page
-- **Outlined** — secondary actions (Save Draft, Download, Add Content), not Cancel
-- **Outlined-2** — Cancel (paired with Filled, including every dialog footer) and other neutral actions that shouldn't read as brand-coloured at rest
-- **Text** — inline, subtle actions
-- **Link** — navigation-like actions within content
-
-### Semantic Selection
-
-**Primary (Cyan):** default · **Danger (Red):** delete/destructive · **Warning (Orange):** consequence-laden actions · **Success (Green):** confirm/complete · **AI (Gradient):** Hugo AI and AI-powered features
-
-### Size Selection
-
-**Large:** hero sections, primary CTAs · **Medium:** standard (most common), including modal and dialog footers · **Small:** tables, compact UIs
+**AI:** gradient start follows the primary filled tokens; end `var(--blaze-quiz)` (Blaze `#8158EC`); hover ring `var(--primary-500)`.
 
 ## Accessibility
 
@@ -516,9 +535,16 @@ The component composes one appearance class from `(semantic, variant)` — `ds-b
 .btn:focus-visible { outline: 2px solid var(--primary-button-background); outline-offset: 2px; }
 ```
 
-Contrast: the light filled base darkened to Primary-700 and the dark filled base flipped to a dark label on Primary-500 — both changes exist to meet WCAG AA. Never use `--primary-500` as text on white.
+- **Loading name.** The label is the button's accessible name, and the Loading state hides it, so the component keeps it as an `aria-label` for the duration (only when the label is a string and the caller has not named the button themselves). Without that, a button in this state is announced as an unnamed disabled button for as long as the work runs.
+- **Contrast.** The light filled base is Primary-700 and the dark filled base uses a dark label on Primary-500; both exist to meet WCAG AA. Never use `--primary-500` as text on white.
 
-## Common Patterns
+## Content
+
+- Write labels in Title Case ("Save Changes", "Delete Report").
+- Where it helps, name what the commit button acts on (the count or the person), so it reads differently from the button that opened the dialog.
+- Title Case a `loadingLabel` like any other label, and keep it to one word where you can; it is read at a glance, not studied.
+
+## Examples
 
 ```tsx
 {/* Primary + secondary pair */}
@@ -531,38 +557,16 @@ Contrast: the light filled base darkened to Primary-700 and the dark filled base
 
 {/* AI action */}
 <Button semantic="ai" icon={<AiGenerateIcon size={20} />}>Generate</Button>
+
+{/* Labelled loading */}
+<Button semantic="ai" loading={busy} loadingLabel="Generating" icon={<SparkleIcon />}>
+  Generate Insights
+</Button>
 ```
 
-## Quick Reference
+## Related
 
-| Action | Variant | Semantic | Size |
-|--------|---------|----------|------|
-| Main CTA | Filled | Primary | Large |
-| Form submit | Filled | Primary | Medium |
-| Cancel | Outlined-2 | Primary | Medium |
-| Delete | Filled | Danger | Medium |
-| Neutral tertiary | Outlined-2 | Primary | Medium |
-| Inline link | Link | Primary | — |
-| AI feature | Filled (gradient) | AI | Medium |
-| Mark complete | Filled | Success | Medium |
-
-### States Cheatsheet
-
-| State | Filled bg | Outlined (fill / chrome) | Text color | Link color |
-|-------|-----------|--------------------------|------------|------------|
-| Enabled | `--primary-button-background` (L: 700 / D: 500) | **transparent** / `--text-button-outlined` | `--text-button-outlined` | `--primary-button-background` |
-| Hover | `…-hover` (L: 800 / D: **400** ↑) | **16% cyan** (24% for semantic families) / `--text-button-hover` | `--text-button-hover` | `--primary-button-background-hover` |
-| Pressed | `…-pressed` (L: 900 / D: 700) | **transparent** / `…-pressed` | `--primary-button-background-pressed` | `--primary-button-background-pressed` |
-| Disabled | `--button-background-disabled` + `--text-button-disabled` | transparent / `--text-disabled` | `--text-disabled` | `--text-disabled` |
-| Loading | `--button-background-disabled` + 20px spinner, width preserved | same pattern | spinner replaces label | n/a |
-
-## Code reality
-
-**`src/components/Button/Button.tsx` is the canonical component** — use it for all new work: `import Button from '@/components/Button/Button'`. Component, `Button.css`, and the token definitions in `src/styles/tokens.css` were migrated to this spec on 2026-08-04 (mode-aware ladders, leading icons, transparent outlined rest, per-state AI gradients). Borders (2026-09-15): fill configurations (Filled, Danger, Warning, Success, AI) render **no border**; bordered configurations draw their 1px border inside the size by taking that pixel out of the padding (`--btn-bw`), so every configuration of a size matches the heights above (S 33 · M 41 · L 48). The AI hover's 2px cyan border is an inset 2px ring (1px on press), since the fill has no border to colour.
-
-Two legacy button patterns also still exist, to be migrated opportunistically (convert a call site when you're already editing that file — no big-bang sweep):
-
-- **Legacy global classes** in `src/styles/tokens.css` — `.btn-primary`, `.btn-outlined`, `.btn-success`, `.btn-danger`, `.btn-text` (~50 usages). These predate the component and cover only the common cases.
-- **Raw `<button>` elements** with hand-rolled styling across pages.
-
-The component is namespaced `ds-btn` precisely so it can coexist with the legacy `.btn-*` classes without collision.
+- [row-actions-menu.md](row-actions-menu.md) - per-row actions
+- [bulk-action-bar.md](bulk-action-bar.md) - actions on selected rows
+- [overlays.md](overlays.md) - `CloseButton`, dialog and drawer footers
+- [colors.md](colors.md) - the palette behind the button tokens

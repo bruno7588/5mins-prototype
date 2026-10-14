@@ -3,17 +3,13 @@ name: 5mins-search
 description: Search input component for 5Mins.ai. Use when implementing any search field, filter input, or keyword search bar in the admin or learner UI. Covers two sizes (M/L), three states (Enabled, Hover, Active/focused), and filled vs empty modes with a clear button. Trigger this skill whenever building a search box, search bar, or any input whose primary purpose is filtering or finding content.
 ---
 
-# 5Mins.ai Search Component
+# Search
 
 A standalone search input with a leading search icon, placeholder text, and a clear (×) button when there is text.
 
-Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — light `11927:6338` / dark `697:33529` (verified 2026-07-03). Colors are semantic tokens resolving per mode (see `colors.md`). Reference width in Figma: 400px.
-
-> **Updated 2026-09-29 (verified against code):** the clear icon is `--text-secondary` in the Token Summary and CSS sketch (the sketch also now shows the built hover and the cyan focus ring); the Do / Don't no longer mentions an `onKeyDown` prop, which does not exist.
-
-> **Updated 2026-09-29 (clear button):** the clear (×) hover is a circular `--input-background-hover` fill with the icon moving to `--text-primary`, replacing the opacity fade; the hit area is 24px (28px at L), padded inside a negative margin so the field height is unchanged.
-
-> **Updated 2026-09-29 (aligned to prototype usage):** every call site in the prototype uses size **M**, including page-level searches (Programs header, course list, My Team toolbar), so the size guidance in "Do / Don't" now says M is the default everywhere and L is unused. "Code reality" now reflects that the active border already uses `--selected` and lists the built props.
+**Code:** `import Search from '@/components/Search/Search'` (default export)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `697:33529` / light `11927:6338`. Reference width in Figma: 400px.
+**Last verified:** 2026-09-30
 
 ## Usage
 
@@ -30,48 +26,68 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) — light `11927:6338` / d
 
 **Do**
 - Use the `Search` component; don't hand-roll a `SearchNormal1` icon next to a raw `<input>`.
-- Use size `M`; it is the size every prototype call site uses, including page-level searches.
+- Use size **M** everywhere, including page-level search at the top of a table (Programs header, course list, My Team toolbar); the prototype has no size **L** call site.
 - Pass `ariaLabel` (it falls back to the placeholder) so the field has an accessible name.
 - Filter on `onChange`; the leading search icon is decoration, not a submit button.
-- Let the built-in clear (×) empty the field; it appears whenever there is text.
+- Let the built-in clear (×) empty the field; it appears whenever there is text. Never hide it on hover only.
+- Use `:focus-within` on the wrapper (not just the `<input>`) to trigger the Active state.
+- Derive `filled` from `value.length > 0`.
 
 **Don't**
-- Don't use `--border-elevated` on the page ground or inside drawers and modals; there Search keeps the quiet `--border`. On a card or menu, pass `elevated` instead (see below).
+- Don't use `--border-elevated` on the page ground or inside drawers and modals; there Search keeps the quiet `--border`. On a card or menu, pass `elevated` instead (see States).
 - Don't use raw `--secondary-500` for the focus border; use the mode-aware `--selected`.
-- Don't wrap it in a `<form>` or add a submit button.
+- Don't wrap it in a `<form>` or add a submit button; filter live from `onChange` (the component has no `onKeyDown` or submit prop). The search icon is decorative, not interactive.
 - Don't change the font weight on focus or fill; it stays Regular 400.
 
 **Canonical spec:** size M: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), 18px search icon, 20px clear icon, text 14px / 400 / 1.5. Fill `--input-background` (`--input-background-hover` on hover); border `--border`, `--border-hover` on hover, `--selected` on focus. Search icon `--text-tertiary`, clear icon `--text-secondary` (`--text-primary` on hover, with a circular `--input-background-hover` fill; 24px hit area, 28px at L), placeholder `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11927:6338` / dark `697:33529`.
 
-**Prototype:** `src/components/Search/Search.tsx` (default export)
-- `value`, `onChange(value)` (required), `placeholder` (default "Search")
-- `size`: `'M' | 'L'` (default `'M'`; L is not used anywhere yet)
-- `onClear` (optional; without it the clear button calls `onChange('')` and refocuses the input)
-- `onFocus`, `onBlur`, `ariaLabel`, `className`
+## Figma to code
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Size | M / L | `size` | `'M'` (default) / `'L'` | L has no call site |
+| State | Enabled / Hover / Active | n/a | CSS `:hover`, `:focus-within` | states are CSS, not props |
+| Filled | false / true | `value` | Filled = `value.length > 0` | shows the clear button |
+
+- **Figma only:** none. The clear button is a hidden "Buttons" layer in Figma rather than a property. The dark set has no `Border-elevated` binding.
+- **Code only:** `elevated`, `onClear`, `onFocus`, `onBlur`, `ariaLabel`, `className`, `placeholder`, `onChange`.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `size` | `"M" \| "L"` | `"M"` | Controls padding, border-radius, icon size, and font size |
+| `value` | `string` | required | Current input value. Figma's "Filled" state is any non-empty value (shows the clear button) |
+| `placeholder` | `string` | `"Search"` | Placeholder text shown when empty |
+| `onChange` | `(value: string) => void` | required | Called on every keystroke |
+| `onClear` | `() => void` | - | Called when the clear (×) button is clicked; without it the clear button calls `onChange('')`. Either way the input is refocused |
+| `onFocus` / `onBlur` | `() => void` | - | Focus handlers |
+| `elevated` | `boolean` | `false` | Set when the search sits on a card or menu: border steps up to `--border-elevated` |
+| `ariaLabel` | `string` | - | Accessible label |
+| `className` | `string` | `""` | Extra class |
 
 **Production:**
 
 | Design system | `@web/ui` component | Props mapping | Known drift |
 |---|---|---|---|
-| Search | _to be mapped by engineering_ | | |
+| Search | _to be mapped by engineering_ | | Clear glyph is an Iconsax `Add` rotated to an × instead of io5 `IoCloseOutline`; the L radius is written as a raw `16px` rather than `var(--radius-m)` |
 
----
+## Anatomy
 
-## Props
+### Empty
+```
+[ SearchIcon ] [ placeholder text ]
+```
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `size` | `"M" \| "L"` | `"M"` | Controls padding, border-radius, icon size, and font size |
-| `state` | `"Enabled" \| "Hover" \| "Active"` | `"Enabled"` | Visual state — map to `:hover` and `:focus-within` in CSS |
-| `filled` | `boolean` | `false` | Whether the input has a value (shows clear button, value text) |
-| `value` | `string` | `""` | Current input value |
-| `placeholder` | `string` | `"Search"` | Placeholder text shown when empty |
-| `onChange` | `(value: string) => void` | — | Called on every keystroke |
-| `onClear` | `() => void` | — | Called when the clear (×) button is clicked |
+### Filled / typing
+```
+[ SearchIcon ] [ value text          ] [ × ]
+```
 
----
+- **SearchIcon** - Iconsax `SearchNormal1` Outline, `--text-tertiary` (18px M / 20px L)
+- **Placeholder** - Regular 400, `--text-disabled`
+- **Value text** - Regular 400, `--text-primary`, `flex: 1`
+- **Clear** - `IoCloseOutline` (io5 set, same glyph as dismissible badges), 20px M / 24px L in a 24px / 28px circular hit area, `--text-secondary` (hover `--text-primary` on an `--input-background-hover` circle), calls `onClear`. Note it is one step stronger than the leading SearchIcon: the clear is an action, the search icon is decoration. The clear icon colour matches the close glyph on CloseButton and the dismissible badge.
 
-## Visual Spec
+## Sizes
 
 ### Size M
 
@@ -95,111 +111,20 @@ Clear icon:     24 × 24px
 Font:           Poppins 16px / 1.5  (Regular 400)
 ```
 
----
-
 ## States
 
 | State | Background | Border (1px) |
 |---|---|---|
-| Enabled | `--input-background` | `--border` |
+| Enabled | `--input-background` | `--border` (`--border-elevated` with `elevated`) |
 | Hover | `--input-background-hover` | `--border-hover` |
 | Active (focused) | `--input-background` | `--selected` (`#EDA30D` light / `#FFBB38` dark) |
+| Clear focus-visible | n/a | 2px `--primary-button-background` outline on the clear button |
 
-- The border is the primary state signal — background only changes on Hover.
-- **On the page ground and inside drawers and modals, Search keeps the quiet `--border`.** It carries a fill at rest, so there it does not need the stronger edge the transparent fields use.
-- **On a card or menu, Search uses `--border-elevated`** (Bruno, 2026-09-30): pass `elevated`. In dark mode `--border` equals `--cards-background`, so the quiet border disappears on a card. Hover (`--border-hover`) and Active (`--selected`) are unchanged. This overrides the earlier "never elevated" note and the Figma dark set, which has no `Border-elevated` binding yet.
+- The border is the primary state signal - background only changes on Hover.
+- **On the page ground and inside drawers and modals, Search keeps the quiet `--border`.** It carries a fill at rest, so there it does not need the stronger edge the transparent fields use. This is deliberate.
+- **On a card or menu, Search uses `--border-elevated`:** pass `elevated`. In dark mode `--border` equals `--cards-background`, so the quiet border disappears on a card. Hover (`--border-hover`) and Active (`--selected`) are unchanged.
 - Token rule: **form-field active borders use the mode-aware `--selected` token** (same as inputs, dropdowns, date fields).
-- In Figma, Active is modeled on the unfilled variant and shows in-progress typing (value text + clear button) — i.e. Active = focused, whatever the content; `filled` styling applies once the field has a value.
-
----
-
-## Anatomy
-
-### Empty
-```
-[ SearchIcon ] [ placeholder text ]
-```
-
-### Filled / typing
-```
-[ SearchIcon ] [ value text          ] [ × ]
-```
-
-- **SearchIcon** — Iconsax `SearchNormal1` Outline, `--text-tertiary` (18px M / 20px L)
-- **Placeholder** — Regular 400, `--text-disabled`
-- **Value text** — Regular 400, `--text-primary`, `flex: 1`
-- **Clear** — `IoCloseOutline` (io5 set, same glyph as dismissible badges), 20px M / 24px L in a 24px / 28px circular hit area, `--text-secondary` (hover `--text-primary` on an `--input-background-hover` circle), calls `onClear`. Note it is one step stronger than the leading SearchIcon: the clear is an action, the search icon is decoration.
-
----
-
-## React TypeScript Implementation
-
-```tsx
-import React, { useState, useRef } from 'react';
-import { SearchNormal1 } from 'iconsax-react';
-import { IoCloseOutline } from 'react-icons/io5';
-
-type SearchSize = 'M' | 'L';
-
-interface SearchProps {
-  size?: SearchSize;
-  value?: string;
-  placeholder?: string;
-  onChange?: (value: string) => void;
-  onClear?: () => void;
-  className?: string;
-}
-
-export const Search: React.FC<SearchProps> = ({
-  size = 'M',
-  value = '',
-  placeholder = 'Search',
-  onChange,
-  onClear,
-  className,
-}) => {
-  const [focused, setFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const filled = value.length > 0;
-  const iconSize = size === 'L' ? 20 : 18;
-  const clearSize = size === 'L' ? 24 : 20;
-
-  return (
-    <div
-      className={`search search--${size.toLowerCase()} ${focused ? 'search--active' : ''} ${className || ''}`}
-      onClick={() => inputRef.current?.focus()}
-    >
-      <SearchNormal1 size={iconSize} color="var(--text-tertiary)" variant="Outline" className="search__icon" />
-
-      <input
-        ref={inputRef}
-        type="text"
-        className="search__input"
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => onChange?.(e.target.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        aria-label={placeholder}
-      />
-
-      {filled && (
-        <button
-          className="search__clear"
-          onClick={(e) => { e.stopPropagation(); onClear?.(); }}
-          aria-label="Clear search"
-        >
-          <IoCloseOutline size={clearSize} />
-        </button>
-      )}
-    </div>
-  );
-};
-```
-
----
-
-## CSS
+- In Figma, Active is modeled on the unfilled variant and shows in-progress typing (value text + clear button) - i.e. Active = focused, whatever the content; `filled` styling applies once the field has a value.
 
 ```css
 /* ── Base ── */
@@ -284,50 +209,39 @@ export const Search: React.FC<SearchProps> = ({
 }
 ```
 
----
-
-## Token Summary
+## Tokens
 
 | Token | Light | Dark | Used for |
 |---|---|---|---|
-| `--input-background` | `#BFC2CC` @16% | `#454C5E` @16% | Default + Active background |
-| `--input-background-hover` | `#DFE1E6` (Neutral-100) | `#2D313D` (Neutral-700) | Hover background |
-| `--border` / `--border-hover` | `#DFE1E6` / `#9EA4B3` | `#2D313D` / `#9EA4B3` | Default / hover border |
-| `--selected` | `#EDA30D` | `#FFBB38` | Active/focused border |
-| `--text-primary` | `#20222A` | `#F9F9FA` | Value text |
-| `--text-tertiary` | `#656B7C` | `#9EA4B3` | Search icon |
-| `--text-secondary` | `#454C5E` | `#BFC2CC` | Clear (×) icon |
-| `--text-disabled` | `#9EA4B3` | `#656B7C` | Placeholder (empty field) |
+| `var(--input-background)` | `#BFC2CC` @16% | `#454C5E` @16% | Default + Active background |
+| `var(--input-background-hover)` | `#DFE1E6` (Neutral-100) | `#2D313D` (Neutral-700) | Hover background |
+| `var(--border)` / `var(--border-hover)` | `#DFE1E6` / `#9EA4B3` | `#2D313D` / `#9EA4B3` | Default / hover border |
+| `var(--selected)` | `#EDA30D` | `#FFBB38` | Active/focused border |
+| `var(--text-primary)` | `#20222A` | `#F9F9FA` | Value text |
+| `var(--text-tertiary)` | `#656B7C` | `#9EA4B3` | Search icon |
+| `var(--text-secondary)` | `#454C5E` | `#BFC2CC` | Clear (×) icon |
+| `var(--text-disabled)` | `#9EA4B3` | `#656B7C` | Placeholder (empty field) |
 
----
+## Accessibility
 
-## Do / Don't
+- Pass `ariaLabel`; it falls back to the placeholder as the input's `aria-label`.
+- The clear button is a `<button>` with `aria-label="Clear search"` and a 2px `--primary-button-background` focus-visible outline; clearing refocuses the input.
+- Focus on the input shows the `--selected` border through `:focus-within` on the wrapper.
 
-✓ Use size **M** everywhere, including page-level search at the top of a table; the prototype has no size **L** call site
-✓ Always show the clear button when there is text — never hide it on hover only
-✓ Use `:focus-within` on the wrapper (not just the `<input>`) to trigger Active state
-✓ Derive `filled` from `value.length > 0`
+## Examples
 
-✗ Don't use a `<form>` wrapper; filter live from `onChange` (the component has no `onKeyDown` or submit prop)
-✗ Don't show a submit/search button — the search icon is decorative, not interactive
-✗ Don't use raw `--secondary-500` for the active border — use mode-aware `--selected`
-✗ Don't change font weight on focus or fill — always Regular 400
+Use the shared component; don't re-implement it. Pass `elevated` when the field sits on a card or menu.
 
----
+```tsx
+import Search from '@/components/Search/Search'
 
-## Code reality
+<Search value={query} onChange={setQuery} placeholder="Search people" />
+<Search value={query} onChange={setQuery} elevated />
+```
 
-`src/components/Search/Search.tsx` implements this component. The active border uses `--selected`, as specified. Remaining drift from the node: the clear glyph is an Iconsax `Add` rotated to an × instead of io5 `IoCloseOutline`, and the L radius is written as a raw `16px` rather than `var(--radius-m)`. The built props are `size`, `value`, `placeholder`, `onChange`, `onClear`, `onFocus`, `onBlur`, `className` and `ariaLabel`; `state` and `filled` in the Props table are Figma variant axes, derived from `:hover`, `:focus-within` and `value.length` rather than passed in. Sizes, padding and the other state tokens match.
+## Related
 
-## Change Log
-
-- **2026-09-22** — Clear icon moved from `--text-tertiary` to `--text-secondary`, matching the close glyph on CloseButton and the dismissible badge. The border stays on `--border` (see States) — that is deliberate and was re-confirmed.
-
----
-
-## Related Skills
-
-- `input.md` — full text input component (labels, validation, helper text); use Search for search-specific UX, Input for form fields
-- `5mins-colors` (colors.md) — surface, border, and text tokens
-- `iconography.md` — Iconsax icon sizing and variant rules
-- `listbox.md` — the embedded search row pinned inside long menus
+- `input.md` - full text input component (labels, validation, helper text); use Search for search-specific UX, Input for form fields
+- `5mins-colors` (colors.md) - surface, border, and text tokens
+- `iconography.md` - Iconsax icon sizing and variant rules
+- `listbox.md` - the embedded search row pinned inside long menus

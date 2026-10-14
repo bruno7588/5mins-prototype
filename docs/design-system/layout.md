@@ -1,19 +1,17 @@
 ---
 name: 5mins-layout
-description: 5Mins.ai layout foundations in one file — the 4px spacing scale (padding, margins, gaps), border radius (roundness), icon sizes, shadows (S/L/XL), and the overlay scrim with dark/light-mode opacities. Use when setting any spacing, padding, margin, gap, corner radius, icon size, box-shadow, or overlay backdrop. Token names mirror the Figma variables. Replaces the former spacing.md; single source for shadow and scrim values.
+description: 5Mins.ai layout foundations in one file - the 4px spacing scale (padding, margins, gaps), border radius (roundness), icon sizes, shadows (S/L/XL), and the overlay scrim with dark/light-mode opacities. Use when setting any spacing, padding, margin, gap, corner radius, icon size, box-shadow, or overlay backdrop. Token names mirror the Figma variables. Single source for shadow and scrim values.
 ---
 
-# 5Mins.ai Layout
+# Layout
 
-Layout foundations: spacing, roundness, padding, margins, icon sizes, shadows, and the overlay scrim. Everything derives from a **4px base unit** — all custom values must be multiples of 4px.
+Layout foundations: spacing, roundness, padding, margins, icon sizes, shadows, and the overlay scrim. Everything derives from a **4px base unit** - all custom layout values must be multiples of 4px.
 
-> **Updated 2026-09-29 (verified against code):** Shadow L is the level for dialogs, modals, menus, dropdowns, tooltips and popovers; XL is currently unused; raw leftward Shadow L values are to be written as `var(--shadow-l)`; the shared Canonical spec line now has its own heading instead of sitting under Scrim.
-
-> **Updated 2026-09-29 (aligned to prototype usage):** §3 and §4 now match the code: Medium buttons pad `10px 20px` (`--space-ssm` / `--space-ml`), inputs pad `8px 12px` (`--space-s` / `--space-sm`), and buttons, dialogs and modals round at `--radius-sm` (12px), per `Button.css`, `InputField.css` and `ConfirmModal.css`.
+**Code:** tokens in `src/styles/tokens.css`; no component (there is no `Layout` component)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Spacing page `5446:24541`, Shadow page `5446:24653`, Utilities page `5446:24691` (overlay); variable collection Padding/Spacing/Roundness
+**Last verified:** 2026-10-14
 
 ## Usage
-
-These are foundations, not components: there is no `Layout` component, so the Prototype and Production component rows are left out. The tokens live in `src/styles/tokens.css`.
 
 ### Spacing
 
@@ -23,7 +21,7 @@ These are foundations, not components: there is no `Layout` component, so the Pr
 - Setting any padding, margin or gap.
 
 **Don't use when**
-- Sizing an icon → use the icon size tokens (§5) ([doc](iconography.md))
+- Sizing an icon → use the icon size tokens ([doc](iconography.md))
 
 **Do**
 - Use `var(--space-*)` for every value the scale covers, e.g. `padding: var(--space-s) var(--space-sm)`.
@@ -64,6 +62,7 @@ These are foundations, not components: there is no `Layout` component, so the Pr
 
 **Do**
 - Use `var(--shadow-s)` or `var(--shadow-l)` (`var(--shadow-xl)` exists but is currently unused); `var(--shadow-card)` for a `--cards-background` card on `--page-background`; `var(--shadow-panel)` for right-anchored side panels.
+- Write raw leftward Shadow L values as `var(--shadow-l)`.
 
 **Don't**
 - Don't stack shadows or invent in-between levels.
@@ -76,7 +75,7 @@ These are foundations, not components: there is no `Layout` component, so the Pr
 - The backdrop behind any dialog, modal, side drawer, lightbox or popover blocker.
 
 **Don't use when**
-- Darkening an image, hero or video so text on it reads → keep that component's own tint (see §7)
+- Darkening an image, hero or video so text on it reads → keep that component's own tint (see Overlay scrim below)
 
 **Do**
 - `background: var(--scrim)` on every overlay backdrop.
@@ -84,13 +83,53 @@ These are foundations, not components: there is no `Layout` component, so the Pr
 **Don't**
 - Don't hardcode `rgba(15, 16, 20, …)` or derive a one-off alpha for a backdrop; only the token flips between light and dark.
 
-### Canonical spec
+**Canonical spec:** spacing `--space-xs` 4 · `--space-s` 8 · `--space-sm` 12 · `--space-m` 16 · `--space-ml` 20 · `--space-l` 24 · `--space-xl` 32 · `--space-xxl` 40 (px); radius `--radius-xs` 4 · `--radius-s` 8 · `--radius-sm` 12 · `--radius-m` 16 · `--radius-ml` 20 · `--radius-l` 24 · `--radius-full`; icons `--icon-size-sm|md|lg|xl` 16/20/24/32; shadows `--shadow-s|l|xl`; `--scrim` Neutral-900 at 25% light / 50% dark.
 
-**Canonical spec:** spacing `--space-xs` 4 · `--space-s` 8 · `--space-sm` 12 · `--space-m` 16 · `--space-ml` 20 · `--space-l` 24 · `--space-xl` 32 · `--space-xxl` 40 (px); radius `--radius-xs` 4 · `--radius-s` 8 · `--radius-sm` 12 · `--radius-m` 16 · `--radius-ml` 20 · `--radius-l` 24 · `--radius-full`; icons `--icon-size-sm|md|lg|xl` 16/20/24/32; shadows `--shadow-s|l|xl`; `--scrim` Neutral-900 at 25% light / 50% dark. Figma: Library `EC26cSVe9KNTCWXvYovakw`, node ids not recorded.
+## Figma to code
 
----
+The Figma number variables and their CSS tokens. The same Figma scale drives **both** spacing and radius. The Figma variables carry WEB code syntax `var(--token)` matching `tokens.css`.
 
-## 1. The 4px scale
+| Figma variable | px | Spacing token | Radius token | Usage |
+|---|---|---|---|---|
+| XXS | 2 | `--space-xxs` | - | Hairline gaps, focus-ring offset, badge inner gap (micro only) |
+| XS | 4 | `--space-xs` | `--radius-xs` | Micro gaps, icon-to-text gap (small buttons) |
+| XSS | 6 | `--space-xss` | - | Compact chip/badge padding, tight icon nudges (micro only) |
+| S | 8 | `--space-s` | `--radius-s` | Small gaps, icon padding, button padding |
+| SSM | 10 | `--space-ssm` | - | Button padding-y (M), compact control padding (micro only) |
+| SM | 12 | `--space-sm` | `--radius-sm` | Compact spacing, input padding-x |
+| M | 16 | `--space-m` | `--radius-m` | Default spacing, card padding, icon-header gap |
+| ML | 20 | `--space-ml` | `--radius-ml` | Form gaps, section gaps |
+| L | 24 | `--space-l` | `--radius-l` | Page padding, page gaps |
+| XL | 32 | `--space-xl` | - | Large spacing |
+| XXL | 40 | `--space-xxl` | - | Extra-large spacing |
+| 0 | 0 | use `0` | use `0` | |
+| 100 | 100 | use `100px` | - | |
+
+XXS / XSS / SSM (2/6/10px) are for micro spacing inside components. They are off the 4px grid on purpose and must not be used for layout spacing.
+
+| Figma effect style | CSS token | Value |
+|---|---|---|
+| Shadow S | `--shadow-s` | `-1px -1px 4px 0 rgba(32, 34, 42, 0.04), 1px 1px 4px 0 rgba(32, 34, 42, 0.04)` |
+| Shadow L | `--shadow-l` | `-4px 0 24px 0 rgba(32, 34, 42, 0.12)` (leftward) |
+| Shadow XL | `--shadow-xl` | `0 4px 32px 0 rgba(32, 34, 42, 0.24)` |
+
+- **Figma only:** the `0` and `100` variables (no CSS token); the Inner-shadow effect style (`inner -4,-4 r0 #2D313D`, "Use this effect in Learning Path cards", no CSS token); the Breakpoints collection (XS 320, S 600, M 900, L 1200, XL 1536), which code does not use as tokens.
+- **Code only:** `--radius-full: 9999px` for circular elements (avatars, pills, badges, chips, icon-button hover backgrounds; icon-only buttons **always** use circular hover, never squared); `--icon-size-sm|md|lg|xl`; `--scrim`; `--shadow-card`, `--shadow-panel`, `--shadow-sticky`.
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Spacing, radius, shadow tokens | _to be mapped by engineering_ | | |
+
+### Known drift
+
+- **Shadow page annotation:** the Figma Shadow page labels Shadow L `4px 4px 24px`; the effect style and code are `-4px 0 24px`. The effect style is right.
+- **Spacing page ladder:** the Figma Spacing page lists 48, 56, 64, 72, 80, 96 and 160 (no variables) and omits 2/6/10 (which have variables).
+
+## Variants
+
+### The 4px scale
 
 Reference ladder (Figma "Spacing/Roundness/Padding/Margins/Icons size"):
 
@@ -112,55 +151,7 @@ Reference ladder (Figma "Spacing/Roundness/Padding/Margins/Icons size"):
 | 6 | 96 |
 | 10 | 160 |
 
-Values above 40px have no named token — use the rem value directly (e.g. `3rem` for 48px section gaps).
-
-## 2. Named tokens (Figma)
-
-The Figma number variables and their CSS tokens. The same scale drives **both** spacing and radius:
-
-| Figma name | px | Spacing token | Radius token |
-|---|---|---|---|
-| XXS | 2 | `--space-xxs` | — |
-| XS | 4 | `--space-xs` | `--radius-xs` |
-| XSS | 6 | `--space-xss` | — |
-| S | 8 | `--space-s` | `--radius-s` |
-| SSM | 10 | `--space-ssm` | — |
-| SM | 12 | `--space-sm` | `--radius-sm` |
-| M | 16 | `--space-m` | `--radius-m` |
-| ML | 20 | `--space-ml` | `--radius-ml` |
-| L | 24 | `--space-l` | `--radius-l` |
-| XL | 32 | `--space-xl` | — |
-| XXL | 40 | `--space-xxl` | — |
-| 0 | 0 | use `0` | use `0` |
-| 100 | 100 | use `100px` | — |
-
-XXS / XSS / SSM (2/6/10px) were added 2026-08-26 for micro spacing inside components. They are off the 4px grid on purpose and must not be used for layout spacing.
-
-Code-only extra: `--radius-full: 9999px` for circular elements (avatars, pills, icon-button hover backgrounds — icon-only buttons **always** use circular hover, never squared).
-
-```css
-:root {
-  /* Spacing (4px base) */
-  --space-xs: 0.25rem;   /* 4px */
-  --space-s: 0.5rem;     /* 8px */
-  --space-sm: 0.75rem;   /* 12px */
-  --space-m: 1rem;       /* 16px */
-  --space-ml: 1.25rem;   /* 20px */
-  --space-l: 1.5rem;     /* 24px */
-  --space-xl: 2rem;      /* 32px */
-  --space-xxl: 2.5rem;   /* 40px */
-
-  /* Border Radius */
-  --radius-xs: 0.25rem;  /* 4px */
-  --radius-s: 0.5rem;    /* 8px */
-  --radius-sm: 0.75rem;  /* 12px */
-  --radius-m: 1rem;      /* 16px */
-  --radius-ml: 1.25rem;  /* 20px */
-  --radius-full: 9999px;
-}
-```
-
-## 3. Padding & margin guidelines
+Values above 40px have no named token - use the rem value directly (e.g. `3rem` for 48px section gaps).
 
 ### Component padding
 
@@ -178,8 +169,6 @@ Code-only extra: `--radius-full: 9999px` for circular elements (avatars, pills, 
 .input   { padding: var(--space-s) var(--space-sm); }   /* 8px 12px */
 ```
 
-### Quick reference
-
 **Component internal spacing**
 - Icon ↔ text gap (small button) → `--space-xs` (4px)
 - Icon ↔ header gap → `--space-m` (16px)
@@ -191,20 +180,20 @@ Code-only extra: `--radius-full: 9999px` for circular elements (avatars, pills, 
 - Page padding, page section gaps → `--space-l` (24px)
 - Large section separation → `--space-xl` / `--space-xxl` (32/40px)
 
-## 4. Roundness (border radius)
+### Roundness (border radius)
 
 | Element | Token |
 |---|---|
 | Buttons | `--radius-sm` (12px) |
-| Cards, inputs, tags, badges, dialogs, modals | `--radius-sm` (12px) |
+| Cards, inputs, tags, dialogs, modals | `--radius-sm` (12px) |
 | Large cards | `--radius-m` (16px) |
 | Hero sections | `--radius-ml` (20px) |
-| Avatars, pills, circular icon-button hover | `--radius-full` |
+| Avatars, pills, badges, circular icon-button hover | `--radius-full` |
 | Small elements, tags | `--radius-xs` (4px) |
 
-## 5. Icon sizes
+### Icon sizes
 
-Iconsax React icons come in exactly four sizes — never others:
+Iconsax React icons come in exactly four sizes - never others:
 
 | Size | Token | Usage |
 |---|---|---|
@@ -213,38 +202,32 @@ Iconsax React icons come in exactly four sizes — never others:
 | 24px | `--icon-size-lg` | Navigation, headers, cards (default) |
 | 32px | `--icon-size-xl` | Large interactive elements, hero sections |
 
-See `iconography.md` for icon usage, variants, and color rules.
+See `iconography.md` for icon usage, variants, and colour rules.
 
-## 6. Shadows
+### Shadows
 
 Three elevation levels per the Figma styles:
 
-| Token | Value | Usage |
-|---|---|---|
-| `--shadow-s` | `-1px -1px 4px 0 rgba(32, 34, 42, 0.04), 1px 1px 4px 0 rgba(32, 34, 42, 0.04)` | Cards, table rows — subtle all-around lift |
-| `--shadow-l` | `-4px 0 24px 0 rgba(32, 34, 42, 0.12)` (Figma Shadow L, leftward) | Dialogs, modals, menus, dropdowns, tooltips, popovers |
-| `--shadow-xl` | `0 4px 32px 0 rgba(32, 34, 42, 0.24)` | Currently unused (modals and dialogs use Shadow L) |
+| Token | Usage |
+|---|---|
+| `--shadow-s` | Cards, table rows - subtle all-around lift |
+| `--shadow-l` | Dialogs, modals, menus, dropdowns, tooltips, popovers |
+| `--shadow-xl` | Currently unused (modals and dialogs use Shadow L) |
 
-```css
-:root {
-  --shadow-s:  -1px -1px 4px 0 rgba(32, 34, 42, 0.04), 1px 1px 4px 0 rgba(32, 34, 42, 0.04);
-  --shadow-l:  -4px 0 24px 0 rgba(32, 34, 42, 0.12);
-  --shadow-xl: 0 4px 32px 0 rgba(32, 34, 42, 0.24);
-}
-```
+`--shadow-card` is Shadow S in light mode and `none` in dark. For a filled card on the page background: in light the two surfaces are one step apart and the fill alone doesn't separate them, in dark they already are. Use it wherever a `--cards-background` card sits directly on `--page-background`.
 
-Code-only extra: `--shadow-card` — Shadow S in light mode, `none` in dark. For a filled card on the page background: in light the two surfaces are one step apart and the fill alone doesn't separate them, in dark they already are. Use it wherever a `--cards-background` card sits directly on `--page-background`.
+`--shadow-panel` (`-24px 0 24px 0 rgba(32, 34, 42, 0.04)`) is the leftward shadow for right-anchored side panels. Shadow L itself is leftward in Figma, and the token matches it. A few `filter: drop-shadow()` surfaces (Tooltip and some popovers) cannot take the token and write the same value by hand.
 
-Code-only extra: `--shadow-panel` (`-24px 0 24px 0 rgba(32, 34, 42, 0.04)`) — leftward shadow for right-anchored side panels. Shadow L itself is leftward in Figma, and the token matches it (re-verified 2026-09-29). A few `filter: drop-shadow()` surfaces (Tooltip and some popovers) cannot take the token and write the same value by hand.
+`--shadow-sticky` (`4px 0 24px 0 rgba(32, 34, 42, 0.12)`, dark `rgba(0, 0, 0, 0.48)`) is Shadow L cast rightward, for a table's frozen first column once scrolled.
 
-## 7. Overlay scrim
+### Overlay scrim
 
 Full-screen backdrop behind dialogs, modals, and side drawers. The base colour is always Neutral-900 `#0F1014`, exposed as the single token `--scrim`, and only the opacity changes per mode:
 
 | Mode | Value |
 |---|---|
-| Light mode | Neutral-900 @ **25%** — `rgba(15, 16, 20, 0.25)` |
-| Dark mode | Neutral-900 @ **50%** — `rgba(15, 16, 20, 0.5)` |
+| Light mode | Neutral-900 @ **25%** - `rgba(15, 16, 20, 0.25)` |
+| Dark mode | Neutral-900 @ **50%** - `rgba(15, 16, 20, 0.5)` |
 
 **Usage rule:** every overlay backdrop - dialog, modal, side drawer, lightbox, popover blocker - uses `background: var(--scrim)`. Never hardcode the rgba value, and never derive a one-off alpha: the token is the only thing that flips between modes.
 
@@ -257,17 +240,29 @@ Full-screen backdrop behind dialogs, modals, and side drawers. The base colour i
 }
 ```
 
-> **Code note:** `tokens.css` ships both values today. `:root` defines `--scrim` as `rgba(15, 16, 20, 0.25)` and the `[data-theme="dark"]` block overrides it to `rgba(15, 16, 20, 0.5)`. Dark mode is live in the prototype (`data-theme` on `<html>`, driven by `src/hooks/useTheme.ts`), so a literal will not follow the theme - always read `var(--scrim)`.
+> **Code note:** `tokens.css` defines `--scrim` as `rgba(15, 16, 20, 0.25)` in `:root` and overrides it to `rgba(15, 16, 20, 0.5)` in the `[data-theme="dark"]` block. Dark mode is live in the prototype (`data-theme` on `<html>`, driven by `src/hooks/useTheme.ts`), so a literal will not follow the theme - always read `var(--scrim)`.
 
 > **What this is not:** the scrim is the blocking layer between the page and an overlay panel. It is not an image-darkening layer, meaning the gradients and flat tints painted over hero images, banners, and card thumbnails to keep text on top legible. Those are a separate concern, belong to their own component spec, and keep their own alphas - do not replace them with `var(--scrim)`.
 
 See `overlays.md` for the Dialog/Modal/Side-Drawer component specs that sit on top of this scrim.
 
----
+## Tokens
 
-## Best practices
+All values live in `src/styles/tokens.css` (spacing, radius, icon sizes, shadows, `--scrim`); read them there rather than copying them.
 
+Best practices:
 1. Always use the named tokens; never hardcode px values that a token covers.
-2. Every custom value must be a multiple of 4px.
+2. Every custom layout value must be a multiple of 4px.
 3. Smaller spacing for related elements, larger for section separation.
-4. One shadow level per surface — don't stack or invent intermediate shadows.
+4. One shadow level per surface - don't stack or invent intermediate shadows.
+
+## Accessibility
+
+- The scrim blocks the page behind an overlay; pair it with the overlay's focus trap and focus return (`overlays.md`).
+
+## Related
+
+- [colors.md](colors.md) - `--scrim` and surface tokens
+- [iconography.md](iconography.md) - icon usage
+- [overlays.md](overlays.md) - Dialog, Modal, Side Drawer
+- [buttons.md](buttons.md) - button padding and heights

@@ -3,15 +3,13 @@ name: 5mins-date-picker-field
 description: DatePickerField for 5Mins.ai, the shared date input that shows a dd/mm/yyyy value and opens the DS month-grid calendar in a portalled popover. Covers props, the Enabled, Hover, Active and Error states, maxDate bounds and from/to date ranges. Use when building any date field, due date, start or completion date, or date-range filter instead of a native date input.
 ---
 
-# 5Mins.ai DatePickerField
+# DatePickerField
 
 `DatePickerField` is the shared date input: a bordered trigger that shows the chosen date as `dd/mm/yyyy` and opens the Monday-first month grid (`MiniCalendar`) in a popover. It replaces the browser's native `<input type="date">` so date entry matches the design system. The visual spec for the field and the grid lives in `calendar.md`; this doc covers the built component.
 
-Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`), date field light `11916:6112` / dark `11529:406` (from `calendar.md`); `src/components/DatePickerField/DatePickerField.tsx` is the reference for behaviour.
-
-> **Updated 2026-09-29 (verified against code):** the popover's Shadow L is named as `var(--shadow-l)`, the z-index wording now gives the layer numbers, the label colour in Error is stated (stays `--text-secondary`), and a keyboard note records that focus does not enter the popover.
-
-> **Updated 2026-10-07 (Figma `11529:406`):** the field defaults to today's date. Callers initialise `value` to today (or the saved date when editing one); `''` is only for date filters, which start empty: the user profile's from/to range and the automations join-date filter (which shows "Date is required" until a date is picked).
+**Code:** `import DatePickerField from '@/components/DatePickerField/DatePickerField'` (default export; the reference for behaviour)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, date field ("Calendar" set) dark `11529:406` / light `12424:2601`
+**Last verified:** 2026-10-07
 
 ## Usage
 
@@ -33,7 +31,7 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`), date field light `11916:6
 - Pass `maxDate` when later days aren't valid, and say so in the label hint (e.g. "today or earlier").
 - Pass `error` with the message when a missing or invalid date blocks saving, so the field shows the problem where it is rather than only on the button.
 - For a range, place two fields side by side with "from" and "to" `ariaLabel`s.
-- Initialise the value to today's date (ISO), or to the saved date when editing one. Leave it `''` only in date filters, where the user picks the date deliberately (e.g. the automations join-date filter).
+- Initialise the value to today's date (ISO), or to the saved date when editing one. Leave it `''` only in date filters, where the user picks the date deliberately: the user profile's from/to range and the automations join-date filter (which shows "Date is required" until a date is picked).
 - Store and pass the value as ISO `yyyy-mm-dd` (`''` when empty); the field formats it for display.
 
 **Don't**
@@ -42,22 +40,17 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`), date field light `11916:6
 - Don't use raw `--secondary-500` for the open border; use the mode-aware `--selected`.
 - Don't pass a display-formatted string (`dd/mm/yyyy`) as `value`.
 
-**Canonical spec:** min width 160px, min height 37px, padding `var(--space-xs) var(--space-sm)` (4px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), text 14px Poppins. Border `--border-elevated`, `--border-hover` on hover, `--selected` while open, `--text-error` on error. Value `--text-primary`, placeholder `--text-disabled`. Calendar icon 20px Linear `--text-primary`; on error a 20px Linear `Danger` in `--text-error` sits before it; error helper 14px / 400 / 1.5 `--text-error`, `var(--space-s)` (8px) below. Popover per `calendar.md`, with Shadow L (`var(--shadow-l)`). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11916:6112` / dark `11529:406`.
+**Canonical spec:** min width 160px, min height 37px, padding `var(--space-xs) var(--space-sm)` (4px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), text 14px Poppins. Border `--border-elevated`, `--border-hover` on hover, `--selected` while open, `--text-error` on error. Value `--text-primary`, placeholder `--text-disabled`. Calendar icon 20px Linear `--text-primary`; on error a 20px Linear `Danger` in `--text-error` sits before it; error helper 14px / 400 / 1.5 `--text-error`, `var(--space-s)` (8px) below. Popover per `calendar.md`, with Shadow L (`var(--shadow-l)`). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12424:2601` / dark `11529:406`.
 
-**Prototype:** `src/components/DatePickerField/DatePickerField.tsx` (default export)
-- `value` (ISO or `''`), `onChange(iso)` (both required)
-- `ariaLabel` (default "Choose a date"), `placeholder` (default "dd/mm/yyyy")
-- `maxDate` (ISO) disables later days
-- `error` (message) turns on the Error state and helper line
-- `className`
+## Figma to code
 
-**Production:**
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Calendar (state) | Enabled / Hover / Active / Error | `error` | Error = `error` message string | Enabled, Hover, Active (open) are CSS / internal open state |
+| Label | true / false | n/a | caller renders the label | the component has no `label` prop |
 
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| DatePickerField | _to be mapped by engineering_ | | |
-
-## Props
+- **Figma only:** the `Label` variant; Figma's Error variant reds the label, which no call site does.
+- **Code only:** `value`, `onChange`, `placeholder`, `ariaLabel`, `maxDate`, `minDate`, `className`. There is no Disabled state in Figma or code.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
@@ -66,12 +59,19 @@ Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`), date field light `11916:6
 | `placeholder` | `string` | `'dd/mm/yyyy'` | Shown in `--text-disabled` while `value` is empty |
 | `ariaLabel` | `string` | `'Choose a date'` | Accessible name of the trigger button |
 | `maxDate` | `string` | none | ISO; later days render disabled in the grid |
+| `minDate` | `string` | none | ISO; earlier days render disabled in the grid |
 | `error` | `string` | none | Shows the Error state and renders this text as the helper line |
 | `className` | `string` | `''` | Extra class on the wrapper |
 
-There is no `label`, `disabled` or `minDate` prop.
+There is no `label` or `disabled` prop.
 
-## Anatomy and behaviour
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| DatePickerField | _to be mapped by engineering_ | | |
+
+## Anatomy
 
 ```
 [ dd/mm/yyyy        (!) [cal] ]   ← trigger button (warning icon only in Error)
@@ -82,17 +82,25 @@ Date is required.                 ← helper line (Error only)
 └──────────────────────────┘
 ```
 
-- **Trigger.** A `<button>` with `aria-haspopup="dialog"`, `aria-expanded`, and `aria-invalid` plus `aria-describedby` (pointing at the helper) when `error` is set. Clicking toggles the popover.
+- **Trigger.** A `<button>`; clicking toggles the popover.
 - **Display.** The ISO value is shown as `dd/mm/yyyy`; an empty value shows the placeholder.
 - **Popover.** Rendered with `createPortal` into `<body>` at `position: fixed` and `z-index: 1060`, which sits above the modal and drawer layers (1000 to 1050) and below toasts (1100), 6px below the field. It follows the field on scroll and resize, flips above the field when there isn't room below, and is clamped 8px inside the viewport.
 - **Default.** Today's date. Every single-date call site (`ExtendDueDateModal`, `EditStartDateModal`, `SetCompletedModal`, `ProgramEnrollmentPopover`) initialises its value to today, or to the saved date when editing. With no value set, the grid still opens on today's month with today drawn as the selection (the component passes today to `MiniCalendar`).
 - **Selecting.** Picking a day calls `onChange(iso)` and closes the popover.
 - **Closing.** A mousedown outside both the field and the popover closes it (listened for in the capture phase, so a modal that stops mousedown bubbling doesn't block it), and so does Escape.
-- **Keyboard.** Focus does not move into the portalled popover, so Tab from the field does not reach the day cells; arrow-key movement is not built.
-- **States.** Enabled, Hover (border only), Active while open (`--selected` border), Error (`--text-error` border, warning icon, helper). Placeholder and value colours follow `input.md`: `--text-disabled` empty, `--text-primary` filled.
 - **Grid.** `MiniCalendar` (`src/pages/programs/components/CourseOutline/MiniCalendar.tsx`) draws the month header, weekday row and day cells per `calendar.md`, and disables days after `maxDate`.
 
-## Related docs
+## States
+
+Enabled, Hover (border only), Active while open (`--selected` border), Error (`--text-error` border, warning icon, helper). Placeholder and value colours follow `input.md`: `--text-disabled` empty, `--text-primary` filled. Full state table in [calendar.md](calendar.md).
+
+## Accessibility
+
+- The trigger has `aria-haspopup="dialog"`, `aria-expanded`, and `aria-invalid` plus `aria-describedby` (pointing at the helper) when `error` is set.
+- Pass a specific `ariaLabel`; the default "Choose a date" doesn't say which date.
+- **Keyboard.** Focus does not move into the portalled popover, so Tab from the field does not reach the day cells; arrow-key movement is not built. Escape closes the popover.
+
+## Related
 
 - `calendar.md` for the field states and the month-grid spec
 - `input.md` for field label typography and placeholder colour

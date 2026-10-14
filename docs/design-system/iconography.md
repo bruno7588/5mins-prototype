@@ -1,297 +1,89 @@
 ---
 name: 5mins-iconography
-description: Iconography system for 5Mins.ai — Iconsax React library, Linear/Bold variants, standard sizes (16/20/24/32), color pairing via tokens. Use when choosing or sizing any icon.
+description: Iconography system for 5Mins.ai - Iconsax React library, Linear/Bold variants, standard sizes (16/20/24/32), color pairing via tokens, the custom 5Mins icons and the skill illustration library. Use when choosing or sizing any icon.
 ---
 
-# 5Mins.ai Iconography System
+# Iconography
 
-Complete icon guidelines for 5Mins.ai using Iconsax React as the primary icon library.
+Icon rules for 5Mins.ai: **Iconsax React** for all UI icons, two variants (Linear and Bold), four sizes, colours from design tokens.
 
-## Overview
+**Code:** `iconsax-react` (named imports); custom 5Mins icons in `src/components/icons/`; skill illustrations in `src/assets/skill-icons/`. To find an icon by meaning or check a name exists, use the `find-icon` skill (`node .claude/skills/find-icon/scripts/find-icon.mjs <keyword>`) rather than guessing.
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Icons page `5447:24698`; skill illustrations frame `9120:10291`
+**Last verified:** 2026-10-14
 
-5Mins.ai uses **Iconsax React** for all iconography, providing a consistent, professional icon system with two variants (Linear and Bold) and full integration with the design system colors.
+## Usage
 
-## Installation
+**Intent:** one icon family at fixed sizes so icons read as a system and pair cleanly with text.
 
-```bash
-pnpm add iconsax-react
-```
+**Use when**
+- Any UI icon: buttons, inputs, navigation, menus, status, table actions.
 
-## Basic Usage
+**Don't use when**
+- Skill-category artwork → use the skill illustrations (below)
+- Skill levels, streaks, quiz-type artwork, certificates → [gamification.md](gamification.md)
+- Empty states → the 72px DS illustrations ([doc](empty-state.md))
 
-```jsx
-import { Home, User, Settings } from 'iconsax-react';
+**Do**
+- Use Iconsax React icons only, imported by name.
+- Use the four sizes: 16, 20, 24, 32px (`--icon-size-sm|md|lg|xl`).
+- Pass `color` explicitly on every Iconsax icon (iconsax-react 0.0.8 on React 19 ignores the default), as a token: `color="var(--text-primary)"`.
+- Linear by default; Bold for active/selected states and emphasis.
+- Give every icon-only button an `aria-label` and a circular `var(--radius-full)` hover background.
 
-<Home size="24" color="var(--neutral-800)" />
-<Home size="24" color="var(--neutral-800)" variant="Linear" />
-<Home size="24" color="var(--primary-600)" variant="Bold" />
-```
+**Don't**
+- Don't mix icon libraries. The one exception: the Ionicons 5 glyphs `IoCloseOutline` (`CloseButton`) and `IoInformationCircleOutline` (Figma's Informative badge), drawn inline as SVG; `react-icons` is not installed.
+- Don't use non-standard sizes (e.g. 18px, 23px).
+- Don't use arbitrary colours outside the tokens, or raw `--neutral-*` for an icon that should flip with the theme.
+- Don't use Bold everywhere.
+- Don't import the entire icon library.
 
-## Icon Size Scale
+**Canonical spec:** Iconsax React, Linear default / Bold active; sizes 16/20/24/32px; colour via token, explicit `color` prop; icon-only buttons circular hover, `aria-label`, Tooltip on web.
 
-Icons come in exactly four sizes — 16, 20, 24, 32px (`--icon-size-sm/md/lg/xl`). The scale and usage table live in `layout.md`.
+## Figma to code
 
-### Implementation
-```jsx
-<InfoCircle size="16" />      /* Small */
-<SearchNormal1 size="20" />   /* Medium */
-<Home size="24" />            /* Large (default) */
-<User size="32" />            /* Extra Large */
-```
+| Figma | Figma values | Code | Code values | Notes |
+|---|---|---|---|---|
+| Glyph `vuesax/linear/<name>` | kebab-case name | Iconsax component | PascalCase name, `variant="Linear"` | `user-cirlce-add` → `UserCirlceAdd` |
+| Glyph `vuesax/bold/<name>` | kebab-case name | Iconsax component | same name, `variant="Bold"` | |
+| `Icons` component set (custom 5Mins icons) | Name (27), Type linear / bold, State Enabled / Hover | `src/components/icons/*` | one component per icon | Hover is CSS, not a prop |
+| Icon size | 24×24 frames (a few 20×20) | `size` prop | `16` / `20` / `24` / `32` (`--icon-size-*`) | no Figma variable for icon sizes |
+| Skill illustrations | `Icons/Skill Icon/*`, `Illustrations/Skill Hugo/*` | `getSkillIllustrationByName` | see below | |
 
-## Icon Colors
+- **Figma only:** the Hover state baked into the custom `Icons` set.
+- **Code only:** `--icon-size-sm|md|lg|xl` tokens (16/20/24/32px).
 
-Icons follow the same color system as typography and brand colors.
+**Production:**
 
-### Color Guidelines
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| Icons | _to be mapped by engineering_ | | |
 
-```jsx
-// Primary (interactive, active elements)
-<Settings size="24" color="var(--neutral-800)" />
+### Known drift
 
-// Secondary (less prominent)
-<User size="24" color="var(--neutral-500)" />
+- **Names don't always round-trip:** Figma glyph names had their numeric suffixes stripped (169 duplicate names, e.g. `arrow-down` where Iconsax has `ArrowDown` and `ArrowDown2`; `search-normal` where code uses `SearchNormal1`) and carry typos (`mportCurve`). These code icons are not findable by name in Figma: ArrangeHorizontal, ArrowDown2, ArrowForward, ArrowLeft2, ArrowRight2, ArrowUp2, Book1, ExportSquare, ImportCurve, MessageAdd1, Note1, SearchNormal1, Star1, Sun1. Use `find-icon` to confirm the Iconsax name.
+- **Informative badge icon:** Figma draws Ionicons `IoInformationCircleOutline`; code uses Iconsax `InfoCircle` Linear as the approved stand-in (`badges.md`).
 
-// Muted (disabled, inactive)
-<ArrowRight size="24" color="var(--neutral-300)" />
+## Variants
 
-// Success state
-<TickCircle size="24" color="var(--success-500)" />
+### Linear (default)
 
-// Warning state
-<InfoCircle size="24" color="var(--warning-500)" />
-
-// Error state
-<CloseCircle size="24" color="var(--danger-500)" />
-
-// Brand/Link
-<Home size="24" color="var(--primary-600)" />
-```
-
-### Color Reference
-
-| State | Color Variable | Usage |
-|-------|---------------|-------|
-| Primary | `--neutral-800` | Interactive elements |
-| Secondary | `--neutral-500` | Supporting elements |
-| Muted | `--neutral-300` | Disabled/inactive |
-| Success | `--success-500` | Success states |
-| Warning | `--warning-500` | Warnings |
-| Danger | `--danger-500` | Errors, delete |
-| Brand | `--primary-600` | Brand elements |
-
-## Icon Variants
-
-### Linear (Default)
-Use for most UI elements, default states, general interface icons.
+Most UI elements, default states, general interface icons: default navigation items, form field icons, general UI elements, inactive states.
 
 ```jsx
-<Home size="24" color="var(--neutral-800)" variant="Linear" />
+<Home size="24" color="var(--text-primary)" variant="Linear" />
 ```
-
-**Usage:**
-- Default navigation items
-- Form field icons
-- General UI elements
-- Inactive states
 
 ### Bold
-Use for active states, selected items, emphasis.
+
+Active states, selected items, emphasis: active navigation items, selected states, important actions, emphasised elements.
 
 ```jsx
-<Home size="24" color="var(--primary-600)" variant="Bold" />
+<Home size="24" color="var(--text-selected)" variant="Bold" />
 ```
 
-**Usage:**
-- Active navigation items
-- Selected states
-- Important actions
-- Emphasized elements
+## Sizes
 
-## Common Patterns
-
-### Navigation Icons
-
-```jsx
-// Inactive
-<Home 
-  size="24" 
-  color="var(--neutral-500)" 
-  variant="Linear" 
-/>
-
-// Active
-<Home 
-  size="24" 
-  color="var(--primary-600)" 
-  variant="Bold" 
-/>
-```
-
-### Button Icons
-
-```jsx
-// Primary button with icon
-<button className="btn-primary">
-  <ArrowRight size="20" color="white" />
-  Continue
-</button>
-
-// Icon button
-<button className="icon-button">
-  <Settings size="24" color="var(--neutral-800)" />
-</button>
-```
-
-### Interactive Icon Hover States
-
-When an icon is used as a standalone clickable element (e.g. close button, action icon), the hover background must always be **circular** (`border-radius: 50%`), never squared.
-
-```css
-/* Icon button hover — ALWAYS use border-radius: 50% */
-.icon-button {
-  display: flex;
-  padding: 4px;
-  border-radius: 50%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.icon-button:hover {
-  background: var(--neutral-50);
-}
-```
-
-✓ Always use `border-radius: 50%` for icon hover backgrounds
-✗ Never use squared corners (`border-radius: 4px` or `8px`) for icon hover states
-
-### Close Icon
-
-Two close treatments exist; both are the shared `CloseButton` (`src/components/CloseButton/CloseButton.tsx`), never a hand-rolled × or an Iconsax `CloseCircle` (that one is a status icon, see below).
-
-| Where | Variant | Look |
-|---|---|---|
-| Side drawers, centred modals, popovers, chips | `CloseButton` (default) | Bare glyph in `--text-secondary`, circular `--input-background` fill on hover only |
-| **Full-screen modals** | `CloseButton variant="fullscreen"` | 44px `--input-background` disc, 4px padding, 36px `IoCloseOutline` glyph (1.5px stroke) in `--text-secondary`; hover lifts to `--input-background-hover` + `--text-primary` |
-
-> **Figma:** full-screen close is Programs `4221:63780` (DS `Icons` set, `Name=close, Type=linear`, overridden to 44px with an `Input-background` fill and a `Text-secondary` stroke). Full spec in `overlays.md` → Close Button (Full-screen modal).
-
-### Input Icons
-
-```jsx
-// Search input
-<div className="input-with-icon">
-  <SearchNormal1 size="20" color="var(--neutral-500)" />
-  <input placeholder="Search..." />
-</div>
-```
-
-### Status Icons
-
-```jsx
-// Success
-<TickCircle size="20" color="var(--success-500)" variant="Bold" />
-
-// Warning
-<InfoCircle size="20" color="var(--warning-500)" variant="Linear" />
-
-// Error
-<CloseCircle size="20" color="var(--danger-500)" variant="Linear" />
-```
-
-### Quiz Type Icons
-
-```jsx
-// Blaze Quiz
-<Flash size="24" color="var(--blaze-quiz)" variant="Bold" />
-
-// Lesson Quiz
-<Book1 size="24" color="var(--lesson-quiz)" variant="Linear" />
-
-// Certificate Quiz
-<Award size="24" color="var(--certificate-quiz)" variant="Bold" />
-
-// Case Study Quiz
-<DocumentText size="24" color="var(--case-study-quiz)" variant="Linear" />
-```
-
-## Commonly Used Icons
-
-### Navigation
-- `Home` - Dashboard, home page
-- `Book1` - Courses, learning
-- `Profile2User` - Team, users
-- `Setting2` - Settings
-- `NotificationBing` - Notifications
-
-### Actions
-- `Add` - Add, create
-- `Edit` - Edit
-- `Trash` - Delete
-- `Eye` - View
-- `ImportCurve` - Download (the one download icon across the product; Iconsax React has no `Download`). Resource cards pair it with `ExportSquare` for Open link (`resource-card.md`)
-- `Share` - Share
-
-### Status
-- `TickCircle` - Success, completed
-- `InfoCircle` - Information, warning
-- `CloseCircle` - Error, failed
-- `Clock` - Pending, in progress
-
-### Form Elements
-- `SearchNormal1` - Search
-- `Calendar` - Date picker
-- `Location` - Location
-- `Sms` - Email
-- `Lock` - Password
-
-### Content Types
-- `Video` - Video content
-- `Image` - Images
-- `DocumentText` - Documents
-- `MicrophoneSlash` - Audio
-
-## Best Practices
-
-### 1. Consistency
-Always use Iconsax React icons for visual consistency.
-
-### 2. Size Standards
-Stick to defined sizes: 16, 20, 24, 32px.
-
-### 3. Color Harmony
-Use colors from the design system palette (CSS variables).
-
-### 4. Semantic Meaning
-Choose icons that clearly represent their function.
-
-### 5. Accessibility
-Provide aria-labels for icon-only buttons.
-
-```jsx
-<button aria-label="Delete course">
-  <Trash size="20" color="var(--danger-500)" />
-</button>
-```
-
-### 6. Performance
-Import only the icons you need.
-
-```jsx
-// ✓ Good
-import { Home, User } from 'iconsax-react';
-
-// ✗ Bad
-import * as Icons from 'iconsax-react';
-```
-
-### 7. Variant Usage
-- **Linear:** Default states
-- **Bold:** Active/selected states
-
-## Icon Size Guidelines
+Icons come in exactly four sizes - 16, 20, 24, 32px (`--icon-size-sm/md/lg/xl`). The scale and usage table live in `layout.md`.
 
 | Context | Size | Example |
 |---------|------|---------|
@@ -302,34 +94,84 @@ import * as Icons from 'iconsax-react';
 | Card header | 24px | Card title icon |
 | Hero section | 32px | Large feature icon |
 
-## Quick Decisions
+```jsx
+<InfoCircle size="16" color="var(--text-secondary)" />    /* Small */
+<SearchNormal1 size="20" color="var(--text-secondary)" /> /* Medium */
+<Home size="24" color="var(--text-primary)" />            /* Large (default) */
+<User size="32" color="var(--text-primary)" />            /* Extra large */
+```
 
-**"What icon size for...?"**
-- Navigation → 24px
-- Button → 20px
-- Form input → 20px
-- Badge/indicator → 16px
-- Hero/feature → 32px
+## States
 
-**"What icon color for...?"**
-- Active element → `--neutral-800`
-- Inactive element → `--neutral-500`
-- Disabled → `--neutral-300`
-- Success → `--success-500`
-- Warning → `--warning-500`
-- Error → `--danger-500`
+### Icon colours
 
-**"What variant for...?"**
-- Default state → Linear
-- Active/selected → Bold
-- Emphasis → Bold
-- Standard UI → Linear
+| State | Token | Usage |
+|-------|-------|-------|
+| Primary | `--text-primary` | Interactive elements; menu, listbox and filter leading icons |
+| Secondary | `--text-secondary` | Supporting elements, inactive navigation |
+| Muted | `--text-disabled` | Disabled/inactive |
+| Selected | `--text-selected` | Selected navigation item (Bold) |
+| Success | `--success-500` | Success states |
+| Warning | `--warning-500` | Warnings |
+| Danger | `--danger-500` | Errors, delete |
+| Brand | `--primary-600` | Brand elements |
 
-## Skill Illustrations (gamification)
+Status icon colours are raw palette tokens on purpose: they are mode-invariant.
 
-Multi-color skill-category illustrations, separate from the Iconsax UI icon set. Used on skill pages, skill/instructor cards, and role panels. Source: Figma `Icons/Skill Icon/*` + `Illustrations/Skill Hugo/*` (frame `9120:10291`, downloaded 2026-07-13). Full library lives in `src/assets/skill-icons/` — **100 skills** as SVG (kebab-case filenames) plus **8 "Skill Hugo"** alternates (`*-hugo.svg`: Automation Testing & Deployment, Financial Compliance, Data & Security Compliance, Workplace Compliance, ESG, Sustainability, Buyer Psychology, Generative ai).
+### Interactive icon hover
 
-Usage — always via the index, never raw paths:
+When an icon is a standalone clickable element (close button, action icon), the hover background is always **circular** (`var(--radius-full)`), never squared.
+
+```css
+.icon-button {
+  display: flex;
+  padding: var(--space-xs);
+  border-radius: var(--radius-full);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.icon-button:hover {
+  background: var(--page-background-hover);
+}
+```
+
+✓ Always a circular hover background for icon-only controls
+✗ Never squared corners (`border-radius: 4px` or `8px`) for icon hover states
+
+### Close icon
+
+Two close treatments exist; both are the shared `CloseButton` (`src/components/CloseButton/CloseButton.tsx`), never a hand-rolled × or an Iconsax `CloseCircle` (that one is a status icon, see below).
+
+| Where | Variant | Look |
+|---|---|---|
+| Side drawers, centred modals, popovers, chips | `CloseButton` (default) | Bare glyph in `--text-secondary`, circular `--input-background` fill on hover only |
+| **Full-screen modals** | `CloseButton variant="fullscreen"` | 44px `--input-background` disc, 4px padding, 36px `IoCloseOutline` glyph (1.5px stroke) in `--text-secondary`; hover lifts to `--input-background-hover` + `--text-primary` |
+
+> **Figma:** full-screen close is Programs `4221:63780` (DS `Icons` set, `Name=close, Type=linear`, overridden to 44px with an `Input-background` fill and a `Text-secondary` stroke). Full spec in `overlays.md` → Close Button (Full-screen modal).
+
+## Content
+
+### Commonly used icons
+
+| Category | Icons |
+|----------|-------|
+| **Navigation** | `Home` (dashboard), `Book1` (courses, learning), `Profile2User` (team, users), `Setting2` (settings), `NotificationBing` (notifications) |
+| **Actions** | `Add`, `Edit`, `Trash` (delete), `Eye` (view), `ImportCurve` (download), `Share` |
+| **Status** | `TickCircle` (success, completed), `InfoCircle` (information, warning), `CloseCircle` (error, failed), `Clock` (pending, in progress) |
+| **Forms** | `SearchNormal1` (search), `Calendar` (date picker), `Location`, `Sms` (email), `Lock` (password) |
+| **Content** | `Video`, `Image`, `DocumentText` (documents), `MicrophoneSlash` (audio) |
+| **Quiz types** | `Flash` (blaze), `Book1` (lesson), `Award` (certificate), `DocumentText` (course assessments) |
+
+`ImportCurve` is the one download icon across the product (Iconsax React has no `Download`). Resource cards pair it with `ExportSquare` for Open link (`resource-card.md`).
+
+### Skill illustrations (gamification)
+
+Multi-colour skill-category illustrations, separate from the Iconsax UI icon set. Used on skill pages, skill/instructor cards, and role panels. Source: Figma `Icons/Skill Icon/*` + `Illustrations/Skill Hugo/*` (frame `9120:10291`). Full library lives in `src/assets/skill-icons/` - **100 skills** as SVG (kebab-case filenames) plus **8 "Skill Hugo"** alternates (`*-hugo.svg`: Automation Testing & Deployment, Financial Compliance, Data & Security Compliance, Workplace Compliance, ESG, Sustainability, Buyer Psychology, Generative ai).
+
+Usage - always via the index, never raw paths:
 
 ```tsx
 import { getSkillIllustrationByName, skillIllustrationHugoByName } from '@/assets/skill-icons'
@@ -337,50 +179,87 @@ import { getSkillIllustrationByName, skillIllustrationHugoByName } from '@/asset
 <img src={getSkillIllustrationByName('Machine Learning')} alt="" width={16} height={16} />
 ```
 
-- `getSkillIllustrationByName(name)` — case-insensitive lookup by official skill name; unknown names fall back to a stable hash pick so mock data never renders empty.
-- `skillIllustrationHugoByName` — the 8 Hugo-style alternates, keyed by the same names.
-- `getSkillIllustration(skillId)` — legacy modulo pick over the original 20; existing call sites only, don't use in new code.
-- Render at 16, 20, or 96px depending on context (skill row, chip, skill page hero); they're decorative — pair with a text label, `alt=""`.
+- `getSkillIllustrationByName(name)` - case-insensitive lookup by official skill name; unknown names fall back to a stable hash pick so mock data never renders empty.
+- `skillIllustrationHugoByName` - the 8 Hugo-style alternates, keyed by the same names.
+- `getSkillIllustration(skillId)` - legacy modulo pick over the original 20; existing call sites only, don't use in new code.
+- Render at 16, 20, or 96px depending on context (skill row, chip, skill page hero); they're decorative - pair with a text label, `alt=""`.
 
-## Resources
+## Accessibility
 
-**Complete CSS Utilities:** `assets/iconography.css`
-- Icon size scale variables
-- Icon color variables
-- Common icon patterns
-- Icon container utilities
+- Provide an `aria-label` for every icon-only button; on web it also shows a DS Tooltip with the same text on hover and focus.
+- Decorative icons next to a text label need no label of their own.
 
-**Detailed Usage Guidelines:** `references/usage-guidelines.md`
-- Comprehensive examples
-- All common patterns
-- Accessibility guidelines
-- Complete icon reference
+```jsx
+<button aria-label="Delete course">
+  <Trash size="20" color="var(--danger-500)" />
+</button>
+```
 
-**Icon Documentation:**
-- [Iconsax React Docs](https://iconsax-react.pages.dev/)
-- [Iconsax Icon Library](https://iconsax.io/)
+## Examples
 
-## Integration with Design System
+```jsx
+import { Home, User, Setting2 } from 'iconsax-react';
 
-Icons integrate seamlessly with:
-- **5mins-colors (colors.md):** All icon colors reference color tokens
-- **5mins-typography:** Icons sized to complement text
-- **Components:** Icons used in buttons, inputs, navigation
+<Home size="24" color="var(--text-primary)" variant="Linear" />
+```
 
-## Common Mistakes to Avoid
+Import only the icons you need:
 
-### Don't:
-✗ Use non-standard sizes (e.g., 23px)
-✗ Use arbitrary colors outside the palette
-✗ Mix icon libraries
-✗ Forget accessibility labels
-✗ Use Bold variant everywhere
-✗ Import entire icon library
+```jsx
+// ✓ Good
+import { Home, User } from 'iconsax-react';
 
-### Do:
-✓ Use standard sizes (16, 20, 24, 32px)
-✓ Use CSS color variables
-✓ Stick to Iconsax React
-✓ Add aria-labels to icon buttons
-✓ Use Linear as default, Bold for active
-✓ Import only needed icons
+// ✗ Bad
+import * as Icons from 'iconsax-react';
+```
+
+**Navigation**
+
+```jsx
+// Inactive
+<Home size="24" color="var(--text-secondary)" variant="Linear" />
+
+// Active
+<Home size="24" color="var(--text-selected)" variant="Bold" />
+```
+
+**Button icons:** use the `Button` component's icon slot ([doc](buttons.md)); icons lead the label.
+
+**Input icons**
+
+```jsx
+<SearchNormal1 size="20" color="var(--text-secondary)" />
+```
+
+**Status icons**
+
+```jsx
+<TickCircle size="20" color="var(--success-500)" variant="Bold" />   // Success
+<InfoCircle size="20" color="var(--warning-500)" variant="Linear" /> // Warning
+<CloseCircle size="20" color="var(--danger-500)" variant="Linear" /> // Error
+```
+
+**Quiz type icons**
+
+```jsx
+<Flash size="24" color="var(--blaze-quiz)" variant="Bold" />                 // Blaze Quiz
+<Book1 size="24" color="var(--lesson-quiz)" variant="Linear" />              // Lesson Quiz
+<Award size="24" color="var(--certificate-quiz)" variant="Bold" />           // Certificate Quiz
+<DocumentText size="24" color="var(--course-assessments)" variant="Linear" /> // Course assessments
+```
+
+### Quick decisions
+
+**"What icon size for...?"** Navigation → 24px · Button → 20px · Form input → 20px · Badge/indicator → 16px · Hero/feature → 32px
+
+**"What icon colour for...?"** Active element → `--text-primary` · Inactive element → `--text-secondary` · Disabled → `--text-disabled` · Success → `--success-500` · Warning → `--warning-500` · Error → `--danger-500`
+
+**"What variant for...?"** Default state → Linear · Active/selected → Bold · Emphasis → Bold · Standard UI → Linear
+
+## Related
+
+- [layout.md](layout.md) - icon size tokens
+- [colors.md](colors.md) - icon colour tokens
+- [gamification.md](gamification.md) - level, streak and quiz artwork
+- [overlays.md](overlays.md) - close button spec
+- [Iconsax React docs](https://iconsax-react.pages.dev/) · [Iconsax library](https://iconsax.io/)

@@ -3,15 +3,13 @@ name: 5mins-resource-card
 description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel, PowerPoint or image file, or an external link) shown as a type tile, title, meta line and one Download or Open link action. Web/Admin and Mobile app variants. Use for any list of course resources, attachments or downloadable files, on the admin course builder or the learner course page.
 ---
 
-# Resource Card
+# Resource card
 
-> **Figma source:** Library `EC26cSVe9KNTCWXvYovakw`. Card set `12213:3040` (Web/Admin Enabled `12213:3062`, Web/Admin Hover `12213:3965`, Mobile app `12213:3041`); Type thumbnail set `12213:2984` (PDF `12213:2985`, Excel `12213:2989`, Word `12213:2993`, PowerPoint `12213:2997`, Image `12213:3001`, External Link `12230:2631`). Verified 2026-09-21 — the set gained Image, and External Link moved to `12230:2631`. Status in Figma: proposed.
-> **Component:** `src/components/ResourceCard/ResourceCard.tsx` — use it, don't hand-roll.
-> **Model + form:** `src/components/ResourceCard/resources.ts` (types, accepted extensions, 50MB cap, validation) and `src/components/ResourceForm/ResourceForm.tsx` (add or edit one resource — `variant="drawer"` on the course builder, `variant="inline"` in the lesson editor).
+Shows one course or lesson resource (a file or an external link) with its type, name and size, and one Download or Open link action.
 
-> **Updated 2026-09-29 (aligned to prototype usage):** the Mobile type tile is 40px (as in the code and the Anatomy table), not 56px; the code sample section is renamed "Example" so this doc has one Usage section.
-
-> **Updated 2026-09-29 (learner cards):** the whole card downloads or opens on learner surfaces; the mobile card drops the tooltip, since there is no hover on a phone.
+**Code:** `import ResourceCard from '@/components/ResourceCard/ResourceCard'`. Model: `src/components/ResourceCard/resources.ts` (types, accepted extensions, 50MB cap, validation). Form: `src/components/ResourceForm/ResourceForm.tsx` (add or edit one resource: `variant="drawer"` on the course builder, `variant="inline"` in the lesson editor).
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, card set `12213:3040` (Web/Admin Enabled `12213:3062`, Web/Admin Hover `12213:3965`, Mobile app `12213:3041`), light copy `12228:2749`; Type thumbnail set `12213:2984` (PDF `12213:2985`, Excel `12213:2989`, Word `12213:2993`, PowerPoint `12213:2997`, Image `12213:3001`, External Link `12230:2631`). Status in Figma: proposed.
+**Last verified:** 2026-09-29
 
 ## Usage
 
@@ -41,25 +39,9 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel, Po
 - Don't put reordering inside the card; it belongs to the row around it.
 - Don't give Remove a red fill; the trash icon turns `--text-error` on hover over the usual `--input-background-hover` circle.
 
-**Canonical spec:** tile 48 x 48 web, 40 x 40 mobile; padding `var(--space-sm)` top/bottom/left and `var(--space-m)` right (12px / 16px) on web, `var(--space-sm)` (12px) on mobile; gap `var(--space-sm)` (12px) web, `var(--space-s)` (8px) mobile; radius `var(--radius-sm)` (12px); `--cards-background`, hover `--cards-background-hover`; `var(--shadow-card)`; title Poppins Bold 16px/1.5 web, 14px/1.5 mobile, `--text-primary`; meta `--text-tertiary`; action a 20px icon in a 28px round button (`var(--radius-full)`), `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, card set `12213:3040` (Web/Admin `12213:3062`, hover `12213:3965`, Mobile `12213:3041`); light / dark split not recorded.
+**Canonical spec:** tile 48 x 48 web, 40 x 40 mobile; padding `var(--space-sm)` top/bottom/left and `var(--space-m)` right (12px / 16px) on web, `var(--space-sm)` (12px) on mobile; gap `var(--space-sm)` (12px) web, `var(--space-s)` (8px) mobile; radius `var(--radius-sm)` (12px); `--cards-background`, hover `--cards-background-hover`; `var(--shadow-card)`; title Poppins Bold 16px/1.5 web, 14px/1.5 mobile, `--text-primary`; meta `--text-tertiary`; action a 20px icon in a 28px round button (`var(--radius-full)`), `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, card set `12213:3040` (Web/Admin `12213:3062`, hover `12213:3965`, Mobile `12213:3041`).
 
-**Prototype:** `src/components/ResourceCard/ResourceCard.tsx`
-- `type`: `pdf | word | excel | powerpoint | image | link`
-- `title`, `size?` (bytes, files only)
-- `device?`: `web` (default) or `mobile`
-- `onOpen?`, `openDisabled?`
-- `onRemove?`: authoring only, adds Remove beside the open action
-- `className?`
-
-**Production:**
-
-| Design system | `@web/ui` component | Props mapping | Known drift |
-|---|---|---|---|
-| ResourceCard | _to be mapped by engineering_ | | |
-
----
-
-## Where it's used
+### Where it's used
 
 | Surface | Variant | Wrapper |
 |---|---|---|
@@ -67,14 +49,29 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel, Po
 | Learner web app: course page → Resources tab | `device="web"` | Stacked list, 12px gap (`ProgramCourseDetails.tsx`) |
 | Admin: content library → lesson editor → Resources tab | `device="web"` | Stacked list, card carries its own Remove (`LessonResourcesTab.tsx`) |
 | Learner web app: course page → a lesson's own resources | `device="web"` | Expanded under the lesson row, indented past the thumbnail |
-| Learner web app: lesson feed → Take a deep dive panel | `device="mobile"` | Stacked list under the instructor link in the Take a deep dive panel (`LessonFeed.tsx`) — the feed is the app player, so it takes the app card |
+| Learner web app: lesson feed → Take a deep dive panel | `device="mobile"` | Stacked list under the instructor link in the Take a deep dive panel (`LessonFeed.tsx`); the feed is the app player, so it takes the app card |
 | Mobile app | `device="mobile"` | Not placed on a screen yet |
 
 Lesson-level resources (DES-334) are authored only in the content library's lesson editor and stored in `src/data/lessonResources.ts`; the course builder's Resources tab stays course-level.
 
 The card carries **one action** for learners: Download for files, Open link for links. Where an admin authors resources it can take a second, `onRemove`, which puts a Remove (trash) beside it inside the card; the trash turns `--text-error` on hover. Reordering still belongs to the row around the card (the course builder's Resources tab), not to the card. There is no type badge: the tile and meta line already say what kind of resource it is.
 
-## Props
+## Figma to code
+
+Figma sets `Card/Resources` (`12213:3040`) and `Type thumbnail` (`12213:2984`).
+
+| Figma property | Figma values | React prop | Prop values | Notes |
+|---|---|---|---|---|
+| Device (Card/Resources) | Web/Admin / Mobile app | `device` | `'web'` (default) / `'mobile'` | |
+| State (Card/Resources) | Enabled / Hover | n/a | CSS `:hover` (gated on `@media (hover: hover)`) | states are CSS, not props |
+| Type (Type thumbnail) | PDF / Word / Excel / PowerPoint / Image / External link | `type` | `'pdf'` / `'word'` / `'excel'` / `'powerpoint'` / `'image'` / `'link'` | |
+| (title text layer) | resource name | `title` | `string` | |
+| (meta text layer) | e.g. "PDF • 1.1 MB" | `size` | bytes, files only | built by `resourceMeta(type, size?)` |
+
+- **Figma only:** none.
+- **Code only:** `onOpen`, `openDisabled`, `onRemove` (authoring Remove action), `tooltip` (default `true`; the mobile app passes `false`), `className`.
+
+**Props:**
 
 ```tsx
 type ResourceType = 'pdf' | 'word' | 'excel' | 'powerpoint' | 'image' | 'link'
@@ -87,11 +84,18 @@ interface ResourceCardProps {
   onOpen?: () => void       // download the file / open the link
   openDisabled?: boolean    // greys the action (e.g. no file to hand back yet)
   onRemove?: () => void     // authoring surfaces only: adds Remove beside the open action
+  tooltip?: boolean         // hover tooltip on the icon action; default true, off in the mobile app
   className?: string
 }
 ```
 
 Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 MB", "External link") and `formatSize(bytes)`.
+
+**Production:**
+
+| Design system | `@web/ui` component | Props mapping | Known drift |
+|---|---|---|---|
+| ResourceCard | _to be mapped by engineering_ | | |
 
 ## Anatomy
 
@@ -103,7 +107,7 @@ Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 M
 | Padding | 12 top, 16 right, 12 bottom, 12 left (`--space-sm` / `--space-m`) | 12 all sides (`--space-sm`) |
 | Gap | 12 (`--space-sm`) | 8 (`--space-s`) |
 | Radius | 12 (`--radius-sm`) | 12 (`--radius-sm`) |
-| Background | `--cards-background`; Hover `--cards-background-hover` | same — hover is gated on `@media (hover: hover)`, not on the variant |
+| Background | `--cards-background`; Hover `--cards-background-hover` | same; hover is gated on `@media (hover: hover)`, not on the variant |
 | Shadow | `--shadow-card` (Shadow S in light mode, none in dark) | same |
 | Type tile | 48 × 48 | 40 × 40 |
 | Title | Poppins Bold 16 / 1.5, `--text-primary`, one line with ellipsis | Bold 14 / 1.5, `--text-primary`, one line with ellipsis |
@@ -112,7 +116,7 @@ Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 M
 | Action | 20px Iconsax Linear in a 28px round button (4px padding, `--space-xs`), `--text-secondary`; on hover `--text-primary` on an `--input-background-hover` fill (`12215:4063`) plus the Tooltip | same 20px icon and 28px button; the button is invisible at rest, so it reads as Figma's bare icon |
 | Actions gap | 8 (`--space-s`) between the open action and Remove | same |
 
-## Type tiles
+### Type tiles
 
 | Type | Tile | Meta label |
 |---|---|---|
@@ -120,7 +124,7 @@ Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 M
 | Word | `word.svg` (blue) | `Word • <size>` |
 | Excel | `excel.svg` (green) | `Excel • <size>` |
 | PowerPoint | `powerpoint.svg` (orange) | `PowerPoint • <size>` |
-| Image | `image.svg` (purple `#9B55C9`, Iconsax **Linear** `gallery` glyph at 1.5 stroke — the one tile whose glyph is stroked, not solid) | `Image • <size>` |
+| Image | `image.svg` (purple `#9B55C9`, Iconsax **Linear** `gallery` glyph at 1.5 stroke, the one tile whose glyph is stroked, not solid) | `Image • <size>` |
 | External link | `link-icon.svg` (Linear link-2 glyph, 24px) centred on a `--certificate-quiz` tile with `--radius-s` | `External link` |
 
 Accepted extensions per type live in `RESOURCE_TYPES` (`resources.ts`): `.pdf` · `.doc,.docx` · `.xls,.xlsx` · `.ppt,.pptx` · `.jpg,.jpeg,.png` (shown to admins as `.jpg or .png` via `acceptLabel`).
@@ -129,16 +133,40 @@ The same artwork (exported as `FILE_THUMBS`) shows at 40px in the Resources draw
 
 File tiles are finished artwork with their colours baked in; don't recolour them or rebuild them from tokens. Scale the same SVG to 40px for Mobile.
 
-## Action icon
+### Action icon
 
 - **Files:** `ImportCurve` (the product's one download icon, see `iconography.md`).
 - **Links:** `ExportSquare`, opening in a new tab.
-- Hovering the icon shows the DS Tooltip (`Position=Top, Alignment=Center, Icon=False`) reading "Download" or "Open link", as in the Web/Admin Hover variant. This applies at every size on web, including `device="mobile"` cards on desktop For You (Bruno, 2026-09-30). The mobile app passes `tooltip={false}`: a phone has no hover.
-- Learner cards (no `onRemove`) are clickable end to end; authoring cards with Remove keep icon-only actions so a tap on the row never downloads by accident.
-- The button has a visible `:focus-visible` ring (`--primary-button-background`) and an `aria-label` of "Download <title>" or "Open link <title>".
-- When there's nothing to download (e.g. an admin's file isn't in the session any more), set `openDisabled`: the icon greys out but stays in place, so every card keeps the same shape.
 
-## Example
+## States
+
+| State | Card | Action button |
+|---|---|---|
+| Enabled | `--cards-background` | `--text-secondary` icon, no fill (invisible button on mobile) |
+| Hover (card, `@media (hover: hover)`) | `--cards-background-hover` | unchanged |
+| Hover (action) | unchanged | `--text-primary` on `--input-background-hover`, plus the Tooltip |
+| Hover (Remove) | unchanged | trash `--text-error` on `--input-background-hover` |
+| Open disabled (`openDisabled`) | unchanged | icon greys out but stays in place, so every card keeps the same shape |
+| Focus-visible (action) | unchanged | visible ring `--primary-button-background` |
+
+- Hovering the icon shows the DS Tooltip (`Position=Top, Alignment=Center, Icon=False`) reading "Download" or "Open link", as in the Web/Admin Hover variant. This applies at every size on web, including `device="mobile"` cards on desktop For You. The mobile app passes `tooltip={false}`: a phone has no hover.
+- Use `openDisabled` when there's nothing to download (e.g. an admin's file isn't in the session any more).
+
+## Tokens
+
+`--cards-background`, `--cards-background-hover`, `--shadow-card`, `--text-primary`, `--text-secondary`, `--text-tertiary`, `--text-error` (Remove hover), `--input-background-hover` (action hover fill), `--primary-button-background` (focus ring), `--certificate-quiz` (External link tile); spacing `--space-xs`, `--space-s`, `--space-sm`, `--space-m`; radius `--radius-sm`, `--radius-s`, `--radius-full`.
+
+## Accessibility
+
+- The action button has a visible `:focus-visible` ring (`--primary-button-background`) and an `aria-label` of "Download <title>" or "Open link <title>".
+- Learner cards (no `onRemove`) are clickable end to end; the icon button stays the keyboard and screen-reader target. Authoring cards with Remove keep icon-only actions so a tap on the row never downloads by accident.
+
+## Content
+
+- Meta line: `<Type> • <size>` for files (e.g. "PDF • 1.1 MB"), `External link` for links.
+- Action labels: "Download" for files, "Open link" for links.
+
+## Examples
 
 ```tsx
 import ResourceCard from '@/components/ResourceCard/ResourceCard'
@@ -152,3 +180,10 @@ import ResourceCard from '@/components/ResourceCard/ResourceCard'
 ```
 
 In a row with other chrome (drag handle, trash), let the card fill the space: `flex: 1; min-width: 0` on a class passed through `className`.
+
+## Related
+
+- [cards.md](cards.md) - lesson, course, category and skill cards
+- [file-uploader.md](file-uploader.md) - the File uploader that reuses the tile artwork
+- [alerts-toast.md](alerts-toast.md) - the DS Tooltip
+- [iconography.md](iconography.md) - `ImportCurve` and `ExportSquare`
