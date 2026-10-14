@@ -49,9 +49,63 @@
   color: var(--text-tertiary);
 }
 
-/* The form step runs wider than the centred handover and done steps. */
-.pcd-signoff-wizard__step--form {
+/* Hand over (Figma 17662:24010): full 900px width, 24px gap, H4 title and 14px body. */
+.pcd-signoff-wizard__step--handover {
+  gap: var(--space-l);
   max-width: 900px;
+}
+
+.pcd-signoff-wizard__step--handover .pcd-signoff-wizard__title {
+  font-size: 16px;
+}
+
+.pcd-signoff-wizard__step--handover .pcd-signoff-wizard__body {
+  font-size: 14px;
+}
+
+/* Licence details (Figma 17663:24087): starts 24px under the header (the shell's
+   own top padding), 16px gaps, H4 title. The shell spaces its step with
+   .wzs-main > div (0,2,1), hence the longer selector. */
+.pcd-signoff-wizard .wzs-main > .pcd-signoff-wizard__step--form {
+  max-width: 900px;
+  gap: var(--space-m);
+  padding-top: 0;
+}
+
+.pcd-signoff-wizard__step--form .pcd-signoff-wizard__title {
+  font-size: 16px;
+}
+
+/* Signed off (Figma 17664:24129): starts 24px under the header, full 900px width,
+   16px gaps, 16px summary padding, and the 14px note 24px below the summary. */
+.pcd-signoff-wizard .wzs-main > .pcd-signoff-wizard__step--done {
+  max-width: 900px;
+  gap: var(--space-m);
+  padding-top: 0;
+}
+
+.pcd-signoff-wizard__step--done .pcd-signoff-summary {
+  padding: var(--space-m);
+}
+
+.pcd-signoff-wizard__step--done .pcd-signoff-wizard__body {
+  margin-top: var(--space-s);
+  font-size: 14px;
+}
+
+/* Statement panel on the web form (Figma 17663:24187): 12px padding, box 16px in
+   from the edge, text 4px after the 32px hit area, 6px down to the date. */
+.pcd-signoff-wizard .pcd-signoff-form > .pcd-signoff-statement {
+  padding: var(--space-sm);
+  gap: var(--space-xss);
+}
+
+.pcd-signoff-wizard .pcd-signoff-statement__check {
+  gap: var(--space-xs);
+}
+
+.pcd-signoff-wizard .pcd-signoff-statement__check .checkbox {
+  margin-left: calc(var(--space-xs) * -1);
 }
 
 /* The whole sign-off page (header, steps, footer) is 900px wide: the shell and the

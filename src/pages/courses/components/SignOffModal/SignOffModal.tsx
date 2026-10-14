@@ -129,7 +129,7 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
     >
       <AnimatePresence mode="wait" initial={false}>
         {step === 'handover' ? (
-          <motion.div key="handover" className="pcd-signoff-wizard__step pcd-signoff-wizard__step--center" {...motionProps}>
+          <motion.div key="handover" className="pcd-signoff-wizard__step pcd-signoff-wizard__step--center pcd-signoff-wizard__step--handover" {...motionProps}>
             <HandoverArt />
             <div className="pcd-signoff-wizard__headline">
               <h2 className="pcd-signoff-wizard__title">{HANDOVER_TITLE}</h2>
@@ -143,7 +143,7 @@ function SignOffModal({ courseId, onClose, onSigned }: SignOffModalProps) {
             <SignOffFields form={form} />
           </motion.div>
         ) : (
-          <motion.div key="done" className="pcd-signoff-wizard__step pcd-signoff-wizard__step--center" {...motionProps}>
+          <motion.div key="done" className="pcd-signoff-wizard__step pcd-signoff-wizard__step--center pcd-signoff-wizard__step--done" {...motionProps}>
             <SuccessTick />
             <div className="pcd-signoff-wizard__headline">
               <h2 className="pcd-signoff-wizard__title">{DONE_TITLE}</h2>
