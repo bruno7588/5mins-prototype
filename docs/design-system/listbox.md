@@ -8,7 +8,7 @@ description: Listbox / menu component for 5Mins.ai - the floating options surfac
 The floating menu surface: a container of list items that appears from a trigger (dropdown, "more" button, picker). Items support a wide range of slot configurations.
 
 **Code:** no shared Listbox component yet: the surface is rendered by `import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'` (action menus) and by `Dropdown`'s menu (`.dropdown-menu`, value lists); the Integer row is page-local in `SchedulePopover.tsx`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Listbox dark `9162:1042` / light `11923:3466`; List items dark `9162:941` / light `12432:13357`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Listbox `9162:1042`; List items `9162:941`
 **Last verified:** 2026-10-07
 
 ## Usage
@@ -43,7 +43,7 @@ The floating menu surface: a container of list items that appears from a trigger
 - Don't add an empty icon slot to rows that have no icon; plain choice lists carry no icons.
 - Don't build a new menu surface for a page when `RowActionsMenu` or `Dropdown` covers it.
 
-**Canonical spec:** container `--cards-background`, 1px `--border-elevated`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), shadow `var(--shadow-l)` (see `layout.md`). Item padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), label 14px / 400 / 1.5 `--text-primary`, icon-to-label gap `var(--space-s)` (8px). Hover `--cards-background-hover`; selected (plain, icon, avatar, skill-icon and supporting-text rows) `--selected` with `--text-on-selected` at weight 500; selected checkbox / radio / Integer rows keep the plain background and show the ticked control, hovering to `--cards-background-hover`; read-only `--text-disabled`. Integer row: radio, then a column with an 8px gap: label 14px / 500 `--text-primary` over supporting text 14px / 400 `--text-tertiary` (4px gap), then the Input integer stepper and the unit 14px / 400 `--text-secondary`, 8px apart; on an Integer row that is not selected the stepper value and unit are `--text-disabled`. Radio + Supporting text rows keep 2px between label and description. Figma: Library `EC26cSVe9KNTCWXvYovakw`, Listbox light `11923:3466` / dark `9162:1042`, List items light `12432:13357` / dark `9162:941`.
+**Canonical spec:** container `--cards-background`, 1px `--border-elevated`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), shadow `var(--shadow-l)` (see `layout.md`). Item padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), label 14px / 400 / 1.5 `--text-primary`, icon-to-label gap `var(--space-s)` (8px). Hover `--cards-background-hover`; selected (plain, icon, avatar, skill-icon and supporting-text rows) `--selected` with `--text-on-selected` at weight 500; selected checkbox / radio / Integer rows keep the plain background and show the ticked control, hovering to `--cards-background-hover`; read-only `--text-disabled`. Integer row: radio, then a column with an 8px gap: label 14px / 500 `--text-primary` over supporting text 14px / 400 `--text-tertiary` (4px gap), then the Input integer stepper and the unit 14px / 400 `--text-secondary`, 8px apart; on an Integer row that is not selected the stepper value and unit are `--text-disabled`. Radio + Supporting text rows keep 2px between label and description. Figma: Library `EC26cSVe9KNTCWXvYovakw`, Listbox `9162:1042`, List items `9162:941`.
 
 ## Figma to code
 
@@ -62,7 +62,11 @@ There is no `Listbox` or `ListItem` React component. Figma properties map to whe
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| State | Enabled / Hover / Read-only | `disabled` (RowActionsMenu item, Dropdown option) | Read-only = `disabled: true` | Hover is CSS `:hover` |
+| State | Enabled / Hover / Read-only / Focus | `disabled` (RowActionsMenu item, Dropdown option) | Read-only = `disabled: true` | Hover is CSS `:hover`; Focus is `:focus-visible` (2px inset `--primary-button-background` ring). The embedded Search row has no Focus variant: its focus is the amber Selected state |
+| Label (text) | "Input text" | RowActionsMenu item `label`; Dropdown option `label` | `string` | |
+| Description (text) | "Write supporting text here" | RowActionsMenu `description`; Dropdown option `description` | `string` | the avatar-with-supporting-text rows keep their own sample text ("Supporting text here") unbound |
+| Helper text (text) | "text" | n/a | not built | |
+| Skill icon glyph (swap) | skill illustration | n/a | not built | |
 | Disabled | false / true | `disabled` | `false` / `true` | |
 | Selected | false / true | Dropdown `value` / `values` | the option whose value matches | RowActionsMenu has no selection |
 | Icon left | true / false | RowActionsMenu `icon`; Dropdown option `icon` | `ReactNode` | |
@@ -76,7 +80,7 @@ There is no `Listbox` or `ListItem` React component. Figma properties map to whe
 | Avatar | false / true | n/a | not built | |
 | Skill icon | false / true | n/a | not built | |
 
-- **Figma only:** Helper ("options") text, Icon right, Avatar and Skill icon rows; group headers in the Wrapping menu itens variant.
+- **Figma only:** Helper ("options") text, Icon right, Avatar and Skill icon rows; group headers in the Wrapping menu itens variant. All on/off axes stay variants because each changes gaps or structure, not only visibility. The leading icon has no swap property: Selected rows use the Bold glyph and the rest Linear.
 - **Code only:** RowActionsMenu `danger`, `title`, `inert`, `onSelect`, `ariaLabel`, `triggerClassName` / `triggerContent` (replace the kebab); Dropdown `allLabel`, `menuClassName`, `menuAlign`.
 
 RowActionsMenu props: `items` (`key`, `label`, `icon`, `description`, `danger`, `dividerBefore`, `disabled`, `title`, `inert`), `onSelect`, `placement` `'bottom' | 'top'`, `caret` (default on), `triggerClassName` / `triggerContent` to replace the kebab. `Dropdown` renders this surface as its menu (`.dropdown-menu`), with checkbox rows in `multiple` mode. Integer row: `src/pages/your-courses/components/AssignCoursesWizard/SchedulePopover.tsx` (`.acw-pop-option`, built from `Radio` + `InputInteger`; page-local, no shared component yet).

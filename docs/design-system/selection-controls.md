@@ -8,7 +8,7 @@ description: Selection controls for 5Mins.ai - Radio button, Checkbox (including
 Checkbox, Radio and Toggle: the controls that pick options or switch a setting on or off.
 
 **Code:** `import Checkbox from '@/components/Checkbox/Checkbox'`, `import Radio from '@/components/Radio/Radio'`, `import Toggle from '@/components/Toggle/Toggle'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Checkbox dark `6339:10484` / light `11917:3924`; Radio dark `5001:18926` / light `11917:3950`; Toggle dark `8160:364` / light `11917:3970`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Checkbox `6339:10484`; Radio `5001:18926`; Toggle `8160:364`
 **Last verified:** 2026-10-09
 
 Colours are semantic tokens resolving per mode (see `colors.md`); hexes below are light-mode values unless a dark value is given. Cross-reference: `5mins-colors` (colors.md) for the raw palette and semantic surface tokens, `5mins-typography` for label typography, `5mins-iconography` for icon sizing conventions.
@@ -62,7 +62,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 - Don't use a checkbox for mutually exclusive choices.
 - Never give the glyph its own colour.
 
-**Canonical spec:** 32 × 32px hit area with `var(--space-s)` (8px) padding and a `var(--radius-full)` hover halo in `--page-background-hover`; 16 × 16px box, 4px radius, 1.5px border `--text-secondary`; checked and indeterminate fill `--selected` with the tick or minus bar cut out of the box, so the surface shows through; disabled `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3924` / dark `6339:10484`.
+**Canonical spec:** 32 × 32px hit area with `var(--space-s)` (8px) padding and a `var(--radius-full)` hover halo in `--page-background-hover`; 16 × 16px box, 4px radius, 1.5px border `--text-secondary`; checked and indeterminate fill `--selected` with the tick or minus bar cut out of the box, so the surface shows through; disabled `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `6339:10484`.
 
 ### Radio
 
@@ -88,7 +88,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 - Don't re-implement radios with `div`s.
 - Don't ship a lone radio; with one option use a checkbox or toggle.
 
-**Canonical spec:** 24 × 24px hit area with a fully round (30px) hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--control-selected`; disabled `--text-disabled`; focus-visible 2px `--primary-button-background` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3950` / dark `5001:18926`.
+**Canonical spec:** 24 × 24px hit area with a fully round (30px) hover halo in `--page-background-hover`; 15 × 15px ring, 1.5px `--text-primary` (unchanged on hover; hover only adds the halo); selected ring and 7px dot `--control-selected`; disabled `--text-disabled`; focus-visible 2px `--primary-button-background` outline. Row gap `var(--space-s)` (8px), option text 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5001:18926`.
 
 ### Toggle
 
@@ -114,7 +114,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 - Don't add a hover halo; the toggle has none.
 - Don't remove the focus outline; focus-visible draws 2px `--primary-button-background` around the track.
 
-**Canonical spec:** md track 36 × 20px, sm track 28 × 16px; thumb 16px (sm 12px) in `--neutral-25` with a 2px inset. Track off `--neutral-400`, on `--selected`; disabled off `--text-disabled`, disabled on `--selected` at 40% opacity. Row gap `var(--space-s)` (8px), label 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11917:3970` / dark `8160:364`.
+**Canonical spec:** md track 36 × 20px, sm track 28 × 16px; thumb 16px (sm 12px) in `--neutral-25` with a 2px inset. Track off `--neutral-400`, on `--selected`; disabled off `--text-disabled`, disabled on `--selected` at 40% opacity. Row gap `var(--space-s)` (8px), label 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8160:364`.
 
 ## Figma to code
 
@@ -123,11 +123,11 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Checked | Not checked / Checked / Indeterminate | `checked` + `indeterminate` | `checked={false}` / `checked={true}` / `indeterminate` | `checked` is required; `indeterminate` wins over `checked` |
-| State | Enabled / Hover | n/a | CSS `:hover` | states are CSS, not props |
+| State | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props; Focus is a 2px ring, 2px offset, around the box |
 | State | n/a | n/a | n/a | only used with Disabled=true |
 | Disabled | false / true | `disabled` | `true` / `false` (default) | |
 
-- **Figma only:** none.
+- **Figma only:** the Focus ring: `Checkbox.css` has no `:focus-visible` rule yet.
 - **Code only:** `onChange()` (no event); disabled + checked and disabled + indeterminate (Figma has Disabled only as Not checked, so a disabled box that is checked keeps the `--selected` fill).
 
 ### Radio (`5001:18926`, "radio-button instances")
@@ -135,21 +135,22 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Selected | true / false | `checked` | `true` / `false` | native radio prop |
-| State | Enabled / Hover | n/a | CSS `:hover` | hovering the labelled row also shows the halo |
+| State | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | hovering the labelled row also shows the halo; Focus rings the 15px ring |
 | State | n/a | n/a | n/a | only used with Disabled=true |
 | Disabled | false / true | `disabled` | `true` / `false` | native radio prop |
 
 - **Figma only:** none.
-- **Code only:** `label` (Figma has no label in the component), `className`, all native radio props (`name`, `onChange`, `value`, `id`), the focus-visible ring.
+- **Code only:** `label` (Figma has no label in the component), `className`, all native radio props (`name`, `onChange`, `value`, `id`).
 
 ### Toggle (`8160:364`)
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Toggle | true / false | `checked` | `true` / `false` | On / Off |
+| State | Enabled / Focus | n/a | CSS `:focus-visible` | ring around the track; axis added 2026-10-14 |
 
 - **Figma only:** none.
-- **Code only:** `size` (`'md' | 'sm'`), `label`, `labelPosition` (`'left' | 'right'`), `disabled` and the disabled states, the focus-visible ring, `className`.
+- **Code only:** `size` (`'md' | 'sm'`), `label`, `labelPosition` (`'left' | 'right'`), `disabled` and the disabled states, `className`.
 
 ### Props
 

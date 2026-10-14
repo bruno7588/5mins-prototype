@@ -48,7 +48,7 @@ A second level inside a tabbed page is chips only; a Content Switcher stays allo
 Pill-shaped label the admin presses to filter or pick an option, or that stands for a chosen value they can remove.
 
 **Code:** `import Chip from '@/components/Chip/Chip'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `5162:28510` / light `12160:12109`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `5162:28510`
 **Last verified:** 2026-09-29
 
 ## Usage
@@ -80,7 +80,7 @@ Pill-shaped label the admin presses to filter or pick an option, or that stands 
 - Don't hardcode hover styles inline; CSS `:hover` handles it
 - Don't change the radius; it is always `var(--radius-full)`
 
-**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px), `var(--space-ssm)` (10px) on the icon side; radius `var(--radius-full)`; gap `var(--space-xs)` (4px) with an icon; border 1px `var(--border-elevated)`, hover `var(--border-hover)` on `var(--page-background-hover)`; selected fill `var(--secondary-500)` with `var(--text-on-selected)` Bold; label 14px Regular `var(--text-secondary)`; icons 16px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12160:12109` / dark `5162:28510`.
+**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px), `var(--space-ssm)` (10px) on the icon side; radius `var(--radius-full)`; gap `var(--space-xs)` (4px) with an icon; border 1px `var(--border-elevated)`, hover `var(--border-hover)` on `var(--page-background-hover)`; selected fill `var(--secondary-500)` with `var(--text-on-selected)` Bold; label 14px Regular `var(--text-secondary)`; icons 16px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5162:28510`.
 
 ## Figma to code
 
@@ -90,10 +90,12 @@ Figma set `Chips` (`5162:28510`).
 |---|---|---|---|---|
 | Selected | false / true | `selected` | `false` (default) / `true` | |
 | Disabled | false / true | `disabled` | `false` (default) / `true` | |
-| State | Enabled / Hover / n/a | n/a | CSS `:hover` | `n/a` is the disabled variants; states are CSS, not props |
-| Icon left | false / true | `iconLeft` or `customIconLeft` | `boolean` / `ReactNode` | `iconLeft` draws the user icon; `customIconLeft` replaces it with any 16px node |
-| Icon right | False / True | `iconRight` | `false` (default) / `true` | pair with `onDismiss` so the × acts |
-| (text layer) | chip text | `label` | `string` (required) | no TEXT property in Figma; override the layer |
+| State | Enabled / Hover / Focus / n/a | n/a | CSS `:hover`, `:focus-visible` | `n/a` is the disabled variants; states are CSS, not props |
+| Icon left | false / true | `iconLeft` or `customIconLeft` | `boolean` / `ReactNode` | `iconLeft` draws the user icon; `customIconLeft` replaces it with any 16px node. Kept as a variant: the icon side's padding drops to 10px |
+| Leading icon (swap) | 16px glyph | `customIconLeft` | `ReactNode` | |
+| Icon right | False / True | `iconRight` | `false` (default) / `true` | pair with `onDismiss` so the × acts. Kept as a variant (padding change) |
+| Trailing icon (swap) | 16px glyph | n/a | n/a | code always draws the close (×) icon |
+| Label (text) | chip text | `label` | `string` (required) | |
 
 - **Figma only:** none.
 - **Code only:** `variant="warning"` (warning border; not used on any page yet), `onClick`, `onDismiss`, `className`, Selected + Hover (`--secondary-600`), a left icon and the × together on one chip.
@@ -270,7 +272,7 @@ CSS variable approach (if token vars are available in the project):
 A segmented control: mutually exclusive sections inside a filled track. Use it to switch between views of the same data (e.g. grid/list, week/month) where the options should read as one connected control rather than separate chips.
 
 **Code:** `import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `7128:23859` + item `8497:24186` / light `8953:10123` + item `11908:5278`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `7128:23859` + item `8497:24186`
 **Last verified:** 2026-09-29
 
 ## Usage
@@ -296,7 +298,7 @@ A segmented control: mutually exclusive sections inside a filled track. Use it t
 - Don't add icons; the shared component has no icon slot. If the component gains them, don't mix icon and no-icon items in one track.
 - Don't use it for sibling page sections
 
-**Canonical spec:** track `var(--input-background)`, padding and gap `var(--space-xs)` (4px), radius `var(--radius-sm)` (12px); item padding `var(--space-xss) var(--space-sm)` (6px 12px), radius `var(--radius-s)` (8px), 14px Regular `var(--text-secondary)`; unselected hover `var(--input-background-hover)`; selected `var(--secondary-500)` with `var(--text-on-selected)` Bold. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `8953:10123` + item `11908:5278` / dark `7128:23859` + `8497:24186`.
+**Canonical spec:** track `var(--input-background)`, padding and gap `var(--space-xs)` (4px), radius `var(--radius-sm)` (12px); item padding `var(--space-xss) var(--space-sm)` (6px 12px), radius `var(--radius-s)` (8px), 14px Regular `var(--text-secondary)`; unselected hover `var(--input-background-hover)`; selected `var(--secondary-500)` with `var(--text-on-selected)` Bold. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `7128:23859` + item `8497:24186`.
 
 ## Figma to code
 
@@ -306,12 +308,12 @@ Figma: `Content switcher` (`7128:23859`, standalone component with no properties
 |---|---|---|---|---|
 | Selected (item) | True / False | `activeKey` | the selected item's `key` | `onChange(key)` sets it |
 | Disabled (item) | false / true | `items[].disabled` | `boolean` | |
-| State (item) | Enabled / Hover | n/a | CSS `:hover` | states are CSS, not props |
-| icon left (item) | false / true | n/a | n/a | no icon slot in code |
-| icon right (item) | false / true | n/a | n/a | no icon slot in code |
-| (item text layer) | section label | `items[].label` | `string` | each item also needs a `key` |
+| State (item) | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props |
+| icon left (item) + Leading icon (swap) | false / true, glyph | n/a | n/a | no icon slot in code |
+| icon right (item) + Trailing icon (swap) | false / true, glyph | n/a | n/a | no icon slot in code |
+| Label (item text) | section label | `items[].label` | `string` | each item also needs a `key` |
 
-- **Figma only:** per-item icons (left 20px, right 16px); the fixed 4-item track.
+- **Figma only:** per-item icons (left 20px, right 16px) and their swaps; the fixed 4-item track.
 - **Code only:** `ariaLabel`, `onChange`, `className`, any item count, the sliding selection pill.
 
 **Props:** `items: { key, label, disabled? }[]`, `activeKey`, `onChange(key)`, `ariaLabel` (labels the tablist), `className`.
@@ -430,7 +432,7 @@ Reference CSS (the shared component already implements this):
 An underlined bar that moves between sibling sections of one page or object.
 
 **Code:** no shared component yet: each page builds its own bar with a page-prefixed class, an `--active` modifier and an `::after` indicator. Reference: `src/pages/roles/Roles.tsx` (`.roles-header__tab`).
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `8497:24855` + item `1939:18281` / light `11975:2581` (an instance, not a component) + item `12134:6969`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `8497:24855` + item `1939:18281`
 **Last verified:** 2026-09-29
 
 ## Usage
@@ -459,7 +461,7 @@ An underlined bar that moves between sibling sections of one page or object.
 - Don't change the indicator colour or thickness, and never hide it on the selected tab
 - Don't put tabs and chips in the same row
 
-**Canonical spec:** label 14px, Medium (500) unselected / Bold (700) selected; indicator 2px `var(--selected)` (#EDA30D light / #FFBB38 dark); label to indicator gap `var(--space-xs)` (4px); gap between tabs `var(--space-m)` (16px); counter pill `var(--input-background)`, radius `var(--radius-full)`, text `var(--text-tertiary)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11975:2581` + item `12134:6969` / dark `8497:24855` + `1939:18281`.
+**Canonical spec:** label 14px, Medium (500) unselected / Bold (700) selected; indicator 2px `var(--selected)` (#EDA30D light / #FFBB38 dark); label to indicator gap `var(--space-xs)` (4px); gap between tabs `var(--space-m)` (16px); counter pill `var(--input-background)`, radius `var(--radius-full)`, text `var(--text-tertiary)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8497:24855` + item `1939:18281`.
 
 **Prototype pages:** `src/pages/roles/Roles.tsx` (`.roles-header__tab`) is compliant: `--selected` indicator, 16px tab gap, cyan focus ring; its one drift is an 8px label-to-indicator gap (spec 4px). `src/pages/your-courses/CourseDetails.tsx` (`.cd-tab`) drifts: `.cd-tab-count` text is `--text-secondary` (spec `--text-tertiary`) and `.cd-tab` has no `:focus-visible` style; don't copy it.
 
@@ -470,12 +472,13 @@ Figma: `Tabs` (`8497:24855`, standalone component with no properties and a fixed
 | Figma property | Figma values | Code | Values | Notes |
 |---|---|---|---|---|
 | Selected | true / false | `--active` modifier (e.g. `.roles-header__tab--active`), `aria-selected` | present / absent | `selected` in the reference prop shape below |
-| State | Enabled / Hover | n/a | CSS `:hover` | states are CSS, not props |
+| State | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props |
 | counter | false / true | page-local count span (e.g. `.cd-tab-count`) | rendered / omitted | `counter?: number` in the reference prop shape |
-| (text layer) | tab label | label text | `string` | |
+| Label (text) | tab label | label text | `string` | |
+| Count (text) | counter number | `counter` | `number` | |
 
 - **Figma only:** the fixed 5-tab bar.
-- **Code only:** the `:focus-visible` ring; any number of tabs.
+- **Code only:** any number of tabs.
 
 **Reference prop shape** for a page-local tab bar (there is no shared component):
 

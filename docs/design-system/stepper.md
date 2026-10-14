@@ -8,7 +8,7 @@ description: Stepper for 5Mins.ai - the numbered step bar in a multi-step wizard
 A row of numbered steps across the top of a multi-step wizard. It shows where the admin is, what is done and what comes next, and lets them jump back to a step they have already reached.
 
 **Code:** no shared component yet: page-local `src/pages/your-courses/components/WizardShell/WizardShell.tsx` (`layout="top"`), styles `.wzs-stepper*` in `WizardShell.css`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, page "Stepper" `8108:4254`, doc frame `8108:5539` (light `12451:237` / dark `8108:5543`); Stepper step dark `12451:95` / light `12468:3923`; Stepper dark `12451:207` / light `12468:4115`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, page "Stepper" `8108:4254`, doc frame `8108:5539` (light `12451:237` / dark `8108:5543`); Stepper step `12451:95`; Stepper `12451:207`
 **Last verified:** 2026-10-14
 
 ## Usage

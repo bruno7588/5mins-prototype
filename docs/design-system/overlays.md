@@ -8,7 +8,7 @@ description: Dialog (Error/Warning/Info/Success types, 56px icons), Modal (720px
 The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and the **Bottom Sheet** in the mobile app, share a common backdrop but serve distinct interaction purposes.
 
 **Code:** Dialog and centred Modal: `import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'` ([confirm-modal.md](confirm-modal.md)); Bottom Sheet: `import BottomSheet from '@/components/BottomSheet/BottomSheet'`; close buttons: `import CloseButton from '@/components/CloseButton/CloseButton'`; Side Drawer and full-screen Modal: no shared component yet, page-local shells with `src/hooks/useOverlayA11y.ts`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Dialog dark `7789:24651` / light `12242:5728`; Modal dark `7479:4350` / light `11919:4717` (instance); Side Drawer dark `10871:12768` / light `11919:4738` (instance); Bottom sheet dark `7479:106` / light `12279:281` (instance); full-screen close: Programs `4221:63780`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Dialog `7789:24651`; Modal dark `7479:4350` / light `11919:4717` (instance); Side Drawer dark `10871:12768` / light `11919:4738` (instance); Bottom sheet dark `7479:106` / light `12279:281` (instance); full-screen close: Programs `4221:63780`
 **Last verified:** 2026-10-13
 
 ## Usage

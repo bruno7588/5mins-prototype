@@ -8,7 +8,7 @@ description: Button component system for 5Mins.ai - Filled, Outlined, Outlined-2
 Triggers a single action, with the variant telling the user how important or how risky that action is.
 
 **Code:** `import Button from '@/components/Button/Button'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `10825:3269` / light `12141:7567` (parent frame `5453:38273`)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`)
 **Last verified:** 2026-09-29
 
 All colours are semantic tokens. Both light- and dark-mode resolutions are listed because the two modes use different state ladders.
@@ -79,33 +79,27 @@ All colours are semantic tokens. Both light- and dark-mode resolutions are liste
 | AI feature | Filled (gradient) | AI | Medium |
 | Mark complete | Filled | Success | Medium |
 
-**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12141:7567` / dark `10825:3269` (parent frame `5453:38273`).
+**Canonical spec:** height Small 33px / Medium 41px / Large 48px; radius `var(--radius-sm)` (12px); Poppins Bold 12px / 14px / 16px; Medium padding 10px `var(--space-ml)` (20px); icon gap `var(--space-xs)` (4px) Small, `var(--space-s)` (8px) Medium and Large. Filled `var(--primary-button-background)` with `var(--text-button-foreground)` label; Outlined-2 `var(--border-elevated)` 1px border with `var(--text-primary)` label; disabled `var(--button-background-disabled)` + `var(--text-button-disabled)`; focus 2px `var(--primary-button-background)` outline, 2px offset. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10825:3269` (parent frame `5453:38273`).
 
 ## Figma to code
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Configuration | Filled | `variant` + `semantic` | `variant="filled"` (default), `semantic="primary"` (default) | |
-| Configuration | Outlined | `variant` | `outlined` | |
-| Configuration | Outlined-2 | `variant` | `outlined-2` | |
-| Configuration | Text | `variant` | `text` | |
-| Configuration | Link | `variant` | `link` | |
-| Configuration | Danger / Warning / Success | `semantic` | `danger` / `warning` / `success` (with `variant="filled"`) | |
-| Configuration | Danger-outlined / Warning-outlined / Success-outlined | `variant` + `semantic` | `variant="outlined"` + `semantic="danger"` etc. | `variant="outlined-2"` with a semantic renders the same `-outlined` treatment |
-| Configuration | Danger-text / Warning-text / Success-text | `variant` + `semantic` | `variant="text"` + `semantic="danger"` etc. | `variant="link"` with a semantic renders the same `-text` treatment |
-| Configuration | AI | `semantic` | `semantic="ai"` (with `variant="filled"`) | |
-| Configuration | AI-Outlined | `variant` + `semantic` | `variant="outlined"` + `semantic="ai"` | Figma casing "AI-Outlined" differs from "Danger-outlined" |
+| Variant | Filled / Outlined / Outlined-2 / Text / Link | `variant` | `filled` (default) / `outlined` / `outlined-2` / `text` / `link` | one-to-one |
+| Semantic | Primary / Danger / Warning / Success / AI | `semantic` | `primary` (default) / `danger` / `warning` / `success` / `ai` | one-to-one. AI exists only with Filled and Outlined; `variant="outlined-2"` with a semantic renders the Outlined treatment, `variant="link"` with a semantic renders the Text treatment |
 | Size | Large / Medium / Small | `size` | `lg` / `md` (default) / `sm` | Figma default is Large; code default is `md` |
-| State | Enabled / Hover / Pressed | n/a | CSS `:hover`, `:active` | states are CSS, not props |
+| State | Enabled / Hover / Pressed / Focus | n/a | CSS `:hover`, `:active`, `:focus-visible` | states are CSS, not props. Focus draws a 2px `Primary-button-background` ring 2px outside the button (a `Focus ring` layer) |
 | State | Loading | `loading` | `true` / `false` | |
 | State | n/a | n/a | n/a | only used with Disabled=true |
 | Disabled | false / true | `disabled` | native attribute | `loading` also sets `disabled` |
-| Icon | true / false | `icon` | ReactNode, rendered before the label | Figma toggles a fixed icon; code takes any Iconsax node |
+| Icon | true / false | `icon` | pass an icon, or leave it out | stays a variant because the icon side's padding is one step tighter |
+| Icon glyph (instance swap) | any Iconsax icon | `icon` | `<Add size={20} color="currentColor" />` | swap the glyph in Figma; code takes the matching Iconsax node |
+| Label (text) | free text | `children` | Title Case string | |
 
 The component composes one appearance class from `(semantic, variant)`: `ds-btn--filled`, `ds-btn--danger-outlined`, `ds-btn--ai`, etc. Semantic families (danger/warning/success) mirror filled/outlined/text; AI is filled + outlined only. See `Button.css` for the full class matrix.
 
-- **Figma only:** Figma has no TEXT property for the label (code: `children`) and no icon swap property. The Figma `State=n/a` value exists only to pair with `Disabled=true`.
-- **Code only:** `trailingIcon` (disclosure controls only), `loadingLabel` (labelled loading, see States), the focus-visible ring (Figma has no Focus state), and Small sizes for semantic families Figma draws only at larger sizes (extrapolate from Sizes).
+- **Figma only:** the `State=n/a` value exists only to pair with `Disabled=true`.
+- **Code only:** `trailingIcon` (disclosure controls only), `loadingLabel` (labelled loading, see States).
 
 **Props**
 
@@ -128,21 +122,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 ```
 
-**Size and state coverage in Figma.** Both mode boards carry the identical matrix. Primary variants (Filled/Outlined/Outlined-2/Text/Link) and AI/AI-Outlined cover all three sizes. Semantic coverage:
+**Size and state coverage in Figma.** One component set serves both modes. Primary variants (Filled/Outlined/Outlined-2/Text/Link) and AI/AI-Outlined cover all three sizes. Semantic coverage:
 
 | Family | Sizes in Figma |
 |--------|----------------|
 | Danger | S, M, L |
-| Danger-outlined | L only |
-| Danger-text | M, L |
-| Warning | M, L |
+| Danger-outlined | S, L |
+| Danger-text | S, M, L |
+| Warning | S, M, L |
 | Warning-outlined | S, M, L |
-| Warning-text | L only |
-| Success | M, L |
-| Success-outlined | M, L |
-| Success-text | L only |
+| Warning-text | S, L |
+| Success | S, M, L |
+| Success-outlined | S, M, L |
+| Success-text | S, L |
 
-Every present size has all five states (incl. Loading). For missing sizes, extrapolate from the Sizes table.
+Every present size has all states (Enabled, Hover, Pressed, Focus, Loading, disabled). For the missing Medium sizes, extrapolate from the Sizes table.
 
 **Implementation notes.** `src/components/Button/Button.tsx` is the canonical component; use it for all new work. It is namespaced `ds-btn` rather than `btn` so it doesn't collide with the legacy global `.btn-*` utility classes (CSS is globally bundled in this app). Two legacy button patterns also still exist, to be migrated opportunistically (convert a call site when you're already editing that file, no big-bang sweep):
 

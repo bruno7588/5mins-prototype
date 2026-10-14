@@ -4,8 +4,16 @@ History moved out of the component and foundation docs on 2026-10-14, when every
 
 Add new entries here, not in the docs.
 
+## Library-wide
+
+- 2026-10-14: Component settings rework across the Library: text and icon-swap properties, on/off variant axes turned into boolean properties only where they were pure show/hide (Toast icon, date field label, Input label and helper text, Radio label, Category New), Focus variants with a 2px cyan ring at 2px offset on interactive components, and every description rewritten with the code mapping. Variants deleted by boolean conversions: Toast 4, date field 4, Input/Radio 40, Category 4 (ids in the session notes).
+- 2026-10-14: Icons renamed to exact iconsax-react names (see iconography.md).
+- 2026-10-14: Figma Library light copies merged into the dark component sets: each component is now one set, and light mode comes from the variable modes on its parent frame. 41 light sets deleted; docs now cite the single set id. Kept as separate light copies pending a decision, all resolved later the same day (dark kept, light deleted; cards gained Shadow S in both modes) except Illustrations/ Assessments: Card/Lessons, Card/Resources, Card/Courses, Card/Instructor, Card/External training, Card/Marketplace, Type thumbnail, Certificate instances, Ranking leaderboard, Illustrations/ Assessments, Top nav/ App.
+- 2026-10-14: Variables restricted to their proper pickers (scopes); Neutral, Primary and Secondary scales hidden from publishing. Every colour and spacing variable carries its WEB code syntax (`var(--token)`).
+
 ## [alerts-toast.md](alerts-toast.md)
 
+- 2026-10-14: Figma settings rework. Alert gains Title, Message and Body text properties plus Icon glyph (Callout) and Warning glyph (Alert) swaps; its variant axes stay. Toast's Icon variant is now a Show icon boolean (Icon=False variants removed) and gains a Message text property. Tooltip gains a Text property; its Icon axis stays a variant. Figma to code tables updated; Carbon description and link removed from Tooltip.
 - 2026-10-14: Toast has no action slot. The Undo action (and its `ToastAction` type, `dismiss` and `onDismiss`) was removed from `Toast.tsx`, along with the Undo on the "Resource removed" and "Assessment deleted" toasts.
 - 2026-10-14: Toast Types table said "**Info** | `--border` (`#2D313D` dark) - a dark neutral pill | io5 `IoInformationCircleOutline`". Changed to `--neutral-600` and Iconsax `InfoCircle` to match `Toast.css` / `Toast.tsx` (the doc's own CSS block and Code reality section already said so); io5 kept as Figma drift.
 - 2026-10-14: Toast library-gap note said "the Info fill is bound to the `Border` variable, whose *light* value (`#DFE1E6`) would make the near-white label illegible". The 2026-10-14 Library audit found the Info fill bound to `Neutral-700`; the binding claim was removed and the drift recorded in Figma to code. Rule (fixed `--neutral-600` in both modes) unchanged.
@@ -17,6 +25,7 @@ Add new entries here, not in the docs.
 
 ## [avatars.md](avatars.md)
 
+- 2026-10-14: Avatar group gains a `Count` text property ("+N" bubble, maps to `remaining`); Avatar, Avatar group and Emojies descriptions rewritten to the 5Mins format and the Atlassian links removed. `Picture` stays a variant.
 - 2026-09-29: > **Updated 2026-09-29 (re-verified against the Figma Library):** the "+N" counter bubble fills with `var(--border)`, not `--page-background-hover`; the no-photo fallback is the Library smiley (a `var(--border)` circle with a `var(--text-tertiary)` smile), not initials; the 24px counter bubble's ring is 0.5px; Avatar Group light node corrected to `11915:3296`.
 - 2026-09-29: Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) - board `5453:37805`; Avatar light `11914:2605` / dark `5097:5884`, Avatar Group light `11915:3296` / dark `5097:5584` (re-verified 2026-09-29).
 - 2026-09-29: **Prototype:** `src/components/Avatar/Avatar.tsx` and `src/components/AvatarGroup/AvatarGroup.tsx` (built 2026-09-29; every page avatar uses them).
@@ -24,6 +33,7 @@ Add new entries here, not in the docs.
 
 ## [badges.md](badges.md)
 
+- 2026-10-14: Badge gains `State=Focus` variants on the five dismissible badges, with a cyan ring on the ✕ (`:focus-visible`). `Icon left` and `Icon right` stay variants; no icon swap or shared label property, because each type has its own icon and label. Description rewritten.
 - 2026-10-14: **Spec source:** ... light `node 12414:9613` (verified 2026-08-26; light node id updated 2026-10-14).
 - 2026-10-02: Re-verified dark 2026-10-02: adds a Hover state on dismissible badges and the io5 `IoCloseOutline` ✕.
 - 2026-08-26: **Spec source:** Figma Library (`EC26cSVe9KNTCWXvYovakw`) - dark `node 5799:479`, light `node 12414:9613` (verified 2026-08-26; light node id updated 2026-10-14). Both nodes have the same structure; only the resolved text/fill tokens differ per mode.
@@ -34,6 +44,9 @@ Add new entries here, not in the docs.
 
 ## [buttons.md](buttons.md)
 
+- 2026-10-14: Figma Buttons `Configuration` (16 values) split into `Variant` and `Semantic`, matching the code props one-to-one. Description updated.
+- 2026-10-14: Figma Buttons gained the 95 missing Small variants (Warning, Success, Danger families in filled, outlined and text, plus states), built from the Medium twins with Small spacing, radius, text style and icon size.
+- 2026-10-14: Figma Buttons set gained a `Label` text property, an `Icon glyph` instance-swap property, 65 `State=Focus` variants (2px ring at 2px offset) and a description with the code mapping. Icon stays a variant because it changes padding.
 - 2026-10-14: Dark-mode `--primary-button-background-pressed` is Primary-600 `#00AFC4`, matching Figma (was Primary-700 `#008393` in code). Applies to filled, outlined, text, link and AI pressed states.
 - 2026-09-29: > **Updated 2026-09-29 (verified against code):** Cancel position split by container (dialogs: Cancel first; side-drawer footers: primary first); the "commit label differs from the opener" rule softened to a recommendation; the icon-only accessibility example no longer uses `<Button>` (it has no circular icon-only shape) and passes `color`.
 - 2026-09-29: > **Updated 2026-09-29 (aligned to prototype usage):** Cancel is **Outlined-2**, not Outlined; modal and dialog footers use **Medium**, not Large.
@@ -59,6 +72,7 @@ Add new entries here, not in the docs.
 
 ## [calendar.md](calendar.md)
 
+- 2026-10-14: Day item gains a `Day` text property, and its `State=Focus` border is rebound from `Selected` to `Primary-Button-background` to match the doc. Date field properties summarised to the new `Show label` boolean and text properties. Descriptions rewritten.
 - 2026-10-07: **Updated 2026-10-07 (Figma `11529:406`):** the calendar defaults to today's date. A date field opens with today already filled in (`dd/mm/yyyy`, `--text-primary`), and the month grid opens on today's month with today selected. The `dd/mm/yyyy` placeholder only shows in date filters, which start empty: the user profile's from/to range and the automations join-date filter (which shows "Date is required" until a date is picked).
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** field padding is 4px 12px with an 8px gap (`DatePickerField.css`); the field label is rendered by the caller and stays `--text-secondary` in Error; outside-month days are clickable; the popover shadow is `var(--shadow-l)`; the keyboard note now reflects that focus does not move into the portalled `DatePickerField` popover; the GSAP popover animation is marked not built; the input.md cross-reference is corrected.
 - 2026-09-29: **Updated 2026-09-29 (aligned to prototype usage):** the built date field (`DatePickerField`) rests on `--border-elevated`, shows its value in `--text-primary` with a `--text-disabled` placeholder, and has no hover fill (border only). The current-day ring is `--border-elevated`. Arrow-key movement between days is not built. "Code reality" now points to the shared `DatePickerField` component.
@@ -67,6 +81,8 @@ Add new entries here, not in the docs.
 
 ## [cards.md](cards.md)
 
+- 2026-10-14: Figma to code updated for the Library settings rework: TEXT and icon swap properties on the card sets, Card/ Category `New` is now a boolean, and every web card has a `State=Focus` variant mapped to `:focus-visible`.
+- 2026-10-14: Cards carry Shadow S in both modes. Figma: Shadow S added to the dark Lesson, Resources, Courses, Instructor, External training and Marketplace sets and their light copies merged (Lesson titles bound to Text-primary); Type thumbnail merged too. Code: `--shadow-card` no longer drops to none in dark, and the Lesson grid tile now carries it (was "no shadow").
 - 2026-10-13: **Pressed (2026-10-13, Bruno's ruling):** a mobile card that is tappable as a whole (`role="button"`, or the program course card's tappable variant) lightens its fill to `--cards-background-hover` while pressed (`:active`, 150ms, none under reduced motion).
 - 2026-10-07: Folder card: Source: `Card/Folder`, light `12427:9698`, dark `10175:3106` (re-verified 2026-10-07).
 - 2026-10-07: **Updated 2026-10-07 (Figma `10175:3106`):** hover now shrinks the whole course stack to 5/6 (240 x 164 → 200 x 137) with a smooth 300ms ease-in-out, instead of scaling layers one by one; back layer `--input-background`, middle layer `--cards-background-hover` (hover `--input-background-elevated`); count text `--text-tertiary`; the New Folder tile has a 1.5px dashed `--border-elevated` border and hovers to `--input-background`. Keyboard focus shows the hover state plus the cyan ring. Card-to-info gap is 12px (was 16px).
@@ -80,6 +96,7 @@ Add new entries here, not in the docs.
 
 ## [chips-switcher-tabs.md](chips-switcher-tabs.md)
 
+- 2026-10-14: Figma to code updated: Chip, Content switcher item and Tab items gain `Label` TEXT properties (plus `Count` on tabs), leading and trailing icon swaps, and `State=Focus` variants; the icon axes stay variants because they change padding or gap.
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** a second level inside a tabbed page is chips only (a Content Switcher stays allowed for two views of one object in a drawer); tab focus ring is cyan `--primary-button-background`; the Tabs prototype examples now say which is compliant (Roles) and which drifts (Course details); tab gap confirmed at 16px.
 - 2026-09-29: **Updated 2026-09-29 (aligned to prototype usage):** Chip props, radius, selected border and the two-icon case now match `src/components/Chip`; the Content Switcher selected label is Bold and the component has no icon slot. There is no shared Tabs component; pages build their own tab bars to this spec.
 - 2026-07-03: Spec source (verified 2026-07-03): Chips light `12160:12109` / dark `5162:28510` · Content Switcher light `8953:10123` + item `11908:5278` / dark `7128:23859` + `8497:24186` · Tabs light `11975:2581` (an instance, not a component) + item `12134:6969` / dark `8497:24855` + `1939:18281`.
@@ -101,6 +118,8 @@ Add new entries here, not in the docs.
 
 ## [date-picker-field.md](date-picker-field.md)
 
+- 2026-10-14: Date field ("Calendar" set) `Label` variant axis replaced by a `Show label` boolean (Label=false variants deleted); new text properties `Label`, `Value`, `Helper text` and `Month`. No Focus variant: Active is the focus look. Description rewritten.
+- 2026-10-14: Date field padding is 8px 12px (`var(--space-s) var(--space-sm)`), matching Figma (was 4px 12px in doc and code); height stays 37px.
 - 2026-10-14: Removed "There is no `label`, `disabled` or `minDate` prop." The component has a `minDate` prop (`DatePickerField.tsx`); the doc now lists it. There is still no `label` or `disabled` prop.
 - 2026-10-07: **Updated 2026-10-07 (Figma `11529:406`):** the field defaults to today's date. Callers initialise `value` to today (or the saved date when editing one); `''` is only for date filters, which start empty: the user profile's from/to range and the automations join-date filter (which shows "Date is required" until a date is picked).
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** the popover's Shadow L is named as `var(--shadow-l)`, the z-index wording now gives the layer numbers, the label colour in Error is stated (stays `--text-secondary`), and a keyboard note records that focus does not enter the popover.
@@ -113,6 +132,8 @@ Add new entries here, not in the docs.
 
 ## [dropdown.md](dropdown.md)
 
+- 2026-10-14: Figma to code updated: `Label`, `Value`, `Helper message` and `Error message` TEXT properties and an `Icon` swap; focus stays the existing Active state.
+- 2026-10-14: Dropdown fits its content (hug). The fixed-width (230px) light Figma copy `12113:14844` was deleted; the single set `8925:1408` serves both modes.
 - 2026-10-14: Menu max height is 320px (was 240px), matching `listbox.md`; `Dropdown.css` updated.
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** the superseded Menu sketch (selected `--secondary-500` + `--neutral-800`, `TickCircle`) is replaced by what `Dropdown.css` draws (`--selected` / `--text-on-selected`, no tick) and the React sketch no longer renders a tick; error helper text is `--text-error`; `role="combobox"` and arrow-key navigation marked as not built; the read-only leading-icon grey now depends on `currentColor`; Dropdown and InputField now share the `--text-error` error border (ruled 2026-09-29); the menu border is now `--border-elevated`, matching Figma `9162:1042`.
 - 2026-09-29: **Updated 2026-09-29 (aligned to prototype usage):** the built Dropdown supports multi-select (`multiple`, `values`, `onChangeValues`, `allLabel`, `summaryLabel`), option `description` lines, `menuClassName` and `menuAlign`, and portals its menu to `<body>`. The 2026-04-14 changelog line saying multi-select was removed no longer holds, and the "React TypeScript Implementation" sketch below predates these props; `src/components/Dropdown/Dropdown.tsx` is the reference.
@@ -124,6 +145,7 @@ Add new entries here, not in the docs.
 
 ## [empty-state.md](empty-state.md)
 
+- 2026-10-14: Figma Empty state gained Title and Description text properties; descriptions rewritten for Empty state and Illustrations Empty state.
 - 2026-10-14: Removed the "code-only extension / Not a Figma variant" labels on `surface="dropzone"`. The Library audit (2026-10-14) found `Surface [Plain, Dropzone]` on `5452:37234`, so Surface now maps 1:1 in the Figma to code table. Removed text: "`surface`: `plain` (default) | `dropzone` (code-only extension)" and "### `surface=\"dropzone\"` - code-only extra / Not a Figma variant."
 - 2026-09-29: > **Updated 2026-09-29 (verified against code):** the CTA rule now matches code: a single action may be the outlined button alone (Resources), a pair is outlined then filled (Content); the loading rule is softened, since there is no shared skeleton component.
 - 2026-07-13: Visual Spec (Mobile): Figma-verified 2026-07-13 (variant `Device=Mobile`, dark node `5452:37381`).
@@ -131,6 +153,7 @@ Add new entries here, not in the docs.
 
 ## [file-uploader.md](file-uploader.md)
 
+- 2026-10-14: Figma File uploader gained Progress and Error message text properties and State=Focus (L, S) with the cyan focus ring; description rewritten.
 - 2026-09-29: > **Updated 2026-09-29 (re-verified against Figma `11546:1560`):** icons are `DocumentUpload` (Linear; `--text-error` in Error) and `DocumentText` (Bold, Filled); the button reads "Select File" in every state, with a `--border-elevated` border and Medium / Small padding (10px 20px L, 8px 16px S), lighting to `--primary-button-background-hover` over a 16% fill on hover, including when the zone is hovered; the L main gap is 20px and the L icon-to-text gap 16px; Error is a `--danger-500` dashed border over a 16% Danger-500 wash with a Regular bulleted list (up to three, then "+N errors"); the progress arc is `--primary-600`. The zone and button have cyan focus rings, and the button no longer opens the picker twice.
 - 2026-09-29: > **Updated 2026-09-29 (aligned to prototype usage):** the built component takes a single `errorMessage` (not `errors[]`), has no `onPreview` or Preview button, adds an `icon` prop, uses `ExportCurve` / `ClipboardText` glyphs, draws the Error border in `--text-error` over an 8% danger tint, gives the outlined button a 12px radius and uses a 16px main gap on L. The glyphs, error styling and gaps in this note are superseded by the Figma re-verification note below.
 - 2026-09-29: > **Updated 2026-09-29 (verified against code):** frontmatter description updated (single error line, no Preview); `onChangeFile` is only called from Filled; the stale 8px button radius, token names and hover override now match `FileUploader.css`; the Preview button section and the outdated full-component sketch are removed; the progress track is `var(--border)`; the recipes compile against the real props.
@@ -139,10 +162,12 @@ Add new entries here, not in the docs.
 
 ## [filter-bar.md](filter-bar.md)
 
+- 2026-10-14: Figma Filter bar gained Count, Filter 1-6, Filter 1-6 icon and Overflow count properties; description now points to src/components/FilterBar.
 - 2026-10-08: Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) component set "Filter bar" `12438:2724` (added 2026-10-08), variants `State = Empty | Filled` x `Expanded = false | true`.
 
 ## [gamification.md](gamification.md)
 
+- 2026-10-14: Figma Learning path gained Description and Progress text properties, Quiz/Options gained Label and Explanation text properties and desktop State=Focus; every Gamification set description rewritten.
 - 2026-08-17: Assessment illustrations: Source: Figma `Illustrations/ Assessments`, frame `9120:8850` (classic six downloaded 2026-07-13, interactive four 2026-08-17).
 - 2026-07-13: Skill level illustrations: Source: Figma `Illustrations/ Learning path`, frame `9120:9437` (downloaded 2026-07-13).
 - 2026-07-13: Progress illustrations: Source: Figma `Illustrations/ Progress`, frame `10157:9081` (downloaded 2026-07-13).
@@ -151,6 +176,7 @@ Add new entries here, not in the docs.
 
 ## [headers.md](headers.md)
 
+- 2026-10-14: Figma Header description rewritten; no property changes (all content lives in slots).
 - 2026-10-14: Page Header titles are `<h2>` (were `<h1>`) and Section Header titles are `<h3>` (were `<h2>`). Code updated on 13 web pages and the shared `SectionHeader`; the mobile app keeps its own `<h1>` titles.
 - 2026-09-29: > **Updated 2026-09-29 (verified against code):** Page Header prototype now cites Roles (24px `<h1>`) instead of User profile (20px); page tab gap is 16px; CTA gap is 16px and the Section Header section gap 16px, matching code (Figma draws 12px); the stale `SectionHeaderProps` and sample are replaced by the real prototype props; the non-existent `assets/headers.css` links are removed; focus rings are cyan `--primary-button-background`; the Section Header divider stays `--border` inside drawers and modals.
 - 2026-09-29: > **Updated 2026-09-29 (aligned to prototype usage):** breadcrumb link and current rows in the Page Header typography table are now 14px Regular / 1.5, matching `Breadcrumb.css` (was 12px / 1.2).
@@ -159,6 +185,7 @@ Add new entries here, not in the docs.
 
 ## [iconography.md](iconography.md)
 
+- 2026-10-14: Figma Icons page renamed to exact iconsax-react names (1,969 of 2,016 glyphs, matched by path geometry, style prefix kept: `vuesax/linear/ArrowDown2`). All 88 icons used in code are findable in Bold; Linear lacks `Mobile` and `Refresh`. Some old names changed meaning by geometry (e.g. `send` is `Transmit`, `undo` is `Back`).
 - 2026-10-14: Restructured to the foundation template (Figma glyph and `Icons` set to Iconsax / custom component mapping, Known drift for icon names). Icon colours moved from raw `--neutral-800/500/300` to `--text-primary/secondary/disabled` (raw neutrals don't flip in dark mode; code already uses the semantic tokens). Navigation example corrected to `navigation.md`: inactive `--text-secondary` Linear, active `--text-selected` Bold (was `--neutral-500` / `--primary-600`). Quiz example uses `--course-assessments` (`--case-study-quiz` does not exist). Ionicons exception (`IoCloseOutline`, `IoInformationCircleOutline`, inline SVG) and the explicit `color` prop rule moved in from design-system-guidelines.md / project notes. Removed the Resources links to `assets/iconography.css` and `references/usage-guidelines.md` (neither exists).
 - 2026-07-13: Skill illustrations source: "Source: Figma `Icons/Skill Icon/*` + `Illustrations/Skill Hugo/*` (frame `9120:10291`, downloaded 2026-07-13)."
 
@@ -168,6 +195,7 @@ Add new entries here, not in the docs.
 
 ## [input.md](input.md)
 
+- 2026-10-14: Figma Input sets reworked: Outlined Label and Helper text axes became Show label / Show helper text booleans, Radio Label became Show label; text properties (Label, Placeholder, Value, Helper text, Error message, Title, Description and placeholders) and an Icon swap on Outlined added; descriptions rewritten. Figma to code tables updated.
 - 2026-10-14: `--input-background-elevated` is 32% in both modes, matching Figma (was 24%).
 - 2026-10-09: **Updated 2026-10-09 (Integer re-verified against Figma `10145:10895`):** the Integer field is **37px** high, the same as the medium Dropdown (`8925:1408`), so the two line up in a row. Its 24px hover circles overhang the 8px padding instead of growing the field to 42px.
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** fixed the border-weight note (cards use `--border-elevated`), the card-fill hover wording (`InputField` always uses `--input-background`; callers override), light `--input-background-elevated` (24%, not 16%), the Integer resting value colour (`--text-primary`), the Radio label weight (600) and the error-timing guidance; removed raw hex fallbacks and the search example.
@@ -180,6 +208,7 @@ Add new entries here, not in the docs.
 
 ## [layout.md](layout.md)
 
+- 2026-10-14: `--shadow-card` is Shadow S in both modes (was none in dark).
 - 2026-10-14: Restructured to the foundation template (Figma variable and effect style to CSS token tables, Figma only / Code only lists, Known drift). Spacing usage column moved in from design-system-guidelines.md, with `--space-ssm` corrected to Button M padding-y (Button L uses 12px) and `--space-sm` to input padding-x (inputs pad 8px 12px). Badges moved from `--radius-sm` to `--radius-full` per `badges.md`. Removed the duplicated `:root` token blocks (the spacing one was missing the 2/6/10px tokens and `--radius-l`); `tokens.css` is the source.
 - 2026-09-29: > **Updated 2026-09-29 (verified against code):** Shadow L is the level for dialogs, modals, menus, dropdowns, tooltips and popovers; XL is currently unused; raw leftward Shadow L values are to be written as `var(--shadow-l)`; the shared Canonical spec line now has its own heading instead of sitting under Scrim.
 - 2026-09-29: > **Updated 2026-09-29 (aligned to prototype usage):** §3 and §4 now match the code: Medium buttons pad `10px 20px` (`--space-ssm` / `--space-ml`), inputs pad `8px 12px` (`--space-s` / `--space-sm`), and buttons, dialogs and modals round at `--radius-sm` (12px), per `Button.css`, `InputField.css` and `ConfirmModal.css`.
@@ -190,6 +219,7 @@ Add new entries here, not in the docs.
 
 ## [listbox.md](listbox.md)
 
+- 2026-10-14: Figma List items get Label, Description, Helper text and Skill icon glyph properties and State=Focus variants (2px inset ring); all on/off axes stay variants. Listbox and List items descriptions rewritten. Figma to code table updated.
 - 2026-10-07: **Updated 2026-10-07 (Figma List items dark `9162:941`):** new **Integer** variant (radio + supporting text + Input integer stepper and a "day" / "days" unit, `12432:11845`), used by the Assign courses timing popover. **Selected + Hover** variants exist for every row type. **Rows with a checkbox or radio do not fill amber when selected**: the control carries the selection, hover is `--cards-background-hover` (the built `Dropdown` already does this). Checkbox rows have a 12px control-to-label gap. The Search row has Enabled, Hover, Selected (focused, amber border + clear ×) and Read-only states.
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** arrow-key navigation marked as not built; danger icons turn red only with `color="currentColor"`; shadow named `var(--shadow-l)`; supporting-text rows now state both built variants (`RowActionsMenu` label 500 + `--text-tertiary`, `Dropdown` label 600 + `--text-secondary`).
 - 2026-09-29: **Updated 2026-09-29 (aligned to prototype usage):** the container border and group divider are now `--border-elevated` (a menu is an elevated surface; `RowActionsMenu` already draws it this way), the selected row uses the mode-aware `--selected` rather than raw `--secondary-500` (as the built Dropdown menu does), and the leading icon is `--text-primary`.
@@ -199,6 +229,7 @@ Add new entries here, not in the docs.
 
 ## [navigation.md](navigation.md)
 
+- 2026-10-14: Figma navigation reworked: Label text properties on admin and learner menu items and Breadcrumb item, Icon swap on learner items, State=Focus variants on menu items and breadcrumb links, Show link 3/4/5 booleans on Breadcrumb (current page moved last); descriptions rewritten. Figma to code tables updated.
 - 2026-10-05: `src/pages/your-courses/components/AddContentMenu/` - the Create Course Add Content picker. It replaced the right-edge rail on 2026-10-05 (user feedback: the rail icons confused admins) and is a DS listbox (listbox.md) with hover flyouts, not this menu-item language. Figma: Create Course `10210:26756`.
 - 2026-09-29: > **Updated 2026-09-29 (re-verified against Figma `5385:20161`):** Exit Admin is Small; the icons are 20px `--text-primary` (Logout Bold) in 36px hover circles, 16px apart and 32px from the edge.
 - 2026-09-29: > **Updated 2026-09-29 (verified against code):** the learner (Web app) shell is recorded as hand-rolled per page (`.mt-topnav` / `.mt-side`), not "not built"; the section-eyebrow claim is removed; Admin menu metrics, sub-item padding (42px / 12px) and mobile header chips now match the CSS; the program-course breadcrumb sits in `.pcd-header`; Breadcrumb focus ring is cyan `--primary-button-background`.
@@ -226,6 +257,7 @@ Add new entries here, not in the docs.
 
 ## [resource-card.md](resource-card.md)
 
+- 2026-10-14: Figma to code updated: `Title` and `Meta` are TEXT properties, `Action icon` is an icon swap, and the Web/Admin card has a `State=Focus` variant that rings the action button.
 - 2026-09-30: Hovering the icon shows the DS Tooltip at every size on web, including `device="mobile"` cards on desktop For You (Bruno, 2026-09-30).
 - 2026-09-29: **Updated 2026-09-29 (learner cards):** the whole card downloads or opens on learner surfaces; the mobile card drops the tooltip, since there is no hover on a phone.
 - 2026-09-29: **Updated 2026-09-29 (aligned to prototype usage):** the Mobile type tile is 40px (as in the code and the Anatomy table), not 56px; the code sample section is renamed "Example" so this doc has one Usage section.
@@ -233,10 +265,12 @@ Add new entries here, not in the docs.
 
 ## [row-actions-menu.md](row-actions-menu.md)
 
+- 2026-10-14: Figma to code table updated for the new List items Label and Description text properties and the Focus state.
 - 2026-09-29: (verified against code): leading icons now `color="currentColor"` (`.ram-item-icon` supplies `--text-primary`); the unsupported "single action → Small Button" rule removed; disabled-item wording reworded; shadow named `var(--shadow-l)`; focus ring corrected to `--primary-button-background` (what `RowActionsMenu.css` uses); stale listbox `--border` bullet removed.
 
 ## [search.md](search.md)
 
+- 2026-10-14: Figma Search set gets Placeholder and Value text properties and a rewritten description; Filled stays a variant (text colour and layout change too). Figma to code table updated.
 - 2026-09-30: **On a card or menu, Search uses `--border-elevated`** (Bruno, 2026-09-30): pass `elevated`. In dark mode `--border` equals `--cards-background`, so the quiet border disappears on a card. Hover (`--border-hover`) and Active (`--selected`) are unchanged. This overrides the earlier "never elevated" note and the Figma dark set, which has no `Border-elevated` binding yet.
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** the clear icon is `--text-secondary` in the Token Summary and CSS sketch (the sketch also now shows the built hover and the cyan focus ring); the Do / Don't no longer mentions an `onKeyDown` prop, which does not exist.
 - 2026-09-29: **Updated 2026-09-29 (clear button):** the clear (×) hover is a circular `--input-background-hover` fill with the icon moving to `--text-primary`, replacing the opacity fade; the hit area is 24px (28px at L), padded inside a negative margin so the field height is unchanged.
@@ -247,6 +281,7 @@ Add new entries here, not in the docs.
 
 ## [selection-controls.md](selection-controls.md)
 
+- 2026-10-14: Figma to code updated: Checkbox and Radio gain `State=Focus` variants, Toggle gains a `State` axis (Enabled / Focus); the Checkbox focus ring is Figma only until `Checkbox.css` adds one.
 - 2026-10-09: > **Updated 2026-10-09 (re-verified against Figma light `11917:3950` / dark `5001:18926`):** the Radio ring keeps its resting colour on hover (`--text-primary` unselected, `--control-selected` selected); hover adds only the `--page-background-hover` halo. The earlier `--border-hover` ring on hover had no Figma source and is removed.
 - 2026-10-07: > **Updated 2026-10-07 (Figma `6339:10484`, verified against code):** the checkbox tick and minus bar are not white. They are cut out of the filled box, so the surface behind shows through: light on light pages, dark in dark mode. `Checkbox.tsx` draws the Figma shapes as single filled paths in `--selected`. Figma has no disabled-checked variant (Disabled exists only as Not checked), so a disabled box that is checked keeps the `--selected` fill; only the empty box turns `--text-disabled`.
 - 2026-09-29: > **Updated 2026-09-29 (verified against code):** the Common Patterns and indeterminate examples now compile against the real Checkbox API (`checked`, `indeterminate`, `onChange()`, `disabled`; no label, name or aria-label); the unchecked checkbox border is `--text-secondary`; `--control-selected` light/dark values stated; halo radius is `var(--radius-full)`; Radio and Toggle CSS and React samples now mirror the built components (tokens, no raw hex); `className` behaviour and `size="sm"` usage corrected.
@@ -264,6 +299,7 @@ Add new entries here, not in the docs.
 
 ## [table.md](table.md)
 
+- 2026-10-14: Figma Table row gained State=Focus (unselected and selected); Table header gained Label and Icon glyph; Table data gained Label, Supporting label, Date label, Percentage, Icon glyph, Info icon and Action icon; all Table set descriptions rewritten; no on/off axis converted.
 - 2026-10-14: Action column is `flex: 0 0 56px`; `.tbl-col-action` in `Table.css` updated from 52px.
 - 2026-10-14: Frontmatter description and the ASCII diagram said the header is "borderless"; changed to "filled header bar" to match `Table.css` (`.tbl-head { background: var(--input-background) }`) and the body rule.
 - 2026-10-06: > **Updated 2026-10-06 (re-verified against Figma table data, light `12422:2181` / dark `11766:619`):** the primary line of a two-line cell is Poppins **Medium 500** (was Semibold 600); hovered cell text is `--primary-button-background-hover` (the Figma binding; was `--text-button-hover`); thumbnails are 72×44 (was 90×44); the action-icon hover disc is `--input-background-hover` (was `--input-background`); a progress-bar cell has an 8px gap between bar and label (was 12px); a checkbox in a row hovers with a circular `--cards-background-hover` disc. Single-line cell text stays Regular 400.

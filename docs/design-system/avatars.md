@@ -8,7 +8,7 @@ description: Avatar and Avatar Group components for 5Mins.ai. Use when displayin
 A visual representation of a user or entity, alone or stacked in a group with a "+N" overflow counter.
 
 **Code:** `import Avatar from '@/components/Avatar/Avatar'` and `import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`; Avatar dark `5097:5884` / light `11914:2605`; Avatar Group dark `5097:5584` / light `11915:3296`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`; Avatar `5097:5884`; Avatar Group `5097:5584`
 **Last verified:** 2026-09-29
 
 Identical structure in both modes; borders, fallback and counter colours are semantic tokens that resolve per mode (see `colors.md`).
@@ -44,7 +44,7 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 - Don't use initials or a coloured letter chip as the fallback; the Library has no initials variant
 - Don't hard-code the fallback colours; the smiley's circle and smile flip with the mode
 
-**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)`; photo `object-fit: cover`; fallback smiley circle `var(--border)`, smile `var(--text-tertiary)`; group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (ring 0.5px at 24px) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar light `11914:2605` / dark `5097:5884`, Avatar Group light `11915:3296` / dark `5097:5584`.
+**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)`; photo `object-fit: cover`; fallback smiley circle `var(--border)`, smile `var(--text-tertiary)`; group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (ring 0.5px at 24px) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar `5097:5884`, Avatar Group `5097:5584`.
 
 ## Figma to code
 
@@ -60,9 +60,9 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Size | 24px / 32px / 40px | `size` | `24` (default) / `32` / `40` | pass the same `size` to the `<Avatar>` children |
-| (none) | "+N" is fixed layer text | `remaining` | number, default `0` | renders the "+N" bubble when above 0 |
+| Count | text (default "+3") | `remaining` | number, default `0` | renders the "+N" bubble when above 0; the component writes the "+" |
 
-- **Figma only:** none. (The Library's separate `Emojies` set has no code component; `Avatar` renders the smiley fallback.)
+- **Figma only:** none. (The Library's separate `Emojies` set has no code component; `Avatar` renders the smiley fallback.) `Picture` stays a variant, not a boolean: the photo is an image fill on the circle and the fallback is a nested `Emojies` instance, so the two differ in more than one layer's visibility.
 - **Code only:** `alt` and `className` on Avatar; `remaining`, `ariaLabel`, `className` and the `--avatar-group-ring` custom property on AvatarGroup; children may be wrapped (e.g. in a Tooltip).
 
 **Avatar props**

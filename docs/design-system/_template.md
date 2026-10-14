@@ -15,7 +15,7 @@ description: <one sentence: what it is, its variants, when to use it>
 <One line: what the component is for.>
 
 **Code:** `import X from '@/components/X/X'` (or "no shared component yet: <where it lives>")
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `<node id>` / light `<node id>`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `<node id>` (one component set; light and dark come from the variable modes on the parent frame)
 **Last verified:** YYYY-MM-DD
 
 ## Usage (required)

@@ -8,7 +8,7 @@ description: Badge component for 5Mins.ai - pill-shaped status indicators (Succe
 Small, pill-shaped status indicators that communicate state, category, or metadata at a glance.
 
 **Code:** `import Badge from '@/components/Badge/Badge'` (`src/components/Badge/Badge.tsx` + `Badge.css`; use it, never hand-roll a pill)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `5799:479` / light `12414:9613`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `5799:479`
 **Last verified:** 2026-10-14
 
 Both nodes have the same structure; only the resolved text/fill tokens differ per mode.
@@ -55,7 +55,7 @@ Both nodes have the same structure; only the resolved text/fill tokens differ pe
 
 Badges appear inside table cells, cards, headers, and list rows.
 
-**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px); radius `var(--radius-full)`; gap `var(--space-xs)` (4px), `var(--space-s)` (8px) once a × is present; label 14px Medium, line height 1.2; icons 16px `currentColor`; text tokens `--text-success`, `--text-warning`, `--text-error`, `--text-progress`, `--text-secondary`; fills are 16% tints of the type colour, `var(--input-background)` for informative, solid `var(--danger-400)` for new; ✕ is io5 `IoCloseOutline` (1px stroke, 16px box); Hover (dismissible only) doubles the fill to 32% and puts the ✕ on a 24% disc of the type colour (informative: Neutral-200 light / Neutral-500 dark). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12414:9613` / dark `5799:479`.
+**Canonical spec:** padding `var(--space-xss) var(--space-sm)` (6px 12px); radius `var(--radius-full)`; gap `var(--space-xs)` (4px), `var(--space-s)` (8px) once a × is present; label 14px Medium, line height 1.2; icons 16px `currentColor`; text tokens `--text-success`, `--text-warning`, `--text-error`, `--text-progress`, `--text-secondary`; fills are 16% tints of the type colour, `var(--input-background)` for informative, solid `var(--danger-400)` for new; ✕ is io5 `IoCloseOutline` (1px stroke, 16px box); Hover (dismissible only) doubles the fill to 32% and puts the ✕ on a 24% disc of the type colour (informative: Neutral-200 light / Neutral-500 dark). Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5799:479`.
 
 ## Figma to code
 
@@ -64,12 +64,13 @@ Badges appear inside table cells, cards, headers, and list rows.
 | Type | Success / Warning / Error / In progress / Informative / New | `type` | `success` (default) / `warning` / `error` / `in-progress` / `informative` / `new` | Figma default is also Success |
 | Icon left | true / false | `icon` | `true` / `false` (default) | `customIcon` replaces the type icon; ignored on `new` |
 | Icon right | true / false | `onDismiss` | handler present / absent | the ✕ renders only when a handler is passed; there is no boolean |
-| State | Enabled / Hover | n/a | CSS `:hover` | Hover exists only on dismissible badges |
+| State | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | Hover and Focus exist only on dismissible badges; Focus draws the ring on the ✕ |
+| (label text) | each type carries its own label ("Success", "Warning", "In progress", "Error", "Informative", "New") | `label` | string or node, defaults to the type label | no shared text property on purpose: one would give every type the same default label; type over the text in Figma |
 
 There is **no size axis**. Both icons are independent: a badge can carry either, both, or neither. Figma draws no variant with a type icon **and** a ✕; see Anatomy.
 
-- **Figma only:** the label is fixed layer text, not a property (code: `label`). Figma names the type "Informative"; the code default label is "Information".
-- **Code only:** types `quiz` and `scheduled` (see [App extensions](#app-extensions)); `customIcon`; `label` (string or node, so a label can pair two weights); `dismissLabel`; `className`; the ✕ focus-visible ring.
+- **Figma only:** Figma names the type "Informative"; the code default label is "Information". `Icon left` and `Icon right` stay variants, not booleans: the In progress label changes line height with the icon, the ✕ also widens the gap from XS to S, and Figma has no badge with both icons. The leading icon has no swap property because it is the type icon and differs per type; a single swap property would force one glyph on every type.
+- **Code only:** types `quiz` and `scheduled` (see [App extensions](#app-extensions)); `customIcon`; `label` (string or node, so a label can pair two weights); `dismissLabel`; `className`.
 
 **Props**
 

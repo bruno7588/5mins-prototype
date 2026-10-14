@@ -8,7 +8,7 @@ description: Gamification asset libraries for 5Mins.ai - skill-level shield/meda
 Asset libraries for learner progression UI. All are exact Figma exports: never redraw, recolour, or substitute them.
 
 **Code:** no shared React component; typed asset indexes in `src/assets/` (`level-illustrations`, `progress-illustrations`, `assessment-illustrations`, `certificate-illustrations`, `gamification-illustrations`, `skill-icons`), rendered with `<img>`.
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Gamification page. Learning path levels dark `9120:9437` / light `11196:8794`; Progress dark `10157:9081` / light `11196:7723`; Assessments dark `9120:8850` / light `12154:10371`; Certificate dark `9120:9301` / light `11196:7670`; Gamification heroes dark `11196:7607` / light `11196:7707`.
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Gamification page. Learning path levels `9120:9437`; Progress `10157:9081`; Assessments dark `9120:8850` / light `12154:10371`; Certificate `9120:9301`; Gamification heroes `11196:7607`.
 **Last verified:** 2026-08-17
 
 ## Usage
@@ -46,7 +46,7 @@ Asset libraries for learner progression UI. All are exact Figma exports: never r
 | Illustrations/Certificate | Size | XL / L / M / S | `getCertificateIllustration(size)` | `'xl'` / `'l'` / `'m'` / `'s'` | 240 / 80 / 56 / 20px |
 | Illustrations/Gamification | Type | Progress / Certificate / Quiz / Learning Path | `getGamificationIllustration(type)` | `'progress'` / `'certificate'` / `'quiz'` / `'learning-path'` | 96px |
 
-- **Figma only:** Learning path (`5514:8463`), Certificate instances (`5514:2390`), Ranking, leaderboard (`2613:26421`), Quiz/Options (`5504:24966`), Progress bar (`7046:25097`), Thumbnail type (`9537:7400`) have no code component; the 11th Assessments Type value has no code key.
+- **Figma only:** Learning path (`5514:8463`), Certificate instances (`5514:2390`), Ranking, leaderboard (`2613:26421`), Quiz/Options (`5504:24966`), Progress bar (`7046:25097`), Thumbnail type (`9537:7400`) have no code component; the 11th Assessments Type value has no code key. Their component properties: Learning path `Description` and `Progress` (text); Quiz/Options `Label` and `Explanation` (text) plus `State=Focus` (desktop, before submitting; `:focus-visible` when built).
 - **Code only:** `assessmentTypeFromLabel(label)` bridges an outline card's display label to an `AssessmentType` key.
 
 **Production:**

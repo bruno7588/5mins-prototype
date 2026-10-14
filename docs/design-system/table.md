@@ -8,7 +8,7 @@ description: Data table component for 5Mins.ai - card-style bordered rows (not a
 Data table component for the 5Mins.ai admin and learner platform. Use for any rows of records: learners, enrolments, courses, roles, reports, audit logs, or any "show me rows of data" screen.
 
 **Code:** `import Table from '@/components/Table/Table'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, full table dark `7896:2624` (light `11927:7332` is an instance of it, not a component), row states dark `7896:2804` / light `12292:3846`, header dark `11872:3077` / light `11927:7554`, cell types dark `11766:619` / light `12422:2181`. Colours are semantic tokens resolving per mode (see `colors.md`).
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, full table dark `7896:2624` (light `11927:7332` is an instance of it, not a component), row states `7896:2804`, header `11872:3077`, cell types `11766:619`. Colours are semantic tokens resolving per mode (see `colors.md`).
 **Last verified:** 2026-10-06
 
 ## Usage
@@ -61,15 +61,16 @@ The Figma table is four component sets; code is one data-driven `Table` whose ce
 | Table row1 ... Table row10 (slots) | 10 fixed rows | `rows` + `columns[].render` | `T[]`, one render per column | code renders any number of rows; `getRowKey` required |
 | Pagination (nested instance) | footer | `pagination` | `{ from, to, total, onPrev, onNext }` | hidden when everything fits on one page |
 
-**Table row** (`7896:2804` / `12292:3846`)
+**Table row** (`7896:2804`)
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | State | Enabled / Hover / n/a | `getRowState` | `'enabled'` / `'hover'` | hover is also CSS `:hover`; `n/a` has no code value |
 | Selected | false / true | `getRowState` or `isSelected` | `'selected'` | Selected + Hover is CSS `:hover` on a selected row |
 | Disabled | false / true | `getRowState` | `'disabled'` | read-only rows |
+| State | Focus | n/a | CSS `:focus-visible` | cyan ring on a clickable row (`onRowClick`) |
 
-**Table header** (`11872:3077` / `11927:7554`)
+**Table header** (`11872:3077`)
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
@@ -77,8 +78,10 @@ The Figma table is four component sets; code is one data-driven `Table` whose ce
 | Checkbox | false / true | `selectable` | `true` | select-all; `onToggleAll`, `allSelected`, `selectAllIndeterminate`, `selectAllDisabled` |
 | Icon | false / true | `columns[].sortable` + `onSort` | `true` | the sort arrow itself is rendered by the caller inside `header` |
 | Disabled | false / true | n/a | CSS `.tbl-head-cell.is-disabled` | no prop sets it |
+| Label (text) | "Text" | `columns[].header` | ReactNode | |
+| Icon glyph (instance swap) | arrow-down | sort arrow inside `header` | 16px `ArrowDown` | shown when Icon=true |
 
-**Table data** (`11766:619` / `12422:2181`)
+**Table data** (`11766:619`)
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
@@ -96,6 +99,13 @@ The Figma table is four component sets; code is one data-driven `Table` whose ce
 | Dropdown | false / true | `columns[].render` | `<Dropdown>` | |
 | Disabled | false / true | `getRowState` | `'disabled'` | |
 | State | Enabled / Hover / Selected / Read-only | `getRowState`, `cellClassName` | `is-link` / `is-hover` for hover text | Read-only = `'disabled'` |
+| Label (text) | "Text" | `columns[].render` | cell text | |
+| Supporting label (text) | "Supporting text" | `columns[].render` | `.supporting` line | Supporting text=true |
+| Date label (text) | "Jan 1, 2025" | `columns[].render` | `.tbl-date` | date=true |
+| Percentage (text) | "100%" | `columns[].render` | `.tbl-progress` label | Progress bar=true |
+| Icon glyph (instance swap) | Danger | `columns[].render` | trailing 20px Iconsax icon | Text + Icon cell |
+| Info icon (instance swap) | info | `columns[].render` | trailing icon | Illustration cells |
+| Action icon (instance swap) | More | `RowActionsMenu` | kebab in `.tbl-action` | action-icon cell |
 
 - **Figma only:** the fixed 10-row slot model; Table row `State=n/a`; Table header `Disabled` (CSS class only); Thumbnail type set (`9537:7400`, Course / Your content / Lesson) has no code component.
 - **Code only:** `getRowKey`, `onRowClick`, `columns[].key`, `width`, `align`, `cellClassName`, `isRowSelectable`, `selectAllIndeterminate`, `footerStart`; the action-icon cell `.tbl-action` (kebab via `RowActionsMenu`).

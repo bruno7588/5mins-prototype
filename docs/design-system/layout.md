@@ -58,7 +58,6 @@ Layout foundations: spacing, roundness, padding, margins, icon sizes, shadows, a
 - A surface floats above the page: dialogs, modals, menus, dropdowns, tooltips and popovers (L); cards (S).
 
 **Don't use when**
-- Separating a filled card from the page in dark mode → `var(--shadow-card)` already drops to none there
 
 **Do**
 - Use `var(--shadow-s)` or `var(--shadow-l)` (`var(--shadow-xl)` exists but is currently unused); `var(--shadow-card)` for a `--cards-background` card on `--page-background`; `var(--shadow-panel)` for right-anchored side panels.
@@ -214,7 +213,7 @@ Three elevation levels per the Figma styles:
 | `--shadow-l` | Dialogs, modals, menus, dropdowns, tooltips, popovers |
 | `--shadow-xl` | Currently unused (modals and dialogs use Shadow L) |
 
-`--shadow-card` is Shadow S in light mode and `none` in dark. For a filled card on the page background: in light the two surfaces are one step apart and the fill alone doesn't separate them, in dark they already are. Use it wherever a `--cards-background` card sits directly on `--page-background`.
+`--shadow-card` is Shadow S in both modes, matching the Figma cards. Use it wherever a `--cards-background` card sits directly on `--page-background`.
 
 `--shadow-panel` (`-24px 0 24px 0 rgba(32, 34, 42, 0.04)`) is the leftward shadow for right-anchored side panels. Shadow L itself is leftward in Figma, and the token matches it. A few `filter: drop-shadow()` surfaces (Tooltip and some popovers) cannot take the token and write the same value by hand.
 

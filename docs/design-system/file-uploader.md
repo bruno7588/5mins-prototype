@@ -8,7 +8,7 @@ description: File upload drop zone for 5Mins.ai - two sizes (L full-width, S 180
 A drop zone that lets the user drag in or pick one file, then shows its progress and the file that is held. React + TypeScript, Iconsax icons.
 
 **Code:** `import FileUploader from '@/components/FileUploader/FileUploader'` (named and default export)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `11546:1560` / light `12308:6617`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `11546:1560`
 **Last verified:** 2026-09-29
 
 ## Usage
@@ -42,10 +42,13 @@ A drop zone that lets the user drag in or pick one file, then shows its progress
 |---|---|---|---|---|
 | Size | L / S | `size` | `'L'` (default) / `'S'` | same casing |
 | State | Enabled / Hover / Error / Uploading / Filled | `state` | `'Enabled'` / `'Hover'` / `'Error'` / `'Uploading'` / `'Filled'` | controlled; omit for uncontrolled. Hover also comes from CSS `:hover` and drag-over |
-| Info (slot) | body content | `fileName`, `progress`, `errorMessage` | string / 0-100 / string or string[] | content depends on state |
-| Info2 (slot) | body content | `fileName`, `progress`, `errorMessage` | as above | |
+| State | Focus | n/a | CSS `:focus-visible` | cyan ring on the zone and button |
+| Info (slot) | body content | `icon`, `fileName`, `fileIcon` | ReactNode / string / ReactNode | content depends on state |
+| Info2 (slot) | body content | `icon`, `fileName`, `fileIcon` | as above | |
+| Progress (text) | "72%" | `progress` | 0-100 | Uploading |
+| Error message (text) | "Error message here!" | `errorMessage` | string or string[] | Error; the "+N errors" line is fixed sample text |
 
-- **Figma only:** the `Info` / `Info2` slots as free containers; no Focus or Disabled variant (focus-visible is CSS in code).
+- **Figma only:** the `Info` / `Info2` slots as free containers (text and icons inside a slot cannot be component properties); no Disabled variant.
 - **Code only:** `onFileSelect(file)`, `onChangeFile()`, `accept`, `icon` (Enabled/Hover glyph), `fileIcon` (Filled thumbnail), `className`.
 
 ```tsx

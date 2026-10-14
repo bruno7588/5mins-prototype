@@ -8,7 +8,7 @@ description: Input field system for 5Mins.ai - four types. Outlined (standard la
 Text and number entry: the labelled form field, the in-place title editor, the option-with-input row and the numeric stepper.
 
 **Code:** `import InputField from '@/components/InputField/InputField'`, `import InputInline from '@/components/InputInline/InputInline'`, `import InputInteger from '@/components/InputInteger/InputInteger'` (all default exports). Radio: no shared component yet.
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, set dark `11180:1982` / light `12114:20552`; Outlined dark `8974:24610` / light `12114:20561`; Inline dark `10330:4736` / light `12300:6403`; Radio dark `8974:30479` / light `12114:20857`; Integer dark `10145:10895` / light `12114:20914`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, set `11180:1982`; Outlined `8974:24610`; Inline `10330:4736`; Radio `8974:30479`; Integer `10145:10895`
 **Last verified:** 2026-10-09
 
 ## Usage
@@ -73,7 +73,7 @@ The `InputField` component is the standard text entry control across the 5Mins.a
 | Building your own password icon layout | Pass `iconRight`; composition is automatic |
 | `readOnly` for disabled | `disabled={true}` |
 
-**Canonical spec:** padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); label to field to helper gap `var(--space-s)` (8px); text Paragraph M (14px / 400 / 1.5). Border `--border-elevated` at rest, `--border-hover` + `--input-background` fill on hover (the component always uses `--input-background`; a caller on a card fill overrides it with `--input-background-elevated`), `--selected` on focus, `--border` when disabled, `--text-error` on error. Placeholder `--text-disabled`, helper `--text-tertiary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12114:20561` / dark `8974:24610`.
+**Canonical spec:** padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); label to field to helper gap `var(--space-s)` (8px); text Paragraph M (14px / 400 / 1.5). Border `--border-elevated` at rest, `--border-hover` + `--input-background` fill on hover (the component always uses `--input-background`; a caller on a card fill overrides it with `--input-background-elevated`), `--selected` on focus, `--border` when disabled, `--text-error` on error. Placeholder `--text-disabled`, helper `--text-tertiary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8974:24610`.
 
 ### Figma to code
 
@@ -83,12 +83,15 @@ The `InputField` component is the standard text entry control across the 5Mins.a
 | Hovering | false / true | n/a | CSS `:hover` | composes with Filled and success; not with Active or Disabled |
 | Disabled | false / true | `disabled` | `false` (default) / `true` | |
 | Validation | none / error / success | `validation` | `'none'` (default) / `'error'` / `'success'` | code also has `'warning'` |
-| Label | true / false | `label` | `ReactNode`, omitted = no label | Figma variant, code content prop |
-| Helper text | false / true | `helperText` | `string`, omitted = none | Figma variant, code content prop |
-| Icon right | false / true | `iconRight` | `ReactNode`, omitted = none | Figma variant, code content prop |
+| Show label (boolean) + Label (text) | true / false; "Label" | `label` | `ReactNode`, omitted = no label | |
+| Show helper text (boolean) + Helper text (text) | true / false; "Helper text" | `helperText` | `string`, omitted = none | |
+| Error message (text) | "Error message" | `helperText` with `validation="error"` | `string` | bound on the error variants |
+| Icon right + Icon (swap) | false / true; Iconsax glyph | `iconRight` | `ReactNode`, omitted = none | still a variant: on success and error variants the trailing icon wraps the validation icon in a frame |
+| Placeholder (text) | "Input text" | `placeholder` | `string` (default "Input text") | bound on Enabled, Active and n/a variants |
+| Value (text) | "Input text" | `value` | `string` | bound on Filled variants |
 
 - **Figma only:** the `n/a` State value. The Outlined disabled variants bind their border to `Border-elevated`; the Radio, Integer, Chip and Dropdown sets bind disabled to `Border`. Treat the Outlined disabled binding as stale, and `--border` as the rule.
-- **Code only:** `validation="warning"`, `placeholder` (default "Input text"), `value`, `onChange`, `onBlur`, `type` (default `'text'`), `autoFocus`, `className`.
+- **Code only:** `validation="warning"`, `onChange`, `onBlur`, `type` (default `'text'`), `autoFocus`, `className`.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -277,7 +280,7 @@ The `InputInteger` component is the numeric stepper used for small whole-number 
 - Don't show native number spinners; the − / + controls are the only steppers.
 - Don't give the whole box a hover fill; hover shows on the − / + control under the pointer (circular `--page-background-hover`).
 
-**Canonical spec:** height 37px (matches the medium Dropdown, `8925:1408`, so the two line up in a row; the 24px hover circles overhang the 8px padding instead of growing the field to 42px); padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); gap between controls `var(--space-sm)` (12px); 20px Iconsax glyph in a 24px `var(--radius-full)` hover target; width fits content. Border `--border-elevated`, `--border-hover` on hover, `--selected` on focus, `--text-error` on error, `--border` when disabled. Helper `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12114:20914` / dark `10145:10895`.
+**Canonical spec:** height 37px (matches the medium Dropdown, `8925:1408`, so the two line up in a row; the 24px hover circles overhang the 8px padding instead of growing the field to 42px); padding `var(--space-s) var(--space-sm)` (8px 12px); radius `var(--radius-sm)` (12px); gap between controls `var(--space-sm)` (12px); 20px Iconsax glyph in a 24px `var(--radius-full)` hover target; width fits content. Border `--border-elevated`, `--border-hover` on hover, `--selected` on focus, `--text-error` on error, `--border` when disabled. Helper `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10145:10895`.
 
 ### Figma to code
 
@@ -286,10 +289,11 @@ The `InputInteger` component is the numeric stepper used for small whole-number 
 | State | Enabled / Hover / Active / Filled / n/a | n/a | CSS `:hover`, `:focus-within`; Filled = value set | `n/a` is the sentinel used on Disabled variants |
 | Validation | none / success / error | `validation` | `'none'` (default) / `'success'` / `'error'` | |
 | Disabled | false / true | `disabled` | `false` (default) / `true` | |
-| Label | true / false | `label` / `ariaLabel` | `string`; omit `label` and pass `ariaLabel` for no visible label | Figma variant, code content prop |
-| Helper text | false / true | `helperText` | `ReactNode`, omitted = none | Figma variant, code content prop |
+| Label + Label (text) | true / false; "Label" | `label` / `ariaLabel` | `string`; omit `label` and pass `ariaLabel` for no visible label | still a variant: the error variant without a label draws its message in the label style |
+| Helper text + Helper text (text) | false / true; "Helper text" | `helperText` | `ReactNode`, omitted = none | still a variant: error variants show their message under `Helper text=false` |
+| Error message (text) | "Error message" | `helperText` with `validation="error"` | `ReactNode` | |
 
-- **Figma only:** the `n/a` State value. Figma draws the step icons at `21×21px`; code uses 20px (see Anatomy).
+- **Figma only:** the `n/a` State value. The value text ("0" / "100") has no property because it differs by state. Figma draws the step icons at `21×21px`; code uses 20px (see Anatomy).
 - **Code only:** `value`, `onChange`, `min` (default 0), `max`, `step` (default 1), `suffix`, `className` (incl. `input-integer--inline`), `ariaLabel`.
 
 | Prop | Type | Default | Description |
@@ -415,7 +419,7 @@ A borderless editor for a title and optional description, used where the content
 - Don't add an error icon; the red title and the message carry the error.
 - Don't hand-roll a borderless title `<input>`; use `InputInline`.
 
-**Canonical spec:** L title H1 Bold 32 / 1.5, description Paragraph L Regular 16 / 1.5; M title H3 Bold 20 / 1.5, description Paragraph M Regular 14 / 1.5. Gap `var(--space-xs)` (4px). Placeholders `--text-disabled` ("Add Title", "Add a description"); filled title `--text-primary`, description `--text-secondary`; caret `--text-primary`. Error: title and message `--text-error`, message Paragraph M Regular 14. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12300:6403` / dark `10330:4736`.
+**Canonical spec:** L title H1 Bold 32 / 1.5, description Paragraph L Regular 16 / 1.5; M title H3 Bold 20 / 1.5, description Paragraph M Regular 14 / 1.5. Gap `var(--space-xs)` (4px). Placeholders `--text-disabled` ("Add Title", "Add a description"); filled title `--text-primary`, description `--text-secondary`; caret `--text-primary`. Error: title and message `--text-error`, message Paragraph M Regular 14. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `10330:4736`.
 
 Used by Course details (L, with error), Program builder (L) and Automation details (M, title only).
 
@@ -425,12 +429,16 @@ Used by Course details (L, with error), Program builder (L) and Automation detai
 |---|---|---|---|---|
 | Size | L / M | `size` | `'L'` (default) / `'M'` | |
 | State | Enabled / Active / Filled | n/a | CSS `:focus` (caret); Filled = `title` non-empty | |
-| Validation | none / error | `error` | `string` message, omitted = none | Figma variant, code message string |
-| Description | true / false | `onDescriptionChange` | pass it to show the description line | the description line only renders with this |
+| Validation + Error message (text) | none / error; "Error message" | `error` | `string` message, omitted = none | |
+| Description | true / false | `onDescriptionChange` | pass it to show the description line | still a variant: the gap changes (4px with a description, 8px without) |
 | Disabled | false | n/a | n/a | single-value axis; no disabled state |
+| Title (text) | "Title of the Course/Card" | `title` | `string` | bound on Filled variants |
+| Title placeholder (text) | "Add Title" | `titlePlaceholder` | `string` (default "Add Title") | bound on Enabled and Active variants |
+| Description (text) | "Description of the course" | `description` | `string` | bound on Filled variants |
+| Description placeholder (text) | "Add a description" | `descriptionPlaceholder` | `string` (default "Add a description") | bound on Enabled and Active variants |
 
 - **Figma only:** the `Disabled` axis (only `false` exists).
-- **Code only:** `title`, `onTitleChange`, `titlePlaceholder` (default "Add Title"), `titleAriaLabel`, `onTitleBlur`, `titleRef`, `titleId` (for a dialog that takes its name from the title via `aria-labelledby`), `description`, `descriptionPlaceholder` (default "Add a description"), `descriptionAriaLabel`, `className`.
+- **Code only:** `onTitleChange`, `titleAriaLabel`, `onTitleBlur`, `titleRef`, `titleId` (for a dialog that takes its name from the title via `aria-labelledby`), `descriptionAriaLabel`, `className`.
 
 **Production:**
 
@@ -496,7 +504,9 @@ A bordered field row with a **21px radio button inside** - the user both selects
 | Selected | false / true | n/a | not built | radio behaviour per `selection-controls.md` |
 | Validation | none / success | n/a | not built | no error state in Figma |
 | Disabled | false / true | n/a | not built | |
-| Label | true / false | n/a | not built | |
+| Show label (boolean) + Label (text) | true / false; "Label" | n/a | not built | |
+| Placeholder (text) | "Input text" | n/a | not built | bound on Enabled and Hover variants |
+| Value (text) | "Text" | n/a | not built | bound on Active, Filled and n/a variants |
 
 - **Figma only:** the whole set; no code exists.
 - **Code only:** none.

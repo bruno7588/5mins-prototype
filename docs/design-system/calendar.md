@@ -8,7 +8,7 @@ description: Calendar / date picker for 5Mins.ai - the date input field (Enabled
 A date input field that opens a month-grid calendar popover. Weeks start on **Monday**.
 
 **Code:** date field `import DatePickerField from '@/components/DatePickerField/DatePickerField'` (see [date-picker-field.md](date-picker-field.md)); month grid: no shared component yet, `src/pages/programs/components/CourseOutline/MiniCalendar.tsx` (`.mc__*` classes)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, date field dark `11529:406` / light `12424:2601`; day item dark `5279:26511` / light `11916:6094`; Calendar (month grid frame) `11529:430`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, date field `11529:406`; day item `5279:26511`; Calendar (month grid frame) `11529:430`
 **Last verified:** 2026-10-07
 
 ## Usage
@@ -33,7 +33,7 @@ A date input field that opens a month-grid calendar popover. Weeks start on **Mo
 - Don't use the browser's native date picker; it doesn't match the design system.
 - Don't use raw `--secondary-500` for the active border; use the mode-aware `--selected`.
 
-**Canonical spec:** see [date-picker-field.md](date-picker-field.md). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12424:2601` / dark `11529:406`.
+**Canonical spec:** see [date-picker-field.md](date-picker-field.md). Figma: Library `EC26cSVe9KNTCWXvYovakw`, `11529:406`.
 
 ### Calendar (month grid)
 
@@ -56,11 +56,11 @@ A date input field that opens a month-grid calendar popover. Weeks start on **Mo
 - Don't render the popover inside a clipping ancestor; portal it, as `DatePickerField` does.
 - Don't start weeks on Sunday; weeks are Monday-first.
 
-**Canonical spec:** popover `--cards-background`, 1px `--border-elevated`, radius `var(--radius-sm)` (12px), Shadow L, 352px wide. Day cells 40 × 40px, 8px gap; hover `--cards-background-hover` at `var(--radius-s)` (8px); current day 1px `--border-elevated` ring; selected `--selected` fill with Medium 14 `--text-on-selected`; out-of-month and disabled `--text-disabled` at 50% opacity. Month title Semibold 16 `--text-primary`; weekdays Regular 14 `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, day item light `11916:6094` / dark `5279:26511`, Calendar `11529:430`.
+**Canonical spec:** popover `--cards-background`, 1px `--border-elevated`, radius `var(--radius-sm)` (12px), Shadow L, 352px wide. Day cells 40 × 40px, 8px gap; hover `--cards-background-hover` at `var(--radius-s)` (8px); current day 1px `--border-elevated` ring; selected `--selected` fill with Medium 14 `--text-on-selected`; out-of-month and disabled `--text-disabled` at 50% opacity. Month title Semibold 16 `--text-primary`; weekdays Regular 14 `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, day item `5279:26511`, Calendar `11529:430`.
 
 ## Figma to code
 
-**Date field ("Calendar" set, `11529:406`):** maps to `DatePickerField`; the full table is in [date-picker-field.md](date-picker-field.md#figma-to-code-required). In short, `Calendar` = Enabled / Hover / Active / Error (Error = `error` prop, the rest are CSS and open state) and `Label` = true / false (the caller renders the label).
+**Date field ("Calendar" set, `11529:406`):** maps to `DatePickerField`; the full table is in [date-picker-field.md](date-picker-field.md#figma-to-code-required). In short, `Calendar` = Enabled / Hover / Active / Error (Error = `error` prop, the rest are CSS and open state; Active is also the focus look), `Show label` = true / false (the caller renders the label), and the text properties `Label`, `Value`, `Helper text` and `Month`.
 
 **Day item (`5279:26511`)**
 
@@ -69,8 +69,9 @@ A date input field that opens a month-grid calendar popover. Weeks start on **Mo
 | State | n/a / Enabled / Hover / Focus / Illustration / Current day | n/a | CSS `:hover`, `:focus-visible`; Current day computed from today | Illustration is not built |
 | Selected | false / true | `MiniCalendar` `value` | the day matching `value` (ISO) | |
 | Disabled | false / true | `MiniCalendar` `maxDate` / `minDate` | days outside the bounds | outside-month days use the same look but stay clickable |
+| Day | text (default "01") | n/a | computed day number | |
 
-- **Figma only:** `State=Illustration` (23×28px streak graphic for the learner streak calendar). The month grid `11529:430` is a frame, not a component. The Figma light date field shows a raw `Secondary-500` binding on the active border; treat that as stale, `--selected` is the rule. The light Calendar set uses the dark Day item instance.
+- **Figma only:** `State=Illustration` (23×28px streak graphic for the learner streak calendar). The month grid `11529:430` is a frame, not a component. The Figma light date field shows a raw `Secondary-500` binding on the active border; treat that as stale, `--selected` is the rule. The light Calendar set uses the dark Day item instance. The Day item `State=Focus` border is bound to `Primary-Button-background` (cyan), matching the code; it was `Selected` before 2026-10-14.
 - **Code only:** `MiniCalendar` `onSelect(iso)`, `minDate` (ISO; days before it render disabled, the mirror of `maxDate`).
 
 MiniCalendar props: `value` (ISO `yyyy-mm-dd`), `onSelect(iso)`, `maxDate` (ISO), `minDate` (ISO).
@@ -103,7 +104,7 @@ The column stacks label → field → popover/helper with an **8px gap**.
 ### Date field (trigger)
 
 ```
-Padding:  4px 12px   (--space-xs --space-sm), min height 37px
+Padding:  8px 12px   (--space-s --space-sm), min height 37px
 Radius:   12px       (--radius-sm)
 Gap:      8px between value and icon   (--space-s)
 Icon:     calendar, 20px, trailing
@@ -111,7 +112,7 @@ Value:    Poppins Regular 14, defaults to today's date; placeholder "dd/mm/yyyy"
 Label:    Poppins Semibold 14, var(--text-secondary)   (Paragraph M semibold)
 ```
 
-The date field shares the amber `--selected` active border with `input.md`, but has no hover fill and its own 4px 12px padding.
+The date field shares the amber `--selected` active border with `input.md`, but has no hover fill and its own 8px 12px padding.
 
 ### Calendar popover
 
@@ -178,7 +179,7 @@ Source:      Figma Library Calendar 11529:430
 .date-field__input {
   display: flex; align-items: center; gap: var(--space-s);
   min-height: 37px;
-  padding: var(--space-xs) var(--space-sm);        /* 4px 12px */
+  padding: var(--space-s) var(--space-sm);         /* 8px 12px */
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);                  /* 12px */
   font: 400 14px/1.5 'Poppins'; color: var(--text-primary);
@@ -249,4 +250,4 @@ Source:      Figma Library Calendar 11529:430
 - [date-picker-field.md](date-picker-field.md) - the built date field component
 - `5mins-colors` (colors.md) - the semantic tokens above
 - `layout.md` - spacing/radius scale, Shadow L
-- `input.md` - text inputs (the date field shares the amber `--selected` active border, but has no hover fill and its own 4px 12px padding)
+- `input.md` - text inputs (the date field shares the amber `--selected` active border, but has no hover fill and its own 8px 12px padding)

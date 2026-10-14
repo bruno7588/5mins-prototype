@@ -8,7 +8,7 @@ description: Search input component for 5Mins.ai. Use when implementing any sear
 A standalone search input with a leading search icon, placeholder text, and a clear (×) button when there is text.
 
 **Code:** `import Search from '@/components/Search/Search'` (default export)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `697:33529` / light `11927:6338`. Reference width in Figma: 400px.
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `697:33529`. Reference width in Figma: 400px.
 **Last verified:** 2026-09-30
 
 ## Usage
@@ -39,7 +39,7 @@ A standalone search input with a leading search icon, placeholder text, and a cl
 - Don't wrap it in a `<form>` or add a submit button; filter live from `onChange` (the component has no `onKeyDown` or submit prop). The search icon is decorative, not interactive.
 - Don't change the font weight on focus or fill; it stays Regular 400.
 
-**Canonical spec:** size M: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), 18px search icon, 20px clear icon, text 14px / 400 / 1.5. Fill `--input-background` (`--input-background-hover` on hover); border `--border`, `--border-hover` on hover, `--selected` on focus. Search icon `--text-tertiary`, clear icon `--text-secondary` (`--text-primary` on hover, with a circular `--input-background-hover` fill; 24px hit area, 28px at L), placeholder `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `11927:6338` / dark `697:33529`.
+**Canonical spec:** size M: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), 18px search icon, 20px clear icon, text 14px / 400 / 1.5. Fill `--input-background` (`--input-background-hover` on hover); border `--border`, `--border-hover` on hover, `--selected` on focus. Search icon `--text-tertiary`, clear icon `--text-secondary` (`--text-primary` on hover, with a circular `--input-background-hover` fill; 24px hit area, 28px at L), placeholder `--text-disabled`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `697:33529`.
 
 ## Figma to code
 
@@ -48,9 +48,11 @@ A standalone search input with a leading search icon, placeholder text, and a cl
 | Size | M / L | `size` | `'M'` (default) / `'L'` | L has no call site |
 | State | Enabled / Hover / Active | n/a | CSS `:hover`, `:focus-within` | states are CSS, not props |
 | Filled | false / true | `value` | Filled = `value.length > 0` | shows the clear button |
+| Placeholder (text) | "Search" | `placeholder` | `string` | bound on the empty Enabled and Hover variants |
+| Value (text) | "Text input" | `value` | `string` | bound on the Filled variants; Active keeps its own sample text |
 
-- **Figma only:** none. The clear button is a hidden "Buttons" layer in Figma rather than a property. The dark set has no `Border-elevated` binding.
-- **Code only:** `elevated`, `onClear`, `onFocus`, `onBlur`, `ariaLabel`, `className`, `placeholder`, `onChange`.
+- **Figma only:** a hidden outlined AI "Buttons" layer in every variant (no property, not in code). The clear button belongs to the Filled and Active variants rather than being a property. The dark set has no `Border-elevated` binding.
+- **Code only:** `elevated`, `onClear`, `onFocus`, `onBlur`, `ariaLabel`, `className`, `onChange`.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|

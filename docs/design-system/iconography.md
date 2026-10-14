@@ -43,8 +43,8 @@ Icon rules for 5Mins.ai: **Iconsax React** for all UI icons, two variants (Linea
 
 | Figma | Figma values | Code | Code values | Notes |
 |---|---|---|---|---|
-| Glyph `vuesax/linear/<name>` | kebab-case name | Iconsax component | PascalCase name, `variant="Linear"` | `user-cirlce-add` → `UserCirlceAdd` |
-| Glyph `vuesax/bold/<name>` | kebab-case name | Iconsax component | same name, `variant="Bold"` | |
+| Glyph `vuesax/linear/<Name>` | exact iconsax-react name | Iconsax component | same name, `variant="Linear"` | `vuesax/linear/ArrowDown2` → `<ArrowDown2 variant="Linear" />` |
+| Glyph `vuesax/bold/<Name>` | exact iconsax-react name | Iconsax component | same name, `variant="Bold"` | |
 | `Icons` component set (custom 5Mins icons) | Name (27), Type linear / bold, State Enabled / Hover | `src/components/icons/*` | one component per icon | Hover is CSS, not a prop |
 | Icon size | 24×24 frames (a few 20×20) | `size` prop | `16` / `20` / `24` / `32` (`--icon-size-*`) | no Figma variable for icon sizes |
 | Skill illustrations | `Icons/Skill Icon/*`, `Illustrations/Skill Hugo/*` | `getSkillIllustrationByName` | see below | |
@@ -60,7 +60,7 @@ Icon rules for 5Mins.ai: **Iconsax React** for all UI icons, two variants (Linea
 
 ### Known drift
 
-- **Names don't always round-trip:** Figma glyph names had their numeric suffixes stripped (169 duplicate names, e.g. `arrow-down` where Iconsax has `ArrowDown` and `ArrowDown2`; `search-normal` where code uses `SearchNormal1`) and carry typos (`mportCurve`). These code icons are not findable by name in Figma: ArrangeHorizontal, ArrowDown2, ArrowForward, ArrowLeft2, ArrowRight2, ArrowUp2, Book1, ExportSquare, ImportCurve, MessageAdd1, Note1, SearchNormal1, Star1, Sun1. Use `find-icon` to confirm the Iconsax name.
+- **Names match code:** Figma glyphs carry their exact iconsax-react names (matched by shape). Two Linear glyphs used in code are still unnamed because their paths differ from iconsax-react: `Mobile` (Figma `mobile` 10215:71222) and `Refresh` (`refresh` 10215:68679); the Bold versions exist. 22 glyphs with no iconsax-react equivalent and 25 duplicate copies keep their old kebab-case names.
 - **Informative badge icon:** Figma draws Ionicons `IoInformationCircleOutline`; code uses Iconsax `InfoCircle` Linear as the approved stand-in (`badges.md`).
 
 ## Variants

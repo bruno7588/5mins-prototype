@@ -8,7 +8,7 @@ description: RowActionsMenu for 5Mins.ai - the kebab (more) button on a table or
 The kebab button at the end of a table row and the action menu it opens: the DS listbox ([listbox.md](listbox.md)) in its action-menu form, a floating surface of items that each run one action on that row, portalled to `<body>` so it escapes the table cell's `overflow: hidden` and stays glued to its trigger on scroll and resize.
 
 **Code:** `import RowActionsMenu, { type RowMenuItem } from '@/components/RowActionsMenu/RowActionsMenu'` (code is the reference for the trigger)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, via [listbox.md](listbox.md): Listbox dark `9162:1042` / light `11923:3466`; List items dark `9162:941` / light `12432:13357`; two-line item People `8572:654` <!-- TODO: node id unknown -->
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, via [listbox.md](listbox.md): Listbox `9162:1042`; List items `9162:941`; two-line item People `8572:654` <!-- TODO: node id unknown -->
 **Last verified:** 2026-09-29
 
 ## Usage
@@ -54,13 +54,14 @@ The trigger has no Figma component; the menu maps to the Listbox and List items 
 | Listbox > Position | Bottom / Top / n/a | `placement` | `'bottom'` (default) / `'top'` | `n/a` has no code equivalent |
 | Listbox > Wrapping menu itens | false / true | n/a | n/a | Code labels are one line, no wrap (the `false` form) |
 | Listbox > List-1 / List-2 / List-3 (slots) | content | `items` | `RowMenuItem[]` | Groups are separated with `dividerBefore` |
-| List itens > Supporting text | false / true | `items[].description` | `string` | Turns the item into the stacked (two-line) form |
-| List itens > Icon left | false / true | `items[].icon` | `ReactNode` | |
+| List itens > Supporting text + Description (text) | false / true; "Write supporting text here" | `items[].description` | `string` | Turns the item into the stacked (two-line) form |
+| List itens > Label (text) | "Input text" | `items[].label` | `string` | |
+| List itens > Icon left | false / true | `items[].icon` | `ReactNode` | no swap property: Selected rows use the Bold glyph |
 | List itens > Disabled | false / true | `items[].disabled` | `boolean` | |
-| List itens > State | Enabled / Hover / Read-only | n/a | CSS `:hover` | Read-only has no code equivalent |
+| List itens > State | Enabled / Hover / Read-only / Focus | n/a | CSS `:hover`, `:focus-visible` | Read-only has no code equivalent; Focus is the 2px inset ring |
 
-- **Figma only:** Listbox `Position=n/a`, `Wrapping menu itens=true`; List itens `State=Read-only`, `Selected`, `Helper text`, `Icon right`, `Avatar`, `Skill icon`, `Checkbox`, `Radio`, `Search`, `Integer` (those belong to the Dropdown, [dropdown.md](dropdown.md)).
-- **Code only:** `onSelect`, `ariaLabel`, `triggerClassName`, `triggerContent`; item `key`, `label`, `danger`, `dividerBefore`, `title`, `inert`.
+- **Figma only:** Listbox `Position=n/a`, `Wrapping menu itens=true`; List itens `State=Read-only`, `Selected`, `Helper text`, `Icon right`, `Avatar`, `Skill icon`, `Checkbox`, `Radio`, `Search`, `Integer` (those belong to the Dropdown, [dropdown.md](dropdown.md)), and the `Helper text` and `Skill icon glyph` properties.
+- **Code only:** `onSelect`, `ariaLabel`, `triggerClassName`, `triggerContent`; item `key`, `danger`, `dividerBefore`, `title`, `inert`.
 
 **Props**
 

@@ -8,7 +8,7 @@ description: Resource card for 5Mins.ai: a course resource (PDF, Word, Excel, Po
 Shows one course or lesson resource (a file or an external link) with its type, name and size, and one Download or Open link action.
 
 **Code:** `import ResourceCard from '@/components/ResourceCard/ResourceCard'`. Model: `src/components/ResourceCard/resources.ts` (types, accepted extensions, 50MB cap, validation). Form: `src/components/ResourceForm/ResourceForm.tsx` (add or edit one resource: `variant="drawer"` on the course builder, `variant="inline"` in the lesson editor).
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, card set `12213:3040` (Web/Admin Enabled `12213:3062`, Web/Admin Hover `12213:3965`, Mobile app `12213:3041`), light copy `12228:2749`; Type thumbnail set `12213:2984` (PDF `12213:2985`, Excel `12213:2989`, Word `12213:2993`, PowerPoint `12213:2997`, Image `12213:3001`, External Link `12230:2631`). Status in Figma: proposed.
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, card set `12213:3040` (Web/Admin Enabled `12213:3062`, Web/Admin Hover `12213:3965`, Mobile app `12213:3041`); Type thumbnail set `12213:2984` (PDF `12213:2985`, Excel `12213:2989`, Word `12213:2993`, PowerPoint `12213:2997`, Image `12213:3001`, External Link `12230:2631`). Status in Figma: proposed.
 **Last verified:** 2026-09-29
 
 ## Usage
@@ -63,10 +63,11 @@ Figma sets `Card/Resources` (`12213:3040`) and `Type thumbnail` (`12213:2984`).
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Device (Card/Resources) | Web/Admin / Mobile app | `device` | `'web'` (default) / `'mobile'` | |
-| State (Card/Resources) | Enabled / Hover | n/a | CSS `:hover` (gated on `@media (hover: hover)`) | states are CSS, not props |
+| State (Card/Resources) | Enabled / Hover / Focus | n/a | CSS `:hover` (gated on `@media (hover: hover)`), `:focus-visible` | states are CSS, not props; Focus (Web/Admin only) rings the action button |
 | Type (Type thumbnail) | PDF / Word / Excel / PowerPoint / Image / External link | `type` | `'pdf'` / `'word'` / `'excel'` / `'powerpoint'` / `'image'` / `'link'` | |
-| (title text layer) | resource name | `title` | `string` | |
-| (meta text layer) | e.g. "PDF • 1.1 MB" | `size` | bytes, files only | built by `resourceMeta(type, size?)` |
+| Title (text) | resource name | `title` | `string` | |
+| Meta (text) | e.g. "PDF • 1.1 MB" | `size` | bytes, files only | built by `resourceMeta(type, size?)` |
+| Action icon (swap) | `ImportCurve` | set by `type` | `ImportCurve` (files) / `ExportSquare` (links) | not a prop; the Remove trash icon is fixed |
 
 - **Figma only:** none.
 - **Code only:** `onOpen`, `openDisabled`, `onRemove` (authoring Remove action), `tooltip` (default `true`; the mobile app passes `false`), `className`.
@@ -108,7 +109,7 @@ Helpers exported from the same file: `resourceMeta(type, size?)` ("PDF • 1.1 M
 | Gap | 12 (`--space-sm`) | 8 (`--space-s`) |
 | Radius | 12 (`--radius-sm`) | 12 (`--radius-sm`) |
 | Background | `--cards-background`; Hover `--cards-background-hover` | same; hover is gated on `@media (hover: hover)`, not on the variant |
-| Shadow | `--shadow-card` (Shadow S in light mode, none in dark) | same |
+| Shadow | `--shadow-card` (Shadow S in both modes) | same |
 | Type tile | 48 × 48 | 40 × 40 |
 | Title | Poppins Bold 16 / 1.5, `--text-primary`, one line with ellipsis | Bold 14 / 1.5, `--text-primary`, one line with ellipsis |
 | Meta | Regular 14 / 1.5, `--text-tertiary` | Regular 12 / 1.2, `--text-tertiary` |

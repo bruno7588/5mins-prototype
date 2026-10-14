@@ -8,7 +8,7 @@ description: Filter bar component for 5Mins.ai (`src/components/FilterBar`). Use
 A card that holds a list's field filters. The head always shows **Filters** and a count; collapsed, it summarises the active filters as pills; expanded, it shows one row per filter with its control.
 
 **Code:** `import FilterBar, { FilterBarAddButton, type FilterBarFilter } from '@/components/FilterBar/FilterBar'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, component set "Filter bar", dark `12438:2724` / light `12462:987`. Built from the People picker filter bar (`PeoplePicker.tsx`). Colours are semantic tokens resolving per mode (see `colors.md`).
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, component set "Filter bar", `12438:2724`. Built from the People picker filter bar (`PeoplePicker.tsx`). Colours are semantic tokens resolving per mode (see `colors.md`).
 **Last verified:** 2026-10-08
 
 ## Usage
@@ -45,8 +45,12 @@ A card that holds a list's field filters. The head always shows **Filters** and 
 | State | Empty / Filled | `filters` | `[]` / one or more `FilterBarFilter` | derived from `filters.length`, not a prop |
 | Expanded | false / true | `expanded` | `false` / `true` | page owns the state; toggled through `onToggleExpanded` |
 | Body (slot) | filter rows | `filters[].control` | ReactNode per filter | each row's control is rendered by the page |
+| Count (text) | "8" | `filters.length` | number | Filled only; Empty shows a fixed "0" |
+| Filter 1 ... Filter 6 (text) | Status, Progress, Score, Due date, Start date, Completion date | `filters[].pillLabel` (or `title`) | string | Filled, collapsed |
+| Filter 1 icon ... Filter 6 icon (instance swap) | field glyphs | `filters[].Icon` | Iconsax component | Filled, collapsed |
+| Overflow count (text) | "+3" | derived | "+N" past `maxPills` | Filled, collapsed |
 
-- **Figma only:** the `Body` slot as a free container; no hover or focus variants (hover and focus are CSS in code).
+- **Figma only:** the `Body` slot as a free container; no hover or focus variants (hover and focus are CSS in code, and the nested Buttons carry their own Focus state).
 - **Code only:** `onToggleExpanded`, `onRemove(id)`, `onClearAll`, `renderAddFilter(placement)`, `maxPills` (default 6), `className`; on `FilterBarFilter`: `id`, `title`, `Icon`, `pillLabel`, `rowLabel`, `removable`; the `FilterBarAddButton` export (`open`, `onClick`, `disabled`, `disabledReason`, children).
 
 **Production:**

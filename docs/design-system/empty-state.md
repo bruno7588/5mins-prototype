@@ -8,7 +8,7 @@ description: Empty State component for 5Mins.ai - centred illustration + title +
 A centred composition shown when a content area has nothing to display, always paired with the action(s) that fill it.
 
 **Code:** `import EmptyState from '@/components/EmptyState/EmptyState'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `5452:37234` / light `11921:5779` (mobile variant `5452:37381`). Colours are semantic tokens resolving per mode (see `colors.md`).
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `5452:37234` (mobile variant `5452:37381`). Colours are semantic tokens resolving per mode (see `colors.md`).
 **Last verified:** 2026-09-29
 
 ## Usage
@@ -48,8 +48,10 @@ A centred composition shown when a content area has nothing to display, always p
 |---|---|---|---|---|
 | Device | Desktop / Mobile | `device` | `desktop` (default) / `mobile` | |
 | Surface | Plain / Dropzone | `surface` | `plain` (default) / `dropzone` | |
+| Title (text) | "Empty state title" | `title` | string | required |
+| Description (text) | sample copy | `description` | string | |
 
-- **Figma only:** none. Title, description, buttons and illustration are fixed content in the Figma variants, not component properties.
+- **Figma only:** none. The illustration and the buttons are nested instances (change them on the instance), not component properties.
 - **Code only:** `title` (required), `description`, `illustration` (72px node), `primaryAction` (filled) and `secondaryAction` (outlined, renders first), each `{ label, onClick, icon? }`, `className`.
 
 **Production:**

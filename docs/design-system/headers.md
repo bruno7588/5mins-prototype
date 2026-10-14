@@ -8,7 +8,7 @@ description: Page Header and Section Header for 5Mins.ai - slot-based base compo
 The Page Header names a page and holds its actions and tabs; the Section Header titles a block, card, drawer or modal inside it.
 
 **Code:** no shared component yet. Section Header: `import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'` (page-local). Page Header: built per page with a page-prefixed class (e.g. `.roles-header` in `src/pages/roles/Roles.tsx`); the builder pages (Create Course, Program Builder, SCORM Create Course) share the page-local `src/pages/your-courses/components/PageHeader/PageHeader.tsx`.
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `Header` component set dark `7902:1019` / light `11921:13215` (mode frames dark `7902:1018` / light `9531:2974`)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `Header` component set `7902:1019` (mode frames dark `7902:1018` / light `9531:2974`)
 **Last verified:** 2026-09-29
 
 The base component exposes three swappable slots: **label** (eyebrow metadata ↔ breadcrumb), **header** (headline + CTA cluster), and **navigation** (tabs ↔ chips).
@@ -80,7 +80,7 @@ The base component exposes three swappable slots: **label** (eyebrow metadata �
 
 ## Figma to code
 
-**Header** (component set `7902:1019` / `11921:13215`)
+**Header** (component set `7902:1019`)
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|

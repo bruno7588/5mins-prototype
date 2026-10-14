@@ -8,7 +8,7 @@ description: DatePickerField for 5Mins.ai, the shared date input that shows a dd
 `DatePickerField` is the shared date input: a bordered trigger that shows the chosen date as `dd/mm/yyyy` and opens the Monday-first month grid (`MiniCalendar`) in a popover. It replaces the browser's native `<input type="date">` so date entry matches the design system. The visual spec for the field and the grid lives in `calendar.md`; this doc covers the built component.
 
 **Code:** `import DatePickerField from '@/components/DatePickerField/DatePickerField'` (default export; the reference for behaviour)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, date field ("Calendar" set) dark `11529:406` / light `12424:2601`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, date field ("Calendar" set) `11529:406`
 **Last verified:** 2026-10-07
 
 ## Usage
@@ -40,16 +40,20 @@ description: DatePickerField for 5Mins.ai, the shared date input that shows a dd
 - Don't use raw `--secondary-500` for the open border; use the mode-aware `--selected`.
 - Don't pass a display-formatted string (`dd/mm/yyyy`) as `value`.
 
-**Canonical spec:** min width 160px, min height 37px, padding `var(--space-xs) var(--space-sm)` (4px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), text 14px Poppins. Border `--border-elevated`, `--border-hover` on hover, `--selected` while open, `--text-error` on error. Value `--text-primary`, placeholder `--text-disabled`. Calendar icon 20px Linear `--text-primary`; on error a 20px Linear `Danger` in `--text-error` sits before it; error helper 14px / 400 / 1.5 `--text-error`, `var(--space-s)` (8px) below. Popover per `calendar.md`, with Shadow L (`var(--shadow-l)`). Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12424:2601` / dark `11529:406`.
+**Canonical spec:** min width 160px, min height 37px, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), gap `var(--space-s)` (8px), text 14px Poppins. Border `--border-elevated`, `--border-hover` on hover, `--selected` while open, `--text-error` on error. Value `--text-primary`, placeholder `--text-disabled`. Calendar icon 20px Linear `--text-primary`; on error a 20px Linear `Danger` in `--text-error` sits before it; error helper 14px / 400 / 1.5 `--text-error`, `var(--space-s)` (8px) below. Popover per `calendar.md`, with Shadow L (`var(--shadow-l)`). Figma: Library `EC26cSVe9KNTCWXvYovakw`, `11529:406`.
 
 ## Figma to code
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Calendar (state) | Enabled / Hover / Active / Error | `error` | Error = `error` message string | Enabled, Hover, Active (open) are CSS / internal open state |
-| Label | true / false | n/a | caller renders the label | the component has no `label` prop |
+| Calendar (state) | Enabled / Hover / Active / Error | `error` | Error = `error` message string | Enabled, Hover, Active (open) are CSS / internal open state; Active is also the focus look |
+| Show label | true / false | n/a | caller renders the label | the component has no `label` prop |
+| Label | text | n/a | the caller's label text | |
+| Value | text | `value` | ISO `yyyy-mm-dd`, shown as `dd/mm/yyyy` | |
+| Helper text | text | `error` | the error message | Error only |
+| Month | text | n/a | month title computed from the value | inside the Active popover |
 
-- **Figma only:** the `Label` variant; Figma's Error variant reds the label, which no call site does.
+- **Figma only:** the `Show label` boolean and `Label` text; Figma's Error variant reds the label, which no call site does. There is no separate Focus variant: like Dropdown, the focused field shows the amber `Active` border. The code has no `:focus-visible` style on `.dpf-field` yet.
 - **Code only:** `value`, `onChange`, `placeholder`, `ariaLabel`, `maxDate`, `minDate`, `className`. There is no Disabled state in Figma or code.
 
 | Prop | Type | Default | Description |

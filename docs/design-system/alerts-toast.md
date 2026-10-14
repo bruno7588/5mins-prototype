@@ -37,7 +37,7 @@ Pick by persistence and placement:
 Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 
 **Code:** `import Alert from '@/components/Alert/Alert'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `3658:32304` / light `12060:2785`. Both modes share identical structure.
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `3658:32304`. Both modes share identical structure.
 **Last verified:** 2026-09-29
 
 ### Usage
@@ -106,9 +106,14 @@ Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 | Icon | false / true | `icon` | `false` (default) / `true` | the platform `InfoIcon` (20px on Callout, 24px on Alert). For the Alert warning triangle, pass Iconsax `Danger` Bold as `customIcon`. Use icon *or* illustration, not both |
 | Button | false / true | `button` | `false` (default) / `true` | label from `buttonLabel`, handler `onButtonClick` |
 | Supporting text | false / true | n/a | `title` + `bullets` (Callout) or `title` + `message` (either type) | no 1:1 prop; these render the body |
+| Title | text | `title` | string | the title line of a Supporting text variant, and the Alert line |
+| Message | text | `message` | string | the single line of a Callout without Supporting text |
+| Body | text | `bullets` (Callout) or `message` | string[] / string | the body under the title in Supporting text variants |
+| Icon glyph | instance swap (default info) | `customIcon` | ReactNode | Callout icon slot; the default info glyph is `icon` |
+| Warning glyph | instance swap (default `Danger` Bold) | `customIcon` | ReactNode | Alert icon slot; Iconsax `Danger` Bold, `color="currentColor"` |
 
 - **Figma only:** `Supporting text` as a boolean (code has no `supportingText` prop).
-- **Code only:** `customIcon` (ReactNode leading icon), `title`, `message`, `bullets`, `buttonLabel`, `onButtonClick`, `onClose` (renders a 24px close × at row end), `className`. The `title` + `message` body (title + paragraph instead of bullets, 2px gap) is a code extension; keep it.
+- **Code only:** `buttonLabel` (set on the nested Buttons instance in Figma), `onButtonClick`, `onClose` (renders a 24px close × at row end), `className`. The `title` + `message` body (title + paragraph instead of bullets, 2px gap) is a code extension; keep it.
 
 **Production:**
 
@@ -323,10 +328,11 @@ A floating feedback pill that appears after an action (save, delete, error) and 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Type | Success / Warning / Error / Info | `show(type, …)` | `'success'` / `'warning'` / `'error'` / `'info'` | lower case in code |
-| Icon | True / False | `ToastContainer` `icon` | `true` (default) / `false` | boolean in code, variant in Figma |
+| Show icon | true / false (boolean) | `ToastContainer` `icon` | `true` (default) / `false` | the glyph follows Type |
+| Message | text | `show(…, message)` | string | second `show` argument, one short line |
 
-- **Figma only:** none. The message text is not a Figma component property.
-- **Code only:** `message` (second `show` argument); a custom icon (third `show` argument, an Iconsax icon that replaces the type icon when the action has its own glyph, e.g. `show('success', 'Downloading...', ImportCurve)`); `ToastContainer` `className`; the `useToast()` hook (`{ toasts, show }`).
+- **Figma only:** none.
+- **Code only:** a custom icon (third `show` argument, an Iconsax icon that replaces the type icon when the action has its own glyph, e.g. `show('success', 'Downloading...', ImportCurve)`); `ToastContainer` `className`; the `useToast()` hook (`{ toasts, show }`).
 - **Figma vs code drift:** Figma's Info icon is io5 `IoInformationCircleOutline`; code uses Iconsax `InfoCircle`, because Iconsax is the project's only icon set. Figma binds the Info fill to `Neutral-700`; code uses `--neutral-600` (see States). The single Figma node has no light pair.
 
 **Production:**
@@ -415,7 +421,7 @@ show('success', 'Course published')
 A small dark floating label that appears on hover or focus of a trigger. The information must be contextual, useful, and **nonessential**; never put required content in a tooltip.
 
 **Code:** `import Tooltip from '@/components/Tooltip/Tooltip'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `2683:29027` / light `11927:8087`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `2683:29027`
 **Last verified:** 2026-09-29
 
 ### Usage
@@ -453,10 +459,11 @@ A small dark floating label that appears on hover or focus of a trigger. The inf
 |---|---|---|---|---|
 | Position | Top / Bottom / Left / Right | `position` | `'Top'` (default) / `'Bottom'` / `'Left'` / `'Right'` | which side of the trigger the tooltip appears on (caret points back at the trigger) |
 | Alignment | Center / Start / End | `alignment` | `'Center'` (default) / `'Start'` / `'End'` | caret placement along the edge; Start/End apply to Top/Bottom only; Left/Right are always Center |
-| Icon | True / False | `icon` | `true` (default) / `false` | renders the platform `InfoIcon` (20px, `iconSize` 16 for dense rows) as the anchor (info-icon-with-tooltip pattern), 2px gap to the body. Pass `icon={false}` to wrap your own trigger as `children` |
+| Icon | True / False | `icon` | `true` (default) / `false` | renders the platform `InfoIcon` (20px, `iconSize` 16 for dense rows) as the anchor (info-icon-with-tooltip pattern), 2px gap to the body. Pass `icon={false}` to wrap your own trigger as `children`. Stays a variant in Figma: the bubble's sizing, radius and alignment differ between True and False |
+| Text | text | `text` | string or node | |
 
-- **Figma only:** none. The tooltip text is not a Figma component property.
-- **Code only:** `text` (string or node), `iconSize`, `iconColor`, `disabled` (silences it without unmounting), `children` (the trigger when `icon={false}`), `className`, `bodyClassName`. The bubble portals to `<body>` so overflow never clips it.
+- **Figma only:** none.
+- **Code only:** `iconSize`, `iconColor`, `disabled` (silences it without unmounting), `children` (the trigger when `icon={false}`), `className`, `bodyClassName`. The bubble portals to `<body>` so overflow never clips it.
 
 **Production:**
 

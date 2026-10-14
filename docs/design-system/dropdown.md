@@ -8,7 +8,7 @@ description: Dropdown / Select component for 5Mins.ai. Covers states (Enabled, H
 A closed field that opens a listbox so the user picks one value, or several, from a known list. Cross-reference with `colors`, `typography`, and `iconography` for raw token values.
 
 **Code:** `import Dropdown from '@/components/Dropdown/Dropdown'` (default export; `src/components/Dropdown/Dropdown.tsx` is the reference)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, dark `8925:1408` / light `12113:14844`
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `8925:1408`
 **Last verified:** 2026-09-29
 
 ## Usage
@@ -45,7 +45,7 @@ A closed field that opens a listbox so the user picks one value, or several, fro
 - Don't use `--danger-500` for the error border; Dropdown and InputField share `--text-error`, held on hover.
 - Don't copy the `.dropdown-*` classes into a new component; extend `Dropdown` instead.
 
-**Canonical spec:** md trigger 37px high, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), text 14px / 400 / 1.5; sm is 33px with 4px 12px padding and 12px text. Border `--border-elevated`, hover `--border-hover` + `--input-background`, open or focused `--selected`, read-only `--border` with `--text-disabled`, error `--text-error`. Placeholder `--text-disabled`, label Paragraph M semibold `--text-secondary`, helper `--text-tertiary`. Menu: `--cards-background`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), max height 320px, selected row `--selected` with `--text-on-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12113:14844` / dark `8925:1408`.
+**Canonical spec:** md trigger 37px high, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), text 14px / 400 / 1.5; sm is 33px with 4px 12px padding and 12px text. Border `--border-elevated`, hover `--border-hover` + `--input-background`, open or focused `--selected`, read-only `--border` with `--text-disabled`, error `--text-error`. Placeholder `--text-disabled`, label Paragraph M semibold `--text-secondary`, helper `--text-tertiary`. Menu: `--cards-background`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), max height 320px, selected row `--selected` with `--text-on-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8925:1408`.
 
 ## Figma to code
 
@@ -54,9 +54,14 @@ A closed field that opens a listbox so the user picks one value, or several, fro
 | State | Enabled / Hover / Active / Read-only / Error | `readOnly`, `error` | Read-only = `readOnly`; Error = `error` message string | Enabled, Hover, Active are CSS (`:hover`, `.is-active`, `:focus-visible`) |
 | Disabled | false / true | `readOnly` | `false` (default) / `true` | Figma pairs `Disabled=true` with `State=Read-only`; code has one prop |
 | Icon left | true / false | `iconLeft` | `ReactNode`, omitted = none | Figma variant, code content prop |
+| Icon (swap) | leading glyph (`Sort`) | `iconLeft` | the icon node | |
 | Label top | false / true | `label` + `labelPlacement` | `labelPlacement="top"` (default) | two Figma booleans map to one enum |
 | Label start | false / true | `label` + `labelPlacement` | `labelPlacement="start"` | |
 | Helper text | false / true | `helperText` | `string`, omitted = none | `error` replaces it |
+| Label (text) | field label | `label` | `string` | |
+| Value (text) | trigger text | selected option's `label`, or `placeholder` | `string` | |
+| Helper message (text) | helper copy | `helperText` | `string` | |
+| Error message (text) | error copy | `error` | `string` | State=Error only |
 
 - **Figma only:** the separate `Disabled` axis (code uses `readOnly` alone). The set has **no size axis**: Small and Large are not in it and still need their own link.
 - **Code only:** `size` (`'sm'` / `'md'` default / `'lg'`), `options` (`value`, `label`, optional `description`, `disabled`, `icon`), `value`, `onChange`, `placeholder` (default "Select"), `multiple` with `values`, `onChangeValues`, `allLabel`, `summaryLabel`; `searchable` and `searchPlaceholder` (pins the listbox search item at the top of the menu, filters by label); `radio` (single-select rows carry the listbox radio item instead of the amber fill); `triggerText` (fixed trigger text that replaces the selection read-back); `className`, `menuClassName`, `menuAlign` `'start' | 'end'` (default `'start'`).

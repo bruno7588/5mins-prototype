@@ -8,7 +8,7 @@ description: ConfirmModal, the shared centred overlay shell for 5Mins.ai dialogs
 The shell every centred Dialog and short Modal in the prototype is built on: it supplies the scrim, the panel, the portal, the focus trap and the close behaviour, and the caller composes the content (icon, title, body, buttons) inside it.
 
 **Code:** `import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'` (`src/components/ConfirmModal/ConfirmModal.tsx` + `ConfirmModal.css`; code is the reference)
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Dialog dark `7789:24651` / light `12242:5728`; Modal dark `7479:4350` / light `11919:4717` (instance)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Dialog `7789:24651`; Modal dark `7479:4350` / light `11919:4717` (instance)
 **Last verified:** 2026-09-29
 
 ## Usage

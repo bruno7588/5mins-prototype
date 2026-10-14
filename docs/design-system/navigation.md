@@ -8,7 +8,7 @@ description: Navigation system for 5Mins.ai - Top Navigation bar (Web app and Ad
 The app shell chrome: a fixed **Top Navigation** bar and a left **Side Panel Navigation**, plus the Breadcrumb trail and the mobile app chrome. Top nav and side panel come in two systems, **Web app** (learner) and **Admin**, that share tokens but differ in density and item styling.
 
 **Code:** `import TopNav from '@/components/TopNav/TopNav'`, `import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'`, `import Breadcrumb from '@/components/Breadcrumb/Breadcrumb'`, `import TabNav from '@/components/mobile/TabNav/TabNav'`, `import TopNav from '@/components/mobile/TopNav/TopNav'` (mobile). The Web app (learner) top nav and side panel have no shared component yet: hand-rolled per page as `.mt-topnav` / `.mt-side`.
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`. Top Nav/Admin dark `5385:20137` / light `12328:8954` (Admin large `5385:20161`); Side navigation dark `4697:13314` / light `12048:2302`; Menu/Itens/WebApp dark `4674:25675` / light `12048:2401`; Menu/Itens/Admin dark `10372:4045` / light `12048:2440`; Breadcrumb dark `8497:2231` / `8497:1494`, light `11935:2368` / `8517:34946`; mobile `Top nav/ App` `1910:18375`, `Tab nav` `1324:35285` (dark nodes)
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`. Top Nav/Admin `5385:20137` (Admin large `5385:20161`); Side navigation `4697:13314`; Menu/Itens/WebApp `4674:25675`; Menu/Itens/Admin `10372:4045`; Breadcrumb dark `8497:2231` / `8497:1494`, light `11935:2368` / `8517:34946`; mobile `Top nav/ App` `1910:18375`, `Tab nav` `1324:35285` (dark nodes)
 **Last verified:** 2026-09-29
 
 Colours are semantic tokens resolving per mode (see `colors.md`).
@@ -37,7 +37,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 - Don't add page-specific actions to the top nav.
 - Don't use a squared hover on the icon buttons.
 
-**Canonical spec:** height 70px; `var(--page-background)` with a `1px solid var(--border)` bottom edge; padding `var(--space-s) var(--space-l) var(--space-s) var(--space-xl)` (the right 24px plus the icon button's 8px inset puts the last glyph 32px from the edge); logo 102×22; Exit Admin Small Outlined-2; 16px from Exit Admin to the first glyph and between glyphs; icon buttons 36px, `var(--radius-full)`, 20px `--text-primary` glyphs. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12328:8954` / dark `5385:20137` (Admin large `5385:20161`).
+**Canonical spec:** height 70px; `var(--page-background)` with a `1px solid var(--border)` bottom edge; padding `var(--space-s) var(--space-l) var(--space-s) var(--space-xl)` (the right 24px plus the icon button's 8px inset puts the last glyph 32px from the edge); logo 102×22; Exit Admin Small Outlined-2; 16px from Exit Admin to the first glyph and between glyphs; icon buttons 36px, `var(--radius-full)`, 20px `--text-primary` glyphs. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5385:20137` (Admin large `5385:20161`).
 
 **Prototype:** `src/components/TopNav/TopNav.tsx`
 - No props. Logo and Exit Admin go to `/workspace`; the Moon/Sun button calls `useTheme().toggle`; the Logout button opens a menu (Log Out, Mobile App).
@@ -66,7 +66,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 - Don't use a filled amber row for the selected item.
 - Don't use raw `--secondary-*` for selected text; use the mode-aware `--text-selected`.
 
-**Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); menu padding 16px top, 12px sides; 4px between top-level entries; sub-items (padding 12px 16px 12px 42px) stack flush, 0 gap, directly under their group heading; 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, light `12048:2302`, Admin items `12048:2440` / dark `4697:13314`, `4674:25675`, `10372:4045`.
+**Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); menu padding 16px top, 12px sides; 4px between top-level entries; sub-items (padding 12px 16px 12px 42px) stack flush, 0 gap, directly under their group heading; 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `4697:13314`, menu items `4674:25675` (Web app) and `10372:4045` (Admin).
 
 **Prototype:** `src/components/LeftSidebar/LeftSidebar.tsx`
 - No props. Expandable People & Teams and Content groups; selection from `useLocation().pathname`.
@@ -125,7 +125,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 
 ## Figma to code
 
-### TopNav (Top Nav/Admin `5385:20137` / `12328:8954`)
+### TopNav (Top Nav/Admin `5385:20137`)
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
@@ -136,7 +136,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 - **Code only:** the Moon/Sun theme toggle state (`aria-pressed`), the Logout menu (Log Out, Mobile App).
 - **Drift:** `TopNav` is the Admin top nav (inline SVG logo, Exit Admin, Moon/Sun dark-mode toggle, Logout button that opens a menu with Log Out and Mobile App), background `--page-background`. Figma draws the Moon/Logout glyphs at 21px; the code uses 20px, the nearest icon-scale size.
 
-### LeftSidebar (Side navigation `4697:13314` / `12048:2302`; Menu/Itens/Admin `10372:4045` / `12048:2440`)
+### LeftSidebar (Side navigation `4697:13314`; Menu/Itens/Admin `10372:4045`)
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
@@ -145,26 +145,28 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 | Menu/Itens/Admin · Type | Menu / Sub-menu | n/a | `.sidebar-item` / `.sidebar-sub-item` | rows are internal to `LeftSidebar`, no props |
 | Menu/Itens/Admin · Selected | false / true | n/a | route match (`useLocation().pathname`) | `.sidebar-sub-item--active` |
 | Menu/Itens/Admin · chevron right | false / true | n/a | groups only (People & Teams, Content) | `ArrowDown2` / `ArrowUp2` chevron |
-| Menu/Itens/Admin · State | Hover / Enabled | n/a | CSS `:hover` | states are CSS, not props |
+| Menu/Itens/Admin · State | Hover / Enabled / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props; Focus is the cyan ring (not yet in code, see Drift) |
 | Menu/Itens/Admin · Expanded | true / false | n/a | internal `peopleOpen` / `contentOpen` | not a prop |
+| Menu/Itens/Admin · Label (text) | "Item" | n/a | item text | no icon swap property: Selected rows use the Bold glyph, the rest Linear |
 
 - **Figma only:** `State=Collapsed` and the collapsed hover flyout tooltip; the open-group row fill (`--page-background-hover`).
 - **Code only:** a red count badge on the Roles sub-item and a red dot on the collapsed People & Teams group (neither is part of the Library component).
 - **Drift:** sub-menus mount and unmount instantly (`{peopleOpen && ...}`) instead of animating with `Collapse`; the active item has no `aria-current="page"`; selected icons use `--secondary-600` rather than `--text-selected`; items have no `:focus-visible` style; no open-group fill.
 
-**Menu/Itens/WebApp** (`4674:25675` / `12048:2401`): `Selected` (false / true), `State` (Hover / Enabled), `Expanded` (true / false). No shared component: each learner page hand-rolls the shell with `.mt-topnav` / `.mt-side` classes (defined in `pages/my-team/MyTeam.css`), in `MyTeam.tsx`, `ForYou.tsx`, `Workspace.tsx`, `ProgramDetails.tsx`, `ProgramCourseDetails.tsx`, `UserProfile.tsx` and `Events.tsx`. The side panel reuses the shared `AdminMenuItem` (the learner menu's Admin entry, a `.mt-side__item` locked during impersonation, [doc](impersonation-banner.md)) and `ProfileMenu` components, which have no doc yet. Its selected icon is raw `--secondary-500`, not `--text-selected`. Extracting a shared learner shell is a candidate clean-up.
+**Menu/Itens/WebApp** (`4674:25675`): `Selected` (false / true), `State` (Hover / Enabled / Focus, Focus = `:focus-visible` cyan ring), `Expanded` (true / false), `Label` (text, item text), `Icon` (swap, the Bold Iconsax glyph). No shared component: each learner page hand-rolls the shell with `.mt-topnav` / `.mt-side` classes (defined in `pages/my-team/MyTeam.css`), in `MyTeam.tsx`, `ForYou.tsx`, `Workspace.tsx`, `ProgramDetails.tsx`, `ProgramCourseDetails.tsx`, `UserProfile.tsx` and `Events.tsx`. The side panel reuses the shared `AdminMenuItem` (the learner menu's Admin entry, a `.mt-side__item` locked during impersonation, [doc](impersonation-banner.md)) and `ProfileMenu` components, which have no doc yet. Its selected icon is raw `--secondary-500`, not `--text-selected`. Extracting a shared learner shell is a candidate clean-up.
 
-### Breadcrumb (Breadcrumb `8497:2231`; Breadcrumb item `8497:1494` / `11935:2383`)
+### Breadcrumb (Breadcrumb `8497:2231`; Breadcrumb item `8497:1494`)
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Breadcrumb (no properties) | trail of 6 nested items, 3 hidden | `items` | `{ label, onClick?, disabled? }[]` | trail length comes from the array |
+| Breadcrumb · Show link 3 / Show link 4 / Show link 5 | false / true (default false) | `items` | `{ label, onClick?, disabled? }[]` | trail length comes from the array; the extra links sit before the current page |
 | Breadcrumb item · Type | Link / Current page | n/a | position in `items` | the last entry is Current page |
-| Breadcrumb item · State | Hover / Enabled / n/a | n/a | CSS `:hover` | n/a on Current page |
+| Breadcrumb item · State | Hover / Enabled / Focus / n/a | n/a | CSS `:hover`, `:focus-visible` | n/a on Current page; Focus on Link only |
 | Breadcrumb item · Disabled | false / true | `items[i].disabled` | `boolean` | |
+| Breadcrumb item · Label (text) | "Breadcrumb" | `items[i].label` | `string` | |
 
 - **Figma only:** none.
-- **Code only:** `className`, `onClick` per item, the focus-visible ring (no Focus variant in Figma).
+- **Code only:** `className`, `onClick` per item.
 
 `src/components/Breadcrumb/` is the implementation; use it. Three pages hand-roll the same trail with their own classes; they match the state table, but they are still three copies of one component, so migrate them when you next touch those headers:
 
@@ -174,7 +176,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 | `pages/your-courses/CourseDetails` | `.cd-breadcrumb-*` |
 | `pages/your-courses/YourCoursesList` | `.courses-list-breadcrumb-*` |
 
-### Mobile nav (Tab nav `1324:35285` / `9897:18192`; Top nav/ App `1910:18375` / `11235:11758`)
+### Mobile nav (Tab nav `1324:35285`; Top nav/ App `1910:18375`)
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
@@ -327,7 +329,7 @@ Shared elements:
 
 **Admin.** Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records, Events, Account & Settings.
 
-**Expandable groups** (People & Teams, Content) append a 16px `ArrowDown2`/`ArrowUp2` chevron in `--text-tertiary`, right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`. The reference is the component set `10372:4045` (full Menu/Sub-menu × selected × Enabled/Hover matrix), not the assembled panel `12048:2302`, which draws sub-items at 44px left / 8px vertical.
+**Expandable groups** (People & Teams, Content) append a 16px `ArrowDown2`/`ArrowUp2` chevron in `--text-tertiary`, right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`. The reference is the component set `10372:4045` (full Menu/Sub-menu × selected × Enabled/Hover matrix), not the assembled Side navigation panel `4697:13314`, which draws sub-items at 44px left / 8px vertical.
 
 ### Collapsed side panel
 
