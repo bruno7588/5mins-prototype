@@ -1,6 +1,6 @@
 # Engineering skill: 5mins-ds-audit
 
-A Claude Code skill for the production monorepo. It compares a production component against the design-system docs in this repo and the Figma Library, and reports drift. It has three modes: `audit` (default), `build` and `map`.
+A Claude Code skill for the production repo. It compares a production component against the design-system docs in this repo and the Figma Library, and reports drift. It has three modes: `audit` (default), `build` and `map`.
 
 ## Install (engineering)
 

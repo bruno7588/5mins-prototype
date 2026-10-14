@@ -54,10 +54,10 @@ Foundations for every audit: `design-system-guidelines.md`.
 
 ## Where production drift hides
 
-This repo mixes several UI libraries (MUI 5, Mantine 7, base-ui, emotion, styled-components). A component's rendered result can come from any of these layers, so read them all before concluding:
+This repo builds on MUI 5.18 with Emotion. A component's rendered result can come from any of these layers, so read them all before concluding:
 
 1. The component's own styles: `packages/web/ui/src/lib/<Component>/` (`styles.ts`, the component file).
-2. The library it wraps: which MUI / Mantine / base-ui component, and that library's default padding, min-height and line-height.
+2. The library it wraps: which MUI component, and MUI's default padding, min-height and line-height.
 3. Theme component overrides and base variants in `packages/web/utils/theme` (typography, component overrides, radius/shape).
 4. Theme-level wrappers in the theme setup (anything that rescales type or spacing at breakpoints).
 5. Call-site overrides: `sx`, `styled(...)`, inline `style`, and `!important`.
@@ -75,7 +75,7 @@ Two kinds of target:
 3. **Confirm against Figma (only if needed).** Use the Figma MCP (`get_design_context`, `get_variable_defs`, `get_screenshot`) with the node ids in the doc's Canonical spec. Always read the **main component**, never a resized instance on a page. Skip this step when the doc already gives the value you need; Figma calls are rate-limited per seat.
 4. **Read production.** Walk the five layers above; skip any layer that doesn't exist for this target and say so. Record each property's declared value and where it is set (`file:line`). When a property is not set anywhere (a missing hover rule, no clear button), write `absent`.
 5. **Measure rendered values** for size, padding, radius, font and colour:
-   - **Where:** for a shared component, its Storybook stories (`nx run web-ui:storybook` if not running). If it has no story, measure in the running app and list "missing story" (shared components only; page call sites never have stories). For a call site, measure the page in the running app.
+   - **Where:** for a shared component, its Storybook stories (start Storybook if the repo has it and it isn't running). If it has no story, measure in the running app and list "missing story" (shared components only; page call sites never have stories). For a call site, measure the page in the running app.
    - **Theme:** in Storybook use the themes addon toolbar (or the `globals=theme:dark` URL parameter); in the app use its theme toggle or theme attribute. Measure light and dark.
    - **Reliability (the browser tool is shared and fragile):**
      - Freeze transitions before reading: inject `*,*::before,*::after{transition:none!important;animation:none!important}` once per page, or you will read mid-transition values and report false drift.
@@ -85,7 +85,7 @@ Two kinds of target:
      - Icon colours: SVG icons often report `stroke: none` in computed style; read the colour from the icon's `color` prop or SVG attribute instead.
    - States: enabled, hover, focus-visible, disabled, plus loading/error where the doc defines them.
 6. **Check usage (bypasses).** Count places that do this job without the shared component (including the audited call site, if it is one), and give up to 5 examples. To confirm many hits, script the check (e.g. the icon within 3 lines of `<input`) rather than opening each file. Look for both:
-   - library imports: `@mui/material` / `@mantine/core` / `@base-ui-components` components that `@web/ui` already wraps;
+   - library imports: `@mui/material` components that `@web/ui` already wraps;
    - hand-rolled signatures (open each hit to confirm before counting; some are legitimate embedded variants the doc allows):
 
      | Component | Hand-rolled signature |
@@ -111,7 +111,7 @@ Two kinds of target:
 
 Target: <shared component | call site: path + element> · Uses shared component: <yes | no | n/a>
 Doc: <doc>.md (<sections read>) · Figma: <node ids used, or "not needed">
-Production: <paths> · Library base: <MUI X / Mantine Y / custom> · Layers not present: <list or "none">
+Production: <paths> · Library base: <MUI component / custom> · Layers not present: <list or "none">
 Measured: <Storybook | app route>, <states>, <light and dark | what couldn't be measured and why>
 
 ### Drift

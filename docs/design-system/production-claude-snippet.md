@@ -1,6 +1,6 @@
 ---
 name: 5mins-production-claude-snippet
-description: Paste-ready block for the production monorepo's CLAUDE.md / AGENTS.md. Always-on design-system rules and doc index, so agents follow the DS without having to invoke a skill.
+description: Paste-ready block for the production repo's CLAUDE.md / AGENTS.md. Always-on design-system rules and doc index, so agents follow the DS without having to invoke a skill.
 ---
 
 # Production CLAUDE.md snippet
@@ -16,7 +16,7 @@ Paste everything between the two lines into the production repo's root `CLAUDE.m
 **To check a component against the DS, run `/5mins-ds-audit <component>`. Before building a screen, run `/5mins-ds-audit build <what you're building>`.**
 
 ### Non-negotiables
-- Build UI from `@web/ui` components. Don't import an MUI / Mantine / base-ui component directly in `apps/*` when `@web/ui` has one for the job. If `@web/ui` lacks it, say so; don't hand-roll a lookalike.
+- Build UI from `@web/ui` components. Don't import an MUI component directly in `apps/*` when `@web/ui` has one for the job. If `@web/ui` lacks it, say so; don't hand-roll a lookalike.
 - Theme values only: no raw hex, rgba or px for colour, spacing, radius, type or shadow in `styled()`, `sx` or style props. Missing a value? Add it to the theme.
 - Every interactive element has a visible `:focus-visible` indicator, in `--primary-button-background` (cyan).
 - Icons: Iconsax (`iconsax-reactjs`) only, 16 / 20 / 24 / 32px, `color` passed explicitly. Icon-only buttons have a circular hover and an `aria-label`.
