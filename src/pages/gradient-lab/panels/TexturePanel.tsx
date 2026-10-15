@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Trash } from 'iconsax-react'
+import { ExportCurve, Trash } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import FileUploader from '@/components/FileUploader/FileUploader'
@@ -7,7 +7,7 @@ import type { ToastType } from '@/components/Toast/Toast'
 import { removeFlower, uploadFlower } from '../flowers'
 import { FALLBACK_PALETTE, type Flower, type LabState } from '../types'
 
-/* Image: pick an uploaded flower (rainbow order) or none, upload more,
+/* Image: pick an uploaded image (rainbow order) or none, upload more,
    and remove the picked one. Rotation lives with the framing. Prefix: gl-tex- */
 
 const NONE = '__none__'
@@ -77,7 +77,7 @@ function TexturePanel({ lab, update, flowers, loadError, reload, show }: Props) 
   return (
     <section className="gl-section" aria-labelledby="gl-tex-title">
       <h2 id="gl-tex-title" className="gl-section__title">Image</h2>
-      {loadError && <Alert type="Alert" icon message={`Couldn't load your flowers: ${loadError}`} />}
+      {loadError && <Alert type="Alert" icon message={`Couldn't load your images: ${loadError}`} />}
       <Dropdown
         menuClassName="gl-tex__menu"
         options={options}
@@ -91,7 +91,8 @@ function TexturePanel({ lab, update, flowers, loadError, reload, show }: Props) 
         className="gl-tex__uploader"
         accept=".jpg,.jpeg,.png,.webp"
         multiple
-        helpText="Drop flower photos here (JPEG, PNG or WebP, at least 512 px)"
+        icon={<ExportCurve size={32} color="var(--text-secondary)" variant="Linear" />}
+        helpText="Drop images here (JPEG, PNG, or WebP, at least 512px)"
         state={uploading > 0 ? 'Uploading' : errors.length ? 'Error' : 'Enabled'}
         progress={uploading > 0 ? 50 : 0}
         errorMessage={errors}
