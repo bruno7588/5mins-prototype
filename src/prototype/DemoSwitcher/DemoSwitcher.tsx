@@ -7,7 +7,7 @@ import './DemoSwitcher.css'
 
 /* Prototype chrome, not product UI: one segmented switcher for the demo surfaces
    (Desktop opens Web App / Admin, Mobile opens the native app), Comment mode for anyone
-   with the link and, locally, the Playground labs menu and Design Inspect toggle. Ships to Vercel too, so shared
+   with the link, the Playground labs menu and, locally, the Design Inspect toggle. Ships to Vercel too, so shared
    demo links can switch and comment. shadcn-style in plain CSS, off the 5Mins brand.
    Prefix: demosw- */
 
@@ -172,20 +172,18 @@ function DemoSwitcher() {
         >
           <ArrowUp2 size={16} color="currentColor" variant="Linear" />
         </button>
-        {/* Playground and Edit are local-only: shared Vercel links get Desktop, Native App and Comment. */}
-        {import.meta.env.DEV && (
-          <button
-            type="button"
-            className={`demosw-seg${currentLab ? ' demosw-seg--active' : ''}`}
-            aria-label="Playground: labs"
-            data-tip="Playground"
-            aria-haspopup="menu"
-            aria-expanded={openMenu === 'playground'}
-            onClick={() => setOpenMenu((m) => (m === 'playground' ? null : 'playground'))}
-          >
-            <Magicpen size={20} color="currentColor" variant="Linear" />
-          </button>
-        )}
+        {/* Playground is on shared links too; Edit (Design Inspect) stays local-only. */}
+        <button
+          type="button"
+          className={`demosw-seg${currentLab ? ' demosw-seg--active' : ''}`}
+          aria-label="Playground: labs"
+          data-tip="Playground"
+          aria-haspopup="menu"
+          aria-expanded={openMenu === 'playground'}
+          onClick={() => setOpenMenu((m) => (m === 'playground' ? null : 'playground'))}
+        >
+          <Magicpen size={20} color="currentColor" variant="Linear" />
+        </button>
         {import.meta.env.DEV && (
           <button
             type="button"

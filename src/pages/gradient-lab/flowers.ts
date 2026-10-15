@@ -2,8 +2,17 @@ import { useCallback, useEffect, useState } from 'react'
 import { extractPalette } from './palette'
 import type { Flower } from './types'
 
-/* Client for the dev-only tools/gradient-lab Vite plugin, which saves uploaded
-   flower photos into src/assets/gradient-lab/flowers/. */
+/* Uploaded photos. On localhost they go through the dev-only tools/gradient-lab
+   Vite plugin into src/assets/gradient-lab/flowers/. On the shared (deployed)
+   site there is no server to write to, so uploads live in this browser tab only
+   (an in-memory list of data URLs, gone on reload). */
+
+/** True on the deployed site: no dev plugin, uploads stay in the browser. */
+export const BROWSER_ONLY = !import.meta.env.DEV
+
+let localFlowers: Flower[] = []
+const localListeners = new Set<() => void>()
+const notifyLocal = () => localListeners.forEach((l) => l())
 
 const API = '/__gradient-lab'
 /** Saved photos are square JPEGs at this size. */
@@ -54,6 +63,19 @@ export async function uploadFlower(file: File): Promise<Flower> {
     ctx.imageSmoothingQuality = 'high'
     ctx.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, SIZE, SIZE)
     const dataUrl = canvas.toDataURL('image/jpeg', 0.92)
+    if (BROWSER_ONLY) {
+      const slug = file.name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 60) || 'image'
+      const flower: Flower = {
+        id: `${slug}-${Date.now().toString(36)}`,
+        name: file.name,
+        src: dataUrl,
+        hue: mainHue(img),
+        savedAt: new Date().toISOString(),
+      }
+      localFlowers = [...localFlowers, flower]
+      notifyLocal()
+      return flower
+    }
     const res = await fetch(`${API}/flowers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -66,6 +88,11 @@ export async function uploadFlower(file: File): Promise<Flower> {
 }
 
 export function removeFlower(id: string): Promise<void> {
+  if (BROWSER_ONLY) {
+    localFlowers = localFlowers.filter((f) => f.id !== id)
+    notifyLocal()
+    return Promise.resolve()
+  }
   return fetch(`${API}/flowers/${encodeURIComponent(id)}`, { method: 'DELETE' }).then((r) => json<void>(r))
 }
 
@@ -79,6 +106,11 @@ export function useFlowers() {
   const [error, setError] = useState<string | null>(null)
 
   const reload = useCallback(() => {
+    if (BROWSER_ONLY) {
+      setFlowers([...localFlowers].sort(byHue))
+      setLoading(false)
+      return
+    }
     setLoading(true)
     fetch(`${API}/flowers`)
       .then((r) => json<Flower[]>(r))
@@ -91,5 +123,12 @@ export function useFlowers() {
   }, [])
 
   useEffect(reload, [reload])
+  useEffect(() => {
+    if (!BROWSER_ONLY) return
+    localListeners.add(reload)
+    return () => {
+      localListeners.delete(reload)
+    }
+  }, [reload])
   return { flowers, loading, error, reload }
 }

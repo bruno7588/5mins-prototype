@@ -14,7 +14,7 @@ import GradientSlots from './panels/GradientSlots'
 import { APP_IMAGE_SIZE, clearGradient, saveGradient, useSavedGradients } from './gradients'
 import { parsePreset, toPreset } from './preset'
 import FocalPad from './panels/FocalPad'
-import FramingPanel from './panels/FramingPanel'
+import FramingPanel, { RotateField } from './panels/FramingPanel'
 import TexturePanel from './panels/TexturePanel'
 import { useLabDials, type DialsKind } from './panels/useLabDials'
 import { extractKey, paletteKeys, usePaletteExtraction } from './panels/usePaletteExtraction'
@@ -26,8 +26,9 @@ import './panels/panels.css'
  * Gradient Lab (Playground, dev only): makes default company images and live
  * shaders on one screen. Left: the live preview (wheel zooms, drag pans).
  * Right: one controls column with an Image / Gradient / Shader switcher
- * (Export sits in the header): Image picks, uploads and removes the photo;
- * Gradient holds framing, focal point and the gradient DialKit panel; Shader
+ * (Export sits in the header): Image picks, uploads, removes and frames the
+ * photo (aspect ratio, render size); Gradient holds the focal point, rotate
+ * and the gradient DialKit panel; Shader
  * holds the motion panel. Prefix: gl-
  */
 
@@ -197,7 +198,8 @@ function GradientLab() {
               </div>
             )}
           </div>
-          <p className="gl-lab__hint">Scroll to zoom · drag to pan · focal point on the pad</p>
+          <p className="gl-lab__hint">Scroll to zoom · drag to pan</p>
+          {import.meta.env.DEV && (
           <GradientSlots
             gradients={gradients}
             activeSlot={activeSlot}
@@ -207,6 +209,7 @@ function GradientLab() {
             onSave={saveSlot}
             onClear={clearSlot}
           />
+          )}
         </div>
 
         <aside className="gl-lab__col" aria-label="Controls">
@@ -219,20 +222,22 @@ function GradientLab() {
           />
 
           {tab === 'image' && (
-            <TexturePanel
-              lab={lab}
-              update={update}
-              flowers={flowers}
-              loadError={flowersError}
-              reload={reload}
-              show={show}
-            />
+            <>
+              <TexturePanel
+                lab={lab}
+                update={update}
+                flowers={flowers}
+                loadError={flowersError}
+                reload={reload}
+                show={show}
+              />
+              <hr className="gl-section__divider" />
+              <FramingPanel lab={lab} update={update} />
+            </>
           )}
 
           {tab === 'gradient' && (
             <>
-              <FramingPanel lab={lab} update={update} />
-              <hr className="gl-section__divider" />
               <section className="gl-section" aria-labelledby="gl-focal-title">
                 <h2 id="gl-focal-title" className="gl-section__title">Focal point</h2>
                 <FocalPad x={lab.gradient.offsetX} y={lab.gradient.offsetY} onChange={setOffset} />
@@ -245,6 +250,7 @@ function GradientLab() {
                 >
                   Randomise Framing
                 </Button>
+                <RotateField lab={lab} update={update} />
               </section>
               <hr className="gl-section__divider" />
             </>

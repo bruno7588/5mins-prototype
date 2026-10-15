@@ -52,6 +52,8 @@ export function useSavedGradients() {
   const [error, setError] = useState<string | null>(null)
 
   const reload = useCallback(() => {
+    // The saved slots write the app's images on localhost only.
+    if (!import.meta.env.DEV) return
     fetch(API)
       .then((r) => json<SavedGradient[]>(r))
       .then((list) => {

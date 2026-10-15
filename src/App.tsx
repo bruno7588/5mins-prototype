@@ -65,10 +65,10 @@ function App() {
       />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/mobile" element={<MobileApp />} />
-      {/* Playground labs are local-only; shared links bounce to the home page. */}
-      <Route path="/quiz-lab" element={import.meta.env.DEV ? <QuizLab /> : <Navigate to="/" replace />} />
-      <Route path="/chart-lab" element={import.meta.env.DEV ? <ChartLab /> : <Navigate to="/" replace />} />
-      <Route path="/gradient-lab" element={import.meta.env.DEV ? <GradientLab /> : <Navigate to="/" replace />} />
+      {/* Playground labs: on the shared link too. */}
+      <Route path="/quiz-lab" element={<QuizLab />} />
+      <Route path="/chart-lab" element={<ChartLab />} />
+      <Route path="/gradient-lab" element={<GradientLab />} />
       <Route path="/my-team" element={<MyTeam />} />
       {/* A learner profile opened from My Team — top-level so it keeps the
           learner shell instead of picking up the admin TopNav below. */}

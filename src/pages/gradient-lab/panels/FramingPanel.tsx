@@ -1,8 +1,8 @@
 import Dropdown from '@/components/Dropdown/Dropdown'
 import { outputSize, type AspectRatio, type LabState, type RenderSize, type TextureRotation } from '../types'
 
-/* Framing, grouped: texture rotation, then aspect ratio and render size side
-   by side. Prefix: gl-section */
+/* Output framing: aspect ratio and render size side by side (Image tab), plus
+   the Rotate field used under the focal point. Prefix: gl-section */
 
 const ROTATE_OPTIONS = [
   { value: '0', label: 'None' },
@@ -34,12 +34,6 @@ function FramingPanel({ lab, update }: Props) {
   })
   return (
     <section className="gl-section" aria-label="Framing">
-      <Dropdown
-        label="Rotate"
-        options={ROTATE_OPTIONS}
-        value={String(framing.rotate)}
-        onChange={(v) => update({ framing: { ...framing, rotate: Number(v) as TextureRotation } })}
-      />
       <div className="gl-section__row">
       <Dropdown
         label="Aspect ratio"
@@ -55,6 +49,18 @@ function FramingPanel({ lab, update }: Props) {
       />
       </div>
     </section>
+  )
+}
+
+/** Rotate: quarter turns of the image, shown under the focal point in the Gradient tab. */
+export function RotateField({ lab, update }: Props) {
+  return (
+    <Dropdown
+      label="Rotate"
+      options={ROTATE_OPTIONS}
+      value={String(lab.framing.rotate)}
+      onChange={(v) => update({ framing: { ...lab.framing, rotate: Number(v) as TextureRotation } })}
+    />
   )
 }
 

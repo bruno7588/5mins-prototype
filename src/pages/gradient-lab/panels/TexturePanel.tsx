@@ -2,7 +2,6 @@ import { useRef, useState } from 'react'
 import { Trash } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Dropdown from '@/components/Dropdown/Dropdown'
-import Tooltip from '@/components/Tooltip/Tooltip'
 import FileUploader from '@/components/FileUploader/FileUploader'
 import type { ToastType } from '@/components/Toast/Toast'
 import { removeFlower, uploadFlower } from '../flowers'
@@ -27,12 +26,18 @@ function TexturePanel({ lab, update, flowers, loadError, reload, show }: Props) 
   /* Files in flight; errors reset only when a new batch starts, so one success can't hide another file's error. */
   const inFlight = useRef(0)
   const [errors, setErrors] = useState<string[]>([])
-  const [removing, setRemoving] = useState(false)
 
-  const selected = flowers.find((f) => f.id === lab.flowerId)
   const options = [
     { value: NONE, label: 'No image' },
-    ...flowers.map((f) => ({ value: f.id, label: f.name })),
+    ...flowers.map((f) => ({
+      value: f.id,
+      label: f.name,
+      action: {
+        icon: <Trash size={20} variant="Linear" color="currentColor" />,
+        label: 'Remove image',
+        onClick: () => void handleRemove(f),
+      },
+    })),
   ]
 
   const pick = (value: string) => {
@@ -57,18 +62,15 @@ function TexturePanel({ lab, update, flowers, loadError, reload, show }: Props) 
     }
   }
 
-  const handleRemove = async () => {
-    if (!selected) return
-    setRemoving(true)
+  /* Removing the image in use also clears the gradient back to the empty state. */
+  async function handleRemove(flower: Flower) {
     try {
-      await removeFlower(selected.id)
-      update({ flowerId: null, palette: FALLBACK_PALETTE })
+      await removeFlower(flower.id)
+      if (lab.flowerId === flower.id) update({ flowerId: null, palette: FALLBACK_PALETTE })
       reload()
-      show('success', 'Texture removed')
+      show('success', 'Image removed')
     } catch (e) {
       show('error', e instanceof Error ? e.message : "Couldn't remove the image")
-    } finally {
-      setRemoving(false)
     }
   }
 
@@ -76,31 +78,14 @@ function TexturePanel({ lab, update, flowers, loadError, reload, show }: Props) 
     <section className="gl-section" aria-labelledby="gl-tex-title">
       <h2 id="gl-tex-title" className="gl-section__title">Image</h2>
       {loadError && <Alert type="Alert" icon message={`Couldn't load your flowers: ${loadError}`} />}
-      <div className="gl-tex__picker">
-        <Dropdown
-          className="gl-tex__dropdown"
-          menuClassName="gl-tex__menu"
-          options={options}
-          value={lab.flowerId ?? NONE}
-          onChange={pick}
-          searchable={flowers.length > 8}
-          searchPlaceholder="Search flowers"
-        />
-        {selected && (
-          <Tooltip icon={false} text="Remove image">
-            <button
-              type="button"
-              className="gl-tex__remove"
-              aria-label="Remove image"
-              aria-busy={removing}
-              disabled={removing}
-              onClick={handleRemove}
-            >
-              <Trash size={20} variant="Linear" color="var(--text-primary)" />
-            </button>
-          </Tooltip>
-        )}
-      </div>
+      <Dropdown
+        menuClassName="gl-tex__menu"
+        options={options}
+        value={lab.flowerId ?? NONE}
+        onChange={pick}
+        searchable={flowers.length > 8}
+        searchPlaceholder="Search images"
+      />
       <FileUploader
         size="S"
         className="gl-tex__uploader"
