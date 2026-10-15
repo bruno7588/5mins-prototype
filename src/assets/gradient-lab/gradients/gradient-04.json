@@ -52,7 +52,7 @@
   },
   "noise": {
     "type": "dither",
-    "size": 6,
+    "size": 8,
     "intensity": 0.16,
     "blend": "overlay",
     "colour": 0.24,

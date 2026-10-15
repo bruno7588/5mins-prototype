@@ -3,7 +3,7 @@
     "slot": 1,
     "name": "Gradient 1",
     "image": "/src/assets/company-images/default-01.jpg",
-    "savedAt": "2026-10-15T20:12:19.220Z",
+    "savedAt": "2026-10-15T20:16:40.689Z",
     "preset": {
       "version": 1,
       "name": "Gradient 1",
@@ -58,7 +58,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -90,7 +90,7 @@
     "slot": 2,
     "name": "Gradient 2",
     "image": "/src/assets/company-images/default-02.jpg",
-    "savedAt": "2026-10-15T20:12:31.855Z",
+    "savedAt": "2026-10-15T20:16:52.291Z",
     "preset": {
       "version": 1,
       "name": "Gradient 2",
@@ -145,7 +145,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -177,7 +177,7 @@
     "slot": 3,
     "name": "Gradient 3",
     "image": "/src/assets/company-images/default-03.jpg",
-    "savedAt": "2026-10-15T20:12:37.703Z",
+    "savedAt": "2026-10-15T20:16:58.042Z",
     "preset": {
       "version": 1,
       "name": "Gradient 3",
@@ -232,7 +232,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -264,7 +264,7 @@
     "slot": 4,
     "name": "Gradient 4",
     "image": "/src/assets/company-images/default-04.jpg",
-    "savedAt": "2026-10-15T20:12:42.218Z",
+    "savedAt": "2026-10-15T20:17:03.329Z",
     "preset": {
       "version": 1,
       "name": "Gradient 4",
@@ -319,7 +319,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -351,7 +351,7 @@
     "slot": 5,
     "name": "Gradient 5",
     "image": "/src/assets/company-images/default-05.jpg",
-    "savedAt": "2026-10-15T20:12:47.432Z",
+    "savedAt": "2026-10-15T20:17:08.489Z",
     "preset": {
       "version": 1,
       "name": "Gradient 5",
@@ -406,7 +406,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -438,7 +438,7 @@
     "slot": 6,
     "name": "Gradient 6",
     "image": "/src/assets/company-images/default-06.jpg",
-    "savedAt": "2026-10-15T20:12:54.552Z",
+    "savedAt": "2026-10-15T20:17:13.991Z",
     "preset": {
       "version": 1,
       "name": "Gradient 6",
@@ -493,7 +493,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -525,7 +525,7 @@
     "slot": 7,
     "name": "Gradient 7",
     "image": "/src/assets/company-images/default-07.jpg",
-    "savedAt": "2026-10-15T20:13:00.414Z",
+    "savedAt": "2026-10-15T20:17:20.144Z",
     "preset": {
       "version": 1,
       "name": "Gradient 7",
@@ -580,7 +580,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -612,7 +612,7 @@
     "slot": 8,
     "name": "Gradient 8",
     "image": "/src/assets/company-images/default-08.jpg",
-    "savedAt": "2026-10-15T20:13:06.053Z",
+    "savedAt": "2026-10-15T20:17:26.331Z",
     "preset": {
       "version": 1,
       "name": "Gradient 8",
@@ -667,7 +667,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -699,7 +699,7 @@
     "slot": 9,
     "name": "Gradient 9",
     "image": "/src/assets/company-images/default-09.jpg",
-    "savedAt": "2026-10-15T20:13:12.191Z",
+    "savedAt": "2026-10-15T20:17:32.898Z",
     "preset": {
       "version": 1,
       "name": "Gradient 9",
@@ -754,7 +754,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -786,7 +786,7 @@
     "slot": 10,
     "name": "Gradient 10",
     "image": "/src/assets/company-images/default-10.jpg",
-    "savedAt": "2026-10-15T20:13:17.690Z",
+    "savedAt": "2026-10-15T20:17:38.751Z",
     "preset": {
       "version": 1,
       "name": "Gradient 10",
@@ -841,7 +841,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -873,7 +873,7 @@
     "slot": 11,
     "name": "Gradient 11",
     "image": "/src/assets/company-images/default-11.jpg",
-    "savedAt": "2026-10-15T20:13:23.692Z",
+    "savedAt": "2026-10-15T20:17:44.366Z",
     "preset": {
       "version": 1,
       "name": "Gradient 11",
@@ -928,7 +928,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
@@ -960,7 +960,7 @@
     "slot": 12,
     "name": "Gradient 12",
     "image": "/src/assets/company-images/default-12.jpg",
-    "savedAt": "2026-10-15T20:13:29.926Z",
+    "savedAt": "2026-10-15T20:17:50.252Z",
     "preset": {
       "version": 1,
       "name": "Gradient 12",
@@ -1015,7 +1015,7 @@
       },
       "noise": {
         "type": "dither",
-        "size": 6,
+        "size": 8,
         "intensity": 0.16,
         "blend": "overlay",
         "colour": 0.24,
