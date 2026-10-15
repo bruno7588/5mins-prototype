@@ -112,7 +112,7 @@ Only the cards below have a shared component. Lesson list rows, Assessment rows,
 **Don't**
 - Don't hand-roll the segmented progress bar; it is 8 equal segments, `--primary-600` filled, `--border` empty.
 
-**Canonical spec:** 170 x 230px; radius `var(--radius-sm)` (12px); `--cards-background`, hover `--cards-background-hover`; `var(--shadow-card)` (Shadow S); info padding 16px, gap 12px; title Poppins Bold 14px/1.5, 3 lines; instructor Regular 12px/1.2 `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5144:14181`.
+**Canonical spec:** 170 x 230px; radius `var(--radius-sm)` (12px); `--cards-background`, hover `--cards-background-hover` plus a 1.12x thumbnail zoom (300ms, none under reduced motion); `var(--shadow-card)` (Shadow S); info padding 16px, gap 12px; title Poppins Bold 14px/1.5, 3 lines; instructor Regular 12px/1.2 `--text-secondary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `5144:14181`.
 
 ### SkillCard (skill-progress tile)
 

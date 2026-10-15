@@ -29,8 +29,31 @@
   position: relative;
   flex: 1 0 0;
   min-height: 0;
+  overflow: hidden;
+}
+
+/* The zoomable layer, under the tag, duration and progress. Hover zooms it
+   1.12x inside the fixed thumb, as the course card does. */
+.lesson-grid-card__picture {
+  position: absolute;
+  inset: 0;
   background-size: cover;
   background-position: center;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lesson-grid-card:hover .lesson-grid-card__picture {
+  transform: scale(1.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-grid-card__picture {
+    transition: none;
+  }
+
+  .lesson-grid-card:hover .lesson-grid-card__picture {
+    transform: none;
+  }
 }
 
 .lesson-grid-card__tag {
