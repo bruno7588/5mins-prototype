@@ -14,9 +14,11 @@
   },
   "dependencies": {
     "cuelume": "^0.1.2",
+    "dialkit": "2.0.2",
     "framer-motion": "^12.42.2",
     "gsap": "^3.15.0",
     "iconsax-react": "^0.0.8",
+    "motion": "^14.3.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.1.0"

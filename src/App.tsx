@@ -25,7 +25,7 @@ import Onboarding from './pages/onboarding/Onboarding'
 import MobileApp from './pages/mobile/MobileApp'
 import QuizLab from './pages/quiz-lab/QuizLab'
 import ChartLab from './pages/chart-lab/ChartLab'
-import NewLab from './pages/new-lab/NewLab'
+import GradientLab from './pages/gradient-lab/GradientLab'
 
 import MyTeam from './pages/my-team/MyTeam'
 import Workspace from './pages/workspace/Workspace'
@@ -68,7 +68,7 @@ function App() {
       {/* Playground labs are local-only; shared links bounce to the home page. */}
       <Route path="/quiz-lab" element={import.meta.env.DEV ? <QuizLab /> : <Navigate to="/" replace />} />
       <Route path="/chart-lab" element={import.meta.env.DEV ? <ChartLab /> : <Navigate to="/" replace />} />
-      <Route path="/new-lab" element={import.meta.env.DEV ? <NewLab /> : <Navigate to="/" replace />} />
+      <Route path="/gradient-lab" element={import.meta.env.DEV ? <GradientLab /> : <Navigate to="/" replace />} />
       <Route path="/my-team" element={<MyTeam />} />
       {/* A learner profile opened from My Team — top-level so it keeps the
           learner shell instead of picking up the admin TopNav below. */}

@@ -1,0 +1,136 @@
+/* ── Gradient Lab (Playground, dev only) ──────────────────────────────────────
+   One screen: title header, then the stage (live preview) on the left and one
+   controls column (Export, then a Gradient / Shader switcher) on the right.
+   Below 1100px the column stacks under the stage. All classes are gl- prefixed (globally bundled CSS); tokens
+   only. The inline DialKit panel keeps its own styling (prototype chrome). */
+
+.gl-lab {
+  /* Height of the sticky header, so the sticky stage sits just below it. */
+  --gl-header-h: 74px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--page-background);
+}
+
+.gl-lab__header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  box-sizing: border-box;
+  min-height: var(--gl-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  padding: var(--space-m) var(--space-l);
+  border-bottom: 1px solid var(--border);
+  background: var(--page-background);
+}
+
+.gl-lab__title {
+  margin: 0;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.gl-lab__body {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+  gap: var(--space-l);
+  padding: var(--space-l);
+}
+
+.gl-lab__stage-col {
+  position: sticky;
+  top: calc(var(--gl-header-h) + var(--space-l));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.gl-lab__stage {
+  /* The visible height minus the header, the hint and the gradient slots below the card. */
+  height: calc(100vh - var(--gl-header-h) - 250px);
+  min-height: 360px;
+  padding: var(--space-l);
+  border-radius: var(--radius-l);
+  background: var(--input-background);
+  overflow: hidden;
+}
+
+.gl-lab__hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.gl-lab__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  min-width: 0;
+}
+
+/* Full column width, the two tabs sharing it equally. */
+.gl-lab__switcher {
+  display: flex;
+  width: 100%;
+}
+
+.gl-lab__switcher .switcher__item {
+  flex: 1 1 0;
+}
+
+.gl-lab__dials {
+  min-width: 0;
+}
+
+/* The inline panel fills the column and drops the floating panel's own corner. */
+.gl-lab__dials .dialkit-panel-inner {
+  width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 1099px) {
+  .gl-lab__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gl-lab__stage-col {
+    position: static;
+    grid-column: 1 / -1;
+  }
+
+  .gl-lab__stage {
+    height: auto;
+    aspect-ratio: 1;
+    max-height: 80vh;
+  }
+}
+
+@media (max-width: 640px) {
+  .gl-lab__body {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-m);
+  }
+
+  .gl-lab__header {
+    padding: var(--space-m);
+  }
+}
+
+/* No image picked: the empty state sits centred in the stage. */
+.gl-lab__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}

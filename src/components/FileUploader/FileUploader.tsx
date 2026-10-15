@@ -15,6 +15,8 @@ interface FileUploaderProps {
   onFileSelect?: (file: File) => void
   onChangeFile?: () => void
   accept?: string
+  /** Accept several files at once; onFileSelect is called once per file. */
+  multiple?: boolean
   /** Enabled/Hover body copy; defaults to "Drag and drop file here or click to upload". */
   helpText?: string
   /** Enabled/Hover: replaces the upload icon, e.g. a video or audio glyph for a media upload. */
@@ -33,6 +35,7 @@ export function FileUploader({
   onFileSelect,
   onChangeFile,
   accept,
+  multiple = false,
   helpText = 'Drag and drop file here or click to upload',
   icon,
   fileIcon,
@@ -51,9 +54,9 @@ export function FileUploader({
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    onFileSelect?.(file)
+    const files = Array.from(e.target.files ?? []).slice(0, multiple ? undefined : 1)
+    if (!files.length) return
+    files.forEach((file) => onFileSelect?.(file))
     if (!controlledState) setInternalState('Filled')
     e.target.value = ''
   }
@@ -68,11 +71,11 @@ export function FileUploader({
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
-    const file = e.dataTransfer.files?.[0]
-    if (!file) return
-    onFileSelect?.(file)
+    const files = Array.from(e.dataTransfer.files ?? []).slice(0, multiple ? undefined : 1)
+    if (!files.length) return
+    files.forEach((file) => onFileSelect?.(file))
     if (!controlledState) setInternalState('Filled')
-  }, [onFileSelect, controlledState])
+  }, [onFileSelect, controlledState, multiple])
 
   const r = 26
   const circ = 2 * Math.PI * r
@@ -112,6 +115,7 @@ export function FileUploader({
         ref={inputRef}
         type="file"
         accept={accept}
+        multiple={multiple}
         aria-label="Upload file"
         onChange={handleFileChange}
         className="file-uploader__input"

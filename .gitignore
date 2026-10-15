@@ -22,3 +22,7 @@ dist
 # Playwright output
 /test-results/
 /playwright-report/
+
+# Gradient Studio: uploaded source photos stay local (stock licences forbid redistribution)
+src/assets/gradient-lab/flowers/*.jpg
+src/assets/gradient-lab/flowers/manifest.json
