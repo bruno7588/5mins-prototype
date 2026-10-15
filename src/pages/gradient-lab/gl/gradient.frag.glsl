@@ -365,11 +365,6 @@ void main() {
   p = mat2(cr, sr, -sr, cr) * p;
   p -= u_offset * 0.5;
 
-  /* The photo as it is: framed (zoom, rotation, focal point, quarter turns) but
-     not swirled, warped or moved. It softens as abstraction rises. */
-  vec2 framed = turn(p);
-  vec3 raw = textureLod(u_photo, framed + 0.5, u_abstract * u_maxLod * 0.7).rgb;
-
   float a = u_swirl * length(p) * 6.0;
   float ca = cos(a), sa = sin(a);
   p = mat2(ca, sa, -sa, ca) * p;
@@ -382,6 +377,11 @@ void main() {
       fbm4(vec4(p * 1.6 + u_warpCoord.xy + vec2(5.2, 1.3), u_warpCoord.zw + vec2(3.7, 9.1))));
     p += u_warp * 0.35 * w;
   }
+
+  /* The photo as it is: framed (zoom, rotation, focal point, quarter turns) and
+     bent by the same swirl, distortion and warp as the gradient, but not moved
+     by the flow. It softens as abstraction rises. */
+  vec3 raw = textureLod(u_photo, turn(p) + 0.5, u_abstract * u_maxLod * 0.7).rgb;
 
   p -= u_flow;
 
