@@ -35,6 +35,9 @@ const NOISE_OPTIONS: { value: NoiseType; label: string }[] = [
   { value: 'simplex', label: 'Simplex' },
   { value: 'fbm', label: 'Fbm' },
   { value: 'worley', label: 'Worley' },
+  { value: 'paper', label: 'Paper' },
+  { value: 'dither', label: 'Dither' },
+  { value: 'halftone', label: 'Halftone' },
 ]
 const BLEND_OPTIONS: { value: BlendMode; label: string }[] = [
   { value: 'soft-light', label: 'Soft light' },
@@ -81,18 +84,17 @@ interface LabDials {
     'seamless loop': boolean
     'loop seconds': number
     'animated grain': boolean
-    'grain fps': string
+    'grain fps': number
   }
 }
 
 interface PanelValues extends LabDials {
   Palette: Record<string, string>
-  Timeline: { scrub: number }
 }
 
 const colourKey = (i: number) => `colour ${i + 1}`
 
-/** The lab values the panel mirrors (everything except the palette and the scrub). */
+/** The lab values the panel mirrors (everything except the palette). */
 function labToDials(lab: LabState): LabDials {
   const { gradient: g, motion: m } = lab
   return {
@@ -125,7 +127,7 @@ function labToDials(lab: LabState): LabDials {
       'seamless loop': m.loop,
       'loop seconds': m.loopSeconds,
       'animated grain': m.grainAnimated,
-      'grain fps': String(m.grainFps),
+      'grain fps': m.grainFps,
     },
   }
 }
@@ -143,11 +145,11 @@ function dialsMotion(d: LabDials['Motion']): MotionSettings {
     loop: d['seamless loop'],
     loopSeconds: d['loop seconds'],
     grainAnimated: d['animated grain'],
-    grainFps: d['grain fps'] === '24' ? 24 : 12,
+    grainFps: d['grain fps'],
   }
 }
 
-function buildConfig(lab: LabState, kind: DialsKind, scrub: number): DialConfig {
+function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
   const v = labToDials(lab)
   const palette: DialConfig = { _collapsed: true }
   lab.palette.forEach((p, i) => {
@@ -169,17 +171,7 @@ function buildConfig(lab: LabState, kind: DialsKind, scrub: number): DialConfig 
         'seamless loop': m['seamless loop'],
         'loop seconds': [m['loop seconds'], 2, 30, 1],
         'animated grain': m['animated grain'],
-        'grain fps': {
-          type: 'select',
-          options: [
-            { value: '12', label: '12' },
-            { value: '24', label: '24' },
-          ],
-          default: m['grain fps'],
-        },
-      },
-      Timeline: {
-        scrub: [scrub, 0, 1, 0.001],
+        'grain fps': [m['grain fps'], 2, 24, 2],
       },
     }
   }
@@ -209,6 +201,7 @@ function buildConfig(lab: LabState, kind: DialsKind, scrub: number): DialConfig 
       blend: { type: 'select', options: BLEND_OPTIONS, default: v.Noise.blend },
       colour: [v.Noise.colour, 0, 1, 0.01],
       luma: [v.Noise.luma, 0, 1, 0.01],
+      distortion: [v.Noise.distortion, 0, 1, 0.01],
     },
     Palette: palette,
   }
@@ -217,23 +210,21 @@ function buildConfig(lab: LabState, kind: DialsKind, scrub: number): DialConfig 
 const sameKeys = <T extends object>(a: T, b: T) =>
   (Object.keys(a) as (keyof T)[]).every((k) => a[k] === b[k])
 
-/** Registers this tab's panel and keeps it in sync with lab. The scrub (0-1) lives on the page so it survives tab switches. */
+/** Registers this tab's panel and keeps it in sync with lab. */
 export function useLabDials(
   kind: DialsKind,
   lab: LabState,
   update: (patch: Partial<LabState>) => void,
   onReextract: () => void,
-  scrub: number,
-  onScrub: (scrub: number) => void,
 ): void {
-  const latest = useRef({ lab, update, onReextract, scrub, onScrub })
-  latest.current = { lab, update, onReextract, scrub, onScrub }
+  const latest = useRef({ lab, update, onReextract })
+  latest.current = { lab, update, onReextract }
 
   // Rebuilt only when the structure changes (palette count); DialKit owns the
   // live values, the config just seeds them.
   const count = lab.palette.length
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const config = useMemo(() => buildConfig(latest.current.lab, kind, latest.current.scrub), [count, kind])
+  const config = useMemo(() => buildConfig(latest.current.lab, kind), [count, kind])
 
   const dialRef = useRef<ReturnType<typeof useDialKitController> | null>(null)
   const onAction = useCallback((action: string) => {
@@ -283,17 +274,17 @@ export function useLabDials(
   // lab snapshot can never drop an edit.
   useEffect(() => {
     const v = dial.getValues() as unknown as PanelValues
-    const { lab: now, update: push, scrub: lastScrub, onScrub: pushScrub } = latest.current
+    const { lab: now, update: push } = latest.current
     const patch: Partial<LabState> = {}
 
     if (kind === 'shader') {
       const motion = dialsMotion(v.Motion)
       if (!sameKeys(motion, now.motion)) push({ motion })
-      if (v.Timeline.scrub !== lastScrub) pushScrub(v.Timeline.scrub)
       return
     }
 
     const gradient: GradientSettings = {
+      abstraction: now.gradient.abstraction,
       sourceMode: v.Source.mode,
       mix: v.Source.mix,
       blur: v.Source.blur,
@@ -315,6 +306,7 @@ export function useLabDials(
       blend: v.Noise.blend,
       colour: v.Noise.colour,
       luma: v.Noise.luma,
+      distortion: v.Noise.distortion,
     }
     if (!sameKeys(noise, now.noise)) patch.noise = noise
 

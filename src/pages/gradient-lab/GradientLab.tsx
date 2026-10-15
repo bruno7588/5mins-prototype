@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { Shuffle } from 'iconsax-react'
-import { DialRoot } from 'dialkit'
+import { DialRoot, Slider } from 'dialkit'
 import 'dialkit/styles.css'
 import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
@@ -45,13 +45,11 @@ interface DialsProps {
   lab: LabState
   update: (patch: Partial<LabState>) => void
   reextract: () => void
-  scrub: number
-  onScrub: (scrub: number) => void
 }
 
 /** The open tab's DialKit panel, inline. Mounted per tab, so only its panel shows. */
-function TabDials({ kind, lab, update, reextract, scrub, onScrub }: DialsProps) {
-  useLabDials(kind, lab, update, reextract, scrub, onScrub)
+function TabDials({ kind, lab, update, reextract }: DialsProps) {
+  useLabDials(kind, lab, update, reextract)
   return (
     <div className="gl-lab__dials">
       <DialRoot mode="inline" theme="system" />
@@ -118,10 +116,14 @@ function GradientLab() {
       show('error', `Couldn't clear gradient ${activeSlot}: ${(e as Error).message}`)
     }
   }
-  const [scrub, setScrub] = useState(0)
 
   const setOffset = useCallback(
     (x: number, y: number) => setLab((prev) => ({ ...prev, gradient: { ...prev.gradient, offsetX: x, offsetY: y } })),
+    [],
+  )
+
+  const setAbstraction = useCallback(
+    (abstraction: number) => setLab((prev) => ({ ...prev, gradient: { ...prev.gradient, abstraction } })),
     [],
   )
 
@@ -174,7 +176,6 @@ function GradientLab() {
   /* No image, no gradient: the stage shows an empty state and nothing can be saved or exported. */
   const hasImage = flower !== undefined
   const baseName = flower ? flower.name.replace(/\.[a-z0-9]+$/i, '') : 'rainbow'
-  const scrubTime = lab.motion.playing ? undefined : scrub * lab.motion.loopSeconds
 
   return (
     <div className="gl-lab">
@@ -187,7 +188,7 @@ function GradientLab() {
         <div className="gl-lab__stage-col">
           <div className="gl-lab__stage">
             {hasImage ? (
-              <LabCanvas ref={canvasRef} lab={lab} flowers={flowers} time={scrubTime} onPan={onPan} onZoom={onZoom} />
+              <LabCanvas ref={canvasRef} lab={lab} flowers={flowers} onPan={onPan} onZoom={onZoom} />
             ) : (
               <div className="gl-lab__empty">
                 <EmptyState
@@ -238,6 +239,21 @@ function GradientLab() {
 
           {tab === 'gradient' && (
             <>
+              {/* 0 = the photo as it is, 1 = the full gradient. DialKit's own slider, outside the panel. */}
+              <section className="gl-section" aria-labelledby="gl-abstract-title">
+                <h2 id="gl-abstract-title" className="gl-section__title">Abstraction</h2>
+                <div className="dialkit-root gl-abstract" data-mode="inline" data-theme="system">
+                  <Slider
+                    label="Photo to gradient"
+                    value={lab.gradient.abstraction}
+                    onChange={setAbstraction}
+                    min={0}
+                    max={1}
+                    step={0.01}
+                  />
+                </div>
+              </section>
+              <hr className="gl-section__divider" />
               <section className="gl-section" aria-labelledby="gl-focal-title">
                 <h2 id="gl-focal-title" className="gl-section__title">Focal point</h2>
                 <FocalPad x={lab.gradient.offsetX} y={lab.gradient.offsetY} onChange={setOffset} />
@@ -257,7 +273,7 @@ function GradientLab() {
           )}
 
           {tab !== 'image' && (
-            <TabDials key={tab} kind={tab} lab={lab} update={update} reextract={reextract} scrub={scrub} onScrub={setScrub} />
+            <TabDials key={tab} kind={tab} lab={lab} update={update} reextract={reextract} />
           )}
         </aside>
       </div>

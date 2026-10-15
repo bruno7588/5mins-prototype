@@ -72,7 +72,8 @@ function LabCanvas({ lab, time, onPan, onZoom, ref, flowers }: Props) {
   const [failure, setFailure] = useState<string | null>(null)
   const reduced = usePrefersReducedMotion()
 
-  const needsPhoto = lab.gradient.sourceMode !== 'palette'
+  // Abstraction below 1 shows the photo itself, whatever the source mode.
+  const needsPhoto = lab.gradient.sourceMode !== 'palette' || lab.gradient.abstraction < 1
   const photoSrc = needsPhoto ? flowers.find((f) => f.id === lab.flowerId)?.src : undefined
   const [photo, setPhoto] = useState<HTMLImageElement | null>(null)
 

@@ -15,7 +15,7 @@ export interface Flower {
 }
 
 export type SourceMode = 'palette' | 'photo' | 'mix'
-export type NoiseType = 'white' | 'blue' | 'value' | 'simplex' | 'fbm' | 'worley'
+export type NoiseType = 'white' | 'blue' | 'value' | 'simplex' | 'fbm' | 'worley' | 'paper' | 'dither' | 'halftone'
 export type BlendMode = 'soft-light' | 'overlay' | 'add' | 'multiply'
 
 /** One colour point of the gradient: a palette colour placed where it sits in the photo. */
@@ -31,6 +31,8 @@ export interface PalettePoint {
 }
 
 export interface GradientSettings {
+  /** 0 = the photo as it is (no gradient, grain or motion), 1 = the full abstract gradient. */
+  abstraction: number
   sourceMode: SourceMode
   /** 0 = palette only, 1 = blurred photo only (used when sourceMode is 'mix'). */
   mix: number
@@ -64,6 +66,8 @@ export interface NoiseSettings {
   colour: number
   /** 0 = even grain, 1 = grain mostly in midtones */
   luma: number
+  /** 0-1: grain roughens the edges between colours (Paper Shaders' grain mixer) */
+  distortion: number
 }
 
 export interface MotionSettings {
@@ -88,7 +92,8 @@ export interface MotionSettings {
   loopSeconds: number
   /** Grain changes over time (at grainFps) instead of staying fixed. */
   grainAnimated: boolean
-  grainFps: 12 | 24
+  /** Grain frames per second: 2 to 24, in steps of 2. */
+  grainFps: number
 }
 
 export type AspectRatio = '1:1' | '16:9' | '9:16' | '4:3' | '3:4'
@@ -149,6 +154,7 @@ export interface ShaderPreset {
 }
 
 export const DEFAULT_GRADIENT: GradientSettings = {
+  abstraction: 0,
   sourceMode: 'palette',
   mix: 0.35,
   blur: 0.8,
@@ -169,6 +175,7 @@ export const DEFAULT_NOISE: NoiseSettings = {
   blend: 'soft-light',
   colour: 0.15,
   luma: 0.5,
+  distortion: 0,
 }
 
 export const DEFAULT_MOTION: MotionSettings = {

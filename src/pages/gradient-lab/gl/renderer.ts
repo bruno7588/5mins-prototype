@@ -24,15 +24,15 @@ const TAU = Math.PI * 2
 const NOISE_RADIUS = 0.8
 
 const SOURCE_MODES: Record<SourceMode, number> = { palette: 0, photo: 1, mix: 2 }
-const NOISE_TYPES: Record<NoiseType, number> = { white: 0, blue: 1, value: 2, simplex: 3, fbm: 4, worley: 5 }
+const NOISE_TYPES: Record<NoiseType, number> = { white: 0, blue: 1, value: 2, simplex: 3, fbm: 4, worley: 5, paper: 6, dither: 7, halftone: 8 }
 const BLEND_MODES: Record<BlendMode, number> = { 'soft-light': 0, overlay: 1, add: 2, multiply: 3 }
 
 const UNIFORMS = [
   'u_resolution', 'u_dpr', 'u_aspectScale', 'u_baseTurns', 'u_count', 'u_oklab', 'u_points', 'u_weights', 'u_softness',
-  'u_mode', 'u_mix', 'u_photo', 'u_lod', 'u_texel',
+  'u_mode', 'u_mix', 'u_photo', 'u_lod', 'u_texel', 'u_abstract', 'u_maxLod',
   'u_scale', 'u_rotation', 'u_offset', 'u_swirl', 'u_distortion', 'u_phase',
   'u_warp', 'u_warpOctaves', 'u_warpCoord', 'u_flow',
-  'u_noiseType', 'u_noiseSize', 'u_noiseIntensity', 'u_blend', 'u_noiseColour', 'u_noiseLuma', 'u_grainSeed',
+  'u_noiseType', 'u_noiseSize', 'u_noiseIntensity', 'u_blend', 'u_noiseColour', 'u_noiseLuma', 'u_grainSeed', 'u_grainDistort',
 ] as const
 type UniformName = (typeof UNIFORMS)[number]
 
@@ -230,6 +230,10 @@ export function createRenderer(canvas: HTMLCanvasElement): GradientRenderer | nu
 
       gl.uniform1i(loc.u_mode, mode)
       gl.uniform1f(loc.u_mix, g.mix)
+      /* Abstraction only means something with a photo; without one it is the gradient. */
+      const abstract = hasPhoto ? Math.min(1, Math.max(0, g.abstraction ?? 1)) : 1
+      gl.uniform1f(loc.u_abstract, abstract)
+      gl.uniform1f(loc.u_maxLod, maxLod)
       gl.uniform1i(loc.u_photo, 0)
       gl.uniform1f(loc.u_lod, g.blur * maxLod)
       gl.uniform1f(loc.u_texel, 1 / photoSize)
@@ -247,11 +251,12 @@ export function createRenderer(canvas: HTMLCanvasElement): GradientRenderer | nu
 
       gl.uniform1i(loc.u_noiseType, NOISE_TYPES[n.type] ?? 0)
       gl.uniform1f(loc.u_noiseSize, n.size)
-      gl.uniform1f(loc.u_noiseIntensity, n.intensity)
+      gl.uniform1f(loc.u_noiseIntensity, (n.intensity) * abstract)
       gl.uniform1i(loc.u_blend, BLEND_MODES[n.blend] ?? 0)
       gl.uniform1f(loc.u_noiseColour, n.colour)
       gl.uniform1f(loc.u_noiseLuma, n.luma)
       gl.uniform1f(loc.u_grainSeed, grainSeed)
+      gl.uniform1f(loc.u_grainDistort, n.distortion * abstract)
 
       gl.drawArrays(gl.TRIANGLES, 0, 3)
     },

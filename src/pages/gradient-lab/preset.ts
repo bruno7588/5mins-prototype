@@ -21,7 +21,7 @@ import {
    documented in types.ts. */
 
 const SOURCE_MODES: SourceMode[] = ['palette', 'photo', 'mix']
-const NOISE_TYPES: NoiseType[] = ['white', 'blue', 'value', 'simplex', 'fbm', 'worley']
+const NOISE_TYPES: NoiseType[] = ['white', 'blue', 'value', 'simplex', 'fbm', 'worley', 'paper', 'dither', 'halftone']
 const BLEND_MODES: BlendMode[] = ['soft-light', 'overlay', 'add', 'multiply']
 const MAX_PALETTE = 8
 const ASPECTS = Object.keys(ASPECT_VALUES) as AspectRatio[]
@@ -96,6 +96,8 @@ function parseGradient(v: unknown): GradientSettings {
   const p = 'gradient'
   const g = obj(v, p)
   return {
+    // Optional: presets saved before it existed are the full gradient.
+    abstraction: g.abstraction === undefined ? 1 : num(g, 'abstraction', p, 0, 1),
     sourceMode: oneOf(g, 'sourceMode', p, SOURCE_MODES),
     mix: num(g, 'mix', p, 0, 1),
     blur: num(g, 'blur', p, 0, 1),
@@ -120,6 +122,8 @@ function parseNoise(v: unknown): NoiseSettings {
     blend: oneOf(n, 'blend', p, BLEND_MODES),
     colour: num(n, 'colour', p, 0, 1),
     luma: num(n, 'luma', p, 0, 1),
+    // Added later, so older presets have none.
+    distortion: n.distortion === undefined ? 0 : num(n, 'distortion', p, 0, 1),
   }
 }
 
@@ -127,7 +131,7 @@ function parseMotion(v: unknown): MotionSettings {
   const p = 'motion'
   const m = obj(v, p)
   const fps = m.grainFps
-  if (fps !== 12 && fps !== 24) throw new Error('motion.grainFps must be 12 or 24.')
+  if (typeof fps !== 'number' || fps < 2 || fps > 24 || fps % 2 !== 0) throw new Error('motion.grainFps must be an even number from 2 to 24.')
   return {
     playing: bool(m, 'playing', p),
     speed: num(m, 'speed', p, 0, 3),

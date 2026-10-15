@@ -25,6 +25,8 @@ uniform float u_mix;
 uniform sampler2D u_photo;   // SRGB8_ALPHA8, so samples come back linear
 uniform float u_lod;
 uniform float u_texel;       // 1 / photo size
+uniform float u_abstract;    // 0 = the photo as it is, 1 = the full gradient
+uniform float u_maxLod;      // top mip level of the photo
 
 // UV pipeline
 uniform float u_scale;
@@ -39,13 +41,14 @@ uniform vec4 u_warpCoord;    // xy: seed offset, zw: time coordinate (a circle w
 uniform vec2 u_flow;
 
 // Grain
-uniform int u_noiseType;     // 0 white, 1 blue, 2 value, 3 simplex, 4 fbm, 5 worley
+uniform int u_noiseType;     // 0 white, 1 blue, 2 value, 3 simplex, 4 fbm, 5 worley, 6 paper, 7 dither, 8 halftone
 uniform float u_noiseSize;
 uniform float u_noiseIntensity;
 uniform int u_blend;         // 0 soft-light, 1 overlay, 2 add, 3 multiply
 uniform float u_noiseColour;
 uniform float u_noiseLuma;
 uniform float u_grainSeed;
+uniform float u_grainDistort; // 0-1: grain roughens the edges between colours
 
 out vec4 outColor;
 
@@ -237,6 +240,46 @@ float worley(vec2 q, float seed) {
   return sqrt(best);
 }
 
+/* Paper: fine roughness flecks plus curly fibres. Adapted from Paper Shaders'
+   paper-texture (Apache-2.0, github.com/paper-design/shaders), on hashed
+   value noise instead of its noise texture. */
+float paperGrain(vec2 q, float seed) {
+  // Roughness: two stretched multi-octave fields; their squared difference makes sharp flecks.
+  vec2 u = q / vec2(2.0, 4.0);
+  vec2 r = vec2(0.0);
+  float amp = 0.5, norm = 0.0, f = 1.0;
+  for (int i = 0; i < 4; i++) {
+    float s = seed + float(i) * 2.0;
+    r += amp * vec2(valueNoise(u * f, s), valueNoise(u * f + 17.0, s + 1.0));
+    norm += amp;
+    amp *= 0.8;
+    f *= 2.1;
+  }
+  r /= norm;
+  float dx = 0.5 + r.x - r.y;
+  float rough = 3.0 * dx * dx - 0.7;
+
+  // Fibre: the gradient length of rotated octaves traces thin, curly threads.
+  vec2 grad = vec2(0.0);
+  float sc = 1.0;
+  amp = 1.0;
+  f = 0.12;
+  for (int i = 0; i < 5; i++) {
+    float an = float(i) * 0.8;
+    float rc = cos(an), rs = sin(an);
+    vec2 v = mat2(rc, rs, -rs, rc) * q * f;
+    float s = seed + 20.0 + float(i);
+    float n0 = valueNoise(v, s);
+    vec2 d = vec2(valueNoise(v + vec2(0.05, 0.0), s) - n0, valueNoise(v + vec2(0.0, 0.05), s) - n0) / 0.05;
+    grad += amp * sc * d;
+    sc *= 1.7;
+    amp *= 0.5;
+    f *= 1.7;
+  }
+  float fibre = clamp(0.333 * length(grad), 0.0, 1.0);
+  return rough * 0.45 + (fibre - 0.35) * 0.6;
+}
+
 /* One zero-centred grain channel, roughly in -0.5..0.5. `ch` decorrelates channels. */
 float grain(vec2 q, float ch) {
   float seed = u_grainSeed * 3.0 + ch;
@@ -254,12 +297,42 @@ float grain(vec2 q, float ch) {
     float n = snoise(s) * 0.5 + snoise(s * 2.0 + 11.0) * 0.25 + snoise(s * 4.0 + 23.0) * 0.125;
     return n * 0.7;
   }
+  if (u_noiseType == 6) return paperGrain(q + shift, seed);
   return (worley(q, seed) - 0.42) * 1.4;
+}
+
+/* Bayer thresholds, static per pixel so they never flicker. */
+float bayer2(vec2 a) { a = floor(a); return fract(a.x / 2.0 + a.y * a.y * 0.75); }
+float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
+float bayer8(vec2 a) { return bayer4(0.5 * a) * 0.25 + bayer2(a); }
+
+/* Dither: ordered 8x8 Bayer down to a few levels per channel; more intensity,
+   fewer levels. After Paper Shaders' image-dithering (Apache-2.0). */
+vec3 ditherColour(vec3 c, vec2 q) {
+  float levels = floor(mix(12.0, 2.0, u_noiseIntensity)) - 1.0;
+  vec2 shift = floor(hash33(vec3(u_grainSeed, 5.0, 1.0)).xy * 8.0);
+  return floor(c * levels + bayer8(q + shift)) / levels;
+}
+
+/* Halftone: a 45-degree dot screen; dot area follows darkness, ink and paper
+   keep the colour. After Paper Shaders' halftone-dots (Apache-2.0). */
+vec3 halftoneColour(vec3 c) {
+  vec2 h = mat2(0.7071, 0.7071, -0.7071, 0.7071) * gl_FragCoord.xy / max(u_noiseSize * u_dpr * 6.0, 1e-3);
+  float d = length(fract(h) - 0.5);
+  float luma = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  float r = sqrt(clamp(1.0 - luma, 0.0, 1.0)) * 0.72;
+  float aa = max(fwidth(d), 1e-4);
+  float ink = 1.0 - smoothstep(r - aa, r + aa, d);
+  vec3 paper = min(c * 1.3 + 0.08, 1.0);
+  return mix(c, mix(paper, c * 0.45, ink), u_noiseIntensity);
 }
 
 vec3 applyGrain(vec3 c) {
   if (u_noiseIntensity <= 0.0) return c;
   vec2 q = gl_FragCoord.xy / max(u_noiseSize * u_dpr, 1e-3);
+  // Whole-pixel cells, or uneven 1- and 2-pixel cells show up as stripes.
+  if (u_noiseType == 7) return ditherColour(c, floor(gl_FragCoord.xy / max(floor(u_noiseSize * u_dpr + 0.5), 1.0)));
+  if (u_noiseType == 8) return halftoneColour(c);
   float mono = grain(q, 0.0);
   vec3 g = vec3(mono);
   if (u_noiseColour > 0.001) {
@@ -274,9 +347,14 @@ vec3 applyGrain(vec3 c) {
   return c * (1.0 + g * k * 2.0);                                             // multiply
 }
 
-/* 4x4 Bayer threshold, static per pixel so it never flickers. */
-float bayer2(vec2 a) { a = floor(a); return fract(a.x / 2.0 + a.y * a.y * 0.75); }
-float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
+/* Clockwise quarter turns of what is sampled. y is down, so sampling at
+   (y, -x) shows the texture turned clockwise. */
+vec2 turn(vec2 p) {
+  if (u_baseTurns == 1) return vec2(p.y, -p.x);
+  if (u_baseTurns == 2) return -p;
+  if (u_baseTurns == 3) return vec2(-p.y, p.x);
+  return p;
+}
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution;
@@ -286,6 +364,11 @@ void main() {
   float cr = cos(u_rotation), sr = sin(u_rotation);
   p = mat2(cr, sr, -sr, cr) * p;
   p -= u_offset * 0.5;
+
+  /* The photo as it is: framed (zoom, rotation, focal point, quarter turns) but
+     not swirled, warped or moved. It softens as abstraction rises. */
+  vec2 framed = turn(p);
+  vec3 raw = textureLod(u_photo, framed + 0.5, u_abstract * u_maxLod * 0.7).rgb;
 
   float a = u_swirl * length(p) * 6.0;
   float ca = cos(a), sa = sin(a);
@@ -305,14 +388,22 @@ void main() {
   /* Turn what is sampled (palette points and photo), not the motion: the warp
      and flow above look the same whichever way the texture faces. y is down,
      so sampling at (y, -x) shows the texture turned clockwise. */
-  if (u_baseTurns == 1) p = vec2(p.y, -p.x);
-  else if (u_baseTurns == 2) p = -p;
-  else if (u_baseTurns == 3) p = vec2(-p.y, p.x);
+  p = turn(p);
+
+  /* Grain distortion: a per-grain jitter of where the gradient is sampled, so
+     the edges between colours turn sandy (Paper Shaders' grain mixer, Apache-2.0). */
+  if (u_grainDistort > 0.0) {
+    vec2 gq = gl_FragCoord.xy / max(u_noiseSize * u_dpr, 1e-3);
+    p += (hash33(vec3(floor(gq), u_grainSeed * 3.0 + 11.0)).xy - 0.5) * u_grainDistort * 0.35;
+  }
 
   vec3 col;
   if (u_mode == 0) col = paletteColour(p);
   else if (u_mode == 1) col = photoColour(p);
   else col = mix(paletteColour(p), photoColour(p), u_mix);
+
+  /* Abstraction: the photo melts into the gradient (u_abstract is 1 without a photo). */
+  col = mix(raw, col, smoothstep(0.0, 1.0, u_abstract));
 
   vec3 srgb = applyGrain(linearToSrgb(col));
   srgb += (bayer4(gl_FragCoord.xy) - 0.5) / 255.0;
