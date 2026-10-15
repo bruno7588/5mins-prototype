@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "name": "Gradient 6",
+  "source": {
+    "flowerId": "pink-hyacinths-blooming-in-a-green-garden-2026-09-24-18-34-2-mv9vh2wm",
+    "palette": [
+      {
+        "color": "#bb883c",
+        "x": 0.5616067377495463,
+        "y": 0.5295910843920145,
+        "weight": 0.26904296875
+      },
+      {
+        "color": "#597f95",
+        "x": 0.516170431211499,
+        "y": 0.15583290554414783,
+        "weight": 0.23779296875
+      },
+      {
+        "color": "#d48500",
+        "x": 0.38441849571734477,
+        "y": 0.7416856263383298,
+        "weight": 0.22802734375
+      },
+      {
+        "color": "#568250",
+        "x": 0.5627475792253521,
+        "y": 0.27266725352112675,
+        "weight": 0.138671875
+      },
+      {
+        "color": "#e25f00",
+        "x": 0.4781310328185328,
+        "y": 0.8976833976833977,
+        "weight": 0.12646484375
+      }
+    ]
+  },
+  "gradient": {
+    "abstraction": 0.8,
+    "sourceMode": "palette",
+    "mix": 0.35,
+    "blur": 0.8,
+    "softness": 3.5,
+    "scale": 0.97,
+    "rotation": 161,
+    "offsetX": 0.07,
+    "offsetY": -0.22,
+    "distortion": 0.11,
+    "swirl": 0.15,
+    "seed": 354
+  },
+  "noise": {
+    "type": "dither",
+    "size": 6,
+    "intensity": 0.16,
+    "blend": "overlay",
+    "colour": 0.24,
+    "luma": 1,
+    "distortion": 1
+  },
+  "motion": {
+    "playing": true,
+    "speed": 0.16,
+    "randomness": 0.4,
+    "flowAngle": 24,
+    "flowStrength": 0.1,
+    "warp": 0.4,
+    "warpOctaves": 2,
+    "swirlMotion": 0.2,
+    "loop": true,
+    "loopSeconds": 24,
+    "grainAnimated": false,
+    "grainFps": 2
+  },
+  "framing": {
+    "aspect": "1:1",
+    "renderSize": 512,
+    "rotate": 0
+  }
+}

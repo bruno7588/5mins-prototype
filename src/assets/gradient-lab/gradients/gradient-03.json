@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "name": "Gradient 3",
+  "source": {
+    "flowerId": "colorful-tulips-blooming-in-a-lush-green-garden-2026-09-23-2-mv9vgg95",
+    "palette": [
+      {
+        "color": "#62852a",
+        "x": 0.5176619224422442,
+        "y": 0.6274494636963697,
+        "weight": 0.2958984375
+      },
+      {
+        "color": "#e06bb0",
+        "x": 0.37723214285714285,
+        "y": 0.3837594696969697,
+        "weight": 0.2255859375
+      },
+      {
+        "color": "#7eb000",
+        "x": 0.5635328389830508,
+        "y": 0.550097104519774,
+        "weight": 0.216064453125
+      },
+      {
+        "color": "#e0c700",
+        "x": 0.6283162434895834,
+        "y": 0.3968912760416667,
+        "weight": 0.1875
+      },
+      {
+        "color": "#c2002d",
+        "x": 0.2956280537459283,
+        "y": 0.46022495928338764,
+        "weight": 0.074951171875
+      }
+    ]
+  },
+  "gradient": {
+    "abstraction": 0.8,
+    "sourceMode": "palette",
+    "mix": 0.35,
+    "blur": 0.8,
+    "softness": 3.5,
+    "scale": 0.97,
+    "rotation": 161,
+    "offsetX": 0.07,
+    "offsetY": -0.22,
+    "distortion": 0.11,
+    "swirl": 0.15,
+    "seed": 354
+  },
+  "noise": {
+    "type": "dither",
+    "size": 6,
+    "intensity": 0.16,
+    "blend": "overlay",
+    "colour": 0.24,
+    "luma": 1,
+    "distortion": 1
+  },
+  "motion": {
+    "playing": true,
+    "speed": 0.16,
+    "randomness": 0.4,
+    "flowAngle": 24,
+    "flowStrength": 0.1,
+    "warp": 0.4,
+    "warpOctaves": 2,
+    "swirlMotion": 0.2,
+    "loop": true,
+    "loopSeconds": 24,
+    "grainAnimated": false,
+    "grainFps": 2
+  },
+  "framing": {
+    "aspect": "1:1",
+    "renderSize": 512,
+    "rotate": 0
+  }
+}

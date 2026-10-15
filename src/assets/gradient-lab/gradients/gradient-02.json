@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "name": "Gradient 2",
+  "source": {
+    "flowerId": "purple-crocus-flowers-blooming-in-spring-sunlight-2026-09-25-mv9vh9ez",
+    "palette": [
+      {
+        "color": "#ead700",
+        "x": 0.509917835032775,
+        "y": 0.8046761198106337,
+        "weight": 0.335205078125
+      },
+      {
+        "color": "#615712",
+        "x": 0.6080217189160467,
+        "y": 0.2553716126461211,
+        "weight": 0.229736328125
+      },
+      {
+        "color": "#9a7d5f",
+        "x": 0.35961003309265943,
+        "y": 0.22547194645006016,
+        "weight": 0.202880859375
+      },
+      {
+        "color": "#a9a000",
+        "x": 0.4857175736497545,
+        "y": 0.5873184328968903,
+        "weight": 0.149169921875
+      },
+      {
+        "color": "#cb40d7",
+        "x": 0.5297794117647059,
+        "y": 0.46075367647058824,
+        "weight": 0.0830078125
+      }
+    ]
+  },
+  "gradient": {
+    "abstraction": 0.8,
+    "sourceMode": "palette",
+    "mix": 0.35,
+    "blur": 0.8,
+    "softness": 3.5,
+    "scale": 0.97,
+    "rotation": 161,
+    "offsetX": 0.07,
+    "offsetY": -0.22,
+    "distortion": 0.11,
+    "swirl": 0.15,
+    "seed": 354
+  },
+  "noise": {
+    "type": "dither",
+    "size": 6,
+    "intensity": 0.16,
+    "blend": "overlay",
+    "colour": 0.24,
+    "luma": 1,
+    "distortion": 1
+  },
+  "motion": {
+    "playing": true,
+    "speed": 0.16,
+    "randomness": 0.4,
+    "flowAngle": 24,
+    "flowStrength": 0.1,
+    "warp": 0.4,
+    "warpOctaves": 2,
+    "swirlMotion": 0.2,
+    "loop": true,
+    "loopSeconds": 24,
+    "grainAnimated": false,
+    "grainFps": 2
+  },
+  "framing": {
+    "aspect": "1:1",
+    "renderSize": 512,
+    "rotate": 0
+  }
+}

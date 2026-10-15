@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "name": "Gradient 7",
+  "source": {
+    "flowerId": "white-blossoms-and-pink-buds-in-spring-2026-09-21-13-14-52-u-mv9vhskp",
+    "palette": [
+      {
+        "color": "#00a3bd",
+        "x": 0.4653098600844773,
+        "y": 0.4286150343189018,
+        "weight": 0.3099836333878887
+      },
+      {
+        "color": "#d2b2b1",
+        "x": 0.5444624442586399,
+        "y": 0.415003135451505,
+        "weight": 0.2936170212765957
+      },
+      {
+        "color": "#00b9d4",
+        "x": 0.4496691176470588,
+        "y": 0.6481433823529412,
+        "weight": 0.27823240589198034
+      },
+      {
+        "color": "#b15265",
+        "x": 0.5599498056994818,
+        "y": 0.6903740284974094,
+        "weight": 0.06317512274959083
+      },
+      {
+        "color": "#9f5d11",
+        "x": 0.5953311011904762,
+        "y": 0.6875,
+        "weight": 0.05499181669394435
+      }
+    ]
+  },
+  "gradient": {
+    "abstraction": 0.8,
+    "sourceMode": "palette",
+    "mix": 0.35,
+    "blur": 0.8,
+    "softness": 3.5,
+    "scale": 0.97,
+    "rotation": 161,
+    "offsetX": 0.07,
+    "offsetY": -0.22,
+    "distortion": 0.11,
+    "swirl": 0.15,
+    "seed": 354
+  },
+  "noise": {
+    "type": "dither",
+    "size": 6,
+    "intensity": 0.16,
+    "blend": "overlay",
+    "colour": 0.24,
+    "luma": 1,
+    "distortion": 1
+  },
+  "motion": {
+    "playing": true,
+    "speed": 0.16,
+    "randomness": 0.4,
+    "flowAngle": 24,
+    "flowStrength": 0.1,
+    "warp": 0.4,
+    "warpOctaves": 2,
+    "swirlMotion": 0.2,
+    "loop": true,
+    "loopSeconds": 24,
+    "grainAnimated": false,
+    "grainFps": 2
+  },
+  "framing": {
+    "aspect": "1:1",
+    "renderSize": 512,
+    "rotate": 0
+  }
+}

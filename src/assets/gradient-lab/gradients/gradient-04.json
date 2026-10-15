@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "name": "Gradient 4",
+  "source": {
+    "flowerId": "beautiful-bluebells-blooming-in-a-green-spring-mea-2026-09-2-mv9vgce1",
+    "palette": [
+      {
+        "color": "#7aa57d",
+        "x": 0.46112200184501845,
+        "y": 0.3222613007380074,
+        "weight": 0.330810546875
+      },
+      {
+        "color": "#68922d",
+        "x": 0.5592013888888889,
+        "y": 0.5171759259259259,
+        "weight": 0.32958984375
+      },
+      {
+        "color": "#3f5d29",
+        "x": 0.47026150932400934,
+        "y": 0.7758595571095571,
+        "weight": 0.20947265625
+      },
+      {
+        "color": "#029fd2",
+        "x": 0.5173717751842751,
+        "y": 0.40584689803439805,
+        "weight": 0.099365234375
+      },
+      {
+        "color": "#006cd3",
+        "x": 0.43018353174603174,
+        "y": 0.6530257936507936,
+        "weight": 0.03076171875
+      }
+    ]
+  },
+  "gradient": {
+    "abstraction": 0.8,
+    "sourceMode": "palette",
+    "mix": 0.35,
+    "blur": 0.8,
+    "softness": 3.5,
+    "scale": 0.97,
+    "rotation": 161,
+    "offsetX": 0.07,
+    "offsetY": -0.22,
+    "distortion": 0.11,
+    "swirl": 0.15,
+    "seed": 354
+  },
+  "noise": {
+    "type": "dither",
+    "size": 6,
+    "intensity": 0.16,
+    "blend": "overlay",
+    "colour": 0.24,
+    "luma": 1,
+    "distortion": 1
+  },
+  "motion": {
+    "playing": true,
+    "speed": 0.16,
+    "randomness": 0.4,
+    "flowAngle": 24,
+    "flowStrength": 0.1,
+    "warp": 0.4,
+    "warpOctaves": 2,
+    "swirlMotion": 0.2,
+    "loop": true,
+    "loopSeconds": 24,
+    "grainAnimated": false,
+    "grainFps": 2
+  },
+  "framing": {
+    "aspect": "1:1",
+    "renderSize": 512,
+    "rotate": 0
+  }
+}

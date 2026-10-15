@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "name": "Gradient 5",
+  "source": {
+    "flowerId": "soft-blue-flowers-blooming-in-spring-sunlight-2026-09-23-06--mv9vhflk",
+    "palette": [
+      {
+        "color": "#7ac1b2",
+        "x": 0.39264231220657275,
+        "y": 0.7192634976525821,
+        "weight": 0.3538205980066445
+      },
+      {
+        "color": "#7c9cdd",
+        "x": 0.6763300619834711,
+        "y": 0.7210743801652892,
+        "weight": 0.2009966777408638
+      },
+      {
+        "color": "#5ebb7f",
+        "x": 0.31628684497816595,
+        "y": 0.8166280021834061,
+        "weight": 0.19019933554817275
+      },
+      {
+        "color": "#1dad49",
+        "x": 0.2449314024390244,
+        "y": 0.8531631097560975,
+        "weight": 0.17026578073089702
+      },
+      {
+        "color": "#007b46",
+        "x": 0.3518688725490196,
+        "y": 0.8746936274509803,
+        "weight": 0.08471760797342193
+      }
+    ]
+  },
+  "gradient": {
+    "abstraction": 0.8,
+    "sourceMode": "palette",
+    "mix": 0.35,
+    "blur": 0.8,
+    "softness": 3.5,
+    "scale": 0.97,
+    "rotation": 161,
+    "offsetX": 0.07,
+    "offsetY": -0.22,
+    "distortion": 0.11,
+    "swirl": 0.15,
+    "seed": 354
+  },
+  "noise": {
+    "type": "dither",
+    "size": 6,
+    "intensity": 0.16,
+    "blend": "overlay",
+    "colour": 0.24,
+    "luma": 1,
+    "distortion": 1
+  },
+  "motion": {
+    "playing": true,
+    "speed": 0.16,
+    "randomness": 0.4,
+    "flowAngle": 24,
+    "flowStrength": 0.1,
+    "warp": 0.4,
+    "warpOctaves": 2,
+    "swirlMotion": 0.2,
+    "loop": true,
+    "loopSeconds": 24,
+    "grainAnimated": false,
+    "grainFps": 2
+  },
+  "framing": {
+    "aspect": "1:1",
+    "renderSize": 512,
+    "rotate": 0
+  }
+}

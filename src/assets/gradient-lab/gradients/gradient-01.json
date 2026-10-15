@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "name": "Gradient 1",
+  "source": {
+    "flowerId": "grape-hyacinths-spring-bloom-close-up-in-sunlight-2026-09-23-mv9vgxjr",
+    "palette": [
+      {
+        "color": "#eba84e",
+        "x": 0.5741413474240423,
+        "y": 0.2505882595772787,
+        "weight": 0.36962890625
+      },
+      {
+        "color": "#966ac9",
+        "x": 0.2632734977949283,
+        "y": 0.5003531560088202,
+        "weight": 0.221435546875
+      },
+      {
+        "color": "#c3722e",
+        "x": 0.6542602211796247,
+        "y": 0.6534433646112601,
+        "weight": 0.18212890625
+      },
+      {
+        "color": "#dcb030",
+        "x": 0.5032482675906184,
+        "y": 0.7943929904051172,
+        "weight": 0.114501953125
+      },
+      {
+        "color": "#854124",
+        "x": 0.46925951086956524,
+        "y": 0.7711956521739131,
+        "weight": 0.1123046875
+      }
+    ]
+  },
+  "gradient": {
+    "abstraction": 0.8,
+    "sourceMode": "palette",
+    "mix": 0.35,
+    "blur": 0.8,
+    "softness": 3.5,
+    "scale": 0.97,
+    "rotation": 161,
+    "offsetX": 0.07,
+    "offsetY": -0.22,
+    "distortion": 0.11,
+    "swirl": 0.15,
+    "seed": 354
+  },
+  "noise": {
+    "type": "dither",
+    "size": 6,
+    "intensity": 0.16,
+    "blend": "overlay",
+    "colour": 0.24,
+    "luma": 1,
+    "distortion": 1
+  },
+  "motion": {
+    "playing": true,
+    "speed": 0.16,
+    "randomness": 0.4,
+    "flowAngle": 24,
+    "flowStrength": 0.1,
+    "warp": 0.4,
+    "warpOctaves": 2,
+    "swirlMotion": 0.2,
+    "loop": true,
+    "loopSeconds": 24,
+    "grainAnimated": false,
+    "grainFps": 2
+  },
+  "framing": {
+    "aspect": "1:1",
+    "renderSize": 512,
+    "rotate": 0
+  }
+}

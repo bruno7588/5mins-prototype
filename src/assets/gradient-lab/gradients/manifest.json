@@ -1,1 +1,1046 @@
-[]
+[
+  {
+    "slot": 1,
+    "name": "Gradient 1",
+    "image": "/src/assets/company-images/default-01.jpg",
+    "savedAt": "2026-10-15T20:12:19.220Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 1",
+      "source": {
+        "flowerId": "grape-hyacinths-spring-bloom-close-up-in-sunlight-2026-09-23-mv9vgxjr",
+        "palette": [
+          {
+            "color": "#eba84e",
+            "x": 0.5741413474240423,
+            "y": 0.2505882595772787,
+            "weight": 0.36962890625
+          },
+          {
+            "color": "#966ac9",
+            "x": 0.2632734977949283,
+            "y": 0.5003531560088202,
+            "weight": 0.221435546875
+          },
+          {
+            "color": "#c3722e",
+            "x": 0.6542602211796247,
+            "y": 0.6534433646112601,
+            "weight": 0.18212890625
+          },
+          {
+            "color": "#dcb030",
+            "x": 0.5032482675906184,
+            "y": 0.7943929904051172,
+            "weight": 0.114501953125
+          },
+          {
+            "color": "#854124",
+            "x": 0.46925951086956524,
+            "y": 0.7711956521739131,
+            "weight": 0.1123046875
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 2,
+    "name": "Gradient 2",
+    "image": "/src/assets/company-images/default-02.jpg",
+    "savedAt": "2026-10-15T20:12:31.855Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 2",
+      "source": {
+        "flowerId": "purple-crocus-flowers-blooming-in-spring-sunlight-2026-09-25-mv9vh9ez",
+        "palette": [
+          {
+            "color": "#ead700",
+            "x": 0.509917835032775,
+            "y": 0.8046761198106337,
+            "weight": 0.335205078125
+          },
+          {
+            "color": "#615712",
+            "x": 0.6080217189160467,
+            "y": 0.2553716126461211,
+            "weight": 0.229736328125
+          },
+          {
+            "color": "#9a7d5f",
+            "x": 0.35961003309265943,
+            "y": 0.22547194645006016,
+            "weight": 0.202880859375
+          },
+          {
+            "color": "#a9a000",
+            "x": 0.4857175736497545,
+            "y": 0.5873184328968903,
+            "weight": 0.149169921875
+          },
+          {
+            "color": "#cb40d7",
+            "x": 0.5297794117647059,
+            "y": 0.46075367647058824,
+            "weight": 0.0830078125
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 3,
+    "name": "Gradient 3",
+    "image": "/src/assets/company-images/default-03.jpg",
+    "savedAt": "2026-10-15T20:12:37.703Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 3",
+      "source": {
+        "flowerId": "colorful-tulips-blooming-in-a-lush-green-garden-2026-09-23-2-mv9vgg95",
+        "palette": [
+          {
+            "color": "#62852a",
+            "x": 0.5176619224422442,
+            "y": 0.6274494636963697,
+            "weight": 0.2958984375
+          },
+          {
+            "color": "#e06bb0",
+            "x": 0.37723214285714285,
+            "y": 0.3837594696969697,
+            "weight": 0.2255859375
+          },
+          {
+            "color": "#7eb000",
+            "x": 0.5635328389830508,
+            "y": 0.550097104519774,
+            "weight": 0.216064453125
+          },
+          {
+            "color": "#e0c700",
+            "x": 0.6283162434895834,
+            "y": 0.3968912760416667,
+            "weight": 0.1875
+          },
+          {
+            "color": "#c2002d",
+            "x": 0.2956280537459283,
+            "y": 0.46022495928338764,
+            "weight": 0.074951171875
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 4,
+    "name": "Gradient 4",
+    "image": "/src/assets/company-images/default-04.jpg",
+    "savedAt": "2026-10-15T20:12:42.218Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 4",
+      "source": {
+        "flowerId": "beautiful-bluebells-blooming-in-a-green-spring-mea-2026-09-2-mv9vgce1",
+        "palette": [
+          {
+            "color": "#7aa57d",
+            "x": 0.46112200184501845,
+            "y": 0.3222613007380074,
+            "weight": 0.330810546875
+          },
+          {
+            "color": "#68922d",
+            "x": 0.5592013888888889,
+            "y": 0.5171759259259259,
+            "weight": 0.32958984375
+          },
+          {
+            "color": "#3f5d29",
+            "x": 0.47026150932400934,
+            "y": 0.7758595571095571,
+            "weight": 0.20947265625
+          },
+          {
+            "color": "#029fd2",
+            "x": 0.5173717751842751,
+            "y": 0.40584689803439805,
+            "weight": 0.099365234375
+          },
+          {
+            "color": "#006cd3",
+            "x": 0.43018353174603174,
+            "y": 0.6530257936507936,
+            "weight": 0.03076171875
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 5,
+    "name": "Gradient 5",
+    "image": "/src/assets/company-images/default-05.jpg",
+    "savedAt": "2026-10-15T20:12:47.432Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 5",
+      "source": {
+        "flowerId": "soft-blue-flowers-blooming-in-spring-sunlight-2026-09-23-06--mv9vhflk",
+        "palette": [
+          {
+            "color": "#7ac1b2",
+            "x": 0.39264231220657275,
+            "y": 0.7192634976525821,
+            "weight": 0.3538205980066445
+          },
+          {
+            "color": "#7c9cdd",
+            "x": 0.6763300619834711,
+            "y": 0.7210743801652892,
+            "weight": 0.2009966777408638
+          },
+          {
+            "color": "#5ebb7f",
+            "x": 0.31628684497816595,
+            "y": 0.8166280021834061,
+            "weight": 0.19019933554817275
+          },
+          {
+            "color": "#1dad49",
+            "x": 0.2449314024390244,
+            "y": 0.8531631097560975,
+            "weight": 0.17026578073089702
+          },
+          {
+            "color": "#007b46",
+            "x": 0.3518688725490196,
+            "y": 0.8746936274509803,
+            "weight": 0.08471760797342193
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 6,
+    "name": "Gradient 6",
+    "image": "/src/assets/company-images/default-06.jpg",
+    "savedAt": "2026-10-15T20:12:54.552Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 6",
+      "source": {
+        "flowerId": "pink-hyacinths-blooming-in-a-green-garden-2026-09-24-18-34-2-mv9vh2wm",
+        "palette": [
+          {
+            "color": "#bb883c",
+            "x": 0.5616067377495463,
+            "y": 0.5295910843920145,
+            "weight": 0.26904296875
+          },
+          {
+            "color": "#597f95",
+            "x": 0.516170431211499,
+            "y": 0.15583290554414783,
+            "weight": 0.23779296875
+          },
+          {
+            "color": "#d48500",
+            "x": 0.38441849571734477,
+            "y": 0.7416856263383298,
+            "weight": 0.22802734375
+          },
+          {
+            "color": "#568250",
+            "x": 0.5627475792253521,
+            "y": 0.27266725352112675,
+            "weight": 0.138671875
+          },
+          {
+            "color": "#e25f00",
+            "x": 0.4781310328185328,
+            "y": 0.8976833976833977,
+            "weight": 0.12646484375
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 7,
+    "name": "Gradient 7",
+    "image": "/src/assets/company-images/default-07.jpg",
+    "savedAt": "2026-10-15T20:13:00.414Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 7",
+      "source": {
+        "flowerId": "white-blossoms-and-pink-buds-in-spring-2026-09-21-13-14-52-u-mv9vhskp",
+        "palette": [
+          {
+            "color": "#00a3bd",
+            "x": 0.4653098600844773,
+            "y": 0.4286150343189018,
+            "weight": 0.3099836333878887
+          },
+          {
+            "color": "#d2b2b1",
+            "x": 0.5444624442586399,
+            "y": 0.415003135451505,
+            "weight": 0.2936170212765957
+          },
+          {
+            "color": "#00b9d4",
+            "x": 0.4496691176470588,
+            "y": 0.6481433823529412,
+            "weight": 0.27823240589198034
+          },
+          {
+            "color": "#b15265",
+            "x": 0.5599498056994818,
+            "y": 0.6903740284974094,
+            "weight": 0.06317512274959083
+          },
+          {
+            "color": "#9f5d11",
+            "x": 0.5953311011904762,
+            "y": 0.6875,
+            "weight": 0.05499181669394435
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 8,
+    "name": "Gradient 8",
+    "image": "/src/assets/company-images/default-08.jpg",
+    "savedAt": "2026-10-15T20:13:06.053Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 8",
+      "source": {
+        "flowerId": "yellow-and-white-flowers-blooming-in-springtime-2026-09-24-1-mv9vhw81",
+        "palette": [
+          {
+            "color": "#c9d600",
+            "x": 0.4267339135021097,
+            "y": 0.5471057489451476,
+            "weight": 0.289306640625
+          },
+          {
+            "color": "#e0e6aa",
+            "x": 0.5726209554334555,
+            "y": 0.28118322649572647,
+            "weight": 0.199951171875
+          },
+          {
+            "color": "#55af00",
+            "x": 0.6128800675675675,
+            "y": 0.7500633445945946,
+            "weight": 0.1806640625
+          },
+          {
+            "color": "#6ccefd",
+            "x": 0.4895133486562942,
+            "y": 0.12753049858557283,
+            "weight": 0.172607421875
+          },
+          {
+            "color": "#478700",
+            "x": 0.4243822674418605,
+            "y": 0.8126816860465116,
+            "weight": 0.157470703125
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 9,
+    "name": "Gradient 9",
+    "image": "/src/assets/company-images/default-09.jpg",
+    "savedAt": "2026-10-15T20:13:12.191Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 9",
+      "source": {
+        "flowerId": "dreamy-close-up-of-white-flowers-with-water-drople-2026-09-2-mv9vgo9s",
+        "palette": [
+          {
+            "color": "#9dc8e5",
+            "x": 0.6297566881918819,
+            "y": 0.49302352398523985,
+            "weight": 0.25723777883246324
+          },
+          {
+            "color": "#188fda",
+            "x": 0.7324598735408561,
+            "y": 0.7800036478599222,
+            "weight": 0.2439487422876127
+          },
+          {
+            "color": "#3bb1dd",
+            "x": 0.7746010638297872,
+            "y": 0.5602393617021276,
+            "weight": 0.2230659705742762
+          },
+          {
+            "color": "#f59ed8",
+            "x": 0.25844332298136646,
+            "y": 0.827833850931677,
+            "weight": 0.15282392026578073
+          },
+          {
+            "color": "#baa6dd",
+            "x": 0.34595197876447875,
+            "y": 0.7182975386100386,
+            "weight": 0.12292358803986711
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 10,
+    "name": "Gradient 10",
+    "image": "/src/assets/company-images/default-10.jpg",
+    "savedAt": "2026-10-15T20:13:17.690Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 10",
+      "source": {
+        "flowerId": "spring-blossom-beauty-delicate-white-flowers-in-b-2026-09-22-mv9vhmbk",
+        "palette": [
+          {
+            "color": "#4e2357",
+            "x": 0.6008607784431138,
+            "y": 0.8239302644710579,
+            "weight": 0.4213624894869638
+          },
+          {
+            "color": "#c77c94",
+            "x": 0.4564867424242424,
+            "y": 0.5022253787878788,
+            "weight": 0.20815811606391926
+          },
+          {
+            "color": "#bb2c47",
+            "x": 0.6669140625,
+            "y": 0.260625,
+            "weight": 0.16820857863751051
+          },
+          {
+            "color": "#d8a662",
+            "x": 0.4797472133757962,
+            "y": 0.25144307324840764,
+            "weight": 0.13204373423044574
+          },
+          {
+            "color": "#9b5627",
+            "x": 0.664623877245509,
+            "y": 0.4301553143712575,
+            "weight": 0.07022708158116064
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 11,
+    "name": "Gradient 11",
+    "image": "/src/assets/company-images/default-11.jpg",
+    "savedAt": "2026-10-15T20:13:23.692Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 11",
+      "source": {
+        "flowerId": "dreamy-floral-blossom-on-pink-abstract-background-2026-09-24-mv9vgtaw",
+        "palette": [
+          {
+            "color": "#e49dad",
+            "x": 0.4731607082488168,
+            "y": 0.4319060598377282,
+            "weight": 0.361083984375
+          },
+          {
+            "color": "#8a505f",
+            "x": 0.5842656893004116,
+            "y": 0.6990097736625515,
+            "weight": 0.35595703125
+          },
+          {
+            "color": "#e64474",
+            "x": 0.4011485927152318,
+            "y": 0.350403559602649,
+            "weight": 0.184326171875
+          },
+          {
+            "color": "#ff154e",
+            "x": 0.6158905632411067,
+            "y": 0.1749320652173913,
+            "weight": 0.061767578125
+          },
+          {
+            "color": "#d5ba39",
+            "x": 0.24932740066225165,
+            "y": 0.5380277317880795,
+            "weight": 0.036865234375
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  },
+  {
+    "slot": 12,
+    "name": "Gradient 12",
+    "image": "/src/assets/company-images/default-12.jpg",
+    "savedAt": "2026-10-15T20:13:29.926Z",
+    "preset": {
+      "version": 1,
+      "name": "Gradient 12",
+      "source": {
+        "flowerId": "delicate-white-blossom-on-a-flowering-branch-2026-09-22-13-1-mv9vgkep",
+        "palette": [
+          {
+            "color": "#52636f",
+            "x": 0.39174107142857145,
+            "y": 0.286796791084855,
+            "weight": 0.3351331893448524
+          },
+          {
+            "color": "#8b8678",
+            "x": 0.4268112562189055,
+            "y": 0.5070869610281924,
+            "weight": 0.21706263498920086
+          },
+          {
+            "color": "#59534a",
+            "x": 0.5366870777027027,
+            "y": 0.5782833614864865,
+            "weight": 0.21310295176385888
+          },
+          {
+            "color": "#d1c3b9",
+            "x": 0.2899228463587922,
+            "y": 0.45363843250444047,
+            "weight": 0.20266378689704823
+          },
+          {
+            "color": "#a18d57",
+            "x": 0.2887113764044944,
+            "y": 0.5678546348314607,
+            "weight": 0.032037437005039596
+          }
+        ]
+      },
+      "gradient": {
+        "abstraction": 0.8,
+        "sourceMode": "palette",
+        "mix": 0.35,
+        "blur": 0.8,
+        "softness": 3.5,
+        "scale": 0.97,
+        "rotation": 161,
+        "offsetX": 0.07,
+        "offsetY": -0.22,
+        "distortion": 0.11,
+        "swirl": 0.15,
+        "seed": 354
+      },
+      "noise": {
+        "type": "dither",
+        "size": 6,
+        "intensity": 0.16,
+        "blend": "overlay",
+        "colour": 0.24,
+        "luma": 1,
+        "distortion": 1
+      },
+      "motion": {
+        "playing": true,
+        "speed": 0.16,
+        "randomness": 0.4,
+        "flowAngle": 24,
+        "flowStrength": 0.1,
+        "warp": 0.4,
+        "warpOctaves": 2,
+        "swirlMotion": 0.2,
+        "loop": true,
+        "loopSeconds": 24,
+        "grainAnimated": false,
+        "grainFps": 2
+      },
+      "framing": {
+        "aspect": "1:1",
+        "renderSize": 512,
+        "rotate": 0
+      }
+    }
+  }
+]

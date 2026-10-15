@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "name": "Gradient 8",
+  "source": {
+    "flowerId": "yellow-and-white-flowers-blooming-in-springtime-2026-09-24-1-mv9vhw81",
+    "palette": [
+      {
+        "color": "#c9d600",
+        "x": 0.4267339135021097,
+        "y": 0.5471057489451476,
+        "weight": 0.289306640625
+      },
+      {
+        "color": "#e0e6aa",
+        "x": 0.5726209554334555,
+        "y": 0.28118322649572647,
+        "weight": 0.199951171875
+      },
+      {
+        "color": "#55af00",
+        "x": 0.6128800675675675,
+        "y": 0.7500633445945946,
+        "weight": 0.1806640625
+      },
+      {
+        "color": "#6ccefd",
+        "x": 0.4895133486562942,
+        "y": 0.12753049858557283,
+        "weight": 0.172607421875
+      },
+      {
+        "color": "#478700",
+        "x": 0.4243822674418605,
+        "y": 0.8126816860465116,
+        "weight": 0.157470703125
+      }
+    ]
+  },
+  "gradient": {
+    "abstraction": 0.8,
+    "sourceMode": "palette",
+    "mix": 0.35,
+    "blur": 0.8,
+    "softness": 3.5,
+    "scale": 0.97,
+    "rotation": 161,
+    "offsetX": 0.07,
+    "offsetY": -0.22,
+    "distortion": 0.11,
+    "swirl": 0.15,
+    "seed": 354
+  },
+  "noise": {
+    "type": "dither",
+    "size": 6,
+    "intensity": 0.16,
+    "blend": "overlay",
+    "colour": 0.24,
+    "luma": 1,
+    "distortion": 1
+  },
+  "motion": {
+    "playing": true,
+    "speed": 0.16,
+    "randomness": 0.4,
+    "flowAngle": 24,
+    "flowStrength": 0.1,
+    "warp": 0.4,
+    "warpOctaves": 2,
+    "swirlMotion": 0.2,
+    "loop": true,
+    "loopSeconds": 24,
+    "grainAnimated": false,
+    "grainFps": 2
+  },
+  "framing": {
+    "aspect": "1:1",
+    "renderSize": 512,
+    "rotate": 0
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "name": "Gradient 10",
+  "source": {
+    "flowerId": "spring-blossom-beauty-delicate-white-flowers-in-b-2026-09-22-mv9vhmbk",
+    "palette": [
+      {
+        "color": "#4e2357",
+        "x": 0.6008607784431138,
+        "y": 0.8239302644710579,
+        "weight": 0.4213624894869638
+      },
+      {
+        "color": "#c77c94",
+        "x": 0.4564867424242424,
+        "y": 0.5022253787878788,
+        "weight": 0.20815811606391926
+      },
+      {
+        "color": "#bb2c47",
+        "x": 0.6669140625,
+        "y": 0.260625,
+        "weight": 0.16820857863751051
+      },
+      {
+        "color": "#d8a662",
+        "x": 0.4797472133757962,
+        "y": 0.25144307324840764,
+        "weight": 0.13204373423044574
+      },
+      {
+        "color": "#9b5627",
+        "x": 0.664623877245509,
+        "y": 0.4301553143712575,
+        "weight": 0.07022708158116064
+      }
+    ]
+  },
+  "gradient": {
+    "abstraction": 0.8,
+    "sourceMode": "palette",
+    "mix": 0.35,
+    "blur": 0.8,
+    "softness": 3.5,
+    "scale": 0.97,
+    "rotation": 161,
+    "offsetX": 0.07,
+    "offsetY": -0.22,
+    "distortion": 0.11,
+    "swirl": 0.15,
+    "seed": 354
+  },
+  "noise": {
+    "type": "dither",
+    "size": 6,
+    "intensity": 0.16,
+    "blend": "overlay",
+    "colour": 0.24,
+    "luma": 1,
+    "distortion": 1
+  },
+  "motion": {
+    "playing": true,
+    "speed": 0.16,
+    "randomness": 0.4,
+    "flowAngle": 24,
+    "flowStrength": 0.1,
+    "warp": 0.4,
+    "warpOctaves": 2,
+    "swirlMotion": 0.2,
+    "loop": true,
+    "loopSeconds": 24,
+    "grainAnimated": false,
+    "grainFps": 2
+  },
+  "framing": {
+    "aspect": "1:1",
+    "renderSize": 512,
+    "rotate": 0
+  }
+}
