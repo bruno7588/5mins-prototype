@@ -57,6 +57,12 @@
   background: var(--cards-background);
 }
 
+/* Menu opened rightwards from a trigger near the left edge: caret on the left. */
+.ram-caret--start {
+  right: auto;
+  left: 16px;
+}
+
 .ram-caret--top {
   top: -6px;
   border-left: 1px solid var(--border-elevated);

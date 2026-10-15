@@ -1,0 +1,208 @@
+/* Gradient Studio storage API (Vercel function), shared by everyone using the
+   Studio on the live site and on localhost. Same setup as comments.ts: Upstash
+   Redis over its REST API, no npm deps, and the link is the password (writes
+   are rate limited per IP). The saved gradients are the app's default company
+   images, so a save shows for everyone straight away.
+
+   Keys
+     gl:flowers        hash  id   -> photo metadata JSON
+     gl:flower:<id>    string     base64 JPEG (1024 x 1024)
+     gl:gradients      hash  slot -> { slot, name, savedAt, preset } JSON
+     gl:gimg:<slot>    string     base64 JPEG (512 x 512, the still)
+
+   Routes (?r=)
+     GET    flowers                      photo list
+     POST   flowers   {name,hue,dataUrl,id?}  add a photo (id only when seeding)
+     DELETE flowers&id=                  remove a photo
+     GET    gradients                    saved gradients, by slot
+     PUT    gradients {slot,name,preset,dataUrl}  save or replace a slot
+     DELETE gradients&slot=              clear a slot
+     GET    image&kind=flower|gradient&id=&v=  the JPEG (cached; v busts it) */
+
+declare const process: { env: Record<string, string | undefined> }
+
+const REDIS_URL = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL
+const REDIS_TOKEN = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN
+
+const ROUTE = '/api/gradient-lab'
+const WRITES_PER_MINUTE = 40
+/* Vercel caps a request body at 4.5 MB; a 1024 px JPEG is well under this. */
+const MAX_IMAGE_CHARS = 3_500_000
+const MAX_PRESET_CHARS = 20_000
+const ID_PATTERN = /^[a-z0-9-]{1,100}$/
+
+interface StoredFlower {
+  id: string
+  name: string
+  hue: number
+  savedAt: string
+}
+
+interface StoredGradient {
+  slot: number
+  name: string
+  savedAt: string
+  preset: unknown
+}
+
+// Same-origin in production; localhost calls the deployed API cross-origin.
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...CORS },
+  })
+
+async function redis(...command: (string | number)[]): Promise<unknown> {
+  const res = await fetch(REDIS_URL!, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${REDIS_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(command),
+  })
+  const data = (await res.json()) as { result?: unknown; error?: string }
+  if (data.error) throw new Error(data.error)
+  return data.result
+}
+
+// HGETALL returns a flat [field, value, field, value, ...] list.
+function parseHash<T>(flat: string[] | null): T[] {
+  const out: T[] = []
+  for (let i = 1; i < (flat ?? []).length; i += 2) out.push(JSON.parse(flat![i]) as T)
+  return out
+}
+
+const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
+
+/** The base64 body of a JPEG data URL, or null. */
+function jpegBase64(v: unknown): string | null {
+  if (typeof v !== 'string' || v.length > MAX_IMAGE_CHARS) return null
+  const match = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(v)
+  return match ? match[1] : null
+}
+
+const imagePath = (kind: 'flower' | 'gradient', id: string | number, savedAt: string) =>
+  `${ROUTE}?r=image&kind=${kind}&id=${encodeURIComponent(String(id))}&v=${encodeURIComponent(savedAt)}`
+
+const flowerOut = (f: StoredFlower) => ({ ...f, src: imagePath('flower', f.id, f.savedAt) })
+const gradientOut = (g: StoredGradient) => ({ ...g, image: imagePath('gradient', g.slot, g.savedAt) })
+
+async function rateLimited(request: Request): Promise<boolean> {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const key = `gl-rl:${ip}:${Math.floor(Date.now() / 60000)}`
+  const count = (await redis('INCR', key)) as number
+  if (count === 1) await redis('EXPIRE', key, 60)
+  return count > WRITES_PER_MINUTE
+}
+
+const notConfigured = () => json({ error: 'Gradient storage is not connected yet.' }, 503)
+const route = (request: Request) => new URL(request.url).searchParams
+
+function slotOf(v: unknown): number | null {
+  const n = typeof v === 'string' ? Number(v) : v
+  return typeof n === 'number' && Number.isInteger(n) && n >= 1 && n <= 999 ? n : null
+}
+
+export function OPTIONS() {
+  return new Response(null, { status: 204, headers: CORS })
+}
+
+export async function GET(request: Request) {
+  if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
+  const params = route(request)
+  const r = params.get('r')
+
+  if (r === 'flowers') {
+    const list = parseHash<StoredFlower>((await redis('HGETALL', 'gl:flowers')) as string[] | null)
+    return json(list.map(flowerOut))
+  }
+
+  if (r === 'gradients') {
+    const list = parseHash<StoredGradient>((await redis('HGETALL', 'gl:gradients')) as string[] | null)
+    list.sort((a, b) => a.slot - b.slot)
+    return json(list.map(gradientOut))
+  }
+
+  if (r === 'image') {
+    const kind = params.get('kind')
+    const id = params.get('id') ?? ''
+    const key =
+      kind === 'flower' && ID_PATTERN.test(id) ? `gl:flower:${id}` : kind === 'gradient' && slotOf(id) ? `gl:gimg:${slotOf(id)}` : null
+    if (!key) return json({ error: 'kind and id are required' }, 400)
+    const base64 = (await redis('GET', key)) as string | null
+    if (!base64) return json({ error: 'Not found' }, 404)
+    const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
+    return new Response(bytes, {
+      headers: {
+        'Content-Type': 'image/jpeg',
+        // The URL carries the save time, so a saved image never changes under it.
+        'Cache-Control': params.get('v') ? 'public, max-age=31536000, immutable' : 'no-store',
+        ...CORS,
+      },
+    })
+  }
+
+  return json({ error: 'Unknown route' }, 404)
+}
+
+export async function POST(request: Request) {
+  if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
+  if (route(request).get('r') !== 'flowers') return json({ error: 'Unknown route' }, 404)
+  if (await rateLimited(request)) return json({ error: 'Too many saves, try again in a minute.' }, 429)
+  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
+  const name = str(body?.name, 200)
+  const hue = typeof body?.hue === 'number' && body.hue >= -1 && body.hue < 360 ? Math.round(body.hue) : -1
+  const base64 = jpegBase64(body?.dataUrl)
+  if (!name || !base64) return json({ error: 'name and a JPEG dataUrl are required' }, 400)
+  const slug = name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'image'
+  const given = str(body?.id, 100)
+  const id = given && ID_PATTERN.test(given) ? given : `${slug}-${Date.now().toString(36)}`
+  const flower: StoredFlower = { id, name, hue, savedAt: new Date().toISOString() }
+  await redis('SET', `gl:flower:${id}`, base64)
+  await redis('HSET', 'gl:flowers', id, JSON.stringify(flower))
+  return json(flowerOut(flower))
+}
+
+export async function PUT(request: Request) {
+  if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
+  if (route(request).get('r') !== 'gradients') return json({ error: 'Unknown route' }, 404)
+  if (await rateLimited(request)) return json({ error: 'Too many saves, try again in a minute.' }, 429)
+  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
+  const slot = slotOf(body?.slot)
+  const name = str(body?.name, 200) || `Gradient ${slot}`
+  const base64 = jpegBase64(body?.dataUrl)
+  const preset = body?.preset
+  if (!slot || !base64 || typeof preset !== 'object' || preset === null) {
+    return json({ error: 'slot, preset and a JPEG dataUrl are required' }, 400)
+  }
+  if (JSON.stringify(preset).length > MAX_PRESET_CHARS) return json({ error: 'The preset is too large.' }, 413)
+  const gradient: StoredGradient = { slot, name, savedAt: new Date().toISOString(), preset }
+  await redis('SET', `gl:gimg:${slot}`, base64)
+  await redis('HSET', 'gl:gradients', String(slot), JSON.stringify(gradient))
+  return json(gradientOut(gradient))
+}
+
+export async function DELETE(request: Request) {
+  if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
+  const params = route(request)
+  if (await rateLimited(request)) return json({ error: 'Too many changes, try again in a minute.' }, 429)
+  if (params.get('r') === 'flowers') {
+    const id = params.get('id') ?? ''
+    if (!ID_PATTERN.test(id)) return json({ error: 'id is required' }, 400)
+    await redis('HDEL', 'gl:flowers', id)
+    await redis('DEL', `gl:flower:${id}`)
+    return json({ deleted: id })
+  }
+  if (params.get('r') === 'gradients') {
+    const slot = slotOf(params.get('slot'))
+    if (!slot) return json({ error: 'slot is required' }, 400)
+    await redis('HDEL', 'gl:gradients', String(slot))
+    await redis('DEL', `gl:gimg:${slot}`)
+    return json({ deleted: slot })
+  }
+  return json({ error: 'Unknown route' }, 404)
+}

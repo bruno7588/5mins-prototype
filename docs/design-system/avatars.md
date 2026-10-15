@@ -5,7 +5,7 @@ description: Avatar and Avatar Group components for 5Mins.ai. Use when displayin
 
 # Avatars
 
-A visual representation of a user or entity, alone or stacked in a group with a "+N" overflow counter. Two shapes: a **circle** for people who use the platform (learners, admins, managers) and a **square** (12px radius) for companies and instructors, the creators of content.
+A visual representation of a user or entity, alone or stacked in a group with a "+N" overflow counter. Two shapes: a **circle** for people who use the platform (learners, admins, managers) and a **square** (8px radius) for companies and instructors, the creators of content.
 
 **Code:** `import Avatar from '@/components/Avatar/Avatar'` and `import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'`
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`; Avatar `5097:5884`; Avatar Group `5097:5584`
@@ -40,13 +40,13 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 **Don't**
 - Don't add a border to a standalone avatar; the ring is group-only
 - Don't use the square for learners or other people in the platform, and don't use the circle for a company or an instructor
-- Don't use any radius other than full (circle) or `var(--radius-sm)` (square)
+- Don't use any radius other than full (circle) or `var(--radius-s)` (square)
 - Don't scale the counter text independently; it is bound to the group size (8/10/12px)
 - Don't mix avatar sizes within one group
 - Don't use initials or a coloured letter chip as the fallback; the Library has no initials variant
 - Don't hard-code the fallback colours; the smiley's circle and smile flip with the mode
 
-**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)` (circle, people) or `var(--radius-sm)` 12px (square, companies and instructors); photo `object-fit: cover`; fallback smiley circle `var(--border)`, smile `var(--text-tertiary)`; group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (ring 0.5px at 24px) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar `5097:5884`, Avatar Group `5097:5584`.
+**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)` (circle, people) or `var(--radius-s)` 8px (square, companies and instructors); photo `object-fit: cover`; fallback smiley circle `var(--border)`, smile `var(--text-tertiary)`; group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (ring 0.5px at 24px) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar `5097:5884`, Avatar Group `5097:5584`.
 
 ## Figma to code
 
@@ -75,7 +75,7 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 | `src` | `string` | none | Photo URL. Omit it and the fallback smiley renders (Figma's `Picture=false`) |
 | `size` | `24 \| 32 \| 40 \| 48 \| 56 \| 64 \| 72` | `32` | Diameter in px |
 | `alt` | `string` | `''` | Leave empty when the name is written beside the avatar |
-| `shape` | `'circle' \| 'square'` | `'circle'` | Circle for people; square (12px radius) for companies and instructors |
+| `shape` | `'circle' \| 'square'` | `'circle'` | Circle for people; square (8px radius) for companies and instructors |
 | `className` | `string` | none | Extra class on the wrapper |
 
 **AvatarGroup props**
@@ -173,7 +173,7 @@ A horizontal stack of avatars with a trailing "+N" counter bubble.
 
 ### Square avatar (companies and instructors)
 
-`<Avatar shape="square">`: the same sizes, photo and fallback as the circle, with a 12px radius (`var(--radius-sm)`). Square so the creator of content (a company or an instructor) never reads as a person who learns.
+`<Avatar shape="square">`: the same sizes, photo and fallback as the circle, with an 8px radius (`var(--radius-s)`). Square so the creator of content (a company or an instructor) never reads as a person who learns.
 
 - **Company:** `import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'` renders the tenant's company image (`src/data/companyImage.ts`) as a square Avatar. It never shows the fallback, because a company always has an image (an upload or a default from `src/assets/company-images`).
 - **Instructor:** `<Avatar src={instructor.avatar} shape="square" />`, e.g. the creator row in the lesson feed (desktop and mobile).

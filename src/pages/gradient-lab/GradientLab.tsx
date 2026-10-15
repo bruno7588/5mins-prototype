@@ -200,7 +200,6 @@ function GradientLab() {
             )}
           </div>
           <p className="gl-lab__hint">Scroll to zoom · drag to pan</p>
-          {import.meta.env.DEV && (
           <GradientSlots
             gradients={gradients}
             activeSlot={activeSlot}
@@ -210,7 +209,6 @@ function GradientLab() {
             onSave={saveSlot}
             onClear={clearSlot}
           />
-          )}
         </div>
 
         <aside className="gl-lab__col" aria-label="Controls">

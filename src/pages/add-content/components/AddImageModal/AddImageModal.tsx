@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { SearchNormal1 } from 'iconsax-react'
 import SparkleIcon from '../../../../components/icons/SparkleIcon'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
@@ -29,6 +29,8 @@ export interface ImageModalUpload {
 export interface ImageModalDefault {
   id: string
   src: string
+  /** Laid over the tile image, e.g. a live version of it. */
+  overlay?: ReactNode
 }
 
 interface CardContent {
@@ -471,6 +473,7 @@ function AddImageModal({
                 onClick={() => handleDefaultPick(image.id)}
               >
                 <img src={image.src} alt="" />
+                {image.overlay}
                 {savingDefault === image.id && (
                   <span className="aim-defaults__saving" role="status" aria-label="Saving image">
                     <span className="ds-btn__spinner" />

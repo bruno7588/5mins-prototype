@@ -20,6 +20,8 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   if (!pending) {
     pending = new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image()
+      // Shared photos are cross-origin on localhost; WebGL and pixel reads need a CORS-clean image.
+      img.crossOrigin = 'anonymous'
       img.onload = () => resolve(img)
       img.onerror = () => reject(new Error(`Couldn't load ${src}`))
       img.src = src

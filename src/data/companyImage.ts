@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { DEFAULT_COMPANY_IMAGES } from '@/assets/company-images'
+import { getCompanyDefaults, useCompanyDefaults } from './companyDefaults'
 
 /* The tenant's company image: shown as the company avatar and as the fallback on
    lesson cards without a thumbnail. Always set (an upload or a default), never
@@ -9,14 +9,15 @@ import { DEFAULT_COMPANY_IMAGES } from '@/assets/company-images'
 export type CompanyImage = { kind: 'default'; id: string } | { kind: 'upload'; src: string }
 
 const STORAGE_KEY = '5mins-company-image'
-const FALLBACK: CompanyImage = { kind: 'default', id: DEFAULT_COMPANY_IMAGES[0].id }
+/* The first default. Any default- id is kept even if the list hasn't loaded it yet. */
+const FALLBACK: CompanyImage = { kind: 'default', id: 'default-01' }
 const listeners = new Set<() => void>()
 
 function load(): CompanyImage {
   try {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null') as CompanyImage | null
     if (stored?.kind === 'upload' && stored.src) return stored
-    if (stored?.kind === 'default' && DEFAULT_COMPANY_IMAGES.some((d) => d.id === stored.id)) return stored
+    if (stored?.kind === 'default' && /^default-\d+$/.test(stored.id)) return stored
   } catch {
     /* storage unavailable or corrupt: use the pre-selected default */
   }
@@ -44,14 +45,15 @@ export const setCompanyUpload = (src: string) => save({ kind: 'upload', src })
 /** Replaces any upload. */
 export const setCompanyDefault = (id: string) => save({ kind: 'default', id })
 
-export function companyImageSrc(image: CompanyImage) {
+export function companyImageSrc(image: CompanyImage, defaults = getCompanyDefaults()) {
   if (image.kind === 'upload') return image.src
-  return (DEFAULT_COMPANY_IMAGES.find((d) => d.id === image.id) ?? DEFAULT_COMPANY_IMAGES[0]).src
+  return (defaults.find((d) => d.id === image.id) ?? defaults[0]).src
 }
 
 export function useCompanyImage() {
   const image = useSyncExternalStore(subscribe, () => current)
-  return { image, src: companyImageSrc(image) }
+  const defaults = useCompanyDefaults()
+  return { image, src: companyImageSrc(image, defaults) }
 }
 
 export const COMPANY_IMAGE_SIZE = 512

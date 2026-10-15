@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react'
 import { Brush2, Eye } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
 import Toggle from '@/components/Toggle/Toggle'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
-import { DEFAULT_COMPANY_IMAGES } from '@/assets/company-images'
+import { useCompanyDefaults } from '@/data/companyDefaults'
 import { setCompanyDefault, setCompanyUpload, useCompanyImage, validateCompanyImage } from '@/data/companyImage'
 import ThumbnailPreviewModal from './ThumbnailPreviewModal'
 import './LayoutSettings.css'
@@ -55,6 +56,8 @@ function LogoSlot({ label, mode }: { label: string; mode: 'light' | 'dark' }) {
 function LayoutSettings() {
   const [workspaceHome, setWorkspaceHome] = useState(false)
   const company = useCompanyImage()
+  // The default images, each playing its shader in the picker.
+  const liveDefaults = useCompanyDefaults().map((d) => ({ id: d.id, src: d.src, overlay: <CompanyImageMotion defaultId={d.id} /> }))
   const [pickerOpen, setPickerOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
 
@@ -114,7 +117,10 @@ function LayoutSettings() {
       <section className="acl-card">
         <h3 className="acl-title">Company image</h3>
         <div className="acl-thumb">
-          <img className="acl-thumb__preview" src={company.src} alt="Company image" width={80} height={80} />
+          <span className="acl-thumb__media">
+            <img className="acl-thumb__preview" src={company.src} alt="Company image" width={80} height={80} />
+            <CompanyImageMotion />
+          </span>
           <div className="acl-thumb__info">
             <p className="acl-text">
               Shown as your company avatar and on lessons that don't have their own thumbnail.
@@ -143,11 +149,11 @@ function LayoutSettings() {
             validate: validateCompanyImage,
           }}
           onSelect={setCompanyUpload}
-          defaultImages={DEFAULT_COMPANY_IMAGES}
+          defaultImages={liveDefaults}
           selectedDefaultId={company.image.kind === 'default' ? company.image.id : undefined}
           onSaveDefault={setCompanyDefault}
         />
-        <ThumbnailPreviewModal src={company.src} open={previewOpen} onClose={() => setPreviewOpen(false)} />
+        <ThumbnailPreviewModal open={previewOpen} onClose={() => setPreviewOpen(false)} />
       </section>
     </div>
   )

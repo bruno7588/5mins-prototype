@@ -1,0 +1,14 @@
+/* Over the still company image; shows once its first frame is drawn. */
+.company-motion {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.company-motion[data-ready] {
+  opacity: 1;
+}

@@ -154,17 +154,16 @@
   color: var(--text-secondary);
 }
 
-.gl-slots__actions {
-  display: flex;
-  gap: var(--space-s);
-}
-
+/* One row that scrolls sideways: twelve tiles fit the width, the rest scroll.
+   The padding keeps focus rings from being clipped by the scroll box. */
 .gl-slots__grid {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 11 * var(--space-s)) / 12);
   gap: var(--space-s);
   margin: 0;
-  padding: 0;
+  padding: var(--space-xs);
+  overflow-x: auto;
   list-style: none;
 }
 
@@ -212,6 +211,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--space-xs);
+}
+
+/* The + tile after the last slot: same size as a slot, dashed like an empty one. */
+.gl-slots__add-wrap,
+.gl-slots__add-wrap .tooltip__trigger {
+  display: flex;
+  width: 100%;
+}
+
+/* The clear confirm menu hugs its two short items instead of the 240px row-menu minimum. */
+.ram-menu.gl-slots__menu {
+  min-width: 0;
+}
+
+/* Save and clear under the active slot, side by side. */
+.gl-slots__tools {
+  display: flex;
   gap: var(--space-xs);
 }
 

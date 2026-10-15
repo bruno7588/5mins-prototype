@@ -1,29 +1,26 @@
 import { useCallback, useEffect, useState } from 'react'
+import { refreshCompanyDefaults } from '@/data/companyDefaults'
+import { GL_API, glJson, glUrl } from './api'
 import type { ShaderPreset } from './types'
 
-/* Client for the saved-gradient slots of the dev-only tools/gradient-lab
-   plugin. Each of the 12 slots keeps a full shader preset (motion included)
-   and writes the app's default company image for that slot. */
+/* The saved gradients, shared through the Gradient Studio API. Each numbered
+   slot keeps a full shader preset (motion included) and a 512 px still; together
+   they are the app's default company images, so a save or clear shows in the
+   app for everyone straight away. Slots are open-ended. */
 
-const API = '/__gradient-lab/gradients'
-export const GRADIENT_SLOTS = 12
 /** The app's default company images are square JPEGs at this size. */
 export const APP_IMAGE_SIZE = 512
 
 export interface SavedGradient {
   slot: number
   name: string
-  /** Dev-server URL of the app image this slot writes. */
+  /** URL of the 512 px still (the app's company image for this slot). */
   image: string
   savedAt: string
   preset: ShaderPreset
 }
 
-async function json<T>(res: Response): Promise<T> {
-  const body = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error((body as { error?: string }).error ?? `Request failed (${res.status})`)
-  return body as T
-}
+const withUrl = (g: SavedGradient): SavedGradient => ({ ...g, image: glUrl(g.image) })
 
 function toDataUrl(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -35,16 +32,19 @@ function toDataUrl(blob: Blob): Promise<string> {
 }
 
 export async function saveGradient(slot: number, preset: ShaderPreset, image: Blob): Promise<SavedGradient> {
-  const res = await fetch(API, {
-    method: 'POST',
+  const res = await fetch(`${GL_API}?r=gradients`, {
+    method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ slot, name: preset.name, preset, dataUrl: await toDataUrl(image) }),
   })
-  return json<SavedGradient>(res)
+  const saved = withUrl(await glJson<SavedGradient>(res))
+  refreshCompanyDefaults()
+  return saved
 }
 
-export function clearGradient(slot: number): Promise<void> {
-  return fetch(`${API}/${slot}`, { method: 'DELETE' }).then((r) => json<void>(r))
+export async function clearGradient(slot: number): Promise<void> {
+  await glJson<void>(await fetch(`${GL_API}?r=gradients&slot=${slot}`, { method: 'DELETE' }))
+  refreshCompanyDefaults()
 }
 
 export function useSavedGradients() {
@@ -52,12 +52,10 @@ export function useSavedGradients() {
   const [error, setError] = useState<string | null>(null)
 
   const reload = useCallback(() => {
-    // The saved slots write the app's images on localhost only.
-    if (!import.meta.env.DEV) return
-    fetch(API)
-      .then((r) => json<SavedGradient[]>(r))
+    fetch(`${GL_API}?r=gradients`)
+      .then((r) => glJson<SavedGradient[]>(r))
       .then((list) => {
-        setGradients(list)
+        setGradients(list.map(withUrl))
         setError(null)
       })
       .catch((e: Error) => setError(e.message))

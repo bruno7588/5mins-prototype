@@ -1,30 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
+import { GL_API, glJson, glUrl } from './api'
 import { extractPalette } from './palette'
 import type { Flower } from './types'
 
-/* Uploaded photos. On localhost they go through the dev-only tools/gradient-lab
-   Vite plugin into src/assets/gradient-lab/flowers/. On the shared (deployed)
-   site there is no server to write to, so uploads live in this browser tab only
-   (an in-memory list of data URLs, gone on reload). */
+/* Uploaded photos, shared by everyone through the Gradient Studio API
+   (api/gradient-lab.ts): uploads are cropped and saved there, and every
+   visitor sees the same list. */
 
-/** True on the deployed site: no dev plugin, uploads stay in the browser. */
-export const BROWSER_ONLY = !import.meta.env.DEV
-
-let localFlowers: Flower[] = []
-const localListeners = new Set<() => void>()
-const notifyLocal = () => localListeners.forEach((l) => l())
-
-const API = '/__gradient-lab'
 /** Saved photos are square JPEGs at this size. */
 const SIZE = 1024
 /** Shortest side below this would look soft once cropped and blurred. */
 const MIN_SIDE = 512
 
-async function json<T>(res: Response): Promise<T> {
-  const body = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error((body as { error?: string }).error ?? `Request failed (${res.status})`)
-  return body as T
-}
+const withUrl = (f: Flower): Flower => ({ ...f, src: glUrl(f.src) })
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -48,7 +36,7 @@ function mainHue(img: HTMLImageElement): number {
   return Math.round(((h * 60) + 360) % 360)
 }
 
-/** Centre-crops the file to a 1024 x 1024 JPEG and saves it through the plugin. */
+/** Centre-crops the file to a 1024 x 1024 JPEG and saves it to the shared library. */
 export async function uploadFlower(file: File): Promise<Flower> {
   if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error(`${file.name}: use a JPEG, PNG or WebP image.`)
   const url = URL.createObjectURL(file)
@@ -63,59 +51,36 @@ export async function uploadFlower(file: File): Promise<Flower> {
     ctx.imageSmoothingQuality = 'high'
     ctx.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, SIZE, SIZE)
     const dataUrl = canvas.toDataURL('image/jpeg', 0.92)
-    if (BROWSER_ONLY) {
-      const slug = file.name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 60) || 'image'
-      const flower: Flower = {
-        id: `${slug}-${Date.now().toString(36)}`,
-        name: file.name,
-        src: dataUrl,
-        hue: mainHue(img),
-        savedAt: new Date().toISOString(),
-      }
-      localFlowers = [...localFlowers, flower]
-      notifyLocal()
-      return flower
-    }
-    const res = await fetch(`${API}/flowers`, {
+    const res = await fetch(`${GL_API}?r=flowers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: file.name, hue: mainHue(img), dataUrl }),
     })
-    return json<Flower>(res)
+    return withUrl(await glJson<Flower>(res))
   } finally {
     URL.revokeObjectURL(url)
   }
 }
 
 export function removeFlower(id: string): Promise<void> {
-  if (BROWSER_ONLY) {
-    localFlowers = localFlowers.filter((f) => f.id !== id)
-    notifyLocal()
-    return Promise.resolve()
-  }
-  return fetch(`${API}/flowers/${encodeURIComponent(id)}`, { method: 'DELETE' }).then((r) => json<void>(r))
+  return fetch(`${GL_API}?r=flowers&id=${encodeURIComponent(id)}`, { method: 'DELETE' }).then((r) => glJson<void>(r))
 }
 
 /** Rainbow order: red to violet, then neutrals last. */
 export const byHue = (a: Flower, b: Flower) => (a.hue < 0 ? 999 : a.hue) - (b.hue < 0 ? 999 : b.hue)
 
-/** Uploaded flowers, in rainbow order. */
+/** The shared photos, in rainbow order. */
 export function useFlowers() {
   const [flowers, setFlowers] = useState<Flower[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const reload = useCallback(() => {
-    if (BROWSER_ONLY) {
-      setFlowers([...localFlowers].sort(byHue))
-      setLoading(false)
-      return
-    }
     setLoading(true)
-    fetch(`${API}/flowers`)
-      .then((r) => json<Flower[]>(r))
+    fetch(`${GL_API}?r=flowers`)
+      .then((r) => glJson<Flower[]>(r))
       .then((list) => {
-        setFlowers([...list].sort(byHue))
+        setFlowers(list.map(withUrl).sort(byHue))
         setError(null)
       })
       .catch((e: Error) => setError(e.message))
@@ -123,12 +88,5 @@ export function useFlowers() {
   }, [])
 
   useEffect(reload, [reload])
-  useEffect(() => {
-    if (!BROWSER_ONLY) return
-    localListeners.add(reload)
-    return () => {
-      localListeners.delete(reload)
-    }
-  }, [reload])
   return { flowers, loading, error, reload }
 }

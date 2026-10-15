@@ -16,7 +16,7 @@
 .ds-avatar--72 { width: 72px; height: 72px; }
 
 /* Square avatar: companies and instructors (avatars.md). People who learn stay circular. */
-.ds-avatar--square { border-radius: var(--radius-sm); }
+.ds-avatar--square { border-radius: var(--radius-s); }
 
 .ds-avatar__img,
 .ds-avatar__fallback {

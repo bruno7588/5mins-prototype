@@ -1,5 +1,7 @@
 import type { KeyboardEvent } from 'react'
 import { PlayCircle, Lock, Danger } from 'iconsax-react'
+import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
+import { useCompanyImage } from '@/data/companyImage'
 import './LessonCard.css'
 
 const SEGMENTS = 8
@@ -11,6 +13,7 @@ export interface MobileLessonCardProps {
   instructor: string
   durationLabel: string
   typeLabel?: string
+  /** Optional: without one the card shows the company image, as the desktop card does. */
   image?: string
   /** 0–100 */
   progress?: number
@@ -34,6 +37,7 @@ function MobileLessonCard({
   onClick,
   onQuizClick,
 }: MobileLessonCardProps) {
+  const companyImage = useCompanyImage()
   const filledSegments = completed
     ? SEGMENTS
     : Math.max(0, Math.min(SEGMENTS, Math.round((progress / 100) * SEGMENTS)))
@@ -82,7 +86,8 @@ function MobileLessonCard({
       onKeyDown={interactive ? handleKeyDown : undefined}
     >
       <div className="m-lesson-card__row">
-        <div className="m-lesson-card__thumb" style={image ? { backgroundImage: `url(${image})` } : undefined}>
+        <div className="m-lesson-card__thumb" style={{ backgroundImage: `url(${image || companyImage.src})` }}>
+          {!image && <CompanyImageMotion />}
           <span className="m-lesson-card__tag">
             <PlayCircle size={16} color="var(--text-secondary)" variant="Bold" />
           </span>

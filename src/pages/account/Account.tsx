@@ -38,7 +38,7 @@ function Account() {
   const tabParam = searchParams.get('tab') as TabKey | null
   const courseParam = searchParams.get('course') ?? undefined
   const [activeTab, setActiveTab] = useState<TabKey>(
-    tabParam && TABS.some((t) => t.key === tabParam) ? tabParam : 'audit-log',
+    tabParam && TABS.some((t) => t.key === tabParam) ? tabParam : 'layout',
   )
 
   return (

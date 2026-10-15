@@ -1,4 +1,5 @@
 import { PlayCircle } from 'iconsax-react'
+import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
 import { useCompanyImage } from '@/data/companyImage'
 import './LessonGridCard.css'
 
@@ -43,7 +44,9 @@ function LessonGridCard({ title, instructor, thumbnail, durationLabel, filled, c
         <span
           className="lesson-grid-card__picture"
           style={{ backgroundImage: `url(${thumbnail || companyImage.src})` }}
-        />
+        >
+          {!thumbnail && <CompanyImageMotion />}
+        </span>
         <span className="lesson-grid-card__tag">
           <PlayCircle size={20} color="var(--text-secondary)" variant="Bold" />
         </span>

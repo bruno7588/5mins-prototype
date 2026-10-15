@@ -94,16 +94,24 @@ export function createRenderer(canvas: HTMLCanvasElement): GradientRenderer | nu
   /* WebGL2 can draw with no attributes, but some drivers want a VAO bound. */
   const vao = gl.createVertexArray()
 
-  /* Photo texture: sRGB internal format so filtering and mips happen in linear light. */
-  const texture = gl.createTexture()
-  gl.bindTexture(gl.TEXTURE_2D, texture)
+  /* Photo textures: sRGB internal format so filtering and mips happen in linear light. */
+  function makeTexture(): WebGLTexture {
+    const t = gl.createTexture()!
+    gl.bindTexture(gl.TEXTURE_2D, t)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+    return t
+  }
+  const blank = makeTexture()
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([128, 128, 128, 255]))
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
   gl.generateMipmap(gl.TEXTURE_2D)
-  let uploaded: { image: HTMLImageElement; src: string } | null = null
+  /* One texture per photo, so a renderer shared by several shaders (the app's
+     live company images) switches photos without re-uploading. Oldest first. */
+  const MAX_PHOTOS = 16
+  const photoTextures = new Map<HTMLImageElement, { texture: WebGLTexture; src: string; size: number }>()
+  let texture = blank
   let maxLod = 0
   let photoSize = 1
 
@@ -112,17 +120,30 @@ export function createRenderer(canvas: HTMLCanvasElement): GradientRenderer | nu
   const points = new Float32Array(MAX_POINTS * 2)
   const weights = new Float32Array(MAX_POINTS)
 
-  /* Upload once per image; re-upload only when the element or its src changes. */
+  /* Upload once per image; re-upload only when the element's src changes. */
   function syncPhoto(image: HTMLImageElement | null): boolean {
-    if (!image || !image.complete || image.naturalWidth === 0) return false
-    if (uploaded && uploaded.image === image && uploaded.src === image.currentSrc) return true
-    gl.bindTexture(gl.TEXTURE_2D, texture)
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, gl.RGBA, gl.UNSIGNED_BYTE, image)
-    gl.generateMipmap(gl.TEXTURE_2D)
-    photoSize = Math.max(image.naturalWidth, image.naturalHeight)
+    if (!image || !image.complete || image.naturalWidth === 0) {
+      texture = blank
+      return false
+    }
+    let entry = photoTextures.get(image)
+    if (!entry || entry.src !== image.currentSrc) {
+      if (!entry && photoTextures.size >= MAX_PHOTOS) {
+        const [oldest, old] = photoTextures.entries().next().value!
+        gl.deleteTexture(old.texture)
+        photoTextures.delete(oldest)
+      }
+      const t = entry?.texture ?? makeTexture()
+      gl.bindTexture(gl.TEXTURE_2D, t)
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, gl.RGBA, gl.UNSIGNED_BYTE, image)
+      gl.generateMipmap(gl.TEXTURE_2D)
+      entry = { texture: t, src: image.currentSrc, size: Math.max(image.naturalWidth, image.naturalHeight) }
+      photoTextures.set(image, entry)
+    }
+    texture = entry.texture
+    photoSize = entry.size
     maxLod = Math.floor(Math.log2(photoSize))
-    uploaded = { image, src: image.currentSrc }
     return true
   }
 
@@ -276,7 +297,8 @@ export function createRenderer(canvas: HTMLCanvasElement): GradientRenderer | nu
     },
 
     destroy() {
-      gl.deleteTexture(texture)
+      gl.deleteTexture(blank)
+      photoTextures.forEach((p) => gl.deleteTexture(p.texture))
       gl.deleteVertexArray(vao)
       gl.deleteProgram(program)
       gl.deleteShader(vert)

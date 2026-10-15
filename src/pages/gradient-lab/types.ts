@@ -7,7 +7,7 @@ export interface Flower {
   id: string
   /** The uploaded file's name, for display. */
   name: string
-  /** Dev-server URL of the 1024 x 1024 JPEG, e.g. /src/assets/gradient-lab/flowers/<id>.jpg */
+  /** URL of the 1024 x 1024 JPEG in the shared library. */
   src: string
   /** Hue of the photo's main colour in degrees (0-359), or -1 when it is mostly neutral. Sorts the tray as a rainbow. */
   hue: number

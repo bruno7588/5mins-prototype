@@ -36,6 +36,8 @@ interface RowActionsMenuProps {
   triggerContent?: ReactNode
   /** Show the caret pointing at the trigger (default true; off for attached dropdowns). */
   caret?: boolean
+  /** Extra class on the menu surface (it is portaled, so it can't be reached from the page). */
+  menuClassName?: string
 }
 
 /**
@@ -52,6 +54,7 @@ function RowActionsMenu({
   triggerClassName = 'ram-trigger',
   triggerContent,
   caret = true,
+  menuClassName,
 }: RowActionsMenuProps) {
   const [open, setOpen] = useState(false)
   const btnRef = useRef<HTMLButtonElement>(null)
@@ -60,6 +63,9 @@ function RowActionsMenu({
   /* A tall menu on a low row would run past the bottom of the window, so it
      flips above the trigger when there is more room there. */
   const [flipped, setFlipped] = useState(false)
+  /* The menu hangs left from the trigger's right edge; near the left edge of the
+     window there is no room for that, so it hangs right from the left edge instead. */
+  const [startAligned, setStartAligned] = useState(false)
 
   useLayoutEffect(() => {
     if (!open) return
@@ -77,9 +83,10 @@ function RowActionsMenu({
 
   useLayoutEffect(() => {
     if (!open || !rect) return
-    const menuH = menuRef.current?.getBoundingClientRect().height ?? 0
+    const menu = menuRef.current?.getBoundingClientRect()
     const roomBelow = window.innerHeight - rect.bottom
-    setFlipped(menuH + 16 > roomBelow && rect.top > roomBelow)
+    setFlipped((menu?.height ?? 0) + 16 > roomBelow && rect.top > roomBelow)
+    setStartAligned((menu?.width ?? 0) + 8 > rect.right)
   }, [open, rect, items])
 
   useEffect(() => {
@@ -124,17 +131,17 @@ function RowActionsMenu({
           <div
             ref={menuRef}
             role="menu"
-            className="ram-menu"
+            className={`ram-menu${menuClassName ? ` ${menuClassName}` : ''}`}
             style={{
               position: 'fixed',
-              right: Math.max(8, window.innerWidth - rect.right),
+              ...(startAligned ? { left: rect.left } : { right: Math.max(8, window.innerWidth - rect.right) }),
               zIndex: 2000,
               ...(placement === 'top' || flipped
                 ? { bottom: window.innerHeight - rect.top + 8 }
                 : { top: rect.bottom + 8 }),
             }}
           >
-            {caret && <span className={`ram-caret ram-caret--${placement === 'top' || flipped ? 'bottom' : 'top'}`} aria-hidden="true" />}
+            {caret && <span className={`ram-caret ram-caret--${placement === 'top' || flipped ? 'bottom' : 'top'}${startAligned ? ' ram-caret--start' : ''}`} aria-hidden="true" />}
             {items.map((item) => (
               <Fragment key={item.key}>
                 {item.dividerBefore && <div className="ram-divider" role="separator" />}

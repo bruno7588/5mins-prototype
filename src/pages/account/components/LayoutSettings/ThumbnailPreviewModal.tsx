@@ -8,9 +8,9 @@ import { COMPANY } from '@/data/people'
 const SAMPLE_TITLE = 'Title of My Lesson'
 
 /** Shows the company image where learners see it: the company avatar, the lesson grid card and the mobile lesson list card. */
-function ThumbnailPreviewModal({ src, open, onClose }: { src: string; open: boolean; onClose: () => void }) {
+function ThumbnailPreviewModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
-    <ConfirmModal open={open} onClose={onClose} ariaLabel="Preview image" closable>
+    <ConfirmModal open={open} onClose={onClose} ariaLabel="Preview image" closable className="acl-preview">
       <div className="confirm-modal-header">
         <h2 className="confirm-modal-title">Preview image</h2>
         <p className="confirm-modal-body">
@@ -18,9 +18,9 @@ function ThumbnailPreviewModal({ src, open, onClose }: { src: string; open: bool
           resolution, re-upload at 2x size.
         </p>
       </div>
-      <div className="acl-preview__divider" aria-hidden="true" />
       <div className="acl-preview__examples">
-        <LessonGridCard title={SAMPLE_TITLE} instructor={COMPANY} thumbnail={src} durationLabel="4m 0s" filled={2} />
+        {/* No thumbnail: the card falls back to the company image, live when it has a shader. */}
+        <LessonGridCard title={SAMPLE_TITLE} instructor={COMPANY} durationLabel="4m 0s" filled={2} />
         <div className="acl-preview__column">
           {/* The creator row on a company-made lesson (LessonFeed). */}
           <div className="acl-preview__creator">
@@ -30,7 +30,7 @@ function ThumbnailPreviewModal({ src, open, onClose }: { src: string; open: bool
               <span className="acl-preview__creator-role">Company</span>
             </div>
           </div>
-          <MobileLessonCard title={SAMPLE_TITLE} instructor={COMPANY} durationLabel="4 min" image={src} progress={25} />
+          <MobileLessonCard title={SAMPLE_TITLE} instructor={COMPANY} durationLabel="4 min" progress={25} />
         </div>
       </div>
       <div className="confirm-modal-actions">
