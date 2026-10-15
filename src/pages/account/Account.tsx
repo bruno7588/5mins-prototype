@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'
 import AuditLog from './components/AuditLog/AuditLog'
+import LayoutSettings from './components/LayoutSettings/LayoutSettings'
 import './Account.css'
 
 type TabKey =
@@ -66,6 +67,8 @@ function Account() {
         <div className="acs-body">
           {activeTab === 'audit-log' ? (
             <AuditLog initialCourseId={courseParam} />
+          ) : activeTab === 'layout' ? (
+            <LayoutSettings />
           ) : (
             <div className="acs-placeholder">
               This section isn’t part of this prototype yet.

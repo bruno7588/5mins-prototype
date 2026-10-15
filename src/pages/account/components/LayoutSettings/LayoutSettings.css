@@ -1,0 +1,186 @@
+/* Account & Settings > Layout tab (Figma Account - Settings 8998:24001). Prefix: acl- */
+
+.acl-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-ml);
+  padding-top: var(--space-l);
+}
+
+.acl-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-m);
+  width: 100%;
+  max-width: 900px;
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+}
+
+.acl-card--row {
+  flex-direction: row;
+  gap: var(--space-sm);
+}
+
+.acl-head {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.acl-title {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.acl-text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.acl-toggle {
+  flex-shrink: 0;
+  padding: var(--space-xs) 0;
+}
+
+/* ── Brand logo ── */
+.acl-logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xl);
+}
+
+.acl-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-m);
+}
+
+.acl-logo__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.acl-logo__label {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.acl-logo__preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 320px;
+  height: 80px;
+  padding: var(--space-s);
+  border: 1px dashed var(--border-elevated);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.acl-logo__preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Previews of how the logo sits on each mode, so they stay put whatever the app theme. */
+.acl-logo__preview--light {
+  /* stylelint-disable-next-line -- mode-invariant light-mode preview */
+  background: var(--neutral-25);
+  /* stylelint-disable-next-line -- mode-invariant light-mode preview */
+  color: var(--neutral-800);
+}
+
+.acl-logo__preview--dark {
+  /* stylelint-disable-next-line -- mode-invariant dark-mode preview */
+  background: var(--neutral-800);
+  /* stylelint-disable-next-line -- mode-invariant dark-mode preview */
+  color: var(--neutral-25);
+}
+
+/* ── Theme colours ── */
+.acl-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.acl-theme__swatches {
+  display: flex;
+  gap: var(--space-s);
+}
+
+.acl-swatch {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+}
+
+.acl-swatch--background {
+  background: var(--page-background);
+}
+
+.acl-swatch--text {
+  background: var(--text-secondary);
+}
+
+.acl-swatch--accent {
+  background: var(--selected);
+}
+
+/* ── Lesson thumbnail ── */
+.acl-thumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.acl-thumb__preview {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  border: 1px dashed var(--border-elevated);
+  border-radius: var(--radius-s);
+  color: var(--text-secondary);
+}
+
+.acl-thumb__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.acl-thumb__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-m);
+}
