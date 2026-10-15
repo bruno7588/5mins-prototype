@@ -1,4 +1,5 @@
 import Avatar from '@/components/Avatar/Avatar'
+import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'
 import BottomSheet from '@/components/BottomSheet/BottomSheet'
 import Button from '@/components/Button/Button'
 import ResourceCard from '@/components/ResourceCard/ResourceCard'
@@ -29,7 +30,7 @@ function LessonSheet({ lesson, onClose, onOpenLink, onDownload, hidden }: Lesson
       <div className="m-lsheet">
         <div className="m-lsheet__about">
           <div className="m-lsheet__instructor">
-            <Avatar src={lesson.instructorAvatar} size={48} />
+            {lesson.byCompany ? <CompanyAvatar size={48} /> : <Avatar src={lesson.instructorAvatar} size={48} />}
             <div className="m-lsheet__who">
               <p className="m-lsheet__name">{lesson.instructor}</p>
               {lesson.instructorBio && <p className="m-lsheet__bio">{lesson.instructorBio}</p>}

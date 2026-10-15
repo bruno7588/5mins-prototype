@@ -158,22 +158,11 @@
   width: 100%;
 }
 
+/* Always filled (an upload or a default), so no empty-slot dashed border. */
 .acl-thumb__preview {
-  display: flex;
+  display: block;
   flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  overflow: hidden;
-  border: 1px dashed var(--border-elevated);
   border-radius: var(--radius-s);
-  color: var(--text-secondary);
-}
-
-.acl-thumb__preview img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 
@@ -183,4 +172,57 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-m);
+}
+
+.acl-thumb__actions {
+  display: flex;
+  gap: var(--space-m);
+}
+
+/* ── Company image preview modal (ConfirmModal default width) ── */
+.acl-preview__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Grid card beside the avatar and the mobile list card. */
+.acl-preview__examples {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.acl-preview__column {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-m);
+  min-width: 0;
+}
+
+/* The creator row on a company-made lesson (LessonFeed .lf-instructor). */
+.acl-preview__creator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.acl-preview__creator-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.acl-preview__creator-name {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.acl-preview__creator-role {
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-secondary);
 }

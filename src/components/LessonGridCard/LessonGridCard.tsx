@@ -1,4 +1,5 @@
 import { PlayCircle } from 'iconsax-react'
+import { useCompanyImage } from '@/data/companyImage'
 import './LessonGridCard.css'
 
 const SEGMENTS = 8
@@ -6,7 +7,8 @@ const SEGMENTS = 8
 export interface LessonGridCardProps {
   title: string
   instructor: string
-  thumbnail: string
+  /** Optional: without one the card shows the company image. */
+  thumbnail?: string
   /** e.g. "3m 45s" */
   durationLabel: string
   /** Filled segments, 0–8. */
@@ -17,6 +19,7 @@ export interface LessonGridCardProps {
 }
 
 function LessonGridCard({ title, instructor, thumbnail, durationLabel, filled, completed = false, onOpen }: LessonGridCardProps) {
+  const companyImage = useCompanyImage()
   const interactive = !!onOpen
   return (
     <article
@@ -38,7 +41,7 @@ function LessonGridCard({ title, instructor, thumbnail, durationLabel, filled, c
     >
       <div
         className="lesson-grid-card__thumb"
-        style={{ backgroundImage: `url(${thumbnail})` }}
+        style={{ backgroundImage: `url(${thumbnail || companyImage.src})` }}
       >
         <span className="lesson-grid-card__tag">
           <PlayCircle size={20} color="var(--text-secondary)" variant="Bold" />

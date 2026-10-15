@@ -3,6 +3,7 @@ import heroGif from '../../assets/for-you/v3-Hugo-FullCorrect-Anim.gif'
 import avatar1 from '../../assets/programs/avatar-1.png'
 import avatar2 from '../../assets/programs/avatar-2.png'
 import avatar3 from '../../assets/programs/avatar-3.png'
+import { COMPANY } from '../../data/people'
 
 export interface FeedEpisode {
   label: string
@@ -16,7 +17,11 @@ export interface FeedEpisode {
 
 export interface FeedLesson {
   instructor: string
-  instructorAvatar: string
+  /** Not used when the lesson is byCompany: the company avatar shows instead. */
+  instructorAvatar?: string
+  /** Made by the learner's own company, not a 5Mins instructor: shows the company
+      name and square company image (src/data/companyImage.ts). */
+  byCompany?: boolean
   /** One-line bio under the instructor in the mobile lesson sheet. */
   instructorBio?: string
   title: string
@@ -208,6 +213,24 @@ export const feedLessons: FeedLesson[] = [
           'Review once, properly',
         ],
       },
+    ],
+  },
+  {
+    instructor: COMPANY,
+    byCompany: true,
+    title: 'Handling Guest Data at the Front Desk',
+    media: heroGif,
+    progress: 0.2,
+    duration: '3:10',
+    skillName: 'Workplace Compliance',
+    skillLevel: 2,
+    quizPoints: 3,
+    episodes: [
+      { label: 'Episode 1', title: 'What Counts as Guest Data', progress: 0.2, duration: '3:10' },
+    ],
+    learningGoals: [
+      'Recognising personal data at check-in',
+      'Sharing guest details only with the right people',
     ],
   },
 ]

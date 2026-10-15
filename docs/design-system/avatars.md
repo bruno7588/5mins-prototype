@@ -38,7 +38,7 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 
 **Don't**
 - Don't add a border to a standalone avatar; the ring is group-only
-- Don't use squares or other radii; avatars are always fully circular
+- Don't use squares or other radii for people; person avatars are always fully circular (the square is the company avatar, below)
 - Don't scale the counter text independently; it is bound to the group size (8/10/12px)
 - Don't mix avatar sizes within one group
 - Don't use initials or a coloured letter chip as the fallback; the Library has no initials variant
@@ -166,6 +166,13 @@ A horizontal stack of avatars with a trailing "+N" counter bubble.
 |---|---|---|
 | Picture | `Picture=true` | the photo, `object-fit: cover` |
 | Fallback | `Picture=false` | the Library smiley: `var(--border)` circle, `var(--text-tertiary)` smile |
+
+### Company avatar (square)
+
+**Code:** `import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'` (reads the tenant's company image from `src/data/companyImage.ts`).
+**Figma:** not in the Library yet (interim spec, 2026-10-15); replace with the Library node when Design adds it.
+
+Shows the tenant's company image where a lesson is made by the company rather than an instructor. Square so a company never reads as a person. Sizes 40 (desktop) and 48 (mobile); radius `var(--radius-s)` (8px, as lesson card thumbnails); `object-fit: cover`; no fallback state, because a company always has an image (an upload or a default from `src/assets/company-images`).
 
 ## Sizes
 

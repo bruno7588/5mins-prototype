@@ -9,6 +9,7 @@ import {
 } from 'iconsax-react'
 import CloseButton from '../../../components/CloseButton/CloseButton'
 import Avatar from '@/components/Avatar/Avatar'
+import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'
 import ResourceCard from '@/components/ResourceCard/ResourceCard'
 import { getLearningsIllustration } from '../../../assets/learnings-illustrations'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
@@ -166,10 +167,14 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
       <aside className="lf-panel">
         <div className="lf-instructor">
           <div className="lf-instructor__creator">
-            <Avatar src={lesson.instructorAvatar} size={40} />
+            {lesson.byCompany ? (
+              <CompanyAvatar size={40} />
+            ) : (
+              <Avatar src={lesson.instructorAvatar} size={40} />
+            )}
             <div className="lf-instructor__info">
               <span className="lf-instructor__name">{lesson.instructor}</span>
-              <span className="lf-instructor__role">Instructor</span>
+              <span className="lf-instructor__role">{lesson.byCompany ? 'Company' : 'Instructor'}</span>
             </div>
           </div>
           <button

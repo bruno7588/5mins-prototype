@@ -1,0 +1,7 @@
+/* Square company avatar: same sizes as Avatar, card-thumbnail radius (avatars.md). */
+.company-avatar {
+  display: block;
+  flex-shrink: 0;
+  border-radius: var(--radius-s);
+  object-fit: cover;
+}

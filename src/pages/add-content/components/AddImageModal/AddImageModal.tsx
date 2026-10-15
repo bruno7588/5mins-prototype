@@ -5,7 +5,31 @@ import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import FileUploader from '../../../../components/FileUploader/FileUploader'
 import './AddImageModal.css'
 
-type Tab = 'upload' | 'generate' | 'freepik'
+export type ImageModalTab = 'upload' | 'generate' | 'freepik' | 'defaults'
+type Tab = ImageModalTab
+
+const TAB_LABELS: Record<Tab, string> = {
+  upload: 'Upload image',
+  generate: 'Generate With AI',
+  freepik: 'Stock Footage',
+  defaults: 'Default images',
+}
+
+const DEFAULT_TABS: Tab[] = ['upload', 'generate', 'freepik']
+
+export interface ImageModalUpload {
+  /** File input accept list. */
+  accept: string
+  /** Drop-zone copy; defaults to FileUploader's own. */
+  helpText?: string
+  /** Resolves to an error message to reject the file, or null to accept it. */
+  validate?: (file: File) => Promise<string | null>
+}
+
+export interface ImageModalDefault {
+  id: string
+  src: string
+}
 
 interface CardContent {
   title?: string
@@ -20,10 +44,21 @@ interface AddImageModalProps {
   cardContent?: CardContent
   /** Show the "Suggest From Card" affordance on the Generate tab (default true). */
   showSuggest?: boolean
+  /** Defaults keep the lesson / course / program image picker as it was. */
+  title?: string
+  /** Which tabs show, in order. */
+  tabs?: Tab[]
+  upload?: ImageModalUpload
+  /** Default images tab: the tiles and the one currently in use. Clicking a tile
+      shows a short loading state, then saves it and closes. */
+  defaultImages?: ImageModalDefault[]
+  selectedDefaultId?: string
+  onSaveDefault?: (id: string) => void
 }
 
 const GENERATED_ASPECT = '1 / 1'
 const GENERATION_DELAY_MS = 3000
+const DEFAULT_SAVE_DELAY_MS = 1000
 const SUGGEST_DELAY_MS = 900
 
 function buildSuggestedPrompt(content: CardContent | undefined): string {
@@ -34,7 +69,7 @@ function buildSuggestedPrompt(content: CardContent | undefined): string {
   return `An illustration that visualises "${subject}", clean modern business style, soft pastel colours, no text.`
 }
 
-const ACCEPTED_IMAGE_EXTENSIONS = '.jpg,.jpeg,.png'
+const DEFAULT_UPLOAD: ImageModalUpload = { accept: '.jpg,.jpeg,.png' }
 
 const ASPECT_POOL = ['4 / 3', '3 / 4', '1 / 1', '3 / 2', '16 / 9', '2 / 3'] as const
 
@@ -63,8 +98,26 @@ const freepikThumb = (seed: string, aspect: string) => {
   return `https://picsum.photos/seed/${seed}/${width}/${height}`
 }
 
-function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardContent, showSuggest = true }: AddImageModalProps) {
-  const [tab, setTab] = useState<Tab>(initialTab)
+function AddImageModal({
+  open,
+  onClose,
+  onSelect,
+  initialTab = 'upload',
+  cardContent,
+  showSuggest = true,
+  title = 'Add image',
+  tabs = DEFAULT_TABS,
+  upload = DEFAULT_UPLOAD,
+  defaultImages = [],
+  selectedDefaultId,
+  onSaveDefault,
+}: AddImageModalProps) {
+  const startTab = tabs.includes(initialTab) ? initialTab : tabs[0]
+  const [tab, setTab] = useState<Tab>(startTab)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [pickedDefault, setPickedDefault] = useState(selectedDefaultId)
+  const [savingDefault, setSavingDefault] = useState<string | null>(null)
+  const saveTimer = useRef<number | null>(null)
   const [query, setQuery] = useState('')
   const [prompt, setPrompt] = useState('')
   const [generating, setGenerating] = useState(false)
@@ -78,7 +131,10 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
 
   useEffect(() => {
     if (open) {
-      setTab(initialTab)
+      setTab(startTab)
+      setUploadError(null)
+      setPickedDefault(selectedDefaultId)
+      setSavingDefault(null)
       setQuery('')
       setPrompt('')
       setGenerating(false)
@@ -94,7 +150,12 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
         window.clearTimeout(suggestTimer.current)
         suggestTimer.current = null
       }
+      if (saveTimer.current !== null) {
+        window.clearTimeout(saveTimer.current)
+        saveTimer.current = null
+      }
     }
+    // Reset on open only; tabs and the current default are read as they are then.
   }, [open, initialTab])
 
   const q = query.trim()
@@ -107,7 +168,10 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
       }))
     : FREEPIK_STUBS
 
-  const handleFile = (file: File) => {
+  const handleFile = async (file: File) => {
+    const error = upload.validate ? await upload.validate(file) : null
+    setUploadError(error)
+    if (error) return
     const reader = new FileReader()
     reader.onload = () => {
       if (typeof reader.result === 'string') {
@@ -116,6 +180,17 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
       }
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleDefaultPick = (id: string) => {
+    if (savingDefault || id === selectedDefaultId) return
+    setPickedDefault(id)
+    setSavingDefault(id)
+    saveTimer.current = window.setTimeout(() => {
+      saveTimer.current = null
+      onSaveDefault?.(id)
+      onClose()
+    }, DEFAULT_SAVE_DELAY_MS)
   }
 
   const handleFreepikPick = (seed: string, aspect: string) => {
@@ -173,38 +248,23 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
 
 
   return (
-    <ConfirmModal open={open} onClose={onClose} className="aim-modal" closable>
+    <ConfirmModal open={open} onClose={onClose} className="aim-modal" ariaLabel={title} closable>
       <div className="aim-header">
-        <h2 className="aim-title">Add image</h2>
+        <h2 className="aim-title">{title}</h2>
         <div className="aim-divider" />
         <div className="aim-tabs" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={tab === 'upload'}
-            className={`aim-tab${tab === 'upload' ? ' aim-tab--active' : ''}`}
-            onClick={() => setTab('upload')}
-          >
-            Upload image
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={tab === 'generate'}
-            className={`aim-tab${tab === 'generate' ? ' aim-tab--active' : ''}`}
-            onClick={() => setTab('generate')}
-          >
-            Generate With AI
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={tab === 'freepik'}
-            className={`aim-tab${tab === 'freepik' ? ' aim-tab--active' : ''}`}
-            onClick={() => setTab('freepik')}
-          >
-            Stock Footage
-          </button>
+          {tabs.map((key) => (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              aria-selected={tab === key}
+              className={`aim-tab${tab === key ? ' aim-tab--active' : ''}`}
+              onClick={() => setTab(key)}
+            >
+              {TAB_LABELS[key]}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -212,7 +272,10 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
         {tab === 'upload' && (
           <FileUploader
             size="L"
-            accept={ACCEPTED_IMAGE_EXTENSIONS}
+            accept={upload.accept}
+            helpText={upload.helpText}
+            state={uploadError ? 'Error' : undefined}
+            errorMessage={uploadError ?? undefined}
             onFileSelect={handleFile}
             className="aim-uploader"
           />
@@ -393,7 +456,32 @@ function AddImageModal({ open, onClose, onSelect, initialTab = 'upload', cardCon
             </div>
           </div>
         )}
+
+        {tab === 'defaults' && (
+          <div className="aim-defaults" role="radiogroup" aria-label="Default images" aria-busy={!!savingDefault}>
+            {defaultImages.map((image, i) => (
+              <button
+                key={image.id}
+                type="button"
+                role="radio"
+                aria-checked={pickedDefault === image.id}
+                aria-label={`Default image ${i + 1}`}
+                className={`aim-defaults__tile${pickedDefault === image.id ? ' aim-defaults__tile--selected' : ''}`}
+                disabled={!!savingDefault && savingDefault !== image.id}
+                onClick={() => handleDefaultPick(image.id)}
+              >
+                <img src={image.src} alt="" />
+                {savingDefault === image.id && (
+                  <span className="aim-defaults__saving" role="status" aria-label="Saving image">
+                    <span className="ds-btn__spinner" />
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
+
     </ConfirmModal>
   )
 }

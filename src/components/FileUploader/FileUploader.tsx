@@ -15,6 +15,8 @@ interface FileUploaderProps {
   onFileSelect?: (file: File) => void
   onChangeFile?: () => void
   accept?: string
+  /** Enabled/Hover body copy; defaults to "Drag and drop file here or click to upload". */
+  helpText?: string
   /** Enabled/Hover: replaces the upload icon, e.g. a video or audio glyph for a media upload. */
   icon?: ReactNode
   /** Filled state: replaces the default document icon, e.g. a file-type thumbnail. */
@@ -31,6 +33,7 @@ export function FileUploader({
   onFileSelect,
   onChangeFile,
   accept,
+  helpText = 'Drag and drop file here or click to upload',
   icon,
   fileIcon,
   className,
@@ -119,9 +122,7 @@ export function FileUploader({
         <>
           <div className="file-uploader__icon-group">
             {icon ?? <DocumentUpload size={iconSize} color="var(--text-secondary)" variant="Linear" />}
-            <p className="file-uploader__body">
-              Drag and drop file here or click to upload
-            </p>
+            <p className="file-uploader__body">{helpText}</p>
           </div>
           {selectButton}
         </>

@@ -1,6 +1,7 @@
 import type { HeroSlide } from './components/FeedHero'
 import type { SkillCardProps } from '../../components/SkillCard/SkillCard'
 import type { LessonGridCardProps } from '../../components/LessonGridCard/LessonGridCard'
+import { COMPANY } from '../../data/people'
 
 import heroGif from '../../assets/for-you/v3-Hugo-FullCorrect-Anim.gif'
 import course1 from '../../assets/workspace/course-1.png'
@@ -37,5 +38,8 @@ export const jumpBackIn: LessonGridCardProps[] = [
   { title: 'Leading Remote Teams Without Losing Momentum', instructor: 'Marco Rossi', thumbnail: thumb2, durationLabel: '4m 12s', filled: 2 },
   { title: 'Turning Conflict Into Collaboration', instructor: 'Ana Ferreira', thumbnail: thumb3, durationLabel: '5m 03s', filled: 6 },
   { title: 'The Manager’s Guide to Delegation', instructor: 'Liam Walsh', thumbnail: thumb4, durationLabel: '2m 58s', filled: 8, completed: true },
+  // Made by the company, no thumbnail of its own: falls back to the company image.
+  // Index 4 opens feedLessons[4], the matching company lesson.
+  { title: 'Handling Guest Data at the Front Desk', instructor: COMPANY, durationLabel: '3m 10s', filled: 2 },
   { title: 'How Top Performers Manage Their Energy', instructor: 'Sofia Costa', thumbnail: thumb5, durationLabel: '3m 30s', filled: 1 },
 ]

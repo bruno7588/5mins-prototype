@@ -599,3 +599,57 @@
   color: var(--text-button-disabled);
 }
 
+
+/* ── Default images tab: square tiles, one selected (radio group) ── */
+.aim-defaults {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-s);
+}
+
+.aim-defaults__tile {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 150ms ease;
+}
+
+.aim-defaults__tile:hover {
+  border-color: var(--border-hover);
+}
+
+.aim-defaults__tile--selected,
+.aim-defaults__tile--selected:hover {
+  border-color: var(--selected);
+}
+
+.aim-defaults__tile:focus-visible {
+  outline: 2px solid var(--secondary-600);
+  outline-offset: 2px;
+}
+
+.aim-defaults__tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Clicked tile while it saves (1s): the Button spinner over the scrim. */
+.aim-defaults__saving {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+  /* stylelint-disable-next-line -- white spinner on the dark scrim in both modes */
+  color: var(--neutral-0);
+}
+
+.aim-defaults__tile:disabled {
+  cursor: default;
+}

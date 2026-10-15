@@ -10,6 +10,7 @@ import {
   Send2,
 } from 'iconsax-react'
 import Avatar from '@/components/Avatar/Avatar'
+import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'
 import { getLevelIllustration } from '@/assets/level-illustrations'
 import type { FeedLesson } from '@/pages/for-you/feedItems'
 import './LessonFeedScreen.css'
@@ -107,7 +108,11 @@ function LessonFeedScreen({ lessons, startIndex, onMore, sheetIndex, onIndexChan
             </div>
 
             <div className="m-lf-side">
-              <Avatar src={lesson.instructorAvatar} size={48} className="m-lf-side__avatar" />
+              {lesson.byCompany ? (
+                <CompanyAvatar size={48} className="m-lf-side__avatar" />
+              ) : (
+                <Avatar src={lesson.instructorAvatar} size={48} className="m-lf-side__avatar" />
+              )}
               <SideAction icon={<Discover size={24} color="var(--neutral-0)" variant="Linear" />} label="Learnings" />
               <SideAction icon={<ArchiveAdd size={24} color="var(--neutral-0)" variant="Linear" />} label="Bookmark" />
               <SideAction icon={<Send2 size={24} color="var(--neutral-0)" variant="Linear" />} label="Send" />

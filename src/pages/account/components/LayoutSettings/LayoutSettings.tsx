@@ -1,11 +1,17 @@
 import { useRef, useState } from 'react'
-import { Brush2, GalleryAdd } from 'iconsax-react'
+import { Brush2, Eye } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import Toggle from '@/components/Toggle/Toggle'
+import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
+import { DEFAULT_COMPANY_IMAGES } from '@/assets/company-images'
+import { setCompanyDefault, setCompanyUpload, useCompanyImage, validateCompanyImage } from '@/data/companyImage'
+import ThumbnailPreviewModal from './ThumbnailPreviewModal'
 import './LayoutSettings.css'
 
 /* Account & Settings > Layout (Figma Account - Settings 8998:24001).
-   Select Logo / Select Image open the file picker and preview the chosen file locally.
+   Select Logo opens the file picker and previews the chosen file locally. The company
+   image is the tenant's shared one (src/data/companyImage.ts), changed through the
+   shared image picker modal.
    Prefix: acl- */
 
 /** A hidden file input behind a Select button; the chosen image previews via an object URL. */
@@ -48,7 +54,9 @@ function LogoSlot({ label, mode }: { label: string; mode: 'light' | 'dark' }) {
 
 function LayoutSettings() {
   const [workspaceHome, setWorkspaceHome] = useState(false)
-  const thumbnail = useImagePicker()
+  const company = useCompanyImage()
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(false)
 
   return (
     <div className="acl-body">
@@ -104,24 +112,42 @@ function LayoutSettings() {
       </section>
 
       <section className="acl-card">
-        <h3 className="acl-title">Lesson thumbnail image</h3>
+        <h3 className="acl-title">Company image</h3>
         <div className="acl-thumb">
-          <div className="acl-thumb__preview">
-            {thumbnail.src ? (
-              <img src={thumbnail.src} alt="Lesson thumbnail" />
-            ) : (
-              <GalleryAdd size={32} color="currentColor" variant="Linear" />
-            )}
-          </div>
+          <img className="acl-thumb__preview" src={company.src} alt="Company image" width={80} height={80} />
           <div className="acl-thumb__info">
             <p className="acl-text">
-              Upload a 256 x 256 px image, PNG or JPEG format. This image shows up in your lesson
-              thumbnails.
+              Shown as your company avatar and on lessons that don't have their own thumbnail.
+              Upload a 512 x 512 px JPEG.
             </p>
-            <Button onClick={thumbnail.open}>Select Image</Button>
+            <div className="acl-thumb__actions">
+              <Button
+                variant="outlined"
+                icon={<Eye size={20} color="currentColor" variant="Linear" />}
+                onClick={() => setPreviewOpen(true)}
+              >
+                Preview
+              </Button>
+              <Button onClick={() => setPickerOpen(true)}>Change</Button>
+            </div>
           </div>
-          {thumbnail.input('image/png,image/jpeg')}
         </div>
+        <AddImageModal
+          open={pickerOpen}
+          onClose={() => setPickerOpen(false)}
+          title="Change company image"
+          tabs={['upload', 'defaults']}
+          upload={{
+            accept: '.jpg,.jpeg',
+            helpText: 'Drag or upload a 512 x 512 px JPEG, smaller than 9 MB.',
+            validate: validateCompanyImage,
+          }}
+          onSelect={setCompanyUpload}
+          defaultImages={DEFAULT_COMPANY_IMAGES}
+          selectedDefaultId={company.image.kind === 'default' ? company.image.id : undefined}
+          onSaveDefault={setCompanyDefault}
+        />
+        <ThumbnailPreviewModal src={company.src} open={previewOpen} onClose={() => setPreviewOpen(false)} />
       </section>
     </div>
   )
