@@ -585,14 +585,13 @@
   background: var(--cards-background-hover);
 }
 
-.automations-listbox-item--selected {
-  background: var(--secondary-500);
-  color: var(--text-primary);
-  font-weight: 400;
-}
-
+/* Selected row per listbox.md: Secondary-500 in both modes, --text-on-selected at
+   500, and the same fill on hover (as the DS Dropdown). */
+.automations-listbox-item--selected,
 .automations-listbox-item--selected:hover {
-  background: var(--secondary-600);
+  background: var(--secondary-500);
+  color: var(--text-on-selected);
+  font-weight: 500;
 }
 
 .automations-filter-dropdowns {

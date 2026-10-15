@@ -4,6 +4,7 @@ import { ArrowDown2 } from 'iconsax-react'
 import Checkbox from '../Checkbox/Checkbox'
 import Radio from '../Radio/Radio'
 import Search from '../Search/Search'
+import Tooltip from '../Tooltip/Tooltip'
 import './Dropdown.css'
 
 export interface DropdownOption {
@@ -13,6 +14,9 @@ export interface DropdownOption {
   disabled?: boolean
   /** Leading icon (listbox.md icon-left slot); the trigger shows the picked one. */
   icon?: ReactNode
+  /** Trailing icon button (listbox.md icon-right slot), e.g. delete this option. Clicking
+      it runs the action without picking the option. Single-select rows only. */
+  action?: { icon: ReactNode; label: string; onClick: () => void }
 }
 
 type Size = 'sm' | 'md' | 'lg'
@@ -330,6 +334,53 @@ function Dropdown({
                   >
                     <Radio checked={isSelected} disabled={opt.disabled} readOnly tabIndex={-1} aria-hidden="true" />
                     {text}
+                  </div>
+                </li>
+              )
+            }
+
+            /* A row with a trailing action is a div that owns the click, like the
+               radio rows: the action is a button and cannot nest inside one. */
+            if (opt.action) {
+              const { action } = opt
+              const pick = () => {
+                if (opt.disabled) return
+                onChange?.(opt.value)
+                setIsActive(false)
+              }
+              return (
+                <li key={opt.value}>
+                  <div
+                    role="option"
+                    aria-selected={isSelected}
+                    aria-disabled={opt.disabled || undefined}
+                    tabIndex={opt.disabled ? -1 : 0}
+                    className={`${optionClass} dropdown-option--action`}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={pick}
+                    onKeyDown={(e) => {
+                      if (e.target !== e.currentTarget) return
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        pick()
+                      }
+                    }}
+                  >
+                    {text}
+                    <Tooltip icon={false} text={action.label}>
+                      <button
+                        type="button"
+                        className="dropdown-option__action"
+                        aria-label={action.label}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          action.onClick()
+                        }}
+                      >
+                        {action.icon}
+                      </button>
+                    </Tooltip>
                   </div>
                 </li>
               )

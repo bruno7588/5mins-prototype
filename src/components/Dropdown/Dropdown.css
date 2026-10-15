@@ -167,12 +167,13 @@
   font-weight: 500;
 }
 
-/* --selected, not raw --secondary-500: the raw token is the dark value, so a
-   selected row came out #FFBB38 in light where the ramp wants #EDA30D. Same
-   fix the trigger border carries above. */
+/* Secondary-500 (#FFBB38) in both modes, the same amber as the Content Switcher's
+   selected pill (Bruno, 2026-10-15). The trigger's active border keeps the
+   mode-aware --selected. */
 .dropdown-option.is-selected,
 .dropdown-option.is-selected:hover:not(:disabled) {
-  background: var(--selected);
+  /* stylelint-disable-next-line -- selected fill is Secondary-500 in both modes, like the switcher */
+  background: var(--secondary-500);
   color: var(--text-on-selected);
   font-weight: 500;
 }
@@ -266,7 +267,8 @@
    is a plain row like any other. */
 .dropdown-option--all.is-selected,
 .dropdown-option--all.is-selected:hover {
-  background: var(--selected);
+  /* stylelint-disable-next-line -- selected menu row is Secondary-500 in both modes, as the Content Switcher (listbox.md) */
+  background: var(--secondary-500);
   color: var(--text-on-selected);
 }
 
@@ -337,4 +339,35 @@
 
 .dropdown-option:has(.dropdown-option__icon) {
   justify-content: flex-start;
+}
+
+/* Trailing action (listbox.md icon-right slot): an icon-only button with the DS
+   circular hover. The row stays a single click target for picking. */
+.dropdown-option--action {
+  cursor: pointer;
+}
+
+.dropdown-option__action {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: calc(var(--space-xs) * -1) 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.dropdown-option__action:hover {
+  background: var(--input-background);
+}
+
+.dropdown-option__action:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }

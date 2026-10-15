@@ -41,11 +41,11 @@ A closed field that opens a listbox so the user picks one value, or several, fro
 
 **Don't**
 - Don't give the trigger a fill at rest; it is transparent with a border only.
-- Don't use raw `--secondary-500` for the active border or the selected row; use the mode-aware `--selected`.
+- Don't use raw `--secondary-500` for the active border; use the mode-aware `--selected`. The selected menu row is the exception: it is `--secondary-500` in both modes, matching the Content Switcher
 - Don't use `--danger-500` for the error border; Dropdown and InputField share `--text-error`, held on hover.
 - Don't copy the `.dropdown-*` classes into a new component; extend `Dropdown` instead.
 
-**Canonical spec:** md trigger 37px high, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), text 14px / 400 / 1.5; sm is 33px with 4px 12px padding and 12px text. Border `--border-elevated`, hover `--border-hover` + `--input-background`, open or focused `--selected`, read-only `--border` with `--text-disabled`, error `--text-error`. Placeholder `--text-disabled`, label Paragraph M semibold `--text-secondary`, helper `--text-tertiary`. Menu: `--cards-background`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), max height 320px, selected row `--selected` with `--text-on-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8925:1408`.
+**Canonical spec:** md trigger 37px high, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), text 14px / 400 / 1.5; sm is 33px with 4px 12px padding and 12px text. Border `--border-elevated`, hover `--border-hover` + `--input-background`, open or focused `--selected`, read-only `--border` with `--text-disabled`, error `--text-error`. Placeholder `--text-disabled`, label Paragraph M semibold `--text-secondary`, helper `--text-tertiary`. Menu: `--cards-background`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), max height 320px, selected row `--secondary-500` (#FFBB38, both modes, as the Content Switcher pill) with `--text-on-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8925:1408`.
 
 ## Figma to code
 

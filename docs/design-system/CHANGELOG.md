@@ -139,6 +139,7 @@ Add new entries here, not in the docs.
 
 ## [dropdown.md](dropdown.md)
 
+- 2026-10-15: Selected menu row fill moved from `--selected` (#EDA30D in light) to `--secondary-500` (#FFBB38, both modes) so it matches the Content Switcher's selected pill (Bruno). The trigger's active border keeps `--selected`. Same change in listbox.md.
 - 2026-10-14: Figma to code updated: `Label`, `Value`, `Helper message` and `Error message` TEXT properties and an `Icon` swap; focus stays the existing Active state.
 - 2026-10-14: Dropdown fits its content (hug). The fixed-width (230px) light Figma copy `12113:14844` was deleted; the single set `8925:1408` serves both modes.
 - 2026-10-14: Menu max height is 320px (was 240px), matching `listbox.md`; `Dropdown.css` updated.

@@ -661,7 +661,8 @@
 /* Selected preset — solid fill + dark label, matching the DS Dropdown option */
 .audit-date-preset.is-selected,
 .audit-date-preset.is-selected:hover {
-  background: var(--selected);
+  /* stylelint-disable-next-line -- selected menu row is Secondary-500 in both modes, as the Content Switcher (listbox.md) */
+  background: var(--secondary-500);
   color: var(--text-on-selected);
   font-weight: 500;
 }

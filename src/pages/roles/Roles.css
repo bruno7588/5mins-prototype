@@ -1943,11 +1943,13 @@
 .roles-function-dropdown__option--active {
   color: var(--text-on-selected);
   font-weight: 500;
-  background: var(--selected);
+  /* stylelint-disable-next-line -- selected menu row is Secondary-500 in both modes, as the Content Switcher (listbox.md) */
+  background: var(--secondary-500);
 }
 
 .roles-function-dropdown__option--active:hover {
-  background: var(--selected);
+  /* stylelint-disable-next-line -- selected menu row is Secondary-500 in both modes, as the Content Switcher (listbox.md) */
+  background: var(--secondary-500);
 }
 
 .roles-function-dropdown__option-icon {
