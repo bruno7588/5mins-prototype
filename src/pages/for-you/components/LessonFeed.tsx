@@ -170,7 +170,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
             {lesson.byCompany ? (
               <CompanyAvatar size={40} />
             ) : (
-              <Avatar src={lesson.instructorAvatar} size={40} />
+              <Avatar src={lesson.instructorAvatar} size={40} shape="square" />
             )}
             <div className="lf-instructor__info">
               <span className="lf-instructor__name">{lesson.instructor}</span>

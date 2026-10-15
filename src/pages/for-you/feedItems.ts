@@ -53,9 +53,9 @@ export interface FeedConcept {
 // One entry per "Jump back in" / hero card — the feed navigates this list.
 export const feedLessons: FeedLesson[] = [
   {
-    instructor: 'Michaela Scott',
-    instructorAvatar: avatar1,
-    instructorBio: 'Driving projects to success with strategic planning and team collaboration.',
+    // Made by the company: shows the company image chosen in Account & Settings.
+    instructor: COMPANY,
+    byCompany: true,
     deepDiveUrl: 'https://example.com/michaela-scott',
     title: "Tearing Down Zendesk's Pricing. What is behind our Unconscious Bias? (Episode 1/4)",
     media: heroGif,

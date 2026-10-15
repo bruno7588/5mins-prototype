@@ -5,11 +5,11 @@ description: Avatar and Avatar Group components for 5Mins.ai. Use when displayin
 
 # Avatars
 
-A visual representation of a user or entity, alone or stacked in a group with a "+N" overflow counter.
+A visual representation of a user or entity, alone or stacked in a group with a "+N" overflow counter. Two shapes: a **circle** for people who use the platform (learners, admins, managers) and a **square** (12px radius) for companies and instructors, the creators of content.
 
 **Code:** `import Avatar from '@/components/Avatar/Avatar'` and `import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'`
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`; Avatar `5097:5884`; Avatar Group `5097:5584`
-**Last verified:** 2026-09-29
+**Last verified:** 2026-10-15 (square shape is code only; no Library variant yet)
 
 Identical structure in both modes; borders, fallback and counter colours are semantic tokens that resolve per mode (see `colors.md`).
 
@@ -21,6 +21,7 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 - Showing the person in a table row, beside their name and role
 - Showing who is enrolled or involved as a compact stacked group with a "+N" overflow
 - Showing a person in a profile header or detail panel (48 to 72px)
+- Showing a company (the tenant's company image, via `CompanyAvatar`) or an instructor as the creator of content → `shape="square"`
 
 **Don't use when**
 - The person is a selection the admin can remove → Chip with `iconLeft` ([doc](chips-switcher-tabs.md))
@@ -38,13 +39,14 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 
 **Don't**
 - Don't add a border to a standalone avatar; the ring is group-only
-- Don't use squares or other radii for people; person avatars are always fully circular (the square is the company avatar, below)
+- Don't use the square for learners or other people in the platform, and don't use the circle for a company or an instructor
+- Don't use any radius other than full (circle) or `var(--radius-sm)` (square)
 - Don't scale the counter text independently; it is bound to the group size (8/10/12px)
 - Don't mix avatar sizes within one group
 - Don't use initials or a coloured letter chip as the fallback; the Library has no initials variant
 - Don't hard-code the fallback colours; the smiley's circle and smile flip with the mode
 
-**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)`; photo `object-fit: cover`; fallback smiley circle `var(--border)`, smile `var(--text-tertiary)`; group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (ring 0.5px at 24px) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar `5097:5884`, Avatar Group `5097:5584`.
+**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)` (circle, people) or `var(--radius-sm)` 12px (square, companies and instructors); photo `object-fit: cover`; fallback smiley circle `var(--border)`, smile `var(--text-tertiary)`; group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (ring 0.5px at 24px) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar `5097:5884`, Avatar Group `5097:5584`.
 
 ## Figma to code
 
@@ -54,6 +56,7 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 |---|---|---|---|---|
 | Size | 24px / 32px / 40px / 48px / 56px / 64px / 72px | `size` | `24` / `32` (default) / `40` / `48` / `56` / `64` / `72` | Figma uses "24px" strings and defaults to 72px; code takes numbers and defaults to 32 |
 | Picture | true / false | `src` | URL set / omitted | omit `src` and the fallback smiley renders |
+| n/a (not in the Library yet) | circle / square | `shape` | `'circle'` (default) / `'square'` | square for companies and instructors; add as a Library variant |
 
 **Avatar group** (`5097:5584`)
 
@@ -63,7 +66,7 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 | Count | text (default "+3") | `remaining` | number, default `0` | renders the "+N" bubble when above 0; the component writes the "+" |
 
 - **Figma only:** none. (The Library's separate `Emojies` set has no code component; `Avatar` renders the smiley fallback.) `Picture` stays a variant, not a boolean: the photo is an image fill on the circle and the fallback is a nested `Emojies` instance, so the two differ in more than one layer's visibility.
-- **Code only:** `alt` and `className` on Avatar; `remaining`, `ariaLabel`, `className` and the `--avatar-group-ring` custom property on AvatarGroup; children may be wrapped (e.g. in a Tooltip).
+- **Code only:** `shape` (until Design adds a square variant), `alt` and `className` on Avatar; `remaining`, `ariaLabel`, `className` and the `--avatar-group-ring` custom property on AvatarGroup; children may be wrapped (e.g. in a Tooltip).
 
 **Avatar props**
 
@@ -72,6 +75,7 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 | `src` | `string` | none | Photo URL. Omit it and the fallback smiley renders (Figma's `Picture=false`) |
 | `size` | `24 \| 32 \| 40 \| 48 \| 56 \| 64 \| 72` | `32` | Diameter in px |
 | `alt` | `string` | `''` | Leave empty when the name is written beside the avatar |
+| `shape` | `'circle' \| 'square'` | `'circle'` | Circle for people; square (12px radius) for companies and instructors |
 | `className` | `string` | none | Extra class on the wrapper |
 
 **AvatarGroup props**
@@ -167,12 +171,13 @@ A horizontal stack of avatars with a trailing "+N" counter bubble.
 | Picture | `Picture=true` | the photo, `object-fit: cover` |
 | Fallback | `Picture=false` | the Library smiley: `var(--border)` circle, `var(--text-tertiary)` smile |
 
-### Company avatar (square)
+### Square avatar (companies and instructors)
 
-**Code:** `import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'` (reads the tenant's company image from `src/data/companyImage.ts`).
-**Figma:** not in the Library yet (interim spec, 2026-10-15); replace with the Library node when Design adds it.
+`<Avatar shape="square">`: the same sizes, photo and fallback as the circle, with a 12px radius (`var(--radius-sm)`). Square so the creator of content (a company or an instructor) never reads as a person who learns.
 
-Shows the tenant's company image where a lesson is made by the company rather than an instructor. Square so a company never reads as a person. Sizes 40 (desktop) and 48 (mobile); radius `var(--radius-s)` (8px, as lesson card thumbnails); `object-fit: cover`; no fallback state, because a company always has an image (an upload or a default from `src/assets/company-images`).
+- **Company:** `import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'` renders the tenant's company image (`src/data/companyImage.ts`) as a square Avatar. It never shows the fallback, because a company always has an image (an upload or a default from `src/assets/company-images`).
+- **Instructor:** `<Avatar src={instructor.avatar} shape="square" />`, e.g. the creator row in the lesson feed (desktop and mobile).
+- **Figma:** not in the Library yet; Design to add a Shape variant (Circle / Square) to Avatar `5097:5884`.
 
 ## Sizes
 
@@ -197,7 +202,8 @@ Display only: avatars and groups have no hover, pressed, disabled or focus state
 | `--page-background` | Neutral-25 `#F9F9FA` | Neutral-800 `#20222A` | Group separator ring (1px) |
 | `--border` | Neutral-100 `#DFE1E6` | Neutral-700 `#2D313D` | "+N" counter bubble background; fallback smiley circle |
 | `--text-tertiary` | Neutral-400 `#656B7C` | Neutral-300 `#9EA4B3` | "+N" counter text; fallback smiley smile |
-| `--radius-full` (Figma `100`) | n/a | n/a | Border radius (fully circular) |
+| `--radius-full` (Figma `100`) | n/a | n/a | Border radius, circle (people) |
+| `--radius-sm` | n/a | n/a | Border radius 12px, square (companies and instructors) |
 
 ## Accessibility
 

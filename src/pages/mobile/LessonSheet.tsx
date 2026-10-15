@@ -30,7 +30,7 @@ function LessonSheet({ lesson, onClose, onOpenLink, onDownload, hidden }: Lesson
       <div className="m-lsheet">
         <div className="m-lsheet__about">
           <div className="m-lsheet__instructor">
-            {lesson.byCompany ? <CompanyAvatar size={48} /> : <Avatar src={lesson.instructorAvatar} size={48} />}
+            {lesson.byCompany ? <CompanyAvatar size={48} /> : <Avatar src={lesson.instructorAvatar} size={48} shape="square" />}
             <div className="m-lsheet__who">
               <p className="m-lsheet__name">{lesson.instructor}</p>
               {lesson.instructorBio && <p className="m-lsheet__bio">{lesson.instructorBio}</p>}

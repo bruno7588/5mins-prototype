@@ -111,7 +111,7 @@ function LessonFeedScreen({ lessons, startIndex, onMore, sheetIndex, onIndexChan
               {lesson.byCompany ? (
                 <CompanyAvatar size={48} className="m-lf-side__avatar" />
               ) : (
-                <Avatar src={lesson.instructorAvatar} size={48} className="m-lf-side__avatar" />
+                <Avatar src={lesson.instructorAvatar} size={48} shape="square" className="m-lf-side__avatar" />
               )}
               <SideAction icon={<Discover size={24} color="var(--neutral-0)" variant="Linear" />} label="Learnings" />
               <SideAction icon={<ArchiveAdd size={24} color="var(--neutral-0)" variant="Linear" />} label="Bookmark" />

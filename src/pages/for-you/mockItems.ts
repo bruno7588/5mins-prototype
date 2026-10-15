@@ -9,7 +9,6 @@ import course2 from '../../assets/workspace/course-2.png'
 import course3 from '../../assets/workspace/course-3.png'
 import course4 from '../../assets/workspace/course-4.png'
 
-import thumb1 from '../../assets/programs/course-thumbs/course-thumb-1.jpg'
 import thumb2 from '../../assets/programs/course-thumbs/course-thumb-2.jpg'
 import thumb3 from '../../assets/programs/course-thumbs/course-thumb-3.jpg'
 import thumb4 from '../../assets/programs/course-thumbs/course-thumb-4.jpg'
@@ -34,7 +33,8 @@ export const skillCards: SkillCardProps[] = [
 ]
 
 export const jumpBackIn: LessonGridCardProps[] = [
-  { title: 'The importance of Authentic Stories and How to Tell', instructor: 'Priya Nair', thumbnail: thumb1, durationLabel: '3m 45s', filled: 4 },
+  // Opens feedLessons[0], a company lesson: no thumbnail, so it shows the company image.
+  { title: 'The importance of Authentic Stories and How to Tell', instructor: COMPANY, durationLabel: '3m 45s', filled: 4 },
   { title: 'Leading Remote Teams Without Losing Momentum', instructor: 'Marco Rossi', thumbnail: thumb2, durationLabel: '4m 12s', filled: 2 },
   { title: 'Turning Conflict Into Collaboration', instructor: 'Ana Ferreira', thumbnail: thumb3, durationLabel: '5m 03s', filled: 6 },
   { title: 'The Manager’s Guide to Delegation', instructor: 'Liam Walsh', thumbnail: thumb4, durationLabel: '2m 58s', filled: 8, completed: true },

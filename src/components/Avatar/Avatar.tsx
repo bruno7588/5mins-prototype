@@ -10,6 +10,9 @@ interface AvatarProps {
   size?: AvatarSize
   /** Leave empty when the person's name is already written beside the avatar. */
   alt?: string
+  /** `circle` for people (learners, admins, managers); `square` (12px radius)
+      for companies and instructors (avatars.md). */
+  shape?: 'circle' | 'square'
   className?: string
 }
 
@@ -30,9 +33,10 @@ function FallbackSmiley() {
 }
 
 /* Avatar - avatars.md. A photo, or the Library smiley when there is none;
-   never initials. Circular, no border on its own (the ring is AvatarGroup's). */
-function Avatar({ src, size = 32, alt = '', className }: AvatarProps) {
-  const classes = ['ds-avatar', `ds-avatar--${size}`, className].filter(Boolean).join(' ')
+   never initials. Circular for people, square for companies and instructors;
+   no border on its own (the ring is AvatarGroup's). */
+function Avatar({ src, size = 32, alt = '', shape = 'circle', className }: AvatarProps) {
+  const classes = ['ds-avatar', `ds-avatar--${size}`, shape === 'square' && 'ds-avatar--square', className].filter(Boolean).join(' ')
   return (
     <span className={classes}>
       {src ? <img className="ds-avatar__img" src={src} alt={alt} /> : <FallbackSmiley />}

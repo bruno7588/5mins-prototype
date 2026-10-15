@@ -107,7 +107,7 @@ Every component doc follows `_template.md`: Usage, then Figma to code. Read the 
 |---|---|
 | Buttons, cards, inputs, dialogs, modals | `--radius-sm` (12px) |
 | Large cards / hero sections | `--radius-m` (16px) / `--radius-ml` (20px) |
-| Avatars, badges, chips, icon-button hover / Side Drawer | `--radius-full` / none (flush) |
+| Avatars, badges, chips, icon-button hover / Side Drawer | `--radius-full` (square company / instructor avatar `--radius-sm`) / none (flush) |
 
 ### What overlay for…
 - Delete or hard-to-undo confirmation, quick yes/no → **Dialog** (`semantic="danger"` when destructive)
