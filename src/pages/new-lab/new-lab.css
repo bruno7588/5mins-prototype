@@ -1,0 +1,8 @@
+/* New Lab placeholder. Prefix: nlab- (globally bundled CSS). */
+.nlab-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--page-background);
+}

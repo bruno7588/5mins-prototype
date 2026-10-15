@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "src/prototype/DemoSwitcher/DemoSwitcher.css"
+        ],
+        "createdAt": "2026-10-15T14:44:44.710Z",
+        "reason": "Pre-existing intentional design: DemoSwitcher.css comment records the width animation as deliberate, Bruno preferred it to a clip-and-fade; prototype chrome, not product UI"
+      }
+    ]
+  }
+}
