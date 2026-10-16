@@ -118,15 +118,16 @@ function LayoutSettings() {
         <h3 className="acl-title">Company image</h3>
         <div className="acl-thumb">
           <span className="acl-thumb__media">
-            <img className="acl-thumb__preview" src={company.src} alt="Company image" width={80} height={80} />
+            <img className="acl-thumb__preview" src={company.src} alt="Company image" width={96} height={96} />
             <CompanyImageMotion />
           </span>
           <div className="acl-thumb__info">
             <p className="acl-text">
-              Shown as your company avatar and on lessons that don't have their own thumbnail.
-              Upload a 512 x 512 px JPEG.
+              Upload a 512 x 512 px image, PNG or JPEG format. This image shows up in your lesson
+              thumbnails and company avatar
             </p>
             <div className="acl-thumb__actions">
+              <Button onClick={() => setPickerOpen(true)}>Change</Button>
               <Button
                 variant="outlined"
                 icon={<Eye size={20} color="currentColor" variant="Linear" />}
@@ -134,7 +135,6 @@ function LayoutSettings() {
               >
                 Preview
               </Button>
-              <Button onClick={() => setPickerOpen(true)}>Change</Button>
             </div>
           </div>
         </div>
@@ -144,8 +144,8 @@ function LayoutSettings() {
           title="Change company image"
           tabs={['upload', 'defaults']}
           upload={{
-            accept: '.jpg,.jpeg',
-            helpText: 'Drag or upload a 512 x 512 px JPEG, smaller than 9 MB.',
+            accept: '.png,.jpg,.jpeg',
+            helpText: 'Drag or upload a 512 x 512 px PNG or JPEG, smaller than 9 MB.',
             validate: validateCompanyImage,
           }}
           onSelect={setCompanyUpload}

@@ -59,10 +59,12 @@ export function useCompanyImage() {
 export const COMPANY_IMAGE_SIZE = 512
 const MAX_BYTES = 9 * 1024 * 1024
 
-/** Upload rules: JPEG, under 9 MB, at least 512 x 512 so it stays crisp at every size. */
+/** Upload rules: PNG or JPEG, under 9 MB, at least 512 x 512 so it stays crisp at every size. */
 export async function validateCompanyImage(file: File): Promise<string | null> {
-  if (file.type !== 'image/jpeg') return 'Only JPEG images are supported. Upload a .jpg or .jpeg file.'
-  if (file.size >= MAX_BYTES) return 'This image is 9 MB or larger. Upload a JPEG smaller than 9 MB.'
+  if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+    return 'Only PNG or JPEG images are supported. Upload a .png, .jpg or .jpeg file.'
+  }
+  if (file.size >= MAX_BYTES) return 'This image is 9 MB or larger. Upload an image smaller than 9 MB.'
   try {
     const bitmap = await createImageBitmap(file)
     const { width, height } = bitmap
@@ -71,7 +73,7 @@ export async function validateCompanyImage(file: File): Promise<string | null> {
       return `This image is ${width} x ${height} px. Upload one at least 512 x 512 px.`
     }
   } catch {
-    return 'This image could not be read. Upload a different JPEG.'
+    return 'This image could not be read. Upload a different image.'
   }
   return null
 }
