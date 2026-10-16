@@ -168,13 +168,13 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
         <div className="lf-instructor">
           <div className="lf-instructor__creator">
             {lesson.byCompany ? (
-              <CompanyAvatar size={40} />
+              <CompanyAvatar size={32} />
             ) : (
               <Avatar src={lesson.instructorAvatar} size={40} shape="square" />
             )}
             <div className="lf-instructor__info">
               <span className="lf-instructor__name">{lesson.instructor}</span>
-              <span className="lf-instructor__role">{lesson.byCompany ? 'Company' : 'Instructor'}</span>
+              {!lesson.byCompany && <span className="lf-instructor__role">Instructor</span>}
             </div>
           </div>
           <button
