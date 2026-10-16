@@ -149,6 +149,7 @@ function LayoutSettings() {
             accept: '.png,.jpg,.jpeg',
             helpText: 'Drag or upload a 512 x 512 px PNG or JPEG, smaller than 9 MB.',
             validate: validateCompanyImage,
+            confirm: true,
           }}
           onSelect={(src) => {
             setCompanyUpload(src)

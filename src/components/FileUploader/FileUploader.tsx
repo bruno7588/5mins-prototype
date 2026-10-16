@@ -23,6 +23,9 @@ interface FileUploaderProps {
   icon?: ReactNode
   /** Filled state: replaces the default document icon, e.g. a file-type thumbnail. */
   fileIcon?: ReactNode
+  /** Filled state: shows only this (e.g. the picked image), without the file name or
+      Select File. A new file can still be dropped on the zone. */
+  filledPreview?: ReactNode
   className?: string
 }
 
@@ -39,6 +42,7 @@ export function FileUploader({
   helpText = 'Drag and drop file here or click to upload',
   icon,
   fileIcon,
+  filledPreview,
   className,
 }: FileUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -96,7 +100,7 @@ export function FileUploader({
   )
 
   const sizeClass = isL ? 'file-uploader--L' : 'file-uploader--S'
-  const stateClass = `file-uploader--${state.toLowerCase()}`
+  const stateClass = `file-uploader--${state.toLowerCase()}${state === 'Filled' && filledPreview ? ' file-uploader--preview' : ''}`
   const dragClass = isDragging ? 'file-uploader--dragging' : ''
 
   return (
@@ -173,7 +177,8 @@ export function FileUploader({
       )}
 
       {/* FILLED */}
-      {state === 'Filled' && (
+      {state === 'Filled' && filledPreview}
+      {state === 'Filled' && !filledPreview && (
         <>
           <div className={`file-uploader__icon-group${fileIcon ? ' file-uploader__icon-group--thumb' : ''}`}>
             {fileIcon ?? <DocumentText size={iconSize} color="var(--text-secondary)" variant="Bold" />}

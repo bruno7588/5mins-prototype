@@ -1,0 +1,79 @@
+/* Library Slider (EC26cSVe9KNTCWXvYovakw 10662:14039). Prefix: ds-slider */
+.ds-slider {
+  --slider-thumb: 20px;
+  position: relative;
+  width: 100%;
+  height: 44px;
+}
+
+.ds-slider__input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.ds-slider__input:disabled {
+  cursor: default;
+}
+
+.ds-slider__rail,
+.ds-slider__track,
+.ds-slider__thumb {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.ds-slider__rail {
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+}
+
+/* The track runs to the thumb's centre. */
+.ds-slider__track {
+  left: 0;
+  width: calc(var(--slider-thumb) / 2 + (100% - var(--slider-thumb)) * var(--slider-pct) / 100);
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--selected);
+}
+
+.ds-slider__thumb {
+  left: calc((100% - var(--slider-thumb)) * var(--slider-pct) / 100);
+  width: var(--slider-thumb);
+  height: var(--slider-thumb);
+  border-radius: var(--radius-full);
+  background: var(--selected);
+  box-shadow: var(--shadow-s);
+  transition: box-shadow 150ms ease;
+}
+
+/* Hover: the Library's soft halo round the thumb. */
+.ds-slider__input:hover:not(:disabled) ~ .ds-slider__thumb {
+  box-shadow: 0 0 0 11px var(--selected-tint);
+}
+
+.ds-slider__input:focus-visible ~ .ds-slider__thumb {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.ds-slider--disabled .ds-slider__track,
+.ds-slider--disabled .ds-slider__thumb {
+  background: var(--button-background-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-slider__thumb {
+    transition: none;
+  }
+}

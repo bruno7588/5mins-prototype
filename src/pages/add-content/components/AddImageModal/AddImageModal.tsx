@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { SearchNormal1 } from 'iconsax-react'
+import { Add, Minus, SearchNormal1 } from 'iconsax-react'
 import SparkleIcon from '../../../../components/icons/SparkleIcon'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import FileUploader from '../../../../components/FileUploader/FileUploader'
+import Button from '@/components/Button/Button'
+import Slider from '@/components/Slider/Slider'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import './AddImageModal.css'
 
 export type ImageModalTab = 'upload' | 'generate' | 'freepik' | 'defaults'
@@ -24,6 +27,9 @@ export interface ImageModalUpload {
   helpText?: string
   /** Resolves to an error message to reject the file, or null to accept it. */
   validate?: (file: File) => Promise<string | null>
+  /** Hold the picked file in the uploader with a zoom slider, and only use it on Save
+      (square, cropped to the zoom). Without it a valid file is used straight away. */
+  confirm?: boolean
 }
 
 export interface ImageModalDefault {
@@ -62,6 +68,55 @@ const GENERATED_ASPECT = '1 / 1'
 const GENERATION_DELAY_MS = 3000
 const DEFAULT_SAVE_DELAY_MS = 1000
 const SUGGEST_DELAY_MS = 900
+const ZOOM_MIN = 1
+const ZOOM_MAX = 3
+const ZOOM_STEP = 0.25
+/** Long edge cap for a saved, cropped upload. */
+const CROP_MAX = 1024
+const CENTRE = { x: 0.5, y: 0.5 }
+/** Arrow keys move the crop this share of its own side. */
+const NUDGE = 0.05
+
+/** A held upload: its natural size, plus the crop centre as 0-1 of each side. */
+interface StagedImage {
+  src: string
+  name: string
+  width: number
+  height: number
+}
+
+/** Side of the square crop, as 0-1 of the image's width and height. */
+function cropSpan(img: StagedImage, zoom: number) {
+  const side = Math.min(img.width, img.height) / zoom
+  return { x: side / img.width, y: side / img.height }
+}
+
+/** Keeps the crop window inside the image. */
+function clampCentre(img: StagedImage, zoom: number, c: { x: number; y: number }) {
+  const span = cropSpan(img, zoom)
+  const clamp = (v: number, s: number) => Math.min(1 - s / 2, Math.max(s / 2, v))
+  return { x: clamp(c.x, span.x), y: clamp(c.y, span.y) }
+}
+
+/** The square at `zoom` round centre `c` (0-1), as a data URL. */
+function cropSquare(src: string, zoom: number, c: { x: number; y: number }): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => {
+      const side = Math.min(img.naturalWidth, img.naturalHeight) / zoom
+      const out = Math.min(CROP_MAX, Math.round(side))
+      const canvas = document.createElement('canvas')
+      canvas.width = out
+      canvas.height = out
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return reject(new Error('No canvas'))
+      ctx.drawImage(img, c.x * img.naturalWidth - side / 2, c.y * img.naturalHeight - side / 2, side, side, 0, 0, out, out)
+      resolve(canvas.toDataURL('image/png'))
+    }
+    img.onerror = reject
+    img.src = src
+  })
+}
 
 function buildSuggestedPrompt(content: CardContent | undefined): string {
   const title = (content?.title ?? '').trim()
@@ -117,6 +172,12 @@ function AddImageModal({
   const startTab = tabs.includes(initialTab) ? initialTab : tabs[0]
   const [tab, setTab] = useState<Tab>(startTab)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  /** Upload with `confirm`: the picked file, held until Save. */
+  const [staged, setStaged] = useState<StagedImage | null>(null)
+  const [zoom, setZoom] = useState(ZOOM_MIN)
+  /** Crop centre, 0-1 of the image; dragging the image moves it. */
+  const [centre, setCentre] = useState(CENTRE)
+  const dragRef = useRef<{ x: number; y: number; centre: { x: number; y: number } } | null>(null)
   const [pickedDefault, setPickedDefault] = useState(selectedDefaultId)
   const [savingDefault, setSavingDefault] = useState<string | null>(null)
   const saveTimer = useRef<number | null>(null)
@@ -135,6 +196,9 @@ function AddImageModal({
     if (open) {
       setTab(startTab)
       setUploadError(null)
+      setStaged(null)
+      setZoom(ZOOM_MIN)
+      setCentre(CENTRE)
       setPickedDefault(selectedDefaultId)
       setSavingDefault(null)
       setQuery('')
@@ -176,12 +240,67 @@ function AddImageModal({
     if (error) return
     const reader = new FileReader()
     reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        onSelect(reader.result)
-        onClose()
+      if (typeof reader.result !== 'string') return
+      if (upload.confirm) {
+        const src = reader.result
+        const probe = new Image()
+        probe.onload = () => {
+          setStaged({ src, name: file.name, width: probe.naturalWidth, height: probe.naturalHeight })
+          setZoom(ZOOM_MIN)
+          setCentre(CENTRE)
+        }
+        probe.src = src
+        return
       }
+      onSelect(reader.result)
+      onClose()
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleStagedSave = async () => {
+    if (!staged) return
+    onSelect(await cropSquare(staged.src, zoom, centre))
+    onClose()
+  }
+
+  /* Zoom round the current centre, pulled back in if the wider window would leave the image. */
+  const changeZoom = (next: number) => {
+    const z = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next))
+    setZoom(z)
+    if (staged) setCentre((c) => clampCentre(staged, z, c))
+  }
+
+  const handleStagePointerDown = (e: React.PointerEvent<HTMLSpanElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId)
+    dragRef.current = { x: e.clientX, y: e.clientY, centre }
+  }
+
+  const handleStagePointerMove = (e: React.PointerEvent<HTMLSpanElement>) => {
+    const drag = dragRef.current
+    if (!drag || !staged) return
+    // The frame shows one crop side, so a full frame's drag moves the centre one span.
+    const frame = e.currentTarget.getBoundingClientRect().width
+    const span = cropSpan(staged, zoom)
+    setCentre(
+      clampCentre(staged, zoom, {
+        x: drag.centre.x - ((e.clientX - drag.x) / frame) * span.x,
+        y: drag.centre.y - ((e.clientY - drag.y) / frame) * span.y,
+      }),
+    )
+  }
+
+  const handleStagePointerUp = () => {
+    dragRef.current = null
+  }
+
+  const handleStageKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (!staged) return
+    const step = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]
+    if (!step) return
+    e.preventDefault()
+    const span = cropSpan(staged, zoom)
+    setCentre((c) => clampCentre(staged, zoom, { x: c.x + step[0] * span.x * NUDGE, y: c.y + step[1] * span.y * NUDGE }))
   }
 
   const handleDefaultPick = (id: string) => {
@@ -270,17 +389,84 @@ function AddImageModal({
         </div>
       </div>
 
-      <div className="aim-body">
+      <div className={`aim-body${tab === 'upload' && upload.confirm ? ' aim-body--confirm' : ''}`}>
         {tab === 'upload' && (
-          <FileUploader
-            size="L"
-            accept={upload.accept}
-            helpText={upload.helpText}
-            state={uploadError ? 'Error' : undefined}
-            errorMessage={uploadError ?? undefined}
-            onFileSelect={handleFile}
-            className="aim-uploader"
-          />
+          <div className="aim-upload">
+            <FileUploader
+              size="L"
+              accept={upload.accept}
+              helpText={upload.helpText}
+              state={uploadError ? 'Error' : staged ? 'Filled' : undefined}
+              errorMessage={uploadError ?? undefined}
+              filledPreview={
+                staged ? (
+                  <span
+                    className="aim-stage"
+                    role="group"
+                    aria-label="Crop. Drag the image or use the arrow keys to move it."
+                    tabIndex={0}
+                    onPointerDown={handleStagePointerDown}
+                    onPointerMove={handleStagePointerMove}
+                    onPointerUp={handleStagePointerUp}
+                    onPointerCancel={handleStagePointerUp}
+                    onKeyDown={handleStageKeyDown}
+                  >
+                    <img
+                      src={staged.src}
+                      alt=""
+                      draggable={false}
+                      style={(() => {
+                        // The image at the size where one crop side fills the frame, placed so the centre sits mid-frame.
+                        const span = cropSpan(staged, zoom)
+                        return {
+                          width: `${100 / span.x}%`,
+                          height: `${100 / span.y}%`,
+                          left: `${50 - (centre.x / span.x) * 100}%`,
+                          top: `${50 - (centre.y / span.y) * 100}%`,
+                        }
+                      })()}
+                    />
+                  </span>
+                ) : undefined
+              }
+              onFileSelect={handleFile}
+              className="aim-uploader"
+            />
+            {staged && (
+              <div className="aim-zoom">
+                <Tooltip icon={false} text="Zoom out">
+                  <button
+                    type="button"
+                    className="aim-zoom__btn"
+                    aria-label="Zoom out"
+                    disabled={zoom <= ZOOM_MIN}
+                    onClick={() => changeZoom(zoom - ZOOM_STEP)}
+                  >
+                    <Minus size={24} color="var(--text-primary)" />
+                  </button>
+                  </Tooltip>
+                <Slider
+                  aria-label="Zoom"
+                  min={ZOOM_MIN}
+                  max={ZOOM_MAX}
+                  step={0.01}
+                  value={zoom}
+                  onChange={changeZoom}
+                />
+                <Tooltip icon={false} text="Zoom in">
+                  <button
+                    type="button"
+                    className="aim-zoom__btn"
+                    aria-label="Zoom in"
+                    disabled={zoom >= ZOOM_MAX}
+                    onClick={() => changeZoom(zoom + ZOOM_STEP)}
+                  >
+                    <Add size={24} color="var(--text-primary)" />
+                  </button>
+                  </Tooltip>
+              </div>
+            )}
+          </div>
         )}
 
         {tab === 'generate' && (
@@ -485,6 +671,12 @@ function AddImageModal({
         )}
       </div>
 
+      {tab === 'upload' && upload.confirm && (
+        <div className="confirm-modal-actions">
+          <Button variant="outlined-2" onClick={onClose}>Cancel</Button>
+          <Button disabled={!staged} onClick={handleStagedSave}>Save</Button>
+        </div>
+      )}
     </ConfirmModal>
   )
 }
