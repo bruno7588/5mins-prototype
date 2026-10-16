@@ -170,7 +170,7 @@
 .acl-thumb__preview {
   display: block;
   flex-shrink: 0;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   object-fit: cover;
 }
 

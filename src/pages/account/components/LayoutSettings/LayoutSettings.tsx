@@ -127,7 +127,7 @@ function LayoutSettings() {
               thumbnails and company avatar
             </p>
             <div className="acl-thumb__actions">
-              <Button onClick={() => setPickerOpen(true)}>Change</Button>
+              <Button onClick={() => setPickerOpen(true)}>Change Image</Button>
               <Button
                 variant="outlined"
                 icon={<Eye size={20} color="currentColor" variant="Linear" />}
