@@ -84,6 +84,17 @@ describe('preset', () => {
     expect(() => parsePreset(notObject)).toThrow(/framing must be an object/)
   })
 
+  it('reads liquid back and gives older presets none', () => {
+    const lab: LabState = { ...LAB, motion: { ...LAB.motion, liquid: 0.6 } }
+    expect(parsePreset(JSON.parse(JSON.stringify(toPreset(lab, 'Ink')))).motion?.liquid).toBe(0.6)
+    const old = roundTrip(LAB)
+    delete old.motion.liquid
+    expect(parsePreset(old).motion?.liquid).toBe(0)
+    const bad = roundTrip(LAB)
+    bad.motion.liquid = 'lots'
+    expect(() => parsePreset(bad)).toThrow(/motion\.liquid/)
+  })
+
   it('clamps out-of-range values to the documented ranges', () => {
     const json = roundTrip(LAB)
     json.gradient.softness = 20
@@ -93,6 +104,7 @@ describe('preset', () => {
     json.motion.speed = -1
     json.motion.warpOctaves = 2.6
     json.motion.loopSeconds = 90
+    json.motion.liquid = 2
     json.source.palette[0].x = 3
     const parsed = parsePreset(json)
     expect(parsed.gradient?.softness).toBe(8)
@@ -102,6 +114,7 @@ describe('preset', () => {
     expect(parsed.motion?.speed).toBe(0)
     expect(parsed.motion?.warpOctaves).toBe(3)
     expect(parsed.motion?.loopSeconds).toBe(30)
+    expect(parsed.motion?.liquid).toBe(1)
     expect(parsed.palette?.[0].x).toBe(1)
   })
 })

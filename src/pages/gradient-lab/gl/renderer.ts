@@ -31,7 +31,7 @@ const UNIFORMS = [
   'u_resolution', 'u_dpr', 'u_aspectScale', 'u_baseTurns', 'u_count', 'u_oklab', 'u_points', 'u_weights', 'u_softness',
   'u_mode', 'u_mix', 'u_photo', 'u_lod', 'u_texel', 'u_abstract', 'u_maxLod',
   'u_scale', 'u_rotation', 'u_offset', 'u_swirl', 'u_distortion', 'u_phase',
-  'u_warp', 'u_warpOctaves', 'u_warpCoord', 'u_flow',
+  'u_warp', 'u_warpOctaves', 'u_warpCoord', 'u_flow', 'u_liquid',
   'u_noiseType', 'u_noiseSize', 'u_noiseIntensity', 'u_blend', 'u_noiseColour', 'u_noiseLuma', 'u_grainSeed', 'u_grainDistort',
 ] as const
 type UniformName = (typeof UNIFORMS)[number]
@@ -269,6 +269,7 @@ export function createRenderer(canvas: HTMLCanvasElement): GradientRenderer | nu
       gl.uniform1i(loc.u_warpOctaves, Math.min(5, Math.max(1, Math.round(m.warpOctaves))))
       gl.uniform4f(loc.u_warpCoord, warpSeed[0], warpSeed[1], noiseTime[0], noiseTime[1])
       gl.uniform2f(loc.u_flow, flow[0], flow[1])
+      gl.uniform1f(loc.u_liquid, m.liquid ?? 0)
 
       gl.uniform1i(loc.u_noiseType, NOISE_TYPES[n.type] ?? 0)
       gl.uniform1f(loc.u_noiseSize, n.size)

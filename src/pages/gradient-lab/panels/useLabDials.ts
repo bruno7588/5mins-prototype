@@ -81,6 +81,7 @@ interface LabDials {
     warp: number
     'warp octaves': number
     'swirl motion': number
+    liquid: number
     'seamless loop': boolean
     'loop seconds': number
     'animated grain': boolean
@@ -124,6 +125,7 @@ function labToDials(lab: LabState): LabDials {
       warp: m.warp,
       'warp octaves': m.warpOctaves,
       'swirl motion': m.swirlMotion,
+      liquid: m.liquid,
       'seamless loop': m.loop,
       'loop seconds': m.loopSeconds,
       'animated grain': m.grainAnimated,
@@ -142,6 +144,7 @@ function dialsMotion(d: LabDials['Motion']): MotionSettings {
     warp: d.warp,
     warpOctaves: d['warp octaves'],
     swirlMotion: d['swirl motion'],
+    liquid: d.liquid,
     loop: d['seamless loop'],
     loopSeconds: d['loop seconds'],
     grainAnimated: d['animated grain'],
@@ -168,6 +171,7 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
         warp: [m.warp, 0, 1, 0.01],
         'warp octaves': [m['warp octaves'], 1, 5, 1],
         'swirl motion': [m['swirl motion'], 0, 1, 0.01],
+        liquid: [m.liquid, 0, 1, 0.01],
         'seamless loop': m['seamless loop'],
         'loop seconds': [m['loop seconds'], 2, 30, 1],
         'animated grain': m['animated grain'],

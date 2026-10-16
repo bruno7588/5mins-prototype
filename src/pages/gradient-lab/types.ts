@@ -86,6 +86,8 @@ export interface MotionSettings {
   warpOctaves: number
   /** Animated swirl, 0-1 */
   swirlMotion: number
+  /** Nested (liquid) domain warp, 0-1: colour smears into streaks and tendrils. 0 = off. */
+  liquid: number
   /** Seamless loop: every motion repeats exactly every loopSeconds. */
   loop: boolean
   /** 2-30 */
@@ -187,6 +189,7 @@ export const DEFAULT_MOTION: MotionSettings = {
   warp: 0.2,
   warpOctaves: 2,
   swirlMotion: 0.2,
+  liquid: 0,
   loop: true,
   loopSeconds: 10,
   grainAnimated: false,

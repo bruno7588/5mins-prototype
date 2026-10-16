@@ -141,6 +141,8 @@ function parseMotion(v: unknown): MotionSettings {
     warp: num(m, 'warp', p, 0, 1),
     warpOctaves: num(m, 'warpOctaves', p, 1, 5, true),
     swirlMotion: num(m, 'swirlMotion', p, 0, 1),
+    // Added later, so older presets have none (and render as before).
+    liquid: m.liquid === undefined ? 0 : num(m, 'liquid', p, 0, 1),
     loop: bool(m, 'loop', p),
     loopSeconds: num(m, 'loopSeconds', p, 2, 30, true),
     grainAnimated: bool(m, 'grainAnimated', p),

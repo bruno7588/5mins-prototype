@@ -39,6 +39,7 @@ uniform float u_warp;
 uniform int u_warpOctaves;
 uniform vec4 u_warpCoord;    // xy: seed offset, zw: time coordinate (a circle when looping)
 uniform vec2 u_flow;
+uniform float u_liquid;      // 0-1: nested (warp of a warp) domain warp, colour pulled into streaks
 
 // Grain
 uniform int u_noiseType;     // 0 white, 1 blue, 2 value, 3 simplex, 4 fbm, 5 worley, 6 paper, 7 dither, 8 halftone
@@ -376,6 +377,24 @@ void main() {
       fbm4(vec4(p * 1.6 + u_warpCoord.xy, u_warpCoord.zw)),
       fbm4(vec4(p * 1.6 + u_warpCoord.xy + vec2(5.2, 1.3), u_warpCoord.zw + vec2(3.7, 9.1))));
     p += u_warp * 0.35 * w;
+  }
+
+  /* Liquid: a second-order domain warp (after Inigo Quilez's fbm(p + fbm(p))),
+     at a low frequency so masses stay large and soft.
+     The inner warp bends the coordinates the outer warp is read at, so colour
+     is dragged into long streaks and tendrils, like ink pulled through water.
+     Both layers walk the same time circle (the outer one on a smaller circle),
+     so loops stay seamless. Zero skips it, leaving older presets unchanged. */
+  if (u_liquid > 0.0) {
+    vec2 s = p * 0.7 + u_warpCoord.xy + vec2(31.4, 7.7);
+    vec4 t = vec4(u_warpCoord.zw * 0.5, u_warpCoord.zw * 0.35);
+    vec2 q = vec2(
+      fbm4(vec4(s, t.xy)),
+      fbm4(vec4(s + vec2(5.2, 1.3), t.xy + vec2(3.7, 9.1))));
+    vec2 r = vec2(
+      fbm4(vec4(s + 2.5 * q + vec2(1.7, 9.2), t.zw + vec2(8.3, 2.8))),
+      fbm4(vec4(s + 2.5 * q + vec2(8.3, 2.8), t.zw + vec2(1.1, 6.4))));
+    p += u_liquid * 0.5 * r;
   }
 
   /* The photo as it is: framed (zoom, rotation, focal point, quarter turns) and
