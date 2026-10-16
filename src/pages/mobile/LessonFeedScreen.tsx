@@ -109,7 +109,7 @@ function LessonFeedScreen({ lessons, startIndex, onMore, sheetIndex, onIndexChan
 
             <div className="m-lf-side">
               {lesson.byCompany ? (
-                <CompanyAvatar size={48} className="m-lf-side__avatar" />
+                <CompanyAvatar size={32} className="m-lf-side__avatar" />
               ) : (
                 <Avatar src={lesson.instructorAvatar} size={48} shape="square" className="m-lf-side__avatar" />
               )}
