@@ -1,10 +1,6 @@
 import { workspacePrograms, type ProgramCourse } from '../workspace/mockItems'
 import type { ResourceType } from '@/components/ResourceCard/ResourceCard'
-import thumb2 from '../../assets/programs/course-2.png'
 import thumb3 from '../../assets/programs/course-3.png'
-import thumb4 from '../../assets/programs/course-4.png'
-import thumb5 from '../../assets/programs/course-5.png'
-import thumb6 from '../../assets/programs/course-6.png'
 
 export interface CourseLesson {
   id: string
@@ -106,7 +102,6 @@ const sections: CourseSection[] = [
         id: 'l2',
         title: 'The Mindset of Innovative Leaders',
         meta: 'Lesson · Dr. Amara Okafor · 8 min',
-        thumbnail: thumb2,
         state: 'locked',
       },
     ],
@@ -120,7 +115,6 @@ const sections: CourseSection[] = [
         id: 'l3',
         title: 'Creating Psychological Safety',
         meta: 'Lesson · James Whitfield · 5 min',
-        thumbnail: thumb3,
         state: 'locked',
         resources: [
           { id: 'l3r1', type: 'powerpoint', title: 'Team safety workshop slides', size: 8493465 },
@@ -130,7 +124,6 @@ const sections: CourseSection[] = [
         id: 'l4',
         title: 'Assessment: Team Dynamics',
         meta: 'Assessment · 10 questions',
-        thumbnail: thumb4,
         state: 'locked',
       },
     ],
@@ -144,14 +137,12 @@ const sections: CourseSection[] = [
         id: 'l5',
         title: 'Leading Through Uncertainty',
         meta: 'Lesson · Priya Nair · 7 min',
-        thumbnail: thumb5,
         state: 'locked',
       },
       {
         id: 'l6',
         title: 'Measuring Innovation Impact',
         meta: 'Lesson · Priya Nair · 9 min',
-        thumbnail: thumb6,
         state: 'locked',
       },
     ],

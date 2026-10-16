@@ -403,7 +403,8 @@
   object-fit: cover;
 }
 
-.pcd-lesson--locked .pcd-lesson__thumb img {
+.pcd-lesson--locked .pcd-lesson__thumb img,
+.pcd-lesson--locked .pcd-lesson__thumb .company-motion {
   filter: grayscale(1);
 }
 
