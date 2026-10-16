@@ -67,11 +67,24 @@
   gap: var(--space-s);
 }
 
+/* Focal pad on the left; Randomise Framing above Rotate beside it. */
+.gl-focal-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+}
+
+.gl-focal-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-s);
+}
+
 .gl-pad__area {
   position: relative;
-  /* Half the column width, centred over the readout. */
-  width: 50%;
-  align-self: center;
+  width: 96px;
+  align-self: flex-start;
   aspect-ratio: 1;
   border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);

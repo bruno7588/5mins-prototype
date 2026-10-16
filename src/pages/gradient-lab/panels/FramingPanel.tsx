@@ -1,15 +1,11 @@
+import { RotateRight } from 'iconsax-react'
+import Button from '@/components/Button/Button'
 import Dropdown from '@/components/Dropdown/Dropdown'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import { outputSize, type AspectRatio, type LabState, type RenderSize, type TextureRotation } from '../types'
 
 /* Output framing: aspect ratio and render size side by side (Image tab), plus
    the Rotate field used under the focal point. Prefix: gl-section */
-
-const ROTATE_OPTIONS = [
-  { value: '0', label: 'None' },
-  { value: '90', label: '90°' },
-  { value: '180', label: '180°' },
-  { value: '270', label: '270°' },
-]
 
 const ASPECT_OPTIONS: { value: AspectRatio; label: string }[] = [
   { value: '1:1', label: '1 : 1' },
@@ -52,15 +48,19 @@ function FramingPanel({ lab, update }: Props) {
   )
 }
 
-/** Rotate: quarter turns of the image, shown under the focal point in the Gradient tab. */
+/** Rotate: one icon button that turns the image a further 90° each click, beside Randomise Framing. */
 export function RotateField({ lab, update }: Props) {
+  const next = ((lab.framing.rotate + 90) % 360) as TextureRotation
   return (
-    <Dropdown
-      label="Rotate"
-      options={ROTATE_OPTIONS}
-      value={String(lab.framing.rotate)}
-      onChange={(v) => update({ framing: { ...lab.framing, rotate: Number(v) as TextureRotation } })}
-    />
+    <Tooltip icon={false} text="Rotate 90°">
+      <Button
+        variant="outlined-2"
+        size="sm"
+        icon={<RotateRight size={16} variant="Linear" color="currentColor" />}
+        aria-label="Rotate 90°"
+        onClick={() => update({ framing: { ...lab.framing, rotate: next } })}
+      />
+    </Tooltip>
   )
 }
 

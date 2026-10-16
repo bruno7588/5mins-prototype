@@ -254,17 +254,20 @@ function GradientLab() {
               <hr className="gl-section__divider" />
               <section className="gl-section" aria-labelledby="gl-focal-title">
                 <h2 id="gl-focal-title" className="gl-section__title">Focal point</h2>
-                <FocalPad x={lab.gradient.offsetX} y={lab.gradient.offsetY} onChange={setOffset} />
-                <Button
-                  className="gl-section__full"
-                  variant="outlined-2"
-                  size="sm"
-                  icon={<Shuffle size={16} variant="Linear" color="currentColor" />}
-                  onClick={randomizeFraming}
-                >
-                  Randomise Framing
-                </Button>
-                <RotateField lab={lab} update={update} />
+                <div className="gl-focal-row">
+                  <FocalPad x={lab.gradient.offsetX} y={lab.gradient.offsetY} onChange={setOffset} />
+                  <div className="gl-focal-actions">
+                    <Button
+                      variant="outlined-2"
+                      size="sm"
+                      icon={<Shuffle size={16} variant="Linear" color="currentColor" />}
+                      onClick={randomizeFraming}
+                    >
+                      Randomise Framing
+                    </Button>
+                    <RotateField lab={lab} update={update} />
+                  </div>
+                </div>
               </section>
               <hr className="gl-section__divider" />
             </>
