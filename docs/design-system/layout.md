@@ -9,7 +9,7 @@ Layout foundations: spacing, roundness, padding, margins, icon sizes, shadows, a
 
 **Code:** tokens in `src/styles/tokens.css`; no component (there is no `Layout` component)
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Spacing page `5446:24541`, Shadow page `5446:24653`, Utilities page `5446:24691` (overlay); variable collection Padding/Spacing/Roundness
-**Last verified:** 2026-10-14
+**Last verified:** 2026-10-16
 
 ## Usage
 
@@ -74,7 +74,7 @@ Layout foundations: spacing, roundness, padding, margins, icon sizes, shadows, a
 - The backdrop behind any dialog, modal, side drawer, lightbox or popover blocker.
 
 **Don't use when**
-- Darkening an image, hero or video so text on it reads → keep that component's own tint (see Overlay scrim below)
+- Darkening an image, hero or video so text on it reads → keep that component's own tint (see Overlay scrim below). Exception: an image crop preview dims the part that won't be kept with `var(--scrim)` (File uploader Image state)
 
 **Do**
 - `background: var(--scrim)` on every overlay backdrop.
@@ -113,7 +113,8 @@ XXS / XSS / SSM (2/6/10px) are for micro spacing inside components. They are off
 | Shadow XL | `--shadow-xl` | `0 4px 32px 0 rgba(32, 34, 42, 0.24)` |
 
 - **Figma only:** the `0` and `100` variables (no CSS token); the Inner-shadow effect style (`inner -4,-4 r0 #2D313D`, "Use this effect in Learning Path cards", no CSS token); the Breakpoints collection (XS 320, S 600, M 900, L 1200, XL 1536), which code does not use as tokens.
-- **Code only:** `--radius-full: 9999px` for circular elements (avatars, pills, badges, chips, icon-button hover backgrounds; icon-only buttons **always** use circular hover, never squared); `--icon-size-sm|md|lg|xl`; `--scrim`; `--shadow-card`, `--shadow-panel`, `--shadow-sticky`.
+- **Code only:** `--radius-full: 9999px` for circular elements (avatars, pills, badges, chips, icon-button hover backgrounds; icon-only buttons **always** use circular hover, never squared); `--icon-size-sm|md|lg|xl`; `--shadow-card`, `--shadow-panel`, `--shadow-sticky`.
+- **Scrim:** `--scrim` maps to the Figma colour variable `Surface colours / Scrim` (`VariableID:12522:2259`, WEB syntax `var(--scrim)`), Neutral-900 at 25% light / 50% dark.
 
 **Production:**
 
@@ -241,7 +242,7 @@ Full-screen backdrop behind dialogs, modals, and side drawers. The base colour i
 
 > **Code note:** `tokens.css` defines `--scrim` as `rgba(15, 16, 20, 0.25)` in `:root` and overrides it to `rgba(15, 16, 20, 0.5)` in the `[data-theme="dark"]` block. Dark mode is live in the prototype (`data-theme` on `<html>`, driven by `src/hooks/useTheme.ts`), so a literal will not follow the theme - always read `var(--scrim)`.
 
-> **What this is not:** the scrim is the blocking layer between the page and an overlay panel. It is not an image-darkening layer, meaning the gradients and flat tints painted over hero images, banners, and card thumbnails to keep text on top legible. Those are a separate concern, belong to their own component spec, and keep their own alphas - do not replace them with `var(--scrim)`.
+> **What this is not:** the scrim is the blocking layer between the page and an overlay panel. It is not an image-darkening layer, meaning the gradients and flat tints painted over hero images, banners, and card thumbnails to keep text on top legible. Those are a separate concern, belong to their own component spec, and keep their own alphas - do not replace them with `var(--scrim)`. The one exception is the image crop preview (File uploader Image state), where `var(--scrim)` dims the part of the image outside the crop square.
 
 See `overlays.md` for the Dialog/Modal/Side-Drawer component specs that sit on top of this scrim.
 
