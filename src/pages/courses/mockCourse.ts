@@ -1,6 +1,5 @@
 import { workspacePrograms, type ProgramCourse } from '../workspace/mockItems'
 import type { ResourceType } from '@/components/ResourceCard/ResourceCard'
-import thumb1 from '../../assets/programs/course-1.png'
 import thumb2 from '../../assets/programs/course-2.png'
 import thumb3 from '../../assets/programs/course-3.png'
 import thumb4 from '../../assets/programs/course-4.png'
@@ -12,7 +11,8 @@ export interface CourseLesson {
   title: string
   /** e.g. "Lesson · Dr. Amara Okafor · 6 min" */
   meta: string
-  thumbnail: string
+  /** Optional: without one the lesson shows the company image. */
+  thumbnail?: string
   /** `done` = completed (a course the learner has worked all the way through). */
   state: 'active' | 'locked' | 'done'
   /** 0..100 — inline progress shown for the active lesson */
@@ -95,7 +95,6 @@ const sections: CourseSection[] = [
         id: 'l1',
         title: 'Why Innovation Starts with Leadership',
         meta: 'Lesson · Dr. Amara Okafor · 6 min',
-        thumbnail: thumb1,
         state: 'active',
         progress: 60,
         resources: [

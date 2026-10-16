@@ -39,6 +39,8 @@ import certificateIllustration from '../../assets/programs/certificate.svg'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Button from '@/components/Button/Button'
+import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
+import { useCompanyImage } from '@/data/companyImage'
 import CourseCertificateCard from './components/CourseCertificateCard/CourseCertificateCard'
 import CertificateReady from './components/CertificateReady/CertificateReady'
 import SignOffCard from './components/SignOffCard/SignOffCard'
@@ -55,6 +57,7 @@ const SEGMENTS = 8
 
 function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => void }) {
   const isLocked = lesson.state === 'locked'
+  const companyImage = useCompanyImage()
   const resourceCount = lesson.resources?.length ?? 0
   const filled = Math.max(0, Math.min(SEGMENTS, Math.round(((lesson.progress ?? 0) / 100) * SEGMENTS)))
   return (
@@ -80,7 +83,8 @@ function LessonCard({ lesson, onOpen }: { lesson: CourseLesson; onOpen?: () => v
         </button>
       ) : null}
       <div className="pcd-lesson__thumb">
-        <img src={lesson.thumbnail} alt="" />
+        <img src={lesson.thumbnail || companyImage.src} alt="" />
+        {!lesson.thumbnail && <CompanyImageMotion />}
         <span className="pcd-lesson__tag">
           <PlayCircle size={20} color="var(--text-secondary)" variant="Bold" />
         </span>

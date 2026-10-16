@@ -3,6 +3,7 @@ import { Brush2, Eye } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
 import Toggle from '@/components/Toggle/Toggle'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import { useCompanyDefaults } from '@/data/companyDefaults'
 import { setCompanyDefault, setCompanyUpload, useCompanyImage, validateCompanyImage } from '@/data/companyImage'
@@ -60,6 +61,7 @@ function LayoutSettings() {
   const liveDefaults = useCompanyDefaults().map((d) => ({ id: d.id, src: d.src, overlay: <CompanyImageMotion defaultId={d.id} /> }))
   const [pickerOpen, setPickerOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
+  const { toasts, show: showToast } = useToast()
 
   return (
     <div className="acl-body">
@@ -148,13 +150,20 @@ function LayoutSettings() {
             helpText: 'Drag or upload a 512 x 512 px PNG or JPEG, smaller than 9 MB.',
             validate: validateCompanyImage,
           }}
-          onSelect={setCompanyUpload}
+          onSelect={(src) => {
+            setCompanyUpload(src)
+            showToast('success', 'Company image updated')
+          }}
           defaultImages={liveDefaults}
           selectedDefaultId={company.image.kind === 'default' ? company.image.id : undefined}
-          onSaveDefault={setCompanyDefault}
+          onSaveDefault={(id) => {
+            setCompanyDefault(id)
+            showToast('success', 'Company image updated')
+          }}
         />
         <ThumbnailPreviewModal open={previewOpen} onClose={() => setPreviewOpen(false)} />
       </section>
+      <ToastContainer toasts={toasts} />
     </div>
   )
 }
