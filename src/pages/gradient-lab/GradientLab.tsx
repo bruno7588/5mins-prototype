@@ -7,6 +7,7 @@ import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import EmptyState from '@/components/EmptyState/EmptyState'
 import emptyIllustration from '@/assets/empty-state-illustrations/empty-box.svg'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
+import { useTheme } from '@/hooks/useTheme'
 import LabCanvas, { type LabCanvasHandle } from './LabCanvas'
 import { useFlowers } from './flowers'
 import ExportPanel from './panels/ExportPanel'
@@ -50,9 +51,10 @@ interface DialsProps {
 /** The open tab's DialKit panel, inline. Mounted per tab, so only its panel shows. */
 function TabDials({ kind, lab, update, reextract }: DialsProps) {
   useLabDials(kind, lab, update, reextract)
+  const { theme } = useTheme()
   return (
     <div className="gl-lab__dials">
-      <DialRoot mode="inline" theme="system" />
+      <DialRoot mode="inline" theme={theme} />
     </div>
   )
 }
@@ -65,6 +67,7 @@ function GradientLab() {
   const update = useCallback((patch: Partial<LabState>) => setLab((prev) => ({ ...prev, ...patch })), [])
   const { flowers, error: flowersError, reload } = useFlowers()
   const { toasts, show } = useToast()
+  const { theme } = useTheme()
   const canvasRef = useRef<LabCanvasHandle>(null)
 
   const reextract = usePaletteExtraction(lab, update, flowers)
@@ -240,7 +243,7 @@ function GradientLab() {
               {/* 0 = the photo as it is, 1 = the full gradient. DialKit's own slider, outside the panel. */}
               <section className="gl-section" aria-labelledby="gl-abstract-title">
                 <h2 id="gl-abstract-title" className="gl-section__title">Abstraction</h2>
-                <div className="dialkit-root gl-abstract" data-mode="inline" data-theme="system">
+                <div className="dialkit-root gl-abstract" data-mode="inline" data-theme={theme}>
                   <Slider
                     label="Photo to gradient"
                     value={lab.gradient.abstraction}
