@@ -2,7 +2,7 @@
    One screen: title header, then the stage (live preview) on the left and one
    controls column (Export, then a Gradient / Shader switcher) on the right.
    Below 1100px the column stacks under the stage. All classes are gl- prefixed (globally bundled CSS); tokens
-   only. The inline DialKit panel keeps its own styling (prototype chrome). */
+   only. DialKit is restyled to tokens through its own variables (below). */
 
 .gl-lab {
   /* Height of the sticky header, so the sticky stage sits just below it. */
@@ -60,7 +60,10 @@
   min-height: 360px;
   padding: var(--space-l);
   border-radius: var(--radius-l);
-  background: var(--input-background);
+  /* A faint dot grid marks the empty canvas, so it doesn't read as part of the shader. */
+  background:
+    radial-gradient(circle, var(--border-elevated) 1px, transparent 1.5px) 0 0 / var(--space-m) var(--space-m),
+    var(--input-background);
   overflow: hidden;
 }
 
@@ -91,6 +94,43 @@
 
 .gl-lab__dials {
   min-width: 0;
+}
+
+/* DialKit (panels and the Abstraction slider) in 5Mins colours: its own
+   variables mapped to semantic tokens, so it flips with the app theme and
+   matches the Focal point pad. [data-theme] outranks DialKit's light rules. */
+.gl-lab .dialkit-root[data-theme] {
+  --dial-glass-bg: var(--page-background);
+  --dial-dropdown-bg: var(--cards-background);
+  --dial-surface: var(--input-background);
+  --dial-surface-subtle: var(--input-background);
+  --dial-surface-hover: var(--input-background-hover);
+  --dial-surface-active: var(--border);
+  --dial-border: var(--border);
+  --dial-border-hover: var(--border-elevated);
+  --dial-focus-ring: var(--primary-button-background);
+  --dial-text-root: var(--text-primary);
+  --dial-text-section: var(--text-secondary);
+  --dial-text-label: var(--text-secondary);
+  --dial-text-focus: var(--text-primary);
+  --dial-text-primary: var(--text-primary);
+  --dial-text-secondary: var(--text-secondary);
+  --dial-text-tertiary: var(--text-tertiary);
+}
+
+/* Slider handle in the Focal point marker's amber. */
+.gl-lab .dialkit-slider-handle {
+  background: var(--selected);
+}
+
+/* Copy parameters: the DS filled button colours instead of DialKit's inverted chip. */
+.gl-lab .dialkit-toolbar-primary {
+  background: var(--primary-button-background);
+  color: var(--text-button-foreground);
+}
+
+.gl-lab .dialkit-toolbar-primary:hover {
+  background: var(--primary-button-background-hover);
 }
 
 /* The inline panel fills the column and drops the floating panel's own corner. */

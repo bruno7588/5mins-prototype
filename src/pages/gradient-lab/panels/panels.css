@@ -208,6 +208,12 @@
   border: 2px solid var(--selected);
 }
 
+/* The tile being dragged: the DnD amber, dashed, so its new place is easy to follow. */
+.gl-slots__slot--dragging,
+.gl-slots__slot--dragging:hover {
+  border: 2px dashed var(--selected);
+}
+
 .gl-slots__slot:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;

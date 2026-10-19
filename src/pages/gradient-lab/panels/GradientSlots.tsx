@@ -1,12 +1,16 @@
+import { useEffect, useState, type DragEvent } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Add, TickCircle, Trash } from 'iconsax-react'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import Tooltip from '@/components/Tooltip/Tooltip'
+import { arriveTransition } from '@/components/AIWorkingCard/arrive'
 import type { SavedGradient } from '../gradients'
 
-/* The saved gradients, as a strip under the preview: every slot up to the
-   highest saved (or active) one, then a + tile that adds an empty slot.
-   Clicking a slot makes it the active one (and loads it when saved); the tick
-   under the active slot saves the current gradient into it. Prefix: gl-slots- */
+/* The saved gradients, as a strip under the preview: the saved slots in order
+   (no gaps), the active slot when it is a new empty one, then a + tile that adds
+   one. Clicking a slot makes it the active one (and loads it when saved); the
+   tick under the active slot saves the current gradient into it. Saved slots
+   drag to a new position; the strip reorders live and saves on drop. Prefix: gl-slots- */
 
 interface Props {
   gradients: SavedGradient[]
@@ -17,11 +21,35 @@ interface Props {
   onSelect: (slot: number) => void
   onSave: () => void
   onClear: () => void
+  /** Every saved slot once, in the new order. */
+  onReorder: (slots: number[]) => void
 }
 
-function GradientSlots({ gradients, activeSlot, saving, canSave, onSelect, onSave, onClear }: Props) {
+function GradientSlots({ gradients, activeSlot, saving, canSave, onSelect, onSave, onClear, onReorder }: Props) {
+  const reduce = useReducedMotion()
   const bySlot = new Map(gradients.map((g) => [g.slot, g]))
-  const count = Math.max(1, activeSlot, ...gradients.map((g) => g.slot))
+  const [dragSlot, setDragSlot] = useState<number | null>(null)
+  // The order while dragging, and after a drop until the saved list comes back.
+  const [order, setOrder] = useState<number[] | null>(null)
+  useEffect(() => setOrder(null), [gradients])
+
+  const slots = order ?? gradients.map((g) => g.slot)
+  const shown = bySlot.has(activeSlot) ? slots : [...slots, activeSlot]
+
+  const dragOver = (over: number) => (e: DragEvent) => {
+    if (dragSlot === null) return
+    e.preventDefault()
+    if (over === dragSlot || !bySlot.has(over)) return
+    const next = slots.filter((s) => s !== dragSlot)
+    next.splice(slots.indexOf(over), 0, dragSlot)
+    setOrder(next)
+  }
+
+  const dragEnd = () => {
+    setDragSlot(null)
+    if (order && order.some((s, i) => s !== gradients[i]?.slot)) onReorder(order)
+    else setOrder(null)
+  }
 
   return (
     <section className="gl-slots" aria-labelledby="gl-slots-title">
@@ -32,21 +60,33 @@ function GradientSlots({ gradients, activeSlot, saving, canSave, onSelect, onSav
       </div>
 
       <ol className="gl-slots__grid">
-        {Array.from({ length: count }, (_, i) => {
-          const slot = i + 1
+        {shown.map((slot) => {
           const saved = bySlot.get(slot)
           const isActive = slot === activeSlot
           return (
-            <li key={slot}>
+            // Keyed by the gradient, not its number, so a reorder slides tiles instead of swapping them.
+            <motion.li
+              key={saved ? saved.savedAt : 'new'}
+              layout="position"
+              transition={arriveTransition(reduce)}
+              onDragOver={dragOver(slot)}
+              onDrop={(e) => e.preventDefault()}
+            >
               <button
                 type="button"
-                className={`gl-slots__slot${saved ? ' gl-slots__slot--saved' : ''}${isActive ? ' gl-slots__slot--active' : ''}`}
+                className={`gl-slots__slot${saved ? ' gl-slots__slot--saved' : ''}${isActive ? ' gl-slots__slot--active' : ''}${slot === dragSlot ? ' gl-slots__slot--dragging' : ''}`}
                 aria-pressed={isActive}
                 aria-label={saved ? `Gradient ${slot}, saved. Open it` : `Gradient ${slot}, empty`}
+                draggable={Boolean(saved)}
+                onDragStart={(e) => {
+                  e.dataTransfer.effectAllowed = 'move'
+                  setDragSlot(slot)
+                }}
+                onDragEnd={dragEnd}
                 onClick={() => onSelect(slot)}
               >
                 {saved ? (
-                  <img src={`${saved.image}?v=${encodeURIComponent(saved.savedAt)}`} alt="" />
+                  <img src={`${saved.image}?v=${encodeURIComponent(saved.savedAt)}`} alt="" draggable={false} />
                 ) : (
                   <span className="gl-slots__number">{slot}</span>
                 )}
@@ -89,12 +129,12 @@ function GradientSlots({ gradients, activeSlot, saving, canSave, onSelect, onSav
                   )}
                 </div>
               )}
-            </li>
+            </motion.li>
           )
         })}
         <li>
           <Tooltip icon={false} text="Add a slot" className="gl-slots__add-wrap">
-            <button type="button" className="gl-slots__slot gl-slots__add" aria-label="Add a slot" onClick={() => onSelect(count + 1)}>
+            <button type="button" className="gl-slots__slot gl-slots__add" aria-label="Add a slot" onClick={() => onSelect(Math.max(0, ...gradients.map((g) => g.slot)) + 1)}>
               <Add size={20} variant="Linear" color="var(--text-secondary)" />
             </button>
           </Tooltip>

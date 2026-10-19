@@ -12,7 +12,7 @@ import LabCanvas, { type LabCanvasHandle } from './LabCanvas'
 import { useFlowers } from './flowers'
 import ExportPanel from './panels/ExportPanel'
 import GradientSlots from './panels/GradientSlots'
-import { APP_IMAGE_SIZE, clearGradient, saveGradient, useSavedGradients } from './gradients'
+import { APP_IMAGE_SIZE, clearGradient, reorderGradients, saveGradient, useSavedGradients } from './gradients'
 import { parsePreset, toPreset } from './preset'
 import FocalPad from './panels/FocalPad'
 import FramingPanel, { RotateField } from './panels/FramingPanel'
@@ -78,9 +78,9 @@ function GradientLab() {
 
   /* Selecting a saved slot loads its settings; an empty slot keeps the current
      gradient so it can be saved there. */
-  const selectSlot = (slot: number) => {
+  const selectSlot = (slot: number, list = gradients) => {
     setActiveSlot(slot)
-    const saved = gradients.find((g) => g.slot === slot)
+    const saved = list.find((g) => g.slot === slot)
     if (!saved) return
     try {
       const patch = parsePreset(saved.preset)
@@ -101,7 +101,7 @@ function GradientLab() {
     try {
       const image = await canvas.exportImage('image/jpeg', 0.92, { width: APP_IMAGE_SIZE, height: APP_IMAGE_SIZE })
       await saveGradient(activeSlot, toPreset(lab, `Gradient ${activeSlot}`), image)
-      reloadGradients()
+      void reloadGradients()
       show('success', `Gradient ${activeSlot} saved`)
     } catch (e) {
       show('error', `Couldn't save gradient ${activeSlot}: ${(e as Error).message}`)
@@ -113,10 +113,25 @@ function GradientLab() {
   const clearSlot = async () => {
     try {
       await clearGradient(activeSlot)
-      reloadGradients()
+      const list = await reloadGradients()
       show('success', `Gradient ${activeSlot} cleared`)
+      // The next gradient moved into this slot; open it, or the one before when this was the last.
+      selectSlot(list.some((g) => g.slot === activeSlot) ? activeSlot : Math.max(1, activeSlot - 1), list)
     } catch (e) {
       show('error', `Couldn't clear gradient ${activeSlot}: ${(e as Error).message}`)
+    }
+  }
+
+  /* Saved slots come back numbered 1..n in the new order; the active one follows its gradient. */
+  const reorderSlots = async (slots: number[]) => {
+    try {
+      await reorderGradients(slots)
+      if (slots.includes(activeSlot)) setActiveSlot(slots.indexOf(activeSlot) + 1)
+      show('success', 'Gradients reordered')
+    } catch (e) {
+      show('error', `Couldn't reorder the gradients: ${(e as Error).message}`)
+    } finally {
+      void reloadGradients()
     }
   }
 
@@ -211,6 +226,7 @@ function GradientLab() {
             onSelect={selectSlot}
             onSave={saveSlot}
             onClear={clearSlot}
+            onReorder={reorderSlots}
           />
         </div>
 

@@ -42,25 +42,53 @@ export async function saveGradient(slot: number, preset: ShaderPreset, image: Bl
   return saved
 }
 
+/** Clears a slot; every later slot moves down one to close the gap. */
 export async function clearGradient(slot: number): Promise<void> {
   await glJson<void>(await fetch(`${GL_API}?r=gradients&slot=${slot}`, { method: 'DELETE' }))
   refreshCompanyDefaults()
 }
 
+/** Saves a new order: every saved slot once. They come back renumbered 1..n. */
+export async function reorderGradients(slots: number[]): Promise<SavedGradient[]> {
+  const res = await fetch(`${GL_API}?r=order`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ slots }),
+  })
+  const list = (await glJson<SavedGradient[]>(res)).map(withUrl)
+  refreshCompanyDefaults()
+  return list
+}
+
+/** True when the saved slots skip a number (left by clears before slots closed up). */
+const hasGaps = (list: SavedGradient[]) => list.some((g, i) => g.slot !== i + 1)
+
 export function useSavedGradients() {
   const [gradients, setGradients] = useState<SavedGradient[]>([])
   const [error, setError] = useState<string | null>(null)
 
-  const reload = useCallback(() => {
-    fetch(`${GL_API}?r=gradients`)
-      .then((r) => glJson<SavedGradient[]>(r))
-      .then((list) => {
-        setGradients(list.map(withUrl))
-        setError(null)
-      })
-      .catch((e: Error) => setError(e.message))
-  }, [])
+  /** Resolves with the fresh list (empty if the request failed). */
+  const reload = useCallback(
+    () =>
+      fetch(`${GL_API}?r=gradients`)
+        .then((r) => glJson<SavedGradient[]>(r))
+        // Older clears left empty slots between gradients; close them up once.
+        .then((list) => (hasGaps(list) ? reorderGradients(list.map((g) => g.slot)).catch(() => list) : list))
+        .then((list) => {
+          const out = list.map(withUrl)
+          setGradients(out)
+          setError(null)
+          return out
+        })
+        .catch((e: Error) => {
+          setError(e.message)
+          return [] as SavedGradient[]
+        }),
+    [],
+  )
 
-  useEffect(reload, [reload])
+  useEffect(() => {
+    void reload()
+  }, [reload])
   return { gradients, error, reload }
 }

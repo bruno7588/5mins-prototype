@@ -16,7 +16,8 @@
      DELETE flowers&id=                  remove a photo
      GET    gradients                    saved gradients, by slot
      PUT    gradients {slot,name,preset,dataUrl}  save or replace a slot
-     DELETE gradients&slot=              clear a slot
+     PUT    order     {slots}             reorder: every saved slot once, in the new order (renumbered 1..n)
+     DELETE gradients&slot=              clear a slot; later slots move down one
      GET    image&kind=flower|gradient&id=&v=  the JPEG (cached; v busts it) */
 
 declare const process: { env: Record<string, string | undefined> }
@@ -169,9 +170,22 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
-  if (route(request).get('r') !== 'gradients') return json({ error: 'Unknown route' }, 404)
+  const r = route(request).get('r')
+  if (r !== 'gradients' && r !== 'order') return json({ error: 'Unknown route' }, 404)
   if (await rateLimited(request)) return json({ error: 'Too many saves, try again in a minute.' }, 429)
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
+
+  if (r === 'order') {
+    const saved = await savedGradients()
+    const bySlot = new Map(saved.map((g) => [g.slot, g]))
+    const slots = Array.isArray(body?.slots) ? body.slots.map(slotOf) : []
+    if (slots.length !== saved.length || new Set(slots).size !== slots.length || !slots.every((s) => s !== null && bySlot.has(s))) {
+      return json({ error: 'slots must list every saved slot once' }, 400)
+    }
+    await renumber(slots.map((s) => bySlot.get(s!)!))
+    return json((await savedGradients()).map(gradientOut))
+  }
+
   const slot = slotOf(body?.slot)
   const name = str(body?.name, 200) || `Gradient ${slot}`
   const base64 = jpegBase64(body?.dataUrl)
@@ -184,6 +198,25 @@ export async function PUT(request: Request) {
   await redis('SET', `gl:gimg:${slot}`, base64)
   await redis('HSET', 'gl:gradients', String(slot), JSON.stringify(gradient))
   return json(gradientOut(gradient))
+}
+
+async function savedGradients(): Promise<StoredGradient[]> {
+  const list = parseHash<StoredGradient>((await redis('HGETALL', 'gl:gradients')) as string[] | null)
+  return list.sort((a, b) => a.slot - b.slot)
+}
+
+/** Stores the given gradients as slots 1..n in this order, closing any gaps.
+    Images go through temporary keys so no rename overwrites one still to move;
+    default names ("Gradient 3") follow their new number. */
+async function renumber(order: StoredGradient[]) {
+  const moves = order.map((g, i) => ({ g, to: i + 1 })).filter(({ g, to }) => g.slot !== to)
+  for (const { g } of moves) await redis('RENAME', `gl:gimg:${g.slot}`, `gl:gimg-tmp:${g.slot}`)
+  for (const { g, to } of moves) await redis('RENAME', `gl:gimg-tmp:${g.slot}`, `gl:gimg:${to}`)
+  for (const { g } of moves) await redis('HDEL', 'gl:gradients', String(g.slot))
+  for (const { g, to } of moves) {
+    const moved: StoredGradient = { ...g, slot: to, name: g.name === `Gradient ${g.slot}` ? `Gradient ${to}` : g.name }
+    await redis('HSET', 'gl:gradients', String(to), JSON.stringify(moved))
+  }
 }
 
 export async function DELETE(request: Request) {
@@ -200,8 +233,11 @@ export async function DELETE(request: Request) {
   if (params.get('r') === 'gradients') {
     const slot = slotOf(params.get('slot'))
     if (!slot) return json({ error: 'slot is required' }, 400)
+    const rest = (await savedGradients()).filter((g) => g.slot !== slot)
     await redis('HDEL', 'gl:gradients', String(slot))
     await redis('DEL', `gl:gimg:${slot}`)
+    // Close the gap: every later slot moves down one.
+    await renumber(rest)
     return json({ deleted: slot })
   }
   return json({ error: 'Unknown route' }, 404)
