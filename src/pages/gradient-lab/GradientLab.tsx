@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Gps, Shuffle } from 'iconsax-react'
 import { DialRoot } from 'dialkit'
 import 'dialkit/styles.css'
@@ -13,7 +13,7 @@ import LabCanvas from './LabCanvas'
 import ExportPanel from './panels/ExportPanel'
 import GradientSlots from './panels/GradientSlots'
 import { clearGradient, reorderGradients, saveGradient, useSavedGradients } from './gradients'
-import { DEFAULT_RECIPE, parseRecipe } from './recipe'
+import { DEFAULT_RECIPE, parseRecipe, type GradientRecipe } from './recipe'
 import FocalPad from './panels/FocalPad'
 import { useLabDials, type DialsKind, type LabState } from './panels/useLabDials'
 import './gradient-lab.css'
@@ -46,7 +46,8 @@ function TabDials({ kind, lab, update }: DialsProps) {
   const { theme } = useTheme()
   return (
     <div className="gl-lab__dials">
-      <DialRoot mode="inline" theme={theme} />
+      {/* DialKit hides itself in production builds by default; the Studio is used on the deployed site. */}
+      <DialRoot mode="inline" theme={theme} productionEnabled />
     </div>
   )
 }
@@ -67,14 +68,22 @@ function GradientLab() {
   const { gradients, reload: reloadGradients } = useSavedGradients()
   const [activeSlot, setActiveSlot] = useState(1)
   const [savingSlot, setSavingSlot] = useState(false)
+  // The new slot's gradient while it is unsaved, kept when another slot is opened.
+  const [draft, setDraft] = useState<GradientRecipe | null>(null)
   const colours = brandPalette(lab.preview, lab.recipe.colours)
 
-  /* Selecting a saved slot loads its recipe; an empty slot keeps the current
-     gradient so it can be saved there. */
+  /* Selecting a saved slot loads its recipe; the new empty slot opens its draft,
+     or keeps the current gradient so it can be saved there. */
   const selectSlot = (slot: number, list = gradients) => {
+    const leavingNew = !gradients.some((g) => g.slot === activeSlot)
+    const nextDraft = leavingNew ? lab.recipe : draft
+    if (leavingNew) setDraft(nextDraft)
     setActiveSlot(slot)
     const saved = list.find((g) => g.slot === slot)
-    if (!saved) return
+    if (!saved) {
+      if (nextDraft) setLab((prev) => ({ ...prev, recipe: nextDraft }))
+      return
+    }
     try {
       const recipe = parseRecipe(saved.preset)
       setLab((prev) => ({ ...prev, recipe }))
@@ -90,6 +99,7 @@ function GradientLab() {
       const recipe = { ...lab.recipe, name: `Gradient ${activeSlot}` }
       const still = await renderStill(recipe, brandPalette(DEFAULT_THEME.light, recipe.colours))
       await saveGradient(activeSlot, recipe, still)
+      if (!gradients.some((g) => g.slot === activeSlot)) setDraft(null)
       void reloadGradients()
       show('success', `Gradient ${activeSlot} saved`)
     } catch (e) {
@@ -123,6 +133,15 @@ function GradientLab() {
       void reloadGradients()
     }
   }
+
+  /* On first load, open slot 1 rather than the built-in default. */
+  const opened = useRef(false)
+  useEffect(() => {
+    if (opened.current || gradients.length === 0) return
+    opened.current = true
+    selectSlot(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gradients])
 
   const setOffset = useCallback((x: number, y: number) => setRecipe({ offsetX: x, offsetY: y }), [setRecipe])
 
@@ -166,6 +185,7 @@ function GradientLab() {
             gradients={gradients}
             activeSlot={activeSlot}
             saving={savingSlot}
+            hasDraft={draft !== null}
             canSave
             onSelect={selectSlot}
             onSave={saveSlot}

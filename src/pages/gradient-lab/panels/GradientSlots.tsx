@@ -16,6 +16,8 @@ interface Props {
   gradients: SavedGradient[]
   activeSlot: number
   saving: boolean
+  /** True while the new slot has unsaved changes: its tile stays when another slot is open. */
+  hasDraft: boolean
   /** False until an image is picked: there is no gradient to save. */
   canSave: boolean
   onSelect: (slot: number) => void
@@ -25,7 +27,7 @@ interface Props {
   onReorder: (slots: number[]) => void
 }
 
-function GradientSlots({ gradients, activeSlot, saving, canSave, onSelect, onSave, onClear, onReorder }: Props) {
+function GradientSlots({ gradients, activeSlot, saving, hasDraft, canSave, onSelect, onSave, onClear, onReorder }: Props) {
   const reduce = useReducedMotion()
   const bySlot = new Map(gradients.map((g) => [g.slot, g]))
   const [dragSlot, setDragSlot] = useState<number | null>(null)
@@ -34,7 +36,8 @@ function GradientSlots({ gradients, activeSlot, saving, canSave, onSelect, onSav
   useEffect(() => setOrder(null), [gradients])
 
   const slots = order ?? gradients.map((g) => g.slot)
-  const shown = bySlot.has(activeSlot) ? slots : [...slots, activeSlot]
+  const nextSlot = Math.max(0, ...gradients.map((g) => g.slot)) + 1
+  const shown = bySlot.has(activeSlot) ? (hasDraft ? [...slots, nextSlot] : slots) : [...slots, activeSlot]
 
   const dragOver = (over: number) => (e: DragEvent) => {
     if (dragSlot === null) return
@@ -134,7 +137,7 @@ function GradientSlots({ gradients, activeSlot, saving, canSave, onSelect, onSav
         })}
         <li>
           <Tooltip icon={false} text="Add a slot" className="gl-slots__add-wrap">
-            <button type="button" className="gl-slots__slot gl-slots__add" aria-label="Add a slot" onClick={() => onSelect(Math.max(0, ...gradients.map((g) => g.slot)) + 1)}>
+            <button type="button" className="gl-slots__slot gl-slots__add" aria-label="Add a slot" onClick={() => onSelect(nextSlot)}>
               <Add size={20} variant="Linear" color="var(--text-secondary)" />
             </button>
           </Tooltip>
