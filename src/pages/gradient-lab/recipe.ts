@@ -1,12 +1,26 @@
 /* A gradient recipe: everything about a default company image except its
    colours, which come from each tenant's theme (src/data/brandPalette.ts).
-   Rendered with Paper Shaders' MeshGradient; the fields map onto its props.
+   Rendered with one of three Paper Shaders: MeshGradient (soft flowing colour),
+   GrainGradient (grainy shapes: wave, dots, ripple and so on) or Dithering (a
+   two-colour pixel pattern); the fields map onto their props.
    Saved in a Gradient Studio slot. Slots saved before recipes held photo
    presets (version 1); parseRecipe converts those on read. */
+
+/** Paper GrainGradient shapes. */
+export const GRAIN_SHAPES = ['wave', 'dots', 'truchet', 'corners', 'ripple', 'blob', 'sphere'] as const
+export type GrainShape = (typeof GRAIN_SHAPES)[number]
+/** Paper Dithering shapes and patterns. */
+export const DITHER_SHAPES = ['simplex', 'warp', 'dots', 'wave', 'ripple', 'swirl', 'sphere'] as const
+export type DitherShape = (typeof DITHER_SHAPES)[number]
+export const DITHER_TYPES = ['random', '2x2', '4x4', '8x8'] as const
+export type DitherType = (typeof DITHER_TYPES)[number]
+export type ShaderKind = 'mesh' | 'grain' | 'dither'
 
 export interface GradientRecipe {
   version: 2
   name: string
+  /** Which Paper shader draws it. */
+  shader: ShaderKind
   /** How many theme-derived colours the gradient uses, 3-5. */
   colours: number
   /** Organic noise distortion, 0-1 */
@@ -17,6 +31,15 @@ export interface GradientRecipe {
   grainMixer: number
   /** Black and white grain overlay, 0-1 */
   grainOverlay: number
+  /** Grain gradient only: the shape, colour edge softness, distortion between bands and grain amount (0-1 each). */
+  shape: GrainShape
+  softness: number
+  intensity: number
+  noise: number
+  /** Dithering only: the shape, the dither pattern and the pixel size (1-20). */
+  ditherShape: DitherShape
+  ditherType: DitherType
+  pxSize: number
   /** Animation speed; 0 holds still. 0-3 */
   speed: number
   /** Starting time in ms: picks the composition, and is the still. */
@@ -33,11 +56,19 @@ export interface GradientRecipe {
 export const DEFAULT_RECIPE: GradientRecipe = {
   version: 2,
   name: 'Gradient',
+  shader: 'mesh',
   colours: 4,
   distortion: 0.8,
   swirl: 0.1,
   grainMixer: 0,
   grainOverlay: 0,
+  shape: 'corners',
+  softness: 0.5,
+  intensity: 0.5,
+  noise: 0.25,
+  ditherShape: 'warp',
+  ditherType: '4x4',
+  pxSize: 2,
   speed: 0.6,
   frame: 0,
   scale: 1,
@@ -77,7 +108,7 @@ function fromLegacy(o: Obj): GradientRecipe {
   const playing = motion?.playing !== false
   const spread = unit(JSON.stringify(source?.palette ?? o.name ?? ''))
   return {
-    version: 2,
+    ...DEFAULT_RECIPE,
     name: typeof o.name === 'string' ? o.name : DEFAULT_RECIPE.name,
     colours: Math.min(5, Math.max(3, paletteSize)),
     // The old shader's distortion was gentler at the same value.
@@ -102,11 +133,19 @@ export function parseRecipe(json: unknown): GradientRecipe {
   return {
     version: 2,
     name: typeof json.name === 'string' ? json.name : d.name,
+    shader: json.shader === 'grain' || json.shader === 'dither' ? json.shader : 'mesh',
     colours: Math.round(num(json, 'colours', d.colours, 3, 5)),
     distortion: num(json, 'distortion', d.distortion, 0, 1),
     swirl: num(json, 'swirl', d.swirl, 0, 1),
     grainMixer: num(json, 'grainMixer', d.grainMixer, 0, 1),
     grainOverlay: num(json, 'grainOverlay', d.grainOverlay, 0, 1),
+    shape: GRAIN_SHAPES.includes(json.shape as GrainShape) ? (json.shape as GrainShape) : d.shape,
+    softness: num(json, 'softness', d.softness, 0, 1),
+    intensity: num(json, 'intensity', d.intensity, 0, 1),
+    noise: num(json, 'noise', d.noise, 0, 1),
+    ditherShape: DITHER_SHAPES.includes(json.ditherShape as DitherShape) ? (json.ditherShape as DitherShape) : d.ditherShape,
+    ditherType: DITHER_TYPES.includes(json.ditherType as DitherType) ? (json.ditherType as DitherType) : d.ditherType,
+    pxSize: num(json, 'pxSize', d.pxSize, 1, 20),
     speed: num(json, 'speed', d.speed, 0, 3),
     frame: Math.round(num(json, 'frame', d.frame, 0, MAX_FRAME)),
     scale: num(json, 'scale', d.scale, 0.25, 4),
@@ -129,4 +168,29 @@ export function readRecipe(json: unknown): GradientRecipe | null {
 export function meshProps(recipe: GradientRecipe, colors: string[]) {
   const { distortion, swirl, grainMixer, grainOverlay, speed, frame, scale, rotation, offsetX, offsetY } = recipe
   return { colors, distortion, swirl, grainMixer, grainOverlay, speed, frame, scale, rotation, offsetX, offsetY }
+}
+
+/** Paper Shaders GrainGradient props: the darkest colour is the background, the rest the bands. */
+export function grainProps(recipe: GradientRecipe, colours: string[]) {
+  const { shape, softness, intensity, noise, speed, frame, scale, rotation, offsetX, offsetY } = recipe
+  const [back, colors] = grainColours(colours)
+  return { colorBack: back, colors, shape, softness, intensity, noise, speed, frame, scale, rotation, offsetX, offsetY }
+}
+
+/** The palette's darker accent (third colour) as the grain gradient's background, the others as its bands. */
+export function grainColours(colours: string[]): [string, string[]] {
+  const back = colours[2] ?? colours[colours.length - 1]
+  return [back, colours.filter((_, i) => i !== 2)]
+}
+
+/** Dithering's two colours: the darker accent dithered over the lighter tint. */
+export function ditherColours(colours: string[]): [back: string, front: string] {
+  return [colours[1] ?? colours[0], colours[2] ?? colours[0]]
+}
+
+/** Paper Shaders Dithering props. */
+export function ditherProps(recipe: GradientRecipe, colours: string[]) {
+  const { ditherShape, ditherType, pxSize, speed, frame, scale, rotation, offsetX, offsetY } = recipe
+  const [colorBack, colorFront] = ditherColours(colours)
+  return { colorBack, colorFront, shape: ditherShape, type: ditherType, size: pxSize, speed, frame, scale, rotation, offsetX, offsetY }
 }

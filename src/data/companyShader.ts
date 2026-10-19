@@ -24,6 +24,8 @@ interface Surface {
 
 const surfaces = new Set<Surface>()
 const mounts = new Map<string, HiddenMount>()
+/** Mounts still being created (the grain gradient waits for its texture). */
+const pending = new Set<string>()
 let raf = 0
 
 const keyOf = (input: ShaderInput) => JSON.stringify(input)
@@ -75,12 +77,16 @@ export function attachCompanyShader(canvas: HTMLCanvasElement, input: ShaderInpu
   const ctx = canvas.getContext('2d')
   if (!ctx) return () => {}
   const key = keyOf(input)
-  if (!mounts.has(key)) {
-    try {
-      mounts.set(key, hiddenMount(input.recipe, input.colours, MOUNT_CSS, input.recipe.speed))
-    } catch {
-      return () => {} // no WebGL: the still stays
-    }
+  if (!mounts.has(key) && !pending.has(key)) {
+    pending.add(key)
+    hiddenMount(input.recipe, input.colours, MOUNT_CSS, input.recipe.speed)
+      .then((m) => {
+        // Kept only if something still shows this shader.
+        if ([...surfaces].some((s) => s.key === key)) mounts.set(key, m)
+        else m.dispose()
+      })
+      .catch(() => {}) // no WebGL: the still stays
+      .finally(() => pending.delete(key))
   }
   const surface: Surface = { canvas, ctx, key, visible: !observer }
   surfaces.add(surface)

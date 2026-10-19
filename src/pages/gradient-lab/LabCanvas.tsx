@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
-import { MeshGradient } from '@paper-design/shaders-react'
-import { meshProps, type GradientRecipe } from './recipe'
+import { Dithering, GrainGradient, MeshGradient } from '@paper-design/shaders-react'
+import { ditherProps, grainProps, meshProps, type GradientRecipe } from './recipe'
 import './lab-canvas.css'
 
-/* Live preview of a recipe in a set of colours (Paper Shaders' MeshGradient):
+/* Live preview of a recipe in a set of colours (Paper Shaders' MeshGradient, GrainGradient or Dithering):
    the largest square that fits its parent (which must have a definite size),
    centred. Plays while `playing` (a still frame under reduced motion). Drag
    pans and the wheel zooms through onPan / onZoom. */
@@ -88,7 +88,8 @@ function LabCanvas({ recipe, colours, playing, onPan, onZoom }: Props) {
     delete e.currentTarget.dataset.dragging
   }
 
-  const props = meshProps(recipe, colours)
+  const speed = playing && !reduced ? recipe.speed : 0
+  const fill = { width: '100%', height: '100%' }
   return (
     <div ref={stageRef} className="gl-cv">
       <div
@@ -102,7 +103,13 @@ function LabCanvas({ recipe, colours, playing, onPan, onZoom }: Props) {
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
       >
-        <MeshGradient {...props} speed={playing && !reduced ? recipe.speed : 0} style={{ width: '100%', height: '100%' }} />
+        {recipe.shader === 'dither' ? (
+          <Dithering {...ditherProps(recipe, colours)} speed={speed} style={fill} />
+        ) : recipe.shader === 'grain' ? (
+          <GrainGradient {...grainProps(recipe, colours)} speed={speed} style={fill} />
+        ) : (
+          <MeshGradient {...meshProps(recipe, colours)} speed={speed} style={fill} />
+        )}
       </div>
     </div>
   )

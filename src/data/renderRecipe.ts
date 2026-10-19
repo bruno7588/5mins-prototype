@@ -1,28 +1,40 @@
 import {
   defaultObjectSizing,
+  ditheringFragmentShader,
+  DitheringShapes,
+  DitheringTypes,
   getShaderColorFromString,
+  getShaderNoiseTexture,
+  grainGradientFragmentShader,
+  GrainGradientShapes,
   meshGradientFragmentShader,
   ShaderFitOptions,
   ShaderMount,
 } from '@paper-design/shaders'
-import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { ditherColours, grainColours, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 
-/* Renders a gradient recipe in a tenant's colours with Paper Shaders' mesh
-   gradient, in the admin's browser: a 512 x 512 JPEG still for the company
+/* Renders a gradient recipe in a tenant's colours with Paper Shaders (mesh
+   or grain gradient, or dithering), in the admin's browser: a 512 x 512 JPEG still for the company
    image, or a live hidden mount that companyShader.ts copies into cards. Each
    mount is one WebGL context, so stills render one at a time. */
 
 export const STILL_PX = 512
 
-/** The uniforms Paper's React MeshGradient would pass for these props. */
-export function meshUniforms(recipe: GradientRecipe, colours: string[]) {
-  return {
-    u_colors: colours.map(getShaderColorFromString),
-    u_colorsCount: colours.length,
-    u_distortion: recipe.distortion,
-    u_swirl: recipe.swirl,
-    u_grainMixer: recipe.grainMixer,
-    u_grainOverlay: recipe.grainOverlay,
+/** The grain gradient samples a noise image; it must be loaded before a mount uses it. */
+let noiseImage: Promise<HTMLImageElement> | null = null
+function loadNoise(): Promise<HTMLImageElement> {
+  noiseImage ??= new Promise((resolve, reject) => {
+    const img = getShaderNoiseTexture()!
+    if (img.complete && img.naturalWidth) resolve(img)
+    img.onload = () => resolve(img)
+    img.onerror = () => reject(new Error("The grain texture couldn't load."))
+  })
+  return noiseImage
+}
+
+/** The fragment shader and uniforms Paper's React MeshGradient or GrainGradient would pass. */
+async function shaderFor(recipe: GradientRecipe, colours: string[]) {
+  const sizing = {
     u_fit: ShaderFitOptions[defaultObjectSizing.fit],
     u_rotation: recipe.rotation,
     u_scale: recipe.scale,
@@ -32,6 +44,49 @@ export function meshUniforms(recipe: GradientRecipe, colours: string[]) {
     u_originY: defaultObjectSizing.originY,
     u_worldWidth: defaultObjectSizing.worldWidth,
     u_worldHeight: defaultObjectSizing.worldHeight,
+  }
+  if (recipe.shader === 'dither') {
+    const [back, front] = ditherColours(colours)
+    return {
+      fragment: ditheringFragmentShader,
+      uniforms: {
+        ...sizing,
+        u_colorBack: getShaderColorFromString(back),
+        u_colorFront: getShaderColorFromString(front),
+        u_shape: DitheringShapes[recipe.ditherShape],
+        u_type: DitheringTypes[recipe.ditherType],
+        u_pxSize: recipe.pxSize,
+      },
+    }
+  }
+  if (recipe.shader === 'grain') {
+    const [back, colors] = grainColours(colours)
+    return {
+      fragment: grainGradientFragmentShader,
+      uniforms: {
+        ...sizing,
+        u_colorBack: getShaderColorFromString(back),
+        u_colors: colors.map(getShaderColorFromString),
+        u_colorsCount: colors.length,
+        u_softness: recipe.softness,
+        u_intensity: recipe.intensity,
+        u_noise: recipe.noise,
+        u_shape: GrainGradientShapes[recipe.shape],
+        u_noiseTexture: await loadNoise(),
+      },
+    }
+  }
+  return {
+    fragment: meshGradientFragmentShader,
+    uniforms: {
+      ...sizing,
+      u_colors: colours.map(getShaderColorFromString),
+      u_colorsCount: colours.length,
+      u_distortion: recipe.distortion,
+      u_swirl: recipe.swirl,
+      u_grainMixer: recipe.grainMixer,
+      u_grainOverlay: recipe.grainOverlay,
+    },
   }
 }
 
@@ -45,13 +100,14 @@ export interface HiddenMount {
  * A mount in an invisible fixed box inside the viewport (Paper pauses mounts it
  * thinks are off-screen). The drawing buffer is kept so it can be copied or encoded.
  */
-export function hiddenMount(recipe: GradientRecipe, colours: string[], cssPx: number, speed: number): HiddenMount {
+export async function hiddenMount(recipe: GradientRecipe, colours: string[], cssPx: number, speed: number): Promise<HiddenMount> {
+  const { fragment, uniforms } = await shaderFor(recipe, colours)
   const box = document.createElement('div')
   box.setAttribute('aria-hidden', 'true')
   box.style.cssText = `position:fixed;left:0;top:0;width:${cssPx}px;height:${cssPx}px;opacity:0;pointer-events:none;z-index:-1;`
   document.body.appendChild(box)
   // minPixelRatio 1: the box is sized in device pixels' worth already for stills.
-  const mount = new ShaderMount(box, meshGradientFragmentShader, meshUniforms(recipe, colours), { preserveDrawingBuffer: true }, speed, recipe.frame, 1)
+  const mount = new ShaderMount(box, fragment, uniforms, { preserveDrawingBuffer: true }, speed, recipe.frame, 1)
   return {
     mount,
     canvas: mount.canvasElement,
@@ -70,7 +126,7 @@ let queue: Promise<unknown> = Promise.resolve()
 export function renderStill(recipe: GradientRecipe, colours: string[], type: 'image/jpeg' | 'image/png' = 'image/jpeg'): Promise<string> {
   const run = async () => {
     const dpr = Math.max(1, window.devicePixelRatio || 1)
-    const { canvas, mount, dispose } = hiddenMount(recipe, colours, STILL_PX / dpr, 0)
+    const { canvas, mount, dispose } = await hiddenMount(recipe, colours, STILL_PX / dpr, 0)
     try {
       // Paper sizes the canvas on its first resize callback, then draws.
       for (let i = 0; i < 3 && canvas.width === 0; i++) await nextFrame()

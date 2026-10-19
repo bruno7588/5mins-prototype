@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Shuffle } from 'iconsax-react'
+import { Gps, Shuffle } from 'iconsax-react'
 import { DialRoot } from 'dialkit'
 import 'dialkit/styles.css'
 import Button from '@/components/Button/Button'
@@ -197,6 +197,15 @@ function GradientLab() {
                       onClick={randomizeFraming}
                     >
                       Randomise Framing
+                    </Button>
+                    <Button
+                      variant="outlined-2"
+                      size="sm"
+                      icon={<Gps size={16} variant="Linear" color="currentColor" />}
+                      disabled={lab.recipe.offsetX === 0 && lab.recipe.offsetY === 0}
+                      onClick={() => setOffset(0, 0)}
+                    >
+                      Centre Point
                     </Button>
                   </div>
                 </div>

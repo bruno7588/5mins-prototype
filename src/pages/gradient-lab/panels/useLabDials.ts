@@ -1,11 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useDialKitController, type DialConfig } from 'dialkit'
 import { DEFAULT_THEME, type ThemeSet } from '@/data/brandTheme'
-import { MAX_FRAME, type GradientRecipe } from '../recipe'
+import {
+  DITHER_SHAPES,
+  DITHER_TYPES,
+  GRAIN_SHAPES,
+  MAX_FRAME,
+  type DitherShape,
+  type DitherType,
+  type GradientRecipe,
+  type GrainShape,
+  type ShaderKind,
+} from '../recipe'
 
 /* The DialKit panel for each tab of the controls column, rendered inline:
-   "Gradient" (shape, and the theme colours to preview it in) or "Shader"
-   (motion and grain). Only the open tab's panel is mounted, seeded from lab
+   "Gradient" (shader type and shape, and the theme colours to preview it in) or
+   "Shader" (motion and grain). The controls follow the shader type: the mesh
+   gradient has distortion, swirl and two grain sliders; the grain gradient has
+   a shape, softness, intensity and noise; dithering has a shape, a pattern and
+   a pixel size. Only the open tab's panel is mounted, seeded from lab
    state on mount, so switching tabs never loses a value. Two-way sync without
    echo loops:
    - DialKit -> lab: when the panel's values change, the recipe and preview are
@@ -25,13 +38,38 @@ export interface LabState {
 
 /** DialKit keys double as labels (first letter capitalised), so they are sentence case. */
 interface PanelValues {
-  Gradient: { colours: number; distortion: number; swirl: number; scale: number; rotation: number; frame: number }
+  Gradient: {
+    type: ShaderKind
+    shape?: GrainShape | DitherShape
+    pattern?: DitherType
+    'pixel size'?: number
+    /** Absent for dithering, which always uses two colours. */
+    colours?: number
+    distortion?: number
+    swirl?: number
+    softness?: number
+    intensity?: number
+    scale: number
+    rotation: number
+    frame: number
+  }
   'Preview colours': { 'header bar': string; 'navigation items': string; 'selected item': string }
   Motion: { playing: boolean; speed: number }
-  Grain: { mixer: number; overlay: number }
+  /** Absent for dithering. */
+  Grain?: { mixer?: number; overlay?: number; noise?: number }
 }
 
 type Folder = keyof PanelValues
+
+const SHADER_OPTIONS: { value: ShaderKind; label: string }[] = [
+  { value: 'mesh', label: 'Mesh gradient' },
+  { value: 'grain', label: 'Grain gradient' },
+  { value: 'dither', label: 'Dithering' },
+]
+const options = <T extends string>(values: readonly T[]) => values.map((value) => ({ value, label: value[0].toUpperCase() + value.slice(1) }))
+const SHAPE_OPTIONS = options(GRAIN_SHAPES)
+const DITHER_SHAPE_OPTIONS = options(DITHER_SHAPES)
+const PATTERN_OPTIONS = options(DITHER_TYPES)
 
 const FOLDERS: Record<DialsKind, Folder[]> = {
   gradient: ['Gradient', 'Preview colours'],
@@ -39,31 +77,50 @@ const FOLDERS: Record<DialsKind, Folder[]> = {
 }
 
 function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
+  const shape = { scale: r.scale, rotation: r.rotation, frame: r.frame }
+  const own: Record<ShaderKind, Partial<PanelValues['Gradient']>> = {
+    mesh: { distortion: r.distortion, swirl: r.swirl },
+    grain: { shape: r.shape, softness: r.softness, intensity: r.intensity },
+    dither: { shape: r.ditherShape, pattern: r.ditherType, 'pixel size': r.pxSize },
+  }
   return {
-    Gradient: { colours: r.colours, distortion: r.distortion, swirl: r.swirl, scale: r.scale, rotation: r.rotation, frame: r.frame },
+    Gradient: { type: r.shader, ...(r.shader === 'dither' ? {} : { colours: r.colours }), ...own[r.shader], ...shape },
     'Preview colours': { 'header bar': p.header, 'navigation items': p.nav, 'selected item': p.selected },
     Motion: { playing, speed: r.speed },
-    Grain: { mixer: r.grainMixer, overlay: r.grainOverlay },
+    Grain: r.shader === 'grain' ? { noise: r.noise } : r.shader === 'mesh' ? { mixer: r.grainMixer, overlay: r.grainOverlay } : undefined,
   }
 }
 
 function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
   const v = labToDials(lab)
+  const g = v.Gradient
   if (kind === 'shader') {
-    return {
-      Motion: { playing: v.Motion.playing, speed: [v.Motion.speed, 0, 3, 0.01] },
-      Grain: { mixer: [v.Grain.mixer, 0, 1, 0.01], overlay: [v.Grain.overlay, 0, 1, 0.01] },
-    }
+    const motion: DialConfig = { Motion: { playing: v.Motion.playing, speed: [v.Motion.speed, 0, 3, 0.01] } }
+    // Dithering has no grain of its own: its pattern is the texture.
+    if (g.type === 'grain') return { ...motion, Grain: { noise: [v.Grain!.noise!, 0, 1, 0.01] } }
+    if (g.type === 'mesh') return { ...motion, Grain: { mixer: [v.Grain!.mixer!, 0, 1, 0.01], overlay: [v.Grain!.overlay!, 0, 1, 0.01] } }
+    return motion
+  }
+  const own: Record<ShaderKind, DialConfig> = {
+    mesh: { distortion: [g.distortion!, 0, 1, 0.01], swirl: [g.swirl!, 0, 1, 0.01] },
+    grain: { softness: [g.softness!, 0, 1, 0.01], intensity: [g.intensity!, 0, 1, 0.01] },
+    dither: {
+      pattern: { type: 'select', options: PATTERN_OPTIONS, default: g.pattern! },
+      'pixel size': [g['pixel size']!, 1, 20, 0.5],
+    },
   }
   const p = v['Preview colours']
   return {
     Gradient: {
-      colours: [v.Gradient.colours, 3, 5, 1],
-      distortion: [v.Gradient.distortion, 0, 1, 0.01],
-      swirl: [v.Gradient.swirl, 0, 1, 0.01],
-      scale: [v.Gradient.scale, 0.25, 4, 0.01],
-      rotation: [v.Gradient.rotation, 0, 360, 1],
-      frame: [v.Gradient.frame, 0, MAX_FRAME, 100],
+      type: { type: 'select', options: SHADER_OPTIONS, default: g.type },
+      ...(g.type !== 'mesh'
+        ? { shape: { type: 'select', options: g.type === 'grain' ? SHAPE_OPTIONS : DITHER_SHAPE_OPTIONS, default: g.shape! } }
+        : {}),
+      ...(g.type === 'dither' ? {} : { colours: [g.colours!, 3, 5, 1] }),
+      ...own[g.type],
+      scale: [g.scale, 0.25, 4, 0.01],
+      rotation: [g.rotation, 0, 360, 1],
+      frame: [g.frame, 0, MAX_FRAME, 100],
       shuffle: { type: 'action', label: 'Shuffle' },
     },
     'Preview colours': {
@@ -80,9 +137,11 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
   const latest = useRef({ lab, update })
   latest.current = { lab, update }
 
-  // DialKit owns the live values; the config only seeds them.
+  // DialKit owns the live values; the config only seeds them. Rebuilt when the
+  // shader type changes, since each type has its own controls.
+  const shader = lab.recipe.shader
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const config = useMemo(() => buildConfig(latest.current.lab, kind), [kind])
+  const config = useMemo(() => buildConfig(latest.current.lab, kind), [kind, shader])
 
   const dialRef = useRef<ReturnType<typeof useDialKitController> | null>(null)
   const onAction = useCallback((action: string) => {
@@ -106,8 +165,10 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
     const have = dial.getValues() as unknown as PanelValues
     const next: Record<string, Record<string, unknown>> = {}
     for (const folder of FOLDERS[kind]) {
-      const w = want[folder] as Record<string, unknown>
-      const h = have[folder] as Record<string, unknown>
+      // Dithering has no Grain folder, and a folder the old shader type didn't have
+      // is empty until the panel rebuilds.
+      const w = (want[folder] ?? {}) as Record<string, unknown>
+      const h = (have[folder] ?? {}) as Record<string, unknown>
       for (const k of Object.keys(w)) {
         const same = typeof w[k] === 'string' ? String(h[k]).toLowerCase() === String(w[k]).toLowerCase() : h[k] === w[k]
         if (!same) (next[folder] ??= {})[k] = w[k]
@@ -121,20 +182,26 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
     const v = dial.getValues() as unknown as PanelValues
     const { lab: now, update: push } = latest.current
     const r = now.recipe
+    // Only the controls this panel shows (the others belong to the other shader type).
+    const changed = (next: GradientRecipe) => (Object.keys(next) as (keyof GradientRecipe)[]).some((k) => next[k] !== r[k])
+    const defined = <T extends object>(o: T) =>
+      Object.fromEntries(Object.entries(o).filter(([k, x]) => x !== undefined && k in r)) as Partial<GradientRecipe>
     if (kind === 'shader') {
-      const recipe = { ...r, speed: v.Motion.speed, grainMixer: v.Grain.mixer, grainOverlay: v.Grain.overlay }
+      const recipe = { ...r, speed: v.Motion.speed, ...defined({ grainMixer: v.Grain?.mixer, grainOverlay: v.Grain?.overlay, noise: v.Grain?.noise }) }
       const patch: Partial<LabState> = {}
-      if (recipe.speed !== r.speed || recipe.grainMixer !== r.grainMixer || recipe.grainOverlay !== r.grainOverlay) patch.recipe = recipe
+      if (changed(recipe)) patch.recipe = recipe
       if (v.Motion.playing !== now.playing) patch.playing = v.Motion.playing
       if (Object.keys(patch).length) push(patch)
       return
     }
-    const g = v.Gradient
-    const recipe = { ...r, colours: g.colours, distortion: g.distortion, swirl: g.swirl, scale: g.scale, rotation: g.rotation, frame: g.frame }
+    // The panel's controls belong to the current type until it rebuilds for a newly picked one.
+    const { type, shape, pattern, 'pixel size': pxSize, ...g } = v.Gradient
+    const own = r.shader === 'dither' ? { ditherShape: shape, ditherType: pattern, pxSize } : { shape }
+    const recipe = { ...r, shader: type, ...defined({ ...g, ...own }) }
     const c = v['Preview colours']
     const preview: ThemeSet = { header: c['header bar'], nav: c['navigation items'], selected: c['selected item'] }
     const patch: Partial<LabState> = {}
-    if ((Object.keys(g) as (keyof typeof g)[]).some((k) => recipe[k] !== r[k])) patch.recipe = recipe
+    if (changed(recipe)) patch.recipe = recipe
     if ((Object.keys(preview) as (keyof ThemeSet)[]).some((k) => preview[k].toLowerCase() !== now.preview[k].toLowerCase())) patch.preview = preview
     if (Object.keys(patch).length) push(patch)
     // eslint-disable-next-line react-hooks/exhaustive-deps
