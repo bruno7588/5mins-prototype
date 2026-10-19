@@ -128,8 +128,9 @@ export function renderStill(recipe: GradientRecipe, colours: string[], type: 'im
     const dpr = Math.max(1, window.devicePixelRatio || 1)
     const { canvas, mount, dispose } = await hiddenMount(recipe, colours, STILL_PX / dpr, 0)
     try {
-      // Paper sizes the canvas on its first resize callback, then draws.
-      for (let i = 0; i < 3 && canvas.width === 0; i++) await nextFrame()
+      // Paper sizes the canvas on its first resize callback, then draws. A new
+      // canvas is 300 x 150, so wait until it matches the square box.
+      for (let i = 0; i < 10 && canvas.width !== canvas.height; i++) await nextFrame()
       mount.setFrame(recipe.frame)
       await nextFrame()
       const out = document.createElement('canvas')
