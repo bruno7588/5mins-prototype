@@ -1,5 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { paletteCount, type GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { fixedColours, paletteCount, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { brandPalette } from './brandPalette'
 import { effectiveTheme, getBrandTheme, subscribeBrandTheme } from './brandTheme'
 import { getCompanyDefaults, subscribeCompanyDefaults, useCompanyDefaults, type CompanyDefault } from './companyDefaults'
@@ -21,11 +21,14 @@ export type CompanyImage =
   | { kind: 'default'; id: string; src?: string; key?: string; dark?: Still }
   | { kind: 'upload'; src: string }
 
-/** What a default's still depends on: its recipe and the tenant's colours for that mode. */
-export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') => JSON.stringify([recipe, effectiveTheme()[mode]])
+/** What a default's still depends on: its recipe, the tenant's colours for that mode and whether they're custom. */
+export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') =>
+  JSON.stringify([recipe, effectiveTheme()[mode], getBrandTheme() !== null])
 
-/** The recipe's shader colours for this tenant in that mode. */
-export const tenantColours = (recipe: GradientRecipe, mode: Theme = 'light') => brandPalette(effectiveTheme()[mode], paletteCount(recipe))
+/** The recipe's shader colours for this tenant in that mode. A recipe's fixed palette shows only on the
+    5Mins theme: theme colours an admin picked always override it. */
+export const tenantColours = (recipe: GradientRecipe, mode: Theme = 'light') =>
+  (getBrandTheme() ? null : fixedColours(recipe)) ?? brandPalette(effectiveTheme()[mode], paletteCount(recipe))
 
 const stills = new Map<string, Promise<string>>()
 
