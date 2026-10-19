@@ -6,7 +6,7 @@ import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { brandPalette } from '@/data/brandPalette'
-import { DEFAULT_THEME, effectiveTheme } from '@/data/brandTheme'
+import { DEFAULT_THEME } from '@/data/brandTheme'
 import { renderStill } from '@/data/renderRecipe'
 import { useTheme } from '@/hooks/useTheme'
 import LabCanvas from './LabCanvas'
@@ -21,9 +21,10 @@ import './panels/panels.css'
 
 /**
  * Gradient Studio (Playground, dev only): makes the recipes behind the default
- * company images. A recipe is the gradient's shape and motion, with no colours:
- * each tenant sees it in colours generated from its theme (brandPalette). Left:
- * the live preview (wheel zooms, drag pans) in the preview colours, and the
+ * company images. A recipe is the gradient's shape and motion, plus an optional
+ * fixed palette shown on the 5Mins theme; tenants with their own theme always
+ * see it in their colours (brandPalette). Left:
+ * the live preview (wheel zooms, drag pans) in the slot's colours, and the
  * saved slots. Right: a Gradient / Shader switcher (Export sits in the header):
  * Gradient holds the focal point and the shape and preview-colour DialKit panel;
  * Shader holds motion and grain. Prefix: gl-
@@ -57,7 +58,8 @@ const round2 = (v: number) => Math.round(v * 100) / 100
 
 function GradientLab() {
   // Previewed in the tenant's colours by default, so recipes are judged in a real brand.
-  const [lab, setLab] = useState<LabState>(() => ({ recipe: DEFAULT_RECIPE, preview: effectiveTheme().light, playing: true }))
+  // A slot without its own palette previews in the 5Mins colours, like its saved still.
+  const [lab, setLab] = useState<LabState>(() => ({ recipe: DEFAULT_RECIPE, preview: DEFAULT_THEME.light, playing: true }))
   const update = useCallback((patch: Partial<LabState>) => setLab((prev) => ({ ...prev, ...patch })), [])
   const setRecipe = useCallback(
     (patch: Partial<LabState['recipe']>) => setLab((prev) => ({ ...prev, recipe: { ...prev.recipe, ...patch } })),
