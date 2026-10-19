@@ -37,6 +37,8 @@ export interface ImageModalDefault {
   src: string
   /** Laid over the tile image, e.g. a live version of it. */
   overlay?: ReactNode
+  /** Still being prepared (e.g. rendered in the tenant's colours): a spinner, not yet pickable. */
+  loading?: boolean
 }
 
 interface CardContent {
@@ -655,10 +657,17 @@ function AddImageModal({
                 aria-checked={pickedDefault === image.id}
                 aria-label={`Default image ${i + 1}`}
                 className={`aim-defaults__tile${pickedDefault === image.id ? ' aim-defaults__tile--selected' : ''}`}
-                disabled={!!savingDefault && savingDefault !== image.id}
+                disabled={image.loading || (!!savingDefault && savingDefault !== image.id)}
+                aria-busy={image.loading || undefined}
                 onClick={() => handleDefaultPick(image.id)}
               >
-                <img src={image.src} alt="" />
+                {image.loading ? (
+                  <span className="aim-defaults__loading" role="status" aria-label="Preparing image">
+                    <span className="ds-btn__spinner" />
+                  </span>
+                ) : (
+                  <img src={image.src} alt="" />
+                )}
                 {image.overlay}
                 {savingDefault === image.id && (
                   <span className="aim-defaults__saving" role="status" aria-label="Saving image">

@@ -1,6 +1,6 @@
 /* ── Gradient Lab preview canvas ──────────────────────────────────────────────
    gl-cv- prefix (globally bundled CSS). Tokens only. The stage fills its parent;
-   LabCanvas sizes the canvas in px to fit the output frame inside it. */
+   LabCanvas sizes the square frame in px to fit inside it. */
 
 .gl-cv {
   position: relative;
@@ -17,6 +17,7 @@
   inset: 0;
   margin: auto;
   display: block;
+  overflow: hidden;
   border-radius: var(--radius-l);
   background: var(--cards-background);
   touch-action: none;
@@ -28,8 +29,4 @@
 
 .gl-cv__surface--pannable[data-dragging] {
   cursor: grabbing;
-}
-
-.gl-cv__surface[hidden] {
-  display: none;
 }

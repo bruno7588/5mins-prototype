@@ -1,41 +1,32 @@
 import { useCallback, useEffect, useState } from 'react'
 import { refreshCompanyDefaults } from '@/data/companyDefaults'
 import { GL_API, glJson, glUrl } from './api'
-import type { ShaderPreset } from './types'
+import type { GradientRecipe } from './recipe'
 
 /* The saved gradients, shared through the Gradient Studio API. Each numbered
-   slot keeps a full shader preset (motion included) and a 512 px still; together
-   they are the app's default company images, so a save or clear shows in the
-   app for everyone straight away. Slots are open-ended. */
-
-/** The app's default company images are square JPEGs at this size. */
-export const APP_IMAGE_SIZE = 512
+   slot keeps a recipe (the gradient's shape and motion, no colours) and a 512 px
+   still in the 5Mins colours; together they are the app's default company
+   images, rendered per tenant in its theme colours, so a save or clear shows in
+   the app for everyone straight away. Slots are open-ended. */
 
 export interface SavedGradient {
   slot: number
   name: string
-  /** URL of the 512 px still (the app's company image for this slot). */
+  /** URL of the 512 px still, in the 5Mins colours. */
   image: string
   savedAt: string
-  preset: ShaderPreset
+  /** The recipe as saved: version 2, or a version 1 photo preset from before (parseRecipe reads both). */
+  preset: unknown
 }
 
 const withUrl = (g: SavedGradient): SavedGradient => ({ ...g, image: glUrl(g.image) })
 
-function toDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = () => reject(new Error("The image couldn't be read."))
-    reader.readAsDataURL(blob)
-  })
-}
-
-export async function saveGradient(slot: number, preset: ShaderPreset, image: Blob): Promise<SavedGradient> {
+/** `still` is a JPEG data URL. */
+export async function saveGradient(slot: number, recipe: GradientRecipe, still: string): Promise<SavedGradient> {
   const res = await fetch(`${GL_API}?r=gradients`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ slot, name: preset.name, preset, dataUrl: await toDataUrl(image) }),
+    body: JSON.stringify({ slot, name: recipe.name, preset: recipe, dataUrl: still }),
   })
   const saved = withUrl(await glJson<SavedGradient>(res))
   refreshCompanyDefaults()

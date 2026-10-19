@@ -4,21 +4,16 @@
    are rate limited per IP). The saved gradients are the app's default company
    images, so a save shows for everyone straight away.
 
-   Keys
-     gl:flowers        hash  id   -> photo metadata JSON
-     gl:flower:<id>    string     base64 JPEG (1024 x 1024)
+   Keys (gl:flowers and gl:flower:<id> are left over from photo-based gradients, unused)
      gl:gradients      hash  slot -> { slot, name, savedAt, preset } JSON
      gl:gimg:<slot>    string     base64 JPEG (512 x 512, the still)
 
    Routes (?r=)
-     GET    flowers                      photo list
-     POST   flowers   {name,hue,dataUrl,id?}  add a photo (id only when seeding)
-     DELETE flowers&id=                  remove a photo
      GET    gradients                    saved gradients, by slot
      PUT    gradients {slot,name,preset,dataUrl}  save or replace a slot
      PUT    order     {slots}             reorder: every saved slot once, in the new order (renumbered 1..n)
      DELETE gradients&slot=              clear a slot; later slots move down one
-     GET    image&kind=flower|gradient&id=&v=  the JPEG (cached; v busts it) */
+     GET    image&kind=gradient&id=&v=   the still JPEG (cached; v busts it) */
 
 declare const process: { env: Record<string, string | undefined> }
 
@@ -27,18 +22,9 @@ const REDIS_TOKEN = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_R
 
 const ROUTE = '/api/gradient-lab'
 const WRITES_PER_MINUTE = 40
-/* Vercel caps a request body at 4.5 MB; a 1024 px JPEG is well under this. */
+/* Vercel caps a request body at 4.5 MB; a 512 px JPEG is well under this. */
 const MAX_IMAGE_CHARS = 3_500_000
 const MAX_PRESET_CHARS = 20_000
-const ID_PATTERN = /^[a-z0-9-]{1,100}$/
-
-interface StoredFlower {
-  id: string
-  name: string
-  hue: number
-  savedAt: string
-}
-
 interface StoredGradient {
   slot: number
   name: string
@@ -49,7 +35,7 @@ interface StoredGradient {
 // Same-origin in production; localhost calls the deployed API cross-origin.
 const CORS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 }
 
@@ -86,11 +72,10 @@ function jpegBase64(v: unknown): string | null {
   return match ? match[1] : null
 }
 
-const imagePath = (kind: 'flower' | 'gradient', id: string | number, savedAt: string) =>
-  `${ROUTE}?r=image&kind=${kind}&id=${encodeURIComponent(String(id))}&v=${encodeURIComponent(savedAt)}`
+const imagePath = (id: string | number, savedAt: string) =>
+  `${ROUTE}?r=image&kind=gradient&id=${encodeURIComponent(String(id))}&v=${encodeURIComponent(savedAt)}`
 
-const flowerOut = (f: StoredFlower) => ({ ...f, src: imagePath('flower', f.id, f.savedAt) })
-const gradientOut = (g: StoredGradient) => ({ ...g, image: imagePath('gradient', g.slot, g.savedAt) })
+const gradientOut = (g: StoredGradient) => ({ ...g, image: imagePath(g.slot, g.savedAt) })
 
 async function rateLimited(request: Request): Promise<boolean> {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
@@ -117,11 +102,6 @@ export async function GET(request: Request) {
   const params = route(request)
   const r = params.get('r')
 
-  if (r === 'flowers') {
-    const list = parseHash<StoredFlower>((await redis('HGETALL', 'gl:flowers')) as string[] | null)
-    return json(list.map(flowerOut))
-  }
-
   if (r === 'gradients') {
     const list = parseHash<StoredGradient>((await redis('HGETALL', 'gl:gradients')) as string[] | null)
     list.sort((a, b) => a.slot - b.slot)
@@ -129,10 +109,8 @@ export async function GET(request: Request) {
   }
 
   if (r === 'image') {
-    const kind = params.get('kind')
-    const id = params.get('id') ?? ''
-    const key =
-      kind === 'flower' && ID_PATTERN.test(id) ? `gl:flower:${id}` : kind === 'gradient' && slotOf(id) ? `gl:gimg:${slotOf(id)}` : null
+    const slot = params.get('kind') === 'gradient' ? slotOf(params.get('id')) : null
+    const key = slot ? `gl:gimg:${slot}` : null
     if (!key) return json({ error: 'kind and id are required' }, 400)
     const base64 = (await redis('GET', key)) as string | null
     if (!base64) return json({ error: 'Not found' }, 404)
@@ -148,24 +126,6 @@ export async function GET(request: Request) {
   }
 
   return json({ error: 'Unknown route' }, 404)
-}
-
-export async function POST(request: Request) {
-  if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
-  if (route(request).get('r') !== 'flowers') return json({ error: 'Unknown route' }, 404)
-  if (await rateLimited(request)) return json({ error: 'Too many saves, try again in a minute.' }, 429)
-  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
-  const name = str(body?.name, 200)
-  const hue = typeof body?.hue === 'number' && body.hue >= -1 && body.hue < 360 ? Math.round(body.hue) : -1
-  const base64 = jpegBase64(body?.dataUrl)
-  if (!name || !base64) return json({ error: 'name and a JPEG dataUrl are required' }, 400)
-  const slug = name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'image'
-  const given = str(body?.id, 100)
-  const id = given && ID_PATTERN.test(given) ? given : `${slug}-${Date.now().toString(36)}`
-  const flower: StoredFlower = { id, name, hue, savedAt: new Date().toISOString() }
-  await redis('SET', `gl:flower:${id}`, base64)
-  await redis('HSET', 'gl:flowers', id, JSON.stringify(flower))
-  return json(flowerOut(flower))
 }
 
 export async function PUT(request: Request) {
@@ -223,13 +183,6 @@ export async function DELETE(request: Request) {
   if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
   const params = route(request)
   if (await rateLimited(request)) return json({ error: 'Too many changes, try again in a minute.' }, 429)
-  if (params.get('r') === 'flowers') {
-    const id = params.get('id') ?? ''
-    if (!ID_PATTERN.test(id)) return json({ error: 'id is required' }, 400)
-    await redis('HDEL', 'gl:flowers', id)
-    await redis('DEL', `gl:flower:${id}`)
-    return json({ deleted: id })
-  }
   if (params.get('r') === 'gradients') {
     const slot = slotOf(params.get('slot'))
     if (!slot) return json({ error: 'slot is required' }, 400)

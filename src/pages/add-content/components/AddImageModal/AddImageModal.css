@@ -675,6 +675,13 @@
   color: var(--neutral-0);
 }
 
+/* A tile whose still is still being prepared: the Button spinner on the empty tile. */
+.aim-defaults__loading {
+  position: absolute;
+  inset: 0;
+  color: var(--text-secondary);
+}
+
 .aim-defaults__tile:disabled {
   cursor: default;
 }

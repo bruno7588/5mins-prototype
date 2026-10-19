@@ -1,0 +1,217 @@
+/* ColourField - docs/design-system/colour-field.md. Field chrome follows the
+   Outlined input (input.md); the popover follows the listbox surface (listbox.md). */
+
+.colour-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.colour-field__label {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ── Field: the Outlined input's border, radius and states ── */
+.colour-field__control {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.colour-field__control:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background);
+}
+
+.colour-field__control:focus-within,
+.colour-field__control.is-open {
+  border-color: var(--selected);
+  background: transparent;
+}
+
+.colour-field__trigger {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-s);
+  min-width: 0;
+  padding: var(--space-s) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.colour-field__swatch {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-xs);
+}
+
+.colour-field__value {
+  overflow: hidden;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Icon-only: circular hover, as every icon button. */
+.colour-field__dropper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: var(--space-xss);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.colour-field__dropper:hover {
+  background: var(--input-background);
+}
+
+.colour-field__dropper:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* ── Popover: the menu surface ── */
+.colour-field__popover {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 264px;
+  box-sizing: border-box;
+  padding: var(--space-sm);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-l);
+}
+
+.colour-field__popover--end {
+  right: 0;
+  left: auto;
+}
+
+.colour-field__square,
+.colour-field__hue {
+  position: relative;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.colour-field__square {
+  height: 160px;
+  border-radius: var(--radius-s);
+}
+
+/* The HSV colour model itself: white to the left, black to the bottom. These are
+   the picker's maths, not design values, so they stay raw. */
+.colour-field__square::before,
+.colour-field__square::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.colour-field__square::before {
+  /* stylelint-disable-next-line -- HSV model gradient (pure white), not a design value */
+  background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+}
+
+.colour-field__square::after {
+  /* stylelint-disable-next-line -- HSV model gradient (pure black), not a design value */
+  background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+}
+
+.colour-field__hue {
+  height: 12px;
+  border-radius: var(--radius-full);
+  /* stylelint-disable-next-line -- the hue spectrum, not a design value */
+  background: linear-gradient(to right, hsl(0 100% 50%), hsl(60 100% 50%), hsl(120 100% 50%), hsl(180 100% 50%), hsl(240 100% 50%), hsl(300 100% 50%), hsl(360 100% 50%));
+}
+
+.colour-field__square:focus-visible,
+.colour-field__hue:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.colour-field__handle {
+  position: absolute;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  /* stylelint-disable-next-line -- the handle ring must read on any picked colour in both modes */
+  border: 2px solid var(--neutral-0);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-s);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.colour-field__hex-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+/* HEX is the only format, so a static box rather than a dropdown. */
+.colour-field__format {
+  flex-shrink: 0;
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.colour-field__hex {
+  flex: 1;
+  min-width: 0;
+}
+
+.colour-field__hex .input-field__input {
+  min-width: 0;
+}
+
+/* The popover is a card fill, so the field steps up to the elevated tint (input.md). */
+.colour-field__hex .input-field__wrapper:hover {
+  background: var(--input-background-elevated);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .colour-field__control,
+  .colour-field__dropper {
+    transition: none;
+  }
+}

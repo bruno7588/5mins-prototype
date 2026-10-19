@@ -16,6 +16,8 @@ interface InputFieldProps {
   type?: string
   className?: string
   autoFocus?: boolean
+  /** Accessible name when there is no visible label. */
+  ariaLabel?: string
 }
 
 function InputField({
@@ -31,6 +33,7 @@ function InputField({
   type = 'text',
   className,
   autoFocus,
+  ariaLabel,
 }: InputFieldProps) {
   const id = useId()
   const helperId = helperText ? `${id}-helper` : undefined
@@ -53,6 +56,7 @@ function InputField({
           onBlur={onBlur}
           disabled={disabled}
           autoFocus={autoFocus}
+          aria-label={ariaLabel}
           aria-invalid={validation === 'error' ? true : undefined}
           aria-describedby={helperId}
         />

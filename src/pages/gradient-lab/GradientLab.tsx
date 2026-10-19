@@ -1,42 +1,35 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Shuffle } from 'iconsax-react'
-import { DialRoot, Slider } from 'dialkit'
+import { DialRoot } from 'dialkit'
 import 'dialkit/styles.css'
 import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
-import EmptyState from '@/components/EmptyState/EmptyState'
-import emptyIllustration from '@/assets/empty-state-illustrations/empty-box.svg'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
+import { brandPalette } from '@/data/brandPalette'
+import { DEFAULT_THEME, effectiveTheme } from '@/data/brandTheme'
+import { renderStill } from '@/data/renderRecipe'
 import { useTheme } from '@/hooks/useTheme'
-import LabCanvas, { type LabCanvasHandle } from './LabCanvas'
-import { useFlowers } from './flowers'
+import LabCanvas from './LabCanvas'
 import ExportPanel from './panels/ExportPanel'
 import GradientSlots from './panels/GradientSlots'
-import { APP_IMAGE_SIZE, clearGradient, reorderGradients, saveGradient, useSavedGradients } from './gradients'
-import { parsePreset, toPreset } from './preset'
+import { clearGradient, reorderGradients, saveGradient, useSavedGradients } from './gradients'
+import { DEFAULT_RECIPE, parseRecipe } from './recipe'
 import FocalPad from './panels/FocalPad'
-import FramingPanel, { RotateField } from './panels/FramingPanel'
-import TexturePanel from './panels/TexturePanel'
-import { useLabDials, type DialsKind } from './panels/useLabDials'
-import { extractKey, paletteKeys, usePaletteExtraction } from './panels/usePaletteExtraction'
-import { ASPECT_VALUES, DEFAULT_LAB_STATE, type LabState } from './types'
+import { useLabDials, type DialsKind, type LabState } from './panels/useLabDials'
 import './gradient-lab.css'
 import './panels/panels.css'
 
 /**
- * Gradient Lab (Playground, dev only): makes default company images and live
- * shaders on one screen. Left: the live preview (wheel zooms, drag pans).
- * Right: one controls column with an Image / Gradient / Shader switcher
- * (Export sits in the header): Image picks, uploads, removes and frames the
- * photo (aspect ratio, render size); Gradient holds the focal point, rotate
- * and the gradient DialKit panel; Shader
- * holds the motion panel. Prefix: gl-
+ * Gradient Studio (Playground, dev only): makes the recipes behind the default
+ * company images. A recipe is the gradient's shape and motion, with no colours:
+ * each tenant sees it in colours generated from its theme (brandPalette). Left:
+ * the live preview (wheel zooms, drag pans) in the preview colours, and the
+ * saved slots. Right: a Gradient / Shader switcher (Export sits in the header):
+ * Gradient holds the focal point and the shape and preview-colour DialKit panel;
+ * Shader holds motion and grain. Prefix: gl-
  */
 
-/** Controls column tabs, in working order: pick the image, shape the gradient, animate it. */
-type ControlsTab = 'image' | DialsKind
-const TABS: { key: ControlsTab; label: string }[] = [
-  { key: 'image', label: 'Image' },
+const TABS: { key: DialsKind; label: string }[] = [
   { key: 'gradient', label: 'Gradient' },
   { key: 'shader', label: 'Shader' },
 ]
@@ -45,12 +38,11 @@ interface DialsProps {
   kind: DialsKind
   lab: LabState
   update: (patch: Partial<LabState>) => void
-  reextract: () => void
 }
 
 /** The open tab's DialKit panel, inline. Mounted per tab, so only its panel shows. */
-function TabDials({ kind, lab, update, reextract }: DialsProps) {
-  useLabDials(kind, lab, update, reextract)
+function TabDials({ kind, lab, update }: DialsProps) {
+  useLabDials(kind, lab, update)
   const { theme } = useTheme()
   return (
     <div className="gl-lab__dials">
@@ -63,44 +55,41 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
 const round2 = (v: number) => Math.round(v * 100) / 100
 
 function GradientLab() {
-  const [lab, setLab] = useState<LabState>(DEFAULT_LAB_STATE)
+  // Previewed in the tenant's colours by default, so recipes are judged in a real brand.
+  const [lab, setLab] = useState<LabState>(() => ({ recipe: DEFAULT_RECIPE, preview: effectiveTheme().light, playing: true }))
   const update = useCallback((patch: Partial<LabState>) => setLab((prev) => ({ ...prev, ...patch })), [])
-  const { flowers, error: flowersError, reload } = useFlowers()
+  const setRecipe = useCallback(
+    (patch: Partial<LabState['recipe']>) => setLab((prev) => ({ ...prev, recipe: { ...prev.recipe, ...patch } })),
+    [],
+  )
   const { toasts, show } = useToast()
-  const { theme } = useTheme()
-  const canvasRef = useRef<LabCanvasHandle>(null)
-
-  const reextract = usePaletteExtraction(lab, update, flowers)
-  const [tab, setTab] = useState<ControlsTab>('image')
+  const [tab, setTab] = useState<DialsKind>('gradient')
   const { gradients, reload: reloadGradients } = useSavedGradients()
   const [activeSlot, setActiveSlot] = useState(1)
   const [savingSlot, setSavingSlot] = useState(false)
+  const colours = brandPalette(lab.preview, lab.recipe.colours)
 
-  /* Selecting a saved slot loads its settings; an empty slot keeps the current
+  /* Selecting a saved slot loads its recipe; an empty slot keeps the current
      gradient so it can be saved there. */
   const selectSlot = (slot: number, list = gradients) => {
     setActiveSlot(slot)
     const saved = list.find((g) => g.slot === slot)
     if (!saved) return
     try {
-      const patch = parsePreset(saved.preset)
-      setLab((prev) => {
-        // Tag the loaded palette so extraction keeps it rather than re-extracting.
-        if (patch.palette) paletteKeys.set(patch.palette, extractKey({ ...prev, ...patch, gradient: patch.gradient ?? prev.gradient }))
-        return { ...prev, ...patch }
-      })
+      const recipe = parseRecipe(saved.preset)
+      setLab((prev) => ({ ...prev, recipe }))
     } catch (e) {
       show('error', `Couldn't open gradient ${slot}: ${(e as Error).message}`)
     }
   }
 
+  /* The slot's still is always in the 5Mins colours: tenants get their own render. */
   const saveSlot = async () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
     setSavingSlot(true)
     try {
-      const image = await canvas.exportImage('image/jpeg', 0.92, { width: APP_IMAGE_SIZE, height: APP_IMAGE_SIZE })
-      await saveGradient(activeSlot, toPreset(lab, `Gradient ${activeSlot}`), image)
+      const recipe = { ...lab.recipe, name: `Gradient ${activeSlot}` }
+      const still = await renderStill(recipe, brandPalette(DEFAULT_THEME.light, recipe.colours))
+      await saveGradient(activeSlot, recipe, still)
       void reloadGradients()
       show('success', `Gradient ${activeSlot} saved`)
     } catch (e) {
@@ -135,94 +124,49 @@ function GradientLab() {
     }
   }
 
-  const setOffset = useCallback(
-    (x: number, y: number) => setLab((prev) => ({ ...prev, gradient: { ...prev.gradient, offsetX: x, offsetY: y } })),
-    [],
-  )
+  const setOffset = useCallback((x: number, y: number) => setRecipe({ offsetX: x, offsetY: y }), [setRecipe])
 
-  const setAbstraction = useCallback(
-    (abstraction: number) => setLab((prev) => ({ ...prev, gradient: { ...prev.gradient, abstraction } })),
-    [],
-  )
-
-  /* Drag on the preview: the image follows the pointer. dx/dy are fractions of
-     the frame; the shader samples p = R * ((uv - 0.5) * aspectScale / scale) -
-     offset / 2, so keeping the point under the pointer fixed needs
-     offset += 2 * R * (d * aspectScale / scale). */
+  /* Drag on the preview: the gradient follows the pointer. Paper applies the
+     offset before scale and rotation, so a drag maps straight onto it. */
   const onPan = useCallback((dx: number, dy: number) => {
-    setLab((prev) => {
-      const g = prev.gradient
-      const ratio = ASPECT_VALUES[prev.framing.aspect]
-      const ux = (dx * Math.min(1, ratio)) / g.scale
-      const uy = (dy * Math.min(1, 1 / ratio)) / g.scale
-      const a = (g.rotation * Math.PI) / 180
-      const c = Math.cos(a)
-      const s = Math.sin(a)
-      return {
-        ...prev,
-        gradient: {
-          ...g,
-          offsetX: clamp(g.offsetX + 2 * (c * ux - s * uy), -1, 1),
-          offsetY: clamp(g.offsetY + 2 * (s * ux + c * uy), -1, 1),
-        },
-      }
-    })
+    setLab((prev) => ({
+      ...prev,
+      recipe: { ...prev.recipe, offsetX: clamp(prev.recipe.offsetX + dx, -1, 1), offsetY: clamp(prev.recipe.offsetY + dy, -1, 1) },
+    }))
   }, [])
 
   const onZoom = useCallback((factor: number) => {
-    setLab((prev) => ({
-      ...prev,
-      gradient: { ...prev.gradient, scale: clamp(prev.gradient.scale * factor, 0.25, 4) },
-    }))
+    setLab((prev) => ({ ...prev, recipe: { ...prev.recipe, scale: clamp(prev.recipe.scale * factor, 0.25, 4) } }))
   }, [])
 
   const randomizeFraming = () => {
     const r = (min: number, max: number) => min + Math.random() * (max - min)
-    setLab((prev) => ({
-      ...prev,
-      gradient: {
-        ...prev.gradient,
-        offsetX: round2(r(-0.6, 0.6)),
-        offsetY: round2(r(-0.6, 0.6)),
-        scale: round2(r(0.8, 1.6)),
-        rotation: Math.floor(r(0, 360)),
-      },
-    }))
+    setRecipe({
+      offsetX: round2(r(-0.6, 0.6)),
+      offsetY: round2(r(-0.6, 0.6)),
+      scale: round2(r(0.8, 1.6)),
+      rotation: Math.floor(r(0, 360)),
+    })
   }
-
-  const flower = flowers.find((f) => f.id === lab.flowerId)
-  /* No image, no gradient: the stage shows an empty state and nothing can be saved or exported. */
-  const hasImage = flower !== undefined
-  const baseName = flower ? flower.name.replace(/\.[a-z0-9]+$/i, '') : 'rainbow'
 
   return (
     <div className="gl-lab">
       <header className="gl-lab__header">
         <h1 className="gl-lab__title">Gradient Studio</h1>
-        <ExportPanel canvasRef={canvasRef} lab={lab} baseName={baseName} show={show} disabled={!hasImage} />
+        <ExportPanel recipe={lab.recipe} colours={colours} show={show} />
       </header>
 
       <div className="gl-lab__body">
         <div className="gl-lab__stage-col">
           <div className="gl-lab__stage">
-            {hasImage ? (
-              <LabCanvas ref={canvasRef} lab={lab} flowers={flowers} onPan={onPan} onZoom={onZoom} />
-            ) : (
-              <div className="gl-lab__empty">
-                <EmptyState
-                  illustration={<img src={emptyIllustration} width={72} height={72} alt="" />}
-                  title="No image yet"
-                  description="Upload a photo or pick one from Image. Its colours become the gradient."
-                />
-              </div>
-            )}
+            <LabCanvas recipe={lab.recipe} colours={colours} playing={lab.playing} onPan={onPan} onZoom={onZoom} />
           </div>
           <p className="gl-lab__hint">Scroll to zoom · drag to pan</p>
           <GradientSlots
             gradients={gradients}
             activeSlot={activeSlot}
             saving={savingSlot}
-            canSave={hasImage}
+            canSave
             onSelect={selectSlot}
             onSave={saveSlot}
             onClear={clearSlot}
@@ -234,47 +178,17 @@ function GradientLab() {
           <ContentSwitcher
             items={TABS}
             activeKey={tab}
-            onChange={(key) => setTab(key as ControlsTab)}
+            onChange={(key) => setTab(key as DialsKind)}
             ariaLabel="Controls"
             className="gl-lab__switcher"
           />
 
-          {tab === 'image' && (
-            <>
-              <TexturePanel
-                lab={lab}
-                update={update}
-                flowers={flowers}
-                loadError={flowersError}
-                reload={reload}
-                show={show}
-              />
-              <hr className="gl-section__divider" />
-              <FramingPanel lab={lab} update={update} />
-            </>
-          )}
-
           {tab === 'gradient' && (
             <>
-              {/* 0 = the photo as it is, 1 = the full gradient. DialKit's own slider, outside the panel. */}
-              <section className="gl-section" aria-labelledby="gl-abstract-title">
-                <h2 id="gl-abstract-title" className="gl-section__title">Abstraction</h2>
-                <div className="dialkit-root gl-abstract" data-mode="inline" data-theme={theme}>
-                  <Slider
-                    label="Photo to gradient"
-                    value={lab.gradient.abstraction}
-                    onChange={setAbstraction}
-                    min={0}
-                    max={1}
-                    step={0.01}
-                  />
-                </div>
-              </section>
-              <hr className="gl-section__divider" />
               <section className="gl-section" aria-labelledby="gl-focal-title">
                 <h2 id="gl-focal-title" className="gl-section__title">Focal point</h2>
                 <div className="gl-focal-row">
-                  <FocalPad x={lab.gradient.offsetX} y={lab.gradient.offsetY} onChange={setOffset} />
+                  <FocalPad x={lab.recipe.offsetX} y={lab.recipe.offsetY} onChange={setOffset} />
                   <div className="gl-focal-actions">
                     <Button
                       variant="outlined-2"
@@ -284,7 +198,6 @@ function GradientLab() {
                     >
                       Randomise Framing
                     </Button>
-                    <RotateField lab={lab} update={update} />
                   </div>
                 </div>
               </section>
@@ -292,9 +205,7 @@ function GradientLab() {
             </>
           )}
 
-          {tab !== 'image' && (
-            <TabDials key={tab} kind={tab} lab={lab} update={update} reextract={reextract} />
-          )}
+          <TabDials key={tab} kind={tab} lab={lab} update={update} />
         </aside>
       </div>
 

@@ -138,16 +138,215 @@
   border-radius: var(--radius-xs);
 }
 
-.acl-swatch--background {
-  background: var(--page-background);
+.acl-theme__actions {
+  display: flex;
+  gap: var(--space-m);
 }
 
-.acl-swatch--text {
-  background: var(--text-secondary);
+/* ── Edit theme modal (720px, overlays.md Modal) ── */
+.confirm-modal.acl-edit {
+  width: 720px;
 }
 
-.acl-swatch--accent {
-  background: var(--selected);
+/* Light / Dark: equal halves, the selected one ringed in the mode-aware amber. */
+.acl-edit__modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.acl-edit__mode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.acl-edit__mode:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background);
+}
+
+.acl-edit__mode.is-selected {
+  border-color: var(--selected);
+  background: transparent;
+}
+
+.acl-edit__mode:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.acl-edit__fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-m);
+  width: 100%;
+}
+
+/* Preview: a fixed-mode sketch, so it uses the raw palette of the mode it depicts.
+   The three brand colours arrive as custom properties from the modal. */
+.acl-edit__preview {
+  --acl-edit-header: transparent;
+  --acl-edit-nav: transparent;
+  --acl-edit-selected: transparent;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-l);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-l);
+  border-radius: var(--radius-sm);
+}
+
+.acl-edit__preview--light {
+  --acl-edit-surface: var(--neutral-25);
+  --acl-edit-line: var(--neutral-100);
+  --acl-edit-muted: var(--neutral-50);
+  /* stylelint-disable-next-line -- mode-invariant light-mode preview */
+  background: var(--neutral-50);
+}
+
+.acl-edit__preview--dark {
+  --acl-edit-surface: var(--neutral-800);
+  --acl-edit-line: var(--neutral-600);
+  --acl-edit-muted: var(--neutral-700);
+  /* stylelint-disable-next-line -- mode-invariant dark-mode preview */
+  background: var(--neutral-900);
+}
+
+.acl-edit__desktop,
+.acl-edit__mobile {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--acl-edit-line);
+  background: var(--acl-edit-surface);
+}
+
+.acl-edit__desktop {
+  width: 360px;
+  height: 200px;
+  border-radius: var(--radius-s);
+}
+
+.acl-edit__desktop-header,
+.acl-edit__mobile-top,
+.acl-edit__mobile-tabs,
+.acl-edit__bar,
+.acl-edit__pill,
+.acl-edit__dot {
+  transition: background 200ms ease;
+}
+
+.acl-edit__desktop-header {
+  flex-shrink: 0;
+  height: 24px;
+  border-bottom: 1px solid var(--acl-edit-line);
+  background: var(--acl-edit-header);
+}
+
+.acl-edit__desktop-body {
+  display: flex;
+  flex: 1;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+}
+
+.acl-edit__desktop-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  width: 72px;
+}
+
+.acl-edit__bar {
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--acl-edit-nav);
+}
+
+.acl-edit__bar--selected {
+  background: var(--acl-edit-selected);
+}
+
+.acl-edit__desktop-content,
+.acl-edit__mobile-content {
+  flex: 1;
+  border-radius: var(--radius-xs);
+  background: var(--acl-edit-muted);
+}
+
+.acl-edit__mobile {
+  width: 96px;
+  height: 180px;
+  border-radius: var(--radius-sm);
+}
+
+.acl-edit__mobile-top {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 24px;
+  padding: 0 var(--space-s);
+  background: var(--acl-edit-header);
+}
+
+.acl-edit__pill {
+  width: 32px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--acl-edit-selected);
+}
+
+.acl-edit__mobile-content {
+  margin: var(--space-s);
+}
+
+.acl-edit__mobile-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-shrink: 0;
+  height: 24px;
+  border-top: 1px solid var(--acl-edit-line);
+  background: var(--acl-edit-header);
+}
+
+.acl-edit__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--acl-edit-nav);
+}
+
+.acl-edit__dot--selected {
+  background: var(--acl-edit-selected);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acl-edit__mode,
+  .acl-edit__desktop-header,
+  .acl-edit__mobile-top,
+  .acl-edit__mobile-tabs,
+  .acl-edit__bar,
+  .acl-edit__pill,
+  .acl-edit__dot {
+    transition: none;
+  }
 }
 
 /* ── Lesson thumbnail ── */

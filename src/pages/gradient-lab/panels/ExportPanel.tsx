@@ -1,41 +1,36 @@
-import { useState, type RefObject } from 'react'
+import { useState } from 'react'
 import { ArrowDown2, Code, Copy } from 'iconsax-react'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import type { ToastType } from '@/components/Toast/Toast'
-import type { LabCanvasHandle } from '../LabCanvas'
-import { toPreset } from '../preset'
-import type { LabState } from '../types'
+import { renderStill } from '@/data/renderRecipe'
+import type { GradientRecipe } from '../recipe'
 import { download, slug } from './files'
 
-/* Export button in the page header: a menu that copies the current frame as a PNG
-   at the framing's output size, and exports the settings as JSON. */
+/* Export button in the page header: a menu that copies the current gradient as
+   a 512 px PNG in the preview colours, and exports the recipe as JSON. */
 
 interface Props {
-  canvasRef: RefObject<LabCanvasHandle | null>
-  lab: LabState
-  /** Base of the file name, e.g. the flower's name. */
-  baseName: string
+  recipe: GradientRecipe
+  /** The preview colours, for the copied image. */
+  colours: string[]
   show: (type: ToastType, message: string) => void
-  /** No image yet: the menu's items are disabled. */
-  disabled?: boolean
 }
 
-function ExportPanel({ canvasRef, lab, baseName, show, disabled = false }: Props) {
+function ExportPanel({ recipe, colours, show }: Props) {
   const [busy, setBusy] = useState<'copy' | null>(null)
 
   const exportJson = () => {
-    const name = slug(baseName, 'shader')
-    download(new Blob([JSON.stringify(toPreset(lab, name), null, 2)], { type: 'application/json' }), `${name}.json`)
+    const name = slug(recipe.name, 'gradient')
+    download(new Blob([JSON.stringify(recipe, null, 2)], { type: 'application/json' }), `${name}.json`)
     show('success', 'JSON exported')
   }
 
   const copyPng = async () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
     setBusy('copy')
     try {
       // The promise goes straight into ClipboardItem so Safari keeps the user gesture.
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': canvas.exportImage('image/png') })])
+      const png = renderStill(recipe, colours, 'image/png').then((url) => fetch(url).then((r) => r.blob()))
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': png })])
       show('success', 'Image copied')
     } catch {
       show('error', "Couldn't copy the image.")
@@ -49,11 +44,11 @@ function ExportPanel({ canvasRef, lab, baseName, show, disabled = false }: Props
       ariaLabel="Export options"
       caret={false}
       items={[
-        { key: 'copy', disabled, title: disabled ? 'Pick an image first' : undefined, label: 'Copy PNG to Clipboard', icon: <Copy size={20} variant="Linear" color="var(--text-primary)" /> },
-        { key: 'json', disabled, title: disabled ? 'Pick an image first' : undefined, label: 'Export JSON', icon: <Code size={20} variant="Linear" color="var(--text-primary)" /> },
+        { key: 'copy', label: 'Copy PNG to Clipboard', icon: <Copy size={20} variant="Linear" color="var(--text-primary)" /> },
+        { key: 'json', label: 'Export JSON', icon: <Code size={20} variant="Linear" color="var(--text-primary)" /> },
       ]}
       onSelect={(key) => {
-        if (busy || disabled) return
+        if (busy) return
         if (key === 'copy') void copyPng()
         else exportJson()
       }}

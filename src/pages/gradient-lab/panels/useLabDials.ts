@@ -1,333 +1,141 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useDialKitController, type DialConfig } from 'dialkit'
-import {
-  type BlendMode,
-  type GradientSettings,
-  type LabState,
-  type MotionSettings,
-  type NoiseSettings,
-  type NoiseType,
-  type SourceMode,
-} from '../types'
-import { dialPalettes, extractKey, paletteKeys } from './usePaletteExtraction'
+import { DEFAULT_THEME, type ThemeSet } from '@/data/brandTheme'
+import { MAX_FRAME, type GradientRecipe } from '../recipe'
 
-/* The DialKit panel for each tab of the controls column: "Gradient" (source,
-   gradient, noise, palette) or "Shader" (motion, timeline), rendered inline.
-   Only the open tab's panel is mounted, and it is seeded from lab state on
-   mount, so switching tabs never loses a value. Two-way sync with lab state, without echo loops:
-   - DialKit -> lab: when the panel's values change, each section is rebuilt
-     from the panel in full and pushed only where it differs from lab.
-   - lab -> DialKit: when lab changes from outside the panel (focal pad,
-     Randomize Framing, wheel zoom, a loaded preset, an extracted palette),
-     the differing values are pushed into the panel with setValues.
-   Each direction is a no-op once both sides agree. The page pad owns the
-   gradient offset, so the panel has no offset control. */
-
-const SOURCE_OPTIONS: { value: SourceMode; label: string }[] = [
-  { value: 'palette', label: 'Palette' },
-  { value: 'photo', label: 'Photo' },
-  { value: 'mix', label: 'Mix' },
-]
-const NOISE_OPTIONS: { value: NoiseType; label: string }[] = [
-  { value: 'white', label: 'White' },
-  { value: 'blue', label: 'Blue' },
-  { value: 'value', label: 'Value' },
-  { value: 'simplex', label: 'Simplex' },
-  { value: 'fbm', label: 'Fbm' },
-  { value: 'worley', label: 'Worley' },
-  { value: 'paper', label: 'Paper' },
-  { value: 'dither', label: 'Dither' },
-  { value: 'halftone', label: 'Halftone' },
-]
-const BLEND_OPTIONS: { value: BlendMode; label: string }[] = [
-  { value: 'soft-light', label: 'Soft light' },
-  { value: 'overlay', label: 'Overlay' },
-  { value: 'add', label: 'Add' },
-  { value: 'multiply', label: 'Multiply' },
-]
+/* The DialKit panel for each tab of the controls column, rendered inline:
+   "Gradient" (shape, and the theme colours to preview it in) or "Shader"
+   (motion and grain). Only the open tab's panel is mounted, seeded from lab
+   state on mount, so switching tabs never loses a value. Two-way sync without
+   echo loops:
+   - DialKit -> lab: when the panel's values change, the recipe and preview are
+     rebuilt from the panel and pushed only where they differ.
+   - lab -> DialKit: values changed outside the panel (focal pad, Randomise
+     Framing, wheel zoom, a loaded slot) are pushed in with setValues.
+   The page's focal pad owns the offset, so the panel has no offset control. */
 
 export type DialsKind = 'gradient' | 'shader'
 
-const FOLDERS: Record<DialsKind, (keyof LabDials)[]> = {
-  gradient: ['Source', 'Gradient', 'Noise'],
-  shader: ['Motion'],
+/** What the Studio edits: the recipe, and the theme colours it is previewed in (not saved). */
+export interface LabState {
+  recipe: GradientRecipe
+  preview: ThemeSet
+  playing: boolean
 }
 
 /** DialKit keys double as labels (first letter capitalised), so they are sentence case. */
-interface LabDials {
-  Source: {
-    mode: SourceMode
-    mix: number
-    blur: number
-    colours: number
-    'saturation boost': number
-    'ignore background': boolean
-  }
-  Gradient: {
-    softness: number
-    scale: number
-    rotation: number
-    distortion: number
-    swirl: number
-    seed: number
-  }
-  Noise: NoiseSettings
-  Motion: {
-    playing: boolean
-    speed: number
-    randomness: number
-    'flow angle': number
-    'flow strength': number
-    warp: number
-    'warp octaves': number
-    'swirl motion': number
-    liquid: number
-    'seamless loop': boolean
-    'loop seconds': number
-    'animated grain': boolean
-    'grain fps': number
-  }
+interface PanelValues {
+  Gradient: { colours: number; distortion: number; swirl: number; scale: number; rotation: number; frame: number }
+  'Preview colours': { 'header bar': string; 'navigation items': string; 'selected item': string }
+  Motion: { playing: boolean; speed: number }
+  Grain: { mixer: number; overlay: number }
 }
 
-interface PanelValues extends LabDials {
-  Palette: Record<string, string>
+type Folder = keyof PanelValues
+
+const FOLDERS: Record<DialsKind, Folder[]> = {
+  gradient: ['Gradient', 'Preview colours'],
+  shader: ['Motion', 'Grain'],
 }
 
-const colourKey = (i: number) => `colour ${i + 1}`
-
-/** The lab values the panel mirrors (everything except the palette). */
-function labToDials(lab: LabState): LabDials {
-  const { gradient: g, motion: m } = lab
+function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
   return {
-    Source: {
-      mode: g.sourceMode,
-      mix: g.mix,
-      blur: g.blur,
-      colours: lab.paletteSize,
-      'saturation boost': lab.saturationBoost,
-      'ignore background': lab.ignoreBackground,
-    },
-    Gradient: {
-      softness: g.softness,
-      scale: g.scale,
-      rotation: g.rotation,
-      distortion: g.distortion,
-      swirl: g.swirl,
-      seed: g.seed,
-    },
-    Noise: { ...lab.noise },
-    Motion: {
-      playing: m.playing,
-      speed: m.speed,
-      randomness: m.randomness,
-      'flow angle': m.flowAngle,
-      'flow strength': m.flowStrength,
-      warp: m.warp,
-      'warp octaves': m.warpOctaves,
-      'swirl motion': m.swirlMotion,
-      liquid: m.liquid,
-      'seamless loop': m.loop,
-      'loop seconds': m.loopSeconds,
-      'animated grain': m.grainAnimated,
-      'grain fps': m.grainFps,
-    },
-  }
-}
-
-function dialsMotion(d: LabDials['Motion']): MotionSettings {
-  return {
-    playing: d.playing,
-    speed: d.speed,
-    randomness: d.randomness,
-    flowAngle: d['flow angle'],
-    flowStrength: d['flow strength'],
-    warp: d.warp,
-    warpOctaves: d['warp octaves'],
-    swirlMotion: d['swirl motion'],
-    liquid: d.liquid,
-    loop: d['seamless loop'],
-    loopSeconds: d['loop seconds'],
-    grainAnimated: d['animated grain'],
-    grainFps: d['grain fps'],
+    Gradient: { colours: r.colours, distortion: r.distortion, swirl: r.swirl, scale: r.scale, rotation: r.rotation, frame: r.frame },
+    'Preview colours': { 'header bar': p.header, 'navigation items': p.nav, 'selected item': p.selected },
+    Motion: { playing, speed: r.speed },
+    Grain: { mixer: r.grainMixer, overlay: r.grainOverlay },
   }
 }
 
 function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
   const v = labToDials(lab)
-  const palette: DialConfig = { _collapsed: true }
-  lab.palette.forEach((p, i) => {
-    palette[colourKey(i)] = { type: 'color', default: p.color }
-  })
-  palette.reextract = { type: 'action', label: 'Re-extract' }
-  const m = v.Motion
   if (kind === 'shader') {
     return {
-      Motion: {
-        playing: m.playing,
-        speed: [m.speed, 0, 3, 0.01],
-        randomness: [m.randomness, 0, 1, 0.01],
-        'flow angle': [m['flow angle'], 0, 360, 1],
-        'flow strength': [m['flow strength'], 0, 1, 0.01],
-        warp: [m.warp, 0, 1, 0.01],
-        'warp octaves': [m['warp octaves'], 1, 5, 1],
-        'swirl motion': [m['swirl motion'], 0, 1, 0.01],
-        liquid: [m.liquid, 0, 1, 0.01],
-        'seamless loop': m['seamless loop'],
-        'loop seconds': [m['loop seconds'], 2, 30, 1],
-        'animated grain': m['animated grain'],
-        'grain fps': [m['grain fps'], 2, 24, 2],
-      },
+      Motion: { playing: v.Motion.playing, speed: [v.Motion.speed, 0, 3, 0.01] },
+      Grain: { mixer: [v.Grain.mixer, 0, 1, 0.01], overlay: [v.Grain.overlay, 0, 1, 0.01] },
     }
   }
+  const p = v['Preview colours']
   return {
-    Source: {
-      mode: { type: 'select', options: SOURCE_OPTIONS, default: v.Source.mode },
-      mix: [v.Source.mix, 0, 1, 0.01],
-      blur: [v.Source.blur, 0, 1, 0.01],
-      colours: [v.Source.colours, 3, 8, 1],
-      'saturation boost': [v.Source['saturation boost'], 0, 1, 0.01],
-      'ignore background': v.Source['ignore background'],
-    },
     Gradient: {
-      softness: [v.Gradient.softness, 1, 8, 0.1],
-      scale: [v.Gradient.scale, 0.25, 4, 0.01],
-      rotation: [v.Gradient.rotation, 0, 360, 1],
+      colours: [v.Gradient.colours, 3, 5, 1],
       distortion: [v.Gradient.distortion, 0, 1, 0.01],
       swirl: [v.Gradient.swirl, 0, 1, 0.01],
-      seed: [v.Gradient.seed, 1, 999, 1],
-      shuffle: { type: 'action', label: 'Shuffle Seed' },
+      scale: [v.Gradient.scale, 0.25, 4, 0.01],
+      rotation: [v.Gradient.rotation, 0, 360, 1],
+      frame: [v.Gradient.frame, 0, MAX_FRAME, 100],
+      shuffle: { type: 'action', label: 'Shuffle' },
     },
-    Noise: {
-      _collapsed: true,
-      type: { type: 'select', options: NOISE_OPTIONS, default: v.Noise.type },
-      size: [v.Noise.size, 0.5, 8, 0.1],
-      intensity: [v.Noise.intensity, 0, 1, 0.01],
-      blend: { type: 'select', options: BLEND_OPTIONS, default: v.Noise.blend },
-      colour: [v.Noise.colour, 0, 1, 0.01],
-      luma: [v.Noise.luma, 0, 1, 0.01],
-      distortion: [v.Noise.distortion, 0, 1, 0.01],
+    'Preview colours': {
+      'header bar': { type: 'color', default: p['header bar'] },
+      'navigation items': { type: 'color', default: p['navigation items'] },
+      'selected item': { type: 'color', default: p['selected item'] },
+      reset: { type: 'action', label: '5Mins Theme' },
     },
-    Palette: palette,
   }
 }
 
-const sameKeys = <T extends object>(a: T, b: T) =>
-  (Object.keys(a) as (keyof T)[]).every((k) => a[k] === b[k])
-
 /** Registers this tab's panel and keeps it in sync with lab. */
-export function useLabDials(
-  kind: DialsKind,
-  lab: LabState,
-  update: (patch: Partial<LabState>) => void,
-  onReextract: () => void,
-): void {
-  const latest = useRef({ lab, update, onReextract })
-  latest.current = { lab, update, onReextract }
+export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Partial<LabState>) => void): void {
+  const latest = useRef({ lab, update })
+  latest.current = { lab, update }
 
-  // Rebuilt only when the structure changes (palette count); DialKit owns the
-  // live values, the config just seeds them.
-  const count = lab.palette.length
+  // DialKit owns the live values; the config only seeds them.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const config = useMemo(() => buildConfig(latest.current.lab, kind), [count, kind])
+  const config = useMemo(() => buildConfig(latest.current.lab, kind), [kind])
 
   const dialRef = useRef<ReturnType<typeof useDialKitController> | null>(null)
   const onAction = useCallback((action: string) => {
     if (action === 'Gradient.shuffle') {
-      dialRef.current?.setValue('Gradient.seed', 1 + Math.floor(Math.random() * 999))
-    } else if (action === 'Palette.reextract') {
-      latest.current.onReextract()
+      dialRef.current?.setValue('Gradient.frame', Math.round((Math.random() * MAX_FRAME) / 100) * 100)
+    } else if (action === 'Preview colours.reset') {
+      const d = DEFAULT_THEME.light
+      dialRef.current?.setValues({ 'Preview colours': { 'header bar': d.header, 'navigation items': d.nav, 'selected item': d.selected } } as never)
     }
   }, [])
   const dial = useDialKitController(kind === 'gradient' ? 'Gradient' : 'Shader', config, { onAction })
   dialRef.current = dial
 
-  // lab -> DialKit: a new palette (extracted or loaded) fills the colour controls.
-  // Runs before the DialKit -> lab sync so old colours never overwrite it.
-  // The controller object changes with every panel edit, so these lab -> DialKit
-  // effects read it through dialRef and depend on lab only; otherwise an edit
-  // would re-run them before it reached lab and be written straight back.
-  useEffect(() => {
-    const dial = dialRef.current
-    if (!dial || kind !== 'gradient' || dialPalettes.has(lab.palette)) return
-    const v = dial.getValues() as unknown as PanelValues
-    const next: Record<string, string> = {}
-    lab.palette.forEach((p, i) => {
-      if (v.Palette[colourKey(i)]?.toLowerCase() !== p.color.toLowerCase()) next[colourKey(i)] = p.color
-    })
-    if (Object.keys(next).length) dial.setValues({ Palette: next } as never)
-  }, [lab.palette, kind])
-
-  // lab -> DialKit: values changed outside the panel (pad, randomize, zoom, preset).
+  // lab -> DialKit. The controller changes with every panel edit, so this reads
+  // it through dialRef and depends on lab only; otherwise an edit would re-run it
+  // before reaching lab and be written straight back.
   useEffect(() => {
     const dial = dialRef.current
     if (!dial) return
-    const target = labToDials(latest.current.lab)
-    const v = dial.getValues() as unknown as PanelValues
+    const want = labToDials(latest.current.lab)
+    const have = dial.getValues() as unknown as PanelValues
     const next: Record<string, Record<string, unknown>> = {}
     for (const folder of FOLDERS[kind]) {
-      const want = target[folder] as unknown as Record<string, unknown>
-      const have = v[folder] as unknown as Record<string, unknown>
-      for (const k of Object.keys(want)) {
-        if (have[k] !== want[k]) (next[folder] ??= {})[k] = want[k]
+      const w = want[folder] as Record<string, unknown>
+      const h = have[folder] as Record<string, unknown>
+      for (const k of Object.keys(w)) {
+        const same = typeof w[k] === 'string' ? String(h[k]).toLowerCase() === String(w[k]).toLowerCase() : h[k] === w[k]
+        if (!same) (next[folder] ??= {})[k] = w[k]
       }
     }
     if (Object.keys(next).length) dial.setValues(next as never)
-  }, [lab.gradient, lab.noise, lab.motion, lab.paletteSize, lab.saturationBoost, lab.ignoreBackground, kind])
+  }, [lab.recipe, lab.preview, lab.playing, kind])
 
-  // DialKit -> lab. Each section is rebuilt from the panel in full, so a stale
-  // lab snapshot can never drop an edit.
+  // DialKit -> lab, rebuilt from the panel in full so a stale snapshot never drops an edit.
   useEffect(() => {
     const v = dial.getValues() as unknown as PanelValues
     const { lab: now, update: push } = latest.current
-    const patch: Partial<LabState> = {}
-
+    const r = now.recipe
     if (kind === 'shader') {
-      const motion = dialsMotion(v.Motion)
-      if (!sameKeys(motion, now.motion)) push({ motion })
+      const recipe = { ...r, speed: v.Motion.speed, grainMixer: v.Grain.mixer, grainOverlay: v.Grain.overlay }
+      const patch: Partial<LabState> = {}
+      if (recipe.speed !== r.speed || recipe.grainMixer !== r.grainMixer || recipe.grainOverlay !== r.grainOverlay) patch.recipe = recipe
+      if (v.Motion.playing !== now.playing) patch.playing = v.Motion.playing
+      if (Object.keys(patch).length) push(patch)
       return
     }
-
-    const gradient: GradientSettings = {
-      abstraction: now.gradient.abstraction,
-      sourceMode: v.Source.mode,
-      mix: v.Source.mix,
-      blur: v.Source.blur,
-      softness: v.Gradient.softness,
-      scale: v.Gradient.scale,
-      rotation: v.Gradient.rotation,
-      offsetX: now.gradient.offsetX,
-      offsetY: now.gradient.offsetY,
-      distortion: v.Gradient.distortion,
-      swirl: v.Gradient.swirl,
-      seed: v.Gradient.seed,
-    }
-    if (!sameKeys(gradient, now.gradient)) patch.gradient = gradient
-
-    const noise: NoiseSettings = {
-      type: v.Noise.type,
-      size: v.Noise.size,
-      intensity: v.Noise.intensity,
-      blend: v.Noise.blend,
-      colour: v.Noise.colour,
-      luma: v.Noise.luma,
-      distortion: v.Noise.distortion,
-    }
-    if (!sameKeys(noise, now.noise)) patch.noise = noise
-
-    if (v.Source.colours !== now.paletteSize) patch.paletteSize = v.Source.colours
-    if (v.Source['saturation boost'] !== now.saturationBoost) patch.saturationBoost = v.Source['saturation boost']
-    if (v.Source['ignore background'] !== now.ignoreBackground) patch.ignoreBackground = v.Source['ignore background']
-
-    // Hand-edited colours (only while the panel holds one control per point).
-    const colours = now.palette.map((_, i) => v.Palette[colourKey(i)])
-    const inSync = colours.every((c) => typeof c === 'string') && v.Palette[colourKey(now.palette.length)] === undefined
-    if (inSync && colours.some((c, i) => c.toLowerCase() !== now.palette[i].color.toLowerCase())) {
-      const palette = now.palette.map((p, i) => ({ ...p, color: colours[i].toLowerCase() }))
-      dialPalettes.add(palette)
-      paletteKeys.set(palette, extractKey({ ...now, ...patch, gradient: patch.gradient ?? now.gradient }))
-      patch.palette = palette
-    }
-
+    const g = v.Gradient
+    const recipe = { ...r, colours: g.colours, distortion: g.distortion, swirl: g.swirl, scale: g.scale, rotation: g.rotation, frame: g.frame }
+    const c = v['Preview colours']
+    const preview: ThemeSet = { header: c['header bar'], nav: c['navigation items'], selected: c['selected item'] }
+    const patch: Partial<LabState> = {}
+    if ((Object.keys(g) as (keyof typeof g)[]).some((k) => recipe[k] !== r[k])) patch.recipe = recipe
+    if ((Object.keys(preview) as (keyof ThemeSet)[]).some((k) => preview[k].toLowerCase() !== now.preview[k].toLowerCase())) patch.preview = preview
     if (Object.keys(patch).length) push(patch)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dial.values])

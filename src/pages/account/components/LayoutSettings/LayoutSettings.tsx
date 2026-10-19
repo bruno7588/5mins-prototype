@@ -6,7 +6,10 @@ import Toggle from '@/components/Toggle/Toggle'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import { useCompanyDefaults } from '@/data/companyDefaults'
-import { setCompanyDefault, setCompanyUpload, useCompanyImage, validateCompanyImage } from '@/data/companyImage'
+import { setCompanyDefault, setCompanyUpload, useCompanyImage, useTenantStills, validateCompanyImage } from '@/data/companyImage'
+import { DEFAULT_THEME, effectiveTheme, setBrandTheme, useBrandTheme, type BrandTheme } from '@/data/brandTheme'
+import { useTheme } from '@/hooks/useTheme'
+import EditThemeModal from './EditThemeModal'
 import ThumbnailPreviewModal from './ThumbnailPreviewModal'
 import './LayoutSettings.css'
 
@@ -57,11 +60,25 @@ function LogoSlot({ label, mode }: { label: string; mode: 'light' | 'dark' }) {
 function LayoutSettings() {
   const [workspaceHome, setWorkspaceHome] = useState(false)
   const company = useCompanyImage()
-  // The default images, each playing its shader in the picker.
-  const liveDefaults = useCompanyDefaults().map((d) => ({ id: d.id, src: d.src, overlay: <CompanyImageMotion defaultId={d.id} /> }))
   const [pickerOpen, setPickerOpen] = useState(false)
+  // The default images in this tenant's colours, rendered when the picker opens. Static tiles: one GPU context.
+  const defaults = useCompanyDefaults()
+  const stillOf = useTenantStills(pickerOpen)
+  const defaultTiles = defaults.map((d) => ({ id: d.id, src: stillOf(d)?.src ?? '', loading: !stillOf(d) }))
   const [previewOpen, setPreviewOpen] = useState(false)
   const { toasts, show: showToast } = useToast()
+  const brandTheme = useBrandTheme()
+  const { theme: appMode } = useTheme()
+  const swatches = effectiveTheme(brandTheme)[appMode]
+  const [themeOpen, setThemeOpen] = useState(false)
+
+  const applyTheme = (next: BrandTheme) => {
+    // A draft left on the 5Mins colours stays the 5Mins theme, not a custom copy of it.
+    const isDefault = JSON.stringify(next).toLowerCase() === JSON.stringify(DEFAULT_THEME).toLowerCase()
+    setBrandTheme(isDefault ? null : next)
+    setThemeOpen(false)
+    showToast('success', 'Theme updated')
+  }
 
   return (
     <div className="acl-body">
@@ -104,16 +121,28 @@ function LayoutSettings() {
         </div>
         <div className="acl-theme">
           <div className="acl-theme__swatches" aria-hidden="true">
-            <span className="acl-swatch acl-swatch--background" />
-            <span className="acl-swatch acl-swatch--text" />
-            <span className="acl-swatch acl-swatch--accent" />
+            <span className="acl-swatch" style={{ background: swatches.header }} />
+            <span className="acl-swatch" style={{ background: swatches.nav }} />
+            <span className="acl-swatch" style={{ background: swatches.selected }} />
           </div>
-          <span className="acl-text">5Mins Theme</span>
+          <span className="acl-text">{brandTheme ? 'Custom Theme' : '5Mins Theme'}</span>
         </div>
-        {/* Theme editing isn't built yet: dimmed and inert, not a decoy. */}
-        <Button icon={<Brush2 size={20} color="currentColor" variant="Linear" />} disabled className="ui-disabled">
-          Customise Theme
-        </Button>
+        <div className="acl-theme__actions">
+          <Button icon={<Brush2 size={20} color="currentColor" variant="Linear" />} onClick={() => setThemeOpen(true)}>
+            Edit Theme
+          </Button>
+          <Button
+            variant="outlined"
+            disabled={!brandTheme}
+            onClick={() => {
+              setBrandTheme(null)
+              showToast('success', 'Theme reset to default')
+            }}
+          >
+            Reset to Default
+          </Button>
+        </div>
+        <EditThemeModal open={themeOpen} initialMode={appMode} onClose={() => setThemeOpen(false)} onApply={applyTheme} />
       </section>
 
       <section className="acl-card">
@@ -155,10 +184,11 @@ function LayoutSettings() {
             setCompanyUpload(src)
             showToast('success', 'Company image updated')
           }}
-          defaultImages={liveDefaults}
+          defaultImages={defaultTiles}
           selectedDefaultId={company.image.kind === 'default' ? company.image.id : undefined}
           onSaveDefault={(id) => {
-            setCompanyDefault(id)
+            const d = defaults.find((x) => x.id === id)
+            setCompanyDefault(id, (d && stillOf(d)) ?? undefined)
             showToast('success', 'Company image updated')
           }}
         />

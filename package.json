@@ -13,6 +13,8 @@
     "lint:css": "stylelint \"src/**/*.css\""
   },
   "dependencies": {
+    "@paper-design/shaders": "0.0.81",
+    "@paper-design/shaders-react": "0.0.81",
     "cuelume": "^0.1.2",
     "dialkit": "2.0.2",
     "framer-motion": "^12.42.2",
