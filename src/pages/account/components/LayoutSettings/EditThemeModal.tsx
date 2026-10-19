@@ -5,7 +5,7 @@ import Button from '@/components/Button/Button'
 import ColourField from '@/components/ColourField/ColourField'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import { effectiveTheme, getBrandTheme, type BrandTheme, type ThemeSet } from '@/data/brandTheme'
-import type { Theme } from '@/hooks/useTheme'
+import { setTheme, type Theme } from '@/hooks/useTheme'
 
 /* Account > Layout > Edit Theme (production Edit theme recording, 2026-10-19).
    Edits both modes as one draft; Apply saves it, Cancel drops it.
@@ -34,22 +34,30 @@ function EditThemeModal({ open, initialMode, onClose, onApply }: EditThemeModalP
   const [mode, setMode] = useState<Theme>(initialMode)
   const [draft, setDraft] = useState<BrandTheme>(() => effectiveTheme(getBrandTheme()))
 
-  // Every opening starts from the saved theme on the app's current mode.
+  // Every opening starts from the saved theme on the app's current mode. Only on
+  // opening: picking a mode below switches the app, which changes initialMode.
   useEffect(() => {
     if (!open) return
     setMode(initialMode)
     setDraft(effectiveTheme(getBrandTheme()))
-  }, [open, initialMode])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   const reduce = useReducedMotion()
   const set = draft[mode]
+
+  // Picking a mode to edit also switches the app to it, so the edit is seen in context.
+  const pickMode = (next: Theme) => {
+    setMode(next)
+    setTheme(next)
+  }
 
   // Radio group keys: the arrows move the selection and the focus together.
   const onModesKey = (e: KeyboardEvent<HTMLDivElement>) => {
     if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return
     e.preventDefault()
     const next = mode === 'light' ? 'dark' : 'light'
-    setMode(next)
+    pickMode(next)
     e.currentTarget.querySelector<HTMLButtonElement>(`[data-mode="${next}"]`)?.focus()
   }
   const previewVars = {
@@ -77,7 +85,7 @@ function EditThemeModal({ open, initialMode, onClose, onApply }: EditThemeModalP
               tabIndex={selected ? 0 : -1}
               data-mode={key}
               className={`acl-edit__mode${selected ? ' is-selected' : ''}`}
-              onClick={() => setMode(key)}
+              onClick={() => pickMode(key)}
             >
               <Icon size={20} color="var(--text-primary)" variant="Linear" />
               {label}
