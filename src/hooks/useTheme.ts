@@ -1,4 +1,4 @@
-import { useCallback, useSyncExternalStore } from 'react'
+import { createContext, useCallback, useContext, useSyncExternalStore } from 'react'
 
 export type Theme = 'light' | 'dark'
 
@@ -32,4 +32,14 @@ export function useTheme() {
   const theme = useSyncExternalStore(subscribe, currentTheme)
   const toggle = useCallback(() => setTheme(currentTheme() === 'dark' ? 'light' : 'dark'), [])
   return { theme, isDark: theme === 'dark', toggle }
+}
+
+/** Set by a surface that pins its own mode (the dark-only PhoneFrame); null follows the app. */
+export const PinnedMode = createContext<Theme | null>(null)
+
+/** The mode this part of the page shows in: a pinned surface's, else the app's. */
+export function useSurfaceMode(): Theme {
+  const pinned = useContext(PinnedMode)
+  const { theme } = useTheme()
+  return pinned ?? theme
 }

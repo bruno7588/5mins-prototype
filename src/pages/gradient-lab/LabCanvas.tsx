@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { Dithering, GrainGradient, MeshGradient } from '@paper-design/shaders-react'
-import { ditherProps, grainProps, meshProps, type GradientRecipe } from './recipe'
+import { ditherBackdropCss, ditherProps, grainProps, meshProps, type GradientRecipe } from './recipe'
 import './lab-canvas.css'
 
 /* Live preview of a recipe in a set of colours (Paper Shaders' MeshGradient, GrainGradient or Dithering):
@@ -104,7 +104,7 @@ function LabCanvas({ recipe, colours, playing, onPan, onZoom }: Props) {
         onPointerCancel={endDrag}
       >
         {recipe.shader === 'dither' ? (
-          <Dithering {...ditherProps(recipe, colours)} speed={speed} style={fill} />
+          <Dithering {...ditherProps(recipe, colours)} speed={speed} style={{ ...fill, background: ditherBackdropCss(colours) }} />
         ) : recipe.shader === 'grain' ? (
           <GrainGradient {...grainProps(recipe, colours)} speed={speed} style={fill} />
         ) : (

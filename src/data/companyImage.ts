@@ -1,35 +1,39 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { paletteCount, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { brandPalette } from './brandPalette'
 import { effectiveTheme, getBrandTheme, subscribeBrandTheme } from './brandTheme'
 import { getCompanyDefaults, subscribeCompanyDefaults, useCompanyDefaults, type CompanyDefault } from './companyDefaults'
 import { renderStill } from './renderRecipe'
+import { useSurfaceMode, type Theme } from '@/hooks/useTheme'
 
 /* The tenant's company image: shown as the company avatar and as the fallback on
    lesson cards without a thumbnail. Always set (an upload or a default), never
    removed, only changed. Same store pattern as useTheme: saving updates every
    mounted view without a refresh.
    A default is one of the Studio's recipes rendered in this tenant's theme
-   colours (the light set) as a 512 x 512 JPEG. `key` records what it was
-   rendered from; when the theme or the recipe changes, it renders again. */
+   colours as 512 x 512 JPEGs, one per mode: `src` in the light set, `dark` in
+   the dark set. Each `key` records what it was rendered from; when the theme or
+   the recipe changes, it renders again. */
+
+type Still = { src: string; key: string }
 
 export type CompanyImage =
-  | { kind: 'default'; id: string; src?: string; key?: string }
+  | { kind: 'default'; id: string; src?: string; key?: string; dark?: Still }
   | { kind: 'upload'; src: string }
 
-/** What a default's still depends on: its recipe and the tenant's light colours. */
-export const stillKey = (recipe: GradientRecipe) => JSON.stringify([recipe, effectiveTheme().light])
+/** What a default's still depends on: its recipe and the tenant's colours for that mode. */
+export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') => JSON.stringify([recipe, effectiveTheme()[mode]])
 
-/** The recipe's shader colours for this tenant. */
-export const tenantColours = (recipe: GradientRecipe) => brandPalette(effectiveTheme().light, recipe.colours)
+/** The recipe's shader colours for this tenant in that mode. */
+export const tenantColours = (recipe: GradientRecipe, mode: Theme = 'light') => brandPalette(effectiveTheme()[mode], paletteCount(recipe))
 
 const stills = new Map<string, Promise<string>>()
 
-/** A default rendered in the tenant's colours (cached per recipe and theme). */
-export function tenantStill(d: CompanyDefault): Promise<{ src: string; key: string }> {
-  const key = stillKey(d.recipe)
+/** A default rendered in the tenant's colours for a mode (cached per recipe and colours). */
+export function tenantStill(d: CompanyDefault, mode: Theme = 'light'): Promise<Still> {
+  const key = stillKey(d.recipe, mode)
   if (!stills.has(key)) {
-    const job = renderStill(d.recipe, tenantColours(d.recipe))
+    const job = renderStill(d.recipe, tenantColours(d.recipe, mode))
     job.catch(() => stills.delete(key))
     stills.set(key, job)
   }
@@ -70,9 +74,9 @@ function save(next: CompanyImage) {
 }
 
 export const setCompanyUpload = (src: string) => save({ kind: 'upload', src })
-/** Replaces any upload. Pass the still when the picker already rendered it. */
-export function setCompanyDefault(id: string, still?: { src: string; key: string }) {
-  save({ kind: 'default', id, ...still })
+/** Replaces any upload. Pass the still (and its mode) when the picker already rendered it; the other mode renders after. */
+export function setCompanyDefault(id: string, still?: Still, mode: Theme = 'light') {
+  save({ kind: 'default', id, ...(mode === 'dark' ? { dark: still } : still) })
   void regenerate()
 }
 
@@ -85,11 +89,15 @@ async function regenerate() {
   const image = current
   if (image.kind !== 'default') return
   const d = defaultFor(image.id, getCompanyDefaults())
-  if (!d || (image.src && image.key === stillKey(d.recipe))) return
+  if (!d) return
+  const fresh = (s: Partial<Still> | undefined, mode: Theme): s is Still => Boolean(s?.src) && s!.key === stillKey(d.recipe, mode)
+  const light = fresh(image, 'light') ? { src: image.src, key: image.key } : null
+  const dark = fresh(image.dark, 'dark') ? image.dark : null
+  if (light && dark) return
   try {
-    const still = await tenantStill(d)
+    const [l, k] = await Promise.all([light ?? tenantStill(d, 'light'), dark ?? tenantStill(d, 'dark')])
     // Only if nothing else was picked meanwhile.
-    if (current === image) save({ kind: 'default', id: d.id, ...still })
+    if (current === image) save({ kind: 'default', id: d.id, ...l, dark: k })
   } catch {
     /* no WebGL: keep the last still */
   }
@@ -101,16 +109,18 @@ if (typeof window !== 'undefined') {
   void regenerate()
 }
 
-export function companyImageSrc(image: CompanyImage, defaults = getCompanyDefaults()) {
-  if (image.kind === 'upload' || image.src) return image.src!
-  // Until the tenant's version renders: the Studio still.
-  return defaultFor(image.id, defaults)?.src ?? ''
+export function companyImageSrc(image: CompanyImage, mode: Theme = 'light', defaults = getCompanyDefaults()) {
+  if (image.kind === 'upload') return image.src
+  // Until a mode's version renders: the other mode's, then the Studio still.
+  const src = mode === 'dark' ? (image.dark?.src ?? image.src) : (image.src ?? image.dark?.src)
+  return src ?? defaultFor(image.id, defaults)?.src ?? ''
 }
 
+/** The company image for the surface's mode: the app's, or dark inside the mobile PhoneFrame. */
 export function useCompanyImage() {
   const image = useSyncExternalStore(subscribe, () => current)
   const defaults = useCompanyDefaults()
-  return { image, src: companyImageSrc(image, defaults) }
+  return { image, src: companyImageSrc(image, useSurfaceMode(), defaults) }
 }
 
 export const COMPANY_IMAGE_SIZE = 512
@@ -135,10 +145,8 @@ export async function validateCompanyImage(file: File): Promise<string | null> {
   return null
 }
 
-type Still = { src: string; key: string }
-
-/** Every default rendered in the tenant's colours while `active` (the picker is open), filled in as each finishes. */
-export function useTenantStills(active: boolean): (d: CompanyDefault) => Still | null {
+/** Every default rendered in the tenant's colours for `mode` while `active` (the picker is open), filled in as each finishes. */
+export function useTenantStills(active: boolean, mode: Theme): (d: CompanyDefault) => Still | null {
   const defaults = useCompanyDefaults()
   const theme = useSyncExternalStore(subscribeBrandTheme, getBrandTheme)
   const [stills, setStills] = useState<Record<string, Still>>({})
@@ -146,14 +154,14 @@ export function useTenantStills(active: boolean): (d: CompanyDefault) => Still |
     if (!active) return
     let live = true
     for (const d of defaults) {
-      tenantStill(d)
+      tenantStill(d, mode)
         .then((s) => live && setStills((prev) => ({ ...prev, [d.id]: s })))
         .catch(() => {})
     }
     return () => {
       live = false
     }
-  }, [active, defaults, theme])
-  // A still from before a theme or recipe change doesn't count.
-  return (d) => (stills[d.id]?.key === stillKey(d.recipe) ? stills[d.id] : null)
+  }, [active, defaults, theme, mode])
+  // A still from before a theme, mode or recipe change doesn't count.
+  return (d) => (stills[d.id]?.key === stillKey(d.recipe, mode) ? stills[d.id] : null)
 }

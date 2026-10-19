@@ -41,7 +41,18 @@ describe('brandPalette', () => {
 
   it('keeps a close brand hue as it is', () => {
     const palette = brandPalette({ header: '#1e9ad6', nav: '#454C5E', selected: '#2e2ede' }, 4)
-    expect(hueGap(toLch(palette[3]).h, toLch('#1e9ad6').h)).toBeLessThan(3)
+    expect(hueGap(toLch(palette[1]).h, toLch('#1e9ad6').h)).toBeLessThan(3)
+  })
+
+  it('keeps both brand hues, straight after the accent (teal with periwinkle)', () => {
+    const palette = brandPalette({ header: '#e8a0c0', nav: '#8CA0EA', selected: '#3D7A6C' }, 5)
+    expect(hueGap(toLch(palette[4]).h, toLch('#8CA0EA').h)).toBeLessThan(3)
+  })
+
+  it('keeps a same-hue brand colour that is much lighter (mint with teal)', () => {
+    const palette = brandPalette({ header: '#B8F5E0', nav: '#8CA0EA', selected: '#3D7A6C' }, 5)
+    expect(hueGap(toLch(palette[1]).h, toLch('#B8F5E0').h)).toBeLessThan(3)
+    expect(hueGap(toLch(palette[4]).h, toLch('#8CA0EA').h)).toBeLessThan(3)
   })
 
   it('returns 3 to 5 colours and is deterministic', () => {

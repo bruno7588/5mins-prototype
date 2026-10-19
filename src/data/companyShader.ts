@@ -1,5 +1,5 @@
 import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
-import { hiddenMount, type HiddenMount } from './renderRecipe'
+import { hiddenMount, paintBackdrop, type HiddenMount } from './renderRecipe'
 
 /* The live version of a default company image: its recipe playing in the
    tenant's colours (Paper Shaders' mesh gradient). One hidden Paper mount per
@@ -38,8 +38,9 @@ function tick() {
   }
   const dpr = window.devicePixelRatio || 1
   for (const s of shown) {
-    const source = mounts.get(s.key)?.canvas
-    if (!source || source.width === 0) continue
+    const m = mounts.get(s.key)
+    const source = m?.canvas
+    if (!m || !source || source.width === 0) continue
     const w = Math.max(1, Math.round(s.canvas.clientWidth * dpr))
     const h = Math.max(1, Math.round(s.canvas.clientHeight * dpr))
     if (s.canvas.width !== w || s.canvas.height !== h) {
@@ -50,6 +51,8 @@ function tick() {
     const crop = source.width / Math.max(w, h)
     const sw = w * crop
     const sh = h * crop
+    // See-through dots draw over last frame's, so repaint the backdrop each frame.
+    if (m.backdrop) paintBackdrop(s.ctx, m.backdrop, w, h)
     s.ctx.drawImage(source, (source.width - sw) / 2, (source.height - sh) / 2, sw, sh, 0, 0, w, h)
     s.canvas.dataset.ready = ''
   }

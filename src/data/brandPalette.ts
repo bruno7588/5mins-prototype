@@ -2,10 +2,12 @@ import { DEFAULT_THEME, type ThemeSet } from './brandTheme'
 
 /* Turns a tenant's theme colours (UI colours, not a palette) into shader colours.
    Fed in raw, black, grey and white make a muddy image, so:
-   1. Neutrals (black, white, greys) never become shader colours.
+   1. Neutrals (black, white, greys) never become shader colours; with no other brand
+      hue, the support slots are pale shades of the accent.
    2. The selected menu item is the accent and leads; a neutral accent falls back to 5Mins amber.
    3. Lighter and darker versions of the accent give depth.
-   4. A chromatic header bar (else nav colour) can add one support hue.
+   4. The chromatic header bar and nav colours add up to two support hues, placed
+      straight after the accent so they show in every shader, not only at 5 colours.
    5. A support hue far round the colour wheel from the accent (red with green) would
       blend through grey, so it is pulled to an analogous hue next to the accent.
    Every colour is held inside a lightness band with a chroma floor, so none goes
@@ -27,13 +29,14 @@ export const MIN_CHROMA = 0.06
 /** The accent and support sit in this band. */
 const LEAD_L: [number, number] = [0.45, 0.85]
 const LEAD_C = 0.08
-/** Hues further apart than this clash when blended. */
-const CLASH_DEGREES = 90
+/** Hues further apart than this clash when blended (red with green is ~117, teal with periwinkle ~95). */
+const CLASH_DEGREES = 110
 /** Analogous step used to replace a clashing hue. */
 const ANALOGOUS_DEGREES = 30
 /** Hues closer than this count as the same colour. */
 const SAME_HUE_DEGREES = 12
-
+/** ...unless their lightness differs by at least this much. */
+const SAME_LIGHTNESS = 0.2
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
 const toSrgb = (c: number) => (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055)
@@ -89,7 +92,7 @@ const hueTurn = (a: number, b: number) => ((b - a + 540) % 360) - 180
 
 const lead = (x: Lch): Lch => ({ l: clamp(x.l, ...LEAD_L), c: Math.max(x.c, LEAD_C), h: x.h })
 
-/** Shader colours for a theme set, accent first. `count` is 3-5. */
+/** Shader colours for a theme set: accent, support, darker accent, lighter accent, second support (or a tint). `count` is 3-5. */
 export function brandPalette(set: ThemeSet, count = 4): string[] {
   const n = clamp(Math.round(count), 3, 5)
   const fallback = hexToLch(DEFAULT_THEME.light.selected)
@@ -101,21 +104,27 @@ export function brandPalette(set: ThemeSet, count = 4): string[] {
   const olive = accent.h > 60 && accent.h < 115
   const darker: Lch = { l: Math.max(MIN_LIGHTNESS, accent.l - 0.18), c: Math.max(LEAD_C, accent.c), h: olive ? accent.h - 20 : accent.h }
 
-  // A brand hue the accent already covers adds nothing; skip it like a neutral.
-  const source = [set.header, set.nav].map(hexToLch).find((x) => x.c >= NEUTRAL_CHROMA && Math.abs(hueTurn(accent.h, x.h)) > SAME_HUE_DEGREES)
-  let support: Lch
-  if (source) {
+  // A brand hue the accent (or the other brand colour) already covers adds nothing; skip it like a neutral.
+  const supports: Lch[] = []
+  for (const source of [set.header, set.nav].map(hexToLch)) {
+    if (source.c < NEUTRAL_CHROMA) continue
     const turn = hueTurn(accent.h, source.h)
     // Clashing pair: keep the direction, but only an analogous step away from the accent.
     const h = Math.abs(turn) > CLASH_DEGREES ? (accent.h + Math.sign(turn) * ANALOGOUS_DEGREES + 360) % 360 : source.h
-    support = lead({ ...source, h })
-  } else {
-    // No brand hue besides the accent: an analogous neighbour so the gradient still has movement.
-    support = { l: clamp(accent.l + 0.05, ...LEAD_L), c: Math.max(LEAD_C, accent.c * 0.9), h: (accent.h - ANALOGOUS_DEGREES + 360) % 360 }
+    // Same hue at a clearly different lightness (mint with teal) still reads as its own colour.
+    if ([accent, ...supports].some((x) => Math.abs(hueTurn(x.h, h)) <= SAME_HUE_DEGREES && Math.abs(x.l - source.l) < SAME_LIGHTNESS)) continue
+    supports.push(lead({ ...source, h }))
   }
-  const tint: Lch = { l: Math.min(MAX_LIGHTNESS, support.l + 0.12), c: Math.max(MIN_CHROMA, support.c * 0.7), h: support.h }
+  // No brand hue besides the accent (the 5Mins theme's grey header and nav): pale shades of the accent itself.
+  const shade = (towardWhite: number, chroma: number): Lch => ({
+    l: accent.l + (MAX_LIGHTNESS - accent.l) * towardWhite,
+    c: Math.max(MIN_CHROMA, accent.c * chroma),
+    h: accent.h,
+  })
+  const support = supports[0] ?? shade(0.5, 0.6)
+  const second = supports[1] ?? (supports[0] ? { l: Math.min(MAX_LIGHTNESS, support.l + 0.12), c: Math.max(MIN_CHROMA, support.c * 0.7), h: support.h } : shade(1, 0.4))
 
-  return [accent, lighter, darker, support, tint].slice(0, n).map(lchToHex)
+  return [accent, support, darker, lighter, second].slice(0, n).map(lchToHex)
 }
 
 /** OKLCH of a hex colour, for tests and checks. */

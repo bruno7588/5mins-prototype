@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { ArrowLeft } from 'iconsax-react'
+import { PinnedMode } from '@/hooks/useTheme'
 import './PhoneFrame.css'
 
 export interface PhoneFrameProps {
@@ -24,7 +25,8 @@ export interface PhoneFrameProps {
  * dark bezel, centered on the page. Mobile-only features render inside it.
  *
  * The mobile app ships dark-mode only, so the bezel pins `data-theme="dark"`
- * over everything on the screen whichever mode the desktop around it is in.
+ * over everything on the screen whichever mode the desktop around it is in
+ * (and PinnedMode, so mode-dependent images such as the company image follow).
  * The stage outside the bezel is desktop chrome and follows the desktop theme.
  */
 function PhoneFrame({ header, footer, children, overlayHeader = false, overlay, onExit }: PhoneFrameProps) {
@@ -36,6 +38,7 @@ function PhoneFrame({ header, footer, children, overlayHeader = false, overlay, 
           <span>Back to Desktop</span>
         </button>
       ) : null}
+      <PinnedMode.Provider value="dark">
       <div className="m-phone" data-theme="dark">
         <div className="m-phone__screen">
           {header ? (
@@ -46,6 +49,7 @@ function PhoneFrame({ header, footer, children, overlayHeader = false, overlay, 
           {overlay}
         </div>
       </div>
+      </PinnedMode.Provider>
     </div>
   )
 }

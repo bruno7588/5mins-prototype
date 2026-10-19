@@ -63,12 +63,12 @@ function LayoutSettings() {
   const [pickerOpen, setPickerOpen] = useState(false)
   // The default images in this tenant's colours, rendered when the picker opens. Static tiles: one GPU context.
   const defaults = useCompanyDefaults()
-  const stillOf = useTenantStills(pickerOpen)
+  const { theme: appMode } = useTheme()
+  const stillOf = useTenantStills(pickerOpen, appMode)
   const defaultTiles = defaults.map((d) => ({ id: d.id, src: stillOf(d)?.src ?? '', loading: !stillOf(d) }))
   const [previewOpen, setPreviewOpen] = useState(false)
   const { toasts, show: showToast } = useToast()
   const brandTheme = useBrandTheme()
-  const { theme: appMode } = useTheme()
   const swatches = effectiveTheme(brandTheme)[appMode]
   const [themeOpen, setThemeOpen] = useState(false)
 
@@ -188,7 +188,7 @@ function LayoutSettings() {
           selectedDefaultId={company.image.kind === 'default' ? company.image.id : undefined}
           onSaveDefault={(id) => {
             const d = defaults.find((x) => x.id === id)
-            setCompanyDefault(id, (d && stillOf(d)) ?? undefined)
+            setCompanyDefault(id, (d && stillOf(d)) ?? undefined, appMode)
             showToast('success', 'Company image updated')
           }}
         />

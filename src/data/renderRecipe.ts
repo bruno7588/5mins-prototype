@@ -11,7 +11,7 @@ import {
   ShaderFitOptions,
   ShaderMount,
 } from '@paper-design/shaders'
-import { ditherColours, grainColours, type GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { DITHER_BACK, ditherBackdrop, ditherFront, grainColours, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 
 /* Renders a gradient recipe in a tenant's colours with Paper Shaders (mesh
    or grain gradient, or dithering), in the admin's browser: a 512 x 512 JPEG still for the company
@@ -46,13 +46,12 @@ async function shaderFor(recipe: GradientRecipe, colours: string[]) {
     u_worldHeight: defaultObjectSizing.worldHeight,
   }
   if (recipe.shader === 'dither') {
-    const [back, front] = ditherColours(colours)
     return {
       fragment: ditheringFragmentShader,
       uniforms: {
         ...sizing,
-        u_colorBack: getShaderColorFromString(back),
-        u_colorFront: getShaderColorFromString(front),
+        u_colorBack: getShaderColorFromString(DITHER_BACK),
+        u_colorFront: getShaderColorFromString(ditherFront(colours)),
         u_shape: DitheringShapes[recipe.ditherShape],
         u_type: DitheringTypes[recipe.ditherType],
         u_pxSize: recipe.pxSize,
@@ -93,7 +92,18 @@ async function shaderFor(recipe: GradientRecipe, colours: string[]) {
 export interface HiddenMount {
   mount: ShaderMount
   canvas: HTMLCanvasElement
+  /** Dithering's see-through dots need this gradient painted behind them on every copy. */
+  backdrop: [string, string] | null
   dispose: () => void
+}
+
+/** Paints a dithering backdrop: the same soft diagonal as ditherBackdropCss. */
+export function paintBackdrop(ctx: CanvasRenderingContext2D, [from, to]: [string, string], w: number, h: number) {
+  const g = ctx.createLinearGradient(0, 0, w, h)
+  g.addColorStop(0, from)
+  g.addColorStop(1, to)
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, w, h)
 }
 
 /**
@@ -111,6 +121,7 @@ export async function hiddenMount(recipe: GradientRecipe, colours: string[], css
   return {
     mount,
     canvas: mount.canvasElement,
+    backdrop: recipe.shader === 'dither' ? ditherBackdrop(colours) : null,
     dispose: () => {
       mount.dispose()
       box.remove()
@@ -126,7 +137,7 @@ let queue: Promise<unknown> = Promise.resolve()
 export function renderStill(recipe: GradientRecipe, colours: string[], type: 'image/jpeg' | 'image/png' = 'image/jpeg'): Promise<string> {
   const run = async () => {
     const dpr = Math.max(1, window.devicePixelRatio || 1)
-    const { canvas, mount, dispose } = await hiddenMount(recipe, colours, STILL_PX / dpr, 0)
+    const { canvas, mount, backdrop, dispose } = await hiddenMount(recipe, colours, STILL_PX / dpr, 0)
     try {
       // Paper sizes the canvas on its first resize callback, then draws. A new
       // canvas is 300 x 150, so wait until it matches the square box.
@@ -136,7 +147,9 @@ export function renderStill(recipe: GradientRecipe, colours: string[], type: 'im
       const out = document.createElement('canvas')
       out.width = STILL_PX
       out.height = STILL_PX
-      out.getContext('2d')!.drawImage(canvas, 0, 0, STILL_PX, STILL_PX)
+      const ctx = out.getContext('2d')!
+      if (backdrop) paintBackdrop(ctx, backdrop, STILL_PX, STILL_PX)
+      ctx.drawImage(canvas, 0, 0, STILL_PX, STILL_PX)
       return out.toDataURL(type, 0.92)
     } finally {
       dispose()

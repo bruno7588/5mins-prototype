@@ -13,7 +13,7 @@ import LabCanvas from './LabCanvas'
 import ExportPanel from './panels/ExportPanel'
 import GradientSlots from './panels/GradientSlots'
 import { clearGradient, reorderGradients, saveGradient, useSavedGradients } from './gradients'
-import { DEFAULT_RECIPE, parseRecipe, type GradientRecipe } from './recipe'
+import { DEFAULT_RECIPE, paletteCount, parseRecipe, type GradientRecipe } from './recipe'
 import FocalPad from './panels/FocalPad'
 import { useLabDials, type DialsKind, type LabState } from './panels/useLabDials'
 import './gradient-lab.css'
@@ -70,7 +70,7 @@ function GradientLab() {
   const [savingSlot, setSavingSlot] = useState(false)
   // The new slot's gradient while it is unsaved, kept when another slot is opened.
   const [draft, setDraft] = useState<GradientRecipe | null>(null)
-  const colours = brandPalette(lab.preview, lab.recipe.colours)
+  const colours = brandPalette(lab.preview, paletteCount(lab.recipe))
 
   /* Selecting a saved slot loads its recipe; the new empty slot opens its draft,
      or keeps the current gradient so it can be saved there. */
@@ -97,7 +97,7 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, name: `Gradient ${activeSlot}` }
-      const still = await renderStill(recipe, brandPalette(DEFAULT_THEME.light, recipe.colours))
+      const still = await renderStill(recipe, brandPalette(DEFAULT_THEME.light, paletteCount(recipe)))
       await saveGradient(activeSlot, recipe, still)
       if (!gradients.some((g) => g.slot === activeSlot)) setDraft(null)
       void reloadGradients()

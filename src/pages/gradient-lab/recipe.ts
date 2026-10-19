@@ -183,14 +183,22 @@ export function grainColours(colours: string[]): [string, string[]] {
   return [back, colours.filter((_, i) => i !== 2)]
 }
 
-/** Dithering's two colours: the darker accent dithered over the lighter tint. */
-export function ditherColours(colours: string[]): [back: string, front: string] {
-  return [colours[1] ?? colours[0], colours[2] ?? colours[0]]
-}
+/** How many palette colours a recipe takes: dithering always takes all 5, for both brand support colours. */
+export const paletteCount = (recipe: GradientRecipe) => (recipe.shader === 'dither' ? 5 : recipe.colours)
 
-/** Paper Shaders Dithering props. */
+/** Dithering's dots: the darker accent, drawn on a see-through background. */
+export const ditherFront = (colours: string[]) => colours[2] ?? colours[0]
+export const DITHER_BACK = 'rgba(0, 0, 0, 0)'
+
+/** Behind the dots: a soft gradient between the two brand support colours (header and nav). */
+export function ditherBackdrop(colours: string[]): [from: string, to: string] {
+  const from = colours[1] ?? colours[0]
+  return [from, colours[4] ?? colours[3] ?? from]
+}
+export const ditherBackdropCss = (colours: string[]) => `linear-gradient(135deg, ${ditherBackdrop(colours).join(', ')})`
+
+/** Paper Shaders Dithering props. The backdrop is painted behind them by the caller. */
 export function ditherProps(recipe: GradientRecipe, colours: string[]) {
   const { ditherShape, ditherType, pxSize, speed, frame, scale, rotation, offsetX, offsetY } = recipe
-  const [colorBack, colorFront] = ditherColours(colours)
-  return { colorBack, colorFront, shape: ditherShape, type: ditherType, size: pxSize, speed, frame, scale, rotation, offsetX, offsetY }
+  return { colorBack: DITHER_BACK, colorFront: ditherFront(colours), shape: ditherShape, type: ditherType, size: pxSize, speed, frame, scale, rotation, offsetX, offsetY }
 }
