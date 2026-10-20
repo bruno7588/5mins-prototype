@@ -1,6 +1,6 @@
 import { useEffect, useState, type DragEvent } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Add, TickCircle, Trash } from 'iconsax-react'
+import { Add, Copy, TickCircle, Trash } from 'iconsax-react'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { arriveTransition } from '@/components/AIWorkingCard/arrive'
@@ -9,7 +9,8 @@ import type { SavedGradient } from '../gradients'
 /* The saved gradients, as a strip under the preview: the saved slots in order
    (no gaps), the active slot when it is a new empty one, then a + tile that adds
    one. Clicking a slot makes it the active one (and loads it when saved); the
-   tick under the active slot saves the current gradient into it. Saved slots
+   tick under the active slot saves the current gradient into it, and the copy
+   button saves it as a new slot at the end. Saved slots
    drag to a new position; the strip reorders live and saves on drop. Prefix: gl-slots- */
 
 interface Props {
@@ -22,12 +23,14 @@ interface Props {
   canSave: boolean
   onSelect: (slot: number) => void
   onSave: () => void
+  /** Saves the current gradient as a new slot at the end. */
+  onDuplicate: () => void
   onClear: () => void
   /** Every saved slot once, in the new order. */
   onReorder: (slots: number[]) => void
 }
 
-function GradientSlots({ gradients, activeSlot, saving, hasDraft, canSave, onSelect, onSave, onClear, onReorder }: Props) {
+function GradientSlots({ gradients, activeSlot, saving, hasDraft, canSave, onSelect, onSave, onDuplicate, onClear, onReorder }: Props) {
   const reduce = useReducedMotion()
   const bySlot = new Map(gradients.map((g) => [g.slot, g]))
   const [dragSlot, setDragSlot] = useState<number | null>(null)
@@ -111,6 +114,19 @@ function GradientSlots({ gradients, activeSlot, saving, hasDraft, canSave, onSel
                         ) : (
                           <TickCircle size={20} variant="Linear" color="var(--text-primary)" />
                         )}
+                      </button>
+                    </Tooltip>
+                  )}
+                  {saved && (
+                    <Tooltip icon={false} text={`Duplicate gradient ${slot}`} className="gl-slots__save-wrap">
+                      <button
+                        type="button"
+                        className="gl-slots__save"
+                        aria-label={`Duplicate gradient ${slot}`}
+                        disabled={saving}
+                        onClick={onDuplicate}
+                      >
+                        <Copy size={20} variant="Linear" color="var(--text-primary)" />
                       </button>
                     </Tooltip>
                   )}

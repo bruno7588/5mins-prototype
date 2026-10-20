@@ -109,6 +109,24 @@ function GradientLab() {
     }
   }
 
+  /* Saves the gradient on screen as a new slot at the end and opens it. */
+  const duplicateSlot = async () => {
+    const slot = Math.max(0, ...gradients.map((g) => g.slot)) + 1
+    setSavingSlot(true)
+    try {
+      const recipe = { ...lab.recipe, name: `Gradient ${slot}` }
+      const still = await renderStill(recipe, brandPalette(DEFAULT_THEME.light, paletteCount(recipe)))
+      await saveGradient(slot, recipe, still)
+      await reloadGradients()
+      setActiveSlot(slot)
+      show('success', `Gradient ${activeSlot} duplicated as gradient ${slot}`)
+    } catch (e) {
+      show('error', `Couldn't duplicate gradient ${activeSlot}: ${(e as Error).message}`)
+    } finally {
+      setSavingSlot(false)
+    }
+  }
+
   const clearSlot = async () => {
     try {
       await clearGradient(activeSlot)
@@ -189,6 +207,7 @@ function GradientLab() {
             canSave
             onSelect={selectSlot}
             onSave={saveSlot}
+            onDuplicate={duplicateSlot}
             onClear={clearSlot}
             onReorder={reorderSlots}
           />
