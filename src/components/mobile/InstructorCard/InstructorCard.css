@@ -96,7 +96,7 @@
   transition: background 150ms ease;
 }
 
-/Users/brunocarvalho/Desktop/01.Projectos/Cursor/5Mins-prototype/.m-instructor-card[role='button']ctive {
+.m-instructor-card[role='button']:active {
   background: var(--cards-background-hover);
 }
 
