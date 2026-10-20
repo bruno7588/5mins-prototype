@@ -6,14 +6,14 @@ import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { brandPalette } from '@/data/brandPalette'
-import { DEFAULT_THEME } from '@/data/brandTheme'
+import { DEFAULT_THEME, effectiveTheme } from '@/data/brandTheme'
 import { renderStill } from '@/data/renderRecipe'
 import { useTheme } from '@/hooks/useTheme'
 import LabCanvas from './LabCanvas'
 import ExportPanel from './panels/ExportPanel'
 import GradientSlots from './panels/GradientSlots'
 import { clearGradient, reorderGradients, saveGradient, useSavedGradients } from './gradients'
-import { DEFAULT_RECIPE, fixedColours, paletteCount, parseRecipe, type GradientRecipe } from './recipe'
+import { DEFAULT_RECIPE, paletteCount, parseRecipe, type GradientRecipe } from './recipe'
 import FocalPad from './panels/FocalPad'
 import { useLabDials, type DialsKind, type LabState } from './panels/useLabDials'
 import './gradient-lab.css'
@@ -21,10 +21,9 @@ import './panels/panels.css'
 
 /**
  * Gradient Studio (Playground, dev only): makes the recipes behind the default
- * company images. A recipe is the gradient's shape and motion, plus an optional
- * fixed palette shown on the 5Mins theme; tenants with their own theme always
- * see it in their colours (brandPalette). Left:
- * the live preview (wheel zooms, drag pans) in the slot's colours, and the
+ * company images. A recipe is the gradient's shape and motion, with no colours:
+ * each tenant sees it in colours generated from its theme (brandPalette). Left:
+ * the live preview (wheel zooms, drag pans) in the preview colours, and the
  * saved slots. Right: a Gradient / Shader switcher (Export sits in the header):
  * Gradient holds the focal point and the shape and preview-colour DialKit panel;
  * Shader holds motion and grain. Prefix: gl-
@@ -58,8 +57,7 @@ const round2 = (v: number) => Math.round(v * 100) / 100
 
 function GradientLab() {
   // Previewed in the tenant's colours by default, so recipes are judged in a real brand.
-  // A slot without its own palette previews in the 5Mins colours, like its saved still.
-  const [lab, setLab] = useState<LabState>(() => ({ recipe: DEFAULT_RECIPE, preview: DEFAULT_THEME.light, playing: true }))
+  const [lab, setLab] = useState<LabState>(() => ({ recipe: DEFAULT_RECIPE, preview: effectiveTheme().light, playing: true }))
   const update = useCallback((patch: Partial<LabState>) => setLab((prev) => ({ ...prev, ...patch })), [])
   const setRecipe = useCallback(
     (patch: Partial<LabState['recipe']>) => setLab((prev) => ({ ...prev, recipe: { ...prev.recipe, ...patch } })),
@@ -72,7 +70,7 @@ function GradientLab() {
   const [savingSlot, setSavingSlot] = useState(false)
   // The new slot's gradient while it is unsaved, kept when another slot is opened.
   const [draft, setDraft] = useState<GradientRecipe | null>(null)
-  const colours = fixedColours(lab.recipe) ?? brandPalette(lab.preview, paletteCount(lab.recipe))
+  const colours = brandPalette(lab.preview, paletteCount(lab.recipe))
 
   /* Selecting a saved slot loads its recipe; the new empty slot opens its draft,
      or keeps the current gradient so it can be saved there. */
@@ -99,7 +97,7 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, name: `Gradient ${activeSlot}` }
-      const still = await renderStill(recipe, fixedColours(recipe) ?? brandPalette(DEFAULT_THEME.light, paletteCount(recipe)))
+      const still = await renderStill(recipe, brandPalette(DEFAULT_THEME.light, paletteCount(recipe)))
       await saveGradient(activeSlot, recipe, still)
       if (!gradients.some((g) => g.slot === activeSlot)) setDraft(null)
       void reloadGradients()

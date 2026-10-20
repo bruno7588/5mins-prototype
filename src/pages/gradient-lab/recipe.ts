@@ -51,9 +51,6 @@ export interface GradientRecipe {
   /** -1 to 1 */
   offsetX: number
   offsetY: number
-  /** Fixed colours that override the tenant's theme, as #rrggbb: [sphere, backdrop from, backdrop to].
-      Without it the recipe takes each tenant's brand colours. */
-  palette?: [string, string, string]
 }
 
 export const DEFAULT_RECIPE: GradientRecipe = {
@@ -155,19 +152,7 @@ export function parseRecipe(json: unknown): GradientRecipe {
     rotation: num(json, 'rotation', d.rotation, 0, 360),
     offsetX: num(json, 'offsetX', d.offsetX, -1, 1),
     offsetY: num(json, 'offsetY', d.offsetY, -1, 1),
-    ...(isPalette(json.palette) ? { palette: json.palette } : {}),
   }
-}
-
-const isPalette = (v: unknown): v is [string, string, string] =>
-  Array.isArray(v) && v.length === 3 && v.every((c) => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c))
-
-/** A fixed palette laid out like brandPalette's, so every shader reads it the same way:
-    dithering's dots are [2], its backdrop runs [1] to [4]. Null when the recipe follows the tenant's theme. */
-export function fixedColours(recipe: GradientRecipe): string[] | null {
-  if (!recipe.palette) return null
-  const [sphere, from, to] = recipe.palette
-  return [sphere, from, sphere, to, to]
 }
 
 /** parseRecipe, or null for anything unreadable. */

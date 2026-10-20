@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useDialKitController, type DialConfig } from 'dialkit'
-import { brandPalette } from '@/data/brandPalette'
-import type { ThemeSet } from '@/data/brandTheme'
+import { DEFAULT_THEME, type ThemeSet } from '@/data/brandTheme'
 import {
   DITHER_SHAPES,
   DITHER_TYPES,
-  fixedColours,
   GRAIN_SHAPES,
   MAX_FRAME,
-  paletteCount,
   type DitherShape,
   type DitherType,
   type GradientRecipe,
@@ -17,7 +14,7 @@ import {
 } from '../recipe'
 
 /* The DialKit panel for each tab of the controls column, rendered inline:
-   "Gradient" (shader type and shape, and the slot's colours) or
+   "Gradient" (shader type and shape, and the theme colours to preview it in) or
    "Shader" (motion and grain). The controls follow the shader type: the mesh
    gradient has distortion, swirl and two grain sliders; the grain gradient has
    a shape, softness, intensity and noise; dithering has a shape, a pattern and
@@ -32,7 +29,7 @@ import {
 
 export type DialsKind = 'gradient' | 'shader'
 
-/** What the Studio edits: the recipe, and the theme it is previewed in when it has no fixed palette (the 5Mins theme). */
+/** What the Studio edits: the recipe, and the theme colours it is previewed in (not saved). */
 export interface LabState {
   recipe: GradientRecipe
   preview: ThemeSet
@@ -56,8 +53,7 @@ interface PanelValues {
     rotation: number
     frame: number
   }
-  /** The slot's own colours: its fixed palette, or the 5Mins colours it takes without one. */
-  'Preview colours': { sphere: string; 'background start': string; 'background end': string }
+  'Preview colours': { 'header bar': string; 'navigation items': string; 'selected item': string }
   Motion: { playing: boolean; speed: number }
   /** Absent for dithering. */
   Grain?: { mixer?: number; overlay?: number; noise?: number }
@@ -80,12 +76,6 @@ const FOLDERS: Record<DialsKind, Folder[]> = {
   shader: ['Motion', 'Grain'],
 }
 
-/** The three colours a recipe shows in, read from the same layout fixedColours writes. */
-function slotColours(r: GradientRecipe, p: ThemeSet): PanelValues['Preview colours'] {
-  const c = fixedColours(r) ?? brandPalette(p, paletteCount(r))
-  return { sphere: c[2], 'background start': c[1], 'background end': c[4] ?? c[3] ?? c[1] }
-}
-
 function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
   const shape = { scale: r.scale, rotation: r.rotation, frame: r.frame }
   const own: Record<ShaderKind, Partial<PanelValues['Gradient']>> = {
@@ -95,7 +85,7 @@ function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
   }
   return {
     Gradient: { type: r.shader, ...(r.shader === 'dither' ? {} : { colours: r.colours }), ...own[r.shader], ...shape },
-    'Preview colours': slotColours(r, p),
+    'Preview colours': { 'header bar': p.header, 'navigation items': p.nav, 'selected item': p.selected },
     Motion: { playing, speed: r.speed },
     Grain: r.shader === 'grain' ? { noise: r.noise } : r.shader === 'mesh' ? { mixer: r.grainMixer, overlay: r.grainOverlay } : undefined,
   }
@@ -134,9 +124,10 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
       shuffle: { type: 'action', label: 'Shuffle' },
     },
     'Preview colours': {
-      sphere: { type: 'color', default: p.sphere },
-      'background start': { type: 'color', default: p['background start'] },
-      'background end': { type: 'color', default: p['background end'] },
+      'header bar': { type: 'color', default: p['header bar'] },
+      'navigation items': { type: 'color', default: p['navigation items'] },
+      'selected item': { type: 'color', default: p['selected item'] },
+      reset: { type: 'action', label: '5Mins Theme' },
     },
   }
 }
@@ -156,6 +147,9 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
   const onAction = useCallback((action: string) => {
     if (action === 'Gradient.shuffle') {
       dialRef.current?.setValue('Gradient.frame', Math.round((Math.random() * MAX_FRAME) / 100) * 100)
+    } else if (action === 'Preview colours.reset') {
+      const d = DEFAULT_THEME.light
+      dialRef.current?.setValues({ 'Preview colours': { 'header bar': d.header, 'navigation items': d.nav, 'selected item': d.selected } } as never)
     }
   }, [])
   const dial = useDialKitController(kind === 'gradient' ? 'Gradient' : 'Shader', config, { onAction })
@@ -203,13 +197,13 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
     // The panel's controls belong to the current type until it rebuilds for a newly picked one.
     const { type, shape, pattern, 'pixel size': pxSize, ...g } = v.Gradient
     const own = r.shader === 'dither' ? { ditherShape: shape, ditherType: pattern, pxSize } : { shape }
-    const recipe: GradientRecipe = { ...r, shader: type, ...defined({ ...g, ...own }) }
-    // An edited colour gives the slot its own fixed palette; untouched, it keeps following the theme.
+    const recipe = { ...r, shader: type, ...defined({ ...g, ...own }) }
     const c = v['Preview colours']
-    const shown = slotColours(r, now.preview)
-    const keys = ['sphere', 'background start', 'background end'] as const
-    if (keys.some((k) => c[k].toLowerCase() !== shown[k].toLowerCase())) recipe.palette = keys.map((k) => c[k].toUpperCase()) as [string, string, string]
-    if (changed(recipe)) push({ recipe })
+    const preview: ThemeSet = { header: c['header bar'], nav: c['navigation items'], selected: c['selected item'] }
+    const patch: Partial<LabState> = {}
+    if (changed(recipe)) patch.recipe = recipe
+    if ((Object.keys(preview) as (keyof ThemeSet)[]).some((k) => preview[k].toLowerCase() !== now.preview[k].toLowerCase())) patch.preview = preview
+    if (Object.keys(patch).length) push(patch)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dial.values])
 }
