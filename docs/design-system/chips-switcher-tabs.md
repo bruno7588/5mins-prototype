@@ -336,7 +336,7 @@ Figma: `Content switcher` (`7128:23859`, standalone component with no properties
 
 **Item:** padding `6px 12px` · radius `8px` (`--radius-s`) · text 14px/1.5 Poppins.
 
-Optional icons per item in Figma: **left 20px** (e.g. trash) or **right 16px** (e.g. info-circle), `gap: 4px`, `currentColor`. The prototype `ContentSwitcher` has no icon slot (items are `key`, `label`, `disabled`).
+Optional icons per item in Figma: **left 20px** (e.g. trash) or **right 16px** (e.g. info-circle), `gap: 4px`, `currentColor`. In code, an item's `icon` is the 20px leading glyph (Library "Show leading icon" + "Leading icon" swap). `iconOnly` hides the label (Library "Show label" off): the label becomes the segment's `aria-label` and a DS Tooltip. Library example: "Example · Icon only" (Mobile / Monitor), used by the Quiz Lab device switch. The trailing 16px icon is Library only.
 
 ## States
 

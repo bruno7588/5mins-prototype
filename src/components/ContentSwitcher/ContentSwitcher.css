@@ -56,3 +56,10 @@
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
 }
+
+/* Leading icon (Library "Leading icon", 20px), above the sliding pill like the label. */
+.switcher__icon {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+}

@@ -1,11 +1,17 @@
-import { useId } from 'react'
+import { useId, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import './ContentSwitcher.css'
 
 export interface SwitcherItem {
   key: string
   label: string
   disabled?: boolean
+  /** Leading icon, a 20px currentColor glyph (Library "Leading icon"). */
+  icon?: ReactNode
+  /** Hides the label and shows only the icon (Library "Show label" off). The label stays
+      the segment's accessible name and its hover tooltip. */
+  iconOnly?: boolean
 }
 
 interface ContentSwitcherProps {
@@ -27,12 +33,14 @@ function ContentSwitcher({ items, activeKey, onChange, className = '', ariaLabel
     <div className={`switcher${className ? ` ${className}` : ''}`} role="tablist" aria-orientation="horizontal" aria-label={ariaLabel}>
       {items.map((item) => {
         const selected = item.key === activeKey
-        return (
+        const iconOnly = !!item.icon && !!item.iconOnly
+        const button = (
           <button
             key={item.key}
             type="button"
             role="tab"
             aria-selected={selected}
+            aria-label={iconOnly ? item.label : undefined}
             disabled={item.disabled}
             className={`switcher__item${selected ? ' is-selected' : ''}`}
             onClick={() => onChange(item.key)}
@@ -45,8 +53,16 @@ function ContentSwitcher({ items, activeKey, onChange, className = '', ariaLabel
                 transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 480, damping: 38 }}
               />
             )}
-            <span className="switcher__label">{item.label}</span>
+            {item.icon && <span className="switcher__icon" aria-hidden="true">{item.icon}</span>}
+            {!iconOnly && <span className="switcher__label">{item.label}</span>}
           </button>
+        )
+        return iconOnly ? (
+          <Tooltip key={item.key} text={item.label} icon={false}>
+            {button}
+          </Tooltip>
+        ) : (
+          button
         )
       })}
     </div>

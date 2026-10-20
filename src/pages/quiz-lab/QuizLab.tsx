@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Mobile, Monitor } from 'iconsax-react'
 import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
@@ -57,8 +58,8 @@ function QuizLab() {
         <h1 className="ql-lab__title">Quiz Lab</h1>
         <ContentSwitcher
           items={[
-            { key: 'mobile', label: 'Mobile' },
-            { key: 'desktop', label: 'Desktop' },
+            { key: 'mobile', label: 'Mobile', icon: <Mobile size={20} color="currentColor" variant="Linear" />, iconOnly: true },
+            { key: 'desktop', label: 'Desktop', icon: <Monitor size={20} color="currentColor" variant="Linear" />, iconOnly: true },
           ]}
           activeKey={device}
           onChange={(key) => setDevice(key as 'mobile' | 'desktop')}
