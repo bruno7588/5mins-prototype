@@ -656,7 +656,12 @@
 }
 
 /* Hover (Figma 9027:27659): the image zooms in slightly behind the hover border. */
-.aim-defaults__tile:hover:not(:disabled) img {
+.aim-defaults__tile .company-motion {
+  transition: transform 200ms ease-in-out;
+}
+
+.aim-defaults__tile:hover:not(:disabled) img,
+.aim-defaults__tile:hover:not(:disabled) .company-motion {
   transform: scale(1.09);
 }
 

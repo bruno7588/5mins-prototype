@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Brush2, Eye } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
@@ -6,6 +6,7 @@ import Toggle from '@/components/Toggle/Toggle'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import { useCompanyDefaults } from '@/data/companyDefaults'
+import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { setCompanyDefault, setCompanyUpload, useCompanyImage, useTenantStills, validateCompanyImage } from '@/data/companyImage'
 import { DEFAULT_THEME, effectiveTheme, setBrandTheme, useBrandTheme, type BrandTheme } from '@/data/brandTheme'
 import { useTheme } from '@/hooks/useTheme'
@@ -57,6 +58,30 @@ function LogoSlot({ label, mode }: { label: string; mode: 'light' | 'dark' }) {
   )
 }
 
+/* A picker tile's live version: plays while the tile is selected, hovered or focused,
+   so at most two animate at once (each playing tile is its own GPU context). */
+function TileMotion({ recipe, selected }: { recipe: GradientRecipe; selected: boolean }) {
+  const anchorRef = useRef<HTMLSpanElement>(null)
+  const [hot, setHot] = useState(false)
+  useEffect(() => {
+    const tile = anchorRef.current?.parentElement
+    if (!tile) return
+    const on = () => setHot(true)
+    const off = () => setHot(false)
+    const events = [['pointerenter', on], ['pointerleave', off], ['focus', on], ['blur', off]] as const
+    for (const [name, fn] of events) tile.addEventListener(name, fn)
+    return () => {
+      for (const [name, fn] of events) tile.removeEventListener(name, fn)
+    }
+  }, [])
+  return (
+    <>
+      <span ref={anchorRef} hidden />
+      {(selected || hot) && <CompanyImageMotion recipe={recipe} />}
+    </>
+  )
+}
+
 function LayoutSettings() {
   const [workspaceHome, setWorkspaceHome] = useState(false)
   const company = useCompanyImage()
@@ -65,7 +90,13 @@ function LayoutSettings() {
   const defaults = useCompanyDefaults()
   const { theme: appMode } = useTheme()
   const stillOf = useTenantStills(pickerOpen, appMode)
-  const defaultTiles = defaults.map((d) => ({ id: d.id, src: stillOf(d)?.src ?? '', loading: !stillOf(d) }))
+  const pickedId = company.image.kind === 'default' ? company.image.id : null
+  const defaultTiles = defaults.map((d) => ({
+    id: d.id,
+    src: stillOf(d)?.src ?? '',
+    loading: !stillOf(d),
+    overlay: <TileMotion recipe={d.recipe} selected={d.id === pickedId} />,
+  }))
   const [previewOpen, setPreviewOpen] = useState(false)
   const { toasts, show: showToast } = useToast()
   const brandTheme = useBrandTheme()
