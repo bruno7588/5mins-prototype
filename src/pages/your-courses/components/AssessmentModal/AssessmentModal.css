@@ -121,33 +121,6 @@
   line-height: 1.2;
 }
 
-.assessment-modal-input {
-  width: 100%;
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  font-family: inherit;
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  outline: none;
-  transition: border-color 150ms ease;
-}
-
-.assessment-modal-input::placeholder {
-  color: var(--text-disabled);
-}
-
-.assessment-modal-input:hover {
-  border-color: var(--border-hover);
-}
-
-.assessment-modal-input:focus {
-  border-color: var(--selected);
-}
-
 /* Options list */
 .assessment-modal-options {
   display: flex;
@@ -229,482 +202,171 @@
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-start;
+  gap: var(--space-m);
   margin-top: auto;
 }
 
-/* ===== Add Media Button (collapsed trigger) — dashed full-width row ===== */
-.assessment-modal-add-media {
-  white-space: nowrap;
+/* Save and Preview share one width, the wider of the two: an inline grid sizes its equal
+   columns to the longest label. */
+.assessment-modal-footer-actions {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--space-m);
+}
+
+/* ===== Image options (DES-345) ===== */
+/* Columns the width of the DS uploader, size S (180px): an empty option is that
+   uploader, a filled one a square image the same width. */
+.assessment-modal-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 180px);
+  align-items: start;
+  gap: var(--space-m);
+}
+
+.assessment-modal-image-option {
   display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* Square, like the images it waits for: the DS size S uploader is 180 x 260, so this is
+   a deliberate local override of its height. */
+.assessment-modal-image-uploader.file-uploader--S {
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+}
+
+/* Add Option: the Your Courses New Folder tile (.your-courses-new-folder) at option
+   size, a dashed square with a plus and its label. */
+.assessment-modal-image-add {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-xs);
+  gap: var(--space-s);
   width: 100%;
-  padding: var(--space-s) var(--space-m);
-  background: var(--input-background);
-  border: 1px dashed var(--border-elevated);
+  aspect-ratio: 1 / 1;
+  border: 1.5px dashed var(--border-elevated);
   border-radius: var(--radius-sm);
-  /* The Add glyph is currentColor; without this it falls back to the UA button
-     colour and reads dimmer than the label next to it. */
-  color: var(--text-primary);
+  background: transparent;
+  color: var(--text-secondary);
+  font: 400 var(--font-size-md)/1.5 'Poppins', sans-serif;
   cursor: pointer;
-  transition: border-color 150ms ease;
+  transition: background-color 150ms ease;
 }
 
-.assessment-modal-add-media:hover {
-  border-color: var(--border-hover);
+.assessment-modal-image-add:hover {
+  background-color: var(--input-background);
 }
 
-.assessment-modal-add-media-label {
-  font-size: var(--font-size-h5);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
+.assessment-modal-image-add:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }
 
-.assessment-modal-add-media-hint {
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
-/* ===== Image Preview State ===== */
-.assessment-modal-media-preview {
+/* A filled option: the image, square, with no border at rest. */
+.assessment-modal-image-tile {
   position: relative;
-  width: 218px;
-  height: 122px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
-.assessment-modal-media-preview-bg {
+.assessment-modal-image-tile-img {
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  object-fit: cover;
 }
 
-/* Shared remove button */
-.assessment-modal-media-remove {
+/* Replace sits in the top-left corner, where the learner's checkbox is, on a
+   see-through dark disc so it reads over any photo. */
+.assessment-modal-image-tile-actions {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: var(--space-s);
+  left: var(--space-s);
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.assessment-modal-image-tile-action {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xs);
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-full);
-  background: var(--scrim);
+  /* Same see-through disc as the learner's image checkbox: 50% at rest, 72% on hover. */
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
   cursor: pointer;
-  z-index: 2;
   transition: background 150ms ease;
 }
 
-.assessment-modal-media-remove:hover {
+.assessment-modal-image-tile-action:hover {
   background: color-mix(in srgb, var(--neutral-900) 72%, transparent);
 }
 
-.assessment-modal-media-remove[data-tooltip]::before,
-.assessment-modal-media-remove[data-tooltip]::after {
-  position: absolute;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 150ms ease;
+.assessment-modal-image-tile-action:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }
 
-.assessment-modal-media-remove[data-tooltip]::before {
-  content: attr(data-tooltip);
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  padding: var(--space-xss) var(--space-sm);
-  background: var(--tooltip-background);
-  color: var(--neutral-25);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  line-height: 1.2;
-  white-space: nowrap;
-  border-radius: var(--radius-s);
-}
-
-.assessment-modal-media-remove[data-tooltip]::after {
-  content: '';
-  bottom: calc(100% + 2px);
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-top-color: var(--tooltip-background);
-}
-
-.assessment-modal-media-remove[data-tooltip]:hover::before,
-.assessment-modal-media-remove[data-tooltip]:hover::after {
-  opacity: 1;
-}
-
-/* ===== Compact Inline Audio Player (pill) ===== */
-.assessment-modal-audio-pill {
+.assessment-modal-image-correct {
   display: flex;
   align-items: center;
-  gap: var(--space-m);
-  padding: var(--space-m);
-  border-radius: var(--radius-full);
-  background: var(--input-background);
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
+  justify-content: space-between;
+  min-height: 32px;
 }
 
-/* Play controls group */
-.assessment-modal-audio-pill-controls {
-  display: flex;
+.assessment-modal-image-correct-mark {
+  display: inline-flex;
   align-items: center;
-  gap: 0;
-  flex-shrink: 0;
-}
-
-.assessment-modal-audio-pill-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: var(--space-xxs);
-  border-radius: 50%;
-  background: transparent;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 150ms ease;
-}
-
-.assessment-modal-audio-pill-btn:hover {
-  opacity: 1;
-}
-
-.assessment-modal-audio-pill-btn--play {
-  width: 36px;
-  height: 36px;
-  opacity: 1;
-}
-
-/* Progress track */
-.assessment-modal-audio-pill-track {
-  flex: 1;
-  min-width: 0;
-  position: relative;
-  height: 4px;
-  background: var(--border);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-}
-
-.assessment-modal-audio-pill-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: var(--text-primary);
-  border-radius: var(--radius-full) 0 0 var(--radius-full);
-  transition: width 100ms linear;
-}
-
-.assessment-modal-audio-pill-thumb {
-  position: absolute;
-  top: 50%;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--text-primary);
-  transform: translate(-50%, -50%);
-  transition: left 100ms linear;
-}
-
-/* Duration */
-.assessment-modal-audio-pill-duration {
+  gap: var(--space-xxs);
   font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-primary);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* Close/remove button */
-.assessment-modal-audio-pill-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xs);
-  border-radius: 50%;
-  background: var(--input-background);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 150ms ease;
-}
-
-.assessment-modal-audio-pill-close:hover {
-  background: var(--input-background-hover);
-}
-
-/* ===== Attach Media Modal (centered overlay) ===== */
-.media-modal-overlay {
-  position: fixed;
-  inset: 0;
-  /* Above the ContentDrawer (1001) + icon strip (1002) so it works when the
-     assessment form is hosted inside the side drawer. */
-  z-index: 1100;
-  background: var(--scrim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: assessment-overlay-fade 200ms ease;
-}
-
-.media-modal {
-  position: relative;
-  width: 520px;
-  max-width: calc(100vw - 48px);
-  background: var(--page-background);
-  border-radius: var(--radius-m);
-  padding: var(--space-l);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
-  box-shadow: 0 16px 48px color-mix(in srgb, var(--neutral-900) 16%, transparent);
-  animation: media-modal-pop 250ms ease;
-}
-
-@keyframes media-modal-pop {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.media-modal-close {
-  position: absolute;
-  top: var(--space-m);
-  right: var(--space-m);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xs);
-  border-radius: var(--radius-full);
-}
-
-.media-modal-close:hover {
-  background: var(--page-background-hover);
-}
-
-/* Drop zone */
-.media-modal-dropzone {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  min-height: 220px;
-  padding: var(--space-l);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.media-modal-dropzone:hover,
-.media-modal-dropzone--dragover {
-  background: var(--input-background);
-}
-
-/* SVG dashed border — rounded corners with exact 4px dash */
-.media-modal-dropzone-border {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: visible;
-}
-
-.media-modal-dropzone-border rect {
-  x: 0.75px;
-  y: 0.75px;
-  width: calc(100% - 1.5px);
-  height: calc(100% - 1.5px);
-  fill: none;
-  stroke: var(--border-elevated);
-  stroke-width: 1.5;
-  stroke-dasharray: 4 4;
-  transition: stroke 150ms ease;
-}
-
-.media-modal-dropzone:hover .media-modal-dropzone-border rect,
-.media-modal-dropzone--dragover .media-modal-dropzone-border rect {
-  stroke: var(--border-hover);
-}
-
-.media-modal-dropzone-icon {
-  color: var(--text-tertiary);
-}
-
-.media-modal-dropzone-text {
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-secondary);
-  text-align: center;
-}
-
-.media-modal-dropzone-formats {
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-tertiary);
-  text-align: center;
   line-height: 1.5;
-}
-
-.media-modal-select-btn {
-  white-space: nowrap;
-  margin-top: var(--space-xs);
-  padding: var(--space-s) var(--space-m);
-  font-size: var(--font-size-h5);
-  font-weight: 700;
   color: var(--text-primary);
-  background: transparent;
-  border: 1.5px solid var(--text-primary);
-  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: color 150ms ease, border-color 150ms ease;
 }
 
-.media-modal-select-btn:hover {
-  color: var(--text-button-hover);
-  border-color: var(--text-button-hover);
+.assessment-modal-image-correct-mark--disabled {
+  color: var(--text-disabled);
+  cursor: default;
 }
 
-/* Staged preview inside drop zone */
-.media-modal-staged-preview {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
+/* The correct mark is green, as the Multiple Choice radio is (--control-selected on
+   .assessment-modal-option-field), not the amber of a neutral selection. */
+.assessment-modal-image-correct-mark .checkbox path {
+  fill: var(--success-500);
 }
 
-/* ===== Crop UI ===== */
-.media-modal-crop {
-  position: relative;
-  width: 400px;
-  height: 224px;
-  overflow: hidden;
-  border-radius: var(--radius-sm);
-  cursor: grab;
-  user-select: none;
-  background-color: var(--neutral-900);
+/* Marked correct: a 2px green border drawn inside the image, so the tile keeps its size. */
+.assessment-modal-image-tile--correct {
+  outline: 2px solid var(--success-500);
+  outline-offset: -2px;
 }
 
-.media-modal-crop--dragging {
-  cursor: grabbing;
-}
-
-/* Zoom slider bar — overlays bottom of crop area */
-.media-modal-crop-slider {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.assessment-modal-image-remove {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-s) var(--space-m);
-  background: color-mix(in srgb, var(--neutral-900) 56%, transparent);
-  backdrop-filter: blur(4px);
-  z-index: 1;
-}
-
-/* Range input styling */
-.media-modal-crop-range {
-  -webkit-appearance: none;
-  appearance: none;
-  flex: 1;
-  height: 4px;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--neutral-0) 24%, transparent);
-  outline: none;
-  cursor: pointer;
-}
-
-.media-modal-crop-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--neutral-0);
-  cursor: pointer;
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--neutral-900) 30%, transparent);
-}
-
-.media-modal-crop-range::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--neutral-0);
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--neutral-900) 30%, transparent);
-}
-
-.media-modal-staged-audio {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-m);
-  background: var(--input-background);
-  border-radius: var(--radius-s);
-  width: 100%;
-}
-
-.media-modal-staged-filename {
-  font-size: var(--font-size-md);
-  font-weight: 500;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
   color: var(--text-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.media-modal-staged-change {
-  font-size: var(--font-size-h5);
-  font-weight: 700;
-  color: var(--text-button-outlined);
-  background: none;
-  border: none;
   cursor: pointer;
-  transition: color 150ms ease;
+  transition: background 150ms ease, color 150ms ease;
 }
 
-.media-modal-staged-change:hover {
-  color: var(--text-button-hover);
+/* Destructive: the bin turns --text-error on hover. */
+.assessment-modal-image-remove:hover {
+  background: var(--page-background-hover);
+  color: var(--text-error);
 }
 
-/* Save button */
-.media-modal-save {
-  white-space: nowrap;
-  align-self: center;
-  padding: var(--space-sm) var(--space-xl);
-  font-size: var(--font-size-h5);
-  font-weight: 700;
-  color: var(--text-button-foreground);
-  background: var(--primary-button-background);
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background 150ms ease;
-}
-
-.media-modal-save:hover {
-  background: var(--primary-button-background-hover);
-}
-
-.media-modal-save:disabled {
-  background: var(--button-background-disabled);
-  color: var(--text-button-disabled);
-  cursor: not-allowed;
+.assessment-modal-image-remove:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
 }

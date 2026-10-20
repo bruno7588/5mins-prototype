@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
+import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
 import QuizHeader from './components/QuizHeader'
 import { FORMAT_ORDER, QUIZ_SAMPLES, type FormatKey } from './quizData'
 import MatchPairsPartial from './formats/MatchPairsPartial'
@@ -10,6 +11,7 @@ import Categorization from './formats/Categorization'
 import SequencingDnd from './formats/SequencingDnd'
 import SelectAll from './formats/SelectAll'
 import SingleChoice from './formats/SingleChoice'
+import ImageChoice from './formats/ImageChoice'
 import FreeText from './formats/FreeText'
 import './quiz-lab.css'
 
@@ -22,6 +24,8 @@ import './quiz-lab.css'
 function QuizLab() {
   const navigate = useNavigate()
   const [format, setFormat] = useState<FormatKey>('match-pairs')
+  /** Phone (the app) or the desktop feed's 544px panel (learner web). */
+  const [device, setDevice] = useState<'mobile' | 'desktop'>('mobile')
   const activeLabel = FORMAT_ORDER.find((f) => f.key === format)?.label ?? ''
 
   const renderFormat = () => {
@@ -40,6 +44,8 @@ function QuizLab() {
         return <SelectAll question={q} />
       case 'single-choice':
         return <SingleChoice question={q} />
+      case 'image-choice':
+        return <ImageChoice question={q} />
       case 'free-text':
         return <FreeText question={q} />
     }
@@ -47,30 +53,68 @@ function QuizLab() {
 
   return (
     <div className="ql-lab" data-theme="dark">
-      <div className="ql-lab__bar">
-        <span className="ql-lab__title">Quiz Lab</span>
-        <span className="ql-lab__sub">
-          New lesson quiz formats we're exploring — tap-only and mobile-first.
-        </span>
+      <header className="ql-lab__bar">
+        <h1 className="ql-lab__title">Quiz Lab</h1>
         <ContentSwitcher
-          items={FORMAT_ORDER.map((f) => ({ key: f.key, label: f.label }))}
-          activeKey={format}
-          onChange={(key) => setFormat(key as FormatKey)}
+          items={[
+            { key: 'mobile', label: 'Mobile' },
+            { key: 'desktop', label: 'Desktop' },
+          ]}
+          activeKey={device}
+          onChange={(key) => setDevice(key as 'mobile' | 'desktop')}
         />
-      </div>
+      </header>
 
-      <PhoneFrame onExit={() => navigate('/workspace')}>
-        {/* Remount on format change so each preview starts fresh. */}
-        <div key={format} className="ql-quizview">
-          <QuizHeader
-            label={activeLabel}
-            used={1}
-            total={3}
-            onClose={() => navigate('/workspace')}
-          />
-          {renderFormat()}
+      <div className="ql-lab__body">
+        {/* The formats as a side panel (DS side panel items, navigation.md), so the
+            list has room to grow and the stage keeps the full height. */}
+        <nav className="ql-lab__nav" aria-label="Quiz formats">
+          {FORMAT_ORDER.map((f) => (
+            <button
+              key={f.key}
+              type="button"
+              className={`ql-lab__nav-item${f.key === format ? ' is-selected' : ''}`}
+              aria-current={f.key === format ? 'page' : undefined}
+              onClick={() => setFormat(f.key)}
+            >
+              {f.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="ql-lab__main">
+          {/* Remount on format or device change so each preview starts fresh. */}
+          {device === 'mobile' ? (
+            <PhoneFrame onExit={() => navigate('/workspace')}>
+              <div key={format} className="ql-quizview">
+                <QuizHeader
+                  label={activeLabel}
+                  used={1}
+                  total={3}
+                  onClose={() => navigate('/workspace')}
+                />
+                {renderFormat()}
+              </div>
+            </PhoneFrame>
+          ) : (
+            /* The same renderers in the panel the desktop feed gives them, as the
+               course builder's Preview shows them. */
+            <div className="ql-lab__desktop">
+              <DesktopPreview>
+                <div key={format} className="ql-quizview">
+                  <QuizHeader
+                    label={activeLabel}
+                    used={1}
+                    total={3}
+                    onClose={() => navigate('/workspace')}
+                  />
+                  {renderFormat()}
+                </div>
+              </DesktopPreview>
+            </div>
+          )}
         </div>
-      </PhoneFrame>
+      </div>
     </div>
   )
 }

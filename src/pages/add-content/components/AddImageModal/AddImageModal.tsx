@@ -243,7 +243,9 @@ function AddImageModal({
     const reader = new FileReader()
     reader.onload = () => {
       if (typeof reader.result !== 'string') return
-      if (upload.confirm) {
+      /* The crop redraws through a canvas, which keeps only a GIF's first frame, so a
+         GIF is used as picked and left to its frame to square it. */
+      if (upload.confirm && file.type !== 'image/gif') {
         const src = reader.result
         const probe = new Image()
         probe.onload = () => {

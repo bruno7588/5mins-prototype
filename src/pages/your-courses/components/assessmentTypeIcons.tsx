@@ -8,6 +8,7 @@ import {
   ClipboardText,
   Edit,
   I3Square,
+  Gallery,
   RecordCircle,
   SliderVertical1,
 } from 'iconsax-react'
@@ -29,6 +30,8 @@ export function assessmentTypeIcon(
   switch (type) {
     case 'single-choice':
       return <RecordCircle size={size} color={c} variant={variant} />
+    case 'image-choice':
+      return <Gallery size={size} color={c} variant={variant} />
     case 'match-pairs':
       return <ArrangeHorizontal size={size} color={c} variant={variant} />
     case 'sequencing':

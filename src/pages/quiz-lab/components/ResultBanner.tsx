@@ -11,9 +11,12 @@ import type { FeedbackStatus } from './FeedbackFooter'
 function ResultBanner({
   status,
   explanation,
+  title,
 }: {
   status: FeedbackStatus
   explanation?: string
+  /** Replaces "Well done!" / "Not quite!", e.g. "Partly right" for a partial answer. */
+  title?: string
 }) {
   if (status === 'idle') return null
   const correct = status === 'correct'
@@ -23,7 +26,7 @@ function ResultBanner({
         <span className="ql-result__emoji" aria-hidden="true">
           {correct ? '👏' : '🙂'}
         </span>
-        <span className="ql-result__title">{correct ? 'Well done!' : 'Not quite!'}</span>
+        <span className="ql-result__title">{title ?? (correct ? 'Well done!' : 'Not quite!')}</span>
       </div>
       {explanation && <p className="ql-result__explanation">{explanation}</p>}
     </div>

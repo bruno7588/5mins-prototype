@@ -14,12 +14,17 @@ interface CheckboxProps {
   indeterminate?: boolean
   onChange?: () => void
   disabled?: boolean
+  /** Names the box when no visible text does, e.g. "Mark option 2 as correct". */
+  ariaLabel?: string
+  className?: string
 }
 
-function Checkbox({ checked, indeterminate = false, onChange, disabled = false }: CheckboxProps) {
+function Checkbox({ checked, indeterminate = false, onChange, disabled = false, ariaLabel, className }: CheckboxProps) {
   return (
     <button
-      className={`checkbox${disabled ? ' checkbox--disabled' : ''}`}
+      type="button"
+      className={`checkbox${disabled ? ' checkbox--disabled' : ''}${className ? ` ${className}` : ''}`}
+      aria-label={ariaLabel}
       onClick={disabled ? undefined : onChange}
       disabled={disabled}
       role="checkbox"

@@ -30,6 +30,9 @@ export function AnswerBars({
   correctIndex,
   leadIndex = null,
   unit = 'learners',
+  images,
+  correctIndices,
+  correctCount = 0,
 }: {
   options: string[]
   tally: number[]
@@ -39,17 +42,38 @@ export function AnswerBars({
   /** A poll's clear leader — only set when one option leads outright. */
   leadIndex?: number | null
   unit?: 'learners' | 'votes'
+  /** Image options (DES-345): each row shows its image instead of words. */
+  images?: string[]
+  /** Several right answers: every one is ticked, and the figure at rest is how many
+      learners picked exactly that set (`correctCount`), not any one row's share. */
+  correctIndices?: number[]
+  correctCount?: number
 }) {
   const [active, setActive] = useState<number | null>(null)
 
-  const rest = correctIndex ?? leadIndex
+  const multi = correctIndices !== undefined
+  const isRight = (i: number) => (multi ? correctIndices.includes(i) : i === correctIndex)
+  const rest = multi ? null : correctIndex ?? leadIndex
   const shown = active ?? rest
-  const shownIsCorrect = correctIndex !== null && shown === correctIndex
+  const shownIsCorrect = shown !== null && (multi || correctIndex !== null) && isRight(shown)
+  const restCorrect = multi && active === null
 
   return (
     <div className="ast-answers">
       <div className="ast-readout" aria-live="polite">
-        {shown === null ? (
+        {restCorrect ? (
+          <>
+            <span key="rest" className="ast-readout__figure is-correct">
+              {pct(correctCount, responded)}%
+            </span>
+            <span className="ast-readout__text">
+              <span className="ast-readout__label">answered correctly</span>
+              <span className="ast-readout__sub">
+                {correctCount} of {responded} {unit}
+              </span>
+            </span>
+          </>
+        ) : shown === null ? (
           /* A poll with no outright leader: the count is the only honest headline. */
           <>
             <span className="ast-readout__figure">{responded}</span>
@@ -68,7 +92,11 @@ export function AnswerBars({
             </span>
             <span className="ast-readout__text">
               <span className="ast-readout__label">
-                {active === null && correctIndex !== null ? 'answered correctly' : options[shown]}
+                {active === null && correctIndex !== null
+                  ? 'answered correctly'
+                  : images
+                    ? 'picked this image'
+                    : options[shown]}
               </span>
               <span className="ast-readout__sub">
                 {tally[shown]} of {responded} {unit}
@@ -81,10 +109,10 @@ export function AnswerBars({
       <ol className="ast-rows" data-focused={active !== null ? 'true' : undefined}>
         {options.map((label, i) => {
           const p = pct(tally[i], responded)
-          const isCorrect = i === correctIndex
+          const isCorrect = isRight(i)
           const tone = isCorrect ? 'is-correct' : i === leadIndex ? 'is-lead' : 'is-plain'
           return (
-            <li key={label}>
+            <li key={images ? i : label}>
               <button
                 type="button"
                 className={`ast-row ${tone}${i === active ? ' is-focused' : ''}`}
@@ -94,7 +122,7 @@ export function AnswerBars({
                 onBlur={() => setActive(null)}
                 onClick={() => setActive(active === i ? null : i)}
                 aria-pressed={i === active}
-                aria-label={`${label}${isCorrect ? ', correct answer' : ''}, ${p}%, ${tally[i]} ${unit}`}
+                aria-label={`${images ? `Image ${i + 1}` : label}${isCorrect ? ', correct answer' : ''}, ${p}%, ${tally[i]} ${unit}`}
               >
                 <span className="ast-row__head">
                   <span className="ast-row__label">
@@ -106,7 +134,7 @@ export function AnswerBars({
                         className="ast-row__tick"
                       />
                     )}
-                    {label}
+                    {images ? <img className="ast-row__thumb" src={images[i]} alt="" /> : label}
                   </span>
                   <span className="ast-row__pct">{p}%</span>
                 </span>
@@ -248,6 +276,9 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
           correctIndex={a.correctIndex}
           tally={optionTally(a)}
           responded={responded}
+          images={a.optionImages}
+          correctIndices={a.correctIndices}
+          correctCount={a.responses.filter((r) => r.correct).length}
         />
       )}
     </section>

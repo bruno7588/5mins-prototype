@@ -55,7 +55,7 @@ A drop zone that lets the user drag in or pick one file, then shows its progress
 | Error message (text) | "Error message here!" | `errorMessage` | string or string[] | Error; the "+N errors" line is fixed sample text |
 
 - **Figma only:** the `Info` / `Info2` slots as free containers (text and icons inside a slot cannot be component properties); no Disabled variant. In Image and Image focus the crop square is a fixed size (240px L, 180px S) and does not grow if the instance is resized.
-- **Code only:** `onFileSelect(file)`, `onChangeFile()`, `accept`, `multiple` (several files, one `onFileSelect` call each), `helpText` (Enabled/Hover body copy), `icon` (Enabled/Hover glyph), `fileIcon` (Filled thumbnail), `className`.
+- **Code only:** `onFileSelect(file)`, `onChangeFile()`, `accept`, `multiple` (several files, one `onFileSelect` call each), `helpText` (Enabled/Hover body copy; an empty string drops it), `buttonLabel` (default "Select File"), `onBrowse()` (replaces the computer's file picker on click, e.g. to open AddImageModal; drops still go to `onFileSelect`), `icon` (Enabled/Hover glyph), `fileIcon` (Filled thumbnail), `className`.
 
 ```tsx
 type FileUploaderSize  = 'L' | 'S';

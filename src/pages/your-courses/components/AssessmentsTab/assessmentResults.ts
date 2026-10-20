@@ -9,6 +9,10 @@
 
 import type { GeneratableType } from '@/data/aiAssessmentGeneration'
 import { ORG_USERS } from '@/data/orgUsers'
+import { QUIZ_SAMPLES, type ImageChoiceQuestion } from '@/pages/quiz-lab/quizData'
+
+/** The Quiz Lab's image question, so the results describe the question learners see there. */
+const IMAGE_SAMPLE = QUIZ_SAMPLES['image-choice'] as ImageChoiceQuestion
 
 /** The six formats that carry a right answer. Poll, short text and exercise do not. */
 export type GradedType = Exclude<GeneratableType, 'poll' | 'short-text' | 'exercise'>
@@ -27,6 +31,9 @@ export interface ChoiceResponse {
   submittedAt: string
   optionIndex: number
   correct: boolean
+  /** Image options (DES-345): every image picked, since several can be right.
+      `optionIndex` then holds the first of them. */
+  picks?: number[]
 }
 
 /** A poll vote. Same shape as a choice minus the verdict — a poll has no right answer. */
@@ -90,6 +97,10 @@ export interface GradedAssessment extends AssessmentBase {
   type: GradedType
   options: string[]
   correctIndex: number
+  /** Multiple choice with image options (DES-345): the images, in the admin's order,
+      and every right one. `options` then holds an empty label per image. */
+  optionImages?: string[]
+  correctIndices?: number[]
   responses: ChoiceResponse[]
 }
 
@@ -200,7 +211,11 @@ export function questionTally(a: MultiAssessment): number[] {
 /** Votes per option, in option order. */
 export function optionTally(a: GradedAssessment | PollAssessment): number[] {
   const tally = a.options.map(() => 0)
-  for (const r of a.responses) tally[r.optionIndex] += 1
+  for (const r of a.responses) {
+    /* An image question counts every image picked, so its shares need not sum to 100. */
+    if ('picks' in r && r.picks) for (const p of r.picks) tally[p] += 1
+    else tally[r.optionIndex] += 1
+  }
   return tally
 }
 
@@ -292,6 +307,28 @@ function choices(id: string, count: number, rightCount: number, options: number,
       submittedAt: DATES[(seed(learner.id) + i) % DATES.length],
       optionIndex: correct ? correctIndex : wrongPick,
       correct,
+    }
+  })
+}
+
+/** `count` responses to an image question, `rightCount` of them the exact correct set.
+    The rest either missed one right image or added a wrong one. */
+function imagePicks(id: string, count: number, rightCount: number, images: number, correct: number[]): ChoiceResponse[] {
+  const wrong = Array.from({ length: images }, (_, i) => i).filter((i) => !correct.includes(i))
+  return pool.slice(0, count).map((learner, i) => {
+    const s = seed(id + learner.id) + i
+    const picks =
+      i < rightCount
+        ? correct
+        : s % 2 === 0
+          ? correct.filter((_, k) => k !== s % correct.length)
+          : [...correct, wrong[s % wrong.length]].sort((x, y) => x - y)
+    return {
+      learner,
+      submittedAt: DATES[(seed(learner.id) + i) % DATES.length],
+      optionIndex: picks[0],
+      correct: i < rightCount,
+      picks,
     }
   })
 }
@@ -616,6 +653,19 @@ export const courseAssessments: AssessmentResult[] = [
     ],
     correctIndex: 1,
     responses: choices('a1', 112, 84, 4, 1),
+  },
+  /* Image options (DES-345): the images are the answers, and three of six are right. */
+  {
+    id: 'a1i',
+    kind: 'graded',
+    type: 'image-choice',
+    title: QUIZ_SAMPLES['image-choice'].prompt,
+    enrolled: ENROLLED,
+    options: IMAGE_SAMPLE.images.map(() => ''),
+    correctIndex: IMAGE_SAMPLE.correctIndices[0],
+    optionImages: IMAGE_SAMPLE.images,
+    correctIndices: IMAGE_SAMPLE.correctIndices,
+    responses: imagePicks('a1i', 104, 71, IMAGE_SAMPLE.images.length, IMAGE_SAMPLE.correctIndices),
   },
   {
     id: 'a2',

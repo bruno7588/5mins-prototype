@@ -70,6 +70,8 @@ export function getAssessmentIllustration(
 const byLabel: Record<string, AssessmentType> = {
   'Lesson Quiz': 'lesson-quiz',
   'Multiple Choice': 'multiple-choice',
+  // No artwork of its own yet (DES-345): Image Choice borrows Multiple Choice's.
+  'Image Choice': 'multiple-choice',
   'Short Text': 'short-text',
   Exercise: 'exercise',
   Poll: 'poll',

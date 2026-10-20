@@ -10,6 +10,7 @@ import {
   CalendarEdit,
   ClipboardText,
   RecordCircle,
+  Gallery,
   Edit,
   ArchiveBook,
   Chart1,
@@ -70,6 +71,7 @@ const SITUATIONAL: Leaf[] = [
 const ASSESSMENTS: Leaf[] = [
   { key: 'as-ai', label: 'Create With AI', icon: <AssessmentsAIIcon size={ICON} color={C} variant="Linear" />, action: { kind: 'assessments-ai' } },
   { key: 'single-choice', label: 'Multiple Choice', icon: <RecordCircle size={ICON} color={C} variant="Linear" />, action: { kind: 'assessment', type: 'single-choice' } },
+  { key: 'image-choice', label: 'Image Choice', icon: <Gallery size={ICON} color={C} variant="Linear" />, action: { kind: 'assessment', type: 'image-choice' } },
   { key: 'match-pairs', label: TYPE_CONFIG['match-pairs'].label, icon: <ArrangeHorizontal size={ICON} color={C} variant="Linear" />, action: { kind: 'interactive', type: 'match-pairs' } },
   { key: 'sequencing', label: TYPE_CONFIG.sequencing.label, icon: <I3Square size={ICON} color={C} variant="Linear" />, action: { kind: 'interactive', type: 'sequencing' } },
   { key: 'categorization', label: TYPE_CONFIG.categorization.label, icon: <Category size={ICON} color={C} variant="Linear" />, action: { kind: 'interactive', type: 'categorization' } },

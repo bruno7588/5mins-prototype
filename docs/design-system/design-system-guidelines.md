@@ -20,7 +20,7 @@ The index for the 5Mins.ai design system: the global rules, a map of every doc, 
 9. **Copy casing.** Button labels in Title Case ("Save Mapping"); headings and other UI copy in sentence case.
 10. **Colour roles.** Never `--primary-500` as text on white; never cyan or amber for warnings or errors; amber is selection only (see the three-amber system in `colors.md`).
 11. **Overlays.** Backdrops are `var(--scrim)`; side drawers are 720px wide.
-12. **No faked states.** Never fake a state with opacity; disabled uses `--button-background-disabled` / `--text-disabled`. Animate expand/collapse with `Collapse`.
+12. **No faked states.** Never fake a state with opacity; disabled uses `--button-background-disabled` / `--text-disabled`. Animate expand/collapse with `Collapse`. Every animation follows `motion.md`: sized to how often it is seen, under 300ms for UI, with a reduced-motion fallback.
 13. **Semantic HTML and ARIA.** Headings in order; `<article>` for lesson cards; `<nav aria-label="Breadcrumb">`; tabs use `role="tablist"` / `role="tab"` with `aria-selected`; status badges `role="status"`; Dialog `role="alertdialog"`, Modal and Side Drawer `role="dialog"`. Disabled `aria-disabled="true"`; loading buttons `aria-busy="true"`; progress bars `role="progressbar"` with `aria-valuenow`/`-min`/`-max`; overlays `aria-modal="true"`, `aria-labelledby` the title, a focus trap and focus return on close.
 
 ## Doc map
@@ -34,6 +34,7 @@ Every component doc follows `_template.md`: Usage, then Figma to code. Read the 
 | `colors.md` | Palettes, semantic surface/text tokens, light/dark values, three-amber system | Any colour decision |
 | `typography.md` | Poppins scale, weights, line heights, `--font-size-*` | Any text style |
 | `layout.md` | Spacing, radius, icon sizes, shadows, scrim | Any spacing, radius, elevation or backdrop |
+| `motion.md` | When to animate, durations, easing, which tool, reduced motion | Adding or changing any animation or transition |
 | `iconography.md` | Iconsax rules, variants, colours, skill illustrations | Choosing or sizing an icon |
 | `buttons.md` | All button families, sizes, states, AI gradient | Any button or link |
 | `badges.md` | Status pills, quiz and scheduled badges | Any status, tag or count pill |

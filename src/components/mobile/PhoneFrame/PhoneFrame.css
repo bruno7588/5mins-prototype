@@ -1,10 +1,15 @@
 /* Phone frame wrapper for the mobile app prototype (375x812 screen, dark bezel) */
 
+/* A size container, so the phone can fit the height it is given (see .m-phone__screen). */
 .m-phone-stage {
   position: relative;
-  min-height: 100vh;
+  width: 100%;
+  /* A fixed height, not a minimum: a size container measures its own height, and a
+     min-height alone leaves that at 0. */
+  height: 100vh;
+  container-type: size;
   display: grid;
-  place-items: center;
+  place-items: safe center;
   padding: var(--space-xl);
   background: var(--page-background);
   overflow: auto;
@@ -53,7 +58,9 @@
 .m-phone__screen {
   position: relative;
   width: 375px;
-  height: 812px;
+  /* Fits the stage's height, like a shorter phone: the full 812px when there is room,
+     down to 480px on a small laptop. Below that the stage scrolls. */
+  height: clamp(480px, 100cqh - 2 * var(--space-ssm), 812px);
   display: flex;
   flex-direction: column;
   border-radius: 44px;

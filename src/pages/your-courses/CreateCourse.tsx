@@ -45,6 +45,7 @@ import {
 
 const assessmentLabels: Record<AssessmentType, string> = {
   'single-choice': 'Multiple Choice',
+  'image-choice': 'Image Choice',
   'short-text': 'Short Text',
   exercise: 'Exercise',
   poll: 'Poll',

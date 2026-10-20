@@ -17,7 +17,8 @@ interface FileUploaderProps {
   accept?: string
   /** Accept several files at once; onFileSelect is called once per file. */
   multiple?: boolean
-  /** Enabled/Hover body copy; defaults to "Drag and drop file here or click to upload". */
+  /** Enabled/Hover body copy; defaults to "Drag and drop file here or click to upload".
+      An empty string drops the line, leaving the icon and Select File. */
   helpText?: string
   /** Enabled/Hover: replaces the upload icon, e.g. a video or audio glyph for a media upload. */
   icon?: ReactNode
@@ -26,6 +27,12 @@ interface FileUploaderProps {
   /** Filled state: shows only this (e.g. the picked image), without the file name or
       Select File. A new file can still be dropped on the zone. */
   filledPreview?: ReactNode
+  /** Replaces the computer's file picker: clicking the zone or Select File calls this
+      instead (e.g. to open a picker with upload, AI and stock tabs). Drops still go to
+      onFileSelect. */
+  onBrowse?: () => void
+  /** The button label; defaults to "Select File". */
+  buttonLabel?: string
   className?: string
 }
 
@@ -43,6 +50,8 @@ export function FileUploader({
   icon,
   fileIcon,
   filledPreview,
+  onBrowse,
+  buttonLabel = 'Select File',
   className,
 }: FileUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -54,7 +63,8 @@ export function FileUploader({
 
   const openPicker = () => {
     if (state === 'Filled') onChangeFile?.()
-    inputRef.current?.click()
+    if (onBrowse) onBrowse()
+    else inputRef.current?.click()
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +105,7 @@ export function FileUploader({
       className={`file-uploader__btn-outlined${isHover ? ' file-uploader__btn-outlined--hover' : ''}`}
       onClick={e => { e.stopPropagation(); openPicker() }}
     >
-      Select File
+      {buttonLabel}
     </button>
   )
 
@@ -130,7 +140,7 @@ export function FileUploader({
         <>
           <div className="file-uploader__icon-group">
             {icon ?? <DocumentUpload size={iconSize} color="var(--text-secondary)" variant="Linear" />}
-            <p className="file-uploader__body">{helpText}</p>
+            {helpText && <p className="file-uploader__body">{helpText}</p>}
           </div>
           {selectButton}
         </>

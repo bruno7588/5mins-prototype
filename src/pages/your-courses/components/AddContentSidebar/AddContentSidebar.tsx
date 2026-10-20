@@ -17,7 +17,7 @@ import './AddContentSidebar.css'
 const iconSize = 20
 const iconColor = 'currentColor'
 
-export type AssessmentType = 'single-choice' | 'short-text' | 'exercise' | 'poll'
+export type AssessmentType = 'single-choice' | 'image-choice' | 'short-text' | 'exercise' | 'poll'
 export type ActiveDrawer = 'library' | 'scorm' | null
 
 interface AddContentSidebarProps {

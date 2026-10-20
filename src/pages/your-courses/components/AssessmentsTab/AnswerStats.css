@@ -203,6 +203,14 @@
   color: var(--text-primary);
 }
 
+/* Image options (DES-345): the image stands in for the option's words. */
+.ast-row__thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: var(--radius-s);
+}
+
 /* Wears the bar's own colour, so the two step back together while another row is
    pointed at. */
 .ast-row__tick {

@@ -51,13 +51,17 @@ export const CARD_TYPE_BY_SCOPE: Record<GenerationScope, 'Assessment' | 'Situati
   situational: 'SituationalTest',
 }
 
+/* Every format a course can hold. Image Choice (DES-345) is built by hand only, so it
+   is here but not in ASSESSMENT_TYPES, the AI picker's list. */
 export const GENERATABLE_TYPES: GeneratableType[] = [
   ...ASSESSMENT_TYPES,
+  'image-choice',
   'situational-test',
 ]
 
 const CLASSIC_LABELS: Record<AssessmentType, string> = {
   'single-choice': 'Multiple Choice',
+  'image-choice': 'Image Choice',
   'short-text': 'Short Text',
   exercise: 'Exercise',
   poll: 'Poll',
@@ -126,6 +130,11 @@ const STEMS: Record<Exclude<GeneratableType, 'situational-test'>, [string, strin
   'single-choice': [
     'Which of these best describes the main point of "%s"?',
     'According to "%s", which action should you take first?',
+  ],
+  /* Image Choice is never generated (not in ASSESSMENT_TYPES); the record needs a key. */
+  'image-choice': [
+    'Which of these images show what "%s" describes?',
+    'Which of these images match the advice in "%s"?',
   ],
   'short-text': [
     'In your own words, what is the key takeaway from "%s"?',

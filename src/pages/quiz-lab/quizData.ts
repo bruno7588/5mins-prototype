@@ -19,6 +19,12 @@ export type {
 } from '@/data/interactiveQuestions'
 
 import type { InteractiveQuestion } from '@/data/interactiveQuestions'
+import officeTowers from '@/assets/programs/course-thumbs/course-thumb-1.jpg'
+import meeting from '@/assets/programs/course-thumbs/course-thumb-2.jpg'
+import dataWave from '@/assets/programs/course-thumbs/course-thumb-3.jpg'
+import skyscrapers from '@/assets/programs/course-thumbs/course-thumb-4.jpg'
+import paperwork from '@/assets/programs/course-thumbs/course-thumb-5.jpg'
+import talk from '@/assets/programs/course-thumbs/course-thumb-6.jpg'
 
 /** The lab's tabs. Select-all is learner-only — it has no authoring UI yet. */
 export type FormatKey =
@@ -28,6 +34,7 @@ export type FormatKey =
   | 'sequencing'
   | 'select-all'
   | 'single-choice'
+  | 'image-choice'
   | 'free-text'
 
 export interface SelectAllQuestion {
@@ -43,6 +50,27 @@ export interface SelectAllQuestion {
 
 /** One answer of several. A poll is the same screen with `correctIndex: -1` — it asks
  *  rather than marks, so there is nothing to check and nothing to reveal. */
+/** Multiple choice with image options (DES-345): no labels, one or more correct. */
+export interface ImageChoiceQuestion {
+  type: 'image-choice'
+  prompt: string
+  /** Image URLs, in the order the admin set them. */
+  images: string[]
+  /** Indexes into `images`. */
+  correctIndices: number[]
+  explanation?: string
+}
+
+/** All or nothing: right only when the picks are exactly the correct set. The counts say
+    why a wrong answer failed: how many of the correct images were found, how many picks
+    were wrong, and how many correct images were left unpicked. */
+export function gradeImageChoice(picked: readonly number[], correct: readonly number[]) {
+  const hits = picked.filter((i) => correct.includes(i)).length
+  const wrongPicks = picked.length - hits
+  const missed = correct.length - hits
+  return { right: wrongPicks === 0 && missed === 0, hits, wrongPicks, missed, total: correct.length }
+}
+
 export interface SingleChoiceQuestion {
   type: 'single-choice'
   prompt: string
@@ -64,6 +92,7 @@ export type QuizQuestion =
   | InteractiveQuestion
   | SelectAllQuestion
   | SingleChoiceQuestion
+  | ImageChoiceQuestion
   | FreeTextQuestion
 
 /** Fisher–Yates shuffle returning a new array (used for banks / column order). */
@@ -87,6 +116,12 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
       'Forward it to your team to warn them',
     ],
     correctIndex: 1,
+  },
+  'image-choice': {
+    type: 'image-choice',
+    prompt: 'Which of these show people working together?',
+    images: [meeting, officeTowers, paperwork, dataWave, talk, skyscrapers],
+    correctIndices: [0, 2, 4],
   },
   'free-text': {
     type: 'free-text',
@@ -153,6 +188,7 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
 
 export const FORMAT_ORDER: { key: FormatKey; label: string }[] = [
   { key: 'single-choice', label: 'Multiple choice' },
+  { key: 'image-choice', label: 'Image choice' },
   { key: 'match-pairs', label: 'Match the pairs' },
   { key: 'fill-blank', label: 'Fill in the blank' },
   { key: 'categorization', label: 'Categorize' },

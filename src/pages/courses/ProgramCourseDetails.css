@@ -604,3 +604,11 @@
 .pcd-cert-modal__cta {
   align-self: center;
 }
+
+/* The phone stage fills the overlay rather than a whole viewport, so the phone fits
+   inside the overlay's padding. */
+.pcd-quizstage .m-phone-stage {
+  min-height: 0;
+  height: 100%;
+  padding: 0;
+}

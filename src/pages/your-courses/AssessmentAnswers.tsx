@@ -65,7 +65,8 @@ function sheet(a: AssessmentResult): string[][] {
         r.learner.name,
         r.learner.role,
         r.submittedAt,
-        a.options[r.optionIndex],
+        /* A sheet cannot hold the images, so it names them by their place in the question. */
+        a.optionImages && r.picks ? r.picks.map((p) => `Image ${p + 1}`).join('; ') : a.options[r.optionIndex],
         r.correct ? 'Correct' : 'Incorrect',
       ]),
     ]
@@ -266,6 +267,16 @@ function AssessmentAnswers() {
              its "option" is how much of the arrangement was right — so the count leads
              and the phrase steps back, the way the chart above states it. */
           render: (r) => {
+            /* Image options (DES-345): the images they picked, never "Option N". */
+            if (a.optionImages && r.picks) {
+              return (
+                <span className="asp-thumbs">
+                  {r.picks.map((p) => (
+                    <img key={p} className="asp-thumb" src={a.optionImages![p]} alt={`Image ${p + 1}`} />
+                  ))}
+                </span>
+              )
+            }
             const answer = a.options[r.optionIndex]
             return (
               <span className="asp-choice">
