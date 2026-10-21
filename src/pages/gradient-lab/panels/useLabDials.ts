@@ -5,7 +5,9 @@ import {
   DITHER_SHAPES,
   DITHER_TYPES,
   GRAIN_SHAPES,
+  isCanvasPattern,
   MAX_FRAME,
+  type CanvasPattern,
   type DitherShape,
   type DitherType,
   type GradientRecipe,
@@ -18,7 +20,8 @@ import {
    "Shader" (motion and grain). The controls follow the shader type: the mesh
    gradient has distortion, swirl and two grain sliders; the grain gradient has
    a shape, softness, intensity and noise; dithering has a shape, a pattern and
-   a pixel size. Only the open tab's panel is mounted, seeded from lab
+   a pixel size; each canvas pattern has a slider for every value that shapes
+   it (PATTERN_DIALS). Only the open tab's panel is mounted, seeded from lab
    state on mount, so switching tabs never loses a value. Two-way sync without
    echo loops:
    - DialKit -> lab: when the panel's values change, the recipe and preview are
@@ -52,6 +55,8 @@ interface PanelValues {
     scale: number
     rotation: number
     frame: number
+    /** A canvas pattern's own sliders, keyed by their label (PATTERN_DIALS). */
+    [dial: string]: unknown
   }
   'Preview colours': { 'header bar': string; 'navigation items': string; 'selected item': string }
   Motion: { playing: boolean; speed: number }
@@ -65,7 +70,87 @@ const SHADER_OPTIONS: { value: ShaderKind; label: string }[] = [
   { value: 'mesh', label: 'Mesh gradient' },
   { value: 'grain', label: 'Grain gradient' },
   { value: 'dither', label: 'Dithering' },
+  { value: 'sine', label: 'Sine stack' },
+  { value: 'sweep', label: 'Dot sweep' },
+  { value: 'rain', label: 'Pixel rain' },
+  { value: 'halftone', label: 'Halftone wave' },
+  { value: 'cubes', label: 'Isometric cubes' },
+  { value: 'kaleido', label: 'Kaleidoscope' },
+  { value: 'truchet', label: 'Truchet flow' },
 ]
+
+type NumberField = { [K in keyof GradientRecipe]: GradientRecipe[K] extends number ? K : never }[keyof GradientRecipe]
+
+/** Each canvas pattern's sliders: label, recipe field, min, max, step. Ranges match parseRecipe. */
+const PATTERN_DIALS: Record<CanvasPattern, [string, NumberField, number, number, number][]> = {
+  sine: [
+    ['spacing', 'sineSpacing', 2, 20, 0.1],
+    ['wavelength', 'sineWavelength', 20, 200, 1],
+    ['phase shift', 'sinePhase', 0.05, 1.5, 0.01],
+    ['amplitude', 'sineAmplitude', 0, 1, 0.01],
+    ['swell', 'sineEnvelope', 0, 0.38, 0.01],
+    ['line width', 'sineLineWidth', 0.2, 3, 0.05],
+    ['highlight line', 'sineHighlight', 0, 1, 0.01],
+  ],
+  sweep: [
+    ['spacing', 'sweepSpacing', 3, 15, 0.1],
+    ['smallest dot', 'sweepDotMin', 0, 3, 0.05],
+    ['largest dot', 'sweepDotMax', 0.5, 6, 0.05],
+    ['turn time', 'sweepTurn', 1, 12, 0.5],
+    ['surge', 'sweepSurge', 0, 0.9, 0.01],
+    ['trail', 'sweepTrail', 0.2, 4, 0.05],
+    ['arm width', 'sweepArm', 0, 4, 0.05],
+  ],
+  rain: [
+    ['cell size', 'rainCell', 2, 15, 0.1],
+    ['square size', 'rainSquare', 0.2, 1, 0.01],
+    ['dry columns', 'rainDry', 0, 0.9, 0.01],
+    ['shortest trail', 'rainTrailMin', 1, 20, 1],
+    ['trail range', 'rainTrailRange', 0, 30, 1],
+    ['fall time', 'rainFall', 0.25, 4, 0.05],
+    ['seed', 'rainSeed', 0, 99, 1],
+  ],
+  halftone: [
+    ['spacing', 'halftoneSpacing', 2, 15, 0.1],
+    ['dot size', 'halftoneDot', 0.1, 0.7, 0.01],
+    ['wave angle', 'halftoneAngle', -180, 180, 0.5],
+    ['wavelength', 'halftoneWavelength', 20, 400, 1],
+    ['wave time', 'halftoneTime', 1, 24, 0.5],
+    ['second wave angle', 'halftoneAngle2', -180, 180, 0.5],
+    ['second wavelength', 'halftoneWavelength2', 20, 400, 1],
+    ['second wave time', 'halftoneTime2', 1, 24, 0.5],
+    ['wave mix', 'halftoneMix', 0, 1, 0.01],
+    ['tone start', 'halftoneStart', 0, 1, 0.01],
+    ['tone end', 'halftoneEnd', 0, 1, 0.01],
+  ],
+  cubes: [
+    ['cube size', 'cubeSize', 3, 25, 0.1],
+    ['lift', 'cubeLift', 0, 3, 0.05],
+    ['wave time', 'cubeTime', 1, 24, 0.5],
+    ['wave across', 'cubeWaveX', -10, 10, 0.1],
+    ['wave down', 'cubeWaveY', -10, 10, 0.1],
+    ['edge width', 'cubeEdge', 0, 1, 0.01],
+  ],
+  kaleido: [
+    ['mirror size', 'kaleidoSize', 10, 80, 0.5],
+    ['large disc', 'kaleidoDisc', 0.05, 0.6, 0.01],
+    ['small disc', 'kaleidoDot', 0, 0.4, 0.01],
+    ['leg time', 'kaleidoLeg', 0.5, 6, 0.1],
+    ['small disc lag', 'kaleidoLag', 0, 12, 0.1],
+  ],
+  truchet: [
+    ['tiles across', 'truchetTiles', 2, 20, 1],
+    ['line width', 'truchetLine', 0.05, 0.5, 0.01],
+    ['turn time', 'truchetTurn', 0.2, 2, 0.05],
+    ['wave crossing', 'truchetCross', 0.5, 3, 0.05],
+    ['overshoot', 'truchetOvershoot', 0, 3, 0.05],
+    ['cycle time', 'truchetCycle', 4, 30, 0.5],
+    ['seed', 'truchetSeed', 0, 99, 1],
+  ],
+}
+
+/** A pattern's slider values from the recipe, keyed by label. */
+const patternValues = (r: GradientRecipe, kind: CanvasPattern) => Object.fromEntries(PATTERN_DIALS[kind].map(([label, field]) => [label, r[field]]))
 const options = <T extends string>(values: readonly T[]) => values.map((value) => ({ value, label: value[0].toUpperCase() + value.slice(1) }))
 const SHAPE_OPTIONS = options(GRAIN_SHAPES)
 const DITHER_SHAPE_OPTIONS = options(DITHER_SHAPES)
@@ -78,13 +163,16 @@ const FOLDERS: Record<DialsKind, Folder[]> = {
 
 function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
   const shape = { scale: r.scale, rotation: r.rotation, frame: r.frame }
-  const own: Record<ShaderKind, Partial<PanelValues['Gradient']>> = {
+  const own: Partial<Record<ShaderKind, Partial<PanelValues['Gradient']>>> = {
     mesh: { distortion: r.distortion, swirl: r.swirl },
     grain: { shape: r.shape, softness: r.softness, intensity: r.intensity },
     dither: { shape: r.ditherShape, pattern: r.ditherType, 'pixel size': r.pxSize },
   }
+  const mine = isCanvasPattern(r.shader) ? patternValues(r, r.shader) : own[r.shader]
+  // Dithering and the canvas patterns take a fixed number of colours.
+  const fixed = r.shader === 'dither' || isCanvasPattern(r.shader)
   return {
-    Gradient: { type: r.shader, ...(r.shader === 'dither' ? {} : { colours: r.colours }), ...own[r.shader], ...shape },
+    Gradient: { type: r.shader, ...(fixed ? {} : { colours: r.colours }), ...mine, ...shape },
     'Preview colours': { 'header bar': p.header, 'navigation items': p.nav, 'selected item': p.selected },
     Motion: { playing, speed: r.speed },
     Grain: r.shader === 'grain' ? { noise: r.noise } : r.shader === 'mesh' ? { mixer: r.grainMixer, overlay: r.grainOverlay } : undefined,
@@ -101,7 +189,7 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
     if (g.type === 'mesh') return { ...motion, Grain: { mixer: [v.Grain!.mixer!, 0, 1, 0.01], overlay: [v.Grain!.overlay!, 0, 1, 0.01] } }
     return motion
   }
-  const own: Record<ShaderKind, DialConfig> = {
+  const own: Partial<Record<ShaderKind, DialConfig>> = {
     mesh: { distortion: [g.distortion!, 0, 1, 0.01], swirl: [g.swirl!, 0, 1, 0.01] },
     grain: { softness: [g.softness!, 0, 1, 0.01], intensity: [g.intensity!, 0, 1, 0.01] },
     dither: {
@@ -110,14 +198,18 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
     },
   }
   const p = v['Preview colours']
+  const pattern = isCanvasPattern(g.type)
+  const mine: DialConfig = isCanvasPattern(g.type)
+    ? Object.fromEntries(PATTERN_DIALS[g.type].map(([label, , min, max, step]) => [label, [g[label] as number, min, max, step]]))
+    : own[g.type]!
   return {
     Gradient: {
       type: { type: 'select', options: SHADER_OPTIONS, default: g.type },
-      ...(g.type !== 'mesh'
+      ...(g.type === 'grain' || g.type === 'dither'
         ? { shape: { type: 'select', options: g.type === 'grain' ? SHAPE_OPTIONS : DITHER_SHAPE_OPTIONS, default: g.shape! } }
         : {}),
-      ...(g.type === 'dither' ? {} : { colours: [g.colours!, 3, 5, 1] }),
-      ...own[g.type],
+      ...(g.type === 'dither' || pattern ? {} : { colours: [g.colours!, 3, 5, 1] }),
+      ...mine,
       scale: [g.scale, 0.25, 4, 0.01],
       rotation: [g.rotation, 0, 360, 1],
       frame: [g.frame, 0, MAX_FRAME, 100],
@@ -196,7 +288,11 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
     }
     // The panel's controls belong to the current type until it rebuilds for a newly picked one.
     const { type, shape, pattern, 'pixel size': pxSize, ...g } = v.Gradient
-    const own = r.shader === 'dither' ? { ditherShape: shape, ditherType: pattern, pxSize } : { shape }
+    const own = isCanvasPattern(r.shader)
+      ? Object.fromEntries(PATTERN_DIALS[r.shader].map(([label, field]) => [field, g[label]]))
+      : r.shader === 'dither'
+        ? { ditherShape: shape, ditherType: pattern, pxSize }
+        : { shape }
     const recipe = { ...r, shader: type, ...defined({ ...g, ...own }) }
     const c = v['Preview colours']
     const preview: ThemeSet = { header: c['header bar'], nav: c['navigation items'], selected: c['selected item'] }

@@ -2,7 +2,9 @@
    colours, which come from each tenant's theme (src/data/brandPalette.ts).
    Rendered with one of three Paper Shaders: MeshGradient (soft flowing colour),
    GrainGradient (grainy shapes: wave, dots, ripple and so on) or Dithering (a
-   two-colour pixel pattern); the fields map onto their props.
+   two-colour pixel pattern); the fields map onto their props. Or with one of
+   seven canvas patterns (src/data/canvasPatterns.ts): the sine stack, the dot
+   sweep, pixel rain, the halftone wave, isometric cubes, the kaleidoscope or Truchet flow.
    Saved in a Gradient Studio slot. Slots saved before recipes held photo
    presets (version 1); parseRecipe converts those on read. */
 
@@ -14,7 +16,11 @@ export const DITHER_SHAPES = ['simplex', 'warp', 'dots', 'wave', 'ripple', 'swir
 export type DitherShape = (typeof DITHER_SHAPES)[number]
 export const DITHER_TYPES = ['random', '2x2', '4x4', '8x8'] as const
 export type DitherType = (typeof DITHER_TYPES)[number]
-export type ShaderKind = 'mesh' | 'grain' | 'dither'
+/** The shader kinds drawn in 2D canvas rather than by Paper Shaders. */
+export const CANVAS_PATTERNS = ['sine', 'sweep', 'rain', 'halftone', 'cubes', 'kaleido', 'truchet'] as const
+export type CanvasPattern = (typeof CANVAS_PATTERNS)[number]
+export type ShaderKind = 'mesh' | 'grain' | 'dither' | CanvasPattern
+export const isCanvasPattern = (kind: ShaderKind): kind is CanvasPattern => (CANVAS_PATTERNS as readonly string[]).includes(kind)
 
 export interface GradientRecipe {
   version: 2
@@ -40,6 +46,85 @@ export interface GradientRecipe {
   ditherShape: DitherShape
   ditherType: DitherType
   pxSize: number
+  /** Sine stack only. Gap between lines and wavelength, as % of the frame (2-20, 20-200). */
+  sineSpacing: number
+  sineWavelength: number
+  /** Phase shift between neighbouring lines, radians (0.05-1.5). */
+  sinePhase: number
+  /** Wave height as a share of the most the lines can take without crossing (0-1). */
+  sineAmplitude: number
+  /** How far the slow swell raises and lowers the waves (0-0.38). */
+  sineEnvelope: number
+  /** Line width, % of the frame (0.2-3). */
+  sineLineWidth: number
+  /** Where the line in the second colour sits, top to bottom (0-1). */
+  sineHighlight: number
+  /** Dot sweep only. Grid gap and the smallest and largest dot radius, as % of the frame. */
+  sweepSpacing: number
+  sweepDotMin: number
+  sweepDotMax: number
+  /** Seconds per turn of the arm (1-12). */
+  sweepTurn: number
+  /** How much each turn surges and settles (0-0.9). */
+  sweepSurge: number
+  /** How long the dots stay large behind the arm, radians (0.2-4). */
+  sweepTrail: number
+  /** Width of the arm's band of dots in the second colour, in grid steps (0-4). */
+  sweepArm: number
+  /** Pixel rain only. Cell size, % of the frame (2-15), and the square's share of it (0.2-1). */
+  rainCell: number
+  rainSquare: number
+  /** Share of columns that stay dry (0-0.9). */
+  rainDry: number
+  /** Trail length in cells: the shortest, and how much longer a column's can be (1-20, 0-30). */
+  rainTrailMin: number
+  rainTrailRange: number
+  /** Multiplies each column's fall time (2, 3, 4 or 6 s) (0.25-4). */
+  rainFall: number
+  /** Picks a different scatter of columns (0-99). */
+  rainSeed: number
+  /** Halftone wave only. Dot spacing, % of the frame (2-15), and the largest dot's radius as a share of it (0.1-0.7). */
+  halftoneSpacing: number
+  halftoneDot: number
+  /** The two travelling waves of tone: angle (degrees), wavelength (% of the frame) and seconds per wave. */
+  halftoneAngle: number
+  halftoneWavelength: number
+  halftoneTime: number
+  halftoneAngle2: number
+  halftoneWavelength2: number
+  halftoneTime2: number
+  /** How much the first wave leads the second (0-1). */
+  halftoneMix: number
+  /** Where the tone starts and ends: dots appear above the start and merge by the end (0-1). */
+  halftoneStart: number
+  halftoneEnd: number
+  /** Isometric cubes only. Half a cube's width, % of the frame (3-25), and how high a cube lifts (0-3 quarter-heights). */
+  cubeSize: number
+  cubeLift: number
+  /** Seconds per lift wave (1-24), and how far the wave turns across and down the frame (-10 to 10). */
+  cubeTime: number
+  cubeWaveX: number
+  cubeWaveY: number
+  /** Edge line width, % of the frame (0-1). */
+  cubeEdge: number
+  /** Kaleidoscope only. Mirror triangle side, % of the frame (10-80); the large and small disc radius as shares of it (0.05-0.6, 0-0.4). */
+  kaleidoSize: number
+  kaleidoDisc: number
+  kaleidoDot: number
+  /** Seconds per leg of the discs' route through the triangle (0.5-6), and how far the small disc runs behind, in seconds (0-12). */
+  kaleidoLeg: number
+  kaleidoLag: number
+  /** Truchet flow only. Tiles across the frame (2-20) and line width as a share of a tile (0.05-0.5). */
+  truchetTiles: number
+  truchetLine: number
+  /** Seconds a quarter turn takes (0.2-2), seconds a wave takes to cross the frame (0.5-3), and the turn's overshoot (0-3). */
+  truchetTurn: number
+  truchetCross: number
+  truchetOvershoot: number
+  /** Seconds for the four waves to play through and loop (4-30). */
+  truchetCycle: number
+  /** Picks a different arrangement of tiles (0-99). */
+  truchetSeed: number
   /** Animation speed; 0 holds still. 0-3 */
   speed: number
   /** Starting time in ms: picks the composition, and is the still. */
@@ -69,6 +154,56 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   ditherShape: 'warp',
   ditherType: '4x4',
   pxSize: 2,
+  sineSpacing: 6.2,
+  sineWavelength: 78,
+  sinePhase: 0.42,
+  sineAmplitude: 1,
+  sineEnvelope: 0.3,
+  sineLineWidth: 0.95,
+  sineHighlight: 0.62,
+  sweepSpacing: 6.4,
+  sweepDotMin: 0.55,
+  sweepDotMax: 2.7,
+  sweepTurn: 3,
+  sweepSurge: 0.5,
+  sweepTrail: 1.25,
+  sweepArm: 1.15,
+  rainCell: 5.2,
+  rainSquare: 0.8,
+  rainDry: 0.3,
+  rainTrailMin: 5,
+  rainTrailRange: 12,
+  rainFall: 1,
+  rainSeed: 0,
+  halftoneSpacing: 6.4,
+  halftoneDot: 0.43,
+  halftoneAngle: -35.5,
+  halftoneWavelength: 120,
+  halftoneTime: 4,
+  halftoneAngle2: 51.6,
+  halftoneWavelength2: 210,
+  halftoneTime2: 6,
+  halftoneMix: 0.72,
+  halftoneStart: 0.12,
+  halftoneEnd: 0.98,
+  cubeSize: 9,
+  cubeLift: 1.5,
+  cubeTime: 4,
+  cubeWaveX: 5,
+  cubeWaveY: 3,
+  cubeEdge: 0.16,
+  kaleidoSize: 34,
+  kaleidoDisc: 0.34,
+  kaleidoDot: 0.12,
+  kaleidoLeg: 2,
+  kaleidoLag: 7,
+  truchetTiles: 5,
+  truchetLine: 0.2,
+  truchetTurn: 0.65,
+  truchetCross: 2.2,
+  truchetOvershoot: 1.1,
+  truchetCycle: 12,
+  truchetSeed: 0,
   speed: 0.6,
   frame: 0,
   scale: 1,
@@ -133,7 +268,7 @@ export function parseRecipe(json: unknown): GradientRecipe {
   return {
     version: 2,
     name: typeof json.name === 'string' ? json.name : d.name,
-    shader: json.shader === 'grain' || json.shader === 'dither' ? json.shader : 'mesh',
+    shader: (['grain', 'dither', ...CANVAS_PATTERNS] as readonly string[]).includes(json.shader as string) ? (json.shader as ShaderKind) : 'mesh',
     colours: Math.round(num(json, 'colours', d.colours, 3, 5)),
     distortion: num(json, 'distortion', d.distortion, 0, 1),
     swirl: num(json, 'swirl', d.swirl, 0, 1),
@@ -146,6 +281,56 @@ export function parseRecipe(json: unknown): GradientRecipe {
     ditherShape: DITHER_SHAPES.includes(json.ditherShape as DitherShape) ? (json.ditherShape as DitherShape) : d.ditherShape,
     ditherType: DITHER_TYPES.includes(json.ditherType as DitherType) ? (json.ditherType as DitherType) : d.ditherType,
     pxSize: num(json, 'pxSize', d.pxSize, 1, 20),
+    sineSpacing: num(json, 'sineSpacing', d.sineSpacing, 2, 20),
+    sineWavelength: num(json, 'sineWavelength', d.sineWavelength, 20, 200),
+    sinePhase: num(json, 'sinePhase', d.sinePhase, 0.05, 1.5),
+    sineAmplitude: num(json, 'sineAmplitude', d.sineAmplitude, 0, 1),
+    sineEnvelope: num(json, 'sineEnvelope', d.sineEnvelope, 0, 0.38),
+    sineLineWidth: num(json, 'sineLineWidth', d.sineLineWidth, 0.2, 3),
+    sineHighlight: num(json, 'sineHighlight', d.sineHighlight, 0, 1),
+    sweepSpacing: num(json, 'sweepSpacing', d.sweepSpacing, 3, 15),
+    sweepDotMin: num(json, 'sweepDotMin', d.sweepDotMin, 0, 3),
+    sweepDotMax: num(json, 'sweepDotMax', d.sweepDotMax, 0.5, 6),
+    sweepTurn: num(json, 'sweepTurn', d.sweepTurn, 1, 12),
+    sweepSurge: num(json, 'sweepSurge', d.sweepSurge, 0, 0.9),
+    sweepTrail: num(json, 'sweepTrail', d.sweepTrail, 0.2, 4),
+    sweepArm: num(json, 'sweepArm', d.sweepArm, 0, 4),
+    rainCell: num(json, 'rainCell', d.rainCell, 2, 15),
+    rainSquare: num(json, 'rainSquare', d.rainSquare, 0.2, 1),
+    rainDry: num(json, 'rainDry', d.rainDry, 0, 0.9),
+    rainTrailMin: Math.round(num(json, 'rainTrailMin', d.rainTrailMin, 1, 20)),
+    rainTrailRange: Math.round(num(json, 'rainTrailRange', d.rainTrailRange, 0, 30)),
+    rainFall: num(json, 'rainFall', d.rainFall, 0.25, 4),
+    rainSeed: Math.round(num(json, 'rainSeed', d.rainSeed, 0, 99)),
+    halftoneSpacing: num(json, 'halftoneSpacing', d.halftoneSpacing, 2, 15),
+    halftoneDot: num(json, 'halftoneDot', d.halftoneDot, 0.1, 0.7),
+    halftoneAngle: num(json, 'halftoneAngle', d.halftoneAngle, -180, 180),
+    halftoneWavelength: num(json, 'halftoneWavelength', d.halftoneWavelength, 20, 400),
+    halftoneTime: num(json, 'halftoneTime', d.halftoneTime, 1, 24),
+    halftoneAngle2: num(json, 'halftoneAngle2', d.halftoneAngle2, -180, 180),
+    halftoneWavelength2: num(json, 'halftoneWavelength2', d.halftoneWavelength2, 20, 400),
+    halftoneTime2: num(json, 'halftoneTime2', d.halftoneTime2, 1, 24),
+    halftoneMix: num(json, 'halftoneMix', d.halftoneMix, 0, 1),
+    halftoneStart: num(json, 'halftoneStart', d.halftoneStart, 0, 1),
+    halftoneEnd: num(json, 'halftoneEnd', d.halftoneEnd, 0, 1),
+    cubeSize: num(json, 'cubeSize', d.cubeSize, 3, 25),
+    cubeLift: num(json, 'cubeLift', d.cubeLift, 0, 3),
+    cubeTime: num(json, 'cubeTime', d.cubeTime, 1, 24),
+    cubeWaveX: num(json, 'cubeWaveX', d.cubeWaveX, -10, 10),
+    cubeWaveY: num(json, 'cubeWaveY', d.cubeWaveY, -10, 10),
+    cubeEdge: num(json, 'cubeEdge', d.cubeEdge, 0, 1),
+    kaleidoSize: num(json, 'kaleidoSize', d.kaleidoSize, 10, 80),
+    kaleidoDisc: num(json, 'kaleidoDisc', d.kaleidoDisc, 0.05, 0.6),
+    kaleidoDot: num(json, 'kaleidoDot', d.kaleidoDot, 0, 0.4),
+    kaleidoLeg: num(json, 'kaleidoLeg', d.kaleidoLeg, 0.5, 6),
+    kaleidoLag: num(json, 'kaleidoLag', d.kaleidoLag, 0, 12),
+    truchetTiles: Math.round(num(json, 'truchetTiles', d.truchetTiles, 2, 20)),
+    truchetLine: num(json, 'truchetLine', d.truchetLine, 0.05, 0.5),
+    truchetTurn: num(json, 'truchetTurn', d.truchetTurn, 0.2, 2),
+    truchetCross: num(json, 'truchetCross', d.truchetCross, 0.5, 3),
+    truchetOvershoot: num(json, 'truchetOvershoot', d.truchetOvershoot, 0, 3),
+    truchetCycle: num(json, 'truchetCycle', d.truchetCycle, 4, 30),
+    truchetSeed: Math.round(num(json, 'truchetSeed', d.truchetSeed, 0, 99)),
     speed: num(json, 'speed', d.speed, 0, 3),
     frame: Math.round(num(json, 'frame', d.frame, 0, MAX_FRAME)),
     scale: num(json, 'scale', d.scale, 0.25, 4),
@@ -183,8 +368,12 @@ export function grainColours(colours: string[]): [string, string[]] {
   return [back, colours.filter((_, i) => i !== 2)]
 }
 
-/** How many palette colours a recipe takes: dithering always takes all 5, for both brand support colours. */
-export const paletteCount = (recipe: GradientRecipe) => (recipe.shader === 'dither' ? 5 : recipe.colours)
+/** How many palette colours a recipe takes: dithering always takes all 5, for both brand support colours;
+    the canvas patterns always 3. */
+export const paletteCount = (recipe: GradientRecipe) => (recipe.shader === 'dither' ? 5 : isCanvasPattern(recipe.shader) ? 3 : recipe.colours)
+
+/** A canvas pattern's colours: the accent behind, the darker accent for the main marks, the pale support for the highlight. */
+export const patternColours = (colours: string[]) => ({ bg: colours[0], fg: colours[2] ?? colours[0], fg2: colours[1] ?? colours[0] })
 
 /** Dithering's dots: the darker accent, drawn on a see-through background. */
 export const ditherFront = (colours: string[]) => colours[2] ?? colours[0]

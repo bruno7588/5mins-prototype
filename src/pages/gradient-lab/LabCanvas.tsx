@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { Dithering, GrainGradient, MeshGradient } from '@paper-design/shaders-react'
-import { ditherBackdropCss, ditherProps, grainProps, meshProps, type GradientRecipe } from './recipe'
+import { drawPattern, patternTime } from '@/data/canvasPatterns'
+import { ditherBackdropCss, ditherProps, grainProps, isCanvasPattern, meshProps, type GradientRecipe } from './recipe'
 import './lab-canvas.css'
 
-/* Live preview of a recipe in a set of colours (Paper Shaders' MeshGradient, GrainGradient or Dithering):
+/* Live preview of a recipe in a set of colours (Paper Shaders' MeshGradient, GrainGradient or Dithering,
+   or a canvas pattern):
    the largest square that fits its parent (which must have a definite size),
    centred. Plays while `playing` (a still frame under reduced motion). Drag
    pans and the wheel zooms through onPan / onZoom. */
@@ -19,6 +21,37 @@ function usePrefersReducedMotion(): boolean {
     return () => mq.removeEventListener('change', onChange)
   }, [])
   return reduced
+}
+
+/** A canvas pattern, drawn at the screen's pixel density into a canvas filling its frame.
+    One clock runs for the life of the preview, so editing a control never restarts the motion. */
+function PatternCanvas({ recipe, colours, speed, size }: { recipe: GradientRecipe; colours: string[]; speed: number; size: number }) {
+  const ref = useRef<HTMLCanvasElement>(null)
+  const latest = useRef({ recipe, colours, speed })
+  latest.current = { recipe, colours, speed }
+  const dirty = useRef(true)
+  dirty.current = true
+  useEffect(() => {
+    const canvas = ref.current
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx) return
+    canvas.width = canvas.height = Math.round(size * Math.max(1, window.devicePixelRatio || 1))
+    dirty.current = true
+    let elapsed = 0
+    let last = performance.now()
+    let raf = 0
+    const frame = (now: number) => {
+      const { recipe: r, colours: c, speed: v } = latest.current
+      elapsed += (now - last) * v
+      last = now
+      if (v > 0 || dirty.current) drawPattern(ctx, r, c, patternTime(r, elapsed, 1))
+      dirty.current = false
+      raf = requestAnimationFrame(frame)
+    }
+    raf = requestAnimationFrame(frame)
+    return () => cancelAnimationFrame(raf)
+  }, [size])
+  return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />
 }
 
 interface Props {
@@ -103,7 +136,9 @@ function LabCanvas({ recipe, colours, playing, onPan, onZoom }: Props) {
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
       >
-        {recipe.shader === 'dither' ? (
+        {isCanvasPattern(recipe.shader) ? (
+          <PatternCanvas recipe={recipe} colours={colours} speed={speed} size={size} />
+        ) : recipe.shader === 'dither' ? (
           <Dithering {...ditherProps(recipe, colours)} speed={speed} style={{ ...fill, background: ditherBackdropCss(colours) }} />
         ) : recipe.shader === 'grain' ? (
           <GrainGradient {...grainProps(recipe, colours)} speed={speed} style={fill} />

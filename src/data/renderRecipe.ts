@@ -11,10 +11,11 @@ import {
   ShaderFitOptions,
   ShaderMount,
 } from '@paper-design/shaders'
-import { DITHER_BACK, ditherBackdrop, ditherFront, grainColours, type GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { DITHER_BACK, ditherBackdrop, ditherFront, grainColours, isCanvasPattern, type GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { drawPattern, playPattern } from './canvasPatterns'
 
 /* Renders a gradient recipe in a tenant's colours with Paper Shaders (mesh
-   or grain gradient, or dithering), in the admin's browser: a 512 x 512 JPEG still for the company
+   or grain gradient, or dithering) or a canvas pattern (canvasPatterns.ts), in the admin's browser: a 512 x 512 JPEG still for the company
    image, or a live hidden mount that companyShader.ts copies into cards. Each
    mount is one WebGL context, so stills render one at a time. */
 
@@ -90,7 +91,8 @@ async function shaderFor(recipe: GradientRecipe, colours: string[]) {
 }
 
 export interface HiddenMount {
-  mount: ShaderMount
+  /** Shows the frame at this many ms of animation time. */
+  setFrame: (ms: number) => void
   canvas: HTMLCanvasElement
   /** Dithering's see-through dots need this gradient painted behind them on every copy. */
   backdrop: [string, string] | null
@@ -111,6 +113,21 @@ export function paintBackdrop(ctx: CanvasRenderingContext2D, [from, to]: [string
  * thinks are off-screen). The drawing buffer is kept so it can be copied or encoded.
  */
 export async function hiddenMount(recipe: GradientRecipe, colours: string[], cssPx: number, speed: number): Promise<HiddenMount> {
+  // A canvas pattern needs no GPU context: a detached 2D canvas, played or held still.
+  if (isCanvasPattern(recipe.shader)) {
+    const canvas = document.createElement('canvas')
+    canvas.width = canvas.height = Math.round(cssPx * Math.max(1, window.devicePixelRatio || 1))
+    const stop = playPattern(canvas, recipe, colours, speed)
+    return {
+      canvas,
+      backdrop: null,
+      setFrame: (ms) => {
+        stop()
+        drawPattern(canvas.getContext('2d')!, recipe, colours, ms / 1000)
+      },
+      dispose: stop,
+    }
+  }
   const { fragment, uniforms } = await shaderFor(recipe, colours)
   const box = document.createElement('div')
   box.setAttribute('aria-hidden', 'true')
@@ -119,7 +136,7 @@ export async function hiddenMount(recipe: GradientRecipe, colours: string[], css
   // minPixelRatio 1: the box is sized in device pixels' worth already for stills.
   const mount = new ShaderMount(box, fragment, uniforms, { preserveDrawingBuffer: true }, speed, recipe.frame, 1)
   return {
-    mount,
+    setFrame: (ms) => mount.setFrame(ms),
     canvas: mount.canvasElement,
     backdrop: recipe.shader === 'dither' ? ditherBackdrop(colours) : null,
     dispose: () => {
@@ -137,12 +154,12 @@ let queue: Promise<unknown> = Promise.resolve()
 export function renderStill(recipe: GradientRecipe, colours: string[], type: 'image/jpeg' | 'image/png' = 'image/jpeg'): Promise<string> {
   const run = async () => {
     const dpr = Math.max(1, window.devicePixelRatio || 1)
-    const { canvas, mount, backdrop, dispose } = await hiddenMount(recipe, colours, STILL_PX / dpr, 0)
+    const { canvas, setFrame, backdrop, dispose } = await hiddenMount(recipe, colours, STILL_PX / dpr, 0)
     try {
       // Paper sizes the canvas on its first resize callback, then draws. A new
       // canvas is 300 x 150, so wait until it matches the square box.
       for (let i = 0; i < 10 && canvas.width !== canvas.height; i++) await nextFrame()
-      mount.setFrame(recipe.frame)
+      setFrame(recipe.frame)
       await nextFrame()
       const out = document.createElement('canvas')
       out.width = STILL_PX
