@@ -5,7 +5,7 @@ import 'dialkit/styles.css'
 import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
-import { recipeColours } from '@/data/brandPalette'
+import { recipeColours, themeColours } from '@/data/brandPalette'
 import { DEFAULT_THEME, effectiveTheme } from '@/data/brandTheme'
 import { renderStill } from '@/data/renderRecipe'
 import { useTheme } from '@/hooks/useTheme'
@@ -71,6 +71,7 @@ function GradientLab() {
   // The new slot's gradient while it is unsaved, kept when another slot is opened.
   const [draft, setDraft] = useState<GradientRecipe | null>(null)
   const colours = recipeColours(lab.recipe, lab.preview)
+  const finishColours = themeColours(lab.preview)
 
   /* Selecting a saved slot loads its recipe; the new empty slot opens its draft,
      or keeps the current gradient so it can be saved there. */
@@ -97,7 +98,7 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, name: `Gradient ${activeSlot}` }
-      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_THEME.light))
+      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_THEME.light), 'image/jpeg', themeColours(DEFAULT_THEME.light))
       await saveGradient(activeSlot, recipe, still)
       if (!gradients.some((g) => g.slot === activeSlot)) setDraft(null)
       void reloadGradients()
@@ -115,7 +116,7 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, name: `Gradient ${slot}` }
-      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_THEME.light))
+      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_THEME.light), 'image/jpeg', themeColours(DEFAULT_THEME.light))
       await saveGradient(slot, recipe, still)
       await reloadGradients()
       setActiveSlot(slot)
@@ -190,13 +191,13 @@ function GradientLab() {
     <div className="gl-lab">
       <header className="gl-lab__header">
         <h1 className="gl-lab__title">Gradient Studio</h1>
-        <ExportPanel recipe={lab.recipe} colours={colours} show={show} />
+        <ExportPanel recipe={lab.recipe} colours={colours} finishColours={finishColours} show={show} />
       </header>
 
       <div className="gl-lab__body">
         <div className="gl-lab__stage-col">
           <div className="gl-lab__stage">
-            <LabCanvas recipe={lab.recipe} colours={colours} playing={lab.playing} onPan={onPan} onZoom={onZoom} />
+            <LabCanvas recipe={lab.recipe} colours={colours} finishColours={finishColours} playing={lab.playing} onPan={onPan} onZoom={onZoom} />
           </div>
           <p className="gl-lab__hint">Scroll to zoom · drag to pan</p>
           <GradientSlots

@@ -22,6 +22,9 @@ export type DitherType = (typeof DITHER_TYPES)[number]
 export const CANVAS_PATTERNS = ['sine', 'sweep', 'rain', 'halftone', 'cubes', 'kaleido', 'truchet', 'tunnel', 'contours', 'bloom', 'confetti', 'scan', 'ripple'] as const
 export type CanvasPattern = (typeof CANVAS_PATTERNS)[number]
 export type ShaderKind = 'mesh' | 'grain' | 'dither' | CanvasPattern
+/** The pixel finish: off, or ordered dithering with a Bayer matrix of this size (src/data/pixelFinish.ts). */
+export const FINISHES = ['off', '2x2', '4x4', '8x8'] as const
+export type Finish = (typeof FINISHES)[number]
 export const isCanvasPattern = (kind: ShaderKind): kind is CanvasPattern => (CANVAS_PATTERNS as readonly string[]).includes(kind)
 /** Drawn in the tenant's three theme colours as they are, rather than a blended palette: the canvas patterns and dithering. */
 export const usesThemeColours = (kind: ShaderKind) => kind === 'dither' || isCanvasPattern(kind)
@@ -200,6 +203,9 @@ export interface GradientRecipe {
   rippleSwell: number
   /** Picks a different scatter of drops (0-99). */
   rippleSeed: number
+  /** The pixel finish over any type, and its pixel size as % of the frame (0.3-4). */
+  finish: Finish
+  finishPixel: number
   /** Animation speed; 0 holds still. 0-3 */
   speed: number
   /** Starting time in ms: picks the composition, and is the still. */
@@ -328,6 +334,8 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   ripplePush: 5,
   rippleSwell: 2.1,
   rippleSeed: 0,
+  finish: 'off',
+  finishPixel: 0.8,
   speed: 0.6,
   frame: 0,
   scale: 1,
@@ -504,6 +512,8 @@ export function parseRecipe(json: unknown): GradientRecipe {
     ripplePush: num(json, 'ripplePush', d.ripplePush, 0, 15),
     rippleSwell: num(json, 'rippleSwell', d.rippleSwell, 0, 5),
     rippleSeed: Math.round(num(json, 'rippleSeed', d.rippleSeed, 0, 99)),
+    finish: FINISHES.includes(json.finish as Finish) ? (json.finish as Finish) : d.finish,
+    finishPixel: num(json, 'finishPixel', d.finishPixel, 0.3, 4),
     speed: num(json, 'speed', d.speed, 0, 3),
     frame: Math.round(num(json, 'frame', d.frame, 0, MAX_FRAME)),
     scale: num(json, 'scale', d.scale, 0.25, 4),

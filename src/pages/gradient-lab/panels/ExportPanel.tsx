@@ -13,10 +13,12 @@ interface Props {
   recipe: GradientRecipe
   /** The preview colours, for the copied image. */
   colours: string[]
+  /** The three preview theme colours, for the pixel finish. */
+  finishColours: string[]
   show: (type: ToastType, message: string) => void
 }
 
-function ExportPanel({ recipe, colours, show }: Props) {
+function ExportPanel({ recipe, colours, finishColours, show }: Props) {
   const [busy, setBusy] = useState<'copy' | null>(null)
 
   const exportJson = () => {
@@ -29,7 +31,7 @@ function ExportPanel({ recipe, colours, show }: Props) {
     setBusy('copy')
     try {
       // The promise goes straight into ClipboardItem so Safari keeps the user gesture.
-      const png = renderStill(recipe, colours, 'image/png').then((url) => fetch(url).then((r) => r.blob()))
+      const png = renderStill(recipe, colours, 'image/png', finishColours).then((url) => fetch(url).then((r) => r.blob()))
       await navigator.clipboard.write([new ClipboardItem({ 'image/png': png })])
       show('success', 'Image copied')
     } catch {

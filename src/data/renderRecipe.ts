@@ -13,6 +13,7 @@ import {
 } from '@paper-design/shaders'
 import { DITHER_BACK, DITHER_BACKDROP_HOLD, ditherBackdrop, ditherFront, grainColours, isCanvasPattern, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { drawPattern, playPattern } from './canvasPatterns'
+import { applyPixelFinish } from './pixelFinish'
 
 /* Renders a gradient recipe in a tenant's colours with Paper Shaders (mesh
    or grain gradient, or dithering) or a canvas pattern (canvasPatterns.ts), in the admin's browser: a 512 x 512 JPEG still for the company
@@ -151,8 +152,14 @@ const nextFrame = () => new Promise<void>((r) => requestAnimationFrame(() => r()
 
 let queue: Promise<unknown> = Promise.resolve()
 
-/** The recipe in these colours as a 512 x 512 data URL (JPEG unless asked). Calls run one after another. */
-export function renderStill(recipe: GradientRecipe, colours: string[], type: 'image/jpeg' | 'image/png' = 'image/jpeg'): Promise<string> {
+/** The recipe in these colours as a 512 x 512 data URL (JPEG unless asked), with its pixel finish
+    in the three theme colours (`finishColours`). Calls run one after another. */
+export function renderStill(
+  recipe: GradientRecipe,
+  colours: string[],
+  type: 'image/jpeg' | 'image/png' = 'image/jpeg',
+  finishColours?: string[],
+): Promise<string> {
   const run = async () => {
     const dpr = Math.max(1, window.devicePixelRatio || 1)
     const { canvas, setFrame, backdrop, dispose } = await hiddenMount(recipe, colours, STILL_PX / dpr, 0)
@@ -168,6 +175,7 @@ export function renderStill(recipe: GradientRecipe, colours: string[], type: 'im
       const ctx = out.getContext('2d')!
       if (backdrop) paintBackdrop(ctx, backdrop, STILL_PX, STILL_PX)
       ctx.drawImage(canvas, 0, 0, STILL_PX, STILL_PX)
+      applyPixelFinish(ctx, recipe, finishColours)
       return out.toDataURL(type, 0.92)
     } finally {
       dispose()

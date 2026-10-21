@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useBrandTheme } from '@/data/brandTheme'
 import { useCompanyDefaults } from '@/data/companyDefaults'
-import { tenantColours, useCompanyImage } from '@/data/companyImage'
+import { tenantColours, tenantFinishColours, useCompanyImage } from '@/data/companyImage'
 import { attachCompanyShader } from '@/data/companyShader'
 import { useSurfaceMode } from '@/hooks/useTheme'
 import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
@@ -37,7 +37,7 @@ function CompanyImageMotion({ recipe: shown }: { recipe?: GradientRecipe } = {})
   const key = recipe && !reduced ? JSON.stringify([recipe, theme, colourMode]) : null
   // Stable per recipe, theme and mode, so the shader only restarts when one changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const input = useMemo(() => (recipe && key ? { recipe, colours: tenantColours(recipe, colourMode) } : null), [key])
+  const input = useMemo(() => (recipe && key ? { recipe, colours: tenantColours(recipe, colourMode), finish: tenantFinishColours(colourMode) } : null), [key])
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {

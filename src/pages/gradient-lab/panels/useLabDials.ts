@@ -4,12 +4,14 @@ import { DEFAULT_THEME, type ThemeSet } from '@/data/brandTheme'
 import {
   DITHER_SHAPES,
   DITHER_TYPES,
+  FINISHES,
   GRAIN_SHAPES,
   isCanvasPattern,
   MAX_FRAME,
   type CanvasPattern,
   type DitherShape,
   type DitherType,
+  type Finish,
   type GradientRecipe,
   type GrainShape,
   type ShaderKind,
@@ -17,7 +19,7 @@ import {
 
 /* The DialKit panel for each tab of the controls column, rendered inline:
    "Gradient" (shader type and shape, and the theme colours to preview it in) or
-   "Shader" (motion and grain). The controls follow the shader type: the mesh
+   "Shader" (motion, grain and the pixel finish). The controls follow the shader type: the mesh
    gradient has distortion, swirl and two grain sliders; the grain gradient has
    a shape, softness, intensity and noise; dithering has a shape, a pattern and
    a pixel size; each canvas pattern has a slider for every value that shapes
@@ -62,6 +64,8 @@ interface PanelValues {
   Motion: { playing: boolean; speed: number }
   /** Absent for dithering. */
   Grain?: { mixer?: number; overlay?: number; noise?: number }
+  /** The pixel finish, for every type. */
+  Finish: { pattern: Finish; 'pixel size': number }
 }
 
 type Folder = keyof PanelValues
@@ -222,10 +226,11 @@ const options = <T extends string>(values: readonly T[]) => values.map((value) =
 const SHAPE_OPTIONS = options(GRAIN_SHAPES)
 const DITHER_SHAPE_OPTIONS = options(DITHER_SHAPES)
 const PATTERN_OPTIONS = options(DITHER_TYPES)
+const FINISH_OPTIONS = options(FINISHES)
 
 const FOLDERS: Record<DialsKind, Folder[]> = {
   gradient: ['Gradient', 'Preview colours'],
-  shader: ['Motion', 'Grain'],
+  shader: ['Motion', 'Grain', 'Finish'],
 }
 
 function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
@@ -243,6 +248,7 @@ function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
     'Preview colours': { 'header bar': p.header, 'navigation items': p.nav, 'selected item': p.selected },
     Motion: { playing, speed: r.speed },
     Grain: r.shader === 'grain' ? { noise: r.noise } : r.shader === 'mesh' ? { mixer: r.grainMixer, overlay: r.grainOverlay } : undefined,
+    Finish: { pattern: r.finish, 'pixel size': r.finishPixel },
   }
 }
 
@@ -250,7 +256,13 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
   const v = labToDials(lab)
   const g = v.Gradient
   if (kind === 'shader') {
-    const motion: DialConfig = { Motion: { playing: v.Motion.playing, speed: [v.Motion.speed, 0, 3, 0.01] } }
+    const motion: DialConfig = {
+      Motion: { playing: v.Motion.playing, speed: [v.Motion.speed, 0, 3, 0.01] },
+      Finish: {
+        pattern: { type: 'select', options: FINISH_OPTIONS, default: v.Finish.pattern },
+        'pixel size': [v.Finish['pixel size'], 0.3, 4, 0.05],
+      },
+    }
     // Dithering has no grain of its own: its pattern is the texture.
     if (g.type === 'grain') return { ...motion, Grain: { noise: [v.Grain!.noise!, 0, 1, 0.01] } }
     if (g.type === 'mesh') return { ...motion, Grain: { mixer: [v.Grain!.mixer!, 0, 1, 0.01], overlay: [v.Grain!.overlay!, 0, 1, 0.01] } }
@@ -346,7 +358,12 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
     const defined = <T extends object>(o: T) =>
       Object.fromEntries(Object.entries(o).filter(([k, x]) => x !== undefined && k in r)) as Partial<GradientRecipe>
     if (kind === 'shader') {
-      const recipe = { ...r, speed: v.Motion.speed, ...defined({ grainMixer: v.Grain?.mixer, grainOverlay: v.Grain?.overlay, noise: v.Grain?.noise }) }
+      const recipe = {
+        ...r,
+        speed: v.Motion.speed,
+        ...defined({ grainMixer: v.Grain?.mixer, grainOverlay: v.Grain?.overlay, noise: v.Grain?.noise }),
+        ...defined({ finish: v.Finish?.pattern, finishPixel: v.Finish?.['pixel size'] }),
+      }
       const patch: Partial<LabState> = {}
       if (changed(recipe)) patch.recipe = recipe
       if (v.Motion.playing !== now.playing) patch.playing = v.Motion.playing

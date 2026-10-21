@@ -1,4 +1,5 @@
 import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { applyPixelFinish } from './pixelFinish'
 import { hiddenMount, paintBackdrop, type HiddenMount } from './renderRecipe'
 
 /* The live version of a default company image: its recipe playing in the
@@ -10,6 +11,8 @@ import { hiddenMount, paintBackdrop, type HiddenMount } from './renderRecipe'
 export interface ShaderInput {
   recipe: GradientRecipe
   colours: string[]
+  /** The three theme colours, for the recipe's pixel finish. */
+  finish?: string[]
 }
 
 /** Css size of the hidden mount: big enough for the largest card. */
@@ -19,6 +22,7 @@ interface Surface {
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
   key: string
+  input: ShaderInput
   visible: boolean
 }
 
@@ -54,6 +58,7 @@ function tick() {
     // See-through dots draw over last frame's, so repaint the backdrop each frame.
     if (m.backdrop) paintBackdrop(s.ctx, m.backdrop, w, h)
     s.ctx.drawImage(source, (source.width - sw) / 2, (source.height - sh) / 2, sw, sh, 0, 0, w, h)
+    applyPixelFinish(s.ctx, s.input.recipe, s.input.finish)
     s.canvas.dataset.ready = ''
   }
   raf = requestAnimationFrame(tick)
@@ -91,7 +96,7 @@ export function attachCompanyShader(canvas: HTMLCanvasElement, input: ShaderInpu
       .catch(() => {}) // no WebGL: the still stays
       .finally(() => pending.delete(key))
   }
-  const surface: Surface = { canvas, ctx, key, visible: !observer }
+  const surface: Surface = { canvas, ctx, key, input, visible: !observer }
   surfaces.add(surface)
   observer?.observe(canvas)
   wake()

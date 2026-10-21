@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { Dithering, GrainGradient, MeshGradient } from '@paper-design/shaders-react'
 import { drawPattern, patternTime } from '@/data/canvasPatterns'
+import { applyPixelFinish } from '@/data/pixelFinish'
+import { hiddenMount, paintBackdrop, type HiddenMount } from '@/data/renderRecipe'
 import { ditherBackdropCss, ditherProps, grainProps, isCanvasPattern, meshProps, type GradientRecipe } from './recipe'
 import './lab-canvas.css'
 
@@ -8,7 +10,8 @@ import './lab-canvas.css'
    or a canvas pattern):
    the largest square that fits its parent (which must have a definite size),
    centred. Plays while `playing` (a still frame under reduced motion). Drag
-   pans and the wheel zooms through onPan / onZoom. */
+   pans and the wheel zooms through onPan / onZoom. With the pixel finish on,
+   it is applied over every frame in the three theme colours (`finishColours`). */
 
 function usePrefersReducedMotion(): boolean {
   const query = '(prefers-reduced-motion: reduce)'
@@ -25,10 +28,18 @@ function usePrefersReducedMotion(): boolean {
 
 /** A canvas pattern, drawn at the screen's pixel density into a canvas filling its frame.
     One clock runs for the life of the preview, so editing a control never restarts the motion. */
-function PatternCanvas({ recipe, colours, speed, size }: { recipe: GradientRecipe; colours: string[]; speed: number; size: number }) {
+interface CanvasProps {
+  recipe: GradientRecipe
+  colours: string[]
+  finishColours: string[]
+  speed: number
+  size: number
+}
+
+function PatternCanvas({ recipe, colours, finishColours, speed, size }: CanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null)
-  const latest = useRef({ recipe, colours, speed })
-  latest.current = { recipe, colours, speed }
+  const latest = useRef({ recipe, colours, finishColours, speed })
+  latest.current = { recipe, colours, finishColours, speed }
   const dirty = useRef(true)
   dirty.current = true
   useEffect(() => {
@@ -41,11 +52,62 @@ function PatternCanvas({ recipe, colours, speed, size }: { recipe: GradientRecip
     let last = performance.now()
     let raf = 0
     const frame = (now: number) => {
-      const { recipe: r, colours: c, speed: v } = latest.current
+      const { recipe: r, colours: c, finishColours: f, speed: v } = latest.current
       elapsed += (now - last) * v
       last = now
-      if (v > 0 || dirty.current) drawPattern(ctx, r, c, patternTime(r, elapsed, 1))
+      if (v > 0 || dirty.current) {
+        drawPattern(ctx, r, c, patternTime(r, elapsed, 1))
+        applyPixelFinish(ctx, r, f)
+      }
       dirty.current = false
+      raf = requestAnimationFrame(frame)
+    }
+    raf = requestAnimationFrame(frame)
+    return () => cancelAnimationFrame(raf)
+  }, [size])
+  return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />
+}
+
+/** A Paper shader with the pixel finish: the shader plays in a hidden mount and each
+    frame is copied here and finished. The mount is rebuilt after edits settle, so a
+    slider drag doesn't churn WebGL contexts; the old one shows until the new is ready. */
+function FinishedShaderCanvas({ recipe, colours, finishColours, speed, size }: CanvasProps) {
+  const ref = useRef<HTMLCanvasElement>(null)
+  const mountRef = useRef<HiddenMount | null>(null)
+  const latest = useRef({ recipe, finishColours })
+  latest.current = { recipe, finishColours }
+  const key = JSON.stringify([recipe, colours, speed, size])
+  useEffect(() => {
+    let cancelled = false
+    const timer = window.setTimeout(() => {
+      hiddenMount(recipe, colours, size, speed)
+        .then((m) => {
+          if (cancelled) return m.dispose()
+          mountRef.current?.dispose()
+          mountRef.current = m
+        })
+        .catch(() => {})
+    }, mountRef.current ? 150 : 0)
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key])
+  useEffect(() => () => mountRef.current?.dispose(), [])
+  useEffect(() => {
+    const canvas = ref.current
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx) return
+    canvas.width = canvas.height = Math.round(size * Math.max(1, window.devicePixelRatio || 1))
+    let raf = 0
+    const frame = () => {
+      const m = mountRef.current
+      if (m && m.canvas.width > 0) {
+        if (m.backdrop) paintBackdrop(ctx, m.backdrop, canvas.width, canvas.height)
+        ctx.drawImage(m.canvas, 0, 0, canvas.width, canvas.height)
+        applyPixelFinish(ctx, latest.current.recipe, latest.current.finishColours)
+      }
       raf = requestAnimationFrame(frame)
     }
     raf = requestAnimationFrame(frame)
@@ -57,6 +119,8 @@ function PatternCanvas({ recipe, colours, speed, size }: { recipe: GradientRecip
 interface Props {
   recipe: GradientRecipe
   colours: string[]
+  /** The three theme colours, for the pixel finish. */
+  finishColours: string[]
   playing: boolean
   /** Drag on the preview, as a fraction of the frame size (right / down positive). */
   onPan?: (dx: number, dy: number) => void
@@ -64,7 +128,7 @@ interface Props {
   onZoom?: (factor: number) => void
 }
 
-function LabCanvas({ recipe, colours, playing, onPan, onZoom }: Props) {
+function LabCanvas({ recipe, colours, finishColours, playing, onPan, onZoom }: Props) {
   const stageRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState(0)
@@ -137,7 +201,9 @@ function LabCanvas({ recipe, colours, playing, onPan, onZoom }: Props) {
         onPointerCancel={endDrag}
       >
         {isCanvasPattern(recipe.shader) ? (
-          <PatternCanvas recipe={recipe} colours={colours} speed={speed} size={size} />
+          <PatternCanvas recipe={recipe} colours={colours} finishColours={finishColours} speed={speed} size={size} />
+        ) : recipe.finish !== 'off' ? (
+          <FinishedShaderCanvas recipe={recipe} colours={colours} finishColours={finishColours} speed={speed} size={size} />
         ) : recipe.shader === 'dither' ? (
           <Dithering {...ditherProps(recipe, colours)} speed={speed} style={{ ...fill, background: ditherBackdropCss(colours) }} />
         ) : recipe.shader === 'grain' ? (

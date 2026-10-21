@@ -1,6 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
-import { recipeColours } from './brandPalette'
+import { recipeColours, themeColours } from './brandPalette'
 import { effectiveTheme, getBrandTheme, subscribeBrandTheme } from './brandTheme'
 import { getCompanyDefaults, subscribeCompanyDefaults, useCompanyDefaults, type CompanyDefault } from './companyDefaults'
 import { renderStill } from './renderRecipe'
@@ -27,13 +27,16 @@ export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') => JSON.
 /** The recipe's colours for this tenant in that mode. */
 export const tenantColours = (recipe: GradientRecipe, mode: Theme = 'light') => recipeColours(recipe, effectiveTheme()[mode])
 
+/** The tenant's three theme colours in that mode, for a recipe's pixel finish. */
+export const tenantFinishColours = (mode: Theme = 'light') => themeColours(effectiveTheme()[mode])
+
 const stills = new Map<string, Promise<string>>()
 
 /** A default rendered in the tenant's colours for a mode (cached per recipe and colours). */
 export function tenantStill(d: CompanyDefault, mode: Theme = 'light'): Promise<Still> {
   const key = stillKey(d.recipe, mode)
   if (!stills.has(key)) {
-    const job = renderStill(d.recipe, tenantColours(d.recipe, mode))
+    const job = renderStill(d.recipe, tenantColours(d.recipe, mode), 'image/jpeg', tenantFinishColours(mode))
     job.catch(() => stills.delete(key))
     stills.set(key, job)
   }

@@ -136,5 +136,10 @@ export const toLch = hexToLch
     item), so admins see their own colours; the mesh and grain gradients take the
     blended palette above. */
 export function recipeColours(recipe: GradientRecipe, set: ThemeSet): string[] {
-  return usesThemeColours(recipe.shader) ? [set.header, set.nav, set.selected] : brandPalette(set, paletteCount(recipe))
+  return usesThemeColours(recipe.shader) ? themeColours(set) : brandPalette(set, paletteCount(recipe))
+}
+
+/** The three theme colours as they are: header bar, navigation items, selected item. */
+export function themeColours(set: ThemeSet): string[] {
+  return [set.header, set.nav, set.selected]
 }
