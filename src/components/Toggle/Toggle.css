@@ -15,10 +15,11 @@
   cursor: inherit;
 }
 
+/* Off is --text-disabled, as the Library Toggle (selection-controls.md). */
 .toggle__track {
   position: absolute;
   inset: 0;
-  background: var(--neutral-400);
+  background: var(--text-disabled);
   border-radius: 10px;
   transition: background 150ms ease;
   pointer-events: none;

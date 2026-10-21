@@ -9,7 +9,7 @@ Checkbox, Radio and Toggle: the controls that pick options or switch a setting o
 
 **Code:** `import Checkbox from '@/components/Checkbox/Checkbox'`, `import Radio from '@/components/Radio/Radio'`, `import Toggle from '@/components/Toggle/Toggle'`
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Checkbox `6339:10484`; Radio `5001:18926`; Toggle `8160:364`
-**Last verified:** 2026-10-09
+**Last verified:** 2026-10-21
 
 Colours are semantic tokens resolving per mode (see `colors.md`); hexes below are light-mode values unless a dark value is given. Cross-reference: `5mins-colors` (colors.md) for the raw palette and semantic surface tokens, `5mins-typography` for label typography, `5mins-iconography` for icon sizing conventions.
 
@@ -114,7 +114,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 - Don't add a hover halo; the toggle has none.
 - Don't remove the focus outline; focus-visible draws 2px `--primary-button-background` around the track.
 
-**Canonical spec:** md track 36 × 20px, sm track 28 × 16px; thumb 16px (sm 12px) in `--neutral-25` with a 2px inset. Track off `--neutral-400`, on `--selected`; disabled off `--text-disabled`, disabled on `--selected` at 40% opacity. Row gap `var(--space-s)` (8px), label 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8160:364`.
+**Canonical spec:** md track 36 × 20px, sm track 28 × 16px; thumb 16px (sm 12px) in `--neutral-25` with a 2px inset. Track off `--text-disabled`, on `--selected`; disabled off `--text-disabled`, disabled on `--selected` at 40% opacity. Row gap `var(--space-s)` (8px), label 14px / 400 `--text-primary`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8160:364`.
 
 ## Figma to code
 
@@ -340,7 +340,7 @@ Checkbox and Radio have one size. Toggle has two:
 
 | State | Track colour | Thumb colour | Thumb position |
 |---|---|---|---|
-| Off (enabled) | `--neutral-400` (`#656B7C`) | `--neutral-25` (`#F9F9FA`) | left |
+| Off (enabled) | `--text-disabled` (`#9EA4B3` light, `#656B7C` dark) | `--neutral-25` (`#F9F9FA`) | left |
 | On (enabled) | `var(--selected)` (`#EDA30D` light / `#FFBB38` dark) | `--neutral-25` | right |
 | Off (disabled) | `--text-disabled` (`#9EA4B3`, neutral-300) | `--neutral-25` | left |
 | On (disabled) | `var(--selected)` at 40% opacity | `--neutral-25` | right |
@@ -368,7 +368,7 @@ No hover halo on the toggle (unlike radio/checkbox). Optional subtle darkening o
 .toggle__track {
   position: absolute;
   inset: 0;
-  background: var(--neutral-400);   /* Off */
+  background: var(--text-disabled);   /* Off */
   border-radius: 10px;
   transition: background 150ms ease;
 }

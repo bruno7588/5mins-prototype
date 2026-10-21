@@ -293,6 +293,7 @@ Add new entries here, not in the docs.
 ## [selection-controls.md](selection-controls.md)
 
 - 2026-10-14: Checkbox gained its `:focus-visible` ring (2px `--primary-button-background`, 2px outside the box).
+- 2026-10-21: Toggle off track is `--text-disabled` in code and docs, matching the Library (code was raw `--neutral-400`, which does not flip in dark mode).
 - 2026-10-14: Figma to code updated: Checkbox and Radio gain `State=Focus` variants, Toggle gains a `State` axis (Enabled / Focus); the Checkbox focus ring is Figma only until `Checkbox.css` adds one.
 - 2026-10-09: > **Updated 2026-10-09 (re-verified against Figma light `11917:3950` / dark `5001:18926`):** the Radio ring keeps its resting colour on hover (`--text-primary` unselected, `--control-selected` selected); hover adds only the `--page-background-hover` halo. The earlier `--border-hover` ring on hover had no Figma source and is removed.
 - 2026-10-07: > **Updated 2026-10-07 (Figma `6339:10484`, verified against code):** the checkbox tick and minus bar are not white. They are cut out of the filled box, so the surface behind shows through: light on light pages, dark in dark mode. `Checkbox.tsx` draws the Figma shapes as single filled paths in `--selected`. Figma has no disabled-checked variant (Disabled exists only as Not checked), so a disabled box that is checked keeps the `--selected` fill; only the empty box turns `--text-disabled`.
