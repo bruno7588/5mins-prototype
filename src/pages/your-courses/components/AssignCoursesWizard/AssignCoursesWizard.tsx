@@ -9,6 +9,7 @@ import WizardSuccess from '../WizardShell/WizardSuccess'
 import PeoplePicker from '../PeoplePicker/PeoplePicker'
 import CoursesStep from './CoursesStep'
 import ReviewStep, { includeChoice, outcomeFor, reviewCounts } from './ReviewStep'
+import { recordCourseLaunches } from '../../activeEnrolments'
 import { plural, type AssignCourse } from './schedule'
 import './AssignCoursesWizard.css'
 
@@ -60,6 +61,8 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
     )
     const counts = reviewCounts(courses, activeCommitted, choiceFor)
     recordEnrolments(pairs)
+    // The courses land on Your Courses > Active Enrolments as enrolled today.
+    recordCourseLaunches(counts.perCourse.map((r) => ({ id: r.course.id, name: r.course.name, thumb: r.course.thumb, enrolled: r.enrol })))
     setLaunched({ courses: courses.length, people: counts.people })
   }
 

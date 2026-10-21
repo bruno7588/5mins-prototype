@@ -220,21 +220,28 @@
   list-style: none;
 }
 
+/* Figma Your Courses "Row 1" (7714:14233): a tray in --input-background holding the
+   course card, with the enrol count and the include toggle under it. */
 .acw-review-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  padding: var(--space-s);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+.acw-review-card {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-m);
+  min-height: 64px;
+  padding: var(--space-s) var(--space-sm);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
   box-shadow: var(--shadow-card);
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  transition: background-color 150ms ease;
-}
-
-.acw-review-row:hover {
-  background: var(--cards-background-hover);
 }
 
 .acw-review-counter {
@@ -242,10 +249,10 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: var(--radius-full);
-  background: var(--input-background-elevated);
+  background: var(--input-background);
   font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1;
@@ -254,9 +261,9 @@
 
 .acw-review-thumb {
   flex-shrink: 0;
-  width: 88px;
-  height: 48px;
-  border-radius: var(--radius-sm);
+  width: 80px;
+  height: 42px;
+  border-radius: var(--radius-s);
   object-fit: cover;
 }
 
@@ -264,7 +271,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-xs);
   min-width: 0;
 }
 
@@ -303,40 +310,20 @@
   white-space: nowrap;
 }
 
+/* Under the card: the enrol count, then the include toggle (Toggle sm). */
+.acw-review-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-m);
+}
+
 .acw-review-people {
-  flex-shrink: 0;
+  color: var(--text-secondary);
 }
 
-/* Right of the row: the count, and for a course some people already have, one checkbox
-   to include them plus View People to see who they are. */
-.acw-review-side {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-s);
-  flex-shrink: 0;
-}
-
-.acw-review-existing {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.acw-review-include {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  color: var(--text-primary);
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-/* A 20px hit area, as the old callout checkboxes, so the box sits level with the label. */
-.acw-review-include .checkbox {
-  width: var(--space-ml);
-  height: var(--space-ml);
-  padding: var(--space-xxs);
+.acw-review-include .toggle-row__label {
+  color: var(--text-tertiary);
 }
 
 /* Callout for people who already have some of the courses (built from .alert). */

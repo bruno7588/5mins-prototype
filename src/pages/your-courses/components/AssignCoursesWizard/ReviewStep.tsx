@@ -1,16 +1,12 @@
-import { useState } from 'react'
 import { Calendar, PlayCircle, Refresh } from 'iconsax-react'
-import Badge from '@/components/Badge/Badge'
-import Button from '@/components/Button/Button'
-import Checkbox from '@/components/Checkbox/Checkbox'
-import AffectedPeopleDrawer from './AffectedPeopleDrawer'
+import Toggle from '@/components/Toggle/Toggle'
 import { PEOPLE } from '@/data/people'
 import { enrolmentStatus, type EnrolmentStatus } from '@/data/enrolments'
 import { plural, startOffsets, timingParts, type AssignCourse } from './schedule'
 
 /* Review (DES-332 AC 10-12): one card row per course, in launch order. A row whose course
-   some people already have offers one checkbox to include them (restarting anyone
-   enrolled, enrolling again anyone who completed) and View People to see who they are. */
+   some people already have offers one toggle to include them (restarting anyone
+   enrolled, enrolling again anyone who completed). */
 
 const BY_ID = new Map(PEOPLE.map((p) => [p.id, p]))
 
@@ -130,8 +126,6 @@ interface Props {
 function ReviewStep({ courses, committedIds, included, onToggleIncluded }: Props) {
   const counts = reviewCounts(courses, committedIds, (id) => includeChoice(included.includes(id)))
   const offsets = startOffsets(courses)
-  // The course whose existing people the View People drawer lists.
-  const [viewing, setViewing] = useState<string | null>(null)
 
   /* Every count on this step is anchored to the people picked on the People step,
      the same number the stepper shows, so admins see one total and parts of it. */
@@ -146,52 +140,52 @@ function ReviewStep({ courses, committedIds, included, onToggleIncluded }: Props
         </h4>
 
         {/* A short list (1 to 5 courses), so no column header: each row labels its own
-            number inline. Figma Programs "Card/course" (4240:92985). */}
+            number inline. Figma Your Courses "Row 1" (7714:14233): the course card in a
+            tray, with the enrol count and the include toggle under it. */}
         <ul className="acw-review-list">
           {counts.perCourse.map((r, index) => {
             const t = timingParts(r.course, offsets[index])
             return (
               <li key={r.course.id} className="acw-review-row">
-                <span className="acw-review-counter">{index + 1}</span>
-                <img className="acw-review-thumb" src={r.course.thumb} alt="" />
-                <div className="acw-review-body">
-                  {/* Opens the course in a new tab so the wizard keeps its selections. */}
-                  <a
-                    className="acw-review-course"
-                    href={`/your-courses/course?title=${encodeURIComponent(r.course.name)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {r.course.name}
-                  </a>
-                  <span className="acw-review-info">
-                    <span className="acw-review-info-item">
-                      <PlayCircle size={16} color="var(--text-tertiary)" variant="Linear" />
-                      {t.start}
+                <div className="acw-review-card">
+                  <span className="acw-review-counter">{index + 1}</span>
+                  <img className="acw-review-thumb" src={r.course.thumb} alt="" />
+                  <div className="acw-review-body">
+                    {/* Opens the course in a new tab so the wizard keeps its selections. */}
+                    <a
+                      className="acw-review-course"
+                      href={`/your-courses/course?title=${encodeURIComponent(r.course.name)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {r.course.name}
+                    </a>
+                    <span className="acw-review-info">
+                      <span className="acw-review-info-item">
+                        <PlayCircle size={16} color="var(--text-tertiary)" variant="Linear" />
+                        {t.start}
+                      </span>
+                      <span className="acw-review-info-item">
+                        <Calendar size={16} color="var(--text-tertiary)" variant="Linear" />
+                        {t.due}
+                      </span>
+                      <span className="acw-review-info-item">
+                        <Refresh size={16} color="var(--text-tertiary)" variant="Linear" />
+                        {t.repeat}
+                      </span>
                     </span>
-                    <span className="acw-review-info-item">
-                      <Calendar size={16} color="var(--text-tertiary)" variant="Linear" />
-                      {t.due}
-                    </span>
-                    <span className="acw-review-info-item">
-                      <Refresh size={16} color="var(--text-tertiary)" variant="Linear" />
-                      {t.repeat}
-                    </span>
-                  </span>
+                  </div>
                 </div>
-                <div className="acw-review-side">
-                  <Badge type="in-progress" className="acw-review-people" label={`${plural(r.enrol, 'person', 'people')} to enrol`} />
+                <div className="acw-review-footer">
+                  <span className="acw-review-people">{plural(r.enrol, 'person', 'people')} to enrol</span>
                   {r.existing > 0 && (
-                    <div className="acw-review-existing">
-                      {/* The label text toggles the box too. */}
-                      <label className="acw-review-include">
-                        <Checkbox checked={included.includes(r.course.id)} onChange={() => onToggleIncluded(r.course.id)} />
-                        Include {r.existing} already enrolled
-                      </label>
-                      <Button variant="text" size="sm" onClick={() => setViewing(r.course.id)}>
-                        View People
-                      </Button>
-                    </div>
+                    <Toggle
+                      size="sm"
+                      className="acw-review-include"
+                      checked={included.includes(r.course.id)}
+                      onChange={() => onToggleIncluded(r.course.id)}
+                      label={`Include ${r.existing} already enrolled`}
+                    />
                   )}
                 </div>
               </li>
@@ -199,13 +193,6 @@ function ReviewStep({ courses, committedIds, included, onToggleIncluded }: Props
           })}
         </ul>
       </div>
-
-      <AffectedPeopleDrawer
-        open={viewing !== null}
-        rows={counts.affected.filter((a) => a.courseId === viewing)}
-        onClose={() => setViewing(null)}
-      />
-
     </div>
   )
 }
