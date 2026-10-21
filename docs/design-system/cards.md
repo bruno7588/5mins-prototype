@@ -420,7 +420,7 @@ A quiz or assessment item. Three devices (admin, web app, mobile), each with its
 
 The variant matrix is `Device × Disabled × State × Completed`, and it is deliberately sparse: admin has enabled and hover only, web app carries all six (enabled / hover, each × disabled and × completed), mobile has no hover and no disabled+completed combination.
 
-Assessment cards use a built-in illustration in place of a thumbnail. The official illustrations are in `src/assets/assessment-illustrations/` (Figma `Illustrations/ Assessments` `9120:8850`): ten types (Multiple choice, Short text, Exercise, Situational test, Fast Track, Poll, Fill in the blank, Sequence, Categorize, Match the pairs), each as distinct Mobile (56px) and Desktop (80px) artwork. Use `getAssessmentIllustration(type, device)`; scale the desktop one down for the 48px admin row. Keep the size and placement exact. Full set and node refs: `gamification.md` → Assessment illustrations.
+Assessment cards use a built-in illustration in place of a thumbnail. The official illustrations are in `src/assets/assessment-illustrations/` (Figma `Illustrations/ Assessments` `9120:8850`): eleven types (Multiple choice, Short text, Exercise, Situational test, Fast Track, Poll, Fill in the blank, Sequence, Categorize, Match the pairs, Image choice), each as distinct Mobile (56px) and Desktop (80px) artwork. Use `getAssessmentIllustration(type, device)`; scale the desktop one down for the 48px admin row. Keep the size and placement exact. Full set and node refs: `gamification.md` → Assessment illustrations.
 
 #### Assessment admin list row (900 x 73)
 

@@ -1,6 +1,6 @@
 // 5Mins assessment-type illustrations — Figma "Illustrations/ Assessments" (frame 9120:8850;
 // the six classic types downloaded 2026-07-13, the four interactive ones 2026-08-17, lesson
-// quiz 2026-09-01). Eleven assessment types — the whole frame — each as distinct Mobile
+// quiz 2026-09-01, image choice 2026-10-21). Twelve assessment types — the whole frame — each as distinct Mobile
 // (56px) and Desktop (80px) artwork. Used in
 // Assessment cards (56px mobile list card, 80px web app row; scale the desktop one down for
 // the 48px admin row).
@@ -27,6 +27,8 @@ import categorizeMobile from './categorize-mobile.svg'
 import categorizeDesktop from './categorize-desktop.svg'
 import matchPairsMobile from './match-pairs-mobile.svg'
 import matchPairsDesktop from './match-pairs-desktop.svg'
+import imageChoiceMobile from './image-choice-mobile.svg'
+import imageChoiceDesktop from './image-choice-desktop.svg'
 
 export type AssessmentType =
   | 'lesson-quiz'
@@ -40,6 +42,7 @@ export type AssessmentType =
   | 'sequence'
   | 'categorize'
   | 'match-pairs'
+  | 'image-choice'
 
 export type AssessmentIllustrationDevice = 'mobile' | 'desktop'
 
@@ -55,6 +58,7 @@ const illustrations: Record<AssessmentType, Record<AssessmentIllustrationDevice,
   sequence: { mobile: sequenceMobile, desktop: sequenceDesktop },
   categorize: { mobile: categorizeMobile, desktop: categorizeDesktop },
   'match-pairs': { mobile: matchPairsMobile, desktop: matchPairsDesktop },
+  'image-choice': { mobile: imageChoiceMobile, desktop: imageChoiceDesktop },
 }
 
 export function getAssessmentIllustration(
@@ -70,8 +74,7 @@ export function getAssessmentIllustration(
 const byLabel: Record<string, AssessmentType> = {
   'Lesson Quiz': 'lesson-quiz',
   'Multiple Choice': 'multiple-choice',
-  // No artwork of its own yet (DES-345): Image Choice borrows Multiple Choice's.
-  'Image Choice': 'multiple-choice',
+  'Image Choice': 'image-choice',
   'Short Text': 'short-text',
   Exercise: 'exercise',
   Poll: 'poll',
