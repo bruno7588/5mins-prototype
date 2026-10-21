@@ -45,7 +45,7 @@ Icon rules for 5Mins.ai: **Iconsax React** for all UI icons, two variants (Linea
 |---|---|---|---|---|
 | Glyph `vuesax/linear/<Name>` | exact iconsax-react name | Iconsax component | same name, `variant="Linear"` | `vuesax/linear/ArrowDown2` → `<ArrowDown2 variant="Linear" />` |
 | Glyph `vuesax/bold/<Name>` | exact iconsax-react name | Iconsax component | same name, `variant="Bold"` | |
-| `Icons` component set (custom 5Mins icons) | Name (27), Type linear / bold, State Enabled / Hover | `src/components/icons/*` | one component per icon | Hover is CSS, not a prop |
+| `Icons` component set (custom 5Mins icons) | Name (28), Type linear / bold, State Enabled / Hover | `src/components/icons/*` | one component per icon | Hover is CSS, not a prop |
 | Icon size | 24×24 frames (a few 20×20) | `size` prop | `16` / `20` / `24` / `32` (`--icon-size-*`) | no Figma variable for icon sizes |
 | Skill illustrations | `Icons/Skill Icon/*`, `Illustrations/Skill Hugo/*` | `getSkillIllustrationByName` | see below | |
 

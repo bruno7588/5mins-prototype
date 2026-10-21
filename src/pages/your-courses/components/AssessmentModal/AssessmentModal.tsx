@@ -6,6 +6,7 @@ import SectionHeader from '../SectionHeader/SectionHeader'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import Checkbox from '@/components/Checkbox/Checkbox'
+import AIImageIcon from '@/components/icons/AIImageIcon'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
@@ -23,6 +24,8 @@ import './AssessmentModal.css'
 
 /** Image options (DES-345): 10MB each, any of these formats. */
 const OPTION_IMAGE_MAX_BYTES = 10 * 1024 * 1024
+/** Image Choice takes 2 to 4 images; the field label says so before the admin reaches it. */
+const MAX_IMAGE_OPTIONS = 4
 const OPTION_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 
 async function validateOptionImage(file: File): Promise<string | null> {
@@ -129,7 +132,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   }
 
   const handleAddImageOption = () => {
-    setImages(prev => [...prev, null])
+    setImages(prev => (prev.length < MAX_IMAGE_OPTIONS ? [...prev, null] : prev))
   }
 
   /* A file dropped on an empty tile skips the picker: checked, then shown as is. */
@@ -208,7 +211,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
             <div className="assessment-modal-field">
               <span className="assessment-modal-label">
                 Images{' '}
-                <span className="assessment-modal-label-hint">(JPG, PNG, WebP, GIF • max. 10MB)</span>
+                <span className="assessment-modal-label-hint">(2 to {MAX_IMAGE_OPTIONS} images • JPG, PNG, WebP, GIF • max. 10MB)</span>
               </span>
               <div className="assessment-modal-image-grid">
                 {images.map((src, index) => (
@@ -238,7 +241,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                         helpText=""
                         buttonLabel="Add Image"
                         className="assessment-modal-image-uploader"
-                        icon={<GalleryAdd size={32} color="var(--text-secondary)" variant="Linear" />}
+                        icon={<AIImageIcon size={32} color="var(--text-secondary)" />}
                         state={dropErrors[index] ? 'Error' : 'Enabled'}
                         errorMessage={dropErrors[index]}
                         onBrowse={() => setPickerIndex(index)}
@@ -282,7 +285,8 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                 ))}
               </div>
               {/* Adds an empty option: the text button under the list, as Add Pair, Add Item
-                  and Add Step do on the other assessments. */}
+                  and Add Step do on the other assessments. Gone at the limit; the label states it. */}
+              {images.length < MAX_IMAGE_OPTIONS && (
               <div className="assessment-modal-image-add-row">
                 <Button
                   variant="text"
@@ -290,9 +294,10 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                   icon={<Add size={20} color="currentColor" variant="Linear" />}
                   onClick={handleAddImageOption}
                 >
-                  Add New Image
+                  Add New Option
                 </Button>
               </div>
+              )}
             </div>
           )}
 
