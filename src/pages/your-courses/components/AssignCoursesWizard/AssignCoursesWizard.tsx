@@ -8,7 +8,7 @@ import WizardShell, { type WizardStep } from '../WizardShell/WizardShell'
 import WizardSuccess from '../WizardShell/WizardSuccess'
 import PeoplePicker from '../PeoplePicker/PeoplePicker'
 import CoursesStep from './CoursesStep'
-import ReviewStep, { outcomeFor, reviewCounts, type ExistingChoice } from './ReviewStep'
+import ReviewStep, { includeChoice, outcomeFor, reviewCounts } from './ReviewStep'
 import { plural, type AssignCourse } from './schedule'
 import './AssignCoursesWizard.css'
 
@@ -27,9 +27,12 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   const [step, setStep] = useState<Step>('courses')
   const [courses, setCourses] = useState<AssignCourse[]>([])
   const [committed, setCommitted] = useState<string[]>([])
-  // What happens to people who already have a course; both off by default, so a
-  // straight Launch leaves every existing enrolment and completion alone.
-  const [choice, setChoice] = useState<ExistingChoice>({ restart: false, again: false })
+  // Courses whose existing people the admin chose to include (restart or re-enrol). None
+  // by default, so a straight Launch leaves every existing enrolment and completion alone.
+  const [included, setIncluded] = useState<string[]>([])
+  const choiceFor = (courseId: string) => includeChoice(included.includes(courseId))
+  const toggleIncluded = (courseId: string) =>
+    setIncluded((ids) => (ids.includes(courseId) ? ids.filter((id) => id !== courseId) : [...ids, courseId]))
   // The ticked people on the People step; the footer button commits them.
   const [draftIds, setDraftIds] = useState<string[]>([])
   const [confirmDiscard, setConfirmDiscard] = useState(false)
@@ -52,10 +55,10 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   const launch = () => {
     const pairs = courses.flatMap((c) =>
       activeCommitted
-        .filter((id) => outcomeFor(id, c.id, choice) !== 'skip')
+        .filter((id) => outcomeFor(id, c.id, choiceFor(c.id)) !== 'skip')
         .map((personId) => ({ personId, courseId: c.id })),
     )
-    const counts = reviewCounts(courses, activeCommitted, choice)
+    const counts = reviewCounts(courses, activeCommitted, choiceFor)
     recordEnrolments(pairs)
     setLaunched({ courses: courses.length, people: counts.people })
   }
@@ -179,7 +182,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
           )}
         </div>
         <div hidden={step !== 'review'}>
-          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} choice={choice} onChoiceChange={setChoice} />}
+          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} included={included} onToggleIncluded={toggleIncluded} />}
         </div>
       </WizardShell>
 

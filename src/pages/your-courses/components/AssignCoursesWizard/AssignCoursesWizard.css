@@ -307,6 +307,38 @@
   flex-shrink: 0;
 }
 
+/* Right of the row: the count, and for a course some people already have, one checkbox
+   to include them plus View People to see who they are. */
+.acw-review-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-s);
+  flex-shrink: 0;
+}
+
+.acw-review-existing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.acw-review-include {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  color: var(--text-primary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* A 20px hit area, as the old callout checkboxes, so the box sits level with the label. */
+.acw-review-include .checkbox {
+  width: var(--space-ml);
+  height: var(--space-ml);
+  padding: var(--space-xxs);
+}
+
 /* Callout for people who already have some of the courses (built from .alert). */
 /* Title is Paragraph M semibold (14 / 600) in --text-primary, one step up from
    Alert's Medium --text-secondary. */

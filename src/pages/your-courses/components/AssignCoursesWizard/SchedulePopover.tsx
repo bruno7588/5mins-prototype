@@ -121,7 +121,7 @@ function SchedulePopover({ column, course, index, onChange, onClose, anchorRef, 
             checked={!delayed}
             onChange={() => onChange({ enrolment: { kind: 'immediate' } })}
           />
-          <p className="acw-pop-desc">Starts on assignment</p>
+          <p className="acw-pop-desc">Starts today</p>
         </div>
         <div className="acw-pop-option">
           <Radio

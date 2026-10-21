@@ -41,7 +41,7 @@ export interface CellSummary {
  *  later courses from the previous course's start. */
 export function enrolmentSummary(c: AssignCourse, index: number): CellSummary {
   if (c.enrolment.kind === 'immediate') {
-    return { title: 'Immediate', desc: 'Starts on assignment' }
+    return { title: 'Immediate', desc: 'Starts today' }
   }
   const days = plural(c.enrolment.days, 'day')
   return { title: `After ${days}`, desc: `${days} after ${index === 0 ? 'assignment' : 'previous course'}` }
@@ -59,10 +59,10 @@ export function repeatSummary(c: AssignCourse): CellSummary {
   return { title: 'Recurring', desc: `Every ${plural(c.repeat.interval, unit)}` }
 }
 
-/** Start, due and repeat terms for a Review row ("Starts on assignment", "No due date", "One time only"). */
+/** Start, due and repeat terms for a Review row ("Starts today", "No due date", "One time only"). */
 export function timingParts(c: AssignCourse, offset: number) {
   return {
-    start: offset === 0 ? 'Starts on assignment' : `Starts on ${fmtDate(offset)}`,
+    start: offset === 0 ? 'Starts today' : `Starts on ${fmtDate(offset)}`,
     due: c.due.kind === 'none' ? 'No due date' : `Due ${fmtDate(offset + c.due.daysAfterStart)}`,
     repeat: repeatSummary(c).desc ?? repeatSummary(c).title,
   }
