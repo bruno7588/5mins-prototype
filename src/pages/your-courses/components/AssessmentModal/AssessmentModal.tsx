@@ -293,7 +293,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                       {/* Remove sits here for every option, filled or empty, once there are more
                           than two: it removes the option, not just its image. */}
                       {images.length > 2 && (
-                        <Tooltip text="Remove option" icon={false} className="assessment-modal-image-correct-remove">
+                        <Tooltip text="Remove option" icon={false} alignment="End" className="assessment-modal-image-correct-remove">
                           <button
                             className="assessment-modal-image-remove"
                             type="button"
