@@ -13,7 +13,6 @@ import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
 import FileUploader from '@/components/FileUploader/FileUploader'
 import InputField from '@/components/InputField/InputField'
 import Radio from '@/components/Radio/Radio'
-import Toggle from '@/components/Toggle/Toggle'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import { QuizFooterLayoutContext } from '@/pages/quiz-lab/components/FeedbackFooter'
@@ -96,15 +95,10 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
      a new question starts with the first option marked correct. */
   const [images, setImages] = useState<(string | null)[]>(initial?.optionImages ?? [null, null])
   const [correctImages, setCorrectImages] = useState<number[]>(initial?.correctIndices ?? [0])
-  /** One label per tile, kept in step with `images`. */
+  /** One optional label per option, kept in step with `images`. */
   const [labels, setLabels] = useState<string[]>(() =>
     initial?.optionImages ? initial.optionImages.map((_, i) => initial.options[i] ?? '') : ['', ''],
   )
-  /** Labels are all or none: on, every image needs one; off, none is saved. */
-  const [showLabels, setShowLabels] = useState(() => labels.some(l => l.trim()))
-  /** Label fields left once, by option; with a Save attempt, these show a missing label. */
-  const [leftLabels, setLeftLabels] = useState<boolean[]>([])
-  const [triedSave, setTriedSave] = useState(false)
   /** The option the image picker is filling, or null while it is closed. */
   const [pickerIndex, setPickerIndex] = useState<number | null>(null)
   /** A dropped file that failed validation, by option, shown in that tile's uploader. */
@@ -136,7 +130,6 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   const handleRemoveImageOption = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index))
     setLabels(prev => prev.filter((_, i) => i !== index))
-    setLeftLabels(prev => prev.filter((_, i) => i !== index))
     setDropErrors({})
     setCorrectImages(prev => prev.filter(i => i !== index).map(i => (i > index ? i - 1 : i)))
   }
@@ -171,19 +164,10 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   /* Empty tiles are dropped on save; the correct marks are re-pointed at what is left. */
   const filledImages = images.flatMap((src, index) => (src ? [{ src, index }] : []))
   const savedImages = filledImages.map(f => f.src)
-  const savedLabels = filledImages.map(f => (showLabels ? (labels[f.index] ?? '').trim() : ''))
+  const savedLabels = filledImages.map(f => (labels[f.index] ?? '').trim())
   const savedCorrect = filledImages.flatMap((f, i) => (correctImages.includes(f.index) ? [i] : []))
 
-  /* Labels are all or none: with them on, an image without one cannot be saved. */
-  const missingLabels = showLabels && savedLabels.some(l => !l)
-  const labelMissing = (index: number) =>
-    showLabels && !!images[index] && !(labels[index] ?? '').trim() && (triedSave || !!leftLabels[index])
-
   const handleSubmit = () => {
-    if (isImageMode && missingLabels) {
-      setTriedSave(true)
-      return
-    }
     onAdd({
       type,
       question,
@@ -233,20 +217,13 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
             onChange={(e) => setQuestion(e.target.value)}
           />
 
-          {/* Image options: a grid of square tiles, each filled from the image picker. */}
+          {/* Image options: one row each, the square image beside its label and Correct mark. */}
           {isImageMode && (
             <div className="assessment-modal-field">
               <span className="assessment-modal-label">
                 Images{' '}
                 <span className="assessment-modal-label-hint assessment-modal-label-hint--images">(max. {MAX_IMAGE_OPTIONS} images • JPG, PNG, WebP, GIF • max. 10MB)</span>
               </span>
-              <Toggle
-                size="sm"
-                className="assessment-modal-image-labels-toggle"
-                label="Show labels"
-                checked={showLabels}
-                onChange={(e) => setShowLabels(e.target.checked)}
-              />
               <div className="assessment-modal-image-grid">
                 {images.map((src, index) => (
                   <div className="assessment-modal-image-option" key={index}>
@@ -282,23 +259,19 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                         onFileSelect={(file) => handleDroppedImage(index, file)}
                       />
                     )}
-                    {/* The words under the image for the learner, on every option while labels
-                        are on, so an empty option can be named before its image is added. */}
-                    {showLabels && (
-                      <InputField
-                        className="assessment-modal-image-label"
-                        placeholder="Add a label"
-                        ariaLabel={`Label for option ${index + 1}`}
-                        value={labels[index] ?? ''}
-                        validation={labelMissing(index) ? 'error' : 'none'}
-                        helperText={labelMissing(index) ? 'Add a label' : undefined}
-                        onBlur={() => setLeftLabels(prev => { const next = [...prev]; next[index] = true; return next })}
-                        onChange={(e) => {
-                          const value = e.target.value.slice(0, MAX_IMAGE_LABEL)
-                          setLabels(prev => prev.map((l, i) => (i === index ? value : l)))
-                        }}
-                      />
-                    )}
+                    <div className="assessment-modal-image-fields">
+                    {/* Optional words under the image for the learner, on every option, so an
+                        empty one can be named before its image is added. */}
+                    <InputField
+                      className="assessment-modal-image-label"
+                      label={<>Label <span className="assessment-modal-label-hint">(optional)</span></>}
+                      placeholder="Add a label"
+                      value={labels[index] ?? ''}
+                      onChange={(e) => {
+                        const value = e.target.value.slice(0, MAX_IMAGE_LABEL)
+                        setLabels(prev => prev.map((l, i) => (i === index ? value : l)))
+                      }}
+                    />
                     <div className="assessment-modal-image-correct">
                       {/* A label, so the word toggles the box too. Correct reads green, as on a
                           Multiple Choice option: the tick here and the image's border above. A
@@ -331,6 +304,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                           </button>
                         </Tooltip>
                       )}
+                    </div>
                     </div>
                   </div>
                 ))}
