@@ -365,11 +365,11 @@
   outline-offset: 2px;
 }
 
-/* Image Choice preview (Figma Create Course 10574:35075): a 540 x 640 panel with a 24px
+/* Image Choice preview (Figma Create Course 10574:35075): a 600 x 640 panel with a 24px
    gutter all round, the label and close flush with the content, and a full-width Medium
    Check / Continue with no divider above it. */
 .assessment-modal-preview .desktop-preview__frame {
-  width: 540px;
+  width: 600px;
   height: min(640px, calc(100vh - 96px));
   padding: var(--space-l);
   border-radius: var(--radius-sm);

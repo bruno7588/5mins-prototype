@@ -31,7 +31,15 @@
   overflow: auto;
 }
 
+/* The learner web view fills the stage up to 900px, the content max-width used across
+   the app, rather than the 544px feed panel. */
+.ql-lab__desktop .desktop-preview {
+  width: 100%;
+}
+
 .ql-lab__desktop .desktop-preview__frame {
+  width: 100%;
+  max-width: 900px;
   border: 1px solid var(--border);
 }
 
@@ -960,6 +968,20 @@
   display: block;
   overflow: hidden;
   border-radius: var(--radius-s);
+}
+
+/* The admin's optional label under the image: one short line, two at most, in the tile so
+   selected, correct and wrong colour it with the rest of the token. */
+.ql-imgchoice__label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  padding: var(--space-s) var(--space-xs) 0;
+  font: 400 var(--font-size-md)/1.4 'Poppins', sans-serif;
+  color: var(--text-primary);
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .ql-imgchoice__img {

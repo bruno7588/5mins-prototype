@@ -65,8 +65,8 @@ function sheet(a: AssessmentResult): string[][] {
         r.learner.name,
         r.learner.role,
         r.submittedAt,
-        /* A sheet cannot hold the images, so it names them by their place in the question. */
-        a.optionImages && r.picks ? r.picks.map((p) => `Image ${p + 1}`).join('; ') : a.options[r.optionIndex],
+        /* A sheet cannot hold the images, so it names them by their label, or their place in the question. */
+        a.optionImages && r.picks ? r.picks.map((p) => a.options[p] || `Image ${p + 1}`).join('; ') : a.options[r.optionIndex],
         r.correct ? 'Correct' : 'Incorrect',
       ]),
     ]
@@ -272,7 +272,7 @@ function AssessmentAnswers() {
               return (
                 <span className="asp-thumbs">
                   {r.picks.map((p) => (
-                    <img key={p} className="asp-thumb" src={a.optionImages![p]} alt={`Image ${p + 1}`} />
+                    <img key={p} className="asp-thumb" src={a.optionImages![p]} alt={a.options[p] || `Image ${p + 1}`} />
                   ))}
                 </span>
               )

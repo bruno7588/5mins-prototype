@@ -98,7 +98,7 @@ export interface GradedAssessment extends AssessmentBase {
   options: string[]
   correctIndex: number
   /** Multiple choice with image options (DES-345): the images, in the admin's order,
-      and every right one. `options` then holds an empty label per image. */
+      and every right one. `options` then holds each image's label, empty when it has none. */
   optionImages?: string[]
   correctIndices?: number[]
   responses: ChoiceResponse[]
@@ -661,7 +661,7 @@ export const courseAssessments: AssessmentResult[] = [
     type: 'image-choice',
     title: QUIZ_SAMPLES['image-choice'].prompt,
     enrolled: ENROLLED,
-    options: IMAGE_SAMPLE.images.map(() => ''),
+    options: IMAGE_SAMPLE.images.map((_, i) => IMAGE_SAMPLE.labels?.[i] ?? ''),
     correctIndex: IMAGE_SAMPLE.correctIndices[0],
     optionImages: IMAGE_SAMPLE.images,
     correctIndices: IMAGE_SAMPLE.correctIndices,

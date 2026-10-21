@@ -50,12 +50,14 @@ export interface SelectAllQuestion {
 
 /** One answer of several. A poll is the same screen with `correctIndex: -1` — it asks
  *  rather than marks, so there is nothing to check and nothing to reveal. */
-/** Multiple choice with image options (DES-345): no labels, one or more correct. */
+/** Multiple choice with image options (DES-345): optional labels, one or more correct. */
 export interface ImageChoiceQuestion {
   type: 'image-choice'
   prompt: string
   /** Image URLs, in the order the admin set them. */
   images: string[]
+  /** Optional words under each image, parallel to `images`; empty means none. */
+  labels?: string[]
   /** Indexes into `images`. */
   correctIndices: number[]
   explanation?: string
@@ -121,6 +123,7 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
     type: 'image-choice',
     prompt: 'Which of these show people working together?',
     images: [meeting, officeTowers, paperwork, dataWave, talk, skyscrapers],
+    labels: ['Team meeting', '', '', '', 'Planning together', ''],
     correctIndices: [0, 2, 4],
   },
   'free-text': {

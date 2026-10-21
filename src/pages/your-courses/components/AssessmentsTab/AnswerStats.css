@@ -209,6 +209,8 @@
   height: 48px;
   object-fit: cover;
   border-radius: var(--radius-s);
+  /* 8px to a label beside it, with the row's 4px gap. */
+  margin-right: var(--space-xs);
 }
 
 /* Wears the bar's own colour, so the two step back together while another row is

@@ -95,7 +95,7 @@ export function AnswerBars({
                 {active === null && correctIndex !== null
                   ? 'answered correctly'
                   : images
-                    ? 'picked this image'
+                    ? options[shown] || 'picked this image'
                     : options[shown]}
               </span>
               <span className="ast-readout__sub">
@@ -122,7 +122,7 @@ export function AnswerBars({
                 onBlur={() => setActive(null)}
                 onClick={() => setActive(active === i ? null : i)}
                 aria-pressed={i === active}
-                aria-label={`${images ? `Image ${i + 1}` : label}${isCorrect ? ', correct answer' : ''}, ${p}%, ${tally[i]} ${unit}`}
+                aria-label={`${images ? label || `Image ${i + 1}` : label}${isCorrect ? ', correct answer' : ''}, ${p}%, ${tally[i]} ${unit}`}
               >
                 <span className="ast-row__head">
                   <span className="ast-row__label">
@@ -134,7 +134,14 @@ export function AnswerBars({
                         className="ast-row__tick"
                       />
                     )}
-                    {images ? <img className="ast-row__thumb" src={images[i]} alt="" /> : label}
+                    {images ? (
+                      <>
+                        <img className="ast-row__thumb" src={images[i]} alt="" />
+                        {label}
+                      </>
+                    ) : (
+                      label
+                    )}
                   </span>
                   <span className="ast-row__pct">{p}%</span>
                 </span>

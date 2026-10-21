@@ -1,5 +1,5 @@
-/* Desktop preview frame: the lesson feed's 544x812 side panel, on the modal's
-   scrim. The modal supplies the scrim, focus trap and Escape. */
+/* Desktop preview frame: 600 wide (the admin quiz preview width) by 812, on the
+   modal's scrim. The modal supplies the scrim, focus trap and Escape. */
 
 .desktop-preview {
   display: flex;
@@ -10,7 +10,7 @@
    so the height is capped to what is on screen. The width is never scaled: it
    is the thing being previewed. */
 .desktop-preview__frame {
-  width: 544px;
+  width: 600px;
   height: min(812px, calc(100vh - 96px));
   display: flex;
   flex-direction: column;

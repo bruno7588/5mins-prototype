@@ -80,6 +80,9 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   }
 
   const isCorrect = (index: number) => question.correctIndices.includes(index)
+  /* The admin's optional words under an image; the option's accessible name carries them. */
+  const labelOf = (index: number) => question.labels?.[index]?.trim() || ''
+  const optionName = (index: number) => `Option ${index + 1}${labelOf(index) ? `, ${labelOf(index)}` : ''}`
 
   const tileClass = (index: number) => {
     const classes = ['ql-token', 'ql-imgchoice__tile']
@@ -113,8 +116,9 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
                 <span className="ql-imgchoice__frame">
                   <img className="ql-imgchoice__img" src={src} alt="" />
                 </span>
+                {labelOf(index) && <span className="ql-imgchoice__label">{labelOf(index)}</span>}
                 {picked.includes(index) ? (
-                  <span className="ql-imgchoice__mark" aria-label={`Option ${index + 1}, ${isCorrect(index) ? 'correct' : 'wrong'}`}>
+                  <span className="ql-imgchoice__mark" aria-label={`${optionName(index)}, ${isCorrect(index) ? 'correct' : 'wrong'}`}>
                     {isCorrect(index) ? (
                       <TickCircle size={32} color="currentColor" variant="Bold" />
                     ) : (
@@ -122,7 +126,7 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
                     )}
                   </span>
                 ) : isCorrect(index) ? (
-                  <span className="ql-sr-only">Option {index + 1}, missed correct image</span>
+                  <span className="ql-sr-only">{optionName(index)}, missed correct image</span>
                 ) : null}
               </div>
             ) : (
@@ -132,11 +136,12 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
                 <span className="ql-imgchoice__frame">
                   <img className="ql-imgchoice__img" src={src} alt="" />
                 </span>
+                {labelOf(index) && <span className="ql-imgchoice__label">{labelOf(index)}</span>}
                 <Checkbox
                   className="ql-imgchoice__check"
                   checked={picked.includes(index)}
                   onChange={() => toggle(index)}
-                  ariaLabel={`Option ${index + 1}`}
+                  ariaLabel={optionName(index)}
                 />
               </label>
             ),
