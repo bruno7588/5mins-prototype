@@ -1,3 +1,4 @@
+import { paletteCount, usesThemeColours, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { DEFAULT_THEME, type ThemeSet } from './brandTheme'
 
 /* Turns a tenant's theme colours (UI colours, not a palette) into shader colours.
@@ -129,3 +130,11 @@ export function brandPalette(set: ThemeSet, count = 4): string[] {
 
 /** OKLCH of a hex colour, for tests and checks. */
 export const toLch = hexToLch
+
+/** The colours a recipe is drawn in for a theme set. Dithering and the canvas patterns
+    take the three theme colours as they are (header bar, navigation items, selected
+    item), so admins see their own colours; the mesh and grain gradients take the
+    blended palette above. */
+export function recipeColours(recipe: GradientRecipe, set: ThemeSet): string[] {
+  return usesThemeColours(recipe.shader) ? [set.header, set.nav, set.selected] : brandPalette(set, paletteCount(recipe))
+}

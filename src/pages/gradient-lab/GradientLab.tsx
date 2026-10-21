@@ -5,7 +5,7 @@ import 'dialkit/styles.css'
 import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
-import { brandPalette } from '@/data/brandPalette'
+import { recipeColours } from '@/data/brandPalette'
 import { DEFAULT_THEME, effectiveTheme } from '@/data/brandTheme'
 import { renderStill } from '@/data/renderRecipe'
 import { useTheme } from '@/hooks/useTheme'
@@ -13,7 +13,7 @@ import LabCanvas from './LabCanvas'
 import ExportPanel from './panels/ExportPanel'
 import GradientSlots from './panels/GradientSlots'
 import { clearGradient, reorderGradients, saveGradient, useSavedGradients } from './gradients'
-import { DEFAULT_RECIPE, paletteCount, parseRecipe, type GradientRecipe } from './recipe'
+import { DEFAULT_RECIPE, parseRecipe, type GradientRecipe } from './recipe'
 import FocalPad from './panels/FocalPad'
 import { useLabDials, type DialsKind, type LabState } from './panels/useLabDials'
 import './gradient-lab.css'
@@ -30,7 +30,7 @@ import './panels/panels.css'
  */
 
 const TABS: { key: DialsKind; label: string }[] = [
-  { key: 'gradient', label: 'Gradient' },
+  { key: 'gradient', label: 'Background' },
   { key: 'shader', label: 'Shader' },
 ]
 
@@ -70,7 +70,7 @@ function GradientLab() {
   const [savingSlot, setSavingSlot] = useState(false)
   // The new slot's gradient while it is unsaved, kept when another slot is opened.
   const [draft, setDraft] = useState<GradientRecipe | null>(null)
-  const colours = brandPalette(lab.preview, paletteCount(lab.recipe))
+  const colours = recipeColours(lab.recipe, lab.preview)
 
   /* Selecting a saved slot loads its recipe; the new empty slot opens its draft,
      or keeps the current gradient so it can be saved there. */
@@ -97,7 +97,7 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, name: `Gradient ${activeSlot}` }
-      const still = await renderStill(recipe, brandPalette(DEFAULT_THEME.light, paletteCount(recipe)))
+      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_THEME.light))
       await saveGradient(activeSlot, recipe, still)
       if (!gradients.some((g) => g.slot === activeSlot)) setDraft(null)
       void reloadGradients()
@@ -115,7 +115,7 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, name: `Gradient ${slot}` }
-      const still = await renderStill(recipe, brandPalette(DEFAULT_THEME.light, paletteCount(recipe)))
+      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_THEME.light))
       await saveGradient(slot, recipe, still)
       await reloadGradients()
       setActiveSlot(slot)

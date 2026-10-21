@@ -1,6 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { paletteCount, type GradientRecipe } from '@/pages/gradient-lab/recipe'
-import { brandPalette } from './brandPalette'
+import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { recipeColours } from './brandPalette'
 import { effectiveTheme, getBrandTheme, subscribeBrandTheme } from './brandTheme'
 import { getCompanyDefaults, subscribeCompanyDefaults, useCompanyDefaults, type CompanyDefault } from './companyDefaults'
 import { renderStill } from './renderRecipe'
@@ -24,8 +24,8 @@ export type CompanyImage =
 /** What a default's still depends on: its recipe and the tenant's colours for that mode. */
 export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') => JSON.stringify([recipe, effectiveTheme()[mode]])
 
-/** The recipe's shader colours for this tenant in that mode. */
-export const tenantColours = (recipe: GradientRecipe, mode: Theme = 'light') => brandPalette(effectiveTheme()[mode], paletteCount(recipe))
+/** The recipe's colours for this tenant in that mode. */
+export const tenantColours = (recipe: GradientRecipe, mode: Theme = 'light') => recipeColours(recipe, effectiveTheme()[mode])
 
 const stills = new Map<string, Promise<string>>()
 

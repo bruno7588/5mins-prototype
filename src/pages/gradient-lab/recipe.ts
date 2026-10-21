@@ -3,8 +3,10 @@
    Rendered with one of three Paper Shaders: MeshGradient (soft flowing colour),
    GrainGradient (grainy shapes: wave, dots, ripple and so on) or Dithering (a
    two-colour pixel pattern); the fields map onto their props. Or with one of
-   seven canvas patterns (src/data/canvasPatterns.ts): the sine stack, the dot
-   sweep, pixel rain, the halftone wave, isometric cubes, the kaleidoscope or Truchet flow.
+   thirteen canvas patterns (src/data/canvasPatterns.ts): the sine stack, the dot
+   sweep, pixel rain, the halftone wave, isometric cubes, the kaleidoscope,
+   Truchet flow, the dot tunnel, contours, the halftone bloom, confetti, scan bars
+   or the dot ripple.
    Saved in a Gradient Studio slot. Slots saved before recipes held photo
    presets (version 1); parseRecipe converts those on read. */
 
@@ -17,10 +19,12 @@ export type DitherShape = (typeof DITHER_SHAPES)[number]
 export const DITHER_TYPES = ['random', '2x2', '4x4', '8x8'] as const
 export type DitherType = (typeof DITHER_TYPES)[number]
 /** The shader kinds drawn in 2D canvas rather than by Paper Shaders. */
-export const CANVAS_PATTERNS = ['sine', 'sweep', 'rain', 'halftone', 'cubes', 'kaleido', 'truchet'] as const
+export const CANVAS_PATTERNS = ['sine', 'sweep', 'rain', 'halftone', 'cubes', 'kaleido', 'truchet', 'tunnel', 'contours', 'bloom', 'confetti', 'scan', 'ripple'] as const
 export type CanvasPattern = (typeof CANVAS_PATTERNS)[number]
 export type ShaderKind = 'mesh' | 'grain' | 'dither' | CanvasPattern
 export const isCanvasPattern = (kind: ShaderKind): kind is CanvasPattern => (CANVAS_PATTERNS as readonly string[]).includes(kind)
+/** Drawn in the tenant's three theme colours as they are, rather than a blended palette: the canvas patterns and dithering. */
+export const usesThemeColours = (kind: ShaderKind) => kind === 'dither' || isCanvasPattern(kind)
 
 export interface GradientRecipe {
   version: 2
@@ -125,6 +129,77 @@ export interface GradientRecipe {
   truchetCycle: number
   /** Picks a different arrangement of tiles (0-99). */
   truchetSeed: number
+  /** Dot tunnel only. Dots per ring (6-80), ring radius (0.5-4), depth between rings (0.15-1.5) and how far each ring twists with depth (-2 to 2). */
+  tunnelDots: number
+  tunnelRadius: number
+  tunnelGap: number
+  tunnelTwist: number
+  /** Dot steps the tunnel turns every 12 s (-20 to 20), and dot size (0.01-0.2). */
+  tunnelSpin: number
+  tunnelDot: number
+  /** Seconds for a ring to move up to the next (0.25-4), and how far back the tunnel fades out (4-30). */
+  tunnelRingTime: number
+  tunnelDepth: number
+  /** Every this many rings is in the second colour; 0 for none (0-12). */
+  tunnelHighlight: number
+  /** Contours only. Height between lines (0.03-0.3), every this many lines an index line (0 for none, 0-10), and the two line widths, % of the frame (0.05-2). */
+  contourStep: number
+  contourIndex: number
+  contourMinor: number
+  contourMajor: number
+  /** Seconds for the terrain to morph through and back (4-60), and how many lines rise out of the peaks in that time (-10 to 10). */
+  contourMorph: number
+  contourDrift: number
+  /** Halftone bloom only. Dot spacing, % of the frame (2-15), and the largest dot's radius as a share of it (0.1-0.7). */
+  bloomSpacing: number
+  bloomDot: number
+  /** The centre glow's size and how much it flares as a ring leaves, % of the frame (4-60, 0-20). */
+  bloomGlow: number
+  bloomFlare: number
+  /** Seconds for a ring to reach the edge (1-20), rings in flight at once (1-6), and their strength (0-1.5). */
+  bloomPeriod: number
+  bloomRings: number
+  bloomStrength: number
+  /** Ring width as it leaves the centre and as it reaches the edge, % of the frame (1-40). */
+  bloomRingStart: number
+  bloomRingEnd: number
+  /** Confetti only. Pieces across the frame (4-60), their size (0.3-3, 1 as drawn), the share in the near, faster layer (0-1), the share drawn as rectangles rather than discs (0-1) and in the second colour (0-1). */
+  confettiCount: number
+  confettiSize: number
+  confettiNear: number
+  confettiRects: number
+  confettiMix: number
+  /** Seconds for the far layer to fall through the frame; the near one falls twice as fast (3-40). How far the pieces sway, % of the frame (0-10). */
+  confettiFall: number
+  confettiSway: number
+  /** Picks a different scatter of pieces (0-99). */
+  confettiSeed: number
+  /** Scan bars only. Bars down the frame (3-24) and their thickness as a share of the pitch (0.1-0.95). */
+  scanBars: number
+  scanThickness: number
+  /** Seconds for one sweep across (0.5-12), and the share of it spent moving rather than resting (0.2-1). */
+  scanPass: number
+  scanSweep: number
+  /** The cut's width at rest and at full speed, % of the frame (0-20). */
+  scanGapMin: number
+  scanGapMax: number
+  /** How far the outer bars lag the middle ones, in sweeps, so the cut is a chevron (0-1.5). */
+  scanChevron: number
+  /** Dot ripple only. Dot spacing and resting dot radius, % of the frame (3-15, 0.2-3). */
+  rippleSpacing: number
+  rippleDot: number
+  /** Seconds between drops; eight drops play through, then it loops (0.5-6). */
+  rippleInterval: number
+  /** How fast a ripple spreads, % of the frame per second (5-60), its wavelength and width (% of the frame, 4-60 and 2-40), and how long it takes to fade, seconds (0.5-8). */
+  rippleSpeed: number
+  rippleWavelength: number
+  rippleWidth: number
+  rippleFade: number
+  /** How far a ripple pushes the dots aside (0-15) and how much it swells them (0-5). */
+  ripplePush: number
+  rippleSwell: number
+  /** Picks a different scatter of drops (0-99). */
+  rippleSeed: number
   /** Animation speed; 0 holds still. 0-3 */
   speed: number
   /** Starting time in ms: picks the composition, and is the still. */
@@ -204,6 +279,55 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   truchetOvershoot: 1.1,
   truchetCycle: 12,
   truchetSeed: 0,
+  tunnelDots: 30,
+  tunnelRadius: 1.6,
+  tunnelGap: 0.45,
+  tunnelTwist: 0.32,
+  tunnelSpin: 4,
+  tunnelDot: 0.05,
+  tunnelRingTime: 1,
+  tunnelDepth: 16,
+  tunnelHighlight: 4,
+  contourStep: 0.085,
+  contourIndex: 4,
+  contourMinor: 0.3,
+  contourMajor: 0.6,
+  contourMorph: 12,
+  contourDrift: 4,
+  bloomSpacing: 5.6,
+  bloomDot: 0.47,
+  bloomGlow: 24,
+  bloomFlare: 5,
+  bloomPeriod: 6,
+  bloomRings: 3,
+  bloomStrength: 0.85,
+  bloomRingStart: 5,
+  bloomRingEnd: 16,
+  confettiCount: 19,
+  confettiSize: 1,
+  confettiNear: 0.45,
+  confettiRects: 0.72,
+  confettiMix: 0.5,
+  confettiFall: 12,
+  confettiSway: 2.5,
+  confettiSeed: 0,
+  scanBars: 8,
+  scanThickness: 0.58,
+  scanPass: 3,
+  scanSweep: 0.6,
+  scanGapMin: 1.4,
+  scanGapMax: 7.5,
+  scanChevron: 0.5,
+  rippleSpacing: 6,
+  rippleDot: 0.95,
+  rippleInterval: 1.5,
+  rippleSpeed: 20,
+  rippleWavelength: 17,
+  rippleWidth: 10,
+  rippleFade: 2.2,
+  ripplePush: 5,
+  rippleSwell: 2.1,
+  rippleSeed: 0,
   speed: 0.6,
   frame: 0,
   scale: 1,
@@ -331,6 +455,55 @@ export function parseRecipe(json: unknown): GradientRecipe {
     truchetOvershoot: num(json, 'truchetOvershoot', d.truchetOvershoot, 0, 3),
     truchetCycle: num(json, 'truchetCycle', d.truchetCycle, 4, 30),
     truchetSeed: Math.round(num(json, 'truchetSeed', d.truchetSeed, 0, 99)),
+    tunnelDots: Math.round(num(json, 'tunnelDots', d.tunnelDots, 6, 80)),
+    tunnelRadius: num(json, 'tunnelRadius', d.tunnelRadius, 0.5, 4),
+    tunnelGap: num(json, 'tunnelGap', d.tunnelGap, 0.15, 1.5),
+    tunnelTwist: num(json, 'tunnelTwist', d.tunnelTwist, -2, 2),
+    tunnelSpin: num(json, 'tunnelSpin', d.tunnelSpin, -20, 20),
+    tunnelDot: num(json, 'tunnelDot', d.tunnelDot, 0.01, 0.2),
+    tunnelRingTime: num(json, 'tunnelRingTime', d.tunnelRingTime, 0.25, 4),
+    tunnelDepth: num(json, 'tunnelDepth', d.tunnelDepth, 4, 30),
+    tunnelHighlight: Math.round(num(json, 'tunnelHighlight', d.tunnelHighlight, 0, 12)),
+    contourStep: num(json, 'contourStep', d.contourStep, 0.03, 0.3),
+    contourIndex: Math.round(num(json, 'contourIndex', d.contourIndex, 0, 10)),
+    contourMinor: num(json, 'contourMinor', d.contourMinor, 0.05, 2),
+    contourMajor: num(json, 'contourMajor', d.contourMajor, 0.05, 2),
+    contourMorph: num(json, 'contourMorph', d.contourMorph, 4, 60),
+    contourDrift: num(json, 'contourDrift', d.contourDrift, -10, 10),
+    bloomSpacing: num(json, 'bloomSpacing', d.bloomSpacing, 2, 15),
+    bloomDot: num(json, 'bloomDot', d.bloomDot, 0.1, 0.7),
+    bloomGlow: num(json, 'bloomGlow', d.bloomGlow, 4, 60),
+    bloomFlare: num(json, 'bloomFlare', d.bloomFlare, 0, 20),
+    bloomPeriod: num(json, 'bloomPeriod', d.bloomPeriod, 1, 20),
+    bloomRings: Math.round(num(json, 'bloomRings', d.bloomRings, 1, 6)),
+    bloomStrength: num(json, 'bloomStrength', d.bloomStrength, 0, 1.5),
+    bloomRingStart: num(json, 'bloomRingStart', d.bloomRingStart, 1, 40),
+    bloomRingEnd: num(json, 'bloomRingEnd', d.bloomRingEnd, 1, 40),
+    confettiCount: Math.round(num(json, 'confettiCount', d.confettiCount, 4, 60)),
+    confettiSize: num(json, 'confettiSize', d.confettiSize, 0.3, 3),
+    confettiNear: num(json, 'confettiNear', d.confettiNear, 0, 1),
+    confettiRects: num(json, 'confettiRects', d.confettiRects, 0, 1),
+    confettiMix: num(json, 'confettiMix', d.confettiMix, 0, 1),
+    confettiFall: num(json, 'confettiFall', d.confettiFall, 3, 40),
+    confettiSway: num(json, 'confettiSway', d.confettiSway, 0, 10),
+    confettiSeed: Math.round(num(json, 'confettiSeed', d.confettiSeed, 0, 99)),
+    scanBars: Math.round(num(json, 'scanBars', d.scanBars, 3, 24)),
+    scanThickness: num(json, 'scanThickness', d.scanThickness, 0.1, 0.95),
+    scanPass: num(json, 'scanPass', d.scanPass, 0.5, 12),
+    scanSweep: num(json, 'scanSweep', d.scanSweep, 0.2, 1),
+    scanGapMin: num(json, 'scanGapMin', d.scanGapMin, 0, 20),
+    scanGapMax: num(json, 'scanGapMax', d.scanGapMax, 0, 20),
+    scanChevron: num(json, 'scanChevron', d.scanChevron, 0, 1.5),
+    rippleSpacing: num(json, 'rippleSpacing', d.rippleSpacing, 3, 15),
+    rippleDot: num(json, 'rippleDot', d.rippleDot, 0.2, 3),
+    rippleInterval: num(json, 'rippleInterval', d.rippleInterval, 0.5, 6),
+    rippleSpeed: num(json, 'rippleSpeed', d.rippleSpeed, 5, 60),
+    rippleWavelength: num(json, 'rippleWavelength', d.rippleWavelength, 4, 60),
+    rippleWidth: num(json, 'rippleWidth', d.rippleWidth, 2, 40),
+    rippleFade: num(json, 'rippleFade', d.rippleFade, 0.5, 8),
+    ripplePush: num(json, 'ripplePush', d.ripplePush, 0, 15),
+    rippleSwell: num(json, 'rippleSwell', d.rippleSwell, 0, 5),
+    rippleSeed: Math.round(num(json, 'rippleSeed', d.rippleSeed, 0, 99)),
     speed: num(json, 'speed', d.speed, 0, 3),
     frame: Math.round(num(json, 'frame', d.frame, 0, MAX_FRAME)),
     scale: num(json, 'scale', d.scale, 0.25, 4),
@@ -368,23 +541,27 @@ export function grainColours(colours: string[]): [string, string[]] {
   return [back, colours.filter((_, i) => i !== 2)]
 }
 
-/** How many palette colours a recipe takes: dithering always takes all 5, for both brand support colours;
-    the canvas patterns always 3. */
-export const paletteCount = (recipe: GradientRecipe) => (recipe.shader === 'dither' ? 5 : isCanvasPattern(recipe.shader) ? 3 : recipe.colours)
+/** How many colours a recipe takes: the three theme colours for dithering and the canvas patterns. */
+export const paletteCount = (recipe: GradientRecipe) => (usesThemeColours(recipe.shader) ? 3 : recipe.colours)
 
-/** A canvas pattern's colours: the accent behind, the darker accent for the main marks, the pale support for the highlight. */
-export const patternColours = (colours: string[]) => ({ bg: colours[0], fg: colours[2] ?? colours[0], fg2: colours[1] ?? colours[0] })
+/** A canvas pattern's colours, straight from the theme (recipeColours): the header bar
+    leads as the background, navigation items draw the main marks, the selected item the highlights. */
+export const patternColours = (colours: string[]) => ({ bg: colours[0], fg: colours[1] ?? colours[0], fg2: colours[2] ?? colours[0] })
 
-/** Dithering's dots: the darker accent, drawn on a see-through background. */
-export const ditherFront = (colours: string[]) => colours[2] ?? colours[0]
+/** Dithering's dots: the navigation items colour, drawn on a see-through background. */
+export const ditherFront = (colours: string[]) => colours[1] ?? colours[0]
 export const DITHER_BACK = 'rgba(0, 0, 0, 0)'
 
-/** Behind the dots: a soft gradient between the two brand support colours (header and nav). */
+/** Behind the dots: the header bar, leading for the first half, then fading into the selected item in the far corner. */
 export function ditherBackdrop(colours: string[]): [from: string, to: string] {
-  const from = colours[1] ?? colours[0]
-  return [from, colours[4] ?? colours[3] ?? from]
+  return [colours[0], colours[2] ?? colours[0]]
 }
-export const ditherBackdropCss = (colours: string[]) => `linear-gradient(135deg, ${ditherBackdrop(colours).join(', ')})`
+/** Where the header bar starts fading into the selected item, along the diagonal. */
+export const DITHER_BACKDROP_HOLD = 0.5
+export const ditherBackdropCss = (colours: string[]) => {
+  const [from, to] = ditherBackdrop(colours)
+  return `linear-gradient(135deg, ${from} ${DITHER_BACKDROP_HOLD * 100}%, ${to})`
+}
 
 /** Paper Shaders Dithering props. The backdrop is painted behind them by the caller. */
 export function ditherProps(recipe: GradientRecipe, colours: string[]) {

@@ -11,7 +11,7 @@ import {
   ShaderFitOptions,
   ShaderMount,
 } from '@paper-design/shaders'
-import { DITHER_BACK, ditherBackdrop, ditherFront, grainColours, isCanvasPattern, type GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { DITHER_BACK, DITHER_BACKDROP_HOLD, ditherBackdrop, ditherFront, grainColours, isCanvasPattern, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { drawPattern, playPattern } from './canvasPatterns'
 
 /* Renders a gradient recipe in a tenant's colours with Paper Shaders (mesh
@@ -99,10 +99,11 @@ export interface HiddenMount {
   dispose: () => void
 }
 
-/** Paints a dithering backdrop: the same soft diagonal as ditherBackdropCss. */
+/** Paints a dithering backdrop: the same diagonal as ditherBackdropCss. */
 export function paintBackdrop(ctx: CanvasRenderingContext2D, [from, to]: [string, string], w: number, h: number) {
   const g = ctx.createLinearGradient(0, 0, w, h)
   g.addColorStop(0, from)
+  g.addColorStop(DITHER_BACKDROP_HOLD, from)
   g.addColorStop(1, to)
   ctx.fillStyle = g
   ctx.fillRect(0, 0, w, h)
