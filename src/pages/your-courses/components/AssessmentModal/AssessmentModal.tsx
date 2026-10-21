@@ -102,6 +102,9 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   )
   /** Labels are all or none: on, every image needs one; off, none is saved. */
   const [showLabels, setShowLabels] = useState(() => labels.some(l => l.trim()))
+  /** Label fields left once, by option; with a Save attempt, these show a missing label. */
+  const [leftLabels, setLeftLabels] = useState<boolean[]>([])
+  const [triedSave, setTriedSave] = useState(false)
   /** The option the image picker is filling, or null while it is closed. */
   const [pickerIndex, setPickerIndex] = useState<number | null>(null)
   /** A dropped file that failed validation, by option, shown in that tile's uploader. */
@@ -133,6 +136,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   const handleRemoveImageOption = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index))
     setLabels(prev => prev.filter((_, i) => i !== index))
+    setLeftLabels(prev => prev.filter((_, i) => i !== index))
     setDropErrors({})
     setCorrectImages(prev => prev.filter(i => i !== index).map(i => (i > index ? i - 1 : i)))
   }
@@ -170,7 +174,16 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   const savedLabels = filledImages.map(f => (showLabels ? (labels[f.index] ?? '').trim() : ''))
   const savedCorrect = filledImages.flatMap((f, i) => (correctImages.includes(f.index) ? [i] : []))
 
+  /* Labels are all or none: with them on, an image without one cannot be saved. */
+  const missingLabels = showLabels && savedLabels.some(l => !l)
+  const labelMissing = (index: number) =>
+    showLabels && !!images[index] && !(labels[index] ?? '').trim() && (triedSave || !!leftLabels[index])
+
   const handleSubmit = () => {
+    if (isImageMode && missingLabels) {
+      setTriedSave(true)
+      return
+    }
     onAdd({
       type,
       question,
@@ -191,7 +204,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   const hasExplanation = type === 'single-choice'
 
   const canSubmit = isImageMode
-    ? question.trim().length > 0 && savedImages.length >= 2 && savedCorrect.length > 0 && (!showLabels || savedLabels.every(Boolean))
+    ? question.trim().length > 0 && savedImages.length >= 2 && savedCorrect.length > 0
     : question.trim().length > 0 && (!hasOptions || options.some((o) => o.trim().length > 0))
 
   /* The learner's own renderer, fed the draft as it stands. */
@@ -277,6 +290,9 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                         placeholder="Add a label"
                         ariaLabel={`Label for option ${index + 1}`}
                         value={labels[index] ?? ''}
+                        validation={labelMissing(index) ? 'error' : 'none'}
+                        helperText={labelMissing(index) ? 'Add a label' : undefined}
+                        onBlur={() => setLeftLabels(prev => { const next = [...prev]; next[index] = true; return next })}
                         onChange={(e) => {
                           const value = e.target.value.slice(0, MAX_IMAGE_LABEL)
                           setLabels(prev => prev.map((l, i) => (i === index ? value : l)))

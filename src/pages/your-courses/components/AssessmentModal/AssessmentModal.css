@@ -244,6 +244,11 @@
   aspect-ratio: 1 / 1;
 }
 
+/* In a 180px tile the label input must shrink, so the error icon stays inside the field. */
+.assessment-modal-image-label .input-field__input {
+  min-width: 0;
+}
+
 /* 16px under the image grid: the field's 8px gap plus this 8px. */
 .assessment-modal-image-add-row {
   margin-top: var(--space-s);
