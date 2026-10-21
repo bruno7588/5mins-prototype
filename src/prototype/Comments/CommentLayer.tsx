@@ -74,6 +74,27 @@ function useDrag(resetKey: unknown) {
   }
 }
 
+/* Pins can be dragged off what they cover. The nudge is this viewer's own (kept in this
+   browser), so the comment stays attached to the same element for everyone else. */
+const PIN_OFFSETS_KEY = 'pcm-pin-offsets'
+type Offsets = Record<string, { x: number; y: number }>
+const readOffsets = (): Offsets => {
+  try {
+    return JSON.parse(localStorage.getItem(PIN_OFFSETS_KEY) ?? '{}') as Offsets
+  } catch {
+    return {}
+  }
+}
+const saveOffsets = (o: Offsets) => {
+  try {
+    localStorage.setItem(PIN_OFFSETS_KEY, JSON.stringify(o))
+  } catch {
+    /* private window: the nudge lasts until reload */
+  }
+}
+/** Pointer travel before a press on a pin counts as a drag rather than a click. */
+const DRAG_SLOP = 4
+
 interface Props {
   active: boolean
   /** The comments list panel (the arrow beside Comment); pins show either way. */
@@ -102,6 +123,10 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
   const [confirmDelete, setConfirmDelete] = useState(false)
   useEffect(() => setConfirmDelete(false), [openId])
   const threadDrag = useDrag(openId)
+  const [pinOffsets, setPinOffsets] = useState<Offsets>(readOffsets)
+  const pinDrag = useRef<{ id: string; x: number; y: number; ox: number; oy: number; moved: boolean } | null>(null)
+  const offsetOf = (id: string) => pinOffsets[id] ?? { x: 0, y: 0 }
+  useEffect(() => saveOffsets(pinOffsets), [pinOffsets])
   // The clicks that lead to each comment, so it can be reopened inside its drawer or step.
   useEffect(() => recordClicks(), [])
   useEffect(() => resetTrail(), [currentRoute])
@@ -211,7 +236,8 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
 
   if (!active && pins.length === 0 && !open) return null
 
-  const openAt = open ? locate(open.anchor) : null
+  const openAnchor = open ? locate(open.anchor) : null
+  const openAt = open && openAnchor ? { x: openAnchor.x + offsetOf(open.id).x, y: openAnchor.y + offsetOf(open.id).y } : null
 
   return createPortal(
     <div className="pcm-root" data-inspect-ignore>
@@ -230,9 +256,30 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
             key={c.id}
             type="button"
             className={`pcm-pin${c.resolved ? ' pcm-pin--resolved' : ''}${openId === c.id ? ' pcm-pin--open' : ''}`}
-            style={{ left: at.x, top: at.y }}
+            style={{ left: at.x + offsetOf(c.id).x, top: at.y + offsetOf(c.id).y }}
             aria-label={`Comment ${numberOf(c.id)} by ${c.author}`}
-            onClick={() => (openId === c.id ? setOpenId(null) : void openThread(c))}
+            onPointerDown={(e) => {
+              e.currentTarget.setPointerCapture(e.pointerId)
+              const o = offsetOf(c.id)
+              pinDrag.current = { id: c.id, x: e.clientX, y: e.clientY, ox: o.x, oy: o.y, moved: false }
+            }}
+            onPointerMove={(e) => {
+              const d = pinDrag.current
+              if (!d || d.id !== c.id) return
+              const dx = e.clientX - d.x
+              const dy = e.clientY - d.y
+              if (!d.moved && Math.hypot(dx, dy) < DRAG_SLOP) return
+              d.moved = true
+              setPinOffsets((prev) => ({ ...prev, [c.id]: { x: d.ox + dx, y: d.oy + dy } }))
+            }}
+            onClick={() => {
+              // The release at the end of a drag is not a click on the pin.
+              const dragged = pinDrag.current?.moved
+              pinDrag.current = null
+              if (dragged) return
+              if (openId === c.id) setOpenId(null)
+              else void openThread(c)
+            }}
           >
             {numberOf(c.id)}
           </button>

@@ -464,3 +464,8 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
 .pcm-drag:active {
   cursor: grabbing;
 }
+
+/* Pins drag off what they cover; a short press still opens the thread. */
+.pcm-pin {
+  touch-action: none;
+}
