@@ -121,6 +121,11 @@
   line-height: 1.2;
 }
 
+/* The image limits are rules the admin works to, so they read stronger than a hint. */
+.assessment-modal-label-hint--images {
+  color: var(--text-secondary);
+}
+
 /* Options list */
 .assessment-modal-options {
   display: flex;

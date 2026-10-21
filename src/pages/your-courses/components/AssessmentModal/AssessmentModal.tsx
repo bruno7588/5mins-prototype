@@ -165,7 +165,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
       correctIndex: isImageMode ? savedCorrect[0] : correctIndex,
       optionImages: isImageMode ? savedImages : undefined,
       correctIndices: isImageMode ? savedCorrect : undefined,
-      explanation: explanation.trim() || undefined,
+      explanation: hasExplanation ? explanation.trim() || undefined : undefined,
     })
   }
 
@@ -173,8 +173,9 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
      text is answered in their own words and an exercise by uploading a file. */
   const hasOptions = type === 'single-choice' || type === 'poll'
   /* An explanation explains the *correct* answer, so it needs one to exist —
-     which rules out the poll (no right answer) as well as the two open formats. */
-  const hasExplanation = type === 'single-choice' || isImageMode
+     which rules out the poll (no right answer) as well as the two open formats.
+     Image Choice has none either: the marks on the images show why. */
+  const hasExplanation = type === 'single-choice'
 
   const canSubmit = isImageMode
     ? question.trim().length > 0 && savedImages.length >= 2 && savedCorrect.length > 0
@@ -184,7 +185,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   const previewQuestion = !canSubmit || (type !== 'single-choice' && !isImageMode)
     ? null
     : isImageMode
-      ? { type: 'image-choice' as const, prompt: question, images: savedImages, correctIndices: savedCorrect, explanation: explanation.trim() || undefined }
+      ? { type: 'image-choice' as const, prompt: question, images: savedImages, correctIndices: savedCorrect }
       : { type: 'single-choice' as const, prompt: question, options: options.filter(o => o.trim()), correctIndex, explanation: explanation.trim() || undefined }
 
   const formContent = (
@@ -211,7 +212,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
             <div className="assessment-modal-field">
               <span className="assessment-modal-label">
                 Images{' '}
-                <span className="assessment-modal-label-hint">(2 to {MAX_IMAGE_OPTIONS} images • JPG, PNG, WebP, GIF • max. 10MB)</span>
+                <span className="assessment-modal-label-hint assessment-modal-label-hint--images">(max. {MAX_IMAGE_OPTIONS} images • JPG, PNG, WebP, GIF • max. 10MB)</span>
               </span>
               <div className="assessment-modal-image-grid">
                 {images.map((src, index) => (
