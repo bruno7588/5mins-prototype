@@ -12,6 +12,8 @@ export interface PrototypeComment {
   createdAt: string
   resolved: boolean
   parentId: string | null
+  /** The clicks on the page that led to the anchor (clickTrail.ts); older comments have none. */
+  steps?: string[]
 }
 
 export interface NewComment {
@@ -19,6 +21,7 @@ export interface NewComment {
   author: string
   anchor?: Anchor | null
   parentId?: string | null
+  steps?: string[]
   /** Honeypot; always empty from real people. */
   website?: string
 }

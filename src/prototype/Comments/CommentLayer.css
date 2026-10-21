@@ -453,3 +453,14 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
 .pcm-btn--danger:hover {
   background: #b91c1c;
 }
+
+/* Headers that move their box: drag anywhere but the buttons. */
+.pcm-drag {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.pcm-drag:active {
+  cursor: grabbing;
+}

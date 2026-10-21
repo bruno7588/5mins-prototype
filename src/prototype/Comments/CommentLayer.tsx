@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { TickCircle, Trash } from 'iconsax-react'
 import { anchorFor, locate, type Anchor } from './commentAnchor'
+import { currentTrail, isReplaying, recordClicks, replayTrail, resetTrail } from './clickTrail'
 import type { NewComment, PrototypeComment } from './useComments'
 import './CommentLayer.css'
 
@@ -44,6 +45,35 @@ const place = (x: number, y: number) => ({
 
 const isChrome = (t: EventTarget | null) => !!(t as Element | null)?.closest?.('[data-inspect-ignore]')
 
+/* Drag a box by its header so it can be moved off what it covers. The offset sits on top
+   of the box's own position and goes back to zero when `resetKey` changes (another thread). */
+function useDrag(resetKey: unknown) {
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const start = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null)
+  useEffect(() => setOffset({ x: 0, y: 0 }), [resetKey])
+  return {
+    style: { transform: `translate(${offset.x}px, ${offset.y}px)` },
+    handle: {
+      onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+        // Buttons and fields in the header keep their own clicks.
+        if ((e.target as Element).closest('button, input, label')) return
+        e.currentTarget.setPointerCapture(e.pointerId)
+        start.current = { x: e.clientX, y: e.clientY, ox: offset.x, oy: offset.y }
+      },
+      onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
+        const s = start.current
+        if (s) setOffset({ x: s.ox + e.clientX - s.x, y: s.oy + e.clientY - s.y })
+      },
+      onPointerUp: () => {
+        start.current = null
+      },
+      onPointerCancel: () => {
+        start.current = null
+      },
+    },
+  }
+}
+
 interface Props {
   active: boolean
   /** The comments list panel (the arrow beside Comment); pins show either way. */
@@ -71,12 +101,19 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
   const [showResolved, setShowResolved] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   useEffect(() => setConfirmDelete(false), [openId])
+  const threadDrag = useDrag(openId)
+  // The clicks that lead to each comment, so it can be reopened inside its drawer or step.
+  useEffect(() => recordClicks(), [])
+  useEffect(() => resetTrail(), [currentRoute])
+  const listDrag = useDrag(showList)
 
   const roots = comments.filter((c) => !c.parentId)
   const repliesOf = (id: string) => comments.filter((c) => c.parentId === id)
   const numberOf = (id: string) => roots.findIndex((c) => c.id === id) + 1
   const visibleRoots = roots.filter((c) => showResolved || !c.resolved)
   const pageRoots = visibleRoots.filter((c) => c.route === currentRoute)
+  // Outside comment mode the page keeps a pin on every open comment until it is resolved.
+  const pins = active ? pageRoots : pageRoots.filter((c) => !c.resolved)
   // The list groups by page: this page first, then the others in order of first comment.
   const groups = [currentRoute, ...new Set(visibleRoots.map((c) => c.route))]
     .filter((r, i, all) => all.indexOf(r) === i)
@@ -85,8 +122,9 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
   const open = roots.find((c) => c.id === openId) ?? null
 
   // Pins follow their elements through scroll, resize and route animations.
+  const tracking = active || pins.length > 0
   useEffect(() => {
-    if (!active) return
+    if (!tracking) return
     let raf = 0
     const loop = () => {
       setTick((t) => t + 1)
@@ -94,24 +132,26 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
     }
     raf = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(raf)
+  }, [tracking])
+
+  // Entering or leaving comment mode starts clean: no draft, hover or open thread.
+  useEffect(() => {
+    setHover(null)
+    setDraft(null)
+    setOpenId(null)
   }, [active])
 
   // Pick mode: the page underneath is inert; a click pins a new comment there.
   useEffect(() => {
-    if (!active) {
-      setHover(null)
-      setDraft(null)
-      setOpenId(null)
-      return
-    }
+    if (!active) return
     document.documentElement.classList.add('pcm-active')
     const swallow = (e: Event) => {
-      if (isChrome(e.target)) return
+      if (isChrome(e.target) || isReplaying()) return
       e.preventDefault()
       e.stopPropagation()
     }
     const onClick = (e: MouseEvent) => {
-      if (isChrome(e.target)) return
+      if (isChrome(e.target) || isReplaying()) return
       e.preventDefault()
       e.stopPropagation()
       const el = e.target as Element
@@ -147,9 +187,11 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
     }
   }, [active, draft, openId, onExit])
 
-  const openThread = (c: PrototypeComment) => {
+  const openThread = async (c: PrototypeComment) => {
     setDraft(null)
     if (c.route !== currentRoute) return onGoTo(c)
+    // Inside a drawer, modal or step that is closed now: click the way back there first.
+    await replayTrail(c.steps, c.anchor)
     const at = locate(c.anchor)
     at?.el.scrollIntoView({ block: 'center', behavior: 'smooth' })
     setOpenId(c.id)
@@ -163,11 +205,11 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
     if (!target) return
     focusedRef.current = focusId
     if (target.resolved) setShowResolved(true)
-    openThread(target)
+    void openThread(target)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, focusId, comments])
 
-  if (!active) return null
+  if (!active && pins.length === 0 && !open) return null
 
   const openAt = open ? locate(open.anchor) : null
 
@@ -180,7 +222,7 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
         />
       )}
 
-      {pageRoots.map((c) => {
+      {pins.map((c) => {
         const at = locate(c.anchor)
         if (!at) return null
         return (
@@ -190,7 +232,7 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
             className={`pcm-pin${c.resolved ? ' pcm-pin--resolved' : ''}${openId === c.id ? ' pcm-pin--open' : ''}`}
             style={{ left: at.x, top: at.y }}
             aria-label={`Comment ${numberOf(c.id)} by ${c.author}`}
-            onClick={() => (openId === c.id ? setOpenId(null) : openThread(c))}
+            onClick={() => (openId === c.id ? setOpenId(null) : void openThread(c))}
           >
             {numberOf(c.id)}
           </button>
@@ -204,7 +246,7 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
             submitLabel="Post"
             onCancel={() => setDraft(null)}
             onSubmit={async (text, author, website) => {
-              const created = await onAdd({ text, author, website, anchor: draft.anchor })
+              const created = await onAdd({ text, author, website, anchor: draft.anchor, steps: currentTrail() })
               setDraft(null)
               if (created) setOpenId(created.id)
             }}
@@ -215,11 +257,11 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
       {open && (
         <div
           className="pcm-pop"
-          style={openAt ? place(openAt.x, openAt.y) : { right: 16, bottom: 420 }}
+          style={{ ...(openAt ? place(openAt.x, openAt.y) : { right: 16, bottom: 420 }), ...threadDrag.style }}
           role="dialog"
           aria-label={`Comment ${numberOf(open.id)}`}
         >
-          <div className="pcm-pop__head">
+          <div className="pcm-pop__head pcm-drag" {...threadDrag.handle}>
             <span className="pcm-pop__title">Comment {numberOf(open.id)}</span>
             <button
               type="button"
@@ -290,8 +332,8 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
       )}
 
       {showList && (
-      <section className="pcm-panel" aria-label="Comments">
-        <div className="pcm-panel__head">
+      <section className="pcm-panel" aria-label="Comments" style={listDrag.style}>
+        <div className="pcm-panel__head pcm-drag" {...listDrag.handle}>
           <span className="pcm-panel__title">Comments</span>
           <label className="pcm-panel__toggle">
             <input type="checkbox" checked={showResolved} onChange={(e) => setShowResolved(e.target.checked)} />
@@ -321,7 +363,7 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
                         <button
                           type="button"
                           className={`pcm-list__item${openId === c.id ? ' pcm-list__item--open' : ''}`}
-                          onClick={() => openThread(c)}
+                          onClick={() => void openThread(c)}
                         >
                           <span className={`pcm-list__num${c.resolved ? ' pcm-list__num--resolved' : ''}`}>{numberOf(c.id)}</span>
                           <span className="pcm-list__body">

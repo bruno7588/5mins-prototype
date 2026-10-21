@@ -13,6 +13,7 @@ const MAX_TEXT = 2000
 const MAX_AUTHOR = 60
 const MAX_ROUTE = 200
 const MAX_SELECTOR = 1000
+const MAX_STEPS = 20
 const POSTS_PER_MINUTE = 10
 
 export interface StoredComment {
@@ -26,6 +27,8 @@ export interface StoredComment {
   createdAt: string
   resolved: boolean
   parentId: string | null
+  /** Clicks (CSS paths) that reopen the drawer or step the anchor sits in. */
+  steps?: string[]
 }
 
 // Same-origin in production; the dev build calls the deployed API cross-origin.
@@ -144,6 +147,9 @@ export async function POST(request: Request) {
     createdAt: new Date().toISOString(),
     resolved: false,
     parentId: str(body.parentId, 64) || null,
+    steps: Array.isArray(body.steps)
+      ? body.steps.slice(-MAX_STEPS).map((s) => str(s, MAX_SELECTOR)).filter(Boolean)
+      : [],
   }
   await redis('HSET', keyFor(route), comment.id, JSON.stringify(comment))
   await notifySlack(comment, request)
