@@ -8,9 +8,9 @@ import './DesktopPreview.css'
  * the admin approves here is the width the learner actually meets. The renderers
  * inside are the learner's own, unchanged.
  */
-function DesktopPreview({ children }: { children: ReactNode }) {
+function DesktopPreview({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className="desktop-preview">
+    <div className={`desktop-preview${className ? ` ${className}` : ''}`}>
       <div className="desktop-preview__frame">{children}</div>
     </div>
   )

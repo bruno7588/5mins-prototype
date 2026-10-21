@@ -14,6 +14,7 @@ import InputField from '@/components/InputField/InputField'
 import Radio from '@/components/Radio/Radio'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
+import { QuizFooterLayoutContext } from '@/pages/quiz-lab/components/FeedbackFooter'
 import QuizHeader from '@/pages/quiz-lab/components/QuizHeader'
 import ImageChoice from '@/pages/quiz-lab/formats/ImageChoice'
 import SingleChoice from '@/pages/quiz-lab/formats/SingleChoice'
@@ -279,12 +280,18 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                     </div>
                   </div>
                 ))}
-                {/* Adds an empty option, as the New Folder tile adds a folder on Your Courses:
-                    a dashed square at the end of the grid, not a row under it. */}
-                <button className="assessment-modal-image-add" type="button" onClick={handleAddImageOption}>
-                  <Add size={32} color="currentColor" variant="Linear" />
-                  <span>Add Option</span>
-                </button>
+              </div>
+              {/* Adds an empty option: the text button under the list, as Add Pair, Add Item
+                  and Add Step do on the other assessments. */}
+              <div className="assessment-modal-image-add-row">
+                <Button
+                  variant="text"
+                  className="assessment-modal-image-add"
+                  icon={<Add size={20} color="currentColor" variant="Linear" />}
+                  onClick={handleAddImageOption}
+                >
+                  Add New Image
+                </Button>
               </div>
             </div>
           )}
@@ -406,7 +413,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
       >
         {previewQuestion && (
           <div className="iq-drawer__preview-stage">
-            <DesktopPreview>
+            <DesktopPreview className={previewQuestion.type === 'image-choice' ? 'assessment-modal-preview' : undefined}>
               <div className="ql-quizview">
                 <QuizHeader
                   label={config.title.replace('Add assessment - ', '')}
@@ -415,7 +422,10 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                   onClose={() => setPreviewing(false)}
                 />
                 {previewQuestion.type === 'image-choice' ? (
-                  <ImageChoice question={previewQuestion} />
+                  /* Medium button, stretched to the panel by AssessmentModal.css. */
+                  <QuizFooterLayoutContext.Provider value="hug">
+                    <ImageChoice question={previewQuestion} />
+                  </QuizFooterLayoutContext.Provider>
                 ) : (
                   <SingleChoice question={previewQuestion} />
                 )}

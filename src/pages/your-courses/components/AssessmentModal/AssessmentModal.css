@@ -228,7 +228,7 @@
 .assessment-modal-image-option {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-s);
   min-width: 0;
 }
 
@@ -239,32 +239,14 @@
   aspect-ratio: 1 / 1;
 }
 
-/* Add Option: the Your Courses New Folder tile (.your-courses-new-folder) at option
-   size, a dashed square with a plus and its label. */
-.assessment-modal-image-add {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-s);
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border: 1.5px dashed var(--border-elevated);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-secondary);
-  font: 400 var(--font-size-md)/1.5 'Poppins', sans-serif;
-  cursor: pointer;
-  transition: background-color 150ms ease;
+/* 16px under the image grid: the field's 8px gap plus this 8px. */
+.assessment-modal-image-add-row {
+  margin-top: var(--space-s);
 }
 
-.assessment-modal-image-add:hover {
-  background-color: var(--input-background);
-}
-
-.assessment-modal-image-add:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
+/* Add New Image: a DS text button in --text-primary, as .iq-drawer__add-btn. */
+.assessment-modal-image-add.ds-btn--text {
+  color: var(--text-primary);
 }
 
 /* A filled option: the image, square, with no border at rest. */
@@ -324,11 +306,18 @@
 .assessment-modal-image-correct-mark {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xxs);
+  gap: var(--space-xs);
   font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-primary);
   cursor: pointer;
+}
+
+/* Under an image the badge keeps the DS 14px label but is 24px tall
+   (Figma "Image choice / Option (proposed)"): 4px vertical padding. */
+.assessment-modal-image-correct-mark .assessment-modal-correct-badge {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-md);
 }
 
 .assessment-modal-image-correct-mark--disabled {
@@ -369,4 +358,40 @@
 .assessment-modal-image-remove:focus-visible {
   outline: 2px solid var(--primary-button-background);
   outline-offset: 2px;
+}
+
+/* Image Choice preview (Figma Create Course 10574:35075): a 540 x 640 panel with a 24px
+   gutter all round, the label and close flush with the content, and a full-width Medium
+   Check / Continue with no divider above it. */
+.assessment-modal-preview .desktop-preview__frame {
+  width: 540px;
+  height: min(640px, calc(100vh - 96px));
+  padding: var(--space-l);
+  border-radius: var(--radius-sm);
+}
+
+.assessment-modal-preview .ql-quizview {
+  gap: var(--space-xs);
+}
+
+.assessment-modal-preview .ql-qhead {
+  padding: 0;
+}
+
+.assessment-modal-preview .ql-qhead__title {
+  color: var(--text-secondary);
+}
+
+.assessment-modal-preview .ql-screen__body {
+  padding: 0;
+  gap: var(--space-l);
+}
+
+.assessment-modal-preview .ql-footer {
+  padding: var(--space-m) 0 0;
+  border-top: none;
+}
+
+.assessment-modal-preview .ql-footer .ds-btn {
+  width: 100%;
 }
