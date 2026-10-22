@@ -165,9 +165,11 @@ function DemoSwitcher() {
           aria-expanded={listOpen}
           onClick={() => {
             setOpenMenu(null)
+            /* Closing the list leaves comment mode too, so the cursor goes back to normal. */
+            if (listOpen) return exitComments()
             if (!commenting && inspecting) window.dispatchEvent(new Event(TOGGLE_INSPECT))
             setCommenting(true)
-            setListOpen((o) => !o)
+            setListOpen(true)
           }}
         >
           <ArrowUp2 size={16} color="currentColor" variant="Linear" />
@@ -208,7 +210,7 @@ function DemoSwitcher() {
       <CommentLayer
         active={commenting}
         showList={listOpen}
-        onCloseList={() => setListOpen(false)}
+        onCloseList={exitComments}
         comments={comments}
         error={error}
         onAdd={add}
