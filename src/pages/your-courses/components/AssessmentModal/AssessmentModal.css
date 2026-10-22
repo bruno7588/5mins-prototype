@@ -472,3 +472,13 @@
   flex-direction: column;
   gap: var(--space-xxs);
 }
+
+/* Multiple Choice with several correct options: the checkbox is green like the radio. */
+.assessment-modal-option-field .checkbox path {
+  fill: var(--success-500);
+}
+
+/* With the toggle on the label row, the options sit 16px below it. */
+.assessment-modal-field--toggle {
+  gap: var(--space-m);
+}

@@ -71,7 +71,7 @@ export interface AssessmentData {
       correct; `options` then holds each image's optional label (empty when none). */
   optionImages?: string[]
   correctIndices?: number[]
-  /** Image Choice only: off (default) means exactly one image is correct. */
+  /** Image Choice and Multiple Choice: off (default) means exactly one option is correct. */
   multipleCorrect?: boolean
   explanation?: string
 }
@@ -94,6 +94,8 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   const [question, setQuestion] = useState(initial?.question ?? '')
   const [options, setOptions] = useState(initial?.options ?? ['', ''])
   const [correctIndex, setCorrectIndex] = useState(initial?.correctIndex ?? 0)
+  /** Multiple Choice with "Multiple correct options" on: every option marked correct. */
+  const [correctOptions, setCorrectOptions] = useState<number[]>(initial?.correctIndices ?? [initial?.correctIndex ?? 0])
   const [explanation, setExplanation] = useState(initial?.explanation ?? '')
 
   /* Image Choice options: the tiles, and which of them are correct. Like Multiple Choice,
@@ -127,6 +129,18 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
 
   const handleAddOption = () => {
     setOptions(prev => [...prev, ''])
+  }
+
+  /* Multiple Choice follows the Image Choice rules: off keeps the first marked option,
+     on starts from the one the radio shows. */
+  const handleMultipleOptionsChange = (on: boolean) => {
+    setMultipleCorrect(on)
+    if (on) setCorrectOptions([correctIndex])
+    else if (correctOptions.length > 0) setCorrectIndex(Math.min(...correctOptions))
+  }
+
+  const toggleCorrectOption = (index: number) => {
+    setCorrectOptions(prev => (prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]))
   }
 
   const handleOptionChange = (index: number, value: string) => {
@@ -193,15 +207,20 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   /* Once there is an image, say why Save is off when none of the images is marked. */
   const noCorrectImage = savedImages.length > 0 && savedCorrect.length === 0
 
+  const isChoiceMode = type === 'single-choice'
+  const multipleOptions = isChoiceMode && multipleCorrect
+  const optionMarked = (index: number) => (multipleOptions ? correctOptions.includes(index) : correctIndex === index)
+  const noCorrectOption = multipleOptions && correctOptions.length === 0
+
   const handleSubmit = () => {
     onAdd({
       type,
       question,
       options: isImageMode ? savedLabels : options,
-      correctIndex: isImageMode ? savedCorrect[0] : correctIndex,
+      correctIndex: isImageMode ? savedCorrect[0] : multipleOptions ? Math.min(...correctOptions) : correctIndex,
       optionImages: isImageMode ? savedImages : undefined,
-      correctIndices: isImageMode ? savedCorrect : undefined,
-      multipleCorrect: isImageMode ? multipleCorrect : undefined,
+      correctIndices: isImageMode ? savedCorrect : multipleOptions ? [...correctOptions].sort((a, b) => a - b) : undefined,
+      multipleCorrect: isImageMode || isChoiceMode ? multipleCorrect : undefined,
       explanation: hasExplanation ? explanation.trim() || undefined : undefined,
     })
   }
@@ -216,10 +235,11 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
 
   const canSubmit = isImageMode
     ? question.trim().length > 0 && savedImages.length >= 2 && savedCorrect.length > 0
-    : question.trim().length > 0 && (!hasOptions || options.some((o) => o.trim().length > 0))
+    : question.trim().length > 0 && (!hasOptions || options.some((o) => o.trim().length > 0)) && !noCorrectOption
 
-  /* The learner's own renderer, fed the draft as it stands. */
-  const previewQuestion = !canSubmit || (type !== 'single-choice' && !isImageMode)
+  /* The learner's own renderer, fed the draft as it stands. The learner screen has no
+     several-correct Multiple Choice yet, so there is no preview while the toggle is on. */
+  const previewQuestion = !canSubmit || (type !== 'single-choice' && !isImageMode) || multipleOptions
     ? null
     : isImageMode
       ? { type: 'image-choice' as const, prompt: question, images: savedImages, labels: savedLabels, correctIndices: savedCorrect, multipleCorrect }
@@ -230,7 +250,11 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
         {/* Header */}
         <SectionHeader
           title={isEdit ? config.title.replace('Add assessment', 'Edit assessment') : config.title}
-          description={isImageMode && !multipleCorrect ? 'Users can select one correct image' : config.subtitle}
+          description={
+            isImageMode && !multipleCorrect ? 'Users can select one correct image'
+              : multipleOptions ? 'Users can select one or more correct choices'
+              : config.subtitle
+          }
           ctas={<CloseButton onClick={handleClose} />}
         />
 
@@ -391,17 +415,39 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
 
           {/* Options */}
           {hasOptions && !isImageMode && (
-          <div className="assessment-modal-field">
-            <span className="assessment-modal-label">What are the options?</span>
+          <div className={`assessment-modal-field${isChoiceMode ? ' assessment-modal-field--toggle' : ''}`}>
+            {/* As on Image Choice: the toggle on the label's row, far right. Poll has no correct answer. */}
+            {isChoiceMode ? (
+              <div className="assessment-modal-image-header">
+                <span className="assessment-modal-label">What are the options?</span>
+                <Toggle
+                  label="Multiple correct options"
+                  labelPosition="left"
+                  size="sm"
+                  checked={multipleCorrect}
+                  onChange={(e) => handleMultipleOptionsChange(e.target.checked)}
+                />
+              </div>
+            ) : (
+              <span className="assessment-modal-label">What are the options?</span>
+            )}
             <div className="assessment-modal-options">
               {options.map((opt, index) => (
                 <div className="assessment-modal-option-field" key={index}>
-                  <Radio
-                    name="correct-option"
-                    checked={correctIndex === index}
-                    onChange={() => setCorrectIndex(index)}
-                    aria-label={`Mark option ${index + 1} as the correct answer`}
-                  />
+                  {multipleOptions ? (
+                    <Checkbox
+                      checked={correctOptions.includes(index)}
+                      onChange={() => toggleCorrectOption(index)}
+                      ariaLabel={`Mark option ${index + 1} as correct`}
+                    />
+                  ) : (
+                    <Radio
+                      name="correct-option"
+                      checked={correctIndex === index}
+                      onChange={() => setCorrectIndex(index)}
+                      aria-label={`Mark option ${index + 1} as the correct answer`}
+                    />
+                  )}
                   <input
                     className="assessment-modal-option-input"
                     type="text"
@@ -409,7 +455,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                     value={opt}
                     onChange={(e) => handleOptionChange(index, e.target.value)}
                   />
-                  {correctIndex === index && (
+                  {optionMarked(index) && (
                     <Badge type="success" label="Correct" className="assessment-modal-correct-badge" />
                   )}
                 </div>
@@ -419,6 +465,9 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                 <span>Add Option</span>
               </button>
             </div>
+            {noCorrectOption && (
+              <p className="assessment-modal-image-error" role="alert">Mark at least 1 option as correct.</p>
+            )}
           </div>
           )}
 
