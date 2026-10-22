@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Table, { type Column } from '@/components/Table/Table'
 import Avatar from '@/components/Avatar/Avatar'
@@ -51,15 +51,6 @@ function ImpactedUsersDrawer({ open, title, users, onClose }: Props) {
     }, 300)
   }
 
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
 
   if (!open) return null
 

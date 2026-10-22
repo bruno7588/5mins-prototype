@@ -90,7 +90,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 
 **Do**
 - Make it 720px wide, full height, with `role="dialog"` and `aria-modal="true"`.
-- Put a `CloseButton` in the top-right corner and close on Escape (`useOverlayA11y`) and backdrop click.
+- Put a `CloseButton` in the top-right corner and close on backdrop click. Escape does nothing: call `useOverlayA11y(panelRef, open)` without `onEscape`. Escape still closes menus, tooltips and pickers inside the drawer.
 - Pin the footer: a divider, then the filled primary button followed by the Outlined-2 Cancel.
 - Open confirmations from a drawer with `ConfirmModal`; its overlay sits above drawers.
 
@@ -149,7 +149,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 **Prototype pointers**
 - **Dialog:** `src/components/ConfirmModal/ConfirmModal.tsx`. `open`, `onClose` (called by your Cancel; Escape and backdrop only when `closable`), `ariaLabel`, `className` for sizing; content is composed from `.confirm-modal-*` classes.
 - **Modal:** no dedicated component; centred modals use `src/components/ConfirmModal/ConfirmModal.tsx` with a `className`, full-screen ones use their own shell with `src/hooks/useOverlayA11y.ts` and `src/components/CloseButton/CloseButton.tsx` (`variant="fullscreen"`).
-- **Side Drawer:** no shared component; each drawer is page-local. Follow `src/pages/people/components/LimitedAdminDrawer/LimitedAdminDrawer.tsx`, `src/pages/programs/components/EnrolPeopleDrawer/EnrolPeopleDrawer.tsx` or `src/pages/programs/components/CoursePickerDrawer/CoursePickerDrawer.tsx`, which use `useOverlayA11y` and `CloseButton`. The `.side-drawer__*` classes live in `src/pages/my-team/CoursesDrawer.css` (globally bundled; `SaveReportDrawer` also reuses them). Older drawers (`RolePanel`, `SaveReportDrawer`) run their own Escape handlers, and `RolePanel` hand-rolls its close button (`.roles-panel-close`); don't copy those.
+- **Side Drawer:** no shared component; each drawer is page-local. Follow `src/pages/people/components/LimitedAdminDrawer/LimitedAdminDrawer.tsx`, `src/pages/programs/components/EnrolPeopleDrawer/EnrolPeopleDrawer.tsx` or `src/pages/programs/components/CoursePickerDrawer/CoursePickerDrawer.tsx`, which use `useOverlayA11y` and `CloseButton`. The `.side-drawer__*` classes live in `src/pages/my-team/CoursesDrawer.css` (globally bundled; `SaveReportDrawer` also reuses them). `RolePanel` hand-rolls its close button (`.roles-panel-close`); don't copy it.
 - **Bottom Sheet:** `src/components/BottomSheet/BottomSheet.tsx` (default export). `onClose` (called after the slide-out), `ariaLabel`, `children`, `className`. Used by the mobile lesson sheet (`src/pages/mobile/LessonSheet.tsx`).
 
 **Production:**
@@ -182,7 +182,7 @@ Scrim values (Neutral-900 @ 25% light / 50% dark) are defined in `layout.md`; al
 
 - **Dialog:** only the action buttons (confirm/cancel). No Close (×); backdrop click and Escape do nothing (`ConfirmModal` without `closable`).
 - **Modal:** Close (×) button in the top-right corner. Clicking backdrop or pressing Escape closes the modal (`ConfirmModal` with `closable`).
-- **Side Drawer:** Close (×) button in the top-right corner. Clicking backdrop or pressing Escape closes the drawer.
+- **Side Drawer:** Close (×) button in the top-right corner. Clicking backdrop closes the drawer; Escape does nothing.
 
 ### Close button (Modal and Side Drawer)
 
@@ -579,7 +579,7 @@ All four icons render at 56×56px; the Info icon sits inside a plain flex wrappe
 | **Shadow** | Shadow L | Shadow L | None |
 | **Close button** | None | ✓ top-right | ✓ top-right |
 | **Backdrop click** | Does nothing | Closes | Closes |
-| **Escape key** | Does nothing | Closes | Closes |
+| **Escape key** | Does nothing | Closes | Does nothing |
 | **Header style** | Centered, type icon | Left-aligned, section header | Left-aligned, section header |
 | **CTA buttons** | 2 (type-colored) | 1 (primary centered) | 2 (primary, sticky footer) |
 | **Scrollable content** | No | Optional | Yes (flex body) |
@@ -646,7 +646,7 @@ Dialog and drawer buttons take their states from [buttons.md](buttons.md).
 | Accessible name | `aria-label` via `ConfirmModal`'s `ariaLabel` | `aria-label` via `ariaLabel` on `ConfirmModal`, or `aria-labelledby` pointing to the title | `aria-labelledby` pointing to the title |
 | Focus trap | ✓ (mandatory) | ✓ (mandatory) | ✓ (mandatory) |
 | Return focus on close | ✓ | ✓ | ✓ |
-| Escape key closes | ✗ (buttons only) | ✓ | ✓ |
+| Escape key closes | ✗ (buttons only) | ✓ | ✗ |
 | Backdrop click closes | ✗ (buttons only) | ✓ | ✓ |
 
 **Focus management:** when any overlay opens, focus must move to the first interactive element inside the panel. When closed, focus returns to the element that triggered the overlay. Tab key must cycle only through elements inside the overlay (focus trap). Use `useOverlayA11y(panelRef, open, { onEscape })` (`src/hooks/useOverlayA11y.ts`), which `ConfirmModal` already calls.

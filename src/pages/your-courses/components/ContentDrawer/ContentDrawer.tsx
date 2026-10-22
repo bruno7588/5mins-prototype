@@ -187,7 +187,7 @@ function ContentDrawer({
      trapped inside it, and focus returns to the trigger on close. This used to be a bare
      Escape listener, so `aria-modal` was claiming a trap that did not exist and Tab
      walked straight out into the page header. */
-  useOverlayA11y(panelRef, rendered !== null, { onEscape: onClose })
+  useOverlayA11y(panelRef, rendered !== null)
 
   if (rendered === null) return null
 

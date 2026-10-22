@@ -59,14 +59,6 @@ function AddContentDrawer({ open, onClose, onLibraryClick, onScormClick, onAsses
     }
   }, [open])
 
-  useEffect(() => {
-    if (!rendered) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [rendered, onClose])
 
   if (!rendered) return null
 

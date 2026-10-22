@@ -39,7 +39,7 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
     setTimeout(onClose, 300)
   }
 
-  useOverlayA11y(panelRef, !closing, { onEscape: handleClose })
+  useOverlayA11y(panelRef, !closing)
 
   const switchTab = (next: Tab) => {
     setTab(next)

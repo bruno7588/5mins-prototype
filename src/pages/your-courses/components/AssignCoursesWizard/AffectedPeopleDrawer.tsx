@@ -101,13 +101,14 @@ function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
   }, [open])
 
   /* The wizard behind traps Tab and treats Escape as "discard". Catch both first, on
-     window capture, so they only ever act on this drawer. */
+     window capture, so they only ever act on this drawer. Side drawers ignore Escape,
+     so here it is swallowed and does nothing. */
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape' && e.key !== 'Tab') return
       e.stopPropagation()
-      if (e.key === 'Escape') return handleClose()
+      if (e.key === 'Escape') return
       const items = Array.from(
         panelRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])') ?? [],
       )

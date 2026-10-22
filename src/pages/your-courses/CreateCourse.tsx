@@ -396,7 +396,7 @@ function CreateCourse() {
               discard: 'Discard',
             }
 
-  /* Every way out of a drawer — the header close button, Escape and the scrim — routes
+  /* Every way out of a drawer — the header close button and the scrim — routes
      through here, so half-written work can't be thrown away by accident. */
   const requestCloseDrawer = () => {
     const dirty =

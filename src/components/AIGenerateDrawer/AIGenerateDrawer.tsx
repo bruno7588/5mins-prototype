@@ -167,14 +167,6 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
   const totalQuestions = generatedQuestions.length
   const { toasts, show: showToast } = useToast()
 
-  // Escape key
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose()
-    }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [])
 
   // Simulate generation passes
   useEffect(() => {

@@ -14,7 +14,7 @@ interface Props {
    (header, scrolling form, footer action), hosted over the lesson editor. */
 function LessonResourceDrawer({ onClose, onSave }: Props) {
   const panelRef = useRef<HTMLDivElement>(null)
-  useOverlayA11y(panelRef, true, { onEscape: onClose })
+  useOverlayA11y(panelRef, true)
 
   return (
     <>

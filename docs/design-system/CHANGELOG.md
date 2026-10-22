@@ -253,6 +253,7 @@ Add new entries here, not in the docs.
 
 ## [overlays.md](overlays.md)
 
+- 2026-10-22: (Bruno's ruling): a Side Drawer does **not** close on Escape; only its Close (×), backdrop click and footer buttons close it. Escape still closes menus, tooltips and pickers inside it. Removed from every right-hand drawer; Modals keep Escape.
 - 2026-10-14: Figma Dialog buttons swapped from an orphaned old Buttons set to the current Buttons set (labels kept).
 - 2026-10-14: Side Drawer slides in and out with `ease-in-out` (was cubic-bezier(0.32, 0.72, 0, 1) in the doc, and four different curves across the 13 page drawers); code updated on every right-hand drawer and the content that shifts with it.
 - 2026-10-14: Modal entrance is scale 0.96 → 1 with `ease` over 250ms, matching the Dialog. Bottom Sheet bottom padding is `var(--space-l)` (24px) in doc and code (was 20px in the doc, 32px in code).

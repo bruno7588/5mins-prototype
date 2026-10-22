@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   CalendarAdd,
   Clock,
@@ -53,15 +53,6 @@ function EventDetailsDrawer({ open, event, onClose }: Props) {
     }, 300)
   }
 
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
 
   if (!open || !event) return null
 

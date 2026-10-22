@@ -146,7 +146,7 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
     }, 300)
   }
 
-  useOverlayA11y(panelRef, open && !closing, { onEscape: handleClose })
+  useOverlayA11y(panelRef, open && !closing)
 
   // The start-date calendar is portaled to <body> so the drawer's scrollable
   // form (overflow: auto) can't clip it. Anchor it above-right of the trigger,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Add, Danger, TickCircle } from 'iconsax-react'
 import type { Answer, Question } from '../../data/mockQuestions'
 import Button from '../Button/Button'
@@ -61,13 +61,6 @@ function QuestionDrawer({ question, onSave, onClose, onDelete }: QuestionDrawerP
   const [answers, setAnswers] = useState<Answer[]>(question?.answers ?? DEFAULT_ANSWERS.map(a => ({ ...a, id: `new_a${Date.now()}_${Math.random()}` })))
   const [explanation, setExplanation] = useState('')
   const [errors, setErrors] = useState<string[]>([])
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [onClose])
 
   const handleSave = () => {
     const newErrors: string[] = []

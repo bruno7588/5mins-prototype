@@ -268,15 +268,6 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
     }, 300)
   }
 
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
 
   // Close the actions menu on outside click.
   useEffect(() => {

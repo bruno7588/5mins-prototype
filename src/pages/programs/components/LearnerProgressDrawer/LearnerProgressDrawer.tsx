@@ -36,7 +36,7 @@ function LearnerProgressDrawer({ learner, courses, onClose }: Props) {
     setTimeout(onClose, 300)
   }
 
-  useOverlayA11y(panelRef, !closing, { onEscape: handleClose })
+  useOverlayA11y(panelRef, !closing)
 
   return (
     <div className={`lpd-overlay${closing ? ' lpd-overlay--closing' : ''}`} onMouseDown={handleClose}>

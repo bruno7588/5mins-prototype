@@ -115,9 +115,8 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
 
   const handleSave = () => onSave(toQuestion(draft, prompt))
 
-  /* The shell's Escape handler lives on document and closes the whole drawer, so
-     while the preview is up this one runs first (capture) and stops there —
-     Escape backs out of the preview, not out of the unsaved question. */
+  /* While the preview is up, Escape backs out of the preview. The drawer itself
+     ignores Escape. */
   useEffect(() => {
     if (!previewing) return
     const onKeyDown = (e: KeyboardEvent) => {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Calendar, Clock, ArrowRight } from 'iconsax-react'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
@@ -77,15 +77,6 @@ function ReportsListDrawer({
     }, 300)
   }
 
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
 
   if (!open) return null
 

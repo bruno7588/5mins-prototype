@@ -70,7 +70,7 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
     }, 300)
   }
 
-  useOverlayA11y(panelRef, open && !closing, { onEscape: handleClose })
+  useOverlayA11y(panelRef, open && !closing)
 
   const orphans = useMemo(
     () => (person?.limitedAdmin ? orphanedConditions(person.limitedAdmin, fields) : []),

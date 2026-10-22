@@ -111,14 +111,6 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  // Escape key to close panel
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose()
-    }
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
-  }, [onClose])
 
   // AI progress simulation
   const [aiProgress, setAiProgress] = useState(0)

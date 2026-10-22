@@ -171,15 +171,6 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
     },
   ]
 
-  /* ─── Escape key closes preview ──────────────────────── */
-  useEffect(() => {
-    if (!previewRole) return
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closePreview()
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [previewRole, closePreview])
 
   return (
     <div className="roles-single-panel">
