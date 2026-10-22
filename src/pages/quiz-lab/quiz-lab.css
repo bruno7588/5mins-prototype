@@ -991,6 +991,20 @@
   overflow-wrap: anywhere;
 }
 
+/* Graded, the band takes the pick's result colour, with light text in both modes. */
+.ql-token--correct .ql-imgchoice__label,
+.ql-token--incorrect .ql-imgchoice__label {
+  color: var(--neutral-25);
+}
+
+.ql-token--correct .ql-imgchoice__label {
+  background: var(--success-500);
+}
+
+.ql-token--incorrect .ql-imgchoice__label {
+  background: var(--danger-500);
+}
+
 .ql-imgchoice__img {
   display: block;
   width: 100%;
