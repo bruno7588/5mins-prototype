@@ -321,6 +321,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                         accept=".jpg,.jpeg,.png,.webp,.gif"
                         helpText=""
                         buttonLabel="Add Image"
+                        buttonVariant="text"
                         className="assessment-modal-image-uploader"
                         icon={<AIImageIcon size={32} color="var(--text-secondary)" />}
                         state={dropErrors[index] ? 'Error' : 'Enabled'}

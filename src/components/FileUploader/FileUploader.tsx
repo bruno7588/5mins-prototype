@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { DocumentUpload, DocumentText } from 'iconsax-react'
+import Button from '@/components/Button/Button'
 import './FileUploader.css'
 
 type FileUploaderSize = 'L' | 'S'
@@ -33,6 +34,9 @@ interface FileUploaderProps {
   onBrowse?: () => void
   /** The button label; defaults to "Select File". */
   buttonLabel?: string
+  /** 'outlined' (default) or 'text': the DS text button, for tight zones like the
+      Image Choice tiles. */
+  buttonVariant?: 'outlined' | 'text'
   className?: string
 }
 
@@ -52,6 +56,7 @@ export function FileUploader({
   filledPreview,
   onBrowse,
   buttonLabel = 'Select File',
+  buttonVariant = 'outlined',
   className,
 }: FileUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -99,7 +104,11 @@ export function FileUploader({
 
   /* One label in every state, as in the Library. stopPropagation: the zone behind it
      opens the picker too, and both firing opened it twice. */
-  const selectButton = (
+  const selectButton = buttonVariant === 'text' ? (
+    <Button variant="text" size="sm" onClick={e => { e.stopPropagation(); openPicker() }}>
+      {buttonLabel}
+    </Button>
+  ) : (
     <button
       type="button"
       className={`file-uploader__btn-outlined${isHover ? ' file-uploader__btn-outlined--hover' : ''}`}

@@ -219,3 +219,16 @@
   font-size: var(--font-size-md);
   color: var(--text-secondary);
 }
+
+/* Text-variant button (buttonVariant="text"): --text-primary at rest, per Bruno; it
+   takes the DS text-button hover while the zone is hovered or dragged over, as the
+   outlined button does. Pressed and disabled keep the DS ladder. */
+.file-uploader .ds-btn--text:not(:hover):not(:active):not(:disabled) {
+  color: var(--text-primary);
+}
+
+.file-uploader--enabled:hover .ds-btn--text:not(:active):not(:disabled),
+.file-uploader--hover .ds-btn--text:not(:active):not(:disabled),
+.file-uploader--dragging .ds-btn--text:not(:active):not(:disabled) {
+  color: var(--text-button-hover);
+}
