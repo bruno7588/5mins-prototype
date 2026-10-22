@@ -122,8 +122,19 @@
 }
 
 /* The image limits are rules the admin works to, so they read stronger than a hint. */
+/* Its own line under the Images label, so Paragraph M rather than the inline hint size. */
 .assessment-modal-label-hint--images {
-  color: var(--text-secondary);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+/* Field error under the image list, styled as the DS input helper in its error state. */
+.assessment-modal-image-error {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-error);
 }
 
 /* Options list */
@@ -231,7 +242,7 @@
 
 .assessment-modal-image-option {
   display: grid;
-  grid-template-columns: 144px minmax(0, 1fr);
+  grid-template-columns: 100px minmax(0, 1fr);
   align-items: start;
   gap: var(--space-m);
 }
@@ -244,7 +255,7 @@
 }
 
 /* Square, like the images it waits for: the DS size S uploader is 180 x 260, so this is
-   a deliberate local override of its size, and of its padding to fit 144px. */
+   a deliberate local override of its size, and of its padding to fit 100px. */
 .assessment-modal-image-uploader.file-uploader--S {
   width: 100%;
   min-height: 0;
@@ -252,11 +263,6 @@
   aspect-ratio: 1 / 1;
 }
 
-/* Filled at rest, so an empty option reads as a place for an image; hover then only
-   darkens the dashed border. */
-.assessment-modal-image-uploader.file-uploader--enabled {
-  background: var(--input-background);
-}
 
 /* 16px under the image grid: the field's 8px gap plus this 8px. */
 .assessment-modal-image-add-row {
@@ -319,7 +325,25 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-s);
   min-height: 32px;
+}
+
+/* The caption limit, styled as the DS input helper, pushed to the far right of the row.
+   The slot stays mounted (empty at rest) so the live region announces the count. */
+.assessment-modal-image-limit-slot {
+  margin-left: auto;
+}
+
+.assessment-modal-image-limit.assessment-modal-image-limit--error {
+  color: var(--text-error);
+}
+
+.assessment-modal-image-limit {
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-tertiary);
 }
 
 .assessment-modal-image-correct-mark {
@@ -337,6 +361,21 @@
 .assessment-modal-image-correct-mark .assessment-modal-correct-badge {
   padding: var(--space-xs) var(--space-sm);
   font-size: var(--font-size-md);
+  /* Marking an image correct mounts the badge: it slides in left to right. */
+  animation: assessment-modal-correct-in 100ms ease-in-out;
+}
+
+@keyframes assessment-modal-correct-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--space-s) * -1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assessment-modal-image-correct-mark .assessment-modal-correct-badge {
+    animation: none;
+  }
 }
 
 .assessment-modal-image-correct-mark--disabled {
@@ -348,6 +387,10 @@
    .assessment-modal-option-field), not the amber of a neutral selection. */
 .assessment-modal-image-correct-mark .checkbox path {
   fill: var(--success-500);
+}
+
+.assessment-modal-image-correct-mark .radio {
+  --control-selected: var(--success-500);
 }
 
 /* Marked correct: a 2px green border drawn inside the image, so the tile keeps its size. */
@@ -413,4 +456,19 @@
 
 .assessment-modal-preview .ql-footer .ds-btn {
   width: 100%;
+}
+
+/* Images label with its limits under it; the Multiple correct images toggle on the
+   same row, far right. */
+.assessment-modal-image-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.assessment-modal-image-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
 }

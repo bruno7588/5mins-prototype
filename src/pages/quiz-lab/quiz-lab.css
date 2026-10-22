@@ -970,17 +970,24 @@
   border-radius: var(--radius-s);
 }
 
-/* The admin's optional label under the image: one short line, two at most, in the tile so
-   selected, correct and wrong colour it with the rest of the token. */
+/* The admin's optional label: a caption band joined to the bottom of the image, left
+   aligned on --input-background, one short line, two at most. The image gives up its
+   bottom corners to it, so the two read as one card. */
+.ql-imgchoice__frame:has(+ .ql-imgchoice__label) {
+  border-radius: var(--radius-s) var(--radius-s) 0 0;
+}
+
 .ql-imgchoice__label {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  padding: var(--space-s) var(--space-xs) 0;
+  padding: var(--space-s) var(--space-sm);
+  border-radius: 0 0 var(--radius-s) var(--radius-s);
+  background: var(--input-background);
   font: 400 var(--font-size-md)/1.4 'Poppins', sans-serif;
   color: var(--text-primary);
-  text-align: center;
+  text-align: left;
   overflow-wrap: anywhere;
 }
 
@@ -1027,6 +1034,21 @@ label.ql-imgchoice__tile:hover .ql-imgchoice__img {
    light neutral rather than the mode's --text-secondary (dark in light mode). */
 .ql-imgchoice__check rect {
   stroke: var(--neutral-25);
+}
+
+/* The radio (one correct image) takes the checkbox's 32px disc and light ring. Its own
+   hover halo is replaced by the darker disc below. */
+.ql-imgchoice__check.radio {
+  width: 32px;
+  height: 32px;
+}
+
+.ql-imgchoice__check:not(.radio--selected) .radio__ring {
+  border-color: var(--neutral-25);
+}
+
+.ql-imgchoice__tile .ql-imgchoice__check.radio:hover {
+  background: color-mix(in srgb, var(--neutral-900) 72%, transparent);
 }
 
 /* The whole tile is the tap target, so pointing anywhere on it darkens the disc. */

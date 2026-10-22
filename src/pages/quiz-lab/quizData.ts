@@ -60,6 +60,9 @@ export interface ImageChoiceQuestion {
   labels?: string[]
   /** Indexes into `images`. */
   correctIndices: number[]
+  /** The admin's "Allow more than one correct image" setting. Off: the learner picks one
+      image. Left out, it follows the answer: more than one correct image means on. */
+  multipleCorrect?: boolean
   explanation?: string
 }
 

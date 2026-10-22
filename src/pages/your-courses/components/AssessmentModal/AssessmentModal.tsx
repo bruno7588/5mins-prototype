@@ -13,6 +13,7 @@ import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
 import FileUploader from '@/components/FileUploader/FileUploader'
 import InputField from '@/components/InputField/InputField'
 import Radio from '@/components/Radio/Radio'
+import Toggle from '@/components/Toggle/Toggle'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import AddImageModal from '@/pages/add-content/components/AddImageModal/AddImageModal'
 import { QuizFooterLayoutContext } from '@/pages/quiz-lab/components/FeedbackFooter'
@@ -26,8 +27,10 @@ import './AssessmentModal.css'
 const OPTION_IMAGE_MAX_BYTES = 10 * 1024 * 1024
 /** Image Choice takes 2 to 4 images; the field label says so before the admin reaches it. */
 const MAX_IMAGE_OPTIONS = 4
-/** An image's optional label: one short line under it for the learner (2 lines on mobile). */
-const MAX_IMAGE_LABEL = 40
+/** An image's optional caption: at most 2 lines under it on the learner's phone (tile ~133px of text at 14px). */
+const MAX_IMAGE_LABEL = 30
+/** The caption counter stays hidden until this many characters are left. */
+const CAPTION_WARN_LEFT = 5
 const OPTION_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 
 async function validateOptionImage(file: File): Promise<string | null> {
@@ -68,6 +71,8 @@ export interface AssessmentData {
       correct; `options` then holds each image's optional label (empty when none). */
   optionImages?: string[]
   correctIndices?: number[]
+  /** Image Choice only: off (default) means exactly one image is correct. */
+  multipleCorrect?: boolean
   explanation?: string
 }
 
@@ -95,6 +100,8 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
      a new question starts with the first option marked correct. */
   const [images, setImages] = useState<(string | null)[]>(initial?.optionImages ?? [null, null])
   const [correctImages, setCorrectImages] = useState<number[]>(initial?.correctIndices ?? [0])
+  /** Off by default: one correct image, picked with a radio. On: any number, with checkboxes. */
+  const [multipleCorrect, setMultipleCorrect] = useState(initial?.multipleCorrect ?? false)
   /** One optional label per option, kept in step with `images`. */
   const [labels, setLabels] = useState<string[]>(() =>
     initial?.optionImages ? initial.optionImages.map((_, i) => initial.options[i] ?? '') : ['', ''],
@@ -158,14 +165,33 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   }
 
   const toggleCorrectImage = (index: number) => {
+    if (!multipleCorrect) return setCorrectImages([index])
     setCorrectImages(prev => (prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]))
   }
+
+  /* Turning multiple off keeps only the first image that was marked correct. Turning it
+     on starts from what the radios show, so the default mark carries over. */
+  const handleMultipleCorrectChange = (on: boolean) => {
+    setMultipleCorrect(on)
+    if (on) setCorrectImages(markedCorrect)
+    else setCorrectImages(prev => (prev.length > 1 ? [Math.min(...prev)] : prev))
+  }
+
+  /* With one correct image, there is always one once an image exists: the admin's pick
+     while it still has an image, otherwise the first option with an image. */
+  const firstFilled = images.findIndex(Boolean)
+  const keptMark = correctImages.find(i => images[i])
+  const markedCorrect = multipleCorrect
+    ? correctImages
+    : keptMark !== undefined ? [keptMark] : firstFilled >= 0 ? [firstFilled] : []
 
   /* Empty tiles are dropped on save; the correct marks are re-pointed at what is left. */
   const filledImages = images.flatMap((src, index) => (src ? [{ src, index }] : []))
   const savedImages = filledImages.map(f => f.src)
   const savedLabels = filledImages.map(f => (labels[f.index] ?? '').trim())
-  const savedCorrect = filledImages.flatMap((f, i) => (correctImages.includes(f.index) ? [i] : []))
+  const savedCorrect = filledImages.flatMap((f, i) => (markedCorrect.includes(f.index) ? [i] : []))
+  /* Once there is an image, say why Save is off when none of the images is marked. */
+  const noCorrectImage = savedImages.length > 0 && savedCorrect.length === 0
 
   const handleSubmit = () => {
     onAdd({
@@ -175,6 +201,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
       correctIndex: isImageMode ? savedCorrect[0] : correctIndex,
       optionImages: isImageMode ? savedImages : undefined,
       correctIndices: isImageMode ? savedCorrect : undefined,
+      multipleCorrect: isImageMode ? multipleCorrect : undefined,
       explanation: hasExplanation ? explanation.trim() || undefined : undefined,
     })
   }
@@ -195,7 +222,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   const previewQuestion = !canSubmit || (type !== 'single-choice' && !isImageMode)
     ? null
     : isImageMode
-      ? { type: 'image-choice' as const, prompt: question, images: savedImages, labels: savedLabels, correctIndices: savedCorrect }
+      ? { type: 'image-choice' as const, prompt: question, images: savedImages, labels: savedLabels, correctIndices: savedCorrect, multipleCorrect }
       : { type: 'single-choice' as const, prompt: question, options: options.filter(o => o.trim()), correctIndex, explanation: explanation.trim() || undefined }
 
   const formContent = (
@@ -203,7 +230,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
         {/* Header */}
         <SectionHeader
           title={isEdit ? config.title.replace('Add assessment', 'Edit assessment') : config.title}
-          description={config.subtitle}
+          description={isImageMode && !multipleCorrect ? 'Users can select one correct image' : config.subtitle}
           ctas={<CloseButton onClick={handleClose} />}
         />
 
@@ -220,15 +247,25 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
           {/* Image options: one row each, the square image beside its label and Correct mark. */}
           {isImageMode && (
             <div className="assessment-modal-field">
-              <span className="assessment-modal-label">
-                Images{' '}
-                <span className="assessment-modal-label-hint assessment-modal-label-hint--images">(max. {MAX_IMAGE_OPTIONS} images • JPG, PNG, WebP, GIF • max. 10MB)</span>
-              </span>
+              {/* The label with its limits under it, and the toggle on the same row, far right. */}
+              <div className="assessment-modal-image-header">
+                <div className="assessment-modal-image-heading">
+                  <span className="assessment-modal-label">Images</span>
+                  <span className="assessment-modal-label-hint assessment-modal-label-hint--images">max. {MAX_IMAGE_OPTIONS} images • JPG, PNG, WebP, GIF • max. 10MB</span>
+                </div>
+                <Toggle
+                  label="Multiple correct images"
+                  labelPosition="left"
+                  size="sm"
+                  checked={multipleCorrect}
+                  onChange={(e) => handleMultipleCorrectChange(e.target.checked)}
+                />
+              </div>
               <div className="assessment-modal-image-grid">
                 {images.map((src, index) => (
                   <div className="assessment-modal-image-option" key={index}>
                     {src ? (
-                      <div className={`assessment-modal-image-tile${correctImages.includes(index) ? ' assessment-modal-image-tile--correct' : ''}`}>
+                      <div className={`assessment-modal-image-tile${markedCorrect.includes(index) ? ' assessment-modal-image-tile--correct' : ''}`}>
                         <img className="assessment-modal-image-tile-img" src={src} alt={`Option ${index + 1}`} />
                         <div className="assessment-modal-image-tile-actions">
                           <Tooltip text="Replace image" icon={false}>
@@ -264,8 +301,8 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                         empty one can be named before its image is added. */}
                     <InputField
                       className="assessment-modal-image-label"
-                      label={<>Label <span className="assessment-modal-label-hint">(optional)</span></>}
-                      placeholder="Add a label"
+                      label={<>Caption <span className="assessment-modal-label-hint">(optional)</span></>}
+                      placeholder="Add a caption"
                       value={labels[index] ?? ''}
                       onChange={(e) => {
                         const value = e.target.value.slice(0, MAX_IMAGE_LABEL)
@@ -273,23 +310,46 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                       }}
                     />
                     <div className="assessment-modal-image-correct">
-                      {/* A label, so the word toggles the box too. Correct reads green, as on a
-                          Multiple Choice option: the tick here and the image's border above. A
-                          checkbox, not a radio, because several images can be right. */}
+                      {/* A label, so the word toggles the mark too. Correct reads green, as on a
+                          Multiple Choice option: the mark here and the image's border above. A
+                          radio while only one image can be right, a checkbox once several can. */}
                       <label className={`assessment-modal-image-correct-mark${src ? '' : ' assessment-modal-image-correct-mark--disabled'}`}>
-                        <Checkbox
-                          checked={correctImages.includes(index)}
-                          disabled={!src}
-                          onChange={() => toggleCorrectImage(index)}
-                          ariaLabel={`Mark option ${index + 1} as correct`}
-                        />
+                        {multipleCorrect ? (
+                          <Checkbox
+                            checked={markedCorrect.includes(index)}
+                            disabled={!src}
+                            onChange={() => toggleCorrectImage(index)}
+                            ariaLabel={`Mark option ${index + 1} as correct`}
+                          />
+                        ) : (
+                          <Radio
+                            name="correct-image"
+                            checked={markedCorrect.includes(index)}
+                            disabled={!src}
+                            onChange={() => toggleCorrectImage(index)}
+                            aria-label={`Mark option ${index + 1} as the correct answer`}
+                          />
+                        )}
                         {/* Once marked, the word becomes the Multiple Choice Correct badge. */}
-                        {correctImages.includes(index) ? (
+                        {markedCorrect.includes(index) ? (
                           <Badge type="success" label="Correct" className="assessment-modal-correct-badge" />
                         ) : (
                           <span aria-hidden="true">Correct</span>
                         )}
                       </label>
+                      {/* The caption's limit, on the Correct row at the far right (before Remove):
+                          hidden at rest, a count of what is left near the limit, an error at it. */}
+                      <span className="assessment-modal-image-limit-slot" aria-live="polite">
+                        {(() => {
+                          const left = MAX_IMAGE_LABEL - (labels[index] ?? '').length
+                          if (left > CAPTION_WARN_LEFT) return null
+                          return left > 0 ? (
+                            <span className="assessment-modal-image-limit">{left} {left === 1 ? 'character' : 'characters'} left</span>
+                          ) : (
+                            <span className="assessment-modal-image-limit assessment-modal-image-limit--error">Max. {MAX_IMAGE_LABEL} characters</span>
+                          )
+                        })()}
+                      </span>
                       {/* Remove sits here for every option, filled or empty, once there are more
                           than two: it removes the option, not just its image. */}
                       {images.length > 2 && (
@@ -309,6 +369,9 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                   </div>
                 ))}
               </div>
+              {noCorrectImage && (
+                <p className="assessment-modal-image-error" role="alert">Mark at least 1 image as correct.</p>
+              )}
               {/* Adds an empty option: the text button under the list, as Add Pair, Add Item
                   and Add Step do on the other assessments. Gone at the limit; the label states it. */}
               {images.length < MAX_IMAGE_OPTIONS && (
