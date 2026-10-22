@@ -86,6 +86,8 @@ The 5Mins Library is file `EC26cSVe9KNTCWXvYovakw`. It holds Light mode / Dark m
 
 1. Before building anything, list what the screen needs by its `src/components/` name, read the matching `docs/design-system/*.md` (they carry Library node ids), then `get_libraries` and `search_design_system` with `includeLibraryKeys` set to the 5Mins Library. Batch the queries in one call.
 2. Use instances and set variants with `setProperties()`; never detach a Library instance, never redraw one with rectangles.
+   - **Controls are always Library instances, no exceptions:** Radio, Checkbox, Toggle (both sizes), Input (label, helper and error via its properties), Buttons (every variant, AI filled and AI Outlined included), Badge, Tooltip, File uploader, Close button, Tabs, Dropdown, Chips. Set the variant and state (Enabled, Hover, Selected, Disabled, Error) and override only text. A proposed component may compose Library instances (an option row of Input + Radio + Badge) but never contains a drawn control. The audit's `handDrawnControls` list must be empty.
+   - Read Library specs from the **screenshot**, not only the code export: `get_design_context` flattens gradient strokes to their first stop (the AI Outlined button's cyan-to-purple border comes back as flat `#00cee6`).
 3. Components Bruno uses most: `Top Nav/Admin`, `Side navigation`, `Header` {Type=Page}, `Buttons`, `Chips`, `Search`, `Dropdown`, `Listbox`, `List itens`, `Checkbox instances`, `Badge`, `Content switcher`, `Filter bar`, `Table header`, `Table data`, `Pagination`, `Side Drawer`, `Toast`, `Tooltip`, `Empty state`, `Scroll Bar`, `Icons`, `Chevron`, `Illustrations/ ...`, `Callout`, `Cursor`.
 4. **When the Library has no component** for something the screen shows: build a proper local component (variants where states differ, every value bound to a variable), named `5Mins / <Area> / <Name> (proposed)`, and place the main components in a frame named `Proposed components` on the section's last row (auto-layout horizontal, wrapping, gap 120). Use its instances in the screens. List every proposed component in the report, with what it stands in for and why the Library version could not be used.
 5. Known Library gaps (flag, do not improvise): Avatar has no initials variant; `Illustrations/ Assessments` lacks `Type=Lesson quiz, Device=Desktop`; Icons has no `refresh` glyph (`repeat` is nearest).
@@ -141,7 +143,7 @@ Import with `figma.importStyleByKeyAsync(key)` / `figma.variables.importVariable
 All annotation uses the Library **Callout** component set (`Type` = `Why`, `Flow description`, `Note`). Fill its existing text layers; never add loose text to the canvas.
 
 - **Why** (row 0, 1536 wide): heading "Why", body in three labelled lines: Context, Problem to solve, Solution. One or two plain sentences each.
-- **Flow description** (start of each row, 600 wide, row height): `Flow` = the flow title, `Description` = one plain sentence on what the admin does and what they get.
+- **Flow description** (start of each row, 600 wide, row height): `Flow` = the flow title, `Description` = one plain sentence on what the admin does and what they get, then short bullet points with the rules engineering needs to build it: limits and counts, defaults, what each control does to the data, exact error and helper copy, motion (duration and easing). If the rules do not fit, carry the rest in a `Note` placed in the row right after the flow callout. Plain sentences, no em dashes.
 - **Note** (as needed): a short label placed just above the screen it explains, aligned to the detail it points at, width hugging the text (Bruno's run about 330-520 wide, 72-120 tall). Use it for edge cases, sticky behaviour, or copy such as an email subject line.
 - **Cursor:** on every screen reached by a click, put a Library `Cursor` {Type=Pointer} instance on the element that is clicked to go to the next screen, absolute-positioned inside that element's parent frame, tip on the element.
 - **Arrows:** connect the clicked element to the next screen when the next screen is not simply the one to its right (a jump to another row, a branch, an email or external page). Draw an elbow vector on the section, not inside a screen: stroke weight 3, black, round join, corner radius 20, end cap `ARROW_LINES`, no dash. Name it `<source layer> -> <target>`.
@@ -165,6 +167,7 @@ Run `audit.js` from this folder with `use_figma`, replacing `SECTION_ID`. It wal
 - solid fills and strokes not bound to a variable
 - text layers without a text style, or not in Poppins
 - local component instances that are not `(proposed)`
+- hand-drawn controls: any non-instance layer named like a DS control (Radio, Checkbox, Toggle, Button, Input, Badge, Tooltip, Tabs, ...); replace each with the Library instance
 - screens whose name does not match `<Flow> · NN · <state>`, or not 1536 wide
 - screens identical to the one before in the same row (same visible layers and same text), the "row of identical base pages" failure
 

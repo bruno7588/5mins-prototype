@@ -9,13 +9,15 @@ await figma.setCurrentPageAsync(page);
 
 const SCREEN_NAME = /^.+ · \d{2} · .+$/;
 const DEFAULT_NAME = /^(Frame|Group|Rectangle|Modal\/Full screen)( \d+)?$/;
+// A non-instance layer named like a DS control is a hand-drawn copy of a Library component.
+const CONTROL_NAME = /^(radio|checkbox|check box|toggle|switch|button|btn|input|text ?field|badge|tooltip|tabs?|close( button)?|file uploader|dropdown|chip)\b/i;
 // Vector artwork may skip auto-layout.
 const ARTWORK = /illustration|icon|confetti|tick|logo|vuesax|io5|bs\//i;
 const MAX = 40;
 
 const out = {
   noAutoLayout: [], spacers: [], defaultNames: [], unboundGap: [], unboundPadding: [], unboundRadius: [],
-  rawFills: [], rawStrokes: [], unstyledText: [], nonPoppins: [], localNonProposed: [],
+  rawFills: [], rawStrokes: [], unstyledText: [], nonPoppins: [], localNonProposed: [], handDrawnControls: [],
   badScreenNames: [], badScreenWidth: [], duplicateScreens: [], counts: { frames: 0, autoLayout: 0, instances: 0, texts: 0 },
 };
 const push = (list, v) => { if (list.length < MAX) list.push(v); };
@@ -31,6 +33,7 @@ async function walk(n) {
     }
     return; // never audit instance internals
   }
+  if (n.type !== 'TEXT' && n.type !== 'SECTION' && CONTROL_NAME.test(n.name)) push(out.handDrawnControls, `${label(n)} ${n.type}`);
   const bv = n.boundVariables || {};
   if (n.type === 'FRAME' || n.type === 'COMPONENT') {
     out.counts.frames++;

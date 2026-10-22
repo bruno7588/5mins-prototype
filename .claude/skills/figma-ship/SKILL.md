@@ -27,8 +27,10 @@ If the route, the flows or the section are missing, ask. Do not invent flows fro
 1. Parse the arguments. Extract `fileKey` and the section `nodeId` from the link (`node-id=12-34` becomes `12:34`). The section may live on any page of the file, not the first one; always address it by node id.
 2. Confirm the dev server answers: `curl -s -o /dev/null -w '%{http_code}' http://localhost:5173`.
 3. **Why callout content.** Three short lines: Context, Problem to solve, Solution. Draft them from the PRD when `--ticket` is given (its Context section has the problem and the decisions), otherwise from what the user said. Show the three lines to the user with `AskUserQuestion` before spawning the agent, with an option to accept and an option to edit. Keep each line to one or two plain sentences a new teammate could read in ten seconds.
-4. **Flow callout content.** For each flow: its title as given, plus one plain sentence saying what the admin does and what they get. Draft these too and show them in the same question.
-5. Defaults when the user does not say otherwise: **light theme, 1536 wide, admin shell**. Ask only if a state could be reached two ways or the theme or viewport matters for what ships.
+4. **Flow callout content.** For each flow: its title as given, plus one plain sentence saying what the admin does and what they get, followed by the behaviour rules engineering needs (limits, defaults, error copy, motion), per figma-conventions section 7. Draft these too and show them in the same question.
+5. **Update or new.** Read the section first (`get_metadata`). If it already holds screens and the user asks to update them, offer: rebuild clean rows and move every old frame into an `Archive (before <date>)` frame below the new rows (recommended; nothing deleted), or edit the frames in place. Do not modify old frames without that choice.
+6. **Edge cases and errors.** When asked for them, list the edge-case and error states the prototype can actually show (validation errors, limits, disabled states, counters, empty states), by reading the components' code. Put them in the flow list for approval. A state the prototype does not build is not designed: name it to the user as a gap instead.
+7. Defaults when the user does not say otherwise: **light theme, 1536 wide, admin shell**. Ask only if a state could be reached two ways or the theme or viewport matters for what ships.
 
 ## 2. Spawn the agent
 
@@ -39,10 +41,10 @@ One `general-purpose` agent. Pass it the route, the flows and states verbatim, t
 - `Skill: 5mins-design-system` — so the rebuild uses the right components and tokens.
 - `Skill: figma-conventions` — Bruno's house rules for the canvas grid, screen anatomy, auto-layout, tokens, naming, Note callouts, cursors and arrows. Where it is more specific than this brief, it wins.
 
-And to load its tools in **two** ToolSearch calls, one per server:
+And to load its tools in **two** ToolSearch calls, one per server. The browser is the **Playwright MCP** (this Mac runs macOS 13, Playwright pinned to 1.56; `claude-in-chrome` is not installed):
 
 ```
-ToolSearch: select:mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__computer,mcp__claude-in-chrome__find,mcp__claude-in-chrome__javascript_tool,mcp__claude-in-chrome__resize_window,mcp__claude-in-chrome__tabs_close_mcp
+ToolSearch: select:mcp__playwright__browser_navigate,mcp__playwright__browser_snapshot,mcp__playwright__browser_click,mcp__playwright__browser_hover,mcp__playwright__browser_type,mcp__playwright__browser_press_key,mcp__playwright__browser_file_upload,mcp__playwright__browser_evaluate,mcp__playwright__browser_resize,mcp__playwright__browser_take_screenshot,mcp__playwright__browser_close
 ToolSearch: select:mcp__plugin_figma_figma__generate_figma_design,mcp__plugin_figma_figma__get_libraries,mcp__plugin_figma_figma__search_design_system,mcp__plugin_figma_figma__use_figma,mcp__plugin_figma_figma__get_screenshot,mcp__plugin_figma_figma__get_metadata
 ```
 
@@ -60,7 +62,7 @@ The prototype is the source of truth. Every frame must match what the browser sh
 
 ### B. Reach each state in the browser
 
-- `tabs_context_mcp` with `createIfEmpty: true`, then `navigate` to `http://localhost:5173<route>`. Set the theme (sun/moon toggle in the top bar) and viewport (`resize_window`) to what was agreed.
+- `browser_navigate` to `http://localhost:5173<route>`. Set the theme (sun/moon toggle in the top bar) and viewport (`browser_resize`) to what was agreed. Hide the Design Inspect pill (dev chrome, bottom right) with `browser_evaluate` before every screenshot; never rebuild it.
 - For every state, in order: perform the clicks that reach it, then take a screenshot and **confirm the state matches its name** before capturing. Tips for this prototype: row kebabs are `Actions for <name>` buttons; clicking by ref sometimes closes a freshly opened menu, so click by coordinates when that happens; modals are `role="alertdialog"`; the bulk bar appears after a row checkbox is ticked.
 - Keep the browser screenshot of each state. It is the reference the Figma frame is checked against in step F.
 
@@ -71,7 +73,7 @@ The prototype is the source of truth. Every frame must match what the browser sh
 `generate_figma_design` captures a live page by URL, so a state that needs clicks (an open menu or modal) cannot be captured by URL alone. For each state:
 
 1. Call `generate_figma_design` with `fileKey`, the section `nodeId`, and no `captureId`. It returns a capture script and a `captureId`.
-2. With the tab already in the state, run the capture script inside that tab with `javascript_tool`, exactly as returned. If the script cannot be run this way, capture the base route by URL and mark the state "rebuild only".
+2. With the tab already in the state, run the capture script inside that tab with `browser_evaluate`, exactly as returned. If the script cannot be run this way, capture the base route by URL and mark the state "rebuild only".
 3. Poll with the `captureId` every 5 seconds, up to 10 times, until `completed`.
 4. Record the capture's root node id per state.
 
@@ -120,8 +122,10 @@ Row 3   [ Proposed components ]   (only if any were built)
 - Before reporting, list each state frame's top-level layers with `get_metadata` and confirm every state after the first has its own overlay or data layers. If any does not, build it before reporting.
 - Run `.claude/skills/figma-conventions/audit.js` on the section with `use_figma` and fix every finding in frames this run built. Put the audit summary in the report.
 
+- Confirm every control in every screen (radio, checkbox, toggle, input, button, badge, tooltip, tabs) is a Library `INSTANCE`; the audit's `handDrawnControls` must be empty.
+- If the prototype changes while the run is going (the user keeps iterating), rebuild the affected screens before reporting.
 - `get_screenshot` each rebuilt frame and compare it side by side with the browser screenshot of the same state. Anything that differs is a defect: clipped text, overlapping nodes, wrong variants, missing copy, different spacing, a control in a different state. Fix it before moving on. The only allowed difference is a gap named in the report.
-- Close every browser tab the agent opened.
+- Close the browser (`browser_close`).
 - Return: the section link, one line per state with its rebuilt node id (and capture node id if any), whether captures were taken or skipped, every proposed component with what it stands in for **and why the library version could not be used 1:1**, whether any frames in the section were pre-existing, any step skipped and why, and anything left unverified.
 
 ## 3. Report back
