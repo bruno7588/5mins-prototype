@@ -81,6 +81,10 @@ export interface SingleChoiceQuestion {
   prompt: string
   options: string[]
   correctIndex: number
+  /** The admin's "Multiple correct options" setting: every correct option, and on means
+   *  checkboxes and "Select all that apply". Off or left out: one answer, `correctIndex`. */
+  correctIndices?: number[]
+  multipleCorrect?: boolean
   /** Why the marked option is right, shown under the result once graded. Optional:
    *  a question without one grades the same, it just says less afterwards. */
   explanation?: string

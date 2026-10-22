@@ -1145,8 +1145,14 @@ label.ql-imgchoice__tile:hover .ql-imgchoice__img {
   background: var(--text-on-selected);
 }
 
+/* Same for the checkbox: its amber box takes the knockout, the tick stays cut out. */
+.ql-token--selected .ql-choice__check path {
+  fill: var(--text-on-selected);
+}
+
 /* The row owns the hover, so the radio inside it must not paint its own. */
-.ql-choice__option .ql-choice__radio:hover {
+.ql-choice__option .ql-choice__radio:hover,
+.ql-choice__option .ql-choice__check:hover {
   background: transparent;
 }
 

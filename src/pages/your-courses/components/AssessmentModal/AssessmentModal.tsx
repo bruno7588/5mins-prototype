@@ -237,13 +237,22 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
     ? question.trim().length > 0 && savedImages.length >= 2 && savedCorrect.length > 0
     : question.trim().length > 0 && (!hasOptions || options.some((o) => o.trim().length > 0)) && !noCorrectOption
 
-  /* The learner's own renderer, fed the draft as it stands. The learner screen has no
-     several-correct Multiple Choice yet, so there is no preview while the toggle is on. */
-  const previewQuestion = !canSubmit || (type !== 'single-choice' && !isImageMode) || multipleOptions
+  /* Blank options are left out of the preview, so the correct marks are re-pointed. */
+  const filledOptions = options.flatMap((o, index) => (o.trim() ? [index] : []))
+  const previewCorrect = filledOptions.flatMap((o, i) => (optionMarked(o) ? [i] : []))
+  const previewOptions = {
+    options: filledOptions.map(i => options[i]),
+    correctIndex: previewCorrect[0] ?? -2,
+    correctIndices: multipleOptions ? previewCorrect : undefined,
+    multipleCorrect: multipleOptions,
+  }
+
+  /* The learner's own renderer, fed the draft as it stands. */
+  const previewQuestion = !canSubmit || (type !== 'single-choice' && !isImageMode)
     ? null
     : isImageMode
       ? { type: 'image-choice' as const, prompt: question, images: savedImages, labels: savedLabels, correctIndices: savedCorrect, multipleCorrect }
-      : { type: 'single-choice' as const, prompt: question, options: options.filter(o => o.trim()), correctIndex, explanation: explanation.trim() || undefined }
+      : { type: 'single-choice' as const, prompt: question, ...previewOptions, explanation: explanation.trim() || undefined }
 
   const formContent = (
         <div className={`assessment-modal-content${variant === 'drawer' ? ' assessment-modal-content--drawer' : ''}`}>
