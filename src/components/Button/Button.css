@@ -323,6 +323,10 @@
 .ds-btn--ai-outlined:active:not(:disabled) .ds-btn__icon {
   background-image: radial-gradient(circle at top left, var(--primary-button-background-pressed) 0%, var(--blaze-quiz) 100%);
 }
+/* A gradient SparkleIcon takes the same start stop as the label in each state
+   (Library 11210:5334 hover, 11210:5339 pressed). */
+.ds-btn--ai-outlined:hover:not(:disabled) .ds-btn__icon { --sparkle-gradient-start: var(--text-button-hover); }
+.ds-btn--ai-outlined:active:not(:disabled) .ds-btn__icon { --sparkle-gradient-start: var(--primary-button-background-pressed); }
 /* background-clip: text paints glyphs, and an SVG has none — the clip above leaves a
    currentColor icon fully transparent. Icons that want the real gradient carry their own
    (SparkleIcon’s `gradient` prop); anything else falls back to its first stop rather

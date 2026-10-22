@@ -542,7 +542,6 @@ function AddImageModal({
                     <img src={generatedUrl!} alt="Generated preview" />
                   </button>
                 )}
-                <p className="aim-generate-attribution">Powered by Nano Banana</p>
               </div>
             )}
 
@@ -567,32 +566,26 @@ function AddImageModal({
                 </div>
               ) : generatedUrl ? (
                 <>
-                  <button
-                    type="button"
-                    className="aim-generate-btn aim-generate-btn--secondary"
+                  {/* DS AI Outlined, Medium (Library 11210:5329). */}
+                  <Button
+                    semantic="ai"
+                    variant="outlined"
+                    icon={<SparkleIcon size={20} gradient />}
                     onClick={handleGenerate}
                   >
-                    <SparkleIcon size={20} gradient />
-                    <span className="aim-generate-btn-gradient-text">Generate Again</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="aim-generate-btn aim-generate-btn--primary"
-                    onClick={handleGeneratedPick}
-                  >
-                    Save Image
-                  </button>
+                    Generate Again
+                  </Button>
+                  <Button onClick={handleGeneratedPick}>Save Image</Button>
                 </>
               ) : (
-                <button
-                  type="button"
-                  className="aim-generate-btn"
+                <Button
+                  semantic="ai"
+                  icon={<SparkleIcon size={20} />}
                   onClick={handleGenerate}
                   disabled={prompt.trim().length === 0}
                 >
-                  <SparkleIcon size={20} />
                   Generate Image
-                </button>
+                </Button>
               )}
             </div>
           </div>
