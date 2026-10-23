@@ -478,7 +478,14 @@
 }
 
 .lf-deep__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
   overflow-wrap: anywhere;
+}
+
+.lf-deep__link svg {
+  flex-shrink: 0;
 }
 
 /* Learnings · Bookmark · Share · Comments — labelled row, label before icon. */

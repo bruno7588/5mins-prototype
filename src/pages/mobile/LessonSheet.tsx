@@ -1,3 +1,4 @@
+import { Link21 } from 'iconsax-react'
 import Avatar from '@/components/Avatar/Avatar'
 import CompanyAvatar from '@/components/CompanyAvatar/CompanyAvatar'
 import BottomSheet from '@/components/BottomSheet/BottomSheet'
@@ -64,7 +65,7 @@ function LessonSheet({ lesson, onClose, onOpenLink, onDownload, hidden }: Lesson
                 />
               ))}
               {lesson.deepDiveUrl && (
-                <Button variant="link" className="m-lsheet__link" onClick={() => onOpenLink(lesson.deepDiveUrl!, 'deep-dive')}>
+                <Button variant="link" className="m-lsheet__link" icon={<Link21 size={16} color="currentColor" variant="Linear" />} onClick={() => onOpenLink(lesson.deepDiveUrl!, 'deep-dive')}>
                   {deepDiveLabel}
                 </Button>
               )}

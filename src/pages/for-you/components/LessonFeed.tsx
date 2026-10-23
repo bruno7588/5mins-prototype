@@ -4,6 +4,7 @@ import {
   ArrowDown2,
   ArrowUp2,
   Discover,
+  Link21,
   MessageText1,
   Send2,
 } from 'iconsax-react'
@@ -340,6 +341,7 @@ function LessonFeed({ lessons, startIndex, onClose }: LessonFeedProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
+                      <Link21 size={16} color="currentColor" variant="Linear" aria-hidden="true" />
                       {lesson.deepDiveUrl.replace(/^https?:\/\/(www\.)?/, '')}
                     </a>
                   )}
