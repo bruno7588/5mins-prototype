@@ -73,7 +73,7 @@ const SYNONYMS = {
 }
 
 const words = (name) =>
-  name.replace(/Icon$/, '').replace(/([a-z])([A-Z0-9])/g, '$1 $2').replace(/([0-9])([A-Za-z])/g, '$1 $2')
+  name.replace(/Icon$/, '').replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2').replace(/([a-z])([A-Z0-9])/g, '$1 $2').replace(/([0-9])([A-Za-z])/g, '$1 $2')
     .toLowerCase().split(/[\s_-]+/).map((w) => w.replace(/[0-9]+$/, '')).filter(Boolean)
 
 function walk(dir, out = []) {
