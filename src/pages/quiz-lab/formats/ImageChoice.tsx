@@ -30,8 +30,9 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   const [announce, setAnnounce] = useState('')
   // On the web the result sits beside Continue (FeedbackFooter); at phone width it stays under the images.
   const inFooter = useContext(QuizFooterLayoutContext) === 'hug'
-  /* The wrong answer's heading; unset for a right one, or with one correct image. */
-  const [verdict, setVerdict] = useState<string>()
+  /* A wrong answer with several correct images: "Partly right" when a pick was right
+     ("Not quite!" otherwise) over the count. Unset for a right one, or with one correct image. */
+  const [verdict, setVerdict] = useState<{ title?: string; count: string }>()
   const locked = status !== 'idle'
   const multiple = question.multipleCorrect ?? question.correctIndices.length > 1
 
@@ -52,10 +53,11 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
 
   function check() {
     const { right, hits, total } = gradeImageChoice(picked, question.correctIndices)
-    const count = !right && multiple ? `You got ${hits} of ${total} correct` : undefined
+    const count = `You got ${hits} of ${total} correct.`
+    const next = !right && multiple ? { title: hits > 0 ? 'Partly right' : undefined, count } : undefined
     setStatus(right ? 'correct' : 'incorrect')
-    setVerdict(count)
-    setAnnounce(right ? 'Correct' : count ?? 'Not quite')
+    setVerdict(next)
+    setAnnounce(right ? 'Correct' : next ? `${next.title ?? 'Not quite'}. ${count}` : 'Not quite')
     cue(right ? 'correct' : 'incorrect')
   }
 
@@ -69,7 +71,9 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   }
 
   const isCorrect = (index: number) => question.correctIndices.includes(index)
-  const result = <ResultBanner status={status} title={verdict} explanation={question.explanation || undefined} />
+  const result = (
+    <ResultBanner status={status} title={verdict?.title} detail={verdict?.count} explanation={question.explanation || undefined} />
+  )
   /* The admin's optional words under an image; the option's accessible name carries them. */
   const labelOf = (index: number) => question.labels?.[index]?.trim() || ''
   const optionName = (index: number) => `Option ${index + 1}${labelOf(index) ? `, ${labelOf(index)}` : ''}`
@@ -79,6 +83,8 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
     if (locked) {
       classes.push('ql-token--locked')
       if (picked.includes(index)) classes.push(isCorrect(index) ? 'ql-token--correct' : 'ql-token--incorrect')
+      // A right pick in a wrong answer: green outline and tick, no fill, so it doesn't read as done.
+      if (picked.includes(index) && isCorrect(index) && status === 'incorrect') classes.push('ql-imgchoice__tile--partial')
     } else if (picked.includes(index)) {
       classes.push('ql-token--selected')
     }
@@ -102,7 +108,10 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
                   <img className="ql-imgchoice__img" src={src} alt="" />
                 </span>
                 {labelOf(index) && <span className="ql-imgchoice__label">{labelOf(index)}</span>}
-                {picked.includes(index) ? (
+                {picked.includes(index) && isCorrect(index) && status === 'incorrect' ? (
+                  /* Partly right: the green border alone says it, no tick on the photo. */
+                  <span className="ql-sr-only">{optionName(index)}, correct</span>
+                ) : picked.includes(index) ? (
                   <span className="ql-imgchoice__mark" aria-label={`${optionName(index)}, ${isCorrect(index) ? 'correct' : 'wrong'}`}>
                     {isCorrect(index) ? (
                       <TickCircle size={32} color="currentColor" variant="Bold" />

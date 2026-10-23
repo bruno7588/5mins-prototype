@@ -813,6 +813,19 @@
   color: var(--text-error);
 }
 
+/* The count after the heading, same row and colour, regular weight. */
+.ql-result__detail {
+  font: 400 16px/1.5 'Poppins', sans-serif;
+}
+
+.ql-result--correct .ql-result__detail {
+  color: var(--text-success);
+}
+
+.ql-result--incorrect .ql-result__detail {
+  color: var(--text-error);
+}
+
 /* Screen-reader-only live region */
 .ql-sr-only {
   position: absolute;
@@ -1037,6 +1050,18 @@
 
 .ql-token--correct .ql-imgchoice__label {
   background: var(--success-500);
+}
+
+/* A right pick when the answer as a whole is wrong: the green outline and tick, no fill,
+   so it reads as right but not finished next to the red result. */
+.ql-token--correct.ql-imgchoice__tile--partial {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--success-500);
+}
+
+.ql-imgchoice__tile--partial .ql-imgchoice__label {
+  background: var(--input-background);
+  color: var(--text-primary);
 }
 
 .ql-token--incorrect .ql-imgchoice__label {
