@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useDialKitController, type DialConfig } from 'dialkit'
-import { DEFAULT_THEME, type ThemeSet } from '@/data/brandTheme'
+import { DEFAULT_GRADIENT_SET, type ThemeSet } from '@/data/brandTheme'
 import {
   DITHER_SHAPES,
   DITHER_TYPES,
@@ -322,7 +322,7 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
     if (action === 'Gradient.shuffle') {
       dialRef.current?.setValue('Gradient.frame', Math.round((Math.random() * MAX_FRAME) / 100) * 100)
     } else if (action === 'Preview colours.reset') {
-      const d = DEFAULT_THEME.light
+      const d = DEFAULT_GRADIENT_SET
       dialRef.current?.setValues({ 'Preview colours': { 'header bar': d.header, 'navigation items': d.nav, 'selected item': d.selected } } as never)
     }
   }, [])

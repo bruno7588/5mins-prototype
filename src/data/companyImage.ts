@@ -1,7 +1,7 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { recipeColours, themeColours } from './brandPalette'
-import { effectiveTheme, getBrandTheme, subscribeBrandTheme } from './brandTheme'
+import { getBrandTheme, gradientSet, subscribeBrandTheme } from './brandTheme'
 import { getCompanyDefaults, subscribeCompanyDefaults, useCompanyDefaults, type CompanyDefault } from './companyDefaults'
 import { renderStill } from './renderRecipe'
 import { useSurfaceMode, type Theme } from '@/hooks/useTheme'
@@ -12,7 +12,7 @@ import { useSurfaceMode, type Theme } from '@/hooks/useTheme'
    mounted view without a refresh.
    A default is one of the Studio's recipes rendered in this tenant's theme
    colours as 512 x 512 JPEGs, one per mode: `src` in the light set, `dark` in
-   the dark set. Each `key` records what it was rendered from; when the theme or
+   the dark set (gradientSet: the 5Mins theme uses its dark set for both). Each `key` records what it was rendered from; when the theme or
    the recipe changes, it renders again. */
 
 type Still = { src: string; key: string }
@@ -22,13 +22,13 @@ export type CompanyImage =
   | { kind: 'upload'; src: string }
 
 /** What a default's still depends on: its recipe and the tenant's colours for that mode. */
-export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') => JSON.stringify([recipe, effectiveTheme()[mode]])
+export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') => JSON.stringify([recipe, gradientSet(mode)])
 
 /** The recipe's colours for this tenant in that mode. */
-export const tenantColours = (recipe: GradientRecipe, mode: Theme = 'light') => recipeColours(recipe, effectiveTheme()[mode])
+export const tenantColours = (recipe: GradientRecipe, mode: Theme = 'light') => recipeColours(recipe, gradientSet(mode))
 
 /** The tenant's three theme colours in that mode, for a recipe's pixel finish. */
-export const tenantFinishColours = (mode: Theme = 'light') => themeColours(effectiveTheme()[mode])
+export const tenantFinishColours = (mode: Theme = 'light') => themeColours(gradientSet(mode))
 
 const stills = new Map<string, Promise<string>>()
 

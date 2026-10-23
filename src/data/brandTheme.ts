@@ -2,7 +2,8 @@ import { useSyncExternalStore } from 'react'
 
 /* The tenant's theme colours, set in Account > Layout > Edit Theme: one set per
    mode, three colours each. null means the 5Mins theme. The default company
-   images are generated from the light set (brandPalette.ts). Same store pattern
+   images are generated from the set for each mode (gradientSet; the 5Mins theme
+   uses its dark set in both). Same store pattern
    as companyImage.ts: saving updates every mounted view without a refresh. */
 
 export interface ThemeSet {
@@ -55,6 +56,13 @@ export const getBrandTheme = () => current
 
 /** The theme in effect: the tenant's, or the 5Mins one. */
 export const effectiveTheme = (theme: BrandTheme | null = current) => theme ?? DEFAULT_THEME
+
+/** The 5Mins colours the gradients use: its dark set, in both modes. */
+export const DEFAULT_GRADIENT_SET = DEFAULT_THEME.dark
+
+/** The colours a gradient is drawn in for a mode: a custom theme's own set for that
+    mode, or the 5Mins dark set whatever the mode. */
+export const gradientSet = (mode: 'light' | 'dark', theme: BrandTheme | null = current) => (theme ? theme[mode] : DEFAULT_GRADIENT_SET)
 
 /** null resets to the 5Mins theme. */
 export function setBrandTheme(next: BrandTheme | null) {

@@ -6,7 +6,7 @@ import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { recipeColours, themeColours } from '@/data/brandPalette'
-import { DEFAULT_THEME, effectiveTheme } from '@/data/brandTheme'
+import { DEFAULT_GRADIENT_SET, gradientSet } from '@/data/brandTheme'
 import { renderStill } from '@/data/renderRecipe'
 import { useTheme } from '@/hooks/useTheme'
 import LabCanvas from './LabCanvas'
@@ -57,7 +57,7 @@ const round2 = (v: number) => Math.round(v * 100) / 100
 
 function GradientLab() {
   // Previewed in the tenant's colours by default, so recipes are judged in a real brand.
-  const [lab, setLab] = useState<LabState>(() => ({ recipe: DEFAULT_RECIPE, preview: effectiveTheme().light, playing: true }))
+  const [lab, setLab] = useState<LabState>(() => ({ recipe: DEFAULT_RECIPE, preview: gradientSet('light'), playing: true }))
   const update = useCallback((patch: Partial<LabState>) => setLab((prev) => ({ ...prev, ...patch })), [])
   const setRecipe = useCallback(
     (patch: Partial<LabState['recipe']>) => setLab((prev) => ({ ...prev, recipe: { ...prev.recipe, ...patch } })),
@@ -98,7 +98,7 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, name: `Gradient ${activeSlot}` }
-      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_THEME.light), 'image/jpeg', themeColours(DEFAULT_THEME.light))
+      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_GRADIENT_SET), 'image/jpeg', themeColours(DEFAULT_GRADIENT_SET))
       await saveGradient(activeSlot, recipe, still)
       if (!gradients.some((g) => g.slot === activeSlot)) setDraft(null)
       void reloadGradients()
@@ -116,7 +116,7 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, name: `Gradient ${slot}` }
-      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_THEME.light), 'image/jpeg', themeColours(DEFAULT_THEME.light))
+      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_GRADIENT_SET), 'image/jpeg', themeColours(DEFAULT_GRADIENT_SET))
       await saveGradient(slot, recipe, still)
       await reloadGradients()
       setActiveSlot(slot)
