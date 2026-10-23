@@ -206,6 +206,8 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   const savedCorrect = filledImages.flatMap((f, i) => (markedCorrect.includes(f.index) ? [i] : []))
   /* Once there is an image, say why Save is off when none of the images is marked. */
   const noCorrectImage = savedImages.length > 0 && savedCorrect.length === 0
+  /* With one image in, Save needs a second: say so, since the empty tile alone doesn't. */
+  const needsSecondImage = savedImages.length === 1
 
   const isChoiceMode = type === 'single-choice'
   const multipleOptions = isChoiceMode && multipleCorrect
@@ -233,9 +235,13 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
      Image Choice has none either: the marks on the images show why. */
   const hasExplanation = type === 'single-choice'
 
-  const canSubmit = isImageMode
-    ? question.trim().length > 0 && savedImages.length >= 2 && savedCorrect.length > 0
-    : question.trim().length > 0 && (!hasOptions || options.some((o) => o.trim().length > 0)) && !noCorrectOption
+  /* Everything Save needs apart from the question. */
+  const restReady = isImageMode
+    ? savedImages.length >= 2 && savedCorrect.length > 0
+    : (!hasOptions || options.some((o) => o.trim().length > 0)) && !noCorrectOption
+  const canSubmit = question.trim().length > 0 && restReady
+  /* When the question is all that's missing, say so on its field. */
+  const needsQuestion = restReady && !question.trim()
 
   /* Blank options are left out of the preview, so the correct marks are re-pointed. */
   const filledOptions = options.flatMap((o, index) => (o.trim() ? [index] : []))
@@ -275,6 +281,8 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
             placeholder="Write your question here..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
+            helperText={needsQuestion ? 'Write a question to save.' : undefined}
+            validation={needsQuestion ? 'error' : 'none'}
           />
 
           {/* Image options: one row each, the square image beside its label and Correct mark. */}
@@ -403,6 +411,9 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                   </div>
                 ))}
               </div>
+              {needsSecondImage && (
+                <p className="assessment-modal-image-error" role="alert">Add 1 more image to save.</p>
+              )}
               {noCorrectImage && (
                 <p className="assessment-modal-image-error" role="alert">Mark at least 1 image as correct.</p>
               )}
