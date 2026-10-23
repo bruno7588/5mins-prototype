@@ -469,3 +469,8 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
 .pcm-pin {
   touch-action: none;
 }
+
+/* Send to Claude Code: what happened to the thread's last send, under the messages. */
+.pcm-sent {
+  margin: 8px 0 0;
+}

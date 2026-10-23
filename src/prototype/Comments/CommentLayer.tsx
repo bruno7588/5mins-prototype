@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom'
 import { TickCircle, Trash } from 'iconsax-react'
 import { anchorFor, locate, type Anchor } from './commentAnchor'
 import { currentTrail, isReplaying, recordClicks, replayTrail, resetTrail } from './clickTrail'
+import { sendToClaude, type SendResult } from './sendToClaude'
+import SparkleIcon from '@/components/icons/SparkleIcon'
 import type { NewComment, PrototypeComment } from './useComments'
 import './CommentLayer.css'
 
@@ -122,6 +124,8 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
   const [showResolved, setShowResolved] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   useEffect(() => setConfirmDelete(false), [openId])
+  // Send to Claude Code (dev only): what happened to the open thread's last send.
+  const [sent, setSent] = useState<{ id: string; state: 'sending' | SendResult } | null>(null)
   const threadDrag = useDrag(openId)
   const [pinOffsets, setPinOffsets] = useState<Offsets>(readOffsets)
   const pinDrag = useRef<{ id: string; x: number; y: number; ox: number; oy: number; moved: boolean } | null>(null)
@@ -310,6 +314,22 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
         >
           <div className="pcm-pop__head pcm-drag" {...threadDrag.handle}>
             <span className="pcm-pop__title">Comment {numberOf(open.id)}</span>
+            {import.meta.env.DEV && (
+              <button
+                type="button"
+                className="pcm-icon-btn"
+                aria-label="Send to Claude Code"
+                data-tip="Send to Claude Code"
+                disabled={sent?.id === open.id && sent.state === 'sending'}
+                onClick={async () => {
+                  const id = open.id
+                  setSent({ id, state: 'sending' })
+                  setSent({ id, state: await sendToClaude(open, repliesOf(id)) })
+                }}
+              >
+                <SparkleIcon size={18} color="currentColor" variant="Linear" />
+              </button>
+            )}
             <button
               type="button"
               className="pcm-icon-btn"
@@ -368,6 +388,17 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
               </div>
             ))}
           </div>
+          {sent?.id === open.id && (
+            <p className="pcm-msg__time pcm-sent" role="status">
+              {sent.state === 'sending'
+                ? 'Sending to Claude Code…'
+                : sent.state === 'sent'
+                  ? 'Sent to Claude Code'
+                  : sent.state === 'queued'
+                    ? 'Queued. Run /inspect in Claude Code to apply it.'
+                    : "Couldn't reach Claude Code. Start the dev server without --host."}
+            </p>
+          )}
           <Composer
             placeholder="Reply"
             submitLabel="Reply"
