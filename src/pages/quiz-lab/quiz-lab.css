@@ -826,6 +826,20 @@
   color: var(--text-error);
 }
 
+/* At phone width (the result under the images, not beside Continue) the count takes its
+   own line under the heading, without the bullet. */
+.ql-screen__body .ql-result {
+  flex-wrap: wrap;
+}
+
+.ql-screen__body .ql-result__sep {
+  display: none;
+}
+
+.ql-screen__body .ql-result__detail {
+  flex-basis: 100%;
+}
+
 /* Screen-reader-only live region */
 .ql-sr-only {
   position: absolute;

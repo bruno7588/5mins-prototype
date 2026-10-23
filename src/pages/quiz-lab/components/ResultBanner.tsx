@@ -32,7 +32,7 @@ function ResultBanner({
         <span className="ql-result__title">{title ?? (correct ? 'Well done!' : 'Not quite!')}</span>
         {detail && (
           <>
-            <span className="ql-result__detail" aria-hidden="true">•</span>
+            <span className="ql-result__detail ql-result__sep" aria-hidden="true">•</span>
             <span className="ql-result__detail">{detail}</span>
           </>
         )}
