@@ -301,11 +301,11 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                       <div className={`assessment-modal-image-tile${markedCorrect.includes(index) ? ' assessment-modal-image-tile--correct' : ''}`}>
                         <img className="assessment-modal-image-tile-img" src={src} alt={`Option ${index + 1}`} />
                         <div className="assessment-modal-image-tile-actions">
-                          <Tooltip text="Replace image" icon={false}>
+                          <Tooltip text="Change image" icon={false}>
                             <button
                               className="assessment-modal-image-tile-action"
                               type="button"
-                              aria-label="Replace image"
+                              aria-label="Change image"
                               onClick={() => setPickerIndex(index)}
                             >
                               <GalleryAdd size={16} color="var(--neutral-0)" variant="Linear" />
