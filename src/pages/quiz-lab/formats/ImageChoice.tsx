@@ -30,8 +30,9 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   const [announce, setAnnounce] = useState('')
   // On the web the result sits beside Continue (FeedbackFooter); at phone width it stays under the images.
   const inFooter = useContext(QuizFooterLayoutContext) === 'hug'
-  /* A wrong answer with several correct images: "Partly right" when a pick was right
-     ("Not quite!" otherwise) over the count. Unset for a right one, or with one correct image. */
+  /* A wrong answer with several correct images: "Not quite" with the count beside it. Not
+     "Partly right": that reads as partial credit, and the answer is reported as wrong.
+     Unset for a right one, or with one correct image. */
   const [verdict, setVerdict] = useState<{ title?: string; count: string }>()
   const locked = status !== 'idle'
   const multiple = question.multipleCorrect ?? question.correctIndices.length > 1
@@ -53,11 +54,11 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
 
   function check() {
     const { right, hits, total } = gradeImageChoice(picked, question.correctIndices)
-    const count = `You got ${hits} of ${total} correct.`
-    const next = !right && multiple ? { title: hits > 0 ? 'Partly right' : undefined, count } : undefined
+    const count = `You found ${hits} of ${total} correct ${total === 1 ? 'image' : 'images'}.`
+    const next = !right && multiple ? { title: 'Not quite', count } : undefined
     setStatus(right ? 'correct' : 'incorrect')
     setVerdict(next)
-    setAnnounce(right ? 'Correct' : next ? `${next.title ?? 'Not quite'}. ${count}` : 'Not quite')
+    setAnnounce(right ? 'Correct' : next ? `${next.title}. ${count}` : 'Not quite')
     cue(right ? 'correct' : 'incorrect')
   }
 
