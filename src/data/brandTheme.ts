@@ -57,8 +57,9 @@ export const getBrandTheme = () => current
 /** The theme in effect: the tenant's, or the 5Mins one. */
 export const effectiveTheme = (theme: BrandTheme | null = current) => theme ?? DEFAULT_THEME
 
-/** The 5Mins colours the gradients use: its dark set, in both modes. */
-export const DEFAULT_GRADIENT_SET = DEFAULT_THEME.dark
+/** The 5Mins colours the gradients use: its dark set, in both modes, with the grey
+    navigation colour swapped for --primary-600 (the canvas needs the hex itself). */
+export const DEFAULT_GRADIENT_SET: ThemeSet = { ...DEFAULT_THEME.dark, nav: '#00AFC4' }
 
 /** The colours a gradient is drawn in for a mode: a custom theme's own set for that
     mode, or the 5Mins dark set whatever the mode. */
