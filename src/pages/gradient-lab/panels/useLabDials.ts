@@ -240,7 +240,7 @@ function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
     grain: { shape: r.shape, softness: r.softness, intensity: r.intensity },
     dither: { shape: r.ditherShape, pattern: r.ditherType, 'pixel size': r.pxSize },
   }
-  const mine = isCanvasPattern(r.shader) ? patternValues(r, r.shader) : own[r.shader]
+  const mine = isCanvasPattern(r.shader) ? { ...patternValues(r, r.shader), 'colour flow': r.flow } : own[r.shader]
   // Dithering and the canvas patterns take a fixed number of colours.
   const fixed = r.shader === 'dither' || isCanvasPattern(r.shader)
   return {
@@ -279,7 +279,10 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
   const p = v['Preview colours']
   const pattern = isCanvasPattern(g.type)
   const mine: DialConfig = isCanvasPattern(g.type)
-    ? Object.fromEntries(PATTERN_DIALS[g.type].map(([label, , min, max, step]) => [label, [g[label] as number, min, max, step]]))
+    ? {
+        ...Object.fromEntries(PATTERN_DIALS[g.type].map(([label, , min, max, step]) => [label, [g[label] as number, min, max, step]])),
+        'colour flow': [g['colour flow'] as number, 0, 1, 0.01],
+      }
     : own[g.type]!
   return {
     Gradient: {
@@ -373,7 +376,7 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
     // The panel's controls belong to the current type until it rebuilds for a newly picked one.
     const { type, shape, pattern, 'pixel size': pxSize, ...g } = v.Gradient
     const own = isCanvasPattern(r.shader)
-      ? Object.fromEntries(PATTERN_DIALS[r.shader].map(([label, field]) => [field, g[label]]))
+      ? { ...Object.fromEntries(PATTERN_DIALS[r.shader].map(([label, field]) => [field, g[label]])), flow: g['colour flow'] }
       : r.shader === 'dither'
         ? { ditherShape: shape, ditherType: pattern, pxSize }
         : { shape }

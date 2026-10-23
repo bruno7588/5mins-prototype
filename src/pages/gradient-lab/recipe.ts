@@ -203,6 +203,9 @@ export interface GradientRecipe {
   rippleSwell: number
   /** Picks a different scatter of drops (0-99). */
   rippleSeed: number
+  /** Canvas patterns only. How far the marks move from flat navigation items and selected
+      item colours into a slowly drifting blend of the two (0-1); the header bar stays flat. */
+  flow: number
   /** The pixel finish over any type, and its pixel size as % of the frame (0.3-4). */
   finish: Finish
   finishPixel: number
@@ -334,6 +337,7 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   ripplePush: 5,
   rippleSwell: 2.1,
   rippleSeed: 0,
+  flow: 1,
   finish: 'off',
   finishPixel: 0.8,
   speed: 0.6,
@@ -512,6 +516,7 @@ export function parseRecipe(json: unknown): GradientRecipe {
     ripplePush: num(json, 'ripplePush', d.ripplePush, 0, 15),
     rippleSwell: num(json, 'rippleSwell', d.rippleSwell, 0, 5),
     rippleSeed: Math.round(num(json, 'rippleSeed', d.rippleSeed, 0, 99)),
+    flow: num(json, 'flow', d.flow, 0, 1),
     finish: FINISHES.includes(json.finish as Finish) ? (json.finish as Finish) : d.finish,
     finishPixel: num(json, 'finishPixel', d.finishPixel, 0.3, 4),
     speed: num(json, 'speed', d.speed, 0, 3),

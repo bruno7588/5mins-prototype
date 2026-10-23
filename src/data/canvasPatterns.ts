@@ -1,4 +1,5 @@
 import { patternColours, type GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { BAYER } from './pixelFinish'
 
 /* The recipes drawn in 2D canvas rather than by Paper Shaders, after thirteen of the
    "40 Motion Backgrounds" sketches (Scenario):
@@ -809,11 +810,75 @@ function drawRipple(ctx: CanvasRenderingContext2D, u: number, e: number, t: numb
   }
 }
 
-/** One frame of a canvas pattern recipe, filling the canvas (in its own pixels). */
-export function drawPattern(ctx: CanvasRenderingContext2D, recipe: GradientRecipe, colours: string[], t: number) {
+/* Colour flow: the marks take a soft, slowly drifting blend of the navigation items and
+   selected item colours, like a mesh gradient seen through them; the header bar
+   background stays flat. Main marks run nav to selected and second-colour marks the
+   other way, so the two still read apart.
+   Built from canvas blend modes rather than pixel by pixel, so it keeps pace at full
+   size: the pattern is drawn as black-and-white masks (how much of the background, main
+   and second marks each pixel holds, antialiasing included), each mask is multiplied by
+   its colour (flat background, or the flow scaled up from a coarse grid), and the three
+   are added together. */
+
+type Colours = { bg: string; fg: string; fg2: string }
+const WHITE = '#FFFFFF'
+const BLACK = '#000000'
+/** The flow is sampled on a coarse grid and smoothed up when drawn: it has no fine detail. */
+const FLOW_GRID = 24
+
+const rgbOf = (hex: string): [number, number, number] => {
+  const n = parseInt(hex.slice(1), 16)
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+}
+
+/** 0 (nav) to 1 (selected) at (x, y) in the frame (0-1), after `t` seconds: folded sine waves warping each other. */
+function flowField(x: number, y: number, t: number): number {
+  const s = t * 0.5
+  let px = x * 2.2
+  let py = y * 2.2
+  px += 0.6 * Math.sin(py * 1.3 + s * 1.7)
+  py += 0.6 * Math.sin(px * 1.1 - s * 1.3 + 1.7)
+  px += 0.4 * Math.sin(py * 2.1 - s * 0.9 + 0.5)
+  return smoothstep(0.15, 0.85, 0.5 + 0.5 * Math.sin(px * 1.4 + s) * Math.cos(py * 1.2 - s * 0.7))
+}
+
+/** Reused between frames: a full-size mask, a full-size layer, and the two coarse flow grids. */
+let maskCanvas: HTMLCanvasElement | null = null
+let layerCanvas: HTMLCanvasElement | null = null
+let gridCanvas: HTMLCanvasElement | null = null
+
+function sized(canvas: HTMLCanvasElement | null, w: number, h: number): HTMLCanvasElement {
+  const c = canvas ?? document.createElement('canvas')
+  if (c.width !== w) c.width = w
+  if (c.height !== h) c.height = h
+  return c
+}
+
+/** The flow in both directions, side by side on one coarse canvas: main marks left, second right. */
+function paintGrids(grid: HTMLCanvasElement, theme: Colours, amount: number, t: number) {
+  const n = FLOW_GRID + 1
+  const g = grid.getContext('2d')!
+  const image = g.createImageData(n * 2, n)
+  const nav = rgbOf(theme.fg)
+  const sel = rgbOf(theme.fg2)
+  for (let j = 0; j < n; j++) {
+    for (let i = 0; i < n; i++) {
+      const v = flowField(i / FLOW_GRID, j / FLOW_GRID, t) * amount
+      // Main marks move `amount` of the way from nav into the flow; second marks from selected.
+      for (const [col, k] of [[i, v], [i + n, 1 - v]] as const) {
+        const p = (j * n * 2 + col) * 4
+        for (let c = 0; c < 3; c++) image.data[p + c] = lerp(nav[c], sel[c], k)
+        image.data[p + 3] = 255
+      }
+    }
+  }
+  g.putImageData(image, 0, 0)
+}
+
+/** Draws the pattern's marks in `colours` over a `colours.bg` fill. */
+function drawMarks(ctx: CanvasRenderingContext2D, recipe: GradientRecipe, { bg, fg, fg2 }: Colours, t: number) {
   const { width: w, height: h } = ctx.canvas
   const size = Math.max(w, h)
-  const { bg, fg, fg2 } = patternColours(colours)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
   ctx.fillStyle = bg
   ctx.fillRect(0, 0, w, h)
@@ -837,6 +902,91 @@ export function drawPattern(ctx: CanvasRenderingContext2D, recipe: GradientRecip
   else if (recipe.shader === 'ripple') drawRipple(ctx, u, e, t, recipe, fg, fg2)
   else drawSine(ctx, u, e, t, recipe, fg, fg2)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
+}
+
+/** One cell per finished pixel, for the flow with the pixel finish. */
+let cellCanvas: HTMLCanvasElement | null = null
+
+/** The flow with the pixel finish: the pattern is drawn one cell per finished pixel, in
+    red for main marks and green for second, so each cell knows how much of each it
+    covers. The Bayer matrix decides background or mark cell by cell (the finish's hard
+    pixels), and mark cells take the flow's colour at that spot, so the gradient survives. */
+function drawFinishedFlow(ctx: CanvasRenderingContext2D, recipe: GradientRecipe, theme: Colours, t: number) {
+  const { width: w, height: h } = ctx.canvas
+  const cell = Math.max(1, (Math.max(w, h) * recipe.finishPixel) / 100)
+  const gw = Math.ceil(w / cell)
+  const gh = Math.ceil(h / cell)
+  cellCanvas = sized(cellCanvas, gw, gh)
+  const g = cellCanvas.getContext('2d', { willReadFrequently: true })!
+  drawMarks(g, recipe, { bg: BLACK, fg: '#FF0000', fg2: '#00FF00' }, t)
+  const image = g.getImageData(0, 0, gw, gh)
+  const px = image.data
+  const matrix = BAYER[recipe.finish as keyof typeof BAYER]
+  const n = Math.sqrt(matrix.length)
+  const bg = rgbOf(theme.bg)
+  const nav = rgbOf(theme.fg)
+  const sel = rgbOf(theme.fg2)
+  for (let y = 0; y < gh; y++) {
+    for (let x = 0; x < gw; x++) {
+      const i = (y * gw + x) * 4
+      const a = px[i] / 255
+      const b = px[i + 1] / 255
+      const threshold = (matrix[(y % n) * n + (x % n)] + 0.5) / matrix.length
+      let rgb = bg
+      if (a + b > threshold) {
+        const v = flowField(x / gw, y / gh, t) * recipe.flow
+        const k = a >= b ? v : 1 - v
+        rgb = [lerp(nav[0], sel[0], k), lerp(nav[1], sel[1], k), lerp(nav[2], sel[2], k)]
+      }
+      px[i] = rgb[0]
+      px[i + 1] = rgb[1]
+      px[i + 2] = rgb[2]
+      px[i + 3] = 255
+    }
+  }
+  g.putImageData(image, 0, 0)
+  ctx.save()
+  ctx.setTransform(1, 0, 0, 1, 0, 0)
+  ctx.globalCompositeOperation = 'copy'
+  ctx.imageSmoothingEnabled = false
+  ctx.drawImage(cellCanvas, 0, 0, gw, gh, 0, 0, gw * cell, gh * cell)
+  ctx.restore()
+}
+
+/** One frame of a canvas pattern recipe, filling the canvas (in its own pixels). */
+export function drawPattern(ctx: CanvasRenderingContext2D, recipe: GradientRecipe, colours: string[], t: number) {
+  const theme = patternColours(colours)
+  if (!(recipe.flow > 0)) return drawMarks(ctx, recipe, theme, t)
+  if (recipe.finish !== 'off') return drawFinishedFlow(ctx, recipe, theme, t)
+  const { width: w, height: h } = ctx.canvas
+  const n = FLOW_GRID + 1
+  maskCanvas = sized(maskCanvas, w, h)
+  layerCanvas = sized(layerCanvas, w, h)
+  gridCanvas = sized(gridCanvas, n * 2, n)
+  paintGrids(gridCanvas, theme, recipe.flow, t)
+  const mask = maskCanvas.getContext('2d')!
+  const layer = layerCanvas.getContext('2d')!
+
+  // The background: white wherever there is no mark, times the header bar.
+  drawMarks(ctx, recipe, { bg: WHITE, fg: BLACK, fg2: BLACK }, t)
+  ctx.globalCompositeOperation = 'multiply'
+  ctx.fillStyle = theme.bg
+  ctx.fillRect(0, 0, w, h)
+
+  // Each kind of mark: its mask times its half of the flow grid, added on.
+  for (const [codes, gx] of [[{ bg: BLACK, fg: WHITE, fg2: BLACK }, 0], [{ bg: BLACK, fg: BLACK, fg2: WHITE }, n]] as const) {
+    drawMarks(mask, recipe, codes, t)
+    layer.globalCompositeOperation = 'copy'
+    layer.imageSmoothingEnabled = true
+    layer.imageSmoothingQuality = 'high'
+    // Grid points sit on pixel centres, so the half-pixel inset keeps the edges on the frame's.
+    layer.drawImage(gridCanvas, gx + 0.5, 0.5, n - 1, n - 1, 0, 0, w, h)
+    layer.globalCompositeOperation = 'multiply'
+    layer.drawImage(maskCanvas, 0, 0)
+    ctx.globalCompositeOperation = 'lighter'
+    ctx.drawImage(layerCanvas, 0, 0)
+  }
+  ctx.globalCompositeOperation = 'source-over'
 }
 
 /** Seconds of pattern time: the recipe's frame (ms) is where it starts. */

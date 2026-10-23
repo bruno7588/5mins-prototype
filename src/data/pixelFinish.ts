@@ -1,4 +1,4 @@
-import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { isCanvasPattern, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 
 /* The pixel finish: ordered dithering over any rendered background, so soft
    shading turns into a grid of hard square pixels in the tenant's three theme
@@ -11,7 +11,7 @@ import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
    frame, so a 512 px still and a small card show the same grain. */
 
 /** Bayer threshold matrices, flattened row by row. */
-const BAYER: Record<'2x2' | '4x4' | '8x8', number[]> = {
+export const BAYER: Record<'2x2' | '4x4' | '8x8', number[]> = {
   '2x2': [0, 2, 3, 1],
   '4x4': [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5],
   '8x8': [
@@ -54,6 +54,8 @@ let grid: HTMLCanvasElement | null = null
  */
 export function applyPixelFinish(ctx: CanvasRenderingContext2D, recipe: GradientRecipe, themeColours: string[] | undefined) {
   if (recipe.finish === 'off' || !themeColours || themeColours.length < 3) return
+  // A pattern with colour flow is finished as it is drawn (drawPattern), so its marks keep the flow's colours.
+  if (isCanvasPattern(recipe.shader) && recipe.flow > 0) return
   const { width: w, height: h } = ctx.canvas
   if (!w || !h) return
   const cell = Math.max(1, (Math.max(w, h) * recipe.finishPixel) / 100)
