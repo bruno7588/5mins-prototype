@@ -80,3 +80,55 @@ export function setBrandTheme(next: BrandTheme | null) {
 export function useBrandTheme() {
   return useSyncExternalStore(subscribeBrandTheme, getBrandTheme)
 }
+
+/* The theme on screen: a custom theme paints the header bar, the navigation menu
+   items and the selected item through --brand-header, --brand-nav and
+   --brand-selected on <html>, in the set for the mode showing. The stylesheets read
+   them with the 5Mins tokens as the fallback, so the 5Mins theme sets nothing. */
+const BRAND_VARS: [keyof ThemeSet, string][] = [
+  ['header', '--brand-header'],
+  ['nav', '--brand-nav'],
+  ['selected', '--brand-selected'],
+]
+
+function paintBrandVars() {
+  const root = document.documentElement
+  const set = current?.[root.dataset.theme === 'dark' ? 'dark' : 'light']
+  for (const [key, name] of BRAND_VARS) {
+    if (set) root.style.setProperty(name, set[key])
+    else root.style.removeProperty(name)
+  }
+}
+
+if (typeof window !== 'undefined') {
+  paintBrandVars()
+  subscribeBrandTheme(paintBrandVars)
+  // Light/dark is the <html data-theme> attribute (useTheme): repaint when it flips.
+  new MutationObserver(paintBrandVars).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+}
+
+const luminance = (hex: string) => {
+  const n = parseInt(hex.slice(1), 16)
+  const lin = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) => lin(c / 255))
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+/** The mode a header bar's contents should take so they read on its colour: a dark bar
+    gets the dark tokens (light text), a light bar the light ones. Undefined when no
+    custom theme is set or the bar already suits the app's mode, so headers leave it unset. */
+export function useHeaderTheme(): 'light' | 'dark' | undefined {
+  const theme = useBrandTheme()
+  const mode = useSyncExternalStore(subscribeMode, readMode)
+  if (!theme) return undefined
+  // The bar is dark when white text out-contrasts near-black on it.
+  const want = luminance(theme[mode].header) < 0.18 ? 'dark' : 'light'
+  return want === mode ? undefined : want
+}
+
+const readMode = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
+function subscribeMode(listener: () => void) {
+  const observer = new MutationObserver(listener)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+  return () => observer.disconnect()
+}

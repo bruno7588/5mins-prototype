@@ -1,4 +1,8 @@
-:root {
+/* [data-theme='light'] lets one element take the light tokens inside the dark app: a
+   tenant's light header bar in dark mode (brandTheme.ts useHeaderTheme). <html> never
+   carries it, so the page itself is unaffected. */
+:root,
+[data-theme='light'] {
   /* Palette values per Figma variables — see docs/design-system/colors.md */
 
   /* Primary (Cyan Brand) */

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useHeaderTheme } from '@/data/brandTheme'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Add, ArrowDown2, FlashCircle, Mobile } from 'iconsax-react'
 import { Logo, learnerSideItems } from '../my-team/MyTeam'
@@ -16,13 +17,15 @@ import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 
 function ForYou() {
   const navigate = useNavigate()
+  // A custom header colour: its contents switch mode so they read on it.
+  const headerTheme = useHeaderTheme()
   const location = useLocation()
   // Which lesson the feed player is opened on (null = closed).
   const [feedIndex, setFeedIndex] = useState<number | null>(null)
 
   return (
     <div className="mt-app">
-      <header className="mt-topnav">
+      <header className="mt-topnav" data-theme={headerTheme}>
         <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
           <Logo size={22} />
         </button>
@@ -55,7 +58,7 @@ function ForYou() {
                   className={`mt-side__item${isActive ? ' mt-side__item--active' : ''}`}
                   onClick={path ? () => navigate(path) : undefined}
                 >
-                  <Icon size={24} color={isActive ? 'var(--secondary-500)' : 'var(--text-secondary)'} variant="Bold" />
+                  <Icon size={24} color={isActive ? 'var(--brand-selected, var(--secondary-500))' : 'var(--brand-nav, var(--text-secondary))'} variant="Bold" />
                   <span>{label}</span>
                 </button>
               )

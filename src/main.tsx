@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './styles/tokens.css'
 import './styles/reset.css'
 import './styles/typography.css'
+import './data/brandTheme' // paints the tenant's header and menu colours (--brand-*)
 import App from './App'
 import { ImpersonationProvider } from './impersonation/ImpersonationContext'
 import DemoSwitcher from './prototype/DemoSwitcher/DemoSwitcher'

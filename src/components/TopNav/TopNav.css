@@ -5,7 +5,8 @@
   right: 0;
   z-index: 100;
   height: 70px;
-  background: var(--page-background);
+  /* The tenant's header bar colour when a custom theme is set (brandTheme.ts). */
+  background: var(--brand-header, var(--page-background));
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;

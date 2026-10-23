@@ -20,7 +20,9 @@ import { initialCompanyRoles, fiveMinsRoles } from '../../pages/roles/data/mockR
 import './LeftSidebar.css'
 
 const iconSize = 20
-const iconColor = 'var(--text-secondary)'
+// The tenant's menu colours when a custom theme is set (brandTheme.ts), else the tokens.
+const iconColor = 'var(--brand-nav, var(--text-secondary))'
+const activeIconColor = 'var(--brand-selected, var(--secondary-600))'
 
 const unmappedRolesCount = buildInitialMappings(initialCompanyRoles, fiveMinsRoles)
   .filter(m => m.status !== 'mapped').length
@@ -147,7 +149,7 @@ function LeftSidebar() {
           <span className="sidebar-item-icon">
             <Flash
               size={iconSize}
-              color={activePage === '/automations' ? 'var(--secondary-600)' : iconColor}
+              color={activePage === '/automations' ? activeIconColor : iconColor}
               variant={activePage === '/automations' ? 'Bold' : 'Linear'}
             />
           </span>
@@ -178,7 +180,7 @@ function LeftSidebar() {
           <span className="sidebar-item-icon">
             <DocumentText
               size={iconSize}
-              color={activePage === '/learning-records' ? 'var(--secondary-600)' : iconColor}
+              color={activePage === '/learning-records' ? activeIconColor : iconColor}
               variant={activePage === '/learning-records' ? 'Bold' : 'Linear'}
             />
           </span>
@@ -201,7 +203,7 @@ function LeftSidebar() {
           <span className="sidebar-item-icon">
             <Setting2
               size={iconSize}
-              color={activePage === '/account' ? 'var(--secondary-600)' : iconColor}
+              color={activePage === '/account' ? activeIconColor : iconColor}
               variant={activePage === '/account' ? 'Bold' : 'Linear'}
             />
           </span>

@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react'
+import { useHeaderTheme } from '@/data/brandTheme'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
@@ -298,6 +299,8 @@ function ProgressCell({ value }: { value: number }) {
 
 function UserProfile() {
   const navigate = useNavigate()
+  // A custom header colour: its contents switch mode so they read on it.
+  const headerTheme = useHeaderTheme()
   const { id = '1' } = useParams<{ id: string }>()
   /* Two doors into this page, and the route says which one the visitor came
      through: /people/:id from the admin People table, /my-team/people/:id from
@@ -811,7 +814,7 @@ function UserProfile() {
   if (isLearnerView) {
     return (
       <div className="mt-app">
-        <header className="mt-topnav">
+        <header className="mt-topnav" data-theme={headerTheme}>
           <button type="button" className="mt-topnav__logo" aria-label="Home" onClick={() => navigate('/workspace')}>
             <Logo size={22} />
           </button>
@@ -846,7 +849,7 @@ function UserProfile() {
                     className={`mt-side__item${isActive ? ' mt-side__item--active' : ''}`}
                     onClick={path ? () => navigate(path) : undefined}
                   >
-                    <Icon size={24} color={isActive ? 'var(--selected)' : 'var(--text-secondary)'} variant="Bold" />
+                    <Icon size={24} color={isActive ? 'var(--brand-selected, var(--selected))' : 'var(--brand-nav, var(--text-secondary))'} variant="Bold" />
                     <span>{label}</span>
                   </button>
                 )

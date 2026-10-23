@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../Button/Button'
 import Tooltip from '../Tooltip/Tooltip'
 import { useTheme } from '../../hooks/useTheme'
+import { useHeaderTheme } from '@/data/brandTheme'
 import './TopNav.css'
 
 function TopNav() {
@@ -12,6 +13,8 @@ function TopNav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const goToApp = () => navigate('/workspace')
+  // A custom header colour: its contents switch mode so they read on it.
+  const headerTheme = useHeaderTheme()
 
   useEffect(() => {
     if (!menuOpen) return
@@ -22,7 +25,7 @@ function TopNav() {
     return () => document.removeEventListener('mousedown', handler)
   }, [menuOpen])
   return (
-    <nav className="topnav">
+    <nav className="topnav" data-theme={headerTheme}>
       <div className="topnav-left">
         <button
           type="button"

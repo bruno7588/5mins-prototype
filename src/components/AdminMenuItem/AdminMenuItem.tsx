@@ -21,7 +21,7 @@ function AdminMenuItem() {
           aria-disabled={locked || undefined}
           onClick={() => navigate('/content-library')}
         >
-          <ShieldSecurity size={24} color={locked ? 'var(--text-disabled)' : 'var(--text-secondary)'} variant="Bold" />
+          <ShieldSecurity size={24} color={locked ? 'var(--text-disabled)' : 'var(--brand-nav, var(--text-secondary))'} variant="Bold" />
           <span>Admin</span>
         </button>
       )}

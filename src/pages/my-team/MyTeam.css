@@ -8,7 +8,8 @@
 /* Top nav */
 .mt-topnav {
   height: 70px;
-  background: var(--page-background);
+  /* The tenant's header bar colour when a custom theme is set (brandTheme.ts). */
+  background: var(--brand-header, var(--page-background));
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -146,7 +147,8 @@
   font-weight: 400;
   font-size: var(--font-size-lg);
   line-height: 1.5;
-  color: var(--text-secondary);
+  /* A custom theme's navigation and selected colours win over the tokens (brandTheme.ts). */
+  color: var(--brand-nav, var(--text-secondary));
   text-align: left;
   width: 100%;
   transition: background 150ms ease;
@@ -157,7 +159,7 @@
 }
 
 .mt-side__item--active {
-  color: var(--text-selected);
+  color: var(--brand-selected, var(--text-selected));
   font-weight: 700;
 }
 
