@@ -481,6 +481,16 @@
   border-top: none;
 }
 
+/* Here the result stays above the centred button, left aligned (Figma 10694:36278). */
+.assessment-modal-preview .ql-footer--with-result {
+  flex-direction: column;
+  align-items: center;
+}
+
+.assessment-modal-preview .ql-footer--with-result .ql-result-group {
+  align-self: stretch;
+}
+
 /* Images label with its limits under it; the Multiple correct images toggle on the
    same row, far right. */
 .assessment-modal-image-header {

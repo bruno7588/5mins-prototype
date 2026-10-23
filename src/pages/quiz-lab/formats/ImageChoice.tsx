@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { CloseCircle, TickCircle } from 'iconsax-react'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import Radio from '@/components/Radio/Radio'
 import { gradeImageChoice, type ImageChoiceQuestion } from '../quizData'
-import FeedbackFooter from '../components/FeedbackFooter'
+import FeedbackFooter, { QuizFooterLayoutContext } from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
@@ -28,6 +28,8 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   const [picked, setPicked] = useState<number[]>([])
   const [status, setStatus] = useState<FeedbackStatus>('idle')
   const [announce, setAnnounce] = useState('')
+  // On the web the result sits beside Continue (FeedbackFooter); at phone width it stays under the images.
+  const inFooter = useContext(QuizFooterLayoutContext) === 'hug'
   /* The wrong answer's heading; unset for a right one, or with one correct image. */
   const [verdict, setVerdict] = useState<string>()
   const locked = status !== 'idle'
@@ -67,6 +69,7 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   }
 
   const isCorrect = (index: number) => question.correctIndices.includes(index)
+  const result = <ResultBanner status={status} title={verdict} explanation={question.explanation || undefined} />
   /* The admin's optional words under an image; the option's accessible name carries them. */
   const labelOf = (index: number) => question.labels?.[index]?.trim() || ''
   const optionName = (index: number) => `Option ${index + 1}${labelOf(index) ? `, ${labelOf(index)}` : ''}`
@@ -138,7 +141,7 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
           )}
         </div>
 
-        <ResultBanner status={status} title={verdict} explanation={question.explanation || undefined} />
+        {!inFooter && result}
       </div>
 
       <div className="ql-sr-only" role="status" aria-live="polite">
@@ -146,6 +149,7 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
       </div>
 
       <FeedbackFooter
+        result={result}
         status={status}
         checkDisabled={picked.length === 0}
         onCheck={check}

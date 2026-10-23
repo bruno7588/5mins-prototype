@@ -761,6 +761,18 @@
   width: auto;
 }
 
+/* Graded on the web: the result message on the left, Continue on the right, one row. */
+.ql-footer--with-result {
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.ql-footer--with-result .ql-result-group {
+  flex: 1;
+  min-width: 0;
+}
+
 /* Result footer: "Well done!" message centred above the CTA. */
 /* Result message below the options (DS "Well done!" pattern) — no fill. */
 /* Verdict and reason are one block: the explanation reads as the rest of the same

@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, type ReactNode } from 'react'
 import Button from '@/components/Button/Button'
 
 export type FeedbackStatus = 'idle' | 'correct' | 'incorrect'
@@ -33,6 +33,9 @@ interface FeedbackFooterProps {
   onCheck?: () => void
   onContinue: () => void
   continueLabel?: string
+  /** The graded result message (ResultBanner). On the web ('hug') it shares the row with
+      Continue, message left and button right; formats that pass it don't render it above. */
+  result?: ReactNode
 }
 
 /**
@@ -48,6 +51,7 @@ function FeedbackFooter({
   onCheck,
   onContinue,
   continueLabel = 'Continue',
+  result,
 }: FeedbackFooterProps) {
   const layout = useContext(QuizFooterLayoutContext)
   const advance = useContext(QuizAdvanceContext)
@@ -66,8 +70,10 @@ function FeedbackFooter({
   }
 
   const correct = status === 'correct'
+  const withResult = layout === 'hug' && !!result
   return (
-    <div className={footerClass}>
+    <div className={`${footerClass}${withResult ? ' ql-footer--with-result' : ''}`}>
+      {withResult && result}
       <Button semantic={correct ? 'success' : 'danger'} size={size} onClick={advance ?? onContinue}>
         {continueLabel}
       </Button>
