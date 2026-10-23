@@ -77,6 +77,14 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener)
 }
 
+/* A Studio save in another tab: fetch again when this one comes back into view, so an
+   open page picks up the new defaults (and companyImage.ts re-renders the current one). */
+if (typeof window !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && requested) refreshCompanyDefaults()
+  })
+}
+
 export const getCompanyDefaults = () => current
 export const subscribeCompanyDefaults = subscribe
 
