@@ -21,8 +21,6 @@ export type {
 import type { InteractiveQuestion } from '@/data/interactiveQuestions'
 import officeTowers from '@/assets/programs/course-thumbs/course-thumb-1.jpg'
 import meeting from '@/assets/programs/course-thumbs/course-thumb-2.jpg'
-import dataWave from '@/assets/programs/course-thumbs/course-thumb-3.jpg'
-import skyscrapers from '@/assets/programs/course-thumbs/course-thumb-4.jpg'
 import paperwork from '@/assets/programs/course-thumbs/course-thumb-5.jpg'
 import talk from '@/assets/programs/course-thumbs/course-thumb-6.jpg'
 
@@ -129,9 +127,10 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
   'image-choice': {
     type: 'image-choice',
     prompt: 'Which of these show people working together?',
-    images: [meeting, officeTowers, paperwork, dataWave, talk, skyscrapers],
-    labels: ['Team meeting', '', '', '', 'Planning together', ''],
-    correctIndices: [0, 2, 4],
+    /* Four, the admin's limit (MAX_IMAGE_OPTIONS). */
+    images: [meeting, officeTowers, paperwork, talk],
+    labels: ['Team meeting', '', '', 'Planning together'],
+    correctIndices: [0, 2, 3],
   },
   'free-text': {
     type: 'free-text',

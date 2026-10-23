@@ -574,7 +574,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                   onClose={() => setPreviewing(false)}
                 />
                 {previewQuestion.type === 'image-choice' ? (
-                  /* Medium button, stretched to the panel by AssessmentModal.css. */
+                  /* Medium button at its own width, centred by AssessmentModal.css. */
                   <QuizFooterLayoutContext.Provider value="hug">
                     <ImageChoice question={previewQuestion} />
                   </QuizFooterLayoutContext.Provider>

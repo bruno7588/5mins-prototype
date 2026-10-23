@@ -5,6 +5,7 @@ import PhoneFrame from '@/components/mobile/PhoneFrame/PhoneFrame'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
 import QuizHeader from './components/QuizHeader'
+import { QuizFooterLayoutContext } from './components/FeedbackFooter'
 import { FORMAT_ORDER, QUIZ_SAMPLES, type FormatKey } from './quizData'
 import MatchPairsPartial from './formats/MatchPairsPartial'
 import FillBlank from './formats/FillBlank'
@@ -109,7 +110,8 @@ function QuizLab() {
                     total={3}
                     onClose={() => navigate('/workspace')}
                   />
-                  {renderFormat()}
+                  {/* Web, as in the builder's Preview: the action sizes to its label. */}
+                  <QuizFooterLayoutContext.Provider value="hug">{renderFormat()}</QuizFooterLayoutContext.Provider>
                 </div>
               </DesktopPreview>
             </div>

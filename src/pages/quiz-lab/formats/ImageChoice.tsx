@@ -8,32 +8,6 @@ import ResultBanner from '../components/ResultBanner'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
 
-type Grade = ReturnType<typeof gradeImageChoice>
-
-const images = (n: number) => (n === 1 ? 'image' : 'images')
-
-/* Names what went right before saying why it still failed: a correct pick beside a
-   wrong result only makes sense once the learner can see the rule and the gap. */
-function feedback(g: Grade, multiple: boolean): { title?: string; line: string } {
-  if (g.right) return { line: '' }
-  if (!multiple) return { line: "That isn't the correct image. The correct one is outlined in green." }
-  if (g.hits === 0) {
-    return {
-      line: `None of your picks were correct. The correct ${g.total === 1 ? 'image is' : 'images are'} outlined in green.`,
-    }
-  }
-  if (g.wrongPicks === 0) {
-    return {
-      title: 'Partly right',
-      line: `You got ${g.hits} of ${g.total} correct images but missed ${g.missed}. Select every correct image to get it right.`,
-    }
-  }
-  const missed = g.missed > 0 ? ` and missed ${g.missed}` : ''
-  return {
-    line: `You got ${g.hits} of ${g.total} correct images, picked ${g.wrongPicks} wrong ${images(g.wrongPicks)}${missed}.`,
-  }
-}
-
 /**
  * Image Choice (DES-345). The images are the answers, and one of them is right unless
  * the admin allowed more than one.
@@ -43,17 +17,19 @@ function feedback(g: Grade, multiple: boolean): { title?: string; line: string }
  * ("Select all that apply"). Tap the tile, then Check. With several, the prompt never
  * says how many are right, so the count does not give the answer away.
  *
- * Right only when the picks are exactly the correct set. Once graded every image
- * stays: right picks green with a tick, wrong picks red with a cross, and correct
- * images the learner left out in a dashed green frame, so the reason for a fail is on
- * screen rather than only in the copy.
+ * Right only when the picks are exactly the correct set. Only the learner's own picks are
+ * marked, each by itself: a right pick green with a tick, a wrong one red with a cross. An
+ * image they didn't pick is never marked, so a reattempt still has to find what's missing.
+ * With several correct images a wrong answer says how many they got ("You got 2 of 3
+ * correct"), counted against the correct images so leaving one out reads as wrong too.
  */
 function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   const [attempt, setAttempt] = useState(0)
   const [picked, setPicked] = useState<number[]>([])
   const [status, setStatus] = useState<FeedbackStatus>('idle')
-  const [grade, setGrade] = useState<Grade | null>(null)
   const [announce, setAnnounce] = useState('')
+  /* The wrong answer's heading; unset for a right one, or with one correct image. */
+  const [verdict, setVerdict] = useState<string>()
   const locked = status !== 'idle'
   const multiple = question.multipleCorrect ?? question.correctIndices.length > 1
 
@@ -73,18 +49,18 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   }
 
   function check() {
-    const result = gradeImageChoice(picked, question.correctIndices)
-    const { title, line } = feedback(result, multiple)
-    setGrade(result)
-    setStatus(result.right ? 'correct' : 'incorrect')
-    setAnnounce(result.right ? 'Correct' : `${title ?? 'Not quite'}. ${line}`)
-    cue(result.right ? 'correct' : 'incorrect')
+    const { right, hits, total } = gradeImageChoice(picked, question.correctIndices)
+    const count = !right && multiple ? `You got ${hits} of ${total} correct` : undefined
+    setStatus(right ? 'correct' : 'incorrect')
+    setVerdict(count)
+    setAnnounce(right ? 'Correct' : count ?? 'Not quite')
+    cue(right ? 'correct' : 'incorrect')
   }
 
   function reset() {
     setPicked([])
     setStatus('idle')
-    setGrade(null)
+    setVerdict(undefined)
     setAnnounce('')
     setAttempt((a) => a + 1)
     cue('continue')
@@ -100,17 +76,12 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
     if (locked) {
       classes.push('ql-token--locked')
       if (picked.includes(index)) classes.push(isCorrect(index) ? 'ql-token--correct' : 'ql-token--incorrect')
-      else if (isCorrect(index)) classes.push('ql-imgchoice__tile--missed')
     } else if (picked.includes(index)) {
       classes.push('ql-token--selected')
     }
     return classes.join(' ')
   }
 
-  const title = grade ? feedback(grade, multiple).title : undefined
-  /* On screen the marks on the images say what went right and wrong, so only the heading
-     and the admin's own explanation show; the counts are for screen readers (announce). */
-  const explanation = question.explanation
 
   return (
     <div className="ql-screen" key={attempt}>
@@ -120,7 +91,7 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
           <span className="ql-imgchoice__hint">{multiple ? 'Select all that apply' : 'Select one image'}</span>
         </div>
 
-        <div className="ql-imgchoice__grid" role={multiple ? 'group' : 'radiogroup'} aria-label="Options">
+        <div className={`ql-imgchoice__grid${question.images.length === 3 ? ' ql-imgchoice__grid--three' : ''}`} role={multiple ? 'group' : 'radiogroup'} aria-label="Options">
           {question.images.map((src, index) =>
             locked ? (
               <div key={index} className={tileClass(index)}>
@@ -136,8 +107,6 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
                       <CloseCircle size={32} color="currentColor" variant="Bold" />
                     )}
                   </span>
-                ) : isCorrect(index) ? (
-                  <span className="ql-sr-only">{optionName(index)}, missed correct image</span>
                 ) : null}
               </div>
             ) : (
@@ -169,7 +138,7 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
           )}
         </div>
 
-        <ResultBanner status={status} title={title} explanation={explanation || undefined} />
+        <ResultBanner status={status} title={verdict} explanation={question.explanation || undefined} />
       </div>
 
       <div className="ql-sr-only" role="status" aria-live="polite">

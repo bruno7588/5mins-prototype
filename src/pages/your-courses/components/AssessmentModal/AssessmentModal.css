@@ -244,7 +244,7 @@
 
 .assessment-modal-image-option {
   display: grid;
-  grid-template-columns: 100px minmax(0, 1fr);
+  grid-template-columns: 108px minmax(0, 1fr);
   align-items: start;
   gap: var(--space-m);
 }
@@ -257,7 +257,7 @@
 }
 
 /* Square, like the images it waits for: the DS size S uploader is 180 x 260, so this is
-   a deliberate local override of its size, and of its padding to fit 100px. */
+   a deliberate local override of its size, and of its padding to fit 108px. */
 .assessment-modal-image-uploader.file-uploader--S {
   width: 100%;
   min-height: 0;
@@ -434,14 +434,21 @@
   outline-offset: 2px;
 }
 
-/* Image Choice preview (Figma Create Course 10574:35075): a 600 x 640 panel with a 24px
-   gutter all round, the label and close flush with the content, and a full-width Medium
-   Check / Continue with no divider above it. */
+/* Image Choice preview (Figma Create Course 10694:36278): a 720px panel as tall as its
+   content, with a 24px gutter all round, the label and close flush with the content, every
+   image on one row, and a Medium Check / Continue centred at its own width with no divider
+   above it. */
 .assessment-modal-preview .desktop-preview__frame {
-  width: 600px;
-  height: min(640px, calc(100vh - 96px));
+  width: 720px;
+  height: auto;
+  max-height: calc(100vh - 96px);
   padding: var(--space-l);
   border-radius: var(--radius-sm);
+}
+
+/* The images share the row (quiz-lab.css, web); 8px apart here, as in Figma. */
+.assessment-modal-preview .ql-imgchoice__grid {
+  gap: var(--space-s);
 }
 
 .assessment-modal-preview .ql-quizview {
@@ -456,18 +463,22 @@
   color: var(--text-secondary);
 }
 
+/* Sized by their content rather than filling a fixed frame, so the panel hugs it; they
+   still shrink and scroll the body when the panel hits the screen's height. */
+.assessment-modal-preview .ql-quizview > .ql-screen,
+.assessment-modal-preview .ql-screen__body {
+  flex: 0 1 auto;
+}
+
 .assessment-modal-preview .ql-screen__body {
   padding: 0;
-  gap: var(--space-l);
+  gap: var(--space-m);
 }
 
 .assessment-modal-preview .ql-footer {
+  justify-content: center;
   padding: var(--space-m) 0 0;
   border-top: none;
-}
-
-.assessment-modal-preview .ql-footer .ds-btn {
-  width: 100%;
 }
 
 /* Images label with its limits under it; the Multiple correct images toggle on the

@@ -40,7 +40,6 @@
 .ql-lab__desktop .desktop-preview__frame {
   width: 100%;
   max-width: 900px;
-  border: 1px solid var(--border);
 }
 
 /* Same header as Gradient Studio (.gl-lab__header): title left, device switch right. */
@@ -751,8 +750,13 @@
   justify-content: center;
 }
 
-/* Wider hosts (the builder's preview modal) let the action size to its label
-   instead of stretching the full width. */
+/* Wider hosts (web: the builder's preview modal and Quiz lab's desktop view) let the
+   action size to its label, aligned far right, instead of stretching the full width. */
+.ql-footer--hug {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .ql-footer--hug .ds-btn {
   width: auto;
 }
@@ -938,11 +942,27 @@
   color: var(--text-secondary);
 }
 
-/* Two square tiles a row, at phone and at panel width alike. */
+/* Two square tiles a row (two images, or four as a 2 x 2 grid), at phone and at panel
+   width alike. Three images sit on one row. */
 .ql-imgchoice__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Each tile hugs its own content, so an image without a caption isn't stretched to a
+     captioned neighbour's height. */
+  align-items: start;
   gap: var(--space-sm);
+}
+
+.ql-imgchoice__grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* On the web (the desktop feed's fixed-width panel), every image sits on one row and
+   they share its width: two are large, three smaller, four smallest. */
+.desktop-preview .ql-imgchoice__grid {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
 }
 
 /* The token is the frame: its fill shows as a band round the image, so selected,
@@ -989,6 +1009,12 @@
   color: var(--text-primary);
   text-align: left;
   overflow-wrap: anywhere;
+}
+
+/* Selected, the band drops its fill and sits on the tile's amber, in its knockout text. */
+.ql-token--selected .ql-imgchoice__label {
+  background: transparent;
+  color: var(--text-on-selected);
 }
 
 /* Graded, the band takes the pick's result colour, with light text in both modes. */
@@ -1182,12 +1208,4 @@ label.ql-imgchoice__tile:hover .ql-imgchoice__img {
 
 .ql-answer:focus {
   border-color: var(--selected);
-}
-
-/* A correct image the learner did not pick: a dashed green frame, so a partly right
-   answer shows its gap (Quizlet's dashed outline). Dashed, not solid, so it never reads
-   as a right pick. */
-.ql-imgchoice__tile--missed {
-  outline: 2px dashed var(--success-500);
-  outline-offset: -2px;
 }
