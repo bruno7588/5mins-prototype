@@ -68,7 +68,7 @@ function PatternCanvas({ recipe, colours, finishColours, speed, size }: CanvasPr
   return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />
 }
 
-/** A Paper shader with the pixel finish: the shader plays in a hidden mount and each
+/** A Paper shader with the pixel finish, or the light form (no React component): the shader plays in a hidden mount and each
     frame is copied here and finished. The mount is rebuilt after edits settle, so a
     slider drag doesn't churn WebGL contexts; the old one shows until the new is ready. */
 function FinishedShaderCanvas({ recipe, colours, finishColours, speed, size }: CanvasProps) {
@@ -202,7 +202,7 @@ function LabCanvas({ recipe, colours, finishColours, playing, onPan, onZoom }: P
       >
         {isCanvasPattern(recipe.shader) ? (
           <PatternCanvas recipe={recipe} colours={colours} finishColours={finishColours} speed={speed} size={size} />
-        ) : recipe.finish !== 'off' ? (
+        ) : recipe.finish !== 'off' || recipe.shader === 'glow' ? (
           <FinishedShaderCanvas recipe={recipe} colours={colours} finishColours={finishColours} speed={speed} size={size} />
         ) : recipe.shader === 'dither' ? (
           <Dithering {...ditherProps(recipe, colours)} speed={speed} style={{ ...fill, background: ditherBackdropCss(colours) }} />

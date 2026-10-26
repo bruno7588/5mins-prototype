@@ -13,10 +13,11 @@ import {
 } from '@paper-design/shaders'
 import { DITHER_BACK, DITHER_BACKDROP_HOLD, ditherBackdrop, ditherFront, grainColours, isCanvasPattern, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { drawPattern, playPattern } from './canvasPatterns'
+import { glowFragmentShader, glowUniforms } from './glowShader'
 import { applyPixelFinish } from './pixelFinish'
 
 /* Renders a gradient recipe in a tenant's colours with Paper Shaders (mesh
-   or grain gradient, or dithering) or a canvas pattern (canvasPatterns.ts), in the admin's browser: a 512 x 512 JPEG still for the company
+   or grain gradient, or dithering), the light form (glowShader.ts, on Paper's mount) or a canvas pattern (canvasPatterns.ts), in the admin's browser: a 512 x 512 JPEG still for the company
    image, or a live hidden mount that companyShader.ts copies into cards. Each
    mount is one WebGL context, so stills render one at a time. */
 
@@ -59,6 +60,9 @@ async function shaderFor(recipe: GradientRecipe, colours: string[]) {
         u_pxSize: recipe.pxSize,
       },
     }
+  }
+  if (recipe.shader === 'glow') {
+    return { fragment: glowFragmentShader, uniforms: { ...sizing, ...glowUniforms(recipe, colours) } }
   }
   if (recipe.shader === 'grain') {
     const [back, colors] = grainColours(colours)

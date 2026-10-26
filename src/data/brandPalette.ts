@@ -130,6 +130,8 @@ export function brandPalette(set: ThemeSet, count = 4): string[] {
 
 /** OKLCH of a hex colour, for tests and checks. */
 export const toLch = hexToLch
+/** #rrggbb for an OKLCH colour, chroma lowered to fit sRGB. */
+export const fromLch = lchToHex
 
 /** The colours a recipe is drawn in for a theme set. Dithering and the canvas patterns
     take the three theme colours as they are (header bar, navigation items, selected

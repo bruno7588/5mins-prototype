@@ -6,7 +6,8 @@
    thirteen canvas patterns (src/data/canvasPatterns.ts): the sine stack, the dot
    sweep, pixel rain, the halftone wave, isometric cubes, the kaleidoscope,
    Truchet flow, the dot tunnel, contours, the halftone bloom, confetti, scan bars
-   or the dot ripple.
+   or the dot ripple. Or the light form (src/data/glowShader.ts): one soft shape lit
+   from a side, its colour ramp built from the three theme colours.
    Saved in a Gradient Studio slot. Slots saved before recipes held photo
    presets (version 1); parseRecipe converts those on read. */
 
@@ -21,13 +22,16 @@ export type DitherType = (typeof DITHER_TYPES)[number]
 /** The shader kinds drawn in 2D canvas rather than by Paper Shaders. */
 export const CANVAS_PATTERNS = ['sine', 'sweep', 'rain', 'halftone', 'cubes', 'kaleido', 'truchet', 'tunnel', 'contours', 'bloom', 'confetti', 'scan', 'ripple'] as const
 export type CanvasPattern = (typeof CANVAS_PATTERNS)[number]
-export type ShaderKind = 'mesh' | 'grain' | 'dither' | CanvasPattern
+/** Light form shapes (src/data/glowShader.ts). */
+export const GLOW_FORMS = ['arch', 'comet', 'orb', 'dome', 'crossing', 'wave', 'prism'] as const
+export type GlowForm = (typeof GLOW_FORMS)[number]
+export type ShaderKind = 'mesh' | 'grain' | 'dither' | 'glow' | CanvasPattern
 /** The pixel finish: off, or ordered dithering with a Bayer matrix of this size (src/data/pixelFinish.ts). */
 export const FINISHES = ['off', '2x2', '4x4', '8x8'] as const
 export type Finish = (typeof FINISHES)[number]
 export const isCanvasPattern = (kind: ShaderKind): kind is CanvasPattern => (CANVAS_PATTERNS as readonly string[]).includes(kind)
 /** Drawn in the tenant's three theme colours as they are, rather than a blended palette: the canvas patterns and dithering. */
-export const usesThemeColours = (kind: ShaderKind) => kind === 'dither' || isCanvasPattern(kind)
+export const usesThemeColours = (kind: ShaderKind) => kind === 'dither' || kind === 'glow' || isCanvasPattern(kind)
 
 export interface GradientRecipe {
   version: 2
@@ -203,6 +207,21 @@ export interface GradientRecipe {
   rippleSwell: number
   /** Picks a different scatter of drops (0-99). */
   rippleSeed: number
+  /** Light form only. The shape, and how much it grows (0.5 as drawn), all 0-1 bar the light. */
+  glowForm: GlowForm
+  glowThickness: number
+  /** How far the hot rim reaches into the form. */
+  glowRim: number
+  /** How hot the rim burns. */
+  glowStrength: number
+  /** How far in the body colour holds before the centre goes dark. */
+  glowDepth: number
+  /** The cool band just outside the lit rim. */
+  glowFringe: number
+  /** How much the background lifts on the lit side. */
+  glowHaze: number
+  /** Where the light comes from, degrees (0 from the right, 90 from the top). */
+  glowLight: number
   /** Canvas patterns only. How far the marks move from flat navigation items and selected
       item colours into a slowly drifting blend of the two (0-1); the header bar stays flat. */
   flow: number
@@ -337,6 +356,14 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   ripplePush: 5,
   rippleSwell: 2.1,
   rippleSeed: 0,
+  glowForm: 'arch',
+  glowThickness: 0.5,
+  glowRim: 0.45,
+  glowStrength: 0.6,
+  glowDepth: 0.5,
+  glowFringe: 0.5,
+  glowHaze: 0.4,
+  glowLight: -40,
   flow: 1,
   finish: 'off',
   finishPixel: 0.8,
@@ -404,7 +431,7 @@ export function parseRecipe(json: unknown): GradientRecipe {
   return {
     version: 2,
     name: typeof json.name === 'string' ? json.name : d.name,
-    shader: (['grain', 'dither', ...CANVAS_PATTERNS] as readonly string[]).includes(json.shader as string) ? (json.shader as ShaderKind) : 'mesh',
+    shader: (['grain', 'dither', 'glow', ...CANVAS_PATTERNS] as readonly string[]).includes(json.shader as string) ? (json.shader as ShaderKind) : 'mesh',
     colours: Math.round(num(json, 'colours', d.colours, 3, 5)),
     distortion: num(json, 'distortion', d.distortion, 0, 1),
     swirl: num(json, 'swirl', d.swirl, 0, 1),
@@ -516,6 +543,14 @@ export function parseRecipe(json: unknown): GradientRecipe {
     ripplePush: num(json, 'ripplePush', d.ripplePush, 0, 15),
     rippleSwell: num(json, 'rippleSwell', d.rippleSwell, 0, 5),
     rippleSeed: Math.round(num(json, 'rippleSeed', d.rippleSeed, 0, 99)),
+    glowForm: GLOW_FORMS.includes(json.glowForm as GlowForm) ? (json.glowForm as GlowForm) : d.glowForm,
+    glowThickness: num(json, 'glowThickness', d.glowThickness, 0, 1),
+    glowRim: num(json, 'glowRim', d.glowRim, 0, 1),
+    glowStrength: num(json, 'glowStrength', d.glowStrength, 0, 1),
+    glowDepth: num(json, 'glowDepth', d.glowDepth, 0, 1),
+    glowFringe: num(json, 'glowFringe', d.glowFringe, 0, 1),
+    glowHaze: num(json, 'glowHaze', d.glowHaze, 0, 1),
+    glowLight: num(json, 'glowLight', d.glowLight, -180, 180),
     flow: num(json, 'flow', d.flow, 0, 1),
     finish: FINISHES.includes(json.finish as Finish) ? (json.finish as Finish) : d.finish,
     finishPixel: num(json, 'finishPixel', d.finishPixel, 0.3, 4),
@@ -556,7 +591,7 @@ export function grainColours(colours: string[]): [string, string[]] {
   return [back, colours.filter((_, i) => i !== 2)]
 }
 
-/** How many colours a recipe takes: the three theme colours for dithering and the canvas patterns. */
+/** How many colours a recipe takes: the three theme colours for dithering, the light form and the canvas patterns. */
 export const paletteCount = (recipe: GradientRecipe) => (usesThemeColours(recipe.shader) ? 3 : recipe.colours)
 
 /** A canvas pattern's colours, straight from the theme (recipeColours): the header bar

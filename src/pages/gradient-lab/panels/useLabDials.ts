@@ -5,6 +5,7 @@ import {
   DITHER_SHAPES,
   DITHER_TYPES,
   FINISHES,
+  GLOW_FORMS,
   GRAIN_SHAPES,
   isCanvasPattern,
   MAX_FRAME,
@@ -12,6 +13,7 @@ import {
   type DitherShape,
   type DitherType,
   type Finish,
+  type GlowForm,
   type GradientRecipe,
   type GrainShape,
   type ShaderKind,
@@ -22,7 +24,7 @@ import {
    "Shader" (motion, grain and the pixel finish). The controls follow the shader type: the mesh
    gradient has distortion, swirl and two grain sliders; the grain gradient has
    a shape, softness, intensity and noise; dithering has a shape, a pattern and
-   a pixel size; each canvas pattern has a slider for every value that shapes
+   a pixel size; the light form has a form and a slider per value (GLOW_DIALS); each canvas pattern has a slider for every value that shapes
    it (PATTERN_DIALS). Only the open tab's panel is mounted, seeded from lab
    state on mount, so switching tabs never loses a value. Two-way sync without
    echo loops:
@@ -46,6 +48,8 @@ interface PanelValues {
   Gradient: {
     type: ShaderKind
     shape?: GrainShape | DitherShape
+    /** Light form only. */
+    form?: GlowForm
     pattern?: DitherType
     'pixel size'?: number
     /** Absent for dithering, which always uses two colours. */
@@ -74,6 +78,7 @@ const SHADER_OPTIONS: { value: ShaderKind; label: string }[] = [
   { value: 'mesh', label: 'Mesh gradient' },
   { value: 'grain', label: 'Grain gradient' },
   { value: 'dither', label: 'Dithering' },
+  { value: 'glow', label: 'Light form' },
   { value: 'sine', label: 'Sine stack' },
   { value: 'sweep', label: 'Dot sweep' },
   { value: 'rain', label: 'Pixel rain' },
@@ -220,6 +225,18 @@ const PATTERN_DIALS: Record<CanvasPattern, [string, NumberField, number, number,
   ],
 }
 
+/** The light form's sliders, as PATTERN_DIALS. Ranges match parseRecipe. */
+const GLOW_DIALS: [string, NumberField, number, number, number][] = [
+  ['thickness', 'glowThickness', 0, 1, 0.01],
+  ['rim width', 'glowRim', 0, 1, 0.01],
+  ['rim heat', 'glowStrength', 0, 1, 0.01],
+  ['depth', 'glowDepth', 0, 1, 0.01],
+  ['fringe', 'glowFringe', 0, 1, 0.01],
+  ['haze', 'glowHaze', 0, 1, 0.01],
+  ['light angle', 'glowLight', -180, 180, 1],
+]
+const GLOW_FORM_OPTIONS = GLOW_FORMS.map((value) => ({ value, label: value[0].toUpperCase() + value.slice(1) }))
+
 /** A pattern's slider values from the recipe, keyed by label. */
 const patternValues = (r: GradientRecipe, kind: CanvasPattern) => Object.fromEntries(PATTERN_DIALS[kind].map(([label, field]) => [label, r[field]]))
 const options = <T extends string>(values: readonly T[]) => values.map((value) => ({ value, label: value[0].toUpperCase() + value.slice(1) }))
@@ -239,10 +256,11 @@ function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
     mesh: { distortion: r.distortion, swirl: r.swirl },
     grain: { shape: r.shape, softness: r.softness, intensity: r.intensity },
     dither: { shape: r.ditherShape, pattern: r.ditherType, 'pixel size': r.pxSize },
+    glow: { form: r.glowForm, ...Object.fromEntries(GLOW_DIALS.map(([label, field]) => [label, r[field]])) },
   }
   const mine = isCanvasPattern(r.shader) ? { ...patternValues(r, r.shader), 'colour flow': r.flow } : own[r.shader]
-  // Dithering and the canvas patterns take a fixed number of colours.
-  const fixed = r.shader === 'dither' || isCanvasPattern(r.shader)
+  // Dithering, the light form and the canvas patterns take a fixed number of colours.
+  const fixed = r.shader === 'dither' || r.shader === 'glow' || isCanvasPattern(r.shader)
   return {
     Gradient: { type: r.shader, ...(fixed ? {} : { colours: r.colours }), ...mine, ...shape },
     'Preview colours': { 'header bar': p.header, 'navigation items': p.nav, 'selected item': p.selected },
@@ -275,6 +293,10 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
       pattern: { type: 'select', options: PATTERN_OPTIONS, default: g.pattern! },
       'pixel size': [g['pixel size']!, 1, 20, 0.5],
     },
+    glow: {
+      form: { type: 'select', options: GLOW_FORM_OPTIONS, default: g.form! },
+      ...Object.fromEntries(GLOW_DIALS.map(([label, , min, max, step]) => [label, [g[label] as number, min, max, step]])),
+    },
   }
   const p = v['Preview colours']
   const pattern = isCanvasPattern(g.type)
@@ -290,7 +312,7 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
       ...(g.type === 'grain' || g.type === 'dither'
         ? { shape: { type: 'select', options: g.type === 'grain' ? SHAPE_OPTIONS : DITHER_SHAPE_OPTIONS, default: g.shape! } }
         : {}),
-      ...(g.type === 'dither' || pattern ? {} : { colours: [g.colours!, 3, 5, 1] }),
+      ...(g.type === 'dither' || g.type === 'glow' || pattern ? {} : { colours: [g.colours!, 3, 5, 1] }),
       ...mine,
       scale: [g.scale, 0.25, 4, 0.01],
       rotation: [g.rotation, 0, 360, 1],
@@ -374,10 +396,12 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
       return
     }
     // The panel's controls belong to the current type until it rebuilds for a newly picked one.
-    const { type, shape, pattern, 'pixel size': pxSize, ...g } = v.Gradient
+    const { type, shape, form, pattern, 'pixel size': pxSize, ...g } = v.Gradient
     const own = isCanvasPattern(r.shader)
       ? { ...Object.fromEntries(PATTERN_DIALS[r.shader].map(([label, field]) => [field, g[label]])), flow: g['colour flow'] }
-      : r.shader === 'dither'
+      : r.shader === 'glow'
+        ? { glowForm: form, ...Object.fromEntries(GLOW_DIALS.map(([label, field]) => [field, g[label]])) }
+        : r.shader === 'dither'
         ? { ditherShape: shape, ditherType: pattern, pxSize }
         : { shape }
     const recipe = { ...r, shader: type, ...defined({ ...g, ...own }) }
