@@ -2,8 +2,8 @@ import { useContext, useId, useState } from 'react'
 import { CloseCircle, TickCircle } from 'iconsax-react'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import Radio from '@/components/Radio/Radio'
-import { gradeImageChoice, type SingleChoiceQuestion } from '../quizData'
-import FeedbackFooter, { QuizAdvanceContext } from '../components/FeedbackFooter'
+import { gradeImageChoice, wrongAnswerCount, type SingleChoiceQuestion } from '../quizData'
+import FeedbackFooter, { QuizAdvanceContext, QuizFooterLayoutContext } from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
 import { cue } from '../quizSound'
@@ -33,6 +33,8 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
   const [picked, setPicked] = useState<number[]>([])
   const [status, setStatus] = useState<FeedbackStatus>('idle')
   const [announce, setAnnounce] = useState('')
+  /* As on Image Choice: a wrong answer with several correct options says how many were right. */
+  const [count, setCount] = useState<string>()
   /* Names the radio group. Two questions on one screen would otherwise share a group
      and steal each other's selection. */
   const group = useId()
@@ -43,6 +45,8 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
   const graded = question.correctIndex >= 0
   const locked = status !== 'idle'
   const multiple = graded && !!question.multipleCorrect
+  // As on Image Choice: on the web the result sits beside Continue; at phone width it stays under the options.
+  const inFooter = useContext(QuizFooterLayoutContext) === 'hug'
 
   function select(index: number) {
     if (locked) return
@@ -54,17 +58,19 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
 
   function check() {
     if (picked.length === 0) return
-    const right = multiple
-      ? gradeImageChoice(picked, question.correctIndices ?? [question.correctIndex]).right
-      : picked[0] === question.correctIndex
+    const correct = question.correctIndices ?? [question.correctIndex]
+    const right = multiple ? gradeImageChoice(picked, correct).right : picked[0] === question.correctIndex
+    const next = !right && multiple ? wrongAnswerCount(picked, correct) : undefined
     setStatus(right ? 'correct' : 'incorrect')
-    setAnnounce(right ? 'Correct' : 'Not quite')
+    setCount(next)
+    setAnnounce(right ? 'Correct' : next ? `Not quite. ${next}` : 'Not quite')
     cue(right ? 'correct' : 'incorrect')
   }
 
   function reset() {
     setPicked([])
     setStatus('idle')
+    setCount(undefined)
     setAnnounce('')
     setAttempt((a) => a + 1)
     cue('continue')
@@ -80,6 +86,8 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
     }
     return classes.join(' ')
   }
+
+  const result = <ResultBanner status={status} title={count && 'Not quite'} detail={count} explanation={question.explanation} />
 
   return (
     <div className="ql-screen" key={attempt}>
@@ -134,7 +142,7 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
           </div>
         )}
 
-        {graded && <ResultBanner status={status} explanation={question.explanation} />}
+        {graded && !inFooter && result}
       </div>
 
       <div className="ql-sr-only" role="status" aria-live="polite">
@@ -144,6 +152,7 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
       {/* A poll has nothing to check, so its one action is the one that moves on. */}
       {graded ? (
         <FeedbackFooter
+          result={result}
           status={status}
           checkDisabled={picked.length === 0}
           onCheck={check}

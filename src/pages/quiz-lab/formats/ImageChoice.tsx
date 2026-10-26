@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { CloseCircle, TickCircle } from 'iconsax-react'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import Radio from '@/components/Radio/Radio'
-import { gradeImageChoice, type ImageChoiceQuestion } from '../quizData'
+import { gradeImageChoice, wrongAnswerCount, type ImageChoiceQuestion } from '../quizData'
 import FeedbackFooter, { QuizFooterLayoutContext } from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
@@ -53,8 +53,8 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   }
 
   function check() {
-    const { right, hits, total } = gradeImageChoice(picked, question.correctIndices)
-    const count = `You found ${hits} of ${total} correct ${total === 1 ? 'image' : 'images'}.`
+    const { right } = gradeImageChoice(picked, question.correctIndices)
+    const count = wrongAnswerCount(picked, question.correctIndices)
     const next = !right && multiple ? { title: 'Not quite', count } : undefined
     setStatus(right ? 'correct' : 'incorrect')
     setVerdict(next)

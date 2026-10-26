@@ -40,7 +40,7 @@ interface FeedbackFooterProps {
 
 /**
  * Pinned bottom action for the quiz (DS-aligned). Idle → Check; once graded →
- * Continue (success/danger). The result message itself lives below the options
+ * Continue when right, Got It when wrong (success/danger). The result message itself lives below the options
  * (see ResultBanner) rather than in a coloured panel.
  */
 function FeedbackFooter({
@@ -50,7 +50,7 @@ function FeedbackFooter({
   checkDisabled = false,
   onCheck,
   onContinue,
-  continueLabel = 'Continue',
+  continueLabel,
   result,
 }: FeedbackFooterProps) {
   const layout = useContext(QuizFooterLayoutContext)
@@ -75,7 +75,7 @@ function FeedbackFooter({
     <div className={`${footerClass}${withResult ? ' ql-footer--with-result' : ''}`}>
       {withResult && result}
       <Button semantic={correct ? 'success' : 'danger'} size={size} onClick={advance ?? onContinue}>
-        {continueLabel}
+        {continueLabel ?? (correct ? 'Continue' : 'Got It')}
       </Button>
     </div>
   )

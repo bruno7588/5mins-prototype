@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { gradeImageChoice } from './quizData'
+import { gradeImageChoice, wrongAnswerCount } from './quizData'
 
 describe('gradeImageChoice', () => {
   const correct = [0, 2]
@@ -22,5 +22,18 @@ describe('gradeImageChoice', () => {
 
   it('fails when no pick is correct', () => {
     expect(gradeImageChoice([1], correct)).toEqual({ right: false, hits: 0, wrongPicks: 1, missed: 2, total: 2 })
+  })
+})
+
+describe('wrongAnswerCount', () => {
+  const correct = [0, 2, 3]
+
+  it('counts the correct picks', () => {
+    expect(wrongAnswerCount([0, 2], correct)).toBe('2 of 3 correct')
+    expect(wrongAnswerCount([0, 1], correct)).toBe('1 of 3 correct')
+  })
+
+  it('says how many were picked when there are more picks than correct options', () => {
+    expect(wrongAnswerCount([0, 1, 2, 3], correct)).toBe('4 picked, only 3 correct')
   })
 })

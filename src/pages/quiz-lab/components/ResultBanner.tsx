@@ -16,7 +16,7 @@ function ResultBanner({
 }: {
   status: FeedbackStatus
   explanation?: string
-  /** Replaces "Well done!" / "Not quite!", e.g. "Partly right" for a partial answer. */
+  /** Replaces "Well done!" / "Not quite", e.g. "Partly right" for a partial answer. */
   title?: string
   /** A short line on the same row after the heading, in the result's colour, e.g. a count. */
   detail?: string
@@ -29,7 +29,7 @@ function ResultBanner({
         <span className="ql-result__emoji" aria-hidden="true">
           {correct ? '👏' : '🙂'}
         </span>
-        <span className="ql-result__title">{title ?? (correct ? 'Well done!' : 'Not quite!')}</span>
+        <span className="ql-result__title">{title ?? (correct ? 'Well done!' : 'Not quite')}</span>
         {detail && (
           <>
             <span className="ql-result__detail ql-result__sep" aria-hidden="true">•</span>

@@ -32,6 +32,7 @@ export type FormatKey =
   | 'sequencing'
   | 'select-all'
   | 'single-choice'
+  | 'multiple-correct'
   | 'image-choice'
   | 'free-text'
 
@@ -72,6 +73,15 @@ export function gradeImageChoice(picked: readonly number[], correct: readonly nu
   const wrongPicks = picked.length - hits
   const missed = correct.length - hits
   return { right: wrongPicks === 0 && missed === 0, hits, wrongPicks, missed, total: correct.length }
+}
+
+/** The line beside "Not quite" on a wrong answer with several correct options. More picks
+    than correct options would read "3 of 3 correct", so that case says how many were picked. */
+export function wrongAnswerCount(picked: readonly number[], correct: readonly number[]) {
+  const { hits, total } = gradeImageChoice(picked, correct)
+  return picked.length > total
+    ? `${picked.length} picked, only ${total} correct`
+    : `${hits} of ${total} correct`
 }
 
 export interface SingleChoiceQuestion {
@@ -123,6 +133,20 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
       'Forward it to your team to warn them',
     ],
     correctIndex: 1,
+  },
+  /* The same question type with the admin's "Multiple correct options" on. */
+  'multiple-correct': {
+    type: 'single-choice',
+    prompt: 'Which of these are signs of a phishing email?',
+    options: [
+      'It asks you to act urgently',
+      "It comes from your manager's usual address",
+      'The link goes to an unfamiliar web address',
+      'It asks for your password',
+    ],
+    correctIndex: 0,
+    correctIndices: [0, 2, 3],
+    multipleCorrect: true,
   },
   'image-choice': {
     type: 'image-choice',
@@ -197,6 +221,7 @@ export const QUIZ_SAMPLES: Record<FormatKey, QuizQuestion> = {
 
 export const FORMAT_ORDER: { key: FormatKey; label: string }[] = [
   { key: 'single-choice', label: 'Multiple choice' },
+  { key: 'multiple-correct', label: 'Multiple choice, multiple correct' },
   { key: 'image-choice', label: 'Image choice' },
   { key: 'match-pairs', label: 'Match the pairs' },
   { key: 'fill-blank', label: 'Fill in the blank' },

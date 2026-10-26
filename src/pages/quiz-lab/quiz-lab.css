@@ -827,9 +827,12 @@
 }
 
 /* At phone width (the result under the images, not beside Continue) the count takes its
-   own line under the heading, without the bullet. */
+   own line under the heading, without the bullet: the emoji centred on the heading,
+   the count aligned with the heading's text (Figma 10732:37382). */
 .ql-screen__body .ql-result {
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--space-s);
 }
 
 .ql-screen__body .ql-result__sep {
@@ -837,7 +840,7 @@
 }
 
 .ql-screen__body .ql-result__detail {
-  flex-basis: 100%;
+  grid-column: 2;
 }
 
 /* Screen-reader-only live region */
