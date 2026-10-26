@@ -156,9 +156,9 @@ void main() {
   float core = mask - smoothstep(rimLength * .2, -rimLength * .2, form(p + L * rimLength * .25));
   float body = mask * (.03 + .19 * exp(-max(-d, 0.) / depthLength));
   float haze = (1. - mask) * u_haze * (.05 + .22 * smoothstep(-1.6, 1.6, dot(p, L)));
-  float t = body + haze + glow * (.55 * max(nearRim, 0.) + .3 * max(wideRim, 0.) + .6 * max(core, 0.));
+  float t = body + haze + glow * (.8 * max(nearRim, 0.) + .35 * max(wideRim, 0.) + 1.2 * max(core, 0.));
   // Rolls the peaks off instead of clipping them to a flat band.
-  vec3 col = ramp(1. - exp(-1.5 * t));
+  vec3 col = ramp(1. - exp(-1.9 * t));
 
   // The chromatic fringe: just outside the lit rim, where a copy moved away from the light still covers.
   float band = rimLength * .45 + .015;

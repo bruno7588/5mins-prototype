@@ -21,8 +21,11 @@ export type CompanyImage =
   | { kind: 'default'; id: string; src?: string; key?: string; dark?: Still }
   | { kind: 'upload'; src: string }
 
+/** Bump when a shader changes how it draws, so stored stills render again. */
+const RENDER_VERSION = 2
+
 /** What a default's still depends on: its recipe and the tenant's colours for that mode. */
-export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') => JSON.stringify([recipe, gradientSet(mode)])
+export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') => JSON.stringify([RENDER_VERSION, recipe, gradientSet(mode)])
 
 /** The recipe's colours for this tenant in that mode. */
 export const tenantColours = (recipe: GradientRecipe, mode: Theme = 'light') => recipeColours(recipe, gradientSet(mode))
