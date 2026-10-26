@@ -482,14 +482,14 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                   )}
                 </div>
               ))}
+              {tooFewCorrect && (
+                <p className="assessment-modal-image-error" role="alert">Mark at least 2 options as correct, or turn off Multiple correct options.</p>
+              )}
               <button className="assessment-modal-add-option" type="button" onClick={handleAddOption}>
                 <Add size={24} color="currentColor" variant="Linear" />
                 <span>Add Option</span>
               </button>
             </div>
-            {tooFewCorrect && (
-              <p className="assessment-modal-image-error" role="alert">Mark at least 2 options as correct, or turn off Multiple correct options.</p>
-            )}
           </div>
           )}
 
