@@ -212,7 +212,8 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   const isChoiceMode = type === 'single-choice'
   const multipleOptions = isChoiceMode && multipleCorrect
   const optionMarked = (index: number) => (multipleOptions ? correctOptions.includes(index) : correctIndex === index)
-  const noCorrectOption = multipleOptions && correctOptions.length === 0
+  /* Multiple correct options means at least two: one marked is a single-choice question. Blank options don't count. */
+  const tooFewCorrect = multipleOptions && correctOptions.filter((i) => options[i]?.trim()).length < 2
 
   const handleSubmit = () => {
     onAdd({
@@ -238,7 +239,7 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
   /* Everything Save needs apart from the question. */
   const restReady = isImageMode
     ? savedImages.length >= 2 && savedCorrect.length > 0
-    : (!hasOptions || options.some((o) => o.trim().length > 0)) && !noCorrectOption
+    : (!hasOptions || options.some((o) => o.trim().length > 0)) && !tooFewCorrect
   const canSubmit = question.trim().length > 0 && restReady
   /* When the question is all that's missing, say so on its field. */
   const needsQuestion = restReady && !question.trim()
@@ -486,8 +487,8 @@ function AssessmentModal({ type, initial = null, onClose, onAdd, sidebarIcons, v
                 <span>Add Option</span>
               </button>
             </div>
-            {noCorrectOption && (
-              <p className="assessment-modal-image-error" role="alert">Mark at least 1 option as correct.</p>
+            {tooFewCorrect && (
+              <p className="assessment-modal-image-error" role="alert">Mark at least 2 options as correct, or turn off Multiple correct options.</p>
             )}
           </div>
           )}
