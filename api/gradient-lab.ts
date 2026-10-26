@@ -93,11 +93,24 @@ function slotOf(v: unknown): number | null {
   return typeof n === 'number' && Number.isInteger(n) && n >= 1 && n <= 999 ? n : null
 }
 
+/** A failure still answers with CORS headers, so the Studio shows the reason rather than a network error. */
+const safe = (handler: (request: Request) => Promise<Response>) => async (request: Request) => {
+  try {
+    return await handler(request)
+  } catch (e) {
+    return json({ error: (e as Error).message || 'Something went wrong.' }, 500)
+  }
+}
+
+export const GET = safe(handleGET)
+export const PUT = safe(handlePUT)
+export const DELETE = safe(handleDELETE)
+
 export function OPTIONS() {
   return new Response(null, { status: 204, headers: CORS })
 }
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
   const params = route(request)
   const r = params.get('r')
@@ -128,7 +141,7 @@ export async function GET(request: Request) {
   return json({ error: 'Unknown route' }, 404)
 }
 
-export async function PUT(request: Request) {
+async function handlePUT(request: Request) {
   if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
   const r = route(request).get('r')
   if (r !== 'gradients' && r !== 'order') return json({ error: 'Unknown route' }, 404)
@@ -142,7 +155,7 @@ export async function PUT(request: Request) {
     if (slots.length !== saved.length || new Set(slots).size !== slots.length || !slots.every((s) => s !== null && bySlot.has(s))) {
       return json({ error: 'slots must list every saved slot once' }, 400)
     }
-    await transaction(await renumberCommands(slots.map((s) => bySlot.get(s!)!)))
+    await renumber(slots.map((s) => bySlot.get(s!)!))
     return json((await savedGradients()).map(gradientOut))
   }
 
@@ -165,40 +178,51 @@ async function savedGradients(): Promise<StoredGradient[]> {
   return list.sort((a, b) => a.slot - b.slot)
 }
 
-/** Runs the commands as one transaction (Upstash multi-exec): all of them apply or none do. */
-async function transaction(commands: (string | number)[][]): Promise<void> {
-  if (!commands.length) return
-  const res = await fetch(`${REDIS_URL}/multi-exec`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${REDIS_TOKEN}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(commands),
-  })
-  const data = (await res.json()) as { error?: string } | { error?: string }[]
-  const failed = Array.isArray(data) ? data.find((d) => d.error) : data
-  if (failed?.error) throw new Error(failed.error)
+/* Clears a slot (ARGV[1], or 0 for none) and moves gradients to new slots (ARGV[2], JSON
+   [{from, to, value}]) in one Lua script, so it runs atomically: nothing else runs
+   between its steps and no step can fail halfway. Images go through temporary keys so
+   no rename overwrites one still to move; a missing image is skipped (and any stale
+   temporary key under its number dropped) instead of failing the rename. */
+const MOVE_SCRIPT = `
+local clear = tonumber(ARGV[1])
+if clear > 0 then
+  redis.call('HDEL', 'gl:gradients', tostring(clear))
+  redis.call('DEL', 'gl:gimg:' .. clear)
+end
+local moves = cjson.decode(ARGV[2])
+for _, m in ipairs(moves) do
+  if redis.call('EXISTS', 'gl:gimg:' .. m.from) == 1 then
+    redis.call('RENAME', 'gl:gimg:' .. m.from, 'gl:gimg-tmp:' .. m.from)
+  else
+    redis.call('DEL', 'gl:gimg-tmp:' .. m.from)
+  end
+end
+for _, m in ipairs(moves) do
+  if redis.call('EXISTS', 'gl:gimg-tmp:' .. m.from) == 1 then
+    redis.call('RENAME', 'gl:gimg-tmp:' .. m.from, 'gl:gimg:' .. m.to)
+  end
+end
+for _, m in ipairs(moves) do redis.call('HDEL', 'gl:gradients', tostring(m.from)) end
+for _, m in ipairs(moves) do redis.call('HSET', 'gl:gradients', tostring(m.to), m.value) end
+return #moves
+`
+
+/** Clears `clear` (0 for none) and stores `order` as slots 1..n, closing any gaps, in one
+    atomic step. Default names ("Gradient 3") follow their new number. */
+async function renumber(order: StoredGradient[], clear = 0) {
+  const moves = order
+    .map((g, i) => ({ g, to: i + 1 }))
+    .filter(({ g, to }) => g.slot !== to)
+    .map(({ g, to }) => ({
+      from: g.slot,
+      to,
+      value: JSON.stringify({ ...g, slot: to, name: g.name === `Gradient ${g.slot}` ? `Gradient ${to}` : g.name }),
+    }))
+  if (!moves.length && !clear) return
+  await redis('EVAL', MOVE_SCRIPT, 0, clear, JSON.stringify(moves))
 }
 
-/** The commands that store the given gradients as slots 1..n in this order, closing any gaps.
-    Images go through temporary keys so no rename overwrites one still to move; a slot
-    with no image is skipped rather than failing the rename. Default names ("Gradient 3")
-    follow their new number. */
-async function renumberCommands(order: StoredGradient[]): Promise<(string | number)[][]> {
-  const moves = order.map((g, i) => ({ g, to: i + 1 })).filter(({ g, to }) => g.slot !== to)
-  if (!moves.length) return []
-  const exists = (await Promise.all(moves.map(({ g }) => redis('EXISTS', `gl:gimg:${g.slot}`)))) as number[]
-  const imaged = moves.filter((_, i) => exists[i] === 1)
-  return [
-    ...imaged.map(({ g }) => ['RENAME', `gl:gimg:${g.slot}`, `gl:gimg-tmp:${g.slot}`]),
-    ...imaged.map(({ g, to }) => ['RENAME', `gl:gimg-tmp:${g.slot}`, `gl:gimg:${to}`]),
-    ...moves.map(({ g }) => ['HDEL', 'gl:gradients', String(g.slot)]),
-    ...moves.map(({ g, to }) => {
-      const moved: StoredGradient = { ...g, slot: to, name: g.name === `Gradient ${g.slot}` ? `Gradient ${to}` : g.name }
-      return ['HSET', 'gl:gradients', String(to), JSON.stringify(moved)]
-    }),
-  ]
-}
-
-export async function DELETE(request: Request) {
+async function handleDELETE(request: Request) {
   if (!REDIS_URL || !REDIS_TOKEN) return notConfigured()
   const params = route(request)
   if (await rateLimited(request)) return json({ error: 'Too many changes, try again in a minute.' }, 429)
@@ -206,8 +230,8 @@ export async function DELETE(request: Request) {
     const slot = slotOf(params.get('slot'))
     if (!slot) return json({ error: 'slot is required' }, 400)
     const rest = (await savedGradients()).filter((g) => g.slot !== slot)
-    // Clear it and close the gap (every later slot moves down one) in one transaction.
-    await transaction([['HDEL', 'gl:gradients', String(slot)], ['DEL', `gl:gimg:${slot}`], ...(await renumberCommands(rest))])
+    // Clear it and close the gap (every later slot moves down one) in one atomic step.
+    await renumber(rest, slot)
     return json({ deleted: slot })
   }
   return json({ error: 'Unknown route' }, 404)
