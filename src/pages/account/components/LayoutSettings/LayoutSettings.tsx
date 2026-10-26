@@ -177,7 +177,7 @@ function LayoutSettings() {
       </section>
 
       <section className="acl-card">
-        <h3 className="acl-title">Company image</h3>
+        <h3 className="acl-title">Lesson thumbnail & avatar image</h3>
         <div className="acl-thumb">
           <span className="acl-thumb__media">
             <img className="acl-thumb__preview" src={company.src} alt="Company image" width={96} height={96} />
