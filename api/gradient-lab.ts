@@ -142,7 +142,7 @@ export async function PUT(request: Request) {
     if (slots.length !== saved.length || new Set(slots).size !== slots.length || !slots.every((s) => s !== null && bySlot.has(s))) {
       return json({ error: 'slots must list every saved slot once' }, 400)
     }
-    await renumber(slots.map((s) => bySlot.get(s!)!))
+    await transaction(await renumberCommands(slots.map((s) => bySlot.get(s!)!)))
     return json((await savedGradients()).map(gradientOut))
   }
 
@@ -165,18 +165,37 @@ async function savedGradients(): Promise<StoredGradient[]> {
   return list.sort((a, b) => a.slot - b.slot)
 }
 
-/** Stores the given gradients as slots 1..n in this order, closing any gaps.
-    Images go through temporary keys so no rename overwrites one still to move;
-    default names ("Gradient 3") follow their new number. */
-async function renumber(order: StoredGradient[]) {
+/** Runs the commands as one transaction (Upstash multi-exec): all of them apply or none do. */
+async function transaction(commands: (string | number)[][]): Promise<void> {
+  if (!commands.length) return
+  const res = await fetch(`${REDIS_URL}/multi-exec`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${REDIS_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(commands),
+  })
+  const data = (await res.json()) as { error?: string } | { error?: string }[]
+  const failed = Array.isArray(data) ? data.find((d) => d.error) : data
+  if (failed?.error) throw new Error(failed.error)
+}
+
+/** The commands that store the given gradients as slots 1..n in this order, closing any gaps.
+    Images go through temporary keys so no rename overwrites one still to move; a slot
+    with no image is skipped rather than failing the rename. Default names ("Gradient 3")
+    follow their new number. */
+async function renumberCommands(order: StoredGradient[]): Promise<(string | number)[][]> {
   const moves = order.map((g, i) => ({ g, to: i + 1 })).filter(({ g, to }) => g.slot !== to)
-  for (const { g } of moves) await redis('RENAME', `gl:gimg:${g.slot}`, `gl:gimg-tmp:${g.slot}`)
-  for (const { g, to } of moves) await redis('RENAME', `gl:gimg-tmp:${g.slot}`, `gl:gimg:${to}`)
-  for (const { g } of moves) await redis('HDEL', 'gl:gradients', String(g.slot))
-  for (const { g, to } of moves) {
-    const moved: StoredGradient = { ...g, slot: to, name: g.name === `Gradient ${g.slot}` ? `Gradient ${to}` : g.name }
-    await redis('HSET', 'gl:gradients', String(to), JSON.stringify(moved))
-  }
+  if (!moves.length) return []
+  const exists = (await Promise.all(moves.map(({ g }) => redis('EXISTS', `gl:gimg:${g.slot}`)))) as number[]
+  const imaged = moves.filter((_, i) => exists[i] === 1)
+  return [
+    ...imaged.map(({ g }) => ['RENAME', `gl:gimg:${g.slot}`, `gl:gimg-tmp:${g.slot}`]),
+    ...imaged.map(({ g, to }) => ['RENAME', `gl:gimg-tmp:${g.slot}`, `gl:gimg:${to}`]),
+    ...moves.map(({ g }) => ['HDEL', 'gl:gradients', String(g.slot)]),
+    ...moves.map(({ g, to }) => {
+      const moved: StoredGradient = { ...g, slot: to, name: g.name === `Gradient ${g.slot}` ? `Gradient ${to}` : g.name }
+      return ['HSET', 'gl:gradients', String(to), JSON.stringify(moved)]
+    }),
+  ]
 }
 
 export async function DELETE(request: Request) {
@@ -187,10 +206,8 @@ export async function DELETE(request: Request) {
     const slot = slotOf(params.get('slot'))
     if (!slot) return json({ error: 'slot is required' }, 400)
     const rest = (await savedGradients()).filter((g) => g.slot !== slot)
-    await redis('HDEL', 'gl:gradients', String(slot))
-    await redis('DEL', `gl:gimg:${slot}`)
-    // Close the gap: every later slot moves down one.
-    await renumber(rest)
+    // Clear it and close the gap (every later slot moves down one) in one transaction.
+    await transaction([['HDEL', 'gl:gradients', String(slot)], ['DEL', `gl:gimg:${slot}`], ...(await renumberCommands(rest))])
     return json({ deleted: slot })
   }
   return json({ error: 'Unknown route' }, 404)

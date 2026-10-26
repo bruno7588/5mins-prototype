@@ -129,6 +129,9 @@ function GradientLab() {
   }
 
   const clearSlot = async () => {
+    // One change at a time: a second clear on stale numbers would clear the wrong slot.
+    if (savingSlot) return
+    setSavingSlot(true)
     try {
       await clearGradient(activeSlot)
       const list = await reloadGradients()
@@ -137,6 +140,8 @@ function GradientLab() {
       selectSlot(list.some((g) => g.slot === activeSlot) ? activeSlot : Math.max(1, activeSlot - 1), list)
     } catch (e) {
       show('error', `Couldn't clear gradient ${activeSlot}: ${(e as Error).message}`)
+    } finally {
+      setSavingSlot(false)
     }
   }
 
