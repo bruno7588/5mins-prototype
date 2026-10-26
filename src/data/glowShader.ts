@@ -6,7 +6,7 @@ import { DEFAULT_THEME } from './brandTheme'
 /* Light form: a soft form lit from one side, after the iridescent "light through
    glass" backgrounds (shaders.com Pro). How the references are made:
    - One shape (a stroked arch, a comet, an orb, a dome, crossing curves, a wave
-     ribbon or a prism) as a signed distance field.
+     ribbon, a prism or a gem) as a signed distance field.
    - A heat value per pixel, mapped through one colour ramp (a gradient map):
      deep inside the shape it is near black, then the body colour, rising
      steeply to a hot rim right at the edge; outside it drops away fast.
@@ -47,7 +47,7 @@ float sdSegment(vec2 p, vec2 a, vec2 b) {
   return length(pa - ba * h);
 }
 
-// Inigo Quilez's 2D uneven capsule and triangle.
+// Inigo Quilez's 2D uneven capsule, polygon and triangle.
 float sdUnevenCapsule(vec2 p, vec2 pa, vec2 pb, float ra, float rb) {
   p -= pa; pb -= pa;
   float h = dot(pb, pb);
@@ -61,6 +61,20 @@ float sdUnevenCapsule(vec2 p, vec2 pa, vec2 pb, float ra, float rb) {
   if (k < 0.) return sqrt(h * n) - ra;
   if (k > c.x) return sqrt(h * (n + 1. - 2. * q.y)) - rb;
   return m - ra;
+}
+
+float sdPolygon(vec2 p, vec2 v[5]) {
+  float d = dot(p - v[0], p - v[0]);
+  float s = 1.;
+  for (int i = 0, j = 4; i < 5; j = i, i++) {
+    vec2 e = v[j] - v[i];
+    vec2 w = p - v[i];
+    vec2 b = w - e * clamp(dot(w, e) / dot(e, e), 0., 1.);
+    d = min(d, dot(b, b));
+    bvec3 c = bvec3(p.y >= v[i].y, p.y < v[j].y, e.x * w.y > e.y * w.x);
+    if (all(c) || all(not(c))) s *= -1.;
+  }
+  return s * sqrt(d);
 }
 
 float sdTriangle(vec2 p, vec2 p0, vec2 p1, vec2 p2) {
@@ -120,8 +134,13 @@ float form(vec2 p) {
     float dBottom = (bottom - p.y) / sqrt(1. + pow(.12 * 2.3 * cos(2.3 * p.x - .4 + .14 * T), 2.));
     return max(dTop, dBottom) - grow * .5;
   }
-  // Prism: a tall triangle, apex near the top.
-  return sdTriangle(p, vec2(-.05, .78), vec2(-1.45, -1.9), vec2(1.3, -1.9)) - .03 - grow;
+  if (u_form < 6.5) {
+    // Prism: a tall triangle, apex near the top.
+    return sdTriangle(p, vec2(-.05, .78), vec2(-1.45, -1.9), vec2(1.3, -1.9)) - .03 - grow;
+  }
+  // Gem: a wide faceted polygon, its ridge rising to a peak right of centre.
+  vec2 gem[5] = vec2[](vec2(-.92, -1.4), vec2(-.92, -.12), vec2(.3, .6), vec2(.95, -.28), vec2(.95, -1.4));
+  return sdPolygon(p, gem) - .02 - grow;
 }
 
 vec3 ramp(float t) {
@@ -155,6 +174,8 @@ void main() {
   // A narrow core right on the edge gives the white-hot line.
   float core = mask - smoothstep(rimLength * .2, -rimLength * .2, form(p + L * rimLength * .25));
   float body = mask * (.03 + .19 * exp(-max(-d, 0.) / depthLength));
+  // The gem's facets: soft vertical bands of light through its body.
+  if (u_form > 6.5) body *= .45 + 1.3 * pow(.5 + .5 * sin(p.x * 5.2 + .9), 2.);
   float haze = (1. - mask) * u_haze * (.05 + .22 * smoothstep(-1.6, 1.6, dot(p, L)));
   float t = body + haze + glow * (.8 * max(nearRim, 0.) + .35 * max(wideRim, 0.) + 1.2 * max(core, 0.));
   // Rolls the peaks off instead of clipping them to a flat band.

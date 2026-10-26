@@ -23,7 +23,7 @@ export type DitherType = (typeof DITHER_TYPES)[number]
 export const CANVAS_PATTERNS = ['sine', 'sweep', 'rain', 'halftone', 'cubes', 'kaleido', 'truchet', 'tunnel', 'contours', 'bloom', 'confetti', 'scan', 'ripple'] as const
 export type CanvasPattern = (typeof CANVAS_PATTERNS)[number]
 /** Light form shapes (src/data/glowShader.ts). */
-export const GLOW_FORMS = ['arch', 'comet', 'orb', 'dome', 'crossing', 'wave', 'prism'] as const
+export const GLOW_FORMS = ['arch', 'comet', 'orb', 'dome', 'crossing', 'wave', 'prism', 'gem'] as const
 export type GlowForm = (typeof GLOW_FORMS)[number]
 export type ShaderKind = 'mesh' | 'grain' | 'dither' | 'glow' | CanvasPattern
 /** The pixel finish: off, or ordered dithering with a Bayer matrix of this size (src/data/pixelFinish.ts). */
