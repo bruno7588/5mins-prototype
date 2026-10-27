@@ -75,15 +75,6 @@ export function gradeImageChoice(picked: readonly number[], correct: readonly nu
   return { right: wrongPicks === 0 && missed === 0, hits, wrongPicks, missed, total: correct.length }
 }
 
-/** The line beside "Not quite" on a wrong answer with several correct options. More picks
-    than correct options would read "3 of 3 correct", so that case says how many were picked. */
-export function wrongAnswerCount(picked: readonly number[], correct: readonly number[]) {
-  const { hits, total } = gradeImageChoice(picked, correct)
-  return picked.length > total
-    ? `${picked.length} picked, only ${total} correct`
-    : `${hits} of ${total} correct`
-}
-
 export interface SingleChoiceQuestion {
   type: 'single-choice'
   prompt: string

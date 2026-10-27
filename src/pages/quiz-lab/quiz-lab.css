@@ -149,6 +149,12 @@
   color: var(--text-primary);
 }
 
+/* Every quiz: once the answer is graded, the question and its hint step back so the result leads. */
+.ql-screen:has(.ql-footer--graded) .ql-stem__q,
+.ql-screen:has(.ql-footer--graded) .ql-imgchoice__hint {
+  color: var(--text-disabled);
+}
+
 /* ── Tappable token (the shared building block) ──────────────────────────── */
 .ql-token {
   display: inline-flex;

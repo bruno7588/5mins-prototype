@@ -72,7 +72,7 @@ function FeedbackFooter({
   const correct = status === 'correct'
   const withResult = layout === 'hug' && !!result
   return (
-    <div className={`${footerClass}${withResult ? ' ql-footer--with-result' : ''}`}>
+    <div className={`${footerClass} ql-footer--graded${withResult ? ' ql-footer--with-result' : ''}`}>
       {withResult && result}
       <Button semantic={correct ? 'success' : 'danger'} size={size} onClick={advance ?? onContinue}>
         {continueLabel ?? (correct ? 'Continue' : 'Got It')}

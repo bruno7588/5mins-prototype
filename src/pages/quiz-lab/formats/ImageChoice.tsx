@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { CloseCircle, TickCircle } from 'iconsax-react'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import Radio from '@/components/Radio/Radio'
-import { gradeImageChoice, wrongAnswerCount, type ImageChoiceQuestion } from '../quizData'
+import { gradeImageChoice, type ImageChoiceQuestion } from '../quizData'
 import FeedbackFooter, { QuizFooterLayoutContext } from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
@@ -20,8 +20,8 @@ import { cue } from '../quizSound'
  * Right only when the picks are exactly the correct set. Only the learner's own picks are
  * marked, each by itself: a right pick green with a tick, a wrong one red with a cross. An
  * image they didn't pick is never marked, so a reattempt still has to find what's missing.
- * With several correct images a wrong answer says how many they got ("You got 2 of 3
- * correct"), counted against the correct images so leaving one out reads as wrong too.
+ * The result says only "Well done!" or "Not quite", with no count of right picks; leaving
+ * a correct image out reads as wrong too.
  */
 function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   const [attempt, setAttempt] = useState(0)
@@ -30,10 +30,6 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
   const [announce, setAnnounce] = useState('')
   // On the web the result sits beside Continue (FeedbackFooter); at phone width it stays under the images.
   const inFooter = useContext(QuizFooterLayoutContext) === 'hug'
-  /* A wrong answer with several correct images: "Not quite" with the count beside it. Not
-     "Partly right": that reads as partial credit, and the answer is reported as wrong.
-     Unset for a right one, or with one correct image. */
-  const [verdict, setVerdict] = useState<{ title?: string; count: string }>()
   const locked = status !== 'idle'
   const multiple = question.multipleCorrect ?? question.correctIndices.length > 1
 
@@ -54,18 +50,14 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
 
   function check() {
     const { right } = gradeImageChoice(picked, question.correctIndices)
-    const count = wrongAnswerCount(picked, question.correctIndices)
-    const next = !right && multiple ? { title: 'Not quite', count } : undefined
     setStatus(right ? 'correct' : 'incorrect')
-    setVerdict(next)
-    setAnnounce(right ? 'Correct' : next ? `${next.title}. ${count}` : 'Not quite')
+    setAnnounce(right ? 'Correct' : 'Not quite')
     cue(right ? 'correct' : 'incorrect')
   }
 
   function reset() {
     setPicked([])
     setStatus('idle')
-    setVerdict(undefined)
     setAnnounce('')
     setAttempt((a) => a + 1)
     cue('continue')
@@ -73,7 +65,7 @@ function ImageChoice({ question }: { question: ImageChoiceQuestion }) {
 
   const isCorrect = (index: number) => question.correctIndices.includes(index)
   const result = (
-    <ResultBanner status={status} title={verdict?.title} detail={verdict?.count} explanation={question.explanation || undefined} />
+    <ResultBanner status={status} explanation={question.explanation || undefined} />
   )
   /* The admin's optional words under an image; the option's accessible name carries them. */
   const labelOf = (index: number) => question.labels?.[index]?.trim() || ''
