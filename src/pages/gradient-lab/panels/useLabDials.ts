@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useDialKitController, type DialConfig } from 'dialkit'
-import { DEFAULT_GRADIENT_SETS, type ThemeSet } from '@/data/brandTheme'
+import type { ThemeSet } from '@/data/brandTheme'
 import {
   DITHER_SHAPES,
   DITHER_TYPES,
   FINISHES,
   GLOW_FORMS,
   GRAIN_SHAPES,
+  ICON_COLOURS,
   isCanvasPattern,
   MAX_FRAME,
   type CanvasPattern,
@@ -16,6 +17,7 @@ import {
   type GlowForm,
   type GradientRecipe,
   type GrainShape,
+  type IconColour,
   type ShaderKind,
 } from '../recipe'
 
@@ -24,7 +26,7 @@ import {
    "Shader" (motion, grain and the pixel finish). The controls follow the shader type: the mesh
    gradient has distortion, swirl and two grain sliders; the grain gradient has
    a shape, softness, intensity and noise; dithering has a shape, a pattern and
-   a pixel size; the light form has a form and a slider per value (GLOW_DIALS); each canvas pattern has a slider for every value that shapes
+   a pixel size; the light form has a form and a slider per value (GLOW_DIALS), offsets likewise (OFFSETS_DIALS); each canvas pattern has a slider for every value that shapes
    it (PATTERN_DIALS). Only the open tab's panel is mounted, seeded from lab
    state on mount, so switching tabs never loses a value. Two-way sync without
    echo loops:
@@ -34,14 +36,14 @@ import {
      Framing, wheel zoom, a loaded slot) are pushed in with setValues.
    The page's focal pad owns the offset, so the panel has no offset control. */
 
-export type DialsKind = 'gradient' | 'shader'
+export type DialsKind = 'gradient' | 'shader' | 'icon'
 
 /** What the Studio edits: the recipe, and the theme colours it is previewed in (not saved). */
 export interface LabState {
   recipe: GradientRecipe
   preview: ThemeSet
-  /** The mode the open slot is for: its 5Mins preview colours. */
-  mode: 'light' | 'dark'
+  /** The open slot's own preview colours (slotSet), which 5Mins Theme resets to. */
+  defaults: ThemeSet
   playing: boolean
 }
 
@@ -75,13 +77,12 @@ interface PanelValues {
   Finish: { pattern: Finish; 'pixel size': number }
 }
 
-type Folder = keyof PanelValues
-
 const SHADER_OPTIONS: { value: ShaderKind; label: string }[] = [
   { value: 'mesh', label: 'Mesh gradient' },
   { value: 'grain', label: 'Grain gradient' },
   { value: 'dither', label: 'Dithering' },
   { value: 'glow', label: 'Light form' },
+  { value: 'offsets', label: 'Offsets' },
   { value: 'sine', label: 'Sine stack' },
   { value: 'sweep', label: 'Dot sweep' },
   { value: 'rain', label: 'Pixel rain' },
@@ -238,6 +239,15 @@ const GLOW_DIALS: [string, NumberField, number, number, number][] = [
   ['haze', 'glowHaze', 0, 1, 0.01],
   ['light angle', 'glowLight', -180, 180, 1],
 ]
+/** Offsets' sliders, as PATTERN_DIALS. Ranges match parseRecipe. */
+const OFFSETS_DIALS: [string, NumberField, number, number, number][] = [
+  ['blocks across', 'offsetsGrid', 2, 16, 1],
+  ['block shift', 'offsetsShift', 0, 3, 0.01],
+  ['bars', 'offsetsBars', 2, 24, 1],
+  ['bar shift', 'offsetsBarShift', 0, 1, 0.01],
+  ['flow', 'offsetsFlow', 0, 1, 0.01],
+  ['grain', 'offsetsGrain', 0, 1, 0.01],
+]
 const GLOW_FORM_OPTIONS = GLOW_FORMS.map((value) => ({ value, label: value[0].toUpperCase() + value.slice(1) }))
 
 /** A pattern's slider values from the recipe, keyed by label. */
@@ -248,9 +258,78 @@ const DITHER_SHAPE_OPTIONS = options(DITHER_SHAPES)
 const PATTERN_OPTIONS = options(DITHER_TYPES)
 const FINISH_OPTIONS = options(FINISHES)
 
-const FOLDERS: Record<DialsKind, Folder[]> = {
+const FOLDERS: Record<DialsKind, string[]> = {
   gradient: ['Gradient', 'Preview colours'],
   shader: ['Motion', 'Grain', 'Finish'],
+  icon: ['Icon', 'Dither', 'Gradient overlay'],
+}
+
+/** The Icon tab's sliders: folder, label, recipe field, min, max, step. Ranges match parseRecipe. */
+const ICON_DIALS: [string, string, NumberField, number, number, number][] = [
+  ['Icon', 'size', 'iconSize', 0.1, 1, 0.01],
+  ['Icon', 'opacity', 'iconOpacity', 0, 1, 0.01],
+  ['Dither', 'pixel size', 'iconPixel', 0.3, 4, 0.05],
+  ['Dither', 'fade', 'iconFade', 0, 1, 0.01],
+  ['Dither', 'fade angle', 'iconFadeAngle', -180, 180, 1],
+  ['Dither', 'noise', 'iconNoise', 0, 1, 0.01],
+  ['Gradient overlay', 'amount', 'iconGradient', 0, 1, 0.01],
+  ['Gradient overlay', 'angle', 'iconGradientAngle', -180, 180, 1],
+  ['Gradient overlay', 'colour noise', 'iconGradientNoise', 0, 1, 0.01],
+]
+const ICON_COLOUR_LABELS: Record<IconColour, string> = {
+  own: 'Icon colours',
+  white: 'White',
+  header: 'Header bar',
+  'header-light': 'Header bar, lighter',
+  'header-dark': 'Header bar, darker',
+  nav: 'Navigation items',
+  'nav-light': 'Navigation items, lighter',
+  'nav-dark': 'Navigation items, darker',
+  selected: 'Selected item',
+  'selected-light': 'Selected item, lighter',
+  'selected-dark': 'Selected item, darker',
+}
+const ICON_COLOUR_OPTIONS = ICON_COLOURS.map((value) => ({ value, label: ICON_COLOUR_LABELS[value] }))
+
+/** The Icon tab's values from the recipe, by folder. */
+function iconValues(r: GradientRecipe): Record<string, Record<string, unknown>> {
+  const v: Record<string, Record<string, unknown>> = {
+    Icon: { colour: r.iconColour },
+    Dither: { pattern: r.iconDither },
+    'Gradient overlay': { from: r.iconGradientFrom, to: r.iconGradientTo },
+  }
+  for (const [folder, label, field] of ICON_DIALS) v[folder][label] = r[field]
+  return v
+}
+
+function iconConfig(r: GradientRecipe): DialConfig {
+  const v = iconValues(r)
+  const slider = (folder: string): DialConfig =>
+    Object.fromEntries(ICON_DIALS.filter(([f]) => f === folder).map(([, label, , min, max, step]) => [label, [v[folder][label] as number, min, max, step]]))
+  return {
+    Icon: { colour: { type: 'select', options: ICON_COLOUR_OPTIONS, default: r.iconColour }, ...slider('Icon') },
+    Dither: { pattern: { type: 'select', options: FINISH_OPTIONS, default: r.iconDither }, ...slider('Dither') },
+    'Gradient overlay': {
+      ...slider('Gradient overlay'),
+      from: { type: 'select', options: ICON_COLOUR_OPTIONS, default: r.iconGradientFrom },
+      to: { type: 'select', options: ICON_COLOUR_OPTIONS, default: r.iconGradientTo },
+    },
+  }
+}
+
+/** The recipe with the Icon tab's values. */
+function iconFromDials(v: Record<string, Record<string, unknown>>, r: GradientRecipe): GradientRecipe {
+  const next = { ...r }
+  for (const [folder, label, field] of ICON_DIALS) {
+    const x = v[folder]?.[label]
+    if (typeof x === 'number') (next as unknown as Record<string, number>)[field] = x
+  }
+  const pick = <T extends string>(x: unknown, values: readonly T[], fallback: T) => (values.includes(x as T) ? (x as T) : fallback)
+  next.iconColour = pick(v.Icon?.colour, ICON_COLOURS, r.iconColour)
+  next.iconDither = pick(v.Dither?.pattern, FINISHES, r.iconDither)
+  next.iconGradientFrom = pick(v['Gradient overlay']?.from, ICON_COLOURS, r.iconGradientFrom)
+  next.iconGradientTo = pick(v['Gradient overlay']?.to, ICON_COLOURS, r.iconGradientTo)
+  return next
 }
 
 function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
@@ -260,10 +339,11 @@ function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
     grain: { shape: r.shape, softness: r.softness, intensity: r.intensity },
     dither: { shape: r.ditherShape, pattern: r.ditherType, 'pixel size': r.pxSize },
     glow: { form: r.glowForm, ...Object.fromEntries(GLOW_DIALS.map(([label, field]) => [label, r[field]])) },
+    offsets: Object.fromEntries(OFFSETS_DIALS.map(([label, field]) => [label, r[field]])),
   }
   const mine = isCanvasPattern(r.shader) ? { ...patternValues(r, r.shader), 'colour flow': r.flow } : own[r.shader]
-  // Dithering, the light form and the canvas patterns take a fixed number of colours.
-  const fixed = r.shader === 'dither' || r.shader === 'glow' || isCanvasPattern(r.shader)
+  // Dithering, the light form, offsets and the canvas patterns take a fixed number of colours.
+  const fixed = r.shader === 'dither' || r.shader === 'glow' || r.shader === 'offsets' || isCanvasPattern(r.shader)
   return {
     Gradient: { type: r.shader, ...(fixed ? {} : { colours: r.colours }), ...mine, ...shape },
     'Preview colours': { 'header bar': p.header, 'navigation items': p.nav, 'selected item': p.selected },
@@ -300,6 +380,7 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
       form: { type: 'select', options: GLOW_FORM_OPTIONS, default: g.form! },
       ...Object.fromEntries(GLOW_DIALS.map(([label, , min, max, step]) => [label, [g[label] as number, min, max, step]])),
     },
+    offsets: Object.fromEntries(OFFSETS_DIALS.map(([label, , min, max, step]) => [label, [g[label] as number, min, max, step]])),
   }
   const p = v['Preview colours']
   const pattern = isCanvasPattern(g.type)
@@ -315,7 +396,7 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
       ...(g.type === 'grain' || g.type === 'dither'
         ? { shape: { type: 'select', options: g.type === 'grain' ? SHAPE_OPTIONS : DITHER_SHAPE_OPTIONS, default: g.shape! } }
         : {}),
-      ...(g.type === 'dither' || g.type === 'glow' || pattern ? {} : { colours: [g.colours!, 3, 5, 1] }),
+      ...(g.type === 'dither' || g.type === 'glow' || g.type === 'offsets' || pattern ? {} : { colours: [g.colours!, 3, 5, 1] }),
       ...mine,
       scale: [g.scale, 0.25, 4, 0.01],
       rotation: [g.rotation, 0, 360, 1],
@@ -341,29 +422,30 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
   // shader type changes, since each type has its own controls.
   const shader = lab.recipe.shader
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const config = useMemo(() => buildConfig(latest.current.lab, kind), [kind, shader])
+  const config = useMemo(() => (kind === 'icon' ? iconConfig(latest.current.lab.recipe) : buildConfig(latest.current.lab, kind)), [kind, shader])
 
   const dialRef = useRef<ReturnType<typeof useDialKitController> | null>(null)
   const onAction = useCallback((action: string) => {
     if (action === 'Gradient.shuffle') {
       dialRef.current?.setValue('Gradient.frame', Math.round((Math.random() * MAX_FRAME) / 100) * 100)
     } else if (action === 'Preview colours.reset') {
-      const d = DEFAULT_GRADIENT_SETS[latest.current.lab.mode]
+      const d = latest.current.lab.defaults
       dialRef.current?.setValues({ 'Preview colours': { 'header bar': d.header, 'navigation items': d.nav, 'selected item': d.selected } } as never)
     }
   }, [])
-  const dial = useDialKitController(kind === 'gradient' ? 'Gradient' : 'Shader', config, { onAction })
+  const dial = useDialKitController(kind === 'gradient' ? 'Gradient' : kind === 'icon' ? 'Icon' : 'Shader', config, { onAction })
   dialRef.current = dial
 
   // lab -> DialKit. The controller changes with every panel edit, so this reads
   // it through dialRef and depends on lab only; otherwise an edit would re-run it
   // before reaching lab and be written straight back.
-  useEffect(() => {
+  /** The panel values that differ from lab, by folder (empty when the panel shows lab). */
+  const panelDiff = () => {
     const dial = dialRef.current
-    if (!dial) return
-    const want = labToDials(latest.current.lab)
-    const have = dial.getValues() as unknown as PanelValues
     const next: Record<string, Record<string, unknown>> = {}
+    if (!dial) return next
+    const want = (kind === 'icon' ? iconValues(latest.current.lab.recipe) : labToDials(latest.current.lab)) as Record<string, unknown>
+    const have = dial.getValues() as unknown as Record<string, unknown>
     for (const folder of FOLDERS[kind]) {
       // Dithering has no Grain folder, and a folder the old shader type didn't have
       // is empty until the panel rebuilds.
@@ -374,11 +456,30 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
         if (!same) (next[folder] ??= {})[k] = w[k]
       }
     }
-    if (Object.keys(next).length) dial.setValues(next as never)
+    return next
+  }
+
+  useEffect(() => {
+    const next = panelDiff()
+    if (Object.keys(next).length) dialRef.current?.setValues(next as never)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lab.recipe, lab.preview, lab.playing, kind])
+
+  // DialKit restores a panel's last values when its tab reopens, which can belong to another
+  // slot. Until the panel has shown lab's values once, its reports are that restore, not
+  // edits, so they are ignored: the effect above seeds the panel from the recipe instead.
+  // A panel that rounds a value to its step never matches exactly, so the second report
+  // (the seeded values) also counts as in sync.
+  const synced = useRef(false)
+  const reports = useRef(0)
 
   // DialKit -> lab, rebuilt from the panel in full so a stale snapshot never drops an edit.
   useEffect(() => {
+    if (!synced.current) {
+      reports.current += 1
+      synced.current = Object.keys(panelDiff()).length === 0 || reports.current >= 2
+      return
+    }
     const v = dial.getValues() as unknown as PanelValues
     const { lab: now, update: push } = latest.current
     const r = now.recipe
@@ -386,6 +487,11 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
     const changed = (next: GradientRecipe) => (Object.keys(next) as (keyof GradientRecipe)[]).some((k) => next[k] !== r[k])
     const defined = <T extends object>(o: T) =>
       Object.fromEntries(Object.entries(o).filter(([k, x]) => x !== undefined && k in r)) as Partial<GradientRecipe>
+    if (kind === 'icon') {
+      const recipe = iconFromDials(v as unknown as Record<string, Record<string, unknown>>, r)
+      if (changed(recipe)) push({ recipe })
+      return
+    }
     if (kind === 'shader') {
       const recipe = {
         ...r,
@@ -405,6 +511,8 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
       ? { ...Object.fromEntries(PATTERN_DIALS[r.shader].map(([label, field]) => [field, g[label]])), flow: g['colour flow'] }
       : r.shader === 'glow'
         ? { glowForm: form, ...Object.fromEntries(GLOW_DIALS.map(([label, field]) => [field, g[label]])) }
+        : r.shader === 'offsets'
+        ? Object.fromEntries(OFFSETS_DIALS.map(([label, field]) => [field, g[label]]))
         : r.shader === 'dither'
         ? { ditherShape: shape, ditherType: pattern, pxSize }
         : { shape }

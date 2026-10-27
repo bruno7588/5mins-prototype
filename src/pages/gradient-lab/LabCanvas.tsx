@@ -3,6 +3,7 @@ import { GrainGradient, MeshGradient } from '@paper-design/shaders-react'
 import { drawPattern, patternTime } from '@/data/canvasPatterns'
 import { applyPixelFinish } from '@/data/pixelFinish'
 import { applySoftFinish } from '@/data/softFinish'
+import { finishedIcon } from '@/data/iconDither'
 import { drawDither, hiddenMount, type HiddenMount } from '@/data/renderRecipe'
 import { grainProps, isCanvasPattern, meshProps, type GradientRecipe } from './recipe'
 import './lab-canvas.css'
@@ -70,7 +71,7 @@ function PatternCanvas({ recipe, colours, finishColours, speed, size }: CanvasPr
   return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />
 }
 
-/** A Paper shader with the pixel finish, or the light form (no React component): the shader plays in a hidden mount and each
+/** A Paper shader with the pixel finish, or the light form or offsets (no React component): the shader plays in a hidden mount and each
     frame is copied here and finished. The mount is rebuilt after edits settle, so a
     slider drag doesn't churn WebGL contexts; the old one shows until the new is ready. */
 function FinishedShaderCanvas({ recipe, colours, finishColours, speed, size }: CanvasProps) {
@@ -117,6 +118,29 @@ function FinishedShaderCanvas({ recipe, colours, finishColours, speed, size }: C
     return () => cancelAnimationFrame(raf)
   }, [size])
   return <canvas ref={ref} style={{ width: '100%', height: '100%', display: 'block' }} />
+}
+
+/** The recipe's finished icon over the preview, at the preview's pixel density. Only the icon's own
+    fields rebuild it, so the gradient's controls never redraw the icon. */
+function IconLayer({ recipe, themeColours, size }: { recipe: GradientRecipe; themeColours: string[]; size: number }) {
+  const [src, setSrc] = useState('')
+  const iconFields = Object.fromEntries(Object.entries(recipe).filter(([k]) => k.startsWith('icon')))
+  const key = JSON.stringify([iconFields, themeColours, size])
+  const latest = useRef(recipe)
+  latest.current = recipe
+  useEffect(() => {
+    let cancelled = false
+    finishedIcon(latest.current, Math.round(size * Math.max(1, window.devicePixelRatio || 1)), themeColours)
+      .then((c) => !cancelled && setSrc(c.toDataURL('image/png')))
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key])
+  const { iconSize: s, iconX: x, iconY: y } = recipe
+  const place = { width: `${s * 100}%`, height: `${s * 100}%`, left: `${(0.5 - s / 2 + x / 2) * 100}%`, top: `${(0.5 - s / 2 + y / 2) * 100}%` }
+  return src ? <img className="gl-cv__icon" src={src} alt="" draggable={false} style={place} /> : null
 }
 
 interface Props {
@@ -205,13 +229,14 @@ function LabCanvas({ recipe, colours, finishColours, playing, onPan, onZoom }: P
       >
         {isCanvasPattern(recipe.shader) ? (
           <PatternCanvas recipe={recipe} colours={colours} finishColours={finishColours} speed={speed} size={size} />
-        ) : recipe.finish !== 'off' || recipe.shader === 'glow' || recipe.shader === 'dither' || recipe.blur > 0 ? (
+        ) : recipe.finish !== 'off' || recipe.shader === 'glow' || recipe.shader === 'offsets' || recipe.shader === 'dither' || recipe.blur > 0 ? (
           <FinishedShaderCanvas recipe={recipe} colours={colours} finishColours={finishColours} speed={speed} size={size} />
         ) : recipe.shader === 'grain' ? (
           <GrainGradient {...grainProps(recipe, colours)} speed={speed} style={fill} />
         ) : (
           <MeshGradient {...meshProps(recipe, colours)} speed={speed} style={fill} />
         )}
+        {recipe.icon && <IconLayer recipe={recipe} themeColours={finishColours} size={size} />}
       </div>
     </div>
   )

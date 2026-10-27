@@ -7,7 +7,8 @@
    sweep, pixel rain, the halftone wave, isometric cubes, the kaleidoscope,
    Truchet flow, the dot tunnel, contours, the halftone bloom, confetti, scan bars
    or the dot ripple. Or the light form (src/data/glowShader.ts): one soft shape lit
-   from a side, its colour ramp built from the three theme colours.
+   from a side, its colour ramp built from the three theme colours. Or offsets
+   (src/data/offsetsShader.ts): a flowing gradient cut into shifted blocks and bars.
    Saved in a Gradient Studio slot. Slots saved before recipes held photo
    presets (version 1); parseRecipe converts those on read. */
 
@@ -25,13 +26,17 @@ export type CanvasPattern = (typeof CANVAS_PATTERNS)[number]
 /** Light form shapes (src/data/glowShader.ts). */
 export const GLOW_FORMS = ['arch', 'comet', 'orb', 'dome', 'crossing', 'wave', 'prism', 'gem'] as const
 export type GlowForm = (typeof GLOW_FORMS)[number]
-export type ShaderKind = 'mesh' | 'grain' | 'dither' | 'glow' | CanvasPattern
+export type ShaderKind = 'mesh' | 'grain' | 'dither' | 'glow' | 'offsets' | CanvasPattern
 /** The pixel finish: off, or ordered dithering with a Bayer matrix of this size (src/data/pixelFinish.ts). */
 export const FINISHES = ['off', '2x2', '4x4', '8x8'] as const
 export type Finish = (typeof FINISHES)[number]
+/** Where the icon's colour and its gradient overlay's ends come from: the icon's own, white, or a theme
+    colour as it is, lighter or darker. */
+export const ICON_COLOURS = ['own', 'white', 'header', 'header-light', 'header-dark', 'nav', 'nav-light', 'nav-dark', 'selected', 'selected-light', 'selected-dark'] as const
+export type IconColour = (typeof ICON_COLOURS)[number]
 export const isCanvasPattern = (kind: ShaderKind): kind is CanvasPattern => (CANVAS_PATTERNS as readonly string[]).includes(kind)
 /** Drawn in the tenant's three theme colours as they are, rather than a blended palette: the canvas patterns and dithering. */
-export const usesThemeColours = (kind: ShaderKind) => kind === 'dither' || kind === 'glow' || isCanvasPattern(kind)
+export const usesThemeColours = (kind: ShaderKind) => kind === 'dither' || kind === 'glow' || kind === 'offsets' || isCanvasPattern(kind)
 
 export interface GradientRecipe {
   version: 2
@@ -222,10 +227,19 @@ export interface GradientRecipe {
   glowHaze: number
   /** Where the light comes from, degrees (0 from the right, 90 from the top). */
   glowLight: number
+  /** Offsets only. Blocks across the frame (2-16) and how far each shifts its view of the gradient (0-3). */
+  offsetsGrid: number
+  offsetsShift: number
+  /** Bars down the frame (2-24) and how far they nudge sideways (0-1). */
+  offsetsBars: number
+  offsetsBarShift: number
+  /** How much the gradient underneath warps as it flows, and the grain over it (0-1 each). */
+  offsetsFlow: number
+  offsetsGrain: number
   /** Canvas patterns only. How far the marks move from flat navigation items and selected
       item colours into a slowly drifting blend of the two (0-1); the header bar stays flat. */
   flow: number
-  /** Dithering only. The backdrop's blob centres, 0-1 of the frame (y down): header bar, navigation items, selected item. */
+  /** Dithering only. The backdrop's blob centres, 0-1 of the frame (y down): header bar, navigation items, and a third kept for saved recipes but no longer drawn (the selected item colour is the sphere's alone). */
   blobs: [number, number][]
   /** The pixel finish over any type, and its pixel size as % of the frame (0.3-4). */
   finish: Finish
@@ -238,6 +252,31 @@ export interface GradientRecipe {
   playing: boolean
   /** Starting time in ms: picks the composition, and is the still. */
   frame: number
+  /** An SVG icon over the gradient (src/data/iconDither.ts), in the preview and the saved still; '' for none. */
+  icon: string
+  /** Its width and height as a share of the frame (0.1-1), and its centre's offset from the frame's, -1 to 1 of half the frame. */
+  iconSize: number
+  iconX: number
+  iconY: number
+  /** The icon's colour: its own, white or a theme colour (the selected item by default). */
+  iconColour: IconColour
+  /** 0-1 */
+  iconOpacity: number
+  /** Ordered dithering of the icon, or off; its pixel size, % of the frame (0.3-4). */
+  iconDither: Finish
+  iconPixel: number
+  /** How much of the icon fades out across it (0-1), and the direction it fades towards, degrees (90 down). */
+  iconFade: number
+  iconFadeAngle: number
+  /** Random speckle mixed into the dither (or the edge, with dithering off), 0-1. */
+  iconNoise: number
+  /** A gradient laid over the icon's colour (0-1), its two ends and its direction, degrees (0 left to right). */
+  iconGradient: number
+  iconGradientFrom: IconColour
+  iconGradientTo: IconColour
+  iconGradientAngle: number
+  /** How far each pixel's place along the gradient is scattered, so the gradient reads grainy (0-1). */
+  iconGradientNoise: number
   /** Zoom, 0.25-4 */
   scale: number
   /** Degrees, 0-360 */
@@ -370,6 +409,12 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   glowFringe: 0.5,
   glowHaze: 0.4,
   glowLight: -40,
+  offsetsGrid: 6,
+  offsetsShift: 1.5,
+  offsetsBars: 6,
+  offsetsBarShift: 0.15,
+  offsetsFlow: 0.5,
+  offsetsGrain: 0.25,
   flow: 1,
   blobs: [
     [0.1, 0.05],
@@ -382,6 +427,22 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   speed: 0.6,
   playing: true,
   frame: 0,
+  icon: '',
+  iconSize: 0.8,
+  iconX: 0,
+  iconY: 0,
+  iconColour: 'selected',
+  iconOpacity: 1,
+  iconDither: '4x4',
+  iconPixel: 0.8,
+  iconFade: 0.7,
+  iconFadeAngle: 90,
+  iconNoise: 0,
+  iconGradient: 0,
+  iconGradientFrom: 'white',
+  iconGradientTo: 'selected',
+  iconGradientAngle: 45,
+  iconGradientNoise: 0,
   scale: 1,
   rotation: 0,
   offsetX: 0,
@@ -444,7 +505,7 @@ export function parseRecipe(json: unknown): GradientRecipe {
   return {
     version: 2,
     name: typeof json.name === 'string' ? json.name : d.name,
-    shader: (['grain', 'dither', 'glow', ...CANVAS_PATTERNS] as readonly string[]).includes(json.shader as string) ? (json.shader as ShaderKind) : 'mesh',
+    shader: (['grain', 'dither', 'glow', 'offsets', ...CANVAS_PATTERNS] as readonly string[]).includes(json.shader as string) ? (json.shader as ShaderKind) : 'mesh',
     colours: Math.round(num(json, 'colours', d.colours, 3, 5)),
     distortion: num(json, 'distortion', d.distortion, 0, 1),
     swirl: num(json, 'swirl', d.swirl, 0, 1),
@@ -564,6 +625,12 @@ export function parseRecipe(json: unknown): GradientRecipe {
     glowFringe: num(json, 'glowFringe', d.glowFringe, 0, 1),
     glowHaze: num(json, 'glowHaze', d.glowHaze, 0, 1),
     glowLight: num(json, 'glowLight', d.glowLight, -180, 180),
+    offsetsGrid: Math.round(num(json, 'offsetsGrid', d.offsetsGrid, 2, 16)),
+    offsetsShift: num(json, 'offsetsShift', d.offsetsShift, 0, 3),
+    offsetsBars: Math.round(num(json, 'offsetsBars', d.offsetsBars, 2, 24)),
+    offsetsBarShift: num(json, 'offsetsBarShift', d.offsetsBarShift, 0, 1),
+    offsetsFlow: num(json, 'offsetsFlow', d.offsetsFlow, 0, 1),
+    offsetsGrain: num(json, 'offsetsGrain', d.offsetsGrain, 0, 1),
     flow: num(json, 'flow', d.flow, 0, 1),
     blobs: readBlobs(json.blobs) ?? d.blobs,
     finish: FINISHES.includes(json.finish as Finish) ? (json.finish as Finish) : d.finish,
@@ -572,12 +639,38 @@ export function parseRecipe(json: unknown): GradientRecipe {
     speed: num(json, 'speed', d.speed, 0, 3),
     playing: json.playing !== false,
     frame: Math.round(num(json, 'frame', d.frame, 0, MAX_FRAME)),
+    icon: readIcon(json.icon),
+    iconSize: num(json, 'iconSize', d.iconSize, 0.1, 1),
+    iconX: num(json, 'iconX', d.iconX, -1, 1),
+    iconY: num(json, 'iconY', d.iconY, -1, 1),
+    iconColour: ICON_COLOURS.includes(json.iconColour as IconColour) ? (json.iconColour as IconColour) : d.iconColour,
+    iconOpacity: num(json, 'iconOpacity', d.iconOpacity, 0, 1),
+    iconDither: FINISHES.includes(json.iconDither as Finish) ? (json.iconDither as Finish) : d.iconDither,
+    iconPixel: num(json, 'iconPixel', d.iconPixel, 0.3, 4),
+    iconFade: num(json, 'iconFade', d.iconFade, 0, 1),
+    iconFadeAngle: num(json, 'iconFadeAngle', d.iconFadeAngle, -180, 180),
+    iconNoise: num(json, 'iconNoise', d.iconNoise, 0, 1),
+    iconGradient: num(json, 'iconGradient', d.iconGradient, 0, 1),
+    iconGradientFrom: ICON_COLOURS.includes(json.iconGradientFrom as IconColour) ? (json.iconGradientFrom as IconColour) : d.iconGradientFrom,
+    iconGradientTo: ICON_COLOURS.includes(json.iconGradientTo as IconColour) ? (json.iconGradientTo as IconColour) : d.iconGradientTo,
+    iconGradientAngle: num(json, 'iconGradientAngle', d.iconGradientAngle, -180, 180),
+    iconGradientNoise: num(json, 'iconGradientNoise', d.iconGradientNoise, 0, 1),
     scale: num(json, 'scale', d.scale, 0.25, 4),
     rotation: num(json, 'rotation', d.rotation, 0, 360),
     offsetX: num(json, 'offsetX', d.offsetX, -1, 1),
     offsetY: num(json, 'offsetY', d.offsetY, -1, 1),
   }
 }
+
+/** An SVG document's markup, or '' for anything else. */
+export function readIcon(v: unknown): string {
+  return typeof v === 'string' && /^\s*<svg[\s>]/i.test(v) && v.length <= MAX_ICON_LENGTH ? v.trim() : ''
+}
+
+const MAX_ICON_LENGTH = 20_000
+
+/** The icon as an image URL. Drawn as an image, so nothing in the SVG can run. */
+export const iconUrl = (svg: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
 
 /** parseRecipe, or null for anything unreadable. */
 /** Three [x, y] pairs, each 0-1, or null. */
@@ -614,7 +707,7 @@ export function grainColours(colours: string[]): [string, string[]] {
   return [back, colours.filter((_, i) => i !== 2)]
 }
 
-/** How many colours a recipe takes: the three theme colours for dithering, the light form and the canvas patterns. */
+/** How many colours a recipe takes: the three theme colours for dithering, the light form, offsets and the canvas patterns. */
 export const paletteCount = (recipe: GradientRecipe) => (usesThemeColours(recipe.shader) ? 3 : recipe.colours)
 
 /** A canvas pattern's colours, straight from the theme (recipeColours): the header bar

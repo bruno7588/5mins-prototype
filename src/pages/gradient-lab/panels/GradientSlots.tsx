@@ -6,8 +6,8 @@ import Tooltip from '@/components/Tooltip/Tooltip'
 import { arriveTransition } from '@/components/AIWorkingCard/arrive'
 import type { SavedGradient } from '../gradients'
 
-/** Slots 1 and 2 are the company image in light and dark mode (slotMode in brandTheme.ts). */
-const MODE_LABEL: Record<number, string> = { 1: 'Light', 2: 'Dark' }
+/** Slots 1 and 2 are the company image in light and dark mode, 3 and 4 likewise (slotMode in brandTheme.ts). */
+const MODE_LABEL: Record<number, string> = { 1: 'Light', 2: 'Dark', 3: 'Light', 4: 'Dark' }
 
 /* The saved gradients, as a strip under the preview: the saved slots in order
    (no gaps), the active slot when it is a new empty one, then a + tile that adds

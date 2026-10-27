@@ -66,8 +66,17 @@ export const DEFAULT_GRADIENT_SETS: Record<'light' | 'dark', ThemeSet> = {
   dark: { header: '#20222A', nav: '#9EA4B3', selected: '#9EA4B3' },
 }
 
-/** Gradient Studio slot 1 is the light-mode company image, slot 2 the dark-mode one. */
-export const slotMode = (slot: number): 'light' | 'dark' => (slot === 2 ? 'dark' : 'light')
+/** The 5Mins theme colours as Edit Theme shows them, for Gradient Studio slots 3 (light) and 4 (dark). */
+export const STUDIO_THEME_SETS: Record<'light' | 'dark', ThemeSet> = {
+  light: { header: '#F7F7F8', nav: '#454C5E', selected: '#FFBB38' },
+  dark: { header: '#20222A', nav: '#BFC2CC', selected: '#FFBB38' },
+}
+
+/** Gradient Studio slot 1 is the light-mode company image, slot 2 the dark-mode one; slots 3 and 4 likewise light and dark. */
+export const slotMode = (slot: number): 'light' | 'dark' => (slot === 2 || slot === 4 ? 'dark' : 'light')
+
+/** The colours a Studio slot is previewed and saved in: the company image greys for slots 1 and 2, the 5Mins theme colours for 3 and 4. */
+export const slotSet = (slot: number): ThemeSet => (slot === 3 || slot === 4 ? STUDIO_THEME_SETS : DEFAULT_GRADIENT_SETS)[slotMode(slot)]
 
 /** The colours a gradient is drawn in for a mode: a custom theme's own set for that
     mode, or the 5Mins dark set whatever the mode. */

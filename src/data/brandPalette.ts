@@ -139,6 +139,12 @@ export const toLch = hexToLch
 /** #rrggbb for an OKLCH colour, chroma lowered to fit sRGB. */
 export const fromLch = lchToHex
 
+/** The colour made lighter (positive) or darker (negative) by this much OKLCH lightness, hue and chroma kept. */
+export function shade(hex: string, lightness: number): string {
+  const c = hexToLch(hex)
+  return lchToHex({ ...c, l: clamp(c.l + lightness, 0.05, 0.99) })
+}
+
 /** The colours a recipe is drawn in for a theme set. Dithering and the canvas patterns
     take the three theme colours as they are (header bar, navigation items, selected
     item), so admins see their own colours; the mesh and grain gradients take the

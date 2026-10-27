@@ -12,14 +12,16 @@ import {
   ShaderMount,
 } from '@paper-design/shaders'
 import { DITHER_BACK, DITHER_DOTS, grainColours, isCanvasPattern, type GradientRecipe } from '@/pages/gradient-lab/recipe'
-import { fromLch, toLch } from './brandPalette'
+import { shade, toLch } from './brandPalette'
 import { drawPattern, playPattern } from './canvasPatterns'
 import { glowFragmentShader, glowUniforms } from './glowShader'
+import { finishedIcon, iconOrigin } from './iconDither'
+import { offsetsFragmentShader, offsetsUniforms } from './offsetsShader'
 import { applyPixelFinish } from './pixelFinish'
 import { applySoftFinish, paintNoise } from './softFinish'
 
 /* Renders a gradient recipe in a tenant's colours with Paper Shaders (mesh
-   or grain gradient, or dithering), the light form (glowShader.ts, on Paper's mount) or a canvas pattern (canvasPatterns.ts), in the admin's browser: a 512 x 512 JPEG still for the company
+   or grain gradient, or dithering), the light form (glowShader.ts) and offsets (offsetsShader.ts), on Paper's mount, or a canvas pattern (canvasPatterns.ts), in the admin's browser: a 512 x 512 JPEG still for the company
    image, or a live hidden mount that companyShader.ts copies into cards. Each
    mount is one WebGL context, so stills render one at a time. */
 
@@ -66,6 +68,9 @@ async function shaderFor(recipe: GradientRecipe, colours: string[]) {
   if (recipe.shader === 'glow') {
     return { fragment: glowFragmentShader, uniforms: { ...sizing, ...glowUniforms(recipe, colours) } }
   }
+  if (recipe.shader === 'offsets') {
+    return { fragment: offsetsFragmentShader, uniforms: { ...sizing, ...offsetsUniforms(recipe, colours) } }
+  }
   if (recipe.shader === 'grain') {
     const [back, colors] = grainColours(colours)
     return {
@@ -108,22 +113,17 @@ export interface HiddenMount {
 
 /** How far the backdrop's noise moves each pixel either side of mid grey (soft-light). */
 const BACKDROP_NOISE = 18
-/** How far (OKLCH lightness) the dots move away from the backdrop: darker on a light one, lighter on a dark one. */
-const DOT_CONTRAST = 0.25
-
-/** The colour pushed away from the backdrop's lightness, for the dots to stand out. */
-function contrastDot(colour: string, lightBackdrop: boolean) {
-  const c = toLch(colour)
-  return fromLch({ ...c, l: Math.min(0.98, Math.max(0.05, c.l + (lightBackdrop ? -DOT_CONTRAST : DOT_CONTRAST))) })
-}
+/** The dots' gradient, top left to bottom right, as OKLCH lightness steps from the selected item colour:
+    darker shades on a light backdrop so they stand out from it, lighter to slightly darker on a dark one. */
+const DOT_SHADES = { light: [0, -0.15, -0.3], dark: [0.12, 0, -0.15] }
 
 let dotLayer: HTMLCanvasElement | null = null
 
 /**
- * Draws a dithering frame: a backdrop of one soft blob per theme colour, centred where the
- * recipe puts them (`blobs`, 0-1 of the frame), with a little noise, then
- * the shader's white dots coloured by the three colours the other way round (selected item
- * top left through navigation to header bar bottom right). `crop` is the part of the
+ * Draws a dithering frame: a backdrop of soft blobs in the header bar and navigation items
+ * colours, centred where the recipe puts them (`blobs`, 0-1 of the frame), with a little noise, then
+ * the shader's white dots coloured in shades of the selected item (DOT_SHADES): the selected
+ * item colour is the sphere's alone, never the backdrop's. `crop` is the part of the
  * square shader frame to use, for surfaces that cover a different shape.
  */
 export function drawDither(
@@ -140,10 +140,9 @@ export function drawDither(
   ctx.setTransform(1, 0, 0, 1, 0, 0)
   ctx.fillStyle = header
   ctx.fillRect(0, 0, w, h)
-  // Header bar last and smaller, so its corner stays clear of the other two.
+  // Header bar last and smaller, so its corner stays clear of navigation's.
   const layers: [string, [number, number], number][] = [
     [nav, blobs[1], 0.8],
-    [selected, blobs[2], 0.8],
     [header, blobs[0], 0.5],
   ]
   for (const [c, [x, y], r] of layers) {
@@ -167,12 +166,10 @@ export function drawDither(
   d.clearRect(0, 0, w, h)
   d.drawImage(source, ...crop, 0, 0, w, h)
   d.globalCompositeOperation = 'source-in'
-  // The header bar fills the backdrop: on a light one (light mode) the dots go darker, on a dark one lighter.
-  const lightBackdrop = toLch(header).l > 0.5
+  // The header bar fills the backdrop: on a light one (light mode) the shades run darker.
+  const steps = DOT_SHADES[toLch(header).l > 0.5 ? 'light' : 'dark']
   const g = d.createLinearGradient(0, 0, w, h)
-  g.addColorStop(0, contrastDot(selected, lightBackdrop))
-  g.addColorStop(0.5, contrastDot(nav, lightBackdrop))
-  g.addColorStop(1, contrastDot(header, lightBackdrop))
+  steps.forEach((step, i) => g.addColorStop(i / (steps.length - 1), shade(selected, step)))
   d.fillStyle = g
   d.fillRect(0, 0, w, h)
   ctx.drawImage(dotLayer, 0, 0)
@@ -216,6 +213,14 @@ export async function hiddenMount(recipe: GradientRecipe, colours: string[], css
   }
 }
 
+/** The recipe's finished icon over the finished gradient. */
+async function drawIcon(ctx: CanvasRenderingContext2D, recipe: GradientRecipe, px: number, themeColours?: string[]) {
+  const icon = await finishedIcon(recipe, px, themeColours)
+  const { x, y } = iconOrigin(recipe, px)
+  ctx.imageSmoothingEnabled = false
+  ctx.drawImage(icon, x, y, Math.round(px * recipe.iconSize), Math.round(px * recipe.iconSize))
+}
+
 const nextFrame = () => new Promise<void>((r) => requestAnimationFrame(() => r()))
 
 let queue: Promise<unknown> = Promise.resolve()
@@ -245,6 +250,7 @@ export function renderStill(
       else ctx.drawImage(canvas, 0, 0, STILL_PX, STILL_PX)
       applySoftFinish(ctx, recipe)
       applyPixelFinish(ctx, recipe, finishColours)
+      if (recipe.icon) await drawIcon(ctx, recipe, STILL_PX, finishColours)
       return out.toDataURL(type, 0.92)
     } finally {
       dispose()

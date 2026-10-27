@@ -23,6 +23,14 @@
   touch-action: none;
 }
 
+/* The recipe's icon over the gradient; LabCanvas sets its size and place from the recipe. */
+.gl-cv__icon {
+  position: absolute;
+  /* Keeps the dither cells square and crisp. */
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
 .gl-cv__surface--pannable {
   cursor: grab;
 }
