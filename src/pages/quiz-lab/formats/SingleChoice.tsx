@@ -2,7 +2,7 @@ import { useContext, useId, useState } from 'react'
 import { CloseCircle, TickCircle } from 'iconsax-react'
 import Checkbox from '@/components/Checkbox/Checkbox'
 import Radio from '@/components/Radio/Radio'
-import { gradeImageChoice, wrongAnswerCount, type SingleChoiceQuestion } from '../quizData'
+import { gradeImageChoice, type SingleChoiceQuestion } from '../quizData'
 import FeedbackFooter, { QuizAdvanceContext, QuizFooterLayoutContext } from '../components/FeedbackFooter'
 import ResultBanner from '../components/ResultBanner'
 import type { FeedbackStatus } from '../components/FeedbackFooter'
@@ -22,8 +22,10 @@ import { cue } from '../quizSound'
  *
  * With several correct options (the admin's "Multiple correct options"), each row carries
  * a checkbox and the stem says "Select all that apply". Grading is all or nothing, as on
- * Image Choice, and the collapse keeps every pick, all green or all red, so no single
- * pick gives away whether it was one of the answers.
+ * Image Choice. A right answer collapses to every pick, green. A wrong one says "Not
+ * quite" and nothing more (no count) and collapses to the wrong picks only, red with a
+ * cross; when every pick was right but some answers were missed, the picks stay, red with
+ * no cross, since none of them was wrong.
  *
  * A poll is the same screen with nothing to mark (`correctIndex: -1`): it asks, so
  * there is no Check, no grading and no collapse — the pick is the whole interaction.
@@ -33,8 +35,6 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
   const [picked, setPicked] = useState<number[]>([])
   const [status, setStatus] = useState<FeedbackStatus>('idle')
   const [announce, setAnnounce] = useState('')
-  /* As on Image Choice: a wrong answer with several correct options says how many were right. */
-  const [count, setCount] = useState<string>()
   /* Names the radio group. Two questions on one screen would otherwise share a group
      and steal each other's selection. */
   const group = useId()
@@ -60,17 +60,14 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
     if (picked.length === 0) return
     const correct = question.correctIndices ?? [question.correctIndex]
     const right = multiple ? gradeImageChoice(picked, correct).right : picked[0] === question.correctIndex
-    const next = !right && multiple ? wrongAnswerCount(picked, correct) : undefined
     setStatus(right ? 'correct' : 'incorrect')
-    setCount(next)
-    setAnnounce(right ? 'Correct' : next ? `Not quite. ${next}` : 'Not quite')
+    setAnnounce(right ? 'Correct' : 'Not quite')
     cue(right ? 'correct' : 'incorrect')
   }
 
   function reset() {
     setPicked([])
     setStatus('idle')
-    setCount(undefined)
     setAnnounce('')
     setAttempt((a) => a + 1)
     cue('continue')
@@ -87,7 +84,7 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
     return classes.join(' ')
   }
 
-  const result = <ResultBanner status={status} title={count && 'Not quite'} detail={count} explanation={question.explanation} />
+  const result = <ResultBanner status={status} explanation={question.explanation} />
 
   return (
     <div className="ql-screen" key={attempt}>
@@ -97,24 +94,33 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
           {multiple && <span className="ql-imgchoice__hint">Select all that apply</span>}
         </div>
 
-        {locked && picked.length > 0 ? (
+        {locked && picked.length > 0 ? (() => {
+          const correct = question.correctIndices ?? [question.correctIndex]
+          const wrongPicks = picked.filter((i) => !correct.includes(i))
+          // A wrong multi-pick answer shows only the wrong picks; with none (answers missed), every pick, unmarked.
+          const shown = multiple && status === 'incorrect' && wrongPicks.length > 0 ? wrongPicks : picked
+          const marked = !(multiple && status === 'incorrect' && wrongPicks.length === 0)
+          return (
           /* The graded answer, alone. Not a button any more — there is nothing left to
              choose, and the icon takes the radio's place so the row keeps its shape. */
           <div className="ql-choice__options">
-            {[...picked].sort((a, b) => a - b).map((index) => (
+            {[...shown].sort((a, b) => a - b).map((index) => (
               <div key={index} className={optionClass(index)}>
-                <span className="ql-choice__mark" aria-hidden="true">
-                  {status === 'correct' ? (
-                    <TickCircle size={20} color="currentColor" variant="Linear" />
-                  ) : (
-                    <CloseCircle size={20} color="currentColor" variant="Linear" />
-                  )}
-                </span>
+                {marked && (
+                  <span className="ql-choice__mark" aria-hidden="true">
+                    {status === 'correct' ? (
+                      <TickCircle size={20} color="currentColor" variant="Linear" />
+                    ) : (
+                      <CloseCircle size={20} color="currentColor" variant="Linear" />
+                    )}
+                  </span>
+                )}
                 <span className="ql-choice__label">{question.options[index]}</span>
               </div>
             ))}
           </div>
-        ) : (
+          )
+        })() : (
           <div className="ql-choice__options" role={multiple ? 'group' : 'radiogroup'} aria-label="Options">
             {question.options.map((option, index) => (
               /* A label rather than a button: the DS Radio is a real input, which a
