@@ -41,7 +41,8 @@
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true,
     "figma@claude-plugins-official": true,
-    "ponytail@ponytail": true
+    "ponytail@ponytail": true,
+    "claude-memory@anthropic-plugin-directory": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
