@@ -57,7 +57,7 @@ function tick() {
     const sw = w * crop
     const sh = h * crop
     const rect: [number, number, number, number] = [(source.width - sw) / 2, (source.height - sh) / 2, sw, sh]
-    if (m.dither) drawDither(s.ctx, source, m.dither, s.input.recipe.blobs, w, h, rect)
+    if (m.dither) drawDither(s.ctx, source, m.dither, s.input.recipe, w, h, rect)
     else s.ctx.drawImage(source, ...rect, 0, 0, w, h)
     applySoftFinish(s.ctx, s.input.recipe)
     applyPixelFinish(s.ctx, s.input.recipe, s.input.finish)

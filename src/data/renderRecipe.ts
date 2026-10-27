@@ -122,15 +122,15 @@ let dotLayer: HTMLCanvasElement | null = null
 /**
  * Draws a dithering frame: a backdrop of soft blobs in the header bar and navigation items
  * colours, centred where the recipe puts them (`blobs`, 0-1 of the frame), with a little noise, then
- * the shader's white dots coloured in shades of the selected item (DOT_SHADES): the selected
- * item colour is the sphere's alone, never the backdrop's. `crop` is the part of the
+ * the shader's white dots coloured in shades of one theme colour (`dotColour`, the selected item
+ * by default; DOT_SHADES): that colour is the sphere's alone, never the backdrop's. `crop` is the part of the
  * square shader frame to use, for surfaces that cover a different shape.
  */
 export function drawDither(
   ctx: CanvasRenderingContext2D,
   source: HTMLCanvasElement,
   [header, nav, selected]: string[],
-  blobs: [number, number][],
+  { blobs, ditherColour }: Pick<GradientRecipe, 'blobs' | 'ditherColour'>,
   w: number,
   h: number,
   crop: [number, number, number, number] = [0, 0, source.width, source.height],
@@ -169,7 +169,8 @@ export function drawDither(
   // The header bar fills the backdrop: on a light one (light mode) the shades run darker.
   const steps = DOT_SHADES[toLch(header).l > 0.5 ? 'light' : 'dark']
   const g = d.createLinearGradient(0, 0, w, h)
-  steps.forEach((step, i) => g.addColorStop(i / (steps.length - 1), shade(selected, step)))
+  const dot = { header, nav, selected }[ditherColour]
+  steps.forEach((step, i) => g.addColorStop(i / (steps.length - 1), shade(dot, step)))
   d.fillStyle = g
   d.fillRect(0, 0, w, h)
   ctx.drawImage(dotLayer, 0, 0)
@@ -246,7 +247,7 @@ export function renderStill(
       out.width = STILL_PX
       out.height = STILL_PX
       const ctx = out.getContext('2d')!
-      if (dither) drawDither(ctx, canvas, dither, recipe.blobs, STILL_PX, STILL_PX)
+      if (dither) drawDither(ctx, canvas, dither, recipe, STILL_PX, STILL_PX)
       else ctx.drawImage(canvas, 0, 0, STILL_PX, STILL_PX)
       applySoftFinish(ctx, recipe)
       applyPixelFinish(ctx, recipe, finishColours)

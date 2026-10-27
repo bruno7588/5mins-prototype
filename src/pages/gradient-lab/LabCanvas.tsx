@@ -107,7 +107,7 @@ function FinishedShaderCanvas({ recipe, colours, finishColours, speed, size }: C
     const frame = () => {
       const m = mountRef.current
       if (m && m.canvas.width > 0) {
-        if (m.dither) drawDither(ctx, m.canvas, m.dither, latest.current.recipe.blobs, canvas.width, canvas.height)
+        if (m.dither) drawDither(ctx, m.canvas, m.dither, latest.current.recipe, canvas.width, canvas.height)
         else ctx.drawImage(m.canvas, 0, 0, canvas.width, canvas.height)
         applySoftFinish(ctx, latest.current.recipe)
         applyPixelFinish(ctx, latest.current.recipe, latest.current.finishColours)

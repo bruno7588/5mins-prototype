@@ -57,13 +57,14 @@ export const getBrandTheme = () => current
 /** The theme in effect: the tenant's, or the 5Mins one. */
 export const effectiveTheme = (theme: BrandTheme | null = current) => theme ?? DEFAULT_THEME
 
-/** The 5Mins colours the gradients use, neutral greys per mode. Light: header bar
-    --neutral-200, navigation --neutral-500, selected --neutral-800. Dark: header bar
-    --neutral-800, navigation --neutral-300, selected --neutral-300. Tenants with their own
-    theme use their colours instead. The canvas needs the hex itself. */
+/** The 5Mins colours the gradients use: neutral greys for the header bar and navigation, and the
+    5Mins amber for the selected item, so it shows on the sphere. Light: header bar --neutral-200,
+    navigation --neutral-500. Dark: header bar --neutral-800, navigation --neutral-300. Selected
+    #FFBB38 in both, as Edit Theme shows it. Tenants with their own theme use their colours
+    instead. The canvas needs the hex itself. */
 export const DEFAULT_GRADIENT_SETS: Record<'light' | 'dark', ThemeSet> = {
-  light: { header: '#BFC2CC', nav: '#454C5E', selected: '#20222A' },
-  dark: { header: '#20222A', nav: '#9EA4B3', selected: '#9EA4B3' },
+  light: { header: '#BFC2CC', nav: '#454C5E', selected: '#FFBB38' },
+  dark: { header: '#20222A', nav: '#9EA4B3', selected: '#FFBB38' },
 }
 
 /** The 5Mins theme colours as Edit Theme shows them, for Gradient Studio slots 3 (light) and 4 (dark). */

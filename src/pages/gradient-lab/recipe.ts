@@ -19,6 +19,9 @@ export type GrainShape = (typeof GRAIN_SHAPES)[number]
 export const DITHER_SHAPES = ['simplex', 'warp', 'dots', 'wave', 'ripple', 'swirl', 'sphere'] as const
 export type DitherShape = (typeof DITHER_SHAPES)[number]
 export const DITHER_TYPES = ['random', '2x2', '4x4', '8x8'] as const
+/** The theme colour dithering's sphere is shaded in. */
+export const DITHER_COLOURS = ['header', 'nav', 'selected'] as const
+export type DitherColour = (typeof DITHER_COLOURS)[number]
 export type DitherType = (typeof DITHER_TYPES)[number]
 /** The shader kinds drawn in 2D canvas rather than by Paper Shaders. */
 export const CANVAS_PATTERNS = ['sine', 'sweep', 'rain', 'halftone', 'cubes', 'kaleido', 'truchet', 'tunnel', 'contours', 'bloom', 'confetti', 'scan', 'ripple'] as const
@@ -62,6 +65,8 @@ export interface GradientRecipe {
   ditherShape: DitherShape
   ditherType: DitherType
   pxSize: number
+  /** The theme colour the sphere's dots are shaded in. */
+  ditherColour: DitherColour
   /** Sine stack only. Gap between lines and wavelength, as % of the frame (2-20, 20-200). */
   sineSpacing: number
   sineWavelength: number
@@ -302,6 +307,7 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   ditherShape: 'warp',
   ditherType: '4x4',
   pxSize: 2,
+  ditherColour: 'selected',
   sineSpacing: 6.2,
   sineWavelength: 78,
   sinePhase: 0.42,
@@ -518,6 +524,7 @@ export function parseRecipe(json: unknown): GradientRecipe {
     ditherShape: DITHER_SHAPES.includes(json.ditherShape as DitherShape) ? (json.ditherShape as DitherShape) : d.ditherShape,
     ditherType: DITHER_TYPES.includes(json.ditherType as DitherType) ? (json.ditherType as DitherType) : d.ditherType,
     pxSize: num(json, 'pxSize', d.pxSize, 1, 20),
+    ditherColour: DITHER_COLOURS.includes(json.ditherColour as DitherColour) ? (json.ditherColour as DitherColour) : d.ditherColour,
     sineSpacing: num(json, 'sineSpacing', d.sineSpacing, 2, 20),
     sineWavelength: num(json, 'sineWavelength', d.sineWavelength, 20, 200),
     sinePhase: num(json, 'sinePhase', d.sinePhase, 0.05, 1.5),
