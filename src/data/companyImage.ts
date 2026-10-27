@@ -22,7 +22,7 @@ export type CompanyImage =
   | { kind: 'upload'; src: string }
 
 /** Bump when a shader changes how it draws, so stored stills render again. */
-const RENDER_VERSION = 2
+const RENDER_VERSION = 5
 
 /** What a default's still depends on: its recipe and the tenant's colours for that mode. */
 export const stillKey = (recipe: GradientRecipe, mode: Theme = 'light') => JSON.stringify([RENDER_VERSION, recipe, gradientSet(mode)])
@@ -86,24 +86,27 @@ export function setCompanyDefault(id: string, still?: Still, mode: Theme = 'ligh
   void regenerate()
 }
 
-/** The tenant's one generated image is always the first Studio gradient (older picks of other slots move to it). */
-const defaultFor = (_id: string, defaults: CompanyDefault[]) => defaults[0]
+/** The tenant's generated image for a mode: Studio gradient 1 in light mode, gradient 2 in dark
+    (gradient 1 until there is a second). Older picks of other slots move to these. */
+export const defaultForMode = (mode: Theme, defaults: CompanyDefault[] = getCompanyDefaults()) =>
+  (mode === 'dark' ? defaults.find((d) => d.id === 'default-02') : undefined) ?? defaults.find((d) => d.id === 'default-01') ?? defaults[0]
 
 /* Renders the current default again when its theme or recipe has moved on.
    Uploads are never touched. */
 async function regenerate() {
   const image = current
   if (image.kind !== 'default') return
-  const d = defaultFor(image.id, getCompanyDefaults())
-  if (!d) return
-  const fresh = (s: Partial<Still> | undefined, mode: Theme): s is Still => Boolean(s?.src) && s!.key === stillKey(d.recipe, mode)
-  const light = fresh(image, 'light') ? { src: image.src, key: image.key } : null
-  const dark = fresh(image.dark, 'dark') ? image.dark : null
+  const dl = defaultForMode('light')
+  const dd = defaultForMode('dark')
+  if (!dl || !dd) return
+  const fresh = (s: Partial<Still> | undefined, d: CompanyDefault, mode: Theme): s is Still => Boolean(s?.src) && s!.key === stillKey(d.recipe, mode)
+  const light = fresh(image, dl, 'light') ? { src: image.src, key: image.key } : null
+  const dark = fresh(image.dark, dd, 'dark') ? image.dark : null
   if (light && dark) return
   try {
-    const [l, k] = await Promise.all([light ?? tenantStill(d, 'light'), dark ?? tenantStill(d, 'dark')])
+    const [l, k] = await Promise.all([light ?? tenantStill(dl, 'light'), dark ?? tenantStill(dd, 'dark')])
     // Only if nothing else was picked meanwhile.
-    if (current === image) save({ kind: 'default', id: d.id, ...l, dark: k })
+    if (current === image) save({ kind: 'default', id: dl.id, ...l, dark: k })
   } catch {
     /* no WebGL: keep the last still */
   }
@@ -119,7 +122,7 @@ export function companyImageSrc(image: CompanyImage, mode: Theme = 'light', defa
   if (image.kind === 'upload') return image.src
   // Until a mode's version renders: the other mode's, then the Studio still.
   const src = mode === 'dark' ? (image.dark?.src ?? image.src) : (image.src ?? image.dark?.src)
-  return src ?? defaultFor(image.id, defaults)?.src ?? ''
+  return src ?? defaultForMode(mode, defaults)?.src ?? ''
 }
 
 /** The company image for the surface's mode: the app's, or dark inside the mobile PhoneFrame. */

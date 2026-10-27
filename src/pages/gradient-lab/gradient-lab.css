@@ -139,6 +139,41 @@
   border-radius: var(--radius-sm);
 }
 
+/* Copy parameters (header toolbar) and Save version (top of the panel body) side by side.
+   DialKit renders them in different blocks and clips the body, so the toolbar leaves the
+   header and drops onto the version actions' row (left half) while Save version keeps
+   the right half. The header stops sticking so the moved toolbar scrolls with the panel. */
+.gl-lab__dials .dialkit-folder-root {
+  position: relative;
+}
+
+.gl-lab__dials .dialkit-folder-root > .dialkit-panel-header {
+  position: static;
+}
+
+.gl-lab__dials .dialkit-panel-toolbar {
+  position: absolute;
+  /* The version actions row: header (title + spacing) above it, measured. */
+  top: 60px;
+  left: 0;
+  width: calc(50% - var(--space-xs));
+  margin: 0;
+}
+
+/* Copy parameters reads as text only, no clipboard icon. */
+.gl-lab__dials .dialkit-toolbar-add svg {
+  display: none;
+}
+
+.gl-lab__dials .dialkit-versions-actions {
+  margin-left: calc(50% + var(--space-xs));
+}
+
+.gl-lab__dials .dialkit-versions-button {
+  flex: 1;
+  height: 36px;
+}
+
 @media (max-width: 1099px) {
   .gl-lab__body {
     grid-template-columns: minmax(0, 1fr);

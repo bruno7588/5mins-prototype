@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useBrandTheme } from '@/data/brandTheme'
 import { useCompanyDefaults } from '@/data/companyDefaults'
-import { tenantColours, tenantFinishColours, useCompanyImage } from '@/data/companyImage'
+import { defaultForMode, tenantColours, tenantFinishColours, useCompanyImage } from '@/data/companyImage'
 import { attachCompanyShader } from '@/data/companyShader'
 import { useSurfaceMode } from '@/hooks/useTheme'
 import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
@@ -33,7 +33,7 @@ function CompanyImageMotion({ recipe: shown }: { recipe?: GradientRecipe } = {})
   const theme = useBrandTheme()
   const colourMode = useSurfaceMode()
   const id = image.kind === 'default' ? image.id : null
-  const recipe = shown ?? (id ? (defaults.find((d) => d.id === id) ?? defaults[0])?.recipe : undefined)
+  const recipe = shown ?? (id ? defaultForMode(colourMode, defaults)?.recipe : undefined)
   // Saved paused in the Studio: the still underneath is the image.
   const key = recipe?.playing && !reduced ? JSON.stringify([recipe, theme, colourMode]) : null
   // Stable per recipe, theme and mode, so the shader only restarts when one changes.

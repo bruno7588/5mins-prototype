@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useDialKitController, type DialConfig } from 'dialkit'
-import { DEFAULT_GRADIENT_SET, type ThemeSet } from '@/data/brandTheme'
+import { DEFAULT_GRADIENT_SETS, type ThemeSet } from '@/data/brandTheme'
 import {
   DITHER_SHAPES,
   DITHER_TYPES,
@@ -40,6 +40,8 @@ export type DialsKind = 'gradient' | 'shader'
 export interface LabState {
   recipe: GradientRecipe
   preview: ThemeSet
+  /** The mode the open slot is for: its 5Mins preview colours. */
+  mode: 'light' | 'dark'
   playing: boolean
 }
 
@@ -61,6 +63,7 @@ interface PanelValues {
     scale: number
     rotation: number
     frame: number
+    blur: number
     /** A canvas pattern's own sliders, keyed by their label (PATTERN_DIALS). */
     [dial: string]: unknown
   }
@@ -251,7 +254,7 @@ const FOLDERS: Record<DialsKind, Folder[]> = {
 }
 
 function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
-  const shape = { scale: r.scale, rotation: r.rotation, frame: r.frame }
+  const shape = { scale: r.scale, rotation: r.rotation, frame: r.frame, blur: r.blur }
   const own: Partial<Record<ShaderKind, Partial<PanelValues['Gradient']>>> = {
     mesh: { distortion: r.distortion, swirl: r.swirl },
     grain: { shape: r.shape, softness: r.softness, intensity: r.intensity },
@@ -317,6 +320,7 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
       scale: [g.scale, 0.25, 4, 0.01],
       rotation: [g.rotation, 0, 360, 1],
       frame: [g.frame, 0, MAX_FRAME, 100],
+      blur: [g.blur, 0, 10, 0.1],
       shuffle: { type: 'action', label: 'Shuffle' },
     },
     'Preview colours': {
@@ -344,7 +348,7 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
     if (action === 'Gradient.shuffle') {
       dialRef.current?.setValue('Gradient.frame', Math.round((Math.random() * MAX_FRAME) / 100) * 100)
     } else if (action === 'Preview colours.reset') {
-      const d = DEFAULT_GRADIENT_SET
+      const d = DEFAULT_GRADIENT_SETS[latest.current.lab.mode]
       dialRef.current?.setValues({ 'Preview colours': { 'header bar': d.header, 'navigation items': d.nav, 'selected item': d.selected } } as never)
     }
   }, [])

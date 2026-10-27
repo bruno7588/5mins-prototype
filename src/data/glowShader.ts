@@ -205,6 +205,15 @@ const hueTurn = (a: number, b: number) => ((b - a + 540) % 360) - 180
     value of one of them, plus one step through the hue between navigation and selected. */
 export function glowRamp(colours: string[]): { ramp: string[]; fringe: string } {
   const [header, nav, selected] = colours.map(toLch)
+  // An all-grey theme (the 5Mins one) stays grey and keeps its own order: the header bar is the
+  // ground, navigation the body, the selected item the highlight, pushed a little past it.
+  // So a light set reads as dark forms on a pale ground, and a dark set the other way round.
+  if ([header, nav, selected].every((x) => x.c < NEUTRAL_CHROMA)) {
+    const grey = (l: number): Lch => ({ l: clamp(l, 0.04, 0.98), c: nav.c, h: nav.h })
+    const mix = (a: Lch, b: Lch) => (a.l + b.l) / 2
+    const hot = selected.l + (selected.l - nav.l) * 0.5
+    return { ramp: [header.l, mix(header, nav), nav.l, mix(nav, selected), selected.l, hot].map((l) => fromLch(grey(l))), fringe: fromLch(grey(mix(nav, selected))) }
+  }
   // A grey selected item falls back to the 5Mins amber; a grey navigation colour leans off the selected hue.
   const s = selected.c < NEUTRAL_CHROMA ? toLch(DEFAULT_THEME.light.selected) : selected
   const n: Lch = nav.c < NEUTRAL_CHROMA ? { l: nav.l, c: 0.12, h: (s.h + 320) % 360 } : nav

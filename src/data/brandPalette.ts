@@ -96,6 +96,12 @@ const lead = (x: Lch): Lch => ({ l: clamp(x.l, ...LEAD_L), c: Math.max(x.c, LEAD
 /** Shader colours for a theme set: accent, support, darker accent, lighter accent, second support (or a tint). `count` is 3-5. */
 export function brandPalette(set: ThemeSet, count = 4): string[] {
   const n = clamp(Math.round(count), 3, 5)
+  const greys = [set.selected, set.nav, set.header].map(hexToLch)
+  // An all-grey theme (the 5Mins one) stays grey: its three greys, then two lighter steps of the selected one.
+  if (greys.every((x) => x.c < NEUTRAL_CHROMA)) {
+    const [s] = greys
+    return [...greys, { ...s, l: Math.min(MAX_LIGHTNESS, s.l + 0.2) }, { ...s, l: Math.min(MAX_LIGHTNESS, s.l + 0.4) }].slice(0, n).map(lchToHex)
+  }
   const fallback = hexToLch(DEFAULT_THEME.light.selected)
   const picked = hexToLch(set.selected)
   const accent = lead(picked.c < NEUTRAL_CHROMA ? fallback : picked)

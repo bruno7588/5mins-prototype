@@ -1,4 +1,4 @@
-import { useRef, type KeyboardEvent, type PointerEvent } from 'react'
+import { useId, useRef, type KeyboardEvent, type PointerEvent } from 'react'
 
 /* Focal point pad: a square with a draggable marker for gradient.offsetX/Y
    (-1 to 1 each, y down). The DS has no 2D pad, so this is page-local
@@ -16,9 +16,12 @@ interface Props {
   x: number
   y: number
   onChange: (x: number, y: number) => void
+  /** What the marker moves, for screen readers. */
+  label?: string
 }
 
-function FocalPad({ x, y, onChange }: Props) {
+function FocalPad({ x, y, onChange, label = 'Focal point' }: Props) {
+  const hintId = useId()
   const padRef = useRef<HTMLDivElement>(null)
   const thumbRef = useRef<HTMLDivElement>(null)
 
@@ -76,17 +79,17 @@ function FocalPad({ x, y, onChange }: Props) {
           style={{ left: `${((x + 1) / 2) * 100}%`, top: `${((y + 1) / 2) * 100}%` }}
           role="slider"
           tabIndex={0}
-          aria-label="Focal point"
+          aria-label={label}
           aria-valuemin={-1}
           aria-valuemax={1}
           aria-valuenow={x}
           aria-valuetext={`X ${fmt(x)}, Y ${fmt(y)}`}
-          aria-describedby="gl-pad-hint"
+          aria-describedby={hintId}
           onKeyDown={onKeyDown}
         />
       </div>
       <p className="gl-pad__readout" aria-hidden="true">{readout}</p>
-      <p id="gl-pad-hint" className="gl-visually-hidden">
+      <p id={hintId} className="gl-visually-hidden">
         Arrow keys move the point, Shift moves it further, Home centres it.
       </p>
     </div>

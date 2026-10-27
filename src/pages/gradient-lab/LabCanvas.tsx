@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
-import { Dithering, GrainGradient, MeshGradient } from '@paper-design/shaders-react'
+import { GrainGradient, MeshGradient } from '@paper-design/shaders-react'
 import { drawPattern, patternTime } from '@/data/canvasPatterns'
 import { applyPixelFinish } from '@/data/pixelFinish'
-import { hiddenMount, paintBackdrop, type HiddenMount } from '@/data/renderRecipe'
-import { ditherBackdropCss, ditherProps, grainProps, isCanvasPattern, meshProps, type GradientRecipe } from './recipe'
+import { applySoftFinish } from '@/data/softFinish'
+import { drawDither, hiddenMount, type HiddenMount } from '@/data/renderRecipe'
+import { grainProps, isCanvasPattern, meshProps, type GradientRecipe } from './recipe'
 import './lab-canvas.css'
 
 /* Live preview of a recipe in a set of colours (Paper Shaders' MeshGradient, GrainGradient or Dithering,
@@ -57,6 +58,7 @@ function PatternCanvas({ recipe, colours, finishColours, speed, size }: CanvasPr
       last = now
       if (v > 0 || dirty.current) {
         drawPattern(ctx, r, c, patternTime(r, elapsed, 1))
+        applySoftFinish(ctx, r)
         applyPixelFinish(ctx, r, f)
       }
       dirty.current = false
@@ -104,8 +106,9 @@ function FinishedShaderCanvas({ recipe, colours, finishColours, speed, size }: C
     const frame = () => {
       const m = mountRef.current
       if (m && m.canvas.width > 0) {
-        if (m.backdrop) paintBackdrop(ctx, m.backdrop, canvas.width, canvas.height)
-        ctx.drawImage(m.canvas, 0, 0, canvas.width, canvas.height)
+        if (m.dither) drawDither(ctx, m.canvas, m.dither, latest.current.recipe.blobs, canvas.width, canvas.height)
+        else ctx.drawImage(m.canvas, 0, 0, canvas.width, canvas.height)
+        applySoftFinish(ctx, latest.current.recipe)
         applyPixelFinish(ctx, latest.current.recipe, latest.current.finishColours)
       }
       raf = requestAnimationFrame(frame)
@@ -202,10 +205,8 @@ function LabCanvas({ recipe, colours, finishColours, playing, onPan, onZoom }: P
       >
         {isCanvasPattern(recipe.shader) ? (
           <PatternCanvas recipe={recipe} colours={colours} finishColours={finishColours} speed={speed} size={size} />
-        ) : recipe.finish !== 'off' || recipe.shader === 'glow' ? (
+        ) : recipe.finish !== 'off' || recipe.shader === 'glow' || recipe.shader === 'dither' || recipe.blur > 0 ? (
           <FinishedShaderCanvas recipe={recipe} colours={colours} finishColours={finishColours} speed={speed} size={size} />
-        ) : recipe.shader === 'dither' ? (
-          <Dithering {...ditherProps(recipe, colours)} speed={speed} style={{ ...fill, background: ditherBackdropCss(colours) }} />
         ) : recipe.shader === 'grain' ? (
           <GrainGradient {...grainProps(recipe, colours)} speed={speed} style={fill} />
         ) : (

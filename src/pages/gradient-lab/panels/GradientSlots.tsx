@@ -6,6 +6,9 @@ import Tooltip from '@/components/Tooltip/Tooltip'
 import { arriveTransition } from '@/components/AIWorkingCard/arrive'
 import type { SavedGradient } from '../gradients'
 
+/** Slots 1 and 2 are the company image in light and dark mode (slotMode in brandTheme.ts). */
+const MODE_LABEL: Record<number, string> = { 1: 'Light', 2: 'Dark' }
+
 /* The saved gradients, as a strip under the preview: the saved slots in order
    (no gaps), the active slot when it is a new empty one, then a + tile that adds
    one. Clicking a slot makes it the active one (and loads it when saved); the
@@ -82,7 +85,7 @@ function GradientSlots({ gradients, activeSlot, saving, hasDraft, canSave, onSel
                 type="button"
                 className={`gl-slots__slot${saved ? ' gl-slots__slot--saved' : ''}${isActive ? ' gl-slots__slot--active' : ''}${slot === dragSlot ? ' gl-slots__slot--dragging' : ''}`}
                 aria-pressed={isActive}
-                aria-label={saved ? `Gradient ${slot}, saved. Open it` : `Gradient ${slot}, empty`}
+                aria-label={`Gradient ${slot}${MODE_LABEL[slot] ? ` (${MODE_LABEL[slot].toLowerCase()} mode)` : ''}, ${saved ? 'saved. Open it' : 'empty'}`}
                 draggable={Boolean(saved)}
                 onDragStart={(e) => {
                   e.dataTransfer.effectAllowed = 'move'
@@ -97,6 +100,7 @@ function GradientSlots({ gradients, activeSlot, saving, hasDraft, canSave, onSel
                   <span className="gl-slots__number">{slot}</span>
                 )}
               </button>
+              {MODE_LABEL[slot] && <span className="gl-slots__mode" aria-hidden="true">{MODE_LABEL[slot]}</span>}
               {isActive && (canSave || saved) && (
                 <div className="gl-slots__tools">
                   {canSave && (

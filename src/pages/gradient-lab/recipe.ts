@@ -225,9 +225,13 @@ export interface GradientRecipe {
   /** Canvas patterns only. How far the marks move from flat navigation items and selected
       item colours into a slowly drifting blend of the two (0-1); the header bar stays flat. */
   flow: number
+  /** Dithering only. The backdrop's blob centres, 0-1 of the frame (y down): header bar, navigation items, selected item. */
+  blobs: [number, number][]
   /** The pixel finish over any type, and its pixel size as % of the frame (0.3-4). */
   finish: Finish
   finishPixel: number
+  /** Blur over the whole frame, % of the frame (0-10). */
+  blur: number
   /** Animation speed; 0 holds still. 0-3 */
   speed: number
   /** Saved with the Studio's play switch off: the company image stays a still. */
@@ -367,8 +371,14 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   glowHaze: 0.4,
   glowLight: -40,
   flow: 1,
+  blobs: [
+    [0.1, 0.05],
+    [0.9, 0.15],
+    [0.15, 0.95],
+  ],
   finish: 'off',
   finishPixel: 0.8,
+  blur: 0,
   speed: 0.6,
   playing: true,
   frame: 0,
@@ -555,8 +565,10 @@ export function parseRecipe(json: unknown): GradientRecipe {
     glowHaze: num(json, 'glowHaze', d.glowHaze, 0, 1),
     glowLight: num(json, 'glowLight', d.glowLight, -180, 180),
     flow: num(json, 'flow', d.flow, 0, 1),
+    blobs: readBlobs(json.blobs) ?? d.blobs,
     finish: FINISHES.includes(json.finish as Finish) ? (json.finish as Finish) : d.finish,
     finishPixel: num(json, 'finishPixel', d.finishPixel, 0.3, 4),
+    blur: num(json, 'blur', d.blur, 0, 10),
     speed: num(json, 'speed', d.speed, 0, 3),
     playing: json.playing !== false,
     frame: Math.round(num(json, 'frame', d.frame, 0, MAX_FRAME)),
@@ -568,6 +580,13 @@ export function parseRecipe(json: unknown): GradientRecipe {
 }
 
 /** parseRecipe, or null for anything unreadable. */
+/** Three [x, y] pairs, each 0-1, or null. */
+function readBlobs(v: unknown): [number, number][] | null {
+  if (!Array.isArray(v) || v.length !== 3) return null
+  const pairs = v.map((p) => (Array.isArray(p) && p.length === 2 && p.every((n) => typeof n === 'number' && Number.isFinite(n)) ? [Math.min(1, Math.max(0, p[0])), Math.min(1, Math.max(0, p[1]))] : null))
+  return pairs.every(Boolean) ? (pairs as [number, number][]) : null
+}
+
 export function readRecipe(json: unknown): GradientRecipe | null {
   try {
     return parseRecipe(json)
@@ -602,23 +621,6 @@ export const paletteCount = (recipe: GradientRecipe) => (usesThemeColours(recipe
     leads as the background, navigation items draw the main marks, the selected item the highlights. */
 export const patternColours = (colours: string[]) => ({ bg: colours[0], fg: colours[1] ?? colours[0], fg2: colours[2] ?? colours[0] })
 
-/** Dithering's dots: the navigation items colour, drawn on a see-through background. */
-export const ditherFront = (colours: string[]) => colours[1] ?? colours[0]
+/** Dithering draws its dots as a white mask on a see-through background; drawDither (renderRecipe.ts) colours them and paints the backdrop. */
+export const DITHER_DOTS = '#FFFFFF'
 export const DITHER_BACK = 'rgba(0, 0, 0, 0)'
-
-/** Behind the dots: the header bar, leading for the first half, then fading into the selected item in the far corner. */
-export function ditherBackdrop(colours: string[]): [from: string, to: string] {
-  return [colours[0], colours[2] ?? colours[0]]
-}
-/** Where the header bar starts fading into the selected item, along the diagonal. */
-export const DITHER_BACKDROP_HOLD = 0.5
-export const ditherBackdropCss = (colours: string[]) => {
-  const [from, to] = ditherBackdrop(colours)
-  return `linear-gradient(135deg, ${from} ${DITHER_BACKDROP_HOLD * 100}%, ${to})`
-}
-
-/** Paper Shaders Dithering props. The backdrop is painted behind them by the caller. */
-export function ditherProps(recipe: GradientRecipe, colours: string[]) {
-  const { ditherShape, ditherType, pxSize, speed, frame, scale, rotation, offsetX, offsetY } = recipe
-  return { colorBack: DITHER_BACK, colorFront: ditherFront(colours), shape: ditherShape, type: ditherType, size: pxSize, speed, frame, scale, rotation, offsetX, offsetY }
-}

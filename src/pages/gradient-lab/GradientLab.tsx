@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Gps, Shuffle } from 'iconsax-react'
+import { ArrowDown2, Gps, Shuffle } from 'iconsax-react'
 import { DialRoot } from 'dialkit'
 import 'dialkit/styles.css'
 import Button from '@/components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import { recipeColours, themeColours } from '@/data/brandPalette'
-import { DEFAULT_GRADIENT_SET, gradientSet } from '@/data/brandTheme'
+import { DEFAULT_GRADIENT_SETS, gradientSet, slotMode } from '@/data/brandTheme'
 import { renderStill } from '@/data/renderRecipe'
 import { useTheme } from '@/hooks/useTheme'
 import LabCanvas from './LabCanvas'
@@ -14,7 +14,11 @@ import ExportPanel from './panels/ExportPanel'
 import GradientSlots from './panels/GradientSlots'
 import { clearGradient, reorderGradients, saveGradient, useSavedGradients } from './gradients'
 import { DEFAULT_RECIPE, parseRecipe, type GradientRecipe } from './recipe'
+import Collapse from '@/components/Collapse/Collapse'
 import FocalPad from './panels/FocalPad'
+
+/** The dithering backdrop's blobs, in recipe.blobs order. */
+const BLOB_LABELS = ['Header bar', 'Navigation items', 'Selected item']
 import { useLabDials, type DialsKind, type LabState } from './panels/useLabDials'
 import './gradient-lab.css'
 import './panels/panels.css'
@@ -57,7 +61,7 @@ const round2 = (v: number) => Math.round(v * 100) / 100
 
 function GradientLab() {
   // Previewed in the tenant's colours by default, so recipes are judged in a real brand.
-  const [lab, setLab] = useState<LabState>(() => ({ recipe: DEFAULT_RECIPE, preview: gradientSet('light'), playing: true }))
+  const [lab, setLab] = useState<LabState>(() => ({ recipe: DEFAULT_RECIPE, preview: gradientSet('light'), mode: 'light', playing: true }))
   const update = useCallback((patch: Partial<LabState>) => setLab((prev) => ({ ...prev, ...patch })), [])
   const setRecipe = useCallback(
     (patch: Partial<LabState['recipe']>) => setLab((prev) => ({ ...prev, recipe: { ...prev.recipe, ...patch } })),
@@ -80,6 +84,9 @@ function GradientLab() {
     const nextDraft = leavingNew ? lab.recipe : draft
     if (leavingNew) setDraft(nextDraft)
     setActiveSlot(slot)
+    // Each slot previews in the 5Mins colours of the mode it is for.
+    const mode = slotMode(slot)
+    setLab((prev) => ({ ...prev, mode, preview: DEFAULT_GRADIENT_SETS[mode] }))
     const saved = list.find((g) => g.slot === slot)
     if (!saved) {
       if (nextDraft) setLab((prev) => ({ ...prev, recipe: nextDraft }))
@@ -98,7 +105,8 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, playing: lab.playing, name: `Gradient ${activeSlot}` }
-      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_GRADIENT_SET), 'image/jpeg', themeColours(DEFAULT_GRADIENT_SET))
+      const set = DEFAULT_GRADIENT_SETS[slotMode(activeSlot)]
+      const still = await renderStill(recipe, recipeColours(recipe, set), 'image/jpeg', themeColours(set))
       await saveGradient(activeSlot, recipe, still)
       if (!gradients.some((g) => g.slot === activeSlot)) setDraft(null)
       void reloadGradients()
@@ -116,7 +124,8 @@ function GradientLab() {
     setSavingSlot(true)
     try {
       const recipe = { ...lab.recipe, playing: lab.playing, name: `Gradient ${slot}` }
-      const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_GRADIENT_SET), 'image/jpeg', themeColours(DEFAULT_GRADIENT_SET))
+      const set = DEFAULT_GRADIENT_SETS[slotMode(slot)]
+      const still = await renderStill(recipe, recipeColours(recipe, set), 'image/jpeg', themeColours(set))
       await saveGradient(slot, recipe, still)
       await reloadGradients()
       setActiveSlot(slot)
@@ -168,6 +177,12 @@ function GradientLab() {
   }, [gradients])
 
   const setOffset = useCallback((x: number, y: number) => setRecipe({ offsetX: x, offsetY: y }), [setRecipe])
+
+  const [blobsOpen, setBlobsOpen] = useState(true)
+
+  /* Dithering's colour blobs: each pad's -1 to 1 maps onto 0-1 of the frame. */
+  const setBlob = (i: number, x: number, y: number) =>
+    setRecipe({ blobs: lab.recipe.blobs.map((b, j) => (j === i ? [round2((x + 1) / 2), round2((y + 1) / 2)] : b)) })
 
   /* Drag on the preview: the gradient follows the pointer. Paper applies the
      offset before scale and rotation, so a drag maps straight onto it. */
@@ -256,6 +271,45 @@ function GradientLab() {
                 </div>
               </section>
               <hr className="gl-section__divider" />
+              {lab.recipe.shader === 'dither' && (
+                <>
+                  <section className="gl-section" aria-labelledby="gl-blobs-title">
+                    <h2 id="gl-blobs-title" className="gl-section__title">
+                      <button
+                        type="button"
+                        className="gl-blobs__toggle"
+                        aria-expanded={blobsOpen}
+                        aria-controls="gl-blobs-body"
+                        onClick={() => setBlobsOpen((o) => !o)}
+                      >
+                        Colour blobs
+                        <ArrowDown2
+                          size={16}
+                          variant="Linear"
+                          color="var(--text-primary)"
+                          className={`gl-blobs__chevron${blobsOpen ? ' gl-blobs__chevron--open' : ''}`}
+                        />
+                      </button>
+                    </h2>
+                    <Collapse open={blobsOpen}>
+                    <div id="gl-blobs-body" className="gl-blobs">
+                      {BLOB_LABELS.map((name, i) => (
+                        <div key={name} className="gl-blobs__item">
+                          <span className="gl-blobs__label">{name}</span>
+                          <FocalPad
+                            label={`${name} blob`}
+                            x={lab.recipe.blobs[i][0] * 2 - 1}
+                            y={lab.recipe.blobs[i][1] * 2 - 1}
+                            onChange={(x, y) => setBlob(i, x, y)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    </Collapse>
+                  </section>
+                  <hr className="gl-section__divider" />
+                </>
+              )}
             </>
           )}
 

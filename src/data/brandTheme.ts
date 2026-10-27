@@ -57,13 +57,21 @@ export const getBrandTheme = () => current
 /** The theme in effect: the tenant's, or the 5Mins one. */
 export const effectiveTheme = (theme: BrandTheme | null = current) => theme ?? DEFAULT_THEME
 
-/** The 5Mins colours the gradients use: its dark set, in both modes, with the grey
-    navigation colour swapped for --primary-600 (the canvas needs the hex itself). */
-export const DEFAULT_GRADIENT_SET: ThemeSet = { ...DEFAULT_THEME.dark, nav: '#00AFC4' }
+/** The 5Mins colours the gradients use, neutral greys per mode. Light: header bar
+    --neutral-200, navigation --neutral-500, selected --neutral-800. Dark: header bar
+    --neutral-800, navigation --neutral-300, selected --neutral-100. Tenants with their own
+    theme use their colours instead. The canvas needs the hex itself. */
+export const DEFAULT_GRADIENT_SETS: Record<'light' | 'dark', ThemeSet> = {
+  light: { header: '#BFC2CC', nav: '#454C5E', selected: '#20222A' },
+  dark: { header: '#20222A', nav: '#9EA4B3', selected: '#DFE1E6' },
+}
+
+/** Gradient Studio slot 1 is the light-mode company image, slot 2 the dark-mode one. */
+export const slotMode = (slot: number): 'light' | 'dark' => (slot === 2 ? 'dark' : 'light')
 
 /** The colours a gradient is drawn in for a mode: a custom theme's own set for that
     mode, or the 5Mins dark set whatever the mode. */
-export const gradientSet = (mode: 'light' | 'dark', theme: BrandTheme | null = current) => (theme ? theme[mode] : DEFAULT_GRADIENT_SET)
+export const gradientSet = (mode: 'light' | 'dark', theme: BrandTheme | null = current) => (theme ? theme[mode] : DEFAULT_GRADIENT_SETS[mode])
 
 /** null resets to the 5Mins theme. */
 export function setBrandTheme(next: BrandTheme | null) {

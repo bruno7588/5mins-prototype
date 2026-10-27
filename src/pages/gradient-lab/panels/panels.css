@@ -54,6 +54,60 @@
   gap: var(--space-m);
 }
 
+/* Dithering's three colour blob pads, side by side. */
+.gl-blobs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-m);
+}
+
+/* The section title doubles as the expand / collapse control. */
+.gl-blobs__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gl-blobs__toggle:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.gl-blobs__chevron {
+  flex-shrink: 0;
+  transition: transform 300ms cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+.gl-blobs__chevron--open {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gl-blobs__chevron {
+    transition: none;
+  }
+}
+
+.gl-blobs__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.gl-blobs__label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
 .gl-focal-actions {
   display: flex;
   flex-direction: column;
@@ -211,6 +265,12 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-xs);
+}
+
+/* "Light" / "Dark" under slots 1 and 2: the company image for each mode. */
+.gl-slots__mode {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
 }
 
 /* The + tile after the last slot: same size as a slot, dashed like an empty one. */
