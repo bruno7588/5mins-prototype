@@ -123,14 +123,19 @@
   background: var(--selected);
 }
 
-/* Copy parameters: the DS filled button colours instead of DialKit's inverted chip. */
+/* Copy parameters: the same surface, text and hover as Save version beside it. */
 .gl-lab .dialkit-toolbar-primary {
-  background: var(--primary-button-background);
-  color: var(--text-button-foreground);
+  background: var(--dial-surface);
+  color: var(--dial-text-primary);
+  font-size: var(--font-size-sm);
 }
 
 .gl-lab .dialkit-toolbar-primary:hover {
-  background: var(--primary-button-background-hover);
+  background: var(--dial-surface-hover);
+}
+
+.gl-lab .dialkit-toolbar-primary:active {
+  background: var(--dial-surface-active);
 }
 
 /* The inline panel fills the column and drops the floating panel's own corner. */

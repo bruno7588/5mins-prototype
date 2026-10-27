@@ -13,10 +13,9 @@ describe('brandPalette', () => {
   it('never emits a neutral, too dark or too pale colour', () => {
     const sets = [
       DEFAULT_THEME.light,
-      { header: '#000000', nav: '#808080', selected: '#ffffff' },
       { header: '#2e2ede', nav: '#57f5c0', selected: '#e397a7' },
       { header: '#111111', nav: '#222222', selected: '#0a1a3a' },
-      { header: '#ffffff', nav: '#fafafa', selected: '#fff8e0' },
+      { header: '#ffffff', nav: '#fafafa', selected: '#ffe8a0' },
     ]
     for (const set of sets) {
       for (const hex of brandPalette(set, 5)) {
@@ -28,9 +27,15 @@ describe('brandPalette', () => {
     }
   })
 
-  it('falls back to amber when the accent is grey', () => {
-    const [accent] = brandPalette({ header: '#000000', nav: '#808080', selected: '#888888' })
+  it('falls back to amber when the accent is grey but the theme has a brand colour', () => {
+    const [accent] = brandPalette({ header: '#1F4D3A', nav: '#808080', selected: '#888888' })
     expect(hueGap(toLch(accent).h, toLch('#EDA30D').h)).toBeLessThan(3)
+  })
+
+  it('keeps an all-grey theme grey (the 5Mins greys)', () => {
+    for (const hex of brandPalette({ header: '#000000', nav: '#808080', selected: '#ffffff' }, 5)) {
+      expect(toLch(hex).c, hex).toBeLessThan(NEUTRAL_CHROMA)
+    }
   })
 
   it('pulls a clashing support hue next to the accent (red with green)', () => {

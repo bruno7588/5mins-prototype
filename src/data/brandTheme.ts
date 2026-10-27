@@ -59,11 +59,11 @@ export const effectiveTheme = (theme: BrandTheme | null = current) => theme ?? D
 
 /** The 5Mins colours the gradients use, neutral greys per mode. Light: header bar
     --neutral-200, navigation --neutral-500, selected --neutral-800. Dark: header bar
-    --neutral-800, navigation --neutral-300, selected --neutral-100. Tenants with their own
+    --neutral-800, navigation --neutral-300, selected --neutral-300. Tenants with their own
     theme use their colours instead. The canvas needs the hex itself. */
 export const DEFAULT_GRADIENT_SETS: Record<'light' | 'dark', ThemeSet> = {
   light: { header: '#BFC2CC', nav: '#454C5E', selected: '#20222A' },
-  dark: { header: '#20222A', nav: '#9EA4B3', selected: '#DFE1E6' },
+  dark: { header: '#20222A', nav: '#9EA4B3', selected: '#9EA4B3' },
 }
 
 /** Gradient Studio slot 1 is the light-mode company image, slot 2 the dark-mode one. */
