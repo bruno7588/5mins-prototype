@@ -87,7 +87,7 @@ function GradientLab() {
     }
     try {
       const recipe = parseRecipe(saved.preset)
-      setLab((prev) => ({ ...prev, recipe }))
+      setLab((prev) => ({ ...prev, recipe, playing: recipe.playing }))
     } catch (e) {
       show('error', `Couldn't open gradient ${slot}: ${(e as Error).message}`)
     }
@@ -97,7 +97,7 @@ function GradientLab() {
   const saveSlot = async () => {
     setSavingSlot(true)
     try {
-      const recipe = { ...lab.recipe, name: `Gradient ${activeSlot}` }
+      const recipe = { ...lab.recipe, playing: lab.playing, name: `Gradient ${activeSlot}` }
       const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_GRADIENT_SET), 'image/jpeg', themeColours(DEFAULT_GRADIENT_SET))
       await saveGradient(activeSlot, recipe, still)
       if (!gradients.some((g) => g.slot === activeSlot)) setDraft(null)
@@ -115,7 +115,7 @@ function GradientLab() {
     const slot = Math.max(0, ...gradients.map((g) => g.slot)) + 1
     setSavingSlot(true)
     try {
-      const recipe = { ...lab.recipe, name: `Gradient ${slot}` }
+      const recipe = { ...lab.recipe, playing: lab.playing, name: `Gradient ${slot}` }
       const still = await renderStill(recipe, recipeColours(recipe, DEFAULT_GRADIENT_SET), 'image/jpeg', themeColours(DEFAULT_GRADIENT_SET))
       await saveGradient(slot, recipe, still)
       await reloadGradients()

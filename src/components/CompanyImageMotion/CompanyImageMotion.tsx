@@ -23,7 +23,7 @@ function usePrefersReducedMotion(): boolean {
 
 /* The company image, playing: its recipe in the tenant's colours on a canvas laid
    over the still (which stays underneath as the fallback). Fills its positioned
-   parent. Renders nothing for an upload or under reduced motion. Plays in the
+   parent. Renders nothing for an upload, a recipe saved paused, or under reduced motion. Plays in the
    tenant's colours for the surface's mode (light or dark). Pass `recipe` to play
    another default instead, e.g. a tile in the image picker. */
 function CompanyImageMotion({ recipe: shown }: { recipe?: GradientRecipe } = {}) {
@@ -34,7 +34,8 @@ function CompanyImageMotion({ recipe: shown }: { recipe?: GradientRecipe } = {})
   const colourMode = useSurfaceMode()
   const id = image.kind === 'default' ? image.id : null
   const recipe = shown ?? (id ? (defaults.find((d) => d.id === id) ?? defaults[0])?.recipe : undefined)
-  const key = recipe && !reduced ? JSON.stringify([recipe, theme, colourMode]) : null
+  // Saved paused in the Studio: the still underneath is the image.
+  const key = recipe?.playing && !reduced ? JSON.stringify([recipe, theme, colourMode]) : null
   // Stable per recipe, theme and mode, so the shader only restarts when one changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const input = useMemo(() => (recipe && key ? { recipe, colours: tenantColours(recipe, colourMode), finish: tenantFinishColours(colourMode) } : null), [key])

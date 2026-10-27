@@ -230,6 +230,8 @@ export interface GradientRecipe {
   finishPixel: number
   /** Animation speed; 0 holds still. 0-3 */
   speed: number
+  /** Saved with the Studio's play switch off: the company image stays a still. */
+  playing: boolean
   /** Starting time in ms: picks the composition, and is the still. */
   frame: number
   /** Zoom, 0.25-4 */
@@ -368,6 +370,7 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   finish: 'off',
   finishPixel: 0.8,
   speed: 0.6,
+  playing: true,
   frame: 0,
   scale: 1,
   rotation: 0,
@@ -555,6 +558,7 @@ export function parseRecipe(json: unknown): GradientRecipe {
     finish: FINISHES.includes(json.finish as Finish) ? (json.finish as Finish) : d.finish,
     finishPixel: num(json, 'finishPixel', d.finishPixel, 0.3, 4),
     speed: num(json, 'speed', d.speed, 0, 3),
+    playing: json.playing !== false,
     frame: Math.round(num(json, 'frame', d.frame, 0, MAX_FRAME)),
     scale: num(json, 'scale', d.scale, 0.25, 4),
     rotation: num(json, 'rotation', d.rotation, 0, 360),
