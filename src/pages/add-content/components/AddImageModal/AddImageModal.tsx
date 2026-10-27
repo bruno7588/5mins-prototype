@@ -59,6 +59,8 @@ interface AddImageModalProps {
   /** Which tabs show, in order. */
   tabs?: Tab[]
   upload?: ImageModalUpload
+  /** A file already picked from the computer: opens on the upload tab with it loaded. */
+  initialFile?: File | null
   /** Default images tab: the tiles and the one currently in use. Clicking a tile
       shows a short loading state, then saves it and closes. */
   defaultImages?: ImageModalDefault[]
@@ -167,6 +169,7 @@ function AddImageModal({
   title = 'Add image',
   tabs = DEFAULT_TABS,
   upload = DEFAULT_UPLOAD,
+  initialFile,
   defaultImages = [],
   selectedDefaultId,
   onSaveDefault,
@@ -261,6 +264,11 @@ function AddImageModal({
     }
     reader.readAsDataURL(file)
   }
+
+  useEffect(() => {
+    if (open && initialFile) void handleFile(initialFile)
+    // Once per open, after the reset above.
+  }, [open, initialFile])
 
   const handleStagedSave = async () => {
     if (!staged) return
@@ -377,20 +385,22 @@ function AddImageModal({
       <div className="aim-header">
         <h2 className="aim-title">{title}</h2>
         <div className="aim-divider" />
-        <div className="aim-tabs" role="tablist">
-          {tabs.map((key) => (
-            <button
-              key={key}
-              type="button"
-              role="tab"
-              aria-selected={tab === key}
-              className={`aim-tab${tab === key ? ' aim-tab--active' : ''}`}
-              onClick={() => setTab(key)}
-            >
-              {TAB_LABELS[key]}
-            </button>
-          ))}
-        </div>
+        {tabs.length > 1 && (
+          <div className="aim-tabs" role="tablist">
+            {tabs.map((key) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={tab === key}
+                className={`aim-tab${tab === key ? ' aim-tab--active' : ''}`}
+                onClick={() => setTab(key)}
+              >
+                {TAB_LABELS[key]}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className={`aim-body${tab === 'upload' && upload.confirm ? ' aim-body--confirm' : ''}`}>

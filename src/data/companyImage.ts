@@ -1,7 +1,7 @@
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from 'react'
 import type { GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { recipeColours, themeColours } from './brandPalette'
-import { getBrandTheme, gradientSet, subscribeBrandTheme } from './brandTheme'
+import { gradientSet, subscribeBrandTheme } from './brandTheme'
 import { getCompanyDefaults, subscribeCompanyDefaults, useCompanyDefaults, type CompanyDefault } from './companyDefaults'
 import { renderStill } from './renderRecipe'
 import { useSurfaceMode, type Theme } from '@/hooks/useTheme'
@@ -86,8 +86,8 @@ export function setCompanyDefault(id: string, still?: Still, mode: Theme = 'ligh
   void regenerate()
 }
 
-/** The default an image points at; the first one if that slot no longer exists. */
-const defaultFor = (id: string, defaults: CompanyDefault[]) => defaults.find((d) => d.id === id) ?? defaults[0]
+/** The tenant's one generated image is always the first Studio gradient (older picks of other slots move to it). */
+const defaultFor = (_id: string, defaults: CompanyDefault[]) => defaults[0]
 
 /* Renders the current default again when its theme or recipe has moved on.
    Uploads are never touched. */
@@ -149,25 +149,4 @@ export async function validateCompanyImage(file: File): Promise<string | null> {
     return 'This image could not be read. Upload a different image.'
   }
   return null
-}
-
-/** Every default rendered in the tenant's colours for `mode` while `active` (the picker is open), filled in as each finishes. */
-export function useTenantStills(active: boolean, mode: Theme): (d: CompanyDefault) => Still | null {
-  const defaults = useCompanyDefaults()
-  const theme = useSyncExternalStore(subscribeBrandTheme, getBrandTheme)
-  const [stills, setStills] = useState<Record<string, Still>>({})
-  useEffect(() => {
-    if (!active) return
-    let live = true
-    for (const d of defaults) {
-      tenantStill(d, mode)
-        .then((s) => live && setStills((prev) => ({ ...prev, [d.id]: s })))
-        .catch(() => {})
-    }
-    return () => {
-      live = false
-    }
-  }, [active, defaults, theme, mode])
-  // A still from before a theme, mode or recipe change doesn't count.
-  return (d) => (stills[d.id]?.key === stillKey(d.recipe, mode) ? stills[d.id] : null)
 }
