@@ -160,8 +160,8 @@
   margin: 0;
 }
 
-/* Copy parameters reads as text only, no clipboard icon. */
-.gl-lab__dials .dialkit-toolbar-add svg {
+/* Copy parameters reads as text only: no clipboard icon, and no empty slot for it, so the label centres. */
+.gl-lab__dials .dialkit-toolbar-add > span:has(svg) {
   display: none;
 }
 
@@ -200,4 +200,10 @@
   .gl-lab__header {
     padding: var(--space-m);
   }
+}
+
+/* Button labels are Title Case; DialKit hard-codes "Copy parameters" and "Save version". */
+.gl-lab__dials .dialkit-toolbar-add,
+.gl-lab__dials .dialkit-versions-button {
+  text-transform: capitalize;
 }
