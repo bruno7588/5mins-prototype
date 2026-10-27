@@ -24,8 +24,9 @@ import { cue } from '../quizSound'
  * a checkbox and the stem says "Select all that apply". Grading is all or nothing, as on
  * Image Choice. A right answer collapses to every pick, green. A wrong one says "Not
  * quite" and nothing more (no count) and collapses to the wrong picks only, red with a
- * cross; when every pick was right but some answers were missed, the picks stay, red with
- * no cross, since none of them was wrong.
+ * cross; when every pick was right but some answers were missed, no rows show at all, as
+ * a right answer in red would read as wrong (all-or-nothing tools such as Rise and Kahoot
+ * do the same: a plain "Incorrect", no marks on the picks).
  *
  * A poll is the same screen with nothing to mark (`correctIndex: -1`): it asks, so
  * there is no Check, no grading and no collapse — the pick is the whole interaction.
@@ -97,24 +98,22 @@ function SingleChoice({ question }: { question: SingleChoiceQuestion }) {
         {locked && picked.length > 0 ? (() => {
           const correct = question.correctIndices ?? [question.correctIndex]
           const wrongPicks = picked.filter((i) => !correct.includes(i))
-          // A wrong multi-pick answer shows only the wrong picks; with none (answers missed), every pick, unmarked.
-          const shown = multiple && status === 'incorrect' && wrongPicks.length > 0 ? wrongPicks : picked
-          const marked = !(multiple && status === 'incorrect' && wrongPicks.length === 0)
+          // A wrong multi-pick answer shows only the wrong picks; with none (answers missed), no rows.
+          const shown = multiple && status === 'incorrect' ? wrongPicks : picked
+          if (shown.length === 0) return null
           return (
           /* The graded answer, alone. Not a button any more — there is nothing left to
              choose, and the icon takes the radio's place so the row keeps its shape. */
           <div className="ql-choice__options">
             {[...shown].sort((a, b) => a - b).map((index) => (
               <div key={index} className={optionClass(index)}>
-                {marked && (
-                  <span className="ql-choice__mark" aria-hidden="true">
-                    {status === 'correct' ? (
-                      <TickCircle size={20} color="currentColor" variant="Linear" />
-                    ) : (
-                      <CloseCircle size={20} color="currentColor" variant="Linear" />
-                    )}
-                  </span>
-                )}
+                <span className="ql-choice__mark" aria-hidden="true">
+                  {status === 'correct' ? (
+                    <TickCircle size={20} color="currentColor" variant="Linear" />
+                  ) : (
+                    <CloseCircle size={20} color="currentColor" variant="Linear" />
+                  )}
+                </span>
                 <span className="ql-choice__label">{question.options[index]}</span>
               </div>
             ))}
