@@ -13,12 +13,12 @@ import Search from '@/components/Search/Search'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import Table, { type Column } from '@/components/Table/Table'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
-import { typeLabel } from '@/data/aiAssessmentGeneration'
 import searchIllustration from '@/assets/empty-state-illustrations/search.svg'
 import AnswerStats, { BandLabel } from './components/AssessmentsTab/AnswerStats'
 import MultiQuestionAnswers from './components/AssessmentsTab/MultiQuestionAnswers'
 import {
   courseAssessments,
+  formatName,
   hasStatedAnswer,
   multiScore,
   PASS_SCORE,
@@ -67,7 +67,7 @@ function sheet(a: AssessmentResult): string[][] {
         r.learner.role,
         r.submittedAt,
         /* A sheet cannot hold the images, so it names them by their label, or their place in the question. */
-        a.optionImages && r.picks ? r.picks.map((p) => a.options[p] || `Image ${p + 1}`).join('; ') : a.options[r.optionIndex],
+        r.picks ? r.picks.map((p) => a.options[p] || `Image ${p + 1}`).join('; ') : a.options[r.optionIndex],
         r.correct ? 'Correct' : 'Incorrect',
       ]),
     ]
@@ -331,6 +331,16 @@ function AssessmentAnswers() {
                 </span>
               )
             }
+            /* Select all that apply: every option they ticked, one per line. */
+            if (r.picks) {
+              return (
+                <ul className="asp-picks">
+                  {r.picks.map((p) => (
+                    <li key={p}>{a.options[p]}</li>
+                  ))}
+                </ul>
+              )
+            }
             const answer = a.options[r.optionIndex]
             return (
               <span className="asp-choice">
@@ -490,7 +500,7 @@ function AssessmentAnswers() {
                   in both places it was the same sentence printed twice. */}
               <p className="asp-meta">
                 {[
-                  a.lesson ? 'Lesson Quiz' : typeLabel(a.type),
+                  formatName(a),
                   a.kind === 'multi'
                     ? `${a.questions.length} ${a.type === 'fill-blank' ? 'blanks' : 'questions'}`
                     : null,

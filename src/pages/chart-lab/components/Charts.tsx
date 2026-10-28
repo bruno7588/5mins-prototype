@@ -130,7 +130,7 @@ export function OutcomeBars({
       <CorrectSplit score={score} />
       <section className="cl-answer" aria-label="Correct answer">
         {answer.kind === "matches" ? (
-          <ul className="cl-answer__list">
+          <ul className="cl-answer__list cl-answer__list--pairs">
             {answer.pairs.map(([term, match]) => (
               <li key={term} className="cl-match">
                 <span className="cl-match__term">{term}</span>
@@ -160,7 +160,7 @@ export function OutcomeBars({
             {answer.steps.map((step, n) => (
               <li key={step} className="cl-answer__item">
                 <span className="cl-row__marker">{n + 1}</span>
-                <span>{step}</span>
+                <span className="cl-answer__step">{step}</span>
               </li>
             ))}
           </ol>
@@ -193,7 +193,6 @@ export function BlankSentence({
               <span key={i}>
                 <span className="cl-blank">
                   <span className="cl-blank__answer">{p.answer}</span>
-                  <span className="cl-blank__value">{p.pct}%</span>
                 </span>
                 {/* No space before punctuation that follows the blank. */}
                 {/^[,.;:!?]/.test(String(parts[i + 1] ?? "")) ? "" : " "}

@@ -5,7 +5,7 @@ import {
   assessmentTypeFromLabel,
   getAssessmentIllustration,
 } from '@/assets/assessment-illustrations'
-import type { AssessmentResult } from './assessmentResults'
+import { formatName, type AssessmentResult } from './assessmentResults'
 import './AssessmentList.css'
 
 interface Props {
@@ -51,7 +51,7 @@ function AssessmentList({ rows, resultCell, onView, pagination }: Props) {
                     />
                   ) : null
                 })()}
-                {a.lesson ? 'Lesson Quiz' : typeLabel(a.type)}
+                {formatName(a)}
               </span>
               <span className="asl-cell asl-c-result">{resultCell(a)}</span>
               <span className="asl-cell asl-c-responses">

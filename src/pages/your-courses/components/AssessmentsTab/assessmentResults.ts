@@ -7,7 +7,7 @@
  * V2 adds the field to those two members; nothing else has to move.
  */
 
-import type { GeneratableType } from '@/data/aiAssessmentGeneration'
+import { typeLabel, type GeneratableType } from '@/data/aiAssessmentGeneration'
 import { ORG_USERS } from '@/data/orgUsers'
 import { QUIZ_SAMPLES, type ImageChoiceQuestion } from '@/pages/quiz-lab/quizData'
 import type { CorrectAnswer } from '@/pages/chart-lab/chartLabData'
@@ -315,8 +315,9 @@ function choices(id: string, count: number, rightCount: number, options: number,
   })
 }
 
-/** `count` responses to an image question, `rightCount` of them the exact correct set.
-    The rest either missed one right image or added a wrong one. */
+/** `count` responses to a question with several right options (images or select all
+    that apply), `rightCount` of them the exact correct set. The rest either missed one
+    right option or added a wrong one. */
 function imagePicks(id: string, count: number, rightCount: number, images: number, correct: number[]): ChoiceResponse[] {
   const wrong = Array.from({ length: images }, (_, i) => i).filter((i) => !correct.includes(i))
   return pool.slice(0, count).map((learner, i) => {
@@ -326,7 +327,7 @@ function imagePicks(id: string, count: number, rightCount: number, images: numbe
         ? correct
         : s % 2 === 0
           ? correct.filter((_, k) => k !== s % correct.length)
-          : [...correct, wrong[s % wrong.length]].sort((x, y) => x - y)
+          : [...correct, wrong[Math.floor(s / 2) % wrong.length]].sort((x, y) => x - y)
     return {
       learner,
       submittedAt: DATES[(seed(learner.id) + i) % DATES.length],
@@ -629,6 +630,14 @@ const QUIZ_DECISIONS: MultiQuestion[] = [
   },
 ]
 
+/** The format's name as the list and the page header show it. Select all that apply is
+    Multiple Choice with several right options, and the admin should see which it is. */
+export function formatName(a: AssessmentResult): string {
+  if (a.lesson) return 'Lesson Quiz'
+  if (a.kind === 'graded' && a.correctIndices && !a.optionImages) return 'Select All That Apply'
+  return typeLabel(a.type)
+}
+
 export const courseAssessments: AssessmentResult[] = [
   /* A lesson quiz surfaced on the first page of the list — the check at the end of a
      lesson (two or three questions, no prompt of its own; the row names the lesson). */
@@ -670,6 +679,24 @@ export const courseAssessments: AssessmentResult[] = [
     optionImages: IMAGE_SAMPLE.images,
     correctIndices: IMAGE_SAMPLE.correctIndices,
     responses: imagePicks('a1i', 104, 71, IMAGE_SAMPLE.images.length, IMAGE_SAMPLE.correctIndices),
+  },
+  /* Select all that apply: three of five are right, and only the exact set scores. */
+  {
+    id: 'a1m',
+    kind: 'graded',
+    type: 'single-choice',
+    title: 'Which of these help a new joiner feel safe to speak up? Select all that apply.',
+    enrolled: ENROLLED,
+    options: [
+      'Their manager asks for their view first in meetings',
+      'Mistakes are only discussed in private',
+      'Questions get a real answer, not a brush-off',
+      'Someone thanks them when they flag a problem',
+      'Decisions are made before the meeting',
+    ],
+    correctIndex: 0,
+    correctIndices: [0, 2, 3],
+    responses: imagePicks('a1m', 98, 54, 5, [0, 2, 3]),
   },
   {
     id: 'a2',

@@ -271,6 +271,24 @@
   gap: var(--space-s);
 }
 
+/* A sequence step, medium like a matched term. */
+.cl-answer__step {
+  font-weight: 500;
+}
+
+/* Matched pairs in a 2 x 2 grid, one column on narrow screens. */
+.cl-answer__list--pairs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+@media (max-width: 600px) {
+  .cl-answer__list--pairs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .cl-answer__item {
   display: flex;
   align-items: center;
@@ -293,8 +311,8 @@
 }
 
 .cl-match__term {
-  font-size: var(--font-size-h4);
-  font-weight: 700;
+  font-size: var(--font-size-md);
+  font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
 }
@@ -362,7 +380,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-m);
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   background: var(--input-background);
   color: var(--text-primary);
@@ -374,18 +392,6 @@
 .cl-blank__answer {
   font-size: var(--font-size-md);
   font-weight: 500;
-}
-
-.cl-blank__value {
-  padding: var(--space-xxs) var(--space-s);
-  border-radius: var(--radius-full);
-  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
-  background: var(--success-500);
-  /* stylelint-disable-next-line -- white text on the green pill in both modes */
-  color: var(--neutral-25);
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
 }
 
 /* ── Lesson quiz and situational test: the flashcard deck ──────────────────
@@ -464,7 +470,7 @@
 }
 
 .cl-deck__chev:hover:not(:disabled) {
-  background: var(--page-background-hover);
+  background: var(--input-background-hover);
 }
 
 .cl-deck__chev:disabled {
