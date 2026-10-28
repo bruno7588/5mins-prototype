@@ -154,20 +154,6 @@
   overflow-wrap: anywhere;
 }
 
-/* Image options (DES-345): the picked images, in the order the admin set them. */
-.asp-thumbs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-}
-
-.asp-thumb {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: var(--radius-s);
-}
-
 /* The uploaded file cell reads as a filename with a quiet caption under it, so it drops
    the table's default two-line emphasis. */
 .tbl-stack.asp-file .primary {

@@ -230,7 +230,7 @@
 .cl-outcome {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-ml);
 }
 
 /* ── The correct answer ──────────────────────────────────────────────────────
@@ -247,6 +247,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-s);
+}
+
+/* The step number, green with its step. */
+.cl-answer__item .cl-row__marker {
+  color: var(--text-success);
 }
 
 /* A sequence step, medium like a matched term. */
@@ -366,6 +371,7 @@
 .cl-blank__answer {
   font-size: var(--font-size-md);
   font-weight: 500;
+  color: var(--text-success);
 }
 
 /* ── Lesson quiz and situational test: the flashcard deck ──────────────────

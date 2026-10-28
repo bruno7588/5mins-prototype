@@ -44,7 +44,9 @@ function rows(options: string[], tally: number[], responded: number, isRight: (i
    correct only with every blank right. The title carries the sentence after its
    instruction ("Complete the sentence: …"), with ___ where each blank goes. */
 function Blanks({ a, responded }: { a: MultiAssessment; responded: number }) {
-  const sentence = a.title.slice(a.title.indexOf(': ') + 2)
+  /* The sentence after "Complete the sentence: ", standing on its own, so it opens with a capital. */
+  const rest = a.title.slice(a.title.indexOf(': ') + 2)
+  const sentence = rest.charAt(0).toUpperCase() + rest.slice(1)
   const pieces = sentence.split('___')
   const parts: ComponentProps<typeof BlankSentence>['parts'] = []
   pieces.forEach((piece, i) => {

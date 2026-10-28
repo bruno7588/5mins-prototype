@@ -310,9 +310,7 @@ function AssessmentAnswers() {
       /* Banded formats record how much of an arrangement was right, not which option
          was chosen — see hasStatedAnswer. */
       const banded = !hasStatedAnswer(a)
-      const columns: Column<ChoiceResponse>[] = [
-        learnerColumn<ChoiceResponse>(),
-        {
+      const answerColumn: Column<ChoiceResponse> = {
           key: 'answer',
           header: 'Answer',
           width: '1 1 240px',
@@ -321,16 +319,6 @@ function AssessmentAnswers() {
              its "option" is how much of the arrangement was right — so the count leads
              and the phrase steps back, the way the chart above states it. */
           render: (r) => {
-            /* Image options (DES-345): the images they picked, never "Option N". */
-            if (a.optionImages && r.picks) {
-              return (
-                <span className="asp-thumbs">
-                  {r.picks.map((p) => (
-                    <img key={p} className="asp-thumb" src={a.optionImages![p]} alt={a.options[p] || `Image ${p + 1}`} />
-                  ))}
-                </span>
-              )
-            }
             /* Select all that apply: every option they ticked, one per line. */
             if (r.picks) {
               return (
@@ -348,7 +336,12 @@ function AssessmentAnswers() {
               </span>
             )
           },
-        },
+        }
+      const columns: Column<ChoiceResponse>[] = [
+        learnerColumn<ChoiceResponse>(),
+        /* Image choice has no Answer column: the picks are images, and the chart above
+           already shows which ones each share chose. */
+        ...(a.optionImages ? [] : [answerColumn]),
         {
           key: 'result',
           header: 'Result',
