@@ -284,7 +284,7 @@ function GradientLab() {
                 </div>
               </section>
               <hr className="gl-section__divider" />
-              {lab.recipe.shader === 'dither' && (
+              {lab.recipe.shader === 'dither' && lab.recipe.ditherBackdrop === 'blobs' && (
                 <>
                   <section className="gl-section" aria-labelledby="gl-blobs-title">
                     <h2 id="gl-blobs-title" className="gl-section__title">

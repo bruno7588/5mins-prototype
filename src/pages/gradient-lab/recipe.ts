@@ -22,6 +22,12 @@ export const DITHER_TYPES = ['random', '2x2', '4x4', '8x8'] as const
 /** The theme colour dithering's sphere is shaded in. */
 export const DITHER_COLOURS = ['header', 'nav', 'selected'] as const
 export type DitherColour = (typeof DITHER_COLOURS)[number]
+/** Dithering's backdrop: soft blobs of the header bar and navigation items, or the flat header bar. */
+export const DITHER_BACKDROPS = ['blobs', 'flat'] as const
+export type DitherBackdrop = (typeof DITHER_BACKDROPS)[number]
+/** Where the sphere's gradient starts: shades of its own colour, or a theme colour blending into it. */
+export const DITHER_FROMS = ['shades', ...DITHER_COLOURS] as const
+export type DitherFrom = (typeof DITHER_FROMS)[number]
 export type DitherType = (typeof DITHER_TYPES)[number]
 /** The shader kinds drawn in 2D canvas rather than by Paper Shaders. */
 export const CANVAS_PATTERNS = ['sine', 'sweep', 'rain', 'halftone', 'cubes', 'kaleido', 'truchet', 'tunnel', 'contours', 'bloom', 'confetti', 'scan', 'ripple'] as const
@@ -65,8 +71,11 @@ export interface GradientRecipe {
   ditherShape: DitherShape
   ditherType: DitherType
   pxSize: number
-  /** The theme colour the sphere's dots are shaded in. */
+  /** The theme colour the sphere's dots are shaded in (the gradient's end), and where the gradient starts. */
   ditherColour: DitherColour
+  ditherFrom: DitherFrom
+  /** Soft blobs behind the sphere, or a flat fill. */
+  ditherBackdrop: DitherBackdrop
   /** Sine stack only. Gap between lines and wavelength, as % of the frame (2-20, 20-200). */
   sineSpacing: number
   sineWavelength: number
@@ -308,6 +317,8 @@ export const DEFAULT_RECIPE: GradientRecipe = {
   ditherType: '4x4',
   pxSize: 2,
   ditherColour: 'selected',
+  ditherFrom: 'shades',
+  ditherBackdrop: 'blobs',
   sineSpacing: 6.2,
   sineWavelength: 78,
   sinePhase: 0.42,
@@ -525,6 +536,8 @@ export function parseRecipe(json: unknown): GradientRecipe {
     ditherType: DITHER_TYPES.includes(json.ditherType as DitherType) ? (json.ditherType as DitherType) : d.ditherType,
     pxSize: num(json, 'pxSize', d.pxSize, 1, 20),
     ditherColour: DITHER_COLOURS.includes(json.ditherColour as DitherColour) ? (json.ditherColour as DitherColour) : d.ditherColour,
+    ditherFrom: DITHER_FROMS.includes(json.ditherFrom as DitherFrom) ? (json.ditherFrom as DitherFrom) : d.ditherFrom,
+    ditherBackdrop: DITHER_BACKDROPS.includes(json.ditherBackdrop as DitherBackdrop) ? (json.ditherBackdrop as DitherBackdrop) : d.ditherBackdrop,
     sineSpacing: num(json, 'sineSpacing', d.sineSpacing, 2, 20),
     sineWavelength: num(json, 'sineWavelength', d.sineWavelength, 20, 200),
     sinePhase: num(json, 'sinePhase', d.sinePhase, 0.05, 1.5),

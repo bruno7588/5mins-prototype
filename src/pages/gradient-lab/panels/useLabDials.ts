@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useDialKitController, type DialConfig } from 'dialkit'
 import type { ThemeSet } from '@/data/brandTheme'
 import {
+  DITHER_BACKDROPS,
   DITHER_COLOURS,
+  DITHER_FROMS,
   DITHER_SHAPES,
   DITHER_TYPES,
   FINISHES,
@@ -12,7 +14,9 @@ import {
   isCanvasPattern,
   MAX_FRAME,
   type CanvasPattern,
+  type DitherBackdrop,
   type DitherColour,
+  type DitherFrom,
   type DitherShape,
   type DitherType,
   type Finish,
@@ -60,6 +64,8 @@ interface PanelValues {
     'pixel size'?: number
     /** Dithering only: the theme colour the sphere is shaded in. */
     'sphere colour'?: DitherColour
+    'sphere gradient from'?: DitherFrom
+    background?: DitherBackdrop
     /** Absent for dithering, which always uses two colours. */
     colours?: number
     distortion?: number
@@ -263,6 +269,8 @@ const PATTERN_OPTIONS = options(DITHER_TYPES)
 const FINISH_OPTIONS = options(FINISHES)
 const SPHERE_COLOUR_LABELS: Record<DitherColour, string> = { header: 'Header bar', nav: 'Navigation items', selected: 'Selected item' }
 const SPHERE_COLOUR_OPTIONS = DITHER_COLOURS.map((value) => ({ value, label: SPHERE_COLOUR_LABELS[value] }))
+const SPHERE_FROM_OPTIONS = DITHER_FROMS.map((value) => ({ value, label: value === 'shades' ? 'Shades of sphere colour' : SPHERE_COLOUR_LABELS[value] }))
+const BACKDROP_OPTIONS: { value: DitherBackdrop; label: string }[] = DITHER_BACKDROPS.map((value) => ({ value, label: value === 'flat' ? 'Flat header bar' : 'Soft blobs' }))
 
 const FOLDERS: Record<DialsKind, string[]> = {
   gradient: ['Gradient', 'Preview colours'],
@@ -343,7 +351,7 @@ function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
   const own: Partial<Record<ShaderKind, Partial<PanelValues['Gradient']>>> = {
     mesh: { distortion: r.distortion, swirl: r.swirl },
     grain: { shape: r.shape, softness: r.softness, intensity: r.intensity },
-    dither: { shape: r.ditherShape, pattern: r.ditherType, 'pixel size': r.pxSize, 'sphere colour': r.ditherColour },
+    dither: { shape: r.ditherShape, pattern: r.ditherType, 'pixel size': r.pxSize, 'sphere colour': r.ditherColour, 'sphere gradient from': r.ditherFrom, background: r.ditherBackdrop },
     glow: { form: r.glowForm, ...Object.fromEntries(GLOW_DIALS.map(([label, field]) => [label, r[field]])) },
     offsets: Object.fromEntries(OFFSETS_DIALS.map(([label, field]) => [label, r[field]])),
   }
@@ -382,6 +390,8 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
       pattern: { type: 'select', options: PATTERN_OPTIONS, default: g.pattern! },
       'pixel size': [g['pixel size']!, 1, 20, 0.5],
       'sphere colour': { type: 'select', options: SPHERE_COLOUR_OPTIONS, default: g['sphere colour']! },
+      'sphere gradient from': { type: 'select', options: SPHERE_FROM_OPTIONS, default: g['sphere gradient from']! },
+      background: { type: 'select', options: BACKDROP_OPTIONS, default: g.background! },
     },
     glow: {
       form: { type: 'select', options: GLOW_FORM_OPTIONS, default: g.form! },
@@ -513,7 +523,7 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
       return
     }
     // The panel's controls belong to the current type until it rebuilds for a newly picked one.
-    const { type, shape, form, pattern, 'pixel size': pxSize, 'sphere colour': ditherColour, ...g } = v.Gradient
+    const { type, shape, form, pattern, 'pixel size': pxSize, 'sphere colour': ditherColour, 'sphere gradient from': ditherFrom, background: ditherBackdrop, ...g } = v.Gradient
     const own = isCanvasPattern(r.shader)
       ? { ...Object.fromEntries(PATTERN_DIALS[r.shader].map(([label, field]) => [field, g[label]])), flow: g['colour flow'] }
       : r.shader === 'glow'
@@ -521,7 +531,7 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
         : r.shader === 'offsets'
         ? Object.fromEntries(OFFSETS_DIALS.map(([label, field]) => [field, g[label]]))
         : r.shader === 'dither'
-        ? { ditherShape: shape, ditherType: pattern, pxSize, ditherColour }
+        ? { ditherShape: shape, ditherType: pattern, pxSize, ditherColour, ditherFrom, ditherBackdrop }
         : { shape }
     const recipe = { ...r, shader: type, ...defined({ ...g, ...own }) }
     const c = v['Preview colours']

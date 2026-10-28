@@ -122,15 +122,16 @@ let dotLayer: HTMLCanvasElement | null = null
 /**
  * Draws a dithering frame: a backdrop of soft blobs in the header bar and navigation items
  * colours, centred where the recipe puts them (`blobs`, 0-1 of the frame), with a little noise, then
- * the shader's white dots coloured in shades of one theme colour (`dotColour`, the selected item
- * by default; DOT_SHADES): that colour is the sphere's alone, never the backdrop's. `crop` is the part of the
+ * the shader's white dots coloured in shades of one theme colour (`ditherColour`, the selected item
+ * by default; DOT_SHADES), or from another theme colour into it (`ditherFrom`). A flat backdrop
+ * (`ditherBackdrop`) is the header bar alone. `crop` is the part of the
  * square shader frame to use, for surfaces that cover a different shape.
  */
 export function drawDither(
   ctx: CanvasRenderingContext2D,
   source: HTMLCanvasElement,
   [header, nav, selected]: string[],
-  { blobs, ditherColour }: Pick<GradientRecipe, 'blobs' | 'ditherColour'>,
+  { blobs, ditherColour, ditherFrom, ditherBackdrop }: Pick<GradientRecipe, 'blobs' | 'ditherColour' | 'ditherFrom' | 'ditherBackdrop'>,
   w: number,
   h: number,
   crop: [number, number, number, number] = [0, 0, source.width, source.height],
@@ -138,13 +139,17 @@ export function drawDither(
   const s = Math.max(w, h)
   ctx.save()
   ctx.setTransform(1, 0, 0, 1, 0, 0)
+  // The header bar fills the backdrop; a flat one is that alone, without the blobs.
   ctx.fillStyle = header
   ctx.fillRect(0, 0, w, h)
   // Header bar last and smaller, so its corner stays clear of navigation's.
-  const layers: [string, [number, number], number][] = [
-    [nav, blobs[1], 0.8],
-    [header, blobs[0], 0.5],
-  ]
+  const layers: [string, [number, number], number][] =
+    ditherBackdrop === 'flat'
+      ? []
+      : [
+          [nav, blobs[1], 0.8],
+          [header, blobs[0], 0.5],
+        ]
   for (const [c, [x, y], r] of layers) {
     const g = ctx.createRadialGradient(x * w, y * h, 0, x * w, y * h, r * s)
     g.addColorStop(0, c)
@@ -166,11 +171,18 @@ export function drawDither(
   d.clearRect(0, 0, w, h)
   d.drawImage(source, ...crop, 0, 0, w, h)
   d.globalCompositeOperation = 'source-in'
-  // The header bar fills the backdrop: on a light one (light mode) the shades run darker.
-  const steps = DOT_SHADES[toLch(header).l > 0.5 ? 'light' : 'dark']
   const g = d.createLinearGradient(0, 0, w, h)
-  const dot = { header, nav, selected }[ditherColour]
-  steps.forEach((step, i) => g.addColorStop(i / (steps.length - 1), shade(dot, step)))
+  const theme = { header, nav, selected }
+  const dot = theme[ditherColour]
+  if (ditherFrom === 'shades') {
+    // Shades of the sphere colour: darker on a light header bar (light mode), lighter on a dark one.
+    const steps = DOT_SHADES[toLch(header).l > 0.5 ? 'light' : 'dark']
+    steps.forEach((step, i) => g.addColorStop(i / (steps.length - 1), shade(dot, step)))
+  } else {
+    // From another theme colour into the sphere colour.
+    g.addColorStop(0, theme[ditherFrom])
+    g.addColorStop(1, dot)
+  }
   d.fillStyle = g
   d.fillRect(0, 0, w, h)
   ctx.drawImage(dotLayer, 0, 0)
