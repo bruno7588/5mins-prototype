@@ -86,7 +86,7 @@
 .cl-rows {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
 }
 
 .cl-barrow {
@@ -111,29 +111,37 @@
   inset: 0 auto 0 0;
   width: var(--cl-w, 0%);
   border-radius: var(--radius-sm);
-  background: var(--border-elevated);
+  background: var(--border);
 }
 
-.cl-barrow.is-correct .cl-barrow__fill {
-  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
-  background: var(--success-500);
-}
-
-/* Hover deepens the bar one step so the row under the pointer reads as one: grey
-   bars move their track to the elevated input tint and their fill to the
-   border-elevated grey; the correct bar follows the Success button ladder, its track to the
-   outlined button's 24% tint and its fill to the hover shade. */
-.cl-barrow,
-.cl-barrow__fill {
-  transition: background-color 150ms ease;
-}
-
-.cl-barrow:hover {
+/* Light mode: the grey fill a step up from its track. Neutral bars only. */
+:root:not([data-theme='dark']) .cl-barrow:not(.is-correct) .cl-barrow__fill {
   background: var(--input-background-elevated);
 }
 
-.cl-barrow:hover .cl-barrow__fill {
-  background: var(--border-elevated);
+.cl-barrow.is-correct .cl-barrow__fill {
+  /* stylelint-disable-next-line -- the correct answer is Success-500 in light mode */
+  background: var(--success-500);
+}
+
+/* Success-600 in dark mode, a step deeper against the dark ground. */
+[data-theme='dark'] .cl-barrow.is-correct .cl-barrow__fill {
+  /* stylelint-disable-next-line -- the correct answer is Success-600 in dark mode */
+  background: var(--success-600);
+}
+
+/* Lightens to Success-500 on hover. Placed after the hover rules would also do, but the
+   dark selector already outranks them. */
+[data-theme='dark'] .cl-barrow.is-correct:hover .cl-barrow__fill {
+  /* stylelint-disable-next-line -- the correct bar lightens to Success-500 on hover in dark mode */
+  background: var(--success-500);
+}
+
+/* Only the correct bar has a hover: it follows the Success button ladder, its track to
+   the outlined button's 24% tint and its fill to the hover shade. Neutral bars stay still. */
+.cl-barrow,
+.cl-barrow__fill {
+  transition: background-color 150ms ease;
 }
 
 .cl-barrow.is-correct:hover {
@@ -183,6 +191,8 @@
 
 .cl-barrow.is-correct .cl-row__label {
   font-weight: 500;
+  /* stylelint-disable-next-line -- white on the green fill in both modes */
+  color: var(--neutral-25);
 }
 
 /* Read by screen readers only. */
@@ -200,7 +210,7 @@
 .cl-tiles {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
 }
 
 .cl-tile {
@@ -343,9 +353,8 @@
    The sentence is the chart. Each blank is a pill holding its answer, with the
    share who filled it in correctly in a Success-500 count at the end. */
 .cl-sentence {
-  max-width: 60ch;
   color: var(--text-secondary);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   line-height: 2.6;
 }
 
@@ -363,7 +372,7 @@
 }
 
 .cl-blank__answer {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-weight: 500;
 }
 
@@ -372,8 +381,8 @@
   border-radius: var(--radius-full);
   /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
   background: var(--success-500);
-  /* stylelint-disable-next-line -- dark text on Success-500 in both modes, for contrast */
-  color: var(--neutral-800);
+  /* stylelint-disable-next-line -- white text on the green pill in both modes */
+  color: var(--neutral-25);
   font-size: var(--font-size-md);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -455,7 +464,7 @@
 }
 
 .cl-deck__chev:hover:not(:disabled) {
-  background: var(--cards-background-hover);
+  background: var(--page-background-hover);
 }
 
 .cl-deck__chev:disabled {

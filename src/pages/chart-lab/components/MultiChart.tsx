@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from 'react'
+import { useEffect, useState, type KeyboardEvent } from 'react'
 import { ArrowLeft2, ArrowRight2 } from 'iconsax-react'
 import { questionScore, type MultiAssessment } from '../chartLabData'
 import { OptionBars } from './Charts'
@@ -9,10 +9,23 @@ import { OptionBars } from './Charts'
  * question numbers below. It opens on the weakest question, where the admin's
  * attention is due.
  */
-function MultiChart({ a }: { a: MultiAssessment }) {
+function MultiChart({
+  a,
+  onQuestionChange,
+  showTitle = true,
+}: {
+  a: MultiAssessment
+  /** Told which question is showing, for a page that titles itself with it. */
+  onQuestionChange?: (index: number) => void
+  /** Off when the page already shows the question as its title. */
+  showTitle?: boolean
+}) {
   const weakest = a.questions.reduce((low, q) => (questionScore(q) < questionScore(low) ? q : low))
   const [index, setIndex] = useState(a.questions.indexOf(weakest))
   const last = a.questions.length - 1
+  useEffect(() => {
+    onQuestionChange?.(index)
+  }, [index, onQuestionChange])
   const go = (i: number) => setIndex(Math.min(Math.max(i, 0), last))
 
   /* Left and right step through the questions, as the chevrons do. */
@@ -50,7 +63,7 @@ function MultiChart({ a }: { a: MultiAssessment }) {
                 <p className="cl-deck__count">
                   Question {i + 1} of {a.questions.length}
                 </p>
-                <h3 className="cl-deck__question">{q.title}</h3>
+                {showTitle ? <h3 className="cl-deck__question">{q.title}</h3> : null}
                 <OptionBars rows={q.rows} />
               </li>
             ))}

@@ -41,10 +41,10 @@
   min-width: 0;
 }
 
-/* H1 — a page title, where the drawer's was an H3. */
+/* H3: the question is the title, and a question runs longer than a page name. */
 .asp-title {
   margin: 0;
-  font-size: var(--font-size-h2);
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.5;
   color: var(--text-primary);
@@ -69,42 +69,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-m);
-  padding: var(--space-m);
-  border-radius: var(--radius-sm);
-  background: var(--cards-background);
-  /* Shadow S in light, nothing in dark — the token already carries that split, because
-     over a dark ground the same shadow reads as grime rather than lift. */
-  box-shadow: var(--shadow-card);
-}
-
-/* No rule under the question: the 16px to the figures below already separates what was
-   asked from how it was answered. */
-.asp-brief__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
-  min-width: 0;
-}
-
-/* Paragraph M medium. Not the semibold a form-field label takes — nothing is being
-   filled in here, and the weight belongs to the question underneath. */
-.asp-brief__label {
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
-/* The question the panel is about, leading it — Paragraph L semibold, per
-   typography.md. Capped at a readable measure: the panel is as wide as the page, and a
-   line run across 1400px is one the eye loses on the way back. */
-.asp-brief__value {
-  margin: 0;
-  max-width: 90ch;
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--text-primary);
 }
 
 /* ── Toolbar ─────────────────────────────────────────────────────────────── */
@@ -149,6 +113,23 @@
   white-space: normal;
   overflow: visible;
   overflow-wrap: anywhere;
+}
+
+/* The answer, then View More under it, left-aligned with the text. */
+.asp-longanswer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.asp-answer.is-clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 /* A chosen option is a sentence, so it wraps like one. */

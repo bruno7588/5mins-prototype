@@ -68,7 +68,14 @@ function Blanks({ a, responded }: { a: MultiAssessment; responded: number }) {
  * incorrect split with the right arrangement under it; short text and exercise are the
  * share of enrolled learners who answered.
  */
-function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
+function AnswerStats({
+  assessment: a,
+  onQuestionChange,
+}: {
+  assessment: AssessmentResult
+  /** A lesson quiz titles the page with the question on show, so the deck drops its own. */
+  onQuestionChange?: (index: number) => void
+}) {
   if (a.responses.length === 0) return null
 
   const responded = a.responses.length
@@ -97,6 +104,8 @@ function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
       if (a.type === 'fill-blank') return <Blanks a={a} responded={responded} />
       return (
         <MultiChart
+          onQuestionChange={a.lesson ? onQuestionChange : undefined}
+          showTitle={!a.lesson}
           a={{
             id: a.id,
             type: a.lesson ? 'Lesson quiz' : 'Situational test',

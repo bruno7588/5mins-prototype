@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import gsap from 'gsap'
 import { useLocation, useNavigate, useParams, Navigate } from 'react-router-dom'
 import { ImportCurve, Sort } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
@@ -144,6 +145,57 @@ function filterOptions(a: AssessmentResult): { value: string; label: string }[] 
   ]
 }
 
+/** A written answer, held to two lines with View More when it runs longer. The row
+    grows to the full text with the project's 0.3s ease-in-out. */
+function LongAnswer({ text }: { text: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const from = useRef<number | null>(null)
+  const [open, setOpen] = useState(false)
+  const [long, setLong] = useState(false)
+
+  /* Measured while clamped, and again when the column resizes: longer than two lines
+     is the only case with a button. */
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el || open) return
+    const measure = () => setLong(el.scrollHeight > el.clientHeight + 1)
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [text, open])
+
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el || from.current === null) return
+    const start = from.current
+    from.current = null
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    gsap.fromTo(el, { height: start }, { height: el.offsetHeight, duration: 0.3, ease: 'power2.inOut', clearProps: 'height' })
+  }, [open])
+
+  return (
+    <span className="asp-longanswer">
+      <span ref={ref} className={`asp-answer${open ? '' : ' is-clamped'}`}>
+        {text}
+      </span>
+      {long || open ? (
+        <Button
+          variant="text"
+          size="sm"
+          onClick={() => {
+            from.current = ref.current?.offsetHeight ?? null
+            setOpen(!open)
+          }}
+          aria-expanded={open}
+        >
+          {open ? 'View Less' : 'View More'}
+        </Button>
+      ) : null}
+    </span>
+  )
+}
+
 function AssessmentAnswers() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -153,6 +205,7 @@ function AssessmentAnswers() {
   const [query, setQuery] = useState('')
   const [answer, setAnswer] = useState(ALL)
   const [page, setPage] = useState(0)
+  const [questionIndex, setQuestionIndex] = useState(0)
   /* Unsorted until asked: the order responses arrive in is a fact too, and a list that
      sorts itself on arrival hides who answered first. */
   const [sort, setSort] = useState<'none' | 'asc' | 'desc'>('none')
@@ -179,10 +232,11 @@ function AssessmentAnswers() {
      is Title. A fill-in-the-blanks states its whole sentence, because each chip below
      shows one clause of it and the clauses alone never spell it out. Everything else has
      one question and the title is it. A lesson quiz gets nothing: see the section below. */
+  /* The lesson quiz question the deck is showing; the deck reports it as it turns. */
+  const lessonQuestion =
+    a.kind === 'multi' && a.lesson ? a.questions[questionIndex]?.prompt : undefined
   const leadText =
     a.kind !== 'multi' || a.type === 'fill-blank' || a.prompt ? a.title : null
-  const leadLabel =
-    a.kind === 'multi' && a.type === 'situational-test' ? 'Title' : 'Question'
 
   /* Both filters read the same rows, so they compose: a name and an answer together
      ask "did this person get it right", which is the question a search exists for. */
@@ -328,7 +382,7 @@ function AssessmentAnswers() {
           /* Whole, not clamped to two lines. A written answer has no length limit, and
              a drawer row that showed the first hundred characters was the reason an
              admin had to download the sheet to find out what their team had said. */
-          render: (r) => <span className="asp-answer">{r.text}</span>,
+          render: (r) => <LongAnswer text={r.text} />,
         },
       ]
       return (
@@ -426,7 +480,9 @@ function AssessmentAnswers() {
 
           <header className="asp-header">
             <div className="asp-headline">
-              <h2 className="asp-title">View Answers</h2>
+              {/* The question leads the page. A lesson quiz has several, so the title is
+                  the one the deck below is showing. */}
+              <h2 className="asp-title">{lessonQuestion ?? leadText ?? a.title}</h2>
               {/* The same name the row carries: a lesson quiz's underlying type is
                   Multiple Choice, and saying so contradicts the list it was opened from. */}
               {/* What kind of assessment this is, and how big. How many answered belongs
@@ -457,15 +513,7 @@ function AssessmentAnswers() {
                   of its own, its title IS its first question, and the chips below already
                   show that one. Printing it would be the same sentence twice. */}
               <section className="asp-brief">
-                {leadText ? (
-                  <div className="asp-brief__field">
-                    {/* Named, now that the header no longer carries it: on its own the
-                        line could be a heading, a note or an instruction. */}
-                    <span className="asp-brief__label">{leadLabel}</span>
-                    <p className="asp-brief__value">{leadText}</p>
-                  </div>
-                ) : null}
-                <AnswerStats key={a.id} assessment={a} />
+                <AnswerStats key={a.id} assessment={a} onQuestionChange={setQuestionIndex} />
               </section>
 
               <div className="asp-toolbar">
