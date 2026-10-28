@@ -79,7 +79,11 @@ export function ImageTiles({
           className={`cl-tile${t.correct ? " is-correct" : ""}`}
         >
           <span className="cl-tile__image" aria-hidden="true">
-            <Gallery size={20} color="currentColor" />
+            {t.src ? (
+              <img src={t.src} alt="" />
+            ) : (
+              <Gallery size={20} color="currentColor" />
+            )}
           </span>
           <BarRow pct={t.pct} correct={t.correct} value={`${t.pct}%`}>
             <span className="cl-row__label">
@@ -190,7 +194,9 @@ export function BlankSentence({
                 <span className="cl-blank">
                   <span className="cl-blank__answer">{p.answer}</span>
                   <span className="cl-blank__value">{p.pct}%</span>
-                </span>{" "}
+                </span>
+                {/* No space before punctuation that follows the blank. */}
+                {/^[,.;:!?]/.test(String(parts[i + 1] ?? "")) ? "" : " "}
               </span>
             ),
           )}

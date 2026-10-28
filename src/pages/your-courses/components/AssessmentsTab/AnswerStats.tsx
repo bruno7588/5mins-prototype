@@ -1,228 +1,18 @@
-import { useState } from 'react'
-import { TickCircle } from 'iconsax-react'
-import Chip from '@/components/Chip/Chip'
+import { type ComponentProps } from 'react'
+import { BlankSentence, ImageTiles, OpenResponse, OptionBars, OutcomeBars } from '@/pages/chart-lab/components/Charts'
+import MultiChart from '@/pages/chart-lab/components/MultiChart'
+import type { OptionRow } from '@/pages/chart-lab/chartLabData'
+import '@/pages/chart-lab/chart-lab.css'
 import {
   optionTally,
   questionOptionTally,
   type AssessmentResult,
   type MultiAssessment,
-  type PollAssessment,
 } from './assessmentResults'
 import './AnswerStats.css'
 
 /** Whole percents, so nothing claims a precision the sample cannot carry. */
 const pct = (n: number, of: number) => (of ? Math.round((n / of) * 100) : 0)
-
-/* ── One option, one row ──────────────────────────────────────────────────
-   Every charted format draws the same thing: a row per option, the option's words
-   over a thin track, its share hard right. One accent does the work. The right
-   answer is green with a tick, every other row stays a quiet neutral, and nothing
-   has to be pointed at to be read.
-
-   The big figure above the rows is the finding at rest (how many got it right) and
-   a readout on hover or tap: point at a row and it names that option, while the
-   others step back a shade. Same shape for a poll, which has no right answer, so
-   its leader wears the brand colour instead of green and no tick. */
-export function AnswerBars({
-  options,
-  tally,
-  responded,
-  correctIndex,
-  leadIndex = null,
-  unit = 'learners',
-  images,
-  correctIndices,
-  correctCount = 0,
-}: {
-  options: string[]
-  tally: number[]
-  responded: number
-  /** The right answer, or null where the format has none. */
-  correctIndex: number | null
-  /** A poll's clear leader — only set when one option leads outright. */
-  leadIndex?: number | null
-  unit?: 'learners' | 'votes'
-  /** Image options (DES-345): each row shows its image instead of words. */
-  images?: string[]
-  /** Several right answers: every one is ticked, and the figure at rest is how many
-      learners picked exactly that set (`correctCount`), not any one row's share. */
-  correctIndices?: number[]
-  correctCount?: number
-}) {
-  const [active, setActive] = useState<number | null>(null)
-
-  const multi = correctIndices !== undefined
-  const isRight = (i: number) => (multi ? correctIndices.includes(i) : i === correctIndex)
-  const rest = multi ? null : correctIndex ?? leadIndex
-  const shown = active ?? rest
-  const shownIsCorrect = shown !== null && (multi || correctIndex !== null) && isRight(shown)
-  const restCorrect = multi && active === null
-
-  return (
-    <div className="ast-answers">
-      <div className="ast-readout" aria-live="polite">
-        {restCorrect ? (
-          <>
-            <span key="rest" className="ast-readout__figure is-correct">
-              {pct(correctCount, responded)}%
-            </span>
-            <span className="ast-readout__text">
-              <span className="ast-readout__label">answered correctly</span>
-              <span className="ast-readout__sub">
-                {correctCount} of {responded} {unit}
-              </span>
-            </span>
-          </>
-        ) : shown === null ? (
-          /* A poll with no outright leader: the count is the only honest headline. */
-          <>
-            <span className="ast-readout__figure">{responded}</span>
-            <span className="ast-readout__text">
-              <span className="ast-readout__label">{unit}</span>
-              <span className="ast-readout__sub">No single answer leads</span>
-            </span>
-          </>
-        ) : (
-          <>
-            <span
-              key={`${shown}-${active === null}`}
-              className={`ast-readout__figure${shownIsCorrect ? ' is-correct' : ''}`}
-            >
-              {pct(tally[shown], responded)}%
-            </span>
-            <span className="ast-readout__text">
-              <span className="ast-readout__label">
-                {active === null && correctIndex !== null
-                  ? 'answered correctly'
-                  : images
-                    ? options[shown] || 'picked this image'
-                    : options[shown]}
-              </span>
-              <span className="ast-readout__sub">
-                {tally[shown]} of {responded} {unit}
-              </span>
-            </span>
-          </>
-        )}
-      </div>
-
-      <ol className="ast-rows" data-focused={active !== null ? 'true' : undefined}>
-        {options.map((label, i) => {
-          const p = pct(tally[i], responded)
-          const isCorrect = isRight(i)
-          const tone = isCorrect ? 'is-correct' : i === leadIndex ? 'is-lead' : 'is-plain'
-          return (
-            <li key={images ? i : label}>
-              <button
-                type="button"
-                className={`ast-row ${tone}${i === active ? ' is-focused' : ''}`}
-                onMouseEnter={() => setActive(i)}
-                onMouseLeave={() => setActive(null)}
-                onFocus={() => setActive(i)}
-                onBlur={() => setActive(null)}
-                onClick={() => setActive(active === i ? null : i)}
-                aria-pressed={i === active}
-                aria-label={`${images ? label || `Image ${i + 1}` : label}${isCorrect ? ', correct answer' : ''}, ${p}%, ${tally[i]} ${unit}`}
-              >
-                <span className="ast-row__head">
-                  <span className="ast-row__label">
-                    {isCorrect && (
-                      <TickCircle
-                        size={16}
-                        color="currentColor"
-                        variant="Bold"
-                        className="ast-row__tick"
-                      />
-                    )}
-                    {images ? (
-                      <>
-                        <img className="ast-row__thumb" src={images[i]} alt="" />
-                        {label}
-                      </>
-                    ) : (
-                      label
-                    )}
-                  </span>
-                  <span className="ast-row__pct">{p}%</span>
-                </span>
-                <span className="ast-row__track">
-                  <span
-                    className="ast-row__fill"
-                    style={{ '--ast-w': `${p}%`, '--ast-i': i } as React.CSSProperties}
-                    aria-hidden="true"
-                  />
-                </span>
-              </button>
-            </li>
-          )
-        })}
-      </ol>
-    </div>
-  )
-}
-
-/* ── Several questions, one at a time ─────────────────────────────────────
-   Every format that asks more than one thing in a sitting: a lesson quiz, a
-   situational test running a scenario, a fill-in-the-blanks with more than one
-   blank. One question's rows at a time with a chip to move between them — the
-   score of a question is not the same finding as which wrong answer took the
-   people who missed it. */
-function Quiz({ a, responded }: { a: MultiAssessment; responded: number }) {
-  const [sel, setSel] = useState(0)
-  const q = a.questions[sel]
-  /* A blank is not a question, and calling it one on a fill-in-the-blanks reads as
-     though the sentence were a quiz. */
-  const unit = a.type === 'fill-blank' ? 'Blank' : 'Question'
-
-  return (
-    <div className="ast-quiz">
-      <div className="ast-quiz__chips">
-        {a.questions.map((_, i) => (
-          <Chip
-            key={i}
-            label={`${unit} ${i + 1}`}
-            selected={i === sel}
-            onClick={() => setSel(i)}
-          />
-        ))}
-      </div>
-      {/* The chip says which one; this says what it was. A lesson quiz has no prompt
-          of its own, so without this the chart is about nothing named. */}
-      <p className="ast-quiz__prompt">{q.prompt}</p>
-      {/* Keyed per question, so the rows grow in again and the readout resets. */}
-      <AnswerBars
-        key={sel}
-        options={q.options}
-        correctIndex={q.correctIndex}
-        tally={questionOptionTally(a, sel)}
-        responded={responded}
-      />
-    </div>
-  )
-}
-
-/* ── How they voted ───────────────────────────────────────────────────────
-   A poll has no right answer, so the ranking is the whole story: the same rows,
-   ordered by how many chose each. The leader is marked only when it leads
-   outright — a tie at the top has no winner to name. */
-function Poll({ a, responded }: { a: PollAssessment; responded: number }) {
-  const tally = optionTally(a)
-  const ranked = a.options
-    .map((label, i) => ({ label, n: tally[i] }))
-    .sort((x, y) => y.n - x.n)
-  const lead = ranked.length > 1 && ranked[0].n > 0 && ranked[0].n > ranked[1].n ? 0 : null
-
-  return (
-    <AnswerBars
-      options={ranked.map((r) => r.label)}
-      tally={ranked.map((r) => r.n)}
-      responded={responded}
-      correctIndex={null}
-      leadIndex={lead}
-      unit="votes"
-    />
-  )
-}
 
 /**
  * "4 of 4 pairs correct" — the count leads at full strength and the phrase it is
@@ -240,54 +30,111 @@ export function BandLabel({ label }: { label: string }) {
   )
 }
 
+/** One bar per option: the right answer green, every other option grey. */
+function rows(options: string[], tally: number[], responded: number, isRight: (i: number) => boolean): OptionRow[] {
+  return options.map((label, i) => ({
+    label,
+    pct: pct(tally[i], responded),
+    tone: isRight(i) ? 'correct' : 'wrong',
+  }))
+}
+
+/* A fill-in-the-blanks: the sentence with each blank's answer and the share who got it,
+   beside the correct / incorrect split. Scoring is all or nothing, so a learner is
+   correct only with every blank right. The title carries the sentence after its
+   instruction ("Complete the sentence: …"), with ___ where each blank goes. */
+function Blanks({ a, responded }: { a: MultiAssessment; responded: number }) {
+  const sentence = a.title.slice(a.title.indexOf(': ') + 2)
+  const pieces = sentence.split('___')
+  const parts: ComponentProps<typeof BlankSentence>['parts'] = []
+  pieces.forEach((piece, i) => {
+    if (piece.trim()) parts.push(piece.trim())
+    const q = a.questions[i]
+    if (q) {
+      parts.push({
+        answer: q.options[q.correctIndex],
+        pct: pct(questionOptionTally(a, i)[q.correctIndex], responded),
+      })
+    }
+  })
+  const allRight = a.responses.filter((r) => r.picks.every((p, qi) => p === a.questions[qi].correctIndex)).length
+  return <BlankSentence score={pct(allRight, responded)} parts={parts} />
+}
+
 /**
- * The shape of a result, above the rows that spell it out. Every scored format and
- * the poll draw the same rows; the formats that record no score at all — short text,
- * exercise — get no chart rather than an invented one.
+ * The chart at the top of the answers page: the same charts as the Chart Lab, one per
+ * format. A lesson quiz or situational test is a deck of its questions; a single
+ * question is its option bars; match, sequence and categorise are the correct /
+ * incorrect split with the right arrangement under it; short text and exercise are the
+ * share of enrolled learners who answered.
  */
 function AnswerStats({ assessment: a }: { assessment: AssessmentResult }) {
   if (a.responses.length === 0) return null
 
   const responded = a.responses.length
 
-  /* Short text and exercise are not scored: no ratio to meter and no options to count,
-     so they get no chart. They keep the one stat instead — how many answered, out of
-     everyone enrolled — because with no big figure it is the only summary they have.
-     The charted formats drop it: the big figure over the rows already says it. */
-  if (a.kind === 'text' || a.kind === 'file') {
-    return (
-      <section className="ast" aria-label="Overview">
-        <p className="ast-stat">
-          <span className="ast-stat__label">
-            {a.kind === 'file' ? 'Total files' : 'Total answers'}
-          </span>
-          <span className="ast-stat__value">
-            <span className="ast-stat__figure">{responded}</span> of {a.enrolled}
-          </span>
-        </p>
-      </section>
-    )
-  }
+  const chart = (() => {
+    if (a.kind === 'text' || a.kind === 'file') {
+      return (
+        <OpenResponse
+          q={{ id: a.id, kind: 'open', type: a.type, title: a.title, responses: responded, enrolled: a.enrolled }}
+        />
+      )
+    }
+
+    if (a.kind === 'poll') {
+      const tally = optionTally(a)
+      return (
+        <OptionBars
+          rows={a.options
+            .map((label, i) => ({ label, pct: pct(tally[i], responded), tone: 'plain' as const }))
+            .sort((x, y) => y.pct - x.pct)}
+        />
+      )
+    }
+
+    if (a.kind === 'multi') {
+      if (a.type === 'fill-blank') return <Blanks a={a} responded={responded} />
+      return (
+        <MultiChart
+          a={{
+            id: a.id,
+            type: a.lesson ? 'Lesson quiz' : 'Situational test',
+            title: a.title,
+            responses: responded,
+            questions: a.questions.map((q, qi) => ({
+              id: `${a.id}-${qi}`,
+              title: q.prompt,
+              rows: rows(q.options, questionOptionTally(a, qi), responded, (i) => i === q.correctIndex),
+            })),
+          }}
+        />
+      )
+    }
+
+    const right = a.responses.filter((r) => r.correct).length
+    if (a.answer) return <OutcomeBars score={pct(right, responded)} answer={a.answer} />
+
+    const tally = optionTally(a)
+    const isRight = (i: number) => (a.correctIndices ? a.correctIndices.includes(i) : i === a.correctIndex)
+    if (a.optionImages) {
+      return (
+        <ImageTiles
+          tiles={a.optionImages.map((src, i) => ({
+            src,
+            label: a.options[i] || `Image ${i + 1}`,
+            pct: pct(tally[i], responded),
+            correct: isRight(i),
+          }))}
+        />
+      )
+    }
+    return <OptionBars rows={rows(a.options, tally, responded, isRight)} />
+  })()
 
   return (
     <section className="ast" aria-label="Overview">
-      {a.kind === 'multi' ? (
-        <Quiz a={a} responded={responded} />
-      ) : a.kind === 'poll' ? (
-        <Poll a={a} responded={responded} />
-      ) : (
-        /* Every single-question graded format, the banded ones included: their options
-           are score bands ("4 of 4 pairs correct"), and the right answer is full marks. */
-        <AnswerBars
-          options={a.options}
-          correctIndex={a.correctIndex}
-          tally={optionTally(a)}
-          responded={responded}
-          images={a.optionImages}
-          correctIndices={a.correctIndices}
-          correctCount={a.responses.filter((r) => r.correct).length}
-        />
-      )}
+      {chart}
     </section>
   )
 }

@@ -10,6 +10,7 @@
 import type { GeneratableType } from '@/data/aiAssessmentGeneration'
 import { ORG_USERS } from '@/data/orgUsers'
 import { QUIZ_SAMPLES, type ImageChoiceQuestion } from '@/pages/quiz-lab/quizData'
+import type { CorrectAnswer } from '@/pages/chart-lab/chartLabData'
 
 /** The Quiz Lab's image question, so the results describe the question learners see there. */
 const IMAGE_SAMPLE = QUIZ_SAMPLES['image-choice'] as ImageChoiceQuestion
@@ -101,6 +102,9 @@ export interface GradedAssessment extends AssessmentBase {
       and every right one. `options` then holds each image's label, empty when it has none. */
   optionImages?: string[]
   correctIndices?: number[]
+  /** Match the pairs, sequence and categorise: the right arrangement, shown under the
+      correct / incorrect split. Scoring is all or nothing, so this is the whole answer. */
+  answer?: CorrectAnswer
   responses: ChoiceResponse[]
 }
 
@@ -759,6 +763,15 @@ export const courseAssessments: AssessmentResult[] = [
     enrolled: ENROLLED,
     options: ['4 of 4 pairs correct', '3 of 4 pairs correct', '2 of 4 pairs correct', '1 of 4 pairs correct'],
     correctIndex: 0,
+    answer: {
+      kind: 'matches',
+      pairs: [
+        ['Decision log', 'Fewer surprises for new joiners'],
+        ['Regular retros', 'Problems raised early'],
+        ['Recognising candour', 'More disagreement in reviews'],
+        ['Clear ownership', 'Faster decisions'],
+      ],
+    },
     responses: choices('a6', 91, 61, 4, 0),
   },
   {
@@ -769,6 +782,16 @@ export const courseAssessments: AssessmentResult[] = [
     enrolled: ENROLLED,
     options: ['5 of 5 steps in order', '4 of 5 steps in order', '3 of 5 steps in order', '2 of 5 steps in order'],
     correctIndex: 0,
+    answer: {
+      kind: 'steps',
+      steps: [
+        'Listen to how the team works today',
+        'Name the behaviours to change',
+        'Pilot the change with one team',
+        'Communicate it to everyone',
+        'Review what changed after a month',
+      ],
+    },
     responses: choices('a7', 84, 32, 4, 0),
   },
   {
@@ -779,6 +802,13 @@ export const courseAssessments: AssessmentResult[] = [
     enrolled: ENROLLED,
     options: ['6 of 6 sorted correctly', '5 of 6 sorted correctly', '4 of 6 sorted correctly', '3 of 6 sorted correctly'],
     correctIndex: 0,
+    answer: {
+      kind: 'groups',
+      groups: [
+        { label: 'Reinforce', items: ['Raising a risk early', 'Crediting a teammate’s idea', 'Admitting a mistake in a retro'] },
+        { label: 'Redirect', items: ['Deciding in a private chat', 'Interrupting a quieter colleague', 'Blaming a person, not the process'] },
+      ],
+    },
     responses: choices('a8', 79, 56, 4, 0),
   },
   {

@@ -29,7 +29,7 @@ interface Scored {
 export type ChartQuestion =
   | (Base & Scored & { kind: 'options'; rows: OptionRow[] })
   | (Base & { kind: 'poll'; rows: OptionRow[] })
-  | (Base & Scored & { kind: 'images'; tiles: { label: string; pct: number; correct: boolean }[] })
+  | (Base & Scored & { kind: 'images'; tiles: { label: string; pct: number; correct: boolean; src?: string }[] })
   /** Match the pairs, categorise, sequence: only correct or incorrect, so the
       chart shows that split and the correct answer once. */
   | (Base & Scored & { kind: 'outcome'; answer: CorrectAnswer })

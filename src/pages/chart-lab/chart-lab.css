@@ -220,9 +220,17 @@
   place-items: center;
   width: calc(var(--space-xxl) * 1.5);
   aspect-ratio: 4 / 3;
+  overflow: hidden;
   border-radius: var(--radius-s);
   background: var(--input-background);
   color: var(--text-tertiary);
+}
+
+.cl-tile__image img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
 }
 
 .cl-tile.is-correct .cl-tile__image {
