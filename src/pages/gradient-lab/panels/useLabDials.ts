@@ -4,7 +4,7 @@ import type { ThemeSet } from '@/data/brandTheme'
 import {
   DITHER_BACKDROPS,
   DITHER_COLOURS,
-  DITHER_FROMS,
+  DITHER_FILLS,
   DITHER_SHAPES,
   DITHER_TYPES,
   FINISHES,
@@ -16,7 +16,7 @@ import {
   type CanvasPattern,
   type DitherBackdrop,
   type DitherColour,
-  type DitherFrom,
+  type DitherFill,
   type DitherShape,
   type DitherType,
   type Finish,
@@ -54,6 +54,13 @@ export interface LabState {
 }
 
 /** DialKit keys double as labels (first letter capitalised), so they are sentence case. */
+/** Dithering's sphere or backdrop: its fill, its colour (a gradient's start) and a gradient's end. */
+interface ColourFolder<F> {
+  fill: F
+  colour: DitherColour
+  'gradient to': DitherColour
+}
+
 interface PanelValues {
   Gradient: {
     type: ShaderKind
@@ -62,10 +69,6 @@ interface PanelValues {
     form?: GlowForm
     pattern?: DitherType
     'pixel size'?: number
-    /** Dithering only: the theme colour the sphere is shaded in. */
-    'sphere colour'?: DitherColour
-    'sphere gradient from'?: DitherFrom
-    background?: DitherBackdrop
     /** Absent for dithering, which always uses two colours. */
     colours?: number
     distortion?: number
@@ -79,6 +82,9 @@ interface PanelValues {
     /** A canvas pattern's own sliders, keyed by their label (PATTERN_DIALS). */
     [dial: string]: unknown
   }
+  /** Dithering only. */
+  Sphere?: ColourFolder<DitherFill>
+  Background?: ColourFolder<DitherBackdrop>
   'Preview colours': { 'header bar': string; 'navigation items': string; 'selected item': string }
   Motion: { playing: boolean; speed: number }
   /** Absent for dithering. */
@@ -267,13 +273,12 @@ const SHAPE_OPTIONS = options(GRAIN_SHAPES)
 const DITHER_SHAPE_OPTIONS = options(DITHER_SHAPES)
 const PATTERN_OPTIONS = options(DITHER_TYPES)
 const FINISH_OPTIONS = options(FINISHES)
-const SPHERE_COLOUR_LABELS: Record<DitherColour, string> = { header: 'Header bar', nav: 'Navigation items', selected: 'Selected item' }
-const SPHERE_COLOUR_OPTIONS = DITHER_COLOURS.map((value) => ({ value, label: SPHERE_COLOUR_LABELS[value] }))
-const SPHERE_FROM_OPTIONS = DITHER_FROMS.map((value) => ({ value, label: value === 'shades' ? 'Shades of sphere colour' : SPHERE_COLOUR_LABELS[value] }))
-const BACKDROP_OPTIONS: { value: DitherBackdrop; label: string }[] = DITHER_BACKDROPS.map((value) => ({ value, label: value === 'flat' ? 'Flat header bar' : 'Soft blobs' }))
+const FILL_LABELS: Record<DitherFill | DitherBackdrop, string> = { flat: 'Flat colour', gradient: 'Gradient', shades: 'Shades of colour', blobs: 'Soft blobs' }
+const SPHERE_FILL_OPTIONS = DITHER_FILLS.map((value) => ({ value, label: FILL_LABELS[value] }))
+const BACKDROP_OPTIONS = DITHER_BACKDROPS.map((value) => ({ value, label: FILL_LABELS[value] }))
 
 const FOLDERS: Record<DialsKind, string[]> = {
-  gradient: ['Gradient', 'Preview colours'],
+  gradient: ['Gradient', 'Sphere', 'Background', 'Preview colours'],
   shader: ['Motion', 'Grain', 'Finish'],
   icon: ['Icon', 'Dither', 'Gradient overlay'],
 }
@@ -304,6 +309,13 @@ const ICON_COLOUR_LABELS: Record<IconColour, string> = {
   'selected-dark': 'Selected item, darker',
 }
 const ICON_COLOUR_OPTIONS = ICON_COLOURS.map((value) => ({ value, label: ICON_COLOUR_LABELS[value] }))
+const DITHER_COLOUR_OPTIONS = DITHER_COLOURS.map((value) => ({ value, label: ICON_COLOUR_LABELS[value] }))
+/** The Sphere or Background folder, with its fill options. */
+const colourFolder = <F extends string>(v: ColourFolder<F>, fills: { value: F; label: string }[]): DialConfig => ({
+  fill: { type: 'select', options: fills, default: v.fill },
+  colour: { type: 'select', options: DITHER_COLOUR_OPTIONS, default: v.colour },
+  'gradient to': { type: 'select', options: DITHER_COLOUR_OPTIONS, default: v['gradient to'] },
+})
 
 /** The Icon tab's values from the recipe, by folder. */
 function iconValues(r: GradientRecipe): Record<string, Record<string, unknown>> {
@@ -343,6 +355,9 @@ function iconFromDials(v: Record<string, Record<string, unknown>>, r: GradientRe
   next.iconDither = pick(v.Dither?.pattern, FINISHES, r.iconDither)
   next.iconGradientFrom = pick(v['Gradient overlay']?.from, ICON_COLOURS, r.iconGradientFrom)
   next.iconGradientTo = pick(v['Gradient overlay']?.to, ICON_COLOURS, r.iconGradientTo)
+  // Picking an overlay colour while the overlay is off turns it on, so the pick shows.
+  const picked = next.iconGradientFrom !== r.iconGradientFrom || next.iconGradientTo !== r.iconGradientTo
+  if (picked && next.iconGradient === 0) next.iconGradient = 1
   return next
 }
 
@@ -351,7 +366,7 @@ function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
   const own: Partial<Record<ShaderKind, Partial<PanelValues['Gradient']>>> = {
     mesh: { distortion: r.distortion, swirl: r.swirl },
     grain: { shape: r.shape, softness: r.softness, intensity: r.intensity },
-    dither: { shape: r.ditherShape, pattern: r.ditherType, 'pixel size': r.pxSize, 'sphere colour': r.ditherColour, 'sphere gradient from': r.ditherFrom, background: r.ditherBackdrop },
+    dither: { shape: r.ditherShape, pattern: r.ditherType, 'pixel size': r.pxSize },
     glow: { form: r.glowForm, ...Object.fromEntries(GLOW_DIALS.map(([label, field]) => [label, r[field]])) },
     offsets: Object.fromEntries(OFFSETS_DIALS.map(([label, field]) => [label, r[field]])),
   }
@@ -360,6 +375,8 @@ function labToDials({ recipe: r, preview: p, playing }: LabState): PanelValues {
   const fixed = r.shader === 'dither' || r.shader === 'glow' || r.shader === 'offsets' || isCanvasPattern(r.shader)
   return {
     Gradient: { type: r.shader, ...(fixed ? {} : { colours: r.colours }), ...mine, ...shape },
+    Sphere: r.shader === 'dither' ? { fill: r.ditherFill, colour: r.ditherColour, 'gradient to': r.ditherTo } : undefined,
+    Background: r.shader === 'dither' ? { fill: r.ditherBackdrop, colour: r.ditherBackColour, 'gradient to': r.ditherBackTo } : undefined,
     'Preview colours': { 'header bar': p.header, 'navigation items': p.nav, 'selected item': p.selected },
     Motion: { playing, speed: r.speed },
     Grain: r.shader === 'grain' ? { noise: r.noise } : r.shader === 'mesh' ? { mixer: r.grainMixer, overlay: r.grainOverlay } : undefined,
@@ -389,9 +406,6 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
     dither: {
       pattern: { type: 'select', options: PATTERN_OPTIONS, default: g.pattern! },
       'pixel size': [g['pixel size']!, 1, 20, 0.5],
-      'sphere colour': { type: 'select', options: SPHERE_COLOUR_OPTIONS, default: g['sphere colour']! },
-      'sphere gradient from': { type: 'select', options: SPHERE_FROM_OPTIONS, default: g['sphere gradient from']! },
-      background: { type: 'select', options: BACKDROP_OPTIONS, default: g.background! },
     },
     glow: {
       form: { type: 'select', options: GLOW_FORM_OPTIONS, default: g.form! },
@@ -421,6 +435,7 @@ function buildConfig(lab: LabState, kind: DialsKind): DialConfig {
       blur: [g.blur, 0, 10, 0.1],
       shuffle: { type: 'action', label: 'Shuffle' },
     },
+    ...(v.Sphere && v.Background ? { Sphere: colourFolder(v.Sphere, SPHERE_FILL_OPTIONS), Background: colourFolder(v.Background, BACKDROP_OPTIONS) } : {}),
     'Preview colours': {
       'header bar': { type: 'color', default: p['header bar'] },
       'navigation items': { type: 'color', default: p['navigation items'] },
@@ -523,7 +538,7 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
       return
     }
     // The panel's controls belong to the current type until it rebuilds for a newly picked one.
-    const { type, shape, form, pattern, 'pixel size': pxSize, 'sphere colour': ditherColour, 'sphere gradient from': ditherFrom, background: ditherBackdrop, ...g } = v.Gradient
+    const { type, shape, form, pattern, 'pixel size': pxSize, ...g } = v.Gradient
     const own = isCanvasPattern(r.shader)
       ? { ...Object.fromEntries(PATTERN_DIALS[r.shader].map(([label, field]) => [field, g[label]])), flow: g['colour flow'] }
       : r.shader === 'glow'
@@ -531,7 +546,17 @@ export function useLabDials(kind: DialsKind, lab: LabState, update: (patch: Part
         : r.shader === 'offsets'
         ? Object.fromEntries(OFFSETS_DIALS.map(([label, field]) => [field, g[label]]))
         : r.shader === 'dither'
-        ? { ditherShape: shape, ditherType: pattern, pxSize, ditherColour, ditherFrom, ditherBackdrop }
+        ? {
+            ditherShape: shape,
+            ditherType: pattern,
+            pxSize,
+            ditherFill: v.Sphere?.fill,
+            ditherColour: v.Sphere?.colour,
+            ditherTo: v.Sphere?.['gradient to'],
+            ditherBackdrop: v.Background?.fill,
+            ditherBackColour: v.Background?.colour,
+            ditherBackTo: v.Background?.['gradient to'],
+          }
         : { shape }
     const recipe = { ...r, shader: type, ...defined({ ...g, ...own }) }
     const c = v['Preview colours']

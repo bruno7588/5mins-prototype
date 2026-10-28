@@ -17,9 +17,8 @@ import { DEFAULT_RECIPE, parseRecipe, readIcon, type GradientRecipe } from './re
 import Collapse from '@/components/Collapse/Collapse'
 import FocalPad from './panels/FocalPad'
 
-/** The dithering backdrop's blobs, in recipe.blobs order. The third (selected item) is no longer
-    drawn: that colour is the sphere's alone. */
-const BLOB_LABELS = ['Header bar', 'Navigation items']
+/** The dithering backdrop's blobs, in recipe.blobs order: the Background folder's colour and its gradient-to colour. */
+const BLOB_LABELS = ['Colour', 'Gradient to']
 import { useLabDials, type DialsKind, type LabState } from './panels/useLabDials'
 import './gradient-lab.css'
 import './panels/panels.css'
@@ -119,6 +118,19 @@ function GradientLab() {
     } finally {
       setSavingSlot(false)
     }
+  }
+
+  /* Copy Settings keeps the gradient on screen; Paste Settings loads it into the open slot, unsaved,
+     so it shows in that slot's colours and is saved with Update. */
+  const [copied, setCopied] = useState<{ slot: number; recipe: GradientRecipe } | null>(null)
+  const copySettings = () => {
+    setCopied({ slot: activeSlot, recipe: { ...lab.recipe, playing: lab.playing } })
+    show('success', `Gradient ${activeSlot} settings copied`)
+  }
+  const pasteSettings = () => {
+    if (!copied) return
+    setLab((prev) => ({ ...prev, recipe: copied.recipe, playing: copied.recipe.playing }))
+    show('success', `Gradient ${copied.slot} settings pasted. Update gradient ${activeSlot} to keep them.`)
   }
 
   /* Saves the gradient on screen as a new slot at the end and opens it. */
@@ -243,6 +255,9 @@ function GradientLab() {
             onSave={saveSlot}
             onDuplicate={duplicateSlot}
             onClear={clearSlot}
+            onCopy={copySettings}
+            copiedFrom={copied?.slot ?? null}
+            onPaste={pasteSettings}
             onReorder={reorderSlots}
           />
         </div>

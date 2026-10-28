@@ -1,6 +1,6 @@
 import { useEffect, useState, type DragEvent } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Add, Copy, TickCircle, Trash } from 'iconsax-react'
+import { Add, ClipboardImport, Copy, DocumentCopy, TickCircle, Trash } from 'iconsax-react'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import { arriveTransition } from '@/components/AIWorkingCard/arrive'
@@ -13,7 +13,8 @@ const MODE_LABEL: Record<number, string> = { 1: 'Light', 2: 'Dark', 3: 'Light', 
    (no gaps), the active slot when it is a new empty one, then a + tile that adds
    one. Clicking a slot makes it the active one (and loads it when saved); the
    tick under the active slot saves the current gradient into it, and the copy
-   button saves it as a new slot at the end. Saved slots
+   button saves it as a new slot at the end. Copy Settings keeps the gradient on screen and Paste
+   Settings loads it into the open slot, to save with the tick. Saved slots
    drag to a new position; the strip reorders live and saves on drop. Prefix: gl-slots- */
 
 interface Props {
@@ -29,11 +30,16 @@ interface Props {
   /** Saves the current gradient as a new slot at the end. */
   onDuplicate: () => void
   onClear: () => void
+  /** Keeps the gradient on screen to paste into another slot. */
+  onCopy: () => void
+  /** The slot the copied settings came from, or null when nothing is copied. */
+  copiedFrom: number | null
+  onPaste: () => void
   /** Every saved slot once, in the new order. */
   onReorder: (slots: number[]) => void
 }
 
-function GradientSlots({ gradients, activeSlot, saving, hasDraft, canSave, onSelect, onSave, onDuplicate, onClear, onReorder }: Props) {
+function GradientSlots({ gradients, activeSlot, saving, hasDraft, canSave, onSelect, onSave, onDuplicate, onClear, onCopy, copiedFrom, onPaste, onReorder }: Props) {
   const reduce = useReducedMotion()
   const bySlot = new Map(gradients.map((g) => [g.slot, g]))
   const [dragSlot, setDragSlot] = useState<number | null>(null)
@@ -131,6 +137,18 @@ function GradientSlots({ gradients, activeSlot, saving, hasDraft, canSave, onSel
                         onClick={onDuplicate}
                       >
                         <Copy size={20} variant="Linear" color="var(--text-primary)" />
+                      </button>
+                    </Tooltip>
+                  )}
+                  <Tooltip icon={false} text={`Copy settings of gradient ${slot}`} className="gl-slots__save-wrap">
+                    <button type="button" className="gl-slots__save" aria-label={`Copy settings of gradient ${slot}`} onClick={onCopy}>
+                      <DocumentCopy size={20} variant="Linear" color="var(--text-primary)" />
+                    </button>
+                  </Tooltip>
+                  {copiedFrom !== null && copiedFrom !== slot && (
+                    <Tooltip icon={false} text={`Paste settings of gradient ${copiedFrom}`} className="gl-slots__save-wrap">
+                      <button type="button" className="gl-slots__save" aria-label={`Paste settings of gradient ${copiedFrom}`} onClick={onPaste}>
+                        <ClipboardImport size={20} variant="Linear" color="var(--text-primary)" />
                       </button>
                     </Tooltip>
                   )}

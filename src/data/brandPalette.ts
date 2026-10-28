@@ -1,4 +1,4 @@
-import { paletteCount, usesThemeColours, type GradientRecipe } from '@/pages/gradient-lab/recipe'
+import { paletteCount, usesThemeColours, type DitherColour, type GradientRecipe } from '@/pages/gradient-lab/recipe'
 import { DEFAULT_THEME, type ThemeSet } from './brandTheme'
 
 /* Turns a tenant's theme colours (UI colours, not a palette) into shader colours.
@@ -143,6 +143,17 @@ export const fromLch = lchToHex
 export function shade(hex: string, lightness: number): string {
   const c = hexToLch(hex)
   return lchToHex({ ...c, l: clamp(c.l + lightness, 0.05, 0.99) })
+}
+
+/** OKLCH lightness between a theme colour and its lighter or darker version. */
+const NAMED_SHADE = 0.18
+
+/** A named colour (white, or a theme colour as it is, lighter or darker) in the three theme colours. */
+export function namedColour(name: DitherColour, [header, nav, selected]: string[]): string {
+  if (name === 'white') return '#FFFFFF'
+  const [key, tone] = name.split('-') as ['header' | 'nav' | 'selected', 'light' | 'dark' | undefined]
+  const hex = { header, nav, selected }[key]
+  return tone ? shade(hex, tone === 'light' ? NAMED_SHADE : -NAMED_SHADE) : hex
 }
 
 /** The colours a recipe is drawn in for a theme set. Dithering and the canvas patterns

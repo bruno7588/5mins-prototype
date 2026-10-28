@@ -156,22 +156,9 @@
   position: static;
 }
 
+/* DialKit's Copy parameters copies an AI prompt, not settings Studio can paste; the slot's Copy Settings does that. */
 .gl-lab__dials .dialkit-panel-toolbar {
-  position: absolute;
-  /* The version actions row: header (title + spacing) above it, measured. */
-  top: 60px;
-  left: 0;
-  width: calc(50% - var(--space-xs));
-  margin: 0;
-}
-
-/* Copy parameters reads as text only: no clipboard icon, and no empty slot for it, so the label centres. */
-.gl-lab__dials .dialkit-toolbar-add > span:has(svg) {
   display: none;
-}
-
-.gl-lab__dials .dialkit-versions-actions {
-  margin-left: calc(50% + var(--space-xs));
 }
 
 .gl-lab__dials .dialkit-versions-button {
@@ -207,8 +194,7 @@
   }
 }
 
-/* Button labels are Title Case; DialKit hard-codes "Copy parameters" and "Save version". */
-.gl-lab__dials .dialkit-toolbar-add,
+/* Button labels are Title Case; DialKit hard-codes "Save version". */
 .gl-lab__dials .dialkit-versions-button {
   text-transform: capitalize;
 }
