@@ -21,7 +21,7 @@ export interface BrandTheme {
 }
 
 export const DEFAULT_THEME: BrandTheme = {
-  light: { header: '#F9F9FA', nav: '#9EA4B3', selected: '#FFBB38' },
+  light: { header: '#F9F9FA', nav: '#454C5E', selected: '#EDA30D' },
   dark: { header: '#20222A', nav: '#BFC2CC', selected: '#FFBB38' },
 }
 

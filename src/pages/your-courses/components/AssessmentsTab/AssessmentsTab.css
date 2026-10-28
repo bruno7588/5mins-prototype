@@ -203,44 +203,16 @@
 }
 
 /* ── Result cell ────────────────────────────────────────────────────────── */
-.asm-result {
+/* DS .tbl-progress expects to be the flex cell itself; here it's nested in the
+   cell, so restore the row layout (bar + % side by side). */
+.asm-progress {
   display: flex;
-  max-width: 256px;
-  flex-direction: column;
-  /* A line and the line that supports it, not two facts side by side — 4px let them
-     drift apart into a list of two. */
-  gap: var(--space-xxs);
-  min-width: 0;
+  align-items: center;
+  height: auto;
 }
 
-.asm-result__lead {
-  font-size: var(--font-size-md);
-  color: var(--text-primary);
+.asm-progress .pct {
   font-variant-numeric: tabular-nums;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.asm-result__sub {
-  font-size: var(--font-size-sm);
-  color: var(--text-tertiary);
-}
-
-/* A free-text question has no score, so the column carries what people actually
-   wrote instead. Never an em dash. */
-.asm-result__quote {
-  margin: 0;
-  max-width: 256px;
-  /* .tbl-cell sets white-space: nowrap, which the clamp inherits and dies on. */
-  white-space: normal;
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--text-secondary);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .asm-result__none {
@@ -288,16 +260,13 @@
   gap: var(--space-sm);
 }
 
-/* Filter and export travel together on the right. */
+/* The filter on the far left, the export on the far right. */
 .asm-pivotrow__actions {
-  margin-left: auto;
+  flex: 1;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: var(--space-sm);
-}
-
-.asm-pivot {
-  align-self: flex-start;
 }
 
 /* ── Learner cell ───────────────────────────────────────────────────────── */
@@ -337,7 +306,7 @@
    One quiet line where four stat cards used to be. The Insights card below does
    the summarising; the count and the triage signal are legible in the list. */
 /* In multi-select the trigger always shows its placeholder string, and the
-   component greys it as an empty prompt. Here "All assessments" is the current
+   component greys it as an empty prompt. Here "All types" is the current
    state — no filter applied — so it reads as a selection, not a prompt.
    Scoped to this instance: a genuinely empty dropdown elsewhere stays grey. */
 .asm-typefilter .dropdown-trigger-text--placeholder {

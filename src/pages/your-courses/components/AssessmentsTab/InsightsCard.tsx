@@ -46,9 +46,6 @@ function stamp(): string {
 }
 
 interface Props {
-  /** Open a named learner's row in the By Learner pivot. The summary says who is
-   *  behind; this is what makes that a door rather than a sentence. */
-  onOpenLearner: (id: string) => void
   /** Every response across the course — the thing being summarised. */
   responseCount: number
   /** Set when the panel is opened from the toolbar: opening is the ask, so the run
@@ -71,7 +68,7 @@ interface Props {
    reading rows. Three is what fits before the block stops being a summary. */
 const NAMED = attentionRows.slice(0, ATTENTION_SHOWN)
 
-function InsightsCard({ onOpenLearner, responseCount, autoStart, onClose, stats }: Props) {
+function InsightsCard({ responseCount, autoStart, onClose, stats }: Props) {
   const [phase, setPhase] = useState<Phase>(courseInsight.generatedAt ? 'ready' : 'idle')
   const [generatedAt, setGeneratedAt] = useState<string | null>(courseInsight.generatedAt)
   /* Whether the finished summary is showing. Only ever false by the admin's hand —
@@ -323,13 +320,7 @@ function InsightsCard({ onOpenLearner, responseCount, autoStart, onClose, stats 
                   <li key={r.learner.id} className="asmi-person">
                     <Avatar src={r.learner.avatar} size={32} />
                     <span className="asmi-person__text">
-                      <button
-                        type="button"
-                        className="asmi-person__name"
-                        onClick={() => onOpenLearner(r.learner.id)}
-                      >
-                        {r.learner.name}
-                      </button>
+                      <span className="asmi-person__name">{r.learner.name}</span>
                       <span className="asmi-person__reason">{r.sentence}</span>
                     </span>
                   </li>
