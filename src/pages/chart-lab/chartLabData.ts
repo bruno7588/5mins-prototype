@@ -1,48 +1,26 @@
-/* Chart Lab mock data — one sample question per assessment type, all from the
-   same food-and-hospitality assessment so the overview and the cards agree. */
+/* Chart lab mock data: a lesson quiz and a situational test (several questions
+   each), and one sample question for every single-question type. Each is a page
+   of its own in the product (View Answers). Scoring is all or nothing: a learner's
+   answer is correct or incorrect, never partly right. */
 
-export type Band = 'success' | 'warning' | 'error'
-
-/** Score bands: 75%+ is on track, 50–74% needs a look, under 50% is a problem. */
-export function band(pct: number): Band {
-  if (pct >= 75) return 'success'
-  if (pct >= 50) return 'warning'
-  return 'error'
-}
-
-/** How a bar is drawn. Colour only ever means right, flagged or leading. */
-export type Tone = 'correct' | 'wrong' | 'flag' | 'lead' | 'plain'
+/** How a bar is drawn. Only the correct answer has a colour (Success-500). */
+export type Tone = 'correct' | 'wrong' | 'plain'
 
 export interface OptionRow {
   label: string
   pct: number
   tone: Tone
-  /** Option letter or step number; correct rows show a tick instead. */
-  marker?: string
-  /** Match the pairs / categorise: the item the label is matched to. */
-  from?: string
-  tag?: string
-}
-
-export interface Insight {
-  icon: 'swap' | 'info'
-  lead: string
-  text: string
 }
 
 interface Base {
   id: string
-  number: number
-  /** The type badge, e.g. "Multiple choice". */
+  /** The type, as the page header shows it. */
   type: string
-  /** Short type name for the overview column. */
-  short: string
   title: string
   responses: number
-  insight?: Insight
 }
 
-/** Scored types carry a % correct; the caption says what "correct" means. */
+/** Scored types carry a % correct; the label says what "correct" means. */
 interface Scored {
   score: number
   scoreLabel: string
@@ -51,102 +29,211 @@ interface Scored {
 export type ChartQuestion =
   | (Base & Scored & { kind: 'options'; rows: OptionRow[] })
   | (Base & { kind: 'poll'; rows: OptionRow[] })
-  | (Base &
-      Scored & {
-        kind: 'images'
-        tiles: { label: string; pct: number; correct: boolean; icon: 'wet-floor' | 'exit' | 'no-parking' | 'notice' }[]
-      })
+  | (Base & Scored & { kind: 'images'; tiles: { label: string; pct: number; correct: boolean }[] })
+  /** Match the pairs, categorise, sequence: only correct or incorrect, so the
+      chart shows that split and the correct answer once. */
+  | (Base & Scored & { kind: 'outcome'; answer: CorrectAnswer })
+  /** Fill in the blanks: the sentence, each blank with the share who filled it in. */
   | (Base & Scored & { kind: 'blanks'; parts: (string | { answer: string; pct: number })[] })
   | (Base & {
       kind: 'open'
       enrolled: number
-      themes: { label: string; pct: number }[]
-      answers: { text: string; name: string }[]
     })
 
-export const ASSESSMENT = {
-  title: 'Food Safety Level 2 · Final quiz',
-  learners: 412,
-  passed: 71,
+/** The correct answer to a question with no options to tally. */
+export type CorrectAnswer =
+  /** Match the pairs: shown as the learner sees a matched pair. */
+  | { kind: 'matches'; pairs: [string, string][] }
+  /** Categorise: each category with its items, as the learner sees them placed. */
+  | { kind: 'groups'; groups: { label: string; items: string[] }[] }
+  | { kind: 'steps'; steps: string[] }
+
+export const isScored = (q: ChartQuestion): q is Extract<ChartQuestion, { score: number }> => 'score' in q
+
+/** One question of a lesson quiz or situational test: single answer, so its
+    % correct is the share who picked the correct option. */
+export interface QuizQuestion {
+  id: string
+  title: string
+  rows: OptionRow[]
 }
 
-export interface ChartSection {
+/** A lesson quiz (3 to 4 questions) or situational test (up to 8): one page. */
+export interface MultiAssessment {
+  id: string
+  type: 'Lesson quiz' | 'Situational test'
   title: string
-  covers: string
-  questions: ChartQuestion[]
+  responses: number
+  questions: QuizQuestion[]
+}
+
+export const questionScore = (q: QuizQuestion) =>
+  q.rows.filter((r) => r.tone === 'correct').reduce((sum, r) => sum + r.pct, 0)
+
+/** Four options, the first one correct. */
+const options = (correct: [string, number], ...wrong: [string, number][]): OptionRow[] => [
+  { label: correct[0], pct: correct[1], tone: 'correct' },
+  ...wrong.map(([label, pct]) => ({ label, pct, tone: 'wrong' as const })),
+]
+
+const lessonQuiz: MultiAssessment = {
+  id: 'lesson-quiz',
+  type: 'Lesson quiz',
+  title: 'Handling guest data',
+  responses: 412,
+  questions: [
+    {
+      id: 'lq1',
+      title: 'A guest asks you to hold their passport overnight. What should you do?',
+      rows: options(
+        ['Politely decline and offer the in-room safe', 78],
+        ['Keep it at the front desk until check-out', 14],
+        ['Ask a manager to lock it in the back office', 6],
+        ['Agree, as long as they sign a release form', 2],
+      ),
+    },
+    {
+      id: 'lq2',
+      title: "Where should a guest's booking form go after check-in?",
+      rows: options(['In the locked office drawer', 64], ['In the tray on the front desk', 22], ['In the bin', 8], ['In the staff room', 6]),
+    },
+    {
+      id: 'lq3',
+      title: 'Which of these is personal data?',
+      rows: options(["The guest's email address", 85], ["The hotel's VAT number", 9], ['The room rate', 4], ['The Wi-Fi password', 2]),
+    },
+    {
+      id: 'lq4',
+      title: "Someone asks for another guest's room number. What do you do?",
+      rows: options(
+        ['Decline, and offer to call the room for them', 52],
+        ["Give it if they say they're family", 38],
+        ['Write it on a note for them', 7],
+        ['Ask a manager first', 3],
+      ),
+    },
+  ],
+}
+
+const situationalTest: MultiAssessment = {
+  id: 'situational-test',
+  type: 'Situational test',
+  title: 'A data breach at the front desk',
+  responses: 398,
+  questions: [
+    {
+      id: 'st1',
+      title: "A colleague shares a customer's card details in team chat. What's your first step?",
+      rows: options(
+        ['Report it to your data protection lead', 34],
+        ['Delete the message and move on', 52],
+        ['Reply asking them not to do it again', 10],
+        ['Screenshot it as evidence', 4],
+      ),
+    },
+    {
+      id: 'st2',
+      title: 'Your manager is off shift. Who do you report it to?',
+      rows: options(['The data protection lead', 71], ['The night manager', 18], ['The IT helpdesk', 8], ['Nobody until tomorrow', 3]),
+    },
+    {
+      id: 'st3',
+      title: 'The colleague asks you not to report it. What do you say?',
+      rows: options(['Explain that you have to report it', 66], ['Agree, just this once', 21], ['Say nothing', 9], ['Tell the guest instead', 4]),
+    },
+    {
+      id: 'st4',
+      title: 'The card owner calls about their booking. Do you mention the incident?',
+      rows: options(
+        ['No, the data protection lead will contact them', 58],
+        ['Yes, tell them straight away', 30],
+        ['Only if they ask', 10],
+        ['End the call', 2],
+      ),
+    },
+    {
+      id: 'st5',
+      title: 'Should you delete the message from the chat?',
+      rows: options(
+        ['No, keep it until the data protection lead says otherwise', 41],
+        ['Yes, delete it now', 49],
+        ['Edit it to hide the card number', 8],
+        ['Forward it to your manager', 2],
+      ),
+    },
+    {
+      id: 'st6',
+      title: 'How soon must you report a data breach?',
+      rows: options(['Straight away', 74], ['By the end of your shift', 19], ['Within a week', 5], ['Only if harm is likely', 2]),
+    },
+    {
+      id: 'st7',
+      title: 'What helps stop this happening again?',
+      rows: options(['Taking payments through the secure link', 82], ['Writing card numbers on paper', 9], ['Reading them out by phone', 6], ['Using a personal phone', 3]),
+    },
+    {
+      id: 'st8',
+      title: 'A guest overhears and asks what happened. What do you say?',
+      rows: options(
+        ["That you can't discuss it, and offer help with their stay", 69],
+        ['Say it was nothing', 15],
+        ['Tell them the details', 14],
+        ['Ignore them', 2],
+      ),
+    },
+  ],
 }
 
 const q1: ChartQuestion = {
   id: 'q1',
   kind: 'poll',
-  number: 1,
   type: 'Poll',
-  short: 'Poll',
   title: 'How confident do you feel handling a guest complaint on your own?',
   responses: 412,
   rows: [
-    { marker: 'A', label: 'Fairly confident', pct: 46, tone: 'lead' },
-    { marker: 'B', label: 'Very confident', pct: 29, tone: 'plain' },
-    { marker: 'C', label: 'Not very confident', pct: 18, tone: 'plain' },
-    { marker: 'D', label: "I'd always get a manager", pct: 7, tone: 'plain' },
+    { label: 'Fairly confident', pct: 46, tone: 'plain' },
+    { label: 'Very confident', pct: 29, tone: 'plain' },
+    { label: 'Not very confident', pct: 18, tone: 'plain' },
+    { label: "I'd always get a manager", pct: 7, tone: 'plain' },
   ],
 }
 
 const q2: ChartQuestion = {
   id: 'q2',
   kind: 'open',
-  number: 2,
   type: 'Short text',
-  short: 'Short text',
   title: 'In one sentence, how would you calm down an upset guest?',
   responses: 388,
   enrolled: 412,
-  themes: [
-    { label: 'Listen first', pct: 62 },
-    { label: 'Apologise', pct: 48 },
-    { label: 'Offer a fix', pct: 35 },
-    { label: 'Get a manager', pct: 17 },
-  ],
-  answers: [
-    {
-      text: 'Let them finish, repeat back what went wrong, then tell them exactly what I\'ll do next.',
-      name: 'Priya S.',
-    },
-    { text: 'Apologise straight away and offer a drink while I sort it out.', name: 'Tom R.' },
-  ],
 }
 
 const q3: ChartQuestion = {
   id: 'q3',
   kind: 'options',
-  number: 3,
   type: 'Multiple choice',
-  short: 'Choice',
   title: 'A guest asks you to hold their passport overnight. What should you do?',
   responses: 412,
   score: 78,
-  scoreLabel: 'correct',
+  scoreLabel: 'answered correctly',
   rows: [
     { label: 'Politely decline and offer the in-room safe', pct: 78, tone: 'correct' },
-    { marker: 'B', label: 'Keep it at the front desk until check-out', pct: 14, tone: 'wrong' },
-    { marker: 'C', label: 'Ask a manager to lock it in the back office', pct: 6, tone: 'wrong' },
-    { marker: 'D', label: 'Agree, as long as they sign a release form', pct: 2, tone: 'wrong' },
+    { label: 'Keep it at the front desk until check-out', pct: 14, tone: 'wrong' },
+    { label: 'Ask a manager to lock it in the back office', pct: 6, tone: 'wrong' },
+    { label: 'Agree, as long as they sign a release form', pct: 2, tone: 'wrong' },
   ],
 }
 
-const q3b: ChartQuestion = {
-  id: 'q3b',
+const selectAll: ChartQuestion = {
+  id: 'select-all',
   kind: 'options',
-  number: 2,
   type: 'Select all that apply',
-  short: 'Select all',
   title: "Which of these count as a guest's personal data?",
   responses: 405,
   score: 56,
-  scoreLabel: 'fully correct',
+  scoreLabel: 'ticked every right answer and nothing else',
   rows: [
     { label: 'Email address', pct: 88, tone: 'correct' },
-    { marker: 'B', label: "The hotel's VAT number", pct: 23, tone: 'wrong' },
+    { label: "The hotel's VAT number", pct: 23, tone: 'wrong' },
     { label: 'Booking reference', pct: 61, tone: 'correct' },
     { label: 'IP address used to book', pct: 47, tone: 'correct' },
   ],
@@ -155,105 +242,77 @@ const q3b: ChartQuestion = {
 const q4: ChartQuestion = {
   id: 'q4',
   kind: 'images',
-  number: 4,
   type: 'Image choice',
-  short: 'Image',
   title: 'Which sign should you place after mopping the lobby?',
   responses: 377,
   score: 81,
-  scoreLabel: 'correct',
+  scoreLabel: 'answered correctly',
   tiles: [
-    { label: 'Wet floor', pct: 81, correct: true, icon: 'wet-floor' },
-    { label: 'Fire exit', pct: 11, correct: false, icon: 'exit' },
-    { label: 'No parking', pct: 5, correct: false, icon: 'no-parking' },
-    { label: 'Notice', pct: 3, correct: false, icon: 'notice' },
-  ],
-}
-
-const q5: ChartQuestion = {
-  id: 'q5',
-  kind: 'options',
-  number: 5,
-  type: 'Situational test',
-  short: 'Situational',
-  title: "A colleague shares a customer's card details in team chat. What's your first step?",
-  responses: 398,
-  score: 34,
-  scoreLabel: 'correct',
-  rows: [
-    { label: 'Report it to your data protection lead', pct: 34, tone: 'correct' },
-    { marker: 'B', label: 'Delete the message and move on', pct: 52, tone: 'flag', tag: 'Most picked' },
-    { marker: 'C', label: 'Reply asking them not to do it again', pct: 10, tone: 'wrong' },
-    { marker: 'D', label: 'Screenshot it as evidence', pct: 4, tone: 'wrong' },
+    { label: 'Wet floor', pct: 81, correct: true },
+    { label: 'Fire exit', pct: 11, correct: false },
+    { label: 'No parking', pct: 5, correct: false },
+    { label: 'Notice', pct: 3, correct: false },
   ],
 }
 
 const q6: ChartQuestion = {
   id: 'q6',
-  kind: 'options',
-  number: 6,
+  kind: 'outcome',
   type: 'Match the pairs',
-  short: 'Pairs',
   title: 'Match each allergen to the dish that contains it',
   responses: 361,
   score: 63,
-  scoreLabel: 'all pairs right',
-  rows: [
-    { from: 'Sesame', label: 'Hummus', pct: 94, tone: 'correct' },
-    { from: 'Gluten', label: 'Soy sauce', pct: 72, tone: 'correct' },
-    { from: 'Celery', label: 'Waldorf salad', pct: 41, tone: 'flag', tag: 'Most missed' },
-    { from: 'Mustard', label: 'Honey glaze', pct: 88, tone: 'correct' },
-  ],
+  scoreLabel: 'answered correctly',
+  answer: {
+    kind: 'matches',
+    pairs: [
+      ['Sesame', 'Hummus'],
+      ['Gluten', 'Soy sauce'],
+      ['Celery', 'Waldorf salad'],
+      ['Mustard', 'Honey glaze'],
+    ],
+  },
 }
 
-const q6b: ChartQuestion = {
-  id: 'q6b',
-  kind: 'options',
-  number: 3,
+const categorise: ChartQuestion = {
+  id: 'categorise',
+  kind: 'outcome',
   type: 'Categorise',
-  short: 'Categorise',
   title: 'Sort each item into the right fridge',
   responses: 344,
   score: 58,
-  scoreLabel: 'all items right',
-  rows: [
-    { from: 'Raw chicken', label: 'Raw meat fridge', pct: 91, tone: 'correct' },
-    { from: 'Cooked ham', label: 'Ready-to-eat fridge', pct: 66, tone: 'correct' },
-    { from: 'Smoked salmon', label: 'Ready-to-eat fridge', pct: 38, tone: 'flag', tag: 'Most missed' },
-    { from: 'Raw prawns', label: 'Raw meat fridge', pct: 84, tone: 'correct' },
-  ],
-  insight: { icon: 'info', lead: 'Smoked salmon', text: 'went to the raw meat fridge for 55%' },
+  scoreLabel: 'answered correctly',
+  answer: {
+    kind: 'groups',
+    groups: [
+      { label: 'Raw meat fridge', items: ['Raw chicken', 'Raw prawns'] },
+      { label: 'Ready-to-eat fridge', items: ['Cooked ham', 'Smoked salmon'] },
+    ],
+  },
 }
 
 const q7: ChartQuestion = {
   id: 'q7',
-  kind: 'options',
-  number: 7,
+  kind: 'outcome',
   type: 'Sequence',
-  short: 'Sequence',
   title: 'Put the fire alarm steps in the right order',
   responses: 352,
   score: 39,
-  scoreLabel: 'fully in order',
-  rows: [
-    { marker: '1', label: 'Raise the alarm', pct: 91, tone: 'correct' },
-    { marker: '2', label: 'Call reception with your location', pct: 52, tone: 'correct' },
-    { marker: '3', label: 'Guide guests to the nearest exit', pct: 44, tone: 'flag', tag: 'Most missed' },
-    { marker: '4', label: 'Head count at the assembly point', pct: 86, tone: 'correct' },
-  ],
-  insight: { icon: 'swap', lead: 'Most common mistake:', text: 'steps 2 and 3 swapped (31%)' },
+  scoreLabel: 'answered correctly',
+  answer: {
+    kind: 'steps',
+    steps: ['Raise the alarm', 'Call reception with your location', 'Guide guests to the nearest exit', 'Head count at the assembly point'],
+  },
 }
 
 const q8: ChartQuestion = {
   id: 'q8',
   kind: 'blanks',
-  number: 8,
   type: 'Fill in the blanks',
-  short: 'Blanks',
   title: 'Complete the fridge storage rule',
   responses: 349,
   score: 47,
-  scoreLabel: 'all blanks right',
+  scoreLabel: 'answered correctly',
   parts: [
     'Store raw meat on the',
     { answer: 'bottom', pct: 92 },
@@ -263,35 +322,19 @@ const q8: ChartQuestion = {
     { answer: '5°C', pct: 38 },
     'or colder.',
   ],
-  insight: { icon: 'info', lead: 'Top wrong answer for 5°C:', text: '8°C (41%)' },
 }
 
-/** The eight questions of the sample assessment, in order, for the overview. */
-export const OVERVIEW_QUESTIONS: ChartQuestion[] = [q1, q2, q3, q4, q5, q6, q7, q8]
-
-/** Every pattern, grouped by how it reads. Select all and categorise come from
-    other assessments, so they sit in the gallery but not in the overview. */
-export const SECTIONS: ChartSection[] = [
-  {
-    title: 'Single answer',
-    covers: 'Lesson quiz · Multiple choice (single) · Situational test',
-    questions: [q3, q5],
-  },
-  {
-    title: 'Select all that apply',
-    covers: 'Bars show the share of learners who ticked each option',
-    questions: [q3b],
-  },
-  { title: 'Image choice', covers: 'Select the correct image (single or multiple)', questions: [q4] },
-  { title: 'Poll', covers: 'No right answer, so the leading option gets the colour', questions: [q1] },
-  {
-    title: 'Per-item accuracy',
-    covers: 'Match the pairs · Categorise · Sequence · Fill in the blanks',
-    questions: [q6, q6b, q7, q8],
-  },
-  {
-    title: 'Open response',
-    covers: 'Short text · Exercise. Nothing to mark, so show the themes and real answers',
-    questions: [q2],
-  },
+/** One page per chart, as the product shows them. */
+export const PAGES: { key: string; label: string; question?: ChartQuestion; assessment?: MultiAssessment }[] = [
+  { key: 'lesson-quiz', label: 'Lesson quiz', assessment: lessonQuiz },
+  { key: 'situational-test', label: 'Situational test', assessment: situationalTest },
+  { key: 'q3', label: 'Multiple choice', question: q3 },
+  { key: 'select-all', label: 'Select all', question: selectAll },
+  { key: 'q4', label: 'Image choice', question: q4 },
+  { key: 'q1', label: 'Poll', question: q1 },
+  { key: 'q6', label: 'Match the pairs', question: q6 },
+  { key: 'categorise', label: 'Categorise', question: categorise },
+  { key: 'q7', label: 'Sequence', question: q7 },
+  { key: 'q8', label: 'Fill in the blanks', question: q8 },
+  { key: 'q2', label: 'Short text', question: q2 },
 ]

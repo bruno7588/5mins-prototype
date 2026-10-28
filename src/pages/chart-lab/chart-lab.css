@@ -1,24 +1,191 @@
-/* Chart Lab — assessment results charts. Every class is prefixed cl- (CSS is
-   globally bundled). Colour only ever means something:
-     --cl-correct  the right answer          --cl-flag  misconception / weakest item
-     --cl-lead     no right answer, leading  --cl-plain everything else
-   Score bands (75%+ / 50–74% / under 50%) use the success / warning / error text tokens. */
+/* Chart lab: assessment results charts, one per page. Every class is prefixed cl-
+   (CSS is globally bundled). Quiet by default: text colours carry the reading,
+   thin bars carry the shares, and colour only ever means one thing: Success-500
+   marks the correct answer. Every other option, picked or not, is the tertiary
+   text grey. */
 
 .cl-lab {
-  --cl-correct: var(--text-progress);
-  --cl-flag: var(--text-error);
-  --cl-lead: var(--selected);
-  --cl-plain: var(--border-hover);
-  --cl-track: var(--input-background);
-  /* Bar width / column height, set per bar inline from the data. */
-  --cl-w: 0%;
-  --cl-h: 0%;
-
   min-height: 100vh;
   background: var(--page-background);
   color: var(--text-primary);
 }
 
+/* ── Lab chrome ──────────────────────────────────────────────────────────── */
+.cl-lab__bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-l) var(--space-xxl);
+  border-bottom: 1px solid var(--border);
+}
+
+.cl-lab__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cl-lab__title {
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.cl-lab__sub {
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+}
+
+.cl-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+/* ── The page ────────────────────────────────────────────────────────────── */
+.cl-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-xxl) var(--space-l);
+}
+
+/* The title, then its metadata in one secondary line, as the View Answers header. */
+.cl-page__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cl-page__meta {
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-page__title {
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+/* ── A chart ─────────────────────────────────────────────────────────────── */
+.cl-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* ── Bars ────────────────────────────────────────────────────────────────────
+   One tall bar per answer: the share filled from the left, the label and the %
+   inside it. The fill is a stronger tint of the track's hue, so text in the
+   primary colour reads on both in either mode. */
+.cl-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.cl-barrow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: calc(var(--space-xxl) + var(--space-xs));
+  padding: var(--space-s) var(--space-m);
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+  color: var(--text-primary);
+}
+
+.cl-barrow.is-correct {
+  background: var(--success-tint);
+}
+
+.cl-barrow__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--cl-w, 0%);
+  border-radius: var(--radius-sm);
+  background: var(--border-elevated);
+}
+
+.cl-barrow.is-correct .cl-barrow__fill {
+  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
+  background: var(--success-500);
+}
+
+/* Hover deepens the bar one step so the row under the pointer reads as one: grey
+   bars move their track to the elevated input tint and their fill to the
+   border-elevated grey; the correct bar follows the Success button ladder, its track to the
+   outlined button's 24% tint and its fill to the hover shade. */
+.cl-barrow,
+.cl-barrow__fill {
+  transition: background-color 150ms ease;
+}
+
+.cl-barrow:hover {
+  background: var(--input-background-elevated);
+}
+
+.cl-barrow:hover .cl-barrow__fill {
+  background: var(--border-elevated);
+}
+
+.cl-barrow.is-correct:hover {
+  /* stylelint-disable-next-line -- Success-500 @ 24%, the Success outlined button's hover tint */
+  background: color-mix(in srgb, var(--success-500) 24%, transparent);
+}
+
+.cl-barrow.is-correct:hover .cl-barrow__fill {
+  background: var(--button-success-background-hover);
+}
+
+.cl-barrow__content,
+.cl-barrow__value {
+  position: relative;
+  z-index: 1;
+}
+
+.cl-barrow__content {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.cl-barrow__value {
+  flex-shrink: 0;
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-row__marker {
+  flex: 0 0 var(--space-m);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-row__label {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+.cl-barrow.is-correct .cl-row__label {
+  font-weight: 500;
+}
+
+/* Read by screen readers only. */
 .cl-sr {
   position: absolute;
   width: 1px;
@@ -28,694 +195,341 @@
   white-space: nowrap;
 }
 
-/* ── Page chrome ─────────────────────────────────────────────────────────── */
-.cl-lab__bar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  padding: var(--space-l) var(--space-xxl);
-  background: var(--cards-background);
-  border-bottom: 1px solid var(--border);
-}
-
-.cl-lab__title {
-  font-size: var(--font-size-h2);
-  font-weight: 700;
-  line-height: 1.5;
-}
-
-.cl-lab__sub {
-  font-size: var(--font-size-md);
-  color: var(--text-secondary);
-}
-
-.cl-lab__body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xxl);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-xxl);
-}
-
-.cl-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
-}
-
-.cl-section__head {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.cl-section__title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.cl-section__covers {
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.cl-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
-  gap: var(--space-l);
-  align-items: start;
-}
-
-/* ── Card ────────────────────────────────────────────────────────────────── */
-.cl-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-l);
-  padding: var(--space-l);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-m);
-  scroll-margin: var(--space-xxl);
-}
-
-.cl-card__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-l);
-}
-
-.cl-card__question {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-  min-width: 0;
-}
-
-.cl-card__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-}
-
-.cl-card__number {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--text-tertiary);
-}
-
-.cl-card__title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-.cl-hero {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-xxs);
-  flex-shrink: 0;
-  text-align: right;
-}
-
-.cl-hero__figure {
-  font-size: var(--font-size-h1);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.cl-hero__caption {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  line-height: 1.2;
-  color: var(--text-secondary);
-}
-
-.cl-hero__figure.is-success,
-.cl-overview__figure.is-success,
-.cl-col__value.is-success { color: var(--text-success); }
-.cl-hero__figure.is-warning,
-.cl-overview__figure.is-warning,
-.cl-col__value.is-warning { color: var(--text-warning); }
-.cl-hero__figure.is-error,
-.cl-overview__figure.is-error,
-.cl-col__value.is-error { color: var(--text-error); }
-.cl-hero__figure.is-neutral { color: var(--text-primary); }
-
-/* ── Bars ────────────────────────────────────────────────────────────────── */
-.cl-track {
-  display: flex;
-  height: var(--space-ssm);
-  border-radius: var(--radius-full);
-  background: var(--cl-track);
-  overflow: hidden;
-}
-
-.cl-track.is-thin {
-  height: var(--space-s);
-}
-
-.cl-fill {
-  width: var(--cl-w);
-  border-radius: var(--radius-full);
-  background: var(--cl-plain);
-  animation: cl-grow 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  animation-delay: calc(var(--cl-i, 0) * 70ms + 100ms);
-}
-
-@keyframes cl-grow {
-  from { width: 0; }
-}
-
-.cl-bars {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
-  list-style: none;
-}
-
-.cl-bar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xss);
-}
-
-.cl-bar__line {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-}
-
-.cl-bar__marker {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: var(--radius-full);
-  background: var(--page-background-hover);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.cl-bar__from {
-  flex: 0 0 140px;
-  overflow: hidden;
-  padding: var(--space-xxs) var(--space-ssm);
-  border-radius: var(--radius-s);
-  background: var(--page-background-hover);
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cl-bar__arrow {
-  flex-shrink: 0;
-  color: var(--text-tertiary);
-}
-
-.cl-bar__label {
-  flex: 1;
-  min-width: 0;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.cl-bar__value {
-  flex: 0 0 48px;
-  text-align: right;
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-secondary);
-}
-
-/* The paired rows start their bar at the left edge; the lettered rows indent it
-   past the marker so every bar starts on the same line as its label. */
-.cl-bar:has(.cl-bar__marker) .cl-track {
-  margin-left: calc(20px + var(--space-s));
-}
-
-.cl-bar.is-correct .cl-bar__label,
-.cl-bar.is-flag .cl-bar__label,
-.cl-bar.is-lead .cl-bar__label {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.cl-bar.is-correct .cl-bar__marker {
-  background: transparent;
-  color: var(--cl-correct);
-}
-
-.cl-bar.is-correct .cl-bar__value { color: var(--cl-correct); }
-.cl-bar.is-correct .cl-fill { background: var(--cl-correct); }
-
-.cl-bar.is-flag .cl-bar__value { color: var(--cl-flag); }
-.cl-bar.is-flag .cl-fill { background: var(--cl-flag); }
-
-.cl-bar.is-lead .cl-bar__marker { background: var(--cl-lead); color: var(--text-on-selected); }
-.cl-bar.is-lead .cl-bar__value { color: var(--text-primary); }
-.cl-bar.is-lead .cl-fill { background: var(--cl-lead); }
-
-/* A numbered step that was placed correctly keeps its number, in the correct colour. */
-.cl-bar.is-correct .cl-bar__marker:not(:has(svg)) {
-  background: var(--page-background-hover);
-  color: var(--text-primary);
-}
-
-/* ── Image tiles ─────────────────────────────────────────────────────────── */
+/* ── Image choice ────────────────────────────────────────────────────────── */
+/* One row per image, as the other charts: the thumbnail, then its bar. */
 .cl-tiles {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-sm);
-  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
 }
 
 .cl-tile {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-ssm);
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.cl-tile .cl-barrow {
+  flex: 1;
+  min-width: 0;
 }
 
 .cl-tile__image {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1;
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: calc(var(--space-xxl) * 1.5);
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius-s);
-  background: var(--page-background-hover);
-  color: var(--text-secondary);
+  background: var(--input-background);
+  color: var(--text-tertiary);
 }
 
 .cl-tile.is-correct .cl-tile__image {
-  outline: 2px solid var(--cl-correct);
-  outline-offset: 2px;
+  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
+  box-shadow: inset 0 0 0 2px var(--success-500);
 }
 
-.cl-tile__check {
-  position: absolute;
-  top: var(--space-xs);
-  right: var(--space-xs);
+/* The correct / incorrect split, then the correct answer below it. */
+.cl-outcome {
   display: flex;
-  color: var(--cl-correct);
+  flex-direction: column;
+  gap: var(--space-xl);
 }
 
-.cl-tile__line {
+/* ── The correct answer ──────────────────────────────────────────────────────
+   Shown once under the correct / incorrect split, without figures: scoring is
+   all or nothing, so no pair, step or blank has a score of its own. Its pieces
+   sit on the correct answer's green tint. */
+.cl-answer {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-xs);
+  flex-direction: column;
+  gap: var(--space-m);
 }
 
-.cl-tile__label {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  line-height: 1.2;
-  color: var(--text-secondary);
-}
-
-.cl-tile__value {
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-secondary);
-}
-
-.cl-tile.is-correct .cl-tile__label { font-weight: 600; color: var(--text-primary); }
-.cl-tile.is-correct .cl-tile__value { color: var(--cl-correct); }
-.cl-tile.is-correct .cl-fill { background: var(--cl-correct); }
-
-/* ── Fill in the blanks ──────────────────────────────────────────────────── */
-.cl-sentence {
+.cl-answer__list {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.cl-answer__item {
+  display: flex;
   align-items: center;
-  gap: var(--space-sm) var(--space-s);
-  padding: var(--space-ml);
-  border-radius: var(--radius-s);
-  background: var(--page-background);
-  font-size: var(--font-size-lg);
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--success-tint);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+/* Match the pairs: each pair on the correct bar's green track tint, the term over its match. */
+.cl-match {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  padding: var(--space-sm) var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--success-tint);
+}
+
+.cl-match__term {
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.cl-match__def {
+  font-size: var(--font-size-md);
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+/* Categorise: the categories side by side, each its name over an input-tinted box
+   holding its items as chips on the correct bar's green track tint. */
+.cl-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
+  gap: var(--space-m);
+}
+
+.cl-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.cl-group__label {
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.cl-group__bucket {
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+}
+
+.cl-group__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.cl-group__chip {
+  padding: var(--space-sm) var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--success-tint);
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ── Fill in the blanks ──────────────────────────────────────────────────────
+   The sentence is the chart. Each blank is a pill holding its answer, with the
+   share who filled it in correctly in a Success-500 count at the end. */
+.cl-sentence {
+  max-width: 60ch;
+  color: var(--text-secondary);
+  font-size: var(--font-size-lg);
+  line-height: 2.6;
 }
 
 .cl-blank {
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-xs) var(--space-xss) var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-s);
-  border-bottom: 2px solid;
-  animation: cl-pop 400ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-.cl-blank:nth-child(4) { animation-delay: 80ms; }
-.cl-blank:nth-child(6) { animation-delay: 160ms; }
-
-@keyframes cl-pop {
-  from { opacity: 0; transform: translateY(var(--space-xs)); }
-}
-
-.cl-blank__answer {
-  font-weight: 600;
-}
-
-.cl-blank__value {
-  padding: 0 var(--space-xss);
-  border-radius: var(--radius-xs);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  line-height: 20px;
-  color: var(--text-button-foreground);
-  font-variant-numeric: tabular-nums;
-}
-
-.cl-blank.is-success { background: var(--success-tint); border-color: var(--text-success); }
-.cl-blank.is-success .cl-blank__value { background: var(--text-success); }
-.cl-blank.is-warning { background: var(--warning-tint); border-color: var(--text-warning); }
-.cl-blank.is-warning .cl-blank__value { background: var(--text-warning); }
-.cl-blank.is-error { background: var(--danger-tint); border-color: var(--text-error); }
-.cl-blank.is-error .cl-blank__value { background: var(--text-error); }
-
-/* ── Insight note ────────────────────────────────────────────────────────── */
-.cl-insight {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-ssm) var(--space-sm);
-  border-radius: var(--radius-s);
-  background: var(--page-background-hover);
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.cl-insight svg {
-  flex-shrink: 0;
-}
-
-.cl-insight strong {
-  font-weight: 600;
+  padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-m);
+  border-radius: var(--radius-full);
+  background: var(--input-background);
   color: var(--text-primary);
-}
-
-/* ── Open response ───────────────────────────────────────────────────────── */
-.cl-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.cl-group--ruled {
-  padding-top: var(--space-ml);
-  border-top: 1px solid var(--border);
-}
-
-.cl-group__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.cl-eyebrow {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.cl-link {
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  color: var(--text-button-outlined);
-  cursor: pointer;
-}
-
-.cl-link:hover { color: var(--primary-button-background-hover); }
-
-.cl-link:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-  border-radius: var(--radius-xs);
-}
-
-.cl-themes {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  list-style: none;
-}
-
-.cl-theme {
-  display: grid;
-  grid-template-columns: 140px 1fr 48px;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.cl-theme__label {
-  font-size: var(--font-size-md);
-  font-weight: 500;
   line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.cl-theme__value {
-  text-align: right;
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-secondary);
-}
-
-.cl-theme.is-lead .cl-theme__label,
-.cl-theme.is-lead .cl-theme__value { font-weight: 600; color: var(--text-primary); }
-.cl-theme.is-lead .cl-fill { background: var(--cl-lead); }
-
-.cl-quotes {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  list-style: none;
-}
-
-.cl-quote {
-  display: flex;
-  gap: var(--space-sm);
-  padding-left: var(--space-sm);
-  border-left: 3px solid var(--border);
-}
-
-.cl-quote__text {
-  flex: 1;
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-}
-
-.cl-quote__name {
-  flex-shrink: 0;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  line-height: 1.75;
-  color: var(--text-tertiary);
-}
-
-/* ── Overview ────────────────────────────────────────────────────────────── */
-.cl-overview {
-  display: flex;
-  gap: var(--space-xxl);
-  padding: var(--space-l);
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-m);
-}
-
-.cl-overview__summary {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: var(--space-l);
-  flex: 0 0 240px;
-}
-
-.cl-overview__lead {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-}
-
-.cl-overview__title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-.cl-overview__figure {
-  font-size: var(--font-size-h1);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.cl-overview__caption {
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.cl-overview__stats {
-  display: flex;
-  gap: var(--space-l);
-}
-
-.cl-overview__stats div {
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.cl-overview__stats dt {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.cl-overview__stats dd {
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-}
-
-.cl-cols {
-  display: flex;
-  flex: 1;
-  gap: var(--space-sm);
-  list-style: none;
-}
-
-.cl-col {
-  flex: 1;
-  min-width: 0;
-}
-
-.cl-col__hit {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--space-s);
-  width: 100%;
-  padding: var(--space-xs);
-  border: none;
-  border-radius: var(--radius-s);
-  background: none;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-}
-
-.cl-col__hit:hover { background: var(--page-background); }
-
-.cl-col__hit:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
-
-.cl-col__value {
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  line-height: 1.5;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-
-.cl-col__value.is-muted {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  line-height: 1.75;
-  color: var(--text-tertiary);
-}
-
-.cl-col__area {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 180px;
-  border-radius: var(--radius-s);
-  background: var(--cl-track);
-  overflow: hidden;
-}
-
-.cl-col__area.is-unscored {
-  background: none;
-  border: 1.5px dashed var(--border-hover);
-}
-
-.cl-col__bar {
-  height: var(--cl-h);
-  border-radius: var(--radius-s);
-  animation: cl-rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  animation-delay: calc(var(--cl-i, 0) * 60ms + 100ms);
-}
-
-@keyframes cl-rise {
-  from { height: 0; }
-}
-
-.cl-col__bar.is-success { background: var(--text-success); }
-.cl-col__bar.is-warning { background: var(--text-warning); }
-.cl-col__bar.is-error { background: var(--text-error); }
-
-.cl-col__tick {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.cl-col__number {
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-.cl-col__type {
-  overflow: hidden;
-  max-width: 100%;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  line-height: 1.2;
-  color: var(--text-secondary);
-  text-overflow: ellipsis;
+  vertical-align: middle;
   white-space: nowrap;
 }
 
+.cl-blank__answer {
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+}
+
+.cl-blank__value {
+  padding: var(--space-xxs) var(--space-s);
+  border-radius: var(--radius-full);
+  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
+  background: var(--success-500);
+  /* stylelint-disable-next-line -- dark text on Success-500 in both modes, for contrast */
+  color: var(--neutral-800);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Lesson quiz and situational test: the flashcard deck ──────────────────
+   As the flashcard editor: one question card at a time on a sliding strip, round
+   chevrons overlapping its edges, the question numbers below. */
+.cl-deck {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+.cl-deck__row {
+  position: relative;
+}
+
+.cl-deck__track {
+  overflow: hidden;
+}
+
+.cl-deck__strip {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+  transition: transform 300ms ease-in-out;
+}
+
+.cl-deck__card {
+  display: flex;
+  flex: 0 0 100%;
+  flex-direction: column;
+  gap: var(--space-m);
+  min-width: 0;
+}
+
+.cl-deck__count {
+  font-size: var(--font-size-md);
+  color: var(--text-tertiary);
+}
+
+.cl-deck__question {
+  margin-top: calc(var(--space-s) * -1);
+  margin-bottom: var(--space-xs);
+  font-size: var(--font-size-h4);
+  font-weight: 600;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+.cl-deck__chev {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-xxl);
+  height: var(--space-xxl);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  box-shadow: var(--shadow-s);
+  color: var(--text-primary);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color 150ms ease;
+}
+
+/* No card around the question, so the chevrons sit clear of the bars, outside them. */
+.cl-deck__chev--left {
+  left: calc((var(--space-xxl) + var(--space-m)) * -1);
+}
+
+.cl-deck__chev--right {
+  right: calc((var(--space-xxl) + var(--space-m)) * -1);
+}
+
+.cl-deck__chev:hover:not(:disabled) {
+  background: var(--cards-background-hover);
+}
+
+.cl-deck__chev:disabled {
+  color: var(--text-disabled);
+  cursor: default;
+}
+
+.cl-deck__pages {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.cl-deck__page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 var(--space-s);
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-tertiary);
+  font: inherit;
+  font-size: var(--font-size-md);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.cl-deck__page:hover {
+  background: var(--input-background);
+}
+
+.cl-deck__page.is-active {
+  background: var(--selected-tint);
+  /* stylelint-disable-next-line -- the flashcard pagination's active number */
+  color: var(--secondary-600);
+  font-weight: 500;
+}
+
+.cl-deck__chev:focus-visible,
+.cl-deck__page:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* No room outside the bars: the row keeps a gutter each side for the chevrons. */
+@media (max-width: 1160px) {
+  .cl-deck__row {
+    padding-inline: calc(var(--space-xxl) + var(--space-xs));
+  }
+
+  .cl-deck__chev--left {
+    left: 0;
+  }
+
+  .cl-deck__chev--right {
+    right: 0;
+  }
+}
+
+/* ── Narrow screens ──────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .cl-lab__bar {
+    padding: var(--space-l) var(--space-m);
+  }
+
+  .cl-page {
+    padding: var(--space-xl) var(--space-m);
+  }
+
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .cl-fill,
-  .cl-col__bar,
-  .cl-blank {
-    animation: none;
+  .cl-barrow,
+  .cl-barrow__fill,
+  .cl-deck__strip,
+  .cl-deck__chev,
+  .cl-deck__page {
+    transition: none;
   }
 }

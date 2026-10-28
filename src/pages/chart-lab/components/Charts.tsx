@@ -1,166 +1,230 @@
-import { type CSSProperties, type ReactNode } from 'react'
+import { type CSSProperties, type ReactNode } from "react";
+import { Gallery } from "iconsax-react";
 import {
-  ArrowRight,
-  ArrowSwapHorizontal,
-  Car,
-  InfoCircle,
-  LogoutCurve,
-  TickCircle,
-  Warning2,
-} from 'iconsax-react'
-import Badge from '@/components/Badge/Badge'
-import { band, type ChartQuestion, type Insight, type OptionRow } from '../chartLabData'
+  type ChartQuestion,
+  type CorrectAnswer,
+  type OptionRow,
+} from "../chartLabData";
 
-/** Fill width and stagger index, read by the grow-in animation in chart-lab.css. */
-const fill = (pct: number, i: number) => ({ '--cl-w': `${pct}%`, '--cl-i': i }) as CSSProperties
-
-/* ── One bar per option ───────────────────────────────────────────────────
-   Label and figure on one line, the bar under it. The correct answer is the only
-   teal; a flagged row (the misconception, the weakest item) is the only red. */
-export function OptionBars({ rows }: { rows: OptionRow[] }) {
-  const paired = rows.some((r) => r.from)
+/**
+ * The bar every chart is made of: a tall track with the share filled from the
+ * left, and the content (label on the left, % at the end) inside it. The correct
+ * answer is the only colour (Success-500); everything else is tertiary grey.
+ */
+export function BarRow({
+  pct,
+  correct = false,
+  value,
+  className = "",
+  children,
+}: {
+  pct: number;
+  correct?: boolean;
+  value: ReactNode;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <ol className="cl-bars">
-      {rows.map((r, i) => (
-        <li key={`${r.from ?? ''}${r.label}`} className={`cl-bar is-${r.tone}`}>
-          <div className="cl-bar__line">
-            {paired ? (
-              <>
-                <span className="cl-bar__from">{r.from}</span>
-                <ArrowRight size={16} color="currentColor" className="cl-bar__arrow" aria-hidden="true" />
-              </>
-            ) : (
-              <span className="cl-bar__marker" aria-hidden="true">
-                {r.tone === 'correct' && !/^\d$/.test(r.marker ?? '') ? (
-                  <TickCircle size={20} variant="Bold" color="currentColor" />
-                ) : (
-                  r.marker
-                )}
-              </span>
-            )}
-            <span className="cl-bar__label">
+    <span className={`cl-barrow${correct ? " is-correct" : ""} ${className}`}>
+      <span
+        className="cl-barrow__fill"
+        style={{ "--cl-w": `${pct}%` } as CSSProperties}
+        aria-hidden="true"
+      />
+      <span className="cl-barrow__content">{children}</span>
+      <span className="cl-barrow__value">{value}</span>
+    </span>
+  );
+}
+
+/** The green bar says it on screen; these words say it to a screen reader. */
+function Correct() {
+  return <span className="cl-sr"> (correct answer)</span>;
+}
+
+/* ── One bar per option ───────────────────────────────────────────────── */
+export function OptionBars({ rows }: { rows: OptionRow[] }) {
+  return (
+    <ol className="cl-rows">
+      {rows.map((r) => (
+        <li key={r.label}>
+          <BarRow
+            pct={r.pct}
+            correct={r.tone === "correct"}
+            value={`${r.pct}%`}
+          >
+            <span className="cl-row__label">
               {r.label}
-              {r.tone === 'correct' && <span className="cl-sr"> (correct answer)</span>}
+              {r.tone === "correct" && <Correct />}
             </span>
-            {r.tag && <Badge type="error" label={r.tag} />}
-            <span className="cl-bar__value">{r.pct}%</span>
-          </div>
-          <span className="cl-track">
-            <span className="cl-fill" style={fill(r.pct, i)} />
-          </span>
+          </BarRow>
         </li>
       ))}
     </ol>
-  )
+  );
 }
 
 /* ── Image choice ─────────────────────────────────────────────────────────
-   Placeholder artwork stands in for the uploaded images. It stays neutral so
-   it never borrows the colours that mean right and wrong. */
-const TILE_ICONS: Record<string, ReactNode> = {
-  'wet-floor': <Warning2 size={32} variant="Bold" color="currentColor" />,
-  exit: <LogoutCurve size={32} color="currentColor" />,
-  'no-parking': <Car size={32} color="currentColor" />,
-  notice: <InfoCircle size={32} color="currentColor" />,
-}
-
-export function ImageTiles({ tiles }: { tiles: Extract<ChartQuestion, { kind: 'images' }>['tiles'] }) {
+   The uploaded images sit where the placeholders are, each with its bar under it. */
+export function ImageTiles({
+  tiles,
+}: {
+  tiles: Extract<ChartQuestion, { kind: "images" }>["tiles"];
+}) {
   return (
     <ol className="cl-tiles">
-      {tiles.map((t, i) => (
-        <li key={t.label} className={`cl-tile${t.correct ? ' is-correct' : ''}`}>
+      {tiles.map((t) => (
+        <li
+          key={t.label}
+          className={`cl-tile${t.correct ? " is-correct" : ""}`}
+        >
           <span className="cl-tile__image" aria-hidden="true">
-            {TILE_ICONS[t.icon]}
-            {t.correct && (
-              <span className="cl-tile__check">
-                <TickCircle size={24} variant="Bold" color="currentColor" />
-              </span>
-            )}
+            <Gallery size={20} color="currentColor" />
           </span>
-          <span className="cl-tile__line">
-            <span className="cl-tile__label">
+          <BarRow pct={t.pct} correct={t.correct} value={`${t.pct}%`}>
+            <span className="cl-row__label">
               {t.label}
-              {t.correct && <span className="cl-sr"> (correct answer)</span>}
+              {t.correct && <Correct />}
             </span>
-            <span className="cl-tile__value">{t.pct}%</span>
-          </span>
-          <span className="cl-track is-thin">
-            <span className="cl-fill" style={fill(t.pct, i)} />
-          </span>
+          </BarRow>
         </li>
       ))}
     </ol>
-  )
+  );
+}
+
+/* ── All or nothing ───────────────────────────────────────────────────────
+   Match the pairs, categorise and sequence are scored as a whole: the learner's answer is correct or incorrect. So the chart is that split,
+   then the correct answer, shown once and without figures. */
+/** The share who answered correctly and incorrectly. */
+function CorrectSplit({ score }: { score: number }) {
+  return (
+    <ol className="cl-rows">
+      <li>
+        <BarRow pct={score} correct value={`${score}%`}>
+          <span className="cl-row__label">Correct</span>
+        </BarRow>
+      </li>
+      <li>
+        <BarRow pct={100 - score} value={`${100 - score}%`}>
+          <span className="cl-row__label">Incorrect</span>
+        </BarRow>
+      </li>
+    </ol>
+  );
+}
+
+export function OutcomeBars({
+  score,
+  answer,
+}: {
+  score: number;
+  answer: CorrectAnswer;
+}) {
+  return (
+    <div className="cl-outcome">
+      <CorrectSplit score={score} />
+      <section className="cl-answer" aria-label="Correct answer">
+        {answer.kind === "matches" ? (
+          <ul className="cl-answer__list">
+            {answer.pairs.map(([term, match]) => (
+              <li key={term} className="cl-match">
+                <span className="cl-match__term">{term}</span>
+                <span className="cl-match__def">{match}</span>
+              </li>
+            ))}
+          </ul>
+        ) : answer.kind === "groups" ? (
+          <div className="cl-groups">
+            {answer.groups.map((g) => (
+              <div key={g.label} className="cl-group">
+                <h4 className="cl-group__label">{g.label}</h4>
+                <div className="cl-group__bucket">
+                  <ul className="cl-group__items">
+                    {g.items.map((item) => (
+                      <li key={item} className="cl-group__chip">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <ol className="cl-answer__list">
+            {answer.steps.map((step, n) => (
+              <li key={step} className="cl-answer__item">
+                <span className="cl-row__marker">{n + 1}</span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+    </div>
+  );
 }
 
 /* ── Fill in the blanks ───────────────────────────────────────────────────
-   The sentence is the chart: each blank carries its own answer and how many
-   filled it in correctly, tinted by score band. */
-export function BlankSentence({ parts }: { parts: Extract<ChartQuestion, { kind: 'blanks' }>['parts'] }) {
+   The correct / incorrect split, and beside it the sentence: each blank a pill
+   holding its answer, with the share who filled it in correctly in a Success-500
+   count at the end. */
+export function BlankSentence({
+  score,
+  parts,
+}: {
+  score: number;
+  parts: Extract<ChartQuestion, { kind: "blanks" }>["parts"];
+}) {
   return (
-    <p className="cl-sentence">
-      {parts.map((p, i) =>
-        typeof p === 'string' ? (
-          <span key={i}>{p}</span>
-        ) : (
-          <span key={i} className={`cl-blank is-${band(p.pct)}`}>
-            <span className="cl-blank__answer">{p.answer}</span>
-            <span className="cl-blank__value">{p.pct}%</span>
-          </span>
-        ),
-      )}
-    </p>
-  )
+    <div className="cl-outcome">
+      <CorrectSplit score={score} />
+      <section className="cl-answer" aria-label="Correct answer">
+        <p className="cl-sentence">
+          {parts.map((p, i) =>
+            typeof p === "string" ? (
+              <span key={i}>{p} </span>
+            ) : (
+              <span key={i}>
+                <span className="cl-blank">
+                  <span className="cl-blank__answer">{p.answer}</span>
+                  <span className="cl-blank__value">{p.pct}%</span>
+                </span>{" "}
+              </span>
+            ),
+          )}
+        </p>
+      </section>
+    </div>
+  );
 }
 
 /* ── Open response ────────────────────────────────────────────────────────
-   Nothing to mark right or wrong: the recurring themes as bars, the most
-   common one in the "no right answer" yellow, then a few real answers. */
-export function OpenResponse({ q }: { q: Extract<ChartQuestion, { kind: 'open' }> }) {
+   Nothing to mark: the share of enrolled learners who wrote an answer, and the
+   share who did not. */
+export function OpenResponse({
+  q,
+}: {
+  q: Extract<ChartQuestion, { kind: "open" }>;
+}) {
+  const missing = q.enrolled - q.responses;
+  const rows = [
+    { label: "Answered", count: q.responses },
+    { label: "Not answered", count: missing },
+  ];
   return (
-    <>
-      <div className="cl-group">
-        <h4 className="cl-eyebrow">Recurring themes</h4>
-        <ol className="cl-themes">
-          {q.themes.map((t, i) => (
-            <li key={t.label} className={`cl-theme${i === 0 ? ' is-lead' : ''}`}>
-              <span className="cl-theme__label">{t.label}</span>
-              <span className="cl-track">
-                <span className="cl-fill" style={fill(t.pct, i)} />
-              </span>
-              <span className="cl-theme__value">{t.pct}%</span>
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div className="cl-group cl-group--ruled">
-        <div className="cl-group__head">
-          <h4 className="cl-eyebrow">Latest answers</h4>
-          <button type="button" className="cl-link">
-            View all
-          </button>
-        </div>
-        <ul className="cl-quotes">
-          {q.answers.map((a) => (
-            <li key={a.name} className="cl-quote">
-              <span className="cl-quote__text">“{a.text}”</span>
-              <span className="cl-quote__name">{a.name}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
-  )
-}
-
-export function InsightNote({ insight }: { insight: Insight }) {
-  const Icon = insight.icon === 'swap' ? ArrowSwapHorizontal : InfoCircle
-  return (
-    <p className="cl-insight">
-      <Icon size={16} color="currentColor" aria-hidden="true" />
-      <span>
-        <strong>{insight.lead}</strong> {insight.text}
-      </span>
-    </p>
-  )
+    <ol className="cl-rows">
+      {rows.map((r) => {
+        const pct = Math.round((r.count / q.enrolled) * 100);
+        return (
+          <li key={r.label}>
+            <BarRow pct={pct} value={`${pct}%`}>
+              <span className="cl-row__label">{r.label}</span>
+            </BarRow>
+          </li>
+        );
+      })}
+    </ol>
+  );
 }
