@@ -538,9 +538,6 @@ function AssessmentAnswers() {
                   ariaLabel="Search learners"
                   className="asp-search"
                 />
-                {/* Grouped, so the export sits at the edge whether or not a filter is
-                    beside it — short text and exercise have nothing to filter by. */}
-                <div className="asp-toolbar__end">
                 {options ? (
                   <Dropdown
                     options={options}
@@ -550,11 +547,14 @@ function AssessmentAnswers() {
                       setPage(0)
                     }}
                     size="md"
-                    menuAlign="end"
+                    menuAlign="start"
                     iconLeft={<Sort size={20} color="var(--text-primary)" variant="Linear" />}
                     className="asp-filter"
                   />
                 ) : null}
+                {/* The filter sits beside the search it narrows with; the export keeps the
+                    far edge. Short text and exercise have nothing to filter by. */}
+                <div className="asp-toolbar__end">
                 {/* With the two controls that narrow the table, above the table it
                     exports. An exercise has nothing to export as a sheet — its answers
                     are the uploaded files, fetched row by row. */}

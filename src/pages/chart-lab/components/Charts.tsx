@@ -143,15 +143,13 @@ export function OutcomeBars({
             {answer.groups.map((g) => (
               <div key={g.label} className="cl-group">
                 <h4 className="cl-group__label">{g.label}</h4>
-                <div className="cl-group__bucket">
-                  <ul className="cl-group__items">
-                    {g.items.map((item) => (
-                      <li key={item} className="cl-group__chip">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <ul className="cl-group__items">
+                  {g.items.map((item) => (
+                    <li key={item} className="cl-group__chip">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>

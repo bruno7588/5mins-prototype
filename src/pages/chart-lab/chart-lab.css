@@ -102,10 +102,6 @@
   color: var(--text-primary);
 }
 
-.cl-barrow.is-correct {
-  background: var(--success-tint);
-}
-
 .cl-barrow__fill {
   position: absolute;
   inset: 0 auto 0 0;
@@ -120,33 +116,15 @@
 }
 
 .cl-barrow.is-correct .cl-barrow__fill {
-  /* stylelint-disable-next-line -- the correct answer is Success-500 in light mode */
+  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
   background: var(--success-500);
 }
 
-/* Success-600 in dark mode, a step deeper against the dark ground. */
-[data-theme='dark'] .cl-barrow.is-correct .cl-barrow__fill {
-  /* stylelint-disable-next-line -- the correct answer is Success-600 in dark mode */
-  background: var(--success-600);
-}
-
-/* Lightens to Success-500 on hover. Placed after the hover rules would also do, but the
-   dark selector already outranks them. */
-[data-theme='dark'] .cl-barrow.is-correct:hover .cl-barrow__fill {
-  /* stylelint-disable-next-line -- the correct bar lightens to Success-500 on hover in dark mode */
-  background: var(--success-500);
-}
-
-/* Only the correct bar has a hover: it follows the Success button ladder, its track to
-   the outlined button's 24% tint and its fill to the hover shade. Neutral bars stay still. */
+/* Only the correct bar has a hover: its fill moves to the Success button's hover shade.
+   Every track, correct or not, stays Input-background. Neutral bars stay still. */
 .cl-barrow,
 .cl-barrow__fill {
   transition: background-color 150ms ease;
-}
-
-.cl-barrow.is-correct:hover {
-  /* stylelint-disable-next-line -- Success-500 @ 24%, the Success outlined button's hover tint */
-  background: color-mix(in srgb, var(--success-500) 24%, transparent);
 }
 
 .cl-barrow.is-correct:hover .cl-barrow__fill {
@@ -170,7 +148,7 @@
 .cl-barrow__value {
   flex-shrink: 0;
   font-size: var(--font-size-md);
-  font-weight: 500;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
@@ -186,11 +164,11 @@
   flex: 1;
   min-width: 0;
   font-size: var(--font-size-md);
+  font-weight: 600;
   line-height: 1.5;
 }
 
 .cl-barrow.is-correct .cl-row__label {
-  font-weight: 500;
   /* stylelint-disable-next-line -- white on the green fill in both modes */
   color: var(--neutral-25);
 }
@@ -274,6 +252,7 @@
 /* A sequence step, medium like a matched term. */
 .cl-answer__step {
   font-weight: 500;
+  color: var(--text-success);
 }
 
 /* Matched pairs in a 2 x 2 grid, one column on narrow screens. */
@@ -295,7 +274,7 @@
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-sm);
-  background: var(--success-tint);
+  background: var(--input-background);
   font-size: var(--font-size-md);
   line-height: 1.5;
 }
@@ -307,20 +286,21 @@
   gap: var(--space-xxs);
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-sm);
-  background: var(--success-tint);
+  background: var(--input-background);
 }
 
 .cl-match__term {
   font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text-success);
 }
 
+/* Text-success copy, as the Success badge, on the Input-background card. */
 .cl-match__def {
   font-size: var(--font-size-md);
   line-height: 1.4;
-  color: var(--text-secondary);
+  color: var(--text-success);
 }
 
 /* Categorise: the categories side by side, each its name over an input-tinted box
@@ -345,12 +325,6 @@
   color: var(--text-secondary);
 }
 
-.cl-group__bucket {
-  padding: var(--space-sm);
-  border-radius: var(--radius-sm);
-  background: var(--input-background);
-}
-
 .cl-group__items {
   display: flex;
   flex-wrap: wrap;
@@ -360,8 +334,8 @@
 .cl-group__chip {
   padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-sm);
-  background: var(--success-tint);
-  color: var(--text-primary);
+  background: var(--input-background);
+  color: var(--text-success);
   font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
