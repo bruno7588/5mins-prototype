@@ -491,14 +491,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--space-xxl);
-  height: var(--space-xxl);
+  /* Library Chevron, overflow=true: 32px circle on Page-background, no shadow, 20px
+     Text-secondary arrow; Hover Cards-background-hover; Disabled arrow Text-disabled. */
+  width: var(--space-xl);
+  height: var(--space-xl);
   padding: 0;
   border: none;
   border-radius: var(--radius-full);
-  background: var(--input-background);
-  box-shadow: var(--shadow-s);
-  color: var(--text-primary);
+  background: var(--page-background);
+  color: var(--text-secondary);
   cursor: pointer;
   transform: translateY(-50%);
   transition: background-color 150ms ease;
@@ -506,15 +507,15 @@
 
 /* No card around the question, so the chevrons sit clear of the bars, outside them. */
 .cl-deck__chev--left {
-  left: calc((var(--space-xxl) + var(--space-m)) * -1);
+  left: calc((var(--space-xl) + var(--space-m)) * -1);
 }
 
 .cl-deck__chev--right {
-  right: calc((var(--space-xxl) + var(--space-m)) * -1);
+  right: calc((var(--space-xl) + var(--space-m)) * -1);
 }
 
 .cl-deck__chev:hover:not(:disabled) {
-  background: var(--input-background-hover);
+  background: var(--cards-background-hover);
 }
 
 .cl-deck__chev:disabled {
@@ -567,7 +568,7 @@
 /* No room outside the bars: the row keeps a gutter each side for the chevrons. */
 @media (max-width: 1160px) {
   .cl-deck__row {
-    padding-inline: calc(var(--space-xxl) + var(--space-xs));
+    padding-inline: calc(var(--space-xl) + var(--space-xs));
   }
 
   .cl-deck__chev--left {

@@ -31,7 +31,7 @@
 /* Inside the card there is no room outside the bars, so the question deck keeps a
    gutter each side and its chevrons sit in it, 12px clear of the bars. */
 .ast .cl-deck__row {
-  padding-inline: calc(var(--space-xxl) + var(--space-sm));
+  padding-inline: calc(var(--space-xl) + var(--space-sm));
 }
 
 .ast .cl-deck__chev--left {

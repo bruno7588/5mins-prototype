@@ -803,6 +803,7 @@ export const courseAssessments: AssessmentResult[] = [
     enrolled: ENROLLED,
     responses: texts([
       'A five-minute round at the end of each sprint review where anyone can flag something that felt off. No fixing, just naming it.',
+      'Ten minutes at the end of every retro where the manager leaves the room and someone else writes up what was said. We tried this once after a project went badly and it was the only time I have seen people say what they actually thought. It should not have taken a disaster to get there, and it should not have stopped when the project ended. The write-up went to the manager afterwards with no names on it, which is what made it safe.',
       'Monthly "what did we learn from a mistake" slot in the team meeting, led by a different person each time.',
       'We already do a Friday shout-out channel. I would make it required for managers rather than optional.',
       'Start every 1:1 with the same question: what is one thing I could do differently for you?',
@@ -812,7 +813,6 @@ export const courseAssessments: AssessmentResult[] = [
       'Buddy system for new joiners for the first six weeks, with a check-in at weeks 1, 3 and 6.',
       'Honestly our team is too small for rituals, we talk constantly anyway.',
       'A standing "what nearly went wrong" item. Not incidents — near misses. The stuff nobody reports because it worked out in the end.',
-      'Ten minutes at the end of every retro where the manager leaves the room and someone else writes up what was said. We tried this once after a project went badly and it was the only time I have seen people say what they actually thought. It should not have taken a disaster to get there, and it should not have stopped when the project ended. The write-up went to the manager afterwards with no names on it, which is what made it safe.',
       'Swap the weekly status update for a weekly "what I am stuck on" update. Same meeting, opposite question.',
       'Pair a new joiner with someone outside their function for the first month.',
       'We run a Friday demo. I would add a rule that at least one thing shown has to be unfinished.',

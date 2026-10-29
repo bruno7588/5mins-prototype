@@ -46,7 +46,7 @@ function MultiChart({
           disabled={index === 0}
           aria-label="Previous question"
         >
-          <ArrowLeft2 size={24} color="currentColor" variant="Linear" />
+          <ArrowLeft2 size={20} color="currentColor" variant="Linear" />
         </button>
 
         <div className="cl-deck__track">
@@ -78,7 +78,7 @@ function MultiChart({
           disabled={index === last}
           aria-label="Next question"
         >
-          <ArrowRight2 size={24} color="currentColor" variant="Linear" />
+          <ArrowRight2 size={20} color="currentColor" variant="Linear" />
         </button>
       </div>
 

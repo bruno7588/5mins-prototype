@@ -386,6 +386,7 @@ function AssessmentAnswers() {
         {
           key: 'result',
           header: 'Result',
+          align: 'right',
           width: '0 0 140px',
           render: (r) =>
             r.correct ? <Badge type="success" label="Correct" /> : <Badge type="error" label="Incorrect" />,
@@ -404,7 +405,7 @@ function AssessmentAnswers() {
     if (a.kind === 'poll') {
       const columns: Column<VoteResponse>[] = [
         learnerColumn<VoteResponse>(),
-        { key: 'vote', header: 'Voted for', width: '1 1 240px', render: (r) => a.options[r.optionIndex] },
+        { key: 'vote', header: 'Voted for', width: '1 1 240px', align: 'right', render: (r) => a.options[r.optionIndex] },
       ]
       return (
         <Table
@@ -477,7 +478,7 @@ function AssessmentAnswers() {
         render: (r) => 'notAnswered' in r ? null : (
           /* An icon on its own in a column with no header — the tooltip is where it says
              what it does. */
-          <Tooltip text="Download File" position="Top" icon={false}>
+          <Tooltip text="Download File" position="Top" alignment="End" icon={false}>
             <button
               className="icon-btn"
               onClick={() => showToast('success', `Downloading ${r.fileName}`)}
