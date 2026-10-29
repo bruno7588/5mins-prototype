@@ -16,3 +16,10 @@
 .lrn.mqa--blanks {
   --lrn-cols: minmax(240px, 1fr) minmax(200px, 1fr) 170px 40px;
 }
+
+/* Question bank: "Question 3 of 6" over the question, tertiary like the card's own label. */
+.mqa-qlabel {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}

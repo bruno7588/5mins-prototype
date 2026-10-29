@@ -51,6 +51,9 @@
 }
 
 .asp-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   margin: 0;
   font-size: var(--font-size-md);
   line-height: 1.5;

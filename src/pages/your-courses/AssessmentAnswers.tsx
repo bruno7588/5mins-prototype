@@ -532,18 +532,27 @@ function AssessmentAnswers() {
               {/* What kind of assessment this is, and how big. How many answered belongs
                   to the chart below, where it is the denominator of every figure — said
                   in both places it was the same sentence printed twice. */}
-              <p className="asp-meta">
+              <div className="asp-meta">
                 {[
                   formatName(a),
-                  /* A question bank has no single question count to state; each question
-                     card says how many answered it. */
-                  a.kind === 'multi' && !a.drawCount
-                    ? `${a.questions.length} ${a.type === 'fill-blank' ? 'blanks' : 'questions'}`
-                    : null,
+                  /* A question bank has no single question count to state, so it is named,
+                     and the tooltip says why learners' questions differ. */
+                  a.kind === 'multi' && a.drawCount
+                    ? `Question bank of ${a.questions.length}, picked at random for each learner`
+                    : a.kind === 'multi'
+                      ? `${a.questions.length} ${a.type === 'fill-blank' ? 'blanks' : 'questions'}`
+                      : null,
                 ]
                   .filter(Boolean)
                   .join(' · ')}
-              </p>
+                {a.kind === 'multi' && a.drawCount ? (
+                  <Tooltip
+                    text="Learners answer different questions, so each question shows how many learners answered it."
+                    iconSize={16}
+                    iconColor="var(--text-secondary)"
+                  />
+                ) : null}
+              </div>
             </div>
           </header>
 

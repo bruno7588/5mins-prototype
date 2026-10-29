@@ -135,9 +135,21 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                             )}
                           </span>
                           <span className="lrn-answer__body">
-                            <span className="lrn-answer__title">
-                              {qi + 1}. {q.prompt}
-                            </span>
+                            {/* A question bank labels each question as its card above does
+                                ("Question 3 of 6"), so a row's numbers read as the bank's,
+                                not as gaps in the learner's own attempt. */}
+                            {a.drawCount ? (
+                              <>
+                                <span className="mqa-qlabel">
+                                  Question {qi + 1} of {a.questions.length}
+                                </span>
+                                <span className="lrn-answer__title">{q.prompt}</span>
+                              </>
+                            ) : (
+                              <span className="lrn-answer__title">
+                                {qi + 1}. {q.prompt}
+                              </span>
+                            )}
                             {/* What they picked, and nothing else: the chart above names
                                 the right answer in green for the question its chips have
                                 selected, so restating it here was the same sentence twice

@@ -46,3 +46,13 @@
 .ast .cl-deck__chev--right {
   right: 0;
 }
+
+/* The page titles itself with the question, so a card is its label then its bars, 12px apart. */
+.ast .cl-deck__card {
+  gap: var(--space-sm);
+}
+
+/* The question numbers sit 12px under the bars. */
+.ast .cl-deck {
+  gap: var(--space-sm);
+}
