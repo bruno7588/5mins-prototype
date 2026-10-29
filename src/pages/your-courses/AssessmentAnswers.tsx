@@ -21,6 +21,8 @@ import {
   formatName,
   hasStatedAnswer,
   multiScore,
+  NOT_DRAWN,
+  perAttempt,
   PASS_SCORE,
   answerRows,
   type AssessmentResult,
@@ -92,14 +94,19 @@ function sheet(a: AssessmentResult): string[][] {
     return [
       ['Learner', 'Role', 'Submitted', 'Question', 'Answer', 'Result'],
       ...a.responses.flatMap((r) =>
-        a.questions.map((q, qi) => [
-          r.learner.name,
-          r.learner.role,
-          r.submittedAt,
-          `${qi + 1}. ${q.prompt}`,
-          q.options[r.picks[qi]],
-          r.picks[qi] === q.correctIndex ? 'Correct' : 'Incorrect',
-        ]),
+        a.questions.flatMap((q, qi) =>
+          /* A bank question this learner was not given has no row. */
+          r.picks[qi] === NOT_DRAWN
+            ? []
+            : [[
+                r.learner.name,
+                r.learner.role,
+                r.submittedAt,
+                `${qi + 1}. ${q.prompt}`,
+                q.options[r.picks[qi]],
+                r.picks[qi] === q.correctIndex ? 'Correct' : 'Incorrect',
+              ]],
+        ),
       ),
     ]
 
@@ -252,7 +259,7 @@ function AssessmentAnswers() {
     if (q && !r.learner.name.toLowerCase().includes(q)) return false
     if (answer === ALL) return true
     if (a.kind === 'multi') {
-      const pct = Math.round((multiScore(a, a.responses[i]) / a.questions.length) * 100)
+      const pct = Math.round((multiScore(a, a.responses[i]) / perAttempt(a)) * 100)
       return answer === 'pass' ? pct >= PASS_SCORE : pct < PASS_SCORE
     }
     if (a.kind === 'graded') {
@@ -538,7 +545,9 @@ function AssessmentAnswers() {
               <p className="asp-meta">
                 {[
                   formatName(a),
-                  a.kind === 'multi'
+                  /* A question bank has no single question count to state; each question
+                     card says how many answered it. */
+                  a.kind === 'multi' && !a.drawCount
                     ? `${a.questions.length} ${a.type === 'fill-blank' ? 'blanks' : 'questions'}`
                     : null,
                 ]

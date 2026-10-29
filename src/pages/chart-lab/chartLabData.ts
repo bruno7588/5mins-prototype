@@ -56,6 +56,8 @@ export interface QuizQuestion {
   id: string
   title: string
   rows: OptionRow[]
+  /** Set when learners get different questions (a question bank): how many answered this one. */
+  answered?: number
 }
 
 /** A lesson quiz (3 to 4 questions) or situational test (up to 8): one page. */

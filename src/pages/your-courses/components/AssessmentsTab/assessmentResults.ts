@@ -138,7 +138,24 @@ export interface MultiAssessment extends AssessmentBase {
   kind: 'multi'
   type: 'situational-test' | GradedType
   questions: MultiQuestion[]
+  /** A lesson quiz with a question bank: each attempt shows this many of `questions`,
+      randomly chosen, so learners answer different sets. Absent, everyone gets them all.
+      A question a learner was not given holds NOT_DRAWN in their `picks`. */
+  drawCount?: number
   responses: MultiResponse[]
+}
+
+/** In a learner's `picks`: a bank question their attempt did not include. */
+export const NOT_DRAWN = -1
+
+/** How many questions one attempt shows: the bank's draw, or every question. */
+export function perAttempt(a: MultiAssessment): number {
+  return a.drawCount ?? a.questions.length
+}
+
+/** How many learners were given question `qi`. With no bank, everyone who responded. */
+export function answeredCount(a: MultiAssessment, qi: number): number {
+  return a.responses.filter((r) => r.picks[qi] !== NOT_DRAWN).length
 }
 
 export type AssessmentResult =
@@ -166,7 +183,7 @@ export function correctPct(a: AssessmentResult): number | null {
        same two questions is not the same shape as one where two learners missed
        everything, and the answer count is what both claims are read off. */
     const right = a.responses.reduce((n, r) => n + multiScore(a, r), 0)
-    return Math.round((right / (a.responses.length * a.questions.length)) * 100)
+    return Math.round((right / (a.responses.length * perAttempt(a))) * 100)
   }
   const right = a.responses.filter((r) => r.correct).length
   return Math.round((right / a.responses.length) * 100)
@@ -372,6 +389,23 @@ function runs(
       return (q.correctIndex + 1 + ((seed(id + learner.id) + qi) % (n - 1))) % n
     }),
   }))
+}
+
+/** `runs` for a lesson quiz with a question bank: each learner is given `draw` of the
+    questions, a different set per learner, and the rest are NOT_DRAWN. */
+function bankRuns(id: string, count: number, questions: MultiQuestion[], easiness: number[], draw: number): MultiResponse[] {
+  return runs(id, count, questions, easiness).map((r, i) => {
+    /* Deterministic: a seeded shuffle of the bank, first `draw` taken. */
+    const order = questions.map((_, qi) => qi)
+    let s = seed(id + r.learner.id) * 31 + i
+    for (let k = order.length - 1; k > 0; k--) {
+      s = (Math.imul(s, 1103515245) + 12345) >>> 0
+      const j = s % (k + 1)
+      ;[order[k], order[j]] = [order[j], order[k]]
+    }
+    const drawn = new Set(order.slice(0, draw))
+    return { ...r, picks: r.picks.map((p, qi) => (drawn.has(qi) ? p : NOT_DRAWN)) }
+  })
 }
 
 function votes(id: string, count: number, options: number): VoteResponse[] {
@@ -585,6 +619,36 @@ const QUIZ_CULTURE: MultiQuestion[] = [
     ],
     correctIndex: 1,
   },
+  {
+    prompt: 'A manager praises speed but promotes the person who never misses a detail. Which value will the team adopt?',
+    options: [
+      'Speed, because it is said most often',
+      'Attention to detail, because it is rewarded',
+      'Both equally',
+      'Neither, until it is written down',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'What is the quickest way to change a team habit that undercuts a stated value?',
+    options: [
+      'Restate the value at the next all-hands',
+      'Change what happens when the habit shows up',
+      'Add the value to the performance review form',
+      'Run a workshop on the value',
+    ],
+    correctIndex: 1,
+  },
+  {
+    prompt: 'Which signal shows a value is actually lived?',
+    options: [
+      'It appears in the company handbook',
+      'People act on it when it costs them something',
+      'Leaders mention it in every meeting',
+      'It is printed on the office walls',
+    ],
+    correctIndex: 1,
+  },
 ]
 
 const QUIZ_BEHAVIOUR: MultiQuestion[] = [
@@ -671,7 +735,8 @@ export function formatName(a: AssessmentResult): string {
 
 export const courseAssessments: AssessmentResult[] = [
   /* A lesson quiz surfaced on the first page of the list — the check at the end of a
-     lesson (two or three questions, no prompt of its own; the row names the lesson). */
+     lesson (no prompt of its own; the row names the lesson). This one has a question
+     bank: six questions, three per attempt, so learners answer different sets. */
   {
     id: 'q1',
     kind: 'multi',
@@ -681,7 +746,8 @@ export const courseAssessments: AssessmentResult[] = [
     prompt: '',
     enrolled: ENROLLED,
     questions: QUIZ_CULTURE,
-    responses: runs('q1', 109, QUIZ_CULTURE, [82, 64, 73]),
+    drawCount: 3,
+    responses: bankRuns('q1', 109, QUIZ_CULTURE, [82, 64, 73, 58, 49, 77], 3),
   },
   {
     id: 'a1',
@@ -1007,7 +1073,7 @@ function answerText(a: AssessmentResult, i: number): string {
   /* A whole run through a scenario, so the row states the score and the drawer
      holds the twelve answers behind it. */
   if (a.kind === 'multi')
-    return `${multiScore(a, a.responses[i])} of ${a.questions.length} correct`
+    return `${multiScore(a, a.responses[i])} of ${perAttempt(a)} correct`
   return a.responses[i].fileName
 }
 
@@ -1094,7 +1160,7 @@ export const learnerRows: LearnerRow[] = pool.map((learner) => {
       answer: answerText(a, i),
       correct: verdict(a, i),
       ...(a.kind === 'multi'
-        ? { partial: { correct: multiScore(a, a.responses[i]), of: a.questions.length } }
+        ? { partial: { correct: multiScore(a, a.responses[i]), of: perAttempt(a) } }
         : {}),
       submittedAt: a.responses[i].submittedAt,
     })
@@ -1179,6 +1245,8 @@ export function responsesCsv(): string {
     if (a.kind === 'multi') {
       for (const r of a.responses) {
         a.questions.forEach((q, qi) => {
+          /* A bank question this learner was not given has no answer to export. */
+          if (r.picks[qi] === NOT_DRAWN) return
           rows.push([
             a.title,
             a.type,

@@ -4,6 +4,7 @@ import MultiChart from '@/pages/chart-lab/components/MultiChart'
 import type { OptionRow } from '@/pages/chart-lab/chartLabData'
 import '@/pages/chart-lab/chart-lab.css'
 import {
+  answeredCount,
   optionTally,
   questionOptionTally,
   type AssessmentResult,
@@ -113,11 +114,17 @@ function AnswerStats({
             type: a.lesson ? 'Lesson quiz' : 'Situational test',
             title: a.title,
             responses: responded,
-            questions: a.questions.map((q, qi) => ({
-              id: `${a.id}-${qi}`,
-              title: q.prompt,
-              rows: rows(q.options, questionOptionTally(a, qi), responded, (i) => i === q.correctIndex),
-            })),
+            /* With a question bank each question has its own audience, so its shares
+               are out of the learners who were given it, and the card says how many. */
+            questions: a.questions.map((q, qi) => {
+              const answered = answeredCount(a, qi)
+              return {
+                id: `${a.id}-${qi}`,
+                title: q.prompt,
+                rows: rows(q.options, questionOptionTally(a, qi), answered, (i) => i === q.correctIndex),
+                answered: a.drawCount ? answered : undefined,
+              }
+            }),
           }}
         />
       )

@@ -3,7 +3,7 @@ import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowDown2, CloseCircle, TickCircle
 import Avatar from '@/components/Avatar/Avatar'
 import Collapse from '@/components/Collapse/Collapse'
 import { BandLabel } from './AnswerStats'
-import { multiScore, type MultiAssessment, type MultiResponse } from './assessmentResults'
+import { multiScore, NOT_DRAWN, perAttempt, type MultiAssessment, type MultiResponse } from './assessmentResults'
 /* The By Learner pivot is this same shape one level up — learner rows that open onto
    their answers — so the row-card chrome is borrowed rather than restated. */
 import './LearnerList.css'
@@ -79,7 +79,7 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
         {rows.map((r) => {
           const isOpen = open.has(r.learner.id)
           const score = multiScore(a, r)
-          const pct = Math.round((score / a.questions.length) * 100)
+          const pct = Math.round((score / perAttempt(a)) * 100)
           return (
             <li key={r.learner.id} className={`lrn-card${isOpen ? ' is-open' : ''}`}>
               <button
@@ -99,7 +99,7 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                 {blanks && (
                   <span className="lrn-cell">
                     <span>
-                      <BandLabel label={`${score} of ${a.questions.length} blanks correct`} />
+                      <BandLabel label={`${score} of ${perAttempt(a)} blanks correct`} />
                     </span>
                   </span>
                 )}
@@ -121,6 +121,9 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                 <div className="lrn-detail">
                   <ul className="lrn-answers mqa-answers">
                     {a.questions.map((q, qi) => {
+                      /* Only the questions this learner's attempt included. The bank
+                         number stays, so a row matches the question card above. */
+                      if (r.picks[qi] === NOT_DRAWN) return null
                       const right = r.picks[qi] === q.correctIndex
                       return (
                         <li key={qi} className="lrn-answer">

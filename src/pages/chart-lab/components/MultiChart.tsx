@@ -62,6 +62,7 @@ function MultiChart({
               >
                 <p className="cl-deck__count">
                   Question {i + 1} of {a.questions.length}
+                  {q.answered !== undefined && ` · Answered by ${q.answered} learners`}
                 </p>
                 {showTitle ? <h3 className="cl-deck__question">{q.title}</h3> : null}
                 <OptionBars rows={q.rows} />
