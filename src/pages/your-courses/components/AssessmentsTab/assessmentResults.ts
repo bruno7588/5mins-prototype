@@ -1088,6 +1088,14 @@ function verdict(a: AssessmentResult, i: number): boolean | null {
  */
 export const PASS_SCORE = 80
 
+/** The Badge a score wears: a pass is Success, under the pass score Warning, under half
+    Error. The pass line is the course's, so it matches the filter. */
+export function scoreBadgeType(pct: number): 'success' | 'warning' | 'error' {
+  if (pct >= PASS_SCORE) return 'success'
+  if (pct >= 50) return 'warning'
+  return 'error'
+}
+
 /**
  * One learner's score on one assessment, 0–100, or null where the format records no
  * score at all: a poll has no right answer, and short text and exercise are not marked.

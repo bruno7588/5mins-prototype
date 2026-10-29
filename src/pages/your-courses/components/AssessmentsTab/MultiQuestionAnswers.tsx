@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowDown2, CloseCircle, TickCircle } from 'iconsax-react'
 import Avatar from '@/components/Avatar/Avatar'
+import Badge from '@/components/Badge/Badge'
 import Collapse from '@/components/Collapse/Collapse'
 import { BandLabel } from './AnswerStats'
-import { multiScore, NOT_DRAWN, perAttempt, type MultiAssessment, type MultiResponse } from './assessmentResults'
+import { multiScore, NOT_DRAWN, perAttempt, scoreBadgeType, type MultiAssessment, type MultiResponse } from './assessmentResults'
 /* The By Learner pivot is this same shape one level up — learner rows that open onto
    their answers — so the row-card chrome is borrowed rather than restated. */
 import './LearnerList.css'
@@ -104,12 +105,11 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                   </span>
                 )}
 
-                {/* The same figure the By Learner pivot shows, drawn the same way: a
-                    percentage on its own. The bar beside it was redrawing what the
-                    number already said, and which questions they missed is one row
-                    below, ticked and crossed. */}
+                {/* The score on a Badge coloured by the course pass score: a pass is
+                    Success, under it Warning, under half Error. Which questions they
+                    missed is one row below, ticked and crossed. */}
                 <span className="lrn-cell lrn-c-score">
-                  <span className="lrn-pct">{pct}%</span>
+                  <Badge type={scoreBadgeType(pct)} label={`${pct}%`} />
                 </span>
 
                 <span className="lrn-cell lrn-c-expand lrn-chevron" aria-hidden="true">

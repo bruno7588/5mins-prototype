@@ -3,6 +3,7 @@ import { Add, ArrowDown2, Danger, DocumentUpload } from 'iconsax-react'
 import MoreIcon from '../../components/icons/MoreIcon'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Button from '../../components/Button/Button'
+import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import { Table, type Column } from '@/components/Table/Table'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
@@ -378,26 +379,19 @@ function LearningRecordsTab() {
     <section className="lr" aria-label="Learning Records">
       {/* Actions bar */}
       <div className="lr__actions">
-        <div className="lr__chips">
-          <button
-            type="button"
-            className={`lr__chip${activeChip === '5mins' ? ' lr__chip--active' : ''}`}
-            onClick={() => { setActiveChip('5mins'); setSelectedExtIds(new Set()) }}
-          >
-            5Mins Courses
-          </button>
-          <button
-            type="button"
-            className={`lr__chip${activeChip === 'external' ? ' lr__chip--active' : ''}`}
-            onClick={() => setActiveChip('external')}
-          >
-            External Training
-          </button>
-        </div>
+        <ContentSwitcher
+          items={[
+            { key: '5mins', label: '5Mins Courses' },
+            { key: 'external', label: 'External Training' },
+          ]}
+          activeKey={activeChip}
+          onChange={(key) => {
+            setActiveChip(key as ChipType)
+            if (key === '5mins') setSelectedExtIds(new Set())
+          }}
+          ariaLabel="Learning records type"
+        />
         <div className="lr__actions-right">
-          <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />}>
-            Download Report
-          </Button>
           {activeChip === 'external' && (
             <div className="lr__add-training-wrap" ref={addMenuRef}>
               <Button variant="outlined" icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setAddMenuOpen(o => !o)}>
@@ -421,6 +415,10 @@ function LearningRecordsTab() {
               )}
             </div>
           )}
+          {/* Download Report holds the far right edge whatever else shows beside it. */}
+          <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />}>
+            Download Report
+          </Button>
         </div>
       </div>
 

@@ -16,41 +16,6 @@
   width: 100%;
 }
 
-.lr__chips {
-  display: flex;
-  gap: var(--space-sm);
-}
-
-.lr__chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xss) var(--space-sm);
-  border-radius: var(--radius-full);
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid var(--border-elevated);
-  cursor: pointer;
-  line-height: 1.5;
-  white-space: nowrap;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-}
-
-.lr__chip:hover:not(.lr__chip--active) {
-  background: var(--input-background);
-  color: var(--text-primary);
-}
-
-.lr__chip--active {
-  background: var(--secondary-500);
-  color: var(--text-on-selected);
-  font-weight: 500;
-  border-color: var(--secondary-500);
-}
-
 .lr__actions-right {
   display: flex;
   gap: var(--space-m);
