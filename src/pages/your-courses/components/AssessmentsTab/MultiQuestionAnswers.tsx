@@ -136,12 +136,12 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                           </span>
                           <span className="lrn-answer__body">
                             {/* A question bank labels each question as its card above does
-                                ("Question 3 of 6"), so a row's numbers read as the bank's,
+                                ("Question 3"), so a row's numbers read as the bank's,
                                 not as gaps in the learner's own attempt. */}
                             {a.drawCount ? (
                               <>
                                 <span className="mqa-qlabel">
-                                  Question {qi + 1} of {a.questions.length}
+                                  Question {qi + 1}
                                 </span>
                                 <span className="lrn-answer__title">{q.prompt}</span>
                               </>
