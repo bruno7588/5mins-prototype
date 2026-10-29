@@ -152,6 +152,25 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* The share as a semibold Badge: the correct answer Neutral-25 with Success-500 figures
+   (it sits on the green bar), every other option on Border grey with secondary figures. */
+.badge.cl-pct {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.badge.cl-pct--correct {
+  /* stylelint-disable-next-line -- a white chip on the green bar in both modes */
+  background: var(--neutral-25);
+  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
+  color: var(--success-500);
+}
+
+.badge.cl-pct--wrong {
+  background: var(--border);
+  color: var(--text-secondary);
+}
+
 .cl-row__marker {
   flex: 0 0 var(--space-m);
   font-size: var(--font-size-sm);

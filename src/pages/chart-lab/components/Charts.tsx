@@ -33,7 +33,10 @@ export function BarRow({
         aria-hidden="true"
       />
       <span className="cl-barrow__content">{children}</span>
-      <span className="cl-barrow__value">{value}</span>
+      {/* The share on a Badge: solid Success for the correct answer, Border grey otherwise. */}
+      <span className="cl-barrow__value">
+        <Badge label={value} className={`cl-pct ${correct ? "cl-pct--correct" : "cl-pct--wrong"}`} />
+      </span>
     </span>
   );
 }

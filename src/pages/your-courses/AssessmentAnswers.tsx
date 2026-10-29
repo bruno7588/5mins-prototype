@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useLocation, useNavigate, useParams, Navigate } from 'react-router-dom'
-import { CloseCircle, ImportCurve, Sort, TickCircle } from 'iconsax-react'
+import { ImportCurve, Sort } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
 import Avatar from '@/components/Avatar/Avatar'
 import Badge from '@/components/Badge/Badge'
@@ -16,6 +16,7 @@ import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import searchIllustration from '@/assets/empty-state-illustrations/search.svg'
 import AnswerStats, { BandLabel } from './components/AssessmentsTab/AnswerStats'
 import MultiQuestionAnswers from './components/AssessmentsTab/MultiQuestionAnswers'
+import SelectAllAnswers from './components/AssessmentsTab/SelectAllAnswers'
 import {
   courseAssessments,
   formatName,
@@ -328,6 +329,12 @@ function AssessmentAnswers() {
   /* One table per response shape — the columns differ, and the union of arrays
      cannot be narrowed from inside a shared renderer. */
   const table = (() => {
+    /* Select all that apply: several ticked options to a learner, so each row opens onto
+       them, as the scenario and lesson quiz rows open onto their questions. */
+    if (a.kind === 'graded' && a.correctIndices && !a.optionImages) {
+      return <SelectAllAnswers assessment={a} responses={pageRows as ChoiceResponse[]} pagination={pagination} />
+    }
+
     if (a.kind === 'graded') {
       /* Banded formats record how much of an arrangement was right, not which option
          was chosen — see hasStatedAnswer. */
@@ -363,23 +370,6 @@ function AssessmentAnswers() {
                       />
                     ))}
                 </span>
-              )
-            }
-            /* Select all that apply: every option they ticked, one per line. */
-            if (r.picks) {
-              return (
-                <ul className="asp-picks">
-                  {r.picks.map((p) => (
-                    <li key={p}>
-                      {a.correctIndices?.includes(p) ? (
-                        <TickCircle size={16} color="var(--success-500)" variant="Bold" aria-label="Correct" />
-                      ) : (
-                        <CloseCircle size={16} color="var(--danger-500)" variant="Bold" aria-label="Incorrect" />
-                      )}
-                      {a.options[p]}
-                    </li>
-                  ))}
-                </ul>
               )
             }
             const answer = a.options[r.optionIndex]

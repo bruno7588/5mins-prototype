@@ -71,6 +71,12 @@
   gap: var(--space-m);
 }
 
+/* 20px from the question to the charts, inside the page's 24px rhythm (the charts to
+   the toolbar stay 24px). */
+.asp-header + .asp-brief {
+  margin-top: calc(var(--space-ml) - var(--space-l));
+}
+
 /* ── Toolbar ─────────────────────────────────────────────────────────────── */
 .asp-toolbar {
   display: flex;
@@ -133,29 +139,6 @@
 }
 
 /* A chosen option is a sentence, so it wraps like one. */
-/* Select all that apply: each ticked option on its own line. */
-.asp-picks {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  white-space: normal;
-}
-
-/* A tick or cross before each option: right pick or wrong pick. */
-.asp-picks li {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-xs);
-}
-
-.asp-picks li svg {
-  flex-shrink: 0;
-  margin-top: var(--space-xxs);
-}
-
 .asp-choice {
   display: block;
   white-space: normal;
