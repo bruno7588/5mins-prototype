@@ -147,11 +147,56 @@
   white-space: normal;
 }
 
+/* A tick or cross before each option: right pick or wrong pick. */
+.asp-picks li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.asp-picks li svg {
+  flex-shrink: 0;
+  margin-top: var(--space-xxs);
+}
+
 .asp-choice {
   display: block;
   white-space: normal;
   overflow: visible;
   overflow-wrap: anywhere;
+}
+
+/* Image options (DES-345): the picked images, in the order the admin set them. */
+.asp-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.asp-thumb {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: var(--radius-s);
+  /* 1px inside border: right picks in success, wrong picks in danger. */
+  outline: 1px solid;
+  outline-offset: -1px;
+}
+
+.asp-thumb.is-correct {
+  outline-color: var(--success-500);
+}
+
+.asp-thumb.is-incorrect {
+  outline-color: var(--danger-500);
+}
+
+/* A right image the learner did not pick: an empty dashed square the thumbs' size. */
+.asp-thumb-missed {
+  width: 32px;
+  height: 32px;
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-s);
 }
 
 /* The uploaded file cell reads as a filename with a quiet caption under it, so it drops

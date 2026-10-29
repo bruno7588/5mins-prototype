@@ -10,6 +10,7 @@
 
 .ast-band__figure {
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .ast-band__rest {

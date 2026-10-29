@@ -236,7 +236,7 @@
 /* ── The correct answer ──────────────────────────────────────────────────────
    Shown once under the correct / incorrect split, without figures: scoring is
    all or nothing, so no pair, step or blank has a score of its own. Its pieces
-   sit on the correct answer's green tint. */
+   are bordered cards like the Assessments tab's summary stat cards. */
 .cl-answer {
   display: flex;
   flex-direction: column;
@@ -249,15 +249,18 @@
   gap: var(--space-s);
 }
 
-/* The step number, green with its step. */
+/* The step number, in the slot a matched pair gives its 32px tick. */
 .cl-answer__item .cl-row__marker {
+  flex: 0 0 32px;
+  text-align: center;
+  font-size: var(--font-size-md);
   color: var(--text-success);
 }
 
 /* A sequence step, medium like a matched term. */
 .cl-answer__step {
   font-weight: 500;
-  color: var(--text-success);
+  color: var(--text-primary);
 }
 
 /* Matched pairs in a 2 x 2 grid, one column on narrow screens. */
@@ -278,38 +281,51 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--input-background);
   font-size: var(--font-size-md);
   line-height: 1.5;
 }
 
 /* Match the pairs: each pair on the correct bar's green track tint, the term over its match. */
+/* Same anatomy as the Assessments tab's summary stat cards (.asm-stat): bordered,
+   a 32px success tick on the left, the term over its match beside it. */
 .cl-match {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.cl-match > svg {
+  flex: 0 0 auto;
+}
+
+.cl-match__text {
   display: flex;
   flex-direction: column;
   gap: var(--space-xxs);
-  padding: var(--space-sm) var(--space-m);
-  border-radius: var(--radius-sm);
-  background: var(--input-background);
+  min-width: 0;
 }
 
 .cl-match__term {
   font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
-  color: var(--text-success);
+  color: var(--text-primary);
 }
 
-/* Text-success copy, as the Success badge, on the Input-background card. */
+/* The match, secondary under its primary term. */
 .cl-match__def {
   font-size: var(--font-size-md);
   line-height: 1.4;
-  color: var(--text-success);
+  color: var(--text-secondary);
 }
 
-/* Categorise: the categories side by side, each its name over an input-tinted box
-   holding its items as chips on the correct bar's green track tint. */
+/* Categorise: the categories side by side, each its name over its items as
+   bordered chips. */
 .cl-groups {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -338,9 +354,9 @@
 
 .cl-group__chip {
   padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--input-background);
-  color: var(--text-success);
+  color: var(--text-primary);
   font-size: var(--font-size-md);
   font-weight: 500;
   line-height: 1.5;
@@ -360,8 +376,8 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-xss) var(--space-sm);
+  border: 1px solid var(--border);
   border-radius: var(--radius-full);
-  background: var(--input-background);
   color: var(--text-primary);
   line-height: 1.5;
   vertical-align: middle;
@@ -371,7 +387,7 @@
 .cl-blank__answer {
   font-size: var(--font-size-md);
   font-weight: 500;
-  color: var(--text-success);
+  color: var(--text-primary);
 }
 
 /* ── Lesson quiz and situational test: the flashcard deck ──────────────────

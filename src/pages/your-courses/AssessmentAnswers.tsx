@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useLocation, useNavigate, useParams, Navigate } from 'react-router-dom'
-import { ImportCurve, Sort } from 'iconsax-react'
+import { CloseCircle, ImportCurve, Sort, TickCircle } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
 import Avatar from '@/components/Avatar/Avatar'
 import Badge from '@/components/Badge/Badge'
@@ -22,11 +22,13 @@ import {
   hasStatedAnswer,
   multiScore,
   PASS_SCORE,
+  answerRows,
   type AssessmentResult,
   type ChoiceResponse,
   type FileResponse,
   type MultiResponse,
   type ResponseLearner,
+  type NotAnswered,
   type TextResponse,
   type VoteResponse,
 } from './components/AssessmentsTab/assessmentResults'
@@ -118,8 +120,13 @@ function sheet(a: AssessmentResult): string[][] {
 const ALL = 'all'
 
 function filterOptions(a: AssessmentResult): { value: string; label: string }[] | null {
-  /* Neither is marked, so there is nothing to narrow by but the name. */
-  if (a.kind === 'text' || a.kind === 'file') return null
+  /* Short text and exercises are not marked, so the only cut is whether they have answered yet. */
+  if (a.kind === 'text' || a.kind === 'file')
+    return [
+      { value: ALL, label: 'All learners' },
+      { value: 'answered', label: 'Answered' },
+      { value: 'not-answered', label: 'Not answered' },
+    ]
 
   if (a.kind === 'multi')
     return [
@@ -254,13 +261,21 @@ function AssessmentAnswers() {
     if (a.kind === 'poll') {
       return String((a.responses[i] as VoteResponse).optionIndex) === answer
     }
+    if (a.kind === 'text' || a.kind === 'file') {
+      return !('notAnswered' in r) === (answer === 'answered')
+    }
     return true
   }
+
+  /* Short text and exercises also list the learners yet to answer; every other format,
+     only answers. */
+  const rows: { learner: ResponseLearner }[] =
+    a.kind === 'text' || a.kind === 'file' ? answerRows<{ learner: ResponseLearner }>(a.responses) : a.responses
 
   /* Indices kept alongside the rows: the multi filter scores a response against its
      own assessment, which needs to know where in the original list it sat. */
   const kept = useMemo(
-    () => a.responses.map((r, i) => ({ r, i })).filter(({ r, i }) => matches(r, i)),
+    () => rows.map((r, i) => ({ r, i })).filter(({ r, i }) => matches(r, i)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [a.id, query, answer],
   )
@@ -319,12 +334,43 @@ function AssessmentAnswers() {
              its "option" is how much of the arrangement was right — so the count leads
              and the phrase steps back, the way the chart above states it. */
           render: (r) => {
+            /* Image options (DES-345): the images they picked, never "Option N". */
+            if (a.optionImages && r.picks) {
+              return (
+                <span className="asp-thumbs">
+                  {r.picks.map((p) => (
+                    <img
+                      key={p}
+                      className={`asp-thumb ${a.correctIndices?.includes(p) ? 'is-correct' : 'is-incorrect'}`}
+                      src={a.optionImages![p]} alt={a.options[p] || `Image ${p + 1}`} />
+                  ))}
+                  {/* One dashed square per right image they did not pick. */}
+                  {a.correctIndices
+                    ?.filter((c) => !r.picks!.includes(c))
+                    .map((c) => (
+                      <span
+                        key={`missed-${c}`}
+                        className="asp-thumb-missed"
+                        role="img"
+                        aria-label={`Missed: ${a.options[c] || `Image ${c + 1}`}`}
+                      />
+                    ))}
+                </span>
+              )
+            }
             /* Select all that apply: every option they ticked, one per line. */
             if (r.picks) {
               return (
                 <ul className="asp-picks">
                   {r.picks.map((p) => (
-                    <li key={p}>{a.options[p]}</li>
+                    <li key={p}>
+                      {a.correctIndices?.includes(p) ? (
+                        <TickCircle size={16} color="var(--success-500)" variant="Bold" aria-label="Correct" />
+                      ) : (
+                        <CloseCircle size={16} color="var(--danger-500)" variant="Bold" aria-label="Incorrect" />
+                      )}
+                      {a.options[p]}
+                    </li>
                   ))}
                 </ul>
               )
@@ -339,9 +385,7 @@ function AssessmentAnswers() {
         }
       const columns: Column<ChoiceResponse>[] = [
         learnerColumn<ChoiceResponse>(),
-        /* Image choice has no Answer column: the picks are images, and the chart above
-           already shows which ones each share chose. */
-        ...(a.optionImages ? [] : [answerColumn]),
+        answerColumn,
         {
           key: 'result',
           header: 'Result',
@@ -376,8 +420,8 @@ function AssessmentAnswers() {
     }
 
     if (a.kind === 'text') {
-      const columns: Column<TextResponse>[] = [
-        learnerColumn<TextResponse>(),
+      const columns: Column<TextResponse | NotAnswered>[] = [
+        learnerColumn<TextResponse | NotAnswered>(),
         {
           key: 'text',
           header: 'Answer',
@@ -385,13 +429,13 @@ function AssessmentAnswers() {
           /* Whole, not clamped to two lines. A written answer has no length limit, and
              a drawer row that showed the first hundred characters was the reason an
              admin had to download the sheet to find out what their team had said. */
-          render: (r) => <LongAnswer text={r.text} />,
+          render: (r) => ('notAnswered' in r ? '–' : <LongAnswer text={r.text} />),
         },
       ]
       return (
         <Table
           columns={columns}
-          rows={pageRows as TextResponse[]}
+          rows={pageRows as (TextResponse | NotAnswered)[]}
           getRowKey={(r) => r.learner.id}
           pagination={pagination}
         />
@@ -414,12 +458,12 @@ function AssessmentAnswers() {
         />
       )
 
-    const columns: Column<FileResponse>[] = [
-      learnerColumn<FileResponse>(),
+    const columns: Column<FileResponse | NotAnswered>[] = [
+      learnerColumn<FileResponse | NotAnswered>(),
       {
         key: 'file',
         header: 'File',
-        render: (r) => (
+        render: (r) => 'notAnswered' in r ? '–' : (
           <span className="tbl-stack asp-file">
             <span className="primary">{r.fileName}</span>
             <span className="supporting">
@@ -433,7 +477,7 @@ function AssessmentAnswers() {
         header: '',
         width: '0 0 52px',
         cellClassName: 'tbl-action',
-        render: (r) => (
+        render: (r) => 'notAnswered' in r ? null : (
           /* An icon on its own in a column with no header — the tooltip is where it says
              what it does. */
           <Tooltip text="Download File" position="Top" icon={false}>
@@ -451,7 +495,7 @@ function AssessmentAnswers() {
     return (
       <Table
         columns={columns}
-        rows={pageRows as FileResponse[]}
+        rows={pageRows as (FileResponse | NotAnswered)[]}
         getRowKey={(r) => r.learner.id}
         pagination={pagination}
       />

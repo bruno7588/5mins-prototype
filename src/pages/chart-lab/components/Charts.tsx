@@ -1,5 +1,5 @@
 import { type CSSProperties, type ReactNode } from "react";
-import { Gallery } from "iconsax-react";
+import { Gallery, TickCircle } from "iconsax-react";
 import {
   type ChartQuestion,
   type CorrectAnswer,
@@ -133,8 +133,11 @@ export function OutcomeBars({
           <ul className="cl-answer__list cl-answer__list--pairs">
             {answer.pairs.map(([term, match]) => (
               <li key={term} className="cl-match">
-                <span className="cl-match__term">{term}</span>
-                <span className="cl-match__def">{match}</span>
+                <TickCircle size={32} color="var(--success-500)" variant="Bold" aria-hidden="true" />
+                <span className="cl-match__text">
+                  <span className="cl-match__term">{term}</span>
+                  <span className="cl-match__def">{match}</span>
+                </span>
               </li>
             ))}
           </ul>

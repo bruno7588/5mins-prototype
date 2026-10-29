@@ -301,10 +301,16 @@ const DATES = [
 /** Deterministic pseudo-random so the mock is stable across reloads. */
 const seed = (s: string) => [...s].reduce((a, c) => a + c.charCodeAt(0), 0)
 
+/** Whether response `i` of `count` is one of the `rightCount` right ones. Spreads them
+    evenly through the list, so every page (the first above all) mixes right and wrong
+    while the total stays exactly `rightCount`. */
+const isRight = (i: number, count: number, rightCount: number) =>
+  Math.floor(((i + 1) * rightCount) / count) > Math.floor((i * rightCount) / count)
+
 /** `count` responses to a graded question, with `rightCount` of them correct. */
 function choices(id: string, count: number, rightCount: number, options: number, correctIndex: number): ChoiceResponse[] {
   return pool.slice(0, count).map((learner, i) => {
-    const correct = i < rightCount
+    const correct = isRight(i, count, rightCount)
     const wrongPick = (correctIndex + 1 + ((seed(id + learner.id) + i) % (options - 1))) % options
     return {
       learner,
@@ -316,23 +322,25 @@ function choices(id: string, count: number, rightCount: number, options: number,
 }
 
 /** `count` responses to a question with several right options (images or select all
-    that apply), `rightCount` of them the exact correct set. The rest either missed one
-    right option or added a wrong one. */
+    that apply), `rightCount` of them the exact correct set. The rest missed one right
+    option, added a wrong one, or swapped a right one for a wrong one. */
 function imagePicks(id: string, count: number, rightCount: number, images: number, correct: number[]): ChoiceResponse[] {
   const wrong = Array.from({ length: images }, (_, i) => i).filter((i) => !correct.includes(i))
+  /* Counts the wrong answers so far, so consecutive ones take turns through the three
+     kinds and through which option was missed or added. */
+  let w = 0
   return pool.slice(0, count).map((learner, i) => {
-    const s = seed(id + learner.id) + i
-    const picks =
-      i < rightCount
-        ? correct
-        : s % 2 === 0
-          ? correct.filter((_, k) => k !== s % correct.length)
-          : [...correct, wrong[Math.floor(s / 2) % wrong.length]].sort((x, y) => x - y)
+    const right = isRight(i, count, rightCount)
+    const missed = correct.filter((_, k) => k !== w % correct.length)
+    const extra = wrong[(w + seed(id)) % wrong.length]
+    const picks = right
+      ? correct
+      : [missed, [...correct, extra], [...missed, extra]][w++ % 3].sort((x, y) => x - y)
     return {
       learner,
       submittedAt: DATES[(seed(learner.id) + i) % DATES.length],
       optionIndex: picks[0],
-      correct: i < rightCount,
+      correct: right,
       picks,
     }
   })
@@ -341,7 +349,8 @@ function imagePicks(id: string, count: number, rightCount: number, images: numbe
 /* One run through a scenario per learner.
  *
  * `easiness[q]` is roughly how many of the pool get question q right, and a learner's
- * position in the pool is roughly how well they do — but both are wobbled per question,
+ * rank (their position shuffled, so strong and weak share every page) is roughly how
+ * well they do — but both are wobbled per question,
  * so a strong learner still drops one and a weak one still gets the easy ones. Strictly
  * honouring the counts instead makes every learner score within one of the average,
  * which is the one thing a per-learner table is read to find out. */
@@ -355,7 +364,9 @@ function runs(
     learner,
     submittedAt: DATES[(seed(learner.id) + i) % DATES.length],
     picks: questions.map((q, qi) => {
-      const grip = i + ((seed(id + learner.id) + qi * 3) % 7) - 3
+      /* 37 is prime and no count here is a multiple of it, so this visits every rank once. */
+      const rank = (i * 37) % count
+      const grip = rank + ((seed(id + learner.id) + qi * 3) % 7) - 3
       if (grip < easiness[qi]) return q.correctIndex
       const n = q.options.length
       return (q.correctIndex + 1 + ((seed(id + learner.id) + qi) % (n - 1))) % n
@@ -385,6 +396,26 @@ function texts(answers: string[]): TextResponse[] {
     submittedAt: DATES[(seed(pool[i].id) + i) % DATES.length],
     text,
   }))
+}
+
+/** A learner yet to answer, on the short-text and exercise answers tables. Kept out of
+    `responses`, which every count reads. */
+export interface NotAnswered {
+  learner: ResponseLearner
+  notAnswered: true
+}
+
+/** Everyone in the pool, answered or not, spread evenly so each page mixes both. */
+export function answerRows<T extends { learner: ResponseLearner }>(responses: T[]): (T | NotAnswered)[] {
+  const missing = pool.slice(responses.length)
+  const total = responses.length + missing.length
+  let r = 0
+  let m = 0
+  return Array.from({ length: total }, (_, i) =>
+    isRight(i, total, responses.length)
+      ? responses[r++]
+      : { learner: missing[m++], notAnswered: true as const },
+  )
 }
 
 /* The scenario the situational test runs on. Twelve questions over one incident,
