@@ -372,7 +372,25 @@
 /* ── Fill in the blanks ──────────────────────────────────────────────────────
    The sentence is the chart. Each blank is a pill holding its answer, with the
    share who filled it in correctly in a Success-500 count at the end. */
+/* Wrapped like the other correct-answer cards: bordered, 8px 12px, one tick before
+   the sentence. */
+.cl-sentence-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+/* Level with the first line: (36.4px line - 20px tick) / 2. */
+.cl-sentence-card > svg {
+  flex: 0 0 auto;
+  margin-top: var(--space-s);
+}
+
 .cl-sentence {
+  min-width: 0;
   color: var(--text-secondary);
   font-size: var(--font-size-md);
   line-height: 2.6;
@@ -382,7 +400,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-s) var(--space-sm) var(--space-s) var(--space-s);
+  padding: var(--space-xss) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);

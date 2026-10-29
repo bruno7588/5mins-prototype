@@ -188,22 +188,25 @@ export function BlankSentence({
     <div className="cl-outcome">
       <CorrectSplit score={score} />
       <section className="cl-answer" aria-label="Correct answer">
-        <p className="cl-sentence">
-          {parts.map((p, i) =>
-            typeof p === "string" ? (
-              <span key={i}>{p}</span>
-            ) : (
-              /* 6px either side of the blank, none before punctuation that follows it. */
-              <span
-                key={i}
-                className={`cl-blank${/^[,.;:!?]/.test(String(parts[i + 1] ?? "")) ? " cl-blank--tight" : ""}`}
-              >
-                <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-hidden="true" />
-                <span className="cl-blank__answer">{p.answer}</span>
-              </span>
-            ),
-          )}
-        </p>
+        {/* One tick for the whole sentence, as each match pair carries one. */}
+        <div className="cl-sentence-card">
+          <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-hidden="true" />
+          <p className="cl-sentence">
+            {parts.map((p, i) =>
+              typeof p === "string" ? (
+                <span key={i}>{p}</span>
+              ) : (
+                /* 6px either side of the blank, none before punctuation that follows it. */
+                <span
+                  key={i}
+                  className={`cl-blank${/^[,.;:!?]/.test(String(parts[i + 1] ?? "")) ? " cl-blank--tight" : ""}`}
+                >
+                  <span className="cl-blank__answer">{p.answer}</span>
+                </span>
+              ),
+            )}
+          </p>
+        </div>
       </section>
     </div>
   );
