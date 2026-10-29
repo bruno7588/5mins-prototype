@@ -522,6 +522,8 @@ function AssessmentAnswers() {
             ]}
           />
 
+          {/* The question and its charts share one bordered card. */}
+          <div className="asp-card">
           <header className="asp-header">
             <div className="asp-headline">
               {/* The question leads the page. A lesson quiz has several, so the title is
@@ -559,18 +561,14 @@ function AssessmentAnswers() {
           {a.responses.length === 0 ? (
             <p className="asp-none">Nobody has answered this yet.</p>
           ) : (
+            <section className="asp-brief">
+              <AnswerStats key={a.id} assessment={a} onQuestionChange={setQuestionIndex} />
+            </section>
+          )}
+          </div>
+
+          {a.responses.length === 0 ? null : (
             <>
-              {/* What the card leads with, above the chart that summarises the rows.
-                  Questions live here rather than in the header, which carries only the
-                  format — the header cannot hold a question when a quiz has three.
-
-                  A lesson quiz is the one format with nothing to put here: it has no name
-                  of its own, its title IS its first question, and the chips below already
-                  show that one. Printing it would be the same sentence twice. */}
-              <section className="asp-brief">
-                <AnswerStats key={a.id} assessment={a} onQuestionChange={setQuestionIndex} />
-              </section>
-
               <div className="asp-toolbar">
                 <Search
                   size="M"

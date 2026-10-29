@@ -34,11 +34,6 @@
   padding-inline: calc(var(--space-xxl) + var(--space-sm));
 }
 
-/* Every other chart keeps the same gutter, so all formats' bars share one width. */
-.ast > :not(.cl-deck) {
-  padding-inline: calc(var(--space-xxl) + var(--space-sm));
-}
-
 .ast .cl-deck__chev--left {
   left: 0;
 }

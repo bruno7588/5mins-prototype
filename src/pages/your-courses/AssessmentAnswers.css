@@ -74,10 +74,15 @@
   gap: var(--space-m);
 }
 
-/* 20px from the question to the charts, inside the page's 24px rhythm (the charts to
-   the toolbar stay 24px). */
-.asp-header + .asp-brief {
-  margin-top: calc(var(--space-ml) - var(--space-l));
+/* The question and its charts in one bordered card, 20px between them; the card sits
+   24px above the toolbar on the page's own rhythm. */
+.asp-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  padding: var(--space-l);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
 }
 
 /* ── Toolbar ─────────────────────────────────────────────────────────────── */
