@@ -4,7 +4,7 @@
 .demosw-root {
   position: fixed;
   right: 16px;
-  bottom: 16px;
+  bottom: 72px;
   /* Above PhoneFrame (10), below the Design Inspect overlay. */
   z-index: 2147482000;
   font: 500 14px/20px ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;

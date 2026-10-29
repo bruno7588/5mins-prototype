@@ -260,11 +260,11 @@ html.pcm-active *:not([data-inspect-ignore], [data-inspect-ignore] *) {
 .pcm-panel {
   position: fixed;
   right: 16px;
-  bottom: 76px;
+  bottom: 132px;
   display: flex;
   flex-direction: column;
   width: 320px;
-  max-height: min(420px, calc(100vh - 120px));
+  max-height: min(420px, calc(100vh - 176px));
   border: 1px solid #27272a;
   border-radius: 8px;
   background: var(--neutral-900);
