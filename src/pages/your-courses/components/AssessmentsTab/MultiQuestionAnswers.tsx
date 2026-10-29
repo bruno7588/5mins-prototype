@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowDown, ArrowLeft2, ArrowRight2, ArrowDown2, CloseCircle, TickCircle } from 'iconsax-react'
 import Avatar from '@/components/Avatar/Avatar'
 import Collapse from '@/components/Collapse/Collapse'
+import { BandLabel } from './AnswerStats'
 import { multiScore, type MultiAssessment, type MultiResponse } from './assessmentResults'
 /* The By Learner pivot is this same shape one level up — learner rows that open onto
    their answers — so the row-card chrome is borrowed rather than restated. */
@@ -35,6 +36,9 @@ interface Props {
 function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggleSort, pagination }: Props) {
   const [open, setOpen] = useState<Set<string>>(new Set())
   const rows = responses ?? a.responses
+  /* Fill in the blanks states each sitting as a count, the way the banded formats
+     state theirs ("3 of 4 pairs correct"). */
+  const blanks = a.type === 'fill-blank'
 
   const toggle = (id: string) =>
     setOpen((prev) => {
@@ -45,9 +49,10 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
     })
 
   return (
-    <div className="lrn">
+    <div className={`lrn${blanks ? ' mqa--blanks' : ''}`}>
       <div className="lrn-head">
         <span className="lrn-c-learner">Learner</span>
+        {blanks && <span>Answer</span>}
         <button
           type="button"
           className="lrn-sort"
@@ -90,6 +95,14 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                     <span className="lrn-role">{r.learner.role}</span>
                   </span>
                 </span>
+
+                {blanks && (
+                  <span className="lrn-cell">
+                    <span>
+                      <BandLabel label={`${score} of ${a.questions.length} blanks correct`} />
+                    </span>
+                  </span>
+                )}
 
                 {/* The same figure the By Learner pivot shows, drawn the same way: a
                     percentage on its own. The bar beside it was redrawing what the

@@ -1,5 +1,6 @@
 import { type CSSProperties, type ReactNode } from "react";
 import { Gallery, TickCircle } from "iconsax-react";
+import Badge from "@/components/Badge/Badge";
 import {
   type ChartQuestion,
   type CorrectAnswer,
@@ -133,7 +134,7 @@ export function OutcomeBars({
           <ul className="cl-answer__list cl-answer__list--pairs">
             {answer.pairs.map(([term, match]) => (
               <li key={term} className="cl-match">
-                <TickCircle size={32} color="var(--success-500)" variant="Bold" aria-hidden="true" />
+                <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-hidden="true" />
                 <span className="cl-match__text">
                   <span className="cl-match__term">{term}</span>
                   <span className="cl-match__def">{match}</span>
@@ -149,6 +150,7 @@ export function OutcomeBars({
                 <ul className="cl-group__items">
                   {g.items.map((item) => (
                     <li key={item} className="cl-group__chip">
+                      <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-hidden="true" />
                       {item}
                     </li>
                   ))}
@@ -160,7 +162,7 @@ export function OutcomeBars({
           <ol className="cl-answer__list">
             {answer.steps.map((step, n) => (
               <li key={step} className="cl-answer__item">
-                <span className="cl-row__marker">{n + 1}</span>
+                <Badge type="success" label={n + 1} className="cl-step-badge" />
                 <span className="cl-answer__step">{step}</span>
               </li>
             ))}
@@ -189,14 +191,15 @@ export function BlankSentence({
         <p className="cl-sentence">
           {parts.map((p, i) =>
             typeof p === "string" ? (
-              <span key={i}>{p} </span>
+              <span key={i}>{p}</span>
             ) : (
-              <span key={i}>
-                <span className="cl-blank">
-                  <span className="cl-blank__answer">{p.answer}</span>
-                </span>
-                {/* No space before punctuation that follows the blank. */}
-                {/^[,.;:!?]/.test(String(parts[i + 1] ?? "")) ? "" : " "}
+              /* 6px either side of the blank, none before punctuation that follows it. */
+              <span
+                key={i}
+                className={`cl-blank${/^[,.;:!?]/.test(String(parts[i + 1] ?? "")) ? " cl-blank--tight" : ""}`}
+              >
+                <TickCircle size={20} color="var(--success-500)" variant="Bold" aria-hidden="true" />
+                <span className="cl-blank__answer">{p.answer}</span>
               </span>
             ),
           )}

@@ -249,12 +249,15 @@
   gap: var(--space-s);
 }
 
-/* The step number, in the slot a matched pair gives its 32px tick. */
-.cl-answer__item .cl-row__marker {
-  flex: 0 0 32px;
-  text-align: center;
-  font-size: var(--font-size-md);
-  color: var(--text-success);
+/* The step number: a 20px solid Success badge. Scoped here, the shared Badge keeps its tint. */
+.badge.cl-step-badge {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: var(--success-500);
+  color: var(--neutral-25);
+  font-size: var(--font-size-sm);
 }
 
 /* A sequence step, medium like a matched term. */
@@ -280,7 +283,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-m);
+  padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-md);
@@ -289,17 +292,18 @@
 
 /* Match the pairs: each pair on the correct bar's green track tint, the term over its match. */
 /* Same anatomy as the Assessments tab's summary stat cards (.asm-stat): bordered,
-   a 32px success tick on the left, the term over its match beside it. */
+   a 20px success tick level with the term, the term over its match beside it. */
 .cl-match {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-m);
+  padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
 }
 
-.cl-match > svg {
+.cl-match > svg,
+.cl-group__chip > svg {
   flex: 0 0 auto;
 }
 
@@ -353,7 +357,10 @@
 }
 
 .cl-group__chip {
-  padding: var(--space-sm) var(--space-m);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-sm);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
@@ -375,13 +382,18 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-xss) var(--space-sm);
+  padding: var(--space-s) var(--space-sm) var(--space-s) var(--space-s);
   border: 1px solid var(--border);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
   line-height: 1.5;
   vertical-align: middle;
   white-space: nowrap;
+  margin: 0 var(--space-xss);
+}
+
+.cl-blank--tight {
+  margin-right: 0;
 }
 
 .cl-blank__answer {

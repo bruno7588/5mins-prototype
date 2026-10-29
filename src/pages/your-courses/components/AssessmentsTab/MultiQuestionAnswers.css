@@ -11,3 +11,8 @@
   color: var(--text-secondary);
 }
 
+
+/* Fill in the blanks adds an Answer column ("3 of 4 blanks correct") before Score. */
+.lrn.mqa--blanks {
+  --lrn-cols: minmax(240px, 1fr) minmax(200px, 1fr) 170px 40px;
+}
