@@ -95,7 +95,7 @@
   align-items: center;
   gap: var(--space-sm);
   min-height: calc(var(--space-xxl) + var(--space-xs));
-  padding: var(--space-s) var(--space-m);
+  padding: var(--space-s) var(--space-s) var(--space-s) var(--space-m);
   overflow: hidden;
   border-radius: var(--radius-sm);
   background: var(--input-background);
@@ -152,22 +152,21 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* The share as a semibold Badge: the correct answer Neutral-25 with Success-500 figures
-   (it sits on the green bar), every other option on Border grey with secondary figures. */
+/* The share as a semibold Badge: the correct answer on Page-background with Success-500
+   figures (it sits on the green bar), every other option on Page-background with secondary figures. */
 .badge.cl-pct {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
 .badge.cl-pct--correct {
-  /* stylelint-disable-next-line -- a white chip on the green bar in both modes */
-  background: var(--neutral-25);
+  background: var(--page-background);
   /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
   color: var(--success-500);
 }
 
 .badge.cl-pct--wrong {
-  background: var(--border);
+  background: var(--page-background);
   color: var(--text-secondary);
 }
 
@@ -265,7 +264,7 @@
 .cl-answer__list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
 }
 
 /* The step number: a 20px solid Success badge. Scoped here, the shared Badge keeps its tint. */
