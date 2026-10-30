@@ -170,7 +170,7 @@
 }
 
 .workflow-card__rules:not(.workflow-card__rules--disabled) .course-reminders-row:hover {
-  background-color: var(--input-background-elevated);
+  background-color: var(--input-background);
 }
 
 .course-reminders-row__text {
@@ -286,7 +286,7 @@
 }
 
 .course-reminders-row__icon-btn:hover:not(:disabled) {
-  background: var(--cards-background-hover);
+  background: var(--input-background-hover);
   color: var(--text-primary);
 }
 
