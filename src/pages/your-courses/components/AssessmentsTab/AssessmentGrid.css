@@ -14,10 +14,11 @@
 }
 
 /* ── Summary: My Team's stat cards in a row ────────────────────────────── */
+/* The same four columns and gap as the bento below, so each stat card lines up with a column. */
 .asg-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-m);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-l);
 }
 
 /* ── Bento ─────────────────────────────────────────────────────────────── */
@@ -333,12 +334,14 @@
 
 /* ── Smaller screens ───────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
+  .asg-stats,
   .asg-bento {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 640px) {
+  .asg-stats,
   .asg-bento {
     grid-template-columns: minmax(0, 1fr);
   }
