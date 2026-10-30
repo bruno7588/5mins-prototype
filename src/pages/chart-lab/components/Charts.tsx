@@ -116,7 +116,7 @@ export function ImageTiles({
    Match the pairs, categorise and sequence are scored as a whole: the learner's answer is correct or incorrect. So the chart is that split,
    then the correct answer, shown once and without figures. */
 /** The share who answered correctly and incorrectly. */
-function CorrectSplit({ score }: { score: number }) {
+export function CorrectSplit({ score }: { score: number }) {
   return (
     <ol className="cl-rows">
       <li>

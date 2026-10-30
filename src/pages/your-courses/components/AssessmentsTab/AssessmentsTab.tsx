@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Sort } from 'iconsax-react'
 import CsvIcon from '@/components/icons/CsvIcon'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import Button from '@/components/Button/Button'
+import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
+import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import { GENERATABLE_TYPES, typeLabel } from '@/data/aiAssessmentGeneration'
 import emptyBoxIllustration from '@/assets/empty-state-illustrations/empty-box.svg'
 import searchIllustration from '@/assets/empty-state-illustrations/search.svg'
 import AssessmentList from './AssessmentList'
+import AssessmentGrid from './AssessmentGrid'
+import ProgressCell from './ProgressCell'
 import InsightsCard from './InsightsCard'
 import {
   attentionRows,
@@ -28,22 +32,6 @@ const LESSON_QUIZ = 'lesson-quiz'
 /* Above this the results and the insights sit side by side; below it they stack. */
 const SIDE_BY_SIDE = '(min-width: 1201px)'
 
-/** The DS table progress cell (table.md): 8 segments, cyan fill, the percentage beside it. */
-const SEGMENTS = 8
-function ProgressCell({ value }: { value: number }) {
-  const filled = Math.round((value / 100) * SEGMENTS)
-  return (
-    <span className="tbl-progress asm-progress">
-      <span className="bar" aria-hidden="true">
-        {Array.from({ length: SEGMENTS }, (_, i) => (
-          <span key={i} className={`seg${i < filled ? ' fill' : ''}`} />
-        ))}
-      </span>
-      <span className="pct">{value}%</span>
-    </span>
-  )
-}
-
 /**
  * The result column. A scored format shows its score as a bar: across its questions
  * when it has more than one (correctPct averages every answer). A poll, written answer
@@ -62,6 +50,16 @@ function AssessmentsTab() {
   const navigate = useNavigate()
   const location = useLocation()
   const [types, setTypes] = useState<string[]>([])
+  /* V1 is the list; V2 the card grid, kept side by side to compare. The choice lives in
+     the URL (?answers=v2) so a V2 link can be shared; tab and title are kept. */
+  const [params, setParams] = useSearchParams()
+  const version = params.get('answers') === 'v2' ? 'v2' : 'v1'
+  const setVersion = (v: string) => {
+    const next = new URLSearchParams(params)
+    if (v === 'v2') next.set('answers', 'v2')
+    else next.delete('answers')
+    setParams(next, { replace: true, state: location.state })
+  }
   const [page, setPage] = useState(0)
   /* Insights is a panel the admin asks for, not furniture: until it is opened the
      table has the whole width. Closing it ends the summary with it — keeping one in
@@ -176,13 +174,24 @@ function AssessmentsTab() {
             menuClassName="asm-typefilter-menu"
             menuAlign="start"
           />
-        <Button
-          variant="outlined-2"
-          onClick={downloadCsv}
-          icon={<CsvIcon size={20} color="currentColor" />}
-        >
-          Download Answers
-        </Button>
+        <div className="asm-pivotrow__end">
+          <ContentSwitcher
+            items={[
+              { key: 'v1', label: 'V1' },
+              { key: 'v2', label: 'V2' },
+            ]}
+            activeKey={version}
+            onChange={setVersion}
+            ariaLabel="Answers layout"
+          />
+          <Button
+            variant="outlined-2"
+            onClick={downloadCsv}
+            icon={<CsvIcon size={20} color="currentColor" />}
+          >
+            Download Answers
+          </Button>
+        </div>
         {/* Generate Insights button removed for now — to be rebuilt later. The insights
             panel machinery below stays wired so it can be reconnected to a new trigger. */}
         </div>
@@ -196,6 +205,21 @@ function AssessmentsTab() {
           <p className="asm-empty__body">Clear the filter to see everything in this course.</p>
         </div>
       ) : (
+        <AnimatePresence mode="wait" initial={false}>
+        {version === 'v2' ? (
+        <motion.div key="v2" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
+          <AssessmentGrid
+            rows={filtered}
+            stats={stats}
+            onView={(a) =>
+              navigate(`/your-courses/course/assessments/${a.id}`, {
+                state: (location.state as object | null) ?? undefined,
+              })
+            }
+          />
+        </motion.div>
+        ) : (
+        <motion.div key="v1" {...ARRIVE(reduce)} transition={arriveTransition(reduce)}>
         <AssessmentList
           rows={rows}
           resultCell={(a) => <ResultCell a={a} />}
@@ -214,6 +238,9 @@ function AssessmentsTab() {
             onNext: safePage < lastPage ? () => setPage(safePage + 1) : undefined,
           }}
         />
+        </motion.div>
+        )}
+        </AnimatePresence>
       )}
 
         </div>

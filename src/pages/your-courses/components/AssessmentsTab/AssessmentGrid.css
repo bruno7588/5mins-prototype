@@ -1,0 +1,313 @@
+/* Answers tab V2: a bento of assessments, each tile laid out for what its format has
+   to show. No fill, no shadows: a Border hairline carries each tile. Prefix `asg-`. */
+
+.asg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+.asg-label {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ── Summary: My Team's stat cards in a row ────────────────────────────── */
+.asg-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-m);
+}
+
+/* ── Bento ─────────────────────────────────────────────────────────────── */
+.asg-bento {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(216px, auto);
+  grid-auto-flow: dense;
+  gap: var(--space-l);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.asg-cell {
+  display: flex;
+  min-width: 0;
+}
+
+/* Choice and poll tiles show their options: two columns wide. */
+.asg-cell--choice {
+  grid-column: span 2;
+}
+
+/* Lesson quizzes carry the ring: two rows tall. */
+.asg-cell--ring {
+  grid-row: span 2;
+}
+
+/* ── Tile ──────────────────────────────────────────────────────────────── */
+.asg-tile {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-sm);
+  min-width: 0;
+  padding: var(--space-l);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.asg-tile:hover {
+  background: var(--input-background);
+}
+
+/* Tinted tiles: two soft colour blooms, fading into the page. Stronger in dark mode, as the course card's glow is.
+   - Lowest scores: Danger-400 to Lesson-quiz (#FA715F).
+   - No right answer (poll, short text, exercise): Course-assessments (#2A90D8) to
+     Certificate-quiz (#6368DB).
+   - Lesson quizzes: Certificate-quiz (#6368DB) to Warning-200 (#FFDBAF), the
+     illustration's own colours. */
+.asg-tile--low,
+.asg-tile--open,
+.asg-tile--quiz {
+  --asg-mix: 8%;
+  /* Two soft blooms, as in a lit glass card: the first colour high on the left, the
+     second lower on the right, both fading out well before the edges. */
+  --asg-tint:
+    radial-gradient(70% 60% at 25% 20%, color-mix(in srgb, var(--asg-from) var(--asg-mix), transparent), transparent 70%),
+    radial-gradient(70% 70% at 80% 75%, color-mix(in srgb, var(--asg-to) var(--asg-mix), transparent), transparent 70%);
+  background: var(--asg-tint);
+}
+
+.asg-tile--low:hover,
+.asg-tile--open:hover,
+.asg-tile--quiz:hover {
+  background: var(--asg-tint), var(--input-background);
+}
+
+:root[data-theme='dark'] :is(.asg-tile--low, .asg-tile--open, .asg-tile--quiz) {
+  --asg-mix: 14%;
+}
+
+.asg-tile--low {
+  /* stylelint-disable-next-line -- the low-score gradient starts at Danger-400 in both modes */
+  --asg-from: var(--danger-400);
+  --asg-to: var(--lesson-quiz);
+}
+
+.asg-tile--open {
+  --asg-from: var(--course-assessments);
+  --asg-to: var(--certificate-quiz);
+}
+
+/* Lesson quizzes: the colours of their own illustration, its purple and its peach. */
+.asg-tile--quiz {
+  --asg-from: var(--certificate-quiz);
+  /* stylelint-disable-next-line -- the lesson quiz illustration's peach is Warning-200 */
+  --asg-to: var(--warning-200);
+}
+
+.asg-tile:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.asg-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.asg-illu {
+  flex-shrink: 0;
+}
+
+.asg-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+}
+
+.asg-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: var(--font-size-h3);
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.asg-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-s);
+  margin-top: auto;
+  padding-top: var(--space-m);
+}
+
+.asg-foot--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-sm);
+}
+
+.asg-figure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  margin-top: auto;
+  font-size: var(--font-size-h2);
+  font-weight: 500;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+
+.asg-figure__unit {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+/* Every answer count reads in Text-tertiary. */
+.asg-label.asg-answered {
+  color: var(--text-tertiary);
+}
+
+/* ── The answers page's charts, inside a tile ─────────────────────────── */
+.asg-chart {
+  display: block;
+  margin-top: auto;
+}
+
+/* Image choice: the correct images side by side, each with its name and share. */
+.asg-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--space-m);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.asg-image {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.asg-image img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.asg-image__caption {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-s);
+  font-size: var(--font-size-sm);
+}
+
+.asg-image__label {
+  overflow: hidden;
+  color: var(--text-primary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.asg-image__pct {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-success);
+}
+
+/* ── Ring ──────────────────────────────────────────────────────────────── */
+.asg-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  margin: auto 0;
+}
+
+.asg-ring svg {
+  transform: rotate(-90deg);
+}
+
+.asg-ring__track,
+.asg-ring__value {
+  fill: none;
+  stroke-width: 10;
+}
+
+.asg-ring__track {
+  stroke: var(--input-background);
+}
+
+.asg-ring__value {
+  stroke: var(--primary-600);
+  stroke-linecap: round;
+}
+
+.asg-ring__figure {
+  position: absolute;
+  font-size: var(--font-size-h2);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+/* ── V1's segmented result bar, stretched to the tile ──────────────────── */
+.asg-tile .asg-progress {
+  height: auto;
+}
+
+.asg-tile .asg-progress .bar {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+/* ── Smaller screens ───────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .asg-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .asg-bento {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .asg-cell--choice {
+    grid-column: auto;
+  }
+
+  .asg-cell--ring {
+    grid-row: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asg-tile {
+    transition: none;
+  }
+}

@@ -269,6 +269,13 @@
   gap: var(--space-sm);
 }
 
+/* The V1 / V2 switcher beside the export. */
+.asm-pivotrow__end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
 /* ── Learner cell ───────────────────────────────────────────────────────── */
 .asm-learner {
   display: flex;
