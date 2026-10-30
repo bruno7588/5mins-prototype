@@ -288,9 +288,17 @@
   stroke: var(--input-background);
 }
 
+/* The ring is the share correct, so it fills in the correct-answer green, as the bars do:
+   Success-300 in light mode, Success-500 in dark. */
 .asg-ring__value {
-  stroke: var(--primary-600);
+  /* stylelint-disable-next-line -- the correct share is Success-300 in light mode */
+  stroke: var(--success-300);
   stroke-linecap: round;
+}
+
+:root[data-theme='dark'] .asg-ring__value {
+  /* stylelint-disable-next-line -- the correct share is Success-500 in dark mode */
+  stroke: var(--success-500);
 }
 
 .asg-ring__figure {
