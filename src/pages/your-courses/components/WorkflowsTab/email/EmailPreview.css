@@ -9,33 +9,11 @@
   align-items: stretch;
 }
 
-.epv-head {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  padding-right: var(--space-xxl);
-}
-
-.epv-title {
-  margin: 0;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.epv-sub {
-  margin: 0;
-  font-size: var(--font-size-md);
-  color: var(--text-secondary);
-}
-
 /* Page-local underline tabs (chips-switcher-tabs.md). */
 .epv-tabs {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-m);
-  border-bottom: 1px solid var(--border);
 }
 
 .epv-tab {
@@ -58,7 +36,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -1px;
+  bottom: 0;
   height: 2px;
   border-radius: var(--radius-xs);
   background: transparent;

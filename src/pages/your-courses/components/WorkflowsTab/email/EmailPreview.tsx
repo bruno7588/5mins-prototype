@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import logoUrl from '@/assets/certificate/5mins-logo.svg'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import TeamsIcon from '@/components/icons/TeamsIcon'
+import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'
 import LiveEmail, { type LockedKind } from './LiveEmail'
 import {
   FIELDS,
@@ -150,12 +151,10 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
 
   return (
     <ConfirmModal open={open} onClose={onClose} closable className="epv" ariaLabel={`Preview ${name}`}>
-      <div className="epv-head">
-        <h2 className="epv-title">Preview</h2>
-        <p className="epv-sub">
-          {name[0].toUpperCase() + name.slice(1)}, with sample values for Alex Morgan.
-        </p>
-      </div>
+      <SectionHeader
+        title="Preview"
+        description={`${name[0].toUpperCase() + name.slice(1)}, with sample values for Alex Morgan.`}
+      />
 
       {isReminder && (
         <div className="epv-tabs" role="tablist" aria-label="Where it shows">

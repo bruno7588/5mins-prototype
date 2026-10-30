@@ -25,9 +25,9 @@ const LOCKED: Record<EmailType, string> = {
 
 const SUBJECTS: Record<EmailType, Record<Tone, string>> = {
   reminder: {
-    friendly: `${f('first_name')}, ${f('days_left')} left on ${f('course_name')}`,
-    professional: `Reminder: ${f('course_name')} is due on ${f('due_date')}`,
-    urgent: `Action needed: complete ${f('course_name')} in ${f('days_left')}`,
+    friendly: `${f('first_name')}, ${f('days_left')} left on your course`,
+    professional: `Reminder: your course is due in ${f('days_left')}`,
+    urgent: `Action needed: complete your course in ${f('days_left')}`,
   },
   welcome: {
     friendly: `Welcome to ${f('org')} on 5Mins, ${f('first_name')} 🎉`,

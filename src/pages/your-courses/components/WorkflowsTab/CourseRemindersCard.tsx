@@ -228,6 +228,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
               ))}
               {enabled && (
                 <Button icon={<Add size={20} color="currentColor" variant="Linear" />} variant="text"
+                  className="course-reminders-add"
                   onClick={() => setModal({ mode: 'add' })}
                 >Add Reminder
                 </Button>

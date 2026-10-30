@@ -349,3 +349,8 @@
   font-size: var(--font-size-sm);
   color: var(--text-tertiary);
 }
+
+/* The column stretches its children; the text button keeps its own width, left-aligned. */
+.course-reminders-add {
+  align-self: flex-start;
+}

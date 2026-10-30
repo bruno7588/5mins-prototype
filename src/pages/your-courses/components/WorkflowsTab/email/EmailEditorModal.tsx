@@ -4,9 +4,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { Placeholder } from '@tiptap/extensions'
 import { Additem, Danger, Eraser, Link1, Mobile, Slack, Text, TextBold, TextItalic, TextUnderline, Warning2 } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
-import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
-import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import InputField from '@/components/InputField/InputField'
@@ -37,6 +35,7 @@ import {
 import EmailPreview, { type PreviewTab } from './EmailPreview'
 import WriteWithAIPanel from './WriteWithAIPanel'
 import SparkleIcon from '@/components/icons/SparkleIcon'
+import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'
 import './EmailEditorModal.css'
 
 /* Full-screen email editor (DES-348 phase 1, D8): a compose card with the subject,
@@ -96,19 +95,24 @@ function hasTextAbove(editor: Editor) {
   return found
 }
 
+/* Course name and due date stay out of the subject: one subject goes to every course. */
+const SUBJECT_EXCLUDED: FieldKey[] = ['course_name', 'due_date']
+
 function FieldMenu({
   type,
+  forSubject,
   placement,
   onPick,
   onClose,
 }: {
   type: EmailType
+  forSubject?: boolean
   placement: 'above' | 'below'
   onPick: (key: FieldKey) => void
   onClose: () => void
 }) {
   const ref = useRef<HTMLDivElement>(null)
-  const keys = fieldsFor(type)
+  const keys = fieldsFor(type).filter((k) => !(forSubject && SUBJECT_EXCLUDED.includes(k)))
 
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
@@ -240,7 +244,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
     ],
     content: target.initial.subject,
     shouldRerenderOnTransaction: true,
-    editorProps: { attributes: { class: 'eed-subject-input', 'aria-label': 'Subject' } },
+    editorProps: { attributes: { class: 'eed-subject-input', 'aria-labelledby': 'eed-subject-label' } },
     onCreate: ({ editor }) => {
       baseline.current.subject = editor.getHTML()
     },
@@ -347,7 +351,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
     ...(INTEGRATIONS.teams
       ? [{ tab: 'teams' as const, label: 'Microsoft Teams', icon: <TeamsIcon size={16} /> }]
       : []),
-    { tab: 'phone', label: 'Phone notification', icon: <Mobile size={16} color="currentColor" variant="Linear" /> },
+    { tab: 'phone', label: 'phone notifications', icon: <Mobile size={16} color="currentColor" variant="Linear" /> },
   ]
 
   const showSubjectError = submitted && errors.subject
@@ -359,24 +363,24 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
 
       <div className={`eed-content${aiOpen ? ' eed-content--ai' : ''}`}>
         <div className="eed-main">
-          <header className="eed-header">
-            <div className="eed-title-row">
-              <h2 className="eed-title">{target.title}</h2>
-              {showAI && !aiOpen && (
+          <SectionHeader
+            title={target.title}
+            description={target.when}
+            ctas={
+              showAI && !aiOpen ? (
                 <Button
                   semantic="ai"
                   variant="outlined"
-                  size="sm"
-                  icon={<SparkleIcon size={16} color="currentColor" />}
+                  icon={<SparkleIcon size={20} color="currentColor" />}
                   onClick={() => setAiOpen(true)}
                 >
                   Write with AI
                 </Button>
-              )}
-            </div>
-            {target.when ? (
-              <p className="eed-when">{target.when}</p>
-            ) : (
+              ) : undefined
+            }
+          />
+          <div className="eed-intro">
+            {!target.when && (
               <div className="eed-days">
                 <span>Send</span>
                 <InputInteger
@@ -402,23 +406,21 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
             {target.notes?.map((note) => (
               <p key={note} className="eed-note">{note}</p>
             ))}
-          </header>
+          </div>
 
-          <div className="eed-card">
-            <div className={`eed-subject${showSubjectError ? ' eed-subject--error' : ''}`}>
-              <div className="eed-subject__row">
-                <span className="eed-label" id="eed-subject-label">Subject</span>
-                <EditorContent editor={subject} className="eed-subject__editor" onFocus={() => setMenu(null)} />
-                <span className={`eed-counter${subjectLength > SUBJECT_MAX ? ' eed-counter--over' : ''}`}>
-                  {subjectLength} / {SUBJECT_MAX}
-                </span>
+          <div className="eed-fields">
+            {/* Subject: the Outlined input (input.md), holding a one-line editor so it can take fields and emoji. */}
+            <div className={`input-field eed-input${showSubjectError ? ' input-field--error' : ''}`}>
+              <div className="eed-label-row">
+                <span className="input-field__label" id="eed-subject-label">Subject</span>
                 <div className="eed-menu-anchor">
                   <ToolButton label="Insert field into subject" onClick={() => setMenu(menu === 'subject' ? null : 'subject')}>
-                    <Additem size={20} color="currentColor" variant="Linear" />
+                    <Additem size={24} color="currentColor" variant="Linear" />
                   </ToolButton>
                   {menu === 'subject' && (
                     <FieldMenu
                       type={target.type}
+                      forSubject
                       placement="below"
                       onPick={(key) => insertField(subject, key)}
                       onClose={() => setMenu(null)}
@@ -426,136 +428,139 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                   )}
                 </div>
               </div>
-              {isReminder && (
-                <div className="eed-channels">
-                  <span className="eed-channels__label">Also shown in</span>
-                  {channels.map((c) => (
-                    <Chip
-                      key={c.tab}
-                      label={c.label}
-                      customIconLeft={c.icon}
-                      onClick={() => setPreview(c.tab)}
-                    />
-                  ))}
-                </div>
-              )}
+              <div className="input-field__wrapper">
+                <EditorContent editor={subject} className="eed-subject__editor" onFocus={() => setMenu(null)} />
+              </div>
+              <span className="input-field__helper eed-helper-row" role={showSubjectError ? 'alert' : undefined}>
+                <span>
+                  {showSubjectError
+                    ? errors.subject
+                    : isReminder && (
+                        <>
+                          The subject is also sent to{' '}
+                          {channels.map((c, i) => (
+                            <span key={c.tab}>
+                              <span className="eed-channels__item">
+                                {c.icon}
+                                {c.label}
+                              </span>
+                              {i < channels.length - 2 ? ', ' : i === channels.length - 2 ? ' and ' : ''}
+                            </span>
+                          ))}
+                          . The message is email only.
+                        </>
+                      )}
+                </span>
+                <span className={`eed-counter${subjectLength > SUBJECT_MAX ? ' eed-counter--over' : ''}`}>
+                  {subjectLength} / {SUBJECT_MAX}
+                </span>
+              </span>
             </div>
 
-            <div className="eed-body">
-              <div className="eed-body__head">
-                <span className="eed-label">Message</span>
-                {isReminder && (
-                  <Tooltip text="Slack, Microsoft Teams and phone notifications don't include the message." icon={false}>
-                    <span tabIndex={0} className="eed-tag-anchor">
-                      <Badge type="informative" label="Email only" />
-                    </span>
-                  </Tooltip>
+            {/* Message: the Outlined input holding the editor, with the toolbar at its bottom. */}
+            <div className={`input-field eed-input${showBodyError ? ' input-field--error' : ''}`}>
+              <span className="input-field__label">Message</span>
+              <div className="input-field__wrapper eed-body__wrapper">
+                <EditorContent editor={body} className="eed-body__editor" />
+                {linkOpen && (
+                  <div className="eed-link">
+                    <InputField
+                      ariaLabel="Link address"
+                      placeholder="https://"
+                      value={linkUrl}
+                      onChange={(e) => setLinkUrl(e.target.value)}
+                      autoFocus
+                      className="eed-link__field"
+                    />
+                    <Button size="sm" onClick={applyLink} disabled={!linkUrl.trim()}>
+                      Add Link
+                    </Button>
+                    {body.isActive('link') && (
+                      <Button size="sm" variant="text" onClick={removeLink}>
+                        Remove Link
+                      </Button>
+                    )}
+                  </div>
                 )}
+
+                <div className="eed-toolbar" role="toolbar" aria-label="Formatting">
+                  <ToolButton label="Bold" active={body.isActive('bold')} onClick={() => body.chain().focus().toggleBold().run()}>
+                    <TextBold size={24} color="currentColor" variant={body.isActive('bold') ? 'Bold' : 'Linear'} />
+                  </ToolButton>
+                  <ToolButton label="Italic" active={body.isActive('italic')} onClick={() => body.chain().focus().toggleItalic().run()}>
+                    <TextItalic size={24} color="currentColor" variant={body.isActive('italic') ? 'Bold' : 'Linear'} />
+                  </ToolButton>
+                  <ToolButton
+                    label="Underline"
+                    active={body.isActive('underline')}
+                    onClick={() => body.chain().focus().toggleUnderline().run()}
+                  >
+                    <TextUnderline size={24} color="currentColor" variant={body.isActive('underline') ? 'Bold' : 'Linear'} />
+                  </ToolButton>
+                  <ToolButton
+                    label="Heading"
+                    active={body.isActive('heading')}
+                    onClick={() => body.chain().focus().toggleHeading({ level: 3 }).run()}
+                  >
+                    <Text size={24} color="currentColor" variant={body.isActive('heading') ? 'Bold' : 'Linear'} />
+                  </ToolButton>
+                  <span className="eed-toolbar__sep" aria-hidden="true" />
+                  <ToolButton
+                    label="Bulleted list"
+                    active={body.isActive('bulletList')}
+                    onClick={() => body.chain().focus().toggleBulletList().run()}
+                  >
+                    <ListBulletIcon size={24} />
+                  </ToolButton>
+                  <ToolButton
+                    label="Numbered list"
+                    active={body.isActive('orderedList')}
+                    onClick={() => body.chain().focus().toggleOrderedList().run()}
+                  >
+                    <ListNumberIcon size={24} />
+                  </ToolButton>
+                  <span className="eed-toolbar__sep" aria-hidden="true" />
+                  <ToolButton label="Link" active={body.isActive('link')} onClick={openLink}>
+                    <Link1 size={24} color="currentColor" variant={body.isActive('link') ? 'Bold' : 'Linear'} />
+                  </ToolButton>
+                  <ToolButton
+                    label="Clear formatting"
+                    onClick={() => body.chain().focus().unsetAllMarks().clearNodes().run()}
+                  >
+                    <Eraser size={24} color="currentColor" variant="Linear" />
+                  </ToolButton>
+                  <span className="eed-toolbar__sep" aria-hidden="true" />
+                  <div className="eed-menu-anchor">
+                    <Button
+                      size="sm"
+                      variant="text"
+                      icon={<Additem size={20} color="currentColor" variant="Linear" />}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => setMenu(menu === 'body' ? null : 'body')}
+                      aria-expanded={menu === 'body'}
+                    >
+                      Insert Field
+                    </Button>
+                    {menu === 'body' && (
+                      <FieldMenu
+                        type={target.type}
+                        placement="above"
+                        onPick={(key) => insertField(body, key)}
+                        onClose={() => setMenu(null)}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+              <span className="input-field__helper eed-helper-row" role={showBodyError ? 'alert' : undefined}>
+                <span>{showBodyError ? errors.body : EMOJI_HINT}</span>
                 {bodyLength >= MESSAGE_MAX * 0.8 && (
                   <span className={`eed-counter${bodyLength > MESSAGE_MAX ? ' eed-counter--over' : ''}`}>
                     {bodyLength.toLocaleString('en-GB')} / {MESSAGE_MAX.toLocaleString('en-GB')}
                   </span>
                 )}
-              </div>
-              <EditorContent editor={body} className="eed-body__editor" />
+              </span>
             </div>
-
-            {linkOpen && (
-              <div className="eed-link">
-                <InputField
-                  ariaLabel="Link address"
-                  placeholder="https://"
-                  value={linkUrl}
-                  onChange={(e) => setLinkUrl(e.target.value)}
-                  autoFocus
-                  className="eed-link__field"
-                />
-                <Button size="sm" onClick={applyLink} disabled={!linkUrl.trim()}>
-                  Add Link
-                </Button>
-                {body.isActive('link') && (
-                  <Button size="sm" variant="text" onClick={removeLink}>
-                    Remove Link
-                  </Button>
-                )}
-              </div>
-            )}
-
-            <div className="eed-toolbar" role="toolbar" aria-label="Formatting">
-              <ToolButton label="Bold" active={body.isActive('bold')} onClick={() => body.chain().focus().toggleBold().run()}>
-                <TextBold size={20} color="currentColor" variant={body.isActive('bold') ? 'Bold' : 'Linear'} />
-              </ToolButton>
-              <ToolButton label="Italic" active={body.isActive('italic')} onClick={() => body.chain().focus().toggleItalic().run()}>
-                <TextItalic size={20} color="currentColor" variant={body.isActive('italic') ? 'Bold' : 'Linear'} />
-              </ToolButton>
-              <ToolButton
-                label="Underline"
-                active={body.isActive('underline')}
-                onClick={() => body.chain().focus().toggleUnderline().run()}
-              >
-                <TextUnderline size={20} color="currentColor" variant={body.isActive('underline') ? 'Bold' : 'Linear'} />
-              </ToolButton>
-              <ToolButton
-                label="Heading"
-                active={body.isActive('heading')}
-                onClick={() => body.chain().focus().toggleHeading({ level: 3 }).run()}
-              >
-                <Text size={20} color="currentColor" variant={body.isActive('heading') ? 'Bold' : 'Linear'} />
-              </ToolButton>
-              <span className="eed-toolbar__sep" aria-hidden="true" />
-              <ToolButton
-                label="Bulleted list"
-                active={body.isActive('bulletList')}
-                onClick={() => body.chain().focus().toggleBulletList().run()}
-              >
-                <ListBulletIcon size={20} />
-              </ToolButton>
-              <ToolButton
-                label="Numbered list"
-                active={body.isActive('orderedList')}
-                onClick={() => body.chain().focus().toggleOrderedList().run()}
-              >
-                <ListNumberIcon size={20} />
-              </ToolButton>
-              <span className="eed-toolbar__sep" aria-hidden="true" />
-              <ToolButton label="Link" active={body.isActive('link')} onClick={openLink}>
-                <Link1 size={20} color="currentColor" variant={body.isActive('link') ? 'Bold' : 'Linear'} />
-              </ToolButton>
-              <ToolButton
-                label="Clear formatting"
-                onClick={() => body.chain().focus().unsetAllMarks().clearNodes().run()}
-              >
-                <Eraser size={20} color="currentColor" variant="Linear" />
-              </ToolButton>
-              <span className="eed-toolbar__sep" aria-hidden="true" />
-              <div className="eed-menu-anchor">
-                <Button
-                  size="sm"
-                  variant="text"
-                  icon={<Additem size={20} color="currentColor" variant="Linear" />}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => setMenu(menu === 'body' ? null : 'body')}
-                  aria-expanded={menu === 'body'}
-                >
-                  Insert Field
-                </Button>
-                {menu === 'body' && (
-                  <FieldMenu
-                    type={target.type}
-                    placement="above"
-                    onPick={(key) => insertField(body, key)}
-                    onClose={() => setMenu(null)}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="eed-meta">
-            {showSubjectError && <p className="eed-error" role="alert">{errors.subject}</p>}
-            {showBodyError && <p className="eed-error" role="alert">{errors.body}</p>}
-            <p className="eed-helper">Most inboxes show about 60 characters of the subject, phones about 40.</p>
-            <p className="eed-helper">{EMOJI_HINT}</p>
           </div>
 
           <footer className="eed-footer">

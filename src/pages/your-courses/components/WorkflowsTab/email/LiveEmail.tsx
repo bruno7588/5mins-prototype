@@ -1,4 +1,6 @@
+import { Clock, PlayCircle } from 'iconsax-react'
 import logoUrl from '@/assets/certificate/5mins-logo.svg'
+import courseThumb from '@/assets/email/course-thumb.jpg'
 import { FIELDS, LOCKED_LABEL, ORG_INITIALS, ORG_NAME } from './emailContent'
 import './LiveEmail.css'
 
@@ -17,15 +19,25 @@ export function EmailButton({ label }: { label: string }) {
   )
 }
 
+/** Course card, Emails Figma 8003:11293: image left, title, lessons and duration, View Course. */
 export function EmailCourseCard() {
   return (
     <div className="lmail-course">
-      <div className="lmail-course__thumb" aria-hidden="true" />
+      <img className="lmail-course__thumb" src={courseThumb} alt="" />
       <div className="lmail-course__info">
-        <strong className="lmail-course__name">{FIELDS.course_name.sample}</strong>
-        <span className="lmail-course__meta">
-          {FIELDS.lessons.sample} · {FIELDS.duration.sample}
-        </span>
+        <div className="lmail-course__text">
+          <strong className="lmail-course__name">{FIELDS.course_name.sample}</strong>
+          <div className="lmail-course__meta">
+            <span>
+              <PlayCircle size={14} color="currentColor" variant="Linear" />
+              {FIELDS.lessons.sample}
+            </span>
+            <span>
+              <Clock size={14} color="currentColor" variant="Linear" />
+              {FIELDS.duration.sample}
+            </span>
+          </div>
+        </div>
         <span className="lmail-btn">View Course</span>
       </div>
     </div>

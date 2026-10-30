@@ -76,7 +76,7 @@ export const LOCKED_COURSE = '<div data-locked-block="course"></div>'
 export const LOCKED_ACTIVATE = '<div data-locked-block="activate"></div>'
 
 /** The locked block's button label, by kind. */
-export const LOCKED_LABEL = { button: 'Learn Now', activate: 'Activate your account' } as const
+export const LOCKED_LABEL = { button: 'Learn Now', activate: 'Activate Your Account' } as const
 
 const SIGN_OFF = "<p>That's it! See you in 5Mins! 🚀</p><p><strong>Team 5Mins</strong></p>"
 
@@ -93,7 +93,7 @@ export const reminderDefault = (days: number): EmailText => ({
 
 /** Starter text for reminders admins add, so they don't begin from a blank page. */
 export const REMINDER_STARTER: EmailText = {
-  subject: `<p>${f('days_left')} left to complete ${f('course_name')}</p>`,
+  subject: `<p>${f('days_left')} left to complete your course</p>`,
   body:
     `<p>Hi ${f('first_name')} 👋</p>` +
     `<p>You have ${f('days_left')} left to complete <strong>${f('course_name')}</strong>. It's due on ${f('due_date')}.</p>` +

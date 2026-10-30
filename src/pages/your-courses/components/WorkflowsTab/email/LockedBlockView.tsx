@@ -1,5 +1,4 @@
 import { NodeViewWrapper, type ReactNodeViewProps } from '@tiptap/react'
-import { Lock } from 'iconsax-react'
 import { EmailButton, EmailCourseCard } from './LiveEmail'
 import { LOCKED_LABEL } from './emailContent'
 
@@ -14,16 +13,7 @@ function LockedBlockView({ node }: ReactNodeViewProps) {
       contentEditable={false}
       aria-label="Part of the email added by 5Mins"
     >
-      <span className="eed-locked__badge">
-        <Lock size={16} color="currentColor" variant="Linear" />
-        Added by 5Mins
-      </span>
       {isCourse ? <EmailCourseCard /> : <EmailButton label={LOCKED_LABEL[kind]} />}
-      {isCourse && (
-        <p className="eed-locked__caption">
-          Example course. Each person sees the course the reminder is about.
-        </p>
-      )}
     </NodeViewWrapper>
   )
 }

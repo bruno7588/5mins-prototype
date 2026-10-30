@@ -17,14 +17,14 @@
 }
 
 .eed-content {
-  width: min(720px, 100% - 176px);
+  width: min(600px, 100% - 176px);
   margin: 0 auto;
   padding: var(--space-l) 0 var(--space-xxl);
 }
 
 /* Write with AI open: the panel sits beside the card, never above it (2.3). */
 .eed-content--ai {
-  width: min(1064px, 100% - 176px);
+  width: min(944px, 100% - 176px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: var(--space-l);
@@ -38,29 +38,18 @@
   min-width: 0;
 }
 
-.eed-title-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-m);
-  padding-right: var(--space-xxl);
+
+.eed-intro:empty {
+  display: none;
 }
 
-.eed-header {
+.eed-intro {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
 }
 
-.eed-title {
-  flex: 1;
-  margin: 0;
-  font-size: var(--font-size-h2);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
 
-.eed-when,
 .eed-note {
   margin: 0;
   font-size: var(--font-size-md);
@@ -75,22 +64,53 @@
   color: var(--text-primary);
 }
 
-/* ---- Compose card ---- */
+/* ---- Subject and message: Outlined inputs (input.md) ---- */
 
-.eed-card {
+.eed-fields {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  background: var(--cards-background);
+  gap: var(--space-l);
 }
 
-.eed-label {
-  flex-shrink: 0;
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  color: var(--text-secondary);
+/* Label on the left, the subject's Insert field button at the far right. */
+.eed-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  margin-block: calc(var(--space-s) * -1);
 }
+
+/* No wrapper padding, so the toolbar divider runs the full width of the field. */
+.eed-body__wrapper {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+}
+
+.eed-body__editor {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Helper text on the left, counter at the far right of the same line. */
+.eed-helper-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-m);
+}
+
+.eed-helper-row > span:first-child {
+  flex: 1;
+}
+
+.eed-error {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-error);
+}
+
+
 
 .eed-counter {
   flex-shrink: 0;
@@ -104,24 +124,8 @@
   color: var(--text-error);
 }
 
-.eed-subject {
-  border-bottom: 1px solid var(--border-elevated);
-}
 
-.eed-subject__row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-s) var(--space-s) var(--space-s) var(--space-m);
-}
 
-.eed-subject__row .eed-label {
-  width: 64px;
-}
-
-.eed-subject--error .eed-subject__row .eed-label {
-  color: var(--text-error);
-}
 
 .eed-subject__editor {
   flex: 1;
@@ -132,7 +136,7 @@
   overflow-x: auto;
   white-space: nowrap;
   font-size: var(--font-size-md);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.5;
   color: var(--text-primary);
   outline: none;
@@ -143,48 +147,27 @@
   margin: 0;
 }
 
-.eed-channels {
-  display: flex;
-  flex-wrap: wrap;
+.eed-channels__item {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-s) var(--space-m) var(--space-sm);
+  gap: var(--space-xs);
+  color: var(--text-secondary);
+  vertical-align: bottom;
 }
 
-.eed-channels__label {
-  font-size: var(--font-size-sm);
-  color: var(--text-tertiary);
-}
 
 /* ---- Message ---- */
 
-.eed-body {
-  display: flex;
-  flex-direction: column;
-}
 
-.eed-body__head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-m) var(--space-m) 0;
-}
 
-.eed-tag-anchor {
-  display: inline-flex;
-  border-radius: var(--radius-full);
-}
 
-.eed-tag-anchor:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
 
 .eed-body-input {
-  min-height: 320px;
-  padding: var(--space-sm) var(--space-m) var(--space-m);
+  min-height: 360px;
+  padding: var(--space-sm);
   font-size: var(--font-size-md);
-  line-height: 1.6;
+  font-weight: 400;
+  line-height: 1.5;
   color: var(--text-primary);
   outline: none;
   overflow-wrap: anywhere;
@@ -243,39 +226,14 @@
 }
 
 /* Locked button or course card (1.8). */
+/* Shown as sent, with no frame: a dashed outline read as a drop zone. */
 .eed-locked {
-  position: relative;
-  margin: var(--space-m) 0;
-  padding: var(--space-l) var(--space-m) var(--space-s);
-  border: 1px dashed var(--border-hover);
-  border-radius: var(--radius-sm);
+  margin: var(--space-s) 0 var(--space-m);
   user-select: none;
   cursor: default;
 }
 
-.eed-locked__badge {
-  position: absolute;
-  top: calc(var(--space-sm) * -1);
-  right: var(--space-sm);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 0 var(--space-s);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-full);
-  background: var(--cards-background);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  line-height: 1.8;
-  color: var(--text-secondary);
-}
 
-.eed-locked__caption {
-  margin: var(--space-s) 0 0;
-  font-size: var(--font-size-sm);
-  color: var(--text-tertiary);
-  text-align: center;
-}
 
 /* ---- Link row and toolbar ---- */
 
@@ -283,18 +241,20 @@
   display: flex;
   align-items: center;
   gap: var(--space-s);
-  padding: var(--space-s) var(--space-m);
-  border-top: 1px solid var(--border-elevated);
+  padding: 0 var(--space-sm) var(--space-s);
 }
 
 .eed-link__field {
   flex: 1;
 }
 
-/* Pinned to the bottom of the card, and to the viewport while the card scrolls. */
+/* Hovering the toolbar doesn't fill the field; only the icon buttons react. */
+.eed-body__wrapper:has(.eed-toolbar:hover) {
+  background: transparent;
+}
+
+/* Toolbar at the bottom of the message field. */
 .eed-toolbar {
-  position: sticky;
-  bottom: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -377,8 +337,6 @@
 
 .eed-menu__group + .eed-menu__group {
   margin-top: var(--space-xs);
-  padding-top: var(--space-xs);
-  border-top: 1px solid var(--border-elevated);
 }
 
 .eed-menu__header {
@@ -423,19 +381,7 @@
 
 /* ---- Below the card ---- */
 
-.eed-meta {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  margin-top: calc(var(--space-sm) * -1);
-}
 
-.eed-helper,
-.eed-error {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--text-tertiary);
-}
 
 .eed-error {
   color: var(--text-error);
@@ -444,13 +390,14 @@
 .eed-footer {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-m);
 }
 
 .eed-footer__end {
   display: flex;
+  flex-shrink: 0;
   gap: var(--space-m);
-  margin-left: auto;
 }
 
 /* ---- Write with AI panel ---- */

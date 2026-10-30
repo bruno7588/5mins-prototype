@@ -102,44 +102,66 @@
   padding: var(--space-s) 0 var(--space-m);
 }
 
+/* Light-mode filled button, as sent. */
 .lmail-btn {
   display: inline-block;
-  padding: var(--space-sm) var(--space-l);
+  padding: var(--space-ssm) var(--space-ml);
   border-radius: var(--radius-s);
-  background: var(--primary-500);
-  color: var(--neutral-800);
+  background: var(--primary-700);
+  color: var(--neutral-25);
   font-weight: 700;
+  line-height: 1.5;
   text-align: center;
 }
 
+/* Course card (Emails Figma 8003:11293). */
 .lmail-course {
-  overflow: hidden;
-  border-radius: var(--radius-sm);
-  background: var(--neutral-50);
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
 }
 
 .lmail-course__thumb {
+  flex-shrink: 0;
+  width: 200px;
   height: 120px;
-  background: linear-gradient(120deg, var(--primary-700), var(--primary-400));
+  border-radius: var(--radius-sm);
+  object-fit: cover;
 }
 
 .lmail-course__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.lmail-course__text {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-m) var(--space-m);
 }
 
 .lmail-course__name {
   font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: var(--neutral-800);
 }
 
 .lmail-course__meta {
-  color: var(--neutral-500);
+  display: flex;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--neutral-400);
 }
 
-.lmail-course__info .lmail-btn {
-  margin-top: var(--space-s);
+.lmail-course__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 .lmail-foot {
