@@ -1,0 +1,557 @@
+/* Full-screen email editor (DES-348 D8). The compose card sits on the page ground,
+   so it takes the card fill and --border-elevated. Prefix: eed- */
+
+.eed-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow-y: auto;
+  background: var(--page-background);
+}
+
+.eed-close {
+  position: absolute;
+  top: var(--space-l);
+  right: var(--space-xxl);
+  z-index: 101;
+}
+
+.eed-content {
+  width: min(720px, 100% - 176px);
+  margin: 0 auto;
+  padding: var(--space-l) 0 var(--space-xxl);
+}
+
+/* Write with AI open: the panel sits beside the card, never above it (2.3). */
+.eed-content--ai {
+  width: min(1064px, 100% - 176px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: var(--space-l);
+  align-items: start;
+}
+
+.eed-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  min-width: 0;
+}
+
+.eed-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  padding-right: var(--space-xxl);
+}
+
+.eed-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.eed-title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.eed-when,
+.eed-note {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+}
+
+.eed-days {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  font-size: var(--font-size-md);
+  color: var(--text-primary);
+}
+
+/* ---- Compose card ---- */
+
+.eed-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+}
+
+.eed-label {
+  flex-shrink: 0;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.eed-counter {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.eed-counter--over {
+  color: var(--text-error);
+}
+
+.eed-subject {
+  border-bottom: 1px solid var(--border-elevated);
+}
+
+.eed-subject__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-s) var(--space-s) var(--space-s) var(--space-m);
+}
+
+.eed-subject__row .eed-label {
+  width: 64px;
+}
+
+.eed-subject--error .eed-subject__row .eed-label {
+  color: var(--text-error);
+}
+
+.eed-subject__editor {
+  flex: 1;
+  min-width: 0;
+}
+
+.eed-subject-input {
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  outline: none;
+  scrollbar-width: none;
+}
+
+.eed-subject-input p {
+  margin: 0;
+}
+
+.eed-channels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-m) var(--space-sm);
+}
+
+.eed-channels__label {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+/* ---- Message ---- */
+
+.eed-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.eed-body__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-m) var(--space-m) 0;
+}
+
+.eed-tag-anchor {
+  display: inline-flex;
+  border-radius: var(--radius-full);
+}
+
+.eed-tag-anchor:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.eed-body-input {
+  min-height: 320px;
+  padding: var(--space-sm) var(--space-m) var(--space-m);
+  font-size: var(--font-size-md);
+  line-height: 1.6;
+  color: var(--text-primary);
+  outline: none;
+  overflow-wrap: anywhere;
+}
+
+.eed-body-input p {
+  margin: 0 0 var(--space-s);
+}
+
+.eed-body-input h3 {
+  margin: var(--space-sm) 0 var(--space-xs);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.eed-body-input ul,
+.eed-body-input ol {
+  margin: 0 0 var(--space-s);
+  padding-left: var(--space-l);
+}
+
+.eed-body-input li p {
+  margin: 0 0 var(--space-xs);
+}
+
+.eed-body-input a {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.eed-body-input .is-empty::before,
+.eed-subject-input .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--text-disabled);
+  pointer-events: none;
+}
+
+/* Personal field token (D7), selected state per D16. */
+.eed-field {
+  display: inline-block;
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-xs);
+  background: var(--input-background);
+  color: var(--text-primary);
+  font-weight: 500;
+  line-height: inherit;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.eed-field.ProseMirror-selectednode {
+  background: var(--selected-tint);
+}
+
+/* Locked button or course card (1.8). */
+.eed-locked {
+  position: relative;
+  margin: var(--space-m) 0;
+  padding: var(--space-l) var(--space-m) var(--space-s);
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-sm);
+  user-select: none;
+  cursor: default;
+}
+
+.eed-locked__badge {
+  position: absolute;
+  top: calc(var(--space-sm) * -1);
+  right: var(--space-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-s);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-full);
+  background: var(--cards-background);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.eed-locked__caption {
+  margin: var(--space-s) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+/* ---- Link row and toolbar ---- */
+
+.eed-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-s) var(--space-m);
+  border-top: 1px solid var(--border-elevated);
+}
+
+.eed-link__field {
+  flex: 1;
+}
+
+/* Pinned to the bottom of the card, and to the viewport while the card scrolls. */
+.eed-toolbar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-sm);
+  border-top: 1px solid var(--border-elevated);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: var(--cards-background);
+}
+
+.eed-toolbar__sep {
+  width: 1px;
+  height: 20px;
+  margin: 0 var(--space-xs);
+  background: var(--border-elevated);
+}
+
+/* Icon button states (D16): circular hover, amber tint when the format is on. */
+.eed-tool {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.eed-tool:hover,
+.eed-tool:active {
+  background: var(--page-background-hover);
+}
+
+.eed-tool--active {
+  background: var(--selected-tint);
+}
+
+.eed-tool--active:hover {
+  background: var(--selected-tint-hover);
+}
+
+.eed-tool:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* ---- Insert field menu (listbox surface) ---- */
+
+.eed-menu-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.eed-menu {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  width: 280px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding: var(--space-s);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-l);
+}
+
+.eed-menu--above {
+  bottom: calc(100% + var(--space-xs));
+}
+
+.eed-menu--below {
+  top: calc(100% + var(--space-xs));
+  left: auto;
+  right: 0;
+}
+
+.eed-menu__group + .eed-menu__group {
+  margin-top: var(--space-xs);
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--border-elevated);
+}
+
+.eed-menu__header {
+  margin: 0;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.eed-menu__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-s) var(--space-sm);
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.eed-menu__item:hover {
+  background: var(--cards-background-hover);
+}
+
+.eed-menu__item:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: -2px;
+}
+
+.eed-menu__support {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* ---- Below the card ---- */
+
+.eed-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-top: calc(var(--space-sm) * -1);
+}
+
+.eed-helper,
+.eed-error {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+.eed-error {
+  color: var(--text-error);
+}
+
+.eed-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.eed-footer__end {
+  display: flex;
+  gap: var(--space-m);
+  margin-left: auto;
+}
+
+/* ---- Write with AI panel ---- */
+
+.eed-ai {
+  position: sticky;
+  top: var(--space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-m);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+}
+
+.eed-ai__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.eed-ai__title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.eed-ai__intro {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+}
+
+.eed-ai__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.eed-ai__label {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* DS has no multi-line input, so the textarea wears the Outlined InputField chrome
+   (input.md), as the Generate assessments drawer does. */
+.eed-ai__textarea {
+  width: 100%;
+  padding: var(--space-s) var(--space-sm);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-primary);
+  outline: none;
+  resize: none;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.eed-ai__textarea::placeholder {
+  color: var(--text-disabled);
+}
+
+.eed-ai__textarea:hover {
+  border-color: var(--border-hover);
+  background: var(--input-background);
+}
+
+.eed-ai__textarea:focus {
+  border-color: var(--selected);
+  background: transparent;
+}
+
+.eed-ai__generate {
+  align-self: flex-start;
+}
+
+.eed-ai__result {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  font-size: var(--font-size-md);
+  color: var(--text-primary);
+}
+
+.eed-ai__result > span {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eed-ai__textarea {
+    transition: none;
+  }
+}

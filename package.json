@@ -15,6 +15,10 @@
   "dependencies": {
     "@paper-design/shaders": "0.0.81",
     "@paper-design/shaders-react": "0.0.81",
+    "@tiptap/extensions": "^3.32.1",
+    "@tiptap/pm": "^3.32.1",
+    "@tiptap/react": "^3.32.1",
+    "@tiptap/starter-kit": "^3.32.1",
     "cuelume": "^0.1.2",
     "dialkit": "2.1.0",
     "framer-motion": "^12.42.2",

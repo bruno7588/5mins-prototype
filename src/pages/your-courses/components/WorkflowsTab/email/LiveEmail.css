@@ -1,0 +1,217 @@
+/* The sent email (D13). Mail clients render it light, so it uses fixed palette
+   tokens that don't flip with the admin theme. 600px column, as transactional
+   email. Prefix: lmail- */
+
+.lmail {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--neutral-0);
+  color: var(--neutral-800);
+  font-size: var(--font-size-md);
+  line-height: 1.6;
+}
+
+.lmail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-m);
+  padding: var(--space-xl) var(--space-xxl) var(--space-m);
+}
+
+.lmail-org {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--neutral-600);
+}
+
+.lmail-org__mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-s);
+  background: var(--neutral-600);
+  color: var(--neutral-0);
+  font-size: var(--font-size-sm);
+}
+
+.lmail-powered {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-xxs);
+  font-size: var(--font-size-sm);
+  color: var(--neutral-300);
+}
+
+.lmail-powered img {
+  height: 14px;
+  width: auto;
+}
+
+.lmail-rule {
+  border: 0;
+  border-top: 1px solid var(--neutral-200);
+  margin: 0 var(--space-xxl) var(--space-ml);
+}
+
+.lmail-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 0 var(--space-xxl);
+}
+
+.lmail-text:empty {
+  display: none;
+}
+
+.lmail-text p,
+.lmail-text ul,
+.lmail-text ol {
+  margin: 0 0 var(--space-sm);
+}
+
+.lmail-text h3 {
+  margin: var(--space-s) 0 var(--space-xs);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.lmail-text ul,
+.lmail-text ol {
+  padding-left: var(--space-l);
+}
+
+.lmail-text li p {
+  margin: 0 0 var(--space-xs);
+}
+
+.lmail-text a {
+  color: var(--primary-700);
+}
+
+.lmail-cta {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-s) 0 var(--space-m);
+}
+
+.lmail-btn {
+  display: inline-block;
+  padding: var(--space-sm) var(--space-l);
+  border-radius: var(--radius-s);
+  background: var(--primary-500);
+  color: var(--neutral-800);
+  font-weight: 700;
+  text-align: center;
+}
+
+.lmail-course {
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--neutral-50);
+}
+
+.lmail-course__thumb {
+  height: 120px;
+  background: linear-gradient(120deg, var(--primary-700), var(--primary-400));
+}
+
+.lmail-course__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-m) var(--space-m);
+}
+
+.lmail-course__name {
+  font-size: var(--font-size-lg);
+}
+
+.lmail-course__meta {
+  color: var(--neutral-500);
+}
+
+.lmail-course__info .lmail-btn {
+  margin-top: var(--space-s);
+}
+
+.lmail-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-ml);
+  padding: var(--space-l) var(--space-xxl) var(--space-l);
+}
+
+.lmail-rule--foot {
+  align-self: stretch;
+  margin: 0;
+}
+
+.lmail-social {
+  display: flex;
+  gap: var(--space-xxl);
+}
+
+.lmail-social svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--neutral-800);
+}
+
+.lmail-stores {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm) var(--space-l);
+}
+
+.lmail-store {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  width: 120px;
+  height: 36px;
+  padding: 0 var(--space-s);
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-s);
+  background: var(--neutral-900);
+  color: var(--neutral-0);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.lmail-store svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+.lmail-store > span {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  white-space: nowrap;
+}
+
+.lmail-store small {
+  /* stylelint-disable-next-line -- App Store and Google Play badge artwork, not 5Mins type */
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.lmail-unsub {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--neutral-400);
+  text-decoration: underline;
+}

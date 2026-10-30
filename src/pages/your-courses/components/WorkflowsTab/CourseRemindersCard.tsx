@@ -4,15 +4,20 @@ import Toggle from '../../../../components/Toggle/Toggle'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
-import EditReminderModal, { type ReminderDraft } from './EditReminderModal'
+import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
+import EmailEditorModal, { type EmailEditorTarget } from './email/EmailEditorModal'
+import { REMINDER_STARTER, reminderDefault, type EmailText } from './email/emailContent'
 
 export interface Reminder {
   id: string
   days: number
+  /** Editor HTML (subject and message). */
   subject: string
   body: string
   system?: boolean
+  /** A built-in reminder whose text an admin has changed. */
+  custom?: boolean
   paused?: boolean
 }
 
@@ -23,13 +28,9 @@ interface Props {
   onChange: (reminders: Reminder[]) => void
 }
 
-const DEFAULT_COPY = {
-  subject: 'Reminder: your course is due soon',
-  body: "Hi there,\nA quick reminder that your assigned course is coming up. Just 5 minutes now and you're done.\nThanks!",
-}
-
 let nextId = 0
 const newId = () => `r_${Date.now()}_${nextId++}`
+const plural = (days: number) => `${days} ${days === 1 ? 'day' : 'days'}`
 
 type ModalState = { mode: 'add' } | { mode: 'edit'; id: string } | null
 
@@ -47,32 +48,74 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
   const deleting = sorted.find((r) => r.id === deletingId) ?? null
   const editing = modal?.mode === 'edit' ? reminders.find((r) => r.id === modal.id) ?? null : null
 
-  const initial: ReminderDraft | undefined = useMemo(() => {
-    if (!modal) return undefined
-    if (modal.mode === 'edit' && editing) {
-      return { days: editing.days, subject: editing.subject, body: editing.body }
+  const target: EmailEditorTarget | null = useMemo(() => {
+    if (!modal) return null
+    const others = new Set(reminders.filter((r) => r.id !== editing?.id).map((r) => r.days))
+    if (editing?.system) {
+      return {
+        type: 'reminder',
+        title: `Edit ${editing.days}-day reminder`,
+        name: `${editing.days}-day reminder`,
+        when: `Sent ${plural(editing.days)} before a course's due date. This day is built in and can't be changed.`,
+        days: editing.days,
+        initial: { subject: editing.subject, body: editing.body },
+        customised: !!editing.custom,
+        canReset: true,
+        saveLabel: 'Save Reminder',
+      }
     }
-    // Add mode — pick first available default day, prefill with default copy
-    const used = new Set(reminders.map((r) => r.days))
-    const fallback = [3, 5, 14, 2, 10, 21, 30].find((d) => !used.has(d)) ?? 3
-    return { days: fallback, ...DEFAULT_COPY }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modal])
+    if (editing) {
+      return {
+        type: 'reminder',
+        title: 'Edit reminder',
+        name: 'reminder',
+        days: editing.days,
+        takenDays: others,
+        initial: { subject: editing.subject, body: editing.body },
+        customised: true,
+        canReset: false,
+        saveLabel: 'Save Reminder',
+      }
+    }
+    // Add mode: first free day, starter text
+    const fallback = [3, 5, 14, 2, 10, 21, 30].find((d) => !others.has(d)) ?? 3
+    return {
+      type: 'reminder',
+      title: 'Add reminder',
+      name: 'reminder',
+      days: fallback,
+      takenDays: others,
+      initial: REMINDER_STARTER,
+      customised: true,
+      canReset: false,
+      isNew: true,
+      saveLabel: 'Save Reminder',
+    }
+  }, [modal, editing, reminders])
 
-  const takenDays = useMemo(() => {
-    const ids = new Set(reminders.map((r) => r.id))
-    if (modal?.mode === 'edit') ids.delete(modal.id)
-    return new Set(reminders.filter((r) => ids.has(r.id)).map((r) => r.days))
-  }, [reminders, modal])
-
-  const handleSave = (data: ReminderDraft) => {
-    if (modal?.mode === 'edit') {
-      onChange(reminders.map((r) => (r.id === modal.id ? { ...r, ...data } : r)))
-      showToast('success', 'Reminder updated')
+  const handleSave = (text: EmailText, days: number) => {
+    if (editing) {
+      onChange(
+        reminders.map((r) =>
+          r.id === editing.id ? { ...r, ...text, days, custom: r.system ? true : r.custom } : r,
+        ),
+      )
+      showToast('success', editing.system ? `${editing.days}-day reminder updated` : 'Reminder updated')
     } else {
-      onChange([...reminders, { id: newId(), ...data }])
+      onChange([...reminders, { id: newId(), days, ...text }])
       showToast('success', 'Reminder added')
     }
+    setModal(null)
+  }
+
+  const handleReset = () => {
+    if (!editing) return
+    onChange(
+      reminders.map((r) =>
+        r.id === editing.id ? { ...r, ...reminderDefault(r.days), custom: false } : r,
+      ),
+    )
+    showToast('success', `${editing.days}-day reminder reset to default`)
     setModal(null)
   }
 
@@ -96,7 +139,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
         <div className="workflow-card__headline">
           <h3 className="workflow-card__title">Course reminders</h3>
           <p className="workflow-card__desc">
-            Send automatic emails to learners before a course's due date. Sent at 9:00 AM UTC on the scheduled day.
+            Send automatic emails to learners before a course's due date. Sent at 10:00 in each learner's local time on the scheduled day.
           </p>
         </div>
         <Toggle checked={enabled} onChange={onToggle} />
@@ -115,11 +158,21 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                 return (
                   <div key={r.id} className={rowClass}>
                     <span className="course-reminders-row__text">Send email</span>
-                    <span className="course-reminders-row__badge">
-                      {r.days} {r.days === 1 ? 'day' : 'days'}
-                    </span>
+                    <span className="course-reminders-row__badge">{plural(r.days)}</span>
                     <span className="course-reminders-row__text">before due date</span>
+                    {r.custom && <Badge type="informative" label="Custom reminder" />}
                     <span className="course-reminders-row__actions">
+                      <Tooltip text="Edit reminder" icon={false} disabled={!enabled}>
+                        <button
+                          type="button"
+                          className="course-reminders-row__icon-btn"
+                          onClick={() => setModal({ mode: 'edit', id: r.id })}
+                          disabled={!enabled}
+                          aria-label="Edit reminder"
+                        >
+                          <Edit2 size={16} color="currentColor" variant="Linear" />
+                        </button>
+                      </Tooltip>
                       <Toggle
                         checked={enabled && !isPaused}
                         disabled={!enabled}
@@ -145,9 +198,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
               {customReminders.map((r) => (
                 <div key={r.id} className="course-reminders-row">
                   <span className="course-reminders-row__text">Send email</span>
-                  <span className="course-reminders-row__badge">
-                    {r.days} {r.days === 1 ? 'day' : 'days'}
-                  </span>
+                  <span className="course-reminders-row__badge">{plural(r.days)}</span>
                   <span className="course-reminders-row__text">before due date</span>
                   <span className="course-reminders-row__actions">
                     <Tooltip text="Edit reminder" icon={false} disabled={!enabled}>
@@ -186,14 +237,15 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
         )}
       </ul>
 
-      <EditReminderModal
-        open={modal !== null}
-        mode={modal?.mode === 'edit' ? 'edit' : 'add'}
-        initial={initial}
-        takenDays={takenDays}
-        onClose={() => setModal(null)}
-        onSave={handleSave}
-      />
+      {target && (
+        <EmailEditorModal
+          key={modal?.mode === 'edit' ? modal.id : 'add'}
+          target={target}
+          onClose={() => setModal(null)}
+          onSave={handleSave}
+          onReset={handleReset}
+        />
+      )}
 
       <ConfirmModal open={deleting !== null} onClose={() => setDeletingId(null)}>
         {deleting && (

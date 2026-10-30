@@ -1,0 +1,251 @@
+/* Email and channel preview (1.9). The admin chrome uses semantic tokens; the
+   email and the Slack, Teams and phone mocks show how they look to recipients,
+   so they use fixed palette tokens. Prefix: epv- */
+
+.confirm-modal.epv {
+  width: 720px;
+  max-height: calc(100vh - 2 * var(--space-l));
+  overflow-y: auto;
+  align-items: stretch;
+}
+
+.epv-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-right: var(--space-xxl);
+}
+
+.epv-title {
+  margin: 0;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.epv-sub {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+}
+
+/* Page-local underline tabs (chips-switcher-tabs.md). */
+.epv-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-m);
+  border-bottom: 1px solid var(--border);
+}
+
+.epv-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 0 var(--space-s);
+  border: 0;
+  background: none;
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.epv-tab::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  transition: background-color 150ms ease-out;
+}
+
+.epv-tab:hover {
+  color: var(--text-primary);
+}
+
+.epv-tab--active {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.epv-tab--active::after {
+  background: var(--selected);
+}
+
+.epv-tab:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.epv-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.epv-inbox {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-xs) var(--space-sm);
+  margin: 0;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-size: var(--font-size-md);
+}
+
+.epv-inbox dt {
+  color: var(--text-tertiary);
+}
+
+.epv-inbox dd {
+  margin: 0;
+  min-width: 0;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.epv-inbox__subject {
+  font-weight: 600;
+}
+
+.epv-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--neutral-50);
+}
+
+.epv-frame--email {
+  padding: var(--space-l) var(--space-sm);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.epv-app-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-s);
+  background: var(--neutral-0);
+  border: 1px solid var(--neutral-100);
+}
+
+.epv-app-icon img {
+  width: 28px;
+  height: auto;
+}
+
+.epv-chat {
+  display: flex;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 560px;
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--neutral-100);
+  border-radius: var(--radius-s);
+  background: var(--neutral-0);
+  color: var(--neutral-800);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+.epv-chat--teams .epv-app-icon {
+  border-radius: var(--radius-full);
+}
+
+.epv-chat__main {
+  min-width: 0;
+}
+
+.epv-chat__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xss);
+}
+
+.epv-chat__tag {
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-xs);
+  background: var(--neutral-50);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--neutral-400);
+}
+
+.epv-chat__time {
+  font-size: var(--font-size-sm);
+  color: var(--neutral-400);
+}
+
+.epv-chat__text {
+  margin: var(--space-xxs) 0 0;
+  overflow-wrap: anywhere;
+}
+
+.epv-chat__link {
+  color: var(--primary-800);
+  text-decoration: underline;
+}
+
+.epv-phone {
+  display: flex;
+  gap: var(--space-ssm);
+  width: 100%;
+  max-width: 360px;
+  padding: var(--space-sm);
+  border-radius: var(--radius-ml);
+  background: var(--neutral-800);
+  color: var(--neutral-0);
+}
+
+.epv-phone__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.epv-phone__top {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--neutral-200);
+}
+
+.epv-phone__title {
+  margin: var(--space-xxs) 0 0;
+  overflow: hidden;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.epv-phone__body {
+  margin: 0;
+  font-size: var(--font-size-md);
+  color: var(--neutral-100);
+}
+
+.epv-caption {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--neutral-500);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .epv-tab::after {
+    transition: none;
+  }
+}

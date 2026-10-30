@@ -337,3 +337,15 @@
   padding: var(--space-s) var(--space-sm);
   font-size: var(--font-size-md);
 }
+
+/* Welcome emails card (DES-348) */
+.welcome-row__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.welcome-row__sub {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
