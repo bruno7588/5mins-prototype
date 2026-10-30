@@ -1,11 +1,11 @@
 import { useMemo, type ReactNode } from 'react'
-import { Chart, Danger, People, TaskSquare, TickCircle } from 'iconsax-react'
+import { Chart, CloseCircle, Danger, People, TaskSquare, TickCircle } from 'iconsax-react'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import {
   assessmentTypeFromLabel,
   getAssessmentIllustration,
 } from '@/assets/assessment-illustrations'
-import { CorrectSplit, OpenResponse, OptionBars } from '@/pages/chart-lab/components/Charts'
+import { OpenResponse, OptionBars } from '@/pages/chart-lab/components/Charts'
 import '@/pages/chart-lab/chart-lab.css'
 import Badge from '@/components/Badge/Badge'
 import ProgressCell from './ProgressCell'
@@ -232,7 +232,19 @@ function Tile({ a }: { a: AssessmentResult }) {
         <Head a={a} />
         <span className="asg-title">{a.title}</span>
         <span className="asg-chart">
-          <CorrectSplit score={pct} />
+          {/* The split as the correct-answer list draws it: icon, plain text, share badge. */}
+          <ul className="asg-correct">
+            <li className="asg-correct__row">
+              <TickCircle size={20} color="currentColor" variant="Linear" className="asg-correct__icon" aria-hidden="true" />
+              <span className="asg-correct__label">Correct</span>
+              <Badge label={`${pct}%`} className="cl-pct cl-pct--correct asg-correct__pct" />
+            </li>
+            <li className="asg-correct__row asg-correct__row--wrong">
+              <CloseCircle size={20} color="currentColor" variant="Linear" className="asg-correct__icon" aria-hidden="true" />
+              <span className="asg-correct__label">Incorrect</span>
+              <Badge label={`${100 - pct}%`} className="cl-pct cl-pct--wrong asg-correct__pct" />
+            </li>
+          </ul>
         </span>
       </>
     )

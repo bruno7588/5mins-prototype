@@ -199,21 +199,34 @@
 .asg-correct {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-s);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* Each row sits on the same empty track as the grey bars (cl-barrow), 8px apart. */
 .asg-correct__row {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  padding: var(--space-s) var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
 }
 
 .asg-correct__icon {
   flex-shrink: 0;
   color: var(--text-success);
+}
+
+.asg-correct__row--wrong .asg-correct__icon {
+  color: var(--text-error);
+}
+
+/* The incorrect share takes its icon's colour. */
+.asg-correct__row--wrong .badge.asg-correct__pct {
+  color: var(--text-error);
 }
 
 .asg-correct__label {
@@ -233,10 +246,10 @@
    top-right corner. */
 .asg-images {
   display: grid;
-  /* 80% of the card width, so each thumbnail is a fifth smaller than full width. */
-  max-width: 80%;
+  /* 40% of the card width: half the size the thumbnails were at 80%. */
+  max-width: 40%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-ml);
+  gap: var(--space-m);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -257,13 +270,24 @@
 
 .asg-image__pct {
   position: absolute;
-  top: var(--space-s);
-  right: var(--space-s);
+  top: var(--space-xs);
+  right: var(--space-xs);
 }
 
-/* Bar labels inside a card read in Regular, quieter than on the answers page. */
+/* Bars inside a card sit 8px apart. */
+.asg-chart .cl-rows {
+  gap: var(--space-s);
+}
+
+/* Grey bars (poll, answered / not answered) show only their track in a card: the badge carries the share. */
+.asg-chart .cl-barrow:not(.is-correct):not(.is-incorrect) .cl-barrow__fill {
+  display: none;
+}
+
+/* Bar labels inside a card read in Regular Text-secondary, quieter than on the answers page. */
 .asg-chart .cl-row__label {
   font-weight: 400;
+  color: var(--text-secondary);
 }
 
 /* ── Ring ──────────────────────────────────────────────────────────────── */
