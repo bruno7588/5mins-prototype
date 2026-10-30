@@ -94,8 +94,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  min-height: calc(var(--space-xxl) + var(--space-xs));
-  padding: var(--space-s) var(--space-s) var(--space-s) var(--space-m);
+  padding: var(--space-s) var(--space-sm);
   overflow: hidden;
   border-radius: var(--radius-sm);
   background: var(--input-background);
@@ -115,23 +114,12 @@
   background: var(--input-background-elevated);
 }
 
-/* The correct answer's track: Success-500 at 16%, so the whole row reads as the right one. */
-.cl-barrow.is-correct {
-  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
-  background: color-mix(in srgb, var(--success-500) 16%, transparent);
-}
-
 .cl-barrow.is-correct .cl-barrow__fill {
   /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
   background: var(--success-500);
 }
 
-/* A wrong option: Danger-500 at 16% for the track, Danger-400 for the fill, Text-primary on it. */
-.cl-barrow.is-incorrect {
-  /* stylelint-disable-next-line -- wrong answers are Danger-500 in both modes */
-  background: color-mix(in srgb, var(--danger-500) 16%, transparent);
-}
-
+/* A wrong option: Danger-400 fill with Text-primary on it; the track stays Input-background. */
 .cl-barrow.is-incorrect .cl-barrow__fill {
   /* stylelint-disable-next-line -- wrong answers fill Danger-400 in both modes */
   background: var(--danger-400);
@@ -172,6 +160,8 @@
 /* The share as a semibold Badge: the correct answer on Page-background with Success-500
    figures (it sits on the green bar), every other option on Page-background with secondary figures. */
 .badge.cl-pct {
+  /* Tighter than the DS Badge so it does not set the bar height (8px + 21px + 8px). */
+  padding-block: var(--space-xxs);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
