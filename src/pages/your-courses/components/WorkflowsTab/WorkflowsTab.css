@@ -358,6 +358,12 @@
   align-self: flex-start;
 }
 
+/* Add-row button: --text-primary label, as the form add-row buttons (Add Item, Add
+   Option, .iq-drawer__add-btn). Hover keeps the DS brand step. */
+.course-reminders-add.ds-btn--text {
+  color: var(--text-primary);
+}
+
 /* Email name: Paragraph M medium. */
 .welcome-row__text .course-reminders-row__text {
   font-weight: 500;
