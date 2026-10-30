@@ -109,9 +109,9 @@
   background: var(--border);
 }
 
-/* Light mode: the grey fill a step up from its track. Neutral bars only. */
-:root:not([data-theme='dark']) .cl-barrow:not(.is-correct):not(.is-incorrect) .cl-barrow__fill {
-  background: var(--input-background-elevated);
+/* Neutral bars (polls, open response): Border-elevated in both modes. */
+.cl-barrow:not(.is-correct):not(.is-incorrect) .cl-barrow__fill {
+  background: var(--border-elevated);
 }
 
 /* Soft fills: Success-300 / Danger-200 in light mode, Success-500 / Danger-400 in dark. */
@@ -181,8 +181,8 @@
 /* The share as a semibold Badge: the correct answer on Page-background with Success-500
    figures (it sits on the green bar), every other option on Page-background with secondary figures. */
 .badge.cl-pct {
-  /* Tighter than the DS Badge so it does not set the bar height (8px + 21px + 8px). */
-  padding-block: var(--space-xxs);
+  /* 4px 8px, tighter than the DS Badge; the bars come out about 41px tall. */
+  padding: var(--space-xs) var(--space-s);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
