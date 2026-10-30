@@ -114,7 +114,7 @@
   background: var(--input-background-elevated);
 }
 
-/* Soft fills: Success-300 / Danger-300 in light mode, Success-500 / Danger-400 in dark. */
+/* Soft fills: Success-300 / Danger-200 in light mode, Success-500 / Danger-400 in dark. */
 .cl-barrow.is-correct .cl-barrow__fill {
   /* stylelint-disable-next-line -- the correct answer is Success-300 in light mode */
   background: var(--success-300);
@@ -127,8 +127,8 @@
 
 /* A wrong option with Text-primary on it; the track stays Input-background. */
 .cl-barrow.is-incorrect .cl-barrow__fill {
-  /* stylelint-disable-next-line -- wrong answers fill Danger-300 in light mode */
-  background: var(--danger-300);
+  /* stylelint-disable-next-line -- wrong answers fill Danger-200 in light mode */
+  background: var(--danger-200);
 }
 
 :root[data-theme='dark'] .cl-barrow.is-incorrect .cl-barrow__fill {
@@ -136,16 +136,7 @@
   background: var(--danger-400);
 }
 
-/* Only the correct bar has a hover: its fill moves to the Success button's hover shade.
-   Every track, correct or not, stays Input-background. Neutral bars stay still. */
-.cl-barrow,
-.cl-barrow__fill {
-  transition: background-color 150ms ease;
-}
-
-.cl-barrow.is-correct:hover .cl-barrow__fill {
-  background: var(--button-success-background-hover);
-}
+/* Bars have no hover: they are read-only. */
 
 /* On arrival each fill grows from the left: 520ms on the house curve, 45ms apart (motion.md). */
 .cl-barrow__fill {

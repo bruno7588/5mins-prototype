@@ -121,11 +121,13 @@ function CorrectSplit({ score }: { score: number }) {
     <ol className="cl-rows">
       <li>
         <BarRow pct={score} correct value={`${score}%`}>
+          <TickCircle size={20} color="currentColor" variant="Linear" className="cl-row__icon" aria-hidden="true" />
           <span className="cl-row__label">Correct</span>
         </BarRow>
       </li>
       <li>
-        <BarRow pct={100 - score} value={`${100 - score}%`}>
+        <BarRow pct={100 - score} incorrect value={`${100 - score}%`}>
+          <CloseCircle size={20} color="currentColor" variant="Linear" className="cl-row__icon" aria-hidden="true" />
           <span className="cl-row__label">Incorrect</span>
         </BarRow>
       </li>
