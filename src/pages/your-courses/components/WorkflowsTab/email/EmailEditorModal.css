@@ -5,6 +5,8 @@
   position: fixed;
   inset: 0;
   z-index: 100;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   background: var(--page-background);
 }
@@ -17,6 +19,7 @@
 }
 
 .eed-content {
+  flex: 1 0 auto;
   width: min(600px, 100% - 176px);
   margin: 0 auto;
   padding: var(--space-l) 0 var(--space-xxl);
@@ -69,7 +72,7 @@
 .eed-fields {
   display: flex;
   flex-direction: column;
-  gap: var(--space-l);
+  gap: var(--space-ml);
 }
 
 /* Label on the left, the subject's Insert field button at the far right. */
@@ -78,7 +81,6 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-s);
-  margin-block: calc(var(--space-s) * -1);
 }
 
 /* No wrapper padding, so the toolbar divider runs the full width of the field. */
@@ -164,7 +166,7 @@
 
 .eed-body-input {
   min-height: 360px;
-  padding: var(--space-sm);
+  padding: var(--space-m) var(--space-sm);
   font-size: var(--font-size-md);
   font-weight: 400;
   line-height: 1.5;
@@ -173,8 +175,26 @@
   overflow-wrap: anywhere;
 }
 
+/* The last block's own margin would add to the 16px bottom padding. */
+.eed-body-input > :last-child,
+.eed-body-input > :last-child .eed-locked {
+  margin-bottom: 0;
+}
+
 .eed-body-input p {
   margin: 0 0 var(--space-s);
+}
+
+.eed-body-input h2 {
+  margin: var(--space-sm) 0 var(--space-xs);
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* Text style dropdown hugs its label. */
+.eed-style {
+  width: max-content;
 }
 
 .eed-body-input h3 {
@@ -248,21 +268,13 @@
   flex: 1;
 }
 
-/* Hovering the toolbar doesn't fill the field; only the icon buttons react. */
-.eed-body__wrapper:has(.eed-toolbar:hover) {
-  background: transparent;
-}
-
-/* Toolbar at the bottom of the message field. */
+/* Toolbar below the message field: 12px from the field (8px field gap + 4px). */
 .eed-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-s) var(--space-sm);
-  border-top: 1px solid var(--border-elevated);
-  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-  background: var(--cards-background);
+  gap: var(--space-s);
+  margin-top: var(--space-xs);
 }
 
 .eed-toolbar__sep {
@@ -276,8 +288,8 @@
 .eed-tool {
   display: inline-grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: 0;
   border-radius: var(--radius-full);
@@ -291,12 +303,14 @@
   background: var(--page-background-hover);
 }
 
+/* On: the same Linear glyph drawn heavier, in the selected text colour. Iconsax's
+   Bold text icons sit in a filled square and read bigger, so they aren't used. */
 .eed-tool--active {
-  background: var(--selected-tint);
+  color: var(--text-selected);
 }
 
-.eed-tool--active:hover {
-  background: var(--selected-tint-hover);
+.eed-tool--active svg path {
+  stroke-width: 2.25;
 }
 
 .eed-tool:focus-visible {
@@ -388,10 +402,16 @@
 }
 
 .eed-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-m);
+  padding: var(--space-m) var(--space-l);
+  border-top: 1px solid var(--border);
+  background: var(--page-background);
 }
 
 .eed-footer__end {

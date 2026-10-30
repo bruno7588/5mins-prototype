@@ -77,6 +77,13 @@
   margin: 0 0 var(--space-sm);
 }
 
+.lmail-text h2 {
+  margin: var(--space-s) 0 var(--space-xs);
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 .lmail-text h3 {
   margin: var(--space-s) 0 var(--space-xs);
   font-size: var(--font-size-lg);
@@ -99,14 +106,15 @@
 .lmail-cta {
   display: flex;
   justify-content: center;
-  padding: var(--space-s) 0 var(--space-m);
+  padding: var(--space-s) 0 0;
 }
 
-/* Light-mode filled button, as sent. */
+/* Light-mode filled button, as sent: DS Button Medium (10px 20px, 14px Bold, 12px radius). */
 .lmail-btn {
   display: inline-block;
   padding: var(--space-ssm) var(--space-ml);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-md);
   background: var(--primary-700);
   color: var(--neutral-25);
   font-weight: 700;

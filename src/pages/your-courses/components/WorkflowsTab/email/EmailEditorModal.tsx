@@ -2,9 +2,10 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useEditor, EditorContent, type Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { Placeholder } from '@tiptap/extensions'
-import { Additem, Danger, Eraser, Link1, Mobile, Slack, Text, TextBold, TextItalic, TextUnderline, Warning2 } from 'iconsax-react'
+import { Additem, Danger, Eraser, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
+import Dropdown from '@/components/Dropdown/Dropdown'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import InputField from '@/components/InputField/InputField'
@@ -72,8 +73,12 @@ interface Props {
   onReset: () => void
 }
 
-const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
-const EMOJI_HINT = isMac ? 'Add emoji with Ctrl + Cmd + Space.' : 'Add emoji with Windows key + full stop.'
+/* Text styles from the type scale, so every email stays on brand. */
+const TEXT_STYLES = [
+  { value: 'p', label: 'Normal text' },
+  { value: 'h2', label: 'Heading' },
+  { value: 'h3', label: 'Subheading' },
+]
 const GROUPS: FieldGroup[] = ['Person', 'Organisation', 'Course']
 
 /** Text above the locked block, including fields. Required on Save. */
@@ -257,10 +262,12 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
         blockquote: false,
         code: false,
         codeBlock: false,
-        heading: { levels: [3] },
+        heading: { levels: [2, 3] },
         horizontalRule: false,
         strike: false,
         link: { openOnClick: false, autolink: true, defaultProtocol: 'https' },
+        // No forced empty line after the button or course card; admins can delete it.
+        trailingNode: false,
       }),
       FieldNode,
       LockedBlockNode,
@@ -415,7 +422,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 <span className="input-field__label" id="eed-subject-label">Subject</span>
                 <div className="eed-menu-anchor">
                   <ToolButton label="Insert field into subject" onClick={() => setMenu(menu === 'subject' ? null : 'subject')}>
-                    <Additem size={24} color="currentColor" variant="Linear" />
+                    <Additem size={20} color="currentColor" variant="Linear" />
                   </ToolButton>
                   {menu === 'subject' && (
                     <FieldMenu
@@ -457,7 +464,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
               </span>
             </div>
 
-            {/* Message: the Outlined input holding the editor, with the toolbar at its bottom. */}
+            {/* Message: the Outlined input holding the editor, with the toolbar below it. */}
             <div className={`input-field eed-input${showBodyError ? ' input-field--error' : ''}`}>
               <span className="input-field__label">Message</span>
               <div className="input-field__wrapper eed-body__wrapper">
@@ -483,99 +490,92 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                   </div>
                 )}
 
-                <div className="eed-toolbar" role="toolbar" aria-label="Formatting">
-                  <ToolButton label="Bold" active={body.isActive('bold')} onClick={() => body.chain().focus().toggleBold().run()}>
-                    <TextBold size={24} color="currentColor" variant={body.isActive('bold') ? 'Bold' : 'Linear'} />
-                  </ToolButton>
-                  <ToolButton label="Italic" active={body.isActive('italic')} onClick={() => body.chain().focus().toggleItalic().run()}>
-                    <TextItalic size={24} color="currentColor" variant={body.isActive('italic') ? 'Bold' : 'Linear'} />
-                  </ToolButton>
-                  <ToolButton
-                    label="Underline"
-                    active={body.isActive('underline')}
-                    onClick={() => body.chain().focus().toggleUnderline().run()}
+              </div>
+              <div className="eed-toolbar" role="toolbar" aria-label="Formatting">
+                <ToolButton label="Bold" active={body.isActive('bold')} onClick={() => body.chain().focus().toggleBold().run()}>
+                  <TextBold size={20} color="currentColor" variant="Linear" />
+                </ToolButton>
+                <ToolButton label="Italic" active={body.isActive('italic')} onClick={() => body.chain().focus().toggleItalic().run()}>
+                  <TextItalic size={20} color="currentColor" variant="Linear" />
+                </ToolButton>
+                <ToolButton
+                  label="Underline"
+                  active={body.isActive('underline')}
+                  onClick={() => body.chain().focus().toggleUnderline().run()}
+                >
+                  <TextUnderline size={20} color="currentColor" variant="Linear" />
+                </ToolButton>
+                <span className="eed-toolbar__sep" aria-hidden="true" />
+                <Dropdown
+                  size="sm"
+                  className="eed-style"
+                  options={TEXT_STYLES}
+                  value={body.isActive('heading', { level: 2 }) ? 'h2' : body.isActive('heading', { level: 3 }) ? 'h3' : 'p'}
+                  onChange={(v) => {
+                    const chain = body.chain().focus()
+                    if (v === 'p') chain.setParagraph().run()
+                    else chain.setHeading({ level: v === 'h2' ? 2 : 3 }).run()
+                  }}
+                />
+                <span className="eed-toolbar__sep" aria-hidden="true" />
+                <ToolButton
+                  label="Bulleted list"
+                  active={body.isActive('bulletList')}
+                  onClick={() => body.chain().focus().toggleBulletList().run()}
+                >
+                  <ListBulletIcon size={20} />
+                </ToolButton>
+                <ToolButton
+                  label="Numbered list"
+                  active={body.isActive('orderedList')}
+                  onClick={() => body.chain().focus().toggleOrderedList().run()}
+                >
+                  <ListNumberIcon size={20} />
+                </ToolButton>
+                <span className="eed-toolbar__sep" aria-hidden="true" />
+                <ToolButton label="Link" active={body.isActive('link')} onClick={openLink}>
+                  <Link1 size={20} color="currentColor" variant="Linear" />
+                </ToolButton>
+                <ToolButton
+                  label="Clear formatting"
+                  onClick={() => body.chain().focus().unsetAllMarks().clearNodes().run()}
+                >
+                  <Eraser size={20} color="currentColor" variant="Linear" />
+                </ToolButton>
+                <span className="eed-toolbar__sep" aria-hidden="true" />
+                <div className="eed-menu-anchor">
+                  <Button
+                    variant="text"
+                    icon={<Additem size={20} color="currentColor" variant="Linear" />}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => setMenu(menu === 'body' ? null : 'body')}
+                    aria-expanded={menu === 'body'}
                   >
-                    <TextUnderline size={24} color="currentColor" variant={body.isActive('underline') ? 'Bold' : 'Linear'} />
-                  </ToolButton>
-                  <ToolButton
-                    label="Heading"
-                    active={body.isActive('heading')}
-                    onClick={() => body.chain().focus().toggleHeading({ level: 3 }).run()}
-                  >
-                    <Text size={24} color="currentColor" variant={body.isActive('heading') ? 'Bold' : 'Linear'} />
-                  </ToolButton>
-                  <span className="eed-toolbar__sep" aria-hidden="true" />
-                  <ToolButton
-                    label="Bulleted list"
-                    active={body.isActive('bulletList')}
-                    onClick={() => body.chain().focus().toggleBulletList().run()}
-                  >
-                    <ListBulletIcon size={24} />
-                  </ToolButton>
-                  <ToolButton
-                    label="Numbered list"
-                    active={body.isActive('orderedList')}
-                    onClick={() => body.chain().focus().toggleOrderedList().run()}
-                  >
-                    <ListNumberIcon size={24} />
-                  </ToolButton>
-                  <span className="eed-toolbar__sep" aria-hidden="true" />
-                  <ToolButton label="Link" active={body.isActive('link')} onClick={openLink}>
-                    <Link1 size={24} color="currentColor" variant={body.isActive('link') ? 'Bold' : 'Linear'} />
-                  </ToolButton>
-                  <ToolButton
-                    label="Clear formatting"
-                    onClick={() => body.chain().focus().unsetAllMarks().clearNodes().run()}
-                  >
-                    <Eraser size={24} color="currentColor" variant="Linear" />
-                  </ToolButton>
-                  <span className="eed-toolbar__sep" aria-hidden="true" />
-                  <div className="eed-menu-anchor">
-                    <Button
-                      size="sm"
-                      variant="text"
-                      icon={<Additem size={20} color="currentColor" variant="Linear" />}
-                      onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => setMenu(menu === 'body' ? null : 'body')}
-                      aria-expanded={menu === 'body'}
-                    >
-                      Insert Field
-                    </Button>
-                    {menu === 'body' && (
-                      <FieldMenu
-                        type={target.type}
-                        placement="above"
-                        onPick={(key) => insertField(body, key)}
-                        onClose={() => setMenu(null)}
-                      />
-                    )}
-                  </div>
+                    Insert Field
+                  </Button>
+                  {menu === 'body' && (
+                    <FieldMenu
+                      type={target.type}
+                      placement="above"
+                      onPick={(key) => insertField(body, key)}
+                      onClose={() => setMenu(null)}
+                    />
+                  )}
                 </div>
               </div>
-              <span className="input-field__helper eed-helper-row" role={showBodyError ? 'alert' : undefined}>
-                <span>{showBodyError ? errors.body : EMOJI_HINT}</span>
-                {bodyLength >= MESSAGE_MAX * 0.8 && (
-                  <span className={`eed-counter${bodyLength > MESSAGE_MAX ? ' eed-counter--over' : ''}`}>
-                    {bodyLength.toLocaleString('en-GB')} / {MESSAGE_MAX.toLocaleString('en-GB')}
-                  </span>
-                )}
-              </span>
+              {(showBodyError || bodyLength >= MESSAGE_MAX * 0.8) && (
+                <span className="input-field__helper eed-helper-row" role={showBodyError ? 'alert' : undefined}>
+                  <span>{showBodyError && errors.body}</span>
+                  {bodyLength >= MESSAGE_MAX * 0.8 && (
+                    <span className={`eed-counter${bodyLength > MESSAGE_MAX ? ' eed-counter--over' : ''}`}>
+                      {bodyLength.toLocaleString('en-GB')} / {MESSAGE_MAX.toLocaleString('en-GB')}
+                    </span>
+                  )}
+                </span>
+              )}
             </div>
           </div>
 
-          <footer className="eed-footer">
-            {target.canReset && target.customised && (
-              <Button variant="text" semantic="danger" onClick={() => setConfirm('reset')}>
-                Reset to Default
-              </Button>
-            )}
-            <div className="eed-footer__end">
-              <Button variant="outlined-2" onClick={() => setPreview('email')}>
-                Preview
-              </Button>
-              <Button onClick={save}>{target.saveLabel}</Button>
-            </div>
-          </footer>
         </div>
 
         {aiOpen && (
@@ -587,6 +587,21 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
           />
         )}
       </div>
+
+      {/* Sticky footer: the actions stay in reach while the message scrolls. */}
+      <footer className="eed-footer">
+        {target.canReset && target.customised && (
+          <Button size="lg" variant="text" semantic="danger" onClick={() => setConfirm('reset')}>
+            Reset to Default
+          </Button>
+        )}
+        <div className="eed-footer__end">
+          <Button size="lg" variant="outlined-2" onClick={() => setPreview('email')}>
+            Preview
+          </Button>
+          <Button size="lg" onClick={save}>{target.saveLabel}</Button>
+        </div>
+      </footer>
 
       <EmailPreview
         open={preview !== null}
@@ -605,7 +620,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
       <ConfirmModal open={confirm === 'discard'} onClose={() => setConfirm(null)} ariaLabel="Discard your changes?">
         <div className="confirm-modal-header confirm-modal-header--center">
           <div className="confirm-modal-icon">
-            <Warning2 size={72} color="var(--warning-500)" variant="Linear" />
+            <InfoCircle size={72} color="var(--warning-500)" variant="Linear" />
           </div>
           <h2 className="confirm-modal-title">Discard your changes?</h2>
           <p className="confirm-modal-body">Your edits to this email haven't been saved.</p>

@@ -57,11 +57,9 @@ const EMAILS: {
       type: 'welcome',
       title: 'Edit welcome email',
       name: 'welcome email',
-      when: 'Sent when someone activates their account.',
+      when: 'Your email goes to everyone who joins, including managers and people without the app.',
       canReset: true,
       saveLabel: 'Save',
-      callout: "Custom emails are text only, so the 2 images in today's welcome email won't be sent.",
-      notes: ['Your email goes to everyone who joins, including managers and people without the app.'],
     },
   },
   {
