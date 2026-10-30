@@ -1,5 +1,5 @@
 import { type CSSProperties, type ReactNode } from "react";
-import { Gallery, TickCircle } from "iconsax-react";
+import { CloseCircle, Gallery, TickCircle } from "iconsax-react";
 import Badge from "@/components/Badge/Badge";
 import {
   type ChartQuestion,
@@ -15,18 +15,21 @@ import {
 export function BarRow({
   pct,
   correct = false,
+  incorrect = false,
   value,
   className = "",
   children,
 }: {
   pct: number;
   correct?: boolean;
+  /** A wrong option: Danger-500 fill on a Danger tint, as the correct one is Success. */
+  incorrect?: boolean;
   value: ReactNode;
   className?: string;
   children: ReactNode;
 }) {
   return (
-    <span className={`cl-barrow${correct ? " is-correct" : ""} ${className}`}>
+    <span className={`cl-barrow${correct ? " is-correct" : ""}${incorrect ? " is-incorrect" : ""} ${className}`}>
       <span
         className="cl-barrow__fill"
         style={{ "--cl-w": `${pct}%` } as CSSProperties}
@@ -55,8 +58,16 @@ export function OptionBars({ rows }: { rows: OptionRow[] }) {
           <BarRow
             pct={r.pct}
             correct={r.tone === "correct"}
+            incorrect={r.tone === "wrong"}
             value={`${r.pct}%`}
           >
+            {/* Green alone reads as "most picked", so each option also carries a tick or a cross. */}
+            {r.tone === "correct" && (
+              <TickCircle size={20} color="currentColor" variant="Linear" className="cl-row__icon" aria-hidden="true" />
+            )}
+            {r.tone === "wrong" && (
+              <CloseCircle size={20} color="currentColor" variant="Linear" className="cl-row__icon" aria-hidden="true" />
+            )}
             <span className="cl-row__label">
               {r.label}
               {r.tone === "correct" && <Correct />}

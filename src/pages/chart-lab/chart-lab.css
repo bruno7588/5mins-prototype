@@ -111,13 +111,30 @@
 }
 
 /* Light mode: the grey fill a step up from its track. Neutral bars only. */
-:root:not([data-theme='dark']) .cl-barrow:not(.is-correct) .cl-barrow__fill {
+:root:not([data-theme='dark']) .cl-barrow:not(.is-correct):not(.is-incorrect) .cl-barrow__fill {
   background: var(--input-background-elevated);
+}
+
+/* The correct answer's track: Success-500 at 16%, so the whole row reads as the right one. */
+.cl-barrow.is-correct {
+  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
+  background: color-mix(in srgb, var(--success-500) 16%, transparent);
 }
 
 .cl-barrow.is-correct .cl-barrow__fill {
   /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
   background: var(--success-500);
+}
+
+/* A wrong option: Danger-500 at 16% for the track, Danger-400 for the fill, Text-primary on it. */
+.cl-barrow.is-incorrect {
+  /* stylelint-disable-next-line -- wrong answers are Danger-500 in both modes */
+  background: color-mix(in srgb, var(--danger-500) 16%, transparent);
+}
+
+.cl-barrow.is-incorrect .cl-barrow__fill {
+  /* stylelint-disable-next-line -- wrong answers fill Danger-400 in both modes */
+  background: var(--danger-400);
 }
 
 /* Only the correct bar has a hover: its fill moves to the Success button's hover shade.
@@ -186,6 +203,13 @@
   line-height: 1.5;
 }
 
+/* Tick or cross before the label, 12px off it (the content gap). */
+.cl-row__icon {
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.cl-barrow.is-correct .cl-row__icon,
 .cl-barrow.is-correct .cl-row__label {
   /* stylelint-disable-next-line -- white on the green fill in both modes */
   color: var(--neutral-25);
