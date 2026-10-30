@@ -220,7 +220,7 @@
 .cl-tiles {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-s);
 }
 
 .cl-tile {
@@ -234,11 +234,13 @@
   min-width: 0;
 }
 
+/* As tall as its bar (the row stretches it), 4:3 wide. */
 .cl-tile__image {
   display: grid;
   flex-shrink: 0;
+  position: relative;
+  align-self: stretch;
   place-items: center;
-  width: calc(var(--space-xxl) * 1.5);
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-s);
@@ -246,7 +248,10 @@
   color: var(--text-tertiary);
 }
 
+/* Out of flow, so the photo's own size never sets the row height. */
 .cl-tile__image img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   border-radius: inherit;
