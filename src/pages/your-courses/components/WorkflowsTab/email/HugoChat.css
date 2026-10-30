@@ -1,0 +1,215 @@
+/* Ask Hugo chat (Hugo AI chatbot Figma 9178:32108). Prefix: hugo- */
+
+.hugo {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.hugo-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-m) var(--space-l);
+}
+
+.hugo-head__title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.hugo-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-ml) var(--space-l);
+}
+
+.hugo-thread {
+  width: min(720px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+/* Question: right-aligned bubble, square bottom-right corner. */
+.hugo-question {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hugo-question__bubble {
+  max-width: 600px;
+  margin: 0;
+  padding: var(--space-sm) var(--space-m);
+  border-radius: var(--radius-m) var(--radius-m) 0 var(--radius-m);
+  background: var(--input-background);
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+/* Answer: AI icon, then text. */
+.hugo-answer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+}
+
+.hugo-answer__icon {
+  flex-shrink: 0;
+}
+
+.hugo-answer__icon--pulse {
+  animation: hugo-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes hugo-pulse {
+  50% { opacity: 0.4; }
+}
+
+.hugo-answer__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.hugo-answer__text {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.hugo-answer__text--muted,
+.hugo-answer__note {
+  margin: 0;
+  color: var(--text-tertiary);
+}
+
+.hugo-answer__note {
+  font-size: var(--font-size-md);
+}
+
+/* Draft card: what the answer put in the email. */
+.hugo-draft {
+  width: min(320px, 100%);
+  padding: var(--space-sm);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+}
+
+.hugo-draft__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.hugo-draft__subject {
+  margin: var(--space-xs) 0 0;
+  overflow: hidden;
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hugo-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+/* Input: card field with the send button, disclaimer below. */
+.hugo-input {
+  width: min(720px, 100% - 2 * var(--space-l));
+  margin: 0 auto;
+  padding: var(--space-s) 0 var(--space-ml);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-ml);
+}
+
+.hugo-field {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-sm) var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-l);
+}
+
+.hugo-field:focus-within {
+  border-color: var(--selected);
+}
+
+.hugo-field__input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.hugo-field__input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.hugo-field__send {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.hugo-field__send:disabled {
+  color: var(--text-tertiary);
+  cursor: default;
+}
+
+.hugo-field__send:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.hugo-disclaimer {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hugo-answer__icon--pulse {
+    animation: none;
+  }
+}

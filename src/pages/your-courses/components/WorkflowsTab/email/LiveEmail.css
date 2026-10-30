@@ -77,13 +77,6 @@
   margin: 0 0 var(--space-sm);
 }
 
-.lmail-text h2 {
-  margin: var(--space-s) 0 var(--space-xs);
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-}
-
 .lmail-text h3 {
   margin: var(--space-s) 0 var(--space-xs);
   font-size: var(--font-size-lg);

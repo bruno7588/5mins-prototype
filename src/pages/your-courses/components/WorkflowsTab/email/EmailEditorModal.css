@@ -11,6 +11,17 @@
   background: var(--page-background);
 }
 
+/* Modal header across the full page width; the title clears the full-screen close,
+   the rule runs edge to edge. */
+.eed-page-header {
+  flex-shrink: 0;
+  padding-top: var(--space-l);
+}
+
+.eed-page-header .section-header__headline {
+  padding: 0 104px 0 var(--space-l);
+}
+
 .eed-close {
   position: absolute;
   top: var(--space-l);
@@ -20,18 +31,10 @@
 
 .eed-content {
   flex: 1 0 auto;
-  width: min(600px, 100% - 176px);
+  /* 600px inputs + the card's 24px padding each side. */
+  width: min(648px, 100% - 176px);
   margin: 0 auto;
   padding: var(--space-l) 0 var(--space-xxl);
-}
-
-/* Write with AI open: the panel sits beside the card, never above it (2.3). */
-.eed-content--ai {
-  width: min(944px, 100% - 176px);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: var(--space-l);
-  align-items: start;
 }
 
 .eed-main {
@@ -69,10 +72,20 @@
 
 /* ---- Subject and message: Outlined inputs (input.md) ---- */
 
+/* Subject and message sit on a card. */
 .eed-fields {
   display: flex;
   flex-direction: column;
   gap: var(--space-ml);
+  padding: var(--space-l);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-s);
+}
+
+/* On a card, the field hover fill is the elevated one (input.md). */
+.eed-fields .input-field__wrapper:hover {
+  background: var(--input-background-elevated);
 }
 
 /* Label on the left, the subject's Insert field button at the far right. */
@@ -183,13 +196,6 @@
 
 .eed-body-input p {
   margin: 0 0 var(--space-s);
-}
-
-.eed-body-input h2 {
-  margin: var(--space-sm) 0 var(--space-xs);
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
 }
 
 /* Text style dropdown hugs its label. */
@@ -420,105 +426,38 @@
   gap: var(--space-m);
 }
 
-/* ---- Write with AI panel ---- */
+/* ---- Ask Hugo open: chat in the centre, email form on the right (2.3) ---- */
 
-.eed-ai {
-  position: sticky;
-  top: var(--space-l);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
-  padding: var(--space-m);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  background: var(--cards-background);
+.eed-overlay--hugo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 696px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
 }
 
-.eed-ai__head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
+.eed-overlay--hugo .eed-page-header {
+  grid-column: 1 / -1;
+  grid-row: 1;
 }
 
-.eed-ai__title {
-  flex: 1;
+.eed-overlay--hugo .eed-hugo {
+  min-height: 0;
+  grid-column: 1;
+  grid-row: 2;
+  border-right: 1px solid var(--border);
+}
+
+.eed-overlay--hugo .eed-content {
+  grid-column: 2;
+  grid-row: 2;
+  width: auto;
   margin: 0;
-  font-size: var(--font-size-h4);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
+  /* Same top padding as the single-column editor, so the form doesn't shift up. */
+  padding: var(--space-l);
+  overflow-y: auto;
 }
 
-.eed-ai__intro {
-  margin: 0;
-  font-size: var(--font-size-md);
-  color: var(--text-secondary);
-}
-
-.eed-ai__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-}
-
-.eed-ai__label {
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-/* DS has no multi-line input, so the textarea wears the Outlined InputField chrome
-   (input.md), as the Generate assessments drawer does. */
-.eed-ai__textarea {
-  width: 100%;
-  padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border-elevated);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  font-family: inherit;
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--text-primary);
-  outline: none;
-  resize: none;
-  transition: border-color 150ms ease, background 150ms ease;
-}
-
-.eed-ai__textarea::placeholder {
-  color: var(--text-disabled);
-}
-
-.eed-ai__textarea:hover {
-  border-color: var(--border-hover);
-  background: var(--input-background);
-}
-
-.eed-ai__textarea:focus {
-  border-color: var(--selected);
-  background: transparent;
-}
-
-.eed-ai__generate {
-  align-self: flex-start;
-}
-
-.eed-ai__result {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-s);
-  font-size: var(--font-size-md);
-  color: var(--text-primary);
-}
-
-.eed-ai__result > span {
-  flex: 1;
-  min-width: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .eed-ai__textarea {
-    transition: none;
-  }
+.eed-overlay--hugo .eed-footer {
+  grid-column: 1 / -1;
+  grid-row: 3;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useEditor, EditorContent, type Editor } from '@tiptap/react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import StarterKit from '@tiptap/starter-kit'
 import { Placeholder } from '@tiptap/extensions'
 import { Additem, Danger, Eraser, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
@@ -34,7 +35,7 @@ import {
   type FieldKey,
 } from './emailContent'
 import EmailPreview, { type PreviewTab } from './EmailPreview'
-import WriteWithAIPanel from './WriteWithAIPanel'
+import HugoChat from './HugoChat'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'
 import './EmailEditorModal.css'
@@ -75,10 +76,13 @@ interface Props {
 
 /* Text styles from the type scale, so every email stays on brand. */
 const TEXT_STYLES = [
-  { value: 'p', label: 'Normal text' },
-  { value: 'h2', label: 'Heading' },
-  { value: 'h3', label: 'Subheading' },
+  { value: 'p', label: 'Paragraph' },
+  { value: 'h3', label: 'Heading' },
 ]
+/* Page transition (motion.md): 300ms ease-in-out for the email column's move. A soft
+   curve, so it starts moving at once rather than easing out of a standstill. */
+const MOVE = (reduce: boolean | null) => ({ duration: reduce ? 0 : 0.3, ease: [0.4, 0, 0.2, 1] as const })
+
 const GROUPS: FieldGroup[] = ['Person', 'Organisation', 'Course']
 
 /** Text above the locked block, including fields. Required on Save. */
@@ -203,6 +207,9 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
   const [confirm, setConfirm] = useState<'discard' | 'reset' | null>(null)
   const [preview, setPreview] = useState<PreviewTab | null>(null)
   const [aiOpen, setAiOpen] = useState(false)
+  // The two-column layout outlives the chat until its exit animation finishes.
+  const [hugoLayout, setHugoLayout] = useState(false)
+  const reduce = useReducedMotion()
   const baseline = useRef({ subject: '', body: '' })
   const isReminder = target.type === 'reminder'
   const lockedLabel = isReminder ? 'course card' : 'button'
@@ -262,7 +269,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
         blockquote: false,
         code: false,
         codeBlock: false,
-        heading: { levels: [2, 3] },
+        heading: { levels: [3] },
         horizontalRule: false,
         strike: false,
         link: { openOnClick: false, autolink: true, defaultProtocol: 'https' },
@@ -364,28 +371,58 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
   const showSubjectError = submitted && errors.subject
   const showBodyError = submitted && errors.body
 
+  const header = (
+    <SectionHeader
+      title={target.title}
+      description={target.when}
+      ctas={
+        showAI && !aiOpen ? (
+          <Button
+            semantic="ai"
+            variant="outlined"
+            icon={<SparkleIcon size={20} color="currentColor" />}
+            onClick={() => {
+              setHugoLayout(true)
+              setAiOpen(true)
+            }}
+          >
+            Write with AI
+          </Button>
+        ) : undefined
+      }
+    />
+  )
+
   return (
-    <div className="eed-overlay" ref={panelRef} role="dialog" aria-modal="true" aria-label={target.title}>
+    <div
+      className={`eed-overlay${hugoLayout ? ' eed-overlay--hugo' : ''}`}
+      ref={panelRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={target.title}
+    >
       <CloseButton variant="fullscreen" onClick={requestClose} className="eed-close" />
 
-      <div className={`eed-content${aiOpen ? ' eed-content--ai' : ''}`}>
+      {/* Write with AI opens Ask Hugo: chat in the centre, the email form on the right. */}
+      {/* The modal header spans the full page width, above the email (and the Hugo chat). */}
+      <div className="eed-page-header">{header}</div>
+      <AnimatePresence onExitComplete={() => setHugoLayout(false)}>
+        {aiOpen && (
+          <motion.div
+            key="hugo"
+            className="eed-hugo"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, x: -24 }}
+            animate={{ opacity: 1, x: 0, transition: { duration: reduce ? 0 : 0.3, ease: 'easeOut' } }}
+            exit={{ opacity: 0, x: reduce ? 0 : -24, transition: { duration: reduce ? 0 : 0.2, ease: 'easeIn' } }}
+          >
+            <HugoChat type={target.type} onClose={() => setAiOpen(false)} onApply={applyDraft} onUndo={setText} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* The email column glides between centre and right as Hugo opens and closes. */}
+      <motion.div className="eed-content" layout="position" transition={MOVE(reduce)}>
         <div className="eed-main">
-          <SectionHeader
-            title={target.title}
-            description={target.when}
-            ctas={
-              showAI && !aiOpen ? (
-                <Button
-                  semantic="ai"
-                  variant="outlined"
-                  icon={<SparkleIcon size={20} color="currentColor" />}
-                  onClick={() => setAiOpen(true)}
-                >
-                  Write with AI
-                </Button>
-              ) : undefined
-            }
-          />
           <div className="eed-intro">
             {!target.when && (
               <div className="eed-days">
@@ -510,11 +547,11 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                   size="sm"
                   className="eed-style"
                   options={TEXT_STYLES}
-                  value={body.isActive('heading', { level: 2 }) ? 'h2' : body.isActive('heading', { level: 3 }) ? 'h3' : 'p'}
+                  value={body.isActive('heading') ? 'h3' : 'p'}
                   onChange={(v) => {
                     const chain = body.chain().focus()
                     if (v === 'p') chain.setParagraph().run()
-                    else chain.setHeading({ level: v === 'h2' ? 2 : 3 }).run()
+                    else chain.setHeading({ level: 3 }).run()
                   }}
                 />
                 <span className="eed-toolbar__sep" aria-hidden="true" />
@@ -578,15 +615,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
 
         </div>
 
-        {aiOpen && (
-          <WriteWithAIPanel
-            type={target.type}
-            onClose={() => setAiOpen(false)}
-            onApply={applyDraft}
-            onUndo={setText}
-          />
-        )}
-      </div>
+      </motion.div>
 
       {/* Sticky footer: the actions stay in reach while the message scrolls. */}
       <footer className="eed-footer">
