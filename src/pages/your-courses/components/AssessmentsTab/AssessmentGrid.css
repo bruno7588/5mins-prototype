@@ -1,5 +1,5 @@
 /* Answers tab V2: a bento of assessments, each tile laid out for what its format has
-   to show. No fill, no shadows: a Border hairline carries each tile. Prefix `asg-`. */
+   to show. An Input-background fill; no borders, no shadows. Prefix `asg-`. */
 
 .asg {
   display: flex;
@@ -56,9 +56,9 @@
   gap: var(--space-sm);
   min-width: 0;
   padding: var(--space-l);
-  border: 1px solid var(--border);
+  border: 0;
   border-radius: var(--radius-m);
-  background: transparent;
+  background: var(--input-background);
   color: var(--text-primary);
   font: inherit;
   text-align: left;
@@ -67,7 +67,7 @@
 }
 
 .asg-tile:hover {
-  background: var(--input-background);
+  background: var(--input-background-hover);
 }
 
 /* Tinted tiles: two soft colour blooms, fading into the page. Stronger in dark mode, as the course card's glow is.
@@ -85,13 +85,13 @@
   --asg-tint:
     radial-gradient(70% 60% at 25% 20%, color-mix(in srgb, var(--asg-from) var(--asg-mix), transparent), transparent 70%),
     radial-gradient(70% 70% at 80% 75%, color-mix(in srgb, var(--asg-to) var(--asg-mix), transparent), transparent 70%);
-  background: var(--asg-tint);
+  background: var(--asg-tint), var(--input-background);
 }
 
 .asg-tile--low:hover,
 .asg-tile--open:hover,
 .asg-tile--quiz:hover {
-  background: var(--asg-tint), var(--input-background);
+  background: var(--asg-tint), var(--input-background-hover);
 }
 
 :root[data-theme='dark'] :is(.asg-tile--low, .asg-tile--open, .asg-tile--quiz) {
@@ -194,10 +194,45 @@
   margin-top: auto;
 }
 
-/* Image choice: the correct images side by side, each with its name and share. */
+/* Multiple choice and select all: only the correct answers, each with its share. */
+.asg-correct {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.asg-correct__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.asg-correct__icon {
+  flex-shrink: 0;
+  color: var(--text-success);
+}
+
+.asg-correct__label {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* The answers page's share badge (cl-pct), held at its size. */
+.asg-correct__pct {
+  flex-shrink: 0;
+}
+
+/* Image choice: the correct thumbnails side by side, no frame, the share badge in the
+   top-right corner. */
 .asg-images {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-m);
   margin: 0;
   padding: 0;
@@ -205,38 +240,27 @@
 }
 
 .asg-image {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
+  position: relative;
   min-width: 0;
 }
 
 .asg-image img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: var(--radius-sm);
 }
 
-.asg-image__caption {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-s);
-  font-size: var(--font-size-sm);
-}
-
-.asg-image__label {
-  overflow: hidden;
-  color: var(--text-primary);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 .asg-image__pct {
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-success);
+  position: absolute;
+  top: var(--space-s);
+  right: var(--space-s);
+}
+
+/* Bar labels inside a card read in Regular, quieter than on the answers page. */
+.asg-chart .cl-row__label {
+  font-weight: 400;
 }
 
 /* ── Ring ──────────────────────────────────────────────────────────────── */
@@ -283,6 +307,18 @@
 .asg-tile .asg-progress .bar {
   flex: 1 1 auto;
   width: auto;
+}
+
+/* The bar here is the share correct, so it fills in the correct-answer green:
+   Success-300 in light mode, Success-500 in dark. */
+.asg-tile .asg-progress .seg.fill {
+  /* stylelint-disable-next-line -- the correct share is Success-300 in light mode */
+  background: var(--success-300);
+}
+
+:root[data-theme='dark'] .asg-tile .asg-progress .seg.fill {
+  /* stylelint-disable-next-line -- the correct share is Success-500 in dark mode */
+  background: var(--success-500);
 }
 
 /* ── Smaller screens ───────────────────────────────────────────────────── */

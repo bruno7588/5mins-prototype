@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react'
-import { Chart, Danger, People, TaskSquare } from 'iconsax-react'
+import { Chart, Danger, People, TaskSquare, TickCircle } from 'iconsax-react'
 import { typeLabel } from '@/data/aiAssessmentGeneration'
 import {
   assessmentTypeFromLabel,
@@ -7,6 +7,7 @@ import {
 } from '@/assets/assessment-illustrations'
 import { CorrectSplit, OpenResponse, OptionBars } from '@/pages/chart-lab/components/Charts'
 import '@/pages/chart-lab/chart-lab.css'
+import Badge from '@/components/Badge/Badge'
 import ProgressCell from './ProgressCell'
 import '@/pages/my-team/MyTeam.css'
 import {
@@ -121,32 +122,40 @@ function ChoiceBody({ a }: { a: GradedAssessment | PollAssessment }) {
   const isRight = (i: number) => (a.correctIndices ? a.correctIndices.includes(i) : i === a.correctIndex)
   if (a.optionImages) {
     return (
-      /* Only the correct images, as pictures rather than bars: the card says what right
-         looks like; the full set and its bars are on the answers page. */
+      /* Only the correct images: the thumbnail alone, no frame, the share on the answers
+         page's badge in its top-right corner. The full set is on the answers page. */
       <ul className="asg-images">
         {a.optionImages
-          .map((src, i) => ({ src, i, label: a.options[i] || `Image ${i + 1}`, pct: share(tally[i], n) }))
+          .map((src, i) => ({ src, i, label: a.options[i]?.trim() || `Image ${i + 1}`, pct: share(tally[i], n) }))
           .filter((t) => isRight(t.i))
           .map((t) => (
             <li key={t.i} className="asg-image">
               <img src={t.src} alt="" />
-              <span className="asg-image__caption">
-                <span className="asg-image__label">{t.label}</span>
-                <span className="asg-image__pct">{t.pct}%</span>
-              </span>
+              <Badge label={`${t.pct}%`} className="cl-pct cl-pct--correct asg-image__pct" />
+              <span className="cl-sr">{t.label}, correct answer</span>
             </li>
           ))}
       </ul>
     )
   }
+  /* Only the correct answers and the share who picked each, no bars: the full spread
+     is on the answers page. */
   return (
-    <OptionBars
-      rows={a.options.map((label, i) => ({
-        label,
-        pct: share(tally[i], n),
-        tone: isRight(i) ? ('correct' as const) : ('wrong' as const),
-      }))}
-    />
+    <ul className="asg-correct">
+      {a.options
+        .map((label, i) => ({ label, i, pct: share(tally[i], n) }))
+        .filter((o) => isRight(o.i))
+        .map((o) => (
+          <li key={o.i} className="asg-correct__row">
+            <TickCircle size={20} color="currentColor" variant="Linear" className="asg-correct__icon" aria-hidden="true" />
+            <span className="asg-correct__label">
+              {o.label}
+              <span className="cl-sr"> (correct answer)</span>
+            </span>
+            <Badge label={`${o.pct}%`} className="cl-pct cl-pct--correct asg-correct__pct" />
+          </li>
+        ))}
+    </ul>
   )
 }
 
