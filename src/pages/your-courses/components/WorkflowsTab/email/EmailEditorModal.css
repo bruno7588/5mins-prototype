@@ -93,13 +93,6 @@
 }
 
 /* Label on the left, the subject's Insert field button at the far right. */
-.eed-label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-s);
-}
-
 /* No wrapper padding, so the toolbar divider runs the full width of the field. */
 .eed-body__wrapper {
   flex-direction: column;
@@ -357,6 +350,43 @@
   top: calc(100% + var(--space-xs));
   left: auto;
   right: 0;
+}
+
+/* The emoji button shows a real emoji, at the 20px icon size. */
+.eed-tool__emoji {
+  font-size: var(--font-size-h3);
+  line-height: 1;
+}
+
+/* Emoji grid: eight 32px cells a row. */
+.eed-emoji {
+  display: grid;
+  grid-template-columns: repeat(8, var(--space-xl));
+  gap: var(--space-xxs);
+  width: auto;
+}
+
+.eed-emoji__item {
+  display: grid;
+  place-items: center;
+  width: var(--space-xl);
+  height: var(--space-xl);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  font-size: var(--font-size-lg);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.eed-emoji__item:hover {
+  background: var(--cards-background-hover);
+}
+
+.eed-emoji__item:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: -2px;
 }
 
 .eed-menu__group + .eed-menu__group {

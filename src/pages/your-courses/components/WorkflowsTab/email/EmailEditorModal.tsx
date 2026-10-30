@@ -169,24 +169,76 @@ function FieldMenu({
   )
 }
 
+/* A browser can't open the computer's own emoji panel from a button, so the toolbar
+   offers a short grid of the emojis people use most in work emails. */
+const EMOJIS = [
+  '😀', '😊', '🙂', '😉', '😄', '🤩', '🥳', '🤗',
+  '👋', '👍', '👏', '🙌', '💪', '🙏', '🤝', '✌️',
+  '🎉', '🎊', '✨', '⭐', '🌟', '🔥', '🚀', '🏆',
+  '✅', '📚', '📖', '✏️', '💡', '🧠', '🎯', '📅',
+  '⏰', '⏳', '📣', '💬', '❤️', '💙', '☀️', '🌱',
+]
+
+function EmojiMenu({ onPick, onClose }: { onPick: (emoji: string) => void; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      if (!ref.current?.parentElement?.contains(e.target as Node)) onClose()
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    ref.current?.querySelector<HTMLElement>('button')?.focus()
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [onClose])
+
+  return (
+    <div ref={ref} className="eed-menu eed-menu--above eed-emoji" role="menu" aria-label="Insert emoji">
+      {EMOJIS.map((emoji) => (
+        <button
+          key={emoji}
+          type="button"
+          role="menuitem"
+          className="eed-emoji__item"
+          aria-label={emoji}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => onPick(emoji)}
+        >
+          {emoji}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 function ToolButton({
   label,
   active,
+  expanded,
   onClick,
   children,
 }: {
   label: string
   active?: boolean
+  /** For a button that opens a menu. */
+  expanded?: boolean
   onClick: () => void
   children: ReactNode
 }) {
   return (
-    <Tooltip text={label} icon={false}>
+    <Tooltip text={label} icon={false} disabled={expanded}>
       <button
         type="button"
         className={`eed-tool${active ? ' eed-tool--active' : ''}`}
         aria-label={label}
-        aria-pressed={active ?? false}
+        aria-pressed={expanded === undefined ? active ?? false : undefined}
+        aria-expanded={expanded}
         onMouseDown={(e) => e.preventDefault()}
         onClick={onClick}
       >
@@ -201,7 +253,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
   const [days, setDays] = useState(target.days)
   const [dirty, setDirty] = useState(!!target.isNew)
   const [submitted, setSubmitted] = useState(false)
-  const [menu, setMenu] = useState<'subject' | 'body' | null>(null)
+  const [menu, setMenu] = useState<'subject' | 'body' | 'emoji' | null>(null)
   const [linkOpen, setLinkOpen] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
   const [confirm, setConfirm] = useState<'discard' | 'reset' | null>(null)
@@ -457,8 +509,10 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
           <div className="eed-fields">
             {/* Subject: the Outlined input (input.md), holding a one-line editor so it can take fields and emoji. */}
             <div className={`input-field eed-input${showSubjectError ? ' input-field--error' : ''}`}>
-              <div className="eed-label-row">
-                <span className="input-field__label" id="eed-subject-label">Subject</span>
+              <span className="input-field__label" id="eed-subject-label">Subject</span>
+              <div className="input-field__wrapper">
+                <EditorContent editor={subject} className="eed-subject__editor" onFocus={() => setMenu(null)} />
+                {/* Insert field sits inside the input, as its right icon (input.md). */}
                 <div className="eed-menu-anchor">
                   <ToolButton label="Insert field into subject" onClick={() => setMenu(menu === 'subject' ? null : 'subject')}>
                     <Additem size={20} color="currentColor" variant="Linear" />
@@ -473,9 +527,6 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                     />
                   )}
                 </div>
-              </div>
-              <div className="input-field__wrapper">
-                <EditorContent editor={subject} className="eed-subject__editor" onFocus={() => setMenu(null)} />
               </div>
               <span className="input-field__helper eed-helper-row" role={showSubjectError ? 'alert' : undefined}>
                 <span>
@@ -581,6 +632,24 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 >
                   <Eraser size={20} color="currentColor" variant="Linear" />
                 </ToolButton>
+                <div className="eed-menu-anchor">
+                  <ToolButton
+                    label="Insert emoji"
+                    expanded={menu === 'emoji'}
+                    onClick={() => setMenu(menu === 'emoji' ? null : 'emoji')}
+                  >
+                    <span className="eed-tool__emoji" aria-hidden="true">😀</span>
+                  </ToolButton>
+                  {menu === 'emoji' && (
+                    <EmojiMenu
+                      onPick={(emoji) => {
+                        body.chain().focus().insertContent(emoji).run()
+                        setMenu(null)
+                      }}
+                      onClose={() => setMenu(null)}
+                    />
+                  )}
+                </div>
                 <span className="eed-toolbar__sep" aria-hidden="true" />
                 <div className="eed-menu-anchor">
                   <Button
