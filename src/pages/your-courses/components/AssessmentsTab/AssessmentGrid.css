@@ -246,8 +246,8 @@
    top-right corner. */
 .asg-images {
   display: grid;
-  /* 40% of the card width: half the size the thumbnails were at 80%. */
-  max-width: 40%;
+  /* The thumbnails share 60% of the card width. */
+  max-width: 60%;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-m);
   margin: 0;
