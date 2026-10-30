@@ -86,7 +86,7 @@
 .cl-rows {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-s);
 }
 
 .cl-barrow {
