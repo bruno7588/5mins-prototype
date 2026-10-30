@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { ArrowSquareUp, Sms } from 'iconsax-react'
+import { ArrowCircleUp2, Sms } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
@@ -104,8 +104,6 @@ function HugoChat({ type, onClose, onApply, onUndo }: Props) {
   return (
     <section className="hugo" aria-label="Ask Hugo">
       <header className="hugo-head">
-        <SparkleIcon size={20} gradient />
-        <h3 className="hugo-head__title">Ask Hugo</h3>
         <CloseButton onClick={onClose} ariaLabel="Close Ask Hugo" />
       </header>
 
@@ -180,7 +178,7 @@ function HugoChat({ type, onClose, onApply, onUndo }: Props) {
             aria-label="Send"
             disabled={!input.trim() || thinking}
           >
-            <ArrowSquareUp size={32} color="currentColor" variant="Bold" />
+            <ArrowCircleUp2 size={32} color="currentColor" variant="Bold" />
           </button>
         </form>
         <p className="hugo-disclaimer">Hugo AI may make mistakes. Please verify important information.</p>

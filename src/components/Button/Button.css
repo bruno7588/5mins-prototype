@@ -349,6 +349,8 @@
   background-clip: border-box;
   color: var(--text-button-disabled);
 }
+/* The icon svg is coloured directly above, so disabled has to reach the svg too. */
+.ds-btn--ai-outlined:disabled .ds-btn__icon svg { color: var(--text-button-disabled); }
 
 /* ── Loading — spinner replaces label, width preserved ── */
 .ds-btn--loading { pointer-events: none; }

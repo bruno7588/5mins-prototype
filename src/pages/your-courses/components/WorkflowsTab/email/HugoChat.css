@@ -7,21 +7,15 @@
   height: 100%;
 }
 
+/* Just the close control, at the right. */
 .hugo-head {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--space-s);
   padding: var(--space-m) var(--space-l);
 }
 
-.hugo-head__title {
-  flex: 1;
-  margin: 0;
-  font-size: var(--font-size-h4);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
 
 .hugo-list {
   flex: 1;
@@ -186,8 +180,17 @@
   border: 0;
   border-radius: var(--radius-s);
   background: transparent;
-  color: var(--text-primary);
+  /* Ready to send: the primary button colour (buttons.md). */
+  color: var(--primary-button-background);
   cursor: pointer;
+}
+
+.hugo-field__send:hover:not(:disabled) {
+  color: var(--primary-button-background-hover);
+}
+
+.hugo-field__send:active:not(:disabled) {
+  color: var(--primary-button-background-pressed);
 }
 
 .hugo-field__send:disabled {

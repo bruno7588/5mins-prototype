@@ -376,10 +376,12 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
       title={target.title}
       description={target.when}
       ctas={
-        showAI && !aiOpen ? (
+        showAI ? (
+          // Stays visible but disabled while the chat is open.
           <Button
             semantic="ai"
             variant="outlined"
+            disabled={aiOpen}
             icon={<SparkleIcon size={20} color="currentColor" />}
             onClick={() => {
               setHugoLayout(true)
