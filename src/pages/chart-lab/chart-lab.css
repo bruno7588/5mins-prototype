@@ -114,14 +114,25 @@
   background: var(--input-background-elevated);
 }
 
+/* Soft fills: Success-300 / Danger-300 in light mode, Success-500 / Danger-400 in dark. */
 .cl-barrow.is-correct .cl-barrow__fill {
-  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
+  /* stylelint-disable-next-line -- the correct answer is Success-300 in light mode */
+  background: var(--success-300);
+}
+
+:root[data-theme='dark'] .cl-barrow.is-correct .cl-barrow__fill {
+  /* stylelint-disable-next-line -- the correct answer is Success-500 in dark mode */
   background: var(--success-500);
 }
 
-/* A wrong option: Danger-400 fill with Text-primary on it; the track stays Input-background. */
+/* A wrong option with Text-primary on it; the track stays Input-background. */
 .cl-barrow.is-incorrect .cl-barrow__fill {
-  /* stylelint-disable-next-line -- wrong answers fill Danger-400 in both modes */
+  /* stylelint-disable-next-line -- wrong answers fill Danger-300 in light mode */
+  background: var(--danger-300);
+}
+
+:root[data-theme='dark'] .cl-barrow.is-incorrect .cl-barrow__fill {
+  /* stylelint-disable-next-line -- wrong answers fill Danger-400 in dark mode */
   background: var(--danger-400);
 }
 
@@ -134,6 +145,25 @@
 
 .cl-barrow.is-correct:hover .cl-barrow__fill {
   background: var(--button-success-background-hover);
+}
+
+/* On arrival each fill grows from the left: 520ms on the house curve, 45ms apart (motion.md). */
+.cl-barrow__fill {
+  transform-origin: left center;
+  animation: cl-bar-grow 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+:is(.cl-rows, .cl-tiles) > li:nth-child(2) .cl-barrow__fill { animation-delay: 45ms; }
+:is(.cl-rows, .cl-tiles) > li:nth-child(3) .cl-barrow__fill { animation-delay: 90ms; }
+:is(.cl-rows, .cl-tiles) > li:nth-child(4) .cl-barrow__fill { animation-delay: 135ms; }
+:is(.cl-rows, .cl-tiles) > li:nth-child(5) .cl-barrow__fill { animation-delay: 180ms; }
+:is(.cl-rows, .cl-tiles) > li:nth-child(6) .cl-barrow__fill { animation-delay: 225ms; }
+:is(.cl-rows, .cl-tiles) > li:nth-child(n + 7) .cl-barrow__fill { animation-delay: 270ms; }
+
+@keyframes cl-bar-grow {
+  from {
+    transform: scaleX(0);
+  }
 }
 
 .cl-barrow__content,
@@ -189,7 +219,7 @@
   flex: 1;
   min-width: 0;
   font-size: var(--font-size-md);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
 }
 
@@ -199,9 +229,10 @@
   align-self: center;
 }
 
-.cl-barrow.is-correct .cl-row__icon,
-.cl-barrow.is-correct .cl-row__label {
-  /* stylelint-disable-next-line -- white on the green fill in both modes */
+/* Light mode keeps Text-primary on the softer Success-400 fill; dark mode is white on Success-600. */
+:root[data-theme='dark'] .cl-barrow.is-correct .cl-row__icon,
+:root[data-theme='dark'] .cl-barrow.is-correct .cl-row__label {
+  /* stylelint-disable-next-line -- white on the Success-600 fill in dark mode */
   color: var(--neutral-25);
 }
 
@@ -618,5 +649,9 @@
   .cl-deck__chev,
   .cl-deck__page {
     transition: none;
+  }
+
+  .cl-barrow__fill {
+    animation: none;
   }
 }

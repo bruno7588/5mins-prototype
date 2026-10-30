@@ -83,6 +83,23 @@
   padding: var(--space-l);
   border: 1px solid var(--border);
   border-radius: var(--radius-m);
+  /* A green glow from the top-left corner with a warm amber under it, fading into the page. */
+  /* stylelint-disable-next-line -- the glow is Success-500 in both modes */
+  --asp-glow-green: color-mix(in srgb, var(--success-500) 18%, transparent);
+  /* stylelint-disable-next-line -- the warm edge is Warning-500 in both modes */
+  --asp-glow-warm: color-mix(in srgb, var(--warning-500) 12%, transparent);
+  background:
+    radial-gradient(75% 90% at 0% 0%, var(--asp-glow-green), transparent 70%),
+    radial-gradient(50% 75% at 0% 75%, var(--asp-glow-warm), transparent 70%),
+    var(--page-background);
+}
+
+/* Dark mode carries the glow more strongly, as in the reference. */
+:root[data-theme='dark'] .asp-card {
+  /* stylelint-disable-next-line -- the glow is Success-500 in both modes */
+  --asp-glow-green: color-mix(in srgb, var(--success-500) 32%, transparent);
+  /* stylelint-disable-next-line -- the warm edge is Warning-500 in both modes */
+  --asp-glow-warm: color-mix(in srgb, var(--warning-500) 22%, transparent);
 }
 
 /* ── Toolbar ─────────────────────────────────────────────────────────────── */
