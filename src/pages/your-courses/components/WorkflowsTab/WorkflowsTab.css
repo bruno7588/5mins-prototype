@@ -345,12 +345,20 @@
   min-width: 0;
 }
 
+/* Paragraph M regular. */
 .welcome-row__sub {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
   color: var(--text-tertiary);
 }
 
 /* The column stretches its children; the text button keeps its own width, left-aligned. */
 .course-reminders-add {
   align-self: flex-start;
+}
+
+/* Email name: Paragraph M medium. */
+.welcome-row__text .course-reminders-row__text {
+  font-weight: 500;
 }

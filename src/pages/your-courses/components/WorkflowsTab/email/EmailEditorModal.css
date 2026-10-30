@@ -11,8 +11,7 @@
   background: var(--page-background);
 }
 
-/* Modal header across the full page width; the title clears the full-screen close,
-   the rule runs edge to edge. */
+/* Modal header across the full page width; the title clears the full-screen close. */
 .eed-page-header {
   flex-shrink: 0;
   padding-top: var(--space-l);
@@ -20,6 +19,11 @@
 
 .eed-page-header .section-header__headline {
   padding: 0 104px 0 var(--space-l);
+}
+
+/* The rule keeps the modal's 24px side margins. */
+.eed-page-header .section-header__divider {
+  margin: 0 var(--space-l);
 }
 
 .eed-close {
