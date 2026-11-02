@@ -3,7 +3,7 @@ import { useEditor, EditorContent, type Editor } from '@tiptap/react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import StarterKit from '@tiptap/starter-kit'
 import { Placeholder } from '@tiptap/extensions'
-import { Additem, Danger, Eraser, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
+import { Danger, Eraser, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import Dropdown from '@/components/Dropdown/Dropdown'
@@ -12,6 +12,7 @@ import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import InputField from '@/components/InputField/InputField'
 import InputInteger from '@/components/InputInteger/InputInteger'
 import Tooltip from '@/components/Tooltip/Tooltip'
+import BracesIcon from '@/components/icons/BracesIcon'
 import ListBulletIcon from '@/components/icons/ListBulletIcon'
 import ListNumberIcon from '@/components/icons/ListNumberIcon'
 import TeamsIcon from '@/components/icons/TeamsIcon'
@@ -497,9 +498,6 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 Another reminder is already sent {days} {days === 1 ? 'day' : 'days'} before the due date.
               </p>
             )}
-            {target.isNew && (
-              <p className="eed-note">Starter text so you don't begin from a blank page. Edit it or write your own.</p>
-            )}
             {target.callout && <Alert type="Callout" message={target.callout} />}
             {target.notes?.map((note) => (
               <p key={note} className="eed-note">{note}</p>
@@ -515,7 +513,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 {/* Insert field sits inside the input, as its right icon (input.md). */}
                 <div className="eed-menu-anchor">
                   <ToolButton label="Insert field into subject" onClick={() => setMenu(menu === 'subject' ? null : 'subject')}>
-                    <Additem size={20} color="currentColor" variant="Linear" />
+                    <BracesIcon size={20} />
                   </ToolButton>
                   {menu === 'subject' && (
                     <FieldMenu
@@ -534,29 +532,26 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                     ? errors.subject
                     : isReminder && (
                         <>
+                          {/* Each channel opens Preview on its tab. */}
                           The subject is also sent to{' '}
                           {channels.map((c, i) => (
                             <span key={c.tab}>
-                              <span className="eed-channels__item">
-                                {c.icon}
-                                {c.label}
-                              </span>
-                              {i < channels.length - 2 ? ', ' : i === channels.length - 2 ? ' and ' : ''}
+                              <Button variant="link" size="md" onClick={() => setPreview(c.tab)}>
+                                {c.tab === 'teams' ? 'Teams' : c.label}
+                              </Button>
+                              {i < channels.length - 2 ? ', ' : i === channels.length - 2 ? ', and ' : ''}
                             </span>
                           ))}
                           . The message is email only.
                         </>
                       )}
                 </span>
-                <span className={`eed-counter${subjectLength > SUBJECT_MAX ? ' eed-counter--over' : ''}`}>
-                  {subjectLength} / {SUBJECT_MAX}
-                </span>
               </span>
             </div>
 
             {/* Message: the Outlined input holding the editor, with the toolbar below it. */}
             <div className={`input-field eed-input${showBodyError ? ' input-field--error' : ''}`}>
-              <span className="input-field__label">Message</span>
+              <span className="input-field__label">{isReminder ? 'Message (email only)' : 'Message'}</span>
               <div className="input-field__wrapper eed-body__wrapper">
                 <EditorContent editor={body} className="eed-body__editor" />
                 {linkOpen && (
@@ -654,7 +649,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 <div className="eed-menu-anchor">
                   <Button
                     variant="text"
-                    icon={<Additem size={20} color="currentColor" variant="Linear" />}
+                    icon={<BracesIcon size={20} />}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => setMenu(menu === 'body' ? null : 'body')}
                     aria-expanded={menu === 'body'}

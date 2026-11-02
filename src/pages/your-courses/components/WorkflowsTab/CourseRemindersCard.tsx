@@ -170,7 +170,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                           disabled={!enabled}
                           aria-label="Edit reminder"
                         >
-                          <Edit2 size={16} color="currentColor" variant="Linear" />
+                          <Edit2 size={20} color="currentColor" variant="Linear" />
                         </button>
                       </Tooltip>
                       <Toggle
@@ -209,7 +209,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                         disabled={!enabled}
                         aria-label="Edit reminder"
                       >
-                        <Edit2 size={16} color="currentColor" variant="Linear" />
+                        <Edit2 size={20} color="currentColor" variant="Linear" />
                       </button>
                     </Tooltip>
                     <Tooltip text="Delete reminder" icon={false} disabled={!enabled}>
@@ -220,7 +220,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                         disabled={!enabled}
                         aria-label="Delete reminder"
                       >
-                        <Trash size={16} color="currentColor" variant="Linear" />
+                        <Trash size={20} color="currentColor" variant="Linear" />
                       </button>
                     </Tooltip>
                   </span>

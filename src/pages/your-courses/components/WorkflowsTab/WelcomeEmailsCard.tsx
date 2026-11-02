@@ -124,7 +124,7 @@ function WelcomeEmailsCard({ emails, onChange }: Props) {
                       onClick={() => setEditing(e.key)}
                       aria-label={`Edit ${e.name}`}
                     >
-                      <Edit2 size={16} color="currentColor" variant="Linear" />
+                      <Edit2 size={20} color="currentColor" variant="Linear" />
                     </button>
                   </Tooltip>
                 </span>

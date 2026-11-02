@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Mobile, Slack, Sms } from 'iconsax-react'
-import type { ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import logoUrl from '@/assets/certificate/5mins-logo.svg'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import TeamsIcon from '@/components/icons/TeamsIcon'
@@ -52,24 +52,19 @@ function AppIcon() {
   )
 }
 
-function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subject, body, customised }: Props) {
-  const reduce = useReducedMotion()
-  const isReminder = type === 'reminder'
+interface ChannelProps {
+  channel: Exclude<PreviewTab, 'email'>
+  subject: string
+  days: number
+  customised: boolean
+}
+
+/** How a reminder's subject shows on Slack, Teams or a phone. */
+function ChannelPreview({ channel, subject, days, customised }: ChannelProps) {
   const subjectLine = subjectText(subject, days) || '(no subject yet)'
-  const { above, below } = splitBody(fillFields(body, days))
   const today = todaysChannelText(days)
   const chat = customised ? subjectLine : today.chat
   const phoneTitle = customised ? subjectLine : today.phoneTitle
-  const current = isReminder ? tab : 'email'
-
-  const tabs: { id: PreviewTab; label: string; icon: ReactNode }[] = [
-    { id: 'email', label: 'Email', icon: <Sms size={16} color="currentColor" variant="Linear" /> },
-    ...(INTEGRATIONS.slack
-      ? [{ id: 'slack' as const, label: 'Slack', icon: <Slack size={16} color="currentColor" variant="Linear" /> }]
-      : []),
-    ...(INTEGRATIONS.teams ? [{ id: 'teams' as const, label: 'Microsoft Teams', icon: <TeamsIcon size={16} /> }] : []),
-    { id: 'phone', label: 'Phone notification', icon: <Mobile size={16} color="currentColor" variant="Linear" /> },
-  ]
 
   const chatText = (
     <p className="epv-chat__text">
@@ -84,55 +79,9 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
     </p>
   )
 
-  let panel: ReactNode
-  if (current === 'email') {
-    panel = (
-      <>
-        <dl className="epv-inbox">
-          <dt>From</dt>
-          <dd>{senderFor(type, customised)}</dd>
-          <dt>Subject</dt>
-          <dd className="epv-inbox__subject">{subjectLine}</dd>
-        </dl>
-        <div className="epv-frame epv-frame--email">
-          <LiveEmail locked={LOCKED_KIND[type]} above={above} below={below} />
-        </div>
-      </>
-    )
-  } else if (current === 'slack') {
-    panel = (
-      <div className="epv-frame">
-        <div className="epv-chat epv-chat--slack">
-          <AppIcon />
-          <div className="epv-chat__main">
-            <div className="epv-chat__meta">
-              <strong>5Mins</strong>
-              <span className="epv-chat__tag">APP</span>
-              <span className="epv-chat__time">10:00</span>
-            </div>
-            {chatText}
-          </div>
-        </div>
-      </div>
-    )
-  } else if (current === 'teams') {
-    panel = (
-      <div className="epv-frame">
-        <div className="epv-chat epv-chat--teams">
-          <AppIcon />
-          <div className="epv-chat__main">
-            <div className="epv-chat__meta">
-              <strong>5Mins</strong>
-              <span className="epv-chat__time">10:00</span>
-            </div>
-            {chatText}
-          </div>
-        </div>
-      </div>
-    )
-  } else {
-    panel = (
-      <div className="epv-frame">
+  if (channel === 'phone') {
+    return (
+      <div className="epv-solo">
         <div className="epv-phone">
           <AppIcon />
           <div className="epv-phone__main">
@@ -144,10 +93,67 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
             <p className="epv-phone__body">{FIELDS.course_name.sample}</p>
           </div>
         </div>
-        <p className="epv-caption">Android shows the title on one line.</p>
       </div>
     )
   }
+  /* The Slack or Teams message on its own, no frame around it. */
+  return (
+    <div className={`epv-chat epv-chat--${channel}`}>
+      <AppIcon />
+      <div className="epv-chat__main">
+        <div className="epv-chat__meta">
+          <strong>5Mins</strong>
+          {channel === 'slack' && <span className="epv-chat__tag">APP</span>}
+          <span className="epv-chat__time">10:00</span>
+        </div>
+        {chatText}
+      </div>
+    </div>
+  )
+}
+
+function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subject, body, customised }: Props) {
+  const reduce = useReducedMotion()
+  const isReminder = type === 'reminder'
+  /* The open tab's natural height, for the stack to ease to. */
+  const measureRef = useRef<HTMLDivElement>(null)
+  const [height, setHeight] = useState<number | 'auto'>('auto')
+  useLayoutEffect(() => {
+    const el = measureRef.current
+    if (!open || !el) return
+    const observer = new ResizeObserver(() => setHeight(el.offsetHeight))
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [open])
+  const subjectLine = subjectText(subject, days) || '(no subject yet)'
+  const { above, below } = splitBody(fillFields(body, days))
+  const current = isReminder ? tab : 'email'
+
+  const tabs: { id: PreviewTab; label: string; icon: ReactNode }[] = [
+    { id: 'email', label: 'Email', icon: <Sms size={16} color="currentColor" variant="Linear" /> },
+    ...(INTEGRATIONS.slack
+      ? [{ id: 'slack' as const, label: 'Slack', icon: <Slack size={16} color="currentColor" variant="Linear" /> }]
+      : []),
+    ...(INTEGRATIONS.teams ? [{ id: 'teams' as const, label: 'Microsoft Teams', icon: <TeamsIcon size={16} /> }] : []),
+    { id: 'phone', label: 'Phone notification', icon: <Mobile size={16} color="currentColor" variant="Linear" /> },
+  ]
+
+  /* From, Subject and the email on one card, no border, Shadow S. */
+  const mail = (
+    <div className="epv-mail">
+      <dl className="epv-inbox">
+        <dt>From</dt>
+        <dd>{senderFor(type, customised)}</dd>
+        <dt>Subject</dt>
+        <dd className="epv-inbox__subject">{subjectLine}</dd>
+      </dl>
+      <div className="epv-frame epv-frame--email">
+        <LiveEmail locked={LOCKED_KIND[type]} above={above} below={below} />
+      </div>
+    </div>
+  )
+  const panel =
+    current === 'email' ? mail : <ChannelPreview channel={current} subject={subject} days={days} customised={customised} />
 
   return (
     <ConfirmModal open={open} onClose={onClose} closable className="epv" ariaLabel={`Preview ${name}`}>
@@ -174,19 +180,29 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
         </div>
       )}
 
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={current}
-          role={isReminder ? 'tabpanel' : undefined}
-          className="epv-panel"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: reduce ? 0 : 0.15, ease: 'easeOut' }}
-        >
-          {panel}
-        </motion.div>
-      </AnimatePresence>
+      {/* The modal fits each tab: its height eases between the email and the shorter
+          channel previews while its top edge stays put (see .confirm-modal.epv). */}
+      <motion.div
+        className="epv-stack"
+        animate={{ height }}
+        transition={{ duration: reduce ? 0 : 0.3, ease: 'easeInOut' }}
+      >
+        <div ref={measureRef}>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={current}
+            role={isReminder ? 'tabpanel' : undefined}
+            className="epv-panel"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduce ? 0 : 0.15, ease: 'easeOut' }}
+          >
+            {panel}
+          </motion.div>
+        </AnimatePresence>
+        </div>
+      </motion.div>
     </ConfirmModal>
   )
 }

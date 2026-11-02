@@ -53,10 +53,14 @@
   display: none;
 }
 
+/* The send timing and notes sit on a card, like the subject and message below. */
 .eed-intro {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
 }
 
 
@@ -81,13 +85,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-ml);
-  padding: var(--space-l);
+  padding: var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
+}
+
+/* Shadow S lifts both cards in light mode only. */
+:root:not([data-theme='dark']) .eed-intro,
+:root:not([data-theme='dark']) .eed-fields {
   box-shadow: var(--shadow-s);
 }
 
 /* On a card, the field hover fill is the elevated one (input.md). */
+.eed-intro .input-field__wrapper:hover,
 .eed-fields .input-field__wrapper:hover {
   background: var(--input-background-elevated);
 }
@@ -157,14 +167,6 @@
 
 .eed-subject-input p {
   margin: 0;
-}
-
-.eed-channels__item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  color: var(--text-secondary);
-  vertical-align: bottom;
 }
 
 
