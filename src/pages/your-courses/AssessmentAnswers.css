@@ -177,12 +177,32 @@
   min-width: 0;
 }
 
-.asp-answer.is-clamped {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
+/* View More sits inline, after the ellipsis on the second line (LongAnswer). */
+.asp-answer .asp-viewmore {
+  vertical-align: baseline;
+}
+
+/* Hidden copy the two-line cut is measured on: same width and type as the answer. */
+.asp-longanswer {
+  position: relative;
+  width: 100%;
+}
+
+.asp-longanswer > .asp-answer {
+  width: 100%;
+}
+
+.asp-answer--probe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.asp-answer--probe[data-full=true] .asp-answer__probe-end {
+  display: none;
 }
 
 /* A chosen option is a sentence, so it wraps like one. */
@@ -314,4 +334,14 @@
   font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/* View More / View Less follows the learner's answer, so it rests in Text secondary,
+   not the Text button's primary blue; hover and press keep the DS button colours. */
+.ds-btn--text.asp-viewmore {
+  color: var(--text-secondary);
+}
+
+.ds-btn--text.asp-viewmore:hover:not(:disabled) {
+  color: var(--primary-button-background-hover);
 }

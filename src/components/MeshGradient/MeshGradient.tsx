@@ -57,6 +57,8 @@ export default function MeshGradient({
   const anim = useRef({ from: config, to: config, morph: 1 })
   const startRef = useRef(0)
   const rafRef = useRef(0)
+  // Restarts the loop after it has stopped (a still frame, or the canvas off screen).
+  const kickRef = useRef<() => void>(() => {})
   // Pointer parallax: `target` follows the cursor, `current` eases toward it.
   const pointerTarget = useRef({ x: 0, y: 0 })
   const pointerCurrent = useRef({ x: 0, y: 0 })
@@ -94,15 +96,27 @@ export default function MeshGradient({
     const canvas = canvasRef.current!
     const reduced = prefersReducedMotion()
     const parallaxAmount = interactive && !reduced && hasHover() ? parallax : 0
+    /* Nothing moves under reduced motion, or with no drift and no parallax (breathe={0}). */
+    const still = reduced || (breathe === 0 && parallaxAmount === 0)
+
+    /* Only draw while the canvas is on screen; a still mesh draws once and stops until
+       the config or size changes. */
+    let visible = true
+    const schedule = () => {
+      if (!rafRef.current) rafRef.current = requestAnimationFrame(paint)
+    }
+    kickRef.current = schedule
 
     const paint = (now: number) => {
+      rafRef.current = 0
+      if (!visible) return
       if (!startRef.current) startRef.current = now
-      const time = reduced ? 0 : (now - startRef.current) / 1000
+      const time = still ? 0 : (now - startRef.current) / 1000
 
       const dispW = wrap.clientWidth
       const dispH = wrap.clientHeight
       if (dispW <= 0 || dispH <= 0) {
-        rafRef.current = requestAnimationFrame(paint)
+        schedule()
         return
       }
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -140,11 +154,27 @@ export default function MeshGradient({
       ctx.imageSmoothingQuality = 'high'
       ctx.drawImage(offscreen, 0, 0, lw, lh, 0, 0, bw, bh)
 
-      rafRef.current = requestAnimationFrame(paint)
+      // A still frame (morph done) is drawn once; nothing to repeat.
+      if (still && morph >= 1) return
+      schedule()
     }
 
-    rafRef.current = requestAnimationFrame(paint)
-    return () => cancelAnimationFrame(rafRef.current)
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      if (visible) kickRef.current()
+    })
+    io.observe(wrap)
+    const ro = new ResizeObserver(() => kickRef.current())
+    ro.observe(wrap)
+
+    schedule()
+    return () => {
+      io.disconnect()
+      ro.disconnect()
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = 0
+      kickRef.current = () => {}
+    }
   }, [noise, offscreen, interactive, parallax, breathe, breatheSpeed])
 
   // Morph to a new config whenever it changes.
@@ -158,8 +188,10 @@ export default function MeshGradient({
 
     if (prefersReducedMotion()) {
       a.morph = 1
+      kickRef.current()
       return
     }
+    kickRef.current()
     const tween = gsap.to(a, {
       morph: 1,
       duration: morphDuration,

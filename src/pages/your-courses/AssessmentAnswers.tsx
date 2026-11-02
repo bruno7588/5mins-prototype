@@ -165,25 +165,48 @@ function filterOptions(a: AssessmentResult): { value: string; label: string }[] 
   ]
 }
 
-/** A written answer, held to two lines with View More when it runs longer. The row
-    grows to the full text with the project's 0.3s ease-in-out. */
+/** Longest cut of `text` that still fits in two lines of `probe` with the ellipsis and
+    View More after it, at a word boundary. `probe` is a hidden copy at the same width. */
+function fitTwoLines(text: string, probe: HTMLElement, textEl: HTMLElement): number | null {
+  const max = parseFloat(getComputedStyle(probe).lineHeight) * 2 + 1
+  textEl.textContent = text
+  probe.dataset.full = 'true'
+  if (probe.offsetHeight <= max) return null
+  probe.dataset.full = 'false'
+  let lo = 0
+  let hi = text.length
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2)
+    textEl.textContent = text.slice(0, mid).trimEnd()
+    if (probe.offsetHeight <= max) lo = mid
+    else hi = mid - 1
+  }
+  const space = text.lastIndexOf(' ', lo)
+  return space > lo * 0.6 ? space : lo
+}
+
+/** A written answer, held to two lines that end in "…" and View More when it runs
+    longer. The row grows to the full text with the project's 0.3s ease-in-out. */
 function LongAnswer({ text }: { text: string }) {
   const ref = useRef<HTMLSpanElement>(null)
+  const probeRef = useRef<HTMLSpanElement>(null)
+  const probeTextRef = useRef<HTMLSpanElement>(null)
   const from = useRef<number | null>(null)
   const [open, setOpen] = useState(false)
-  const [long, setLong] = useState(false)
+  /* Where the collapsed answer is cut; null when it fits in two lines. */
+  const [cut, setCut] = useState<number | null>(null)
 
-  /* Measured while clamped, and again when the column resizes: longer than two lines
-     is the only case with a button. */
+  /* Measured on a hidden copy, and again when the column resizes. */
   useLayoutEffect(() => {
-    const el = ref.current
-    if (!el || open) return
-    const measure = () => setLong(el.scrollHeight > el.clientHeight + 1)
+    const probe = probeRef.current
+    const probeText = probeTextRef.current
+    if (!probe || !probeText) return
+    const measure = () => setCut(fitTwoLines(text, probe, probeText))
     measure()
     const ro = new ResizeObserver(measure)
-    ro.observe(el)
+    ro.observe(probe)
     return () => ro.disconnect()
-  }, [text, open])
+  }, [text])
 
   useLayoutEffect(() => {
     const el = ref.current
@@ -194,24 +217,32 @@ function LongAnswer({ text }: { text: string }) {
     gsap.fromTo(el, { height: start }, { height: el.offsetHeight, duration: 0.3, ease: 'power2.inOut', clearProps: 'height' })
   }, [open])
 
+  const toggle = (
+    <Button
+      variant="text"
+      size="sm"
+      className="asp-viewmore"
+      onClick={() => {
+        from.current = ref.current?.offsetHeight ?? null
+        setOpen(!open)
+      }}
+      aria-expanded={open}
+    >
+      {open ? 'View Less' : 'View More'}
+    </Button>
+  )
+
   return (
     <span className="asp-longanswer">
-      <span ref={ref} className={`asp-answer${open ? '' : ' is-clamped'}`}>
-        {text}
+      <span ref={ref} className="asp-answer">
+        {cut === null || open ? text : `${text.slice(0, cut).trimEnd()}…`}
+        {cut !== null && <> {toggle}</>}
       </span>
-      {long || open ? (
-        <Button
-          variant="text"
-          size="sm"
-          onClick={() => {
-            from.current = ref.current?.offsetHeight ?? null
-            setOpen(!open)
-          }}
-          aria-expanded={open}
-        >
-          {open ? 'View Less' : 'View More'}
-        </Button>
-      ) : null}
+      {/* Hidden copy the cut is measured on: the text, the ellipsis and the button. */}
+      <span ref={probeRef} className="asp-answer asp-answer--probe" aria-hidden="true">
+        <span ref={probeTextRef} />
+        <span className="asp-answer__probe-end">… <span className="ds-btn ds-btn--text ds-btn--sm asp-viewmore">View More</span></span>
+      </span>
     </span>
   )
 }
@@ -537,7 +568,7 @@ function AssessmentAnswers() {
 
           {/* The question and its charts share one bordered card. */}
           <div className={mesh ? 'asp-card asp-card--mesh' : `asp-card asp-card--tinted${tintClass(a, new Set())}`}>
-          {mesh && <MeshGradient config={mesh} interactive={false} className="asp-card__mesh" />}
+          {mesh && <MeshGradient config={mesh} interactive={false} breathe={0} className="asp-card__mesh" />}
           <header className="asp-header">
             <div className="asp-headline">
               {/* The question leads the page. A lesson quiz has several, so the title is
