@@ -8,9 +8,11 @@ interface SectionHeaderProps {
   ctas?: ReactNode
   /** Optional control before the title — a back button on a multi-step drawer. */
   leading?: ReactNode
+  /** Rule under the headline; on by default. Workflows editor and preview hide it. */
+  divider?: boolean
 }
 
-function SectionHeader({ title, description, ctas, leading }: SectionHeaderProps) {
+function SectionHeader({ title, description, ctas, leading, divider = true }: SectionHeaderProps) {
   return (
     <header className="section-header">
       <div className="section-header__headline">
@@ -25,7 +27,7 @@ function SectionHeader({ title, description, ctas, leading }: SectionHeaderProps
       </div>
       {/* Rule under the headline (headers.md → Section Header) — separates the
           drawer's title block from the form below it. */}
-      <div className="section-header__divider" aria-hidden="true" />
+      {divider && <div className="section-header__divider" aria-hidden="true" />}
     </header>
   )
 }

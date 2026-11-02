@@ -266,7 +266,8 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
   const baseline = useRef({ subject: '', body: '' })
   const isReminder = target.type === 'reminder'
   const lockedLabel = isReminder ? 'course card' : 'button'
-  const showAI = INTEGRATIONS.ai
+  /* Write with AI is parked for now (Bruno, 2026-11-02); the Hugo chat comes back later. */
+  const showAI = false
 
   useOverlayA11y(panelRef, true)
 
@@ -432,6 +433,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
 
   const header = (
     <SectionHeader
+      divider={false}
       title={target.title}
       description={target.when}
       ctas={
@@ -465,8 +467,6 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
       <CloseButton variant="fullscreen" onClick={requestClose} className="eed-close" />
 
       {/* Write with AI opens Ask Hugo: chat in the centre, the email form on the right. */}
-      {/* The modal header spans the full page width, above the email (and the Hugo chat). */}
-      <div className="eed-page-header">{header}</div>
       <AnimatePresence onExitComplete={() => setHugoLayout(false)}>
         {aiOpen && (
           <motion.div
@@ -484,6 +484,8 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
       {/* The email column glides between centre and right as Hugo opens and closes. */}
       <motion.div className="eed-content" layout="position" transition={MOVE(reduce)}>
         <div className="eed-main">
+          {/* Title on top of the email section, as in the automation editor. */}
+          {header}
           <div className="eed-intro">
             {!target.when && (
               <div className="eed-days">

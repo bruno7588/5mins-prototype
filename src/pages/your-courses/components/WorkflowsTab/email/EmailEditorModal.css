@@ -11,21 +11,6 @@
   background: var(--page-background);
 }
 
-/* Modal header across the full page width; the title clears the full-screen close. */
-.eed-page-header {
-  flex-shrink: 0;
-  padding-top: var(--space-l);
-}
-
-.eed-page-header .section-header__headline {
-  padding: 0 104px 0 var(--space-l);
-}
-
-/* The rule keeps the modal's 24px side margins. */
-.eed-page-header .section-header__divider {
-  margin: 0 var(--space-l);
-}
-
 .eed-close {
   position: absolute;
   top: var(--space-l);
@@ -35,10 +20,12 @@
 
 .eed-content {
   flex: 1 0 auto;
-  /* 600px inputs + the card's 24px padding each side. */
-  width: min(648px, 100% - 176px);
+  /* One centred column like the automation editor: header on top of the email
+     section; the top padding clears the full-screen close (24 + 40 + 16px). */
+  width: 100%;
+  max-width: 900px;
   margin: 0 auto;
-  padding: var(--space-l) 0 var(--space-xxl);
+  padding: calc(var(--space-l) + var(--space-xxl) + var(--space-m)) var(--space-m) var(--space-xxl);
 }
 
 .eed-main {
@@ -471,11 +458,6 @@
   grid-template-columns: minmax(0, 1fr) 696px;
   grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
-}
-
-.eed-overlay--hugo .eed-page-header {
-  grid-column: 1 / -1;
-  grid-row: 1;
 }
 
 .eed-overlay--hugo .eed-hugo {
