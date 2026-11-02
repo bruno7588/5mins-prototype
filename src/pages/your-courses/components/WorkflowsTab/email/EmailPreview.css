@@ -194,11 +194,6 @@
   overflow-wrap: anywhere;
 }
 
-.epv-chat__link {
-  color: var(--primary-800);
-  text-decoration: underline;
-}
-
 .epv-phone {
   display: flex;
   gap: var(--space-ssm);

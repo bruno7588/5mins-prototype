@@ -146,12 +146,6 @@ export const INVITE_REMINDER_STARTER: EmailText = {
     LOCKED_ACTIVATE,
 }
 
-/** What Slack, Microsoft Teams and the phone show today for an uncustomised built-in reminder (D17). */
-export const todaysChannelText = (days: number) => ({
-  chat: `${days === 1 ? '🚀 Power Up' : "🛥️ Don't Miss the Boat!"}: Complete your Assigned Course. Start here`,
-  phoneTitle: `Hurry up! 😅 ${plural(days)} left...`,
-})
-
 /** Sender name (D19): customised emails come from the organisation via 5Mins. */
 export function senderFor(type: EmailType, customised: boolean) {
   if (customised) return `${ORG_NAME} via 5Mins`

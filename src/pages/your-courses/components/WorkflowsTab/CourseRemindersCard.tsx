@@ -157,7 +157,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                 const rowClass = `course-reminders-row${isPaused ? ' course-reminders-row--paused' : ''}`
                 return (
                   <div key={r.id} className={rowClass}>
-                    <span className="course-reminders-row__text">Send email</span>
+                    <span className="course-reminders-row__text">Send Reminder</span>
                     <span className="course-reminders-row__badge">{plural(r.days)}</span>
                     <span className="course-reminders-row__text">before due date</span>
                     {r.custom && <Badge type="informative" label="Custom reminder" />}
@@ -197,7 +197,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
             <div className="course-reminders-group__body">
               {customReminders.map((r) => (
                 <div key={r.id} className="course-reminders-row">
-                  <span className="course-reminders-row__text">Send email</span>
+                  <span className="course-reminders-row__text">Send Reminder</span>
                   <span className="course-reminders-row__badge">{plural(r.days)}</span>
                   <span className="course-reminders-row__text">before due date</span>
                   <span className="course-reminders-row__actions">

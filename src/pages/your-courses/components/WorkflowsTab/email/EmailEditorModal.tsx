@@ -3,7 +3,7 @@ import { useEditor, EditorContent, type Editor } from '@tiptap/react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import StarterKit from '@tiptap/starter-kit'
 import { Placeholder } from '@tiptap/extensions'
-import { Danger, Eraser, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
+import { Danger, Eye, Eraser, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import Dropdown from '@/components/Dropdown/Dropdown'
@@ -536,7 +536,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                           The subject is also sent to{' '}
                           {channels.map((c, i) => (
                             <span key={c.tab}>
-                              <Button variant="link" size="md" onClick={() => setPreview(c.tab)}>
+                              <Button variant="link" size="md" className="eed-channel-link" onClick={() => setPreview(c.tab)}>
                                 {c.tab === 'teams' ? 'Teams' : c.label}
                               </Button>
                               {i < channels.length - 2 ? ', ' : i === channels.length - 2 ? ', and ' : ''}
@@ -691,7 +691,12 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
           </Button>
         )}
         <div className="eed-footer__end">
-          <Button size="lg" variant="outlined-2" onClick={() => setPreview('email')}>
+          <Button
+            size="lg"
+            variant="outlined-2"
+            icon={<Eye size={20} color="currentColor" variant="Linear" />}
+            onClick={() => setPreview('email')}
+          >
             Preview
           </Button>
           <Button size="lg" onClick={save}>{target.saveLabel}</Button>

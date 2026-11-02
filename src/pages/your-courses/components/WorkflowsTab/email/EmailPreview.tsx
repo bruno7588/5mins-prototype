@@ -13,7 +13,6 @@ import {
   senderFor,
   splitBody,
   subjectText,
-  todaysChannelText,
   type EmailType,
 } from './emailContent'
 import './EmailPreview.css'
@@ -56,28 +55,15 @@ interface ChannelProps {
   channel: Exclude<PreviewTab, 'email'>
   subject: string
   days: number
-  customised: boolean
 }
 
 /** How a reminder's subject shows on Slack, Teams or a phone. */
-function ChannelPreview({ channel, subject, days, customised }: ChannelProps) {
+function ChannelPreview({ channel, subject, days }: ChannelProps) {
+  /* Always the subject as typed, saved or not, so every channel matches the editor. */
   const subjectLine = subjectText(subject, days) || '(no subject yet)'
-  const today = todaysChannelText(days)
-  const chat = customised ? subjectLine : today.chat
-  const phoneTitle = customised ? subjectLine : today.phoneTitle
+  const phoneTitle = subjectLine
 
-  const chatText = (
-    <p className="epv-chat__text">
-      {customised ? (
-        chat
-      ) : (
-        <>
-          {chat.replace(/ here$/, ' ')}
-          <span className="epv-chat__link">here</span>
-        </>
-      )}
-    </p>
-  )
+  const chatText = <p className="epv-chat__text">{subjectLine}</p>
 
   if (channel === 'phone') {
     return (
@@ -153,7 +139,7 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
     </div>
   )
   const panel =
-    current === 'email' ? mail : <ChannelPreview channel={current} subject={subject} days={days} customised={customised} />
+    current === 'email' ? mail : <ChannelPreview channel={current} subject={subject} days={days} />
 
   return (
     <ConfirmModal open={open} onClose={onClose} closable className="epv" ariaLabel={`Preview ${name}`}>

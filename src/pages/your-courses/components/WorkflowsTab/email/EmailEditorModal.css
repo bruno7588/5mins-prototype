@@ -234,12 +234,14 @@
 }
 
 /* Personal field token (D7), selected state per D16. */
+/* Fields look like the In progress badge (badges.md): pill, Primary tint, Text progress. */
 .eed-field {
   display: inline-block;
-  padding: 0 var(--space-xs);
-  border-radius: var(--radius-xs);
-  background: var(--input-background);
-  color: var(--text-primary);
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-full);
+  background: var(--primary-tint);
+  color: var(--text-progress);
+  font-size: var(--font-size-md);
   font-weight: 500;
   line-height: inherit;
   white-space: nowrap;
@@ -496,4 +498,12 @@
 .eed-overlay--hugo .eed-footer {
   grid-column: 1 / -1;
   grid-row: 3;
+}
+
+/* Channel links in the subject hint: secondary to the form, so Text primary, not the
+   Link button's primary blue; the underline still marks them as links. */
+.ds-btn--link.eed-channel-link,
+.ds-btn--link.eed-channel-link:hover:not(:disabled),
+.ds-btn--link.eed-channel-link:active:not(:disabled) {
+  color: var(--text-primary);
 }

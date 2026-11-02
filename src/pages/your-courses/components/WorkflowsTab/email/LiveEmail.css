@@ -148,7 +148,7 @@
 .lmail-course__name {
   font-size: var(--font-size-lg);
   line-height: 1.5;
-  color: var(--neutral-800);
+  color: var(--text-primary);
 }
 
 .lmail-course__meta {
@@ -156,7 +156,7 @@
   gap: var(--space-sm);
   font-size: var(--font-size-sm);
   line-height: 1.2;
-  color: var(--neutral-400);
+  color: var(--text-tertiary);
 }
 
 .lmail-course__meta span {
