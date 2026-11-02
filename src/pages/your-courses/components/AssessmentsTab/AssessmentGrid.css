@@ -1,5 +1,5 @@
 /* Answers tab V2: a bento of assessments, each tile laid out for what its format has
-   to show. An Input-background fill; no borders, no shadows. Prefix `asg-`. */
+   to show. A Cards-background fill; no borders; Shadow S in light mode. Prefix `asg-`. */
 
 .asg {
   display: flex;
@@ -59,7 +59,7 @@
   padding: var(--space-l);
   border: 0;
   border-radius: var(--radius-m);
-  background: var(--input-background);
+  background: var(--cards-background);
   color: var(--text-primary);
   font: inherit;
   text-align: left;
@@ -68,7 +68,12 @@
 }
 
 .asg-tile:hover {
-  background: var(--input-background-hover);
+  background: var(--cards-background-hover);
+}
+
+/* Light mode only: the card fill is one step off the page, so Shadow S lifts it. */
+:root:not([data-theme='dark']) .asg-tile {
+  box-shadow: var(--shadow-s);
 }
 
 /* Tinted tiles: two soft colour blooms, fading into the page. Stronger in dark mode, as the course card's glow is.
@@ -79,23 +84,25 @@
      illustration's own colours. */
 .asg-tile--low,
 .asg-tile--open,
-.asg-tile--quiz {
+.asg-tile--quiz,
+.asg-tile--art {
   --asg-mix: 8%;
-  /* Two soft blooms, as in a lit glass card: the first colour high on the left, the
-     second lower on the right, both fading out well before the edges. */
+  /* Two soft blooms, as in a lit glass card, both fading out well before the edges. Each
+     type sets where they sit (--asg-at-from, --asg-at-to), so the grid varies in direction. */
   --asg-tint:
-    radial-gradient(70% 60% at 25% 20%, color-mix(in srgb, var(--asg-from) var(--asg-mix), transparent), transparent 70%),
-    radial-gradient(70% 70% at 80% 75%, color-mix(in srgb, var(--asg-to) var(--asg-mix), transparent), transparent 70%);
-  background: var(--asg-tint), var(--input-background);
+    radial-gradient(70% 60% at var(--asg-at-from, 25% 20%), color-mix(in srgb, var(--asg-from) var(--asg-mix), transparent), transparent 70%),
+    radial-gradient(70% 70% at var(--asg-at-to, 80% 75%), color-mix(in srgb, var(--asg-to) var(--asg-mix), transparent), transparent 70%);
+  background: var(--asg-tint), var(--cards-background);
 }
 
 .asg-tile--low:hover,
 .asg-tile--open:hover,
-.asg-tile--quiz:hover {
-  background: var(--asg-tint), var(--input-background-hover);
+.asg-tile--quiz:hover,
+.asg-tile--art:hover {
+  background: var(--asg-tint), var(--cards-background-hover);
 }
 
-:root[data-theme='dark'] :is(.asg-tile--low, .asg-tile--open, .asg-tile--quiz) {
+:root[data-theme='dark'] :is(.asg-tile--low, .asg-tile--open, .asg-tile--quiz, .asg-tile--art) {
   --asg-mix: 14%;
 }
 
@@ -103,11 +110,15 @@
   /* stylelint-disable-next-line -- the low-score gradient starts at Danger-400 in both modes */
   --asg-from: var(--danger-400);
   --asg-to: var(--lesson-quiz);
+  --asg-at-from: 25% 20%;
+  --asg-at-to: 80% 75%;
 }
 
 .asg-tile--open {
   --asg-from: var(--course-assessments);
   --asg-to: var(--certificate-quiz);
+  --asg-at-from: 75% 20%;
+  --asg-at-to: 20% 80%;
 }
 
 /* Lesson quizzes: the colours of their own illustration, its purple and its peach. */
@@ -115,7 +126,69 @@
   --asg-from: var(--certificate-quiz);
   /* stylelint-disable-next-line -- the lesson quiz illustration's peach is Warning-200 */
   --asg-to: var(--warning-200);
+  --asg-at-from: 50% 0%;
+  --asg-at-to: 50% 100%;
 }
+
+/* Other graded formats: the two main colours of each one's illustration, snapped to the
+   nearest token. */
+/* stylelint-disable -- illustration colours are mode-invariant palette steps */
+.asg-tile--multiple-choice {
+  --asg-from: var(--secondary-600);
+  --asg-to: var(--flash-poll);
+  --asg-at-from: 20% 80%;
+  --asg-at-to: 80% 20%;
+}
+
+.asg-tile--image-choice {
+  --asg-from: var(--primary-500);
+  --asg-to: var(--flash-poll);
+  --asg-at-from: 0% 50%;
+  --asg-at-to: 100% 50%;
+}
+
+.asg-tile--fill-blank {
+  --asg-from: var(--lesson-quiz);
+  --asg-to: var(--course-assessments);
+  --asg-at-from: 80% 80%;
+  --asg-at-to: 20% 20%;
+}
+
+.asg-tile--match-pairs {
+  --asg-from: var(--danger-500);
+  --asg-to: var(--success-500);
+  --asg-at-from: 50% 100%;
+  --asg-at-to: 50% 0%;
+}
+
+.asg-tile--sequence {
+  --asg-from: var(--blaze-quiz);
+  --asg-to: var(--flash-poll);
+  --asg-at-from: 100% 50%;
+  --asg-at-to: 0% 50%;
+}
+
+.asg-tile--categorize {
+  --asg-from: var(--certificate-quiz);
+  --asg-to: var(--course-assessments);
+  --asg-at-from: 30% 0%;
+  --asg-at-to: 70% 100%;
+}
+
+.asg-tile--situational-test {
+  --asg-from: var(--secondary-400);
+  --asg-to: var(--primary-700);
+  --asg-at-from: 100% 0%;
+  --asg-at-to: 0% 100%;
+}
+
+.asg-tile--fast-track {
+  --asg-from: var(--blaze-quiz);
+  --asg-to: var(--primary-300);
+  --asg-at-from: 0% 100%;
+  --asg-at-to: 100% 0%;
+}
+/* stylelint-enable */
 
 .asg-tile:focus-visible {
   outline: 2px solid var(--primary-button-background);
@@ -217,7 +290,8 @@
 
 .asg-correct__icon {
   flex-shrink: 0;
-  color: var(--text-success);
+  /* stylelint-disable-next-line -- the correct tick is Success-500 in both modes */
+  color: var(--success-500);
 }
 
 .asg-correct__row--wrong .asg-correct__icon {
@@ -284,6 +358,17 @@
   display: none;
 }
 
+/* Share badges inside a card sit on the card's own fill, not the page's. */
+.asg-tile .badge.cl-pct {
+  background: var(--cards-background);
+}
+
+/* Correct-answer bars inside a card fill in Success-500 in both modes. */
+.asg-chart .cl-barrow.is-correct .cl-barrow__fill {
+  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
+  background: var(--success-500);
+}
+
 /* Bar labels inside a card read in Regular Text-secondary, quieter than on the answers page. */
 .asg-chart .cl-row__label {
   font-weight: 400;
@@ -314,16 +399,11 @@
 }
 
 /* The ring is the share correct, so it fills in the correct-answer green, as the bars do:
-   Success-300 in light mode, Success-500 in dark. */
+   Success-500 in both modes. */
 .asg-ring__value {
-  /* stylelint-disable-next-line -- the correct share is Success-300 in light mode */
-  stroke: var(--success-300);
-  stroke-linecap: round;
-}
-
-:root[data-theme='dark'] .asg-ring__value {
-  /* stylelint-disable-next-line -- the correct share is Success-500 in dark mode */
+  /* stylelint-disable-next-line -- the correct share is Success-500 in both modes */
   stroke: var(--success-500);
+  stroke-linecap: round;
 }
 
 .asg-ring__figure {
@@ -345,14 +425,9 @@
 }
 
 /* The bar here is the share correct, so it fills in the correct-answer green:
-   Success-300 in light mode, Success-500 in dark. */
+   Success-500 in both modes. */
 .asg-tile .asg-progress .seg.fill {
-  /* stylelint-disable-next-line -- the correct share is Success-300 in light mode */
-  background: var(--success-300);
-}
-
-:root[data-theme='dark'] .asg-tile .asg-progress .seg.fill {
-  /* stylelint-disable-next-line -- the correct share is Success-500 in dark mode */
+  /* stylelint-disable-next-line -- the correct share is Success-500 in both modes */
   background: var(--success-500);
 }
 

@@ -1,17 +1,12 @@
 import { useMemo, type ReactNode } from 'react'
-import { Chart, CloseCircle, Danger, People, TaskSquare, TickCircle } from 'iconsax-react'
-import { typeLabel } from '@/data/aiAssessmentGeneration'
-import {
-  assessmentTypeFromLabel,
-  getAssessmentIllustration,
-} from '@/assets/assessment-illustrations'
+import { Chart, CloseCircle, Danger, People, TickCircle } from 'iconsax-react'
+import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import { OpenResponse, OptionBars } from '@/pages/chart-lab/components/Charts'
 import '@/pages/chart-lab/chart-lab.css'
 import Badge from '@/components/Badge/Badge'
 import ProgressCell from './ProgressCell'
 import '@/pages/my-team/MyTeam.css'
 import {
-  PASS_SCORE,
   correctPct,
   formatName,
   optionTally,
@@ -19,6 +14,7 @@ import {
   type GradedAssessment,
   type PollAssessment,
 } from './assessmentResults'
+import { artOf, tintClass, weakestIds } from './tileTint'
 import './AssessmentGrid.css'
 
 /* Answers tab V2: the course's assessments as a bento grid. Summary stat cards on top,
@@ -34,6 +30,7 @@ import './AssessmentGrid.css'
 interface Stats {
   total: number
   responders: number
+  completed: number
   enrolled: number
   average: number | null
 }
@@ -45,9 +42,6 @@ interface Props {
 }
 
 type Layout = 'choice' | 'ring' | 'split' | 'bar' | 'count'
-
-/** How many of the lowest scores carry the red glow. */
-const LOW_COUNT = 3
 
 const BANDED = new Set(['match-pairs', 'sequencing', 'categorization'])
 
@@ -94,7 +88,7 @@ function StatCard({ icon, label, value }: { icon: ReactNode; label: string; valu
 
 /** The format's own illustration and name, as the learner met it. */
 function Head({ a }: { a: AssessmentResult }) {
-  const art = a.lesson ? 'lesson-quiz' : assessmentTypeFromLabel(typeLabel(a.type))
+  const art = artOf(a)
   return (
     <span className="asg-head">
       {art && (
@@ -281,32 +275,16 @@ function Tile({ a }: { a: AssessmentResult }) {
 }
 
 function AssessmentGrid({ rows, stats, onView }: Props) {
-  const scored = useMemo(
-    () => rows.map((a) => correctPct(a)).filter((n): n is number => n !== null),
-    [rows],
-  )
-  const below = scored.filter((n) => n < PASS_SCORE).length
-  /* The three weakest scores get a red glow, so the eye lands on them first. */
-  const weakest = useMemo(() => {
-    const ranked = rows
-      .map((a) => ({ id: a.id, pct: correctPct(a) }))
-      .filter((x): x is { id: string; pct: number } => x.pct !== null && x.pct < PASS_SCORE)
-      .sort((x, y) => x.pct - y.pct)
-    return new Set(ranked.slice(0, LOW_COUNT).map((x) => x.id))
-  }, [rows])
-
-  /* One tint per tile: the lowest scores first, then the open formats, then lesson quizzes
-     in their own illustration's colours. */
-  const tint = (a: AssessmentResult) => {
-    if (weakest.has(a.id)) return ' asg-tile--low'
-    if (correctPct(a) === null) return ' asg-tile--open'
-    if (a.lesson) return ' asg-tile--quiz'
-    return ''
-  }
+  const weakest = useMemo(() => weakestIds(rows), [rows])
 
   return (
     <div className="asg">
       <div className="asg-stats">
+        <StatCard
+          icon={<TickCircle size={24} color="var(--success-500)" variant="Linear" />}
+          label="Completed"
+          value={`${share(stats.completed, stats.enrolled)}%`}
+        />
         <StatCard
           icon={<Chart size={24} color="var(--primary-600)" variant="Linear" />}
           label="Average score"
@@ -314,18 +292,13 @@ function AssessmentGrid({ rows, stats, onView }: Props) {
         />
         <StatCard
           icon={<Danger size={24} color="var(--warning-600)" variant="Linear" />}
-          label="Below pass"
-          value={`${below} of ${scored.length}`}
+          label="Needs attention"
+          value={String(weakest.size)}
         />
         <StatCard
           icon={<People size={24} color="var(--text-primary)" variant="Linear" />}
-          label="Answered"
-          value={`${stats.responders} of ${stats.enrolled}`}
-        />
-        <StatCard
-          icon={<TaskSquare size={24} color="var(--text-primary)" variant="Linear" />}
-          label="Assessments"
-          value={String(stats.total)}
+          label="Not started"
+          value={`${stats.enrolled - stats.responders} learners`}
         />
       </div>
 
@@ -335,7 +308,7 @@ function AssessmentGrid({ rows, stats, onView }: Props) {
             <div
               role="button"
               tabIndex={0}
-              className={`asg-tile${tint(a)}`}
+              className={`asg-tile${tintClass(a, weakest)}`}
               onClick={() => onView(a)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {

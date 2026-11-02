@@ -124,9 +124,13 @@ function AssessmentsTab() {
     const responders = new Set(
       courseAssessments.flatMap((a) => a.responses.map((r) => r.learner.id)),
     ).size
+    /* Learners who answered every assessment in the course. */
+    const answeredBy = courseAssessments.map((a) => new Set(a.responses.map((r) => r.learner.id)))
+    const completed = [...(answeredBy[0] ?? [])].filter((id) => answeredBy.every((s) => s.has(id))).length
     return {
       total: courseAssessments.length,
       responders,
+      completed,
       enrolled: courseAssessments[0]?.enrolled ?? 0,
       average: scores.length ? Math.round(scores.reduce((x, y) => x + y, 0) / scores.length) : null,
       scored: scores.length,

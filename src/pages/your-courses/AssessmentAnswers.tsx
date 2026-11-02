@@ -35,7 +35,9 @@ import {
   type TextResponse,
   type VoteResponse,
 } from './components/AssessmentsTab/assessmentResults'
+import { tintClass, weakestIds } from './components/AssessmentsTab/tileTint'
 import { COURSE_TITLE } from './courseTitle'
+import './components/AssessmentsTab/AssessmentGrid.css'
 import './AssessmentAnswers.css'
 
 const PAGE_SIZE = 10
@@ -524,7 +526,7 @@ function AssessmentAnswers() {
           />
 
           {/* The question and its charts share one bordered card. */}
-          <div className="asp-card">
+          <div className={`asp-card asp-card--tinted${tintClass(a, weakestIds(courseAssessments))}`}>
           <header className="asp-header">
             <div className="asp-headline">
               {/* The question leads the page. A lesson quiz has several, so the title is

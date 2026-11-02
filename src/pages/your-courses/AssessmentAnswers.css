@@ -102,6 +102,13 @@
   --asp-glow-warm: color-mix(in srgb, var(--warning-500) 22%, transparent);
 }
 
+/* The card takes the same tint as its tile on the Answers grid (asg-tile--* in
+   AssessmentGrid.css), over the page fill. Not clickable, so no hover change. */
+.asp-card.asp-card--tinted,
+.asp-card.asp-card--tinted:hover {
+  background: var(--asg-tint, none), var(--page-background);
+}
+
 /* ── Toolbar ─────────────────────────────────────────────────────────────── */
 .asp-toolbar {
   display: flex;
