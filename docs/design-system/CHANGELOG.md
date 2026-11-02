@@ -108,6 +108,7 @@ Add new entries here, not in the docs.
 
 ## [colors.md](colors.md)
 
+- 2026-11-02: Dark-mode `--input-background-hover` is Neutral-600 `#383D4C` (was Neutral-700 `#2D313D`, the same as `--cards-background`, so hover discs on cards barely showed). search.md and table.md token tables updated. Figma variable not yet updated.
 - 2026-10-14: Added six status tint tokens (`--success-tint` etc., 16%). Every raw colour in `src/` now uses a token (`color-mix` for other opacities); pure-black shadows use Neutral-900; near-palette purples, greens and near-blacks snapped to Blaze, Success-500 and Neutral-900. Chart colours and decorative gradients are marked exceptions. `pnpm build` now fails on any new raw colour or font size.
 - 2026-10-14: Dark-mode `--primary-button-background-pressed` is Primary-600 `#00AFC4`, matching Figma (was Primary-700 `#008393` in code). Applies to filled, outlined, text, link and AI pressed states.
 - 2026-10-14: `--input-background-elevated` now matches Figma at 32% in both modes (was 24% in code); `tokens.css` updated.
@@ -218,6 +219,7 @@ Add new entries here, not in the docs.
 
 ## [layout.md](layout.md)
 
+- 2026-11-02: Dark-mode `--scrim` is Neutral-900 @ 72% `rgba(15, 16, 20, 0.72)` (was 50%); light stays at 25%. overlays.md values updated to match. Figma variable `Surface colours / Scrim` dark mode not yet updated.
 - 2026-10-14: `--shadow-card` is Shadow S in both modes (was none in dark).
 - 2026-10-14: Restructured to the foundation template (Figma variable and effect style to CSS token tables, Figma only / Code only lists, Known drift). Spacing usage column moved in from design-system-guidelines.md, with `--space-ssm` corrected to Button M padding-y (Button L uses 12px) and `--space-sm` to input padding-x (inputs pad 8px 12px). Badges moved from `--radius-sm` to `--radius-full` per `badges.md`. Removed the duplicated `:root` token blocks (the spacing one was missing the 2/6/10px tokens and `--radius-l`); `tokens.css` is the source.
 - 2026-09-29: > **Updated 2026-09-29 (verified against code):** Shadow L is the level for dialogs, modals, menus, dropdowns, tooltips and popovers; XL is currently unused; raw leftward Shadow L values are to be written as `var(--shadow-l)`; the shared Canonical spec line now has its own heading instead of sitting under Scrim.

@@ -124,7 +124,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 - Don't use a raw overlay colour; it is `var(--scrim)`.
 - Don't animate it linearly or with a short ease; it rises on a long decelerating curve (see States).
 
-**Canonical spec:** fills its positioned parent (the phone screen). Overlay `var(--scrim)` (Neutral-900 at 50% in the dark mobile app). Sheet `var(--page-background)`, top corners `var(--radius-sm)` (12px), padding `0 var(--space-m) var(--space-l)` (0 16px 24px), gap `var(--space-s)` (8px), max height 90%, content scrolls. Header: `var(--space-m)` (16px) padding around a 64 × 4px handle, `var(--neutral-500)`, radius `var(--radius-s)`.
+**Canonical spec:** fills its positioned parent (the phone screen). Overlay `var(--scrim)` (Neutral-900 at 72% in the dark mobile app). Sheet `var(--page-background)`, top corners `var(--radius-sm)` (12px), padding `0 var(--space-m) var(--space-l)` (0 16px 24px), gap `var(--space-s)` (8px), max height 90%, content scrolls. Header: `var(--space-m)` (16px) padding around a 64 × 4px handle, `var(--neutral-500)`, radius `var(--radius-s)`.
 
 ## Figma to code
 
@@ -176,7 +176,7 @@ A full-screen semi-transparent layer that dims the page content and prevents int
 }
 ```
 
-Scrim values (Neutral-900 @ 25% light / 50% dark) are defined in `layout.md`; always use `var(--scrim)`, never a literal.
+Scrim values (Neutral-900 @ 25% light / 72% dark) are defined in `layout.md`; always use `var(--scrim)`, never a literal.
 
 ### Close behaviour
 
@@ -632,7 +632,7 @@ Dialog and drawer buttons take their states from [buttons.md](buttons.md).
 | `--text-primary` | `#20222A` | `#F9F9FA` | Titles and primary text |
 | `--text-secondary` | `#454C5E` | `#BFC2CC` | Supporting text and descriptions |
 | `--border` | `#DFE1E6` | `#2D313D` | Divider lines |
-| `--scrim` | Neutral-900 @ 25% | Neutral-900 @ 50% | Backdrop fill (see `layout.md`) |
+| `--scrim` | Neutral-900 @ 25% | Neutral-900 @ 72% | Backdrop fill (see `layout.md`) |
 | `--radius-sm` | `12px` | same | Panel corner rounding (Dialog & Modal; Drawer has none) and button corner rounding |
 
 **Shadow:** Modal and Dialog panels use Shadow L, `box-shadow: var(--shadow-l);`.

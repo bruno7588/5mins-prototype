@@ -216,7 +216,7 @@ Font:           Poppins 16px / 1.5  (Regular 400)
 | Token | Light | Dark | Used for |
 |---|---|---|---|
 | `var(--input-background)` | `#BFC2CC` @16% | `#454C5E` @16% | Default + Active background |
-| `var(--input-background-hover)` | `#DFE1E6` (Neutral-100) | `#2D313D` (Neutral-700) | Hover background |
+| `var(--input-background-hover)` | `#DFE1E6` (Neutral-100) | `#383D4C` (Neutral-600) | Hover background |
 | `var(--border)` / `var(--border-hover)` | `#DFE1E6` / `#9EA4B3` | `#2D313D` / `#9EA4B3` | Default / hover border |
 | `var(--selected)` | `#EDA30D` | `#FFBB38` | Active/focused border |
 | `var(--text-primary)` | `#20222A` | `#F9F9FA` | Value text |

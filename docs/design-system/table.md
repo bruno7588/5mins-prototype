@@ -242,7 +242,7 @@ Use the semantic token names, not raw hex. Cross-reference `colors.md`, `layout.
 | `--text-tertiary` | `#656B7C` | `#9EA4B3` | date year line |
 | `--text-disabled` | `#9EA4B3` | `#656B7C` | read-only / disabled cell text |
 | `--primary-button-background-hover` | `#005862` | `#33E2F7` | hovered link-cell text (Figma `Primary-button-background-hover`) |
-| `--input-background-hover` | `#DFE1E6` | `#2D313D` | action-icon hover disc |
+| `--input-background-hover` | `#DFE1E6` | `#383D4C` | action-icon hover disc |
 | `--cards-background-hover` | `#EFF0F2` | `#383D4C` | row checkbox hover disc |
 | `--text-success` | `#11763D` | `#18A957` | success badge text |
 | `--primary-600` | `#00AFC4` | `#00AFC4` | progress bar fill |

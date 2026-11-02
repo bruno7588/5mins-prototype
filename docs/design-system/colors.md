@@ -209,7 +209,7 @@ Backgrounds, borders, and button fills.
 | Cards-background-hover | `--cards-background-hover` | Neutral-600 `#383D4C` | Neutral-50 `#EFF0F2` | Card hover state |
 | Input-background | `--input-background` | `#454C5E` @ 16% | `#BFC2CC` @ 16% | Input/dropdown/search background on the page surface (translucent - apply only over a known surface; over a card fill use `--input-background-elevated`) |
 | Input-background-elevated | `--input-background-elevated` | `#454C5E` @ 32% | `#BFC2CC` @ 32% | The same fill one step up, for a field sitting on a card surface (`--cards-background`) |
-| Input-background-hover | `--input-background-hover` | Neutral-700 `#2D313D` | Neutral-100 `#DFE1E6` | Input background on hover |
+| Input-background-hover | `--input-background-hover` | Neutral-600 `#383D4C` | Neutral-100 `#DFE1E6` | Input background on hover |
 | Selected | `--selected` | Secondary-500 `#FFBB38` | Secondary-600 `#EDA30D` | Active/selected state - inputs, tabs, chips, radios, checkboxes |
 | Selected-row | `--selected-row` | `#FFBB38` @ 16% | `#FFBB38` @ 16% | Selected table row fill and border |
 | Selected-row-hover | `--selected-row-hover` | `#FFBB38` @ 24% | `#FFBB38` @ 24% | Selected table row on hover |

@@ -183,7 +183,7 @@
   --selected-fill: var(--secondary-100); /* opaque fill for sticky cells over scrolling content */
   --selected-fill-hover: #FDECC5; /* hover state of --selected-fill / selected rows (opaque) */
   --control-selected: var(--secondary-600); /* radio/checkbox selected amber, per selection-controls.md */
-  --scrim: rgba(15, 16, 20, 0.25); /* overlay backdrop — Neutral-900 @ 25%; overridden to 50% in dark mode (layout.md §7) */
+  --scrim: rgba(15, 16, 20, 0.25); /* overlay backdrop — Neutral-900 @ 25%; overridden to 72% in dark mode (layout.md §7) */
 
   /* Spacing (4px base) */
   --space-xxs: 0.125rem; /* 2px */
@@ -257,7 +257,7 @@
   --cards-background-hover: var(--neutral-600);
   --input-background: rgba(69, 76, 94, 0.16); /* Neutral-500 @ 16% */
   --input-background-elevated: rgba(69, 76, 94, 0.32); /* Neutral-500 @ 32% */
-  --input-background-hover: var(--neutral-700);
+  --input-background-hover: var(--neutral-600);
   /* Figma variables (Bruno, 2026-09-29): Border is Neutral-700, Border-elevated
      Neutral-600. Border now matches --cards-background in dark mode, so use
      --border-elevated for borders and dividers drawn on a card, menu or drawer. */
@@ -296,8 +296,8 @@
   /* Translucent stand-in for the opaque light-mode fill — designer review pending */
   --selected-fill-hover: rgba(255, 187, 56, 0.24);
 
-  /* Overlay backdrop — Neutral-900 @ 50% in dark mode (layout.md §7) */
-  --scrim: rgba(15, 16, 20, 0.5);
+  /* Overlay backdrop — Neutral-900 @ 72% in dark mode (layout.md §7) */
+  --scrim: rgba(15, 16, 20, 0.72);
 }
 
 /* Prototype-wide "not built yet" treatment: controls that look real but have no
