@@ -55,7 +55,7 @@ function WorkflowCard({
             </button>
           </p>
         </div>
-        <Toggle checked={enabled} onChange={onToggle} />
+        <Toggle live checked={enabled} onChange={onToggle} />
       </header>
 
       <ul className={`workflow-card__rules${enabled ? '' : ' workflow-card__rules--disabled'}`}>

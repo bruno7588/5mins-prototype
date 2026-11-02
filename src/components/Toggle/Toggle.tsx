@@ -5,16 +5,19 @@ type ToggleProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> 
   label?: React.ReactNode
   labelPosition?: 'left' | 'right'
   size?: 'md' | 'sm'
+  /** Something running live (an automation, a workflow): on is Success-500, not the amber Selected. */
+  live?: boolean
 }
 
 const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
-  ({ label, labelPosition = 'right', size = 'md', checked, disabled, id, className, ...props }, ref) => {
+  ({ label, labelPosition = 'right', size = 'md', live = false, checked, disabled, id, className, ...props }, ref) => {
     const reactId = useId()
     const controlId = id ?? `toggle-${reactId}`
     const wrapperClass = [
       'toggle',
       size === 'sm' ? 'toggle--sm' : '',
       checked ? 'toggle--on' : '',
+      live ? 'toggle--live' : '',
       disabled ? 'toggle--disabled' : '',
     ]
       .filter(Boolean)

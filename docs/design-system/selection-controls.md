@@ -108,6 +108,7 @@ Key rule: radios and checkboxes are **form inputs** (committed on submit). Toggl
 - Use `size="sm"` for compact rows, such as a menu item (`ProfileMenu`), a settings card (`CourseSettings`) or a report row (`LearningRecords`); default `md` elsewhere.
 - Reveal a switched-on feature's fields with the `Collapse` component so they animate in.
 - Give it a visible label (`label` prop or adjacent text) or an `aria-label`.
+- Pass `live` when the toggle switches something that keeps running (an automation, a workflow, a course reminder): on is `--success-500`, so it reads as active, not as a selection. Settings and preferences keep the amber `--selected`.
 
 **Don't**
 - Don't hand-roll a switch from a `<button role="switch">`; use the Toggle.

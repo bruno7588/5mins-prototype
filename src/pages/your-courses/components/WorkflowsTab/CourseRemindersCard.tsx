@@ -139,10 +139,10 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
         <div className="workflow-card__headline">
           <h3 className="workflow-card__title">Course reminders</h3>
           <p className="workflow-card__desc">
-            Send automatic emails to learners before a course's due date. Sent at 10:00 in each learner's local time on the scheduled day.
+            Send automatic reminders to learners before a course's due date. Sent at 10:00 in each learner's local time on the scheduled day.
           </p>
         </div>
-        <Toggle checked={enabled} onChange={onToggle} />
+        <Toggle live checked={enabled} onChange={onToggle} />
       </header>
 
       <ul className={rulesClass}>
@@ -174,6 +174,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                         </button>
                       </Tooltip>
                       <Toggle
+                        live
                         checked={enabled && !isPaused}
                         disabled={!enabled}
                         onChange={() => togglePause(r.id)}

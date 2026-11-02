@@ -42,6 +42,13 @@
   background: var(--selected);
 }
 
+/* Live: an automation or workflow that is running. On is Success-500 so it reads as
+   active, not as a selection. */
+/* stylelint-disable-next-line -- status colour, same in both modes */
+.toggle--live.toggle--on .toggle__track {
+  background: var(--success-500);
+}
+
 .toggle--on .toggle__thumb {
   transform: translateX(16px);
 }
