@@ -18,13 +18,14 @@ export function weakestIds(rows: AssessmentResult[]): Set<string> {
   return new Set(ranked.slice(0, LOW_COUNT).map((x) => x.id))
 }
 
-/* One tint per assessment: the lowest scores first, then the open formats, then lesson
-   quizzes and every other graded format in their own illustration's colours. Shared by the
-   Answers grid tiles and the answers page card, so both glow alike. */
+/* One tint per assessment: the lowest scores first, then lesson quizzes, then every other
+   format (open ones included) in its own illustration's colours; an open format with no
+   illustration falls back to the shared open tint. Shared by the Answers grid tiles and the
+   answers page card, so both glow alike. */
 export function tintClass(a: AssessmentResult, weakest: Set<string>): string {
   if (weakest.has(a.id)) return ' asg-tile--low'
-  if (correctPct(a) === null) return ' asg-tile--open'
   if (a.lesson) return ' asg-tile--quiz'
   const art = artOf(a)
-  return art ? ` asg-tile--art asg-tile--${art}` : ''
+  if (art) return ` asg-tile--art asg-tile--${art}`
+  return correctPct(a) === null ? ' asg-tile--open' : ''
 }

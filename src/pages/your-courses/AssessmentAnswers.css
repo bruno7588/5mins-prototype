@@ -109,6 +109,21 @@
   background: var(--asg-tint, none), var(--page-background);
 }
 
+/* A format with a mesh gradient (answerMesh.ts) draws it on a canvas behind the
+   content; isolation keeps the canvas under the card's text and charts. */
+.asp-card.asp-card--mesh {
+  position: relative;
+  isolation: isolate;
+  /* No fill: the mesh sits straight on the page, inside the card's own border. */
+  background: transparent;
+}
+
+.asp-card__mesh {
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
 /* ── Toolbar ─────────────────────────────────────────────────────────────── */
 .asp-toolbar {
   display: flex;

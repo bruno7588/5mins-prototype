@@ -86,7 +86,7 @@
 .asg-tile--open,
 .asg-tile--quiz,
 .asg-tile--art {
-  --asg-mix: 8%;
+  --asg-mix: 16%; /* both themes */
   /* Two soft blooms, as in a lit glass card, both fading out well before the edges. Each
      type sets where they sit (--asg-at-from, --asg-at-to), so the grid varies in direction. */
   --asg-tint:
@@ -102,10 +102,6 @@
   background: var(--asg-tint), var(--cards-background-hover);
 }
 
-:root[data-theme='dark'] :is(.asg-tile--low, .asg-tile--open, .asg-tile--quiz, .asg-tile--art) {
-  --asg-mix: 14%;
-}
-
 .asg-tile--low {
   /* stylelint-disable-next-line -- the low-score gradient starts at Danger-400 in both modes */
   --asg-from: var(--danger-400);
@@ -117,7 +113,7 @@
 .asg-tile--open {
   --asg-from: var(--course-assessments);
   --asg-to: var(--certificate-quiz);
-  --asg-at-from: 75% 20%;
+  --asg-at-from: 25% 20%; /* both glows on the left */
   --asg-at-to: 20% 80%;
 }
 
@@ -178,7 +174,7 @@
 .asg-tile--situational-test {
   --asg-from: var(--secondary-400);
   --asg-to: var(--primary-700);
-  --asg-at-from: 100% 0%;
+  --asg-at-from: 0% 0%; /* top left */
   --asg-at-to: 0% 100%;
 }
 
@@ -187,6 +183,28 @@
   --asg-to: var(--primary-300);
   --asg-at-from: 0% 100%;
   --asg-at-to: 100% 0%;
+}
+
+/* Open formats, also in their illustration's colours. */
+.asg-tile--short-text {
+  --asg-from: var(--course-assessments);
+  --asg-to: var(--certificate-quiz);
+  --asg-at-from: 25% 20%; /* both glows on the left */
+  --asg-at-to: 20% 80%;
+}
+
+.asg-tile--poll {
+  --asg-from: var(--secondary-500);
+  --asg-to: var(--secondary-600);
+  --asg-at-from: 25% 20%;
+  --asg-at-to: 80% 75%;
+}
+
+.asg-tile--exercise {
+  --asg-from: var(--warning-600);
+  --asg-to: var(--certificate-quiz);
+  --asg-at-from: 75% 20%;
+  --asg-at-to: 20% 80%;
 }
 /* stylelint-enable */
 
