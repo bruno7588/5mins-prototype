@@ -31,6 +31,8 @@ interface Stats {
   total: number
   responders: number
   completed: number
+  failed: number
+  graded: number
   enrolled: number
   average: number | null
 }
@@ -292,13 +294,13 @@ function AssessmentGrid({ rows, stats, onView }: Props) {
         />
         <StatCard
           icon={<Danger size={24} color="var(--warning-600)" variant="Linear" />}
-          label="Needs attention"
-          value={String(weakest.size)}
+          label="Failed"
+          value={`${share(stats.failed, stats.graded)}%`}
         />
         <StatCard
           icon={<People size={24} color="var(--text-primary)" variant="Linear" />}
           label="Not started"
-          value={`${stats.enrolled - stats.responders} learners`}
+          value={`${share(stats.enrolled - stats.responders, stats.enrolled)}%`}
         />
       </div>
 

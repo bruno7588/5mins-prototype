@@ -18,6 +18,9 @@ import {
   attentionRows,
   correctPct,
   courseAssessments,
+  multiScore,
+  PASS_SCORE,
+  perAttempt,
   responsesCsv,
   totalResponses,
   type AssessmentResult,
@@ -127,10 +130,22 @@ function AssessmentsTab() {
     /* Learners who answered every assessment in the course. */
     const answeredBy = courseAssessments.map((a) => new Set(a.responses.map((r) => r.learner.id)))
     const completed = [...(answeredBy[0] ?? [])].filter((id) => answeredBy.every((s) => s.has(id))).length
+    /* Each learner's average over the scored assessments they answered; under the pass
+       mark counts as failed. */
+    const perLearner = new Map<string, number[]>()
+    const add = (id: string, score: number) => perLearner.set(id, [...(perLearner.get(id) ?? []), score])
+    for (const a of courseAssessments) {
+      if (a.kind === 'graded') a.responses.forEach((r) => add(r.learner.id, r.correct ? 100 : 0))
+      if (a.kind === 'multi') a.responses.forEach((r) => add(r.learner.id, (multiScore(a, r) / perAttempt(a)) * 100))
+    }
+    const averages = [...perLearner.values()].map((s) => s.reduce((x, y) => x + y, 0) / s.length)
+    const failed = averages.filter((n) => n < PASS_SCORE).length
     return {
       total: courseAssessments.length,
       responders,
       completed,
+      failed,
+      graded: averages.length,
       enrolled: courseAssessments[0]?.enrolled ?? 0,
       average: scores.length ? Math.round(scores.reduce((x, y) => x + y, 0) / scores.length) : null,
       scored: scores.length,
