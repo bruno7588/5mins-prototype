@@ -111,6 +111,7 @@ Row 3   [ Proposed components ]   (only if any were built)
 3. **Every state is a full screen**, the base page plus whatever is open on it. If two states share the same base, duplicate it. A designer reads the flow by scanning the row; never a floating modal on white.
    - **Every screen must visibly differ from the one before it.** Duplicating the base is only the start: each state adds its own layers as children of its frame, above the base in z-order (open menu, scrim plus modal or dialog, ticked rows plus bulk bar, changed row data plus toast). A row of identical base pages is the most common failure; check for it before reporting.
    - Build the flow's **start state once** (for example the rows ticked with the bar showing) and duplicate *that* for the later screens of the flow, so the selection carries through.
+   - **Design the hover states under every cursor.** Where a screen has a cursor, `browser_hover` the same element in the prototype, screenshot it, and build exactly what shows: the hovered control in its Library `State=Hover` variant, the row, card or list item it sits in with its hover fill, and the tooltip if one appears. Never leave the element under a cursor at rest (figma-conventions section 7).
    - Overlays sit where the browser viewport shows them. A frame is the full page height, so a centred modal can look low in it; that is expected, not a defect.
 4. Page states are **1536 wide**, the default screen width in the 5Mins Figma files. Size the browser viewport to 1536 in step B so the layout matches 1:1. An overlay's own width comes from its CSS (the modal is 600, the confirmation 480).
 5. Copy comes from the prototype verbatim (Title Case buttons, sentence case everything else). Do not rewrite it.
@@ -120,6 +121,7 @@ Row 3   [ Proposed components ]   (only if any were built)
 ### F. Verify and report
 
 - Before reporting, list each state frame's top-level layers with `get_metadata` and confirm every state after the first has its own overlay or data layers. If any does not, build it before reporting.
+- For every frame with a `Cursor` instance, confirm the element under its tip and its row or card are in their hover state (matching the `browser_hover` screenshot). A cursor over a rest-state element is a defect; fix it before reporting.
 - Run `.claude/skills/figma-conventions/audit.js` on the section with `use_figma` and fix every finding in frames this run built. Put the audit summary in the report.
 
 - Confirm every control in every screen (radio, checkbox, toggle, input, button, badge, tooltip, tabs) is a Library `INSTANCE`; the audit's `handDrawnControls` must be empty.
