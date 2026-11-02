@@ -500,10 +500,10 @@
   grid-row: 3;
 }
 
-/* Channel links in the subject hint: secondary to the form, so Text primary, not the
+/* Channel links in the subject hint: secondary to the form, so Text secondary, not the
    Link button's primary blue; the underline still marks them as links. */
 .ds-btn--link.eed-channel-link,
 .ds-btn--link.eed-channel-link:hover:not(:disabled),
 .ds-btn--link.eed-channel-link:active:not(:disabled) {
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }

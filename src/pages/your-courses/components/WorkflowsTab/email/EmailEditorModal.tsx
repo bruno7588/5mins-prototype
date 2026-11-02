@@ -316,6 +316,10 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
     onUpdate: () => markDirty(),
   })
 
+  /* The toolbar only shows the formats under the cursor once the admin has put it in the
+     message: before that, the cursor sits at the start by default and the opening
+     line is bold, so Bold looked switched on for no reason. */
+  const [bodyTouched, setBodyTouched] = useState(false)
   const body = useEditor({
     extensions: [
       StarterKit.configure({
@@ -342,11 +346,13 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
     onCreate: ({ editor }) => {
       baseline.current.body = editor.getHTML()
     },
+    onFocus: () => setBodyTouched(true),
     onUpdate: () => markDirty(),
   })
 
   if (!subject || !body) return null
 
+  const marked = (name: string) => bodyTouched && body.isActive(name)
   const subjectLength = visibleLength(subject.getText())
   const bodyLength = visibleLength(body.getText())
   const daysTaken = !!target.takenDays?.has(days)
@@ -577,15 +583,15 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
 
               </div>
               <div className="eed-toolbar" role="toolbar" aria-label="Formatting">
-                <ToolButton label="Bold" active={body.isActive('bold')} onClick={() => body.chain().focus().toggleBold().run()}>
+                <ToolButton label="Bold" active={marked('bold')} onClick={() => body.chain().focus().toggleBold().run()}>
                   <TextBold size={20} color="currentColor" variant="Linear" />
                 </ToolButton>
-                <ToolButton label="Italic" active={body.isActive('italic')} onClick={() => body.chain().focus().toggleItalic().run()}>
+                <ToolButton label="Italic" active={marked('italic')} onClick={() => body.chain().focus().toggleItalic().run()}>
                   <TextItalic size={20} color="currentColor" variant="Linear" />
                 </ToolButton>
                 <ToolButton
                   label="Underline"
-                  active={body.isActive('underline')}
+                  active={marked('underline')}
                   onClick={() => body.chain().focus().toggleUnderline().run()}
                 >
                   <TextUnderline size={20} color="currentColor" variant="Linear" />
@@ -595,7 +601,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                   size="sm"
                   className="eed-style"
                   options={TEXT_STYLES}
-                  value={body.isActive('heading') ? 'h3' : 'p'}
+                  value={marked('heading') ? 'h3' : 'p'}
                   onChange={(v) => {
                     const chain = body.chain().focus()
                     if (v === 'p') chain.setParagraph().run()
@@ -605,20 +611,20 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 <span className="eed-toolbar__sep" aria-hidden="true" />
                 <ToolButton
                   label="Bulleted list"
-                  active={body.isActive('bulletList')}
+                  active={marked('bulletList')}
                   onClick={() => body.chain().focus().toggleBulletList().run()}
                 >
                   <ListBulletIcon size={20} />
                 </ToolButton>
                 <ToolButton
                   label="Numbered list"
-                  active={body.isActive('orderedList')}
+                  active={marked('orderedList')}
                   onClick={() => body.chain().focus().toggleOrderedList().run()}
                 >
                   <ListNumberIcon size={20} />
                 </ToolButton>
                 <span className="eed-toolbar__sep" aria-hidden="true" />
-                <ToolButton label="Link" active={body.isActive('link')} onClick={openLink}>
+                <ToolButton label="Link" active={marked('link')} onClick={openLink}>
                   <Link1 size={20} color="currentColor" variant="Linear" />
                 </ToolButton>
                 <ToolButton

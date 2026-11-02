@@ -81,7 +81,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
     const fallback = [3, 5, 14, 2, 10, 21, 30].find((d) => !others.has(d)) ?? 3
     return {
       type: 'reminder',
-      title: 'Add reminder',
+      title: 'Add new reminder',
       name: 'reminder',
       days: fallback,
       takenDays: others,
