@@ -258,8 +258,9 @@
 }
 
 /* Every answer count reads in Text-tertiary. */
-.asg-label.asg-answered {
-  color: var(--text-tertiary);
+/* Shown only when too few answered for the figures to be trusted. */
+.asg-label.asg-small {
+  color: var(--text-warning);
 }
 
 /* ── The answers page's charts, inside a tile ─────────────────────────── */
@@ -320,9 +321,9 @@
    top-right corner. */
 .asg-images {
   display: grid;
-  /* The thumbnails share 60% of the card width. */
-  max-width: 60%;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Each thumbnail (and the summary box after them) takes a fifth of the card width. */
+  max-width: calc(var(--asg-image-cols, 3) * 20%);
+  grid-template-columns: repeat(var(--asg-image-cols, 3), minmax(0, 1fr));
   gap: var(--space-m);
   margin: 0;
   padding: 0;
@@ -346,6 +347,25 @@
   position: absolute;
   top: var(--space-xs);
   right: var(--space-xs);
+}
+
+/* The summary box: thumbnail-sized, on the bars' Input-background fill, the overall share
+   correct over how many answered. */
+.asg-image--summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  aspect-ratio: 1 / 1;
+  padding: var(--space-s);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+  text-align: center;
+}
+
+.asg-image--summary .asg-figure {
+  margin-top: 0;
 }
 
 /* Bars inside a card sit 8px apart. */
@@ -382,6 +402,19 @@
   place-items: center;
   align-self: center;
   margin: auto 0;
+}
+
+/* The ring with its "Average score" label 8px under it, the pair centred in the tile. */
+.asg-ring-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-s);
+  margin: auto 0;
+}
+
+.asg-ring-group .asg-ring {
+  margin: 0;
 }
 
 .asg-ring svg {

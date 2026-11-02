@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react'
+import { useMemo, type CSSProperties, type ReactNode } from 'react'
 import { Chart, CloseCircle, Danger, People, TickCircle } from 'iconsax-react'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
 import { OpenResponse, OptionBars } from '@/pages/chart-lab/components/Charts'
@@ -117,20 +117,27 @@ function ChoiceBody({ a }: { a: GradedAssessment | PollAssessment }) {
   }
   const isRight = (i: number) => (a.correctIndices ? a.correctIndices.includes(i) : i === a.correctIndex)
   if (a.optionImages) {
+    const correct = a.optionImages
+      .map((src, i) => ({ src, i, label: a.options[i]?.trim() || `Image ${i + 1}`, pct: share(tally[i], n) }))
+      .filter((t) => isRight(t.i))
     return (
       /* Only the correct images: the thumbnail alone, no frame, the share on the answers
-         page's badge in its top-right corner. The full set is on the answers page. */
-      <ul className="asg-images">
-        {a.optionImages
-          .map((src, i) => ({ src, i, label: a.options[i]?.trim() || `Image ${i + 1}`, pct: share(tally[i], n) }))
-          .filter((t) => isRight(t.i))
-          .map((t) => (
-            <li key={t.i} className="asg-image">
-              <img src={t.src} alt="" />
-              <Badge label={`${t.pct}%`} className="cl-pct cl-pct--correct asg-image__pct" />
-              <span className="cl-sr">{t.label}, correct answer</span>
-            </li>
-          ))}
+         page's badge in its top-right corner. The full set is on the answers page. Then a
+         thumbnail-sized box on the bars' Input-background fill with the overall share
+         correct (and the small-sample warning when it applies). */
+      <ul className="asg-images" style={{ '--asg-image-cols': correct.length + 1 } as CSSProperties}>
+        {correct.map((t) => (
+          <li key={t.i} className="asg-image">
+            <img src={t.src} alt="" />
+            <Badge label={`${t.pct}%`} className="cl-pct cl-pct--correct asg-image__pct" />
+            <span className="cl-sr">{t.label}, correct answer</span>
+          </li>
+        ))}
+        <li className="asg-image asg-image--summary">
+          <span className="asg-figure">{correctPct(a)}%</span>
+          <span className="asg-label">Average score</span>
+          {smallSample(a)}
+        </li>
       </ul>
     )
   }
@@ -153,6 +160,15 @@ function ChoiceBody({ a }: { a: GradedAssessment | PollAssessment }) {
         ))}
     </ul>
   )
+}
+
+/** Under this share of enrolled learners, a card's figures rest on too few answers. */
+const SMALL_SAMPLE = 0.2
+
+/** How many answered, shown only when so few did that the figures could mislead. */
+function smallSample(a: AssessmentResult): ReactNode {
+  const n = a.responses.length
+  return n < a.enrolled * SMALL_SAMPLE ? <span className="asg-label asg-small">Only {n} answered</span> : null
 }
 
 /** A score ring with the figure in its centre. */
@@ -198,11 +214,12 @@ function Tile({ a }: { a: AssessmentResult }) {
       <>
         <Head a={a} />
         <span className="asg-title">{a.title}</span>
-        <Ring pct={pct} />
-        <span className="asg-foot">
+        {/* The label sits just under the ring, the pair centred in the tile. */}
+        <span className="asg-ring-group">
+          <Ring pct={pct} />
           <span className="asg-label">Average score</span>
-          <span className="asg-label asg-answered">{answered} answered</span>
         </span>
+        {smallSample(a) && <span className="asg-foot">{smallSample(a)}</span>}
       </>
     )
   }
@@ -215,9 +232,10 @@ function Tile({ a }: { a: AssessmentResult }) {
         <span className="asg-chart">
           <ChoiceBody a={a} />
         </span>
-        <span className="asg-foot">
-          <span className="asg-label asg-answered">{answered} answered</span>
-        </span>
+        {/* Image choice carries the small-sample warning in its summary box instead. */}
+        {!(a.kind === 'graded' && a.optionImages) && smallSample(a) && (
+          <span className="asg-foot">{smallSample(a)}</span>
+        )}
       </>
     )
   }
@@ -242,6 +260,7 @@ function Tile({ a }: { a: AssessmentResult }) {
             </li>
           </ul>
         </span>
+        {smallSample(a) && <span className="asg-foot">{smallSample(a)}</span>}
       </>
     )
   }
@@ -268,7 +287,7 @@ function Tile({ a }: { a: AssessmentResult }) {
       <span className="asg-foot asg-foot--stack">
         <span className="asg-row">
           <span className="asg-figure">{pct}%</span>
-          <span className="asg-label asg-answered">{answered} answered</span>
+          {smallSample(a)}
         </span>
         <ProgressCell value={pct ?? 0} showPct={false} className="asg-progress" />
       </span>
