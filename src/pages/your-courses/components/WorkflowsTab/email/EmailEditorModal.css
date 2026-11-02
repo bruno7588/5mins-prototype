@@ -237,13 +237,13 @@
 /* Fields look like the In progress badge (badges.md): pill, Primary tint, Text progress. */
 .eed-field {
   display: inline-block;
-  padding: 0 var(--space-sm);
+  padding: var(--space-xss) var(--space-sm);
   border-radius: var(--radius-full);
   background: var(--primary-tint);
   color: var(--text-progress);
   font-size: var(--font-size-md);
   font-weight: 500;
-  line-height: inherit;
+  line-height: 1.2;
   white-space: nowrap;
   cursor: default;
 }

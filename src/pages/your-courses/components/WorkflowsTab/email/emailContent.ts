@@ -93,7 +93,7 @@ export const reminderDefault = (days: number): EmailText => ({
 
 /** Starter text for reminders admins add, so they don't begin from a blank page. */
 export const REMINDER_STARTER: EmailText = {
-  subject: `<p>${f('days_left')} left to complete your course</p>`,
+  subject: `<p>${f('days_left')} to complete your course</p>`,
   body:
     `<p>Hi ${f('first_name')} 👋</p>` +
     `<p>You have ${f('days_left')} left to complete <strong>${f('course_name')}</strong>. It's due on ${f('due_date')}.</p>` +

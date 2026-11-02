@@ -74,10 +74,6 @@ const EMAILS: {
       when: 'Sent 3, 5, 7 and 9 days after the invite until the account is activated. Managers also get one on days 14 and 21.',
       canReset: true,
       saveLabel: 'Save',
-      notes: [
-        `One subject and message for every reminder, sent from ${ORG_NAME} via 5Mins instead of Maddie from 5Mins.`,
-        'New starter text: today each reminder has different text.',
-      ],
     },
   },
 ]

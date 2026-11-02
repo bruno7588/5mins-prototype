@@ -67,7 +67,7 @@ function ChannelPreview({ channel, subject, days }: ChannelProps) {
 
   if (channel === 'phone') {
     return (
-      <div className="epv-solo">
+      <div className="epv-frame">
         <div className="epv-phone">
           <AppIcon />
           <div className="epv-phone__main">
@@ -82,17 +82,19 @@ function ChannelPreview({ channel, subject, days }: ChannelProps) {
       </div>
     )
   }
-  /* The Slack or Teams message on its own, no frame around it. */
+  /* The Slack or Teams message in a frame with the input fill. */
   return (
-    <div className={`epv-chat epv-chat--${channel}`}>
-      <AppIcon />
-      <div className="epv-chat__main">
-        <div className="epv-chat__meta">
-          <strong>5Mins</strong>
-          {channel === 'slack' && <span className="epv-chat__tag">APP</span>}
-          <span className="epv-chat__time">10:00</span>
+    <div className="epv-frame">
+      <div className={`epv-chat epv-chat--${channel}`}>
+        <AppIcon />
+        <div className="epv-chat__main">
+          <div className="epv-chat__meta">
+            <strong>5Mins</strong>
+            {channel === 'slack' && <span className="epv-chat__tag">APP</span>}
+            <span className="epv-chat__time">10:00</span>
+          </div>
+          {chatText}
         </div>
-        {chatText}
       </div>
     </div>
   )
@@ -145,7 +147,7 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
     <ConfirmModal open={open} onClose={onClose} closable className="epv" ariaLabel={`Preview ${name}`}>
       <SectionHeader
         title="Preview"
-        description={`${name[0].toUpperCase() + name.slice(1)}, with sample values for Alex Morgan.`}
+        description={name[0].toUpperCase() + name.slice(1)}
       />
 
       {isReminder && (
