@@ -23,7 +23,7 @@
   /* One centred column like the automation editor: header on top of the email
      section; the top padding clears the full-screen close (24 + 40 + 16px). */
   width: 100%;
-  max-width: 900px;
+  max-width: 720px;
   margin: 0 auto;
   padding: calc(var(--space-l) + var(--space-xxl) + var(--space-m)) var(--space-m) var(--space-xxl);
 }
