@@ -211,8 +211,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* The share as a semibold Badge: the correct answer on Page-background with Success-500
-   figures (it sits on the green bar), every other option on Page-background with secondary figures. */
+/* The share as a semibold Badge on Page-background: Text-success figures on a correct
+   bar, Text-secondary on a wrong or neutral one. */
 .badge.cl-pct {
   /* 4px 8px, tighter than the DS Badge; the bars come out about 41px tall. */
   padding: var(--space-xs) var(--space-s);
@@ -222,8 +222,7 @@
 
 .badge.cl-pct--correct {
   background: var(--page-background);
-  /* stylelint-disable-next-line -- the correct answer is Success-500 in both modes */
-  color: var(--success-500);
+  color: var(--text-success);
 }
 
 .badge.cl-pct--wrong {
