@@ -617,7 +617,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                               {i < channels.length - 2 ? ', ' : i === channels.length - 2 ? ', and ' : ''}
                             </span>
                           ))}
-                          . The message is email only.
+                          .
                         </>
                       )}
                 </span>

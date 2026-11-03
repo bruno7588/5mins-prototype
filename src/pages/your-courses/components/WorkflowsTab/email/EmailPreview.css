@@ -235,9 +235,15 @@
 }
 
 /* Dark admin theme: inbox strip and Slack / Teams messages in their dark mode. */
-:root[data-theme='dark'] .epv-inbox,
+:root[data-theme='dark'] .epv-inbox {
+  /* Same near-black page as the dark email it heads. */
+  background: var(--neutral-900);
+  color: var(--text-primary);
+}
+
 :root[data-theme='dark'] .epv-chat {
-  background: var(--cards-background);
+  /* Slack and Teams dark mode: the same near-black page as the email. */
+  background: var(--neutral-900);
   color: var(--text-primary);
 }
 

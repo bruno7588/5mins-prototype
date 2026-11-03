@@ -247,7 +247,8 @@
 /* Dark admin theme: the email as mail apps show it in dark mode. Semantic tokens,
    so it follows the theme; the button, badges and course card keep their colours. */
 :root[data-theme='dark'] .lmail {
-  background: var(--cards-background);
+  /* Mail apps in dark mode use a near-black page (Gmail); fixed Neutral 900. */
+  background: var(--neutral-900);
   color: var(--text-primary);
 }
 
