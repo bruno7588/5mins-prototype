@@ -52,7 +52,7 @@ const SHAPES: Record<string, ShapeSpec[]> = {
   ],
   /* Red and green, the illustration's two cards. */
   'match-pairs': [
-    square('--danger-500', 0.15, 0.9, 0.8, 35, 0.3),
+    soft(square('--danger-500', 0.15, 0.1, 0.8, 35, 0.3)), /* red at 8%: read too strong at 16% */
     square('--success-500', 0.85, 0.1, 0.8, -20, 0.3),
     circle('--success-500', 0.55, 1.05, 0.6),
   ],

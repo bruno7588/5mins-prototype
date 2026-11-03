@@ -12,7 +12,7 @@ import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'
 import Search from '@/components/Search/Search'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import Table, { type Column } from '@/components/Table/Table'
-import ToastContainer, { useToast } from '@/components/Toast/Toast'
+import ToastContainer, { ToastSpinner, useToast } from '@/components/Toast/Toast'
 import EmptyState from '@/components/EmptyState/EmptyState'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import AnswerStats, { BandLabel } from './components/AssessmentsTab/AnswerStats'
@@ -528,7 +528,7 @@ function AssessmentAnswers() {
           <Tooltip text="Download File" position="Top" alignment="End" icon={false}>
             <button
               className="icon-btn"
-              onClick={() => showToast('success', `Downloading ${r.fileName}`)}
+              onClick={() => showToast('success', `Downloading ${r.fileName}`, ToastSpinner)}
               aria-label={`Download ${r.fileName}`}
             >
               <ImportCurve size={20} color="var(--text-primary)" variant="Linear" />

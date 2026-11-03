@@ -1,15 +1,24 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ComponentType } from 'react'
 import { TickCircle, InfoCircle, Danger } from 'iconsax-react'
 import './Toast.css'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
+/** Anything drawn in the icon slot: an Iconsax icon, or ToastSpinner. */
+export type ToastIcon = ComponentType<{ size?: number | string; color?: string; variant?: 'Linear' }>
+
+/** A ring that turns for as long as the toast shows, for work under way ("Downloading…").
+    Same 24px slot as the type icons; it takes the toast's near-white currentColor. */
+export function ToastSpinner({ size = 24 }: { size?: number | string }) {
+  return <span className="toast__spinner" style={{ width: size, height: size }} aria-hidden="true" />
+}
+
 export interface ToastItem {
   id: number
   type: ToastType
   message: string
-  /** Replaces the type icon, e.g. a download glyph on a "Downloading..." toast. */
-  icon?: typeof TickCircle
+  /** Replaces the type icon, e.g. ToastSpinner on a "Downloading..." toast. */
+  icon?: ToastIcon
 }
 
 interface ToastEntry extends ToastItem {
@@ -41,7 +50,7 @@ function ToastPill({
   message: string
   fading: boolean
   icon: boolean
-  customIcon?: typeof TickCircle
+  customIcon?: ToastIcon
 }) {
   const Icon = customIcon ?? ICON_MAP[type]
   return (
@@ -63,7 +72,7 @@ export function useToast() {
   const [toasts, setToasts] = useState<ToastEntry[]>([])
   const timersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map())
 
-  function show(type: ToastType, message: string, icon?: typeof TickCircle) {
+  function show(type: ToastType, message: string, icon?: ToastIcon) {
     const id = ++globalIdCounter
     setToasts(prev => [...prev, { id, type, message, icon, fading: false }])
 

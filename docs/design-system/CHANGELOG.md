@@ -13,6 +13,8 @@ Add new entries here, not in the docs.
 
 ## [alerts-toast.md](alerts-toast.md)
 
+- 2026-11-03: Added `ToastSpinner`, a rotating ring for the icon slot on in-progress toasts ("Downloading <file>"). Figma: Course details `12516:63739`.
+
 - 2026-10-14: Alert and Callout buttons and the close × gained a `:focus-visible` ring (was the browser default).
 - 2026-10-14: Callout default Message and Body text replaced with generic copy (the old sample had a typo).
 - 2026-10-14: Figma settings rework. Alert gains Title, Message and Body text properties plus Icon glyph (Callout) and Warning glyph (Alert) swaps; its variant axes stay. Toast's Icon variant is now a Show icon boolean (Icon=False variants removed) and gains a Message text property. Tooltip gains a Text property; its Icon axis stays a variant. Figma to code tables updated; Carbon description and link removed from Tooltip.

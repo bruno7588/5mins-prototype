@@ -332,7 +332,7 @@ A floating feedback pill that appears after an action (save, delete, error) and 
 | Message | text | `show(…, message)` | string | second `show` argument, one short line |
 
 - **Figma only:** none.
-- **Code only:** a custom icon (third `show` argument, an Iconsax icon that replaces the type icon when the action has its own glyph, e.g. `show('success', 'Downloading...', ImportCurve)`); `ToastContainer` `className`; the `useToast()` hook (`{ toasts, show }`).
+- **Code only:** a custom icon (third `show` argument, an Iconsax icon that replaces the type icon when the action has its own glyph); for work under way, pass `ToastSpinner`, a 24px ring in `currentColor` that turns every 0.8s (1.6s under reduced motion), e.g. `show('success', 'Downloading plan.pdf', ToastSpinner)`; `ToastContainer` `className`; the `useToast()` hook (`{ toasts, show }`).
 - **Figma vs code drift:** Figma's Info icon is io5 `IoInformationCircleOutline`; code uses Iconsax `InfoCircle`, because Iconsax is the project's only icon set. Figma binds the Info fill to `Neutral-700`; code uses `--neutral-600` (see States). The single Figma node has no light pair.
 
 **Production:**
