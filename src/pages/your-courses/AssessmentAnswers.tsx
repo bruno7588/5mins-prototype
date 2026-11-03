@@ -132,6 +132,9 @@ function sheet(a: AssessmentResult): string[][] {
 
 /** The answer filter's options, which differ by what the format records. */
 const ALL = 'all'
+/** Every filter ends with the learners yet to answer, listed as Short text lists them. */
+const NOT_ANSWERED = 'not-answered'
+const NOT_ANSWERED_OPTION = { value: NOT_ANSWERED, label: 'Not answered' }
 
 function filterOptions(a: AssessmentResult): { value: string; label: string }[] | null {
   /* Short text and exercises are not marked, so the only cut is whether they have answered yet. */
@@ -148,6 +151,7 @@ function filterOptions(a: AssessmentResult): { value: string; label: string }[] 
       { value: ALL, label: 'All results' },
       { value: 'pass', label: `Passed (${PASS_SCORE}% or above)` },
       { value: 'fail', label: `Below ${PASS_SCORE}%` },
+      NOT_ANSWERED_OPTION,
     ]
 
   /* A graded question has a right answer, so the question worth asking of it is who
@@ -158,6 +162,7 @@ function filterOptions(a: AssessmentResult): { value: string; label: string }[] 
       { value: ALL, label: 'All answers' },
       { value: 'correct', label: 'Correct' },
       { value: 'incorrect', label: 'Incorrect' },
+      NOT_ANSWERED_OPTION,
     ]
 
   /* A poll has no right answer, so its options are the only cut there is. */
@@ -302,37 +307,42 @@ function AssessmentAnswers() {
 
   /* Both filters read the same rows, so they compose: a name and an answer together
      ask "did this person get it right", which is the question a search exists for. */
-  const matches = <T extends { learner: ResponseLearner }>(r: T, i: number): boolean => {
+  const matches = <T extends { learner: ResponseLearner }>(r: T): boolean => {
     const q = query.trim().toLowerCase()
     if (q && !r.learner.name.toLowerCase().includes(q)) return false
+    if (a.kind === 'text' || a.kind === 'file') {
+      if (answer === ALL) return true
+      return !('notAnswered' in r) === (answer === 'answered')
+    }
+    /* Everywhere else the learners yet to answer show only under Not answered. */
+    if ('notAnswered' in r) {
+      return a.kind === 'poll' ? votes.includes(NOT_ANSWERED) : answer === NOT_ANSWERED
+    }
     if (a.kind === 'poll') {
-      return votes.length === 0 || votes.includes(String((a.responses[i] as VoteResponse).optionIndex))
+      return votes.length === 0 || votes.includes(String((r as unknown as VoteResponse).optionIndex))
     }
     if (answer === ALL) return true
+    if (answer === NOT_ANSWERED) return false
     if (a.kind === 'multi') {
-      const score = multiScore(a, a.responses[i])
+      const score = multiScore(a, r as unknown as MultiResponse)
       if (a.type !== 'situational-test') return (score === perAttempt(a)) === (answer === 'correct')
       const pct = Math.round((score / perAttempt(a)) * 100)
       return answer === 'pass' ? pct >= PASS_SCORE : pct < PASS_SCORE
     }
     if (a.kind === 'graded') {
-      return (a.responses[i] as ChoiceResponse).correct === (answer === 'correct')
-    }
-    if (a.kind === 'text' || a.kind === 'file') {
-      return !('notAnswered' in r) === (answer === 'answered')
+      return (r as unknown as ChoiceResponse).correct === (answer === 'correct')
     }
     return true
   }
 
-  /* Short text and exercises also list the learners yet to answer; every other format,
-     only answers. */
-  const rows: { learner: ResponseLearner }[] =
-    a.kind === 'text' || a.kind === 'file' ? answerRows<{ learner: ResponseLearner }>(a.responses) : a.responses
+  /* Every format carries the learners yet to answer: Short text and exercises list them
+     among the answers, the rest only under the Not answered filter. */
+  const rows: { learner: ResponseLearner }[] = answerRows<{ learner: ResponseLearner }>(a.responses)
 
   /* Indices kept alongside the rows: the multi filter scores a response against its
      own assessment, which needs to know where in the original list it sat. */
   const kept = useMemo(
-    () => rows.map((r, i) => ({ r, i })).filter(({ r, i }) => matches(r, i)),
+    () => rows.map((r, i) => ({ r, i })).filter(({ r }) => matches(r)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [a.id, query, answer, votes],
   )
@@ -340,7 +350,7 @@ function AssessmentAnswers() {
   /* Before the slice, so the order is the cohort's rather than this page's. Lowest first
      on the first press — a scenario is read to find who struggled. */
   const ordered =
-    sort === 'none' || a.kind !== 'multi'
+    sort === 'none' || a.kind !== 'multi' || answer === NOT_ANSWERED
       ? kept
       : [...kept].sort(({ r: x }, { r: y }) => {
           const d = multiScore(a, x as MultiResponse) - multiScore(a, y as MultiResponse)
@@ -378,6 +388,22 @@ function AssessmentAnswers() {
   /* One table per response shape — the columns differ, and the union of arrays
      cannot be narrowed from inside a shared renderer. */
   const table = (() => {
+    /* Not answered: the Short text layout, the learner and a dash where the answer goes. */
+    if (a.kind !== 'text' && a.kind !== 'file' && a.kind !== 'poll' && answer === NOT_ANSWERED) {
+      const columns: Column<NotAnswered>[] = [
+        learnerColumn<NotAnswered>(),
+        { key: 'answer', header: 'Answer', width: '1 1 420px', render: () => '–' },
+      ]
+      return (
+        <Table
+          columns={columns}
+          rows={pageRows as NotAnswered[]}
+          getRowKey={(r) => r.learner.id}
+          pagination={pagination}
+        />
+      )
+    }
+
     /* Select all that apply: several ticked options to a learner, so each row opens onto
        them, as the scenario and lesson quiz rows open onto their questions. */
     if (a.kind === 'graded' && a.correctIndices && !a.optionImages) {
@@ -452,15 +478,15 @@ function AssessmentAnswers() {
     }
 
     if (a.kind === 'poll') {
-      const columns: Column<VoteResponse>[] = [
-        learnerColumn<VoteResponse>(),
+      const columns: Column<VoteResponse | NotAnswered>[] = [
+        learnerColumn<VoteResponse | NotAnswered>(),
         /* Laid out like the short text table: the answer left-aligned beside the learner. */
-        { key: 'vote', header: 'Voted for', width: '1 1 420px', render: (r) => a.options[r.optionIndex] },
+        { key: 'vote', header: 'Voted for', width: '1 1 420px', render: (r) => ('notAnswered' in r ? '–' : a.options[r.optionIndex]) },
       ]
       return (
         <Table
           columns={columns}
-          rows={pageRows as VoteResponse[]}
+          rows={pageRows as (VoteResponse | NotAnswered)[]}
           getRowKey={(r) => r.learner.id}
           pagination={pagination}
         />
@@ -601,6 +627,12 @@ function AssessmentAnswers() {
                 ]
                   .filter(Boolean)
                   .join(' · ')}
+                {/* How many of the enrolled learners have answered, so the gap shows; in the
+                    table's "3 of 4" style, the count at full strength. */}
+                <span aria-hidden="true">·</span>
+                <span>
+                  <BandLabel label={`${a.responses.length} of ${a.enrolled} answered`} />
+                </span>
                 {a.kind === 'multi' && a.drawCount ? (
                   <Tooltip
                     text="Learners answer different questions, so each question shows how many learners answered it."
@@ -637,7 +669,7 @@ function AssessmentAnswers() {
                 />
                 {a.kind === 'poll' ? (
                   <Dropdown
-                    options={a.options.map((label, i) => ({ value: String(i), label }))}
+                    options={[...a.options.map((label, i) => ({ value: String(i), label })), NOT_ANSWERED_OPTION]}
                     multiple
                     values={votes}
                     onChangeValues={(v) => {
