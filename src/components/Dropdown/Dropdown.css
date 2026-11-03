@@ -252,9 +252,13 @@
   font-weight: 400;
 }
 
-.dropdown-option--check.is-selected:hover,
+/* Selected + Hover on a checkbox row is the plain hover fill (listbox.md). The
+   :not(:disabled) matches the generic selected rule's weight, which would otherwise
+   win on hover and paint the row amber over its amber checkbox. */
+.dropdown-option--check.is-selected:hover:not(:disabled),
 .dropdown-option--check:hover {
   background: var(--cards-background-hover);
+  color: var(--text-primary);
 }
 
 .dropdown-option--check:focus-visible {

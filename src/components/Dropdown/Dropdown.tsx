@@ -166,8 +166,13 @@ function Dropdown({
      read back: callers that show chips beneath the field would otherwise say the
      same thing twice and grow the control past the row. */
   const pickedOptions = options.filter((o) => picked.includes(o.value))
+  /* With an "all" row, an empty pick is a real choice (every item), so the trigger
+     reads it back filled rather than as a placeholder. */
+  const allChosen = multiple && !!allLabel && pickedOptions.length === 0
   const multiLabel =
-    !summaryLabel || pickedOptions.length === 0
+    allChosen
+      ? allLabel
+      : !summaryLabel || pickedOptions.length === 0
       ? placeholder
       : pickedOptions.length === 1
         ? pickedOptions[0].label
@@ -176,7 +181,7 @@ function Dropdown({
   const showsPlaceholder = triggerText
     ? false
     : multiple
-      ? !summaryLabel || pickedOptions.length === 0
+      ? !allChosen && (!summaryLabel || pickedOptions.length === 0)
       : !selected
 
   return (

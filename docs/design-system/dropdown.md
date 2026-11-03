@@ -30,7 +30,7 @@ A closed field that opens a listbox so the user picks one value, or several, fro
 
 **Do**
 - Reuse the DS `Dropdown` for single-select, multi-select and date-adjacent filter rows rather than building a page-local trigger and popover.
-- For multi-select, pass `multiple` with `values` / `onChangeValues`; add `allLabel` for a "no filter" first row.
+- For multi-select, pass `multiple` with `values` / `onChangeValues`; add `allLabel` for a "no filter" first row. While nothing is picked, the "all" row is the choice, so the trigger reads its label back in `--text-primary` (filled), never as a placeholder.
 - Pass `summaryLabel` to read the picks back in the trigger ("Selected: 3"); leave it out when chips below the field already list the picks.
 - Use `readOnly` for a disabled dropdown (e.g. while its card's toggle is off).
 - Default to `size="md"` (the most used size); `size="sm"` is used for compact filter rows, small popovers and the label-start course status filter. `lg` has no call site.

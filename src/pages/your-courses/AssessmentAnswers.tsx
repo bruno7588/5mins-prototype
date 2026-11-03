@@ -256,6 +256,8 @@ function AssessmentAnswers() {
 
   const [query, setQuery] = useState('')
   const [answer, setAnswer] = useState(ALL)
+  /* A poll filters by any number of options at once; empty means every vote. */
+  const [votes, setVotes] = useState<string[]>([])
   const [page, setPage] = useState(0)
   const [questionIndex, setQuestionIndex] = useState(0)
   /* Unsorted until asked: the order responses arrive in is a fact too, and a list that
@@ -302,6 +304,9 @@ function AssessmentAnswers() {
   const matches = <T extends { learner: ResponseLearner }>(r: T, i: number): boolean => {
     const q = query.trim().toLowerCase()
     if (q && !r.learner.name.toLowerCase().includes(q)) return false
+    if (a.kind === 'poll') {
+      return votes.length === 0 || votes.includes(String((a.responses[i] as VoteResponse).optionIndex))
+    }
     if (answer === ALL) return true
     if (a.kind === 'multi') {
       const pct = Math.round((multiScore(a, a.responses[i]) / perAttempt(a)) * 100)
@@ -309,9 +314,6 @@ function AssessmentAnswers() {
     }
     if (a.kind === 'graded') {
       return (a.responses[i] as ChoiceResponse).correct === (answer === 'correct')
-    }
-    if (a.kind === 'poll') {
-      return String((a.responses[i] as VoteResponse).optionIndex) === answer
     }
     if (a.kind === 'text' || a.kind === 'file') {
       return !('notAnswered' in r) === (answer === 'answered')
@@ -329,7 +331,7 @@ function AssessmentAnswers() {
   const kept = useMemo(
     () => rows.map((r, i) => ({ r, i })).filter(({ r, i }) => matches(r, i)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [a.id, query, answer],
+    [a.id, query, answer, votes],
   )
 
   /* Before the slice, so the order is the cohort's rather than this page's. Lowest first
@@ -449,7 +451,8 @@ function AssessmentAnswers() {
     if (a.kind === 'poll') {
       const columns: Column<VoteResponse>[] = [
         learnerColumn<VoteResponse>(),
-        { key: 'vote', header: 'Voted for', width: '1 1 240px', align: 'right', render: (r) => a.options[r.optionIndex] },
+        /* Laid out like the short text table: the answer left-aligned beside the learner. */
+        { key: 'vote', header: 'Voted for', width: '1 1 420px', render: (r) => a.options[r.optionIndex] },
       ]
       return (
         <Table
@@ -544,7 +547,7 @@ function AssessmentAnswers() {
     )
   })()
 
-  const narrowed = query.trim() !== '' || answer !== ALL
+  const narrowed = query.trim() !== '' || answer !== ALL || votes.length > 0
 
   return (
     <div className="asp-layout">
@@ -627,7 +630,24 @@ function AssessmentAnswers() {
                   ariaLabel="Search learners"
                   className="asp-search"
                 />
-                {options ? (
+                {a.kind === 'poll' ? (
+                  <Dropdown
+                    options={a.options.map((label, i) => ({ value: String(i), label }))}
+                    multiple
+                    values={votes}
+                    onChangeValues={(v) => {
+                      setVotes(v)
+                      setPage(0)
+                    }}
+                    placeholder="All votes"
+                    allLabel="All votes"
+                    summaryLabel="Votes"
+                    size="md"
+                    menuAlign="start"
+                    iconLeft={<Sort size={20} color="var(--text-primary)" variant="Linear" />}
+                    className="asp-filter"
+                  />
+                ) : options ? (
                   <Dropdown
                     options={options}
                     value={answer}
