@@ -260,7 +260,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
           <>
             <div className="confirm-modal-header confirm-modal-header--center">
               <div className="confirm-modal-icon">
-                <Danger size={72} color="var(--danger-500)" variant="Linear" />
+                <Danger size={56} color="var(--danger-500)" variant="Linear" />
               </div>
               <h2 className="confirm-modal-title">Delete the {deleting.days}-day reminder?</h2>
               <p className="confirm-modal-body">

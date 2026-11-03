@@ -816,7 +816,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
       <ConfirmModal open={confirm === 'discard'} onClose={() => setConfirm(null)} ariaLabel="Discard your changes?">
         <div className="confirm-modal-header confirm-modal-header--center">
           <div className="confirm-modal-icon">
-            <InfoCircle size={72} color="var(--warning-500)" variant="Linear" />
+            <InfoCircle size={56} color="var(--warning-500)" variant="Linear" />
           </div>
           <h2 className="confirm-modal-title">Discard your changes?</h2>
           <p className="confirm-modal-body">Your edits to this email haven't been saved.</p>
@@ -834,7 +834,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
       <ConfirmModal open={confirm === 'reset'} onClose={() => setConfirm(null)} ariaLabel={`Reset the ${target.name}?`}>
         <div className="confirm-modal-header confirm-modal-header--center">
           <div className="confirm-modal-icon">
-            <Danger size={72} color="var(--warning-500)" variant="Linear" />
+            <Danger size={56} color="var(--warning-500)" variant="Linear" />
           </div>
           <h2 className="confirm-modal-title">Reset the {target.name} to the 5Mins default?</h2>
           <p className="confirm-modal-body">

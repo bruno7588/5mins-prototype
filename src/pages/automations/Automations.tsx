@@ -1557,7 +1557,7 @@ function Automations() {
         {pendingDelete && (
           <>
             <div className="confirm-modal-header confirm-modal-header--center">
-              <Danger size={72} color="var(--danger-500)" variant="Linear" />
+              <Danger size={56} color="var(--danger-500)" variant="Linear" />
               <h3 className="confirm-modal-title">Delete automation</h3>
               <p className="confirm-modal-body">
                 You're about to delete <strong>{pendingDelete.name}</strong>. Past

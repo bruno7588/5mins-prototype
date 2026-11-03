@@ -632,7 +632,7 @@ function AutomationDetailsModal({
         ariaLabel="Unsaved changes"
       >
         <div className="confirm-modal-header confirm-modal-header--center">
-          <Danger size={72} color="var(--warning-500)" variant="Linear" />
+          <Danger size={56} color="var(--warning-500)" variant="Linear" />
           <h3 className="confirm-modal-title">You've got unsaved changes!</h3>
           <p className="confirm-modal-body">
             Changes to this automation will be lost if you exit now. Do you want to leave
@@ -663,7 +663,7 @@ function AutomationDetailsModal({
         ariaLabel="Switch enrolment type"
       >
         <div className="confirm-modal-header confirm-modal-header--center">
-          <Danger size={72} color="var(--warning-500)" variant="Linear" />
+          <Danger size={56} color="var(--warning-500)" variant="Linear" />
           <h3 className="confirm-modal-title">
             Switch to {pendingActionType === 'programs' ? 'program' : 'courses'}?
           </h3>
