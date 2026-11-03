@@ -2,7 +2,7 @@ import type { MeshConfig, Shape } from '@/lib/meshGradient'
 
 /* The View Answers question card's mesh gradient (the onboarding renderer, see
    src/lib/meshGradient.ts): a few large blurred shapes in the format's illustration
-   colours at 20% opacity, with no fill under them, so they sit on the page, and a fine grain on top. The same
+   colours at 16% opacity, with no fill under them, so they sit on the page, and a fine grain on top. The same
    values in light and dark mode. Colours are read from the design tokens at runtime,
    never typed here. */
 
@@ -12,7 +12,7 @@ const token = (name: string) =>
 type ShapeSpec = Omit<Shape, 'id' | 'color' | 'phase' | 'opacity'> & { token: string }
 
 /** Every shape's opacity, the same in light and dark mode. */
-const SHAPE_OPACITY = 0.2
+const SHAPE_OPACITY = 0.16
 
 const circle = (token: string, x: number, y: number, size: number): ShapeSpec => ({
   token, type: 'circle', x, y, size, rotation: 0, radius: 0,
