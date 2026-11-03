@@ -834,7 +834,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
       <ConfirmModal open={confirm === 'reset'} onClose={() => setConfirm(null)} ariaLabel={`Reset the ${target.name}?`}>
         <div className="confirm-modal-header confirm-modal-header--center">
           <div className="confirm-modal-icon">
-            <Danger size={72} color="var(--danger-500)" variant="Linear" />
+            <Danger size={72} color="var(--warning-500)" variant="Linear" />
           </div>
           <h2 className="confirm-modal-title">Reset the {target.name} to the 5Mins default?</h2>
           <p className="confirm-modal-body">
@@ -848,7 +848,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
           <Button variant="outlined-2" onClick={() => setConfirm(null)}>
             Cancel
           </Button>
-          <Button semantic="danger" onClick={onReset}>
+          <Button semantic="warning" onClick={onReset}>
             Reset to Default
           </Button>
         </div>
