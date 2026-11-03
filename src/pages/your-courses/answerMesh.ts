@@ -2,7 +2,7 @@ import type { MeshConfig, Shape } from '@/lib/meshGradient'
 
 /* The View Answers question card's mesh gradient (the onboarding renderer, see
    src/lib/meshGradient.ts): a few large blurred shapes in the format's illustration
-   colours at 16% opacity, with no fill under them, so they sit on the page, and a fine grain on top. The same
+   colours at 16% opacity (the yellows at 8%), with no fill under them, so they sit on the page, and a fine grain on top. The same
    values in light and dark mode. Colours are read from the design tokens at runtime,
    never typed here. */
 
@@ -13,6 +13,9 @@ type ShapeSpec = Omit<Shape, 'id' | 'color' | 'phase' | 'opacity'> & { token: st
 
 /** Every shape's opacity, the same in light and dark mode. */
 const SHAPE_OPACITY = 0.16
+/** The yellows (Secondary-400/500/600) read stronger than the other hues, so they sit at 8%. */
+const YELLOW_OPACITY = 0.08
+const YELLOWS = new Set(['--secondary-400', '--secondary-500', '--secondary-600'])
 
 const circle = (token: string, x: number, y: number, size: number): ShapeSpec => ({
   token, type: 'circle', x, y, size, rotation: 0, radius: 0,
@@ -117,7 +120,7 @@ export function answerMesh(art: string): MeshConfig {
     },
     shapes: SHAPES[art].map((s, i) => {
       const { token: name, ...rest } = s
-      return { ...rest, id: `${art}-${i}`, color: token(name), opacity: SHAPE_OPACITY, phase: i * 1.7 }
+      return { ...rest, id: `${art}-${i}`, color: token(name), opacity: YELLOWS.has(name) ? YELLOW_OPACITY : SHAPE_OPACITY, phase: i * 1.7 }
     }),
   }
 }
