@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useCurrentUser } from '../../../../hooks/useCurrentUser'
+import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import WorkflowCard from './WorkflowCard'
 import EmailPreviewModal from './EmailPreviewModal'
 import CourseRemindersCard, { type Reminder } from './CourseRemindersCard'
@@ -15,6 +16,10 @@ const SEED_REMINDERS: Reminder[] = [
 
 function WorkflowsTab() {
   const user = useCurrentUser()
+  const { toasts, show: showToast } = useToast()
+  // Turning a workflow on confirms with a success toast, off with an informative one.
+  const confirmToggle = (name: string, verb: 'is' | 'are', on: boolean) =>
+    showToast(on ? 'success' : 'info', `${name} ${verb} now ${on ? 'active' : 'inactive'}`)
   const [enabled, setEnabled] = useState(false)
   const [frequency, setFrequency] = useState('week')
   const [scope, setScope] = useState('direct')
@@ -45,7 +50,10 @@ function WorkflowsTab() {
         frequency={frequency}
         scope={scope}
         lastSent="Apr 27 to 4 managers"
-        onToggle={() => setEnabled((v) => !v)}
+        onToggle={() => {
+          confirmToggle('Team progress update', 'is', !enabled)
+          setEnabled(!enabled)
+        }}
         onFrequencyChange={setFrequency}
         onScopeChange={setScope}
         onPreview={() => setPreviewOpen(true)}
@@ -53,7 +61,10 @@ function WorkflowsTab() {
       <CourseRemindersCard
         enabled={remindersEnabled}
         reminders={reminders}
-        onToggle={() => setRemindersEnabled((v) => !v)}
+        onToggle={() => {
+          confirmToggle('Course reminders', 'are', !remindersEnabled)
+          setRemindersEnabled(!remindersEnabled)
+        }}
         onChange={setReminders}
       />
       <WelcomeEmailsCard
@@ -61,6 +72,7 @@ function WorkflowsTab() {
         onChange={(key, email) => setJoinEmails((all) => ({ ...all, [key]: email }))}
       />
       <EmailPreviewModal open={previewOpen} onClose={() => setPreviewOpen(false)} />
+      <ToastContainer toasts={toasts} />
     </div>
   )
 }

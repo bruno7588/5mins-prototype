@@ -624,6 +624,10 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
               </span>
             </div>
 
+          </div>
+
+          {/* Message on its own card, apart from the subject, so the form reads in two steps. */}
+          <div className="eed-fields">
             {/* Message: the Outlined input holding the editor, with the toolbar below it. */}
             <div className={`input-field eed-input${showBodyError ? ' input-field--error' : ''}`}>
               <span className="input-field__label">{isReminder ? 'Message (email only)' : 'Message'}</span>
@@ -674,7 +678,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                   >
                     <TextColourIcon size={18} />
                     {/* The colour at the cursor, as in the flashcards editor. */}
-                    <span className="eed-tool__swatch" style={{ background: textColourAt(body) }} aria-hidden="true" />
+                    <span className="eed-tool__swatch" style={{ background: (body.getAttributes('textStyle').color as string | undefined) ?? 'var(--text-primary)' }} aria-hidden="true" />
                   </ToolButton>
                   {menu === 'colour' && (
                     <ColourMenu

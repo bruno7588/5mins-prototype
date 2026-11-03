@@ -1,13 +1,16 @@
 import { Clock, PlayCircle } from 'iconsax-react'
-import logoUrl from '@/assets/certificate/5mins-logo.svg'
+import logoSvg from '@/assets/certificate/5mins-logo.svg?raw'
 import courseThumb from '@/assets/email/course-thumb.jpg'
 import { FIELDS, LOCKED_LABEL, ORG_INITIALS, ORG_NAME } from './emailContent'
 import './LiveEmail.css'
 
 /* The email as 5Mins sends it (D13): organisation header, the admin's text with
    the locked button or course card, and the 5Mins footer. Engineering connects
-   this markup to the email provider. Mail clients show it light, so it stays
-   light in both admin themes and uses fixed palette tokens, not semantic ones. */
+   this markup to the email provider. Light by default; in the dark admin theme it
+   previews the dark version mail apps show (LiveEmail.css). */
+
+/* The logo inline, its dark letters on currentColor, so they turn light in dark mode. */
+const LOGO = logoSvg.replace(/#20222A/gi, 'currentColor')
 
 export type LockedKind = 'button' | 'course' | 'activate'
 
@@ -93,7 +96,7 @@ function LiveEmail({ locked, above, below }: Props) {
         </div>
         <div className="lmail-powered">
           Powered by
-          <img src={logoUrl} alt="5Mins" />
+          <span className="lmail-powered__logo" role="img" aria-label="5Mins" dangerouslySetInnerHTML={{ __html: LOGO }} />
         </div>
       </div>
       <hr className="lmail-rule" />

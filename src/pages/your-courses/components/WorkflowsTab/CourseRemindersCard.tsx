@@ -141,7 +141,7 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
         <div className="workflow-card__headline">
           <h3 className="workflow-card__title">Course reminders</h3>
           <p className="workflow-card__desc">
-            Send automatic reminders to learners before a course's due date. Sent at 10:00 in each learner's local time on the scheduled day.
+            Send automatic reminders to learners by email, Slack, Microsoft Teams and phone notification before a course's due date. Sent at 10:00 in each learner's local time on the scheduled day.
           </p>
         </div>
         <Toggle live checked={enabled} onChange={onToggle} />

@@ -1,6 +1,6 @@
-/* The sent email (D13). Mail clients render it light, so it uses fixed palette
-   tokens that don't flip with the admin theme. 600px column, as transactional
-   email. Prefix: lmail- */
+/* The sent email (D13), light as sent, in fixed palette tokens. In the dark admin
+   theme the overrides at the end show it dark, as mail apps in dark mode do.
+   600px column, as transactional email. Prefix: lmail- */
 
 .lmail {
   width: 100%;
@@ -49,7 +49,12 @@
   color: var(--neutral-300);
 }
 
-.lmail-powered img {
+.lmail-powered__logo {
+  display: flex;
+  color: var(--neutral-800);
+}
+
+.lmail-powered__logo svg {
   height: 14px;
   width: auto;
 }
@@ -237,4 +242,37 @@
   font-size: var(--font-size-sm);
   color: var(--neutral-400);
   text-decoration: underline;
+}
+
+/* Dark admin theme: the email as mail apps show it in dark mode. Semantic tokens,
+   so it follows the theme; the button, badges and course card keep their colours. */
+:root[data-theme='dark'] .lmail {
+  background: var(--cards-background);
+  color: var(--text-primary);
+}
+
+:root[data-theme='dark'] .lmail-org {
+  color: var(--text-secondary);
+}
+
+:root[data-theme='dark'] .lmail-powered,
+:root[data-theme='dark'] .lmail-unsub {
+  color: var(--text-tertiary);
+}
+
+:root[data-theme='dark'] .lmail-powered__logo {
+  color: var(--text-primary);
+}
+
+:root[data-theme='dark'] .lmail-rule {
+  border-top-color: var(--border-elevated);
+}
+
+:root[data-theme='dark'] .lmail-text a {
+  /* stylelint-disable-next-line -- primary-700 links fail contrast on the dark email; no semantic link token */
+  color: var(--primary-300);
+}
+
+:root[data-theme='dark'] .lmail-social svg {
+  fill: var(--text-primary);
 }

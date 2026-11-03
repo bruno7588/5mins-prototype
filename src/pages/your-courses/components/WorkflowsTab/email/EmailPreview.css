@@ -88,7 +88,7 @@
   gap: var(--space-xs) var(--space-sm);
   margin: 0;
   padding: var(--space-sm) var(--space-l); /* same 24px sides as the email */
-  /* Light in both themes, like the email it heads; fixed palette tokens. */
+  /* Light like the email it heads; dark in the dark theme (overrides at the end). */
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   background: var(--neutral-0);
   font-size: var(--font-size-md);
@@ -232,4 +232,25 @@
 :root:not([data-theme='dark']) .epv-mail,
 :root:not([data-theme='dark']) .epv-chat {
   box-shadow: var(--shadow-s);
+}
+
+/* Dark admin theme: inbox strip and Slack / Teams messages in their dark mode. */
+:root[data-theme='dark'] .epv-inbox,
+:root[data-theme='dark'] .epv-chat {
+  background: var(--cards-background);
+  color: var(--text-primary);
+}
+
+:root[data-theme='dark'] .epv-inbox dt,
+:root[data-theme='dark'] .epv-chat__tag,
+:root[data-theme='dark'] .epv-chat__time {
+  color: var(--text-tertiary);
+}
+
+:root[data-theme='dark'] .epv-inbox dd {
+  color: var(--text-primary);
+}
+
+:root[data-theme='dark'] .epv-chat__tag {
+  background: var(--input-background);
 }

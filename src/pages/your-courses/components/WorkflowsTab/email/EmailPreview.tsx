@@ -146,7 +146,6 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
   return (
     <ConfirmModal open={open} onClose={onClose} closable className="epv" ariaLabel={`Preview ${name}`}>
       <SectionHeader
-        divider={false}
         title="Preview"
         description={name[0].toUpperCase() + name.slice(1)}
       />
