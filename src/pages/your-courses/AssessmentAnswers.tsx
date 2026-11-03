@@ -593,8 +593,10 @@ function AssessmentAnswers() {
                      and the tooltip says why learners' questions differ. */
                   a.kind === 'multi' && a.drawCount
                     ? `Question bank of ${a.questions.length}, picked at random for each learner`
-                    : a.kind === 'multi'
-                      ? `${a.questions.length} ${a.type === 'fill-blank' ? 'blanks' : 'questions'}`
+                    /* A question deck already says "Question 1 of N", so only the blanks
+                       count is stated here. */
+                    : a.kind === 'multi' && a.type === 'fill-blank'
+                      ? `${a.questions.length} blanks`
                       : null,
                 ]
                   .filter(Boolean)
