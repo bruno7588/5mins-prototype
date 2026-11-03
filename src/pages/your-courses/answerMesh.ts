@@ -60,7 +60,7 @@ const SHAPES: Record<string, ShapeSpec[]> = {
   'sequence': [
     circle('--blaze-quiz', 0.98, 0.5, 1.0),
     square('--flash-poll', 0.62, 0.0, 0.65, 8, 0.45),
-    circle('--flash-poll', 0.3, 0.95, 0.75),
+    circle('--flash-poll', 0.3, 0.05, 0.75),
   ],
   /* Indigo and blue. */
   'categorize': [
