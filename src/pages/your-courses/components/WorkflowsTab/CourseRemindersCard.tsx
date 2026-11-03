@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Add, Danger, Edit2, Trash } from 'iconsax-react'
 import Toggle from '../../../../components/Toggle/Toggle'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
@@ -6,6 +6,7 @@ import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
+import Collapse from '@/components/Collapse/Collapse'
 import EmailEditorModal, { type EmailEditorTarget } from './email/EmailEditorModal'
 import { REMINDER_STARTER, reminderDefault, type EmailText } from './email/emailContent'
 
@@ -37,6 +38,7 @@ type ModalState = { mode: 'add' } | { mode: 'edit'; id: string } | null
 function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) {
   const [modal, setModal] = useState<ModalState>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const addWrapRef = useRef<HTMLDivElement>(null)
   const { toasts, show: showToast } = useToast()
 
   const sorted = useMemo(
@@ -188,13 +190,11 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
           </li>
         )}
 
-        {(customReminders.length > 0 || enabled) && (
+        {customReminders.length > 0 && (
           <li className="course-reminders-group">
-            {customReminders.length > 0 && (
-              <div className="course-reminders-group__header">
-                <span className="course-reminders-group__title">Your reminders</span>
-              </div>
-            )}
+            <div className="course-reminders-group__header">
+              <span className="course-reminders-group__title">Your reminders</span>
+            </div>
             <div className="course-reminders-group__body">
               {customReminders.map((r) => (
                 <div key={r.id} className="course-reminders-row">
@@ -227,17 +227,21 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                   </span>
                 </div>
               ))}
-              {enabled && (
-                <Button icon={<Add size={20} color="currentColor" variant="Linear" />} variant="text"
-                  className="course-reminders-add"
-                  onClick={() => setModal({ mode: 'add' })}
-                >Add Reminder
-                </Button>
-              )}
             </div>
           </li>
         )}
       </ul>
+
+      {/* Add Reminder eases in and out with the card toggle (Collapse). */}
+      <Collapse open={enabled}>
+        <div ref={addWrapRef} className={`course-reminders-add-wrap${customReminders.length > 0 ? ' course-reminders-add-wrap--after-custom' : ''}`}>
+          <Button icon={<Add size={20} color="currentColor" variant="Linear" />} variant="text"
+            className="course-reminders-add"
+            onClick={() => setModal({ mode: 'add' })}
+          >Add Reminder
+          </Button>
+        </div>
+      </Collapse>
 
       {target && (
         <EmailEditorModal
@@ -249,16 +253,20 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
         />
       )}
 
-      <ConfirmModal open={deleting !== null} onClose={() => setDeletingId(null)}>
+      <ConfirmModal
+        open={deleting !== null}
+        onClose={() => setDeletingId(null)}
+        ariaLabel={deleting ? `Delete the ${deleting.days}-day reminder?` : undefined}
+      >
         {deleting && (
           <>
             <div className="confirm-modal-header confirm-modal-header--center">
               <div className="confirm-modal-icon">
                 <Danger size={72} color="var(--danger-500)" variant="Linear" />
               </div>
-              <h2 className="confirm-modal-title">Delete reminder</h2>
+              <h2 className="confirm-modal-title">Delete the {deleting.days}-day reminder?</h2>
               <p className="confirm-modal-body">
-                This reminder will be removed.
+                Learners will no longer get a reminder {plural(deleting.days)} before a course is due.
               </p>
             </div>
             <div className="confirm-modal-actions confirm-modal-actions--center">
@@ -272,6 +280,8 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                   handleRemove(deleting.id)
                   setDeletingId(null)
                   showToast('success', 'Reminder deleted')
+                  // The trash button is gone, so focus would fall to the page; land on Add Reminder.
+                  requestAnimationFrame(() => addWrapRef.current?.querySelector('button')?.focus())
                 }}
               >
                 Delete

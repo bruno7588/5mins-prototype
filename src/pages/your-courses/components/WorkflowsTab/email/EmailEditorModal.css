@@ -489,3 +489,55 @@
 .ds-btn--link.eed-channel-link:active:not(:disabled) {
   color: var(--text-secondary);
 }
+
+/* Text colour popover: the Colour field picker at its own width (colour-field.md). */
+.eed-colour {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 264px;
+  padding: var(--space-sm);
+}
+
+/* Text colour: the "A" with a dot of the current colour at its bottom right, as in the
+   flashcards editor. The ring keeps a white or page-coloured dot visible. */
+.eed-tool--colour {
+  position: relative;
+}
+
+.eed-tool__swatch {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-full);
+}
+
+/* Text colour greys: one row of the neutral steps used for text, above the picker.
+   Swatch chrome as the Colour field swatch (colour-field.md), at 24px. */
+.eed-colour__greys {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.eed-colour__grey {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+}
+
+.eed-colour__grey:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* Hover: a 2px inside border in Text selected (1px border plus a 1px inset ring). */
+.eed-colour__grey:hover {
+  border-color: var(--text-selected);
+  box-shadow: inset 0 0 0 1px var(--text-selected);
+}

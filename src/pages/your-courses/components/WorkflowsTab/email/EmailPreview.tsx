@@ -174,7 +174,7 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
       <motion.div
         className="epv-stack"
         animate={{ height }}
-        transition={{ duration: reduce ? 0 : 0.3, ease: 'easeInOut' }}
+        transition={{ duration: reduce ? 0 : 0.2, ease: 'easeInOut' }}
       >
         <div ref={measureRef}>
         <AnimatePresence mode="wait" initial={false}>
@@ -183,9 +183,8 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
             role={isReminder ? 'tabpanel' : undefined}
             className="epv-panel"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: reduce ? 0 : 0.15, ease: 'easeOut' }}
+            animate={{ opacity: 1, transition: { duration: reduce ? 0 : 0.15, ease: 'easeOut' } }}
+            exit={{ opacity: 0, transition: { duration: reduce ? 0 : 0.1, ease: 'easeIn' } }}
           >
             {panel}
           </motion.div>

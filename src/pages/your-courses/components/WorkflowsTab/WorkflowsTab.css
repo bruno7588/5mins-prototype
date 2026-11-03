@@ -85,36 +85,6 @@
   color: var(--primary-button-background-hover);
 }
 
-/* Collapsible body — animates height + opacity when toggle flips */
-.workflow-card__collapsible {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 180ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.workflow-card__collapsible--open {
-  grid-template-rows: 1fr;
-}
-
-.workflow-card__collapsible-inner {
-  min-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 120ms ease;
-}
-
-.workflow-card__collapsible--open .workflow-card__collapsible-inner {
-  opacity: 1;
-  transition: opacity 160ms ease 40ms;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .workflow-card__collapsible,
-  .workflow-card__collapsible-inner {
-    transition: none;
-  }
-}
-
 .workflow-card__footer {
   display: flex;
   flex-direction: column;
@@ -356,6 +326,17 @@
 /* The column stretches its children; the text button keeps its own width, left-aligned. */
 .course-reminders-add {
   align-self: flex-start;
+}
+
+/* Sits below the rules list: same spacing it had inside it (group gap, or row gap
+   after Your reminders). Padding, not margin, so Collapse animates it to 0. */
+.course-reminders-add-wrap {
+  display: flex;
+  padding-top: var(--space-m);
+}
+
+.course-reminders-add-wrap--after-custom {
+  padding-top: var(--space-sm);
 }
 
 /* Add-row button: --text-primary label, as the form add-row buttons (Add Item, Add

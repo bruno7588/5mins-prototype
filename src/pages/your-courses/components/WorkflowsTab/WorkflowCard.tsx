@@ -2,6 +2,7 @@ import Toggle from '../../../../components/Toggle/Toggle'
 import Dropdown from '../../../../components/Dropdown/Dropdown'
 import Badge from '../../../../components/Badge/Badge'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
+import Collapse from '@/components/Collapse/Collapse'
 
 interface Props {
   enabled: boolean
@@ -24,12 +25,12 @@ const SCOPE_OPTIONS = [
   {
     value: 'direct',
     label: 'Direct reports',
-    description: 'Team members who report to you',
+    description: "Each manager's own team",
   },
   {
     value: 'org',
     label: 'My organisation',
-    description: 'Includes indirect reports from each manager under you',
+    description: 'Everyone below each manager, including indirect reports',
   },
 ]
 
@@ -69,7 +70,7 @@ function WorkflowCard({
             readOnly={!enabled}
             className="workflow-card__inline-dropdown"
           />
-          <span>on monday at 9:00 AM UTC</span>
+          <span>{frequency === 'month' ? 'on the first Monday' : 'on Monday'} at 9:00 AM UTC</span>
         </li>
         <li className="workflow-card__rule">
           <span>Include</span>
@@ -90,22 +91,17 @@ function WorkflowCard({
         </li>
       </ul>
 
-      <div
-        className={`workflow-card__collapsible${enabled ? ' workflow-card__collapsible--open' : ''}`}
-        aria-hidden={!enabled}
-      >
-        <div className="workflow-card__collapsible-inner">
-          {lastSent && (
-            <footer className="workflow-card__footer">
-              <Badge
-                type="informative"
-                label={`Last sent ${lastSent}`}
-                className="workflow-card__last-sent-badge"
-              />
-            </footer>
-          )}
-        </div>
-      </div>
+      <Collapse open={enabled}>
+        {lastSent && (
+          <footer className="workflow-card__footer">
+            <Badge
+              type="informative"
+              label={`Last sent ${lastSent}`}
+              className="workflow-card__last-sent-badge"
+            />
+          </footer>
+        )}
+      </Collapse>
     </article>
   )
 }

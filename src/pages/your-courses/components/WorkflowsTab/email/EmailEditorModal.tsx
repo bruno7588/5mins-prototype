@@ -3,8 +3,10 @@ import { useEditor, EditorContent, type Editor } from '@tiptap/react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import StarterKit from '@tiptap/starter-kit'
 import { Placeholder } from '@tiptap/extensions'
-import { Danger, Eye, Eraser, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
+import { Color, TextStyle } from '@tiptap/extension-text-style'
+import { Danger, Eye, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
+import ColourPicker from '@/components/ColourField/ColourPicker'
 import Button from '@/components/Button/Button'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import CloseButton from '@/components/CloseButton/CloseButton'
@@ -14,6 +16,7 @@ import InputInteger from '@/components/InputInteger/InputInteger'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import BracesIcon from '@/components/icons/BracesIcon'
 import ListBulletIcon from '@/components/icons/ListBulletIcon'
+import TextColourIcon from '@/components/icons/TextColourIcon'
 import ListNumberIcon from '@/components/icons/ListNumberIcon'
 import TeamsIcon from '@/components/icons/TeamsIcon'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
@@ -84,7 +87,7 @@ const TEXT_STYLES = [
    curve, so it starts moving at once rather than easing out of a standstill. */
 const MOVE = (reduce: boolean | null) => ({ duration: reduce ? 0 : 0.3, ease: [0.4, 0, 0.2, 1] as const })
 
-const GROUPS: FieldGroup[] = ['Person', 'Organisation', 'Course']
+const GROUPS: FieldGroup[] = ['Person', 'Organisation', 'Invite', 'Course']
 
 /** Text above the locked block, including fields. Required on Save. */
 function hasTextAbove(editor: Editor) {
@@ -218,14 +221,70 @@ function EmojiMenu({ onPick, onClose }: { onPick: (emoji: string) => void; onClo
   )
 }
 
+/* The neutral greys used for text, darkest first. The email needs a hex, so it is read
+   off the token at pick time; the swatch itself paints with the token. */
+const TEXT_GREYS = [900, 800, 700, 600, 500, 400, 300, 200]
+const tokenHex = (step: number) =>
+  getComputedStyle(document.documentElement).getPropertyValue(`--neutral-${step}`).trim().toLowerCase()
+
+/** Text colour: the Colour field picker in a toolbar popover. Colours the selection as the admin drags. */
+function ColourMenu({ value, onPick, onClose }: { value: string; onPick: (hex: string) => void; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      if (!ref.current?.parentElement?.contains(e.target as Node)) onClose()
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    ref.current?.querySelector<HTMLElement>('[role="slider"]')?.focus()
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [onClose])
+
+  return (
+    <div ref={ref} className="eed-menu eed-menu--above eed-colour" role="dialog" aria-label="Text colour">
+      <div className="eed-colour__greys">
+        {TEXT_GREYS.map((step) => (
+          <button
+              key={step}
+              type="button"
+              className="eed-colour__grey"
+              style={{ background: `var(--neutral-${step})` }}
+              aria-label={`Neutral ${step}`}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => onPick(tokenHex(step))}
+            />
+        ))}
+      </div>
+      <ColourPicker label="Text colour" value={value} onChange={onPick} />
+    </div>
+  )
+}
+
+/** The colour of the text at the cursor as #rrggbb: the mark if set, else the editor's own text colour. */
+function textColourAt(editor: Editor) {
+  const mark = editor.getAttributes('textStyle').color as string | undefined
+  if (mark && /^#[0-9a-f]{6}$/i.test(mark)) return mark
+  const rgb = getComputedStyle(editor.view.dom).color.match(/\d+/g) ?? ['0', '0', '0']
+  return '#' + rgb.slice(0, 3).map((n) => Number(n).toString(16).padStart(2, '0')).join('')
+}
+
 function ToolButton({
   label,
   active,
   expanded,
   onClick,
+  className,
   children,
 }: {
   label: string
+  className?: string
   active?: boolean
   /** For a button that opens a menu. */
   expanded?: boolean
@@ -236,7 +295,7 @@ function ToolButton({
     <Tooltip text={label} icon={false} disabled={expanded}>
       <button
         type="button"
-        className={`eed-tool${active ? ' eed-tool--active' : ''}`}
+        className={`eed-tool${active ? ' eed-tool--active' : ''}${className ? ` ${className}` : ''}`}
         aria-label={label}
         aria-pressed={expanded === undefined ? active ?? false : undefined}
         aria-expanded={expanded}
@@ -254,7 +313,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
   const [days, setDays] = useState(target.days)
   const [dirty, setDirty] = useState(!!target.isNew)
   const [submitted, setSubmitted] = useState(false)
-  const [menu, setMenu] = useState<'subject' | 'body' | 'emoji' | null>(null)
+  const [menu, setMenu] = useState<'subject' | 'body' | 'emoji' | 'colour' | null>(null)
   const [linkOpen, setLinkOpen] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
   const [confirm, setConfirm] = useState<'discard' | 'reset' | null>(null)
@@ -334,6 +393,8 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
         // No forced empty line after the button or course card; admins can delete it.
         trailingNode: false,
       }),
+      TextStyle,
+      Color,
       FieldNode,
       LockedBlockNode,
       Placeholder.configure({
@@ -357,8 +418,14 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
   const subjectLength = visibleLength(subject.getText())
   const bodyLength = visibleLength(body.getText())
   const daysTaken = !!target.takenDays?.has(days)
+  // Spaces alone don't count as a subject; a field on its own does.
+  let subjectHasField = false
+  subject.state.doc.descendants((n) => {
+    if (n.type.name === 'field') subjectHasField = true
+  })
+  const subjectBlank = subject.isEmpty || (!subjectHasField && !subject.getText().trim())
   const errors = {
-    subject: subject.isEmpty
+    subject: subjectBlank
       ? 'Add a subject'
       : subjectLength > SUBJECT_MAX
         ? `Keep the subject to ${SUBJECT_MAX} characters or fewer`
@@ -598,6 +665,25 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 >
                   <TextUnderline size={20} color="currentColor" variant="Linear" />
                 </ToolButton>
+                <div className="eed-menu-anchor">
+                  <ToolButton
+                    label="Text colour"
+                    className="eed-tool--colour"
+                    expanded={menu === 'colour'}
+                    onClick={() => setMenu(menu === 'colour' ? null : 'colour')}
+                  >
+                    <TextColourIcon size={18} />
+                    {/* The colour at the cursor, as in the flashcards editor. */}
+                    <span className="eed-tool__swatch" style={{ background: textColourAt(body) }} aria-hidden="true" />
+                  </ToolButton>
+                  {menu === 'colour' && (
+                    <ColourMenu
+                      value={textColourAt(body)}
+                      onPick={(hex) => body.chain().setColor(hex).run()}
+                      onClose={() => setMenu(null)}
+                    />
+                  )}
+                </div>
                 <span className="eed-toolbar__sep" aria-hidden="true" />
                 <Dropdown
                   size="sm"
@@ -628,12 +714,6 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 <span className="eed-toolbar__sep" aria-hidden="true" />
                 <ToolButton label="Link" active={marked('link')} onClick={openLink}>
                   <Link1 size={20} color="currentColor" variant="Linear" />
-                </ToolButton>
-                <ToolButton
-                  label="Clear formatting"
-                  onClick={() => body.chain().focus().unsetAllMarks().clearNodes().run()}
-                >
-                  <Eraser size={20} color="currentColor" variant="Linear" />
                 </ToolButton>
                 <div className="eed-menu-anchor">
                   <ToolButton
