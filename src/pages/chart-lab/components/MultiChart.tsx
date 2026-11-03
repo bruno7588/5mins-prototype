@@ -1,13 +1,12 @@
 import { useEffect, useState, type KeyboardEvent } from 'react'
 import { ArrowLeft2, ArrowRight2 } from 'iconsax-react'
-import { questionScore, type MultiAssessment } from '../chartLabData'
+import { type MultiAssessment } from '../chartLabData'
 import { OptionBars } from './Charts'
 
 /**
  * A lesson quiz or situational test on one page, as the flashcard editor shows its
  * cards: one question at a time on a sliding strip, chevrons either side and the
- * question numbers below. It opens on the weakest question, where the admin's
- * attention is due.
+ * question numbers below. It opens on question 1, in the order the learner met them.
  */
 function MultiChart({
   a,
@@ -20,8 +19,7 @@ function MultiChart({
   /** Off when the page already shows the question as its title. */
   showTitle?: boolean
 }) {
-  const weakest = a.questions.reduce((low, q) => (questionScore(q) < questionScore(low) ? q : low))
-  const [index, setIndex] = useState(a.questions.indexOf(weakest))
+  const [index, setIndex] = useState(0)
   const last = a.questions.length - 1
   useEffect(() => {
     onQuestionChange?.(index)

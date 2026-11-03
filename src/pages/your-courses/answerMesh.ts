@@ -9,7 +9,7 @@ import type { MeshConfig, Shape } from '@/lib/meshGradient'
 const token = (name: string) =>
   getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 
-type ShapeSpec = Omit<Shape, 'id' | 'color' | 'phase' | 'opacity'> & { token: string }
+type ShapeSpec = Omit<Shape, 'id' | 'color' | 'phase' | 'opacity'> & { token: string; opacity?: number }
 
 /** Every shape's opacity, the same in light and dark mode. */
 const SHAPE_OPACITY = 0.16
@@ -20,6 +20,8 @@ const YELLOWS = new Set(['--secondary-400', '--secondary-500', '--secondary-600'
 const circle = (token: string, x: number, y: number, size: number): ShapeSpec => ({
   token, type: 'circle', x, y, size, rotation: 0, radius: 0,
 })
+/** A shape held at 8% where its hue reads too strong on one card. */
+const soft = (s: ShapeSpec): ShapeSpec => ({ ...s, opacity: YELLOW_OPACITY })
 const square = (token: string, x: number, y: number, size: number, rotation: number, radius: number): ShapeSpec => ({
   token, type: 'square', x, y, size, rotation, radius,
 })
@@ -29,11 +31,11 @@ const square = (token: string, x: number, y: number, size: number, rotation: num
    x and y are fractions of the card (0 to 1, may sit past the edge); size is a fraction
    of the card's height. */
 const SHAPES: Record<string, ShapeSpec[]> = {
-  /* Amber and purples. */
+  /* Amber and purples; the purple square on the right at 8%, like the yellows (it read too strong at 16%). */
   'multiple-choice': [
     square('--secondary-600', 0.12, 0.2, 0.95, 28, 0.4),
     circle('--flash-poll', 0.45, 0.95, 0.9),
-    square('--blaze-quiz', 0.82, 0.15, 0.8, 12, 0.3),
+    soft(square('--blaze-quiz', 0.82, 0.15, 0.8, 12, 0.3)),
     circle('--secondary-400', 0.97, 0.9, 0.7),
   ],
   /* Cyan and violet. */
@@ -69,7 +71,7 @@ const SHAPES: Record<string, ShapeSpec[]> = {
   /* Yellow and teal. */
   'situational-test': [
     circle('--secondary-400', 0.0, 0.0, 1.05),
-    square('--primary-700', 0.05, 1.0, 0.8, 22, 0.35),
+    soft(square('--primary-700', 0.05, 1.0, 0.8, 22, 0.35)), /* bottom-left blue at 8%: read too strong at 16% */
     circle('--primary-700', 0.75, 0.55, 0.6),
   ],
   /* Violet and light cyan. */
@@ -119,8 +121,8 @@ export function answerMesh(art: string): MeshConfig {
       overlayOpacity: 0, /* no wash: the shapes sit straight on the card */
     },
     shapes: SHAPES[art].map((s, i) => {
-      const { token: name, ...rest } = s
-      return { ...rest, id: `${art}-${i}`, color: token(name), opacity: YELLOWS.has(name) ? YELLOW_OPACITY : SHAPE_OPACITY, phase: i * 1.7 }
+      const { token: name, opacity, ...rest } = s
+      return { ...rest, id: `${art}-${i}`, color: token(name), opacity: opacity ?? (YELLOWS.has(name) ? YELLOW_OPACITY : SHAPE_OPACITY), phase: i * 1.7 }
     }),
   }
 }
