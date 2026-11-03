@@ -48,7 +48,7 @@ function WorkflowCard({
     <article className="workflow-card">
       <header className="workflow-card__header">
         <div className="workflow-card__headline">
-          <h3 className="workflow-card__title">Team Progress Update</h3>
+          <h3 className="workflow-card__title">Team progress update</h3>
           <p className="workflow-card__desc">
             Send each manager an email of their team's courses, due in the next 30 days.{' '}
             <button type="button" className="workflow-card__preview-link" onClick={onPreview}>
