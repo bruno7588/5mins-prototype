@@ -47,7 +47,7 @@ const SHAPES: Record<string, ShapeSpec[]> = {
   /* Coral and blue. */
   'fill-blank': [
     circle('--lesson-quiz', 0.1, 0.15, 1.0),
-    square('--course-assessments', 0.2, 0.05, 0.85, 18, 0.35),
+    soft(square('--course-assessments', 0.2, 0.05, 0.85, 18, 0.35)), /* blue at 8%: read too strong at 16% */
     circle('--lesson-quiz', 0.5, 0.5, 0.5),
   ],
   /* Red and green, the illustration's two cards. */
