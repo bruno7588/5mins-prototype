@@ -227,6 +227,13 @@
   transition: color 200ms ease;
 }
 
+/* "(edited)": a built-in email or reminder whose text an admin changed. */
+.course-reminders-row__edited {
+  color: var(--text-tertiary);
+  font-style: italic;
+  font-weight: 400;
+}
+
 .workflow-card__rules--disabled .course-reminders-row__text,
 .workflow-card__rules--disabled .course-reminders-row__badge {
   color: var(--text-disabled);

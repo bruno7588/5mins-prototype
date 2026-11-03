@@ -4,7 +4,6 @@ import Toggle from '../../../../components/Toggle/Toggle'
 import Tooltip from '../../../../components/Tooltip/Tooltip'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
-import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import Collapse from '@/components/Collapse/Collapse'
 import EmailEditorModal, { type EmailEditorTarget } from './email/EmailEditorModal'
@@ -150,9 +149,6 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
       <ul className={rulesClass}>
         {defaultReminders.length > 0 && (
           <li className="course-reminders-group">
-            <div className="course-reminders-group__header">
-              <span className="course-reminders-group__title">Default Reminders</span>
-            </div>
             <div className="course-reminders-group__body">
               {defaultReminders.map((r) => {
                 const isPaused = !!r.paused
@@ -161,8 +157,10 @@ function CourseRemindersCard({ enabled, reminders, onToggle, onChange }: Props) 
                   <div key={r.id} className={rowClass}>
                     <span className="course-reminders-row__text">Send Reminder</span>
                     <span className="course-reminders-row__badge">{plural(r.days)}</span>
-                    <span className="course-reminders-row__text">before due date</span>
-                    {r.custom && <Badge type="informative" label="Custom reminder" />}
+                    <span className="course-reminders-row__text">
+                      before due date
+                      {r.custom && <span className="course-reminders-row__edited"> (edited)</span>}
+                    </span>
                     <span className="course-reminders-row__actions">
                       <Tooltip text="Edit reminder" icon={false} disabled={!enabled}>
                         <button

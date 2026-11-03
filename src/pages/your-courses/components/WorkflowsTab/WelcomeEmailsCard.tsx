@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Edit2 } from 'iconsax-react'
-import Badge from '@/components/Badge/Badge'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import EmailEditorModal, { type EmailEditorTarget } from './email/EmailEditorModal'
@@ -108,10 +107,12 @@ function WelcomeEmailsCard({ emails, onChange }: Props) {
             {EMAILS.map((e) => (
               <div key={e.key} className="course-reminders-row">
                 <div className="welcome-row__text">
-                  <span className="course-reminders-row__text">{e.title}</span>
+                  <span className="course-reminders-row__text">
+                    {e.title}
+                    {emails[e.key].custom && <span className="course-reminders-row__edited"> (edited)</span>}
+                  </span>
                   <span className="welcome-row__sub">{e.sub}</span>
                 </div>
-                {emails[e.key].custom && <Badge type="informative" label="Custom email" />}
                 <span className="course-reminders-row__actions">
                   <Tooltip text={`Edit ${e.name}`} icon={false}>
                     <button

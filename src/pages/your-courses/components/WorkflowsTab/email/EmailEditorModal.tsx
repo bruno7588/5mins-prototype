@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import StarterKit from '@tiptap/starter-kit'
 import { Placeholder } from '@tiptap/extensions'
 import { Color, TextStyle } from '@tiptap/extension-text-style'
-import { Danger, Eye, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
+import { Back, Danger, Eye, Link1, Mobile, Slack, TextBold, TextItalic, TextUnderline, InfoCircle } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import ColourPicker from '@/components/ColourField/ColourPicker'
 import Button from '@/components/Button/Button'
@@ -757,6 +757,15 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                     />
                   )}
                 </div>
+                {/* Reset sits with the text it replaces, its own group after Insert Field. */}
+                {target.canReset && (target.customised || isDirty) && (
+                  <>
+                    <span className="eed-toolbar__sep" aria-hidden="true" />
+                    <ToolButton label="Reset to default" onClick={() => setConfirm('reset')}>
+                      <Back size={20} color="currentColor" variant="Linear" />
+                    </ToolButton>
+                  </>
+                )}
               </div>
               {(showBodyError || bodyLength >= MESSAGE_MAX * 0.8) && (
                 <span className="input-field__helper eed-helper-row" role={showBodyError ? 'alert' : undefined}>
@@ -777,11 +786,6 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
 
       {/* Sticky footer: the actions stay in reach while the message scrolls. */}
       <footer className="eed-footer">
-        {target.canReset && target.customised && (
-          <Button size="lg" variant="text" semantic="danger" onClick={() => setConfirm('reset')}>
-            Reset to Default
-          </Button>
-        )}
         <div className="eed-footer__end">
           <Button
             size="lg"
