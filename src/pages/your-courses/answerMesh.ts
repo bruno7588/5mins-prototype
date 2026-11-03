@@ -46,7 +46,7 @@ const SHAPES: Record<string, ShapeSpec[]> = {
   ],
   /* Coral and blue. */
   'fill-blank': [
-    circle('--lesson-quiz', 0.9, 0.85, 1.0),
+    circle('--lesson-quiz', 0.1, 0.15, 1.0),
     square('--course-assessments', 0.2, 0.05, 0.85, 18, 0.35),
     circle('--lesson-quiz', 0.5, 0.5, 0.5),
   ],
@@ -65,7 +65,7 @@ const SHAPES: Record<string, ShapeSpec[]> = {
   /* Indigo and blue. */
   'categorize': [
     square('--certificate-quiz', 0.3, 0.0, 0.9, 50, 0.4),
-    circle('--course-assessments', 0.7, 1.0, 0.95),
+    circle('--course-assessments', 0.5, 0.0, 0.95),
     circle('--certificate-quiz', 1.0, 0.25, 0.55),
   ],
   /* Yellow and teal. */

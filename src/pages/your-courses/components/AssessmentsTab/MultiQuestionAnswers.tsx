@@ -40,6 +40,10 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
   /* Fill in the blanks states each sitting as a count, the way the banded formats
      state theirs ("3 of 4 pairs correct"). */
   const blanks = a.type === 'fill-blank'
+  /* Only a situational test is scored on a scale. A lesson quiz and a fill in the blanks
+     are all or nothing, like every other course assessment: Correct with every answer
+     right, otherwise Incorrect. */
+  const binary = a.type !== 'situational-test'
 
   const toggle = (id: string) =>
     setOpen((prev) => {
@@ -54,6 +58,9 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
       <div className="lrn-head">
         <span className="lrn-c-learner">Learner</span>
         {blanks && <span>Answer</span>}
+        {binary ? (
+          <span>Result</span>
+        ) : (
         <button
           type="button"
           className="lrn-sort"
@@ -73,6 +80,7 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
             }`}
           />
         </button>
+        )}
         <span className="lrn-c-expand" aria-hidden="true" />
       </div>
 
@@ -109,7 +117,11 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                     Success, under it Warning, under half Error. Which questions they
                     missed is one row below, ticked and crossed. */}
                 <span className="lrn-cell lrn-c-score">
-                  <Badge type={scoreBadgeType(pct)} label={`${pct}%`} />
+                  {binary ? (
+                    score === perAttempt(a) ? <Badge type="success" label="Correct" /> : <Badge type="error" label="Incorrect" />
+                  ) : (
+                    <Badge type={scoreBadgeType(pct)} label={`${pct}%`} />
+                  )}
                 </span>
 
                 <span className="lrn-cell lrn-c-expand lrn-chevron" aria-hidden="true">

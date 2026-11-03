@@ -142,7 +142,8 @@ function filterOptions(a: AssessmentResult): { value: string; label: string }[] 
       { value: 'not-answered', label: 'Not answered' },
     ]
 
-  if (a.kind === 'multi')
+  /* A situational test is the one format scored on a scale; the rest are all or nothing. */
+  if (a.kind === 'multi' && a.type === 'situational-test')
     return [
       { value: ALL, label: 'All results' },
       { value: 'pass', label: `Passed (${PASS_SCORE}% or above)` },
@@ -152,7 +153,7 @@ function filterOptions(a: AssessmentResult): { value: string; label: string }[] 
   /* A graded question has a right answer, so the question worth asking of it is who
      got it — not which of four options each person picked. Which wrong answer they
      chose is in the chart above and in the row itself. */
-  if (a.kind === 'graded')
+  if (a.kind === 'graded' || a.kind === 'multi')
     return [
       { value: ALL, label: 'All answers' },
       { value: 'correct', label: 'Correct' },
@@ -309,7 +310,9 @@ function AssessmentAnswers() {
     }
     if (answer === ALL) return true
     if (a.kind === 'multi') {
-      const pct = Math.round((multiScore(a, a.responses[i]) / perAttempt(a)) * 100)
+      const score = multiScore(a, a.responses[i])
+      if (a.type !== 'situational-test') return (score === perAttempt(a)) === (answer === 'correct')
+      const pct = Math.round((score / perAttempt(a)) * 100)
       return answer === 'pass' ? pct >= PASS_SCORE : pct < PASS_SCORE
     }
     if (a.kind === 'graded') {
