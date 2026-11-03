@@ -94,7 +94,7 @@ const SHAPES: Record<string, ShapeSpec[]> = {
   ],
   /* Orange and indigo. */
   'exercise': [
-    square('--warning-600', 0.85, 0.1, 0.85, 15, 0.35),
+    square('--warning-600', 0.15, 0.1, 0.85, 15, 0.35),
     circle('--certificate-quiz', 0.2, 0.9, 0.95),
     circle('--warning-600', 0.45, 0.0, 0.5),
   ],
