@@ -306,36 +306,6 @@
   color: var(--text-tertiary);
 }
 
-/* Per empty-state.md: 72px art, Bold 20 title, body capped at 600px. */
-.asp-noresults {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-ml);
-  padding: var(--space-xxl) var(--space-l);
-  text-align: center;
-}
-
-.asp-empty__art {
-  display: block;
-}
-
-.asp-empty__title {
-  margin: 0;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.asp-empty__body {
-  margin: 0;
-  max-width: 600px;
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
 /* View More / View Less follows the learner's answer, so it rests in Text secondary,
    not the Text button's primary blue; hover and press keep the DS button colours. */
 .ds-btn--text.asp-viewmore {

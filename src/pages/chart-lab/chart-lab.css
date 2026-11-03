@@ -136,7 +136,40 @@
   background: var(--danger-400);
 }
 
-/* Bars have no hover: they are read-only. */
+/* Hover: the fill goes one step up its ladder, in both modes. */
+.cl-barrow__fill {
+  transition: background-color 150ms ease;
+}
+
+.cl-barrow:not(.is-correct):not(.is-incorrect):hover .cl-barrow__fill {
+  /* stylelint-disable-next-line -- neutral bar hover is Neutral-200 in light mode */
+  background: var(--neutral-200);
+}
+
+:root[data-theme='dark'] .cl-barrow:not(.is-correct):not(.is-incorrect):hover .cl-barrow__fill {
+  /* stylelint-disable-next-line -- neutral bar hover is Neutral-500 in dark mode (one step lighter) */
+  background: var(--neutral-500);
+}
+
+.cl-barrow.is-correct:hover .cl-barrow__fill {
+  /* stylelint-disable-next-line -- correct bar hover is Success-400 in light mode */
+  background: var(--success-400);
+}
+
+:root[data-theme='dark'] .cl-barrow.is-correct:hover .cl-barrow__fill {
+  /* stylelint-disable-next-line -- correct bar hover is Success-600 in dark mode */
+  background: var(--success-600);
+}
+
+.cl-barrow.is-incorrect:hover .cl-barrow__fill {
+  /* stylelint-disable-next-line -- wrong bar hover is Danger-300 in light mode */
+  background: var(--danger-300);
+}
+
+:root[data-theme='dark'] .cl-barrow.is-incorrect:hover .cl-barrow__fill {
+  /* stylelint-disable-next-line -- wrong bar hover is Danger-500 in dark mode */
+  background: var(--danger-500);
+}
 
 /* On arrival each fill grows from the left: 520ms on the house curve, 45ms apart (motion.md). */
 .cl-barrow__fill {

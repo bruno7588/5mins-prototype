@@ -13,7 +13,8 @@ import Search from '@/components/Search/Search'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import Table, { type Column } from '@/components/Table/Table'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
-import searchIllustration from '@/assets/empty-state-illustrations/search.svg'
+import EmptyState from '@/components/EmptyState/EmptyState'
+import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 import AnswerStats, { BandLabel } from './components/AssessmentsTab/AnswerStats'
 import MultiQuestionAnswers from './components/AssessmentsTab/MultiQuestionAnswers'
 import SelectAllAnswers from './components/AssessmentsTab/SelectAllAnswers'
@@ -660,15 +661,15 @@ function AssessmentAnswers() {
               </div>
 
               {total === 0 ? (
-                <div className="asp-noresults">
-                  <img className="asp-empty__art" src={searchIllustration} alt="" width={72} height={72} />
-                  <h2 className="asp-empty__title">No answers match</h2>
-                  <p className="asp-empty__body">
-                    {narrowed
-                      ? 'Clear the search or the answer filter to see every response.'
-                      : 'Nobody has answered this yet.'}
-                  </p>
-                </div>
+                <EmptyState
+                  illustration={<img src={noResultsIllustration} alt="" width={72} height={72} />}
+                  title="No results"
+                  description={
+                    narrowed
+                      ? "Clear the search or the answer filter to see every answer"
+                      : "Nobody has answered this yet."
+                  }
+                />
               ) : (
                 table
               )}

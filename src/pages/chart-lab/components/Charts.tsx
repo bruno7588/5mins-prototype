@@ -100,7 +100,13 @@ export function ImageTiles({
               <Gallery size={20} color="currentColor" />
             )}
           </span>
-          <BarRow pct={t.pct} correct={t.correct} value={`${t.pct}%`}>
+          <BarRow pct={t.pct} correct={t.correct} incorrect={!t.correct} value={`${t.pct}%`}>
+            {/* Same as the option bars: a tick on a right image, a cross on a wrong one. */}
+            {t.correct ? (
+              <TickCircle size={20} color="currentColor" variant="Linear" className="cl-row__icon" aria-hidden="true" />
+            ) : (
+              <CloseCircle size={20} color="currentColor" variant="Linear" className="cl-row__icon" aria-hidden="true" />
+            )}
             <span className="cl-row__label">
               {t.label}
               {t.correct && <Correct />}
