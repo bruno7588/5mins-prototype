@@ -5,7 +5,7 @@ import { locate, selectorFor, type Anchor } from './commentAnchor'
    the last page change; a new comment saves the trail, and opening it later replays the
    clicks until its element is back. Typed text is not replayed. */
 
-const MAX_STEPS = 20
+const MAX_STEPS = 60
 const STEP_WAIT_MS = 1200
 
 let steps: string[] = []

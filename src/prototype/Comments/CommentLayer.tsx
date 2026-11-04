@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { TickCircle, Trash } from 'iconsax-react'
-import { anchorFor, locate, type Anchor } from './commentAnchor'
+import { anchorFor, locate, placeFor, type Anchor } from './commentAnchor'
 import { currentTrail, isReplaying, recordClicks, replayTrail, resetTrail } from './clickTrail'
 import { sendToClaude, type SendResult } from './sendToClaude'
 import SparkleIcon from '@/components/icons/SparkleIcon'
@@ -119,7 +119,7 @@ interface Props {
 function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, onResolve, onDelete, onExit, currentRoute, onGoTo, focusId }: Props) {
   const [, setTick] = useState(0)
   const [hover, setHover] = useState<DOMRect | null>(null)
-  const [draft, setDraft] = useState<{ anchor: Anchor; x: number; y: number } | null>(null)
+  const [draft, setDraft] = useState<{ anchor: Anchor; where: string; x: number; y: number } | null>(null)
   const [openId, setOpenId] = useState<string | null>(null)
   const [showResolved, setShowResolved] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -185,7 +185,7 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
       e.stopPropagation()
       const el = e.target as Element
       setOpenId(null)
-      setDraft({ anchor: anchorFor(el, e.clientX, e.clientY), x: e.clientX, y: e.clientY })
+      setDraft({ anchor: anchorFor(el, e.clientX, e.clientY), where: placeFor(el), x: e.clientX, y: e.clientY })
     }
     const onMove = (e: MouseEvent) => {
       setHover(isChrome(e.target) ? null : (e.target as Element).getBoundingClientRect())
@@ -297,7 +297,7 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
             submitLabel="Post"
             onCancel={() => setDraft(null)}
             onSubmit={async (text, author, website) => {
-              const created = await onAdd({ text, author, website, anchor: draft.anchor, steps: currentTrail() })
+              const created = await onAdd({ text, author, website, anchor: draft.anchor, place: draft.where, steps: currentTrail() })
               setDraft(null)
               if (created) setOpenId(created.id)
             }}
@@ -450,7 +450,9 @@ function CommentLayer({ active, showList, onCloseList, comments, error, onAdd, o
                               {replies > 0 && ` · ${replies} ${replies === 1 ? 'reply' : 'replies'}`}
                             </span>
                             <span className="pcm-list__text">{c.text}</span>
-                            {onThisPage && !locate(c.anchor) && <span className="pcm-list__tag">Not on screen</span>}
+                            {onThisPage && !locate(c.anchor) && (
+                              <span className="pcm-list__tag">{c.place ? `Not on screen · in ${c.place}` : 'Not on screen'}</span>
+                            )}
                           </span>
                         </button>
                       </li>

@@ -8,8 +8,8 @@ export interface Anchor {
   yPct: number
 }
 
-// React's useId values (":r1:") change between renders, so they never anchor anything.
-const stableId = (el: Element) => (el.id && !el.id.includes(':') ? el.id : null)
+// React's useId values (":r1:", "«r1»", "_r_1_") change between renders, so they never anchor anything.
+const stableId = (el: Element) => (el.id && !/[:«»]|_r_/.test(el.id) ? el.id : null)
 
 export function selectorFor(el: Element): string {
   const parts: string[] = []
@@ -52,4 +52,19 @@ export function locate(anchor: Anchor | null): { x: number; y: number; el: Eleme
   const r = el.getBoundingClientRect()
   if (!r.width && !r.height) return null
   return { x: r.left + (r.width * anchor.xPct) / 100, y: r.top + (r.height * anchor.yPct) / 100, el }
+}
+
+const headingIn = (el: Element) =>
+  el.querySelector('h1, h2, h3, h4')?.textContent?.trim().replace(/\s+/g, ' ').slice(0, 60) || null
+
+/** A readable "where": the drawer or modal the element sits in, then its nearest section heading. */
+export function placeFor(el: Element): string {
+  const overlay = el.closest('[role="dialog"], [aria-modal="true"]')
+  const overlayName = overlay ? overlay.getAttribute('aria-label') || headingIn(overlay) : null
+  let section: string | null = null
+  for (let node = el.parentElement; node && node !== overlay && node !== document.body; node = node.parentElement) {
+    section = headingIn(node)
+    if (section) break
+  }
+  return [...new Set([overlayName, section].filter(Boolean))].join(', ')
 }

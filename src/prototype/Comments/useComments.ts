@@ -14,6 +14,8 @@ export interface PrototypeComment {
   parentId: string | null
   /** The clicks on the page that led to the anchor (clickTrail.ts); older comments have none. */
   steps?: string[]
+  /** Where the anchor was when posted, e.g. "Assign courses, Select people to enrol". */
+  place?: string
 }
 
 export interface NewComment {
@@ -22,6 +24,7 @@ export interface NewComment {
   anchor?: Anchor | null
   parentId?: string | null
   steps?: string[]
+  place?: string
   /** Honeypot; always empty from real people. */
   website?: string
 }
