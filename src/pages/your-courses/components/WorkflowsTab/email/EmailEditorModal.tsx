@@ -14,7 +14,7 @@ import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import InputField from '@/components/InputField/InputField'
 import InputInteger from '@/components/InputInteger/InputInteger'
 import Tooltip from '@/components/Tooltip/Tooltip'
-import BracesIcon from '@/components/icons/BracesIcon'
+import { LuBraces } from 'react-icons/lu'
 import ListBulletIcon from '@/components/icons/ListBulletIcon'
 import TextColourIcon from '@/components/icons/TextColourIcon'
 import ListNumberIcon from '@/components/icons/ListNumberIcon'
@@ -588,7 +588,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 {/* Insert field sits inside the input, as its right icon (input.md). */}
                 <div className="eed-menu-anchor">
                   <ToolButton label="Insert field into subject" onClick={() => setMenu(menu === 'subject' ? null : 'subject')}>
-                    <BracesIcon size={20} />
+                    <LuBraces size={20} color="currentColor" aria-hidden />
                   </ToolButton>
                   {menu === 'subject' && (
                     <FieldMenu
@@ -741,7 +741,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                 <div className="eed-menu-anchor">
                   <Button
                     variant="text"
-                    icon={<BracesIcon size={20} />}
+                    icon={<LuBraces size={20} color="currentColor" aria-hidden />}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => setMenu(menu === 'body' ? null : 'body')}
                     aria-expanded={menu === 'body'}

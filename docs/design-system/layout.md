@@ -109,7 +109,7 @@ XXS / XSS / SSM (2/6/10px) are for micro spacing inside components. They are off
 | Figma effect style | CSS token | Value |
 |---|---|---|
 | Shadow S | `--shadow-s` | `-1px -1px 4px 0 rgba(32, 34, 42, 0.04), 1px 1px 4px 0 rgba(32, 34, 42, 0.04)` |
-| Shadow L | `--shadow-l` | `-4px 0 24px 0 rgba(32, 34, 42, 0.12)` (leftward) |
+| Shadow L | `--shadow-l` | `-4px 0 24px 0 rgba(32, 34, 42, 0.12)` (leftward); dark `rgba(15, 16, 20, 0.24)` (Neutral-900 at 24%) |
 | Shadow XL | `--shadow-xl` | `0 4px 32px 0 rgba(32, 34, 42, 0.24)` |
 
 - **Figma only:** the `0` and `100` variables (no CSS token); the Inner-shadow effect style (`inner -4,-4 r0 #2D313D`, "Use this effect in Learning Path cards", no CSS token); the Breakpoints collection (XS 320, S 600, M 900, L 1200, XL 1536), which code does not use as tokens.
