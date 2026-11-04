@@ -175,7 +175,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
             <PeoplePicker
               courseIds={courseIds}
               courseNames={courseNames}
-              modes={['all', 'people', 'teams', 'managers', 'cohorts']}
+              modes={['all', 'people', 'cohorts']}
               committedIds={committed}
               onCommit={(ids) => setCommitted(ids)}
               includeEnrolled
