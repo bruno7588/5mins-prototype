@@ -294,7 +294,13 @@
 
 .eed-tool:hover,
 .eed-tool:active {
-  background: var(--page-background-hover);
+  background: var(--cards-background-hover);
+}
+
+/* Inside the Subject input the icon sits on the input surface, so it hovers like the input. */
+.eed-input .eed-tool:hover,
+.eed-input .eed-tool:active {
+  background: var(--input-background-hover);
 }
 
 /* On: the same Linear glyph drawn heavier, in the selected text colour. Iconsax's
