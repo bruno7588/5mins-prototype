@@ -3,13 +3,21 @@
    so they use fixed palette tokens. Prefix: epv- */
 
 .confirm-modal.epv {
-  /* The 600px email plus the modal's 24px padding each side. */
-  width: calc(600px + 2 * var(--space-l));
+  /* The email is shown scaled down so the modal isn't too tall. 0.87 is the smallest
+     scale that still fits the four channel tabs (516px) on one line. */
+  --epv-email-scale: 0.87;
+  /* The scaled 600px email plus the modal's 24px padding each side. */
+  width: calc(600px * var(--epv-email-scale) + 2 * var(--space-l));
   max-height: calc(100vh - 2 * var(--space-l) - var(--space-xxl));
   overflow-y: auto;
   align-items: stretch;
   /* Pinned to the top, not centred, so only the bottom edge moves as tabs change height. */
   margin: var(--space-xxl) auto auto;
+}
+
+/* No channel tabs, so the height never changes: centre it on the page. */
+.confirm-modal.epv.epv--centred {
+  margin: auto;
 }
 
 /* Page-local underline tabs (chips-switcher-tabs.md). */
@@ -120,6 +128,8 @@
   /* The email fills the card: no gap above or below it. */
   padding: 0;
   background: none;
+  /* Laid out at its real 600px, then drawn smaller; the From/Subject strip stays full size. */
+  zoom: var(--epv-email-scale);
 }
 
 .epv-app-icon {

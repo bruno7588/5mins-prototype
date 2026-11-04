@@ -144,10 +144,11 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
     current === 'email' ? mail : <ChannelPreview channel={current} subject={subject} days={days} />
 
   return (
-    <ConfirmModal open={open} onClose={onClose} closable className="epv" ariaLabel={`Preview ${name}`}>
+    <ConfirmModal open={open} onClose={onClose} closable className={isReminder ? 'epv' : 'epv epv--centred'} ariaLabel={`Preview ${name}`}>
       <SectionHeader
         title="Preview"
         description={name[0].toUpperCase() + name.slice(1)}
+        divider={isReminder}
       />
 
       {isReminder && (
