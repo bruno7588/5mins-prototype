@@ -65,6 +65,7 @@ function YourCourses() {
           <div className="your-courses-enrol-table">
             <div className="your-courses-enrol-row your-courses-enrol-row--head">
               <div className="your-courses-enrol-cell your-courses-enrol-cell--course">Course</div>
+              <div className="your-courses-enrol-cell your-courses-enrol-cell--pass">Pass score</div>
               <div className="your-courses-enrol-cell your-courses-enrol-cell--last your-courses-enrol-cell--sortable">
                 Last enrolment
                 <ArrowDown2 size={16} color="var(--text-secondary)" variant="Linear" />
@@ -92,6 +93,9 @@ function YourCourses() {
                   >
                     {row.title}
                   </span>
+                </div>
+                <div className="your-courses-enrol-cell your-courses-enrol-cell--pass">
+                  {row.passScore === undefined ? 'Not set' : `${row.passScore}%`}
                 </div>
                 <div className="your-courses-enrol-cell your-courses-enrol-cell--last">{lastEnrolmentLabel(row.daysAgo)}</div>
                 <div className="your-courses-enrol-cell your-courses-enrol-cell--users">

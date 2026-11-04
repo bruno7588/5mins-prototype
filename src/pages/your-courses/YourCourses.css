@@ -300,6 +300,12 @@
   gap: var(--space-m);
 }
 
+.your-courses-enrol-cell--pass {
+  width: 120px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .your-courses-enrol-cell--last {
   width: 154px;
   flex-shrink: 0;

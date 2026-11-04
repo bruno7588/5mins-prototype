@@ -11,6 +11,8 @@ export interface EnrolmentRow {
   /** Days since the last enrolment; 0 is today. Drives the label and the sort. */
   daysAgo: number
   enrolledUsers: number
+  /** Course pass score in %; undefined when the course has none ("Not set"). */
+  passScore?: number
   /** Course image; defaults to the shared placeholder. */
   thumb?: string
   /** Order of launches in this session, so the latest of several today comes first. */
@@ -21,17 +23,17 @@ let launches = 0
 
 const rows: EnrolmentRow[] = [
   // DES-335 demo: the licensing course with the trainer sign-off (opens with a Sign-off tab).
-  { id: 'licensing', title: 'Licensing (Scotland) Staff Training', daysAgo: 0, enrolledUsers: 25, thumb: licensingThumb },
+  { id: 'licensing', title: 'Licensing (Scotland) Staff Training', daysAgo: 0, enrolledUsers: 25, passScore: 80, thumb: licensingThumb },
   { id: 'marketing-tools', title: 'Marketing Tools and Resources that Everyone Should know Tools and Resources for Everyone', daysAgo: 3, enrolledUsers: 23 },
-  { id: 'customer-discovery', title: 'Mastering Customer Discovery: Interviews, Surveys and Insights', daysAgo: 5, enrolledUsers: 41 },
-  { id: 'data-privacy', title: 'Foundations of Data Privacy and Compliance for Teams', daysAgo: 7, enrolledUsers: 12 },
+  { id: 'customer-discovery', title: 'Mastering Customer Discovery: Interviews, Surveys and Insights', daysAgo: 5, enrolledUsers: 41, passScore: 70 },
+  { id: 'data-privacy', title: 'Foundations of Data Privacy and Compliance for Teams', daysAgo: 7, enrolledUsers: 12, passScore: 80 },
   { id: 'leadership', title: 'Leadership Essentials: Coaching, Feedback and Difficult Conversations', daysAgo: 2, enrolledUsers: 58 },
   { id: 'onboarding', title: 'Designing Effective Onboarding Journeys for New Hires', daysAgo: 1, enrolledUsers: 7 },
-  { id: 'financial-modelling', title: 'Introduction to Financial Modelling for Non-Finance Managers', daysAgo: 14, enrolledUsers: 34 },
-  { id: 'cybersecurity', title: 'Cybersecurity Awareness: Spotting Phishing and Social Engineering', daysAgo: 4, enrolledUsers: 96 },
+  { id: 'financial-modelling', title: 'Introduction to Financial Modelling for Non-Finance Managers', daysAgo: 14, enrolledUsers: 34, passScore: 75 },
+  { id: 'cybersecurity', title: 'Cybersecurity Awareness: Spotting Phishing and Social Engineering', daysAgo: 4, enrolledUsers: 96, passScore: 90 },
   { id: 'agile', title: 'Agile Delivery in Practice: Sprints, Standups and Retrospectives', daysAgo: 6, enrolledUsers: 19 },
   { id: 'writing-web', title: 'Writing for the Web: Clarity, Tone and Accessibility', daysAgo: 21, enrolledUsers: 28 },
-  { id: 'remote-teams', title: 'Managing Remote Teams Across Time Zones and Cultures', daysAgo: 30, enrolledUsers: 15 },
+  { id: 'remote-teams', title: 'Managing Remote Teams Across Time Zones and Cultures', daysAgo: 30, enrolledUsers: 15, passScore: 60 },
 ]
 
 /** Every row, last enrolment first. */
