@@ -82,7 +82,7 @@ const SIGN_OFF = "<p>That's it! See you in 5Mins! 🚀</p><p><strong>Team 5Mins<
 
 /** Today's 5Mins text for the built-in 7-day and 1-day reminders. */
 export const reminderDefault = (days: number): EmailText => ({
-  subject: `<p>${days === 1 ? 'Power Up : Complete your Course' : "Don't Miss the Boat! : Complete your Course"}</p>`,
+  subject: `<p>${plural(days)} left to complete your course</p>`,
   body:
     `<p>Hi ${f('first_name')} 👋</p>` +
     `<p>Your course is waiting for you - just ${plural(days)} remaining to complete it.</p>` +
