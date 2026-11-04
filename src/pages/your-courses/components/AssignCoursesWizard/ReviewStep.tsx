@@ -1,5 +1,7 @@
-import { Calendar, PlayCircle, Refresh } from 'iconsax-react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { Calendar, Danger, PlayCircle, Refresh } from 'iconsax-react'
 import Toggle from '@/components/Toggle/Toggle'
+import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import { PEOPLE } from '@/data/people'
 import { enrolmentStatus, type EnrolmentStatus } from '@/data/enrolments'
 import { plural, startOffsets, timingParts, type AssignCourse } from './schedule'
@@ -126,6 +128,7 @@ interface Props {
 function ReviewStep({ courses, committedIds, included, onToggleIncluded }: Props) {
   const counts = reviewCounts(courses, committedIds, (id) => includeChoice(included.includes(id)))
   const offsets = startOffsets(courses)
+  const reduce = useReducedMotion()
 
   /* Every count on this step is anchored to the people picked on the People step,
      the same number the stepper shows, so admins see one total and parts of it. */
@@ -187,6 +190,20 @@ function ReviewStep({ courses, committedIds, included, onToggleIncluded }: Props
                       label={`Include ${r.existing} already enrolled`}
                     />
                   )}
+                  {/* Including them overwrites what they have, so say so while it is on. */}
+                  <AnimatePresence initial={false}>
+                    {r.existing > 0 && included.includes(r.course.id) && (
+                      <motion.span
+                        className="acw-review-warning"
+                        {...ARRIVE(reduce)}
+                        exit={{ opacity: 0, transition: { duration: reduce ? 0 : 0.15, ease: 'easeIn' } }}
+                        transition={arriveTransition(reduce)}
+                      >
+                        <Danger size={16} color="currentColor" variant="Bold" />
+                        Their current enrolment and progress will be reset
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </div>
               </li>
             )

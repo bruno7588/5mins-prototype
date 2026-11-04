@@ -326,6 +326,15 @@
   color: var(--text-tertiary);
 }
 
+/* Shown while "Include N already enrolled" is on (alerts-toast.md warning glyph and colour). */
+.acw-review-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--text-warning);
+  font-weight: 600;
+}
+
 /* Callout for people who already have some of the courses (built from .alert). */
 /* Title is Paragraph M semibold (14 / 600) in --text-primary, one step up from
    Alert's Medium --text-secondary. */
