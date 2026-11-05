@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Add, Book1, Buildings2, Calendar, DocumentUpload, Profile, TickCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
@@ -56,9 +57,11 @@ const RESULT_OPTIONS = [
 
 interface Props {
   showToast: (type: 'success', message: string) => void
+  /** Page-header slot that holds the Add Training menu. */
+  actionsSlot?: HTMLElement | null
 }
 
-function ExternalTrainingRecords({ showToast }: Props) {
+function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
   const { records } = useExternalTraining()
   const [drawer, setDrawer] = useState<{ record: ExternalRecord | null } | null>(null)
   const [bulkOpen, setBulkOpen] = useState(false)
@@ -140,10 +143,9 @@ function ExternalTrainingRecords({ showToast }: Props) {
     ),
   }))
 
-  return (
-    <div className="lret">
-      <div className="lret-toolbar lret-toolbar--end">
-        {/* One Add Training button; the menu offers one record or a bulk CSV upload. */}
+  /* One Add Training button; the menu offers one record or a bulk CSV upload.
+     Portalled into the page header, at the far right beside Download Report. */
+  const addMenu = (
         <RowActionsMenu
           ariaLabel="Add Training"
           caret={false}
@@ -162,7 +164,11 @@ function ExternalTrainingRecords({ showToast }: Props) {
           ]}
           onSelect={(key) => (key === 'bulk' ? setBulkOpen(true) : setDrawer({ record: null }))}
         />
-      </div>
+  )
+
+  return (
+    <div className="lret">
+      {actionsSlot && createPortal(addMenu, actionsSlot)}
 
       <FilterBar
         filters={filters}

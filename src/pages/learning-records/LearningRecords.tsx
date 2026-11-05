@@ -136,6 +136,7 @@ function DateCell({ value }: { value: string | null }) {
 
 function LearningRecords() {
   const [activeTab, setActiveTab] = useState<TabKey>('5mins')
+  const [extActionsSlot, setExtActionsSlot] = useState<HTMLDivElement | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filtersExpanded, setFiltersExpanded] = useState(false)
   const [activeFilters, setActiveFilters] = useState<string[]>([])
@@ -583,8 +584,10 @@ function LearningRecords() {
                   </Button>
                 </Tooltip>
                 {/* Save the current filter view as a report */}
-                <Button variant="outlined" onClick={openCreateReport}>Save New Report</Button>
+                <Button onClick={openCreateReport}>Save New Report</Button>
                 </>)}
+                {/* External Training puts its Add Training menu here, at the far right. */}
+                {activeTab === 'external' && <div ref={setExtActionsSlot} className="lrp-ext-actions" />}
               </div>
             </div>
           </div>
@@ -666,7 +669,7 @@ function LearningRecords() {
               getRowKey={(row) => row.id}
             />
           ) : (
-            <ExternalTrainingRecords showToast={showToast} />
+            <ExternalTrainingRecords showToast={showToast} actionsSlot={extActionsSlot} />
           )}
 
 
