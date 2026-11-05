@@ -108,24 +108,19 @@ function hasTextAbove(editor: Editor) {
   return found
 }
 
-/* Course name and due date stay out of the subject: one subject goes to every course. */
-const SUBJECT_EXCLUDED: FieldKey[] = ['course_name', 'due_date']
-
 function FieldMenu({
   type,
-  forSubject,
   placement,
   onPick,
   onClose,
 }: {
   type: EmailType
-  forSubject?: boolean
   placement: 'above' | 'below'
   onPick: (key: FieldKey) => void
   onClose: () => void
 }) {
   const ref = useRef<HTMLDivElement>(null)
-  const keys = fieldsFor(type).filter((k) => !(forSubject && SUBJECT_EXCLUDED.includes(k)))
+  const keys = fieldsFor(type)
 
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
@@ -593,7 +588,6 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
                   {menu === 'subject' && (
                     <FieldMenu
                       type={target.type}
-                      forSubject
                       placement="below"
                       onPick={(key) => insertField(subject, key)}
                       onClose={() => setMenu(null)}
