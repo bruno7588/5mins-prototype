@@ -1,0 +1,163 @@
+/* Account & Settings > External Training (DES-336). Prefix: aet- */
+
+.aet-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  padding-top: var(--space-l);
+}
+
+.aet-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+  width: 100%;
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+  background: var(--cards-background);
+}
+
+.aet-head {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.aet-title {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.aet-text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.aet-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.aet-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.aet-toolbar .search {
+  width: 320px;
+  max-width: 100%;
+}
+
+.aet-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.aet-error-text {
+  color: var(--text-error);
+}
+
+/* ── Course drawer ── */
+.aet-drawer__heading {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.aet-drawer__title {
+  margin: 0;
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.aet-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  padding-top: var(--space-l);
+}
+
+.aet-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-s);
+}
+
+.aet-field > .dropdown {
+  width: 100%;
+}
+
+.aet-label {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.aet-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+}
+
+.aet-row--center {
+  align-items: center;
+}
+
+.aet-unit {
+  width: 160px;
+}
+
+.aet-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+/* ── Modals ── */
+.aet-modal {
+  width: 560px;
+}
+
+.aet-modal--wide {
+  width: 880px;
+}
+
+.aet-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+  width: 100%;
+}
+
+.aet-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-m);
+}
+
+.aet-modal__table {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.aet-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}

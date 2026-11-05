@@ -3,11 +3,14 @@ import { useSearchParams } from 'react-router-dom'
 import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'
 import AuditLog from './components/AuditLog/AuditLog'
 import LayoutSettings from './components/LayoutSettings/LayoutSettings'
+import ExternalTraining from './components/ExternalTraining/ExternalTraining'
+import { isFullAdmin } from '@/data/externalTraining'
 import './Account.css'
 
 type TabKey =
   | 'layout'
   | 'audit-log'
+  | 'external-training'
   | 'skill-lessons'
   | 'instructor-visibility'
   | 'skill-map'
@@ -21,6 +24,8 @@ type TabKey =
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'layout', label: 'Layout' },
   { key: 'audit-log', label: 'Audit Log' },
+  // DES-336: the approved list. Full admins only (D21).
+  ...(isFullAdmin() ? [{ key: 'external-training' as const, label: 'External Training' }] : []),
   { key: 'skill-lessons', label: 'Skill Lessons Visibility' },
   { key: 'instructor-visibility', label: 'Instructor Visibility' },
   { key: 'skill-map', label: 'Skill Map' },
@@ -69,6 +74,8 @@ function Account() {
             <AuditLog initialCourseId={courseParam} />
           ) : activeTab === 'layout' ? (
             <LayoutSettings />
+          ) : activeTab === 'external-training' ? (
+            <ExternalTraining />
           ) : (
             <div className="acs-placeholder">
               This section isn’t part of this prototype yet.
