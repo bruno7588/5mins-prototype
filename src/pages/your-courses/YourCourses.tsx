@@ -95,7 +95,11 @@ function YourCourses() {
                   </span>
                 </div>
                 <div className="your-courses-enrol-cell your-courses-enrol-cell--pass">
-                  {row.passScore === undefined ? 'Not set' : `${row.passScore}%`}
+                  {row.passScore === undefined ? (
+                    <span className="your-courses-enrol-unset">Not set</span>
+                  ) : (
+                    `${row.passScore}%`
+                  )}
                 </div>
                 <div className="your-courses-enrol-cell your-courses-enrol-cell--last">{lastEnrolmentLabel(row.daysAgo)}</div>
                 <div className="your-courses-enrol-cell your-courses-enrol-cell--users">

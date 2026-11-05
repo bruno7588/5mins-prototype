@@ -306,6 +306,10 @@
   white-space: nowrap;
 }
 
+.your-courses-enrol-unset {
+  color: var(--text-tertiary);
+}
+
 .your-courses-enrol-cell--last {
   width: 154px;
   flex-shrink: 0;
