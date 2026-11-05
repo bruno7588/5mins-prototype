@@ -32,7 +32,7 @@ function AssessmentList({ rows, resultCell, onView, pagination }: Props) {
           <li key={a.id} className="asl-card">
             <div className="asl-row">
               <span className="asl-cell asl-c-title">
-                <span className="asl-title">{a.title}</span>
+                <span className="asl-title">{a.lesson ?? a.title}</span>
               </span>
               <span className="asl-cell asl-c-type">
                 {/* The format's own artwork rather than a line icon: the same

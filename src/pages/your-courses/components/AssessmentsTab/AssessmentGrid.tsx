@@ -201,7 +201,7 @@ function Tile({ a }: { a: AssessmentResult }) {
     return (
       <>
         <Head a={a} />
-        <span className="asg-title">{a.title}</span>
+        <span className="asg-title">{a.lesson ?? a.title}</span>
         <span className="asg-foot">
           <span className="asg-label">Nothing submitted yet</span>
         </span>
@@ -213,7 +213,7 @@ function Tile({ a }: { a: AssessmentResult }) {
     return (
       <>
         <Head a={a} />
-        <span className="asg-title">{a.title}</span>
+        <span className="asg-title">{a.lesson ?? a.title}</span>
         {/* The label sits just under the ring, the pair centred in the tile. */}
         <span className="asg-ring-group">
           <Ring pct={pct} />
@@ -228,7 +228,7 @@ function Tile({ a }: { a: AssessmentResult }) {
     return (
       <>
         <Head a={a} />
-        <span className="asg-title">{a.title}</span>
+        <span className="asg-title">{a.lesson ?? a.title}</span>
         <span className="asg-chart">
           <ChoiceBody a={a} />
         </span>
@@ -244,7 +244,7 @@ function Tile({ a }: { a: AssessmentResult }) {
     return (
       <>
         <Head a={a} />
-        <span className="asg-title">{a.title}</span>
+        <span className="asg-title">{a.lesson ?? a.title}</span>
         <span className="asg-chart">
           {/* The split as the correct-answer list draws it: icon, plain text, share badge. */}
           <ul className="asg-correct">
@@ -269,7 +269,7 @@ function Tile({ a }: { a: AssessmentResult }) {
     return (
       <>
         <Head a={a} />
-        <span className="asg-title">{a.title}</span>
+        <span className="asg-title">{a.lesson ?? a.title}</span>
         <span className="asg-chart">
           <OpenResponse
             q={{ id: a.id, kind: 'open', type: a.type, title: a.title, responses: answered, enrolled: a.enrolled }}
@@ -283,7 +283,7 @@ function Tile({ a }: { a: AssessmentResult }) {
   return (
     <>
       <Head a={a} />
-      <span className="asg-title">{a.title}</span>
+      <span className="asg-title">{a.lesson ?? a.title}</span>
       <span className="asg-foot asg-foot--stack">
         <span className="asg-row">
           <span className="asg-figure">{pct}%</span>
