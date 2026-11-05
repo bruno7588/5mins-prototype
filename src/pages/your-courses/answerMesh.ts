@@ -98,11 +98,11 @@ const SHAPES: Record<string, ShapeSpec[]> = {
     circle('--certificate-quiz', 0.2, 0.9, 0.95),
     circle('--warning-600', 0.45, 0.0, 0.5),
   ],
-  /* Indigo and peach, top and bottom. */
+  /* Indigo and peach, all along the top. */
   'lesson-quiz': [
     circle('--certificate-quiz', 0.5, -0.05, 1.0),
-    square('--warning-200', 0.3, 1.05, 0.85, 10, 0.45),
-    circle('--warning-200', 0.9, 0.95, 0.6),
+    square('--warning-200', 0.3, -0.05, 0.85, 10, 0.45),
+    circle('--warning-200', 0.9, 0.05, 0.6),
   ],
 }
 
