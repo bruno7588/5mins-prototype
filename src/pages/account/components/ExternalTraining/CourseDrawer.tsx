@@ -186,12 +186,12 @@ function CourseDrawer({ course, initialName = '', onClose, onSaved }: Props) {
             </div>
 
             <div className="aet-field" role="radiogroup" aria-labelledby="aet-retraining-label">
-              <span id="aet-retraining-label" className="aet-label">Retraining</span>
-              <Radio name="aet-retraining" label="No retraining" checked={!retrains} onChange={() => setRetrains(false)} />
+              <span id="aet-retraining-label" className="aet-label">Expiry</span>
+              <Radio name="aet-retraining" label="No expiry" checked={!retrains} onChange={() => setRetrains(false)} />
               <div className="aet-row aet-row--center">
-                <Radio name="aet-retraining" label="Every" checked={retrains} onChange={() => setRetrains(true)} />
+                <Radio name="aet-retraining" label="Expires after" checked={retrains} onChange={() => setRetrains(true)} />
                 <InputInteger
-                  ariaLabel="Retraining interval in months"
+                  ariaLabel="Expires after, in months"
                   value={months}
                   onChange={(v) => {
                     setMonths(v)
@@ -206,7 +206,7 @@ function CourseDrawer({ course, initialName = '', onClose, onSaved }: Props) {
               {ruleChanged && recordCount > 0 && (
                 <Alert
                   type="Callout"
-                  message={`Changes apply to new records only. The ${recordCount} existing record${recordCount === 1 ? '' : 's'} keep their retraining due dates.`}
+                  message={`Changes apply to new records only. The ${recordCount} existing record${recordCount === 1 ? '' : 's'} keep their expiry dates.`}
                 />
               )}
             </div>

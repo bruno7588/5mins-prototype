@@ -107,9 +107,9 @@ export function retrainingDueDate(
 export const formatDay = (iso: string) =>
   fromIso(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
-/** "Every 12 months" / "No retraining" (same wording everywhere). */
+/** "Expires after 12 months" / "No expiry" (same wording everywhere). */
 export const retrainingLabel = (months: number | null) =>
-  months == null ? 'No retraining' : `Every ${months} month${months === 1 ? '' : 's'}`
+  months == null ? 'No expiry' : `Expires after ${months} month${months === 1 ? '' : 's'}`
 
 export const durationLabel = ({ value, unit }: ExternalCourse['duration']) =>
   `${value} ${value === 1 ? unit.replace(/s$/, '') : unit}`

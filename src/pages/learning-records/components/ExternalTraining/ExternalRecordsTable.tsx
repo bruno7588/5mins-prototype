@@ -91,7 +91,7 @@ function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = tr
     },
     { key: 'provider', header: 'Provider', width: '1 0 160px', render: (r) => recordProviderName(r) || <span className="lret-dash">–</span> },
     { key: 'completion', header: 'Completion date', width: '0 0 136px', render: (r) => formatDay(r.completionDate) },
-    { key: 'due', header: 'Retraining due', width: '0 0 200px', render: (r) => <RetrainingDueCell record={r} all={all} /> },
+    { key: 'due', header: 'Expiry', width: '0 0 200px', render: (r) => <RetrainingDueCell record={r} all={all} /> },
     ...(showDuration
       ? [{ key: 'duration', header: 'Duration', width: '0 0 96px', render: (r: ExternalRecord) => recordDurationLabel(r) || <span className="lret-dash">–</span> }]
       : []),

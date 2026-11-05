@@ -451,23 +451,23 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
 
                   {mode === 'one-off' && result === 'Passed' && (
                     <div className="aet-field">
-                      <span className="aet-label">Retraining due date (optional)</span>
-                      <DatePickerField value={oneOffDue} onChange={setOneOffDue} minDate={completionDate || undefined} ariaLabel="Retraining due date" />
+                      <span className="aet-label">Expiry date (optional)</span>
+                      <DatePickerField value={oneOffDue} onChange={setOneOffDue} minDate={completionDate || undefined} ariaLabel="Expiry date" />
                     </div>
                   )}
 
                   {mode === 'course' && course && completionDate && (
                     <div className="aetd-due" role="status">
                       {result === 'Not Passed' ? (
-                        <span className="aet-text">No retraining due date for a training that wasn't passed.</span>
+                        <span className="aet-text">No expiry date for a training that wasn't passed.</span>
                       ) : dueDate ? (
                         <>
-                          <span className="aetd-value">Retraining due {formatDay(dueDate)}</span>
+                          <span className="aetd-value">Expires {formatDay(dueDate)}</span>
                           {due === 'overdue' && <Badge type="error" label="Overdue" />}
                           {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
                         </>
                       ) : (
-                        <span className="aetd-value">No retraining</span>
+                        <span className="aetd-value">No expiry</span>
                       )}
                     </div>
                   )}

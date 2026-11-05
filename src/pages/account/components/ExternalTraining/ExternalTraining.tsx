@@ -123,7 +123,7 @@ function ExternalTraining() {
       render: (c) => c.providerIds.map(providerName).filter(Boolean).join(', ') || '–',
     },
     { key: 'duration', header: 'Duration', width: '0 0 112px', render: (c) => durationLabel(c.duration) },
-    { key: 'retraining', header: 'Retraining', width: '0 0 160px', render: (c) => retrainingLabel(c.retrainingMonths) },
+    { key: 'retraining', header: 'Expiry', width: '0 0 160px', render: (c) => retrainingLabel(c.retrainingMonths) },
     { key: 'records', header: 'Records', width: '0 0 88px', align: 'center', render: (c) => courseRecords(c.id) },
     {
       key: 'actions',
@@ -298,7 +298,7 @@ function ExternalTraining() {
                 <EmptyState
                   illustration={<img src={emptyBox} alt="" width={72} height={72} />}
                   title="No approved courses yet"
-                  description="Add the external courses your people take, with how often they need retraining."
+                  description="Add the external courses your people take, with how long each one stays valid."
                   secondaryAction={{ label: 'Bulk Upload Courses', onClick: () => setCsvOpen(true) }}
                   primaryAction={{ label: 'Add Course', onClick: () => setCourseDrawer({ course: null }) }}
                 />

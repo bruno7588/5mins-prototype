@@ -32,7 +32,7 @@ type FilterId = 'learner' | 'retraining' | 'course' | 'provider' | 'result'
 
 const FILTER_META: Record<FilterId, { title: string; description: string; Icon: typeof Calendar }> = {
   learner: { title: 'Learner', description: 'Filter by the person the training belongs to', Icon: Profile },
-  retraining: { title: 'Retraining', description: 'Overdue, due soon, upcoming or no due date', Icon: Calendar },
+  retraining: { title: 'Expiry', description: 'Overdue, due soon, valid or no expiry', Icon: Calendar },
   course: { title: 'Course', description: 'Filter by approved course or one-off training', Icon: Book1 },
   provider: { title: 'Provider', description: 'Filter by training provider', Icon: Buildings2 },
   result: { title: 'Result', description: 'Passed or not passed', Icon: TickCircle },
@@ -47,8 +47,8 @@ const GROUPS: FilterGroup[] = [
 const RETRAINING_OPTIONS = [
   { value: 'overdue', label: 'Overdue' },
   { value: 'due-soon', label: 'Due soon' },
-  { value: 'upcoming', label: 'Upcoming' },
-  { value: 'none', label: 'No due date' },
+  { value: 'upcoming', label: 'Valid' },
+  { value: 'none', label: 'No expiry' },
 ]
 const RESULT_OPTIONS = [
   { value: 'Passed', label: 'Passed' },
