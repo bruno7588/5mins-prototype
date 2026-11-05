@@ -123,9 +123,11 @@ interface Props {
   /** Courses whose existing people are included; off by default, so they are skipped. */
   included: string[]
   onToggleIncluded: (courseId: string) => void
+  /** Opened from a profile: name the person rather than counting them. */
+  personName?: string
 }
 
-function ReviewStep({ courses, committedIds, included, onToggleIncluded }: Props) {
+function ReviewStep({ courses, committedIds, included, onToggleIncluded, personName }: Props) {
   const counts = reviewCounts(courses, committedIds, (id) => includeChoice(included.includes(id)))
   const offsets = startOffsets(courses)
   const reduce = useReducedMotion()
@@ -139,7 +141,7 @@ function ReviewStep({ courses, committedIds, included, onToggleIncluded }: Props
       <div className="acw-review-section">
         {/* No Edit buttons: the stepper's completed steps and Back already lead there. */}
         <h4 className="acw-review-heading">
-          Assign {plural(courses.length, 'course')} to {plural(selected, 'person', 'people')}
+          Assign {plural(courses.length, 'course')} to {personName ?? plural(selected, 'person', 'people')}
         </h4>
 
         {/* A short list (1 to 5 courses), so no column header: each row labels its own

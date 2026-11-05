@@ -10,7 +10,7 @@ import PeoplePicker from '../PeoplePicker/PeoplePicker'
 import CoursesStep from './CoursesStep'
 import ReviewStep, { includeChoice, outcomeFor, reviewCounts } from './ReviewStep'
 import { recordCourseLaunches } from '../../activeEnrolments'
-import { plural, type AssignCourse } from './schedule'
+import { plural, startOffsets, type AssignCourse } from './schedule'
 import './AssignCoursesWizard.css'
 
 /* Assign courses (DES-332): Courses → People → Review → success. A one-time bulk
@@ -22,12 +22,19 @@ interface Props {
   onClose: () => void
   /** Success: View Enrolments, to the Active Enrolments tab where the new enrolments show. */
   onDone: () => void
+  /** Opened from a person's profile: these people are already chosen, so there is no People step. */
+  personIds?: string[]
+  /** Who the preset people are, named on Review instead of a count. */
+  personName?: string
+  /** After launch: each course that enrolled someone, with its start in days from today. */
+  onLaunched?: (assigned: { course: AssignCourse; startOffset: number }[]) => void
 }
 
-function AssignCoursesWizard({ onClose, onDone }: Props) {
+function AssignCoursesWizard({ onClose, onDone, personIds, personName, onLaunched }: Props) {
+  const preset = !!personIds
   const [step, setStep] = useState<Step>('courses')
   const [courses, setCourses] = useState<AssignCourse[]>([])
-  const [committed, setCommitted] = useState<string[]>([])
+  const [committed, setCommitted] = useState<string[]>(personIds ?? [])
   // Courses whose existing people the admin chose to include (restart or re-enrol). None
   // by default, so a straight Launch leaves every existing enrolment and completion alone.
   const [included, setIncluded] = useState<string[]>([])
@@ -46,7 +53,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
   // skips them by default and lets the admin restart or re-enrol them.
   const activeCommitted = committed
 
-  const hasWork = courses.length > 0 || committed.length > 0
+  const hasWork = courses.length > 0 || (!preset && committed.length > 0)
   const requestClose = () => {
     if (launched) return onDone()
     if (hasWork) setConfirmDiscard(true)
@@ -63,6 +70,12 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
     recordEnrolments(pairs)
     // The courses land on Your Courses > Active Enrolments as enrolled today.
     recordCourseLaunches(counts.perCourse.map((r) => ({ id: r.course.id, name: r.course.name, thumb: r.course.thumb, enrolled: r.enrol })))
+    const offsets = startOffsets(courses)
+    onLaunched?.(
+      courses
+        .map((course, i) => ({ course, startOffset: offsets[i] }))
+        .filter((_, i) => counts.perCourse[i].enrol > 0),
+    )
     setLaunched({ courses: courses.length, people: counts.people })
   }
 
@@ -76,20 +89,24 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
       done: courses.length > 0,
       count: courses.length,
     },
-    {
-      id: 'people',
-      title: 'People',
-      sub:
-        courses.length === 0
-          ? 'Add courses first'
-          : activeCommitted.length === 0
-            ? 'No people yet'
-            : plural(activeCommitted.length, 'person', 'people'),
-      Icon: Profile2User,
-      state: step === 'people' ? 'current' : courses.length === 0 ? 'locked' : 'reachable',
-      done: activeCommitted.length > 0,
-      count: activeCommitted.length,
-    },
+    ...(preset
+      ? []
+      : [
+          {
+            id: 'people',
+            title: 'People',
+            sub:
+              courses.length === 0
+                ? 'Add courses first'
+                : activeCommitted.length === 0
+                  ? 'No people yet'
+                  : plural(activeCommitted.length, 'person', 'people'),
+            Icon: Profile2User,
+            state: step === 'people' ? 'current' : courses.length === 0 ? 'locked' : 'reachable',
+            done: activeCommitted.length > 0,
+            count: activeCommitted.length,
+          } satisfies WizardStep,
+        ]),
     {
       id: 'review',
       title: 'Review',
@@ -100,6 +117,11 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
     },
   ]
 
+  const launchBlocked =
+    step === 'review' &&
+    reviewCounts(courses, activeCommitted, choiceFor).people === 0 &&
+    'No one to enrol. Include people already enrolled to continue'
+
   const nextBlocked =
     step === 'courses'
       ? courses.length === 0 && 'Add at least one course to continue'
@@ -109,9 +131,12 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
 
   const action =
     step === 'review' ? (
-      <Button size="lg" onClick={launch}>
-        Assign Courses
-      </Button>
+      // Everyone picked already has every course and none are included: nothing to launch.
+      <Tooltip text={launchBlocked || ''} position="Top" icon={false} disabled={!launchBlocked}>
+        <Button size="lg" disabled={!!launchBlocked} onClick={launch}>
+          Assign Courses
+        </Button>
+      </Tooltip>
     ) : (
       <Tooltip text={nextBlocked || ''} position="Top" icon={false} disabled={!nextBlocked}>
         {/* People step: one button commits the ticked people and moves on, instead of a
@@ -123,7 +148,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
             if (step === 'people') {
               setCommitted(draftIds)
               setStep('review')
-            } else setStep('people')
+            } else setStep(preset ? 'review' : 'people')
           }}
         >
           {step === 'people'
@@ -154,7 +179,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
         action={action}
         backAction={
           step !== 'courses' && (
-            <Button variant="outlined-2" size="lg" onClick={() => setStep(step === 'review' ? 'people' : 'courses')}>
+            <Button variant="outlined-2" size="lg" onClick={() => setStep(step === 'review' && !preset ? 'people' : 'courses')}>
               Back
             </Button>
           )
@@ -171,7 +196,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
         </div>
         <div hidden={step !== 'people'}>
           <h3 className="wzs-section-title acw-step-title">Select people to enrol</h3>
-          {courses.length > 0 && (
+          {!preset && courses.length > 0 && (
             <PeoplePicker
               courseIds={courseIds}
               courseNames={courseNames}
@@ -185,7 +210,7 @@ function AssignCoursesWizard({ onClose, onDone }: Props) {
           )}
         </div>
         <div hidden={step !== 'review'}>
-          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} included={included} onToggleIncluded={toggleIncluded} />}
+          {step === 'review' && <ReviewStep courses={courses} committedIds={activeCommitted} included={included} onToggleIncluded={toggleIncluded} personName={personName} />}
         </div>
       </WizardShell>
 

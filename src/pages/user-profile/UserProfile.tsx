@@ -17,6 +17,8 @@ import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type Filter
 import ExtendDueDateModal, { type ExtendDueDate } from './components/ExtendDueDateModal/ExtendDueDateModal'
 import EditStartDateModal, { type StartDateChange } from './components/EditStartDateModal/EditStartDateModal'
 import GiveAnotherAttemptModal from './components/GiveAnotherAttemptModal/GiveAnotherAttemptModal'
+import AssignCoursesWizard from '@/pages/your-courses/components/AssignCoursesWizard/AssignCoursesWizard'
+import type { AssignCourse } from '@/pages/your-courses/components/AssignCoursesWizard/schedule'
 import { COURSE_STATUS_CARDS, type CourseStatusCard } from '@/data/courseStatusCards'
 import ProfileMenu from '@/components/ProfileMenu/ProfileMenu'
 import { Logo, learnerSideItems, teamProfiles } from '../my-team/MyTeam'
@@ -312,9 +314,34 @@ function UserProfile() {
   const person = PEOPLE[id] ?? teamProfiles[id] ?? PEOPLE['1']
 
   const [activeTab, setActiveTab] = useState<Tab>('Course Progress')
+  const [assignOpen, setAssignOpen] = useState(false)
   // Due dates are editable via the bulk actions, so the list is state, not the const.
   const [courses, setCourses] = useState<CourseProgress[]>(COURSES)
   const [view, setView] = useState<CourseView>('all')
+  /* Courses assigned from this profile join Course Progress as new enrolments: Not
+     Started when they start today, Scheduled when they start later. Re-assigning a
+     course the person already has replaces that row (a restart). */
+  const addAssigned = (assigned: { course: AssignCourse; startOffset: number }[]) => {
+    const isoIn = (days: number) => {
+      const d = new Date()
+      d.setDate(d.getDate() + days)
+      return d.toISOString().slice(0, 10)
+    }
+    const rows: CourseProgress[] = assigned.map(({ course, startOffset }) => ({
+      id: `assigned-${course.id}`,
+      course: course.name,
+      thumb: course.thumb,
+      startDate: isoIn(startOffset),
+      dueDate: course.due.kind === 'none' ? '' : isoIn(startOffset + course.due.daysAfterStart),
+      progress: 0,
+      score: null,
+      status: startOffset === 0 ? 'Not Started' : 'Scheduled',
+      completionDate: null,
+      compliance: false,
+    }))
+    const names = new Set(rows.map((r) => r.course))
+    setCourses((cs) => [...rows, ...cs.filter((c) => !names.has(c.course))])
+  }
   const inView = (c: CourseProgress) => view === 'all' || c.compliance
   /* Which enrolments the Extend-due-date modal is acting on: the whole
      selection ('bulk') or the single row its menu was opened from. */
@@ -626,9 +653,18 @@ function UserProfile() {
                 <h2 className="up-name">{person.name}</h2>
                 <p className="up-meta">{person.role} · {person.email}</p>
               </div>
-              <Button variant="filled" className="up-edit ui-disabled" disabled>
-                Edit Profile
-              </Button>
+              {/* Admin only: the Assign Courses flow with this person already chosen,
+                  so it goes Courses → Review with no People step. */}
+              <div className="up-ctas">
+                {!isLearnerView && (
+                  <Button variant="outlined" onClick={() => setAssignOpen(true)}>
+                    Assign Courses
+                  </Button>
+                )}
+                <Button variant="filled" className="ui-disabled" disabled>
+                  Edit Profile
+                </Button>
+              </div>
             </div>
 
             <div className="up-divider" />
@@ -878,6 +914,21 @@ function UserProfile() {
       <LeftSidebar />
       <main className="up-main">{page}</main>
       {overlays}
+      {/* The shared people roster keys people as person-N; the profile route id is N. */}
+      {assignOpen && (
+        <AssignCoursesWizard
+          personIds={[`person-${id}`]}
+          personName={person.name}
+          onClose={() => setAssignOpen(false)}
+          onLaunched={addAssigned}
+          // View Enrolments: back to Course Progress, showing every course so the new ones are in view.
+          onDone={() => {
+            setAssignOpen(false)
+            setActiveTab('Course Progress')
+            setView('all')
+          }}
+        />
+      )}
     </div>
   )
 }

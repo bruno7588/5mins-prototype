@@ -55,8 +55,11 @@
   margin: var(--space-xxs) 0 0;
 }
 
-/* Push the CTA to the far right of the headline row */
-.up-edit {
+/* Push the CTAs to the far right of the headline row */
+.up-ctas {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
   margin-left: auto;
 }
 
