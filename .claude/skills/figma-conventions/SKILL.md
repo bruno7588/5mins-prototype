@@ -143,7 +143,7 @@ Import with `figma.importStyleByKeyAsync(key)` / `figma.variables.importVariable
 All annotation uses the Library **Callout** component set (`Type` = `Why`, `Flow description`, `Note`). Fill its existing text layers; never add loose text to the canvas.
 
 - **Why** (row 0, 1536 wide): heading "Why", body with three labels: `Context:`, `Problem to solve:`, `Solution:`. Each label on its own line, its text on the next, a blank line between labels. One or two plain sentences each. Context names every surface the feature covers. Solution says what the thing is in one line, never a list of its controls ("One page shaped for every format: the question, a chart of how everyone answered, and learner table view").
-- **Flow description** (start of each row, 600 wide, row height): `Flow` = the flow title. `Description` = one opening line on what the flow is or what Correct means, then only the labelled groups that apply, each label on its own line and a blank line between groups: `Chart:`, `Table:`, `Filter:`, `Actions:` (bullets). Keep what engineering cannot see on the screen: what each control does to the data, scoring and sort rules, limits and defaults, exact UI copy in quotes ("No results", "1-10 of 112"), sizes that matter to build. If the rules do not fit, carry the rest in a `Note` placed in the row right after the flow callout. Plain sentences, no em dashes.
+- **Flow description** (start of each row, 600 wide, row height): `Flow` = the flow title. `Description` = one opening line on what the flow is or what Correct means, then only the labelled groups that apply, each label on its own line and a blank line between groups: `Chart:`, `Table:`, `Filter:`, `Actions:` (bullets). Keep what engineering cannot see on the screen: what each control does to the data, scoring and sort rules, limits and defaults, exact UI copy in quotes ("No results", "1-10 of 112"), sizes that matter to build. If the rules do not fit, carry the rest in a `Note` placed in the row right after the flow callout. Bullets, not paragraphs: follow the **Callout copy rules** below.
 - **Write less** (Bruno cut about 40% of the Answers callouts on 2026-11-03; these are the cuts he made):
   - A spec shared by several flows (chart styling, motion, a common component) goes once in a `Note` with a link to the handover, never repeated in each Flow callout.
   - No cross-references ("as Multiple choice", "sort and filter as Situational test"). Describe only what is different in this flow.
@@ -152,6 +152,33 @@ All annotation uses the Library **Callout** component set (`Type` = `Why`, `Flow
   - No exports or off-screen data (CSV columns) unless the flow is about them.
   - Plain words: "%" not "share"; "on a badge" without its colours.
   - Draft, then cut: before handing over, remove every line that repeats another callout, describes the screen, or names something absent.
+- **Callout copy rules** (Bruno, 2026-11-05: callouts were too verbose; readers scan, they don't read, so write for scanning). Apply to Why, Flow description and Note:
+  1. **Lead with the point.** The opening line says what the flow is in 12 words or fewer. Everything after it is detail.
+  2. **Bullets, not paragraphs.** Under each label, one idea per bullet, 15 words or fewer. No paragraph runs past two lines. Why lines stay one or two short sentences.
+  3. **Labels as headings.** Each group gets a label on its own line (`Rules:`, `Copy:`, `Actions:`, `Chart:`, `Table:`, `Filter:`), bullets under it, a blank line between groups. Only the groups that apply.
+  4. **Condition, then result.** Write rules as `When X: Y` or `X → Y` ("No one to enrol → Assign Courses disabled"), not as a sentence that explains why.
+  5. **Fragments are fine.** Drop articles and filler ("so that", "in order to", "the user can", "here we"). Active voice, present tense.
+  6. **Exact UI copy on its own bullet**, in quotes, under `Copy:`. Never bury a string inside a sentence.
+  7. **At most five bullets per group.** More than that means a `Note`, or that some bullets restate the screen.
+  8. **The cut test.** For each bullet ask: would engineering build anything differently without it? If not, delete it.
+  9. House style: British English, plain words, no em dashes, button names in Title Case.
+
+  Before (too long): "Opened from Assign Courses on a person's profile (People). The person is already chosen, so there is no People step: Courses, then Review. Assign Courses is disabled when no one would be enrolled, here because the person already has both courses and Include is off."
+
+  After:
+  ```
+  Assign courses to one person, from their profile.
+
+  Rules:
+  • Person preset → no People step (Courses, Review)
+  • No one to enrol → Assign Courses disabled
+  • View Enrolments → profile, Course Progress tab
+
+  Copy:
+  • Heading: "Assign 3 courses to Anthonny Wallace"
+  • Tooltip: "No one to enrol. Include people already enrolled to continue"
+  • Toast: "3 courses assigned to Anthonny Wallace"
+  ```
 - **Note** (as needed): a short label placed just above the screen it explains, aligned to the detail it points at, width hugging the text (Bruno's run about 330-520 wide, 72-120 tall). Use it for edge cases, sticky behaviour, or copy such as an email subject line.
 - **Cursor:** on every screen reached by a click, put a Library `Cursor` {Type=Pointer} instance on the element that is clicked to go to the next screen, absolute-positioned inside that element's parent frame, tip on the element.
 - **Hover states under the cursor (always):** wherever a cursor sits, the screen shows every hover state the prototype shows at that point, never the rest state. That means the element under the tip (button, icon button, link, menu item, chip) in its Library `State=Hover` variant, **and** any container that hovers too (a table row in its row-hover fill, a card in its hover fill, a list row). Read the hover styles from the matching `docs/design-system/*.md` and confirm them in the browser with `browser_hover` before building; bind the hover tokens, never a typed colour. A tooltip that the prototype shows on hover (every icon-only control) is shown as well. A screen with a cursor and no hover state is a defect.
