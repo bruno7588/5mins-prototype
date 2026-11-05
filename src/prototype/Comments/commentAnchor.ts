@@ -29,6 +29,29 @@ export function selectorFor(el: Element): string {
   return parts.join(' > ')
 }
 
+/* A path either starts at an id (#root) or at a direct child of <body>: a portalled modal or
+   drawer. Body's children differ between builds (the dev-only Inspect root, the comment layer),
+   so the first step's position is ignored and the rest of the path is tried in each portal. */
+const isPortal = (el: Element) =>
+  el.tagName !== 'SCRIPT' && !el.id && !el.matches('[data-inspect-ignore]')
+
+/** The element a saved path points at, or null. */
+export function find(selector: string): Element | null {
+  try {
+    if (selector.startsWith('#')) return document.querySelector(selector)
+    const [first, ...rest] = selector.replace(/^body > /, '').split(' > ')
+    const tag = first.replace(/:nth-of-type\(\d+\)$/, '')
+    for (const top of Array.from(document.body.children)) {
+      if (!isPortal(top) || !top.matches(tag)) continue
+      const el = rest.length ? top.querySelector(`:scope > ${rest.join(' > ')}`) : top
+      if (el) return el
+    }
+  } catch {
+    // A malformed saved path matches nothing.
+  }
+  return null
+}
+
 export function anchorFor(el: Element, clientX: number, clientY: number): Anchor {
   const r = el.getBoundingClientRect()
   const pct = (v: number) => Math.round(Math.min(Math.max(v, 0), 100) * 10) / 10
@@ -42,12 +65,7 @@ export function anchorFor(el: Element, clientX: number, clientY: number): Anchor
 /** The pin's viewport position, or null when the element is not on the page right now. */
 export function locate(anchor: Anchor | null): { x: number; y: number; el: Element } | null {
   if (!anchor?.selector) return null
-  let el: Element | null = null
-  try {
-    el = document.querySelector(anchor.selector)
-  } catch {
-    return null
-  }
+  const el = find(anchor.selector)
   if (!el) return null
   const r = el.getBoundingClientRect()
   if (!r.width && !r.height) return null
