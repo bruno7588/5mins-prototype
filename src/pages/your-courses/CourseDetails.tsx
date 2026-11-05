@@ -128,7 +128,7 @@ const learners: Learner[] = [
 const TABS: { key: Tab; label: string; count?: number }[] = [
   { key: 'content', label: 'Course Content' },
   { key: 'enrolments', label: 'Enrolments', count: TOTAL },
-  { key: 'assessments', label: 'Answers' },
+  { key: 'assessments', label: 'Responses' },
   { key: 'settings', label: 'Settings' },
   { key: 'overview', label: 'Overview' },
 ]

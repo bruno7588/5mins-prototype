@@ -35,7 +35,7 @@ const HANDOVER_MS = 900
  *  still opening — the tween measures its target once, so text arriving mid-open is text
  *  the height it settles on never counted. */
 const OPEN_MS = 300
-const STEPS = ['Reading assessment answers', 'Writing the summary']
+const STEPS = ['Reading assessment responses', 'Writing the summary']
 /** Below this, a summary says more about the sample than about the cohort. */
 const MIN_RESPONSES = 5
 

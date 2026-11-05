@@ -159,7 +159,7 @@ function filterOptions(a: AssessmentResult): { value: string; label: string }[] 
      chose is in the chart above and in the row itself. */
   if (a.kind === 'graded' || a.kind === 'multi')
     return [
-      { value: ALL, label: 'All answers' },
+      { value: ALL, label: 'All responses' },
       { value: 'correct', label: 'Correct' },
       { value: 'incorrect', label: 'Incorrect' },
       NOT_ANSWERED_OPTION,
@@ -380,7 +380,7 @@ function AssessmentAnswers() {
     const url = URL.createObjectURL(new Blob(['﻿' + body], { type: 'text/csv;charset=utf-8' }))
     const link = document.createElement('a')
     link.href = url
-    link.download = `${a.title} answers.csv`
+    link.download = `${a.title} responses.csv`
     link.click()
     URL.revokeObjectURL(url)
   }
@@ -595,7 +595,7 @@ function AssessmentAnswers() {
               /* Not the assessment's name, because it does not have one — a question is
                  its whole identity, and one of those is too long for a crumb while a
                  lesson quiz has three. The crumb says where you are instead. */
-              { label: 'View Answers' },
+              { label: 'View Responses' },
             ]}
           />
 
@@ -711,7 +711,7 @@ function AssessmentAnswers() {
                     onClick={download}
                     disabled={a.responses.length === 0}
                   >
-                    Download Answers
+                    Download Responses
                   </Button>
                 ) : null}
                 </div>
@@ -723,7 +723,7 @@ function AssessmentAnswers() {
                   title="No results"
                   description={
                     narrowed
-                      ? "Clear the search or the answer filter to see every answer"
+                      ? "Clear the search or the answer filter to see every response"
                       : "Nobody has answered this yet."
                   }
                 />

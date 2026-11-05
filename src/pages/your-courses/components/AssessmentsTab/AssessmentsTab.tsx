@@ -164,7 +164,7 @@ function AssessmentsTab() {
     return (
       <section className="asm asm--empty">
         <img className="asm-empty__art" src={emptyBoxIllustration} alt="" width={72} height={72} />
-        <h3 className="asm-empty__title">No answers yet</h3>
+        <h3 className="asm-empty__title">No responses yet</h3>
         <p className="asm-empty__body">
           Lesson quizzes and assessments you add to this course appear here, with how learners answered them.
         </p>
@@ -201,14 +201,14 @@ function AssessmentsTab() {
             ]}
             activeKey={version}
             onChange={setVersion}
-            ariaLabel="Answers layout"
+            ariaLabel="Responses layout"
           />
           <Button
             variant="outlined-2"
             onClick={downloadCsv}
             icon={<CsvIcon size={20} color="currentColor" />}
           >
-            Download Answers
+            Download Responses
           </Button>
         </div>
         {/* Generate Insights button removed for now — to be rebuilt later. The insights

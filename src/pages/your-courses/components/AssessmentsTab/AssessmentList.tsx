@@ -23,7 +23,7 @@ function AssessmentList({ rows, resultCell, onView, pagination }: Props) {
         <span className="asl-c-title">Title</span>
         <span className="asl-c-type">Type</span>
         <span className="asl-c-result">Result</span>
-        <span className="asl-c-responses">Answers nº</span>
+        <span className="asl-c-responses">Responses nº</span>
         <span className="asl-c-action" aria-hidden="true" />
       </div>
 
@@ -60,7 +60,7 @@ function AssessmentList({ rows, resultCell, onView, pagination }: Props) {
               </span>
               <span className="asl-cell asl-c-action">
                 <Button variant="outlined-2" size="sm" onClick={() => onView(a)}>
-                  View Answers
+                  View Responses
                 </Button>
               </span>
             </div>
