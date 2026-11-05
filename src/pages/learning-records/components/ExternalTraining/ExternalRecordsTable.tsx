@@ -96,17 +96,17 @@ function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = tr
       ? [{ key: 'duration', header: 'Duration', width: '0 0 96px', render: (r: ExternalRecord) => recordDurationLabel(r) || <span className="lret-dash">–</span> }]
       : []),
     {
-      key: 'result',
-      header: 'Result',
-      width: '0 0 120px',
-      render: (r) => <Badge type={r.result === 'Passed' ? 'success' : 'error'} icon={false} label={r.result} />,
-    },
-    {
       key: 'score',
       header: 'Score',
       width: '0 0 80px',
       align: 'center',
       render: (r) => (r.score != null ? `${r.score}%` : <span className="lret-dash">–</span>),
+    },
+    {
+      key: 'result',
+      header: 'Result',
+      width: '0 0 120px',
+      render: (r) => <Badge type={r.result === 'Passed' ? 'success' : 'error'} icon={false} label={r.result} />,
     },
     {
       key: 'certificate',
