@@ -39,6 +39,8 @@ import thumb9 from '../../assets/programs/course-thumbs/course-thumb-9.jpg'
 import './UserProfile.css'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
+import ExternalTrainingTab, { type ExternalTrainingViewer } from './components/ExternalTrainingTab/ExternalTrainingTab'
+import { SIGNED_IN_LEARNER_ID } from '@/data/externalTraining'
 
 /* ─── Header lookup ─── Mirrors the active People rows (src/pages/people/People.tsx)
    so a profile resolves from its route id. Kept minimal on purpose — a prototype
@@ -59,7 +61,7 @@ const PEOPLE: Record<string, ProfilePerson> = {
   '5': { name: 'Erik Johansson', role: 'Data Analyst', email: 'erik.j@email.com', avatar: 'EJ' },
 }
 
-const TABS = ['Engagement', 'Skills', 'Course Progress', 'Certificates'] as const
+const TABS = ['Engagement', 'Skills', 'Course Progress', 'Certificates', 'External Training'] as const
 type Tab = (typeof TABS)[number]
 
 /* Enrolment lifecycle. Scheduled = start date still ahead, so the learner
@@ -312,6 +314,16 @@ function UserProfile() {
      resolves either roster, so a pasted link still finds its person. */
   const isLearnerView = useLocation().pathname.startsWith('/my-team')
   const person = PEOPLE[id] ?? teamProfiles[id] ?? PEOPLE['1']
+  /* External Training viewer (D13): the admin side edits; under /my-team the signed-in
+     learner sees their own records and a manager their team's, read-only. Anyone else
+     under /my-team gets the team guard (Blocker 2). */
+  const externalViewer: ExternalTrainingViewer | null = !isLearnerView
+    ? 'admin'
+    : id === SIGNED_IN_LEARNER_ID
+      ? 'learner'
+      : teamProfiles[id]
+        ? 'manager'
+        : null
 
   const [activeTab, setActiveTab] = useState<Tab>('Course Progress')
   const [assignOpen, setAssignOpen] = useState(false)
@@ -674,7 +686,7 @@ function UserProfile() {
 
             <div className="up-tabs" role="tablist">
               {TABS.map((tab) => {
-                const isReady = tab === 'Course Progress'
+                const isReady = tab === 'Course Progress' || tab === 'External Training'
                 return (
                   <button
                     key={tab}
@@ -692,6 +704,13 @@ function UserProfile() {
             </div>
           </header>
 
+          {activeTab === 'External Training' ? (
+            externalViewer ? (
+              <ExternalTrainingTab personId={id} personName={person.name} viewer={externalViewer} showToast={showToast} />
+            ) : (
+              <p className="uet-text uet-guard">You can only see people in your team.</p>
+            )
+          ) : (<>
           <ContentSwitcher
             className="up-view-switcher"
             ariaLabel="Course view"
@@ -762,6 +781,7 @@ function UserProfile() {
               pagination={{ from: rows.length ? 1 : 0, to: rows.length, total: rows.length }}
             />
           )}
+          </>)}
         </div>
   )
 

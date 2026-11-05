@@ -22,49 +22,6 @@
   align-items: center;
 }
 
-.lr__add-training-wrap {
-  position: relative;
-}
-
-.lr__add-menu {
-  position: absolute;
-  top: calc(100% + 4px);
-  right: 0;
-  z-index: 1000;
-  min-width: 200px;
-  width: max-content;
-  background: var(--cards-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-l);
-  padding: var(--space-s);
-  margin: 0;
-  list-style: none;
-}
-
-.lr__add-menu-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-s) var(--space-sm);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-primary);
-  text-align: left;
-  cursor: pointer;
-  transition: background 100ms ease;
-}
-
-.lr__add-menu-item:hover {
-  background: var(--cards-background-hover);
-}
-
 /* ── Filters bar ── */
 .lr__filters {
   display: flex;
@@ -199,75 +156,6 @@
   color: var(--danger-400);
 }
 
-/* ── Floating bulk action bar ── */
-.lr__bulk-bar {
-  position: fixed;
-  bottom: var(--space-l);
-  left: 50%;
-  transform: translateX(calc(-50% + 120px));
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm);
-  background: var(--tooltip-background);
-  border-radius: var(--radius-m); /* 16px — same as the shared .bulk-bar */
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--neutral-900) 24%, transparent);
-  animation: lr-bulk-bar-slide-up 140ms ease-out;
-}
-
-.lr__bulk-bar-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  background: var(--input-background);
-  border: none;
-  cursor: pointer;
-  color: var(--neutral-300);
-}
-
-.lr__bulk-bar-close:hover {
-  background: color-mix(in srgb, var(--neutral-0) 10%, transparent);
-  color: var(--neutral-0);
-}
-
-.lr__bulk-bar-count {
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--neutral-200);
-  white-space: nowrap;
-}
-
-.lr__bulk-bar-divider {
-  width: 1px;
-  height: 24px;
-  background: color-mix(in srgb, var(--neutral-0) 16%, transparent);
-  flex-shrink: 0;
-}
-
-.lr__bulk-bar-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-xss) var(--space-sm);
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-h5);
-  font-weight: 700;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  border: none;
-  background: var(--danger-500);
-  color: var(--neutral-0);
-  white-space: nowrap;
-}
-
-.lr__bulk-bar-btn:hover {
-  background: var(--danger-600);
-}
-
 @keyframes lr-bulk-bar-slide-up {
   from {
     opacity: 0;
@@ -277,4 +165,9 @@
     opacity: 1;
     transform: translateX(calc(-50% + 120px)) translateY(0);
   }
+}
+
+/* DES-336: Expiry filter on the manager's External Training list. */
+.lr__expiry-filter {
+  width: 220px;
 }

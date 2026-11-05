@@ -1,0 +1,31 @@
+/* Person profile > External Training (DES-336). Prefix: uet- */
+
+.uet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.uet-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+/* The Add Training button sits at the right even when there's no sentence. */
+.uet-toolbar > .ds-btn:only-child {
+  margin-left: auto;
+}
+
+.uet-text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.uet-guard {
+  padding: var(--space-xl) 0;
+}

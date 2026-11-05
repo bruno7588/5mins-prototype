@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
-import { Add, ArrowDown2, Danger, DocumentUpload } from 'iconsax-react'
-import MoreIcon from '../../components/icons/MoreIcon'
+import { useMemo, useState } from 'react'
+import { Add, ArrowDown2 } from 'iconsax-react'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Button from '../../components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import { Table, type Column } from '@/components/Table/Table'
-import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
-import ToastContainer, { useToast } from '../../components/Toast/Toast'
-import AddTrainingDrawer from './AddTrainingDrawer'
+import Dropdown from '@/components/Dropdown/Dropdown'
+import EmptyState from '@/components/EmptyState/EmptyState'
+import certificatesIllustration from '@/assets/empty-state-illustrations/certificates.svg'
+import ExternalRecordsTable from '@/pages/learning-records/components/ExternalTraining/ExternalRecordsTable'
+import { dueRank, dueState, useExternalTraining } from '@/data/externalTraining'
+import { teamProfiles } from './MyTeam'
 import './LearningRecordsTab.css'
 
 type ChipType = '5mins' | 'external'
@@ -194,37 +196,6 @@ const mockData: LearningRecord[] = [
   },
 ]
 
-/* ── External Training data ── */
-
-type ExternalResult = 'Passed' | 'Not Passed'
-
-interface ExternalTraining {
-  id: string
-  email: string
-  training: string
-  provider: string
-  startDate: string
-  completionDate: string | null
-  expiration: string | null
-  duration: string
-  score: string | null
-  result: ExternalResult
-  hasCertificate: boolean
-}
-
-const externalData: ExternalTraining[] = [
-  { id: 'e1', email: 'michael.t@company.com', training: 'Project Management Fundamentals', provider: 'Leadership Academy', startDate: '2026-04-13', completionDate: '2026-04-25', expiration: '2026-05-10', duration: '2 days', score: '100%', result: 'Passed', hasCertificate: true },
-  { id: 'e2', email: 'jessica.h@company.com', training: 'Advanced Excel for Finance', provider: 'SkillBridge Online', startDate: '2026-03-20', completionDate: '2026-04-02', expiration: null, duration: '3 days', score: null, result: 'Not Passed', hasCertificate: false },
-  { id: 'e3', email: 'david.j@company.com', training: 'Data Analytics Bootcamp', provider: 'TechForward Institute', startDate: '2026-04-01', completionDate: '2026-04-15', expiration: '2027-04-15', duration: '5 days', score: '92%', result: 'Passed', hasCertificate: true },
-  { id: 'e4', email: 'noah.w@company.com', training: 'Customer Experience Design', provider: 'CX Academy', startDate: '2026-03-10', completionDate: '2026-03-22', expiration: '2026-09-22', duration: '2 days', score: '100%', result: 'Passed', hasCertificate: true },
-  { id: 'e5', email: 'mei.t@company.com', training: 'First Aid & CPR Certification', provider: 'Red Cross Training', startDate: '2026-02-15', completionDate: '2026-02-16', expiration: null, duration: '1 day', score: null, result: 'Not Passed', hasCertificate: false },
-  { id: 'e6', email: 'ethan.b@company.com', training: 'Barista Mastery Program', provider: 'Coffee Institute', startDate: '2026-04-05', completionDate: '2026-04-12', expiration: '2027-04-12', duration: '2 days', score: '100%', result: 'Passed', hasCertificate: true },
-  { id: 'e7', email: 'priya.s@company.com', training: 'Leadership & Team Management', provider: 'Leadership Academy', startDate: '2026-03-25', completionDate: '2026-04-08', expiration: null, duration: '3 days', score: null, result: 'Not Passed', hasCertificate: false },
-  { id: 'e8', email: 'samantha.r@company.com', training: 'Financial Modelling Workshop', provider: 'FinanceHub', startDate: '2026-04-10', completionDate: '2026-04-18', expiration: '2027-04-18', duration: '2 days', score: '95%', result: 'Passed', hasCertificate: true },
-  { id: 'e9', email: 'laura.c@company.com', training: 'ISO 27001 Auditor Training', provider: 'CompliancePro', startDate: '2026-03-01', completionDate: '2026-03-15', expiration: '2027-03-15', duration: '5 days', score: '88%', result: 'Passed', hasCertificate: true },
-  { id: 'e10', email: 'marcus.r@company.com', training: 'Workplace Safety Advanced', provider: 'SafeWork Training', startDate: '2026-02-20', completionDate: '2026-03-05', expiration: '2026-09-05', duration: '2 days', score: '100%', result: 'Passed', hasCertificate: true },
-]
-
 function formatDate(dateStr: string): { line1: string; line2: string } {
   const d = new Date(dateStr + 'T00:00:00')
   const month = d.toLocaleString('en-US', { month: 'short' })
@@ -287,93 +258,30 @@ const recordColumns: Column<LearningRecord>[] = [
   },
 ]
 
-const externalColumns: Column<ExternalTraining>[] = [
-  { key: 'email', header: 'Email', width: '1 0 240px', render: (row) => row.email },
-  { key: 'training', header: 'Training', width: '0 0 200px', render: (row) => row.training },
-  { key: 'provider', header: 'Training provider', width: '0 0 200px', render: (row) => row.provider },
-  { key: 'startDate', header: 'Start date', width: '0 0 104px', render: (row) => <DateCell value={row.startDate} /> },
-  { key: 'completionDate', header: 'Completion date', width: '0 0 144px', render: (row) => <DateCell value={row.completionDate} /> },
-  { key: 'expiration', header: 'Expiration', width: '0 0 104px', render: (row) => <DateCell value={row.expiration} /> },
-  { key: 'duration', header: 'Duration', width: '0 0 84px', render: (row) => row.duration },
-  { key: 'score', header: 'Score', width: '0 0 72px', render: (row) => row.score ?? '—' },
-  {
-    key: 'result',
-    header: 'Result',
-    width: '0 0 128px',
-    render: (row) => (
-      <span className={`lr__badge ${row.result === 'Passed' ? 'lr__badge--completed' : 'lr__badge--not-passed'}`}>
-        {row.result}
-      </span>
-    ),
-  },
-  {
-    key: 'certificate',
-    header: 'Certificate',
-    width: '0 0 140px',
-    render: (row) => row.hasCertificate
-      ? <Button size="sm" variant="outlined" className="ui-disabled" disabled>Download</Button>
-      : <span className="lr__date-dash">—</span>,
-  },
-  {
-    key: 'more',
-    header: '',
-    width: '0 0 56px',
-    align: 'center',
-    render: () => (
-      <span className="ui-disabled">
-        <MoreIcon size={24} color="var(--text-tertiary)" />
-      </span>
-    ),
-  },
+/* Expiry filter for the manager's read-only list (PRD 3.6, D22). */
+const EXPIRY_FILTER = [
+  { value: 'all', label: 'All' },
+  { value: 'overdue', label: 'Overdue' },
+  { value: 'due-soon', label: 'Due soon' },
 ]
 
 function LearningRecordsTab() {
   const [activeChip, setActiveChip] = useState<ChipType>('5mins')
-  const [selectedExtIds, setSelectedExtIds] = useState<Set<string>>(new Set())
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [confirmInput, setConfirmInput] = useState('')
-  const [addMenuOpen, setAddMenuOpen] = useState(false)
-  const [addDrawerOpen, setAddDrawerOpen] = useState(false)
-  const addMenuRef = useRef<HTMLDivElement>(null)
+  const [expiry, setExpiry] = useState('all')
+  const { records } = useExternalTraining()
 
-  useEffect(() => {
-    if (!addMenuOpen) return
-    const handler = (e: MouseEvent) => {
-      if (addMenuRef.current && !addMenuRef.current.contains(e.target as Node)) setAddMenuOpen(false)
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [addMenuOpen])
-  const toast = useToast()
-
-  const toggleExtRow = (id: string) => {
-    setSelectedExtIds(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
-
-  const allExtSelected = externalData.length > 0 && externalData.every(r => selectedExtIds.has(r.id))
-
-  const toggleAllExt = () => {
-    if (allExtSelected) setSelectedExtIds(new Set())
-    else setSelectedExtIds(new Set(externalData.map(r => r.id)))
-  }
-
-  const handleDeleteTrainings = () => {
-    const count = selectedExtIds.size
-    setSelectedExtIds(new Set())
-    setShowDeleteConfirm(false)
-    setConfirmInput('')
-    toast.show('success', `${count} training${count === 1 ? '' : 's'} deleted`)
-  }
-
-  const closeDeleteConfirm = () => {
-    setShowDeleteConfirm(false)
-    setConfirmInput('')
-  }
+  /* Read-only for managers (D22): their own team only, overdue and due soon first. */
+  const teamRecords = useMemo(
+    () =>
+      records
+        .filter((r) => r.personId in teamProfiles) // the manager's team: everyone on the My Team roster. Read at render, not module load: MyTeam imports this file.
+        .filter((r) => expiry === 'all' || dueState(r, records) === expiry)
+        .sort(
+          (a, b) =>
+            dueRank(dueState(a, records)) - dueRank(dueState(b, records)) || b.completionDate.localeCompare(a.completionDate),
+        ),
+    [records, expiry],
+  )
 
   return (
     <section className="lr" aria-label="Learning Records">
@@ -385,35 +293,19 @@ function LearningRecordsTab() {
             { key: 'external', label: 'External Training' },
           ]}
           activeKey={activeChip}
-          onChange={(key) => {
-            setActiveChip(key as ChipType)
-            if (key === '5mins') setSelectedExtIds(new Set())
-          }}
+          onChange={(key) => setActiveChip(key as ChipType)}
           ariaLabel="Learning records type"
         />
         <div className="lr__actions-right">
           {activeChip === 'external' && (
-            <div className="lr__add-training-wrap" ref={addMenuRef}>
-              <Button variant="outlined" icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setAddMenuOpen(o => !o)}>
-                Add Training
-              </Button>
-              {addMenuOpen && (
-                <ul className="lr__add-menu" role="menu">
-                  <li>
-                    <button type="button" className="lr__add-menu-item" role="menuitem" onClick={() => { setAddMenuOpen(false); setAddDrawerOpen(true) }}>
-                      <Add size={20} color="var(--text-primary)" variant="Linear" />
-                      <span>Add training</span>
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" className="lr__add-menu-item ui-disabled" role="menuitem" disabled>
-                      <DocumentUpload size={20} color="var(--text-primary)" variant="Linear" />
-                      <span>Bulk upload CSV</span>
-                    </button>
-                  </li>
-                </ul>
-              )}
-            </div>
+            <Dropdown
+              label="Expiry"
+              labelPlacement="start"
+              options={EXPIRY_FILTER}
+              value={expiry}
+              onChange={setExpiry}
+              className="lr__expiry-filter"
+            />
           )}
           {/* Download Report holds the far right edge whatever else shows beside it. */}
           <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />}>
@@ -422,111 +314,50 @@ function LearningRecordsTab() {
         </div>
       </div>
 
-      {/* Filters bar — not built on this tab yet (the standalone Learning Records
-          page has the working version); shown disabled instead of as a decoy. */}
-      <div className="lr__filters ui-disabled" aria-disabled="true">
-        <span className="lr__filters-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </span>
-        <span className="lr__filters-label">Filters</span>
-        <span className="lr__filters-badge">0</span>
-        <button type="button" className="lr__filters-add" disabled>
-          <Add size={20} color="currentColor" variant="Linear" />
-          Add
-        </button>
-        <span className="lr__filters-spacer" />
-        <span className="lr__filters-chevron">
-          <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
-        </span>
-      </div>
-
-      {/* Data table — the pagination is a static mock, same as before. */}
       {activeChip === '5mins' ? (
-        <Table
-          columns={recordColumns}
-          rows={mockData}
-          getRowKey={(row) => row.id}
-          pagination={{ from: 1, to: 10, total: 28 }}
-        />
-      ) : (
-        <Table
-          columns={externalColumns}
-          rows={externalData}
-          getRowKey={(row) => row.id}
-          selectable
-          isSelected={(row) => selectedExtIds.has(row.id)}
-          onToggleRow={(row) => toggleExtRow(row.id)}
-          onToggleAll={toggleAllExt}
-          allSelected={allExtSelected}
-          pagination={{ from: 1, to: 10, total: 28 }}
-        />
-      )}
-
-      {/* Floating bulk action bar */}
-      {selectedExtIds.size > 0 && activeChip === 'external' && (
-        <div className="lr__bulk-bar">
-          <button
-            className="lr__bulk-bar-close"
-            aria-label="Clear selection"
-            onClick={() => setSelectedExtIds(new Set())}
-          >
-            <Add size={20} color="currentColor" style={{ transform: 'rotate(45deg)' }} />
-          </button>
-          <span className="lr__bulk-bar-count">{selectedExtIds.size} selected</span>
-          <div className="lr__bulk-bar-divider" />
-          <button className="lr__bulk-bar-btn" onClick={() => setShowDeleteConfirm(true)}>
-            Delete {selectedExtIds.size} {selectedExtIds.size === 1 ? 'Training' : 'Trainings'}
-          </button>
-        </div>
-      )}
-
-      <ConfirmModal open={showDeleteConfirm} onClose={closeDeleteConfirm}>
-        <div className="confirm-modal-header confirm-modal-header--center">
-          <div className="confirm-modal-icon">
-            <Danger size={72} color="var(--danger-500)" variant="Linear" />
+        <>
+          {/* Filters bar — not built on this tab yet (the standalone Learning Records
+              page has the working version); shown disabled instead of as a decoy. */}
+          <div className="lr__filters ui-disabled" aria-disabled="true">
+            <span className="lr__filters-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </span>
+            <span className="lr__filters-label">Filters</span>
+            <span className="lr__filters-badge">0</span>
+            <button type="button" className="lr__filters-add" disabled>
+              <Add size={20} color="currentColor" variant="Linear" />
+              Add
+            </button>
+            <span className="lr__filters-spacer" />
+            <span className="lr__filters-chevron">
+              <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
+            </span>
           </div>
-          <h2 className="confirm-modal-title">
-            Delete {selectedExtIds.size} {selectedExtIds.size === 1 ? 'training' : 'trainings'}
-          </h2>
-          <p className="confirm-modal-body">
-            This action cannot be undone. The selected training records will be permanently removed.
-          </p>
-        </div>
-        <div className="confirm-modal-input-group">
-          <label className="confirm-modal-label">
-            Type <span className="confirm-modal-label-danger">'Delete'</span> below, to confirm
-          </label>
-          <input
-            className="confirm-modal-input"
-            type="text"
-            value={confirmInput}
-            onChange={e => setConfirmInput(e.target.value)}
-            placeholder="Delete"
+
+          {/* Data table — the pagination is a static mock, same as before. */}
+          <Table
+            columns={recordColumns}
+            rows={mockData}
+            getRowKey={(row) => row.id}
+            pagination={{ from: 1, to: 10, total: 28 }}
           />
-        </div>
-        <div className="confirm-modal-actions">
-          <Button variant="outlined-2" onClick={closeDeleteConfirm}>Cancel</Button>
-          <Button semantic="danger"
-            disabled={confirmInput !== 'Delete'}
-            onClick={handleDeleteTrainings}
-          >
-            Delete Permanently
-          </Button>
-        </div>
-      </ConfirmModal>
-
-      <AddTrainingDrawer
-        open={addDrawerOpen}
-        onClose={() => setAddDrawerOpen(false)}
-        onAdd={() => {
-          setAddDrawerOpen(false)
-          toast.show('success', 'Training added successfully')
-        }}
-      />
-
-      <ToastContainer toasts={toast.toasts} />
+        </>
+      ) : teamRecords.length ? (
+        // Read-only: no Add, no row actions (D22). Download works.
+        <ExternalRecordsTable rows={teamRecords} all={records} showDuration={false} />
+      ) : (
+        <EmptyState
+          illustration={<img src={certificatesIllustration} alt="" width={72} height={72} />}
+          title={expiry === 'all' ? 'No external training yet' : 'Nothing to show'}
+          description={
+            expiry === 'all'
+              ? 'Your admin records training done outside 5Mins from the certificate.'
+              : 'No one in your team matches this expiry filter.'
+          }
+        />
+      )}
     </section>
   )
 }
