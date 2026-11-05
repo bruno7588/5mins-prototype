@@ -1,16 +1,18 @@
-import { useMemo, useState } from 'react'
-import { Add, DocumentUpload } from 'iconsax-react'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { Add, Book1, Buildings2, Calendar, DocumentUpload, Profile, TickCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
-import Dropdown from '@/components/Dropdown/Dropdown'
 import EmptyState from '@/components/EmptyState/EmptyState'
-import Search from '@/components/Search/Search'
+import FilterBar, { FilterBarAddButton, type FilterBarFilter } from '@/components/FilterBar/FilterBar'
 import noResults from '@/assets/empty-state-illustrations/no-results.svg'
+import FilterListbox, { type FilterGroup } from '../FilterListbox/FilterListbox'
+import FilterMultiSelect from '../FilterControls/FilterMultiSelect'
 import {
   deleteRecord,
   dueRank,
   dueState,
   personById,
+  recordProviderName,
   recordTrainingName,
   saveRecord,
   useExternalTraining,
@@ -22,12 +24,33 @@ import ExternalRecordsTable from './ExternalRecordsTable'
 import './ExternalTraining.css'
 
 /* Learning Records > External Training (PRD 2.9), the admin's list of every
-   external training record. Prefix: lret- */
+   external training record, narrowed with the shared Filter bar. Prefix: lret- */
 
-export const RETRAINING_FILTER = [
-  { value: 'all', label: 'All' },
+type FilterId = 'learner' | 'retraining' | 'course' | 'provider' | 'result'
+
+const FILTER_META: Record<FilterId, { title: string; description: string; Icon: typeof Calendar }> = {
+  learner: { title: 'Learner', description: 'Filter by the person the training belongs to', Icon: Profile },
+  retraining: { title: 'Retraining', description: 'Overdue, due soon, upcoming or no due date', Icon: Calendar },
+  course: { title: 'Course', description: 'Filter by approved course or one-off training', Icon: Book1 },
+  provider: { title: 'Provider', description: 'Filter by training provider', Icon: Buildings2 },
+  result: { title: 'Result', description: 'Passed or not passed', Icon: TickCircle },
+}
+
+const GROUPS: FilterGroup[] = [
+  { section: 'Person', items: [{ id: 'learner', ...FILTER_META.learner }] },
+  { section: 'Training', items: (['course', 'provider'] as FilterId[]).map((id) => ({ id, ...FILTER_META[id] })) },
+  { section: 'Status', items: (['retraining', 'result'] as FilterId[]).map((id) => ({ id, ...FILTER_META[id] })) },
+]
+
+const RETRAINING_OPTIONS = [
   { value: 'overdue', label: 'Overdue' },
   { value: 'due-soon', label: 'Due soon' },
+  { value: 'upcoming', label: 'Upcoming' },
+  { value: 'none', label: 'No due date' },
+]
+const RESULT_OPTIONS = [
+  { value: 'Passed', label: 'Passed' },
+  { value: 'Not Passed', label: 'Not Passed' },
 ]
 
 interface Props {
@@ -36,37 +59,89 @@ interface Props {
 
 function ExternalTrainingRecords({ showToast }: Props) {
   const { records } = useExternalTraining()
-  const [query, setQuery] = useState('')
-  const [retraining, setRetraining] = useState('all')
   const [drawer, setDrawer] = useState<{ record: ExternalRecord | null } | null>(null)
   const [bulkOpen, setBulkOpen] = useState(false)
   const [toDelete, setToDelete] = useState<ExternalRecord | null>(null)
 
-  const rows = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return records
-      .filter((r) => retraining === 'all' || dueState(r, records) === retraining)
-      .filter((r) => !q || `${personById(r.personId)?.name ?? ''} ${recordTrainingName(r)}`.toLowerCase().includes(q))
-      .sort(
-        (a, b) =>
-          dueRank(dueState(a, records)) - dueRank(dueState(b, records)) || b.completionDate.localeCompare(a.completionDate),
-      )
-  }, [records, query, retraining])
+  /* ── Filter bar state ── */
+  const [active, setActive] = useState<FilterId[]>([])
+  const [values, setValues] = useState<Partial<Record<FilterId, string[]>>>({})
+  const [expanded, setExpanded] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const headerAddRef = useRef<HTMLDivElement>(null)
+  const bottomAddRef = useRef<HTMLDivElement>(null)
+
+  const addFilter = useCallback((id: string) => {
+    setActive((prev) => (prev.includes(id as FilterId) ? prev : [...prev, id as FilterId]))
+    setMenuOpen(false)
+    setExpanded(true)
+  }, [])
+  const removeFilter = useCallback((id: string) => {
+    setActive((prev) => prev.filter((f) => f !== id))
+    setValues((prev) => ({ ...prev, [id]: undefined }))
+  }, [])
+
+  /* Option lists come from the records, so every option finds at least one row. */
+  const unique = (list: { value: string; label: string }[]) =>
+    [...new Map(list.map((o) => [o.value, o])).values()].sort((a, b) => a.label.localeCompare(b.label))
+  const optionsFor = (id: FilterId) =>
+    id === 'learner'
+      ? unique(records.map((r) => ({ value: r.personId, label: personById(r.personId)?.name ?? r.personId })))
+      : id === 'course'
+        ? unique(records.map((r) => ({ value: recordTrainingName(r), label: recordTrainingName(r) })))
+        : id === 'provider'
+          ? unique(records.map((r) => recordProviderName(r)).filter(Boolean).map((p) => ({ value: p, label: p })))
+          : id === 'retraining'
+            ? RETRAINING_OPTIONS
+            : RESULT_OPTIONS
+
+  const valueOf = (id: FilterId, r: ExternalRecord) =>
+    id === 'learner'
+      ? r.personId
+      : id === 'course'
+        ? recordTrainingName(r)
+        : id === 'provider'
+          ? recordProviderName(r)
+          : id === 'retraining'
+            ? dueState(r, records) ?? 'none'
+            : r.result
+
+  const rows = useMemo(
+    () =>
+      records
+        .filter((r) => active.every((id) => !values[id]?.length || values[id]!.includes(valueOf(id, r))))
+        .sort(
+          (a, b) =>
+            dueRank(dueState(a, records)) - dueRank(dueState(b, records)) || b.completionDate.localeCompare(a.completionDate),
+        ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [records, active, values],
+  )
+
+  const pillLabel = (id: FilterId) => {
+    const v = values[id] ?? []
+    if (v.length !== 1) return FILTER_META[id].title
+    return optionsFor(id).find((o) => o.value === v[0])?.label ?? FILTER_META[id].title
+  }
+
+  const filters: FilterBarFilter[] = active.map((id) => ({
+    id,
+    title: FILTER_META[id].title,
+    Icon: FILTER_META[id].Icon,
+    pillLabel: pillLabel(id),
+    control: (
+      <FilterMultiSelect
+        options={optionsFor(id)}
+        value={values[id] ?? []}
+        placeholder={`Select ${FILTER_META[id].title.toLowerCase()}`}
+        onChange={(v) => setValues((prev) => ({ ...prev, [id]: v }))}
+      />
+    ),
+  }))
 
   return (
     <div className="lret">
-      <div className="lret-toolbar">
-        <div className="lret-toolbar__filters">
-          <Search value={query} onChange={setQuery} onClear={() => setQuery('')} placeholder="Search learners or courses" ariaLabel="Search external training" />
-          <Dropdown
-            label="Retraining"
-            labelPlacement="start"
-            options={RETRAINING_FILTER}
-            value={retraining}
-            onChange={setRetraining}
-            className="lret-filter"
-          />
-        </div>
+      <div className="lret-toolbar lret-toolbar--end">
         <div className="lret-toolbar__ctas">
           <Button variant="outlined" icon={<DocumentUpload size={20} color="currentColor" variant="Linear" />} onClick={() => setBulkOpen(true)}>
             Bulk Upload Training
@@ -76,6 +151,30 @@ function ExternalTrainingRecords({ showToast }: Props) {
           </Button>
         </div>
       </div>
+
+      <FilterBar
+        filters={filters}
+        expanded={expanded}
+        onToggleExpanded={() => {
+          setExpanded((e) => !e)
+          setMenuOpen(false)
+        }}
+        onRemove={removeFilter}
+        onClearAll={() => {
+          setActive([])
+          setValues({})
+        }}
+        renderAddFilter={(placement) => {
+          // Only the live instance gets an open listbox so their click-outside handlers don't clash.
+          const ref = placement === 'header' ? headerAddRef : bottomAddRef
+          const open = menuOpen && (placement === 'header' ? !expanded : expanded)
+          return (
+            <FilterBarAddButton ref={ref} open={open} onClick={() => setMenuOpen((o) => !o)}>
+              <FilterListbox open={open} onClose={() => setMenuOpen(false)} onSelect={addFilter} anchorRef={ref} groups={GROUPS} />
+            </FilterBarAddButton>
+          )
+        }}
+      />
 
       {rows.length ? (
         <ExternalRecordsTable
@@ -88,7 +187,7 @@ function ExternalTrainingRecords({ showToast }: Props) {
         <EmptyState
           illustration={<img src={noResults} alt="" width={72} height={72} />}
           title="No external training found"
-          description="Try a different name, or show all retraining states."
+          description="Try removing a filter."
         />
       )}
 

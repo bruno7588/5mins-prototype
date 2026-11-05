@@ -563,6 +563,8 @@ function LearningRecords() {
                   Download Report
                 </Button>
 
+                {/* Saved reports are 5Mins-course reports; External Training keeps only Download Report. */}
+                {activeTab === '5mins' && (<>
                 {/* Saved reports — opens the list side drawer; disabled until one exists */}
                 <Tooltip
                   icon={false}
@@ -582,6 +584,7 @@ function LearningRecords() {
                 </Tooltip>
                 {/* Save the current filter view as a report */}
                 <Button variant="outlined" onClick={openCreateReport}>Save New Report</Button>
+                </>)}
               </div>
             </div>
           </div>
