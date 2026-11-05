@@ -149,7 +149,6 @@ Each of these builds its own `SearchNormal1` icon plus text input.
 
 | Component | Hand-rolled instance | Should use |
 |---|---|---|
-| ContentSwitcher | `.eng-switcher`, `pages/my-team/EngagementTab.tsx:129` | `ContentSwitcher` ([chips-switcher-tabs.md](chips-switcher-tabs.md)) |
 | Breadcrumb | `.add-content-breadcrumb`, `pages/add-content/AddContent.tsx:154` | `Breadcrumb` ([navigation.md](navigation.md)) |
 | Collapse | `grid-template-rows: 0fr` expand, `pages/your-courses/components/WorkflowsTab/WorkflowsTab.css:91` | `Collapse` |
 | Collapse | `grid-template-rows: 0fr` expand, `pages/people/components/BulkUploadModal/BulkUploadModal.css:206` | `Collapse` |

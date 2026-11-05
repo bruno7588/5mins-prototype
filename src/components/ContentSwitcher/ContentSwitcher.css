@@ -1,7 +1,7 @@
 /* Content Switcher — segmented control in a filled track (DS: chips-switcher-tabs.md). */
 .switcher {
   display: inline-flex;
-  gap: var(--space-xs);
+  gap: var(--space-s); /* 8px between segments */
   padding: var(--space-xs);
   background: var(--input-background);
   border-radius: var(--radius-sm); /* 12px */
@@ -13,9 +13,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  padding: var(--space-xss) var(--space-sm);
+  padding: var(--space-s) var(--space-sm); /* 8px 12px */
   border: none;
-  border-radius: var(--radius-s); /* 8px */
+  border-radius: var(--radius-sm); /* 12px */
   background: transparent;
   font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-secondary);
@@ -32,7 +32,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-sm);
   background: var(--secondary-500); /* var(--secondary-500) — raw token, both modes */
 }
 
@@ -57,7 +57,7 @@
   outline-offset: 2px;
 }
 
-/* Leading icon (Library "Leading icon", 20px), above the sliding pill like the label. */
+/* Leading (20px) and trailing (16px) icons, above the sliding pill like the label. */
 .switcher__icon {
   position: relative;
   z-index: 1;

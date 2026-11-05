@@ -102,6 +102,10 @@ Add new entries here, not in the docs.
 
 ## [chips-switcher-tabs.md](chips-switcher-tabs.md)
 
+- 2026-11-05: `ContentSwitcher` items gain `trailingIcon` (16px, after the label), matching Library Content=Trailing icon; the trailing icon is no longer Figma only.
+- 2026-11-05: Figma Content switcher item gains a `Content` variant axis (Label / Leading icon / Trailing icon / Icon only) across all 6 states, 24 variants in a states x content grid; the `Show leading icon`, `Show trailing icon` and `Show label` booleans are removed. Trailing icon default restored to info-circle (`9986:43611`). Examples rebuilt as `12589:308` and `12589:398`.
+- 2026-11-05: Figma Content switcher gains "Example · Leading icon" and "Example · Icon only"; component descriptions and the doc now map Show leading icon + Leading icon to `items[].icon` and Show label off to `iconOnly` (was "no icon slot in code"). Trailing icon stays Figma only.
+- 2026-11-05: Content switcher item synced to Library frame `8953:10118`: padding 6px 12px → 8px 12px (`--space-s` `--space-sm`), radius 8px → 12px (`--radius-sm`, matching the track); the sliding selection pill follows. Track gap between segments 4px → 8px (`--space-s`). Track padding, colours, type and the cyan focus ring are unchanged.
 - 2026-10-14: Figma Content switcher item `icon left` / `icon right` axes became `Show leading icon` / `Show trailing icon` switches; 12 variants deleted.
 - 2026-10-14: Figma to code updated: Chip, Content switcher item and Tab items gain `Label` TEXT properties (plus `Count` on tabs), leading and trailing icon swaps, and `State=Focus` variants; the icon axes stay variants because they change padding or gap.
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** a second level inside a tabbed page is chips only (a Content Switcher stays allowed for two views of one object in a drawer); tab focus ring is cyan `--primary-button-background`; the Tabs prototype examples now say which is compliant (Roles) and which drifts (Course details); tab gap confirmed at 16px.

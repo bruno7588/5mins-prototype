@@ -272,8 +272,8 @@ CSS variable approach (if token vars are available in the project):
 A segmented control: mutually exclusive sections inside a filled track. Use it to switch between views of the same data (e.g. grid/list, week/month) where the options should read as one connected control rather than separate chips.
 
 **Code:** `import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'`
-**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `7128:23859` + item `8497:24186`
-**Last verified:** 2026-09-29
+**Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `7128:23859` + item `8497:24186` (frame `8953:10118`; examples Leading icon `12589:308`, Icon only `12589:398`)
+**Last verified:** 2026-11-05
 
 ## Usage
 
@@ -295,10 +295,10 @@ A segmented control: mutually exclusive sections inside a filled track. Use it t
 - Keep the sliding selection pill; it already respects reduced motion
 
 **Don't**
-- Don't add icons; the shared component has no icon slot. If the component gains them, don't mix icon and no-icon items in one track.
+- Don't mix content types in one track; give every item the same one (label, leading `icon`, `trailingIcon`, or icon only).
 - Don't use it for sibling page sections
 
-**Canonical spec:** track `var(--input-background)`, padding and gap `var(--space-xs)` (4px), radius `var(--radius-sm)` (12px); item padding `var(--space-xss) var(--space-sm)` (6px 12px), radius `var(--radius-s)` (8px), 14px Regular `var(--text-secondary)`; unselected hover `var(--input-background-hover)`; selected `var(--secondary-500)` with `var(--text-on-selected)` Bold. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `7128:23859` + item `8497:24186`.
+**Canonical spec:** track `var(--input-background)`, padding `var(--space-xs)` (4px), gap `var(--space-s)` (8px), radius `var(--radius-sm)` (12px); item padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), 14px Regular `var(--text-secondary)`; unselected hover `var(--input-background-hover)`; selected `var(--secondary-500)` with `var(--text-on-selected)` Bold. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `7128:23859` + item `8497:24186`.
 
 ## Figma to code
 
@@ -309,14 +309,16 @@ Figma: `Content switcher` (`7128:23859`, standalone component with no properties
 | Selected (item) | True / False | `activeKey` | the selected item's `key` | `onChange(key)` sets it |
 | Disabled (item) | false / true | `items[].disabled` | `boolean` | |
 | State (item) | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props |
-| Show leading icon (switch) + Leading icon (swap) | off / on, glyph | n/a | n/a | no icon slot in code |
-| Show trailing icon (switch) + Trailing icon (swap) | off / on, glyph | n/a | n/a | no icon slot in code |
+| Content (item) | Label | `items[].label` only | | |
+| Content (item) | Leading icon | `items[].icon` | 20px iconsax glyph, `currentColor` | swap `Leading icon` for the glyph |
+| Content (item) | Icon only | `items[].icon` + `items[].iconOnly: true` | | `label` stays: it becomes the `aria-label` and a Tooltip |
+| Content (item) | Trailing icon | `items[].trailingIcon` | 16px iconsax glyph, `currentColor` | swap `Trailing icon` for the glyph |
 | Label (item text) | section label | `items[].label` | `string` | each item also needs a `key` |
 
-- **Figma only:** per-item icons (left 20px, right 16px) and their swaps; the fixed 4-item track.
+- **Figma only:** the fixed 4-item track (hide items you don't need).
 - **Code only:** `ariaLabel`, `onChange`, `className`, any item count, the sliding selection pill.
 
-**Props:** `items: { key, label, disabled? }[]`, `activeKey`, `onChange(key)`, `ariaLabel` (labels the tablist), `className`.
+**Props:** `items: { key, label, disabled?, icon?, iconOnly?, trailingIcon? }[]`, `activeKey`, `onChange(key)`, `ariaLabel` (labels the tablist), `className`.
 
 **Production:**
 
@@ -332,11 +334,11 @@ Figma: `Content switcher` (`7128:23859`, standalone component with no properties
 └────────────────────────────────────────────┘
 ```
 
-**Track:** `background: var(--input-background)` · padding `4px` (`--xs`) · gap `4px` · radius `12px` (`--radius-sm`).
+**Track:** `background: var(--input-background)` · padding `4px` (`--xs`) · gap `8px` (`--space-s`) between segments · radius `12px` (`--radius-sm`).
 
-**Item:** padding `6px 12px` · radius `8px` (`--radius-s`) · text 14px/1.5 Poppins.
+**Item:** padding `8px 12px` (`--space-s` `--space-sm`) · radius `12px` (`--radius-sm`), the same as the track · text 14px/1.5 Poppins.
 
-Optional icons per item in Figma: **left 20px** (e.g. trash) or **right 16px** (e.g. info-circle), `gap: 4px`, `currentColor`. In code, an item's `icon` is the 20px leading glyph (Library "Show leading icon" + "Leading icon" swap). `iconOnly` hides the label (Library "Show label" off): the label becomes the segment's `aria-label` and a DS Tooltip. Library example: "Example · Icon only" (Mobile / Monitor), used by the Quiz Lab device switch. The trailing 16px icon is Library only.
+Item content in Figma is the `Content` variant: Label, Leading icon (**20px**, e.g. trash), Trailing icon (**16px**, e.g. info-circle) or Icon only; `gap: 4px`, `currentColor`, the same 8px 12px padding in every variant. In code, an item's `icon` is the 20px leading glyph (Library Content=Leading icon + "Leading icon" swap). `iconOnly` hides the label (Library Content=Icon only): the label becomes the segment's `aria-label` and a DS Tooltip. Library examples beside the component: "Example · Leading icon" (`12589:308`, Desktop / Mobile) and "Example · Icon only" (`12589:398`, Monitor / Mobile), the Quiz Lab device switch. An item's `trailingIcon` is the 16px trailing glyph (Library Content=Trailing icon).
 
 ## States
 
@@ -352,7 +354,7 @@ The selected item's hover has no further change; it is already the active segmen
 
 ## Tokens
 
-`--input-background` (track), `--input-background-hover` (unselected hover), `--secondary-500` (selected fill, raw palette token, both modes), `--text-on-selected`, `--text-secondary`, `--text-disabled`, `--primary-button-background` (focus ring); spacing `--space-xs`, `--space-xss`, `--space-sm`; radius `--radius-sm`, `--radius-s`.
+`--input-background` (track), `--input-background-hover` (unselected hover), `--secondary-500` (selected fill, raw palette token, both modes), `--text-on-selected`, `--text-secondary`, `--text-disabled`, `--primary-button-background` (focus ring); spacing `--space-xs`, `--space-s`, `--space-sm`; radius `--radius-sm`.
 
 ## Accessibility
 
@@ -388,7 +390,7 @@ Reference CSS (the shared component already implements this):
 ```css
 .switcher {
   display: inline-flex;
-  gap: 4px;
+  gap: 8px;
   padding: 4px;
   background: var(--input-background);
   border-radius: var(--radius-sm);      /* 12px */
@@ -399,9 +401,9 @@ Reference CSS (the shared component already implements this):
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 6px 12px;
+  padding: 8px 12px;
   border: none;
-  border-radius: var(--radius-s);       /* 8px */
+  border-radius: var(--radius-sm);      /* 12px */
   background: transparent;
   font: 400 14px/1.5 'Poppins', sans-serif;
   color: var(--text-secondary);

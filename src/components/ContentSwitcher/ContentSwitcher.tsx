@@ -9,6 +9,8 @@ export interface SwitcherItem {
   disabled?: boolean
   /** Leading icon, a 20px currentColor glyph (Library "Leading icon"). */
   icon?: ReactNode
+  /** Trailing icon, a 16px currentColor glyph after the label (Library Content=Trailing icon). */
+  trailingIcon?: ReactNode
   /** Hides the label and shows only the icon (Library "Show label" off). The label stays
       the segment's accessible name and its hover tooltip. */
   iconOnly?: boolean
@@ -55,6 +57,7 @@ function ContentSwitcher({ items, activeKey, onChange, className = '', ariaLabel
             )}
             {item.icon && <span className="switcher__icon" aria-hidden="true">{item.icon}</span>}
             {!iconOnly && <span className="switcher__label">{item.label}</span>}
+            {item.trailingIcon && !iconOnly && <span className="switcher__icon" aria-hidden="true">{item.trailingIcon}</span>}
           </button>
         )
         return iconOnly ? (
