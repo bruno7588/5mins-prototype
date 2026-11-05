@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 780" width="980" height="780" role="img" aria-label="DES-336 user journey: recording an external training, from certificate arriving to the record being visible to manager and learner">
+  <defs>
+    <marker id="h" orient="auto" markerWidth="8" markerHeight="8" refX="6" refY="4"><path d="M0 0 L8 4 L0 8 Z" fill="#9EA4B3"/></marker>
+  </defs>
+  <style>
+    text { font-family: Poppins, -apple-system, 'Segoe UI', sans-serif; fill: #454C5E; font-size: 12.5px; }
+    .lab { font-size: 11px; font-weight: 700; fill: #008393; letter-spacing: .04em; }
+    .lab-ok { font-size: 11px; font-weight: 700; fill: #11763D; letter-spacing: .04em; }
+    .ttl { font-size: 15px; font-weight: 700; fill: #20222A; }
+    .scr { font-size: 11px; fill: #656B7C; }
+    .q { font-style: italic; fill: #20222A; }
+    .side { font-size: 12px; font-weight: 700; fill: #20222A; }
+    .card { fill: #FFFFFF; stroke: #DFE1E6; }
+    .ok { fill: #E8F6EE; stroke: #DFE1E6; }
+    .setup { fill: #F2FDFE; stroke: #CCF8FD; }
+    .branch { fill: #FFFAF2; stroke: #9EA4B3; stroke-dasharray: 5 4; }
+    .arrow { stroke: #9EA4B3; stroke-width: 2; fill: none; }
+  </style>
+  <rect width="980" height="780" fill="#F9F9FA"/>
+
+  <text x="20" y="36" style="font-size:20px;font-weight:700;fill:#20222A">DES-336 user journey: recording an external training</text>
+  <text x="20" y="62">When a learner hands in a certificate for training done outside 5Mins, an admin wants to record it against an approved course in seconds,</text>
+  <text x="20" y="80">so the retraining due date is right and visible to the learner and their manager, without retyping details or creating inconsistent records.</text>
+
+  <!-- Row A arrows -->
+  <path class="arrow" d="M220 215 L254 215" marker-end="url(#h)"/>
+  <path class="arrow" d="M460 215 L494 215" marker-end="url(#h)"/>
+  <path class="arrow" d="M700 215 L734 215" marker-end="url(#h)"/>
+  <!-- Step 4 down to step 5 -->
+  <path class="arrow" d="M840 310 L840 394" marker-end="url(#h)"/>
+  <!-- Row B arrows, right to left -->
+  <path class="arrow" d="M740 495 L706 495" marker-end="url(#h)"/>
+  <path class="arrow" d="M500 495 L466 495" marker-end="url(#h)"/>
+
+  <!-- Step 1 -->
+  <rect class="card" x="20" y="120" width="200" height="190" rx="12"/>
+  <text x="32" y="142" class="lab">1 · TRIGGER</text>
+  <text x="32" y="162" class="ttl">Certificate arrives</text>
+  <text x="32" y="180" class="scr">Outside 5Mins</text>
+  <text x="32" y="202">A learner hands in a</text>
+  <text x="32" y="220">certificate: email, paper</text>
+  <text x="32" y="238">or a photo.</text>
+  <text x="32" y="294" class="q">“Where do I record this?”</text>
+
+  <!-- Step 2 -->
+  <rect class="card" x="260" y="120" width="200" height="190" rx="12"/>
+  <text x="272" y="142" class="lab">2 · ORIENT</text>
+  <text x="272" y="162" class="ttl">Open the person</text>
+  <text x="272" y="180" class="scr">Profile › External Training tab</text>
+  <text x="272" y="202">Sees their records and</text>
+  <text x="272" y="220">due states.</text>
+  <text x="272" y="294" class="q">“Is this already recorded?”</text>
+
+  <!-- Step 3 -->
+  <rect class="card" x="500" y="120" width="200" height="190" rx="12"/>
+  <text x="512" y="142" class="lab">3 · ACT</text>
+  <text x="512" y="162" class="ttl">Upload the certificate</text>
+  <text x="512" y="180" class="scr">Add Training drawer</text>
+  <text x="512" y="202">Drops in the file. Fill In</text>
+  <text x="512" y="220">Manually is always there.</text>
+  <text x="512" y="294" class="q">“What do I need to give?”</text>
+
+  <!-- Step 4 -->
+  <rect class="card" x="740" y="120" width="200" height="190" rx="12"/>
+  <text x="752" y="142" class="lab">4 · ACT</text>
+  <text x="752" y="162" class="ttl">AI reads it</text>
+  <text x="752" y="180" class="scr">Drawer, reading state</text>
+  <text x="752" y="202">Learner, course and</text>
+  <text x="752" y="220">completion date filled</text>
+  <text x="752" y="238">in for review.</text>
+  <text x="752" y="294" class="q">“Is it working?”</text>
+
+  <!-- Step 5 -->
+  <rect class="card" x="740" y="400" width="200" height="190" rx="12"/>
+  <text x="752" y="422" class="lab">5 · DECIDE</text>
+  <text x="752" y="442" class="ttl">Check and complete</text>
+  <text x="752" y="460" class="scr">Drawer, review</text>
+  <text x="752" y="482">Checks flagged fields,</text>
+  <text x="752" y="500">picks the provider, sees</text>
+  <text x="752" y="518">the retraining due date.</text>
+  <text x="752" y="574" class="q">“Did it read it right?”</text>
+
+  <!-- Step 6 -->
+  <rect class="ok" x="500" y="400" width="200" height="190" rx="12"/>
+  <text x="512" y="422" class="lab-ok">6 · CONFIRM</text>
+  <text x="512" y="442" class="ttl">Save</text>
+  <text x="512" y="460" class="scr">Profile tab</text>
+  <text x="512" y="482">Toast confirms; the row</text>
+  <text x="512" y="500">shows its due state; the</text>
+  <text x="512" y="518">older record stops flagging.</text>
+  <text x="512" y="574" class="q">“Is the status right?”</text>
+
+  <!-- Step 7 -->
+  <rect class="ok" x="260" y="400" width="200" height="190" rx="12"/>
+  <text x="272" y="422" class="lab-ok">7 · CONFIRM</text>
+  <text x="272" y="442" class="ttl">Visible to others</text>
+  <text x="272" y="460" class="scr">My Team list and profile tab</text>
+  <text x="272" y="482">Manager sees due states</text>
+  <text x="272" y="500">across their team, view only;</text>
+  <text x="272" y="518">learner on their own profile.</text>
+  <text x="272" y="574" class="q">“What's my status?”</text>
+
+  <!-- Setup -->
+  <rect class="setup" x="20" y="400" width="200" height="190" rx="12"/>
+  <text x="32" y="422" class="lab">BEFORE STEP 1</text>
+  <text x="32" y="442" class="ttl">Set up once</text>
+  <text x="32" y="460" class="scr">Full admins only</text>
+  <text x="32" y="482">Account and Settings ›</text>
+  <text x="32" y="500">External Training: providers,</text>
+  <text x="32" y="518">courses, retraining rules,</text>
+  <text x="32" y="536">one-off setting.</text>
+  <text x="32" y="566">Bulk: CSV + zip of</text>
+  <text x="32" y="584" style="font-size:12.5px">certificates.</text>
+
+  <!-- Side paths -->
+  <text x="20" y="626" class="side" style="font-size:13px">Side paths</text>
+  <rect class="branch" x="20" y="640" width="200" height="120" rx="12"/>
+  <text x="32" y="662" class="side">From 3 · No certificate</text>
+  <text x="32" y="684">Fill In Manually. The</text>
+  <text x="32" y="702">certificate is optional and</text>
+  <text x="32" y="720">can be added later.</text>
+
+  <rect class="branch" x="260" y="640" width="200" height="120" rx="12"/>
+  <text x="272" y="662" class="side">From 4 · Can't read it</text>
+  <text x="272" y="684">A callout says so; the</text>
+  <text x="272" y="702">admin fills in the details.</text>
+
+  <rect class="branch" x="500" y="640" width="200" height="120" rx="12"/>
+  <text x="512" y="662" class="side">From 5 · Possible mistake</text>
+  <text x="512" y="684">Certificate names someone</text>
+  <text x="512" y="702">else, or the record already</text>
+  <text x="512" y="720">exists: a warning. Neither</text>
+  <text x="512" y="738">blocks saving.</text>
+
+  <rect class="branch" x="740" y="640" width="200" height="120" rx="12"/>
+  <text x="752" y="662" class="side">From 5 · No course match</text>
+  <text x="752" y="684">Hint shows what it read. Pick</text>
+  <text x="752" y="702">a course, or Add Course to</text>
+  <text x="752" y="720">Approved List first; Record as</text>
+  <text x="752" y="738">One-off second, if allowed.</text>
+</svg>
