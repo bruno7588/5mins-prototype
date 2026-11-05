@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { Add, Book1, Buildings2, Calendar, DocumentUpload, Profile, TickCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
+import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import EmptyState from '@/components/EmptyState/EmptyState'
 import FilterBar, { FilterBarAddButton, type FilterBarFilter } from '@/components/FilterBar/FilterBar'
 import noResults from '@/assets/empty-state-illustrations/no-results.svg'
@@ -142,14 +143,25 @@ function ExternalTrainingRecords({ showToast }: Props) {
   return (
     <div className="lret">
       <div className="lret-toolbar lret-toolbar--end">
-        <div className="lret-toolbar__ctas">
-          <Button variant="outlined" icon={<DocumentUpload size={20} color="currentColor" variant="Linear" />} onClick={() => setBulkOpen(true)}>
-            Bulk Upload Training
-          </Button>
-          <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setDrawer({ record: null })}>
-            Add Training
-          </Button>
-        </div>
+        {/* One Add Training button; the menu offers one record or a bulk CSV upload. */}
+        <RowActionsMenu
+          ariaLabel="Add Training"
+          caret={false}
+          triggerClassName="ds-btn ds-btn--md ds-btn--filled ds-btn--has-icon"
+          triggerContent={
+            <>
+              <span className="ds-btn__icon">
+                <Add size={20} color="currentColor" variant="Linear" />
+              </span>
+              <span className="ds-btn__label">Add Training</span>
+            </>
+          }
+          items={[
+            { key: 'single', label: 'Add training', icon: <Add size={20} color="var(--text-primary)" variant="Linear" /> },
+            { key: 'bulk', label: 'Bulk upload CSV', icon: <DocumentUpload size={20} color="var(--text-primary)" variant="Linear" /> },
+          ]}
+          onSelect={(key) => (key === 'bulk' ? setBulkOpen(true) : setDrawer({ record: null }))}
+        />
       </div>
 
       <FilterBar
