@@ -3,6 +3,7 @@ import Button from '@/components/Button/Button'
 import { Table, type Column } from '@/components/Table/Table'
 import { SearchNormal1, Edit2, Trash, Refresh, Danger, TickCircle, Convertshape2 } from 'iconsax-react'
 import Badge from '../../../components/Badge/Badge'
+import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import type { CompanyRole, FiveMinsRole } from '../data/mockRoles'
 import {
   type HrisRoleMapping,
@@ -232,34 +233,16 @@ function HrisMappingTab({
   return (
     <>
       <div className="roles-filter-bar">
-        <div className="roles-category-chips" role="group" aria-label="Mapping filter">
-          <button
-            type="button"
-            aria-pressed={filterTab === 'unmapped'}
-            className={`roles-chip roles-chip--with-icon${filterTab === 'unmapped' ? ' roles-chip--active' : ''}`}
-            onClick={() => handleFilterTab('unmapped')}
-          >
-            <Danger size={20} variant="Linear" color="currentColor" />
-            Unmapped ({counts.unmapped})
-          </button>
-          <button
-            type="button"
-            aria-pressed={filterTab === 'mapped'}
-            className={`roles-chip roles-chip--with-icon${filterTab === 'mapped' ? ' roles-chip--active' : ''}`}
-            onClick={() => handleFilterTab('mapped')}
-          >
-            <TickCircle size={20} variant="Linear" color="currentColor" />
-            Mapped ({counts.mapped})
-          </button>
-          <button
-            type="button"
-            aria-pressed={filterTab === 'all'}
-            className={`roles-chip${filterTab === 'all' ? ' roles-chip--active' : ''}`}
-            onClick={() => handleFilterTab('all')}
-          >
-            All ({counts.all})
-          </button>
-        </div>
+        <ContentSwitcher
+          ariaLabel="Mapping filter"
+          items={[
+            { key: 'unmapped', label: `Unmapped (${counts.unmapped})`, icon: <Danger size={20} variant="Linear" color="currentColor" /> },
+            { key: 'mapped', label: `Mapped (${counts.mapped})`, icon: <TickCircle size={20} variant="Linear" color="currentColor" /> },
+            { key: 'all', label: `All (${counts.all})` },
+          ]}
+          activeKey={filterTab}
+          onChange={(key) => handleFilterTab(key as FilterTab)}
+        />
       </div>
 
       <div className="hris-search-row">
