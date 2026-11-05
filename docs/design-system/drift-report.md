@@ -154,6 +154,8 @@ Each of these builds its own `SearchNormal1` icon plus text input.
 | Collapse | `grid-template-rows: 0fr` expand, `pages/your-courses/components/WorkflowsTab/WorkflowsTab.css:91` | `Collapse` |
 | Collapse | `grid-template-rows: 0fr` expand, `pages/people/components/BulkUploadModal/BulkUploadModal.css:206` | `Collapse` |
 
+Sanctioned exceptions (Bruno, 2026-11-05): a Content Switcher as the second level inside an already-tabbed page, where the doc says Chips. Account & Settings > External Training switches Approved Courses / Approved Providers (`pages/account/components/ExternalTraining/ExternalTraining.tsx`), following the user profile's Course Progress switcher.
+
 ## Dead code
 
 | Component | Instance | Note |

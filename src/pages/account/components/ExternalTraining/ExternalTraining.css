@@ -88,7 +88,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
-  padding-top: var(--space-l);
 }
 
 .aet-field {
@@ -134,10 +133,6 @@
   width: 560px;
 }
 
-.aet-modal--wide {
-  width: 880px;
-}
-
 .aet-modal__form {
   display: flex;
   flex-direction: column;
@@ -151,13 +146,96 @@
   gap: var(--space-m);
 }
 
-.aet-modal__table {
-  max-height: 360px;
-  overflow-y: auto;
-}
-
 .aet-chips {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-s);
+}
+
+/* Cards carry Shadow S in light mode only (cards: no border). */
+:root:not([data-theme='dark']) .aet-card {
+  box-shadow: var(--shadow-s);
+}
+
+.aet-toolbar--top {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.aet-toolbar__ctas {
+  display: flex;
+  gap: var(--space-m);
+}
+
+.aet-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+/* ── Bulk upload drawer: numbered steps on a dashed rail (same as Bulk upload of trainings) ── */
+.aet-steps {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aet-step {
+  position: relative;
+  display: flex;
+  gap: var(--space-m);
+  padding-bottom: var(--space-l);
+}
+
+/* Dashed rail from one step number to the next. */
+.aet-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: var(--space-l);
+  bottom: 0;
+  left: calc(var(--space-sm) - 1px);
+  border-left: 1px dashed var(--border);
+}
+
+.aet-step__num {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-l);
+  height: var(--space-l);
+  border: 1px solid var(--text-secondary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text-secondary);
+}
+
+.aet-step__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.aet-step__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.aet-step__preview {
+  padding-top: var(--space-s);
+}
+
+.aet-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
 }

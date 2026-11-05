@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react'
 import './Button.css'
 
-export type ButtonVariant = 'filled' | 'outlined' | 'outlined-2' | 'text' | 'link'
+export type ButtonVariant = 'filled' | 'outlined' | 'outlined-2' | 'text' | 'text-2' | 'link'
 export type ButtonSemantic = 'primary' | 'danger' | 'warning' | 'success' | 'ai'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 

@@ -55,6 +55,7 @@
 /* Text / Link carry no box — strip padding regardless of size.
    `.ds-btn` prefix keeps these ahead of the two-class has-icon rules above. */
 .ds-btn.ds-btn--text,
+.ds-btn.ds-btn--text-2,
 .ds-btn.ds-btn--link,
 .ds-btn.ds-btn--danger-text,
 .ds-btn.ds-btn--warning-text,
@@ -135,6 +136,13 @@
 .ds-btn--text:hover:not(:disabled)  { color: var(--text-button-hover); }
 .ds-btn--text:active:not(:disabled) { color: var(--primary-button-background-pressed); }
 .ds-btn--text:disabled { color: var(--text-disabled); }
+
+/* Text-2: the neutral Text (as Outlined-2 is to Outlined). --text-primary at rest,
+   the Text hover and pressed ladder on interaction (Bruno, 2026-11-05). */
+.ds-btn--text-2 { color: var(--text-primary); }
+.ds-btn--text-2:hover:not(:disabled)  { color: var(--text-button-hover); }
+.ds-btn--text-2:active:not(:disabled) { color: var(--primary-button-background-pressed); }
+.ds-btn--text-2:disabled { color: var(--text-disabled); }
 
 /* Link (Library Buttons 10825:3269, updated 2026-09-28): Medium, not Bold, on the
    filled button's colour ladder; the underline skips descenders. Paragraph S/M/L

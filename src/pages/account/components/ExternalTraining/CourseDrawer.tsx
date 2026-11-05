@@ -157,9 +157,8 @@ function CourseDrawer({ course, initialName = '', onClose, onSaved }: Props) {
                 </div>
               )}
               <Button
-                variant="text"
-                size="sm"
-                icon={<Add size={16} color="currentColor" variant="Linear" />}
+                variant="text-2"
+                icon={<Add size={20} color="currentColor" variant="Linear" />}
                 onClick={() => setProviderModal(true)}
               >
                 Add Provider

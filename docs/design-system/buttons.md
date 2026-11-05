@@ -56,6 +56,7 @@ All colours are semantic tokens. Both light- and dark-mode resolutions are liste
 - **Outlined** - secondary actions (Save Draft, Download, Add Content), not Cancel
 - **Outlined-2** - Cancel (paired with Filled, including every dialog footer) and other neutral actions that shouldn't read as brand-coloured at rest
 - **Text** - inline, subtle actions
+- **Text-2** - the neutral Text: inline actions inside forms (e.g. "Add Provider" under a field) that shouldn't read as brand-coloured at rest; `--text-primary` at rest, the Text hover and pressed ladder on interaction
 - **Link** - navigation-like actions within content
 
 ### Semantic selection
@@ -85,7 +86,7 @@ All colours are semantic tokens. Both light- and dark-mode resolutions are liste
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Variant | Filled / Outlined / Outlined-2 / Text / Link | `variant` | `filled` (default) / `outlined` / `outlined-2` / `text` / `link` | one-to-one |
+| Variant | Filled / Outlined / Outlined-2 / Text / Link | `variant` | `filled` (default) / `outlined` / `outlined-2` / `text` / `text-2` / `link` | one-to-one; `text-2` is code-only so far (neutral Text, 2026-11-05), not yet in the Library |
 | Semantic | Primary / Danger / Warning / Success / AI | `semantic` | `primary` (default) / `danger` / `warning` / `success` / `ai` | one-to-one. AI exists only with Filled and Outlined, and the props type rejects `semantic="ai"` with any other variant; `variant="outlined-2"` with a semantic renders the Outlined treatment, `variant="link"` with a semantic renders the Text treatment |
 | Size | Large / Medium / Small | `size` | `lg` / `md` (default) / `sm` | Figma default is Large; code default is `md` |
 | State | Enabled / Hover / Pressed / Focus | n/a | CSS `:hover`, `:active`, `:focus-visible` | states are CSS, not props. Focus draws a 2px `Primary-button-background` ring 2px outside the button (a `Focus ring` layer) |
@@ -243,6 +244,8 @@ No background, border, or padding, just the bold label. Same chrome ladder as Ou
 .btn-text:active   { color: var(--primary-button-background-pressed); }
 .btn-text:disabled { color: var(--text-disabled); }        /* note: --text-disabled, not --text-button-disabled */
 ```
+
+**Text-2** (`variant="text-2"`) is the same box-less button with a neutral rest colour, as Outlined-2 is to Outlined: `color: var(--text-primary)` at rest; hover, pressed and disabled as Text. Added 2026-11-05 at Bruno's request; not yet in the Library.
 
 ### Link
 

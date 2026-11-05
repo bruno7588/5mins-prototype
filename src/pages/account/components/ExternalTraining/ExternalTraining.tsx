@@ -9,7 +9,7 @@ import Search from '@/components/Search/Search'
 import Table, { type Column } from '@/components/Table/Table'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import Toggle from '@/components/Toggle/Toggle'
-import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'
+import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
 import noResults from '@/assets/empty-state-illustrations/no-results.svg'
 import {
@@ -26,7 +26,7 @@ import {
 } from '@/data/externalTraining'
 import CourseDrawer from './CourseDrawer'
 import ProviderModal from './ProviderModal'
-import ApprovedListCsvModal from './ApprovedListCsvModal'
+import BulkUploadCoursesDrawer from './BulkUploadCoursesDrawer'
 import './ExternalTraining.css'
 
 /* Account & Settings > External Training (DES-336 Phase 1, DEV-4740).
@@ -37,11 +37,14 @@ type Confirm =
   | { kind: 'archive-course' | 'delete-course'; course: ExternalCourse }
   | { kind: 'archive-provider' | 'delete-provider'; provider: ExternalProvider }
 
+type View = 'courses' | 'providers'
+
 const icon = (I: typeof Edit2) => <I size={20} color="var(--text-primary)" variant="Linear" />
 
 function ExternalTraining() {
   const { courses, providers, records, allowOneOffs } = useExternalTraining()
   const { toasts, show: showToast } = useToast()
+  const [view, setView] = useState<View>('courses')
   const [query, setQuery] = useState('')
   const [showArchived, setShowArchived] = useState(false)
   const [courseDrawer, setCourseDrawer] = useState<{ course: ExternalCourse | null } | null>(null)
@@ -66,8 +69,9 @@ function ExternalTraining() {
     () =>
       providers
         .filter((p) => showArchived || !p.archived)
+        .filter((p) => !query.trim() || p.name.toLowerCase().includes(query.trim().toLowerCase()))
         .sort((a, b) => Number(a.archived) - Number(b.archived) || a.name.localeCompare(b.name)),
-    [providers, showArchived],
+    [providers, showArchived, query],
   )
 
   /* Archive when it has records, delete when it has none (D4). */
@@ -120,7 +124,7 @@ function ExternalTraining() {
     },
     { key: 'duration', header: 'Duration', width: '0 0 112px', render: (c) => durationLabel(c.duration) },
     { key: 'retraining', header: 'Retraining', width: '0 0 160px', render: (c) => retrainingLabel(c.retrainingMonths) },
-    { key: 'records', header: 'Records', width: '0 0 88px', render: (c) => courseRecords(c.id) },
+    { key: 'records', header: 'Records', width: '0 0 88px', align: 'center', render: (c) => courseRecords(c.id) },
     {
       key: 'actions',
       header: '',
@@ -149,8 +153,8 @@ function ExternalTraining() {
         </span>
       ),
     },
-    { key: 'courses', header: 'Courses', width: '0 0 112px', render: (p) => providerCourses(p.id) },
-    { key: 'records', header: 'Records', width: '0 0 88px', render: (p) => providerRecords(p.id) },
+    { key: 'courses', header: 'Courses', width: '0 0 112px', align: 'center', render: (p) => providerCourses(p.id) },
+    { key: 'records', header: 'Records', width: '0 0 88px', align: 'center', render: (p) => providerRecords(p.id) },
     {
       key: 'actions',
       header: '',
@@ -237,13 +241,6 @@ function ExternalTraining() {
   return (
     <div className="aet-body">
       <section className="aet-card aet-card--row">
-        <div className="aet-head">
-          <h3 className="aet-title">Allow one-off trainings</h3>
-          <p className="aet-text">
-            Admins can record training that isn't on the approved list. Turn this off to only allow approved
-            courses.
-          </p>
-        </div>
         <Toggle
           checked={allowOneOffs}
           onChange={(e) => {
@@ -252,91 +249,111 @@ function ExternalTraining() {
           }}
           aria-label="Allow one-off trainings"
         />
+        <div className="aet-head">
+          <h3 className="aet-title">Allow one-off trainings</h3>
+          <p className="aet-text">
+            Admins can record training that isn't on the approved list. Turn this off to only allow approved
+            courses.
+          </p>
+        </div>
       </section>
 
-      <section className="aet-section" aria-labelledby="aet-courses">
-        <SectionHeader
-          title="Approved courses"
-          description="The external courses your people take, with how often they need retraining."
-          divider={false}
-          ctas={
-            !coursesEmpty && (
+      <section className="aet-section" aria-label="Approved list">
+        <div className="aet-toolbar aet-toolbar--top">
+          <ContentSwitcher
+            ariaLabel="Approved list"
+            items={[
+              { key: 'courses', label: 'Approved Courses' },
+              { key: 'providers', label: 'Approved Providers' },
+            ]}
+            activeKey={view}
+            onChange={(key) => {
+              setView(key as View)
+              setQuery('')
+            }}
+          />
+          <div className="aet-toolbar__ctas">
+            {view === 'courses' && !coursesEmpty && (
               <>
-                <Button variant="outlined-2" icon={<DocumentUpload size={20} color="currentColor" variant="Linear" />} onClick={() => setCsvOpen(true)}>
-                  Upload CSV
+                <Button variant="outlined" icon={<DocumentUpload size={20} color="currentColor" variant="Linear" />} onClick={() => setCsvOpen(true)}>
+                  Bulk Upload Courses
                 </Button>
                 <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setCourseDrawer({ course: null })}>
                   Add Course
                 </Button>
               </>
-            )
-          }
-        />
-        {coursesEmpty ? (
-          <EmptyState
-            illustration={<img src={emptyBox} alt="" width={72} height={72} />}
-            title="No approved courses yet"
-            description="Add the external courses your people take, with how often they need retraining."
-            secondaryAction={{ label: 'Upload CSV', onClick: () => setCsvOpen(true) }}
-            primaryAction={{ label: 'Add Course', onClick: () => setCourseDrawer({ course: null }) }}
-          />
-        ) : (
-          <>
-            <div className="aet-toolbar">
-              <Search value={query} onChange={setQuery} onClear={() => setQuery('')} placeholder="Search courses" ariaLabel="Search courses" />
-              <Toggle
-                checked={showArchived}
-                onChange={(e) => setShowArchived(e.target.checked)}
-                label="Show archived"
-                size="sm"
-              />
-            </div>
-            {visibleCourses.length ? (
-              <Table
-                columns={courseColumns}
-                rows={visibleCourses}
-                getRowKey={(c) => c.id}
-                getRowState={(c) => (c.archived ? 'disabled' : 'enabled')}
-              />
-            ) : (
-              <EmptyState
-                illustration={<img src={noResults} alt="" width={72} height={72} />}
-                title="No courses found"
-                description="Try a different name, or turn on Show archived."
-              />
             )}
-          </>
-        )}
-      </section>
-
-      <section className="aet-section" aria-labelledby="aet-providers">
-        <SectionHeader
-          title="Approved providers"
-          description="The organisations that deliver your approved courses."
-          divider={false}
-          ctas={
-            !providersEmpty && (
-              <Button variant="outlined-2" icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setProviderModal({ provider: null })}>
+            {view === 'providers' && !providersEmpty && (
+              <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setProviderModal({ provider: null })}>
                 Add Provider
               </Button>
-            )
-          }
-        />
-        {providersEmpty ? (
-          <EmptyState
-            illustration={<img src={emptyBox} alt="" width={72} height={72} />}
-            title="No approved providers yet"
-            description="Add the organisations that deliver your external courses."
-            secondaryAction={{ label: 'Add Provider', onClick: () => setProviderModal({ provider: null }) }}
-          />
-        ) : (
-          <Table
-            columns={providerColumns}
-            rows={visibleProviders}
-            getRowKey={(p) => p.id}
-            getRowState={(p) => (p.archived ? 'disabled' : 'enabled')}
-          />
-        )}
+            )}
+          </div>
+        </div>
+
+        {/* No swap animation between the two views (Bruno, 2026-11-05). */}
+        <div className="aet-view" role="tabpanel">
+            {view === 'courses' ? (
+              coursesEmpty ? (
+                <EmptyState
+                  illustration={<img src={emptyBox} alt="" width={72} height={72} />}
+                  title="No approved courses yet"
+                  description="Add the external courses your people take, with how often they need retraining."
+                  secondaryAction={{ label: 'Bulk Upload Courses', onClick: () => setCsvOpen(true) }}
+                  primaryAction={{ label: 'Add Course', onClick: () => setCourseDrawer({ course: null }) }}
+                />
+              ) : (
+                <>
+                  <div className="aet-toolbar">
+                    <Search value={query} onChange={setQuery} onClear={() => setQuery('')} placeholder="Search courses" ariaLabel="Search courses" />
+                    <Toggle checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} label="Show archived" size="sm" />
+                  </div>
+                  {visibleCourses.length ? (
+                    <Table
+                      columns={courseColumns}
+                      rows={visibleCourses}
+                      getRowKey={(c) => c.id}
+                      getRowState={(c) => (c.archived ? 'disabled' : 'enabled')}
+                    />
+                  ) : (
+                    <EmptyState
+                      illustration={<img src={noResults} alt="" width={72} height={72} />}
+                      title="No courses found"
+                      description="Try a different name, or turn on Show archived."
+                    />
+                  )}
+                </>
+              )
+            ) : providersEmpty ? (
+              <EmptyState
+                illustration={<img src={emptyBox} alt="" width={72} height={72} />}
+                title="No approved providers yet"
+                description="Add the organisations that deliver your external courses."
+                secondaryAction={{ label: 'Add Provider', onClick: () => setProviderModal({ provider: null }) }}
+              />
+            ) : (
+              <>
+                <div className="aet-toolbar">
+                  <Search value={query} onChange={setQuery} onClear={() => setQuery('')} placeholder="Search providers" ariaLabel="Search providers" />
+                  <Toggle checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} label="Show archived" size="sm" />
+                </div>
+                {visibleProviders.length ? (
+                  <Table
+                    columns={providerColumns}
+                    rows={visibleProviders}
+                    getRowKey={(p) => p.id}
+                    getRowState={(p) => (p.archived ? 'disabled' : 'enabled')}
+                  />
+                ) : (
+                  <EmptyState
+                    illustration={<img src={noResults} alt="" width={72} height={72} />}
+                    title="No providers found"
+                    description="Try a different name, or turn on Show archived."
+                  />
+                )}
+              </>
+            )}
+        </div>
       </section>
 
       {courseDrawer && (
@@ -360,14 +377,15 @@ function ExternalTraining() {
         }}
       />
 
-      <ApprovedListCsvModal
-        open={csvOpen}
-        onClose={() => setCsvOpen(false)}
-        onAdded={(n) => {
-          setCsvOpen(false)
-          showToast('success', `${n} course${n === 1 ? '' : 's'} added`)
-        }}
-      />
+      {csvOpen && (
+        <BulkUploadCoursesDrawer
+          onClose={() => setCsvOpen(false)}
+          onAdded={(n) => {
+            setCsvOpen(false)
+            showToast('success', `${n} course${n === 1 ? '' : 's'} added`)
+          }}
+        />
+      )}
 
       <ConfirmModal open={!!dialog} onClose={() => setConfirm(null)} ariaLabel={dialog?.title}>
         {dialog && (
