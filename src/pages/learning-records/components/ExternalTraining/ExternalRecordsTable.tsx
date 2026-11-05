@@ -35,18 +35,13 @@ export function RetrainingDueCell({ record, all }: { record: ExternalRecord; all
   const state = dueState(record, all)
   return (
     <span className="tbl-stack">
-      {/* Overdue and due soon show the date inside the badge; the badge icon and the
-          hidden word carry the state, so it never rests on colour alone. */}
+      {/* Overdue and due soon put the date inside the badge, with the state as words
+          ("Overdue 12 May 2026", "Due 10 Nov 2026"), so it never rests on colour alone. */}
       <span className="primary">
         {state === 'overdue' || state === 'due-soon' ? (
           <Badge
             type={state === 'overdue' ? 'error' : 'warning'}
-            label={
-              <>
-                <span className="lret-sr">{state === 'overdue' ? 'Overdue: ' : 'Due soon: '}</span>
-                {formatDay(record.retrainingDueDate)}
-              </>
-            }
+            label={`${state === 'overdue' ? 'Overdue' : 'Due'} ${formatDay(record.retrainingDueDate)}`}
           />
         ) : (
           formatDay(record.retrainingDueDate)
@@ -104,14 +99,14 @@ function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = tr
       key: 'result',
       header: 'Result',
       width: '0 0 120px',
-      render: (r) => (
-        <span className="tbl-stack">
-          <span className="primary">
-            <Badge type={r.result === 'Passed' ? 'success' : 'error'} icon={false} label={r.result} />
-          </span>
-          {r.score != null && <span className="supporting">Score {r.score}%</span>}
-        </span>
-      ),
+      render: (r) => <Badge type={r.result === 'Passed' ? 'success' : 'error'} icon={false} label={r.result} />,
+    },
+    {
+      key: 'score',
+      header: 'Score',
+      width: '0 0 80px',
+      align: 'center',
+      render: (r) => (r.score != null ? `${r.score}%` : <span className="lret-dash">–</span>),
     },
     {
       key: 'certificate',

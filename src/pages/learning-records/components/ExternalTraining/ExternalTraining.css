@@ -77,13 +77,3 @@
   line-height: 1.5;
   color: var(--text-primary);
 }
-
-/* Screen-reader-only text (the state word inside a date badge). */
-.lret-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
