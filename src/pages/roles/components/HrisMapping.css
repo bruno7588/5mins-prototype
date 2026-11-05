@@ -236,7 +236,7 @@
 .hris-panel-options {
   display: flex;
   flex-direction: column;
-  gap: var(--space-s);
+  gap: var(--space-sm);
 }
 
 .hris-panel-options__group {
@@ -267,7 +267,7 @@
   align-items: center;
   gap: var(--space-s);
   padding: var(--space-sm) var(--space-m);
-  background: var(--cards-background);
+  background: transparent;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-family: 'Poppins', sans-serif;
@@ -279,16 +279,15 @@
 }
 
 .hris-panel-option:hover {
-  background: var(--cards-background-hover);
+  background: var(--input-background);
 }
 
 .hris-panel-option--selected {
   border-color: var(--selected);
-  background: var(--selected-tint);
 }
 
 .hris-panel-option--selected:hover {
-  background: color-mix(in srgb, var(--secondary-600) 24%, transparent);
+  background: var(--input-background);
 }
 
 .hris-panel-option__name {
