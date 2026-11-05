@@ -35,9 +35,13 @@
 
 /* Bulk upload: two uploaders and the name-matching step. */
 .lret-uploaders {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-m);
+}
+
+.lret-uploaders > .aet-field > * {
+  width: 100%;
 }
 
 .lret-match {
