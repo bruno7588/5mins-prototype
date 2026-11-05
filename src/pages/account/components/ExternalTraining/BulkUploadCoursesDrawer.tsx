@@ -200,10 +200,10 @@ function BulkUploadCoursesDrawer({ onClose, onAdded }: Props) {
                     <Table columns={templateColumns} rows={TEMPLATE_ROWS} getRowKey={(r) => String(r.line)} />
                   </div>
                 </Collapse>
-                <div>
+                <div className="aet-step__action">
                   <Button
                     variant="text"
-                    trailingIcon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
+                    icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
                     onClick={() => download('approved-courses-template.csv', TEMPLATE)}
                   >
                     Download CSV Template
@@ -230,7 +230,7 @@ function BulkUploadCoursesDrawer({ onClose, onAdded }: Props) {
                 <FileUploader
                   size="L"
                   accept=".csv"
-                  state={fileName ? 'Filled' : undefined}
+                  state={fileName ? 'Filled' : 'Enabled'}
                   fileName={fileName ?? undefined}
                   helpText="Drag and drop CSV file here or click to upload"
                   onFileSelect={(f) => {

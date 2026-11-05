@@ -41,3 +41,11 @@
   line-height: 1.5;
   color: var(--text-error);
 }
+
+/* A field being filled from the certificate wears the shared AI shimmer (.is-writing in
+   AIWorkingCard.css, as Assessments > Create With AI); the band stays inside the field. */
+.aetd-writing {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+}

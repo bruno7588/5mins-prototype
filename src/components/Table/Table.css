@@ -9,6 +9,31 @@
 .tbl-scroll {
   overflow-x: auto;
   width: 100%;
+  /* An always-visible scrollbar under the table when it scrolls sideways, so columns
+     past the edge are discoverable. The global thin scrollbar (reset.css) is an
+     overlay that macOS hides until you scroll; resetting these two to auto brings
+     back the styled classic bar below. */
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
+
+.tbl-scroll::-webkit-scrollbar {
+  height: var(--space-s);
+}
+
+.tbl-scroll::-webkit-scrollbar-track {
+  margin-top: var(--space-xs);
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+}
+
+.tbl-scroll::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-full);
+  background: var(--border-elevated);
+}
+
+.tbl-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
 }
 
 /* Sized to its content but never below the viewport, so once the pinned column

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Add, ArchiveMinus, ArrowRotateLeft, DocumentUpload, Edit2, Trash } from 'iconsax-react'
+import { Add, ArchiveMinus, Danger, ArrowRotateLeft, DocumentUpload, Edit2, Trash } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
@@ -390,7 +390,13 @@ function ExternalTraining() {
       <ConfirmModal open={!!dialog} onClose={() => setConfirm(null)} ariaLabel={dialog?.title}>
         {dialog && (
           <>
-            <div className="confirm-modal-header">
+            <div className={`confirm-modal-header${dialog.danger ? ' confirm-modal-header--center' : ''}`}>
+              {/* Delete is the DS Error dialog (centred, Danger icon); archive is a plain dialog. */}
+              {dialog.danger && (
+                <div className="confirm-modal-icon">
+                  <Danger size={56} color="var(--danger-500)" variant="Linear" />
+                </div>
+              )}
               <h2 className="confirm-modal-title">{dialog.title}</h2>
               <p className="confirm-modal-body">{dialog.body}</p>
             </div>

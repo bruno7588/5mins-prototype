@@ -77,3 +77,42 @@
   line-height: 1.5;
   color: var(--text-primary);
 }
+
+/* Learner name: Medium, matching the 5Mins Courses tab; a link to the profile. */
+.lret-learner-link {
+  display: block;
+  max-width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.lret-learner-link .primary {
+  display: block;
+  font-weight: 500;
+}
+
+.lret-learner-link:hover .primary,
+.lret-learner-link:focus-visible .primary {
+  color: var(--primary-button-background-hover);
+}
+
+.lret-learner-link:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Long course and provider names truncate; the full value is the title tooltip. */
+.lret-ellipsis {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Course and provider cells ignore their text length when the table sizes itself, so a
+   long name truncates instead of widening the table; spare width still flows to them. */
+.lret-contain {
+  contain: inline-size;
+}

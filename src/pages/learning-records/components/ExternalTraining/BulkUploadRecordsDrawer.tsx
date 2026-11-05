@@ -27,7 +27,8 @@ import './ExternalTraining.css'
 
 /* Bulk upload of trainings (PRD 2.10 and 2.11), on the three-step drawer Bruno
    shared. The prototype doesn't parse files: any CSV previews the demo rows below,
-   and a zip "contains" the certificate file names the rows mention.
+   and a zip "contains" the certificate file names the rows mention; loose PDF or
+   image files match a row by their own name.
 
    Names that aren't on the approved list are matched once inside the upload (D15);
    the choice is remembered on the course, so the same file matches on its own next
@@ -90,7 +91,8 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
   const panelRef = useRef<HTMLElement>(null)
   useOverlayA11y(panelRef, true)
   const [csv, setCsv] = useState<string | null>(null)
-  const [zip, setZip] = useState<string | null>(null)
+  /* Certificates: one zip, or the PDF and image files themselves (several at once). */
+  const [certs, setCerts] = useState<string[]>([])
   const [filter, setFilter] = useState<'ready' | 'exists' | 'error'>('ready')
   const [mappings, setMappings] = useState<Record<string, Mapping>>({})
 
@@ -128,7 +130,12 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
   const count = (s: Status) => rows.filter((r) => r.status === s).length
   const ready = rows.filter((r) => r.status === 'ready')
   const needsMatching = unmatched.some(([name]) => !mappings[name])
-  const certFor = (r: CsvRow) => (zip && r.certificate ? r.certificate : null)
+  const hasZip = certs.some((n) => n.toLowerCase().endsWith('.zip'))
+  // A zip "holds" every file the rows name; loose files match a row by their own name.
+  const certFor = (r: CsvRow) =>
+    r.certificate && (hasZip || certs.some((n) => n.toLowerCase() === r.certificate!.toLowerCase()))
+      ? r.certificate
+      : null
 
   const commit = () => {
     // Remember each mapped spelling on its course, so the next upload matches on its own (D15).
@@ -217,10 +224,10 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
               <div className="aet-step__body">
                 <h3 className="aet-step__title">Use our template</h3>
                 <p className="aet-text">Download our CSV file and fill it in following the template.</p>
-                <div>
+                <div className="aet-step__action">
                   <Button
                     variant="text"
-                    trailingIcon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
+                    icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
                     onClick={() => download('external-training-template.csv', TEMPLATE)}
                   >
                     Download CSV Template
@@ -234,8 +241,8 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
                 <h3 className="aet-step__title">Fill in the information</h3>
                 <p className="aet-text">
                   Use one row for each training and put each detail in its own cell. Use the course names from your
-                  approved list. To add certificates, put the files in a zip and write each file's name in the
-                  Certificate file column.
+                  approved list. To add certificates, write each file's name in the Certificate file column,
+                  then upload the files, or a zip of them, with the CSV.
                 </p>
               </div>
             </li>
@@ -249,24 +256,25 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
                     <FileUploader
                       size="L"
                       accept=".csv"
-                      state={csv ? 'Filled' : undefined}
+                      state={csv ? 'Filled' : 'Enabled'}
                       fileName={csv ?? undefined}
-                      helpText="Drag and drop CSV file here or click to upload"
+                      helpText="One row per record. Our template has a Certificate file column."
                       onFileSelect={(f) => setCsv(f.name)}
                       onChangeFile={() => setCsv(null)}
                     />
                   </div>
                   <div className="aet-field">
-                    <span className="aet-label">Certificates zip (optional)</span>
+                    <span className="aet-label">Certificates (optional)</span>
                     <FileUploader
                       size="L"
-                      accept=".zip"
+                      accept=".zip,.pdf,.jpg,.jpeg,.png"
+                      multiple
                       icon={<ZipIcon size={40} color="var(--text-secondary)" />}
-                      state={zip ? 'Filled' : undefined}
-                      fileName={zip ?? undefined}
-                      helpText="Drag and drop a zip of certificates here"
-                      onFileSelect={(f) => setZip(f.name)}
-                      onChangeFile={() => setZip(null)}
+                      state={certs.length ? 'Filled' : 'Enabled'}
+                      fileName={certs.length === 1 ? certs[0] : `${certs.length} certificate files`}
+                      helpText="A zip of PDF or image files"
+                      onFileSelect={(f) => setCerts((c) => (c.includes(f.name) ? c : [...c, f.name]))}
+                      onChangeFile={() => setCerts([])}
                     />
                   </div>
                 </div>

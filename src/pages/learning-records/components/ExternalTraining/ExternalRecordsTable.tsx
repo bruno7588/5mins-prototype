@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Edit2, Trash } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
@@ -61,22 +62,37 @@ interface Props {
   /** Omit for a read-only table (managers, learners). */
   onEdit?: (r: ExternalRecord) => void
   onDelete?: (r: ExternalRecord) => void
+  /** Link each learner to their profile (External Training tab); null for no link. */
+  learnerHref?: (personId: string) => string | null
 }
 
-function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = true, onEdit, onDelete }: Props) {
+function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = true, onEdit, onDelete, learnerHref }: Props) {
   const columns: Column<ExternalRecord>[] = [
+    /* Widths add up to about 1200px (the pinned learner column is 240px at least) with Duration hidden, so the admin list fits a 1536px screen; below
+       that the table scrolls, with the learner pinned and a visible scrollbar. Long
+       text truncates with the full value on hover. */
     ...(showLearner
       ? [
           {
             key: 'learner',
             header: 'Learner',
-            width: '1 0 200px',
+            width: '0 0 240px',
+            cellClassName: learnerHref ? 'is-link' : undefined,
             render: (r: ExternalRecord) => {
               const p = personById(r.personId)
+              const href = learnerHref?.(r.personId) ?? null
+              const name = <span className="primary" title={p?.name}>{p?.name ?? 'Unknown'}</span>
               return (
                 <span className="tbl-stack">
-                  <span className="primary">{p?.name ?? 'Unknown'}</span>
-                  <span className="supporting">{p?.invited ? 'Invited' : p?.email}</span>
+                  {href ? (
+                    // Opens the person's profile on the External Training tab.
+                    <Link to={href} className="lret-learner-link">
+                      {name}
+                    </Link>
+                  ) : (
+                    name
+                  )}
+                  <span className="supporting" title={p?.email}>{p?.invited ? 'Invited' : p?.email}</span>
                 </span>
               )
             },
@@ -86,32 +102,44 @@ function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = tr
     {
       key: 'course',
       header: 'Course',
-      width: '1 0 200px',
-      render: (r) => recordTrainingName(r),
+      width: '1 0 152px',
+      cellClassName: 'lret-contain',
+      render: (r) => <span className="lret-ellipsis" title={recordTrainingName(r)}>{recordTrainingName(r)}</span>,
     },
-    { key: 'provider', header: 'Provider', width: '1 0 160px', render: (r) => recordProviderName(r) || <span className="lret-dash">–</span> },
+    {
+      key: 'provider',
+      header: 'Provider',
+      width: '1 0 124px',
+      cellClassName: 'lret-contain',
+      render: (r) =>
+        recordProviderName(r) ? (
+          <span className="lret-ellipsis" title={recordProviderName(r)}>{recordProviderName(r)}</span>
+        ) : (
+          <span className="lret-dash">–</span>
+        ),
+    },
     { key: 'completion', header: 'Completion date', width: '0 0 136px', render: (r) => formatDay(r.completionDate) },
     { key: 'due', header: 'Expiry', width: '0 0 200px', render: (r) => <RetrainingDueCell record={r} all={all} /> },
     ...(showDuration
-      ? [{ key: 'duration', header: 'Duration', width: '0 0 96px', render: (r: ExternalRecord) => recordDurationLabel(r) || <span className="lret-dash">–</span> }]
+      ? [{ key: 'duration', header: 'Duration', width: '0 0 88px', render: (r: ExternalRecord) => recordDurationLabel(r) || <span className="lret-dash">–</span> }]
       : []),
     {
       key: 'score',
       header: 'Score',
-      width: '0 0 80px',
+      width: '0 0 64px',
       align: 'center',
       render: (r) => (r.score != null ? `${r.score}%` : <span className="lret-dash">–</span>),
     },
     {
       key: 'result',
       header: 'Result',
-      width: '0 0 120px',
+      width: '0 0 112px',
       render: (r) => <Badge type={r.result === 'Passed' ? 'success' : 'error'} icon={false} label={r.result} />,
     },
     {
       key: 'certificate',
       header: 'Certificate',
-      width: '0 0 128px',
+      width: '0 0 104px',
       render: (r) =>
         r.certificate ? (
           <Button size="sm" variant="outlined" onClick={() => downloadCertificate(r)}>

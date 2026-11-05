@@ -346,7 +346,12 @@ function LearningRecordsTab() {
         </>
       ) : teamRecords.length ? (
         // Read-only: no Add, no row actions (D22). Download works.
-        <ExternalRecordsTable rows={teamRecords} all={records} showDuration={false} />
+        <ExternalRecordsTable
+          rows={teamRecords}
+          all={records}
+          showDuration={false}
+          learnerHref={(id) => `/my-team/people/${id}?tab=external-training`}
+        />
       ) : (
         <EmptyState
           illustration={<img src={certificatesIllustration} alt="" width={72} height={72} />}

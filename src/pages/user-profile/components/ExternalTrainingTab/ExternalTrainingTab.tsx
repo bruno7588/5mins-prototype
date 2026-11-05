@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Add } from 'iconsax-react'
+import { Add, Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import EmptyState from '@/components/EmptyState/EmptyState'
@@ -111,7 +111,11 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
       <ConfirmModal open={!!toDelete} onClose={() => setToDelete(null)} ariaLabel="Delete record">
         {toDelete && (
           <>
-            <div className="confirm-modal-header">
+            {/* DS Error dialog: centred, 56px Danger icon, danger commit. */}
+            <div className="confirm-modal-header confirm-modal-header--center">
+              <div className="confirm-modal-icon">
+                <Danger size={56} color="var(--danger-500)" variant="Linear" />
+              </div>
               <h2 className="confirm-modal-title">
                 Delete {recordTrainingName(toDelete)} from {personById(toDelete.personId)?.name ?? personName}'s profile?
               </h2>

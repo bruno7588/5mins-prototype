@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { useHeaderTheme } from '@/data/brandTheme'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowDown, ArrowDown2, TaskSquare, NotificationBing, CalendarAdd, CalendarEdit, RotateLeft, Refresh, Repeat, UserMinus, Mobile, Add, FlashCircle } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
@@ -325,7 +325,11 @@ function UserProfile() {
         ? 'manager'
         : null
 
-  const [activeTab, setActiveTab] = useState<Tab>('Course Progress')
+  // ?tab=external-training (from a learner link in a records list) opens that tab.
+  const [searchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<Tab>(
+    searchParams.get('tab') === 'external-training' ? 'External Training' : 'Course Progress',
+  )
   const [assignOpen, setAssignOpen] = useState(false)
   // Due dates are editable via the bulk actions, so the list is state, not the const.
   const [courses, setCourses] = useState<CourseProgress[]>(COURSES)

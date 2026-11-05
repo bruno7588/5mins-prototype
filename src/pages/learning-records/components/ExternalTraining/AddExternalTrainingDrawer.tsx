@@ -6,7 +6,6 @@ import Alert from '@/components/Alert/Alert'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import Collapse from '@/components/Collapse/Collapse'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import EmptyState from '@/components/EmptyState/EmptyState'
@@ -37,7 +36,8 @@ import './AddExternalTrainingDrawer.css'
 /* Add / Edit external training (DES-336 Phase 2, PRD 2.1-2.8).
 
    Certificate first: dropping a file "reads" it and fills learner, course and
-   completion date for the admin to check. Fill In Manually is always there (D14),
+   completion date for the admin to check. The form is always visible, so the admin
+   can type the details instead (D14),
    and the certificate is optional (D17).
 
    The prototype has no AI service (production decides the model, Blocker 1). The
@@ -89,7 +89,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const [certificate, setCertificate] = useState<string | null>(initialRecord?.certificate ?? null)
   const [reading, setReading] = useState(false)
   const [read, setRead] = useState<Read | null>(null)
-  const [manual, setManual] = useState(editing)
   const [personId, setPersonId] = useState(initialRecord?.personId ?? lockedPersonId ?? '')
   const [mode, setMode] = useState<Mode>(initialRecord && !initialRecord.courseId ? 'one-off' : 'course')
   const [courseId, setCourseId] = useState(initialRecord?.courseId ?? '')
@@ -107,7 +106,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
     setRecord(r)
     setCertificate(r.certificate)
     setRead(null)
-    setManual(true)
     setPersonId(r.personId)
     setMode(r.courseId ? 'course' : 'one-off')
     setCourseId(r.courseId ?? '')
@@ -136,55 +134,89 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId])
 
-  /* ── Simulated certificate read ── */
-  const readTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
-  useEffect(() => () => clearTimeout(readTimer.current), [])
+  /* ── Simulated certificate read ──
+     The form is always there. While the certificate is read, each field it fills wears
+     the shared AI shimmer (.is-writing, as in Assessments > Create With AI) and gets its
+     value one after another: learner, then course and provider, then completion date. */
+  type WritingField = 'learner' | 'course' | 'date'
+  const [writing, setWriting] = useState<Set<WritingField>>(new Set())
+  const readTimers = useRef<ReturnType<typeof setTimeout>[]>([])
+  const clearReadTimers = () => {
+    readTimers.current.forEach(clearTimeout)
+    readTimers.current = []
+  }
+  useEffect(() => clearReadTimers, [])
+  const done = (field: WritingField) =>
+    setWriting((prev) => {
+      const next = new Set(prev)
+      next.delete(field)
+      return next
+    })
+  const at = (ms: number, fn: () => void) => readTimers.current.push(setTimeout(fn, ms))
 
   const onCertificate = (file: File) => {
     setCertificate(file.name)
     if (editing) return // adding a missing certificate to a record doesn't re-read it
+    clearReadTimers()
     setReading(true)
     setRead(null)
+    const fixed = lockedPersonId ?? (personId || undefined)
+    setWriting(new Set<WritingField>(fixed ? ['course', 'date'] : ['learner', 'course', 'date']))
     const name = file.name.toLowerCase()
-    readTimer.current = setTimeout(() => {
-      setReading(false)
-      setManual(true)
-      if (name.includes('unreadable')) {
+
+    if (name.includes('unreadable')) {
+      at(1500, () => {
+        setWriting(new Set())
+        setReading(false)
         setRead({ learner: null, courseText: null, unreadable: true })
-        return
-      }
-      const fixed = lockedPersonId ?? (personId || undefined)
-      if (name.includes('duplicate')) {
-        const existing = records.find((r) => r.courseId && (!fixed || r.personId === fixed)) ?? records[0]
-        const who = personById(existing.personId)!
-        setRead({ learner: who.name, courseText: courses.find((c) => c.id === existing.courseId)?.name ?? null })
-        setPersonId(existing.personId)
-        setMode('course')
-        setCourseId(existing.courseId ?? '')
-        setProviderId(existing.providerId ?? '')
-        setCompletionDate(existing.completionDate)
-        return
-      }
-      const learner = name.includes('mismatch') ? 'Paul Whitaker' : personById(fixed ?? '2')!.name
+      })
+      return
+    }
+
+    // What the certificate "says".
+    const existing = name.includes('duplicate')
+      ? records.find((r) => r.courseId && (!fixed || r.personId === fixed)) ?? records[0]
+      : null
+    const learner = existing
+      ? personById(existing.personId)!.name
+      : name.includes('mismatch')
+        ? 'Paul Whitaker'
+        : personById(fixed ?? '2')!.name
+    const courseText = existing
+      ? courses.find((c) => c.id === existing.courseId)?.name ?? null
+      : name.includes('nomatch')
+        ? 'Fire Safety Awareness'
+        : 'First Aid at Work'
+    const course = existing
+      ? { id: existing.courseId ?? '', provider: existing.providerId ?? '' }
+      : name.includes('nomatch')
+        ? { id: '', provider: '' }
+        : { id: 'c1', provider: 'p1' }
+    const date = existing ? existing.completionDate : '2026-10-28'
+
+    at(600, () => {
       // Fill the learner only when nobody is chosen yet and the name is someone we know.
-      if (!fixed) setPersonId(TRAINING_PEOPLE.find((p) => samePerson(p.name, learner))?.id ?? '')
-      if (name.includes('nomatch')) {
-        setRead({ learner, courseText: 'Fire Safety Awareness' })
-        setMode('course')
-        setCourseId('')
-        setProviderId('')
-      } else {
-        setRead({ learner, courseText: 'First Aid at Work' })
-        setMode('course')
-        setCourseId('c1')
-        setProviderId('p1')
-      }
-      setCompletionDate('2026-10-28')
-    }, 1500)
+      if (existing) setPersonId(existing.personId)
+      else if (!fixed) setPersonId(TRAINING_PEOPLE.find((p) => samePerson(p.name, learner))?.id ?? '')
+      done('learner')
+    })
+    at(1000, () => {
+      setMode('course')
+      setCourseId(course.id)
+      setProviderId(course.provider)
+      done('course')
+    })
+    at(1400, () => {
+      setCompletionDate(date)
+      done('date')
+      setReading(false)
+      setRead({ learner, courseText })
+    })
   }
 
   const clearCertificate = () => {
-    clearTimeout(readTimer.current)
+    clearReadTimers()
+    setWriting(new Set())
     setCertificate(null)
     setReading(false)
     setRead(null)
@@ -255,7 +287,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   /* 2.7: nothing to record against and one-offs are off. */
   const blocked = !editing && courses.every((c) => c.archived) && !allowOneOffs
   const listEmpty = courses.every((c) => c.archived)
-  const showFields = manual || editing
 
   const personOptions = TRAINING_PEOPLE.map((p) => ({
     value: p.id,
@@ -301,17 +332,12 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                 <FileUploader
                   size="L"
                   accept=".pdf,.jpg,.jpeg,.png"
-                  state={certificate ? 'Filled' : undefined}
+                  state={certificate ? 'Filled' : 'Enabled'}
                   fileName={certificate ?? undefined}
                   helpText={editing ? 'Drag and drop the certificate here or click to upload' : "Upload the certificate and we'll fill in the details from it."}
                   onFileSelect={onCertificate}
                   onChangeFile={clearCertificate}
                 />
-                {!showFields && (
-                  <Button variant="text-2" onClick={() => setManual(true)}>
-                    Fill In Manually
-                  </Button>
-                )}
               </div>
 
               {reading && <AIWorkingCard singleLine steps={['Reading the certificate...']} activeStep={0} />}
@@ -321,10 +347,10 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                 <Alert type="Callout" message="We filled in these details from the certificate. Check them before you save." />
               )}
 
-              <Collapse open={showFields && !reading}>
+              <div>
                 <div className="aet-form">
                   {/* Learner */}
-                  <div className="aet-field aetd-full">
+                  <div className={`aet-field aetd-full${writing.has('learner') ? ' aetd-writing is-writing' : ''}`}>
                     <Dropdown
                       label="Learner"
                       placeholder="Select a learner"
@@ -351,7 +377,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
 
                   {/* Course (or one-off) */}
                   {mode === 'course' ? (
-                    <div className="aet-field aetd-full">
+                    <div className={`aet-field aetd-full${writing.has('course') ? ' aetd-writing is-writing' : ''}`}>
                       <Dropdown
                         label="Course"
                         placeholder="Select a course"
@@ -438,7 +464,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                   )}
 
                   {/* Completion date + retraining due */}
-                  <div className="aet-field">
+                  <div className={`aet-field${writing.has('date') ? ' aetd-writing is-writing' : ''}`}>
                     <span className="aet-label">Completion date</span>
                     <DatePickerField
                       value={completionDate}
@@ -497,7 +523,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     </div>
                   </div>
                 </div>
-              </Collapse>
+              </div>
             </div>
           )}
         </div>
@@ -506,7 +532,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
           <div className="side-drawer__footer">
             <div className="side-drawer__footer-divider" />
             <div className="side-drawer__buttons">
-              <Button onClick={save} disabled={reading || !showFields}>
+              <Button onClick={save} disabled={reading}>
                 {editing ? 'Save Changes' : 'Add Training'}
               </Button>
             </div>

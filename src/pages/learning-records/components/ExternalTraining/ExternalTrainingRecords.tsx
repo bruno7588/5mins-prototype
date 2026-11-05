@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Add, Book1, Buildings2, Calendar, DocumentUpload, Profile, TickCircle } from 'iconsax-react'
+import { Add, Danger, Book1, Buildings2, Calendar, DocumentUpload, Profile, TickCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
@@ -198,8 +198,10 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
         <ExternalRecordsTable
           rows={rows}
           all={records}
+          showDuration={false}
           onEdit={(r) => setDrawer({ record: r })}
           onDelete={setToDelete}
+          learnerHref={(id) => (personById(id)?.invited ? null : `/people/${id}?tab=external-training`)}
         />
       ) : (
         <EmptyState
@@ -235,7 +237,11 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
       <ConfirmModal open={!!toDelete} onClose={() => setToDelete(null)} ariaLabel="Delete record">
         {toDelete && (
           <>
-            <div className="confirm-modal-header">
+            {/* DS Error dialog: centred, 56px Danger icon, danger commit. */}
+            <div className="confirm-modal-header confirm-modal-header--center">
+              <div className="confirm-modal-icon">
+                <Danger size={56} color="var(--danger-500)" variant="Linear" />
+              </div>
               <h2 className="confirm-modal-title">
                 Delete {recordTrainingName(toDelete)} from {personById(toDelete.personId)?.name}'s profile?
               </h2>
