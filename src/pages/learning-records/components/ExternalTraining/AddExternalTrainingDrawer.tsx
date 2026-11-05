@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Add, Danger } from 'iconsax-react'
+import { Danger } from 'iconsax-react'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import Alert from '@/components/Alert/Alert'
 import Badge from '@/components/Badge/Badge'
@@ -15,11 +15,12 @@ import InputInteger from '@/components/InputInteger/InputInteger'
 import Radio from '@/components/Radio/Radio'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
-import CourseDrawer from '@/pages/account/components/ExternalTraining/CourseDrawer'
 import '@/pages/account/components/ExternalTraining/ExternalTraining.css'
 import {
   TRAINING_PEOPLE,
+  addCourses,
   dueState,
+  duplicateProvider,
   durationLabel,
   formatDay,
   isFullAdmin,
@@ -28,6 +29,9 @@ import {
   retrainingDueDate,
   todayIso,
   useExternalTraining,
+  type DurationUnit,
+  type ExternalCourse,
+  type ExternalProvider,
   type ExternalRecord,
   type ExternalResult,
 } from '@/data/externalTraining'
@@ -50,13 +54,28 @@ import './AddExternalTrainingDrawer.css'
      anything else     → First Aid at Work, St John Ambulance, 28 Oct 2026
    Prefix: aetd- */
 
-type Mode = 'course' | 'one-off'
+/** 'not-listed': the course isn't on the approved list; the admin adds it to the list
+    or records a one-off, in place (Revolut-style "not listed" link in the menu). */
+type Mode = 'course' | 'not-listed'
+type NotListedAs = 'list' | 'one-off'
 type Read = { learner: string | null; courseText: string | null; unreadable?: boolean }
 
 const RESULT_OPTIONS = [
   { value: 'Passed', label: 'Passed' },
   { value: 'Not Passed', label: 'Not Passed' },
 ]
+
+const UNIT_OPTIONS = [
+  { value: 'minutes', label: 'Minutes' },
+  { value: 'hours', label: 'Hours' },
+  { value: 'days', label: 'Days' },
+]
+
+/** A one-off's stored duration ("2 days") back into the stepper and unit. */
+const parseDuration = (text: string | undefined): { value: number; unit: DurationUnit } => {
+  const m = text?.match(/^(\d+)\s*(minute|hour|day)/i)
+  return m ? { value: Number(m[1]), unit: `${m[2].toLowerCase()}s` as DurationUnit } : { value: 0, unit: 'hours' }
+}
 
 /** Same person if the surname matches and the first names share an initial ("S. Chen" ≈ "Sarah Chen"). */
 const samePerson = (a: string, b: string) => {
@@ -80,42 +99,64 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const [record, setRecord] = useState<ExternalRecord | null>(initialRecord)
   const editing = !!record
 
-  const [courseDrawer, setCourseDrawer] = useState<string | null>(null) // initial name
   const panelRef = useRef<HTMLElement>(null)
-  // Paused while Add Course is open on top, so the two focus traps never fight.
-  useOverlayA11y(panelRef, courseDrawer === null)
+  useOverlayA11y(panelRef, true)
+
+  /* Ways out when the course isn't listed: full admins can add it to the list (D21),
+     anyone can record a one-off while the tenant allows them. */
+  const canAdd = isFullAdmin()
+  const canOneOff = allowOneOffs || !!(initialRecord && !initialRecord.courseId)
+  const listEmpty = courses.every((c) => c.archived)
 
   /* ── Form state ── */
+  const initialDuration = parseDuration(initialRecord?.oneOff?.duration)
   const [certificate, setCertificate] = useState<string | null>(initialRecord?.certificate ?? null)
   const [reading, setReading] = useState(false)
   const [read, setRead] = useState<Read | null>(null)
   const [personId, setPersonId] = useState(initialRecord?.personId ?? lockedPersonId ?? '')
-  const [mode, setMode] = useState<Mode>(initialRecord && !initialRecord.courseId ? 'one-off' : 'course')
+  const [mode, setMode] = useState<Mode>(
+    (initialRecord && !initialRecord.courseId) || (!initialRecord && listEmpty) ? 'not-listed' : 'course',
+  )
+  const [notListedAs, setNotListedAs] = useState<NotListedAs>(
+    initialRecord && !initialRecord.courseId ? 'one-off' : canAdd ? 'list' : 'one-off',
+  )
   const [courseId, setCourseId] = useState(initialRecord?.courseId ?? '')
   const [providerId, setProviderId] = useState(initialRecord?.providerId ?? '')
   const [completionDate, setCompletionDate] = useState(initialRecord?.completionDate ?? '')
   const [result, setResult] = useState<ExternalResult>(initialRecord?.result ?? 'Passed')
   const [score, setScore] = useState(initialRecord?.score ?? 0)
-  const [oneOffName, setOneOffName] = useState(initialRecord?.oneOff?.name ?? '')
-  const [oneOffProvider, setOneOffProvider] = useState(initialRecord?.oneOff?.provider ?? '')
-  const [oneOffDuration, setOneOffDuration] = useState(initialRecord?.oneOff?.duration ?? '')
+  const [newName, setNewName] = useState(initialRecord?.oneOff?.name ?? '')
+  const [newProvider, setNewProvider] = useState(initialRecord?.oneOff?.provider ?? '')
+  const [newDuration, setNewDuration] = useState(initialDuration.value)
+  const [newUnit, setNewUnit] = useState<DurationUnit>(initialDuration.unit)
+  const [retrains, setRetrains] = useState(true)
+  const [months, setMonths] = useState(12)
   const [oneOffDue, setOneOffDue] = useState(initialRecord && !initialRecord.courseId ? initialRecord.retrainingDueDate ?? '' : '')
   const [submitted, setSubmitted] = useState(false)
 
+  const openNotListed = (name: string) => {
+    setMode('not-listed')
+    setCourseId('')
+    if (name) setNewName(name)
+  }
+
   const loadRecord = (r: ExternalRecord) => {
+    const d = parseDuration(r.oneOff?.duration)
     setRecord(r)
     setCertificate(r.certificate)
     setRead(null)
     setPersonId(r.personId)
-    setMode(r.courseId ? 'course' : 'one-off')
+    setMode(r.courseId ? 'course' : 'not-listed')
+    if (!r.courseId) setNotListedAs('one-off')
     setCourseId(r.courseId ?? '')
     setProviderId(r.providerId ?? '')
     setCompletionDate(r.completionDate)
     setResult(r.result)
     setScore(r.score ?? 0)
-    setOneOffName(r.oneOff?.name ?? '')
-    setOneOffProvider(r.oneOff?.provider ?? '')
-    setOneOffDuration(r.oneOff?.duration ?? '')
+    setNewName(r.oneOff?.name ?? '')
+    setNewProvider(r.oneOff?.provider ?? '')
+    setNewDuration(d.value)
+    setNewUnit(d.unit)
     setOneOffDue(r.courseId ? '' : r.retrainingDueDate ?? '')
     setSubmitted(false)
   }
@@ -201,9 +242,14 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
       done('learner')
     })
     at(1000, () => {
-      setMode('course')
-      setCourseId(course.id)
-      setProviderId(course.provider)
+      // A course that isn't listed opens the not-listed block with its name filled in.
+      if (course.id) {
+        setMode('course')
+        setCourseId(course.id)
+        setProviderId(course.provider)
+      } else if (courseText && (canAdd || canOneOff)) {
+        openNotListed(courseText)
+      }
       done('course')
     })
     at(1400, () => {
@@ -226,7 +272,11 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const person = personById(personId)
   const mismatch = !!(read?.learner && person && !samePerson(read.learner, person.name))
   const unknownLearner = !!(read?.learner && !person && !lockedPersonId)
-  const noMatch = !!(read?.courseText && !read.unreadable && mode === 'course' && !courseId && !courses.some((c) => c.name === read.courseText))
+  const fromCertificate = mode === 'not-listed' && !!read?.courseText && newName === read.courseText
+  const addingToList = mode === 'not-listed' && notListedAs === 'list'
+  const listed = newName.trim()
+    ? courses.find((c) => !c.archived && c.name.trim().toLowerCase() === newName.trim().toLowerCase())
+    : undefined
   const duplicate = useMemo(
     () =>
       mode === 'course' && courseId && personId && completionDate
@@ -242,9 +292,13 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
       ? course && completionDate
         ? retrainingDueDate(completionDate, course.retrainingMonths, result)
         : null
-      : result === 'Passed'
-        ? oneOffDue || null
-        : null
+      : addingToList
+        ? completionDate
+          ? retrainingDueDate(completionDate, retrains ? months : null, result)
+          : null
+        : result === 'Passed'
+          ? oneOffDue || null
+          : null
   const preview: ExternalRecord | null = completionDate
     ? {
         id: '_preview', personId, courseId: courseId || null, providerId: providerId || null, completionDate,
@@ -257,8 +311,16 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
     learner: personId ? '' : 'Select a learner',
     course: mode === 'course' && !courseId ? 'Select a course' : '',
     provider: mode === 'course' && courseId && !providerId ? 'Select a provider' : '',
-    oneOffName: mode === 'one-off' && !oneOffName.trim() ? 'Add the training name' : '',
-    oneOffProvider: mode === 'one-off' && !oneOffProvider.trim() ? 'Add the provider name' : '',
+    newName:
+      mode !== 'not-listed'
+        ? ''
+        : !newName.trim()
+          ? 'Add the course name'
+          : listed
+            ? 'Already on the approved list. Choose it from the list.'
+            : '',
+    newProvider: mode === 'not-listed' && !newProvider.trim() ? 'Add the provider name' : '',
+    newDuration: addingToList && newDuration <= 0 ? 'Add a duration' : '',
     date: completionDate ? '' : 'Add the completion date',
   }
   const hasErrors = Object.values(errors).some(Boolean)
@@ -267,12 +329,39 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const save = () => {
     setSubmitted(true)
     if (hasErrors) return
+    /* Add to the approved list: the course (and its provider, if new) goes on the list
+       first, then the record points at it, like any other listed course. */
+    let savedCourseId = mode === 'course' ? courseId : null
+    let savedProviderId = mode === 'course' ? providerId : null
+    if (addingToList) {
+      const existing = duplicateProvider(newProvider)
+      const provider: ExternalProvider = existing ?? { id: newId('p'), name: newProvider.trim(), archived: false }
+      const added: ExternalCourse = {
+        id: newId('c'),
+        name: newName.trim(),
+        providerIds: [provider.id],
+        duration: { value: newDuration, unit: newUnit },
+        retrainingMonths: retrains ? months : null,
+        otherNames: [],
+        archived: false,
+      }
+      addCourses([added], existing ? [] : [provider])
+      savedCourseId = added.id
+      savedProviderId = provider.id
+    }
     const next: ExternalRecord = {
       id: record?.id ?? newId('r'),
       personId,
-      courseId: mode === 'course' ? courseId : null,
-      providerId: mode === 'course' ? providerId : null,
-      oneOff: mode === 'one-off' ? { name: oneOffName.trim(), provider: oneOffProvider.trim(), duration: oneOffDuration.trim() } : undefined,
+      courseId: savedCourseId,
+      providerId: savedProviderId,
+      oneOff:
+        mode === 'not-listed' && notListedAs === 'one-off'
+          ? {
+              name: newName.trim(),
+              provider: newProvider.trim(),
+              duration: newDuration > 0 ? durationLabel({ value: newDuration, unit: newUnit }) : '',
+            }
+          : undefined,
       completionDate,
       // Editing keeps the stored due date unless the date, course or result changed (D9).
       retrainingDueDate: dueDate,
@@ -284,9 +373,9 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
     onSaved(next, !record)
   }
 
-  /* 2.7: nothing to record against and one-offs are off. */
-  const blocked = !editing && courses.every((c) => c.archived) && !allowOneOffs
-  const listEmpty = courses.every((c) => c.archived)
+  /* 2.7: nothing to record against, one-offs are off and the admin can't add to the list. */
+  const blocked = !editing && listEmpty && !allowOneOffs && !canAdd
+  const bothWays = canAdd && canOneOff
 
   const personOptions = TRAINING_PEOPLE.map((p) => ({
     value: p.id,
@@ -357,6 +446,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                       searchable
                       searchPlaceholder="Search people"
                       readOnly={!!lockedPersonId}
+                      className={lockedPersonId ? 'aetd-locked' : undefined}
                       options={personOptions}
                       value={personId}
                       onChange={setPersonId}
@@ -375,7 +465,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     )}
                   </div>
 
-                  {/* Course (or one-off) */}
+                  {/* Course, or the not-listed block */}
                   {mode === 'course' ? (
                     <div className={`aet-field aetd-full${writing.has('course') ? ' aetd-writing is-writing' : ''}`}>
                       <Dropdown
@@ -387,62 +477,106 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                         value={courseId}
                         onChange={setCourseId}
                         error={err('course')}
-                        helperText={
-                          noMatch
-                            ? `The certificate says “${read!.courseText}”. Pick the matching course, or add it to the approved list.`
-                            : course
-                              ? `Duration: ${durationLabel(course.duration)}`
-                              : undefined
+                        helperText={course ? `Duration: ${durationLabel(course.duration)}` : undefined}
+                        emptyText={(q) => `No approved courses match “${q}”`}
+                        /* One way out, pinned at the bottom of the menu (Revolut-style). */
+                        footerLink={
+                          canAdd || canOneOff ? { label: 'Not on the approved list', onClick: openNotListed } : undefined
                         }
                       />
-                      {listEmpty && allowOneOffs && (
-                        <Alert type="Callout" message="Your approved list is empty. Add this course to it to keep records consistent." />
-                      )}
-                      <div className="aetd-links">
-                        {isFullAdmin() && (
-                          <Button
-                            variant="text-2"
-                            icon={<Add size={20} color="currentColor" variant="Linear" />}
-                            onClick={() => setCourseDrawer(read?.courseText && noMatch ? read.courseText : '')}
-                          >
-                            Add Course to Approved List
-                          </Button>
-                        )}
-                        {allowOneOffs && (
-                          <Button variant="text-2" onClick={() => setMode('one-off')}>
-                            Record as One-off
-                          </Button>
-                        )}
-                      </div>
                     </div>
                   ) : (
-                    <div className="aet-field aetd-full">
+                    <div className={`aet-field aetd-full aetd-not-listed${writing.has('course') ? ' aetd-writing is-writing' : ''}`}>
                       <div className="aetd-oneoff-head">
-                        <span className="aet-label">One-off training</span>
-                        <Button variant="text-2" onClick={() => setMode('course')}>
-                          Choose From Approved List
-                        </Button>
+                        <span className="aet-label">Not on the approved list</span>
+                        {!listEmpty && (
+                          <Button variant="text-2" onClick={() => setMode('course')}>
+                            Choose From Approved List
+                          </Button>
+                        )}
                       </div>
                       <InputField
-                        label="Training name"
-                        value={oneOffName}
-                        onChange={(e) => setOneOffName(e.target.value)}
-                        validation={err('oneOffName') ? 'error' : 'none'}
-                        helperText={err('oneOffName')}
+                        label="Course name"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        validation={err('newName') ? 'error' : 'none'}
+                        helperText={err('newName') ?? (fromCertificate ? 'From the certificate.' : undefined)}
                       />
+                      {bothWays && (
+                        <div className="aetd-choices" role="radiogroup" aria-label="How to record it">
+                          {(
+                            [
+                              ['list', 'Add to the approved list', 'Future records and uploads match it'],
+                              ['one-off', 'Record as a one-off', 'This record only'],
+                            ] as const
+                          ).map(([value, title, desc]) => (
+                            <label key={value} className="aetd-choice">
+                              <Radio
+                                name="aetd-not-listed"
+                                checked={notListedAs === value}
+                                onChange={() => setNotListedAs(value)}
+                                aria-describedby={`aetd-choice-${value}`}
+                              />
+                              <span className="aetd-choice__text">
+                                <span className="aetd-choice__title">{title}</span>
+                                <span id={`aetd-choice-${value}`} className="aetd-choice__desc">
+                                  {desc}
+                                </span>
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
                       <InputField
                         label="Provider name"
-                        value={oneOffProvider}
-                        onChange={(e) => setOneOffProvider(e.target.value)}
-                        validation={err('oneOffProvider') ? 'error' : 'none'}
-                        helperText={err('oneOffProvider')}
+                        placeholder="For example, St John Ambulance"
+                        value={newProvider}
+                        onChange={(e) => setNewProvider(e.target.value)}
+                        validation={err('newProvider') ? 'error' : 'none'}
+                        helperText={err('newProvider')}
                       />
-                      <InputField
-                        label="Duration (optional)"
-                        placeholder="For example, 2 days"
-                        value={oneOffDuration}
-                        onChange={(e) => setOneOffDuration(e.target.value)}
-                      />
+                      <div className="aet-field">
+                        <span className="aet-label">
+                          Duration {!addingToList && <span className="aetd-optional">(optional)</span>}
+                        </span>
+                        <div className="aet-row">
+                          <InputInteger
+                            ariaLabel="Duration"
+                            value={newDuration}
+                            onChange={setNewDuration}
+                            min={0}
+                            validation={err('newDuration') ? 'error' : 'none'}
+                            helperText={err('newDuration')}
+                          />
+                          <Dropdown
+                            options={UNIT_OPTIONS}
+                            value={newUnit}
+                            onChange={(v) => setNewUnit(v as DurationUnit)}
+                            className="aet-unit"
+                          />
+                        </div>
+                      </div>
+                      {addingToList && (
+                        <div className="aet-field" role="radiogroup" aria-labelledby="aetd-expiry-label">
+                          <span id="aetd-expiry-label" className="aet-label">Expiry</span>
+                          <Radio name="aetd-expiry" label="No expiry" checked={!retrains} onChange={() => setRetrains(false)} />
+                          <div className="aet-row aet-row--center">
+                            <Radio name="aetd-expiry" label="Expires after" checked={retrains} onChange={() => setRetrains(true)} />
+                            <InputInteger
+                              ariaLabel="Expires after, in months"
+                              value={months}
+                              onChange={(v) => {
+                                setMonths(v)
+                                setRetrains(true)
+                              }}
+                              min={1}
+                              max={240}
+                              suffix="months"
+                              disabled={!retrains}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -463,26 +597,39 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     </div>
                   )}
 
-                  {/* Completion date + retraining due */}
-                  <div className={`aet-field${writing.has('date') ? ' aetd-writing is-writing' : ''}`}>
-                    <span className="aet-label">Completion date</span>
-                    <DatePickerField
-                      value={completionDate}
-                      onChange={setCompletionDate}
-                      maxDate={todayIso()}
-                      ariaLabel="Completion date"
-                      error={err('date')}
+                  {/* Completion date, result and score (optional) on one row */}
+                  <div className="aet-row">
+                    <div className={`aet-field aetd-date${writing.has('date') ? ' aetd-writing is-writing' : ''}`}>
+                      <span className="aet-label">Completion date</span>
+                      <DatePickerField
+                        value={completionDate}
+                        onChange={setCompletionDate}
+                        maxDate={todayIso()}
+                        ariaLabel="Completion date"
+                        error={err('date')}
+                      />
+                    </div>
+                    <Dropdown
+                      label="Result"
+                      options={RESULT_OPTIONS}
+                      value={result}
+                      onChange={(v) => setResult(v as ExternalResult)}
+                      className="aetd-result"
                     />
+                    <div className="aet-field">
+                      <span className="aet-label">Score <span className="aetd-optional">(optional)</span></span>
+                      <InputInteger value={score} onChange={setScore} min={0} max={100} suffix="%" ariaLabel="Score" />
+                    </div>
                   </div>
 
-                  {mode === 'one-off' && result === 'Passed' && (
+                  {mode === 'not-listed' && notListedAs === 'one-off' && result === 'Passed' && (
                     <div className="aet-field">
-                      <span className="aet-label">Expiry date (optional)</span>
+                      <span className="aet-label">Expiry date <span className="aetd-optional">(optional)</span></span>
                       <DatePickerField value={oneOffDue} onChange={setOneOffDue} minDate={completionDate || undefined} ariaLabel="Expiry date" />
                     </div>
                   )}
 
-                  {mode === 'course' && course && completionDate && (
+                  {((mode === 'course' && course) || addingToList) && completionDate && (
                     <div className="aetd-due" role="status">
                       {result === 'Not Passed' ? (
                         <span className="aet-text">No expiry date for a training that wasn't passed.</span>
@@ -508,20 +655,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     />
                   )}
 
-                  {/* Result and score (optional) */}
-                  <div className="aet-row">
-                    <Dropdown
-                      label="Result"
-                      options={RESULT_OPTIONS}
-                      value={result}
-                      onChange={(v) => setResult(v as ExternalResult)}
-                      className="aetd-result"
-                    />
-                    <div className="aet-field">
-                      <span className="aet-label">Score (optional)</span>
-                      <InputInteger value={score} onChange={setScore} min={0} max={100} suffix="%" ariaLabel="Score" />
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -539,19 +672,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
           </div>
         )}
       </aside>
-
-      {courseDrawer !== null && (
-        <CourseDrawer
-          course={null}
-          initialName={courseDrawer}
-          onClose={() => setCourseDrawer(null)}
-          onSaved={(_name, _isNew, saved) => {
-            setCourseDrawer(null)
-            setMode('course')
-            setCourseId(saved.id)
-          }}
-        />
-      )}
     </>
   )
 }

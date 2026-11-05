@@ -303,6 +303,20 @@
   background: var(--cards-background);
 }
 
+/* Footer link (proposed, DES-336): one centred link pinned under the options after
+   a divider, like the search is pinned above them. */
+.dropdown-footer {
+  position: sticky;
+  bottom: calc(var(--space-s) * -1);
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  margin: var(--space-xs) 0 calc(var(--space-s) * -1);
+  padding: var(--space-sm) 0;
+  border-top: 1px solid var(--border-elevated);
+  background: var(--cards-background);
+}
+
 .dropdown-empty {
   padding: var(--space-s) var(--space-sm);
   font-family: 'Poppins', sans-serif;

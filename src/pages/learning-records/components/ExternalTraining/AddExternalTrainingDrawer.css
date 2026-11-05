@@ -6,12 +6,6 @@
   width: 100%;
 }
 
-.aetd-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-l);
-}
-
 .aetd-oneoff-head {
   display: flex;
   align-items: center;
@@ -48,4 +42,67 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-sm);
+}
+
+/* The learner is fixed when recording from their profile: a plain filled field
+   (no border, input fill, primary text), not the greyed read-only state. */
+.aetd-locked .dropdown-trigger:disabled {
+  background: var(--input-background);
+  border-color: transparent;
+  color: var(--text-primary);
+  cursor: default;
+}
+
+/* It can't open, so it carries no chevron. */
+.aetd-locked .dropdown-chevron {
+  display: none;
+}
+
+/* "(optional)" after a field label: Paragraph S regular, tertiary. */
+.aetd-optional {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+/* Not on the approved list: add it to the list or record a one-off. Each choice says
+   what it means underneath (selection-controls.md: options with a title and description). */
+.aetd-choices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.aetd-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  cursor: pointer;
+}
+
+.aetd-choice__text {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--space-xs);
+}
+
+.aetd-choice__title {
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.aetd-choice__desc {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+/* The block's fields fill the drawer and sit a field-gap apart, like the form around it. */
+.aetd-not-listed {
+  gap: var(--space-m);
+}
+
+.aetd-not-listed > * {
+  width: 100%;
 }

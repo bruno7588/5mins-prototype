@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowDown2 } from 'iconsax-react'
+import Button from '../Button/Button'
 import Checkbox from '../Checkbox/Checkbox'
 import Radio from '../Radio/Radio'
 import Search from '../Search/Search'
@@ -27,7 +28,8 @@ export interface DropdownProps {
   placeholder?: string
   label?: string
   labelPlacement?: 'top' | 'start'
-  helperText?: string
+  /** Text, or text with an inline link button. */
+  helperText?: ReactNode
   error?: string
   iconLeft?: ReactNode
   readOnly?: boolean
@@ -59,6 +61,11 @@ export interface DropdownProps {
   /** Fixed trigger text that replaces the selection read-back, e.g. "Change program"
       when the pick is already shown elsewhere. The menu still marks the selection. */
   triggerText?: string
+  /** `searchable` only: the text shown when the search matches nothing (default "No results"). */
+  emptyText?: (query: string) => string
+  /** One link pinned under the options after a divider, e.g. "Not on the list" (proposed,
+      Revolut-style). Closes the menu and gets the current search text. */
+  footerLink?: { label: string; onClick: (query: string) => void }
 }
 
 function Dropdown({
@@ -85,6 +92,8 @@ function Dropdown({
   searchPlaceholder = 'Search',
   radio = false,
   triggerText,
+  emptyText,
+  footerLink,
 }: DropdownProps) {
   const [isActive, setIsActive] = useState(false)
   const [query, setQuery] = useState('')
@@ -262,7 +271,7 @@ function Dropdown({
             </li>
           )}
           {searchable && visibleOptions.length === 0 && (
-            <li className="dropdown-empty">No results</li>
+            <li className="dropdown-empty">{emptyText ? emptyText(query.trim()) : 'No results'}</li>
           )}
           {visibleOptions.map((opt) => {
             const isSelected = multiple ? isPicked(opt.value) : opt.value === value
@@ -411,6 +420,21 @@ function Dropdown({
               </li>
             )
           })}
+          {footerLink && (
+            <li className="dropdown-footer">
+              <Button
+                variant="link"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  const q = query.trim()
+                  setIsActive(false)
+                  footerLink.onClick(q)
+                }}
+              >
+                {footerLink.label}
+              </Button>
+            </li>
+          )}
         </ul>,
         document.body,
       )}
