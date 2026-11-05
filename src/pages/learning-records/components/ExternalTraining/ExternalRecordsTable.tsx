@@ -80,12 +80,7 @@ function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = tr
       key: 'course',
       header: 'Course',
       width: '1 0 200px',
-      render: (r) => (
-        <span className="lret-course">
-          <span>{recordTrainingName(r)}</span>
-          {!r.courseId && <Badge type="informative" icon={false} label="One-off" />}
-        </span>
-      ),
+      render: (r) => recordTrainingName(r),
     },
     { key: 'provider', header: 'Provider', width: '1 0 160px', render: (r) => recordProviderName(r) || <span className="lret-dash">–</span> },
     { key: 'completion', header: 'Completion date', width: '0 0 136px', render: (r) => formatDay(r.completionDate) },
