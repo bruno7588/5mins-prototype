@@ -7,6 +7,7 @@ import CloseButton from '@/components/CloseButton/CloseButton'
 import Collapse from '@/components/Collapse/Collapse'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import FileUploader from '@/components/FileUploader/FileUploader'
+import ZipIcon from '@/components/icons/ZipIcon'
 import Table, { type Column } from '@/components/Table/Table'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import '@/pages/account/components/ExternalTraining/ExternalTraining.css'
@@ -260,6 +261,7 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
                     <FileUploader
                       size="L"
                       accept=".zip"
+                      icon={<ZipIcon size={40} color="var(--text-secondary)" />}
                       state={zip ? 'Filled' : undefined}
                       fileName={zip ?? undefined}
                       helpText="Drag and drop a zip of certificates here"
