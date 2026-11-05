@@ -341,7 +341,10 @@ function UserProfile() {
     }))
     const names = new Set(rows.map((r) => r.course))
     setCourses((cs) => [...rows, ...cs.filter((c) => !names.has(c.course))])
+    setAssignedCount(rows.length)
   }
+  // How many courses the last launch added, for the toast once the wizard closes.
+  const [assignedCount, setAssignedCount] = useState(0)
   const inView = (c: CourseProgress) => view === 'all' || c.compliance
   /* Which enrolments the Extend-due-date modal is acting on: the whole
      selection ('bulk') or the single row its menu was opened from. */
@@ -926,6 +929,10 @@ function UserProfile() {
             setAssignOpen(false)
             setActiveTab('Course Progress')
             setView('all')
+            if (assignedCount > 0) {
+              showToast('success', `${assignedCount} ${assignedCount === 1 ? 'course' : 'courses'} assigned to ${person.name}`)
+              setAssignedCount(0)
+            }
           }}
         />
       )}
