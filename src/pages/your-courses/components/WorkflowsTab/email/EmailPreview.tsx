@@ -63,7 +63,11 @@ function ChannelPreview({ channel, subject, days }: ChannelProps) {
   const subjectLine = subjectText(subject, days) || '(no subject yet)'
   const phoneTitle = subjectLine
 
-  const chatText = <p className="epv-chat__text">{subjectLine}</p>
+  /* Slack and Teams add the call to action after the subject (once, even if the subject
+     already carries it); email and phone show the subject alone. */
+  const CHAT_CTA = 'Complete your Assigned Course. Start here'
+  const chatLine = subjectLine.includes(CHAT_CTA) ? subjectLine : `${subjectLine}: ${CHAT_CTA}`
+  const chatText = <p className="epv-chat__text">{chatLine}</p>
 
   if (channel === 'phone') {
     return (
