@@ -3,6 +3,7 @@ import { ArrowDown2, Diagram } from 'iconsax-react'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Avatar from '@/components/Avatar/Avatar'
+import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import { getSkillIllustrationByName } from '../../assets/skill-icons'
 import avatar1 from './assets/m1.jpg'
 import avatar2 from './assets/m2.jpg'
@@ -127,22 +128,15 @@ function SkillsCompetency() {
     <div className="eng-card">
       <div className="eng-card__headline">
         <h3 className="eng-card__title">Skills competency</h3>
-        <div className="eng-switcher">
-          <button
-            type="button"
-            className={`eng-switcher__item${skillType === 'hard' ? ' eng-switcher__item--active' : ''}`}
-            onClick={() => setSkillType('hard')}
-          >
-            Hard Skills
-          </button>
-          <button
-            type="button"
-            className={`eng-switcher__item${skillType === 'soft' ? ' eng-switcher__item--active' : ''}`}
-            onClick={() => setSkillType('soft')}
-          >
-            Soft Skills
-          </button>
-        </div>
+        <ContentSwitcher
+          ariaLabel="Skill type"
+          items={[
+            { key: 'hard', label: 'Hard Skills' },
+            { key: 'soft', label: 'Soft Skills' },
+          ]}
+          activeKey={skillType}
+          onChange={(key) => setSkillType(key as 'hard' | 'soft')}
+        />
       </div>
 
       <div className="eng-skills__table">
@@ -298,22 +292,16 @@ function Leaderboard() {
         </button>
       </div>
 
-      <div className="eng-switcher eng-switcher--full">
-        <button
-          type="button"
-          className={`eng-switcher__item${scope === 'team' ? ' eng-switcher__item--active' : ''}`}
-          onClick={() => setScope('team')}
-        >
-          Team
-        </button>
-        <button
-          type="button"
-          className={`eng-switcher__item${scope === 'company' ? ' eng-switcher__item--active' : ''}`}
-          onClick={() => setScope('company')}
-        >
-          Company
-        </button>
-      </div>
+      <ContentSwitcher
+        className="eng-switcher--full"
+        ariaLabel="Leaderboard scope"
+        items={[
+          { key: 'team', label: 'Team' },
+          { key: 'company', label: 'Company' },
+        ]}
+        activeKey={scope}
+        onChange={(key) => setScope(key as typeof scope)}
+      />
 
       <div className="eng-lb__list">
         {leaderboardData.map((entry) => (

@@ -45,48 +45,14 @@
   margin: 0;
 }
 
-/* Content switcher (reused in Skills + Leaderboard) */
-.eng-switcher {
+/* Leaderboard scope: shared ContentSwitcher stretched to full width, segments sharing it equally. */
+.switcher.eng-switcher--full {
   display: flex;
-  gap: var(--space-xs);
-  padding: var(--space-xs);
-  background: var(--input-background-elevated);
-  border-radius: var(--radius-sm);
-}
-
-.eng-switcher--full {
   width: 100%;
 }
 
-.eng-switcher__item {
-  padding: var(--space-s) var(--space-m);
-  border-radius: var(--radius-s);
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-secondary);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  line-height: 1.5;
-  white-space: nowrap;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.eng-switcher--full .eng-switcher__item {
-  flex: 1;
-  text-align: center;
-}
-
-.eng-switcher__item:hover:not(.eng-switcher__item--active) {
-  background: var(--input-background-elevated);
-  color: var(--text-primary);
-}
-
-.eng-switcher__item--active {
-  background: var(--secondary-500);
-  color: var(--text-on-selected);
-  font-weight: 500;
+.eng-switcher--full .switcher__item {
+  flex: 1 1 0;
 }
 
 /* ── Fake dropdown (static) ── */
