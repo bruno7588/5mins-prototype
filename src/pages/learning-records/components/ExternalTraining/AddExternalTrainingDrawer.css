@@ -1,0 +1,43 @@
+/* Add / Edit external training drawer (DES-336). Shares the aet- form classes from
+   Account & Settings > External Training. Prefix: aetd- */
+
+.aetd-full,
+.aetd-full > .dropdown {
+  width: 100%;
+}
+
+.aetd-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+}
+
+.aetd-oneoff-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.aetd-value {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.aetd-due {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.aetd-result {
+  width: 200px;
+}
+
+.aetd-error {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--text-error);
+}

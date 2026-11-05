@@ -3,7 +3,6 @@ import Button from '@/components/Button/Button'
 import Table, { type Column } from '@/components/Table/Table'
 import { Calendar, Note1 } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
-import MoreIcon from '../../components/icons/MoreIcon'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import Toggle from '../../components/Toggle/Toggle'
@@ -24,6 +23,7 @@ import {
   type FilterEntry,
   type SavedReport,
 } from '../../utils/lrSavedFilters'
+import ExternalTrainingRecords from './components/ExternalTraining/ExternalTrainingRecords'
 import './LearningRecords.css'
 
 type TabKey = '5mins' | 'external'
@@ -87,35 +87,6 @@ const deactivatedData: CourseRecord[] = [
   { id: 'd4', name: 'James Whitfield', email: 'james.w@company.com', team: 'Finance', region: 'North America', course: 'Anti-Money Laundering', category: 'Compliance', enrolment: 'Current', startDate: '2025-09-15', dueDate: '2025-10-12', completionDate: null, daysLate: 21, duration: '20 mins', progress: 60, status: 'Overdue', deactivation: { type: 'long-leave', on: 'Dec 05, 2025' } },
 ]
 
-/* ── External Training data ── */
-type ExternalResult = 'Passed' | 'Not Passed'
-
-interface ExternalRecord {
-  id: string
-  email: string
-  training: string
-  provider: string
-  startDate: string
-  completionDate: string | null
-  expiration: string | null
-  duration: string
-  score: string | null
-  result: ExternalResult
-  hasCertificate: boolean
-}
-
-const externalData: ExternalRecord[] = [
-  { id: 'e1', email: 'michael.t@company.com', training: 'Project Management Fundamentals', provider: 'Leadership Academy', startDate: '2026-04-13', completionDate: '2026-04-25', expiration: '2026-05-10', duration: '2 days', score: '100%', result: 'Passed', hasCertificate: true },
-  { id: 'e2', email: 'jessica.h@company.com', training: 'Advanced Excel for Finance', provider: 'SkillBridge Online', startDate: '2026-03-20', completionDate: '2026-04-02', expiration: null, duration: '3 days', score: null, result: 'Not Passed', hasCertificate: false },
-  { id: 'e3', email: 'david.j@company.com', training: 'Data Analytics Bootcamp', provider: 'TechForward Institute', startDate: '2026-04-01', completionDate: '2026-04-15', expiration: '2027-04-15', duration: '5 days', score: '92%', result: 'Passed', hasCertificate: true },
-  { id: 'e4', email: 'noah.w@company.com', training: 'Customer Experience Design', provider: 'CX Academy', startDate: '2026-03-10', completionDate: '2026-03-22', expiration: '2026-09-22', duration: '2 days', score: '100%', result: 'Passed', hasCertificate: true },
-  { id: 'e5', email: 'mei.t@company.com', training: 'First Aid & CPR Certification', provider: 'Red Cross Training', startDate: '2026-02-15', completionDate: '2026-02-16', expiration: null, duration: '1 day', score: null, result: 'Not Passed', hasCertificate: false },
-  { id: 'e6', email: 'ethan.b@company.com', training: 'Barista Mastery Program', provider: 'Coffee Institute', startDate: '2026-04-05', completionDate: '2026-04-12', expiration: '2027-04-12', duration: '2 days', score: '100%', result: 'Passed', hasCertificate: true },
-  { id: 'e7', email: 'priya.s@company.com', training: 'Leadership & Team Management', provider: 'Leadership Academy', startDate: '2026-03-25', completionDate: '2026-04-08', expiration: null, duration: '3 days', score: null, result: 'Not Passed', hasCertificate: false },
-  { id: 'e8', email: 'samantha.r@company.com', training: 'Financial Modelling Workshop', provider: 'FinanceHub', startDate: '2026-04-10', completionDate: '2026-04-18', expiration: '2027-04-18', duration: '2 days', score: '95%', result: 'Passed', hasCertificate: true },
-  { id: 'e9', email: 'laura.c@company.com', training: 'ISO 27001 Auditor Training', provider: 'CompliancePro', startDate: '2026-03-01', completionDate: '2026-03-15', expiration: '2027-03-15', duration: '5 days', score: '88%', result: 'Passed', hasCertificate: true },
-  { id: 'e10', email: 'marcus.r@company.com', training: 'Workplace Safety Advanced', provider: 'SafeWork Training', startDate: '2026-02-20', completionDate: '2026-03-05', expiration: '2026-09-05', duration: '2 days', score: '100%', result: 'Passed', hasCertificate: true },
-]
 
 function formatDate(dateStr: string): { line1: string; line2: string } {
   const d = new Date(dateStr + 'T00:00:00')
@@ -560,54 +531,6 @@ function LearningRecords() {
     },
   ]
 
-  const externalColumns: Column<ExternalRecord>[] = [
-    { key: 'email', header: 'Email', width: '0 0 240px', render: (row) => row.email },
-    { key: 'training', header: 'Training', width: '0 0 200px', render: (row) => row.training },
-    { key: 'provider', header: 'Training provider', width: '0 0 200px', render: (row) => row.provider },
-    { key: 'startDate', header: 'Start date', width: '0 0 94px', render: (row) => <DateCell value={row.startDate} /> },
-    { key: 'completionDate', header: 'Completion date', width: '0 0 94px', render: (row) => <DateCell value={row.completionDate} /> },
-    { key: 'expiration', header: 'Expiration', width: '0 0 94px', render: (row) => <DateCell value={row.expiration} /> },
-    { key: 'duration', header: 'Duration', width: '0 0 84px', render: (row) => row.duration },
-    {
-      key: 'score',
-      header: 'Score',
-      width: '0 0 64px',
-      render: (row) => row.score ?? <span className="lrp-dash">–</span>,
-    },
-    {
-      key: 'result',
-      header: 'Result',
-      width: '0 0 128px',
-      render: (row) => (
-        <span className={`lrp-badge ${row.result === 'Passed' ? 'lrp-badge--completed' : 'lrp-badge--overdue'}`}>
-          {row.result}
-        </span>
-      ),
-    },
-    {
-      key: 'certificate',
-      header: 'Certificate',
-      width: '0 0 140px',
-      render: (row) =>
-        row.hasCertificate ? (
-          <Button size="sm" variant="outlined" className="ui-disabled" disabled>Download</Button>
-        ) : (
-          <span className="lrp-dash">–</span>
-        ),
-    },
-    {
-      key: 'more',
-      header: '',
-      width: '0 0 48px',
-      align: 'center',
-      render: () => (
-        <span className="ui-disabled">
-          <MoreIcon size={20} color="var(--text-tertiary)" />
-        </span>
-      ),
-    },
-  ]
-
 
   return (
     <div className="lrp-layout">
@@ -663,6 +586,7 @@ function LearningRecords() {
             </div>
           </div>
 
+          {activeTab === '5mins' && (<>
           {/* Filters bar (DS filter-bar.md) */}
           <div className="lrp-filters-wrap">
             <FilterBar
@@ -729,6 +653,7 @@ function LearningRecords() {
               )}
             </div>
           </div>
+          </>)}
 
           {/* Table */}
           {activeTab === '5mins' ? (
@@ -738,11 +663,7 @@ function LearningRecords() {
               getRowKey={(row) => row.id}
             />
           ) : (
-            <Table
-              columns={externalColumns}
-              rows={externalData}
-              getRowKey={(row) => row.id}
-            />
+            <ExternalTrainingRecords showToast={showToast} />
           )}
 
 
