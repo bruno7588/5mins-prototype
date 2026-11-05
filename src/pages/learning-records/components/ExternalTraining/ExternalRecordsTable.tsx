@@ -35,10 +35,22 @@ export function RetrainingDueCell({ record, all }: { record: ExternalRecord; all
   const state = dueState(record, all)
   return (
     <span className="tbl-stack">
-      <span className="primary lret-due">
-        {formatDay(record.retrainingDueDate)}
-        {state === 'overdue' && <Badge type="error" label="Overdue" />}
-        {state === 'due-soon' && <Badge type="warning" label="Due soon" />}
+      {/* Overdue and due soon show the date inside the badge; the badge icon and the
+          hidden word carry the state, so it never rests on colour alone. */}
+      <span className="primary">
+        {state === 'overdue' || state === 'due-soon' ? (
+          <Badge
+            type={state === 'overdue' ? 'error' : 'warning'}
+            label={
+              <>
+                <span className="lret-sr">{state === 'overdue' ? 'Overdue: ' : 'Due soon: '}</span>
+                {formatDay(record.retrainingDueDate)}
+              </>
+            }
+          />
+        ) : (
+          formatDay(record.retrainingDueDate)
+        )}
       </span>
       {renewed && <span className="supporting">Renewed {formatDay(renewed.completionDate)}</span>}
     </span>
