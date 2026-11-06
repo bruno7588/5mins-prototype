@@ -15,6 +15,9 @@ export interface DropdownOption {
   disabled?: boolean
   /** Leading icon (listbox.md icon-left slot); the trigger shows the picked one. */
   icon?: ReactNode
+  /** Leading 72x44 image in the menu row only (course pickers, as the Automations
+      course search); the trigger stays text. */
+  thumbnail?: string
   /** Trailing icon button (listbox.md icon-right slot), e.g. delete this option. Clicking
       it runs the action without picking the option. Single-select rows only. */
   action?: { icon: ReactNode; label: string; onClick: () => void }
@@ -284,6 +287,7 @@ function Dropdown({
               .join(' ')
             const text = (
               <>
+              {opt.thumbnail && <img className="dropdown-option__thumb" src={opt.thumbnail} alt="" />}
               {opt.icon && <span className="dropdown-option__icon">{opt.icon}</span>}
               <span className={`dropdown-option__text${opt.description ? ' is-rich' : ''}`}>
                 <span className="dropdown-option__label">{opt.label}</span>

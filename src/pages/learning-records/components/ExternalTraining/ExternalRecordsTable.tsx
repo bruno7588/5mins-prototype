@@ -20,7 +20,7 @@ import {
    The viewer decides the columns and whether rows have actions. */
 
 /* DS table date (table.md): "Sep 12," over the year in tertiary, as on the profile's Course Progress. */
-function DateCell({ iso }: { iso: string }) {
+export function DateCell({ iso }: { iso: string }) {
   const d = new Date(iso + 'T00:00:00')
   return (
     <span className="tbl-date">
@@ -56,7 +56,7 @@ export function RetrainingDueCell({ record, all }: { record: ExternalRecord; all
             label={`${state === 'overdue' ? 'Overdue' : 'Due'} ${formatDay(record.retrainingDueDate)}`}
           />
         ) : (
-          formatDay(record.retrainingDueDate)
+          <DateCell iso={record.retrainingDueDate} />
         )}
       </span>
       {renewed && <span className="supporting">Renewed {formatDay(renewed.completionDate)}</span>}

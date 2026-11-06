@@ -22,6 +22,7 @@ import {
 } from '@/data/externalTraining'
 import AddExternalTrainingDrawer from './AddExternalTrainingDrawer'
 import BulkUploadRecordsDrawer from './BulkUploadRecordsDrawer'
+import BulkUploadChoiceModal, { type BulkUploadKind } from './BulkUploadChoiceModal'
 import ExternalRecordsTable from './ExternalRecordsTable'
 import './ExternalTraining.css'
 
@@ -64,7 +65,8 @@ interface Props {
 function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
   const { records } = useExternalTraining()
   const [drawer, setDrawer] = useState<{ record: ExternalRecord | null } | null>(null)
-  const [bulkOpen, setBulkOpen] = useState(false)
+  const [bulkChoice, setBulkChoice] = useState(false)
+  const [bulkKind, setBulkKind] = useState<BulkUploadKind | null>(null)
   const [toDelete, setToDelete] = useState<ExternalRecord | null>(null)
 
   /* ── Filter bar state ── */
@@ -160,9 +162,9 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
           }
           items={[
             { key: 'single', label: 'Add training', icon: <Add size={20} color="var(--text-primary)" variant="Linear" /> },
-            { key: 'bulk', label: 'Bulk upload CSV', icon: <DocumentUpload size={20} color="var(--text-primary)" variant="Linear" /> },
+            { key: 'bulk', label: 'Bulk upload', icon: <DocumentUpload size={20} color="var(--text-primary)" variant="Linear" /> },
           ]}
-          onSelect={(key) => (key === 'bulk' ? setBulkOpen(true) : setDrawer({ record: null }))}
+          onSelect={(key) => (key === 'bulk' ? setBulkChoice(true) : setDrawer({ record: null }))}
         />
   )
 
@@ -224,11 +226,21 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
         />
       )}
 
-      {bulkOpen && (
+      <BulkUploadChoiceModal
+        open={bulkChoice}
+        onClose={() => setBulkChoice(false)}
+        onChoose={(k) => {
+          setBulkChoice(false)
+          setBulkKind(k)
+        }}
+      />
+
+      {bulkKind && (
         <BulkUploadRecordsDrawer
-          onClose={() => setBulkOpen(false)}
+          kind={bulkKind}
+          onClose={() => setBulkKind(null)}
           onAdded={(n) => {
-            setBulkOpen(false)
+            setBulkKind(null)
             showToast('success', `${n} record${n === 1 ? '' : 's'} added`)
           }}
         />

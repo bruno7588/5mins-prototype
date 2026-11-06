@@ -33,42 +33,46 @@
   gap: var(--space-xs);
 }
 
-/* Bulk upload: two uploaders and the name-matching step. */
-.lret-uploaders {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-m);
-}
-
-.lret-uploaders > .aet-field > * {
-  width: 100%;
-}
-
+/* Bulk upload: the name-matching step. */
 .lret-match {
   display: flex;
   flex-direction: column;
   gap: var(--space-m);
-}
-
-.lret-match__row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-m);
-  padding: var(--space-sm) var(--space-m);
-  border: 1px solid var(--border);
+  /* A card (no border, Shadow S) so the matching step stands apart from the table. */
+  padding: var(--space-m);
   border-radius: var(--radius-sm);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-card);
 }
 
+/* Match the pairs layout (InteractiveDrawer .iq-drawer__pair-grid): name in the
+   file, link glyph, course picker. */
+.lret-match__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-sm) var(--space-s);
+}
+
+.lret-match__head {
+  padding-inline: var(--space-sm);
+  font-size: var(--font-size-md);
+  font-weight: 600; /* DS field label: Paragraph M semibold (input.md) */
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Read-only field chrome, as a match-the-pairs term row. */
 .lret-match__name {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-xxs);
-}
-
-.lret-match__control {
-  width: 280px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  /* Stretches to the Dropdown trigger beside it. */
+  align-self: stretch;
+  padding: var(--space-xss) var(--space-sm);
+  border: 1px solid var(--border-elevated); /* on a card */
+  border-radius: var(--radius-sm);
 }
 
 .lret-match__label {
@@ -76,6 +80,17 @@
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
+}
+
+.lret-match__count {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm); /* Paragraph S regular */
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+.lret-match__control {
+  width: 100%;
 }
 
 /* Learner name: Medium, matching the 5Mins Courses tab; a link to the profile. */
@@ -115,4 +130,11 @@
    long name truncates instead of widening the table; spare width still flows to them. */
 .lret-contain {
   contain: inline-size;
+}
+
+/* Bulk upload review: a true full-screen modal (overlays.md), over the top bar
+   too, as the lesson editors are. Bulk manage people keeps its below-the-nav shell. */
+.bulk-upload-modal.lret-review {
+  top: 0;
+  z-index: 101;
 }

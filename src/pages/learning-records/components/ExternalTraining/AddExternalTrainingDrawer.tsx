@@ -19,6 +19,7 @@ import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
 import '@/pages/account/components/ExternalTraining/ExternalTraining.css'
 import {
+  courseThumb,
   TRAINING_PEOPLE,
   addCourses,
   dueState,
@@ -544,7 +545,12 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                         placeholder="Select a course"
                         searchable
                         searchPlaceholder="Search approved courses"
-                        options={activeCourses.map((c) => ({ value: c.id, label: c.name }))}
+                        options={activeCourses.map((c) => ({
+                          value: c.id,
+                          label: c.name,
+                          description: providers.filter((p) => c.providerIds.includes(p.id)).map((p) => p.name).join(', '),
+                          thumbnail: courseThumb(c.id),
+                        }))}
                         value={courseId}
                         onChange={setCourseId}
                         error={err('course')}

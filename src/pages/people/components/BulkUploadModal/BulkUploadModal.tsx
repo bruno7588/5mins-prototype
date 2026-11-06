@@ -196,7 +196,7 @@ function CellWithWarning({ value, warning }: { value: string; warning?: CellWarn
   )
 }
 
-function CellError({ value, error }: { value: string; error: CellError }) {
+export function CellError({ value, error }: { value: string; error: Pick<CellError, 'label' | 'solution'> }) {
   const anchorRef = useRef<HTMLSpanElement>(null)
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({ opacity: 0 })
 

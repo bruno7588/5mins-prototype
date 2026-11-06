@@ -18,7 +18,7 @@ import thumb7 from '../../assets/programs/course-thumbs/course-thumb-7.jpg'
 import thumb8 from '../../assets/programs/course-thumbs/course-thumb-8.jpg'
 import thumb9 from '../../assets/programs/course-thumbs/course-thumb-9.jpg'
 
-const THUMBS = [thumb1, thumb2, thumb3, thumb4, thumb5, thumb6, thumb7, thumb8, thumb9]
+export const THUMBS = [thumb1, thumb2, thumb3, thumb4, thumb5, thumb6, thumb7, thumb8, thumb9]
 
 /** Who authored the content. Same two-way split the role picker already uses. */
 export type ContentSource = '5mins' | 'tenant'
