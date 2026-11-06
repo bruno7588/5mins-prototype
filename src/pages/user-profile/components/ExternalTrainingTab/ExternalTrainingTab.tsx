@@ -61,7 +61,7 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
           )}
           {isAdmin && (
             <Button
-              variant="outlined-2"
+              variant="outlined"
               icon={<Add size={20} color="currentColor" variant="Linear" />}
               onClick={() => setDrawer({ record: null })}
             >

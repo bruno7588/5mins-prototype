@@ -3,7 +3,6 @@ import { Add } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
-import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import InputField from '@/components/InputField/InputField'
@@ -152,10 +151,12 @@ function CourseDrawer({ course, initialName = '', onClose, onSaved }: Props) {
                   {providerIds.map((id) => {
                     const label = providers.find((p) => p.id === id)?.name ?? ''
                     return (
-                      <Chip
+                      <Badge
                         key={id}
+                        type="informative"
                         label={label}
                         onDismiss={() => setProviderIds((ids) => ids.filter((x) => x !== id))}
+                        dismissLabel={`Remove ${label}`}
                       />
                     )
                   })}

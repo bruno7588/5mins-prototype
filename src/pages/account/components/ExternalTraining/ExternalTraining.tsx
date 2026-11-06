@@ -390,13 +390,11 @@ function ExternalTraining() {
       <ConfirmModal open={!!dialog} onClose={() => setConfirm(null)} ariaLabel={dialog?.title}>
         {dialog && (
           <>
-            <div className={`confirm-modal-header${dialog.danger ? ' confirm-modal-header--center' : ''}`}>
-              {/* Delete is the DS Error dialog (centred, Danger icon); archive is a plain dialog. */}
-              {dialog.danger && (
-                <div className="confirm-modal-icon">
-                  <Danger size={56} color="var(--danger-500)" variant="Linear" />
-                </div>
-              )}
+            <div className="confirm-modal-header confirm-modal-header--center">
+              {/* DS dialogs (overlays.md): delete is Error; archive is Warning, since it can be restored. */}
+              <div className="confirm-modal-icon">
+                <Danger size={56} color={dialog.danger ? 'var(--danger-500)' : 'var(--warning-500)'} variant="Linear" />
+              </div>
               <h2 className="confirm-modal-title">{dialog.title}</h2>
               <p className="confirm-modal-body">{dialog.body}</p>
             </div>
@@ -405,7 +403,7 @@ function ExternalTraining() {
                 Cancel
               </Button>
               <Button
-                semantic={dialog.danger ? 'danger' : 'primary'}
+                semantic={dialog.danger ? 'danger' : 'warning'}
                 onClick={() => {
                   dialog.run()
                   setConfirm(null)

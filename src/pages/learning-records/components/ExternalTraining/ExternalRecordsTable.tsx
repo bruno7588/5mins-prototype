@@ -139,7 +139,7 @@ function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = tr
     {
       key: 'certificate',
       header: 'Certificate',
-      width: '0 0 104px',
+      width: '0 0 120px',
       render: (r) =>
         r.certificate ? (
           <Button size="sm" variant="outlined" onClick={() => downloadCertificate(r)}>
