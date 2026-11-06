@@ -488,11 +488,16 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                   as its field fills, and fades out when the read is done. */}
               <AnimatePresence initial={false}>
                 {reading && (
+                  /* The card's height opens and closes too, so the form below slides down
+                     and back up instead of jumping. The negative margin cancels the form's
+                     24px gap (--space-l) while the card is closed, so nothing snaps at the
+                     ends either. */
                   <motion.div
                     key="reading"
-                    initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
+                    style={{ overflow: 'hidden' }}
+                    initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8, height: 0, marginBottom: -24 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto', marginBottom: 0 }}
+                    exit={reduce ? { opacity: 0 } : { opacity: 0, height: 0, marginBottom: -24 }}
                     transition={arriveTransition(reduce)}
                   >
                     <AIWorkingCard steps={readSteps} activeStep={readStep} lastStepDone={false} />

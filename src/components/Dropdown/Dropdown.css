@@ -321,6 +321,7 @@
 .dropdown-footer .ds-btn.ds-btn--link {
   padding-inline: var(--space-sm);
   font-weight: 700;
+  text-decoration: none;
 }
 
 .dropdown-empty {
