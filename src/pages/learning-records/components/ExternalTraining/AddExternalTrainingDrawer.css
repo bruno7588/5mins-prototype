@@ -20,10 +20,20 @@
   color: var(--text-primary);
 }
 
+/* Expiry: a read-only field, filled and borderless like the read-only Duration. */
 .aetd-due {
   display: flex;
   align-items: center;
   gap: var(--space-s);
+  width: fit-content;
+  box-sizing: border-box;
+  padding: var(--space-s) var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+}
+
+.aetd-due .aetd-value {
+  font-weight: 400;
 }
 
 .aetd-result {
@@ -54,8 +64,27 @@
 }
 
 /* It can't open, so it carries no chevron. */
-.aetd-locked .dropdown-chevron {
+.aetd-locked .dropdown-chevron,
+.aetd-readonly .dropdown-chevron {
   display: none;
+}
+
+/* Nor does a read-only stepper carry the minus and plus. */
+.aetd-readonly .input-integer__step {
+  display: none;
+}
+
+/* Read-only duration and unit: the same filled, borderless field as the locked learner. */
+.aetd-readonly .dropdown-trigger:disabled,
+.aetd-readonly.input-integer--disabled .input-integer__control {
+  background: var(--input-background);
+  border-color: transparent;
+  color: var(--text-primary);
+  cursor: default;
+}
+
+.aetd-readonly.input-integer--disabled .input-integer__value {
+  color: var(--text-primary);
 }
 
 /* "(optional)" after a field label: Paragraph S regular, tertiary. */
@@ -88,21 +117,40 @@
 
 .aetd-choice__title {
   font-size: var(--font-size-md);
+  font-weight: 500;
   line-height: 1.5;
   color: var(--text-primary);
 }
 
 .aetd-choice__desc {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
+  font-weight: 400;
   line-height: 1.5;
   color: var(--text-tertiary);
 }
 
-/* The block's fields fill the drawer and sit a field-gap apart, like the form around it. */
+/* The block's fields fill the drawer and sit a field-gap apart, like the form around it.
+   A bordered box (no fill; --border, as inside drawers) marks it as one unit that
+   replaced the Course field (Mobbin: incident.io nested fields). */
 .aetd-not-listed {
   gap: var(--space-m);
+  padding: var(--space-m);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
 }
 
 .aetd-not-listed > * {
   width: 100%;
+}
+
+/* Certificate drop zone: hugs its content instead of the L size's 240px minimum,
+   so the form below starts higher. */
+.aetd-uploader.file-uploader--L {
+  min-height: 0;
+}
+
+/* The read-only duration and its unit read as one value: a tighter 8px gap. */
+.aet-row.aetd-readonly-row {
+  gap: var(--space-s);
 }

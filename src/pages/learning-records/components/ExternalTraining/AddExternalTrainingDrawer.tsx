@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Danger } from 'iconsax-react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
+import { arriveTransition } from '@/components/AIWorkingCard/arrive'
 import Alert from '@/components/Alert/Alert'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
@@ -93,11 +95,23 @@ interface Props {
   onSaved: (record: ExternalRecord, isNew: boolean) => void
 }
 
+/* Course field ↔ not-listed block: one screen replacing another inside the drawer
+   (motion.md: AnimatePresence mode="wait", arrive in, rise out; opacity only when reduced). */
+const SWAP = (reduce: boolean | null) => ({
+  initial: reduce ? { opacity: 0 } : { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  exit: reduce ? { opacity: 0 } : { opacity: 0, y: -16 },
+  transition: arriveTransition(reduce),
+})
+
 function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = null, onClose, onSaved }: Props) {
   const navigate = useNavigate()
   const { courses, providers, records, allowOneOffs } = useExternalTraining()
   const [record, setRecord] = useState<ExternalRecord | null>(initialRecord)
   const editing = !!record
+  const reduce = useReducedMotion()
+  /* Set by the "Not on the approved list" click, so Course name takes focus when it arrives. */
+  const [focusName, setFocusName] = useState(false)
 
   const panelRef = useRef<HTMLElement>(null)
   useOverlayA11y(panelRef, true)
@@ -420,10 +434,11 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                 <span className="aet-label">Certificate (PDF, JPG, PNG • max. 10MB)</span>
                 <FileUploader
                   size="L"
+                  className="aetd-uploader"
                   accept=".pdf,.jpg,.jpeg,.png"
                   state={certificate ? 'Filled' : 'Enabled'}
                   fileName={certificate ?? undefined}
-                  helpText={editing ? 'Drag and drop the certificate here or click to upload' : "Upload the certificate and we'll fill in the details from it."}
+                  helpText={editing ? 'Drag and drop the certificate here or click to upload' : "Drag & drop or upload the certificate, and we'll fill in the details from it."}
                   onFileSelect={onCertificate}
                   onChangeFile={clearCertificate}
                 />
@@ -432,9 +447,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
               {reading && <AIWorkingCard singleLine steps={['Reading the certificate...']} activeStep={0} />}
 
               {read?.unreadable && <Alert type="Callout" message="We couldn't read this certificate. Fill in the details below." />}
-              {read && !read.unreadable && !reading && (
-                <Alert type="Callout" message="We filled in these details from the certificate. Check them before you save." />
-              )}
 
               <div>
                 <div className="aet-form">
@@ -465,9 +477,14 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     )}
                   </div>
 
-                  {/* Course, or the not-listed block */}
+                  {/* Course, or the not-listed block: a swap, so it animates (motion.md) */}
+                  <AnimatePresence mode="wait" initial={false}>
                   {mode === 'course' ? (
-                    <div className={`aet-field aetd-full${writing.has('course') ? ' aetd-writing is-writing' : ''}`}>
+                    <motion.div
+                      key="course"
+                      {...SWAP(reduce)}
+                      className={`aet-field aetd-full${writing.has('course') ? ' aetd-writing is-writing' : ''}`}
+                    >
                       <Dropdown
                         label="Course"
                         placeholder="Select a course"
@@ -477,16 +494,28 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                         value={courseId}
                         onChange={setCourseId}
                         error={err('course')}
-                        helperText={course ? `Duration: ${durationLabel(course.duration)}` : undefined}
                         emptyText={(q) => `No approved courses match “${q}”`}
                         /* One way out, pinned at the bottom of the menu (Revolut-style). */
                         footerLink={
-                          canAdd || canOneOff ? { label: 'Not on the approved list', onClick: openNotListed } : undefined
+                          canAdd || canOneOff
+                            ? {
+                                label: 'Not on the approved list',
+                                onClick: (q) => {
+                                  // Only an admin's click moves focus; a certificate read doesn't.
+                                  setFocusName(true)
+                                  openNotListed(q)
+                                },
+                              }
+                            : undefined
                         }
                       />
-                    </div>
+                    </motion.div>
                   ) : (
-                    <div className={`aet-field aetd-full aetd-not-listed${writing.has('course') ? ' aetd-writing is-writing' : ''}`}>
+                    <motion.div
+                      key="not-listed"
+                      {...SWAP(reduce)}
+                      className={`aet-field aetd-full aetd-not-listed${writing.has('course') ? ' aetd-writing is-writing' : ''}`}
+                    >
                       <div className="aetd-oneoff-head">
                         <span className="aet-label">Not on the approved list</span>
                         {!listEmpty && (
@@ -495,13 +524,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                           </Button>
                         )}
                       </div>
-                      <InputField
-                        label="Course name"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        validation={err('newName') ? 'error' : 'none'}
-                        helperText={err('newName') ?? (fromCertificate ? 'From the certificate.' : undefined)}
-                      />
+                      {/* The choice first: it decides which fields follow. Then the same order as Settings → Add course. */}
                       {bothWays && (
                         <div className="aetd-choices" role="radiogroup" aria-label="How to record it">
                           {(
@@ -527,6 +550,14 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                           ))}
                         </div>
                       )}
+                      <InputField
+                        label="Course name"
+                        autoFocus={focusName}
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        validation={err('newName') ? 'error' : 'none'}
+                        helperText={err('newName') ?? (fromCertificate ? 'From the certificate.' : undefined)}
+                      />
                       <InputField
                         label="Provider name"
                         placeholder="For example, St John Ambulance"
@@ -577,8 +608,9 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                           </div>
                         </div>
                       )}
-                    </div>
+                    </motion.div>
                   )}
+                  </AnimatePresence>
 
                   {/* Provider, when the course has several (D2) */}
                   {mode === 'course' && course && courseProviders.length > 1 && (
@@ -594,6 +626,18 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     <div className="aet-field">
                       <span className="aet-label">Provider</span>
                       <span className="aetd-value">{courseProviders[0].name}</span>
+                    </div>
+                  )}
+
+                  {/* Duration belongs to the approved course (edited in Settings), so it
+                      shows read-only, in the same stepper as the not-listed block. */}
+                  {mode === 'course' && course && (
+                    <div className="aet-field">
+                      <span className="aet-label">Duration</span>
+                      <div className="aet-row aetd-readonly-row">
+                        <InputInteger ariaLabel="Duration" value={course.duration.value} onChange={() => {}} disabled className="aetd-readonly" />
+                        <Dropdown options={UNIT_OPTIONS} value={course.duration.unit} readOnly className="aet-unit aetd-readonly" />
+                      </div>
                     </div>
                   )}
 
@@ -630,18 +674,22 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                   )}
 
                   {((mode === 'course' && course) || addingToList) && completionDate && (
-                    <div className="aetd-due" role="status">
-                      {result === 'Not Passed' ? (
-                        <span className="aet-text">No expiry date for a training that wasn't passed.</span>
-                      ) : dueDate ? (
-                        <>
-                          <span className="aetd-value">Expires {formatDay(dueDate)}</span>
-                          {due === 'overdue' && <Badge type="error" label="Overdue" />}
-                          {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
-                        </>
-                      ) : (
-                        <span className="aetd-value">No expiry</span>
-                      )}
+                    /* Worked out from the course, so a read-only field like Duration. */
+                    <div className="aet-field">
+                      <span className="aet-label">Expiry</span>
+                      <div className="aetd-due" role="status">
+                        {result === 'Not Passed' ? (
+                          <span className="aetd-value">No expiry date for a training that wasn't passed.</span>
+                        ) : dueDate ? (
+                          <>
+                            <span className="aetd-value">{formatDay(dueDate)}</span>
+                            {due === 'overdue' && <Badge type="error" label="Overdue" />}
+                            {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
+                          </>
+                        ) : (
+                          <span className="aetd-value">No expiry</span>
+                        )}
+                      </div>
                     </div>
                   )}
 
