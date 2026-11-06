@@ -672,14 +672,7 @@ function UserProfile() {
                 <h2 className="up-name">{person.name}</h2>
                 <p className="up-meta">{person.role} · {person.email}</p>
               </div>
-              {/* Admin only: the Assign Courses flow with this person already chosen,
-                  so it goes Courses → Review with no People step. */}
               <div className="up-ctas">
-                {!isLearnerView && (
-                  <Button variant="outlined" onClick={() => setAssignOpen(true)}>
-                    Assign Courses
-                  </Button>
-                )}
                 <Button variant="filled" className="ui-disabled" disabled>
                   Edit Profile
                 </Button>
@@ -715,20 +708,29 @@ function UserProfile() {
               <p className="uet-text uet-guard">You can only see people in your team.</p>
             )
           ) : (<>
-          <ContentSwitcher
-            className="up-view-switcher"
-            ariaLabel="Course view"
-            items={[
-              { key: 'all', label: 'All Courses' },
-              { key: 'compliance', label: `Compliance Only (${courses.filter((c) => c.compliance).length})` },
-            ]}
-            activeKey={view}
-            onChange={(key) => {
-              setView(key as CourseView)
-              // Rows outside the new view shouldn't stay silently selected.
-              setSelected(new Set())
-            }}
-          />
+          <div className="up-view-row">
+            <ContentSwitcher
+              className="up-view-switcher"
+              ariaLabel="Course view"
+              items={[
+                { key: 'all', label: 'All Courses' },
+                { key: 'compliance', label: `Compliance Only (${courses.filter((c) => c.compliance).length})` },
+              ]}
+              activeKey={view}
+              onChange={(key) => {
+                setView(key as CourseView)
+                // Rows outside the new view shouldn't stay silently selected.
+                setSelected(new Set())
+              }}
+            />
+            {/* Admin only, and a Course Progress action, so it lives in this tab: the
+                Assign Courses flow with this person already chosen (Courses → Review). */}
+            {!isLearnerView && (
+              <Button variant="outlined" onClick={() => setAssignOpen(true)}>
+                Assign Courses
+              </Button>
+            )}
+          </div>
 
           {/* Standing at a glance, before the rows (Figma People 9192:42911).
               Follows the view switcher above; search and filters below narrow
