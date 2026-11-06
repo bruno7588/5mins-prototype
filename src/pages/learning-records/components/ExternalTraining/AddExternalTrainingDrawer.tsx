@@ -514,16 +514,18 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     <motion.div
                       key="not-listed"
                       {...SWAP(reduce)}
-                      className={`aet-field aetd-full aetd-not-listed${writing.has('course') ? ' aetd-writing is-writing' : ''}`}
+                      className="aet-field aetd-full"
                     >
                       <div className="aetd-oneoff-head">
                         <span className="aet-label">Not on the approved list</span>
                         {!listEmpty && (
-                          <Button variant="text-2" onClick={() => setMode('course')}>
-                            Choose From Approved List
+                          <Button variant="text" onClick={() => setMode('course')}>
+                            Select From Approved List
                           </Button>
                         )}
                       </div>
+                      {/* The heading and the way back sit outside the card, as its label. */}
+                      <div className={`aetd-not-listed${writing.has('course') ? ' aetd-writing is-writing' : ''}`}>
                       {/* The choice first: it decides which fields follow. Then the same order as Settings → Add course. */}
                       {bothWays && (
                         <div className="aetd-choices" role="radiogroup" aria-label="How to record it">
@@ -608,6 +610,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                           </div>
                         </div>
                       )}
+                      </div>
                     </motion.div>
                   )}
                   </AnimatePresence>
@@ -713,7 +716,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
           <div className="side-drawer__footer">
             <div className="side-drawer__footer-divider" />
             <div className="side-drawer__buttons">
-              <Button onClick={save} disabled={reading}>
+              <Button onClick={save} disabled={reading || hasErrors}>
                 {editing ? 'Save Changes' : 'Add Training'}
               </Button>
             </div>

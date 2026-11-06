@@ -130,12 +130,16 @@
 }
 
 /* The block's fields fill the drawer and sit a field-gap apart, like the form around it.
-   A bordered box (no fill; --border, as inside drawers) marks it as one unit that
-   replaced the Course field (Mobbin: incident.io nested fields). */
+   A card (--cards-background, Shadow S, no border) marks it as one unit that
+   replaced the Course field. */
 .aetd-not-listed {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   gap: var(--space-m);
   padding: var(--space-m);
-  border: 1px solid var(--border);
+  background: var(--cards-background);
+  box-shadow: var(--shadow-s);
   border-radius: var(--radius-sm);
   box-sizing: border-box;
 }
