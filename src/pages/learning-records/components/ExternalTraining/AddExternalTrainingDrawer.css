@@ -158,3 +158,46 @@
 .aet-row.aetd-readonly-row {
   gap: var(--space-s);
 }
+
+/* Uploaded certificate shown in the drop zone (filledPreview): the image, or a PDF's
+   first page, fitted inside so the admin can check it against the filled fields. */
+.aetd-uploader.file-uploader--preview {
+  padding: var(--space-s);
+}
+
+.aetd-cert-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: var(--cards-background);
+}
+
+/* An image takes its own shape, so the box fits the page; a PDF frame has no
+   natural size, so it gets a portrait page shape. */
+iframe.aetd-cert-preview {
+  height: 200px;
+  aspect-ratio: 3 / 4;
+}
+
+/* File name and the way to swap it, under the preview. */
+.aetd-cert-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.aetd-cert-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}

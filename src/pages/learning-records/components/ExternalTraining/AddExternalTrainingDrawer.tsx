@@ -125,6 +125,10 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   /* ── Form state ── */
   const initialDuration = parseDuration(initialRecord?.oneOff?.duration)
   const [certificate, setCertificate] = useState<string | null>(initialRecord?.certificate ?? null)
+  /* The picked file itself, so the drop zone can show the certificate (a saved record
+     only has its file name, so it falls back to the name). */
+  const [certificateFile, setCertificateFile] = useState<{ url: string; pdf: boolean } | null>(null)
+  useEffect(() => () => { if (certificateFile) URL.revokeObjectURL(certificateFile.url) }, [certificateFile])
   const [reading, setReading] = useState(false)
   const [read, setRead] = useState<Read | null>(null)
   const [personId, setPersonId] = useState(initialRecord?.personId ?? lockedPersonId ?? '')
@@ -211,6 +215,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
 
   const onCertificate = (file: File) => {
     setCertificate(file.name)
+    setCertificateFile({ url: URL.createObjectURL(file), pdf: file.type === 'application/pdf' || /\.pdf$/i.test(file.name) })
     if (editing) return // adding a missing certificate to a record doesn't re-read it
     clearReadTimers()
     setReading(true)
@@ -278,6 +283,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
     clearReadTimers()
     setWriting(new Set())
     setCertificate(null)
+    setCertificateFile(null)
     setReading(false)
     setRead(null)
   }
@@ -441,7 +447,26 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                   helpText={editing ? 'Drag and drop the certificate here or click to upload' : "Drag & drop or upload the certificate, and we'll fill in the details from it."}
                   onFileSelect={onCertificate}
                   onChangeFile={clearCertificate}
+                  /* The certificate itself, so the admin can check it against the
+                     filled fields (a DS exception: filledPreview is otherwise for crops). */
+                  filledPreview={
+                    certificateFile ? (
+                      certificateFile.pdf ? (
+                        <iframe className="aetd-cert-preview" src={`${certificateFile.url}#toolbar=0&navpanes=0`} title="Certificate preview" />
+                      ) : (
+                        <img className="aetd-cert-preview" src={certificateFile.url} alt="Certificate preview" />
+                      )
+                    ) : undefined
+                  }
                 />
+                {certificateFile && certificate && (
+                  <div className="aetd-cert-meta">
+                    <span className="aetd-cert-name" title={certificate}>{certificate}</span>
+                    <Button variant="text" onClick={clearCertificate}>
+                      Change File
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {reading && <AIWorkingCard singleLine steps={['Reading the certificate...']} activeStep={0} />}
