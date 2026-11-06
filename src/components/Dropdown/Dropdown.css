@@ -317,6 +317,11 @@
   background: var(--cards-background);
 }
 
+/* Text-button footer (leading icon) sits left, under the options. */
+.dropdown-footer--start {
+  justify-content: flex-start;
+}
+
 .dropdown-empty {
   padding: var(--space-s) var(--space-sm);
   font-family: 'Poppins', sans-serif;

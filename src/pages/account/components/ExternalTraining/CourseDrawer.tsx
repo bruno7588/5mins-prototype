@@ -141,6 +141,11 @@ function CourseDrawer({ course, initialName = '', onClose, onSaved }: Props) {
                 values={providerIds}
                 onChangeValues={setProviderIds}
                 error={s(errors.providers) || undefined}
+                footerLink={{
+                  label: 'Add Provider',
+                  icon: <Add size={20} color="currentColor" variant="Linear" />,
+                  onClick: () => setProviderModal(true),
+                }}
               />
               {providerIds.length > 0 && (
                 <div className="aet-badges">
@@ -156,13 +161,6 @@ function CourseDrawer({ course, initialName = '', onClose, onSaved }: Props) {
                   })}
                 </div>
               )}
-              <Button
-                variant="text-2"
-                icon={<Add size={20} color="currentColor" variant="Linear" />}
-                onClick={() => setProviderModal(true)}
-              >
-                Add Provider
-              </Button>
             </div>
 
             <div className="aet-field">

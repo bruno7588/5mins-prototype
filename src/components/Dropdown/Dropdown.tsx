@@ -65,7 +65,7 @@ export interface DropdownProps {
   emptyText?: (query: string) => string
   /** One link pinned under the options after a divider, e.g. "Not on the list" (proposed,
       Revolut-style). Closes the menu and gets the current search text. */
-  footerLink?: { label: string; onClick: (query: string) => void }
+  footerLink?: { label: string; onClick: (query: string) => void; /** Leading icon: renders a text button instead of a link. */ icon?: ReactNode }
 }
 
 function Dropdown({
@@ -421,9 +421,10 @@ function Dropdown({
             )
           })}
           {footerLink && (
-            <li className="dropdown-footer">
+            <li className={`dropdown-footer${footerLink.icon ? ' dropdown-footer--start' : ''}`}>
               <Button
-                variant="link"
+                variant={footerLink.icon ? 'text-2' : 'link'}
+                icon={footerLink.icon}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
                   const q = query.trim()

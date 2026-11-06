@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import InputField from '@/components/InputField/InputField'
+import SectionHeader from '@/pages/your-courses/components/SectionHeader/SectionHeader'
 import { duplicateProvider, newId, saveProvider, type ExternalProvider } from '@/data/externalTraining'
 
 interface Props {
@@ -37,9 +38,7 @@ function ProviderModal({ open, provider, onClose, onSaved }: Props) {
 
   return (
     <ConfirmModal open={open} onClose={onClose} closable className="aet-modal" ariaLabel={provider ? 'Edit provider' : 'Add provider'}>
-      <div className="confirm-modal-header">
-        <h2 className="confirm-modal-title">{provider ? 'Edit provider' : 'Add provider'}</h2>
-      </div>
+      <SectionHeader title={provider ? 'Edit provider' : 'Add provider'} />
       <form
         className="aet-modal__form"
         onSubmit={(e) => {
