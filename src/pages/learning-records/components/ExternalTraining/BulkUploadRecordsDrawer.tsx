@@ -272,7 +272,7 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
                       icon={<ZipIcon size={40} color="var(--text-secondary)" />}
                       state={certs.length ? 'Filled' : 'Enabled'}
                       fileName={certs.length === 1 ? certs[0] : `${certs.length} certificate files`}
-                      helpText="A zip of PDF or image files"
+                      helpText="A zip or PDF of image files"
                       onFileSelect={(f) => setCerts((c) => (c.includes(f.name) ? c : [...c, f.name]))}
                       onChangeFile={() => setCerts([])}
                     />

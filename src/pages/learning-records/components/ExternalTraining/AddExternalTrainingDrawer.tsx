@@ -107,7 +107,7 @@ const SWAP = (reduce: boolean | null) => ({
 function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = null, onClose, onSaved }: Props) {
   const navigate = useNavigate()
   const { courses, providers, records, allowOneOffs } = useExternalTraining()
-  const [record, setRecord] = useState<ExternalRecord | null>(initialRecord)
+  const [record] = useState<ExternalRecord | null>(initialRecord)
   const editing = !!record
   const reduce = useReducedMotion()
   /* Set by the "Not on the approved list" click, so Course name takes focus when it arrives. */
@@ -156,27 +156,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
     setMode('not-listed')
     setCourseId('')
     if (name) setNewName(name)
-  }
-
-  const loadRecord = (r: ExternalRecord) => {
-    const d = parseDuration(r.oneOff?.duration)
-    setRecord(r)
-    setCertificate(r.certificate)
-    setRead(null)
-    setPersonId(r.personId)
-    setMode(r.courseId ? 'course' : 'not-listed')
-    if (!r.courseId) setNotListedAs('one-off')
-    setCourseId(r.courseId ?? '')
-    setProviderId(r.providerId ?? '')
-    setCompletionDate(r.completionDate)
-    setResult(r.result)
-    setScore(r.score ?? 0)
-    setNewName(r.oneOff?.name ?? '')
-    setNewProvider(r.oneOff?.provider ?? '')
-    setNewDuration(d.value)
-    setNewUnit(d.unit)
-    setOneOffDue(r.courseId ? '' : r.retrainingDueDate ?? '')
-    setSubmitted(false)
   }
 
   const activeCourses = courses.filter((c) => !c.archived || c.id === courseId)
@@ -385,7 +364,8 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
       savedProviderId = provider.id
     }
     const next: ExternalRecord = {
-      id: record?.id ?? newId('r'),
+      // A matching record (D25) is updated in place rather than added twice.
+      id: record?.id ?? duplicate?.id ?? newId('r'),
       personId,
       courseId: savedCourseId,
       providerId: savedProviderId,
@@ -405,7 +385,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
       certificate,
       source: record?.source ?? (read && !read.unreadable ? 'ai' : 'manual'),
     }
-    onSaved(next, !record)
+    onSaved(next, !record && !duplicate)
   }
 
   /* 2.7: nothing to record against, one-offs are off and the admin can't add to the list. */
@@ -509,6 +489,31 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
 
               <div>
                 <div className="aet-form">
+                  {/* One Alert at a time: a wrong-learner certificate comes first (fix the file),
+                      then an existing record (D25). */}
+                  {duplicate && !mismatch && (
+                    <Alert
+                      type="Alert"
+                      customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
+                      title="This record already exists"
+                      message={
+                        <>
+                          {person?.name} already has <span className="aetd-strong">{course?.name}</span> completed on{' '}
+                          {formatDay(duplicate.completionDate)}. Update Training replaces it with these details.
+                        </>
+                      }
+                    />
+                  )}
+                  {mismatch && (
+                    <Alert
+                      type="Alert"
+                      customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
+                      message={`This certificate names ${read!.learner}, not ${person!.name}. Check you've uploaded the right file.`}
+                      button
+                      buttonLabel="Change File"
+                      onButtonClick={clearCertificate}
+                    />
+                  )}
                   {/* Learner */}
                   <div className={`aet-field aetd-full${writing.has('learner') ? ' aetd-writing is-writing' : ''}`}>
                     <Dropdown
@@ -521,19 +526,9 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                       options={personOptions}
                       value={personId}
                       onChange={setPersonId}
-                      error={err('learner')}
+                      error={err('learner') ?? (mismatch ? `Doesn't match the certificate (${read!.learner})` : undefined)}
                       helperText={unknownLearner ? `The certificate names ${read!.learner}. Pick the learner.` : undefined}
                     />
-                    {mismatch && (
-                      <Alert
-                        type="Alert"
-                        customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
-                        message={`This certificate names ${read!.learner}, not ${person!.name}. Check you've uploaded the right file.`}
-                        button
-                        buttonLabel="Change File"
-                        onButtonClick={clearCertificate}
-                      />
-                    )}
                   </div>
 
                   {/* Course, or the not-listed block: a swap, so it animates (motion.md) */}
@@ -755,16 +750,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     </div>
                   )}
 
-                  {duplicate && (
-                    <Alert
-                      type="Callout"
-                      message={`${person?.name} already has ${course?.name} completed on ${formatDay(duplicate.completionDate)}.`}
-                      button
-                      buttonLabel="Edit Existing Record"
-                      onButtonClick={() => loadRecord(duplicate)}
-                    />
-                  )}
-
                 </div>
               </div>
             </div>
@@ -775,8 +760,8 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
           <div className="side-drawer__footer">
             <div className="side-drawer__footer-divider" />
             <div className="side-drawer__buttons">
-              <Button onClick={save} disabled={reading || hasErrors}>
-                {editing ? 'Save Changes' : 'Add Training'}
+              <Button onClick={save} disabled={reading || hasErrors || mismatch}>
+                {editing || duplicate ? 'Update Training' : 'Add Training'}
               </Button>
             </div>
           </div>

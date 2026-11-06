@@ -201,3 +201,13 @@ iframe.aetd-cert-preview {
   line-height: 1.5;
   color: var(--text-secondary);
 }
+
+/* A name to pick out inside running text, e.g. the course in the existing-record Alert. */
+.aetd-strong {
+  font-weight: 600;
+}
+
+/* A locked learner that doesn't match the certificate still shows the DS error border. */
+.aetd-locked .dropdown-trigger.has-error:disabled {
+  border-color: var(--text-error);
+}

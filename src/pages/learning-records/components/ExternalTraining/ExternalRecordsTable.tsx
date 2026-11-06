@@ -19,6 +19,17 @@ import {
    (admin), the person profile tab (admin, manager, learner) and My Team (manager).
    The viewer decides the columns and whether rows have actions. */
 
+/* DS table date (table.md): "Sep 12," over the year in tertiary, as on the profile's Course Progress. */
+function DateCell({ iso }: { iso: string }) {
+  const d = new Date(iso + 'T00:00:00')
+  return (
+    <span className="tbl-date">
+      <span className="day">{d.toLocaleString('en-US', { month: 'short' })} {d.getDate()},</span>
+      <span className="year">{d.getFullYear()}</span>
+    </span>
+  )
+}
+
 /** Prototype download: the certificate file isn't stored, so this saves a small stand-in. */
 export function downloadCertificate(r: ExternalRecord) {
   const body = `Certificate for ${recordTrainingName(r)}\nLearner: ${personById(r.personId)?.name ?? ''}\nCompleted: ${formatDay(r.completionDate)}\n`
@@ -118,7 +129,7 @@ function ExternalRecordsTable({ rows, all, showLearner = true, showDuration = tr
           <span className="lret-dash">–</span>
         ),
     },
-    { key: 'completion', header: 'Completion date', width: '0 0 136px', render: (r) => formatDay(r.completionDate) },
+    { key: 'completion', header: 'Completion date', width: '0 0 136px', render: (r) => <DateCell iso={r.completionDate} /> },
     { key: 'due', header: 'Expiry', width: '0 0 200px', render: (r) => <RetrainingDueCell record={r} all={all} /> },
     ...(showDuration
       ? [{ key: 'duration', header: 'Duration', width: '0 0 88px', render: (r: ExternalRecord) => recordDurationLabel(r) || <span className="lret-dash">–</span> }]
