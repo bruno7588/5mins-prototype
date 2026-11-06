@@ -45,7 +45,7 @@ A closed field that opens a listbox so the user picks one value, or several, fro
 - Don't use `--danger-500` for the error border; Dropdown and InputField share `--text-error`, held on hover.
 - Don't copy the `.dropdown-*` classes into a new component; extend `Dropdown` instead.
 
-**Canonical spec:** md trigger 37px high, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), text 14px / 400 / 1.5; sm is 33px with 4px 12px padding and 12px text. Border `--border-elevated`, hover `--border-hover` + `--input-background`, open or focused `--selected`, read-only `--border` with `--text-disabled`, error `--text-error`. Placeholder `--text-disabled`, label Paragraph M semibold `--text-secondary`, helper `--text-tertiary`. Menu: `--cards-background`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), max height 320px, selected row `--secondary-500` (#FFBB38, both modes, as the Content Switcher pill) with `--text-on-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8925:1408`.
+**Canonical spec:** md trigger 37px high, padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-sm)` (12px), text 14px / 400 / 1.5; sm is 33px with 4px 12px padding and 12px text. Border `--border-elevated`, hover `--border-hover` + `--input-background`, open or focused `--selected`, read-only `--border` with `--text-disabled`, error `--text-error`. Placeholder `--text-disabled`, label Paragraph M semibold `--text-secondary`, helper `--text-tertiary`. Menu: `--cards-background`, radius `var(--radius-sm)` (12px), padding `var(--space-s)` (8px), max height 400px, selected row `--secondary-500` (#FFBB38, both modes, as the Content Switcher pill) with `--text-on-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8925:1408`.
 
 ## Figma to code
 
@@ -143,7 +143,7 @@ Visible only when `helperText` is true (matches the Figma variant). In error sta
 
 What `src/components/Dropdown/Dropdown.css` draws:
 
-- `.dropdown-menu`: portalled to `<body>`, `position: fixed`, `z-index: 1060`, `var(--cards-background)`, 1px border, radius `var(--radius-sm)` (12px), `var(--shadow-l)`, padding `var(--space-s)` (8px), max height 320px then scroll.
+- `.dropdown-menu`: portalled to `<body>`, `position: fixed`, `z-index: 1060`, `var(--cards-background)`, 1px border, radius `var(--radius-sm)` (12px), `var(--shadow-l)`, padding `var(--space-s)` (8px), max height 400px then scroll.
 - `.dropdown-option`: padding `var(--space-s) var(--space-sm)` (8px 12px), radius `var(--radius-s)` (8px), 14px / 400 / 1.5 `var(--text-primary)`; hover `var(--cards-background-hover)`.
 - Selected: `var(--selected)` fill with `var(--text-on-selected)` text at weight 500. No tick icon.
 - Disabled: `var(--text-disabled)`, not clickable.

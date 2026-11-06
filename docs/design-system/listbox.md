@@ -112,7 +112,7 @@ Shadow:      var(--shadow-l)
   box-shadow: var(--shadow-l);
   display: flex;
   flex-direction: column;
-  max-height: 320px;                    /* then scroll */
+  max-height: 400px;                    /* then scroll */
   overflow-y: auto;
 }
 
