@@ -1,3 +1,6 @@
+import coachesImg from '@/assets/email/welcome-coaches.png'
+import appImg from '@/assets/email/welcome-app.gif'
+
 /* Content for the customisable emails (DES-348): personal fields, today's 5Mins
    text for each email, starter text for new reminders, and the sample values the
    preview fills in. Subjects and messages are stored as editor HTML: a field is
@@ -75,8 +78,17 @@ export const LOCKED_BUTTON = '<div data-locked-block="button"></div>'
 export const LOCKED_COURSE = '<div data-locked-block="course"></div>'
 export const LOCKED_ACTIVATE = '<div data-locked-block="activate"></div>'
 
+/** Images in the welcome email. Admins can delete them, not add new ones. */
+export const EMAIL_IMAGES = {
+  coaches: { src: coachesImg, alt: 'Some of our coaches and partners, with the skills they teach' },
+  app: { src: appImg, alt: 'The progress page in the 5Mins app' },
+} as const
+export type EmailImageKey = keyof typeof EMAIL_IMAGES
+const img = (key: EmailImageKey) =>
+  `<img data-email-image="${key}" src="${EMAIL_IMAGES[key].src}" alt="${EMAIL_IMAGES[key].alt}">`
+
 /** The locked block's button label, by kind. */
-export const LOCKED_LABEL = { button: 'Learn Now', activate: 'Activate Your Account' } as const
+export const LOCKED_LABEL = { button: 'Download Now', activate: 'Activate Your Account' } as const
 
 const SIGN_OFF = "<p>That's it! See you in 5Mins! 🚀</p><p><strong>Team 5Mins</strong></p>"
 
@@ -102,20 +114,24 @@ export const REMINDER_STARTER: EmailText = {
     `<p>See you there,</p><p>${f('org')}</p>`,
 }
 
-/** Today's 5Mins welcome email, as editable text (its two images are not included). */
+/** Today's 5Mins welcome email, as editable text (D13 template). */
 export const WELCOME_DEFAULT: EmailText = {
   subject: '<p>Welcome to 5Mins 🎉</p>',
   body:
     `<p><strong>Hey ${f('first_name')} 👋,</strong></p>` +
     '<p>Thanks for signing up to 5Mins! Before you start learning, there are a few things you should know.</p>' +
     '<h3>Our library</h3>' +
-    "<ul><li><p>🍿 We've got over 10,000 video lessons (we call them Shorts) covering 100+ sought after skills.</p></li>" +
-    '<li><p>🔥 We partner with over 150 coaches, high-growth companies and professors to bring you bite-sized lessons that pack a punch!</p></li></ul>' +
-    '<h3>Track your progress</h3>' +
-    "<ul><li><p>📈 As you learn on 5Mins, you'll get skill points which will help you climb the leaderboard.</p></li>" +
-    '<li><p>🏅 Learn in specific skill areas to level them up and earn exclusive badges.</p></li></ul>' +
-    "<p>The best way to learn on 5Mins is to explore, it's time to start your learning journey!</p>" +
-    LOCKED_BUTTON,
+    "<p>🍿 We've got over 10,000 video lessons (we call them Shorts) covering 100+ sought after skills.</p>" +
+    '<p>🔥 We partner with over 150 coaches, high-growth companies and professors to bring you bite-sized lessons that pack a punch!</p>' +
+    img('coaches') +
+    "<h3>Track your team's progress</h3>" +
+    '<p>📈 Invite your team and watch them grow their skills on the progress page.</p>' +
+    "<p>🏅 View your team's leaderboard and how they stack up against other teams.</p>" +
+    img('app') +
+    '<h3>The 5Mins app</h3>' +
+    "<p>📱 To track your progress you'll need the 5Mins app, download it below.</p>" +
+    LOCKED_BUTTON +
+    "<p>That's it! See you in 5Mins! 🚀</p><p>Team 5Mins</p>",
 }
 
 /** Today's 5Mins invitation email, as editable text (phase 2, 2.1). */

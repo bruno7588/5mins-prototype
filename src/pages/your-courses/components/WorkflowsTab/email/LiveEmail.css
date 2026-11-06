@@ -97,6 +97,18 @@
   margin: 0 0 var(--space-xs);
 }
 
+.lmail-text img[data-email-image] {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto var(--space-sm);
+}
+
+.lmail-text img[data-email-image='app'] {
+  width: 360px;
+  max-width: 100%;
+}
+
 .lmail-text a {
   color: var(--primary-700);
 }

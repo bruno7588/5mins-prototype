@@ -23,6 +23,7 @@ import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import {
   FieldNode,
   LockedBlockNode,
+  EmailImageNode,
   SingleLine,
   SubjectDocument,
   visibleLength,
@@ -392,6 +393,7 @@ function EmailEditorModal({ target, onClose, onSave, onReset }: Props) {
       Color,
       FieldNode,
       LockedBlockNode,
+      EmailImageNode,
       Placeholder.configure({
         placeholder: ({ pos, editor }) =>
           pos > 0 && editor.state.doc.resolve(pos).index(0) > 0 ? 'Add text below (optional)' : 'Write your message',

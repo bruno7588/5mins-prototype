@@ -1,7 +1,7 @@
 import { Extension, Node, mergeAttributes, ReactNodeViewRenderer } from '@tiptap/react'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 import type { Node as PMNode } from '@tiptap/pm/model'
-import { FIELDS, type FieldKey } from './emailContent'
+import { EMAIL_IMAGES, FIELDS, type EmailImageKey, type FieldKey } from './emailContent'
 import LockedBlockView from './LockedBlockView'
 
 /* Tiptap pieces for the email editor (D5): personal fields as one-unit inline
@@ -117,6 +117,39 @@ export const LockedBlockNode = Node.create({
         },
       }),
     ]
+  },
+})
+
+/** A 5Mins image in the message (welcome email). Moves and deletes as one unit;
+    its picture and alt text come from EMAIL_IMAGES, not the admin. */
+export const EmailImageNode = Node.create({
+  name: 'emailImage',
+  group: 'block',
+  atom: true,
+  selectable: true,
+  draggable: false,
+
+  addAttributes() {
+    return {
+      key: {
+        default: 'coaches',
+        parseHTML: (el) => el.getAttribute('data-email-image'),
+        renderHTML: (attrs) => ({ 'data-email-image': attrs.key }),
+      },
+    }
+  },
+
+  parseHTML() {
+    return [{ tag: 'img[data-email-image]' }]
+  },
+
+  renderHTML({ node, HTMLAttributes }) {
+    const image = EMAIL_IMAGES[node.attrs.key as EmailImageKey]
+    return ['img', mergeAttributes(HTMLAttributes, { src: image?.src, alt: image?.alt ?? '' })]
+  },
+
+  renderText() {
+    return ''
   },
 })
 

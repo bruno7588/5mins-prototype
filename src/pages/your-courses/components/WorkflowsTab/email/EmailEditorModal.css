@@ -206,6 +206,25 @@
   margin: 0 0 var(--space-xs);
 }
 
+/* Welcome email images: full width; the app screenshot at the template's 360px. */
+.eed-body-input img[data-email-image] {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto var(--space-s);
+  border-radius: var(--radius-s);
+}
+
+.eed-body-input img[data-email-image='app'] {
+  width: 360px;
+  max-width: 100%;
+}
+
+.eed-body-input img.ProseMirror-selectednode {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+}
+
 .eed-body-input a {
   color: var(--text-primary);
   text-decoration: underline;
