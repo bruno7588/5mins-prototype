@@ -212,6 +212,8 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
       return next
     })
   const at = (ms: number, fn: () => void) => readTimers.current.push(setTimeout(fn, ms))
+  const [readSteps, setReadSteps] = useState<string[]>([])
+  const [readStep, setReadStep] = useState(0)
 
   const onCertificate = (file: File) => {
     setCertificate(file.name)
@@ -222,10 +224,17 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
     setRead(null)
     const fixed = lockedPersonId ?? (personId || undefined)
     setWriting(new Set<WritingField>(fixed ? ['course', 'date'] : ['learner', 'course', 'date']))
+    /* The passes, as Create With AI names them: done ones tick, the running one pulses.
+       No learner pass when the learner is already fixed. ~3s in all. */
+    const steps = fixed
+      ? ['Reading the certificate', 'Matching the course', 'Filling in the completion date']
+      : ['Reading the certificate', 'Finding the learner', 'Matching the course', 'Filling in the completion date']
+    setReadSteps(steps)
+    setReadStep(0)
     const name = file.name.toLowerCase()
 
     if (name.includes('unreadable')) {
-      at(1500, () => {
+      at(3000, () => {
         setWriting(new Set())
         setReading(false)
         setRead({ learner: null, courseText: null, unreadable: true })
@@ -254,13 +263,18 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
         : { id: 'c1', provider: 'p1' }
     const date = existing ? existing.completionDate : '2026-10-28'
 
-    at(600, () => {
+    // Pass timings: read 0-900ms, then one pass per field, each landing as its pass ends.
+    const learnerAt = fixed ? 900 : 1600
+    const courseAt = fixed ? 2000 : 2300
+    at(900, () => setReadStep(1))
+    at(learnerAt, () => {
       // Fill the learner only when nobody is chosen yet and the name is someone we know.
       if (existing) setPersonId(existing.personId)
       else if (!fixed) setPersonId(TRAINING_PEOPLE.find((p) => samePerson(p.name, learner))?.id ?? '')
       done('learner')
+      if (!fixed) setReadStep(2)
     })
-    at(1000, () => {
+    at(courseAt, () => {
       // A course that isn't listed opens the not-listed block with its name filled in.
       if (course.id) {
         setMode('course')
@@ -270,8 +284,9 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
         openNotListed(courseText)
       }
       done('course')
+      setReadStep(fixed ? 2 : 3)
     })
-    at(1400, () => {
+    at(3000, () => {
       setCompletionDate(date)
       done('date')
       setReading(false)
@@ -469,7 +484,21 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                 )}
               </div>
 
-              {reading && <AIWorkingCard singleLine steps={['Reading the certificate...']} activeStep={0} />}
+              {/* As Create With AI: the step list arrives with a short rise, ticks each pass
+                  as its field fills, and fades out when the read is done. */}
+              <AnimatePresence initial={false}>
+                {reading && (
+                  <motion.div
+                    key="reading"
+                    initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={arriveTransition(reduce)}
+                  >
+                    <AIWorkingCard steps={readSteps} activeStep={readStep} lastStepDone={false} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {read?.unreadable && <Alert type="Callout" message="We couldn't read this certificate. Fill in the details below." />}
 
