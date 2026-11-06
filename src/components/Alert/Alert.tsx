@@ -10,7 +10,8 @@ interface AlertProps {
   customIcon?: ReactNode
   illustration?: boolean
   title?: string
-  message?: string
+  /** Text, or a node when part of it needs weight (e.g. a Semibold name). */
+  message?: ReactNode
   bullets?: string[]
   button?: boolean
   buttonLabel?: string
@@ -49,7 +50,7 @@ function Alert({
           situational drawer's guidance callout) rather than Iconsax's. */}
       {showIcon && (
         customIcon ?? (
-          <InfoIcon size={isAlert ? 24 : 20} color="currentColor" className="alert__icon" />
+          <InfoIcon size={20} color="currentColor" className="alert__icon" />
         )
       )}
       {!icon && illustration && isAlert && (
@@ -87,7 +88,7 @@ function Alert({
         <button
           type="button"
           className={`alert__btn ${
-            isAlert ? 'alert__btn--inline' : 'alert__btn--outlined'
+            isAlert ? 'alert__btn--inline' : 'alert__btn--text'
           }`}
           onClick={onButtonClick}
         >

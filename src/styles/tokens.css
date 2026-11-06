@@ -171,6 +171,7 @@
   /* Status tints: the 16% fills behind badges, chips and callouts. Identical in both modes. */
   --success-tint: rgba(24, 169, 87, 0.16); /* Success-500 @ 16% */
   --warning-tint: rgba(255, 165, 56, 0.16); /* Warning-500 @ 16% */
+  --alert-warning-background: rgba(255, 165, 56, 0.12); /* Warning-500 @ 12%: Alert banner fill (Library Alert 3658:32304) */
   --primary-tint: rgba(0, 206, 230, 0.16); /* Primary-500 @ 16% */
   --danger-tint: rgba(223, 22, 66, 0.16); /* Danger-500 @ 16% */
   --ai-tint: rgba(129, 88, 236, 0.16); /* Blaze @ 16% */

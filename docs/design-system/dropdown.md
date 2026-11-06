@@ -29,6 +29,7 @@ A closed field that opens a listbox so the user picks one value, or several, fro
 - The menu runs actions rather than setting a value → use RowActionsMenu on the Listbox surface ([doc](listbox.md))
 
 **Do**
+- Use `footerLink` for one way out pinned under the options after a divider (e.g. "Not on the approved list", "Add Provider"). It sits left-aligned with the option text: a link renders Bold with no underline; pass `icon` (e.g. Iconsax `Add`) to render a text button instead.
 - Reuse the DS `Dropdown` for single-select, multi-select and date-adjacent filter rows rather than building a page-local trigger and popover.
 - For multi-select, pass `multiple` with `values` / `onChangeValues`; add `allLabel` for a "no filter" first row. While nothing is picked, the "all" row is the choice, so the trigger reads its label back in `--text-primary` (filled), never as a placeholder.
 - Pass `summaryLabel` to read the picks back in the trigger ("Selected: 3"); leave it out when chips below the field already list the picks.

@@ -24,7 +24,7 @@ Pick by persistence and placement:
 | Trigger | always visible | always visible | after an action | hover / focus |
 | Purpose | guidance / tips | warnings needing attention | action feedback | nonessential context |
 | Dismissal | persistent | persistent | auto (~5s) | on leave/blur |
-| Fill | translucent neutral | Warning-500 @ 16% tint | solid semantic colour | `--tooltip-background` |
+| Fill | translucent neutral | Warning-500 @ 12% tint | solid semantic colour | `--tooltip-background` |
 | Type scale | Regular/Medium 14 | Regular 16 (title Bold 14) | **Bold 16** | Regular 14 |
 
 - Use **Callout** for tips, guidance, onboarding hints, feature announcements.
@@ -67,9 +67,9 @@ Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 - Don't hand-roll a grey guidance box with its own colours; the Callout is `--text-secondary` on `--input-background`
 - Don't use `supportingText`; it is not a prop in code
 - Don't use both `illustration` and `icon` together in Callout; pick one
-- Don't mix the button styles: Callout buttons are always outlined; the underlined text button is Alert-only
+- Don't mix the button styles: a one-line Callout uses a text button on the right, a Callout with a body an outlined button below it; the Alert's text button is `--text-warning`
 
-**Canonical spec:** background `var(--input-background)`; radius `var(--radius-sm)` (12px); padding `var(--space-sm) var(--space-m)` (12px 16px), `var(--space-m)` (16px) with a body; gap `var(--space-s)` (8px); text 14px Regular `var(--text-secondary)`, title 14px Medium; icon 20px.
+**Canonical spec:** background `var(--input-background)`; radius `var(--radius-sm)` (12px); padding `var(--space-s) var(--space-sm)` (8px 12px), with or without a body; gap `var(--space-s)` (8px); text 14px Regular `var(--text-secondary)`, title 14px SemiBold, 8px above the body; icon 20px. Button: one line, a text button on the right (Medium 14, `--text-primary`, 24px from the message); with a body, an outlined button 16px below it (`--border-elevated`, `8px 16px`, Bold 14). Figma: Library `EC26cSVe9KNTCWXvYovakw`, Alert `3658:32304`.
 
 #### Alert
 
@@ -89,13 +89,15 @@ Inline banners: one React component, `type="Callout"` or `type="Alert"`.
 - Use `<Alert type="Alert">`
 - Pass the warning triangle as `customIcon` (Iconsax `Danger`, `variant="Bold"`, `color="currentColor"`); the `icon` prop gives the InfoIcon instead
 - Use `title` + `message` when the warning needs a headline and an explanation
-- Use `button` for the fix; it renders the underlined text button, label in Title Case
+- `message` takes a node when part of it needs weight, e.g. a SemiBold course name in running text
+- Show one Alert at a time in a drawer or modal; when two apply, show the one the admin must fix first
+- Use `button` for the fix; it renders a text button (Medium 14, `--text-warning`, no underline), label in Title Case
 
 **Don't**
 - Don't pass `bullets`; the Alert type ignores them; use `title` + `message`
 - Don't hardcode the warning colour; use `var(--text-warning)` (resolves per mode)
 
-**Canonical spec:** background Warning-500 at 16% (literal `rgba(255, 165, 56, 0.16)` in `Alert.css`, no token yet); radius `var(--radius-sm)` (12px); padding `var(--space-sm) var(--space-m)` (12px 16px); gap `var(--space-sm)` (12px); text 16px Regular `var(--text-warning)`, title 14px Bold; icon 24px.
+**Canonical spec:** background `var(--alert-warning-background)` (Warning-500 at 12%); radius `var(--radius-sm)` (12px); padding `var(--space-s) var(--space-sm)` (8px 12px); gap `var(--space-s)` (8px) icon to text, 24px to the button; text `var(--text-warning)`: one line without a title is Paragraph M SemiBold (14px / 600), a title is 14px SemiBold over a 14px Regular message; icon 20px; button Medium 14 `--text-warning`, no underline. Figma: Library `EC26cSVe9KNTCWXvYovakw`, Alert `3658:32304`.
 
 ### Figma to code
 
@@ -166,18 +168,18 @@ background: transparent;
 ```
 
 ```
-Background:    rgba(255, 165, 56, 0.16)   /* Warning-500 @ 16%, same in both modes */
+Background:    var(--alert-warning-background)   /* Warning-500 @ 12%, same in both modes */
 Border-radius: 12px   (--radius-sm)
 Padding:       12px 16px  (--space-sm --space-m); 16px with title + message
 Gap:           12px icon → text; 24px between info area and button
 Text:          Poppins 16px / 1.5, Regular (400), var(--text-warning);
-               with title + message: title 14px Bold, message 14px Regular
+               with title + message: title 14px SemiBold, message 14px Regular
 ```
 
 - **bell**: `illustration` renders a 🔔 emoji in a 21×21px box, `shrink-0`; hidden when `icon` is set
 - **icon**: warning triangle, Iconsax `Danger` **Bold**, 24px, passed as `customIcon`; the `icon` prop renders the 24px `InfoIcon` instead
 - **text**: `message` alone renders one 16px Regular line in `--text-warning`; `title` + `message` renders a 14px **Bold** title over a 14px Regular message. A `title` without `message` renders nothing
-- **button**: underlined text button, right of the text
+- **button**: text button (Medium 14, no underline), right of the text
 
 Alert button:
 
@@ -196,7 +198,7 @@ margin-left: 12px;   /* + the row's 12px gap = 24px */
 
 - Body column (`.alert__body`) gap `var(--space-s)` (8px), tightened to `var(--space-xxs)` (2px) between a title and message; bullets sit `var(--space-xs)` (4px) apart with a 21px indent
 - The Callout's outlined button sits inside the body, 8px below the text; with no body it sits at the row end
-- The Alert's underlined button (16px Bold) adds a 12px left margin to the row's 12px gap, so it is 24px from the text
+- The Alert's text button (Medium 14) adds a 16px left margin to the row's 8px gap, so it is 24px from the text
 - `onClose` adds a 24px circular dismiss button at the row end
 
 ### Variants
@@ -223,7 +225,7 @@ All variants share the same `12px 16px` padding (`16px` with a body).
 | `icon` | platform `InfoIcon` (24px) |
 | `customIcon` | any node; pass Iconsax `Danger` Bold (24px) for the warning triangle |
 
-The text is always `message`, or `title` + `message`; a `title` on its own renders nothing. Each can carry the underlined button on the right (24px gap).
+The text is always `message`, or `title` + `message`; a `title` on its own renders nothing. Each can carry the text button on the right (24px gap).
 
 ### States
 
@@ -232,7 +234,7 @@ Alert and Callout are static; only their buttons are interactive.
 | Element | Rest | Hover | Focus-visible |
 |---|---|---|---|
 | Callout outlined button | transparent, 1px `--text-primary` border | `var(--page-background-hover)` fill | 2px `--primary-button-background` outline, 2px offset |
-| Alert underlined button | `--text-warning`, underlined | no hover style | 2px `--primary-button-background` outline, 2px offset |
+| Alert text button | `--text-warning`, no underline | no hover style | 2px `--primary-button-background` outline, 2px offset |
 | Close × (`onClose`) | transparent 24px circle | `var(--page-background-hover)` | 2px `--primary-button-background` outline, 2px offset |
 
 ### Tokens
@@ -240,7 +242,7 @@ Alert and Callout are static; only their buttons are interactive.
 | Token | Light mode | Dark mode | Used for |
 |---|---|---|---|
 | `--input-background` | `#BFC2CC` @ 16% | `#454C5E` @ 16% | Callout background |
-| `rgba(255,165,56,0.16)` | same | same | Alert background (Warning-500 @ 16%, literal) |
+| `--alert-warning-background` (`rgba(255,165,56,0.12)`) | same | same | Alert background (Warning-500 @ 12%) |
 | `--text-secondary` | Neutral-500 `#454C5E` | Neutral-200 `#BFC2CC` | Callout text |
 | `--text-warning` | Warning-600 `#E88206` | Warning-500 `#FFA538` | Alert text + button |
 | `--text-primary` | Neutral-800 `#20222A` | Neutral-25 `#F9F9FA` | Callout button border + label |
@@ -274,7 +276,7 @@ import Alert from '@/components/Alert/Alert'
   onButtonClick={openCourse}
 />
 
-// Alert: warning triangle, headline + explanation, underlined fix button
+// Alert: warning triangle, headline + explanation, text fix button
 <Alert
   type="Alert"
   customIcon={<Danger size={24} variant="Bold" color="currentColor" />}

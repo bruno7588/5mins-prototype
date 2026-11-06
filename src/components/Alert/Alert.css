@@ -1,10 +1,10 @@
-/* Alert / Callout — per docs/design-system/alerts-toast.md */
+/* Alert / Callout — Figma Library Alert 3658:32304, docs/design-system/alerts-toast.md */
 
 .alert {
   display: flex;
   align-items: center;
   border-radius: var(--radius-sm);
-  padding: var(--space-sm) var(--space-m);
+  padding: var(--space-s) var(--space-sm); /* 8px 12px */
   gap: var(--space-s);
   width: 100%;
   box-sizing: border-box;
@@ -23,21 +23,26 @@
 
 /* ── Alert (warning) ── */
 .alert--alert {
-  /* Warning-500 #FFA538 @ 16% (was Secondary-500 @ 12%) */
-  background: var(--warning-tint);
+  background: var(--alert-warning-background); /* Warning-500 @ 12% */
   color: var(--text-warning);
-  font-size: var(--font-size-lg);
-  font-weight: 400;
+  /* One line, no title: Paragraph M semibold (Figma's single-line Alert). */
+  font-size: var(--font-size-md);
+  font-weight: 600;
   line-height: 1.5;
-  /* 12px icon → text; the inline button adds another 12px for the 24px
-     info↔button gap the spec calls for. */
-  gap: var(--space-sm);
+  /* 8px icon → text; the inline button adds 16px for the 24px info↔button gap. */
+  gap: var(--space-s);
 }
 
-/* ── With supporting text: align top, larger padding ── */
+/* Figma draws the warning glyph at 20px; callers pass Iconsax at 24. */
+.alert--alert > svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ── With supporting text: align top (same 8px 12px padding) ── */
 .alert--with-body {
   align-items: flex-start;
-  padding: var(--space-m);
 }
 
 /* ── Icon ── */
@@ -47,8 +52,8 @@
 
 .alert__bell {
   flex-shrink: 0;
-  width: 21px;
-  height: 21px;
+  width: 20px;
+  height: 20px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -72,20 +77,17 @@
   gap: var(--space-s);
 }
 
-.alert__body:has(.alert__title + .alert__message) {
-  gap: var(--space-xxs);
-}
+/* Title to body: 8px, as the Library (the .alert__body gap). */
 
 .alert__title {
   margin: 0;
   font-size: var(--font-size-md);
-  font-weight: 500;
+  font-weight: 600; /* Paragraph M semibold */
   line-height: 1.5;
   color: var(--text-secondary);
 }
 
 .alert--alert .alert__title {
-  font-weight: 700;
   color: var(--text-warning);
 }
 
@@ -121,30 +123,43 @@
   cursor: pointer;
 }
 
-/* Outlined — Callout */
+/* Outlined — Callout with supporting text (Library: --border-elevated, 8px 16px, Bold 14),
+   16px below the body. */
 .alert__btn--outlined {
+  align-self: flex-start;
+  margin-top: var(--space-s);
   font-size: var(--font-size-md);
   color: var(--text-primary);
-  border: 1px solid var(--text-primary);
+  border: 1px solid var(--border-elevated);
   border-radius: var(--radius-sm);
   padding: var(--space-s) var(--space-m);
   background: transparent;
+}
+
+/* Text — one-line Callout: Medium 14, --text-primary, no border, on the right. */
+.alert__btn--text {
+  margin-left: var(--space-m); /* + the row's 8px gap = 24px from the message */
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .alert__btn--outlined:hover {
   background: var(--page-background-hover);
 }
 
-/* Inline underline — Alert */
+/* Inline — Alert: Medium 14, --text-warning, no underline (Library). */
 .alert__btn--inline {
-  margin-left: var(--space-sm); /* + the row's 12px gap = 24px from the info area */
-  font-size: var(--font-size-lg);
+  margin-left: var(--space-m); /* + the row's 8px gap = 24px from the info area */
+  font-size: var(--font-size-md);
+  font-weight: 500;
   color: var(--text-warning);
   background: transparent;
   border: none;
   padding: 0;
-  text-decoration: underline;
-  text-decoration-skip-ink: none;
 }
 
 /* Close (X) — used when onClose is provided */

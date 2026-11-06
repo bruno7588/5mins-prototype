@@ -13,6 +13,10 @@ Add new entries here, not in the docs.
 
 ## [alerts-toast.md](alerts-toast.md)
 
+- 2026-11-06: Alert and Callout synced to the Library Alert (`3658:32304`): padding 8px 12px in every variant (was 12px 16px, 16px with a body); icon 20px (Alert was 24px); title SemiBold (Callout was Medium, Alert Bold) with 8px to the body; one-line Alert text without a title is Paragraph M SemiBold 14 (was Regular 16); Alert button Medium 14 with no underline (was Bold 16, underlined); one-line Callout button is a text button on the right (was outlined); outlined Callout button border `--border-elevated` (was `--text-primary`), 16px below the body.
+- 2026-11-06: Alert background Warning-500 at 12% via the new `--alert-warning-background` token (was `--warning-tint`, 16%).
+- 2026-11-06: `message` accepts a ReactNode. Rule added: one Alert at a time in a drawer or modal.
+
 - 2026-11-03: Added `ToastSpinner`, a rotating ring for the icon slot on in-progress toasts ("Downloading <file>"). Figma: Course details `12516:63739`.
 
 - 2026-10-14: Alert and Callout buttons and the close × gained a `:focus-visible` ring (was the browser default).
@@ -146,6 +150,9 @@ Add new entries here, not in the docs.
 
 ## [dropdown.md](dropdown.md)
 
+- 2026-11-06: Options with a supporting line use a Medium (500) label (was Semibold 600), matching the Library and RowActionsMenu.
+- 2026-11-06: `footerLink` is left-aligned with the option text (was centred); a link renders Bold with no underline; optional `icon` renders a text button.
+
 - 2026-11-03: Multi-select with `allLabel`: an empty selection now shows the all label filled (`--text-primary`) instead of the placeholder, because every item is selected.
 
 - 2026-10-15: Selected menu row fill moved from `--selected` (#EDA30D in light) to `--secondary-500` (#FFBB38, both modes) so it matches the Content Switcher's selected pill (Bruno). The trigger's active border keeps `--selected`. Same change in listbox.md.
@@ -169,6 +176,8 @@ Add new entries here, not in the docs.
 - 2026-07-03: Spec source: Figma Library (`EC26cSVe9KNTCWXvYovakw`) - light `11921:5779` / dark `5452:37234` (verified 2026-07-03).
 
 ## [file-uploader.md](file-uploader.md)
+
+- 2026-11-06: `filledPreview` exception for certificates checked against AI-filled fields (Add external training): preview up to 200px tall, file name and Change File below.
 
 - 2026-10-14: Figma File uploader gained Progress and Error message text properties and State=Focus (L, S) with the cyan focus ring; description rewritten.
 - 2026-09-29: > **Updated 2026-09-29 (re-verified against Figma `11546:1560`):** icons are `DocumentUpload` (Linear; `--text-error` in Error) and `DocumentText` (Bold, Filled); the button reads "Select File" in every state, with a `--border-elevated` border and Medium / Small padding (10px 20px L, 8px 16px S), lighting to `--primary-button-background-hover` over a 16% fill on hover, including when the zone is hovered; the L main gap is 20px and the L icon-to-text gap 16px; Error is a `--danger-500` dashed border over a 16% Danger-500 wash with a Regular bulleted list (up to three, then "+N errors"); the progress arc is `--primary-600`. The zone and button have cyan focus rings, and the button no longer opens the picker twice.
@@ -239,6 +248,8 @@ Add new entries here, not in the docs.
 
 ## [listbox.md](listbox.md)
 
+- 2026-11-06: Max height 400px before scrolling (was 320px).
+
 - 2026-10-14: Figma List items get Label, Description, Helper text and Skill icon glyph properties and State=Focus variants (2px inset ring); all on/off axes stay variants. Listbox and List items descriptions rewritten. Figma to code table updated.
 - 2026-10-07: **Updated 2026-10-07 (Figma List items dark `9162:941`):** new **Integer** variant (radio + supporting text + Input integer stepper and a "day" / "days" unit, `12432:11845`), used by the Assign courses timing popover. **Selected + Hover** variants exist for every row type. **Rows with a checkbox or radio do not fill amber when selected**: the control carries the selection, hover is `--cards-background-hover` (the built `Dropdown` already does this). Checkbox rows have a 12px control-to-label gap. The Search row has Enabled, Hover, Selected (focused, amber border + clear ×) and Read-only states.
 - 2026-09-29: **Updated 2026-09-29 (verified against code):** arrow-key navigation marked as not built; danger icons turn red only with `color="currentColor"`; shadow named `var(--shadow-l)`; supporting-text rows now state both built variants (`RowActionsMenu` label 500 + `--text-tertiary`, `Dropdown` label 600 + `--text-secondary`).
@@ -286,6 +297,8 @@ Add new entries here, not in the docs.
 - 2026-09-21: Figma source verified 2026-09-21 - the set gained Image, and External Link moved to `12230:2631`.
 
 ## [row-actions-menu.md](row-actions-menu.md)
+
+- 2026-11-06: Menu width fits its items (was a 240px minimum).
 
 - 2026-10-14: Figma to code table updated for the new List items Label and Description text properties and the Focus state.
 - 2026-09-29: (verified against code): leading icons now `color="currentColor"` (`.ram-item-icon` supplies `--text-primary`); the unsupported "single action → Small Button" rule removed; disabled-item wording reworded; shadow named `var(--shadow-l)`; focus ring corrected to `--primary-button-background` (what `RowActionsMenu.css` uses); stale listbox `--border` bullet removed.
