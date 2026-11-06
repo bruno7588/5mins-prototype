@@ -421,7 +421,7 @@ function Dropdown({
             )
           })}
           {footerLink && (
-            <li className={`dropdown-footer${footerLink.icon ? ' dropdown-footer--start' : ''}`}>
+            <li className="dropdown-footer">
               <Button
                 variant={footerLink.icon ? 'text-2' : 'link'}
                 icon={footerLink.icon}

@@ -142,7 +142,7 @@ All slots are combinable per the Figma variant axes; gaps are the load-bearing d
 | **Checkbox** | 16px checkbox box (see `selection-controls.md`) - multi-select lists. No amber fill when selected | **12px** |
 | **Radio** | radio in a 16 x 24 column - single-select lists. No amber fill when selected | 8px |
 | **Integer** | radio + supporting text, then an Input integer stepper (see `input.md`) and a unit ("day" / "days", 14px `--text-secondary`) 8px apart, 8px under the text. Label Medium 500. Figma `12432:11845` (Disabled `12432:13335`: every text `--text-disabled`). Used by the Assign courses timing popover | 8px |
-| **Supporting text** | second line, Regular 14. The two built menus differ: `RowActionsMenu` uses a **Medium (500)** label over a `--text-tertiary` description (Figma Library spec), while `Dropdown` uses a **Semibold (600)** label over a `--text-secondary` description that may wrap (`Dropdown.css`). **4px** column gap in `RowActionsMenu`; items top-aligned; in `RowActionsMenu` both lines stay on one row (no wrap). Read-only turns both lines `--text-disabled`. Figma Library List items `10187:2585` | - |
+| **Supporting text** | second line, Regular 14. The two built menus differ: `RowActionsMenu` uses a **Medium (500)** label over a `--text-tertiary` description (Figma Library spec), while `Dropdown` uses the same **Medium (500)** label over a `--text-secondary` description that may wrap (`Dropdown.css`). **4px** column gap in `RowActionsMenu`; items top-aligned; in `RowActionsMenu` both lines stay on one row (no wrap). Read-only turns both lines `--text-disabled`. Figma Library List items `10187:2585` | - |
 | **Search** | an embedded search field as the first item: 240px, `--input-background` fill, radius 12, `8px 12px` padding, 18px icon, placeholder `--text-disabled`. States: Enabled, Hover (`--border-hover` outline), Selected (focused: `--selected` border, typed text, clear ×), Read-only. Figma `10775:2692` | - |
 
 Item heights for reference: 37px plain · 40px with avatar/radio · ~60–62px with supporting text · 107px Integer row · 53px search row.
@@ -220,7 +220,7 @@ There is no keyboard-highlight state in Figma or code; arrow-key navigation is n
   color: var(--text-secondary);
 }
 
-/* Supporting-text rows (RowActionsMenu values; Dropdown uses label 600 + --text-secondary) */
+/* Supporting-text rows (both menus: label 500; Dropdown description --text-secondary) */
 .listbox__item--rich { align-items: flex-start; }
 .listbox__item--rich .listbox__item-info { display: flex; flex-direction: column; gap: var(--space-xs); white-space: nowrap; }
 .listbox__item--rich .listbox__item-title { font-weight: 500; }

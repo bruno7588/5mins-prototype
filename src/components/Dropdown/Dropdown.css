@@ -193,10 +193,10 @@
 }
 
 /* Supporting-text rows (listbox.md slot matrix): supporting is Regular 14 and the
-   label goes Semibold 14 — the same primary-over-supporting pair the table cells use,
+   label goes Medium 14 (Figma Library List items 10187:2585) — the same primary-over-supporting pair the table cells use,
    so the two lines separate on weight rather than size. */
 .dropdown-option__text.is-rich .dropdown-option__label {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .dropdown-option__desc {
@@ -303,23 +303,24 @@
   background: var(--cards-background);
 }
 
-/* Footer link (proposed, DES-336): one centred link pinned under the options after
-   a divider, like the search is pinned above them. */
+/* Footer link (proposed, DES-336): one left-aligned link pinned under the options
+   after a divider, like the search is pinned above them. */
 .dropdown-footer {
   position: sticky;
   bottom: calc(var(--space-s) * -1);
   z-index: 1;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin: var(--space-xs) 0 calc(var(--space-s) * -1);
   padding: var(--space-sm) 0;
   border-top: 1px solid var(--border-elevated);
   background: var(--cards-background);
 }
 
-/* Text-button footer (leading icon) sits left, under the options. */
-.dropdown-footer--start {
-  justify-content: flex-start;
+/* A plain link has no padding of its own: line it up with the option text, Bold. */
+.dropdown-footer .ds-btn.ds-btn--link {
+  padding-inline: var(--space-sm);
+  font-weight: 700;
 }
 
 .dropdown-empty {
