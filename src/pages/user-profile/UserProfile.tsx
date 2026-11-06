@@ -673,7 +673,7 @@ function UserProfile() {
                 <p className="up-meta">{person.role} · {person.email}</p>
               </div>
               <div className="up-ctas">
-                <Button variant="filled" className="ui-disabled" disabled>
+                <Button variant="filled">
                   Edit Profile
                 </Button>
               </div>

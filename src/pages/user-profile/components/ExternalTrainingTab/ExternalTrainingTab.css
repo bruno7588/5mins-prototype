@@ -3,7 +3,7 @@
 .uet {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-ml);
 }
 
 .uet-toolbar {
