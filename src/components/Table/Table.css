@@ -21,14 +21,24 @@
   height: var(--space-s);
 }
 
+/* The bar keeps its space at rest (no layout jump) but only shows while the
+   cursor is over the table or focus is inside it. */
 .tbl-scroll::-webkit-scrollbar-track {
   margin-top: var(--space-xs);
   border-radius: var(--radius-full);
-  background: var(--input-background);
+  background: transparent;
 }
 
 .tbl-scroll::-webkit-scrollbar-thumb {
   border-radius: var(--radius-full);
+  background: transparent;
+}
+
+.tbl-scroll:is(:hover, :focus-within)::-webkit-scrollbar-track {
+  background: var(--input-background);
+}
+
+.tbl-scroll:is(:hover, :focus-within)::-webkit-scrollbar-thumb {
   background: var(--border-elevated);
 }
 

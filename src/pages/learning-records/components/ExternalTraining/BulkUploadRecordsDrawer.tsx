@@ -24,12 +24,13 @@ import {
   type ExternalRecord,
   type ExternalResult,
 } from '@/data/externalTraining'
-import type { BulkUploadKind } from './BulkUploadChoiceModal'
 import { DateCell } from './ExternalRecordsTable'
 import './ExternalTraining.css'
 
-/* Bulk upload of trainings (PRD 2.10 and 2.11). Two kinds, picked in
-   BulkUploadChoiceModal: a CSV (records only) or a zip holding the CSV and the
+export type BulkUploadKind = 'csv' | 'zip'
+
+/* Bulk upload of trainings (PRD 2.10 and 2.11). Two kinds, picked in the
+   Add Training menu: a CSV (records only) or a zip holding the CSV and the
    certificate files. Step 1 is the template, instructions and uploader; step 2
    reviews the file as Bulk manage people does: an error bar with Download Error
    File, tabs with counts, error-type chips, red cells with the fix on hover, and

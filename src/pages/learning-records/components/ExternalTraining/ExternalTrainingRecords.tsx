@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Add, Danger, Book1, Buildings2, Calendar, DocumentUpload, Profile, TickCircle } from 'iconsax-react'
+import { Add, Danger, Book1, Buildings2, Calendar, Profile, TickCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
@@ -21,8 +21,9 @@ import {
   type ExternalRecord,
 } from '@/data/externalTraining'
 import AddExternalTrainingDrawer from './AddExternalTrainingDrawer'
-import BulkUploadRecordsDrawer from './BulkUploadRecordsDrawer'
-import BulkUploadChoiceModal, { type BulkUploadKind } from './BulkUploadChoiceModal'
+import CsvIcon from '@/components/icons/CsvIcon'
+import ZipIcon from '@/components/icons/ZipIcon'
+import BulkUploadRecordsDrawer, { type BulkUploadKind } from './BulkUploadRecordsDrawer'
 import ExternalRecordsTable from './ExternalRecordsTable'
 import './ExternalTraining.css'
 
@@ -65,7 +66,6 @@ interface Props {
 function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
   const { records } = useExternalTraining()
   const [drawer, setDrawer] = useState<{ record: ExternalRecord | null } | null>(null)
-  const [bulkChoice, setBulkChoice] = useState(false)
   const [bulkKind, setBulkKind] = useState<BulkUploadKind | null>(null)
   const [toDelete, setToDelete] = useState<ExternalRecord | null>(null)
 
@@ -145,7 +145,7 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
     ),
   }))
 
-  /* One Add Training button; the menu offers one record or a bulk CSV upload.
+  /* One Add Training button; the menu offers one record, a bulk CSV or a ZIP upload.
      Portalled into the page header, at the far right beside Download Report. */
   const addMenu = (
         <RowActionsMenu
@@ -161,10 +161,26 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
             </>
           }
           items={[
-            { key: 'single', label: 'Add training', icon: <Add size={20} color="var(--text-primary)" variant="Linear" /> },
-            { key: 'bulk', label: 'Bulk upload', icon: <DocumentUpload size={20} color="var(--text-primary)" variant="Linear" /> },
+            {
+              key: 'single',
+              label: 'Add training',
+              description: 'Add one training record for a learner',
+              icon: <Add size={20} color="var(--text-primary)" variant="Linear" />,
+            },
+            {
+              key: 'csv',
+              label: 'Bulk upload CSV',
+              description: 'Add training records from a spreadsheet, without certificates',
+              icon: <CsvIcon size={20} color="var(--text-primary)" />,
+            },
+            {
+              key: 'zip',
+              label: 'Upload ZIP file',
+              description: 'Add training records and their certificates in one zip file',
+              icon: <ZipIcon size={20} color="var(--text-primary)" />,
+            },
           ]}
-          onSelect={(key) => (key === 'bulk' ? setBulkChoice(true) : setDrawer({ record: null }))}
+          onSelect={(key) => (key === 'single' ? setDrawer({ record: null }) : setBulkKind(key as BulkUploadKind))}
         />
   )
 
@@ -225,15 +241,6 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
           }}
         />
       )}
-
-      <BulkUploadChoiceModal
-        open={bulkChoice}
-        onClose={() => setBulkChoice(false)}
-        onChoose={(k) => {
-          setBulkChoice(false)
-          setBulkKind(k)
-        }}
-      />
 
       {bulkKind && (
         <BulkUploadRecordsDrawer
