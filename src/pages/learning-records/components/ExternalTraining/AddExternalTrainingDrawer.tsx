@@ -172,13 +172,14 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const [newProvider, setNewProvider] = useState(initialRecord?.oneOff?.provider ?? '')
   const [newDuration, setNewDuration] = useState(initialDuration.value)
   const [newUnit, setNewUnit] = useState<DurationUnit>(initialDuration.unit)
-  const [retrains, setRetrains] = useState(true)
+  const [retrains, setRetrains] = useState(false) // No expiry until the admin picks a rule
   const [months, setMonths] = useState(12)
   const [oneOffDue, setOneOffDue] = useState(initialRecord && !initialRecord.courseId ? initialRecord.retrainingDueDate ?? '' : '')
   const [submitted, setSubmitted] = useState(false)
-  /* Keep File on the mismatch Alert: the admin confirms the certificate is this learner's
+  /* Same Person on the mismatch Alert: the admin confirms the certificate is this learner's
      (married name, nickname, a misread). Tied to the pair, so changing either asks again. */
   const [keptFor, setKeptFor] = useState<string | null>(null)
+  const mismatchRef = useRef<HTMLDivElement>(null)
 
   const openNotListed = (name: string) => {
     setMode('not-listed')
@@ -394,6 +395,12 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const err = (k: keyof typeof errors) => (submitted && errors[k] ? errors[k] : undefined)
 
   const save = () => {
+    // An unresolved name mismatch: take the admin to the Alert rather than doing nothing.
+    if (mismatch) {
+      mismatchRef.current?.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' })
+      mismatchRef.current?.focus({ preventScroll: true })
+      return
+    }
     setSubmitted(true)
     if (hasErrors) return
     /* Add to the approved list: the course (and its provider, if new) goes on the list
@@ -615,15 +622,19 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                       }
                     />
                   )}
+                  {/* The one place the mismatch is said: announced as it appears, and where
+                      Add Training sends focus while it is unresolved. */}
                   {mismatch && (
-                    <Alert
-                      type="Alert"
-                      customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
-                      message={`This certificate names ${read!.learner}, not ${person!.name}. Check you've uploaded the right file, or keep it if it's the same person.`}
-                      button
-                      buttonLabel="Keep File"
-                      onButtonClick={() => setKeptFor(mismatchKey)}
-                    />
+                    <div ref={mismatchRef} role="alert" tabIndex={-1} className="aetd-mismatch">
+                      <Alert
+                        type="Alert"
+                        customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
+                        message={`This certificate names ${read!.learner}, not ${person!.name}. Change the file, or confirm it's the same person.`}
+                        button
+                        buttonLabel="Same Person"
+                        onButtonClick={() => setKeptFor(mismatchKey)}
+                      />
+                    </div>
                   )}
                   {/* Learner */}
                   <div className={`aet-field aetd-full${writing.has('learner') ? ' aetd-writing is-writing' : ''}`}>
@@ -637,7 +648,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                       options={personOptions}
                       value={personId}
                       onChange={setPersonId}
-                      error={err('learner') ?? (mismatch ? `Doesn't match the certificate (${read!.learner})` : undefined)}
+                      error={err('learner')}
                       helperText={unknownLearner ? `The certificate names ${read!.learner}. Pick the learner.` : undefined}
                     />
                   </div>
@@ -796,26 +807,33 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     </div>
                   )}
                   {mode === 'course' && course && courseProviders.length === 1 && (
-                    <div className="aet-field">
-                      <span className="aet-label">Provider</span>
-                      <span className="aetd-value">{courseProviders[0].name}</span>
+                    /* A course's only provider can't be changed: the same filled, read-only
+                       field as the locked Learner and the read-only Duration. */
+                    <div className="aet-field aetd-full">
+                      <Dropdown
+                        label="Provider"
+                        options={[{ value: courseProviders[0].id, label: courseProviders[0].name }]}
+                        value={courseProviders[0].id}
+                        readOnly
+                        className="aetd-locked"
+                      />
                     </div>
                   )}
 
-                  {/* Duration belongs to the approved course (edited in Settings), so it
-                      shows read-only, in the same stepper as the not-listed block. */}
-                  {mode === 'course' && course && (
-                    <div className="aet-field">
-                      <span className="aet-label">Duration</span>
-                      <div className="aet-row aetd-readonly-row">
-                        <InputInteger ariaLabel="Duration" value={course.duration.value} onChange={() => {}} disabled className="aetd-readonly" />
-                        <Dropdown options={UNIT_OPTIONS} value={course.duration.unit} readOnly className="aet-unit aetd-readonly" />
+                  {/* Duration, completion date and expiry on one row: the dates that make the
+                      record, read together. Result and score follow on their own row. */}
+                  <div className="aet-row aetd-dates-row">
+                    {/* Duration belongs to the approved course (edited in Settings), so it
+                        shows read-only, in the same stepper as the not-listed block. */}
+                    {mode === 'course' && course && (
+                      <div className="aet-field">
+                        <span className="aet-label">Duration</span>
+                        <div className="aet-row aetd-readonly-row">
+                          <InputInteger ariaLabel="Duration" value={course.duration.value} onChange={() => {}} disabled className="aetd-readonly" />
+                          <Dropdown options={UNIT_OPTIONS} value={course.duration.unit} readOnly className="aet-unit aetd-readonly" />
+                        </div>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Completion date, result and score (optional) on one row */}
-                  <div className="aet-row">
+                    )}
                     <div className={`aet-field aetd-date${writing.has('date') ? ' aetd-writing is-writing' : ''}`}>
                       <span className="aet-label">Completion date</span>
                       <DatePickerField
@@ -826,6 +844,34 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                         error={err('date')}
                       />
                     </div>
+                    {mode === 'not-listed' && notListedAs === 'one-off' && result === 'Passed' && (
+                      <div className="aet-field aetd-date">
+                        <span className="aet-label">Expiry date <span className="aetd-optional">(optional)</span></span>
+                        <DatePickerField value={oneOffDue} onChange={setOneOffDue} minDate={completionDate || undefined} ariaLabel="Expiry date" />
+                      </div>
+                    )}
+                    {((mode === 'course' && course) || addingToList) && completionDate && (
+                      /* Worked out from the course, so a read-only field like Duration. */
+                      <div className="aet-field">
+                        <span className="aet-label">Expiry</span>
+                        <div className="aetd-due" role="status">
+                          {result === 'Not Passed' ? (
+                            <span className="aetd-value">No expiry date for a training that wasn't passed.</span>
+                          ) : dueDate ? (
+                            <>
+                              <span className="aetd-value">{formatDay(dueDate)}</span>
+                              {due === 'overdue' && <Badge type="error" label="Overdue" />}
+                              {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
+                            </>
+                          ) : (
+                            <span className="aetd-value">No expiry</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="aet-row">
                     <Dropdown
                       label="Result"
                       options={RESULT_OPTIONS}
@@ -839,33 +885,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     </div>
                   </div>
 
-                  {mode === 'not-listed' && notListedAs === 'one-off' && result === 'Passed' && (
-                    <div className="aet-field">
-                      <span className="aet-label">Expiry date <span className="aetd-optional">(optional)</span></span>
-                      <DatePickerField value={oneOffDue} onChange={setOneOffDue} minDate={completionDate || undefined} ariaLabel="Expiry date" />
-                    </div>
-                  )}
-
-                  {((mode === 'course' && course) || addingToList) && completionDate && (
-                    /* Worked out from the course, so a read-only field like Duration. */
-                    <div className="aet-field">
-                      <span className="aet-label">Expiry</span>
-                      <div className="aetd-due" role="status">
-                        {result === 'Not Passed' ? (
-                          <span className="aetd-value">No expiry date for a training that wasn't passed.</span>
-                        ) : dueDate ? (
-                          <>
-                            <span className="aetd-value">{formatDay(dueDate)}</span>
-                            {due === 'overdue' && <Badge type="error" label="Overdue" />}
-                            {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
-                          </>
-                        ) : (
-                          <span className="aetd-value">No expiry</span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
                 </div>
               </div>
             </div>
@@ -876,7 +895,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
           <div className="side-drawer__footer">
             <div className="side-drawer__footer-divider" />
             <div className="side-drawer__buttons">
-              <Button onClick={save} disabled={reading || hasErrors || mismatch}>
+              <Button onClick={save} disabled={reading || hasErrors}>
                 {editing || duplicate ? 'Update Training' : 'Add Training'}
               </Button>
             </div>

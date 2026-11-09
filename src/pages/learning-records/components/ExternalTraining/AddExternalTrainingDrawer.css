@@ -348,6 +348,17 @@
   display: none;
 }
 
+/* Mismatch Alert wrapper: takes focus when Add Training is pressed before it is resolved. */
+.aetd-mismatch {
+  width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.aetd-mismatch:focus {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
 /* A name to pick out inside running text, e.g. the course in the existing-record Alert. */
 .aetd-strong {
   font-weight: 600;
