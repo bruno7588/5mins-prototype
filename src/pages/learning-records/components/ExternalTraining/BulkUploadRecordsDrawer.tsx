@@ -435,7 +435,7 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
         </div>
 
         <div className="side-drawer__content">
-          <ol className="aet-steps lret-steps">
+          <ol className="aet-steps">
             <li className="aet-step">
               <span className="aet-step__num" aria-hidden="true">1</span>
               <div className="aet-step__body">

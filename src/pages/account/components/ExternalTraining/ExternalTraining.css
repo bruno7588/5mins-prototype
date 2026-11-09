@@ -189,14 +189,18 @@
   padding-bottom: var(--space-l);
 }
 
-/* Dashed rail from one step number to the next. */
+/* The Learning records Figma stepper (12386:164782), shared by both bulk upload drawers:
+   a 20px filled number, 4px down to sit on the title, and a 0.5px dashed --text-tertiary
+   line (2px dash, 4px gap) that stops 8px short of each number. */
 .aet-step:not(:last-child)::before {
   content: '';
   position: absolute;
-  top: var(--space-l);
-  bottom: 0;
-  left: calc(var(--space-sm) - 1px);
-  border-left: 1px dashed var(--border);
+  top: calc(var(--space-xs) + var(--space-ml) + var(--space-s));
+  bottom: var(--space-xs);
+  left: calc(var(--space-ml) / 2 - 0.5px);
+  width: 1px;
+  transform: scaleX(0.5); /* 0.5px line that still draws on 1x screens */
+  background: repeating-linear-gradient(to bottom, var(--text-tertiary) 0 2px, transparent 2px 6px);
 }
 
 .aet-step__num {
@@ -204,10 +208,11 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: var(--space-l);
-  height: var(--space-l);
-  border: 1px solid var(--text-secondary);
+  width: var(--space-ml);
+  height: var(--space-ml);
+  margin-top: var(--space-xs);
   border-radius: var(--radius-full);
+  background: var(--input-background);
   font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 1;
