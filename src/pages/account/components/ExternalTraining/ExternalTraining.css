@@ -7,12 +7,14 @@
   padding-top: var(--space-l);
 }
 
+/* The one-off setting card, as Figma 9137:6012: 12px 16px padding, 12px between the
+   small toggle and its text. */
 .aet-card {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-m);
+  gap: var(--space-sm);
   width: 100%;
-  padding: var(--space-m);
+  padding: var(--space-sm) var(--space-m);
   border-radius: var(--radius-sm);
   background: var(--cards-background);
 }
@@ -24,10 +26,16 @@
   gap: var(--space-xs);
 }
 
+.aet-card__toggle {
+  display: flex;
+  padding-top: var(--space-xxs);
+}
+
+/* Paragraph M semibold. */
 .aet-title {
   margin: 0;
-  font-size: var(--font-size-h4);
-  font-weight: 700;
+  font-size: var(--font-size-md);
+  font-weight: 600;
   line-height: 1.5;
   color: var(--text-primary);
 }

@@ -263,14 +263,18 @@ function ExternalTraining() {
   return (
     <div className="aet-body">
       <section className="aet-card aet-card--row">
-        <Toggle
-          checked={allowOneOffs}
-          onChange={(e) => {
-            setAllowOneOffs(e.target.checked)
-            showToast('success', e.target.checked ? 'One-off trainings turned on' : 'One-off trainings turned off')
-          }}
-          aria-label="Allow one-off trainings"
-        />
+        {/* Small toggle, 2px down so it sits on the title (Figma 9137:6012). */}
+        <span className="aet-card__toggle">
+          <Toggle
+            size="sm"
+            checked={allowOneOffs}
+            onChange={(e) => {
+              setAllowOneOffs(e.target.checked)
+              showToast('success', e.target.checked ? 'One-off trainings turned on' : 'One-off trainings turned off')
+            }}
+            aria-label="Allow one-off trainings"
+          />
+        </span>
         <div className="aet-head">
           <h3 className="aet-title">Allow one-off trainings</h3>
           <p className="aet-text">
