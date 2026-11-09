@@ -75,14 +75,51 @@ html.di-active [contenteditable] {
   outline-offset: 2px;
 }
 
-.di-hint {
-  position: fixed;
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: #15161c;
+/* Text style panel (Edit Text): two dropdowns, the design-system type scale and the
+   text colour tokens. */
+.di-type-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.di-type-head {
   color: #a0a3b1;
   font-size: 11px;
-  white-space: nowrap;
+  font-weight: 600;
+}
+
+.di-select {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0f1014;
+  color: #f4f4f7;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.di-select:focus-visible {
+  outline: 2px solid #b8a6ff;
+  outline-offset: 2px;
+}
+
+.di-type-colour-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The picked colour, beside its token name. */
+.di-swatch {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
 }
 
 /* Inline prompt panel */

@@ -24,6 +24,8 @@ import './DesignInspect.css'
  * Double-click text (or "Edit text" in the panel) to type over it in place. Enter
  * saves: the dev server writes the exact wording into the source when it can find
  * it, otherwise the edit goes to Claude as a request. Esc puts the old text back.
+ * While editing, a Text style panel lists the design-system type scale and text colours;
+ * a pick previews live and, on save, goes to Claude as a token-exact restyle request.
  */
 
 type Status =
@@ -40,6 +42,8 @@ type Status =
 
 const PANEL_W = 380
 const PANEL_H = 200
+const TYPE_W = 340
+const TYPE_H = 220
 const GAP = 8
 
 declare global {
@@ -90,9 +94,73 @@ function editableText(el: Element): { texts: Text[]; wrap: boolean } | null {
   return labels.length === 1 ? { texts: labels, wrap: true } : null
 }
 
+/* The design-system type scale (docs/design-system/typography.md, src/styles/typography.css)
+   and the semantic text colours, offered while editing text so a style is picked, never typed. */
+interface TextStyle {
+  name: string
+  size: string
+  weight: number
+  lineHeight: number
+}
+const para = (label: string, size: string, lh: number): TextStyle[] => [
+  { name: `Paragraph ${label} regular`, size, weight: 400, lineHeight: lh },
+  { name: `Paragraph ${label} medium`, size, weight: 500, lineHeight: lh },
+  { name: `Paragraph ${label} semibold`, size, weight: 600, lineHeight: lh },
+]
+const TEXT_STYLES: TextStyle[] = [
+  { name: 'Display', size: '--font-size-display', weight: 700, lineHeight: 1.5 },
+  { name: 'H1', size: '--font-size-h1', weight: 700, lineHeight: 1.5 },
+  { name: 'H2', size: '--font-size-h2', weight: 700, lineHeight: 1.5 },
+  { name: 'H3', size: '--font-size-h3', weight: 700, lineHeight: 1.5 },
+  { name: 'H4', size: '--font-size-h4', weight: 700, lineHeight: 1.5 },
+  { name: 'H5', size: '--font-size-h5', weight: 700, lineHeight: 1.5 },
+  { name: 'H6', size: '--font-size-h6', weight: 700, lineHeight: 1.2 },
+  ...para('L', '--font-size-lg', 1.5),
+  ...para('M', '--font-size-md', 1.5),
+  ...para('S', '--font-size-sm', 1.2),
+]
+const TEXT_COLOURS = [
+  '--text-primary',
+  '--text-secondary',
+  '--text-tertiary',
+  '--text-disabled',
+  '--text-success',
+  '--text-warning',
+  '--text-error',
+  '--text-selected',
+]
+const tokenPx = (token: string) => parseFloat(getComputedStyle(document.documentElement).getPropertyValue(token))
+
+/** The scale entry the element already uses, matched on size, weight and line height. */
+function currentStyle(el: HTMLElement): TextStyle | null {
+  const cs = getComputedStyle(el)
+  const size = parseFloat(cs.fontSize)
+  const weight = Number(cs.fontWeight)
+  const lh = cs.lineHeight === 'normal' ? NaN : Math.round((parseFloat(cs.lineHeight) / size) * 10) / 10
+  const same = TEXT_STYLES.filter((s) => tokenPx(s.size) === size && s.weight === weight)
+  return same.find((s) => s.lineHeight === lh) ?? same[0] ?? null
+}
+
+/** The colour token the element's text resolves to, read through a probe in the overlay root. */
+function currentColour(el: HTMLElement, root: HTMLElement): string | null {
+  const now = getComputedStyle(el).color
+  const probe = document.createElement('span')
+  root.appendChild(probe)
+  const hit = TEXT_COLOURS.find((t) => {
+    probe.style.color = `var(${t})`
+    return getComputedStyle(probe).color === now
+  })
+  probe.remove()
+  return hit ?? null
+}
+
 interface TextEditSession {
   /** The inspected element; its source line and request describe the edit. */
   el: HTMLElement
+  /** The element's style attribute before any preview, put back on cancel or once the source updates. */
+  styleAttr: string | null
+  /** When a style is picked with only some words selected: a temporary span around them, previewed alone. */
+  part?: { span: HTMLElement; text: string }
   /** What the caret lives in: the element itself, or a temporary span around its label. */
   field: HTMLElement
   /** React owns these nodes; exactly these go back into the element when editing ends. */
@@ -113,6 +181,13 @@ export default function DesignInspect() {
   const pendingId = useRef<string | null>(null)
   const [editing, setEditing] = useState<HTMLElement | null>(null)
   const editRef = useRef<TextEditSession | null>(null)
+  // Picked in the Text style panel while editing; ref too, so finishEdit reads the latest.
+  const [pick, setPick] = useState<{ style?: TextStyle; colour?: string }>({})
+  const pickRef = useRef(pick)
+  const [now, setNow] = useState<{ style: TextStyle | null; colour: string | null }>({ style: null, colour: null })
+  const nowRef = useRef(now)
+  // A saved style preview stays on the element until Claude's edit hot-reloads, then goes.
+  const previewRef = useRef<{ el: HTMLElement; styleAttr: string | null } | null>(null)
 
   // Own container so app CSS and the app's portals never interleave with the overlay.
   const root = useMemo(() => {
@@ -137,7 +212,11 @@ export default function DesignInspect() {
       field.textContent = texts[0].data.trim()
       texts[0].replaceWith(field)
     }
-    editRef.current = { el, field, nodes, texts, data: texts.map((n) => n.data), wrap }
+    editRef.current = { el, styleAttr: el.getAttribute('style'), field, nodes, texts, data: texts.map((n) => n.data), wrap }
+    pickRef.current = {}
+    setPick({})
+    nowRef.current = { style: currentStyle(el), colour: currentColour(el, root) }
+    setNow(nowRef.current)
     setSelected(el)
     setHover(null)
     setEditing(field)
@@ -148,6 +227,41 @@ export default function DesignInspect() {
     const sel = window.getSelection()
     sel?.removeAllRanges()
     sel?.addRange(range)
+  }, [root])
+
+  /* Some words selected (not all of them): wrap them once, so every pick styles only that part. */
+  const capturePart = useCallback(() => {
+    const session = editRef.current
+    if (!session || session.part) return
+    const sel = window.getSelection()
+    const range = sel && sel.rangeCount ? sel.getRangeAt(0) : null
+    const text = range?.toString().trim() ?? ''
+    const whole = (session.field.textContent ?? '').trim()
+    if (!range || range.collapsed || !session.field.contains(range.commonAncestorContainer) || !text || text === whole) return
+    const span = document.createElement('span')
+    try {
+      range.surroundContents(span)
+      session.part = { span, text }
+    } catch {
+      // The selection crosses an element boundary; fall back to styling the whole text.
+    }
+  }, [])
+
+  /* Live preview: the pick goes on the element as inline tokens; nothing is saved until Enter. */
+  const choose = useCallback((next: { style?: TextStyle; colour?: string }) => {
+    const session = editRef.current
+    if (!session) return
+    capturePart()
+    const merged = { ...pickRef.current, ...next }
+    pickRef.current = merged
+    setPick(merged)
+    const s = (session.part?.span ?? session.el).style
+    if (merged.style) {
+      s.fontSize = `var(${merged.style.size})`
+      s.fontWeight = String(merged.style.weight)
+      s.lineHeight = String(merged.style.lineHeight)
+    }
+    if (merged.colour) s.color = `var(${merged.colour})`
   }, [])
 
   const finishEdit = useCallback((save: boolean) => {
@@ -155,7 +269,7 @@ export default function DesignInspect() {
     if (!session) return
     editRef.current = null
     setEditing(null)
-    const { el, field, nodes, texts, data, wrap } = session
+    const { el, styleAttr, field, nodes, texts, data, wrap, part } = session
     const typed = (field.textContent ?? '').replace(/\u00a0/g, ' ')
     field.removeAttribute('contenteditable')
     window.getSelection()?.removeAllRanges()
@@ -166,10 +280,58 @@ export default function DesignInspect() {
     const before = original.trim()
     const after = typed.trim()
     texts.forEach((n, i) => (n.data = data[i]))
-    if (!save || after === before || !after) {
-      setStatus({ kind: 'idle' })
+    // A pick that matches what the text already has is not a change.
+    const picked = {
+      style: pickRef.current.style?.name === nowRef.current.style?.name ? undefined : pickRef.current.style,
+      colour: pickRef.current.colour === nowRef.current.colour ? undefined : pickRef.current.colour,
+    }
+    pickRef.current = {}
+    setPick({})
+    const restyle = save && (picked.style || picked.colour)
+    if (!restyle) {
+      if (styleAttr === null) el.removeAttribute('style')
+      else el.setAttribute('style', styleAttr)
+    }
+    if (save && after !== before && after) saveText(el, wrap, texts, original, before, after, typed)
+    else if (!restyle) setStatus({ kind: 'idle' })
+    if (restyle) sendStyle(el, styleAttr, picked, part?.text, before)
+  }, [])
+
+  /* A style pick changes a CSS rule, so it goes to Claude with the exact tokens. A whole-text
+     preview stays on the element until that edit hot-reloads; a part preview leaves with the
+     temporary span. */
+  const sendStyle = (
+    el: HTMLElement,
+    styleAttr: string | null,
+    picked: { style?: TextStyle; colour?: string },
+    partText: string | undefined,
+    whole: string,
+  ) => {
+    const parts: string[] = []
+    if (picked.style) {
+      const { name, size, weight, lineHeight } = picked.style
+      parts.push(`the design-system text style "${name}" (font-size: var(${size}); font-weight: ${weight}; line-height: ${lineHeight})`)
+    }
+    if (picked.colour) parts.push(`the text colour var(${picked.colour})`)
+    const req = buildRequest(
+      el,
+      partText
+        ? `Give only the words "${partText}" in "${whole}" ${parts.join(' and ')}. Picked from the Edit Text style list with just those words selected: wrap them in their own element (a span with a page-prefixed class), style that class with these exact tokens, and leave the rest of the text as it is.`
+        : `Give this text ${parts.join(' and ')}. Picked from the Edit Text style list: apply these exact tokens to the rule that styles this element (or the matching typography class), and change nothing else.`,
+    )
+    if (!partText) previewRef.current = { el, styleAttr }
+    const hot = import.meta.hot
+    if (!hot) {
+      void navigator.clipboard.writeText(toMarkdown(req))
+      setStatus({ kind: 'copied' })
       return
     }
+    pendingId.current = req.id
+    setStatus({ kind: 'sending' })
+    hot.send('design-inspect:send', req)
+  }
+
+  const saveText = (el: HTMLElement, wrap: boolean, texts: Text[], original: string, before: string, after: string, typed: string) => {
     if (wrap) texts[0].data = original.replace(before, after)
     else texts.forEach((n, i) => (n.data = i === 0 ? typed : ''))
     const req = buildRequest(
@@ -193,7 +355,7 @@ export default function DesignInspect() {
       after,
       request: req,
     })
-  }, [])
+  }
 
   const exit = useCallback(() => {
     finishEdit(true)
@@ -329,6 +491,13 @@ export default function DesignInspect() {
         setStatus({ kind: 'updated' })
         pendingId.current = null
       }
+      // Claude's restyle has landed in the source: drop the inline preview so the real rule shows.
+      if ((kind === 'updated' || kind === 'reloading') && previewRef.current) {
+        const { el, styleAttr } = previewRef.current
+        previewRef.current = null
+        if (styleAttr === null) el.removeAttribute('style')
+        else el.setAttribute('style', styleAttr)
+      }
       if (kind === 'reloading' && pendingId.current) setStatus({ kind: 'reloading' })
       if (kind === 'text-saved' && id) {
         pendingId.current = null
@@ -378,8 +547,69 @@ export default function DesignInspect() {
   return createPortal(
     <>
       {active && editing && (
-        <div className="di-hint" style={placeHint(editing.getBoundingClientRect())}>
-          Enter to save · Esc to cancel
+        /* Text style panel. mousedown is cancelled so the caret stays in the text being edited. */
+        <div
+          className="di-panel di-type"
+          style={placeType(editing.getBoundingClientRect())}
+          role="dialog"
+          aria-label="Text style"
+          onMouseDown={(e) => {
+            // Keep the caret in the text, except where a dropdown has to open.
+            if (!(e.target instanceof HTMLSelectElement)) e.preventDefault()
+          }}
+        >
+          {/* Opening a dropdown takes focus from the text, so the selected words are wrapped first. */}
+          <label className="di-type-field">
+            <span className="di-type-head">Text style</span>
+            <select
+              className="di-select"
+              value={(pick.style ?? now.style)?.name ?? ''}
+              onMouseDown={capturePart}
+              onFocus={capturePart}
+              onChange={(e) => {
+                const s = TEXT_STYLES.find((t) => t.name === e.target.value)
+                if (s) choose({ style: s })
+              }}
+            >
+              {!(pick.style ?? now.style) && <option value="">Not a design-system style</option>}
+              {TEXT_STYLES.map((s) => (
+                <option key={s.name} value={s.name}>
+                  {s.name} · {tokenPx(s.size)}px · {s.weight} · {s.lineHeight}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="di-type-field">
+            <span className="di-type-head">Colour</span>
+            <span className="di-type-colour-row">
+              <span className="di-swatch" style={{ background: `var(${pick.colour ?? now.colour ?? '--text-primary'})` }} aria-hidden="true" />
+              <select
+                className="di-select"
+                value={pick.colour ?? now.colour ?? ''}
+                onMouseDown={capturePart}
+                onFocus={capturePart}
+                onChange={(e) => e.target.value && choose({ colour: e.target.value })}
+              >
+                {!(pick.colour ?? now.colour) && <option value="">Not a design-system colour</option>}
+                {TEXT_COLOURS.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </span>
+          </label>
+          <div className="di-actions">
+            <button type="button" className="di-btn di-btn--primary" onClick={() => finishEdit(true)}>
+              Save
+            </button>
+            <button type="button" className="di-btn" onClick={() => finishEdit(false)}>
+              Cancel
+            </button>
+            <span className="di-status">
+              {pick.style || pick.colour ? 'Style goes to Claude' : 'Enter to save · Esc to cancel'}
+            </span>
+          </div>
         </div>
       )}
       {active && hover && hoverRect && <Box rect={hoverRect} label={`${shortLabel(hover)} · ${shortSource(hover)}`} />}
@@ -459,16 +689,21 @@ function Box({ rect, label, selected }: { rect: DOMRect; label: string; selected
 }
 
 /** Below the element if it fits, else above; inside it when the element fills the viewport. */
-function placePanel(r: DOMRect): CSSProperties {
-  const left = Math.min(Math.max(GAP, r.left), Math.max(GAP, window.innerWidth - PANEL_W - GAP))
-  if (r.bottom + GAP + PANEL_H <= window.innerHeight) return { top: r.bottom + GAP, left, width: PANEL_W }
-  if (r.top - GAP - PANEL_H >= 0) return { bottom: window.innerHeight - r.top + GAP, left, width: PANEL_W }
-  const top = Math.min(Math.max(GAP, r.top + GAP), Math.max(GAP, window.innerHeight - PANEL_H - GAP))
-  return { top, left, width: PANEL_W }
+/** The Text style panel must never cover the text it previews: below or above it, else
+    pinned to the far side of the viewport. */
+function placeType(r: DOMRect): CSSProperties {
+  const h = Math.min(TYPE_H, window.innerHeight - 2 * GAP)
+  if (r.bottom + GAP + h <= window.innerHeight || r.top - GAP - h >= 0) return placePanel(r, TYPE_W, h)
+  const left = r.left + r.width / 2 < window.innerWidth / 2 ? window.innerWidth - TYPE_W - GAP : GAP
+  return { top: GAP, left, width: TYPE_W, maxHeight: h }
 }
 
-function placeHint(r: DOMRect): CSSProperties {
-  return r.bottom + GAP + 28 <= window.innerHeight ? { top: r.bottom + GAP, left: r.left } : { top: r.top - GAP - 24, left: r.left }
+function placePanel(r: DOMRect, w = PANEL_W, h = PANEL_H): CSSProperties {
+  const left = Math.min(Math.max(GAP, r.left), Math.max(GAP, window.innerWidth - w - GAP))
+  if (r.bottom + GAP + h <= window.innerHeight) return { top: r.bottom + GAP, left, width: w }
+  if (r.top - GAP - h >= 0) return { bottom: window.innerHeight - r.top + GAP, left, width: w }
+  const top = Math.min(Math.max(GAP, r.top + GAP), Math.max(GAP, window.innerHeight - h - GAP))
+  return { top, left, width: w }
 }
 
 function statusText(s: Status): string {

@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-10-15T14:44:44.710Z",
         "reason": "Pre-existing intentional design: DemoSwitcher.css comment records the width animation as deliberate, Bruno preferred it to a clip-and-fade; prototype chrome, not product UI"
+      },
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "src/dev/DesignInspect/DesignInspect.css"
+        ],
+        "createdAt": "2026-11-09T12:42:52.716Z",
+        "reason": "Claude triage: pre-existing dev-only Design Inspect highlight box; it follows the hovered element's geometry and is already disabled under prefers-reduced-motion"
       }
     ]
   }
