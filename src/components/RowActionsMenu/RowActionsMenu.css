@@ -183,3 +183,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* A disabled item wrapped in its reason Tooltip still spans the menu width. */
+.tooltip-wrapper.ram-item-tip,
+.ram-item-tip > .tooltip__trigger {
+  display: flex;
+  width: 100%;
+}
+
+.ram-item-tip > .tooltip__trigger > .ram-item {
+  flex: 1;
+}

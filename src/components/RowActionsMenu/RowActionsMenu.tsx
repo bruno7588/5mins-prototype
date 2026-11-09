@@ -1,6 +1,7 @@
-import { Fragment, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import MoreIcon from '@/components/icons/MoreIcon'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import './RowActionsMenu.css'
 
 export interface RowMenuItem {
@@ -18,7 +19,8 @@ export interface RowMenuItem {
   /** Not valid for this row — shown greyed, never hidden, so the action stays
       discoverable and the menu keeps a stable shape. */
   disabled?: boolean
-  /** Native tooltip — says why a greyed item is unavailable. */
+  /** Says why a greyed item is unavailable: shown in the DS Tooltip beside a disabled
+      item on hover and focus, and read out as its description. */
   title?: string
   /** Looks enabled but does nothing (e.g. an action not built yet). Only the
       arrow cursor signals it; use `disabled` when the grey carries meaning. */
@@ -58,6 +60,7 @@ function RowActionsMenu({
 }: RowActionsMenuProps) {
   const [open, setOpen] = useState(false)
   const btnRef = useRef<HTMLButtonElement>(null)
+  const reasonId = useId()
   const menuRef = useRef<HTMLDivElement>(null)
   const [rect, setRect] = useState<DOMRect | null>(null)
   /* A tall menu on a low row would run past the bottom of the window, so it
@@ -145,27 +148,61 @@ function RowActionsMenu({
             {items.map((item) => (
               <Fragment key={item.key}>
                 {item.dividerBefore && <div className="ram-divider" role="separator" />}
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`ram-item${item.description ? ' ram-item--stacked' : ''}${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}${item.inert ? ' ram-item--inert' : ''}`}
-                  /* aria-disabled only, not the native attribute: a natively disabled
-                     item drops out of the tab order, so keyboard and screen-reader
-                     users would never reach it or its reason. */
-                  aria-disabled={item.disabled || item.inert || undefined}
-                  title={item.title}
-                  onClick={item.disabled || item.inert ? undefined : () => handleSelect(item.key)}
-                >
-                  {item.icon && <span className="ram-item-icon">{item.icon}</span>}
-                  {item.description ? (
-                    <span className="ram-item-body">
-                      <span className="ram-item-label">{item.label}</span>
-                      <span className="ram-item-description">{item.description}</span>
+                {item.disabled && item.title ? (
+                  <Tooltip text={item.title} icon={false} position="Left" className="ram-item-tip">
+                    {/* The reason, for screen readers (the bubble is visual). */}
+                    <span id={`${reasonId}-${item.key}`} hidden>
+                      {item.title}
                     </span>
-                  ) : (
-                    <span className="ram-item-label">{item.label}</span>
-                  )}
-                </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className={`ram-item${item.description ? ' ram-item--stacked' : ''}${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}${item.inert ? ' ram-item--inert' : ''}`}
+                      /* aria-disabled only, not the native attribute: a natively disabled
+                         item drops out of the tab order, so keyboard and screen-reader
+                         users would never reach it or its reason. */
+                      aria-disabled={item.disabled || item.inert || undefined}
+                      /* A disabled item's reason is the DS Tooltip; other items keep a native title. */
+                      title={item.disabled ? undefined : item.title}
+                      aria-describedby={item.disabled && item.title ? `${reasonId}-${item.key}` : undefined}
+                      onClick={item.disabled || item.inert ? undefined : () => handleSelect(item.key)}
+                    >
+                      {item.icon && <span className="ram-item-icon">{item.icon}</span>}
+                      {item.description ? (
+                        <span className="ram-item-body">
+                          <span className="ram-item-label">{item.label}</span>
+                          <span className="ram-item-description">{item.description}</span>
+                        </span>
+                      ) : (
+                        <span className="ram-item-label">{item.label}</span>
+                      )}
+                    </button>
+                  </Tooltip>
+                ) : (
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`ram-item${item.description ? ' ram-item--stacked' : ''}${item.danger ? ' ram-item--danger' : ''}${item.disabled ? ' ram-item--disabled' : ''}${item.inert ? ' ram-item--inert' : ''}`}
+                    /* aria-disabled only, not the native attribute: a natively disabled
+                       item drops out of the tab order, so keyboard and screen-reader
+                       users would never reach it or its reason. */
+                    aria-disabled={item.disabled || item.inert || undefined}
+                    /* A disabled item's reason is the DS Tooltip; other items keep a native title. */
+                    title={item.disabled ? undefined : item.title}
+                    aria-describedby={item.disabled && item.title ? `${reasonId}-${item.key}` : undefined}
+                    onClick={item.disabled || item.inert ? undefined : () => handleSelect(item.key)}
+                  >
+                    {item.icon && <span className="ram-item-icon">{item.icon}</span>}
+                    {item.description ? (
+                      <span className="ram-item-body">
+                        <span className="ram-item-label">{item.label}</span>
+                        <span className="ram-item-description">{item.description}</span>
+                      </span>
+                    ) : (
+                      <span className="ram-item-label">{item.label}</span>
+                    )}
+                  </button>
+                )}
               </Fragment>
             ))}
           </div>,
