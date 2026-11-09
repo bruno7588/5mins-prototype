@@ -123,7 +123,7 @@ function ExternalTraining() {
       render: (c) => c.providerIds.map(providerName).filter(Boolean).join(', ') || '–',
     },
     { key: 'duration', header: 'Duration', width: '0 0 112px', render: (c) => durationLabel(c.duration) },
-    { key: 'retraining', header: 'Expiry', width: '0 0 160px', render: (c) => retrainingLabel(c.retrainingMonths) },
+    { key: 'retraining', header: 'Expiry', width: '0 0 200px', render: (c) => retrainingLabel(c.retrainingMonths) },
     { key: 'records', header: 'Records', width: '0 0 88px', align: 'center', render: (c) => courseRecords(c.id) },
     {
       key: 'actions',

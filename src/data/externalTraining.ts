@@ -104,9 +104,10 @@ export function retrainingDueDate(
   return addMonthsClamped(completionDate, retrainingMonths)
 }
 
-/** "14 Oct 2026". */
+/** "Oct 14, 2026": the same order as the table's two-line date (.tbl-date), so a row
+    never mixes two formats. */
 export const formatDay = (iso: string) =>
-  fromIso(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  fromIso(iso).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
 
 /** "Expires after 12 months" / "No expiry" (same wording everywhere). */
 export const retrainingLabel = (months: number | null) =>

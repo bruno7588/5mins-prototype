@@ -87,6 +87,11 @@
   color: var(--text-primary);
 }
 
+/* The read-only unit ("Days") hugs its word instead of the editable unit's 160px. */
+.aet-unit.aetd-readonly {
+  width: fit-content;
+}
+
 /* "(optional)" after a field label: Paragraph S regular, tertiary. */
 .aetd-optional {
   font-size: var(--font-size-sm);
@@ -148,58 +153,199 @@
   width: 100%;
 }
 
-/* Certificate drop zone: hugs its content instead of the L size's 240px minimum,
-   so the form below starts higher. */
-.aetd-uploader.file-uploader--L {
-  min-height: 0;
-}
-
 /* The read-only duration and its unit read as one value: a tighter 8px gap. */
 .aet-row.aetd-readonly-row {
   gap: var(--space-s);
 }
 
-/* Uploaded certificate shown in the drop zone (filledPreview): the image, or a PDF's
-   first page, fitted inside so the admin can check it against the filled fields. */
-.aetd-uploader.file-uploader--preview {
-  padding: var(--space-s);
-}
-
-.aetd-cert-preview {
-  display: block;
-  max-width: 100%;
-  max-height: 200px;
-  width: auto;
-  height: auto;
-  border: 0;
-  border-radius: var(--radius-s);
-  background: var(--cards-background);
-}
-
-/* An image takes its own shape, so the box fits the page; a PDF frame has no
-   natural size, so it gets a portrait page shape. */
-iframe.aetd-cert-preview {
-  height: 200px;
-  aspect-ratio: 3 / 4;
-}
-
-/* File name and the way to swap it, under the preview. */
-.aetd-cert-meta {
+/* Certificate row, as Create Course > Course thumbnail (.cdt-thumb): the box on the
+   left, copy and button on the right, 16px apart. The box is 160x90, dashed with
+   Add Content's gallery icon while empty (.new-lesson-thumb-empty). */
+.aetd-cert-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-m);
   width: 100%;
 }
 
-.aetd-cert-name {
-  min-width: 0;
+/* Dashed while empty; once picked the box is the certificate, so the border goes solid. */
+.aetd-cert-box {
+  flex: 0 0 160px;
+  width: 160px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  border: 1px dashed var(--border-elevated);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+}
+
+.aetd-cert-box--filled {
+  border-style: solid;
+}
+
+.aetd-cert-box--dragging {
+  border: 1px dashed var(--border-hover);
+  background: var(--input-background);
+}
+
+.aetd-cert-preview {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  border: 0;
+  background: var(--cards-background);
+  pointer-events: none; /* the box takes drops, not the frame */
+}
+
+.aetd-cert-info {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.aetd-cert-copy {
+  margin: 0;
   font-size: var(--font-size-md);
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/* Filled box: the preview badge sits bottom-left, as the lesson thumbnail's eye
+   (.lesson-editor-thumb-preview). */
+.aetd-cert-box {
+  position: relative;
+}
+
+/* The accepted formats in the Certificate label read lighter than the label itself:
+   Paragraph M regular. */
+.aetd-label-hint {
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.aetd-cert-box > .aetd-cert-preview-btn {
+  position: absolute;
+  left: var(--space-xs);
+  bottom: var(--space-xs);
+}
+
+.aetd-cert-box--previewable {
+  cursor: zoom-in;
+}
+
+.aetd-cert-box--previewable:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+/* The preview's close sits in the top-right corner of the screen: --input-background
+   disc (the full-screen close), icon in --text-primary so it reads over the scrim. */
+.close-btn--fullscreen.aetd-cert-full__close {
+  position: fixed;
+  z-index: 1;
+  top: var(--space-l);
+  right: var(--space-l);
+  background: var(--input-background);
+  color: var(--text-primary);
+}
+
+.aetd-cert-preview-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--neutral-900) 50%, transparent);
+  color: var(--neutral-25);
+}
+
+
+.aetd-cert-remove:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.aetd-cert-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+/* Remove: a 20px icon in a 28px round button, red icon on hover (as ResourceCard's remove). */
+.aetd-cert-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+@media (hover: hover) {
+  .aetd-cert-remove:hover {
+    background: var(--input-background-hover);
+    color: var(--text-error);
+  }
+}
+
+/* Certificate preview: the file centred over the scrim, covering the drawer too. */
+.aetd-cert-full {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* One page sits in the middle; a long stack starts at the top and scrolls. */
+  justify-content: safe center;
+  gap: var(--space-m);
+  overflow-y: auto;
+  padding: var(--space-xl);
+  background: var(--scrim);
+  cursor: zoom-out;
+  animation: overlay-fade-in 200ms ease-out;
+}
+
+/* Each page fits the screen; more pages stack and the overlay scrolls. */
+.aetd-cert-full__file {
+  display: block;
+  flex-shrink: 0;
+  max-width: 100%;
+  max-height: calc(100vh - 2 * var(--space-xl));
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: default;
+}
+
+.aetd-cert-full__more {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--neutral-25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aetd-cert-full {
+    animation: none;
+  }
+}
+
+.aetd-cert-input {
+  display: none;
 }
 
 /* A name to pick out inside running text, e.g. the course in the existing-record Alert. */

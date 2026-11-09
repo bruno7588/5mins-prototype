@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Danger } from 'iconsax-react'
+import { Danger, DocumentText, Eye, GalleryAdd, Trash } from 'iconsax-react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import { arriveTransition } from '@/components/AIWorkingCard/arrive'
@@ -11,10 +11,10 @@ import CloseButton from '@/components/CloseButton/CloseButton'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import EmptyState from '@/components/EmptyState/EmptyState'
-import FileUploader from '@/components/FileUploader/FileUploader'
 import InputField from '@/components/InputField/InputField'
 import InputInteger from '@/components/InputInteger/InputInteger'
 import Radio from '@/components/Radio/Radio'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
 import '@/pages/account/components/ExternalTraining/ExternalTraining.css'
@@ -105,6 +105,29 @@ const SWAP = (reduce: boolean | null) => ({
   transition: arriveTransition(reduce),
 })
 
+/* The preview shows at most this many pages of a PDF, then says how many there are. */
+const MAX_PREVIEW_PAGES = 10
+
+/* A PDF certificate's pages as PNG data URLs (up to MAX_PREVIEW_PAGES), plus its page count.
+   pdf.js loads only when a PDF is picked. */
+async function pdfPages(file: File): Promise<{ pages: string[]; total: number }> {
+  const pdfjs = await import('pdfjs-dist')
+  const { default: workerSrc } = await import('pdfjs-dist/build/pdf.worker.min.mjs?url')
+  pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
+  const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise
+  const pages: string[] = []
+  for (let n = 1; n <= Math.min(doc.numPages, MAX_PREVIEW_PAGES); n++) {
+    const page = await doc.getPage(n)
+    const viewport = page.getViewport({ scale: 2 })
+    const canvas = document.createElement('canvas')
+    canvas.width = viewport.width
+    canvas.height = viewport.height
+    await page.render({ canvas, viewport }).promise
+    pages.push(canvas.toDataURL('image/png'))
+  }
+  return { pages, total: doc.numPages }
+}
+
 function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = null, onClose, onSaved }: Props) {
   const navigate = useNavigate()
   const { courses, providers, records, allowOneOffs } = useExternalTraining()
@@ -128,7 +151,8 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const [certificate, setCertificate] = useState<string | null>(initialRecord?.certificate ?? null)
   /* The picked file itself, so the drop zone can show the certificate (a saved record
      only has its file name, so it falls back to the name). */
-  const [certificateFile, setCertificateFile] = useState<{ url: string; pdf: boolean } | null>(null)
+  // url: page 1, for the box. pages: what the preview stacks. total: the file's page count.
+  const [certificateFile, setCertificateFile] = useState<{ url: string; pages: string[]; total: number } | null>(null)
   useEffect(() => () => { if (certificateFile) URL.revokeObjectURL(certificateFile.url) }, [certificateFile])
   const [reading, setReading] = useState(false)
   const [read, setRead] = useState<Read | null>(null)
@@ -152,6 +176,9 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const [months, setMonths] = useState(12)
   const [oneOffDue, setOneOffDue] = useState(initialRecord && !initialRecord.courseId ? initialRecord.retrainingDueDate ?? '' : '')
   const [submitted, setSubmitted] = useState(false)
+  /* Keep File on the mismatch Alert: the admin confirms the certificate is this learner's
+     (married name, nickname, a misread). Tied to the pair, so changing either asks again. */
+  const [keptFor, setKeptFor] = useState<string | null>(null)
 
   const openNotListed = (name: string) => {
     setMode('not-listed')
@@ -195,9 +222,42 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const [readSteps, setReadSteps] = useState<string[]>([])
   const [readStep, setReadStep] = useState(0)
 
+  const certInputRef = useRef<HTMLInputElement>(null)
+  const [dragging, setDragging] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(false)
+  // The preview is a closable full-screen view: Esc closes it (the drawer itself ignores Esc).
+  useEffect(() => {
+    if (!previewOpen) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setPreviewOpen(false)
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [previewOpen])
+
+  /* Trash beside Change File: drops the file and anything read from it; typed fields stay. */
+  const removeCertificate = () => {
+    clearReadTimers()
+    setWriting(new Set())
+    setCertificate(null)
+    setCertificateFile(null)
+    setReading(false)
+    setRead(null)
+    setKeptFor(null)
+  }
+
   const onCertificate = (file: File) => {
+    setKeptFor(null) // a new file asks about a name mismatch again
     setCertificate(file.name)
-    setCertificateFile({ url: URL.createObjectURL(file), pdf: file.type === 'application/pdf' || /\.pdf$/i.test(file.name) })
+    // A PDF shows as its first page drawn to an image, so no browser PDF viewer (toolbar,
+    // page list, grey surround) appears in the box or the preview.
+    if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) {
+      setCertificateFile(null)
+      pdfPages(file)
+        .then(({ pages, total }) => setCertificateFile({ url: pages[0], pages, total }))
+        .catch(() => setCertificateFile(null))
+    } else {
+      const url = URL.createObjectURL(file)
+      setCertificateFile({ url, pages: [url], total: 1 })
+    }
     if (editing) return // adding a missing certificate to a record doesn't re-read it
     clearReadTimers()
     setReading(true)
@@ -274,18 +334,10 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
     })
   }
 
-  const clearCertificate = () => {
-    clearReadTimers()
-    setWriting(new Set())
-    setCertificate(null)
-    setCertificateFile(null)
-    setReading(false)
-    setRead(null)
-  }
-
   /* ── Derived ── */
   const person = personById(personId)
-  const mismatch = !!(read?.learner && person && !samePerson(read.learner, person.name))
+  const mismatchKey = `${read?.learner}|${personId}`
+  const mismatch = !!(read?.learner && person && !samePerson(read.learner, person.name)) && keptFor !== mismatchKey
   const unknownLearner = !!(read?.learner && !person && !lockedPersonId)
   const fromCertificate = mode === 'not-listed' && !!read?.courseText && newName === read.courseText
   const addingToList = mode === 'not-listed' && notListedAs === 'list'
@@ -433,36 +485,94 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
             <div className="aet-form">
               {/* Certificate first (D6, D14, D17) */}
               <div className="aet-field aetd-full">
-                <span className="aet-label">Certificate (PDF, JPG, PNG • max. 10MB)</span>
-                <FileUploader
-                  size="L"
-                  className="aetd-uploader"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  state={certificate ? 'Filled' : 'Enabled'}
-                  fileName={certificate ?? undefined}
-                  helpText={editing ? 'Drag and drop the certificate here or click to upload' : "Drag & drop or upload the certificate, and we'll fill in the details from it."}
-                  onFileSelect={onCertificate}
-                  onChangeFile={clearCertificate}
-                  /* The certificate itself, so the admin can check it against the
-                     filled fields (a DS exception: filledPreview is otherwise for crops). */
-                  filledPreview={
-                    certificateFile ? (
-                      certificateFile.pdf ? (
-                        <iframe className="aetd-cert-preview" src={`${certificateFile.url}#toolbar=0&navpanes=0`} title="Certificate preview" />
-                      ) : (
-                        <img className="aetd-cert-preview" src={certificateFile.url} alt="Certificate preview" />
-                      )
-                    ) : undefined
-                  }
-                />
-                {certificateFile && certificate && (
-                  <div className="aetd-cert-meta">
-                    <span className="aetd-cert-name" title={certificate}>{certificate}</span>
-                    <Button variant="text" onClick={clearCertificate}>
-                      Change File
-                    </Button>
+                <span className="aet-label">
+                  Certificate <span className="aetd-label-hint">(PDF, JPG, PNG • max. 10MB)</span>
+                </span>
+                {/* Same row as Create Course > Course thumbnail (CourseDetailsTab): a small
+                    box on the left (dashed while empty, the certificate once picked), the
+                    copy and the button on the right. The box takes a dropped file too. */}
+                <div className="aetd-cert-row">
+                  {/* Once a file is in, the whole box opens the preview. */}
+                  <div
+                    className={`aetd-cert-box${certificate ? ' aetd-cert-box--filled' : ''}${certificateFile ? ' aetd-cert-box--previewable' : ''}${dragging ? ' aetd-cert-box--dragging' : ''}`}
+                    {...(certificateFile
+                      ? {
+                          role: 'button',
+                          tabIndex: 0,
+                          'aria-label': 'Preview certificate',
+                          onClick: () => setPreviewOpen(true),
+                          onKeyDown: (e: React.KeyboardEvent) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              setPreviewOpen(true)
+                            }
+                          },
+                        }
+                      : {})}
+                    onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      setDragging(false)
+                      const file = e.dataTransfer.files?.[0]
+                      if (file) onCertificate(file)
+                    }}
+                  >
+                    {certificateFile ? (
+                      <img className="aetd-cert-preview" src={certificateFile.url} alt="Certificate preview" />
+                    ) : certificate ? (
+                      <DocumentText size={32} color="var(--text-secondary)" variant="Bold" />
+                    ) : (
+                      <GalleryAdd size={32} color="var(--text-secondary)" variant="Linear" />
+                    )}
+                    {/* Preview badge, as the lesson thumbnail (LessonEditorModal): a cue only, the box is the button. */}
+                    {certificateFile && (
+                      <span className="aetd-cert-preview-btn" aria-hidden="true">
+                        <Eye size={16} color="currentColor" variant="Linear" />
+                      </span>
+                    )}
                   </div>
-                )}
+                  <div className="aetd-cert-info">
+                    {/* Same copy once a file is in: the box shows the certificate, its file name adds nothing. */}
+                    <p className="aetd-cert-copy">
+                      {editing
+                        ? 'Upload the certificate or drop it on the box.'
+                        : "Upload the certificate or drop it on the box, and we'll fill in the details from it."}
+                    </p>
+                    <div className="aetd-cert-actions">
+                      <Button
+                        variant="outlined-2"
+                        onClick={() => certInputRef.current?.click()}
+                      >
+                        {certificate ? 'Change File' : 'Upload Certificate'}
+                      </Button>
+                      {certificate && (
+                        <Tooltip text="Remove" position="Top" icon={false}>
+                          <button
+                            type="button"
+                            className="aetd-cert-remove"
+                            aria-label="Remove"
+                            onClick={removeCertificate}
+                          >
+                            <Trash size={20} color="currentColor" variant="Linear" />
+                          </button>
+                        </Tooltip>
+                      )}
+                    </div>
+                    <input
+                      ref={certInputRef}
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      aria-label="Upload certificate"
+                      className="aetd-cert-input"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) onCertificate(file)
+                        e.target.value = ''
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* As Create With AI: the step list arrives with a short rise, ticks each pass
@@ -509,10 +619,10 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                     <Alert
                       type="Alert"
                       customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
-                      message={`This certificate names ${read!.learner}, not ${person!.name}. Check you've uploaded the right file.`}
+                      message={`This certificate names ${read!.learner}, not ${person!.name}. Check you've uploaded the right file, or keep it if it's the same person.`}
                       button
-                      buttonLabel="Change File"
-                      onButtonClick={clearCertificate}
+                      buttonLabel="Keep File"
+                      onButtonClick={() => setKeptFor(mismatchKey)}
                     />
                   )}
                   {/* Learner */}
@@ -770,6 +880,29 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                 {editing || duplicate ? 'Update Training' : 'Add Training'}
               </Button>
             </div>
+          </div>
+        )}
+
+        {/* Certificate preview: the file alone, centred over the scrim. The backdrop or Esc
+            closes it. Inside the drawer panel so its focus trap keeps it reachable. */}
+        {previewOpen && certificateFile && (
+          <div className="aetd-cert-full" role="dialog" aria-modal="true" aria-label="Certificate" onClick={() => setPreviewOpen(false)}>
+            <CloseButton variant="fullscreen" className="aetd-cert-full__close" onClick={() => setPreviewOpen(false)} />
+            {/* Every page, one under the other; the overlay scrolls when they don't fit. */}
+            {certificateFile.pages.map((src, i) => (
+              <img
+                key={i}
+                className="aetd-cert-full__file"
+                src={src}
+                alt={certificateFile.pages.length > 1 ? `Certificate, page ${i + 1}` : 'Certificate'}
+                onClick={(e) => e.stopPropagation()}
+              />
+            ))}
+            {certificateFile.total > certificateFile.pages.length && (
+              <p className="aetd-cert-full__more">
+                Showing the first {certificateFile.pages.length} of {certificateFile.total} pages
+              </p>
+            )}
           </div>
         )}
       </aside>
