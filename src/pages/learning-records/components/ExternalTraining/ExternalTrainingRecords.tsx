@@ -23,7 +23,8 @@ import {
 import AddExternalTrainingDrawer from './AddExternalTrainingDrawer'
 import CsvIcon from '@/components/icons/CsvIcon'
 import ZipIcon from '@/components/icons/ZipIcon'
-import BulkUploadRecordsDrawer, { type BulkUploadKind } from './BulkUploadRecordsDrawer'
+import BulkUploadRecordsDrawer from './BulkUploadRecordsDrawer'
+import CertificatesReview from './CertificatesReview'
 import ExternalRecordsTable from './ExternalRecordsTable'
 import './ExternalTraining.css'
 
@@ -66,7 +67,11 @@ interface Props {
 function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
   const { records } = useExternalTraining()
   const [drawer, setDrawer] = useState<{ record: ExternalRecord | null } | null>(null)
-  const [bulkKind, setBulkKind] = useState<BulkUploadKind | null>(null)
+  const [csvOpen, setCsvOpen] = useState(false)
+  /* Upload ZIP file has no template: the menu opens the file picker (a zip, or several
+     certificate files), and picking opens Review certificates. */
+  const [certsOpen, setCertsOpen] = useState(false)
+  const zipInputRef = useRef<HTMLInputElement>(null)
   const [toDelete, setToDelete] = useState<ExternalRecord | null>(null)
 
   /* ── Filter bar state ── */
@@ -176,17 +181,31 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
             {
               key: 'zip',
               label: 'Upload ZIP file',
-              description: 'Add training records and their certificates in one zip file',
+              description: "Add a zip of certificates. We'll read each one and match the learner",
               icon: <ZipIcon size={20} color="var(--text-primary)" />,
             },
           ]}
-          onSelect={(key) => (key === 'single' ? setDrawer({ record: null }) : setBulkKind(key as BulkUploadKind))}
+          onSelect={(key) =>
+            key === 'single' ? setDrawer({ record: null }) : key === 'zip' ? zipInputRef.current?.click() : setCsvOpen(true)
+          }
         />
   )
 
   return (
     <div className="lret">
       {actionsSlot && createPortal(addMenu, actionsSlot)}
+      <input
+        ref={zipInputRef}
+        type="file"
+        accept=".zip,.pdf,.jpg,.jpeg,.png"
+        multiple
+        hidden
+        onChange={(e) => {
+          const n = e.target.files?.length ?? 0
+          e.target.value = ''
+          if (n) setCertsOpen(true)
+        }}
+      />
 
       <FilterBar
         filters={filters}
@@ -242,13 +261,27 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
         />
       )}
 
-      {bulkKind && (
+      {csvOpen && (
         <BulkUploadRecordsDrawer
-          kind={bulkKind}
-          onClose={() => setBulkKind(null)}
+          onClose={() => setCsvOpen(false)}
           onAdded={(n) => {
-            setBulkKind(null)
+            setCsvOpen(false)
             showToast('success', `${n} record${n === 1 ? '' : 's'} added`)
+          }}
+        />
+      )}
+
+      {certsOpen && (
+        <CertificatesReview
+          onClose={() => setCertsOpen(false)}
+          onAdded={(n, remaining) => {
+            // The ready ones are added; anything still waiting keeps the review open.
+            if (!remaining) setCertsOpen(false)
+            showToast(
+              'success',
+              `${n} record${n === 1 ? '' : 's'} added` +
+                (remaining ? `. ${remaining} certificate${remaining === 1 ? '' : 's'} still need${remaining === 1 ? 's' : ''} review.` : ''),
+            )
           }}
         />
       )}

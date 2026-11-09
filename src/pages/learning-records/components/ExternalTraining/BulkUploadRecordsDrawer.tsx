@@ -1,12 +1,10 @@
-import { Fragment, useMemo, useRef, useState, type RefObject } from 'react'
-import { ArrangeHorizontal, Danger, ImportCurve } from 'iconsax-react'
+import { useMemo, useRef, useState, type RefObject } from 'react'
+import { Danger, ImportCurve } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
-import Dropdown from '@/components/Dropdown/Dropdown'
 import FileUploader from '@/components/FileUploader/FileUploader'
-import ZipIcon from '@/components/icons/ZipIcon'
 import Table, { type Column } from '@/components/Table/Table'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import { CellError } from '@/pages/people/components/BulkUploadModal/BulkUploadModal'
@@ -24,14 +22,13 @@ import {
   type ExternalRecord,
   type ExternalResult,
 } from '@/data/externalTraining'
+import CourseMappingCard from './CourseMappingCard'
 import { DateCell } from './ExternalRecordsTable'
 import './ExternalTraining.css'
 
-export type BulkUploadKind = 'csv' | 'zip'
-
-/* Bulk upload of trainings (PRD 2.10 and 2.11). Two kinds, picked in the
-   Add Training menu: a CSV (records only) or a zip holding the CSV and the
-   certificate files. Step 1 is the template, instructions and uploader; step 2
+/* Bulk upload CSV (PRD 2.10), from the Add Training menu: records only, no
+   certificates (a zip of certificates is CertificatesReview). Step 1 is the
+   template, instructions and uploader; step 2
    reviews the file as Bulk manage people does: an error bar with Download Error
    File, tabs with counts, error-type chips, red cells with the fix on hover, and
    no commit until a clean re-upload.
@@ -49,39 +46,29 @@ interface CsvRow {
   date: string
   result: ExternalResult
   score: number | null
-  certificate: string | null
 }
 
 const DEMO_ROWS: CsvRow[] = [
-  { line: 2, email: 'michael.thompson@email.com', course: 'First Aid at Work', provider: 'St John Ambulance', date: '2026-09-12', result: 'Passed', score: 90, certificate: 'thompson-first-aid.pdf' },
-  { line: 3, email: 'jessica.hart@email.com', course: 'Fire Marshal', provider: 'SafeWork Training', date: '2026-08-01', result: 'Passed', score: null, certificate: 'hart-fire-marshal.pdf' },
-  { line: 4, email: 'david.johnson@email.com', course: 'Forklift CB 3 day', provider: 'RTITB', date: '2026-07-20', result: 'Passed', score: 85, certificate: 'johnson-forklift.jpg' },
-  { line: 5, email: 'noah.williams@email.com', course: 'Forklift CB 3 day', provider: 'RTITB', date: '2026-07-21', result: 'Passed', score: 92, certificate: null },
-  { line: 6, email: 'mei.tanaka@email.com', course: 'Food Hyg L2', provider: 'Highfield Qualifications', date: '2026-06-02', result: 'Passed', score: null, certificate: null },
-  { line: 7, email: 'anthonny@example.com', course: 'First Aid at Work', provider: 'Red Cross Training', date: '2026-10-14', result: 'Passed', score: 92, certificate: 'first-aid-renewal-wallace.pdf' },
-  { line: 8, email: 'unknown.person@email.com', course: 'Fire Marshal', provider: 'SafeWork Training', date: '2026-08-03', result: 'Passed', score: null, certificate: null },
-  { line: 9, email: 'brenda@email.com', course: '', provider: 'Highfield Qualifications', date: '2026-05-10', result: 'Passed', score: null, certificate: null },
+  { line: 2, email: 'michael.thompson@email.com', course: 'First Aid at Work', provider: 'St John Ambulance', date: '2026-09-12', result: 'Passed', score: 90 },
+  { line: 3, email: 'jessica.hart@email.com', course: 'Fire Marshal', provider: 'SafeWork Training', date: '2026-08-01', result: 'Passed', score: null },
+  { line: 4, email: 'david.johnson@email.com', course: 'Forklift CB 3 day', provider: 'RTITB', date: '2026-07-20', result: 'Passed', score: 85 },
+  { line: 5, email: 'noah.williams@email.com', course: 'Forklift CB 3 day', provider: 'RTITB', date: '2026-07-21', result: 'Passed', score: 92 },
+  { line: 6, email: 'mei.tanaka@email.com', course: 'Food Hyg L2', provider: 'Highfield Qualifications', date: '2026-06-02', result: 'Passed', score: null },
+  { line: 7, email: 'anthonny@example.com', course: 'First Aid at Work', provider: 'Red Cross Training', date: '2026-10-14', result: 'Passed', score: 92 },
+  { line: 8, email: 'unknown.person@email.com', course: 'Fire Marshal', provider: 'SafeWork Training', date: '2026-08-03', result: 'Passed', score: null },
+  { line: 9, email: 'brenda@email.com', course: '', provider: 'Highfield Qualifications', date: '2026-05-10', result: 'Passed', score: null },
 ]
-/* In the zip demo, the first upload is missing this file. */
-const MISSING_IN_ZIP = 'johnson-forklift.jpg'
+const TEMPLATE =
+  'Email,Course name,Provider,Completion date,Result,Score\n' +
+  'sarah.chen@email.com,First Aid at Work,St John Ambulance,2026-10-14,Passed,92\n'
 
-const TEMPLATE = {
-  csv:
-    'Email,Course name,Provider,Completion date,Result,Score\n' +
-    'sarah.chen@email.com,First Aid at Work,St John Ambulance,2026-10-14,Passed,92\n',
-  zip:
-    'Email,Course name,Provider,Completion date,Result,Score,Certificate file\n' +
-    'sarah.chen@email.com,First Aid at Work,St John Ambulance,2026-10-14,Passed,92,chen-first-aid.pdf\n',
-}
-
-type ErrorCategory = 'person-not-found' | 'course-missing' | 'certificate-missing'
-type ErrorColumn = 'learner' | 'course' | 'cert'
+type ErrorCategory = 'person-not-found' | 'course-missing'
+type ErrorColumn = 'learner' | 'course'
 const ERROR_META: Record<ErrorCategory, { column: ErrorColumn; label: string; solution: string }> = {
   'person-not-found': { column: 'learner', label: 'Person not found', solution: 'Use the email the person has in 5Mins.' },
   'course-missing': { column: 'course', label: 'Course name missing', solution: 'Add a course name from your approved list.' },
-  'certificate-missing': { column: 'cert', label: 'Certificate not in the zip', solution: 'Add the file to the zip, or clear the Certificate file cell.' },
 }
-const ERROR_ORDER: ErrorCategory[] = ['person-not-found', 'course-missing', 'certificate-missing']
+const ERROR_ORDER: ErrorCategory[] = ['person-not-found', 'course-missing']
 
 /** A mapping for a name that isn't on the list: a course id, 'one-off' or 'skip'. */
 type Mapping = string
@@ -110,16 +97,14 @@ type RowError = { label: string; solution: string }
 const makeError = (c: ErrorCategory): RowError => ({ label: ERROR_META[c].label, solution: ERROR_META[c].solution })
 
 interface Props {
-  kind: BulkUploadKind
   onClose: () => void
   onAdded: (count: number) => void
 }
 
-function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
+function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
   const { courses, records, allowOneOffs, providers } = useExternalTraining()
   const panelRef = useRef<HTMLElement>(null)
   useOverlayA11y(panelRef, true)
-  const isZip = kind === 'zip'
   const [step, setStep] = useState<'upload' | 'review'>('upload')
   const [fileName, setFileName] = useState<string | null>(null)
   const [uploader, setUploader] = useState<'Enabled' | 'Uploading' | 'Filled'>('Enabled')
@@ -152,7 +137,6 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
         const errors: Checked['errors'] = {}
         if (!person) errors.learner = makeError('person-not-found')
         if (!r.course) errors.course = makeError('course-missing')
-        if (isZip && !fixed && r.certificate === MISSING_IN_ZIP) errors.cert = makeError('certificate-missing')
         const base = { ...r, errors, personId: person?.id ?? null, courseId: null, oneOff: false }
         if (Object.keys(errors).length) return { ...base, status: 'error' }
         const matched = matchCourse(r.course)
@@ -163,14 +147,13 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
         return { ...base, courseId: mapping, status: exists ? 'exists' : 'ready' }
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [records, mappings, sourceRows, isZip, fixed],
+    [records, mappings, sourceRows],
   )
   const count = (s: Status) => rows.filter((r) => r.status === s).length
   const errorRows = rows.filter((r) => r.status === 'error')
   const hasErrors = errorRows.length > 0
   const ready = rows.filter((r) => r.status === 'ready')
   const needsMatching = unmatched.some(([name]) => !mappings[name])
-  const certFor = (r: CsvRow) => (isZip && r.certificate && !(r.certificate === MISSING_IN_ZIP && !fixed) ? r.certificate : null)
 
   const rowHas = (r: Checked, c: ErrorCategory) => !!r.errors[ERROR_META[c].column]
   const errorChips = [
@@ -250,7 +233,7 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
         retrainingDueDate: r.oneOff ? null : retrainingDueDate(r.date, course?.retrainingMonths ?? null, r.result),
         result: r.result,
         score: r.score,
-        certificate: certFor(r),
+        certificate: null,
         source: 'csv',
       }
     })
@@ -308,18 +291,6 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
     { key: 'date', header: 'Completion date', width: '0 0 140px', render: (r) => <DateCell iso={r.date} /> },
     { key: 'result', header: 'Result', width: '0 0 100px', render: (r) => r.result },
     { key: 'score', header: 'Score', width: '0 0 80px', render: (r) => (r.score == null ? '–' : `${r.score}%`) },
-    ...(isZip
-      ? [
-          {
-            key: 'cert',
-            header: 'Certificate',
-            width: '1 0 200px',
-            cellClassName: errorTint('cert'),
-            render: (r: Checked) =>
-              r.errors.cert ? <CellError value={r.certificate ?? ''} error={r.errors.cert} /> : certFor(r) ? 'Matched' : '–',
-          },
-        ]
-      : []),
   ]
 
   const tabs: { key: Tab; label: string; count: number; color: string }[] = [
@@ -345,9 +316,9 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
           <div className="bulk-upload-form bulk-upload-form--preview">
             <div className="bulk-upload-header">
               <div className="aet-drawer__heading">
-                <h2 id="lret-bulk-title" className="bulk-upload-title">{isZip ? 'Review ZIP file' : 'Review CSV file'}</h2>
+                <h2 id="lret-bulk-title" className="bulk-upload-title">Review CSV file</h2>
                 <p className="aet-text">
-                  {isZip ? 'People are matched by email and certificates by file name.' : 'People are matched by email.'} Records already in 5Mins are skipped.
+                  People are matched by email. Records already in 5Mins are skipped.
                 </p>
               </div>
               <CloseButton variant="fullscreen" onClick={onClose} />
@@ -373,39 +344,13 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
               )}
 
               {unmatched.length > 0 && (
-                <div className="lret-match">
-                  <div className="aet-step__body">
-                    <h3 className="aet-step__title">Names that aren't on your approved list</h3>
-                    <p className="aet-text">We'll remember this, so next time these rows match on their own.</p>
-                  </div>
-                  {/* Two columns, as Match the pairs (MatchPairsBody): the name in the
-                      file, the link glyph, then the approved course it maps to. */}
-                  <div className="lret-match__grid" role="group" aria-label="Match names to courses">
-                    <span className="lret-match__head">Name in your file</span>
-                    <span aria-hidden="true" />
-                    <span className="lret-match__head">Course in 5Mins</span>
-                    {unmatched.map(([name, n]) => (
-                      <Fragment key={name}>
-                        <span className="lret-match__name">
-                          <span className="lret-match__label">{name}</span>
-                          <span className="lret-match__count">
-                            {n} row{n === 1 ? '' : 's'}
-                          </span>
-                        </span>
-                        <ArrangeHorizontal size={20} color="var(--text-tertiary)" variant="Linear" className="lret-match__link" />
-                        <Dropdown
-                          className="lret-match__control"
-                          placeholder="Search for a course"
-                          searchable
-                          searchPlaceholder="Search approved courses"
-                          options={mappingOptions}
-                          value={mappings[name] ?? ''}
-                          onChange={(v) => setMappings((m) => ({ ...m, [name]: v }))}
-                        />
-                      </Fragment>
-                    ))}
-                  </div>
-                </div>
+                <CourseMappingCard
+                  unmatched={unmatched}
+                  mappings={mappings}
+                  options={mappingOptions}
+                  nameHeader="Name in your file"
+                  onChange={(name, v) => setMappings((m) => ({ ...m, [name]: v }))}
+                />
               )}
 
               <div className="bulk-preview-tabs" role="tablist" aria-label="Filter records">
@@ -478,12 +423,10 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
           <div className="side-drawer__headline">
             <div className="aet-drawer__heading">
               <h2 id="lret-bulk-title" className="aet-drawer__title">
-                {isZip ? 'Upload a ZIP file' : 'Upload a CSV file'}
+                Upload a CSV file
               </h2>
               <p className="aet-text">
-                {isZip
-                  ? 'Add training records and their certificates from other platforms in one zip file.'
-                  : 'Add training records from other platforms to keep all your learning in one place.'}
+                Add training records from other platforms to keep all your learning in one place.
               </p>
             </div>
             <CloseButton onClick={onClose} />
@@ -492,7 +435,7 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
         </div>
 
         <div className="side-drawer__content">
-          <ol className="aet-steps">
+          <ol className="aet-steps lret-steps">
             <li className="aet-step">
               <span className="aet-step__num" aria-hidden="true">1</span>
               <div className="aet-step__body">
@@ -502,7 +445,7 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
                   <Button
                     variant="text"
                     icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
-                    onClick={() => download('external-training-template.csv', TEMPLATE[kind])}
+                    onClick={() => download('external-training-template.csv', TEMPLATE)}
                   >
                     Download CSV Template
                   </Button>
@@ -516,23 +459,20 @@ function BulkUploadRecordsDrawer({ kind, onClose, onAdded }: Props) {
                 <p className="aet-text">
                   Use one row for each training and put each detail in its own cell. Use the course names from your
                   approved list.
-                  {isZip &&
-                    " Write each certificate's file name in the Certificate file column, then put the CSV and the certificate files (PDF or image) in one zip."}
                 </p>
               </div>
             </li>
             <li className="aet-step">
               <span className="aet-step__num" aria-hidden="true">3</span>
               <div className="aet-step__body">
-                <h3 className="aet-step__title">{isZip ? 'Upload your ZIP file' : 'Upload your CSV file'}</h3>
+                <h3 className="aet-step__title">Upload your CSV file</h3>
                 <FileUploader
                   size="L"
-                  accept={isZip ? '.zip' : '.csv'}
-                  icon={isZip ? <ZipIcon size={40} color="var(--text-secondary)" /> : undefined}
+                  accept=".csv"
                   state={uploader}
                   progress={progress}
                   fileName={fileName ?? undefined}
-                  helpText={isZip ? 'One zip with the CSV and the certificate files' : 'One row per record, as in our template'}
+                  helpText="One row per record, as in our template"
                   onFileSelect={handleFile}
                   onChangeFile={backToUpload}
                 />

@@ -138,3 +138,59 @@
   top: 0;
   z-index: 101;
 }
+
+/* Bulk upload steps, as the Learning records Figma stepper (12386:164782): a 20px filled
+   number, 4px down to sit on the title, and a 0.5px dashed --text-tertiary line (2px dash,
+   4px gap) that stops 8px short of each number. Overrides the shared .aet-step* here only. */
+.lret-steps .aet-step__num {
+  width: var(--space-ml);
+  height: var(--space-ml);
+  margin-top: var(--space-xs);
+  border: 0;
+  background: var(--input-background);
+  font-size: var(--font-size-sm);
+}
+
+.lret-steps .aet-step:not(:last-child)::before {
+  top: calc(var(--space-xs) + var(--space-ml) + var(--space-s));
+  bottom: var(--space-xs);
+  left: calc(var(--space-ml) / 2 - 0.5px);
+  width: 1px;
+  transform: scaleX(0.5); /* 0.5px line that still draws on 1x screens */
+  border-left: 0;
+  background: repeating-linear-gradient(to bottom, var(--text-tertiary) 0 2px, transparent 2px 6px);
+}
+
+/* Certificates review (CertificatesReview): a cell still being read is a filled bar
+   wearing the shared AI shimmer (.is-writing, AIWorkingCard.css). */
+.lret-reading {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: var(--space-m);
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--input-background);
+}
+
+/* Learner error: the name on the certificate (CellError) above the learner picker. */
+.lret-pick {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+  min-width: 0;
+}
+
+.lret-file {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+/* A cell holding the learner picker grows past the table's 58px cell cap. */
+.tbl-cell.lret-cell-grow {
+  max-height: none;
+  overflow: visible;
+}

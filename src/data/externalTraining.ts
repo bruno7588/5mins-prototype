@@ -169,6 +169,13 @@ export const TRAINING_PEOPLE: TrainingPerson[] = [
 
 export const personById = (id: string) => TRAINING_PEOPLE.find((p) => p.id === id)
 
+/** Same person if the surname matches and the first names share an initial ("S. Chen" ≈ "Sarah Chen"). */
+export const samePerson = (a: string, b: string) => {
+  const parts = (n: string) => n.toLowerCase().replace(/\./g, '').trim().split(/\s+/)
+  const [pa, pb] = [parts(a), parts(b)]
+  return pa[pa.length - 1] === pb[pb.length - 1] && pa[0][0] === pb[0][0]
+}
+
 const seedProviders: ExternalProvider[] = [
   { id: 'p1', name: 'St John Ambulance', archived: false },
   { id: 'p2', name: 'Red Cross Training', archived: false },

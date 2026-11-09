@@ -38,6 +38,7 @@ import {
   type ExternalProvider,
   type ExternalRecord,
   type ExternalResult,
+  samePerson,
 } from '@/data/externalTraining'
 import './AddExternalTrainingDrawer.css'
 
@@ -79,13 +80,6 @@ const UNIT_OPTIONS = [
 const parseDuration = (text: string | undefined): { value: number; unit: DurationUnit } => {
   const m = text?.match(/^(\d+)\s*(minute|hour|day)/i)
   return m ? { value: Number(m[1]), unit: `${m[2].toLowerCase()}s` as DurationUnit } : { value: 0, unit: 'hours' }
-}
-
-/** Same person if the surname matches and the first names share an initial ("S. Chen" ≈ "Sarah Chen"). */
-const samePerson = (a: string, b: string) => {
-  const parts = (n: string) => n.toLowerCase().replace(/\./g, '').trim().split(/\s+/)
-  const [pa, pb] = [parts(a), parts(b)]
-  return pa[pa.length - 1] === pb[pb.length - 1] && pa[0][0] === pb[0][0]
 }
 
 interface Props {
