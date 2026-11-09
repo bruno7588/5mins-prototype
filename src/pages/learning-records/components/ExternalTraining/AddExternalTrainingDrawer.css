@@ -349,14 +349,21 @@
 }
 
 /* Mismatch Alert wrapper: takes focus when Add Training is pressed before it is resolved. */
-.aetd-mismatch {
-  width: 100%;
-  border-radius: var(--radius-sm);
+/* Confirm box under Learner when the certificate names someone else. The checkbox's
+   own 8px padding is the 8px gap to its text (selection-controls.md); the negative
+   margin lines the box up with the field's edge. Text 14px / 400 --text-primary. */
+.aetd-confirm {
+  display: flex;
+  align-items: center;
+  margin-left: calc(-1 * var(--space-s));
+  cursor: pointer;
 }
 
-.aetd-mismatch:focus {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
+.aetd-confirm__text {
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
 }
 
 /* A name to pick out inside running text, e.g. the course in the existing-record Alert. */

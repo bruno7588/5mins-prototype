@@ -7,6 +7,7 @@ import { arriveTransition } from '@/components/AIWorkingCard/arrive'
 import Alert from '@/components/Alert/Alert'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
+import Checkbox from '@/components/Checkbox/Checkbox'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import DatePickerField from '@/components/DatePickerField/DatePickerField'
 import Dropdown from '@/components/Dropdown/Dropdown'
@@ -176,10 +177,10 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const [months, setMonths] = useState(12)
   const [oneOffDue, setOneOffDue] = useState(initialRecord && !initialRecord.courseId ? initialRecord.retrainingDueDate ?? '' : '')
   const [submitted, setSubmitted] = useState(false)
-  /* Same Person on the mismatch Alert: the admin confirms the certificate is this learner's
+  /* The confirm box under Learner: the admin confirms the certificate is this learner's
      (married name, nickname, a misread). Tied to the pair, so changing either asks again. */
   const [keptFor, setKeptFor] = useState<string | null>(null)
-  const mismatchRef = useRef<HTMLDivElement>(null)
+  const confirmRef = useRef<HTMLLabelElement>(null)
 
   const openNotListed = (name: string) => {
     setMode('not-listed')
@@ -338,7 +339,9 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   /* ── Derived ── */
   const person = personById(personId)
   const mismatchKey = `${read?.learner}|${personId}`
-  const mismatch = !!(read?.learner && person && !samePerson(read.learner, person.name)) && keptFor !== mismatchKey
+  // The certificate names someone else; until the admin ticks the confirm box it blocks saving.
+  const nameDiffers = !!(read?.learner && person && !samePerson(read.learner, person.name))
+  const mismatch = nameDiffers && keptFor !== mismatchKey
   const unknownLearner = !!(read?.learner && !person && !lockedPersonId)
   const fromCertificate = mode === 'not-listed' && !!read?.courseText && newName === read.courseText
   const addingToList = mode === 'not-listed' && notListedAs === 'list'
@@ -395,10 +398,10 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   const err = (k: keyof typeof errors) => (submitted && errors[k] ? errors[k] : undefined)
 
   const save = () => {
-    // An unresolved name mismatch: take the admin to the Alert rather than doing nothing.
+    // An unconfirmed name mismatch: take the admin to the confirm box rather than doing nothing.
     if (mismatch) {
-      mismatchRef.current?.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' })
-      mismatchRef.current?.focus({ preventScroll: true })
+      confirmRef.current?.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' })
+      confirmRef.current?.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true })
       return
     }
     setSubmitted(true)
@@ -622,21 +625,8 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                       }
                     />
                   )}
-                  {/* The one place the mismatch is said: announced as it appears, and where
-                      Add Training sends focus while it is unresolved. */}
-                  {mismatch && (
-                    <div ref={mismatchRef} role="alert" tabIndex={-1} className="aetd-mismatch">
-                      <Alert
-                        type="Alert"
-                        customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
-                        message={`This certificate names ${read!.learner}, not ${person!.name}. Change the file, or confirm it's the same person.`}
-                        button
-                        buttonLabel="Same Person"
-                        onButtonClick={() => setKeptFor(mismatchKey)}
-                      />
-                    </div>
-                  )}
-                  {/* Learner */}
+                  {/* Learner. A certificate naming someone else is settled here, at the field:
+                      the name it shows, and a box to confirm it is this learner (D8). */}
                   <div className={`aet-field aetd-full${writing.has('learner') ? ' aetd-writing is-writing' : ''}`}>
                     <Dropdown
                       label="Learner"
@@ -648,9 +638,29 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                       options={personOptions}
                       value={personId}
                       onChange={setPersonId}
-                      error={err('learner')}
-                      helperText={unknownLearner ? `The certificate names ${read!.learner}. Pick the learner.` : undefined}
+                      /* The certificate names someone who isn't in 5Mins: an error, since the
+                         record can't go ahead until the right learner is picked or the file changed. */
+                      error={
+                        unknownLearner
+                          ? `The certificate names ${read!.learner}, who isn't in 5Mins. Pick a learner or change the file.`
+                          : mismatch
+                            ? `The certificate names ${read!.learner}.`
+                            : err('learner')
+                      }
+                      helperText={
+                        nameDiffers && !mismatch ? `The certificate names ${read!.learner}. Confirmed as ${person!.name}.` : undefined
+                      }
                     />
+                    {nameDiffers && (
+                      /* Announced as it appears; Add Training sends focus here while unticked. */
+                      <label ref={confirmRef} className="aetd-confirm" aria-live="polite">
+                        <Checkbox
+                          checked={!mismatch}
+                          onChange={() => setKeptFor(mismatch ? mismatchKey : null)}
+                        />
+                        <span className="aetd-confirm__text">{person!.name} is the person named on this certificate</span>
+                      </label>
+                    )}
                   </div>
 
                   {/* Course, or the not-listed block: a swap, so it animates (motion.md) */}
