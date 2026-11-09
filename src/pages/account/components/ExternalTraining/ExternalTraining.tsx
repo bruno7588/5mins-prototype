@@ -9,6 +9,7 @@ import Search from '@/components/Search/Search'
 import Table, { type Column } from '@/components/Table/Table'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import Toggle from '@/components/Toggle/Toggle'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
 import noResults from '@/assets/empty-state-illustrations/no-results.svg'
@@ -74,15 +75,36 @@ function ExternalTraining() {
     [providers, showArchived, query],
   )
 
-  /* Archive when it has records, delete when it has none (D4). */
-  const menuFor = (archived: boolean, count: number): RowMenuItem[] => [
-    { key: 'edit', label: 'Edit', icon: icon(Edit2) },
-    archived
-      ? { key: 'unarchive', label: 'Unarchive', icon: icon(ArrowRotateLeft) }
-      : count > 0
-        ? { key: 'archive', label: 'Archive', icon: icon(ArchiveMinus) }
-        : { key: 'delete', label: 'Delete', icon: <Trash size={20} color="currentColor" variant="Linear" />, danger: true },
-  ]
+  /* Archive when it has training records, delete when it has none (D4). Delete is never
+     hidden: with records it shows greyed with the reason (Stripe, HubSpot, Front all say why). */
+  const recordCount = (n: number) => `${n} training record${n === 1 ? '' : 's'}`
+  const menuFor = (archived: boolean, count: number, thing: 'course' | 'provider'): RowMenuItem[] => {
+    const del = { key: 'delete', label: 'Delete', icon: <Trash size={20} color="currentColor" variant="Linear" />, danger: true }
+    if (archived) return [{ key: 'edit', label: 'Edit', icon: icon(Edit2) }, { key: 'unarchive', label: 'Unarchive', icon: icon(ArrowRotateLeft) }]
+    if (!count) return [{ key: 'edit', label: 'Edit', icon: icon(Edit2) }, del]
+    return [
+      { key: 'edit', label: 'Edit', icon: icon(Edit2) },
+      { key: 'archive', label: 'Archive', icon: icon(ArchiveMinus) },
+      { ...del, disabled: true, title: `This ${thing} has ${recordCount(count)}, so it can't be deleted. Archive it instead.` },
+    ]
+  }
+
+  /* "Training records" names what is counted (research 2026-11-09: name the thing, explain
+     the nuance at the header); the tooltip says renewals and Not passed count too. */
+  const recordsHeader = (thing: 'course' | 'provider') => (
+    <span className="aet-th">
+      Training records
+      <Tooltip
+        position="Top"
+        alignment="End"
+        text={
+          thing === 'course'
+            ? 'Each time this course was logged for a learner, including renewals and Not passed results.'
+            : 'Each time a course from this provider was logged for a learner, including renewals and Not passed results.'
+        }
+      />
+    </span>
+  )
 
   const onCourseAction = (key: string, course: ExternalCourse) => {
     if (key === 'edit') setCourseDrawer({ course })
@@ -124,7 +146,7 @@ function ExternalTraining() {
     },
     { key: 'duration', header: 'Duration', width: '0 0 112px', render: (c) => durationLabel(c.duration) },
     { key: 'retraining', header: 'Expiry', width: '0 0 200px', render: (c) => retrainingLabel(c.retrainingMonths) },
-    { key: 'records', header: 'Records', width: '0 0 88px', align: 'center', render: (c) => courseRecords(c.id) },
+    { key: 'records', header: recordsHeader('course'), width: '0 0 184px', align: 'center', render: (c) => courseRecords(c.id) },
     {
       key: 'actions',
       header: '',
@@ -134,7 +156,7 @@ function ExternalTraining() {
       render: (c) => (
         <RowActionsMenu
           ariaLabel={`Actions for ${c.name}`}
-          items={menuFor(c.archived, courseRecords(c.id))}
+          items={menuFor(c.archived, courseRecords(c.id), 'course')}
           onSelect={(key) => onCourseAction(key, c)}
         />
       ),
@@ -154,7 +176,7 @@ function ExternalTraining() {
       ),
     },
     { key: 'courses', header: 'Courses', width: '0 0 112px', align: 'center', render: (p) => providerCourses(p.id) },
-    { key: 'records', header: 'Records', width: '0 0 88px', align: 'center', render: (p) => providerRecords(p.id) },
+    { key: 'records', header: recordsHeader('provider'), width: '0 0 184px', align: 'center', render: (p) => providerRecords(p.id) },
     {
       key: 'actions',
       header: '',
@@ -164,7 +186,7 @@ function ExternalTraining() {
       render: (p) => (
         <RowActionsMenu
           ariaLabel={`Actions for ${p.name}`}
-          items={menuFor(p.archived, providerRecords(p.id))}
+          items={menuFor(p.archived, providerRecords(p.id), 'provider')}
           onSelect={(key) => onProviderAction(key, p)}
         />
       ),
@@ -181,7 +203,7 @@ function ExternalTraining() {
       const n = courseRecords(confirm.course.id)
       return {
         title: `Archive ${confirm.course.name}?`,
-        body: `It won't be offered for new records or uploads. Its ${n} record${n === 1 ? '' : 's'} stay on people's profiles and still show when they're due.`,
+        body: `Archived courses can't be picked for new training records. Its ${recordCount(n)} ${n === 1 ? 'stays' : 'stay'} on learner profiles and still count${n === 1 ? 's' : ''} towards expiry.`,
         cta: 'Archive Course',
         danger: false,
         run: () => {
@@ -193,7 +215,7 @@ function ExternalTraining() {
     if (confirm.kind === 'delete-course') {
       return {
         title: `Delete ${confirm.course.name}?`,
-        body: "It has no records. It's removed from the approved list and can't be recovered.",
+        body: "It has no training records. It's removed from the approved list and can't be recovered.",
         cta: 'Delete Course',
         danger: true,
         run: () => {
@@ -217,7 +239,7 @@ function ExternalTraining() {
       const n = providerRecords(provider.id)
       return {
         title: `Archive ${provider.name}?`,
-        body: `It won't be offered for new records or uploads. Its ${n} record${n === 1 ? '' : 's'} stay on people's profiles.${strandedLine}`,
+        body: `Archived providers can't be picked for new training records. Its ${recordCount(n)} ${n === 1 ? 'stays' : 'stay'} on learner profiles.${strandedLine}`,
         cta: 'Archive Provider',
         danger: false,
         run: () => {
@@ -228,7 +250,7 @@ function ExternalTraining() {
     }
     return {
       title: `Delete ${provider.name}?`,
-      body: `It has no records. It's removed from the approved list and can't be recovered.${strandedLine}`,
+      body: `It has no training records. It's removed from the approved list and can't be recovered.${strandedLine}`,
       cta: 'Delete Provider',
       danger: true,
       run: () => {

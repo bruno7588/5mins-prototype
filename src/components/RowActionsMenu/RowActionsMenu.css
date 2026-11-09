@@ -140,6 +140,12 @@
   color: var(--text-error);
 }
 
+/* A greyed destructive item (e.g. Delete while records exist) reads disabled, not red. */
+.ram-item--danger.ram-item--disabled .ram-item-icon,
+.ram-item--danger.ram-item--disabled .ram-item-label {
+  color: var(--text-disabled);
+}
+
 /* Section divider */
 /* The menu is an elevated surface, so its divider uses --border-elevated: the
    same neutral as --border in light, one step up in dark where --border and

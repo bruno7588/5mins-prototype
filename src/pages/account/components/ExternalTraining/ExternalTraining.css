@@ -249,3 +249,10 @@
 .aet-step__action {
   padding-top: var(--space-s);
 }
+
+/* A table header with its info tooltip beside it, as the User profile's Progress header. */
+.aet-th {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
