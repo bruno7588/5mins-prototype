@@ -647,9 +647,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
                             ? `The certificate names ${read!.learner}.`
                             : err('learner')
                       }
-                      helperText={
-                        nameDiffers && !mismatch ? `The certificate names ${read!.learner}. Confirmed as ${person!.name}.` : undefined
-                      }
                     />
                     {nameDiffers && (
                       /* Announced as it appears; Add Training sends focus here while unticked. */
