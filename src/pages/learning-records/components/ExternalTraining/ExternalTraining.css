@@ -194,3 +194,12 @@
   max-height: none;
   overflow: visible;
 }
+
+/* Add Training menu: 400px at most, so each description wraps under its label. */
+.ram-menu.lret-add-menu {
+  max-width: 400px;
+}
+
+.lret-add-menu .ram-item-description {
+  white-space: normal;
+}

@@ -155,6 +155,7 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
   const addMenu = (
         <RowActionsMenu
           ariaLabel="Add Training"
+          menuClassName="lret-add-menu"
           caret={false}
           triggerClassName="ds-btn ds-btn--md ds-btn--filled ds-btn--has-icon"
           triggerContent={
@@ -175,7 +176,7 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
             {
               key: 'csv',
               label: 'Bulk upload CSV',
-              description: 'Add training records from a spreadsheet, without certificates',
+              description: 'Add training records from other platforms to keep all your learning in one place',
               icon: <CsvIcon size={20} color="var(--text-primary)" />,
             },
             {
