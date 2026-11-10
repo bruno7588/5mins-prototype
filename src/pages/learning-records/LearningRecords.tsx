@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 import Tabs from '@/components/Tabs/Tabs'
+import EmptyState from '@/components/EmptyState/EmptyState'
+import noResults from '@/assets/empty-state-illustrations/no-results.svg'
 import ExternalTraining from '@/pages/account/components/ExternalTraining/ExternalTraining'
 import { isFullAdmin, useExternalTraining } from '@/data/externalTraining'
 import Button from '@/components/Button/Button'
@@ -675,11 +677,20 @@ function LearningRecords() {
 
           {/* Table */}
           {activeTab === '5mins' ? (
-            <Table
-              columns={courseColumns}
-              rows={displayedCourseRows}
-              getRowKey={(row) => row.id}
-            />
+            displayedCourseRows.length ? (
+              <Table
+                columns={courseColumns}
+                rows={displayedCourseRows}
+                getRowKey={(row) => row.id}
+              />
+            ) : (
+              /* Nothing matches the search and filters. */
+              <EmptyState
+                illustration={<img src={noResults} alt="" width={72} height={72} />}
+                title="No records found"
+                description="Try a different learner or course, or remove a filter."
+              />
+            )
           ) : extTab === 'approved' ? (
             <ExternalTraining />
           ) : (
