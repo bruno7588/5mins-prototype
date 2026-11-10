@@ -86,7 +86,7 @@ function AIWorkingCard({
               exit={{ opacity: 0 }}
               transition={arriveTransition(reduce)}
             >
-              <SparkleIcon size={20} gradient />
+              <SparkleIcon size={16} gradient />
             </motion.span>
           ) : null
 
@@ -97,7 +97,7 @@ function AIWorkingCard({
                line appears, and animating that size means scaling the row, which stretches
                the words inside it. */
             <motion.div
-              className="ai-working-step"
+              className={`ai-working-step${past ? ' ai-working-step--past' : ''}`}
               key={label}
               {...(singleLine
                 ? fade
@@ -109,7 +109,7 @@ function AIWorkingCard({
                 {done && (
                   <TickCircle
                     className="ai-working-step__tick"
-                    size={20}
+                    size={16}
                     color="var(--success-500)"
                     variant="Bold"
                   />

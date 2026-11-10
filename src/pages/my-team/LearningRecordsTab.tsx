@@ -1,14 +1,25 @@
-import { useMemo, useState } from 'react'
-import { Add, ArrowDown2 } from 'iconsax-react'
+import { useMemo, useRef, useState, type ReactNode } from 'react'
+import { Book1, Buildings2, Calendar, Category, Global, People, Profile, TickCircle } from 'iconsax-react'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Button from '../../components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import { Table, type Column } from '@/components/Table/Table'
-import Dropdown from '@/components/Dropdown/Dropdown'
 import EmptyState from '@/components/EmptyState/EmptyState'
+import FilterBar, { FilterBarAddButton, type FilterBarFilter } from '@/components/FilterBar/FilterBar'
 import certificatesIllustration from '@/assets/empty-state-illustrations/certificates.svg'
+import noResults from '@/assets/empty-state-illustrations/no-results.svg'
+import FilterListbox, { type FilterGroup } from '@/pages/learning-records/components/FilterListbox/FilterListbox'
+import FilterMultiSelect from '@/pages/learning-records/components/FilterControls/FilterMultiSelect'
 import ExternalRecordsTable from '@/pages/learning-records/components/ExternalTraining/ExternalRecordsTable'
-import { dueRank, dueState, useExternalTraining } from '@/data/externalTraining'
+import {
+  dueRank,
+  dueState,
+  personById,
+  recordProviderName,
+  recordTrainingName,
+  useExternalTraining,
+  type ExternalRecord,
+} from '@/data/externalTraining'
 import { teamProfiles } from './MyTeam'
 import './LearningRecordsTab.css'
 
@@ -258,29 +269,186 @@ const recordColumns: Column<LearningRecord>[] = [
   },
 ]
 
-/* Expiry filter for the manager's read-only list (PRD 3.6, D22). */
-const EXPIRY_FILTER = [
-  { value: 'all', label: 'All' },
+/* ── Filter bar (DS FilterBar, the same set-up as the admin Learning Records page) ── */
+
+type FilterMeta = Record<string, { title: string; description: string; Icon: typeof Calendar }>
+type Option = { value: string; label: string }
+
+/* Options come from the rows, so every option finds at least one. */
+const uniqueOptions = (list: Option[]) =>
+  [...new Map(list.filter((o) => o.value).map((o) => [o.value, o])).values()].sort((a, b) => a.label.localeCompare(b.label))
+
+/* One Filter bar's state: which filters are on, their values, and the bar itself. */
+function useFilterBar<T>(
+  meta: FilterMeta,
+  groups: FilterGroup[],
+  optionsFor: (id: string) => Option[],
+  valueOf: (id: string, row: T) => string,
+): { bar: ReactNode; match: (row: T) => boolean; hasFilters: boolean } {
+  const [active, setActive] = useState<string[]>([])
+  const [values, setValues] = useState<Record<string, string[]>>({})
+  const [expanded, setExpanded] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const headerAddRef = useRef<HTMLDivElement>(null)
+  const bottomAddRef = useRef<HTMLDivElement>(null)
+
+  const addFilter = (id: string) => {
+    setActive((prev) => (prev.includes(id) ? prev : [...prev, id]))
+    setMenuOpen(false)
+    setExpanded(true)
+  }
+  const removeFilter = (id: string) => {
+    setActive((prev) => prev.filter((f) => f !== id))
+    setValues((prev) => ({ ...prev, [id]: [] }))
+  }
+  const pillLabel = (id: string) => {
+    const v = values[id] ?? []
+    if (v.length !== 1) return meta[id].title
+    return optionsFor(id).find((o) => o.value === v[0])?.label ?? meta[id].title
+  }
+
+  const filters: FilterBarFilter[] = active.map((id) => ({
+    id,
+    title: meta[id].title,
+    Icon: meta[id].Icon,
+    pillLabel: pillLabel(id),
+    control: (
+      <FilterMultiSelect
+        options={optionsFor(id)}
+        value={values[id] ?? []}
+        placeholder={`Select ${meta[id].title.toLowerCase()}`}
+        onChange={(v) => setValues((prev) => ({ ...prev, [id]: v }))}
+      />
+    ),
+  }))
+
+  const bar = (
+    <FilterBar
+      filters={filters}
+      expanded={expanded}
+      onToggleExpanded={() => {
+        setExpanded((e) => !e)
+        setMenuOpen(false)
+      }}
+      onRemove={removeFilter}
+      onClearAll={() => {
+        setActive([])
+        setValues({})
+      }}
+      renderAddFilter={(placement) => {
+        // Only the live instance gets an open listbox so their click-outside handlers don't clash.
+        const ref = placement === 'header' ? headerAddRef : bottomAddRef
+        const open = menuOpen && (placement === 'header' ? !expanded : expanded)
+        return (
+          <FilterBarAddButton ref={ref} open={open} onClick={() => setMenuOpen((o) => !o)}>
+            <FilterListbox open={open} onClose={() => setMenuOpen(false)} onSelect={addFilter} anchorRef={ref} groups={groups} />
+          </FilterBarAddButton>
+        )
+      }}
+    />
+  )
+
+  const match = (row: T) => active.every((id) => !values[id]?.length || values[id].includes(valueOf(id, row)))
+  return { bar, match, hasFilters: active.some((id) => values[id]?.length) }
+}
+
+/* 5Mins Courses: the course records of the manager's team. */
+const COURSE_META: FilterMeta = {
+  learner: { title: 'Learner', description: 'Filter by the person on the course', Icon: Profile },
+  team: { title: 'Team', description: 'Filter by team', Icon: People },
+  region: { title: 'Region', description: 'Filter by region', Icon: Global },
+  course: { title: 'Course', description: 'Filter by course', Icon: Book1 },
+  category: { title: 'Category', description: 'Filter by course category', Icon: Category },
+  status: { title: 'Status', description: 'Completed or failed', Icon: TickCircle },
+}
+const COURSE_GROUPS: FilterGroup[] = [
+  { section: 'Person', items: ['learner', 'team', 'region'].map((id) => ({ id, ...COURSE_META[id] })) },
+  { section: 'Course', items: ['course', 'category'].map((id) => ({ id, ...COURSE_META[id] })) },
+  { section: 'Status', items: [{ id: 'status', ...COURSE_META.status }] },
+]
+const courseValue = (id: string, r: LearningRecord): string =>
+  id === 'learner' ? r.name : (r[id as 'team' | 'region' | 'course' | 'category' | 'status'] as string)
+
+/* External Training: read-only for managers (D22), their own team only. */
+const EXTERNAL_META: FilterMeta = {
+  learner: { title: 'Learner', description: 'Filter by the person the training belongs to', Icon: Profile },
+  course: { title: 'Course', description: 'Filter by approved course or one-off training', Icon: Book1 },
+  provider: { title: 'Provider', description: 'Filter by training provider', Icon: Buildings2 },
+  retraining: { title: 'Expiry', description: 'Overdue, due soon, valid or no expiry', Icon: Calendar },
+  result: { title: 'Result', description: 'Passed or not passed', Icon: TickCircle },
+}
+const EXTERNAL_GROUPS: FilterGroup[] = [
+  { section: 'Person', items: [{ id: 'learner', ...EXTERNAL_META.learner }] },
+  { section: 'Training', items: ['course', 'provider'].map((id) => ({ id, ...EXTERNAL_META[id] })) },
+  { section: 'Status', items: ['retraining', 'result'].map((id) => ({ id, ...EXTERNAL_META[id] })) },
+]
+const RETRAINING_OPTIONS: Option[] = [
   { value: 'overdue', label: 'Overdue' },
   { value: 'due-soon', label: 'Due soon' },
+  { value: 'upcoming', label: 'Valid' },
+  { value: 'none', label: 'No expiry' },
+]
+const RESULT_OPTIONS: Option[] = [
+  { value: 'Passed', label: 'Passed' },
+  { value: 'Not Passed', label: 'Not Passed' },
 ]
 
 function LearningRecordsTab() {
   const [activeChip, setActiveChip] = useState<ChipType>('5mins')
-  const [expiry, setExpiry] = useState('all')
   const { records } = useExternalTraining()
 
-  /* Read-only for managers (D22): their own team only, overdue and due soon first. */
-  const teamRecords = useMemo(
-    () =>
-      records
-        .filter((r) => r.personId in teamProfiles) // the manager's team: everyone on the My Team roster. Read at render, not module load: MyTeam imports this file.
-        .filter((r) => expiry === 'all' || dueState(r, records) === expiry)
-        .sort(
-          (a, b) =>
-            dueRank(dueState(a, records)) - dueRank(dueState(b, records)) || b.completionDate.localeCompare(a.completionDate),
-        ),
-    [records, expiry],
+  /* The manager's team: everyone on the My Team roster. Read at render, not module
+     load: MyTeam imports this file. */
+  const teamAll = useMemo(() => records.filter((r) => r.personId in teamProfiles), [records])
+
+  const courseFilters = useFilterBar<LearningRecord>(
+    COURSE_META,
+    COURSE_GROUPS,
+    (id) => uniqueOptions(mockData.map((r) => ({ value: courseValue(id, r), label: courseValue(id, r) }))),
+    courseValue,
+  )
+  const externalValue = (id: string, r: ExternalRecord): string =>
+    id === 'learner'
+      ? r.personId
+      : id === 'course'
+        ? recordTrainingName(r)
+        : id === 'provider'
+          ? recordProviderName(r)
+          : id === 'retraining'
+            ? dueState(r, records) ?? 'none'
+            : r.result
+  const externalFilters = useFilterBar<ExternalRecord>(
+    EXTERNAL_META,
+    EXTERNAL_GROUPS,
+    (id) =>
+      id === 'retraining'
+        ? RETRAINING_OPTIONS
+        : id === 'result'
+          ? RESULT_OPTIONS
+          : uniqueOptions(
+              teamAll.map((r) => ({
+                value: externalValue(id, r),
+                label: id === 'learner' ? personById(r.personId)?.name ?? r.personId : externalValue(id, r),
+              })),
+            ),
+    externalValue,
+  )
+
+  const courseRows = mockData.filter(courseFilters.match)
+  /* Overdue and due soon first. */
+  const teamRecords = teamAll
+    .filter(externalFilters.match)
+    .sort(
+      (a, b) =>
+        dueRank(dueState(a, records)) - dueRank(dueState(b, records)) || b.completionDate.localeCompare(a.completionDate),
+    )
+
+  const noResultsState = (
+    <EmptyState
+      illustration={<img src={noResults} alt="" width={72} height={72} />}
+      title="No records found"
+      description="Try removing a filter."
+    />
   )
 
   return (
@@ -297,17 +465,6 @@ function LearningRecordsTab() {
           ariaLabel="Learning records type"
         />
         <div className="lr__actions-right">
-          {activeChip === 'external' && (
-            <Dropdown
-              label="Expiry"
-              labelPlacement="start"
-              options={EXPIRY_FILTER}
-              value={expiry}
-              onChange={setExpiry}
-              className="lr__expiry-filter"
-            />
-          )}
-          {/* Download Report holds the far right edge whatever else shows beside it. */}
           <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />}>
             Download Report
           </Button>
@@ -316,51 +473,43 @@ function LearningRecordsTab() {
 
       {activeChip === '5mins' ? (
         <>
-          {/* Filters bar — not built on this tab yet (the standalone Learning Records
-              page has the working version); shown disabled instead of as a decoy. */}
-          <div className="lr__filters ui-disabled" aria-disabled="true">
-            <span className="lr__filters-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-            </span>
-            <span className="lr__filters-label">Filters</span>
-            <span className="lr__filters-badge">0</span>
-            <button type="button" className="lr__filters-add" disabled>
-              <Add size={20} color="currentColor" variant="Linear" />
-              Add
-            </button>
-            <span className="lr__filters-spacer" />
-            <span className="lr__filters-chevron">
-              <ArrowDown2 size={16} color="var(--text-tertiary)" variant="Linear" />
-            </span>
-          </div>
-
-          {/* Data table — the pagination is a static mock, same as before. */}
-          <Table
-            columns={recordColumns}
-            rows={mockData}
-            getRowKey={(row) => row.id}
-            pagination={{ from: 1, to: 10, total: 28 }}
-          />
+          {courseFilters.bar}
+          {courseRows.length ? (
+            /* The pagination stays a static mock until filters narrow the rows. */
+            <Table
+              columns={recordColumns}
+              rows={courseRows}
+              getRowKey={(row) => row.id}
+              pagination={
+                courseFilters.hasFilters
+                  ? { from: 1, to: courseRows.length, total: courseRows.length }
+                  : { from: 1, to: 10, total: 28 }
+              }
+            />
+          ) : (
+            noResultsState
+          )}
         </>
-      ) : teamRecords.length ? (
-        // Read-only: no Add, no row actions (D22). Download works.
-        <ExternalRecordsTable
-          rows={teamRecords}
-          all={records}
-          showDuration={false}
-          learnerHref={(id) => `/my-team/people/${id}?tab=external-training`}
-        />
+      ) : teamAll.length ? (
+        <>
+          {externalFilters.bar}
+          {teamRecords.length ? (
+            // Read-only: no Add, no row actions (D22). Download works.
+            <ExternalRecordsTable
+              rows={teamRecords}
+              all={records}
+              showDuration={false}
+              learnerHref={(id) => `/my-team/people/${id}?tab=external-training`}
+            />
+          ) : (
+            noResultsState
+          )}
+        </>
       ) : (
         <EmptyState
           illustration={<img src={certificatesIllustration} alt="" width={72} height={72} />}
-          title={expiry === 'all' ? 'No external training yet' : 'Nothing to show'}
-          description={
-            expiry === 'all'
-              ? 'Your admin records training done outside 5Mins from the certificate.'
-              : 'No one in your team matches this expiry filter.'
-          }
+          title="No external training yet"
+          description="Your admin records training done outside 5Mins from the certificate."
         />
       )}
     </section>

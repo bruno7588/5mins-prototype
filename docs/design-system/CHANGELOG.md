@@ -6,6 +6,7 @@ Add new entries here, not in the docs.
 
 ## Library-wide
 
+- 2026-11-10: AI working card re-specced in Figma: 16px icons in a 16px slot, 8px icon gap (6px on passes behind the work), 12px detail line, Library AI icon on the running pass; shimmer added to the Active step. Code updated to match; new doc ai-working-card.md.
 - 2026-11-10: New Library components: Bulk action bar, AI working card (+ AI working step), Summary stat (Layout Stacked / Inline), Avatar Shape (Circle / Square), and a gradient sparkle icon in the Icons set. Shared `StatTile` (src/components/StatTile) built to match Summary stat; Automations, Course details, Program admin, My Team, User profile, the Assessments grid and the Assessments insights card migrated to it (one look: 12px 16px padding, label Text-secondary, 32px icon in both layouts).
 - 2026-10-14: Component settings rework across the Library: text and icon-swap properties, on/off variant axes turned into boolean properties only where they were pure show/hide (Toast icon, date field label, Input label and helper text, Radio label, Category New), Focus variants with a 2px cyan ring at 2px offset on interactive components, and every description rewritten with the code mapping. Variants deleted by boolean conversions: Toast 4, date field 4, Input/Radio 40, Category 4 (ids in the session notes).
 - 2026-10-14: Icons renamed to exact iconsax-react names (see iconography.md).

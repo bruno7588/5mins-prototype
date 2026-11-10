@@ -52,12 +52,15 @@
 .ai-working-step {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-xs);
+  gap: var(--space-s);
   min-height: 28px;
 }
 
+/* Passes behind the work sit a step tighter to their tick (Figma AI working step, State=Done). */
+.ai-working-step--past { gap: var(--space-xss); }
+
 /* Fixed box so the labels stay aligned as icons swap in and out, and so the sparkle and
-   the tick — both 20px — share one centre line rather than each finding its own.
+   the tick (both 16px) share one centre line rather than each finding its own.
 
    The box is one text line tall: the row is top-aligned, so a taller box would drop the
    glyph below the line it belongs to. */
@@ -66,7 +69,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
+  width: 16px;
   height: calc(14px * 1.5);
   flex-shrink: 0;
 }
@@ -146,9 +149,9 @@
   /* Bound to the pass above it: 4px is close enough to read as one block, far enough
      that the two lines don't run together. */
   margin-top: var(--space-xs);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.2;
   color: var(--text-tertiary);
 }
 

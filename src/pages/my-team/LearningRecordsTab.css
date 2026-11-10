@@ -22,71 +22,6 @@
   align-items: center;
 }
 
-/* ── Filters bar ── */
-.lr__filters {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-s);
-  background: var(--cards-background);
-  border-radius: var(--radius-sm);
-}
-
-.lr__filters-icon {
-  display: flex;
-  align-items: center;
-  color: var(--text-primary);
-}
-
-.lr__filters-label {
-  font-size: var(--font-size-h5);
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.lr__filters-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  padding: 1px var(--space-xss);
-  border-radius: var(--radius-full);
-  background: var(--input-background-elevated);
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.lr__filters-add {
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-h5);
-  font-weight: 700;
-  color: var(--text-button-outlined);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  line-height: 1.5;
-  padding: 0 var(--space-s) 0 var(--space-xs);
-}
-
-.lr__filters-spacer {
-  flex: 1;
-}
-
-.lr__filters-chevron {
-  display: flex;
-  align-items: center;
-  color: var(--text-tertiary);
-  cursor: pointer;
-  padding: var(--space-xxs);
-}
-
 /* Date cell content */
 .lr__date-cell {
   display: flex;
@@ -168,6 +103,3 @@
 }
 
 /* DES-336: Expiry filter on the manager's External Training list. */
-.lr__expiry-filter {
-  width: 220px;
-}
