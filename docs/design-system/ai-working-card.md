@@ -72,7 +72,8 @@ The "AI is working" placeholder: the passes that have happened, ticked, and the 
 | `--text-primary` | running and terminal labels; shimmer base |
 | `--text-tertiary` | passes behind the work; detail line |
 | `--success-500` | tick |
-| `--text-button-outlined`, `--blaze-quiz` | AI icon gradient and shimmer band |
+| `--primary-button-background`, `--blaze-quiz` | AI icon gradient (left to right on each sparkle shape) |
+| `--text-button-outlined`, `--blaze-quiz` | shimmer band |
 | `--space-s`, `--space-xss`, `--space-xs` | row and icon gaps, detail offset |
 
 ## Accessibility

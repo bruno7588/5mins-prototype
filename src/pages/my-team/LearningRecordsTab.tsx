@@ -5,6 +5,7 @@ import Button from '../../components/Button/Button'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import { Table, type Column } from '@/components/Table/Table'
 import EmptyState from '@/components/EmptyState/EmptyState'
+import Search from '@/components/Search/Search'
 import FilterBar, { FilterBarAddButton, type FilterBarFilter } from '@/components/FilterBar/FilterBar'
 import certificatesIllustration from '@/assets/empty-state-illustrations/certificates.svg'
 import noResults from '@/assets/empty-state-illustrations/no-results.svg'
@@ -395,6 +396,7 @@ const RESULT_OPTIONS: Option[] = [
 
 function LearningRecordsTab() {
   const [activeChip, setActiveChip] = useState<ChipType>('5mins')
+  const [query, setQuery] = useState('')
   const { records } = useExternalTraining()
 
   /* The manager's team: everyone on the My Team roster. Read at render, not module
@@ -434,10 +436,13 @@ function LearningRecordsTab() {
     externalValue,
   )
 
-  const courseRows = mockData.filter(courseFilters.match)
+  /* Search narrows by person or course name, on top of the filters. */
+  const q = query.trim().toLowerCase()
+  const hit = (...text: (string | undefined)[]) => !q || text.some((t) => t?.toLowerCase().includes(q))
+  const courseRows = mockData.filter((r) => courseFilters.match(r) && hit(r.name, r.email, r.course))
   /* Overdue and due soon first. */
   const teamRecords = teamAll
-    .filter(externalFilters.match)
+    .filter((r) => externalFilters.match(r) && hit(personById(r.personId)?.name, recordTrainingName(r)))
     .sort(
       (a, b) =>
         dueRank(dueState(a, records)) - dueRank(dueState(b, records)) || b.completionDate.localeCompare(a.completionDate),
@@ -465,6 +470,13 @@ function LearningRecordsTab() {
           ariaLabel="Learning records type"
         />
         <div className="lr__actions-right">
+          <Search
+            value={query}
+            onChange={setQuery}
+            placeholder={activeChip === '5mins' ? 'Search learners or courses' : 'Search learners or training'}
+            ariaLabel="Search learning records"
+            className="lr__search"
+          />
           <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />}>
             Download Report
           </Button>
@@ -481,7 +493,7 @@ function LearningRecordsTab() {
               rows={courseRows}
               getRowKey={(row) => row.id}
               pagination={
-                courseFilters.hasFilters
+                (courseFilters.hasFilters || q)
                   ? { from: 1, to: courseRows.length, total: courseRows.length }
                   : { from: 1, to: 10, total: 28 }
               }

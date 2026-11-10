@@ -69,7 +69,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 **Canonical spec:** width 240px; `var(--page-background)` with `1px solid var(--border)` right edge; item padding `var(--space-sm) var(--space-m)` (12px 16px), gap `var(--space-s)` (8px); menu padding 16px top, 12px sides; 4px between top-level entries; sub-items (padding 12px 16px 12px 42px) stack flush, 0 gap, directly under their group heading; 20px Linear icons; Regular 14 `--text-secondary`, selected Bold `--text-selected`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `4697:13314`, menu items `4674:25675` (Web app) and `10372:4045` (Admin).
 
 **Prototype:** `src/components/LeftSidebar/LeftSidebar.tsx`
-- No props. Expandable People & Teams and Content groups; selection from `useLocation().pathname`.
+- No props. Expandable People & Teams, Content and Learning Records groups; selection from `useLocation().pathname`.
 
 ### Breadcrumb
 
@@ -144,7 +144,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 | Side navigation · State | Collapsed / Expanded | n/a | Expanded only | collapsed states are not implemented (fixed 240px) |
 | Menu/Itens/Admin · Type | Menu / Sub-menu | n/a | `.sidebar-item` / `.sidebar-sub-item` | rows are internal to `LeftSidebar`, no props |
 | Menu/Itens/Admin · Selected | false / true | n/a | route match (`useLocation().pathname`) | `.sidebar-sub-item--active` |
-| Menu/Itens/Admin · chevron right | false / true | n/a | groups only (People & Teams, Content) | `ArrowDown2` / `ArrowUp2` chevron |
+| Menu/Itens/Admin · chevron right | false / true | n/a | groups only (People & Teams, Content, Learning Records) | `ArrowDown2` / `ArrowUp2` chevron |
 | Menu/Itens/Admin · State | Hover / Enabled / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props; Focus is the cyan ring (not yet in code, see Drift) |
 | Menu/Itens/Admin · Expanded | true / false | n/a | internal `peopleOpen` / `contentOpen` | not a prop |
 | Menu/Itens/Admin · Label (text) | "Item" | n/a | item text | no icon swap property: Selected rows use the Bold glyph, the rest Linear |
@@ -327,9 +327,9 @@ Shared elements:
 
 **Web app.** Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regular 16**, 8px gap. Items: For You, Your Workspace, Knowledge Hub, Search, My Team, My Progress, Feed, Profile, Admin.
 
-**Admin.** Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records, Events, Account & Settings.
+**Admin.** Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records ▾ (5Mins Courses `/learning-records`, External Training `/learning-records/external`, Approved Courses `/learning-records/approved-courses`, full admins only), Events, Account & Settings.
 
-**Expandable groups** (People & Teams, Content) append a 16px `ArrowDown2`/`ArrowUp2` chevron in `--text-tertiary`, right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`. The reference is the component set `10372:4045` (full Menu/Sub-menu × selected × Enabled/Hover matrix), not the assembled Side navigation panel `4697:13314`, which draws sub-items at 44px left / 8px vertical.
+**Expandable groups** (People & Teams, Content, Learning Records) append a 16px `ArrowDown2`/`ArrowUp2` chevron in `--text-tertiary`, right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`. The reference is the component set `10372:4045` (full Menu/Sub-menu × selected × Enabled/Hover matrix), not the assembled Side navigation panel `4697:13314`, which draws sub-items at 44px left / 8px vertical.
 
 ### Collapsed side panel
 

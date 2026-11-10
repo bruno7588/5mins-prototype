@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import Button from '@/components/Button/Button'
 import Table, { type Column } from '@/components/Table/Table'
-import Tabs from '@/components/Tabs/Tabs'
 import { Calendar, Note1 } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import CsvIcon from '../../components/icons/CsvIcon'
@@ -136,7 +136,8 @@ function DateCell({ value }: { value: string | null }) {
 }
 
 function LearningRecords() {
-  const [activeTab, setActiveTab] = useState<TabKey>('5mins')
+  /* The sidebar picks the view: Learning Records > 5Mins Courses or External Training. */
+  const activeTab: TabKey = useLocation().pathname === '/learning-records/external' ? 'external' : '5mins'
   const [extActionsSlot, setExtActionsSlot] = useState<HTMLDivElement | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filtersExpanded, setFiltersExpanded] = useState(false)
@@ -332,11 +333,6 @@ function LearningRecords() {
     if (showDeactivated) rows = [...deactivatedData, ...rows]
     return rows.filter(matchesFilters)
   })()
-
-  const tabs: { key: TabKey; label: string }[] = [
-    { key: '5mins', label: '5Mins Courses' },
-    { key: 'external', label: 'External Training' },
-  ]
 
   // Renders the correct input for an added filter based on its control type.
   const renderControl = (id: string) => {
@@ -541,15 +537,8 @@ function LearningRecords() {
         <div className="lrp-page">
           {/* Header */}
           <div className="lrp-header">
-            <h2 className="lrp-title">Learning Records</h2>
-            <div className="lrp-divider" />
             <div className="lrp-tabs-row">
-              <Tabs
-                items={tabs}
-                activeKey={activeTab}
-                onChange={(key) => setActiveTab(key as TabKey)}
-                ariaLabel="Learning record types"
-              />
+              <h2 className="lrp-title">{activeTab === 'external' ? 'External Training' : '5Mins Courses'}</h2>
 
               <div className="lrp-head-actions">
                 {/* Quick export — download the current table view without saving a report */}
@@ -583,6 +572,7 @@ function LearningRecords() {
                 {activeTab === 'external' && <div ref={setExtActionsSlot} className="lrp-ext-actions" />}
               </div>
             </div>
+            <div className="lrp-divider" />
           </div>
 
           {activeTab === '5mins' && (<>

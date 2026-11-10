@@ -103,3 +103,6 @@
 }
 
 /* DES-336: Expiry filter on the manager's External Training list. */
+.lr__search {
+  width: 280px;
+}

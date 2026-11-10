@@ -17,6 +17,7 @@ import {
 } from 'iconsax-react'
 import { buildInitialMappings } from '../../pages/roles/data/mockHrisMappings'
 import { initialCompanyRoles, fiveMinsRoles } from '../../pages/roles/data/mockRoles'
+import { isFullAdmin } from '@/data/externalTraining'
 import './LeftSidebar.css'
 
 const iconSize = 20
@@ -36,6 +37,7 @@ function LeftSidebar() {
 
   const [peopleOpen, setPeopleOpen] = useState(isPeopleSection)
   const [contentOpen, setContentOpen] = useState(true)
+  const [recordsOpen, setRecordsOpen] = useState(activePage.startsWith('/learning-records'))
 
   return (
     <aside className="left-sidebar">
@@ -172,20 +174,45 @@ function LeftSidebar() {
           <span className="sidebar-item-label">Skills</span>
         </button>
 
-        {/* Learning Records */}
-        <button
-          className={`sidebar-item${activePage === '/learning-records' ? ' sidebar-item--active' : ''}`}
-          onClick={() => navigate('/learning-records')}
-        >
+        {/* Learning Records (expandable) */}
+        <button className="sidebar-item" onClick={() => setRecordsOpen(!recordsOpen)}>
           <span className="sidebar-item-icon">
-            <DocumentText
-              size={iconSize}
-              color={activePage === '/learning-records' ? activeIconColor : iconColor}
-              variant={activePage === '/learning-records' ? 'Bold' : 'Linear'}
-            />
+            <DocumentText size={iconSize} color={iconColor} variant="Linear" />
           </span>
           <span className="sidebar-item-label">Learning Records</span>
+          <span className="sidebar-item-chevron">
+            {recordsOpen ? (
+              <ArrowUp2 size={16} color="var(--text-tertiary)" />
+            ) : (
+              <ArrowDown2 size={16} color="var(--text-tertiary)" />
+            )}
+          </span>
         </button>
+        {recordsOpen && (
+          <div className="sidebar-sub-items">
+            <button
+              className={`sidebar-sub-item${activePage === '/learning-records' ? ' sidebar-sub-item--active' : ''}`}
+              onClick={() => navigate('/learning-records')}
+            >
+              5Mins Courses
+            </button>
+            <button
+              className={`sidebar-sub-item${activePage === '/learning-records/external' ? ' sidebar-sub-item--active' : ''}`}
+              onClick={() => navigate('/learning-records/external')}
+            >
+              External Training
+            </button>
+            {/* Only full admins manage the approved list (DES-336 D21). */}
+            {isFullAdmin() && (
+              <button
+                className={`sidebar-sub-item${activePage === '/learning-records/approved-courses' ? ' sidebar-sub-item--active' : ''}`}
+                onClick={() => navigate('/learning-records/approved-courses')}
+              >
+                Approved Courses
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Events */}
         <button className="sidebar-item ui-disabled" disabled>

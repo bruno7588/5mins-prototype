@@ -37,6 +37,7 @@ import ProgramBuilder from './pages/programs/ProgramBuilder'
 import ProgramCourseDetails from './pages/courses/ProgramCourseDetails'
 import Events from './pages/events/Events'
 import LearningRecords from './pages/learning-records/LearningRecords'
+import ApprovedCourses from './pages/learning-records/ApprovedCourses'
 import Account from './pages/account/Account'
 
 function App() {
@@ -120,6 +121,8 @@ function App() {
                 <Route path="/people" element={<People />} />
                 <Route path="/people/:id" element={<UserProfile />} />
                 <Route path="/learning-records" element={<LearningRecords />} />
+                <Route path="/learning-records/external" element={<LearningRecords />} />
+                <Route path="/learning-records/approved-courses" element={<ApprovedCourses />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/user-fields" element={<UserFields />} />
                 <Route path="/roles" element={<Roles />} />

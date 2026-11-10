@@ -44,10 +44,13 @@ function SparkleIcon({
     >
       {gradient && (
         <defs>
-          <linearGradient id={gradId} x1="0" y1="0" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+          {/* Figma Library Icons "AI" (11118:1380): each sparkle runs from
+              Primary-Button-background on its left edge to Blaze quiz on its right.
+              objectBoundingBox (the default) gives every path its own sweep. */}
+          <linearGradient id={gradId} x1="0" y1="0.5" x2="1" y2="0.5">
             {/* The start stop follows the AI Outlined label per state: a button sets
                 --sparkle-gradient-start on hover and press (Button.css). */}
-            <stop offset="0" style={{ stopColor: 'var(--sparkle-gradient-start, var(--text-button-outlined))' }} />
+            <stop offset="0" style={{ stopColor: 'var(--sparkle-gradient-start, var(--primary-button-background))' }} />
             <stop offset="1" style={{ stopColor: 'var(--blaze-quiz)' }} />
           </linearGradient>
         </defs>
