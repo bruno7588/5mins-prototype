@@ -474,8 +474,8 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
           <EmptyState
             illustration={<img src={emptyBox} alt="" width={72} height={72} />}
             title="No approved courses yet"
-            description="Add courses to the approved list in Approved Courses before recording training."
-            primaryAction={{ label: 'Go to Approved Courses', onClick: () => navigate('/learning-records/approved-courses') }}
+            description="Add courses to the approved list in External Training before recording training."
+            primaryAction={{ label: 'Go to Approved List', onClick: () => navigate('/learning-records/external?tab=approved-list') }}
           />
         ) : (
           <div className="aet-form">

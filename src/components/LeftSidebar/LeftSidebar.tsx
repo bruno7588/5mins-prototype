@@ -17,7 +17,6 @@ import {
 } from 'iconsax-react'
 import { buildInitialMappings } from '../../pages/roles/data/mockHrisMappings'
 import { initialCompanyRoles, fiveMinsRoles } from '../../pages/roles/data/mockRoles'
-import { isFullAdmin } from '@/data/externalTraining'
 import Collapse from '@/components/Collapse/Collapse'
 import './LeftSidebar.css'
 
@@ -203,15 +202,6 @@ function LeftSidebar() {
             >
               External Training
             </button>
-            {/* Only full admins manage the approved list (DES-336 D21). */}
-            {isFullAdmin() && (
-              <button
-                className={`sidebar-sub-item${activePage === '/learning-records/approved-courses' ? ' sidebar-sub-item--active' : ''}`}
-                onClick={() => navigate('/learning-records/approved-courses')}
-              >
-                Approved Courses
-              </button>
-            )}
           </div>
         </Collapse>
 

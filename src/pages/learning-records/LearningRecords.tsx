@@ -1,5 +1,8 @@
 import { useCallback, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
+import Tabs from '@/components/Tabs/Tabs'
+import ExternalTraining from '@/pages/account/components/ExternalTraining/ExternalTraining'
+import { isFullAdmin, useExternalTraining } from '@/data/externalTraining'
 import Button from '@/components/Button/Button'
 import Table, { type Column } from '@/components/Table/Table'
 import { Calendar, Note1 } from 'iconsax-react'
@@ -139,6 +142,10 @@ function DateCell({ value }: { value: string | null }) {
 function LearningRecords() {
   /* The sidebar picks the view: Learning Records > 5Mins Courses or External Training. */
   const activeTab: TabKey = useLocation().pathname === '/learning-records/external' ? 'external' : '5mins'
+  /* External Training's own tabs: Records, and Approved list (?tab=approved-list). */
+  const [searchParams, setSearchParams] = useSearchParams()
+  const extTab = isFullAdmin() && searchParams.get('tab') === 'approved-list' ? 'approved' : 'records'
+  const ext = useExternalTraining()
   const [query, setQuery] = useState('')
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filtersExpanded, setFiltersExpanded] = useState(false)
@@ -545,6 +552,19 @@ function LearningRecords() {
 
             </div>
             <div className="lrp-divider" />
+            {/* External Training: the records, and the approved list they are recorded against. */}
+            {activeTab === 'external' && (
+              <Tabs
+                ariaLabel="External training sections"
+                activeKey={extTab}
+                onChange={(key) => setSearchParams(key === 'approved' ? { tab: 'approved-list' } : {})}
+                items={[
+                  { key: 'records', label: 'Records', counter: ext.records.length },
+                  // Only full admins manage the approved list (DES-336 D21). Counts its live courses.
+                  ...(isFullAdmin() ? [{ key: 'approved', label: 'Approved list', counter: ext.courses.filter((c) => !c.archived).length }] : []),
+                ]}
+              />
+            )}
           </div>
 
           {activeTab === '5mins' && (<>
@@ -660,6 +680,8 @@ function LearningRecords() {
               rows={displayedCourseRows}
               getRowKey={(row) => row.id}
             />
+          ) : extTab === 'approved' ? (
+            <ExternalTraining />
           ) : (
             <ExternalTrainingRecords showToast={showToast} />
           )}

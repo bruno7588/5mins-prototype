@@ -327,7 +327,7 @@ Shared elements:
 
 **Web app.** Base: `padding: 16px` · radius 8 · icon **24px Iconsax Bold** · label **Regular 16**, 8px gap. Items: For You, Your Workspace, Knowledge Hub, Search, My Team, My Progress, Feed, Profile, Admin.
 
-**Admin.** Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records ▾ (5Mins Courses `/learning-records`, External Training `/learning-records/external`, Approved Courses `/learning-records/approved-courses`, full admins only), Events, Account & Settings.
+**Admin.** Base: `padding: 12px 16px` · radius 8 · icon **20px Iconsax Linear** · label **Regular 14**, 8px gap. Items: Home, People & Teams ▾, Content ▾, Automations, Reports, Skills, Learning Records ▾ (5Mins Courses `/learning-records`, External Training `/learning-records/external`, whose page has Records and Approved list tabs; Approved list for full admins only), Events, Account & Settings.
 
 **Expandable groups** (People & Teams, Content, Learning Records) append a 16px `ArrowDown2`/`ArrowUp2` chevron in `--text-tertiary`, right-aligned (label flexes). **Sub-menu items** are text-only rows: `padding: 12px 16px 12px 42px` (aligns text under the parent label), Regular 14 `--text-tertiary`. The reference is the component set `10372:4045` (full Menu/Sub-menu × selected × Enabled/Hover matrix), not the assembled Side navigation panel `4697:13314`, which draws sub-items at 44px left / 8px vertical.
 
