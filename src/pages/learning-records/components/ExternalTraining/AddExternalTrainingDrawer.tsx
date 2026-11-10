@@ -89,6 +89,8 @@ interface Props {
   lockedPersonId?: string
   /** Edit an existing record. */
   record?: ExternalRecord | null
+  /** A learner recording their own training (Profile): can't add to the approved list. */
+  learnerView?: boolean
   onClose: () => void
   onSaved: (record: ExternalRecord, isNew: boolean) => void
 }
@@ -125,7 +127,7 @@ async function pdfPages(file: File): Promise<{ pages: string[]; total: number }>
   return { pages, total: doc.numPages }
 }
 
-function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord = null, onClose, onSaved }: Props) {
+function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord = null, learnerView = false, onClose, onSaved }: Props) {
   const navigate = useNavigate()
   const { courses, providers, records, allowOneOffs } = useExternalTraining()
   const [record] = useState<ExternalRecord | null>(initialRecord)
@@ -137,7 +139,7 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
 
   /* Ways out when the course isn't listed: full admins can add it to the list (D21),
      anyone can record a one-off while the tenant allows them. */
-  const canAdd = isFullAdmin()
+  const canAdd = !learnerView && isFullAdmin()
   const canOneOff = allowOneOffs || !!(initialRecord && !initialRecord.courseId)
   const listEmpty = courses.every((c) => c.archived)
 
@@ -474,8 +476,16 @@ function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord
           <EmptyState
             illustration={<img src={emptyBox} alt="" width={72} height={72} />}
             title="No approved courses yet"
-            description="Add courses to the approved list in External Training before recording training."
-            primaryAction={{ label: 'Go to Approved List', onClick: () => navigate('/learning-records/external?tab=approved-list') }}
+            description={
+              learnerView
+                ? 'Ask your admin to add courses to the approved list before recording training.'
+                : 'Add courses to the approved list in External Training before recording training.'
+            }
+            primaryAction={
+              learnerView
+                ? undefined
+                : { label: 'Go to Approved List', onClick: () => navigate('/learning-records/external?tab=approved-list') }
+            }
           />
         ) : (
           <div className="aet-form">

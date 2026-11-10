@@ -9,7 +9,7 @@ description: Self-contained build specs for the seven official 5Mins.ai content 
 
 This doc is fully self-contained. Every dimension, token, and structure below is the real spec, so no Figma connection is needed to build a card. The Figma nodes are listed only for anyone who wants to re-verify.
 
-**Code:** `WorkspaceCourseCard`, `CategoryCard`, `LessonGridCard`, `SkillCard` in `src/components/<Name>/<Name>.tsx`; mobile `CourseCard`, `CategoryCard`, `ProgramCourseCard`, `LessonCard`, `AssessmentCard`, `InstructorCard` in `src/components/mobile/`. No shared component yet for the Lesson list rows, Assessment rows, Folder card (`src/pages/your-courses/YourCourses.tsx`), desktop Instructor card, skill chip or media type tag.
+**Code:** `WorkspaceCourseCard`, `CategoryCard`, `LessonGridCard`, `SkillCard`, `InstructorCard` (desktop) in `src/components/<Name>/<Name>.tsx`; mobile `CourseCard`, `CategoryCard`, `ProgramCourseCard`, `LessonCard`, `AssessmentCard`, `InstructorCard` in `src/components/mobile/`. No shared component yet for the Lesson list rows, Assessment rows, Folder card (`src/pages/your-courses/YourCourses.tsx`), skill chip or media type tag.
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Lesson `5144:14181`, Assessment `10242:2782`, Course `5132:5756`, Skill `11802:3704`, Category `10176:1806`, Folder `10175:3106`, Instructor `5149:27386`, Media type tag `4603:27712`
 **Last verified:** 2026-10-07
 
@@ -44,7 +44,7 @@ A course **resource** (a PDF, Word, Excel or PowerPoint file, or an external lin
 
 For Lesson and Assessment cards, pick the variant by surface: an **admin panel** screen uses the admin list row; a **learner web app** screen uses the web app row; a **grid or library browse** layout uses the Lesson grid tile. When unsure, read the surrounding chrome: dark admin chrome means admin.
 
-Only the cards below have a shared component. Lesson list rows, Assessment rows, the Folder card, the Instructor card (desktop) and the skill chip are spec-only: build them from the [Anatomy](#anatomy) sections.
+Only the cards below have a shared component. Lesson list rows, Assessment rows, the Folder card and the skill chip are spec-only: build them from the [Anatomy](#anatomy) sections.
 
 ### WorkspaceCourseCard (desktop Course card)
 
@@ -256,7 +256,7 @@ No shared component: built in `src/pages/your-courses/YourCourses.tsx`.
 
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Device | Desktop / Mobile | component choice | spec-only (desktop) / `mobile/InstructorCard` | |
+| Device | Desktop / Mobile | component choice | `InstructorCard` / `mobile/InstructorCard` | |
 | State | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | desktop only |
 | Name, Bio (text) | name, bio | `name`, `bio` | `string` | |
 | Skill 1, Skill 2 (text) + Skill 1 icon, Skill 2 icon (swap) | skill rows | `skills` | `{ label, icon? }[]` | Figma draws a fixed two rows |
@@ -732,7 +732,7 @@ The first tile in a folder grid is the creator affordance: 308 x 272, transparen
 
 ### Instructor card
 
-An instructor presented as a compact horizontal card: photo, name, short bio, and a list of skill rows. Source: `Card/Instructor` `5149:27386`. Variants: Desktop Default `6124:3237`, Desktop Hover `9590:2718`, Mobile Default `5149:27385`. The mobile variant is implemented as the shared component `src/components/mobile/InstructorCard`.
+An instructor presented as a compact horizontal card: photo, name, short bio, and a list of skill rows. Source: `Card/Instructor` `5149:27386`. Variants: Desktop Default `6124:3237`, Desktop Hover `9590:2718`, Mobile Default `5149:27385`. Desktop is the shared component `src/components/InstructorCard` (learner Profile, Following tab); mobile is `src/components/mobile/InstructorCard`.
 
 | | Desktop | Mobile |
 |---|---|---|

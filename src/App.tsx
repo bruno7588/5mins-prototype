@@ -38,6 +38,7 @@ import ProgramCourseDetails from './pages/courses/ProgramCourseDetails'
 import Events from './pages/events/Events'
 import LearningRecords from './pages/learning-records/LearningRecords'
 import Account from './pages/account/Account'
+import Profile from './pages/profile/Profile'
 
 function App() {
   return (
@@ -75,6 +76,7 @@ function App() {
       <Route path="/my-team/people/:id" element={<UserProfile />} />
       <Route path="/workspace" element={<Workspace />} />
       <Route path="/for-you" element={<ForYou />} />
+      <Route path="/profile" element={<Profile />} />
       {/* Program Builder — standalone full-page, no TopNav (ranks above /programs/:id) */}
       <Route
         path="/programs/builder"

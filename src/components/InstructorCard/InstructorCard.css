@@ -1,0 +1,119 @@
+/* Desktop Instructor card — cards.md "Instructor card", Library 5149:27386 (Desktop 6124:3237, Hover 9590:2718).
+   404 x 160; photo 120 wide, full height; info padding 16, gap 12. */
+
+.instructor-card {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  background: var(--cards-background);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  text-align: left;
+  transition: background 150ms ease;
+}
+
+.instructor-card--interactive {
+  cursor: pointer;
+}
+
+.instructor-card--interactive:hover {
+  background: var(--cards-background-hover);
+}
+
+.instructor-card--interactive:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.instructor-card__photo {
+  align-self: stretch;
+  flex-shrink: 0;
+  width: 120px;
+  background-color: var(--border);
+  background-size: cover;
+  background-position: center;
+}
+
+.instructor-card__info {
+  flex: 1 0 0;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-m);
+}
+
+.instructor-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  min-width: 0;
+}
+
+.instructor-card__name {
+  margin: 0;
+  font-family: Poppins, sans-serif;
+  font-size: var(--font-size-h4);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.instructor-card__bio {
+  margin: 0;
+  font-family: Poppins, sans-serif;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.instructor-card__skills {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.instructor-card__skill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border-radius: var(--radius-s);
+  font-family: Poppins, sans-serif;
+  font-size: var(--font-size-sm);
+  line-height: 1.2;
+  color: var(--text-tertiary);
+  min-width: 0;
+}
+
+.instructor-card__skill span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.instructor-card__skill img {
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .instructor-card {
+    transition: none;
+  }
+}

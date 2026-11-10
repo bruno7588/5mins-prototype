@@ -249,8 +249,8 @@ export const learnerSideItems: { label: string; icon: typeof Home2; path?: strin
   { label: 'My Team', icon: Award, path: '/my-team' },
   { label: 'My Progress', icon: Medal },
   { label: 'Feed', icon: Messages2 },
-  // DES-336: the signed-in learner's own profile (External Training tab, read-only).
-  { label: 'Profile', icon: UserSquare, path: '/my-team/people/1' },
+  // The signed-in learner's Profile: Bookmarks, Likes, Following and External Training (read-only).
+  { label: 'Profile', icon: UserSquare, path: '/profile' },
 ]
 
 function MyTeam() {

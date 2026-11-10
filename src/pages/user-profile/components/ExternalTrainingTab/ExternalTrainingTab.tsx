@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Add, Danger } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
@@ -20,8 +21,8 @@ import {
 import './ExternalTrainingTab.css'
 
 /* Person profile > External Training (DES-336 Phase 3, PRD 3.1-3.5).
-   One tab for every viewer (D13): admins add, edit and delete; managers (own team
-   only) and the learner on their own profile see the same list, read-only.
+   One tab for every viewer (D13): admins add, edit and delete; the learner on their
+   own Profile adds training with the same drawer; managers (own team only) read only.
    Prefix: uet- */
 
 export type ExternalTrainingViewer = 'admin' | 'manager' | 'learner'
@@ -31,9 +32,12 @@ interface Props {
   personName: string
   viewer: ExternalTrainingViewer
   showToast: (type: 'success', message: string) => void
+  /** Where Add Training renders instead of its own row above the table (the learner
+      Profile puts it on the tabs row). */
+  addButtonTarget?: HTMLElement | null
 }
 
-function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props) {
+function ExternalTrainingTab({ personId, personName, viewer, showToast, addButtonTarget }: Props) {
   const { records } = useExternalTraining()
   /* Stays set while the drawer plays its exit; key remounts it fresh on each open. */
   const [drawer, setDrawer] = useState<{ record: ExternalRecord | null; open: boolean; key: number } | null>(null)
@@ -41,6 +45,8 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
   const closeDrawer = () => setDrawer((d) => d && { ...d, open: false })
   const [toDelete, setToDelete] = useState<ExternalRecord | null>(null)
   const isAdmin = viewer === 'admin'
+  const isLearner = viewer === 'learner'
+  const canAddTraining = isAdmin || isLearner
   const firstName = personName.split(' ')[0]
 
   // Overdue first, then due soon, then newest (PRD 3.1).
@@ -57,19 +63,19 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
 
   return (
     <div className="uet">
-      {rows.length > 0 && isAdmin && (
-        <div className="uet-toolbar">
-          {isAdmin && (
-            <Button
-              variant="outlined"
-              icon={<Add size={20} color="currentColor" variant="Linear" />}
-              onClick={() => openDrawer(null)}
-            >
-              Add Training
-            </Button>
-          )}
-        </div>
-      )}
+      {rows.length > 0 && canAddTraining && (() => {
+        const addButton = (
+          /* Filled on the learner Profile's tabs row; outlined on the admin profile. */
+          <Button
+            variant={addButtonTarget ? 'filled' : 'outlined'}
+            icon={<Add size={20} color="currentColor" variant="Linear" />}
+            onClick={() => openDrawer(null)}
+          >
+            Add Training
+          </Button>
+        )
+        return addButtonTarget ? createPortal(addButton, addButtonTarget) : <div className="uet-toolbar">{addButton}</div>
+      })()}
 
       {rows.length ? (
         <ExternalRecordsTable
@@ -86,9 +92,11 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
           description={
             isAdmin
               ? `Record training ${firstName} has done outside 5Mins to track when it expires.`
-              : "Your admin records training done outside 5Mins from the certificate."
+              : isLearner
+                ? "Record training you've done outside 5Mins to track when it expires."
+                : "Your admin records training done outside 5Mins from the certificate."
           }
-          primaryAction={isAdmin ? { label: 'Add Training', onClick: () => openDrawer(null) } : undefined}
+          primaryAction={canAddTraining ? { label: 'Add Training', onClick: () => openDrawer(null) } : undefined}
         />
       )}
 
@@ -98,13 +106,17 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
           open={drawer.open}
           lockedPersonId={personId}
           record={drawer.record}
+          learnerView={isLearner}
           onClose={closeDrawer}
           onSaved={(r, isNew) => {
             saveRecord(r)
             closeDrawer()
+            const name = recordTrainingName(r)
             showToast(
               'success',
-              isNew ? `${recordTrainingName(r)} added for ${personName}` : `${recordTrainingName(r)} updated for ${personName}`,
+              isLearner
+                ? `${name} ${isNew ? 'added to' : 'updated in'} your records`
+                : isNew ? `${name} added for ${personName}` : `${name} updated for ${personName}`,
             )
           }}
         />

@@ -1,0 +1,55 @@
+/* ===== Learner Profile page (lp-) =====
+   Shell: MyTeam.css (mt-*). Header: UserProfile.css (up-header, as on the people profile). */
+
+/* Tabs on the left, the active tab's action (Add Training) on the right. The action
+   sits out of the flow, centred on the tabs, so the button (taller than the tabs)
+   never changes the row's height: the tabs don't jump when switching tabs. */
+.lp-tabs-row {
+  position: relative;
+  min-width: 0;
+  /* The centred button is 16px taller than the tabs, so the row adds 8px above and below:
+     divider to tabs 24px (button clears it by 16), and the button sits 24px above the table. */
+  margin: var(--space-s) 0;
+}
+
+.lp-tabs-row__actions {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.lp-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  min-width: 0;
+}
+
+.lp-switcher {
+  align-self: flex-start;
+}
+
+/* Lesson grid tiles are a fixed 170 x 230 (cards.md); the row wraps. */
+.lp-lesson-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+}
+
+/* Course cards are a fixed 300 wide (cards.md). */
+.lp-course-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+}
+
+/* Instructor cards: 404 wide at minimum, stretching to fill the row. */
+.lp-instructor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(404px, 1fr));
+  gap: var(--space-l);
+}
