@@ -6,6 +6,7 @@ import FileUploader from '../../../../components/FileUploader/FileUploader'
 import Button from '@/components/Button/Button'
 import Slider from '@/components/Slider/Slider'
 import Tooltip from '@/components/Tooltip/Tooltip'
+import Tabs from '@/components/Tabs/Tabs'
 import './AddImageModal.css'
 
 export type ImageModalTab = 'upload' | 'generate' | 'freepik' | 'defaults'
@@ -386,20 +387,11 @@ function AddImageModal({
         <h2 className="aim-title">{title}</h2>
         <div className="aim-divider" />
         {tabs.length > 1 && (
-          <div className="aim-tabs" role="tablist">
-            {tabs.map((key) => (
-              <button
-                key={key}
-                type="button"
-                role="tab"
-                aria-selected={tab === key}
-                className={`aim-tab${tab === key ? ' aim-tab--active' : ''}`}
-                onClick={() => setTab(key)}
-              >
-                {TAB_LABELS[key]}
-              </button>
-            ))}
-          </div>
+          <Tabs
+            items={tabs.map((key) => ({ key, label: TAB_LABELS[key] }))}
+            activeKey={tab}
+            onChange={(key) => setTab(key as Tab)}
+          />
         )}
       </div>
 

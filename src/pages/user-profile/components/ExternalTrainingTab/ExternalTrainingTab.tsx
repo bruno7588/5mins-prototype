@@ -35,7 +35,10 @@ interface Props {
 
 function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props) {
   const { records } = useExternalTraining()
-  const [drawer, setDrawer] = useState<{ record: ExternalRecord | null } | null>(null)
+  /* Stays set while the drawer plays its exit; key remounts it fresh on each open. */
+  const [drawer, setDrawer] = useState<{ record: ExternalRecord | null; open: boolean; key: number } | null>(null)
+  const openDrawer = (record: ExternalRecord | null) => setDrawer({ record, open: true, key: Date.now() })
+  const closeDrawer = () => setDrawer((d) => d && { ...d, open: false })
   const [toDelete, setToDelete] = useState<ExternalRecord | null>(null)
   const isAdmin = viewer === 'admin'
   const firstName = personName.split(' ')[0]
@@ -63,7 +66,7 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
             <Button
               variant="outlined"
               icon={<Add size={20} color="currentColor" variant="Linear" />}
-              onClick={() => setDrawer({ record: null })}
+              onClick={() => openDrawer(null)}
             >
               Add Training
             </Button>
@@ -76,7 +79,7 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
           rows={rows}
           all={records}
           showLearner={false}
-          onEdit={isAdmin ? (r) => setDrawer({ record: r }) : undefined}
+          onEdit={isAdmin ? (r) => openDrawer(r) : undefined}
           onDelete={isAdmin ? setToDelete : undefined}
         />
       ) : (
@@ -88,18 +91,20 @@ function ExternalTrainingTab({ personId, personName, viewer, showToast }: Props)
               ? `Record training ${firstName} has done outside 5Mins to track when it expires.`
               : "Your admin records training done outside 5Mins from the certificate."
           }
-          primaryAction={isAdmin ? { label: 'Add Training', onClick: () => setDrawer({ record: null }) } : undefined}
+          primaryAction={isAdmin ? { label: 'Add Training', onClick: () => openDrawer(null) } : undefined}
         />
       )}
 
       {drawer && (
         <AddExternalTrainingDrawer
+          key={drawer.key}
+          open={drawer.open}
           lockedPersonId={personId}
           record={drawer.record}
-          onClose={() => setDrawer(null)}
+          onClose={closeDrawer}
           onSaved={(r, isNew) => {
             saveRecord(r)
-            setDrawer(null)
+            closeDrawer()
             showToast(
               'success',
               isNew ? `${recordTrainingName(r)} added for ${personName}` : `${recordTrainingName(r)} updated for ${personName}`,

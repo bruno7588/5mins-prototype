@@ -2,11 +2,11 @@ import { useState } from 'react'
 import Button from '@/components/Button/Button'
 import Table, { type Column } from '@/components/Table/Table'
 import { SearchNormal1 } from 'iconsax-react'
-import CloseButton from '../../../../components/CloseButton/CloseButton'
 import thumb1 from '@/assets/programs/course-thumbs/course-thumb-1.jpg'
 import thumb2 from '@/assets/programs/course-thumbs/course-thumb-2.jpg'
 import thumb3 from '@/assets/programs/course-thumbs/course-thumb-3.jpg'
 import thumb4 from '@/assets/programs/course-thumbs/course-thumb-4.jpg'
+import { DrawerHeader } from '../ContentDrawer/DrawerSlots'
 import './ScormDrawer.css'
 
 export interface ScormFile {
@@ -49,15 +49,14 @@ export const scormFiles: ScormFile[] = [
 ]
 
 interface ContentProps {
-  onClose: () => void
   addedIds: Set<number>
   onAdd: (file: ScormFile) => void
   onRemove: (id: number) => void
 }
 
-/* Inner content only — no overlay/shell. Mount inside a shared drawer shell
-   (see ContentDrawer) so swapping between content types doesn't re-animate. */
-export function ScormDrawerContent({ onClose, addedIds, onAdd, onRemove }: ContentProps) {
+/* Inner content only, no overlay or shell. Mount inside ContentDrawer's SideDrawer so
+   swapping between content types doesn't re-animate; the title goes to its header. */
+export function ScormDrawerContent({ addedIds, onAdd, onRemove }: ContentProps) {
   const [search, setSearch] = useState('')
 
   const filtered = scormFiles.filter((f) =>
@@ -98,16 +97,15 @@ export function ScormDrawerContent({ onClose, addedIds, onAdd, onRemove }: Conte
 
   return (
     <>
-      <div className="scorm-drawer-header">
-        <div className="scorm-drawer-headline">
-          <h3 className="scorm-drawer-title">Add SCORM files</h3>
-          <p className="scorm-drawer-subtitle">
+      <DrawerHeader
+        title="Add SCORM files"
+        description={
+          <>
             Add from the list of SCORM files you've already published.{' '}
             <span className="scorm-drawer-upload-link ui-disabled" aria-disabled="true">Upload New SCORM</span>
-          </p>
-        </div>
-        <CloseButton onClick={onClose} className="scorm-drawer-close" />
-      </div>
+          </>
+        }
+      />
 
       <div className="scorm-drawer-search">
         <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />

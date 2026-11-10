@@ -40,6 +40,7 @@ import certificateIllustration from '../../assets/programs/certificate.svg'
 import AdminMenuItem from '@/components/AdminMenuItem/AdminMenuItem'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import Button from '@/components/Button/Button'
+import Tabs from '@/components/Tabs/Tabs'
 import CompanyImageMotion from '@/components/CompanyImageMotion/CompanyImageMotion'
 import { useCompanyImage } from '@/data/companyImage'
 import CourseCertificateCard from './components/CourseCertificateCard/CourseCertificateCard'
@@ -326,31 +327,16 @@ function ProgramCourseDetails() {
               </div>
             </header>
 
-            {/* Tabs */}
-            <nav className="pcd-tabs">
-              <button
-                type="button"
-                className={`pcd-tab${tab === 'course' ? ' pcd-tab--active' : ''}`}
-                onClick={() => setTab('course')}
-              >
-                Course
-              </button>
-              <button
-                type="button"
-                className={`pcd-tab${tab === 'about' ? ' pcd-tab--active' : ''}`}
-                onClick={() => setTab('about')}
-              >
-                About
-              </button>
-              <button
-                type="button"
-                className={`pcd-tab${tab === 'resources' ? ' pcd-tab--active' : ''}`}
-                onClick={() => setTab('resources')}
-              >
-                Resources
-                {resources.length > 0 && <span className="pcd-tab__count">{resources.length}</span>}
-              </button>
-            </nav>
+            <Tabs
+              items={[
+                { key: 'course', label: 'Course' },
+                { key: 'about', label: 'About' },
+                { key: 'resources', label: 'Resources', counter: resources.length > 0 ? resources.length : undefined },
+              ]}
+              activeKey={tab}
+              onChange={(key) => setTab(key as typeof tab)}
+              ariaLabel="Course sections"
+            />
 
             {/* Course outline */}
             {tab === 'course' ? (

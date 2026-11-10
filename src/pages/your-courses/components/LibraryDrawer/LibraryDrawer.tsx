@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import Button from '@/components/Button/Button'
 import { PlayCircle } from 'iconsax-react'
-import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Search from '../../../../components/Search/Search'
-import '../../../my-team/CoursesDrawer.css'
+import { DrawerHeader } from '../ContentDrawer/DrawerSlots'
 import './LibraryDrawer.css'
 
 export interface LibraryLesson {
@@ -88,15 +87,14 @@ export const libraryLessons: LibraryLesson[] = [
 ]
 
 interface ContentProps {
-  onClose: () => void
   addedIds: Set<number>
   onAdd: (lesson: LibraryLesson) => void
   onRemove: (id: number) => void
 }
 
-/* Inner content only — no overlay/shell. Mount inside a shared drawer shell
-   (see ContentDrawer) so swapping between content types doesn't re-animate. */
-export function LibraryDrawerContent({ onClose, addedIds, onAdd, onRemove }: ContentProps) {
+/* Inner content only, no overlay or shell. Mount inside ContentDrawer's SideDrawer so
+   swapping between content types doesn't re-animate; the title goes to its header. */
+export function LibraryDrawerContent({ addedIds, onAdd, onRemove }: ContentProps) {
   const [search, setSearch] = useState('')
 
   const query = search.trim().toLowerCase()
@@ -110,19 +108,10 @@ export function LibraryDrawerContent({ onClose, addedIds, onAdd, onRemove }: Con
 
   return (
     <>
-      <div className="side-drawer__header">
-        <div className="side-drawer__headline">
-          <div className="library-drawer__headline">
-            <h2 id="content-drawer-title" className="library-drawer__title">
-              Add lessons from 5Mins library
-            </h2>
-            <p className="library-drawer__subtitle">
-              Explore from 20,000+ lessons designed for your team's growth
-            </p>
-          </div>
-          <CloseButton onClick={onClose} />
-        </div>
-      </div>
+      <DrawerHeader
+        title="Add lessons from 5Mins library"
+        description="Explore from 20,000+ lessons designed for your team's growth"
+      />
 
       <div className="library-drawer__search">
         <Search
@@ -134,7 +123,7 @@ export function LibraryDrawerContent({ onClose, addedIds, onAdd, onRemove }: Con
         />
       </div>
 
-      <div className="side-drawer__content library-drawer__list">
+      <div className="library-drawer__list">
         {filtered.length === 0 ? (
           <p className="library-drawer__empty">No lessons match your search.</p>
         ) : (

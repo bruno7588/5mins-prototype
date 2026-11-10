@@ -20,57 +20,9 @@
   margin: auto;
 }
 
-/* Page-local underline tabs (chips-switcher-tabs.md). */
+/* Channel tabs (shared Tabs) wrap on a narrow modal. */
 .epv-tabs {
-  display: flex;
   flex-wrap: wrap;
-  gap: var(--space-m);
-}
-
-.epv-tab {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 0 0 var(--space-s);
-  border: 0;
-  background: none;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.epv-tab::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  border-radius: var(--radius-xs);
-  background: transparent;
-  transition: background-color 150ms ease-out;
-}
-
-.epv-tab:hover {
-  color: var(--text-primary);
-}
-
-.epv-tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.epv-tab--active::after {
-  background: var(--selected);
-}
-
-.epv-tab:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-  border-radius: var(--radius-xs);
 }
 
 /* Clips while the height eases, but leaves room for the cards' Shadow S. */
@@ -230,12 +182,6 @@
   margin: 0;
   font-size: var(--font-size-md);
   color: var(--neutral-100);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .epv-tab::after {
-    transition: none;
-  }
 }
 
 /* Cards carry no border; Shadow S lifts them in light mode only. */

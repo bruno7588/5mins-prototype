@@ -1,0 +1,36 @@
+/* Course builder content drawer, hosted in the shared SideDrawer (panel, header,
+   divider, footer and slide all come from @/components/SideDrawer).
+   Prefix: .content-drawer */
+
+/* Each body lays out its own scrolling region (a list, a form), so the drawer body is a
+   column for it to fill, with the panel's 20px rhythm between its parts. */
+.content-drawer__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-ml);
+}
+
+/* Title block portalled in by DrawerHeader: an optional back button, then the title. */
+.content-drawer__headline {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.content-drawer__headline > .ds-drawer__titles {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Fills the footer row so a body can push an action to the far end. */
+.content-drawer__footer-slot {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The assessment form (AssessmentModal, variant="drawer") still draws its own title,
+   close button and footer, so the drawer's header would repeat them. Remove this once
+   AssessmentModal renders its title and buttons through DrawerSlots. */
+.assessment-drawer-shell > .ds-drawer__header {
+  display: none;
+}

@@ -84,14 +84,6 @@
   min-width: 0;
 }
 
-.aet-drawer__title {
-  margin: 0;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
 .aet-form {
   display: flex;
   flex-direction: column;

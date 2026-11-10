@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Add } from 'iconsax-react'
 import Checkbox from '../Checkbox/Checkbox'
 import { mockQuestions } from '../../data/mockQuestions'
@@ -150,10 +150,15 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
     })
   }
 
-  // New lesson empty state — checkbox banner
+  const editQuestion = state.editingQuestionId
+    ? state.questions.find(q => q.id === state.editingQuestionId)
+    : undefined
+
+  let body: ReactNode
   if (!state.poolEnabled && isNew) {
-    return (
-      <div className="quiz-tab">
+    // New lesson empty state: checkbox banner
+    body = (
+      <>
         {aiAvailable && (
         <div className="quiz-tab-empty-banner" onClick={handleAICheckbox}>
           <Checkbox checked={state.aiQuizzesOptIn} />
@@ -171,22 +176,12 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
           <Add size={20} color="currentColor" />
           Add Question Manually
         </button>
-
-        {/* Create new question drawer */}
-        {state.addingNew && (
-          <QuestionDrawer
-            onSave={handleSaveNew}
-            onClose={handleCloseDrawer}
-          />
-        )}
-      </div>
+      </>
     )
-  }
-
-  // Existing lesson with no questions — empty pool state
-  if (!state.poolEnabled && !isNew) {
-    return (
-      <div className="quiz-tab">
+  } else if (!state.poolEnabled) {
+    // Existing lesson with no questions: empty pool state
+    body = (
+      <>
         <PoolHeader
           poolSize={0}
           drawCount={state.drawCount}
@@ -206,73 +201,55 @@ function QuizTab({ isNew = false, hasGeneratedQuizzes = false, onAIOptInChange, 
             </p>
           </div>
         </div>
+      </>
+    )
+  } else {
+    // Populated state
+    body = (
+      <>
+        <PoolHeader
+          poolSize={poolSize}
+          drawCount={state.drawCount}
+          maxPoolSize={MAX_POOL_SIZE}
+          onDrawCountChange={handleDrawCountChange}
+          onAddManual={handleStartAdd}
+          addManualDisabled={state.addingNew || poolSize >= MAX_POOL_SIZE}
+          onGenerate={handleGenerateMore}
+        />
 
-        {/* Create new question drawer */}
-        {state.addingNew && (
-          <QuestionDrawer
-            onSave={handleSaveNew}
-            onClose={handleCloseDrawer}
-          />
-        )}
-
-        {/* AI Generate drawer */}
-        {state.showAIDrawer && (
-          <AIGenerateDrawer
-            onComplete={handleAIDrawerComplete}
-            lessonTitle={lessonTitle}
-          />
-        )}
-        <ToastContainer toasts={toasts} />
-      </div>
+        <div className="quiz-tab-question-list">
+          {state.questions.map(q => (
+              <QuestionCard
+                key={q.id}
+                question={q}
+                onEdit={() => handleStartEdit(q.id)}
+              />
+          ))}
+        </div>
+      </>
     )
   }
 
-  // Populated state
+  /* The drawers sit in the same place in every state, so saving the first
+     question (which swaps the empty state for the list) doesn't remount them
+     and they can play their slide-out. */
   return (
     <div className="quiz-tab">
-      <PoolHeader
-        poolSize={poolSize}
-        drawCount={state.drawCount}
-        maxPoolSize={MAX_POOL_SIZE}
-        onDrawCountChange={handleDrawCountChange}
-        onAddManual={handleStartAdd}
-        addManualDisabled={state.addingNew || poolSize >= MAX_POOL_SIZE}
-        onGenerate={handleGenerateMore}
+      {body}
+
+      <QuestionDrawer
+        open={!!editQuestion || state.addingNew}
+        question={editQuestion}
+        onSave={state.editingQuestionId ? handleSaveEdit : handleSaveNew}
+        onClose={handleCloseDrawer}
+        onDelete={editQuestion ? () => handleDelete(editQuestion.id) : undefined}
       />
 
-      <div className="quiz-tab-question-list">
-        {state.questions.map(q => (
-            <QuestionCard
-              key={q.id}
-              question={q}
-              onEdit={() => handleStartEdit(q.id)}
-            />
-        ))}
-      </div>
-
-      {/* Edit / Create new question drawer */}
-      {(state.editingQuestionId || state.addingNew) && (() => {
-        const editQuestion = state.editingQuestionId
-          ? state.questions.find(q => q.id === state.editingQuestionId)
-          : undefined
-        if (state.editingQuestionId && !editQuestion) return null
-        return (
-          <QuestionDrawer
-            question={editQuestion}
-            onSave={state.editingQuestionId ? handleSaveEdit : handleSaveNew}
-            onClose={handleCloseDrawer}
-            onDelete={editQuestion ? () => handleDelete(editQuestion.id) : undefined}
-          />
-        )
-      })()}
-
-      {/* AI Generate drawer */}
-      {state.showAIDrawer && (
-        <AIGenerateDrawer
-          onComplete={handleAIDrawerComplete}
-          lessonTitle={lessonTitle}
-        />
-      )}
+      <AIGenerateDrawer
+        open={state.showAIDrawer}
+        onComplete={handleAIDrawerComplete}
+        lessonTitle={lessonTitle}
+      />
       <ToastContainer toasts={toasts} />
     </div>
   )

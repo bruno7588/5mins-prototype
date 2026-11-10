@@ -6,7 +6,7 @@
   padding: var(--space-l) 0;
   max-width: 1180px;
   margin: 0 auto;
-  /* Sync timing with the AddContentDrawer slide (300ms, CoursesDrawer.css). */
+  /* Sync timing with the SideDrawer slide (300ms). */
   transition: transform 300ms ease-in-out,
     padding-right 300ms ease-in-out;
 }
@@ -565,14 +565,6 @@
 }
 
 /* ── Dialog (per design-system/overlays.md) ─────────────────── */
-.overlay-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--scrim);
-  z-index: 1000;
-  animation: overlay-fade-in 200ms ease-out;
-}
-
 @keyframes overlay-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }

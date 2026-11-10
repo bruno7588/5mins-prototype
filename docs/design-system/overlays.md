@@ -7,7 +7,7 @@ description: Dialog (Error/Warning/Info/Success types, 56px icons), Modal (720px
 
 The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and the **Bottom Sheet** in the mobile app, share a common backdrop but serve distinct interaction purposes.
 
-**Code:** Dialog and centred Modal: `import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'` ([confirm-modal.md](confirm-modal.md)); Bottom Sheet: `import BottomSheet from '@/components/BottomSheet/BottomSheet'`; close buttons: `import CloseButton from '@/components/CloseButton/CloseButton'`; Side Drawer and full-screen Modal: no shared component yet, page-local shells with `src/hooks/useOverlayA11y.ts`
+**Code:** Dialog and centred Modal: `import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'` ([confirm-modal.md](confirm-modal.md)); Bottom Sheet: `import BottomSheet from '@/components/BottomSheet/BottomSheet'`; close buttons: `import CloseButton from '@/components/CloseButton/CloseButton'`; Side Drawer: `import SideDrawer from '@/components/SideDrawer/SideDrawer'`; full-screen Modal: no shared component yet, page-local shells with `src/hooks/useOverlayA11y.ts`
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, Dialog `7789:24651`; Modal dark `7479:4350` / light `11919:4717` (instance); Side Drawer dark `10871:12768` / light `11919:4738` (instance); Bottom sheet dark `7479:106` / light `12279:281` (instance); full-screen close: Programs `4221:63780`
 **Last verified:** 2026-10-13
 
@@ -90,7 +90,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 
 **Do**
 - Make it 720px wide, full height, with `role="dialog"` and `aria-modal="true"`.
-- Put a `CloseButton` in the top-right corner and close on backdrop click. Escape does nothing: call `useOverlayA11y(panelRef, open)` without `onEscape`. Escape still closes menus, tooltips and pickers inside the drawer.
+- Build it with `SideDrawer`: it puts the `CloseButton` top-right, closes on backdrop press, and ignores Escape. Escape still closes menus, tooltips and pickers inside the drawer.
 - Pin the footer: a divider, then the filled primary button followed by the Outlined-2 Cancel.
 - Open confirmations from a drawer with `ConfirmModal`; its overlay sits above drawers.
 
@@ -139,7 +139,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 | Modal > Placeholder (slot) | content | `ConfirmModal` `children` | `ReactNode` | |
 | Modal/Full screen > Device | Desktop / Mobile | n/a | n/a | Page-local shell with `useOverlayA11y` and `<CloseButton variant="fullscreen">` |
 | Modal/Full screen > State | Default | n/a | n/a | Single-value axis |
-| Side Drawer > Form (slot) | content | n/a | page-local | No shared component; `.side-drawer__*` classes |
+| Side Drawer > Form (slot) | content | `SideDrawer` `children` (+ `header`, `subheader`, `footer`) | `ReactNode` | |
 | Bottom sheet > Sheet content (slot) | content | `BottomSheet` `children` | `ReactNode` | |
 | Close icon (Modal, Side Drawer) | `io5/IoCloseOutline` | `CloseButton` `variant` | `'default'` / `'fullscreen'` | Full-screen modals use `fullscreen` |
 
@@ -149,7 +149,7 @@ The overlay components, **Dialog**, **Modal** and **Side Drawer** on desktop and
 **Prototype pointers**
 - **Dialog:** `src/components/ConfirmModal/ConfirmModal.tsx`. `open`, `onClose` (called by your Cancel; Escape and backdrop only when `closable`), `ariaLabel`, `className` for sizing; content is composed from `.confirm-modal-*` classes.
 - **Modal:** no dedicated component; centred modals use `src/components/ConfirmModal/ConfirmModal.tsx` with a `className`, full-screen ones use their own shell with `src/hooks/useOverlayA11y.ts` and `src/components/CloseButton/CloseButton.tsx` (`variant="fullscreen"`).
-- **Side Drawer:** no shared component; each drawer is page-local. Follow `src/pages/people/components/LimitedAdminDrawer/LimitedAdminDrawer.tsx`, `src/pages/programs/components/EnrolPeopleDrawer/EnrolPeopleDrawer.tsx` or `src/pages/programs/components/CoursePickerDrawer/CoursePickerDrawer.tsx`, which use `useOverlayA11y` and `CloseButton`. The `.side-drawer__*` classes live in `src/pages/my-team/CoursesDrawer.css` (globally bundled; `SaveReportDrawer` also reuses them). `RolePanel` hand-rolls its close button (`.roles-panel-close`); don't copy it.
+- **Side Drawer:** `src/components/SideDrawer/SideDrawer.tsx` (default export). Every drawer in the prototype uses it (migrated 2026-11-10). It owns the backdrop, 720px panel, header with `CloseButton` and divider, scrolling body, pinned footer, focus trap (`useOverlayA11y`, no Escape) and the 300ms slide in and out.
 - **Bottom Sheet:** `src/components/BottomSheet/BottomSheet.tsx` (default export). `onClose` (called after the slide-out), `ariaLabel`, `children`, `className`. Used by the mobile lesson sheet (`src/pages/mobile/LessonSheet.tsx`).
 
 **Production:**
@@ -696,83 +696,41 @@ import Button from '@/components/Button/Button'
 
 ### Side Drawer
 
-There is no shared drawer component; this is the page-local shape to follow.
+Use the shared component; don't build a drawer shell by hand.
 
 ```tsx
-import { ReactNode } from 'react';
-import CloseButton from '@/components/CloseButton/CloseButton';
-import Button from '@/components/Button/Button';
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
+import Button from '@/components/Button/Button'
 
-interface SideDrawerProps {
-  title: string;
-  supportingText?: string;
-  children: ReactNode;
-  primaryLabel?: string;
-  secondaryLabel?: string;
-  onPrimary?: () => void;
-  onSecondary?: () => void;
-  onClose: () => void;
-}
-
-export function SideDrawer({
-  title,
-  supportingText,
-  children,
-  primaryLabel = 'Save',
-  secondaryLabel = 'Cancel',
-  onPrimary,
-  onSecondary,
-  onClose,
-}: SideDrawerProps) {
-  return (
-    <>
-      <div className="overlay-backdrop" onClick={onClose} />
-
-      <div className="side-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
-        <CloseButton onClick={onClose} />
-
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <h2 id="drawer-title" className="modal__title">{title}</h2>
-            {supportingText && (
-              <p className="modal__supporting-text">{supportingText}</p>
-            )}
-          </div>
-          <div className="modal__divider" />
-        </div>
-
-        <div className="side-drawer__content">
-          {children}
-        </div>
-
-        <div className="side-drawer__footer">
-          <div className="side-drawer__footer-divider" />
-          <div className="side-drawer__buttons">
-            {onPrimary && <Button onClick={onPrimary}>{primaryLabel}</Button>}
-            {onSecondary && <Button variant="outlined-2" onClick={onSecondary}>{secondaryLabel}</Button>}
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-```
-
-Usage, e.g. a user detail panel:
-
-```tsx
 <SideDrawer
-  title="Learner Profile"
-  supportingText="View and edit learner details"
-  primaryLabel="Save"
-  secondaryLabel="Discard"
-  onPrimary={handleSave}
-  onSecondary={handleDiscard}
-  onClose={closeDrawer}
+  open={open}
+  onClose={() => setOpen(false)}
+  title="Learner profile"
+  subtitle="View and edit learner details"
+  footer={
+    <>
+      <Button onClick={handleSave}>Save</Button>
+      <Button variant="outlined-2" onClick={() => setOpen(false)}>Cancel</Button>
+    </>
+  }
 >
   <LearnerDetailForm />
 </SideDrawer>
 ```
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `open` | `boolean` | required | Set false to close; the drawer plays its exit slide, then unmounts. Keep it mounted (and keep its data) so the exit can play |
+| `onClose` | `() => void` | required | Called by the X and a press on the backdrop, never by Escape. Open a discard confirm here if needed |
+| `title` | `ReactNode` | none | H3 title; also names the dialog |
+| `subtitle` | `ReactNode` | none | Supporting line under the title |
+| `header` | `ReactNode` | none | Replaces the title block (e.g. a person with an avatar); close button and divider still drawn. Pass `ariaLabel` |
+| `subheader` | `ReactNode` | none | Non-scrolling content under the header divider (stepper, search and filter row) |
+| `footer` | `ReactNode` | none | Pinned button row; a divider is drawn above it |
+| `ariaLabel` | `string` | none | Names the dialog when there is no plain `title` |
+| `belowPageHeader` | `boolean` | `false` | Starts below `--page-header-offset` (course builder) |
+| `instant` | `boolean` | `false` | Mounts without the slide, when one drawer hands off to another in place |
+| `className` / `bodyClassName` | `string` | none | Extra class on the panel / the scrolling body |
 
 ## Related
 

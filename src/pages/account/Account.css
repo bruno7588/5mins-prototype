@@ -29,47 +29,11 @@
   margin-top: var(--space-l);
 }
 
+/* Layout only; the tab look comes from the shared Tabs component. */
 .acs-tabs {
-  display: flex;
-  gap: var(--space-m);
   margin-top: var(--space-m);
   padding-bottom: var(--space-xs);
-  overflow-x: auto; /* 10 tabs — scroll rather than wrap/break on smaller viewports */
-}
-
-.acs-tab {
-  position: relative;
-  flex-shrink: 0;
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-secondary);
-  background: transparent;
-  border: none;
-  padding: 0 0 var(--space-xs);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: color 150ms ease;
-}
-
-.acs-tab:hover {
-  color: var(--text-primary);
-}
-
-.acs-tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.acs-tab--active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--secondary-500);
-  border-radius: 2px;
+  overflow-x: auto; /* 10 tabs - scroll rather than wrap/break on smaller viewports */
 }
 
 /* ── Body ── */

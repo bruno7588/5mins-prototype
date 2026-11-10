@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import Button from '@/components/Button/Button'
 import Table, { type Column } from '@/components/Table/Table'
+import Tabs from '@/components/Tabs/Tabs'
 import { Calendar, Note1 } from 'iconsax-react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import CsvIcon from '../../components/icons/CsvIcon'
@@ -543,20 +544,12 @@ function LearningRecords() {
             <h2 className="lrp-title">Learning Records</h2>
             <div className="lrp-divider" />
             <div className="lrp-tabs-row">
-              <div className="lrp-tabs" role="tablist">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeTab === tab.key}
-                    className={`lrp-tab${activeTab === tab.key ? ' lrp-tab--active' : ''}`}
-                    onClick={() => setActiveTab(tab.key)}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+              <Tabs
+                items={tabs}
+                activeKey={activeTab}
+                onChange={(key) => setActiveTab(key as TabKey)}
+                ariaLabel="Learning record types"
+              />
 
               <div className="lrp-head-actions">
                 {/* Quick export — download the current table view without saving a report */}
@@ -677,13 +670,17 @@ function LearningRecords() {
         </div>
       </main>
 
-      <ReportsListDrawer
-        open={reportsListOpen}
-        onClose={() => setReportsListOpen(false)}
-        reports={reports}
-        onEdit={openEditReport}
-        onDownload={downloadReport}
-      />
+      {/* On a hand-off to the edit drawer the list leaves at once (no exit
+          slide), so its scrim does not stack under the edit drawer's. */}
+      {!(reportDrawerOpen && drawerInstant) && (
+        <ReportsListDrawer
+          open={reportsListOpen}
+          onClose={() => setReportsListOpen(false)}
+          reports={reports}
+          onEdit={openEditReport}
+          onDownload={downloadReport}
+        />
+      )}
 
       <SaveReportDrawer
         open={reportDrawerOpen}

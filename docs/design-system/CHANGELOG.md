@@ -107,6 +107,7 @@ Add new entries here, not in the docs.
 
 ## [chips-switcher-tabs.md](chips-switcher-tabs.md)
 
+- 2026-11-10: Shared `Tabs` component (`src/components/Tabs`) built from the spec and every page tab bar migrated to it (about 25 bars). Indicator is `--selected` everywhere (several bars used raw secondary-500/600); label-to-indicator gap 4px; counters `--text-tertiary`; arrow-key navigation; not-built tabs use `.ui-disabled`. Not migrated: bulk upload review filter tabs (status-coloured counts).
 - 2026-11-05: `ContentSwitcher` items gain `trailingIcon` (16px, after the label), matching Library Content=Trailing icon; the trailing icon is no longer Figma only.
 - 2026-11-05: Figma Content switcher item gains a `Content` variant axis (Label / Leading icon / Trailing icon / Icon only) across all 6 states, 24 variants in a states x content grid; the `Show leading icon`, `Show trailing icon` and `Show label` booleans are removed. Trailing icon default restored to info-circle (`9986:43611`). Examples rebuilt as `12589:308` and `12589:398`.
 - 2026-11-05: Figma Content switcher gains "Example · Leading icon" and "Example · Icon only"; component descriptions and the doc now map Show leading icon + Leading icon to `items[].icon` and Show label off to `iconOnly` (was "no icon slot in code"). Trailing icon stays Figma only.
@@ -275,6 +276,7 @@ Add new entries here, not in the docs.
 
 ## [overlays.md](overlays.md)
 
+- 2026-11-10: Shared `SideDrawer` component (`src/components/SideDrawer`) and every side drawer migrated to it (about 30). Drawers lose per-drawer shadows and hand-built close buttons; all are 720px, close on X and backdrop, never Escape, slide 300ms in and out. `useOverlayA11y` no longer fights a dialog stacked on top for Tab.
 - 2026-10-22: (Bruno's ruling): a Side Drawer does **not** close on Escape; only its Close (×), backdrop click and footer buttons close it. Escape still closes menus, tooltips and pickers inside it. Removed from every right-hand drawer; Modals keep Escape.
 - 2026-10-14: Figma Dialog buttons swapped from an orphaned old Buttons set to the current Buttons set (labels kept).
 - 2026-10-14: Side Drawer slides in and out with `ease-in-out` (was cubic-bezier(0.32, 0.72, 0, 1) in the doc, and four different curves across the 13 page drawers); code updated on every right-hand drawer and the content that shifts with it.

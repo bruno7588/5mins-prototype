@@ -1,6 +1,6 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Button from '../../components/Button/Button'
-import CloseButton from '../../components/CloseButton/CloseButton'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import Avatar from '@/components/Avatar/Avatar'
 import { formatRelativeShort } from './relativeTime'
 import { coursesTotal } from './memberStatus'
@@ -125,8 +125,12 @@ interface ShellProps {
 }
 
 /** The reminder side drawer: title, editable subject and message, recipients, send. */
-export function ReminderDrawerShell({ open, content, onClose, onSend }: ShellProps) {
-  const [closing, setClosing] = useState(false)
+export function ReminderDrawerShell({ open, content: liveContent, onClose, onSend }: ShellProps) {
+  // Parents clear their recipients on close; keep the last content so the exit
+  // slide still shows it.
+  const lastContent = useRef(liveContent)
+  if (open) lastContent.current = liveContent
+  const content = lastContent.current
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
 
@@ -139,78 +143,39 @@ export function ReminderDrawerShell({ open, content, onClose, onSend }: ShellPro
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(() => {
-      setClosing(false)
-      onClose()
-    }, 300)
-  }
-
-
-  if (!open) return null
-
   return (
-    <>
-      <div
-        className={`overlay-backdrop${closing ? ' overlay-backdrop--closing' : ''}`}
-        onClick={handleClose}
-        aria-hidden="true"
-      />
-      <aside
-        className={`side-drawer${closing ? ' side-drawer--closing' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="reminder-drawer-title"
-      >
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <div className="rd-header-text">
-              <h2 id="reminder-drawer-title" className="rd-title">Send reminder</h2>
-              <p className="rd-subtitle">
-                Keep it short and friendly. This will be sent as an email.
-              </p>
-            </div>
-            <CloseButton onClick={handleClose} />
-          </div>
-          <div className="modal__divider" />
+    <SideDrawer
+      open={open}
+      onClose={onClose}
+      title="Send reminder"
+      subtitle="Keep it short and friendly. This will be sent as an email."
+      footer={<Button onClick={() => onSend(content.count)}>Send Reminders ({content.count})</Button>}
+    >
+      <div className="rd-form">
+        <div className="rd-field">
+          <label className="rd-label" htmlFor="rd-subject">Subject</label>
+          <input
+            id="rd-subject"
+            className="rd-input"
+            type="text"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          />
         </div>
 
-        <div className="side-drawer__content">
-          <div className="rd-form">
-            <div className="rd-field">
-              <label className="rd-label" htmlFor="rd-subject">Subject</label>
-              <input
-                id="rd-subject"
-                className="rd-input"
-                type="text"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-              />
-            </div>
-
-            <div className="rd-field">
-              <label className="rd-label" htmlFor="rd-message">Message</label>
-              <textarea
-                id="rd-message"
-                className="rd-input rd-textarea"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-            </div>
-
-            <div className="rd-field">{content.table}</div>
-          </div>
+        <div className="rd-field">
+          <label className="rd-label" htmlFor="rd-message">Message</label>
+          <textarea
+            id="rd-message"
+            className="rd-input rd-textarea"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
         </div>
 
-        <div className="side-drawer__footer">
-          <div className="side-drawer__footer-divider" />
-          <div className="side-drawer__buttons">
-            <Button onClick={() => onSend(content.count)}>Send Reminders ({content.count})</Button>
-          </div>
-        </div>
-      </aside>
-    </>
+        <div className="rd-field">{content.table}</div>
+      </div>
+    </SideDrawer>
   )
 }
 

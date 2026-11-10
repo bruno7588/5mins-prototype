@@ -17,6 +17,7 @@ import jewelsIllustration from '@/assets/programs/jewels.svg'
 import certificateIllustration from '@/assets/programs/certificate.svg'
 import penNib from '@/assets/sign-off/pen-nib.svg'
 import courseMedallion from '@/assets/sign-off/certificate-medallion.svg'
+import Tabs from '@/components/Tabs/Tabs'
 import './CourseScreen.css'
 
 const SEGMENTS = 8
@@ -125,29 +126,17 @@ function CourseScreen({ courseId, onBack, onStartSignOff, onGetCertificate }: Co
         </div>
       </header>
 
-      <nav className="m-course__tabs" role="tablist" aria-label="Course sections">
-        {(
-          [
-            { key: 'course', label: 'Course' },
-            { key: 'about', label: 'About' },
-            { key: 'resources', label: 'Resources', count: resources.length },
-          ] as const
-        ).map((t) => (
-          <button
-            key={t.key}
-            type="button"
-            role="tab"
-            aria-selected={tab === t.key}
-            className={`m-course__tab${tab === t.key ? ' m-course__tab--active' : ''}`}
-            onClick={() => setTab(t.key)}
-          >
-            <span className="m-course__tabrow">
-              {t.label}
-              {'count' in t && t.count > 0 ? <span className="m-course__tabcount">{t.count}</span> : null}
-            </span>
-          </button>
-        ))}
-      </nav>
+      <Tabs
+        className="m-course__tabs"
+        ariaLabel="Course sections"
+        items={[
+          { key: 'course', label: 'Course' },
+          { key: 'about', label: 'About' },
+          { key: 'resources', label: 'Resources', counter: resources.length > 0 ? resources.length : undefined },
+        ]}
+        activeKey={tab}
+        onChange={(key) => setTab(key as typeof tab)}
+      />
 
       {tab === 'course' ? (
         <div className="m-course__body">

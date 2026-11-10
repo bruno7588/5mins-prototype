@@ -1,39 +1,5 @@
-/* Overlay — same pattern as QuestionDrawer */
-.ai-drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--scrim);
-  z-index: 200;
-  animation: drawer-overlay-in 200ms ease;
-}
-
-/* Panel */
-.ai-drawer-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 720px;
-  max-width: 100vw;
-  background: var(--page-background);
-  z-index: 201;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow-panel);
-  animation: drawer-slide-in 250ms ease-in-out;
-}
-
-/* Header */
-.ai-drawer-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: var(--space-l);
-  padding-bottom: var(--space-m);
-}
-
+/* Shell is the shared SideDrawer. Header: title, then the review subtitle. */
 .ai-drawer-headline {
-  flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -46,31 +12,8 @@
   color: var(--text-primary);
 }
 
-.ai-drawer-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  color: var(--text-primary);
-  transition: background 150ms ease;
-}
-
-.ai-drawer-close:hover {
-  background: var(--page-background-hover);
-}
-
-.ai-drawer-divider {
-  height: 1px;
-  background: var(--border);
-}
-
-/* Body (scrollable) */
+/* Body: SideDrawer's scrolling body. */
 .ai-drawer-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-l);
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
@@ -228,22 +171,6 @@
 /* ──────────────────────────────────────────
    Footer
    ────────────────────────────────────────── */
-
-.ai-drawer-footer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
-  padding: var(--space-m) var(--space-l);
-}
-
-.ai-drawer-footer::before {
-  content: '';
-  display: block;
-  height: 1px;
-  background: var(--border);
-  margin: 0 calc(-1 * var(--space-l));
-  margin-top: calc(-1 * var(--space-m));
-}
 
 .ai-drawer-footer-buttons {
   display: flex;

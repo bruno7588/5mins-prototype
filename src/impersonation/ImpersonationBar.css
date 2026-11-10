@@ -21,17 +21,13 @@ body.imp-impersonating .topnav {
 /* Full-height overlays reachable from the learner app start below the banner too.
    Otherwise the banner (z-index 1090) sits over their top strip — a drawer's title
    and close button, the lesson feed's close — or, for the quiz stage (1100), the
-   overlay covers the banner and the admin loses sight of the session. The Add
-   Content drawer is excluded: it anchors to its page header, not the viewport top. */
-body.imp-impersonating .side-drawer:not(.add-content-drawer),
-body.imp-impersonating .overlay-backdrop,
+   overlay covers the banner and the admin loses sight of the session. The course
+   builder drawer is excluded: it anchors to its page header, not the viewport top. */
+body.imp-impersonating .ds-drawer-backdrop:not(.ds-drawer--below-header),
 body.imp-impersonating .lf-overlay,
 body.imp-impersonating .confirm-modal-overlay,
 body.imp-impersonating .pcd-quizstage {
   top: var(--imp-bar-h);
-}
-body.imp-impersonating .side-drawer:not(.add-content-drawer) {
-  height: auto;
 }
 body.imp-impersonating .confirm-modal {
   max-height: calc(100vh - var(--imp-bar-h) - 64px);

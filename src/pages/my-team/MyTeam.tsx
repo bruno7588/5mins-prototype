@@ -25,6 +25,7 @@ import ProfileMenu from '../../components/ProfileMenu/ProfileMenu'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Search from '../../components/Search/Search'
 import { Table, type Column } from '@/components/Table/Table'
+import Tabs from '@/components/Tabs/Tabs'
 import Avatar from '@/components/Avatar/Avatar'
 import Badge from '../../components/Badge/Badge'
 import ContentSwitcher from '../../components/ContentSwitcher/ContentSwitcher'
@@ -123,6 +124,13 @@ type TeamMember = {
 const CURRENT_USER_ID = 'me'
 const CURRENT_USER_NAME = 'Alex Morgan'
 const PAGE_SIZE = 10
+
+type MtTab = 'course-tracker' | 'engagement' | 'learning-records'
+const MT_TABS: { key: MtTab; label: string }[] = [
+  { key: 'course-tracker', label: 'Course Tracker' },
+  { key: 'engagement', label: 'Engagement' },
+  { key: 'learning-records', label: 'Learning Records' },
+]
 
 const COURSE_POOL = [
   'Compliance & Ethics 101',
@@ -283,7 +291,7 @@ function MyTeam() {
   const [courseFilter, setCourseFilter] = useState<'all' | 'compliance'>('all')
   const [scopeFilter, setScopeFilter] = useState<string>('direct')
   const [page, setPage] = useState(1)
-  const [currentTab, setCurrentTab] = useState<'course-tracker' | 'engagement' | 'learning-records'>('course-tracker')
+  const [currentTab, setCurrentTab] = useState<MtTab>('course-tracker')
 
   const managerNameById = (id: string) =>
     id === CURRENT_USER_ID ? CURRENT_USER_NAME : team.find((m) => m.id === id)?.name ?? '—'
@@ -658,20 +666,12 @@ function MyTeam() {
 
             <div className="mt-pageheader__divider" />
 
-            <nav className="mt-tabs">
-              <button type="button" className={`mt-tab${currentTab === 'course-tracker' ? ' mt-tab--active' : ''}`} onClick={() => setCurrentTab('course-tracker')}>
-                <span>Course Tracker</span>
-                {currentTab === 'course-tracker' && <span className="mt-tab__indicator" aria-hidden="true" />}
-              </button>
-              <button type="button" className={`mt-tab${currentTab === 'engagement' ? ' mt-tab--active' : ''}`} onClick={() => setCurrentTab('engagement')}>
-                <span>Engagement</span>
-                {currentTab === 'engagement' && <span className="mt-tab__indicator" aria-hidden="true" />}
-              </button>
-              <button type="button" className={`mt-tab${currentTab === 'learning-records' ? ' mt-tab--active' : ''}`} onClick={() => setCurrentTab('learning-records')}>
-                <span>Learning Records</span>
-                {currentTab === 'learning-records' && <span className="mt-tab__indicator" aria-hidden="true" />}
-              </button>
-            </nav>
+            <Tabs
+              items={MT_TABS}
+              activeKey={currentTab}
+              onChange={(key) => setCurrentTab(key as MtTab)}
+              ariaLabel="My Team sections"
+            />
           </header>
 
           {currentTab === 'engagement' && <EngagementTab />}
@@ -769,16 +769,15 @@ function MyTeam() {
         </section>
       </div>
 
-      {drawerMemberId && (() => {
-        const member = team.find((m) => m.id === drawerMemberId)
-        if (!member) return null
+      {(() => {
+        const member = drawerMemberId ? team.find((m) => m.id === drawerMemberId) : undefined
         return (
           <CoursesDrawer
-            open
-            memberName={member.name}
-            memberRole={member.role}
-            memberAvatarSrc={member.avatarSrc}
-            courses={allCoursesFor(member)}
+            open={!!member}
+            memberName={member?.name ?? ''}
+            memberRole={member?.role ?? ''}
+            memberAvatarSrc={member?.avatarSrc}
+            courses={member ? allCoursesFor(member) : []}
             onClose={() => setDrawerMemberId(null)}
           />
         )

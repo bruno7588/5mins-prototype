@@ -267,41 +267,6 @@
   border-radius: 4px;
 }
 
-.mt-tabs {
-  display: flex;
-  gap: var(--space-m);
-}
-
-.mt-tab {
-  position: relative;
-  background: transparent;
-  border: none;
-  padding: 0 0 var(--space-s) 0;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 500;
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.mt-tab--active {
-  color: var(--text-primary);
-  font-weight: 700;
-}
-
-.mt-tab__indicator {
-  display: block;
-  height: 2px;
-  width: 100%;
-  background: var(--secondary-500);
-  border-radius: 2px;
-}
-
 /* Course Progress tab content */
 .mt-course-progress {
   display: flex;

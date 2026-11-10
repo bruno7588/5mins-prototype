@@ -19,6 +19,7 @@ import loomLogo from '@/assets/lesson-upload/loom.svg'
 import synthesiaLogo from '@/assets/lesson-upload/synthesia.svg'
 import tiktokLogo from '@/assets/lesson-upload/tiktok.svg'
 import vimeoLogo from '@/assets/lesson-upload/vimeo.png'
+import Tabs from '@/components/Tabs/Tabs'
 import '@/components/LessonEditorModal/LessonEditorModal.css'
 import './NewLessonModal.css'
 
@@ -291,28 +292,16 @@ function NewLessonModal({ kind, onClose, onPublish }: NewLessonModalProps) {
           </div>
         )}
 
-        <div className="lesson-editor-tabs" role="tablist">
-          {([
-            ['quiz', 'Quiz'],
-            ['resources', 'Resources'],
-            ['skills', 'Skills'],
-            ['category', 'Add to Category'],
-          ] as const).map(([key, label]) => (
-            <button
-              key={key}
-              type="button"
-              role="tab"
-              aria-selected={tab === key}
-              className={`lesson-editor-tab${tab === key ? ' lesson-editor-tab--active' : ''}`}
-              onClick={() => setTab(key)}
-            >
-              {label}
-              {key === 'resources' && resources.length > 0 && (
-                <span className="lesson-editor-tab__count">{resources.length}</span>
-              )}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          items={[
+            { key: 'quiz', label: 'Quiz' },
+            { key: 'resources', label: 'Resources', counter: resources.length > 0 ? resources.length : undefined },
+            { key: 'skills', label: 'Skills' },
+            { key: 'category', label: 'Add to Category' },
+          ]}
+          activeKey={tab}
+          onChange={(key) => setTab(key as Tab)}
+        />
 
         <div className="lesson-editor-tab-content">
           {tab === 'quiz' && <QuizTab isNew aiAvailable={!isLink} />}

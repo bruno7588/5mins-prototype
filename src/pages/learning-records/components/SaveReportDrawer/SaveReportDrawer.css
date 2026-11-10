@@ -1,7 +1,4 @@
-/* SaveReportDrawer — form-specific styles. Shell (.side-drawer*, .overlay-backdrop,
-   .modal__divider) comes from the shared drawer stylesheet, imported here so the
-   shell is present regardless of which other drawers are mounted. */
-@import '../../../my-team/CoursesDrawer.css';
+/* SaveReportDrawer - form-specific styles. The shell is the shared SideDrawer. */
 
 .rd-header-text {
   flex: 1;
@@ -24,14 +21,6 @@
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
-}
-
-/* Header actions: the ⋯ menu + close button, grouped top-right */
-.rd-header-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  flex-shrink: 0;
 }
 
 .rd-more-wrapper {
@@ -415,11 +404,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-/* Footer row: vertically center the button(s) */
-.rd-footer-buttons {
-  align-items: center;
 }
 
 /* Schedule grid — 2 columns: Frequency / cadence, Time / Timezone */

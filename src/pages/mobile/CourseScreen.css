@@ -146,60 +146,9 @@
   color: var(--text-secondary);
 }
 
-/* ── Tabs (chips-switcher-tabs.md) ── */
+/* ── Tabs: spacing around the shared Tabs bar ── */
 .m-course__tabs {
-  display: flex;
-  gap: var(--space-m);
   padding: var(--space-m) var(--space-m) 0;
-}
-
-.m-course__tab {
-  position: relative;
-  padding: 0 0 var(--space-xs);
-  border: none;
-  background: none;
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.m-course__tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.m-course__tab--active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  border-radius: var(--radius-full);
-  background: var(--selected);
-}
-
-.m-course__tab:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
-
-.m-course__tabrow {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.m-course__tabcount {
-  padding: 0 var(--space-xss);
-  border-radius: var(--radius-full);
-  background: var(--input-background);
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-tertiary);
 }
 
 /* ── Body ── */

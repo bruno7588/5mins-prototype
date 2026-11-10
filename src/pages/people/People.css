@@ -68,43 +68,6 @@
   line-height: 1.5;
 }
 
-/* ===== Tabs ===== */
-.people-tabs {
-  display: flex;
-  gap: var(--space-m);
-}
-
-.people-tab {
-  position: relative;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-secondary);
-  padding: 0;
-  padding-bottom: var(--space-xs);
-  cursor: pointer;
-  transition: color 150ms ease;
-}
-
-.people-tab:hover {
-  color: var(--text-primary);
-}
-
-.people-tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.people-tab--active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--secondary-500);
-  border-radius: 2px;
-}
-
 /* ===== Info banner (Deactivated tab) ===== */
 .people-info-banner {
   display: flex;

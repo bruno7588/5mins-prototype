@@ -705,40 +705,9 @@
   background: var(--input-background);
 }
 
-/* Tabs */
+/* Tabs: the shared Tabs bar spans the editor width. */
 .fce-tabs {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-m);
   width: 100%;
-}
-
-.fce-tab {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 0;
-  background: none;
-  border: none;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  cursor: pointer;
-}
-
-.fce-tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.fce-tab--active::after {
-  content: '';
-  width: 100%;
-  height: 2px;
-  background: var(--secondary-600);
 }
 
 /* Quiz */

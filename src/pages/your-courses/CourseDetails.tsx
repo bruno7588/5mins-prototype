@@ -43,6 +43,7 @@ import { SIGN_OFF_DEMO_COURSE } from '@/data/trainerSignOff'
 import EnrolCourseModal from './components/EnrolCourseModal/EnrolCourseModal'
 import '../people/People.css'
 import CourseFilters, { matchesCourse, defaultValueFor, FILTER_DEFS, type FilterId, type FilterRow, type FilterValue } from '@/pages/user-profile/components/CourseFilters/CourseFilters'
+import Tabs from '@/components/Tabs/Tabs'
 import './CourseDetails.css'
 
 type Tab = 'content' | 'enrolments' | 'assessments' | 'signoff' | 'settings' | 'overview'
@@ -567,22 +568,12 @@ function CourseDetails() {
 
           <div className="cd-divider" />
 
-          <div className="cd-tabs" role="tablist">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                role="tab"
-                aria-selected={activeTab === tab.key}
-                className={`cd-tab${activeTab === tab.key ? ' cd-tab--active' : ''}`}
-                onClick={() => selectTab(tab.key)}
-              >
-                <span className="cd-tab-label">
-                  {tab.label}
-                  {tab.count != null && <span className="cd-tab-count">{tab.count}</span>}
-                </span>
-              </button>
-            ))}
-          </div>
+          <Tabs
+            items={tabs.map((tab) => ({ key: tab.key, label: tab.label, counter: tab.count }))}
+            activeKey={activeTab}
+            onChange={(key) => selectTab(key as Tab)}
+            ariaLabel="Course sections"
+          />
         </header>
 
         {activeTab === 'enrolments' ? (

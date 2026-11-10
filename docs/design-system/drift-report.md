@@ -11,20 +11,10 @@ Places inside the prototype where a page hand-rolls UI that a shared component (
 
 ## Overlays (drawers and modals)
 
-There is no shared Drawer or Modal shell component yet, so each drawer and modal builds its own backdrop. Fix target: the [overlays.md](overlays.md) spec (no shared shell yet).
+Drawers use the shared `SideDrawer` (all migrated 2026-11-10). There is no shared Modal shell yet, so these modals build their own backdrop. Fix target: the [overlays.md](overlays.md) spec.
 
 | Component | Hand-rolled instance | Should use |
 |---|---|---|
-| Drawer overlay | `.lad-overlay`, `pages/people/components/LimitedAdminDrawer/LimitedAdminDrawer.css:3` | overlays.md spec (no shared shell yet) |
-| Drawer overlay | `.epd-overlay`, `pages/programs/components/EnrolPeopleDrawer/EnrolPeopleDrawer.css:3` | overlays.md spec (no shared shell yet) |
-| Drawer overlay | `.cpd-overlay`, `pages/programs/components/CoursePickerDrawer/CoursePickerDrawer.css:2` | overlays.md spec (no shared shell yet) |
-| Drawer overlay | `.lpd-overlay`, `pages/programs/components/LearnerProgressDrawer/LearnerProgressDrawer.css:2` | overlays.md spec (no shared shell yet) |
-| Drawer overlay | `.uf-drawer-overlay`, `pages/people/components/UserFieldDrawer/UserFieldDrawer.css:2` | overlays.md spec (no shared shell yet) |
-| Drawer overlay | `.scorm-drawer-overlay` (plus `--with-sidebar`), `pages/your-courses/components/ScormDrawer/ScormDrawer.css:2` | overlays.md spec (no shared shell yet) |
-| Drawer overlay | `.sc-scorm-drawer-overlay`, `pages/scorm-content/components/ScormDrawer/ScormDrawer.css:2` | overlays.md spec (no shared shell yet) |
-| Drawer overlay | `.roles-panel-overlay`, `pages/roles/Roles.css:776` | overlays.md spec (no shared shell yet) |
-| Drawer overlay | `.overlay-backdrop`, `pages/my-team/CoursesDrawer.css:7` | overlays.md spec (no shared shell yet) |
-| Drawer overlay | `.overlay-backdrop`, `pages/your-courses/components/ContentList/ContentList.css:635` | overlays.md spec (no shared shell yet) |
 | Modal overlay | `.assessment-modal-overlay`, `pages/your-courses/components/AssessmentModal/AssessmentModal.css:2` | overlays.md spec (no shared shell yet) |
 | Modal overlay | `.media-modal-overlay`, `pages/your-courses/components/AssessmentModal/AssessmentModal.css:450` | overlays.md spec (no shared shell yet) |
 | Modal overlay | `.lsm-overlay`, `pages/programs/components/LaunchSuccessModal/LaunchSuccessModal.css:2` | overlays.md spec (no shared shell yet) |

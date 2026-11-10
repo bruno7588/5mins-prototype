@@ -18,7 +18,7 @@ import type { DropdownOption } from '@/components/Dropdown/Dropdown'
 import Alert from '@/components/Alert/Alert'
 import Badge from '@/components/Badge/Badge'
 import Avatar from '@/components/Avatar/Avatar'
-import { useOverlayA11y } from '@/hooks/useOverlayA11y'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import type { UserField } from '@/data/userFields'
 import { emptyScope, isScopeComplete, orphanedConditions } from '../../limitedAdmin'
 import type { LimitedAdminScope, ScopeCondition } from '../../limitedAdmin'
@@ -44,17 +44,19 @@ interface Props {
   onRemove: () => void
 }
 
-function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }: Props) {
-  const [closing, setClosing] = useState(false)
+function LimitedAdminDrawer({ open, person: livePerson, fields, onClose, onSave, onRemove }: Props) {
   const [scope, setScope] = useState<LimitedAdminScope>(emptyScope)
-  const panelRef = useRef<HTMLElement>(null)
+  /* The parent clears the person on close; keep the last one so the exit slide
+     still shows it. */
+  const lastPerson = useRef(livePerson)
+  if (open && livePerson) lastPerson.current = livePerson
+  const person = lastPerson.current
 
   const isEditing = Boolean(person?.limitedAdmin)
 
   /* Reset the form each time the drawer opens on a person. */
   useEffect(() => {
     if (!open) return
-    setClosing(false)
     setScope(
       person?.limitedAdmin && person.limitedAdmin.conditions.length > 0
         ? { conditions: person.limitedAdmin.conditions.map((c) => ({ ...c, values: [...c.values] })) }
@@ -62,22 +64,12 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
     )
   }, [open, person])
 
-  function handleClose() {
-    setClosing(true)
-    setTimeout(() => {
-      setClosing(false)
-      onClose()
-    }, 300)
-  }
-
-  useOverlayA11y(panelRef, open && !closing)
-
   const orphans = useMemo(
     () => (person?.limitedAdmin ? orphanedConditions(person.limitedAdmin, fields) : []),
     [person, fields],
   )
 
-  if (!open || !person) return null
+  if (!person) return null
 
   const fieldOptions: DropdownOption[] = fields.map((f) => ({
     value: String(f.id),
@@ -114,165 +106,140 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
   const saveLabel = isEditing ? 'Save' : 'Make Limited Admin'
 
   return (
-    <div
-      className={`lad-overlay${closing ? ' lad-overlay--closing' : ''}`}
-      /* Only a press on the backdrop itself closes. The panel must NOT stop
-         propagation instead: React would stop the native event at the root, so
-         it would never reach the document-level listeners that close a portalled
-         dropdown when you click outside it. */
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) handleClose()
-      }}
-    >
-      <aside
-        ref={panelRef}
-        className={`lad-panel${closing ? ' lad-panel--closing' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label={isEditing ? 'Edit Limited Admin scope' : 'Make Limited Admin'}
-        tabIndex={-1}
-      >
-        <header className="lad-header">
-          <div className="lad-header__top">
-            <h2 className="lad-title">{isEditing ? 'Edit scope' : 'Make Limited Admin'}</h2>
-            <CloseButton onClick={handleClose} ariaLabel="Close" />
-          </div>
-          <div className="lad-divider" />
-        </header>
-
-        <div className="lad-body">
-          {/* Who this is about */}
-          <div className="lad-person">
-            <Avatar name={person.name} size={40} src={person.avatarImg} />
-            <div className="lad-person__text">
-              <p className="lad-person__name">{person.name}</p>
-              <p className="lad-person__email">{person.email}</p>
-            </div>
-          </div>
-
-          {/* What the role means */}
-          <Alert
-            type="Callout"
-            customIcon={<InfoCircle size={20} color="var(--text-secondary)" variant="Linear" />}
-            message="A Limited Admin manages people, enrolments and learning records for the people in their scope only. They cannot see reports, teams, cohorts or settings, and cannot manage other admins."
-          />
-
-          {orphans.length > 0 && (
-            <Alert
-              type="Alert"
-              customIcon={<Danger size={20} color="var(--text-warning)" variant="Bold" />}
-              title="This scope is out of date"
-              message="A field or value it relies on has been removed. Until you fix it, this Limited Admin sees nobody."
-            />
+    <SideDrawer
+      open={open}
+      onClose={onClose}
+      title={isEditing ? 'Edit scope' : 'Make Limited Admin'}
+      bodyClassName="lad-body"
+      footer={
+        <>
+          <Button
+            variant="filled"
+            disabled={!canSave}
+            onClick={() => canSave && onSave(scope)}
+          >
+            {saveLabel}
+          </Button>
+          {isEditing && (
+            <Button className="lad-remove" semantic="danger" onClick={onRemove}>
+              Remove Limited Admin
+            </Button>
           )}
+        </>
+      }
+    >
+      {/* Who this is about */}
+      <div className="lad-person">
+        <Avatar name={person.name} size={40} src={person.avatarImg} />
+        <div className="lad-person__text">
+          <p className="lad-person__name">{person.name}</p>
+          <p className="lad-person__email">{person.email}</p>
+        </div>
+      </div>
 
-          {/* Scope: one row per field, read as a sentence. */}
-          {!hasFields ? (
-            <p className="lad-empty">
-              There are no custom user fields yet. Create one on the User fields page
-              before scoping a Limited Admin.
-            </p>
-          ) : (
-            <>
-              {scope.conditions.map((condition, index) => {
-                const field = fields.find((f) => f.id === condition.fieldId)
-                return (
-                  <div className="lad-scope-item" key={index}>
-                  <div className="lad-scope-row">
-                    <span className="lad-scope-lead">{index === 0 ? 'Scope is' : 'and'}</span>
-                    <Dropdown
-                      className="lad-scope-dropdown"
-                      options={availableFields(index)}
-                      value={condition.fieldId ? String(condition.fieldId) : undefined}
-                      placeholder="Select field"
-                      onChange={(value) =>
-                        updateCondition(index, { fieldId: Number(value), values: [] })
-                      }
-                    />
-                    <span className="lad-scope-operator">is any of</span>
-                    <Dropdown
-                      className="lad-scope-dropdown"
-                      options={(field?.options ?? []).map((o) => ({ value: o, label: o }))}
-                      multiple
-                      values={condition.values}
-                      onChangeValues={(values) => updateCondition(index, { values })}
-                      placeholder="Select option"
-                      readOnly={!field}
-                    />
-                    {scope.conditions.length > 1 && (
-                      <CloseButton
-                        size={20}
-                        className="lad-scope-remove"
-                        onClick={() => removeCondition(index)}
-                        ariaLabel="Remove field"
-                      />
-                    )}
-                  </div>
+      {/* What the role means */}
+      <Alert
+        type="Callout"
+        customIcon={<InfoCircle size={20} color="var(--text-secondary)" variant="Linear" />}
+        message="A Limited Admin manages people, enrolments and learning records for the people in their scope only. They cannot see reports, teams, cohorts or settings, and cannot manage other admins."
+      />
 
-                  {/* The picks always live here, one chip each, from the first one on:
-                      the trigger keeps its placeholder, so the selection never moves
-                      between the field and this row as the count changes, and a long
-                      name is never truncated in the trigger. */}
-                  {condition.values.length > 0 && (
-                    <div className="lad-scope-chips">
-                      {condition.values.map((value) => (
-                        <Badge
-                          key={value}
-                          type="informative"
-                          label={value}
-                          onDismiss={() =>
-                            updateCondition(index, {
-                              values: condition.values.filter((v) => v !== value),
-                            })
-                          }
-                        />
-                      ))}
-                    </div>
-                  )}
-                  </div>
-                )
-              })}
+      {orphans.length > 0 && (
+        <Alert
+          type="Alert"
+          customIcon={<Danger size={20} color="var(--text-warning)" variant="Bold" />}
+          title="This scope is out of date"
+          message="A field or value it relies on has been removed. Until you fix it, this Limited Admin sees nobody."
+        />
+      )}
 
-              {availableFields(-1).length > 0 && (
-                <RowActionsMenu
-                  items={availableFields(-1).map((o) => ({ key: o.value, label: o.label }))}
-                  onSelect={(key) => addCondition(Number(key))}
-                  ariaLabel="Add field"
-                  caret={false}
-                  /* The design system's own text-button classes on the menu's trigger,
-                     so it reads as the same control it replaced. */
-                  triggerClassName="ds-btn ds-btn--md ds-btn--text ds-btn--has-icon lad-add-field"
-                  triggerContent={
-                    <>
-                      <Add size={20} color="currentColor" />
-                      Add Field
-                    </>
+      {/* Scope: one row per field, read as a sentence. */}
+      {!hasFields ? (
+        <p className="lad-empty">
+          There are no custom user fields yet. Create one on the User fields page
+          before scoping a Limited Admin.
+        </p>
+      ) : (
+        <>
+          {scope.conditions.map((condition, index) => {
+            const field = fields.find((f) => f.id === condition.fieldId)
+            return (
+              <div className="lad-scope-item" key={index}>
+              <div className="lad-scope-row">
+                <span className="lad-scope-lead">{index === 0 ? 'Scope is' : 'and'}</span>
+                <Dropdown
+                  className="lad-scope-dropdown"
+                  options={availableFields(index)}
+                  value={condition.fieldId ? String(condition.fieldId) : undefined}
+                  placeholder="Select field"
+                  onChange={(value) =>
+                    updateCondition(index, { fieldId: Number(value), values: [] })
                   }
                 />
-              )}
-            </>
-          )}
-        </div>
+                <span className="lad-scope-operator">is any of</span>
+                <Dropdown
+                  className="lad-scope-dropdown"
+                  options={(field?.options ?? []).map((o) => ({ value: o, label: o }))}
+                  multiple
+                  values={condition.values}
+                  onChangeValues={(values) => updateCondition(index, { values })}
+                  placeholder="Select option"
+                  readOnly={!field}
+                />
+                {scope.conditions.length > 1 && (
+                  <CloseButton
+                    size={20}
+                    className="lad-scope-remove"
+                    onClick={() => removeCondition(index)}
+                    ariaLabel="Remove field"
+                  />
+                )}
+              </div>
 
-        <div className="lad-footer">
-          <div className="lad-divider" />
-          <div className="lad-footer__row">
-            <Button
-              variant="filled"
-              disabled={!canSave}
-              onClick={() => canSave && onSave(scope)}
-            >
-              {saveLabel}
-            </Button>
-            {isEditing && (
-              <Button className="lad-remove" semantic="danger" onClick={onRemove}>
-                Remove Limited Admin
-              </Button>
-            )}
-          </div>
-        </div>
-      </aside>
-    </div>
+              {/* The picks always live here, one chip each, from the first one on:
+                  the trigger keeps its placeholder, so the selection never moves
+                  between the field and this row as the count changes, and a long
+                  name is never truncated in the trigger. */}
+              {condition.values.length > 0 && (
+                <div className="lad-scope-chips">
+                  {condition.values.map((value) => (
+                    <Badge
+                      key={value}
+                      type="informative"
+                      label={value}
+                      onDismiss={() =>
+                        updateCondition(index, {
+                          values: condition.values.filter((v) => v !== value),
+                        })
+                      }
+                    />
+                  ))}
+                </div>
+              )}
+              </div>
+            )
+          })}
+
+          {availableFields(-1).length > 0 && (
+            <RowActionsMenu
+              items={availableFields(-1).map((o) => ({ key: o.value, label: o.label }))}
+              onSelect={(key) => addCondition(Number(key))}
+              ariaLabel="Add field"
+              caret={false}
+              /* The design system's own text-button classes on the menu's trigger,
+                 so it reads as the same control it replaced. */
+              triggerClassName="ds-btn ds-btn--md ds-btn--text ds-btn--has-icon lad-add-field"
+              triggerContent={
+                <>
+                  <Add size={20} color="currentColor" />
+                  Add Field
+                </>
+              }
+            />
+          )}
+        </>
+      )}
+    </SideDrawer>
   )
 }
 

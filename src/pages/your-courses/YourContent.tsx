@@ -7,6 +7,7 @@ import { lessonKey } from '@/data/lessonResources'
 import LessonEditorModal from '../../components/LessonEditorModal/LessonEditorModal'
 import FlashcardEditor from '../add-content/components/FlashcardEditor/FlashcardEditor'
 import { readAddedLessons, updateAddedLesson, removeAddedLesson } from '../../utils/addedLessons'
+import Tabs from '@/components/Tabs/Tabs'
 import './YourContent.css'
 
 type Tab = 'lessons' | 'scorm'
@@ -72,20 +73,15 @@ function YourContent() {
         <div className="your-content-header">
           <h2 className="your-content-title">Your Content</h2>
           <div className="page-header-divider" />
-          <div className="content-tabs">
-            <button
-              className={`content-tab${activeTab === 'lessons' ? ' content-tab--active' : ''}`}
-              onClick={() => setActiveTab('lessons')}
-            >
-              Lessons
-            </button>
-            <button
-              className={`content-tab${activeTab === 'scorm' ? ' content-tab--active' : ''}`}
-              onClick={() => setActiveTab('scorm')}
-            >
-              SCORM
-            </button>
-          </div>
+          <Tabs
+            items={[
+              { key: 'lessons', label: 'Lessons' },
+              { key: 'scorm', label: 'SCORM' },
+            ]}
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key as Tab)}
+            ariaLabel="Content type"
+          />
         </div>
         <ContentTable variant={activeTab} onLessonClick={handleLessonClick} onAddContent={handleAddContent} aiQuizReadyIds={aiQuizReadyIds} addedLessons={addedLessons} onDeleteLesson={handleDeleteLesson} />
       </main>

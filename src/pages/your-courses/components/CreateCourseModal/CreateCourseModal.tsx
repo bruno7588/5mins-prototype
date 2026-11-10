@@ -10,6 +10,7 @@ import {
   FolderOpen,
   ArrowDown2,
 } from 'iconsax-react'
+import Tabs from '@/components/Tabs/Tabs'
 import './CreateCourseModal.css'
 
 type Tab = 'details' | 'content' | 'resources' | 'settings'
@@ -39,32 +40,17 @@ function CreateCourseModal({ onClose }: CreateCourseModalProps) {
         </div>
 
         {/* Tabs */}
-        <div className="create-course-tabs">
-          <button
-            className={`create-course-tab${activeTab === 'details' ? ' create-course-tab--active' : ''}`}
-            onClick={() => setActiveTab('details')}
-          >
-            Details
-          </button>
-          <button
-            className={`create-course-tab${activeTab === 'content' ? ' create-course-tab--active' : ''}`}
-            onClick={() => setActiveTab('content')}
-          >
-            Course Content
-          </button>
-          <button
-            className={`create-course-tab${activeTab === 'resources' ? ' create-course-tab--active' : ''}`}
-            onClick={() => setActiveTab('resources')}
-          >
-            Resources
-          </button>
-          <button
-            className={`create-course-tab${activeTab === 'settings' ? ' create-course-tab--active' : ''}`}
-            onClick={() => setActiveTab('settings')}
-          >
-            Settings
-          </button>
-        </div>
+        <Tabs
+          className="create-course-tabs"
+          items={[
+            { key: 'details', label: 'Details' },
+            { key: 'content', label: 'Course Content' },
+            { key: 'resources', label: 'Resources' },
+            { key: 'settings', label: 'Settings' },
+          ]}
+          activeKey={activeTab}
+          onChange={(key) => setActiveTab(key as Tab)}
+        />
       </div>
 
       {/* Body */}

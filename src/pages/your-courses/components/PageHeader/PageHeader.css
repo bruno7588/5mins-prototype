@@ -49,47 +49,12 @@
   margin: 0 calc(-1 * var(--space-xl));
 }
 
-/* Tabs — gap 20px; divider lives above (page-header-divider). */
+/* Tab row: the divider lives above (page-header-divider); the extra 8px on
+   top keeps the original 24px from the divider to the tab labels. */
 .page-header-tabrow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-m);
-}
-
-.page-header-tabs {
-  display: flex;
-  gap: var(--space-ml);
-}
-
-.page-header-tab {
-  position: relative;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-secondary);
-  padding: var(--space-s) 0 var(--space-sm) 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 150ms ease;
-}
-
-.page-header-tab:hover {
-  color: var(--text-primary);
-}
-
-.page-header-tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.page-header-tab--active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--selected);
-  border-radius: 2px;
+  padding-top: var(--space-s);
 }

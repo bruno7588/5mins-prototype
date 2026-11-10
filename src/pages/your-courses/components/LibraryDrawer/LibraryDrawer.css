@@ -1,37 +1,15 @@
 /* LibraryDrawer — content per Figma 7068:79092.
-   Drawer shell uses shared .side-drawer / .overlay-backdrop from CoursesDrawer.css. */
-
-.library-drawer__headline {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
-.library-drawer__title {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.library-drawer__subtitle {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
+   Hosted in ContentDrawer's SideDrawer, which draws the title and close button. */
 
 .library-drawer__search {
   flex-shrink: 0;
 }
 
+/* The list scrolls under the search, which stays put. */
 .library-drawer__list {
+  flex: 1 0 0;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-m);

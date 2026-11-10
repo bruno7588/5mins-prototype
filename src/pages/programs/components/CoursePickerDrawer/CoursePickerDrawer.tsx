@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
-import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
-import CloseButton from '../../../../components/CloseButton/CloseButton'
+import { useEffect, useState } from 'react'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
+import Tabs from '@/components/Tabs/Tabs'
 import Search from '../../../../components/Search/Search'
 import Dropdown from '../../../../components/Dropdown/Dropdown'
 import ContentSwitcher from '../../../../components/ContentSwitcher/ContentSwitcher'
@@ -14,6 +14,7 @@ import {
 import './CoursePickerDrawer.css'
 
 interface Props {
+  open: boolean
   /** Course ids already in the program — those rows show "Remove". */
   existingCourseIds: string[]
   onAdd: (course: CatalogCourse) => void
@@ -23,9 +24,7 @@ interface Props {
 
 type Tab = 'yours' | '5mins'
 
-function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Props) {
-  const [closing, setClosing] = useState(false)
-  const panelRef = useRef<HTMLElement>(null)
+function CoursePickerDrawer({ open, existingCourseIds, onAdd, onRemove, onClose }: Props) {
   const [tab, setTab] = useState<Tab>('yours')
   const [query, setQuery] = useState('')
   const [dimension, setDimension] = useState<'functions' | 'skills'>('functions')
@@ -34,13 +33,6 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
 
   const existing = new Set(existingCourseIds)
 
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(onClose, 300)
-  }
-
-  useOverlayA11y(panelRef, !closing)
-
   const switchTab = (next: Tab) => {
     setTab(next)
     setQuery('')
@@ -48,6 +40,11 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
     setFunctionFilter('all')
     setSkillFilter('all')
   }
+
+  // The drawer stays mounted between opens, so each open starts fresh on Your Courses.
+  useEffect(() => {
+    if (open) switchTab('yours')
+  }, [open])
 
   const q = query.trim().toLowerCase()
   const results = (tab === 'yours' ? yourCourses() : fiveMinsCourses()).filter((c) => {
@@ -60,63 +57,42 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
   })
 
   return (
-    <div className={`cpd-overlay${closing ? ' cpd-overlay--closing' : ''}`} onMouseDown={handleClose}>
-      <aside
-        ref={panelRef}
-        className={`cpd-panel${closing ? ' cpd-panel--closing' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cpd-title"
-        tabIndex={-1}
-        onMouseDown={(e) => e.stopPropagation()}
-      >
-        <header className="cpd-header">
-          <h2 className="cpd-header__title" id="cpd-title">Add courses to program</h2>
-          <CloseButton onClick={handleClose} />
-        </header>
+    <SideDrawer
+      open={open}
+      onClose={onClose}
+      title="Add courses to program"
+      subheader={
+        <div className="cpd-subheader">
+          <Tabs
+            items={[
+              { key: 'yours', label: 'Your Courses' },
+              { key: '5mins', label: '5Mins Courses' },
+            ]}
+            activeKey={tab}
+            onChange={(k) => switchTab(k as Tab)}
+            ariaLabel="Course source"
+          />
 
-        <div className="cpd-divider" />
+          {tab === '5mins' && (
+            <div className="cpd-controls">
+              <ContentSwitcher
+                items={[
+                  { key: 'functions', label: 'Functions' },
+                  { key: 'skills', label: 'Skills' },
+                ]}
+                activeKey={dimension}
+                onChange={(k) => setDimension(k as 'functions' | 'skills')}
+              />
+              <Dropdown
+                className="cpd-controls__filter"
+                menuAlign="end"
+                options={dimension === 'functions' ? FUNCTION_OPTIONS : SKILL_OPTIONS}
+                value={dimension === 'functions' ? functionFilter : skillFilter}
+                onChange={dimension === 'functions' ? setFunctionFilter : setSkillFilter}
+              />
+            </div>
+          )}
 
-        <div className="cpd-tabs" role="tablist">
-          <button
-            role="tab"
-            aria-selected={tab === 'yours'}
-            className={`cpd-tab${tab === 'yours' ? ' cpd-tab--active' : ''}`}
-            onClick={() => switchTab('yours')}
-          >
-            Your Courses
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === '5mins'}
-            className={`cpd-tab${tab === '5mins' ? ' cpd-tab--active' : ''}`}
-            onClick={() => switchTab('5mins')}
-          >
-            5Mins Courses
-          </button>
-        </div>
-
-        {tab === '5mins' && (
-          <div className="cpd-controls">
-            <ContentSwitcher
-              items={[
-                { key: 'functions', label: 'Functions' },
-                { key: 'skills', label: 'Skills' },
-              ]}
-              activeKey={dimension}
-              onChange={(k) => setDimension(k as 'functions' | 'skills')}
-            />
-            <Dropdown
-              className="cpd-controls__filter"
-              menuAlign="end"
-              options={dimension === 'functions' ? FUNCTION_OPTIONS : SKILL_OPTIONS}
-              value={dimension === 'functions' ? functionFilter : skillFilter}
-              onChange={dimension === 'functions' ? setFunctionFilter : setSkillFilter}
-            />
-          </div>
-        )}
-
-        <div className="cpd-search">
           <Search
             size="M"
             value={query}
@@ -125,51 +101,49 @@ function CoursePickerDrawer({ existingCourseIds, onAdd, onRemove, onClose }: Pro
             className="cpd-search__input"
           />
         </div>
-
-        <div className="cpd-body">
-          {results.length === 0 ? (
-            <div className="cpd-empty">
-              <p>{q ? `No courses match “${query.trim()}”.` : 'No courses here yet.'}</p>
-            </div>
-          ) : (
-            <>
-              <p className="cpd-col-head">Course name</p>
-              <div className="cpd-list">
-                {results.map((course) => {
-                  const added = existing.has(course.courseId)
-                  return (
-                    <div key={course.courseId} className="cpd-row">
-                      <span className="cpd-row__thumb" style={{ backgroundImage: `url(${course.thumb})` }} />
-                      <span className="cpd-row__info">
-                        <span className="cpd-row__title">{course.title}</span>
-                        <span className="cpd-row__meta">
-                          {course.lessonCount} lessons · {course.durationMinutes}min
-                        </span>
-                      </span>
-                      {added ? (
-                        <button
-                          className="cpd-row__btn cpd-row__btn--remove"
-                          onClick={() => onRemove(course.courseId)}
-                        >
-                          Remove
-                        </button>
-                      ) : (
-                        <button
-                          className="cpd-row__btn cpd-row__btn--add"
-                          onClick={() => onAdd(course)}
-                        >
-                          Add
-                        </button>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            </>
-          )}
+      }
+    >
+      {results.length === 0 ? (
+        <div className="cpd-empty">
+          <p>{q ? `No courses match “${query.trim()}”.` : 'No courses here yet.'}</p>
         </div>
-      </aside>
-    </div>
+      ) : (
+        <>
+          <p className="cpd-col-head">Course name</p>
+          <div className="cpd-list">
+            {results.map((course) => {
+              const added = existing.has(course.courseId)
+              return (
+                <div key={course.courseId} className="cpd-row">
+                  <span className="cpd-row__thumb" style={{ backgroundImage: `url(${course.thumb})` }} />
+                  <span className="cpd-row__info">
+                    <span className="cpd-row__title">{course.title}</span>
+                    <span className="cpd-row__meta">
+                      {course.lessonCount} lessons · {course.durationMinutes}min
+                    </span>
+                  </span>
+                  {added ? (
+                    <button
+                      className="cpd-row__btn cpd-row__btn--remove"
+                      onClick={() => onRemove(course.courseId)}
+                    >
+                      Remove
+                    </button>
+                  ) : (
+                    <button
+                      className="cpd-row__btn cpd-row__btn--add"
+                      onClick={() => onAdd(course)}
+                    >
+                      Add
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+    </SideDrawer>
   )
 }
 

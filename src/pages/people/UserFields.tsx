@@ -128,14 +128,13 @@ function UserFields() {
           )}
         </div>
 
-        {showDrawer && (
-          <UserFieldDrawer
-            onClose={() => { setShowDrawer(false); setEditingField(null) }}
-            onSave={handleSave}
-            initialData={editingField ? { name: editingField.name, options: editingField.options, required: editingField.required } : undefined}
-            existingNames={fields.map(f => f.name)}
-          />
-        )}
+        <UserFieldDrawer
+          open={showDrawer}
+          onClose={() => { setShowDrawer(false); setEditingField(null) }}
+          onSave={handleSave}
+          initialData={editingField ? { name: editingField.name, options: editingField.options, required: editingField.required } : undefined}
+          existingNames={fields.map(f => f.name)}
+        />
 
         {/* Delete confirmation */}
         <ConfirmModal open={!!deleteField} onClose={() => { setDeleteField(null); setConfirmInput('') }}>

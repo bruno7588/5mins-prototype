@@ -4,7 +4,7 @@ import { generateMoreQuestions } from '../../data/mockQuestions'
 import type { Answer, Question } from '../../data/mockQuestions'
 import ToastContainer, { useToast } from '../Toast/Toast'
 import Button from '../Button/Button'
-import CloseButton from '../CloseButton/CloseButton'
+import SideDrawer from '../SideDrawer/SideDrawer'
 import QuestionCard from '@/pages/your-courses/components/QuestionCard/QuestionCard'
 import { QuestionPreview } from '@/pages/your-courses/components/SituationalTestPreview/SituationalTestPreview'
 import type { SituationalQuestion } from '@/pages/your-courses/components/SituationalTestDrawer/SituationalTestDrawer'
@@ -15,6 +15,8 @@ import { useTyped, prefersReducedMotion } from '../AIWorkingCard/useTyped'
 import './AIGenerateDrawer.css'
 
 interface AIGenerateDrawerProps {
+  /** Each open starts a fresh run; the drawer stays mounted so it can slide out. */
+  open: boolean
   /** `finished` is true when the last question was reviewed, false when the drawer was
    *  closed part-way. */
   onComplete: (savedQuestions: Question[], finished: boolean) => void
@@ -150,11 +152,11 @@ function makeEmptyAnswer(index: number): Answer {
   }
 }
 
-function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
+function AIGenerateDrawer({ open, onComplete, lessonTitle }: AIGenerateDrawerProps) {
   const [phase, setPhase] = useState<'generating' | 'reviewing'>('generating')
   const reduce = useReducedMotion()
   const [currentStep, setCurrentStep] = useState(0)
-  const [generatedQuestions] = useState<Question[]>(() => generateMoreQuestions())
+  const [generatedQuestions, setGeneratedQuestions] = useState<Question[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [savedQuestions, setSavedQuestions] = useState<Question[]>([])
 
@@ -168,22 +170,30 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
   const { toasts, show: showToast } = useToast()
 
 
-  // Simulate generation passes
+  // Simulate generation passes. The drawer stays mounted between opens, so each open
+  // starts a new run from the top.
   useEffect(() => {
-    if (phase !== 'generating') return
+    if (!open) return
+    const questions = generateMoreQuestions()
+    setGeneratedQuestions(questions)
+    setPhase('generating')
+    setCurrentStep(0)
+    setCurrentIndex(0)
+    setSavedQuestions([])
+    setPreviewing(false)
 
-    const optionsMs = OPTION_MS * Math.max(1, generatedQuestions[0]?.answers.length ?? 1)
+    const optionsMs = OPTION_MS * Math.max(1, questions[0]?.answers.length ?? 1)
     const starts = [0, READING_MS, READING_MS + QUESTION_MS, READING_MS + QUESTION_MS + optionsMs]
     const timers = starts.map((at, i) => setTimeout(() => setCurrentStep(i), at))
 
     // Complete generation: the review opens on the question that was just written
     timers.push(setTimeout(() => {
       setPhase('reviewing')
-      loadQuestion(generatedQuestions[0])
+      loadQuestion(questions[0])
     }, starts[starts.length - 1] + DONE_MS))
 
     return () => timers.forEach(clearTimeout)
-  }, [])
+  }, [open])
 
   function loadQuestion(q: Question) {
     setEditText(q.text)
@@ -255,10 +265,12 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
   }
   return (
     <>
-      <div className="ai-drawer-overlay" onClick={handleClose} />
-      <div className="ai-drawer-panel">
-        {/* Header */}
-        <div className="ai-drawer-header">
+      <SideDrawer
+        open={open}
+        onClose={handleClose}
+        ariaLabel={phase === 'generating' ? 'Generating questions' : 'Review questions'}
+        bodyClassName="ai-drawer-body"
+        header={
           <div className="ai-drawer-headline">
             <h3 className="ai-drawer-title">
               {phase === 'generating' ? 'Generating Questions…' : 'Review Questions'}
@@ -269,91 +281,82 @@ function AIGenerateDrawer({ onComplete, lessonTitle }: AIGenerateDrawerProps) {
               </p>
             </Collapse>
           </div>
-          <CloseButton onClick={handleClose} className="ai-drawer-close" />
-        </div>
-        <div className="ai-drawer-divider" />
-
-        {/* Body */}
-        <div className="ai-drawer-body">
-          {/* The wait and each question are screens: the one on screen leaves upward as
-              the next rises into its place, as in the course builder's generate drawer.
-              AnimatePresence keeps the leaving screen's last render, so it shows the
-              question it was, not the one loading in. */}
-          <AnimatePresence mode="wait" initial={false}>
-          {phase === 'generating' ? (
+        }
+        footer={
+          phase === 'reviewing' ? (
             <motion.div
-              key="working"
-              className="ai-drawer-phase"
-              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+              className="ai-drawer-footer-buttons"
+              {...ARRIVE(reduce)}
               transition={arriveTransition(reduce)}
             >
-              <AIWorkingCard
-                className="ai-drawer-working"
-                steps={STEPS}
-                activeStep={currentStep}
-                detail={stepDetail(currentStep, lessonTitle, generatedQuestions[0])}
-                singleLine
-              />
-              {generatedQuestions[0] && (
-                <LiveQuestion question={generatedQuestions[0]} activeStep={currentStep} />
-              )}
-            </motion.div>
-          ) : (
-            <motion.div
-              key={`question-${currentIndex}`}
-              className="ai-drawer-phase"
-              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
-              transition={arriveTransition(reduce)}
-            >
-              {/* The course builder's question card, so both AI reviews read the same:
-                  "Question 1/6" and the format in the card's own head. */}
-              <QuestionCard
-                question={reviewQuestion}
-                label={`Question ${currentIndex + 1}/${totalQuestions}`}
-                format="single-choice"
-                isOpen
-                onToggle={() => {}}
-                collapsible={false}
-                readOnly={false}
-                generated
-                edit={{
-                  onChange: (patch) => {
-                    if (patch.text !== undefined) setEditText(patch.text)
-                    if (patch.explanation !== undefined) setEditExplanation(patch.explanation)
-                    if (patch.correctIndex !== undefined) setCorrectAnswer(patch.correctIndex)
-                  },
-                  onOptionChange: (i, value) => updateAnswer(i, { text: value }),
-                  onAddOption: addAnswer,
-                  onRemoveOption: removeAnswer,
-                  onBlur: () => {},
-                  errors: { text: false, options: false, correctBlank: false },
-                }}
-              />
-            </motion.div>
-          )}
-          </AnimatePresence>
-        </div>
-
-        {/* Footer — only in review phase */}
-        <AnimatePresence initial={false}>
-        {phase === 'reviewing' && (
-          <motion.div
-            className="ai-drawer-footer"
-            {...ARRIVE(reduce)}
-            transition={arriveTransition(reduce)}
-          >
-            <div className="ai-drawer-footer-buttons">
               <Button onClick={handleSave}>Save</Button>
               <Button variant="outlined" onClick={handleDiscard}>Discard</Button>
               <Button variant="outlined-2" onClick={() => setPreviewing(true)}>Preview</Button>
               <ToastContainer toasts={toasts} className="ai-drawer-toasts" />
-            </div>
+            </motion.div>
+          ) : undefined
+        }
+      >
+        {/* The wait and each question are screens: the one on screen leaves upward as
+            the next rises into its place, as in the course builder's generate drawer.
+            AnimatePresence keeps the leaving screen's last render, so it shows the
+            question it was, not the one loading in. */}
+        <AnimatePresence mode="wait" initial={false}>
+        {phase === 'generating' ? (
+          <motion.div
+            key="working"
+            className="ai-drawer-phase"
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+            transition={arriveTransition(reduce)}
+          >
+            <AIWorkingCard
+              className="ai-drawer-working"
+              steps={STEPS}
+              activeStep={currentStep}
+              detail={stepDetail(currentStep, lessonTitle, generatedQuestions[0])}
+              singleLine
+            />
+            {generatedQuestions[0] && (
+              <LiveQuestion question={generatedQuestions[0]} activeStep={currentStep} />
+            )}
+          </motion.div>
+        ) : (
+          <motion.div
+            key={`question-${currentIndex}`}
+            className="ai-drawer-phase"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+            transition={arriveTransition(reduce)}
+          >
+            {/* The course builder's question card, so both AI reviews read the same:
+                "Question 1/6" and the format in the card's own head. */}
+            <QuestionCard
+              question={reviewQuestion}
+              label={`Question ${currentIndex + 1}/${totalQuestions}`}
+              format="single-choice"
+              isOpen
+              onToggle={() => {}}
+              collapsible={false}
+              readOnly={false}
+              generated
+              edit={{
+                onChange: (patch) => {
+                  if (patch.text !== undefined) setEditText(patch.text)
+                  if (patch.explanation !== undefined) setEditExplanation(patch.explanation)
+                  if (patch.correctIndex !== undefined) setCorrectAnswer(patch.correctIndex)
+                },
+                onOptionChange: (i, value) => updateAnswer(i, { text: value }),
+                onAddOption: addAnswer,
+                onRemoveOption: removeAnswer,
+                onBlur: () => {},
+                errors: { text: false, options: false, correctBlank: false },
+              }}
+            />
           </motion.div>
         )}
         </AnimatePresence>
-      </div>
+      </SideDrawer>
 
       {previewing && (
         <QuestionPreview question={reviewQuestion} onClose={() => setPreviewing(false)} />

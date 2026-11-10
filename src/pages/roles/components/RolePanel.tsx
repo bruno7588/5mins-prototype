@@ -7,6 +7,7 @@ import Alert from '../../../components/Alert/Alert'
 import { skillCatalogue, simulateAISuggestion, type Skill, type CompanyRole, type FiveMinsRole } from '../data/mockRoles'
 import { getSkillIllustration } from '../../../assets/skill-icons'
 import Button from '@/components/Button/Button'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 
 /* ─── Panel mode types ─────────────────────────────────── */
 
@@ -17,20 +18,41 @@ export type PanelMode =
   | { type: 'edit'; role: CompanyRole }
 
 interface Props {
-  mode: PanelMode
+  open: boolean
+  /** The parent may clear this on close; the panel keeps the last one for the exit slide. */
+  mode: PanelMode | null
   existingRoleNames?: string[]
   onClose: () => void
   onSave: (name: string, skills: Skill[], leadership: boolean) => void
   onDelete?: (roleId: number) => void
 }
 
-function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: Props) {
-  const [closing, setClosing] = useState(false)
+type ContentProps = Omit<Props, 'mode'> & { mode: PanelMode }
 
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(() => onClose(), 300)
+/* Keeps the panel mounted while it closes, so the drawer's exit slide plays with
+   the same content, and starts a fresh form (new key) each time it opens. */
+function RolePanel({ open, mode, existingRoleNames = [], ...rest }: Props) {
+  const [session, setSession] = useState<{ mode: PanelMode; key: number } | null>(null)
+  if (open && mode && mode !== session?.mode) {
+    setSession({ mode, key: (session?.key ?? 0) + 1 })
   }
+  // Saving adds the new name to the list; keep the list it opened with so the
+  // exit slide does not flash a duplicate-name warning.
+  const names = useRef(existingRoleNames)
+  if (open) names.current = existingRoleNames
+  if (!session) return null
+  return (
+    <RolePanelContent
+      key={session.key}
+      open={open}
+      mode={session.mode}
+      existingRoleNames={names.current}
+      {...rest}
+    />
+  )
+}
+
+function RolePanelContent({ open, mode, existingRoleNames = [], onClose, onSave, onDelete }: ContentProps) {
 
   const isEdit = mode.type === 'edit'
   const isCopy = mode.type === 'copy'
@@ -313,13 +335,16 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
   const showBackInHeader = !isEdit && !isPrefilled && step === 2
 
   return (
-    <div className={`roles-panel-overlay${closing ? ' roles-panel-overlay--closing' : ''}`} onClick={handleClose}>
-      <div className={`roles-panel${closing ? ' roles-panel--closing' : ''}`} onClick={e => e.stopPropagation()}>
-        {/* Header — section-header style */}
-        <div className="roles-panel-section-header">
+    <>
+      <SideDrawer
+        open={open}
+        onClose={onClose}
+        ariaLabel={renderTitle()}
+        bodyClassName="roles-panel-body"
+        header={
           <div className="roles-panel-section-header__headline">
             {showBackInHeader && (
-              <button className="roles-panel-back-circle" onClick={() => setStep(1)}>
+              <button className="roles-panel-back-circle" onClick={() => setStep(1)} aria-label="Back">
                 <ArrowLeft size={20} color="currentColor" />
               </button>
             )}
@@ -329,363 +354,10 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                 <p className="roles-panel-section-header__description">{renderSubtitle()}</p>
               )}
             </div>
-            {!showBackInHeader && (
-              <button className="roles-panel-close" onClick={handleClose}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M17.25 17.25L6.75 6.75M17.25 6.75L6.75 17.25" stroke="var(--text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            )}
           </div>
-          <div className="roles-panel-section-header__divider" />
-        </div>
-
-        {/* Body */}
-        <div className="roles-panel-body">
-          {/* ── Edit Mode (single view, no steps) ── */}
-          {isEdit && (
-            <>
-              {mode.role.employeeCount > 0 && (
-                <Alert
-                  type="Alert"
-                  customIcon={<Danger size={24} variant="Bold" color="currentColor" className="alert__icon" />}
-                  message={`${mode.role.employeeCount} learner${mode.role.employeeCount !== 1 ? 's' : ''} have this role. Changing skills will update their recommendations.`}
-                  className="roles-panel-edit-alert"
-                />
-              )}
-
-              <InputField
-                label="Role Name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                validation={isDuplicateName ? 'warning' : 'none'}
-                helperText={isDuplicateName ? `A role named "${name.trim()}" already exists in your company roles. Change the name to continue.` : undefined}
-              />
-
-              <div className="roles-panel-field">
-                <label className="roles-panel-checkbox-row">
-                  <Checkbox checked={leadership} onChange={() => setLeadership(!leadership)} />
-                  <div>
-                    <span>This is a leadership role</span>
-                    <span className="roles-panel-helper">AI will suggest management and coaching skills</span>
-                  </div>
-                </label>
-              </div>
-
-              <div className="roles-panel-divider" />
-
-              {editAiWorking ? (
-                <div className="roles-ai-working-card">
-                  <div className="roles-ai-steps">
-                    <div className="roles-ai-step">
-                      <span className={`roles-ai-step__icon ${aiStep >= 2 ? 'roles-ai-step__icon--done' : 'roles-ai-step__icon--active'}`}>
-                        {aiStep >= 2 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
-                        ) : (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="var(--primary-500)" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
-                        )}
-                      </span>
-                      <span className="roles-ai-step__text">{aiStep >= 2 ? 'Analyzing your role' : 'Analyzing your role…'}</span>
-                    </div>
-                    <div className="roles-ai-step">
-                      <span className={`roles-ai-step__icon ${aiStep >= 3 ? 'roles-ai-step__icon--done' : aiStep >= 2 ? 'roles-ai-step__icon--active' : ''}`}>
-                        {aiStep >= 3 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
-                        ) : aiStep >= 2 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/><path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/></svg>
-                        ) : null}
-                      </span>
-                      <span className={`roles-ai-step__text ${aiStep < 2 ? 'roles-ai-step__text--disabled' : ''}`}>{aiStep === 2 ? 'Matching skills…' : 'Matching skills'}</span>
-                    </div>
-                    <div className="roles-ai-step">
-                      <span className="roles-ai-step__icon" />
-                      <span className={`roles-ai-step__text ${aiStep < 3 ? 'roles-ai-step__text--disabled' : ''}`}>Done</span>
-                    </div>
-                  </div>
-                  <div className="roles-ai-progress">
-                    <div className="roles-ai-progress__bar">
-                      <div className="roles-ai-progress__fill" style={{ transform: `translateX(${aiProgress - 100}%)` }} />
-                    </div>
-                    <span className="roles-ai-progress__text">{aiProgress}%</span>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="roles-panel-label-row">
-                    <p className="roles-panel-label" style={{ marginBottom: 0 }}>
-                      Skills — remove or add as needed
-                    </p>
-                    <button
-                      className="roles-btn-ai-text"
-                      onClick={handleEditAISuggest}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                        <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/>
-                        <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/>
-                      </svg>
-                      <span>Add Skills With AI</span>
-                    </button>
-                  </div>
-                  {renderSkillChips()}
-                  {renderSkillSearchSection()}
-                </>
-              )}
-            </>
-          )}
-
-          {/* ── Step 1: Details (create & copy) ── */}
-          {!isEdit && step === 1 && (
-            <>
-              <InputField
-                label="Role Name"
-                className={!isCopy ? 'roles-field-required' : undefined}
-                placeholder="e.g. Sales Development Rep"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                helperText={isDuplicateName ? `A role named "${name.trim()}" already exists in your company roles. Change the name to continue.` : isCopy ? "You can rename this role to match your company's terminology" : undefined}
-                validation={isDuplicateName ? 'warning' : 'none'}
-                autoFocus
-              />
-
-              {/* Description only in create modes, not copy */}
-              {!isCopy && (
-                <div className="input-field">
-                  <label className="input-field__label">Description</label>
-                  <div className="input-field__wrapper">
-                    <textarea
-                      className="input-field__input roles-panel-textarea-inline"
-                      rows={2}
-                      placeholder="Type a job description..."
-                      value={description}
-                      onChange={e => {
-                        setDescription(e.target.value)
-                        e.target.style.height = 'auto'
-                        e.target.style.height = e.target.scrollHeight + 'px'
-                      }}
-                    />
-                  </div>
-                  {uploadedFileName ? (
-                    <div className="roles-panel-file-chip">
-                      <DocumentText size={20} color="var(--text-secondary)" variant="Bold" />
-                      <span className="roles-panel-file-chip__name">{uploadedFileName}</span>
-                      <button
-                        className="roles-panel-file-chip__remove"
-                        onClick={() => { setUploadedFileName(null); setDescription('') }}
-                        aria-label="Remove document"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        <span className="roles-panel-file-chip__remove-tooltip">Remove Document</span>
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <button
-                        className="roles-panel-upload-btn"
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                      >
-                        <DocumentUpload size={20} color="currentColor" variant="Linear" />
-                        Upload Job Description
-                      </button>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".txt,.pdf,.doc,.docx"
-                        style={{ display: 'none' }}
-                        onChange={e => {
-                          const file = e.target.files?.[0]
-                          if (file) handleFile(file)
-                          e.target.value = ''
-                        }}
-                      />
-                    </>
-                  )}
-                </div>
-              )}
-
-              <div className="roles-panel-field">
-                <label className="roles-panel-checkbox-row">
-                  <Checkbox checked={leadership} onChange={() => setLeadership(!leadership)} />
-                  <div>
-                    <span>This is a leadership role</span>
-                    <span className="roles-panel-helper">AI will suggest management and coaching skills</span>
-                  </div>
-                </label>
-              </div>
-            </>
-          )}
-
-          {/* ── Step 2: Skills (create & copy) ── */}
-          {!isEdit && step === 2 && (
-            <>
-              {/* Role name — editable for duplicate, badge for others */}
-              {isPrefilled ? (
-                <>
-                  <InputField
-                    label="Role Name"
-                    className="roles-field-required"
-                    placeholder="e.g. Sales Development Rep"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    validation={isDuplicateName ? 'warning' : 'none'}
-                    helperText={isDuplicateName ? `A role named "${name.trim()}" already exists in your company roles. Change the name to continue.` : undefined}
-                    autoFocus
-                  />
-                  <div className="input-field">
-                    <label className="input-field__label">Description</label>
-                    <div className="input-field__wrapper">
-                      <textarea
-                        className="input-field__input roles-panel-textarea-inline"
-                        rows={2}
-                        placeholder="Type a job description..."
-                        value={description}
-                        onChange={e => {
-                          setDescription(e.target.value)
-                          e.target.style.height = 'auto'
-                          e.target.style.height = e.target.scrollHeight + 'px'
-                        }}
-                      />
-                    </div>
-                    {uploadedFileName ? (
-                      <div className="roles-panel-file-chip">
-                        <DocumentText size={20} color="var(--text-secondary)" variant="Bold" />
-                        <span className="roles-panel-file-chip__name">{uploadedFileName}</span>
-                        <button
-                          className="roles-panel-file-chip__remove"
-                          onClick={() => { setUploadedFileName(null); setDescription('') }}
-                          aria-label="Remove document"
-                        >
-                          <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                          <span className="roles-panel-file-chip__remove-tooltip">Remove Document</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <button
-                          className="roles-panel-upload-btn"
-                          type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          <DocumentUpload size={20} color="currentColor" variant="Linear" />
-                          Upload Job Description
-                        </button>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept=".txt,.pdf,.doc,.docx"
-                          style={{ display: 'none' }}
-                          onChange={e => {
-                            const file = e.target.files?.[0]
-                            if (file) handleFile(file)
-                            e.target.value = ''
-                          }}
-                        />
-                      </>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="roles-ai-role-badge">
-                  <span className="roles-ai-role-badge__label">Role:</span>
-                  <span className="roles-ai-role-badge__name">{name}</span>
-                </div>
-              )}
-
-              {/* AI Working Animation */}
-              {aiLoading && (
-                <div className="roles-ai-working-card">
-                  <div className="roles-ai-steps">
-                    <div className="roles-ai-step">
-                      <span className={`roles-ai-step__icon ${aiStep >= 2 ? 'roles-ai-step__icon--done' : 'roles-ai-step__icon--active'}`}>
-                        {aiStep >= 2 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
-                        ) : (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="var(--primary-500)" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
-                        )}
-                      </span>
-                      <span className="roles-ai-step__text">{aiStep >= 2 ? 'Analyzing your role' : 'Analyzing your role…'}</span>
-                    </div>
-                    <div className="roles-ai-step">
-                      <span className={`roles-ai-step__icon ${aiStep >= 3 ? 'roles-ai-step__icon--done' : aiStep >= 2 ? 'roles-ai-step__icon--active' : ''}`}>
-                        {aiStep >= 3 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
-                        ) : aiStep >= 2 ? (
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/><path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/></svg>
-                        ) : null}
-                      </span>
-                      <span className={`roles-ai-step__text ${aiStep < 2 ? 'roles-ai-step__text--disabled' : ''}`}>{aiStep === 2 ? 'Matching skills…' : 'Matching skills'}</span>
-                    </div>
-                    <div className="roles-ai-step">
-                      <span className="roles-ai-step__icon" />
-                      <span className={`roles-ai-step__text ${aiStep < 3 ? 'roles-ai-step__text--disabled' : ''}`}>Done</span>
-                    </div>
-                  </div>
-                  <div className="roles-ai-progress">
-                    <div className="roles-ai-progress__bar">
-                      <div className="roles-ai-progress__fill" style={{ transform: `translateX(${aiProgress - 100}%)` }} />
-                    </div>
-                    <span className="roles-ai-progress__text">{aiProgress}%</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Skills UI after AI finishes or for copy/manual */}
-              {!aiLoading && (
-                <>
-                  {!isCopy && !isPrefilled && (
-                    <div className="roles-panel-label-row">
-                      <p className="roles-panel-label" style={{ marginBottom: 0 }}>
-                        Skills — remove or add as needed
-                      </p>
-                      <button
-                        className="roles-btn-ai-text"
-                        disabled={aiLoading}
-                        onClick={handleAISuggest}
-                      >
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                          <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/>
-                          <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/>
-                        </svg>
-                        <span>Add Skills With AI</span>
-                      </button>
-                    </div>
-                  )}
-                  {isCopy && (
-                    <p className="roles-panel-label" style={{ marginBottom: 4 }}>
-                      Skills from 5Mins library — remove or add as needed
-                    </p>
-                  )}
-                  {isPrefilled && (
-                    <div className="roles-panel-label-row">
-                      <p className="roles-panel-label" style={{ marginBottom: 0 }}>
-                        Skills — remove or add as needed
-                      </p>
-                      <button
-                        className="roles-btn-ai-text"
-                        disabled={aiLoading}
-                        onClick={handleAISuggest}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                          <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/>
-                          <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/>
-                        </svg>
-                        <span>Add Skills With AI</span>
-                      </button>
-                    </div>
-                  )}
-
-                  {renderSkillChips()}
-                  {renderSkillSearchSection()}
-                </>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="roles-panel-footer">
-          <div className="roles-panel-footer-divider" />
-          <div className="roles-panel-footer-row">
+        }
+        footer={
+          <>
             <div className="roles-panel-footer-left">
               {/* Step 1 Create: AI + Manual buttons */}
               {!isEdit && !isCopy && step === 1 && (
@@ -753,7 +425,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
                     {isCopy ? 'Copy Role' : 'Create Role'}
                   </Button>
                   <Button variant="outlined-2"
-                    onClick={handleClose}
+                    onClick={onClose}
                   >
                     Cancel
                   </Button>
@@ -763,9 +435,348 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
             {!isEdit && !isPrefilled && (
               <span className="roles-panel-step-indicator">Step {step} of 2</span>
             )}
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      >
+        {/* ── Edit Mode (single view, no steps) ── */}
+        {isEdit && (
+          <>
+            {mode.role.employeeCount > 0 && (
+              <Alert
+                type="Alert"
+                customIcon={<Danger size={24} variant="Bold" color="currentColor" className="alert__icon" />}
+                message={`${mode.role.employeeCount} learner${mode.role.employeeCount !== 1 ? 's' : ''} have this role. Changing skills will update their recommendations.`}
+                className="roles-panel-edit-alert"
+              />
+            )}
+
+            <InputField
+              label="Role Name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              validation={isDuplicateName ? 'warning' : 'none'}
+              helperText={isDuplicateName ? `A role named "${name.trim()}" already exists in your company roles. Change the name to continue.` : undefined}
+            />
+
+            <div className="roles-panel-field">
+              <label className="roles-panel-checkbox-row">
+                <Checkbox checked={leadership} onChange={() => setLeadership(!leadership)} />
+                <div>
+                  <span>This is a leadership role</span>
+                  <span className="roles-panel-helper">AI will suggest management and coaching skills</span>
+                </div>
+              </label>
+            </div>
+
+            <div className="roles-panel-divider" />
+
+            {editAiWorking ? (
+              <div className="roles-ai-working-card">
+                <div className="roles-ai-steps">
+                  <div className="roles-ai-step">
+                    <span className={`roles-ai-step__icon ${aiStep >= 2 ? 'roles-ai-step__icon--done' : 'roles-ai-step__icon--active'}`}>
+                      {aiStep >= 2 ? (
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
+                      ) : (
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="var(--primary-500)" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
+                      )}
+                    </span>
+                    <span className="roles-ai-step__text">{aiStep >= 2 ? 'Analyzing your role' : 'Analyzing your role…'}</span>
+                  </div>
+                  <div className="roles-ai-step">
+                    <span className={`roles-ai-step__icon ${aiStep >= 3 ? 'roles-ai-step__icon--done' : aiStep >= 2 ? 'roles-ai-step__icon--active' : ''}`}>
+                      {aiStep >= 3 ? (
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
+                      ) : aiStep >= 2 ? (
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/><path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/></svg>
+                      ) : null}
+                    </span>
+                    <span className={`roles-ai-step__text ${aiStep < 2 ? 'roles-ai-step__text--disabled' : ''}`}>{aiStep === 2 ? 'Matching skills…' : 'Matching skills'}</span>
+                  </div>
+                  <div className="roles-ai-step">
+                    <span className="roles-ai-step__icon" />
+                    <span className={`roles-ai-step__text ${aiStep < 3 ? 'roles-ai-step__text--disabled' : ''}`}>Done</span>
+                  </div>
+                </div>
+                <div className="roles-ai-progress">
+                  <div className="roles-ai-progress__bar">
+                    <div className="roles-ai-progress__fill" style={{ transform: `translateX(${aiProgress - 100}%)` }} />
+                  </div>
+                  <span className="roles-ai-progress__text">{aiProgress}%</span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="roles-panel-label-row">
+                  <p className="roles-panel-label" style={{ marginBottom: 0 }}>
+                    Skills — remove or add as needed
+                  </p>
+                  <button
+                    className="roles-btn-ai-text"
+                    onClick={handleEditAISuggest}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                      <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/>
+                      <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/>
+                    </svg>
+                    <span>Add Skills With AI</span>
+                  </button>
+                </div>
+                {renderSkillChips()}
+                {renderSkillSearchSection()}
+              </>
+            )}
+          </>
+        )}
+
+        {/* ── Step 1: Details (create & copy) ── */}
+        {!isEdit && step === 1 && (
+          <>
+            <InputField
+              label="Role Name"
+              className={!isCopy ? 'roles-field-required' : undefined}
+              placeholder="e.g. Sales Development Rep"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              helperText={isDuplicateName ? `A role named "${name.trim()}" already exists in your company roles. Change the name to continue.` : isCopy ? "You can rename this role to match your company's terminology" : undefined}
+              validation={isDuplicateName ? 'warning' : 'none'}
+              autoFocus
+            />
+
+            {/* Description only in create modes, not copy */}
+            {!isCopy && (
+              <div className="input-field">
+                <label className="input-field__label">Description</label>
+                <div className="input-field__wrapper">
+                  <textarea
+                    className="input-field__input roles-panel-textarea-inline"
+                    rows={2}
+                    placeholder="Type a job description..."
+                    value={description}
+                    onChange={e => {
+                      setDescription(e.target.value)
+                      e.target.style.height = 'auto'
+                      e.target.style.height = e.target.scrollHeight + 'px'
+                    }}
+                  />
+                </div>
+                {uploadedFileName ? (
+                  <div className="roles-panel-file-chip">
+                    <DocumentText size={20} color="var(--text-secondary)" variant="Bold" />
+                    <span className="roles-panel-file-chip__name">{uploadedFileName}</span>
+                    <button
+                      className="roles-panel-file-chip__remove"
+                      onClick={() => { setUploadedFileName(null); setDescription('') }}
+                      aria-label="Remove document"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <span className="roles-panel-file-chip__remove-tooltip">Remove Document</span>
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      className="roles-panel-upload-btn"
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <DocumentUpload size={20} color="currentColor" variant="Linear" />
+                      Upload Job Description
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".txt,.pdf,.doc,.docx"
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        const file = e.target.files?.[0]
+                        if (file) handleFile(file)
+                        e.target.value = ''
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+            )}
+
+            <div className="roles-panel-field">
+              <label className="roles-panel-checkbox-row">
+                <Checkbox checked={leadership} onChange={() => setLeadership(!leadership)} />
+                <div>
+                  <span>This is a leadership role</span>
+                  <span className="roles-panel-helper">AI will suggest management and coaching skills</span>
+                </div>
+              </label>
+            </div>
+          </>
+        )}
+
+        {/* ── Step 2: Skills (create & copy) ── */}
+        {!isEdit && step === 2 && (
+          <>
+            {/* Role name — editable for duplicate, badge for others */}
+            {isPrefilled ? (
+              <>
+                <InputField
+                  label="Role Name"
+                  className="roles-field-required"
+                  placeholder="e.g. Sales Development Rep"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  validation={isDuplicateName ? 'warning' : 'none'}
+                  helperText={isDuplicateName ? `A role named "${name.trim()}" already exists in your company roles. Change the name to continue.` : undefined}
+                  autoFocus
+                />
+                <div className="input-field">
+                  <label className="input-field__label">Description</label>
+                  <div className="input-field__wrapper">
+                    <textarea
+                      className="input-field__input roles-panel-textarea-inline"
+                      rows={2}
+                      placeholder="Type a job description..."
+                      value={description}
+                      onChange={e => {
+                        setDescription(e.target.value)
+                        e.target.style.height = 'auto'
+                        e.target.style.height = e.target.scrollHeight + 'px'
+                      }}
+                    />
+                  </div>
+                  {uploadedFileName ? (
+                    <div className="roles-panel-file-chip">
+                      <DocumentText size={20} color="var(--text-secondary)" variant="Bold" />
+                      <span className="roles-panel-file-chip__name">{uploadedFileName}</span>
+                      <button
+                        className="roles-panel-file-chip__remove"
+                        onClick={() => { setUploadedFileName(null); setDescription('') }}
+                        aria-label="Remove document"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <span className="roles-panel-file-chip__remove-tooltip">Remove Document</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        className="roles-panel-upload-btn"
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <DocumentUpload size={20} color="currentColor" variant="Linear" />
+                        Upload Job Description
+                      </button>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".txt,.pdf,.doc,.docx"
+                        style={{ display: 'none' }}
+                        onChange={e => {
+                          const file = e.target.files?.[0]
+                          if (file) handleFile(file)
+                          e.target.value = ''
+                        }}
+                      />
+                    </>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="roles-ai-role-badge">
+                <span className="roles-ai-role-badge__label">Role:</span>
+                <span className="roles-ai-role-badge__name">{name}</span>
+              </div>
+            )}
+
+            {/* AI Working Animation */}
+            {aiLoading && (
+              <div className="roles-ai-working-card">
+                <div className="roles-ai-steps">
+                  <div className="roles-ai-step">
+                    <span className={`roles-ai-step__icon ${aiStep >= 2 ? 'roles-ai-step__icon--done' : 'roles-ai-step__icon--active'}`}>
+                      {aiStep >= 2 ? (
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
+                      ) : (
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="var(--primary-500)" strokeWidth="2" fill="none" strokeDasharray="25 25"><animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/></circle></svg>
+                      )}
+                    </span>
+                    <span className="roles-ai-step__text">{aiStep >= 2 ? 'Analyzing your role' : 'Analyzing your role…'}</span>
+                  </div>
+                  <div className="roles-ai-step">
+                    <span className={`roles-ai-step__icon ${aiStep >= 3 ? 'roles-ai-step__icon--done' : aiStep >= 2 ? 'roles-ai-step__icon--active' : ''}`}>
+                      {aiStep >= 3 ? (
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667A8.333 8.333 0 1 0 18.333 10 8.333 8.333 0 0 0 10 1.667Zm3.583 6.416-4.166 4.167a.625.625 0 0 1-.884 0l-2.116-2.117a.625.625 0 1 1 .883-.883l1.675 1.675 3.725-3.725a.625.625 0 1 1 .883.883Z" fill="var(--success-500)"/></svg>
+                      ) : aiStep >= 2 ? (
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/><path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/></svg>
+                      ) : null}
+                    </span>
+                    <span className={`roles-ai-step__text ${aiStep < 2 ? 'roles-ai-step__text--disabled' : ''}`}>{aiStep === 2 ? 'Matching skills…' : 'Matching skills'}</span>
+                  </div>
+                  <div className="roles-ai-step">
+                    <span className="roles-ai-step__icon" />
+                    <span className={`roles-ai-step__text ${aiStep < 3 ? 'roles-ai-step__text--disabled' : ''}`}>Done</span>
+                  </div>
+                </div>
+                <div className="roles-ai-progress">
+                  <div className="roles-ai-progress__bar">
+                    <div className="roles-ai-progress__fill" style={{ transform: `translateX(${aiProgress - 100}%)` }} />
+                  </div>
+                  <span className="roles-ai-progress__text">{aiProgress}%</span>
+                </div>
+              </div>
+            )}
+
+            {/* Skills UI after AI finishes or for copy/manual */}
+            {!aiLoading && (
+              <>
+                {!isCopy && !isPrefilled && (
+                  <div className="roles-panel-label-row">
+                    <p className="roles-panel-label" style={{ marginBottom: 0 }}>
+                      Skills — remove or add as needed
+                    </p>
+                    <button
+                      className="roles-btn-ai-text"
+                      disabled={aiLoading}
+                      onClick={handleAISuggest}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/>
+                        <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/>
+                      </svg>
+                      <span>Add Skills With AI</span>
+                    </button>
+                  </div>
+                )}
+                {isCopy && (
+                  <p className="roles-panel-label" style={{ marginBottom: 4 }}>
+                    Skills from 5Mins library — remove or add as needed
+                  </p>
+                )}
+                {isPrefilled && (
+                  <div className="roles-panel-label-row">
+                    <p className="roles-panel-label" style={{ marginBottom: 0 }}>
+                      Skills — remove or add as needed
+                    </p>
+                    <button
+                      className="roles-btn-ai-text"
+                      disabled={aiLoading}
+                      onClick={handleAISuggest}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 2.5L11.25 6.25L15 7.5L11.25 8.75L10 12.5L8.75 8.75L5 7.5L8.75 6.25L10 2.5Z" fill="#8158EC"/>
+                        <path d="M15 12.5L15.625 14.375L17.5 15L15.625 15.625L15 17.5L14.375 15.625L12.5 15L14.375 14.375L15 12.5Z" fill="#8158EC"/>
+                      </svg>
+                      <span>Add Skills With AI</span>
+                    </button>
+                  </div>
+                )}
+
+                {renderSkillChips()}
+                {renderSkillSearchSection()}
+              </>
+            )}
+          </>
+        )}
+      </SideDrawer>
 
       {/* Delete Confirmation Dialog */}
       {isEdit && (
@@ -809,7 +820,7 @@ function RolePanel({ mode, existingRoleNames = [], onClose, onSave, onDelete }: 
           </div>
         </ConfirmModal>
       )}
-    </div>
+    </>
   )
 }
 

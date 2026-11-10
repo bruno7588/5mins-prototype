@@ -171,52 +171,6 @@
   flex-wrap: wrap;
 }
 
-.hris-panel-tabs {
-  display: flex;
-  gap: var(--space-m);
-}
-
-.hris-panel-tab {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: 0 0 var(--space-s);
-  background: none;
-  border: none;
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: color 150ms ease;
-}
-
-.hris-panel-tab:hover {
-  color: var(--text-primary);
-}
-
-.hris-panel-tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.hris-panel-tab--active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--secondary-500);
-  border-radius: 2px;
-}
-
-.hris-panel-tab:focus-visible {
-  outline: 2px solid var(--primary-button-background);
-  outline-offset: 2px;
-}
-
 .hris-panel-search-wrapper {
   display: flex;
   flex-direction: column;
@@ -243,23 +197,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-}
-
-.hris-panel-options__count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  padding: 0 var(--space-s);
-  height: 20px;
-  background: var(--input-background);
-  color: var(--text-secondary);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
-  line-height: 1.2;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
 }
 
 .hris-panel-option {

@@ -1,8 +1,0 @@
-/* Resources drawer shell, hosted in the shared ContentDrawer (panel, padding and slide
-   come from .side-drawer). The form itself is @/components/ResourceForm.
-   Prefix: .resources-drawer-shell */
-
-/* The rule under the header belongs to SectionHeader; the shell's flex gap spaces it. */
-.resources-drawer-shell .section-header {
-  padding-bottom: 0;
-}

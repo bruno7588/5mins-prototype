@@ -27,6 +27,7 @@ import type { CourseResource } from '@/components/ResourceCard/resources'
 import { getLessonResources, lessonKey, nextLessonResourceId, setLessonResources } from '@/data/lessonResources'
 import type { ContentRow } from '../../../your-courses/components/ContentTable/ContentTable'
 import flashcardThumb from '../../../../assets/programs/course-thumbs/course-thumb-1.jpg'
+import Tabs from '@/components/Tabs/Tabs'
 import './FlashcardEditor.css'
 
 export interface Card {
@@ -689,21 +690,17 @@ function FlashcardEditor({ open, onClose, onPublish, mode = 'create', initialLes
         </div>
 
         {/* Tabs */}
-        <div className="fce-tabs">
-          {(['quiz', 'resources', 'skills', 'category'] as EditorTab[]).map(t => (
-            <button
-              key={t}
-              type="button"
-              className={`fce-tab${activeTab === t ? ' fce-tab--active' : ''}`}
-              onClick={() => setActiveTab(t)}
-            >
-              {t === 'quiz' && 'Quiz'}
-              {t === 'resources' && 'Resources'}
-              {t === 'skills' && 'Skills'}
-              {t === 'category' && 'Add to Category'}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          className="fce-tabs"
+          items={[
+            { key: 'quiz', label: 'Quiz' },
+            { key: 'resources', label: 'Resources' },
+            { key: 'skills', label: 'Skills' },
+            { key: 'category', label: 'Add to Category' },
+          ]}
+          activeKey={activeTab}
+          onChange={(key) => setActiveTab(key as EditorTab)}
+        />
 
         {activeTab === 'quiz' && (
           <div className="fce-quiz">

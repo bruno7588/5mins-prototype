@@ -15,8 +15,8 @@ import EmptyState from '@/components/EmptyState/EmptyState'
 import InputField from '@/components/InputField/InputField'
 import InputInteger from '@/components/InputInteger/InputInteger'
 import Radio from '@/components/Radio/Radio'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import Tooltip from '@/components/Tooltip/Tooltip'
-import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import emptyBox from '@/assets/empty-state-illustrations/empty-box.svg'
 import '@/pages/account/components/ExternalTraining/ExternalTraining.css'
 import {
@@ -83,6 +83,8 @@ const parseDuration = (text: string | undefined): { value: number; unit: Duratio
 }
 
 interface Props {
+  /** Set false to close; the drawer plays its exit, so keep it mounted. */
+  open: boolean
   /** Recording from a person's profile: the learner is fixed. */
   lockedPersonId?: string
   /** Edit an existing record. */
@@ -123,7 +125,7 @@ async function pdfPages(file: File): Promise<{ pages: string[]; total: number }>
   return { pages, total: doc.numPages }
 }
 
-function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = null, onClose, onSaved }: Props) {
+function AddExternalTrainingDrawer({ open, lockedPersonId, record: initialRecord = null, onClose, onSaved }: Props) {
   const navigate = useNavigate()
   const { courses, providers, records, allowOneOffs } = useExternalTraining()
   const [record] = useState<ExternalRecord | null>(initialRecord)
@@ -132,8 +134,6 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
   /* Set by the "Not on the approved list" click, so Course name takes focus when it arrives. */
   const [focusName, setFocusName] = useState(false)
 
-  const panelRef = useRef<HTMLElement>(null)
-  useOverlayA11y(panelRef, true)
 
   /* Ways out when the course isn't listed: full admins can add it to the list (D21),
      anyone can record a one-off while the tenant allows them. */
@@ -457,448 +457,428 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
 
   return (
     <>
-      <div className="overlay-backdrop" onClick={onClose} aria-hidden="true" />
-      <aside
-        ref={panelRef}
-        tabIndex={-1}
-        className="side-drawer aet-drawer"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="aetd-title"
+      <SideDrawer
+        open={open}
+        onClose={onClose}
+        title={editing ? 'Edit external training' : 'Add external training'}
+        subtitle="Record training done outside 5Mins against an approved course."
+        footer={
+          !blocked && (
+            <Button onClick={save} disabled={reading || hasErrors}>
+              {editing || duplicate ? 'Update Training' : 'Add Training'}
+            </Button>
+          )
+        }
       >
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <div className="aet-drawer__heading">
-              <h2 id="aetd-title" className="aet-drawer__title">{editing ? 'Edit external training' : 'Add external training'}</h2>
-              <p className="aet-text">Record training done outside 5Mins against an approved course.</p>
-            </div>
-            <CloseButton onClick={onClose} />
-          </div>
-          <div className="modal__divider" />
-        </div>
-
-        <div className="side-drawer__content">
-          {blocked ? (
-            <EmptyState
-              illustration={<img src={emptyBox} alt="" width={72} height={72} />}
-              title="No approved courses yet"
-              description="Add courses to the approved list in Account and Settings before recording training."
-              primaryAction={{ label: 'Go to Settings', onClick: () => navigate('/account?tab=external-training') }}
-            />
-          ) : (
-            <div className="aet-form">
-              {/* Certificate first (D6, D14, D17) */}
-              <div className="aet-field aetd-full">
-                <span className="aet-label">
-                  Certificate <span className="aetd-label-hint">(PDF, JPG, PNG • max. 10MB)</span>
-                </span>
-                {/* Same row as Create Course > Course thumbnail (CourseDetailsTab): a small
-                    box on the left (dashed while empty, the certificate once picked), the
-                    copy and the button on the right. The box takes a dropped file too. */}
-                <div className="aetd-cert-row">
-                  {/* Once a file is in, the whole box opens the preview. */}
-                  <div
-                    className={`aetd-cert-box${certificate ? ' aetd-cert-box--filled' : ''}${certificateFile ? ' aetd-cert-box--previewable' : ''}${dragging ? ' aetd-cert-box--dragging' : ''}`}
-                    {...(certificateFile
-                      ? {
-                          role: 'button',
-                          tabIndex: 0,
-                          'aria-label': 'Preview certificate',
-                          onClick: () => setPreviewOpen(true),
-                          onKeyDown: (e: React.KeyboardEvent) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault()
-                              setPreviewOpen(true)
-                            }
-                          },
-                        }
-                      : {})}
-                    onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
-                    onDragLeave={() => setDragging(false)}
-                    onDrop={(e) => {
-                      e.preventDefault()
-                      setDragging(false)
-                      const file = e.dataTransfer.files?.[0]
+        {blocked ? (
+          <EmptyState
+            illustration={<img src={emptyBox} alt="" width={72} height={72} />}
+            title="No approved courses yet"
+            description="Add courses to the approved list in Account and Settings before recording training."
+            primaryAction={{ label: 'Go to Settings', onClick: () => navigate('/account?tab=external-training') }}
+          />
+        ) : (
+          <div className="aet-form">
+            {/* Certificate first (D6, D14, D17) */}
+            <div className="aet-field aetd-full">
+              <span className="aet-label">
+                Certificate <span className="aetd-label-hint">(PDF, JPG, PNG • max. 10MB)</span>
+              </span>
+              {/* Same row as Create Course > Course thumbnail (CourseDetailsTab): a small
+                  box on the left (dashed while empty, the certificate once picked), the
+                  copy and the button on the right. The box takes a dropped file too. */}
+              <div className="aetd-cert-row">
+                {/* Once a file is in, the whole box opens the preview. */}
+                <div
+                  className={`aetd-cert-box${certificate ? ' aetd-cert-box--filled' : ''}${certificateFile ? ' aetd-cert-box--previewable' : ''}${dragging ? ' aetd-cert-box--dragging' : ''}`}
+                  {...(certificateFile
+                    ? {
+                        role: 'button',
+                        tabIndex: 0,
+                        'aria-label': 'Preview certificate',
+                        onClick: () => setPreviewOpen(true),
+                        onKeyDown: (e: React.KeyboardEvent) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            setPreviewOpen(true)
+                          }
+                        },
+                      }
+                    : {})}
+                  onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    setDragging(false)
+                    const file = e.dataTransfer.files?.[0]
+                    if (file) onCertificate(file)
+                  }}
+                >
+                  {certificateFile ? (
+                    <img className="aetd-cert-preview" src={certificateFile.url} alt="Certificate preview" />
+                  ) : certificate ? (
+                    <DocumentText size={32} color="var(--text-secondary)" variant="Bold" />
+                  ) : (
+                    <GalleryAdd size={32} color="var(--text-secondary)" variant="Linear" />
+                  )}
+                  {/* Preview badge, as the lesson thumbnail (LessonEditorModal): a cue only, the box is the button. */}
+                  {certificateFile && (
+                    <span className="aetd-cert-preview-btn" aria-hidden="true">
+                      <Eye size={16} color="currentColor" variant="Linear" />
+                    </span>
+                  )}
+                </div>
+                <div className="aetd-cert-info">
+                  {/* Same copy once a file is in: the box shows the certificate, its file name adds nothing. */}
+                  <p className="aetd-cert-copy">
+                    {editing
+                      ? 'Upload the certificate or drop it on the box.'
+                      : "Upload the certificate or drop it on the box, and we'll fill in the details from it."}
+                  </p>
+                  <div className="aetd-cert-actions">
+                    <Button
+                      variant="outlined-2"
+                      onClick={() => certInputRef.current?.click()}
+                    >
+                      {certificate ? 'Change File' : 'Upload Certificate'}
+                    </Button>
+                    {certificate && (
+                      <Tooltip text="Remove" position="Top" icon={false}>
+                        <button
+                          type="button"
+                          className="aetd-cert-remove"
+                          aria-label="Remove"
+                          onClick={removeCertificate}
+                        >
+                          <Trash size={20} color="currentColor" variant="Linear" />
+                        </button>
+                      </Tooltip>
+                    )}
+                  </div>
+                  <input
+                    ref={certInputRef}
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    aria-label="Upload certificate"
+                    className="aetd-cert-input"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
                       if (file) onCertificate(file)
+                      e.target.value = ''
                     }}
-                  >
-                    {certificateFile ? (
-                      <img className="aetd-cert-preview" src={certificateFile.url} alt="Certificate preview" />
-                    ) : certificate ? (
-                      <DocumentText size={32} color="var(--text-secondary)" variant="Bold" />
-                    ) : (
-                      <GalleryAdd size={32} color="var(--text-secondary)" variant="Linear" />
-                    )}
-                    {/* Preview badge, as the lesson thumbnail (LessonEditorModal): a cue only, the box is the button. */}
-                    {certificateFile && (
-                      <span className="aetd-cert-preview-btn" aria-hidden="true">
-                        <Eye size={16} color="currentColor" variant="Linear" />
-                      </span>
-                    )}
-                  </div>
-                  <div className="aetd-cert-info">
-                    {/* Same copy once a file is in: the box shows the certificate, its file name adds nothing. */}
-                    <p className="aetd-cert-copy">
-                      {editing
-                        ? 'Upload the certificate or drop it on the box.'
-                        : "Upload the certificate or drop it on the box, and we'll fill in the details from it."}
-                    </p>
-                    <div className="aetd-cert-actions">
-                      <Button
-                        variant="outlined-2"
-                        onClick={() => certInputRef.current?.click()}
-                      >
-                        {certificate ? 'Change File' : 'Upload Certificate'}
-                      </Button>
-                      {certificate && (
-                        <Tooltip text="Remove" position="Top" icon={false}>
-                          <button
-                            type="button"
-                            className="aetd-cert-remove"
-                            aria-label="Remove"
-                            onClick={removeCertificate}
-                          >
-                            <Trash size={20} color="currentColor" variant="Linear" />
-                          </button>
-                        </Tooltip>
-                      )}
-                    </div>
-                    <input
-                      ref={certInputRef}
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      aria-label="Upload certificate"
-                      className="aetd-cert-input"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (file) onCertificate(file)
-                        e.target.value = ''
-                      }}
-                    />
-                  </div>
+                  />
                 </div>
               </div>
+            </div>
 
-              {/* As Create With AI: the step list arrives with a short rise, ticks each pass
-                  as its field fills, and fades out when the read is done. */}
-              <AnimatePresence initial={false}>
-                {reading && (
-                  /* The card's height opens and closes too, so the form below slides down
-                     and back up instead of jumping. The negative margin cancels the form's
-                     24px gap (--space-l) while the card is closed, so nothing snaps at the
-                     ends either. */
-                  <motion.div
-                    key="reading"
-                    style={{ overflow: 'hidden' }}
-                    initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8, height: 0, marginBottom: -24 }}
-                    animate={{ opacity: 1, y: 0, height: 'auto', marginBottom: 0 }}
-                    exit={reduce ? { opacity: 0 } : { opacity: 0, height: 0, marginBottom: -24 }}
-                    transition={arriveTransition(reduce)}
-                  >
-                    <AIWorkingCard steps={readSteps} activeStep={readStep} lastStepDone={false} />
-                  </motion.div>
+            {/* As Create With AI: the step list arrives with a short rise, ticks each pass
+                as its field fills, and fades out when the read is done. */}
+            <AnimatePresence initial={false}>
+              {reading && (
+                /* The card's height opens and closes too, so the form below slides down
+                   and back up instead of jumping. The negative margin cancels the form's
+                   24px gap (--space-l) while the card is closed, so nothing snaps at the
+                   ends either. */
+                <motion.div
+                  key="reading"
+                  style={{ overflow: 'hidden' }}
+                  initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8, height: 0, marginBottom: -24 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto', marginBottom: 0 }}
+                  exit={reduce ? { opacity: 0 } : { opacity: 0, height: 0, marginBottom: -24 }}
+                  transition={arriveTransition(reduce)}
+                >
+                  <AIWorkingCard steps={readSteps} activeStep={readStep} lastStepDone={false} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {read?.unreadable && <Alert type="Callout" message="We couldn't read this certificate. Fill in the details below." />}
+
+            <div>
+              <div className="aet-form">
+                {/* One Alert at a time: a wrong-learner certificate comes first (fix the file),
+                    then an existing record (D25). */}
+                {duplicate && !mismatch && (
+                  <Alert
+                    type="Alert"
+                    customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
+                    title="This record already exists"
+                    message={
+                      <>
+                        {person?.name} already has <span className="aetd-strong">{course?.name}</span> completed on{' '}
+                        {formatDay(duplicate.completionDate)}. Update Training replaces it with these details.
+                      </>
+                    }
+                  />
                 )}
-              </AnimatePresence>
-
-              {read?.unreadable && <Alert type="Callout" message="We couldn't read this certificate. Fill in the details below." />}
-
-              <div>
-                <div className="aet-form">
-                  {/* One Alert at a time: a wrong-learner certificate comes first (fix the file),
-                      then an existing record (D25). */}
-                  {duplicate && !mismatch && (
-                    <Alert
-                      type="Alert"
-                      customIcon={<Danger size={24} color="currentColor" variant="Bold" />}
-                      title="This record already exists"
-                      message={
-                        <>
-                          {person?.name} already has <span className="aetd-strong">{course?.name}</span> completed on{' '}
-                          {formatDay(duplicate.completionDate)}. Update Training replaces it with these details.
-                        </>
-                      }
-                    />
+                {/* Learner. A certificate naming someone else is settled here, at the field:
+                    the name it shows, and a box to confirm it is this learner (D8). */}
+                <div className={`aet-field aetd-full${writing.has('learner') ? ' aetd-writing is-writing' : ''}`}>
+                  <Dropdown
+                    label="Learner"
+                    placeholder="Select a learner"
+                    searchable
+                    searchPlaceholder="Search people"
+                    readOnly={!!lockedPersonId}
+                    className={lockedPersonId ? 'aetd-locked' : undefined}
+                    options={personOptions}
+                    value={personId}
+                    onChange={setPersonId}
+                    /* The certificate names someone who isn't in 5Mins: an error, since the
+                       record can't go ahead until the right learner is picked or the file changed. */
+                    error={
+                      unknownLearner
+                        ? `The certificate names ${read!.learner}, who isn't in 5Mins. Pick a learner or change the file.`
+                        : mismatch
+                          ? `The certificate names ${read!.learner}.`
+                          : err('learner')
+                    }
+                  />
+                  {nameDiffers && (
+                    /* Announced as it appears; Add Training sends focus here while unticked. */
+                    <label ref={confirmRef} className="aetd-confirm" aria-live="polite">
+                      <Checkbox
+                        checked={!mismatch}
+                        onChange={() => setKeptFor(mismatch ? mismatchKey : null)}
+                      />
+                      <span className="aetd-confirm__text">{person!.name} is the person named on this certificate</span>
+                    </label>
                   )}
-                  {/* Learner. A certificate naming someone else is settled here, at the field:
-                      the name it shows, and a box to confirm it is this learner (D8). */}
-                  <div className={`aet-field aetd-full${writing.has('learner') ? ' aetd-writing is-writing' : ''}`}>
+                </div>
+
+                {/* Course, or the not-listed block: a swap, so it animates (motion.md) */}
+                <AnimatePresence mode="wait" initial={false}>
+                {mode === 'course' ? (
+                  <motion.div
+                    key="course"
+                    {...SWAP(reduce)}
+                    className={`aet-field aetd-full${writing.has('course') ? ' aetd-writing is-writing' : ''}`}
+                  >
                     <Dropdown
-                      label="Learner"
-                      placeholder="Select a learner"
+                      label="Course"
+                      placeholder="Select a course"
                       searchable
-                      searchPlaceholder="Search people"
-                      readOnly={!!lockedPersonId}
-                      className={lockedPersonId ? 'aetd-locked' : undefined}
-                      options={personOptions}
-                      value={personId}
-                      onChange={setPersonId}
-                      /* The certificate names someone who isn't in 5Mins: an error, since the
-                         record can't go ahead until the right learner is picked or the file changed. */
-                      error={
-                        unknownLearner
-                          ? `The certificate names ${read!.learner}, who isn't in 5Mins. Pick a learner or change the file.`
-                          : mismatch
-                            ? `The certificate names ${read!.learner}.`
-                            : err('learner')
+                      searchPlaceholder="Search approved courses"
+                      options={activeCourses.map((c) => ({
+                        value: c.id,
+                        label: c.name,
+                        description: providers.filter((p) => c.providerIds.includes(p.id)).map((p) => p.name).join(', '),
+                        thumbnail: courseThumb(c.id),
+                      }))}
+                      value={courseId}
+                      onChange={setCourseId}
+                      error={err('course')}
+                      emptyText={(q) => `No approved courses match “${q}”`}
+                      /* One way out, pinned at the bottom of the menu (Revolut-style). */
+                      footerLink={
+                        canAdd || canOneOff
+                          ? {
+                              label: 'Not on the approved list',
+                              onClick: (q) => {
+                                // Only an admin's click moves focus; a certificate read doesn't.
+                                setFocusName(true)
+                                openNotListed(q)
+                              },
+                            }
+                          : undefined
                       }
                     />
-                    {nameDiffers && (
-                      /* Announced as it appears; Add Training sends focus here while unticked. */
-                      <label ref={confirmRef} className="aetd-confirm" aria-live="polite">
-                        <Checkbox
-                          checked={!mismatch}
-                          onChange={() => setKeptFor(mismatch ? mismatchKey : null)}
-                        />
-                        <span className="aetd-confirm__text">{person!.name} is the person named on this certificate</span>
-                      </label>
-                    )}
-                  </div>
-
-                  {/* Course, or the not-listed block: a swap, so it animates (motion.md) */}
-                  <AnimatePresence mode="wait" initial={false}>
-                  {mode === 'course' ? (
-                    <motion.div
-                      key="course"
-                      {...SWAP(reduce)}
-                      className={`aet-field aetd-full${writing.has('course') ? ' aetd-writing is-writing' : ''}`}
-                    >
-                      <Dropdown
-                        label="Course"
-                        placeholder="Select a course"
-                        searchable
-                        searchPlaceholder="Search approved courses"
-                        options={activeCourses.map((c) => ({
-                          value: c.id,
-                          label: c.name,
-                          description: providers.filter((p) => c.providerIds.includes(p.id)).map((p) => p.name).join(', '),
-                          thumbnail: courseThumb(c.id),
-                        }))}
-                        value={courseId}
-                        onChange={setCourseId}
-                        error={err('course')}
-                        emptyText={(q) => `No approved courses match “${q}”`}
-                        /* One way out, pinned at the bottom of the menu (Revolut-style). */
-                        footerLink={
-                          canAdd || canOneOff
-                            ? {
-                                label: 'Not on the approved list',
-                                onClick: (q) => {
-                                  // Only an admin's click moves focus; a certificate read doesn't.
-                                  setFocusName(true)
-                                  openNotListed(q)
-                                },
-                              }
-                            : undefined
-                        }
-                      />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="not-listed"
-                      {...SWAP(reduce)}
-                      className="aet-field aetd-full"
-                    >
-                      <div className="aetd-oneoff-head">
-                        <span className="aet-label">Not on the approved list</span>
-                        {!listEmpty && (
-                          <Button variant="text" onClick={() => setMode('course')}>
-                            Select From Approved List
-                          </Button>
-                        )}
-                      </div>
-                      {/* The heading and the way back sit outside the card, as its label. */}
-                      <div className={`aetd-not-listed${writing.has('course') ? ' aetd-writing is-writing' : ''}`}>
-                      {/* The choice first: it decides which fields follow. Then the same order as Settings → Add course. */}
-                      {bothWays && (
-                        <div className="aetd-choices" role="radiogroup" aria-label="How to record it">
-                          {(
-                            [
-                              ['list', 'Add to the approved list', 'Future records and uploads match it'],
-                              ['one-off', 'Record as a one-off', 'This record only'],
-                            ] as const
-                          ).map(([value, title, desc]) => (
-                            <label key={value} className="aetd-choice">
-                              <Radio
-                                name="aetd-not-listed"
-                                checked={notListedAs === value}
-                                onChange={() => setNotListedAs(value)}
-                                aria-describedby={`aetd-choice-${value}`}
-                              />
-                              <span className="aetd-choice__text">
-                                <span className="aetd-choice__title">{title}</span>
-                                <span id={`aetd-choice-${value}`} className="aetd-choice__desc">
-                                  {desc}
-                                </span>
-                              </span>
-                            </label>
-                          ))}
-                        </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="not-listed"
+                    {...SWAP(reduce)}
+                    className="aet-field aetd-full"
+                  >
+                    <div className="aetd-oneoff-head">
+                      <span className="aet-label">Not on the approved list</span>
+                      {!listEmpty && (
+                        <Button variant="text" onClick={() => setMode('course')}>
+                          Select From Approved List
+                        </Button>
                       )}
-                      <InputField
-                        label="Course name"
-                        autoFocus={focusName}
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        validation={err('newName') ? 'error' : 'none'}
-                        helperText={err('newName') ?? (fromCertificate ? 'From the certificate.' : undefined)}
-                      />
-                      <InputField
-                        label="Provider name"
-                        placeholder="For example, St John Ambulance"
-                        value={newProvider}
-                        onChange={(e) => setNewProvider(e.target.value)}
-                        validation={err('newProvider') ? 'error' : 'none'}
-                        helperText={err('newProvider')}
-                      />
-                      <div className="aet-field">
-                        <span className="aet-label">
-                          Duration {!addingToList && <span className="aetd-optional">(optional)</span>}
-                        </span>
-                        <div className="aet-row">
-                          <InputInteger
-                            ariaLabel="Duration"
-                            value={newDuration}
-                            onChange={setNewDuration}
-                            min={0}
-                            validation={err('newDuration') ? 'error' : 'none'}
-                            helperText={err('newDuration')}
-                          />
-                          <Dropdown
-                            options={UNIT_OPTIONS}
-                            value={newUnit}
-                            onChange={(v) => setNewUnit(v as DurationUnit)}
-                            className="aet-unit"
-                          />
-                        </div>
-                      </div>
-                      {addingToList && (
-                        <div className="aet-field" role="radiogroup" aria-labelledby="aetd-expiry-label">
-                          <span id="aetd-expiry-label" className="aet-label">Expiry</span>
-                          <Radio name="aetd-expiry" label="No expiry" checked={!retrains} onChange={() => setRetrains(false)} />
-                          <div className="aet-row aet-row--center">
-                            <Radio name="aetd-expiry" label="Expires after" checked={retrains} onChange={() => setRetrains(true)} />
-                            <InputInteger
-                              ariaLabel="Expires after, in months"
-                              value={months}
-                              onChange={(v) => {
-                                setMonths(v)
-                                setRetrains(true)
-                              }}
-                              min={1}
-                              max={240}
-                              suffix="months"
-                              disabled={!retrains}
+                    </div>
+                    {/* The heading and the way back sit outside the card, as its label. */}
+                    <div className={`aetd-not-listed${writing.has('course') ? ' aetd-writing is-writing' : ''}`}>
+                    {/* The choice first: it decides which fields follow. Then the same order as Settings → Add course. */}
+                    {bothWays && (
+                      <div className="aetd-choices" role="radiogroup" aria-label="How to record it">
+                        {(
+                          [
+                            ['list', 'Add to the approved list', 'Future records and uploads match it'],
+                            ['one-off', 'Record as a one-off', 'This record only'],
+                          ] as const
+                        ).map(([value, title, desc]) => (
+                          <label key={value} className="aetd-choice">
+                            <Radio
+                              name="aetd-not-listed"
+                              checked={notListedAs === value}
+                              onChange={() => setNotListedAs(value)}
+                              aria-describedby={`aetd-choice-${value}`}
                             />
-                          </div>
-                        </div>
-                      )}
-                      </div>
-                    </motion.div>
-                  )}
-                  </AnimatePresence>
-
-                  {/* Provider, when the course has several (D2) */}
-                  {mode === 'course' && course && courseProviders.length > 1 && (
-                    <div className="aet-field" role="radiogroup" aria-labelledby="aetd-provider-label">
-                      <span id="aetd-provider-label" className="aet-label">Provider</span>
-                      {courseProviders.map((p) => (
-                        <Radio key={p.id} name="aetd-provider" label={p.name} checked={providerId === p.id} onChange={() => setProviderId(p.id)} />
-                      ))}
-                      {err('provider') && <span className="aetd-error">{err('provider')}</span>}
-                    </div>
-                  )}
-                  {mode === 'course' && course && courseProviders.length === 1 && (
-                    /* A course's only provider can't be changed: the same filled, read-only
-                       field as the locked Learner and the read-only Duration. */
-                    <div className="aet-field aetd-full">
-                      <Dropdown
-                        label="Provider"
-                        options={[{ value: courseProviders[0].id, label: courseProviders[0].name }]}
-                        value={courseProviders[0].id}
-                        readOnly
-                        className="aetd-locked"
-                      />
-                    </div>
-                  )}
-
-                  {/* Duration, completion date and expiry on one row: the dates that make the
-                      record, read together. Result and score follow on their own row. */}
-                  <div className="aet-row aetd-dates-row">
-                    {/* Duration belongs to the approved course (edited in Settings), so it
-                        shows read-only, in the same stepper as the not-listed block. */}
-                    {mode === 'course' && course && (
-                      <div className="aet-field">
-                        <span className="aet-label">Duration</span>
-                        <div className="aet-row aetd-readonly-row">
-                          <InputInteger ariaLabel="Duration" value={course.duration.value} onChange={() => {}} disabled className="aetd-readonly" />
-                          <Dropdown options={UNIT_OPTIONS} value={course.duration.unit} readOnly className="aet-unit aetd-readonly" />
-                        </div>
+                            <span className="aetd-choice__text">
+                              <span className="aetd-choice__title">{title}</span>
+                              <span id={`aetd-choice-${value}`} className="aetd-choice__desc">
+                                {desc}
+                              </span>
+                            </span>
+                          </label>
+                        ))}
                       </div>
                     )}
-                    <div className={`aet-field aetd-date${writing.has('date') ? ' aetd-writing is-writing' : ''}`}>
-                      <span className="aet-label">Completion date</span>
-                      <DatePickerField
-                        value={completionDate}
-                        onChange={setCompletionDate}
-                        maxDate={todayIso()}
-                        ariaLabel="Completion date"
-                        error={err('date')}
-                      />
-                    </div>
-                    {mode === 'not-listed' && notListedAs === 'one-off' && result === 'Passed' && (
-                      <div className="aet-field aetd-date">
-                        <span className="aet-label">Expiry date <span className="aetd-optional">(optional)</span></span>
-                        <DatePickerField value={oneOffDue} onChange={setOneOffDue} minDate={completionDate || undefined} ariaLabel="Expiry date" />
-                      </div>
-                    )}
-                    {((mode === 'course' && course) || addingToList) && completionDate && (
-                      /* Worked out from the course, so a read-only field like Duration. */
-                      <div className="aet-field">
-                        <span className="aet-label">Expiry</span>
-                        <div className="aetd-due" role="status">
-                          {result === 'Not Passed' ? (
-                            <span className="aetd-value">No expiry date for a training that wasn't passed.</span>
-                          ) : dueDate ? (
-                            <>
-                              <span className="aetd-value">{formatDay(dueDate)}</span>
-                              {due === 'overdue' && <Badge type="error" label="Overdue" />}
-                              {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
-                            </>
-                          ) : (
-                            <span className="aetd-value">No expiry</span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="aet-row">
-                    <Dropdown
-                      label="Result"
-                      options={RESULT_OPTIONS}
-                      value={result}
-                      onChange={(v) => setResult(v as ExternalResult)}
-                      className="aetd-result"
+                    <InputField
+                      label="Course name"
+                      autoFocus={focusName}
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      validation={err('newName') ? 'error' : 'none'}
+                      helperText={err('newName') ?? (fromCertificate ? 'From the certificate.' : undefined)}
+                    />
+                    <InputField
+                      label="Provider name"
+                      placeholder="For example, St John Ambulance"
+                      value={newProvider}
+                      onChange={(e) => setNewProvider(e.target.value)}
+                      validation={err('newProvider') ? 'error' : 'none'}
+                      helperText={err('newProvider')}
                     />
                     <div className="aet-field">
-                      <span className="aet-label">Score <span className="aetd-optional">(optional)</span></span>
-                      <InputInteger value={score} onChange={setScore} min={0} max={100} suffix="%" ariaLabel="Score" />
+                      <span className="aet-label">
+                        Duration {!addingToList && <span className="aetd-optional">(optional)</span>}
+                      </span>
+                      <div className="aet-row">
+                        <InputInteger
+                          ariaLabel="Duration"
+                          value={newDuration}
+                          onChange={setNewDuration}
+                          min={0}
+                          validation={err('newDuration') ? 'error' : 'none'}
+                          helperText={err('newDuration')}
+                        />
+                        <Dropdown
+                          options={UNIT_OPTIONS}
+                          value={newUnit}
+                          onChange={(v) => setNewUnit(v as DurationUnit)}
+                          className="aet-unit"
+                        />
+                      </div>
                     </div>
+                    {addingToList && (
+                      <div className="aet-field" role="radiogroup" aria-labelledby="aetd-expiry-label">
+                        <span id="aetd-expiry-label" className="aet-label">Expiry</span>
+                        <Radio name="aetd-expiry" label="No expiry" checked={!retrains} onChange={() => setRetrains(false)} />
+                        <div className="aet-row aet-row--center">
+                          <Radio name="aetd-expiry" label="Expires after" checked={retrains} onChange={() => setRetrains(true)} />
+                          <InputInteger
+                            ariaLabel="Expires after, in months"
+                            value={months}
+                            onChange={(v) => {
+                              setMonths(v)
+                              setRetrains(true)
+                            }}
+                            min={1}
+                            max={240}
+                            suffix="months"
+                            disabled={!retrains}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    </div>
+                  </motion.div>
+                )}
+                </AnimatePresence>
+
+                {/* Provider, when the course has several (D2) */}
+                {mode === 'course' && course && courseProviders.length > 1 && (
+                  <div className="aet-field" role="radiogroup" aria-labelledby="aetd-provider-label">
+                    <span id="aetd-provider-label" className="aet-label">Provider</span>
+                    {courseProviders.map((p) => (
+                      <Radio key={p.id} name="aetd-provider" label={p.name} checked={providerId === p.id} onChange={() => setProviderId(p.id)} />
+                    ))}
+                    {err('provider') && <span className="aetd-error">{err('provider')}</span>}
                   </div>
+                )}
+                {mode === 'course' && course && courseProviders.length === 1 && (
+                  /* A course's only provider can't be changed: the same filled, read-only
+                     field as the locked Learner and the read-only Duration. */
+                  <div className="aet-field aetd-full">
+                    <Dropdown
+                      label="Provider"
+                      options={[{ value: courseProviders[0].id, label: courseProviders[0].name }]}
+                      value={courseProviders[0].id}
+                      readOnly
+                      className="aetd-locked"
+                    />
+                  </div>
+                )}
 
+                {/* Duration, completion date and expiry on one row: the dates that make the
+                    record, read together. Result and score follow on their own row. */}
+                <div className="aet-row aetd-dates-row">
+                  {/* Duration belongs to the approved course (edited in Settings), so it
+                      shows read-only, in the same stepper as the not-listed block. */}
+                  {mode === 'course' && course && (
+                    <div className="aet-field">
+                      <span className="aet-label">Duration</span>
+                      <div className="aet-row aetd-readonly-row">
+                        <InputInteger ariaLabel="Duration" value={course.duration.value} onChange={() => {}} disabled className="aetd-readonly" />
+                        <Dropdown options={UNIT_OPTIONS} value={course.duration.unit} readOnly className="aet-unit aetd-readonly" />
+                      </div>
+                    </div>
+                  )}
+                  <div className={`aet-field aetd-date${writing.has('date') ? ' aetd-writing is-writing' : ''}`}>
+                    <span className="aet-label">Completion date</span>
+                    <DatePickerField
+                      value={completionDate}
+                      onChange={setCompletionDate}
+                      maxDate={todayIso()}
+                      ariaLabel="Completion date"
+                      error={err('date')}
+                    />
+                  </div>
+                  {mode === 'not-listed' && notListedAs === 'one-off' && result === 'Passed' && (
+                    <div className="aet-field aetd-date">
+                      <span className="aet-label">Expiry date <span className="aetd-optional">(optional)</span></span>
+                      <DatePickerField value={oneOffDue} onChange={setOneOffDue} minDate={completionDate || undefined} ariaLabel="Expiry date" />
+                    </div>
+                  )}
+                  {((mode === 'course' && course) || addingToList) && completionDate && (
+                    /* Worked out from the course, so a read-only field like Duration. */
+                    <div className="aet-field">
+                      <span className="aet-label">Expiry</span>
+                      <div className="aetd-due" role="status">
+                        {result === 'Not Passed' ? (
+                          <span className="aetd-value">No expiry date for a training that wasn't passed.</span>
+                        ) : dueDate ? (
+                          <>
+                            <span className="aetd-value">{formatDay(dueDate)}</span>
+                            {due === 'overdue' && <Badge type="error" label="Overdue" />}
+                            {due === 'due-soon' && <Badge type="warning" label="Due soon" />}
+                          </>
+                        ) : (
+                          <span className="aetd-value">No expiry</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </div>
-          )}
-        </div>
 
-        {!blocked && (
-          <div className="side-drawer__footer">
-            <div className="side-drawer__footer-divider" />
-            <div className="side-drawer__buttons">
-              <Button onClick={save} disabled={reading || hasErrors}>
-                {editing || duplicate ? 'Update Training' : 'Add Training'}
-              </Button>
+                <div className="aet-row">
+                  <Dropdown
+                    label="Result"
+                    options={RESULT_OPTIONS}
+                    value={result}
+                    onChange={(v) => setResult(v as ExternalResult)}
+                    className="aetd-result"
+                  />
+                  <div className="aet-field">
+                    <span className="aet-label">Score <span className="aetd-optional">(optional)</span></span>
+                    <InputInteger value={score} onChange={setScore} min={0} max={100} suffix="%" ariaLabel="Score" />
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
         )}
@@ -925,7 +905,7 @@ function AddExternalTrainingDrawer({ lockedPersonId, record: initialRecord = nul
             )}
           </div>
         )}
-      </aside>
+      </SideDrawer>
     </>
   )
 }

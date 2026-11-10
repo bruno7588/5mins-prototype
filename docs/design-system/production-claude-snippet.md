@@ -13,8 +13,6 @@ Paste everything between the two lines into the production repo's root `CLAUDE.m
 
 **Source of truth:** the design-system docs in the prototype repo, `bruno7588/5mins-prototype` → `docs/design-system/`. Clone it once to `~/5mins-prototype` (or set `$FIVEMINS_DS_REPO`). Each doc starts with a `## Usage` block: intent, use when, don't use when, do / don't, canonical spec, production mapping. Read that block before building or restyling a component. Figma Library `EC26cSVe9KNTCWXvYovakw` is the visual reference; if Figma and a doc disagree, the doc wins and design should be told.
 
-**To check a component against the DS, run `/5mins-ds-audit <component>`. Before building a screen, run `/5mins-ds-audit build <what you're building>`.**
-
 ### Non-negotiables
 - Build UI from `@web/ui` components. Don't import an MUI component directly in `apps/*` when `@web/ui` has one for the job. If `@web/ui` lacks it, say so; don't hand-roll a lookalike.
 - Theme values only: no raw hex, rgba or px for colour, spacing, radius, type or shadow in `styled()`, `sx` or style props. Missing a value? Add it to the theme.

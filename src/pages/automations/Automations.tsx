@@ -26,6 +26,7 @@ import AutomationDetailsModal, { type AutomationDetailsMode } from './Automation
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import Badge from '../../components/Badge/Badge'
 import Table, { type Column } from '@/components/Table/Table'
+import Tabs from '@/components/Tabs/Tabs'
 import WorkflowsTab from '../your-courses/components/WorkflowsTab/WorkflowsTab'
 import {
   findCatalogCourseByName,
@@ -1139,26 +1140,16 @@ function Automations() {
             </p>
           </div>
           <div className="page-header-divider" />
-          <div className="automations-tabs">
-            <button
-              className={`automations-tab${activeTab === 'manage' ? ' automations-tab--active' : ''}`}
-              onClick={() => setActiveTab('manage')}
-            >
-              Manage
-            </button>
-            <button
-              className={`automations-tab${activeTab === 'activity' ? ' automations-tab--active' : ''}`}
-              onClick={() => setActiveTab('activity')}
-            >
-              Activity
-            </button>
-            <button
-              className={`automations-tab${activeTab === 'workflows' ? ' automations-tab--active' : ''}`}
-              onClick={() => setActiveTab('workflows')}
-            >
-              Workflows
-            </button>
-          </div>
+          <Tabs
+            items={[
+              { key: 'manage', label: 'Manage' },
+              { key: 'activity', label: 'Activity' },
+              { key: 'workflows', label: 'Workflows' },
+            ]}
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key as Tab)}
+            ariaLabel="Automations sections"
+          />
         </div>
 
         {activeTab === 'manage' && (

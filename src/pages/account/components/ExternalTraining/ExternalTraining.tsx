@@ -48,9 +48,17 @@ function ExternalTraining() {
   const [view, setView] = useState<View>('courses')
   const [query, setQuery] = useState('')
   const [showArchived, setShowArchived] = useState(false)
-  const [courseDrawer, setCourseDrawer] = useState<{ course: ExternalCourse | null } | null>(null)
+  /* Stays set while the drawer plays its exit; key remounts it fresh on each open. */
+  const [courseDrawer, setCourseDrawer] = useState<{ course: ExternalCourse | null; open: boolean; key: number } | null>(null)
+  const openCourseDrawer = (course: ExternalCourse | null) => setCourseDrawer({ course, open: true, key: Date.now() })
+  const closeCourseDrawer = () => setCourseDrawer((d) => d && { ...d, open: false })
   const [providerModal, setProviderModal] = useState<{ provider: ExternalProvider | null } | null>(null)
   const [csvOpen, setCsvOpen] = useState(false)
+  const [csvKey, setCsvKey] = useState(0)
+  const openCsv = () => {
+    setCsvKey((k) => k + 1)
+    setCsvOpen(true)
+  }
   const [confirm, setConfirm] = useState<Confirm | null>(null)
 
   const courseRecords = (id: string) => records.filter((r) => r.courseId === id).length
@@ -107,7 +115,7 @@ function ExternalTraining() {
   )
 
   const onCourseAction = (key: string, course: ExternalCourse) => {
-    if (key === 'edit') setCourseDrawer({ course })
+    if (key === 'edit') openCourseDrawer(course)
     if (key === 'archive') setConfirm({ kind: 'archive-course', course })
     if (key === 'delete') setConfirm({ kind: 'delete-course', course })
     if (key === 'unarchive') {
@@ -301,10 +309,10 @@ function ExternalTraining() {
           <div className="aet-toolbar__ctas">
             {view === 'courses' && !coursesEmpty && (
               <>
-                <Button variant="outlined" icon={<DocumentUpload size={20} color="currentColor" variant="Linear" />} onClick={() => setCsvOpen(true)}>
+                <Button variant="outlined" icon={<DocumentUpload size={20} color="currentColor" variant="Linear" />} onClick={openCsv}>
                   Bulk Upload Courses
                 </Button>
-                <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setCourseDrawer({ course: null })}>
+                <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => openCourseDrawer(null)}>
                   Add Course
                 </Button>
               </>
@@ -325,8 +333,8 @@ function ExternalTraining() {
                   illustration={<img src={emptyBox} alt="" width={72} height={72} />}
                   title="No approved courses yet"
                   description="Add the external courses your people take, with how long each one stays valid."
-                  secondaryAction={{ label: 'Bulk Upload Courses', onClick: () => setCsvOpen(true) }}
-                  primaryAction={{ label: 'Add Course', onClick: () => setCourseDrawer({ course: null }) }}
+                  secondaryAction={{ label: 'Bulk Upload Courses', onClick: openCsv }}
+                  primaryAction={{ label: 'Add Course', onClick: () => openCourseDrawer(null) }}
                 />
               ) : (
                 <>
@@ -384,10 +392,12 @@ function ExternalTraining() {
 
       {courseDrawer && (
         <CourseDrawer
+          key={courseDrawer.key}
+          open={courseDrawer.open}
           course={courseDrawer.course}
-          onClose={() => setCourseDrawer(null)}
+          onClose={closeCourseDrawer}
           onSaved={(name, isNew) => {
-            setCourseDrawer(null)
+            closeCourseDrawer()
             showToast('success', isNew ? `${name} added` : `${name} updated`)
           }}
         />
@@ -403,8 +413,10 @@ function ExternalTraining() {
         }}
       />
 
-      {csvOpen && (
+      {csvKey > 0 && (
         <BulkUploadCoursesDrawer
+          key={csvKey}
+          open={csvOpen}
           onClose={() => setCsvOpen(false)}
           onAdded={(n) => {
             setCsvOpen(false)

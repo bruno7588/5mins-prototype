@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowDown, ArrowUp, Sort } from 'iconsax-react'
-import CloseButton from '../../components/CloseButton/CloseButton'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import Avatar from '@/components/Avatar/Avatar'
 import Search from '../../components/Search/Search'
 import Dropdown, { type DropdownOption } from '../../components/Dropdown/Dropdown'
@@ -32,29 +32,18 @@ interface Props {
   onClose: () => void
 }
 
-function CoursesDrawer({
-  open,
-  memberName,
-  memberRole,
-  memberAvatarSrc,
-  courses,
-  onClose,
-}: Props) {
-  const [closing, setClosing] = useState(false)
+function CoursesDrawer(props: Props) {
+  const { open, onClose } = props
+  // The parent clears the member on close; keep the last one so the exit slide
+  // still shows it.
+  const last = useRef(props)
+  if (open) last.current = props
+  const { memberName, memberRole, memberAvatarSrc, courses } = last.current
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   // Status is the only sortable column, so it is never unsorted. Ascending =
   // COURSE_STATUS_ORDER = most urgent first, which is what a manager opens this for.
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
-
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(() => {
-      setClosing(false)
-      onClose()
-    }, 300)
-  }
-
 
   // Reset filters each time the drawer opens for a new member
   useEffect(() => {
@@ -79,37 +68,23 @@ function CoursesDrawer({
     })
   }, [courses, query, statusFilter, sortDir])
 
-  if (!open) return null
-
   const segments = 8
 
   return (
-    <>
-      <div
-        className={`overlay-backdrop${closing ? ' overlay-backdrop--closing' : ''}`}
-        onClick={handleClose}
-        aria-hidden="true"
-      />
-      <aside
-        className={`side-drawer${closing ? ' side-drawer--closing' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="drawer-title"
-      >
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <div className="cd-drawer__member">
-              <Avatar name={memberName} src={memberAvatarSrc} size={56} />
-              <div className="cd-drawer__member-info">
-                <h2 id="drawer-title" className="cd-drawer__member-name">{memberName}</h2>
-                <p className="cd-drawer__member-role">{memberRole}</p>
-              </div>
-            </div>
-            <CloseButton onClick={handleClose} />
+    <SideDrawer
+      open={open}
+      onClose={onClose}
+      ariaLabel={memberName}
+      header={
+        <div className="cd-drawer__member">
+          <Avatar name={memberName} src={memberAvatarSrc} size={56} />
+          <div className="cd-drawer__member-info">
+            <h2 className="cd-drawer__member-name">{memberName}</h2>
+            <p className="cd-drawer__member-role">{memberRole}</p>
           </div>
-          <div className="modal__divider" />
         </div>
-
+      }
+      subheader={
         <div className="cd-toolbar">
           <div className="cd-toolbar__search">
             <Search
@@ -130,59 +105,56 @@ function CoursesDrawer({
             />
           </div>
         </div>
-
-        <div className="side-drawer__content">
-          <div className="cd-table">
-            <div className="cd-table__header">
-              <div className="cd-table__cell cd-table__cell--course">Courses</div>
-              <button
-                type="button"
-                className="cd-table__cell cd-table__cell--status cd-table__th-btn"
-                onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
-                aria-label={`Sort by status, currently ${sortDir === 'asc' ? 'most urgent first' : 'least urgent first'}`}
-              >
-                Status
-                {sortDir === 'asc' ? (
-                  <ArrowUp size={16} color="currentColor" variant="Linear" />
-                ) : (
-                  <ArrowDown size={16} color="currentColor" variant="Linear" />
-                )}
-              </button>
-              <div className="cd-table__cell cd-table__cell--progress">Progress</div>
-            </div>
-
-            {filtered.length === 0 ? (
-              <div className="cd-table__empty">
-                <p className="cd-table__empty-text">No courses found</p>
-                <p className="cd-table__empty-subtext">Try a different search or status filter</p>
-              </div>
-            ) : filtered.map((c) => {
-              const filled = Math.round((c.progress / 100) * segments)
-              return (
-                <div className="cd-table__row" key={c.id}>
-                  <div className="cd-table__cell cd-table__cell--course">
-                    <img className="cd-table__thumb" src={c.thumbnailSrc} alt="" />
-                    <p className="cd-table__course-title">{c.title}</p>
-                  </div>
-                  <div className="cd-table__cell cd-table__cell--status">
-                    <StatusBadge status={c.status} />
-                  </div>
-                  <div className="cd-table__cell cd-table__cell--progress">
-                    <div className="cd-table__progress" role="progressbar" aria-valuenow={c.progress} aria-valuemin={0} aria-valuemax={100}>
-                      {Array.from({ length: segments }).map((_, i) => (
-                        <span key={i} className={`cd-table__progress-seg${i < filled ? ' cd-table__progress-seg--filled' : ''}`} />
-                      ))}
-                    </div>
-                    <span className="cd-table__progress-pct">{c.progress}%</span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+      }
+    >
+      <div className="cd-table">
+        <div className="cd-table__header">
+          <div className="cd-table__cell cd-table__cell--course">Courses</div>
+          <button
+            type="button"
+            className="cd-table__cell cd-table__cell--status cd-table__th-btn"
+            onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
+            aria-label={`Sort by status, currently ${sortDir === 'asc' ? 'most urgent first' : 'least urgent first'}`}
+          >
+            Status
+            {sortDir === 'asc' ? (
+              <ArrowUp size={16} color="currentColor" variant="Linear" />
+            ) : (
+              <ArrowDown size={16} color="currentColor" variant="Linear" />
+            )}
+          </button>
+          <div className="cd-table__cell cd-table__cell--progress">Progress</div>
         </div>
 
-      </aside>
-    </>
+        {filtered.length === 0 ? (
+          <div className="cd-table__empty">
+            <p className="cd-table__empty-text">No courses found</p>
+            <p className="cd-table__empty-subtext">Try a different search or status filter</p>
+          </div>
+        ) : filtered.map((c) => {
+          const filled = Math.round((c.progress / 100) * segments)
+          return (
+            <div className="cd-table__row" key={c.id}>
+              <div className="cd-table__cell cd-table__cell--course">
+                <img className="cd-table__thumb" src={c.thumbnailSrc} alt="" />
+                <p className="cd-table__course-title">{c.title}</p>
+              </div>
+              <div className="cd-table__cell cd-table__cell--status">
+                <StatusBadge status={c.status} />
+              </div>
+              <div className="cd-table__cell cd-table__cell--progress">
+                <div className="cd-table__progress" role="progressbar" aria-valuenow={c.progress} aria-valuemin={0} aria-valuemax={100}>
+                  {Array.from({ length: segments }).map((_, i) => (
+                    <span key={i} className={`cd-table__progress-seg${i < filled ? ' cd-table__progress-seg--filled' : ''}`} />
+                  ))}
+                </div>
+                <span className="cd-table__progress-pct">{c.progress}%</span>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </SideDrawer>
   )
 }
 

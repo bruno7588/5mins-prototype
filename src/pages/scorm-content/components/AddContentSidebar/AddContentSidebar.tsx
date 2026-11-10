@@ -59,14 +59,13 @@ function AddContentSidebar({ addedScormIds, onAddScorm, onRemoveScorm }: AddCont
         label="Resources"
       />
 
-      {showScormDrawer && (
-        <ScormDrawer
-          onClose={() => setShowScormDrawer(false)}
-          addedIds={addedScormIds}
-          onAdd={onAddScorm}
-          onRemove={onRemoveScorm}
-        />
-      )}
+      <ScormDrawer
+        open={showScormDrawer}
+        onClose={() => setShowScormDrawer(false)}
+        addedIds={addedScormIds}
+        onAdd={onAddScorm}
+        onRemove={onRemoveScorm}
+      />
     </aside>
   )
 }

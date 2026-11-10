@@ -1,12 +1,11 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { DocumentDownload, ImportCurve } from 'iconsax-react'
 import Button from '@/components/Button/Button'
 import Chip from '@/components/Chip/Chip'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import Collapse from '@/components/Collapse/Collapse'
 import FileUploader from '@/components/FileUploader/FileUploader'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import Table, { type Column } from '@/components/Table/Table'
-import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import {
   addCourses,
   duplicateProvider,
@@ -77,14 +76,14 @@ const templateColumns: Column<CsvRow>[] = [
 ]
 
 interface Props {
+  /** Set false to close; the drawer plays its exit, so keep it mounted. */
+  open: boolean
   onClose: () => void
   onAdded: (count: number) => void
 }
 
-function BulkUploadCoursesDrawer({ onClose, onAdded }: Props) {
+function BulkUploadCoursesDrawer({ open, onClose, onAdded }: Props) {
   const { courses } = useExternalTraining()
-  const panelRef = useRef<HTMLElement>(null)
-  useOverlayA11y(panelRef, true)
   const [fileName, setFileName] = useState<string | null>(null)
   const [filter, setFilter] = useState<Status>('ready')
   const [preview, setPreview] = useState(false)
@@ -162,134 +161,112 @@ function BulkUploadCoursesDrawer({ onClose, onAdded }: Props) {
   const ctaLabel = !fileName ? 'Add Courses' : ready.length === 1 ? 'Add 1 Course' : `Add ${ready.length} Courses`
 
   return (
-    <>
-      <div className="overlay-backdrop" onClick={onClose} aria-hidden="true" />
-      <aside
-        ref={panelRef}
-        tabIndex={-1}
-        className="side-drawer aet-drawer"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="aet-bulk-title"
-      >
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <div className="aet-drawer__heading">
-              <h2 id="aet-bulk-title" className="aet-drawer__title">Bulk upload courses</h2>
-              <p className="aet-text">Add your approved external courses in one go, with their providers and expiry rules.</p>
+    <SideDrawer
+      open={open}
+      onClose={onClose}
+      title="Bulk upload courses"
+      subtitle="Add your approved external courses in one go, with their providers and expiry rules."
+      footer={
+        <Button disabled={!fileName || ready.length === 0} onClick={commit}>
+          {ctaLabel}
+        </Button>
+      }
+    >
+      <ol className="aet-steps">
+        <li className="aet-step">
+          <span className="aet-step__num" aria-hidden="true">1</span>
+          <div className="aet-step__body">
+            <h3 className="aet-step__title">Use our template</h3>
+            <p className="aet-text">
+              Download our CSV file and fill it in following the template.{' '}
+              <Button variant="link" onClick={() => setPreview((p) => !p)} aria-expanded={preview}>
+                {preview ? 'Hide Preview' : 'Preview'}
+              </Button>
+            </p>
+            <Collapse open={preview}>
+              <div className="aet-step__preview">
+                <Table columns={templateColumns} rows={TEMPLATE_ROWS} getRowKey={(r) => String(r.line)} />
+              </div>
+            </Collapse>
+            <div className="aet-step__action">
+              <Button
+                variant="text"
+                icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
+                onClick={() => download('approved-courses-template.csv', TEMPLATE)}
+              >
+                Download CSV Template
+              </Button>
             </div>
-            <CloseButton onClick={onClose} />
           </div>
-          <div className="modal__divider" />
-        </div>
+        </li>
 
-        <div className="side-drawer__content">
-          <ol className="aet-steps">
-            <li className="aet-step">
-              <span className="aet-step__num" aria-hidden="true">1</span>
-              <div className="aet-step__body">
-                <h3 className="aet-step__title">Use our template</h3>
-                <p className="aet-text">
-                  Download our CSV file and fill it in following the template.{' '}
-                  <Button variant="link" onClick={() => setPreview((p) => !p)} aria-expanded={preview}>
-                    {preview ? 'Hide Preview' : 'Preview'}
-                  </Button>
-                </p>
-                <Collapse open={preview}>
-                  <div className="aet-step__preview">
-                    <Table columns={templateColumns} rows={TEMPLATE_ROWS} getRowKey={(r) => String(r.line)} />
-                  </div>
-                </Collapse>
-                <div className="aet-step__action">
-                  <Button
-                    variant="text"
-                    icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
-                    onClick={() => download('approved-courses-template.csv', TEMPLATE)}
-                  >
-                    Download CSV Template
-                  </Button>
-                </div>
-              </div>
-            </li>
+        <li className="aet-step">
+          <span className="aet-step__num" aria-hidden="true">2</span>
+          <div className="aet-step__body">
+            <h3 className="aet-step__title">Fill in the information</h3>
+            <p className="aet-text">
+              Use one row for each course and put each detail in its own cell. Separate several providers with
+              ";". Leave Expires after blank for courses that don't expire.
+            </p>
+          </div>
+        </li>
 
-            <li className="aet-step">
-              <span className="aet-step__num" aria-hidden="true">2</span>
-              <div className="aet-step__body">
-                <h3 className="aet-step__title">Fill in the information</h3>
-                <p className="aet-text">
-                  Use one row for each course and put each detail in its own cell. Separate several providers with
-                  ";". Leave Expires after blank for courses that don't expire.
-                </p>
-              </div>
-            </li>
+        <li className="aet-step">
+          <span className="aet-step__num" aria-hidden="true">3</span>
+          <div className="aet-step__body">
+            <h3 className="aet-step__title">Upload CSV file</h3>
+            <FileUploader
+              size="L"
+              accept=".csv"
+              state={fileName ? 'Filled' : 'Enabled'}
+              fileName={fileName ?? undefined}
+              helpText="Drag and drop CSV file here or click to upload"
+              onFileSelect={(f) => {
+                setFileName(f.name)
+                // Open on the first chip with rows, so a re-upload lands on "Already in your list".
+                setFilter((['ready', 'exists', 'error'] as Status[]).find((s) => count(s) > 0) ?? 'ready')
+              }}
+              onChangeFile={() => setFileName(null)}
+            />
+          </div>
+        </li>
+      </ol>
 
-            <li className="aet-step">
-              <span className="aet-step__num" aria-hidden="true">3</span>
-              <div className="aet-step__body">
-                <h3 className="aet-step__title">Upload CSV file</h3>
-                <FileUploader
-                  size="L"
-                  accept=".csv"
-                  state={fileName ? 'Filled' : 'Enabled'}
-                  fileName={fileName ?? undefined}
-                  helpText="Drag and drop CSV file here or click to upload"
-                  onFileSelect={(f) => {
-                    setFileName(f.name)
-                    // Open on the first chip with rows, so a re-upload lands on "Already in your list".
-                    setFilter((['ready', 'exists', 'error'] as Status[]).find((s) => count(s) > 0) ?? 'ready')
-                  }}
-                  onChangeFile={() => setFileName(null)}
-                />
-              </div>
-            </li>
-          </ol>
-
-          <Collapse open={!!fileName}>
-            <div className="aet-review">
-              <div className="aet-step__body">
-                <h3 className="aet-step__title">Review</h3>
-                <p className="aet-text">
-                  Courses already in your list are skipped and never overwritten. New providers in the file are added
-                  too.
-                </p>
-              </div>
-              <div className="aet-chips" role="group" aria-label="Filter rows">
-                <Chip label={`Ready to add (${count('ready')})`} selected={filter === 'ready'} onClick={() => setFilter('ready')} />
-                <Chip label={`Already in your list (${count('exists')})`} selected={filter === 'exists'} onClick={() => setFilter('exists')} />
-                <Chip label={`Errors (${count('error')})`} variant="warning" selected={filter === 'error'} onClick={() => setFilter('error')} />
-              </div>
-              {filter === 'error' && count('error') > 0 && (
-                <div>
-                  <Button
-                    variant="text"
-                    icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
-                    onClick={() =>
-                      download(
-                        'approved-courses-errors.csv',
-                        'Row,Course name,Error\n' +
-                          rows.filter((r) => r.status === 'error').map((r) => `${r.line},${r.name},${r.reason}`).join('\n'),
-                      )
-                    }
-                  >
-                    Download Error File
-                  </Button>
-                </div>
-              )}
-              <Table columns={columns} rows={rows.filter((r) => r.status === filter)} getRowKey={(r) => String(r.line)} />
+      <Collapse open={!!fileName}>
+        <div className="aet-review">
+          <div className="aet-step__body">
+            <h3 className="aet-step__title">Review</h3>
+            <p className="aet-text">
+              Courses already in your list are skipped and never overwritten. New providers in the file are added
+              too.
+            </p>
+          </div>
+          <div className="aet-chips" role="group" aria-label="Filter rows">
+            <Chip label={`Ready to add (${count('ready')})`} selected={filter === 'ready'} onClick={() => setFilter('ready')} />
+            <Chip label={`Already in your list (${count('exists')})`} selected={filter === 'exists'} onClick={() => setFilter('exists')} />
+            <Chip label={`Errors (${count('error')})`} variant="warning" selected={filter === 'error'} onClick={() => setFilter('error')} />
+          </div>
+          {filter === 'error' && count('error') > 0 && (
+            <div>
+              <Button
+                variant="text"
+                icon={<DocumentDownload size={20} color="currentColor" variant="Linear" />}
+                onClick={() =>
+                  download(
+                    'approved-courses-errors.csv',
+                    'Row,Course name,Error\n' +
+                      rows.filter((r) => r.status === 'error').map((r) => `${r.line},${r.name},${r.reason}`).join('\n'),
+                  )
+                }
+              >
+                Download Error File
+              </Button>
             </div>
-          </Collapse>
+          )}
+          <Table columns={columns} rows={rows.filter((r) => r.status === filter)} getRowKey={(r) => String(r.line)} />
         </div>
-
-        <div className="side-drawer__footer">
-          <div className="side-drawer__footer-divider" />
-          <div className="side-drawer__buttons">
-            <Button disabled={!fileName || ready.length === 0} onClick={commit}>
-              {ctaLabel}
-            </Button>
-          </div>
-        </div>
-      </aside>
-    </>
+      </Collapse>
+    </SideDrawer>
   )
 }
 

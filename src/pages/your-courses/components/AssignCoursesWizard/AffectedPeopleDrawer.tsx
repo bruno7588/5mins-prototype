@@ -2,20 +2,19 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Avatar from '@/components/Avatar/Avatar'
 import Badge from '@/components/Badge/Badge'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import EmptyState from '@/components/EmptyState/EmptyState'
 import Search from '@/components/Search/Search'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import Table, { type Column } from '@/components/Table/Table'
-import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import { PEOPLE } from '@/data/people'
 import type { EnrolmentStatus } from '@/data/enrolments'
 import type { AffectedRow } from './ReviewStep'
 import noResultsIllustration from '@/assets/empty-state-illustrations/no-results.svg'
 
 /* "View People" on Review: everyone who already has one of the selected courses, one row
-   per person and course, split by a Content Switcher: currently enrolled or completed. DS Side Drawer
-   (overlays.md) with the shell classes from CoursesDrawer.css, name cell as in My Team's
+   per person and course, split by a Content Switcher: currently enrolled or completed. Shared
+   SideDrawer (overlays.md), name cell as in My Team's
    ReminderDrawer, status badges as in Course details Enrolments. */
 
 const BY_ID = new Map(PEOPLE.map((p) => [p.id, p]))
@@ -78,20 +77,10 @@ interface Props {
 }
 
 function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
-  const panelRef = useRef<HTMLElement>(null)
-  const [closing, setClosing] = useState(false)
+  /* SideDrawer owns the panel, so the key handler finds it from a node inside it. */
+  const contentRef = useRef<HTMLDivElement>(null)
   const [tab, setTab] = useState<'current' | 'completed'>('current')
   const [query, setQuery] = useState('')
-
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(() => {
-      setClosing(false)
-      onClose()
-    }, 300)
-  }
-
-  useOverlayA11y(panelRef, open && !closing)
 
   useEffect(() => {
     if (open) {
@@ -109,13 +98,14 @@ function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
       if (e.key !== 'Escape' && e.key !== 'Tab') return
       e.stopPropagation()
       if (e.key === 'Escape') return
+      const panel = contentRef.current?.closest<HTMLElement>('[role="dialog"]')
       const items = Array.from(
-        panelRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])') ?? [],
+        panel?.querySelectorAll<HTMLElement>('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])') ?? [],
       )
       if (items.length === 0) return
       const first = items[0]
       const last = items[items.length - 1]
-      const inside = panelRef.current?.contains(document.activeElement)
+      const inside = panel?.contains(document.activeElement)
       if (e.shiftKey && (document.activeElement === first || !inside)) {
         e.preventDefault()
         last.focus()
@@ -129,8 +119,6 @@ function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
-  if (!open) return null
-
   const current = rows.filter((r) => r.status !== 'completed')
   const completed = rows.filter((r) => r.status === 'completed')
   const tabs = [
@@ -143,57 +131,33 @@ function AffectedPeopleDrawer({ open, rows, onClose }: Props) {
   const visible = active ? active.rows.filter((r) => !q || r.name.toLowerCase().includes(q) || r.courseName.toLowerCase().includes(q)) : []
 
   return createPortal(
-    <>
-      <div
-        className={`overlay-backdrop${closing ? ' overlay-backdrop--closing' : ''}`}
-        onClick={handleClose}
-        aria-hidden="true"
-      />
-      <aside
-        ref={panelRef}
-        tabIndex={-1}
-        className={`side-drawer${closing ? ' side-drawer--closing' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="acw-affected-title"
-      >
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <h2 id="acw-affected-title" className="acw-affected__title">
-              People who already have these courses
-            </h2>
-            <CloseButton onClick={handleClose} />
+    <SideDrawer open={open} onClose={onClose} title="People who already have these courses">
+      <div ref={contentRef} className="acw-affected__content">
+        <ContentSwitcher
+          className="acw-affected__switcher"
+          items={tabs.map((t) => ({ key: t.id, label: `${t.label} (${t.rows.length})` }))}
+          activeKey={active?.id ?? 'current'}
+          onChange={(key) => setTab(key as 'current' | 'completed')}
+          ariaLabel="People who already have these courses"
+        />
+        <Search value={query} onChange={setQuery} placeholder="Search for people or courses" ariaLabel="Search for people or courses" />
+        {active && (
+          /* Switching swaps the list instantly; only the switcher pill moves. Keyed on
+             the query too, so a new search starts on the first page. */
+          <div key={`${active.id}|${q}`} role="tabpanel">
+            {visible.length === 0 ? (
+              <EmptyState
+                illustration={<img src={noResultsIllustration} width={72} height={72} alt="" />}
+                title="No results"
+                description="Try a different search."
+              />
+            ) : (
+              <AffectedTable rows={visible} columns={active.columns} />
+            )}
           </div>
-          <div className="modal__divider" />
-        </div>
-
-        <div className="side-drawer__content acw-affected__content">
-          <ContentSwitcher
-            className="acw-affected__switcher"
-            items={tabs.map((t) => ({ key: t.id, label: `${t.label} (${t.rows.length})` }))}
-            activeKey={active?.id ?? 'current'}
-            onChange={(key) => setTab(key as 'current' | 'completed')}
-            ariaLabel="People who already have these courses"
-          />
-          <Search value={query} onChange={setQuery} placeholder="Search for people or courses" ariaLabel="Search for people or courses" />
-          {active && (
-            /* Switching swaps the list instantly; only the switcher pill moves. Keyed on
-               the query too, so a new search starts on the first page. */
-            <div key={`${active.id}|${q}`} role="tabpanel">
-              {visible.length === 0 ? (
-                <EmptyState
-                  illustration={<img src={noResultsIllustration} width={72} height={72} alt="" />}
-                  title="No results"
-                  description="Try a different search."
-                />
-              ) : (
-                <AffectedTable rows={visible} columns={active.columns} />
-              )}
-            </div>
-          )}
-        </div>
-      </aside>
-    </>,
+        )}
+      </div>
+    </SideDrawer>,
     document.body,
   )
 }

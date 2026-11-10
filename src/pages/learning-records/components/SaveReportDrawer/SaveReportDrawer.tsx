@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useRef, useState, type ComponentType } from
 import gsap from 'gsap'
 import BellIllustration from '../../../../components/icons/BellIllustration'
 import Button from '../../../../components/Button/Button'
-import CloseButton from '../../../../components/CloseButton/CloseButton'
 import Collapse from '../../../../components/Collapse/Collapse'
 import InputField from '../../../../components/InputField/InputField'
 import Dropdown from '../../../../components/Dropdown/Dropdown'
@@ -11,6 +10,7 @@ import RecipientsField from './RecipientsField'
 import CsvIcon from '../../../../components/icons/CsvIcon'
 import MoreIcon from '../../../../components/icons/MoreIcon'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import { Eye, Trash, Danger } from 'iconsax-react'
 import { FILTER_BY_ID, filterOptions } from '../FilterListbox/FilterListbox'
 import { orgUserByEmail, CURRENT_USER_EMAIL } from '@/data/orgUsers'
@@ -191,7 +191,6 @@ function todayISO(): string {
 
 function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDownload, onViewInTable, onDelete, instant }: SaveReportDrawerProps) {
   const isEditing = !!initial
-  const [closing, setClosing] = useState(false)
   // In-drawer actions menu (View Records / Delete) + delete confirmation.
   const [menuOpen, setMenuOpen] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -260,15 +259,6 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
     }
   }
 
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(() => {
-      setClosing(false)
-      onClose()
-    }, 300)
-  }
-
-
   // Close the actions menu on outside click.
   useEffect(() => {
     if (!menuOpen) return
@@ -278,8 +268,6 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
     document.addEventListener('mousedown', onClickOutside)
     return () => document.removeEventListener('mousedown', onClickOutside)
   }, [menuOpen])
-
-  if (!open) return null
 
   const nameMissing = name.trim().length === 0
   // A pending valid email counts — it gets committed on save.
@@ -313,7 +301,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
     }
     if (!scheduled) {
       onSave(buildReport({ scheduled: false, recipients: [] }))
-      handleClose()
+      onClose()
       return
     }
     // Fold a typed-but-uncommitted email into the recipient list.
@@ -322,26 +310,20 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
         ? [...recipients, pendingRecipient]
         : recipients
     onSave(buildReport({ scheduled: true, recipients: finalRecipients }))
-    handleClose()
+    onClose()
   }
 
   return (
     <>
-      <div
-        className={`overlay-backdrop${closing ? ' overlay-backdrop--closing' : instant ? ' overlay-backdrop--instant' : ''}`}
-        onClick={handleClose}
-        aria-hidden="true"
-      />
-      <aside
-        className={`side-drawer${closing ? ' side-drawer--closing' : instant ? ' side-drawer--instant' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="save-report-drawer-title"
-      >
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
+      <SideDrawer
+        open={open}
+        onClose={onClose}
+        instant={instant}
+        ariaLabel={isEditing ? 'Edit report' : 'Save a new report'}
+        header={
+          <>
             <div className="rd-header-text">
-              <h2 id="save-report-drawer-title" className="rd-title">
+              <h2 className="rd-title">
                 {isEditing ? 'Edit report' : 'Save a new report'}
               </h2>
               {isEditing && createdBy && (() => {
@@ -361,206 +343,57 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
                 )
               })()}
             </div>
-            <div className="rd-header-actions">
-              {isEditing && (onViewInTable || onDelete) && (
-                <div className="rd-more-wrapper" ref={menuRef}>
-                  <button
-                    type="button"
-                    className="rd-icon-btn"
-                    aria-label="Report actions"
-                    aria-haspopup="menu"
-                    aria-expanded={menuOpen}
-                    onClick={() => setMenuOpen((o) => !o)}
-                  >
-                    <MoreIcon size={20} color="var(--text-secondary)" />
-                  </button>
-                  {menuOpen && (
-                    <div className="rd-menu" role="menu">
-                      {onViewInTable && (
-                        <button
-                          type="button"
-                          role="menuitem"
-                          className="rd-menu-item"
-                          onClick={() => {
-                            setMenuOpen(false)
-                            if (initial) onViewInTable(initial)
-                            handleClose()
-                          }}
-                        >
-                          <Eye size={20} color="var(--text-primary)" variant="Linear" />
-                          View Records
-                        </button>
-                      )}
-                      {onDelete && (
-                        <button
-                          type="button"
-                          role="menuitem"
-                          className="rd-menu-item rd-menu-item--danger"
-                          onClick={() => {
-                            setMenuOpen(false)
-                            setConfirmDelete(true)
-                          }}
-                        >
-                          <Trash size={20} color="var(--danger-500)" variant="Linear" />
-                          Delete
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-              <CloseButton onClick={handleClose} />
-            </div>
-          </div>
-          <div className="modal__divider" />
-        </div>
-
-        <div className="side-drawer__content">
-          <div className="rd-form">
-            {/* Name + Filters — one tight section (16px gap); 24px separates it
-                from the schedule toggle below. Matches Figma 11637:124991. */}
-            <div className="rd-section">
-              {/* Name */}
-              <InputField
-                label="Name"
-                placeholder="e.g. Weekly overdue learners"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                validation={triedSave && nameMissing ? 'error' : 'none'}
-                helperText={triedSave && nameMissing ? 'Give the report a name.' : undefined}
-              />
-
-              {/* Filters — read-only snapshot of the report's filter view. */}
-              <div className="rd-field">
-                <label className="rd-label">Filters</label>
-                {filters.length === 0 ? (
-                  <p className="rd-hint">No filters — this report covers all learning records.</p>
-                ) : (
-                  <FilterChipsRow
-                    chips={filters.flatMap((f) => {
-                      const meta = FILTER_BY_ID[f.id]
-                      if (!meta) return []
-                      const opt = filterOptions(f.id).find((o) => o.value === f.value)
-                      const label = opt ? `${meta.title}: ${opt.label}` : meta.title
-                      return [{ id: f.id, label, Icon: meta.Icon }]
-                    })}
-                  />
+            {isEditing && (onViewInTable || onDelete) && (
+              <div className="rd-more-wrapper" ref={menuRef}>
+                <button
+                  type="button"
+                  className="rd-icon-btn"
+                  aria-label="Report actions"
+                  aria-haspopup="menu"
+                  aria-expanded={menuOpen}
+                  onClick={() => setMenuOpen((o) => !o)}
+                >
+                  <MoreIcon size={20} color="var(--text-secondary)" />
+                </button>
+                {menuOpen && (
+                  <div className="rd-menu" role="menu">
+                    {onViewInTable && (
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="rd-menu-item"
+                        onClick={() => {
+                          setMenuOpen(false)
+                          if (initial) onViewInTable(initial)
+                          onClose()
+                        }}
+                      >
+                        <Eye size={20} color="var(--text-primary)" variant="Linear" />
+                        View Records
+                      </button>
+                    )}
+                    {onDelete && (
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="rd-menu-item rd-menu-item--danger"
+                        onClick={() => {
+                          setMenuOpen(false)
+                          setConfirmDelete(true)
+                        }}
+                      >
+                        <Trash size={20} color="var(--danger-500)" variant="Linear" />
+                        Delete
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
-            </div>
-
-            {/* Schedule toggle — whole card toggles; the scheduling fields below
-                reveal/collapse (GSAP) when it's switched on. */}
-            <div
-              className="rd-toggle-row"
-              role="button"
-              tabIndex={0}
-              onClick={() => setScheduled((s) => !s)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  setScheduled((s) => !s)
-                }
-              }}
-            >
-              <div className="rd-toggle-text">
-                <span className="rd-toggle-title">Schedule this report</span>
-                {/* Description shows when off; collapses away once scheduling is on. */}
-                <Collapse open={!scheduled}>
-                  <span className="rd-hint rd-toggle-hint">Email this report to people on a recurring schedule.</span>
-                </Collapse>
-              </div>
-              <span className="rd-toggle-control" onClick={(e) => e.stopPropagation()}>
-                <Toggle checked={scheduled} onChange={(e) => setScheduled(e.target.checked)} />
-              </span>
-            </div>
-
-            {/* Scheduling fields — revealed inline when the toggle is on. */}
-            <Collapse open={scheduled}>
-              <div className="rd-section rd-schedule">
-                {/* Schedule grid — Frequency / cadence detail on row 1, Time / Timezone on row 2 */}
-                <div className="rd-grid">
-                  {/* Frequency */}
-                  <Dropdown
-                    label="Frequency"
-                    options={FREQ_OPTIONS}
-                    value={frequency}
-                    onChange={setFrequency}
-                  />
-
-                  {/* Cadence detail — depends on the frequency */}
-                  {frequency === 'weekly' && (
-                    <Dropdown
-                      label="On which day?"
-                      options={WEEKDAY_OPTIONS}
-                      value={weekday}
-                      onChange={setWeekday}
-                    />
-                  )}
-
-                  {frequency === 'monthly' && (
-                    <Dropdown
-                      label="When in the month?"
-                      options={MONTHLY_OPTIONS}
-                      value={monthlyMode}
-                      onChange={setMonthlyMode}
-                    />
-                  )}
-
-                  {frequency === 'quarterly' && (
-                    <Dropdown
-                      label="When in the quarter?"
-                      options={QUARTERLY_OPTIONS}
-                      value={monthlyMode}
-                      onChange={setMonthlyMode}
-                    />
-                  )}
-
-                  {/* Time */}
-                  <Dropdown
-                    label="Time"
-                    options={TIME_OPTIONS}
-                    value={deliverTime}
-                    onChange={setDeliverTime}
-                  />
-
-                  {/* Timezone */}
-                  <Dropdown
-                    label="Timezone"
-                    options={TZ_OPTIONS}
-                    value={timezone}
-                    onChange={setTimezone}
-                  />
-                </div>
-
-                {/* Recipients — autocompletes from registered users */}
-                <div className="rd-field">
-                  <label className="rd-label">Send reports to</label>
-                  <RecipientsField
-                    recipients={recipients}
-                    onChange={setRecipients}
-                    onPendingEmailChange={setPendingRecipient}
-                    error={triedSave && recipientsMissing ? 'Add at least one recipient.' : undefined}
-                  />
-                </div>
-
-                {/* Next report — when it first sends */}
-                <div className="rd-alert">
-                  <span className="rd-alert-icon">
-                    <BellIllustration size={20} />
-                  </span>
-                  <span className="rd-alert-text">
-                    Scheduled for {nextReportPreview({ frequency, weekday, startDate, monthlyMode, deliverTime, timezone })}.
-                  </span>
-                </div>
-              </div>
-            </Collapse>
-          </div>
-        </div>
-
-        <div className="side-drawer__footer">
-          <div className="side-drawer__footer-divider" />
-          <div className="side-drawer__buttons rd-footer-buttons">
+            )}
+          </>
+        }
+        footer={
+          <>
             <Button
               disabled={nameMissing || (scheduled && recipientsMissing)}
               onClick={handleSave}
@@ -578,9 +411,150 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
                 Download Report
               </Button>
             )}
+          </>
+        }
+      >
+        <div className="rd-form">
+          {/* Name + Filters — one tight section (16px gap); 24px separates it
+              from the schedule toggle below. Matches Figma 11637:124991. */}
+          <div className="rd-section">
+            {/* Name */}
+            <InputField
+              label="Name"
+              placeholder="e.g. Weekly overdue learners"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              validation={triedSave && nameMissing ? 'error' : 'none'}
+              helperText={triedSave && nameMissing ? 'Give the report a name.' : undefined}
+            />
+
+            {/* Filters — read-only snapshot of the report's filter view. */}
+            <div className="rd-field">
+              <label className="rd-label">Filters</label>
+              {filters.length === 0 ? (
+                <p className="rd-hint">No filters — this report covers all learning records.</p>
+              ) : (
+                <FilterChipsRow
+                  chips={filters.flatMap((f) => {
+                    const meta = FILTER_BY_ID[f.id]
+                    if (!meta) return []
+                    const opt = filterOptions(f.id).find((o) => o.value === f.value)
+                    const label = opt ? `${meta.title}: ${opt.label}` : meta.title
+                    return [{ id: f.id, label, Icon: meta.Icon }]
+                  })}
+                />
+              )}
+            </div>
           </div>
+
+          {/* Schedule toggle — whole card toggles; the scheduling fields below
+              reveal/collapse (GSAP) when it's switched on. */}
+          <div
+            className="rd-toggle-row"
+            role="button"
+            tabIndex={0}
+            onClick={() => setScheduled((s) => !s)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setScheduled((s) => !s)
+              }
+            }}
+          >
+            <div className="rd-toggle-text">
+              <span className="rd-toggle-title">Schedule this report</span>
+              {/* Description shows when off; collapses away once scheduling is on. */}
+              <Collapse open={!scheduled}>
+                <span className="rd-hint rd-toggle-hint">Email this report to people on a recurring schedule.</span>
+              </Collapse>
+            </div>
+            <span className="rd-toggle-control" onClick={(e) => e.stopPropagation()}>
+              <Toggle checked={scheduled} onChange={(e) => setScheduled(e.target.checked)} />
+            </span>
+          </div>
+
+          {/* Scheduling fields — revealed inline when the toggle is on. */}
+          <Collapse open={scheduled}>
+            <div className="rd-section rd-schedule">
+              {/* Schedule grid — Frequency / cadence detail on row 1, Time / Timezone on row 2 */}
+              <div className="rd-grid">
+                {/* Frequency */}
+                <Dropdown
+                  label="Frequency"
+                  options={FREQ_OPTIONS}
+                  value={frequency}
+                  onChange={setFrequency}
+                />
+
+                {/* Cadence detail — depends on the frequency */}
+                {frequency === 'weekly' && (
+                  <Dropdown
+                    label="On which day?"
+                    options={WEEKDAY_OPTIONS}
+                    value={weekday}
+                    onChange={setWeekday}
+                  />
+                )}
+
+                {frequency === 'monthly' && (
+                  <Dropdown
+                    label="When in the month?"
+                    options={MONTHLY_OPTIONS}
+                    value={monthlyMode}
+                    onChange={setMonthlyMode}
+                  />
+                )}
+
+                {frequency === 'quarterly' && (
+                  <Dropdown
+                    label="When in the quarter?"
+                    options={QUARTERLY_OPTIONS}
+                    value={monthlyMode}
+                    onChange={setMonthlyMode}
+                  />
+                )}
+
+                {/* Time */}
+                <Dropdown
+                  label="Time"
+                  options={TIME_OPTIONS}
+                  value={deliverTime}
+                  onChange={setDeliverTime}
+                />
+
+                {/* Timezone */}
+                <Dropdown
+                  label="Timezone"
+                  options={TZ_OPTIONS}
+                  value={timezone}
+                  onChange={setTimezone}
+                />
+              </div>
+
+              {/* Recipients — autocompletes from registered users */}
+              <div className="rd-field">
+                <label className="rd-label">Send reports to</label>
+                <RecipientsField
+                  recipients={recipients}
+                  onChange={setRecipients}
+                  onPendingEmailChange={setPendingRecipient}
+                  error={triedSave && recipientsMissing ? 'Add at least one recipient.' : undefined}
+                />
+              </div>
+
+              {/* Next report — when it first sends */}
+              <div className="rd-alert">
+                <span className="rd-alert-icon">
+                  <BellIllustration size={20} />
+                </span>
+                <span className="rd-alert-text">
+                  Scheduled for {nextReportPreview({ frequency, weekday, startDate, monthlyMode, deliverTime, timezone })}.
+                </span>
+              </div>
+            </div>
+          </Collapse>
         </div>
-      </aside>
+      </SideDrawer>
 
       <ConfirmModal open={confirmDelete} onClose={() => setConfirmDelete(false)}>
         {initial && (
@@ -604,7 +578,7 @@ function SaveReportDrawer({ open, onClose, onSave, initial, currentFilters, onDo
                 onClick={() => {
                   setConfirmDelete(false)
                   onDelete?.(initial.id)
-                  handleClose()
+                  onClose()
                 }}
               >
                 Delete Report

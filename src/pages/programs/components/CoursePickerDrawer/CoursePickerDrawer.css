@@ -1,38 +1,3 @@
-/* ── Overlay + panel (modal, 720px wide) ────────────────────────────────── */
-.cpd-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: var(--scrim);
-  display: flex;
-  justify-content: flex-end;
-  animation: cpd-fade-in 200ms ease;
-}
-
-.cpd-overlay--closing {
-  animation: cpd-fade-out 300ms ease forwards;
-}
-
-.cpd-panel {
-  width: 720px;
-  max-width: 95vw;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: var(--page-background);
-  box-shadow: -8px 0 24px color-mix(in srgb, var(--neutral-800) 12%, transparent);
-  animation: cpd-slide-in 280ms ease-in-out;
-}
-
-.cpd-panel--closing {
-  animation: cpd-slide-out 300ms ease-in-out forwards;
-}
-
-@keyframes cpd-fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes cpd-fade-out { from { opacity: 1; } to { opacity: 0; } }
-@keyframes cpd-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
-@keyframes cpd-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
-
 /* Behind the scrim, the program content shrinks to the space left of the 720px
    panel, animating in sync with the slide-in (empty state contracts to the left). */
 .cpd-content-area {
@@ -44,56 +9,11 @@
   padding-right: clamp(0px, calc(100vw - 600px), 720px);
 }
 
-/* ── Header ─────────────────────────────────────────────────────────────── */
-.cpd-header {
+/* ── SideDrawer subheader: tabs, filters and search stay put while the list scrolls ── */
+.cpd-subheader {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-m) var(--space-l);
-}
-
-.cpd-header__title {
-  margin: 0;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-/* Divider sits between the header title and the tabs. */
-.cpd-divider {
-  height: 1px;
-  margin: 0 var(--space-l);
-  background: var(--border);
-}
-
-/* ── Tabs (short underline under the active tab only) ───────────────────── */
-.cpd-tabs {
-  display: flex;
+  flex-direction: column;
   gap: var(--space-m);
-  padding: var(--space-m) var(--space-l) 0;
-}
-
-.cpd-tab {
-  padding: 0 0 var(--space-xs);
-  border: none;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: color 120ms ease, border-color 120ms ease;
-}
-
-.cpd-tab:hover {
-  color: var(--text-primary);
-}
-
-.cpd-tab--active {
-  color: var(--text-primary);
-  font-weight: 700;
-  border-bottom-color: var(--selected);
 }
 
 /* ── Filters row (search + Function/Skill dropdowns on the 5Mins tab) ────── */
@@ -103,7 +23,6 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
-  padding: var(--space-m) var(--space-l) 0;
 }
 
 .cpd-controls__filter {
@@ -114,21 +33,9 @@
 /* Right-aligned to the filter's right edge via the Dropdown's menuAlign="end"
    — the menu is portalled to <body>, so a descendant rule can't reach it. */
 
-/* Search — full-width, below the switcher/filter row. */
-.cpd-search {
-  padding: var(--space-m) var(--space-l) var(--space-sm);
-}
-
-.cpd-search .cpd-search__input {
+/* Search, full width, below the switcher/filter row. */
+.cpd-search__input {
   width: 100%;
-}
-
-/* ── Body (scroll area) ─────────────────────────────────────────────────── */
-.cpd-body {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 0 var(--space-l) var(--space-l);
 }
 
 .cpd-col-head {

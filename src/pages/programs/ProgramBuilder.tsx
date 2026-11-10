@@ -210,14 +210,13 @@ function ProgramBuilder() {
         </main>
       </div>
 
-      {pickerOpen && (
-        <CoursePickerDrawer
-          existingCourseIds={existingCourseIds}
-          onAdd={addCourseFromCatalog}
-          onRemove={removeCourseFromProgram}
-          onClose={() => setPickerOpen(false)}
-        />
-      )}
+      <CoursePickerDrawer
+        open={pickerOpen}
+        existingCourseIds={existingCourseIds}
+        onAdd={addCourseFromCatalog}
+        onRemove={removeCourseFromProgram}
+        onClose={() => setPickerOpen(false)}
+      />
 
       <AddImageModal
         open={imageModalOpen}

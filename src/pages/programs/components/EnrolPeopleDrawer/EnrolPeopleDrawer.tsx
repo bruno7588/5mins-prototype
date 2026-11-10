@@ -1,8 +1,8 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowLeft2, ArrowRight2, Calendar, UserTick } from 'iconsax-react'
-import { useOverlayA11y } from '../../../../hooks/useOverlayA11y'
-import CloseButton from '../../../../components/CloseButton/CloseButton'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
+import Button from '@/components/Button/Button'
 import Checkbox from '../../../../components/Checkbox/Checkbox'
 import Search from '../../../../components/Search/Search'
 import Chip from '../../../../components/Chip/Chip'
@@ -118,8 +118,6 @@ function DrawerPagination({ page, total, onPage }: { page: number; total: number
 }
 
 function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
-  const [closing, setClosing] = useState(false)
-  const panelRef = useRef<HTMLElement>(null)
   const [mode, setMode] = useState<Mode>('all')
   const [startMode, setStartMode] = useState<'immediately' | 'on-date'>('immediately')
   const [startDate, setStartDate] = useState(todayISO())
@@ -137,16 +135,6 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
   const [cohortQuery, setCohortQuery] = useState('')
   const [peoplePage, setPeoplePage] = useState(0)
   const [cohortPage, setCohortPage] = useState(0)
-
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(() => {
-      setClosing(false)
-      onClose()
-    }, 300)
-  }
-
-  useOverlayA11y(panelRef, open && !closing)
 
   // The start-date calendar is portaled to <body> so the drawer's scrollable
   // form (overflow: auto) can't clip it. Anchor it above-right of the trigger,
@@ -288,285 +276,255 @@ function EnrolPeopleDrawer({ open, onClose, launched, onEnrol }: Props) {
     onEnrol(summary, startMode === 'on-date' ? startDate : todayISO())
   }
 
-  if (!open) return null
-
   return (
-    <div
-      className={`epd-overlay${closing ? ' epd-overlay--closing' : ''}`}
-      onMouseDown={handleClose}
+    <SideDrawer
+      open={open}
+      onClose={onClose}
+      title="Enrol people"
+      bodyClassName="epd-form"
+      footer={
+        <>
+          <Button disabled={!canEnrol} onClick={handleEnrol}>
+            {ctaLabel}
+          </Button>
+          <span
+            className={`epd-summary${selectedCount === 0 ? ' epd-summary--empty' : ''}`}
+            aria-live="polite"
+          >
+            {summaryText}
+          </span>
+        </>
+      }
     >
-      <aside
-        ref={panelRef}
-        className={`epd-panel${closing ? ' epd-panel--closing' : ''}`}
-        onMouseDown={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Enrol people"
-        tabIndex={-1}
-      >
-        {/* Header */}
-        <header className="epd-header">
-          <div className="epd-header__top">
-            <h2 className="epd-title">Enrol people</h2>
-            <CloseButton onClick={handleClose} />
+      <div className="epd-chips">
+        <Chip label="All" selected={mode === 'all'} onClick={() => setMode('all')} />
+        <Chip label="People" selected={mode === 'people'} onClick={() => setMode('people')} />
+        <Chip label="Cohort" selected={mode === 'cohort'} onClick={() => setMode('cohort')} />
+      </div>
+
+      {/* ── All ── */}
+      {mode === 'all' && (
+        <div
+          role="button"
+          tabIndex={0}
+          className={`epd-all-row${allSelected ? ' epd-all-row--selected' : ''}`}
+          onClick={() => setAllSelected((v) => !v)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setAllSelected((v) => !v)
+            }
+          }}
+        >
+          <Checkbox checked={allSelected} />
+          <span className="epd-all-row__label">All people from {COMPANY}</span>
+          <span className="epd-all-row__count">{COMPANY_HEADCOUNT}</span>
+        </div>
+      )}
+
+      {/* ── People ── */}
+      {mode === 'people' && (
+        <div className="epd-section">
+          {/* Filters: not built yet, so shown disabled instead of as a decoy. */}
+          <div className="ui-disabled" aria-disabled="true" inert>
+            <FilterBar
+              filters={[]}
+              expanded={false}
+              onToggleExpanded={() => {}}
+              onRemove={() => {}}
+              onClearAll={() => {}}
+              renderAddFilter={() => <FilterBarAddButton open={false} onClick={() => {}} />}
+            />
           </div>
-          <div className="epd-divider" />
-        </header>
 
-        {/* Scrollable form */}
-        <div className="epd-form">
-          <div className="epd-chips">
-            <Chip label="All" selected={mode === 'all'} onClick={() => setMode('all')} />
-            <Chip label="People" selected={mode === 'people'} onClick={() => setMode('people')} />
-            <Chip label="Cohort" selected={mode === 'cohort'} onClick={() => setMode('cohort')} />
-          </div>
+          <Search
+            size="M"
+            value={peopleQuery}
+            placeholder="Search for people"
+            ariaLabel="Search for people"
+            onChange={(v) => {
+              setPeopleQuery(v)
+              setPeoplePage(0)
+            }}
+            className="epd-search"
+          />
 
-          {/* ── All ── */}
-          {mode === 'all' && (
-            <div
-              role="button"
-              tabIndex={0}
-              className={`epd-all-row${allSelected ? ' epd-all-row--selected' : ''}`}
-              onClick={() => setAllSelected((v) => !v)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  setAllSelected((v) => !v)
-                }
-              }}
-            >
-              <Checkbox checked={allSelected} />
-              <span className="epd-all-row__label">All people from {COMPANY}</span>
-              <span className="epd-all-row__count">{COMPANY_HEADCOUNT}</span>
+          <div className="epd-table">
+            <div className="epd-thead epd-thead--people">
+              <span className="epd-th epd-th--name">
+                <Checkbox checked={peopleHeaderChecked} onChange={togglePeopleHeader} />
+                Name
+              </span>
+              <span className="epd-th epd-th--team">Team</span>
+              <span className="epd-th epd-th--status">Status</span>
             </div>
-          )}
-
-          {/* ── People ── */}
-          {mode === 'people' && (
-            <div className="epd-section">
-              {/* Filters — not built yet; shown disabled instead of as a decoy. */}
-              <div className="ui-disabled" aria-disabled="true" inert>
-                <FilterBar
-                  filters={[]}
-                  expanded={false}
-                  onToggleExpanded={() => {}}
-                  onRemove={() => {}}
-                  onClearAll={() => {}}
-                  renderAddFilter={() => <FilterBarAddButton open={false} onClick={() => {}} />}
-                />
-              </div>
-
-              <Search
-                size="M"
-                value={peopleQuery}
-                placeholder="Search for people"
-                ariaLabel="Search for people"
-                onChange={(v) => {
-                  setPeopleQuery(v)
-                  setPeoplePage(0)
-                }}
-                className="epd-search"
-              />
-
-              <div className="epd-table">
-                <div className="epd-thead epd-thead--people">
-                  <span className="epd-th epd-th--name">
-                    <Checkbox checked={peopleHeaderChecked} onChange={togglePeopleHeader} />
-                    Name
-                  </span>
-                  <span className="epd-th epd-th--team">Team</span>
-                  <span className="epd-th epd-th--status">Status</span>
-                </div>
-                {visiblePeople.length === 0 ? (
-                  <div className="epd-empty">No people match “{peopleQuery.trim()}”.</div>
-                ) : (
-                  visiblePeople.map((p) => {
-                    const checked = selectedPeople.has(p.id)
-                    return (
-                      <div
-                        key={p.id}
-                        className={`epd-row epd-row--people${checked ? ' epd-row--selected' : ''}${p.enrolled ? ' epd-row--enrolled' : ''}`}
-                        onClick={() => {
-                          if (!p.enrolled) togglePerson(p.id)
-                        }}
-                      >
-                        <div className="epd-cell epd-cell--name">
-                          <Checkbox checked={checked} disabled={p.enrolled} />
-                          <span className="epd-person">
-                            <span className="epd-person__name">{p.name}</span>
-                            <span className="epd-person__email">{p.email}</span>
-                          </span>
-                        </div>
-                        <div className="epd-cell epd-cell--team">{p.team}</div>
-                        <div className="epd-cell epd-cell--status">
-                          {p.enrolled ? (
-                            <span className="epd-enrolled-badge">
-                              <UserTick size={16} color="currentColor" variant="Linear" />
-                              Enrolled
-                            </span>
-                          ) : (
-                            <span className="epd-status-empty">–</span>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })
-                )}
-                <DrawerPagination page={peoplePage} total={filteredPeople.length} onPage={setPeoplePage} />
-              </div>
-            </div>
-          )}
-
-          {/* ── Cohort ── */}
-          {mode === 'cohort' && (
-            <div className="epd-section">
-              <div className="epd-cohort-alert">
-                <img src={bellIllustration} alt="" width={20} height={20} className="epd-cohort-alert__bell" />
-                <span className="epd-cohort-alert__text">
-                  Create a cohort with members from diverse teams for content delivery
-                </span>
-                <button type="button" className="epd-cohort-alert__link ui-disabled" disabled>
-                  New Cohort
-                </button>
-              </div>
-
-              <Search
-                size="M"
-                value={cohortQuery}
-                placeholder="Search for cohorts"
-                ariaLabel="Search for cohorts"
-                onChange={(v) => {
-                  setCohortQuery(v)
-                  setCohortPage(0)
-                }}
-                className="epd-search"
-              />
-
-              <div className="epd-table">
-                <div className="epd-thead epd-thead--cohort">
-                  <span className="epd-th epd-th--cohort">
-                    <Checkbox checked={cohortHeaderChecked} onChange={toggleCohortHeader} />
-                    Cohort
-                  </span>
-                  <span className="epd-th epd-th--members">Members</span>
-                  <span className="epd-th epd-th--view" />
-                </div>
-                {visibleCohorts.length === 0 ? (
-                  <div className="epd-empty">No cohorts match “{cohortQuery.trim()}”.</div>
-                ) : (
-                  visibleCohorts.map((c) => {
-                    const checked = selectedCohorts.has(c.id)
-                    return (
-                      <div
-                        key={c.id}
-                        className={`epd-row epd-row--cohort${checked ? ' epd-row--selected' : ''}`}
-                        onClick={() => toggleCohort(c.id)}
-                      >
-                        <div className="epd-cell epd-cell--cohort">
-                          <Checkbox checked={checked} />
-                          <span className="epd-cohort__name">{c.name}</span>
-                        </div>
-                        <div className="epd-cell epd-cell--members">{c.members}</div>
-                        <div className="epd-cell epd-cell--view">
-                          <button
-                            type="button"
-                            className="epd-view-btn ui-disabled"
-                            disabled
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            View
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })
-                )}
-                <DrawerPagination page={cohortPage} total={filteredCohorts.length} onPage={setCohortPage} />
-              </div>
-            </div>
-          )}
-
-          {/* Program start date — shared across all modes */}
-          <div className="epd-date">
-            <div className="epd-date__header">
-              <span className="epd-date__title">Program start date</span>
-              <span className="epd-date__sub">Choose when enrolment should start</span>
-            </div>
-            <div className="epd-date__options">
-              <button
-                type="button"
-                className={`epd-date__opt${startMode === 'immediately' ? ' epd-date__opt--selected' : ''}`}
-                onClick={() => setStartMode('immediately')}
-              >
-                <Radio checked={startMode === 'immediately'} readOnly tabIndex={-1} />
-                <span>Immediately</span>
-              </button>
-
-              <div className={`epd-date__opt${startMode === 'on-date' ? ' epd-date__opt--selected' : ''}`}>
-                <button
-                  type="button"
-                  className="epd-date__opt-radio"
-                  onClick={() => setStartMode('on-date')}
-                >
-                  <Radio checked={startMode === 'on-date'} readOnly tabIndex={-1} />
-                  <span>On specific date</span>
-                </button>
-                <div className="epd-date__cal">
-                  <button
-                    ref={startTriggerRef}
-                    type="button"
-                    className={`epd-date__cal-trigger${startMode === 'on-date' ? '' : ' epd-date__cal-trigger--disabled'}${startCalOpen ? ' epd-date__cal-trigger--active' : ''}`}
-                    disabled={startMode !== 'on-date'}
-                    onClick={() => setStartCalOpen((o) => !o)}
+            {visiblePeople.length === 0 ? (
+              <div className="epd-empty">No people match “{peopleQuery.trim()}”.</div>
+            ) : (
+              visiblePeople.map((p) => {
+                const checked = selectedPeople.has(p.id)
+                return (
+                  <div
+                    key={p.id}
+                    className={`epd-row epd-row--people${checked ? ' epd-row--selected' : ''}${p.enrolled ? ' epd-row--enrolled' : ''}`}
+                    onClick={() => {
+                      if (!p.enrolled) togglePerson(p.id)
+                    }}
                   >
-                    <span>{fmtDate(startDate)}</span>
-                    <Calendar size={20} color="currentColor" variant="Linear" />
-                  </button>
-                  {startCalOpen && startMode === 'on-date' && calPos &&
-                    createPortal(
-                      <div
-                        ref={startPopRef}
-                        className="epd-date__cal-pop"
-                        style={{ right: calPos.right, bottom: calPos.bottom }}
-                      >
-                        <MiniCalendar
-                          value={startDate}
-                          onSelect={(iso) => {
-                            setStartDate(iso)
-                            setStartCalOpen(false)
-                          }}
-                        />
-                      </div>,
-                      document.body,
-                    )}
-                </div>
-              </div>
-            </div>
+                    <div className="epd-cell epd-cell--name">
+                      <Checkbox checked={checked} disabled={p.enrolled} />
+                      <span className="epd-person">
+                        <span className="epd-person__name">{p.name}</span>
+                        <span className="epd-person__email">{p.email}</span>
+                      </span>
+                    </div>
+                    <div className="epd-cell epd-cell--team">{p.team}</div>
+                    <div className="epd-cell epd-cell--status">
+                      {p.enrolled ? (
+                        <span className="epd-enrolled-badge">
+                          <UserTick size={16} color="currentColor" variant="Linear" />
+                          Enrolled
+                        </span>
+                      ) : (
+                        <span className="epd-status-empty">–</span>
+                      )}
+                    </div>
+                  </div>
+                )
+              })
+            )}
+            <DrawerPagination page={peoplePage} total={filteredPeople.length} onPage={setPeoplePage} />
           </div>
         </div>
+      )}
 
-        {/* Footer */}
-        <div className="epd-footer">
-          <div className="epd-divider" />
-          <div className="epd-footer__row">
+      {/* ── Cohort ── */}
+      {mode === 'cohort' && (
+        <div className="epd-section">
+          <div className="epd-cohort-alert">
+            <img src={bellIllustration} alt="" width={20} height={20} className="epd-cohort-alert__bell" />
+            <span className="epd-cohort-alert__text">
+              Create a cohort with members from diverse teams for content delivery
+            </span>
+            <button type="button" className="epd-cohort-alert__link ui-disabled" disabled>
+              New Cohort
+            </button>
+          </div>
+
+          <Search
+            size="M"
+            value={cohortQuery}
+            placeholder="Search for cohorts"
+            ariaLabel="Search for cohorts"
+            onChange={(v) => {
+              setCohortQuery(v)
+              setCohortPage(0)
+            }}
+            className="epd-search"
+          />
+
+          <div className="epd-table">
+            <div className="epd-thead epd-thead--cohort">
+              <span className="epd-th epd-th--cohort">
+                <Checkbox checked={cohortHeaderChecked} onChange={toggleCohortHeader} />
+                Cohort
+              </span>
+              <span className="epd-th epd-th--members">Members</span>
+              <span className="epd-th epd-th--view" />
+            </div>
+            {visibleCohorts.length === 0 ? (
+              <div className="epd-empty">No cohorts match “{cohortQuery.trim()}”.</div>
+            ) : (
+              visibleCohorts.map((c) => {
+                const checked = selectedCohorts.has(c.id)
+                return (
+                  <div
+                    key={c.id}
+                    className={`epd-row epd-row--cohort${checked ? ' epd-row--selected' : ''}`}
+                    onClick={() => toggleCohort(c.id)}
+                  >
+                    <div className="epd-cell epd-cell--cohort">
+                      <Checkbox checked={checked} />
+                      <span className="epd-cohort__name">{c.name}</span>
+                    </div>
+                    <div className="epd-cell epd-cell--members">{c.members}</div>
+                    <div className="epd-cell epd-cell--view">
+                      <button
+                        type="button"
+                        className="epd-view-btn ui-disabled"
+                        disabled
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        View
+                      </button>
+                    </div>
+                  </div>
+                )
+              })
+            )}
+            <DrawerPagination page={cohortPage} total={filteredCohorts.length} onPage={setCohortPage} />
+          </div>
+        </div>
+      )}
+
+      {/* Program start date, shared across all modes */}
+      <div className="epd-date">
+        <div className="epd-date__header">
+          <span className="epd-date__title">Program start date</span>
+          <span className="epd-date__sub">Choose when enrolment should start</span>
+        </div>
+        <div className="epd-date__options">
+          <button
+            type="button"
+            className={`epd-date__opt${startMode === 'immediately' ? ' epd-date__opt--selected' : ''}`}
+            onClick={() => setStartMode('immediately')}
+          >
+            <Radio checked={startMode === 'immediately'} readOnly tabIndex={-1} />
+            <span>Immediately</span>
+          </button>
+
+          <div className={`epd-date__opt${startMode === 'on-date' ? ' epd-date__opt--selected' : ''}`}>
             <button
               type="button"
-              className="epd-launch"
-              disabled={!canEnrol}
-              onClick={handleEnrol}
+              className="epd-date__opt-radio"
+              onClick={() => setStartMode('on-date')}
             >
-              {ctaLabel}
+              <Radio checked={startMode === 'on-date'} readOnly tabIndex={-1} />
+              <span>On specific date</span>
             </button>
-            <span
-              className={`epd-summary${selectedCount === 0 ? ' epd-summary--empty' : ''}`}
-              aria-live="polite"
-            >
-              {summaryText}
-            </span>
+            <div className="epd-date__cal">
+              <button
+                ref={startTriggerRef}
+                type="button"
+                className={`epd-date__cal-trigger${startMode === 'on-date' ? '' : ' epd-date__cal-trigger--disabled'}${startCalOpen ? ' epd-date__cal-trigger--active' : ''}`}
+                disabled={startMode !== 'on-date'}
+                onClick={() => setStartCalOpen((o) => !o)}
+              >
+                <span>{fmtDate(startDate)}</span>
+                <Calendar size={20} color="currentColor" variant="Linear" />
+              </button>
+              {startCalOpen && startMode === 'on-date' && calPos &&
+                createPortal(
+                  <div
+                    ref={startPopRef}
+                    className="epd-date__cal-pop"
+                    style={{ right: calPos.right, bottom: calPos.bottom }}
+                  >
+                    <MiniCalendar
+                      value={startDate}
+                      onSelect={(iso) => {
+                        setStartDate(iso)
+                        setStartCalOpen(false)
+                      }}
+                    />
+                  </div>,
+                  document.body,
+                )}
+            </div>
           </div>
         </div>
-      </aside>
-    </div>
+      </div>
+    </SideDrawer>
   )
 }
 

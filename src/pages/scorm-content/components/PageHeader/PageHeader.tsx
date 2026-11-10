@@ -1,12 +1,13 @@
 import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
+import Tabs from '@/components/Tabs/Tabs'
 import './PageHeader.css'
 
 const tabs = [
-  { label: 'Details', active: false },
-  { label: 'Course Content', active: true },
-  { label: 'Resources', active: false },
-  { label: 'Settings', active: false },
+  { key: 'Details', label: 'Details' },
+  { key: 'Course Content', label: 'Course Content' },
+  { key: 'Resources', label: 'Resources' },
+  { key: 'Settings', label: 'Settings' },
 ]
 
 function PageHeader() {
@@ -20,16 +21,13 @@ function PageHeader() {
           <CloseButton variant="fullscreen" className="sc-page-header-close" />
         </div>
       </div>
-      <nav className="sc-page-header-tabs">
-        {tabs.map((tab) => (
-          <button
-            key={tab.label}
-            className={`sc-page-header-tab ${tab.active ? 'sc-page-header-tab--active' : ''}`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
+      <Tabs
+        items={tabs}
+        activeKey="Course Content"
+        onChange={() => {}}
+        ariaLabel="Create course sections"
+        className="sc-page-header-tabs"
+      />
     </header>
   )
 }

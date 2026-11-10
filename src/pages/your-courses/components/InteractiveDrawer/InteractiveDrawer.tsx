@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import QuizIllustration from '@/components/icons/QuizIllustration'
 import DesktopPreview from '@/components/DesktopPreview/DesktopPreview'
@@ -22,7 +21,7 @@ import FillBlank from '@/pages/quiz-lab/formats/FillBlank'
 import Categorization from '@/pages/quiz-lab/formats/Categorization'
 import SequencingDnd from '@/pages/quiz-lab/formats/SequencingDnd'
 import '@/pages/quiz-lab/quiz-lab.css'
-import SectionHeader from '../SectionHeader/SectionHeader'
+import { DrawerFooter, DrawerHeader } from '../ContentDrawer/DrawerSlots'
 import CategorizationBody from './bodies/CategorizationBody'
 import FillBlankBody from './bodies/FillBlankBody'
 import MatchPairsBody from './bodies/MatchPairsBody'
@@ -43,7 +42,6 @@ interface Props {
   type: InteractiveQuestionType
   /** Prefilled when reopened from the course outline; null when creating. */
   initial?: InteractiveQuestion | null
-  onClose: () => void
   onSave: (question: InteractiveQuestion) => void
   /** Lets the page guard the close paths while there is unsaved work. */
   onDirtyChange?: (dirty: boolean) => void
@@ -72,7 +70,7 @@ const snapshot = (prompt: string, draft: Draft) =>
  * 'incomplete' rules stay silent — on an untouched draft they all fire at once,
  * each restating the label above it — and hold Save disabled instead.
  */
-function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChange }: Props) {
+function InteractiveDrawer({ type, initial = null, onSave, onDirtyChange }: Props) {
   const isEdit = !!initial
   const config = TYPE_CONFIG[type]
 
@@ -147,12 +145,11 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
 
   return (
     <>
-      <SectionHeader
+      <DrawerHeader
         /* Same header pattern as the classic assessment modal — every assessment
            reads "Add assessment - <format>". */
         title={`${isEdit ? 'Edit' : 'Add'} assessment - ${config.title}`}
         description={config.description}
-        ctas={<CloseButton onClick={onClose} />}
       />
 
       <div className="iq-drawer__body">
@@ -185,23 +182,25 @@ function InteractiveDrawer({ type, initial = null, onClose, onSave, onDirtyChang
         <div className="iq-drawer__body-slot">{body}</div>
       </div>
 
-      <div className="iq-drawer__footer">
-        {/* Plain "Save", like the classic assessment modal — the header
-            already names the format. */}
-        <Button onClick={handleSave} disabled={!canSave}>
-          Save
-        </Button>
-        {/* Secondary action, sitting beside Save on the footer's 16px gap. Figma
-            keeps it in place and disables it until there is something to show,
-            rather than letting the footer change shape as the form fills in. */}
-        <Button
-          variant="outlined-2"
-          disabled={!previewQuestion}
-          onClick={() => setPreviewing(true)}
-        >
-          Preview
-        </Button>
-      </div>
+      <DrawerFooter>
+        <div className="iq-drawer__footer">
+          {/* Plain "Save", like the classic assessment modal — the header
+              already names the format. */}
+          <Button onClick={handleSave} disabled={!canSave}>
+            Save
+          </Button>
+          {/* Secondary action, sitting beside Save on the footer's 16px gap. Figma
+              keeps it in place and disables it until there is something to show,
+              rather than letting the footer change shape as the form fills in. */}
+          <Button
+            variant="outlined-2"
+            disabled={!previewQuestion}
+            onClick={() => setPreviewing(true)}
+          >
+            Preview
+          </Button>
+        </div>
+      </DrawerFooter>
 
       {/* The feed panel on the scrim — no dialog card, no title bar; the format
           label and the close sit in the quiz's own header (Figma 9111:4633).

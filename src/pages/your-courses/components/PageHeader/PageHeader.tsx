@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../../../components/Button/Button'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
+import Tabs from '@/components/Tabs/Tabs'
 import './PageHeader.css'
 
 export interface PageHeaderTab {
@@ -86,24 +87,12 @@ function PageHeader({
       </div>
       <div className="page-header-divider" aria-hidden="true" />
       <div className="page-header-tabrow">
-        <nav className="page-header-tabs">
-          {tabs.map((tab) => (
-            <button
-              key={tab.label}
-              className={[
-                'page-header-tab',
-                tab.label === activeTab && 'page-header-tab--active',
-                tab.disabled && 'ui-disabled',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              disabled={tab.disabled}
-              onClick={onTabChange && !tab.disabled ? () => onTabChange(tab.label) : undefined}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+        <Tabs
+          items={tabs.map((tab) => ({ key: tab.label, label: tab.label, disabled: tab.disabled }))}
+          activeKey={activeTab}
+          onChange={(key) => onTabChange?.(key)}
+          ariaLabel={`${title} sections`}
+        />
         {tabsAction}
       </div>
     </header>

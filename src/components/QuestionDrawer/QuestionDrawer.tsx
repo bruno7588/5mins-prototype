@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { Add, Danger, TickCircle } from 'iconsax-react'
 import type { Answer, Question } from '../../data/mockQuestions'
 import Button from '../Button/Button'
-import CloseButton from '../CloseButton/CloseButton'
 import ConfirmModal from '../ConfirmModal/ConfirmModal'
 import InputField from '../InputField/InputField'
+import SideDrawer from '../SideDrawer/SideDrawer'
 import './QuestionDrawer.css'
 
 interface QuestionDrawerProps {
+  open: boolean
   question?: Question
   onSave: (question: Question) => void
   onClose: () => void
@@ -53,14 +54,36 @@ const DEFAULT_ANSWERS: Answer[] = [
   { id: `new_a2_${Date.now()}`, text: '', isCorrect: false },
 ]
 
-function QuestionDrawer({ question, onSave, onClose, onDelete }: QuestionDrawerProps) {
+const initialAnswers = (question?: Question) =>
+  question?.answers ?? DEFAULT_ANSWERS.map(a => ({ ...a, id: `new_a${Date.now()}_${Math.random()}` }))
+
+function QuestionDrawer({ open, question, onSave, onClose, onDelete }: QuestionDrawerProps) {
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const isNew = !question
-  const questionType = question?.type ?? 'multiple_choice'
+  /* The drawer stays mounted so it can slide out, and the host clears `question` as it
+     closes. Hold what was opened (and whether it could be deleted) until the next open,
+     which starts the form afresh. */
+  const [shown, setShown] = useState(question)
+  const [canDelete, setCanDelete] = useState(!!onDelete)
+  const [wasOpen, setWasOpen] = useState(open)
+  const isNew = !shown
+  const questionType = shown?.type ?? 'multiple_choice'
   const [text, setText] = useState(question?.text ?? '')
-  const [answers, setAnswers] = useState<Answer[]>(question?.answers ?? DEFAULT_ANSWERS.map(a => ({ ...a, id: `new_a${Date.now()}_${Math.random()}` })))
+  const [answers, setAnswers] = useState<Answer[]>(() => initialAnswers(question))
   const [explanation, setExplanation] = useState('')
   const [errors, setErrors] = useState<string[]>([])
+
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (open) {
+      setShown(question)
+      setCanDelete(!!onDelete)
+      setText(question?.text ?? '')
+      setAnswers(initialAnswers(question))
+      setExplanation('')
+      setErrors([])
+      setConfirmDelete(false)
+    }
+  }
 
   const handleSave = () => {
     const newErrors: string[] = []
@@ -76,8 +99,8 @@ function QuestionDrawer({ question, onSave, onClose, onDelete }: QuestionDrawerP
       return
     }
 
-    const savedQuestion: Question = question
-      ? { ...question, text: text.trim(), answers: answers.filter(a => a.text.trim()) }
+    const savedQuestion: Question = shown
+      ? { ...shown, text: text.trim(), answers: answers.filter(a => a.text.trim()) }
       : {
           id: `q_manual_${Date.now()}`,
           text: text.trim(),
@@ -114,120 +137,16 @@ function QuestionDrawer({ question, onSave, onClose, onDelete }: QuestionDrawerP
 
   return (
     <>
-      <div className="question-drawer-overlay" onClick={onClose} />
-      <div
-        className="question-drawer-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-label={isNew ? 'Create new question' : 'Edit question'}
-      >
-        {/* Header */}
-        <div className="question-drawer-heading">
-          <div className="question-drawer-header">
-            <h3 className="question-drawer-title">{isNew ? 'Create new question' : 'Edit question'}</h3>
-            <CloseButton onClick={onClose} className="question-drawer-close" />
-          </div>
-          <div className="question-drawer-divider" />
-        </div>
-
-        {/* Body */}
-        <div className="question-drawer-body">
-          {/* Question text */}
-          <InputField
-            label="What is your question?"
-            placeholder="Write your question here..."
-            value={text}
-            onChange={e => { setText(e.target.value); setErrors([]) }}
-            autoFocus
-          />
-
-          {/* Answer options */}
-          {questionType !== 'free_text' && (
-            <div className="question-drawer-field">
-              <label className="question-drawer-label">What are the options?</label>
-              <div className="question-drawer-answers">
-                {answers.map((answer, i) => (
-                  <div
-                    key={answer.id}
-                    className={`question-drawer-answer${answer.isCorrect ? ' question-drawer-answer--correct' : ''}`}
-                  >
-                    <button
-                      className="question-drawer-radio"
-                      onClick={() => setCorrectAnswer(i)}
-                      aria-label={answer.isCorrect ? 'Correct answer' : 'Mark as correct'}
-                    >
-                      <RadioIcon selected={answer.isCorrect} />
-                    </button>
-                    <input
-                      className="question-drawer-answer-input"
-                      value={answer.text}
-                      onChange={e => updateAnswer(i, { text: e.target.value })}
-                      placeholder={`Write option ${i + 1} here`}
-                    />
-                    {answer.isCorrect && (
-                      <span className="question-drawer-correct-badge">Correct</span>
-                    )}
-                    {answers.length > 2 && (
-                      <button
-                        className="question-drawer-answer-remove"
-                        onClick={() => removeAnswer(i)}
-                        aria-label="Remove answer"
-                      >
-                        <CloseSmallIcon />
-                      </button>
-                    )}
-                  </div>
-                ))}
-
-                {/* Add option row */}
-                {answers.length < 6 && (
-                  <button className="question-drawer-add-option" onClick={addAnswer}>
-                    <Add size={24} color="var(--text-primary)" />
-                    <span>Add option</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Explanation */}
-          <div className="question-drawer-field">
-            <label className="question-drawer-label">
-              Add an explanation <span className="question-drawer-label--regular">(optional)</span>
-            </label>
-            <div className={`question-drawer-explanation${explanation.trim() ? ' question-drawer-explanation--filled' : ''}`}>
-              {explanation.trim() && (
-                <span className="question-drawer-explanation-icon">
-                  <TickCircle size={24} color="var(--success-500)" variant="Bold" />
-                </span>
-              )}
-              <textarea
-                className="question-drawer-explanation-input"
-                value={explanation}
-                onChange={e => setExplanation(e.target.value)}
-                placeholder="Add an explanation..."
-                rows={3}
-              />
-            </div>
-          </div>
-
-          {/* Errors */}
-          {errors.length > 0 && (
-            <div className="question-drawer-errors">
-              {errors.map((err, i) => (
-                <p key={i} className="question-drawer-error">{err}</p>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="question-drawer-footer">
-          <div className="question-drawer-divider" />
-          <div className="question-drawer-footer__buttons">
+      <SideDrawer
+        open={open}
+        onClose={onClose}
+        title={isNew ? 'Create new question' : 'Edit question'}
+        bodyClassName="question-drawer-body"
+        footer={
+          <>
             <Button onClick={handleSave}>Save</Button>
-            <Button variant="outlined" onClick={onClose}>Cancel</Button>
-            {onDelete && (
+            <Button variant="outlined-2" onClick={onClose}>Cancel</Button>
+            {canDelete && (
               <Button
                 className="question-drawer-delete"
                 semantic="danger"
@@ -237,9 +156,100 @@ function QuestionDrawer({ question, onSave, onClose, onDelete }: QuestionDrawerP
                 Delete Question
               </Button>
             )}
+          </>
+        }
+      >
+        {/* Question text */}
+        {/* The drawer focuses its first control (the close button) unless one is marked
+            data-autofocus; InputField doesn't pass that through, so mark its input here. */}
+        <div ref={el => { el?.querySelector('input')?.setAttribute('data-autofocus', '') }}>
+          <InputField
+            label="What is your question?"
+            placeholder="Write your question here..."
+            value={text}
+            onChange={e => { setText(e.target.value); setErrors([]) }}
+          />
+        </div>
+
+        {/* Answer options */}
+        {questionType !== 'free_text' && (
+          <div className="question-drawer-field">
+            <label className="question-drawer-label">What are the options?</label>
+            <div className="question-drawer-answers">
+              {answers.map((answer, i) => (
+                <div
+                  key={answer.id}
+                  className={`question-drawer-answer${answer.isCorrect ? ' question-drawer-answer--correct' : ''}`}
+                >
+                  <button
+                    className="question-drawer-radio"
+                    onClick={() => setCorrectAnswer(i)}
+                    aria-label={answer.isCorrect ? 'Correct answer' : 'Mark as correct'}
+                  >
+                    <RadioIcon selected={answer.isCorrect} />
+                  </button>
+                  <input
+                    className="question-drawer-answer-input"
+                    value={answer.text}
+                    onChange={e => updateAnswer(i, { text: e.target.value })}
+                    placeholder={`Write option ${i + 1} here`}
+                  />
+                  {answer.isCorrect && (
+                    <span className="question-drawer-correct-badge">Correct</span>
+                  )}
+                  {answers.length > 2 && (
+                    <button
+                      className="question-drawer-answer-remove"
+                      onClick={() => removeAnswer(i)}
+                      aria-label="Remove answer"
+                    >
+                      <CloseSmallIcon />
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              {/* Add option row */}
+              {answers.length < 6 && (
+                <button className="question-drawer-add-option" onClick={addAnswer}>
+                  <Add size={24} color="var(--text-primary)" />
+                  <span>Add option</span>
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Explanation */}
+        <div className="question-drawer-field">
+          <label className="question-drawer-label">
+            Add an explanation <span className="question-drawer-label--regular">(optional)</span>
+          </label>
+          <div className={`question-drawer-explanation${explanation.trim() ? ' question-drawer-explanation--filled' : ''}`}>
+            {explanation.trim() && (
+              <span className="question-drawer-explanation-icon">
+                <TickCircle size={24} color="var(--success-500)" variant="Bold" />
+              </span>
+            )}
+            <textarea
+              className="question-drawer-explanation-input"
+              value={explanation}
+              onChange={e => setExplanation(e.target.value)}
+              placeholder="Add an explanation..."
+              rows={3}
+            />
           </div>
         </div>
-      </div>
+
+        {/* Errors */}
+        {errors.length > 0 && (
+          <div className="question-drawer-errors">
+            {errors.map((err, i) => (
+              <p key={i} className="question-drawer-error">{err}</p>
+            ))}
+          </div>
+        )}
+      </SideDrawer>
 
       <ConfirmModal open={confirmDelete} onClose={() => setConfirmDelete(false)}>
         <div className="confirm-modal-header confirm-modal-header--center">

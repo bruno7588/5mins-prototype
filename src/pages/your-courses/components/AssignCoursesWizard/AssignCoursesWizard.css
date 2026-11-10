@@ -382,16 +382,7 @@
   margin-top: var(--space-sm);
 }
 
-/* View People side drawer (overlays.md: 20px Bold title; shell from CoursesDrawer.css). */
-.acw-affected__title {
-  flex: 1;
-  margin: 0;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
+/* View People side drawer body (shell is the shared SideDrawer). */
 .acw-affected__content {
   display: flex;
   flex-direction: column;

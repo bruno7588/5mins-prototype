@@ -3,12 +3,6 @@
    only. Chrome deliberately matches InteractiveDrawer.css so the drawers read as
    one family; classes are prefixed .gen-drawer__ because CSS is bundled globally. */
 
-/* No padding under the rule: the 20px to the body is the drawer shell's own
-   flex gap, same as every other assessment drawer. */
-.generate-drawer-shell .section-header {
-  padding-bottom: 0;
-}
-
 .gen-drawer__body {
   flex: 1;
   min-height: 0;
@@ -44,13 +38,11 @@
 
 
 
+/* Sits in SideDrawer's pinned footer, which draws the divider above it. */
 .gen-drawer__footer {
   display: flex;
   align-items: center;
   gap: var(--space-m);
-  padding-top: var(--space-m);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
 }
 
 /* ===== Zero-transcript state (FR-05) =====

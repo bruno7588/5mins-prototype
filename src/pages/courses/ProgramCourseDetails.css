@@ -185,61 +185,6 @@
   white-space: nowrap;
 }
 
-/* ---- Tabs ---- */
-.pcd-tabs {
-  display: flex;
-  align-items: center;
-  gap: var(--space-m);
-}
-
-.pcd-tab {
-  position: relative;
-  display: inline-flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 0 0 var(--space-xss);
-  background: none;
-  border: none;
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  line-height: 1.5;
-  white-space: nowrap;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.pcd-tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.pcd-tab--active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--selected);
-}
-
-.pcd-tab__count {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xxs) var(--space-s);
-  border-radius: 40px;
-  background: var(--input-background);
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
 /* ---- Course outline ---- */
 .pcd-outline {
   display: flex;

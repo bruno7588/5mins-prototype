@@ -15,6 +15,7 @@ import {
   subjectText,
   type EmailType,
 } from './emailContent'
+import Tabs from '@/components/Tabs/Tabs'
 import './EmailPreview.css'
 
 /* Preview (1.9): the exact email with sample values, plus where a course
@@ -156,21 +157,13 @@ function EmailPreview({ open, tab, onTabChange, onClose, type, name, days, subje
       />
 
       {isReminder && (
-        <div className="epv-tabs" role="tablist" aria-label="Where it shows">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={current === t.id}
-              className={`epv-tab${current === t.id ? ' epv-tab--active' : ''}`}
-              onClick={() => onTabChange(t.id)}
-            >
-              {t.icon}
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          className="epv-tabs"
+          ariaLabel="Where it shows"
+          items={tabs.map((t) => ({ key: t.id, label: <>{t.icon}{t.label}</> }))}
+          activeKey={current}
+          onChange={(key) => onTabChange(key as PreviewTab)}
+        />
       )}
 
       {/* The modal fits each tab: its height eases between the email and the shorter

@@ -23,40 +23,7 @@
   gap: var(--space-m);
 }
 
-/* Tabs */
+/* Tab bar spacing: 8px above the labels, as before the shared Tabs. */
 .sc-page-header-tabs {
-  display: flex;
-  gap: var(--space-m);
-}
-
-.sc-page-header-tab {
-  position: relative;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-secondary);
-  padding: var(--space-s) 0 var(--space-sm) 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 150ms ease;
-}
-
-.sc-page-header-tab:hover {
-  color: var(--text-primary);
-}
-
-.sc-page-header-tab--active {
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.sc-page-header-tab--active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--secondary-500);
-  border-radius: 2px;
+  padding-top: var(--space-s);
 }

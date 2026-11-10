@@ -1,104 +1,11 @@
-/* Overlay */
-.uf-drawer-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  background: var(--scrim);
-  animation: uf-overlay-fade 250ms ease;
-}
-
-@keyframes uf-overlay-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.uf-drawer-overlay--closing {
-  animation: uf-overlay-fade-out 300ms ease forwards;
-}
-
-@keyframes uf-overlay-fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
-/* Drawer panel */
-.uf-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 201;
-  width: 720px;
-  max-width: 100%;
-  background: var(--page-background);
-  padding: var(--space-ml) var(--space-l);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-ml);
-  animation: uf-drawer-slide 300ms ease-in-out;
-}
-
-@keyframes uf-drawer-slide {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-.uf-drawer--closing {
-  animation: uf-drawer-slide-out 300ms ease-in-out forwards;
-}
-
-@keyframes uf-drawer-slide-out {
-  from { transform: translateX(0); }
-  to { transform: translateX(100%); }
-}
-
-/* Header */
-.uf-drawer-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.uf-drawer-header-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-m);
-}
-
-.uf-drawer-title {
-  flex: 1;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.uf-drawer-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xs);
-  cursor: pointer;
-  border-radius: var(--radius-full);
-}
-
-.uf-drawer-close:hover {
-  background: var(--cards-background-hover);
-}
-
-.uf-drawer-divider {
-  height: 1px;
-  background: var(--border);
-  border-radius: var(--radius-xs);
-}
+/* User field drawer content. The shell is the shared SideDrawer (overlays.md). */
 
 /* Form */
+/* The scrolling body (SideDrawer bodyClassName) */
 .uf-drawer-form {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
-  overflow-y: auto;
 }
 
 .uf-drawer-field {
@@ -300,11 +207,4 @@
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.5;
-}
-
-/* Footer */
-.uf-drawer-footer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
 }

@@ -66,8 +66,16 @@ interface Props {
 
 function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
   const { records } = useExternalTraining()
-  const [drawer, setDrawer] = useState<{ record: ExternalRecord | null } | null>(null)
+  /* Stays set while the drawer plays its exit; key remounts it fresh on each open. */
+  const [drawer, setDrawer] = useState<{ record: ExternalRecord | null; open: boolean; key: number } | null>(null)
+  const openDrawer = (record: ExternalRecord | null) => setDrawer({ record, open: true, key: Date.now() })
+  const closeDrawer = () => setDrawer((d) => d && { ...d, open: false })
   const [csvOpen, setCsvOpen] = useState(false)
+  const [csvKey, setCsvKey] = useState(0)
+  const openCsv = () => {
+    setCsvKey((k) => k + 1)
+    setCsvOpen(true)
+  }
   /* Upload ZIP file has no template: the menu opens the file picker (a zip, or several
      certificate files), and picking opens Review certificates. */
   const [certsOpen, setCertsOpen] = useState(false)
@@ -187,7 +195,7 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
             },
           ]}
           onSelect={(key) =>
-            key === 'single' ? setDrawer({ record: null }) : key === 'zip' ? zipInputRef.current?.click() : setCsvOpen(true)
+            key === 'single' ? openDrawer(null) : key === 'zip' ? zipInputRef.current?.click() : openCsv()
           }
         />
   )
@@ -237,7 +245,7 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
           rows={rows}
           all={records}
           showDuration={false}
-          onEdit={(r) => setDrawer({ record: r })}
+          onEdit={(r) => openDrawer(r)}
           onDelete={setToDelete}
           learnerHref={(id) => (personById(id)?.invited ? null : `/people/${id}?tab=external-training`)}
         />
@@ -251,19 +259,23 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
 
       {drawer && (
         <AddExternalTrainingDrawer
+          key={drawer.key}
+          open={drawer.open}
           record={drawer.record}
-          onClose={() => setDrawer(null)}
+          onClose={closeDrawer}
           onSaved={(r, isNew) => {
             saveRecord(r)
-            setDrawer(null)
+            closeDrawer()
             const who = personById(r.personId)?.name ?? ''
             showToast('success', isNew ? `${recordTrainingName(r)} added for ${who}` : `${recordTrainingName(r)} updated for ${who}`)
           }}
         />
       )}
 
-      {csvOpen && (
+      {csvKey > 0 && (
         <BulkUploadRecordsDrawer
+          key={csvKey}
+          open={csvOpen}
           onClose={() => setCsvOpen(false)}
           onAdded={(n) => {
             setCsvOpen(false)

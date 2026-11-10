@@ -67,7 +67,6 @@ Every component doc follows `_template.md`: Usage, then Figma to code. Read the 
 | `impersonation-banner.md` | Impersonation session bar | Changing the banner or adding fixed layers |
 | `drift-report.md` | Known hand-rolled duplicates (report, not guidance) | Before refactoring a page |
 | `production-claude-snippet.md` | Paste-ready DS block for the production repo | Setting up agents in production |
-| `eng-skill/` | Engineering DS audit skill and README | Auditing production code against the DS |
 
 ## Quick decision reference
 

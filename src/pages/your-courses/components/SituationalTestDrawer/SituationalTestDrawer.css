@@ -1,29 +1,8 @@
-/* Situational test authoring (DES-276). Hosted inside the shared ContentDrawer shell,
-   which owns the panel, its padding and the slide animation — this file only styles the
-   form. Field chrome deliberately matches the Add assessment drawer (AssessmentModal.css)
+/* Situational test authoring (DES-276). Hosted inside ContentDrawer's SideDrawer,
+   which owns the panel, header, footer divider and slide animation; this file only
+   styles the form. Field chrome deliberately matches the Add assessment drawer (AssessmentModal.css)
    so the two read as one family; class names are prefixed .st-drawer__ because the
    prototype bundles CSS globally. */
-
-/* The rule under the header belongs to SectionHeader itself (headers.md) —
-   keeping the border here drew a second line. Nothing is added beneath it
-   either: the header's own padding used to stack on top of the shell's 20px
-   flex gap and read as a gap twice the size of every other one on the panel.
-   One gap, 20px, whatever leads the body. */
-.situational-test-drawer-shell .section-header {
-  padding-bottom: 0;
-}
-
-/* 12px between the back arrow and the title. The title group has to absorb the free
-   space (Figma's flex-1 headline), or space-between pushes it to the middle of the row
-   and the arrow ends up marooned on the far left. */
-.situational-test-drawer-shell .section-header__headline {
-  gap: var(--space-sm);
-}
-
-.situational-test-drawer-shell .section-header__title-group {
-  flex: 1;
-  min-width: 0;
-}
 
 /* 32px filled circle with a 16px arrow, per Figma 8998:55648. */
 .st-drawer__back {
@@ -431,14 +410,12 @@
 
 /* Primary action left, step indicator right — the two-step drawer pattern already
    used by the roles panel. */
+/* Sits in SideDrawer's pinned footer, which draws the divider above it. */
 .st-drawer__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-m);
-  padding-top: var(--space-m);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
 }
 
 .st-drawer__footer-actions {

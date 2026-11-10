@@ -7,6 +7,7 @@ import Button from '@/components/Button/Button'
 import SparkleIcon from '../icons/SparkleIcon'
 import QuizTab from '../QuizTab/QuizTab'
 import CloseButton from '../CloseButton/CloseButton'
+import Tabs from '@/components/Tabs/Tabs'
 import './LessonEditorModal.css'
 
 /** Row shape the editor needs — structurally matches the page-level ContentRow. */
@@ -171,33 +172,16 @@ function LessonEditorModal({ lesson, isNew, onClose, onPublish, onQuizReviewed, 
         </div>
 
         {/* Tab bar */}
-        <div className="lesson-editor-tabs">
-          <button
-            className={`lesson-editor-tab${activeTab === 'quiz' ? ' lesson-editor-tab--active' : ''}`}
-            onClick={() => setActiveTab('quiz')}
-          >
-            Quiz
-          </button>
-          <button
-            className={`lesson-editor-tab${activeTab === 'resources' ? ' lesson-editor-tab--active' : ''}`}
-            onClick={() => setActiveTab('resources')}
-          >
-            Resources
-            {resources.length > 0 && <span className="lesson-editor-tab__count">{resources.length}</span>}
-          </button>
-          <button
-            className="lesson-editor-tab lesson-editor-tab--disabled"
-            disabled
-          >
-            Skills
-          </button>
-          <button
-            className="lesson-editor-tab lesson-editor-tab--disabled"
-            disabled
-          >
-            Add to Category
-          </button>
-        </div>
+        <Tabs
+          items={[
+            { key: 'quiz', label: 'Quiz' },
+            { key: 'resources', label: 'Resources', counter: resources.length > 0 ? resources.length : undefined },
+            { key: 'skills', label: 'Skills', disabled: true },
+            { key: 'category', label: 'Add to Category', disabled: true },
+          ]}
+          activeKey={activeTab}
+          onChange={(key) => setActiveTab(key as EditorTab)}
+        />
 
         {/* Tab content */}
         <div className="lesson-editor-tab-content">

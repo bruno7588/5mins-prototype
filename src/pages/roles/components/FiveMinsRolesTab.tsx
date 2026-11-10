@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import Button from '@/components/Button/Button'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import { Table, type Column } from '@/components/Table/Table'
 import {
   SearchNormal1, ArrowDown2,
@@ -61,7 +62,7 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [previewRole, setPreviewRole] = useState<FiveMinsRole | null>(null)
-  const [previewClosing, setPreviewClosing] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const perPage = 10
@@ -116,20 +117,16 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
   }, [dropdownOpen])
 
   /* ─── Preview panel ──────────────────────────────────── */
+  /* The role stays set after close so the drawer keeps its content during the exit slide. */
   const openPreview = (role: FiveMinsRole) => {
     setPreviewRole(role)
+    setPreviewOpen(true)
   }
 
-  const closePreview = useCallback(() => {
-    setPreviewClosing(true)
-    setTimeout(() => {
-      setPreviewRole(null)
-      setPreviewClosing(false)
-    }, 300)
-  }, [])
+  const closePreview = useCallback(() => setPreviewOpen(false), [])
 
   const handleCopyFromPreview = (role: FiveMinsRole) => {
-    setPreviewRole(null)
+    setPreviewOpen(false)
     onCopy(role)
   }
 
@@ -282,53 +279,25 @@ function FiveMinsRolesTab({ onCopy, onCreateRole }: Props) {
 
       {/* ─── Preview Panel Overlay ─────────────────────── */}
       {previewRole && (
-        <div className={`roles-panel-overlay${previewClosing ? ' roles-panel-overlay--closing' : ''}`} onClick={closePreview}>
-          <div
-            className={`roles-preview-panel${previewClosing ? ' roles-panel--closing' : ''}`}
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="roles-preview-header">
-              <div className="roles-preview-header__headline">
-                <div className="roles-preview-header__title-group">
-                  <h2 className="roles-preview-header__title">{previewRole.name}</h2>
-                  <p className="roles-preview-header__description">{previewRole.description}</p>
+        <SideDrawer
+          open={previewOpen}
+          onClose={closePreview}
+          title={previewRole.name}
+          subtitle={previewRole.description}
+          footer={<Button onClick={() => handleCopyFromPreview(previewRole)}>Copy to Company Roles</Button>}
+        >
+          <div className="roles-expanded-section">
+            <span className="roles-expanded-label">Skills</span>
+            <div className="roles-skill-cards">
+              {previewRole.skills.map(sk => (
+                <div key={sk.id} className="roles-skill-card">
+                  <img className="roles-skill-card__icon" src={getSkillIllustration(sk.id)} alt="" />
+                  <span className="roles-skill-card__name">{sk.name}</span>
                 </div>
-                <button className="roles-panel-close" onClick={closePreview}>
-                  <svg width="24" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M25.875 25.875L10.125 10.125M25.875 10.125L10.125 25.875" stroke="var(--text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-              <div className="roles-preview-header__divider" />
-            </div>
-
-            {/* Body */}
-            <div className="roles-panel-body">
-              <div className="roles-expanded-section">
-                <span className="roles-expanded-label">Skills</span>
-                <div className="roles-skill-cards">
-                  {previewRole.skills.map(sk => (
-                    <div key={sk.id} className="roles-skill-card">
-                      <img className="roles-skill-card__icon" src={getSkillIllustration(sk.id)} alt="" />
-                      <span className="roles-skill-card__name">{sk.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="roles-preview-footer">
-              <div className="roles-preview-footer__divider" />
-              <Button
-                onClick={() => handleCopyFromPreview(previewRole)}
-              >
-                Copy to Company Roles
-              </Button>
+              ))}
             </div>
           </div>
-        </div>
+        </SideDrawer>
       )}
     </div>
   )

@@ -8,6 +8,7 @@ import Badge from '../../components/Badge/Badge'
 import Button from '../../components/Button/Button'
 import Tooltip from '../../components/Tooltip/Tooltip'
 import Table, { type Column } from '../../components/Table/Table'
+import Tabs from '@/components/Tabs/Tabs'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
@@ -681,24 +682,17 @@ function UserProfile() {
 
             <div className="up-divider" />
 
-            <div className="up-tabs" role="tablist">
-              {TABS.map((tab) => {
-                const isReady = tab === 'Course Progress' || tab === 'External Training'
-                return (
-                  <button
-                    key={tab}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeTab === tab}
-                    disabled={!isReady}
-                    className={`up-tab${activeTab === tab ? ' up-tab--active' : ''}${isReady ? '' : ' ui-disabled'}`}
-                    onClick={() => isReady && setActiveTab(tab)}
-                  >
-                    {tab}
-                  </button>
-                )
-              })}
-            </div>
+            {/* Only Course Progress and External Training are built; the rest are disabled. */}
+            <Tabs
+              items={TABS.map((tab) => ({
+                key: tab,
+                label: tab,
+                disabled: tab !== 'Course Progress' && tab !== 'External Training',
+              }))}
+              activeKey={activeTab}
+              onChange={(key) => setActiveTab(key as Tab)}
+              ariaLabel="Profile sections"
+            />
           </header>
 
           {activeTab === 'External Training' ? (

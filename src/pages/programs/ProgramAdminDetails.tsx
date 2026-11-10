@@ -20,6 +20,7 @@ import './ProgramAdminDetails.css'
 import Button from '@/components/Button/Button'
 import Avatar from '@/components/Avatar/Avatar'
 import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
+import Tabs from '@/components/Tabs/Tabs'
 
 const TABS = ['Courses', 'Enrolments', 'Settings']
 const PAGE_SIZE = 10
@@ -155,7 +156,13 @@ function ProgramAdminDetails() {
   const [learnerQuery, setLearnerQuery] = useState('')
   const [learners, setLearners] = useState(LEARNERS)
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  // The learner stays set after close so the drawer can play its exit slide.
   const [progressLearner, setProgressLearner] = useState<Learner | null>(null)
+  const [progressOpen, setProgressOpen] = useState(false)
+  const openProgress = (l: Learner) => {
+    setProgressLearner(l)
+    setProgressOpen(true)
+  }
   const [unenrolTarget, setUnenrolTarget] = useState<Learner | null>(null)
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
   const [enrolled, setEnrolled] = useState(false)
@@ -355,20 +362,12 @@ function ProgramAdminDetails() {
 
       <div className="pad-divider" />
 
-      {/* Tabs */}
-      <nav className="pad-tabs" role="tablist">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            role="tab"
-            aria-selected={tab === t}
-            className={`pad-tab${tab === t ? ' pad-tab--active' : ''}`}
-            onClick={() => changeTab(t)}
-          >
-            {t}
-          </button>
-        ))}
-      </nav>
+      <Tabs
+        items={TABS.map((t) => ({ key: t, label: t }))}
+        activeKey={tab}
+        onChange={changeTab}
+        ariaLabel="Program sections"
+      />
 
       {/* ── Courses ── */}
       {tab === 'Courses' &&
@@ -522,7 +521,7 @@ function ProgramAdminDetails() {
                 <div
                   key={l.id}
                   className="pad-row pad-row--click"
-                  onClick={() => setProgressLearner(l)}
+                  onClick={() => openProgress(l)}
                 >
                   <div className="pad-row__name">
                     <Avatar name={l.name} src={l.avatar} size={32} />
@@ -563,7 +562,7 @@ function ProgramAdminDetails() {
                           className="pad-menu__item"
                           role="menuitem"
                           onClick={() => {
-                            setProgressLearner(l)
+                            openProgress(l)
                             setOpenMenuId(null)
                           }}
                         >
@@ -600,9 +599,10 @@ function ProgramAdminDetails() {
 
       {progressLearner && (
         <LearnerProgressDrawer
+          open={progressOpen}
           learner={progressLearner}
           courses={courseSteps}
-          onClose={() => setProgressLearner(null)}
+          onClose={() => setProgressOpen(false)}
         />
       )}
 

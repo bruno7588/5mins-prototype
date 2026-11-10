@@ -5,6 +5,7 @@ import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import Button from '../../components/Button/Button'
 import AssignCoursesWizard from './components/AssignCoursesWizard/AssignCoursesWizard'
 import { activeEnrolments, lastEnrolmentLabel } from './activeEnrolments'
+import Tabs from '@/components/Tabs/Tabs'
 import './YourCourses.css'
 
 type Tab = 'created' | 'enrolments' | 'dashboard'
@@ -39,26 +40,16 @@ function YourCourses() {
             </div>
           </div>
           <div className="page-header-divider" />
-          <div className="your-courses-tabs">
-            <button
-              className={`your-courses-tab${activeTab === 'created' ? ' your-courses-tab--active' : ''}`}
-              onClick={() => setActiveTab('created')}
-            >
-              Created by You
-            </button>
-            <button
-              className={`your-courses-tab${activeTab === 'enrolments' ? ' your-courses-tab--active' : ''}`}
-              onClick={() => setActiveTab('enrolments')}
-            >
-              Active Enrolments
-            </button>
-            <button
-              className={`your-courses-tab${activeTab === 'dashboard' ? ' your-courses-tab--active' : ''}`}
-              onClick={() => setActiveTab('dashboard')}
-            >
-              Dashboard
-            </button>
-          </div>
+          <Tabs
+            items={[
+              { key: 'created', label: 'Created by You' },
+              { key: 'enrolments', label: 'Active Enrolments' },
+              { key: 'dashboard', label: 'Dashboard' },
+            ]}
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key as Tab)}
+            ariaLabel="Your courses sections"
+          />
         </div>
 
         {activeTab === 'enrolments' ? (

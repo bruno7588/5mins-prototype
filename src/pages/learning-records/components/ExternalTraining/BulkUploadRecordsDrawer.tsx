@@ -1,10 +1,11 @@
-import { useMemo, useRef, useState, type RefObject } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Danger, ImportCurve } from 'iconsax-react'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
 import Chip from '@/components/Chip/Chip'
 import CloseButton from '@/components/CloseButton/CloseButton'
 import FileUploader from '@/components/FileUploader/FileUploader'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import Table, { type Column } from '@/components/Table/Table'
 import { useOverlayA11y } from '@/hooks/useOverlayA11y'
 import { CellError } from '@/pages/people/components/BulkUploadModal/BulkUploadModal'
@@ -97,15 +98,18 @@ type RowError = { label: string; solution: string }
 const makeError = (c: ErrorCategory): RowError => ({ label: ERROR_META[c].label, solution: ERROR_META[c].solution })
 
 interface Props {
+  /** Set false to close; the upload drawer plays its exit, so keep it mounted. */
+  open: boolean
   onClose: () => void
   onAdded: (count: number) => void
 }
 
-function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
+function BulkUploadRecordsDrawer({ open, onClose, onAdded }: Props) {
   const { courses, records, allowOneOffs, providers } = useExternalTraining()
-  const panelRef = useRef<HTMLElement>(null)
-  useOverlayA11y(panelRef, true)
   const [step, setStep] = useState<'upload' | 'review'>('upload')
+  /* The upload step is a SideDrawer (it owns its focus trap); the review is full screen. */
+  const panelRef = useRef<HTMLDivElement>(null)
+  useOverlayA11y(panelRef, open && step === 'review')
   const [fileName, setFileName] = useState<string | null>(null)
   const [uploader, setUploader] = useState<'Enabled' | 'Uploading' | 'Filled'>('Enabled')
   const [progress, setProgress] = useState(0)
@@ -309,9 +313,11 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
       : null
 
   /* Review: full screen, as Bulk manage people (BulkUploadModal's shell and styles). */
+  /* The full-screen review has no exit animation: it leaves at once, as before. */
+  if (step === 'review' && !open) return null
   if (step === 'review')
     return (
-      <div ref={panelRef as RefObject<HTMLDivElement>} tabIndex={-1} className="bulk-upload-modal lret-review" role="dialog" aria-modal="true" aria-labelledby="lret-bulk-title">
+      <div ref={panelRef} tabIndex={-1} className="bulk-upload-modal lret-review" role="dialog" aria-modal="true" aria-labelledby="lret-bulk-title">
         <div className="bulk-upload-content bulk-upload-content--preview">
           <div className="bulk-upload-form bulk-upload-form--preview">
             <div className="bulk-upload-header">
@@ -416,79 +422,58 @@ function BulkUploadRecordsDrawer({ onClose, onAdded }: Props) {
     )
 
   return (
-    <>
-      <div className="overlay-backdrop" onClick={onClose} aria-hidden="true" />
-      <aside ref={panelRef} tabIndex={-1} className="side-drawer aet-drawer" role="dialog" aria-modal="true" aria-labelledby="lret-bulk-title">
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <div className="aet-drawer__heading">
-              <h2 id="lret-bulk-title" className="aet-drawer__title">
-                Upload a CSV file
-              </h2>
-              <p className="aet-text">
-                Add training records from other platforms to keep all your learning in one place.
-              </p>
+    <SideDrawer
+      open={open}
+      onClose={onClose}
+      title="Upload a CSV file"
+      subtitle="Add training records from other platforms to keep all your learning in one place."
+      footer={<Button disabled>Add Records</Button>}
+    >
+      <ol className="aet-steps">
+        <li className="aet-step">
+          <span className="aet-step__num" aria-hidden="true">1</span>
+          <div className="aet-step__body">
+            <h3 className="aet-step__title">Use our template</h3>
+            <p className="aet-text">Download our CSV file and fill it in following the template.</p>
+            <div className="aet-step__action">
+              <Button
+                variant="text"
+                icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
+                onClick={() => download('external-training-template.csv', TEMPLATE)}
+              >
+                Download CSV Template
+              </Button>
             </div>
-            <CloseButton onClick={onClose} />
           </div>
-          <div className="modal__divider" />
-        </div>
-
-        <div className="side-drawer__content">
-          <ol className="aet-steps">
-            <li className="aet-step">
-              <span className="aet-step__num" aria-hidden="true">1</span>
-              <div className="aet-step__body">
-                <h3 className="aet-step__title">Use our template</h3>
-                <p className="aet-text">Download our CSV file and fill it in following the template.</p>
-                <div className="aet-step__action">
-                  <Button
-                    variant="text"
-                    icon={<ImportCurve size={20} color="currentColor" variant="Linear" />}
-                    onClick={() => download('external-training-template.csv', TEMPLATE)}
-                  >
-                    Download CSV Template
-                  </Button>
-                </div>
-              </div>
-            </li>
-            <li className="aet-step">
-              <span className="aet-step__num" aria-hidden="true">2</span>
-              <div className="aet-step__body">
-                <h3 className="aet-step__title">Fill in the information</h3>
-                <p className="aet-text">
-                  Use one row for each training and put each detail in its own cell. Use the course names from your
-                  approved list.
-                </p>
-              </div>
-            </li>
-            <li className="aet-step">
-              <span className="aet-step__num" aria-hidden="true">3</span>
-              <div className="aet-step__body">
-                <h3 className="aet-step__title">Upload your CSV file</h3>
-                <FileUploader
-                  size="L"
-                  accept=".csv"
-                  state={uploader}
-                  progress={progress}
-                  fileName={fileName ?? undefined}
-                  helpText="One row per record, as in our template"
-                  onFileSelect={handleFile}
-                  onChangeFile={backToUpload}
-                />
-              </div>
-            </li>
-          </ol>
-        </div>
-
-        <div className="side-drawer__footer">
-          <div className="side-drawer__footer-divider" />
-          <div className="side-drawer__buttons">
-            <Button disabled>Add Records</Button>
+        </li>
+        <li className="aet-step">
+          <span className="aet-step__num" aria-hidden="true">2</span>
+          <div className="aet-step__body">
+            <h3 className="aet-step__title">Fill in the information</h3>
+            <p className="aet-text">
+              Use one row for each training and put each detail in its own cell. Use the course names from your
+              approved list.
+            </p>
           </div>
-        </div>
-      </aside>
-    </>
+        </li>
+        <li className="aet-step">
+          <span className="aet-step__num" aria-hidden="true">3</span>
+          <div className="aet-step__body">
+            <h3 className="aet-step__title">Upload your CSV file</h3>
+            <FileUploader
+              size="L"
+              accept=".csv"
+              state={uploader}
+              progress={progress}
+              fileName={fileName ?? undefined}
+              helpText="One row per record, as in our template"
+              onFileSelect={handleFile}
+              onChangeFile={backToUpload}
+            />
+          </div>
+        </li>
+      </ol>
+    </SideDrawer>
   )
 }
 

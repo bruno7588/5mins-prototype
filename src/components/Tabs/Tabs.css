@@ -1,0 +1,65 @@
+/* Tabs - docs/design-system/chips-switcher-tabs.md (Figma 8497:24855) */
+
+.ds-tabs {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+}
+
+.ds-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 var(--space-xs);
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.ds-tab:hover:not(:disabled) { color: var(--text-primary); }
+
+.ds-tab--selected {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* 2px indicator under the label row (label + counter), selected only. */
+.ds-tab--selected::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: var(--radius-xs);
+  background: var(--selected);
+}
+
+.ds-tab:focus-visible {
+  outline: 2px solid var(--primary-button-background);
+  outline-offset: 2px;
+}
+
+.ds-tab__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+}
+
+.ds-tab__counter {
+  padding: 0 var(--space-xss);
+  border-radius: var(--radius-full);
+  background: var(--input-background);
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
+.ds-tab--selected .ds-tab__counter,
+.ds-tab:hover:not(:disabled) .ds-tab__counter { color: var(--text-secondary); }

@@ -1,4 +1,4 @@
-/* ReminderDrawer — reminder-specific styles (shell uses side-drawer classes from CoursesDrawer.css) */
+/* ReminderDrawer - reminder-specific styles (the shell is the shared SideDrawer). .rd-header-text, .rd-title and .rd-subtitle are no longer used here but SaveReportDrawer still uses them. */
 
 .rd-header-text {
   display: flex;

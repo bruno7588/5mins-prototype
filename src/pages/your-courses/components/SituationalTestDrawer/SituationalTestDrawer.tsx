@@ -3,7 +3,6 @@ import { Add, ArrowDown2, ArrowLeft, ArrowUp2, Danger } from 'iconsax-react'
 import InfoIcon from '@/components/icons/InfoIcon'
 import SparkleIcon from '@/components/icons/SparkleIcon'
 import Button from '@/components/Button/Button'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import ContentSwitcher from '@/components/ContentSwitcher/ContentSwitcher'
 import Collapse from '@/components/Collapse/Collapse'
@@ -11,7 +10,7 @@ import Tooltip from '@/components/Tooltip/Tooltip'
 import { autoGrow, autoGrowRef } from '../InteractiveDrawer/autoGrow'
 import '../InteractiveDrawer/InteractiveDrawer.css'
 import QuestionCard from '../QuestionCard/QuestionCard'
-import SectionHeader from '../SectionHeader/SectionHeader'
+import { DrawerFooter, DrawerHeader } from '../ContentDrawer/DrawerSlots'
 import SituationalTestPreview from '../SituationalTestPreview/SituationalTestPreview'
 import { type GeneratableType } from '@/data/aiAssessmentGeneration'
 import { type InteractiveQuestion } from '@/data/interactiveQuestions'
@@ -120,7 +119,6 @@ const snapshot = (title: string, brief: string, questions: SituationalQuestion[]
 interface Props {
   /** Prefilled when reopened from the course outline (FR-4); null when creating. */
   initial?: SituationalTestData | null
-  onClose: () => void
   onSave: (title: string, brief: string, questions: SituationalQuestion[]) => void
   /** Create path only: step 1's commit adds the card to the outline before step 2. */
   onCreate?: (title: string, brief: string) => void
@@ -140,7 +138,7 @@ interface Props {
    before questions — deliberate friction so it exists before the questions that depend
    on it. */
 function SituationalTestDrawerContent({
-  initial = null, onClose, onSave, onCreate, onDirtyChange, review,
+  initial = null, onSave, onCreate, onDirtyChange, review,
 }: Props) {
   /* A review carries a draft, so it takes the two-pane editor rather than the
      create wizard — there is nothing to gate when the fields arrive filled in. */
@@ -283,7 +281,7 @@ function SituationalTestDrawerContent({
 
   return (
     <>
-      <SectionHeader
+      <DrawerHeader
         /* Create's step 2 names the step rather than the object: the back arrow beside it
            already says which object you are inside. The edit form names the object, since
            it is the whole test on one surface. */
@@ -298,7 +296,6 @@ function SituationalTestDrawerContent({
         description={
           !review && !isEdit && step === 1 ? 'Write the brief users will be tested on' : undefined
         }
-        ctas={<CloseButton onClick={onClose} />}
         /* Step 2's route back to the title and brief (Figma 8998:55648, 9037:62042). */
         leading={
           !twoPane && step === 2 ? (
@@ -478,70 +475,72 @@ function SituationalTestDrawerContent({
         ) : null}
       </div>
 
-      <div className="st-drawer__footer">
-        <div className="st-drawer__footer-actions">
-          {review ? (
-            /* Both actions sit together on the left: one adds this draft to the course,
-               the other throws it away and asks for another. They are alternatives to
-               each other, so they read as a pair rather than as opposite ends of a bar.
-               AI-Outlined (buttons.md § AI Variants) — the same generative action that
-               produced this draft, at secondary weight beside the commit. */
-            <>
+      <DrawerFooter>
+        <div className="st-drawer__footer">
+          <div className="st-drawer__footer-actions">
+            {review ? (
+              /* Both actions sit together on the left: one adds this draft to the course,
+                 the other throws it away and asks for another. They are alternatives to
+                 each other, so they read as a pair rather than as opposite ends of a bar.
+                 AI-Outlined (buttons.md § AI Variants) — the same generative action that
+                 produced this draft, at secondary weight beside the commit. */
+              <>
+                <Button onClick={handleSave} disabled={!canSubmit}>
+                  Save Situational Test
+                </Button>
+                <Button
+                  semantic="ai"
+                  variant="outlined"
+                  /* The label gradient is background-clip: text, which an SVG cannot take —
+                     so the sparkle paints its own, from the same two stops. */
+                  icon={<SparkleIcon size={20} gradient />}
+                  onClick={() => (dirty ? setConfirmRegenerate(true) : review.onGenerateAgain())}
+                >
+                  Generate Again
+                </Button>
+              </>
+            ) : isEdit ? (
+              /* One commit for the whole test, whichever pane is showing — the switcher
+                 moved the navigation out of the footer, so nothing here is a detour. */
+              <Button onClick={handleSave} disabled={!canSubmit}>
+                Update Situational Test
+              </Button>
+            ) : step === 1 ? (
+              /* Wrapped rather than conditionally rendered so the tooltip fires over the
+                 *disabled* button — handlers sit on Tooltip's own wrapper. It saves: the
+                 card joins the outline here, and step 2 fills in its questions. */
+              <Tooltip
+                /* Names whichever field is actually missing — "write a brief first" over a
+                   filled brief would send the admin looking in the wrong place. */
+                text={!titleFilled ? 'Name the situational test first' : 'Write a brief first'}
+                position="Top"
+                alignment="Start"
+                icon={false}
+                disabled={canContinue}
+              >
+                <Button onClick={handleContinue} disabled={!canContinue}>
+                  Save & Add Questions
+                </Button>
+              </Tooltip>
+            ) : (
+              /* The card already exists from step 1, so this saves rather than creates. */
               <Button onClick={handleSave} disabled={!canSubmit}>
                 Save Situational Test
               </Button>
-              <Button
-                semantic="ai"
-                variant="outlined"
-                /* The label gradient is background-clip: text, which an SVG cannot take —
-                   so the sparkle paints its own, from the same two stops. */
-                icon={<SparkleIcon size={20} gradient />}
-                onClick={() => (dirty ? setConfirmRegenerate(true) : review.onGenerateAgain())}
-              >
-                Generate Again
-              </Button>
-            </>
-          ) : isEdit ? (
-            /* One commit for the whole test, whichever pane is showing — the switcher
-               moved the navigation out of the footer, so nothing here is a detour. */
-            <Button onClick={handleSave} disabled={!canSubmit}>
-              Update Situational Test
-            </Button>
-          ) : step === 1 ? (
-            /* Wrapped rather than conditionally rendered so the tooltip fires over the
-               *disabled* button — handlers sit on Tooltip's own wrapper. It saves: the
-               card joins the outline here, and step 2 fills in its questions. */
-            <Tooltip
-              /* Names whichever field is actually missing — "write a brief first" over a
-                 filled brief would send the admin looking in the wrong place. */
-              text={!titleFilled ? 'Name the situational test first' : 'Write a brief first'}
-              position="Top"
-              alignment="Start"
-              icon={false}
-              disabled={canContinue}
-            >
-              <Button onClick={handleContinue} disabled={!canContinue}>
-                Save & Add Questions
-              </Button>
-            </Tooltip>
-          ) : (
-            /* The card already exists from step 1, so this saves rather than creates. */
-            <Button onClick={handleSave} disabled={!canSubmit}>
-              Save Situational Test
+            )}
+          </div>
+          {/* Create only. A counter implies a sequence you finish, and on the edit path
+              either surface commits, so there is nothing to count down to. */}
+          {!twoPane && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
+          {/* Opposite the commit actions: the two on the left decide the draft's fate,
+              this one only looks at it. */}
+          {review && (
+            <Button variant="outlined-2" onClick={() => setPreviewing(true)}>
+              Preview
             </Button>
           )}
         </div>
-        {/* Create only. A counter implies a sequence you finish, and on the edit path
-            either surface commits, so there is nothing to count down to. */}
-        {!twoPane && <span className="st-drawer__step-indicator">Step {step} of 2</span>}
-        {/* Opposite the commit actions: the two on the left decide the draft's fate,
-            this one only looks at it. */}
-        {review && (
-          <Button variant="outlined-2" onClick={() => setPreviewing(true)}>
-            Preview
-          </Button>
-        )}
-      </div>
+      </DrawerFooter>
 
       {previewing && (
         <SituationalTestPreview

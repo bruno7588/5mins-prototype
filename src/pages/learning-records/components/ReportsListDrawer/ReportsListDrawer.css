@@ -1,27 +1,4 @@
-/* ReportsListDrawer — saved-reports list. Shell from the shared drawer stylesheet. */
-@import '../../../my-team/CoursesDrawer.css';
-
-.rl-header-text {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  min-width: 0;
-}
-
-.rl-title {
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.rl-subtitle {
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
+/* ReportsListDrawer - saved-reports list. The shell is the shared SideDrawer. */
 
 .rl-empty {
   padding: var(--space-l) 0;

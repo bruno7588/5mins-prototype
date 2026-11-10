@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '@/components/Button/Button'
 import Table, { type Column } from '@/components/Table/Table'
 import { SearchNormal1 } from 'iconsax-react'
-import CloseButton from '../../../../components/CloseButton/CloseButton'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import './ScormDrawer.css'
 
 export interface ScormFile {
@@ -40,20 +40,20 @@ export const scormFiles: ScormFile[] = [
 ]
 
 interface ScormDrawerProps {
+  open: boolean
   onClose: () => void
   addedIds: Set<number>
   onAdd: (file: ScormFile) => void
   onRemove: (id: number) => void
 }
 
-function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
+function ScormDrawer({ open, onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
   const [search, setSearch] = useState('')
-  const [closing, setClosing] = useState(false)
 
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(onClose, 300)
-  }
+  // The drawer stays mounted between opens, so each open starts with an empty search.
+  useEffect(() => {
+    if (open) setSearch('')
+  }, [open])
 
   const filtered = scormFiles.filter((f) =>
     f.fileName.toLowerCase().includes(search.toLowerCase())
@@ -92,21 +92,17 @@ function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
   ]
 
   return (
-    <div className={`sc-scorm-drawer-overlay${closing ? ' sc-scorm-drawer-overlay--closing' : ''}`} onClick={handleClose}>
-      <aside className={`sc-scorm-drawer${closing ? ' sc-scorm-drawer--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
-        {/* Close button */}
-        <CloseButton onClick={handleClose} className="sc-scorm-drawer-close" />
-
-        {/* Header */}
-        <div className="sc-scorm-drawer-header">
-          <h3 className="sc-scorm-drawer-title">Add SCORM files</h3>
-          <p className="sc-scorm-drawer-subtitle">
-            Add from the list of SCORM files you've already published.{' '}
-            <span className="sc-scorm-drawer-upload-link ui-disabled" aria-disabled="true">Upload New SCORM</span>
-          </p>
-        </div>
-
-        {/* Search */}
+    <SideDrawer
+      open={open}
+      onClose={onClose}
+      title="Add SCORM files"
+      subtitle={
+        <>
+          Add from the list of SCORM files you've already published.{' '}
+          <span className="sc-scorm-drawer-upload-link ui-disabled" aria-disabled="true">Upload New SCORM</span>
+        </>
+      }
+      subheader={
         <div className="sc-scorm-drawer-search">
           <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
           <input
@@ -116,10 +112,10 @@ function ScormDrawer({ onClose, addedIds, onAdd, onRemove }: ScormDrawerProps) {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-
-        <Table columns={columns} rows={filtered} getRowKey={(f) => String(f.id)} />
-      </aside>
-    </div>
+      }
+    >
+      <Table columns={columns} rows={filtered} getRowKey={(f) => String(f.id)} />
+    </SideDrawer>
   )
 }
 

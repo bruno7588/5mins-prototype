@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import LeftSidebar from '@/components/LeftSidebar/LeftSidebar'
+import Tabs from '@/components/Tabs/Tabs'
 import AuditLog from './components/AuditLog/AuditLog'
 import LayoutSettings from './components/LayoutSettings/LayoutSettings'
 import ExternalTraining from './components/ExternalTraining/ExternalTraining'
@@ -53,20 +54,13 @@ function Account() {
         <header className="acs-header">
           <h2 className="acs-title">Account &amp; Settings</h2>
           <div className="acs-divider" aria-hidden="true" />
-          <div className="acs-tabs" role="tablist">
-            {TABS.map((tab) => (
-              <button
-                key={tab.key}
-                type="button"
-                role="tab"
-                aria-selected={activeTab === tab.key}
-                className={`acs-tab${activeTab === tab.key ? ' acs-tab--active' : ''}`}
-                onClick={() => setActiveTab(tab.key)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          <Tabs
+            items={TABS}
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key as TabKey)}
+            ariaLabel="Settings sections"
+            className="acs-tabs"
+          />
         </header>
 
         <div className="acs-body">

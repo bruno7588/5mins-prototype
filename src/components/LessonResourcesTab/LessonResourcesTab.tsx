@@ -45,9 +45,11 @@ function LessonResourcesTab({ resources, isNew, onAdd, onRemove }: Props) {
     setAdding(false)
   }
 
-  if (resources.length === 0) {
-    return (
-      <div className="lesson-resources">
+  // One drawer for both states, so it stays mounted (and slides out) when the first save
+  // swaps the empty state for the list.
+  return (
+    <div className="lesson-resources">
+      {resources.length === 0 ? (
         <EmptyState
           surface="dropzone"
           illustration={<img src={resourcesIllustration} width={72} height={72} alt="" />}
@@ -63,34 +65,29 @@ function LessonResourcesTab({ resources, isNew, onAdd, onRemove }: Props) {
             onClick: () => setAdding(true),
           }}
         />
-        {adding && <LessonResourceDrawer onClose={() => setAdding(false)} onSave={save} />}
-      </div>
-    )
-  }
+      ) : (
+        <>
+          <div className="lesson-resources__list">
+            {resources.map((resource) => (
+              <ResourceCard
+                key={resource.id}
+                type={resource.type}
+                title={resource.name}
+                size={resource.size}
+                onOpen={() => openResource(resource)}
+                openDisabled={resource.type !== 'link' && !resource.file}
+                onRemove={() => onRemove(resource)}
+              />
+            ))}
+          </div>
 
-  return (
-    <div className="lesson-resources">
-      {resources.length > 0 && (
-        <div className="lesson-resources__list">
-          {resources.map((resource) => (
-            <ResourceCard
-              key={resource.id}
-              type={resource.type}
-              title={resource.name}
-              size={resource.size}
-              onOpen={() => openResource(resource)}
-              openDisabled={resource.type !== 'link' && !resource.file}
-              onRemove={() => onRemove(resource)}
-            />
-          ))}
-        </div>
+          <Button variant="outlined-2" icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setAdding(true)}>
+            Add Resource
+          </Button>
+        </>
       )}
 
-      <Button variant="outlined-2" icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setAdding(true)}>
-        Add Resource
-      </Button>
-
-      {adding && <LessonResourceDrawer onClose={() => setAdding(false)} onSave={save} />}
+      <LessonResourceDrawer open={adding} onClose={() => setAdding(false)} onSave={save} />
     </div>
   )
 }

@@ -1,14 +1,13 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Add } from 'iconsax-react'
 import Alert from '@/components/Alert/Alert'
 import Badge from '@/components/Badge/Badge'
 import Button from '@/components/Button/Button'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import Dropdown from '@/components/Dropdown/Dropdown'
 import InputField from '@/components/InputField/InputField'
 import InputInteger from '@/components/InputInteger/InputInteger'
 import Radio from '@/components/Radio/Radio'
-import { useOverlayA11y } from '@/hooks/useOverlayA11y'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import {
   duplicateCourse,
   newId,
@@ -26,6 +25,8 @@ const UNIT_OPTIONS = [
 ]
 
 interface Props {
+  /** Set false to close; the drawer plays its exit, so keep it mounted. */
+  open: boolean
   /** null = Add Course. */
   course: ExternalCourse | null
   /** Pre-fill the name (Add Course to Approved List from the recording drawer). */
@@ -34,13 +35,10 @@ interface Props {
   onSaved: (name: string, isNew: boolean, course: ExternalCourse) => void
 }
 
-/* Add / Edit Course (PRD 1.5). 720px side drawer on the shared .side-drawer shell. */
-function CourseDrawer({ course, initialName = '', onClose, onSaved }: Props) {
+/* Add / Edit Course (PRD 1.5). 720px side drawer on the shared SideDrawer. */
+function CourseDrawer({ open, course, initialName = '', onClose, onSaved }: Props) {
   const { providers, records } = useExternalTraining()
-  const panelRef = useRef<HTMLElement>(null)
-  // Paused while the Add Provider modal is on top, so the two focus traps never fight.
   const [providerModal, setProviderModal] = useState(false)
-  useOverlayA11y(panelRef, !providerModal)
 
   const [name, setName] = useState(course?.name ?? initialName)
   const [providerIds, setProviderIds] = useState<string[]>(course?.providerIds ?? [])
@@ -92,152 +90,130 @@ function CourseDrawer({ course, initialName = '', onClose, onSaved }: Props) {
 
   return (
     <>
-      <div className="overlay-backdrop" onClick={onClose} aria-hidden="true" />
-      <aside
-        ref={panelRef}
-        tabIndex={-1}
-        className="side-drawer aet-drawer"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="aet-course-title"
+      <SideDrawer
+        open={open}
+        onClose={onClose}
+        title={course ? 'Edit course' : 'Add course'}
+        subtitle="Courses on the approved list can be recorded on people's profiles and in uploads."
+        footer={<Button onClick={save}>{course ? 'Save Changes' : 'Save Course'}</Button>}
       >
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <div className="aet-drawer__heading">
-              <h2 id="aet-course-title" className="aet-drawer__title">{course ? 'Edit course' : 'Add course'}</h2>
-              <p className="aet-text">Courses on the approved list can be recorded on people's profiles and in uploads.</p>
-            </div>
-            <CloseButton onClick={onClose} />
-          </div>
-          <div className="modal__divider" />
-        </div>
-
-        <div className="side-drawer__content">
-          <div className="aet-form">
-            <InputField
-              label="Course name"
-              placeholder="For example, First Aid at Work"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              validation={s(errors.name) ? 'error' : 'none'}
-              helperText={s(errors.name) || undefined}
+        <div className="aet-form">
+          <InputField
+            label="Course name"
+            placeholder="For example, First Aid at Work"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            validation={s(errors.name) ? 'error' : 'none'}
+            helperText={s(errors.name) || undefined}
+          />
+          {renamed && recordCount > 0 && (
+            <Alert
+              type="Callout"
+              message={`The new name shows on its ${recordCount} record${recordCount === 1 ? '' : 's'} too. Certificate files keep their original wording.`}
             />
-            {renamed && recordCount > 0 && (
+          )}
+
+          <div className="aet-field">
+            <Dropdown
+              label="Providers"
+              placeholder="Select providers"
+              multiple
+              searchable
+              searchPlaceholder="Search providers"
+              options={providerOptions}
+              values={providerIds}
+              onChangeValues={setProviderIds}
+              error={s(errors.providers) || undefined}
+              footerLink={{
+                label: 'Add Provider',
+                icon: <Add size={20} color="currentColor" variant="Linear" />,
+                onClick: () => setProviderModal(true),
+              }}
+            />
+            {providerIds.length > 0 && (
+              <div className="aet-badges">
+                {providerIds.map((id) => {
+                  const label = providers.find((p) => p.id === id)?.name ?? ''
+                  return (
+                    <Badge
+                      key={id}
+                      type="informative"
+                      label={label}
+                      onDismiss={() => setProviderIds((ids) => ids.filter((x) => x !== id))}
+                      dismissLabel={`Remove ${label}`}
+                    />
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="aet-field">
+            <span className="aet-label">Duration</span>
+            <div className="aet-row">
+              <InputInteger
+                ariaLabel="Duration"
+                value={duration}
+                onChange={setDuration}
+                min={0}
+                validation={s(errors.duration) ? 'error' : 'none'}
+                helperText={s(errors.duration) || undefined}
+              />
+              <Dropdown
+                options={UNIT_OPTIONS}
+                value={unit}
+                onChange={(v) => setUnit(v as DurationUnit)}
+                className="aet-unit"
+              />
+            </div>
+          </div>
+
+          <div className="aet-field" role="radiogroup" aria-labelledby="aet-retraining-label">
+            <span id="aet-retraining-label" className="aet-label">Expiry</span>
+            <Radio name="aet-retraining" label="No expiry" checked={!retrains} onChange={() => setRetrains(false)} />
+            <div className="aet-row aet-row--center">
+              <Radio name="aet-retraining" label="Expires after" checked={retrains} onChange={() => setRetrains(true)} />
+              <InputInteger
+                ariaLabel="Expires after, in months"
+                value={months}
+                onChange={(v) => {
+                  setMonths(v)
+                  setRetrains(true)
+                }}
+                min={1}
+                max={240}
+                suffix="months"
+                disabled={!retrains}
+              />
+            </div>
+            {ruleChanged && recordCount > 0 && (
               <Alert
                 type="Callout"
-                message={`The new name shows on its ${recordCount} record${recordCount === 1 ? '' : 's'} too. Certificate files keep their original wording.`}
+                message={`Changes apply to new records only. The ${recordCount} existing record${recordCount === 1 ? '' : 's'} keep their expiry dates.`}
               />
             )}
-
-            <div className="aet-field">
-              <Dropdown
-                label="Providers"
-                placeholder="Select providers"
-                multiple
-                searchable
-                searchPlaceholder="Search providers"
-                options={providerOptions}
-                values={providerIds}
-                onChangeValues={setProviderIds}
-                error={s(errors.providers) || undefined}
-                footerLink={{
-                  label: 'Add Provider',
-                  icon: <Add size={20} color="currentColor" variant="Linear" />,
-                  onClick: () => setProviderModal(true),
-                }}
-              />
-              {providerIds.length > 0 && (
-                <div className="aet-badges">
-                  {providerIds.map((id) => {
-                    const label = providers.find((p) => p.id === id)?.name ?? ''
-                    return (
-                      <Badge
-                        key={id}
-                        type="informative"
-                        label={label}
-                        onDismiss={() => setProviderIds((ids) => ids.filter((x) => x !== id))}
-                        dismissLabel={`Remove ${label}`}
-                      />
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-
-            <div className="aet-field">
-              <span className="aet-label">Duration</span>
-              <div className="aet-row">
-                <InputInteger
-                  ariaLabel="Duration"
-                  value={duration}
-                  onChange={setDuration}
-                  min={0}
-                  validation={s(errors.duration) ? 'error' : 'none'}
-                  helperText={s(errors.duration) || undefined}
-                />
-                <Dropdown
-                  options={UNIT_OPTIONS}
-                  value={unit}
-                  onChange={(v) => setUnit(v as DurationUnit)}
-                  className="aet-unit"
-                />
-              </div>
-            </div>
-
-            <div className="aet-field" role="radiogroup" aria-labelledby="aet-retraining-label">
-              <span id="aet-retraining-label" className="aet-label">Expiry</span>
-              <Radio name="aet-retraining" label="No expiry" checked={!retrains} onChange={() => setRetrains(false)} />
-              <div className="aet-row aet-row--center">
-                <Radio name="aet-retraining" label="Expires after" checked={retrains} onChange={() => setRetrains(true)} />
-                <InputInteger
-                  ariaLabel="Expires after, in months"
-                  value={months}
-                  onChange={(v) => {
-                    setMonths(v)
-                    setRetrains(true)
-                  }}
-                  min={1}
-                  max={240}
-                  suffix="months"
-                  disabled={!retrains}
-                />
-              </div>
-              {ruleChanged && recordCount > 0 && (
-                <Alert
-                  type="Callout"
-                  message={`Changes apply to new records only. The ${recordCount} existing record${recordCount === 1 ? '' : 's'} keep their expiry dates.`}
-                />
-              )}
-            </div>
-
-            {otherNames.length > 0 && (
-              <div className="aet-field">
-                <span className="aet-label">Also matches in uploads</span>
-                <p className="aet-text">Names mapped to this course in a CSV upload.</p>
-                <div className="aet-badges">
-                  {otherNames.map((n) => (
-                    <Badge
-                      key={n}
-                      type="informative"
-                      icon={false}
-                      label={n}
-                      onDismiss={() => setOtherNames((all) => all.filter((x) => x !== n))}
-                      dismissLabel={`Remove ${n}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
-        </div>
 
-        <div className="side-drawer__footer">
-          <div className="side-drawer__footer-divider" />
-          <div className="side-drawer__buttons">
-            <Button onClick={save}>{course ? 'Save Changes' : 'Save Course'}</Button>
-          </div>
+          {otherNames.length > 0 && (
+            <div className="aet-field">
+              <span className="aet-label">Also matches in uploads</span>
+              <p className="aet-text">Names mapped to this course in a CSV upload.</p>
+              <div className="aet-badges">
+                {otherNames.map((n) => (
+                  <Badge
+                    key={n}
+                    type="informative"
+                    icon={false}
+                    label={n}
+                    onDismiss={() => setOtherNames((all) => all.filter((x) => x !== n))}
+                    dismissLabel={`Remove ${n}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      </aside>
+      </SideDrawer>
 
       <ProviderModal
         open={providerModal}

@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
-import { useOverlayA11y } from '@/hooks/useOverlayA11y'
+import { useRef, useState } from 'react'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
+import { DrawerSlotsContext } from './DrawerSlots'
 import { LibraryDrawerContent, type LibraryLesson } from '../LibraryDrawer/LibraryDrawer'
 import { ScormDrawerContent } from '../ScormDrawer/ScormDrawer'
 import type { ScormFile } from '../ScormDrawer/ScormDrawer'
@@ -24,9 +25,9 @@ import {
   type InteractiveQuestionType,
 } from '@/data/interactiveQuestions'
 import type { AssessmentType } from '../AddContentSidebar/AddContentSidebar'
-import '../../../my-team/CoursesDrawer.css'
 import '../LibraryDrawer/LibraryDrawer.css'
 import '../ScormDrawer/ScormDrawer.css'
+import './ContentDrawer.css'
 
 /* One member for all four interactive formats — which one is carried in a prop,
    so adding a fifth format doesn't widen this union or the two switches on it. */
@@ -113,9 +114,9 @@ interface Props {
   onResourceSave: (resource: Omit<CourseResource, 'id'>) => void
 }
 
-/* Single drawer shell that hosts library or SCORM content. Stays mounted across
-   swaps (library → scorm) so the panel doesn't slide out and back in. Only animates
-   in on first open and out when activeDrawer goes to null. */
+/* One SideDrawer hosts every course builder content type. It stays mounted across
+   swaps (library to SCORM) so the panel doesn't slide out and back in; SideDrawer only
+   animates in on first open and out when activeDrawer goes to null. */
 function ContentDrawer({
   activeDrawer,
   onClose,
@@ -149,45 +150,16 @@ function ContentDrawer({
   resourceInitial,
   onResourceSave,
 }: Props) {
-  // What content to actually render. Lags activeDrawer when closing so the
-  // close animation can complete before unmounting.
-  const [rendered, setRendered] = useState<ActiveDrawer>(activeDrawer)
-  const [closing, setClosing] = useState(false)
-  const closeTimerRef = useRef<number | null>(null)
-  const panelRef = useRef<HTMLElement | null>(null)
+  /* What content to render. Keeps the last type while activeDrawer goes to null, so
+     the body stays on screen through SideDrawer's exit slide. */
+  const last = useRef<ActiveDrawer>(activeDrawer)
+  if (activeDrawer !== null) last.current = activeDrawer
+  const rendered = last.current
 
-  useEffect(() => {
-    if (activeDrawer !== null) {
-      // Open or swap — keep the shell mounted, just switch content.
-      if (closeTimerRef.current !== null) {
-        window.clearTimeout(closeTimerRef.current)
-        closeTimerRef.current = null
-      }
-      setRendered(activeDrawer)
-      setClosing(false)
-      return
-    }
-    // activeDrawer === null — animate the close, then unmount.
-    if (rendered === null) return
-    setClosing(true)
-    closeTimerRef.current = window.setTimeout(() => {
-      setRendered(null)
-      setClosing(false)
-      closeTimerRef.current = null
-    }, 300)
-    return () => {
-      if (closeTimerRef.current !== null) {
-        window.clearTimeout(closeTimerRef.current)
-        closeTimerRef.current = null
-      }
-    }
-  }, [activeDrawer])
-
-  /* The DS overlay behaviour (overlays.md): focus moves into the panel on open, Tab is
-     trapped inside it, and focus returns to the trigger on close. This used to be a bare
-     Escape listener, so `aria-modal` was claiming a trap that did not exist and Tab
-     walked straight out into the page header. */
-  useOverlayA11y(panelRef, rendered !== null)
+  /* The empty elements SideDrawer draws in its header and footer; the bodies portal
+     their title and buttons into them (DrawerSlots). */
+  const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null)
+  const [footerSlot, setFooterSlot] = useState<HTMLElement | null>(null)
 
   if (rendered === null) return null
 
@@ -205,24 +177,38 @@ function ContentDrawer({
     : situationalTest ? 'Edit Situational Test'
     : 'Add Situational Test'
 
+  /* Only bodies with pinned buttons get a footer, so the others draw no divider. The AI
+     form keeps Generate under its last field; its wait and reviews pin theirs. Resources
+     and the assessment form still lay out their footers inside the body, as ResourceForm
+     and AssessmentModal are shared components. */
+  const hasFooter =
+    rendered === 'situational-test' ||
+    rendered === 'interactive' ||
+    (rendered === 'ai-generate' && !!(generating || generationReview || generationAssessmentReview))
+
+  const shellClass =
+    rendered === 'library' ? 'library-drawer'
+    : rendered === 'scorm' ? 'scorm-drawer-shell'
+    : rendered === 'situational-test' ? 'situational-test-drawer-shell'
+    : rendered === 'interactive' ? 'interactive-drawer-shell'
+    : rendered === 'resources' ? 'resources-drawer-shell'
+    : rendered === 'ai-generate' ? `generate-drawer-shell${generationReview ? ' situational-test-drawer-shell' : ''}`
+    : 'assessment-drawer-shell'
+
   return (
-    <>
-      <div
-        className={`overlay-backdrop overlay-backdrop--with-sidebar${closing ? ' overlay-backdrop--closing' : ''}`}
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      <aside
-        className={`side-drawer side-drawer--with-sidebar${closing ? ' side-drawer--closing' : ''} ${rendered === 'library' ? 'library-drawer' : rendered === 'scorm' ? 'scorm-drawer-shell' : rendered === 'situational-test' ? 'situational-test-drawer-shell' : rendered === 'interactive' ? 'interactive-drawer-shell' : rendered === 'resources' ? 'resources-drawer-shell' : rendered === 'ai-generate' ? `generate-drawer-shell${generationReview ? ' situational-test-drawer-shell' : ''}` : 'assessment-drawer-shell'}`}
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label={label}
-        tabIndex={-1}
-      >
+    <SideDrawer
+      open={activeDrawer !== null}
+      onClose={onClose}
+      belowPageHeader
+      ariaLabel={label}
+      className={`content-drawer ${shellClass}`}
+      bodyClassName="content-drawer__body"
+      header={<div ref={setHeaderSlot} className="content-drawer__header-slot" />}
+      footer={hasFooter ? <div ref={setFooterSlot} className="content-drawer__footer-slot" /> : undefined}
+    >
+      <DrawerSlotsContext.Provider value={{ header: headerSlot, footer: hasFooter ? footerSlot : null }}>
         {rendered === 'library' && (
           <LibraryDrawerContent
-            onClose={onClose}
             addedIds={libraryAddedIds}
             onAdd={onLibraryAdd}
             onRemove={onLibraryRemove}
@@ -230,7 +216,6 @@ function ContentDrawer({
         )}
         {rendered === 'scorm' && (
           <ScormDrawerContent
-            onClose={onClose}
             addedIds={scormAddedIds}
             onAdd={onScormAdd}
             onRemove={onScormRemove}
@@ -256,7 +241,6 @@ function ContentDrawer({
           <SituationalTestDrawerContent
             key={situationalTest?.id ?? 'new'}
             initial={situationalTest}
-            onClose={onClose}
             onSave={onSituationalTestSave}
             onCreate={onSituationalTestCreate}
             onDirtyChange={onSituationalTestDirtyChange}
@@ -273,7 +257,6 @@ function ContentDrawer({
             key={`${interactiveType}-${interactiveInitialId ?? 'new'}`}
             type={interactiveType}
             initial={interactiveInitial}
-            onClose={onClose}
             onSave={onInteractiveSave}
             onDirtyChange={onInteractiveDirtyChange}
           />
@@ -285,7 +268,6 @@ function ContentDrawer({
             key={`${generationScope}-${generationCoverage.withTranscript.length}`}
             scope={generationScope}
             coverage={generationCoverage}
-            onClose={onClose}
             onGenerate={onGenerate}
             onAddLessons={onAddLessons}
             generating={generating}
@@ -299,12 +281,11 @@ function ContentDrawer({
           <ResourcesDrawerContent
             key={resourceInitial?.id ?? 'new'}
             initial={resourceInitial}
-            onClose={onClose}
             onSave={onResourceSave}
           />
         )}
-      </aside>
-    </>
+      </DrawerSlotsContext.Provider>
+    </SideDrawer>
   )
 }
 

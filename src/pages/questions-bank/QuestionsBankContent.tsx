@@ -4,6 +4,7 @@ import ContentTable from './components/ContentTable/ContentTable'
 import type { ContentRow } from './components/ContentTable/ContentTable'
 import { lessonKey } from '@/data/lessonResources'
 import LessonEditorModal from '../../components/LessonEditorModal/LessonEditorModal'
+import Tabs from '@/components/Tabs/Tabs'
 import './QuestionsBankContent.css'
 
 type Tab = 'lessons' | 'scorm'
@@ -59,20 +60,15 @@ function QuestionsBankContent() {
         <div className="your-content-header">
           <h2 className="your-content-title">Your Content</h2>
           <div className="qb-page-header-divider" />
-          <div className="content-tabs">
-            <button
-              className={`content-tab${activeTab === 'lessons' ? ' content-tab--active' : ''}`}
-              onClick={() => setActiveTab('lessons')}
-            >
-              Lessons
-            </button>
-            <button
-              className={`content-tab${activeTab === 'scorm' ? ' content-tab--active' : ''}`}
-              onClick={() => setActiveTab('scorm')}
-            >
-              SCORM
-            </button>
-          </div>
+          <Tabs
+            items={[
+              { key: 'lessons', label: 'Lessons' },
+              { key: 'scorm', label: 'SCORM' },
+            ]}
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key as Tab)}
+            ariaLabel="Content type"
+          />
         </div>
         <ContentTable variant={activeTab} onLessonClick={handleLessonClick} onAddContent={handleAddContent} aiQuizReadyIds={aiQuizReadyIds} addedLessons={addedLessons} />
       </main>

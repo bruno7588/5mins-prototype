@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef } from 'react'
 import {
   CalendarAdd,
   Clock,
@@ -7,10 +7,9 @@ import {
   VideoSquare,
 } from 'iconsax-react'
 import Button from '../../components/Button/Button'
-import CloseButton from '../../components/CloseButton/CloseButton'
+import SideDrawer from '@/components/SideDrawer/SideDrawer'
 import { AttendeeStack, formatItemTime } from '../calendar/CalendarView'
 import type { CalendarItem } from '../calendar/mockItems'
-import '../my-team/CoursesDrawer.css'
 import './EventDetailsDrawer.css'
 
 interface Props {
@@ -42,19 +41,13 @@ function buildTintGradient(thumbnailGradient: string, alpha: number): string {
   return `linear-gradient(${angle}, ${hexToRgba(colors[0], alpha)} 0%, ${hexToRgba(colors[1], alpha)} 100%)`
 }
 
-function EventDetailsDrawer({ open, event, onClose }: Props) {
-  const [closing, setClosing] = useState(false)
-
-  const handleClose = () => {
-    setClosing(true)
-    setTimeout(() => {
-      setClosing(false)
-      onClose()
-    }, 300)
-  }
-
-
-  if (!open || !event) return null
+function EventDetailsDrawer({ open, event: liveEvent, onClose }: Props) {
+  // The parent clears the event on close; keep the last one so the exit slide
+  // still shows it.
+  const lastEvent = useRef(liveEvent)
+  if (open && liveEvent) lastEvent.current = liveEvent
+  const event = lastEvent.current
+  if (!event) return null
 
   const start = new Date(event.startsAt)
   const day = start.getDate()
@@ -64,93 +57,72 @@ function EventDetailsDrawer({ open, event, onClose }: Props) {
 
   const { colors: accentColors } = extractGradientStops(event.thumbnailGradient)
   const tintGradient = buildTintGradient(event.thumbnailGradient, 0.08)
-  const drawerBackground = `${tintGradient}, var(--page-background)`
   const cardBackground = `${tintGradient}, var(--cards-background)`
 
   return (
-    <>
-      <div
-        className={`overlay-backdrop${closing ? ' overlay-backdrop--closing' : ''}`}
-        onClick={handleClose}
-        aria-hidden="true"
-      />
-      <aside
-        className={`side-drawer event-drawer${closing ? ' side-drawer--closing' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="event-drawer-title"
-        style={{ background: drawerBackground }}
-      >
-        <div className="side-drawer__header">
-          <div className="side-drawer__headline">
-            <h2 id="event-drawer-title" className="event-drawer__title">{event.title}</h2>
-            <CloseButton onClick={handleClose} />
+    <SideDrawer open={open} onClose={onClose} title={event.title} className="event-drawer">
+      {/* The panel takes the event's tint over --page-background. SideDrawer has
+          no style prop, so the tint is a layer behind the panel content. */}
+      <div className="event-drawer__tint" style={{ background: tintGradient }} aria-hidden="true" />
+      <div className="event-drawer__card" style={{ background: cardBackground }}>
+        <div
+          className="event-drawer__card-header"
+          style={{ borderBottomColor: hexToRgba(accentColors[0], 0.16) }}
+        >
+          <div className="event-drawer__card-info">
+            <p className="event-drawer__session">{event.kind}</p>
+            {event.instructor ? (
+              <p className="event-drawer__instructor">Instructor {event.instructor}</p>
+            ) : null}
           </div>
-          <div className="modal__divider" />
+          <div className="event-drawer__actions">
+            <Button variant="outlined-2" icon={<CalendarAdd size={20} color="currentColor" variant="Linear" />}>
+              Add to Calendar
+            </Button>
+            <Button>Register</Button>
+          </div>
         </div>
-
-        <div className="side-drawer__content">
-          <div className="event-drawer__card" style={{ background: cardBackground }}>
-            <div
-              className="event-drawer__card-header"
-              style={{ borderBottomColor: hexToRgba(accentColors[0], 0.16) }}
-            >
-              <div className="event-drawer__card-info">
-                <p className="event-drawer__session">{event.kind}</p>
-                {event.instructor ? (
-                  <p className="event-drawer__instructor">Instructor {event.instructor}</p>
-                ) : null}
-              </div>
-              <div className="event-drawer__actions">
-                <Button variant="outlined-2" icon={<CalendarAdd size={20} color="currentColor" variant="Linear" />}>
-                  Add to Calendar
-                </Button>
-                <Button>Register</Button>
-              </div>
-            </div>
-            <div className="event-drawer__card-body">
-              <div className="event-drawer__date-tile" style={{ background: event.thumbnailGradient }}>
-                <span className="event-drawer__date-day">{day}</span>
-                <span className="event-drawer__date-month">{month}</span>
-              </div>
-              <div className="event-drawer__meta">
-                <div className="event-drawer__meta-row">
-                  <span className="event-drawer__meta-item">
-                    <Clock size={20} color="var(--text-secondary)" variant="Linear" />
-                    <span>{formatItemTime(event)}</span>
-                  </span>
-                  {event.location ? (
-                    <span className="event-drawer__meta-item">
-                      <LocationIcon size={20} color="var(--text-secondary)" variant="Linear" />
-                      <span>Where: {event.location}</span>
-                    </span>
-                  ) : null}
-                </div>
+        <div className="event-drawer__card-body">
+          <div className="event-drawer__date-tile" style={{ background: event.thumbnailGradient }}>
+            <span className="event-drawer__date-day">{day}</span>
+            <span className="event-drawer__date-month">{month}</span>
+          </div>
+          <div className="event-drawer__meta">
+            <div className="event-drawer__meta-row">
+              <span className="event-drawer__meta-item">
+                <Clock size={20} color="var(--text-secondary)" variant="Linear" />
+                <span>{formatItemTime(event)}</span>
+              </span>
+              {event.location ? (
                 <span className="event-drawer__meta-item">
-                  <People size={20} color="var(--text-secondary)" variant="Linear" />
-                  <span>{attendeeCount} learners</span>
+                  <LocationIcon size={20} color="var(--text-secondary)" variant="Linear" />
+                  <span>Where: {event.location}</span>
                 </span>
-              </div>
+              ) : null}
             </div>
+            <span className="event-drawer__meta-item">
+              <People size={20} color="var(--text-secondary)" variant="Linear" />
+              <span>{attendeeCount} learners</span>
+            </span>
           </div>
-
-          <section className="event-drawer__section">
-            <h3 className="event-drawer__section-title">About the event</h3>
-            <p className="event-drawer__description">
-              {event.description ??
-                `Join us for ${event.title}. Connect with peers, sharpen your skills, and explore what's next on your learning journey.`}
-            </p>
-          </section>
-
-          {event.attendees.length > 0 ? (
-            <section className="event-drawer__attending">
-              <h4 className="event-drawer__attending-title">Who's attending</h4>
-              <AttendeeStack attendees={event.attendees} overflow={event.overflowCount} />
-            </section>
-          ) : null}
         </div>
-      </aside>
-    </>
+      </div>
+
+      <section className="event-drawer__section">
+        <h3 className="event-drawer__section-title">About the event</h3>
+        <p className="event-drawer__description">
+          {event.description ??
+            `Join us for ${event.title}. Connect with peers, sharpen your skills, and explore what's next on your learning journey.`}
+        </p>
+      </section>
+
+      {event.attendees.length > 0 ? (
+        <section className="event-drawer__attending">
+          <h4 className="event-drawer__attending-title">Who's attending</h4>
+          <AttendeeStack attendees={event.attendees} overflow={event.overflowCount} />
+        </section>
+      ) : null}
+    </SideDrawer>
   )
 }
 

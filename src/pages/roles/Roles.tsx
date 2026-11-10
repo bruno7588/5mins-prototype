@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
+import Tabs from '@/components/Tabs/Tabs'
 import ToastContainer, { useToast } from '../../components/Toast/Toast'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import Alert from '../../components/Alert/Alert'
@@ -243,32 +244,16 @@ function Roles() {
               className="hris-dry-run-alert"
             />
           )}
-          <div className="roles-header__tabs" role="tablist">
-            <button
-              role="tab"
-              aria-selected={activeTab === 'library'}
-              className={`roles-header__tab${activeTab === 'library' ? ' roles-header__tab--active' : ''}`}
-              onClick={() => setActiveTab('library')}
-            >
-              5Mins Roles
-            </button>
-            <button
-              role="tab"
-              aria-selected={activeTab === 'company'}
-              className={`roles-header__tab${activeTab === 'company' ? ' roles-header__tab--active' : ''}`}
-              onClick={() => setActiveTab('company')}
-            >
-              Company Roles
-            </button>
-            <button
-              role="tab"
-              aria-selected={activeTab === 'hris-mapping'}
-              className={`roles-header__tab${activeTab === 'hris-mapping' ? ' roles-header__tab--active' : ''}`}
-              onClick={() => setActiveTab('hris-mapping')}
-            >
-              HRIS Mapping
-            </button>
-          </div>
+          <Tabs
+            items={[
+              { key: 'library', label: '5Mins Roles' },
+              { key: 'company', label: 'Company Roles' },
+              { key: 'hris-mapping', label: 'HRIS Mapping' },
+            ]}
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key as Tab)}
+            ariaLabel="Role lists"
+          />
         </header>
 
         <div className="roles-content">
@@ -307,24 +292,23 @@ function Roles() {
         </div>
       </main>
 
-      {panelMode && (
-        <RolePanel
-          mode={panelMode}
-          existingRoleNames={companyRoles.map(r => r.name)}
-          onClose={() => setPanelMode(null)}
-          onSave={handlePanelSave}
-        />
-      )}
+      <RolePanel
+        open={panelMode !== null}
+        mode={panelMode}
+        existingRoleNames={companyRoles.map(r => r.name)}
+        onClose={() => setPanelMode(null)}
+        onSave={handlePanelSave}
+      />
 
-      {hrisPanelMapping && (
-        <HrisMappingPanel
-          mapping={hrisPanelMapping}
-          tenantRoles={companyRoles}
-          publicRoles={fiveMinsRoles}
-          onClose={() => setHrisPanelMapping(null)}
-          onSave={handleHrisSave}
-        />
-      )}
+      <HrisMappingPanel
+        open={hrisPanelMapping !== null}
+        mapping={hrisPanelMapping}
+        tenantRoles={companyRoles}
+        publicRoles={fiveMinsRoles}
+        onClose={() => setHrisPanelMapping(null)}
+        onSave={handleHrisSave}
+      />
+
 
       {/* HRIS mapping removal confirmation (high-impact only) */}
       <ConfirmModal

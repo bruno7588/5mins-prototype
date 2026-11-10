@@ -5,7 +5,6 @@ import Alert from '@/components/Alert/Alert'
 import Button from '@/components/Button/Button'
 import InputField from '@/components/InputField/InputField'
 import { getAssessmentIllustration } from '@/assets/assessment-illustrations'
-import CloseButton from '@/components/CloseButton/CloseButton'
 import AIWorkingCard from '@/components/AIWorkingCard/AIWorkingCard'
 import { ARRIVE, arriveTransition } from '@/components/AIWorkingCard/arrive'
 import { prefersReducedMotion, useTyped } from '@/components/AIWorkingCard/useTyped'
@@ -26,7 +25,7 @@ import SituationalTestDrawerContent, {
 } from '../SituationalTestDrawer/SituationalTestDrawer'
 import QuestionCard from '../QuestionCard/QuestionCard'
 import { QuestionPreview } from '../SituationalTestPreview/SituationalTestPreview'
-import SectionHeader from '../SectionHeader/SectionHeader'
+import { DrawerFooter, DrawerHeader } from '../ContentDrawer/DrawerSlots'
 import ToastContainer, { useToast } from '@/components/Toast/Toast'
 import './GenerateAssessmentsDrawer.css'
 
@@ -34,7 +33,6 @@ interface Props {
   /** Which rail group opened this — decides what gets written. */
   scope: GenerationScope
   coverage: CoverageReport
-  onClose: () => void
   onGenerate: (types: GeneratableType[], prompt?: GenerationPrompt) => void
   /** Route out of the zero-transcript dead end — opens the 5Mins Library. */
   onAddLessons: () => void
@@ -151,7 +149,7 @@ const COPY: Record<
  * drawer holds until the drafts land on the outline behind it.
  */
 function GenerateAssessmentsDrawer({
-  scope, coverage, onClose, onGenerate, onAddLessons,
+  scope, coverage, onGenerate, onAddLessons,
   generating = null, review = null, assessmentReview = null, failure = null,
 }: Props) {
   const copy = COPY[scope]
@@ -206,7 +204,6 @@ function GenerateAssessmentsDrawer({
           >
             <AssessmentReview
               drafts={assessmentReview.drafts}
-              onClose={onClose}
               onSaveOne={assessmentReview.onSaveOne}
               onDiscard={assessmentReview.onDiscard}
               onEdit={assessmentReview.onEdit}
@@ -226,7 +223,6 @@ function GenerateAssessmentsDrawer({
                 writing one are the same skill. */}
             <SituationalTestDrawerContent
               initial={review.draft}
-              onClose={onClose}
               onSave={review.onSave}
               review={{ onGenerateAgain: review.onGenerateAgain }}
             />
@@ -244,7 +240,7 @@ function GenerateAssessmentsDrawer({
                   the read isn't knowable, so the card names the pass it is on (FR-11).
                   The footer goes with the form — there is nothing to submit while it
                   runs. */}
-              <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
+              <DrawerHeader title={copy.title} />
               <div className="gen-drawer__body">
                 <GeneratingBody
                   steps={generating.steps}
@@ -258,19 +254,21 @@ function GenerateAssessmentsDrawer({
               {/* The button that started the run stays where it was and spins: the wait
                   is that button's own work, so it says so rather than disappearing and
                   leaving the drawer with no sign of what is being waited on. */}
-              <div className="gen-drawer__footer">
-                {/* The DS Loading state swaps the label out for the spinner; this one
-                    keeps it, as drawn — the label is the only thing naming what is being
-                    waited for, and the working card above is already the progress. */}
-                <Button
-                  semantic="ai"
-                  disabled
-                  aria-busy
-                  icon={<span className="gen-drawer__cta-spinner" aria-hidden="true" />}
-                >
-                  {copy.cta}
-                </Button>
-              </div>
+              <DrawerFooter>
+                <div className="gen-drawer__footer">
+                  {/* The DS Loading state swaps the label out for the spinner; this one
+                      keeps it, as drawn — the label is the only thing naming what is being
+                      waited for, and the working card above is already the progress. */}
+                  <Button
+                    semantic="ai"
+                    disabled
+                    aria-busy
+                    icon={<span className="gen-drawer__cta-spinner" aria-hidden="true" />}
+                  >
+                    {copy.cta}
+                  </Button>
+                </div>
+              </DrawerFooter>
             </motion.div>
           )
         )}
@@ -284,7 +282,7 @@ function GenerateAssessmentsDrawer({
   if (total === 0) {
     return (
       <>
-        <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
+        <DrawerHeader title={copy.title} />
         <div className="gen-drawer__body gen-drawer__body--empty">
           <div className="gen-drawer__empty">
             <img src={emptyBox} width={72} height={72} alt="" />
@@ -313,7 +311,7 @@ function GenerateAssessmentsDrawer({
       {/* No description: the callout and the source list below say the same things
           with more room, and saying them twice above the fold just pushed the
           controls down. */}
-      <SectionHeader title={copy.title} ctas={<CloseButton onClick={onClose} />} />
+      <DrawerHeader title={copy.title} />
 
       <div className="gen-drawer__body">
         {/* A failed run comes back to the form it started from, instructions intact, so
@@ -630,12 +628,11 @@ const LiveQuestion = forwardRef<
  * discarded, and the next one rises in. The drawer closes after the last.
  */
 function AssessmentReview({
-  drafts, onClose, onSaveOne, onDiscard, onEdit, failure = null,
+  drafts, onSaveOne, onDiscard, onEdit, failure = null,
 }: {
   drafts: GeneratedAssessment[]
   /** Set when the run stopped early: says how many were written before it did. */
   failure?: GenerationFailure | null
-  onClose: () => void
   /** Adds this one to the course and drops it from the pending set. */
   onSaveOne: (index: number) => void
   onDiscard: (index: number) => void
@@ -664,10 +661,9 @@ function AssessmentReview({
 
   return (
     <>
-      <SectionHeader
+      <DrawerHeader
         title="Review assessments"
         description="Select which assessments you want to save and which you want to discard. You can always edit them later."
-        ctas={<CloseButton onClick={onClose} />}
       />
 
       <div className="gen-drawer__body">
@@ -728,21 +724,23 @@ function AssessmentReview({
         </AnimatePresence>
       </div>
 
-      <div className="gen-drawer__footer">
-        <div className="gen-drawer__review-buttons">
-          <Button disabled={!draft} onClick={() => advance('save')}>
-            Save
-          </Button>
-          <Button variant="outlined" disabled={!draft} onClick={() => advance('discard')}>
-            Discard
-          </Button>
-          {/* The learner's view of this one, as the course assessment drawers offer. */}
-          <Button variant="outlined-2" disabled={!question} onClick={() => setPreviewing(true)}>
-            Preview
-          </Button>
-          <ToastContainer toasts={toasts} className="gen-drawer__toasts" />
+      <DrawerFooter>
+        <div className="gen-drawer__footer">
+          <div className="gen-drawer__review-buttons">
+            <Button disabled={!draft} onClick={() => advance('save')}>
+              Save
+            </Button>
+            <Button variant="outlined" disabled={!draft} onClick={() => advance('discard')}>
+              Discard
+            </Button>
+            {/* The learner's view of this one, as the course assessment drawers offer. */}
+            <Button variant="outlined-2" disabled={!question} onClick={() => setPreviewing(true)}>
+              Preview
+            </Button>
+            <ToastContainer toasts={toasts} className="gen-drawer__toasts" />
+          </div>
         </div>
-      </div>
+      </DrawerFooter>
 
       {previewing && question && (
         <QuestionPreview

@@ -164,38 +164,10 @@
 /* DS Outlined-2 (buttons.md): transparent + neutral hairline at rest;
    brand cyan surfaces only on interaction — 24% (hover) → 8% (pressed) fill ladder. */
 
-/* ── Divider + tabs ─────────────────────────────────────────────────────── */
+/* ── Divider ─────────────────────────────────────────────────────── */
 .pad-divider {
   height: 1px;
   background: var(--border);
-}
-
-.pad-tabs {
-  display: flex;
-  gap: var(--space-m);
-}
-
-.pad-tab {
-  padding: 0 0 var(--space-xs);
-  border: none;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  font-family: 'Poppins', sans-serif;
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: color 120ms ease, border-color 120ms ease;
-}
-
-.pad-tab:hover {
-  color: var(--text-primary);
-}
-
-.pad-tab--active {
-  color: var(--text-primary);
-  font-weight: 700;
-  border-bottom-color: var(--selected);
 }
 
 /* ── Course table (read-only) ───────────────────────────────────────────── */

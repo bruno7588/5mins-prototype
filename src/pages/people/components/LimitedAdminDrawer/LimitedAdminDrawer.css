@@ -1,82 +1,7 @@
-/* Limited Admin drawer — 720px right-anchored side drawer per overlays.md. */
+/* Limited Admin drawer content. The shell is the shared SideDrawer (overlays.md). */
 
-.lad-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: var(--scrim);
-  display: flex;
-  justify-content: flex-end;
-  animation: lad-fade-in 200ms ease;
-}
-
-.lad-overlay--closing {
-  animation: lad-fade-out 300ms ease forwards;
-}
-
-.lad-panel {
-  width: 720px;
-  max-width: 95vw;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-ml);
-  padding: var(--space-ml) var(--space-l);
-  background: var(--page-background);
-  box-shadow: -8px 0 24px color-mix(in srgb, var(--neutral-800) 12%, transparent);
-  animation: lad-slide-in 300ms ease-in-out;
-}
-
-.lad-panel--closing {
-  animation: lad-slide-out 300ms ease-in-out forwards;
-}
-
-@keyframes lad-fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes lad-fade-out { from { opacity: 1; } to { opacity: 0; } }
-@keyframes lad-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
-@keyframes lad-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
-
-@media (prefers-reduced-motion: reduce) {
-  .lad-overlay,
-  .lad-overlay--closing,
-  .lad-panel,
-  .lad-panel--closing {
-    animation: none;
-  }
-}
-
-/* ── Header ─────────────────────────────────────────────────────────────── */
-.lad-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.lad-header__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-m);
-}
-
-.lad-title {
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-
-.lad-divider {
-  height: 1px;
-  width: 100%;
-  background: var(--border);
-}
-
-/* ── Body ───────────────────────────────────────────────────────────────── */
+/* Body: the shared SideDrawer scrolls it; this sets the spacing between sections. */
 .lad-body {
-  flex: 1 0 0;
-  min-height: 0;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
@@ -148,19 +73,6 @@
   min-width: 0;
 }
 
-/* ── Footer ─────────────────────────────────────────────────────────────── */
-.lad-footer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-ml);
-}
-
-.lad-footer__row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
 /* Shrink to its label and sit under the first column, rather than stretching
    across the section and centring its content. The neutral rest colour keeps it
    quiet next to the two dropdowns; the DS hover ladder still applies.
@@ -173,7 +85,7 @@
 /* Taking the role away sits at the far end of the footer, out of the save
    cluster: the two are a keystroke apart in consequence and should not be a
    pixel apart on screen. */
-.lad-footer__row .lad-remove {
+.ds-btn.lad-remove {
   margin-left: auto;
 }
 

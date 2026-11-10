@@ -1,16 +1,18 @@
-/* EventDetailsDrawer — content per Figma node 9792:181828.
-   Drawer shell uses shared .side-drawer / .overlay-backdrop from CoursesDrawer.css.
-   Background tint on .event-drawer and .event-drawer__card is set inline,
-   derived from the event's thumbnail gradient colors at 8% opacity. */
+/* EventDetailsDrawer - content per Figma node 9792:181828.
+   Drawer shell is the shared SideDrawer. Background tint on .event-drawer__tint
+   and .event-drawer__card is set inline, derived from the event's thumbnail
+   gradient colours at 8% opacity. */
 
-.event-drawer__title {
-  flex: 1;
-  margin: 0;
-  font-size: var(--font-size-h3);
-  font-weight: 700;
-  line-height: 1.5;
-  color: var(--text-primary);
-  word-break: break-word;
+/* Tint layer: fills the panel behind its content, over --page-background. */
+.ds-drawer.event-drawer {
+  position: relative;
+  isolation: isolate;
+}
+.event-drawer__tint {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* ── Session card ─────────────────────────────────────────────── */

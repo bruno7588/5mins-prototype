@@ -433,9 +433,9 @@ Reference CSS (the shared component already implements this):
 
 An underlined bar that moves between sibling sections of one page or object.
 
-**Code:** no shared component yet: each page builds its own bar with a page-prefixed class, an `--active` modifier and an `::after` indicator. Reference: `src/pages/roles/Roles.tsx` (`.roles-header__tab`).
+**Code:** `import Tabs from '@/components/Tabs/Tabs'` (`src/components/Tabs/Tabs.tsx` + `Tabs.css`; every page tab bar uses it since 2026-11-10)
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, `8497:24855` + item `1939:18281`
-**Last verified:** 2026-09-29
+**Last verified:** 2026-11-10
 
 ## Usage
 
@@ -465,52 +465,30 @@ An underlined bar that moves between sibling sections of one page or object.
 
 **Canonical spec:** label 14px, Medium (500) unselected / Bold (700) selected; indicator 2px `var(--selected)` (#EDA30D light / #FFBB38 dark); label to indicator gap `var(--space-xs)` (4px); gap between tabs `var(--space-m)` (16px); counter pill `var(--input-background)`, radius `var(--radius-full)`, text `var(--text-tertiary)`. Figma: Library `EC26cSVe9KNTCWXvYovakw`, `8497:24855` + item `1939:18281`.
 
-**Prototype pages:** `src/pages/roles/Roles.tsx` (`.roles-header__tab`) is compliant: `--selected` indicator, 16px tab gap, cyan focus ring; its one drift is an 8px label-to-indicator gap (spec 4px). `src/pages/your-courses/CourseDetails.tsx` (`.cd-tab`) drifts: `.cd-tab-count` text is `--text-secondary` (spec `--text-tertiary`) and `.cd-tab` has no `:focus-visible` style; don't copy it.
-
 ## Figma to code
 
-Figma: `Tabs` (`8497:24855`, standalone component with no properties and a fixed 5 tabs) built from the `Tab items` set (`1939:18281`). There is no shared React component, so Figma properties map to the page-local CSS classes.
+Figma: `Tabs` (`8497:24855`, standalone component with no properties and a fixed 5 tabs) built from the `Tab items` set (`1939:18281`). Code: the shared `Tabs` component.
 
-| Figma property | Figma values | Code | Values | Notes |
+| Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
-| Selected | true / false | `--active` modifier (e.g. `.roles-header__tab--active`), `aria-selected` | present / absent | `selected` in the reference prop shape below |
+| Selected | true / false | `activeKey` | the selected item's `key` | `onChange(key)` sets it |
 | State | Enabled / Hover / Focus | n/a | CSS `:hover`, `:focus-visible` | states are CSS, not props |
-| counter | false / true | page-local count span (e.g. `.cd-tab-count`) | rendered / omitted | `counter?: number` in the reference prop shape |
-| Label (text) | tab label | label text | `string` | |
-| Count (text) | counter number | `counter` | `number` | |
+| counter | false / true | `items[].counter` | `number`, omitted = no pill | `0` still renders |
+| Label (text) | tab label | `items[].label` | `string` (or node) | each item also needs a `key` |
+| Count (text) | counter number | `items[].counter` | `number` | |
 
 - **Figma only:** the fixed 5-tab bar.
-- **Code only:** any number of tabs.
+- **Code only:** any number of tabs; `items[].disabled` for a tab that is not built yet (the `.ui-disabled` dimmed, inert treatment, skipped by arrow keys); `ariaLabel` and `className` on the bar.
 
-**Reference prop shape** for a page-local tab bar (there is no shared component):
+**Props**
 
-`<Tabs>` (the container)
-
-| Prop        | Type                        | Default     | Description                              |
-|-------------|-----------------------------|-------------|------------------------------------------|
-| `items`     | `TabItem[]`                 | required    | Array of tab items to render             |
-| `activeKey` | `string`                    | required    | `key` of the currently selected tab      |
-| `onChange`  | `(key: string) => void`     | required    | Called when user clicks a tab            |
-| `className` | `string`                    | -           | Extra CSS classes on the bar             |
-
-`TabItem` shape
-
-| Field      | Type        | Required | Description                                    |
-|------------|-------------|----------|------------------------------------------------|
-| `key`      | `string`    | yes      | Unique identifier, used for selection          |
-| `label`    | `string`    | yes      | Visible tab label                              |
-| `counter`  | `number`    | no       | If provided, shows a counter pill (e.g. `0`)   |
-
-`<TabItem>` (low-level, if used standalone)
-
-| Prop        | Type                          | Default     | Description                                |
-|-------------|-------------------------------|-------------|--------------------------------------------|
-| `label`     | `string`                      | required    | Text displayed in the tab                  |
-| `selected`  | `boolean`                     | `false`     | Bold `--text-primary` text, amber underline visible |
-| `counter`   | `number \| undefined`         | `undefined` | If defined, renders counter pill next to label |
-| `state`     | `"Enabled" \| "Hover"`        | `"Enabled"` | Visual state (Hover normally driven by CSS) |
-| `onClick`   | `() => void`                  | -           | Click handler                              |
-| `className` | `string`                      | -           | Extra CSS classes                          |
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `items` | `TabItem[]` (`{ key, label, counter?, disabled? }`) | required | The tabs, in order |
+| `activeKey` | `string` | required | `key` of the selected tab |
+| `onChange` | `(key: string) => void` | required | Called on click and on arrow-key moves |
+| `ariaLabel` | `string` | none | Names the tab list, e.g. "Course sections" |
+| `className` | `string` | none | Page layout on the bar (margins, a divider below) |
 
 **Production:**
 
@@ -600,233 +578,27 @@ Tab Name 0      ← Hover + Counter (counter text brightens too)
 
 ## Examples
 
-Reference implementation for a page-local tab bar (no shared component exists; use page-prefixed class names in real pages):
-
 ```tsx
-import React from 'react';
+import Tabs from '@/components/Tabs/Tabs'
 
-type TabState = 'Enabled' | 'Hover';
-
-export interface TabItem {
-  key: string;
-  label: string;
-  counter?: number;
-}
-
-interface TabsProps {
-  items: TabItem[];
-  activeKey: string;
-  onChange: (key: string) => void;
-  className?: string;
-}
-
-export function Tabs({ items, activeKey, onChange, className = '' }: TabsProps) {
-  return (
-    <div
-      role="tablist"
-      className={`inline-flex items-start gap-[16px] ${className}`}
-    >
-      {items.map((item) => (
-        <TabItemView
-          key={item.key}
-          label={item.label}
-          counter={item.counter}
-          selected={item.key === activeKey}
-          onClick={() => onChange(item.key)}
-        />
-      ))}
-    </div>
-  );
-}
-
-interface TabItemViewProps {
-  label: string;
-  selected?: boolean;
-  counter?: number;
-  state?: TabState;
-  onClick?: () => void;
-  className?: string;
-}
-
-export function TabItemView({
-  label,
-  selected = false,
-  counter,
-  state = 'Enabled',
-  onClick,
-  className = '',
-}: TabItemViewProps) {
-  const isHover = state === 'Hover';
-  const hasCounter = typeof counter === 'number';
-
-  // Label color + weight
-  const labelStyle = selected
-    ? 'font-bold text-[var(--text-primary)]'
-    : isHover
-    ? 'font-medium text-[var(--text-primary)]'
-    : 'font-medium text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]';
-
-  // Counter text color depends on (selected or hover) vs default
-  const counterTextColor = selected || isHover
-    ? 'text-[var(--text-secondary)]'
-    : 'text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)]';
-
-  return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={selected}
-      onClick={onClick}
-      className={`group inline-flex flex-col items-center gap-[4px] cursor-pointer bg-transparent border-0 p-0 ${className}`}
-    >
-      <div className="inline-flex items-start gap-[4px]">
-        <span
-          className={`text-[14px] leading-[1.5] font-[Poppins] whitespace-nowrap ${labelStyle}`}
-        >
-          {label}
-        </span>
-        {hasCounter && (
-          <span
-            className="inline-flex items-center justify-center px-[6px] rounded-[100px] bg-[var(--input-background)]"
-          >
-            <span
-              className={`text-[14px] leading-[1.5] font-medium font-[Poppins] ${counterTextColor}`}
-            >
-              {counter}
-            </span>
-          </span>
-        )}
-      </div>
-      {/* Indicator only when selected */}
-      <div
-        className={`h-[2px] w-full rounded-[1px] ${selected ? 'bg-[var(--selected)]' : 'bg-transparent'}`}
-        aria-hidden
-      />
-    </button>
-  );
-}
-```
-
-CSS variable approach (if token vars are available in the project):
-
-```css
-.tabs {
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 16px; /* --m */
-}
-
-.tab-item {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px; /* --xs */
-  cursor: pointer;
-  background: transparent;
-  border: 0;
-  padding: 0;
-}
-
-.tab-item__row {
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 4px;
-}
-
-.tab-item__label {
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  font-weight: 500;
-  color: var(--text-secondary, #bfc2cc);
-  white-space: nowrap;
-  transition: color 0.15s;
-}
-
-.tab-item:hover .tab-item__label {
-  color: var(--text-primary, #f9f9fa);
-}
-
-.tab-item--selected .tab-item__label {
-  font-weight: 700;
-  color: var(--text-primary, #f9f9fa);
-}
-
-.tab-item__counter {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 6px;
-  border-radius: 100px;
-  background-color: var(--input-background);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  font-weight: 500;
-  color: var(--text-tertiary, #9ea4b3);
-}
-
-.tab-item:hover .tab-item__counter,
-.tab-item--selected .tab-item__counter {
-  color: var(--text-secondary, #bfc2cc);
-}
-
-.tab-item__indicator {
-  height: 2px;
-  width: 100%;
-  background-color: transparent;
-}
-
-.tab-item--selected .tab-item__indicator {
-  background-color: var(--selected);
-}
-```
-
-Usage:
-
-```tsx
-// Basic tabs
-const [active, setActive] = useState('overview');
+const [tab, setTab] = useState('overview')
 
 <Tabs
-  activeKey={active}
-  onChange={setActive}
+  ariaLabel="Course sections"
+  activeKey={tab}
+  onChange={setTab}
   items={[
     { key: 'overview', label: 'Overview' },
-    { key: 'enrolments', label: 'Enrolments' },
-    { key: 'completions', label: 'Completions' },
-    { key: 'observations', label: 'Observations' },
+    { key: 'enrolments', label: 'Enrolments', counter: 12 },
+    { key: 'settings', label: 'Settings', disabled: true },
   ]}
 />
-
-// Tabs with counters (e.g. queues, inboxes)
-<Tabs
-  activeKey={active}
-  onChange={setActive}
-  items={[
-    { key: 'open',     label: 'Open',     counter: 12 },
-    { key: 'in_review', label: 'In review', counter: 3 },
-    { key: 'closed',   label: 'Closed' },
-  ]}
-/>
-
-// Inside a section header
-<div>
-  <Tabs
-    activeKey={tab}
-    onChange={setTab}
-    items={[
-      { key: 'team',   label: 'My Team',  counter: teamSize },
-      { key: 'pulse',  label: 'Pulse' },
-      { key: 'config', label: 'Settings' },
-    ]}
-  />
-  <div className="border-t border-[var(--border)] mt-[-1px]" /> {/* optional underline */}
-  <div className="pt-[24px]">{/* tab panel content */}</div>
-</div>
 ```
 
+Keyboard: the selected tab is in the Tab order; Left/Right, Home and End move between tabs and select them (WAI-ARIA tabs pattern).
+
 ---
+
 
 ## Related
 

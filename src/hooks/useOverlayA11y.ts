@@ -34,6 +34,11 @@ export function useOverlayA11y(
         return
       }
       if (e.key !== 'Tab' || !panel) return
+      /* A dialog stacked on top (e.g. a confirm over a drawer) owns Tab while
+         focus is inside it; trapping here too would pull focus back. */
+      const focused = document.activeElement
+      const owner = focused instanceof HTMLElement ? focused.closest('[aria-modal="true"]') : null
+      if (owner && owner !== panel) return
       const items = focusables()
       if (items.length === 0) {
         e.preventDefault()

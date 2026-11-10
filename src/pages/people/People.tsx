@@ -28,6 +28,7 @@ import avatarCarlos from '../../assets/avatars/avatar-4.jpg'
 import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import MoreIcon from '../../components/icons/MoreIcon'
 import { Table, type Column } from '@/components/Table/Table'
+import Tabs from '@/components/Tabs/Tabs'
 import Avatar from '@/components/Avatar/Avatar'
 import BulkActionBar from '../../components/BulkActionBar/BulkActionBar'
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
@@ -812,17 +813,12 @@ function People() {
       </div>
 
       {/* Tabs */}
-      <div className="people-tabs">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            className={`people-tab${activeTab === tab ? ' people-tab--active' : ''}`}
-            onClick={() => handleTabSwitch(tab)}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        items={tabs.map((tab) => ({ key: tab, label: tab }))}
+        activeKey={activeTab}
+        onChange={handleTabSwitch}
+        ariaLabel="People lists"
+      />
 
       {/* Info banner — Deactivated tab only (hide when no deactivated users) */}
       {isDeactivatedTab && deactivatedPeople.length > 0 && (

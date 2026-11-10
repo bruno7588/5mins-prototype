@@ -1,76 +1,4 @@
-/* DS Side Drawer — follows docs/design-system/overlays.md, content per Figma 10613:658 */
-
-/* Backdrop */
-/* The DS scrim (layout.md §7) — 50% in dark, 25% in light. It used to be a hardcoded
-   Neutral-900 at 64%, which buried the page behind it; the token keeps the content
-   underneath readable. The alpha lives in the colour, so the fade runs 0 → 1. */
-.overlay-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--scrim);
-  z-index: 1000;
-  animation: overlay-fade-in 200ms ease-out;
-}
-.overlay-backdrop--closing { animation: overlay-fade-out 300ms ease-out forwards; }
-@keyframes overlay-fade-in  { from { opacity: 0; } to { opacity: 1; } }
-@keyframes overlay-fade-out { from { opacity: 1; } to { opacity: 0; } }
-
-/* Drawer panel */
-.side-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 720px;
-  max-width: 100%;
-  height: 100vh;
-  padding: var(--space-ml) var(--space-l);
-  background: var(--page-background);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-ml);
-  z-index: 1001;
-  overflow: hidden;
-  /* Even ease-in-out. The old iOS-sheet curve (cubic-bezier(0.32, 0.72, 0, 1))
-     put ~90% of the travel in the first 40% of the time, so it read as a snap
-     however long the duration was. Every drawer unmount timer must stay in step
-     with this 300ms — see the 300 in each handleClose. */
-  animation: side-drawer-in 300ms ease-in-out;
-}
-.side-drawer--closing { animation: side-drawer-out 300ms ease-in-out forwards; }
-@keyframes side-drawer-in  { from { transform: translateX(100%); } to { transform: translateX(0); } }
-@keyframes side-drawer-out { from { transform: translateX(0);    } to { transform: translateX(100%); } }
-
-/* Instant mount — used when a drawer hands off to another in place (e.g. the
-   reports list → edit screen), so the panel/backdrop swap content without a
-   slide-in/fade that would read as a jump. */
-.side-drawer--instant { animation: none; }
-.overlay-backdrop--instant { animation: none; }
-
-/* Course builder drawers (ContentDrawer): start below the PageHeader divider so the
-   builder's title and CTAs stay visible and undimmed while a drawer is open. The old
-   Add Content side rail is gone (replaced by the Add Content menu), so nothing is
-   reserved on the right any more. */
-.overlay-backdrop.overlay-backdrop--with-sidebar { inset: auto; top: var(--page-header-offset, 0px); right: 0; bottom: 0; left: 0; }
-.side-drawer.side-drawer--with-sidebar {
-  top: var(--page-header-offset, 0px);
-  height: auto;
-}
-
-/* Header (member chip + close, divider below) */
-.side-drawer__header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  flex-shrink: 0;
-}
-
-.side-drawer__headline {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-m);
-  width: 100%;
-}
+/* My Team courses drawer content. The drawer shell is the shared SideDrawer (src/components/SideDrawer). */
 
 .cd-drawer__member {
   flex: 1;
@@ -101,11 +29,6 @@
   margin: 0;
 }
 
-.cd-drawer__close {
-  flex-shrink: 0;
-  padding: var(--space-xs);
-}
-
 .modal__divider {
   width: 100%;
   height: 1px;
@@ -129,36 +52,6 @@
   flex: 0 0 auto;
   width: 180px;
 }
-
-/* Content */
-.side-drawer__content {
-  flex: 1 0 0;
-  min-height: 0;
-  width: 100%;
-  overflow-y: auto;
-}
-
-/* Footer */
-.side-drawer__footer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-m);
-  width: 100%;
-  background: var(--page-background);
-  flex-shrink: 0;
-}
-.side-drawer__footer-divider {
-  width: 100%;
-  height: 1px;
-  background: var(--border);
-  border-radius: var(--radius-xs);
-}
-.side-drawer__buttons {
-  display: flex;
-  gap: var(--space-m);
-  align-items: flex-start;
-}
-.side-drawer__btn-secondary:hover { background: var(--button-outline-fill-hover); }
 
 /* Courses table */
 .cd-table {

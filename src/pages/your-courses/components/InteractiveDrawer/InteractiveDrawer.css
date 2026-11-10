@@ -5,14 +5,6 @@
    family; class names are prefixed .iq-drawer__ because the prototype bundles CSS
    globally. */
 
-/* The rule under the header belongs to SectionHeader itself (headers.md) —
-   keeping a border here drew a second line. Nothing is added beneath it either:
-   the 20px between the rule and the callout is the drawer shell's own flex gap,
-   so this header contributes no padding of its own. */
-.interactive-drawer-shell .section-header {
-  padding-bottom: 0;
-}
-
 .iq-drawer__body {
   flex: 1;
   min-height: 0;
@@ -468,13 +460,11 @@
 
 /* ===== Footer ===== */
 
+/* Sits in SideDrawer's pinned footer, which draws the divider above it. */
 .iq-drawer__footer {
   display: flex;
   align-items: center;
   gap: var(--space-m);
-  padding-top: var(--space-m);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
 }
 
 /* Reorder announcements — visible to screen readers only. */
