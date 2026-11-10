@@ -306,23 +306,6 @@ function ExternalTraining() {
               setQuery('')
             }}
           />
-          <div className="aet-toolbar__ctas">
-            {view === 'courses' && !coursesEmpty && (
-              <>
-                <Button variant="outlined" icon={<DocumentUpload size={20} color="currentColor" variant="Linear" />} onClick={openCsv}>
-                  Bulk Upload Courses
-                </Button>
-                <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => openCourseDrawer(null)}>
-                  Add Course
-                </Button>
-              </>
-            )}
-            {view === 'providers' && !providersEmpty && (
-              <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setProviderModal({ provider: null })}>
-                Add Provider
-              </Button>
-            )}
-          </div>
         </div>
 
         {/* No swap animation between the two views (Bruno, 2026-11-05). */}
@@ -341,6 +324,14 @@ function ExternalTraining() {
                   <div className="aet-toolbar">
                     <Search value={query} onChange={setQuery} onClear={() => setQuery('')} placeholder="Search courses" ariaLabel="Search courses" />
                     <Toggle checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} label="Show archived" size="sm" />
+                    <div className="aet-toolbar__ctas">
+                      <Button variant="outlined" icon={<DocumentUpload size={20} color="currentColor" variant="Linear" />} onClick={openCsv}>
+                        Bulk Upload Courses
+                      </Button>
+                      <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => openCourseDrawer(null)}>
+                        Add Course
+                      </Button>
+                    </div>
                   </div>
                   {visibleCourses.length ? (
                     <Table
@@ -370,6 +361,11 @@ function ExternalTraining() {
                 <div className="aet-toolbar">
                   <Search value={query} onChange={setQuery} onClear={() => setQuery('')} placeholder="Search providers" ariaLabel="Search providers" />
                   <Toggle checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} label="Show archived" size="sm" />
+                  <div className="aet-toolbar__ctas">
+                    <Button icon={<Add size={20} color="currentColor" variant="Linear" />} onClick={() => setProviderModal({ provider: null })}>
+                      Add Provider
+                    </Button>
+                  </div>
                 </div>
                 {visibleProviders.length ? (
                   <Table

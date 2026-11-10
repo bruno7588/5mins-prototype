@@ -18,6 +18,7 @@ import {
 import { buildInitialMappings } from '../../pages/roles/data/mockHrisMappings'
 import { initialCompanyRoles, fiveMinsRoles } from '../../pages/roles/data/mockRoles'
 import { isFullAdmin } from '@/data/externalTraining'
+import Collapse from '@/components/Collapse/Collapse'
 import './LeftSidebar.css'
 
 const iconSize = 20
@@ -72,7 +73,7 @@ function LeftSidebar() {
             )}
           </span>
         </button>
-        {peopleOpen && (
+        <Collapse open={peopleOpen}>
           <div className="sidebar-sub-items">
             <button
               className={`sidebar-sub-item${activePage === '/people' ? ' sidebar-sub-item--active' : ''}`}
@@ -103,7 +104,7 @@ function LeftSidebar() {
               )}
             </button>
           </div>
-        )}
+        </Collapse>
 
         {/* Content (expandable) */}
         <button className="sidebar-item" onClick={() => setContentOpen(!contentOpen)}>
@@ -119,7 +120,7 @@ function LeftSidebar() {
             )}
           </span>
         </button>
-        {contentOpen && (
+        <Collapse open={contentOpen}>
           <div className="sidebar-sub-items">
             <button
               className={`sidebar-sub-item${activePage === '/programs' ? ' sidebar-sub-item--active' : ''}`}
@@ -141,7 +142,7 @@ function LeftSidebar() {
               Your Courses
             </button>
           </div>
-        )}
+        </Collapse>
 
         {/* Automations */}
         <button
@@ -188,7 +189,7 @@ function LeftSidebar() {
             )}
           </span>
         </button>
-        {recordsOpen && (
+        <Collapse open={recordsOpen}>
           <div className="sidebar-sub-items">
             <button
               className={`sidebar-sub-item${activePage === '/learning-records' ? ' sidebar-sub-item--active' : ''}`}
@@ -212,7 +213,7 @@ function LeftSidebar() {
               </button>
             )}
           </div>
-        )}
+        </Collapse>
 
         {/* Events */}
         <button className="sidebar-item ui-disabled" disabled>

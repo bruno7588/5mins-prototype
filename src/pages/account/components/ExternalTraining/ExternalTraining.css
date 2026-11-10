@@ -3,8 +3,7 @@
 .aet-body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
-  padding-top: var(--space-l);
+  gap: var(--space-l);
 }
 
 /* The one-off setting card, as Figma 9137:6012: 12px 16px padding, 12px between the
@@ -165,12 +164,14 @@
 .aet-toolbar__ctas {
   display: flex;
   gap: var(--space-m);
+  /* Sits at the right end of the search row. */
+  margin-left: auto;
 }
 
 .aet-view {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-l);
 }
 
 /* ── Bulk upload drawer: numbered steps on a dashed rail (same as Bulk upload of trainings) ── */

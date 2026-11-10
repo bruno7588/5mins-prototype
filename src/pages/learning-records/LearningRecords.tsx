@@ -7,6 +7,7 @@ import LeftSidebar from '../../components/LeftSidebar/LeftSidebar'
 import CsvIcon from '../../components/icons/CsvIcon'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import Toggle from '../../components/Toggle/Toggle'
+import Search from '@/components/Search/Search'
 import Badge from '../../components/Badge/Badge'
 import InputInteger from '../../components/InputInteger/InputInteger'
 import InputField from '../../components/InputField/InputField'
@@ -138,7 +139,7 @@ function DateCell({ value }: { value: string | null }) {
 function LearningRecords() {
   /* The sidebar picks the view: Learning Records > 5Mins Courses or External Training. */
   const activeTab: TabKey = useLocation().pathname === '/learning-records/external' ? 'external' : '5mins'
-  const [extActionsSlot, setExtActionsSlot] = useState<HTMLDivElement | null>(null)
+  const [query, setQuery] = useState('')
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [filtersExpanded, setFiltersExpanded] = useState(false)
   const [activeFilters, setActiveFilters] = useState<string[]>([])
@@ -331,7 +332,9 @@ function LearningRecords() {
     const archived = courseData.filter((r) => r.enrolment === 'Archived')
     let rows = showArchived ? [...archived, ...current] : current
     if (showDeactivated) rows = [...deactivatedData, ...rows]
-    return rows.filter(matchesFilters)
+    /* Search narrows by learner or course, on top of the filters. */
+    const q = query.trim().toLowerCase()
+    return rows.filter(matchesFilters).filter((r) => !q || [r.name, r.email, r.course].some((t) => t.toLowerCase().includes(q)))
   })()
 
   // Renders the correct input for an added filter based on its control type.
@@ -540,37 +543,6 @@ function LearningRecords() {
             <div className="lrp-tabs-row">
               <h2 className="lrp-title">{activeTab === 'external' ? 'External Training' : '5Mins Courses'}</h2>
 
-              <div className="lrp-head-actions">
-                {/* Quick export — download the current table view without saving a report */}
-                <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />} onClick={downloadCurrentView}>
-                  Download Report
-                </Button>
-
-                {/* Saved reports are 5Mins-course reports; External Training keeps only Download Report. */}
-                {activeTab === '5mins' && (<>
-                {/* Saved reports — opens the list side drawer; disabled until one exists */}
-                <Tooltip
-                  icon={false}
-                  position="Bottom"
-                  disabled={reports.length > 0}
-                  text="No saved reports yet. Build a filter view and choose “Save Report”."
-                >
-                  <Button
-                    variant="outlined-2"
-                    aria-haspopup="dialog"
-                    disabled={reports.length === 0}
-                    onClick={() => setReportsListOpen(true)}
-                    icon={<Note1 size={20} color="currentColor" variant="Linear" />}
-                  >
-                    Reports ({reports.length})
-                  </Button>
-                </Tooltip>
-                {/* Save the current filter view as a report */}
-                <Button onClick={openCreateReport}>Save New Report</Button>
-                </>)}
-                {/* External Training puts its Add Training menu here, at the far right. */}
-                {activeTab === 'external' && <div ref={setExtActionsSlot} className="lrp-ext-actions" />}
-              </div>
             </div>
             <div className="lrp-divider" />
           </div>
@@ -642,6 +614,43 @@ function LearningRecords() {
               )}
             </div>
           </div>
+
+          {/* Under the Filter bar: search on the left, the report actions on the right
+              (the same row as External Training). */}
+          <div className="lrp-toolbar">
+            <Search
+              value={query}
+              onChange={setQuery}
+              placeholder="Search learners or courses"
+              ariaLabel="Search learning records"
+              className="lrp-search"
+            />
+            <div className="lrp-head-actions">
+              {/* Quick export — download the current table view without saving a report */}
+              <Button variant="outlined-2" icon={<CsvIcon size={20} color="currentColor" />} onClick={downloadCurrentView}>
+                Download Report
+              </Button>
+              {/* Saved reports — opens the list side drawer; disabled until one exists */}
+              <Tooltip
+                icon={false}
+                position="Bottom"
+                disabled={reports.length > 0}
+                text="No saved reports yet. Build a filter view and choose “Save Report”."
+              >
+                <Button
+                  variant="outlined-2"
+                  aria-haspopup="dialog"
+                  disabled={reports.length === 0}
+                  onClick={() => setReportsListOpen(true)}
+                  icon={<Note1 size={20} color="currentColor" variant="Linear" />}
+                >
+                  Reports ({reports.length})
+                </Button>
+              </Tooltip>
+              {/* Save the current filter view as a report */}
+              <Button onClick={openCreateReport}>Save New Report</Button>
+            </div>
+          </div>
           </>)}
 
           {/* Table */}
@@ -652,7 +661,7 @@ function LearningRecords() {
               getRowKey={(row) => row.id}
             />
           ) : (
-            <ExternalTrainingRecords showToast={showToast} actionsSlot={extActionsSlot} />
+            <ExternalTrainingRecords showToast={showToast} />
           )}
 
 

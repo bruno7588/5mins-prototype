@@ -351,3 +351,17 @@
   color: var(--text-disabled);
   cursor: not-allowed;
 }
+
+/* Search on the left, report actions on the right, under the Filter bar. */
+.lrp-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+}
+
+.lrp-search {
+  width: 360px;
+  max-width: 100%;
+}

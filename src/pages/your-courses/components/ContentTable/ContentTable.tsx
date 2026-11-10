@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  SearchNormal1,
   Add,
   ArrowDown2,
   ExportSquare,
@@ -13,6 +12,7 @@ import {
 import AddScormModal from '../../../../components/AddScormModal/AddScormModal'
 import Table, { type Column } from '@/components/Table/Table'
 import Button from '../../../../components/Button/Button'
+import Search from '@/components/Search/Search'
 import CloseButton from '../../../../components/CloseButton/CloseButton'
 import ConfirmModal from '../../../../components/ConfirmModal/ConfirmModal'
 import ToastContainer, { useToast } from '../../../../components/Toast/Toast'
@@ -152,6 +152,10 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
   }, [addedLessons])
   const rows = isScorm ? scorm : lessons
   const setRows = isScorm ? setScorm : setLessons
+  /* Search narrows the table by file name. */
+  const [query, setQuery] = useState('')
+  const q = query.trim().toLowerCase()
+  const shownRows = q ? rows.filter((r) => r.fileName.toLowerCase().includes(q)) : rows
 
   const [showAddScorm, setShowAddScorm] = useState(false)
   const [editScormRow, setEditScormRow] = useState<ContentRow | null>(null)
@@ -394,18 +398,21 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
         </div>
       )}
 
-      {/* Filter bar */}
+      {/* Filter bar: search first, then the source filter */}
       <div className="content-table-filters">
+        <Search
+          value={query}
+          onChange={setQuery}
+          placeholder={isScorm ? 'Search SCORM files' : 'Search content'}
+          ariaLabel={isScorm ? 'Search SCORM files' : 'Search content'}
+          className="content-table-search"
+        />
+
         <span className="content-table-filter-label">Show content from</span>
         <button className="content-table-filter-dropdown ui-disabled" disabled>
           All
           <ArrowDown2 size={16} color="var(--text-tertiary)" />
         </button>
-
-        <div className="content-table-search">
-          <SearchNormal1 size={20} color="var(--text-tertiary)" variant="Linear" />
-          <input type="text" placeholder={isScorm ? 'Search SCORM files' : 'Search content'} />
-        </div>
 
         <Button
           icon={<Add size={20} color="currentColor" />}
@@ -418,9 +425,9 @@ function ContentTable({ variant = 'lessons', onLessonClick, onAddContent, aiQuiz
       {/* Table */}
       <Table
         columns={columns}
-        rows={rows}
+        rows={shownRows}
         getRowKey={(row) => String(row.id)}
-        pagination={{ from: 1, to: rows.length, total: rows.length }}
+        pagination={{ from: 1, to: shownRows.length, total: shownRows.length }}
       />
 
 

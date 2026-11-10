@@ -151,7 +151,7 @@ Colours are semantic tokens resolving per mode (see `colors.md`).
 
 - **Figma only:** `State=Collapsed` and the collapsed hover flyout tooltip; the open-group row fill (`--page-background-hover`).
 - **Code only:** a red count badge on the Roles sub-item and a red dot on the collapsed People & Teams group (neither is part of the Library component).
-- **Drift:** sub-menus mount and unmount instantly (`{peopleOpen && ...}`) instead of animating with `Collapse`; the active item has no `aria-current="page"`; selected icons use `--secondary-600` rather than `--text-selected`; items have no `:focus-visible` style; no open-group fill.
+- **Drift:** the active item has no `aria-current="page"`; selected icons use `--secondary-600` rather than `--text-selected`; items have no `:focus-visible` style; no open-group fill.
 
 **Menu/Itens/WebApp** (`4674:25675`): `Selected` (false / true), `State` (Hover / Enabled / Focus, Focus = `:focus-visible` cyan ring), `Expanded` (true / false), `Label` (text, item text), `Icon` (swap, the Bold Iconsax glyph). No shared component: each learner page hand-rolls the shell with `.mt-topnav` / `.mt-side` classes (defined in `pages/my-team/MyTeam.css`), in `MyTeam.tsx`, `ForYou.tsx`, `Workspace.tsx`, `ProgramDetails.tsx`, `ProgramCourseDetails.tsx`, `UserProfile.tsx` and `Events.tsx`. The side panel reuses the shared `AdminMenuItem` (the learner menu's Admin entry, a `.mt-side__item` locked during impersonation, [doc](impersonation-banner.md)) and `ProfileMenu` components, which have no doc yet. Its selected icon is raw `--secondary-500`, not `--text-selected`. Extracting a shared learner shell is a candidate clean-up.
 

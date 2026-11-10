@@ -4,7 +4,7 @@
 .lret {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-l);
 }
 
 .lret-toolbar {
@@ -180,4 +180,9 @@
 
 .lret-add-menu .ram-item-description {
   white-space: normal;
+}
+
+.lret-search {
+  width: 360px;
+  max-width: 100%;
 }

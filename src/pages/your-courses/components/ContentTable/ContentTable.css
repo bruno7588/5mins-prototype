@@ -39,31 +39,13 @@
 }
 
 .content-table-search {
-  flex: 1;
-  max-width: 400px;
-  display: flex;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--space-s) var(--space-sm);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background-color: var(--input-background);
+  width: 400px;
+  max-width: 100%;
+}
+
+/* The add button holds the far right of the row. */
+.content-table-filters > .ds-btn {
   margin-left: auto;
-}
-
-.content-table-search input {
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: inherit;
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--text-primary);
-  width: 100%;
-}
-
-.content-table-search input::placeholder {
-  color: var(--text-disabled);
 }
 
 .content-table-file {

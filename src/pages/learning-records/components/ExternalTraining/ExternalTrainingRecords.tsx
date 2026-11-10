@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { Add, Danger, Book1, Buildings2, Calendar, Profile, TickCircle } from 'iconsax-react'
 import Button from '@/components/Button/Button'
+import Search from '@/components/Search/Search'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import RowActionsMenu from '@/components/RowActionsMenu/RowActionsMenu'
 import EmptyState from '@/components/EmptyState/EmptyState'
@@ -60,11 +60,9 @@ const RESULT_OPTIONS = [
 
 interface Props {
   showToast: (type: 'success', message: string) => void
-  /** Page-header slot that holds the Add Training menu. */
-  actionsSlot?: HTMLElement | null
 }
 
-function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
+function ExternalTrainingRecords({ showToast }: Props) {
   const { records } = useExternalTraining()
   /* Stays set while the drawer plays its exit; key remounts it fresh on each open. */
   const [drawer, setDrawer] = useState<{ record: ExternalRecord | null; open: boolean; key: number } | null>(null)
@@ -86,6 +84,7 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
   const [active, setActive] = useState<FilterId[]>([])
   const [values, setValues] = useState<Partial<Record<FilterId, string[]>>>({})
   const [expanded, setExpanded] = useState(false)
+  const [query, setQuery] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const headerAddRef = useRef<HTMLDivElement>(null)
   const bottomAddRef = useRef<HTMLDivElement>(null)
@@ -129,12 +128,17 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
     () =>
       records
         .filter((r) => active.every((id) => !values[id]?.length || values[id]!.includes(valueOf(id, r))))
+        /* Search narrows by learner, course or provider, on top of the filters. */
+        .filter((r) => {
+          const q = query.trim().toLowerCase()
+          return !q || [personById(r.personId)?.name, recordTrainingName(r), recordProviderName(r)].some((t) => t?.toLowerCase().includes(q))
+        })
         .sort(
           (a, b) =>
             dueRank(dueState(a, records)) - dueRank(dueState(b, records)) || b.completionDate.localeCompare(a.completionDate),
         ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [records, active, values],
+    [records, active, values, query],
   )
 
   const pillLabel = (id: FilterId) => {
@@ -159,7 +163,7 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
   }))
 
   /* One Add Training button; the menu offers one record, a bulk CSV or a ZIP upload.
-     Portalled into the page header, at the far right beside Download Report. */
+     It sits at the far right of the row under the Filter bar, beside Download Report. */
   const addMenu = (
         <RowActionsMenu
           ariaLabel="Add Training"
@@ -202,7 +206,6 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
 
   return (
     <div className="lret">
-      {actionsSlot && createPortal(addMenu, actionsSlot)}
       <input
         ref={zipInputRef}
         type="file"
@@ -239,6 +242,27 @@ function ExternalTrainingRecords({ showToast, actionsSlot }: Props) {
           )
         }}
       />
+
+      {/* Under the Filter bar: search on the left, Download Report and Add Training on the right. */}
+      <div className="lret-toolbar">
+        <Search
+          value={query}
+          onChange={setQuery}
+          placeholder="Search learners, courses or providers"
+          ariaLabel="Search external training"
+          className="lret-search"
+        />
+        <div className="lret-toolbar__ctas">
+          <Button
+            variant="outlined-2"
+            icon={<CsvIcon size={20} color="currentColor" />}
+            onClick={() => showToast('success', 'Downloading current view (CSV)')}
+          >
+            Download Report
+          </Button>
+          {addMenu}
+        </div>
+      </div>
 
       {rows.length ? (
         <ExternalRecordsTable
