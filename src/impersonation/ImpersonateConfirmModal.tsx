@@ -32,7 +32,7 @@ function ImpersonateConfirmModal({ person, onClose, onConfirm }: Props) {
 
       <div className="imp-confirm__content">
         <div className="imp-confirm__who">
-          <Avatar size={40} src={person.avatarImg} />
+          <Avatar name={person.name} size={40} src={person.avatarImg} />
           <div className="imp-confirm__who-id">
             <div className="imp-confirm__who-name">{person.name}</div>
             <div className="imp-confirm__who-role">{person.role}</div>

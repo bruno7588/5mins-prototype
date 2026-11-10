@@ -86,7 +86,7 @@ function MemberTable({ members }: { members: ReminderMember[] }) {
         return (
           <div className="rd-table__row" key={m.id}>
             <div className="rd-table__cell rd-table__cell--name">
-              <Avatar src={m.avatarSrc} size={40} />
+              <Avatar name={m.name} src={m.avatarSrc} size={40} />
               <div className="rd-member-info">
                 <span className="rd-member-name">{m.name}</span>
                 <span className="rd-member-role">

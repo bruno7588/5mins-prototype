@@ -124,7 +124,7 @@ export function AttendeeStack({ attendees, overflow }: { attendees: CalendarItem
       className="cal-card__avatars"
     >
       {shown.map((a, i) => (
-        <Avatar key={`${a.initials}-${i}`} size={24} />
+        <Avatar initials={a.initials} key={`${a.initials}-${i}`} size={24} />
       ))}
     </AvatarGroup>
   )

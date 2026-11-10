@@ -581,7 +581,7 @@ function People() {
       render: (person) => (
         <span className="tbl-media">
           <div className="people-avatar-wrap">
-            <Avatar size={40} src={person.avatarImg} />
+            <Avatar name={person.name} size={40} src={person.avatarImg} />
             {/* The role rides the avatar rather than the name: it belongs to the
                 person, and a badge beside the name pushed the name out of a cell
                 that is already the tightest in the row. */}
@@ -726,7 +726,7 @@ function People() {
       width: '0 1 300px',
       render: (person) => (
         <span className="tbl-media">
-          <Avatar size={40} />
+          <Avatar name={person.name} size={40} />
           <div className="people-name-info">
             <span className="people-name">{person.name}</span>
             <span className="people-email">{person.email}</span>

@@ -288,7 +288,7 @@ function SignOffTab() {
               {recipients.slice(0, 5).map((r) => (
                 <div className="rd-table__row" key={r.id}>
                   <div className="rd-table__cell rd-table__cell--name">
-                    <Avatar size={40} />
+                    <Avatar name={r.name} size={40} />
                     <div className="rd-member-info">
                       <span className="rd-member-name">{r.name}</span>
                       <span className="rd-member-role">{r.email}</span>

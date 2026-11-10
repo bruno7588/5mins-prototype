@@ -192,7 +192,7 @@ function MobileTopNav({
         <>
           <div className="m-topnav__profile">
             <span className="m-topnav__avatarwrap">
-              <Avatar size={40} src={avatar} />
+              <Avatar name={name} size={40} src={avatar} />
               <button type="button" className="m-topnav__editbadge" aria-label="Profile settings" onClick={onEditProfile}>
                 <Setting2 size={16} color="var(--text-primary)" variant="Linear" />
               </button>

@@ -32,7 +32,7 @@ function ImpersonationBar() {
           <span className="imp-bar__prefix-text">Impersonating</span>
         </span>
         <span className="imp-bar__person">
-          <Avatar size={24} src={person.avatarImg} />
+          <Avatar name={person.name} size={24} src={person.avatarImg} />
           <span className="imp-bar__label">
             <strong className="imp-bar__name">{person.name}</strong>
             <span className="imp-bar__role">· {person.role}</span>

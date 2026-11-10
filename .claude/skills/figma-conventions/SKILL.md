@@ -90,7 +90,7 @@ The 5Mins Library is file `EC26cSVe9KNTCWXvYovakw`. It holds Light mode / Dark m
    - Read Library specs from the **screenshot**, not only the code export: `get_design_context` flattens gradient strokes to their first stop (the AI Outlined button's cyan-to-purple border comes back as flat `#00cee6`).
 3. Components Bruno uses most: `Top Nav/Admin`, `Side navigation`, `Header` {Type=Page}, `Buttons`, `Chips`, `Search`, `Dropdown`, `Listbox`, `List itens`, `Checkbox instances`, `Badge`, `Content switcher`, `Filter bar`, `Table header`, `Table data`, `Pagination`, `Side Drawer`, `Toast`, `Tooltip`, `Empty state`, `Scroll Bar`, `Icons`, `Chevron`, `Illustrations/ ...`, `Callout`, `Cursor`.
 4. **When the Library has no component** for something the screen shows: build a proper local component (variants where states differ, every value bound to a variable), named `5Mins / <Area> / <Name> (proposed)`, and place the main components in a frame named `Proposed components` on the section's last row (auto-layout horizontal, wrapping, gap 120). Use its instances in the screens. List every proposed component in the report, with what it stands in for and why the Library version could not be used.
-5. Known Library gaps (flag, do not improvise): Avatar has no initials variant; `Illustrations/ Assessments` lacks `Type=Lesson quiz, Device=Desktop`; Icons has no `refresh` glyph (`repeat` is nearest).
+5. Known Library gaps (flag, do not improvise): `Illustrations/ Assessments` lacks `Type=Lesson quiz, Device=Desktop`; Icons has no `refresh` glyph (`repeat` is nearest).
 
 ## 5. Tokens, never raw values
 

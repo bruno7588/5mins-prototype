@@ -99,7 +99,7 @@ function CoursesDrawer({
         <div className="side-drawer__header">
           <div className="side-drawer__headline">
             <div className="cd-drawer__member">
-              <Avatar src={memberAvatarSrc} size={56} />
+              <Avatar name={memberName} src={memberAvatarSrc} size={56} />
               <div className="cd-drawer__member-info">
                 <h2 id="drawer-title" className="cd-drawer__member-name">{memberName}</h2>
                 <p className="cd-drawer__member-role">{memberRole}</p>

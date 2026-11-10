@@ -12,9 +12,10 @@ import './ReportsListDrawer.css'
 
 const MAX_AVATARS = 3
 
-/** A single 24px avatar: the recipient's photo, or the fallback smiley. */
+/** A single 24px avatar: the recipient's photo, or their initials. */
 function AvatarCircle({ email }: { email: string }) {
-  return <Avatar src={orgUserByEmail(email)?.avatar} size={24} />
+  const user = orgUserByEmail(email)
+  return <Avatar src={user?.avatar} name={user?.name ?? email} size={24} />
 }
 
 /**

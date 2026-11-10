@@ -53,7 +53,7 @@ const COURSE_PATH = '/your-courses/course?tab=assessments'
 function person(learner: ResponseLearner) {
   return (
     <span className="tbl-media">
-      <Avatar src={learner.avatar} size={32} />
+      <Avatar name={learner.name} src={learner.avatar} size={32} />
       <span className="tbl-stack">
         <span className="primary">{learner.name}</span>
         <span className="supporting">{learner.role}</span>

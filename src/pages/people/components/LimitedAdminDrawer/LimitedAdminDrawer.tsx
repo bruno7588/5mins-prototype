@@ -143,7 +143,7 @@ function LimitedAdminDrawer({ open, person, fields, onClose, onSave, onRemove }:
         <div className="lad-body">
           {/* Who this is about */}
           <div className="lad-person">
-            <Avatar size={40} src={person.avatarImg} />
+            <Avatar name={person.name} size={40} src={person.avatarImg} />
             <div className="lad-person__text">
               <p className="lad-person__name">{person.name}</p>
               <p className="lad-person__email">{person.email}</p>

@@ -318,7 +318,7 @@ function InsightsCard({ responseCount, autoStart, onClose, stats }: Props) {
               <ul className="asmi-people">
                 {NAMED.map((r) => (
                   <li key={r.learner.id} className="asmi-person">
-                    <Avatar src={r.learner.avatar} size={32} />
+                    <Avatar name={r.learner.name} src={r.learner.avatar} size={32} />
                     <span className="asmi-person__text">
                       <span className="asmi-person__name">{r.learner.name}</span>
                       <span className="asmi-person__reason">{r.sentence}</span>

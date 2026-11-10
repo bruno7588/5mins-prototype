@@ -180,7 +180,7 @@ function RecipientsField({ recipients, onChange, error, onPendingEmailChange }: 
                 onMouseEnter={() => setActiveIndex(i)}
                 onClick={() => addEmail(u.email)}
               >
-                <Avatar src={u.avatar} size={40} />
+                <Avatar name={u.name} src={u.avatar} size={40} />
                 <span className="rcp-option-text">
                   <span className="rcp-option-name">{u.name}</span>
                   <span className="rcp-option-email">{u.email}</span>

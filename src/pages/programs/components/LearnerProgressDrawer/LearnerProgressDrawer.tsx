@@ -50,7 +50,7 @@ function LearnerProgressDrawer({ learner, courses, onClose }: Props) {
         onMouseDown={(e) => e.stopPropagation()}
       >
         <header className="lpd-header">
-          <Avatar src={learner.avatar} size={48} />
+          <Avatar name={learner.name} src={learner.avatar} size={48} />
           <div className="lpd-headline">
             <p className="lpd-name" id="lpd-name">{learner.name}</p>
             <p className="lpd-role">{learner.role}</p>

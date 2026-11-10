@@ -317,7 +317,7 @@ function Leaderboard() {
               )}
             </div>
 
-            <Avatar src={entry.avatarSrc} size={40} />
+            <Avatar name={entry.name} src={entry.avatarSrc} size={40} />
 
             <div className="eng-lb__info">
               <p className="eng-lb__name">{entry.name}</p>

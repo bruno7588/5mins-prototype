@@ -9,13 +9,13 @@ A visual representation of a user or entity, alone or stacked in a group with a 
 
 **Code:** `import Avatar from '@/components/Avatar/Avatar'` and `import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'`
 **Figma:** Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`; Avatar `5097:5884`; Avatar Group `5097:5584`
-**Last verified:** 2026-10-15 (square shape is code only; no Library variant yet)
+**Last verified:** 2026-11-10 (initials fallback replaced the smiley; square shape is code only, no Library variant yet)
 
 Identical structure in both modes; borders, fallback and counter colours are semantic tokens that resolve per mode (see `colors.md`).
 
 ## Usage
 
-**Intent:** puts a face (or the fallback smiley) to a person, alone or as a stacked group with a "+N" count, so the admin can see who at a glance.
+**Intent:** puts a face (or their initials) to a person, alone or as a stacked group with a "+N" count, so the admin can see who at a glance.
 
 **Use when**
 - Showing the person in a table row, beside their name and role
@@ -28,9 +28,9 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 - The image is a content thumbnail, not a person → table thumbnail `.tbl-thumb` ([doc](table.md))
 
 **Do**
-- Use the shared `Avatar` / `AvatarGroup` components; never hand-roll a circle `<img>` or an initials chip
+- Use the shared `Avatar` / `AvatarGroup` components; never hand-roll a circle `<img>` or an initials chip; pass `name` and the component draws the initials
 - In table rows, put a 32 or 40px `<Avatar>` inside the `.tbl-media` cell
-- When there is no photo, show the Library fallback smiley at the same size: a `var(--border)` circle with a `var(--text-tertiary)` smile
+- When there is no photo, show the person's initials at the same size: first letter of the first and last name, uppercase ("BM"), `var(--text-secondary)` on a `var(--border)` circle
 - Use `alt=""` (or `aria-hidden` on a group) when the name or count is already written beside it
 - Show at most 3 avatars plus "+N" (the Figma pattern), with the true remaining count in the bubble
 - Give every avatar in a group a 1px `var(--page-background)` ring, so it blends with the surface behind
@@ -43,10 +43,10 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 - Don't use any radius other than full (circle) or `var(--radius-s)` (square)
 - Don't scale the counter text independently; it is bound to the group size (8/10/12px)
 - Don't mix avatar sizes within one group
-- Don't use initials or a coloured letter chip as the fallback; the Library has no initials variant
-- Don't hard-code the fallback colours; the smiley's circle and smile flip with the mode
+- Don't use the old smiley or a coloured letter chip as the fallback; initials sit on the neutral `var(--border)` circle
+- Don't hard-code the fallback colours; the circle and initials flip with the mode
 
-**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)` (circle, people) or `var(--radius-s)` 8px (square, companies and instructors); photo `object-fit: cover`; fallback smiley circle `var(--border)`, smile `var(--text-tertiary)`; group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (ring 0.5px at 24px) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar `5097:5884`, Avatar Group `5097:5584`.
+**Canonical spec:** sizes 24, 32, 40, 48, 56, 64, 72px; radius `var(--radius-full)` (circle, people) or `var(--radius-s)` 8px (square, companies and instructors); photo `object-fit: cover`; fallback initials `var(--text-secondary)` on a `var(--border)` circle (type per size in Variants); group sizes 24 / 32 / 40px with overlap -8 / -12 / -16px; ring 1px `var(--page-background)`; "+N" bubble `var(--border)` (ring 0.5px at 24px) with `var(--text-tertiary)` Regular text 8 / 10 / 12px. Figma: Library `EC26cSVe9KNTCWXvYovakw`, board `5453:37805`, Avatar `5097:5884`, Avatar Group `5097:5584`.
 
 ## Figma to code
 
@@ -55,7 +55,7 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 | Figma property | Figma values | React prop | Prop values | Notes |
 |---|---|---|---|---|
 | Size | 24px / 32px / 40px / 48px / 56px / 64px / 72px | `size` | `24` / `32` (default) / `40` / `48` / `56` / `64` / `72` | Figma uses "24px" strings and defaults to 72px; code takes numbers and defaults to 32 |
-| Picture | true / false | `src` | URL set / omitted | omit `src` and the fallback smiley renders |
+| Picture | true / false | `src` | URL set / omitted | omit `src` and the initials render; Figma's `Initials` text property maps to `name` (or `initials`) |
 | n/a (not in the Library yet) | circle / square | `shape` | `'circle'` (default) / `'square'` | square for companies and instructors; add as a Library variant |
 
 **Avatar group** (`5097:5584`)
@@ -65,14 +65,16 @@ Identical structure in both modes; borders, fallback and counter colours are sem
 | Size | 24px / 32px / 40px | `size` | `24` (default) / `32` / `40` | pass the same `size` to the `<Avatar>` children |
 | Count | text (default "+3") | `remaining` | number, default `0` | renders the "+N" bubble when above 0; the component writes the "+" |
 
-- **Figma only:** none. (The Library's separate `Emojies` set has no code component; `Avatar` renders the smiley fallback.) `Picture` stays a variant, not a boolean: the photo is an image fill on the circle and the fallback is a nested `Emojies` instance, so the two differ in more than one layer's visibility.
+- **Figma only:** none. `Picture` stays a variant, not a boolean: the photo is an image fill on the circle and the fallback is a filled circle with an `Initials` text layer, so the two differ in more than one layer's visibility.
 - **Code only:** `shape` (until Design adds a square variant), `alt` and `className` on Avatar; `remaining`, `ariaLabel`, `className` and the `--avatar-group-ring` custom property on AvatarGroup; children may be wrapped (e.g. in a Tooltip).
 
 **Avatar props**
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `src` | `string` | none | Photo URL. Omit it and the fallback smiley renders (Figma's `Picture=false`) |
+| `src` | `string` | none | Photo URL. Omit it and the initials render (Figma's `Picture=false`) |
+| `name` | `string` | none | The person's full name; the initials are its first and last words' first letters ("Bruno Marques" → "BM") |
+| `initials` | `string` | none | Explicit initials when no full name is known (e.g. calendar attendees); wins over `name` |
 | `size` | `24 \| 32 \| 40 \| 48 \| 56 \| 64 \| 72` | `32` | Diameter in px |
 | `alt` | `string` | `''` | Leave empty when the name is written beside the avatar |
 | `shape` | `'circle' \| 'square'` | `'circle'` | Circle for people; square (8px radius) for companies and instructors |
@@ -105,8 +107,8 @@ The CSS classes in Anatomy (`.avatar`, `.avatar-group*`) are the spec sketch; th
 Shape:      circle, border-radius var(--radius-full) (Figma token `100`)
 Sizes:      24, 32, 40, 48, 56, 64, 72 px  (all on the 4px/8px grid)
 Picture:    <img> fills the circle, object-fit: cover
-Fallback:   Library smiley fills the circle: circle var(--border), smile var(--text-tertiary)
-            (light #DFE1E6 / #656B7C, dark #2D313D / #9EA4B3)
+Fallback:   initials centred on the circle: circle var(--border), text var(--text-secondary)
+            (light Neutral-100 / Neutral-500, dark Neutral-700 / Neutral-200)
 ```
 
 No border on standalone avatars; the border only appears inside a group.
@@ -169,7 +171,18 @@ A horizontal stack of avatars with a trailing "+N" counter bubble.
 | Variant | Figma | Renders |
 |---|---|---|
 | Picture | `Picture=true` | the photo, `object-fit: cover` |
-| Fallback | `Picture=false` | the Library smiley: `var(--border)` circle, `var(--text-tertiary)` smile |
+| Fallback | `Picture=false` | initials: `var(--text-secondary)` on a `var(--border)` circle |
+
+**Initials type per size** (Poppins, line-height 1):
+
+| Avatar | Figma style | Code |
+|---|---|---|
+| 72px | H2 (24) | `var(--font-size-h2)`, 700 |
+| 64px, 56px | H3 (20) | `var(--font-size-h3)`, 700 |
+| 48px | H4 (16) | `var(--font-size-h4)`, 700 |
+| 40px | Paragraph M semibold (14) | `var(--font-size-md)`, 600 |
+| 32px | Paragraph S semibold (12) | `var(--font-size-sm)`, 600 |
+| 24px | none, SemiBold 10 | `10px`, 600: a deliberate exception (no 10px type token; do not add one) |
 
 ### Square avatar (companies and instructors)
 
@@ -200,8 +213,9 @@ Display only: avatars and groups have no hover, pressed, disabled or focus state
 | Token | Light mode | Dark mode | Used for |
 |---|---|---|---|
 | `--page-background` | Neutral-25 `#F9F9FA` | Neutral-800 `#20222A` | Group separator ring (1px) |
-| `--border` | Neutral-100 `#DFE1E6` | Neutral-700 `#2D313D` | "+N" counter bubble background; fallback smiley circle |
-| `--text-tertiary` | Neutral-400 `#656B7C` | Neutral-300 `#9EA4B3` | "+N" counter text; fallback smiley smile |
+| `--border` | Neutral-100 `#DFE1E6` | Neutral-700 `#2D313D` | "+N" counter bubble background; fallback initials circle |
+| `--text-tertiary` | Neutral-400 `#656B7C` | Neutral-300 `#9EA4B3` | "+N" counter text |
+| `--text-secondary` | Neutral-500 | Neutral-200 | Fallback initials |
 | `--radius-full` (Figma `100`) | n/a | n/a | Border radius, circle (people) |
 | `--radius-sm` | n/a | n/a | Border radius 12px, square (companies and instructors) |
 
@@ -209,7 +223,7 @@ Display only: avatars and groups have no hover, pressed, disabled or focus state
 
 - `alt` names the photo; leave it empty (`alt=""`) when the person's name is already written beside the avatar.
 - `AvatarGroup` with `ariaLabel` gets `role="img"` and that name (e.g. "12 learners enrolled"); without it the group is decorative and `aria-hidden`, for when the count is written beside it.
-- The fallback smiley is `aria-hidden`.
+- The fallback initials are `aria-hidden`; the name is written beside the avatar or carried by `alt`/`ariaLabel`.
 
 ## Examples
 
@@ -217,8 +231,8 @@ Display only: avatars and groups have no hover, pressed, disabled or focus state
 import Avatar from '@/components/Avatar/Avatar'
 import AvatarGroup from '@/components/AvatarGroup/AvatarGroup'
 
-// Single avatar: photo, or the fallback smiley when there is none
-<Avatar src={person.photo} size={32} />
+// Single avatar: photo, or the person's initials when there is none
+<Avatar src={person.photo} name={person.name} size={32} />
 
 // Group: at most 3 shown, the true remaining count in the bubble
 <AvatarGroup size={24} remaining={enrolled.length - 3} ariaLabel={`${enrolled.length} learners enrolled`}>

@@ -33,6 +33,7 @@ Add new entries here, not in the docs.
 
 ## [avatars.md](avatars.md)
 
+- 2026-11-10: No-photo fallback changed from the Library smiley to initials (first letter of first and last name, e.g. "BM"): `--text-secondary` on a `--border` circle. Library Avatar `5097:5884` Picture=false gained an `Initials` text property and per-size type (H2 at 72 down to Paragraph S semibold at 32); 24px uses SemiBold 10px as a deliberate exception (no 10px token). Code: `Avatar` gained `name` and `initials` props; every caller with a name passes it.
 - 2026-10-15: Square avatar added (Bruno): circle for people who use the platform (learners, admins, managers), square with a 12px radius (`--radius-sm`) for companies and instructors. Code `shape` prop on Avatar; `CompanyAvatar` is now a square Avatar. Replaces the same-day interim company avatar (8px) and the lesson-feed-only exception. Not yet in the Figma Library.
 - 2026-10-14: Avatar group gains a `Count` text property ("+N" bubble, maps to `remaining`); Avatar, Avatar group and Emojies descriptions rewritten to the 5Mins format and the Atlassian links removed. `Picture` stays a variant.
 - 2026-09-29: > **Updated 2026-09-29 (re-verified against the Figma Library):** the "+N" counter bubble fills with `var(--border)`, not `--page-background-hover`; the no-photo fallback is the Library smiley (a `var(--border)` circle with a `var(--text-tertiary)` smile), not initials; the 24px counter bubble's ring is 0.5px; Avatar Group light node corrected to `11915:3296`.

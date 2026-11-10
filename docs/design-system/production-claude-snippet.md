@@ -44,7 +44,7 @@ Paste everything between the two lines into the production repo's root `CLAUDE.m
 | Filter within a tabbed page | Chips, never nested tabs |
 | Two views of one object | Content Switcher |
 | Expand / collapse | Animated collapse (ease-in-out), never a hard mount/unmount |
-| Person photo or placeholder | Avatar: photo, or the Library smiley when there is none (never initials); groups show up to 3 plus "+N" |
+| Person photo or placeholder | Avatar: photo, or the person's initials when there is none (pass `name`); groups show up to 3 plus "+N" |
 | Editable page or modal title | Inline input: size L on pages, M in modals and drawers; no box or focus ring, error message under the title |
 | Selected table row | `--selected-row` fill and border, `--selected-row-hover` on hover; 24px checkbox in a 48px column |
 | Page tab bar | Tabs, 16px gap, `--selected` indicator |

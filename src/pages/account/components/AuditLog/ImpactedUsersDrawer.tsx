@@ -25,7 +25,7 @@ const columns: Column<ImpactedUser>[] = [
     header: 'Name',
     render: (u) => (
       <span className="tbl-media">
-        <Avatar size={40} />
+        <Avatar name={u.name} size={40} />
         <span className="tbl-stack">
           <span className="primary">{u.name}</span>
           <span className="supporting">{u.email}</span>

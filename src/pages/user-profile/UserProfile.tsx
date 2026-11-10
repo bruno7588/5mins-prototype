@@ -667,7 +667,7 @@ function UserProfile() {
           {/* Profile header — divider sits between the headline and the tabs (per headers.md) */}
           <header className="up-header">
             <div className="up-headline">
-              <Avatar size={56} src={person.avatarImg} />
+              <Avatar name={person.name} size={56} src={person.avatarImg} />
               <div className="up-title-group">
                 <h2 className="up-name">{person.name}</h2>
                 <p className="up-meta">{person.role} · {person.email}</p>

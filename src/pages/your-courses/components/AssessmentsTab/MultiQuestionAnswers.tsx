@@ -98,7 +98,7 @@ function MultiQuestionAnswers({ assessment: a, responses, sort = 'none', onToggl
                 onClick={() => toggle(r.learner.id)}
               >
                 <span className="lrn-cell lrn-c-learner">
-                  <Avatar src={r.learner.avatar} size={40} />
+                  <Avatar name={r.learner.name} src={r.learner.avatar} size={40} />
                   <span className="lrn-person">
                     <span className="lrn-name">{r.learner.name}</span>
                     <span className="lrn-role">{r.learner.role}</span>

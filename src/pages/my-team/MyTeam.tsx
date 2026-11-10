@@ -433,7 +433,7 @@ function MyTeam() {
       width: '1 0 260px',
       render: (r) => (
         <span className="tbl-media">
-          <Avatar src={r.avatarSrc} size={40} />
+          <Avatar name={r.name} src={r.avatarSrc} size={40} />
           <div
             className="mt-cp__member-info"
             role="link"

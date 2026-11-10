@@ -525,7 +525,7 @@ function ProgramAdminDetails() {
                   onClick={() => setProgressLearner(l)}
                 >
                   <div className="pad-row__name">
-                    <Avatar src={l.avatar} size={32} />
+                    <Avatar name={l.name} src={l.avatar} size={32} />
                     <span className="pad-row__title pad-row__title--link">{l.name}</span>
                   </div>
                   <div className="pad-row__date">

@@ -33,7 +33,7 @@ const nameColumn: Column<AffectedRow> = {
   header: 'Name',
   render: (r) => (
     <span className="tbl-media">
-      <Avatar size={40} />
+      <Avatar name={r.name} size={40} />
       <span className="tbl-stack">
         <span className="primary">{r.name}</span>
         <span className="supporting">{BY_ID.get(r.personId)?.team}</span>
